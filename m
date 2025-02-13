@@ -1,46 +1,55 @@
-Return-Path: <linux-kernel+bounces-513836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B150AA34F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:18:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62ED6A34F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DD218913E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914863ABBE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18028266189;
-	Thu, 13 Feb 2025 20:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D024B266180;
+	Thu, 13 Feb 2025 20:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="kSEyVsSI"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="kZXVBaVG"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5711524BC1D;
-	Thu, 13 Feb 2025 20:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F052222DE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477877; cv=none; b=A5Cnn1ROplDuAj4nSI13OutN3idlCyVr4SjxtAfPxFMoY1aipUIEBMlG+omrjeHQ9OBONYqfNTLX6cZqXsK/G2Mmp03lhrm10Fw2vm6hFzj5Lk/zTuUq/2OBnaMkuORwolt4KWwI+8ImTP5t5ZZp8fzbr23g2ZlvjZnwTPtVIhU=
+	t=1739477965; cv=none; b=oIgrwksOf6Y4pA4HqWf4WxhC+lFGdqhhAiRj4f1YiJL34FMqew2YBujZG/eaI6Mvu5f5Tzb9EeeIUUCZX5xqVLrE/kdNZ8LRdNV1MPR52QHjZ8YjgWWKX2j9m+FElUvXp8Y9k+826WqFAMAX89o/iu94Wl0HVY1LKSJLN7Tb4Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477877; c=relaxed/simple;
-	bh=Z4yIAvWFLDmP5unflsXIbZxV+qfHdE5ANG++IPeu0go=;
+	s=arc-20240116; t=1739477965; c=relaxed/simple;
+	bh=R3gp0/xn5MD0hMtEjlXTBJZUS3gA1JpvIAi+rpJVCPs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=laT03xzFs/Hsr8cw6lzlOmgGKM1sO5beGkTELNmAZ4yE/ZpheijSGWqy1TeRAgf0L221sMpRkM8pVFnmkjRVJmGAiXwl1jgcTkcEC5OL+XzgGXmrVv6qkinUdEfOe6t5aAfM6YFFNvU4AB6kz2BNQe6rtQHeiKUv/8grp1HBmlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=kSEyVsSI; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1739477872; bh=Z4yIAvWFLDmP5unflsXIbZxV+qfHdE5ANG++IPeu0go=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kSEyVsSIqGpEfeTGb79N8VOeKWuLNrq2ZkXHhj8qfTXa/pAkZXjj2qsIFhss6os/7
-	 lDHsgi8p4VERW+drkEcJ6OOEi26eLzxN1/fueHiUgOjUOJ5CjGPIubVbO/SmILDvOo
-	 /tMx/qn9RIEn1wRyJLH+SZT1Cda3ipsBFsMZnaZ0=
-Received: from [192.168.110.172] (unknown [178.197.218.240])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id EC8E42052A91;
-	Thu, 13 Feb 2025 21:17:51 +0100 (CET)
-Message-ID: <9b9d53c6-7e37-4af7-878c-a1c174b04491@ralfj.de>
-Date: Thu, 13 Feb 2025 21:17:50 +0100
+	 In-Reply-To:Content-Type; b=e0GI1gEfcfffvg9oFgRFRvAmzquZcwnQWrTEyfwU99QRt7krf4Fu6d5Mgd9oLsFoHUkcL+S+FBTNsxd+PNjWNR4VK+BNaGF4pl0Qth3eF2sxP0YYpYF8knOwVuX7Ih+AzvWuBvIc6Ya5WcBdPNGSgJdOmF8HX0pEYoS6+Q4dWsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=kZXVBaVG; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1739477961;
+ bh=S+N8QktHLziteDHKc6l89RJnsEypWQF7J2Pqb6k3fjQ=;
+ b=kZXVBaVGTNurnLIMVZBfh1c4gdJpqljd7rfEkZ+b0F4M3YLb7C5zurA0aavi2p8680ggU7g5p
+ H+Wklp/s1NhVZr5WgWjKToSwLBGkag/yuJ70kqekAfu1vhdmo42x7cRdSJegVwhQy0Tn8drNqZn
+ cTPFylzweig/cjvIDWNBwKvLu1pYnAnVBKxIPpBK32brW+lgUkVNPA/SGw7pXofi9JSBzroc37x
+ BqP9vGXphXGxxpCsAnS9AczYZuYAyEROXAIF3Ss5Gv5JESB7CjoR5aApQ0wDRp7c+JAAGgtr5QZ
+ PlHwPBj88M3tS2eaIEVb2wKUkgPcg8lnoBgl8NmcBinQ==
+X-Forward-Email-ID: 67ae53c49555f68eb8805aed
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3da8e680-1f36-473d-b51a-6c77a6ea8cc1@kwiboo.se>
+Date: Thu, 13 Feb 2025 21:19:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,126 +57,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat
- target
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev,
- stable@vger.kernel.org, Matthew Maurer <mmaurer@google.com>,
- Jubilee Young <workingjubilee@gmail.com>
-References: <20250210163732.281786-1-ojeda@kernel.org>
- <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
- <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
- <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device
+ tree
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Dragan Simic <dsimic@manjaro.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Tim Lunn <tim@feathertop.org>,
+ FUKAUMI Naoki <naoki@radxa.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Elon Zhang
+ <zhangzj@rock-chips.com>, Alexey Charkov <alchark@gmail.com>,
+ Stephen Chen <stephen@radxa.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+References: <20250213145921.133412-1-detlev.casanova@collabora.com>
+ <20250213145921.133412-3-detlev.casanova@collabora.com>
+ <b5977d21-aa39-4e91-863b-cc7f9dc6938c@kwiboo.se>
+ <5973630.DvuYhMxLoT@trenzalore>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <5973630.DvuYhMxLoT@trenzalore>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Detlev,
 
->>> We have to carefully make the distinction here between codegen and ABI.
+On 2025-02-13 20:56, Detlev Casanova wrote:
+> Hi Jonas,
+> 
+> On Thursday, 13 February 2025 10:48:10 EST Jonas Karlman wrote:
+>> Hi Detlev,
+>>
+>> On 2025-02-13 15:57, Detlev Casanova wrote:
+>>> From: Stephen Chen <stephen@radxa.com>
 >>>
->>> The arm64 C code in the kernel is built with -mgeneral-regs-only
->>> because FP/SIMD registers are not preserved/restored like GPRs, and so
->>> they must be used only in carefully controlled circumstances, i.e., in
->>> assembler code called under kernel_neon_begin()/kernel_neon_end()
->>> [modulo some exceptions related to NEON intrinsics]
+>>> The Radxa ROCK 4D board is based on the Rockchip rk3576 SoC.
 >>>
->>> This does not impact the ABI, which remains hard-float [this was the
->>> only arm64 calling convention that existed until about a year ago].
->>> Any function that takes or returns floats or doubles (or NEON
->>> intrinsic types) is simply rejected by the compiler.
+>>> The device tree adds support for basic devices:
+>>>  - UART
+>>>  - SD Card
+>>>  - Ethernet
+>>>  - USB
+>>>  - RTC
+>>>
+>>> It has 4 USB ports but only 3 are usable as the top left one is used
+>>> for maskrom.
+>>>
+>>> It has a USB-C port that is only used for powering the board.
+>>>
+>>> Signed-off-by: Stephen Chen <stephen@radxa.com>
+>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>> ---
+>>>
+>>>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>>>  .../boot/dts/rockchip/rk3576-rock-4d.dts      | 651 ++++++++++++++++++
+>>>  2 files changed, 652 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+>>> b/arch/arm64/boot/dts/rockchip/Makefile index
+>>> def1222c1907e..a112aeb37948a 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/Makefile
+>>> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+>>> @@ -132,6 +132,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=
+>>> rk3568-wolfvision-pf5-display-vz.dtbo> 
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
+>>>
+>>> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
+>>>
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
+>>>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+>>> b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts new file mode 100644
+>>> index 0000000000000..f356742f9d643
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+>>> @@ -0,0 +1,651 @@
 >>
->> That's how C works. It is not how Rust works. Rust does not reject using floats
->> ever. Instead, Rust offers softfloat targets where you can still use floats, but
->> it won't use float registers. Obviously, that needs to use a different ABI.
->> As you said, aarch64 does not have an official softfloat ABI, but LLVM
->> implements a de-facto softfloat ABI if you ask it to generate functions that
->> take/return float types while disabling the relevant target features. (Maybe
->> LLVM should just refuse to generate such code, and then Rust may have ended up
->> with a different design. But now this would all be quite tricky to change.)
+>> [snip]
 >>
->>> Changing this to softfloat for Rust modifies this calling convention,
->>> i.e., it will result in floats and doubles being accepted as function
->>> parameters and return values, but there is no code in the kernel that
->>> actually supports/implements that.
+>>> +&gmac0 {
+>>> +	phy-mode = "rgmii-id";
+>>> +	clock_in_out = "output";
+>>> +
+>>> +	snps,reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
+>>> +	snps,reset-active-low;
+>>> +	snps,reset-delays-us = <0 20000 100000>;
 >>
->> As explained above, f32/f64 were already accepted as function parameters and
->> return values in Rust code before this change. So this patch does not change
->> anything here. (In fact, the ABI used for these functions should be exactly the
->> same before and after this patch.)
->>
+>> The snps,reset- props are deprecated and should be changed to reset-
+>> props in the phy node.
 > 
-> OK, so can I summarize the above as
-> 
-> - Rust calling Rust will work fine and happily use float types without
-> using FP/SIMD registers in codegen;
-> - Rust calling C or C calling Rust will not support float or double
-> arguments or return values due to the restrictions imposed by the C
-> compiler.
-> 
-> ?
+> Arg, second time I use deprectated props on new things. Are there plans or 
+> ways to make dtbs_check warn about those ?
 
-Correct. (I assume the existing Rust kernel code contains no float or SIMD types 
-so this is largely theoretical. But I'm a Rust compiler / upstream dev, not a 
-Rust-for-Linux / kernel dev, so I might be entirely off here.)
-
-> 
->>> Also, it should be clarified
->>> whether using a softfloat ABI permits the compiler to use FP/SIMD
->>> registers in codegen. We might still need -Ctarget-feature="-neon"
->>> here afaict.
->>
->> Rust's softfloat targets do not use FP/SIMD registers by default. Ideally these
->> targets allow selectively using FP/SIMD registers within certain functions; for
->> aarch64, this is not properly supported by LLVM and therefore Rust.
->>
-> 
-> I read this as 'this default behavior might change in the future', and
-> so -Ctarget-feature="-neon" should be added even if it is redundant at
-> this point in time.
-
-Personally I think it would be a breaking change to start using neon in the 
-aarch64-softfloat target, for reasons such as what we are discussing. (And this 
-means we won't do it.) We have generally, but implicitly, understood "softfloat" 
-to mean both "uses softfloat ABI" and "does not use any FP/SIMD registers by 
-default". But I don't know whether the Rust compiler team has formally committed 
-to anything here. I can inquire about that if you want.
-
-OTOH I cannot see how adding "-neon" could possibly hurt, either. It's juts a 
-NOP currently.
-
-Kind regards,
-Ralf
-
+Agree, would be nice if dtbs_check could be a little bit more verbose
+about use of deprecated props :-)
 
 > 
->>> Ideally, we'd have a target/target-feature combo that makes this more
->>> explicit: no FP/SIMD codegen at all, without affecting the ABI,
->>> therefore making float/double types in function prototypes illegal.
->>> AIUI, this change does something different.
+>>> +
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&eth0m0_miim
+>>> +		     &eth0m0_tx_bus2
+>>> +		     &eth0m0_rx_bus2
+>>> +		     &eth0m0_rgmii_clk
+>>> +		     &eth0m0_rgmii_bus
+>>> +		     &ethm0_clk0_25m_out>;
+>>> +
+>>> +	phy-handle = <&rgmii_phy0>;
+>>> +	status = "okay";
+>>> +};
 >>
->> Having targets without float support would be a significant departure from past
->> language decisions in Rust -- that doesn't mean it's impossible, but it would
->> require a non-trivial effort (starting with an RFC to lay down the motivation
->> and design).
+>> [snip]
 >>
+>>> +&mdio0 {
+>>> +	rgmii_phy0: phy@1 {
+>>
+>> Maybe ethernet-phy@1 ?
 > 
-> Fair enough. The codegen is all that matters, and there are other
-> cases (e.g., spilling) where the compiler may decide to use FP/SIMD
-> registers without any floats or doubles in sight. In fact, there are
-> swaths of non-performance critical floating point code in the AMDGPU
-> driver where it would be useful to have float/double support using
-> softfloat codegen too.
+> Indeed.
+> 
+>>> +		compatible = "ethernet-phy-ieee802.3-c22";
+>>> +		reg = <0x1>;
+>>> +		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
+>>
+>> Please add reset- props here.
+>>
+>> Changing to use reset- props may cause issue if a RTL8211F PHY is used
+>> on the board. Use a ethernet-phy-id compatible or mainline U-Boot to
+>> ensure the Ethernet PHY can be discovered during probe.
+> 
+> Using downstream u-boot, with the RTL8211F PHY, linux can still detect the PHY 
+> and use it correctly, even with reset-* props at the PHY level.
+> 
+> I guess I can keep those there then, unless the issues you mention are more 
+> subtle than that ?
+> 
+
+Ohh, typically there has been issues for Linux to find the Ethernet PHY unless
+it has first been reset by boot firmware. Something like:
+
+  rk_gmac-dwmac fe010000.ethernet eth0: no phy at addr -1
+  rk_gmac-dwmac fe010000.ethernet eth0: stmmac_open: Cannot attach to PHY (error: -19)
+
+There was a chicken-and-egg issue related to detecting ethernet phy:
+- phy needs to be reset or phy_id read back as 0xffffffff on mdio bus
+- phy device is not created because a valid phy_id is not read back
+- phy device needs to be created before it can be reset
+
+See [1] for more details on the ethernet phy issue that typically have
+affected multiple Rockchip boards with RTL8211F PHYs. Maybe it has been
+fixed in v6.13+.
+
+[1] https://lore.kernel.org/all/47d55aca-bee6-810f-379f-9431649fefa6@kwiboo.se/
+
+Regards,
+Jonas
+
+> 
+> Detlev.
+> 
+> 
+> 
 
 
