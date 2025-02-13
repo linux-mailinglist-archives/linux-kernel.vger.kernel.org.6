@@ -1,104 +1,134 @@
-Return-Path: <linux-kernel+bounces-512612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77D5A33B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:47:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D0BA33B89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761DE166931
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1759E3A6335
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CF720E709;
-	Thu, 13 Feb 2025 09:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEBF20F061;
+	Thu, 13 Feb 2025 09:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QHhuORDr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NwnbyiS6"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93A4202C31;
-	Thu, 13 Feb 2025 09:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBD3202C31
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440039; cv=none; b=aF5nw/0BUClrAfkqq6++DNKFhMCV/y+zfGqYgseSQDHvzSvCHzYEhrQD5N5GdxVeHJ35r+hWnNcz8kpQA7HlEbZF0FyIY7rpDBOCM0OjYx0XqwaSSGcgh1lmMTvJNPGWNjtc9Dqy27vWxN9tpV1U9QfQ0KdIJnEH2SDA6CxKt48=
+	t=1739440057; cv=none; b=JLxSkeVbViI8EyhRpCA2CUD55XGEH7qUo6aTC36BBWyX3yXzFucPVxtClf7jacD9WkR4q77tNFXOWcJvC1LVcOYNzsEoifZkK6k8hTbZEII7usoa9IpISzTyu/CJdVc8oFggYEalufADdsuIrW0LkTGDaDrondh4hcD0gJzlH/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440039; c=relaxed/simple;
-	bh=ZxDr6AwnXUdrFTM7NUHu4gVEND5MJ7HwI8ht+KxlXR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRkIN5pgVGFmwpAJy1v74RLLE24mmfP2PsC/MT9mjWY0gTMuk7++e1kQD5j+SeebezNAvuYhxPte+kfVgixZcsJQELR0EFU8VaP+mk5TKtAJAwiDcbuTndP5JYYU5d1W90vFLX0QgexRg8MZcbHaLKJ69RdMcMROfmgEZW+Qz7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QHhuORDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C063DC4CED1;
-	Thu, 13 Feb 2025 09:47:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739440037;
-	bh=ZxDr6AwnXUdrFTM7NUHu4gVEND5MJ7HwI8ht+KxlXR8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QHhuORDrzKwj5nBcVvdvE5Y948j1UgMJfjFp8pw/e97yQK/EVb8EgOuHGtLW+/Sm0
-	 VSpcvBWnl1O9uwpg/75Ztx0bcfcaNXjfr5rPM2mOG/Y5QLBX9ASpAVfNssreu592VR
-	 x0B1SbLlHxlMZ5cFeevkHgHIgNXX4NPCsOnCxarE=
-Date: Thu, 13 Feb 2025 10:47:14 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Badhri Jagan Sridharan <badhri@google.com>
-Cc: Jos Wang <joswang1221@gmail.com>, Amit Sunil Dhamne <amitsd@google.com>,
-	heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] usb: typec: tcpm: PSSourceOffTimer timeout in
- PR_Swap enters ERROR_RECOVERY
-Message-ID: <2025021323-surviving-straddle-1f68@gregkh>
-References: <20250209071752.69530-1-joswang1221@gmail.com>
- <5d504702-270f-4227-afd6-a41814c905e3@google.com>
- <CAPTae5+Z3UcDcdFcn=Ref5aQSUEEyz-yVbRqoPJ1LogP4MzJdg@mail.gmail.com>
- <CAMtoTm0bchocN6XrQBRdYuye7=4CoFbU-6wMpRAXR4OU77XkwQ@mail.gmail.com>
- <CAPTae5J5WCD6JmEE2tsgfJDzW9FRusiTXreTdY79MBs4AL6ZHg@mail.gmail.com>
+	s=arc-20240116; t=1739440057; c=relaxed/simple;
+	bh=qzJGD2b+cbjGe2N6+DgDif/b8vffJoz0V+ySZt7b4BI=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=fEsbZxMrafidI8CxFnrCxabt+nMyguRhWNX85q2KjDbV+TAAlkaNOMZPGT7q6HEEWRluj09ZDdnpq2g7RO0pooh58zvbp2BI83srDgL2bJU1kJGvdoUjb6Il1QLk7fcEEpX+OMPhBDIVFZOA4azxIwEHL2Z1egnmoQenpx8UQdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NwnbyiS6; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so445956a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:47:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739440055; x=1740044855; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PuoEoBk1WxA1QM7rSYL5IAeW1R6CE44HE0t4+Ea+Jjs=;
+        b=NwnbyiS6AzjDitoE3i/JvqabdY0H083Quox50BgWrq7l6EXhLMU94d9S3Tzv6t8Rvt
+         zY0gs76Bc5llVbdwoCiwDCzP+X+GP6SM/r1k70gDcdAp2IvO0Kivd158O4oL2Clz3L6B
+         HYCG0qG5e30MeJTm42S8I8NA1fRhS6uNX2OWZxvb+oJgGxoJdqLphl2UjpJcN0Sih3TY
+         McsNSXaWfn/oFkIP621sY3KD37wpCP+Sqg3lh8rP/b92s/oNicuHYAyMQmgiZVDXlFPP
+         kmiJaIwVA387jjH0XG/uDUAFk1ON2UoNe0m3jWUZkSbbYXJQdyiyrypcJWTpHAOtE+Eg
+         GCyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739440055; x=1740044855;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PuoEoBk1WxA1QM7rSYL5IAeW1R6CE44HE0t4+Ea+Jjs=;
+        b=J+UcxPaxgBXT8lsfghvibbggTYQiIW66jnygRlrWTnydcihkU0ojcL5EpzlMHDo2lW
+         +qNOsIf7TtyAVwduucH7Sv/ojbCc303SoCkHRk6R0eG/RolQKSGfH8BG+5pKsTF+YWgW
+         UFyuF3cE1+f9k3wx45kYArFqnah9IBeXO8iCaNxQO2rcXFHqUDaXXml5shiE0+InRI0m
+         jpbmXj9li1RhCTfCn75/3yQvSM5XFVoon56r/Ib+yVK1lijzW3Sm8HFMVRCQdEcFcUa/
+         FDh7BIa9MAVxpt+0upU8DgZhZ0athmMQPyhTZLMsN/ED0qI4EM7RHkXv3FQk9YgHebIX
+         wvzg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0m0QkcPILi2SjqlarHd3kjtmVhGW3osIPvrAWmK+MJHhtrD2Xp8NOEJUs4zb5DXw4OxQACBshbcFQKgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6iPL2yvsYJDHN0J/M9Zs2nzwIsiNSGSBI55C9lEHdVfXH3Cp8
+	1d9sGuqr1FSV2O31EwHmYwLIhSLw6vCCWNH2H+fC0dhK1mz85CquDeUvkHYPRJTIs/o6TocGjc9
+	LgzdltAy9e16KxefP3p8DaQ==
+X-Google-Smtp-Source: AGHT+IFjo0o7W8BMmhgfzjT1fZjgSjJW+Epialp3pC2emFjR4ZguxthbuHETUF+drifrj4mBdX3+3nB91gHNlOu2NQ==
+X-Received: from pjbmp3.prod.google.com ([2002:a17:90b:1903:b0:2fa:a101:755])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3a89:b0:2f4:423a:8fb2 with SMTP id 98e67ed59e1d1-2fc0e98dd17mr3572208a91.20.1739440055202;
+ Thu, 13 Feb 2025 01:47:35 -0800 (PST)
+Date: Thu, 13 Feb 2025 09:47:33 +0000
+In-Reply-To: <Z0ykBZAOZUdf8GbB@x1n> (message from Peter Xu on Sun, 1 Dec 2024
+ 12:59:33 -0500)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPTae5J5WCD6JmEE2tsgfJDzW9FRusiTXreTdY79MBs4AL6ZHg@mail.gmail.com>
+Mime-Version: 1.0
+Message-ID: <diqz5xle9nwq.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and cleanup
+From: Ackerley Tng <ackerleytng@google.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
+	jgg@nvidia.com, david@redhat.com, rientjes@google.com, fvdl@google.com, 
+	jthoughton@google.com, seanjc@google.com, pbonzini@redhat.com, 
+	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
+	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
+	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
+	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
+	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
+	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
+	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
+	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 12, 2025 at 11:16:35PM -0800, Badhri Jagan Sridharan wrote:
-> On Tue, Feb 11, 2025 at 5:50 AM Jos Wang <joswang1221@gmail.com> wrote:
-> >
-> > On Tue, Feb 11, 2025 at 7:51 AM Badhri Jagan Sridharan
-> > <badhri@google.com> wrote:
-> > >
-> > > On Mon, Feb 10, 2025 at 3:02 PM Amit Sunil Dhamne <amitsd@google.com> wrote:
-> > > >
-> > > >
-> > > > On 2/8/25 11:17 PM, joswang wrote:
-> > > > > From: Jos Wang <joswang@lenovo.com>
-> > > nit: From https://elixir.bootlin.com/linux/v6.13.1/source/Documentation/process/submitting-patches.rst#L619
-> > >
-> > >   - A ``from`` line specifying the patch author, followed by an empty
-> > >     line (only needed if the person sending the patch is not the author).
-> > >
-> > > Given that you are the author, wondering why do you have an explicit "From:" ?
-> > >
-> > Hello, thank you for your help in reviewing the code.
-> > My company email address is joswang@lenovo.com, and my personal gmail
-> > email address is joswang1221@gmail.com, which is used to send patches.
-> > Do you suggest deleting the "From:" line?
-> > I am considering deleting the "From:" line, whether the author and
-> > Signed-off-by in the patch need to be changed to
-> > "joswang1221@gmail.com".
-> 
-> Yes, changing signed-off to joswang1221@gmail.com will remove the need
-> for "From:".
-> Go ahead with it if it makes sense on your side.
+Peter Xu <peterx@redhat.com> writes:
 
-No, what was done here originally is correct, please do not ask people
-to not actually follow the correct procedure.
+> On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
+>> +/**
+>> + * Removes folios in range [@lstart, @lend) from page cache of inode, updates
+>> + * inode metadata and hugetlb reservations.
+>> + */
+>> +static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
+>> +						   loff_t lstart, loff_t lend)
+>> +{
+>> +	struct kvm_gmem_hugetlb *hgmem;
+>> +	struct hstate *h;
+>> +	int gbl_reserve;
+>> +	int num_freed;
+>> +
+>> +	hgmem = kvm_gmem_hgmem(inode);
+>> +	h = hgmem->h;
+>> +
+>> +	num_freed = kvm_gmem_hugetlb_filemap_remove_folios(inode->i_mapping,
+>> +							   h, lstart, lend);
+>> +
+>> +	gbl_reserve = hugepage_subpool_put_pages(hgmem->spool, num_freed);
+>> +	hugetlb_acct_memory(h, -gbl_reserve);
+>
+> I wonder whether this is needed, and whether hugetlb_acct_memory() needs to
+> be exported in the other patch.
+>
+> IIUC subpools manages the global reservation on its own when min_pages is
+> set (which should be gmem's case, where both max/min set to gmem size).
+> That's in hugepage_put_subpool() -> unlock_or_release_subpool().
+>
 
-Jos, thank you, there is nothing wrong with the way you sent this.
+Thank you for pointing this out! You are right and I will remove
+hugetlb_acct_memory() from here.
 
-thanks,
-
-greg k-h
+>> +
+>> +	spin_lock(&inode->i_lock);
+>> +	inode->i_blocks -= blocks_per_huge_page(h) * num_freed;
+>> +	spin_unlock(&inode->i_lock);
+>> +}
 
