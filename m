@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-513506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CECA34B20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:01:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27639A34B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1683AE6DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8543AB2D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E68A204088;
-	Thu, 13 Feb 2025 16:47:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4FC28A2DD;
+	Thu, 13 Feb 2025 16:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PmR6xa6R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1690828A2AA;
-	Thu, 13 Feb 2025 16:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E2228A2A1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739465233; cv=none; b=b5R1u1oIuSN3zVdYeqjcUNlwOXJjRb3i0OwInCv6puxMhZ/x7I31lmCYZKpIx8eONDRNAvk4on4GS++Kx7FkrYmMutg7+Mcgv0NyttymSdGziiDO5BR2j9vg0udIx+rjLbz5a9uRAfuBhhu86zKftZXYLWLyTJ2SkvzXIalHdeQ=
+	t=1739465251; cv=none; b=FL2YHN/mIjk6iJwZg3ODcOvTms4cgIcz3wbyp9C4DWSROVNeRcbIJtQAkPvbMQdYKTcnNoL7o+4eX1Zx1wZa/aqATCA0Jh+Nj1dwbx3dR/uz1ClF9snnbJyvoV9P6tGVZ27j+Fz+CzilOxnaXKZJJzBfaCkidrrCBw0FxmoYxG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739465233; c=relaxed/simple;
-	bh=Q+7RTh/pTrWkDGeB5wUpAsRMuOZ7iBoJrIrT5Q6Tqpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hVQV0mBUXrt/cecamvVre44vzAWTkCOZCOjdhcR4dngFx6wmm+Ku0b++zIAqaExMbNG3jC5Jp5tH2OpQRiuJF3j7x2HXtTIPpyDophgHmlPx3pCCBpxFixEUik2K7oTqSERCYLaY6ZbxKsSMsC/wG0WiidleOGCxCZ4pqsbGEws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ABDBC4CED1;
-	Thu, 13 Feb 2025 16:47:11 +0000 (UTC)
-Date: Thu, 13 Feb 2025 11:47:21 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Purva Yeshi <purvayeshi550@gmail.com>
-Cc: mhiramat@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2] docs: trace: Refactor index documentation
-Message-ID: <20250213114721.23d07909@gandalf.local.home>
-In-Reply-To: <1906f93a-dc32-4dbe-9b11-eabd4aad196e@gmail.com>
-References: <20250206141453.139613-1-purvayeshi550@gmail.com>
-	<20250210174556.70fc53b7@gandalf.local.home>
-	<1906f93a-dc32-4dbe-9b11-eabd4aad196e@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739465251; c=relaxed/simple;
+	bh=AMKzVi/B0d2Jn9OIPZ2LweH4Dmo3yJ/iCGhV8aOlMPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VQt0U3E1InAIO7JYx6Z0juJl/hxyFLL9kcYdPRA23Dy2sBoBrhugw8mVBmu25USWeeYHhUP6H3TNryduwhBdQNaXTaUGpKnxnx8+RSV7dfoLmoVSvqPHsHdyuCXzSmVHkzj1loVCPPMXBeQ0qJh+sFOHiSdPKU613zRZ7sq5lIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PmR6xa6R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DA2NmQ002033
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:47:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pdPqwdhySUYtLxO6ZXkv3AyokTUz8gph0Rz4I17smjk=; b=PmR6xa6RZSIyGQYa
+	1ohpI/2W5xKQVxwfYPJ0awefbsNAr4lfM/CAAqFZteBUfN/Hk7lWv7DgZJ67Q5J4
+	c0rzp3k/0BDNkKkZbheK4pWx9AWAuimPWGQ2kl3MU6uY8pepcnELWRO2Utp+QssC
+	3iJvGz1SVsAiFYPQZc2cFWZyG0Q1mQkeZU/+yhfEmsa/yNWF/2RnPo/YP4MLkElr
+	mb9Wc4i+X9gNSB1zhyDWEAYcEG6eYMdgP87W9Jo+OJ0ZKkeAu5n8kB0Qxk0geN4c
+	FBJ3kU3ek6CgDpgJv2DrnjUB3TCBNFMwvjiD6YLH3shOCg9/8l1ZfdjNV+Onap//
+	GLxRbA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44semp91gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:47:28 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e45cd4145bso2867126d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:47:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739465247; x=1740070047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pdPqwdhySUYtLxO6ZXkv3AyokTUz8gph0Rz4I17smjk=;
+        b=vHI1OBFxBsZ9ykRPWTf2vn6uG0+JeAoJvfB+5juItgOHbfyl08sq3M/WXl2uUeGJCf
+         rIJsT5rd/0bjxIuXUU2qLTsIGt7UUvTZevz3kb94HbnelSGPeEGlq/JnyMOoEygOE6yr
+         bOd4NsqvLW0bHkcuZEmVBxSEdW+bwbJIPu96906dRykG3ZsFziy0o+8YUsADyhus9pO9
+         JeC3LOBBTb7xq/1gnTm3SoZ5YnqJsfrCTs+EewEoRup9DLkY56nKGZDbwgSpnAwhQVFP
+         WGu15WZp23iM8fO5NPqbN+M69/yshw2B0IH+/dUg9Hyc2BSIsD97tlvZYen5bRojmI1K
+         w7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjJ88GDFtMkKYysBxgOtsRx2SCt6pVKdGpMLVz4gveKHRNqQ81g5X2pfJdzjcQbQKtGdBBOqqB9+0iFd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1QGX1xD1NmJ0dRJCKNdoYEFtZ9Eh3Ace26uf/gY05eTzCEe3u
+	SD3qSJWzlp6ZelYriDYW5f0ZySH4m85sSpZXT0+isGKfdaOQ442oTx0OlzEmVuQYfDUrpWX6/mC
+	w1+liOUEH9ltVVqelhjS/mhlRBv7FckmI1MkEj8SJ+7bSgsnmVLNda0jznZQgMY8=
+X-Gm-Gg: ASbGncsSwWRDIBFDBR7xVcmmHdR6WMTI1BNkWtZFsH8K/30MGXo/P3+wAQjoZ8y8jT+
+	c7gVtSdqiQVzZ/p94AH/5cXrzNrljIn6HliQDWqgJSqbtfXzCt9vQE+7XgFxHIAL8fG00/5kekL
+	mYCJQzbwP0lWNDaJ1QEAsO8A1/NW4xiHmsUz0oEFOrGSohJCRlkAg6Y7CeANWcx776VgifNokPr
+	ksn7L8HjKEDsJx/BsT3LuNfCjwpYhoX/YH1OLMJYg3Wr1IHxV2kXlcJc3GpLkD9oIrMYEVAHdVu
+	CR5+JG9739r+oNobi2ggAlPEJ9gXzELFmUji/DY1I46j+JszGGIXtEJSLP8=
+X-Received: by 2002:a05:6214:1d0e:b0:6d8:967a:1a60 with SMTP id 6a1803df08f44-6e46ed93ca3mr48905706d6.2.1739465247512;
+        Thu, 13 Feb 2025 08:47:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGEetTXePMyTND5uVB//0Cph5yyIkXDH1QnV5NVQnh4WczSnYALFJyWUjGFeD039hxpYavxng==
+X-Received: by 2002:a05:6214:1d0e:b0:6d8:967a:1a60 with SMTP id 6a1803df08f44-6e46ed93ca3mr48905226d6.2.1739465247027;
+        Thu, 13 Feb 2025 08:47:27 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bee4asm162967666b.170.2025.02.13.08.47.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 08:47:26 -0800 (PST)
+Message-ID: <eb7ec79c-a9d1-4d8e-975e-30f12bf583e5@oss.qualcomm.com>
+Date: Thu, 13 Feb 2025 17:47:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/msm/a6xx: Print GMU core firmware version at boot
+To: Thomas Zimmermann <tzimmermann@suse.de>, Abel Vesa
+ <abel.vesa@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20241219-topic-gmu_fw_ver-v1-0-d403a70052d8@oss.qualcomm.com>
+ <20241219-topic-gmu_fw_ver-v1-2-d403a70052d8@oss.qualcomm.com>
+ <Z64fUjIfFzs4R8Im@linaro.org> <b8004a16-6130-4232-91fd-85d62c2b84ec@suse.de>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <b8004a16-6130-4232-91fd-85d62c2b84ec@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: BDiiddL2GaT2_txF4HrZT3Wk3eif290_
+X-Proofpoint-GUID: BDiiddL2GaT2_txF4HrZT3Wk3eif290_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502130120
 
-On Thu, 13 Feb 2025 17:26:21 +0530
-Purva Yeshi <purvayeshi550@gmail.com> wrote:
-
-> >> +Tracing in the Linux kernel is a powerful mechanism that allows
-> >> +developers and system administrators to analyze and debug system
-> >> +behavior. This guide provides documentation on various tracing
-> >> +frameworks and tools available in the Linux kernel.
-> >> +
-> >> +Introduction to Tracing
-> >> +-----------------------
-> >> +
-> >> +This section provides an overview of Linux tracing mechanisms
-> >> +and debugging approaches.
-> >>   
-> >>   .. toctree::
-> >> -   :maxdepth: 2
-> >> +   :maxdepth: 1  
-> > 
-> > I don't really know what the maxdepth gives here, but there was no mention
-> > in the change log why it had to be converted from 2 to 1.
-> >   
+On 13.02.2025 5:41 PM, Thomas Zimmermann wrote:
+> Hi
 > 
-> I changed :maxdepth: from 2 to 1 to simplify the table of contents, 
-> keeping only document titles instead of also including second-level 
-> section headings. The intent was to improve readability and navigation.
-> 
-> Additionally, I referred to commit '270beb5b2aae', as suggested by 
-> Jonathan Corbet in the v1 patch, to align the documentation structure 
-> accordingly.
-> 
-> I'll update the commit message in the next revision to explicitly 
-> mention this change.
-> 
+> Am 13.02.25 um 17:35 schrieb Abel Vesa:
+>> On 24-12-19 23:36:56, Konrad Dybcio wrote:
+>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>
+>>> Log the version for informational purposes, such as for keeping track
+>>> of possible GMU fw-related failures in crash / CI logs.
+>>>
+>>> Intentionally not implemented on the if (gmu->legacy) codepath, as
+>>> these registers seem not to be used on there.
+>>>
+>>> Downstream additionally warns if the firmware version is too old for
+>>> a given GPU, but we already pair the binary to a given GPU, so let's
+>>> not go there at the moment.
+>>>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>> ---
 
-Can you make that a separate patch. A commit should do only one thing and
-that change isn't necessary to be part of the rest of the changes.
+[...]
 
-> >>   
-> >> -   ftrace-design
-> >> +   debugging
-> >> +   tracepoints
-> >>      tracepoint-analysis
-> >> +
-
-> >> +
-> >> +Hardware and Performance Tracing
-> >> +--------------------------------
-> >> +
-> >> +This section covers tracing features that monitor hardware
-> >> +interactions and system performance.
-> >> +
-> >> +.. toctree::
-> >> +   :maxdepth: 1
-> >> +
-> >>      intel_th  
-> >   
-> >>      ring-buffer-design  
-> > 
-> > The ring-buffer-design should be in "Core Tracing Frameworks".
-> >   
+>> So maybe DRM_INFO_ONCE instead ?
 > 
-> I'll move 'ring-buffer-design' to the Core Tracing Frameworks section.
-> 
-> >>      ring-buffer-map  
-> > 
-> > This describes how to map the ring buffer in user space. Maybe it should go
-> > at the "Introduction" section?
-> > 
-> >   
-> 
-> For ring-buffer-map, placing it in the Introduction section could 
-> provide early context, but since it is more implementation-specific, it 
-> might fit better under Core Tracing Frameworks alongside 
-> ring-buffer-design. Would that placement works?
+> drm_dbg() seems appropriate. Most of the time, firmware versions are not interesting.
 
+Unfortunately, in our case they are, given users source them from all
+kinds of places..
 
-But it's not kernel implementation. It describes how to use it in user
-space. That is, it's not part of the tracing framework.
-
--- Steve
+Konrad
 
