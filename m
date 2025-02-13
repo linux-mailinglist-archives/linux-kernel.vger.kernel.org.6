@@ -1,91 +1,100 @@
-Return-Path: <linux-kernel+bounces-513845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BF7A34F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:29:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F610A34F5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1343ADF8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C00168137
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1A4266194;
-	Thu, 13 Feb 2025 20:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF5B266195;
+	Thu, 13 Feb 2025 20:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iahmU/xL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721B2222DE;
-	Thu, 13 Feb 2025 20:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UTxDWhaL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F4E24BC1D;
+	Thu, 13 Feb 2025 20:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739478513; cv=none; b=MqlchFaRGIffVHToDde+wlloiOusZ84B5ZY8a5Kgxs5fywJvxhtqlBGyHLICE/nNRqQ3/Lt1nSgHSBhgXrqMNO5bD9wOF5/S/J+kkzk+BLkW+39CMlm1WtFnDrzb7gljQZ7qnuLGgEld4qJOuWpMCiTOOiq6fxEnmvKFIQ0SOhw=
+	t=1739478533; cv=none; b=kljTXWTV91l2YqgpqYOcoyXiwIOBASOhpKWeNDMlbVWIoOmpDWgFYyqXxwZOha7XPAGSBa7kjpNce6nhgXEWbXn4NhyWLxoJ/3E/EqfPEp5VgxT2vB9z45Pz6WHetf0jBa395HJT2qeiQer2G285UZ9qprIt8E5U6y3553Xp3Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739478513; c=relaxed/simple;
-	bh=kONj13IcqgHJ804P/bAafBVxsgQtnFkjDzMz0OaRA5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAcy7miTltYn357Z1syOgxAc2nTHcWEdCr7kpKTRWXHUoOa/La1uIDYrOUmLpTMEyLzfHHqa0uYL8a5x+JcH8aLkNTqr9gfD9E0ubTAFgAorey3jA6hs4DwfK3htTFQ/IrSDBXX54dNtZMQwHUXLRjf4hrObyQjCV9SopHREKAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iahmU/xL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1BDC4CED1;
-	Thu, 13 Feb 2025 20:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739478513;
-	bh=kONj13IcqgHJ804P/bAafBVxsgQtnFkjDzMz0OaRA5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iahmU/xLEyQ5W/x8G1XXoCuN03pzKYwXt5cjuLid0J2kmowncl+TcJsBFiFdnXAAw
-	 G2ImJXb8GEatewBIrpkPliLaVlqt+YwGGaUUe7ZSu+QTYYixOnY8NQ2L7bIeTRgQUv
-	 XKnoPM2jM1FoMZeunPhWxtFsi2R5Y5hFOZiAaOJoy/mpOM4gWxkgDqxt6cxdKUlMuU
-	 BoApdn8Ievmh5OjxdKpuGyto3xVNRAyh7XmFvutyOt9T/k4TTYgxr4QRgZbm8S/7vs
-	 LNDWpa83WcAlnkwCZMlGuxN6RkOyoj8ufbHuvlgSph2scXDoaLz4qnczlhAkx5/TP9
-	 F+nNPktOc/3gg==
-Date: Thu, 13 Feb 2025 12:28:33 -0800
-From: Kees Cook <kees@kernel.org>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: jannh@google.com, jmill@asu.edu, joao@overdrivepizza.com,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	luto@kernel.org, samitolvanen@google.com,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
-Message-ID: <202502131224.D6F5A235@keescook>
-References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
- <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
+	s=arc-20240116; t=1739478533; c=relaxed/simple;
+	bh=nknWJ+z0SP3wafNg+nCOAUI+rJEqqS7g4A0g13t8JSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T2m9/ZgA8qWWhFJixV6igcQ6p+nNOKIuTGi9DmEEQclnULDr0a7WhugXX5ZxeB3Km8ST3O4lFJXVijhwLQ6U6TXUQxj2poznZT3aTzy8eT8oZUXh/QDpgffvX/y/RVMQ2870H/xrK5cQFGaTr3A0B1k2pJuqGxk0kWbJ7hSjUcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UTxDWhaL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC. (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8833A203F3CB;
+	Thu, 13 Feb 2025 12:28:51 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8833A203F3CB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739478532;
+	bh=FVY3r1RNzm3lnez0t18kEbUj6IdxjFad9QEqEvSyVcs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Reply-To:From;
+	b=UTxDWhaLmrK+RIBYhfmZlfU+SvrmBBqYQNZoGWEz2tjVzT4yQC7trxO676DR7FvAV
+	 1rlxBHV4FCCXWF8M730p8ExNvyaZGgFvqEd6wk9uuSze7bu1RwEhRWtPmYAAvWnkqh
+	 oXCBNq0UUKRMd8x9wwBieI4m3gmNo9QULiyx5tt4=
+Date: Thu, 13 Feb 2025 12:28:49 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: <jgg@nvidia.com>, <kevin.tian@intel.com>, <tglx@linutronix.de>,
+ <maz@kernel.org>, <joro@8bytes.org>, <will@kernel.org>,
+ <robin.murphy@arm.com>, <shuah@kernel.org>, <iommu@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kselftest@vger.kernel.org>, <eric.auger@redhat.com>,
+ <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>, <yury.norov@gmail.com>,
+ <patches@lists.linux.dev>, jacob.pan@linux.microsoft.com
+Subject: Re: [PATCH v1 01/13] genirq/msi: Store the IOMMU IOVA directly in
+ msi_desc instead of iommu_cookie
+Message-ID: <20250213122849.34f5d1cb@DESKTOP-0403QTC.>
+In-Reply-To: <a580069c5e494ffffa668218b6fe3a207b01efec.1739005085.git.nicolinc@nvidia.com>
+References: <cover.1739005085.git.nicolinc@nvidia.com>
+	<a580069c5e494ffffa668218b6fe3a207b01efec.1739005085.git.nicolinc@nvidia.com>
+Reply-To: jacob.pan@linux.microsoft.com
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 01:31:30AM +0000, Andrew Cooper wrote:
-> >> Assuming this is an issue you all feel is worth addressing, I will
-> >> continue working on providing a patch. I'm concerned though that the
-> >> overhead from adding a wrmsr on both syscall entry and exit to
-> >> overwrite and restore the KERNEL_GS_BASE MSR may be quite high, so
-> >> any feedback in regards to the approach or suggestions of alternate
-> >> approaches to patching are welcome :) 
-> >
-> > Since the kernel, as far as I understand, uses FineIBT without
-> > backwards control flow protection (in other words, I think we assume
-> > that the kernel stack is trusted?),
-> 
-> This is fun indeed.  Linux cannot use supervisor shadow stacks because
-> the mess around NMI re-entrancy (and IST more generally) requires ROP
-> gadgets in order to function safely.  Implementing this with shadow
-> stacks active, while not impossible, is deemed to be prohibitively
-> complicated.
+Hi Nicolin,
 
-And just validate my understanding here, this attack is fundamentally
-about FineIBT, not regular CFI (IBT or not), as the validation of target
-addresses is done at indirect call time, yes?
+On Sat, 8 Feb 2025 01:02:34 -0800
+Nicolin Chen <nicolinc@nvidia.com> wrote:
 
--Kees
+> -static inline void msi_desc_set_iommu_cookie(struct msi_desc *desc,
+> -					     const void
+> *iommu_cookie) +/**
+> + * iommu_dma_compose_msi_msg() - Apply translation to an MSI message
+> + * @desc: MSI descriptor prepared by iommu_dma_prepare_msi()
+> + * @msg: MSI message containing target physical address
+> + */
+Is it IOVA not PA?
 
--- 
-Kees Cook
+> +static inline void iommu_dma_compose_msi_msg(struct msi_desc *desc,
+> +					     struct msi_msg *msg)
+>  {
+> -}
+> +#ifdef CONFIG_IRQ_MSI_IOMMU
+> +	if (desc->iommu_msi_page_shift) {
+> +		u64 msi_iova = desc->iommu_msi_iova
+> +			       << desc->iommu_msi_page_shift;
+> +
+> +		msg->address_hi = upper_32_bits(msi_iova);
+> +		msg->address_lo = lower_32_bits(msi_iova) |
+> +				  (msg->address_lo &
+> +				   ((1 <<
+> desc->iommu_msi_page_shift) - 1));
+> +	}
+>  #endif
+> +}
 
