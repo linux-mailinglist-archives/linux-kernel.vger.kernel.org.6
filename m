@@ -1,168 +1,114 @@
-Return-Path: <linux-kernel+bounces-513620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01614A34C8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:56:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BCEA34C8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714DF188CD92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5417416B9C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACF523A9B6;
-	Thu, 13 Feb 2025 17:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQSCv8KV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C602063E1;
-	Thu, 13 Feb 2025 17:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDAE23A9BC;
+	Thu, 13 Feb 2025 17:56:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753B2063E1;
+	Thu, 13 Feb 2025 17:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469393; cv=none; b=j0xwBA79IopgiOLzYX3ddJiSUWlG26nJ6EOfX8yGbgNhVMwY31telahMeBEn+1ECGZ8NugBNz4+Gv1CVe/VuOSUMMCDpf99yblyMZWXYbssjZsXZnUdIVtPPOJdPSa51gy60DM9bSG/v7nLKTV15iU7X8x/kZGJ8TIw1Vbc4KN4=
+	t=1739469389; cv=none; b=J2FfI7ABvxZIuPqN4qEyvMVdnbn6i0RljwSxK/ijJ8hGgKHITWwTSVbOU7bFOFQ0PdHVk3c8ozR1w/o7ZM3U84PeqfEK16SWcr/8rIqVvzwp6AhT8PpdT8nRm717I+szeY2S6hIYJ5IoSZnplKlSK9NA7oubZVYX0cQ2qXTSiOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469393; c=relaxed/simple;
-	bh=zu6XwvxRWfLZhbU+NQRFBvpihnBJdGqYI23riG2Rn94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJ98NOwgqDr7LMkjKwJcBYoMvGJ1kwZr7Z7YG+RzfOESA+k5eWN9YC3hGk1izSaQik7r0/AYKy8w2PpZfYUJ07p27cTaEEZkQUnIdP9/qrnGeWwPcbB2HefzI9AtcqKNmIr3OlawSnXxYmK/uvMy/p+O8i1/4WFw+FL6yqHl2vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQSCv8KV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B50CC4CEE7;
-	Thu, 13 Feb 2025 17:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469392;
-	bh=zu6XwvxRWfLZhbU+NQRFBvpihnBJdGqYI23riG2Rn94=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DQSCv8KVcTJfUl5QCqlb1aPWdpHME3qfxr2BivoYk1VpoYEyZwZG/Pk73Czq+skEu
-	 oKKCCD/YJjrItngdSK0146kMNHvpo0YkaPBs2GSQF3YY6jsjbUj1Qmd70VJ6dqs9vx
-	 GnfnwHfUjdQv3ruq2pVdRmm4oX3pqAjgUizmTb1TfQrk/IxgTI5462HQQ/XYudg5mb
-	 VCo1ECe0H2RaG8JXOcuWkm5I9C6hXAOnFQT2ZcXtvOPnPWmZjv3wiqBa2zd6tVfEYI
-	 d9oguZ7nRm0jEJEWZSDpj+xYvjAVtW1lSsY6CbbfbEt+iq73hNwrnGSNtLsgDGZlj+
-	 FOUMn/2lxIQfA==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d9837f201aso4621005a12.0;
-        Thu, 13 Feb 2025 09:56:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIfLZpIQshHB/gOvxJ0PCHLzF0trXLMiqv6HOS+uL9/mbPUS0rh7eOPnZFciinGxAC9g1CjSOSauG9@vger.kernel.org, AJvYcCV3zT8XUB2FMuEjBsRFJJFArZpb7/f2LoWnCNRRv300sNjbqyMqGAMCWY2vVemfOvoObOwRHDyknsZm@vger.kernel.org, AJvYcCVu+zJUXoWtTP3teq1jQdJIYmg32b4s6+4tIjoA0V+SkmCJnbtGu2q47dQY7TcIyim7T5kJqQXctWn4HK1d@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0tnBpmMLm42Vh1PaH9KBAilQQLdTD3qIMaOIBYGGREUV62Da
-	/TM6XWR9GNhHrpWGyAX5l9RploI3QeKhmky4DsZww2B6Nwh6t83RWQ97ZEjfGhWdanIPAljuYkg
-	lvzXF/Jfj7mRHVvB40f4RXpoh9g==
-X-Google-Smtp-Source: AGHT+IHTeCe7WowntB6fs9UcxQzrutTfaoimXk6oistVCJvHwS4uUZuMCGZVr/Sa699J0jyvKNfSQ6RXSzn0q5mmsec=
-X-Received: by 2002:a05:6402:2755:b0:5de:a972:8c7 with SMTP id
- 4fb4d7f45d1cf-5decba4bf54mr3906685a12.5.1739469390719; Thu, 13 Feb 2025
- 09:56:30 -0800 (PST)
+	s=arc-20240116; t=1739469389; c=relaxed/simple;
+	bh=VJ9/7u5dm3yhevUGmYiN3uNdAeAmMy1lBqGWU8RiYq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZffHj+lJBgb12qZP82t6+z1FONUmXVAetXrOW0093G63mQ01aJUvIFbgSwyshxDYHSfZl11gm+p4dJns8qOBUo+nxber710u0Qg+/2NnO7HW9xlNT/gd6U+wT9E7x9FPnQr882lrpTFZnft5hp14nbS1Gx9WFQPzkixs+rekCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8239B113E;
+	Thu, 13 Feb 2025 09:56:47 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 202C73F5A1;
+	Thu, 13 Feb 2025 09:56:23 -0800 (PST)
+Date: Thu, 13 Feb 2025 17:56:20 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Chatre, Reinette" <reinette.chatre@intel.com>,
+	Babu Moger <babu.moger@amd.com>,
+	"peternewman@google.com" <peternewman@google.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"paulmck@kernel.org" <paulmck@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"thuth@redhat.com" <thuth@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"xiongwei.song@windriver.com" <xiongwei.song@windriver.com>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"perry.yuan@amd.com" <perry.yuan@amd.com>,
+	"sandipan.das@amd.com" <sandipan.das@amd.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Li, Xin3" <xin3.li@intel.com>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"mario.limonciello@amd.com" <mario.limonciello@amd.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"tan.shaopeng@fujitsu.com" <tan.shaopeng@fujitsu.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	"Eranian, Stephane" <eranian@google.com>
+Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+Message-ID: <Z64yRKyaG+yUhc2N@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <Z6zeXby8ajh0ax6i@e133380.arm.com>
+ <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
+ <SJ1PR11MB6083A2CD66FAE5DBEDCB96C0FCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io> <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
-In-Reply-To: <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 13 Feb 2025 11:56:19 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
-X-Gm-Features: AWEUYZnNrV6AeqfriIoD2NAW7TvpHv4rdwKYJwl0y8ybKwiiM0n7mQqePyuXunc
-Message-ID: <CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
-	Marc Zyngier <maz@kernel.org>, Stan Skowronek <stan@corellium.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083A2CD66FAE5DBEDCB96C0FCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On Tue, Feb 11, 2025 at 1:54=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzwei=
-g.io> wrote:
->
-> From: Hector Martin <marcan@marcan.st>
->
-> This version of the hardware moved around a bunch of registers, so we
-> drop the old compatible for these and introduce register offset
-> structures to handle the differences.
->
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> ---
->  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++=
-------
->  1 file changed, 105 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller=
-/pcie-apple.c
-> index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac=
-61143ae1d3ed744 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -26,6 +26,7 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/msi.h>
-> +#include <linux/of_device.h>
+Hi Tony,
 
-Drivers should not need this...
+On Thu, Feb 13, 2025 at 12:11:13AM +0000, Luck, Tony wrote:
+> > I do not think that resctrl's current support of the mbm_total_bytes and
+> > mbm_local_bytes should be considered as the "only" two available "slots"
+> > into which all possible events should be forced into. "mon_features" exists
+> > to guide user space to which events are supported and as I see it new events
+> > can be listed here to inform user space of their availability, with their
+> > associated event files available in the resource groups.
+> 
+> 100%  I have a number of "events" in the pipeline that do not fit these
+> names. I'm planning on new files with descriptive[1] names for the events
+> they report.
+> 
+> -Tony
+> 
+> [1] When these are ready to post we can discuss the names I chose and
+> change them if there are better names that work across architectures.
 
-> +const struct reg_info t602x_hw =3D {
-> +       .phy_lane_ctl =3D 0,
-> +       .port_msiaddr =3D PORT_T602X_MSIADDR,
-> +       .port_msiaddr_hi =3D PORT_T602X_MSIADDR_HI,
-> +       .port_refclk =3D 0,
-> +       .port_perst =3D PORT_T602X_PERST,
-> +       .port_rid2sid =3D PORT_T602X_RID2SID,
-> +       .port_msimap =3D PORT_T602X_MSIMAP,
-> +       .max_rid2sid =3D 512, /* 16 on t602x, guess for autodetect on fut=
-ure HW */
-> +       .max_msimap =3D 512, /* 96 on t602x, guess for autodetect on futu=
-re HW */
-> +};
-> +
-> +static const struct of_device_id apple_pcie_of_match_hw[] =3D {
-> +       { .compatible =3D "apple,t6020-pcie", .data =3D &t602x_hw },
-> +       { .compatible =3D "apple,pcie", .data =3D &t8103_hw },
-> +       { }
-> +};
+Do any of the approaches discussed in [2] look viable for this?
 
-You should not have 2 match tables.
+(Ideally, reply over there.)
 
-> @@ -750,13 +828,19 @@ static int apple_pcie_init(struct pci_config_window=
- *cfg)
->         struct platform_device *platform =3D to_platform_device(dev);
->         struct device_node *of_port;
->         struct apple_pcie *pcie;
-> +       const struct of_device_id *match;
->         int ret;
->
-> +       match =3D of_match_device(apple_pcie_of_match_hw, dev);
-> +       if (!match)
-> +               return -ENODEV;
-> +
->         pcie =3D devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
->         if (!pcie)
->                 return -ENOMEM;
->
->         pcie->dev =3D dev;
-> +       pcie->hw =3D match->data;
->
->         mutex_init(&pcie->lock);
->
-> @@ -795,6 +879,7 @@ static const struct pci_ecam_ops apple_pcie_cfg_ecam_=
-ops =3D {
->  };
->
->  static const struct of_device_id apple_pcie_of_match[] =3D {
-> +       { .compatible =3D "apple,t6020-pcie", .data =3D &apple_pcie_cfg_e=
-cam_ops },
->         { .compatible =3D "apple,pcie", .data =3D &apple_pcie_cfg_ecam_op=
-s },
->         { }
+Cheers
+---Dave
 
-You are going to need to merge the data to 1 struct.
-
-And then use (of_)?device_get_match_data() in probe().
-
-Rob
+[2] https://lore.kernel.org/lkml/Z64tw2NbJXbKpLrH@e133380.arm.com/
 
