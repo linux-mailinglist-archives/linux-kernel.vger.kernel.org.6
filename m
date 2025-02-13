@@ -1,117 +1,174 @@
-Return-Path: <linux-kernel+bounces-512332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470A4A337AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:03:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DFBA337A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30F167A2588
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631C5168628
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2879820764E;
-	Thu, 13 Feb 2025 06:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6EB207651;
+	Thu, 13 Feb 2025 06:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LB8+CRIZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fG/jPqPx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCDE1E376E;
-	Thu, 13 Feb 2025 06:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A761D86E6;
+	Thu, 13 Feb 2025 06:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739426604; cv=none; b=N4TbGcALhYtPTPehy5Z97iukh3rqtSHEeCXnE9TJ1Cx/DA7U3UabparY3xb5Ph+cDj7XaUkeLrCy5V6GhFDjn7Me4vQhg4yGRM6ilOvynKupigqgK3DVQ93dIIM9x5VcjOgelvJRfyT8QfqmVhLTZE8BwhBgiIsTWmrn6BLs494=
+	t=1739426430; cv=none; b=GAD25CITJI13x5mhbCk3921d3tgOr9VMgduRjaGEg1pn/x9DA9j6fZx/WEzPh0ztMG4o5R6ZAT5glNJ332+RfvbRg0ytOLG5C1X61ZvnARLJC3QivnxRE2Y57Zjpu/sOJE5/eprWmdoHhH9aErXl3b69Af4EtJ2B1rVhQ7cNVYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739426604; c=relaxed/simple;
-	bh=A1KejvtxR9/JSfGOFPXMqvUIQBaZlAHvh1/62NOg5Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M21KyCEqHTk5Vk/pC61GLDVzhrjl19UAUVih2pboDIL1CdndhNTh/3pjY79RSYGVBuB82K+gISlaIMWaxXyNlshTL5CCWToH1EtpJsmME+/OFWuy4pXeMkj3f7aXr80wg7+aYVKplG7eJ2/reu8BJX2Uf6rvA5nNnLuJAMDwIjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LB8+CRIZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739426603; x=1770962603;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A1KejvtxR9/JSfGOFPXMqvUIQBaZlAHvh1/62NOg5Y8=;
-  b=LB8+CRIZyDsFotBQH8KFunpfma2smt4yYX8cVeSpr66fjhTryEUP+D57
-   4dpw6owdPhAgpj39TNqZyUCJrmbsRZ0W/Vcu9SoSSgJIj+xrPQFUchl1o
-   eBE4+i293mXkPy3xsvAoCBHbq4lmLYV+KKcOdkrN2pbv0mfFCmRKxZm1+
-   gB0Qj0x/NILSjv874rvaxz8WGsUjsIj0R+969lSkE3OfKz4WbKETz05uu
-   I62aCMWqGspb+My5o3xgI3Ox/OoKxXyX23fXzWaj2gR2UQOkgkIJfienu
-   JMFPKZsZ5O0vDUFRfy5hP7MXXi0KmF3OScpC0HSK6IYiJ1p0aXIesp+OL
-   g==;
-X-CSE-ConnectionGUID: yfyih/YkQoOYa7ODLPVcQQ==
-X-CSE-MsgGUID: MRws48Y+THm/FAdCMXmQKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57644332"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="57644332"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:03:22 -0800
-X-CSE-ConnectionGUID: AvIoVobbT6+oTVNraSds5w==
-X-CSE-MsgGUID: kvlLfINJR0uni5uKSjASzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="112900246"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:03:18 -0800
-Date: Thu, 13 Feb 2025 06:59:43 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
-	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-	andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: felix:  Add NULL check for outer_tagging_rule()
-Message-ID: <Z62KTwRLHAQDyIGb@mev-dev.igk.intel.com>
-References: <20250213040754.1473-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1739426430; c=relaxed/simple;
+	bh=8s/bTDUVIWxdrqH6fipakZGBYO9lwvpZ1w8a5gGB1Cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ayNknybPmbqMUSwsjJg2DoQnc6plhjfan9U8owC9kA51YruriMpqVZ9k3e63JhxI275zabYGfKd1c+Z5BoIB/jAksD4haonGWxwRR66z6DcHlJjEShNWAiFnXoZjikpED0XvgTfiXK0wkwh+Z7EGUIr1yt06v1AKzSOBT3WNVW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fG/jPqPx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CFl1kh006169;
+	Thu, 13 Feb 2025 06:00:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pU35+8aa/1/SkLGu1AkjE4CxlpoQx7T26Qs2oC5MHXY=; b=fG/jPqPxbu9B/v41
+	/Z0bBxJIxqqLF2DgoPOOuoRJIs/piiTtoVdxpm6YGrZ2SrKn7IAbV/hGyaUXYCDz
+	bHOfN+rDe/isfoLXATlaWsEZtIFICWq8/7+/0JbqzmHvVrID8rgk5CbSXJmp9TsB
+	E4sXp1wqBo6wCGtDgyvMcgxpkfGNAhk3qMb73amzzG3d+urnA6UkNktnvr+JokDW
+	x7xeeUgipf4K60hPUlfeU7hT0vNwlyKFdLsne0nHbBjd0ed55hM+uYBRdsmmEA7r
+	PdLs5O5XSZgQUyhthTNeh8NFRYbleO3vo1LkgOPo/g7xG/5oOj85OJdNtx4ruJXK
+	2ynfbg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qe5n1q95-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:00:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D602X0029415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:00:02 GMT
+Received: from [10.231.216.52] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 22:00:00 -0800
+Message-ID: <ed6a0be1-f7c3-4ada-9413-730c85a5cd3c@quicinc.com>
+Date: Thu, 13 Feb 2025 13:59:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213040754.1473-1-vulab@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: qcs8300-ride: enable BT on
+ qcs8300-ride
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_jiaymao@quicinc.com>,
+        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <quic_mohamull@quicinc.com>
+References: <20250211104421.1172892-1-quic_chejiang@quicinc.com>
+ <20250211104421.1172892-2-quic_chejiang@quicinc.com>
+ <b74f0591-242d-45eb-8c5b-bfc7edb0441a@oss.qualcomm.com>
+Content-Language: en-US
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+In-Reply-To: <b74f0591-242d-45eb-8c5b-bfc7edb0441a@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9ThJRlQAWjSp9nsuc8MjF4FexPaWXi5y
+X-Proofpoint-ORIG-GUID: 9ThJRlQAWjSp9nsuc8MjF4FexPaWXi5y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502130044
 
-On Thu, Feb 13, 2025 at 12:07:54PM +0800, Wentao Liang wrote:
-> In felix_update_tag_8021q_rx_rules(), the return value of
-> ocelot_vcap_block_find_filter_by_id() is not checked, which could
-> lead to a NULL pointer dereference if the filter is not found.
-> 
-> Add the necessary check and use `continue` to skip the current CPU
-> port if the filter is not found, ensuring that all CPU ports are
-> processed.
-> 
-> Fixes: f1288fd7293b ("net: dsa: felix: fix VLAN tag loss on CPU reception with ocelot-8021q")
-> Cc: stable@vger.kernel.org # 6.11+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/net/dsa/ocelot/felix.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-> index 3aa9c997018a..10ad43108b88 100644
-> --- a/drivers/net/dsa/ocelot/felix.c
-> +++ b/drivers/net/dsa/ocelot/felix.c
-> @@ -348,6 +348,8 @@ static int felix_update_tag_8021q_rx_rules(struct dsa_switch *ds, int port,
->  
->  		outer_tagging_rule = ocelot_vcap_block_find_filter_by_id(block_vcap_es0,
->  									 cookie, false);
-> +		if (!outer_tagging_rule)
-> +			continue;
->  
->  		felix_update_tag_8021q_rx_rule(outer_tagging_rule, vlan_filtering);
->  
+Hi Konrad,
 
-All other calls to ocelot_vcap_block_find_filter_by_id() are checked, so
-looks correct, thanks.
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+On 2/11/2025 10:34 PM, Konrad Dybcio wrote:
+> On 11.02.2025 11:44 AM, Cheng Jiang wrote:
+>> Enable BT on qcs8300-ride by adding a node for the BT module. Since the
+>> platform uses the QCA6698 Bluetooth chip. While the QCA6698 shares th
+>> same IP core as the WCN6855, it has different RF components and RAM sizes,
+>> requiring new firmware files. Use the firmware-name property to specify
+>> the NVM and rampatch firmware to load.
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 24 +++++++++++++++++++++++
+>>  1 file changed, 24 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> index a6991e8e2df6..93458773b72d 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> @@ -17,6 +17,7 @@ / {
+>>  
+>>  	aliases {
+>>  		serial0 = &uart7;
+>> +		serial1 = &uart2;
+>>  	};
+>>  
+>>  	chosen {
+>> @@ -451,6 +452,13 @@ &serdes0 {
+>>  };
+>>  
+>>  &tlmm {
+>> +	bt_en_state: bt-en-state {
+>> +		pins = "gpio55";
+>> +		function = "normal";
+>> +		output-low;
+>> +		bias-pull-down;
+>> +	};
+>> +
+>>  	ethernet0_default: ethernet0-default-state {
+>>  		ethernet0_mdc: ethernet0-mdc-pins {
+>>  			pins = "gpio5";
+>> @@ -544,6 +552,22 @@ wlan_en_state: wlan-en-state {
+>>  	};
+>>  };
+>>  
+>> +&uart2 {
+>> +	status = "okay";
+>> +	bluetooth: bluetooth {
+> 
+> Please add a newline between the last property and subnodes
+> 
+Ack.
+>> +		compatible = "qcom,wcn6855-bt";
+>> +		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&bt_en_state>;
+> 
+> You should use qcom,wcn6855-pmu (see e.g. sc8280xp-crd.dts)
+> 
+Ack. Will use the power sequence for BT power control. 
+>> +		enable-gpios = <&tlmm 55 GPIO_ACTIVE_HIGH>; /* BT_EN */
+>> +
+>> +		vddio-supply       = <&vreg_conn_pa>;         /* bt-vdd-ctrl1-supply */
+>> +		vddbtcxmx-supply   = <&vreg_conn_1p8>;        /* bt-vdd-ctrl2-supply */
+> 
+> Drop these comments
+> 
+Ack.
 
-> -- 
-> 2.42.0.windows.2
 
