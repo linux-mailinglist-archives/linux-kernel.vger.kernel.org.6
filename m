@@ -1,85 +1,50 @@
-Return-Path: <linux-kernel+bounces-513739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F12A34E0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:51:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA166A34E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6F9188F513
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:51:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15677A460A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76020245AEB;
-	Thu, 13 Feb 2025 18:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5yi+iYr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C500245AF9;
+	Thu, 13 Feb 2025 18:52:45 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241E828A2D4;
-	Thu, 13 Feb 2025 18:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3A8245AF2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739472690; cv=none; b=sF5/uuro2I9ZVV/tpwCH6OLyQJ8umJSZRPOTdLnMFr+Gb/3cXFVBdeJqIl6NCR4ESr9F35XPpNaaIB0Ift3vzpPetNbvBcMjI+cIe2cAWIKfRA+EXDeiXmXsqerfemijKB5jRvIbm+MguQMxnpAGHLhWPsv+XtQV4xkn4fis59o=
+	t=1739472764; cv=none; b=AZGhwuzaGpJHN9JS9K/PWK86AJNDMssDUFkhrGCda++4gL5V0AoI01ATfyzcquR9dsvk3L8IKnPHh7Ek+XxiyABBHNkz0A1DJS+pwL2ZuswXtAdJTMpvuvh69kza5K+5hPz154cFyaDJLbWiElf+UxSttGKQ/mAr4jMNpj3t8+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739472690; c=relaxed/simple;
-	bh=Z4JIzyla/zB42IIdyq9rsiYIJ4BG8zZIFXJSyVMSn5A=;
+	s=arc-20240116; t=1739472764; c=relaxed/simple;
+	bh=RSALijCH6oG8xA04buFXAlVZne7UppEJdwslExTCEsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YSFPT3tg53T/oaSGs1PRnwb3AVOlvTo1d1blDJNOLJSCoduRq2SW7Xi/XBbYAN9JoHZL7AMhIr5XBJ0srHUPp+lDtjAKtaDSYgsDzEt+33UwyazIEDvPbcRAsrxKvH22bs2NUHlZGjs9c/F8fo7nH51pkVPnP8NrOdpoWSRFuSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5yi+iYr; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739472689; x=1771008689;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z4JIzyla/zB42IIdyq9rsiYIJ4BG8zZIFXJSyVMSn5A=;
-  b=O5yi+iYrXxKqvWzjL3L9IAMDOS8ziGCquYhC+S7VElPmYLtHrLf++Cr3
-   mp1ui1gVtf6tODkubyDD/Na156Ew6Hi7qDBPG26sEJipnVYEpdub0SUhW
-   9X44ngE7oKd2RINb3JH+wSrqShNHC3ieb4McxV70ss3NyhKG019v4q9KK
-   X5yf87/tR8I+xApeRoG4Tcy9hprqaXre5BwzAuKvKPyG2wQu0C5r9KUJJ
-   hJl1DCBtTBrMeEtcJft8+saQ6CYMPWlL4mqX5QdoRgUwTYOv4p7kSy4WR
-   PLUwo6Xea0TzUCGt7xIX8HhPppODqws2TZ6nmPRuOIdNdsHp4R1Ky8buJ
-   A==;
-X-CSE-ConnectionGUID: t9K6O2jlQSy+KjJXsHQdaQ==
-X-CSE-MsgGUID: g+6C0P0TTq6qAaG7KNSc0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40123366"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40123366"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:51:29 -0800
-X-CSE-ConnectionGUID: h8dHvQ9XTBSbZoTu5XPOSw==
-X-CSE-MsgGUID: u5xXpwf1Sh2wFmPfe87bCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113108142"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:51:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tieJ0-0000000BFtK-2TtO;
-	Thu, 13 Feb 2025 20:51:22 +0200
-Date: Thu, 13 Feb 2025 20:51:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 1/2] drm: Move for_each_if() to util_macros.h for
- wider use
-Message-ID: <Z64_KheQ_b0TtBDn@smile.fi.intel.com>
-References: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
- <20250213182527.3092371-2-andriy.shevchenko@linux.intel.com>
- <87msepy93x.fsf@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cUiqVl/7cSGffQJwCLaFU1+iOSUOL7bKAA/g4HhSVK8BwcOQV/T3w0q2ovYxh51quB+5TgWKmI8UGhmwuV0oLS0lf7X9ZcITwvYE+puKZFPhfFn0iDoLit7Z2hrCxQhJ/ifcEJHFLSCBYectobztV6UTHjA7jG4usOxaiBQ/SvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51DIqMsE001272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 13:52:23 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 6A78515C0009; Thu, 13 Feb 2025 13:52:22 -0500 (EST)
+Date: Thu, 13 Feb 2025 13:52:22 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, fstests@vger.kernel.org
+Subject: Re: [next-20250212] FStests generic/451 on EXT4 FS resulting in
+ kernel OOPs
+Message-ID: <20250213185222.GA398915@mit.edu>
+References: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +53,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87msepy93x.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
 
-On Thu, Feb 13, 2025 at 08:48:02PM +0200, Jani Nikula wrote:
-> On Thu, 13 Feb 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > Other subsystem(s) may want to reuse the for_each_if() macro.
-> > Move it to util_macros.h to make it globally available.
-
-> Acked-by: Jani Nikula <jani.nikula@intel.com>
-
-Thanks!
-
-> If you want to go down the memory lane, see [1]. ;)
+On Thu, Feb 13, 2025 at 11:21:22AM +0530, Venkat Rao Bagalkote wrote:
+> Greetings!!!
 > 
-> [1] https://lore.kernel.org/r/20180709083650.23549-1-daniel.vetter@ffwll.ch
+> I am observing kernel OOPs, while running FStests generic/451 on EXT4 with
+> linux-next kernel(next-20250212) on IBM Power Servers.
 
-Yeah, I have read it a few hours ago to refresh my memories.
+I'm running daily spinnner tests on the fs-next branch on the
+linux-next tree, via:
 
--- 
-With Best Regards,
-Andy Shevchenko
+   gce-xfstests ltm -c ext4/all,xfs/all,btrfs/all,f2fs/all -g auto --repo \
+       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next \
+       --watch fs-next
 
+The fs-next branch is a subset of linux-next which only has file
+system related branches.  This avoids instability caused by non-fs
+related changes.  I'm not seeing any kernel oops on today's fs-next
+running on an x86 cloud server, using a standardized config.
 
+Looking at the kernel stack trace of your report, it appears that a
+linked list used by the workqueue handler (in process_one_work) had
+gotten corrupted.  This could be caused by anything (which is one of
+the reasons why I test using fs-next instead of linux-next; we didn't
+want to spend time debugging problems that aren't under our control).
+
+Is this something which you can easily reproduce?  If so, can you try
+seeing if it reproduces on the fs-next branch, and could you try
+bisecting the to find the guilty commit?  If this was something we
+could reproduce in my test infrastructure, the bisection could be
+trivially accomplished via:
+
+   gce-xfstests ltm -c ext4/4k generic/451 --repo linux-next.git \
+      --bisect-bad linux-next --bisect-good v6.14-rc1
+
+... and then wait for an e-mailed report to land in my inbox.   :-)
+
+Can you do something similar using your test infrastructure?
+
+Unfortuantely, given the stack trace, I doubt kernel developers would
+be able to do much more with your report.
+
+Thanks,
+
+					- Ted
 
