@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-512569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC7AA33AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:16:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2D2A33AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 214BF169816
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96ED3188ECE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314AF20F06D;
-	Thu, 13 Feb 2025 09:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C97F211299;
+	Thu, 13 Feb 2025 09:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUxn6nTh"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C8720C49E;
-	Thu, 13 Feb 2025 09:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YY/SEY+U"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026D320D519;
+	Thu, 13 Feb 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437952; cv=none; b=tT6t99v4jfCr0FBHc52O35jqv8M5yEkbl35cPeTbxbsZdMlQ2j1sYw1Eq7dNHrGXJpU/5UU/ibx9om5sIeZSHNYgHOA1jb1fFrb2NsGl17hzmX5x7DIor7eqYjhlkNB3EtJWmA5pmSSFmdcsQDs2sYbsGjiFpEwDWcLVCnD5jts=
+	t=1739438067; cv=none; b=sT2Tx8X/wwrO6ycBMglwg1N5zIen3kKsU+CqMzwmQcZJijvn8nmHIuV/31NZaJT/uy/cR7gRxqgj8cs70U/ayA8z+JyDwLYEHt/lsqCQqzmzuJOYOIcdLrvIXDUHBERrEyHM1ca1ax3xRC+S7OjjilQXS3xc6+RjgquDkFz+WRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437952; c=relaxed/simple;
-	bh=yLddpAR4+uHNaBfR84/0dHce0z/yGb9TvcOzbtkoKUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nQxVkxjxB6rps6sFU+TfGTtL28RB3zvi7GAR7lQrxMO7BOj9vU5w4eqABKAPlEVGUq9myLGvdLuPwP0/3lk5DB8Ughjdoc9u66Dd6PCmSlmHxy1joGdjNfZB0AvceOMzqhrXfAjQLKXWjs2XdPKt4knAx5/zUUneDOLUmAveY9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUxn6nTh; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43946b5920cso3724635e9.1;
-        Thu, 13 Feb 2025 01:12:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739437949; x=1740042749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tg1JP0auLt2hGreWRb8PL7qoComGrRDHQlIsTeKF7VE=;
-        b=fUxn6nThMhkaowpzeUlUhRdy876YqU+QJaOkjvp097n5uKLxHFKzXD7Y8PGZTHJGDI
-         r63PL2zP8RtBwlla8ASkyCV349z5lh6ThXSk2f4hVKLcK50jBXhOxNW47Q0J+gKa+bwu
-         qhvkyD3BkrXZ5RaqeQtbzdmWcXaRbMkgrOsSbISvdsoBraTxbzRag5MjOmMLECSq1Wr5
-         293cij+RKi0v4Bd5AgRiRnT1LQI82dAVPwkHkfmZ2enGf3SEAnEsG6Urgm07XL6p8xR9
-         7DHpflb+bs8IfmkNnNb8etdI3k/RyFsePLEBkOchGyayFZKAZg9M36bR8ZW/9gX7w5mE
-         TRrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739437949; x=1740042749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tg1JP0auLt2hGreWRb8PL7qoComGrRDHQlIsTeKF7VE=;
-        b=MAB1NrBhMxMKGoD8KdPOBh/ughTGMHRnp2QPztzg4S72XOOe87uVgdFFC2q6cAyNXo
-         TaBhEiLTTdfFgvhDUVTKM05RGoIf/Vw2xZWIWL/qQI611CK4ShV7LaP/ceEr/bPlZM/G
-         ODjZJnxvLuzWLehMxPutGOXSyKoJg5lc0/Y0AtETZeTOhr3vk7zsaNsmrbS0taW35JnZ
-         PfxAWw8sLeBkLa4FGZQxVW2qPVfSl8GwOmYak02OrMFJGXBBKT8tdxljuahKImZGoRPA
-         JJWvWeA70I1nKrZ01HcgGF9H4j1zGBgeg4LvRkopTac/W8f/O0oIhNq6XHA3QRWJZ3KL
-         4lZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0+8mneDkp1qVqoL9YHaxV4b+LAqLFXpZEjEgWeg9tHyAEoj7KOJhKiZ2U/091uFPb1EapfdAXMCF/@vger.kernel.org, AJvYcCUnbdqA9YLi341g+TLdM7GSgLPtcHy26BmsEAZ3mhy5etpcwetOFa2ogybOgVrXjjfLeXS8wezQF/va7czY@vger.kernel.org, AJvYcCV1uYuD6ATSjNYEkAmZH/UV2eI4PvEgHb+U8ICwQQyRMBjKxEv7Iztsx+bBEHmhXXzvsB4YGXqxyPrB@vger.kernel.org, AJvYcCVbFYvLAUZx7WSOLRBSr6N3UXQqZtid/eyeAG1EAoGkdgYQWJRuJc3DUCGpor46CxFYWhNYOcEFheGdyfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe2Tk1CVWUjtUV01K01iHk9yXK9ZkOQhKcCTFaKDLq15CrT1nP
-	jWBeBS2bTjp4vVIYmJW090RrTDjuuhRqWeDfrOt+JOsPEKEpoXC8MSJiYOTF5opCxkaatNQMI1u
-	qEGeDdjo4v2APFEZ1lu2pr4mEwMM=
-X-Gm-Gg: ASbGncu8bdAUArFSjnFdwd97WE93/je+VMxXMb+MJGRvw/gG77aMx2aBzpoocfCYSLy
-	8pip8P2x9jPG3eF7qHC0iSNYOvSNcYV4XzqXxnV+QIoNR1BuWU8wZgiA9hZVIZfU1LicsDtG3mw
-	==
-X-Google-Smtp-Source: AGHT+IEIXiFHGpQVqWcQkS8ro0yUEuPnyaUHznDC/xhn3mOMYppaKdBfxc4IehqBFdtdLKysYuxZvKa7oxsPHk5SNG0=
-X-Received: by 2002:a05:600c:45ce:b0:436:e3ea:4447 with SMTP id
- 5b1f17b1804b1-439601a9bc9mr30373085e9.30.1739437948788; Thu, 13 Feb 2025
- 01:12:28 -0800 (PST)
+	s=arc-20240116; t=1739438067; c=relaxed/simple;
+	bh=VH0gOSLT3KcBrr4tY877xERRX7Mw1PDztgwjnNLzI6E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mIOg9u5tr/7u2/p4GHBCnKT3aKMvVucabDc15i7i+LszKniA1vBXspS2Ee/bYwdBs0OUj5oOTcdp/O5q4VK3EW9xhDgSg3SZ8Ayde8jj5EiLvfIGFiWVMPZAnfTBfwz1Y4sLkobW9vAUiaBYJqSwY02duYpvOWwBQNC5TTaEDgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YY/SEY+U; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=x23ERDFK1yV7btZzekL4kes0FjMOz/c4VclowWcJil4=;
+	b=YY/SEY+UNfFd28ydKiF4UpS+W7XesZfxSOEKVVdF4oN50T1hH7Ybv93DzccrUj
+	woN4emiO5FTwUcZKo+Pv2AQjSxcfYPKHHUpztxJs4TOljTIyrnGzbWjwFFcB0pwq
+	qHEmPfKuAMxCFSQ0fdkoyeLBpAX0SFMFGGhWkjNfE4RmI=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCnDqzAt61nAiVyDw--.49436S2;
+	Thu, 13 Feb 2025 17:13:37 +0800 (CST)
+From: 412574090@163.com
+To: sergei.shtylyov@gmail.com
+Cc: 412574090@163.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	weiyufeng@kylinos.cn
+Subject: Re: [PATCH] usb: fix error while OF and ACPI all config Y
+Date: Thu, 13 Feb 2025 17:13:35 +0800
+Message-Id: <20250213091335.197011-1-412574090@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <309b356f-a7b8-4f1f-92b7-ed5b144bd039@gmail.com>
+References: <309b356f-a7b8-4f1f-92b7-ed5b144bd039@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-2-clamor95@gmail.com>
- <20250213-eminent-antique-koala-5a68fd@krzk-bin>
-In-Reply-To: <20250213-eminent-antique-koala-5a68fd@krzk-bin>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 13 Feb 2025 11:12:16 +0200
-X-Gm-Features: AWEUYZnFHGmvApSVhe437rJ4JjjYpQhXvUgc0fkqXWr4PnY20ptTukWJUhLNQ3o
-Message-ID: <CAPVz0n1fDGEi0fV+CegKo7GWjv4piPqYyDd6Mo1j2mtXSp8w6g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
-	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgCnDqzAt61nAiVyDw--.49436S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZw17Zry8XrWxGry5WF4xXrb_yoWfCwb_G3
+	Wjk397Gry8G34Fkr15KrWF9r13K3WDWrW8AF1qqr93XFWI93WxXwn0qr9Yva17Ww4DCF1D
+	AryFyr9F9F45ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7VUbD5rUUUUUU==
+X-CM-SenderInfo: yursklauqziqqrwthudrp/xtbBXwTyAGetsSF7cQAAs5
 
-=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 11:11 Krzy=
-sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>> From: weiyufeng <weiyufeng@kylinos.cn>
+>> 
+>> When both OF and ACPI are configured as Y simultaneously，this may
+>> cause error while install os with usb disk，while reading data from
+>> the usb disk, the onboard_ hub driver will reinitialize the
+>> hub, causing system installation exceptions.
+>> 
+>> Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
+>> ---
+>>  drivers/usb/misc/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+>> index 6497c4e81e95..9ffb51191621 100644
+>> --- a/drivers/usb/misc/Kconfig
+>> +++ b/drivers/usb/misc/Kconfig
+>> @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
+>>  
+>>  config USB_ONBOARD_DEV
+>>  	tristate "Onboard USB device support"
+>> -	depends on OF
+>> +	depends on (OF && !ACPI)
 >
-> On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
-> > AL3000a is an ambient light sensor quite closely related to
-> > exising AL3010 and can re-use exising schema for AL3010.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al30=
-10.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> > index a3a979553e32..6db4dfd5aa6c 100644
-> > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> > @@ -4,14 +4,16 @@
-> >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
-> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >
-> > -title: Dyna-Image AL3010 sensor
-> > +title: Dyna-Image AL3000a/AL3010 sensor
-> >
-> >  maintainers:
-> >    - David Heidelberg <david@ixit.cz>
-> >
-> >  properties:
-> >    compatible:
-> > -    const: dynaimage,al3010
-> > +    enum:
-> > +      - dynaimage,al3010
-> > +      - dynaimage,al3000a
->
-> If this stays here, keep alphabetical order.
->
+>   I don't think () are needed here.
+    Yes, () will be deleted in next version.
+--
+Thanks, 
 
-Acknowledged, thank you.
+weiyufeng
 
-> Best regards,
-> Krzysztof
->
 
