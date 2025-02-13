@@ -1,50 +1,84 @@
-Return-Path: <linux-kernel+bounces-513621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54F3A34C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:57:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF29A34C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C763A480E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822B416BB3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06C23F401;
-	Thu, 13 Feb 2025 17:56:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1748323A9B4;
+	Thu, 13 Feb 2025 17:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nL7iWe8L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644A823A9BA;
-	Thu, 13 Feb 2025 17:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A359E23A9BF;
+	Thu, 13 Feb 2025 17:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469419; cv=none; b=ORWWxP+Uh330omxq5KitABzOF/kQESzz/lrfwS9BuCvxFxykQ6/sdtkoZfkxGJDCmsOt4fr10V6mmi/bh6PfAXTqIvlB/FjunSqyHLE+ND5akkspmiahMcAgYfHXx7OTAZWL2QpbaUTFyrNBHH0LGzUNJ2/LdsYFs8cMnYISC8Q=
+	t=1739469495; cv=none; b=G4475mm8US+cyKyMrM261TxiwrH1cNUkfFiEBlwtywTg/09PkNq9yZrFwoFRsHJn3oawRDctUmseq2oqEmLLD7fNATMaSZsr1iMcMk/d4KNzIVguXoPs7zfP2kTCpEWUyLT4FhjXUav9K6dJrWfZlgGvWYbamBfVEcKUB9t9Itk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469419; c=relaxed/simple;
-	bh=0WV2CmcTZUiH+zQk/eImcSLFCn6EHvq25FoHekBJf6c=;
+	s=arc-20240116; t=1739469495; c=relaxed/simple;
+	bh=xWOXLkZUDipVXkBEWn6lKA+dhIt25ilw4tSep9BV2AI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ha6eaXpPiA+MVWaYPHynquYne2hrTGsL2/5eb8ZxObU5uCfas3uwsuL4/JYn1oj1SLkUShR8dK1iVeHmtvI7xnCzyBfK8arDtTf+mpSZ+g7ELjXus6MsahgubF1pEwF3LeysjKrjaPOiSZSWjZVceFIIe7eyVnn3IhppqVbdWtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220B4C4CED1;
-	Thu, 13 Feb 2025 17:56:55 +0000 (UTC)
-Date: Thu, 13 Feb 2025 17:56:53 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
-	will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
-	mark.rutland@arm.com, joey.gouly@arm.com,
-	dave.hansen@linux.intel.com, akpm@linux-foundation.org,
-	chenfeiyang@loongson.cn, chenhuacai@kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	quic_tingweiz@quicinc.com, stable@vger.kernel.org
-Subject: Re: [PATCH v6] arm64: mm: Populate vmemmap/linear at the page level
- for hotplugged sections
-Message-ID: <Z64yZRPpyR9A_BiR@arm.com>
-References: <20250213075703.1270713-1-quic_zhenhuah@quicinc.com>
- <9bc91fe3-c590-48e2-b29f-736d0b056c34@redhat.com>
- <Z64UcwSGQ53mFmWF@arm.com>
- <b2964ea1-a22c-4b66-89ef-3082b6d00d21@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iF5XwEfEQtoEXdfHW9Qot9GpFxvjTue+56M/kQU7D/QdyrvAjqjVgpGPUaQwkCrJSmYKTR0mqcQlrRS+ABy2vXOlWdk0aSy8q9NEs8bqeZHSnaNuvBjSi3jQIJDXIWR9s1KBe1wg0P22XT16d7sVhUFJGD3/VQ4N2pBKPgV3Fww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nL7iWe8L; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739469494; x=1771005494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xWOXLkZUDipVXkBEWn6lKA+dhIt25ilw4tSep9BV2AI=;
+  b=nL7iWe8LRuaaE9XtsEcgHVtkJqusZwn078EcJfVJ1ID0soWE8WODa1du
+   9N/sHArAJdd1KLeVrHkSVoTA9MO870iIGOgvrxcBdCk7lHiBLgY7U/VMq
+   Cz8f8jRZpYXbDcpJtedBIZahWbcsERPBLqHVtQDp6Sj0qjziO8eqnFQ9j
+   VH4OcLRO7uFH65/NsEXo0x8x9hC4I+RVR4V/HZw2fBYGn6vuvzZfghqQa
+   AWAZGHQNoe+m5hz7QdLvSTFDcndqQwD4c/Ys8ZwV/yhBouowydsNRf2t1
+   YMa4kg89l/IqwY0tqzLuvxcLvNZ01qEJVIjKnD8J0wGiLA31CymLIOeu6
+   A==;
+X-CSE-ConnectionGUID: 4S1JRYt2TK6htlOC44dRpA==
+X-CSE-MsgGUID: LWXmXoRXSSWwfnjClGvfXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40066666"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40066666"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 09:58:13 -0800
+X-CSE-ConnectionGUID: xIa7/2r4Ru+OWWqzhiIL+w==
+X-CSE-MsgGUID: FRsG1AacQQO4aUWK4apTMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="118223746"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 13 Feb 2025 09:58:08 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tidTS-0018XD-0N;
+	Thu, 13 Feb 2025 17:58:06 +0000
+Date: Fri, 14 Feb 2025 01:57:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Robert Budai <robert.budai@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
+Message-ID: <202502140107.SF1UwFxM-lkp@intel.com>
+References: <20250211175706.276987-4-robert.budai@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,75 +87,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b2964ea1-a22c-4b66-89ef-3082b6d00d21@redhat.com>
+In-Reply-To: <20250211175706.276987-4-robert.budai@analog.com>
 
-On Thu, Feb 13, 2025 at 05:16:37PM +0100, David Hildenbrand wrote:
-> On 13.02.25 16:49, Catalin Marinas wrote:
-> > On Thu, Feb 13, 2025 at 01:59:25PM +0100, David Hildenbrand wrote:
-> > > On 13.02.25 08:57, Zhenhua Huang wrote:
-> > > > On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-> > > > to 27, making one section 128M. The related page struct which vmemmap
-> > > > points to is 2M then.
-> > > > Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-> > > > vmemmap to populate at the PMD section level which was suitable
-> > > > initially since hot plug granule is always one section(128M). However,
-> > > > commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> > > > introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-> > > > existing arm64 assumptions.
-> > > > 
-> > > > Considering the vmemmap_free -> unmap_hotplug_pmd_range path, when
-> > > > pmd_sect() is true, the entire PMD section is cleared, even if there is
-> > > > other effective subsection. For example page_struct_map1 and
-> > > > page_strcut_map2 are part of a single PMD entry and they are hot-added
-> > > > sequentially. Then page_struct_map1 is removed, vmemmap_free() will clear
-> > > > the entire PMD entry freeing the struct page map for the whole section,
-> > > > even though page_struct_map2 is still active. Similar problem exists
-> > > > with linear mapping as well, for 16K base page(PMD size = 32M) or 64K
-> > > > base page(PMD = 512M), their block mappings exceed SUBSECTION_SIZE.
-> > > > Tearing down the entire PMD mapping too will leave other subsections
-> > > > unmapped in the linear mapping.
-> > > > 
-> > > > To address the issue, we need to prevent PMD/PUD/CONT mappings for both
-> > > > linear and vmemmap for non-boot sections if corresponding size on the
-> > > > given base page exceeds SUBSECTION_SIZE(2MB now).
-> > > > 
-> > > > Cc: <stable@vger.kernel.org> # v5.4+
-> > > > Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> > > > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> > > > Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> > > 
-> > > Just so I understand correctly: for ordinary memory-sections-size hotplug
-> > > (NVDIMM, virtio-mem), we still get a large mapping where possible?
-> > 
-> > Up to 2MB blocks only since that's the SUBSECTION_SIZE value. The
-> > vmemmap mapping is also limited to PAGE_SIZE mappings (we could use
-> > contiguous mappings for vmemmap but it's not wired up; I don't think
-> > it's worth the hassle).
-> 
-> But that's messed up, no?
-> 
-> If someone hotplugs a memory section, they have to hotunplug a memory
-> section, not parts of it.
-> 
-> That's why x86 does in vmemmap_populate():
-> 
-> if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> 	err = vmemmap_populate_basepages(start, end, node, NULL);
-> else if (boot_cpu_has(X86_FEATURE_PSE))
-> 	err = vmemmap_populate_hugepages(start, end, node, altmap);
-> ...
-> 
-> Maybe I'm missing something. Most importantly, why the weird subsection
-> stuff is supposed to degrade ordinary hotplug of dimms/virtio-mem etc.
+Hi Robert,
 
-I think that's based on the discussion for a previous version assuming
-that the hotplug/unplug sizes are not guaranteed to be symmetric:
+kernel test robot noticed the following build warnings:
 
-https://lore.kernel.org/lkml/a720aaa5-a75e-481e-b396-a5f2b50ed362@quicinc.com/
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.14-rc2 next-20250213]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If that's not the case, we can indeed ignore the SUBSECTION_SIZE
-altogether and just rely on the start/end of the hotplugged region.
+url:    https://github.com/intel-lab-lkp/linux/commits/Robert-Budai/iio-imu-adis-Add-custom-ops-struct/20250212-040235
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250211175706.276987-4-robert.budai%40analog.com
+patch subject: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
+config: arc-randconfig-r112-20250213 (https://download.01.org/0day-ci/archive/20250214/202502140107.SF1UwFxM-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250214/202502140107.SF1UwFxM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140107.SF1UwFxM-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/imu/adis.c:319:42: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned short [usertype] *val @@     got unsigned short [usertype] status_16 @@
+   drivers/iio/imu/adis.c:319:42: sparse:     expected unsigned short [usertype] *val
+   drivers/iio/imu/adis.c:319:42: sparse:     got unsigned short [usertype] status_16
+>> drivers/iio/imu/adis.c:319:42: sparse: sparse: non size-preserving integer to pointer cast
+
+vim +319 drivers/iio/imu/adis.c
+
+   298	
+   299	/**
+   300	 * __adis_check_status() - Check the device for error conditions (unlocked)
+   301	 * @adis: The adis device
+   302	 *
+   303	 * Returns 0 on success, a negative error code otherwise
+   304	 */
+   305	int __adis_check_status(struct adis *adis)
+   306	{
+   307		unsigned int status;
+   308		int diag_stat_bits;
+   309		u16 status_16;
+   310		int ret;
+   311		int i;
+   312	
+   313		if (adis->data->diag_stat_size)
+   314			ret = adis->ops->read(adis, adis->data->diag_stat_reg, &status,
+   315					      adis->data->diag_stat_size);
+   316		else
+   317		{
+   318			ret = __adis_read_reg_16(adis, adis->data->diag_stat_reg,
+ > 319						 status_16);
+   320			status = status_16;
+   321		}
+   322		if (ret)
+   323			return ret;
+   324	
+   325		status &= adis->data->status_error_mask;
+   326	
+   327		if (status == 0)
+   328			return 0;
+   329	
+   330		diag_stat_bits = BITS_PER_BYTE * (adis->data->diag_stat_size ?
+   331						  adis->data->diag_stat_size : 2);
+   332	
+   333		for (i = 0; i < diag_stat_bits; ++i) {
+   334			if (status & BIT(i)) {
+   335				dev_err(&adis->spi->dev, "%s.\n",
+   336					adis->data->status_error_msgs[i]);
+   337			}
+   338		}
+   339	
+   340		return -EIO;
+   341	}
+   342	EXPORT_SYMBOL_NS_GPL(__adis_check_status, "IIO_ADISLIB");
+   343	
 
 -- 
-Catalin
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
