@@ -1,541 +1,199 @@
-Return-Path: <linux-kernel+bounces-513247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670CDA3460B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:21:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FC4A345DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B38A1888857
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258B61713F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6858626B0B1;
-	Thu, 13 Feb 2025 15:11:57 +0000 (UTC)
-Received: from n169-111.mail.139.com (n169-111.mail.139.com [120.232.169.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C179126B0AD;
+	Thu, 13 Feb 2025 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XeZ0X3gn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD945684;
-	Thu, 13 Feb 2025 15:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7188E26B099;
+	Thu, 13 Feb 2025 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739459516; cv=none; b=ay2a7U7z4CZObJwgmPZIWQXiK2rR1+16p45JnXDpBTUxPtQ/FqTeWhVWmn8D65okPkFfWEat62ApZU0H/W/8d4ETRfVfxAiDKdjCKHsA+IRKK5HrhCW+W5XrSzMirESFN0mHZMv7vifQHwMa2OqO3W59FuGDosVWImjBOEX7v+Q=
+	t=1739459405; cv=none; b=KY5o4T/KvbM1p/hA3t7i+zN4IffpWeBzS57tBaCu0qkiFP8gGce7Aeq6WXiwX27FkRnf4gA7pNNoJiEnK7w1BKW2Yq9058SqSSEKAToFN8/y567p7K2f7JpDgQCcegGUrd6y/bCLIM7z4gyj19viYMq//fJvPI4NUVDgI+5F1YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739459516; c=relaxed/simple;
-	bh=UN/zqlPZ7vd8ucmimYG1iJj4FDfIjFglUVFCBf3gKmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qijerx9oxD+9zYq5v7hF68gR1Bc1r5mmHCAr1TfOTJJpg8Q0Q6XXz+0LV0MVPw1J3NbsF82H/ZpaBIhiQpNnZkQPeWMZWEhhnb7Ou4zPnVJh2YY+OPWVpGZH3tEGqJmm0KLufm9+imNc5r1KbWrLSDlgdVuMCU45zhPDkynDzK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from [IPV6:2409:8a00:7877:4fa0:7350:f7e9:7b36:d399] (unknown[2409:8A00:7877:4FA0:7350:F7E9:7B36:D399])
-	by rmsmtp-lg-appmail-11-12089 (RichMail) with SMTP id 2f3967ae0add7c7-a8f04;
-	Thu, 13 Feb 2025 23:08:20 +0800 (CST)
-X-RM-TRANSID:2f3967ae0add7c7-a8f04
-Message-ID: <231ee9b1-de54-47c8-a39b-f57a6d6f8d9c@139.com>
-Date: Thu, 13 Feb 2025 23:08:19 +0800
+	s=arc-20240116; t=1739459405; c=relaxed/simple;
+	bh=oNWaztRC9HOHQeQo0SIxqA8XfmleriZq7neNIntuQaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttNsFBQ2jz7bPEMFevaza++vzMI8XMCwYv2pdHNGRaDF5TG1SiRXwEBlM3evOOYvwehVVHyiePJidIY6t2YY6ZzjBylcA31FXclu4rqEfHM12M6KSUKKmByq5sHlP/SMX6k/BiBr+HxFMhtQKawrAJ7T7+/wj1RR83/HhU26bT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XeZ0X3gn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DD9qPa001101;
+	Thu, 13 Feb 2025 15:09:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Nx35n43omz2S0j8VNoQwyCAaNPUmYf
+	sQNdk9Bkd5gKY=; b=XeZ0X3gn2QPulkRaUnJnBrZkQCpid10B09iYKl/e0gO/kT
+	//uKE5UAuTKSEP6MpOZ0JdUGipgK1ZUvEMuvWebRA/T+txqkwpRpgd3e/mERuzOV
+	sTH4tx95ucF8RRUBdSHmZBzFILZmimHORQY4r5e0s5ywFtpubF3j6E7p2899L44t
+	gJp0lXNmSQyzZDSgGMmYNUgRsjJmg+TY2iqbi0hP53UsYLmRgHBgKlDwiRE93loC
+	MVTpmfmpL6YTYxFoNtCmnQZBwe5O87KEryJgTjYj8XJb99HSZWdoMXYOldec0Ab/
+	+GGu3zbsk1gom+joIynUxJ82kKE3zCJbLhV91Teg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44saj8jrrd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 15:09:42 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DBb4oe000914;
+	Thu, 13 Feb 2025 15:09:40 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjknesrv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 15:09:40 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DF9a3C33095958
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 15:09:37 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD09E2004D;
+	Thu, 13 Feb 2025 15:09:36 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A95542004B;
+	Thu, 13 Feb 2025 15:09:36 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 13 Feb 2025 15:09:36 +0000 (GMT)
+Date: Thu, 13 Feb 2025 16:09:34 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH] arm64: scripts/sorttable: Implement sorting mcount_loc
+ at boot for arm64
+Message-ID: <20250213150934.12012-C-hca@linux.ibm.com>
+References: <20250210142647.083ff456@gandalf.local.home>
+ <20250213125302.12012-A-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] platform/x86: lenovo-super-hotkey-wmi.c: Supportformic
- and audio mute LEDs
-To: Kurt Borja <kuurtb@gmail.com>, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- dongeg1@lenovo.com, Mark Pearson <mpearson-lenovo@squebb.ca>
-References: <20250212070154.5333-1-xy-jackie@139.com>
- <D7QNJ79F513X.FYQCGSC9M3KG@gmail.com>
- <edc9efc7-e96b-44cc-98c6-48eabb53b83c@139.com>
- <D7RD26POOF0C.1P0CGJQ7YSQJT@gmail.com>
-Content-Language: en-US
-From: Jackie <xy-jackie@139.com>
-In-Reply-To: <D7RD26POOF0C.1P0CGJQ7YSQJT@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213125302.12012-A-hca@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: S5kam7uZ1aI1nPU6jix8C8BRLexLvoRE
+X-Proofpoint-ORIG-GUID: S5kam7uZ1aI1nPU6jix8C8BRLexLvoRE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502130112
 
+On Thu, Feb 13, 2025 at 01:53:02PM +0100, Heiko Carstens wrote:
+> On Mon, Feb 10, 2025 at 02:26:47PM -0500, Steven Rostedt wrote:
+> > For the s390 folks. I cross compiled a s390 and looked at the mcount_loc
+> > section, and I have no idea how to implement this for that. I wrote a elf
+> > parser to dump sections based symbols:
+> > 
+> >   https://rostedt.org/code/dump_elf_sym.c
+> > 
+> > And ran it on the s390 vmlinux:
+> > 
+> >  $ ./dump_elf_sym vmlinux __start_mcount_loc __stop_mcount_loc
+> >  1801620: .. .. .. .. .. .. .. ..   00 00 00 00 00 11 70 20  ......... .....p 
+> >  1801630: 00 00 00 00 00 11 70 90   00 00 00 00 00 11 70 a0  ......p.. .....p.
+> >  1801640: 00 00 00 00 00 11 71 10   00 00 00 00 00 11 71 20  ......q.. .....q 
+> >  1801650: 00 00 00 00 00 11 71 90   00 00 00 00 01 7c 70 00  ......q.. ....|p.
+> >  1801660: 00 00 00 00 01 7c 70 20   00 00 00 00 01 7c 70 40  .....|p . ....|p@
+> >  1801670: 00 00 00 00 01 7c 70 60   00 00 00 00 01 7c 70 70  .....|p`. ....|pp
+> >  1801680: 00 00 00 00 01 7c 70 98   00 00 00 00 01 7c 70 c0  .....|p.. ....|p.
+> >  1801690: 00 00 00 00 01 7c 70 d0   00 00 00 00 01 7c 71 68  .....|p.. ....|qh
+> > [..]
+> > 
+> > It looks like addresses in that section...
+> 
+> Those are the addresses of the mcount locations. After looking at
+> sorttable.c it really looks like that for s390 we can simply select
+> HAVE_BUILDTIME_MCOUNT_SORT without any further changes.
+> 
+> I just tested it with different compiler options (fentry vs hotpatch),
+> including selecting FTRACE_SORT_STARTUP_TEST, and as expected everything
+> works.
+> 
+> I'm going to give it some more testing in our CI - but if nothing breaks a
+> patch which selects HAVE_BUILDTIME_MCOUNT_SORT for s390 will go upstream
+> with the next merge window.
 
+Something like this:
 
-On 2025/2/13 21:43, Kurt Borja wrote:
-> On Thu Feb 13, 2025 at 4:32 AM -05, Jackie Dong wrote:
->> Hi Kurt,
->>      Thanks for your careful review and new comments which are helpful
->> for me to understand maintainers ideas, pls review my comments as below.
->>      I'll submit a new revison of the patch after get your feedback.
->> On 2/13/25 01:43, Kurt Borja wrote:
->>> Hi Jackie,
->>>
->>> I left some style recommendations below and a couple questions. I
->>> apologize for not including this in the last review.
->>>
->>> On Wed Feb 12, 2025 at 2:01 AM -05, Jackie Dong wrote:
->>>> Implement Lenovo utility data WMI calls needed to make LEDs
->>>> work on Ideapads that support this GUID.
->>>> This enables the mic and audio LEDs to be updated correctly.
->>>>
->>>> Tested on below samples.
->>>> ThinkBook 13X Gen4 IMH
->>>> ThinkBook 14 G6 ABP
->>>> ThinkBook 16p Gen4-21J8
->>>> ThinkBook 16 G8 IRL
->>>> ThinkBook 16 G7+ ASP
->>>>
->>>> Signed-off-by: Jackie Dong <xy-jackie@139.com>
->>>> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->>>> ---
->>>> Changes in v5:
->>>>    - Take out union acpi_object *obj __free(kfree) = output.pointer from
->>>>      if-else block
->>>>    - Remove lsk_wmi_context_lud_keys related source code
->>>>
->>>> Changes in v4:
->>>>    - Add related head files include cleanup.h, dev_printk.h, device.h,
->>>>      module.h
->>>>    - Replaced kfree() by __free()
->>>>    - Remove double free for obj
->>>>    - Remove wpriv->cdev[led_type].dev = dev
->>>>    - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private *)context
->>>>    - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
->>>>    - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
->>>>
->>>> Changes in v3:
->>>>    - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
->>>>    - Renamed everything in this driver which contains the name "ideapad"
->>>>      to instead contain the name of this driver.
->>>>    - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
->>>>      and use container_of() to the led_wdev pointer.
->>>>    - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
->>>>    - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
->>>>      and free the ACPI object after get the required value.
->>>>    - Removed led_classdev_unregister() after led_reg_failed label, but
->>>>      add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
->>>>      resource.
->>>>    - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
->>>>      source codes and only keep LUD_WMI_METHOD_GUID.
->>>>
->>>> Changes in v2:
->>>>    - Update code layout and formatting as recommended in review
->>>>    - Improved error handling in ideapad_wmi_led_init
->>>>    - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
->>>>      ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
->>>>
->>>>    drivers/platform/x86/Kconfig                  |   9 +
->>>>    drivers/platform/x86/Makefile                 |   1 +
->>>>    .../platform/x86/lenovo-super-hotkey-wmi.c    | 222 ++++++++++++++++++
->>>>    3 files changed, 232 insertions(+)
->>>>    create mode 100644 drivers/platform/x86/lenovo-super-hotkey-wmi.c
->>>>
->>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->>>> index 0258dd879d64..c1792e8f04e1 100644
->>>> --- a/drivers/platform/x86/Kconfig
->>>> +++ b/drivers/platform/x86/Kconfig
->>>> @@ -475,6 +475,15 @@ config IDEAPAD_LAPTOP
->>>>    	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
->>>>    	  rfkill switch, hotkey, fan control and backlight control.
->>>>    
->>>> +config LENOVO_SUPER_HOTKEY_WMI
->>>> +	tristate "Lenovo Super Hotkey Utility WMI extras driver"
->>>> +	depends on ACPI_WMI
->>>> +	depends on IDEAPAD_LAPTOP
->>>
->>> Does this still depend on IDEAPAD_LAPTOP? Also add:
->>> 	select NEW_LEDS
->>> 	select LEDS_CLASS
->>>
->> In my view, keep depend on IDEAPAD, because that mic-mute LED function
->> doesn't work without ideapad_laptop.ko. Due to KEY_MICMUTE event is
->> handled in ideapad_laptop. And this file only turn on/off MIC mute LED
->> after the KEY_MICMUTE pressed. For Audio mute LED, audio mute key is
->> common handled by keyboard driver, but MIC mute key is special and
->> handled in ideapad_laptop.ko for Lenovo non-ThinkPad products. Audio
->> mute and MIC mute function can work when user press related hotkey in
->> past, only it's mute LED doesn't turn on/off.
->> For ThinkPad products, MIC mute key is handled in thinkpad_acpi.
-> 
-> Oh - Thanks, this is important information.
-> 
->>
->> { KE_KEY,       0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } }, in
->> ideapad_keymap[].
->>
->> This LENOVO_SUPER_HOTKEY_WMI depends on IDEAPAD_LAPTOP which included
->> led moudles(NEW_LEDS/LEDS_CLASS) as below. Maybe it shoud be enough.
-> 
-> I'd add them anyway, to be explicit about what this module needs.
-> 
-OK, will update it next revision.
->>
->> config IDEAPAD_LAPTOP
->>           tristate "Lenovo IdeaPad Laptop Extras"
->>           depends on ACPI
->>           depends on RFKILL && INPUT
->>           depends on SERIO_I8042
->>           depends on BACKLIGHT_CLASS_DEVICE
->>           depends on ACPI_VIDEO || ACPI_VIDEO = n
->>           depends on ACPI_WMI || ACPI_WMI = n
->>           select ACPI_PLATFORM_PROFILE
->>           select INPUT_SPARSEKMAP
->>           select NEW_LEDS
->>           select LEDS_CLASS
->>           help
->>             This is a driver for Lenovo IdeaPad netbooks contains drivers for
->>             rfkill switch, hotkey, fan control and backlight control.
->>
->>>> +	help
->>>> +	  This driver provides WMI support for Lenovo customized hotkeys function
->>>> +	  of Lenovo NoteBooks which are for Consumer and SMB customers, such as
->>>> +	  Ideapad/YOGA/XiaoXin/Gaming/ThinkBook and so on.
->>>
->>> This driver deals with mute key leds. Is this description right?
->> In fact, this driver should handle all lenovo super hotkey functions
->> which are implemeteled by wmi. Audio mute LED and Mic mute LED are just
->> the two functions of them. The driver will be extented for all lenovo
->> super hotkey in future. I have to say that different products are with
->> different hotkey, not all products support all hotkeys function, such as
->> many ThinkBook products without MIC mute LED. Currently,
-> 
-> Interesting.
-> 
-> As this driver doesn't handle the hotkeys directly, may I suggest some
-> slight rewording? Something like:
-> 
-> "This driver provides WMI support for Lenovo hotkey utilities, such as
-> LED control for audio/mic mute events for IdeaPad, etc..."
-> 
-> Remember this can be edited as new features are implemented.
-> 
-Yes, you're right, will update it next revision.
->>
->> Some links are FYR.
->> How to use Lenovo Hotkeys on keyboard?
->> https://tt-hardware.com/en/pc/how-to-use-lenovo-hotkeys-on-keyboard/
->> Lenovo Hotkeys
->> https://apps.microsoft.com/detail/9pcmmnb260tx?hl=en-us&gl=US
->>
->> For these Lenovo Hotkeys, ThinkPad series are impelemented by acpi, but
->> some hotkeys of non-ThinkPad products are impelemented by wmi, special
->> for latest non-ThinkPad products. This is why I write this driver.
->>>
->>>> +
->>>>    config LENOVO_YMC
->>>>    	tristate "Lenovo Yoga Tablet Mode Control"
->>>>    	depends on ACPI_WMI
->>>> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
->>>> index e1b142947067..598335da9f55 100644
->>>> --- a/drivers/platform/x86/Makefile
->>>> +++ b/drivers/platform/x86/Makefile
->>>> @@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
->>>>    # IBM Thinkpad and Lenovo
->>>>    obj-$(CONFIG_IBM_RTL)		+= ibm_rtl.o
->>>>    obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad-laptop.o
->>>> +obj-$(CONFIG_LENOVO_SUPER_HOTKEY_WMI)	+= lenovo-super-hotkey-wmi.o
->>>>    obj-$(CONFIG_LENOVO_YMC)	+= lenovo-ymc.o
->>>>    obj-$(CONFIG_SENSORS_HDAPS)	+= hdaps.o
->>>>    obj-$(CONFIG_THINKPAD_ACPI)	+= thinkpad_acpi.o
->>>> diff --git a/drivers/platform/x86/lenovo-super-hotkey-wmi.c b/drivers/platform/x86/lenovo-super-hotkey-wmi.c
->>>
->>> This name doesn't tell me a lot about the features of this driver. Is
->>> this the internal name of the WMI device?
->> Reference previous comment.
->> If you have a better proposal, let me know.
-> 
-> I propose lenovo-wmi-hotkey-utilities.c.
-> 
-> Let me know what you think about the description and name proposals.
-> 
-Fine,will update it next revision.
->>>
->>>> new file mode 100644
->>>> index 000000000000..86c3dc2009b8
->>>> --- /dev/null
->>>> +++ b/drivers/platform/x86/lenovo-super-hotkey-wmi.c
->>>> @@ -0,0 +1,222 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
->>>> + *
->>>> + *  Copyright (C) 2025	Lenovo
->>>> + */
->>>> +
->>>> +#include <linux/cleanup.h>
->>>> +#include <linux/dev_printk.h>
->>>> +#include <linux/device.h>
->>>> +#include <linux/leds.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/wmi.h>
->>>> +
->>>> +/* Lenovo Super Hotkey WMI GUIDs */
->>>> +#define LUD_WMI_METHOD_GUID	"CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
->>>> +
->>>> +/* Lenovo Utility Data WMI method_id */
->>>> +#define WMI_LUD_GET_SUPPORT 1
->>>> +#define WMI_LUD_SET_FEATURE 2
->>>> +
->>>> +#define WMI_LUD_GET_MICMUTE_LED_VER   20
->>>> +#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
->>>> +
->>>> +#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
->>>> +#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
->>>> +
->>>> +/* Input parameters to mute/unmute audio LED and Mic LED */
->>>> +struct wmi_led_args {
->>>> +	u8 id;
->>>> +	u8 subid;
->>>> +	u16 value;
->>>> +};
->>>> +
->>>> +/* Values of input parameters to SetFeature of audio LED and Mic LED */
->>>> +enum hotkey_set_feature {
->>>> +	MIC_MUTE_LED_ON = 1,
->>>> +	MIC_MUTE_LED_OFF,
->>>> +	AUDIO_MUTE_LED_ON = 4,
->>>
->>> Please align this values.
->> For this comment, I understand it should be as below. If my
->> understanding is insufficient,pls give me a sample to update it.
->>
->> +enum hotkey_set_feature {
->> +       MIC_MUTE_LED_ON   = 1,
->> +       MIC_MUTE_LED_OFF,
->> +       AUDIO_MUTE_LED_ON = 4,
->> +       AUDIO_MUTE_LED_OFF,
-> 
-> I'd go for:
-> 
-> 	MIC_MUTE_LED_ON		= 1,
-> 	MIC_MUTE_LED_ON		= 2,
-> 	AUDIO_MUTE_LED_ON	= 4,
-> 	AUDIO_MUTE_LED_OFF	= 5,
-> 
-> To be more explicit.
->
-OK, will update it next revision.
+From 0759d6b961946b7e5cfb19971d56f5493204301c Mon Sep 17 00:00:00 2001
+From: Heiko Carstens <hca@linux.ibm.com>
+Date: Thu, 13 Feb 2025 13:57:33 +0100
+Subject: [PATCH] s390: Sort mcount locations at build time
 
->>
->>
->>>
->>>> +	AUDIO_MUTE_LED_OFF,
->>>> +};
->>>> +
->>>> +#define LSH_ACPI_LED_MAX 2
->>>> +
->>>> +struct lenovo_super_hotkey_wmi_private {
->>>> +	struct led_classdev cdev[LSH_ACPI_LED_MAX];
->>>> +	struct wmi_device *led_wdev;
->>>> +};
->>>> +
->>>> +enum mute_led_type {
->>>> +	MIC_MUTE,
->>>> +	AUDIO_MUTE,
->>>> +};
->>>> +
->>>> +static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct led_classdev *led_cdev,
->>>> +				enum led_brightness brightness)
->>>> +
->>>> +{
->>>> +	struct lenovo_super_hotkey_wmi_private *wpriv = container_of(led_cdev,
->>>> +			struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
->>>> +	struct wmi_led_args led_arg = {0, 0, 0};
->>>> +	struct acpi_buffer input;
->>>> +	acpi_status status;
->>>> +
->>>> +	switch (led_type) {
->>>> +	case MIC_MUTE:
->>>> +		led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : MIC_MUTE_LED_OFF;
->>>> +		break;
->>>> +	case AUDIO_MUTE:
->>>> +		led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : AUDIO_MUTE_LED_OFF;
->>>> +		break;
->>>> +	default:
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	input.length = sizeof(led_arg);
->>>> +	input.pointer = &led_arg;
->>>> +	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_SET_FEATURE, &input, NULL);
->>>> +	if (ACPI_FAILURE(status))
->>>> +		return -EIO;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
->>>> +				     enum led_brightness brightness)
->>>> +
->>>> +{
->>>> +	return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
->>>> +}
->>>> +
->>>> +static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
->>>> +				   enum led_brightness brightness)
->>>> +{
->>>> +	return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
->>>> +}
->>>> +
->>>> +static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct device *dev)
->>>> +{
->>>> +	struct lenovo_super_hotkey_wmi_private *wpriv = dev_get_drvdata(dev);
->>>> +	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
->>>> +	struct acpi_buffer input;
->>>> +	int led_version, err = 0;
->>>> +	unsigned int wmiarg;
->>>> +	acpi_status status;
->>>> +
->>>> +	switch (led_type) {
->>>> +	case MIC_MUTE:
->>>> +		wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
->>>> +		break;
->>>> +	case AUDIO_MUTE:
->>>> +		wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
->>>> +		break;
->>>> +	default:
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	input.length = sizeof(wmiarg);
->>>> +	input.pointer = &wmiarg;
->>>> +	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_GET_SUPPORT, &input, &output);
->>>> +	if (ACPI_FAILURE(status))
->>>> +		return -EIO;
->>>> +
->>>> +	union acpi_object *obj __free(kfree) = output.pointer;
->>>> +	if (obj && obj->type == ACPI_TYPE_INTEGER) {
->>>> +		led_version = obj->integer.value;
->>>> +	} else {
->>>> +		err = -EIO;
->>>> +		return err;
->>>
->>> Return -EIO directly here and drop the braces on both branches.
->>>
->> OK, will update it next revision.
->>>> +	}
->>>> +
->>>> +	wpriv->cdev[led_type].max_brightness = LED_ON;
->>>> +	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
->>>> +
->>>> +	switch (led_type) {
->>>> +	case MIC_MUTE:
->>>> +		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
->>>> +			err = -EIO;
->>>> +			goto led_error;
->>>
->>> Return -EIO and drop brances.
->>>
->> OK, will update it next revision.
->>>> +		}
->>>> +		wpriv->cdev[led_type].name = "platform::micmute";
->>>> +		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
->>>> +		wpriv->cdev[led_type].default_trigger = "audio-micmute";
->>>> +
->>>> +		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->>>> +		if (err < 0)
->>>> +			goto led_reg_failed;
->>>> +
->>>> +		break;
->>>> +	case AUDIO_MUTE:
->>>> +		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
->>>> +			err = -EIO;
->>>> +			goto led_error;
->>>
->>> Return -EIO and drop brances.
->>>
->> OK, will update it next revision.
->>>> +		}
->>>> +		wpriv->cdev[led_type].name = "platform::mute";
->>>> +		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
->>>> +		wpriv->cdev[led_type].default_trigger = "audio-mute";
->>>> +
->>>> +		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->>>> +		if (err < 0)
->>>> +			goto led_reg_failed;
->>>> +
->>>> +		break;
->>>> +	default:
->>>> +		err = -EINVAL;
->>>> +		dev_err(dev, "Unknown LED type %d\n", led_type);
->>>> +		goto led_error;
->>>
->>> Return -EINVAL directly.
->>>
->> OK, will update it next revision.
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +
->>>> +led_reg_failed:
->>>> +	dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
->>>> +
->>>> +led_error:
->>>> +	return err;
->>>> +}
->>>> +
->>>> +static void lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
->>>> +{
->>>> +	lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
->>>> +	lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
->>>
->>> I wonder why you decided not to propagate errors of this calls. Maybe
->>> you are expecting one to fail but not the other?
->>>
->>> If this both fail this module would remain loaded for no reason, so
->>> maybe propagate some error in that case.
->>>
->> Oh, it's my fault. I'll update related source code as below.
->>
->> static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
->> {
->>           int err;
->>           err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
->>           if (err)
->>                   return err;
->>
->>           err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
->>           if (err)
->>                   return err;
->>
->>           return 0;
->> }
->>
->>>> +}
->>>> +
->>>> +static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, const void *context)
->>>> +{
->>>> +	struct lenovo_super_hotkey_wmi_private *wpriv;
->>>> +
->>>> +	wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
->>>> +	if (!wpriv)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	dev_set_drvdata(&wdev->dev, wpriv);
->>>> +	wpriv->led_wdev = wdev;
->>>> +	lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] = {
->>>> +	{ LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
->>>
->>> Maybe drop this comment.
->>>
->>   From Lenovo Keyboard WMI Specification V3.6, there're 3 WMI GUIDs at
->> least now. I hope to keep the comment which should be helpful for new
->> developer of this driver.
-> 
-> Then it's fine IMO.
-> 
-It's glad for me to get your feedback quickly.I'll submit next version 
-patch tomorrow, due to my laptop with develop environment in office and 
-I'm back home now.
-Thanks Kurt for your suggestions, again.
+For s390 the mcount_loc section of the kernel image contains the addresses
+of the mcount locations. All addresses will be adjusted with the same
+offset by the decompressor before the kernel is started.
 
-  Jackie Dong
+Therefore select HAVE_BUILDTIME_MCOUNT_SORT so that the entries of this
+section are sorted at build time. Given that the same offset is applied to
+all entries the section will be sorted in any case.
 
+Note that this was not possible before commit 778666df60f0 ("s390: compile
+relocatable kernel without -fPIE"). Since this commit all R_390_64 absolute
+relocations are handled in a special way: only the address of the to be
+changed location is put into a special section. For all those locations the
+same offset is applied as described above.
 
+Without that change it would have been necessary to also adjust the addend
+of all relocations which correspond to the mcount_loc section, when sorting
+the mcount_loc section.
+
+Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Closes: https://lore.kernel.org/r/20250210142647.083ff456@gandalf.local.home/
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ arch/s390/Kconfig                 | 1 +
+ arch/s390/configs/debug_defconfig | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 9c9ec08d78c7..acaa1d1c12b2 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -185,6 +185,7 @@ config S390
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+ 	select HAVE_ARCH_VMAP_STACK
+ 	select HAVE_ASM_MODVERSIONS
++	select HAVE_BUILDTIME_MCOUNT_SORT
+ 	select HAVE_CMPXCHG_DOUBLE
+ 	select HAVE_CMPXCHG_LOCAL
+ 	select HAVE_DEBUG_KMEMLEAK
+diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
+index d6beec5292a0..a2b0444b7d6b 100644
+--- a/arch/s390/configs/debug_defconfig
++++ b/arch/s390/configs/debug_defconfig
+@@ -887,6 +887,7 @@ CONFIG_USER_EVENTS=y
+ CONFIG_HIST_TRIGGERS=y
+ CONFIG_FTRACE_STARTUP_TEST=y
+ # CONFIG_EVENT_TRACE_STARTUP_TEST is not set
++CONFIG_FTRACE_SORT_STARTUP_TEST=y
+ CONFIG_SAMPLES=y
+ CONFIG_SAMPLE_TRACE_PRINTK=m
+ CONFIG_SAMPLE_FTRACE_DIRECT=m
+-- 
+2.45.2
 
