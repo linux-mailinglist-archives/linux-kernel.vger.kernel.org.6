@@ -1,152 +1,532 @@
-Return-Path: <linux-kernel+bounces-512914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CF5A33F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:30:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AA1A33F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:35:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A248316A599
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08078188C835
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0516D22157B;
-	Thu, 13 Feb 2025 12:29:26 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A178623A990;
+	Thu, 13 Feb 2025 12:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OVwdSG1v"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA13221571;
-	Thu, 13 Feb 2025 12:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCA0227E90
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449765; cv=none; b=edZ9qqS4txttSyLoqhXK463BHfAsxzhqFt3gvJS45dkH2m399Vgz2kD/kK6S0WeUcv1PcyRke86odXfMrn0xpIkTrQtefBah+1Qe6GtKvepsbpPauw+ZzfD5nIx3f5lgir4agJlZFgqTrCT+8iYPPjraAF8XJYmmfVN5cq4KQds=
+	t=1739450066; cv=none; b=D6D3bmHN9QGQmG25d6SqSqC0GthErcgEuFSgndMlQjbnDAXQbLVziGj4iuuTUtFRboJYcFq1XMkLJcIlXfivXFwspnSijsASq6z6kN3uXEXCHHDm3QIBrmufH2imXurupcXFLqEvOlw6+1NkiKvtWxr+TOJG+xC/cW9+Q83YalY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449765; c=relaxed/simple;
-	bh=jk00WPfjJdRWwtvttDxvBjbhGSoB2MNZaLTlNQA5q0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yvf5n4n4o4fgWhNsWqEIBFAy71wZzqhyHLd0S88zRj6NX7fWFQaj+PYQJI/gg46kPSLDISlq8LJnZv3gr0IW8gt+0NwKj8ljrW/J3a/Tdlshi7lFB34C1+Ybdb2i47WuRwduYV7XTvjnknTcGjNn8MGWnaEd4vh9wm8hj0w5Voc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5de4d3bbc76so1271675a12.3;
-        Thu, 13 Feb 2025 04:29:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739449762; x=1740054562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CgbbSoqNFmU6PToV+GxUdXGITf/t3e7ENN5LNLiqK/k=;
-        b=j34ZLAaHXdX3Igo7NlWvKBIia4dHvfvgnzbAwsgcYFmsqctTD2Myv9KBxYiiu/TAOO
-         hdgzuOBlLw46AFfHwmMultch5poUbUVR7TN9GLKNlVzstnuwp3go9gBIKCf33o09VCR5
-         KY6FUWz/fgsoSvpWAbIyYF2Q4wQ4fjlJwozJxKKKWXBN53wVIA8oEe+zwizEQTZP8Rbl
-         jlrdYvQ/UNlJiVjj2/45mpxtji19H7K2zsYgF7tilBTQao17pJHoeRmSLVgiUo1wJcjH
-         KNKVuEzpUbcWUxBYaoRaYb1UDraWNus7UDZNPay4ju8iaGoliW+fVk5dXTScxG2ldGCh
-         1VdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBS3IjkSKCRu1tIEbOczoMFsZKCteeFbJSW2LXUfW2zo6EU/zh3+h/QyaQVZ7+fKsfR155wtG3@vger.kernel.org, AJvYcCWOZ3/wiaBWhIBrfIaczvBFjDYCyDvddDl/C5d7YKSrNCizrW3tlOKIH3qCgwPShQYG99zVJeWf8Hax3Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysEbgnQ8VfjVHScfHmd2MoLFn3kGjQMXuyd+tBaoI0wQEUYm+r
-	cx9WJPpLHtez3a1iDMXV/PDZx9UZ5R39+O356uY8X6BbcuhwsASXAyAaIQ==
-X-Gm-Gg: ASbGncuplRtohvhDIXFP4kBwIVC5ObwkjyUL2wTxE/GrdTUV2sMoOdlbV3o4Jbws2Tr
-	cyMpo/hWpJvSdBxXSFtV9O3Q9ZujpW9LWB4I1fMtLDHu0V7c8F55nWg0J23WL9RQZBoI9x2jRZt
-	1nW5TeDj4CNvfxhURp2F+zvRzHZfebe07vKQK9caOt46EMvsTAWLMZO77pJ9vjNZYwLkkKx1D9L
-	1qe2JL402VRmkGpP0/wGY8GOENYUHYj+nys6XXfAzuw41oDo7TgcpQsxn+KeOTFc/wzdD58VTSG
-	8ijhng==
-X-Google-Smtp-Source: AGHT+IHlD7EZ96Fa7vEuM/9HfDXXGjQewjt4jeNY1VIxvsQQjy2gdZAqHyHU0camMc4QmRQiIy2F9Q==
-X-Received: by 2002:a05:6402:5203:b0:5da:d76:7b2e with SMTP id 4fb4d7f45d1cf-5deadcfc25cmr6837787a12.0.1739449761469;
-        Thu, 13 Feb 2025 04:29:21 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece287e2asm1085490a12.71.2025.02.13.04.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 04:29:20 -0800 (PST)
-Date: Thu, 13 Feb 2025 04:29:17 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, dsahern@kernel.org,
-	edumazet@google.com, horms@kernel.org, kernel-team@meta.com,
-	kuba@kernel.org, kuniyu@amazon.co.jp, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com, ushankar@purestorage.com
-Subject: Re: [PATCH net-next v3 2/3] net: Add dev_getbyhwaddr_rtnl() helper
-Message-ID: <20250213-accomplished-chamois-of-vigor-b324af@leitao>
-References: <20250213-prudent-olivine-bobcat-ffa64f@leitao>
- <20250213105217.37429-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1739450066; c=relaxed/simple;
+	bh=OQH0XZWWhIwEuxvx+K7mtqzq6AuFdlFyDeWf/6DM7ps=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C+5iffWMMdWwScOwERyBMa+Yqvhvk5Cp33sA4xb3u17hoFszY1f7nAVd78WuL1YDq3rf7I54E4CJIDhkEqzfhhx4G2Af2iMG5qDi1D9rmMdAG0R6tuAeXFWiCda4B/uWgiivg65UGqFe7oBPP7RCySs5rUG2lg/FQ2/9ZIfdMvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OVwdSG1v; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8c6e790e-f1b6-46ab-9acf-bdea8076405b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739450060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bemDLFLu/fe7Io6gFtEICZLhavceAM8sYoIl7bI+PpY=;
+	b=OVwdSG1vJ41RyjrDnWJi444uax7Jq5jLVll0fNmgy03GrCcPBhkf9PMe3JTeuTBHMFNsmo
+	at4H/uRBwOj1k4F2ZJdUuos6lFtUCBMh/QcnhVcEC6+AG/v5BjxeHmmyGfPJdUYe0sMZpx
+	jqJf20aKcSCwTHg6nvy9CxfhkcJ69gk=
+Date: Thu, 13 Feb 2025 18:03:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213105217.37429-1-kuniyu@amazon.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Subject: Re: [PATCH v5 2/3] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>
+References: <20250209160925.380348-1-aradhya.bhatia@linux.dev>
+ <20250209160925.380348-3-aradhya.bhatia@linux.dev>
+ <16db8f3d-04a2-408a-964f-4cf9478229b4@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <16db8f3d-04a2-408a-964f-4cf9478229b4@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 13, 2025 at 07:52:17PM +0900, Kuniyuki Iwashima wrote:
-> From: Breno Leitao <leitao@debian.org>
-> Date: Thu, 13 Feb 2025 02:29:38 -0800
-> > Hello Kuniyuki,
-> > 
-> > On Thu, Feb 13, 2025 at 04:31:29PM +0900, Kuniyuki Iwashima wrote:
-> > > > Subject: [PATCH net-next v3 2/3] net: Add dev_getbyhwaddr_rtnl() helper
-> > > 
-> > > s/_rtnl//
-> > 
-> > Ack!
-> > 
-> > > looks like Uday's comment was missed due to the lore issue.
-> > 
-> > hmm, I haven't seen Uday's comment. Didn't it reach lore?
-> 
-> I saw the reply and my another one on lore but somehow they
-> were removed :)
-> 
-> 
-> > 
-> > > From: Breno Leitao <leitao@debian.org>
-> > > Date: Wed, 12 Feb 2025 09:47:25 -0800
-> > > > +/**
-> > > > + *	dev_getbyhwaddr - find a device by its hardware address
-> > > 
-> > > While at it, could you replace '\t' after '*' to a single '\s'
-> > > for all kernel-doc comment lines below ?
-> > > 
-> > > 
-> > > > + *	@net: the applicable net namespace
-> > > > + *	@type: media type of device
-> > > > + *	@ha: hardware address
-> > > > + *
-> > > > + *	Similar to dev_getbyhwaddr_rcu(), but the owner needs to hold
-> > > > + *	rtnl_lock.
-> > > 
-> > > Otherwise the text here is mis-aligned.
-> > 
-> > Sorry, what is misaligned specifically? I generated the documentation,
-> > and I can't see it misaligned.
-> > 
-> > This is what I see when generating the document (full log at
-> > https://pastebin.mozilla.org/YkotEoHh#L250,271)
-> > 
-> > 
-> > 	dev_getbyhwaddr_rcu(9)                                                         Kernel Hacker's Manual                                                         dev_getbyhwaddr_rcu(9)
-> > 
-> > 	NAME
-> > 	dev_getbyhwaddr_rcu - find a device by its hardware address
-> > 
-> > 	SYNOPSIS
-> > 	struct net_device * dev_getbyhwaddr_rcu (struct net *net , unsigned short type , const char *ha );
-> > 
-> > 	ARGUMENTS
-> > 	net         the applicable net namespace
-> > 
-> > 	type        media type of device
-> > 
-> > 	ha          hardware address
-> > 
-> > 			Search for an interface by MAC address. Returns NULL if the device is not found or a pointer to the device.  The caller must hold RCU.  The returned  device  has
->                         ^^^^^^
-> This scentence starts from a weird position when we use '\t' after '*'.
-> You will see it start from the head if '\s' follows '*'.
->
+Hi Tomi,
 
-Makes sense. All of these functions on that file is misaligned.
+Thank you for reviewing the patches!
 
-Having it aligned will add the section under "DESCRIPTION" manpage
-section.
+On 11/02/25 17:54, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 09/02/2025 18:09, Aradhya Bhatia wrote:
+>> From: Aradhya Bhatia <a-bhatia1@ti.com>
+>>
+>> The OLDI transmitters (TXes) do not have registers of their own, and are
+>> dependent on the source video-ports (VPs) from the DSS to provide
+>> configuration data. This hardware doesn't directly sit on the internal
+>> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
+>> supposed to be child nodes under the DSS, and not independent devices.
+>>
+>> Two of the OLDI TXes can function in tandem to output dual-link OLDI
+>> output, or cloned single-link outputs. In these cases, one OLDI will be
+>> the primary OLDI, and the other one, a companion. The following diagram
+>> represents such a configuration.
+>>
+>> +-----+-----+         +-------+
+>> |     |     |         |       |
+>> |     | VP1 +----+--->+ OLDI0 |  (Primary - may need companion)
+>> |     |     |    |    |       |
+>> | DSS +-----+    |    +-------+
+>> |     |     |    |
+>> |     | VP2 |    |    +-------+
+>> |     |     |    |    |       |
+>> +-----+-----+    +--->+ OLDI1 |  (Companion OLDI)
+>>                        |       |
+>>                        +-------+
+>>
+>> The DSS in AM625 SoC has a configuration like the one above. The AM625
+>> DSS VP1 (port@0) can connect and control 2 OLDI TXes, to use them in
+>> dual-link or cloned single-link OLDI modes. It is only the VP1 that can
+>> connect to either OLDI TXes for the AM625 DSS, and not the VP2.
+>>
+>> Alternatively, on some future TI SoCs, along with the above
+>> configuration, the OLDI TX can _also_ connect to separate video sources,
+>> making them work entirely independent of each other. In this case,
+>> neither of the OLDIs are "companion" or "secondary" OLDIs, and nor do
+>> they require one. They both are independent and primary OLDIs. The
+>> following diagram represents such a configuration.
+>>
+>> +-----+-----+               +-------+
+>> |     |     |               |       |
+>> |     | VP1 +--+----------->+ OLDI0 |  (Primary - may need companion)
+>> |     |     |  |            |       |
+>> |     +-----+  |            +-------+
+>> |     |     |  |
+>> |     | VP2 |  |
+>> |     |     |  |
+>> | DSS +-----+  |   +---+    +-------+
+>> |     |     |  +-->+ M |    |       |
+>> |     | VP3 +----->+ U +--->+ OLDI1 |  (Companion or Primary)
+>> |     |     |      | X |    |       |
+>> |     +-----+      +---+    +-------+
+>> |     |     |
+>> |     | VP4 |
+>> |     |     |
+>> +-----+-----+
+>>
+>> Note that depending on the mux configuration, the OLDIs can either be
+>> working together in tandem - sourced by VP1, OR, they could be working
+>> independently sourced by VP1 and VP3 respectively.
+>> The idea is to support all the configurations with this OLDI TX schema.
+>>
+>> The OLDI functionality is further supported by a system-control module,
+>> which contains a few registers to control OLDI IO power and other
+>> electrical characteristics of the IO lanes.
+>>
+>> Add devicetree binding schema for the OLDI TXes to support various
+>> configurations, and extend their support to the AM625 DSS.
+>>
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+>> ---
+>>   .../bindings/display/ti/ti,am625-oldi.yaml    |  88 ++++++++++
+>>   .../bindings/display/ti/ti,am65x-dss.yaml     | 154 ++++++++++++++++++
+>>   MAINTAINERS                                   |   1 +
+>>   3 files changed, 243 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/ti/
+>> ti,am625-oldi.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-
+>> oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-
+>> oldi.yaml
+>> new file mode 100644
+>> index 000000000000..42a80a512660
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>> @@ -0,0 +1,88 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Texas Instruments AM625 OLDI Transmitter
+>> +
+>> +maintainers:
+>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> +  - Aradhya Bhatia <aradhya.bhatia@linux.dev>
+>> +
+>> +description:
+>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports
+>> serialized RGB
+>> +  pixel data transmission between host and flat panel display over
+>> LVDS (Low
+>> +  Voltage Differential Sampling) interface. The OLDI TX consists of
+>> 7-to-1 data
+>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the
+>> LVDS output
+>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit
+>> RGB or
+>> +  padded and un-padded 18-bit RGB bus formats as input.
+>> +
+>> +properties:
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: serial clock input for the OLDI transmitters
+>> +
+>> +  clock-names:
+>> +    const: serial
+>> +
+>> +  ti,companion-oldi:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle to companion OLDI transmitter. This property is
+>> mandatory for the
+>> +      primarty OLDI TX if the OLDI TXes are expected to work either
+>> in dual-lvds
+>> +      mode or in clone mode. This property should point to the
+>> secondary OLDI
+>> +      TX.
+>> +
+>> +  ti,secondary-oldi:
+>> +    type: boolean
+>> +    description:
+>> +      Boolean property to mark the OLDI transmitter as the secondary
+>> one, when the
+>> +      OLDI hardware is expected to run as a companion HW, in cases of
+>> dual-lvds
+>> +      mode or clone mode. The primary OLDI hardware is responsible
+>> for all the
+>> +      hardware configuration.
+> 
+> I think these work, but I'm wondering if we would ever need to check
+> something from the main oldi from the secondary oldi. In that case
+> "crossed phandles" would be better, i.e. something like:
+> 
+> (in the first oldi:)
+> ti,slave-oldi = <phandle-to-second-oldi>
+> 
+> (in the second oldi:)
+> ti,master-oldi = <phandle-to-first-oldi>
+
+When I had first designed the code and the devicetree for OLDI, it was
+done so with the belief that we wouldn't reqiure a bridge instance for
+the secondary OLDI, at all.
+
+While that idea holds true for dual-lvds configuration, it doesn't so
+for the clone mode configuration. For clone mode, as you pointed out, we
+will require a 2nd bridge instance to configure any of the bridges and
+panels that come after the 2nd OLDI.
+
+
+> 
+> Then again, if we ever need that, even with these bindings the driver
+> could find the first oldi, but needs to go via the dss's node.
+
+While it is possible to do it this way, it might not be the cleanest
+one. And _if_ there is a ever a DSS in future with more than 2 OLDI
+TXes, say 4, then the decipher logic may get too complicated.
+
+While I cannot think of any case where the secondary OLDI bridge DT
+might need to access the primary OLDI bridge at the moment, I wonder if
+we should play it safer and have this option anyway.
+
+Maybe something like this?
+
+(primary OLDI)
+ti,primary-oldi;
+ti,companion-oldi = <phandle-to-secondary-oldi>;
+
+(secondary OLDI)
+ti,secondary-oldi;
+ti,companion-oldi = <phandle-to-primary-oldi>;
+
+I will have to drop the condition below, and add ti,primary-oldi
+property.
+
+> 
+> So, just a thought.
+> 
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> 
+> 
+>> +  ti,oldi-io-ctrl:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle to syscon device node mapping OLDI IO_CTRL registers
+>> found in the
+>> +      control MMR region. These registers are required to toggle the
+>> I/O lane
+>> +      power, and control its electrical characteristics.
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: Parallel RGB input port
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: LVDS output port
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@1
+>> +
+>> +allOf:
+>> +  - if:
+>> +      required:
+>> +        - ti,secondary-oldi
+>> +    then:
+>> +      properties:
+>> +        ti,companion-oldi: false
+>> +
+
+(this condition)
+
+>> +required:
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - ti,oldi-io-ctrl
+>> +  - ports
+>> +
+>> +additionalProperties: false
+>> +
+>> +...
+>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-
+>> dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> index 399d68986326..a82c525631ea 100644
+>> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>> @@ -91,6 +91,24 @@ properties:
+>>             For AM625 DSS, the internal DPI output port node from video
+>>             port 1.
+>>             For AM62A7 DSS, the port is tied off inside the SoC.
+>> +        properties:
+>> +          endpoint@0:
+>> +            $ref: /schemas/graph.yaml#/properties/endpoint
+>> +            description:
+>> +              For AM625 DSS, VP Connection to OLDI0.
+>> +              For AM65X DSS, OLDI output from the SoC.
+>> +
+>> +          endpoint@1:
+>> +            $ref: /schemas/graph.yaml#/properties/endpoint
+>> +            description:
+>> +              For AM625 DSS, VP Connection to OLDI1.
+>> +
+>> +        anyOf:
+>> +          - required:
+>> +              - endpoint
+>> +          - required:
+>> +              - endpoint@0
+>> +              - endpoint@1
+>>           port@1:
+>>           $ref: /schemas/graph.yaml#/properties/port
+>> @@ -112,6 +130,25 @@ properties:
+>>         Input memory (from main memory to dispc) bandwidth limit in
+>>         bytes per second
+>>   +  oldi-transmitters:
+>> +    description:
+>> +      Child node under the DSS, to describe all the OLDI transmitters
+>> connected
+>> +      to the DSS videoports.
+>> +    type: object
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 1
+>> +
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      '^oldi@[0-1]$':
+>> +        $ref: ti,am625-oldi.yaml#
+>> +        description: OLDI transmitters connected to the DSS VPs
+>> +
+>>   allOf:
+>>     - if:
+>>         properties:
+>> @@ -120,10 +157,25 @@ allOf:
+>>               const: ti,am62a7-dss
+>>       then:
+>>         properties:
+>> +        oldi-transmitters: false
+>>           ports:
+>>             properties:
+>>               port@0: false
+>>   +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: ti,am65x-dss
+>> +    then:
+>> +      properties:
+>> +        oldi-transmitters: false
+>> +        ports:
+>> +          properties:
+>> +            port@0:
+>> +              properties:
+>> +                endpoint@1: false
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -171,3 +223,105 @@ examples:
+>>               };
+>>           };
+>>       };
+>> +
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>> +
+>> +    bus {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +        dss1: dss@30200000 {
+>> +            compatible = "ti,am625-dss";
+>> +            reg = <0x00 0x30200000 0x00 0x1000>, /* common */
+>> +                  <0x00 0x30202000 0x00 0x1000>, /* vidl1 */
+>> +                  <0x00 0x30206000 0x00 0x1000>, /* vid */
+>> +                  <0x00 0x30207000 0x00 0x1000>, /* ovr1 */
+>> +                  <0x00 0x30208000 0x00 0x1000>, /* ovr2 */
+>> +                  <0x00 0x3020a000 0x00 0x1000>, /* vp1 */
+>> +                  <0x00 0x3020b000 0x00 0x1000>, /* vp2 */
+>> +                  <0x00 0x30201000 0x00 0x1000>; /* common1 */
+>> +            reg-names = "common", "vidl1", "vid",
+>> +                        "ovr1", "ovr2", "vp1", "vp2", "common1";
+>> +            power-domains = <&k3_pds 186 TI_SCI_PD_EXCLUSIVE>;
+>> +            clocks =        <&k3_clks 186 6>,
+>> +                            <&vp1_clock>,
+>> +                            <&k3_clks 186 2>;
+>> +            clock-names = "fck", "vp1", "vp2";
+>> +            interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+>> +            oldi-transmitters {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +                oldi0: oldi@0 {
+>> +                    reg = <0>;
+>> +                    clocks = <&k3_clks 186 0>;
+>> +                    clock-names = "serial";
+>> +                    ti,companion-oldi = <&oldi1>;
+>> +                    ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
+>> +                    ports {
+>> +                        #address-cells = <1>;
+>> +                        #size-cells = <0>;
+>> +                        port@0 {
+>> +                            reg = <0>;
+>> +                            oldi0_in: endpoint {
+>> +                                remote-endpoint = <&dpi0_out0>;
+>> +                            };
+>> +                        };
+>> +                        port@1 {
+>> +                            reg = <1>;
+>> +                            oldi0_out: endpoint {
+>> +                                remote-endpoint = <&panel_in0>;
+>> +                            };
+>> +                        };
+>> +                    };
+>> +                };
+>> +                oldi1: oldi@1 {
+>> +                    reg = <1>;
+>> +                    clocks = <&k3_clks 186 0>;
+>> +                    clock-names = "serial";
+>> +                    ti,secondary-oldi;
+>> +                    ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
+>> +                    ports {
+>> +                        #address-cells = <1>;
+>> +                        #size-cells = <0>;
+>> +                        port@0 {
+>> +                            reg = <0>;
+>> +                            oldi1_in: endpoint {
+>> +                                remote-endpoint = <&dpi0_out1>;
+>> +                            };
+>> +                        };
+>> +                        port@1 {
+>> +                            reg = <1>;
+>> +                            oldi1_out: endpoint {
+>> +                                remote-endpoint = <&panel_in1>;
+>> +                            };
+>> +                        };
+>> +                    };
+>> +                };
+>> +            };
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +                port@0 {
+>> +                    #address-cells = <1>;
+>> +                    #size-cells = <0>;
+>> +                    reg = <0>;
+>> +                    dpi0_out0: endpoint@0 {
+>> +                        reg = <0>;
+>> +                        remote-endpoint = <&oldi0_in>;
+>> +                    };
+>> +                    dpi0_out1: endpoint@1 {
+>> +                        reg = <1>;
+>> +                        remote-endpoint = <&oldi1_in>;
+>> +                    };
+>> +                };
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    dpi1_out: endpoint {
+>> +                        remote-endpoint = <&hdmi_bridge>;
+>> +                    };
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 0fa7c5728f1e..88fa2d9435b8 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7816,6 +7816,7 @@ M:    Tomi Valkeinen
+>> <tomi.valkeinen@ideasonboard.com>
+>>   L:    dri-devel@lists.freedesktop.org
+>>   S:    Maintained
+>>   T:    git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>> +F:    Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>   F:    Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+>>   F:    Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+>>   F:    Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+> 
+
+-- 
+Regards
+Aradhya
+
 
