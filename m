@@ -1,245 +1,212 @@
-Return-Path: <linux-kernel+bounces-512594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECBBA33B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:36:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEDAA33B53
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EC3C164687
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA5518881CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7455320D50E;
-	Thu, 13 Feb 2025 09:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3220AF87;
+	Thu, 13 Feb 2025 09:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="pN00AFFh"
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gfk40apN"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40DB2054EF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288D120D4EF;
+	Thu, 13 Feb 2025 09:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739439388; cv=none; b=XD71jMhKi+9nQrdhWu4w8xTbTk7xDUGQENxQR8PKPyiZD9c0en9r6bZAS0IidoAZNNZ7HEujnlA31etdExZ/zwFjr26hb24DRgJ9Qk3QBVRYmWqClASfnk9bxGsR3p2M1nkZVn98BZUCNjhAW+FTqHiUbjATCJXCCV/PvXnZpSA=
+	t=1739439488; cv=none; b=sKDJJwwoKz9BHzuLULpjSCwuV3GHIDIjzSyuJbWk9hCdhd8cjlGNa7EbuaqT+zaVk4Xgal1CU8NST2ExZmSKoYvNsdxGLJQ7jmLYy8OLpflzQzooSlHaFIBzEYqkZFFvKNyovoKfQfstVFTsCCla8zY0fmxTcQuavXSHygKDtqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739439388; c=relaxed/simple;
-	bh=Xks2AQtjxvwrChkFZ7xuO3536ffvDP4GEU/rf8lq8O0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=q7wZr6xxrSKehfGuKF0JsnFj21bYQwLL9V0rxnL4TJf7vT/YJCzLg9nWwjE/jAhVNNNJAa2DyVWNBdc6ZcYpnC7s0+5hOjH2mb+acPiEWPOyybkY5kFgGGM4GKagWngmmNO3Mdo/7dUGePrZamIm53ELB1/FTIRKOMlMaMufyn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=pN00AFFh; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id BD9018D;
-	Thu, 13 Feb 2025 10:36:22 +0100 (CET)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id vyuxYidFWxHH; Thu, 13 Feb 2025 10:36:17 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 42DDE8C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1739439377; bh=tekiVTTfZtySu8YWP1V86LIjTypYcpB753wIT4hhcTQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pN00AFFhtcM/umMlPMpNtIod+kHg6/wtNEoFt1g8Q/qNL1lyVAhggf++Y5MyoysB5
-	 zaAPRiVtk0kSOn1A35vOe1o5vsye3N4BRbCCMFHSCD9q2AIY2wwt1A2do53Z9gRCFJ
-	 LaXJxi8B6UXJgBomP+hW7bQqo95G3sG9j5OqkrgDb9A//C+JtmJ1zxEH15DL1dGHgY
-	 Jk0Nfn0AmxCC0ZbQb9JsKkvSNNIKcwObqK0YGZYbi2sASF0U4Yve8EU6GgElxKWqcH
-	 XR1QJFsoexjwZ08gLBBcxbboAcLUQjuobyubqXUBm926/6umPy4t6Jnl5ZTowNTIix
-	 TiB2dtW42I2zg==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id 42DDE8C;
-	Thu, 13 Feb 2025 10:36:17 +0100 (CET)
+	s=arc-20240116; t=1739439488; c=relaxed/simple;
+	bh=OJMyPvJ9Xja01/DX2ZKSXrF1TaukTR4zVn8V8THvDeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BAXF46fsHoW7j3iab0+PuppdroFNzyH/hBtFXUkOaR6xGNtKLgtkG7nB0u8dSg1jFImtlXi0PC3N3MPHoCR9xGp/VF50tfeFl1y4bO/GKLINgG6s+3IKxula7sHoN69/gJJzu+eDLGxEqm6SbcDVkTnbpdALsI7N6tobNu8W2OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gfk40apN; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51faf3342b3so189085e0c.2;
+        Thu, 13 Feb 2025 01:38:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739439485; x=1740044285; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Do0/WPilau4ooK+L0ONiTGLsYWj0jYE1EjbzMsQjJp0=;
+        b=Gfk40apNiC9pXoLz11Nbiy+Qm83hJM2UdOBW2DllvOn/KFwIDv4pWPxskpy8vFqjxz
+         JjLYfY0pZTeduvKLvujF2ShrEvd+G8e68Npn9500FiVeui8e1sGSB20pyYHnqKz7Lk0q
+         EYpPii/yol3VZlF94epZ4/SxIeG8W5SVSiSmAPcPlouAeNN1WjPtn01i0Y/gOeQXgGsm
+         bUK64MeoZDcewqfvzAy6sjd9EPNd4CmDvTp3msS9mICV/bsmka6rOfZTxkaoP2Uj2Jig
+         YLvuj1ypTnDjTaDdLHJLiFPwFWSq+nWUL97PiO7omT5VfemgBmHY4mUYNyDHVvVhyxCu
+         Dlow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739439485; x=1740044285;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Do0/WPilau4ooK+L0ONiTGLsYWj0jYE1EjbzMsQjJp0=;
+        b=ddST9RRcCw9WTHfydfr6Snjt5tqyZNeC53iCj5n0VpAqRPdFHAXhutx2i9x8q8viU2
+         JojxBCeIjWKi8P72AvubIVyMYTZb+JyOfh2K37lunfP1xXPMyIVC0KRPvpeqidMHg6sU
+         aEiK+zKEFf1UeJ/ZEsmGcci6frxC2FvcC8d63p3IWVYU/xfuOqdcIN5ZL/XBG+JDKzTS
+         yJIL8OdrVzNA253zBReVpyOuNQ7UdNpoIyo+nlHC96ouJ1M2LCYTd2WBi0n+zXmukSxr
+         CAwpdyFQsfGWTBeWLAoVL6nLeUKG7rfSJkb7GLZ3ST9dUyvlZeHX5X74XX6/peoKptbx
+         4+cg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Hzl1e4+EYJLPMLZg4FyuObNw3EyNeKAIeK7AmaSbFB/p6L9nl+oXBR0g38BY49jYPGD48mO871ASPBkcwwoPFRg=@vger.kernel.org, AJvYcCX5WGbqA2W43tQQgR50yyAr1gHX8VcWTqZO1Xp2GkQfpkqd3CtpS9rP6/nWSzjNTdu40odRkUimVayK/UY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhOUmPGc0AMGnlKBlBVMNzLZqvpjN9FxbKgKXtHaJp7yUNSkYv
+	jhjm/G0mzknTg4MUcm/7GnJn8zz2B4Q/t5PSZUzvaeSeWv1BLL1l/p+JyQLIFol2ec4g7bVKpG4
+	HpDmoV2RMBrWiwyILmXy4NrqG9qk=
+X-Gm-Gg: ASbGncsVXc4hgoBgV9LRpob8tsYFxOTDZ/3TeFi+N7yb2BVQg1SyOAp4RdUWpwH7jDP
+	XLTAsfLcPdmxHi/I1LSH/IDK2SHus5h/rDcRrivy5Se+buBQfw4b+3PjdUPIGzEukrgdcN99vFm
+	2F7+Kwji+4y8TYOvjnKcUHJMsY0uU5/w==
+X-Google-Smtp-Source: AGHT+IHFRyFDSjT12HnWSaV6WILkXQSsSuLhFI4b+GzNUMD9PsTnXsgwe8zzsWccRhv4HeiIWGavFLpiIowjhUpYU+w=
+X-Received: by 2002:a05:6122:65a2:b0:515:4b68:c37f with SMTP id
+ 71dfb90a1353d-52067cfe3b1mr6381091e0c.6.1739439484797; Thu, 13 Feb 2025
+ 01:38:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 13 Feb 2025 10:36:17 +0100
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, airlied@redhat.com, Jocelyn Falempe
- <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
-In-Reply-To: <984c317de1027f5886390a65f1f66126@3xo.fr>
-References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
- <194c4656963debcf074d87e89ab1a829@3xo.fr>
- <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
- <984c317de1027f5886390a65f1f66126@3xo.fr>
-Message-ID: <f3035876f984f7439fa66ab8ec13dfc0@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250212182034.366167-1-fabrizio.castro.jz@renesas.com> <20250212182034.366167-2-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250212182034.366167-2-fabrizio.castro.jz@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Feb 2025 09:37:38 +0000
+X-Gm-Features: AWEUYZnlz0g0E5bM5VdYEG5J3JNA_zClGwtQILbF3AJ345HcSj1jSm26h_tutGE
+Message-ID: <CA+V-a8uPQxraOnVnafO-Ovk=inrzJWG+ySK5uO2uBOuXEDx+tA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] irqchip/renesas-rzg2l: Use local dev pointer in rzg2l_irqc_common_init()
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the noise, html was rejected by linux-kernel@vger.kernel.org 
-so resending this mail in plain text
+On Wed, Feb 12, 2025 at 6:22=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+>
+> Replace direct references to `&pdev->dev` with the local `dev` pointer
+> in rzg2l_irqc_common_init() to avoid redundant dereferencing.
+>
+> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+> Hi Geert,
+>
+> I have taken the liberty of adding your Suggested-by, I hope that's
+> okay?
+>
+> I have also added a few more patches to further tidy up
+> rzg2l_irqc_common_init().
+>
+> Thanks!
+>
+> Fab
+> ---
+>  drivers/irqchip/irq-renesas-rzg2l.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Regards
-Nicolas
+Cheers,
+Prabhakar
 
-Le 2025-02-13 10:27, Nicolas Baranger a écrit :
-
-> Dear Thomas
-> 
-> Thanks for answer and help.
-> 
-> Yes, due to .date total removal in linux 6.14 
-> (https://github.com/torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd) 
-> the last DKMS sources are :
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/
-> 
-> You can also find this sources in directory drivers/gpu/drm/ast_new of 
-> the tarball 
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/linux-6.14.0.1-ast1.15.1-rc2_nba0_20250212.tar.gz
-> 
-> I'm surprised by the fact the in-kernel driver 0.1.0 is more advanced 
-> than Aspeed version 1.15.1 because on my system it has very poor 
-> rendering and is very slow, twinkle is high and had poor colors.
-> The screen flickering is high and it's like if I was using a very old 
-> cathode ray tube monitor (In fact I'm using a SAMSUNG LCD monitor which 
-> is perfectly functionnal and which display a nice and eyes confortable 
-> picture when using ast 1.15.1 driver or the video output of the Nvidia 
-> GPU ).
-> 
-> My testing system is a test Xeon server with an AST2400 BMC with its 
-> AST VGA card as the main video output (to be able to have a screen on 
-> the BMC KVM) +a discrete NVIDIA GPU I'm using for GPGPU and 3D 
-> rendering with Nvidia prime render offload.
-> What I constat with embed kernel driver 0.1.0 is that the Xeon 
-> processor is doing the video job for example when watching a video, and 
-> it's not the case with version 1.15.1 even when displaying on the AST 
-> VGA card a vulkan rotating cube (compute by nvidia GPU with nvidia 
-> prime but display by the AST VGA card of the AST2400).
-> Note that with in-kernel version 0.1.0 it's nearly impossible to make 
-> round the vulkan cube at more than half a round by  second where it's 
-> working (very) fine for a 32MB video memory card with version 1.15.1 as 
-> you can see in the video present in the online directory
-> 
-> I'm not developer or kernel developer so be sure that I wouldn't have 
-> done all this work if the in-kernel ast version 0.1.0 was usable 
-> out-of-the-box
-> 
-> Sure you can give me a patch I will test on this server (building 
-> mainline+ast_new yesterday tooks 19 minutes on this server)
-> 
-> PS:
-> here is a 'git diff linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast 
-> linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast_new'
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ast-fullpatch.patch
-> Diff is about 250+ kb so the 2 drivers seems to have nothing to do with 
-> each others...
-> 
-> Thanks again for help
-> 
-> Kind regards
-> Nicolas
-> 
-> Le 2025-02-13 08:57, Thomas Zimmermann a écrit :
-> Hi Nicolas
-> 
-> Am 12.02.25 um 19:58 schrieb Nicolas Baranger: Dear maintener
-> That's mostly me and Jocelyn.
-> 
-> I did include ast-drm driver version 1.15.1 (in replacement of version 
-> 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
-> dkms patch
-> 
-> Last DKMS patch had been sucessfully tested on mainline.
-> And last ast.ko version 1.15.1 included in linux tree had also been 
-> sucessfully tested
-> 
-> Online directory is updated with :
-> - new DKMS patch
-> - new DKMS srouces
-> - new DKMS debian package
-> - new tarball of mainline included ast_new ported in kernel tree
-> - new kernel debian package (mainline with ast_new)
-> 
-> NB: online directory is here: 
-> https://xba.soartist.net/ast-drm_nba_20250211/
-> 
-> Please let me know what I should do to see this change in linux-next
-> I'm having a little trouble with figuring out which of the many driver 
-> sources is the relevant one. Am I correct to assume it's the one at
-> 
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/
-> 
-> About that driver: Although the official driver reports an ancient 
-> version number, it is an up-to-date driver. It is actually more 
-> up-to-date than Aspeed's package. Both drivers share source code and a 
-> few years ago there was an effort to bring the kernel's driver up to 
-> the same feature set. Since then, the kernel's driver has been updated, 
-> reworked and improved.
-> 
-> About the performance: From what I can tell, the only significant 
-> difference in these drivers is memory management. Your ast_new driver 
-> uses an older algorithm that we replaced quite a few releases ago. The 
-> old version was unreliable on systems with little video memory, so we 
-> had to replace it.  I don't know why the new code should be slower 
-> though.
-> 
-> If I give you a patch against a recent Linux kernel, are you capable of 
-> building the patched kernel and testing that change on your system?
-> 
-> Best regards
-> Thomas
-> 
-> Thanks for help
-> 
-> Kind regards
-> Nicolas Baranger
-> 
-> Le 2025-02-11 19:15, Nicolas Baranger a écrit :
-> 
-> Dear maintener
-> 
-> For my own usage, I did make work the ASPEED ast-drm 1.15.1 video 
-> driver on mainline kernel (6.13.0 + 6.13.1).
-> 
-> ASPEED video driver is availiable here:
-> https://www.aspeedtech.com/file/support/Linux_DRM_1.15.1_4.tar.gz
-> 
-> But it only work for LTS kernel
-> So I modify the DKMS package and I build a new Debian DKMS package with 
-> the adapted  source.
-> My patch can be find here :
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/astdiff.patch
-> See the README:
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/README
-> 
-> Using this new 'ast 1.15.1' driver, performance are amazing compared to 
-> the 'ast' driver include in kernel tree, specially when using a 
-> discrete GPU and offloading VULKAN / 3D on it but using AST VGA card as 
-> the main video card and as the main and only video output (the discrete 
-> GPU is used only for offloading 3D or for cuda/opencl)
-> 
-> So to make things easier, I include the new 'ast 1.15.1' driver in 
-> kernel tree as AST_NEW : linux-6.13.1-ast/drivers/gpu/drm/ast_new'
-> It's working fine as you can see on this video :
-> https://xba.soartist.net/ast-drm_nba_20250211/vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm 
-> I upload all the work I've done here :
-> https://xba.soartist.net/ast-drm_nba_20250211/
-> 
-> See the global README :
-> https://xba.soartist.net/ast-drm_nba_20250211/README
-> 
-> and the README in nba-kernel sub-directory :
-> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/README
-> 
-> I'm not a developer so please let me know if I made the things the 
-> right way and if this new 'ast 1.15.1' driver can be ported to 
-> linux-next or linux-? ?
-> If you need more explanations, do not hesitate to contact me, I would 
-> be happy to help
-> 
-> Kind regards
-> Nicolas Baranger
+> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
+nesas-rzg2l.c
+> index 99e27e01b0b1..a7c3a3cc6b9f 100644
+> --- a/drivers/irqchip/irq-renesas-rzg2l.c
+> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
+> @@ -542,40 +542,40 @@ static int rzg2l_irqc_common_init(struct device_nod=
+e *node, struct device_node *
+>
+>         parent_domain =3D irq_find_host(parent);
+>         if (!parent_domain) {
+> -               dev_err(&pdev->dev, "cannot find parent domain\n");
+> +               dev_err(dev, "cannot find parent domain\n");
+>                 return -ENODEV;
+>         }
+>
+> -       rzg2l_irqc_data =3D devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_d=
+ata), GFP_KERNEL);
+> +       rzg2l_irqc_data =3D devm_kzalloc(dev, sizeof(*rzg2l_irqc_data), G=
+FP_KERNEL);
+>         if (!rzg2l_irqc_data)
+>                 return -ENOMEM;
+>
+>         rzg2l_irqc_data->irqchip =3D irq_chip;
+>
+> -       rzg2l_irqc_data->base =3D devm_of_iomap(&pdev->dev, pdev->dev.of_=
+node, 0, NULL);
+> +       rzg2l_irqc_data->base =3D devm_of_iomap(dev, dev->of_node, 0, NUL=
+L);
+>         if (IS_ERR(rzg2l_irqc_data->base))
+>                 return PTR_ERR(rzg2l_irqc_data->base);
+>
+>         ret =3D rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret)=
+;
+> +               dev_err(dev, "cannot parse interrupts: %d\n", ret);
+>                 return ret;
+>         }
+>
+> -       resetn =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +       resetn =3D devm_reset_control_get_exclusive(dev, NULL);
+>         if (IS_ERR(resetn))
+>                 return PTR_ERR(resetn);
+>
+>         ret =3D reset_control_deassert(resetn);
+>         if (ret) {
+> -               dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n"=
+, ret);
+> +               dev_err(dev, "failed to deassert resetn pin, %d\n", ret);
+>                 return ret;
+>         }
+>
+> -       pm_runtime_enable(&pdev->dev);
+> -       ret =3D pm_runtime_resume_and_get(&pdev->dev);
+> +       pm_runtime_enable(dev);
+> +       ret =3D pm_runtime_resume_and_get(dev);
+>         if (ret < 0) {
+> -               dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d=
+\n", ret);
+> +               dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", re=
+t);
+>                 goto pm_disable;
+>         }
+>
+> @@ -585,7 +585,7 @@ static int rzg2l_irqc_common_init(struct device_node =
+*node, struct device_node *
+>                                               node, &rzg2l_irqc_domain_op=
+s,
+>                                               rzg2l_irqc_data);
+>         if (!irq_domain) {
+> -               dev_err(&pdev->dev, "failed to add irq domain\n");
+> +               dev_err(dev, "failed to add irq domain\n");
+>                 ret =3D -ENOMEM;
+>                 goto pm_put;
+>         }
+> @@ -606,9 +606,9 @@ static int rzg2l_irqc_common_init(struct device_node =
+*node, struct device_node *
+>         return 0;
+>
+>  pm_put:
+> -       pm_runtime_put(&pdev->dev);
+> +       pm_runtime_put(dev);
+>  pm_disable:
+> -       pm_runtime_disable(&pdev->dev);
+> +       pm_runtime_disable(dev);
+>         reset_control_assert(resetn);
+>         return ret;
+>  }
+> --
+> 2.34.1
+>
+>
 
