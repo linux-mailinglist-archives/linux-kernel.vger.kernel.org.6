@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-514048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E7EA351B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:58:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B773A351D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2EB3ACE01
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7B316EBD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137FA2753EC;
-	Thu, 13 Feb 2025 22:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC77D2753F1;
+	Thu, 13 Feb 2025 22:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fcKCaSsh"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mw+QsdMs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6752753EB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DAA2753E4;
+	Thu, 13 Feb 2025 22:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739487498; cv=none; b=MsVAyzaUaJ1mrkko6440jCj7yF8Tp4FCTTsJO0WsZzfjTobDHOK8tOB64KmaQia/8giA1XKW3bGrNHhT3pPmMyxNcDz9+iublVibfm1D/73JZiSlfItn39V5TwWmJNkkNPUe4QmDBAk9Xqj+4lsr3PwJ4eJ6+kPmxTKJnun1Mt4=
+	t=1739487525; cv=none; b=BAmbrXCT9htpCbDC2LdL880dwmC9P5jCpvmDo+ipGyq4BTdPdBTsqRQCgOE60pUo57ZJcU2CBlnLJuQ1NV7UvpCO3HUwRQoAhvkNqt+rkeOU365eh4Nr55ke6SoN7kXWkDrwZWD0GfcgDcqY8AXYwxfTX21xGf+xNk1UYwDce2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739487498; c=relaxed/simple;
-	bh=Y27dhfw8v4BA3YPmRiUGr4aKS1BFKwdnmIIc52BuMys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zcr+gzwV2ELcTErqCgORu7K5FmUvPowCynyw+tQ4fWLphSf2duuvPc36Z9/XVEl/83LoQgERFBYXiSk7xFbhjqrK3cZHRqICz3xw1NvqV8YOVKGJPFlCxwJCLi0lDWCGucChnXMqbJzs/1AhiyWj6OOyRRwRiiEtqfK+Q1H7rC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fcKCaSsh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DMvG6j001130;
-	Thu, 13 Feb 2025 22:57:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=5Eh7zljLNWHH82zXNllR4wLMW+pcLetr2vsY7QBQP
-	8M=; b=fcKCaSshWLQCjnh827XCWKFIIXEcrfzpyDiOpg5AycPuGKcxDf68S4UQf
-	bHVMQ0yZqT4D5fGfnIxjQJLIP6D1WouYXvLg5wt+Q+aDkrkPQLHHHo45FE5TomoF
-	rvB3zdn7WnotUpNora2am4YJsXkUmg4YsCgx7QPEXr2+trF6SY0iV+ULnlHoRTWG
-	ZMhNlaLm4p1jV3RQpOpYqi4PUcMURaBW9vakZuH/m8oRN6jpc5xmmnkmRkPKfzE0
-	4W/9Dxk7xnJhHKf886RN0J1bC6BjstCTXGCoGd2yIiG4VPtxxRyijY74isqHxAGJ
-	/+dQvquZXKr9jxUH5c/XR/5+C76fQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44saj8n1c5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 22:57:58 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DKbxjD028758;
-	Thu, 13 Feb 2025 22:57:57 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma20a74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 22:57:57 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DMvtUJ29819530
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 22:57:55 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 73DFA58055;
-	Thu, 13 Feb 2025 22:57:55 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 486D858043;
-	Thu, 13 Feb 2025 22:57:55 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.104.210])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Feb 2025 22:57:55 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, eajames@linux.ibm.com, jk@ozlabs.org,
-        joel@jms.id.au, alistair@popple.id.au, linux-fsi@lists.ozlabs.org,
-        ninad@linux.ibm.com
-Subject: [PATCH v2 RESEND] MAINTAINERS: change maintainer for FSI
-Date: Thu, 13 Feb 2025 16:57:46 -0600
-Message-ID: <20250213225746.2159118-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1739487525; c=relaxed/simple;
+	bh=JVrIfR2b7Zw5tphgm7dmRrPq3bFn2dAIdtlGx9/51vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S34cffam5fP5tYhCo9M7kMnljzC2LIWaU/aEwFuah1p2xeBNleRhAyJPW6NTx8iq0Oz8i97FJOZArXLP/ORI+p8yOxF9tfj3PhDMyQXt1xDUTgbQesCEbGlWsIIYW5R702JPkafMsPKR9rFqguLkGEjlo2qAVuIHyM4PBbF59rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mw+QsdMs; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739487524; x=1771023524;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JVrIfR2b7Zw5tphgm7dmRrPq3bFn2dAIdtlGx9/51vk=;
+  b=Mw+QsdMshJosyrmllhx7VeZt0nppm/FBiQfBL9BLL/sV+EMPSdtTuJPF
+   i7+7QHwwKmqQOHKjEHDlVQZuyjJKuIqSwz/lu8EjKYxgPR1DojySv5Lta
+   UCUzVrW6zn6LgSKQFFv37kimIbLNVKecvxIOlZQ2lyyvzbcAjnyFgU+0J
+   PdfpI8fqlILOopvZb9rTRB+fWO10JBjaO4KIK9km5MOJjEokXxO0FO2cV
+   GVCmzjl89qrJw6KJXy1yHNgxVVwfOsFoXGd5Conn6VEBH4gPPX8Z3mgw6
+   B4jrTVfnlD824nOvGLrhMNuvjEn+OCiQ+hk0BNYLIhYEUQ8/oPJ4qlSdU
+   A==;
+X-CSE-ConnectionGUID: f41P3VHkR0CTg37QB5w64g==
+X-CSE-MsgGUID: IZZFlNMBQA6gweqJZUlo0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40340106"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="40340106"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:58:43 -0800
+X-CSE-ConnectionGUID: Vo36sgjRSCusd9Bp7qRkhA==
+X-CSE-MsgGUID: KBz5hXtISISEmI5lrNKflA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113774073"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 13 Feb 2025 14:58:40 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiiAH-0018nP-25;
+	Thu, 13 Feb 2025 22:58:37 +0000
+Date: Fri, 14 Feb 2025 06:57:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Jonathan Santos <Jonathan.Santos@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jonath4nns@gmail.com,
+	marcelo.schmitt1@gmail.com, dlechner@baylibre.com
+Subject: Re: [PATCH RESEND v3 11/17] iio: adc: ad7768-1: add regulator to
+ control VCM output
+Message-ID: <202502140626.PzhgxFMq-lkp@intel.com>
+References: <3552833157f252f3b6813f0042059e858c90d53a.1739368121.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cBI5atXhIrYQCefTMGonVft6czH-SS6a
-X-Proofpoint-ORIG-GUID: cBI5atXhIrYQCefTMGonVft6czH-SS6a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_08,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502130158
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3552833157f252f3b6813f0042059e858c90d53a.1739368121.git.Jonathan.Santos@analog.com>
 
-Due to job transitions, both Joel and Jeremy can no longer maintain
-the FSI subsystem. I will take over.
-I also replaced Alistair with Ninad as a reviewer, as Alistair doesn't
-have access to hardware and hasn't been active.
-I also removed the link to Joel's FSI tree as he won't be maintaining
-it.
+Hi Jonathan,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Acked-by: Jeremy Kerr <jk@ozlabs.org>
----
-Sorry for the resend; I forgot Jeremy's ack.
+kernel test robot noticed the following build errors:
 
-Changes since v1:
- - Remove Alistair as reviewer
- - Add Ninad as reviewer
- - Don't add Joel and Jeremy as reviewers.
+[auto build test ERROR on 5de07b8a24cf44cdb78adeab790704bf577c2c1d]
 
- MAINTAINERS | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Santos/iio-adc-ad7768-1-Fix-conversion-result-sign/20250213-022329
+base:   5de07b8a24cf44cdb78adeab790704bf577c2c1d
+patch link:    https://lore.kernel.org/r/3552833157f252f3b6813f0042059e858c90d53a.1739368121.git.Jonathan.Santos%40analog.com
+patch subject: [PATCH RESEND v3 11/17] iio: adc: ad7768-1: add regulator to control VCM output
+config: loongarch-randconfig-002-20250214 (https://download.01.org/0day-ci/archive/20250214/202502140626.PzhgxFMq-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140626.PzhgxFMq-lkp@intel.com/reproduce)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1f65a2a1cde5b..59a6b47e9c278 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9441,14 +9441,11 @@ F:	include/linux/fscrypt.h
- F:	include/uapi/linux/fscrypt.h
- 
- FSI SUBSYSTEM
--M:	Jeremy Kerr <jk@ozlabs.org>
--M:	Joel Stanley <joel@jms.id.au>
--R:	Alistar Popple <alistair@popple.id.au>
--R:	Eddie James <eajames@linux.ibm.com>
-+M:	Eddie James <eajames@linux.ibm.com>
-+R:	Ninad Palsule <ninad@linux.ibm.com>
- L:	linux-fsi@lists.ozlabs.org
- S:	Supported
- Q:	http://patchwork.ozlabs.org/project/linux-fsi/list/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git
- F:	drivers/fsi/
- F:	include/linux/fsi*.h
- F:	include/trace/events/fsi*.h
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140626.PzhgxFMq-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "rdev_get_drvdata" [drivers/iio/adc/ad7768-1.ko] undefined!
+>> ERROR: modpost: "devm_regulator_register" [drivers/iio/adc/ad7768-1.ko] undefined!
+>> ERROR: modpost: "regulator_list_voltage_table" [drivers/iio/adc/ad7768-1.ko] undefined!
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
