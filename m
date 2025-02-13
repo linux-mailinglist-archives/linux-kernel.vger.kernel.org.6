@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-513287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9092A34887
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:52:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD63A34882
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908233A91F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1F4188815C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782E51DDC33;
-	Thu, 13 Feb 2025 15:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E11B1AAA29;
+	Thu, 13 Feb 2025 15:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="0kwRNqV6"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQRuXCVk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EFC1AA786;
-	Thu, 13 Feb 2025 15:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733626B087;
+	Thu, 13 Feb 2025 15:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461593; cv=none; b=j0JSfnvGljvmB26vestNqT4FEzqzdAxPNHjN+UyXzQal73dlBM1reqn9fMV4D3b5MUPA33KxiLS5qbvyt+WZ+bcbh2MdREbvX0OdsY70FMbonUI45PCxyxwrnqbELrcnz5FEYZXMVpx9zjL4yzMLtY+oxCfFc+bjyI3+mqZolTQ=
+	t=1739461629; cv=none; b=aDftfEpbRX5xvV6gT6IZFUlpoHM5sg9AUFHDVWpA6MYYioRY1tSytd+IPs1XPeQmxzeVoULkrKYA+tpc/x2B7P0hFwaENEGRJd555+pwVCIlMlEUVulnsAz2S9sBYoJ1P1AXtLQXMuZWiSTTdRek38/4Smp2q2DJif6rZottZ18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461593; c=relaxed/simple;
-	bh=eQ5hKL8Do7QTUquhfPYnl9WT+Oj8r0LEBJJf4Dgm8XE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNitZnTZpGeULxzEzWVs6eB1kILpcibGJan1c15vWjn7dEqtobiD+MwlPkcctVpQficSc0k+pmdm2LWwqpEsRL/Gwv9Mi5cgUAQ6ERhgyMr1YuNoludkblEMKX5/9vwwciL2mM+ua/weDm1iO+vuYhmSQZbucFBxwj0+ZWP8dLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=0kwRNqV6; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1739461584; bh=eQ5hKL8Do7QTUquhfPYnl9WT+Oj8r0LEBJJf4Dgm8XE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=0kwRNqV6/VTFUT91g8IVWD+PE8xZ3DtpuOWqmBqqx6r467v1iZBtf1ABglQ7QUI0b
-	 NFTt9gWq/HEYAE83AvSePXmbph3ufFjUqooOv3/+jTDqa3wkBf86JWYHx4uVB+MKuQ
-	 uHsGyclvb41/uqXepDW74cr8FITn4VcIiEdFK9DY=
-Received: from [10.21.49.97] (unknown [195.176.44.46])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 013482052A91;
-	Thu, 13 Feb 2025 16:46:23 +0100 (CET)
-Message-ID: <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
-Date: Thu, 13 Feb 2025 16:46:22 +0100
+	s=arc-20240116; t=1739461629; c=relaxed/simple;
+	bh=E1GUjYdJqoBRJw9tQ+cO3lASHQVBixZzsUVVWG/US9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dpq7mKp6sBksUNIzOxPT5llIyH2Xh6C7M1SDOXCFDGbFvsJetEpbfQOD33NJ2YuUcxMEc75UflR1sE+jY/sd4e+GuF73vgGugGhtO5k/kU9rL8GifTsJ0yIQ4Q0qJcf2bXj0OvOBh8InQvLF802txodUVyxnEqBTW3g1TDs26cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQRuXCVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B11C4CEE7;
+	Thu, 13 Feb 2025 15:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739461629;
+	bh=E1GUjYdJqoBRJw9tQ+cO3lASHQVBixZzsUVVWG/US9E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RQRuXCVkRSWCBtQvf8cddg/93v7kQ+kuCtzjriKQugqc/0tlw0wQ+lIuQ+ZNvuUui
+	 p989xGxi/7Y76OximxiGTexZmIoEu0Qqh0mV1GJrL7YebEkeKO+ONuJC4BLSzj3zEt
+	 k7FQlW+OmTWLVP38lXqSwNRvy05DPdkEWCawW0RzmokqoJAzBa8qcKBHiBdS1hE7Yz
+	 j2NU9vHZr5dTlHD8NfJbR5hV+HdZYWNbYQboBTxSMDv8cU4979M+RoP5MzPeHCs1hf
+	 nFoem2hcaQUbq9+wKv/G1MrPqT5/cgzZBWODqdaqF62d9Cy7/GHRbrgqmJEQh5MJsB
+	 e37j2V26OErgw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5439a6179a7so1049438e87.1;
+        Thu, 13 Feb 2025 07:47:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWCIJYYBa2uFuAZieZXncUfLyjT1IxROfSOzMkH9uyxErgboq9peoxk4c5RLda81dpfExd97VIxNJpvH8Fo@vger.kernel.org, AJvYcCXbbBbEFKyktRqPVDEBMQRcBL7NIN1L0RiIqJTBgLuHAl6VaQ+uOsUdU0ONawe3tdLKK86EnmWXIT+z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza3XKMmPO71Y1/8IL6qJBFRws8Hr/3n05YSvYqHLSjR2KknT1F
+	pu0+/JnNSxH5GPtX54DSfbMAMvfkaPI2yff8TU/mftd6e1EkCRAXbN1LvOzTP9Hsz7RSXSIBWbS
+	lk0ZnnlWU0renUDv0Q+zguhSqgK0=
+X-Google-Smtp-Source: AGHT+IGv5cDKLfiKWM0AbqmdVhU4cj+YxJl2cKveWSLPMNHSkmFWQco2+fFaxe83V+KevVsWhgrCg8aeW9stFG6GeqA=
+X-Received: by 2002:a05:6512:10d2:b0:545:16ef:d5fa with SMTP id
+ 2adb3069b0e04-5451dfdbf37mr1109497e87.12.1739461627368; Thu, 13 Feb 2025
+ 07:47:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat
- target
-To: Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev,
- stable@vger.kernel.org, Matthew Maurer <mmaurer@google.com>,
- Jubilee Young <workingjubilee@gmail.com>
-References: <20250210163732.281786-1-ojeda@kernel.org>
- <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250121214219.1455896-1-brahmajit.xyz@gmail.com>
+In-Reply-To: <20250121214219.1455896-1-brahmajit.xyz@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 13 Feb 2025 16:46:56 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGvgad183WbUHPGduXHEahfoWasued-LdJ+Tkhc=z-9GA@mail.gmail.com>
+X-Gm-Features: AWEUYZkFY2PYa8gfx6hGCdnL0CMJypnzzWYdPRULOd_DTaJ2LhpwBLnko3b9nkQ
+Message-ID: <CAMj1kXGvgad183WbUHPGduXHEahfoWasued-LdJ+Tkhc=z-9GA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ACPI: Fix building with GCC 15
+To: Brahmajit Das <brahmajit.xyz@gmail.com>
+Cc: rafael.j.wysocki@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 21 Jan 2025 at 22:42, Brahmajit Das <brahmajit.xyz@gmail.com> wrote=
+:
+>
+> Building with GCC 15 results in the following build error:
+>
+> ...
+>   CC      drivers/acpi/tables.o
+> In file included from ./include/acpi/actbl.h:371,
+>                  from ./include/acpi/acpi.h:26,
+>                  from ./include/linux/acpi.h:26,
+>                  from drivers/acpi/tables.c:19:
+> ./include/acpi/actbl1.h:30:33: error: initializer-string for array of =E2=
+=80=98char=E2=80=99 is too long [-Werror=3Dunterminated-string-initializati=
+on]
+>    30 | #define ACPI_SIG_BERT           "BERT"  /* Boot Error Record Tabl=
+e */
+>       |                                 ^~~~~~
+> drivers/acpi/tables.c:400:9: note: in expansion of macro =E2=80=98ACPI_SI=
+G_BERT=E2=80=99
+>   400 |         ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECD=
+T,
+>       |         ^~~~~~~~~~~~~
+> ./include/acpi/actbl1.h:31:33: error: initializer-string for array of =E2=
+=80=98char=E2=80=99 is too long [-Werror=3Dunterminated-string-initializati=
+on]
+>    31 | #define ACPI_SIG_BGRT           "BGRT"  /* Boot Graphics Resource=
+ Table */
+>       |                                 ^~~~~~
+> drivers/acpi/tables.c:400:24: note: in expansion of macro =E2=80=98ACPI_S=
+IG_BGRT=E2=80=99
+>   400 |         ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECD=
+T,
+>       |                        ^~~~~~~~~~~~~
+> ./include/acpi/actbl1.h:34:33: error: initializer-string for array of =E2=
+=80=98char=E2=80=99 is too long [-Werror=3Dunterminated-string-initializati=
+on]
+>    34 | #define ACPI_SIG_CPEP           "CPEP"  /* Corrected Platform Err=
+or Polling table */
+> ...
+>
+> This is due to GCC having enabled
+> -Werror=3Dunterminated-string-initialization[0] by default. To work aroun=
+d
+> this build time error we're modifying the size of table_sigs from
+> table_sigs[][ACPI_NAMESEG_SIZE] to table_sigs[][ACPI_NAMESEG_SIZE + 1].
+> This ensures space for NUL, thus satisfying GCC.
+>
+> [0]: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wno-un=
+terminated-string-initialization
+>
+> Signed-off-by: Brahmajit Das <brahmajit.xyz@gmail.com>
+> ---
+>  drivers/acpi/tables.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> index 9e1b01c35070..5a6524eb79d8 100644
+> --- a/drivers/acpi/tables.c
+> +++ b/drivers/acpi/tables.c
+> @@ -396,7 +396,7 @@ static u8 __init acpi_table_checksum(u8 *buffer, u32 =
+length)
+>  }
+>
+>  /* All but ACPI_SIG_RSDP and ACPI_SIG_FACS: */
+> -static const char table_sigs[][ACPI_NAMESEG_SIZE] __initconst =3D {
+> +static const char table_sigs[][ACPI_NAMESEG_SIZE + 1] __initconst =3D {
+>         ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECDT,
+>         ACPI_SIG_EINJ, ACPI_SIG_ERST, ACPI_SIG_HEST, ACPI_SIG_MADT,
+>         ACPI_SIG_MSCT, ACPI_SIG_SBST, ACPI_SIG_SLIT, ACPI_SIG_SRAT,
 
-> We have to carefully make the distinction here between codegen and ABI.
-> 
-> The arm64 C code in the kernel is built with -mgeneral-regs-only
-> because FP/SIMD registers are not preserved/restored like GPRs, and so
-> they must be used only in carefully controlled circumstances, i.e., in
-> assembler code called under kernel_neon_begin()/kernel_neon_end()
-> [modulo some exceptions related to NEON intrinsics]
-> 
-> This does not impact the ABI, which remains hard-float [this was the
-> only arm64 calling convention that existed until about a year ago].
-> Any function that takes or returns floats or doubles (or NEON
-> intrinsic types) is simply rejected by the compiler.
-
-That's how C works. It is not how Rust works. Rust does not reject using floats 
-ever. Instead, Rust offers softfloat targets where you can still use floats, but 
-it won't use float registers. Obviously, that needs to use a different ABI.
-As you said, aarch64 does not have an official softfloat ABI, but LLVM 
-implements a de-facto softfloat ABI if you ask it to generate functions that 
-take/return float types while disabling the relevant target features. (Maybe 
-LLVM should just refuse to generate such code, and then Rust may have ended up 
-with a different design. But now this would all be quite tricky to change.)
-
-> Changing this to softfloat for Rust modifies this calling convention,
-> i.e., it will result in floats and doubles being accepted as function
-> parameters and return values, but there is no code in the kernel that
-> actually supports/implements that.
-
-As explained above, f32/f64 were already accepted as function parameters and 
-return values in Rust code before this change. So this patch does not change 
-anything here. (In fact, the ABI used for these functions should be exactly the 
-same before and after this patch.)
-
-> Also, it should be clarified
-> whether using a softfloat ABI permits the compiler to use FP/SIMD
-> registers in codegen. We might still need -Ctarget-feature="-neon"
-> here afaict.
-
-Rust's softfloat targets do not use FP/SIMD registers by default. Ideally these 
-targets allow selectively using FP/SIMD registers within certain functions; for 
-aarch64, this is not properly supported by LLVM and therefore Rust.
-
-> Ideally, we'd have a target/target-feature combo that makes this more
-> explicit: no FP/SIMD codegen at all, without affecting the ABI,
-> therefore making float/double types in function prototypes illegal.
-> AIUI, this change does something different.
-
-Having targets without float support would be a significant departure from past 
-language decisions in Rust -- that doesn't mean it's impossible, but it would 
-require a non-trivial effort (starting with an RFC to lay down the motivation 
-and design).
-
-Kind regards,
-Ralf
-
-
+Please add the __nonstring attribute instead.
 
