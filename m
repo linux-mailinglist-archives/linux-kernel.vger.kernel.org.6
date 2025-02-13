@@ -1,120 +1,227 @@
-Return-Path: <linux-kernel+bounces-512231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F184A33630
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:38:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA19A33639
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459541884CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6933A647E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6750F204F91;
-	Thu, 13 Feb 2025 03:38:31 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A18204F99;
+	Thu, 13 Feb 2025 03:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwkwqKUx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD58C204080;
-	Thu, 13 Feb 2025 03:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEC2046A0;
+	Thu, 13 Feb 2025 03:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739417911; cv=none; b=MpR4wunVcsHt3PhhyT9gc2lvuNL8BVBcnV0XDpUZMvsSAGaShT6Ots6JrpyGIFvBJJ0KFORI/XTvmUahhx/Uhd2sgsf3nzqA2kYgElO2dFVx+VLhlVQoz1aeevrG6t/Rhh0uv1JA3DvdjUL2l15riOLCGWY5R/flc4Z9xnA+ZYo=
+	t=1739418002; cv=none; b=C/1nFcIbKcigvfZzKgWwicMFeIHRimIBz5zuog/HuxP47h92tE8OdjogpIFTaWXr5ErNv7ONeyqaxq6PJNTmvxbnlIRXDeFtuljA+Nz+rtw7WnIxDDFmuzB0SoQIXTYK/21XduwFqlDkXxIQlz5SO+a3fJPu+L11YhQDvqkTLFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739417911; c=relaxed/simple;
-	bh=YvUP2oYZOBIz7MiyhBYXzlL7FDycSv4JpNWjTW0Rvto=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dpn5iT8Nrr9qcemYoQhck18dDmQNsQWoF0sinzK80InQapLYRQTbg9Try5iIMBj7swwCm09EKAx6ZiPj8rHfzvUoTwKZZt+f7oj10gXgx4oGCmVwOvUKfe4i/+cmtaRw2XgcSsP/CeleWAONhVqnGHjCb0BOL3jTFV67ccQhb5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Ytgqz5gsQz4f3jks;
-	Thu, 13 Feb 2025 11:38:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D96801A08B5;
-	Thu, 13 Feb 2025 11:38:23 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXul4uaa1nrzvKDg--.9280S3;
-	Thu, 13 Feb 2025 11:38:23 +0800 (CST)
-Subject: Re: [PATCH] block: Modify the escape character
-To: Donglei Wei <veidongray@qq.com>, linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <tencent_208A5FC4C96DBFC52E02FC3CC394272EFB0A@qq.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f5182f1c-eec9-9144-114c-1bdbd2571990@huaweicloud.com>
-Date: Thu, 13 Feb 2025 11:38:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1739418002; c=relaxed/simple;
+	bh=ULGd7LN0moouwdSR7PW3Hja/yJMbyk/hJ6bJyO3SQTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODIDmjHkJkEY13z7QQS1qLv65n5fZ2+H/zhzRproeOOLjzWx955IsN4hg8So7nBBV0rcnA4KKEgP+VDOL7+q0WeVvp0o2MMyxFHRJT01Tqybq6g0E5I7xQ18FXaHWdJdw3oWO0YZmG42BzCUpxCQwUj4DIZYTQ6+BoiJF6hAFTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwkwqKUx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A871C4CED1;
+	Thu, 13 Feb 2025 03:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739418001;
+	bh=ULGd7LN0moouwdSR7PW3Hja/yJMbyk/hJ6bJyO3SQTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MwkwqKUxLME1gl73yQwJuxpnX0p2Ns4DpRCwbsfOvQWb0PUFh3l8ievI8FzrvsdRr
+	 8CDxSxmwnOZEspbsuh4AixLqEyXN15ixy7U7p0xVg25hitWJ/1HwNLZs6yHdP1wArg
+	 gDBcKX8dBup2o7e8neRmisBpNe+Tbjw3mnKY8mL99JKbLGylzK6CxPQRk3unhG37H6
+	 eqmhjlqjxzrxutvUzzFXlq4l1iqKm+CQhj2Y/rtNJWfvvFs+X7uUS4fouIAL7Dv9z4
+	 pt3RuzGicjGjCIwhzUwoL8BAMkcbZvoSEtfSzWwnGj/tFUJMTuZ1aFOMEGoPgsJB28
+	 aK16ssEAOi3sQ==
+Date: Wed, 12 Feb 2025 19:39:59 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>,
+	Wander Costa <wcosta@redhat.com>
+Subject: Re: [PATCH v3 1/4] perf trace: Allocate syscall stats only if
+ summary is on
+Message-ID: <Z61pjzzG-y4Zp0hd@google.com>
+References: <20250205205443.1986408-1-namhyung@kernel.org>
+ <20250205205443.1986408-2-namhyung@kernel.org>
+ <Z60JmMKq-Do-VBUn@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <tencent_208A5FC4C96DBFC52E02FC3CC394272EFB0A@qq.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXul4uaa1nrzvKDg--.9280S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFyktr4xCr1xtr4UCr1rZwb_yoW8Xr1DpF
-	W5GasxA39F9w4IgF1DGa1avrnav3ZIqa1SqrsIgw4Ykr13WwnF9F1kAryqyFWkuF4xtr4f
-	XFsagFyDtw1Duw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UE-erUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z60JmMKq-Do-VBUn@x1>
 
-Hi,
-
-Please change the title.
-
-ÔÚ 2025/02/09 20:35, Donglei Wei Ð´µÀ:
->      The iocg->cfg_weight/WEIGHT_ONE code has a data type of long unsigned int,
->      which is escaped using %u, which generates a compilation warning.
+On Wed, Feb 12, 2025 at 09:50:32PM +0100, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 05, 2025 at 12:54:40PM -0800, Namhyung Kim wrote:
+> > The syscall stats are used only when summary is requested.  Let's avoid
+> > unnecessary operations.  While at it, let's pass 'trace' pointer
+> > directly instead of passing 'output' file pointer and 'summary' option
+> > in the 'trace' separately.
 > 
->      Signed-off-by: Donglei Wei <veidongray@qq.com>
-> ---
+> root@number:~# perf probe -x ~/bin/perf intlist__new
+> Added new event:
+>   probe_perf:intlist_new (on intlist__new in /home/acme/bin/perf)
+> 
+> You can now use it in all perf tools, such as:
+> 
+> 	perf record -e probe_perf:intlist_new -aR sleep 1
+> 
+> root@number:~# perf trace -e probe_perf:intlist_new perf trace -e *nanosleep sleep 1
+>      0.000 (1000.184 ms): sleep/574971 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7ffda05c1be0) = 0
+> root@number:~# perf trace -e probe_perf:intlist_new perf trace -e *nanosleep --summary sleep 1
+>      0.000 :574984/574984 probe_perf:intlist_new(__probe_ip: 6861748)
+> 
+>  Summary of events:
+> 
+>  sleep (574985), 2 events, 25.0%
+> 
+>    syscall            calls  errors  total       min       avg       max       stddev
+>                                      (msec)    (msec)    (msec)    (msec)        (%)
+>    --------------- --------  ------ -------- --------- --------- ---------     ------
+>    clock_nanosleep        1      0  1000.205  1000.205  1000.205  1000.205      0.00%
+> 
+> root@number:~#
+> 
+> I'm trying to convince a colleague to have this short streamlined to
+> something like:
+> 
+>   # perf trace -e ~/bin/perf/intlist_new()/ perf trace -e *nanosleep sleep 1
+> 
+> Or some other event syntax that allows us to specify compactly and
+> unambiguously that we want to put a probe if one isn't there yet and
+> inside the () to specify which of the arguments we want collected, etc,
+> to save the 'perf probe' step, adding the probe and removing it if it
+> isn't there or reusing a pre-existing, compatible one.
 
-I never see this warning, is this because USEC_PER_MSEC is long, causing
-other fields in the same enum to be long?
+Yep, probably we need a syntax without '/' since it'd be confused by
+the path separators.
+
+> 
+> Anyway, for the patch tested:
+> 
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 Thanks,
-Kuai
+Namhyung
 
->   block/blk-iocost.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-> index 65a1d4427ccf..693e642d4235 100644
-> --- a/block/blk-iocost.c
-> +++ b/block/blk-iocost.c
-> @@ -3078,7 +3078,7 @@ static u64 ioc_weight_prfill(struct seq_file *sf, struct blkg_policy_data *pd,
->   	struct ioc_gq *iocg = pd_to_iocg(pd);
->   
->   	if (dname && iocg->cfg_weight)
-> -		seq_printf(sf, "%s %u\n", dname, iocg->cfg_weight / WEIGHT_ONE);
-> +		seq_printf(sf, "%s %lu\n", dname, iocg->cfg_weight / WEIGHT_ONE);
->   	return 0;
->   }
->   
-> @@ -3088,7 +3088,7 @@ static int ioc_weight_show(struct seq_file *sf, void *v)
->   	struct blkcg *blkcg = css_to_blkcg(seq_css(sf));
->   	struct ioc_cgrp *iocc = blkcg_to_iocc(blkcg);
->   
-> -	seq_printf(sf, "default %u\n", iocc->dfl_weight / WEIGHT_ONE);
-> +	seq_printf(sf, "default %lu\n", iocc->dfl_weight / WEIGHT_ONE);
->   	blkcg_print_blkgs(sf, blkcg, ioc_weight_prfill,
->   			  &blkcg_policy_iocost, seq_cft(sf)->private, false);
->   	return 0;
-> 
-
+> - Arnaldo
+>  
+> > Acked-by: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/builtin-trace.c | 21 +++++++++++----------
+> >  1 file changed, 11 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index ac97632f13dc8f7c..7e0324a2e9182088 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1522,13 +1522,14 @@ struct thread_trace {
+> >  	struct intlist *syscall_stats;
+> >  };
+> >  
+> > -static struct thread_trace *thread_trace__new(void)
+> > +static struct thread_trace *thread_trace__new(struct trace *trace)
+> >  {
+> >  	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+> >  
+> >  	if (ttrace) {
+> >  		ttrace->files.max = -1;
+> > -		ttrace->syscall_stats = intlist__new(NULL);
+> > +		if (trace->summary)
+> > +			ttrace->syscall_stats = intlist__new(NULL);
+> >  	}
+> >  
+> >  	return ttrace;
+> > @@ -1550,7 +1551,7 @@ static void thread_trace__delete(void *pttrace)
+> >  	free(ttrace);
+> >  }
+> >  
+> > -static struct thread_trace *thread__trace(struct thread *thread, FILE *fp)
+> > +static struct thread_trace *thread__trace(struct thread *thread, struct trace *trace)
+> >  {
+> >  	struct thread_trace *ttrace;
+> >  
+> > @@ -1558,7 +1559,7 @@ static struct thread_trace *thread__trace(struct thread *thread, FILE *fp)
+> >  		goto fail;
+> >  
+> >  	if (thread__priv(thread) == NULL)
+> > -		thread__set_priv(thread, thread_trace__new());
+> > +		thread__set_priv(thread, thread_trace__new(trace));
+> >  
+> >  	if (thread__priv(thread) == NULL)
+> >  		goto fail;
+> > @@ -1568,7 +1569,7 @@ static struct thread_trace *thread__trace(struct thread *thread, FILE *fp)
+> >  
+> >  	return ttrace;
+> >  fail:
+> > -	color_fprintf(fp, PERF_COLOR_RED,
+> > +	color_fprintf(trace->output, PERF_COLOR_RED,
+> >  		      "WARNING: not enough memory, dropping samples!\n");
+> >  	return NULL;
+> >  }
+> > @@ -2622,7 +2623,7 @@ static int trace__sys_enter(struct trace *trace, struct evsel *evsel,
+> >  		return -1;
+> >  
+> >  	thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
+> > -	ttrace = thread__trace(thread, trace->output);
+> > +	ttrace = thread__trace(thread, trace);
+> >  	if (ttrace == NULL)
+> >  		goto out_put;
+> >  
+> > @@ -2699,7 +2700,7 @@ static int trace__fprintf_sys_enter(struct trace *trace, struct evsel *evsel,
+> >  		return -1;
+> >  
+> >  	thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
+> > -	ttrace = thread__trace(thread, trace->output);
+> > +	ttrace = thread__trace(thread, trace);
+> >  	/*
+> >  	 * We need to get ttrace just to make sure it is there when syscall__scnprintf_args()
+> >  	 * and the rest of the beautifiers accessing it via struct syscall_arg touches it.
+> > @@ -2771,7 +2772,7 @@ static int trace__sys_exit(struct trace *trace, struct evsel *evsel,
+> >  		return -1;
+> >  
+> >  	thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
+> > -	ttrace = thread__trace(thread, trace->output);
+> > +	ttrace = thread__trace(thread, trace);
+> >  	if (ttrace == NULL)
+> >  		goto out_put;
+> >  
+> > @@ -2960,7 +2961,7 @@ static int trace__sched_stat_runtime(struct trace *trace, struct evsel *evsel,
+> >  	struct thread *thread = machine__findnew_thread(trace->host,
+> >  							sample->pid,
+> >  							sample->tid);
+> > -	struct thread_trace *ttrace = thread__trace(thread, trace->output);
+> > +	struct thread_trace *ttrace = thread__trace(thread, trace);
+> >  
+> >  	if (ttrace == NULL)
+> >  		goto out_dump;
+> > @@ -3214,7 +3215,7 @@ static int trace__pgfault(struct trace *trace,
+> >  		}
+> >  	}
+> >  
+> > -	ttrace = thread__trace(thread, trace->output);
+> > +	ttrace = thread__trace(thread, trace);
+> >  	if (ttrace == NULL)
+> >  		goto out_put;
+> >  
+> > -- 
+> > 2.48.1.502.g6dc24dfdaf-goog
 
