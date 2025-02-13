@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-512794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7D1A33DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:23:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632ADA33DD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF79188D612
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:22:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D253AA721
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3449222157F;
-	Thu, 13 Feb 2025 11:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CEF21D3C0;
+	Thu, 13 Feb 2025 11:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TqEPr+8k"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jmXXXcrr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DD021D3E0;
-	Thu, 13 Feb 2025 11:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1A4221708;
+	Thu, 13 Feb 2025 11:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445653; cv=none; b=ovBa/kFKPEM6MT6aIIES1oQSuYvAABt6LDsZ0l9eLeQKa7xDPyERYLAYoCF589/TLdX56NgXS4+JGLOPZ9r+U0Sbmz9KzUgGW1M7e8yFG+FhkqjPbSsvDshaEQSf6+aVdardk6LZyS8W9WnK4S55KcyE23UjGy4diTepBYEJyVw=
+	t=1739445624; cv=none; b=DIiq2VZaYBWReAouwrXi2qSh3SPVxhk24G197qpvKNNWHPbXaO2AtfYIjYISu1aBPfhRPSPBThLqeXCFBl1M5IxfKvEDFM33kP7TrAkaKhW9o6e5U5x7V69oJH/cmS4evgapZbjUSYnh8damiynM4NtCUL9G9TMBCT3Dr8PvAhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445653; c=relaxed/simple;
-	bh=e0eGua7t7TvlPBa9LwHKZrO9ganTKJP++6K1ucHteGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bwfq/TK6ZrCmOZXDXR5ihY57AO/JqEa+Vdm9s01p8UUCRf3HPgeWwZedWub4Ss9NBmeBzquV+ewbAUr07Oc2aTrKaOIsaEbPb1yENIImxhMYCoHDhFLOGmh5JWa4w/y9cE8BSiOP72fvaCOaYHFrz5z+TbWsPCJAV/DTsBHf5NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TqEPr+8k; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739445650;
-	bh=e0eGua7t7TvlPBa9LwHKZrO9ganTKJP++6K1ucHteGE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TqEPr+8kYbymOGE/ORH11JUEEdKWYxPB7p25Xt+OeO7Nn4/SY/ClqOP4vY1tOmzvq
-	 kQTsyLM0OehqUXgQ6pjd76W9tjrwy8hSG1mF5dNvYSQAs95u5TymWVIIi+V6HoGddy
-	 +P/GvCBoeeNW0LQqncxqpkiQkvjlGKg7Dxaa5hCseGow1dwAlGMv+odl00upckl7nm
-	 fwUFdhqnM6eOL646G4Q1wUxXXrrGCCtnIlWKyOWOMB8475Qk3pJL8BDK0yioYqFdCF
-	 xOtnFU6PqDJXiKPqnCHsMgUOxir8jFejEjZipX1uriYmbXN1rr3JCc+OYmeR80OiIU
-	 u/x6tyrm/ZGbg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 71A9917E151F;
-	Thu, 13 Feb 2025 12:20:49 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: matthias.bgg@gmail.com
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com,
-	pablo.sun@mediatek.com
-Subject: [PATCH v1 3/3] arm64: dts: mediatek: mt8395-nio-12l: Preconfigure DSI0 pipeline
-Date: Thu, 13 Feb 2025 12:20:08 +0100
-Message-ID: <20250213112008.56394-4-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250213112008.56394-1-angelogioacchino.delregno@collabora.com>
-References: <20250213112008.56394-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1739445624; c=relaxed/simple;
+	bh=NCCx4YVnsVLzOQ8d17oCuZGX9ttdU8tyQhskq7ys0r4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bO4F3a35SrCLkVECyMZCMCAbzK8xR8ROxSeyq8SKzwIgvASCOPIv6O0u1vRgrZelyZBSnTYVudj+P/5g0eDP+zw7oYDFrrI0uVwSbcGAB3O9msxYgu8RLCAPF59JgCeseMKZW37nYIQnDyqjUuGpCNxufRRsu4PCjPnYNKL3SeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jmXXXcrr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED83EC4CED1;
+	Thu, 13 Feb 2025 11:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739445623;
+	bh=NCCx4YVnsVLzOQ8d17oCuZGX9ttdU8tyQhskq7ys0r4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jmXXXcrr3Sre5r3HfVbwsqe/7kHlTR6c5WtciC/SIpqapPx17FA04P35+wSesiYqB
+	 zcAy27txYtVPWgDM4SQjvMILvzP/LSWDssJYtjYA5r4GoMfHK7gdUgj07qLqtRobn9
+	 azwI2ePINYy2tixGRt4mALwv9DyqZooFpgT45odk=
+Date: Thu, 13 Feb 2025 12:20:19 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+	"christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
+	"make_ruc2021@163.com" <make_ruc2021@163.com>,
+	"peter.chen@nxp.com" <peter.chen@nxp.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pawel Eichler <peichler@cadence.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: FW: [PATCH] usb: xhci: lack of clearing xHC resources
+Message-ID: <2025021306-rally-making-d5f0@gregkh>
+References: <20250213101158.8153-1-pawell@cadence.com>
+ <PH7PR07MB9538F08AF8B1D7FF5070DA76DDFF2@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB9538F08AF8B1D7FF5070DA76DDFF2@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-This board can use a MIPI-DSI panel on the DSI0 connector: in
-preparation for adding an overlay for the Radxa Display 8HD,
-add a pipeline connecting VDOSYS0 components to DSI0.
+On Thu, Feb 13, 2025 at 10:46:06AM +0000, Pawel Laszczak wrote:
+> The xHC resources allocated for USB devices are not released in correct
+> order after resuming in case when while suspend device was reconnected.
+> 
+> This issue has been detected during the fallowing scenario:
+> - connect hub HS to root port
+> - connect LS/FS device to hub port
+> - wait for enumeration to finish
+> - force DUT to suspend
+> - reconnect hub attached to root port
+> - wake DUT
+> 
+> For this scenario during enumeration of USB LS/FS device the Cadence xHC
+> reports completion error code for xHCi commands because the devices was not
+> property disconnected and in result the xHC resources has not been
+> correct freed.
+> XHCI specification doesn't mention that device can be reset in any order
+> so, we should not treat this issue as Cadence xHC controller bug.
+> Similar as during disconnecting in this case the device should be cleared
+> starting form the last usb device in tree toward the root hub.
+> To fix this issue usbcore driver should disconnect all USB
+> devices connected to hub which was reconnected while suspending.
+> 
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: <stable@vger.kernel.org>
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/core/hub.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 0cd44f1fd56d..2473cbf317a8 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -3627,10 +3627,12 @@ static int finish_port_resume(struct usb_device *udev)
+>  		 * the device will be rediscovered.
+>  		 */
+>   retry_reset_resume:
+> -		if (udev->quirks & USB_QUIRK_RESET)
+> +		if (udev->quirks & USB_QUIRK_RESET) {
+>  			status = -ENODEV;
+> -		else
+> +		} else {
+> +			hub_disconnect_children(udev);
+>  			status = usb_reset_and_verify_device(udev);
+> +		}
+>  	}
+>  
+>  	/* 10.5.4.5 says be sure devices in the tree are still there.
+> -- 
+> 2.43.0
+> 
 
-This pipeline remains disabled by default, as it is expected
-to be enabled only by a devicetree overlay that declares the
-actual DSI panel node, completing the graph.
+Hi,
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../dts/mediatek/mt8395-radxa-nio-12l.dts     | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-index 41dc34837b02..7184dc99296c 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-@@ -172,6 +172,32 @@ &cpu7 {
- 	cpu-supply = <&mt6315_6_vbuck1>;
- };
- 
-+&dither0_out {
-+	remote-endpoint = <&dsi0_in>;
-+};
-+
-+&dsi0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dsi0_in: endpoint {
-+				remote-endpoint = <&dither0_out>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dsi0_out: endpoint { };
-+		};
-+	};
-+};
-+
- &eth {
- 	phy-mode = "rgmii-rxid";
- 	phy-handle = <&rgmii_phy>;
--- 
-2.48.1
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
