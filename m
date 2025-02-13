@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-513354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F033A3498D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:21:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23EDA3497B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49F53B2459
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D801890EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3653D200B89;
-	Thu, 13 Feb 2025 16:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EA624169A;
+	Thu, 13 Feb 2025 16:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o/ragaeq"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bmOGSEgv"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E96D155326;
-	Thu, 13 Feb 2025 16:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEC5203703
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463283; cv=none; b=Ba/sOifu0MnOPiDwu8Jz7IYi9GG6+m7OSG8QJp4uaq7FXt1n3sBCqIk2+BbvUEom9ucAZzpIAFg0M1GFjolBms0RQuRLkRhnMo7kTFxXKMbaOiljCckOsrKpvNxDHbuuaLLAtj4bt2cuQnF0U6duGlU9Rw8pCSPfEjcqP1h0lK4=
+	t=1739463313; cv=none; b=Y+gA5gkMZI8Ftiufjr/X4rna+NdoPCawFMPn5rwJG9o77PlcvkHSA4+o+a5XGCxuXfHGcIYrA1MzBv3Yf41gF2LxRI9y3+MtIPQndCuJIrYWiQlKxn1AMSD4r3jgKkFiYRxbtqWJX7klVoGSGMYgFSeaVMVHO9JPbUqP3TL653U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463283; c=relaxed/simple;
-	bh=vGJnb1m4SzGUIvD8C7Q70RDN83mTiA+BJaGjQwL7LEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uuOACICQBD7QZc41KJo4DNMVeNA3Sm5/SOG5ME0ILN3VXAMDSPboIt2lOnL2vCG9xDuATwC/EIn5idZ6TDEiKPPygnsxjv4hf0Qy4/tAMohsiydIBNRcv8Qum01JSa199dFDpzigxrYCbJZFCmExn7FVUYMUjizgopA9EoyMC3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o/ragaeq; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 25360441D0;
-	Thu, 13 Feb 2025 16:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739463278;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0TVSfnhO/D9vf7kVKocZCtgHhLvkRIYScp2kiZ0Rn5s=;
-	b=o/ragaeqE14+pkiUyeerhxStHnHzUEuBaR1MDzBW+7wdy/u3tp+KketwFkv6a1sl29X91R
-	bazTwFPopWFSaJGSUnKpDZQLBGOmVuo2ndmrlnYUDCz/CfzWgQ3cFrXnEsLh/o5rj6Vzn4
-	VVkvrSy7CFWtMgXit8j7dBcts6buJjY42hvgI8s8rJOqOX6cPCwaWN1Rs4f9k222J2ouyg
-	g8hqm/3JkLHGpxJAL0LWtcSlVMlhaRHgSzcKAdhZtP9y9aopwC7UfNpKr9ixsbQlI3cumA
-	81i+wvtWy8TucWElCaV+3PwElF+2fBxbpdNArU7gYJqnCwdZinWA3a/2fuPrjw==
-Date: Thu, 13 Feb 2025 17:14:35 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>, andrew@lunn.ch, Arnd
- Bergmann <arnd@arndb.de>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
- <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
- brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
- dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
- kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
- list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
- ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
- lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
- manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
- thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
- <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <20250213171435.1c2ce376@bootlin.com>
-In-Reply-To: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739463313; c=relaxed/simple;
+	bh=Xtu8WDPQHFE0nfu8De7jzGkDApIs7LU+ui80j8p9qmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WE65TLOJUnuJiV2x1vwABEYSFreWERkpICKzukSQsCCCQUc1KuzqbF4kFU60wkSuahD6cg87IBw0kl/fv88UjIyb7gz23Zcayx8fUyIYDGUER7Wky9jI2X48qzGc7Z8FdcOYhethFCluh758SR8au+zbwfkSPC+B5my1qiQkukE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bmOGSEgv; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=C51i
+	iAHVT3vDNfkeqXUJtAutZGCOhAHahDQm3Gape3k=; b=bmOGSEgvInf30Ab23XEB
+	ZSvM8t2hj+wuVYy+0VNcnl2Oqzij9O9BDcizEid1xrPe7k69gHAyEm2scxbZqtY5
+	iHCIgL/rNquBKNnhD92Qp+/pw6Hzbme+/ha9sgDBuO/vfR0cE3ZhdidUjsSzzGBi
+	HH/AYcXyAlBSg5R1KHj0DnwdeyUYE6LChTeciXONrf/E9LCdoh8E8WN3p5ywLVf3
+	MaQsIqeSFs0UoYq8E3Kgjh25qSBKuBMmO29zVpKBOFlauXvSZAv76qAIjRYbM4Rb
+	z4cdCofFbykqrJ9wRQmS+zEJwB5kRX6VxkbmGtX3F7C0gwESETI4YGk8Vq0hoQq3
+	AA==
+Received: (qmail 1940101 invoked from network); 13 Feb 2025 17:15:09 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Feb 2025 17:15:09 +0100
+X-UD-Smtp-Session: l3s3148p1@TtimXAguZMtehh99
+Date: Thu, 13 Feb 2025 17:15:09 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 06/10] i2c: kempld: Use i2c_10bit_addr_*_from_msg()
+ helpers
+Message-ID: <Z64ajR7CSIDNmIKz@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
+ <20250213141045.2716943-7-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjedvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeehpdhrtghpthhtohepphhhihhlsehrrghsphgsvghrrhihphhirdgtohhmpdhrtghpthhtoheprghnughrvggrrdhpohhrthgrsehsuhhsvgdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheps
- ggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lJSRca1oCsfvYLnD"
+Content-Disposition: inline
+In-Reply-To: <20250213141045.2716943-7-andriy.shevchenko@linux.intel.com>
 
-Hi Phil,
 
-On Thu, 13 Feb 2025 15:18:45 +0000
-Phil Elwell <phil@raspberrypi.com> wrote:
+--lJSRca1oCsfvYLnD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andrea,
-> 
-> The problem with this approach (loading an overlay from the RP1 PCIe
-> driver), and it's one that I have raised with you offline, is that
-> (unless anyone can prove otherwise) it becomes impossible to create a
-> Pi 5 DTS file which makes use of the RP1's resources. How do you
-> declare something as simple as a button wired to an RP1 GPIO, or fan
-> connected to a PWM output?
 
-The driver could be improved in a second step.
-For instance, it could load the dtbo from user-space using request_firmare()
-instead of loading the embedded dtbo.
+> @@ -132,10 +130,12 @@ static int kempld_i2c_process(struct kempld_i2c_dat=
+a *i2c)
+> =20
+>  	/* Second part of 10 bit addressing */
+>  	if (i2c->state =3D=3D STATE_ADDR10) {
+> -		kempld_write8(pld, KEMPLD_I2C_DATA, i2c->msg->addr & 0xff);
+> +		addr =3D i2c_10bit_addr_lo_from_msg(msg);
+> +		i2c->state =3D STATE_START;
 
-> 
-> If this is the preferred route to upstream adoption, I would prefer it
-> if rp1.dtso could be split in two - an rp1.dtsi similar to what we
-> have downstream, and an rp1.dtso that #includes it. In this way we can
-> keep the patching and duplication to a minimum.
+Any reason you moved this?
 
-Indeed, having a rp1.dtsi avoid duplication but how the rp1.dtso in
-the the kernel sources could include user customization (button, fan, ...)
-without being modified ?
-At least we have to '#include <my_rp1_customizations.dtsi>'.
+> +
+> +		kempld_write8(pld, KEMPLD_I2C_DATA, addr);
 
-Requesting the dtbo from user-space allows to let the user to create
-its own dtso without the need to modify the one in kernel sources.
+Maybe we could skip using 'addr' here?
 
-Does it make sense ?
+>  		kempld_write8(pld, KEMPLD_I2C_CMD, I2C_CMD_WRITE);
+> =20
+> -		i2c->state =3D STATE_START;
+>  		return 0;
+>  	}
 
-Best regards,
-Hervé
+--lJSRca1oCsfvYLnD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmeuGokACgkQFA3kzBSg
+KbZulg/+J22rNnR6Yu2i8QVlWFeEaAZKIv1ksHQrj0QpkW1k7ZiMG1gPZad043ax
+Dn4VnOCgTDfMGM0tRO+RslfP8QwFNhi7vj6SNHq1b5AAzArl0EJMQJbxOku03Uw6
+Rs6FZyjJd/9mdS64pjXBGpIrEqA032jxL0CgmMNZN8WXB4iJo4cUDkRnNHv8gY9Y
+W0EPAKWpLDbDIHge/zTd+x547y7qQUsp8pV5+h2z6Nfgbd5/k27rE87/yxcTG443
+nx0BtBAfODwujcrAhNXHyl/Q7eX4sImUOpz7wetHHAtIEioH3OOG4/D1Ggk1rtJT
+eL3nlGxlIPJH0P1yZtvj++PTL5HYwXbCD7oTD6JEdy3+Lt9MXEpsKpTX6X9NNB3S
+Fqz3Puo+Hd/2nPmJEIGuX30fKup7UO1a0b2e/AUoedNZGT1PpX8v/JIoqOvNU6I5
+htn1IeaHh16BvSSZZQ57wbAXbv2Z52xRVH/bjO+HWT3TJ5yCIMeY1SWdfw1tZ6ri
+palSy7QZgrvN7M2K+iymB+rhHrkDdHGh+NlgaEkW/kN2gDo/izjmQVFoXnH2vpMM
+bADn9rxmbM6u3vVfJESnbE6sik3kSbykAj1E6JqWq9huA+vnGXmvbJL+jxTQNP8G
+2G+F4nPACxsxrkJQIXA3m/1QZ6yZxp9KuKIcgGswsZpOLOlK5gs=
+=eGZz
+-----END PGP SIGNATURE-----
+
+--lJSRca1oCsfvYLnD--
 
