@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-512523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A98A33A72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:59:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00047A33A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7272E3A5FCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0FB3A986B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0D820C480;
-	Thu, 13 Feb 2025 08:58:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDDA20C481;
+	Thu, 13 Feb 2025 08:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItxKbILe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F0B142E7C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3995835944;
+	Thu, 13 Feb 2025 08:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437081; cv=none; b=pLiymKTPASZdnqoyr3I8I+aV4Y5Vr8pNemmXDEf9te8WCEqZAfUAT7/gnnMXTPWxCHFb4WbvGwx47f6LAfFjm1mqlrqmqsps8ZuR78Lq66uVSpbriX1VS9SggQ5ZqIh61jjJA26SrAQgrGWwW+AkLZ/uhfhRmyMd9GIfpqjH0r8=
+	t=1739437110; cv=none; b=swOZQtmnVfmwAr5FD2sRcsz5mvNJWb/LsML+fXBzuUovVXRAo6aHRP5c8OU4O9hR3hglWO0tEZMoczN1nymA0eq1pBqL9FXZfXGI2piUyFEpeGxOlHJg9XtdK2aY9eY1p8H5g/LEida3xKSuz06tuIa6aEeaLoAeaLVy+LfPm8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437081; c=relaxed/simple;
-	bh=s8sXWMDu/QUnoFTZ22/hDVtpPDaq0QP9ZU6cEyAHFLU=;
+	s=arc-20240116; t=1739437110; c=relaxed/simple;
+	bh=YJu0nHS2qGx3nviRf9AY7LRO097uHNLwmCAGmqR5Ocs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atWxTZ1JHwCWd+d38da69/oZ1KDY561BKQswR8YCxlYWk6o/zpDtPW+SfN1K6Vz1/bUeMwWiK52zvYkYcI2pMtmV1u+8GOYfv3Bfbum7pPKCfVFOFGzDA6b7DYu0f4V27gCDA9KvDGla8jM15R9+400WIk3Qzm4dd3NVNO39sdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tiV2h-0005U2-Jz; Thu, 13 Feb 2025 09:57:55 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tiV2h-000ipD-0K;
-	Thu, 13 Feb 2025 09:57:55 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tiV2h-00CoLM-00;
-	Thu, 13 Feb 2025 09:57:55 +0100
-Date: Thu, 13 Feb 2025 09:57:54 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and
- register regulator notifiers
-Message-ID: <Z620Ei5FwhhPfBu9@pengutronix.de>
-References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
- <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLtc+sdaunCSbMiwXduf4MnpTa62KxXiNtMht1cAoPZhWsokCylX2dsiuFGPZz2XgyE4S+Dwi6jNjyBTajAd3l8gpWVGnG/0uUPkMsMDrkwT713pafT2ar9t2Si8vTcgN1+wzTG3j+bQ7gpNtLA0q7RVQbTyY0muiDsha7Ntjl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItxKbILe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B2A9C4CED1;
+	Thu, 13 Feb 2025 08:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739437110;
+	bh=YJu0nHS2qGx3nviRf9AY7LRO097uHNLwmCAGmqR5Ocs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ItxKbILe/RICgn7IPSqQ4uB/f8uQfLSymwefI+hsygoydxGgM7M7VqPgGO0lb55Qr
+	 gBRGFFYiFrXGRYMRnuaBfBGsox183p6iybfenqLyiuz5ppn6NOu8l/aZ98FNwrv/ZK
+	 3cCTg5GmFAQmsqzbmRD3z7jFT+yBMMeBXrsa34y8G27JGJfwBC8a6OeErPGBF/KcaV
+	 8j4IBUdNu9+yC4vkyKuUv8KOssjanuYy2DA2hJY12UDGp4M0NmJMC0r05LJrzJjbFG
+	 qZ2rJWyB61AlMXI49zCXrBENjuAgnSDkfGHvuVeamwKajtajrT0vfdKzWCdv4CWGUR
+	 1vDFAXAYH8Wtg==
+Date: Thu, 13 Feb 2025 09:58:27 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: hwmon: gpio-fan: Add optional regulator
+ support
+Message-ID: <20250213-ludicrous-tarantula-of-priority-b09e5d@krzk-bin>
+References: <20250210145934.761280-1-alexander.stein@ew.tq-group.com>
+ <20250210145934.761280-2-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,94 +61,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250210145934.761280-2-alexander.stein@ew.tq-group.com>
 
-On Wed, Feb 12, 2025 at 11:47:08PM +0000, Christian Loehle wrote:
-> On 2/12/25 13:24, Oleksij Rempel wrote:
-> > Extend the MMC core to handle undervoltage events by implementing
-> > infrastructure to notify the MMC bus about voltage drops.
-> > 
-> > Background & Decision at LPC24:
-> > 
-> > This solution was proposed and refined during LPC24 in the talk
-> > "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
-> > Embedded Systems" which aimed to address how Linux should handle power
-> > fluctuations in embedded devices to prevent data corruption or storage
-> > damage.
-> > 
-> > At the time, multiple possible solutions were considered:
-> > 
-> > 1. Triggering a system-wide suspend or shutdown: when undervoltage is
-> >    detected, with device-specific prioritization to ensure critical
-> >    components shut down first.
-> >    - This approach was disliked by Greg Kroah-Hartman, as it introduced
-> >      complexity and was not suitable for all use cases.
-> > 
-> > 2. Notifying relevant devices through the regulator framework: to allow
-> >    graceful per-device handling.
-> >    - This approach was agreed upon as the most acceptable: by participants
-> >      in the discussion, including Greg Kroah-Hartman, Mark Brown,
-> >      and Rafael J. Wysocki.
-> >    - This patch implements that decision by integrating undervoltage
-> >      handling into the MMC subsystem.
-> > 
-> > This patch was tested on iMX8MP based system with SDHCI controller.
+On Mon, Feb 10, 2025 at 03:59:29PM +0100, Alexander Stein wrote:
+> This adds an optional regulator support (e.g. switchable supply) to the
+
+Add an...
+
+> GPIO fan binding.
 > 
-> Any details here? How long does it take from undervoltage to
-> poweroff notification.
-
-On this system, with current implementation, it takes 4.5 millisecond
-from voltage drop detection to mmc_poweroff_notify.
-
-> Roughly how long of a heads up would that yield in realistic
-> undervoltage scenarios?
-
-It depends on the board implementation and attached power supply.
-In my case, the testing system provides about 100ms capacity on board.
-The power supply provides additional 1-2 seconds.
-
-If the power is cut between power supply and board, we will have max
-100ms.
-
-> > +static int _mmc_handle_undervoltage(struct mmc_host *host)
-> > +{
-> > +	return mmc_shutdown(host);
-> > +}
-> > +
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/gpio-fan.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> The poweroff notification part I understand, because it polls for busy
-> (i.e. hopefully until the card thinks it's done committing to flash).
-> Poweroff isn't always available though, the other paths of
-> _mmc_suspend() are:
-> 
-> 	else if (mmc_can_sleep(host->card))
-> 		err = mmc_sleep(host);
-> 	else if (!mmc_host_is_spi(host))
-> 		err = mmc_deselect_cards(host);
-> 
-> 	if (!err) {
-> 		mmc_power_off(host);
-> 
-> So we may also just deselect, which AFAIR succeeds as a FSM (i.e.
-> doesn't mean anything was committed to flash) and then we just
-> poweroff.
-> Is that what we want in an undervoltage scenario?
+> diff --git a/Documentation/devicetree/bindings/hwmon/gpio-fan.yaml b/Documentation/devicetree/bindings/hwmon/gpio-fan.yaml
+> index 7f30cfc873506..d5386990ab153 100644
+> --- a/Documentation/devicetree/bindings/hwmon/gpio-fan.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/gpio-fan.yaml
+> @@ -23,6 +23,9 @@ properties:
+>    alarm-gpios:
+>      maxItems: 1
+>  
+> +  fan-supply:
+> +    description: Phandle to the regulator that provides power to the fan.
 
-Yes. In an undervoltage scenario, our primary priority is to protect the
-hardware from damage. Data integrity is secondary in this case. The most
-critical action is to immediately stop writing to the card.  
+Look how fan-common.yaml writes it. It is really not necessary to say
+that phandle is a phandle.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+"Power supply for fan."
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
