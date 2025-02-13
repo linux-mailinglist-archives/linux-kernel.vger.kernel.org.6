@@ -1,206 +1,137 @@
-Return-Path: <linux-kernel+bounces-513147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49470A34233
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:34:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F31A34218
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E7318917C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AC6168CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BEA22154E;
-	Thu, 13 Feb 2025 14:31:21 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C40214A69;
+	Thu, 13 Feb 2025 14:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAcmDLI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E07828137F;
-	Thu, 13 Feb 2025 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A16281360;
+	Thu, 13 Feb 2025 14:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739457080; cv=none; b=hMjN1GE6aB081f3t7WZXfj9mXUnlPI+fcb3SdhuaIAmKblrGALRhP7HPuoT4sXE4MkFCiYf9Rkfo6uPAz8KdIuUMS9q9//ACaZfb2ZJlas8dXt7bskeI63g4139LV3ww774xcd/mwwogewIUZbLsjp+CLpYoy+AT2JOqx490o18=
+	t=1739457108; cv=none; b=jzjrtjgMA0zpDQOrhx1Fl/YcvRoYpTAmDtkyzqElqtG04sDrJAztKY+6/YZ/EJAVC/dmHoLvfNbU8NFwz2SEURL8AXPS84Alv2FTk5PwhCMRkN4nFrN0WC6FkpTxLvKZcicWESd1uEsxfK99pNt4rRvb/W95/FDpQ2tIjfGYCE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739457080; c=relaxed/simple;
-	bh=31YhI11H59DYPu3hRaeC34ybAn18Xcpud5Cqlj7F4fs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XQEfn4blH+oz5hw9bnUsbv3gU65IMbuGIuHlOyZy1aFtPRFcPWvMbGVu+EnKuogYuyf6MYtYdPOgD4UjCdNyNbQN1BdetaY/TM5oEWS1gNjGWwdQFWNrebK5Ras5jtArNcQxnT0otvBu+3U1hFA7Gk7NrIaZwqoKNCNtDbKn0kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51e902b58c0so557789e0c.0;
-        Thu, 13 Feb 2025 06:31:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739457077; x=1740061877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=diUPziCw23CNdHBFl3HK/c+BYvOaikSZHz1UhbL/zbk=;
-        b=TGXu/VGixZwN9Z+GbGW6d0ohBnXlT5mqh7Kzf8Kne3zHIiAYuaDFWT2MyIF5bnx8Uj
-         80t874XNPsl3HaEKEdRpZlzXCObQOwZCf5jM0SkBYeSFxge08WA6UxllMw5nMVlPV8hU
-         BJat5J3IP6U5kmhVZhcHkGE6I3VrWUZ0czh3hZIOGjp1fLNfZD21QwFecKLAQACnEXEG
-         GIfAGFVhVrwS9XKBPhqGDYDBRUO5TZbIjKrF8+RHbJYrj0LYmeFpoCDKeONJzylIXh4F
-         2ijzOun2S1VXilMGCIBPXiqPlKpf06Km1UEXluPs9DfNnHOR4bf3TLUSlkUwlXdfJuhU
-         QEzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1tPNYT5llmztstEQwf27S3fBA8hnz3P79qBF2nB/v22kosOF6l3ea+NHcHd+vqtKxVyw9FZvZevD5gC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya7PbX66hQ6PZ4SPZq79HaM5g7g1tiiZeo+QMNZnJjt5f/Dv1c
-	gi93XeXYTWxjXDqoeg4MU/comrtiosZb6KodiWp1lMim+hQtfzRqc3PDKMTdyok=
-X-Gm-Gg: ASbGncuDJVU7QKV7Sfw2ECi8lbfx/bfAfwl/ptZqkBHrXkWTNA5P42omzkhZlUtVNve
-	o9/BuQgx5TCTZcRJIGdCWb38bFABRhLa9eAyQdZTo1Ohn+9zEVMVneCcZ1MDLoe1prDxdTo9cd2
-	74hlATcVsSqvpujZ0BHNHuB6pn6immrkz4KQjWwURkPtwVnZEjp3UC1gCHVSmGe8d9DpH+vqSee
-	qZWaWNLFRfFwwhPLyoFeG75jC/xU2ntkadDN5pGe+d4sZIevzoWtUb5Ea22RBZuPOuDrT4A0Yox
-	ljr31RKMe+LSyOcNo7Otk62bx7LNeBJz7dU93DsHFxhLrjoPT+pYjA==
-X-Google-Smtp-Source: AGHT+IF3UmNQqtqjAlt+l6j1IeW9PkmwBtIIM1c40DKdjOZCsXAsUy86h3W101MRUKHEBw5npuLIFA==
-X-Received: by 2002:a05:6122:3bd5:b0:520:61ee:c7f9 with SMTP id 71dfb90a1353d-52067c75088mr6915913e0c.7.1739457077332;
-        Thu, 13 Feb 2025 06:31:17 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86be05esm195225241.21.2025.02.13.06.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 06:31:15 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso601249241.1;
-        Thu, 13 Feb 2025 06:31:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVh93/JbTYs95s5PyM2Ni9F7Tqtu++iOhyMYqGqMlIQv66QoSYVtLQVQSoxt93LEpomlD/SO+SX5WzgyUo=@vger.kernel.org
-X-Received: by 2002:a05:6102:5108:b0:4bb:edc9:f95c with SMTP id
- ada2fe7eead31-4bbf210aa1emr6936904137.15.1739457074833; Thu, 13 Feb 2025
- 06:31:14 -0800 (PST)
+	s=arc-20240116; t=1739457108; c=relaxed/simple;
+	bh=OA53EvUVXv1GhM5nFaZwYKdlhJhq0PlyQ6nM6WoxQ5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cJtyWu65pryRRB5IFQCyfk+d47obdEI2V0ztKuP0sYyHs7WKPpWJqUUI7oOScquUrL52po2Wl+AbQ4pXHpvv93GGKs26fbYpsQjOt3de+Yd78sXPnhRJ5M7WlgDmkzbX153Bc59FTa05nzrcne50lum3Qh/1Onzd978Qc+3aV0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAcmDLI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654C1C4CEE8;
+	Thu, 13 Feb 2025 14:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739457107;
+	bh=OA53EvUVXv1GhM5nFaZwYKdlhJhq0PlyQ6nM6WoxQ5k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NAcmDLI49tnhWxwzXDphQWUBEilB0AbJCqZ9K6H6jvIOO8naxJwJtPt9cM3IfrzWm
+	 GtGGHbCU9ER3G7KV2zY65oplYowGGiD+XVwvhsB2aBpz2M6MP3U+Ota0H2CnnJ+BNk
+	 g0QoaZCKCXEW+nsO2pMweI5bMFk0JCBih2oipLuVaDa/HTF9e0shquxyZ+HW51KCpX
+	 9rsNEkya68f+EHItQFVFLJszS9loxH/1JvBczkJXL8Ks598xN6sL4FjihPURumLbRD
+	 qRd+EPVprlcVbdGEF9Zf0Ldw3GZ+cukfo+yN8aGNUD1FRsjwJw8qn0XyT4nZsHBh5Z
+	 krPQ+swBN9oog==
+From: cel@kernel.org
+To: jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Lingfeng <lilingfeng3@huawei.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	lilingfeng@huaweicloud.com
+Subject: Re: [PATCH v2] nfsd: put dl_stid if fail to queue dl_recall
+Date: Thu, 13 Feb 2025 09:31:43 -0500
+Message-ID: <173945704787.138332.16372203572251102866.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250213144220.156089-1-lilingfeng3@huawei.com>
+References: <20250213144220.156089-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203031213.399914-1-koichiro.den@canonical.com>
- <20250203031213.399914-3-koichiro.den@canonical.com> <CAMuHMdXCAH=5Az9fq33-8izCLRbzxOM6zj8VbPWj0iR=KXPFtw@mail.gmail.com>
- <uwd2pczhwy6coa2oopsb3drtulnhvw5snmktikhbuhc5lljzio@3ixj2ksfhb4l>
-In-Reply-To: <uwd2pczhwy6coa2oopsb3drtulnhvw5snmktikhbuhc5lljzio@3ixj2ksfhb4l>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Feb 2025 15:31:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXM2q5SHshb4f8kCxVM7REBbngFBYo2JFd+fOd6mpADFA@mail.gmail.com>
-X-Gm-Features: AWEUYZmKn_OItAplv5izWu0V-KBIoXzcBxNXkklj1NElG-CEstlrOvtuO-vw0p4
-Message-ID: <CAMuHMdXM2q5SHshb4f8kCxVM7REBbngFBYo2JFd+fOd6mpADFA@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] gpio: aggregator: introduce basic configfs interface
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Den-san,
+From: Chuck Lever <chuck.lever@oracle.com>
 
-On Thu, 13 Feb 2025 at 15:13, Koichiro Den <koichiro.den@canonical.com> wrote:
-> On Wed, Feb 12, 2025 at 02:48:12PM GMT, Geert Uytterhoeven wrote:
-> > On Mon, 3 Feb 2025 at 04:12, Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > The existing sysfs 'new_device' interface has several limitations:
-> > > * No way to determine when GPIO aggregator creation is complete.
-> > > * No way to retrieve errors when creating a GPIO aggregator.
-> > > * No way to trace a GPIO line of an aggregator back to its
-> > >   corresponding physical device.
-> > > * The 'new_device' echo does not indicate which virtual gpiochip<N>
-> > >   was created.
-> > > * No way to assign names to GPIO lines exported through an aggregator.
-> > >
-> > > Introduce the new configfs interface for gpio-aggregator to address
-> > > these limitations. It provides a more streamlined, modern, and
-> > > extensible configuration method. For backward compatibility, the
-> > > 'new_device' interface and its behaviour is retained for now.
-> > >
-> > > This commit implements minimal functionalities:
-> > >
-> > >   /config/gpio-aggregator/<name-of-your-choice>/
-> > >   /config/gpio-aggregator/<name-of-your-choice>/live
-> > >   /config/gpio-aggregator/<name-of-your-choice>/<lineY>/
-> > >   /config/gpio-aggregator/<name-of-your-choice>/<lineY>/key
-> > >   /config/gpio-aggregator/<name-of-your-choice>/<lineY>/offset
-> > >
-> > > Basic setup flow is:
-> > > 1. Create a directory for a GPIO aggregator.
-> > > 2. Create subdirectories for each line you want to instantiate.
-> > > 3. In each line directory, configure the key and offset.
-> > >    The key/offset semantics are as follows:
-> > >    * If offset is >= 0:
-> > >      - key specifies the name of the chip this GPIO belongs to
-> > >      - offset specifies the line offset within that chip.
-> > >    * If offset is <0:
-> > >      - key needs to specify the GPIO line name.
-> > > 4. Return to the aggregator's root directory and write '1' to the live
-> > >    attribute.
-> > >
-> > > For example, the command in the existing kernel doc:
-> > >
-> > >   echo 'e6052000.gpio 19 e6050000.gpio 20-21' > new_device
-> > >
-> > > is equivalent to:
-> > >
-> > >   mkdir /sys/kernel/config/gpio-aggregator/<custom-name>
-> > >   # Change <custom-name> to name of your choice (e.g. "aggr0")
-> > >   cd /sys/kernel/config/gpio-aggregator/<custom-name>
-> > >   mkdir line0 line1 line2  # Only "line<Y>" naming allowed.
-> > >   echo e6052000.gpio > line0/key
-> > >   echo 19            > line0/offset
-> > >   echo e6050000.gpio > line1/key
-> > >   echo 20            > line1/offset
-> > >   echo e6050000.gpio > line2/key
-> > >   echo 21            > line2/offset
-> > >   echo 1             > live
-> > >
-> > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+On Thu, 13 Feb 2025 22:42:20 +0800, Li Lingfeng wrote:
+> Before calling nfsd4_run_cb to queue dl_recall to the callback_wq, we
+> increment the reference count of dl_stid.
+> We expect that after the corresponding work_struct is processed, the
+> reference count of dl_stid will be decremented through the callback
+> function nfsd4_cb_recall_release.
+> However, if the call to nfsd4_run_cb fails, the incremented reference
+> count of dl_stid will not be decremented correspondingly, leading to the
+> following nfs4_stid leak:
+> unreferenced object 0xffff88812067b578 (size 344):
+>   comm "nfsd", pid 2761, jiffies 4295044002 (age 5541.241s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 6b 6b 6b 6b b8 02 c0 e2 81 88 ff ff  ....kkkk........
+>     00 6b 6b 6b 6b 6b 6b 6b 00 00 00 00 ad 4e ad de  .kkkkkkk.....N..
+>   backtrace:
+>     kmem_cache_alloc+0x4b9/0x700
+>     nfsd4_process_open1+0x34/0x300
+>     nfsd4_open+0x2d1/0x9d0
+>     nfsd4_proc_compound+0x7a2/0xe30
+>     nfsd_dispatch+0x241/0x3e0
+>     svc_process_common+0x5d3/0xcc0
+>     svc_process+0x2a3/0x320
+>     nfsd+0x180/0x2e0
+>     kthread+0x199/0x1d0
+>     ret_from_fork+0x30/0x50
+>     ret_from_fork_asm+0x1b/0x30
+> unreferenced object 0xffff8881499f4d28 (size 368):
+>   comm "nfsd", pid 2761, jiffies 4295044005 (age 5541.239s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 30 4d 9f 49 81 88 ff ff  ........0M.I....
+>     30 4d 9f 49 81 88 ff ff 20 00 00 00 01 00 00 00  0M.I.... .......
+>   backtrace:
+>     kmem_cache_alloc+0x4b9/0x700
+>     nfs4_alloc_stid+0x29/0x210
+>     alloc_init_deleg+0x92/0x2e0
+>     nfs4_set_delegation+0x284/0xc00
+>     nfs4_open_delegation+0x216/0x3f0
+>     nfsd4_process_open2+0x2b3/0xee0
+>     nfsd4_open+0x770/0x9d0
+>     nfsd4_proc_compound+0x7a2/0xe30
+>     nfsd_dispatch+0x241/0x3e0
+>     svc_process_common+0x5d3/0xcc0
+>     svc_process+0x2a3/0x320
+>     nfsd+0x180/0x2e0
+>     kthread+0x199/0x1d0
+>     ret_from_fork+0x30/0x50
+>     ret_from_fork_asm+0x1b/0x30
+> Fix it by checking the result of nfsd4_run_cb and call nfs4_put_stid if
+> fail to queue dl_recall.
+> 
+> [...]
 
-> > > --- a/drivers/gpio/gpio-aggregator.c
-> > > +++ b/drivers/gpio/gpio-aggregator.c
+I replaced the Fixes: tag with Cc: stable.
 
-> > > +       /*
-> > > +        * Undepend is required only if device disablement (live == 0)
-> >
-> > s/Undepend/Lock-up/?
->
-> I must admit that I couldn't find a best suitable antonym to 'depend'.
-> IMO Lock-up sounds a bit misleading. How about 'Unlock'?
+Applied to nfsd-testing, thanks!
 
-I wrote "Lock-up" to match the "lockup" in aggr_lockup_configfs() below.
-But now I understand why you wrote "Undepend": when passed "false",
-aggr_lockup_configfs() calls configfs_undepend_item_unlocked(),
-so "Undepend" is fine.
+[1/1] nfsd: put dl_stid if fail to queue dl_recall
+      commit: d520b70859e0fb6d62ca12eee601a3d6ff4a11b6
 
-> > > +        * succeeds or if device enablement (live == 1) fails.
-> > > +        */
-> > > +       if (live == !!ret)
-> > > +               aggr_lockup_configfs(aggr, false);
-> > > +
-> > > +       return ret ?: count;
-> > > +}
+--
+Chuck Lever
 
-> > > +static struct config_group *
-> > > +gpio_aggr_make_group(struct config_group *group, const char *name)
-> > > +{
-> > > +       /* arg space is unneeded */
-> > > +       struct gpio_aggregator *aggr = kzalloc(sizeof(*aggr), GFP_KERNEL);
-> > > +       if (!aggr)
-> > > +               return ERR_PTR(-ENOMEM);
-> > > +
-> > > +       mutex_lock(&gpio_aggregator_lock);
-> > > +       aggr->id = idr_alloc(&gpio_aggregator_idr, aggr, 0, 0, GFP_KERNEL);
-> > > +       mutex_unlock(&gpio_aggregator_lock);
-> > > +
-> > > +       if (aggr->id < 0) {
-> > > +               kfree(aggr);
-> > > +               return ERR_PTR(aggr->id);
-> > > +       }
-> >
-> > The above more or less duplicates the existing code in
-> > new_device_store().
->
-> I'll factor out the common part and add new funcs gpio_alloc()/gpio_free().
-> Please let me know if any objections.
-
-Thanks, that would be fine!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
