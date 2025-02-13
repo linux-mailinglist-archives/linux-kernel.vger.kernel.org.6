@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-512684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3091A33C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:23:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3107CA33CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55CE6161F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B497D3A942D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BF0219E8F;
-	Thu, 13 Feb 2025 10:16:44 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE6C212F9A;
+	Thu, 13 Feb 2025 10:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RRJKNTPq"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F38219A8B;
-	Thu, 13 Feb 2025 10:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9950A20DD79
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441803; cv=none; b=oY7sHJek6c4maQ1OgjkdO0KDuySq1PLLICo0Ite2L86yibFFnUj1xfn3gDFuEVFgwtnltNrqIpmKU5y3svsMJxK8sl4aSB3ZRIX7QKhUrIXFWE79DJW6Kns/dg4XcYDp+Fu07kgIj5/lns2m/BxItY+Zr2ezKkbtyNNNNgEnt0s=
+	t=1739441956; cv=none; b=U5RSRSdGZ3GS0hhwQGWNq80CrC/tFqZ4DSzAKv/rHL5q/5K6T/5Z1gO8WWPqnWOlGM27TkiIjECUs7oWN6qhtHQMIc/Vz1k1YqHPTGCqx+A0zY2KdIfXLQgzDmFeAofpU37C0I+fwIoE0I4ypw6NVhSQ9wEPWbDk+zcVKhCCVWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441803; c=relaxed/simple;
-	bh=zA9d9gT4g9Tt3Lvb75vKHFhoyfPzrVq1krr7Du+1xjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URpxWY3sdtnZjUrKSfOnsb/ZtySo4/aAJQ5WL2T1liVOgPtXiszfZMDSlJzjGEwKSAKTuncG/H0s/yOyCdabcqg2ZWNSst2z3auWTKFU5jtPccV4k9Ngv0/lGAETX94BBKofMxjhmz73gHndo1kt/2i5E8Ww5hWa0bM09SjeM1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7ca64da5dso138943766b.0;
-        Thu, 13 Feb 2025 02:16:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739441799; x=1740046599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AY3BpgsmGybHCIcIxGp6caLtrhAoBfIK+U+jcsUKwBE=;
-        b=Ds/Eec/gmBYgww+T5bMLI8Jh0ruxPiaISHuyW3IyitJtM8JnUUSLxDOcGNuZVOfsm4
-         MMq2fQU0TZrjVD2gNTd76UiELlhCXcp6rHLbk6SqyYo9dPq74t/kQCv5hfgdHexYkTZz
-         jm6W/A68bqFn8SvLOzuWkp1eHv3UglZq6Zyb7riBxw2VWY1I1TPq69ThlBgr0sC+U4dL
-         rNMafbdGXAdpbpcknYC1WsZnL3HxbrSo0h4uCVsTgv3px2s0uS0KZffLbDUt7n8MDpnq
-         bPlUqTQPZ5ml4FeG82EB4v6fBA/8lxvRrOlTj5Lb0cq1VZXlJ2o06DVgeaLTrOZcksUD
-         jXBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTLtROGBFexlWVy5MRZENk5Uih3OuAikP08/k2Lp5wv3bZ0Ia6Rnlh4O7kmDG7Pv2AesmbofxRO24gbcM=@vger.kernel.org, AJvYcCX0jsQJ19XncE9XKfjbU5P5qkTzfAtMWIcog5/ocIQKepXUYKpPF/1j3QLfzKUEH76df18M8XZf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk04IliB5iDvNKna3E1O15iClK4t4pOCq6mfvGH1bS/EcormIx
-	fijn3Jxm6r3G4vZ8EYzL28zWEOkGDcI57yeD9n4Ksh0gROkfUHEb
-X-Gm-Gg: ASbGncv/TIRFAgXV2tfDGI0LKvPLBXZCoXqbXGL45q0avues8vys580m6Lb0WI8emwJ
-	PPisnlc8m0uMtPSbUavcgrZxh/wXYYVFpINIka/Vieo4BY21k8Lnt01lo0W+X+4po97PXD0C3US
-	ZdJWq7FH655kTBHb2vI4psMJEBm+oIP+E+Leck7jb91OwQUKoxAYD877l35wBk62uojrvW6cUtd
-	D3YR4iOD3bozSvJJEDb9ufXmFU1TO7MsB2QZrl07S9hibWafs7HNNNxrT9nUIGWylUeBh4e8+4v
-	x6a8MQ==
-X-Google-Smtp-Source: AGHT+IFK5rp9NhV5zaEVsy2IvOjKKd5D5sQXzWwTqZY7R2x3CwoFBJ3GXyVkM7BQHtWFQXtI0eF5fg==
-X-Received: by 2002:a17:906:fe02:b0:ab7:c11:a980 with SMTP id a640c23a62f3a-aba510aecf0mr192945766b.17.1739441799171;
-        Thu, 13 Feb 2025 02:16:39 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:9::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bf55bsm99631566b.184.2025.02.13.02.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 02:16:38 -0800 (PST)
-Date: Thu, 13 Feb 2025 02:16:36 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, dsahern@kernel.org,
-	edumazet@google.com, horms@kernel.org, kernel-team@meta.com,
-	kuba@kernel.org, kuniyu@amazon.co.jp, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com, ushankar@purestorage.com
-Subject: Re: [PATCH net-next v3 1/3] net: document return value of
- dev_getbyhwaddr_rcu()
-Message-ID: <20250213-kickass-orchid-wildebeest-3ec3ae@leitao>
-References: <20250213073646.14847-1-kuniyu@amazon.com>
- <20250213074748.16001-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1739441956; c=relaxed/simple;
+	bh=gobRm5klG9qLpLtL0cXlyf1R+Cz3ToKa1X3k9IhyBOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YEF5VPNS7/e2333Dgh3blVxzSNXBjxYqF65qu+QuTdIRuijeDTN8xrBcys5FKKxzl6pAMINBpVfwu8b/gi0UsEJ4u7rr8LgzRmFBD2D06X5okp33WZYB7OoRDJkUl3ABmjaL449CrA+KcAnNTpIx0Lvz78HhKpRuPaeSQ8s+HUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RRJKNTPq; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739441941;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PDjLygtCi1vCtbRpum5K/rvtczS1k9PvMWQ8Pv/Of7U=;
+	b=RRJKNTPqn12IyLN+yh0a5aQBIxXfLKOa83lncsYP5oCcdVbnklF6jZasoZBCVaizrRnB5a
+	Gs2aOLTPmvEnq0PfNPaW5/NqX0fbSEcsjX8Nl0wqXhZ6Ew2Bms/wLeHBtHb2NuQcvr0aRL
+	7t2tKDzH3EhwC8dOW7kmxrZuJ5Cdi6w=
+Date: Thu, 13 Feb 2025 18:18:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213074748.16001-1-kuniyu@amazon.com>
+Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
+To: alexs@kernel.org
+Cc: Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250213054222.21776-1-alexs@kernel.org>
+ <20250213054222.21776-2-alexs@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250213054222.21776-2-alexs@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Kuniyuki,
 
-On Thu, Feb 13, 2025 at 04:47:48PM +0900, Kuniyuki Iwashima wrote:
-> From: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Date: Thu, 13 Feb 2025 16:36:46 +0900
-> > From: Breno Leitao <leitao@debian.org>
-> > Date: Wed, 12 Feb 2025 09:47:24 -0800
-> > > diff --git a/net/core/dev.c b/net/core/dev.c
-> > > index d5ab9a4b318ea4926c200ef20dae01eaafa18c6b..0b3480a125fcaa6f036ddf219c29fa362ea0cb29 100644
-> > > --- a/net/core/dev.c
-> > > +++ b/net/core/dev.c
-> > > @@ -1134,8 +1134,8 @@ int netdev_get_name(struct net *net, char *name, int ifindex)
-> > >   *	The returned device has not had its ref count increased
-> > >   *	and the caller must therefore be careful about locking
-> > >   *
-> > > + *	Return: pointer to the net_device, or NULL if not found
-> > >   */
-> > 
-I am a bit confused about what you are saying.
-> > I noticed here we still mention RTNL and it should be removed.
+在 2/13/25 1:42 PM, alexs@kernel.org 写道:
+> From: Alex Shi <alexs@kernel.org>
+>
+> A good checked summit could save much time for linux-doc maintainer.
+>
+> Signed-off-by: Alex Shi <alexs@kernel.org>
+> Cc: Yanteng Si <siyanteng@loongson.cn>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-I have no mention RTNL in this patch at all:
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
-	# git log -n1 --oneline HEAD~2
-	6d34fd4700231 net: document return value of dev_getbyhwaddr_rcu()
-	# git show  HEAD~2  | grep -i rtnl
 
-> I missed this part is removed in patch 2, but the Return: part
-> is still duplicate.
 
-This part is also unclear to me. What do you mean the "Return:" part is
-still duplicated?
+> ---
+>   Documentation/translations/zh_CN/index.rst | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/translations/zh_CN/index.rst b/Documentation/translations/zh_CN/index.rst
+> index 7574e1673180..cc512ca54172 100644
+> --- a/Documentation/translations/zh_CN/index.rst
+> +++ b/Documentation/translations/zh_CN/index.rst
+> @@ -26,7 +26,13 @@
+>   顺便说下，中文文档也需要遵守内核编码风格，风格中中文和英文的主要不同就是中文
+>   的字符标点占用两个英文字符宽度，所以，当英文要求不要超过每行100个字符时，
+>   中文就不要超过50个字符。另外，也要注意'-'，'='等符号与相关标题的对齐。在将
+> -补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试。
+> +补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试，确保
+> +在 ``make htmldocs/pdfdocs`` 中不增加新的告警，最后，安装检查你生成的
+> +html/pdf 文件，确认它们看起来是正常的。
+> +
+> +提交之前请确认你的补丁可以正常提交到中文文档维护库:
+> +https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git/
 
-This is how the documentation looks like, after the patch applied:
+> +如果你的补丁依赖于其他人的补丁, 可以与其他人商量后由某一个人合并提交。
 
-	/**
-	*      dev_getbyhwaddr_rcu - find a device by its hardware address
-	*      @net: the applicable net namespace
-	*      @type: media type of device
-	*      @ha: hardware address
-	*
-	*      Search for an interface by MAC address. Returns NULL if the device
-	*      is not found or a pointer to the device.
-	*      The caller must hold RCU.
-	*      The returned device has not had its ref count increased
-	*      and the caller must therefore be careful about locking
-	*
-	*      Return: pointer to the net_device, or NULL if not found
-	*/
-	struct net_device *dev_getbyhwaddr_rcu(struct net *net, unsigned short type,
-						const char *ha)
-	{
-		<snip>
-	}
+I think this requires a detailed tutorial. Otherwise, it
 
-	/**
-	*      dev_getbyhwaddr - find a device by its hardware address
-	*      @net: the applicable net namespace
-	*      @type: media type of device
-	*      @ha: hardware address
-	*
-	*      Similar to dev_getbyhwaddr_rcu(), but the owner needs to hold
-	*      rtnl_lock.
-	*
-	*      Return: pointer to the net_device, or NULL if not found
-	*/
-	struct net_device *dev_getbyhwaddr(struct net *net, unsigned short type,
-					const char *ha)
-	{
-		<snip>
-	}
+will increase the difficulty for beginners to get started.
 
-Where is the Return: part duplicated?
+How about removing it for now? I have a plan to write
 
-Thanks for the review
---breno
+a translation guidebook. What's your opinion?
+
+
+Thanks,
+
+Yanteng
+
+>   
+>   与Linux 内核社区一起工作
+>   ------------------------
 
