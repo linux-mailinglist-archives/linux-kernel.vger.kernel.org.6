@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-512202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076E4A3358A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:39:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2861A3358E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86315188AE74
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A913A7D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9372040B3;
-	Thu, 13 Feb 2025 02:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028EB204680;
+	Thu, 13 Feb 2025 02:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXFzev+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SvZ1xzTP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C0535949;
-	Thu, 13 Feb 2025 02:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841AC35949;
+	Thu, 13 Feb 2025 02:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739414378; cv=none; b=SSI38js/Iu8RrBbepbcahymkkgkkT8QcpBGPUAPEcgDhdKE9E5bjxADqXJeRUDXQ9hQAeI6XG6QMuvUvcnjmyVrjygUbPcGI+GAB2K/dbcOjsaPFBg1nUwYzg7e3ZuigGoRX3E+3XTd/OMWIXegLrsPae1WnR53h/7X/3d1Bp0g=
+	t=1739414446; cv=none; b=g2IJbDogbkybNxV40uKx+AoF7IGTEdaVM89Y2fn1LCTOhQUc/L3FYWUxqzhp1wRTIDQKTEdQpFgoWiowuN5T0tdSg3hvcbVG/gXjNb9XdMTLY0xLiFHAwjlS3ke7iSUKQmXA/ohyP/CU2XGvlkEsyFyi7PUvywzSgCzWVkpAlM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739414378; c=relaxed/simple;
-	bh=Ye5px58taMfZ3cjCNVKAcqFsalM8tE2xKoemSzw9HqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4HrDTg64C7m9rk+DLkIoyZ4umbNtnv7kqjjc5bp6w5i6UoZEbuLdjymrvn3/oQnVy6uDQNidF4KaadPXA4/JLH9SsU6No2UJ7dOdRruN0tvAXbfgrJ1h66VC0Qy+xp7d5vsbqD9ayXSPfRduqgJOJ1V7+cJbDxuArYMX8wsC1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXFzev+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2855C4CEDF;
-	Thu, 13 Feb 2025 02:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739414378;
-	bh=Ye5px58taMfZ3cjCNVKAcqFsalM8tE2xKoemSzw9HqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LXFzev+hp6c/FFwdVltgsE8gpU9o0g18Chy7UX9ehEUNXE/94q8KRz2HQop9ndVGu
-	 Fc5uTGsKBMCqkAyMSfOP261M7O8mQZx7bo60XuZRShqIkULgaFyuYT9oJvlu/II4sC
-	 D5boKBVj5Nwu5hE1Q7nsd5RKvZ6G0Ksu5jW+lSER2rHevLHMAFrfJfxi6TFNz+q+cw
-	 oo+s5O/WiwKeQm/z44gdOEgGOJKq0eNvP7+ot00xcWzhf1kK2rhmbC58urj66OIL26
-	 TBlXarHd1Rr55eeiG4jfxKoCdQp3pE89IVWI9VC2a4pboqGuiK0LPvR7IiOo1XR6pu
-	 /XPHA6+Ce1dvg==
-Date: Wed, 12 Feb 2025 18:39:36 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] compiler.h: Specify correct attribute for
- .rodata..c_jump_table
-Message-ID: <20250213023936.lzbpgou4eallaij3@jpoimboe>
-References: <20240924062710.1243-1-yangtiezhu@loongson.cn>
- <20250212175023.rsxsw7pno57gsxps@jpoimboe>
- <b1e5e3ea-be4b-5dae-cc0d-34693429d060@loongson.cn>
+	s=arc-20240116; t=1739414446; c=relaxed/simple;
+	bh=cE2iJB3OrulRpc7Rb4dCoPZ4Ky4vgHwwheI4oec45n4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S8HlJ0XXzF61RqTYtJ+vzi54eezbBHQPPV12ZqPSpDKEfcirJuSYsiGGDYwOB6jXm6cAlHMJszQ8iFKHCM/pZrqCCA4oSn7a8h0BRpkpp+JGNGjLBZxE1/UQLxYHKG1nRxrGC1VQYeQP0Zhp8uSbXDHkkNeocmfbuKoMIfTe9lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SvZ1xzTP; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739414444; x=1770950444;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cE2iJB3OrulRpc7Rb4dCoPZ4Ky4vgHwwheI4oec45n4=;
+  b=SvZ1xzTPeI1CbGBOkENiuNYb9h0blaCyC7oku/3zuHrIA9TQ4EHRckzh
+   M5Mv4RnJTY/DmQAlCCpo2zJVPUpcdYsoOmfVZ3OWw6qFq/e1HQRg66P10
+   Z12yYHuCrCAp06L1PonmrokqJgSJ4fBlemAjBoz8JWi6Ccev/QX2KYdgV
+   ho0KSjznW9jMExkQTffH6xyo9tikJfw0dlzmw2WWI+UmbSMgByBmXCV2b
+   +326JSpi30bCbItUpBhXe2Ta2+585FD6efc3m+/4KIe58zXYET3bNcmLd
+   5b2W8gf6ZODZFc0jDqNL8ypA5tQaWkWrx74euJ9Y/jL4CPLDvID5uwS1Z
+   w==;
+X-CSE-ConnectionGUID: pOksh8PISk+pdtrsQG4btA==
+X-CSE-MsgGUID: 2vUloj2VSLuI3HwbZwJ+DQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39802393"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="39802393"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:40:43 -0800
+X-CSE-ConnectionGUID: 3sGc4uU/RF6xYYIvPyHpsA==
+X-CSE-MsgGUID: UXSroWr9R0CFX4g5Xw7f3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="112863616"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by fmviesa006.fm.intel.com with ESMTP; 12 Feb 2025 18:40:41 -0800
+From: Even Xu <even.xu@intel.com>
+To: david.laight.linux@gmail.com,
+	jikos@kernel.org,
+	bentiss@kernel.org
+Cc: srinivas.pandruvada@linux.intel.com,
+	mpearson-lenovo@squebb.ca,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Even Xu <even.xu@intel.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] Hid: Intel-thc-hid: Intel-thc: Fix "dubious: !x | !y" issue
+Date: Thu, 13 Feb 2025 10:40:21 +0800
+Message-Id: <20250213024021.2477473-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b1e5e3ea-be4b-5dae-cc0d-34693429d060@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 10:20:40AM +0800, Tiezhu Yang wrote:
-> On 02/13/2025 01:50 AM, Josh Poimboeuf wrote:
-> > > @@ -133,7 +133,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-> > >  #define annotate_unreachable() __annotate_unreachable(__COUNTER__)
-> > > 
-> > >  /* Annotate a C jump table to allow objtool to follow the code flow */
-> > > -#define __annotate_jump_table __section(".rodata..c_jump_table")
-> > > +#define __annotate_jump_table __section(".rodata..c_jump_table,\"a\",@progbits #")
-> > 
-> > This caused a regression, this hack apparently doesn't work with Clang:
-> > 
-> >   $ readelf -WS kernel/bpf/core.o | grep c_jump_table
-> >     [43] .rodata..c_jump_table,"a",@progbits # PROGBITS        0000000000000000 00d610 000800 00   A  0   0 16
-> > 
-> > Notice the section name is literally:
-> > 
-> >   .rodata..c_jump_table,"a",@progbits #
-> 
-> Yes, I noticed this section name which contains the original name
-> ".rodata..c_jump_table" and the specified attribute compiled with
-> Clang, it should not contain the specified attribute.
-> 
-> That is strange but seems no effect due to only compare the first
-> few letters of the section name in objtool.
+Change to use "||" to make it more readable and avoid miss
+understanding.
 
-It actually does have an effect -- objtool doesn't recognize the BPF C
-jump table (see the use of C_JUMP_TABLE_SECTION in
-tools/objtool/arch/x86/special.c), resulting in a bogus warning and
-missing ORC.
+Signed-off-by: Even Xu <even.xu@intel.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202501292144.eFDq4ovr-lkp@intel.com
+---
+ drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I do have a workaround to use strstarts() instead of strcmp(), I'll be
-posting that soon.
-
-> I will keep digging with the GNU and LLVM compiler developers.
-
-Thanks!
-
+diff --git a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c
+index eb23bea77686..8f97e71df7f4 100644
+--- a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c
++++ b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c
+@@ -295,7 +295,7 @@ static void release_dma_buffers(struct thc_device *dev,
+ 		return;
+ 
+ 	for (i = 0; i < config->prd_tbl_num; i++) {
+-		if (!config->sgls[i] | !config->sgls_nent[i])
++		if (!config->sgls[i] || !config->sgls_nent[i])
+ 			continue;
+ 
+ 		dma_unmap_sg(dev->dev, config->sgls[i],
 -- 
-Josh
+2.40.1
+
 
