@@ -1,45 +1,73 @@
-Return-Path: <linux-kernel+bounces-512329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218FFA337A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:58:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470A4A337AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AA618801DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30F167A2588
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062C7207640;
-	Thu, 13 Feb 2025 05:58:32 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2879820764E;
+	Thu, 13 Feb 2025 06:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LB8+CRIZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BC513CF9C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCDE1E376E;
+	Thu, 13 Feb 2025 06:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739426311; cv=none; b=YhFlsFu+XAeC+KuOF+cqd7UbkvI7rQ9R8lbIRRZOX2S89/nDXvln1Dqrxv/ZAnZWdcMoPjPiwPE8bSvldMcbw6zkFzyYgsKdsXddG8ZcJybcnUFOwq6pzKemxFY9CigdhXwJR13khYTDOzOp1pCmmHr7kwf72y/DaVZcOW1g+lE=
+	t=1739426604; cv=none; b=N4TbGcALhYtPTPehy5Z97iukh3rqtSHEeCXnE9TJ1Cx/DA7U3UabparY3xb5Ph+cDj7XaUkeLrCy5V6GhFDjn7Me4vQhg4yGRM6ilOvynKupigqgK3DVQ93dIIM9x5VcjOgelvJRfyT8QfqmVhLTZE8BwhBgiIsTWmrn6BLs494=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739426311; c=relaxed/simple;
-	bh=gsEYLWgwS4GFzaEBCOqnK9FZFsDTSj16sWYIdYyyt7w=;
+	s=arc-20240116; t=1739426604; c=relaxed/simple;
+	bh=A1KejvtxR9/JSfGOFPXMqvUIQBaZlAHvh1/62NOg5Y8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0MjbmGwLOuhcI3wJkguds1opEVATHd6IeNu6qJG7USXtDDGG9hyV5rPjJp8HFz/Fuyw+WinPP2JBIErG/n8fi+RbJjjwWhKpa1fQlTB2SIAOoCihtwdewj09phjBC8AHW1RDRuOg+bTNDa9KjGlPbFsJZxnw9C0lK8cJtAb840=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 364FF67373; Thu, 13 Feb 2025 06:58:25 +0100 (CET)
-Date: Thu, 13 Feb 2025 06:58:25 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] nvme-pci: skip CMB blocks incompatible with PCI
- P2P DMA
-Message-ID: <20250213055825.GD19370@lst.de>
-References: <20250212170444.16138-1-uwu@icenowy.me> <20250212170444.16138-3-uwu@icenowy.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M21KyCEqHTk5Vk/pC61GLDVzhrjl19UAUVih2pboDIL1CdndhNTh/3pjY79RSYGVBuB82K+gISlaIMWaxXyNlshTL5CCWToH1EtpJsmME+/OFWuy4pXeMkj3f7aXr80wg7+aYVKplG7eJ2/reu8BJX2Uf6rvA5nNnLuJAMDwIjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LB8+CRIZ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739426603; x=1770962603;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=A1KejvtxR9/JSfGOFPXMqvUIQBaZlAHvh1/62NOg5Y8=;
+  b=LB8+CRIZyDsFotBQH8KFunpfma2smt4yYX8cVeSpr66fjhTryEUP+D57
+   4dpw6owdPhAgpj39TNqZyUCJrmbsRZ0W/Vcu9SoSSgJIj+xrPQFUchl1o
+   eBE4+i293mXkPy3xsvAoCBHbq4lmLYV+KKcOdkrN2pbv0mfFCmRKxZm1+
+   gB0Qj0x/NILSjv874rvaxz8WGsUjsIj0R+969lSkE3OfKz4WbKETz05uu
+   I62aCMWqGspb+My5o3xgI3Ox/OoKxXyX23fXzWaj2gR2UQOkgkIJfienu
+   JMFPKZsZ5O0vDUFRfy5hP7MXXi0KmF3OScpC0HSK6IYiJ1p0aXIesp+OL
+   g==;
+X-CSE-ConnectionGUID: yfyih/YkQoOYa7ODLPVcQQ==
+X-CSE-MsgGUID: MRws48Y+THm/FAdCMXmQKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57644332"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="57644332"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:03:22 -0800
+X-CSE-ConnectionGUID: AvIoVobbT6+oTVNraSds5w==
+X-CSE-MsgGUID: kvlLfINJR0uni5uKSjASzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="112900246"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:03:18 -0800
+Date: Thu, 13 Feb 2025 06:59:43 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: felix:  Add NULL check for outer_tagging_rule()
+Message-ID: <Z62KTwRLHAQDyIGb@mev-dev.igk.intel.com>
+References: <20250213040754.1473-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,27 +76,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212170444.16138-3-uwu@icenowy.me>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250213040754.1473-1-vulab@iscas.ac.cn>
 
-On Thu, Feb 13, 2025 at 01:04:44AM +0800, Icenowy Zheng wrote:
-> +	/*
-> +	 * Controllers may support a CMB size larger than their BAR,
-> +	 * for example, due to being behind a bridge. Reduce the CMB to
-> +	 * the reported size of the BAR
-> +	 */
-> +	if (size > bar_size - offset)
-> +		size = bar_size - offset;
+On Thu, Feb 13, 2025 at 12:07:54PM +0800, Wentao Liang wrote:
+> In felix_update_tag_8021q_rx_rules(), the return value of
+> ocelot_vcap_block_find_filter_by_id() is not checked, which could
+> lead to a NULL pointer dereference if the filter is not found.
+> 
+> Add the necessary check and use `continue` to skip the current CPU
+> port if the filter is not found, ensuring that all CPU ports are
+> processed.
+> 
+> Fixes: f1288fd7293b ("net: dsa: felix: fix VLAN tag loss on CPU reception with ocelot-8021q")
+> Cc: stable@vger.kernel.org # 6.11+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/net/dsa/ocelot/felix.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
+> index 3aa9c997018a..10ad43108b88 100644
+> --- a/drivers/net/dsa/ocelot/felix.c
+> +++ b/drivers/net/dsa/ocelot/felix.c
+> @@ -348,6 +348,8 @@ static int felix_update_tag_8021q_rx_rules(struct dsa_switch *ds, int port,
+>  
+>  		outer_tagging_rule = ocelot_vcap_block_find_filter_by_id(block_vcap_es0,
+>  									 cookie, false);
+> +		if (!outer_tagging_rule)
+> +			continue;
+>  
+>  		felix_update_tag_8021q_rx_rule(outer_tagging_rule, vlan_filtering);
+>  
 
-Nit: use up the full 80 characters for the comment, and maybe switch
-the above expression to use the min() helper.
+All other calls to ocelot_vcap_block_find_filter_by_id() are checked, so
+looks correct, thanks.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-> +	if (!IS_ALIGNED(size, memremap_compat_align()) ||
-> +	    !IS_ALIGNED(pci_resource_start(pdev, bar),
-> +			memremap_compat_align()))
-
-These compat names looked odd to me, but it looks like they are indeed
-the proper interface here.  So modulo the little style things above
-this looks good, thanks a lot!
-
+> -- 
+> 2.42.0.windows.2
 
