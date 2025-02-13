@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-514019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB59CA35168
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:41:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9D2A3516A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE443ACF09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4E016BAB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1690826E17F;
-	Thu, 13 Feb 2025 22:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3A926FA40;
+	Thu, 13 Feb 2025 22:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODO1fwji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tvlp9e1y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lWVipJtW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEFE2661B9;
-	Thu, 13 Feb 2025 22:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2242661B9;
+	Thu, 13 Feb 2025 22:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739486486; cv=none; b=S2+jlBO7rFSKEgO/7clGGy+YyDEewvUBaQXPOcSyZQB9lGINpfIudPQdcBx23QGmRmRXLXTO/wxTfwRkfKGJh1l+A4vGvL7BdZ94PA7v+prPuWJnxj8G5GOvsTxC/fhzIzfd7W9mdkaycw0L9mrEEv/smTYkEsRpF7sBofBz1TE=
+	t=1739486596; cv=none; b=Zmqghg80heCGNFYWeukYZG+GS+ITjYZDEHeXys5W4pXuPl5kMpKI8eKVRqkhUbLfYIz8f29C5zLDhKxotLxGFf56UY738w8+He10qvYFsefr8qhcxZcXftUxx6/i8p89CAzUGUuPfpQH7B71smjXgjSpX6Svw2I2jQXYd31LhLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739486486; c=relaxed/simple;
-	bh=CAUs6/nDNjcTwNdHYChXbiqiDRrypj8AA18+T0T5af4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7JNykx8M9Mf3eVB9WMY61e6sTjTznqWxprB/spFSnOWbP/t9AyTXB/mM1K6VrR/PPwEjRmJhQtgx3nXzswk9mfdI0pNJJREmv9JP0GvUAPVwElUfKDStKmlfM8GACqut2S8iO7mIwH68QnJTJXYcwDm/1W1HWOugPDsUuRaozg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODO1fwji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7856EC4CED1;
-	Thu, 13 Feb 2025 22:41:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739486485;
-	bh=CAUs6/nDNjcTwNdHYChXbiqiDRrypj8AA18+T0T5af4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ODO1fwjiA4au/KUL3n4jxyKJl8PNOod+scC0fQbLvGK84PNz5zukCpL4Cq/HJcTti
-	 2rsvAMFqqkotzEIXWF9oYxp8kGLTeXIMaQBtORe+jQ/ULXQnhep1BZXJINtsHTKsGU
-	 7I+N0QOySIACYzzp7NyZkFX/Aj9Tv9yoGXNL5JGQz9cSZFAjSBv76Ve96m+av4+yIR
-	 RE/2PCyQzFiqvE5c1G3NGFswOplVTDhOgOYysKL2dvserTbwEAi5+3QAVnhnbZlQ7G
-	 hYU/lstAjeqfG6j2J9cj0RhvAtgWflgIBt/5X7FTlDS2bvSltTVc3KMuBuvj4Dl42B
-	 SWBkVDwwo5Znw==
-Date: Thu, 13 Feb 2025 23:41:23 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, Krzysztof Adamski <krzysztof.adamski@nokia.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stefan Roese <sr@denx.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
-Message-ID: <65f5eiy6kh6nhdjgpylrdjpw35jbae4s454u7qeqamh5hny7ms@ip4btvgxlaq4>
-References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
- <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
- <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
+	s=arc-20240116; t=1739486596; c=relaxed/simple;
+	bh=ipJ692m88D8RI2bNjAwTUlpC2vNwbT53/hzUkTCJFcI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OwSur2UMjb4vCfPWNgrJn3r00YNJz+iZ/ItKED61n6KVzp/KkLo6MoXYHPJTuqbzwaF9aSpMJQxW5pkZfqhsc6KmI8E6VXo0bUghgONt27cXcj2ESeNytX7amy88FhS5JzSK8plGYqfmEqCAEDeL8IwT6TJrU8f4KrKm4EhYYpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tvlp9e1y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lWVipJtW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739486592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=07a3+CYGw74UN4M9XxqpV7Zw3gnwqNcGS7ko7WqeKMU=;
+	b=Tvlp9e1yFSScG2IxH5C9QPZ9f7J9SsK8IKVtyQgMEVhsiCwpGORezjeI24zz+XWiF/FlJw
+	FzgRQ+OOPw2tEBNBhebd3jLNWgcezqszumVYMZfMV16t1haDHW1jVQC27Yb/J7DXuMSAUq
+	sACpBd5nx/wjfbkBG/4zeT1D9Rd/RigUbzgLIgtiR7F+UeLGOmqg5KUihpdmX/bQpRr+lY
+	mUd9P2enOM9d1a1LjUAJdDG37HVYdiYsaVOXrlstznBORXlPTMWbeULaaZ2qJNGCEkQiS2
+	QdSd73fLCukiAFGrMpraVduOe2lT1LJSxEZlcVTc3YHCbFfHUbrjF6Se0oKBew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739486592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=07a3+CYGw74UN4M9XxqpV7Zw3gnwqNcGS7ko7WqeKMU=;
+	b=lWVipJtWI3dAH4fxxWXRnbdoSSTGB6hypDwwr7+7knKqP6Tfm847Dg71K5h+qGRqeed/vL
+	hijpdg6icqL9FIBw==
+To: "Vankar, Chintan" <c-vankar@ti.com>, Jason Reeder <jreeder@ti.com>,
+ vigneshr@ti.com, nm@ti.com, Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ s-vadapalli@ti.com, danishanwar@ti.com, m-malladi@ti.com
+Subject: Re: [RFC PATCH 1/2] irqchip: ti-tsir: Add support for Timesync
+ Interrupt Router
+In-Reply-To: <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com>
+References: <20250205160119.136639-1-c-vankar@ti.com>
+ <20250205160119.136639-2-c-vankar@ti.com> <87lduin4o5.ffs@tglx>
+ <09880b14-cef1-44cd-9fa4-8840fb673c0a@ti.com> <87cyfplg8s.ffs@tglx>
+ <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com>
+Date: Thu, 13 Feb 2025 23:43:11 +0100
+Message-ID: <87jz9tjwjk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
+Content-Type: text/plain
 
-Hi Geert,
+Chintan!
 
-> > @@ -952,6 +952,16 @@ static inline u8 i2c_8bit_addr_from_msg(const struct i2c_msg *msg)
-> >         return (msg->addr << 1) | (msg->flags & I2C_M_RD);
-> >  }
-> >
-> > +static inline u8 i2c_10bit_addr_from_msg(const struct i2c_msg *msg)
-> 
-> Having never used 10-bit addressing myself, or even looked into it,
-> it took me a while to understand what this helper really does...
-> So this returns the high byte of the artificial 16-bit address that
-> must be used to address a target that uses 10-bit addressing?
-> Hence I think this should be renamed, to better match its purpose.
+On Fri, Feb 14 2025 at 00:15, Vankar, Chintan wrote:
+> On 2/11/2025 1:33 AM, Thomas Gleixner wrote:
+>> On Sun, Feb 09 2025 at 14:06, Vankar, Chintan wrote:
+>>> On 2/7/2025 2:58 AM, Thomas Gleixner wrote:
+>> If I understand this correctly, then the interrupt number you need to
+>> allocate for this is never going to be requested. If it would be
+>> requested it just would do nothing and the handler would never be
+>> invoked, right?
+>> 
+>> The allocation just establishes the routing of a signal between two
+>> arbitrary IP blocks in the SoC.
+>> 
+>> So the question is what has this to do with interrupts in the first
+>> place?
+>
+> Your understanding is correct about the Timesync INTR. As I mentioned
+> Timesync INTR is an instance of Interrupt Router which has multiple
+> output and not all the output lines are acting as interrupt lines unlike
+> other Interrupt Routers. Timesync INTR can have devices on both the
+> sides, we can provide input to Timesync INTR that can be consumed by
+> some other device from the output line. As an instance, One of the
+> input of Timesync INTR is an output from the CPTS module which can be
+> consumed by other device and that does not need to handle/allocate Linux
+> irq number.
 
-It's coherent with i2c_8bit_addr_from_msg(), right?
+Two questions:
 
-Andi
+ 1) For the case where no interrupt is involved, how is the routing
+    configured?
+
+ 2) For the case where it routes an input line to an interupt, then how
+    is this interrupt going to be handled by this interrupt domain which
+    is not connected to anything and implements an empty disfunctional
+    interrupt chip?
+
+Thanks
+
+        tglx
 
