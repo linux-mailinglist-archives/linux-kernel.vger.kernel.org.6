@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-513507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11103A34AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:51:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CECA34B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD537A6499
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1683AE6DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C48D28A2C6;
-	Thu, 13 Feb 2025 16:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CoL268Ux"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E68A204088;
+	Thu, 13 Feb 2025 16:47:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF4D28A2AA;
-	Thu, 13 Feb 2025 16:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1690828A2AA;
+	Thu, 13 Feb 2025 16:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739465238; cv=none; b=Bmx1ZaBGu0YmQDM1S20yI47qGkIYqD1ynlhCqAeFqVt8pxAmLiKzwg6WPTUB3TEm+LpfwvjnW7Q67zIxQYbo60zx8janLnDN8HnNhcaSsqzWYdEPw8oD5NsPb23r5oaORe2XYvH8OQvoeg+slXmlFfSBF781iIt+ol45/UlKOtc=
+	t=1739465233; cv=none; b=b5R1u1oIuSN3zVdYeqjcUNlwOXJjRb3i0OwInCv6puxMhZ/x7I31lmCYZKpIx8eONDRNAvk4on4GS++Kx7FkrYmMutg7+Mcgv0NyttymSdGziiDO5BR2j9vg0udIx+rjLbz5a9uRAfuBhhu86zKftZXYLWLyTJ2SkvzXIalHdeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739465238; c=relaxed/simple;
-	bh=2AeFDPvSDQR2jQmWqn2taWIaXObbR+ewkk3H+rYzcmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+xmFKyzIijfaPBKRRxNRapK9qHkqWFgTG5hjEmQZtxEjr0Mdir9vw689l9fF+1iWf3S8+McEGfoggA761wpFhyIQnN0On3xfD3GTFQkJUthOP2R79bLK0X14BkSxv7xTgh9Emt90TCvLDYivP054JT/qKxkEeU+MyKNdCjTGeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CoL268Ux; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739465237; x=1771001237;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2AeFDPvSDQR2jQmWqn2taWIaXObbR+ewkk3H+rYzcmA=;
-  b=CoL268Ux3exPBrM598eYd2WbgkCl+c/U+5CxL0TyqleS5Hh78MGWajdG
-   JZtWj2WjOxyo/Fe6Ui4k4bbynegvclnwZLKmhHZYyTbN/Z35fARn8JilA
-   OtpttXTIJCI48kCCl9cQng/5O5WmeIOijE/KVEBcgy5xSDVYtvA6K37sl
-   pHSL4ywp8M3ZWftJBXY3FiYMwFjEBfSIL07Ij1GP0HZDGPdlbhJJdn/uM
-   XYuBAwE7nme4UqmKt95rZf9DqkiLRa02K1xIWnPZF8kb8K9g/lWkjRpoz
-   jsNrMN6HdhR0Odew1UNuDO/d98+Rnlj89fpTEY9b9BywXA80KMY/1VqKV
-   w==;
-X-CSE-ConnectionGUID: mzuJrP1JReuIKmsWzSZTRA==
-X-CSE-MsgGUID: 1a2beVmLT7aL04UAGQT/ug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40301196"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40301196"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:47:16 -0800
-X-CSE-ConnectionGUID: uZisR2uhTGCSMQFeVH0q7A==
-X-CSE-MsgGUID: oswSS3RERG2FpKEk2Ih1Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113688772"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.202])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:47:15 -0800
-Date: Thu, 13 Feb 2025 08:47:12 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] cxl/pmem: debug invalid serial number data
-Message-ID: <Z64iEJB6l8xhDsGj@aschofie-mobl2.lan>
-References: <20250213064008.4032730-1-wangyuquan1236@phytium.com.cn>
- <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1739465233; c=relaxed/simple;
+	bh=Q+7RTh/pTrWkDGeB5wUpAsRMuOZ7iBoJrIrT5Q6Tqpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hVQV0mBUXrt/cecamvVre44vzAWTkCOZCOjdhcR4dngFx6wmm+Ku0b++zIAqaExMbNG3jC5Jp5tH2OpQRiuJF3j7x2HXtTIPpyDophgHmlPx3pCCBpxFixEUik2K7oTqSERCYLaY6ZbxKsSMsC/wG0WiidleOGCxCZ4pqsbGEws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ABDBC4CED1;
+	Thu, 13 Feb 2025 16:47:11 +0000 (UTC)
+Date: Thu, 13 Feb 2025 11:47:21 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Purva Yeshi <purvayeshi550@gmail.com>
+Cc: mhiramat@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] docs: trace: Refactor index documentation
+Message-ID: <20250213114721.23d07909@gandalf.local.home>
+In-Reply-To: <1906f93a-dc32-4dbe-9b11-eabd4aad196e@gmail.com>
+References: <20250206141453.139613-1-purvayeshi550@gmail.com>
+	<20250210174556.70fc53b7@gandalf.local.home>
+	<1906f93a-dc32-4dbe-9b11-eabd4aad196e@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 02:40:08PM +0800, Yuquan Wang wrote:
-> In a nvdimm interleave-set each device with an invalid or zero
-> serial number may cause pmem region initialization to fail, but in
-> cxl case such device could still set cookies of nd_interleave_set
-> and create a nvdimm pmem region.
+On Thu, 13 Feb 2025 17:26:21 +0530
+Purva Yeshi <purvayeshi550@gmail.com> wrote:
+
+> >> +Tracing in the Linux kernel is a powerful mechanism that allows
+> >> +developers and system administrators to analyze and debug system
+> >> +behavior. This guide provides documentation on various tracing
+> >> +frameworks and tools available in the Linux kernel.
+> >> +
+> >> +Introduction to Tracing
+> >> +-----------------------
+> >> +
+> >> +This section provides an overview of Linux tracing mechanisms
+> >> +and debugging approaches.
+> >>   
+> >>   .. toctree::
+> >> -   :maxdepth: 2
+> >> +   :maxdepth: 1  
+> > 
+> > I don't really know what the maxdepth gives here, but there was no mention
+> > in the change log why it had to be converted from 2 to 1.
+> >   
 > 
-> This adds the validation of serial number in cxl pmem region creation.
-> The event of no serial number would cause to fail to set the cookie
-> and pmem region.
+> I changed :maxdepth: from 2 to 1 to simplify the table of contents, 
+> keeping only document titles instead of also including second-level 
+> section headings. The intent was to improve readability and navigation.
+> 
+> Additionally, I referred to commit '270beb5b2aae', as suggested by 
+> Jonathan Corbet in the v1 patch, to align the documentation structure 
+> accordingly.
+> 
+> I'll update the commit message in the next revision to explicitly 
+> mention this change.
+> 
 
-This trips up cxl-test where a mock serial number is set from the
-platform device id and 0 is a valid platform device id.
+Can you make that a separate patch. A commit should do only one thing and
+that change isn't necessary to be part of the rest of the changes.
 
-Take a look at doing this cxl_mock_mem_probe():
--       cxlds->serial = pdev->id;
-+       cxlds->serial = pdev->id + 1;
+> >>   
+> >> -   ftrace-design
+> >> +   debugging
+> >> +   tracepoints
+> >>      tracepoint-analysis
+> >> +
 
---snip
+> >> +
+> >> +Hardware and Performance Tracing
+> >> +--------------------------------
+> >> +
+> >> +This section covers tracing features that monitor hardware
+> >> +interactions and system performance.
+> >> +
+> >> +.. toctree::
+> >> +   :maxdepth: 1
+> >> +
+> >>      intel_th  
+> >   
+> >>      ring-buffer-design  
+> > 
+> > The ring-buffer-design should be in "Core Tracing Frameworks".
+> >   
+> 
+> I'll move 'ring-buffer-design' to the Core Tracing Frameworks section.
+> 
+> >>      ring-buffer-map  
+> > 
+> > This describes how to map the ring buffer in user space. Maybe it should go
+> > at the "Introduction" section?
+> > 
+> >   
+> 
+> For ring-buffer-map, placing it in the Introduction section could 
+> provide early context, but since it is more implementation-specific, it 
+> might fit better under Core Tracing Frameworks alongside 
+> ring-buffer-design. Would that placement works?
 
+
+But it's not kernel implementation. It describes how to use it in user
+space. That is, it's not part of the tracing framework.
+
+-- Steve
 
