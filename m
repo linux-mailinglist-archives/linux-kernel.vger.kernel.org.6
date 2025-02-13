@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-512716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093B2A33CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38395A33CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9583A188AB81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6633A63B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D27B212D7A;
-	Thu, 13 Feb 2025 10:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B49B21322B;
+	Thu, 13 Feb 2025 10:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T4a+xWHV"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2cV9Wio"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FBE207E15
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44539190477;
+	Thu, 13 Feb 2025 10:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443696; cv=none; b=K8ZE9au9KgP/I7uIdc4/fKht00FX4JFfYg/xr5yRk2dBmAFaEuv7mtmrrQ07WYUljYQ7N4oI180Jgw5MGzsoqak4vrcoCVPOFAw3xbWxZTtYDOvRLjSradrbNdjFzSvAJ0ZNdUOps1Ic0r2LrGXtu7ySEc2KCOKmeHo76liuX9k=
+	t=1739443747; cv=none; b=L6PaVbePKlelkWgWSsUIq6Xh6WsMn3TWPUyjQvEtzEy0cmmlVKcFdRQxpa2ZAWfel6BtUo70Yab89DeuN1ihaEPNcjsUUXojf83/t8JH3LM7lEUMu/zik8Q+zxwZZbfzn1dFkuKjLGq2Ntz0jutlQmP/4m3XwIfqaGilFYFMIWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443696; c=relaxed/simple;
-	bh=z6ne5/xHHHBZbOAhfUfbX1Y+FbBvqX0EX1WhwQhJCEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMnTVsjt9EwWXGzkHFtdkB749Czapd88aneo+WANaRVeQOGv32FlsQGs8HimReE2s3v1zEvgfB21gQClPo6xpyU+8eCzz4Q0CJ0lRBUk+I2vZfFgZ6iHuxYp62JkLgC7Q/vhfLWHpxbDZBinrfEhk7ABS78N+RJebmEi7W9d0wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T4a+xWHV; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=oZdD49nkQRr86UNXlDNl2BXueFlY2XCfgHfk71Jg188=; b=T4a+xWHVxnX1WvLh4W6hVwnc2Y
-	DBMX1oKbqkelze4H22crSukMQAVl8d//MvkQaAjhM6p7zXpc+7MKHv/Vj6Z8TI/Hd+NMDWa2oA5cH
-	sY1BsBOeURl3HOr/ZJPyfxDP6wWBCtMrVBrHzTZYzKfdLM5RX+OB5oxec1368gkvnAYnzuEvHiNVm
-	++xgUPq9omM9GXU+GFqUONvZBft3/qlOYw5E64iZaM9SYf82dD5k/8ck1MSwm2MiNsI4fx4UbBxaU
-	vzCtxZqUFB5dXB/zp8TzK2/YJhOVeQ9/FVCBc+FHp3Cg50lJvwh4g78yJQihdBnCax/5gWEOjoWiH
-	I2SGGzXQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiWlH-00000000xbR-2p2N;
-	Thu, 13 Feb 2025 10:48:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B1B7D3001AC; Thu, 13 Feb 2025 11:48:02 +0100 (CET)
-Date: Thu, 13 Feb 2025 11:48:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, nathan@kernel.org, ojeda@kernel.org,
-	kees@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org
-Subject: Re: [PATCH 00/11] x86/ibt: FineIBT-BHI
-Message-ID: <20250213104802.GE28068@noisy.programming.kicks-ass.net>
-References: <20250207121529.222723073@infradead.org>
- <CABCJKudA8aUf=SDsVOOsWX_Cq6LAcioOjgtpv+uq+WGwJbxFPA@mail.gmail.com>
+	s=arc-20240116; t=1739443747; c=relaxed/simple;
+	bh=XJcMuzWHcfvIFulAAXufOZytkAhIQZd/BEnzBVlNqzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gqH1gum7SzWHLQW+liDHCYJaM0qOrtJaIWpfbwmRZ5iTgIO/vKg16GeVM6FyO4h8TjZcEGZA7jl2Tk1+chmkGeCcHEGhjMEYl8l1awQdl3d/3ZCSCfl5iN6t4bJiByEmxyQXcsoabGFYtqQUPgKQ13rZHbFFkePIMyofRm/LKD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2cV9Wio; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220d28c215eso9160425ad.1;
+        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739443744; x=1740048544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6gAqXc8HUCVABGZPiT8WxinVa7t3RXf3lPMGTe4zgq4=;
+        b=B2cV9Wio1fnZsCFO91/jAWT0RrxSqGUtJqs2SlI1utBaImRMqO1Ev97Irsr3FhLYgT
+         Ce1xm+4SVlUYqxZbfW1i6GEq7E86vXMtLQM6tqr3a0+VnnXnxeQYT0Wp5UI/4TZeanw/
+         JmsT8HNpaVJlOo1AlUdoIEVRCU3geMK7uJTZQyFDM0ffjyeAeVpwgposzSksU6vSk2AJ
+         ruCp8olhYdrKno2Hb1LFqqWVgVVfYSifhtp1Cwq93MlhmaAfrJ1/rh9J2NYODsrkYV5k
+         B7n66DW5pwTnhupEw4ObgxDJ+GKfmov2D9JBqtrp9iDVmIG5Cv2qzmBvYrWk7DUBkaKX
+         URhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739443744; x=1740048544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gAqXc8HUCVABGZPiT8WxinVa7t3RXf3lPMGTe4zgq4=;
+        b=T6uP0CqLBWNrleQrLEsimq/+O0g5LFddJ6bzYVaIplUuzps3ASUYw3xNkG0Kiu6uNS
+         x8iJROk0TVhihs19iXBoXNRMgijbK6gxD+FDosmNzbAUL144VerkLwxTubLuOHMm5w7Z
+         ytD3wvSIRs1gyyklOyc4FAkTdJt777og5Ih7mARLlrIzosQ3IjuCBoG0LKAwMJ8tiPVF
+         byBA4+txVJZ8G/o1cdW8BbvIkC61QZLp7T3HB3N7BlBglps3FOjTwtptmloc0k/iHswY
+         z0etJCQJVw/VSMBHDZtxLMur5HIvqB5k9QW3kQA22x5YJQxmCLUMhtpn/xl4k31qX9Lq
+         nL6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWOV2DP+gy580cvCTiBNVBgWhCsqXFXkC19ZjZ8Guej8+Gjt/29QFST42klGZ4TNdPzJVtcjhQXQgtjwDo=@vger.kernel.org, AJvYcCXsMj6Ve91bNHWVPiXosfp0O96zZtE9aX9HtyOJcjeP6VWHPXoLbXV4fNsPS+JEUcwq1OeTEoAYP81C@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRnh58OXKR9E6znuk1wyrsShPTeZ4v+a2cHk3sZx+0ncH8mB+Q
+	IX3ITCOouZz821EnYFFFYOZKN17sF3EuOeB7zlR1hHOPqykEzGNHPPpOMA==
+X-Gm-Gg: ASbGncsHSmT3XC0DQFDiQFZBa4L6aZ3CqUbcPwpFjU/hzSNOoLWtIJmhAEjRpF4L+Ce
+	AxM82xDfb15gLMY0x4017w2+iBBoIOeqSi9eBXzcw3mu9gpnfAbAoDrzgyeH2+HCwOvYL+F3yN2
+	i0/CVG1TWiAdmMh0J7D+3tHuidD3E+Rx6y4BTuLMuJs7axKCyomuR8BoszFzYSTaJmA9M31R9oj
+	9TDXBgLYZ1a5Lmvmb1wGWkSQO5gZpiAicn3UbeQ7Mh6CIMpk27VqLj5QkDSF7OTa4SqehfdJUg3
+	0XrXexHdkXedpx/KP7xDxJeP+p+FgrZhREQt2G0BBDU87CdtLGAmQgKnZzE=
+X-Google-Smtp-Source: AGHT+IHPI73iqJAhygL+ckoDjjYEVJ+PufLrEnm/87ssHD8ijoBVNGHMmXX1kXE88O++SXm+YNWUKg==
+X-Received: by 2002:a17:903:22cd:b0:220:c63b:d945 with SMTP id d9443c01a7336-220d1ed1d7amr49577425ad.14.1739443744433;
+        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e? ([2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585708sm9752485ad.217.2025.02.13.02.49.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 02:49:04 -0800 (PST)
+Message-ID: <922bc558-4d5e-4e8d-bf9e-99fe0babfa5d@gmail.com>
+Date: Thu, 13 Feb 2025 16:18:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCJKudA8aUf=SDsVOOsWX_Cq6LAcioOjgtpv+uq+WGwJbxFPA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
+To: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, skhan@linuxfoundation.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alex Williamson <alex.williamson@redhat.com>
+References: <Z6qFvrf1gsZGSIGo@kbusch-mbp> <20250211210235.GA54524@bhelgaas>
+ <Z6u-pwlktLnPZNF-@kbusch-mbp>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <Z6u-pwlktLnPZNF-@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 10, 2025 at 10:29:22AM -0800, Sami Tolvanen wrote:
-> Hi Peter,
+On 12/02/25 02:48, Keith Busch wrote:
+> On Tue, Feb 11, 2025 at 03:02:35PM -0600, Bjorn Helgaas wrote:
+>> This is kind of a complicated data structure.  IIUC, a struct
+>> pci_saved_state is allocated only in pci_store_saved_state(), where
+>> the size is determined by the sum of the sizes of all the entries in
+>> the dev->saved_cap_space list.
+>>
+>> The pci_saved_state is filled by copying from entries in the
+>> dev->saved_cap_space list.  The entries need not be all the same size
+>> because we copy each entry manually based on its size.
+>>
+>> So cap[] is really just the base of this buffer of variable-sized
+>> entries.  Maybe "struct pci_cap_saved_data cap[]" is not the best
+>> representation of this, but *cap (a pointer) doesn't seem better.
 > 
-> On Fri, Feb 7, 2025 at 4:28 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Hi!
-> >
-> > Respin of the FineIBT-BHI patches.
-> >
-> > Scott has managed to get LLVM bits merged:
-> >
-> >   https://github.com/llvm/llvm-project/commit/e223485c9b38a5579991b8cebb6a200153eee245
-> >
-> > Which prompted me to update these patches once again.
-> >
-> > They boot and build the next kernel on my ADL when booted with: cfi=fineibt+bhi
-> >
-> > Aside from the last two patches -- which implement the FineIBT-BHI scheme
-> > proper -- I'm planning on getting these patches merged 'soon'.
-> >
-> > Scott, what those last two patches need, aside from a lot more testing, is a
-> > coherent writeup of how the mitigation works and ideally also a few numbers
-> > proving the performance gains are worth it.
-> >
-> > Last version at:
-> >
-> >   https://lore.kernel.org/all/20240927194856.096003183@infradead.org/T/#u
-> >
-> > Current patches:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/fineibt-bhi
-> >
-> > Patches apply on top of tip/master.
+> The original code is actually correct despite using a flexible array of
+> a struct that contains a flexible array. That arrangement just means you
+> can't index into it, but the code is only doing pointer arithmetic, so
+> should be fine.
 > 
-> I gave this a spin with a ToT Clang; LKDTM 's CFI_FORWARD_PROTO test
-> now traps in __bhi_args_1 as expected, and the changes look good to
-> me. The is_endbr() clean-up also fixes the gendwarfksyms+ftrace build
-> issue reported earlier. Feel free to add:
+> With this struct:
 > 
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+> struct pci_saved_state {
+>   	u32 config_space[16];
+> 	struct pci_cap_saved_data cap[];
+> };
+> 
+> Accessing "cap" field returns the address right after the config_space[]
+> member. When it's changed to a pointer type, though, it needs to be
+> initialized to *something* but the code doesn't do that. The code just
+> expects the cap to follow right after the config.
+> 
+> Anyway, to silence the warning we can just make it an anonymous member
+> and add 1 to the state to get to the same place in memory as before.
+> 
+> ---
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a37..e562037644fd0 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1929,7 +1929,6 @@ EXPORT_SYMBOL(pci_restore_state);
+>   
+>   struct pci_saved_state {
+>   	u32 config_space[16];
+> -	struct pci_cap_saved_data cap[];
+>   };
+>   
+>   /**
+> @@ -1961,7 +1960,7 @@ struct pci_saved_state *pci_store_saved_state(struct pci_dev *dev)
+>   	memcpy(state->config_space, dev->saved_config_space,
+>   	       sizeof(state->config_space));
+>   
+> -	cap = state->cap;
+> +	cap = (void *)(state + 1);
+>   	hlist_for_each_entry(tmp, &dev->saved_cap_space, next) {
+>   		size_t len = sizeof(struct pci_cap_saved_data) + tmp->cap.size;
+>   		memcpy(cap, &tmp->cap, len);
+> @@ -1991,7 +1990,7 @@ int pci_load_saved_state(struct pci_dev *dev,
+>   	memcpy(dev->saved_config_space, state->config_space,
+>   	       sizeof(state->config_space));
+>   
+> -	cap = state->cap;
+> +	cap = (void *)(state + 1);
+>   	while (cap->size) {
+>   		struct pci_cap_saved_state *tmp;
+>   
+> --
 
-Thanks!
-
-> One thing I realized is that CONFIG_CFI_PERMISSIVE doesn't actually do
-> anything when FineIBT is used since we lose track of CFI trap
-> locations. I'm not sure if that's worth fixing, but perhaps we could
-> disable FineIBT when permissive mode is enabled to avoid confusion?
-
-Hmm, yeah, that's one thing I keep forgetting about. Let me try and fix
-it and see how ugly it gets before offering an opinion :-)
+Thanks for the clarification. I now see that the original use of a 
+flexible array inside 'pci_saved_state' is correct. Would you like me to 
+resend the patch with the modifications you suggested?
 
