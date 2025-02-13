@@ -1,126 +1,185 @@
-Return-Path: <linux-kernel+bounces-513830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53223A34F1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:13:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C96A34F25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA413AD1AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:13:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51FB16DD44
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4324BBF7;
-	Thu, 13 Feb 2025 20:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783E924BBEB;
+	Thu, 13 Feb 2025 20:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hobx4y4p"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="no4ZKzWc"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9664928A2CB;
-	Thu, 13 Feb 2025 20:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07AE24BBF5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477594; cv=none; b=sOkLMPUMcZlOKOslvVQo2eQADmb7vFkC0cUcZAm59cW1sfqr7U4i2Qwg6aFcLWQ0odXSyPhPnmfz3dXzIfM2RzHz90ffy2v/w9Iib0t75WMLyE8RdVoLwQkoMCiQuc01E+mBX4+2P6YNCSLGQXEYG9qY0l8yhOpiWCgi6YREQ1o=
+	t=1739477722; cv=none; b=llXnOUoPxd+6aY6kDpUp3TB6eYG8u/FEhuy3BgYN4XX9VfbsPXUVS2y1xhRVKJmcFvLFi1TFZeF0gSD8NcdRsabId3kL48CyEmESYXMKJEJAtWhHBxlZsYYilWnRat3ADfgEFmfbNs5dM91GV273MR03kf/tVAz/gv4l5tdQBQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477594; c=relaxed/simple;
-	bh=5ZipYuMPgrN9n9uPJIkYegGgMsGv/UZehGDUEqj4LLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EU+rBmJjLdSHIYuuaym05ipYsgcGxAEA4j7ZTK88PfsbN02wo8yoLPHLPtEew/nk1ougjmyntU0jQv2VCyY+vZoyZFDX0sJQOZ0/He/CE+3P4FpcUJhYBS9HQRwotX1KC2vDBO/6dbOAEoiimGFFcizu1Sr/D1DB1APEKT1XCBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hobx4y4p; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0AvuaGU/cH1A/7IDZRhEkvHqA4F9A2Qjq+21qlNvMrk=; b=hobx4y4pjW4CvLaZgqgTHG/Ni2
-	HlN2dGSn7BwnXb4spg0TCKfBpblIJSchznx0NAKY9PmedV+BAyaSmB983ppEOB0AO9P79wDqdjNzF
-	JaiRJnUidqglZC/C6Ddi0LFGJNoxfld6pMusrW5UFSuL/i9hmYQPU35u6+1x8F672Fpg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tifa5-00DqgB-GW; Thu, 13 Feb 2025 21:13:05 +0100
-Date: Thu, 13 Feb 2025 21:13:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 7/7] net: hibmcge: Add ioctl supported in this
- module
-Message-ID: <c1d557b6-7f11-449e-aff7-dad974e1c7c9@lunn.ch>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-8-shaojijie@huawei.com>
+	s=arc-20240116; t=1739477722; c=relaxed/simple;
+	bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SQT1wwqD34zKZtPF8o9I6fTCND2tNTGaaF0AcDwijvzfumj4KkiSA/GTkPPy4ZKCBlGJvXbPlgqPGSZzsVJtwAG2E3uiHr8VoxfKexOmfURGWkl3Gl6yjGiDRqpepIvc8BgMUSKCvWsQBUsGb3WEXDzNYIDS/XOGiSB+9yWuT5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=no4ZKzWc; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7c501bbecso192860966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:15:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1739477719; x=1740082519; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
+        b=no4ZKzWc/LOkvUyqWR0AQdkzJcUgEE7TFl8r2EDvyFoKJqOHeZ2e3FTrjurl/g+Bq8
+         X/K+7tr1sUR8WL0P1DC+5UPkLxiANyp+3FNGmsv1TRol0m0SVBz2NoobCUnBIPSfxlOu
+         zs9faBPz58s/RFKrX0/iqYKs8g12m0GGdISX2ua2RbzpAeDlFNZimAqCiEunvX9fVBDJ
+         z8gN0zRie4AmRNXKgLCnk9WdHs8szYX70HCellANQj2piokQEsjw6RqaBNBydzGDPW6m
+         psTkAk949ew5+62kc6Rit1V4oEs8MxaUkSrBhZ8TtWAigAmZvdM6EYoJM/i63hbCBZN4
+         FoPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739477719; x=1740082519;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
+        b=Asxfd01NlCUbVvn5XA6PBHS4s5qnfQIj+XYVvRpWJ9fLG8xjHUJO8j8LV0Mcf4gjsN
+         9DH1VyjW/k71/DCVG7MsK8ztNL9erG/p1G0LgvX8e0k8CsemFBnHeugiO0Z6Jq8sAJ1r
+         igNMSFTSjnaDxeXqWmJwNFKyRm9tuc3i7MhZBS7ZYldPaKX4XH9Eh7I61/jnoqbJ0fFk
+         yKaLlOOYaifT7D+1EnuFBMBRkK2w5Q1g8RJbxIozHKKArx/F8VxyKrbsAFgqjuu/Ztkm
+         bRMb4MUQLP79H/KxsFnxCxd2epSw/pJkoyMO7Ial4VpU7U/kMNY4+LEC/0UrKlIR/rAy
+         Mx/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX5jpDUUDWHNQdTxTR2qW3tUeKBQLTa7eJg6i3fh2XClh0UfjlBsKvgn09RJHgcrKxGrXrqOq/JBB1yZuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTJGhdMiZN9VsUoIEjXBGYsrEA8Wa9+/8fsLyRfdA4ymzqUzGm
+	Or3QkNJLOUH/g8hbqFt/wSDG2VGHZd3FG0fYsZ7YlfdEFsXxw/2RPboNIIErSHGK6hMhFXgMr9w
+	JMBAKisZ8a1Egf63AW2anDBEnojD3MrABaylXdA==
+X-Gm-Gg: ASbGncswKLyGlC7RrjHZlThWMVyk8l7P+ekLKMZhuXxGXFAL1KFEXyjrAkWLQDQNuiL
+	uUqtwVNOMP5Pb3Df9ycoBgeww/J7GNrmo78FnFBboUNwnIb13sSI6Fcwmt2bYXPRziSqWr3BN
+X-Google-Smtp-Source: AGHT+IHL8CM7ylsZCGYbhhurWPgsNzVEPTt0GbzqEVuFP8DGsWzaxgWDYP0kYEVOuE1FqVkeFZtnMkkFkhc6Mpf6ALQ=
+X-Received: by 2002:a17:907:94c5:b0:aab:740f:e467 with SMTP id
+ a640c23a62f3a-ab7f33459c8mr965659466b.8.1739477719051; Thu, 13 Feb 2025
+ 12:15:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213035529.2402283-8-shaojijie@huawei.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+ <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+ <20250213195304.3a2df02c@bootlin.com>
+In-Reply-To: <20250213195304.3a2df02c@bootlin.com>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Thu, 13 Feb 2025 20:15:06 +0000
+X-Gm-Features: AWEUYZmyv_HkHTHpV0OY_0Sgq0DOC92t4GTNRz9-9baWq02Pyp8uQAKZdY6LeEY
+Message-ID: <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 13, 2025 at 11:55:29AM +0800, Jijie Shao wrote:
-> This patch implements the ioctl interface to
-> read and write the PHY register.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
->  .../net/ethernet/hisilicon/hibmcge/hbg_main.c  | 18 ++++++++++++++++++
->  .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c  | 10 ++++++++++
->  .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h  |  2 ++
->  3 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-> index 78999d41f41d..afd04ed65eee 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-> @@ -273,6 +273,23 @@ static netdev_features_t hbg_net_fix_features(struct net_device *netdev,
->  	return features & HBG_SUPPORT_FEATURES;
->  }
->  
-> +static int hbg_net_eth_ioctl(struct net_device *dev, struct ifreq *ifr, s32 cmd)
-> +{
-> +	struct hbg_priv *priv = netdev_priv(dev);
-> +
-> +	if (test_bit(HBG_NIC_STATE_RESETTING, &priv->state))
-> +		return -EBUSY;
-> +
-> +	switch (cmd) {
-> +	case SIOCGMIIPHY:
-> +	case SIOCGMIIREG:
-> +	case SIOCSMIIREG:
-> +		return hbg_mdio_ioctl(priv, ifr, cmd);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
+Once more, with plain text, which I'd hoped the Android GMail client
+would work out for itself.
 
-No need for this switch statement. phy_mii_ioctl() will return
-EOPNOTSUPP for any it does not support.
+On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com> wrote:
+>
+> Hi Phil,
+>
+> On Thu, 13 Feb 2025 17:57:37 +0000
+> Phil Elwell <phil@raspberrypi.com> wrote:
+>
+> > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
+> > >
+> > > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
+> > > > > fan are directly on this custom board? You then want a board DTS which
+> > > > > includes all these pieces?
+> > > >
+> > > > That depends on whether you count the Raspberry Pi 5 as a custom board.
+> > >
+> > > So you mean the Pi 5 board would itself make use of the resources the
+> > > RP1 device has? They are not simply connected to headers for plugin
+> > > boards, but used by the main board? Hence you want to describe them in
+> > > the board .DTS file.
+> >
+> > That's correct. But even for plug-in devices, those which are on
+> > non-discoverable buses need overlays to declare them, which causes a
+> > problem when the overlay application happens before the kernel is
+> > started.
+> >
+>
+> Hum, I see.
+>
+> We worked on overlay usage on non-discoverable buses wired to a connector
+> and we did a talk about issues we are facing on at Plumber [0].
+>
+> You can also find our big picture in [1] and a last contribution introducing
+> export-symbols feature in [2]. export-symbols is also under discussion on
+> some other threads.
+>
+> Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
+> an addon board to add devices on an i2c bus provided by a base board and
+> wired to an connector the addon board is connected to.
+>
+> Maybe in your case, you can decouple resources (gpio, pwm) provided by the
+> addon board and used by the base board using also nexus node.
+>
+> We use a nexus node [4] (not presented at the Plumbers talk because the idea
+> came during 'out of talk' discussions in Plumbers) in order to allow our
+> addon board to use resources provided by the base board.
+>
+> In your case, if I understood, you are in the other direction but why not
+> using also a nexus node to decouple and translate resources in this other
+> direction ?
+>
+> Don't know if this idea can help but feel free to ask for some more
+> information if needed.
 
-The general structure of an IOCTL handler is to have a switch
-statements for any IOCTL which are handled at this level and the
-default: case then calls into the next layer down.
+Nexus nodes look interesting - I see them as adding a layer of
+abstraction such that, for example, boards can declare which of their
+specific resources performs a common function so that clients can
+treat them all the same. We do the same thing in a limited way by
+using common labels on nodes, but this goes much further.
 
-> +int hbg_mdio_ioctl(struct hbg_priv *priv, struct ifreq *ifr, int cmd)
-> +{
-> +	struct hbg_mac *mac = &priv->mac;
-> +
-> +	if (!mac->phydev)
-> +		return -ENODEV;
-> +
-> +	return phy_mii_ioctl(mac->phydev, ifr, cmd);
+In the case of Pi 5 and RP1, I imagine you are proposing that the Pi 5
+dtb declares the connector node and the overlay fills in the content
+with references to its GPIO controller, PWM controller etc. However, I
+think the overlay would also have to be board specific because it's
+not possible to patch part of a property from an overlay, so you'd end
+up overwriting the GPIO number as well as the controller reference.
 
-phy_do_ioctl(). This is assuming you follow the normal pattern of
-keeping the phydev pointer in the net_device structure.
+What is needed to make this work is the ability to cope with
+unresolved references in the base dtb, to be resolved as each overlay
+is applied, with runtime checking that each reference is resolved
+before it is used, all of which sounds like a nightmare. Plus, we
+really don't want to have to change the way all our camera and display
+overlays work on all Raspberry Pis just to accommodate somebody's idea
+of how RP1 should be handled.
 
-	Andrew
+Besides, Occam's razor surely applies.
+
+Phil
 
