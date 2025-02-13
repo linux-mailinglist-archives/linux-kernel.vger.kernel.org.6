@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-512814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E5AA33E1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:30:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A83DA33E16
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9CD93A51C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:27:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA35D7A595C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE02227E91;
-	Thu, 13 Feb 2025 11:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954CC227EAB;
+	Thu, 13 Feb 2025 11:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Od0e3bRC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iztR3Vxr"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F339E207641
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E020ADE0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739446017; cv=none; b=qNlAabAcE2xcYQMJc1zidgtGNIrRXBkO7g/DdJ0rB1wzy3sOCt2LTW1MAKJbNSAuPKK3c+nQwaMTiTh3mcL1qCm9ensJS2kTJ+2PnOBbrnqh8fnqjLrm2xuxY+2tZCKg+AejqF8lN/J92Qg/MWfxiIwlFcveKtnytGm5uCs+bqA=
+	t=1739446023; cv=none; b=TUkxLe3rqFUJM8aoLo3yeKdw3AWPbrab/EBDL3iKDgn95FztuLqnQrC+QEOkCXICbxXjkPUdWREPYsmtWBD1Tbly2sxWb+y8YqwZ3tnqiBKXat9XbXZXHRgQ10J+UyLIEtKRUkjZA1O7teHfA2fqCfERW690yu7Aqb/ABHiYxK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739446017; c=relaxed/simple;
-	bh=8HU40VzP7w3APpNnz8LfFtyqQBu1k8l7bJHMGTsnRU0=;
+	s=arc-20240116; t=1739446023; c=relaxed/simple;
+	bh=B1fq7jU5UHOIOFbzLHEOATqymdUDUJYnoW+0hPG0daY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MQ4vM2z+o+U/Z4LyWMW9Xia7H+UmPPJ5sseKXJ3rYa9FK+4gsBcT2EAiL7zZvUBgnDPn8ISTlL4J9vfuh0TWckSFTzak1vlL0x+tYEkeTY7ROQnGp3oEMv8BdmgmEkfTbgwK7X1DioB6YDVqKLRy/rzNnFL1f1ce0lst351nIgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Od0e3bRC; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=ujtdfkWgZ976JxNgI7NPdMErOSELRvUcIpY7Hi9HUMC5WhdB5ggOb5S/x40DBz2BMLj9xckw0iEo/0eQLzlHHJjT33kDFvjiSPKtRFuclZRMu/eIQ4Zs+aAAUJyFmYcjaOfhH2I6wQyGURZMQKLcgyNNeos/RNtEHttRjWcnv2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iztR3Vxr; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739446014;
+	s=mimecast20190719; t=1739446020;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Tl5LI0+FIqhluWKBWbRi36sKD2a6jwNqxCIOJBL/9uI=;
-	b=Od0e3bRCkoVSkbgioY3IdNRyP1uT82CZwlWk8qJbxKYsR93S8fdvRy8KVygctKDr3MkBp4
-	5sYmFplAoc7z0zeK98xUmDQ2OgtQW+Qa0mDUyJu13BtRnEeBX/7K6qwqNi4gKshlBWX5tc
-	VabM6AbiLsXCZed7PscuaRNYmUU7HMo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=Hkf58ANdlILzhGg3Hr8zGCN2v7ELtv5G9E/t3NcQaWs=;
+	b=iztR3VxrsBZW9nfl4shVCQWOrAdVwHrJhL4HPbeveorKgoMo8xDAjBH4d0VuV9D9aLgaM0
+	4siLAR9HxZpeDQmic+MOfcpeRo47iCEyb0G+qNV8OnbqSBahPU3wuQzTlNMh3ttsi3QE60
+	p2cVAN1BYD1fGxGp9raUXKUhpJS6B3I=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-MaCDsvRiO2SIiuvC9_iAzA-1; Thu,
- 13 Feb 2025 06:26:51 -0500
-X-MC-Unique: MaCDsvRiO2SIiuvC9_iAzA-1
-X-Mimecast-MFC-AGG-ID: MaCDsvRiO2SIiuvC9_iAzA_1739446010
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-237-1oDKG0SUN_q7hlu0CjkuBg-1; Thu,
+ 13 Feb 2025 06:26:55 -0500
+X-MC-Unique: 1oDKG0SUN_q7hlu0CjkuBg-1
+X-Mimecast-MFC-AGG-ID: 1oDKG0SUN_q7hlu0CjkuBg_1739446014
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25B7218EB2C9;
-	Thu, 13 Feb 2025 11:26:50 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B6D11800981;
+	Thu, 13 Feb 2025 11:26:54 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.45.225.79])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 537F0300018D;
-	Thu, 13 Feb 2025 11:26:46 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A1572300018D;
+	Thu, 13 Feb 2025 11:26:50 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Jani Nikula <jani.nikula@linux.intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
@@ -68,9 +68,9 @@ To: Jani Nikula <jani.nikula@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
 Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v4 4/8] drm/i915/gem: Add i915_gem_object_panic_map()
-Date: Thu, 13 Feb 2025 12:19:28 +0100
-Message-ID: <20250213112620.1923927-5-jfalempe@redhat.com>
+Subject: [PATCH v4 5/8] drm/i915/display: Add drm_panic support
+Date: Thu, 13 Feb 2025 12:19:29 +0100
+Message-ID: <20250213112620.1923927-6-jfalempe@redhat.com>
 In-Reply-To: <20250213112620.1923927-1-jfalempe@redhat.com>
 References: <20250213112620.1923927-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -82,144 +82,153 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Prepare the work for drm_panic support. This is used to map the
-current framebuffer, so the CPU can overwrite it with the panic
-message.
+This adds drm_panic support for a wide range of Intel GPU. I've
+tested it only on 3 laptops, Haswell (with 128MB of eDRAM),
+Comet Lake, and Lunar Lake.
+For hardware using DPT, it's not possible to disable tiling, as you
+will need to reconfigure the way the GPU is accessing the
+framebuffer.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/i915/display/intel_bo.c    | 10 +++++++++
- drivers/gpu/drm/i915/display/intel_bo.h    |  2 ++
- drivers/gpu/drm/i915/gem/i915_gem_object.h |  2 ++
- drivers/gpu/drm/i915/gem/i915_gem_pages.c  | 25 ++++++++++++++++++++++
- drivers/gpu/drm/xe/display/intel_bo.c      | 17 +++++++++++++++
- 5 files changed, 56 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_bo.c b/drivers/gpu/drm/i915/display/intel_bo.c
-index fbd16d7b58d95..5eeb3ba827edf 100644
---- a/drivers/gpu/drm/i915/display/intel_bo.c
-+++ b/drivers/gpu/drm/i915/display/intel_bo.c
-@@ -22,6 +22,11 @@ bool intel_bo_is_shmem(struct drm_gem_object *obj)
- 	return i915_gem_object_is_shmem(to_intel_bo(obj));
+v4:
+ * Add support for Xe driver.
+
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 88 ++++++++++++++++++-
+ 1 file changed, 87 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+index 612e9b0ec14ab..96697ac0ef69a 100644
+--- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
++++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+@@ -33,17 +33,21 @@
+ 
+ #include <linux/dma-fence-chain.h>
+ #include <linux/dma-resv.h>
++#include <linux/iosys-map.h>
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_blend.h>
++#include <drm/drm_cache.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_panic.h>
+ 
+ #include "i915_drv.h"
+ #include "i915_config.h"
+ #include "i9xx_plane_regs.h"
+ #include "intel_atomic_plane.h"
++#include "intel_bo.h"
+ #include "intel_cdclk.h"
+ #include "intel_cursor.h"
+ #include "intel_display_rps.h"
+@@ -51,6 +55,7 @@
+ #include "intel_display_types.h"
+ #include "intel_fb.h"
+ #include "intel_fb_pin.h"
++#include "intel_fbdev.h"
+ #include "skl_scaler.h"
+ #include "skl_watermark.h"
+ 
+@@ -1190,14 +1195,95 @@ intel_cleanup_plane_fb(struct drm_plane *plane,
+ 	intel_plane_unpin_fb(old_plane_state);
  }
  
-+bool intel_bo_has_iomem(struct drm_gem_object *obj)
-+{
-+	return i915_gem_object_has_iomem(to_intel_bo(obj));
-+}
-+
- bool intel_bo_is_protected(struct drm_gem_object *obj)
- {
- 	return i915_gem_object_is_protected(to_intel_bo(obj));
-@@ -57,3 +62,8 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
- {
- 	i915_debugfs_describe_obj(m, to_intel_bo(obj));
- }
-+
-+void *intel_bo_panic_map(struct drm_gem_object *obj)
-+{
-+	return i915_gem_object_panic_map(to_intel_bo(obj));
-+}
-diff --git a/drivers/gpu/drm/i915/display/intel_bo.h b/drivers/gpu/drm/i915/display/intel_bo.h
-index ea7a2253aaa57..0eb084955e9af 100644
---- a/drivers/gpu/drm/i915/display/intel_bo.h
-+++ b/drivers/gpu/drm/i915/display/intel_bo.h
-@@ -13,6 +13,7 @@ struct vm_area_struct;
- bool intel_bo_is_tiled(struct drm_gem_object *obj);
- bool intel_bo_is_userptr(struct drm_gem_object *obj);
- bool intel_bo_is_shmem(struct drm_gem_object *obj);
-+bool intel_bo_has_iomem(struct drm_gem_object *obj);
- bool intel_bo_is_protected(struct drm_gem_object *obj);
- void intel_bo_flush_if_display(struct drm_gem_object *obj);
- int intel_bo_fb_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
-@@ -23,5 +24,6 @@ struct intel_frontbuffer *intel_bo_set_frontbuffer(struct drm_gem_object *obj,
- 						   struct intel_frontbuffer *front);
- 
- void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj);
-+void *intel_bo_panic_map(struct drm_gem_object *obj);
- 
- #endif /* __INTEL_BO__ */
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-index bb713e096db28..a303d9696231a 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-@@ -692,6 +692,8 @@ i915_gem_object_unpin_pages(struct drm_i915_gem_object *obj)
- int __i915_gem_object_put_pages(struct drm_i915_gem_object *obj);
- int i915_gem_object_truncate(struct drm_i915_gem_object *obj);
- 
-+void *i915_gem_object_panic_map(struct drm_i915_gem_object *obj);
-+
- /**
-  * i915_gem_object_pin_map - return a contiguous mapping of the entire object
-  * @obj: the object to map into kernel address space
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-index 8780aa2431053..07c33169603c9 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-@@ -355,6 +355,31 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj,
- 	return vaddr ?: ERR_PTR(-ENOMEM);
- }
- 
-+/* Map the current framebuffer for CPU access. Called from panic handler, so no
-+ * need to pin or cleanup.
++/* Only used by drm_panic get_scanout_buffer() and panic_flush(), so it is
++ * protected by the drm panic spinlock
 + */
-+void *i915_gem_object_panic_map(struct drm_i915_gem_object *obj)
++static struct iosys_map panic_map;
++
++static void intel_panic_flush(struct drm_plane *plane)
 +{
-+	enum i915_map_type has_type;
-+	void *ptr;
++	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
++	struct drm_i915_private *dev_priv = to_i915(plane->dev);
++	struct drm_framebuffer *fb = plane_state->hw.fb;
++	struct intel_plane *iplane = to_intel_plane(plane);
 +
-+	ptr = page_unpack_bits(obj->mm.mapping, &has_type);
++	/* Force a cache flush, otherwise the new pixels won't show up */
++	drm_clflush_virt_range(panic_map.vaddr, fb->height * fb->pitches[0]);
 +
-+	if (ptr)
-+		return ptr;
++	/* Don't disable tiling if it's the fbdev framebuffer.*/
++	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev))
++		return;
 +
-+	if (i915_gem_object_has_struct_page(obj))
-+		ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
-+	else
-+		ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
-+
-+	if (IS_ERR(ptr))
-+		return NULL;
-+
-+	obj->mm.mapping = page_pack_bits(ptr, I915_MAP_WB);
-+	return ptr;
++	if (fb->modifier && iplane->disable_tiling)
++		iplane->disable_tiling(iplane);
 +}
 +
- /* get, pin, and map the pages of the object into kernel space */
- void *i915_gem_object_pin_map(struct drm_i915_gem_object *obj,
- 			      enum i915_map_type type)
-diff --git a/drivers/gpu/drm/xe/display/intel_bo.c b/drivers/gpu/drm/xe/display/intel_bo.c
-index b463f5bd4eed1..7ebc60b23aec4 100644
---- a/drivers/gpu/drm/xe/display/intel_bo.c
-+++ b/drivers/gpu/drm/xe/display/intel_bo.c
-@@ -23,6 +23,11 @@ bool intel_bo_is_shmem(struct drm_gem_object *obj)
- 	return false;
++static int intel_get_scanout_buffer(struct drm_plane *plane,
++				    struct drm_scanout_buffer *sb)
++{
++	struct intel_plane_state *plane_state;
++	struct drm_gem_object *obj;
++	struct drm_framebuffer *fb;
++	struct drm_i915_private *dev_priv = to_i915(plane->dev);
++
++	if (!plane->state || !plane->state->fb || !plane->state->visible)
++		return -ENODEV;
++
++	plane_state = to_intel_plane_state(plane->state);
++	fb = plane_state->hw.fb;
++	obj = intel_fb_bo(fb);
++	if (!obj)
++		return -ENODEV;
++
++	iosys_map_clear(&panic_map);
++	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
++		intel_fbdev_get_map(dev_priv->display.fbdev.fbdev, &panic_map);
++		if (iosys_map_is_null(&panic_map))
++			return -ENOMEM;
++	} else {
++		void *ptr;
++		/* Can't disable tiling if DPT is in use */
++		if (intel_fb_uses_dpt(fb))
++			return -EOPNOTSUPP;
++
++		ptr = intel_bo_panic_map(obj);
++		if (!ptr)
++			return -ENOMEM;
++
++		if (intel_bo_has_iomem(obj))
++			iosys_map_set_vaddr_iomem(&panic_map, ptr);
++		else
++			iosys_map_set_vaddr(&panic_map, ptr);
++
++	}
++
++	sb->map[0] = panic_map;
++	sb->width = fb->width;
++	sb->height = fb->height;
++	sb->format = fb->format;
++	sb->pitch[0] = fb->pitches[0];
++
++	return 0;
++}
++
+ static const struct drm_plane_helper_funcs intel_plane_helper_funcs = {
+ 	.prepare_fb = intel_prepare_plane_fb,
+ 	.cleanup_fb = intel_cleanup_plane_fb,
+ };
+ 
++static const struct drm_plane_helper_funcs intel_primary_plane_helper_funcs = {
++	.prepare_fb = intel_prepare_plane_fb,
++	.cleanup_fb = intel_cleanup_plane_fb,
++	.get_scanout_buffer = intel_get_scanout_buffer,
++	.panic_flush = intel_panic_flush,
++};
++
+ void intel_plane_helper_add(struct intel_plane *plane)
+ {
+-	drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
++	if (plane->base.type == DRM_PLANE_TYPE_PRIMARY)
++		drm_plane_helper_add(&plane->base, &intel_primary_plane_helper_funcs);
++	else
++		drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
  }
  
-+bool intel_bo_has_iomem(struct drm_gem_object *obj)
-+{
-+	return false;
-+}
-+
- bool intel_bo_is_protected(struct drm_gem_object *obj)
- {
- 	return false;
-@@ -59,3 +64,15 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
- {
- 	/* FIXME */
- }
-+
-+void *intel_bo_panic_map(struct drm_gem_object *obj)
-+{
-+	struct xe_bo *bo = gem_to_xe_bo(obj);
-+	struct iosys_map map;
-+	int ret;
-+
-+	ret = ttm_bo_vmap(&bo->ttm, &map);
-+	if (ret)
-+		return NULL;
-+	return map.vaddr;
-+}
+ void intel_plane_init_cursor_vblank_work(struct intel_plane_state *old_plane_state,
 -- 
 2.47.1
 
