@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-513560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CCAA34BA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA1A34BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40584160F6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC43188C591
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CEA2040AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71692063E1;
 	Thu, 13 Feb 2025 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNjY+Rr8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar4SOuP/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2628A2D6;
-	Thu, 13 Feb 2025 17:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0432036FA;
+	Thu, 13 Feb 2025 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467290; cv=none; b=esSNodppBn9OSt5nAhUS8njAYZJzZd1K3jYlYJV9W69NvDvaJ2vT7mzQAySFFcp4UnLjaV3p3wCxlHM1bhb6/9oz8x9UpQBBs5yBQZjcHxn56XGv9ooqQL2svOxQuAVBzKyNx82IdVlR6JC0qrjvd4sIdKXPrYjo5rZ++y2jv68=
+	t=1739467291; cv=none; b=c7fNXRrsH16Mk66u536fSuBnZc4MKW48yrO4XYtk0QoQ5chEKhEi5YgsrsP7/Ppne30B855P4X37EKR/WudE/o6emie2IR0hIFEM8A4s4X7AkLeM3f0D5w/jQ9BrOrczaN1swb3j6P06OEfQ7gXQBh4BSCfOFuRyBiIWV5Zan4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467290; c=relaxed/simple;
-	bh=lmMDrQZ2CzXIwj4HSiF99RcebG+5dulrP1XGevUYcSo=;
+	s=arc-20240116; t=1739467291; c=relaxed/simple;
+	bh=lYO6NRcKGW3pamNfzE5W8XjHsrirWmghOIIFmq2cQrM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=buIuj8RLsR/BIMX8QfYQgA8nAmCN4+MNnCKZ3MfcGAtei5F/LxksK/eLEDOPKas1V7eUssw9jRJoObenz/wc8NpqnFB+bQUi5D1tZuedKqIDeGOK9Id5PvPKC9uhrWDM5bhn8GmQ9MOI8/fTIhlRTwDuZWq8uKswW79FKlbU/TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNjY+Rr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78DAC4CED1;
-	Thu, 13 Feb 2025 17:21:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qUEF3cnCShoH8DcZ+/3/+geJnPe5fMSvQMJHLIe9mafbL6kMakhSWR+yxpb2H2tN5Rb1yTuBJbECdHCOqpIVbDv5M00hnrDYe0Dvf2Uhmx/ppOMpHlN+dEeL141f56qBlHPUVoaNETshCyh2pnRWh1EeecDX7u+qu0nKFI2Q/xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar4SOuP/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DA6C4CEE9;
+	Thu, 13 Feb 2025 17:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739467290;
-	bh=lmMDrQZ2CzXIwj4HSiF99RcebG+5dulrP1XGevUYcSo=;
+	s=k20201202; t=1739467291;
+	bh=lYO6NRcKGW3pamNfzE5W8XjHsrirWmghOIIFmq2cQrM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CNjY+Rr8+jYbTQzSbezmVyAhqXgSHvtW9DV01Uly9y1p8h+8FyXQKIGlQBaFNHqtC
-	 oPyDZVRBoBdJK3Fv4Os35T7LO1ZY7UyqfDwI+qDYD0yxjZkknMCct4CtTDwNMUlgqp
-	 73aTRmf45GRtVBx3QXnByK/iS+tDaBc+AhAcXogLy3yMcrfVBb1vquJzh1k8+/M8K5
-	 atSb0RhJfeTQ11dA6ikw5am+hh65u44mhpqJjHQzoduYuaWrnlHOvrHU2PBLoRcrRQ
-	 euIUMqyuzC4pzn5LdXrRd26pt2+KGwzyXkaMyeiZIedu4ZUxC202BFBEGQ6v4Ul9FU
-	 4mXo15iKpNJUA==
+	b=Ar4SOuP/+ZV9P5CZ2t06lNM75c0c23a6gdDwaiiG+E8gCGS8tOASl1Wgz3mMzXUUH
+	 5UUyNv2sOVstI3k2U/ZL06T9NgLp8hKzCDUCwLsWTjqfDnSDkKkEp/nQNJ1Qkv+WCP
+	 fGPl+cgCeD21Y6UUzLKijYHmxqsgaFFKE4jvs0OLb2T5VQXLs2zdE8P68cE41RSj6j
+	 R/ZWIIPnIsfiy4p+19hC72JLhCsHo91NiVCqvAlx9GDo9DFFLCbRfDv8BaiR5E01yM
+	 mRE5q17kXSCtphU+KQLHFVE4w4C48LjjwfIvlrBMCeGe9kM2fUWmKrFoYzjZU0Lysi
+	 bR91KaIu2Uz3g==
 From: Namhyung Kim <namhyung@kernel.org>
-To: linux-perf-users@vger.kernel.org, James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- "Liang, Kan" <kan.liang@linux.intel.com>, 
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20250212163859.1489916-1-james.clark@linaro.org>
-References: <20250212163859.1489916-1-james.clark@linaro.org>
-Subject: Re: [PATCH] perf tests: Fix Tool PMU test segfault
-Message-Id: <173946728980.1291083.13326359079343509161.b4-ty@kernel.org>
-Date: Thu, 13 Feb 2025 09:21:29 -0800
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+ Masami Hiramatsu <mhiramat@kernel.org>
+In-Reply-To: <20250212221445.437481-1-namhyung@kernel.org>
+References: <20250212221445.437481-1-namhyung@kernel.org>
+Subject: Re: [PATCH] perf tools: Use symfs when opening debuginfo by path
+Message-Id: <173946729082.1291083.16132326522323232275.b4-ty@kernel.org>
+Date: Thu, 13 Feb 2025 09:21:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,13 +63,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 12 Feb 2025 16:38:56 +0000, James Clark wrote:
-> tool_pmu__event_to_str() now handles skipped events by returning NULL,
-> so it's wrong to re-check for a skip on the resulting string. Calling
-> tool_pmu__skip_event() with a NULL string results in a segfault so
-> remove the unnecessary skip to fix it:
+On Wed, 12 Feb 2025 14:14:45 -0800, Namhyung Kim wrote:
+> I found that it failed to load a binary using --symfs option.  Say I
+> have a binary in /home/user/prog/xxx and a perf data file with it.  If I
+> move them to a different machine and use --symfs, it tries to find the
+> binary in some locations under symfs using dso__read_binary_type_filename(),
+> but not the last one.
 > 
->   $ perf test -vv "parsing with PMU name"
+>   ${symfs}/usr/lib/debug/home/user/prog/xxx.debug
+>   ${symfs}/usr/lib/debug/home/user/prog/xxx
+>   ${symfs}/home/user/prog/.debug/xxx
+>   /home/user/prog/xxx
 > 
 > [...]
 Applied to perf-tools-next, thanks!
