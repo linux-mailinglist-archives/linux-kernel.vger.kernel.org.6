@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-512356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5CBA33800
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05666A33803
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E090188C630
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A79188C82F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06415207A3F;
-	Thu, 13 Feb 2025 06:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkS4A/KV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B01BA2D;
-	Thu, 13 Feb 2025 06:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF8820765F;
+	Thu, 13 Feb 2025 06:36:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A23F13B29B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739428387; cv=none; b=hfWXhCnOpKhpnf8yxdsHK7o7ZfS7ZZ0nC2REU2N46DxXSGQ8XRiDzEmoQm5UVm09hMvqXvMgLG+bL4ODNYJGhga3aBjiF4FbUgyy+R8iKLPsqWy7gqJ6KO7jzZ2qOXl868wY5xLIBme5qr/4II6+RPSpt00BPo407beDxFMVFz4=
+	t=1739428580; cv=none; b=YyGpyHA+IV++brZdt225lMCaK49WqfmRUkXWhRN8njLiY0T9xyXza0kJglGWWQxQN9mOUUqDlhtpOyCwIaPfsEhR9Pn/M7FzntNRr4tJ6cyhAPxASGrDPmxdJmsoxTGhLKGb2RDNLNmNaf09PeqxCPcRASaodACHRqCFOGOnoZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739428387; c=relaxed/simple;
-	bh=EYlzHzMqG7RCe6q7JFcYu+FiAfG2RPpXS8EZEEWgLsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSEi15aSsSaEFJlhYeAyzY61crE3W4aYaclAdm82lotK1fwlmVV+YWEegp+OgKqhAX5tgC7eVn1Nf2scq07fO6VrtdxLWl8g8HYmPnGkQRQjyZkA92UN57kWMWJLtqKQieOOb5blaWvCqr71yQ5bUFAMa2aUhy+z9lkaNTkxjiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkS4A/KV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F2DC4CED1;
-	Thu, 13 Feb 2025 06:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739428386;
-	bh=EYlzHzMqG7RCe6q7JFcYu+FiAfG2RPpXS8EZEEWgLsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkS4A/KV+3NNKiQjsxvFOCzRdT8eWvlDjxM2q4kcb2BJO337OWJX9LiciToHB4H5D
-	 betsxIK36VXW3NHNoB4lRt0NJXBcNvvIRD4TdwxZiVuUg3QYAeOYlV1HlcU0EOe6Iq
-	 PZLtnwxTCnRM2qsfunBg9CIOm9UrYC0WezluyZS+0WZx/wi4xyYmqrxjQWRSRydQv3
-	 JAKdnQbYR1WC1r7H2ZTQHeKSXHaJKzo/J/55xlp6TGxwvoKepy/NpWl6mEE7OkYIg4
-	 oMQ9JVu3HAPS0/XGVqxfYxi4AA4Ae/S7xImljyKO0EBVNzSAITvpy/EH7dB6z6x2NI
-	 wBiVk20+/3H9Q==
-Date: Wed, 12 Feb 2025 22:33:04 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: fsverity@lists.linux.dev, linux-crypto@vger.kernel.org,
-	dm-devel@lists.linux.dev, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer
- hashing
-Message-ID: <20250213063304.GA11664@sol.localdomain>
-References: <20250212154718.44255-1-ebiggers@kernel.org>
- <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+	s=arc-20240116; t=1739428580; c=relaxed/simple;
+	bh=P+6n414RxyKfp4s5m1ZMMcWKMEscj1t0ZZK/rIeORQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NnpeuU8T5E8f+qrq7jKYpHyF0inkTtHM7DMFdPmHHOpy66xJvalnaTbawBeZknH/X7qUUAau5JJdjpJUYSwXz7H36GMrf3RQX0EWeaJL4y6OBZNj3XH8kvQs2aotlAWHksB+pkzWRYcs+jkjZNJWyWQz/Fn8N8xgGEdbWwN1w5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AD961756;
+	Wed, 12 Feb 2025 22:36:38 -0800 (PST)
+Received: from [10.162.16.135] (a077893.blr.arm.com [10.162.16.135])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 502343F6A8;
+	Wed, 12 Feb 2025 22:36:12 -0800 (PST)
+Message-ID: <d4fcf981-ea24-4892-9173-2c6f4046c7c1@arm.com>
+Date: Thu, 13 Feb 2025 12:06:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 10/16] mm/vmalloc: Warn on improper use of
+ vunmap_range()
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-11-ryan.roberts@arm.com>
+ <3bbae070-1ae3-4f5d-86ab-b3221425a1cb@arm.com>
+ <faa89fec-4b02-4844-859e-3b0e7f402d89@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <faa89fec-4b02-4844-859e-3b0e7f402d89@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 12:17:42PM +0800, Herbert Xu wrote:
-> On Wed, Feb 12, 2025 at 07:47:11AM -0800, Eric Biggers wrote:
-> > [ This patchset keeps getting rejected by Herbert, who prefers a
-> >   complex, buggy, and slow alternative that shoehorns CPU-based hashing
-> >   into the asynchronous hash API which is designed for off-CPU offload:
-> >   https://lore.kernel.org/linux-crypto/cover.1730021644.git.herbert@gondor.apana.org.au/
-> >   This patchset is a much better way to do it though, and I've already
-> >   been maintaining it downstream as it would not be reasonable to go the
-> >   asynchronous hash route instead.  Let me know if there are any
-> >   objections to me taking this patchset through the fsverity tree, or at
-> >   least patches 1-5 as the dm-verity patches could go in separately. ]
+
+
+On 2/7/25 16:29, Ryan Roberts wrote:
+> On 07/02/2025 08:41, Anshuman Khandual wrote:
+>> On 2/5/25 20:39, Ryan Roberts wrote:
+>>> A call to vmalloc_huge() may cause memory blocks to be mapped at pmd or
+>>> pud level. But it is possible to subsquently call vunmap_range() on a
+>>
+>> s/subsquently/subsequently
+>>
+>>> sub-range of the mapped memory, which partially overlaps a pmd or pud.
+>>> In this case, vmalloc unmaps the entire pmd or pud so that the
+>>> no-overlapping portion is also unmapped. Clearly that would have a bad
+>>> outcome, but it's not something that any callers do today as far as I
+>>> can tell. So I guess it's jsut expected that callers will not do this.
+>>
+>> s/jsut/just
+>>
+>>>
+>>> However, it would be useful to know if this happened in future; let's
+>>> add a warning to cover the eventuality.
+>>
+>> This is a reasonable check to prevent bad outcomes later.
+>>
+>>>
+>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>> ---
+>>>  mm/vmalloc.c | 8 ++++++--
+>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>>> index a6e7acebe9ad..fcdf67d5177a 100644
+>>> --- a/mm/vmalloc.c
+>>> +++ b/mm/vmalloc.c
+>>> @@ -374,8 +374,10 @@ static void vunmap_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
+>>>  		if (cleared || pmd_bad(*pmd))
+>>>  			*mask |= PGTBL_PMD_MODIFIED;
+>>>  
+>>> -		if (cleared)
+>>> +		if (cleared) {
+>>> +			WARN_ON(next - addr < PMD_SIZE);
+>>>  			continue;
+>>> +		}
+>>>  		if (pmd_none_or_clear_bad(pmd))
+>>>  			continue;
+>>>  		vunmap_pte_range(pmd, addr, next, mask);
+>>> @@ -399,8 +401,10 @@ static void vunmap_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+>>>  		if (cleared || pud_bad(*pud))
+>>>  			*mask |= PGTBL_PUD_MODIFIED;
+>>>  
+>>> -		if (cleared)
+>>> +		if (cleared) {
+>>> +			WARN_ON(next - addr < PUD_SIZE);
+>>>  			continue;
+>>> +		}
+>>>  		if (pud_none_or_clear_bad(pud))
+>>>  			continue;
+>>>  		vunmap_pmd_range(pud, addr, next, mask);
+>> Why not also include such checks in vunmap_p4d_range() and __vunmap_range_noflush()
+>> for corresponding P4D and PGD levels as well ?
 > 
-> Yes I object.  While I very much like this idea of parallel hashing
-> that you're introducing, shoehorning it into shash is restricting
-> this to storage-based users.
+> The kernel does not support p4d or pgd leaf entries so there is nothing to check.> 
+> Although vunmap_p4d_range() does call p4d_clear_huge(). The function is a stub
+> and returns void (unlike p[mu]d_clear_huge()). I suspect we could just remove
+> p4d_clear_huge() entirely. But that would be a separate patch to mm tree I think.
 > 
-> Networking is equally able to benefit from paralell hashing, and
-> parallel crypto (in particular, AEAD) in general.  In fact, both
-> TLS and IPsec can benefit directly from bulk submission instead
-> of the current scheme where a single packet is processed at a time.
+> For pgd, there isn't even an equivalent looking function.
+> 
+> Basically at those 2 levels, it's always a table.
 
-I've already covered this extensively, but here we go again.  First there are
-more users of shash than ahash in the kernel, since shash is much easier to use
-and also a bit faster.  There is nothing storage specific about it.  You've
-claimed that shash is deprecated, but that reflects a misunderstanding of what
-users actually want and need.  Users want simple, fast, easy-to-use APIs.  Not
-APIs that are optimized for an obsolete form of hardware offload and have
-CPU-based crypto support bolted on as an afterthought.
-
-Second, these days TLS and IPsec usually use AES-GCM, which is inherently
-parallelizable so does not benefit from multibuffer crypto.  This is a major
-difference between the AEADs and message digest algorithms in common use.  And
-it happens that I recently did a lot of work to optimize AES-GCM on x86_64; see
-my commits in v6.11 that made AES-GCM 2-3x as fast on VAES-capable CPUs.
-
-So anyone who cares about TLS or IPsec performance should of course be using
-AES-GCM, as it's the fastest by far, and it has no need for multibuffer.  But
-even for the rare case where someone is still using a legacy algorithm like
-"authenc(hmac(sha256),cbc(aes))" for some reason, as I've explained before there
-are much lower hanging fruit to optimizing it.  For example x86_64 still has no
-implementation of the authenc template, let alone one that interleaves the
-encryption with the MAC.  Both could be done today with the current crypto API.
-Meanwhile multibuffer crypto would be very hard to apply to that use case (much
-harder than the cases where I've applied it) and would not be very effective,
-for reasons such as the complexity of that combination of algorithms vs. just
-SHA-256.  Again, see
-https://lore.kernel.org/linux-crypto/20240605191410.GB1222@sol.localdomain/,
-https://lore.kernel.org/linux-crypto/20240606052801.GA324380@sol.localdomain/,
-https://lore.kernel.org/linux-crypto/20240610164258.GA3269@sol.localdomain/,
-https://lore.kernel.org/linux-crypto/20240611203209.GB128642@sol.localdomain/,
-https://lore.kernel.org/linux-crypto/20240611201858.GA128642@sol.localdomain/
-where I've already explained this in detail.
-
-You've drawn an analogy to TSO and claimed that submitting multiple requests to
-the crypto API at once would significantly improve performance even without
-support from the underlying algorithm.  But that is incorrect.  TSO saves a
-significant amount of time due to how the networking stack works.  In contrast,
-the equivalent in the crypto API would do very little.  It would at best save
-one indirect call per message, at the cost of adding the overhead of multi
-request support.  Even assuming it was beneficial at all, it would be a very
-minor optimization, and not worth it over other optimization opportunities that
-would not require making complex and error-prone extensions to the crypto API.
-
-I remain quite puzzled by your position here, as it makes no sense.  TBH, I
-think your opinions would be more informed if you had more experience with
-actually implementing and optimizing the various crypto algorithms.
-
-> But thanks for the reminder and I will be posting my patches soon.
-
-I am not really interested in using your patches, sorry.  They just seem like
-really poor engineering and a continuation of many of the worst practices of the
-kernel crypto API that we *know* are not working.  Especially for cryptography
-code, we need to do better.  (And I've even already done it!)
-
-- Eric
+Understood, thanks !
 
