@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-513408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB2EA349EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C7CA34970
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B44F170784
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1892188FF61
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3675624BC0E;
-	Thu, 13 Feb 2025 16:18:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90F270EC4;
-	Thu, 13 Feb 2025 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31366221553;
+	Thu, 13 Feb 2025 16:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="9Hy452L+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aEIBhSP1"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D00200130
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463492; cv=none; b=jrbLzJPtnbfpAVv2s0Kn/zCgBtfy20xbxJIthB5UXXT3nk2Xww8ya8gZElEfoh2vvVA+/Xj9h+m7fu8E7dcAVWpMX5HbiPD6vBkCkSEVHYEBS3sMpULIBbrilQiKIO5VCmbldZ4WVGZBrUx0UoruAB/o8ZdBvYeodXRDS6UY+20=
+	t=1739463294; cv=none; b=b2FPYhE5Cggujvic8QrIJfK1K2tLGiE3uhlMx2tofLrJCTI/8jqqhp2RSyl2MTBoxaw9kxdBrZauQgGSAzjrC3BnNKS5TkqKn6Gk9KWnSyR0m7l6KeVkO/8Xi/lu7U3q84XaDs2SNa4NxaQZPgEPf5zDRehRrmUIUII2IsQ9vsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463492; c=relaxed/simple;
-	bh=AI55fZuPVUZGp2C0JL68eLNSM71xTAytlCMCsAaP3qo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IB2gnuwhDMrX51T+08xPk236hWIrJAwrKae29snOXbb4YfPUt+J38lViKRk45AnmwlaKfMv2R61OJoVmEeHTx/vhnYXgc4wIDOA16ma/nlcwmIhene3+GrgjrnVmvA4R76/hypR9/4t1e8/WSJ25qpJ9+8gN6+/pYqCrh8ycTc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BC2226BA;
-	Thu, 13 Feb 2025 08:18:31 -0800 (PST)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.32.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 180C73F6A8;
-	Thu, 13 Feb 2025 08:18:06 -0800 (PST)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-Subject: [PATCH v7 45/45] WIP: Enable support for PAGE_SIZE>4k
-Date: Thu, 13 Feb 2025 16:14:25 +0000
-Message-ID: <20250213161426.102987-46-steven.price@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
-References: <20250213161426.102987-1-steven.price@arm.com>
+	s=arc-20240116; t=1739463294; c=relaxed/simple;
+	bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuAiaEweV/fb5c=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=JJ6VDQKyTx5pQQPmwLyj7pfL0naP0/uwPlzPZCkNIMs2oeRna2tgRCYgmIvszoWjHJdoR3pUCaQr+zktFrM2hBIeu4PnTkexmjgNr+1i4z+BAl9LSKkFgATtaCkUdXb3IAlMMZg/aAkTRIlOLUfgmutkvBOWUW9xRCyHjPkwYwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=9Hy452L+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aEIBhSP1; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5E87F138009C;
+	Thu, 13 Feb 2025 11:14:51 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-10.internal (MEProxy); Thu, 13 Feb 2025 11:14:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1739463291; x=1739549691; bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuA
+	iaEweV/fb5c=; b=9Hy452L+xFsWrycvvvMpOR9cm+RELglLGmf10ti5XFJpCPra
+	aAFURThZV4MJxFN3JrXiPzcJYC7oyrXNsemLBK8G0WWPHSLU+8Uj4DYiTJE2Z15S
+	NHiuo6kmBUERoogKifYuNLdDfz+zzEurt0CbIWRgKaZM7LEj+YIWLGu9UmTJZmM5
+	+Tc7X5ySExZ0Ee8GRJt9AFuhr9j2TUWMwmNict5HHxJi1RHisypS5LGwXfFMVXDO
+	1OcGHZDyzCOB6Rk0VYfATbMSJdmeBNAxhKATpLcGosUIFov+2IpBTvNwc0VJYgL+
+	F2rKYC5+c2qORhR1reHTRbIXaeopPI7dtk/oNQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739463291; x=
+	1739549691; bh=vB2tLQ8luJCtcby10TZWuCWKxWvuKnuAiaEweV/fb5c=; b=a
+	EIBhSP1UMOzP32rXYDdRMd9nK+mSv0CVZBScor0GRIswWzchuBi4SKCIljXYZWzD
+	ZIDUGqG5UMu6qDxoWN0FfW+5SWXnI5bVr+WybgQDGHeLjrB9Np8WhLzrYp1Qge3U
+	HUsYTxsiYfHZ8xoOMNul0s/qzc4WJSQ1xL6A/M0UN/WpZx3o2wkLJoCh/6xQHZzb
+	Cr0lEluVENMTss/xAalNIwEnMEH6N53wizYoCjrZdxLQH0rb600v9FbXRYUVjNvd
+	HcvzCFTlDU3pvnG7sKh1quEaTu4LlA1Ql/lhJiRWspSQlvm5QhZHxizW8Sl9RWRZ
+	qFUZUMRjokZdk/6ynXpLA==
+X-ME-Sender: <xms:eRquZ1tInnf9kRqzkJYdsJgqzfmpV6gZGjgjXJNIFJbokixtEqKbHw>
+    <xme:eRquZ-esQAlMFQFvO1mBsM7OZ1UtJrb7tQAERI6MmUBx3BZf2pre8nnJFwsGb-9m8
+    6GjRV5ggtbEn5v9BEA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjedvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
+    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
+    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnvggrlhesgh
+    homhhprgdruggvvhdprhgtphhtthhopehsrghgihesghhrihhmsggvrhhgrdhmvgdprhgt
+    phhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohepkhgsuhhstghhse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlhes
+    lhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvh
+    hmvgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhi
+    sehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohephhgthheslhhsthdruggvpd
+    hrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
+X-ME-Proxy: <xmx:eRquZ4yANbrFpU9QyTEousZ9LrqnpIPXkZxxa-PGG083rHBHu56Czg>
+    <xmx:eRquZ8PvOIgF_dIudDTbFb3hYzN3VV57sFtxSNSpx9W30UeOKXeH-Q>
+    <xmx:eRquZ18Mr4WTOqZxZktpBpbJjwc7YzYHAPIvbJRaxFJOFw4lUyP2xA>
+    <xmx:eRquZ8U6IHsHWO0WvdWVOadkBlGVRqHWhGvy7Uw0Z-yEspRiaaBPbQ>
+    <xmx:exquZ8WIfkMqIOhgPSSFSrjSXxYGnq_gLIRbnQGTv-MXeOuObrmogYKI>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 798FDBA0070; Thu, 13 Feb 2025 11:14:49 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 13 Feb 2025 17:14:28 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
+ "Hector Martin" <marcan@marcan.st>, "Keith Busch" <kbusch@kernel.org>,
+ "Jens Axboe" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
+ "sagi@grimberg.me" <sagi@grimberg.me>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Neal Gompa" <neal@gompa.dev>
+Message-Id: <dec49be0-c49c-4c37-8faf-72d9f89e4d53@app.fastmail.com>
+In-Reply-To: <20250213-nvme-fixes-v2-0-a20032d13e38@rosenzweig.io>
+References: <20250213-nvme-fixes-v2-0-a20032d13e38@rosenzweig.io>
+Subject: Re: [PATCH v2 0/2] apple-nvme: bug fixes
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-We now support host page sizes greater than 4k. For this to work
-reliably the guest must be enlightened enough to make sharing requests
-at a granule at least as big as the host. Which today means the guests
-PAGE_SIZE must be equal or greater than the host.
+On Thu, Feb 13, 2025, at 17:12, Alyssa Rosenzweig wrote:
+> This small series fixes two unrelated issues with the Apple NVMe driver.
+>
+> * fix NVMe on certain combinations of firmware + machine
+> * fix a power domain leak
+>
+> Although these are strict bug fixes, given the early stage of mainlining
+> for these SoCs, none of this needs to be backported.
+>
+> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> ---
 
-Note that RTT tables are still allocated using the host's page size, so
-most of the page will be wasted as only the first 4k are actually
-delegated to the RMM. This is the main reason why this is still WIP - I
-haven't yet implemented an appropriate allocator for this.
+For both patches:
 
-Large page sizes are also only very minimally tested, so expect bugs!
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
-New patch for v7
----
- arch/arm64/kvm/rme.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-index a3eddf6917ad..4ae348ee9376 100644
---- a/arch/arm64/kvm/rme.c
-+++ b/arch/arm64/kvm/rme.c
-@@ -144,6 +144,7 @@ static int find_map_level(struct realm *realm,
- 	return level;
- }
- 
-+/* FIXME: This conflates pages and granules */
- static phys_addr_t alloc_delegated_granule(struct kvm_mmu_memory_cache *mc)
- {
- 	phys_addr_t phys = PHYS_ADDR_MAX;
-@@ -171,6 +172,7 @@ static phys_addr_t alloc_delegated_granule(struct kvm_mmu_memory_cache *mc)
- 	return phys;
- }
- 
-+/* FIXME: This conflates pages and granules */
- static void free_delegated_granule(phys_addr_t phys)
- {
- 	if (WARN_ON(rmi_granule_undelegate(phys))) {
-@@ -1694,10 +1696,6 @@ int kvm_init_realm_vm(struct kvm *kvm)
- 
- void kvm_init_rme(void)
- {
--	if (PAGE_SIZE != SZ_4K)
--		/* Only 4k page size on the host is supported */
--		return;
--
- 	if (rmi_check_version())
- 		/* Continue without realm support */
- 		return;
--- 
-2.43.0
 
+Best,
+
+
+Sven
 
