@@ -1,204 +1,108 @@
-Return-Path: <linux-kernel+bounces-512336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C6DA337B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:09:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C008A337BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678337A4807
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E776F1686F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A22D207670;
-	Thu, 13 Feb 2025 06:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28FC207663;
+	Thu, 13 Feb 2025 06:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="asUaXfNW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ea7p+gwC"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D594A01;
-	Thu, 13 Feb 2025 06:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE24A01;
+	Thu, 13 Feb 2025 06:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739426939; cv=none; b=MfosVJ8QuAcgIdDIzE+wmKqApm9igJ9zt+9SmaawKkWTnPrw3HVDzvM1aIxXZA222IiW9wbVg3KIL6npLGjU83tFnG52G03mA+Qxg5ze0ruXqlX6Xec/NC7dW38Fi9Pco4V5O1/O2xQULSsUR/yGipJSD5otDcaXbmWigYNadis=
+	t=1739427127; cv=none; b=kVQ9JXGsYHiaXiH3oTG+ibth7lVpawQT3A/N9YAfw4/mwuRvVFi1dqS+jpI1uFYic4LfQ69l8tu+HnkXGI/s6vIZNoK0gBRwOSHuo653QqcFA4DTEcTjOsc+NgokU85dmE+fMe632/cTFFbYqc7ozjcNkR1vhc069JD8S/MuQ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739426939; c=relaxed/simple;
-	bh=7hF+jrS/ZGl1xydOMQYqalOhnPXKZb6k/RS8DXeO4wc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KZkuvOp0BsHClNrvL7bhdXg/SMh/AlbmP3EjsDt0kOeeHzLDYHoK0+QGPvfT5wEh/KIMkfA1wUH2OOp3iHujtgAPVmAhlEcpPr6mKVnnzqh5WiPQvBJAD5GcPSyYeKtmETycy5vjlA/URmtdM0vzTsuY8vXfeWAnmkq+cH3xFm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=asUaXfNW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CKGBqe001067;
-	Thu, 13 Feb 2025 06:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=OiwmEq
-	6vq3HX08VAFp7Aha2F21vuuzDxEfBUQinf5ZE=; b=asUaXfNWRFTwOlCX26YE37
-	P4EYAy3Sa7LScE/pj3MqPkp0TWm2pTxvtZzAFVRcJod/L3uDpU5ObHDRR8rEsCtf
-	77zJy7j4G0MeVJeyWzdPnH8xgEkS20qiTAnf9yZU8k6sgtH/d1OUR+kCxG+KDiS7
-	0yXgSaTO7+fQCYzbbxqqldQiV5xxacaVa96L7VJlmuIRk5gfZYG6oAcHNVBtPxk4
-	O+7BwhNoVCGXQ3L/DF3tl0Tt3bCVe/DmI/yNgmpXDqGRJABSygOP/Z59D9qbXOjq
-	LHtVDBQ+Q4gl7hqwO1wzyAw5GQ7iYpej4ZrVnITQHE9qqQ+rWOWUsNGIiDTzY3Hw
+	s=arc-20240116; t=1739427127; c=relaxed/simple;
+	bh=B3TsXGEgiYxwgveuXwE3SOg7k5pvyULhsB1fYCdYYto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XchXsCt4IK9xReo6KnGYha7H5xRRvK0MuGFZ3VbjYpuxii8XS25fmOOWky4l5No5NSgIToqcG61Q5SHzwxHtUNv0BUGYOAcl70qHh0PAFlsQwCCEToWuEqJT8suRb1QhAYtWCQnOVis+SFNEVWvu4dI1GJfMi1yPyalybr9OXYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ea7p+gwC; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5deb0d6787cso649462a12.0;
+        Wed, 12 Feb 2025 22:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739427124; x=1740031924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ezVasPHsv6V2uw24MQZZeCDA47yUS9BZKb8CbZfcyRM=;
+        b=Ea7p+gwCZlm97IKVJrFBI9tziuqrCUwVF/oO4nyHU+CNobHT1lPTQ/NWW+CRKZF3wx
+         L9zIgxTNhreu2pY3pIfdBjj+yzZdrSAA27jgb98eP+ssdTsMKMpzE/gM3KXhpvabIwl0
+         r1bOq9NZJ6zRsrbJWWyl6EIOIzoW2u1D0N/NTI7M+5XLAeKo2+OqA4ydYUasJeYRWk9L
+         ASwsfITqM6F7Xy7QRM9OPjtz3UDpFlLjswxv3K5h2YZKmPaaczHPlD+ugpmoFtPYsFfj
+         kLaHBIIbP1fTWgFo4oiV0KaqHoy88RSKlhhDkKHIoQrvn5gZVr8UAaCUZq91DBl4UOWi
+         ADdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739427124; x=1740031924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ezVasPHsv6V2uw24MQZZeCDA47yUS9BZKb8CbZfcyRM=;
+        b=TJBWzeXLYpPB5SNZ+OtwcjT23CrvXtTtg+2Vn8PX9B6m/ng/i8udaQWLNTjHTcAMhn
+         lNLLsYsGRjf6M52jTF+5meLgWw3Wfstfe1hNh9HFerCtshlyuXnkR/YnQKGcFFfOMl8y
+         QneUp3MMrtJ8r4+/WDQaVoFGg476yTiWUnaZutCyBPg546eSKftaRgwCnAY/F7Wg03NB
+         WCLBOqnNPJa3J3cjJi/wrQzuui1SHhmqMxhJ6TOyh/uBnS0Sv6nIZVM7dOsgVIsS4K76
+         JgdvcMtgjJrVNpr7NbDta3R0P9b54V8/RYielcrAOnV+K+Pz9pWYZrSxcVdOHJrRkJsC
+         WaUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVELq4OSFGfLXA9CJxQBIHNXd03ZIj54v3atuDe1U1Cqcg+QOP76FJ123NopdyVQnvMEliKsZOkMtfhGfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg8m5Wjp230D8z9ndVJKi6PcVM4rIYvvNOR3/5dX7cgGKqW+Rh
+	FW1UT2bOqC5PvNRCBz6Lfbsc1BNm0Sw9Ls5jBuu5r+nPBxeJP8vC/PDAzFwB/AnGDJe/IRc/dhc
+	D6uZoOLuTKMKAqZNDG3eQ/S9U3ho=
+X-Gm-Gg: ASbGncsd2sDVGY8pvuKNVULpq17hElfagaQ3ypInZDh2UYquWuFb7VoBunfj/QkHLjW
+	9a/rnnzr+qoqwkmtnjaBbhCWEdjQh221bHoTkUO0qIR3l/bhllnOyv+exiwQOR3wzyPkeImz53Q
 	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rqbpeca6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 06:08:51 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51D55HeI011642;
-	Thu, 13 Feb 2025 06:08:51 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pktk4gvq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 06:08:51 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51D68njD47120766
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 06:08:49 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B78C20043;
-	Thu, 13 Feb 2025 06:08:49 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C7B320040;
-	Thu, 13 Feb 2025 06:08:48 +0000 (GMT)
-Received: from [9.109.204.94] (unknown [9.109.204.94])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Feb 2025 06:08:47 +0000 (GMT)
-Message-ID: <8315ad38-2727-4ffa-8c72-d0c492ad6a74@linux.ibm.com>
-Date: Thu, 13 Feb 2025 11:38:47 +0530
+X-Google-Smtp-Source: AGHT+IG2eCeOPgCOnfGgxoLTFoRqudRFD0yDNYDBsizZdYJdOGMvWhiMMp4wcf8x7uF7eCoVLmRRUIu9w8hyfikuXvA=
+X-Received: by 2002:a05:6402:4615:b0:5dc:c9ce:b029 with SMTP id
+ 4fb4d7f45d1cf-5deadd843c1mr4927202a12.5.1739427123579; Wed, 12 Feb 2025
+ 22:12:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [next-20250212] FStests generic/451 on EXT4 FS resulting in
- kernel OOPs
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, fstests@vger.kernel.org
-References: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vT4tvflbSKzyiQHPl6AmQ5xspwEHvadi
-X-Proofpoint-ORIG-GUID: vT4tvflbSKzyiQHPl6AmQ5xspwEHvadi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- suspectscore=0 phishscore=0 adultscore=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130044
+References: <20250206105435.2159977-1-memxor@gmail.com> <20250206105435.2159977-12-memxor@gmail.com>
+ <20250210102139.GJ10324@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250210102139.GJ10324@noisy.programming.kicks-ass.net>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Thu, 13 Feb 2025 07:11:27 +0100
+X-Gm-Features: AWEUYZluH8U6jOgJVL2P2i7WHZujKsTDPdGeLz2NLA-8PMOJxjeSQqy9UVO92K4
+Message-ID: <CAP01T75Z0GjUPiKWCPU7isSMvA+1uMtYE2Nm-iQnvpjFxk0OUQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 11/26] rqspinlock: Add deadlock detection and recovery
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, 
+	Waiman Long <llong@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Dohyun Kim <dohyunkim@google.com>, 
+	linux-arm-kernel@lists.infradead.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Venkat,
+On Mon, 10 Feb 2025 at 11:21, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Feb 06, 2025 at 02:54:19AM -0800, Kumar Kartikeya Dwivedi wrote:
+> > +#define RES_NR_HELD 32
+> > +
+> > +struct rqspinlock_held {
+> > +     int cnt;
+> > +     void *locks[RES_NR_HELD];
+> > +};
+>
+> That cnt field makes the whole thing overflow a cacheline boundary.
+> Making it 31 makes it fit again.
 
-Thanks for reporting the issue.
-
-I noticed that system rebooted after kernel panic.
-
-Just wondering did you configured kdump/fadump?
-
-Thanks,
-Sourabh Jain
-
-
-On 13/02/25 11:21, Venkat Rao Bagalkote wrote:
-> Greetings!!!
->
->
-> I am observing kernel OOPs, while running FStests generic/451 on EXT4 
-> with linux-next kernel(next-20250212) on IBM Power Servers.
->
->
-> Issue is seen on: next-20250212
->
-> Issue not seen on: next-20250210
->
->
-> Traces:
->
-> [ 2977.768678] run fstests generic/451 at 2025-02-12 16:42:14
-> [ 3001.242006] list_add double add: new=c00000000e2398c8, 
-> prev=c00000000e2398c8, next=c0000000c1f2f0b8.
-> [ 3001.242047] ------------[ cut here ]------------
-> [ 3001.242052] kernel BUG at lib/list_debug.c:35!
-> [ 3001.242059] Oops: Exception in kernel mode, sig: 5 [#1]
-> [ 3001.242065] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=8192 NUMA pSeries
-> [ 3001.242072] Modules linked in: overlay dm_zero dm_thin_pool 
-> dm_persistent_data dm_bio_prison dm_snapshot dm_bufio dm_flakey ext4 
-> mbcache jbd2 loop dm_mod nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 
-> nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject 
-> nft_ct nft_chain_nat nf_nat nf_conntrack bonding nf_defrag_ipv6 
-> nf_defrag_ipv4 tls ip_set rfkill nf_tables nfnetlink pseries_rng 
-> aes_gcm_p10_crypto crypto_simd vmx_crypto xfs sr_mod sd_mod cdrom sg 
-> ibmvscsi ibmveth scsi_transport_srp fuse [last unloaded: scsi_debug]
-> [ 3001.242165] CPU: 26 UID: 0 PID: 894003 Comm: kworker/u228:17 Not 
-> tainted 6.14.0-rc2-next-20250212 #1
-> [ 3001.242174] Hardware name: IBM,8375-42A POWER9 (architected) 
-> 0x4e0202 0xf000005 of:IBM,FW950.80 (VL950_131) hv:phyp pSeries
-> [ 3001.242183] Workqueue: loop0 loop_workfn [loop]
-> [ 3001.242194] NIP:  c00000000090d528 LR: c00000000090d524 CTR: 
-> 00000000007088ec
-> [ 3001.242201] REGS: c0000000e5adfa70 TRAP: 0700   Not tainted 
-> (6.14.0-rc2-next-20250212)
-> [ 3001.242208] MSR:  800000000282b033 
-> <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 2800024f  XER: 00000009
-> [ 3001.242229] CFAR: c000000000224238 IRQMASK: 1
-> [ 3001.242229] GPR00: c00000000090d524 c0000000e5adfd10 
-> c000000001657500 0000000000000058
-> [ 3001.242229] GPR04: c000001179a87c88 c000001179a96000 
-> c0000000e5adfb58 0000001177810000
-> [ 3001.242229] GPR08: 0000000000000027 0000000000000000 
-> 0000000000000000 0000000000000001
-> [ 3001.242229] GPR12: c000000002a49cd0 c00000000f75ff00 
-> c0000000001abf00 c0000000fda72fc0
-> [ 3001.242229] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [ 3001.242229] GPR20: c000000007acbc00 0000000004208060 
-> c00000000e239880 fffffffffffffef7
-> [ 3001.242229] GPR24: 0000000000000402 c0000000924b8fc0 
-> c0000000c1f2f07c c0000000c1f2f000
-> [ 3001.242229] GPR28: c0000000c1f2f0b8 c00000000e2398c8 
-> c00000000e2398c8 c0000000c1f2f0b8
-> [ 3001.242309] NIP [c00000000090d528] 
-> __list_add_valid_or_report+0x158/0x15c
-> [ 3001.242318] LR [c00000000090d524] 
-> __list_add_valid_or_report+0x154/0x15c
-> [ 3001.242324] Call Trace:
-> [ 3001.242327] [c0000000e5adfd10] [c00000000090d524] 
-> __list_add_valid_or_report+0x154/0x15c (unreliable)
-> [ 3001.242336] [c0000000e5adfd90] [c0080000073c359c] 
-> loop_process_work+0x594/0x630 [loop]
-> [ 3001.242344] [c0000000e5adfe40] [c00000000019dc5c] 
-> process_one_work+0x1fc/0x4bc
-> [ 3001.242354] [c0000000e5adfef0] [c00000000019ebec] 
-> worker_thread+0x344/0x508
-> [ 3001.242362] [c0000000e5adff90] [c0000000001ac024] kthread+0x12c/0x14c
-> [ 3001.242370] [c0000000e5adffe0] [c00000000000df98] 
-> start_kernel_thread+0x14/0x18
-> [ 3001.242377] Code: 4b916cf9 60000000 0fe00000 7c0802a6 7c641b78 
-> 3c62ffe5 7fe6fb78 7fc5f378 386343a0 f8010090 4b916cd1 60000000 
-> <0fe00000> 3c4c00d5 38429fd4 fbe1fff8
-> [ 3001.242407] ---[ end trace 0000000000000000 ]---
-> [ 3001.284444] pstore: backend (nvram) writing error (-1)
-> [ 3001.284452]
-> [ 3002.284455] Kernel panic - not syncing: Fatal exception
-> [ 3002.431023] Rebooting in 10 seconds..
->
->
-> Regards,
->
-> Venkat.
->
->
-
+Makes sense, I can make RES_NR_HELD 31, it doesn't matter too much.
+That's one less cacheline to pull into the local CPU during remote CPU reads.
 
