@@ -1,137 +1,237 @@
-Return-Path: <linux-kernel+bounces-513927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C9DA35061
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:16:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C8DA35063
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4151188ED31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91424188E6AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891DF2661BE;
-	Thu, 13 Feb 2025 21:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFA92661B1;
+	Thu, 13 Feb 2025 21:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="snvZs8k/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCyaOVSO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AB223A9AC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC6128A2C1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739481383; cv=none; b=TRjZm8DZsroqxbgCYOHlV1TtcYQeBBrsCBr8MP1IDsLVMYuhCOq3C9O/n7/Tm1sbqtr4pHKV9BTe3lsU8mdlz6dbTc9DfgyQkHyKp7/NQhv5mbmYJlkHnLKIy2LhUKh/+X1pdvwdydvwnjBnNcrAHct7N7k/hICz4zu9fI4+S9Y=
+	t=1739481421; cv=none; b=pULk5BetpAGiq3scC5GFBXhAStSNtY5LYv8bbct6hnQrnmIdh7xXxpncLzpDw/CpJzbY76XNmck0d7QUmm0KRUeWilGv+8ytd6nMO6giUDCV/P4mx2rrXoI/B/4/r9p9D3w0BV3FQfxHj4TVsakSCoG+hAAzU/18stfPelF+3jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739481383; c=relaxed/simple;
-	bh=3WQdWhlcAt5RMELpv6jN3CIGB4FcQWFJOyPQ1BhboU0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZtkhH1z8FERnq9KN9CjXMjEwkYPbvhMMrCwkMJnq3rOJcZtbTqWne1ycOC6FaMZ6iN1xOhI00jIIb7pXudD4cMW42GluV01OLIfBWu14OWfs8M0wpPVTKdeKj4R4YL7rB7CEjdnl2fpuQxRplwEFDHx9abRQNw+N1kKgeCvJqgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=snvZs8k/; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso2632976a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:16:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739481382; x=1740086182; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Pj2vmCrH3lGmsWMC7Z5CvqsyCPHKSUhgpwUVDrBeFe0=;
-        b=snvZs8k/unJpr25vUODl5TIjzYZ5QeE9foi1dktjqjFF1471VKi8SwjwI8ujAmb6Kw
-         lMNemLGcEpjqYUsPXAtbiAI9EreZQOU9SKmOAgp73ag+pieTJaHAhP2gS467rc+19Uln
-         lnAmRVaiC2hv8to1NLJf9sWZe7SF9box32FSVovQmNU0/JuDuunAt86R4bmSVSHngk2/
-         WOiBm1/Zwqs7hjMVjZPeEWAQ4N7w554/rMfphzgzHNXkQkhDtrj8ogHOYPgnQbjttdfq
-         62a7FiE17UjeCLXXrXTiu7W3HJQovqYYgFJi6ooOFHYK+DFy/WKCwTYCot+P84QPsrnL
-         Tzbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739481382; x=1740086182;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pj2vmCrH3lGmsWMC7Z5CvqsyCPHKSUhgpwUVDrBeFe0=;
-        b=e/veDyygpwjEd7avK/Axn/JgadqKKJYDg32Tw2l35SRoZ4h5bOqMOj30dpTpjErDX/
-         zDu6jRduzvtvJWspbrEjM2XMC8NiRkP+ViQ0U0/+aNUfSuEZHB245AVjJPZYxcyuMbp8
-         wufQNHup4XtP5350pEQ3SrkO1GiTO3yuulhhIXqerr1HL2MI67+X3Bk42zGG1c2kUHMX
-         huXlGKqNZLHFYq4+ZrZwEVszbI6KGf3ak5M/FdN3DP3cznuTGo6H7FAXFhioLqLXmXSW
-         qeAFHbteVCKw7poh1RiZhpHYLeYWkCXPOVkti7L9KP1yJxWt/s/2EpBTAe/fc9+XESuL
-         f55w==
-X-Forwarded-Encrypted: i=1; AJvYcCWV3/H8h3qLo5HFHMGVc6FjyAYx/rdggSuf379+5ADetpNBqQUWhrJMqyq0LQ81jkDePYjY3FhK/qeBgQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwriGhM4Lu8ue5cK06t3H+H0iO4oHYapThWcJsxxQjqxfZJlC2J
-	0fe5SxYAmMDPWoz6amfzGAYpnNWOjvqTt/EjfxMUR4NUj81/3FCLI9ryWN2RPAfYJ9DagGjsTc4
-	Bysf3KMfgYTeFqfyTNRDJ45QZGw==
-X-Google-Smtp-Source: AGHT+IEHVfFE/UqvS5dO+GvH3uIJcuQt27d5Ry/qWjuIp40om+JrXO2vtEBPz+YXbTsmJ6Cg1wki5CWKSxzDlWaRpDI=
-X-Received: from pfbbi29.prod.google.com ([2002:a05:6a00:311d:b0:730:83d2:d6a3])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:734a:b0:1e1:ac4f:d322 with SMTP id adf61e73a8af0-1ee6b33e8c9mr9215805637.14.1739481381735;
- Thu, 13 Feb 2025 13:16:21 -0800 (PST)
-Date: Thu, 13 Feb 2025 21:16:14 +0000
+	s=arc-20240116; t=1739481421; c=relaxed/simple;
+	bh=ENdJiPoZx9QTcrQUqtR8e/9fSv4sDxcF8PbfHredjzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ov/ie4UgIzYx8gSi7XqdZuaHO9WJyY+wUIM2mNNzS6nfKi/xIR0BdZjsYveEWrXwTJmwyh0Vo7itw0vT3xxkUVn7DYSBiIvRsnV0EWnKtdNnRlb2UVyu1BOlZmcihqsDU1CsDLuCgBkE8E/9B8I9McB5waBX61ZCK/duvmziiPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCyaOVSO; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739481419; x=1771017419;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ENdJiPoZx9QTcrQUqtR8e/9fSv4sDxcF8PbfHredjzM=;
+  b=MCyaOVSO2YWDfN3CVgT7W5tCnlJjKsHPMHqg3ycpUs3HsqUjKd0hBYbR
+   olevDcIJggAAV1kWwojc5aYsb/pOtCqi4+dJjGO7zOyuBTSIJd26P3/qs
+   tkVsEpj9pnXf4+rKBuMh8gz0cF9onPRkpQYWF6is0XzvcUfsocXSxPE0t
+   f97zTa5dfA/OjnSkrJ/IgJW3NS3v6LUZkpdltUER7tG8SMp3VIMViPg8a
+   i1puEmHjZPRc4hVXhUwqMq1JXTQ9WzUXmvKSCJ7t3IscG21ac4rNugaA6
+   GqjC6eEK5pgJT42liVpREWAQRiRWq9jVCWc201u/BpQPKjEBq7DygmTMT
+   A==;
+X-CSE-ConnectionGUID: hrxqGMDURZGI9zz8EF78rQ==
+X-CSE-MsgGUID: U8nzXFRnR3uSLJiitWCRTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="44142393"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="44142393"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 13:16:58 -0800
+X-CSE-ConnectionGUID: QpybzptHQtW3KPQsrAVrsA==
+X-CSE-MsgGUID: 3tgLdcHZSlKwek0z+FmhFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118469488"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa005.jf.intel.com with ESMTP; 13 Feb 2025 13:16:58 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	eranian@google.com,
+	dapeng1.mi@linux.intel.com,
+	thomas.falcon@intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 0/5] Support auto counter reload
+Date: Thu, 13 Feb 2025 13:17:13 -0800
+Message-Id: <20250213211718.2406744-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2117; i=samitolvanen@google.com;
- h=from:subject; bh=3WQdWhlcAt5RMELpv6jN3CIGB4FcQWFJOyPQ1BhboU0=;
- b=owGbwMvMwCEWxa662nLh8irG02pJDOnrEuUaKxl4F/+xmM1p7nSqL69ELmXL3XcJvYuecT44e
- na15V/tjlIWBjEOBlkxRZaWr6u37v7ulPrqc5EEzBxWJpAhDFycAjARpnMM/wwTH7/cm1r2Ql1M
- y3mVlPSyyb8eCm+/EKM7q64zf8utD48ZGZbuDcnyuhfqmCjo18i09ftyfd+nW3zO8TOHe03beoM vihUA
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250213211614.3537605-2-samitolvanen@google.com>
-Subject: [PATCH] s390/purgatory: Use -D__DISABLE_EXPORTS
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, kernel test robot <lkp@intel.com>, linux-s390@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The object files in purgatory do not export symbols, so disable exports
-for all the object files, not only sha256.o, with -D__DISABLE_EXPORTS.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-This fixes a build failure with CONFIG_GENDWARFKSYMS, where we would
-otherwise attempt to calculate symbol versions for purgatory objects and
-fail because they're not built with debugging information:
+Changes since V2:
+- Rebase on top of several new features, e.g., counters snapshotting
+  feature. Rewrite the code for the ACR CPUID-enumeration, configuration
+  and late setup.
+- Patch 1-3 are newly added for clean up.
 
-error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
-make[5]: *** [../scripts/Makefile.build:207: arch/s390/purgatory/string.o] Error 1
-make[5]: *** Deleting file 'arch/s390/purgatory/string.o'
+Changes since V1:
+- Add a check to the reload value which cannot exceeds the max period
+- Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
+- Update comments explain to case which the event->attr.config2 exceeds
+  the group size
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502120752.U3fOKScQ-lkp@intel.com/
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- arch/s390/purgatory/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The relative rates among two or more events are useful for performance
+analysis, e.g., a high branch miss rate may indicate a performance
+issue. Usually, the samples with a relative rate that exceeds some
+threshold are more useful. However, the traditional sampling takes
+samples of events separately. To get the relative rates among two or
+more events, a high sample rate is required, which can bring high
+overhead. Many samples taken in the non-hotspot area are also dropped
+(useless) in the post-process.
 
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-index bdcf2a3b6c41..bd39b36e7bd6 100644
---- a/arch/s390/purgatory/Makefile
-+++ b/arch/s390/purgatory/Makefile
-@@ -8,7 +8,7 @@ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
- $(obj)/sha256.o: $(srctree)/lib/crypto/sha256.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
--CFLAGS_sha256.o := -D__DISABLE_EXPORTS -D__NO_FORTIFY
-+CFLAGS_sha256.o := -D__NO_FORTIFY
- 
- $(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S FORCE
- 	$(call if_changed_rule,as_o_S)
-@@ -19,9 +19,11 @@ KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
- KBUILD_CFLAGS += -Os -m64 -msoft-float -fno-common
- KBUILD_CFLAGS += -fno-stack-protector
- KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
-+KBUILD_CFLAGS += -D__DISABLE_EXPORTS
- KBUILD_CFLAGS += $(CLANG_FLAGS)
- KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
- KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
-+KBUILD_AFLAGS += -D__DISABLE_EXPORTS
- 
- # Since we link purgatory with -r unresolved symbols are not checked, so we
- # also link a purgatory.chk binary without -r to check for unresolved symbols.
+The auto counter reload (ACR) feature takes samples when the relative
+rate of two or more events exceeds some threshold, which provides the
+fine-grained information at a low cost.
+To support the feature, two sets of MSRs are introduced. For a given
+counter IA32_PMC_GPn_CTR/IA32_PMC_FXm_CTR, bit fields in the
+IA32_PMC_GPn_CFG_B/IA32_PMC_FXm_CFG_B MSR indicate which counter(s)
+can cause a reload of that counter. The reload value is stored in the
+IA32_PMC_GPn_CFG_C/IA32_PMC_FXm_CFG_C.
+The details can be found at Intel SDM (085), Volume 3, 21.9.11 Auto
+Counter Reload.
 
-base-commit: 4dc1d1bec89864d8076e5ab314f86f46442bfb02
+Example:
+
+Here is the snippet of the mispredict.c. Since the array has a random
+numbers, jumps are random and often mispredicted.
+The mispredicted rate depends on the compared value.
+
+For the Loop1, ~11% of all branches are mispredicted.
+For the Loop2, ~21% of all branches are mispredicted.
+
+main()
+{
+...
+        for (i = 0; i < N; i++)
+                data[i] = rand() % 256;
+...
+        /* Loop 1 */
+        for (k = 0; k < 50; k++)
+                for (i = 0; i < N; i++)
+                        if (data[i] >= 64)
+                                sum += data[i];
+...
+
+...
+        /* Loop 2 */
+        for (k = 0; k < 50; k++)
+                for (i = 0; i < N; i++)
+                        if (data[i] >= 128)
+                                sum += data[i];
+...
+}
+
+Usually, a code with a high branch miss rate means a bad performance.
+To understand the branch miss rate of the codes, the traditional method
+usually samples both branches and branch-misses events. E.g.,
+perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions/u}"
+               -c 1000000 -- ./mispredict
+
+[ perf record: Woken up 4 times to write data ]
+[ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
+The 5106 samples are from both events and spread in both Loops.
+In the post-process stage, a user can know that the Loop 2 has a 21%
+branch miss rate. Then they can focus on the samples of branch-misses
+events for the Loop 2.
+
+With this patch, the user can generate the samples only when the branch
+miss rate > 20%. For example,
+perf record -e "{cpu_atom/branch-misses,period=200000,acr_mask=0x2/ppu,
+                 cpu_atom/branch-instructions,period=1000000,acr_mask=0x3/u}"
+                -- ./mispredict
+
+(Two different periods are applied to branch-misses and
+branch-instructions. The ratio is set to 20%.
+If the branch-instructions is overflowed first, the branch-miss
+rate < 20%. No samples should be generated. All counters should be
+automatically reloaded.
+If the branch-misses is overflowed first, the branch-miss rate > 20%.
+A sample triggered by the branch-misses event should be
+generated. Just the counter of the branch-instructions should be
+automatically reloaded.
+
+The branch-misses event should only be automatically reloaded when
+the branch-instructions is overflowed. So the "cause" event is the
+branch-instructions event. The acr_mask is set to 0x2, since the
+event index of branch-instructions is 1.
+
+The branch-instructions event is automatically reloaded no matter which
+events are overflowed. So the "cause" events are the branch-misses
+and the branch-instructions event. The acr_mask should be set to 0x3.)
+
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
+
+ $perf report
+
+Percent       │154:   movl    $0x0,-0x14(%rbp)
+              │     ↓ jmp     1af
+              │     for (i = j; i < N; i++)
+              │15d:   mov     -0x10(%rbp),%eax
+              │       mov     %eax,-0x18(%rbp)
+              │     ↓ jmp     1a2
+              │     if (data[i] >= 128)
+              │165:   mov     -0x18(%rbp),%eax
+              │       cltq
+              │       lea     0x0(,%rax,4),%rdx
+              │       mov     -0x8(%rbp),%rax
+              │       add     %rdx,%rax
+              │       mov     (%rax),%eax
+              │    ┌──cmp     $0x7f,%eax
+100.00   0.00 │    ├──jle     19e
+              │    │sum += data[i];
+
+The 2498 samples are all from the branch-misses events for the Loop 2.
+
+The number of samples and overhead is significantly reduced without
+losing any information.
+
+Kan Liang (5):
+  perf/x86: Add dynamic constraint
+  perf/x86/intel: Track the num of events needs late setup
+  perf: Extend the bit width of the arch-specific flag
+  perf/x86/intel: Add CPUID enumeration for the auto counter reload
+  perf/x86/intel: Support auto counter reload
+
+ arch/x86/events/core.c             |   3 +-
+ arch/x86/events/intel/core.c       | 260 ++++++++++++++++++++++++++++-
+ arch/x86/events/intel/ds.c         |   3 +-
+ arch/x86/events/intel/lbr.c        |   2 +-
+ arch/x86/events/perf_event.h       |  33 ++++
+ arch/x86/events/perf_event_flags.h |  41 ++---
+ arch/x86/include/asm/msr-index.h   |   4 +
+ arch/x86/include/asm/perf_event.h  |   1 +
+ include/linux/perf_event.h         |   4 +-
+ 9 files changed, 320 insertions(+), 31 deletions(-)
+
 -- 
-2.48.1.601.g30ceb7b040-goog
+2.38.1
 
 
