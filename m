@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-512112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EE7A33435
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:44:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6947A3343E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309A21886A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7839E3A7A45
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EFA78F26;
-	Thu, 13 Feb 2025 00:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1335170810;
+	Thu, 13 Feb 2025 00:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nj/kPgnA"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uo4/I2ll"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4AA7346F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D981171D2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739407449; cv=none; b=l561bedAjLATPphJAtLU/9JegySwyA6oPO2FGT7s0PbbBEyj8PrwnWzhw82Xzw82yQqAgSqW3XjABUV+FJZ/iyT9kpSpOZADZfR2dHTrdz43jksRdVSRZuqh4K5bMXiYKEObUCwBVA4PDLUxJZV9qf8Go7jY/LIkx2xmSpM2HJU=
+	t=1739407787; cv=none; b=tRQZxJIl4rLHAtAK26D+BIC7xjs37bctcDjzsa1sZGbGr9sIlzw65O8fwp5RjYbNtscEUDcMdj+pPaUNHGlHxoCAlBRCxcoL7QNATaWY0IaXmhEaq5W0x/SzOYyukmZKkgq2vTBRyiDQjwfyUdk5hk3G1iNTyOie/DZqfCrPNcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739407449; c=relaxed/simple;
-	bh=kNMNh8c15ufMq2hOdDy+f201l80OHrU6gDtUHgb/Pjg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=gUy9qQtQw1IniiO1pOnKcCCATni6SxMHZtosHnfWB0f9rmR8DrDRBVw/NGPC6D2IGhaG22YtVV1Ge29GMGB7ucLcto5QWxwAtt4ZxR36WU3yX91RBGAGEnWJQg6JJjVfRk3CteatDZiBDj5gICK+g5lHMZaZmTvILEykQzgqLvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nj/kPgnA; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250213004404epoutp031d53bd62c813a3e3921fdbbc68d7e0ee~jndrLKIe50839208392epoutp03E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:44:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250213004404epoutp031d53bd62c813a3e3921fdbbc68d7e0ee~jndrLKIe50839208392epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739407444;
-	bh=qbsRW+rPGG7sOyzmINLAUZ6n+49WHNhTA0JmCyA9gd0=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Nj/kPgnAIPEHbsCUiBDAMy8HhDpJMmRmob26t5NUgGsZ1R+eMr5VDM9nQnK1FXsvN
-	 BgG0+L3ghibl632WzsF/sht6GMMcAgX/9d2KmZM8LvKupD/sL/BHvl7KhYAYX0fPoA
-	 naPLF2fgRDySUlAIbTYYypEufYNoJooVjJu0QpQ8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20250213004403epcas2p1fd64379ec227f4747d2b7869ff563cb5~jndqx7TXN3215432154epcas2p1o;
-	Thu, 13 Feb 2025 00:44:03 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.98]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Ytbz70dnhz4x9Pq; Thu, 13 Feb
-	2025 00:44:03 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F3.45.22094.2504DA76; Thu, 13 Feb 2025 09:44:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0~jndpwXQh31412714127epcas2p3n;
-	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250213004402epsmtrp135a32c55cf064ad1d4c0242b0595a572~jndpvmMWf1131811318epsmtrp11;
-	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
-X-AuditID: b6c32a48-e72eb7000000564e-c3-67ad4052a3ba
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F4.80.18729.2504DA76; Thu, 13 Feb 2025 09:44:02 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250213004402epsmtip127a07f22bedc87064fa6ed47580ccf53~jndphlQjr2674526745epsmtip1Z;
-	Thu, 13 Feb 2025 00:44:02 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Kyunghwan Seo
-	<khwan.seo@samsung.com>, Sangwook Shin <sw617.shin@samsung.com>
-Subject: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
- ExynosAutoV920 SoC
-Date: Thu, 13 Feb 2025 09:41:04 +0900
-Message-Id: <20250213004104.3881711-1-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739407787; c=relaxed/simple;
+	bh=j+tcflbxu44pWgyFCTaE34sxvSNJLBAUX5OuwvWeIlk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KTcZZ1xavAipkIVWibjpTUNi0x9O2xfOh+nvsKtbkYS/vvvtnTI19/0wRr3WATbKorMWeTVfxqyqfZybkJ7XI2wj0NftVRZz2XP1rndxtosWvaT1xF+tYYPJS1STZM2flRm5H5tKibdbT1nObmddq5TKbAFjra9R9im7lUtIer0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uo4/I2ll; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-307bc125e2eso3584001fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:49:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739407784; x=1740012584; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LGRGsNpeDghO8jo9QRpPUN0MsUvAIsC2g7b5Clws7I4=;
+        b=Uo4/I2llolT03SPJc5FJg7MOXiL7vUtvKlZQcK+xBhrq5r85DeQZMiRUSOCzLJ9Cxt
+         c8opQhw/6yvhzDTPeAhf+U7VYeJlObvi3TTqveV/lbWPurUZyqxqauJgdejXExhPyVpE
+         stjcuNXYLG/u3muXcSa9YlpLIPTp8GNVOeaM6ttSzxsbOjWlBc4gHkuU51MnHtn2IsHY
+         7/gOPubC2ummnbC/67XCgWN6NkRwu3BGTVVMWTkJPyFqBDfpOhkn92xYsb2QnuQkO4JO
+         83CB8xONMxCdvlSfyPHKboYvREIsMImWowgyzpv90H9cGbuY53VogkfYvF6XLqJI6f1M
+         KkfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739407784; x=1740012584;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LGRGsNpeDghO8jo9QRpPUN0MsUvAIsC2g7b5Clws7I4=;
+        b=CJIDDwenzriQCCO0Dzf/mU7LrJiUE4s0Z7FBs+WE9Z+WBXKNVpy5JcVjzgaVycj/bf
+         g5i/8YTu55/egqFqeHTcA++Vlp+uqT9tX2w2RGe9ypuqMF+gFCVY2IhpUqZBgBAmrFKA
+         fD5KR9xktlc2gALb9Kv3IPt+3HpChs1dU2kYqHvHMCdwQ5fzEJZ4OtP7/MkdWjQCgUPi
+         lf2aHRr8ZFhg0niqlPDxvPuHa/LHxZ/YY0VbY2CveH2Cnsic/aLlRvIqE3scxhlWt19s
+         3Mld+9oE4S9eQNx8C4QSexW5RMA3RHg8iIpb5axUrniWG1miJFFcmYSetoLGgHJekm94
+         Y0sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEEJz70aEJhiAH8Uvqz6ZO0dnMdt/ZbN3FIUaIdlSURzLc6hwkPV7L45+mCB0ir7Ngmq3Wd02s1SXtw38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZqTWlYtD/5JO8MfC09C/gxJrvfF8AVJs656F6bEXNEzT23sw2
+	uwBkblGTjYR4/UbktgdWsFU/w/PWFYACvmZzT1+mLXVesPxWTDNwa57/ppJhq7Q=
+X-Gm-Gg: ASbGncvOsqgOmUWTUueHFRHY9yfAJTbnwpzS9Lk4SE/jqjf+yNGDcqCNiS2JSRh8pAI
+	PT9/K9TtNg2Wv6f+hNm8FDS6hW+L7yS3hqIS5ptb+cNFwRqy0AiGMJxqtaJIewyFnTQC8n8OmYc
+	WEtNOXFEP06u0/f24hlYINHOu5mlJW+tl29FJAB0WKDxs7ivDnUwbBAhy9xVXfc4JOqhLo/K3i8
+	PbGKlMtrtR2fXHLSQI2rxtO2iduw1c9Ab8MNh4KNixKTCFdUGD6dA9kUsmXRP3Zf/+EqtDVMf0P
+	/Ji42haLmOY6m2IFniHf5HU=
+X-Google-Smtp-Source: AGHT+IEV7MH6VGWs1pJyu5VoGEtdf2sBTUzAwsmsMK7jNzvPRB6Bv0XC71s78gTsol6p6TC0e1TlIQ==
+X-Received: by 2002:a05:651c:547:b0:300:de99:fcc6 with SMTP id 38308e7fff4ca-3090ddc75cfmr4568411fa.34.1739407783569;
+        Wed, 12 Feb 2025 16:49:43 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309101224d1sm397021fa.63.2025.02.12.16.49.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 16:49:42 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 13 Feb 2025 02:49:41 +0200
+Subject: [PATCH] drm: drop i2c subdir from Makefile
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmuW6Qw9p0g/PrbSwezNvGZjG//RKj
-	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWMxafZLN4/PIfswOXx6ZVnWweK9es
-	YfXYvKTeY+f3BnaPvi2rGD0+b5ILYIvKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
-	tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2Be
-	oFecmFtcmpeul5daYmVoYGBkClSYkJ1xf0sXW8EewYqHDQYNjPf5uhg5OSQETCTO/7vH2sXI
-	xSEksINRYsrES4wQzidGiWt7W6Ey3xglZh75wAjT8mr7JTBbSGAvo8SEf95wHQuvTWMHSbAJ
-	6EhM/3ebBcQWEYiSOLhjGTtIEbPAHUaJff9fMIMkhAXCJB5+WMMGYrMIqErMeX8WbCqvgK3E
-	ouMH2SG2yUvMvPSdHSIuKHFy5hOwocxA8eats5lBhkoIfGSXmPR/KQtEg4tE74ErUKcKS7w6
-	vgVqkJTEy/42IJsDyM6XOPVEGKK3gVHiXfN7Nogae4lFZ36C1TALaEqs36UPUa4sceQW1Fo+
-	iY7Df6Gm8Ep0tAlBNKpIdPzczAqz6OiZB1BLPST6p+5hBSkXEoiVWLcqeAKj/Cwkv8xC8sss
-	hLULGJlXMYqlFhTnpqcWGxWYwKM0OT93EyM4aWp57GCc/faD3iFGJg7GQ4wSHMxKIrwS09ak
-	C/GmJFZWpRblxxeV5qQWH2I0BYbuRGYp0eR8YNrOK4k3NLE0MDEzMzQ3MjUwVxLnrd7Rki4k
-	kJ5YkpqdmlqQWgTTx8TBKdXAFKIjenFiw/QT+upal1qvvFbcvCqCacfl5esc7FnniHvVb6o5
-	7xPnJ2ao9fDBRl+PgulxE59kfD7OZXr1nneZh/E7t0ULzosZ6ZuIFQuJsARu2rwtkYXpaMDx
-	a/6W2s7ix24UNS165f5KaU2iVVqPPEfkrv3X48vaLSxjvkjO7jPyFL9cPEXhl3mZzyXd3fce
-	LenNUjjNGbQza9fS28yLhXKzFib5sd6+HeJ34uXvV4JzWc5tnnzbK2X1ajU2KdstrTuPzo+0
-	NJCY53P7sJb0bwGtPu3sC5Xv7+3tOpBevfr4O/HkE5++Lzr2a1lW1vQ9CdOmW8ssjjyXKy/5
-	1D2ysevvoY711W6Wx7M9WZRfK7EUZyQaajEXFScCANojCCgjBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnG6Qw9p0g72zZS0ezNvGZjG//RKj
-	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWMxafZLN4/PIfswOXx6ZVnWweK9es
-	YfXYvKTeY+f3BnaPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyri/pYutYI9gxcMGgwbG+3xd
-	jJwcEgImEq+2X2LsYuTiEBLYzSix9FsDcxcjB1BCSuLdM0uIGmGJ+y1HWCFqPjBK3F21mA0k
-	wSagIzH9320WEFtEIE7iWPtmZpAiZoFHjBJnb0xiBkkIC4RIrD56jgnEZhFQlZjz/iwjiM0r
-	YCux6PhBdogN8hIzL31nh4gLSpyc+QRsKDNQvHnrbOYJjHyzkKRmIUktYGRaxSiZWlCcm55b
-	bFhgmJdarlecmFtcmpeul5yfu4kRHMpamjsYt6/6oHeIkYmD8RCjBAezkgivxLQ16UK8KYmV
-	ValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeWpGanphakFsFkmTg4pRqY9n4WTj3mO7tuj8HB
-	z2o1nxlT178PKXlnvO6Lx6x5z5Z8q9Z9/VGidIHSERmWKXrCncoGU5652LEfbvt8uH6ViZe/
-	+84pD678r22Wmhiz8bNPnapbQKOo6L3MKXzXlJdYl5eIHqne9uHwgWu6m3Sf/jtQKic1Pd86
-	b/mirez/9r/cPP2BlFDHupc5Wyw0Hpx6wl/66SbvMq1Ztx7skNGZucF4elOoUG3Os3W12377
-	81oEX3JNcfi8xqaiOoFx2ZmJG0y2OvF9S6lIX2+3Re0Fy+LuZ/O25Nk13Llz9iuzssq6M93h
-	Mc3LNrw88ezYeVfzkq37bLysFA/1/6hq5K+Tfv9TsrWu9IViUYNjaS3fTSWW4oxEQy3mouJE
-	AJaJ723UAgAA
-X-CMS-MailID: 20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0
-References: <CGME20250213004402epcas2p34923dcba3635ceed9b712a24f354d6f0@epcas2p3.samsung.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-fix-tda-v1-1-d3d34b2dc907@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKRBrWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0Nj3bTMCt2SlERdc5MkM0tDs8TERAMDJaDqgqJUoBTYpOjY2loAIHn
+ qcVkAAAA=
+X-Change-ID: 20250213-fix-tda-74b6916aaa00
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Liviu Dudau <liviu.dudau@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1251;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=j+tcflbxu44pWgyFCTaE34sxvSNJLBAUX5OuwvWeIlk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnrUGlA+/TKZ1iluhO1quU2X6GY2Q7ZZcaRQVQL
+ lkvkcV/m82JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ61BpQAKCRCLPIo+Aiko
+ 1fn9B/4/8kJN9+6lJc57KNdIlg84QoZlYaPGHWAK5FWAhDR1ocmoTmSatTIxHPziW0M+iKpGdU9
+ f+CvXkP8cXI5wnPRg0w1XgFgsmtnCbN5hRe4Zil/yy0D9il8PCsm6sVlHSoadBqW+BcNeXk0TY4
+ zEk/LWQH96IVKCK5Nd9Si9WTKblYk23BbFeSy9ZlPLS4mA4r6oQXErh4qIVm6P0TjpE2JcD97vu
+ Fw87LDDp2IfNoRLr4PYj59h2BUEDE1Jw5GZnT+6fGjd53G408F6dMGc3rEdwG55ueXeWz9nlvCr
+ 7Mu9WpCGUYP1uTSTnZ1gi6Dtr4cuID+LAe09dkJmZdy2II9j
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-From: Kyunghwan Seo <khwan.seo@samsung.com>
+The commit 325ba852d148 ("drm/i2c: move TDA998x driver under
+drivers/gpu/drm/bridge") deleted the drivers/gpu/drm/i2c/ subdir, but
+didn't update upper level Makefile. Drop corresponding line to fix build
+issues.
 
-Fix the PMU register bits for the ExynosAutoV920 SoC.
-This SoC has different bit information compared to its previous
-version, ExynosAutoV9, and we have made the necessary adjustments.
-
-rst_stat_bit:
-    - ExynosAutoV920 cl0 : 0
-    - ExynosAutoV920 cl1 : 1
-
-cnt_en_bit:
-    - ExynosAutoV920 cl0 : 8
-    - ExynosAutoV920 cl1 : 8
-
-Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+Fixes: 325ba852d148 ("drm/i2c: move TDA998x driver under drivers/gpu/drm/bridge")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/dri-devel/20250213113841.7645b74c@canb.auug.org.au
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 30450e99e5e9..bdd81d8074b2 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -72,6 +72,8 @@
- #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
- #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
- #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
-+#define EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT	0
-+#define EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT	1
- 
- #define GS_CLUSTER0_NONCPU_OUT			0x1220
- #define GS_CLUSTER1_NONCPU_OUT			0x1420
-@@ -312,9 +314,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
-@@ -325,9 +327,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
- 	.mask_bit = 2,
- 	.mask_reset_inv = true,
- 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
--	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
-+	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT,
- 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
--	.cnt_en_bit = 7,
-+	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
- 		  QUIRK_HAS_DBGACK_BIT,
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 42901f877bf256765829b5fe25bf7844202338cb..50604b49d1ac4edd439ea73361118fd1e6a81d53 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -197,7 +197,6 @@ obj-$(CONFIG_DRM_INGENIC) += ingenic/
+ obj-$(CONFIG_DRM_LOGICVC) += logicvc/
+ obj-$(CONFIG_DRM_MEDIATEK) += mediatek/
+ obj-$(CONFIG_DRM_MESON)	+= meson/
+-obj-y			+= i2c/
+ obj-y			+= panel/
+ obj-y			+= bridge/
+ obj-$(CONFIG_DRM_FSL_DCU) += fsl-dcu/
+
+---
+base-commit: 325ba852d148434c5bcb06d513af1933a7f77b70
+change-id: 20250213-fix-tda-74b6916aaa00
+
+Best regards,
 -- 
-2.40.1
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
