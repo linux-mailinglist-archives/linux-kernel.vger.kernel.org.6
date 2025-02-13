@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-513476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA323A34AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:50:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E701EA34B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BBD17034A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF533BE7E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93254266194;
-	Thu, 13 Feb 2025 16:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8D02661AD;
+	Thu, 13 Feb 2025 16:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="mHu6CIWh"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9UOxC17"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3B7266181;
-	Thu, 13 Feb 2025 16:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CE826619D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464853; cv=none; b=qaGH3jN+kDdFi+up8NYi6sbx6G96nGb6TRImT7eAadpTMmoZn84MukSzVzyTnt1CjjlD4sbeqbpuUMmQQy56lgh2DvyF6cxbOntGS+/jIsV1qd8AU2aUEZz58PYD/3vraCeyMvRLEJFRMf+l6PSA/dweeMAoJTHcZIy0p5xHu8c=
+	t=1739464854; cv=none; b=gIu04pVsu2hBu8ea6Yr+7zmLCRe7UzIwDJmR8O3Mpzx9d1c2HXB2dH8mYBvhzwl21zhU5mnBT/Ch68XBPv7E8/WZV6qIa20ZZ6QHgFpPtVIZn7nTGyZTVA984caewN+8Qxob+qQ9wNQsEkaX+B/D5QnIxwtoQhQYwTU3M1b1/sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464853; c=relaxed/simple;
-	bh=+NmJvozCvHqYo27+QZ99g9mKJER+YVCPI759srgIddc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=deLiy6h3QeLd7SsEUAl5j0BdCn+RalHtUt+Wcclq8F2xJUAyfKX/kXTq3om/+6HbmZ6S06avP9/P+sUBHUtxB0c1LleTj7VnTI5DiGelEF5WbYnPKg9U4KWxFfLXu+mpumBYWzQvX6++pBGu3rRcQRgRbMMHQ6QohOXoQtm0Ek0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=mHu6CIWh; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B85D444097
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739464850; bh=0XfX4xkUPnhb3Qg4pir8Dg6wUP9Xma+uY4HBJFMOGuQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=mHu6CIWhUFtFxJvqpyTvgeZSXxUegMO2ofWHiYbxqel+lpFK6TQEueZhCy9TX30ea
-	 DEO0CsXG3P3Su+N03pSD4LFjKPemVO4kRAMVrFzplcIpV/0FAbhBg+Hzk4mXpalnRL
-	 hKi7ZHERh1oZTIqHSeqyeK9ZgafTxadjJlxV2IC+34pmOjvMK/2cSJJCKKulrGyM9x
-	 KSdUt+MqViP2eIEhgl0wSBZaHVK7Lj07MnUlnKI3lxgEEPZ+np4G4JfyZKi6UEjkV2
-	 vTybn1XeZJhnoEI0j7xA2vIs8qMB3IS4oSMjOT694n8dkFIpUc4oU4qOa3SML9Y+CA
-	 D7ESS8vnIYt9Q==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B85D444097;
-	Thu, 13 Feb 2025 16:40:50 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, kernel test
- robot <lkp@intel.com>
-Subject: Re: [PATCH] docs: Makefile: use the new script to check for bad ABI
- references
-In-Reply-To: <20250211054446.1696826-1-mchehab+huawei@kernel.org>
-References: <20250211054446.1696826-1-mchehab+huawei@kernel.org>
-Date: Thu, 13 Feb 2025 09:40:49 -0700
-Message-ID: <87o6z56bn2.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1739464854; c=relaxed/simple;
+	bh=SDJ9xPx+V/kUYuCd1lfpdiNdJdkLWVzRtwki/MC6fQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mmUIpa/0nRMFdMgcaeoHLA6QhnZq5xV5L0/xlvBhvIq2D1bxZEaPRqjXd0R07sNh39fae+YYE0FTP9CWOXfMUsWHXe7iwcoJ/+kM9NI7XVPWTZpKP2hoTxjGzKnZWlxDPlTi6+qr3oFXM+J7ZQBLksLRHFJe2hJObryOVxTBvow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9UOxC17; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B22E4C4CED1;
+	Thu, 13 Feb 2025 16:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739464853;
+	bh=SDJ9xPx+V/kUYuCd1lfpdiNdJdkLWVzRtwki/MC6fQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S9UOxC175AtipJQE4sLG6QW53cPJbHCMIJQnzSXjuo2JAHnhghALsN2C70ykL2S0L
+	 OCty/aXyKS+GYgGdzwGUTuRS7/Gzf9u/68frrvwzxvygWX7SFu7mMp4FRjl7+Kg/E3
+	 RM5aVSTFfI5lj3gzZALBPQCfh78DrDgg/ecWTH7O6+9hTDbPv/9XZn9pD3KJ7Na4la
+	 WM7D/S+Li1FbzNyO/Y+u9cVhi2ac34LRYDpv+OMsIenOzFmHsAkQr5gmqAWkpJRzl1
+	 /ZTQAk8oEGAZ9odoLnW7Za7xrevSAAL/4Uv+3OihxCfCtV+K9BOPhxZB9yqwyKOZ1Z
+	 srxJRI4uBdtKg==
+Date: Thu, 13 Feb 2025 06:40:52 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Neel Natu <neelnatu@google.com>, Barret Rhoden <brho@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	sched-ext@meta.com
+Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: Implement
+ SCX_OPS_ALLOW_QUEUED_WAKEUP
+Message-ID: <Z64glOKTNBMLD0ca@slm.duckdns.org>
+References: <Z60p755gE1aDiimC@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z60p755gE1aDiimC@slm.duckdns.org>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Wed, Feb 12, 2025 at 01:08:31PM -1000, Tejun Heo wrote:
+> A task wakeup can be either processed on the waker's CPU or bounced to the
+> wakee's previous CPU using an IPI (ttwu_queue). Bouncing to the wakee's CPU
+> avoids the waker's CPU locking and accessing the wakee's rq which can be
+> expensive across cache and node boundaries.
+> 
+> When ttwu_queue path is taken, select_task_rq() and thus ops.select_cpu()
+> are skipped. As this confused some BPF schedulers, there wasn't a good way
+> for a BPF scheduler to tell whether idle CPU selection has been skipped,
+> ops.enqueue() couldn't insert tasks into foreign local DSQs, and the
+> performance difference on machines with simple toplogies were minimal,
+> sched_ext disabled ttwu_queue.
+> 
+> However, this optimization makes noticeable difference on more complex
+> topologies and a BPF scheduler now has an easy way tell whether
+> ops.select_cpu() was skipped since 9b671793c7d9 ("sched_ext, scx_qmap: Add
+> and use SCX_ENQ_CPU_SELECTED") and can insert tasks into foreign local DSQs
+> since 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct
+> dispatches").
+> 
+> Implement SCX_OPS_ALLOW_QUEUED_WAKEUP which allows BPF schedulers to choose
+> to enable ttwu_queue optimization.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Neel Natu <neelnatu@google.com>
+> Reported-by: Barret Rhoden <brho@google.com>
+> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> The get_abi.pl script was replaced by get_abi.py. Update it at docs
-> makefile.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502110736.ZGWaWsep-lkp@intel.com/
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index 52c6c5a3efa9..63094646df28 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -12,7 +12,7 @@ endif
->  
->  # Check for broken ABI files
->  ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
-> -$(shell $(srctree)/scripts/get_abi.pl validate --dir $(srctree)/Documentation/ABI)
-> +$(shell $(srctree)/scripts/get_abi.py --dir $(srctree)/Documentation/ABI validate)
->  endif
+Applying to sched_ext/for-6.15. Peter, the core side change is trivial but
+please holler for any concerns.
 
-Applied, thanks.
+Thanks.
 
-jon
+-- 
+tejun
 
