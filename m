@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-513086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54372A34178
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32894A3417A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF86D3ABC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92553AD742
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CBB2222BD;
-	Thu, 13 Feb 2025 14:04:36 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F05F227EAA;
+	Thu, 13 Feb 2025 14:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SuyrXBDN"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E616A2222B6;
-	Thu, 13 Feb 2025 14:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC6171E43;
+	Thu, 13 Feb 2025 14:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455475; cv=none; b=jHLNn72BWZo94qm0TUgxOXuxiokGQ02i4XAPorxuuZF8vDMie0Sn9CGfpTuhec5emd/C9Zi8tFJLZ+MQO5TNobQo2m+qRzWoG4w9eub/rfrKoBjugzSdGUGOY1YGE4f3z8dLZXXft4S/oVdbnMjeRpKRBRLH8huQxWpfO/5ZsGI=
+	t=1739455532; cv=none; b=fDKf9aZTLBorWmnElFM/wdTDA6IKr+618wmExj7E4Ev/rjmImZ5Vxi96dEFoT1aDMa4/ALLzxS5HmAXM2+5yzM7cRIXRJVhacWkXS9i8oBoLUKSZUxYIHGnA6XAySGOG33KSrv8s4e8HU9cr5JtLUqasOekTc1h1DdYpey/c3ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455475; c=relaxed/simple;
-	bh=7GxreNtLxkyAsAf/SHzi0GF3A7llOYJx5Atvolf2RKc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qw+ZOgP/PFxPbjU7YJwXrSAq3FtbU/saMhkKTW592sqoSroKpi1uQKyxsU7kC+sSY+MZe7h1fqJJbuYOFn/BZE4IIPDu15y/P28ZklaUUmnnuA0cFu3XtNyeO+vITKrqXcNP+3aVpQtqd9aIyShfi4LNOBVxRXJmGAc/18gLChg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ytxfb1dNHzkXNF;
-	Thu, 13 Feb 2025 22:00:55 +0800 (CST)
-Received: from kwepemd500011.china.huawei.com (unknown [7.221.188.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0B2A21800EA;
-	Thu, 13 Feb 2025 22:04:29 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd500011.china.huawei.com (7.221.188.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 13 Feb 2025 22:04:28 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Thu, 13 Feb 2025 22:04:28 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
-	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-Subject: RE: [PATCH] io_uring: use lockless_cq flag in io_req_complete_post()
-Thread-Topic: [PATCH] io_uring: use lockless_cq flag in io_req_complete_post()
-Thread-Index: AQHbfOhWd2OE9cuOPEKuwkCotYxPjrNFRZPg
-Date: Thu, 13 Feb 2025 14:04:28 +0000
-Message-ID: <acc4f93c55574b8abd55da174248e9d2@huawei.com>
-References: <20250212005119.3433005-1-csander@purestorage.com>
-In-Reply-To: <20250212005119.3433005-1-csander@purestorage.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739455532; c=relaxed/simple;
+	bh=PRazXW/kbPHtowtTsKIzPmtMu8CfBctVKjuE3JfV5iU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bJ77aykb7eA2y0VJW8W/UGpsfiFmULChJO3PlkUM+Rk178SzBUORFWJNu0K7lCrHbeAQSWQQxr0fanVbF77u6/a+YKF3U4E4Cbz0Twq1X72khNZiXALKqx6P9qNQTT9MmzGv3V9oFX/nUuwNQjc0jFRpVO+WJRxoz9TWpMeZhGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SuyrXBDN; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 948F843204;
+	Thu, 13 Feb 2025 14:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739455529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QbJppxNHduGQ+2DYZU3v7Z2KhYNzPxsOebdIfv4nVEc=;
+	b=SuyrXBDNecXS47sD8IFsPb+riIglTpi2/yxQkA7eOjkqxW0B3pDgEsWTjKJe3HpudsEKo1
+	rfUHpHNmO25L03hruzfpEYpHQo3LyXgsLW1jmUF6SwdYQ8MpuwWZcW82VOkJuQAouvXGPW
+	qGrboTeu68aJkRs2n/mFAlMXBjN3xwhsLRrQuXqy1n+/cs/Geg6VDEY8Nl/+GezELbs4oe
+	YhBac8FecgPNr+UuZCnAM4et34GPlZ8gboel4wvEOeaI3FN9aJDhJN2yQBaU8W/MfnTxid
+	UKk+Wg0YCbdkY6kSgL4wZGkV+Zd4UrDWhvnHDjMRa1O/IXAe5AZmNEciEaMzrQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Thu, 13 Feb 2025 15:05:13 +0100
+Subject: [PATCH v2] drivers: core: fix device leak in
+ __fw_devlink_relax_cycles()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-8cd3b03e6a3f@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIABj8rWcC/52OTQ6DIBCFr2JYl0aoBtNV79EYQsdRJ1UwYKnGe
+ PeiR+jyey/vZ2MBPWFg92xjHiMFcjaBvGQMemM75NQkZjKXZS6F5C0tWrdf3WAcyL61x8EsGlY
+ YMOiRQiDbHSYB6ukz85sCg2VbGAM5S62Tx1RxLj7rxD2F2fn1PBDFof6/FQUXvBCVqEA1Skn5e
+ Dk3p+gV3Mjqfd9/c5/VnvAAAAA=
+X-Change-ID: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdeuleetffeutdfhvedvjeffuddtteejtdfhffdvhedvleevteekjeejgfejgfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoo
+ hhglhgvrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2FsZWIgU2FuZGVy
-IE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgRmVi
-cnVhcnkgMTIsIDIwMjUgODo1MSBBTQ0KPiBUbzogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRr
-PjsgUGF2ZWwgQmVndW5rb3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IENjOiBDYWxlYiBT
-YW5kZXIgTWF0ZW9zIDxjc2FuZGVyQHB1cmVzdG9yYWdlLmNvbT47IGlvLQ0KPiB1cmluZ0B2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
-VENIXSBpb191cmluZzogdXNlIGxvY2tsZXNzX2NxIGZsYWcgaW4gaW9fcmVxX2NvbXBsZXRlX3Bv
-c3QoKQ0KPiANCj4gaW9fdXJpbmdfY3JlYXRlKCkgY29tcHV0ZXMgY3R4LT5sb2NrbGVzc19jcSBh
-czoNCj4gY3R4LT50YXNrX2NvbXBsZXRlIHx8IChjdHgtPmZsYWdzICYgSU9SSU5HX1NFVFVQX0lP
-UE9MTCkNCj4gDQo+IFNvIHVzZSBpdCB0byBzaW1wbGlmeSB0aGF0IGV4cHJlc3Npb24gaW4gaW9f
-cmVxX2NvbXBsZXRlX3Bvc3QoKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENhbGViIFNhbmRlciBN
-YXRlb3MgPGNzYW5kZXJAcHVyZXN0b3JhZ2UuY29tPg0KPiAtLS0NCj4gIGlvX3VyaW5nL2lvX3Vy
-aW5nLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRp
-b24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pb191cmluZy9pb191cmluZy5jIGIvaW9fdXJpbmcv
-aW9fdXJpbmcuYyBpbmRleA0KPiBlYzk4YTBlYzZmMzQuLjBiZDk0NTk5ZGY4MSAxMDA2NDQNCj4g
-LS0tIGEvaW9fdXJpbmcvaW9fdXJpbmcuYw0KPiArKysgYi9pb191cmluZy9pb191cmluZy5jDQo+
-IEBAIC04OTcsMTEgKzg5NywxMSBAQCBzdGF0aWMgdm9pZCBpb19yZXFfY29tcGxldGVfcG9zdChz
-dHJ1Y3QgaW9fa2lvY2INCj4gKnJlcSwgdW5zaWduZWQgaXNzdWVfZmxhZ3MpDQo+IA0KPiAgCS8q
-DQo+ICAJICogSGFuZGxlIHNwZWNpYWwgQ1Egc3luYyBjYXNlcyB2aWEgdGFza193b3JrLiBERUZF
-Ul9UQVNLUlVODQo+IHJlcXVpcmVzDQo+ICAJICogdGhlIHN1Ym1pdHRlciB0YXNrIGNvbnRleHQs
-IElPUE9MTCBwcm90ZWN0cyB3aXRoIHVyaW5nX2xvY2suDQo+ICAJICovDQo+IC0JaWYgKGN0eC0+
-dGFza19jb21wbGV0ZSB8fCAoY3R4LT5mbGFncyAmIElPUklOR19TRVRVUF9JT1BPTEwpKSB7DQo+
-ICsJaWYgKGN0eC0+bG9ja2xlc3NfY3EpIHsNCg0KV2hlbiB0aGUgY29tcGxldGlvbl9sb2NrIGlz
-IG5vdCBoZWxkLCB0aGUgcmVxIGNvbXBsZXRpb24gZXZlbnQgbmVlZHMgdG8gYmUgaGFuZGxlZCB0
-aHJvdWdoDQp0aGUgdGFza193b3JrIG1lY2hhbmlzbSwgc28gdGhpcyBtb2RpZmljYXRpb24gbWFr
-ZXMgc2Vuc2UgdG8gbWUuDQoNCj4gIAkJcmVxLT5pb190YXNrX3dvcmsuZnVuYyA9IGlvX3JlcV90
-YXNrX2NvbXBsZXRlOw0KPiAgCQlpb19yZXFfdGFza193b3JrX2FkZChyZXEpOw0KPiAgCQlyZXR1
-cm47DQo+ICAJfQ0KPiANCj4gLS0NCj4gMi40NS4yDQo+IA0KDQpSZXZpZXdlZC1ieTogTGkgWmV0
-YW8gPGxpemV0YW8xQGh1YXdlaS5jb20+DQoNCi0tLQ0KTGkgWmV0YW8NCg==
+Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
+cycle detection logic") introduced a new struct device *con_dev and a
+get_dev_from_fwnode() call to get it, but without adding a corresponding
+put_device().
+
+Closes: https://lore.kernel.org/all/20241204124826.2e055091@booty/
+Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
+Cc: stable@vger.kernel.org
+Reviewed-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- add 'Cc: stable@vger.kernel.org'
+- use Closes: tag, not Link:
+- Link to v1: https://lore.kernel.org/r/20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com
+---
+ drivers/base/core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 5a1f051981149dc5b5eee4fb69c0ab748a85956d..2fde698430dff98b5e30f7be7d43d310289c4217 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2079,6 +2079,7 @@ static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
+ out:
+ 	sup_handle->flags &= ~FWNODE_FLAG_VISITED;
+ 	put_device(sup_dev);
++	put_device(con_dev);
+ 	put_device(par_dev);
+ 	return ret;
+ }
+
+---
+base-commit: 09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
+change-id: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
