@@ -1,150 +1,225 @@
-Return-Path: <linux-kernel+bounces-512094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4241CA333F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3BCA333F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34BA167A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:25:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF00167B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21351E52D;
-	Thu, 13 Feb 2025 00:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9120235951;
+	Thu, 13 Feb 2025 00:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kA5Outsz"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g44owFdk"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A75533F6;
-	Thu, 13 Feb 2025 00:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100181E48A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739406310; cv=none; b=rcjc5oWTEzeasDLI5Cya5k5iAPzbPv8jzdsyiF83gY62kDvpzRceYqS+cF/5c2MNkYYX8T3goCvfOlDwoD+Iy7p5KhMx3fEjWslOYOIanxTGEQ72ozQkSemfXp0+eu3t89clgUjR09m4O+al6Bo6AqnPrrq7gn5E0Okq7QwKOLc=
+	t=1739406353; cv=none; b=iFbztQrgluMi5l5g11WYHePgl7TdIgVYFrlOIPzqOnIZQLoOzaIM67ETGcxvZFLZU5VLw3lCDV0s3uKT5VYvJDJKtAggf+aPIH7zAaGFNWICbf37WfvWyi9vDUcnkVj6D3uGcy+utyiL1Ds/pakKYniZrejLP0W/vG1C6f9ZKhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739406310; c=relaxed/simple;
-	bh=fzyna7PLtoUbYbs8+fX5Za4SKqKoUCKcoou8JqjRvYI=;
+	s=arc-20240116; t=1739406353; c=relaxed/simple;
+	bh=N6Vhy+AMNySdETQuQGcSvVOsB67SX6hT78NIQyA2UJw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+nAl/qBIWK1tUaZqZK5fQDe9UEBMLRm7lCyohOwr1jKkaZ7Gc8RkuLerdPgHjtPdlmkomc7ARU671Cvfmj7WGYwbHgs9kjpXiELyK+UZvcesqqufk1fJjGXE1gubsNwUbO2CdsUVQxXnkrODaKe+TiAcyFi9wLg/FtZndlhljk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kA5Outsz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d9837f201aso2946503a12.0;
-        Wed, 12 Feb 2025 16:25:08 -0800 (PST)
+	 To:Cc:Content-Type; b=GP0xe4bt7jqB7xbHtGpAPEM+k59eqOgn0B6ysOhADNNkqi+ta1m/0ajsCdagDeqzWKFjJvl4iFBG+q26KQZehfnDXqYJZ0C1lorvODz+Dc0S0f0FeeH7qhxG00hf1xg+qVXFvyu3lzjM/9U26pKAk8rhShehdzL3dcj8fXZW+6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g44owFdk; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6fb0de4ecd4so3122547b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:25:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739406307; x=1740011107; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739406350; x=1740011150; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W8dBeeEoSDm4SD/YCzWVE+gxCVxcw7YRX7A4c8VioMo=;
-        b=kA5OutszU8dgyo/YxArxToAJa4O1j/qmGf8sX5yViyzzSWo0PH3/eTguC3hoLs/zgA
-         Q9XBH3m7Lk7fQSKyppe2lHIKnuaBuzr6BA8Si13QvxZ/2h20dh5PAqBnuYbhkNnaw1FK
-         W81DGJrYp4UafRjgeuIksUPLXfdBbDDt7uvUdlQKKFIp/hK9AOWzz7wvc8XZG6yLEIUl
-         iie63YD0Y5A9dVdyvX2sumgsOvZ48Abn//T55/IlyDJEHiBnNHzMRKWAoR8djTttSu60
-         RV61YwLS9HFTE+mkHX4INgI/F4k7Nsh832xjw/bW3IlToFnKqB4SdIwalDLm7qmTAHQ2
-         +nuA==
+        bh=j2u8kKjrY9fIuB9CNcK79YulIHKo8nYe5XdwcfoOaGc=;
+        b=g44owFdktVFQzO45V80Y2zTO06nFP3zgAIySx+iU23lzhUqtxh5X/pRSiNd4m4GX3a
+         LbtN6yvnMjo3hRUNPaX2rwl3K5exSfZ3EJdTXol6ZrW15+BG1SpoODHVJd0p0UFqVHtz
+         ZNfLlU5fR44kcrOm6JFS79PQw3bXb80+CzQJyCrfJq9ihcIMtR07NOiGPqNLzCDMOq+a
+         w41P8GXOOG8et9kGSylSFF7HHii5c/vFnrUluPfyQDF/a9NDyWfy2jg8Lvcfus70dM4T
+         +H8DSBGbhEb/qdzdopFRehl8Qsbd5FqgrK0HnTEmbzfMryefBr7y4/VrLd9ZoJZ0Lo+b
+         iCZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739406307; x=1740011107;
+        d=1e100.net; s=20230601; t=1739406350; x=1740011150;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W8dBeeEoSDm4SD/YCzWVE+gxCVxcw7YRX7A4c8VioMo=;
-        b=sCJ2jRUHjgdEkS37IBPRfMDjJTh0bW4Ws5QmiWaxn0jcgTGyWA7EOH6EM9DQKk3FOx
-         7VTywNzxgU3zTI0TAHMegn3/mxgPkyxn/i6ziohEaItrJeDe9zRjPmO6aR0DbnM1a6iP
-         8KIYt8oBYE8eEglGyDgHr1JLcIq998IPGzX+BuEll8pSMqB9dpC0LAhe9Ul92VNa3eU3
-         2oSZdzl3F5dvoKFJ3QWukP1+srkfxH9l0xLWn6M0063e3/1fu0UNa8qQtjIdved7+uDh
-         VMbiwFrUOgPjYUsgFY3DHVmGaUC+UaQD1sN1e+CkIZeTlkfwAgjpDH9uuJhDaKGV+ubV
-         pJAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFWBE+GQ8Cybehp43clBKYP6y4N31LFSpI1ia9MTaoRQEn6rEZLH1pGhPA1WMji4isqsc00QKeIxfLpzU/a4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw92guc59yA7ixOSHiCquArI1KmJGKwDHn+cMln7MZQqLE+NLPg
-	ETTfppNkXdx/vp6CgDeJx768jRvNwVwDID3Fy6NI8/P5Nbo65hm9vjxKTBSywAWxt9Qc7n1e3cT
-	x8QpFuN6yejIb609PwZZLQ1tTbT/ffih+ywk=
-X-Gm-Gg: ASbGnctbs41isiEyTBR8hTEFhWBf12zjSg4aQo/IyFkLSS2oXaUYgtkxyNJaI16L6LG
-	uRa3sVfjFDyBBbfXVtAZyvZ1SAW5cAM/YpEE8poZbL45GRpHYzoeAbQZm4YJWkeAmqPVq
-X-Google-Smtp-Source: AGHT+IFBywya4EAS7dAbROUy9T3txlKiirfcuRq/lCa9/agwJBGHdQZO3s7MfYbRi2pIqybSTqIUYoXFU4GzJwdxoXY=
-X-Received: by 2002:a05:6402:1d50:b0:5db:68bd:ab78 with SMTP id
- 4fb4d7f45d1cf-5decba815dcmr736936a12.10.1739406306489; Wed, 12 Feb 2025
- 16:25:06 -0800 (PST)
+        bh=j2u8kKjrY9fIuB9CNcK79YulIHKo8nYe5XdwcfoOaGc=;
+        b=euUMXKDPaxbDHQucKbWlJhgw78BSTuiUOGN/+WZAxCjzQKaXBBCq7FpXkjZkig+u+h
+         VOkFr+ul3npomYb90mjps8HAX0nAL7y96w8GPmcefpYv94Z7LnMU+Z79BTofcDj366FN
+         Oy0dIff6iG4NxuKhk+X3I+auXqTq1hUrWlixdPlJNujCagymAwUDSxGNgpZ5+T005vZ8
+         0P/sEXoTA6gdJ52OYdI3VG/+gervMnijhbjPs/BUMJ+vBQzyq36J5CKN4fdu46r/YzeD
+         ernfO/vIIhNCJyOCqujH1QIGTtFl/rPI5otaBjBF1sZZGO3vcA9EpoW5gQZerWy3eDRp
+         yH4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWRye7cGqfp0nZJCfbS28dQK7OrQ/hkHPknAIZoYlh8R/rvQRYXrwTgYvtFI+nu5GC0DyO1aeQhSJpaqEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZvBSWtQukHUv87QJWL39HRpEEEDQeaXf2G4eY9/5UnMAoKW6E
+	R+xJcDbi5R/bFx8SkxgYd8LDdwt4QVKSKXzD+fXZTJON3QCoZjhaOUnKEGVYiosv7Zg2iC9aAJj
+	eZ3zc4jYLzjUsCIa3FJgx/lEBWXJxfmFmW0BS
+X-Gm-Gg: ASbGncufSkJ2AkxCszDpTQBl2SZXE0f16d+Dxz+THcuq2EVwgyxXFPmZdTdxQ2L4CJg
+	bxg92dVhmvlPAm7w+Hp2pkbjcBE8zq9aEqBQWn6BfG5ACu4jkbAcw5hyCz5bwaBKdt5suRAF8AL
+	Z14uUSRo5FFzfnx7YK7eaouIZovg==
+X-Google-Smtp-Source: AGHT+IHTvcCYWI14ZvnOu7zHEbTk1BAtb39a79vbmvFNPOyo3bHRiYj75C11od9wdFZaB6X6hn5P1hAXqVGs764bwRg=
+X-Received: by 2002:a05:690c:6489:b0:6f9:3e3d:3f2e with SMTP id
+ 00721157ae682-6fb21c5e23amr46018817b3.33.1739406349753; Wed, 12 Feb 2025
+ 16:25:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250128170447.12918-1-alessandro.zanni87@gmail.com>
-In-Reply-To: <20250128170447.12918-1-alessandro.zanni87@gmail.com>
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Date: Thu, 13 Feb 2025 01:24:30 +0100
-X-Gm-Features: AWEUYZk-ObCPdB1sCqh0rfANabmxISt7chbnNtEsESdDCHQ8OJSszw4wtsrkSNM
-Message-ID: <CABq9Dx53aaX1t2Jidi_zDtR6VDB4UvWo1LkO5GYhCnwfs3ycsQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests: pid_namespace and pidfd missing include
-To: brauner@kernel.org, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250204004038.1680123-1-jthoughton@google.com>
+ <20250204004038.1680123-5-jthoughton@google.com> <Z60bhK96JnKIgqZQ@google.com>
+In-Reply-To: <Z60bhK96JnKIgqZQ@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 12 Feb 2025 16:25:14 -0800
+X-Gm-Features: AWEUYZkCeXzHOoGZKWc3H7LLiVS6f8Z8ZO9QrsVmFhGfklstLnZ9qL0es-onr0M
+Message-ID: <CADrL8HWhuWjfuU2gPjKw0y7y1Z6oxBc05OAWUT3=L3_NtVgRrA@mail.gmail.com>
+Subject: Re: [PATCH v9 04/11] KVM: x86/mmu: Relax locking for
+ kvm_test_age_gfn() and kvm_age_gfn()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> Running "make kselftest" results in several errors like these:
+On Wed, Feb 12, 2025 at 2:07=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> pidfd_fdinfo_test.c:231:36: error: =E2=80=98MS_REC=E2=80=99 undeclared (f=
-irst use in
-> this function)
->   231 |         r =3D mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
+> On Tue, Feb 04, 2025, James Houghton wrote:
+> > diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
+> > index 22551e2f1d00..e984b440c0f0 100644
+> > --- a/arch/x86/kvm/mmu/spte.c
+> > +++ b/arch/x86/kvm/mmu/spte.c
+> > @@ -142,8 +142,14 @@ bool spte_has_volatile_bits(u64 spte)
+> >               return true;
+> >
+> >       if (spte_ad_enabled(spte)) {
+> > -             if (!(spte & shadow_accessed_mask) ||
+> > -                 (is_writable_pte(spte) && !(spte & shadow_dirty_mask)=
+))
+> > +             /*
+> > +              * Do not check the Accessed bit. It can be set (by the C=
+PU)
+> > +              * and cleared (by kvm_tdp_mmu_age_spte()) without holdin=
+g
 >
-> pidfd_fdinfo_test.c:231:45: error: =E2=80=98MS_PRIVATE=E2=80=99 undeclare=
-d (first use
-> in this function); did you mean =E2=80=98MAP_PRIVATE=E2=80=99?
->   231 |         r =3D mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
+> When possible, don't reference functions by name in comments.  There are =
+situations
+> where it's unavoidable, e.g. when calling out memory barrier pairs, but f=
+or cases
+> like this, it inevitably leads to stale code.
+
+Good point. Thanks.
+
 >
-> pid_max.c:48:9: warning: implicit declaration of function =E2=80=98umount=
-2=E2=80=99;
-> did you mean =E2=80=98SYS_umount2=E2=80=99? [-Wimplicit-function-declarat=
-ion]
->    48 |         umount2("/proc", MNT_DETACH);
+> > +              * the mmu_lock, but when clearing the Accessed bit, we d=
+o
+> > +              * not invalidate the TLB, so we can already miss Accesse=
+d bit
 >
-> This patch adds the <sys/mount.h> include in pidfd_fdinfo_test.c and
-> pid_max.c files to find the variables MS_REC, MS_PRIVATE, MNT_DETACH.
+> No "we" in comments or changelog.
+
+Ah my mistake.
+
+> > +              * updates.
+> > +              */
+> > +             if (is_writable_pte(spte) && !(spte & shadow_dirty_mask))
+> >                       return true;
 >
-> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> ---
->  tools/testing/selftests/pid_namespace/pid_max.c   | 1 +
->  tools/testing/selftests/pidfd/pidfd_fdinfo_test.c | 1 +
->  2 files changed, 2 insertions(+)
+> This 100% belongs in a separate prepatory patch.  And if it's moved to a =
+separate
+> patch, then the rename can/should happen at the same time.
 >
-> diff --git a/tools/testing/selftests/pid_namespace/pid_max.c b/tools/test=
-ing/selftests/pid_namespace/pid_max.c
-> index 51c414faabb0..972bedc475f1 100644
-> --- a/tools/testing/selftests/pid_namespace/pid_max.c
-> +++ b/tools/testing/selftests/pid_namespace/pid_max.c
-> @@ -11,6 +11,7 @@
->  #include <string.h>
->  #include <syscall.h>
->  #include <sys/wait.h>
-> +#include <sys/mount.h>
+> And with the Accessed check gone, and looking forward to the below change=
+, I think
+> this is the perfect opportunity to streamline the final check to:
 >
->  #include "../kselftest_harness.h"
->  #include "../pidfd/pidfd.h"
-> diff --git a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c b/tools/te=
-sting/selftests/pidfd/pidfd_fdinfo_test.c
-> index f062a986e382..f718aac75068 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-> @@ -13,6 +13,7 @@
->  #include <syscall.h>
->  #include <sys/wait.h>
->  #include <sys/mman.h>
-> +#include <sys/mount.h>
+>         return spte_ad_enabled(spte) && is_writable_pte(spte) &&
+>                !(spte & shadow_dirty_mask);
+
+LGTM.
+
+> No need to send another version, I'll move things around when applying.
+
+Thanks!
+
+> Also, as discussed off-list I'm 99% certain that with the lockless aging,=
+ KVM
+> must atomically update A/D-disabled SPTEs, as the SPTE can be access-trac=
+ked and
+> restored outside of mmu_lock.  E.g. a task that holds mmu_lock and is cle=
+aring
+> the writable bit needs to update it atomically to avoid its change from b=
+eing
+> lost.
+
+Yeah you're right. This logic applies to A/D-enabled SPTEs too, just
+that we choose to tolerate failures to update the Accessed bit. But in
+the case of A/D-disabled SPTEs, we can't do that. So this makes sense.
+Thanks!
+
+> I'll slot this is in:
 >
->  #include "pidfd.h"
->  #include "../kselftest.h"
 > --
-> 2.43.0
+> From: Sean Christopherson <seanjc@google.com>
+> Date: Wed, 12 Feb 2025 12:58:39 -0800
+> Subject: [PATCH 03/10] KVM: x86/mmu: Always update A/D-disable SPTEs
+>  atomically
+>
+> In anticipation of aging SPTEs outside of mmu_lock, force A/D-disabled
+> SPTEs to be updated atomically, as aging A/D-disabled SPTEs will mark the=
+m
+> for access-tracking outside of mmu_lock.  Coupled with restoring access-
+> tracked SPTEs in the fast page fault handler, the end result is that
+> A/D-disable SPTEs will be volatile at all times.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Hello,
+Reviewed-by: James Houghton <jthoughton@google.com>
 
-I'm reaching out to know if you have any comments or
-feedbacks about this patch.
-
-Thanks,
-Alessandro
+> ---
+>  arch/x86/kvm/mmu/spte.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
+> index 9663ba867178..0f9f47b4ab0e 100644
+> --- a/arch/x86/kvm/mmu/spte.c
+> +++ b/arch/x86/kvm/mmu/spte.c
+> @@ -141,8 +141,11 @@ bool spte_needs_atomic_update(u64 spte)
+>         if (!is_writable_pte(spte) && is_mmu_writable_spte(spte))
+>                 return true;
+>
+> -       /* Access-tracked SPTEs can be restored by KVM's fast page fault =
+handler. */
+> -       if (is_access_track_spte(spte))
+> +       /*
+> +        * A/D-disabled SPTEs can be access-tracked by aging, and access-=
+tracked
+> +        * SPTEs can be restored by KVM's fast page fault handler.
+> +        */
+> +       if (!spte_ad_enabled(spte))
+>                 return true;
+>
+>         /*
+> @@ -151,8 +154,7 @@ bool spte_needs_atomic_update(u64 spte)
+>          * invalidate TLBs when aging SPTEs, and so it's safe to clobber =
+the
+>          * Accessed bit (and rare in practice).
+>          */
+> -       return spte_ad_enabled(spte) && is_writable_pte(spte) &&
+> -              !(spte & shadow_dirty_mask);
+> +       return is_writable_pte(spte) && !(spte & shadow_dirty_mask);
+>  }
+>
+>  bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+> --
 
