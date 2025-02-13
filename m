@@ -1,94 +1,156 @@
-Return-Path: <linux-kernel+bounces-513533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70347A34B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:09:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007FAA34B5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A111D167915
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96EF61888CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B793D200120;
-	Thu, 13 Feb 2025 17:03:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A11FDA76;
-	Thu, 13 Feb 2025 17:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67971FF7D8;
+	Thu, 13 Feb 2025 17:03:37 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF94D28A2B7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466204; cv=none; b=KQg+sDES5Rb3wVw9MQxa6Vrn4p+XGinlJryUIkAlezWKe9cODRmUUzWwUDUtHDOULDmx9VtWk63eelFpQwQXTPxk8pQhHDqiOSlgo/jNzwGhTvDHqXMGg+WyZVrtY1u1H9S2Ad36ygfAT43z8AFpzqzsarn6Eesa2kNw5hKJ1nY=
+	t=1739466217; cv=none; b=ohAq/+tFDLhKPeNqiNBkhbp4iaYOmj1nZEvsi6XqXhJlZ83Kmr2vXjE5wnqL31q6yUdwKx2DanLA360g8/bLXmH4jjOOCk0PNjaRsde2o878JhwWCoxg+XWSKYBYVpkT5ThR18lr0NqqvNCu9R3lLCLAQOzbY8Z0RoJwyB81CYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466204; c=relaxed/simple;
-	bh=vnxnylEp+XKENV3z/9ZNHoQdEM/a7qJdlV6rCttjW9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OizJ+DpdztS1dHRZrZPbzdbUR8oExhiU0Cqa/9JiMvLclxFELz2nbHYJ59GDLn+GGik2CazbiSiBbTyDd9SKyBc9ujUGzw3uhVRKDlQ7f6HryzOwf0fcc8xkczxaOC99B6GPiUnMqzy36x0GvNEU+1RJuEayQvND1fF60kUEAcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 429B3113E;
-	Thu, 13 Feb 2025 09:03:42 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4D83F6A8;
-	Thu, 13 Feb 2025 09:03:21 -0800 (PST)
-Date: Thu, 13 Feb 2025 17:03:16 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v19 10/11] KVM: arm64: nvhe: Disable branch generation in
- nVHE guests
-Message-ID: <20250213170316.GG235556@e132581.arm.com>
-References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
- <20250202-arm-brbe-v19-v19-10-1c1300802385@kernel.org>
+	s=arc-20240116; t=1739466217; c=relaxed/simple;
+	bh=5ZegvEKMTj3ZzsQpAOukJqsaJqss5n7vrVwbzqjdPls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IdWeen/vSKBQASUbgE84K2qPEngHuxrvf/brYkzkHgMS+l5imCaUoZy019vKMb4jWToXZmeVwilz83Xy5X/0acXUytSPC4yJQYBhsLzNTt6kWAnR1iYTHQHU50AyLv0u9YyrAEkBncObO2ybJ9kbuUeh7HH4oZ+y/1JxUGEUID4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 13 Feb
+ 2025 20:03:32 +0300
+Received: from [192.168.211.132] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 13 Feb
+ 2025 20:03:32 +0300
+Message-ID: <6a817784-f3d4-43c2-bd94-ac40c73e8583@fintech.ru>
+Date: Thu, 13 Feb 2025 20:03:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250202-arm-brbe-v19-v19-10-1c1300802385@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon/ci_dpm: Remove needless NULL checks of dpm
+ tables
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>
+CC: Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	"Simona Vetter" <simona@ffwll.ch>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+References: <20250114135856.16192-1-n.zhandarovich@fintech.ru>
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Content-Language: en-US
+In-Reply-To: <20250114135856.16192-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Sun, Feb 02, 2025 at 06:43:04PM -0600, Rob Herring (Arm) wrote:
+Gentle ping :)
 
-[...]
+On 1/14/25 16:58, Nikita Zhandarovich wrote:
+> This patch removes useless NULL pointer checks in functions like
+> ci_set_private_data_variables_based_on_pptable() and
+> ci_setup_default_dpm_tables().
+> 
+> The pointers in question are initialized as addresses to existing
+> structures such as rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk by
+> utilizing & operator and therefore are not in danger of being NULL.
+> 
+> Fix this by removing extra checks thus cleaning the code a tiny bit.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with static
+> analysis tool SVACE.
+> 
+> Fixes: cc8dbbb4f62a ("drm/radeon: add dpm support for CI dGPUs (v2)")
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+>  drivers/gpu/drm/radeon/ci_dpm.c | 34 ++++++++++------------------------
+>  1 file changed, 10 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
+> index abe9d65cc460..7c3a960f486a 100644
+> --- a/drivers/gpu/drm/radeon/ci_dpm.c
+> +++ b/drivers/gpu/drm/radeon/ci_dpm.c
+> @@ -3405,12 +3405,8 @@ static int ci_setup_default_dpm_tables(struct radeon_device *rdev)
+>  		&rdev->pm.dpm.dyn_state.cac_leakage_table;
+>  	u32 i;
+>  
+> -	if (allowed_sclk_vddc_table == NULL)
+> -		return -EINVAL;
+>  	if (allowed_sclk_vddc_table->count < 1)
+>  		return -EINVAL;
+> -	if (allowed_mclk_table == NULL)
+> -		return -EINVAL;
+>  	if (allowed_mclk_table->count < 1)
+>  		return -EINVAL;
+>  
+> @@ -3468,24 +3464,20 @@ static int ci_setup_default_dpm_tables(struct radeon_device *rdev)
+>  	pi->dpm_table.vddc_table.count = allowed_sclk_vddc_table->count;
+>  
+>  	allowed_mclk_table = &rdev->pm.dpm.dyn_state.vddci_dependency_on_mclk;
+> -	if (allowed_mclk_table) {
+> -		for (i = 0; i < allowed_mclk_table->count; i++) {
+> -			pi->dpm_table.vddci_table.dpm_levels[i].value =
+> -				allowed_mclk_table->entries[i].v;
+> -			pi->dpm_table.vddci_table.dpm_levels[i].enabled = true;
+> -		}
+> -		pi->dpm_table.vddci_table.count = allowed_mclk_table->count;
+> +	for (i = 0; i < allowed_mclk_table->count; i++) {
+> +		pi->dpm_table.vddci_table.dpm_levels[i].value =
+> +			allowed_mclk_table->entries[i].v;
+> +		pi->dpm_table.vddci_table.dpm_levels[i].enabled = true;
+>  	}
+> +	pi->dpm_table.vddci_table.count = allowed_mclk_table->count;
+>  
+>  	allowed_mclk_table = &rdev->pm.dpm.dyn_state.mvdd_dependency_on_mclk;
+> -	if (allowed_mclk_table) {
+> -		for (i = 0; i < allowed_mclk_table->count; i++) {
+> -			pi->dpm_table.mvdd_table.dpm_levels[i].value =
+> -				allowed_mclk_table->entries[i].v;
+> -			pi->dpm_table.mvdd_table.dpm_levels[i].enabled = true;
+> -		}
+> -		pi->dpm_table.mvdd_table.count = allowed_mclk_table->count;
+> +	for (i = 0; i < allowed_mclk_table->count; i++) {
+> +		pi->dpm_table.mvdd_table.dpm_levels[i].value =
+> +			allowed_mclk_table->entries[i].v;
+> +		pi->dpm_table.mvdd_table.dpm_levels[i].enabled = true;
+>  	}
+> +	pi->dpm_table.mvdd_table.count = allowed_mclk_table->count;
+>  
+>  	ci_setup_default_pcie_tables(rdev);
+>  
+> @@ -4880,16 +4872,10 @@ static int ci_set_private_data_variables_based_on_pptable(struct radeon_device *
+>  	struct radeon_clock_voltage_dependency_table *allowed_mclk_vddci_table =
+>  		&rdev->pm.dpm.dyn_state.vddci_dependency_on_mclk;
+>  
+> -	if (allowed_sclk_vddc_table == NULL)
+> -		return -EINVAL;
+>  	if (allowed_sclk_vddc_table->count < 1)
+>  		return -EINVAL;
+> -	if (allowed_mclk_vddc_table == NULL)
+> -		return -EINVAL;
+>  	if (allowed_mclk_vddc_table->count < 1)
+>  		return -EINVAL;
+> -	if (allowed_mclk_vddci_table == NULL)
+> -		return -EINVAL;
+>  	if (allowed_mclk_vddci_table->count < 1)
+>  		return -EINVAL;
+>  
 
-> +static void __debug_save_brbe(u64 *brbcr_el1)
-> +{
-> +       *brbcr_el1 = 0;
-> +
-> +       /* Check if the BRBE is enabled */
-> +       if (!(read_sysreg_el1(SYS_BRBCR) & (BRBCR_ELx_E0BRE | BRBCR_ELx_ExBRE)))
-> +               return;
-> +
-> +       /*
-> +        * Prohibit branch record generation while we are in guest.
-> +        * Since access to BRBCR_EL1 is trapped, the guest can't
-> +        * modify the filtering set by the host.
-> +        */
-> +       *brbcr_el1 = read_sysreg_el1(SYS_BRBCR);
-> +       write_sysreg_el1(0, SYS_BRBCR);
-> +}
-
-Should flush branch record and use isb() before exit host kernel?
-
-I see inconsistence between the function above and BRBE's disable
-function. Here it clears E0BRE / ExBRE bits for disabling BRBE, but the
-BRBE driver sets the PAUSED bit in BRBFCR_EL1 for disabling BRBE.
-
-Thanks,
-Leo
 
