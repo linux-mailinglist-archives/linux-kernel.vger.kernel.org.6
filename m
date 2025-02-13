@@ -1,144 +1,229 @@
-Return-Path: <linux-kernel+bounces-512162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DD5A334F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:46:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B10A334F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B24B77A3075
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:45:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89F51673DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AEB1D63C5;
-	Thu, 13 Feb 2025 01:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3918635E;
+	Thu, 13 Feb 2025 01:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSX6aGIZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tia9btoE"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E147D19CCFA;
-	Thu, 13 Feb 2025 01:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532531372
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739411102; cv=none; b=c/ZYHrVQoJVuLOxZHIMQFh6XJN3pVK1n/k9AtNXSW4NIRtq+Ewrqp3GR7ixCfPSl72VR4TWNtvtWg6X5PNeBjOd/rdhOO4pyQsjEIt8boPU6yQcUFwhdCwfmV0oC6dXVK5tB+nZBa6A3Oh9N53y/5MYG/7FSeavCeaHicRAsS1I=
+	t=1739411354; cv=none; b=ss8TUHCMEolUGL3/bAcpbtC5j7ieUMwmIJfNlmyhWjppYJCxtD1+w+LCnEysM+kgiSlyMG361NtkmseFJJ+i/znC0CketB78oEjCcJESNZQVV2Fj0VGE+pN95Djj5kyKcbuFxxk0Oy90C6R32pry7Y9YRSaf1CLP7MRY663AspA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739411102; c=relaxed/simple;
-	bh=QR2M3ggNynpLgjaV5MuEdSsLXcYuPIdLc3HO6YmtxuM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QwC1uiMN3eA7gLDHmZC058ugHX84vjL1owgivcjVlD2Co/euJ8wdsvRcv30finVp5q52FKHe2ACfCZ/HJI3xpaIMamSA6ppoMigo4qFijPm5otftFYkaBGd2/cvzziykZimjEUcYz38nTVnRUx/+7Ov8LYJFH2qdlLp0OZwnEBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSX6aGIZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95533C4CEE2;
-	Thu, 13 Feb 2025 01:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739411101;
-	bh=QR2M3ggNynpLgjaV5MuEdSsLXcYuPIdLc3HO6YmtxuM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mSX6aGIZUvu8Ow3QiHi49WpJMlcbTPa3MmrNc3TMLwyrXGyAMkh+D08gbtBhrm5Ka
-	 0FMbInTxW20qQKBtCs0qQ0HwHpXpDwt1M1VVj64fATFn13PR2u5Q3km+3EdSR2Wtgk
-	 D54xFRjVT5lBCDv3bu/wLFBl5hxvp48h8TYyVc/e1r7o5/gdGK480VsLuMq0QAdVdu
-	 EWYzQ9pl2FxlK3ErLMGQvJRSE24Vgr/oB70eF4/X+PzZtZz3D30HK8DrhmMCLhNbmw
-	 SESO8O1kjGGKQCKodHns7yOiLNSzCrnXF2IpRTySqpqw1xzps064C3NUcGzmBGNfnp
-	 A1jNF2i79DYXw==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 8/8] Docs/admin-guide/mm/damon/usage: add intervals_goal directory on the hierarchy
-Date: Wed, 12 Feb 2025 17:44:38 -0800
-Message-Id: <20250213014438.145611-9-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250213014438.145611-1-sj@kernel.org>
-References: <20250213014438.145611-1-sj@kernel.org>
+	s=arc-20240116; t=1739411354; c=relaxed/simple;
+	bh=juPaH15AHN+x7sI2jVZWJMtV7lT9zU/prxKVp2l874k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xp65WHTSvT6jww5zsRbqISWC/suPHBxHL2pbRD6Bu6GqjwGUUU0lPy8qgBnrpqt9SR4WzEGW/q3KROD2aF1Y1kbWv88nxfM7EZwzUKHNBZFvTbJRHmWt1QhS1KJcLThaFX/c1u3vdas/cJCzpI98xeAdALA+g90FPekrfbBQC6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tia9btoE; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43957634473so3741685e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:49:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739411350; x=1740016150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wY4wXs5+HLRneqjqUBolpxhGqLVUYvpAwoIF6j/MLQ=;
+        b=Tia9btoEinjJc2WehEsldrAEaPgdFsJ4bbxn55mdyNFH/TMQpLDgIQRv6B9tfaq67I
+         0lHhcGA1gltDgM/QZ+i+0WZ5ryv2ybpa90dS+mRlJ0Q+A9LfNc7QB5oQebsRNXxnf5Gt
+         qirEUKLZt3931zJO9qdQxY5kuOsq0oxxt1ey/vQFT2ZcFoAvCA3iexUHxtthh2S8/wR8
+         VAprKa1h0mkwbMjhO1xJygqMlv7wAb+4ifG2urKzuBJfGOSKAnE22QxjGuD7Pu++FxSU
+         gYzt4+wNDfqXs1rdI5ArAUUiRqSZbTt5a2FCFUrcSfw2804QTvDG1Ss5bBc2nCq7CY/f
+         waEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739411350; x=1740016150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/wY4wXs5+HLRneqjqUBolpxhGqLVUYvpAwoIF6j/MLQ=;
+        b=tn0xZc2czDZx8oEluRKuLeYq3kWEVinh9f+cEJQ01uaSYs8cQBj2badz56lSVIG4GC
+         wCiMpCW2AWaamnzrBr1U4uk06y8pIjsHWx5jMXQ0/3NmEns9a4xSF9DTDlv9gnyOQ7Cy
+         1t8s1klJ48hoNYO03iLis1sR5vQHZp0j/kXGVUc1jEVwZqJvNYO+MZAJjyXyJTVyVVe0
+         Ijgawi2LP4d1FUTFMzIHSoKpVWN68AOme2alb9VPHB+Kuuw2/rIp67UTT9AQnYXXnXy0
+         U69ra8qKVIPMN9BCgEREU9OHnM73kSSbSlM4WUGn3wKUtYQofG80fblXIo2eG3ve98+J
+         1d5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbU4f4pHAvC1NjgYvENGOQqn5yDt9oG56cJbv42B1xWZbLzxb6vEMFN5w0Sf6yMdFsVxduWaFOIbZkAcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxiz/u5MMg7jXyiWuMR5PJgWtUes3b9pa2W8pG2KFWYdIXNSoZ
+	STvBULD5g2lNUNVDjvLG3nCRdmsdBRdmA9HRQBSdwvb6eqnRGjqH6/bKzZL6DodYzPaUcT8mmMT
+	g8u6x8Afw3ba4jBGVWXzWm7jL9ks=
+X-Gm-Gg: ASbGncvDb1VwwrXpJXACaI3Md7m0DCVi4YnDGxxSS9ripnUv8PUDKbDfN3JwB8McPgJ
+	SATUdRCv7VjvKgXz05eR2vGAuuCDgNkyQ2B9io3thHVK7jIfgonvpB7ULrGiH5u8Sh3+qO+vmUf
+	o=
+X-Google-Smtp-Source: AGHT+IGsexwhGjEvQnmXxS/PprXAz9+JEzr7OrPin2TezEcpsjL4WY4sUa5E3qCz5q59GrohfZFhC8yZjHvgGdZoZ1o=
+X-Received: by 2002:a05:600c:1d9b:b0:439:60ef:ce94 with SMTP id
+ 5b1f17b1804b1-43960efd0ffmr6349015e9.21.1739411350285; Wed, 12 Feb 2025
+ 17:49:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250212162151.1599059-1-longman@redhat.com>
+In-Reply-To: <20250212162151.1599059-1-longman@redhat.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Thu, 13 Feb 2025 02:48:59 +0100
+X-Gm-Features: AWEUYZlva8wcqIGZAMNqHBqIKxnv5SeuKq11Lnse6U1bm1Vg8g3HRUGtElXJDM4
+Message-ID: <CA+fCnZdbW1Y8gsMhMtKxYZz3W6+CeovOVsi+DZbWsFTE2VNPbA@mail.gmail.com>
+Subject: Re: [PATCH v2] kasan: Don't call find_vm_area() in RT kernel
+To: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Nico Pache <npache@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document DAMON sysfs interface usage for DAMON sampling and aggregation
-intervals auto-tuning.
+On Wed, Feb 12, 2025 at 5:22=E2=80=AFPM Waiman Long <longman@redhat.com> wr=
+ote:
+>
+> The following bug report appeared with a test run in a RT debug kernel.
+>
+> [ 3359.353842] BUG: sleeping function called from invalid context at kern=
+el/locking/spinlock_rt.c:48
+> [ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140=
+605, name: kunit_try_catch
+> [ 3359.353853] preempt_count: 1, expected: 0
+>   :
+> [ 3359.353933] Call trace:
+>   :
+> [ 3359.353955]  rt_spin_lock+0x70/0x140
+> [ 3359.353959]  find_vmap_area+0x84/0x168
+> [ 3359.353963]  find_vm_area+0x1c/0x50
+> [ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
+> [ 3359.353972]  print_report+0x108/0x1f8
+> [ 3359.353976]  kasan_report+0x90/0xc8
+> [ 3359.353980]  __asan_load1+0x60/0x70
+>
+> Commit e30a0361b851 ("kasan: make report_lock a raw spinlock")
+> changes report_lock to a raw_spinlock_t to avoid a similar RT problem.
+> The print_address_description() function is called with report_lock
+> acquired and interrupt disabled.  However, the find_vm_area() function
+> still needs to acquire a spinlock_t which becomes a sleeping lock in
+> the RT kernel. IOW, we can't call find_vm_area() in a RT kernel and
+> changing report_lock to a raw_spinlock_t is not enough to completely
+> solve this RT kernel problem.
+>
+> Fix this bug report by skipping the find_vm_area() call in this case
+> and just print out the address as is.
+>
+> For !RT kernel, follow the example set in commit 0cce06ba859a
+> ("debugobjects,locking: Annotate debug_object_fill_pool() wait type
+> violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
+> inside raw_spinlock_t warning.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/admin-guide/mm/damon/usage.rst | 25 ++++++++++++++++++++
- Documentation/mm/damon/design.rst            |  4 ++++
- 2 files changed, 29 insertions(+)
+Would it be possible to get lockdep to allow taking spinlock_t inside
+raw_spinlock_t instead of annotating the callers for the !RT case? Or
+is this a rare thing for this to be allowed on !RT?
 
-diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
-index 51af66c208c5..8970efce32f0 100644
---- a/Documentation/admin-guide/mm/damon/usage.rst
-+++ b/Documentation/admin-guide/mm/damon/usage.rst
-@@ -64,6 +64,7 @@ comma (",").
-     │ │ │ │ :ref:`0 <sysfs_context>`/avail_operations,operations
-     │ │ │ │ │ :ref:`monitoring_attrs <sysfs_monitoring_attrs>`/
-     │ │ │ │ │ │ intervals/sample_us,aggr_us,update_us
-+    │ │ │ │ │ │ │ intervals_goal/samples_bp,aggrs,min_sample_us,max_sample_us
-     │ │ │ │ │ │ nr_regions/min,max
-     │ │ │ │ │ :ref:`targets <sysfs_targets>`/nr_targets
-     │ │ │ │ │ │ :ref:`0 <sysfs_target>`/pid_target
-@@ -132,6 +133,11 @@ Users can write below commands for the kdamond to the ``state`` file.
- - ``off``: Stop running.
- - ``commit``: Read the user inputs in the sysfs files except ``state`` file
-   again.
-+- ``update_tuned_intervals``: Update the contents of ``sample_us`` and
-+  ``aggr_us`` files of the kdamond with the auto-tuning applied ``sampling
-+  interval`` and ``aggregation interval`` for the files.  Please refer to
-+  :ref:`intervals_goal section <damon_usage_sysfs_monitoring_intervals_goal>`
-+  for more details.
- - ``commit_schemes_quota_goals``: Read the DAMON-based operation schemes'
-   :ref:`quota goals <sysfs_schemes_quota_goals>`.
- - ``update_schemes_stats``: Update the contents of stats files for each
-@@ -213,6 +219,25 @@ writing to and rading from the files.
- For more details about the intervals and monitoring regions range, please refer
- to the Design document (:doc:`/mm/damon/design`).
- 
-+.. _damon_usage_sysfs_monitoring_intervals_goal:
-+
-+contexts/<N>/monitoring_attrs/intervals/intervals_goal/
-+-------------------------------------------------------
-+
-+Under the ``intervals`` directory, one directory for automated tuning of
-+``sample_us`` and ``aggr_us``, namely ``intervals_goal`` directory also exists.
-+Under the directory, four files for the auto-tuning control, namely
-+``samples_bp``, ``aggrs``, ``min_sample_us`` and ``max_sample_us`` exist.
-+Please refer to  the :ref:`design document of the feature
-+<damon_design_monitoring_intervals_autotuning>` for the internal of the tuning
-+mechanism.  Reading and writing the four files under ``intervals_goal``
-+directory shows and updates the tuning parameters that described in the
-+:ref:design doc <damon_design_monitoring_intervals_autotuning>` with the same
-+names.  The tuning starts with the user-set ``sample_us`` and ``aggr_us``.  The
-+tuning-applied current values of the two intervals can be read from the
-+``sample_us`` and ``aggr_us`` files after writing ``update_tuned_intervals`` to
-+the ``state`` file.
-+
- .. _sysfs_targets:
- 
- contexts/<N>/targets/
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index c8e906ac3965..940409abc23f 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -354,6 +354,10 @@ The tuning is turned off by default, and need to be set explicitly by the user.
- As a rule of thumbs and the Parreto principle, 20% access samples ratio target
- is recommended.
- 
-+To know how user-space can use this feature via :ref:`DAMON sysfs interface
-+<sysfs_interface>`, refer to :ref:`intervals_goal <sysfs_scheme>` part of
-+the documentation.
-+
- 
- .. _damon_design_damos:
- 
--- 
-2.39.5
+>
+> Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  mm/kasan/report.c | 47 ++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 34 insertions(+), 13 deletions(-)
+>
+>  [v2] Encapsulate the change into a new
+>       kasan_print_vmalloc_info_ret_page() helper
+>
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index 3fe77a360f1c..9580ac3f3203 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -370,6 +370,38 @@ static inline bool init_task_stack_addr(const void *=
+addr)
+>                         sizeof(init_thread_union.stack));
+>  }
+>
+> +/*
+> + * RT kernel cannot call find_vm_area() in atomic context. For !RT kerne=
+l,
+> + * prevent spinlock_t inside raw_spinlock_t warning by raising wait-type
+> + * to WAIT_SLEEP.
+> + *
+> + * Return: page pointer or NULL
+> + */
+> +static inline struct page *kasan_print_vmalloc_info_ret_page(void *addr)
+
+No need for the kasan_ prefix: this is a static function. (Also the
+_ret_* suffix is something I've never seen before in the kernel
+context, but I don't mind it.)
+
+> +{
+> +       if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> +               static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEE=
+P);
+> +               struct page *page =3D NULL;
+> +               struct vm_struct *va;
+> +
+> +               lock_map_acquire_try(&vmalloc_map);
+> +               va =3D find_vm_area(addr);
+> +               if (va) {
+> +                       pr_err("The buggy address belongs to the virtual =
+mapping at\n"
+> +                              " [%px, %px) created by:\n"
+> +                              " %pS\n",
+> +                              va->addr, va->addr + va->size, va->caller)=
+;
+> +                       pr_err("\n");
+> +
+> +                       page =3D vmalloc_to_page(addr);
+> +               }
+> +               lock_map_release(&vmalloc_map);
+> +               return page;
+> +       }
+> +       pr_err("The buggy address %px belongs to a vmalloc virtual mappin=
+g\n", addr);
+> +       return NULL;
+> +}
+> +
+>  static void print_address_description(void *addr, u8 tag,
+>                                       struct kasan_report_info *info)
+>  {
+> @@ -398,19 +430,8 @@ static void print_address_description(void *addr, u8=
+ tag,
+>                 pr_err("\n");
+>         }
+>
+> -       if (is_vmalloc_addr(addr)) {
+> -               struct vm_struct *va =3D find_vm_area(addr);
+> -
+> -               if (va) {
+> -                       pr_err("The buggy address belongs to the virtual =
+mapping at\n"
+> -                              " [%px, %px) created by:\n"
+> -                              " %pS\n",
+> -                              va->addr, va->addr + va->size, va->caller)=
+;
+> -                       pr_err("\n");
+> -
+> -                       page =3D vmalloc_to_page(addr);
+> -               }
+> -       }
+> +       if (is_vmalloc_addr(addr))
+> +               page =3D kasan_print_vmalloc_info_ret_page(addr);
+>
+>         if (page) {
+>                 pr_err("The buggy address belongs to the physical page:\n=
+");
+> --
+> 2.48.1
+>
 
