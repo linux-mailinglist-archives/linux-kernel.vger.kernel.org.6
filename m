@@ -1,166 +1,128 @@
-Return-Path: <linux-kernel+bounces-512630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C9EA33BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:58:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C83FA33BCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37B916057A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E823C167B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBE221128A;
-	Thu, 13 Feb 2025 09:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b8/8WoyV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C6021148B;
+	Thu, 13 Feb 2025 09:58:25 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908DD20DD5C;
-	Thu, 13 Feb 2025 09:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DFA20DD5C;
+	Thu, 13 Feb 2025 09:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440684; cv=none; b=N4ixj67n2zyJBTIoserCQQPbUcnx2HpEreGRLy+LjL1YA6IU7y5PGN4VeWYgp+O0VI/Eqh4XIadsHYrg8O/WpsOnlAxVGfNjrbefkKlSMoqhfTQ2cTJuwAE57cirU5aw5aRt8FAfkOHq+XJxbVZ5lsue0m83LXorwyiU4dwemkA=
+	t=1739440704; cv=none; b=VMX5ymtqBKkcGSoZ4Hc/R5tWU2bPR42qDcTky8Ha1stDiraTsHub8vpZQ9t/HYx98Wu/CU84Y8RHB3MjeIdJwkL/wnBDgr7mIYb+jXhg/nlPUFYZ2R4m5C8vWExKjAJH6SDLUJxTH9WYiXAL2Qt0xT1TcKLAclB3uC3ue/Fzzzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440684; c=relaxed/simple;
-	bh=Oqtou6ex2ZovnqK8tj3tuIXnnbRe2REcT3xMiDQmKmU=;
+	s=arc-20240116; t=1739440704; c=relaxed/simple;
+	bh=sIMf72bZ70VvfcEOfaZNDsy8vIAaeXVF9ry/WOwLlbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jB8BKw1ZHy9VaB5Rs9Azmx+p6SHHg3JGdJ4wWJ81v3M6hYez3owATs7BP/+luGh5yKEBMfd7V+lR5YZ3MNLjwyZMUVyColWSHPoW92V+7+XVakYTUFbn+Pk4xh+LWI+AZj3zcL5DNAbPVBdlQVvAqycNXISg3hT26uENWYS3ZSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b8/8WoyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDB5C4CED1;
-	Thu, 13 Feb 2025 09:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739440684;
-	bh=Oqtou6ex2ZovnqK8tj3tuIXnnbRe2REcT3xMiDQmKmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b8/8WoyVsel2U/9lZYawTcA0EpGS/8C8U1Jegh4xK7SLoZCDoabMYKzR+8MQR0c8D
-	 IRjmgcetxywX+e6X18JzO29Dhok/zGYihc7UUULzB1vx+HjLFp4BiOvgUCqCFD74No
-	 S1+pUQ7HhjIreXprrvApDNcj9wOJON6+0sV1glOk=
-Date: Thu, 13 Feb 2025 10:58:00 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] serial: mctrl_gpio: add parameter to skip sync
-Message-ID: <2025021347-cling-smoked-9f28@gregkh>
-References: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvCaVq6MyfOQ5sqQt0zi8/ThVC8vv2VMtEV415cLN2cmZAIrNPytF9AyDMtg7PieihHkS9y2qI4vPRX7RSoMxhOzQhcSbIiRpIkXIAqVvq1lk3JpaOwU/KEtRq1PC01D4biJznlF/TMimD7nqMpEcfB2q5HXAhE7dHIQUA6dRaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5deb1266031so1105556a12.2;
+        Thu, 13 Feb 2025 01:58:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739440701; x=1740045501;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q5ZamwJ0Kx0KvBpg8RsfWbLjBh13gTrQJTmNCAequ2U=;
+        b=VeriCGpBCFxtt93aPBFZgSZOQb6UkBsOEYETPovaIJb9CRHE5E9X+IS4TIkMUbR8D0
+         VA1PcCvKaPMwpWqC60iuW1iyMbf13EEF9gno0af0/mb87/T+gpRX1xNEtTEfKjDdVZ9q
+         QtfuDxHHLewN0VSOD2GWJ93JSDu/UGYMO1PAfyMBXvSVYqXs/fNfGEg0d1mP14SCoeSe
+         0DI3dg5LEdxB1AnfUcRCpxFz9lo/b5JBN4UBvTi9d50Xd9YNIF3rSyPy18Yg9oGFOJc0
+         ///wv6Uopol1951Jbwe3EzQd9hb+66sBzUj3DIESsnZg+FysobStkwHE48h/NH8KBmMM
+         tAvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUupDawC/RWKAa/qphxN/STBOZLyvyHEpPmO6edqj6aG6qxPQfTXQHp2+QXcgU8lCzvdwpKrhWfIcRP@vger.kernel.org, AJvYcCVDNki0bQ1I79/KKwFujjmWaXDN8q6aUUU2nNsdDCQQg4cwAvhtylHZ0C14BeDDNxZYEy7OGiM7KjvawYc=@vger.kernel.org, AJvYcCVELeNE9yMpwamnczQ29uXwjp79yQGlDI50gHgFaayDlRaxeWtwcq76bt6tL8Ge+uWnoH9wmfDI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCLLTbR7Pa5W16F0w1pLhQXq6WZssIMnOt25W7Y4WfyMVJy4lw
+	+PUKI/ClI5pb3tCREOyaUHGRTpRfiB4PY8/YilGMRstG/JcZYtPL
+X-Gm-Gg: ASbGncuCJasNSuszN+284LRxVFYJ5XV8ECLdTze0ZS7lIsV7JZn8VosmRGxXMCZ3r5b
+	A1ce1Tx+FED+7gl+peLdQY0maTfpuXcsuIhHSQV4bcrk8hhxgi93XhbDb9N7HVHpk1dPYiqTMId
+	8hkpC0/Y3pxHg3DU4QNIIihTBG9F5tRjQCT9YA1KNScxnxulCR36ct1huY9J7Y2vDm2wkzXvvYi
+	b1fH8/0yQ5PWbfUOcTIXJe8nQysfIVgbJ29oKtXzpLMafzfisTUpgpqgZAX0E1jQ93Km6VC1NWF
+	ga/oj8U=
+X-Google-Smtp-Source: AGHT+IHijeTw/BOivI6gfk1oV8DxhJZtMmLYZDv3eGifbdwjoZKdiicg99ky3m/GQj2Np2THLNDk/A==
+X-Received: by 2002:a17:906:478a:b0:ab7:e234:526b with SMTP id a640c23a62f3a-ab7f334ac6cmr723688766b.3.1739440700615;
+        Thu, 13 Feb 2025 01:58:20 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53231ddasm98891566b.36.2025.02.13.01.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 01:58:20 -0800 (PST)
+Date: Thu, 13 Feb 2025 01:58:17 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Hayes Wang <hayeswang@realtek.com>,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/2] net: Assert proper context while calling
+ napi_schedule()
+Message-ID: <20250213-translucent-nightingale-of-upgrade-b41f2e@leitao>
+References: <20250212174329.53793-1-frederic@kernel.org>
+ <20250212174329.53793-2-frederic@kernel.org>
+ <20250212194820.059dac6f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
+In-Reply-To: <20250212194820.059dac6f@kernel.org>
 
-On Thu, Feb 13, 2025 at 09:25:04AM +0100, Alexis Lothoré wrote:
-> The following splat has been observed on a SAMA5D27 platform using
-> atmel_serial:
+On Wed, Feb 12, 2025 at 07:48:20PM -0800, Jakub Kicinski wrote:
+> On Wed, 12 Feb 2025 18:43:28 +0100 Frederic Weisbecker wrote:
+> > napi_schedule() is expected to be called either:
+> > 
+> > * From an interrupt, where raised softirqs are handled on IRQ exit
+> > 
+> > * From a softirq disabled section, where raised softirqs are handled on
+> >   the next call to local_bh_enable().
+> > 
+> > * From a softirq handler, where raised softirqs are handled on the next
+> >   round in do_softirq(), or further deferred to a dedicated kthread.
+> > 
+> > Other bare tasks context may end up ignoring the raised NET_RX vector
+> > until the next random softirq handling opportunity, which may not
+> > happen before a while if the CPU goes idle afterwards with the tick
+> > stopped.
+> > 
+> > Report inappropriate calling contexts when neither of the three above
+> > conditions are met.
 > 
-> BUG: sleeping function called from invalid context at kernel/irq/manage.c:738
-> in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 27, name: kworker/u5:0
-> preempt_count: 1, expected: 0
-> INFO: lockdep is turned off.
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<00000000>] 0x0
-> hardirqs last disabled at (0): [<c01588f0>] copy_process+0x1c4c/0x7bec
-> softirqs last  enabled at (0): [<c0158944>] copy_process+0x1ca0/0x7bec
-> softirqs last disabled at (0): [<00000000>] 0x0
-> CPU: 0 UID: 0 PID: 27 Comm: kworker/u5:0 Not tainted 6.13.0-rc7+ #74
-> Hardware name: Atmel SAMA5
-> Workqueue: hci0 hci_power_on [bluetooth]
-> Call trace:
->   unwind_backtrace from show_stack+0x18/0x1c
->   show_stack from dump_stack_lvl+0x44/0x70
->   dump_stack_lvl from __might_resched+0x38c/0x598
->   __might_resched from disable_irq+0x1c/0x48
->   disable_irq from mctrl_gpio_disable_ms+0x74/0xc0
->   mctrl_gpio_disable_ms from atmel_disable_ms.part.0+0x80/0x1f4
->   atmel_disable_ms.part.0 from atmel_set_termios+0x764/0x11e8
->   atmel_set_termios from uart_change_line_settings+0x15c/0x994
->   uart_change_line_settings from uart_set_termios+0x2b0/0x668
->   uart_set_termios from tty_set_termios+0x600/0x8ec
->   tty_set_termios from ttyport_set_flow_control+0x188/0x1e0
->   ttyport_set_flow_control from wilc_setup+0xd0/0x524 [hci_wilc]
->   wilc_setup [hci_wilc] from hci_dev_open_sync+0x330/0x203c [bluetooth]
->   hci_dev_open_sync [bluetooth] from hci_dev_do_open+0x40/0xb0 [bluetooth]
->   hci_dev_do_open [bluetooth] from hci_power_on+0x12c/0x664 [bluetooth]
->   hci_power_on [bluetooth] from process_one_work+0x998/0x1a38
->   process_one_work from worker_thread+0x6e0/0xfb4
->   worker_thread from kthread+0x3d4/0x484
->   kthread from ret_from_fork+0x14/0x28
+> Looks like netcons is hitting this warning in netdevsim:
 > 
-> This warning is emitted when trying to toggle, at the highest level,
-> some flow control (with serdev_device_set_flow_control) in a device
-> driver. At the lowest level, the atmel_serial driver is using
-> serial_mctrl_gpio lib to enable/disable the corresponding IRQs
-> accordingly.  The warning emitted by CONFIG_DEBUG_ATOMIC_SLEEP is due to
-> disable_irq (called in mctrl_gpio_disable_ms) being possibly called in
-> some atomic context (some tty drivers perform modem lines configuration
-> in regions protected by port lock).
+> [   16.063196][  T219]  nsim_start_xmit+0x4e0/0x6f0 [netdevsim]
+> [   16.063219][  T219]  ? netif_skb_features+0x23e/0xa80
+> [   16.063237][  T219]  netpoll_start_xmit+0x3c3/0x670
+> [   16.063258][  T219]  __netpoll_send_skb+0x3e9/0x800
+> [   16.063287][  T219]  netpoll_send_skb+0x2a/0xa0
+> [   16.063298][  T219]  send_ext_msg_udp+0x286/0x350 [netconsole]
+> [   16.063325][  T219]  write_ext_msg+0x1c6/0x230 [netconsole]
+> [   16.063346][  T219]  console_emit_next_record+0x20d/0x430
 > 
-> Add a flag to mctrl_gpio_disable_ms to allow controlling whether the
-> function should block, depending the context in which it is called.
-> Update mctrl_gpio_disable_ms calls with the relevant flag value,
-> depending on whether the call is protected by some port lock.
+> https://netdev-3.bots.linux.dev/vmksft-net-drv-dbg/results/990261/7-netcons-basic-sh/stderr
 > 
-> Suggested-by: Jiri Slaby <jirislaby@kernel.org>
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
-> ---
-> This series follows a report made here:
-> https://lore.kernel.org/linux-serial/3d227ebe-1ee6-4d57-b1ec-78be59af7244@bootlin.com/
-> ---
->  drivers/tty/serial/8250/8250_port.c    | 2 +-
->  drivers/tty/serial/atmel_serial.c      | 2 +-
->  drivers/tty/serial/imx.c               | 2 +-
->  drivers/tty/serial/serial_mctrl_gpio.c | 9 +++++++--
->  drivers/tty/serial/serial_mctrl_gpio.h | 4 ++--
->  drivers/tty/serial/sh-sci.c            | 2 +-
->  drivers/tty/serial/stm32-usart.c       | 2 +-
->  7 files changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index d7976a21cca9ce50557ca5f13bb01448ced0728b..b234c6c1fe8b3dae4efc2091c8aecf1f1dddc9f8 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -1680,7 +1680,7 @@ static void serial8250_disable_ms(struct uart_port *port)
->  	if (up->bugs & UART_BUG_NOMSR)
->  		return;
->  
-> -	mctrl_gpio_disable_ms(up->gpios);
-> +	mctrl_gpio_disable_ms(up->gpios, false);
+> We gotta fix that first.
 
-This a bad api.
+Thanks Jakub,
 
-When you read this line in the driver, do you know what "false" means
-here?
+I understand that it will be fixed by this patchset, right?
 
-Please make two functions, mctrl_gpio_disable_ms_sync() and
-mctrl_gpio_disable_ms_no_sync() which can internally just call
-mctrl_gpio_disable_ms() with the boolean, but no driver should have to
-call that at all.
-
-That way, when you read driver code, you KNOW what is happening and you
-don't have to hunt around in a totally different C file to try to figure
-it out and loose your concentration.
-
-thanks,
-
-greg k-h
+https://lore.kernel.org/all/20250212-netdevsim-v1-1-20ece94daae8@debian.org/
 
