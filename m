@@ -1,63 +1,66 @@
-Return-Path: <linux-kernel+bounces-513375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BCEA3498F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B2EA34988
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A544D16E469
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B57B16D7E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9796027426B;
-	Thu, 13 Feb 2025 16:15:56 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44F271261
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47499271272;
+	Thu, 13 Feb 2025 16:15:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECC8271261;
+	Thu, 13 Feb 2025 16:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463356; cv=none; b=bP6MIaNBTXM8GTwU4yG02fPlQMUak546esvq5oJMKVHbULZDs9wKR0Vpz6GlZFNh+tvCDWhPGzjT4+g94XOpLEiwxIjH4gUG/F0/jHHYCHLVQjtaSS8R8ekDwfaYxZhzpRVumlUh5rcQZ0DCfxNVIWWUewpI1wBXn7KFNr0MaXk=
+	t=1739463342; cv=none; b=toxsv9VmY15F+ym3SXs0lPwvxB1WVxTyz0dfvlr8U9mJ8jHjiP615a7NkKmpzACca3SKkM4KjX1tzuxX5kFef6RuDV8qRZ8cjZ4nHorCQ6dmrbmIGEx9MZ1ZkzAtqLUIE4OEN6r1vBFP17JJ/l2EsjPIU2gdFqoQLsVpqLUFPZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463356; c=relaxed/simple;
-	bh=CJUWm0B9xrHsttPWBDyL6R6r42SqK+hog4Vtkzx8ncg=;
+	s=arc-20240116; t=1739463342; c=relaxed/simple;
+	bh=fJTs7RoqJly6zlf3SfjDCnPEv/a8aCdaUx2/ld/Zoq8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d9GDbRutOkYrjr79rDM4Y1ymNDOSZ67fWtix2OHvz63khNJmSqTfMf7QsXk8dyEKW4/0lwsXEuySJA/8XCehl5f68/AUrb4KpOqMfSOTwrUkhr49IvO6MbVyH0Ba0l2+/0KDlKfDMeay1MzQA851t/2F2ActkstuuzpYE6yf69U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tibr7-000000003xx-0VBu;
-	Thu, 13 Feb 2025 11:14:25 -0500
-From: Rik van Riel <riel@surriel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bp@alien8.de,
-	peterz@infradead.org,
-	dave.hansen@linux.intel.com,
-	zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com,
-	thomas.lendacky@amd.com,
-	kernel-team@meta.com,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	jackmanb@google.com,
-	jannh@google.com,
-	mhklinux@outlook.com,
-	andrew.cooper3@citrix.com,
-	Rik van Riel <riel@surriel.com>,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: [PATCH v11 02/12] x86/mm: remove pv_ops.mmu.tlb_remove_table call
-Date: Thu, 13 Feb 2025 11:13:53 -0500
-Message-ID: <20250213161423.449435-3-riel@surriel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250213161423.449435-1-riel@surriel.com>
-References: <20250213161423.449435-1-riel@surriel.com>
+	 MIME-Version; b=V0vFY3BN5ZjbOR/e49OWLIZ9dZFFXG5akOZ7OiXAOSxlnfLVFiPMw6bSYpQ7ZXeOP6UBMphNHidbnUg8IdQlUCgrVIYLgQW80aAm9Y2eA/MyT+WzzofzjQS3r4rEXTy2My3OqjiE04RSQLmC+k/WTzVxiD4eblAQH3Q1UFx0rTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 575651756;
+	Thu, 13 Feb 2025 08:16:01 -0800 (PST)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.32.44])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1446A3F6A8;
+	Thu, 13 Feb 2025 08:15:36 -0800 (PST)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: [PATCH v7 13/45] KVM: arm64: vgic: Provide helper for number of list registers
+Date: Thu, 13 Feb 2025 16:13:53 +0000
+Message-ID: <20250213161426.102987-14-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
+References: <20250213161426.102987-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,103 +68,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: riel@surriel.com
 
-Every pv_ops.mmu.tlb_remove_table call ends up calling tlb_remove_table.
+Currently the number of list registers available is stored in a global
+(kvm_vgic_global_state.nr_lr). With Arm CCA the RMM is permitted to
+reserve list registers for its own use and so the number of available
+list registers can be fewer for a realm VM. Provide a wrapper function
+to fetch the global in preparation for restricting nr_lr when dealing
+with a realm VM.
 
-Get rid of the indirection by simply calling tlb_remove_table directly,
-and not going through the paravirt function pointers.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Suggested-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-Tested-by: Brendan Jackman <jackmanb@google.com>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/x86/hyperv/mmu.c                 | 1 -
- arch/x86/include/asm/paravirt.h       | 5 -----
- arch/x86/include/asm/paravirt_types.h | 2 --
- arch/x86/kernel/kvm.c                 | 1 -
- arch/x86/kernel/paravirt.c            | 1 -
- arch/x86/xen/mmu_pv.c                 | 1 -
- 6 files changed, 11 deletions(-)
+New patch for v6
+---
+ arch/arm64/kvm/vgic/vgic.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
-index cc8c3bd0e7c2..1f7c3082a36d 100644
---- a/arch/x86/hyperv/mmu.c
-+++ b/arch/x86/hyperv/mmu.c
-@@ -239,5 +239,4 @@ void hyperv_setup_mmu_ops(void)
+diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+index cc8c6b9b5dd8..1077fab2df4b 100644
+--- a/arch/arm64/kvm/vgic/vgic.c
++++ b/arch/arm64/kvm/vgic/vgic.c
+@@ -21,6 +21,11 @@ struct vgic_global kvm_vgic_global_state __ro_after_init = {
+ 	.gicv3_cpuif = STATIC_KEY_FALSE_INIT,
+ };
  
- 	pr_info("Using hypercall for remote TLB flush\n");
- 	pv_ops.mmu.flush_tlb_multi = hyperv_flush_tlb_multi;
--	pv_ops.mmu.tlb_remove_table = tlb_remove_table;
- }
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 041aff51eb50..38a632a282d4 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -91,11 +91,6 @@ static inline void __flush_tlb_multi(const struct cpumask *cpumask,
- 	PVOP_VCALL2(mmu.flush_tlb_multi, cpumask, info);
- }
++static inline int kvm_vcpu_vgic_nr_lr(struct kvm_vcpu *vcpu)
++{
++	return kvm_vgic_global_state.nr_lr;
++}
++
+ /*
+  * Locking order is always:
+  * kvm->lock (mutex)
+@@ -802,7 +807,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+ 	lockdep_assert_held(&vgic_cpu->ap_list_lock);
  
--static inline void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
--{
--	PVOP_VCALL2(mmu.tlb_remove_table, tlb, table);
--}
--
- static inline void paravirt_arch_exit_mmap(struct mm_struct *mm)
- {
- 	PVOP_VCALL1(mmu.exit_mmap, mm);
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index fea56b04f436..e26633c00455 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -134,8 +134,6 @@ struct pv_mmu_ops {
- 	void (*flush_tlb_multi)(const struct cpumask *cpus,
- 				const struct flush_tlb_info *info);
+ 	count = compute_ap_list_depth(vcpu, &multi_sgi);
+-	if (count > kvm_vgic_global_state.nr_lr || multi_sgi)
++	if (count > kvm_vcpu_vgic_nr_lr(vcpu) || multi_sgi)
+ 		vgic_sort_ap_list(vcpu);
  
--	void (*tlb_remove_table)(struct mmu_gather *tlb, void *table);
--
- 	/* Hook for intercepting the destruction of an mm_struct. */
- 	void (*exit_mmap)(struct mm_struct *mm);
- 	void (*notify_page_enc_status_changed)(unsigned long pfn, int npages, bool enc);
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 7a422a6c5983..3be9b3342c67 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -838,7 +838,6 @@ static void __init kvm_guest_init(void)
- #ifdef CONFIG_SMP
- 	if (pv_tlb_flush_supported()) {
- 		pv_ops.mmu.flush_tlb_multi = kvm_flush_tlb_multi;
--		pv_ops.mmu.tlb_remove_table = tlb_remove_table;
- 		pr_info("KVM setup pv remote TLB flush\n");
+ 	count = 0;
+@@ -831,7 +836,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+ 
+ 		raw_spin_unlock(&irq->irq_lock);
+ 
+-		if (count == kvm_vgic_global_state.nr_lr) {
++		if (count == kvm_vcpu_vgic_nr_lr(vcpu)) {
+ 			if (!list_is_last(&irq->ap_list,
+ 					  &vgic_cpu->ap_list_head))
+ 				vgic_set_underflow(vcpu);
+@@ -840,7 +845,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
  	}
  
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 527f5605aa3e..2aa251d0b308 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -180,7 +180,6 @@ struct paravirt_patch_template pv_ops = {
- 	.mmu.flush_tlb_kernel	= native_flush_tlb_global,
- 	.mmu.flush_tlb_one_user	= native_flush_tlb_one_user,
- 	.mmu.flush_tlb_multi	= native_flush_tlb_multi,
--	.mmu.tlb_remove_table	= tlb_remove_table,
+ 	/* Nuke remaining LRs */
+-	for (i = count ; i < kvm_vgic_global_state.nr_lr; i++)
++	for (i = count ; i < kvm_vcpu_vgic_nr_lr(vcpu); i++)
+ 		vgic_clear_lr(vcpu, i);
  
- 	.mmu.exit_mmap		= paravirt_nop,
- 	.mmu.notify_page_enc_status_changed	= paravirt_nop,
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2c70cd35e72c..a0b371557125 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2141,7 +2141,6 @@ static const typeof(pv_ops) xen_mmu_ops __initconst = {
- 		.flush_tlb_kernel = xen_flush_tlb,
- 		.flush_tlb_one_user = xen_flush_tlb_one_user,
- 		.flush_tlb_multi = xen_flush_tlb_multi,
--		.tlb_remove_table = tlb_remove_table,
- 
- 		.pgd_alloc = xen_pgd_alloc,
- 		.pgd_free = xen_pgd_free,
+ 	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
 -- 
-2.47.1
+2.43.0
 
 
