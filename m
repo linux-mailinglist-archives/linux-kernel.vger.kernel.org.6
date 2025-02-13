@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-512971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B26A33FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:08:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6E5A33FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71F903AA726
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:08:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D2B7A4720
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3D423F41D;
-	Thu, 13 Feb 2025 13:08:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E6C23F40D;
-	Thu, 13 Feb 2025 13:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F361B23F426;
+	Thu, 13 Feb 2025 13:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NNLCppql"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9781A5AA;
+	Thu, 13 Feb 2025 13:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452117; cv=none; b=EZxNIxqpMvus7Mzey5q7YJUfBe0cholMD5z8Srg94LVf6+Qs7MBBWFJrmpCRn9/V/037+mm63PWMXDaLr1ENT1TaQbieOaj2XeaJhG5GooyAQEjPkbq4+ZJFSYXNs/mwx14DJYDDGJMoYPaAcXNkQjctTlrQLX8J08Z2vRdA0jg=
+	t=1739452135; cv=none; b=ogm0Bxy/02ncdIrzUGTv1ozk8k6iYMDRfJvbTWBYefImFk3X3ym/iiPC6GyiGpkdWxJnIPDTUT8l4v1FxPOYLrr9oUGZidLJ+vnGwogooKlb4u7oWl3KN+/MeUBN/rFj1v+BvSPsCTJklHAweQs6gUskhIykEVISxNVmsloosg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452117; c=relaxed/simple;
-	bh=66HnS2WU7zn4HR8Ta71sxVZqxMt8cAFKsInmnCjPJwo=;
+	s=arc-20240116; t=1739452135; c=relaxed/simple;
+	bh=9s7MimE+YYoctk+mnufjjoHfb5s4zIIEoaK1K0eE10Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2WkyQ5f7DctxZllE8EATZ3BY2R0VpyU7GI8ngMOXy1SUcyIpxB5NFBA+yzQg2MyDyBAw33L14n/5G6EpVAbrj+1tVhoAUYnc/U/72UngGfUuFSTRr+BsPxv5okZZ4/YF6cQAySZSVj0QW/7kQCV0o/S4IVYrU41rUxnzP3nrgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3D1E16F3;
-	Thu, 13 Feb 2025 05:08:54 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18FD83F58B;
-	Thu, 13 Feb 2025 05:08:31 -0800 (PST)
-Date: Thu, 13 Feb 2025 13:08:19 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Peng Fan <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 1/4] firmware: arm_scmi: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z63uttFGqXx4kqNr@pluto>
-References: <20250120-scmi-fwdevlink-v2-0-3af2fa37dbac@nxp.com>
- <20250120-scmi-fwdevlink-v2-1-3af2fa37dbac@nxp.com>
- <7a29ec8f-fef8-4f1c-a2eb-16a63f2b820c@stanley.mountain>
- <20250206105218.GA22527@localhost.localdomain>
- <e20415aa-517c-4e72-a1c3-9c02769c1149@stanley.mountain>
- <Z6SgFGb4Z88v783c@pluto>
- <CAGETcx8MXpLntMu4=9qECdZJzJLJbWa8ziH8XcW=yJNDAgD=Vw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8c8fyxdYRBcN50Iybwfu2jkaVKbQxJSNoQJXnLyGkv4OSjlrZFtAPiSG9hTe0mrmFCdr8IqN6KfjVZvTuG3TN2LTW977TFZ6kyxIlWCMjetxkBLb1HHt9DQbTJp4vZDAkSA18VRMf3+ZlNM1uNT0mtTF00IMToL7w9OZDt83CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NNLCppql; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=M9/Oig8k2SAjxriJP00zkicDUzgrwHu+QT+BDfkghm8=; b=NNLCppqlXEu1bqbdg8rysui6Su
+	UFiy1+HGCbGry+7stYjruvsQ+P5E7G0o4E8qI77Z/yfEnpRSeVpBrNLZp0AWLZloVjFAWRWvBDxPW
+	wz/38krf9fAk67S/rBFdK6CBM4crfCOSPjHt4wnE+T09/W7WJ/d2k6N09pZhFBtBWX4A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tiYxB-00Dk4S-3x; Thu, 13 Feb 2025 14:08:29 +0100
+Date: Thu, 13 Feb 2025 14:08:29 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: felix:  Add NULL check for outer_tagging_rule()
+Message-ID: <a3b6a30d-2a9a-48f2-a6b5-bb6517f7e4e8@lunn.ch>
+References: <20250213040754.1473-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx8MXpLntMu4=9qECdZJzJLJbWa8ziH8XcW=yJNDAgD=Vw@mail.gmail.com>
+In-Reply-To: <20250213040754.1473-1-vulab@iscas.ac.cn>
 
-On Thu, Feb 13, 2025 at 12:17:06AM -0800, Saravana Kannan wrote:
-> On Thu, Feb 6, 2025 at 3:42 AM Cristian Marussi
-> <cristian.marussi@arm.com> wrote:
-> >
-> > On Thu, Feb 06, 2025 at 02:31:19PM +0300, Dan Carpenter wrote:
-> > > On Thu, Feb 06, 2025 at 06:52:20PM +0800, Peng Fan wrote:
-> > > > On Wed, Feb 05, 2025 at 03:45:00PM +0300, Dan Carpenter wrote:
-> > > > >On Mon, Jan 20, 2025 at 03:13:29PM +0800, Peng Fan (OSS) wrote:
-> > > > >> diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-> > > > >> index 2c853c84b58f530898057e4ab274ba76070de05e..7850eb7710f499888d32aebf5d99df63db8bfa26 100644
-> > > > >> --- a/drivers/firmware/arm_scmi/bus.c
-> > > > >> +++ b/drivers/firmware/arm_scmi/bus.c
-> > > > >> @@ -344,6 +344,21 @@ static void __scmi_device_destroy(struct scmi_device *scmi_dev)
-> > > > >>          device_unregister(&scmi_dev->dev);
-> > > > >>  }
-> > > > >>
-> > > > >> +static int
-> > > > >> +__scmi_device_set_node(struct scmi_device *scmi_dev, struct device_node *np,
-> > > > >> +                       int protocol, const char *name)
-> > > > >> +{
-> > > > >> +        /* cpufreq device does not need to be supplier from devlink perspective */
-> > > > >> +        if ((protocol == SCMI_PROTOCOL_PERF) && !strcmp(name, "cpufreq")) {
-> > > > >
-> > > > >I don't love this...  It seems like an hack.  Could we put a flag
-> > > > >somewhere instead?  Perhaps in scmi_device?  (I'm just saying that
-> > > > >because that's what we're passing to this function).
-> > > >
-> > > > This means when creating scmi_device, a flag needs to be set which requires
-> > > > to extend scmi_device_id to include a flag entry or else.
-> > > >
-> > > > As below in scmi-cpufreq.c
-> > > > { SCMI_PROTOCOL_PERF, "cpufreq", SCMI_FWNODE_NO }
-> > > >
-> > >
-> > > Yeah, I like that.
-> > >
-> > > -     if ((protocol == SCMI_PROTOCOL_PERF) && !strcmp(name, "cpufreq")) {
-> > > +     if (scmi_dev->flags & SCMI_FWNODE_NO) {
-> > >
-> > > Or we could do something like "if (scmi_dev->no_fwnode) {"
-> >
-> > I proposed a flag a few review ago about this, it shoule come somehow
-> > from the device_table above like Peng was proposing, so that a driver
-> > can just declare that does NOT need fw_devlink.
+On Thu, Feb 13, 2025 at 12:07:54PM +0800, Wentao Liang wrote:
+> In felix_update_tag_8021q_rx_rules(), the return value of
+> ocelot_vcap_block_find_filter_by_id() is not checked, which could
+> lead to a NULL pointer dereference if the filter is not found.
 > 
-> Sorry, looks I replied to v1 series. Can you take a look at that
-> response please?
-> https://lore.kernel.org/lkml/CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com/
-> 
-> If that suggestion I gave there would work, then that's the cleanest
-> approach. This patch series is just kicking the can down the road (or
-> down an inch).
+> Add the necessary check and use `continue` to skip the current CPU
+> port if the filter is not found, ensuring that all CPU ports are
+> processed.
 
-Thanks for the reply, I will answer on that other thread.
-Cristian
+Thanks for reworking the commit message.
+
+You should include a version number in the Subject: line, so we can
+keep track of the different versions:
+
+https://docs.kernel.org/process/submitting-patches.html
+
+See the Section about "Subject Line".
+
+Also, you should include a brief history of the patches, what changed
+between each version under the --- marker.
+
+There is no need to resend, please just remember these things for you
+next patch you submit.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
