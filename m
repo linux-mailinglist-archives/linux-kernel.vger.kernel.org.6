@@ -1,137 +1,225 @@
-Return-Path: <linux-kernel+bounces-514040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26713A351B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780C6A351A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4BC87A31E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AF93AD43B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF7122D785;
-	Thu, 13 Feb 2025 22:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d/ufoCGq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BBF2753F0;
+	Thu, 13 Feb 2025 22:51:26 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A6722D781
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1662753E9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739487030; cv=none; b=XWjXoHAXvzTvnw9anZ+Pi05HTArTXWdIsWiB8C80ln9v6zzbuFAdwvuTpYqxDIEyN6/D65eBsyvtIpVOj4dxq3syxhCO5lSTRf/ZH6l9qk/qb0jfGbJ19poyhvg8j13d0U5INTmttdqmO3oXuLu14QggNpemweHqRcZbi6uYApQ=
+	t=1739487086; cv=none; b=VmC6A3kLLLSK4Vowj/mC5iCIddRONeX6zNb0zeorThxcrNfDeQRKkSFKsP4J9t9YSVRRSkrd/6PjKIWX+ED3vCk3JrYjGGTcKDBgelvcRVSuqORZetq1ysNnc3J7c36wdCnDsYX7YkdQdFmeWd4pA2AVdoFykw2NpKvj/6TaGSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739487030; c=relaxed/simple;
-	bh=ZJfe2246QdyJtJQ/S4uykIUc7n5oBU0T5TxonN5+Kw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvyZqFjbl2Nl8ThPN0lfkYLnhQuY5XNI977Lpoaf1RjB2LWi1rAYQAtrsK4D5ovK3zYASInzRJJktiqJRhKu+M5Y1isDywWFZmHP3nhP3igTWB6YbsezJL24ldmvIcA7FYVDVFm+98PJDM5ZNA0pLrN0tJ3/QuVi/f5glfJE3Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d/ufoCGq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DEoAbT032241;
-	Thu, 13 Feb 2025 22:50:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=p202ICwOUaPv/AFFu+CG6pEb9R3OHOlCE4EDdrJTi
-	T8=; b=d/ufoCGqKmQRbxM3AaGr9ZWkBlLZt0M6Wxsh3JZZ+TFiiAHJ8FOaerdg1
-	Wh8cpIHSPcOo7MV79Q4A8EESja05CaMG/frtCBWz2rekAMAAffh3+DEitcCwgdTs
-	adeJ1sKwcqNsAoWbuiJKWhyCxn6PCcd8eADi9JgcZI8BXdegRg+FMYkdxCjjsTe7
-	EaNyK+8ljk+ilfD6sFngw/wjY/URdO1tkMjvN8JMN2YMTHa9WnGIVTsjhp6uK8dT
-	E0qms2ydsgho6L8nxnrtoSDNPHxtaTbMaHPArbc6MPqNNjXqyhtp7lNMwQhpefB7
-	5RPNCwGF8MnmAtQZYsdRSHBwSz5QA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44saj8n0ex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 22:50:07 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DMgCOc000924;
-	Thu, 13 Feb 2025 22:50:06 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkngpte-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 22:50:06 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DMo51h17891906
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 22:50:05 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 260F658064;
-	Thu, 13 Feb 2025 22:50:05 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E664F58062;
-	Thu, 13 Feb 2025 22:50:04 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.104.210])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Feb 2025 22:50:04 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, eajames@linux.ibm.com, jk@ozlabs.org,
-        joel@jms.id.au, alistair@popple.id.au, linux-fsi@lists.ozlabs.org,
-        ninad@linux.ibm.com
-Subject: [PATCH v2] MAINTAINERS: change maintainer for FSI
-Date: Thu, 13 Feb 2025 16:50:00 -0600
-Message-ID: <20250213225000.2153643-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1739487086; c=relaxed/simple;
+	bh=ZQiJI6r35L8re7VmaSmuwT9/cCtn0u60zuPKAx+YoYI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtUmiiaNDf17zSF3F7HvFZVtCUt4Jrq5mjBdFKquJwSa1cgtJ6qwwsNrDsoZ49rVSViVVcBZvIgNzz8gSvtpkUHh6dyDq7WLIa0CbZ0gosLtrAg+GTVl5zQhH/6j/P71IfHE7peh+XfyX8cntXUaSDfToWM+iOBv/319l6JFocI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id de340431-ea5c-11ef-9d70-005056bd6ce9;
+	Fri, 14 Feb 2025 00:50:06 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 14 Feb 2025 00:50:05 +0200
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v10 2/2] i2c: octeon: Add block-mode i2c operations
+Message-ID: <Z653HU3WnvapYb0x@surfacebook.localdomain>
+References: <20241010025317.2040470-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20241010025317.2040470-3-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: MBHUSSPxrnD_9vsLmmDKmjFJKIBXmjGp
-X-Proofpoint-ORIG-GUID: MBHUSSPxrnD_9vsLmmDKmjFJKIBXmjGp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_08,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502130158
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010025317.2040470-3-aryan.srivastava@alliedtelesis.co.nz>
 
-Due to job transitions, both Joel and Jeremy can no longer maintain
-the FSI subsystem. I will take over.
-I also replaced Alistair with Ninad as a reviewer, as Alistair doesn't
-have access to hardware and hasn't been active.
-I also removed the link to Joel's FSI tree as he won't be maintaining
-it.
+Thu, Oct 10, 2024 at 03:53:16PM +1300, Aryan Srivastava kirjoitti:
+> Add functions to perform block read and write operations. This applies
+> for cases where the requested operation is for >8 bytes of data.
+> 
+> When not using the block mode transfer, the driver will attempt a series
+> of 8 byte i2c operations until it reaches the desired total. For
+> example, for a 40 byte request the driver will complete 5 separate
+> transactions. This results in large transactions taking a significant
+> amount of time to process.
+> 
+> Add block mode such that the driver can request larger transactions, up
+> to 1024 bytes per transfer.
+> 
+> Many aspects of the block mode transfer is common with the regular 8
+> byte operations. Use generic functions for parts of the message
+> construction and sending the message. The key difference for the block
+> mode is the usage of separate FIFO buffer to store data.
+> 
+> Write to this buffer in the case of a write (before command send).
+> Read from this buffer in the case of a read (after command send).
+> 
+> Data is written into this buffer by placing data into the MSB onwards.
+> This means the bottom 8 bits of the data will match the top 8 bits, and
+> so on and so forth.
+> 
+> Set specific bits in message for block mode, enable block mode transfers
+> from global i2c management registers, construct message, send message,
+> read or write from FIFO buffer as required.
+> 
+> The block-mode transactions result in a significant speed increase in
+> large i2c requests.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
-Changes since v1:
- - Remove Alistair as reviewer
- - Add Ninad as reviewer
- - Don't add Joel and Jeremy as reviewers.
+...
 
- MAINTAINERS | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+> +/**
+> + * octeon_i2c_hlc_block_comp_read - high-level-controller composite block read
+> + * @i2c: The struct octeon_i2c
+> + * @msgs: msg[0] contains address, place read data into msg[1]
+> + *
+> + * i2c core command is constructed and written into the SW_TWSI register.
+> + * The execution of the command will result in requested data being
+> + * placed into a FIFO buffer, ready to be read.
+> + * Used in the case where the i2c xfer is for greater than 8 bytes of read data.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1f65a2a1cde5b..59a6b47e9c278 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9441,14 +9441,11 @@ F:	include/linux/fscrypt.h
- F:	include/uapi/linux/fscrypt.h
- 
- FSI SUBSYSTEM
--M:	Jeremy Kerr <jk@ozlabs.org>
--M:	Joel Stanley <joel@jms.id.au>
--R:	Alistar Popple <alistair@popple.id.au>
--R:	Eddie James <eajames@linux.ibm.com>
-+M:	Eddie James <eajames@linux.ibm.com>
-+R:	Ninad Palsule <ninad@linux.ibm.com>
- L:	linux-fsi@lists.ozlabs.org
- S:	Supported
- Q:	http://patchwork.ozlabs.org/project/linux-fsi/list/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git
- F:	drivers/fsi/
- F:	include/linux/fsi*.h
- F:	include/trace/events/fsi*.h
+> + * Returns 0 on success, otherwise a negative errno.
+
+Please, validate the kernel-doc properly. This has a warning.
+
+> + */
+> +static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct i2c_msg *msgs)
+> +{
+> +	int len, ret = 0;
+> +	u64 cmd = 0;
+> +
+> +	octeon_i2c_hlc_enable(i2c);
+> +	octeon_i2c_block_enable(i2c);
+> +
+> +	/* Write (size - 1) into block control register */
+> +	len = msgs[1].len - 1;
+> +	octeon_i2c_writeq_flush((u64)(len), i2c->twsi_base + OCTEON_REG_BLOCK_CTL(i2c));
+> +
+> +	/* Prepare core command */
+> +	cmd = SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR;
+
+> +	cmd |= (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
+
+Can you, please, remove 10-bit address "support" from the driver to avoid false
+impression that it works. I haven't found any evidence that the upper 3 bits
+are being anyhow used in it.
+
+> +	/* Send core command */
+> +	ret = octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
+> +	if ((cmd & SW_TWSI_R) == 0)
+> +		return octeon_i2c_check_status(i2c, false);
+> +
+> +	/* read data in FIFO */
+> +	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
+> +				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
+> +	for (int i = 0; i < len; i += 8) {
+> +		u64 rd = __raw_readq(i2c->twsi_base + OCTEON_REG_BLOCK_FIFO(i2c));
+> +		/* Place data into msg buf from FIFO, MSB onwards */
+> +		for (int j = 7; j >= 0; j--)
+> +			msgs[1].buf[i + (7 - j)] = (rd >> (8 * j)) & 0xff;
+
+Use proper put_unaligned_be64() / put_unalined_le64() depending on what you
+need. No reinveted wheels, please.
+
+> +	}
+> +
+> +	octeon_i2c_block_disable(i2c);
+> +	return ret;
+> +}
+
+...
+
+> +/**
+> + * octeon_i2c_hlc_block_comp_write - high-level-controller composite block write
+> + * @i2c: The struct octeon_i2c
+> + * @msgs: msg[0] contains address, msg[1] contains data to be written
+> + *
+> + * i2c core command is constructed and write data is written into the FIFO buffer.
+> + * The execution of the command will result in HW write, using the data in FIFO.
+> + * Used in the case where the i2c xfer is for greater than 8 bytes of write data.
+> + *
+> + * Returns 0 on success, otherwise a negative errno.
+
+Same issue with the kernel-doc.
+
+> + */
+> +static int octeon_i2c_hlc_block_comp_write(struct octeon_i2c *i2c, struct i2c_msg *msgs)
+> +{
+> +	bool set_ext = false;
+> +	int len, ret = 0;
+> +	u64 cmd, ext = 0;
+> +
+> +	octeon_i2c_hlc_enable(i2c);
+> +	octeon_i2c_block_enable(i2c);
+> +
+> +	/* Write (size - 1) into block control register */
+> +	len = msgs[1].len - 1;
+> +	octeon_i2c_writeq_flush((u64)(len), i2c->twsi_base + OCTEON_REG_BLOCK_CTL(i2c));
+> +
+> +	/* Prepare core command */
+> +	cmd = SW_TWSI_V | SW_TWSI_SOVR;
+> +	cmd |= (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
+
+Same issue with 10-bit address.
+
+> +	/* Set parameters for extended message (if required) */
+> +	set_ext = octeon_i2c_hlc_ext(i2c, msgs[0], &cmd, &ext);
+> +
+> +	/* Write msg into FIFO buffer */
+> +	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
+> +				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
+> +	for (int i = 0; i < len; i += 8) {
+> +		u64 buf = 0;
+> +		/* Place data from msg buf into FIFO, MSB onwards */
+> +		for (int j = 7; j >= 0; j--)
+> +			buf |= (msgs[1].buf[i + (7 - j)] << (8 * j));
+
+Same issue with unaligned accesses, use get_unaligned_*64().
+
+> +		octeon_i2c_writeq_flush(buf, i2c->twsi_base + OCTEON_REG_BLOCK_FIFO(i2c));
+> +	}
+> +	if (set_ext)
+> +		octeon_i2c_writeq_flush(ext, i2c->twsi_base + OCTEON_REG_SW_TWSI_EXT(i2c));
+> +
+> +	/* Send command to core (send data in FIFO) */
+> +	ret = octeon_i2c_hlc_cmd_send(i2c, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
+> +	if ((cmd & SW_TWSI_R) == 0)
+> +		return octeon_i2c_check_status(i2c, false);
+> +
+> +	octeon_i2c_block_disable(i2c);
+> +	return ret;
+> +}
+
+
 -- 
-2.43.5
+With Best Regards,
+Andy Shevchenko
+
 
 
