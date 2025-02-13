@@ -1,107 +1,70 @@
-Return-Path: <linux-kernel+bounces-513991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99600A35119
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:18:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5230A3511B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DD07A401D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2913AC4E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358326989F;
-	Thu, 13 Feb 2025 22:18:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E80A44C7C;
-	Thu, 13 Feb 2025 22:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6932426982E;
+	Thu, 13 Feb 2025 22:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp2fwWSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E9144C7C;
+	Thu, 13 Feb 2025 22:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739485081; cv=none; b=I16WLd36gNMtKl/HzqZqYZbialCaq+UTu1609Qq0IFkmJC65gexlpGa0ZYZIuBhFbdkSMT1AbBfiZ1EyFRxiLJX3zpA1t8pOgU8aZPHGH/7kQ7MSGrbMzEy1Bf/4M8hLxwxPKITnGxkMNzSd+JQLUz5KxSYHQJAFcoby+OwowK0=
+	t=1739485164; cv=none; b=P05gC7pBZyDs6gJDl5tfljVqMN58XiZbWZ0pSb1esw+4IgyRdcgAp9EzL0Q2yyPDTqnmMicvYHDDdOCDciI0lWIor1g1lpt9ZN/aqUK8u/aZs8/LZLrrbTKuOcit914Uj+rHt3a4F8z9XWbWCGBCiUJJyxpfMziDp/7Omag7dLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739485081; c=relaxed/simple;
-	bh=wqefMj2OjBMV9f903IECS9IfnZFQxMtV9+o7b+D27sU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFn6+IqNfM1WkVpdw8S5/FWNJQa5RcAJDi2Ogev9gSOecOU7PU6xxz+Jxk6jSByu8fdClVc9UGgIs3JJGKuVM0OdQCS/NjgrXKDbwc+xWliXifn9thGJ50FkyxRjMwkByfeXSoGjRVjkR6vO0DlS75saFAXdfrpEXD1+I8q7OJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B436106F;
-	Thu, 13 Feb 2025 14:18:18 -0800 (PST)
-Received: from [10.122.17.146] (unknown [10.122.17.146])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36CEA3F5A1;
-	Thu, 13 Feb 2025 14:17:57 -0800 (PST)
-Message-ID: <b9a7d98a-2723-45e0-bb3b-19cd31473251@arm.com>
-Date: Thu, 13 Feb 2025 16:17:56 -0600
+	s=arc-20240116; t=1739485164; c=relaxed/simple;
+	bh=kDP/eSc24qynCKY6xHzoOx05vk0vadh4xJTRxqwXXKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYXBqEQKiLQ8/qNCg9XGMeVtGYA8Ertn470xHUQkMSn0byiAaq3SySnxqO+Kf+6lD+cAGMPKOFyvudZbuTA1uIvpNhzLdw3ssCjSTZzTFYcG/yv7T884QwZyaq3Y4GjeD9uSwsqkGCFeAwYWixXBVCqNv5nUyu3Iifk+v3Cght8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp2fwWSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE1DC4CEE5;
+	Thu, 13 Feb 2025 22:19:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739485164;
+	bh=kDP/eSc24qynCKY6xHzoOx05vk0vadh4xJTRxqwXXKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mp2fwWSPgc0JF294KS3hLdYPPtTxSzbLekrZWtw4nJJPDnbp5+wdDT89ExYzKvh82
+	 Trimt5d0tpe1upaE6xBvdIj9oYoRjd33YPVWHb6lfqOGODvJeMq6LsvIVRU0vCNIYl
+	 ETiv6ZSGYdJiWxKDy6tc6eQiQVjbykI5o6+1llyGuap4pr8UJpGmBVpTbFXT+wjhtO
+	 edivBAKiDbxEUy1bjVpNBRP2aX7LGxKlYTiVVDduKZmyqXQixACpN1zlGvya2JL8kN
+	 V//UL2ORVE+fq6o0zfOTBtQZ7GGqVNtS5Uy9hgYtGgdV19Za/vpAo/pPo9WRI7OQLF
+	 NRh7uV3dG2/4g==
+Date: Thu, 13 Feb 2025 23:19:19 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/2] i2c: octeon: Add block-mode r/w
+Message-ID: <seom4yspcjnmdxxwn6wuyiqdy2ywpna6nw4rn36tsqinlncbca@jdehzfnznlsg>
+References: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] Documentation: tpm: add documentation for the CRB
- FF-A interface
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250212220548.400447-1-stuart.yoder@arm.com>
- <20250212220548.400447-6-stuart.yoder@arm.com> <Z65uKkt2f0WYxjHi@kernel.org>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <Z65uKkt2f0WYxjHi@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
 
+Hi Aryan,
 
+> Aryan Srivastava (2):
+>   i2c: octeon: refactor common i2c operations
+>   i2c: octeon: Add block-mode i2c operations
 
-On 2/13/25 4:11 PM, Jarkko Sakkinen wrote:
-> On Wed, Feb 12, 2025 at 04:05:48PM -0600, Stuart Yoder wrote:
->> Add documentation providing details of how the CRB driver interacts
->> with FF-A.
->>
->> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
->> ---
->>   Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
->>   1 file changed, 65 insertions(+)
->>   create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
->>
->> diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
->> new file mode 100644
->> index 000000000000..c70f8904a93d
->> --- /dev/null
->> +++ b/Documentation/security/tpm/tpm_ffa_crb.rst
->> @@ -0,0 +1,65 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +========================
->> +TPM CRB over FF-A Driver
->> +========================
->> +
->> +The TPM Command Response Buffer (CRB) interface is a standard TPM interface
->> +defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
->> +The CRB provides a structured set of control registers a client uses when
->> +interacting with a TPM as well as a data buffer for storing TPM commands and
->> +responses. A CRB interface can be implemented in:
->> +
->> +- hardware registers in a discrete TPM chip
->> +
->> +- in memory for a TPM running in isolated environment where shared memory
->> +  allows a client to interact with the TPM
->> +
->> +The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
->> +that defines interfaces and protocols for the following purposes:
->> +
->> +- Compartmentalize firmware into software partitions that run in the Arm
->> +  Secure world environment (also know as TrustZone)
-> 
-> Does that also cover ARM CCA? Just a question (not a review question).
+merged to i2c/i2c-host.
 
-No, CCA is for confidential VMs which is a separate trusted execution
-environment and FF-A is not used there.
-
-Thanks,
-Stuart
+Andi
 
