@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-513302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F683A3489C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:55:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF69A348D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D147C7A1F04
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599063A385F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D2119AD93;
-	Thu, 13 Feb 2025 15:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756DE15697B;
+	Thu, 13 Feb 2025 15:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFkNmonz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZPj+SSAU"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9973526B08B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D356A26B08B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739462118; cv=none; b=gMq4IlREJ689lm8ugTs0lvKFGpof1+6d+QVBPnbrIprVmi7VXLJDNda8BaPI7YIu3aToEJ7cHdM6kDvcTMg+/whLP8xdbydeqxw6IFHmQQ6dKNcAXqssvt3NGHJIX2n/SeY08iczuqn+T+an75CkpUEucVkmLc+RlXTAsOn0a7E=
+	t=1739462170; cv=none; b=maK6SQvNbbwH7uBeW32eWYaVjC/654WihbpzlJYTkRx1ldDoDadetCzsGedILV+dA7+keSejuu21OXTwZswISIQ4byQ2pDfsaA4DrLIAz93D9v+3s41yrE3e8Dw471R3WSCjutadEOgrt1qHkPlK8yKVXMgBYGPEsmpnicv+94U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739462118; c=relaxed/simple;
-	bh=b7ObII/vFR47LETuncg9l2bFg9S6/OwFkur2pLXDuzg=;
+	s=arc-20240116; t=1739462170; c=relaxed/simple;
+	bh=7i6V9OUku3e/q/hSkEcFP0qGhYQ8Xso/nVD/tvXD9sQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ueubrh//cS/i2L88sMqfVOJmZMlDFcaWdP2PiHwz6I0GaPPKfgwjLHhfn8JOuCINw5WYM2pTPxwniQi99DASzjpxy5ypZig/ks4cdXedCMJDex92+uWT6LurtZSBDfHlcJPcM+POo0PYCMWzN2DaFvZ/7f4LkfxLEerfUfny/W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFkNmonz; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739462116; x=1770998116;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=b7ObII/vFR47LETuncg9l2bFg9S6/OwFkur2pLXDuzg=;
-  b=XFkNmonzJ0yhRCRM/6s5nMSpc5ZkcSiq1DmtxzC6jIAW/UHeyc1d2nIn
-   27jLW4BFbGNy6i/31PqNTichVYZNBqGNuMZSqpTHRts9oEPQJE9DPcnSQ
-   fKVeO7XCjcd2i1OZitd6d2Mbqy5Utb9/BB2lsVoeZ0q5n7gQTk/m/DW32
-   zYtC8kkfC1ilkcUQ+i8EzAhor8qTbMxMGlC7MStFQwpabddI1CzxUWv2V
-   GTCscwBrO//pP9sHQ9xF3dwmeJM30q1dPRNp3eCUw71MPGVEwU1+8Ru9I
-   X41EL8Xup71LRX2xWQNsOIc6JOC3I6f+a7n224rcahRff7DxYcBRQT7Hb
-   A==;
-X-CSE-ConnectionGUID: oSnVCN6GQO6Tchtd1SHZCg==
-X-CSE-MsgGUID: exHCnerRTLWdxkSikoDJ2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="65523200"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="65523200"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:55:16 -0800
-X-CSE-ConnectionGUID: jweFNLneQO6WT10qF3AKmQ==
-X-CSE-MsgGUID: E86di0h5Sj65g1P4Nef7mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113840907"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.188]) ([10.125.108.188])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:55:15 -0800
-Message-ID: <f38f1b56-a5df-4644-be59-56c70499ed92@intel.com>
-Date: Thu, 13 Feb 2025 07:55:15 -0800
+	 In-Reply-To:Content-Type; b=hKB8mdmDsTyjLRDus3I0w9BCETnwDQ1Kam6Bsx5a61DsniFaGUES7uq4/Rg/GX1xBrO1fDmnBdNaD0tJ8Ta0DCH6nhkWlBxDpHvXNBoa/4WcFH3BMUlwW4LAcJlqFcJcWdTVR+rXOohpZqXYkxNenvbOGhARyGD8FWD91KTMS+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZPj+SSAU; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30615661f98so11648391fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:56:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739462167; x=1740066967; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qLAli4Gnmcw4fIPwE54pea1emeVcN0oq6/R3bNPrLic=;
+        b=ZPj+SSAU8vW5HyIN9EiQkMt8k+I56bhCy0UL30YyzjIoLYVr145hFIH7lWa0jMynEK
+         s3rzXBC0PkeaEmDBZlNQp0CoMHSmD+XvHPH652et2vBPTY3CTqR9f1FYJVXwfMSOkSmu
+         7f9MgLXT95teNbSKeghMIz77WdjuTfYnYSKKIu885tur5/ILjvtIVDQgdWpYmvmBOKeh
+         Y5msnJCoFqgFA/2TM8vPd/gdgP9IODPaduvL79vaJhxzkUnW9iJAQTJwWjsk1E6Bl+zw
+         ogjJ8P8evyFYYdLYlpJiVfMQCbQMHorloSPlImgKyX/557uneDZA7g3xolzLLxmHmRwf
+         Zuag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739462167; x=1740066967;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLAli4Gnmcw4fIPwE54pea1emeVcN0oq6/R3bNPrLic=;
+        b=xD/WCsBhqQN+oE2mqH61xtVM17oAHLs7LGJDihkkwDsZjLHLoVKva4LnO2YkrDcE6s
+         cDJpl/1prdfbYDbrGa/8U/J6mTBmzbGx5BMOn3m1wblgkm23SZB+308IZlPhe48durZX
+         0YaAATESXJyu6JksOQ0yF/8+ZgAHbKatPx1ZuQeWN6tb2cml1Eor4cBZ9SOwWwRdO1OF
+         E5nW1PiwKd1FJ9Ggksi1LtIpicTso0aj2i3Js9q41wIq8Vq0ZrfaNu6NPLKyNsUPx5LD
+         sdyoacVhOrlWeK3KAm6ArnCJYfw2DT2vHpidXIC+qeMlTCoQWdK0UJajmPtlP8xAWkax
+         25ZA==
+X-Gm-Message-State: AOJu0Yw7f0ZQqzLRHT8PJGq3KKgRU6i/8YJ2CUYsGJw+DVuWygp6xCXF
+	zjovtht4no7IKNVcgVWO8euqDseQZeA4Mae5+V2EWr86EmeQXxHf1aYe3jwjPJmYx1QrGfhItQU
+	b
+X-Gm-Gg: ASbGncvkfkiUaMa+Tqa8Bj6Gj2koPl+E5iC7XB3VsZBYgHQj4jqqXhRgWsIJ9rHB68Q
+	cvQzxgcSk1K5gZdea+1Y14PRqU4CZuRaFxFCmm4ueGgGwbSwCI5NVTIS9bfQApDetVBL+xDeJLt
+	HQnBrxXPxWB3h4jsp13idcgHiTWA6zXMg80nlIUpwz8/tzn4HMe1DcWEZtu4JzxBXZkvXwJb8SS
+	ij/LDwCwYmdIf+Pd3815SxKEc4gQBQdCRxh1Pbx+qJUHivRmph6cQDpKL48sGDkodVcGKcDpnhx
+	RYeRjZ6jAmWsSRtIpJU=
+X-Google-Smtp-Source: AGHT+IEoXf8IM0BCiy1988JuJo2B9cXIjndci1o/MsuJC/BDML4b4xU7aji+rhA42cW+Qk30XmAwPw==
+X-Received: by 2002:a17:907:3fa6:b0:ab9:137d:f6e7 with SMTP id a640c23a62f3a-aba4eb88dd8mr355840866b.7.1739462156201;
+        Thu, 13 Feb 2025 07:55:56 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5339d7bfsm155245866b.141.2025.02.13.07.55.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 07:55:55 -0800 (PST)
+Message-ID: <4039ec74-8b46-417e-ad71-eff22239b90f@suse.com>
+Date: Thu, 13 Feb 2025 16:55:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,143 +80,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] Accept unaccepted kexec segments' destination
- addresses
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, akpm@linux-foundation.org,
- kexec@lists.infradead.org, Yan Zhao <yan.y.zhao@intel.com>,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, x86@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- security@kernel.org
-References: <20241213094930.748-1-yan.y.zhao@intel.com>
- <xgycziy2o56hnom3oau7sbqed3meoni3razc6njj7ujatldnmm@s7odbl4splbn>
- <Z4T1G4dwzo7qdwSP@MiWiFi-R3L-srv>
- <87zfjuoj3i.fsf@email.froward.int.ebiederm.org>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 2/4] kernel: refactor lookup_or_create_module_kobject()
+To: Shyam Saini <shyamsaini@linux.microsoft.com>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ code@tyhicks.com, linux@rasmusvillemoes.dk, christophe.leroy@csgroup.eu,
+ hch@infradead.org, mcgrof@kernel.org, frkaya@linux.microsoft.com,
+ vijayb@linux.microsoft.com, petr.pavlu@suse.com, linux@weissschuh.net,
+ samitolvanen@google.com, da.gomez@samsung.com, gregkh@linuxfoundation.org,
+ rafael@kernel.org, dakr@kernel.org
+References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
+ <20250211214842.1806521-3-shyamsaini@linux.microsoft.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <87zfjuoj3i.fsf@email.froward.int.ebiederm.org>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250211214842.1806521-3-shyamsaini@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/13/25 06:59, Eric W. Biederman wrote:
-...
-> I have a new objection.  I believe ``unaccepted memory'' and especially
-> lazily initialized ``unaccepted memory'' is an information leak that
-> could defeat the purpose of encrypted memory.  For that reason I have
-> Cc'd the security list.  I don't know who to CC to get expertise on this
-> issue, and the security list folks should.
+On 2/11/25 22:48, Shyam Saini wrote:
+> In the unlikely event of the allocation failing, it is better to let
+> the machine boot with a not fully populated sysfs than to kill it with
+> this BUG_ON(). All callers are already prepared for
+> lookup_or_create_module_kobject() returning NULL.
 > 
-> Unless I am misunderstanding things the big idea with encrypted
-> memory is that the hypervisor won't be able to figure out what you
-> are doing, because it can't read your memory.
+> This is also preparation for calling this function from non __init
+> code, where using BUG_ON for allocation failure handling is not
+> acceptable.
 
-At a super high level, you are right. Accepting memory tells the
-hypervisor that the guest is _allocating_ memory. It even tells the host
-what the guest physical address of the memory is. But that's far below
-the standard we've usually exercised in the kernel for rejecting on
-security concerns.
+I think some error reporting should be cleaned up here.
 
-Did anyone on the security list raise any issues here? I've asked them
-about a few things in the past and usually I've thought that no news is
-good news.
+The current situation is that locate_module_kobject() can fail in
+several cases and all these situations are loudly reported by the
+function, either by BUG_ON() or pr_crit(). Consistently with that, both
+its current callers version_sysfs_builtin() and kernel_add_sysfs_param()
+don't do any reporting if locate_module_kobject() fails; they simply
+return.
 
-> My concern is that by making the ``acceptance'' of memory lazy, that
-> there is a fairly strong indication of the function of different parts
-> of memory.  I expect that signal is strong enough to defeat whatever
-> elements of memory address randomization that we implement in the
-> kernel.
+The series seems to introduce two somewhat suboptimal cases.
 
-In the end, the information that the hypervisor gets is that the guest
-allocated _some_ page within a 4MB physical region and the time. It gets
-that signal once per boot for each region. It will mostly see a pattern
-of acceptance going top-down from high to low physical addresses.
+With this patch, when either version_sysfs_builtin() or
+kernel_add_sysfs_param() calls lookup_or_create_module_kobject() and it
+fails because of a potential kzalloc() error, the problem is silently
+ignored.
 
-The hypervisor never learns anything about KASLR. The fact that the
-physical allocation patterns are predictable (with or without memory
-acceptance) is one of the reasons KASLR is in place.
+Similarly, in the patch #4, when module_add_driver() calls
+lookup_or_create_module_kobject() and the function fails, the problem
+may or may not be reported, depending on the error.
 
-I don't think memory acceptance has any real impact on "memory address
-randomization". This is especially true because it's a once-per-boot
-signal, not a continuous thing that can be leveraged. 4MB is also
-awfully coarse.
+I'd suggest something as follows:
+* Drop the pr_crit() reporting in lookup_or_create_module_kobject().
+* Have version_sysfs_builtin() and kernel_add_sysfs_param() log an error
+  when lookup_or_create_module_kobject() fails. Using BUG_ON() might be
+  appropriate, as that is already what is used in
+  kernel_add_sysfs_param()?
+* Update module_add_driver() to propagate any error from
+  lookup_or_create_module_kobject() up the stack.
 
-> So not only does it appear to me that implementation of ``accepting''
-> memory has a stupidly slow implementation, somewhat enshrined by a bad
-> page at a time ACPI standard, but it appears to me that lazily
-> ``accepting'' that memory probably defeats the purpose of having
-> encrypted memory.
-
-Memory acceptance is pitifully slow. But it's slow because it
-fundamentally requires getting guest memory into a known state before
-guest use. You either have slow memory acceptance as a thing or you have
-slow guest boot.
-
-Are there any other CoCo systems that don't have to zero memory like TDX
-does? On the x86 side, we have SGX the various flavors of SEV. They all,
-as far as I know, require some kind of slow "conversion" process when
-pages change security domains.
-
-> I think the actual solution is to remove all code except for the
-> "accept_memory=eager" code paths.  AKA delete the "accept_memory=lazy"
-> code.  At that point there are no more changes that need to be made to
-> kexec.
-
-That was my first instinct too: lazy acceptance is too complicated to
-live and must die.
-
-It sounds like you're advocating for the "slow guest boot" option.
-Kirill, can you remind us how fast a guest boots to the shell for
-modestly-sized (say 256GB) memory with "accept_memory=eager" versus
-"accept_memory=lazy"? IIRC, it was a pretty remarkable difference.
-
-Eric, I wasn't planning on ripping the lazy acceptance code out of
-arch/x86. I haven't heard any rumblings from the mm folks that it's
-causing problems over there either. This seems like something we want to
-fix and I _think_ the core kexec code is the right place to fix this issue.
-
-There are definitely ways to work around this in arch code, but they
-seem rather distasteful and I'd rather not go there.
+-- 
+Thanks,
+Petr
 
