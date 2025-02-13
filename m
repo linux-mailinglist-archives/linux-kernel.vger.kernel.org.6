@@ -1,261 +1,175 @@
-Return-Path: <linux-kernel+bounces-512928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8F1A33F5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:44:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A78CA33F64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87051168822
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA56188D187
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB74221577;
-	Thu, 13 Feb 2025 12:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F24221579;
+	Thu, 13 Feb 2025 12:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ5fyII0"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VVOTlQ5x"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3C5221579
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBC5221541
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739450634; cv=none; b=pIfwTPQafXx8M/9hqg58UVQretOb647NgwEhWsL2MagJFNC/EStOthTKQrc9tZ0PJTJ973WwMSZMqa24qcRDfFdU4Ws6L4IWCpNuqWCBOvDmhcDBEzhXkEgqYj+GVdG6o39hVA34OmOQV11wLzmwZssEMylnmMmbiTRipnsMp+k=
+	t=1739450650; cv=none; b=au2PbhKAzxz+vgXSadnRij4zV99YZPZauQ33opI1qo+6q+M0uWGb8zTNfnjhML+vekeoVfcrHUJmbMrYqjDZJseGczvtXV1KK+wJ6YmOtf/wBEwcswEMYVWMepqt5qUlrjuKjaNVzTP+PV6d98mbMM2Fj/l3XoA3S07mFOci9vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739450634; c=relaxed/simple;
-	bh=Tif10vlrcrWJS8mnrSxzavy5vN6oFFZ+VvAgRncHeO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBgAouVOy6JkgZoq7AyPG4Nijna0xQm8vlghTpZbbg2d9R6XFdvZ0Yt0iUVduuOUYumgG2hwQEhV39hVMPJxlN8ChEqjFiK9mKpPXd+q+26wlH2xOuIrEQruai2Gi4vGCeWsY2/PByHGkTRo5odlHYO2UJ/LPuuxzxREPhi8c8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ5fyII0; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so872667a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:43:52 -0800 (PST)
+	s=arc-20240116; t=1739450650; c=relaxed/simple;
+	bh=R3gnP0CayQxmqzX938MxGg3B4sCeWwi2pOEal8oVqNA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HYSYZ1WLn8RGQGUoweV8cm4NsuIg0jZ7VX4g26ZrhDebrodUfaXjJ6esp4/RfCMnwFpJMtEdCvF6pEepNHv6hV8v4b/YG8kJy71547s6ltANd3iUwfmvDzfgbksUBbBFmArV1OQ9c8u3jbAnrmUJAZEwlR+EgRp1HXXf+F35STo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VVOTlQ5x; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43956fcd608so5212585e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:44:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739450631; x=1740055431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2XjKKYlWXb6xupzizzPwV1OMDDEKmqUSqaArwd7zvko=;
-        b=YQ5fyII0KVmDBkSbiX1K5WFyB5xuel/9asm1+LYlef7XelCSzC/5XckkDkD7YYAMzK
-         kVtMqV7ccuxL4dmuPa9MrrrfcscVEPfvcVxHHqMhQA6q8e22tERorlDQxD13NrLoJ8mZ
-         n8aq2Pa5l9hMsHAanghX82ScS4icZPtPTz/kmdwcDLwhwy8d2y8/XIqE22GosRATTyjX
-         flU0Zc0Eg8iAAO0ndj8haxXLDqti++yd5XGOSFDpEUHpxQzVD14OgVcinrMj7BNZA+R9
-         x+o+ynG7g2N7u+gEkFzf3tjPVdtxys4kS9ZUtIXSl+kWv6NMWt6eXjdi0dv75V6yB8k6
-         aWRg==
+        d=linaro.org; s=google; t=1739450647; x=1740055447; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ij94dGINxNx88EuxN0sn94TRfm6MJr1m8/2BrYCkTf0=;
+        b=VVOTlQ5xjHS2Z3nLrcNXUGO3inpDmPB9dEFmtqyPi8hv6eUb3g7iHxQYv0xheFPD0x
+         jkJ3DT89mGrxVUhNBvd+5srMlh1fiblqwsJ4oeBN2+tOsWUIvsvflsY7iNsItmOZerKQ
+         78QMZaIaBjLvnNlx2dGkE6eY2Dmdj4nQMcb+N/s0lq+EKwXrpGSM8jiebiyJfs48YsPX
+         WIxHBTjAY5G5g9ylOYLTzIseUO6sxjNxsoj3iOIbxBmop7A2GIyRhfHqOAeTpYfNmiZp
+         5NzFdw94xCeDr2LZ300J8GBduOzp85DXmH4LHRfM9stPc85XNKk5Sqak6/xNpQ2bR/eg
+         8oEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739450631; x=1740055431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2XjKKYlWXb6xupzizzPwV1OMDDEKmqUSqaArwd7zvko=;
-        b=pyM6TUGB9sffv7l9wPZH9FfuFHFUFHxiFGwArG49lB11JZRhGZWGSR5wp4SFmj6lXt
-         pTh0IWLMyhsWErFJMkA34p0mGEd4W79vEZiaYkXPsPQFKc4vTN31Ratw9+XIkzEEgnvu
-         EFFxjjcJGa/LjkTYZYbyVVosPzqx3SGElfZ3rpfFvhKMzHqKfcSJhGzVWDctKuhDVUiG
-         5lelMHEmpcdeeaxskIoV0AZsuVzXHCD6O9LXANnsGJ3O85htAGPIbo6RFyiNvLqqYUVb
-         22q+/HcRS0R4r+/NmK1HFavwYsK9W4nQD+yCne5uU+ngID0YOcKL6NT4DYe+L1qegX5r
-         DQtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPZpmv/MSvlsqzXn7SlvytDeSxZOK+ikEkosjEODLQvm/m7FKjzqswcZGO9nx1FoDHT9kuOjJ4K+yT6ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYkfIUG7L4/0gIV1Cih5CrxVqPMu0pyT68RsrRvmZWhSvBVsg6
-	FL/hf/UlMS8F65ksJVE3Oh56BZ8iabgTQbb5o7MBrZDrjsjFLUBZIxiE5/p68bRI03lqJRq8iFw
-	+6Ir7NRIugm+mP7BKRsvJ/FIoLEk=
-X-Gm-Gg: ASbGncsKiS2MDvXdOldTs6Kp0yUAaq+VHeteldRyEtJJEMvIH4FUDOtqx3JVrLr6k2I
-	4hmbQu/GU2keMN/bmVB9zvBoIH7dzp1TJt9x/VqbDz+EqXWibsofR+sUx0BX/fdjyYYaqqZjLAo
-	M=
-X-Google-Smtp-Source: AGHT+IFOw0kNCJFvrzKPyY1j6HibE6TL5bfUxYtzxWEfNrqyHD/MWFpjH/Bqtwv4+uWz3RPHu41mqOu5jSp87zpWBX0=
-X-Received: by 2002:a05:6402:3905:b0:5dc:c9ce:b022 with SMTP id
- 4fb4d7f45d1cf-5dec9e793c6mr2867061a12.9.1739450630923; Thu, 13 Feb 2025
- 04:43:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739450647; x=1740055447;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ij94dGINxNx88EuxN0sn94TRfm6MJr1m8/2BrYCkTf0=;
+        b=vEcz34i63AAEDtQRCXOfz7yzjyiyjpwuRGGMrzQ6ykzKlKp9RPPQ0tve6qrI5RdwS1
+         x9sx14iZc+5xDJT+m/OzZbbwODjhKhNz4TGKKAAlbhrMucs5M6RL/jPstDg1JvHv+yQz
+         GNoEsE6/xWODfWt5NWO4y0b6j0fLM7smCHqkfiPonCxW98D45dY+2BLpDOUFRcLw4rvr
+         BDmVqlwtMe0bYztk7GY/hd2YJtS9RDgyXq9bhO6b0xzQGVZQb8gbqxLkgQWVISWK2DEw
+         HEosZ1lXQaRLWlC8PXDsFBh6mpPmmyV/6dmaHHSxrGWbcMsgAz074s2R2JfEvTCfaqRO
+         4yUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Ngs3IIhZLQgVg13HyRmxfblMHufWgVQjTytIJtGzWkXbBkBn/uS5tfHmFfFtGShArViqBdYMGPoMsRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS070tpOVQAxzwtB0ThhzsdsdeKZ61bKRkr7Nd7EYD2KAHEo9d
+	KGqKZ9c5gD8YmzAeVRzRngiXeXAssrRhd0ByKCoCxSlzZnIJ7VSf73D6gFK3mHc=
+X-Gm-Gg: ASbGncurM0U4XMXn24IdubK4CDAvZRXwP1Vjs89COehq7mY34Q2L6rVuTkNuwFCKa9w
+	LQ1v0AuJIawplVGA9gk1bZXXa9S5xOkngkZApyUDBkHLBtumRrJEgqGIrEUvVg3KSCuW8l6E4NZ
+	Gy1wwKEPiSBrQinqIx2mTFKCckEceraGujYg+6lE9Q107gtzQ0hBb2Qj1/xDu0JhS2P2WysWFqX
+	xT7F+uMhwbNuIRozkJzaxbFbPy5JcpSXXJQwAcPRjlCysiY7xopWCw7R//oNsXP24qoXUSlWwlS
+	EsiE1prLOkg6x3Y=
+X-Google-Smtp-Source: AGHT+IHvfw130tAPFVEYbAnaTFlpZDnn4begdhdP+dVAGnpI8nYVoy0WyBXidzXuhcwcfWMAxmv2BQ==
+X-Received: by 2002:a05:600c:1c84:b0:434:fa55:eb56 with SMTP id 5b1f17b1804b1-43958169fa4mr85886125e9.7.1739450646979;
+        Thu, 13 Feb 2025 04:44:06 -0800 (PST)
+Received: from [127.0.1.1] ([86.123.96.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43961884f88sm16584825e9.28.2025.02.13.04.44.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 04:44:06 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 13 Feb 2025 14:44:02 +0200
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Add crypto engine
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211152812.54018-1-vignesh.raman@collabora.com> <20250211152812.54018-4-vignesh.raman@collabora.com>
-In-Reply-To: <20250211152812.54018-4-vignesh.raman@collabora.com>
-From: Helen Mae Koike Fornazier <helen.fornazier@gmail.com>
-Date: Thu, 13 Feb 2025 09:43:39 -0300
-X-Gm-Features: AWEUYZluT3Wkd1PZxazm6bk_o2BFn8FJ-1pTiFEGh_ywmnPSgc6YNgpHF_7ceUE
-Message-ID: <CAPW4XYZtj7HRhoeOfYguZBEnbqpbRscKrXTn5821aAxvcqNb0g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] drm/ci: enable lockdep detection
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, airlied@gmail.com, 
-	simona.vetter@ffwll.ch, robdclark@gmail.com, guilherme.gallo@collabora.com, 
-	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
-	jani.nikula@linux.intel.com, dmitry.baryshkov@linaro.org, mripard@kernel.org, 
-	boqun.feng@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-x1e80100-crypto-v1-1-f93afdd4025a@linaro.org>
+X-B4-Tracking: v=1; b=H4sIABHprWcC/x3MQQ5AMBBA0avIrDWZKaJcRSxkOpiNSitCxN01l
+ m/x/wNJokqCvnggyqlJw5ZBZQG8TtsiRn02WLQNWqrMReKQEA3Hez+CIcetp5p93XSQqz3KrNd
+ /HMb3/QDicOxWYQAAAA==
+X-Change-ID: 20250213-x1e80100-crypto-18c7d14cd459
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1824; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=R3gnP0CayQxmqzX938MxGg3B4sCeWwi2pOEal8oVqNA=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnrekU2lpmnrvba9K27nkXaa+Sfk07K3qYP2J8z
+ dvLRjpBdDCJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ63pFAAKCRAbX0TJAJUV
+ Voo9D/459rHi+SCEdYpHCUBHoj5yUUN/AqZZ6Y4drP6RG1Pyo3dZcgwZvI5uIgtecQOp+oY49Sn
+ xrbD4qg5Qk8xBFlTn/dUN809zL6YgfSWsInQutRrwM6N7DJq5UzlXPnno+N7OwYIFtptXUORQBB
+ hMuylnWVYNInz+6cos8jPI5vjSKNzFS66A+QK9xZYuFQeeVGbFC0BziqawO6QcMwf/UPtzPibRZ
+ E1obkv+mgXsH6GwiOCd9OjGzxccsZcVbfNcscRzsVtoc9gEuq9Pt4oiUS1SkL//XNBouSJ65/JV
+ /MCuuq3YXIk2nu6nGqiMDSNszB0SYgg1oqY1yUn6XPMZDJ05luIf7bChLzKz8ZxTXeETPtLG3Ng
+ 2DIiGi9A8+kzHINzkLvqtPWjp6DeukvIPy/rcNcMnGEPhFrzklXBkPmKLQMv0NoEKC/qAcORZaE
+ 2xfd+EpAmOfSCJdSaNQSiHyl8SOyJx74dJDnKZpKWxCsFhf/gQ3SITeeRt4sdGbLerPX6wd2SLV
+ GbzVBSaQJ8/WjQ/Ljt6N85GLhHv+GJUwGmrsCoRWfRiN8Ls7kNhi7x0BPqkaJ8nYOLUXWChwUCg
+ dvYqc1Ls+8/qIIC3QiQRTz3TgQeq6Mvzmw35xc8luNUw5Um2HzBloFBXNgWDgQkI58Pk6EHPc9/
+ UtUul1QIA7/Wacg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Hi Vignesh,
+On X Elite, there is a crypto engine IP block similar to ones found on
+SM8x50 platforms.
 
-thanks for your patch.
+Describe the crypto engine and its BAM.
 
-Em ter., 11 de fev. de 2025 =C3=A0s 12:29, Vignesh Raman
-<vignesh.raman@collabora.com> escreveu:
->
-> We have enabled PROVE_LOCKING (which enables LOCKDEP) in drm-ci.
-> This will output warnings when kernel locking errors are encountered
-> and will continue executing tests. To detect if lockdep has been
-> triggered, check the debug_locks value in /proc/lockdep_stats after
-> the tests have run. When debug_locks is 0, it indicates that lockdep
-> has detected issues and turned itself off. Check this value, and if
-> lockdep is detected, exit with an error and configure it as a warning
-> in GitLab CI.
->
-> GitLab CI ignores exit codes other than 1 by default. Pass the correct
-> exit code with variable FF_USE_NEW_BASH_EVAL_STRATEGY set to true or
-> exit on failure.
->
-> Also update the documentation.
->
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
->
-> v2:
->   - Lockdep failures are reported as pipeline warnings,
->     and the documentation is updated.
->
-> ---
->  Documentation/gpu/automated_testing.rst |  4 ++++
->  drivers/gpu/drm/ci/igt_runner.sh        | 11 +++++++++++
->  drivers/gpu/drm/ci/test.yml             | 19 ++++++++++++++++---
->  3 files changed, 31 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/=
-automated_testing.rst
-> index 6d7c6086034d..62aa3ede02a5 100644
-> --- a/Documentation/gpu/automated_testing.rst
-> +++ b/Documentation/gpu/automated_testing.rst
-> @@ -115,6 +115,10 @@ created (eg. https://gitlab.freedesktop.org/janedoe/=
-linux/-/pipelines)
->  5. The various jobs will be run and when the pipeline is finished, all j=
-obs
->  should be green unless a regression has been found.
->
-> +6. Warnings in the pipeline indicate that lockdep
-> +(see Documentation/locking/lockdep-design.rst) issues have been detected
-> +during the tests.
-> +
->
->  How to update test expectations
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_ru=
-nner.sh
-> index 68b042e43b7f..2a0599f12c58 100755
-> --- a/drivers/gpu/drm/ci/igt_runner.sh
-> +++ b/drivers/gpu/drm/ci/igt_runner.sh
-> @@ -85,5 +85,16 @@ deqp-runner junit \
->     --limit 50 \
->     --template "See $ARTIFACTS_BASE_URL/results/{{testcase}}.xml"
->
-> +# Check if /proc/lockdep_stats exists
-> +if [ -f /proc/lockdep_stats ]; then
-> +    # If debug_locks is 0, it indicates lockdep is detected and it turns=
- itself off.
-> +    debug_locks=3D$(grep 'debug_locks:' /proc/lockdep_stats | awk '{prin=
-t $2}')
-> +    if [ "$debug_locks" -eq 0 ] && [ "$ret" -eq 0 ]; then
-> +        echo "Warning: LOCKDEP issue detected. Please check dmesg logs f=
-or more information."
-> +        cat /proc/lockdep_stats
-> +        ret=3D101
-> +    fi
-> +fi
-> +
->  cd $oldpath
->  exit $ret
-> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
-> index 0eab020a33b9..3af735dbf6bd 100644
-> --- a/drivers/gpu/drm/ci/test.yml
-> +++ b/drivers/gpu/drm/ci/test.yml
-> @@ -1,6 +1,8 @@
->  .lava-test:
->    extends:
->      - .container+build-rules
-> +  variables:
-> +    FF_USE_NEW_BASH_EVAL_STRATEGY: 'true'
->    timeout: "1h30m"
->    rules:
->      - !reference [.scheduled_pipeline-rules, rules]
-> @@ -13,6 +15,9 @@
->      - mv -n install/* artifacts/.
->      # Override it with our lava-submit.sh script
->      - ./artifacts/lava-submit.sh
-> +  allow_failure:
-> +    exit_codes:
-> +      - 101
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+https://lore.kernel.org/all/20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org/
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Maybe we could have this rule more generically instead of just in lava,
-so we can re-use it in other jobs as well and we don't need to repeat it.
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 9d38436763432892ceef95daf0335d4cf446357c..5a2c5dd1dc2950b918af23c0939a112cbe47398b 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -3708,6 +3708,36 @@ pcie4_phy: phy@1c0e000 {
+ 			status = "disabled";
+ 		};
+ 
++		cryptobam: dma-controller@1dc4000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0 0x01dc4000 0 0x28000>;
++
++			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++			#dma-cells = <1>;
++
++			iommus = <&apps_smmu 0x480 0>,
++				 <&apps_smmu 0x481 0>;
++
++			qcom,ee = <0>;
++			qcom,controlled-remotely;
++		};
++
++		crypto: crypto@1dfa000 {
++			compatible = "qcom,x1e80100-qce", "qcom,sm8150-qce", "qcom,qce";
++			reg = <0 0x01dfa000 0 0x6000>;
++
++			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "memory";
++
++			dmas = <&cryptobam 4>, <&cryptobam 5>;
++			dma-names = "rx", "tx";
++
++			iommus = <&apps_smmu 0x480 0>,
++				 <&apps_smmu 0x481 0>;
++		};
++
+ 		tcsr_mutex: hwlock@1f40000 {
+ 			compatible = "qcom,tcsr-mutex";
+ 			reg = <0 0x01f40000 0 0x20000>;
 
+---
+base-commit: 7b7a883c7f4de1ee5040bd1c32aabaafde54d209
+change-id: 20250213-x1e80100-crypto-18c7d14cd459
 
-Regards,
-Helen
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
->
->  .lava-igt:arm32:
->    extends:
-> @@ -88,9 +93,14 @@
->      - igt:arm64
->    tags:
->      - $RUNNER_TAG
-> +  allow_failure:
-> +    exit_codes:
-> +      - 101
->
->  .software-driver:
->    stage: software-driver
-> +  variables:
-> +    FF_USE_NEW_BASH_EVAL_STRATEGY: 'true'
->    timeout: "1h30m"
->    rules:
->      - !reference [.scheduled_pipeline-rules, rules]
-> @@ -108,6 +118,9 @@
->      - debian/x86_64_test-gl
->      - testing:x86_64
->      - igt:x86_64
-> +  allow_failure:
-> +    exit_codes:
-> +      - 101
->
->  .msm-sc7180:
->    extends:
-> @@ -153,7 +166,7 @@ msm:apq8016:
->      BM_KERNEL_EXTRA_ARGS: clk_ignore_unused
->      RUNNER_TAG: google-freedreno-db410c
->    script:
-> -    - ./install/bare-metal/fastboot.sh
-> +    - ./install/bare-metal/fastboot.sh || exit $?
->
->  msm:apq8096:
->    extends:
-> @@ -167,7 +180,7 @@ msm:apq8096:
->      GPU_VERSION: apq8096
->      RUNNER_TAG: google-freedreno-db820c
->    script:
-> -    - ./install/bare-metal/fastboot.sh
-> +    - ./install/bare-metal/fastboot.sh || exit $?
->
->  msm:sdm845:
->    extends:
-> @@ -181,7 +194,7 @@ msm:sdm845:
->      GPU_VERSION: sdm845
->      RUNNER_TAG: google-freedreno-cheza
->    script:
-> -    - ./install/bare-metal/cros-servo.sh
-> +    - ./install/bare-metal/cros-servo.sh || exit $?
->
->  msm:sm8350-hdk:
->    extends:
-> --
-> 2.43.0
->
-
-
---=20
-Helen Koike
 
