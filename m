@@ -1,163 +1,238 @@
-Return-Path: <linux-kernel+bounces-512761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311C9A33D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:09:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4658A33D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067D5188BA13
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0311888B38
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767142147E0;
-	Thu, 13 Feb 2025 11:08:11 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EB321519A;
+	Thu, 13 Feb 2025 11:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NIgwJXjN"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9492144A0;
-	Thu, 13 Feb 2025 11:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B99214238;
+	Thu, 13 Feb 2025 11:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444891; cv=none; b=mNaVQk6x/aCiwZimjDPxrFpT8oU+a4BAVQTBuNO2pHFpz0+qFNTL6Rac3TwT9SEhbJVliJ9bVDgWI7L4QH+aZnqYMhIFsBWtvQZfovql/jtlRgK3no25z3y83MOlotrFGP2/7zy0NU1v1VwHTASiBxjSpJ23wpIhIUxYlAdCTL0=
+	t=1739444919; cv=none; b=inyAkcEJUhzYJXNG9pMI9L3ebbbu0BdtMqS8GEWtKQ0DvRqCZdQYBMBBNR6JZdOkh0K/3E9/Glre6UpaUdJx1L8E4he5P5SjgOrsD9V4WWJDjUVvizK4NgDrBaWwdJGMAqtlQWg5wYBOfKfw8lvVDmU8x1a8Yk3xGWXIBFJcpnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444891; c=relaxed/simple;
-	bh=OG5B5PQ05uKmKSRdIZOTWyQ7mU/To8TRZjFZrsJMyPg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MFX7gFMb/7lLkBOy2Vumvy6R5luz2Oeewf0M4kw7c1f8LJwiKyHOVVAJ1oO7sHyTEY08U6F/9Ic7PKz7WsRwxzS91PuTBkAp3drb2Ku05fDcHT0Al+po2mYG5OHqR3fWtIuKsOLwRGyEicG9lPkQXoiY0ELUe+TOVFrg1HVHjw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Ytspr0pwDz4f3jsy;
-	Thu, 13 Feb 2025 19:07:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 31F321A092F;
-	Thu, 13 Feb 2025 19:08:04 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl+T0q1npo7oDg--.15155S3;
-	Thu, 13 Feb 2025 19:08:04 +0800 (CST)
-Subject: Re: [PATCH v2] blk-cgroup: improve policy registration error handling
-To: Chen Linxuan <chenlinxuan@uniontech.com>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Wen Tao <wentao@uniontech.com>, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <D8F5396BD45124E9+20250213033545.993799-2-chenlinxuan@uniontech.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <89cadf52-236f-1e0b-cff8-dcff16296e62@huaweicloud.com>
-Date: Thu, 13 Feb 2025 19:08:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1739444919; c=relaxed/simple;
+	bh=EOBiQL2i0ZXLCxz8ZRPi5i6PvJHEc5UOe7SQ5492xeI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d+2L9N6nydX+bzPd4IzyRa0w4d/fddKA1FixtByWXCInUQvXrH/OqSYcwJb2mJnjAHMitT6MDwm00q73VeMf41YFOTUUo5OjhkRAHuHjQAKFUrPLvtf+fnC9TTtKQwvHoBKyfe88bufamotbvnRmLVNx5afil6wcurac/gKPw1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NIgwJXjN; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=DznlSHtJ15TXUJBEI7kzkOuDVk92KIybVPX2ql7XlRc=; b=NIgwJXjNiNh4TOL4r74Z1Wm82s
+	RlWiIxFQXEyRa2Kj2qNTxUQPo+yE0teNHh0p0/cCtJcFVLN6euqFY25Bcsrl9tc7nc4Dnl8AkAOi7
+	pwqF56OvbU2wpgaLfVYAXFi0DqKkgBeY2Cf5NpBOYtA+ua9X9haOnrxZtChDx80mMmoSAShRawLxD
+	juem+hTJD98dXAd6/gYxoVo+dftZbjzxjI/9TmoyZ2jNndcc/CWQ+sxCzEosVrypFzPypl3/rpZKv
+	p3gIRUGoT4/iOxLpD/KQyTAOVqZXZ7s7u59v47O6Csg9VfiYNZILJK0C9I1E5wzKIEX4K4rfH4L5+
+	hoyqfPjA==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tiX4x-00AAdl-0g; Thu, 13 Feb 2025 12:08:28 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
+  Bernd Schubert <bschubert@ddn.com>,  Joanne Koong
+ <joannelkoong@gmail.com>
+Subject: Re: [PATCH v4] fuse: add new function to invalidate cache for all
+ inodes
+In-Reply-To: <Z60bD3C_p_PHao0n@dread.disaster.area> (Dave Chinner's message of
+	"Thu, 13 Feb 2025 09:05:03 +1100")
+References: <20250211092604.15160-1-luis@igalia.com>
+	<Z6u5dumvZHf_BDHM@dread.disaster.area> <875xlf4cvb.fsf@igalia.com>
+	<Z60bD3C_p_PHao0n@dread.disaster.area>
+Date: Thu, 13 Feb 2025 11:08:28 +0000
+Message-ID: <87mseqcdar.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <D8F5396BD45124E9+20250213033545.993799-2-chenlinxuan@uniontech.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl+T0q1npo7oDg--.15155S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw1kXFW5JFW5tw45AF18Zrb_yoW5Jw4UpF
-	W3K3sxCryktF1xuFsxK3WUtF1rJanYqw4UG345X3WSyr4IyrZ5Kw1jy3WkXFWxurn7JF45
-	tFZ0qay0kF1Ut37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-ÔÚ 2025/02/13 11:35, Chen Linxuan Ð´µÀ:
-> This patch improve the returned error code of blkcg_policy_register().
-> 
-> 1. Move the validation check for cpd/pd_alloc_fn and cpd/pd_free_fn
->     function pairs to the start of blkcg_policy_register(). This ensures
->     we immediately return -EINVAL if the function pairs are not correctly
->     provided, rather than returning -ENOSPC after locking and unlocking
->     mutexes unnecessarily.
-> 
->     Those locks should not contention any problems, as error of policy
->     registration is a super cold path.
-> 
-> 2. Return -ENOMEM when cpd_alloc_fn() failed.
-> 
-> Co-authored-by: Wen Tao <wentao@uniontech.com>
-> Signed-off-by: Wen Tao <wentao@uniontech.com>
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> ---
-> 
-> v1->v2: Also change the return value to -ENOMEM from error path err_free_cpds
-> 
-> ---
->   block/blk-cgroup.c | 22 ++++++++++++----------
->   1 file changed, 12 insertions(+), 10 deletions(-)
+On Thu, Feb 13 2025, Dave Chinner wrote:
+
+> On Wed, Feb 12, 2025 at 11:32:40AM +0000, Luis Henriques wrote:
+>> On Wed, Feb 12 2025, Dave Chinner wrote:
+>>=20
+>> > [ FWIW: if the commit message directly references someone else's
+>> > related (and somewhat relevant) work, please directly CC those
+>> > people on the patch(set). I only noticed this by chance, not because
+>> > I read every FUSE related patch that goes by me. ]
+>>=20
+>> Point taken -- I should have included you on CC since the initial RFC.
+>>=20
+>> > On Tue, Feb 11, 2025 at 09:26:04AM +0000, Luis Henriques wrote:
+>> >> Currently userspace is able to notify the kernel to invalidate the ca=
+che
+>> >> for an inode.  This means that, if all the inodes in a filesystem nee=
+d to
+>> >> be invalidated, then userspace needs to iterate through all of them a=
+nd do
+>> >> this kernel notification separately.
+>> >>=20
+>> >> This patch adds a new option that allows userspace to invalidate all =
+the
+>> >> inodes with a single notification operation.  In addition to invalida=
+te
+>> >> all the inodes, it also shrinks the sb dcache.
+>> >
+>> > That, IMO, seems like a bit naive - we generally don't allow user
+>> > controlled denial of service vectors to be added to the kernel. i.e.
+>> > this is the equivalent of allowing FUSE fs specific 'echo 1 >
+>> > /proc/sys/vm/drop_caches' via some fuse specific UAPI. We only allow
+>> > root access to /proc/sys/vm/drop_caches because it can otherwise be
+>> > easily abused to cause system wide performance issues.
+>> >
+>> > It also strikes me as a somewhat dangerous precendent - invalidating
+>> > random VFS caches through user APIs hidden deep in random fs
+>> > implementations makes for poor visibility and difficult maintenance
+>> > of VFS level functionality...
+>>=20
+>> Hmm... OK, I understand the concern and your comment makes perfect sense.
+>> But would it be acceptable to move this API upper in the stack and make =
+it
+>> visible at the VFS layer?  Something similar to the 'drop_caches' but wi=
+th
+>> a superblock granularity.  I haven't spent any time thinking how could
+>> that be done, but it wouldn't be "hidden deep" anymore.
 >
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> I'm yet to see any justification for why 'user driven entire
+> filesystem cache invalidation' is needed. Get agreement on whether
+> the functionality should exist first, then worry about how to
+> implement it.
+>
+>> >> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> >> ---
+>> >> * Changes since v3
+>> >> - Added comments to clarify semantic changes in fuse_reverse_inval_in=
+ode()
+>> >>   when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+>> >> - Added comments to inodes iteration loop to clarify __iget/iput usage
+>> >>   (suggested by Joanne)
+>> >> - Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+>> >>   fuse_ilookup() directly (suggested by Joanne)
+>> >>=20
+>> >> (Also dropped the RFC from the subject.)
+>> >>=20
+>> >> * Changes since v2
+>> >> - Use the new helper from fuse_reverse_inval_inode(), as suggested by=
+ Bernd.
+>> >> - Also updated patch description as per checkpatch.pl suggestion.
+>> >>=20
+>> >> * Changes since v1
+>> >> As suggested by Bernd, this patch v2 simply adds an helper function t=
+hat
+>> >> will make it easier to replace most of it's code by a call to function
+>> >> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merg=
+ed.
+>> >>=20
+>> >> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbi=
+t.com
+>> >
+>> > That doesn't make the functionality any more palatable.
+>> >
+>> > Those iterators are the first step in removing the VFS inode list
+>> > and only maintaining it in filesystems that actually need this
+>> > functionality. We want this list to go away because maintaining it
+>> > is a general VFS cache scalability limitation.
+>> >
+>> > i.e. if a filesystem has internal functionality that requires
+>> > iterating all instantiated inodes, the filesystem itself should
+>> > maintain that list in the most efficient manner for the filesystem's
+>> > iteration requirements not rely on the VFS to maintain this
+>> > information for it.
+>>=20
+>> Right, and in my use-case that's exactly what is currently being done: t=
+he
+>> FUSE API to invalidate individual inodes is being used.
+>>
+>> This new
+>> functionality just tries to make life easier to userspace when *all* the
+>> inodes need to be invalidated. (For reference, the use-case is CVMFS, a
+>> read-only FS, where new generations of a filesystem snapshot may become
+>> available at some point and the previous one needs to be wiped from the
+>> cache.)
+>
+> But you can't actually "wipe" referenced inodes from cache. That is a
+> use case for revoke(), not inode cache invalidation.
 
-> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-> index 9ed93d91d754..2609f7294427 100644
-> --- a/block/blk-cgroup.c
-> +++ b/block/blk-cgroup.c
-> @@ -1727,27 +1727,27 @@ int blkcg_policy_register(struct blkcg_policy *pol)
->   	struct blkcg *blkcg;
->   	int i, ret;
->   
-> +	/*
-> +	 * Make sure cpd/pd_alloc_fn and cpd/pd_free_fn in pairs, and policy
-> +	 * without pd_alloc_fn/pd_free_fn can't be activated.
-> +	 */
-> +	if ((!pol->cpd_alloc_fn ^ !pol->cpd_free_fn) ||
-> +	    (!pol->pd_alloc_fn ^ !pol->pd_free_fn))
-> +		return -EINVAL;
-> +
->   	mutex_lock(&blkcg_pol_register_mutex);
->   	mutex_lock(&blkcg_pol_mutex);
->   
->   	/* find an empty slot */
-> -	ret = -ENOSPC;
->   	for (i = 0; i < BLKCG_MAX_POLS; i++)
->   		if (!blkcg_policy[i])
->   			break;
->   	if (i >= BLKCG_MAX_POLS) {
->   		pr_warn("blkcg_policy_register: BLKCG_MAX_POLS too small\n");
-> +		ret = -ENOSPC;
->   		goto err_unlock;
->   	}
->   
-> -	/*
-> -	 * Make sure cpd/pd_alloc_fn and cpd/pd_free_fn in pairs, and policy
-> -	 * without pd_alloc_fn/pd_free_fn can't be activated.
-> -	 */
-> -	if ((!pol->cpd_alloc_fn ^ !pol->cpd_free_fn) ||
-> -	    (!pol->pd_alloc_fn ^ !pol->pd_free_fn))
-> -		goto err_unlock;
-> -
->   	/* register @pol */
->   	pol->plid = i;
->   	blkcg_policy[pol->plid] = pol;
-> @@ -1758,8 +1758,10 @@ int blkcg_policy_register(struct blkcg_policy *pol)
->   			struct blkcg_policy_data *cpd;
->   
->   			cpd = pol->cpd_alloc_fn(GFP_KERNEL);
-> -			if (!cpd)
-> +			if (!cpd) {
-> +				ret = -ENOMEM;
->   				goto err_free_cpds;
-> +			}
->   
->   			blkcg->cpd[pol->plid] = cpd;
->   			cpd->blkcg = blkcg;
-> 
+I guess the word "wipe" wasn't the best choice.  See below.
+
+>> > I'm left to ponder why the invalidation isn't simply:
+>> >
+>> > 	/* Remove all possible active references to cached inodes */
+>> > 	shrink_dcache_sb();
+>> >
+>> > 	/* Remove all unreferenced inodes from cache */
+>> > 	invalidate_inodes();
+>> >
+>> > Which will result in far more of the inode cache for the filesystem
+>> > being invalidated than the above code....
+>>=20
+>> To be honest, my initial attempt to implement this feature actually used
+>> invalidate_inodes().  For some reason that I don't remember anymore why I
+>> decided to implement the iterator myself.  I'll go look at that code aga=
+in
+>> and run some tests on this (much!) simplified version of the invalidation
+>> function your suggesting.
+>
+> The above code, while simpler, still doesn't resolve the problem of
+> invalidation of inodes that have active references (e.g. open files
+> on them). They can't be "invalidated" in this way - they can't be
+> removed from cache until all active references go away.
+
+Sure, I understand that and that's *not* what I'm trying to do.  I guess
+I'm just failing to describe my goal.  If there's a userspace process that
+has a file open for an inode that does not exist anymore, that process
+will continue using it -- the user-space filesystem will have to deal with
+that.
+
+Right now, fuse allows the user-space filesystem to notify the kernel that
+*one* inode is not valid anymore.  This is a per inode operation.  I guess
+this is very useful, for example, for network filesystems, where an inode
+may have been deleted from somewhere else.
+
+However, when user-space wants to do this for all the filesystem inodes,
+it will be slow.  With my patch all I wanted to do is to make it a bit
+less painful by moving the inodes iteration into the kernel.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> i.e. any operation that is based on the assumption that we can
+> remove all references to inodes and dentries by walking across them
+> and dropping cache references to them is fundamentally flawed. To do
+> this reliably, all active references have to be hunted down and
+> released before the inodes can be removed from VFS visibility. i.e.
+> the mythical revoke() operation would need to be implemented for
+> this to work...
+>
+> -Dave.
+>
+> --=20
+> Dave Chinner
+> david@fromorbit.com
 
 
