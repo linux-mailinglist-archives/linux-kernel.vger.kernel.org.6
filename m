@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-512906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88812A33F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:26:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE285A33F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220F2188AD7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4227116706F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650F221575;
-	Thu, 13 Feb 2025 12:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3618221569;
+	Thu, 13 Feb 2025 12:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="03wE78lF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="46pwfePF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="XJ9gxEyl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U6wqzpa4"
+Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C566722154D;
-	Thu, 13 Feb 2025 12:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6043227EB4;
+	Thu, 13 Feb 2025 12:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449560; cv=none; b=bAAZFdi1616zi0VbZVABvdj46ClwD5yoVFzcDN7LY+h+Sh8BQa0B0XrzLPx7QYhnJNr16NcmE8BFuSZ+WsYOkoniuN9ijiFLpa+gj5Fv45rmd3Vpi6gZFHBwiWlWOY4fbfWOIqJa0qNO6gXJQ9jqZqRklXI7y04TmPpPbgqQrXc=
+	t=1739449599; cv=none; b=ORfj5pbVJAvCNHqqIEiTjYCcL0gwrztecJKmFSjGTj+uQF2+K/6CQKddw1qJUPFOy6YWm12Kh6B+Ur1AYBY8bN1M9dXtX8+CuPDdXxpKdukeYVCmSyHgtyqu2+bygVFdY7etmu7De7F5A+e2CQvjwi3NQPrzCtgRlxfgYYe/MfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449560; c=relaxed/simple;
-	bh=FyuIqyRwY5pDKpb7ccdF0fQ5vbPAdd5lkH6XBrhkYQo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=j7ObYLZfLSl59Y4i/WYiJiuV6yykDTfM09FXbWj3D+qBuWAtPAenq7kdlAgW/fPeb6TZV1vNmde1tGIr6ryqLuniQxWf+OGrTmDp8LNIsV19x+9HzzspAJMbeaeAYu67VK5bWvJnZg4OmTXU17bo0XBNOfTUVK0OL+XUIUO9xzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=03wE78lF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=46pwfePF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Feb 2025 12:25:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739449556;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vPfERE/UbKRR3WrPrpYUc66xEFupz7II8bdHYN9nBvA=;
-	b=03wE78lFIaOm3LbkD8reZ/VITLra6NjdaPYGCIShJlAOlLSJhUdZyU9Z+bcDKWfCa20S8F
-	j/Os0oQ9corM+SQRiSvozUyv9O7j2kC1JaVfRkV+KaRfj35uxQwh47SAca+IPhd2CaFbM5
-	13UD2SPWz3HuQHtDIQsOBzcQuudJw+/0wLGhNpq4+6I1PA5FH8BmA5aFxI99FTEOjH3gLM
-	ayY38c3CVUE9LIDHdFceQ2sLrqFVY/hXb6UTurfdSkNZQ5LVTHWke8QUetkDXhodfZpw9c
-	jNvZWZvhF/Y35yHoYYtocGjncaRlxBfd9tXC/rXs8v96hBgIkBfzazAZFO52zw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739449556;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vPfERE/UbKRR3WrPrpYUc66xEFupz7II8bdHYN9nBvA=;
-	b=46pwfePFhpMxVHBwp1NsiDTIe8q5JkGFZpf5+c0lP0aO/A9O9mBNQ/gzKSoDMOFTqgrkKd
-	15A3JrFbWwEIe6Bg==
-From: "tip-bot2 for Anup Patel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
-Cc: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250209041655.331470-7-apatel@ventanamicro.com>
-References: <20250209041655.331470-7-apatel@ventanamicro.com>
+	s=arc-20240116; t=1739449599; c=relaxed/simple;
+	bh=VInbsgNGFQ9g5u5UJkhY2KRHZMYXsIXNSyQ4WcgGy8Q=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bI1qjVnclT7HIXTEM0MUrr2ciguhDoXdAgpHRv5iD4RdhVaXuXzRXZx4y81Av9uJ/1AJis7yv97BlibpDYECO5s4cmF1Po1wnj3p0BscWMxWuBn69XGpv/F7EMDLPXU1ZX0QgyE/8xjTe8me50+bhyH9DYsMThH76FwJ65Gq1zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=XJ9gxEyl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U6wqzpa4; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailflow.phl.internal (Postfix) with ESMTP id 4AE72200B56;
+	Thu, 13 Feb 2025 07:26:35 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Thu, 13 Feb 2025 07:26:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739449595;
+	 x=1739456795; bh=FR8peTn+6BBmPLk5iID+tCE6/pHRxsIv4lGcTzblwoI=; b=
+	XJ9gxEyl/COcD8OPpQMR9rJB7dPDYoEPGlnqma1JfToEYYblKGjYlcjWfV5IH5zP
+	zIm6c9uK9RdpTR7BXw61YA5CiPhSRKJprszaWchZqDVqUecm3QzNc+IqCsP6SCjX
+	V17Ljs/L+CMIgmETqwDCM4UlHgMsn9r2r6NMLlWuW5xnK+LoOEmNprP53GmBUsi1
+	NC0cGfFVEuBP7ng5WlzAU0ZpKEdc9nQwsgpDc379Unu41kJ5+1cYYAqnOYZRhgM/
+	SYxHs7DGUSCMP/W+dsCeWqS6cSN/KIERYSnztWZ6uz5Vf09uBu+kSW2Urk0eW/Ec
+	Yw+e7ZtwSBvPVWpho1fEbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739449595; x=
+	1739456795; bh=FR8peTn+6BBmPLk5iID+tCE6/pHRxsIv4lGcTzblwoI=; b=U
+	6wqzpa4uiTMx3q64AWGaIGQS+6SOhDEGiwv4mp84wMhNm+gigOYDGiSJenR6YIP3
+	BM3B4gf7ER0A21xQIXdTbSxXiFUnbrZQPKfY7UyXEzbhAHWbwnkypmbWRPkKDRaR
+	36HuPHxg91nZ6dHfjA5uF6W800rVRZ7rkcvd6TU1NNDFB3ppZiIM+KLDzgvMu4g3
+	FvPxdqGdPDPgYOoV2lH4NG3H9wOjPhspXjxHIfZ2h1ENTNUzN8tZiyJDjhH9QGe7
+	0EjrMHu85tXf3pyho3ylq4wPwc4WaJgxmz1gYs5+PLf50Ea1fV3I10zSdewMErw4
+	YpEqh0ynM2Ko812HwCkNA==
+X-ME-Sender: <xms:-eStZ08ek9ZgBsHSt2yK2pwLtAhTnTAkTCZc9mWvlQfn38LApMtCPw>
+    <xme:-eStZ8v9qERfnFnuuTNNVUySi9zRLQXTiH7I2nnC_q2dXF_qIwxbLfqskJhJjjIls
+    lYfS6oFnwn9dBL9t08>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieejiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeg
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlih
+    gsrhgvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhm
+    pdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtph
+    htthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghp
+    thhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdprhgtphhtthhope
+    guihgrnhguvghrshestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepshhimhhonhgr
+    sehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpd
+    hrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:-eStZ6DJfAjQ14kfAgTdQqyH99WfhZR92CsV1VKNO6MOCXPu35J6BQ>
+    <xmx:-eStZ0cFq550de-DZ_fy71mFwdmBY8g-Xn22ymThnA5StsTXfxd-BA>
+    <xmx:-eStZ5PNRuFuEcjglGcWddwoiAcavhMQqT8AyjktcsY4fTR5FEQZ3A>
+    <xmx:-eStZ-k1QgZGIj34ELqoUXB0YfqzMlj9CYfHAJfHaJFP44wx8Nqs-w>
+    <xmx:--StZyM9KidzQnErUrQeh3H59EWqCYDr1O0-6JJzdwBpqmtnp_ARQlyN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AD13F2220072; Thu, 13 Feb 2025 07:26:33 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173944955351.10177.11768052833964210440.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Date: Thu, 13 Feb 2025 13:26:12 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Dave Ertman" <david.m.ertman@intel.com>,
+ "Ira Weiny" <ira.weiny@intel.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Conor.Dooley" <conor.dooley@microchip.com>,
+ "Daire McNamara" <daire.mcnamara@microchip.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Doug Anderson" <dianders@chromium.org>,
+ "Andrzej Hajda" <andrzej.hajda@intel.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>,
+ "laurent.pinchart" <Laurent.pinchart@ideasonboard.com>,
+ "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Abel Vesa" <abelvesa@kernel.org>, "Peng Fan" <peng.fan@nxp.com>,
+ "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>,
+ "Kevin Hilman" <khilman@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, platform-driver-x86@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Message-Id: <73c1ab6b-fd5e-47e3-8815-8f74758535f1@app.fastmail.com>
+In-Reply-To: 
+ <20250211-aux-device-create-helper-v3-7-7edb50524909@baylibre.com>
+References: 
+ <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+ <20250211-aux-device-create-helper-v3-7-7edb50524909@baylibre.com>
+Subject: Re: [PATCH v3 7/7] clk: amlogic: axg-audio: use the auxiliary reset driver -
+ take 2
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Tue, Feb 11, 2025, at 18:28, Jerome Brunet wrote:
+>
+>  I also think this is more readeable and maintainable than a bunch of
+>  'default CONFIG_FOO if CONFIG_FOO' for CONFIG_RESET_MESON_AUX. This approach
+>  also would have several pitfall, such as picking the value of the first config
+>  set or the config of RESET_MESON_AUX staying to 'n' if CONFIG_FOO is turned on
+>  with menuconfig.
 
-Commit-ID:     4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b
-Gitweb:        https://git.kernel.org/tip/4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b
-Author:        Anup Patel <apatel@ventanamicro.com>
-AuthorDate:    Sun, 09 Feb 2025 09:46:50 +05:30
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 13 Feb 2025 13:18:54 +01:00
+I still think you should just drop the 'imply' line, all it does it
+force reviewers to double-check that you didn't make a mistake
+here, so it's a waste of time.
 
-genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
-
-CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS is not used anymore, hence remove it.
-
-Fixes: f94a18249b7f ("genirq: Remove IRQ_MOVE_PCNTXT and related code")
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250209041655.331470-7-apatel@ventanamicro.com
----
- kernel/irq/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-index 5432418..875f25e 100644
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -31,10 +31,6 @@ config GENERIC_IRQ_EFFECTIVE_AFF_MASK
- config GENERIC_PENDING_IRQ
- 	bool
- 
--# Deduce delayed migration from top-level interrupt chip flags
--config GENERIC_PENDING_IRQ_CHIPFLAGS
--	bool
--
- # Support for generic irq migrating off cpu before the cpu is offline.
- config GENERIC_IRQ_MIGRATION
- 	bool
+    Arnd
 
