@@ -1,79 +1,126 @@
-Return-Path: <linux-kernel+bounces-512270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A3A336BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:14:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71776A336BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11D6A166CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CEB166D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B597C2063E1;
-	Thu, 13 Feb 2025 04:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D456B1F8677;
+	Thu, 13 Feb 2025 04:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulJj7GnK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="FuftZmEp"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BAF205E0B;
-	Thu, 13 Feb 2025 04:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739420073; cv=none; b=Tchgxe0f2LHGw5RgqCmOzXRESZeYPeNeJWLFoa7cJ9ZkfoEKWw3I94saZTEi6XNac8tDOWudn6+1Pv4eRwo512EgA5tzVsC7GuKgB+IJomGpUHeF6e0FfhiEYbSIjfFslpdN6xrbkzIsYvL207M4MT9+BLOvEVarkf8SbG7VJTs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739420073; c=relaxed/simple;
-	bh=58Bzdokx7tiueOMeiMxU3AG2JHoBNNh+X3sxXba91X4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hRAsQhljv2MqEvANeDnuHENjluHt+eM2Zc+1hT8UWhzIaZrjCQxGj5D3ZGE84XISkU/pKtThPGIaBl3S0BAkHnBhB7QFTQX6j6298US6BCwhT7pD+nVmAJWJmKJAqQrFkFyoKXj4ytR7fq/ZFue+FFvY2t0NlIMsyf1vyaD+yTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulJj7GnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B53C4CED1;
-	Thu, 13 Feb 2025 04:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739420072;
-	bh=58Bzdokx7tiueOMeiMxU3AG2JHoBNNh+X3sxXba91X4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ulJj7GnKRHEI1Hvnm/5qQ9PTuZ0Tta8Fv/0HhTDKNF/GVk6xYr/QUFEJw0WEEmKE7
-	 MqYFu3VNNbNQjq6VfOMk9SWHxt5ZvQ1L3niwLnMCR3K9t7LjmNNPGVmbRF6xqm2YAp
-	 uJDo8xp4FuFPOkfIUTViOPlPGdrEILQyw2kmSDguLdEiFAv9wVLM+MER2OE1ef03Ea
-	 sZcILjKUw9JLgl9sOnDe7UNi0oI6txmGg+bjZzb6fqAHrRT1ILky2sfjbSIPtoJfNh
-	 PxZSXb4Ux/4phZlgqLDoWQmbDn4mkd1JVKkASe6m/dZ4GkGKCrJS20P7xw1z/wfxBp
-	 N/xS2VQ108smw==
-Date: Wed, 12 Feb 2025 20:14:30 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Julien Panis <jpanis@baylibre.com>,
- Jacob Keller <jacob.e.keller@intel.com>, danishanwar@ti.com,
- s-vadapalli@ti.com, srk@ti.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net 1/3] net: ethernet: ti: am65-cpsw: fix memleak in
- certain XDP cases
-Message-ID: <20250212201430.5bfaecc7@kernel.org>
-In-Reply-To: <20250210-am65-cpsw-xdp-fixes-v1-1-ec6b1f7f1aca@kernel.org>
-References: <20250210-am65-cpsw-xdp-fixes-v1-0-ec6b1f7f1aca@kernel.org>
-	<20250210-am65-cpsw-xdp-fixes-v1-1-ec6b1f7f1aca@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7982870810;
+	Thu, 13 Feb 2025 04:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739420146; cv=pass; b=NbEFsCR5EoGC916sU0DcOvFIQV3ln+RMnCDLvhXEIuETY5oyPtB7fT/iBZJw9B3gFEbtSNHZigOUvb8xYvhLPmq3kOOEhPeA0C+NWrVNRLqctLIpqf+DFvFIwCkOv9wdYOX/kf5ETOK04n7sNMdSYdCM7dTIJvjeLAqNed7IMIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739420146; c=relaxed/simple;
+	bh=qRLrJsVRTZ+WWw41jpvi8qCG0lbc4O9YO80RcNk63B4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IMW5eKkkXYp47n2fdjvr3lSg93zVaS/9M59bHh6OphHpH61iOO1aDYccTvBt4UnZqbwzFID5YkDyNNRRkUEa1z9fU0GER2Vw5b7RYuBKnSsPdXl8TJVtdt3WucNYCSbYPzfspjjFmLtOx3PHE+lcVp2gGawgahkHR8NfmhBWlyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=FuftZmEp; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739420131; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d4jhk0HkQAXO2XIk3inKmktR6ewF51lw7GQmceAe3sExk1wLkQV2sBJm9XKkJHVriIpO/bRvdFzIgj4x1r6O6yZHK8rz2vIfIZBSh37cfyOFaKqyLqDX9+Jl2bQ1gpRtQEMoTfread7DvwUj7j+vKPQ3ReVEAbFPtGw6N8oxNKc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739420131; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4ToEDu8hKvNWByGuJPfWdRectEFq8etbekmoQIvQ/no=; 
+	b=BcHTkYkzkbodpHQZmPBGbrE4EowoaaZYrQKEQSiB3Sw7/TShji5L9Rgho18cEiXeP7wYnTuz+6+qdXFQE4QLVOPWd44XUTLepV3rZ2LI8i0J/FYdS++AtXXH8XveIENsVO6WhXt6Y21WO/xogFY8dg6R8wlC94nW3ZESkzkScYE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739420131;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=4ToEDu8hKvNWByGuJPfWdRectEFq8etbekmoQIvQ/no=;
+	b=FuftZmEpeeUoK6b6YLs4+nqG8RXHjyVjKQeLf2n0dIMs3dp6efoVs4tJlF/r5usH
+	y9t/EWGFND8nWjMIjey/G/7fZDNkWEOTwa5GfJV03tuykvyFEstxBBWAn2+0yK6YVro
+	evj5eR9fOv1OE7gANKRwHDcT3HGX9ALIteB24MMc=
+Received: by mx.zohomail.com with SMTPS id 1739420128330834.3986541056635;
+	Wed, 12 Feb 2025 20:15:28 -0800 (PST)
+Message-ID: <cf0421d6-f002-4dc1-b3cd-5b535d79cc1d@zohomail.com>
+Date: Thu, 13 Feb 2025 12:15:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 7/7] cxl/region: Drop goto pattern of
+ construct_region()
+To: Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: dave@stgolabs.net, alison.schofield@intel.com, vishal.l.verma@intel.com,
+ ira.weiny@intel.com, dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250211075727.351895-1-ming.li@zohomail.com>
+ <20250211075727.351895-8-ming.li@zohomail.com>
+ <20250211173606.00004d33@huawei.com>
+ <d848f0ab-5055-4cda-8531-258c6fa7280e@intel.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <d848f0ab-5055-4cda-8531-258c6fa7280e@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112271d77f85e48e997955392a03b00007472e1e0cd7a6a76749b207e70f14a6877e49e11328c65ae00:zu08011227318bf9d040207c88550d2aa200000ac7a2c6c48efcceab0d99b60c9ea3af0c6a8e322a0f936ac5:rf0801122debabfad60d5f832903152e720000189c8cbc9a0a94ded23112e2848deb9ad4a3e67db15163b25a5441e5ff000f:ZohoMail
+X-ZohoMailClient: External
 
-On Mon, 10 Feb 2025 16:52:15 +0200 Roger Quadros wrote:
-> -		/* Compute additional headroom to be reserved */
-> -		headroom = (xdp.data - xdp.data_hard_start) - skb_headroom(skb);
-> -		skb_reserve(skb, headroom);
-> +		headroom = xdp.data - xdp.data_hard_start;
-> +	}
+On 2/12/2025 5:24 AM, Dave Jiang wrote:
+>
+> On 2/11/25 10:36 AM, Jonathan Cameron wrote:
+>> On Tue, 11 Feb 2025 15:57:27 +0800
+>> Li Ming <ming.li@zohomail.com> wrote:
+>>
+>>> Some operations need to be procted by the cxl_region_rwsem in construct
+>>> region(). Currently, construct_region() uses down_write() and up_write()
+>>> for the cxl_region_rwsem, so there is a goto pattern after down_write()
+>>> invoked to release cxl_region_rwsem.
+>>>
+>>> construct region() can be optimized to remove the goto pattern. The
+>>> changes are creating a new function called __construct_region() which
+>>> will include all checking and operations protected by the
+>>> cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
+>>> and up_write() in __construct_region().
+>>>
+>>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+>>> ---
+>>>  drivers/cxl/core/region.c | 71 +++++++++++++++++++++------------------
+>>>  1 file changed, 39 insertions(+), 32 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index 36f3771818d3..170278bdcedc 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -3217,49 +3217,31 @@ static int match_region_by_range(struct device *dev, const void *data)
+>>>  	return rc;
+>>>  }
+>>>  
+>>> -/* Establish an empty region covering the given HPA range */
+>>> -static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>>> -					   struct cxl_endpoint_decoder *cxled)
+>>> +static int __construct_region(struct cxl_region *cxlr,
+>> This is only factoring out part, so I'm not sure the naming makes sense.
+>> I don't have a better name however as this is doing various different things...
+>> setup_region() doesn't feel right either...
+> setup_auto_region()? construct_auto_region()?
+>
+> DJ
 
-I'm gonna do a minor touch up here and set the headroom in "else" hope
-you don't mind. Easier to read the code if the init isnt all the way up
-at definition. Also that way reverse xmas tree is maintained.
+Will use construct_auto_region() in V2 if no a better name, thanks for that.
+
+
+Ming
+
 
