@@ -1,137 +1,93 @@
-Return-Path: <linux-kernel+bounces-513058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D073A34139
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:03:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506CCA34133
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08F03A62BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2FC31890A5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212B22222A6;
-	Thu, 13 Feb 2025 13:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EF12222D2;
+	Thu, 13 Feb 2025 13:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2tvBoQ2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKDpKnpQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CA821D3E2;
-	Thu, 13 Feb 2025 13:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3862222CA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455106; cv=none; b=pq87kIozWLIjSabLfEGRnmNvK9+qjXqLmSPF4Z6cHrMv2+RRw5BEIHK6yPvg9L1jbX7HauxUkrj2CVhoZFDU3v+4jpAN4nrlwg0m+gMthSxtoTKz0LVvBAQeiY9wGRRfAjnuCu04nUwKuI7cxMhWYq4zAPTh4PsiHQp5NW0VEXI=
+	t=1739455150; cv=none; b=T/QfB+rGKu+Chib1siEcwRyCjOtFI6oIR02W6CyAxCI2h9TY5KE3C5saMRGw3pLDKH4BoL5ONHrdxtwCQsEkNx7n14O9o1eBgp3qIVVQucdVl+uCmPbt9HRwKQZAuQKsDf3LeqaYm6QfDDLba8Ipz+cAQdf09eL90k9iGOG9w5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455106; c=relaxed/simple;
-	bh=cWTP3mIm51t7PN0mcXoRdd1yxkp6VaJwokjt7+D96Yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjQxdeKp6Vo4J4dZJ2fkRF9GD+RMhTiwjmEFG4BZCTjfSrIUgcyELI5o7QLyHYN9S/GCFyLLMNeCKtsgt07GkZaewUWcpXiRJkp6KsPnOHOmKgoHnrb9KCbtSidCF0y4vYwwln5gKvUIoy3joAA46eeG/7vB2sSjK3PZlQJk6VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2tvBoQ2; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739455105; x=1770991105;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cWTP3mIm51t7PN0mcXoRdd1yxkp6VaJwokjt7+D96Yw=;
-  b=W2tvBoQ2uHGHcuubhSbFAxZtl6xXy7jV1euffhQiCht/95fSDz3CByWZ
-   5EnRuwv6zFPhnlQNFXqaB/uQ+zfEjNdcSlGG+Qpvq2bGAjEdHViUosGru
-   6ImQGheljB/VYznZ3NdJeTyKHIn0AKoRKwq6V+XMz/0J3+N4gxlOCA852
-   boPkUDEr0bdUMptFbyT+Kcn3lfscBGmqjSM0I8amDMtdRAVvYZcYoxTwI
-   GwZmOrZhYssE0yFnITm0o2j1zadvYhTDigM20GN/51MpB+/z2G+hLJf9E
-   p3SBhXnb5EMjbLjv+1Qzy5ElY/AfUaoi5CXMaptMqZdIEnNHXZ6Qg5ToP
-   g==;
-X-CSE-ConnectionGUID: Ih5pRCYtRaSyaUm53nG8MQ==
-X-CSE-MsgGUID: QYvM81YySBaok5eS0eT8Gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50802881"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="50802881"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:58:24 -0800
-X-CSE-ConnectionGUID: gW+iue03QJSLTldzvY4IqQ==
-X-CSE-MsgGUID: BwWktHwtRHymN44ATEq/uA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="144097026"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa001.fm.intel.com with SMTP; 13 Feb 2025 05:58:20 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Feb 2025 15:58:19 +0200
-Date: Thu, 13 Feb 2025 15:58:19 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Fedor Pchelkin <boddah8794@gmail.com>
-Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Saranya Gopal <saranya.gopal@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mark Pearson <mpearson@squebb.ca>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] usb: typec: ucsi: increase timeout for PPM reset
- operations
-Message-ID: <Z636e6Vdr4FC7HbQ@kuha.fi.intel.com>
-References: <20250206184327.16308-1-boddah8794@gmail.com>
- <20250206184327.16308-3-boddah8794@gmail.com>
+	s=arc-20240116; t=1739455150; c=relaxed/simple;
+	bh=86lSLlfSnH3gLlHMarEFFkwpZl7BtgL5BOo2fiEcAXg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BdhJnX9NeNWyG7WNmj67R29i9NdKo2A+PkFB8mTSzq1wYsu2Jmr9eovSXEUcfOooq6uPfpiJoQ6HZXelndXa3sE63mRf6kqsRe7NLkWAg/TCuGPTA2BictMqoFfpiwZz45SwuYS0oBGUNtExoNPnLdqQwoyMPilil2oWW1k5RNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKDpKnpQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3DDBC4CED1;
+	Thu, 13 Feb 2025 13:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739455149;
+	bh=86lSLlfSnH3gLlHMarEFFkwpZl7BtgL5BOo2fiEcAXg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TKDpKnpQZZLPLJkxSAp4NQrHabwTbI+1k6690/Wd6bz1VqhXT3WrSaJBXDJXe7n3V
+	 FAUMe0lEskBGSiui5Jd3oo3DNpCoZ3SzpqtjT8sNEYeLFc/XoMGz9vcOWDatH00MUF
+	 HQBIdOl2MyiU1/KXWpnCRdKFYXI0nqUfDnC9o9FR0mgOXL5loe+bISDAPfYsm2aeu0
+	 bdITb5rssub6wlOgZEM1Gcw6dhOb8KGXmUh8i9dEXTkpamTvbwbH7qky0fGGzRg/vj
+	 Gw9P/KhohA6y5uvdJUXmmdzWSbCmgzvTNVPOm3TZNCHsaOg+5vvBaeVajR3YPePneS
+	 r6IHchmUPbuZw==
+From: Will Deacon <will@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	ionela.voinescu@arm.com,
+	sudeep.holla@arm.com,
+	catalin.marinas@arm.com,
+	Beata Michalska <beata.michalska@arm.com>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	sumitg@nvidia.com,
+	ptsm@linux.microsoft.com
+Subject: Re: [PATCH] arm64: amu: Delay allocating cpumask for AMU FIE support
+Date: Thu, 13 Feb 2025 13:59:01 +0000
+Message-Id: <173944478263.2605897.5555784632946781698.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250131155842.3839098-1-beata.michalska@arm.com>
+References: <20250131155842.3839098-1-beata.michalska@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206184327.16308-3-boddah8794@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 06, 2025 at 09:43:15PM +0300, Fedor Pchelkin wrote:
-> It is observed that on some systems an initial PPM reset during the boot
-> phase can trigger a timeout:
+On Fri, 31 Jan 2025 15:58:42 +0000, Beata Michalska wrote:
+> For the time being, the amu_fie_cpus cpumask is being exclusively used
+> by the AMU-related internals of FIE support and is guaranteed to be
+> valid on every access currently made. Still the mask is not being
+> invalidated on one of the error handling code paths, which leaves
+> a soft spot with theoretical risk of UAF for CPUMASK_OFFSTACK cases.
+> To make things sound, delay allocating said cpumask
+> (for CPUMASK_OFFSTACK) avoiding otherwise nasty sanitising case failing
+> to register the cpufreq policy notifications.
 > 
-> [    6.482546] ucsi_acpi USBC000:00: failed to reset PPM!
-> [    6.482551] ucsi_acpi USBC000:00: error -ETIMEDOUT: PPM init failed
-> 
-> Still, increasing the timeout value, albeit being the most straightforward
-> solution, eliminates the problem: the initial PPM reset may take up to
-> ~8000-10000ms on some Lenovo laptops. When it is reset after the above
-> period of time (or even if ucsi_reset_ppm() is not called overall), UCSI
-> works as expected.
-> 
-> Moreover, if the ucsi_acpi module is loaded/unloaded manually after the
-> system has booted, reading the CCI values and resetting the PPM works
-> perfectly, without any timeout. Thus it's only a boot-time issue.
-> 
-> The reason for this behavior is not clear but it may be the consequence
-> of some tricks that the firmware performs or be an actual firmware bug.
-> As a workaround, increase the timeout to avoid failing the UCSI
-> initialization prematurely.
-> 
-> Fixes: b1b59e16075f ("usb: typec: ucsi: Increase command completion timeout value")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <boddah8794@gmail.com>
+> [...]
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Applied to arm64 (for-next/fixes), thanks!
 
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 0fe1476f4c29..7a56d3f840d7 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -25,7 +25,7 @@
->   * difficult to estimate the time it takes for the system to process the command
->   * before it is actually passed to the PPM.
->   */
-> -#define UCSI_TIMEOUT_MS		5000
-> +#define UCSI_TIMEOUT_MS		10000
->  
->  /*
->   * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
-> -- 
-> 2.48.1
+[1/1] arm64: amu: Delay allocating cpumask for AMU FIE support
+      https://git.kernel.org/arm64/c/d923782b0412
 
+Cheers,
 -- 
-heikki
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
