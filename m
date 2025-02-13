@@ -1,314 +1,282 @@
-Return-Path: <linux-kernel+bounces-513550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21A2A34B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:18:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01377A34B86
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4DB1882292
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC09016C539
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD4F203711;
-	Thu, 13 Feb 2025 17:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364E9202C53;
+	Thu, 13 Feb 2025 17:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EhQ9qg9l"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfsLGCVq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C09202F60
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569CD14AD20;
+	Thu, 13 Feb 2025 17:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466817; cv=none; b=JFwMZqUfFSfWyOJY63GotY/2qMPHawvrUj9Opki4AfGzxv3YIgzDpX9T0PLwhAw0qjE+oJYqwDK6+CYJzGFdDLmmZ8oNJ4iGmbTUz4+/AkOeASq3W3oAixx6d4q8blxkeYVJdhEROrKPksYyCQFBMytlBlgw9CDWElKSXgFM6Gs=
+	t=1739466843; cv=none; b=FObS6mY2StcM+NdIuD3u1LpEYefP3lW4aq44kN8MJrv33bWUOoYaxxHzLPUuymOn+IgTfHniKSCD0XdBEmqHRD7Zkjct3bteSTFe3m1ZAvfieZ2ToeV5k/Ji7EKqp1xDIw8HLUiyuzJVE/h/cpMO2bcjJtHnva/KQA+eoenn30I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466817; c=relaxed/simple;
-	bh=Z1gx+d9KD+fwXgkW7noVLO3LRyUNlol61dY2QcSnYmU=;
+	s=arc-20240116; t=1739466843; c=relaxed/simple;
+	bh=c5kpCmM/AUe0gxWM0ksdx93Irwzp3MjKsc8taJMFDkk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTCkFURX5MVLv0t5ebEZ84oSFW/1Y+oTvkRlkyl+ENo7OckL4XUOqJOeWWM0m/kxYP99Lh7RAfnyrL0UVDUWFgKyB0CO0s2MFJzl6MjMfXPf5qmtJRkDNb78fIuznBjAtFzOeITfQ6nGE7YB6yrYpnOcebzlYhBCV2PvV0L0qiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EhQ9qg9l; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f74b78df93so12060027b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:13:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739466814; x=1740071614; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T4N4dnRJLEMfc5wr2E5ElHWH+c2BgiHQLnksgHaawHw=;
-        b=EhQ9qg9lGkZzsgq2QoPMuQXlYkJKfksvtiMnm1DLiWkJy1zRVVYj9ToE8P+YhUIfba
-         gql3bJz6iHX3w7xmNZmTl6I2qsAwV/X2FUIG/qlXK5su08dt1zQB/Og3UgiFGh2Ckxtv
-         8qVCinIhJfCzaNKJsHz1nAN/qEdORd0u0RRM3X/aOFDdqW6uMfVaX9tqJi8nnRuAH2sE
-         RhmgaDcVt+cMWD2iGthGe9rnKAthhLPApkvKYKZVPsUSF4dpXJWxgV5fKLKGOTeE+sk3
-         pOHMcAW6Rw/E2c6RKa2S4kWDZSnYzp4p9VyEjtBHXS7KHkL1QkJh5HtU2wFUPeADxDK0
-         L6Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739466814; x=1740071614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T4N4dnRJLEMfc5wr2E5ElHWH+c2BgiHQLnksgHaawHw=;
-        b=kra6/0BeDjwZOGBWhiepB9g/JlpqLy8qkGGd5D3yjxgr2+H/iZxkw7D29o0tAlGZhQ
-         7QtpyVRKL4E9cMl7PFB4A+nNuDuiYeSb/nYkGi5wkjXd0QkA6P3Gk7Qq5DzqXOaPO6fx
-         6++y7/jKIeLQ6F2abnC0PlMSPImkC1zJQqSaQiLQZ8/1fGxXoFCyNipEKtU3/v+btkNS
-         snh2M6fw5umW4tvS3cC8liFSdn5ZoCFqJDWH4sbLVCj9DV9cIrv2+0kQ2CPTlHgj0dw9
-         3MWD5t61AZi3Yp8TwIbWyCkjzw9qxTMyNsk1T3oBX1hWNrT5ZK0xkaRxf3gwvVl5JK1+
-         N/7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTBxBEb0B+1hwvf0jgux30LVUfDd8/79iVj4hlxWG229OaDFi+wouS+wbZNEc46xmHUt1m0ejFlKfkECY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx4H9Q0go7hoktq/7P4oFMJSJ24AWM0AlHLhFaNWPVLJI2K65F
-	3ndWs9+pLDmmOSZvw1fa3lXdww7Qf7UreNqNs4FCJyOAih9PXCxOWAoZKYivHkDBI0hhQH37gKY
-	Q93zeCQJPRL/j3FoWx1G7xQHQ7rFSJQ18wG+i
-X-Gm-Gg: ASbGncu2CUaBOs9z9dBuxbJFpA32yxre7s6z5Q5wHqYU8T4V8y4tfaSyDq+2CWHdeFS
-	JwlWkvuWOrfkj679YUebgrT37w9xc6iVdFX3KgfQnLgYyGr0vPsPrpqWb1YhrV6+BpWrdA6zRaJ
-	zbKAYwxxlOeJsQWCFapk7CXolwIsjJIA==
-X-Google-Smtp-Source: AGHT+IHTlYjRsYcli7xRTU3j9viOC5Jiu+MtNYMPzgb/YmalFnLJw3O3OS3xWtv5cL1TBiwzIVBKACTWlBtYkF2kmN8=
-X-Received: by 2002:a05:690c:3802:b0:6f9:957b:e14b with SMTP id
- 00721157ae682-6fb1f1ab110mr91023677b3.16.1739466814396; Thu, 13 Feb 2025
- 09:13:34 -0800 (PST)
+	 To:Cc:Content-Type; b=lO8MxYfadUqHJv7BAuQuDaB9ZJ54CVEGY0Vg09Y474b0WbSAxV5hXXHvE0hz6crCjnQfWotI2GU5HHClmz1mAinQ/EomQF7eDzxWdARqJGFgX/4vkm0pMIMtxPxdMu6JoFph9cFqmMpWLLSNpAeveY2TKRsNToep5cHGhomm7W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfsLGCVq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35D4C4CEE4;
+	Thu, 13 Feb 2025 17:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739466842;
+	bh=c5kpCmM/AUe0gxWM0ksdx93Irwzp3MjKsc8taJMFDkk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VfsLGCVqcnvsz0EPdvO/D1d9L7HWoG9sBA+WrxnRRxQfjSfihFRkvreaFRvRRTKyc
+	 T1Ml9RQ+KkPSVOC0sMPwwtGCINxRdZvohregL0RYui2+LL9BRWNH6wiNV8niVyjluN
+	 LAz5PSyYyqh05V6STGXAf9maWUrTaqRlzKGmM0EBj2AFJLfrI8aljuDgDFe9/MJeqU
+	 CzGabrkbRDo7Ag7oAwuW5ZiG+NwnZbU3y/I13/6a6Mxzyh0jHScQZaDwO78cTIf5Uv
+	 pWi25M1o6osC7Pt00ERpTa+5xO8olPgpxqeTotApd+FfFQGxDq2+Zl+v76j4wJfeJR
+	 PQxXyqv5eDKOQ==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab7cb1154abso154952766b.0;
+        Thu, 13 Feb 2025 09:14:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIDNXrKNWeUIdnhasrsbOw9gF6F136nAE4UpQDN06gNIqEGiR2OhIBbbICk6KH1odR579nR77gG3eI7yW3@vger.kernel.org, AJvYcCWz9TFvgwZqe7fYtZ4PdoJos2Fwqbj3bFIc2uEeURWDOi0v2YVYni+WLpjhaETkQ6tJ4dnJK9jGyXlLKIqcjIsIAw==@vger.kernel.org, AJvYcCXxJnAYTEaifgLIggfrJTTDRN5NUUDqydWebU0ssgvebTZ2z9KqWm26MU6f4p3KwYQBwsYN5saKZN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcQ5c8eEYaQlme2PC38xFB7d6S2BWMheltm9GrhAEi9J6/heCs
+	VpcOusvqKVPgxaRpqeIcNM4UYO07O+X4nVvRpjJVk/IC0L8a/AnLO/iQjexXdQXrzrGhpa8MAlm
+	cM2vj2i1t5rk+hhexehEAULRpOQ==
+X-Google-Smtp-Source: AGHT+IGLiNgkbdSgKYJxLv9yLc1GoCVMmMj+s80I6QXFJXsr3H3G985MmMlHVjvY6J6a3cMlBPrls5p737/5XQ9g0aM=
+X-Received: by 2002:a05:6402:5285:b0:5dc:5a51:cbfa with SMTP id
+ 4fb4d7f45d1cf-5dec9d2c185mr11085898a12.6.1739466841112; Thu, 13 Feb 2025
+ 09:14:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z60p755gE1aDiimC@slm.duckdns.org>
-In-Reply-To: <Z60p755gE1aDiimC@slm.duckdns.org>
-From: Neel Natu <neelnatu@google.com>
-Date: Thu, 13 Feb 2025 09:13:23 -0800
-X-Gm-Features: AWEUYZlDzNzG3JLWcQs7k_AUvVuvwO3aKr2Xni0KqgBEw4p_80WsE_EtrqXYiJ8
-Message-ID: <CAJDe-OLcEe8AuOeffusdxhktTyoAkCgG-7zWAvcuSWWGfDrakQ@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: Implement SCX_OPS_ALLOW_QUEUED_WAKEUP
-To: Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, David Vernet <void@manifault.com>, 
-	Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, Barret Rhoden <brho@google.com>, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
+References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
+ <20250202-arm-brbe-v19-v19-11-1c1300802385@kernel.org> <20250213161628.GF235556@e132581.arm.com>
+In-Reply-To: <20250213161628.GF235556@e132581.arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 13 Feb 2025 11:13:49 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
+X-Gm-Features: AWEUYZl-h3OwTWUMTokpITINNaXk1-oL6xdH92FmLUNnd48obarnwJfoMpDQhGA
+Message-ID: <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
+Subject: Re: [PATCH v19 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+To: Leo Yan <leo.yan@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks Tejun!
+On Thu, Feb 13, 2025 at 10:16=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Sun, Feb 02, 2025 at 06:43:05PM -0600, Rob Herring (Arm) wrote:
+>
+> [...]
+>
+> > +void brbe_enable(const struct arm_pmu *arm_pmu)
+> > +{
+> > +       struct pmu_hw_events *cpuc =3D this_cpu_ptr(arm_pmu->hw_events)=
+;
+> > +       u64 brbfcr =3D 0, brbcr =3D 0;
+> > +
+> > +       /*
+> > +        * Merge the permitted branch filters of all events.
+> > +        */
+> > +       for (int i =3D 0; i < ARMPMU_MAX_HWEVENTS; i++) {
+> > +               struct perf_event *event =3D cpuc->events[i];
+> > +
+> > +               if (event && has_branch_stack(event)) {
+> > +                       brbfcr |=3D event->hw.branch_reg.config;
+> > +                       brbcr |=3D event->hw.extra_reg.config;
+> > +               }
+> > +       }
+> > +
+> > +       /*
+> > +        * If the record buffer contains any branches, we've already re=
+ad them
+> > +        * out and don't want to read them again.
+> > +        * No need to sync as we're already stopped.
+> > +        */
+> > +       brbe_invalidate_nosync();
+> > +       isb(); // Make sure invalidate takes effect before enabling
+> > +
+> > +       /*
+> > +        * In VHE mode with MDCR_EL2.HPMN set to PMCR_EL0.N, the counte=
+rs are
+> > +        * controlled by BRBCR_EL1 rather than BRBCR_EL2 (which writes =
+to
+> > +        * BRBCR_EL1 are redirected to). Use the same value for both re=
+gister
+> > +        * except keep EL1 and EL0 recording disabled in guests.
+> > +        */
+> > +       if (is_kernel_in_hyp_mode())
+> > +               write_sysreg_s(brbcr & ~(BRBCR_ELx_ExBRE | BRBCR_ELx_E0=
+BRE), SYS_BRBCR_EL12);
+> > +       write_sysreg_s(brbcr, SYS_BRBCR_EL1);
+> > +       isb(); // Ensure BRBCR_ELx settings take effect before unpausin=
+g
+> > +
+> > +       write_sysreg_s(brbfcr, SYS_BRBFCR_EL1);
+>
+> Seems to me, it is weird that first enable recording (BRBCR), then set
+> control register BRBFCR.  And the writing SYS_BRBFCR_EL1 not guarded
+> by a barrier is also a bit concerned.
 
-On Wed, Feb 12, 2025 at 3:08=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> A task wakeup can be either processed on the waker's CPU or bounced to th=
-e
-> wakee's previous CPU using an IPI (ttwu_queue). Bouncing to the wakee's C=
-PU
-> avoids the waker's CPU locking and accessing the wakee's rq which can be
-> expensive across cache and node boundaries.
->
-> When ttwu_queue path is taken, select_task_rq() and thus ops.select_cpu()
-> are skipped. As this confused some BPF schedulers, there wasn't a good wa=
-y
+We are always disabled (paused) when we enter brbe_enable(). So the
+last thing we do is unpause. The only ordering we care about after
+writing SYS_BRBFCR_EL1 is writing PMCR which has an isb before it is
+written.
 
-A minor nit in that the commit msg suggests that if ttwu_queue() path is ta=
-ken
-to do the wakeup on remote cpu then select_task_rq()->ops.select_cpu() is
-always skipped as opposed to "sometimes" skipped.
+> > +}
+> > +
+> > +void brbe_disable(void)
+> > +{
+> > +       /*
+> > +        * No need for synchronization here as synchronization in PMCR =
+write
+> > +        * ensures ordering and in the interrupt handler this is a NOP =
+as
+> > +        * we're already paused.
+> > +        */
+> > +       write_sysreg_s(BRBFCR_EL1_PAUSED, SYS_BRBFCR_EL1);
+>
+> Maybe the Arm ARM causes the confusion for the description of the
+> PAUSED bit, I read it as this bit is a status bit to indicate
+> branch recording is paused.
 
-In my understanding select_task_rq() is skipped in a very specific path:
-try_to_wake_up() observes 'p->on_cpu=3D1' and does ttwu_queue_wakelist().
+I agree, but I tested that writing it sets the bit (on FVP). Rule
+RSRJND says s/w clears the bit to unpause, so it is definitely
+writeable. While it doesn't say anything explicitly about s/w setting
+the bit, there is no definition in the Arm ARM of a 'write 0 to clear'
+only bit while there are W1C and W1S definitions.
 
-In all the other cases ttwu_queue() will be preceded by select_task_rq().
+> > +}
+> > +
+> > +static const int brbe_type_to_perf_type_map[BRBINFx_EL1_TYPE_DEBUG_EXI=
+T + 1][2] =3D {
+> > +       [BRBINFx_EL1_TYPE_DIRECT_UNCOND] =3D { PERF_BR_UNCOND, 0 },
+> > +       [BRBINFx_EL1_TYPE_INDIRECT] =3D { PERF_BR_IND, 0 },
+> > +       [BRBINFx_EL1_TYPE_DIRECT_LINK] =3D { PERF_BR_CALL, 0 },
+> > +       [BRBINFx_EL1_TYPE_INDIRECT_LINK] =3D { PERF_BR_IND_CALL, 0 },
+> > +       [BRBINFx_EL1_TYPE_RET] =3D { PERF_BR_RET, 0 },
+> > +       [BRBINFx_EL1_TYPE_DIRECT_COND] =3D { PERF_BR_COND, 0 },
+> > +       [BRBINFx_EL1_TYPE_CALL] =3D { PERF_BR_CALL, 0 },
+> > +       [BRBINFx_EL1_TYPE_ERET] =3D { PERF_BR_ERET, 0 },
+> > +       [BRBINFx_EL1_TYPE_IRQ] =3D { PERF_BR_IRQ, 0 },
+>
+> I saw this table cannot reflect the complete branch type.  We might
+> need to consider to extend the perf branch flags later.
+>
+> If the 'new_type' is always zero, it is not necessary to maintain a
+> array with two items (the second one is always 0).
 
-best
-Neel
+I'm adding the new_type's back in the next version.
 
-> for a BPF scheduler to tell whether idle CPU selection has been skipped,
-> ops.enqueue() couldn't insert tasks into foreign local DSQs, and the
-> performance difference on machines with simple toplogies were minimal,
-> sched_ext disabled ttwu_queue.
 >
-> However, this optimization makes noticeable difference on more complex
-> topologies and a BPF scheduler now has an easy way tell whether
-> ops.select_cpu() was skipped since 9b671793c7d9 ("sched_ext, scx_qmap: Ad=
-d
-> and use SCX_ENQ_CPU_SELECTED") and can insert tasks into foreign local DS=
-Qs
-> since 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct
-> dispatches").
+> > +};
+> > +
+> > +static void brbe_set_perf_entry_type(struct perf_branch_entry *entry, =
+u64 brbinf)
+> > +{
+> > +       int brbe_type =3D brbinf_get_type(brbinf);
+> > +
+> > +       if (brbe_type <=3D BRBINFx_EL1_TYPE_DEBUG_EXIT) {
+> > +               const int *br_type =3D brbe_type_to_perf_type_map[brbe_=
+type];
+> > +
+> > +               entry->type =3D br_type[0];
+> > +               entry->new_type =3D br_type[1];
+> > +       }
+> > +}
+> > +
+> > +static int brbinf_get_perf_priv(u64 brbinf)
+> > +{
+> > +       int brbe_el =3D brbinf_get_el(brbinf);
+> > +
+> > +       switch (brbe_el) {
+> > +       case BRBINFx_EL1_EL_EL0:
+> > +               return PERF_BR_PRIV_USER;
+> > +       case BRBINFx_EL1_EL_EL1:
+> > +               return PERF_BR_PRIV_KERNEL;
+> > +       case BRBINFx_EL1_EL_EL2:
+> > +               if (is_kernel_in_hyp_mode())
+> > +                       return PERF_BR_PRIV_KERNEL;
+> > +               return PERF_BR_PRIV_HV;
+> > +       default:
+> > +               pr_warn_once("%d - unknown branch privilege captured\n"=
+, brbe_el);
+> > +               return PERF_BR_PRIV_UNKNOWN;
+> > +       }
+> > +}
+> > +
+> > +static void capture_brbe_flags(struct perf_branch_entry *entry,
+> > +                              const struct perf_event *event,
+> > +                              u64 brbinf)
+> > +{
+> > +       brbe_set_perf_entry_type(entry, brbinf);
+> > +
+> > +       if (!branch_sample_no_cycles(event))
+> > +               entry->cycles =3D brbinf_get_cycles(brbinf);
+> > +
+> > +       if (!branch_sample_no_flags(event)) {
+> > +               /* Mispredict info is available for source only and com=
+plete branch records. */
+> > +               if (!brbe_record_is_target_only(brbinf)) {
+> > +                       entry->mispred =3D brbinf_get_mispredict(brbinf=
+);
+> > +                       entry->predicted =3D !entry->mispred;
+> > +               }
+> > +
+> > +               /*
+> > +                * Currently TME feature is neither implemented in any =
+hardware
+> > +                * nor it is being supported in the kernel. Just warn h=
+ere once
+> > +                * if TME related information shows up rather unexpecte=
+dly.
+> > +                */
+> > +               if (brbinf_get_lastfailed(brbinf) || brbinf_get_in_tx(b=
+rbinf))
+> > +                       pr_warn_once("Unknown transaction states\n");
 >
-> Implement SCX_OPS_ALLOW_QUEUED_WAKEUP which allows BPF schedulers to choo=
-se
-> to enable ttwu_queue optimization.
+> If the branch is in transaction, we can set:
 >
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Neel Natu <neelnatu@google.com>
-> Reported-by: Barret Rhoden <brho@google.com>
-> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/core.c |    9 ++-------
->  kernel/sched/ext.c  |   30 ++++++++++++++++++++++++------
->  kernel/sched/ext.h  |   10 ++++++++++
->  3 files changed, 36 insertions(+), 13 deletions(-)
+>   entry->in_tx =3D 1;
+
+We actively don't want to support the feature. The comment there is
+from Mark's feedback on a prior version.
+
 >
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3921,13 +3921,8 @@ bool cpus_share_resources(int this_cpu,
+> > +       }
+> > +
+> > +       /*
+> > +        * Branch privilege level is available for target only and comp=
+lete
+> > +        * branch records.
+> > +        */
+> > +       if (!brbe_record_is_source_only(brbinf))
+> > +               entry->priv =3D brbinf_get_perf_priv(brbinf);
 >
->  static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
->  {
-> -       /*
-> -        * The BPF scheduler may depend on select_task_rq() being invoked=
- during
-> -        * wakeups. In addition, @p may end up executing on a different C=
-PU
-> -        * regardless of what happens in the wakeup path making the ttwu_=
-queue
-> -        * optimization less meaningful. Skip if on SCX.
-> -        */
-> -       if (task_on_scx(p))
-> +       /* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
-> +       if (!scx_allow_ttwu_queue(p))
->                 return false;
->
->         /*
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -96,7 +96,7 @@ enum scx_ops_flags {
->         /*
->          * Keep built-in idle tracking even if ops.update_idle() is imple=
-mented.
->          */
-> -       SCX_OPS_KEEP_BUILTIN_IDLE =3D 1LLU << 0,
-> +       SCX_OPS_KEEP_BUILTIN_IDLE       =3D 1LLU << 0,
->
->         /*
->          * By default, if there are no other task to run on the CPU, ext =
-core
-> @@ -104,7 +104,7 @@ enum scx_ops_flags {
->          * flag is specified, such tasks are passed to ops.enqueue() with
->          * %SCX_ENQ_LAST. See the comment above %SCX_ENQ_LAST for more in=
-fo.
->          */
-> -       SCX_OPS_ENQ_LAST        =3D 1LLU << 1,
-> +       SCX_OPS_ENQ_LAST                =3D 1LLU << 1,
->
->         /*
->          * An exiting task may schedule after PF_EXITING is set. In such =
-cases,
-> @@ -117,13 +117,13 @@ enum scx_ops_flags {
->          * depend on pid lookups and wants to handle these tasks directly=
-, the
->          * following flag can be used.
->          */
-> -       SCX_OPS_ENQ_EXITING     =3D 1LLU << 2,
-> +       SCX_OPS_ENQ_EXITING             =3D 1LLU << 2,
->
->         /*
->          * If set, only tasks with policy set to SCHED_EXT are attached t=
-o
->          * sched_ext. If clear, SCHED_NORMAL tasks are also included.
->          */
-> -       SCX_OPS_SWITCH_PARTIAL  =3D 1LLU << 3,
-> +       SCX_OPS_SWITCH_PARTIAL          =3D 1LLU << 3,
->
->         /*
->          * A migration disabled task can only execute on its current CPU.=
- By
-> @@ -136,7 +136,21 @@ enum scx_ops_flags {
->          * current CPU while p->nr_cpus_allowed keeps tracking p->user_cp=
-us_ptr
->          * and thus may disagree with cpumask_weight(p->cpus_ptr).
->          */
-> -       SCX_OPS_ENQ_MIGRATION_DISABLED =3D 1LLU << 4,
-> +       SCX_OPS_ENQ_MIGRATION_DISABLED  =3D 1LLU << 4,
-> +
-> +       /*
-> +        * Queued wakeup (ttwu_queue) is an optimization during wakeups w=
-hich
-> +        * bypasses ops.select_cpu() and invokes ops.enqueue() on the wak=
-ee's
-> +        * previous CPU via IPI (inter-processor interrupt) to reduce cac=
-heline
-> +        * transfers. As the BPF scheduler may depend on ops.select_cpu()=
- being
-> +        * invoked during wakeups, queued wakeup is disabled by default.
-> +        *
-> +        * If this ops flag is set, queued wakeup optimization is enabled=
- and
-> +        * the BPF scheduler must be able to handle ops.enqueue() invoked=
- on the
-> +        * wakee's CPU without preceding ops.select_cpu() even for tasks =
-which
-> +        * may be executed on multiple CPUs.
-> +        */
-> +       SCX_OPS_ALLOW_QUEUED_WAKEUP     =3D 1LLU << 5,
->
->         /*
->          * CPU cgroup support flags
-> @@ -147,6 +161,7 @@ enum scx_ops_flags {
->                                   SCX_OPS_ENQ_LAST |
->                                   SCX_OPS_ENQ_EXITING |
->                                   SCX_OPS_ENQ_MIGRATION_DISABLED |
-> +                                 SCX_OPS_ALLOW_QUEUED_WAKEUP |
->                                   SCX_OPS_SWITCH_PARTIAL |
->                                   SCX_OPS_HAS_CGROUP_WEIGHT,
->  };
-> @@ -897,6 +912,7 @@ DEFINE_STATIC_KEY_FALSE(__scx_switched_a
->  static struct sched_ext_ops scx_ops;
->  static bool scx_warned_zero_slice;
->
-> +DEFINE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
->  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_last);
->  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_exiting);
->  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_migration_disabled);
-> @@ -4717,6 +4733,7 @@ static void scx_ops_disable_workfn(struc
->         static_branch_disable(&__scx_ops_enabled);
->         for (i =3D SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
->                 static_branch_disable(&scx_has_op[i]);
-> +       static_branch_disable(&scx_ops_allow_queued_wakeup);
->         static_branch_disable(&scx_ops_enq_last);
->         static_branch_disable(&scx_ops_enq_exiting);
->         static_branch_disable(&scx_ops_enq_migration_disabled);
-> @@ -5348,9 +5365,10 @@ static int scx_ops_enable(struct sched_e
->                 if (((void (**)(void))ops)[i])
->                         static_branch_enable(&scx_has_op[i]);
->
-> +       if (ops->flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
-> +               static_branch_enable(&scx_ops_allow_queued_wakeup);
->         if (ops->flags & SCX_OPS_ENQ_LAST)
->                 static_branch_enable(&scx_ops_enq_last);
-> -
->         if (ops->flags & SCX_OPS_ENQ_EXITING)
->                 static_branch_enable(&scx_ops_enq_exiting);
->         if (ops->flags & SCX_OPS_ENQ_MIGRATION_DISABLED)
-> --- a/kernel/sched/ext.h
-> +++ b/kernel/sched/ext.h
-> @@ -8,6 +8,8 @@
->   */
->  #ifdef CONFIG_SCHED_CLASS_EXT
->
-> +DECLARE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
-> +
->  void scx_tick(struct rq *rq);
->  void init_scx_entity(struct sched_ext_entity *scx);
->  void scx_pre_fork(struct task_struct *p);
-> @@ -34,6 +36,13 @@ static inline bool task_on_scx(const str
->         return scx_enabled() && p->sched_class =3D=3D &ext_sched_class;
->  }
->
-> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p)
-> +{
-> +       return !scx_enabled() ||
-> +               static_branch_likely(&scx_ops_allow_queued_wakeup) ||
-> +               p->sched_class !=3D &ext_sched_class;
-> +}
-> +
->  #ifdef CONFIG_SCHED_CORE
->  bool scx_prio_less(const struct task_struct *a, const struct task_struct=
- *b,
->                    bool in_fi);
-> @@ -52,6 +61,7 @@ static inline void scx_rq_activate(struc
->  static inline void scx_rq_deactivate(struct rq *rq) {}
->  static inline int scx_check_setscheduler(struct task_struct *p, int poli=
-cy) { return 0; }
->  static inline bool task_on_scx(const struct task_struct *p) { return fal=
-se; }
-> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { r=
-eturn true; }
->  static inline void init_sched_ext_class(void) {}
->
->  #endif /* CONFIG_SCHED_CLASS_EXT */
+> This logic is not quite right.  In theory, if we check with above
+> condition (!brbe_record_is_source_only(brbinf)), it might be the
+> case both source and target are not valid.
+
+We never get here if the record is not valid. A valid record must have
+at least 1 address valid.
+
+I could merge capture_brbe_flags() into perf_entry_from_brbe_regset().
+There's not much reason to have a separate function.
+
+Rob
 
