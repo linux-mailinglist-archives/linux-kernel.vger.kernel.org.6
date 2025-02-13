@@ -1,147 +1,142 @@
-Return-Path: <linux-kernel+bounces-513026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A3DA340BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:49:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FC5A340AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970067A5446
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A6D166DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0B9242900;
-	Thu, 13 Feb 2025 13:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA7C2222D4;
+	Thu, 13 Feb 2025 13:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVkiUUXS"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="O1UWIXHE"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BF23A9A7;
-	Thu, 13 Feb 2025 13:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC852222D0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454350; cv=none; b=Z3BSxt8iFgLmqIKvFyp3soxVfcqp+reTnK4NY6/DJ+80WIXe76PETcCQENJXfQ7+63Ob9K0JJ01FjhP/5vTrjVmcYmyaSnvNhT8AKToFUzrBslCKAXEA9h7Vlwdqh4VCTG3GMJ4Dow5S1aa93YHHXJDWIaCzRt6+uVf5Ye8ibYY=
+	t=1739454344; cv=none; b=DSd5IySNm6eo2/Rj9EkuPigFLMK/Ai50m1XYsv7ZkNE4y6eMiW3gukSFvBDj1nq9CaSjcx6d7Vt/aegc/yLuPfhWN1aLr2F/KLAWVqTmqRGb7xtuNxqfY/wtl7WQhN8jbsDdOaqFZhM4eg/beeaFM9KGciB1P/yWKk5UADHxG2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454350; c=relaxed/simple;
-	bh=GSbac0XMGlGpq3LK4pbKLskyjw5oUq3AyoRnGYD0RgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F7iEf3bG2xp0sMvWSTip9dwAvQm+W2RRGJNrYMZISbXAOzoBwjbRGQ4aUdSIGGWWW2DOyJXFAeavM61SZKgttSrnIJM20l/RUKNXFt4Mr6FXLMAXoa44SLQ6QQbvoPXJazYOUdG2FUn4UDy+sWgUGNq9Zh8eocqpOWVEtlsxwv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVkiUUXS; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72707750de0so27709a34.3;
-        Thu, 13 Feb 2025 05:45:48 -0800 (PST)
+	s=arc-20240116; t=1739454344; c=relaxed/simple;
+	bh=JqQGz/Rf5LV/UyFhhwLvg8wPoS0Ss8A3I+uVWgQQo5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovUvLYU+IQqvNx/6wFnCo5U9Rs7yU96gJTN+/3XD70TvMKeaMCFIJI4ODV1nTQFDrjur2uY6tdqDdZnMt2urW9ks4CvJ3D/PlsLl1Il3zg85Rn0BIvvNDwzxAYpkWkm/ga9THcrgStstCggg171O4L8mgnKDG0mg4qwiEGAZW3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=O1UWIXHE; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c8f38febso15293005ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:45:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739454348; x=1740059148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6gQOE+5IhCQGEcBG+5exSEJRqbSS6WLMWBkfFhzqs0I=;
-        b=dVkiUUXS4pQGpAbBaTeTfWXomFIQvfGbfDYOUOzQuUeYyYU31m1ATYJuDI9KgMUaxs
-         m4Ary39dwXMprdj3XO6AE6rlauF9fKUmGPLlTzi6rYO7UbrJx2jUqNpaC+dTghSO3Hz6
-         jWTay2uVSFImT50ZVsvdQJ5rQDfecqQ86U5qXt69wEky8SIvJE21HyllNAB5/tlpddp6
-         ATfUG3JPUnHowEbAXCIc0G/7Q71OVjJ48nCxD5m6Z7EBNUzb/cpltOX6GAobwVxrWgDc
-         KRKdIEpag6IiW7nYy/A9T7Ub/pKqKf+h1R960oCJ/vDGGCxkxaOfChSjiS6I6FX1O8sx
-         4SMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739454348; x=1740059148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1739454342; x=1740059142; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6gQOE+5IhCQGEcBG+5exSEJRqbSS6WLMWBkfFhzqs0I=;
-        b=CXxjWevSsSwBR6NDLB1cRtxShyzin/DF/3T0Di1v9oOK7lWtd7RN7Qjut/oDRONDty
-         TbOK8jP/eAWRlHE54p4t8OfTNrCWHTBK/9w0+ETSsYdvVF2lizaUAhwbHKQsPASnud5k
-         4Ny0BvP1PFJS63TBsvSUA3bfu1Obb35UVxndP0scWF26XhzAyJiYxr/iRveyhLBCI8XV
-         JKDdXXCAJpknqZ/yEhLkdTIL8F+wq8EcdLl3YJ3++fGzf0xh36tw3aaOf7Pp/uknpeb8
-         bwGNWUvRkp6B+0qYhDhxvoE5g2xj1Qgb1KF/Zhx4YlnXIc8KQK1TWqCO8x4feH7A9+S/
-         3KuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4JdBsnLCRG3IOaPkSYRQcVYBD3v18heax1CKGakOJQHBlqvLRpJi8FEgQMJajXQvRlaQOdl3QeGJu@vger.kernel.org, AJvYcCVb9D+lRU0WM8CUAVaTvvq4XcpwamZZrUoV5PC+AwiCqA1NYblT8B3jevp8/RAmrtXwYZ6gljoJ@vger.kernel.org, AJvYcCXpktpc4RKPQjSFXc38B2LglAq5pUdKy2xG8lHP4zkZcBHKUuBWqHNcqqfRh0lTuhveZS/e1080CQxr02U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFvdqNwLmmdGIdRLPYAkdHaOITls4lzkF8AeyO033XKO4Qq+62
-	40F0uxv82W4oJCdxcKaLNkauwyj+5TQxNFL+MtIQ6ePrQ2jRfMY5zUmgmg1Szp2Czr/ugajlTwc
-	KYwDDRidn8ly0peRMHLz+TtG5rk0=
-X-Gm-Gg: ASbGnctt7lYvGnwy77uAThdyS06dY1Ej6AWCSDGWwB7JgAIzN0jIUZmlR//yCa+9Ggj
-	BWuNLvyVLPUTcXk7fbsSivVXPMiZg+HmTQlacUrztimjbQ1OXp66eG/312Xew1IfezoXqHA96
-X-Google-Smtp-Source: AGHT+IFBfX/ztdybMLcS3wSj+Xa+3ijqwcBNNhBdZ0A6tha8fsOV0Z5urFhL/q4CRZobnikCvYpy14N+IWxcPFf5OHo=
-X-Received: by 2002:a05:6870:82a4:b0:29e:255e:9551 with SMTP id
- 586e51a60fabf-2b8f8ab7afcmr1808374fac.2.1739454347668; Thu, 13 Feb 2025
- 05:45:47 -0800 (PST)
+        bh=RZfMY5Ky6JWO9rAJooFwnfwAFBDZ9Iv+5bt9evH/dRU=;
+        b=O1UWIXHEKbeC/PxRpLLmgkzBm1k6JwJ2hHxPImqG6Z9mkd7UMEdhPn/GPw3oOp9Xpl
+         ANo2Lv0GkybX96+PfFPxJe7vTooPmgNZsZIZuMbidqT0Q6SX7ldu5XVUgi91o6atNusN
+         WIs68Wuvx1itUb4f4+tBPwyp+mZcO+VO5iqjc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739454342; x=1740059142;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RZfMY5Ky6JWO9rAJooFwnfwAFBDZ9Iv+5bt9evH/dRU=;
+        b=wyF4dIsQulQkIplAbBUwqgR63h/D5TG9VESsCCiGwqcCgz7PXHbakVInUckR/PQJML
+         e8PrWt4yzpZACV3KJV6tglTRE0h/eBlJ0gBQtJxI9/uQrcfrtEt2eXP1tUlx4NxMQiMY
+         a50WZ7OAnfnlARs1GTzOpg7taSXMSKjuW1lD+r1VjlCu/pfR5ebBj83yaBzNA4flUmrz
+         BqH3yzS7onZ7hpRDoRF3jJTTunGcDcxky+fL7IsKcSm8iUqKTL79MvdORMNJgucuMY+y
+         vO3kXsZPO33Cc0ht67H7juNg63pMVuSsW1lUIqKUUEbiYjU7i9FE9m/N2uPPMRaQAK3j
+         YEHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUooX4X2vWnzdH7Kz3NcF7D79YruJZhtBtmMuoR3ZC07knYlMCP6HbcHR+j+m6tkbsbyozIArX4tnRf7qU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqN8KA6sXCFHAcez9ilrWP9TVqaJIuF8eHCK1x3+rzNIYPdIdE
+	xzuaBzziUtxZIaKznWj5Mu5lL0PlNmzIye8HywLK1FXsnHhkFjW+jWqW/S1lLAA=
+X-Gm-Gg: ASbGnctVRtOqcJ7fkicyjwrRewPPMMNYB6+wP+mRqVwc2DTz7IZncOJPRuCB5fQYQWd
+	fwSCJ3ZjTDKt+lspWltCV/+Zh9H/o6HCurdS8BfShGKyCHjDNcaEMavxBTiFRvc9ffBZ8pVTcps
+	puNYm4zE8bw3U3M3RKE5uAoKA1SxIWV6I8CUWk27WESi5gxMfAmIzIC+N0Yx6ij3c8jxYTVuV4f
+	db30BUHA4tEvwnEkzZe+d9l4elMgZoaozzxA89z/qYJ2bYYtKJg/5Y+giXsZ+o521Z8GtczmCHB
+	+/aWivQg3U7VDk9PCw2/iK8a6LWbDc8KI0b++slvOmK0nMU+VfNqAeYu8A==
+X-Google-Smtp-Source: AGHT+IGVQHRnaEC8fyg/uKj0MoWqj7Qq9SDAczdTFT9cAow0d4in9EcMOYDk7qf/rAYnjSF0QhPwSA==
+X-Received: by 2002:a17:903:238b:b0:21f:3e2d:7d2e with SMTP id d9443c01a7336-220bdf4ec11mr105120495ad.27.1739454341404;
+        Thu, 13 Feb 2025 05:45:41 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5590770sm12359555ad.231.2025.02.13.05.45.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 05:45:40 -0800 (PST)
+Date: Thu, 13 Feb 2025 05:45:38 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, kuba@kernel.org, rdunlap@infradead.org,
+	bagasdotme@gmail.com, ahmed.zaki@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] documentation: networking: Add NAPI config
+Message-ID: <Z633ggyM-F2pfAkG@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	kuba@kernel.org, rdunlap@infradead.org, bagasdotme@gmail.com,
+	ahmed.zaki@intel.com, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <CALALjgz_jtONSFLAhOTYFcfL2-UwDct9AxhaT4BFGOnnt2UF8A@mail.gmail.com>
+ <013921c8-1fd0-410d-9034-278fc56ff8f5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209071752.69530-1-joswang1221@gmail.com> <5d504702-270f-4227-afd6-a41814c905e3@google.com>
- <CAPTae5+Z3UcDcdFcn=Ref5aQSUEEyz-yVbRqoPJ1LogP4MzJdg@mail.gmail.com>
- <CAMtoTm0bchocN6XrQBRdYuye7=4CoFbU-6wMpRAXR4OU77XkwQ@mail.gmail.com>
- <CAPTae5J5WCD6JmEE2tsgfJDzW9FRusiTXreTdY79MBs4AL6ZHg@mail.gmail.com> <2025021323-surviving-straddle-1f68@gregkh>
-In-Reply-To: <2025021323-surviving-straddle-1f68@gregkh>
-From: Jos Wang <joswang1221@gmail.com>
-Date: Thu, 13 Feb 2025 21:45:36 +0800
-X-Gm-Features: AWEUYZmoFdU52uY9i37E7NZRnAW69SIroh2dDb4IJ8WBYjnXmS0bZLH8p7pupD0
-Message-ID: <CAMtoTm3+0X46e0yO5zne_wxjjDMZGyPfGBUqieDGc6-hWef5_A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] usb: typec: tcpm: PSSourceOffTimer timeout in PR_Swap
- enters ERROR_RECOVERY
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Badhri Jagan Sridharan <badhri@google.com>, Amit Sunil Dhamne <amitsd@google.com>, 
-	heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <013921c8-1fd0-410d-9034-278fc56ff8f5@redhat.com>
 
-On Thu, Feb 13, 2025 at 5:47=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Feb 12, 2025 at 11:16:35PM -0800, Badhri Jagan Sridharan wrote:
-> > On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Jos Wang <joswang1221@gmail.com=
-> wrote:
-> > >
-> > > On Tue, Feb 11, 2025 at 7:51=E2=80=AFAM Badhri Jagan Sridharan
-> > > <badhri@google.com> wrote:
-> > > >
-> > > > On Mon, Feb 10, 2025 at 3:02=E2=80=AFPM Amit Sunil Dhamne <amitsd@g=
-oogle.com> wrote:
-> > > > >
-> > > > >
-> > > > > On 2/8/25 11:17 PM, joswang wrote:
-> > > > > > From: Jos Wang <joswang@lenovo.com>
-> > > > nit: From https://elixir.bootlin.com/linux/v6.13.1/source/Documenta=
-tion/process/submitting-patches.rst#L619
-> > > >
-> > > >   - A ``from`` line specifying the patch author, followed by an emp=
-ty
-> > > >     line (only needed if the person sending the patch is not the au=
-thor).
-> > > >
-> > > > Given that you are the author, wondering why do you have an explici=
-t "From:" ?
-> > > >
-> > > Hello, thank you for your help in reviewing the code.
-> > > My company email address is joswang@lenovo.com, and my personal gmail
-> > > email address is joswang1221@gmail.com, which is used to send patches=
-.
-> > > Do you suggest deleting the "From:" line?
-> > > I am considering deleting the "From:" line, whether the author and
-> > > Signed-off-by in the patch need to be changed to
-> > > "joswang1221@gmail.com".
-> >
-> > Yes, changing signed-off to joswang1221@gmail.com will remove the need
-> > for "From:".
-> > Go ahead with it if it makes sense on your side.
->
-> No, what was done here originally is correct, please do not ask people
-> to not actually follow the correct procedure.
->
-> Jos, thank you, there is nothing wrong with the way you sent this.
->
-> thanks,
->
-> greg k-h
+On Thu, Feb 13, 2025 at 12:45:01PM +0100, Paolo Abeni wrote:
+> On 2/11/25 9:06 PM, Joe Damato wrote:
+> > Document the existence of persistent per-NAPI configuration space and
+> > the API that drivers can opt into.
+> > 
+> > Update stale documentation which suggested that NAPI IDs cannot be
+> > queried from userspace.
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > ---
+> >  v2:
+> >    - Reword the Persistent Napi config section using some suggestions
+> >      from Jakub.
+> > 
+> >  Documentation/networking/napi.rst | 33 ++++++++++++++++++++++++++++++-
+> >  1 file changed, 32 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/networking/napi.rst
+> > b/Documentation/networking/napi.rst
+> > index f970a2be271a..d0e3953cae6a 100644
+> > --- a/Documentation/networking/napi.rst
+> > +++ b/Documentation/networking/napi.rst
+> > @@ -171,12 +171,43 @@ a channel as an IRQ/NAPI which services queues
+> > of a given type. For example,
+> 
+> It looks like your client mangled the patch; the above lines are
+> corrupted (there should be no line split)
+> 
+> Please respin
 
-Thanks=EF=BC=8CI will submit the v2 version patch soon.
+I must be missing something: I don't see the line split when looking
+at the original email and I just tried applying the patch directly
+from my email and it applied just fine.
 
-Thanks,
+Are you sure its not something with your client?
 
-Jos
+See the message on lore:
+
+https://lore.kernel.org/netdev/20250211151543.645d1c57@kernel.org/T/
 
