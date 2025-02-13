@@ -1,87 +1,153 @@
-Return-Path: <linux-kernel+bounces-512712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99277A33CE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:41:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E934A33CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8A7A3605
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A5E7A1598
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00788213235;
-	Thu, 13 Feb 2025 10:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C70D213235;
+	Thu, 13 Feb 2025 10:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LODl8hsH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBVNwmSf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0BD211A06;
-	Thu, 13 Feb 2025 10:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B9E211A06;
+	Thu, 13 Feb 2025 10:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443284; cv=none; b=P9w1eTsd6kab4GdxZ/EM14T1SVs5ZC6M4hCRm4LviDCxayTlQMCAxLZ/6jGZLz7fyjbTRSVS4iZ8cqk1DGhuP/hsGYCTNjvBwHsZ6b/+aa0i1UsQV984PDVj2DgVQO9O5SMpXY/hC6bu4YoiliIIKfc7dUyes1euEPzqk+W1SUA=
+	t=1739443333; cv=none; b=YMK9oNpkYYXeONHrYq1MyHlyw4mMoM7ug5Pw7uXJwBm3l4hdRpQo4Uz3TDuGUMXNv46k88dlgKzqntEL6jCSOhLMlGC0WJpibj8f8PRUzfOWTExi0wUtComAl6K9FjWf9b3bvFUcmFczKf0d2ZrlI/UmwlTNoruqXBwoCL+WpRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443284; c=relaxed/simple;
-	bh=yS3ZXBifaM1osj7cDQyKiVO9YBjcdqedSQMnF4RFzqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkdWhfo0+kyKQVLgqXrMbMcxLwA5Nh/Oa66Wl0YLcloJhhlve5hI4f64+WcA3zYg4/lhwW5BvW248ux/e6eBvS3z/eCIlQtfC6PgXlfR3rg9RDAhZjUmZyJ1F1slCUfnuyxFblbd4LpXauic+HFoX2uKQ66gNB3qtzQ7JmjGc4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LODl8hsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698D5C4CED1;
-	Thu, 13 Feb 2025 10:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739443283;
-	bh=yS3ZXBifaM1osj7cDQyKiVO9YBjcdqedSQMnF4RFzqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LODl8hsHg4ykOVptYtrDbPuOQT1Pj25bdgDbdwcqdnxnlkgzZvOm3dTtXMvMj1lZJ
-	 0fbRRASMBP8Z+Je24schchp+9+VWmheXb9pATbCWFT0HaCR+tYnWIN981cbWRGpNRx
-	 NiSn932QjDaF3QakMZ0n1fqQuVbEURn4MdrkQZQkvsHtkdfe82v3Rl9stSkvfI++Am
-	 XC8+Y62UbY9r/YgzVSWkunAcRR6Sc89A9vDDz1f67h04pCSqGzSBsIlM7wx45+Jg4l
-	 xkW0V4KmTXHdH1Q0e3l7YQ6hZSRqras2fBLhnSIr+Dh0vxbcD+j9dj7Rm4qmftq/xD
-	 yghU972vHSmZA==
-Date: Thu, 13 Feb 2025 10:41:19 +0000
-From: Lee Jones <lee@kernel.org>
-To: Manuel Fombuena <fombuena@outlook.com>
-Cc: pavel@ucw.cz, corbet@lwn.net, linux-leds@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 0/5] LED1202 / leds-st1202 fixes and improvements
-Message-ID: <20250213104119.GD2756671@google.com>
-References: <CWLP123MB5473933B9B97137828ACC6A6C5EB2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1739443333; c=relaxed/simple;
+	bh=JhUzn/oXMehFtshzcjfm48DfNmsq9f9fSX1uzKk6Z4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V32lIT7dPGybW8vVeAkZK7x6MX41lbL46TckHiOq3K7yaVNNGH/dRBR5mSNNDvnQlP0FuNRlNDr9S+b4apZI6lDEiTQcnpzVVNCjTnba6+jnNehVye8/NgIioyx0NeG2zAHurxbdMczohsjGNDCbv1CblO7lXGPDKV+vodPaN64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBVNwmSf; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f7f03d7c0so12270115ad.3;
+        Thu, 13 Feb 2025 02:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739443331; x=1740048131; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+ZPJ7w8CWX3al1cRya7Ec0kd5qmpYeD7VrjjmpjQXU8=;
+        b=iBVNwmSfKPFEU+Fa67jdz58qBjCC1aL4W7iXnHR7Pt0iA95NdmmKqrzwdUFd8difng
+         +4bOfV8gfvlBTUZBmgaOjUIXvNtOb8qR4Bl6eyAPkfHsy6DZ9N81cMOYkwxBoSq25hR7
+         1zGoHVBCKcxMSb7Jzot6bzICBJcHD440fxs3C3xWAlqtM+1jGZS6bz1h5Zitk1G/Rafx
+         Ffvf0qT0T/5QkrGTtvWBgYeXF8iopvQrjSlNPRB2/5YGZSg2FP4/qcsovTp7SPlEaFfV
+         WkIyC0+pb+JcSEFS4RTcijRoUQNC9qccZKVKxYFWaBWVWV8qqStNOkV1AUpoeDtPWBV7
+         +F1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739443331; x=1740048131;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ZPJ7w8CWX3al1cRya7Ec0kd5qmpYeD7VrjjmpjQXU8=;
+        b=LqtqeZHjLn2jxCmFS5BKwkiVH2PH2r1ksDl6QQDQfFJg3HNcGqfjlWk8VzhNpaB4Xu
+         wtxWFeKgqR762mj0fpzQH8NQ/9WVE83kG439PR2KZ8PJwbXVPdrqKdn3uAB0WecMmCxg
+         NiP+CXlUkmc9pzxAdd/xVO/dlmHrUUdDn/5B6odNo5IoVF7fvCnq+bwmJxBCmbyJmTXm
+         PwwZewOx8F20p03v/vpI4faHYEh1S8mFqh6Fy/wFr0ljI7vYxsO+I6bvgkNPqy9CNEKB
+         v2FHCPTBLjmFl7yWL/b/xIngYAu2O3h0UK6VJTwAmlCTB1h4uHf7lsAHJ9gMFydNuUpN
+         vTNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXL9kKIqL0bt2F9KFFyBo/C4hoG0y4fFj0odywCD12pTJMtpRDOO5Vzhyu9CWxZ5Z2QgHdR10AJWD5AMJw=@vger.kernel.org, AJvYcCXQ8+0EF6jXh/0tiKeJ1CAxehG0/2emNVFMVhrZadMtubQguvsrZoZ7XNP6SbhbWIo1/7KdlHx2/3W1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtRHV7yuwleffKraMsDeYavePloTG6det20N8+pQTfSdJfFhVb
+	XYvWTTIOa5D4tma/oe7l1gWZ491hSdvIj6J0K6OoK2l7qBMkbdW4
+X-Gm-Gg: ASbGncs4Mj66XDPwLvp1wluwC6pmgf885pMWbR2qREs1o6Hlu6/Ocoj+La7rMdOGZQs
+	yNXAEAgZwSO4pqEghDYZtBEjVaWznXPmuixTGjLCub7oF54hQR4B/WS+X3xB94xz354lJgk7ayT
+	QmbdJWzTp99mr4JZJbtTgf9wNjLT3TFrsZFDH1ae3M3cFcHGPA9fGlHW9brx1WO/zyqBID2Wzki
+	D5fVxGFX4B6o1k1zXW4MYK0z/jfefOpdNRvOHjkxxm9s4aMDq19bFlksCem9BSI6/mfdEOnDk1K
+	zIsZ6J3wueym+dRV40W6ZCgcsctLMQPhaoiVfZkaW3S2b8VJLNibipfVHq4=
+X-Google-Smtp-Source: AGHT+IEI+FGQT0mJoCaWgpmVxSS8OQ1p7ri9u1bx9jiaRTK7695CdKt6XRKMDtKarhUvKOAGscSMMA==
+X-Received: by 2002:a05:6a00:a90:b0:732:2850:b184 with SMTP id d2e1a72fcca58-7322c3f6c9dmr8920407b3a.18.1739443330706;
+        Thu, 13 Feb 2025 02:42:10 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e? ([2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242549d0csm985310b3a.21.2025.02.13.02.42.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 02:42:10 -0800 (PST)
+Message-ID: <274de7be-86f4-489a-befe-475ae4c51826@gmail.com>
+Date: Thu, 13 Feb 2025 16:12:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CWLP123MB5473933B9B97137828ACC6A6C5EB2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
+To: Bjorn Helgaas <helgaas@kernel.org>, Keith Busch <kbusch@kernel.org>
+Cc: bhelgaas@google.com, skhan@linuxfoundation.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alex Williamson <alex.williamson@redhat.com>
+References: <20250211210235.GA54524@bhelgaas>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <20250211210235.GA54524@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 01 Feb 2025, Manuel Fombuena wrote:
-
-> Collection of patches for the recently added leds-st1202 driver. It is the
-> same patchset sent on 2025-01-17. The cover letter wasn't properly threaded
-> with the patches that time, so apologies for that.
+On 12/02/25 02:32, Bjorn Helgaas wrote:
+> On Mon, Feb 10, 2025 at 04:03:26PM -0700, Keith Busch wrote:
+>> On Mon, Feb 10, 2025 at 06:57:40PM +0530, Purva Yeshi wrote:
+>>> Fix warning detected by smatch tool:
+>>> Array of flexible structure occurs in 'pci_saved_state' struct
+>>>
+>>> The warning occurs because struct pci_saved_state contains struct
+>>> pci_cap_saved_data cap[], where cap[] has a flexible array member (data[]).
+>>> Arrays of structures with flexible members are not allowed, leading to this
+>>> warning.
+>>>
+>>> Replaced cap[] with a pointer (*cap), allowing dynamic memory allocation
+>>> instead of embedding an invalid array of flexible structures.
+>>>
+>>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>>> ---
+>>>   drivers/pci/pci.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>>> index 869d204a7..648a080ef 100644
+>>> --- a/drivers/pci/pci.c
+>>> +++ b/drivers/pci/pci.c
+>>> @@ -1929,7 +1929,7 @@ EXPORT_SYMBOL(pci_restore_state);
+>>>   
+>>>   struct pci_saved_state {
+>>>   	u32 config_space[16];
+>>> -	struct pci_cap_saved_data cap[];
+>>> +	struct pci_cap_saved_data *cap;
+>>>   };
+>>
+>> I don't think this is right. Previously the space for "cap" was
+>> allocated at the end of the pci_saved_state, but now it's just an
+>> uninitialized pointer.
 > 
-> Obvious from the individual descriptions, but as a summary:
+> Thanks, I think you're right.  Dropped pending fix or better
+> explanation.
 > 
-> - 0001: fix a NULL pointer access error that occurs when LEDs are
-> registered but the LED driver is not fully initialized
-> - 0002: initialize the LED driver before any DT LED initialization is done
-> - 0003: some spacing and typo edits
-> - 0004: include the appropriate select in Kconfig to make sure the
-> required Pattern trigger driver is available.
-> - 0005: remove .rst extension on Documentation/leds/index.rst
+> This is kind of a complicated data structure.  IIUC, a struct
+> pci_saved_state is allocated only in pci_store_saved_state(), where
+> the size is determined by the sum of the sizes of all the entries in
+> the dev->saved_cap_space list.
+> 
+> The pci_saved_state is filled by copying from entries in the
+> dev->saved_cap_space list.  The entries need not be all the same size
+> because we copy each entry manually based on its size.
+> 
+> So cap[] is really just the base of this buffer of variable-sized
+> entries.  Maybe "struct pci_cap_saved_data cap[]" is not the best
+> representation of this, but *cap (a pointer) doesn't seem better.
+> 
+> Bjorn
 
-Stripping the separators from patch file names and pasting them
-culminates in a terrible summary.  In no way does this cover-letter
-describe what you're trying to achieve, why you're trying to achieve it
-and the consequences for not applying the set.  Nor does it communicate
-any merge intentions (which is required due to the assumptions made, as
-described in our previous conversation).
+Thanks for the explanation. The primary goal of the patch was to address 
+the Smatch warning regarding the flexible array member inside 
+'pci_cap_saved_data'. However, from the explanation, I now got that the 
+current approach may not be ideal.
 
--- 
-Lee Jones [李琼斯]
 
