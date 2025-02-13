@@ -1,199 +1,125 @@
-Return-Path: <linux-kernel+bounces-514086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D031DA35231
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:29:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED29A35238
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1D83A64D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5CD3AB3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B8922D7B1;
-	Thu, 13 Feb 2025 23:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899B51C84BD;
+	Thu, 13 Feb 2025 23:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cXAIzKUh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fqCj/4yq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLvcnPJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6E2753EF;
-	Thu, 13 Feb 2025 23:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB218C924;
+	Thu, 13 Feb 2025 23:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489360; cv=none; b=YhCpzctiPp7rkjs2bZrc8YoBryDEULh6sDhSPtG0Ks1HaTmzvvrM4ssCmSEJ17/EonhUIsyL9d02d/sUVODFge5wTlaUvZAvtUkit5yNx82IL1i5hXOaCeGOkCcFHvQHJHSfOSoJdDGe2w7toDqX4KXoj2/Wkl7V1U5Sb4WKs/4=
+	t=1739489659; cv=none; b=NyMb9PedBAcUxjHxuk9+oP/lyZ+PgvxOKSoGdBCKSGmVjqqOQSU53uFqQzi9v9bq3olWZ/7TO9FXY3vjqMNvvCH9BcVL6e2rMXiKvC8SErQe8CZOZVvTYvf1M9uBc/oxUDcs4qvsfC2OvCSAHetx4GXrqj8kHomo8a3ST2pBw00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489360; c=relaxed/simple;
-	bh=yCg+JHVGinmY71jeGMv9PqGMuyQ8s3jFb15Rdodj5zU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C3HXgHGTlPUocivxDwOszFja2Q/P3P9EkRRHbcc+PBF7nd13DpvjlE0TZZs6pk0OJdHgb5/m9jNGmpjSPN5pmnhaMc0Phu0M8aIuZXpvbLZxNzo9e56B/nbJ6vLtZAJcWELWj53euWtDpuUXnr+ZBE0DgnyhEtf3BxzKLaF2TPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cXAIzKUh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fqCj/4yq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739489356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SFcNt5odMLbKiXquXUnztFXtBhO5k6+W01eUJBMil2g=;
-	b=cXAIzKUh/DXopgkkyFWkTTBW8LgVQ+67V4PJk0k+1gyCqZPPD8+GLX4eY/sxRdThNwQhEi
-	IrUqQKXn/71/T1gVrYlfxNzGWxjPIxgSLwWGzIwNPefG/MXH6iUE+uWvWqrWwwI/pAp4G/
-	4pQp1rPTb0ZYbf8Fus8A7mxXgpF6BoXz3EunJ8M7xTx74TJJVDEr912IepD7b0En8C5C/M
-	e8ho3SZTUdsKXImSIs6eKNKxaO+WzTHl3cDlDAbtqVqnQ551Cw8zzbIbBnwtTm96vh7/S3
-	MAyy9vCA7wvS9sMzMP6GOLjDyWZhUTld0pVr2Qwu9EgaGb+Mkxwej220jMT+9g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739489356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SFcNt5odMLbKiXquXUnztFXtBhO5k6+W01eUJBMil2g=;
-	b=fqCj/4yqaHP++Z90jOneJHDu4njRFMgeh4MQsVWo4uGjsN8JOpmHUa21LAX9uP3y7Dv1QZ
-	ZiSyWWpRtUYoW5CA==
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
- <konradybcio@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Maulik Shah <quic_mkshah@quicinc.com>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, Johan
- Hovold <johan.hovold@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/qcom-pdc: Workaround hardware register bug on
- X1E80100
-In-Reply-To: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
-References: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
-Date: Fri, 14 Feb 2025 00:29:16 +0100
-Message-ID: <87h64xjuer.ffs@tglx>
+	s=arc-20240116; t=1739489659; c=relaxed/simple;
+	bh=N1peFMfD7vTD/DRcLqn0vJS+BR6mrfRHxFGLN+VrLow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vFcIBgQnkm0+ACCUCMQjeWmH+d1leoTr2dcptYTW9XJ19uoiXKLJxStU52HA7pDIq/dfAQ0hMn7vq4EGWA2d6jS4/0e5mgOmseoogZnfrZWnekf6t6rDAzayh/HZQFN9Sn9csai77nqqdYatkmhVAR3+NhEss9/w0oXYIpm3VQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLvcnPJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9ADC4CEE6;
+	Thu, 13 Feb 2025 23:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739489658;
+	bh=N1peFMfD7vTD/DRcLqn0vJS+BR6mrfRHxFGLN+VrLow=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MLvcnPJYwq2TuORYaw1/ML8+YCaWUgLgFCcZ7doHINjH4PxQSZgvT3c8s4ETClKPv
+	 NAGTXBjLwXrrl2mPgwYjhtnWMUrLHmVqlEbjG0JTiFmJaGuXBfZZmTDZtrM6hIsDGr
+	 vL28499mUY1S2ydy4iAKtiO0YGJYJJcHe8tGbZ82pgMy+iIJa0MRSSfNfPWCYIPn0M
+	 Q4Oaul3kG5QInzMCdZ4u4OY8OYlAqs4DrEhf+PsiK0rslpAZ+ASavWBV6bl9Ouv3Z8
+	 nPIB4UpyH/B9Rdc7aJIcNkryK/Tw49y8n/6UOH2X87M1iEi09uRH1a9fSyMjRzBz/Z
+	 zomhVi+XKletg==
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d149f4c64aso3734585ab.0;
+        Thu, 13 Feb 2025 15:34:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1XANFv5ph0BL8hZ8E7/t+ifDAE4fJnqBqfMR+qkLRKffhO+kEucAwDQKVbQ2GwVjLGNt8CBPBXcaVTx3I8g==@vger.kernel.org, AJvYcCUK9YYWen3dh+z5BuaxYSnoFSr4NCe83inAqQJkvJ7JRWl01+24gu+K/jQSiUt9f/PxrUTUuvop2uqFNibLDYlw/A==@vger.kernel.org, AJvYcCV12rKqMS/bgoC2tB1BnNPZ5dfyBXBfVQazTaWyrwz3jkvgVqmtprm8OV971hg48u3DCqmjATfj7NfDlXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztdrz8m+rUm6BSVCmeGgGNqQLfUNEBFu5ewuHMzH0OC8UIWTFL
+	bRboZ0n3ee1Ay1Oey3X/Cu3TjfLAc1lfIUtX5t2FAlTXAb0lusO7DZvNBBocVUb9NdegqQ/OjFv
+	upZ6LYBmDJ+xvY5rM4J3b9xhmJwo=
+X-Google-Smtp-Source: AGHT+IG1rQV0yKmTd4ign51tXVmFd/3I3khtaLBM2gfno63cBPOt8//ZZKniEPA4RSgy4RfCpeSumDMFlaJlHY9wbAw=
+X-Received: by 2002:a05:6e02:1a61:b0:3a7:8720:9de5 with SMTP id
+ e9e14a558f8ab-3d17bdff43fmr80793525ab.1.1739489657616; Thu, 13 Feb 2025
+ 15:34:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+ <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com> <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
+ <mb61p1pw21f0v.fsf@kernel.org> <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
+ <mb61pseoiz1cq.fsf@kernel.org> <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
+ <mb61pr0411o57.fsf@kernel.org>
+In-Reply-To: <mb61pr0411o57.fsf@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Thu, 13 Feb 2025 15:34:06 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6C77if9-_j2sywHE4ZT3JUOAoDNiepiJPrRWCf8OAojA@mail.gmail.com>
+X-Gm-Features: AWEUYZnvF8YgL5a3ClR7_9YRs3GII1KO5ROPdxeyhHjRsChKmRJielirplxSTbQ
+Message-ID: <CAPhsuW6C77if9-_j2sywHE4ZT3JUOAoDNiepiJPrRWCf8OAojA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
+	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13 2025 at 18:04, Stephan Gerhold wrote:
-> +
-> +static void _pdc_reg_write(void __iomem *base, int reg, u32 i, u32 val)
+On Thu, Feb 13, 2025 at 2:22=E2=80=AFPM Puranjay Mohan <puranjay@kernel.org=
+> wrote:
+>
+> Song Liu <song@kernel.org> writes:
+>
+> > On Thu, Feb 13, 2025 at 12:38=E2=80=AFAM Puranjay Mohan <puranjay@kerne=
+l.org> wrote:
+> > [...]
+> >>
+> >> P.S. - The livepatch doesn't have copy_process() but only copy_signal(=
+),
+> >> yours had copy_process() somehow.
+> >
+> > In my build, copy_signal is inlined to copy_process, unless I add noinl=
+ine.
+> > If I do add noinline, the issue will not reproduce.
+> >
+> > I tried more combinations. The issue doesn't reproduce if I either
+> > 1) add noinline to copy_signal, so we are not patching the whole
+> >    copy_process function;
+> > or
+> > 2) Switch compiler from gcc 14.2.1 to gcc 11.5.0.
+> >
+> > So it appears something in gcc 14.2.1 is causing live patch to fail
+> > for copy_process().
+>
+> So, can you test your RFC set (without SFRAME) with gcc 14.2.1, so we
+> can be sure that it is not a sframe problem?
 
-Please use two leading underscores to make this easy to
-distinguish. But ideally you provide a proper function name which makes
-it clear that this function operates on a given base address contrary to
-pdc_reg_write() which uses pdc_base unconditionally.
+My RFC set is the same. No issue with gcc 11.5.0; but hits the same
+WARNING with gcc 14.2.1. My previous tests are all with clang. I didn't
+see a similar issue there.
 
-> +{
-> +	writel_relaxed(val, base + reg + i * sizeof(u32));
-> +}
->  
->  static void pdc_reg_write(int reg, u32 i, u32 val)
->  {
-> -	writel_relaxed(val, pdc_base + reg + i * sizeof(u32));
-> +	_pdc_reg_write(pdc_base, reg, i, val);
->  }
->  
->  static u32 pdc_reg_read(int reg, u32 i)
-> @@ -60,6 +69,26 @@ static u32 pdc_reg_read(int reg, u32 i)
->  	return readl_relaxed(pdc_base + reg + i * sizeof(u32));
->  }
->  
-> +static void pdc_x1e_irq_enable_write(u32 bank, u32 enable)
-> +{
-> +	void __iomem *base = pdc_base; /* DRV2 */
+> And about having the .sframe section in the livepatch module, I realised
+> that this set doesn't include support for reading/using sframe data from
+> any module(livepatches included), so the patch I added for generating
+> .sframe in kpatch is irrelevant because it is a no-op with the current se=
+tup.
 
-Please do not use tail comments. Also what is DRV2? 
-
-> +
-> +	/*
-> +	 * Workaround hardware bug in the register logic on X1E80100:
-> +	 *  - For bank 0-1, writes need to be made to DRV1, bank 3 and 4.
-> +	 *  - For bank 2-4, writes need to be made to DRV2, bank 0-2.
-> +	 *  - Bank 5 works as expected.
-> +	 */
-> +	if (bank <= 1) {
-> +		base = pdc_drv1;
-> +		bank += 3;
-> +	} else if (bank <= 4) {
-> +		bank -= 2;
-> +	}
-
-This is confusing at best. You map two different base addresses:
-
-  1) The existing pdc_base, which magically is associated to DRV2
-     (whatever that means)
-
-  2) A new magic pdc_drv1 mapping
-
-Then you implement the workaround logic in a pretty uncomprehensible
-way. I had to stare at it more than once to make sure that it matches
-the comment. What about:
-
-    /* Remap the bank access to work around the X1E hardware bug. */
-    switch (bank) {
-    case 0..1:
-         /* Use special mapping and shift to bank 3-4 */
-         base = pdc_base_x1e_quirk;
-         bank += 3;
-         break;
-    case 2..4:
-         /* Use regular mapping and shift to bank 0-2 */
-         base = pdc_base;
-         bank -= 2;
-         break;
-    case 5:
-         /* No fixup required */
-         base = pdc_base;
-         break;
-    }
-
-which makes it obvious what this is about. Hmm?
-
-> +	_pdc_reg_write(base, IRQ_ENABLE_BANK, bank, enable);
-
-> @@ -324,10 +357,21 @@ static int qcom_pdc_init(struct device_node *node, struct device_node *parent)
->  	if (res_size > resource_size(&res))
->  		pr_warn("%pOF: invalid reg size, please fix DT\n", node);
->  
-> +	if (of_device_is_compatible(node, "qcom,x1e80100-pdc")) {
-> +		pdc_drv1 = ioremap(res.start - PDC_DRV_OFFSET, IRQ_ENABLE_BANK_MAX);
-
-What? This maps outside of the resource region. That's neither documented in
-the change log nor explained here.
-
-I assume this can't be properly fixed in the device tree for backwards
-compability reasons, but leaving this undocumented is a recipe for head
-scratching three month down the road.
-
-PDC_DRV_OFFSET is not obvious either.
-
-You really want to explain this properly at least in the change log,
-i.e.:
-
-    X1E80100 has a hardware bug related to the address decoding of write
-    accesses to the IRQ_ENABLE_BANK register.
-
-    Correct implementations access it linear from the base address:
-
-      addr[bank] = base_addr + IRQ_ENABLE_BANK + bank * sizeof(u32);
-
-    The X1E80100 bug requires the following address mangling:
-
-      addr[bank0] = base_addr - 0x10000 + IRQ_ENABLE_BANK + 3 * sizeof(u32);
-      addr[bank1] = base_addr - 0x10000 + IRQ_ENABLE_BANK + 4 * sizeof(u32);
-      addr[bank2] = base_addr           + IRQ_ENABLE_BANK + 0 * sizeof(u32);
-      addr[bank3] = base_addr           + IRQ_ENABLE_BANK + 1 * sizeof(u32);
-      addr[bank4] = base_addr           + IRQ_ENABLE_BANK + 2 * sizeof(u32);
-      addr[bank5] = base_addr           + IRQ_ENABLE_BANK + 5 * sizeof(u32);
-
-    The offset (0x10000) is outside of the resource region and requires
-    therefore a seperate mapping. This can't be expressed in the device
-    tree for $sensible reasons.
-
-    Mapping this region is safe because $sensible reason.
-
-I might have oracled this out of the patch/change log incorrectly, but
-you get the idea.
+Agreed, this issue should be irrelevant to the .sframe section in the .ko f=
+ile.
 
 Thanks,
-
-        tglx
+Song
 
