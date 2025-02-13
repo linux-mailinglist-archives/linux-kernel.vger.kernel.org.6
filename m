@@ -1,141 +1,178 @@
-Return-Path: <linux-kernel+bounces-513594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F79CA34C32
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:42:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DACCA34C23
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34EF3A42B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD24188740F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF334204C0B;
-	Thu, 13 Feb 2025 17:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD022157B;
+	Thu, 13 Feb 2025 17:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ECU7WBy3"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5QuN7Ab"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8013A3EC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39792211A36;
+	Thu, 13 Feb 2025 17:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468338; cv=none; b=knT56caw3xgB6hzcOKCE0uJb9hoiFFw+RWwl2y0lwqzXDgXpSV62YljGFRkE0tz82uyFq5HEB7yntLy1Xv+k1ugyN+JJMcw33oHD/TguglxQS9W+8iCfvOe7GVT2bMS7lYeDU0sy60YxqemXXkcsMKb2gJbgZbQsrTEzgBrzCvQ=
+	t=1739468385; cv=none; b=BQ3+z+QkRnuL8MhtVwg3TpIT3WFLouWTaAwETW5TKCHLNXiqtw/X+z2cBkRtg1AfCPbDO0KXULGp7LsHWUxqvLnXYRxm1vo5L8IXqjoe6f8/TyqDc82pw99Zte1e4sfoZvvnEdUxgrDmsZv7hg1oYqG/93uJSOnNGD7fMoI2kpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468338; c=relaxed/simple;
-	bh=b7N+8dSPQ0OnlGTOQ+2/iyi4f6259SWAIHYoRWb24J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0OYEQtyp/D7PfLAxeQKJxRI+XFABM8osgvxTn3Mm83BssN1fkSnSOhlLY/qwo/W+IkH1oxcGSfIzVtC3NIL+EOKkXcg2I8ddVi7RpzeWZ7rERk/QP3yvZdxMLuSziTstGSOz/ELkGq6U3Lcd2KkjH1y14l6n4psovEvBr0avs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ECU7WBy3; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f6d2642faso30084245ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:38:56 -0800 (PST)
+	s=arc-20240116; t=1739468385; c=relaxed/simple;
+	bh=ch3lPgpH9FqpWF5yhIl3KdS/BSZwVZLBNQlPIEZ73z4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JYXd7Etod5swRcnNEz/wB9zitsDMjXwYd2rL02rRtnvdYWhpymkbsTHZdUCaYyAgInkUaF20mmgUggcYE4Ls3KW3ES6G5aXEK140II9wmFrC9srLMIFiOd2g9ymHFQa7ptij6Xql2g5gLieueCZPVvwvJXYOby83fSfZZHIbJvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5QuN7Ab; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-726f943b322so607554a34.3;
+        Thu, 13 Feb 2025 09:39:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739468336; x=1740073136; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oLC9kfYPwLBjTLU9fLAjv67CM2H+dgqHjhipB5hFLZc=;
-        b=ECU7WBy3jbHPomLP0Xv0uYG7Q3Uwur/tm0kyRQqp1L0sCK3uTarWXuth+a+LOA4Umw
-         brm3i/Kbk3Vk7W8H4zDLq4Q1KDeVz7TDOn6nyJ0Vyx+UXJHl1q8INHTYUENkFqDu5bgj
-         SabyGG1Yp9h18+gTUcWsm7IM+4/kyExktlqaI=
+        d=gmail.com; s=20230601; t=1739468383; x=1740073183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnUJdLyMGBvO/hIllptp513IAD0oBTKPE00WpFD+Cy8=;
+        b=K5QuN7AbsNLTWrY0fhyu++9hNFFcqmRl1zRyDzeanHiWYko0YdXJpsIEf7lgZzVyo4
+         nuKJnz6r2CMuactETW1moCoExVaX3jVQgN2DxkR9U22n5Zw3Icm6SCv3lkIjnr1dzg5V
+         HvhaqtTTypABWEspTHB6XpjMEwfZJKAcSMmYamXtvbIMYmT0gsVIAyKJ3PAKiX4jGvmo
+         7jAG0toa8mIEtITN1G55IJdP5mjOJaNWwJr4YCEHmcUSIqyQRFrGOtXR4HLV8x3sxw+D
+         XoHX3kMA44fKaPQj4P5wlCnKaIcIV+W6i9OVUztFWhJx8X1nXaPO5SUPSDtuMQz1bTe6
+         GXrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739468336; x=1740073136;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oLC9kfYPwLBjTLU9fLAjv67CM2H+dgqHjhipB5hFLZc=;
-        b=Yj4GAg94yq4qqYkeuHgIF0s5hlL6byvq92ptqp/FaD7sNOZzwJ4JweNmbOb7q/Riwg
-         Y0A9Lw1fRRi0Q5ATSuq9Jjfo1OnNTSsJQDs08mRDELmfMsSt+YEHAH0bonS4tl+0QvfR
-         A4XOWGvd2b2p2FAxt680AXHfPQNhX0IQ0iqMWKjVVaoU52eRQR+EH1tsnTlsYxk3O40S
-         8c2YY/rilAOQWkkorD4UB3UCRVu0h+hnOVF76NZzndlWzQc40MLz3W76rz1XA1bt6BtW
-         fq/fO9pDJ+gII5EHlYNWshn1yqEfUSbivFULZayStJLIZjaWzgJoIzl4l0bHiv0UX8fH
-         e4uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnxGpUINSfGxFM9IA2al7OSoydOmJmq2sq9EgcDf9qjlkW4M3h61jRWWx9E+bCm8WqYqlfDZ06Pmkd6SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMzixOcV+S9XBbNtzyuVouAnl1iZCwS/9TLB4GF0GCcSyVRSWt
-	0WLTCDI9UoJ+DBHJy7gbix5Mv4WRjKJ24PQv9qfWVEWk1rpBzyuTr+fsxX/wy9+itXSfswx70ds
-	9
-X-Gm-Gg: ASbGncurINvPUhBhHfs5Swlemc4xAsXkcbQMlhJ11ENZFk1rpiR08NBMbGBnNCXmLYg
-	wYeshCOUZ2RHdSTJGzsjj10PgPmNWGUXGiEch8yoAY5WcmdWiXkxP4MTW0nDhc82k95stitSjvh
-	eg9P5E8ajCMdj2Vc/NNuEKIw2oyX5+4/nNJlW8zL+dgWKx1R/bUXyJMc+J/TmAaczvNg0KJAGDk
-	t1X8ntutalnDVKeAagbmhAMwyKcoReBoe4ARzMteNTS9+iTrwlF8098J0dDYOCuYeso3uTNVBjF
-	vrgrDlKinKa3k+cz0MnChnsfo0/v3KnljeTWT+TqLVyMjpXM/WBrpDg35Q==
-X-Google-Smtp-Source: AGHT+IHKx7UoBaIYvNAKG4jbdIsvHPKTWLspdf35/yTjPBwhkv4ORzitL5INUVr5HwUTUERzhGKRNQ==
-X-Received: by 2002:a05:6a00:2e1c:b0:732:1ffc:36f5 with SMTP id d2e1a72fcca58-7322c374111mr12059457b3a.5.1739468335955;
-        Thu, 13 Feb 2025 09:38:55 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e4casm1588770b3a.103.2025.02.13.09.38.54
+        d=1e100.net; s=20230601; t=1739468383; x=1740073183;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BnUJdLyMGBvO/hIllptp513IAD0oBTKPE00WpFD+Cy8=;
+        b=tHXxvFqZasPNvEFlxqTMSzvbY2+cf3NoYvkiJdH3hD4GiEhr/9SerEHL9TMDWnkxfo
+         ndptVRHjka8zEXS+bRDieVkBzXpXfohJ5UowF5lfmlmnL1mnokFjRjcWNEkyoziQ+3rS
+         9j9Y9W1PUdmimNsiDuboG3Fv9i/UCmkte7n5T8gPqaDj1Upo0xbuxQRP3IMLlFepY8Ow
+         eDhDF9dPWOrlhfND8serw3/FCrN1cEJYwZZeRzLwHgMn1WHmuYh5QYZor/DNm4SZGmFG
+         himprZad37+Up2QwPa0Hyo9tH0ha3itMJZfqMPKjvo3qjWjvx7TsLZbshg63URZTBeMk
+         2GOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnbN+gVDs+8eATFBkxxIs2CgvFc2udZ/AmDIGk0pJasjPorLApDntSWzpMvARvupzsBvy/IVDEMigQ@vger.kernel.org, AJvYcCWn2H75TdCKQIZEj427b03+euAVz71WLDE9cYWoTgXh54r4+NK5/S0UXv691C3yfvsp/h+sW6LH3WMvCdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1ABeEwX0aWoVLyilZn7VzaCCJUeckHABmSjVnAvwBkP3wxKuC
+	Ek/FHeJRzqZ+H36smK13fyq53QuFE66khJdAkAR/y1XvBLssujAA
+X-Gm-Gg: ASbGncuoul2fztzf0Y5eZ6pPhVVoMQeXSU0YT2GZ4mSC+EG4Xcwkt8EcNHHnzK0gS/Z
+	CfzUMkbuLHuwHTFikVR4Av0FtZD/3ozGDPKIq2W89KMarkuzzc44mO/jlSriwdZLir3LNTEeWwn
+	vD1n9LQveGSEc8sBvOKZBeNhCvpFv4L4+iOksI5p32FUoOHHqYB/8eiNPkjWd9GzBe/A74rsQUv
+	ZVoc1wAb8zahtj59OhD+DFcV8oTTpGimIIvenAKIkOtVCyq8w+yqnFxee7NJmUIHdAv1RLQcN9t
+	TDtgp/4/7dKlcsHxi1M2kGRa
+X-Google-Smtp-Source: AGHT+IFvYIB/G0KZILSte8pJfISgj42H0XPT9hPv7ZXXXJSfaRjzTFXXOKVJTFw1PnRxrDQlxNbfnw==
+X-Received: by 2002:a05:6830:65c4:b0:726:e951:7b29 with SMTP id 46e09a7af769-726f1cefa51mr5734804a34.18.1739468383260;
+        Thu, 13 Feb 2025 09:39:43 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.154.251])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72700257ff7sm758460a34.54.2025.02.13.09.39.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 09:38:55 -0800 (PST)
-Date: Thu, 13 Feb 2025 09:38:52 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	rdunlap@infradead.org, bagasdotme@gmail.com, ahmed.zaki@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] documentation: networking: Add NAPI config
-Message-ID: <Z64uLN63gD0nNvk_@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, rdunlap@infradead.org, bagasdotme@gmail.com,
-	ahmed.zaki@intel.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <CALALjgz_jtONSFLAhOTYFcfL2-UwDct9AxhaT4BFGOnnt2UF8A@mail.gmail.com>
- <013921c8-1fd0-410d-9034-278fc56ff8f5@redhat.com>
- <Z633ggyM-F2pfAkG@LQ3V64L9R2>
- <20250213081418.6d3966af@kernel.org>
+        Thu, 13 Feb 2025 09:39:42 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: scott@spiteful.org,
+	bhelgaas@google.com
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] PCI: cpci: remove unused fields
+Date: Thu, 13 Feb 2025 14:39:25 -0300
+Message-Id: <20250213173925.200404-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213081418.6d3966af@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 08:14:18AM -0800, Jakub Kicinski wrote:
-> On Thu, 13 Feb 2025 05:45:38 -0800 Joe Damato wrote:
-> > On Thu, Feb 13, 2025 at 12:45:01PM +0100, Paolo Abeni wrote:
-> > > On 2/11/25 9:06 PM, Joe Damato wrote:  
-> > > > +++ b/Documentation/networking/napi.rst
-> > > > @@ -171,12 +171,43 @@ a channel as an IRQ/NAPI which services queues
-> > > > of a given type. For example,  
-> > > 
-> > > It looks like your client mangled the patch; the above lines are
-> > > corrupted (there should be no line split)
-> > > 
-> > > Please respin  
-> > 
-> > I must be missing something: I don't see the line split when looking
-> > at the original email and I just tried applying the patch directly
-> > from my email and it applied just fine.
-> > 
-> > Are you sure its not something with your client?
-> > 
-> > See the message on lore:
-> > 
-> > https://lore.kernel.org/netdev/20250211151543.645d1c57@kernel.org/T/
-> 
-> It's also broken on lore.
-> 
-> The first diff block starting with the @@ line overflows and gets
-> broken into the next line. All lines within a diff block must start
-> with a space, + or -. The "of a given type. For example," line breaks
-> that.
+The `get_power()` and `set_power()` function pointers in the
+`cpci_hp_controller ops` struct were declared but never implemented by
+any driver. To improve code readability and reduce resource usage,
+remove this pointers and replace with a `flags` field.
 
-I see; I think it's this oauth2 helper I've been trying to use with
-my google cloud account. Arg.
+Use the new `flags` field in `enable_slot()`, `disable_slot()`, and
+`cpci_get_power_s atus()` to track the slot's power state using the
+`SLOT_ENABLED` macro.
 
-I'll RESEND this and my XSK attribute thing, too, which for some
-reason isn't on lore but is on other sites (like spinics).
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/pci/hotplug/cpci_hotplug.h      |  3 +--
+ drivers/pci/hotplug/cpci_hotplug_core.c | 21 +++++++--------------
+ 2 files changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/pci/hotplug/cpci_hotplug.h b/drivers/pci/hotplug/cpci_hotplug.h
+index 03fa39ab0c88..c5cb12cad2b4 100644
+--- a/drivers/pci/hotplug/cpci_hotplug.h
++++ b/drivers/pci/hotplug/cpci_hotplug.h
+@@ -44,8 +44,7 @@ struct cpci_hp_controller_ops {
+ 	int (*enable_irq)(void);
+ 	int (*disable_irq)(void);
+ 	int (*check_irq)(void *dev_id);
+-	u8  (*get_power)(struct slot *slot);
+-	int (*set_power)(struct slot *slot, int value);
++	int flags;
+ };
+ 
+ struct cpci_hp_controller {
+diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
+index d0559d2faf50..87a743c2a5f1 100644
+--- a/drivers/pci/hotplug/cpci_hotplug_core.c
++++ b/drivers/pci/hotplug/cpci_hotplug_core.c
+@@ -27,6 +27,8 @@
+ #define DRIVER_AUTHOR	"Scott Murray <scottm@somanetworks.com>"
+ #define DRIVER_DESC	"CompactPCI Hot Plug Core"
+ 
++#define SLOT_ENABLED 0x00000001
++
+ #define MY_NAME	"cpci_hotplug"
+ 
+ #define dbg(format, arg...)					\
+@@ -71,13 +73,12 @@ static int
+ enable_slot(struct hotplug_slot *hotplug_slot)
+ {
+ 	struct slot *slot = to_slot(hotplug_slot);
+-	int retval = 0;
+ 
+ 	dbg("%s - physical_slot = %s", __func__, slot_name(slot));
+ 
+-	if (controller->ops->set_power)
+-		retval = controller->ops->set_power(slot, 1);
+-	return retval;
++	controller->ops->flags |= SLOT_ENABLED;
++
++	return 0;
+ }
+ 
+ static int
+@@ -109,11 +110,7 @@ disable_slot(struct hotplug_slot *hotplug_slot)
+ 	}
+ 	cpci_led_on(slot);
+ 
+-	if (controller->ops->set_power) {
+-		retval = controller->ops->set_power(slot, 0);
+-		if (retval)
+-			goto disable_error;
+-	}
++	controller->ops->flags &= ~SLOT_ENABLED;
+ 
+ 	slot->adapter_status = 0;
+ 
+@@ -129,11 +126,7 @@ disable_slot(struct hotplug_slot *hotplug_slot)
+ static u8
+ cpci_get_power_status(struct slot *slot)
+ {
+-	u8 power = 1;
+-
+-	if (controller->ops->get_power)
+-		power = controller->ops->get_power(slot);
+-	return power;
++	return controller->ops->flags & SLOT_ENABLED;
+ }
+ 
+ static int
+-- 
+2.34.1
+
 
