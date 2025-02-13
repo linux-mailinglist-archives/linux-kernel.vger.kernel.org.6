@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-512077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95ECA333C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:04:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA02A333CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3233A58C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA851166C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9227A4A01;
-	Thu, 13 Feb 2025 00:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8547433FE;
+	Thu, 13 Feb 2025 00:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lksfB6+M"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tR0PgMek"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94922F44
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0148A10E4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739405070; cv=none; b=EbaUZSPPPOGtIVEpz4ae/usCG7fIjztEXz4bqFKedV0QifT0UKBQ6qop0cOap8Yclw04XM3fHRmBLmgAz8yaZyoNmoO34gWsWO/tjv/G3aiU5cOneNHgFmGJjJ/4saRAGfu8ThjKdyK0CFDPfMnNJXLYdCZS1JE4CwC73Y1vP6k=
+	t=1739405240; cv=none; b=mU9IOj1Q9yCLJH7AIqSh8WHNKKHMtYYCkeTYbvcdqbwHuH8+yFdY5g0G/72Tz6z1U1Sfjfm8MAADSVXxL9Lt0ov1i1kcntsZwMi72QIhbS9wtxFwycAaQKOI51pzA+jeWCz6PLHVJa8tbUkeSjdHDtkyZzqbnnZepxd0rRTN+vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739405070; c=relaxed/simple;
-	bh=yXEn6M4zmOSH0mBgsox+8yvEgc9Smd7J4BruiCZC2Kw=;
+	s=arc-20240116; t=1739405240; c=relaxed/simple;
+	bh=wAQQF2/xUxM6dl/LsVAawc/JJGfCxfKXoI7le3pPCXo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nv7t8/MR1zgmrntVWi7J5mzwdUhylmX68K+qy9Osq1JA9rR2AiPX8v/uNnsVqhkX/4z6I9lKoNOl7WvXtetlgRpSD66XHyQ2TsgDUMfLehmG9jC+XMBqI/ZQDGvqVk6fdsT+oD8EBSQPrKevw3jnzUwm4B/l/16QTvxUHV1qA3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lksfB6+M; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLnncXNmy8UJH7ZJDoZcfQl2hJNvxLDwHH7lxjgifh5dMPgVJRXz++QcqAaZ6SccK07Vi1PLavKWFpATza1by35Xn/3NMbMEwX3Cj7tx8er0kkt1o/eyspiSTLNbZvx0yqKOh7QBOz/1Opt/lPUf5ro5RUrgf4aJAu+QzOAvoHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tR0PgMek; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5439a6179a7so301842e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:04:28 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5451d1d56a7so314498e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:07:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739405067; x=1740009867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/dX/qzqd6dVtCQvTD6EDKh/RRBcZW8oAwKMkEiG/94=;
-        b=lksfB6+MvL2Nl+mseP21+ZYi4C8Av454X7nucJRlRnBTFMJtQq97A6nCjl9nco+bMg
-         8HkoLa4hveCk+w2zxe/BKDSHaacda/SS/SJpZ7wkBVovCYR2XlxW71BAD/A5wWp7+t/5
-         hr5dfePE3Eo06AcV/wFFfti9PrHJr19+k5LKan76jqVtfWfwYSKl0p4qvr1jkJuXPBO0
-         r9lAOH5QhByMLq64qUEEz3XMIIm1Bp4Gj6LJjCchDbQB9VRa/g0xZ3Na91HmUmfqB+x9
-         4NIcBUfLrS0ggbsuHI33owl9jS8eoPlSBLT3mI1P7iNUl4k512K0DoqzU2A15P1Elvbm
-         QJ8A==
+        d=linaro.org; s=google; t=1739405237; x=1740010037; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pf8gs00/4/9w7W7B+PluDcVXqKZN7oOLtPqkB411rw0=;
+        b=tR0PgMekS9KUItlPVTPZ/jPRopmyEbp7gCNSvovsQVRU3WNeZp3Lo3KkZnDu0szsnv
+         WdFDlKJKsSfQEKdyspkhb6ffBFLzU1rHxngMWWUugHDjS0NaIyBqm7eQ+MtiKw/WEeq+
+         c2vvBtpUONtGLLRM+rDlaJk4x/ocM3RIfOE88srufGBP1xCRNsBlaQCVfwR8JKvHrMdd
+         fwAmzHGg8hnFFGztaKIIUG6gpcOB+CB4CB8g9mkv1eA85e7Yhh0EZcxeRdFg3VAlo/UX
+         RurbmW+aeyEi6+TCBgl08WeicrBR8CKfLmDZfwEXf8tboeDRJ2SusA1xk0ftfrsX6Yua
+         Ws8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739405067; x=1740009867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/dX/qzqd6dVtCQvTD6EDKh/RRBcZW8oAwKMkEiG/94=;
-        b=YOYsxVKbevLhp3SwOEenzttlmetYjhFnlCjFGcclvaYkkdQGM8SRv096kW23Z8sGLD
-         C8/TnSeqjzJriTuwysUkfrzdEV3bwG3g4GOyrphyE/jB+QQth2vPFtDz1vNuOPn0fawN
-         nv5h0juF7XCStP1SW9L/eJBI30yrfxoHmwvY9s9EqKQ6G/4C+vhTFjMybrO8B+0foFLY
-         iQ2JczqoVjlG/9MFwKj+aF3HGGeGv2ze4NUOtPyWV1QFWugdWKcyZZhAp/Whz5B16lmu
-         5z2kEGKRoh1yGptqRgCNRZBlAOGfyKnDHpqj2O24zCFe2HwmXZA47cSIQbSNhUETGZy0
-         VZnw==
-X-Forwarded-Encrypted: i=1; AJvYcCViLDVYrebfGI8SJx5e2sBXFoTyP7SISZx9NrcDS0/8PZLoankbMguypLgOCKWylkvE9L7wL81k6c/wIYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqa9Je6czW9xsAB+TZVxmChwE6xw/KJobwDxahZAyKNxrQMuhs
-	XfiTPRB+kqGqo1Mp97hdUyOdxi4a6dvd54F0JND2spYqpBAqpkpWFk+h60mImcI=
-X-Gm-Gg: ASbGncuPRahpMEKbtY/DlArCgg5bxwZeXXl8umnfb4o/kGnI79jxKqUFLTsN8FkFyNu
-	bs3qlnUHM/XzJDRrWfXCO6biorrF7Qu9vOppGu9NldkB+uZ6plKGyfHV9ewjjVEdElAb/bJFfEN
-	Ptvgt9948dqZwHWvRabYQsu+/U1Rvu6HY4zNCyb/NVYM1U9UeJ7pKeFaLWE2b55mI/HUVCgHMY1
-	WIZp5RIqxmUOG8dpr/VkY4kjUxV3pGeFnCdVh9jzAb/WoCr2Kio9XydLiwFPJufegm0OpIAoqcI
-	1PS1IGdzIBEw1ywdJ4x/S5gP4MDtzg0bJd00w2PziLxxYtKKTuj5LdCXLuF7UUb6XcETwwA=
-X-Google-Smtp-Source: AGHT+IH+fxi9VKUfSEWdeJIAsmbcn/rRwU9rp6DokXIOHewLvT5877lvjYqtDg8LhsfdCVvtFd5JDw==
-X-Received: by 2002:a05:6512:220a:b0:545:1d04:5dff with SMTP id 2adb3069b0e04-5451e01f3a6mr241356e87.24.1739405066968;
-        Wed, 12 Feb 2025 16:04:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739405237; x=1740010037;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pf8gs00/4/9w7W7B+PluDcVXqKZN7oOLtPqkB411rw0=;
+        b=vgv7GdtAKRwoMXNLC+Rr/6sb5hdw6j2XvQg7ptZt70pM/EP7L/p4LbfjMWuEREPD8D
+         L0R6Iomt5AuBTLwUikf1dXanCsmhy0vzRHHChrtK5g1CMnhX5jvfOCvpQzCDCYthC3EI
+         GTpEf6dAY8bxiKOEz8dxSVSHL4QZUpHrJchbtvhj4Ejzw+mk+SUkApiyYyChcoETyfnl
+         DbxocXYFXvBs3XBf4GeosuJY0hlwQW+zfFEjdswrqonabMlMKZdPa7LPZbVM1XiZWgbR
+         E07WtnJjXbME7fPuvLPbawOLY9LokaYAhxhU5xDWPl01IVLqHgoZUrcuG8A6ZAi5l0Lk
+         g4eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHIXZ4dWtfxtrmryu1LjDtAJgZIrkkJ2IM1EVsC7eAWX9r4QGgPehJ+OtWT6nf9VRMFAzQHIA5vLNmkUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMoEkIkDr4H/ybuSja/wxQKOQCfpK8DLoTwNLsJqzXvFMt7chM
+	Q4//2T3T+92KGITpMvI1qn6x0HAxKZ0J9ymJ/om50RzBMEnkrFwPGeqbv+FyZ3Q=
+X-Gm-Gg: ASbGncskrsGhwMxLsClN8gxPrSDYbDDe1XskJUkYe60ygq8EubkJCwws55Y5MINOlaV
+	X3XlXPK93SRtpGdtn79dgu6IfU6CWDff6DQL46ZoHCO9MMeczSbrDVaB1u8ORxIPrOx6ri/Ln0C
+	127PRZ6SujoDEGyylol6N+2ZMwZYZT4yThh8UJMiMXqSBOL/AFJ8ArTLJ2h5zaz2mi0ZkDCeM8p
+	yjk2olBEj4Ygj1SLomN7zqd1lAY7ASSEYpEso45rJLtUS0teWW/IZQ2o0OmKA4YTHFXkhGHoGIG
+	XeSWAFYyHhP3O/ZMlW2KFEM4lLEFK8ZoNgAQLHBac9ERsD1cms3TEulA7Qj08MfhXPhgOyY=
+X-Google-Smtp-Source: AGHT+IGgaIb79GOenbsc3e1MUpq7bHd0RnhtaMAeeGwuUeOTEKM4SryWszGVytnTQkm7zU/gnhk9pg==
+X-Received: by 2002:ac2:4e95:0:b0:545:fdd:9ef4 with SMTP id 2adb3069b0e04-5451e4f0750mr213183e87.8.1739405237077;
+        Wed, 12 Feb 2025 16:07:17 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f11ec34sm12035e87.235.2025.02.12.16.04.24
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105cdcsm13282e87.116.2025.02.12.16.07.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 16:04:25 -0800 (PST)
-Date: Thu, 13 Feb 2025 02:04:23 +0200
+        Wed, 12 Feb 2025 16:07:15 -0800 (PST)
+Date: Thu, 13 Feb 2025 02:07:14 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
 	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chandan Uddaraju <chandanu@codeaurora.org>, 
-	Stephen Boyd <swboyd@chromium.org>, Vara Reddy <quic_varar@quicinc.com>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Guenter Roeck <groeck@chromium.org>, Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH v2 2/2] drm/msm/disp: Correct porch timing for SDM845
-Message-ID: <5yli2sqw5hxoinlaguxjq2lleez7p4qjkwvexrgn7uphnu44ws@trlvdrpep5uv>
-References: <20250212-sdm845_dp-v2-0-4954e51458f4@gmail.com>
- <20250212-sdm845_dp-v2-2-4954e51458f4@gmail.com>
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFC 4/7] drm/display: dp-aux-dev: use new DCPD access
+ helpers
+Message-ID: <g2md3uz34tv7atlxm6cvkdwa35pjulwovmlyj4ausoson7wrkw@vjvfpcaejrck>
+References: <20250117-drm-rework-dpcd-access-v1-0-7fc020e04dbc@linaro.org>
+ <20250117-drm-rework-dpcd-access-v1-4-7fc020e04dbc@linaro.org>
+ <87tt9pn8uu.fsf@intel.com>
+ <7unkxysvdn57fp6t7sjmgqsiacg5grbrk4lp3fbfdvaht3hq4o@gqshn45sa5ww>
+ <Z601HHdh2Zn62skU@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250212-sdm845_dp-v2-2-4954e51458f4@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z601HHdh2Zn62skU@intel.com>
 
-On Wed, Feb 12, 2025 at 03:03:47PM -0800, James A. MacInnes wrote:
-> Type-C DisplayPort inoperable due to incorrect porch settings.
-> - Re-used wide_bus_en as flag to prevent porch shifting
+On Thu, Feb 13, 2025 at 01:56:12AM +0200, Ville Syrjälä wrote:
+> On Thu, Jan 23, 2025 at 01:05:47PM +0200, Dmitry Baryshkov wrote:
+> > On Thu, Jan 23, 2025 at 12:05:29PM +0200, Jani Nikula wrote:
+> > > On Fri, 17 Jan 2025, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> > > > Switch drm_dp_aux_dev.c to use new set of DPCD read / write helpers.
+> > > 
+> > > This might be one of the few places where the old functions and the old
+> > > return value was used in a sensible manner.
+> > 
+> > Well... Yes and no. What does it mean if we return less bytes? Is that
+> > still a protocol error?
+> 
+> AFAIK short AUX replies are perfectly legal accoding to the DP
+> spec, but we've not really seen them happening in any real
+> use cases I suppose (although I'm not sure we have sufficient
+> logging to tell whether something failed completely or only
+> partially), hence why we've never really handled them
+> correctly.
+> 
+> For aux_dev it might matter more because the common use
+> case is to just dump the entire DPCD, and some displays
+> violate the spec by having black holes inside the DPCD.
+> What I don't rembmer is whether those black holes actually
+> result in short replies, or whether the entire AUX transfer
+> gets rejected when it hits one even partially.
 
-Unfortunately I don't know enough details to comment on this change.
-Maybe Abhinav can check it. I can only notice that msm-4.14 disables
-programmable_fetch_config for non-DSI calls. Would disabling that call
-for DP interface fix your issue?
+I see. Let's keep the old interface just for the dp-aux-dev and make
+everybody else switch to the new interface. This might complicate the
+patchset a bit, but it seems that's how it should be done.
 
 > 
-> Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
-> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> The other concern with not handling short replies correctly
+> is that writes (and even some reads) can have side effects.
+> So when a short reply arrives we may have already triggered 
+> some side effects while still claiming that the access
+> completely failed.
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> index abd6600046cb..a21addc4794f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-> @@ -94,17 +94,21 @@ static void drm_mode_to_intf_timing_params(
->  		timing->vsync_polarity = 0;
->  	}
->  
-> -	/* for DP/EDP, Shift timings to align it to bottom right */
-> -	if (phys_enc->hw_intf->cap->type == INTF_DP) {
-> +	timing->wide_bus_en = dpu_encoder_is_widebus_enabled(phys_enc->parent);
-> +	timing->compression_en = dpu_encoder_is_dsc_enabled(phys_enc->parent);
-> +
-> +	/*
-> +	 *  For DP/EDP, Shift timings to align it to bottom right.
-> +	 *  wide_bus_en is set for everything excluding SDM845 &
-> +	 *  porch changes cause DisplayPort failure and HDMI tearing.
-> +	 */
-> +	if (phys_enc->hw_intf->cap->type == INTF_DP && timing->wide_bus_en) {
->  		timing->h_back_porch += timing->h_front_porch;
->  		timing->h_front_porch = 0;
->  		timing->v_back_porch += timing->v_front_porch;
->  		timing->v_front_porch = 0;
->  	}
->  
-> -	timing->wide_bus_en = dpu_encoder_is_widebus_enabled(phys_enc->parent);
-> -	timing->compression_en = dpu_encoder_is_dsc_enabled(phys_enc->parent);
-> -
->  	/*
->  	 * for DP, divide the horizonal parameters by 2 when
->  	 * widebus is enabled
-> 
-> -- 
-> 2.43.0
-> 
+> I suppose if someone was sufficiently motivated they could
+> try to handle short replies more correctly and keep retrying
+> the remaining bytes (assuming that is the correct way to
+> handle them). Although with those black holes I guess
+> you'd eventually have to give up anyway before having
+> transferred all the bytes.
 
 -- 
 With best wishes
