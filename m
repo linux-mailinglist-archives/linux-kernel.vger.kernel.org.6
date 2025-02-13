@@ -1,283 +1,312 @@
-Return-Path: <linux-kernel+bounces-513055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DCEA3412D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:02:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3C0A340E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E64E3ABF9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF4016AA65
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112D627426E;
-	Thu, 13 Feb 2025 13:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B5C2135AA;
+	Thu, 13 Feb 2025 13:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TKOfS/jm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qax1h8Uy"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/2Md6kD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2491727129E;
-	Thu, 13 Feb 2025 13:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455052; cv=fail; b=ZQ0hTaEeedlLxTnSJYKOoMikmWmAcJ5cPxeMTleLizg7F/y7TS81zjbWfxDI52xm9yyrHv5sFrxpkOQVf7COtSCedvzPZiQhhu3Um1Mii2MMXSQ46qGzbNMBbKkgdVGChoG6RB4+Jca1HZP1fZHCp75aWiQewRgttGize5plnnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455052; c=relaxed/simple;
-	bh=b62au7gM/3UaNnpgBcSicz4+ph+erw0KtdH2QBYU0Zc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gQCgQPhh0f6REGN1DvB7ax2BvG9JDUOtkXrhZCv6S3IRqDfnfryNKfOIJtO5ZPTSZtLJvgC75GLwobj52aJDlEweSpN6sRHdQQ4WlMMkuPG7boGFfQb6mlRmKYsVW/d35OuSIDKoRXGwB3m4Go6aWYNfs1GSAr64PwE1C0UV0W8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TKOfS/jm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qax1h8Uy; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D8fgkm021994;
-	Thu, 13 Feb 2025 13:57:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=cbsfhwIoN6UOoNYU4jj0NZhQTrfD3MciMudVxKNxmUY=; b=
-	TKOfS/jmxlbeUkCtHxwvAPwMqdQCZ2J0TuWQwGDrmQTphc6w2wyD2a+FmYx1bGuI
-	cdEdjR6Hi5XiVTaRzhKHynLewLVbcu5UnUIrLkxCcIdbs0hFPam7UriNzu7PkqaC
-	R8/ojTRa12/MhlGiIUDQgBpv/VpCMsZKJL0EEqTStQZ6Miocgkpq2V3jrMVXMQvX
-	XJfM5MbQXCPR8Pt5nKMvlP0zlFM4HU6W5SPw5TzhFgi4v1IX6dQACtke/vZvjDl8
-	/r0PT+TRQ8tuf7DZzWkGNreIPcQEaYMp3JF/9GKw/zXZ57pJupYxbxHmJ364a7K5
-	ZgQbehSJ3/UxBdKyOOsvpA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44p0t49jhp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 13:57:19 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51DDWqmt009852;
-	Thu, 13 Feb 2025 13:57:17 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2174.outbound.protection.outlook.com [104.47.57.174])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44nwqj1u15-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 13:57:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x7MyrRT9rvN6m84AmovLEj8E9ldQtQ5Nk/673+8C5zr/yy+8/qQgvx5z6HT27k4JL5O/QnbhxHUZJQ6SrAfQp/GzOiJvzUd3zISToYVyQBUTznITw1Sqj7lZvIeefxGL5iHw/o1Heuim57yCw47lowYmutFlpNAvYELctnOZ2ONdQhX41VoBrM6+Bn2sQiSFKo7n5J50zARUUqxxyu1OJgnfsm+y92k/dx634DvnxWSmyVkesvaoieb1F9zGHtbuTcz9+plGWKZ1ZypLX+Wwpeneg7SO1RnXlNjTqMu+3HyQEVJjfQh2HDvkj13h8oOAjOj/VhbfV91x8n2y7AzLdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cbsfhwIoN6UOoNYU4jj0NZhQTrfD3MciMudVxKNxmUY=;
- b=qyF/+Rwmn9UZ+p2NfnnvS2p68blIpcYq4Gt0RgplMGPbq7RuZxUq6s1frgdVvswA3V7vFD6ebvgdXeTDVKhPEDQjYVJE23nAb5Cp0eAM+wZ6Qgzkpz+rMuLQ9czoSpj2rG7YX8Bf5tRRTm/Mx4FB+AYAKbFqVXnWDsvylTrFhZJexVHMDxVRLewfmBAQALhPp4w81ZhtzYVfDPmsnU8Oh1eq7ks7UyFJfk0+OENPHdvgZZAcy0itWocoIdp9fMVjgecAPxueRTmPbdcxgkmqkGQboP31Roj9nET2MWNgNSQuUKMaKVkmbUdjgqIt+HUeGmtUL/QvBH4GsLV83XXrqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cbsfhwIoN6UOoNYU4jj0NZhQTrfD3MciMudVxKNxmUY=;
- b=qax1h8UyiwSPKYQxLjupOSahQCqeOFQE/bAeJApngFS/VwaePHH1mQ5ANM7JOLe3ZQrplEACANBwJ2cLPBtS0lfV5/g8dYO61wdLpJ3K52JlIpMoGjEQczX4rooILjC/bPB3Tff6I2KI4DPU73Sh2+JVvRrLNEZL1TKgU3sUeL4=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS0PR10MB7125.namprd10.prod.outlook.com (2603:10b6:8:f0::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Thu, 13 Feb 2025 13:57:15 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 13:57:15 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com,
-        hch@lst.de
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-        linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v2 11/11] xfs: Allow block allocator to take an alignment hint
-Date: Thu, 13 Feb 2025 13:56:19 +0000
-Message-Id: <20250213135619.1148432-12-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20250213135619.1148432-1-john.g.garry@oracle.com>
-References: <20250213135619.1148432-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BL6PEPF0001641A.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1004:0:6) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C5E24BBE0;
+	Thu, 13 Feb 2025 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739454995; cv=none; b=JuOli79Uv0Dba6r1cjC+WRhKSINHCNnQNo1Vm5HnLbiLKkU5FVP+KYhjqZxbmOc1dEBymvpeBCfNhQEU0bIixbLwGYnyoqx1p2MLCZ6aMCxyleIBKSyndKq0+cHo1bLo10GIzIeUZlpxohY/gMevaMSO14PhEvpNv5bS1iZmhuM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739454995; c=relaxed/simple;
+	bh=rRHidVDXPWVK+x9+ECREWygbSwTa4kcxMK3/9SuWWMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDNID4vBzxnHeAuZzegHZcrBdKOzwb4jDyHT7PYsKfsJ8aun8c/XKzRrBKnCtKolhE0jOMTSeLFJT+eX32IeJxEgokfSSfs0fl8deggIwDwBrMt7YJfl9l+l4O2lwwKATQf73VCGI7r+wiw4Cr/tEhZe5ihQ1sBYa7lo1oJ44Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/2Md6kD; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739454993; x=1770990993;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rRHidVDXPWVK+x9+ECREWygbSwTa4kcxMK3/9SuWWMo=;
+  b=h/2Md6kDXdZ5sMbQNL9+oxQ7fA0VsU4q4yEmQNx8vk4Y57I/GY4g8tqV
+   xmFRbMX2oRa64SSVMwc4IgpWcBCpNFzUFDtJ/5su9QYmd+LiMNy/v/ZuA
+   AFcexFO6Tm2xzVH5T9yQuxu1A6J+e9j+3s7HOGEJGHnEZFfvKisSW3VOa
+   tAsa/ITddv449eRgkiTGDjwUSDVqkkcbBg8yNzU0+3YIrguDYCZkL5FHJ
+   1EyPIcLL+2KkU8ENgTmCAw+moo0AqT7+AsHXuRbyPaA99Bk5b6v27cLNa
+   4R/Uskxyyu8X8w4NLsOmQW/0hsXPa4yqpPh120LeU2hU0XM4TpLGRSLfn
+   A==;
+X-CSE-ConnectionGUID: usuFaIf2S3W2cZUFNp6THw==
+X-CSE-MsgGUID: gm+bhbl6Q9aV6/gpNUX2JQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40020193"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40020193"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:56:32 -0800
+X-CSE-ConnectionGUID: tBdZYrHFTp2+93dA3mNCjQ==
+X-CSE-MsgGUID: yvVN0Zu6TNqP5j8o4PthVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="118081248"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa003.jf.intel.com with SMTP; 13 Feb 2025 05:56:28 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Feb 2025 15:56:26 +0200
+Date: Thu, 13 Feb 2025 15:56:26 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Fedor Pchelkin <boddah8794@gmail.com>
+Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Saranya Gopal <saranya.gopal@intel.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mark Pearson <mpearson@squebb.ca>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] acpi: typec: ucsi: Introduce a ->poll_cci method
+Message-ID: <Z636Cn5rbvWmfRbc@kuha.fi.intel.com>
+References: <20250206184327.16308-1-boddah8794@gmail.com>
+ <20250206184327.16308-2-boddah8794@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB7125:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f3c28fa-16b8-479a-04ba-08dd4c3652c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IkWQdFbtxcWY8ykNiMXkuIJY2jsjBj8YRglCLp1K6suan9V717aKsGZMtSYk?=
- =?us-ascii?Q?vVBuusgvTlUdlBUugwkFA+cjdcevyiE7EHrfM3jAFeteRIZT6OCeU37f9Mo7?=
- =?us-ascii?Q?tbh7qrqErQ8gehqB194oHvC63dXGN4D/M+60QbFKab6oc6tehgZ0pwY+5/7+?=
- =?us-ascii?Q?8wrsrFQL+73tVDqUeq5qYTZw5R7/ffKH6IZZQHDjuZ5sqZVcitUoNj6I3MZW?=
- =?us-ascii?Q?RlI294xouFw/IFIWi31R3r+gdkjNC4SvRpYeimEWmd7l6QFTHaLNovoq2iJI?=
- =?us-ascii?Q?vrtf+Yx7YIplkf3QcGf1rg0Wf8+wY/53aoPIVh6U1mu6GJjOIX8AT9raQbYK?=
- =?us-ascii?Q?3Kg9HMREXwfQN914sGFPc6J5bgGrrKpzEU0kVCUpMIzcamnZVxvjqVj7973s?=
- =?us-ascii?Q?zmkPcJKAfHT1Plj1kbjdEnP0ea4QMF5DtSjR1eHPElOjxnvQ8lwXZ8r+TjV9?=
- =?us-ascii?Q?AcqF+Piyb+0o9i87TOcZJKo8lwUj0MXr9TbT1mZ9gXW8YW3L2znJPajfPvHJ?=
- =?us-ascii?Q?TTfEBo330sPwn6tDSw/6o1V8KO0BOttRO1RUj/phBWFeFmc6iUT0WLf+7PQa?=
- =?us-ascii?Q?aaEXl56q+DDPTrU7Wi47M7fzUZ5GXFQeTH7vBSnW/PnZv9pUh07RRYao2NoP?=
- =?us-ascii?Q?px7u2ATcYLrP5nUVyoToORr1/VPhNDH+M8FiJ98vsm0lyar1HFKaaANxs0v3?=
- =?us-ascii?Q?zEG6e0BCdFZi0tLgLbarmJ8NOivG0ZhVIgL7Huc7ocTmCwn+vfkOfogji+wW?=
- =?us-ascii?Q?O0eEBnhTE25W2YQCa7HTSXzBI03KVdYa2QFOgWBq8XeqHeZcf3APvse/aeSP?=
- =?us-ascii?Q?ONCrztwMEOJdTRE+zd36qN4yw6a3aGslDgSC4pd2kBiL/KmhmNRrKlXjD7xO?=
- =?us-ascii?Q?1C7A6yul7yAU9XRJk5Nva047Q5hDV4x/Opv4Wdkh4nfx0ZFjEmCLKGVWciAi?=
- =?us-ascii?Q?vztCQwtuf8tNIhLEIJWwsCTo6qiPkI3mROIdKW42cq3ePGyVSTdFOawzSpG3?=
- =?us-ascii?Q?gXO9llCBb9UrPq6GYYCHabMHmQbFpy0/M5dr+fHjRAAj838LN5U4IiSjo9Y5?=
- =?us-ascii?Q?26SV6NF3vGVj++gIZYlfTRRJhIYMb2vEdMmjTHHVN/ebo5uaY01vJr9PExre?=
- =?us-ascii?Q?/mH4Ve5Qa/uqB9H5/slajjHU+CEfChXg3xbh2HA6vOXKsNtUVMQOQ3jCxe6x?=
- =?us-ascii?Q?boeVN4vJM4cegpwvcQcKU7QuFPF+JeW+nFYz+sUqZHLxxnY1Vv0BUhM7cPe9?=
- =?us-ascii?Q?Ppjz0XBHSclh+YHQuDcNnmkWxN4A2KlQMb1sS6hL6aEXcvWs1FsvacsUWGAq?=
- =?us-ascii?Q?8DQvqBxZN3/JRR283/DpDREtwRQyPa03iAamtQtTQFagjfjZ+csullpCEipx?=
- =?us-ascii?Q?3T7lCBe+cMZnQxzWKQGgXiC9dpvR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Dyd9yWJMyIEN8/OJ/VY9u0OybM1Ie44XwKjH8/bIphdzsFlJbO8v9D1g9PDZ?=
- =?us-ascii?Q?nDuMTIuZS17UnLsy/3l/qAp7hNUrJOBnhD/UOsBd8XVzQ50IKHaSBtd+bubE?=
- =?us-ascii?Q?KYU04+GXwOjdJ7Pr4eYHf4NbrSZP0E2B/2MjtIzSQEyaar0w4eaRrGwq+QiW?=
- =?us-ascii?Q?zmkEWuBh+cMkPLmfWsjazMl9YDT4RRdU/X83eMMg/GL0neHApVno1IieCvEf?=
- =?us-ascii?Q?L/+JF8Aqhdf8M5ZzZ1XRt3mG+Tz89bLUzUhXlfATqIGJJAaHVr2brLdyMQkg?=
- =?us-ascii?Q?KX86pyURILBSUoY2KbbkaKSMab/d+bdQHd7QWCyUIajIg+Tl8+lbBjOYQMxr?=
- =?us-ascii?Q?glFr1HzzKXLmchzKVA40fk9CaEA+iddSluEm0cfh+HYxTItDkp5jjrWD/QuW?=
- =?us-ascii?Q?JJ1grU4EGrj+Zstj3c5a7Z3GHCQ9fVK6FZZRGOxZR4WQKECzI6I+rz0dXiWA?=
- =?us-ascii?Q?DdbayXt7BcNiARzQhnsahKHz7NnDa0ispOhnpTeyNkTiF2xfVcgQOYnjhyNc?=
- =?us-ascii?Q?DiNmu7aEZE2JfR2msCfJ53Nh6UCIjpb1/DceTDXwsAt5V7/KAVIiv3YwI1Xw?=
- =?us-ascii?Q?CDHziCVLSDkdJBxAUxN/iKguLuXu+CWXZ8IZ8zxq6H2IJxfV+kHRAXqdygKT?=
- =?us-ascii?Q?Y3oOfvZj7044bbxOSpxrNZydKAvDZzgSyBcsrk2IFV3bUY+QR8JrgLfUEoYX?=
- =?us-ascii?Q?ebNtqfc02PyDFiJglqgY0Mu7n5Z9vcoAgpsh2NODPZOSd/B8ZNaLIKYS8VfK?=
- =?us-ascii?Q?pheIhcCsALg0IUCkiclH1tj+YtpmxFg5tmF9Tu2simA7J+u5ga5kmSx5IpD0?=
- =?us-ascii?Q?5cuPgcqXEP98GED88ojv+tF8rJctcAonc/LkeVhKs5gxnTkHLXzSMDrzHTTe?=
- =?us-ascii?Q?aypO8jDpG9/c9wMn9FNFt/Mau63ewfA1aCrfOyGOEhuIuud6KR/VWCUSPcKM?=
- =?us-ascii?Q?n2EqMbikxlZFemwXOc7xc89vnRQBxph6yZyrcn1ljRswMJxX3MhBQ+7PBJSN?=
- =?us-ascii?Q?zauieMOExsSWIGaetmuZqX0FAsjuZCfEX4uuBM7npVUDrhhmae/+1UCuI5xy?=
- =?us-ascii?Q?rkMYMobI/oRtxctJzQe4eXMKXL6tO7oS990zwKXmyTgu2InUBchLd0txzu2x?=
- =?us-ascii?Q?66aBnl/AGcO4QdFhDrlv/U8IhBbABd3faW3EwxcXVV91k00hgFlzwaXFqfpt?=
- =?us-ascii?Q?C3ZL5VA4AJF1UpedeFuTTosEMbvSiWN66pdi+XLGNYOATYjFCl1YM4HsSFuf?=
- =?us-ascii?Q?RLphPxkCWQ36n73hp2/jXU/luKNz3GqlRrgLqaTElELZtZTNlZyDK7lsU1KI?=
- =?us-ascii?Q?iBHVOPJa1ZrM7RBw3sxhnjbBJrcuCirP4QeJCQshYaDwm6Nx3SMMorvbNAKm?=
- =?us-ascii?Q?c0t1/K9EJ83tndIVqQF7pR2ILvaiUQTzi6JnkIXtTo3qVoYwvaUmZZJNInYt?=
- =?us-ascii?Q?2Kv2jqM90Kt/yxPWmFhFaG1dUlfR3Bier6qCW7/5tOjF9r/8gQa/E6er4eYn?=
- =?us-ascii?Q?Q9OZxMacFu2FhjkzC9MvXNJsrV3xJqEk0bsX0YbMBM0jVzuhBwdHKIX5mDor?=
- =?us-ascii?Q?n4OKv/NamWUIVJc06LKJCo/F29J4zb2bLNSRfW2QN0QraZshKN9cyC1DJrjl?=
- =?us-ascii?Q?Mw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	AIJCZ0lVLbSi+yvmuMCn5dgxEHvXUIPYkAkG+ag7E7rk98c9rZf/6zotQQJHAV9n0yuqYlvjEOs6AopWQsP0ChgzoGMi1aOVh2INyvTODFW+s5R6ZKUqtaJMTM+HY2xdTsa1Ni/QxbggR7FjOq8dYjqIhg6UDPfL4DP3rCyMDEXoJtPl8nblxiejXHgEKh5+eXGQdxq9pr9DvDqePYDAxMCROwyAexTYDyRZSfD7L67vpnUN8J8JkIr+whkT5Ds/iouxl1utH+WwyecUDXI0GrledxUrELgLGqr4MhGFSxuzU8DXakGCIS+shwTEDyPCPaKHKnVzb/6YSk24fxSkjm/17sf73OncMieqd0nOUPSk55P3v6x5xpBQAsNAzo9A6JPBNnrhNcKlGZkmlOXhANzL8MEIl8DFpzidkFSsz8KsJwKWUzJlgi/CPCjtAdHnGH2sK//z+cf/B75KGPcUXsKim4wZTnilVN5kpbW76neKvx0rPnzi/HCfqcs7AEu3dtYO2RK/h58tqR8C6ghQqZ5Ytkcn6uA57Pp09jVj29LfQbbK/R3AGzFt1m5EFYvslE5LuHVNniAF4QIomaNR8aqlfVOIbgz9aRAxIt36sIc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f3c28fa-16b8-479a-04ba-08dd4c3652c5
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 13:57:15.8335
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z4MnshxYdKTOOG49jpyJtADNXGOonXhwn0ou2vjeDaBrsbdrW31ffPlb8Qj7DPH1x8NuvSOXqhiFEBHQ9GGa9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7125
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2501170000 definitions=main-2502130106
-X-Proofpoint-ORIG-GUID: WAKu-5YCBrqDA02RuL9WuRue2RVy9PwU
-X-Proofpoint-GUID: WAKu-5YCBrqDA02RuL9WuRue2RVy9PwU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206184327.16308-2-boddah8794@gmail.com>
 
-When issuing an atomic write by the CoW method, give the block allocator a
-hint to naturally align the data blocks.
+On Thu, Feb 06, 2025 at 09:43:14PM +0300, Fedor Pchelkin wrote:
+> From: "Christian A. Ehrhardt" <lk@c--e.de>
+> 
+> For the ACPI backend of UCSI the UCSI "registers" are just a memory copy
+> of the register values in an opregion. The ACPI implementation in the
+> BIOS ensures that the opregion contents are synced to the embedded
+> controller and it ensures that the registers (in particular CCI) are
+> synced back to the opregion on notifications. While there is an ACPI call
+> that syncs the actual registers to the opregion there is rarely a need to
+> do this and on some ACPI implementations it actually breaks in various
+> interesting ways.
+> 
+> The only reason to force a sync from the embedded controller is to poll
+> CCI while notifications are disabled. Only the ucsi core knows if this
+> is the case and guessing based on the current command is suboptimal, i.e.
+> leading to the following spurious assertion splat:
+> 
+> WARNING: CPU: 3 PID: 76 at drivers/usb/typec/ucsi/ucsi.c:1388 ucsi_reset_ppm+0x1b4/0x1c0 [typec_ucsi]
+> CPU: 3 UID: 0 PID: 76 Comm: kworker/3:0 Not tainted 6.12.11-200.fc41.x86_64 #1
+> Hardware name: LENOVO 21D0/LNVNB161216, BIOS J6CN45WW 03/17/2023
+> Workqueue: events_long ucsi_init_work [typec_ucsi]
+> RIP: 0010:ucsi_reset_ppm+0x1b4/0x1c0 [typec_ucsi]
+> Call Trace:
+>  <TASK>
+>  ucsi_init_work+0x3c/0xac0 [typec_ucsi]
+>  process_one_work+0x179/0x330
+>  worker_thread+0x252/0x390
+>  kthread+0xd2/0x100
+>  ret_from_fork+0x34/0x50
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> 
+> Thus introduce a ->poll_cci() method that works like ->read_cci() with an
+> additional forced sync and document that this should be used when polling
+> with notifications disabled. For all other backends that presumably don't
+> have this issue use the same implementation for both methods.
+> 
+> Fixes: fa48d7e81624 ("usb: typec: ucsi: Do not call ACPI _DSM method for UCSI read operations")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+> Tested-by: Fedor Pchelkin <boddah8794@gmail.com>
+> Signed-off-by: Fedor Pchelkin <boddah8794@gmail.com>
 
-This means that we have a better chance to issuing the atomic write via
-HW offload next time.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- fs/xfs/libxfs/xfs_bmap.c | 7 ++++++-
- fs/xfs/libxfs/xfs_bmap.h | 6 +++++-
- fs/xfs/xfs_reflink.c     | 8 ++++++--
- 3 files changed, 17 insertions(+), 4 deletions(-)
+> ---
+> Add the explicit WARNING splat and slightly increase the length of text
+> lines in the changelog.
+> Original patch: https://lore.kernel.org/linux-usb/Z2Cf1AI8CXao5ZAn@cae.in-ulm.de/
+> 
+>  drivers/usb/typec/ucsi/ucsi.c           | 10 +++++-----
+>  drivers/usb/typec/ucsi/ucsi.h           |  2 ++
+>  drivers/usb/typec/ucsi/ucsi_acpi.c      | 21 ++++++++++++++-------
+>  drivers/usb/typec/ucsi/ucsi_ccg.c       |  1 +
+>  drivers/usb/typec/ucsi/ucsi_glink.c     |  1 +
+>  drivers/usb/typec/ucsi/ucsi_stm32g0.c   |  1 +
+>  drivers/usb/typec/ucsi/ucsi_yoga_c630.c |  1 +
+>  7 files changed, 25 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index fcf499cc9458..0fe1476f4c29 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -1346,7 +1346,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
+>  
+>  	mutex_lock(&ucsi->ppm_lock);
+>  
+> -	ret = ucsi->ops->read_cci(ucsi, &cci);
+> +	ret = ucsi->ops->poll_cci(ucsi, &cci);
+>  	if (ret < 0)
+>  		goto out;
+>  
+> @@ -1364,7 +1364,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
+>  
+>  		tmo = jiffies + msecs_to_jiffies(UCSI_TIMEOUT_MS);
+>  		do {
+> -			ret = ucsi->ops->read_cci(ucsi, &cci);
+> +			ret = ucsi->ops->poll_cci(ucsi, &cci);
+>  			if (ret < 0)
+>  				goto out;
+>  			if (cci & UCSI_CCI_COMMAND_COMPLETE)
+> @@ -1393,7 +1393,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
+>  		/* Give the PPM time to process a reset before reading CCI */
+>  		msleep(20);
+>  
+> -		ret = ucsi->ops->read_cci(ucsi, &cci);
+> +		ret = ucsi->ops->poll_cci(ucsi, &cci);
+>  		if (ret)
+>  			goto out;
+>  
+> @@ -1929,8 +1929,8 @@ struct ucsi *ucsi_create(struct device *dev, const struct ucsi_operations *ops)
+>  	struct ucsi *ucsi;
+>  
+>  	if (!ops ||
+> -	    !ops->read_version || !ops->read_cci || !ops->read_message_in ||
+> -	    !ops->sync_control || !ops->async_control)
+> +	    !ops->read_version || !ops->read_cci || !ops->poll_cci ||
+> +	    !ops->read_message_in || !ops->sync_control || !ops->async_control)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	ucsi = kzalloc(sizeof(*ucsi), GFP_KERNEL);
+> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+> index 82735eb34f0e..28780acc4af2 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.h
+> +++ b/drivers/usb/typec/ucsi/ucsi.h
+> @@ -62,6 +62,7 @@ struct dentry;
+>   * struct ucsi_operations - UCSI I/O operations
+>   * @read_version: Read implemented UCSI version
+>   * @read_cci: Read CCI register
+> + * @poll_cci: Read CCI register while polling with notifications disabled
+>   * @read_message_in: Read message data from UCSI
+>   * @sync_control: Blocking control operation
+>   * @async_control: Non-blocking control operation
+> @@ -76,6 +77,7 @@ struct dentry;
+>  struct ucsi_operations {
+>  	int (*read_version)(struct ucsi *ucsi, u16 *version);
+>  	int (*read_cci)(struct ucsi *ucsi, u32 *cci);
+> +	int (*poll_cci)(struct ucsi *ucsi, u32 *cci);
+>  	int (*read_message_in)(struct ucsi *ucsi, void *val, size_t val_len);
+>  	int (*sync_control)(struct ucsi *ucsi, u64 command);
+>  	int (*async_control)(struct ucsi *ucsi, u64 command);
+> diff --git a/drivers/usb/typec/ucsi/ucsi_acpi.c b/drivers/usb/typec/ucsi/ucsi_acpi.c
+> index 5c5515551963..ac1ebb5d9527 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_acpi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
+> @@ -59,19 +59,24 @@ static int ucsi_acpi_read_version(struct ucsi *ucsi, u16 *version)
+>  static int ucsi_acpi_read_cci(struct ucsi *ucsi, u32 *cci)
+>  {
+>  	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
+> -	int ret;
+> -
+> -	if (UCSI_COMMAND(ua->cmd) == UCSI_PPM_RESET) {
+> -		ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
+> -		if (ret)
+> -			return ret;
+> -	}
+>  
+>  	memcpy(cci, ua->base + UCSI_CCI, sizeof(*cci));
+>  
+>  	return 0;
+>  }
+>  
+> +static int ucsi_acpi_poll_cci(struct ucsi *ucsi, u32 *cci)
+> +{
+> +	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
+> +	int ret;
+> +
+> +	ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ucsi_acpi_read_cci(ucsi, cci);
+> +}
+> +
+>  static int ucsi_acpi_read_message_in(struct ucsi *ucsi, void *val, size_t val_len)
+>  {
+>  	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
+> @@ -94,6 +99,7 @@ static int ucsi_acpi_async_control(struct ucsi *ucsi, u64 command)
+>  static const struct ucsi_operations ucsi_acpi_ops = {
+>  	.read_version = ucsi_acpi_read_version,
+>  	.read_cci = ucsi_acpi_read_cci,
+> +	.poll_cci = ucsi_acpi_poll_cci,
+>  	.read_message_in = ucsi_acpi_read_message_in,
+>  	.sync_control = ucsi_sync_control_common,
+>  	.async_control = ucsi_acpi_async_control
+> @@ -142,6 +148,7 @@ static int ucsi_gram_sync_control(struct ucsi *ucsi, u64 command)
+>  static const struct ucsi_operations ucsi_gram_ops = {
+>  	.read_version = ucsi_acpi_read_version,
+>  	.read_cci = ucsi_acpi_read_cci,
+> +	.poll_cci = ucsi_acpi_poll_cci,
+>  	.read_message_in = ucsi_gram_read_message_in,
+>  	.sync_control = ucsi_gram_sync_control,
+>  	.async_control = ucsi_acpi_async_control
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 740171f24ef9..4b1668733a4b 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -664,6 +664,7 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
+>  static const struct ucsi_operations ucsi_ccg_ops = {
+>  	.read_version = ucsi_ccg_read_version,
+>  	.read_cci = ucsi_ccg_read_cci,
+> +	.poll_cci = ucsi_ccg_read_cci,
+>  	.read_message_in = ucsi_ccg_read_message_in,
+>  	.sync_control = ucsi_ccg_sync_control,
+>  	.async_control = ucsi_ccg_async_control,
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index fed39d458090..8af79101a2fc 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -206,6 +206,7 @@ static void pmic_glink_ucsi_connector_status(struct ucsi_connector *con)
+>  static const struct ucsi_operations pmic_glink_ucsi_ops = {
+>  	.read_version = pmic_glink_ucsi_read_version,
+>  	.read_cci = pmic_glink_ucsi_read_cci,
+> +	.poll_cci = pmic_glink_ucsi_read_cci,
+>  	.read_message_in = pmic_glink_ucsi_read_message_in,
+>  	.sync_control = ucsi_sync_control_common,
+>  	.async_control = pmic_glink_ucsi_async_control,
+> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> index 6923fad31d79..57ef7d83a412 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> @@ -424,6 +424,7 @@ static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
+>  static const struct ucsi_operations ucsi_stm32g0_ops = {
+>  	.read_version = ucsi_stm32g0_read_version,
+>  	.read_cci = ucsi_stm32g0_read_cci,
+> +	.poll_cci = ucsi_stm32g0_read_cci,
+>  	.read_message_in = ucsi_stm32g0_read_message_in,
+>  	.sync_control = ucsi_sync_control_common,
+>  	.async_control = ucsi_stm32g0_async_control,
+> diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> index 4cae85c0dc12..d33e3f2dd1d8 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
+> @@ -74,6 +74,7 @@ static int yoga_c630_ucsi_async_control(struct ucsi *ucsi, u64 command)
+>  static const struct ucsi_operations yoga_c630_ucsi_ops = {
+>  	.read_version = yoga_c630_ucsi_read_version,
+>  	.read_cci = yoga_c630_ucsi_read_cci,
+> +	.poll_cci = yoga_c630_ucsi_read_cci,
+>  	.read_message_in = yoga_c630_ucsi_read_message_in,
+>  	.sync_control = ucsi_sync_control_common,
+>  	.async_control = yoga_c630_ucsi_async_control,
+> -- 
+> 2.48.1
 
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 0ef19f1469ec..9bfdfb7cdcae 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -3454,6 +3454,12 @@ xfs_bmap_compute_alignments(
- 		align = xfs_get_cowextsz_hint(ap->ip);
- 	else if (ap->datatype & XFS_ALLOC_USERDATA)
- 		align = xfs_get_extsz_hint(ap->ip);
-+
-+	if (align > 1 && ap->flags & XFS_BMAPI_EXTSZALIGN)
-+		args->alignment = align;
-+	else
-+		args->alignment = 1;
-+
- 	if (align) {
- 		if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
- 					ap->eof, 0, ap->conv, &ap->offset,
-@@ -3782,7 +3788,6 @@ xfs_bmap_btalloc(
- 		.wasdel		= ap->wasdel,
- 		.resv		= XFS_AG_RESV_NONE,
- 		.datatype	= ap->datatype,
--		.alignment	= 1,
- 		.minalignslop	= 0,
- 	};
- 	xfs_fileoff_t		orig_offset;
-diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-index 4b721d935994..7a31697331dc 100644
---- a/fs/xfs/libxfs/xfs_bmap.h
-+++ b/fs/xfs/libxfs/xfs_bmap.h
-@@ -87,6 +87,9 @@ struct xfs_bmalloca {
- /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
- #define XFS_BMAPI_NORMAP	(1u << 10)
- 
-+/* Try to naturally align allocations to extsz hint */
-+#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
-+
- #define XFS_BMAPI_FLAGS \
- 	{ XFS_BMAPI_ENTIRE,	"ENTIRE" }, \
- 	{ XFS_BMAPI_METADATA,	"METADATA" }, \
-@@ -98,7 +101,8 @@ struct xfs_bmalloca {
- 	{ XFS_BMAPI_REMAP,	"REMAP" }, \
- 	{ XFS_BMAPI_COWFORK,	"COWFORK" }, \
- 	{ XFS_BMAPI_NODISCARD,	"NODISCARD" }, \
--	{ XFS_BMAPI_NORMAP,	"NORMAP" }
-+	{ XFS_BMAPI_NORMAP,	"NORMAP" },\
-+	{ XFS_BMAPI_EXTSZALIGN,	"EXTSZALIGN" }
- 
- 
- static inline int xfs_bmapi_aflag(int w)
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index d097d33dc000..033dff86ecf0 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -445,6 +445,11 @@ xfs_reflink_fill_cow_hole(
- 	int			nimaps;
- 	int			error;
- 	bool			found;
-+	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
-+					      XFS_BMAPI_PREALLOC;
-+
-+	if (atomic)
-+		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
- 
- 	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
- 		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
-@@ -478,8 +483,7 @@ xfs_reflink_fill_cow_hole(
- 	/* Allocate the entire reservation as unwritten blocks. */
- 	nimaps = 1;
- 	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
--			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
--			&nimaps);
-+			bmapi_flags, 0, cmap, &nimaps);
- 	if (error)
- 		goto out_trans_cancel;
- 
 -- 
-2.31.1
-
+heikki
 
