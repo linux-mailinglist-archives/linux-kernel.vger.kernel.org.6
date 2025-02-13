@@ -1,90 +1,155 @@
-Return-Path: <linux-kernel+bounces-513218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177DBA34426
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:01:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E418A3448A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB6CA16F9C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436D03A1255
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A66F242904;
-	Thu, 13 Feb 2025 14:51:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908BF24169B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEF823A9AB;
+	Thu, 13 Feb 2025 14:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QQ4qa4LO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5591123A9A3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458299; cv=none; b=KewEkHJis2uCZTC4uAVWhyWeImvwQ1254L5xj3r21kkaNvvAsWfWZvDGdlO3KB9OJdO1F0bdUlLu/PHmILij2+kQbcQqhm9/xNeRT9KD9OORNHAJhXQ4dh8rAplYU8q7pO5LNouszt7FubYgZJHtR5EiIVn77BIfUBAC9PKFFco=
+	t=1739458314; cv=none; b=We111AvdBfAxOZJ+NbzPQqDM0g6q/QXfNRZMG/Bo4OriizKiXI68Q1U/9yJjf+EFgypaeC0YLhhCFcY6cWcMNzRDrkVUZuTFaAyJ7DXp+4sa7BbGqC3E6rRV9znc/ukZyY9zM+aEk5kP70y3ItKhQQ/F0UYnrikscSsHCYRWL58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458299; c=relaxed/simple;
-	bh=xRSr9mLHsRA464FI1y1mU5KnIYeSV7kKpKI7/hH94pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fV91Pfr2G7XaWGy9tjYe+g06hh27nn2Gs7DNGFE2P7qd/3P8WcdXHBZVqCytmYOhu5W7+e6QzkAMhMoLvk/iCcme1WkxxEAky7mtfCZdDsPOuWqFGljfWw6PZbOsdP0O6xG26feLvURhEylvkcOfrknFI5uhurykYuW/8OzuOts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E3AB106F;
-	Thu, 13 Feb 2025 06:51:56 -0800 (PST)
-Received: from [10.57.79.221] (unknown [10.57.79.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432073F58B;
-	Thu, 13 Feb 2025 06:51:32 -0800 (PST)
-Message-ID: <b9ab5474-0b43-4200-8217-5cd95b365cad@arm.com>
-Date: Thu, 13 Feb 2025 14:51:30 +0000
+	s=arc-20240116; t=1739458314; c=relaxed/simple;
+	bh=B1z2sR69wDiofUV84ZSOpgKNuRtWcJLfrcwnnKTulKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dvto5WGtq+aS5MF/0p6TkYdSJ+VX1Vio8OwmrJoHSqfRo9YKXvmZfbnBl2XcG2gB5fqvt7PMTkr2ZHj/Khja56JFIh4+G/2gxZCoKNnREgz1VrboGcdtZVHDOQK28bi59KpA+bbUObtFcnFlpgTav51SeybbAGHZNhPuOr05Cu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QQ4qa4LO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739458311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6lhS8iVQB+96sJToCHUOQOlC5WCDphVwPzl2IuwUXiI=;
+	b=QQ4qa4LOHdb7a4Z/wQh7+oQyOqdhoBTFL7jqSzIShYSW++0fPAbm4a25cpcyeMwiPHe1hD
+	73bL+2L7w/3UrBYito6jqIzJhVgrdbdk56eBIOQqeZcZoFv5kw1ymrJTdX9SSAR9bGm7hf
+	s/QSlIorDwdND5wyYl/pBvBPQ2YQO+4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-67-cMicW8-jPLq-q-qhvc3MSw-1; Thu, 13 Feb 2025 09:51:50 -0500
+X-MC-Unique: cMicW8-jPLq-q-qhvc3MSw-1
+X-Mimecast-MFC-AGG-ID: cMicW8-jPLq-q-qhvc3MSw_1739458309
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so7865795e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:51:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739458309; x=1740063109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lhS8iVQB+96sJToCHUOQOlC5WCDphVwPzl2IuwUXiI=;
+        b=WxtJlGrdp0NS6cJAELcq+M4RkSx4HcJ22IH/Vg59kt50VOLGdAI4zdtzSU8vHLQWuV
+         BBC10v0PGHyCVitnSCQuUA4OM6PfO20BOAjS/WBvznC4AGOcyDfxaD5JEGJBnsv+PxVM
+         SdfALWu37kkyyVJ7FShezgt7ljiFI3Jr94LY3mjwomCrkVZ80hDnnC8Q1y/U2UVkBLjQ
+         w4reY3tDBYlmmmSiOs4OP+XWSWKIwZ5y5t+Et6bNqrVnRcWJxcOWVKjf41Rm5NZyr6zW
+         KZW2iOOGyj+P+mmGxEJ+meLxfDy7o6sSC2TA4KKnuRTVFwqCCCTy+YVhxpxDevW4snLJ
+         Fd9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmsIoMPqsXo7Yl2qJcc1wMBEyrcMsl8sUAHAN4v2MDM6M7RnSgg/hyoCZ1UQQiUKdnQoNtB7AEu/kVdlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpr71HbhKqjGomUvFyejJ8HvhoqvEvUQV/nnYmY8NwK++w3ok5
+	/hoZCxSdMWbhtaF2c/TKDGY7CY8Qid576yNJA5toSh40obGbDK3dmdnWB7yyS57EEr762I5mHQ5
+	xDP/4GIIXxHdbVrGiT7F/MzjMhmH4QG4m+rlw67KuBpdh++lu5U+SDBPSDBzkfA==
+X-Gm-Gg: ASbGnctiG9gCPCcJ/mHNXk8I20xsz0UghV9RWnzX20PXYZli7fmBd/pNXeElHJ81Gb+
+	0pBLSZS9Z2PKU8zREDXwKEK1+/U0B2vVW3wy4fBtql+uz9zR1d2d58CTNWVoM4BrDyanXoezaja
+	0ZaHhTCjYclkZiygYxmEtjmxgttO2lsMvCCgRDdLPhc8RKBl67/J++89vLkMGfSkNbntpQVn8kx
+	B9vBiRU/R8NMJdYzwRaIhWprbfU3bKa0vaiyKdXN95HzmwDLl3CAViqI36Rpc3Fg6GILGrkKXdi
+	ipXagoyeErYGwYGue0xgf4BuAghujEvV0w==
+X-Received: by 2002:a05:600c:6019:b0:439:608f:a37f with SMTP id 5b1f17b1804b1-439608fa43bmr42015735e9.5.1739458308844;
+        Thu, 13 Feb 2025 06:51:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFAxIKUIaTswRoefZud2gAVQybC2383WLjWG+1WPkr5JTxOxoGMUsCV4ourXMPYfLZFnt8FrQ==
+X-Received: by 2002:a05:600c:6019:b0:439:608f:a37f with SMTP id 5b1f17b1804b1-439608fa43bmr42015405e9.5.1739458308485;
+        Thu, 13 Feb 2025 06:51:48 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7d2sm51597405e9.25.2025.02.13.06.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 06:51:47 -0800 (PST)
+Date: Thu, 13 Feb 2025 15:51:45 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z64HAYoBpu5jUUcb@jlelli-thinkpadt14gen4.remote.csb>
+References: <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <285a43db-c36d-400e-8041-0566f089a482@arm.com>
+ <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
+ <c8f626ba-1be4-4c25-b283-d1e11a061aac@arm.com>
+ <Z630nGN1IHhyYIYl@jlelli-thinkpadt14gen4.remote.csb>
+ <9629f060-28f4-4743-9e60-688cba039f87@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched/uclamp: Add uclamp_is_used() check before
- enable it
-To: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, qyousef@layalina.io,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
- linux-kernel@vger.kernel.org, Hongyan Xia <Hongyan.Xia2@arm.com>
-References: <20250213091554.2593-1-xuewen.yan@unisoc.com>
- <20250213091554.2593-2-xuewen.yan@unisoc.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250213091554.2593-2-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9629f060-28f4-4743-9e60-688cba039f87@arm.com>
 
-On 2/13/25 09:15, Xuewen Yan wrote:
-> Because the static_branch_enable() would get the cpus_read_lock(),
-> and sometimes users may frequently set the uclamp value of tasks,
-> and the uclamp_validate() would call the static_branch_enable()
-> frequently, so add the uclamp_is_used() check to prevent calling
-> the cpus_read_lock() frequently.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->  kernel/sched/syscalls.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 456d339be98f..d718fddadb03 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -368,7 +368,8 @@ static int uclamp_validate(struct task_struct *p,
->  	 * blocking operation which obviously cannot be done while holding
->  	 * scheduler locks.
->  	 */
-> -	static_branch_enable(&sched_uclamp_used);
-> +	if (!uclamp_is_used())
-> +		static_branch_enable(&sched_uclamp_used);
->  
->  	return 0;
->  }
+On 13/02/25 13:38, Christian Loehle wrote:
+> On 2/13/25 13:33, Juri Lelli wrote:
 
-Given that we never disable sched_uclamp_used once active this
-is fine.
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+...
+
+> > Not sure I get what your worry is, sorry. In my understanding when the
+> > last cpu of a policy/cluster gets offlined the corresponding sugov
+> > kthread gets stopped as well (sugov_exit)?
+> > 
+> 
+> The other way round.
+> We may have sugov kthread of cluster [6,7] affined to CPU1. Is it
+> guaranteed that we cannot offline CPU1 (while CPU6 or CPU7 are still
+> online)?
+
+Uhu, is this a sane/desired setup? Anyway, I would say that if CPU1 is
+offlined sugov[6,7] will need to be migrated someplace else.
+
+> Or without the affinity:
+> cluster [6,7] with isolcpu=6 (i.e. sugov kthread of that cluster can
+> only run on CPU7). Is offlining of CPU6 then prevented (as long as
+> CPU7 is online)?
+> I don't see how.
+> Anyway we probably want to change isolcpu and affinity to merely be 
+> a suggestion for the sugov DL case. Fundamentally it belongs to what
+> is run on that CPU anyway.
+
+I would tend to agree.
+
 
