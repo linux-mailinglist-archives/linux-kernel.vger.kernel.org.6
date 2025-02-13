@@ -1,108 +1,150 @@
-Return-Path: <linux-kernel+bounces-512242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576E8A33661
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:48:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740C6A33663
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0915C167EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:48:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BA387A3568
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685B204F91;
-	Thu, 13 Feb 2025 03:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05AA204F74;
+	Thu, 13 Feb 2025 03:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqbAIrOu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BWZ7KxFP"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3472E4A29;
-	Thu, 13 Feb 2025 03:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739418502; cv=none; b=Ejd89nGGlHNr/+fp24PxoFizbH7+1qmJYHWlGONAhjNE6qfvAgNSmKNy0WnJHSz98cBkro9slAlAZKTviakj4helOxt5HjquZ7FtorwKeeT4dyxjHBumYQj48KBqfr/U3X7NEYYvjxcvKwYOFzgU//tr5jziFOxru8/hIJ4coLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739418502; c=relaxed/simple;
-	bh=GA0qV9ScdfUpucwXntMDv7QChc9NisjfStRZOqMTEgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=co/RjyVlXpZBZZQBbVLD3MKGfZ5ur5qpVx/ynNRYbzcZ7H+IWjlCAg9CCzBWz5f5FfrH/aRmIwfoHPhssJ/PYIucX7WpN4qRI4Ks2t0qSRta1KiII/5x03cl1Udwm4icVi3sjzIwbAU5PVR6XsvvVFFZGiaVOokENJ5M1IA1tXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqbAIrOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF20C4CED1;
-	Thu, 13 Feb 2025 03:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739418501;
-	bh=GA0qV9ScdfUpucwXntMDv7QChc9NisjfStRZOqMTEgs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VqbAIrOuqfNW0ruiapd/qgHvDhQTf9O0n7ShA9oqmjLzQQ+oIVhy7OnOWiNdHOwwv
-	 VRayIblIq9s98okMoSEsXZvn/MheaS+GaEj4nL8VNafU0pPyGTM9e1sNwbmGdQ1mPU
-	 udMoZMe4dgDSsz04VR4T/Fo7So4unmyoPaZhQXK2hMX1mVN9ZCTC2sGqTULLGb/Gqi
-	 j7G8XB77+nW7FaDANP+czAPhL3NREawi3U6LGdvVIwO00Zf4hPz8bCkIOa2a4WVqls
-	 AwVdkm4XfOqOehFtTtZouftCdSGCDNSY0q35S/3A/i+vO+HwX6xImfMAZw1f3wP22/
-	 J4YRWGfNlQpzA==
-Date: Wed, 12 Feb 2025 19:48:20 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon
- <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long
- <longman@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Hayes Wang <hayeswang@realtek.com>,
- linux-usb@vger.kernel.org, netdev@vger.kernel.org, Breno Leitao
- <leitao@debian.org>
-Subject: Re: [PATCH 1/2] net: Assert proper context while calling
- napi_schedule()
-Message-ID: <20250212194820.059dac6f@kernel.org>
-In-Reply-To: <20250212174329.53793-2-frederic@kernel.org>
-References: <20250212174329.53793-1-frederic@kernel.org>
-	<20250212174329.53793-2-frederic@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A44537E5;
+	Thu, 13 Feb 2025 03:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739418622; cv=pass; b=BT7a7wtopXtmaXh82tWaWJ2ZNDJBn93w55nHNh2U+a+TeUORTj+M7MCJS9IDJHLKqiieb91VhFE2BYp1xe8WMPP19YXpYujuiWrZVVqNgwXsU9E2aBZRWlhnglK1xfyhcu2xmB2BGgCl7f+v7vkaun3MuDpapp6PvnjocKVMgzs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739418622; c=relaxed/simple;
+	bh=WHYu1ZS/p9mxM+ozqemo6cP3PiAvsHAKZpgoXka46AI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mNmIqYOvonyA+885eQ90G+aRnoLQsf+XUsQCE5DhnAN7qersZ8h5fD1ieK1Q3omrLHudNLAF74wcuO+nWXZ5ykZOwOT4AA4t4/vxn8Gfj2HlRiEFG8I0FqMWB0K16cGmfonBNrd4T2SKq6V1584jF/yzoyh8HBVtOhEgwR0wO7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BWZ7KxFP; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1739418578; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fbT64vxAHYqVOenrWrvSXND6bw3rDp0EXMcTJOW4r10ZOXOtwVDrbLXw6dIh13dyq2ic+xZp5mAWlYebunyhr1/d9Lu90tb73JFGzZYUmxZobh8wbHSkzbQ2D8WSwShuCf8OuBk89TJC4QenPFgsu3qeNZXr1AH73GMwvIMqcXo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739418578; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WHYu1ZS/p9mxM+ozqemo6cP3PiAvsHAKZpgoXka46AI=; 
+	b=jjwbtahT8Gdx7JKCLgxQGErqD+rckdyVpC2WOw6G0G0jfjDWpQeCcARlwmo7NWj/nKxPvqsSeClPekq2nesx2AB7QB2EKyrsatk4Mvdieid+NdLz9UBj+Xomq7nrN0wRR7e14hBGPEdlWjpTpOOfipJBujXifczHtd1GRAR8ep4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739418578;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=WHYu1ZS/p9mxM+ozqemo6cP3PiAvsHAKZpgoXka46AI=;
+	b=BWZ7KxFPlgO5GbULTRCma04EoD7+75tnOegirkMZvna3Y7L5YPpONAufuMXrge58
+	lhgYI9NMKUqKXgDYqkZkhd7MuISbzw/RHjh/iYPZO16XZBkJ9KYTrFzTp0TKi7rd32t
+	LYcNn/bx1IHZH9EJt33APXIU2cbC4LOiTC2WpcvYXV0IbqcVZyc3bKBoqvJSs+/tKQ1
+	mom5ncgtAytRKlE7AcglLfl182C7MIt6zRMUBJPJdP4V8R1VxBbXinDZ3ZBOmUr3wj3
+	mlXbckpCrW1cUCuI5shoPAcGdwo6njybqw66USsKfCfE6xXMeZj0iEx+LDkkzGoj81n
+	1YhNg8Eyfw==
+Received: by mx.zohomail.com with SMTPS id 1739418575396322.68472183264555;
+	Wed, 12 Feb 2025 19:49:35 -0800 (PST)
+Message-ID: <d7d1fb8af8857e7ebfdea48213849ea9ba446477.camel@icenowy.me>
+Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
+ coherent allocator abstraction.)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Steven Rostedt <rostedt@goodmis.org>, 
+ "Dr. Greg" <greg@enjellic.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Dave Airlie <airlied@gmail.com>, Jason
+ Gunthorpe <jgg@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>,
+ phasta@kernel.org, Christoph Hellwig <hch@lst.de>,  Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Abdiel Janulgue
+ <abdiel.janulgue@gmail.com>,  daniel.almeida@collabora.com,
+ aliceryhl@google.com, robin.murphy@arm.com, 
+ rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Bj??rn Roy Baron <bjorn3_gh@protonmail.com>, Benno
+ Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>,  airlied@redhat.com, "open list:DMA MAPPING
+ HELPERS" <iommu@lists.linux.dev>,  DRI Development
+ <dri-devel@lists.freedesktop.org>
+Date: Thu, 13 Feb 2025 11:49:20 +0800
+In-Reply-To: <Z6nTxks3u-ErSalQ@cassiopeiae>
+References: <20250131135421.GO5556@nvidia.com>
+	 <2b9b75d1-eb8e-494a-b05f-59f75c92e6ae@marcan.st>
+	 <Z6OzgBYZNJPr_ZD1@phenom.ffwll.local>
+	 <CAPM=9tzPR9wd=3Wbjnp-T0W8-dDfGah-H3Ny52G85B+2Ev9ksA@mail.gmail.com>
+	 <208e1fc3-cfc3-4a26-98c3-a48ab35bb9db@marcan.st>
+	 <CAHk-=wi=ZmP2=TmHsFSUGq8vUZAOWWSK1vrJarMaOhReDRQRYQ@mail.gmail.com>
+	 <20250207121638.GA7356@wind.enjellic.com>
+	 <Z6bdCrgGEq8Txd-s@home.goodmis.org>
+	 <1e8452ab-613a-4c85-adc0-0c4a293dbf50@marcan.st>
+	 <07c447b77bdac1f8ade1f93456f853f89d4842ee.camel@icenowy.me>
+	 <Z6nTxks3u-ErSalQ@cassiopeiae>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+X-ZohoMail-Owner: <d7d1fb8af8857e7ebfdea48213849ea9ba446477.camel@icenowy.me>+zmo_0_
 
-On Wed, 12 Feb 2025 18:43:28 +0100 Frederic Weisbecker wrote:
-> napi_schedule() is expected to be called either:
-> 
-> * From an interrupt, where raised softirqs are handled on IRQ exit
-> 
-> * From a softirq disabled section, where raised softirqs are handled on
->   the next call to local_bh_enable().
-> 
-> * From a softirq handler, where raised softirqs are handled on the next
->   round in do_softirq(), or further deferred to a dedicated kthread.
-> 
-> Other bare tasks context may end up ignoring the raised NET_RX vector
-> until the next random softirq handling opportunity, which may not
-> happen before a while if the CPU goes idle afterwards with the tick
-> stopped.
-> 
-> Report inappropriate calling contexts when neither of the three above
-> conditions are met.
+=E5=9C=A8 2025-02-10=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 11:24 +0100=EF=BC=
+=8CDanilo Krummrich=E5=86=99=E9=81=93=EF=BC=9A
+> On Mon, Feb 10, 2025 at 05:41:30PM +0800, Icenowy Zheng wrote:
+> > Furtherly, the monorepo nature of Linux kernel means to refactor an
+> > interface, it's usually the person changing the callee that need to
+> > change all callers to satify the interface change; having Rust code
+> > in
+> > tree calling the interface effectively means adding the
+> > responsibility
+> > of fixing the Rust code when the interface changes, which could be
+> > not
+> > acceptable by the C-only maintainers. In regards of adding a
+> > maintainer, having more maintainers means more communication.
+>=20
+> This is exactly the same as for every new driver / component,
+> regardless of
+> whether it is written in C or in Rust.
+>=20
+> It is absolutely common that driver maintainers help with integrating
+> core API
+> changes, if necessary.
+>=20
+> I don't see why the same process should not work for Rust
+> abstractions.
 
-Looks like netcons is hitting this warning in netdevsim:
+Because integrating API changes could involve change to contexts of API
+calls, which could be difficult for Rust situation, especially when
+it's not required for core API maintainers to be able to write Rust.
 
-[   16.063196][  T219]  nsim_start_xmit+0x4e0/0x6f0 [netdevsim]
-[   16.063219][  T219]  ? netif_skb_features+0x23e/0xa80
-[   16.063237][  T219]  netpoll_start_xmit+0x3c3/0x670
-[   16.063258][  T219]  __netpoll_send_skb+0x3e9/0x800
-[   16.063287][  T219]  netpoll_send_skb+0x2a/0xa0
-[   16.063298][  T219]  send_ext_msg_udp+0x286/0x350 [netconsole]
-[   16.063325][  T219]  write_ext_msg+0x1c6/0x230 [netconsole]
-[   16.063346][  T219]  console_emit_next_record+0x20d/0x430
+>=20
+> (Additionally, in this particular case even one of the reviewers of
+> DMA MAPPING HELPERS offered to be a reviewer of the Rust abstractions
+> too, in
+> order to keep eye on the DMA API angle.)
 
-https://netdev-3.bots.linux.dev/vmksft-net-drv-dbg/results/990261/7-netcons-basic-sh/stderr
+Sorry, but I did a fact check on this, and I found that the only
+"reviewer" of DMA MAPPING HELPERS is Robin Murphy, he has only one
+reply in this thread, and the reply only says "Indeed, FWIW it seems
+like the appropriate level of abstraction to me,=20
+judging by the other wrappers living in rust/kernel/ already", he
+didn't offer to be a reviewer, and he still says "Rust folks are happy
+to take responsibility for un-breaking the=20
+Rust build if and when it happens".
 
-We gotta fix that first.
-
-Please post the fixes for net, and then the warning in net-next.
-So that we have some time to fix the uncovered warnings before
-users are broadly exposed to them.
--- 
-pw-bot: cr
+He is just saying he's going to accept the abstraction, which should be
+not able to forcibly override Christoph's explicit NACK here.
 
