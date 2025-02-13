@@ -1,308 +1,138 @@
-Return-Path: <linux-kernel+bounces-513453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEFDA34A6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C4EA34A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC5D1704F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2031D179388
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA5B211A3F;
-	Thu, 13 Feb 2025 16:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C3E1632DD;
+	Thu, 13 Feb 2025 16:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uMF6tyMH"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LLZWOp/k"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B77124BC17
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19C202F72
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464233; cv=none; b=AjtGhm0zbiXPABpaNRvYcWVd+nwPguONjvxvaO3NA3VylYl/oGgsLavjmBZW6PhmRThbQwgra48dGB22a3gFz80n4jaFnEamg8QkDH0d+0lE+Kng8nvx+827YOqyxusV644KyUcu64tSKN+bP201cJeG4EXZ8cnCXjHwSToQJdE=
+	t=1739464259; cv=none; b=dojJmnFbeVNfWIvxM1FXjlYiBjJ2PRXVayATVp2UMpKhpi7ugbKXuPiHSu3hzzU3Z+7+vGZnKTTxoEpuknpMUCdtzin8YSrpzCn1cbygzECvTxXNmaOUa2xZ28pxDj8BznpaM54yPDor6Gnhuy2v6+Z7SSTB9yviD4dS7k3qTyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464233; c=relaxed/simple;
-	bh=ACM2bTV5+8uOy9D4aYTjxvNQEj/5VArQiFJIDBk2bOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UprkKOLMpoNE/ezpz/TSvx+7hY8wb3ERf3SKbXhw7XrsV//dLmrDQ6URtr3FxQA5Cll8VHwjG0/9GpoWHe0tcTxPyp0QL45NJHZVJcV+KRSOjCC4EJs3sAyvt22VGi4NWqvtMbLrJXKiFA3h+b91zZHBq8+RsG8cuO1+0HjDpaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uMF6tyMH; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MNMDnKXII92afWHhH4RWZCjxwftjZXkXdjE1exG0TPY=; b=uMF6tyMHrDtDZmzYEsUM6TiN6a
-	B7J+wLSoaIctHizwPTfwt/IN/8YkHFjVLnzP6ujA2Yp+Y9LmhmndovbrGI6pWtveKtcMVdVWW98ND
-	MYgtTv+nJOB5ej8lsP0v/3RlZKRDWhLgXYCpJPBqqhqHyXsOP1EAqS8gfUt2nCYy9MgzghiqlLc5+
-	q+G1B9E72QQd7mBBZ6Hfc1VFxFcXVhqxEY+/Fv1fyLVzQVzbHBl1RlGsayIyEJQO7Wl83iMm45kw9
-	OH1pUcUSe95K4Z0CzhGgV5UPfkAWUhSACiNRHw+qA4MhUqCH2utD0D//SE5cZ1qXgTh/ejnTFFJ0U
-	ntTudkIg==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tic6Z-0004lW-34; Thu, 13 Feb 2025 17:30:23 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: quentin.schulz@cherry.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH] arm64: dts: rockchip: add usb typec host support to rk3588-jaguar
-Date: Thu, 13 Feb 2025 17:30:13 +0100
-Message-ID: <20250213163013.1616467-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739464259; c=relaxed/simple;
+	bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dDF08W0QKjSm7xSRuwYGMkbTRwWS08zn+oudR7CpQdC1pA7HER+nU6YyqZ7DvOIkza3HjOOxQVk4R2vOnKJKisvHuSKsM4C7Dj7URfo9D7ye5fMY7R6KyGIuZ3AM45lNYxaDMl3ZGbftvoplJa/G946aPX97jKfX8Sskng86f9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LLZWOp/k; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7f838b92eso195146266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:30:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1739464256; x=1740069056; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
+        b=LLZWOp/k9O0iQdBoTYYkLC2opbafdJaOulLUXwXvahvC4NpRFlO4efhb49LikbQS44
+         DyjLuvXMZ8RTJM/9sZDT+pKaymsgQ1NUS3RtRqKGlGMtH4Hc6WqSE2Kag30lyYT6BPnK
+         2sdSgd+OaiF7rdiVqT8w0fvfeRCdP49MCQ02lQGeJdAx+7DtLUC/kDhjhdWVq+fJEYhn
+         qIApuq3jdCGeo1vOf3owgNVqYWcKNbig9H+iZzdH3C4RkJNnEdpghw7klAyVQbmcZkgl
+         yxevGvbxlbGA5G/Sm1mlvDvVmUe7JM1XfahWbQgkdJK/O5B+mHWqdJknptRkOH3fJeGY
+         5GXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739464256; x=1740069056;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
+        b=uRvc7VV/7qr6sc+zlXe2NYqujDqhwrAjJEnRNf/LkrB9QIgx2898tH3wpMiT92basT
+         bC+gJdyPt5/AtZXdkWydGXJASbRmSK8t5naezDBXcoW++SgOeJGSGfSvCG9n1WKHsx4f
+         i8lfU8GuQSjNrk1Cqrz7bVvUV83pBweFoq1m/YczJM8GEq1AnQ4ZATjICQ7D9Au6Qzpk
+         MmWKlsqsS9JcUQCAaczkLUQeHDAnDbsUFxfyV+k2N7Bk4fbjjhCeFxR8ndnO5TPR7J2+
+         tNoXOAB5IDsyM5ylZJ8MwoCPAWTW64b1ciaOzFP8GbN9vA4WXEe74a7Er+c3W8Z2Wz1a
+         fCAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz42/9GN3YNOZXXsstM1//1mIB1xgWKKkPGd/n2Rdq/TQnko7kRK4bOFgBhUmJ3Gp0O4occFSomoITMWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBwCWOwZ6l5y7+5FwvY1t4fHKLFGyQrmItoX/bsiJ5LWJSolJx
+	nFO+ghoNgYI57Y0uanBZS9kAlFHnyaPxS8M3/30cnuiZy9i8YDY4JLDBi4TpDs4bI53tl+wd7pR
+	JWyV61QRuAClvmOpy6uV8F2C+Mp+80e2rHi/b/A==
+X-Gm-Gg: ASbGncv+422DOG2i82GQDtYKWm707eTZ3VsPuR/jfI4uDuhl1L2U1yT06/cRUIUG5tn
+	aS9XzrPxaMLc2KU6fnfWMMaL4VQu31/XMR5J+Avc6D2qPJeyw6PcCaSnjuYB//iBJRnfck/0Y0n
+	gF5rdMuSEojoUlpRr7+XA0cB8wMafc
+X-Google-Smtp-Source: AGHT+IH5GCCG2j+0durJuW8Oa03Wrl0Cv4HeP5h1Abx+8pHhFwZ922emqHD5DAYivn9wYSdjWCmVxGwnF2qbKv7sLSM=
+X-Received: by 2002:a17:907:1909:b0:ab3:76fb:7523 with SMTP id
+ a640c23a62f3a-aba501bce21mr457456966b.53.1739464255721; Thu, 13 Feb 2025
+ 08:30:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+In-Reply-To: <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Thu, 13 Feb 2025 16:30:44 +0000
+X-Gm-Features: AWEUYZnIbvhJ2Gv987WOr8gH33pSGmprAqtfnZVU0XicGf3dfKPk3tqt9y_XRUs
+Message-ID: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrea della Porta <andrea.porta@suse.com>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Hi Andrew,
 
-Jaguar has two type-c ports connected to fusb302 controllers that can
-work both in host and device mode and can also run in display-port
-altmode.
+On Thu, 13 Feb 2025 at 16:27, Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:
+> > Hi Phil,
+> >
+> > On Thu, 13 Feb 2025 15:18:45 +0000
+> > Phil Elwell <phil@raspberrypi.com> wrote:
+> >
+> > > Hi Andrea,
+> > >
+> > > The problem with this approach (loading an overlay from the RP1 PCIe
+> > > driver), and it's one that I have raised with you offline, is that
+> > > (unless anyone can prove otherwise) it becomes impossible to create a
+> > > Pi 5 DTS file which makes use of the RP1's resources. How do you
+> > > declare something as simple as a button wired to an RP1 GPIO, or fan
+> > > connected to a PWM output?
+>
+> Where is this button or fan? On a pluggable board? Isn't that what
+> overlays are for, and they are stackable. So when you probe the
+> pluggable board via its eeprom etc, you find the overlay and load it?
 
-While these ports can work in dual-role data mode, they do not support
-powering the device itself as power-sink. This causes issues because
-the current infrastructure does not cope well with dual-role data
-without dual-role power.
+In the Raspberry Pi ecosystem it would be the firmware that applies
+the overlay, and it can't do that if the resources the overlay refers
+to are not yet present in the dtb.
 
-So add the necessary nodes for the type-c controllers as well
-as enable the relevant core usb nodes, but limit the mode to host-mode
-for now until we figure out device mode.
+> Or do you mean a custom board, which has a CPU, RP1 and the button and
+> fan are directly on this custom board? You then want a board DTS which
+> includes all these pieces?
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
- .../arm64/boot/dts/rockchip/rk3588-jaguar.dts | 178 ++++++++++++++++++
- 1 file changed, 178 insertions(+)
+That depends on whether you count the Raspberry Pi 5 as a custom board.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-index 90f823b2c219..329d98011c60 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-@@ -333,6 +333,52 @@ rtc_twi: rtc@6f {
- 		};
- 	};
- 
-+	usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
-+		vbus-supply = <&vcc_5v0_usb_c1>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			data-role = "dual";
-+			label = "USBC-1 P11";
-+			power-role = "source";
-+			source-pdos =
-+				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usbc0_hs: endpoint {
-+						remote-endpoint = <&usb_host0_xhci_drd_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usbc0_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usbc0_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	vdd_npu_s0: regulator@42 {
- 		compatible = "rockchip,rk8602";
- 		reg = <0x42>;
-@@ -394,6 +440,52 @@ &i2c8 {
- 	pinctrl-0 = <&i2c8m2_xfer>;
- 	status = "okay";
- 
-+	usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <RK_PA4 IRQ_TYPE_LEVEL_LOW>;
-+		vbus-supply = <&vcc_5v0_usb_c2>;
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			data-role = "dual";
-+			label = "USBC-2 P12";
-+			power-role = "source";
-+			source-pdos =
-+				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usbc1_hs: endpoint {
-+						remote-endpoint = <&usb_host1_xhci_drd_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usbc1_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy1_typec_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usbc1_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy1_typec_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	vdd_cpu_big0_s0: regulator@42 {
- 		compatible = "rockchip,rk8602";
- 		reg = <0x42>;
-@@ -851,6 +943,24 @@ &tsadc {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	phy-supply = <&vcc_5v0_usb_c1>;
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	phy-supply = <&vcc_5v0_usb_c2>;
-+	status = "okay";
-+};
-+
- &u2phy2 {
- 	status = "okay";
- };
-@@ -893,6 +1003,46 @@ &uart7 {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	orientation-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_typec_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_ss>;
-+		};
-+
-+		usbdp_phy0_typec_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc0_sbu>;
-+		};
-+	};
-+};
-+
-+&usbdp_phy1 {
-+	orientation-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy1_typec_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc1_ss>;
-+		};
-+
-+		usbdp_phy1_typec_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc1_sbu>;
-+		};
-+	};
-+};
-+
- /* host0 on P10 USB-A */
- &usb_host0_ehci {
- 	status = "okay";
-@@ -903,6 +1053,34 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+&usb_host0_xhci {
-+	dr_mode = "host";
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usb_host0_xhci_drd_sw: endpoint {
-+			remote-endpoint = <&usbc0_hs>;
-+		};
-+	};
-+};
-+
-+&usb_host1_xhci {
-+	dr_mode = "host";
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usb_host1_xhci_drd_sw: endpoint {
-+			remote-endpoint = <&usbc1_hs>;
-+		};
-+	};
-+};
-+
- /* host1 on M.2 E-key */
- &usb_host1_ehci {
- 	status = "okay";
--- 
-2.47.2
-
+Phil
 
