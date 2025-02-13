@@ -1,53 +1,93 @@
-Return-Path: <linux-kernel+bounces-513544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E26CA34B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:14:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929E4A34B45
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09693163FA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E6A2188296B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ED8200120;
-	Thu, 13 Feb 2025 17:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C217200120;
+	Thu, 13 Feb 2025 17:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyzYe8/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B6c9+SMx"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667361FF7DD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D142A200115
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466549; cv=none; b=TSmymN7EcW+9o1Cbw5a8QDjfh0s+BTxFcGnIPv4BRRdAbthNCtHeHXO/AY4uOEUlBPdsDWCF5iJln/V8NSLwcwPYT/Sger1092M+cH04QKyvYgFiJ6uWwTNyivvLyrNNlWzaw/+VRQX4zbbcSrbDkeNw6Bqe1Bfq38kCUUQSn4k=
+	t=1739466014; cv=none; b=m1tvFS8gRMSRyL4D+lZcck6MP1tEtyUxwCD0EqPTl8+NhfF238SDC3GZYleHs16stKyiJlxtioALJy+OMVTR5j5yscmhsAslk5ARl8KZSlJPV60HdNQWoQkAd2Kjq3U6gDhy4xOETD+iGdmIYgJrMAcFnHJDavZGpjqQZd1VC90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466549; c=relaxed/simple;
-	bh=4x9jxxW0VD/X4SQSVaG2JypaS5X6rvTy8i5aJNkaqGw=;
+	s=arc-20240116; t=1739466014; c=relaxed/simple;
+	bh=BtRN7n4xGXk239SdRnSmUkBejNJDYu6BWsjQYOPuYjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSz2A39w/5Q1O5RYge0/7ntjiF6HWClgJ9betuwm3ncEPXS/bs58wYCnG0f5nQjoPJavKvvTEbxtpZQ3BtA9hFIuk5KJifW0W+82P629zGjSPSHno8pwyHza8luhqD7gcJJmvOKktoPMOv/woRdlniv6uyBpGA8ROT9xNN+kkqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyzYe8/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF828C4CED1;
-	Thu, 13 Feb 2025 17:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739466548;
-	bh=4x9jxxW0VD/X4SQSVaG2JypaS5X6rvTy8i5aJNkaqGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OyzYe8/FSw0fl1CP4gUZZpa5MWXZthpkiUG+mI9U9lf93L2MaIccibO3nE4sWJ818
-	 p+cEWlfzkMX/GuNQ9+3yultf7t7/GyBdPh5VdjwsUpkB2WbwJJQ2X0yqtkVvqQ0aDD
-	 G3SYthnFz3F/udB8mazLb+24drxHpMXr9MUHi8XNYehaqHDWsf7coFGd7fqmgKdt4R
-	 9Pdjd658XnbsDREowp3+HltvYyCjf7pcLt8R8plvGnNhGLaZi9yG2qGBp36JDTV5Bw
-	 e3pbnWF2pohnY5SGCG7XN4xTxArGp3+e8+t8N0p9NyyIUBQ7MispuEjYLCc9Rrxb8+
-	 oNjymN98zlMWw==
-Date: Thu, 13 Feb 2025 22:29:45 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Anthony Iliopoulos <ailiop@suse.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc64/ftrace: fix module loading without patchable
- function entries
-Message-ID: <wlscshbqan2svtqkz5xc6v47tzndfnsvge7h4lbfn67zoplekl@elt2oxwhrp6f>
-References: <20250204231821.39140-1-ailiop@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oswvdnkd6dXKnDggrKJUFCb5e5lS8QFIV3yLiSm+gX1dAa7PQnNIX5lqvrl3yQO2SVT5Owal0K6QsomBQKV1BdWwK9x/NG2NlKwmXe4gFLs12oYiQp1xESk9+fvjn5xxk7qStuuAWT4KJ81AgNG2MGuF1oqZjEjOs2qtiXP9Ryc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B6c9+SMx; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-545064389d3so1167171e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:00:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739466011; x=1740070811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eLTdc0mnszW35pcuuPl/ETu0QFfOhGZjVUBzq1yxI/g=;
+        b=B6c9+SMxWWo0B2lSykEu6ugROGyeyZqmYZwGGFJt9vLn/SIJwPto5rHrVW/tfCO9Bp
+         s1D3mzUGJKpZjbnCU84VcVAQwcJPj5nMObD87XfsjKGA/yH/yxFpyCx1nC0hP063lRGS
+         G0CsUucqLayhdADQi3sWrF6FhqmQHKX65SItV3GuvsUzli1vYZYUopRH+VsgEieHoqje
+         gVO/bSV7gFBKJu7s7Wyen9wkKtwr/Qe9UgNG8lyoOjr8qqFGSI35lS50CNgWACaesaBj
+         clQ3l94wd6ahuOY+DU9tMLXFS3U7GaFIr6BM+PMD8/pQdiYtUztkZkSa6Qq0XE6N22HP
+         wlAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739466011; x=1740070811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eLTdc0mnszW35pcuuPl/ETu0QFfOhGZjVUBzq1yxI/g=;
+        b=jA/m46d9hrhreDpG71+WP3PvwgNZ+Kc1VSVGTaAWlT+rjEI493EgpzpgcbHsHgQKuu
+         D95UigVk62S09fBoopm2gOHzcosFi9Bw6CB/Ry0QD5gjUR3i8+BKdh/j0Q+ZcBDXQVeL
+         709coVyIfRh0/HPkIeaMPRGqMTun/XPKEhif9aXxaK/nw3qWdLiucxyJ1Mq1MQOony/z
+         H5X6S5ZJ25TFkni40jdeNyyLDw5zenswUMfbnrgYPuF1GW+qZvbxR4nClF3wCOJj63eO
+         trtqics5yR0sZa7c+E0+7fvVFN2CL9npjbldiVe49J+EuwmLGJ9TuzkAbeo4fpMYY/+Q
+         dG/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPW7D3AsAIDmeL+d52Lu6nLpjEPn23YVqrNrmTmiw8Rtu8cd2gsu3Wg6AVr8mBiTvxwyftASR10gjmnHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Xfb0Ei81XIq5MX3KwKD9pDBTBryE2hooIO8HcDi+KWxh5+pt
+	KDE57IdL1pezJwEVw/kS5zVTs8ZtAjAjOFB/erLqw+hCDjYtHSnRYLr3RTnQC54=
+X-Gm-Gg: ASbGncvmeCfNRPU6PK2rV6QNb+2DomhP+9Xv5PfLpABWfXs2swLy7j/NI+DX2BI041G
+	XftKIKpwg1q9m6+T1w9JtJt25vzL8dP7xAfqD83jcWNzU/YmzvN1qDJaEM8F75SHAxcHj9Gs4A7
+	RsPH20/oKI/5fSp19QcLJjz9JvOHwHtQ39O2v1Fj6gchtYUABeHNMzz0+p3O+Nc/dp1zcBQ6mbj
+	8YMaGvUYMOMZ0Be8StdbWoUXVrP7thOSFykqadRt6o7mnwdZTTKnRNqU36uXKA4Epsz90hX9J77
+	iAqAKd+7snAcqj7h/SbCSt1PFrSAscPemEW5KdERmBNYgcwD3SFh+0H3pD8211xOZ7aZfeQ=
+X-Google-Smtp-Source: AGHT+IECjSH9vRJLStWd+xD1ybGS+qcgRaQJyWQXD6FBqkvSQHj2aTj5q7HpRowg32NwdODaOMXJGw==
+X-Received: by 2002:a05:6512:224a:b0:545:fad:a757 with SMTP id 2adb3069b0e04-5451dd99d0bmr1143047e87.29.1739466010776;
+        Thu, 13 Feb 2025 09:00:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105e4csm219176e87.111.2025.02.13.09.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:00:09 -0800 (PST)
+Date: Thu, 13 Feb 2025 19:00:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v4 3/4] arm64: dts: qcom: sm8550: add missing cpu-cfg
+ interconnect path in the mdss node
+Message-ID: <pgwuzwohvnvrw7ism5zuaigjjsljvqylej2tyjxeo7cpcsycfk@lusbxdvvbetz>
+References: <20250213-topic-sm8x50-mdss-interconnect-bindings-fix-v4-0-3fa0bc42dd38@linaro.org>
+ <20250213-topic-sm8x50-mdss-interconnect-bindings-fix-v4-3-3fa0bc42dd38@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,61 +96,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250204231821.39140-1-ailiop@suse.com>
+In-Reply-To: <20250213-topic-sm8x50-mdss-interconnect-bindings-fix-v4-3-3fa0bc42dd38@linaro.org>
 
-On Wed, Feb 05, 2025 at 12:18:21AM +0100, Anthony Iliopoulos wrote:
-> get_stubs_size assumes that there must always be at least one patchable
-> function entry, which is not always the case (modules that export data
-> but no code), otherwise it returns -ENOEXEC and thus the section header
-> sh_size is set to that value. During module_memory_alloc() the size is
-> passed to execmem_alloc() after being page-aligned and thus set to zero
-> which will cause it to fail the allocation (and thus module loading) as
-> __vmalloc_node_range() checks for zero-sized allocs and returns null:
-> 
-> [  115.466896] module_64: cast_common: doesn't contain __patchable_function_entries.
-> [  115.469189] ------------[ cut here ]------------
-> [  115.469496] WARNING: CPU: 0 PID: 274 at mm/vmalloc.c:3778 __vmalloc_node_range_noprof+0x8b4/0x8f0
-> ...
-> [  115.478574] ---[ end trace 0000000000000000 ]---
-> [  115.479545] execmem: unable to allocate memory
+On Thu, Feb 13, 2025 at 05:27:58PM +0100, Neil Armstrong wrote:
+> The bindings requires the mdp0-mem and the cpu-cfg interconnect path,
+> add the missing cpu-cfg path to fix the dtbs check error.
 
-Ugh, that's nasty.
+I'd say that this is not just to 'fix dtbs check', but also to ensure
+that MDSS has enough bandwidth to let HLOS write config registers.
 
 > 
-> Fix this by removing the check completely, since it is anyway not
-> helpful to propagate this as an error upwards.
-> 
-> Fixes: eec37961a56a ("powerpc64/ftrace: Move ftrace sequence out of line")
-> Signed-off-by: Anthony Iliopoulos <ailiop@suse.com>
+> Fixes: b8591df49cde ("arm64: dts: qcom: sm8550: correct MDSS interconnects")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  arch/powerpc/kernel/module_64.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
 
-Thanks for fixing this. It might also be good to add a check in 
-setup_ftrace_ool_stubs(). Something like this:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
-index 34a5aec4908f..c10a9c66cfe3 100644
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -1125,6 +1125,10 @@ static int setup_ftrace_ool_stubs(const Elf64_Shdr *sechdrs, unsigned long addr,
-        unsigned int i, total_stubs, num_stubs;
-        struct ppc64_stub_entry *stub;
- 
-+       /* Bail out early if no traceable functions */
-+       if (!me->arch.ool_stub_count)
-+               return 0;
-+
-        total_stubs = sechdrs[me->arch.stubs_section].sh_size / sizeof(*stub);
-        num_stubs = roundup(me->arch.ool_stub_count * sizeof(struct ftrace_ool_stub),
-                            sizeof(struct ppc64_stub_entry)) / sizeof(struct ppc64_stub_entry);
-
-
-Regardless of that, for this patch:
-Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
-
-
-- Naveen
-
+-- 
+With best wishes
+Dmitry
 
