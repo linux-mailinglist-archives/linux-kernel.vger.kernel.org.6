@@ -1,190 +1,109 @@
-Return-Path: <linux-kernel+bounces-512564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F705A33ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:15:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D80FA33ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894643AA18C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8628E188CB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564592153EF;
-	Thu, 13 Feb 2025 09:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W48VlXAC"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC74D2153E6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38932153FD;
+	Thu, 13 Feb 2025 09:10:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E2D212B39
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437804; cv=none; b=OEh/5XOfSV+KDLS51XCoNjB2Q35wdNMHc6fCXdF5iIgdmPK8dVDQ0XTMH5MD3n6VgdcTmFa5LLWkGaVusbERTuCiMqoXuw81pGrlNDzw8vEKywMzgQ5s2s6hcgWMHxlH3tCAOnONOs7dqhK6i0twkAAIskLKAGrZZoUcAIQN9Q8=
+	t=1739437806; cv=none; b=dvheWjuOcEoMMO2g6DVd6HsvoLu/NL+Q3ZBdCPhMySQWw8TdjoMooaADAePnFTv5hcUsVKeSXT+wCxwfVUuTRAPYB3xUFIhgYidYeuxwcO+D+oi+Bv3QXnfyDW37nOCyOgEs24JzcLMc1IjHjn2t9MeWEy8owb05o5S9fI4khMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437804; c=relaxed/simple;
-	bh=QdskmGKWM/qnUzxfNQMHJRQJUkPpsk2HO2GVHL9SJQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=up2cdHKyrUbOPwwqH1E400z5T6aiCa/9WViYqMqBoaZodZPXaR/jYSAn5lpr3La0FRwel5xPqX+pcVG7CqTUJAWNjtiQrLacdJeuSTfu0vxxbWOEPgRcMXKfhhatHNe/PPorHdqYb7jHKg/k5MnWcoREv5Ru4KrBJLOn+UI/DgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W48VlXAC; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-308e9ff235bso5752641fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739437801; x=1740042601; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V1j8KVu3ImMqXcK5kW58H7/M7+afJxS0MhcpLzIGID4=;
-        b=W48VlXACyl0X/4TNxIqNDD/Z4saO4DH47GmhdGejKrQ1Dpgk04oifXtXiksfKabm+u
-         E+x3/giOIZCWZ4cQQXZ7b+2OW8/Bzz8LfSAIi3zDVf+PYpjg/wEHa8s8RoPf6lJIkqtJ
-         2VbuzPt+JL575w5wgQLnJMi4pUtQRGUPJLj9J6yOCnUfh2VhTTB4guxfFyH0kDRL84sp
-         zRWErPBkSHmeU9yqNsOxV9CiBKQunebUGzTEW9ZxibCr+Gc7q/T2szjhUmQ/HQ1KhdHB
-         j/SNEs2mWe/2WYOuntteBGgsiOI1iL6r6/D40hOq3IqGArM8tjS0LVgOIWWKHu8cz0cl
-         K4iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739437801; x=1740042601;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V1j8KVu3ImMqXcK5kW58H7/M7+afJxS0MhcpLzIGID4=;
-        b=vWG4ZBjFs4gw/KIvhhWDtcli4ks9CUhdsYTFlGESEfB2/4O2UkFdlw7NbvM4zKKRxk
-         sQaEdkwBpxK6HIZX64SB327LWka0rINF/hCuwT4hzKXQTKE8+tZ3RhX9/uHGu2VEZjM/
-         sPor4Qm6MzIAR03vWDewwuVihZKs4OCaaMxmoFYwv3Db1FEgJuki5OzaMjIJFiIhsETX
-         Txe327gcLhjqGa9yReIQkp+k1B5Zcdn7dimJiXE/qcZfQdlTRu3r/uyX8yy+ZENinzZv
-         W+WseEK/PK0f4RBdr3gWK31D+l2ITMAam+JdCH8sgieVTOHtk7Thxgzxev2LO9DWpxOE
-         OmmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmcdZq4DTBSKDZqB/sKqPjYP7QxT+GyJgxyLlxRditN3AwQ6F8iENN5kgJvJJm8FUYsFPDxGtk2NffgnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU5buJorhlQKSCFKjmgn/sG74+iVAQLrWEa9vI8fFuGhy3/d7C
-	7EP0IyrjwPGj7D1S1DbyfnSGhAJ/YVI0+75QFlOSBIajkSXcPbNMtLPub3eZpYdbuj/JtZOtqfZ
-	vG9V9OCy+a6cyMJmiaYOwo7AWkb/BRnXC2qbI
-X-Gm-Gg: ASbGncvqUg2e/4ih+JYTTAE/s6m61r+F3l/AWwaNt7prJCP9w+Vm3T9bMuVgTTg2bAx
-	unVJpP6Xw5LWYnmi/0RBP32cJrIFeM1ni6mZ01FOHEep3a9RkAGm1B/p46cwCjzLOMdlgbvCL47
-	4Owz+TNCA2wtHOZBJnsMo2FT58TONSFg==
-X-Google-Smtp-Source: AGHT+IFYpwSWkrafXJGJ14Mo/8vLQLp/RyE3eNWDbRrJPVQM2vkOvkkb7ydWSD9NvFUOlx+ZYPnS+CiO3fsVJ8DczIU=
-X-Received: by 2002:a2e:a80e:0:b0:308:ec6f:7022 with SMTP id
- 38308e7fff4ca-3090366a994mr27722751fa.17.1739437800625; Thu, 13 Feb 2025
- 01:10:00 -0800 (PST)
+	s=arc-20240116; t=1739437806; c=relaxed/simple;
+	bh=/SlBUoD84XdaAKAKmYrfM34fE048jnhVWBnMBDvOjn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MkAkUxzVqw3fA2v9yvN9YKrr8vOp5dDFtlxtBwhCp1EAvs3C0XG+FsezMTV64SUcoldS6+nKApQXjNimBFRbc/CVFZn8yvNDge3vUxteoX5O79oiBQLoRnTBMB5kq9TeOiqzWqZIGNkTsCrLaPSJ/H0FoCR7GCNsXxWbvktVce0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4B4716F3;
+	Thu, 13 Feb 2025 01:10:17 -0800 (PST)
+Received: from [10.57.81.93] (unknown [10.57.81.93])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5596D3F58B;
+	Thu, 13 Feb 2025 01:09:54 -0800 (PST)
+Message-ID: <d6af21f1-e539-4fa6-a3f8-c4859b1325c5@arm.com>
+Date: Thu, 13 Feb 2025 09:09:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738772628.git.dvyukov@google.com> <87ldujkjsi.fsf@linux.intel.com>
- <CACT4Y+awFXT2j+HMeAy2RKnoBzb--+heFzJUoBZWp9iJevy1Dw@mail.gmail.com>
- <Z6ZRVeoFxT0NV9yb@tassilo> <CACT4Y+bOVd4hw2fkE4ahJnbyAuc_=wMu_HMkAUbAhL--dTxBiA@mail.gmail.com>
-In-Reply-To: <CACT4Y+bOVd4hw2fkE4ahJnbyAuc_=wMu_HMkAUbAhL--dTxBiA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 13 Feb 2025 10:09:48 +0100
-X-Gm-Features: AWEUYZlilTS_96i68RXq9EjwpscAiKpQsRAW_XlXKSTWt6TPYXuwX5hnwnWXLS4
-Message-ID: <CACT4Y+Z4ea9VBLFamA4K+Eqj0Pimvf7yYdrtDMAxh9TAc7BBOA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/8] perf report: Add latency and parallelism profiling
-To: Andi Kleen <ak@linux.intel.com>
-Cc: namhyung@kernel.org, irogers@google.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 12/16] arm64/mm: Support huge pte-mapped pages in vmap
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-13-ryan.roberts@arm.com>
+ <9a0d3009-18fc-4b53-941a-b6d830fce36a@arm.com>
+ <21da59a8-165d-4423-a00d-d5859f42ec11@arm.com>
+ <0dd74f57-902a-4a6d-9f77-31963b5953d1@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <0dd74f57-902a-4a6d-9f77-31963b5953d1@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Feb 2025 at 08:17, Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Fri, 7 Feb 2025 at 19:30, Andi Kleen <ak@linux.intel.com> wrote:
-> >
-> > > > I assume it just works, but might be worth checking.
-> > >
-> > > Yes, it seems to just work as one would assume. Things just combine as intended.
-> >
-> > Great.
-> >
-> > >
-> > > > It was intended to address some of these issues too.
-> > >
-> > > What issue? Latency profiling? I wonder what approach you had in mind?
-> >
-> > The problem with gaps in parallelism is usually how things change
-> > over time. If you have e.g. idle periods they tend to look different
-> > in the profile. with the full aggregation you don't see it, but with
-> > a time series it tends to stand out.
-> >
-> > But yes that approach usually only works for large gaps. I guess
-> > yours is better for more fine grained issues.
-> >
-> > And I guess it might not be the most intutive for less experienced
-> > users.
-> >
-> > This is BTW actually a case for using a perf data GUI like hotspot or
-> > vtune which can visualize this better and you can zoom arbitrarily.
-> > Standard perf has only timechart for it, but it's a bit clunky to use
-> > and only shows the reschedules.
-> >
-> > > Also (1) user still needs to understand the default profile is wrong,
-> > > (2) be proficient with perf features, (3) manually aggregate lots of
-> > > data (time slicing increases amount of data in the profile X times),
-> > > (4) deal with inaccuracy caused by edge effects (e.g. slice is 1s, but
-> > > program phase changed mid-second).
-> >
-> > If you're lucky and the problem is not long tail you can use a high
-> > percentage cut off (--percent-limit) to eliminate most of the data.
-> >
-> > Then you just have "topN functions over time" which tends to be quite
-> > readable. One drawback of that approach is that it doesn't show
-> > the "other", but perhaps we'll fix that one day.
-> >
-> > But yes that perf has too many options and is not intuitive and most
-> > people miss most of the features is an inherent problem. I don't have
-> > a good solution for that unfortunately, other than perhaps better
-> > documentation.
->
-> I don't think this is a solution :(
->
-> I provided lots of rationale for making this latency profiling enabled
-> by default in this patch series for this reason. If we just capture
-> context switches, then we can show both overhead and latency, even if
-> we sort by overhead by default, people would still see the latency
-> column and may start thinking/asking questions.
-> But this is not happening, so mostly people on this thread will know about it :)
->
->
-> > > But it does open some interesting capabilities in combination with a
-> > > latency profile, e.g. the following shows how parallelism was changing
-> > > over time.
-> > >
-> > > for perf make profile:
-> >
-> > Very nice! Looks useful.
-> >
-> > Perhaps add that variant to tips.txt too.
 
-Now done in v7
+>>>> +#define arch_vmap_pte_range_map_size arch_vmap_pte_range_map_size
+>>>> +static inline unsigned long arch_vmap_pte_range_map_size(unsigned long addr,
+>>>> +						unsigned long end, u64 pfn,
+>>>> +						unsigned int max_page_shift)
+>>>> +{
+>>>> +	if (max_page_shift < CONT_PTE_SHIFT)
+>>>> +		return PAGE_SIZE;
+>>>> +
+>>>> +	if (end - addr < CONT_PTE_SIZE)
+>>>> +		return PAGE_SIZE;
+>>>> +
+>>>> +	if (!IS_ALIGNED(addr, CONT_PTE_SIZE))
+>>>> +		return PAGE_SIZE;
+>>>> +
+>>>> +	if (!IS_ALIGNED(PFN_PHYS(pfn), CONT_PTE_SIZE))
+>>>> +		return PAGE_SIZE;
+>>>> +
+>>>> +	return CONT_PTE_SIZE;
+>>>
+>>> A small nit:
+>>>
+>>> Should the rationale behind picking CONT_PTE_SIZE be added here as an in code
+>>> comment or something in the function - just to make things bit clear.
+>>
+>> I'm not sure what other size we would pick?
+> 
+> The suggestion was to add a small comment in the above helper function explaining
+> the rationale for various conditions in there while returning either PAGE_SIZE or
+> CONT_PTE_SIZE to improve readability etc.
 
-> That's a good idea.
-> I am waiting for other feedback to not resend the series just because of this.
->
->
-> > > perf report -F time,latency,parallelism --time-quantum=1s
-> > >
-> > > # Time           Latency  Parallelism
-> > > # ............  ........  ...........
-> > > #
-> > >   1795957.0000     1.42%            1
-> > >   1795957.0000     0.07%            2
-> > >   1795957.0000     0.01%            3
-> > >   1795957.0000     0.00%            4
-> > >
-> > >   1795958.0000     4.82%            1
-> > >   1795958.0000     0.11%            2
-> > >   1795958.0000     0.00%            3
-> > > ...
-> > >   1795964.0000     1.76%            2
-> > >   1795964.0000     0.58%            4
-> > >   1795964.0000     0.45%            1
-> > >   1795964.0000     0.23%           10
-> > >   1795964.0000     0.21%            6
-> > >
-> > > /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-> > >
-> > > Here it finally started running on more than 1 CPU.
-> >
-> >
-> > -Andi
+OK I've added the following:
+
+/*
+ * If the block is at least CONT_PTE_SIZE in size, and is naturally
+ * aligned in both virtual and physical space, then we can pte-map the
+ * block using the PTE_CONT bit for more efficient use of the TLB.
+ */
+
+Thanks,
+Ryan
+
 
