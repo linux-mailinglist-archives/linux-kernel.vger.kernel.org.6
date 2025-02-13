@@ -1,224 +1,181 @@
-Return-Path: <linux-kernel+bounces-513962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A57A350C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:57:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5EFA350CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6666B1890BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3134D3A79A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBDF26B087;
-	Thu, 13 Feb 2025 21:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DA124BBFE;
+	Thu, 13 Feb 2025 22:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vo1GCYyI"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GES4zMiX"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086D269837;
-	Thu, 13 Feb 2025 21:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2CA206F15
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739483828; cv=none; b=HwV36WOB3n5VnJdgZWx0fiX634UmREKc5DdCBZtnnuFHGd3hSpwyONiUXKNsi0FrrBMND+QJRgoEnZ6Np1rgChfg/CrNEAk1BJNcfOwRPtfvMEdrqaZ1euOC+KL+J3mrXpZ0QOWZmG8O9Xz1kJSlUWVcwSVxzeN7LuwHj97Kq/c=
+	t=1739484036; cv=none; b=rkT/Z8exNyGBC96S4iIEi18r9uoGC4nM02KhFUXmyO7MlQxLSu2gP11H2vFAoV7qCT/1aoj0Q/OgxYO1Hvw/43okJBkMaKNAxIa1uJLRbUa2xa5mDX+zTPu7ocLKeSd7SIFasufTUbpyMQ9Iqb62+New3yomQOCNNhwOqMKXVso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739483828; c=relaxed/simple;
-	bh=nMH8RpVPPDjuHL4kqWt8ZxllbsjE47OlV9xxxE7dtnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jqhx4Op/kx6xgIazyQ/2BkOfrV+BN5sjkAgqHejeBEdIHfqopolfALezUW6I0oQ1OvotZmOivr2CXVfv5AZZ6JWv7ux9ypjgWIeblfXr5HztVwwXX6/PddF1dEUMsIc9pkPKpP0KJo8I+A9LdFVsN8++I2XsbiwHhBPya4Ob8Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vo1GCYyI; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7b80326cdso262155266b.3;
-        Thu, 13 Feb 2025 13:57:06 -0800 (PST)
+	s=arc-20240116; t=1739484036; c=relaxed/simple;
+	bh=lcyYjfx42aCFHp9AMZfpob+6CrOC2rLJVDEySyY3isk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=mqv/X9hVQfWhRvOaWjjZ3DaoviA9DVtkgZ5XagxzbI39C2DAqF2hVWiWCH042wYSW6ECE8Hak7tjGXgcUcVDvgXWDojp79Ii5Eq9YjZNVvRImh4/b+JZJIoMbJ4T/vm4E0Ne0Ekx/1v9zwaRkBORJbLt5h9Af/awEbX+IzN1Sxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GES4zMiX; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f3d8c0a2edso37756b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:00:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739483825; x=1740088625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1739484033; x=1740088833; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cG6py7yu0z9B7maNjhp2/7SOVI/QwUJmvU/x6WtNkGo=;
-        b=Vo1GCYyIsi1pS+hcL/jhI3uWGSH2R4yNpCv4d2h5Glsls8PHfMbLcrY3LQZu2lIWZC
-         INSXodmzfKF0sRic/wrcHGF893DMVj585sWHocUD7CIT3hFIfkkm9EwkEtVklMUnwQoP
-         0Isn2fSmaimCEBe9/Kk575DqgY/KbovILTId98aife/U5K6KY9VZFBobotXioRhiXfbU
-         QDpDFh/FNbufOe7Q78dfXhaxhmaA+KTN9DC2QvA4ctBox96op3h+VTUkE7hhdFlOtNFf
-         fHVJCfn6wrVDUQy9bUZU88mDLdgGVvrRmMj6EUpahdN4n9wQj0V4Rh2+NGYva71R55XD
-         p38g==
+        bh=lVDdJuGJBV06FhLssYXV1tVqu4QAOw03JY046Cqka88=;
+        b=GES4zMiXIj60NrFdKFjsEhdZPfBC+83i2Bivh2TnrTZ2XyY2B82+vJRuqYfRYl9LKt
+         jDSmCUIDMVisUvOvxgtlXzOTI7rEwItmlyEp23PrMIAWWJ/tN9ke6INGTFCKdu4MjM+j
+         1b8z+chut1ohE907gguTe9BujG5dUJptPyM+Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739483825; x=1740088625;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739484033; x=1740088833;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cG6py7yu0z9B7maNjhp2/7SOVI/QwUJmvU/x6WtNkGo=;
-        b=jeLr+CbQfCLV4LiJHLk/2VG6116oQg+9+quBYkhaUYJrKMgN6TCgSSqM8HbBf7gADD
-         2jsLcRiKRn8vTQf3wKRPEBIJ2tTLpdPMx+EeJbleqtEc9ceug17BwIyQGxByzTu1qUsU
-         8erJv21MI1sG6r4aEFRMfyoLbi9UeG6Rs5GjZ76pvq98x1kpcjNsAluE3C/Swv7e1O4X
-         /0VGVc0MEJsc4qs24LvikZUb1MdrygFtKzaWfZ+49vZlZGuKFq5KWFmaxf8BECjIzrQi
-         PDgsQ63UeozHm320jcuVS2WYtscHrUaGQe8gVDzl7WAcQ6cvxyEepAt+9qs5DL6Jybbg
-         nsQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWr0ppAwwItUD0/Jz7U7q04LqZEc81mxp4yLJ84wSQyI66uBUyL/SbQEPa2ZtWKsYRmYEJdeqYRLeN4fI=@vger.kernel.org, AJvYcCX67/Fn/xede+kNAFG3Rs56VhXXTgYBsnCmTMQss/mVdmGpqYPSiVf3o+a0E4PY9TU63sJboM9TXq/C@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4CuH6bUbuhubamKmKucCnuCZfUa8gG9oGwzO72F3dR/npmBng
-	pfZNbNolUyH+HtQyrby7VPSnocF00OKxYd0VzVeXt8WrMT6tFZoVZJ19oj7E
-X-Gm-Gg: ASbGnctWmplhGCtgbFwP4VQ7BFCJIQAXXhHrqy9osweb9JnFfSrSEVIW2w3NG38whOT
-	N3bQtM+Av9kK+AGFXxH30399lOecoYPaVy3H0DFLaXoiMK5bmKwkC230dXhQVXF4f5r5/bQsOXB
-	0R5Dr5NkLwGnXNTJdeWvCZ5Rselr786svmXmqVIHiR2kZ1YydE5+MuEeSUfINcpVZAXdD8OYCyG
-	u/QAWNSnpBvpF8eNKyQBssLL8UHdbE+b5pFXoQimo+E3eF3W/g0jWDpIIXtXKpLDDBIblZRj0SW
-	vmztjgbZKYch9qNx4y5UyDHd4lUs
-X-Google-Smtp-Source: AGHT+IGZkO+tFWVJ/XSuIahWDkoxtDrJAoFaUbSRaWC5deMFCkWx1eq6xUWev2dyvM2gpdCMvuD1Yw==
-X-Received: by 2002:a17:907:944a:b0:ab7:bc17:b3ae with SMTP id a640c23a62f3a-aba4ec15dffmr550867166b.34.1739483825104;
-        Thu, 13 Feb 2025 13:57:05 -0800 (PST)
-Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532595dfsm209794266b.70.2025.02.13.13.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 13:57:04 -0800 (PST)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-rtc@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	dlan@gentoo.org,
-	linux-kernel@vger.kernel.org,
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v11 3/3] rtc: sophgo: cv18xx: Add restart handler
-Date: Thu, 13 Feb 2025 22:56:47 +0100
-Message-ID: <20250213215655.2311793-4-alexander.sverdlin@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
-References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+        bh=lVDdJuGJBV06FhLssYXV1tVqu4QAOw03JY046Cqka88=;
+        b=gIVPZBxipGHadIN9F/wnUGBa/OUyc1cTZLMn/fIAp5clFleitGwAIhfRmaU2GyJx+F
+         NUsi3tvR08aA8BVHtb05tUAmvRnIzsbM00z66LJNIje3b9xzHteUU5mTYkLJb1MjhYig
+         U5WDae+MpJYmkT4HLxem3tOOu+YVB8dyklKiw0BJId3Eq6FPH3LTJYZ6oj5RL+ERCYBe
+         XnpdK45SKA8PjoK3tAz16RyoCw/LU25+94b5X8yfLjv4go7ojzA/QRaU5DCiqrUi7Pg0
+         R/k3T/HGXoIvy1vADxVm1g1+/zAxtvpZ0Z2sd/9STKL68hTYxuCmkhixrWvTodgI1B4m
+         CUMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9H/qeW/3b0CpMXpTk3xbBFiPCBQF46PtQj2x0C2JayhxQx4l45sFzskMRy8XEB5Tdt5VAS5w9cA4fAVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuMghNLVXHblkrtrjf+YosdmkwQuhluRtziKlUrr82xND/FVzh
+	wipfFmkwkx9vZ31vMUML72DT+L40wFcbnBgE+oQQiirQXVudJTTafKaw7jkNp0/C1ti5ZRn6S0l
+	Ob17XJqo4mKKPNvyylDIAeZd04xPbG0CnKnlz
+X-Gm-Gg: ASbGncsd+qSRBXe9SmHjJ8/ZQywlFNS/0Wd1TII01ap7KrZ9zXP5m9d/dEhQO58sZIL
+	T3D+DwsDX+SknXdbbMG3goQ5orRyG8Y3h1OH+89mFafARv5XJfK7hh75Dp7LGplAb6L4W/gljNM
+	ng2F2Hr7zAwiJDFFkpeMXePhzdiGkYsg==
+X-Google-Smtp-Source: AGHT+IFZ89lyjLhjthMWsh+Xv4yhuWhXx7WGtpO3v2Lf/Ol2MmQBmeBdIvJLJQo6cKuEv712+t/jVH0mS+/lu/S260g=
+X-Received: by 2002:a05:6808:1b1f:b0:3eb:9107:ee76 with SMTP id
+ 5614622812f47-3f3e1a4eee0mr102943b6e.7.1739484033654; Thu, 13 Feb 2025
+ 14:00:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250212032155.1276806-1-jeffxu@google.com> <20250212032155.1276806-2-jeffxu@google.com>
+ <qrxmfa6jvaojedmo6fle2e6vd5k4hzihcuxdc6zk43dclf6nsd@dvuzolusdtz4>
+ <CABi2SkUWGXtWAir5j1TO1c7FwOhbNmSwEzwTrxRgzfBydus=2A@mail.gmail.com>
+ <66q7feybn3q2vuam72uwmai322jdx3jtv2m5xmh75l6w6etqiv@knpsyh3o627k>
+ <202502131142.F5EE115C3A@keescook> <t5hsasch3aybjujmjzs3shpiorcgzp5pjc4fmz77u574voi3hr@qomzrd2llv2q>
+In-Reply-To: <t5hsasch3aybjujmjzs3shpiorcgzp5pjc4fmz77u574voi3hr@qomzrd2llv2q>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 13 Feb 2025 14:00:22 -0800
+X-Gm-Features: AWEUYZlJg0Av8eErqyHIPSk3VZi3rcP5H9jYN8zDMf2Bq0g8eCVrgdxuS5QpM8M
+Message-ID: <CABi2SkX3o-PdeuzownVkFT-oo8tjtaaS9ebOALu+r6O1S6W3sg@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 1/7] mseal, system mappings: kernel config and
+ header change
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Kees Cook <kees@kernel.org>, 
+	Jeff Xu <jeffxu@chromium.org>, akpm@linux-foundation.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently provided ATF firmware for ARM64 Sophgo SoCs is binary-only.
-To make Linux independent from this binary firmware, provide restart
-handler triggering COLD or WARM reboot directly via RTC HW block as
-alternative to PSCI interface.
+On Thu, Feb 13, 2025 at 12:54=E2=80=AFPM Liam R. Howlett
+<Liam.Howlett@oracle.com> wrote:
 
-Handler priority SYS_OFF_PRIO_DEFAULT of 0 is desired, because if PSCI
-is indeed present, its priority of 129 will override the new one. On RiskV
-side the behaviour is unchanged as well because SBI SRST handler has higher
-priority as well (192).
+> > > >
+> > > > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't part o=
+f
+> > > > the build. This is intentional. Any 32-bit code trying to use the
+> > > > sealing function or the VM_SEALED flag will immediately fail
+> > > > compilation. This makes it easier to identify incorrect usage.
+> > >
+> > > So you are against using the #define because the VM_SYSTEM_SEAL will =
+be
+> > > defined, even though it will be VM_NONE?  This is no worse than a
+> > > function that returns 0, and it aligns better with what we have today=
+ in
+> > > that it can be put in the list of other flags.
+> >
+> > When I was reading through all of this and considering the history of
+> > its development goals, it strikes me that a function is easier for the
+> > future if/when this can be made a boot-time setting.
+> >
+>
+> Reworking this change to function as a boot-time parameter, or whatever,
+> would not be a significant amount of work, if/when the time comes.
+> Since we don't know what the future holds, it it unnecessary to engineer
+> in a potential change for a future version when the change is easy
+> enough to make later and keep the code cleaner now.
+>
+Sure, I will put the function in mm.h for this patch. We can find a
+proper place when it is time to implement the boot-time parameter
+change.
 
-Tested on SG2000 in ARM64 mode.
+The call stack for sealing system mapping is something like below:
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
-v11:
-- patch introduced;
+install_special_mapping (mm/mmap.c)
+map_vdso (arch/x86/entry/vdso/vma.c)
+load_elf_binary (fs/binfmt_elf.c)
+load_misc_binary (fs/binfmt_misc.c)
+bprm_execve (fs/exec.c)
+do_execveat_common
+__x64_sys_execve
+do_syscall_64
 
- drivers/rtc/rtc-cv1800.c | 51 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+IMO, there's a clear divide between the API implementer and the API user.
+mm and mm.h are the providers, offering the core mm functionality
+through APIs/data structures like install_special_mapping().
 
-diff --git a/drivers/rtc/rtc-cv1800.c b/drivers/rtc/rtc-cv1800.c
-index 5c30f7388983..586d7195f1f4 100644
---- a/drivers/rtc/rtc-cv1800.c
-+++ b/drivers/rtc/rtc-cv1800.c
-@@ -9,17 +9,23 @@
- #include <linux/irq.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/notifier.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/reboot.h>
- #include <linux/regmap.h>
- #include <linux/rtc.h>
- 
-+#define CTRL_UNLOCKKEY         0x0004
-+#define CTRL0                  0x0008
- #define SEC_PULSE_GEN          0x1004
- #define ALARM_TIME             0x1008
- #define ALARM_ENABLE           0x100C
- #define SET_SEC_CNTR_VAL       0x1010
- #define SET_SEC_CNTR_TRIG      0x1014
- #define SEC_CNTR_VAL           0x1018
-+#define EN_PWR_CYC_REQ         0x10C8
-+#define EN_WARM_RST_REQ        0x10CC
- 
- /*
-  * When in VDDBKUP domain, this MACRO register
-@@ -28,6 +34,10 @@
- #define MACRO_RO_T             0x14A8
- #define MACRO_RG_SET_T         0x1498
- 
-+/* CTRL0 bits */
-+#define REQ_PWR_CYC            BIT(3)
-+#define REQ_WARM_RST           BIT(4)
-+
- #define ALARM_ENABLE_MASK      BIT(0)
- #define SEL_SEC_PULSE          BIT(31)
- 
-@@ -160,6 +170,29 @@ static const struct rtc_class_ops cv1800_rtc_ops = {
- 	.alarm_irq_enable = cv1800_rtc_alarm_irq_enable,
- };
- 
-+static int cv1800_restart_handler(struct sys_off_data *data)
-+{
-+	struct cv1800_rtc_priv *info = data->cb_data;
-+	u32 reg_en = EN_WARM_RST_REQ;
-+	u32 request = 0xFFFF0800;
-+
-+	if (data->mode == REBOOT_COLD) {
-+		reg_en = EN_PWR_CYC_REQ;
-+		request |= REQ_PWR_CYC;
-+	} else {
-+		request |= REQ_WARM_RST;
-+	}
-+
-+	/* Enable reset request */
-+	regmap_write(info->rtc_map, reg_en, 1);
-+	/* Enable CTRL0 register access */
-+	regmap_write(info->rtc_map, CTRL_UNLOCKKEY, 0xAB18);
-+	/* Request reset */
-+	regmap_write(info->rtc_map, CTRL0, request);
-+
-+	return NOTIFY_DONE;
-+}
-+
- static int cv1800_rtc_probe(struct platform_device *pdev)
- {
- 	struct cv1800_rtc_priv *rtc;
-@@ -205,7 +238,23 @@ static int cv1800_rtc_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "cannot register interrupt handler\n");
- 
--	return devm_rtc_register_device(rtc->rtc_dev);
-+	ret = devm_rtc_register_device(rtc->rtc_dev);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "cannot register RTC\n");
-+
-+	/*
-+	 * SYS_OFF_PRIO_DEFAULT of 0 is desired here because both RiscV SBI SRST
-+	 * (prio 192) and ARM PSCI (prio 129) will override this one; this
-+	 * handler shall serve as a fallback in cases where firmware is not
-+	 * present.
-+	 */
-+	ret = devm_register_restart_handler(&pdev->dev, cv1800_restart_handler,
-+					    rtc);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "cannot register restart handler\n");
-+
-+	return 0;
- }
- 
- static const struct of_device_id cv1800_dt_ids[] = {
--- 
-2.48.1
+The exe layer (bprm_execve, map_vdso, etc)  is the consumer of the
+install_special_mapping.
+The logic related to checking if sealing system mapping is enabled
+belongs to the exe layer.
 
+>
+> > If mm maintainers prefer a #define for now, that's fine of course. The
+> > value of VM_SYSTEM_SEAL can be VM_NONE on 32-bit.
+>
+> Thanks.  I think having a flag with VM_NONE on 32-bit is just as sane as
+> a "flags |=3D system_seal()" call that unconditionally returns 0 on
+> 32-bit.
+>
+Consider the case below in src/third_party/kernel/v6.6/fs/proc/task_mmu.c,
+
+#ifdef CONFIG_64BIT
+[ilog2(VM_SEALED)] =3D "sl",
+#endif
+
+If #ifdef CONFIG_64BIT is missing, it won't be detected during compile time=
+.
+
+Setting VM_SEALED to VM_NONE could simplify the coding in some cases
+(get/set case), but it might make other cases error prone.
+
+I would prefer to not have VM_SEALED for 32 bit.
+
+
+-Jeff
 
