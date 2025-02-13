@@ -1,204 +1,212 @@
-Return-Path: <linux-kernel+bounces-512224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB189A33600
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:18:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF1A33603
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46129188B1B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C18127A2736
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12F8204C20;
-	Thu, 13 Feb 2025 03:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LEBnynsm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VY2HxzTm"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE36204C1D;
+	Thu, 13 Feb 2025 03:20:13 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D5CB663;
-	Thu, 13 Feb 2025 03:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739416678; cv=fail; b=m/E/uLX1U/iokiJPIGMQYfjAs6P6piO389a8m3aKC77816hVGD6ki1iKwTLruBp0gm3ZzFw+wrVzbcKrg0vN99tV6GP2zCAKcwAHIoqSEibhnL3Et/peTeYvDRiPy6WNDbYqTW61X+WNJ67sSn22C3WLKhA5PBL//giNF7Nctas=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739416678; c=relaxed/simple;
-	bh=Cd0VkbuyMzlwQh906fwidrP+6ALcw+Qawf6Gmv2hgy8=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=go0roLL/FUOjflGoaGGyaRN6TQrNK9/p5R/e9bvLVDhL+DEqWgoVGyIPMFVNWJON9kdu+cZu3Qmt+TltujNL7dhJ4Ku2wNpV2HjZMCeRDSgCkPDUEueWkERflvotJJGOUndz3lUt7j75lR+SksQopvyesdrnSzkN5WGwxyc8Kcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LEBnynsm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VY2HxzTm; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D1pg6m028232;
-	Thu, 13 Feb 2025 03:17:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=9i0jsNDJJdM4ppzVoa
-	lSVllcTjwpgSehgajtH8LqHYU=; b=LEBnynsmBCBzzNyHoOgLSakpLtybRCSHvQ
-	NuGqeSQLf/aTZd2sBgA4S9NxJ9VJvyXCVj8L/RiANgL0YOjLDZChiUxZeT+kOaFF
-	YmxBR12Q2qkqfq7yM1p3Hf70yMrqpCld94RbZVr2AQg96Joz/P06yFS9ukV9L1bg
-	ijwcgDXGDMTGrnaBqAZIPMz50pkbHk5bwQ4oyR7dXZfHHY28d5Za362hAz1BBeQB
-	VCYXIUJtrkTLI/hH9DEuPhUnCCAOG+1vAL8c2a3/VYW/rtO7M40sFwsCYekJ7UI/
-	K86mCfL0MxXBYv88OJz5daqNmUAVb+dXoLPPQRAiZjIixTyg9zxQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44p0tg8uqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 03:17:51 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51D2Bpqc002336;
-	Thu, 13 Feb 2025 03:17:50 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44nwqhpa84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 03:17:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fpJsICWDf8EuMW2ba7LzSR8aXAINh8sNznCBOXzJ56Lu+JYxtgxACQqUd58I0bVMPY06lgMmlamw672GShDcVzl0SYLWLwBf4IPXl9ywBsel2dCfRwN5bYUGRQ2YaDoKIxmGqsaW5CAixx5WkdqzXgvVzhzdfYDXJxlR+7jGPy2Vm3XuFIvgjx/8VECkiKnmoagXDHhDkH2tKzHKLuSvGDrMHAgU1+m7e6s/c8/714jciW7xCGiP21Jc50hiO6UYgkWQgzDgl9W8qZd+en3OeFG0FJlcxBU1A/obA5U/lo7JLteZlHAz5Xj4ZXZiZlGJuBXbv511A8XTcYvhGcX8dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9i0jsNDJJdM4ppzVoalSVllcTjwpgSehgajtH8LqHYU=;
- b=dk2E23gFB/Ml9e0jpbcbX9JmfHWeURM9AnmKDcSSlHILr5hVtuPEBR0aK6dkiAz/pYT5JzXpEjZZRvynNR7FQ8E8OLh9swElptjr/QyEPrYb3758U4V2353omuxLW5HyJMQEiPpnKvYnSwPidp6oQdyibsC6OHRxKXMwziHcNIlSq6xTdOUdg0zyEdFtP1pvbdNw6qcq9Y1/gx1EZGkU/NyMQx1ZoWCVJqvVR/hVprYwX/Ou24Hc2xDUV3TiK/XN+Kc8ijGY8unz8/CQXA5iw922vOpzVKSoCnt7q9Tm9JjwTvzI5WcXV4kBRP4E9IOx0GJzOBw7A18kuqqssvTCGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9i0jsNDJJdM4ppzVoalSVllcTjwpgSehgajtH8LqHYU=;
- b=VY2HxzTmG+qrt3wAKC0aERN/YGbwcDubYOu9NhCAHFWayYHt7yeoYFqdE8zAfCRIKZJ0wG6udADXds1lkZKmxbtQaFjJ4U3erzkkpZRgg7M3GlKJr/XeJfm+siEZlJ18uGhUPGsOb2VSvGVXAvlSRPFwX6A7Wb8AfCYGbpbRuMI=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by BN0PR10MB5064.namprd10.prod.outlook.com (2603:10b6:408:114::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 03:17:48 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%4]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 03:17:48 +0000
-To: Avri Altman <avri.altman@wdc.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bart Van
- Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v4] scsi: ufs: critical health condition
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250211065813.58091-1-avri.altman@wdc.com> (Avri Altman's
-	message of "Tue, 11 Feb 2025 08:58:13 +0200")
-Organization: Oracle Corporation
-Message-ID: <yq1ed02v8hk.fsf@ca-mkp.ca.oracle.com>
-References: <20250211065813.58091-1-avri.altman@wdc.com>
-Date: Wed, 12 Feb 2025 22:17:44 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0106.namprd13.prod.outlook.com
- (2603:10b6:a03:2c5::21) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B772204696;
+	Thu, 13 Feb 2025 03:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739416812; cv=none; b=Z8gQTzuaKbc+QTxXyn9ysq889BiM1NhD71z3mXvufItXZl/fTpg9eOEAeatKzVwiQFcH3FBmKX35HLos9twzsVPBnNn8BQ9HgBvXPbvSXN0k/QUYsirqoh84cN4EapsJiNJ0EERIzGeubpmEJjD/k89q7ewbY9dk11yQtN9q2Go=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739416812; c=relaxed/simple;
+	bh=W9Se1/UwvZd2QD0glU9KagGJZ9GfdMBk7hk4Mok2Dmw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=P/uN8Rh2L3LQ2eEinb22NrNQqfjrfhk8CbxfS0DiMvon/DCOqdrXsvKHmD+tHMk2gWHbUrITVjOdwxANnSKWdfv3Yzt+IHsYiAW/nct+AzIWynAvoWtKG6CS8DIjGCn2jbkNji13ewDtzimwD6wwppXuSAu+QcwO77PAWlzranc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YtgM41krqzkXPf;
+	Thu, 13 Feb 2025 11:16:32 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8C2E31800DB;
+	Thu, 13 Feb 2025 11:20:05 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Feb 2025 11:20:04 +0800
+Subject: Re: [PATCH v1 4/4] mm/hwpoison: Fix incorrect "not recovered" report
+ for recovered clean pages
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
+	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <baolin.wang@linux.alibaba.com>,
+	<tianruidong@linux.alibaba.com>, <tony.luck@intel.com>, <bp@alien8.de>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>
+References: <20250211060200.33845-1-xueshuai@linux.alibaba.com>
+ <20250211060200.33845-5-xueshuai@linux.alibaba.com>
+ <5f116840-60df-c6d9-d7ff-dcf1dce7773f@huawei.com>
+ <3820329d-20e3-49ee-a329-aac7393c6df3@linux.alibaba.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <23251c74-cc50-012c-409f-c45117b52b16@huawei.com>
+Date: Thu, 13 Feb 2025 11:20:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|BN0PR10MB5064:EE_
-X-MS-Office365-Filtering-Correlation-Id: 670f1c4b-6faf-4feb-341d-08dd4bdcfdfc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7u0b68VpDZrqiMUW+MeRKpdhY9E559X1MmcieUdyg6SZS96/Gb9X+TrGBNJJ?=
- =?us-ascii?Q?9h4O0z/dw6ShWYMbS0cHmdBI2b+JGnodXay8XJLcZ3w6g5ZnJUfljUUif1b1?=
- =?us-ascii?Q?s/j3NqrDzWzYO4HCaG7dRXokuQtDUHzzxxJaNKfQ+2dxbIsk5HeA2Am63Y9z?=
- =?us-ascii?Q?Ol+bfYCp8gzSQ/dW68D5l5oezeakOJAZsrtp4QTDDSyKSff9J+CG2TkiIeSR?=
- =?us-ascii?Q?CHnAAC5vi1esgCedKFViXar36QnK/w+m5z4juKZonX+/Tn/XTu5+6QvAeqWP?=
- =?us-ascii?Q?JDmEJvDelXsz+XsZjllLQtXPqwIRfmAfzXzpwPkVaDYu8bgzFNljfu81jEVe?=
- =?us-ascii?Q?xZyIyWXiFD4Z5E9S+3Ede2PBf7XfHstSJr1KrAd5GKfXGBaLZm+tzRM90NiT?=
- =?us-ascii?Q?Jfe0OnNMcWVhMYWQcMVSUOs+jAAAzRHCTFy5bMDcm8kUJEDARgYHCBG7ITL5?=
- =?us-ascii?Q?M9E88HfQ57kfFD1emVCuRv57T07RYfEXVIBHQI2rUB//mkT/gzN9JnZH9lr5?=
- =?us-ascii?Q?hFRgl75OcmrR+wPrFxYBpXZTpeXB+rnI7w4BKpcOIiLqFjVv69fRHboR1abh?=
- =?us-ascii?Q?YdqShV0i8dSEesz8HyagMG4NelmXiHTkk/WZmM3MF6pRVP+7nQLDuuyBDIBs?=
- =?us-ascii?Q?evoPJeAVAExCZEwwZldzegBFolW2zf0YqHs4GP21666xTumwNfpyhRGzzJb8?=
- =?us-ascii?Q?OQusQc5neKs/7/o4fGn+r5IBPIdka85kouO1AumgABaUyCSg2bxdWbDeq5hW?=
- =?us-ascii?Q?HwVD+CChP168myP7JyiReoB6jHDydJ5qHzyA/wVngwjhcjFiLlJQo2/oQDvK?=
- =?us-ascii?Q?h3bQmVlbl4VgN7+VOAY4myiR+7o/Ounhu4ag6C0bN56NFIWIo4pbVH+913Vj?=
- =?us-ascii?Q?aMIsE+U5pNprFF5Unw1mjZ98dtC4yYTFCeANUpvjgSw+gpMYvWW9Fgu9xasm?=
- =?us-ascii?Q?FxsOc5gYSLb76JcZeDHdED/cAg1uBCWGDpm6nS0SZVk2EsxA9SSKzRJSH0Bc?=
- =?us-ascii?Q?bIwEKS7NmP5lb93kVkLrXZQXZz3Luk1Po2mLoO+KpPOX+OYpUmQLVbuiEtwP?=
- =?us-ascii?Q?rspalsEAJLYsXzaMpqVTkbSwP5ikivwaKZjQ5yTQGU/nAykK/R8KQmXB0jfU?=
- =?us-ascii?Q?7gCez0OqpOyVFwgwQAWu/B2GJ43Xqx1OYHUluTOiIv5RUFrOCP90IvcKDsUc?=
- =?us-ascii?Q?zfupaQYChvFMkKiBjm65eWUDc6io+bvhVWToAatE2JFUJFeqZQ+rpFI8Luig?=
- =?us-ascii?Q?+ASuqjnNjievxhIeTf2o78pLUIyzzcpqbxH/8LHV61LWPmEBb0ppXWDOtymY?=
- =?us-ascii?Q?HZiaM8psNPm8mFdB1DjgMQqSYO2UQPN9XvExHkwPtTnKTYIVratAWcsCrIyy?=
- =?us-ascii?Q?gzg4DGI7i6v99K4PRD4dhzFds/Qj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?V2f9/zb5cBnf2+kblfC/BgNE4l9h7G+HLdZQmY/9pqUyKcVmsoxZp+ZceZeY?=
- =?us-ascii?Q?0dwPMo6j3fbwJ2/3qCkNRzpU3NyOBU57NScmgLn6lGYj7MJJOQoo/Ees92rE?=
- =?us-ascii?Q?mt4reCV7zJ5tWtm0I6pXRF0Gi2OLCN80XZEqc0ZdMoROxp/B9YbSKTLy5Msj?=
- =?us-ascii?Q?eV0Z/G8U124IhceAZYCaolmLhncECNcFf3Gshe0GcqTJbhwZ76zQICOqUjlF?=
- =?us-ascii?Q?/WKjIIRAUcvXMWs2+Pf0+CRB9og9vzjTpQY7y+pARA6hRwFbGE67BOvRE/2J?=
- =?us-ascii?Q?o/ZY60L1OhPRAJ4moX7WSQlUS4FYFWrxLzGr620M49zbBBxFS0ZM9Ajo2na3?=
- =?us-ascii?Q?9tptpBr1TsGwumbY2+G8/QuaqsfB4Wn7iSHuVGoQ/z5QZamtxGA9EiG34iBb?=
- =?us-ascii?Q?uGpLWjjt7+Nsi4kJ8lbnAfbK0KEUirFS+tBufSY+ljgJD/EKTZv297DdiSpk?=
- =?us-ascii?Q?9ps6IidZdlZhbN4fyc95J3oFpKIZPIvFhiTjUlhr+nq267W3VrxckqLk98eZ?=
- =?us-ascii?Q?KKjQDeLXCY5iaoAaVjin7BEQUpFXUQlTI7d18lwnN0gzGs0pL+2uT4rv/Y1h?=
- =?us-ascii?Q?JU799wxJa9wQB1sgWQLAiVLXgsZ0fYyI1qs+l0X1VimR0YDVtePLubw31hVw?=
- =?us-ascii?Q?JGa39ieGfW1kgvn7h5mUKc+EVLy44S1NsVcqCfDiWClS7myzpDz/b/mm22NF?=
- =?us-ascii?Q?tWX3AYgS8lVRegfTDDqxVdEpaFjIoN6u2iFkTctc1gsD+wgHaZTAzZfhJHgK?=
- =?us-ascii?Q?xrIiR03lqHdYXfoyXy86CS3JDh1ySlGgFtJwEDSK8/Hi27d8TOwdEgaDptZr?=
- =?us-ascii?Q?mwNAf1LCz0INlzTh38ncb5to1YXIlzXEkxftcVcFIY7eWnTTAy6gPVLlyYFL?=
- =?us-ascii?Q?lbvKg8zZbinsWw3jWi08JRZ3u//txvq2Huu35ltIzQHe7Lq5/qeo1KMI8Cr2?=
- =?us-ascii?Q?6DKhs6JXsWnK7hf9k73N98bN1YQY461VKqc81NxQrW0656rcNaOJS/dcdF05?=
- =?us-ascii?Q?XuyM2OgqmcCyxINhZ89lSLAWpUYesatbX0aaZC3ICFIujfkZwa/AqoWzU3re?=
- =?us-ascii?Q?1ovn+DvPxp5qvJFRGKhGaB0SqF8v23yXEcCjrtKoqm6iDQJoStlDqO7ZPRfD?=
- =?us-ascii?Q?YzkqU6VEKVuOpa1yy2DaYCqHziR+eOa7QYVs5nr+TywmyA5w7fDBJdOWCwiv?=
- =?us-ascii?Q?kkuPkbzwB7gTUo0NpROYLqGdTofoeYzRgSdnv4d+WapjWVpiIkskR7sOQIj9?=
- =?us-ascii?Q?4IAqpvT1sng/D/YYiqOCPkYA4m4fixMvaCa/hFI6YWVxsmqVygEcioLl6E89?=
- =?us-ascii?Q?tw/+0XoLfNIjyTcL+Dd5lL6RtI3O2vuweUlTjmKvPxZctILOc4p8LAQ0nr6t?=
- =?us-ascii?Q?MR29WbzkOZjYOiSnwMkzNGiinwBUlW1F7aIN9U8gEfqGdw9NH4HRNRTlgS0q?=
- =?us-ascii?Q?UY8i0K9BKFf8ymMWBZwtSky84K+gyzHO6nKgNw9Jfe6OyQa5DPZf5Nz2vesW?=
- =?us-ascii?Q?z8YyBqxSPYzE86zdZ/s8L76ZT9vQM3KcbJaokbw6o/qePilcVbBcs2Mm4fF8?=
- =?us-ascii?Q?XYeRSUH8y2Mmb+CB4ErwVEoAt6/nOIm855ecWcBjIkzv0nQyXSmInsRzwoPG?=
- =?us-ascii?Q?tQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	F6PfFHot7LFY25DPeyF9NdSf/0haHISFnqnImdhQvqBu9y7oBlhK0HDO4g43UIlE2PbpPBSldCOzAty0/AwkbfdnloP/5pEJujImW55Yz2tWU4x0gjjPW66xzJIfc6vDZ2rH6BFCioDmIBuKJqB2/SXn2t9iHgz6kEjgCkMAFIN+uswgCQf4RZDsp9LNUd2jqVzNYjMY6WSi7g0hnsKnSXd6XNW2rErli2/yrtNQHYPc1p0qoJtGQ10B0cTPE7DPvF8yvyCraI4h/bHzvC4FfknGsRYNMTGOEg9/gcKico4CeroPxi3/HutQq17bAnscUd7dZHZ8pWEr5ykumCUDjg3YbOUqzyqIrJaXKvhlebu32/CSPmKmNqmFY5/c6h0jcb/OJ56U9iUY6wrICKpUhROv5qO+U4ZmyVJLeibcdueSZGfuZzJb54wPh7+QYY2hu+d6yssPUA1Ua0DKxypvarnS9LJEzXrwuBITUjnA1VwinLbzeDhe6DyYdHfm6aHH297onLuzG7NTbUp4+6SnzbMJmYDY1p+Xd6/TrYjkKWNsBVAdwxLlSHHZfr7N7kOX5IpuyToYaUxU2SPAiiedjCPPjKA05OnRarNBpVbxAr4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 670f1c4b-6faf-4feb-341d-08dd4bdcfdfc
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 03:17:48.3564
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dTOPKb5wF07kAx5SmuOoGMJKYg84Aq1fpS5GbBoqTt/T74waNyOqdyAOoqOxEYsanauepTkYdaWfvaOL/qIXZxhszw78NhvA0poSDd1hZTE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5064
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_01,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=742
- phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2501170000 definitions=main-2502130024
-X-Proofpoint-GUID: c7uLeDc-x3rlAdrVJegRY6PGLiiF0_7D
-X-Proofpoint-ORIG-GUID: c7uLeDc-x3rlAdrVJegRY6PGLiiF0_7D
+In-Reply-To: <3820329d-20e3-49ee-a329-aac7393c6df3@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
+On 2025/2/12 21:55, Shuai Xue wrote:
+> 
+> 
+> 在 2025/2/12 16:09, Miaohe Lin 写道:
+>> On 2025/2/11 14:02, Shuai Xue wrote:
+>>> When an uncorrected memory error is consumed there is a race between
+>>> the CMCI from the memory controller reporting an uncorrected error
+>>> with a UCNA signature, and the core reporting and SRAR signature
+>>> machine check when the data is about to be consumed.
+>>>
+>>> If the CMCI wins that race, the page is marked poisoned when
+>>> uc_decode_notifier() calls memory_failure(). For dirty pages,
+>>> memory_failure() invokes try_to_unmap() with the TTU_HWPOISON flag,
+>>> converting the PTE to a hwpoison entry. However, for clean pages, the
+>>> TTU_HWPOISON flag is cleared, leaving the PTE unchanged and not converted
+>>> to a hwpoison entry. Consequently, for an unmapped dirty page, the PTE is
+>>> marked as a hwpoison entry allowing kill_accessing_process() to:
+>>>
+>>> - call walk_page_range() and return 1
+>>> - call kill_proc() to make sure a SIGBUS is sent
+>>> - return -EHWPOISON to indicate that SIGBUS is already sent to the process
+>>>    and kill_me_maybe() doesn't have to send it again.
+>>>
+>>> Conversely, for clean pages where PTE entries are not marked as hwpoison,
+>>> kill_accessing_process() returns -EFAULT, causing kill_me_maybe() to send a
+>>> SIGBUS.
+>>>
+>>> Console log looks like this:
+>>>
+>>>      Memory failure: 0x827ca68: corrupted page was clean: dropped without side effects
+>>>      Memory failure: 0x827ca68: recovery action for clean LRU page: Recovered
+>>>      Memory failure: 0x827ca68: already hardware poisoned
+>>>      mce: Memory error not recovered
+>>>
+>>> To fix it, return -EHWPOISON if no hwpoison PTE entry is found, preventing
+>>> an unnecessary SIGBUS.
+>>
+>> Thanks for your patch.
+>>
+>>>
+>>> Fixes: 046545a661af ("mm/hwpoison: fix error page recovered but reported "not recovered"")
+>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>> ---
+>>>   mm/memory-failure.c | 5 ++---
+>>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>> index 995a15eb67e2..f9a6b136a6f0 100644
+>>> --- a/mm/memory-failure.c
+>>> +++ b/mm/memory-failure.c
+>>> @@ -883,10 +883,9 @@ static int kill_accessing_process(struct task_struct *p, unsigned long pfn,
+>>>                     (void *)&priv);
+>>>       if (ret == 1 && priv.tk.addr)
+>>>           kill_proc(&priv.tk, pfn, flags);
+>>> -    else
+>>> -        ret = 0;
+>>>       mmap_read_unlock(p->mm);
+>>> -    return ret > 0 ? -EHWPOISON : -EFAULT;
+>>> +
+>>> +    return ret >= 0 ? -EHWPOISON : -EFAULT;
+>>
+>> IIUC, kill_accessing_process() is supposed to return -EHWPOISON to notify that SIGBUS is already
+>> sent to the process and kill_me_maybe() doesn't have to send it again. But with your change,
+>> kill_accessing_process() will return -EHWPOISON even if SIGBUS is not sent. Does this break
+>> the semantics of -EHWPOISON?
+> 
+> Yes, from the comment of kill_me_maybe(),
+> 
+>      * -EHWPOISON from memory_failure() means that it already sent SIGBUS
+>      * to the current process with the proper error info,
+>      * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
+> 
+> this patch break the comment.
+> 
+> But the defination of EHWPOISON is quite different from the comment.
+> 
+>  #define EHWPOISON    133    /* Memory page has hardware error */
+> 
+> As for this issue, returning 0 or EHWPOISON can both prevent a SIGBUS signal
+> from being sent in kill_me_maybe().
+> 
+> Which way do you prefer?
+> 
+>>
+>> BTW I scanned the code of walk_page_range(). It seems with implementation of hwpoison_walk_ops
+>> walk_page_range() will only return 0 or 1, i.e. always >= 0. So kill_accessing_process() will always
+>> return -EHWPOISON if this patch is applied.
+>>
+>> Correct me if I miss something.
+> 
+> Yes, you are right. Let's count the cases one by one:
+> 
+> 1. clean page: try_to_remap(!TTU_HWPOISON), walk_page_range() will return 0 and
 
-Avri,
+Do you mean try_to_unmap?
 
-> The UFS4.1 standard, released on January 8, 2025, added a new
-> exception event: HEALTH_CRITICAL, which notifies the host of a
-> device's critical health condition. This notification implies that the
-> device is approaching the end of its lifetime based on the amount of
-> performed program/erase cycles.
+> we should not send sigbus in kill_me_maybe().
+> 
+> 2. dirty page:
+> 2.1 MCE wins race
+>           CMCI:w/o Action Require         MCE: w/ Action Require
+>                                       TestSetPageHWPoison
+>       TestSetPageHWPoison
+>       return -EHWPOISON
+>                                       try_to_unmap(TTU_HWPOISON)
+>                                       kill_proc in hwpoison_user_mappings()
+> 
+> If MCE wins the race, because the flag of memory_fialure() called by CMCI is
+> not set as MF_ACTION_REQUIRED, everything goes well, kill_proc() will send
+> SIGBUS in hwpoison_user_mappings().
+> 
+> 2.2 CMCI win
+>           CMCI:w/o Action Require         MCE: w/ Action Require
+>     TestSetPageHWPoison
+>     try_to_unmap(TTU_HWPOISON)
+>                                        walk_page_range() return 1 due to hwpoison PTE entry
+>                                        kill_proc in kill_accessing_process()
+> 
+> If the CMCI wins the race, we need to kill the process in
+> kill_accessing_process(). And if try_to_remap() success, everything goes well,
+> kill_proc() will send SIGBUS in kill_accessing_process().
+> 
+> But if try_to_remap() fails, the PTE entry will not be marked as hwpoison, and
+> walk_page_range() return 0 as case 1 clean page, NO SIGBUS will be sent.
 
-Applied to 6.15/scsi-staging, thanks!
+If try_to_unmap() fails, the PTE entry will still point to the dirty page. Then in
+check_hwpoisoned_entry(), we will have pfn == poisoned_pfn. So walk_page_range()
+will return 1 in this case. Or am I miss something?
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> 
+> In summary, hwpoison_walk_ops cannot distinguish between try_to_unmap failing
+> and causing the PTE entry not to be set to hwpoison, and a clean page that
+> originally does not have the PTE entry set to hwpoison.
+
+Is it possible current process is not the one accessing the hwpoisoned page? E.g. memory_failure
+is deferred and called from kworker context or something like that. If it's possible, this is
+another scene needs to be considered.
+
+Thanks.
+.
 
