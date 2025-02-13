@@ -1,156 +1,108 @@
-Return-Path: <linux-kernel+bounces-512209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C43A3359D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C67FAA3359F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B375166C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82078166C5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEA6204080;
-	Thu, 13 Feb 2025 02:50:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AE0204080;
+	Thu, 13 Feb 2025 02:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7tJK2xe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F31923BE
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52E923BE;
+	Thu, 13 Feb 2025 02:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739415022; cv=none; b=Q+SsAa7rRMaNsWTil3z/8WKfG4MEOFGXW6ym0Lb1pGiNNqZl5TEjeKBD3bmbKZ62WYhG5pYgJWTPG2VZ1Wg2riEBR/2ITgENPXMpYlmqWp8JVA8I0jFGSQTFnBGxthbi/+wb3m5OGaoSnVMY4gDH8DStXUmyrYKCBv77dW0boxw=
+	t=1739415070; cv=none; b=K8eb/vphAmt1q6+V1FofC32EBGUyMJ03dy3QfMeq0RE6+8zyyqRsi0mgkT6N8zeZ5mPUMfoMlDr3tIgG/m8fGxkprBMDfHKNJhH3PZfB977qFN29999hpjJhnNmV2vHYaenM0J1xofvJOvHNTfo0aZTY00h1uvpQpzFmnY3AycE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739415022; c=relaxed/simple;
-	bh=IhNnv9A8xMCtA2GWFqZ6Y+uA+T74NuklveC9/S6AB6U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=INwU1AFbjqzr7r6M4dU562o9syaJq92Vvk+WwUc6zZA6/zVNb+RWmt0rmMm65Y1J6n/ggLivkfTFbyb97iuD2s3zDqIHQHZa49tSmX3AKbA+SOI8PokOJir7wFyFTRcm7EZn1acKY6UyD6CC6YsBF8q8Q3kkQlJGmXjVNpv/8zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d18f21d271so1025725ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:50:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739415020; x=1740019820;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPmOTzWtVm2N0eQJTjR3cORbIlvWtpTU5n8X/CPLxVg=;
-        b=lMOLh6sxbTO5WWZSf34HXl6t058RY/SqpgRnj1R4416bab4KGKq51GY30TR3PmVu+L
-         9YN5xHI/oMoc0VWu0E8fPQ+Umh7y7KENDsUQ5aGRxDx9A8ZYIubqMhs/wnv9l2hU6KXH
-         EHS9e01Pgo62OonLaIwGOuGCGw/19ZU1c26r+XJ+l8mpwEEzsq7YVt/0xxeBMORpJGLu
-         E51OkNVBN4tM4S1XrIDuwbSWLZzDO0xwps7Xn/2xs2qVxmypFvvlH1mjdjXsEgGNBGSF
-         2Y1nz6JFg0ndJvlFnaw7aQMISu0q5N3Ll0e7mIDiM3z3uFB4jkiM5KGlTsUwZXYZDEjc
-         AlcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNfe7HaYC+NV87vLvUWfqZRnJ6CYbQFXndzbBg93bKTTgwVoCxlV+ZuE/Naloil1lqjJTHQCXOQl1FTbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhgfRZeQcSwAWAYy3tWNsZwJiEwTYqtsnARFKvKPOTthm8vPaM
-	I9+4G+QMvUm5SBLbUNMX6dGHTcNIDBQ3ebsUZ3/LINvexfklXnPV3EkkxOd/T7LsB1/RDYoqcGn
-	dRt4bltfHLUvd8bFkubiAElMPFuY3hkyOlJFTHn9u9qxXx5qpqCyLAdo=
-X-Google-Smtp-Source: AGHT+IEw996n3q7RYLQxRi8pOtdqwlC1zDTL7Z9O8aZVPVl5RFxdtJILbTaZcmLnF9h2smp6vl5kI1SJzsOsdboXsO235AL/JN6e
+	s=arc-20240116; t=1739415070; c=relaxed/simple;
+	bh=D5FcE6li1n/xmFgPW5rMrv2CGWOnvJjA2ZyGHpiMP3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZk7Urh72JIOVevSA60pVaV4RhI3+JFDKSskAfePkG65IRrv4tyHquZzhl5TBH/iqSkQIVSb12GjPQwVVhz/N5sd/ZYmDHoOTyuPoQl0OjSQ6O6GGlTLQD8swvgx+TOz71tp16zZZM2kTpPAmlGaZHqn+8WwzK72kjW7lDMphbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7tJK2xe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C93C4CEDF;
+	Thu, 13 Feb 2025 02:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739415070;
+	bh=D5FcE6li1n/xmFgPW5rMrv2CGWOnvJjA2ZyGHpiMP3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7tJK2xe+nnWqa4qPU/UsuL/Q4BwMQEI2HZQLC+ATf7gUiSqwfjzBxd/B/7jWw3p8
+	 cma792rh/j3zQIfS1W0+irVN3oOrAPOtcDBkvM0I6zLATOj4VxZOD9kEsN9hQCVzBW
+	 XxWktZaiyb6Fed6z3whVITTd+srup/hjWndKH18MRohkBCPrJtdISkNFI+uarcudXT
+	 u0euR+v1BuiRMsyFIeBDoDqKMg4YG/oq9Hnz02DyYkJ15UfiXD1ARrDBB1pIzbU3FG
+	 Z8PlLf2Ah+GvvvAdvhqIqne7J6Ki/8GT9KoQsf0R1yx4+MF2wXnNJV97Do7ltHUaAZ
+	 TYvN0yT+auVDg==
+Date: Wed, 12 Feb 2025 18:51:08 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] Add jump table support for objtool on LoongArch
+Message-ID: <20250213025108.svqgj5nzseqs6qox@jpoimboe>
+References: <20241217010905.13054-1-yangtiezhu@loongson.cn>
+ <ef1e3e7c-0117-175c-5a85-091382696748@loongson.cn>
+ <20250115013444.anzoct6gvs56m225@jpoimboe>
+ <4612bfd8-442e-fecb-240f-46e735b48540@loongson.cn>
+ <20250210212653.oidcl4aqyrcu3yzi@jpoimboe>
+ <CAAhV-H7MVDj0CbXfwveb7GDn+D=O4N6oUT6rpGrbGmYPLPpRPg@mail.gmail.com>
+ <20250211233056.q47mp5askk7qrxcp@jpoimboe>
+ <CAAhV-H563HcK2bck2k+VLTvrf0C7=cEMr8BJpQhFdJNc+dFOUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a84:b0:3d0:4a82:3f42 with SMTP id
- e9e14a558f8ab-3d17bff951dmr40717425ab.16.1739415020367; Wed, 12 Feb 2025
- 18:50:20 -0800 (PST)
-Date: Wed, 12 Feb 2025 18:50:20 -0800
-In-Reply-To: <66f02282.050a0220.1b7b75.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ad5dec.050a0220.3d72c.01c8.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_quota_check_limit
-From: syzbot <syzbot+8364d1e040a88ed5657d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAAhV-H563HcK2bck2k+VLTvrf0C7=cEMr8BJpQhFdJNc+dFOUw@mail.gmail.com>
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Feb 12, 2025 at 03:22:45PM +0800, Huacai Chen wrote:
+> > The new series now has 7 patches:
+> >
+> > Tiezhu Yang (7):
+> >   objtool: Handle various symbol types of rodata
+> >   objtool: Handle different entry size of rodata
+> >   objtool: Handle PC relative relocation type
+> >   objtool/LoongArch: Add support for switch table
+> >   objtool/LoongArch: Add support for goto table
+> >   LoongArch: Enable jump table for objtool
+> >   LoongArch: Convert unreachable() to BUG()
+> >
+> > I was planning on queueing all 7.
+> >
+> > In particular, patch 6 should stay with the objtool patches since
+> > they're directly related.
+> >
+> > But I was also just going to grab 7 as well.
+> >
+> > Please let me know if you disagree.
+> What about you merge the first 5 patches, and then I merge the last 2
+> to the loongarch tree? (I prefer to merge the whole series to the
+> loongarch tree with your acked-by, but that may be inconvenient to
+> you).
 
-HEAD commit:    4dc1d1bec898 Merge tag 'mfd-fixes-6.14' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1093bbdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
-dashboard link: https://syzkaller.appspot.com/bug?extid=8364d1e040a88ed5657d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db49b0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103b49b0580000
+I want the first 5 patches to go through the -tip tree because we'll
+have other patches depending on them.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4dc1d1be.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/69a70e883a61/vmlinux-4dc1d1be.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e5f11135c484/bzImage-4dc1d1be.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a337140bc590/mount_0.gz
+I'll go ahead and take the first 5.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8364d1e040a88ed5657d@syzkaller.appspotmail.com
+If you take in patches 6 & 7 separately, that might introduce a lot of
+warnings.  But it's up to you.
 
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): set_fs_needs_rebalance... done
-bcachefs (loop0): reading quotas
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/quota.c:232!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5303 Comm: syz-executor286 Not tainted 6.14.0-rc2-syzkaller-00041-g4dc1d1bec898 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_quota_check_limit+0xd48/0xd70 fs/bcachefs/quota.c:232
-Code: de e8 ac fc b1 00 e9 9b fa ff ff e8 e2 47 50 fd 48 c7 c7 10 2b f7 8e 48 89 de e8 93 fc b1 00 e9 d8 fa ff ff e8 c9 47 50 fd 90 <0f> 0b e8 c1 47 50 fd 90 0f 0b e8 b9 47 50 fd 90 0f 0b e8 b1 47 50
-RSP: 0018:ffffc9000cfe6eb0 EFLAGS: 00010293
-RAX: ffffffff846f07d7 RBX: 0000000000000000 RCX: ffff8880006d0000
-RDX: 0000000000000000 RSI: f7c0f28a20bd2430 RDI: 0000000000000000
-RBP: f7c0f28a20bd2418 R08: ffffffff846efb1f R09: f7c0f28a20bd2418
-R10: dffffc0000000000 R11: fffffbfff2036c0f R12: ffff88804a968000
-R13: 0000000000000000 R14: f7c0f28a20bd2430 R15: ffffc9000cfe6fe0
-FS:  00005555744ef380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005624cd3f1098 CR3: 00000000431b0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_quota_acct+0x3fb/0x750 fs/bcachefs/quota.c:299
- bch2_fs_quota_read_inode fs/bcachefs/quota.c:514 [inline]
- bch2_fs_quota_read+0x13d7/0x24b0 fs/bcachefs/quota.c:536
- bch2_fs_recovery+0x307d/0x3de0 fs/bcachefs/recovery.c:988
- bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
- bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b5e44cfaa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc16aae0e8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffc16aae100 RCX: 00007f5b5e44cfaa
-RDX: 0000400000000000 RSI: 0000400000000200 RDI: 00007ffc16aae100
-RBP: 0000400000000200 R08: 00007ffc16aae140 R09: 000000000000f631
-R10: 0000000002a18414 R11: 0000000000000282 R12: 0000400000000000
-R13: 00007ffc16aae140 R14: 0000000000000003 R15: 0000000002a18414
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_quota_check_limit+0xd48/0xd70 fs/bcachefs/quota.c:232
-Code: de e8 ac fc b1 00 e9 9b fa ff ff e8 e2 47 50 fd 48 c7 c7 10 2b f7 8e 48 89 de e8 93 fc b1 00 e9 d8 fa ff ff e8 c9 47 50 fd 90 <0f> 0b e8 c1 47 50 fd 90 0f 0b e8 b9 47 50 fd 90 0f 0b e8 b1 47 50
-RSP: 0018:ffffc9000cfe6eb0 EFLAGS: 00010293
-RAX: ffffffff846f07d7 RBX: 0000000000000000 RCX: ffff8880006d0000
-RDX: 0000000000000000 RSI: f7c0f28a20bd2430 RDI: 0000000000000000
-RBP: f7c0f28a20bd2418 R08: ffffffff846efb1f R09: f7c0f28a20bd2418
-R10: dffffc0000000000 R11: fffffbfff2036c0f R12: ffff88804a968000
-R13: 0000000000000000 R14: f7c0f28a20bd2430 R15: ffffc9000cfe6fe0
-FS:  00005555744ef380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005624cd3f1098 CR3: 00000000431b0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+For patches 6 & 7:
 
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+Josh
 
