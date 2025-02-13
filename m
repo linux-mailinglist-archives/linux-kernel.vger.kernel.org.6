@@ -1,322 +1,116 @@
-Return-Path: <linux-kernel+bounces-512198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519D5A3357A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:24:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B759AA3357D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF40168046
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667BA1661D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B34202C40;
-	Thu, 13 Feb 2025 02:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352841FA15E;
+	Thu, 13 Feb 2025 02:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mLduJNIU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEkWbPxa"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0201820010B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2401741C6A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739413407; cv=none; b=bENtzWwYx0m51QxoAP0zBecfyS5ksbL/k6+awcKQYcQyQq6kNzecdtoI6r6dJ0xXUcerVa9x6fzcCZq3y57LGz0sOjxj8EaDQJutQVgQGo+GcDcTTEVuvGt9hANNvKaxONohOwUJIg/IuX09zYKzEqKp5fRDzsSuWe8Kq/3A4/g=
+	t=1739413518; cv=none; b=iONfCSSHrMyhYfl3IkEaV3A1Pd6oC/s/HGP4MhqXX9eJ5GaqcVuhF/WHv1nMz6H1x70hG7hogf8kTkmNYesgSEC5OHjsgHFCdP6ZFm7yh0H7bg1Fgu23vF7M+RA0BI5CqVj33nnrMql2qDFkvUQdMrp3efFjgLyCdWZzYuMVHJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739413407; c=relaxed/simple;
-	bh=KyIi0V4Mp6gPo+F4KA4qOFqrz0MVhzqomVxCnu29utQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JsnIZX/ziVTpy7D1gmF2AZri8UbuQLRpuF825Wfz9e+IOAZ2sW+OZO7du73pn1ooMKNZ57bePqlP49TCQAu6DIKz5taFbzYcFnqLHmXKfHAaQbLRxHnxipwYKR0FE8oIqVmscPIoNPjLljkhTYTIRsdnXWHzHF847GOM4ViffgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mLduJNIU; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739413407; x=1770949407;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=KyIi0V4Mp6gPo+F4KA4qOFqrz0MVhzqomVxCnu29utQ=;
-  b=mLduJNIULksOSB9eejBp3rpCV9dLydy8YbPdRwX+9rleISEAD1+imQSl
-   mUjD+CLO59D2uClXQEgYCsL63JnnxgxhwyxBICHcdNZFVjoZdeUSWqM4m
-   vBZeSTeZjGoayE/w8iFdUa5ySpB48EuUNAlj9trXXjuWgD6hxaWWsVSjz
-   hmsKz2EaF4DNmKRKbmI0xHnVNMeTglJyku8b5T4zWLGHOVU9h3+LCVe+O
-   t3rQxP0pmZ7ErtiipRpNAeexiZstul4VdOcMGqkvG3SI4i+/30IhvRRjF
-   6LyF6HNC6u5/+uj8xQhzd8ce1T4s03ZRN3i5ZmDieuFn0SYASHM3r0//r
-   w==;
-X-CSE-ConnectionGUID: VYQ5zIQYR5i2IDaF3FrKrA==
-X-CSE-MsgGUID: e3Yyt3raR4KE6PmDsfy2VA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62566646"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="62566646"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:26 -0800
-X-CSE-ConnectionGUID: hYXVCTrfT0eCv6yYg+g/TQ==
-X-CSE-MsgGUID: WDHwzdiOS9W3/MyhQCSt9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113905850"
-Received: from rtice-desk1.amr.corp.intel.com (HELO bxing-mobl1.clients.intel.com) ([10.246.116.160])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:24 -0800
-From: Cedric Xing <cedric.xing@intel.com>
-Date: Wed, 12 Feb 2025 20:23:07 -0600
-Subject: [PATCH 4/4] x86/tdx: Expose TDX MRs through TSM sysfs interface
+	s=arc-20240116; t=1739413518; c=relaxed/simple;
+	bh=5OvR+RJfu+sx8Z8S6QIx4lN0DZP+O/icU5pvC/4XksE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BLkfUANzqxFa+CnUJjlddbpp5V2cCJ2WTBqY6Cfdsqs40hSKXiB0k9rfPUa4+hIkDU9TAiLdzmXPH26piXz2JjpiSo6BxRWer+mDI5cMlS3MRX/HXSMfkN5NGVOhcWnFd4GmuX2lE15jDc9QIo1agUvhFRwfkEzucnMHivz1G98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEkWbPxa; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e2460c6f05so715646d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:25:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739413516; x=1740018316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ArAshzXLr0TjIJ16OpF+I8q1C3m2NQ4+psgUP47Q78k=;
+        b=IEkWbPxai4TxOsN2ZRTw/C/x5JPJQds0AWmW7UCSRTlsr0e4p3sSHPLzPg7j0vx3sU
+         djDCWd/BUxhQ2G6PlUN76+XVPgLO2vagDTZszGADALz98N47y/bsgOVTw2f/4+lrex1O
+         Mm2cSFOqrVsPk7xPg6iYb6YaieGou6WGd9mvDftj8d8pwbxbSomXRzAJsc7GJmT6gteS
+         uqZdamZmcEWBYO1RY+tWTVSn4+mNnJEoumt5tI5ZGEcZzIOxrEie4s7IzaZwgsSLQ8Y8
+         EWfjDXmWCbg4UW0V72G78pL+cyi90dfznkItw/0CgWjWbRwFRex4OUYOl1g0xgX7OQEp
+         n2gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739413516; x=1740018316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ArAshzXLr0TjIJ16OpF+I8q1C3m2NQ4+psgUP47Q78k=;
+        b=YA4vN0Mc7DgM1AUnpZcvMYgly8UHkUwJJiXOmGy//vNMO5g19d7zKU7t4h/Y6yjYmK
+         8wIVoAGHVok12xq1DPzM2Vc8n6NF3H6j1KNM+03yHrJXYdhD/SQzlZojJo1o8Lxw1n9Q
+         8AUM3HSoG7dPbubm4UXra/Rd1aTR8p6HbLM507APhtjnShd+CYAcCImSEog8b3VvryQ3
+         bBO5ERycsR6o7ktBeg94kjNPrRqZ0/nv6tpkXSFrdh0xoVMm295WWuwYuei51aplzuFO
+         uVaxzk1AnMb8n58zhmG2V8dYPc/1RRU9NVfObpfoEEu9ytR8ms9mLGPdDRopmnfXExYG
+         dEOA==
+X-Gm-Message-State: AOJu0YxpqzOTgYARdzxp+3Cb9WgBhoZsCxBXXaOB3YmgS3YIXjOZTDZ+
+	8sdwpGhN/mPZohV3x5c+O/q1F0lPDv4G+WPV9BPHIF2IYX/yX4tG14ZY
+X-Gm-Gg: ASbGncsFp5A4wbgN+n+M57AK4+LMKtg12V/8528Zrbc4d9/OARh5NuqsbsuJxE6Nchi
+	a0Wua7N79wtBtRN7WpXu1HHAeLPnn+cYaqlYpdcoODKn0XHkGlHK77YOh33xKsAJrv9a9CY4DGb
+	b50m0b/dd5Ra/VpBfXf7lEt/8ZbBWsj1jDb1x1h5hvjZK9oYftk7IRVSBnVjp2lYbkTO8v+17QJ
+	Aq9MzvtUR4uhTGmseuf6BnjXgCOGfBNmzt7X7fbjFpzA2e/tEaRazzlGwl57DIP53tdnYr4R2/L
+	roW/7IgSbGgd
+X-Google-Smtp-Source: AGHT+IEddrKkWbXG4voDQYWCCcRelBeJmZg5bVtja+dBu/e6uHjsbYV/yFzXoZ8aO3fB/mQ4hN0ehQ==
+X-Received: by 2002:a05:6214:1d0e:b0:6d8:967a:1a60 with SMTP id 6a1803df08f44-6e46ed93ca3mr36081746d6.2.1739413515952;
+        Wed, 12 Feb 2025 18:25:15 -0800 (PST)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f36bdsm2635766d6.79.2025.02.12.18.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 18:25:14 -0800 (PST)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: lee@kernel.org,
+	lkundrak@v3.sk
+Cc: linux-kernel@vger.kernel.org,
+	zzjas@gmail.com,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH v2] mfd: ene-kb3930: Fix potential NULL pointer dereference
+Date: Wed, 12 Feb 2025 20:25:09 -0600
+Message-Id: <20250213022509.2154603-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-tdx-rtmr-v1-4-9795dc49e132@intel.com>
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
-In-Reply-To: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, 
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
- Cedric Xing <cedric.xing@intel.com>
-X-Mailer: b4 0.13.0
 
-TDX MRs are made accessible to user mode as files (attributes) in sysfs.
+The off_gpios could be NULL. Add missing check in the kb3930_probe().
+This is similar to the issue fixed in commit b1ba8bcb2d1f
+("backlight: hx8357: Fix potential NULL pointer dereference").
 
-Below shows the directory structure of TDX MRs inside a TDVM.
-
-/sys/kernel/tsm
-└── tdx
-    ├── mrconfigid
-    │   └── sha384
-    │       └── digest
-    ├── mrowner
-    │   └── sha384
-    │       └── digest
-    ├── mrownerconfig
-    │   └── sha384
-    │       └── digest
-    ├── mrtd
-    │   └── sha384
-    │       └── digest
-    ├── report0
-    ├── reportdata
-    ├── rtmr0
-    │   └── sha384
-    │       └── digest
-    ├── rtmr1
-    │   └── sha384
-    │       └── digest
-    ├── rtmr2
-    │   └── sha384
-    │       └── digest
-    ├── rtmr3
-    │   └── sha384
-    │       └── digest
-    └── servtd_hash
-        └── sha384
-            └── digest
-
-The digest attribute/file of each MR contains the MR's current value.
-
-Writing to the digest attribute/file of an RTMR extends the written value
-to that RTMR.
-
-The report0 and reportdata attributes offer a simple interface for user
-mode applications to request TDREPORTs. These 2 attributes can be
-enabled/disabled by setting CONFIG_TDX_GUEST_DRIVER_TSM_REPORT to Y/n.
-
-Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+Fixes: ede6b2d1dfc0 ("mfd: ene-kb3930: Add driver for ENE KB3930 Embedded Controller")
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+Suggested-by: Lee Jones <lee@kernel.org>
 ---
- drivers/virt/coco/tdx-guest/Kconfig     |  15 ++++
- drivers/virt/coco/tdx-guest/tdx-guest.c | 119 ++++++++++++++++++++++++++++++++
- 2 files changed, 134 insertions(+)
+ drivers/mfd/ene-kb3930.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virt/coco/tdx-guest/Kconfig b/drivers/virt/coco/tdx-guest/Kconfig
-index 22dd59e19431..effadcfd9918 100644
---- a/drivers/virt/coco/tdx-guest/Kconfig
-+++ b/drivers/virt/coco/tdx-guest/Kconfig
-@@ -9,3 +9,18 @@ config TDX_GUEST_DRIVER
- 
- 	  To compile this driver as module, choose M here. The module will
- 	  be called tdx-guest.
-+
-+if TDX_GUEST_DRIVER
-+
-+config TDX_GUEST_DRIVER_TSM_REPORT
-+	bool "tdx-guest: Enable TSM raw TDREPORT interface"
-+	default y
-+	help
-+	  This option adds 2 files, namely report0 and reportdata, to the TSM
-+	  sysfs directory tree (/sys/kernel/tsm/tdx/).
-+
-+	  To request a TDREPORT, set REPORTDATA by writing to
-+	  /sys/kernel/tsm/tdx/reportdata, then read
-+	  /sys/kernel/tsm/tdx/report0.
-+
-+endif
-diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
-index 224e7dde9cde..c95aa17e728c 100644
---- a/drivers/virt/coco/tdx-guest/tdx-guest.c
-+++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
-@@ -5,6 +5,8 @@
-  * Copyright (C) 2022 Intel Corporation
-  */
- 
-+#define pr_fmt(fmt)			KBUILD_MODNAME ": " fmt
-+
- #include <linux/kernel.h>
- #include <linux/miscdevice.h>
- #include <linux/mm.h>
-@@ -18,6 +20,8 @@
- #include <linux/tsm.h>
- #include <linux/sizes.h>
- 
-+#include <crypto/hash_info.h>
-+
- #include <uapi/linux/tdx-guest.h>
- 
- #include <asm/cpu_device_id.h>
-@@ -304,6 +308,114 @@ static const struct tsm_ops tdx_tsm_ops = {
- 	.report_bin_attr_visible = tdx_report_bin_attr_visible,
- };
- 
-+enum {
-+	TDREPORT_reportdata = 128,
-+	TDREPORT_tdinfo = 512,
-+	TDREPORT_mrtd = TDREPORT_tdinfo + 16,
-+	TDREPORT_mrconfigid = TDREPORT_mrtd + 48,
-+	TDREPORT_mrowner = TDREPORT_mrconfigid + 48,
-+	TDREPORT_mrownerconfig = TDREPORT_mrowner + 48,
-+	TDREPORT_rtmr0 = TDREPORT_mrownerconfig + 48,
-+	TDREPORT_rtmr1 = TDREPORT_rtmr0 + 48,
-+	TDREPORT_rtmr2 = TDREPORT_rtmr1 + 48,
-+	TDREPORT_rtmr3 = TDREPORT_rtmr2 + 48,
-+	TDREPORT_servtd_hash = TDREPORT_rtmr3 + 48,
-+};
-+
-+static u8 tdx_mr_report[TDX_REPORT_LEN] __aligned(TDX_REPORT_LEN);
-+
-+#define TDX_MR_(r)	.mr_value = tdx_mr_report + TDREPORT_##r, TSM_MR_(r, SHA384)
-+static const struct tsm_measurement_register tdx_mrs[] = {
-+	{ TDX_MR_(rtmr0) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr1) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr2) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr3) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(mrtd) },
-+	{ TDX_MR_(mrconfigid) },
-+	{ TDX_MR_(mrowner) },
-+	{ TDX_MR_(mrownerconfig) },
-+	{ TDX_MR_(servtd_hash) },
-+#ifdef CONFIG_TDX_GUEST_DRIVER_TSM_REPORT
-+	{ .mr_value = tdx_mr_report, .mr_size = sizeof(tdx_mr_report),
-+	  .mr_name = "report0", .mr_flags = TSM_MR_F_LIVE | TSM_MR_F_F },
-+	{ .mr_value = tdx_mr_report + TDREPORT_reportdata,
-+	  TSM_MR_(reportdata, SHA512) | TSM_MR_F_W | TSM_MR_F_F },
-+#endif
-+	{}
-+};
-+#undef TDX_MR_
-+
-+static int tdx_mr_refresh(struct tsm_measurement *tmr,
-+			  const struct tsm_measurement_register *mr)
-+{
-+	u8 *reportdata, *tdreport;
-+	int ret;
-+
-+	reportdata = tdx_mr_report + TDREPORT_reportdata;
-+
-+	/*
-+	 * TDCALL requires a GPA as input. Depending on whether this module is
-+	 * built as a built-in (Y) or a module (M), tdx_mr_report may or may
-+	 * not be converted to a GPA using virt_to_phys. If not, a directly
-+	 * mapped buffer must be allocated using kmalloc and used as an
-+	 * intermediary.
-+	 */
-+	if (virt_addr_valid(tdx_mr_report))
-+		tdreport = tdx_mr_report;
-+	else {
-+		tdreport = kmalloc(sizeof(tdx_mr_report), GFP_KERNEL);
-+		if (!tdreport)
-+			return -ENOMEM;
-+
-+		reportdata = memcpy(tdreport + TDREPORT_reportdata, reportdata,
-+				    TDX_REPORTDATA_LEN);
-+	}
-+
-+	ret = tdx_mcall_get_report0(reportdata, tdreport);
-+	if (ret)
-+		pr_err("GetReport call failed\n");
-+
-+	if (tdreport != tdx_mr_report) {
-+		memcpy(tdx_mr_report, tdreport, sizeof(tdx_mr_report));
-+		kfree(tdreport);
-+	}
-+
-+	return ret;
-+}
-+
-+static int tdx_mr_extend(struct tsm_measurement *tmr,
-+			 const struct tsm_measurement_register *mr, const u8 *data)
-+{
-+	u8 *buf;
-+	int ret;
-+
-+	if (virt_addr_valid(data))
-+		buf = (u8 *)data;
-+	else {
-+		buf = kmalloc(64, GFP_KERNEL);
-+		if (!buf)
-+			return -ENOMEM;
-+
-+		memcpy(buf, data, mr->mr_size);
-+	}
-+
-+	ret = tdx_mcall_rtmr_extend((u8)(mr - tmr->mrs), buf);
-+	if (ret)
-+		pr_err("Extending RTMR%ld failed\n", mr - tmr->mrs);
-+
-+	if (buf != data)
-+		kfree(buf);
-+
-+	return ret;
-+}
-+
-+static struct tsm_measurement tdx_measurement = {
-+	.name = "tdx",
-+	.mrs = tdx_mrs,
-+	.refresh = tdx_mr_refresh,
-+	.extend = tdx_mr_extend,
-+};
-+
- static int __init tdx_guest_init(void)
- {
- 	int ret;
-@@ -326,8 +438,14 @@ static int __init tdx_guest_init(void)
- 	if (ret)
- 		goto free_quote;
- 
-+	ret = tsm_register_measurement(&tdx_measurement);
-+	if (ret)
-+		goto unregister_tsm;
-+
- 	return 0;
- 
-+unregister_tsm:
-+	tsm_unregister(&tdx_tsm_ops);
- free_quote:
- 	free_quote_buf(quote_data);
- free_misc:
-@@ -339,6 +457,7 @@ module_init(tdx_guest_init);
- 
- static void __exit tdx_guest_exit(void)
- {
-+	tsm_unregister_measurement(&tdx_measurement);
- 	tsm_unregister(&tdx_tsm_ops);
- 	free_quote_buf(quote_data);
- 	misc_deregister(&tdx_misc_dev);
-
+diff --git a/drivers/mfd/ene-kb3930.c b/drivers/mfd/ene-kb3930.c
+index fa0ad2f14a39..9460a67acb0b 100644
+--- a/drivers/mfd/ene-kb3930.c
++++ b/drivers/mfd/ene-kb3930.c
+@@ -162,7 +162,7 @@ static int kb3930_probe(struct i2c_client *client)
+ 			devm_gpiod_get_array_optional(dev, "off", GPIOD_IN);
+ 		if (IS_ERR(ddata->off_gpios))
+ 			return PTR_ERR(ddata->off_gpios);
+-		if (ddata->off_gpios->ndescs < 2) {
++		if (ddata->off_gpios && ddata->off_gpios->ndescs < 2) {
+ 			dev_err(dev, "invalid off-gpios property\n");
+ 			return -EINVAL;
+ 		}
 -- 
-2.43.0
+2.34.1
 
 
