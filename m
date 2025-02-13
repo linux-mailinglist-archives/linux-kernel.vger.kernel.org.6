@@ -1,307 +1,133 @@
-Return-Path: <linux-kernel+bounces-513022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECBDA340A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:45:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9CAA340B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420713A8930
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:45:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EEB77A3D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DC92222C2;
-	Thu, 13 Feb 2025 13:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B2E19CCFA;
+	Thu, 13 Feb 2025 13:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrWDD825"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bU/Syh21"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C877A24BBE3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C8E24BC1D;
+	Thu, 13 Feb 2025 13:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454278; cv=none; b=j9UXaQzR3yxU8cuxY1XqGDk1rISx62QwUSHlHwztzNRrVyDbz7FCX5D+LZ6MLHfyF6WOakO9WIxuXVPsbQKkRM/VEo+YB3hnzNiVOJ5YMvgZLmCgmd5ZkBFRyExASlrnRJh+BFkTL9IcvjClHfJiyufg29975evvvrt8ip2iQ6A=
+	t=1739454320; cv=none; b=FFdc7WJ8LWkMB7SKUG2GXAPvIl6gm/W/8Hu/RZKT+xV9kjpomGsCxB+nudnrNCTEsqoSADTHcda8oHjjSnRNPWHxK0kUbF4ENh/OxaGdL9rA1fxK+3qzwWgRhtLng+m+ZLmnEVidEUwemE6ByVtZ7a2FP7up/xw57IzHLE716TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454278; c=relaxed/simple;
-	bh=6OsRXGek1x/Zh8AmRY35oA/LL23gK80fMFmfLtmtYfA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R7vhYRNoRIlda6XYrsnGY8q/xwzj1nyhJUrvBokSBdvuuOfCMrAiReY4pxHDqk6/G7N+XHOXzOY5356epnUFUI6KCnJQzOjWdXypE4b4GBuI2+Y6p2+fz8UACG+dblDWIL6LOxVVLfkoUQ5nZpp9VFHR/oc2GXeCrDAdpljAi1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hrWDD825; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-38dcb65c717so545504f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:44:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739454275; x=1740059075; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ic9Th6hBf+PoxAJPvAOFkVubxFFjGgrt31sWLioNKfE=;
-        b=hrWDD82583strneykom/MzrGt1t2JzuS7VNcJLJVfZOpz1Vi/d0ISZu5DZEVaHfJ5D
-         gxAl4XJ4nmqwQNkXHE+YBqppo2c/SBdTqqoAfbjLfp2Gd1b06pBXd7Xoc67vUeCCu1dn
-         lbxPTaKvFUXMcynuDn2bsl4QRj+Z+VvqcnjqEUMNNymwhonbR4yIUjq0AZgTHfbcAWyi
-         l52GSPM+2FJwj9+d19yOR4YDAI2bucIAQ18ufNY05U07KodiSge4FSc0WUH7DT9BHI7c
-         urpteyzJ5H3HFJ7Hkcup4ppiUkqRUecSb54F24TbkPf53V5MJw2yMVcOogkWiqU5wryn
-         AvmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739454275; x=1740059075;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ic9Th6hBf+PoxAJPvAOFkVubxFFjGgrt31sWLioNKfE=;
-        b=Q9TsVd/MwmIMYIlSl2S4dPFDV9NrJgHf1sRd4OaSXLUgqzuzHA6lFAA0FvDBYkMU5T
-         D28mXsY61wJUlDFjAE/mmreVRpn0l5BRGHIJbGObqvI2sGfIbP14cX/3dZHIKKiTMBwG
-         diBo6OySCI3GEkyuFETkM+CZmqVciHWPW7pRp7sWACd8HozGx53gHU0sgQD/UhkezR//
-         vB6iQKdJOqWumrsZ18CwNys0SfPkURJ7OPjYP1lzqYFnV6ebDEDrgAB+wp8BdueIbBq5
-         gv6rQMOzhCBzAGRiCG3zrV+ARPc+dvpudbVlfDK1mjp3npStZ4OXX0KKModLMkp76Tgv
-         1Rrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXofUtBxwdGF9Buke3Nbqe7y5u1l5CaXW+j569x9x+pr+tBbCKiR7ZkJxNJKav/aX7AwJ/EUBTJa/sPmgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5LLOQREh3v74+3EIh8e3X5TEXaKWhjFX809c9HYhifRr4vlN
-	AkGZwSDdBQXqO0MC/ToYoYlZaNP9tKiTR1RnpjdLQRPhdXJpUtSE8Gd1yXNNZ3EKcG9vSwj9O1j
-	MqHIfg+Z5Sw==
-X-Google-Smtp-Source: AGHT+IGLocNDrDAUHRipa45b7Hp8ZAewQIBybLdatWxi3yDfOOAsMV/ODoaKBMvmEBc9yRxstLYJXyCfkeHfrw==
-X-Received: from wmbet10.prod.google.com ([2002:a05:600c:818a:b0:439:5517:7ade])
- (user=derkling job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1786:b0:38f:225b:3122 with SMTP id ffacd0b85a97d-38f24519c10mr4401962f8f.44.1739454275258;
- Thu, 13 Feb 2025 05:44:35 -0800 (PST)
-Date: Thu, 13 Feb 2025 13:44:08 +0000
-In-Reply-To: <20250213105304.1888660-1-derkling@google.com>
+	s=arc-20240116; t=1739454320; c=relaxed/simple;
+	bh=94vF1Z2FInWjQjiuwptK3HfrtPNljBB+6zmYkZoSvMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZ2jyM0Z7LSd3YtJJ8LotJwmUhvTipZ5X0lqiRwaBrvZ1q6P6QUdWMOVu2CHNErnuI/udqMmFz60lNm05NVPVZlbkc9ssRIWFj69Xc62wezWrKBlWfVaU72hMHDU+GLWFpR3Gg2jrKb1MgN8zDgOxEBfRmze/e8jwg6lCScR50M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bU/Syh21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A73C4CED1;
+	Thu, 13 Feb 2025 13:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739454319;
+	bh=94vF1Z2FInWjQjiuwptK3HfrtPNljBB+6zmYkZoSvMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bU/Syh21an6cbZXbPUvrXxU42IRPt6/zNjZGI97HM17dU7pzctUSlBfppEzB7RHMn
+	 YbtW3uS0OldlEXVWqTv5KJ4VYpAqQZvgvSKIJNbbQei5cFav5XlaPFjKb4688fvq+Q
+	 699uSTyheVgS9OsMfAYXPmkvJhu3eI3KayHSM6jQ=
+Date: Thu, 13 Feb 2025 14:45:16 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+	chromeos-bluetooth-upstreaming@chromium.org,
+	Hsin-chen Chuang <chharry@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] Bluetooth: Fix possible race with userspace of
+ sysfs isoc_alt
+Message-ID: <2025021318-regretful-factsheet-79a1@gregkh>
+References: <20250213114400.v4.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021352-dairy-whomever-f8bd@gregkh>
+ <CADg1FFdez0OdNDPRFPFxNHL_JcKmHE6KNxnYvt4sK7i+Uw6opA@mail.gmail.com>
+ <2025021347-washboard-slashed-5d08@gregkh>
+ <CADg1FFdbKx3z+SPWFmY4+xZmewh0MnnZp_gmYEdY0z-mxutmEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250213105304.1888660-1-derkling@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250213134408.2931040-1-derkling@google.com>
-Subject: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Patrick Bellasi <derkling@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Patrick Bellasi <derkling@matbug.net>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADg1FFdbKx3z+SPWFmY4+xZmewh0MnnZp_gmYEdY0z-mxutmEw@mail.gmail.com>
 
-And, of course, this bit:
-
-> diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-> index 3ae84c3b8e6db..1372a569fb585 100644
-> --- a/tools/arch/x86/include/asm/msr-index.h
-> +++ b/tools/arch/x86/include/asm/msr-index.h
-> @@ -717,6 +717,7 @@
+On Thu, Feb 13, 2025 at 09:33:34PM +0800, Hsin-chen Chuang wrote:
+> On Thu, Feb 13, 2025 at 8:10 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 > >
->  /* Zen4 */
->  #define MSR_ZEN4_BP_CFG                 0xc001102e
-> +#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
+> > A: http://en.wikipedia.org/wiki/Top_post
+> > Q: Were do I find info about this thing called top-posting?
+> > A: Because it messes up the order in which people normally read text.
+> > Q: Why is top-posting such a bad thing?
+> > A: Top-posting.
+> > Q: What is the most annoying thing in e-mail?
+> >
+> > A: No.
+> > Q: Should I include quotations after my reply?
+> >
+> > http://daringfireball.net/2007/07/on_top
+> >
+> > On Thu, Feb 13, 2025 at 07:57:15PM +0800, Hsin-chen Chuang wrote:
+> > > The btusb driver data is allocated by devm_kzalloc and is
+> > > automatically freed on driver detach, so I guess we don't have
+> > > anything to do here.
+> >
+> > What?  A struct device should NEVER be allocated with devm_kzalloc.
+> > That's just not going to work at all.
+> 
+> Noted. Perhaps that needs to be refactored together.
+> 
+> >
+> > > Or perhaps we should move btusb_disconnect's content here? Luiz, what
+> > > do you think?
+> >
+> > I think something is really wrong here.  Why are you adding a new struct
+> > device to the system?  What requires that?  What is this new device
+> > going to be used for?
+> 
+> The new device is only for exposing a new sysfs attribute.
 
-has to be added to arch/x86/include/asm/msr-index.h as well.
+That feels crazy.
 
-Following (yet another) updated versions accounting for this.
+> So originally we had a device called hci_dev, indicating the
+> implementation of the Bluetooth HCI layer. hci_dev is directly the
+> child of the usb_interface (the Bluetooth chip connected through USB).
+> Now I would like to add an attribute for something that's not defined
+> in the HCI layer, but lower layer only in Bluetooth USB.
+> Thus we want to rephrase the structure: usb_interface -> btusb (new
+> device) -> hci_dev, and then we could place the new attribute in the
+> new device.
+> 
+> Basically I kept the memory management in btusb unchanged in this
+> patch, as the new device is only used for a new attribute.
+> Would you suggest we revise the memory management since we added a
+> device in this module?
 
-Best,
-Patrick
+If you add a new device in the tree, it HAS to work properly with the
+driver core (i.e. life cycles are unique, you can't have empty release
+functions, etc.)  Put it on the proper bus it belongs to, bind the
+needed drivers to it, and have it work that way, don't make a "fake"
+device for no good reason.
 
----
+thanks,
 
-From: Borislav Petkov <bp@alien8.de>
-
-Add support for
-
-  CPUID Fn8000_0021_EAX[31] (SRSO_MSR_FIX). If this bit is 1, it
-  indicates that software may use MSR BP_CFG[BpSpecReduce] to mitigate
-  SRSO.
-
-enable this BpSpecReduce bit to mitigate SRSO across guest/host
-boundaries.
-
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Patrick Bellasi <derkling@google.com>
----
- Documentation/admin-guide/hw-vuln/srso.rst | 20 ++++++++++++++++++++
- arch/x86/include/asm/cpufeatures.h         |  1 +
- arch/x86/include/asm/msr-index.h           |  1 +
- arch/x86/kernel/cpu/bugs.c                 | 21 +++++++++++++++++----
- arch/x86/kvm/svm/svm.c                     | 14 ++++++++++++++
- tools/arch/x86/include/asm/msr-index.h     |  1 +
- 6 files changed, 54 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/hw-vuln/srso.rst b/Documentation/admin-guide/hw-vuln/srso.rst
-index 2ad1c05b8c883..49680ab99c393 100644
---- a/Documentation/admin-guide/hw-vuln/srso.rst
-+++ b/Documentation/admin-guide/hw-vuln/srso.rst
-@@ -104,6 +104,26 @@ The possible values in this file are:
- 
-    (spec_rstack_overflow=ibpb-vmexit)
- 
-+ * 'Mitigation: Reduced Speculation':
-+
-+   This mitigation gets automatically enabled when the above one "IBPB on
-+   VMEXIT" has been selected and the CPU supports the BpSpecReduce bit.
-+
-+   It gets automatically enabled on machines which have the
-+   SRSO_USER_KERNEL_NO=1 CPUID bit. In that case, the code logic is to switch
-+   to the above =ibpb-vmexit mitigation because the user/kernel boundary is
-+   not affected anymore and thus "safe RET" is not needed.
-+
-+   After enabling the IBPB on VMEXIT mitigation option, the BpSpecReduce bit
-+   is detected (functionality present on all such machines) and that
-+   practically overrides IBPB on VMEXIT as it has a lot less performance
-+   impact and takes care of the guest->host attack vector too.
-+
-+   Currently, the mitigation uses KVM's user_return approach
-+   (kvm_set_user_return_msr()) to set the BpSpecReduce bit when a vCPU runs
-+   a guest and reset it upon return to host userspace or when the KVM module
-+   is unloaded. The intent being, the small perf impact of BpSpecReduce should
-+   be incurred only when really necessary.
- 
- 
- In order to exploit vulnerability, an attacker needs to:
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 508c0dad116bc..c46754298507b 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -468,6 +468,7 @@
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
- #define X86_FEATURE_SRSO_USER_KERNEL_NO	(20*32+30) /* CPU is not affected by SRSO across user/kernel boundaries */
-+#define X86_FEATURE_SRSO_BP_SPEC_REDUCE	(20*32+31) /* BP_CFG[BpSpecReduce] can be used to mitigate SRSO for VMs (SRSO_MSR_FIX in AMD docs). */
- 
- /*
-  * Extended auxiliary flags: Linux defined - for features scattered in various
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 9a71880eec070..6bbc8836d6766 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -720,6 +720,7 @@
- 
- /* Zen4 */
- #define MSR_ZEN4_BP_CFG                 0xc001102e
-+#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
- #define MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT 5
- 
- /* Fam 19h MSRs */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a5d0998d76049..d2007dbfcc1cc 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2522,6 +2522,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_SAFE_RET,
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
-+	SRSO_MITIGATION_BP_SPEC_REDUCE,
- };
- 
- enum srso_mitigation_cmd {
-@@ -2539,7 +2540,8 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_MICROCODE]		= "Vulnerable: Microcode, no safe RET",
- 	[SRSO_MITIGATION_SAFE_RET]		= "Mitigation: Safe RET",
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
--	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only"
-+	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
-+	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
- };
- 
- static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-@@ -2578,7 +2580,7 @@ static void __init srso_select_mitigation(void)
- 	    srso_cmd == SRSO_CMD_OFF) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
--		return;
-+		goto out;
- 	}
- 
- 	if (has_microcode) {
-@@ -2590,7 +2592,7 @@ static void __init srso_select_mitigation(void)
- 		 */
- 		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
- 			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
--			return;
-+			goto out;
- 		}
- 
- 		if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
-@@ -2670,6 +2672,12 @@ static void __init srso_select_mitigation(void)
- 
- ibpb_on_vmexit:
- 	case SRSO_CMD_IBPB_ON_VMEXIT:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+			break;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
- 			if (has_microcode) {
- 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-@@ -2691,7 +2699,12 @@ static void __init srso_select_mitigation(void)
- 	}
- 
- out:
--	pr_info("%s\n", srso_strings[srso_mitigation]);
-+
-+	if (srso_mitigation != SRSO_MITIGATION_BP_SPEC_REDUCE)
-+		setup_clear_cpu_cap(X86_FEATURE_SRSO_BP_SPEC_REDUCE);
-+
-+	if (srso_mitigation != SRSO_MITIGATION_NONE)
-+		pr_info("%s\n", srso_strings[srso_mitigation]);
- }
- 
- #undef pr_fmt
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 7640a84e554a6..6ea3632af5807 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -257,6 +257,7 @@ DEFINE_PER_CPU(struct svm_cpu_data, svm_data);
-  * defer the restoration of TSC_AUX until the CPU returns to userspace.
-  */
- static int tsc_aux_uret_slot __read_mostly = -1;
-+static int zen4_bp_cfg_uret_slot __ro_after_init = -1;
- 
- static const u32 msrpm_ranges[] = {0, 0xc0000000, 0xc0010000};
- 
-@@ -1540,6 +1541,11 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
- 		kvm_set_user_return_msr(tsc_aux_uret_slot, svm->tsc_aux, -1ull);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-+		kvm_set_user_return_msr(zen4_bp_cfg_uret_slot,
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT),
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT));
-+
- 	svm->guest_state_loaded = true;
- }
- 
-@@ -5306,6 +5312,14 @@ static __init int svm_hardware_setup(void)
- 
- 	tsc_aux_uret_slot = kvm_add_user_return_msr(MSR_TSC_AUX);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+		zen4_bp_cfg_uret_slot = kvm_add_user_return_msr(MSR_ZEN4_BP_CFG);
-+		if (WARN_ON_ONCE(zen4_bp_cfg_uret_slot < 0)) {
-+			r = -EIO;
-+			goto err;
-+		}
-+	}
-+
- 	if (boot_cpu_has(X86_FEATURE_AUTOIBRS))
- 		kvm_enable_efer_bits(EFER_AUTOIBRS);
- 
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index 3ae84c3b8e6db..1372a569fb585 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -717,6 +717,7 @@
- 
- /* Zen4 */
- #define MSR_ZEN4_BP_CFG                 0xc001102e
-+#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
- #define MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT 5
- 
- /* Fam 19h MSRs */
--- 
-2.48.1.601.g30ceb7b040-goog
-
+greg k-h
 
