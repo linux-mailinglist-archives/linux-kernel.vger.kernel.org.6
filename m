@@ -1,174 +1,158 @@
-Return-Path: <linux-kernel+bounces-512330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DFBA337A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:00:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D325A337A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631C5168628
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B3718892D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6EB207651;
-	Thu, 13 Feb 2025 06:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A402207646;
+	Thu, 13 Feb 2025 06:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fG/jPqPx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WmUPekEU"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A761D86E6;
-	Thu, 13 Feb 2025 06:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8591E376E;
+	Thu, 13 Feb 2025 06:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739426430; cv=none; b=GAD25CITJI13x5mhbCk3921d3tgOr9VMgduRjaGEg1pn/x9DA9j6fZx/WEzPh0ztMG4o5R6ZAT5glNJ332+RfvbRg0ytOLG5C1X61ZvnARLJC3QivnxRE2Y57Zjpu/sOJE5/eprWmdoHhH9aErXl3b69Af4EtJ2B1rVhQ7cNVYs=
+	t=1739426444; cv=none; b=kaPHH38SXvpbsQ7NFpz92ocD/GRpCMMfYgrnuyQ1bDFpeetunFsbBa+qz2Rn2Ilvaip7HNE6pB5NFgYkT0yJXqe1JRkNLz4eGS1H9PUdGwf5cHiklN6xU0gyUFcF9DxHT+s5SPeAYQCwdTrBEnRWNKvaKlVNdb0rn92f1uySYkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739426430; c=relaxed/simple;
-	bh=8s/bTDUVIWxdrqH6fipakZGBYO9lwvpZ1w8a5gGB1Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ayNknybPmbqMUSwsjJg2DoQnc6plhjfan9U8owC9kA51YruriMpqVZ9k3e63JhxI275zabYGfKd1c+Z5BoIB/jAksD4haonGWxwRR66z6DcHlJjEShNWAiFnXoZjikpED0XvgTfiXK0wkwh+Z7EGUIr1yt06v1AKzSOBT3WNVW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fG/jPqPx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CFl1kh006169;
-	Thu, 13 Feb 2025 06:00:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pU35+8aa/1/SkLGu1AkjE4CxlpoQx7T26Qs2oC5MHXY=; b=fG/jPqPxbu9B/v41
-	/Z0bBxJIxqqLF2DgoPOOuoRJIs/piiTtoVdxpm6YGrZ2SrKn7IAbV/hGyaUXYCDz
-	bHOfN+rDe/isfoLXATlaWsEZtIFICWq8/7+/0JbqzmHvVrID8rgk5CbSXJmp9TsB
-	E4sXp1wqBo6wCGtDgyvMcgxpkfGNAhk3qMb73amzzG3d+urnA6UkNktnvr+JokDW
-	x7xeeUgipf4K60hPUlfeU7hT0vNwlyKFdLsne0nHbBjd0ed55hM+uYBRdsmmEA7r
-	PdLs5O5XSZgQUyhthTNeh8NFRYbleO3vo1LkgOPo/g7xG/5oOj85OJdNtx4ruJXK
-	2ynfbg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qe5n1q95-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 06:00:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D602X0029415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 06:00:02 GMT
-Received: from [10.231.216.52] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
- 2025 22:00:00 -0800
-Message-ID: <ed6a0be1-f7c3-4ada-9413-730c85a5cd3c@quicinc.com>
-Date: Thu, 13 Feb 2025 13:59:57 +0800
+	s=arc-20240116; t=1739426444; c=relaxed/simple;
+	bh=bVh+FGK2nAlK+67aFhVGHvDEOpT1Y3PR9HfW5kYrQUk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SX8v07WDQsaAmurnd56GATeYnztIWr9Nd4VH7Oim36/wETUeAxPXxJ25w0CoGKAAVVNCWej48kGl4E9R59//zmyFJlAT9sH3pOD9ZqzBFn0KbdEOqOMuTWK03v/TFTT3fVFAiX+RplYov4eM4fHM6nDscw0hv9bw/NLUJ9U7ncU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WmUPekEU; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51D60Nvm3947666
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 00:00:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739426423;
+	bh=UDhnz5wxw1hdHaBaFUmXZ2OsCA8ywcG70oJJgWadirY=;
+	h=From:To:CC:Subject:Date;
+	b=WmUPekEU+t7sxR6eZVVDybaHF+73/ETG/YKOk5N1IEc2wTErilEKuYkyQ8/QV7War
+	 bRBap42jhXmScWamSMpgSaAI/SYHrDBsKKV6ynJ/tyfVKBQFwWwj9UMACFjx43k74n
+	 A/KnR0YAHK0Kd1LmVneruNq2+d2D6qzKIAF1+F8w=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51D60NtE076218
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Feb 2025 00:00:23 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Feb 2025 00:00:22 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Feb 2025 00:00:23 -0600
+Received: from santhoshkumark.dhcp.ti.com (santhoshkumark.dhcp.ti.com [172.24.227.241])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51D60J7K117400;
+	Thu, 13 Feb 2025 00:00:20 -0600
+From: Santhosh Kumar K <s-k6@ti.com>
+To: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <quic_sridsn@quicinc.com>, <quic_mdalam@quicinc.com>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <p-mantena@ti.com>, <s-k6@ti.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] mtd: spinand: winbond: Fix oob_layout for W25N01JW
+Date: Thu, 13 Feb 2025 11:30:18 +0530
+Message-ID: <20250213060018.2664518-1-s-k6@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: qcs8300-ride: enable BT on
- qcs8300-ride
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_jiaymao@quicinc.com>,
-        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <quic_mohamull@quicinc.com>
-References: <20250211104421.1172892-1-quic_chejiang@quicinc.com>
- <20250211104421.1172892-2-quic_chejiang@quicinc.com>
- <b74f0591-242d-45eb-8c5b-bfc7edb0441a@oss.qualcomm.com>
-Content-Language: en-US
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <b74f0591-242d-45eb-8c5b-bfc7edb0441a@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9ThJRlQAWjSp9nsuc8MjF4FexPaWXi5y
-X-Proofpoint-ORIG-GUID: 9ThJRlQAWjSp9nsuc8MjF4FexPaWXi5y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502130044
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Konrad,
+Fix the W25N01JW's oob_layout according to the datasheet. [1]
 
-On 2/11/2025 10:34 PM, Konrad Dybcio wrote:
-> On 11.02.2025 11:44 AM, Cheng Jiang wrote:
->> Enable BT on qcs8300-ride by adding a node for the BT module. Since the
->> platform uses the QCA6698 Bluetooth chip. While the QCA6698 shares th
->> same IP core as the WCN6855, it has different RF components and RAM sizes,
->> requiring new firmware files. Use the firmware-name property to specify
->> the NVM and rampatch firmware to load.
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 24 +++++++++++++++++++++++
->>  1 file changed, 24 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->> index a6991e8e2df6..93458773b72d 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->> @@ -17,6 +17,7 @@ / {
->>  
->>  	aliases {
->>  		serial0 = &uart7;
->> +		serial1 = &uart2;
->>  	};
->>  
->>  	chosen {
->> @@ -451,6 +452,13 @@ &serdes0 {
->>  };
->>  
->>  &tlmm {
->> +	bt_en_state: bt-en-state {
->> +		pins = "gpio55";
->> +		function = "normal";
->> +		output-low;
->> +		bias-pull-down;
->> +	};
->> +
->>  	ethernet0_default: ethernet0-default-state {
->>  		ethernet0_mdc: ethernet0-mdc-pins {
->>  			pins = "gpio5";
->> @@ -544,6 +552,22 @@ wlan_en_state: wlan-en-state {
->>  	};
->>  };
->>  
->> +&uart2 {
->> +	status = "okay";
->> +	bluetooth: bluetooth {
-> 
-> Please add a newline between the last property and subnodes
-> 
-Ack.
->> +		compatible = "qcom,wcn6855-bt";
->> +		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&bt_en_state>;
-> 
-> You should use qcom,wcn6855-pmu (see e.g. sc8280xp-crd.dts)
-> 
-Ack. Will use the power sequence for BT power control. 
->> +		enable-gpios = <&tlmm 55 GPIO_ACTIVE_HIGH>; /* BT_EN */
->> +
->> +		vddio-supply       = <&vreg_conn_pa>;         /* bt-vdd-ctrl1-supply */
->> +		vddbtcxmx-supply   = <&vreg_conn_1p8>;        /* bt-vdd-ctrl2-supply */
-> 
-> Drop these comments
-> 
-Ack.
+[1] https://www.winbond.com/hq/product/code-storage-flash-memory/qspinand-flash/?__locale=en&partNo=W25N01JW
+
+Fixes: 6a804fb72de5 ("mtd: spinand: winbond: add support for serial NAND flash")
+Cc: Sridharan S N <quic_sridsn@quicinc.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
+---
+
+Changes in v2:
+ - Detach patch 3/3 from v1
+ - Rebase on next
+ - Link to v1: https://lore.kernel.org/linux-mtd/20250102115110.1402440-1-s-k6@ti.com/
+ 
+Repo: https://github.com/santhosh21/linux/tree/uL_next
+Test results: https://gist.github.com/santhosh21/71ab6646dccc238a0b3c47c0382f219a
+
+---
+ drivers/mtd/nand/spi/winbond.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
+index ea11ae12423f..41cd0a51e450 100644
+--- a/drivers/mtd/nand/spi/winbond.c
++++ b/drivers/mtd/nand/spi/winbond.c
+@@ -134,6 +134,30 @@ static int w25n02kv_ooblayout_free(struct mtd_info *mtd, int section,
+ 	return 0;
+ }
+ 
++static int w25n01jw_ooblayout_ecc(struct mtd_info *mtd, int section,
++				  struct mtd_oob_region *region)
++{
++	if (section > 3)
++		return -ERANGE;
++
++	region->offset = (16 * section) + 12;
++	region->length = 4;
++
++	return 0;
++}
++
++static int w25n01jw_ooblayout_free(struct mtd_info *mtd, int section,
++				   struct mtd_oob_region *region)
++{
++	if (section > 3)
++		return -ERANGE;
++
++	region->offset = (16 * section) + 2;
++	region->length = 10;
++
++	return 0;
++}
++
+ static int w35n01jw_ooblayout_ecc(struct mtd_info *mtd, int section,
+ 				  struct mtd_oob_region *region)
+ {
+@@ -173,6 +197,11 @@ static const struct mtd_ooblayout_ops w35n01jw_ooblayout = {
+ 	.free = w35n01jw_ooblayout_free,
+ };
+ 
++static const struct mtd_ooblayout_ops w25n01jw_ooblayout = {
++	.ecc = w25n01jw_ooblayout_ecc,
++	.free = w25n01jw_ooblayout_free,
++};
++
+ static int w25n02kv_ecc_get_status(struct spinand_device *spinand,
+ 				   u8 status)
+ {
+@@ -249,7 +278,7 @@ static const struct spinand_info winbond_spinand_table[] = {
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+ 		     0,
+-		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL)),
++		     SPINAND_ECCINFO(&w25n01jw_ooblayout, NULL)),
+ 	SPINAND_INFO("W25N01KV", /* 3.3V */
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xae, 0x21),
+ 		     NAND_MEMORG(1, 2048, 96, 64, 1024, 20, 1, 1, 1),
+-- 
+2.34.1
 
 
