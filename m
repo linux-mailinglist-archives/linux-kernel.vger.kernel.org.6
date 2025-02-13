@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-512979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263B3A34004
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:15:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D49AA34023
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09171888E2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223EF16A8FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CC320ADE0;
-	Thu, 13 Feb 2025 13:15:29 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D41227EA2;
+	Thu, 13 Feb 2025 13:18:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977A72AD25
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B7C22172A;
+	Thu, 13 Feb 2025 13:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452529; cv=none; b=ONBUt2F+Jx1/S9+Pc5C0PSiGCFF/ewf4kabp99XZkv7vflH3CN8S+K8s7lm56yU5msmMdyZRjoRay3N0IO00678CaK/bULxZ6+Be+8Sb7cMfA/4Ohd2ikBb3dbrALNEkd01UTdiWULSAckDgipJqqNKh7h5WgXrAve83RBJBhWI=
+	t=1739452734; cv=none; b=uHFTFBcMrEsh+fqamoTO6OwrAegMCGAqwSk8Ck3BgXGbOu9KWcyWL6iqZXMuT/9YcKrN5F1AYpMM92iGDTtlRxWv4MT8BgzzNCO1RXiJwEe9X3AUbHbI4kewUD/I+lW39kP8qyUQqOiq/0rOv+ODlPNXt3251A9aB2AUZ6mlJbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452529; c=relaxed/simple;
-	bh=CqOuhjUXTbJZCjnZilgE0mEtfGYZNgJA3cO9HL8kJcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R6P0Y6bq/aZbLIkBIN1vzZIHc7XfpAn7/2d6NbNnrTqkbl/fm3FzyXh3wLS/bexNIB6+s7fYRpqSK4B1mf/XdEgRGFL1aGHfNtYbuHTC4q2HHKmKLWUCDvk0OnjwKYeMMbTWLxTBdBrn9DjNgimrluxIezlBNApfnll7+k/YtYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BE84E442C8;
-	Thu, 13 Feb 2025 13:15:23 +0000 (UTC)
-Message-ID: <14898598-8411-4c2d-b983-07c8bb50159a@ghiti.fr>
-Date: Thu, 13 Feb 2025 14:15:23 +0100
+	s=arc-20240116; t=1739452734; c=relaxed/simple;
+	bh=XIzr+PvuXP2KTBlj+0Qas/W7CfoHCr/ilC9hkHMevkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CjPPqE6LWKdiMu0zbHGTYCycFUcj4vJH7B8c+NA8ImSLbwiqE7nhs4hmc1/xeo/7MKXg8Jxpq/Awwim3Wg32fqqxbSsSWFK+lHX7DNyLSC4QPcJNSSib65iwC2jsEcKyNaJfmKZ8eLY8W6B4FwD9Z4ELzs8CFEr2KiFh+Kc6bhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YtwjY3XVGz4f3kvt;
+	Thu, 13 Feb 2025 21:18:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 420A41A160B;
+	Thu, 13 Feb 2025 21:18:48 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAXe1828a1nMAXxDg--.16673S4;
+	Thu, 13 Feb 2025 21:18:48 +0800 (CST)
+From: linan666@huaweicloud.com
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	zhangxiaoxu5@huawei.com,
+	wanghai38@huawei.com
+Subject: [PATCH] md: ensure resync is prioritized over recovery
+Date: Thu, 13 Feb 2025 21:15:30 +0800
+Message-Id: <20250213131530.3698600-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] riscv: Change check_unaligned_access_speed_all_cpus
- to void
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, charlie@rivosinc.com,
- jesse@rivosinc.com, Anup Patel <apatel@ventanamicro.com>
-References: <20250207161939.46139-11-ajones@ventanamicro.com>
- <20250207161939.46139-15-ajones@ventanamicro.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250207161939.46139-15-ajones@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegrjhhonhgvshesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrn
- hgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjvghsshgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegrphgrthgvlhesvhgvnhhtrghnrghmihgtrhhordgtohhm
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXe1828a1nMAXxDg--.16673S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar47XFy7Gw15tr1rCr17ZFb_yoW8Xw1fpa
+	1fJFsxurWrtFWfAFWUtw1kXay5Cry0yry8tFy3W3yrZry3tr13ArW5Wa1jvFyUGFyIqa1j
+	qr4kJrWfZF1fCw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjTa0DUUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
+From: Li Nan <linan122@huawei.com>
 
-On 07/02/2025 17:19, Andrew Jones wrote:
-> The return value of check_unaligned_access_speed_all_cpus() is always
-> zero, so make the function void so we don't need to concern ourselves
-> with it. The change also allows us to tidy up
-> check_unaligned_access_all_cpus() a bit.
->
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->   arch/riscv/kernel/unaligned_access_speed.c | 15 +++++----------
->   1 file changed, 5 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> index 02b485dc4bc4..780f1c5f512a 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -218,7 +218,7 @@ static int riscv_offline_cpu(unsigned int cpu)
->   }
->   
->   /* Measure unaligned access speed on all CPUs present at boot in parallel. */
-> -static int __init check_unaligned_access_speed_all_cpus(void)
-> +static void __init check_unaligned_access_speed_all_cpus(void)
->   {
->   	unsigned int cpu;
->   	unsigned int cpu_count = num_possible_cpus();
-> @@ -226,7 +226,7 @@ static int __init check_unaligned_access_speed_all_cpus(void)
->   
->   	if (!bufs) {
->   		pr_warn("Allocation failure, not measuring misaligned performance\n");
-> -		return 0;
-> +		return;
->   	}
->   
->   	/*
-> @@ -261,12 +261,10 @@ static int __init check_unaligned_access_speed_all_cpus(void)
->   	}
->   
->   	kfree(bufs);
-> -	return 0;
->   }
->   #else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
-> -static int __init check_unaligned_access_speed_all_cpus(void)
-> +static void __init check_unaligned_access_speed_all_cpus(void)
->   {
-> -	return 0;
->   }
->   #endif
->   
-> @@ -403,10 +401,10 @@ static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __alway
->   
->   static int __init check_unaligned_access_all_cpus(void)
->   {
-> -	bool all_cpus_emulated;
->   	int cpu;
->   
-> -	all_cpus_emulated = check_unaligned_access_emulated_all_cpus();
-> +	if (!check_unaligned_access_emulated_all_cpus())
-> +		check_unaligned_access_speed_all_cpus();
->   
->   	if (!has_vector()) {
->   		for_each_online_cpu(cpu)
-> @@ -417,9 +415,6 @@ static int __init check_unaligned_access_all_cpus(void)
->   			    NULL, "vec_check_unaligned_access_speed_all_cpus");
->   	}
->   
-> -	if (!all_cpus_emulated)
-> -		return check_unaligned_access_speed_all_cpus();
-> -
->   	return 0;
->   }
->   
+If a new disk is added during resync, the resync process is interrupted,
+and recovery is triggered, causing the previous resync to be lost. In
+reality, disk addition should not terminate resync, fix it.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Steps to reproduce the issue:
+  mdadm -CR /dev/md0 -l1 -n3 -x1 /dev/sd[abcd]
+  mdadm --fail /dev/md0 /dev/sdc
 
-Thanks,
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+ drivers/md/md.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Alex
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 30b3dbbce2d2..827646b3eb59 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9460,6 +9460,13 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
+ 		return true;
+ 	}
+ 
++	/* Check if resync is in progress. */
++	if (mddev->recovery_cp < MaxSector) {
++		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
++		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
++		return true;
++	}
++
+ 	/*
+ 	 * Remove any failed drives, then add spares if possible. Spares are
+ 	 * also removed and re-added, to allow the personality to fail the
+@@ -9476,13 +9483,6 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
+ 		return true;
+ 	}
+ 
+-	/* Check if recovery is in progress. */
+-	if (mddev->recovery_cp < MaxSector) {
+-		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
+-		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
+-		return true;
+-	}
+-
+ 	/* Delay to choose resync/check/repair in md_do_sync(). */
+ 	if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery))
+ 		return true;
+-- 
+2.39.2
 
 
