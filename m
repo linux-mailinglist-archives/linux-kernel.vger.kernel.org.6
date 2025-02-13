@@ -1,214 +1,117 @@
-Return-Path: <linux-kernel+bounces-512420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87976A33916
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E53FA33919
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0917B3A8708
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E583A4ECD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AF120AF8D;
-	Thu, 13 Feb 2025 07:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965E520AF72;
+	Thu, 13 Feb 2025 07:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="CmIagTw0"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFDE20AF66;
-	Thu, 13 Feb 2025 07:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432549; cv=none; b=eW58vQG7ytmKyYsNGQzYKhGla1iBrs8QsZCljMRP9GjiFog2voxa5FdlzjhQksjWqJn/yQarwEG2XWhhKAIowpoB1VkAemChdHr13vGmSguIqKGkGzJKi69WDwsMP0hxa1Awi6G1nh3TeKYcsZsQqHYRojhFAgH7eXQSd0pCaQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432549; c=relaxed/simple;
-	bh=IlVYh+wZ/YIFB/UgdqiAswcv4hn7Nfi0gPcL0hnnO3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JK7i6n/4D3/9vjBMiX32faOtxrabs4afqEvsPzBM4nl1WLFgnWeDS6ayZ0pB/S6aT3JQt8a5DfN3XGJCkWKiZlTvx12dnpYSCm3dTsAucIW9cYVsOs0JyMow47OiQfzzadyqx7mYqv/mOSwK74xYLZvgYnIQ3RFLuA8Ll4IMx1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=CmIagTw0; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGcomxdF"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id D69B642529;
-	Thu, 13 Feb 2025 08:42:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1739432540;
-	bh=IlVYh+wZ/YIFB/UgdqiAswcv4hn7Nfi0gPcL0hnnO3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CmIagTw072QVKg6X2zF7CjJurHTdhFIIdQEKgjmvrTlWE/dhMXwuw81+d2esttJTW
-	 1Y5ahtF8Fh/SNFP1P2RR1sujXeleOSH1HJl/VWQ+xg4ZehSMZVJUiWLJSjesYZK0bO
-	 INumkDNROadS9kEyDgL/db6dJo8AvtGeSnYok5/tosCl3G+YJGQOKeyshvdDM2ZcNu
-	 xudPDBoXknDJGg3hN5/h/oS5jZh1yx3J563YBU6NemsY4JynKHoKUNrpdeH2lDs9VK
-	 7XBBTpmsyUoP0bd2AI13NqcUQzea1IEkVHpYZ4hkviX4l9Nr6eXPw9zpNl1Wi7lDZL
-	 r2pcW+wJeNMNQ==
-Date: Thu, 13 Feb 2025 08:42:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, thomas.lendacky@amd.com,
-	john.allen@amd.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, suravee.suthikulpanit@amd.com, will@kernel.org,
-	robin.murphy@arm.com, michael.roth@amd.com, dionnaglaze@google.com,
-	nikunj@amd.com, ardb@kernel.org, kevinloughlin@google.com,
-	Neeraj.Upadhyay@amd.com, vasant.hegde@amd.com,
-	Stable@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-coco@lists.linux.dev, iommu@lists.linux.dev
-Subject: Re: [PATCH v4 3/3] x86/sev: Fix broken SNP support with KVM module
- built-in
-Message-ID: <Z62iWr77bPWsZcDC@8bytes.org>
-References: <cover.1739226950.git.ashish.kalra@amd.com>
- <138b520fb83964782303b43ade4369cd181fdd9c.1739226950.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8092AD21;
+	Thu, 13 Feb 2025 07:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739432650; cv=none; b=jsWdfNyle7ZccVTQ1PZH5Cesj4m26+52XSQJKWCBebc/P1bIyduBsWZeZ/U3MioSvj3YsQ8EMBEzLlGUjYHnqwsS2zE5jpv0wZLIeSTuucX0zp1kDUGXrXLP8Eg3mxzXMee6blWc4mqsJR16vC7/YC+rNgpQdcZxH+N/6/pMF+c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739432650; c=relaxed/simple;
+	bh=wyNWTZqyT14mqBhlFNkvE0qmeYGciMyAfZIa1EJBy1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V+86gNosbbJVGm0rGr/HxoTk1ppLOZeeshX4avHlpTcmBR4sFjnO+CL1hRPv2cS5YQ652tbcw6Qb/f7o+r6+mmX9jR/Yh9fyi9ZtKH7w0/TDlWEJty/c0/+yj315iWP+66IVxxbCoKeww9lAVSFVgXXwZhQumw/QJuFxZB2zHKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGcomxdF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c2a87378so7479315ad.1;
+        Wed, 12 Feb 2025 23:44:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739432648; x=1740037448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6mqh7zZ0I7zeSAxr8UviTFxyLQBRowHjzSl1AKJt5Ww=;
+        b=NGcomxdFBmu2I4SjUkUalM5aL0FP7SLnhG5Yv+VGbWRev6CidcK9oK9uGs3gvuzDTO
+         D+uknhXuOtOOZLOQeMtOxP5qsXj/MWwtkJ9XTHWuHVzWyb5VSko3JdNZMy0jZfGpBmu2
+         E7pdlKfXhrteNScUpK+Gq8kKFkyfOxCiccig2xLcimXCPv9qdD1QOBzy2cy/GWxRzs/R
+         WHwb2pKD7E1+gE+ukvYDJ+gbqY/pa7M+ZG/4ED3ySJ2Qk8w9wfm0f/7mqoORPIupeSvM
+         91m3oJdhTGuSRPA4pYRQd9oUVgMymYtkIHOK/hE7fPFGv+EOcMQFbEXlmVolajPJAYTo
+         K4dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739432648; x=1740037448;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6mqh7zZ0I7zeSAxr8UviTFxyLQBRowHjzSl1AKJt5Ww=;
+        b=qJnDsuV1Evfc8MQIH72eoTvTlSrID1imJmgr+pmVCm+kAlzu+IWDBXX5NYQtRMBFjA
+         tMXrbYJDZTTv1JfKMvwqqSTovshLnzNwuS9yetW2F+Jw6BXUlfjuvs1O0umkN+NCbex1
+         fdB5oURmMGZVORMmfH4BwClYQ58KgSCi/X0Xnl4PWXMdm2EdyTLprXl+v19JL+O4HEiD
+         hg4xNih/MMDQmw6Za9y/urLTo5nRJ1LU4DzSn0WZwEObHTsbcPILkJvlRkSVXKpRcFEJ
+         M8BUdM29qMXqSnkTlWByvJNjgdahov+2nm/N4BwV6aVaXjdUpwCzPoiyBMgYmW0VjUgV
+         VkPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBNZE0zWtrZqsAOUTjO0+ZcVKjZ5FB9wJzhJSTTmsufehOfWGANz2d/asiVN9VesBkRu6Bk9tR@vger.kernel.org, AJvYcCXG4eWVKZG85BEOIwasQTurWXzVEiaec4D4OiPl//HrlNTTx2MTI2dr+EeZh/Y2H6WhcuHJEdzn21Vf76c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmzUCuGTMu2Enu066K6MlxzcZS1MfewfGcNYVntq0PjnMikPSE
+	2tAeTi7LMTDqJknO4FAxs+bLbpT4eihNyjXEZO7sRIj4S/XjAsjSECYmbg==
+X-Gm-Gg: ASbGncu5AG9wqrOgjQnnVtgEitB8o0swZ7atxv3+VXaW3rFa4VV1ldFzLpVFO2/VO5C
+	fANiCxb4fMhE2CpvJ22ncdmR6A9Z1aSZgNEYoYe9S7EbnaiQ1XHZ9+IHoO/RGPFgqGZA7ogh9fM
+	EL47d+Sh8cRFhUsKPR0IWGd/OxgIZ7r1pIt00R/FkpQUiNI0wqtUg6dlGPLuY/mLMljkgz0bEUL
+	WxEhAnu3MAKhWGEIOHtSfSy0rOBvGZXnspB1ltdnKjtLOv4kAVN8hhObUywNViQy7T2YFzn7nOT
+	GZs2h+4bbAtnjZW2CY7pJcBJFWbozkGbo9y2CRN4cW5CZRbDg5U+fHmrmizQkA==
+X-Google-Smtp-Source: AGHT+IFHQS6eEilAMEI1v2dpXp+IU6XYG73J/JaujKHloofn3UWJh/KpiJBv+PIkFgtREXUb4rjfCA==
+X-Received: by 2002:a17:902:d4c7:b0:21f:522b:690f with SMTP id d9443c01a7336-220bbc7f716mr104718035ad.46.1739432647807;
+        Wed, 12 Feb 2025 23:44:07 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:2a47:1135:5e3e:7a9a? ([2409:40c0:2e:ea4:2a47:1135:5e3e:7a9a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5367f38sm6685205ad.92.2025.02.12.23.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 23:44:07 -0800 (PST)
+Message-ID: <13c2e9c2-7faa-47f7-9e17-2bd21c34b0c5@gmail.com>
+Date: Thu, 13 Feb 2025 13:14:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <138b520fb83964782303b43ade4369cd181fdd9c.1739226950.git.ashish.kalra@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] af_unix: Fix undefined 'other' error
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net,
+ edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, skhan@linuxfoundation.org
+References: <20250210075006.9126-1-purvayeshi550@gmail.com>
+ <20250211003203.81463-1-kuniyu@amazon.com>
+ <dbdcff01-3c46-47f2-b2db-54f16facc7db@gmail.com>
+ <20250212104845.2396abcf@kernel.org>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <20250212104845.2396abcf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 10, 2025 at 10:54:18PM +0000, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
+On 13/02/25 00:18, Jakub Kicinski wrote:
+> On Wed, 12 Feb 2025 19:54:16 +0530 Purva Yeshi wrote:
+>>> The 5 lines of the 3 sentences above have trailing double spaces.
+>>> You may want to configure your editor to highlight them.
+>>>
+>>> e.g. for emacs
+>>>
+>>> (setq-default show-trailing-whitespace t)
+>>
+>> Thank you for pointing that out. I will ensure to check for such
+>> issues before submitting future patches.
 > 
-> Fix issues with enabling SNP host support and effectively SNP support
-> which is broken with respect to the KVM module being built-in.
-> 
-> SNP host support is enabled in snp_rmptable_init() which is invoked as
-> device_initcall(). SNP check on IOMMU is done during IOMMU PCI init
-> (IOMMU_PCI_INIT stage). And for that reason snp_rmptable_init() is
-> currently invoked via device_initcall() and cannot be invoked via
-> subsys_initcall() as core IOMMU subsystem gets initialized via
-> subsys_initcall().
-> 
-> Now, if kvm_amd module is built-in, it gets initialized before SNP host
-> support is enabled in snp_rmptable_init() :
-> 
-> [   10.131811] kvm_amd: TSC scaling supported
-> [   10.136384] kvm_amd: Nested Virtualization enabled
-> [   10.141734] kvm_amd: Nested Paging enabled
-> [   10.146304] kvm_amd: LBR virtualization supported
-> [   10.151557] kvm_amd: SEV enabled (ASIDs 100 - 509)
-> [   10.156905] kvm_amd: SEV-ES enabled (ASIDs 1 - 99)
-> [   10.162256] kvm_amd: SEV-SNP enabled (ASIDs 1 - 99)
-> [   10.171508] kvm_amd: Virtual VMLOAD VMSAVE supported
-> [   10.177052] kvm_amd: Virtual GIF supported
-> ...
-> ...
-> [   10.201648] kvm_amd: in svm_enable_virtualization_cpu
-> 
-> And then svm_x86_ops->enable_virtualization_cpu()
-> (svm_enable_virtualization_cpu) programs MSR_VM_HSAVE_PA as following:
-> wrmsrl(MSR_VM_HSAVE_PA, sd->save_area_pa);
-> 
-> So VM_HSAVE_PA is non-zero before SNP support is enabled on all CPUs.
-> 
-> snp_rmptable_init() gets invoked after svm_enable_virtualization_cpu()
-> as following :
-> ...
-> [   11.256138] kvm_amd: in svm_enable_virtualization_cpu
-> ...
-> [   11.264918] SEV-SNP: in snp_rmptable_init
-> 
-> This triggers a #GP exception in snp_rmptable_init() when snp_enable()
-> is invoked to set SNP_EN in SYSCFG MSR:
-> 
-> [   11.294289] unchecked MSR access error: WRMSR to 0xc0010010 (tried to write 0x0000000003fc0000) at rIP: 0xffffffffaf5d5c28 (native_write_msr+0x8/0x30)
-> ...
-> [   11.294404] Call Trace:
-> [   11.294482]  <IRQ>
-> [   11.294513]  ? show_stack_regs+0x26/0x30
-> [   11.294522]  ? ex_handler_msr+0x10f/0x180
-> [   11.294529]  ? search_extable+0x2b/0x40
-> [   11.294538]  ? fixup_exception+0x2dd/0x340
-> [   11.294542]  ? exc_general_protection+0x14f/0x440
-> [   11.294550]  ? asm_exc_general_protection+0x2b/0x30
-> [   11.294557]  ? __pfx_snp_enable+0x10/0x10
-> [   11.294567]  ? native_write_msr+0x8/0x30
-> [   11.294570]  ? __snp_enable+0x5d/0x70
-> [   11.294575]  snp_enable+0x19/0x20
-> [   11.294578]  __flush_smp_call_function_queue+0x9c/0x3a0
-> [   11.294586]  generic_smp_call_function_single_interrupt+0x17/0x20
-> [   11.294589]  __sysvec_call_function+0x20/0x90
-> [   11.294596]  sysvec_call_function+0x80/0xb0
-> [   11.294601]  </IRQ>
-> [   11.294603]  <TASK>
-> [   11.294605]  asm_sysvec_call_function+0x1f/0x30
-> ...
-> [   11.294631]  arch_cpu_idle+0xd/0x20
-> [   11.294633]  default_idle_call+0x34/0xd0
-> [   11.294636]  do_idle+0x1f1/0x230
-> [   11.294643]  ? complete+0x71/0x80
-> [   11.294649]  cpu_startup_entry+0x30/0x40
-> [   11.294652]  start_secondary+0x12d/0x160
-> [   11.294655]  common_startup_64+0x13e/0x141
-> [   11.294662]  </TASK>
-> 
-> This #GP exception is getting triggered due to the following errata for
-> AMD family 19h Models 10h-1Fh Processors:
-> 
-> Processor may generate spurious #GP(0) Exception on WRMSR instruction:
-> Description:
-> The Processor will generate a spurious #GP(0) Exception on a WRMSR
-> instruction if the following conditions are all met:
-> - the target of the WRMSR is a SYSCFG register.
-> - the write changes the value of SYSCFG.SNPEn from 0 to 1.
-> - One of the threads that share the physical core has a non-zero
-> value in the VM_HSAVE_PA MSR.
-> 
-> The document being referred to above:
-> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/revision-guides/57095-PUB_1_01.pdf
-> 
-> To summarize, with kvm_amd module being built-in, KVM/SVM initialization
-> happens before host SNP is enabled and this SVM initialization
-> sets VM_HSAVE_PA to non-zero, which then triggers a #GP when
-> SYSCFG.SNPEn is being set and this will subsequently cause
-> SNP_INIT(_EX) to fail with INVALID_CONFIG error as SYSCFG[SnpEn] is not
-> set on all CPUs.
-> 
-> Essentially SNP host enabling code should be invoked before KVM
-> initialization, which is currently not the case when KVM is built-in.
-> 
-> Add fix to call snp_rmptable_init() early from iommu_snp_enable()
-> directly and not invoked via device_initcall() which enables SNP host
-> support before KVM initialization with kvm_amd module built-in.
-> 
-> Add additional handling for `iommu=off` or `amd_iommu=off` options.
-> 
-> Note that IOMMUs need to be enabled for SNP initialization, therefore,
-> if host SNP support is enabled but late IOMMU initialization fails
-> then that will cause PSP driver's SNP_INIT to fail as IOMMU SNP sanity
-> checks in SNP firmware will fail with invalid configuration error as
-> below:
-> 
-> [    9.723114] ccp 0000:23:00.1: sev enabled
-> [    9.727602] ccp 0000:23:00.1: psp enabled
-> [    9.732527] ccp 0000:a2:00.1: enabling device (0000 -> 0002)
-> [    9.739098] ccp 0000:a2:00.1: no command queues available
-> [    9.745167] ccp 0000:a2:00.1: psp enabled
-> [    9.805337] ccp 0000:23:00.1: SEV-SNP: failed to INIT rc -5, error 0x3
-> [    9.866426] ccp 0000:23:00.1: SEV API:1.53 build:5
-> 
-> Fixes: c3b86e61b756 ("x86/cpufeatures: Enable/unmask SEV-SNP CPU feature")
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Vasant Hegde <vasant.hegde@amd.com>
-> Signed-off-by: Vasant Hegde <vasant.hegde@amd.com>
-> Cc: <Stable@vger.kernel.org>
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  arch/x86/include/asm/sev.h |  2 ++
->  arch/x86/virt/svm/sev.c    | 23 +++++++----------------
->  drivers/iommu/amd/init.c   | 34 ++++++++++++++++++++++++++++++----
->  3 files changed, 39 insertions(+), 20 deletions(-)
+> To be clear - please fix this and repost this patch
 
-For the IOMMU part:
+Thanks for the clarification. I'll fix the trailing spaces and repost 
+the patch shortly.
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
-
+Best Regards,
+Purva Yeshi
 
