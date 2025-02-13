@@ -1,81 +1,106 @@
-Return-Path: <linux-kernel+bounces-512563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7D7A33ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C347A33AD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046B3188798C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9CF43ABA2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262A32153DC;
-	Thu, 13 Feb 2025 09:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C32212F8F;
+	Thu, 13 Feb 2025 09:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4xw9V3n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FHKPeciZ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74333211A0D;
-	Thu, 13 Feb 2025 09:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36A820C490;
+	Thu, 13 Feb 2025 09:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739437798; cv=none; b=Oxd+/4Z7/ZeVsGp1lIG337jTNApa23wUhSzdI533JzRmJ0oiCe0c2guX+2gk0DTSCxYCyl+bYwfuJtbTPjMMwI5C/Fsyg+B2oRwKaf1Tlte9OtGw+PqzMGB9ZT3RMASBx0QJMb3jIhObZDMfw3qCY3xSLJ9fYSw0geQ58cHXMr0=
+	t=1739437867; cv=none; b=CsIvDdIN4mUAaVQQNc74/IdycF9+eK4nTKJlOAqYQ/z8+cTE6O8w3IQlnPiKEFNIlmtnLbwKEcD2/Uwn9YewluYWMEV8dysDnGCRD4Xa2tNPA2jLkxwQPa3L8KRrGwK4w+annoMKRsmX9GZrj41ZVJbD4sgfClOILPOgfhOAmnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739437798; c=relaxed/simple;
-	bh=yzTo+VSqdbP5hYD2auan7a+l2E2+Wwt1B7liKWHLG5U=;
+	s=arc-20240116; t=1739437867; c=relaxed/simple;
+	bh=UBgSTAr18iVKE29oD70Y3P8gPekBiga3WnTrcv0GM6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hE3M20ri2ObC9GezMnZeqDGGwZ7FF1jx5CNnEPFw1Ln1zaPbxmkHv48OANtiLpcA3CFoT4LWa1GSo8We+4nimJ2aWaxCrP7DRhJNhPEuEgw5q2RF93vnKGIgDOLZOvMA5vkHEbakajsk22kqW6zzshCYe4ERWXD20qWLMqNnDEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4xw9V3n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1E3C4CEE6;
-	Thu, 13 Feb 2025 09:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739437798;
-	bh=yzTo+VSqdbP5hYD2auan7a+l2E2+Wwt1B7liKWHLG5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A4xw9V3nRsRa6ghT9q+jymjVNL2RKfNOZ2YBFCEGAkzEyQWHExLusTZusYF8k7vaF
-	 kIkkKWGJEIZUucKG7cSvSytTwjgRa6WiLUGWQU9LX8JLeVoFewPLUv+ZIvDahdhSpZ
-	 E+k/ZRDjgWb0+NwPxPjtHcJuFMxFP3uwgeCBkI+nPdVsrj7vAKNw9LUrMXz3KWvzFm
-	 /qf9TC0syXuIecZUGTaFX8/+QF4Ug6oVsyAVx4sQ4uNP23Wj7HKcGu6dA0PkvSyHUQ
-	 mFZXoKFadv37t+Cdqk4Kb8sBcTAnJ/3kPdyGqvgCKEVDLwSEDPCLHPCzhnrAxoLAeJ
-	 Jl1FczADjsROA==
-Date: Thu, 13 Feb 2025 10:09:54 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
-	Marc Zyngier <maz@kernel.org>, Stan Skowronek <stan@corellium.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: pci: apple,pcie: Add t6020 support
-Message-ID: <20250213-faithful-ibex-of-feminism-3aea45@krzk-bin>
-References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
- <20250211-pcie-t6-v1-1-b60e6d2501bb@rosenzweig.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTDY506EWV639W7s37FhVygBQbIYasV+pWDXiJYl5bQQkMs0RCwt+L8Fzdh/KosogDLXFpFLYrRIyuGoNHDx1KPK1yPW48LmDgLV3xTpbTjfG9F2P5nYGCIiJ0Z6umKgmeSWjFKpJJxWqvPks66aGRH+YVYb/+ZNlilmjEAJyaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FHKPeciZ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KV5C98I/LRqywPZKUBEyHWkSBV5mfoVaexgU2HkSRYY=; b=FHKPeciZuEcM5wkuV85GDTvkeB
+	de68VNbqN90ENT8s2DIP+ji5goQOWCDVknZRxBG15appf1F0LAR/UzARWezSkdzyEOLAN9GWjAX9a
+	AozPbDPm4XZ2UnoEG/uEIiwQVt4+wHYevtV9wAU9hEnhGYXKKEI9lUvXfWzyYFb0SYNQ9OWFwmyAv
+	HJVJty0Ea/yyFw7+VvapEmG0Y1ML5mSHNPlB0e85RGmhC8U0V24500NtlGzE1+4neViZVoSHhwd8D
+	If330fBza54lqvfUfxO/rAwGfipdI0WFzBjZOtzOQxMem9mQVt6OxuVPeiIB4O64hBtH3wba4w0LA
+	Z7mckHBw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60554)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tiVFF-0000VT-0J;
+	Thu, 13 Feb 2025 09:10:54 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tiVFB-00021H-16;
+	Thu, 13 Feb 2025 09:10:49 +0000
+Date: Thu, 13 Feb 2025 09:10:49 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Qingfang Deng <dqfext@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net-next v2] net: ethernet: mediatek: add EEE support
+Message-ID: <Z623GQHI_FHyDyjE@shell.armlinux.org.uk>
+References: <20250210125246.1950142-1-dqfext@gmail.com>
+ <a42ec2d4-2e4f-4d1d-b204-b637c1106690@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211-pcie-t6-v1-1-b60e6d2501bb@rosenzweig.io>
+In-Reply-To: <a42ec2d4-2e4f-4d1d-b204-b637c1106690@redhat.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Feb 11, 2025 at 02:54:26PM -0500, Alyssa Rosenzweig wrote:
-> This shuffles some registers versus t6000, so requires a new compatible.
+On Thu, Feb 13, 2025 at 10:04:50AM +0100, Paolo Abeni wrote:
+> On 2/10/25 1:52 PM, Qingfang Deng wrote:
+> > Add EEE support to MediaTek SoC Ethernet. The register fields are
+> > similar to the ones in MT7531, except that the LPI threshold is in
+> > milliseconds.
+> > 
+> > Signed-off-by: Qingfang Deng <dqfext@gmail.com>
 > 
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> ---
->  Documentation/devicetree/bindings/pci/apple,pcie.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> @Felix, @Sean, @Lorenzo: could you please have a look?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+That would be a waste of time, because it's implementing the "old way"
+including using phy_init_eee() which Andrew wants to get rid of. It
+should be using phylink's EEE management.
 
-Best regards,
-Krzysztof
+The patches for the mt753x driver converting that over have now been
+apparently merged last night according to patchwork into net-next, but
+something's gone wrong because there's no updates to the git trees
+on korg,
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
