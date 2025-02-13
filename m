@@ -1,39 +1,85 @@
-Return-Path: <linux-kernel+bounces-512579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBB9A33B03
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B19EA33B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA46F1676B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE593A133E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254C21E376E;
-	Thu, 13 Feb 2025 09:17:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1471220DD52
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B920D20FAB2;
+	Thu, 13 Feb 2025 09:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDS3twiU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4486420DD40
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739438248; cv=none; b=kPR7JxL6oxX3LljBea+DxL435u3rja6WH8xH9vqgY4fzWu+2xXbGEfs5qplZ/2ikoK1cmv7fz5FrIMj7eCnhrTUcW4/hVrxDcKBzYesUzIRdE9Lh6jp8GGciOjYrNPNKSFa6NIQzpYB/EEp+BwHqjlR+6UEoVV6QHZnkNZ9UULw=
+	t=1739438281; cv=none; b=TQGeERLOzOx8df+cUw8pulgQnGCdeAEp8CkBl1rum1za2kOk98dmXH7Nx0B2pzK9Y3vTg6Dw7+iQZUAqnel7kgWvmob8Ju7cO6rJFjaetx+FxhI6xSAkL9RtN48HTCuNU445Wsteciyr4Ntw1IV8FrhecpwoC08G4g+q7GtiUPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739438248; c=relaxed/simple;
-	bh=DdugeuxOqHQNZlTbLN5Jexh2Jny3Fy3oSSJCljQIeA8=;
+	s=arc-20240116; t=1739438281; c=relaxed/simple;
+	bh=tZFHp6UCOiU6zKu3uGe+iZ5zxsFxAKP2QH0K61+Dvo8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hjg/87LinjjVb6jPwbk57FbJKB1yvBqu5BHYdGLNb7EirFGzd4Akaxclo9BRg40QFb1w23RZdHklok3k8a5AGFcfdnbKy0O3e60oG0BWkzQ3x49BHuy6NuMiZcDAskMRp35/Z9gTjy/8sx4e5nkc7KVceQtC95SMQ4H7/Kg0kEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F4C16F3;
-	Thu, 13 Feb 2025 01:17:46 -0800 (PST)
-Received: from [10.57.81.93] (unknown [10.57.81.93])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C1C53F58B;
-	Thu, 13 Feb 2025 01:17:23 -0800 (PST)
-Message-ID: <67bcb2f2-8cc1-43e3-b5cc-6c8ef5da8a95@arm.com>
-Date: Thu, 13 Feb 2025 09:17:21 +0000
+	 In-Reply-To:Content-Type; b=efcZIEmrBS6T8CM63Nbio0yfjzQ2/RWaLc2DzclJ33u2OyA1HMFWArOni6hYYUq7kyZcI7mv3FDvB4DVV4MNzL6P3XegKgl2yVys3Dm2vEpIP1pVdIRAQDClBr9/N0RqzIxXmE2SaobKAmVVzKS7VMUf1Srf5uILNYrsSgnG4jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PDS3twiU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739438278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gyhNP3qOlJ39umXMZfckH2nuz/m9WI3f5NG3i+yZUF4=;
+	b=PDS3twiUXT7kG3kZRHfQHEf3ZlRWS5CRBFp/KaL629RmVEHFAOi39oMMqTAXw00+/87XkL
+	jqd9hb7qGOVUwxhGwFxixjlfibJUbSlaRwFnzlHrHFvDAOXYtlqsyVj5J0uKHYdd9KF4Yy
+	6mOD3XvdCz9ORg3DRanl1O0iTpAVirs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-487-Lh494QMOMVyIX0zu2ezbVA-1; Thu, 13 Feb 2025 04:17:56 -0500
+X-MC-Unique: Lh494QMOMVyIX0zu2ezbVA-1
+X-Mimecast-MFC-AGG-ID: Lh494QMOMVyIX0zu2ezbVA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38dd5031ee7so318700f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:17:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739438275; x=1740043075;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gyhNP3qOlJ39umXMZfckH2nuz/m9WI3f5NG3i+yZUF4=;
+        b=pOsZaY1QYqwuRzN/LggWX06liuWJrultVK4z0TKrtrhfoHg/yFbN85zJZ4Uzv6wYbp
+         EvAaNIyX4NqjwdKSnbWWNN6+Ynnzjrm/LJKXx3OakkT9ujK493l26IsSin7EXeb2pZvf
+         m9SgO6Ldl+qqpNm81quPqBogbN476ofscDthCQFAGOpfR58GQX0grjnTFPiav7D7h/fv
+         SRAISIrJR4RbXxx9KpGlpx0oaaCMvPcGuQyDzRn9nZ5jq0XF+rmvVQMiScTXAdrLtUmt
+         nm+O//dNYeKPrvD/btVCZwCpLc8pG0zZagSBNJ6f7+tYiZqoWiFslXPZJgF4/IvFFRnZ
+         a8ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWM4kxTVQRKArsMqvtzptfR1cnLGJHZFl0JO2q/IG3O68ydcH2mzmuvoG6RWAPZdZnEh2wHHgebfllBNYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoBFY8jLRK3LD1LptvlEYQ/iBPWidlB+hc7WwTTgRgZ2niv030
+	kbRVCTd2kOTpAQF17Ht+l1ncQpaLpVsnfh67gw5EKiZLdOBV7qfZwUey30gg6K7ET4IO1rrdF2b
+	Q2pKXBTrYUvqfJZuW58M2Sjx34rbwh4ubfMfOUPUpT0KeF9sS9jb3Y14UINKGVA==
+X-Gm-Gg: ASbGnctKpDyz8AGjwBHDu2sqCCjVN2dBpq/ZPvVsj2GvATFAXiXJuwllFXjesur6Wmx
+	xiqsX05sP5zPO9shQ4LzpR8XLoOEyAzIfp9vtOaFFMaaWPkZ4FbDzrRkE4nL/Aa40JHO5Enihv6
+	vyLFL4bVJyDiZrz6SeLCYTVxKUqfQwtC2Ww7rKH46Pd/RGp8aQP7VYkozY8Ow16QIQRJ0T4zPSk
+	JBXolbo3yPIwmCdhmXBlxpZm0j7go6aUUSqhLpMjxx0lwa1IcXsYCvyI7i1R3z0aBYLQsE/CuKa
+	vLxaHXX6JTqLDFp151b3WHFauG7/3jvv6oQ=
+X-Received: by 2002:a5d:59ad:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-38dea2e8252mr5537700f8f.42.1739438275347;
+        Thu, 13 Feb 2025 01:17:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvdEpVIGWCwTdkiFI9VeLvCiv6OrrtGDZTcFYpY+kBOdDZTqd8HRvUuOkaOwq9itdXLKF4sg==
+X-Received: by 2002:a5d:59ad:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-38dea2e8252mr5537666f8f.42.1739438274976;
+        Thu, 13 Feb 2025 01:17:54 -0800 (PST)
+Received: from [192.168.88.253] (146-241-31-160.dyn.eolo.it. [146.241.31.160])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258cccdesm1314704f8f.26.2025.02.13.01.17.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 01:17:54 -0800 (PST)
+Message-ID: <2c294c0a-26c4-4ec5-992d-a2fd98829b16@redhat.com>
+Date: Thu, 13 Feb 2025 10:17:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,88 +87,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 15/16] mm: Generalize arch_sync_kernel_mappings()
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250205151003.88959-1-ryan.roberts@arm.com>
- <20250205151003.88959-16-ryan.roberts@arm.com>
- <43c256b6-7e44-41bb-b0c5-866fd4faab5c@arm.com>
- <ff93eb30-ddb6-476b-a209-3329d6e3b06f@arm.com>
- <d7c6edbc-957b-475b-b87c-db246ec1413f@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <d7c6edbc-957b-475b-b87c-db246ec1413f@arm.com>
+Subject: Re: [PATCH net-next v9 02/11] rtnetlink: Pack newlink() params into
+ struct
+To: Xiao Liang <shaw.leon@gmail.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alex.aring@gmail.com, andrew+netdev@lunn.ch,
+ b.a.t.m.a.n@lists.open-mesh.org, bpf@vger.kernel.org,
+ bridge@lists.linux.dev, davem@davemloft.net, donald.hunter@gmail.com,
+ dsahern@kernel.org, edumazet@google.com, herbert@gondor.apana.org.au,
+ horms@kernel.org, kuba@kernel.org, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-ppp@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
+ miquel.raynal@bootlin.com, netdev@vger.kernel.org,
+ osmocom-net-gprs@lists.osmocom.org, shuah@kernel.org,
+ stefan@datenfreihafen.org, steffen.klassert@secunet.com,
+ wireguard@lists.zx2c4.com
+References: <20250210133002.883422-3-shaw.leon@gmail.com>
+ <20250213065348.8507-1-kuniyu@amazon.com>
+ <CABAhCOTw+CpiwwRGNtDS3gntTQe7XESNzzi6RXd9ju1xO_a5Hw@mail.gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <CABAhCOTw+CpiwwRGNtDS3gntTQe7XESNzzi6RXd9ju1xO_a5Hw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
->>>> +/**
->>>> + * arch_update_kernel_mappings_end - A batch of kernel pgtable mappings have
->>>> + * been updated.
->>>> + * @start: Virtual address of start of range that was updated.
->>>> + * @end: Virtual address of end of range that was updated.
->>>> + *
->>>> + * An optional hook to inform architecture code that a batch update is complete.
->>>> + * This balances a previous call to arch_update_kernel_mappings_begin().
->>>> + *
->>>> + * An architecture may override this for any purpose, such as exiting a lazy
->>>> + * mode previously entered with arch_update_kernel_mappings_begin() or syncing
->>>> + * kernel mappings to a secondary pgtable. The default implementation calls an
->>>> + * arch-provided arch_sync_kernel_mappings() if any arch-defined pgtable level
->>>> + * was updated.
->>>> + *
->>>> + * Context: Called in task context and may be preemptible.
->>>> + */
->>>> +static inline void arch_update_kernel_mappings_end(unsigned long start,
->>>> +						   unsigned long end,
->>>> +						   pgtbl_mod_mask mask)
->>>> +{
->>>> +	if (mask & ARCH_PAGE_TABLE_SYNC_MASK)
->>>> +		arch_sync_kernel_mappings(start, end);
->>>> +}
+On 2/13/25 9:36 AM, Xiao Liang wrote:
+> On Thu, Feb 13, 2025 at 2:54 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> [...]
+>>> diff --git a/include/linux/if_macvlan.h b/include/linux/if_macvlan.h
+>>> index 523025106a64..0f7281e3e448 100644
+>>> --- a/include/linux/if_macvlan.h
+>>> +++ b/include/linux/if_macvlan.h
+>>> @@ -59,8 +59,10 @@ static inline void macvlan_count_rx(const struct macvlan_dev *vlan,
 >>>
->>> One arch call back calling yet another arch call back sounds bit odd. 
+>>>  extern void macvlan_common_setup(struct net_device *dev);
+>>>
+>>> -extern int macvlan_common_newlink(struct net *src_net, struct net_device *dev,
+>>> -                               struct nlattr *tb[], struct nlattr *data[],
+>>> +struct rtnl_newlink_params;
 >>
->> It's no different from the default implementation of arch_make_huge_pte()
->> calling pte_mkhuge() is it?
+>> You can just include <net/rtnetlink.h> and remove it from .c
+>> files, then this forward declaration will be unnecessary.
 > 
-> Agreed. arch_make_huge_pte() ---> pte_mkhuge() where either helpers can be
-> customized in the platform is another such example but unless necessary we
-> should probably avoid following that. Anyways it's not a big deal I guess.
-> 
+> OK. Was not sure if it's desirable to include include/net files from
+> include/linux.
+
+I think we are better of with the forward declaration instead of adding
+more intra header dependencies, which will slow down the build and will
+produces artifacts in the CI runs (increases of reported warning in the
+incremental build, as any warns from the included header will be
+'propagated' to more files).
+
+>>> +extern int macvlan_common_newlink(struct net_device *dev,
+>>> +                               struct rtnl_newlink_params *params,
+>>>                                 struct netlink_ext_ack *extack);
+>>>
+>>>  extern void macvlan_dellink(struct net_device *dev, struct list_head *head);
 >>
->>> Also
->>> should not ARCH_PAGE_TABLE_SYNC_MASK be checked both for __begin and __end
->>> callbacks in case a platform subscribes into this framework. 
 >>
->> I'm not sure how that would work? The mask is accumulated during the pgtable
->> walk. So we don't have a mask until we get to the end.
+>> [...]
+>>> diff --git a/include/net/rtnetlink.h b/include/net/rtnetlink.h
+>>> index bc0069a8b6ea..00c086ca0c11 100644
+>>> --- a/include/net/rtnetlink.h
+>>> +++ b/include/net/rtnetlink.h
+>>> @@ -69,6 +69,42 @@ static inline int rtnl_msg_family(const struct nlmsghdr *nlh)
+>>>               return AF_UNSPEC;
+>>>  }
+>>>
+>>> +/**
+>>> + *   struct rtnl_newlink_params - parameters of rtnl_link_ops::newlink()
+>>
+>> The '\t' after '*' should be single '\s'.
+>>
+>> Same for lines below.
 > 
-> A non-zero ARCH_PAGE_TABLE_SYNC_MASK indicates that a platform is subscribing
-> to this mechanism. So could ARCH_PAGE_TABLE_SYNC_MASK != 0 be used instead ?
+> This is copied from other structs in the same file. Should I change it?
 
-There are now 2 levels of mechanism:
+https://elixir.bootlin.com/linux/v6.13.2/source/Documentation/process/maintainer-netdev.rst#L376
 
-Either: arch defines ARCH_PAGE_TABLE_SYNC_MASK to be non-zero and provides
-arch_sync_kernel_mappings(). This is unchanged from how it was before.
-
-Or: arch defines it's own version of one or both of
-arch_update_kernel_mappings_begin() and arch_update_kernel_mappings_end().
-
-So a non-zero ARCH_PAGE_TABLE_SYNC_MASK indicates that a platform is subscribing
-to the *first* mechanism. It has nothing to do with the second mechanism. If the
-platform defines arch_update_kernel_mappings_begin() it wants it to be called.
-If it doesn't define it, then it doesn't get called.
+In this series, just use the good formatting for the new code.
 
 Thanks,
-Ryan
+
+Paolo
 
 
