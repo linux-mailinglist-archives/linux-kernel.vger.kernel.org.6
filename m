@@ -1,188 +1,88 @@
-Return-Path: <linux-kernel+bounces-513916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323ACA35032
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:07:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4E2A3503A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E69F116B97B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:07:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2227A5347
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0738269812;
-	Thu, 13 Feb 2025 21:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF3C269802;
+	Thu, 13 Feb 2025 21:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QzZvmcPQ"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJy2LAQb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66992698A7;
-	Thu, 13 Feb 2025 21:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDC9266B73;
+	Thu, 13 Feb 2025 21:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739480808; cv=none; b=bVCOqFaHnKMyxYRCfmh2CC5blyxRL3dG++Kvw0EvfLbbSGqyo5RfFy2kPsbaTV1+E6BhENNHRNuz1d/+3+QskdcyhOYQ1kPnoVGLnt5MmasxDCAGeuAMEqHw1X6ZSPnF688fcAlMa7GVkajm55x27XLNonipOk9+GNPqPKpdtKc=
+	t=1739480858; cv=none; b=NFjJOjA2NQOk620kiTBoYhh6xGySKQEUJSH/XhW7df9yx6hhqAMjjlKJLBpEvqUQxdYY6NQBULBQQ3n7PINSbxmvQSzBWekhZMnlEVhSuj6MTTxfATEXwcp+6mZeNkgj8AzC2nnXQimMMhOKnea9mylupbJIZEYkcakh6HVEvVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739480808; c=relaxed/simple;
-	bh=MqX8yGdjZfKsnWm26teUdp1QQyFQ8CTu3YhcUTzLJ90=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mxp6Qbxz1/+jhzCtFMy/gavN2mDSSU9zyrf/w5gPXG45tZYuUxTkEb+RtVPrLAelC4ME74dfb+1Ho0W++61YBkqvaPd9G8V6KJYMnU9KjesLEkCgEpj0BIYvSd/Oz3Kdjr8JXR0CAao7mPvRPRQ8LVChwxsC50scCpnss+Plo0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QzZvmcPQ; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A3A13440EA;
-	Thu, 13 Feb 2025 21:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739480803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/RrLWIXf4/dLUY89jPfVENxi4hWrbWl7h6YxyRzQyMU=;
-	b=QzZvmcPQo9X5fDpSORzylrRO/Q/OdB0KdxtS5BPna0CDfRfeO4Wsm9Em6qEc9Lqxbas9/L
-	zeYiz+NCs899b+tGYydjQWKSCLTPXgE7lRZxrWU4oFUNMAMU2yISKhhpZJLxraJuminz1T
-	V80xesALUQr4mrf3Dr7DP7AuOs3JqWZZ2Jyl7Oa8QVn8gN+v+rgYk/Lbxf25pVa6cZSDxf
-	NriJJQkazv/OFlIY6jtqAXL0Giz8CVrTdr8Sv4AMd9Ly4+b1aqvZqo3gbVxt9uRjFbOPms
-	SMhtt+LbP6q6Hmjy9rWzmMmN4UhujAfimZnjqrjJtmtU2OyoaSY0zy1u/kQ53A==
-Date: Thu, 13 Feb 2025 22:06:39 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
- <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
- "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
- <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
- brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
- dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
- kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
- list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
- ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
- lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
- manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
- thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
- <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <20250213220639.373da07b@bootlin.com>
-In-Reply-To: <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
-	<20250213171435.1c2ce376@bootlin.com>
-	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
-	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
-	<821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
-	<CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
-	<20250213195304.3a2df02c@bootlin.com>
-	<CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739480858; c=relaxed/simple;
+	bh=TafgeYLB37luVrkS85uWHNNuJq8xdW6/RJc0El72wMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7PgkO0lKFV0vqyc0MAGIWaoqqq4s9XhpDDviDLHaoToXHDxOwXRzW8s0Hc4nN+jB6cOSTnNS+zsvMHshlAdOaDXskscXZ3RwkIOv3wAJosiY+z45wWv1SPqFP8HR7V4NzLLusp9yq+vYJFCDNnckJzzIB6OYdF2LP0bRHeLVhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJy2LAQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70487C4CED1;
+	Thu, 13 Feb 2025 21:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739480857;
+	bh=TafgeYLB37luVrkS85uWHNNuJq8xdW6/RJc0El72wMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YJy2LAQbyodyu4wy4pWNS45Qz6mC4wZlLuVDkX94l3VbK8m3WsLD+ng4WmkaSSKBm
+	 hJvS5qvDYTbN/RUdfEMgvr99IWFALh6UvqD7PtM2199k9Wn6HVID4iVT8HdPKCNi+2
+	 PbVddaPCoS21/BjPrM2761cr6WFCiblmgok0i4TOB0WpkxVvytG0LkuMOH+RZ6prQz
+	 SgJpJ1hvoqWcHG+ojLILZTgoZGHvSmkbRP2hDl2vwHBsMLC7CscdQW6y3ekmWSkdWp
+	 I5fGf1HDEhnhTHTmFoDss1XGkTtmKBnhju4sPjvV1DoKGTOt2AlaOwRJW++QnKcDn9
+	 guhXz42cDwq8g==
+Date: Thu, 13 Feb 2025 21:07:33 +0000
+From: Daniel Thompson <danielt@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Haoyu Li <lihaoyu499@gmail.com>, Lee Jones <lee@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Rob Herring <robh@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chenyuan0y@gmail.com, zichenxie0106@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] drivers: video: backlight: Fix NULL Pointer Dereference
+ in backlight_device_register()
+Message-ID: <Z65fFRKgqk-33HXI@aspen.lan>
+References: <20250130145228.96679-1-lihaoyu499@gmail.com>
+ <87ldun6u5o.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeehpdhrtghpthhtohepphhhihhlsehrrghsphgsvghrrhihphhirdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtoheprghnughrvggrrdhpohhrthgrsehsuhhsvgdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheps
- ggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldun6u5o.fsf@intel.com>
 
-Hi Phil,
+On Mon, Feb 03, 2025 at 03:21:23PM +0200, Jani Nikula wrote:
+> On Thu, 30 Jan 2025, Haoyu Li <lihaoyu499@gmail.com> wrote:
+> > In the function "wled_probe", the "wled->name" is dynamically allocated
+> > (wled_probe -> wled_configure -> devm_kasprintf), which is possible
+> > to be null.
+> >
+> > In the call trace: wled_probe -> devm_backlight_device_register
+> > -> backlight_device_register, this "name" variable is directly
+> > dereferenced without checking. We add a null-check statement.
+> >
+> > Fixes: f86b77583d88 ("backlight: pm8941: Convert to using %pOFn instead of device_node.name")
+> > Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
+> > Cc: stable@vger.kernel.org
+>
+> IMO whoever allocates should be responsible for checking NULL instead of
+> passing NULL around and expecting everyone check their input for NULL.
 
-On Thu, 13 Feb 2025 20:15:06 +0000
-Phil Elwell <phil@raspberrypi.com> wrote:
+Agreed. This should be fixed in at callsites.
 
-> Once more, with plain text, which I'd hoped the Android GMail client
-> would work out for itself.
-> 
-> On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com> wrote:
-> >
-> > Hi Phil,
-> >
-> > On Thu, 13 Feb 2025 17:57:37 +0000
-> > Phil Elwell <phil@raspberrypi.com> wrote:
-> >  
-> > > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:  
-> > > >  
-> > > > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > > > > > fan are directly on this custom board? You then want a board DTS which
-> > > > > > includes all these pieces?  
-> > > > >
-> > > > > That depends on whether you count the Raspberry Pi 5 as a custom board.  
-> > > >
-> > > > So you mean the Pi 5 board would itself make use of the resources the
-> > > > RP1 device has? They are not simply connected to headers for plugin
-> > > > boards, but used by the main board? Hence you want to describe them in
-> > > > the board .DTS file.  
-> > >
-> > > That's correct. But even for plug-in devices, those which are on
-> > > non-discoverable buses need overlays to declare them, which causes a
-> > > problem when the overlay application happens before the kernel is
-> > > started.
-> > >  
-> >
-> > Hum, I see.
-> >
-> > We worked on overlay usage on non-discoverable buses wired to a connector
-> > and we did a talk about issues we are facing on at Plumber [0].
-> >
-> > You can also find our big picture in [1] and a last contribution introducing
-> > export-symbols feature in [2]. export-symbols is also under discussion on
-> > some other threads.
-> >
-> > Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
-> > an addon board to add devices on an i2c bus provided by a base board and
-> > wired to an connector the addon board is connected to.
-> >
-> > Maybe in your case, you can decouple resources (gpio, pwm) provided by the
-> > addon board and used by the base board using also nexus node.
-> >
-> > We use a nexus node [4] (not presented at the Plumbers talk because the idea
-> > came during 'out of talk' discussions in Plumbers) in order to allow our
-> > addon board to use resources provided by the base board.
-> >
-> > In your case, if I understood, you are in the other direction but why not
-> > using also a nexus node to decouple and translate resources in this other
-> > direction ?
-> >
-> > Don't know if this idea can help but feel free to ask for some more
-> > information if needed.  
-> 
-> Nexus nodes look interesting - I see them as adding a layer of
-> abstraction such that, for example, boards can declare which of their
-> specific resources performs a common function so that clients can
-> treat them all the same. We do the same thing in a limited way by
-> using common labels on nodes, but this goes much further.
-> 
-> In the case of Pi 5 and RP1, I imagine you are proposing that the Pi 5
-> dtb declares the connector node and the overlay fills in the content
-> with references to its GPIO controller, PWM controller etc. However, I
-> think the overlay would also have to be board specific because it's
-> not possible to patch part of a property from an overlay, so you'd end
-> up overwriting the GPIO number as well as the controller reference.
-> 
-> What is needed to make this work is the ability to cope with
-> unresolved references in the base dtb, to be resolved as each overlay
-> is applied, with runtime checking that each reference is resolved
-> before it is used, all of which sounds like a nightmare. Plus, we
-> really don't want to have to change the way all our camera and display
-> overlays work on all Raspberry Pis just to accommodate somebody's idea
-> of how RP1 should be handled.
 
-Just to be clear, my comments were not there to tell you how RP1 should
-work. I just proposed ideas without trying to force anything and I can
-fully understand that ideas proposed don't feed your needs.
-
-Sorry if my approach was misunderstood.
-
-Best regards,
-Hervé
+Daniel.
 
