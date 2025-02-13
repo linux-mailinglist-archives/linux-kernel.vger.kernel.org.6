@@ -1,238 +1,122 @@
-Return-Path: <linux-kernel+bounces-512763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4658A33D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6859A33D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0311888B38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877701885A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EB321519A;
-	Thu, 13 Feb 2025 11:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8DB2144CB;
+	Thu, 13 Feb 2025 11:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NIgwJXjN"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3B6so7R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B99214238;
-	Thu, 13 Feb 2025 11:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898421323A;
+	Thu, 13 Feb 2025 11:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444919; cv=none; b=inyAkcEJUhzYJXNG9pMI9L3ebbbu0BdtMqS8GEWtKQ0DvRqCZdQYBMBBNR6JZdOkh0K/3E9/Glre6UpaUdJx1L8E4he5P5SjgOrsD9V4WWJDjUVvizK4NgDrBaWwdJGMAqtlQWg5wYBOfKfw8lvVDmU8x1a8Yk3xGWXIBFJcpnY=
+	t=1739444918; cv=none; b=R6Hd7JgEBv5Pmtn76OjEezchct1QbEp+5KSoRv5hGalOtpS1mlkHAdmcY3Z2d04x+ey1d2Vb6k3+xK0VvyDDc4mk0hAZeJvJeqTfYhA2e/EmRl/Jbtz0yZ+Cih6f5Z3HhkgoF8ygF1HMovTnGHbygB6OAAHDnI1ZNVkn20N5YF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444919; c=relaxed/simple;
-	bh=EOBiQL2i0ZXLCxz8ZRPi5i6PvJHEc5UOe7SQ5492xeI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d+2L9N6nydX+bzPd4IzyRa0w4d/fddKA1FixtByWXCInUQvXrH/OqSYcwJb2mJnjAHMitT6MDwm00q73VeMf41YFOTUUo5OjhkRAHuHjQAKFUrPLvtf+fnC9TTtKQwvHoBKyfe88bufamotbvnRmLVNx5afil6wcurac/gKPw1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NIgwJXjN; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DznlSHtJ15TXUJBEI7kzkOuDVk92KIybVPX2ql7XlRc=; b=NIgwJXjNiNh4TOL4r74Z1Wm82s
-	RlWiIxFQXEyRa2Kj2qNTxUQPo+yE0teNHh0p0/cCtJcFVLN6euqFY25Bcsrl9tc7nc4Dnl8AkAOi7
-	pwqF56OvbU2wpgaLfVYAXFi0DqKkgBeY2Cf5NpBOYtA+ua9X9haOnrxZtChDx80mMmoSAShRawLxD
-	juem+hTJD98dXAd6/gYxoVo+dftZbjzxjI/9TmoyZ2jNndcc/CWQ+sxCzEosVrypFzPypl3/rpZKv
-	p3gIRUGoT4/iOxLpD/KQyTAOVqZXZ7s7u59v47O6Csg9VfiYNZILJK0C9I1E5wzKIEX4K4rfH4L5+
-	hoyqfPjA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tiX4x-00AAdl-0g; Thu, 13 Feb 2025 12:08:28 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
-  Bernd Schubert <bschubert@ddn.com>,  Joanne Koong
- <joannelkoong@gmail.com>
-Subject: Re: [PATCH v4] fuse: add new function to invalidate cache for all
- inodes
-In-Reply-To: <Z60bD3C_p_PHao0n@dread.disaster.area> (Dave Chinner's message of
-	"Thu, 13 Feb 2025 09:05:03 +1100")
-References: <20250211092604.15160-1-luis@igalia.com>
-	<Z6u5dumvZHf_BDHM@dread.disaster.area> <875xlf4cvb.fsf@igalia.com>
-	<Z60bD3C_p_PHao0n@dread.disaster.area>
-Date: Thu, 13 Feb 2025 11:08:28 +0000
-Message-ID: <87mseqcdar.fsf@igalia.com>
+	s=arc-20240116; t=1739444918; c=relaxed/simple;
+	bh=NzeAgOEUcs1QCtjHEiz1U/3sMurLrKohd3+BYTsEIm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqT/vxyLQy6h+puhu3yhrWY7HcIrGRPWJcacdx90lC1d+D8ExTy2WQyCWsKma0nd4pzEHNL+4TuvGLfoIdBmhzE/YC2jSVzP492fD7yZr674yXkqXJvb7kprx9/ZW6zC1AV+vuU69+N9WC3zsNesKNR3Ao1YLATbj1oEBNC1j6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3B6so7R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EDCC4CED1;
+	Thu, 13 Feb 2025 11:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739444917;
+	bh=NzeAgOEUcs1QCtjHEiz1U/3sMurLrKohd3+BYTsEIm4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f3B6so7RtGdEdY1n55i816+qWWtGUmOwoJrHGIYJj4ODxYsSHFcw5V9tDasFO13uL
+	 Ns7IjsoQX2V/8YMlGLXQJfUIhXUi6gQXBkmKGsfXlQCxsNcvSCagCX2uhmYxGF0I5P
+	 W8L5bRG7L13FGtzZ2LyDbc2knelqlxARTmY5Y4MtTBkScvF5UQF8dilWWEWptQcfi6
+	 tSf3MnZBS2iV2tubIoE15GRZ3/nQ8EjgKIcxnOqtJuE+UK40d+lew/BAQX1VMR02yV
+	 Xxpv1cRNhW7CaNEiKLD2CkQegwmWXUcrNF8+Ds/pjsyMTcBOzRJxg77PxQK6GUZ+Mi
+	 A0Dk3gPTPj+RA==
+Message-ID: <5d3c0ffd-2661-415c-8008-3f09523a82af@kernel.org>
+Date: Thu, 13 Feb 2025 12:08:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: fix gpio0 address
+To: niravkumar.l.rabara@intel.com, Dinh Nguyen <dinguyen@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, nirav.rabara@altera.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13 2025, Dave Chinner wrote:
+On 13/02/2025 11:50, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> 
+> Use the correct gpio0 address for Agilex5.
+> 
+> Fixes: 3f7c869e143a ("arm64: dts: socfpga: agilex5: Add gpio0 node and spi dma handshake id")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> ---
 
-> On Wed, Feb 12, 2025 at 11:32:40AM +0000, Luis Henriques wrote:
->> On Wed, Feb 12 2025, Dave Chinner wrote:
->>=20
->> > [ FWIW: if the commit message directly references someone else's
->> > related (and somewhat relevant) work, please directly CC those
->> > people on the patch(set). I only noticed this by chance, not because
->> > I read every FUSE related patch that goes by me. ]
->>=20
->> Point taken -- I should have included you on CC since the initial RFC.
->>=20
->> > On Tue, Feb 11, 2025 at 09:26:04AM +0000, Luis Henriques wrote:
->> >> Currently userspace is able to notify the kernel to invalidate the ca=
-che
->> >> for an inode.  This means that, if all the inodes in a filesystem nee=
-d to
->> >> be invalidated, then userspace needs to iterate through all of them a=
-nd do
->> >> this kernel notification separately.
->> >>=20
->> >> This patch adds a new option that allows userspace to invalidate all =
-the
->> >> inodes with a single notification operation.  In addition to invalida=
-te
->> >> all the inodes, it also shrinks the sb dcache.
->> >
->> > That, IMO, seems like a bit naive - we generally don't allow user
->> > controlled denial of service vectors to be added to the kernel. i.e.
->> > this is the equivalent of allowing FUSE fs specific 'echo 1 >
->> > /proc/sys/vm/drop_caches' via some fuse specific UAPI. We only allow
->> > root access to /proc/sys/vm/drop_caches because it can otherwise be
->> > easily abused to cause system wide performance issues.
->> >
->> > It also strikes me as a somewhat dangerous precendent - invalidating
->> > random VFS caches through user APIs hidden deep in random fs
->> > implementations makes for poor visibility and difficult maintenance
->> > of VFS level functionality...
->>=20
->> Hmm... OK, I understand the concern and your comment makes perfect sense.
->> But would it be acceptable to move this API upper in the stack and make =
-it
->> visible at the VFS layer?  Something similar to the 'drop_caches' but wi=
-th
->> a superblock granularity.  I haven't spent any time thinking how could
->> that be done, but it wouldn't be "hidden deep" anymore.
->
-> I'm yet to see any justification for why 'user driven entire
-> filesystem cache invalidation' is needed. Get agreement on whether
-> the functionality should exist first, then worry about how to
-> implement it.
->
->> >> Signed-off-by: Luis Henriques <luis@igalia.com>
->> >> ---
->> >> * Changes since v3
->> >> - Added comments to clarify semantic changes in fuse_reverse_inval_in=
-ode()
->> >>   when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
->> >> - Added comments to inodes iteration loop to clarify __iget/iput usage
->> >>   (suggested by Joanne)
->> >> - Dropped get_fuse_mount() call -- fuse_mount can be obtained from
->> >>   fuse_ilookup() directly (suggested by Joanne)
->> >>=20
->> >> (Also dropped the RFC from the subject.)
->> >>=20
->> >> * Changes since v2
->> >> - Use the new helper from fuse_reverse_inval_inode(), as suggested by=
- Bernd.
->> >> - Also updated patch description as per checkpatch.pl suggestion.
->> >>=20
->> >> * Changes since v1
->> >> As suggested by Bernd, this patch v2 simply adds an helper function t=
-hat
->> >> will make it easier to replace most of it's code by a call to function
->> >> super_iter_inodes() when Dave Chinner's patch[1] eventually gets merg=
-ed.
->> >>=20
->> >> [1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbi=
-t.com
->> >
->> > That doesn't make the functionality any more palatable.
->> >
->> > Those iterators are the first step in removing the VFS inode list
->> > and only maintaining it in filesystems that actually need this
->> > functionality. We want this list to go away because maintaining it
->> > is a general VFS cache scalability limitation.
->> >
->> > i.e. if a filesystem has internal functionality that requires
->> > iterating all instantiated inodes, the filesystem itself should
->> > maintain that list in the most efficient manner for the filesystem's
->> > iteration requirements not rely on the VFS to maintain this
->> > information for it.
->>=20
->> Right, and in my use-case that's exactly what is currently being done: t=
-he
->> FUSE API to invalidate individual inodes is being used.
->>
->> This new
->> functionality just tries to make life easier to userspace when *all* the
->> inodes need to be invalidated. (For reference, the use-case is CVMFS, a
->> read-only FS, where new generations of a filesystem snapshot may become
->> available at some point and the previous one needs to be wiped from the
->> cache.)
->
-> But you can't actually "wipe" referenced inodes from cache. That is a
-> use case for revoke(), not inode cache invalidation.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I guess the word "wipe" wasn't the best choice.  See below.
-
->> > I'm left to ponder why the invalidation isn't simply:
->> >
->> > 	/* Remove all possible active references to cached inodes */
->> > 	shrink_dcache_sb();
->> >
->> > 	/* Remove all unreferenced inodes from cache */
->> > 	invalidate_inodes();
->> >
->> > Which will result in far more of the inode cache for the filesystem
->> > being invalidated than the above code....
->>=20
->> To be honest, my initial attempt to implement this feature actually used
->> invalidate_inodes().  For some reason that I don't remember anymore why I
->> decided to implement the iterator myself.  I'll go look at that code aga=
-in
->> and run some tests on this (much!) simplified version of the invalidation
->> function your suggesting.
->
-> The above code, while simpler, still doesn't resolve the problem of
-> invalidation of inodes that have active references (e.g. open files
-> on them). They can't be "invalidated" in this way - they can't be
-> removed from cache until all active references go away.
-
-Sure, I understand that and that's *not* what I'm trying to do.  I guess
-I'm just failing to describe my goal.  If there's a userspace process that
-has a file open for an inode that does not exist anymore, that process
-will continue using it -- the user-space filesystem will have to deal with
-that.
-
-Right now, fuse allows the user-space filesystem to notify the kernel that
-*one* inode is not valid anymore.  This is a per inode operation.  I guess
-this is very useful, for example, for network filesystems, where an inode
-may have been deleted from somewhere else.
-
-However, when user-space wants to do this for all the filesystem inodes,
-it will be slow.  With my patch all I wanted to do is to make it a bit
-less painful by moving the inodes iteration into the kernel.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> i.e. any operation that is based on the assumption that we can
-> remove all references to inodes and dentries by walking across them
-> and dropping cache references to them is fundamentally flawed. To do
-> this reliably, all active references have to be hunted down and
-> released before the inodes can be removed from VFS visibility. i.e.
-> the mythical revoke() operation would need to be implemented for
-> this to work...
->
-> -Dave.
->
-> --=20
-> Dave Chinner
-> david@fromorbit.com
-
+Best regards,
+Krzysztof
 
