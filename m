@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-513804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9F9A34EDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631DFA34EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78403AC452
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D473A960D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F1320764A;
-	Thu, 13 Feb 2025 19:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D778324A06F;
+	Thu, 13 Feb 2025 19:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j3cQLwhw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="KV6je5oO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jNKk9yU4"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B2524BC11;
-	Thu, 13 Feb 2025 19:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E400B245B05;
+	Thu, 13 Feb 2025 19:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476591; cv=none; b=CQnuFkY/lo2wkA8BNZ4NPjFlsPi4J6ld/YlfaLxw2/VxaJ2qOWVSYLj9ZPDEOENRjA44k8I0Qwyw9cPBW2lDd7vKGgWE77FsKcDdy7AYB+SYI+NA1uJP1rWYfk0PPPQRuBwb1t707OvloApcH+oHE+xKpu8i2+3WRLRovmdSV78=
+	t=1739476321; cv=none; b=sVZxW6ymSfSmJmJx8tf9PykTDDIYxTwjeyf49jf8efNPdGOmhav6k+Ot4tfF2nNeVOB+srByfXAvMA2QqHSxokeUWIcifqviYWZ3oFa7SPbuUy1YetipuYRFDi+V6g/+I763gD8gxK4Vm0WQV29WHqY6p2a6fHmYG265YnsHPvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476591; c=relaxed/simple;
-	bh=PJmRW2KaIfrpizikoDdSsfo6z+i8RUkbQGWcNuTn1m8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gYFj9qTE5KMEK5JlhZjflrXMS+Fc+37SK1eL9lgMJQ6nNmnb/fHmWsRjKcalbvdg/TM/3ilD/ez2yR964HP+/3Cb/2b1zV424WkSuzA96H5fbJgo1+Q090kXLiZtUvU0AvmmKSd4LkCEFRm7ByFyfk2Bu5PSVBo8EOvGhQPbSkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j3cQLwhw; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739476589; x=1771012589;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PJmRW2KaIfrpizikoDdSsfo6z+i8RUkbQGWcNuTn1m8=;
-  b=j3cQLwhw9rrmcchGmrcWd9LFA+yE/jHi5WXKAU+LZyv/Iq5oKQzo0waB
-   m7cOsMQ5qPY9s+yy228BGX5RJEtbtLB0i254/wGfrE6a8uhW6iAJg9SwT
-   kQMtTvlaXFw9iuJ6/qrNehe88OworooHFvArOSYrNoLdBIvT/1kYZnzT6
-   f0MUWVjaBiIZL+ysK4lFoIowA4wQveL3ccw+zrGYd0lytFEKdHrVWk3ua
-   PM7pVU/S3tUxTvvp/j+3USpiGNPHOjWOmSPcqwzSZj27uPluMqg40ze+m
-   rxWnJmpqh62MWq5K8jKuT9mmoVVBjTB2nHI0LEiNtKeskZEfQk1vPt6aE
-   g==;
-X-CSE-ConnectionGUID: moXuq2SQShKtqD4nmSPN8w==
-X-CSE-MsgGUID: KuzlKpVdRk6ADCdn4d8gjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40078548"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40078548"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:56:28 -0800
-X-CSE-ConnectionGUID: I+8HbDY6RvGH7W7Paeh5Rw==
-X-CSE-MsgGUID: AZJKqqLORUODhGoCsOzjWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150421164"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 13 Feb 2025 11:56:27 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3E6673BA; Thu, 13 Feb 2025 21:56:22 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: [PATCH v1 5/5] gpio: regmap: Allow ngpio to be read from the property
-Date: Thu, 13 Feb 2025 21:48:50 +0200
-Message-ID: <20250213195621.3133406-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
-In-Reply-To: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1739476321; c=relaxed/simple;
+	bh=dvNGHrTeA6ys468eoHNYSsVhvMpC15PcGXt3+qXaffg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AT39sSkdu0vPHqZ54LCgLBWVVQ5fMi5ITySqIaFIJucWsXHE9brmzN72/zRZD1DEuwmDvTG5+nm5sWvl5/5r0tw8D5oSqGrmCO8nPFKWs0CdxGDgjOYrin+Gw3B6VuDs/2nNDUoJw4kxdIbGj2Kvdkfg2kSdmj/+55jm20TeoOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=KV6je5oO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jNKk9yU4; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DC5611140222;
+	Thu, 13 Feb 2025 14:51:57 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-10.internal (MEProxy); Thu, 13 Feb 2025 14:51:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1739476317; x=1739562717; bh=+1icS1ornuLOryc0NeZcleF/lysfwDHd
+	eIVIyTWVEzA=; b=KV6je5oOvDIlLt2IcOKKIavwfangEhqoB+zLeVLNjrhtb8ga
+	ko1I6oJrJzwJI0euTefgVhxm2kbY5xzyv2RV2XCFsCh7EnNqhbcvsRqV8TUI4Lsz
+	A3xdPdxGbH2jaoJGSDReNrRP3Mm0/JXhOouR4F7Aendba5svC5sVxkdbwzXI2lR8
+	D7ITQRsq4RMkmL2/PwqTGWO2IcgAGRQ4y5sz03KJ/NAh2wWA8sJBmdjeo5T2CnoN
+	TAC1AUr9D+bRPVP885VVIcHpLCS3Efyr83E6Y1jACHBmlbkBYVW//mF91GcdjpOy
+	lvcME+rNn7EC0Ob76NDXPOjKN7Z6cjgXTuokYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739476317; x=
+	1739562717; bh=+1icS1ornuLOryc0NeZcleF/lysfwDHdeIVIyTWVEzA=; b=j
+	NKk9yU4fJCx9uyRFkIOvviP8jixh33cVwdZSooMJ+mN45xl1qK8kPJ7gtQazgoKg
+	gZzzEtUpWM6MCbI0bVduq4FqPWQNZtmrc1oChTGj1eom9nJ9B5a/t5u3RuXXUzv0
+	6LAOM6CnoVuwaQHvVMzs88DEEWNPqzWjzaCa9nD1AlPjhsNsFY0/LrblA3ciQszb
+	va8AgUyDnN6tFl1In4C/7l1xs7JqONRMoyx5Gh3tLOm8qo7ZYXNMGS6F9EYtOZur
+	LQmqHnXKQXfpWzEbnJdfTElldsIwW7ZMMBVKMiVI7ToQDzO4tCtW+tdBKV1akjYx
+	cwbUuyl/aST1GzFrV7+lg==
+X-ME-Sender: <xms:XU2uZybhXhFLU0OeqFw5r7L3mpSEfL0QlDD6zoef10vdrtLeWXWdwA>
+    <xme:XU2uZ1YdrG79cucHNEjBZ2JiNE7dxcAYNFCF6qEx33LDHyzJK7N-rQANe6tywi4bv
+    BnyIcJJWSdZvs02QqM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeeiiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
+    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
+    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
+    tghpthhtohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgrnhestg
+    horhgvlhhlihhumhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgv
+    rdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghr
+    rghlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgriieskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehm
+    rghnihhvrghnnhgrnhdrshgrughhrghsihhvrghmsehlihhnrghrohdrohhrghdprhgtph
+    htthhopehkfieslhhinhhugidrtghomh
+X-ME-Proxy: <xmx:XU2uZ88ZTFgef8cAWzc8dX8o9v685TS2_ZzLi1GHY__qmJsqtlyaSQ>
+    <xmx:XU2uZ0pjTonlmsWbpyay6fwx5DEuaYtHCISTD-LlOH_Rt5IW_YyOfg>
+    <xmx:XU2uZ9qGENScLPwOvIevVSsLZZr_mP0EvPTI5fjO6sPoTgr-C4H8LA>
+    <xmx:XU2uZyTjDwJjL5mJ7S5FefJZ0FIiRnjdZGnvxbGeCdqbxiJwG7hfiA>
+    <xmx:XU2uZzZKl2o40-GDvILbgU7vTYyK6xpADGju3BZ9aQPnlOz7YPfR1-yP>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0C5C3BA0070; Thu, 13 Feb 2025 14:51:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 13 Feb 2025 20:51:31 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Marc Zyngier" <maz@kernel.org>,
+ "Alyssa Rosenzweig" <alyssa@rosenzweig.io>
+Cc: "Hector Martin" <marcan@marcan.st>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Mark Kettenis" <kettenis@openbsd.org>,
+ "Stan Skowronek" <stan@corellium.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <ae7bdc0c-c691-43a7-8cd7-b1c22c7623c0@app.fastmail.com>
+In-Reply-To: <86y0ybsd0d.wl-maz@kernel.org>
+References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
+ <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
+ <86y0ybsd0d.wl-maz@kernel.org>
+Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-GPIOLIB supports the case when number of supported GPIOs can be read
-from the device property. Enable this for drivers that are using
-GPIO regmap layer.
+Hi,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-regmap.c  | 13 +++++++++----
- include/linux/gpio/regmap.h |  2 +-
- 2 files changed, 10 insertions(+), 5 deletions(-)
+On Wed, Feb 12, 2025, at 10:55, Marc Zyngier wrote:
+> On Tue, 11 Feb 2025 19:54:32 +0000,
+> Alyssa Rosenzweig <alyssa@rosenzweig.io> wrote:
+>> 
+>> From: Hector Martin <marcan@marcan.st>
+>> 
+>> This version of the hardware moved around a bunch of registers, so we
+>> drop the old compatible for these and introduce register offset
+>> structures to handle the differences.
+>> 
+>> Signed-off-by: Hector Martin <marcan@marcan.st>
+>> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+>> ---
+>>  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++------
+>>  1 file changed, 105 insertions(+), 20 deletions(-)
+>> 
+>> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
+>> index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac61143ae1d3ed744 100644
+...
+>
+>> +	else
+>> +		rmw_set(PHY_LANE_CFG_REFCLKCGEN, port->phy + PHY_LANE_CFG);
+>> +	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
+>> +
+>
+> Can you elaborate on this particular change?
+>
+> I always assumed this was some clock-gating that needed to occur
+> *before* the link training was started. This is now taking place after
+> training, and the commit message doesn't say anything about it.
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 41ee576e7cd0..856f8569566e 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -17,6 +17,8 @@
- #include <linux/gpio/driver.h>
- #include <linux/gpio/regmap.h>
- 
-+#include "gpiolib.h"
-+
- struct gpio_regmap {
- 	struct device *parent;
- 	struct regmap *regmap;
-@@ -210,9 +212,6 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 	if (!config->parent)
- 		return ERR_PTR(-EINVAL);
- 
--	if (!config->ngpio)
--		return ERR_PTR(-EINVAL);
--
- 	/* we need at least one */
- 	if (!config->reg_dat_base && !config->reg_set_base)
- 		return ERR_PTR(-EINVAL);
-@@ -243,7 +242,6 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 	chip->parent = config->parent;
- 	chip->fwnode = config->fwnode;
- 	chip->base = -1;
--	chip->ngpio = config->ngpio;
- 	chip->names = config->names;
- 	chip->label = config->label ?: dev_name(config->parent);
- 	chip->can_sleep = regmap_might_sleep(config->regmap);
-@@ -262,6 +260,13 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 		chip->direction_output = gpio_regmap_direction_output;
- 	}
- 
-+	chip->ngpio = config->ngpio;
-+	if (!chip->ngpio) {
-+		ret = gpiochip_get_ngpios(chip, chip->parent);
-+		if (ret)
-+			return ERR_PTR(ret);
-+	}
-+
- 	/* if not set, assume there is only one register */
- 	gpio->ngpio_per_reg = config->ngpio_per_reg;
- 	if (!gpio->ngpio_per_reg)
-diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-index b9240e4156cc..c722c67668c6 100644
---- a/include/linux/gpio/regmap.h
-+++ b/include/linux/gpio/regmap.h
-@@ -21,7 +21,7 @@ struct regmap;
-  *			If not given, the fwnode of the parent is used.
-  * @label:		(Optional) Descriptive name for GPIO controller.
-  *			If not given, the name of the device is used.
-- * @ngpio:		Number of GPIOs
-+ * @ngpio:		(Optional) Number of GPIOs
-  * @names:		(Optional) Array of names for gpios
-  * @reg_dat_base:	(Optional) (in) register base address
-  * @reg_set_base:	(Optional) set register base address
--- 
-2.45.1.3035.g276e886db78b
+It's been a while but as far as I can tell APPCLK seems to be related
+to the IOMMUs attached to this controller. If it's disabled all reads
+from the respective IOMMU MMIO either came back as 0xffff.. or SError
+(don't remember which one it was) but pcie itself worked just fine
+(until any device tried DMA ofc).
 
+At least on M1 this entire sequence only works because we already
+setup PORT_APPCLK_EN inside m1n1. If we didn't do this (like e.g
+for the thunderbolt pcie/dart) the DART probe would already fail.
+
+
+
+Sven
 
