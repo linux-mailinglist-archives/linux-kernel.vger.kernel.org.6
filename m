@@ -1,961 +1,195 @@
-Return-Path: <linux-kernel+bounces-512959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C90CA33FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B84F1A33FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6B8188EE9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F0B2188E333
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC5C23F41A;
-	Thu, 13 Feb 2025 13:01:51 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD9A221700;
+	Thu, 13 Feb 2025 13:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HWp2zhrn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFF124292B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2656F1A5AA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739451710; cv=none; b=RBTCAWWuj1syX4fpwcPavfxqMNqfBzgjuccJD5iX6MBWXu7eUhyEHl+4rMoiGGdPNfc67P6FFXbP1e1MkquOCIZJ3T5uyDPCllprwSb/T3RyzcdU5Dno0Bw8YcDL81QPSCjeq4S4r1g/3VmQTdMil+hI9AvZO8ILIDwvEy8ZTO8=
+	t=1739451634; cv=none; b=XGWk9asVwAan3Dlu94ijuosgJQRRY7Yqm8OBTpD23PlNnCQ4syraXDvSRtUq6MNYZtib+BmJnFa8RSTKwls4+Nojppc2cwwHjG21vZymp3faPs/WgyAByyb53hkuxm7LhFIHPWDqivks+nISyjop2uUrZP0lFKtDmnGMEoXHHu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739451710; c=relaxed/simple;
-	bh=XyUWeRhR0HUDou+ZYsPL55Yn591rg2FKf7c03Oos5eE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p0v1NxbG7V+g01KtugGSru+5F6gbjT6q/9BQvQs32TnrLtn8jTZLZVgVNuERxhgY4UXudgWj7SbTDfynGzHJM7RVJJXn4F5XouYFPXkul6MUvW4mFQcyrSkLyp+umrOxJCcd16toaC8DIwzAW+RGtfgf8CMNv2jCqhCVU0ceOxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YtwJg2GNzz1JK16;
-	Thu, 13 Feb 2025 21:00:19 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 84A471400D2;
-	Thu, 13 Feb 2025 21:01:43 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
- 2025 21:01:42 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<sstabellini@kernel.org>, <tglx@linutronix.de>, <peterz@infradead.org>,
-	<luto@kernel.org>, <mingo@redhat.com>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>, <kees@kernel.org>, <aliceryhl@google.com>,
-	<ojeda@kernel.org>, <samitolvanen@google.com>, <masahiroy@kernel.org>,
-	<rppt@kernel.org>, <xur@google.com>, <paulmck@kernel.org>, <arnd@arndb.de>,
-	<mark.rutland@arm.com>, <puranjay@kernel.org>, <broonie@kernel.org>,
-	<mbenes@suse.cz>, <sudeep.holla@arm.com>, <guohanjun@huawei.com>,
-	<prarit@redhat.com>, <liuwei09@cestc.cn>, <Jonathan.Cameron@huawei.com>,
-	<dwmw@amazon.co.uk>, <kristina.martsenko@arm.com>, <liaochang1@huawei.com>,
-	<ptosi@google.com>, <thiago.bauermann@linaro.org>, <kevin.brodsky@arm.com>,
-	<Dave.Martin@arm.com>, <joey.gouly@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <xen-devel@lists.xenproject.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v6 8/8] arm64: entry: Switch to generic IRQ entry
-Date: Thu, 13 Feb 2025 21:00:07 +0800
-Message-ID: <20250213130007.1418890-9-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250213130007.1418890-1-ruanjinjie@huawei.com>
-References: <20250213130007.1418890-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1739451634; c=relaxed/simple;
+	bh=GbzcbGEYBt47KyUoS53m6l55tTHSiW3/zYp7rU8qJxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=laLPvDrjKnx+IZIw2a2dBPESmB+995Z++T7ImWo18cv7AJntc8hhMSktV1XCMVCNKfoyUpgXsPV3JTJYnMmrQ9AnCn/uvbneSVxVqSmB8BIsoWT8iXCUhOLD55/y/KqZDCrTn/zAAiJKln3ijXYXgDOjwo+xT+ehWFLT1gA/VMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HWp2zhrn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739451632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mfnvsrTaO3psu4jmIyQdi8eiJDFREwQyTUaQ4HeOqrE=;
+	b=HWp2zhrnZsI2mjmGDGSmHgYT/GdMup27w2DJrdIE4gUKMSatLshUoaCqypmuK4M+TeKKkA
+	ciRUjnl5AgJQsQIoO3lUX+vWP3gwrDOYAxECjkq6JtP3MtvOgoB8guh02OykYDhcd0SUc6
+	+nsjpWSIlz8JrwMtdD16svqP7XkvvZ4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-_0Db4M4hOAeio_DrWZ33lw-1; Thu, 13 Feb 2025 08:00:31 -0500
+X-MC-Unique: _0Db4M4hOAeio_DrWZ33lw-1
+X-Mimecast-MFC-AGG-ID: _0Db4M4hOAeio_DrWZ33lw_1739451629
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38dcc9653caso434636f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:00:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739451629; x=1740056429;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfnvsrTaO3psu4jmIyQdi8eiJDFREwQyTUaQ4HeOqrE=;
+        b=EPDee2+Ym5+IjNaCAVUxN+QjjLsU53OuhEFpQNF/Hw6luWOWU6ATQebw2VJOjL3su3
+         NwRPO6EhoIEWiiuT0RAUF58wwJWKMiJfAQEfslUxit1qNgXZmLteS/GJi4PSTx9pzLlO
+         LnVr9VkA+XGmBkHL8sgybGiPb6UMNbMxA0MPSA23nlDnNAjXqIkOxaF3Is5WYDVIy/0o
+         1zwhsZ6O44znlUR0OrWjfUFyQ7IlQNlNNA+XX6K1A/pwo0z5Wb+mRoKLmFSVvslhYRmI
+         F1L3zQ2289IDvVqGV6w+XhCacpJF0dTeAuBHq61Ax8W7WO2dnjWTGdxlQ70l8P2Zw1eS
+         VFiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUargtKzm3ipurLH94dyMjvSsHqxlnWNQ4B27/QFy+zOfuJ2Yl55w0Gmx6C8sJ6OSfclcVd744fJuxjisw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu0A3AEw/kG4fi84NbL+Zj4lC6ybhh6l7UvqsVN7BNppRZt9FC
+	LvnrN92Uc+bkXtVZ9DHyJsagSK5Z2k8rqmoBCm4tcXSkbmtC2PdqOoXaHYYZn0AKc6NIZdf/49K
+	bXVXLnoVD59irJSnQ2DpaAspSXUiEQjB20KL8qSYGNgFm2vIcRZC6438MKf0pgw==
+X-Gm-Gg: ASbGncuscQTyXeQKALCOApUG9NoWPhoSXeNtIrOAzwwrUus2j4xC0Ob1gTkq4NHjwie
+	71ZxwL39VtzxkusFITNQP/ltx/kZI+M/Al7GvTaljyYNHNfwW+sx3gVHdZeu10cEA6NvYRc4Zi+
+	w1yryP++Yy+t5DHIqxguZXeLbS5Te1c4reCcDaB27/S3/8ZqY46QELBtITQcbThxAP5t3bmDLXu
+	3vUHbWGy+hQWEcyzTAwyP9cPyKYdlIApScV2TLouTbaWQCDbHJ0MT/fc2wOs9eZJAesxzAn/Reg
+	dCsp6aVNNMH7gfIHYRfBrXRY0+mGvnwf1893a7WT42vGFvnJ1gJssoFly8sYnJhmKAcS9yLrmhP
+	NEaJ2iCmegxPlMWj8C2NtYj00yQubmg==
+X-Received: by 2002:a5d:5885:0:b0:38d:da79:c27 with SMTP id ffacd0b85a97d-38f244d5085mr3181650f8f.2.1739451622096;
+        Thu, 13 Feb 2025 05:00:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGibeuFs5cDXtn7xG1Fnqp50UyOedeKGyfYtUsGJrtkfYfZ0quTGv8DvIIEgk1u1kG0YtabFA==
+X-Received: by 2002:a5d:5885:0:b0:38d:da79:c27 with SMTP id ffacd0b85a97d-38f244d5085mr3179420f8f.2.1739451611117;
+        Thu, 13 Feb 2025 05:00:11 -0800 (PST)
+Received: from ?IPV6:2003:cb:c718:100:347d:db94:161d:398f? (p200300cbc7180100347ddb94161d398f.dip0.t-ipconnect.de. [2003:cb:c718:100:347d:db94:161d:398f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4423sm1871351f8f.11.2025.02.13.05.00.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 05:00:09 -0800 (PST)
+Message-ID: <9fb47de6-0d39-43df-b11a-ec188ecd90c8@redhat.com>
+Date: Thu, 13 Feb 2025 14:00:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm 1/1] filemap: Remove redundant folio_test_large check
+ in filemap_free_folio
+To: 'Guanjun' <guanjun@linux.alibaba.com>, willy@infradead.org,
+ akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250213055612.490993-1-guanjun@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250213055612.490993-1-guanjun@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
-to use the generic entry infrastructure from kernel/entry/*.
-The generic entry makes maintainers' work easier and codes
-more elegant.
+On 13.02.25 06:56, 'Guanjun' wrote:
+> From: Guanjun <guanjun@linux.alibaba.com>
+> 
+> The folio_test_large check in filemap_free_folio is unnecessary because
+> folio_nr_pages, which is called internally, already performs this check.
+> Removing the redundant condition simplifies the code and avoids double
+> validation.
+> 
+> This change improves code readability and reduces unnecessary operations
+> in the folio freeing path.
+> 
+> Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
+> ---
+>   mm/filemap.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 804d7365680c..2b860b59a521 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -227,15 +227,12 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
+>   void filemap_free_folio(struct address_space *mapping, struct folio *folio)
+>   {
+>   	void (*free_folio)(struct folio *);
+> -	int refs = 1;
+>   
+>   	free_folio = mapping->a_ops->free_folio;
+>   	if (free_folio)
+>   		free_folio(folio);
+>   
+> -	if (folio_test_large(folio))
+> -		refs = folio_nr_pages(folio);
+> -	folio_put_refs(folio, refs);
+> +	folio_put_refs(folio, folio_nr_pages(folio));
+>   }
+>   
+>   /**
 
-Switch arm64 to generic IRQ entry first, which removed duplicate 100+
-LOC and make Lazy preemption on arm64 available by adding a
-_TIF_NEED_RESCHED_LAZY bit and enabling ARCH_HAS_PREEMPT_LAZY. The next
-patch serise will switch to generic entry completely later. Switch to
-generic entry in two steps according to Mark's suggestion will make it
-easier to review.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-The changes are below:
- - Remove *enter_from/exit_to_kernel_mode(), and wrap with generic
-   irqentry_enter/exit(). Also remove *enter_from/exit_to_user_mode(),
-   and wrap with generic enter_from/exit_to_user_mode() because they
-   are exactly the same so far.
 
- - Remove arm64_enter/exit_nmi() and use generic irqentry_nmi_enter/exit()
-   because they're exactly the same, so the temporary arm64 version
-   irqentry_state can also be removed.
-
- - Remove PREEMPT_DYNAMIC code, as generic entry do the same thing
-   if arm64 implement arch_irqentry_exit_need_resched().
-
-Tested ok with following test cases on Qemu virt platform:
- - Perf tests.
- - Different `dynamic preempt` mode switch.
- - Pseudo NMI tests.
- - Stress-ng CPU stress test.
- - MTE test case in Documentation/arch/arm64/memory-tagging-extension.rst
-   and all test cases in tools/testing/selftests/arm64/mte/*.
-
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v6:
-- Remove arch_exit_to_user_mode_prepare() and pull local_daif_mask() later
-  in the arm64 exit sequence so that we can have it explicit
-  in entry-common.c.
-- Update the commit message.
----
- arch/arm64/Kconfig                    |   1 +
- arch/arm64/include/asm/entry-common.h |  56 +++++
- arch/arm64/include/asm/preempt.h      |   6 -
- arch/arm64/kernel/entry-common.c      | 350 +++++++-------------------
- arch/arm64/kernel/signal.c            |   3 +-
- 5 files changed, 143 insertions(+), 273 deletions(-)
- create mode 100644 arch/arm64/include/asm/entry-common.h
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index c997b27b7da1..f234e3e9e956 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -150,6 +150,7 @@ config ARM64
- 	select GENERIC_EARLY_IOREMAP
- 	select GENERIC_IDLE_POLL_SETUP
- 	select GENERIC_IOREMAP
-+	select GENERIC_IRQ_ENTRY
- 	select GENERIC_IRQ_IPI
- 	select GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
- 	select GENERIC_IRQ_PROBE
-diff --git a/arch/arm64/include/asm/entry-common.h b/arch/arm64/include/asm/entry-common.h
-new file mode 100644
-index 000000000000..93c30b8d653d
---- /dev/null
-+++ b/arch/arm64/include/asm/entry-common.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _ASM_ARM64_ENTRY_COMMON_H
-+#define _ASM_ARM64_ENTRY_COMMON_H
-+
-+#include <linux/thread_info.h>
-+
-+#include <asm/daifflags.h>
-+#include <asm/fpsimd.h>
-+#include <asm/mte.h>
-+#include <asm/stacktrace.h>
-+
-+#define ARCH_EXIT_TO_USER_MODE_WORK (_TIF_MTE_ASYNC_FAULT | _TIF_FOREIGN_FPSTATE)
-+
-+static __always_inline void arch_exit_to_user_mode_work(struct pt_regs *regs,
-+							unsigned long ti_work)
-+{
-+	if (ti_work & _TIF_MTE_ASYNC_FAULT) {
-+		clear_thread_flag(TIF_MTE_ASYNC_FAULT);
-+		send_sig_fault(SIGSEGV, SEGV_MTEAERR, (void __user *)NULL, current);
-+	}
-+
-+	if (ti_work & _TIF_FOREIGN_FPSTATE)
-+		fpsimd_restore_current_state();
-+}
-+
-+#define arch_exit_to_user_mode_work arch_exit_to_user_mode_work
-+
-+static inline bool arch_irqentry_exit_need_resched(void)
-+{
-+	/*
-+	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
-+	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
-+	 * using gic_arch_enable_irqs() for normal IRQs. If anything is set in
-+	 * DAIF we must have handled an NMI, so skip preemption.
-+	 */
-+	if (system_uses_irq_prio_masking() && read_sysreg(daif))
-+		return false;
-+
-+	/*
-+	 * Preempting a task from an IRQ means we leave copies of PSTATE
-+	 * on the stack. cpufeature's enable calls may modify PSTATE, but
-+	 * resuming one of these preempted tasks would undo those changes.
-+	 *
-+	 * Only allow a task to be preempted once cpufeatures have been
-+	 * enabled.
-+	 */
-+	if (!system_capabilities_finalized())
-+		return false;
-+
-+	return true;
-+}
-+
-+#define arch_irqentry_exit_need_resched arch_irqentry_exit_need_resched
-+
-+#endif /* _ASM_ARM64_ENTRY_COMMON_H */
-diff --git a/arch/arm64/include/asm/preempt.h b/arch/arm64/include/asm/preempt.h
-index 0f0ba250efe8..932ea4b62042 100644
---- a/arch/arm64/include/asm/preempt.h
-+++ b/arch/arm64/include/asm/preempt.h
-@@ -2,7 +2,6 @@
- #ifndef __ASM_PREEMPT_H
- #define __ASM_PREEMPT_H
- 
--#include <linux/jump_label.h>
- #include <linux/thread_info.h>
- 
- #define PREEMPT_NEED_RESCHED	BIT(32)
-@@ -85,22 +84,17 @@ static inline bool should_resched(int preempt_offset)
- void preempt_schedule(void);
- void preempt_schedule_notrace(void);
- 
--void raw_irqentry_exit_cond_resched(void);
- #ifdef CONFIG_PREEMPT_DYNAMIC
- 
--DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
- void dynamic_preempt_schedule(void);
- #define __preempt_schedule()		dynamic_preempt_schedule()
- void dynamic_preempt_schedule_notrace(void);
- #define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
--void dynamic_irqentry_exit_cond_resched(void);
--#define irqentry_exit_cond_resched()	dynamic_irqentry_exit_cond_resched()
- 
- #else /* CONFIG_PREEMPT_DYNAMIC */
- 
- #define __preempt_schedule()		preempt_schedule()
- #define __preempt_schedule_notrace()	preempt_schedule_notrace()
--#define irqentry_exit_cond_resched()	raw_irqentry_exit_cond_resched()
- 
- #endif /* CONFIG_PREEMPT_DYNAMIC */
- #endif /* CONFIG_PREEMPTION */
-diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index 7056c584f59c..c3583524c37a 100644
---- a/arch/arm64/kernel/entry-common.c
-+++ b/arch/arm64/kernel/entry-common.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/context_tracking.h>
-+#include <linux/irq-entry-common.h>
- #include <linux/kasan.h>
- #include <linux/linkage.h>
- #include <linux/lockdep.h>
-@@ -28,13 +29,6 @@
- #include <asm/sysreg.h>
- #include <asm/system_misc.h>
- 
--typedef struct irqentry_state {
--	union {
--		bool	exit_rcu;
--		bool	lockdep;
--	};
--} arm64_irqentry_state_t;
--
- /*
-  * Handle IRQ/context state management when entering from kernel mode.
-  * Before this function is called it is not safe to call regular kernel code,
-@@ -43,31 +37,14 @@ typedef struct irqentry_state {
-  * This is intended to match the logic in irqentry_enter(), handling the kernel
-  * mode transitions only.
-  */
--static __always_inline arm64_irqentry_state_t __enter_from_kernel_mode(struct pt_regs *regs)
-+static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs *regs)
- {
--	arm64_irqentry_state_t state = {
--		.exit_rcu = false,
--	};
--
--	if (!IS_ENABLED(CONFIG_TINY_RCU) && is_idle_task(current)) {
--		lockdep_hardirqs_off(CALLER_ADDR0);
--		ct_irq_enter();
--		trace_hardirqs_off_finish();
--
--		state.exit_rcu = true;
--		return state;
--	}
--
--	lockdep_hardirqs_off(CALLER_ADDR0);
--	rcu_irq_enter_check_tick();
--	trace_hardirqs_off_finish();
--
--	return state;
-+	return irqentry_enter(regs);
- }
- 
--static noinstr arm64_irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
-+static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
- {
--	arm64_irqentry_state_t state = __enter_from_kernel_mode(regs);
-+	irqentry_state_t state = __enter_from_kernel_mode(regs);
- 
- 	mte_check_tfsr_entry();
- 	mte_disable_tco_entry(current);
-@@ -75,49 +52,6 @@ static noinstr arm64_irqentry_state_t enter_from_kernel_mode(struct pt_regs *reg
- 	return state;
- }
- 
--static inline bool arm64_preempt_schedule_irq(void)
--{
--	/*
--	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
--	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
--	 * using gic_arch_enable_irqs() for normal IRQs. If anything is set in
--	 * DAIF we must have handled an NMI, so skip preemption.
--	 */
--	if (system_uses_irq_prio_masking() && read_sysreg(daif))
--		return false;
--
--	/*
--	 * Preempting a task from an IRQ means we leave copies of PSTATE
--	 * on the stack. cpufeature's enable calls may modify PSTATE, but
--	 * resuming one of these preempted tasks would undo those changes.
--	 *
--	 * Only allow a task to be preempted once cpufeatures have been
--	 * enabled.
--	 */
--	if (!system_capabilities_finalized())
--		return false;
--
--	return true;
--}
--
--void raw_irqentry_exit_cond_resched(void)
--{
--	if (!preempt_count()) {
--		if (need_resched() && arm64_preempt_schedule_irq())
--			preempt_schedule_irq();
--	}
--}
--
--#ifdef CONFIG_PREEMPT_DYNAMIC
--DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
--void dynamic_irqentry_exit_cond_resched(void)
--{
--	if (!static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
--		return;
--	raw_irqentry_exit_cond_resched();
--}
--#endif
--
- /*
-  * Handle IRQ/context state management when exiting to kernel mode.
-  * After this function returns it is not safe to call regular kernel code,
-@@ -127,31 +61,13 @@ void dynamic_irqentry_exit_cond_resched(void)
-  * mode transitions only, and with preemption handled elsewhere.
-  */
- static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs,
--						  arm64_irqentry_state_t state)
--{
--	lockdep_assert_irqs_disabled();
--
--	if (!regs_irqs_disabled(regs)) {
--		if (state.exit_rcu) {
--			trace_hardirqs_on_prepare();
--			lockdep_hardirqs_on_prepare();
--			ct_irq_exit();
--			lockdep_hardirqs_on(CALLER_ADDR0);
--			return;
--		}
--
--		if (IS_ENABLED(CONFIG_PREEMPTION))
--			irqentry_exit_cond_resched();
--
--		trace_hardirqs_on();
--	} else {
--		if (state.exit_rcu)
--			ct_irq_exit();
--	}
-+						  irqentry_state_t state)
-+{
-+	irqentry_exit(regs, state);
- }
- 
- static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
--					arm64_irqentry_state_t state)
-+					irqentry_state_t state)
- {
- 	mte_check_tfsr_exit();
- 	__exit_to_kernel_mode(regs, state);
-@@ -162,18 +78,15 @@ static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
-  * Before this function is called it is not safe to call regular kernel code,
-  * instrumentable code, or any code which may trigger an exception.
-  */
--static __always_inline void __enter_from_user_mode(void)
-+static __always_inline void __enter_from_user_mode(struct pt_regs *regs)
- {
--	lockdep_hardirqs_off(CALLER_ADDR0);
--	CT_WARN_ON(ct_state() != CT_STATE_USER);
--	user_exit_irqoff();
--	trace_hardirqs_off_finish();
-+	enter_from_user_mode(regs);
- 	mte_disable_tco_entry(current);
- }
- 
--static __always_inline void enter_from_user_mode(struct pt_regs *regs)
-+static __always_inline void arm64_enter_from_user_mode(struct pt_regs *regs)
- {
--	__enter_from_user_mode();
-+	__enter_from_user_mode(regs);
- }
- 
- /*
-@@ -181,113 +94,18 @@ static __always_inline void enter_from_user_mode(struct pt_regs *regs)
-  * After this function returns it is not safe to call regular kernel code,
-  * instrumentable code, or any code which may trigger an exception.
-  */
--static __always_inline void __exit_to_user_mode(void)
--{
--	trace_hardirqs_on_prepare();
--	lockdep_hardirqs_on_prepare();
--	user_enter_irqoff();
--	lockdep_hardirqs_on(CALLER_ADDR0);
--}
--
--static void do_notify_resume(struct pt_regs *regs, unsigned long thread_flags)
--{
--	do {
--		local_irq_enable();
--
--		if (thread_flags & _TIF_NEED_RESCHED)
--			schedule();
--
--		if (thread_flags & _TIF_UPROBE)
--			uprobe_notify_resume(regs);
--
--		if (thread_flags & _TIF_MTE_ASYNC_FAULT) {
--			clear_thread_flag(TIF_MTE_ASYNC_FAULT);
--			send_sig_fault(SIGSEGV, SEGV_MTEAERR,
--				       (void __user *)NULL, current);
--		}
--
--		if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
--			do_signal(regs);
--
--		if (thread_flags & _TIF_NOTIFY_RESUME)
--			resume_user_mode_work(regs);
--
--		if (thread_flags & _TIF_FOREIGN_FPSTATE)
--			fpsimd_restore_current_state();
--
--		local_irq_disable();
--		thread_flags = read_thread_flags();
--	} while (thread_flags & _TIF_WORK_MASK);
--}
--
--static __always_inline void exit_to_user_mode_prepare(struct pt_regs *regs)
-+static __always_inline void arm64_exit_to_user_mode(struct pt_regs *regs)
- {
--	unsigned long flags;
--
- 	local_irq_disable();
--
--	flags = read_thread_flags();
--	if (unlikely(flags & _TIF_WORK_MASK))
--		do_notify_resume(regs, flags);
--
--	local_daif_mask();
--
--	lockdep_sys_exit();
--}
--
--static __always_inline void exit_to_user_mode(struct pt_regs *regs)
--{
- 	exit_to_user_mode_prepare(regs);
-+	local_daif_mask();
- 	mte_check_tfsr_exit();
--	__exit_to_user_mode();
-+	exit_to_user_mode();
- }
- 
- asmlinkage void noinstr asm_exit_to_user_mode(struct pt_regs *regs)
- {
--	exit_to_user_mode(regs);
--}
--
--/*
-- * Handle IRQ/context state management when entering an NMI from user/kernel
-- * mode. Before this function is called it is not safe to call regular kernel
-- * code, instrumentable code, or any code which may trigger an exception.
-- */
--static noinstr arm64_irqentry_state_t arm64_enter_nmi(struct pt_regs *regs)
--{
--	arm64_irqentry_state_t state;
--
--	state.lockdep = lockdep_hardirqs_enabled();
--
--	__nmi_enter();
--	lockdep_hardirqs_off(CALLER_ADDR0);
--	lockdep_hardirq_enter();
--	ct_nmi_enter();
--
--	trace_hardirqs_off_finish();
--	ftrace_nmi_enter();
--
--	return state;
--}
--
--/*
-- * Handle IRQ/context state management when exiting an NMI from user/kernel
-- * mode. After this function returns it is not safe to call regular kernel
-- * code, instrumentable code, or any code which may trigger an exception.
-- */
--static void noinstr arm64_exit_nmi(struct pt_regs *regs,
--				   arm64_irqentry_state_t state)
--{
--	ftrace_nmi_exit();
--	if (state.lockdep) {
--		trace_hardirqs_on_prepare();
--		lockdep_hardirqs_on_prepare();
--	}
--
--	ct_nmi_exit();
--	lockdep_hardirq_exit();
--	if (state.lockdep)
--		lockdep_hardirqs_on(CALLER_ADDR0);
--	__nmi_exit();
-+	arm64_exit_to_user_mode(regs);
- }
- 
- /*
-@@ -295,9 +113,9 @@ static void noinstr arm64_exit_nmi(struct pt_regs *regs,
-  * kernel mode. Before this function is called it is not safe to call regular
-  * kernel code, instrumentable code, or any code which may trigger an exception.
-  */
--static noinstr arm64_irqentry_state_t arm64_enter_el1_dbg(struct pt_regs *regs)
-+static noinstr irqentry_state_t arm64_enter_el1_dbg(struct pt_regs *regs)
- {
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
- 	state.lockdep = lockdep_hardirqs_enabled();
- 
-@@ -315,7 +133,7 @@ static noinstr arm64_irqentry_state_t arm64_enter_el1_dbg(struct pt_regs *regs)
-  * kernel code, instrumentable code, or any code which may trigger an exception.
-  */
- static void noinstr arm64_exit_el1_dbg(struct pt_regs *regs,
--				       arm64_irqentry_state_t state)
-+				       irqentry_state_t state)
- {
- 	if (state.lockdep) {
- 		trace_hardirqs_on_prepare();
-@@ -346,7 +164,7 @@ extern void (*handle_arch_fiq)(struct pt_regs *);
- static void noinstr __panic_unhandled(struct pt_regs *regs, const char *vector,
- 				      unsigned long esr)
- {
--	arm64_enter_nmi(regs);
-+	irqentry_nmi_enter(regs);
- 
- 	console_verbose();
- 
-@@ -452,7 +270,7 @@ UNHANDLED(el1t, 64, error)
- static void noinstr el1_abort(struct pt_regs *regs, unsigned long esr)
- {
- 	unsigned long far = read_sysreg(far_el1);
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
- 	state = enter_from_kernel_mode(regs);
- 	local_daif_inherit(regs);
-@@ -464,7 +282,7 @@ static void noinstr el1_abort(struct pt_regs *regs, unsigned long esr)
- static void noinstr el1_pc(struct pt_regs *regs, unsigned long esr)
- {
- 	unsigned long far = read_sysreg(far_el1);
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
- 	state = enter_from_kernel_mode(regs);
- 	local_daif_inherit(regs);
-@@ -475,7 +293,7 @@ static void noinstr el1_pc(struct pt_regs *regs, unsigned long esr)
- 
- static void noinstr el1_undef(struct pt_regs *regs, unsigned long esr)
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	local_daif_inherit(regs);
- 	do_el1_undef(regs, esr);
-@@ -485,7 +303,7 @@ static void noinstr el1_undef(struct pt_regs *regs, unsigned long esr)
- 
- static void noinstr el1_bti(struct pt_regs *regs, unsigned long esr)
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	local_daif_inherit(regs);
- 	do_el1_bti(regs, esr);
-@@ -495,7 +313,7 @@ static void noinstr el1_bti(struct pt_regs *regs, unsigned long esr)
- 
- static void noinstr el1_gcs(struct pt_regs *regs, unsigned long esr)
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	local_daif_inherit(regs);
- 	do_el1_gcs(regs, esr);
-@@ -505,7 +323,7 @@ static void noinstr el1_gcs(struct pt_regs *regs, unsigned long esr)
- 
- static void noinstr el1_mops(struct pt_regs *regs, unsigned long esr)
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	local_daif_inherit(regs);
- 	do_el1_mops(regs, esr);
-@@ -516,7 +334,7 @@ static void noinstr el1_mops(struct pt_regs *regs, unsigned long esr)
- static void noinstr el1_dbg(struct pt_regs *regs, unsigned long esr)
- {
- 	unsigned long far = read_sysreg(far_el1);
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
- 	state = arm64_enter_el1_dbg(regs);
- 	if (!cortex_a76_erratum_1463225_debug_handler(regs))
-@@ -526,7 +344,7 @@ static void noinstr el1_dbg(struct pt_regs *regs, unsigned long esr)
- 
- static void noinstr el1_fpac(struct pt_regs *regs, unsigned long esr)
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	local_daif_inherit(regs);
- 	do_el1_fpac(regs, esr);
-@@ -580,16 +398,16 @@ asmlinkage void noinstr el1h_64_sync_handler(struct pt_regs *regs)
- static __always_inline void __el1_pnmi(struct pt_regs *regs,
- 				       void (*handler)(struct pt_regs *))
- {
--	arm64_irqentry_state_t state = arm64_enter_nmi(regs);
-+	irqentry_state_t state = irqentry_nmi_enter(regs);
- 
- 	do_interrupt_handler(regs, handler);
--	arm64_exit_nmi(regs, state);
-+	irqentry_nmi_exit(regs, state);
- }
- 
- static __always_inline void __el1_irq(struct pt_regs *regs,
- 				      void (*handler)(struct pt_regs *))
- {
--	arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
-+	irqentry_state_t state = enter_from_kernel_mode(regs);
- 
- 	irq_enter_rcu();
- 	do_interrupt_handler(regs, handler);
-@@ -621,22 +439,22 @@ asmlinkage void noinstr el1h_64_fiq_handler(struct pt_regs *regs)
- asmlinkage void noinstr el1h_64_error_handler(struct pt_regs *regs)
- {
- 	unsigned long esr = read_sysreg(esr_el1);
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
- 	local_daif_restore(DAIF_ERRCTX);
--	state = arm64_enter_nmi(regs);
-+	state = irqentry_nmi_enter(regs);
- 	do_serror(regs, esr);
--	arm64_exit_nmi(regs, state);
-+	irqentry_nmi_exit(regs, state);
- }
- 
- static void noinstr el0_da(struct pt_regs *regs, unsigned long esr)
- {
- 	unsigned long far = read_sysreg(far_el1);
- 
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_mem_abort(far, esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_ia(struct pt_regs *regs, unsigned long esr)
-@@ -651,50 +469,50 @@ static void noinstr el0_ia(struct pt_regs *regs, unsigned long esr)
- 	if (!is_ttbr0_addr(far))
- 		arm64_apply_bp_hardening();
- 
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_mem_abort(far, esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_fpsimd_acc(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_fpsimd_acc(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_sve_acc(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_sve_acc(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_sme_acc(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_sme_acc(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_fpsimd_exc(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_fpsimd_exc(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_sys(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_sys(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_pc(struct pt_regs *regs, unsigned long esr)
-@@ -704,58 +522,58 @@ static void noinstr el0_pc(struct pt_regs *regs, unsigned long esr)
- 	if (!is_ttbr0_addr(instruction_pointer(regs)))
- 		arm64_apply_bp_hardening();
- 
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_sp_pc_abort(far, esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_sp(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_sp_pc_abort(regs->sp, esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_undef(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_undef(regs, esr);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_bti(struct pt_regs *regs)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_bti(regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_mops(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_mops(regs, esr);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_gcs(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_gcs(regs, esr);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_inv(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	bad_el0_sync(regs, 0, esr);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_dbg(struct pt_regs *regs, unsigned long esr)
-@@ -763,28 +581,28 @@ static void noinstr el0_dbg(struct pt_regs *regs, unsigned long esr)
- 	/* Only watchpoints write FAR_EL1, otherwise its UNKNOWN */
- 	unsigned long far = read_sysreg(far_el1);
- 
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	do_debug_exception(far, esr, regs);
- 	local_daif_restore(DAIF_PROCCTX);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_svc(struct pt_regs *regs)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	cortex_a76_erratum_1463225_svc_handler();
- 	fp_user_discard();
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_svc(regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_fpac(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_fpac(regs, esr);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- asmlinkage void noinstr el0t_64_sync_handler(struct pt_regs *regs)
-@@ -852,7 +670,7 @@ asmlinkage void noinstr el0t_64_sync_handler(struct pt_regs *regs)
- static void noinstr el0_interrupt(struct pt_regs *regs,
- 				  void (*handler)(struct pt_regs *))
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 
- 	write_sysreg(DAIF_PROCCTX_NOIRQ, daif);
- 
-@@ -863,7 +681,7 @@ static void noinstr el0_interrupt(struct pt_regs *regs,
- 	do_interrupt_handler(regs, handler);
- 	irq_exit_rcu();
- 
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr __el0_irq_handler_common(struct pt_regs *regs)
-@@ -889,15 +707,15 @@ asmlinkage void noinstr el0t_64_fiq_handler(struct pt_regs *regs)
- static void noinstr __el0_error_handler_common(struct pt_regs *regs)
- {
- 	unsigned long esr = read_sysreg(esr_el1);
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_ERRCTX);
--	state = arm64_enter_nmi(regs);
-+	state = irqentry_nmi_enter(regs);
- 	do_serror(regs, esr);
--	arm64_exit_nmi(regs, state);
-+	irqentry_nmi_exit(regs, state);
- 	local_daif_restore(DAIF_PROCCTX);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- asmlinkage void noinstr el0t_64_error_handler(struct pt_regs *regs)
-@@ -908,19 +726,19 @@ asmlinkage void noinstr el0t_64_error_handler(struct pt_regs *regs)
- #ifdef CONFIG_COMPAT
- static void noinstr el0_cp15(struct pt_regs *regs, unsigned long esr)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_cp15(esr, regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- static void noinstr el0_svc_compat(struct pt_regs *regs)
- {
--	enter_from_user_mode(regs);
-+	arm64_enter_from_user_mode(regs);
- 	cortex_a76_erratum_1463225_svc_handler();
- 	local_daif_restore(DAIF_PROCCTX);
- 	do_el0_svc_compat(regs);
--	exit_to_user_mode(regs);
-+	arm64_exit_to_user_mode(regs);
- }
- 
- asmlinkage void noinstr el0t_32_sync_handler(struct pt_regs *regs)
-@@ -994,7 +812,7 @@ asmlinkage void noinstr __noreturn handle_bad_stack(struct pt_regs *regs)
- 	unsigned long esr = read_sysreg(esr_el1);
- 	unsigned long far = read_sysreg(far_el1);
- 
--	arm64_enter_nmi(regs);
-+	irqentry_nmi_enter(regs);
- 	panic_bad_stack(regs, esr, far);
- }
- #endif /* CONFIG_VMAP_STACK */
-@@ -1003,7 +821,7 @@ asmlinkage void noinstr __noreturn handle_bad_stack(struct pt_regs *regs)
- asmlinkage noinstr unsigned long
- __sdei_handler(struct pt_regs *regs, struct sdei_registered_event *arg)
- {
--	arm64_irqentry_state_t state;
-+	irqentry_state_t state;
- 	unsigned long ret;
- 
- 	/*
-@@ -1028,9 +846,9 @@ __sdei_handler(struct pt_regs *regs, struct sdei_registered_event *arg)
- 	else if (cpu_has_pan())
- 		set_pstate_pan(0);
- 
--	state = arm64_enter_nmi(regs);
-+	state = irqentry_nmi_enter(regs);
- 	ret = do_sdei_event(regs, arg);
--	arm64_exit_nmi(regs, state);
-+	irqentry_nmi_exit(regs, state);
- 
- 	return ret;
- }
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 99ea26d400ff..e1c1abc2cb3f 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -9,6 +9,7 @@
- #include <linux/cache.h>
- #include <linux/compat.h>
- #include <linux/errno.h>
-+#include <linux/irq-entry-common.h>
- #include <linux/kernel.h>
- #include <linux/signal.h>
- #include <linux/freezer.h>
-@@ -1616,7 +1617,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
-  * the kernel can handle, and then we build all the user-level signal handling
-  * stack-frames in one go after that.
-  */
--void do_signal(struct pt_regs *regs)
-+void arch_do_signal_or_restart(struct pt_regs *regs)
- {
- 	unsigned long continue_addr = 0, restart_addr = 0;
- 	int retval = 0;
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
