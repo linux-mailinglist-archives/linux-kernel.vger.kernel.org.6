@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-512403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F97A338DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:30:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84463A338DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:31:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F10E162223
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD05116584B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7603207E1D;
-	Thu, 13 Feb 2025 07:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C5A209F57;
+	Thu, 13 Feb 2025 07:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R/0rMqmW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD931FC0FD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Z3bOEml/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3EA20A5DA;
+	Thu, 13 Feb 2025 07:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739431854; cv=none; b=AMF/lip2SdDGozRwSxip/rVohiNfwlx+wERYMm1JxMEfWyTmmlioJeREk/YMoQ16smzs3qEdtYdlrqj9r0duWeLukeE9sji+BXValAliuX9Qz8/EuOWFXxOxQpQ8eTZKReXnDXcRfAnQuSK4Ya76ycCF7/A7OHHNTfgWoYASRdM=
+	t=1739431872; cv=none; b=k8sQHCuzxW+Go2e837/CWLOTcdoZFBWA/zs4zDZfYmNZk1nKpxjcqB3GEcj1SL70Fj4PnyUlUbrPg6gXOD1mklNn8uWZTI/0JMeIfrbUA2J4/ni13tMRaluyI7nMLn3VlZmSr18edgcT0Z1lVy0M9liMdO1rz4zui03S9377Yvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739431854; c=relaxed/simple;
-	bh=aN3Lr6wUibYnqI/f3UR3bxnxRH352lurFdPMDr3wGpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/o79kLmilq+QTQPhv6h7WOre2jAHvJ94ppiBWaPUovPzPd1cQ3mdzK1g+4UIv2bhdQVZlt0j83J3lk5MiZcwqluz5CnS2uGiVdJWDzI67BG2A45AJJ7XgW/6U59Meyv39+KbzPBd6gW6t4UHvlz8OsiNHQ2lj701MoT8e1GxE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R/0rMqmW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CJdejQ001528
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:30:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QCNYViztWzNyVGjuZcYvR8osCseZOp+c2iM9vCmfw4k=; b=R/0rMqmW1RSHmyyH
-	u2b1USDPdJ7aSlC531/4GzTs9XfBdPWtR3glJ0GOnjt/hqL99dF5hdHaKgfyYI0R
-	FzdVsIXTqwX0crKqRCYUBJEb16DE4Q4W5akBHjTElbDrllPIe9zXQiWJZUyUXyJG
-	CfCbinO4n0UO4N8++jttlWeufVwsM6Q//Wfpb7F+rkJBheQFrz1kr91/Mez21jgI
-	Ltqk/KlhfDKNTGMg0gvGwDRBkKuFDXEsVljF+UTf69DZ+t3471NYtdm3UH0evOy7
-	499pHdPdtYHmPjAfF3cd/29wFyICf9SfBHP63nt55WI9c6EbnAzp5DT204Dl7e3K
-	vXiC2Q==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rrnfu1w0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:30:51 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-21f6cd48c56so9858065ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:30:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739431850; x=1740036650;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCNYViztWzNyVGjuZcYvR8osCseZOp+c2iM9vCmfw4k=;
-        b=gbrZxu9QnMbO4+VkFwXsMrqv+AHmJkaGAd3kddIZzluDm6yIPvPY1LTXtc6ggguJDN
-         nQj68I4W7x6Nl/XwSPVk7yWMKC3r84o8jxecWNLhSJSYnibzLBPd1vEjfZK+RMnAToo3
-         vybk7voQoagVmCM70K4Q0q0JWK4kn7PLjfBPc6OphPwOHZv/m1x7ZSoVSdfjVYKsOLeF
-         5Se/MHHfaNDDsAsUu5+EZ0GJ1F+Bk35681haLAclklkDZsohnuUYCjFjk1jiVFDyWk96
-         VOqxvzhufT8sXWuf0OU2FjmhhH6oox546JsXZYV7mdm4eU00RSPw6yQu/d15A5iPoZYa
-         2E/g==
-X-Gm-Message-State: AOJu0YzjZLiYAbqs6WYkpOmQkaN4WE8QnPHkbJI2ilufrUo63f6Pfy+u
-	IzR9USQyD27ziqZtLHrGRVEoUNjbcZ1exvolEUGX+bDYhVq5gwJjiMeAH+bpwkT2k9WFVyqyjuc
-	nErU54Qg9GsmyWZWqmSu0QwqKTgazOORj2eHM26bJsmYU+Jq+gK5+oyam6d+7RyA=
-X-Gm-Gg: ASbGncsw6kbhSd7qvVZpyAeD9T/GFlumBEymklWj1MaQDIRlSKrFVKD6dqUQ3d/OfhO
-	j5gFcjYvzW5PGmdiXNQI0/c2Goeven/zc+7TzvufDGW3+JAkgwnBC/OkDJ7bY4gZqFD6XC3cVe1
-	pxF/FtITbGYVaVY75S3YYBMt93Vy617HCPCJuY9R9ASMxKEvIsFNrm120OR1v/dDifqJMMUcFWL
-	dSwTDD6m9JaMef8rgXccB5mvCEApZamewOGHjuH6S7t1JTlnR/yHZQw+nOyw9sOBskh/pHM6gZu
-	7LQ0iCC+IO5ls4Z9yUsKVQODB01aQo19Ax4Vromcu7+FWkKc/IxAJBMmZQ0twcmjqSI+2Ol0NA=
-	=
-X-Received: by 2002:a17:902:e946:b0:215:9379:4650 with SMTP id d9443c01a7336-220bbc8bc56mr100108545ad.42.1739431849916;
-        Wed, 12 Feb 2025 23:30:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEXJWllrpEsU7pxBlVyMLO/Rybu/ihb4r1/egz6PdTfhq0gEYZa9CuRi0M1qC1i4D6yi6/26Q==
-X-Received: by 2002:a17:902:e946:b0:215:9379:4650 with SMTP id d9443c01a7336-220bbc8bc56mr100108175ad.42.1739431849521;
-        Wed, 12 Feb 2025 23:30:49 -0800 (PST)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d621sm6361875ad.136.2025.02.12.23.30.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 23:30:49 -0800 (PST)
-Message-ID: <85a035e7-fb06-434c-ba26-f813fc4f3200@oss.qualcomm.com>
-Date: Wed, 12 Feb 2025 23:30:48 -0800
+	s=arc-20240116; t=1739431872; c=relaxed/simple;
+	bh=cYi0mNH+W4kVo6c2gB8r86hGerDnE4yUB+Zmvu1q7pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mK8zFPtq3/z/tA3ta5Gl/AEuWpy4NU1RnpvnaaHd+qfFE3fE30LhlY6FrTkrUgtzNgffBgfpRmFzbT+KhJu8dMKiIS2ea1dekL4jsmX7Xii1oMKV9j3Cc8znPNUiM1KXGyYDaxwjUJkSttjFTVzrB4vmXT+vdddvB7MbLz5Mxk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Z3bOEml/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 68C10203F3D3; Wed, 12 Feb 2025 23:31:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 68C10203F3D3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739431869;
+	bh=QI2rMzM1udG9YAykg4Ejlut8nQl9y5XAj/a7Dc7kaCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z3bOEml/wI1v5DWt+yhgJkZPUNc/YkuG50YK/ZVBwzShh+Xp/UMum3AYBo1DoPdfo
+	 avqZTAieXOuOmAhbXoGJ+3myqx87Q1PxgAAZC8PhvQ73ek0nQ776aEfRJ+MZKYy27k
+	 SkwFI/p6rh3GLTWeTnlVW6/sYoz03piaiB+nH8MU=
+Date: Wed, 12 Feb 2025 23:31:09 -0800
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	michal.swiatkowski@linux.intel.com, mlevitsk@redhat.com,
+	yury.norov@gmail.com, shradhagupta@linux.microsoft.com,
+	kotaranov@microsoft.com, peterz@infradead.org,
+	brett.creeley@amd.com, mhklinux@outlook.com,
+	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
+	longli@microsoft.com, leon@kernel.org, erick.archer@outlook.com,
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: mana: Add debug logs in MANA network driver
+Message-ID: <20250213073109.GA10334@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739267515-31187-1-git-send-email-ernis@linux.microsoft.com>
+ <ab47dc52-3bb3-4b69-b202-b59fe4cb0727@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kbuild: fix linux-headers package build when $(CC)
- cannot link userspace
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>
-References: <20250213062645.325632-1-masahiroy@kernel.org>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250213062645.325632-1-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: YUCkZglDs8mIO8NDt7ohrL_fKZuTPo28
-X-Proofpoint-ORIG-GUID: YUCkZglDs8mIO8NDt7ohrL_fKZuTPo28
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130056
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab47dc52-3bb3-4b69-b202-b59fe4cb0727@lunn.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 2/12/2025 10:26 PM, Masahiro Yamada wrote:
-> Since commit 5f73e7d0386d ("kbuild: refactor cross-compiling
-> linux-headers package"), the linux-headers Debian package fails to
-> build when $(CC) cannot build userspace applications, for example,
-> when using toolchains installed by the 0day bot.
+On Tue, Feb 11, 2025 at 05:31:22PM +0100, Andrew Lunn wrote:
+> On Tue, Feb 11, 2025 at 01:51:55AM -0800, Erni Sri Satya Vennela wrote:
+> > Add debug statements to assist in debugging and monitoring
+> > driver behaviour, making it easier to identify potential
+> > issues  during development and testing.
+> > 
+> > Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+> > ---
+> >  .../net/ethernet/microsoft/mana/gdma_main.c   | 52 +++++++++++++----
+> >  .../net/ethernet/microsoft/mana/hw_channel.c  |  6 +-
+> >  drivers/net/ethernet/microsoft/mana/mana_en.c | 58 +++++++++++++++----
+> >  3 files changed, 94 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+> > index be95336ce089..f9839938f0ab 100644
+> > --- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
+> > +++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+> > @@ -666,8 +666,11 @@ int mana_gd_create_hwc_queue(struct gdma_dev *gd,
+> >  
+> >  	gmi = &queue->mem_info;
+> >  	err = mana_gd_alloc_memory(gc, spec->queue_size, gmi);
+> > -	if (err)
+> > +	if (err) {
+> > +		dev_err(gc->dev, "GDMA queue type: %d, size: %u, gdma memory allocation err: %d\n",
+> > +			spec->type, spec->queue_size, err);
 > 
-> The host programs in the linux-headers package should be rebuilt using
-> the disto's cross-compiler, ${DEB_HOST_GNU_TYPE}-gcc instead of $(CC).
-> Hence, the variable 'CC' must be expanded in this shell script instead
-> of in the top-level Makefile.
+> I would expect a debug statement to use dev_dbg(). Please update your
+> commit message.
+I'll make sure to make this change in the next version of the patch.
 > 
-> Commit f354fc88a72a ("kbuild: install-extmod-build: add missing
-> quotation marks for CC variable") was not a correct fix because
-> CC="ccache gcc" should be unrelated when rebuilding userspace tools.
+> >  		goto free_q;
+> > +	}
+> >  
+> >  	queue->head = 0;
+> >  	queue->tail = 0;
+> > @@ -688,6 +691,8 @@ int mana_gd_create_hwc_queue(struct gdma_dev *gd,
+> >  	*queue_ptr = queue;
+> >  	return 0;
+> >  out:
+> > +	dev_err(gc->dev, "Failed to create queue type %d of size %u, err: %d\n",
+> > +		spec->type, spec->queue_size, err);
+> >  	mana_gd_free_memory(gmi);
+> >  free_q:
+> >  	kfree(queue);
+> > @@ -763,14 +768,18 @@ static int mana_gd_create_dma_region(struct gdma_dev *gd,
+> >  
+> >  	if (resp.hdr.status ||
+> >  	    resp.dma_region_handle == GDMA_INVALID_DMA_REGION) {
+> > -		dev_err(gc->dev, "Failed to create DMA region: 0x%x\n",
+> > -			resp.hdr.status);
+> >  		err = -EPROTO;
+> >  		goto out;
+> >  	}
+> >  
+> >  	gmi->dma_region_handle = resp.dma_region_handle;
+> > +	dev_dbg(gc->dev, "Created DMA region handle 0x%llx\n",
+> > +		gmi->dma_region_handle);
 > 
-> Fixes: 5f73e7d0386d ("kbuild: refactor cross-compiling linux-headers package")
-> Reported-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-> Closes: https://lore.kernel.org/linux-kbuild/CAK7LNARb3xO3ptBWOMpwKcyf3=zkfhMey5H2KnB1dOmUwM79dA@mail.gmail.com/T/#t
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Given all the dev_err() you have added, do this add any value? Is
+> there a way out of this function which is not a success and does not
+> print an error?
+> 
 
-Thanks for the quick fix!
-
-Tested-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-
+I wanted to provide more detailed information using dev_err and dev_dbg.
+In the next version, I will retain the dev_err in the if condition as it
+is, and change the dev_err to dev_dbg in the "out:" label to ensure that
+most of the information gets logged.
+>     Andrew
+> 
+> ---
+> pw-bot: cr
 
