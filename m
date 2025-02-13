@@ -1,174 +1,134 @@
-Return-Path: <linux-kernel+bounces-513090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C3DA3417F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:14:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E030A341AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C3B3ACB36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2EF1890A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D97124292D;
-	Thu, 13 Feb 2025 14:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B17281370;
+	Thu, 13 Feb 2025 14:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jGBtmAOT"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CGVXhOM8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1841C22154F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FA1281345;
+	Thu, 13 Feb 2025 14:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455619; cv=none; b=JnRLtI3ROX4IOPYbyyGykPjI5CVlxfnxRC7wXEr1DWD1hLrdot6t+dboEYDleVumGQQDXg5gxIvVufQh+AehpqlXBEDxEjg9QvtaL/YRtmd0ggR2HZLxyr0pp1ER+I+AB01Yrr6SyY7NKAah8Y8dayqD6qi65RnvmhkWcG3XDao=
+	t=1739455857; cv=none; b=HP40rgPJ8vGediZYKj1VCcZeVXjJniRWYqvtFog1HEsA/WWNG1CgmywPatGuUqmDTpqGCXFo3+MIGT/gtDhhaUN7jr8+kjMN6jOrZ1zrTUf3QhMNn61SCMde7GZGUCGkdaoV25Ww0ksvel9fxl5tsWt66R1Sevp3C6xLJOWKsNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455619; c=relaxed/simple;
-	bh=RhLnZ4v0ULKWu0iDwJ0sh3qj5XEB/ULxdttsDFS1KZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGQoDSyyESaXouiAGw4dU9urHcp7q9flQR+o+cQyeQiLlm/lafpLUc6oZrbnOA7lnk5CC0wDepRftK2wTrK5bsAubo8sqh2a8y6EFgUp1Cs5aoA51yr6zILm8PxNpfP4EeOg4O5UmUgqIgvs38n7K6/DKZFkexTFHfJPwqmiP80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jGBtmAOT; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e46ac799015so718897276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:06:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739455616; x=1740060416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+s+afruOes/BeN3oETSozjf5b7KtJvFcnsAPWmxBXE=;
-        b=jGBtmAOTh3l67r1MgaI3mBZy/RhqISfjGT4PcnhGD7V7Vf7uUlAsYY3BnrspP5G3XF
-         KfV/QB4hnIfWYWxiOtPesPduvrR+/QeTRxenvXaSLxy/0v8Y1N8YHM7AxLAW+J6QmWZJ
-         5fUIq0KZpViP9z+vPmUgIgFgXFxncPAhotgDBDKK9vIkA5YzZUC+FDECkbdI5Xl1dBRX
-         fEY4l4rtSfJQx5guiKE/PayDqFnEf85lDaMFegEXBfCVyqZUyiI1ZEft5DQf5X2oGEIw
-         B776jlUaDlmCxVStHNih5qLzHhjgD8G9tf6b9Jj5rlrNxbV0OYM8EFX8X6K/tOgXoZSk
-         e04A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739455616; x=1740060416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v+s+afruOes/BeN3oETSozjf5b7KtJvFcnsAPWmxBXE=;
-        b=FQqd8Wxh/L8Gqb4tmAbRhZxM42QVTk/1tRYwQnY4IFwFJV7bs4WymS17L9Iw+swcP9
-         tLlDnFPONeC2TtYAggvlq7aYHKLk6kklIEmOEHRMT7bxR1hzKpf/6f7Cq5rP9clP17tF
-         tMGvvr/sP5hDs07prbAeAuHUAUdoxTYtREgjsSliqKmaPm4GWmieid6OHSnSqY++ekyF
-         ZsSPBd8HS+k6YF6uLaR7jVUBXku8XU3eOBeyhDoVMHLxdi+10pRPRK7mSMKEG+FHwWEd
-         jvraJzOCo4NWsobDRjYR3zgY7OknCY89BtaOoyV0/tA+1s+YsUaA/f3pWjCuBDVbiSb0
-         +l3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV4lR1jwwV4WDiQ7DtHbSropHkZCyny8EwrY1ZdZp+9E2ZhtCqzXU7z+sDi2rp2bYSB9TTxJ0zvM8W0So8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4QwnerYx176MhS0HGMAP7nWN/MBKWhDYQdv29egK+vaFagDP
-	4ouD3H1mDv3xuk0yjshYHDiUQrhYrCInZbo/7zHgH0OQW/drFyFMsSREgbha+n2BHs/xpCW/tpE
-	pk8S06/KgTaCCGJm0DOyKBQVlptvJ+TTmj4zt
-X-Gm-Gg: ASbGnctW9G1KSKQuJJbU6fi3dcEQwkAD4FLJxor5ydTf6J1W8PAOIYBEpuxOb+3FiIf
-	XyNk4t+gcF/M9Pce0xe3Cd5yfohWNTAATGtvF2N3cG6yv0mHY5Xp1LBLHXS/yNM6VcIwgLw==
-X-Google-Smtp-Source: AGHT+IHp4oKPpDwKn7fG2TZzfyhaRjClxyo44F1t8DHE32SHPkpBM0l/RG3OXzwrkmmXl3IBHPn6cwzhD7yCo0ce5l0=
-X-Received: by 2002:a05:6902:168c:b0:e5d:a934:701e with SMTP id
- 3f1490d57ef6-e5da9347252mr2175525276.45.1739455615450; Thu, 13 Feb 2025
- 06:06:55 -0800 (PST)
+	s=arc-20240116; t=1739455857; c=relaxed/simple;
+	bh=ToTyMsihtZioDgRW6E04wgRS/tvQ6CsQiomouIaR97s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CkLmWiguTPDRiOrDxZ8eBbNI0GF2FW0JPAKY1WYPBg5kiSRECFRtuZhpsfoJ1/VqpiEv72tNZXNDkRzPpqBYBsuHt/XEG3QM65pIxxIZ0caiD53xXI8r05K5KGhpbo5OA+nKatEBZY9MIRwVxUZ18XXVE8ZaGx+71varrBMlqSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CGVXhOM8; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739455856; x=1770991856;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ToTyMsihtZioDgRW6E04wgRS/tvQ6CsQiomouIaR97s=;
+  b=CGVXhOM8lTHl6CEflJu/a+SkF3SsNbIGDOn9EcT8W+NFllOjXya/RUxd
+   tOAdPIHRga3Ng9v74gr1KSA9UfGSIx0pReQ1lWu06oT9i/qG5XMRA7X59
+   CJwi70w0+onhEVf/NbxSOhD5o8xBtX+ZCL7x/PSX2FCsIrvY4a7nenr3C
+   yZnaj043BrNkQKYctS8h0+aZV6n1BmRNB67VM/TC3bpp/h4Yusxfxwrbj
+   LdRQRSTDDgf9RHwUdJEUq7vzSjBWOZyXAmgqxaXPEp6fpkJeSD3oBAtKi
+   knIMLu1QG1JQufA/j8Gln4SHOG0sWtPz3Im2oUGbipd7gaEEz9LwAcWDT
+   g==;
+X-CSE-ConnectionGUID: JpqVpUKSQKmAp69mQcrQmQ==
+X-CSE-MsgGUID: Qr/ay57IQRiQHTZzh3JCuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40273324"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40273324"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 06:10:54 -0800
+X-CSE-ConnectionGUID: 74s6Vg81S52j4/6jpBZxHA==
+X-CSE-MsgGUID: femaWunTSu+NHGOUW7Rs2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113815326"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 13 Feb 2025 06:10:48 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 214361FD; Thu, 13 Feb 2025 16:10:47 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v2 00/10] i2c: busses: Introduce and use i2c_10bit_addr_*_from_msg()
+Date: Thu, 13 Feb 2025 16:07:14 +0200
+Message-ID: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213114400.v4.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <2025021352-dairy-whomever-f8bd@gregkh> <CADg1FFdez0OdNDPRFPFxNHL_JcKmHE6KNxnYvt4sK7i+Uw6opA@mail.gmail.com>
- <2025021347-washboard-slashed-5d08@gregkh> <CADg1FFdbKx3z+SPWFmY4+xZmewh0MnnZp_gmYEdY0z-mxutmEw@mail.gmail.com>
- <2025021318-regretful-factsheet-79a1@gregkh>
-In-Reply-To: <2025021318-regretful-factsheet-79a1@gregkh>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Thu, 13 Feb 2025 22:06:28 +0800
-X-Gm-Features: AWEUYZk7KS1Z1NcVHtfdSpQsvsw9_eZGxVqxrJuVNvRinHaH1zuC1_kaAxufDe4
-Message-ID: <CADg1FFf5hGrMM8fxiKFF5ZqEMZbsJzByp6+VuaXjJZnDPN2oUg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] Bluetooth: Fix possible race with userspace of
- sysfs isoc_alt
-To: Greg KH <gregkh@linuxfoundation.org>, luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 9:45=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Feb 13, 2025 at 09:33:34PM +0800, Hsin-chen Chuang wrote:
-> > On Thu, Feb 13, 2025 at 8:10=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
-.org> wrote:
-> > >
-> > > A: http://en.wikipedia.org/wiki/Top_post
-> > > Q: Were do I find info about this thing called top-posting?
-> > > A: Because it messes up the order in which people normally read text.
-> > > Q: Why is top-posting such a bad thing?
-> > > A: Top-posting.
-> > > Q: What is the most annoying thing in e-mail?
-> > >
-> > > A: No.
-> > > Q: Should I include quotations after my reply?
-> > >
-> > > http://daringfireball.net/2007/07/on_top
-> > >
-> > > On Thu, Feb 13, 2025 at 07:57:15PM +0800, Hsin-chen Chuang wrote:
-> > > > The btusb driver data is allocated by devm_kzalloc and is
-> > > > automatically freed on driver detach, so I guess we don't have
-> > > > anything to do here.
-> > >
-> > > What?  A struct device should NEVER be allocated with devm_kzalloc.
-> > > That's just not going to work at all.
-> >
-> > Noted. Perhaps that needs to be refactored together.
-> >
-> > >
-> > > > Or perhaps we should move btusb_disconnect's content here? Luiz, wh=
-at
-> > > > do you think?
-> > >
-> > > I think something is really wrong here.  Why are you adding a new str=
-uct
-> > > device to the system?  What requires that?  What is this new device
-> > > going to be used for?
-> >
-> > The new device is only for exposing a new sysfs attribute.
->
-> That feels crazy.
->
-> > So originally we had a device called hci_dev, indicating the
-> > implementation of the Bluetooth HCI layer. hci_dev is directly the
-> > child of the usb_interface (the Bluetooth chip connected through USB).
-> > Now I would like to add an attribute for something that's not defined
-> > in the HCI layer, but lower layer only in Bluetooth USB.
-> > Thus we want to rephrase the structure: usb_interface -> btusb (new
-> > device) -> hci_dev, and then we could place the new attribute in the
-> > new device.
-> >
-> > Basically I kept the memory management in btusb unchanged in this
-> > patch, as the new device is only used for a new attribute.
-> > Would you suggest we revise the memory management since we added a
-> > device in this module?
->
-> If you add a new device in the tree, it HAS to work properly with the
-> driver core (i.e. life cycles are unique, you can't have empty release
-> functions, etc.)  Put it on the proper bus it belongs to, bind the
-> needed drivers to it, and have it work that way, don't make a "fake"
-> device for no good reason.
+For 8-bit addresses we have a helper function, define similar ones
+for 10-bit addresses and use it in the drivers. It allows to remove
+some boilerplate code.
 
-Got it. Thanks for the info.
+Fabrizio, I haven't collected your tags as code changed more than 50%, however
+semantically the parts you reviewed stay the same.
 
-Hi Luiz, I will work on v5 to make btusb resources managed by device.
-Any concern?
+In v2:
+- introduced hi/lo helpers (Geert)
+- rewrote series based on the above
+- added a couple of new converted drivers
 
->
-> thanks,
+v1: https://lore.kernel.org/r/20250212163359.2407327-1-andriy.shevchenko@linux.intel.com
 
->
-> greg k-h
+Andy Shevchenko (10):
+  i2c: Introduce i2c_10bit_addr_*_from_msg() helpers
+  i2c: axxia: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: bcm-kona: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: brcmstb: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: eg20t: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: kempld: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: mt7621: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: rzv2m: Use i2c_10bit_addr_*_from_msg() helpers
+  i2c: ibm_iic: Use i2c_*bit_addr*_from_msg() helpers
+  i2c: mv64xxx: Use i2c_*bit_addr*_from_msg() helpers
 
---
-Best Regards,
-Hsin-chen
+ drivers/i2c/busses/i2c-axxia.c    | 21 +++------------------
+ drivers/i2c/busses/i2c-bcm-kona.c |  6 +++---
+ drivers/i2c/busses/i2c-brcmstb.c  | 11 +++++------
+ drivers/i2c/busses/i2c-eg20t.c    | 28 +++++-----------------------
+ drivers/i2c/busses/i2c-ibm_iic.c  | 14 ++++++--------
+ drivers/i2c/busses/i2c-kempld.c   | 10 +++++-----
+ drivers/i2c/busses/i2c-mt7621.c   | 20 ++++++++------------
+ drivers/i2c/busses/i2c-mv64xxx.c  | 12 +++---------
+ drivers/i2c/busses/i2c-rzv2m.c    | 15 +++++----------
+ include/linux/i2c.h               | 14 ++++++++++++++
+ 10 files changed, 57 insertions(+), 94 deletions(-)
+
+-- 
+2.45.1.3035.g276e886db78b
+
 
