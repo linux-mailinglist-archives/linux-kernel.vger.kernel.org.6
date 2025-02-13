@@ -1,237 +1,151 @@
-Return-Path: <linux-kernel+bounces-513166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7478A342DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2EA342FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204003A76BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3085B3AB7E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E909241690;
-	Thu, 13 Feb 2025 14:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3842E23A9AC;
+	Thu, 13 Feb 2025 14:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUhN9fRu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jfa4GGaD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403972222B1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C6E221552;
+	Thu, 13 Feb 2025 14:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739457476; cv=none; b=tTS9Z3z07Dbl5NogP46Ozx2m0XiGkgK3VN5MOmWkxCZLcm+UyqHnogpwiXx1mZejmCeCtm4b+iI5KRBUk4zqPMzApPR9dLjWrU2q+0tItws2uPedzLaBGtyVHwpbGoh2KwDdMTpLro9gslXp9CV5VlQ8FjeCEpQ5QuSclMBgULg=
+	t=1739457562; cv=none; b=X7cDwCtAR8lV6DX80gxEiv3ayxFi9jf5CZbGKQa5KPtBQd80RxIaBeYV6RnuIGnYS4WI8Qxs9olKo5+Spf8i3ujkiMzr+yt0d9ju6ITmpYUBA55FY0aycFHUGfPgKikJOTAsoUJX6SU/u5mjsPRpbRP0BT8JXX6GcA5lo5SkI0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739457476; c=relaxed/simple;
-	bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YUz1WnTeD6T5Rk4GxrFDLI/NNBV6XYckQlGGcD92DTvgW+NnzsYdcOEjwvyzS3+8PSelv9AyRvrEy66eCdoJ2bP4acdWuDkHY5CoyOyJtSCN3mRiwKNmosS9YizkLXxrNE2Gm0wVKnfNOYTRswogVF7EFFzFtLKoC/GUpIcxsrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUhN9fRu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739457474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
-	b=NUhN9fRuKfk90pCALV78qKCZlBHDd9bIY5i91zQu0fcoVl+/o+Fw7GdTr691javKhHcUAm
-	r9Er3EwSM3ffitmGyL9BQ8CH3LhGtyPbmFNH+ZW05ZW+ZNk3x2adf4NcNoJh5nRSlQWLxv
-	lwPfPtarR8BaLQizGjkBs8ZEcgbyM98=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-3pUviAIMNzilej-0zkoJMw-1; Thu, 13 Feb 2025 09:37:51 -0500
-X-MC-Unique: 3pUviAIMNzilej-0zkoJMw-1
-X-Mimecast-MFC-AGG-ID: 3pUviAIMNzilej-0zkoJMw
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38dc88ed9c0so540537f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:37:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739457470; x=1740062270;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
-        b=MzBwubn/0xVsdiS44g7qczvqWyynOgjNyPQnnyIay+9gVgndwiBimbUfInj45v8v8C
-         gs2dR5Pt7emM/XAyA12baiudcYlGW0xt/rR7r40UNzIh3Q/KoI9oFCrZjL89rrZK18Be
-         WrK8liS3yn1dwgcOLKG1xQTDwVsvEw9EtJxTYexCL+7igjEXuTRkKCZ5Zi7AdJ65TUuZ
-         e4UJ4VnGFRzqcK3Q7GHz2vUl/4YiGnRn8ZYiJNGX89oPoxqVwrWaOyOr/ToZCUQvu1La
-         FuSddNMLHs9jWHz8XWdNNUshW352s/2btQ5uU70L1jgmQpD9DOW/q3yGmT3MVI9ngmm5
-         T6gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEx4To1gOvFitSNkBcfrmHj2s1LraHijSEFauxEXzdWqrCWyh/V8wWkHRz0hNEK7+XFcdOVpMyeYGzYQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1udBJrG/S4AHHXTiJAdhuyPHQM4lKZmlwaWT8CHQ3fAUo8ZV0
-	Cgd5KaOn3IwRFQ5vDH+27uG1/ZhaQcn0K6Ppjn/NWud8rYu+iYK6H2REC4msfFSRZ1CQIsSn23p
-	Jxrth3ypK0A5RR/rNssm1e1gw1d+fgjuTcg7zkXPjP134e39sbm1LzgLUiiXBzQ==
-X-Gm-Gg: ASbGnctPPBYrVwICl4Gbh96nIvuphRUh9GATPfm4f9uVk8b0ECdc3lCHYj38lYbo7AQ
-	thdaNTsjbh5SWQLdkidxHxm7tsLZ/oSusBvkPHPkR5vioP7sij4ElCmP+pyoQPdghrfmjdU83tt
-	D61K58ap0ttVytwfjxGiOPH/gRLp9Or1L7BcZ8Tnn/6DYmdqs69UZs0ZOKoiH+P0f3GbdQ3PLqo
-	k8sQe+/WTOszMVzwBea1CM26Mg1e6atGGZUzn5LgJlX+X/ZDl8xdhpzo4skRu3JmjZQxkBNSJ34
-	lDMNbtGTv3wMS2Qx3R14pQVzxWr92Kg=
-X-Received: by 2002:a5d:648f:0:b0:38f:277a:4eb3 with SMTP id ffacd0b85a97d-38f277a5258mr2651024f8f.8.1739457470391;
-        Thu, 13 Feb 2025 06:37:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDTqe4qsYtkDP00ujYm7DVHNEfDKKsf9UNHm5PPWdZ5xhGE4IKSeM3/RqB5gJfr7CQu4AvKA==
-X-Received: by 2002:a5d:648f:0:b0:38f:277a:4eb3 with SMTP id ffacd0b85a97d-38f277a5258mr2650985f8f.8.1739457469974;
-        Thu, 13 Feb 2025 06:37:49 -0800 (PST)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b44a7sm2119604f8f.12.2025.02.13.06.37.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 06:37:49 -0800 (PST)
-Message-ID: <35fe8e74229af24f45954dd27789363dd5c2f8b8.camel@redhat.com>
-Subject: Re: [PATCH v6 2/3] sched: Move task_mm_cid_work to mm delayed work
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, aubrey.li@linux.intel.com, yu.c.chen@intel.com,
- Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra	 <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- "Paul E. McKenney"	 <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>
-Date: Thu, 13 Feb 2025 15:37:47 +0100
-In-Reply-To: <1a295a1e-08da-4684-81be-9539773a1c94@efficios.com>
-References: <202502131405.1ba0803f-lkp@intel.com>
-	 <17bda9071b6962414f61668698fa840501819172.camel@redhat.com>
-	 <1a295a1e-08da-4684-81be-9539773a1c94@efficios.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739457562; c=relaxed/simple;
+	bh=mljex6fF/+V1lN1/JEaG7T5L9mO4fXa+fKxBcu5YfGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snWRrZaKsXkI2IUMQNWBNKDRgAfbK/G9DVs8lSOMaGnvV5qna7V+vdz5ozIQhKcRzjl1ovMUHnAgLtR10RGJqrvGYHBlrzITR+M30Q/rFWqv54bvrHH6d48FSEHbMwCeoIQOE/IYYdQOQ7e6yvFRfFilhtysw0Ny+zfi15lgoHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jfa4GGaD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5A0C4CEE2;
+	Thu, 13 Feb 2025 14:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739457562;
+	bh=mljex6fF/+V1lN1/JEaG7T5L9mO4fXa+fKxBcu5YfGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jfa4GGaDEqqfKZFf9i1BLECTwiIFy9spSG+YcDopF/6/mYWQ5ezPRlqv5UUsQ9/Hr
+	 j0LWzW+MkhFX5p+SB7yFuiQdGPwmareQEb+7DFw/cXxvqov2t8TUwswlu58DQCbLtp
+	 mB8ZCS8LwnZ9vcciWy3gis3f0EtgJ25z8Ky+eCsL1VxHgwEK2Qf6rg6Yw3UuR3D+Ae
+	 yhHW4GJ0uX//c4o4UZkztSP9dM0zWGuM9JJLsotCNqJilM2B6tEoAmYbqDKnK6G+2H
+	 xY9XvVjrvRK80IxbwtPfWwAWxfWR0Q6gl14O2rQir14iAPAu9X+h8apd2RZ9g4cUXS
+	 /fcPI1gUPQbTA==
+Date: Thu, 13 Feb 2025 15:39:16 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	fan.ni@samsung.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, quic_nitegupt@quicinc.com,
+	quic_krichai@quicinc.com, gost.dev@samsung.com
+Subject: Re: [PATCH v5 0/4] Add support for RAS DES feature in PCIe DW
+Message-ID: <Z64EFN2QZ2AOF11I@ryzen>
+References: <CGME20250121115157epcas5p15f8b34cd76cbbb3b043763e644469b18@epcas5p1.samsung.com>
+ <20250121111421.35437-1-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250121111421.35437-1-shradha.t@samsung.com>
+
+On Tue, Jan 21, 2025 at 04:44:17PM +0530, Shradha Todi wrote:
+> DesignWare controller provides a vendor specific extended capability
+> called RASDES as an IP feature. This extended capability  provides
+> hardware information like:
+>  - Debug registers to know the state of the link or controller. 
+>  - Error injection mechanisms to inject various PCIe errors including
+>    sequence number, CRC
+>  - Statistical counters to know how many times a particular event
+>    occurred
+> 
+> However, in Linux we do not have any generic or custom support to be
+> able to use this feature in an efficient manner. This is the reason we
+> are proposing this framework. Debug and bring up time of high-speed IPs
+> are highly dependent on costlier hardware analyzers and this solution
+> will in some ways help to reduce the HW analyzer usage.
+> 
+> The debugfs entries can be used to get information about underlying
+> hardware and can be shared with user space. Separate debugfs entries has
+> been created to cater to all the DES hooks provided by the controller.
+> The debugfs entries interacts with the RASDES registers in the required
+> sequence and provides the meaningful data to the user. This eases the
+> effort to understand and use the register information for debugging.
+> 
+> v5:
+>     - Addressed Fan's comment to split the patches for easier review
+>     - Addressed Bjorn's comment to fix vendor specific cap search
+>     - Addressed style related change requests from v4
+>     - Added rasdes debugfs init call to common designware files for host
+>       and EP.
+> 
+> v4: https://lore.kernel.org/lkml/20241206074456.17401-1-shradha.t@samsung.com/
+>     - Addressed comments from Manivannan, Bjorn and Jonathan
+>     - Addressed style related change requests from v3
+>     - Added Documentation under Documentation/ABI/testing and kdoc stype
+>       comments wherever required for better understanding
+>     - Enhanced error injection to include all possible error groups
+>     - Removed debugfs init call from common designware file and left it
+>       up to individual platform drivers to init/deinit as required.
+> 
+> v3: https://lore.kernel.org/all/20240625093813.112555-1-shradha.t@samsung.com/
+>     - v2 had suggestions about moving this framework to perf/EDAC instead of a
+>       controller specific debugfs but after discussions we decided to go ahead
+>       with the same. Rebased and posted v3 with minor style changes.
+> 
+> v2: https://lore.kernel.org/lkml/20231130115044.53512-1-shradha.t@samsung.com/
+>     - Addressed comments from Krzysztof Wilczyński, Bjorn Helgaas and
+>       posted v2 with a changed implementation for a better code design
+> 
+> v1: https://lore.kernel.org/all/20210518174618.42089-1-shradha.t@samsung.com/T/
+> 
+> Shradha Todi (4):
+>   PCI: dwc: Add support for vendor specific capability search
+>   Add debugfs based silicon debug support in DWC
+>   Add debugfs based error injection support in DWC
+>   Add debugfs based statistical counter support in DWC
+> 
+>  Documentation/ABI/testing/debugfs-dwc-pcie    | 144 +++++
+>  drivers/pci/controller/dwc/Kconfig            |  10 +
+>  drivers/pci/controller/dwc/Makefile           |   1 +
+>  .../controller/dwc/pcie-designware-debugfs.c  | 561 ++++++++++++++++++
+>  .../pci/controller/dwc/pcie-designware-ep.c   |   5 +
+>  .../pci/controller/dwc/pcie-designware-host.c |   6 +
+>  drivers/pci/controller/dwc/pcie-designware.c  |  19 +
+>  drivers/pci/controller/dwc/pcie-designware.h  |  16 +
+>  8 files changed, 762 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/debugfs-dwc-pcie
+>  create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> 
+> -- 
+> 2.17.1
+> 
+
+Shradha,
+
+Thank you for this awesome feature!
+
+It would be great if we could get it included in v6.15.
+
+Are you intending to send out a v6?
 
 
-
-On Thu, 2025-02-13 at 08:55 -0500, Mathieu Desnoyers wrote:
-> On 2025-02-13 08:25, Gabriele Monaco wrote:
-> > On Thu, 2025-02-13 at 14:52 +0800, kernel test robot wrote:
-> > > kernel test robot noticed
-> > > "WARNING:at_kernel/workqueue.c:#__queue_delayed_work" on:
-> > >=20
-> > > [=C2=A0=C2=A0=C2=A0 2.640924][=C2=A0=C2=A0=C2=A0 T0] ------------[ cu=
-t here ]------------
-> > > [ 2.641646][ T0] WARNING: CPU: 0 PID: 0 at
-> > > kernel/workqueue.c:2495
-> > > __queue_delayed_work (kernel/workqueue.c:2495 (discriminator 9))
-> > > [=C2=A0=C2=A0=C2=A0 2.642874][=C2=A0=C2=A0=C2=A0 T0] Modules linked i=
-n:
-> > > [=C2=A0=C2=A0=C2=A0 2.643381][=C2=A0=C2=A0=C2=A0 T0] CPU: 0 UID: 0 PI=
-D: 0 Comm: swapper Not
-> > > tainted
-> > > 6.14.0-rc2-00002-g287adf9e9c1f #1
-> > > [=C2=A0=C2=A0=C2=A0 2.644582][=C2=A0=C2=A0=C2=A0 T0] Hardware name: Q=
-EMU Standard PC (i440FX +
-> > > PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> > > [ 2.645943][ T0] RIP: 0010:__queue_delayed_work
-> > > (kernel/workqueue.c:2495 (discriminator 9))
-> >=20
-> > There seem to be major problems with this configuration, I'm trying
-> > to
-> > understand what's wrong but, for the time being, this patchset is
-> > not
-> > ready for inclusion.
->=20
-> I think there is an issue with the order of init functions at boot.
->=20
-> poking_init() calls mm_alloc(), which ends up calling mm_init().
->=20
-> The WARN_ON() is about a NULL wq pointer, which I suspect happens
-> if poking_init() is called before workqueue_init_early(), which
-> allocates system_wq.
->=20
-> Indeed, in start_kernel(), poking_init() is called before
-> workqueue_init_early().
->=20
-> I'm not sure what are the init order dependencies across subsystems
-> here.
-> There is the following order in start_kernel():
->=20
-> [...]
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mm_core_init();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 poking_init();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ftrace_init();
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* trace_printk can be e=
-nabled here */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 early_trace_init();
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Set up the sched=
-uler prior starting any interrupts (such
-> as the
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * timer interrupt)=
-. Full topology setup happens at
-> smp_init()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * time - but meanw=
-hile we still have a functioning
-> scheduler.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched_init();
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (WARN(!irqs_disabled(=
-),
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Interrupts were enabled *very* early, fixin=
-g
-> it\n"))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 local_irq_disable();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 radix_tree_init();
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maple_tree_init();
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Set up housekeep=
-ing before setting up workqueues to allow
-> the unbound
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * workqueue to tak=
-e non-housekeeping into account.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 housekeeping_init();
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Allow workqueue =
-creation and work item
-> queueing/cancelling
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * early.=C2=A0 Wor=
-k item execution depends on kthreads and
-> starts after
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * workqueue_init()=
-.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 workqueue_init_early();
-> [...]
->=20
-> So either we find a way to reorder this, or we make sure
-> poking_init()
-> does not require the workqueue.
->=20
-> Thanks,
->=20
-> Mathieu
->=20
-
-Nice suggestion! That seems the culprit..
-
-From the full dmesg of the failure I've seen there's also a problem
-with disabling the delayed work synchronously, since mmdrop cannot
-sleep if we are not in PREEMPT_RT.
-
-I'm trying to come with some satisfactory solution for both, ideally:
-1. the delayed work is not needed in early boot, we may have a better
-place where to start it
-2. we can cancel the work asynchronously on mmdrop and abort it if the
-pcpu_cid is null, but it seems racy, perhaps there's a better place for
-that too
-
-Thanks,
-Gabriele
-
+Kind regards,
+Niklas
 
