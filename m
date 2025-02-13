@@ -1,117 +1,77 @@
-Return-Path: <linux-kernel+bounces-512151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78903A334DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:43:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DCBA334E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEF8167396
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0A6188A859
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9425139566;
-	Thu, 13 Feb 2025 01:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8EE13C82E;
+	Thu, 13 Feb 2025 01:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="auMrHK0z"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GX77E3Jw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C6580034
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD0C80034;
+	Thu, 13 Feb 2025 01:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739410986; cv=none; b=bapZnCeoQdABg82q17OnX9bYKhGmchyIsZAnhQWlU1MqVYYb778ZVOr43ulAG0m2cFXPefYMPi+KO1+B2jkSVfQXt/JuNJwuMYDpClYWbd8ZhnqE6CFFiLoY5kJsiZ8n+/8XKXjJLvrh+OX5mnRnVl0Y76HdXampy/Tgb49M0yE=
+	t=1739411051; cv=none; b=fLiAxOzvBwv7lSEQcCFH282atdMBlXBA84WPcxLziZnQxvmSlF3R/CvoW827gPoMp1cTdVu6Q8GAAUZl/eU9DgZzH0/brnHasJi0+2OkN1LxAp+lUFuIES3z1EuCpBS+tBn9Jj/iLJrwxYkWYT2yHGm8zYT3+I+dEO6724XmF8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739410986; c=relaxed/simple;
-	bh=+ykXtcQ0unMZKuH6OV9U2v3ayx5+m/2c5HxvZe2UP2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ys4xF4M0ULm9oDewHFIMqyAo7FHW6lfxc8JpdRwzIzt2JMxaId5BmP+uka+6t/2GPRfImD9qM8RYeuIRN/mr9Hn4RWpawj5hxJGF+JkaSyrLKVo1n4HA0ome5C3XEoXfS+J6Rqp2lkm8BnwB8+GPY6hmYfZQhLTYyTxEAYO/nHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=auMrHK0z; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220c2a87378so4167735ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739410984; x=1740015784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5oGSM/mXRFDYtGHRMEZVTjxUhTtt3uAbcMTieIkRRk=;
-        b=auMrHK0zjo6ta4ZZrXujpeIKWGqL0TI9jBGeQ/5Doz9OzaMTwrIY5Qsuqw4a2A2X8u
-         wb7XbHg+SIkblJJWiOpzqcpE4S64Bl3izoYwk0kvJ2TxX8g2gttZYO2WeCbp4JzfZ5h8
-         i79HaTpGin/lQDyRMB/UhfkUjZIDUWyoFtIe4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739410984; x=1740015784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T5oGSM/mXRFDYtGHRMEZVTjxUhTtt3uAbcMTieIkRRk=;
-        b=bY/VgQOLlPEpGvleColpIsn1UhITQZBUnwRITt+yP3rxlD0UGRhJo6GwjKMhRsgQXZ
-         zzjAhNol5jbT5WCOEBrp88jnxFyI0ciut5TqTBp0hhiShjY1UqSWlzk6fF3hMVTuOiK5
-         puoTU8b7yr2n5SmAjnUr56oYM/fb6yaFko0M3NFHwwVzVY1rsvMKj8NGQ0Dm1Rg03ei3
-         cKe9c8oIJXcoS6HlRlKsid9cnGmBhDg8Cd7lk20kHU2QoyvrSF1hqNaaxb7Evl9Zu0xi
-         CBz+6/tlVtWaHQLsJC9+6XVsbUEkzfYQlzUmIdc/Pf7o9Be/bGGoT5QKr4XnAOiDXD1u
-         gouA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7HjSeXjc5dQRlrW9QwwEtyHpZY9DDBqs/9s1ONxysOmX5g3XuXezTXgPkmJIkqOKSEdF0A2kIN3rLLpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgmnEzuNQ1Bqge6NYxCHpWWdHsMRKDG0GSeEhd+47gib4lBnI4
-	1DEijgZ15yXnh32MQ33NLPQ8f2DpzkHShwFOdmerhqGCgHU3KfSEepcfaOt0qA==
-X-Gm-Gg: ASbGncthoa0HZKqO6rKUXcSaPrJSfRP0wEGrgWk5PkF9Qqd+4NMi/6qXf+AMHKpZyvH
-	yYd/3RsqCLXZ3v7GgYvkSQo1eKddK+mLW+k1v/h9ra40YcbmuI5+CTsmMDt9tzbK2EDuSgqMRwi
-	snSuTXLhksMjIvVPI4wLLMOI4UHf2kuuC2vTlTfYMif0C4+vt/5gXy9PQyp28PfbV9sRvD91M85
-	J4kUS+2gtJshtmKaqcAeiZjjHhW+M5/UIqZ/Rk9AQ8k+CZ+mLF8MlAQY3R0sKU7X6+bCPQ+ootD
-	bG8YsEfLFl+wfBttHXM=
-X-Google-Smtp-Source: AGHT+IEQkYn7LfEDpm4b84tpMh9IaVyeLMgGUosZu1w3p3j0cQQkmIHAGvjDe9IZBFuwDnNA/Ndrew==
-X-Received: by 2002:a05:6a00:4650:b0:730:76a1:392c with SMTP id d2e1a72fcca58-7322c383ac4mr7127290b3a.9.1739410984041;
-        Wed, 12 Feb 2025 17:43:04 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:3ed3:97ce:5f5f:1f61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273eac4sm107298b3a.113.2025.02.12.17.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 17:43:03 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:42:56 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Kairui Song <ryncsn@gmail.com>, 
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v5 01/18] zram: sleepable entry locking
-Message-ID: <ma5b36tdfdclkcd3ncp3bi7cnrcv2z5ju36h5ovugagp626xpd@kofvqoyhcc3p>
-References: <20250212063153.179231-1-senozhatsky@chromium.org>
- <20250212063153.179231-2-senozhatsky@chromium.org>
- <20250212160830.730a199935e907c2498b28d4@linux-foundation.org>
- <t6w7bzhdy6vywc4gzowdoe2vliwl7sdju6umrti5rscjyd2uns@pquelrkaywjn>
+	s=arc-20240116; t=1739411051; c=relaxed/simple;
+	bh=PiAqO4cwaWZwZ0+zlQA9hwpQDmP/A2e1niC+XO9uyFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jF4P2e0LCKso4awvmzL8ims8HRv0frwkv8ChZYVn5yLI8dXrz8jqE65zayuwodhjNEfL42rsM16lMai33/le9XqlsnjYSWp24PC3rNVa6qbF+59y2IQczudIUuLTRdBC8KrPmsIy+qfxhrHvCE0VGXni3ijZOegCkozrVFBU+Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GX77E3Jw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E6AC4CEDF;
+	Thu, 13 Feb 2025 01:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739411051;
+	bh=PiAqO4cwaWZwZ0+zlQA9hwpQDmP/A2e1niC+XO9uyFQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GX77E3JwvKVzG+XLJWnRpKZrH4DNFn0bYyqATerqOtikishmxI0sKtjiF/ckX0Yic
+	 jNGzru7v5oLp31359mpLNUj6IS4RSYHeUwt2UPNwiHKp4ASWcAcT8oZvSrVpYl/Yzl
+	 xxZ+qj+/a8VqvS8b1I2cown790wc+ZL+B5Gga4i+5gFrxYkdb+oum5QCbaLGCQf8Dg
+	 HirDHCP1wudLE9AvBhHyQvvj1HaVhfbPn1OXhR/fOLj0j4vZ7sGffH+ckYKz+gWtuQ
+	 Y+EOTGZ6AjIZgHpIl4cSptJtbFuqneX96s1DWLZ5X4ZsNsB/KsaHWQ1+D8mk38hk7t
+	 x62LRnFpx+g9Q==
+Date: Wed, 12 Feb 2025 17:44:10 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: borisp@nvidia.com, john.fastabend@gmail.com, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, pabeni@redhat.com, edumazet@google.com,
+ horms@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] tls: Check return value of get_cipher_desc in
+ fill_sg_out
+Message-ID: <20250212174410.42d9ceac@kernel.org>
+In-Reply-To: <20250212025351.380-1-vulab@iscas.ac.cn>
+References: <20250212025351.380-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <t6w7bzhdy6vywc4gzowdoe2vliwl7sdju6umrti5rscjyd2uns@pquelrkaywjn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On (25/02/13 09:52), Sergey Senozhatsky wrote:
-> > > -static int zram_slot_trylock(struct zram *zram, u32 index)
-> > > +static void zram_slot_lock_init(struct zram *zram, u32 index)
-> > >  {
-> > > -	return spin_trylock(&zram->table[index].lock);
-> > > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > > +	lockdep_init_map(&zram->table[index].lockdep_map, "zram-entry->lock",
-> > > +			 &zram->table_lockdep_key, 0);
-> > > +#endif
-> > > +}
-> > > +
-> > >  
-> > > ...
-> > >
-> > > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > > +	lockdep_register_key(&zram->table_lockdep_key);
-> > > +#endif
-> > > +
-> > 
-> > Please check whether all the ifdefs are needed - some of these things
-> > have CONFIG_LOCKDEP=n stubs.
+On Wed, 12 Feb 2025 10:53:50 +0800 Wentao Liang wrote:
+> The function get_cipher_desc() may return NULL if the cipher type is
+> invalid or unsupported. In fill_sg_out(), the return value is used
+> without any checks, which could lead to a NULL pointer dereference.
+> 
+> This patch adds a DEBUG_NET_WARN_ON_ONCE check to ensure that
+> cipher_desc is valid and offloadable before proceeding. This prevents
+> potential crashes and provides a clear warning in debug builds.
 
-The problem is that while functions have LOCKDEP=n stubs, struct members
-don't - we still declare table_lockdep_key and lockdep_map only when
-DEBUG_LOCK_ALLOC is enabled.
+Does not make any sense, the state is validated during configuration.
+-- 
+pw-bot: reject
+pv-bot: llm
 
