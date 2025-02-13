@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-513254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CC0A34630
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:23:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED253A34663
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3912216F14E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67AF17035B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856C5139566;
-	Thu, 13 Feb 2025 15:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA353D97A;
+	Thu, 13 Feb 2025 15:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jlESITdj"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="VN++il+2"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752E626B0B8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95073FB3B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739459841; cv=none; b=rElRUoGV/yU4JFwq3GSTJHxl8nMGs7cd09OcKhCJxpXmbpY2DTyMzvJNxfjGhVmCzvABB3kNRD9JMj7nKoJVlhmygrdNHhzM5dkpLBXMDrNnQLHC3M7huBDpMX1ehd/A2oLb6qGfkbBU6/njctFBsXWMbjBY7K3yMm8p5ejYdSI=
+	t=1739459941; cv=none; b=oBZZkmxbiwdb8dtFW62Uem/rZxAOedJ7TdtLP9SIf1e+Ymd4lfyztfqI4nc3qoJutbHfy9xjqLEpz8kuO6DIIiIkFSdZ+dLyudiDPBiDs6IRY7OQlN8wjsfQEug8FJiMpJJtDwptyexsaCDqSrLbdqKZNGnCj0hjOk/VqmKK1Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739459841; c=relaxed/simple;
-	bh=s+JnwwgybD5c8wcFAbgzYyrwhvw2mcU6LOxkjYGlr8Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DkhS6alYul/5vCJoX6cQvmME2BSm5UKPuDBwBSQZ8fr/K2W2lV4DjpP1qbnGHJO6b0Xe2k7wljG3fTYUsJjJ67KB04x3T+imW8Wyi5VSGuyRE46wiXz+5GeOwJwTJ62LKWDCMllcVQyRI9s7lP35MRftnATvo781FUhAC8Q5UrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jlESITdj; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso3427222a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:17:20 -0800 (PST)
+	s=arc-20240116; t=1739459941; c=relaxed/simple;
+	bh=6/MHXBt3ThyNTmD9iHOOhPj6W2u7EZRVkOK3ed1Q64Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZaBRzJ963xHs4+Ivj2rb90uUC9kAWE6bIPjvlcoNFdxwsLpmHwkpqHsg2WWgTgrTUdWk6E6wgX05mBZG806jr6OCNUFlSZiOhiPiW8OC+dT/1u8/r6AsamvukpyJgRo9p25KrGrldHKZ4FcqfcB3+cq16f3rXxhtDmnBYhkX8Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=VN++il+2; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaecf50578eso217131066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:18:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739459840; x=1740064640; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOwHWbAixNGdS5d63qBoFewmVLXrDRZ9JT49WkI2vX4=;
-        b=jlESITdjXfQzR9CtSvtHlEgLjJN+/2RAr/LsdSgNVV2+udMVo1RSr5N84sqscFiCpy
-         eP6rPg8SYwKDeNI1tNj9wmatDAxRYs5ANSquxoKneOJNomU+LCwQGaoXojt1IDobV8GV
-         1V0YVxzFX1N7M/tryopgKEOTzZjXwYaYZe6f8osyq5KFq4jcO8/xKkJ8Ohaq8P9P2JlS
-         FSpQhWrjx4a2wEvAosPSgvxi+00kvrOZMeb05sxW0vOywFMql+9nlLSIdZNIUMUUj9Nl
-         zaRCAnfnIUVcKxdQxkhZeO6YLdl7pcBwNSmIOI/VgTmsHZ6vzIcK7543QnWIaHAinYzI
-         fIkA==
+        d=raspberrypi.com; s=google; t=1739459938; x=1740064738; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6/MHXBt3ThyNTmD9iHOOhPj6W2u7EZRVkOK3ed1Q64Q=;
+        b=VN++il+2NcLZMuXmB7DtC6t8u7pwISgu60YeSAlSoDlhL+Rz+BjYOrCDuKKGSqJNTv
+         +u7wrbDiN6GxzM+lVgGdMuQoo4n9N7OdMHV2clzOhPj+5yq4lXOQQx/M/Mf+WNf2LfGS
+         roSljNZR/rru7d2FngHpHdE9M5hnfNZ898pmXAsos05p8zy6zGs1CZ4hGWJxMxi47uwU
+         +2ULc+oM+L2mH+Pz2q1MBLw/y7NUaI/FWZ0X/y37mRxw4CBIDGmyGja3Nxyu39j92DDC
+         DCdVSScmyexP+VnO4sXZN/4KACKpyrO8nkBqH+vWulEO4uU2T5Ri9VWcZAFsWSgUhwcD
+         3q+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739459840; x=1740064640;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOwHWbAixNGdS5d63qBoFewmVLXrDRZ9JT49WkI2vX4=;
-        b=OPIVXjOtNMgkV7L7EaUTz39frc9qoQMyRlzj+D2wb+1+8fhcfb8PbTRuzlM5dkxPi/
-         1SaeY4AEzFuY39lXRNKnZIVGLk6OvhoLYFsj+VgfwBDq6eYhNGtAKkqAG8Ol2g9jRiKC
-         zDDcPlLMgDDcUXjIwCSMFxmgE8+YMBm6FChQyhe9Dqlo5rhziSre8V7T4NiiwiKrL+cE
-         LnaHC8N1uzlnt48e1Hae4W8J2uQEsj1oJDLnEjeGo8o7svLNeYJ2ui9gXFJmk44iXm//
-         gHbiAVbLTCt6Ou+LwG1nalzEjPNEJvcsCCsQBSanYnWYbCuCxf8Ol+C0gKBAucNfwnjb
-         vRUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDsFgUmNK/c+gSFwT2gfouTJL3kEpOtfQ2Sx/6nD7n40TUOUC9N6qB8D/jjEpaUwOTj4JTKjhQywBTRQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhdcdcoA1Om/x6EaC1vl2Nyd5F5y1w7R42oz0BpgiTRuIb/x0k
-	83lEugZTRqT6Ei216eW9n1Uhq7uSZllWtM/HwfxBQH0i38tGUAz7B95pnGr685imswbc8t6wvDx
-	eDw==
-X-Google-Smtp-Source: AGHT+IGsi9yJU25HvdPk8HOYfcll3xvyhe/BnSZ4dy+lHC/8X4HkqcVKif5dPKQXJcJUFZhpfpccD6DC6tM=
-X-Received: from pfjd17.prod.google.com ([2002:a05:6a00:2451:b0:730:8566:41dd])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2e84:b0:730:937f:e835
- with SMTP id d2e1a72fcca58-7323c1c7e5dmr4736495b3a.17.1739459839665; Thu, 13
- Feb 2025 07:17:19 -0800 (PST)
-Date: Thu, 13 Feb 2025 07:17:18 -0800
-In-Reply-To: <c47f0fa1-b400-4186-846e-84d0470d887e@linux.intel.com>
+        d=1e100.net; s=20230601; t=1739459938; x=1740064738;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6/MHXBt3ThyNTmD9iHOOhPj6W2u7EZRVkOK3ed1Q64Q=;
+        b=cbJUK2LIQ/O3mRgSD2ASII0Lw7iJs+whwks2yA+mcV83QEC5jvIsZxSUwM8kmX65kM
+         ZqxkRoGE6UDfktYOIouqJN1THw/tR2/5JG9wCqNrOUBBIhf23BKQcsL/pT1f17kIEu7p
+         BM0//wFaCBCQ+rEJunhDIWTnRjTbNLU3vRu3ImH+OBMXKVWB6lYzBBM0xCAP1/y7FPhD
+         tmCCujjLp7utX6LSunYsMJKiQqqlOYclhjKa0RewTChTreh3N+3iI54I8hKLeA+v5QgM
+         2pBVyzU/l5fCsT/ncGIIebGX8T0C/ObbpmiD8Fg8eYVr0gqWDLgYmUuC/JL+pl8he86S
+         oU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXavCajwynMZqkiaBki7FttFJL5e+S90U/spiRXKMMyMvHpvwLkEWFOrF2GG7OihmSFcAYqQpTxWiCWQ6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd8iSMA0/lS4U8qbrno2vs3NIUTu7LwPF5rwfa0z5fB4VlUxYp
+	i5DhnQt7fUTSEnTkApGAM+33e+91SUkbvU4UupInDfIqUpvEWLPCe8kd7Fxu8r0n6Xckkm+PibA
+	cv7UulTspw96KxP397fVpGloNCAtEDU4eKz+wLw==
+X-Gm-Gg: ASbGncuLqXK+FBxi4VG3B5wvF657Kfdgd85/iH65AVUdmMl5pT4KUagd60YBcLrpqVx
+	bpgPrYEubai1OmyPyvtfMwcHDtx+J3f3F3TCpRiKb9wHJteyYDzNfP1nCA73SlPOK5rY+s/8K/s
+	fxZGb80w8xY02S44CTkK5oBpCjNPr9
+X-Google-Smtp-Source: AGHT+IEUUAMp1A3OZpYQwTyMrudMkiFtVUqwOeMuLEVr7St6uJlPcG5asSsJxDTLPpX7Ju1+2ET5B41boTMft3YQY5k=
+X-Received: by 2002:a17:907:3f25:b0:ab7:e278:2955 with SMTP id
+ a640c23a62f3a-ab7f34a31b8mr633294966b.38.1739459936619; Thu, 13 Feb 2025
+ 07:18:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
- <20250211025442.3071607-6-binbin.wu@linux.intel.com> <Z6r0Q/zzjrDaHfXi@yzhao56-desk.sh.intel.com>
- <926a035f-e375-4164-bcd8-736e65a1c0f7@linux.intel.com> <Z6sReszzi8jL97TP@intel.com>
- <Z6vvgGFngGjQHwps@google.com> <3033f048-6aa8-483a-b2dc-37e8dfb237d5@linux.intel.com>
- <Z6zu8liLTKAKmPwV@google.com> <f12e1c06-d38d-4ed0-b471-7f016057f604@linux.intel.com>
- <c47f0fa1-b400-4186-846e-84d0470d887e@linux.intel.com>
-Message-ID: <Z64M_r64CCWxSD5_@google.com>
-Subject: Re: [PATCH v2 5/8] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, isaku.yamahata@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Thu, 13 Feb 2025 15:18:45 +0000
+X-Gm-Features: AWEUYZmetnZU5U18XyjwhGQ_ZYLhS4_yaGIMiS4tC4pNvrJmSgh7GCx5E_wteQI
+Message-ID: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: andrew@lunn.ch, Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, herve.codina@bootlin.com, krzk+dt@kernel.org, 
+	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 13, 2025, Binbin Wu wrote:
-> On 2/13/2025 11:23 AM, Binbin Wu wrote:
-> > On 2/13/2025 2:56 AM, Sean Christopherson wrote:
-> > > On Wed, Feb 12, 2025, Binbin Wu wrote:
-> > > > On 2/12/2025 8:46 AM, Sean Christopherson wrote:
-> > > > > I am completely comfortable saying that KVM doesn't care about STI/SS shadows
-> > > > > outside of the HALTED case, and so unless I'm missing something, I think it makes
-> > > > > sense for tdx_protected_apic_has_interrupt() to not check RVI outside of the HALTED
-> > > > > case, because it's impossible to know if the interrupt is actually unmasked, and
-> > > > > statistically it's far, far more likely that it _is_ masked.
-> > > > OK. Will update tdx_protected_apic_has_interrupt() in "TDX interrupts" part.
-> > > > And use kvm_vcpu_has_events() to replace the open code in this patch.
-> > > Something to keep an eye on: kvm_vcpu_has_events() returns true if pv_unhalted
-> > > is set, and pv_unhalted is only cleared on transitions KVM_MP_STATE_RUNNABLE.
-> > > If the guest initiates a spurious wakeup, pv_unhalted could be left set in
-> > > perpetuity.
-> > 
-> > Oh, yes.
-> > KVM_HC_KICK_CPU is allowed in TDX guests.
+Hi Andrea,
 
-And a clever guest can send a REMRD IPI.
+The problem with this approach (loading an overlay from the RP1 PCIe
+driver), and it's one that I have raised with you offline, is that
+(unless anyone can prove otherwise) it becomes impossible to create a
+Pi 5 DTS file which makes use of the RP1's resources. How do you
+declare something as simple as a button wired to an RP1 GPIO, or fan
+connected to a PWM output?
 
-> > The change below looks good to me.
-> > 
-> > One minor issue is when guest initiates a spurious wakeup, pv_unhalted is
-> > left set, then later when the guest want to halt the vcpu, in
-> > __kvm_emulate_halt(), since pv_unhalted is still set and the state will not
-> > transit to KVM_MP_STATE_HALTED.
-> > But I guess it's guests' responsibility to not initiate spurious wakeup,
-> > guests need to bear the fact that HLT could fail due to a previous
-> > spurious wakeup?
-> 
-> Just found a patch set for fixing the issue.
+If this is the preferred route to upstream adoption, I would prefer it
+if rp1.dtso could be split in two - an rp1.dtsi similar to what we
+have downstream, and an rp1.dtso that #includes it. In this way we can
+keep the patching and duplication to a minimum.
 
-FWIW, Jim's series doesn't address spurious wakeups per se, it just ensures
-pv_unhalted is cleared when transitioning to RUNNING.  If the vCPU is already
-RUNNING, __apic_accept_irq() will set pv_unhalted and nothing will clear it
-until the next transition to RUNNING (which implies at least an attempted
-transition away from RUNNING).
+Thanks,
+
+Phil
+
+P.S. Apologies for the lack of context - your emails don't make it
+through to rpi-kernel-list, and gmail doesn't make it easy to interact
+with a mailing list.
 
