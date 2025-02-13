@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-512338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6409DA337C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:13:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868AFA337C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBDF7A439E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:12:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440A4168B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36A7207677;
-	Thu, 13 Feb 2025 06:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3CA207663;
+	Thu, 13 Feb 2025 06:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3B6dGVa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rfpa5Zy3"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378A24A01;
-	Thu, 13 Feb 2025 06:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBA21E376E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739427180; cv=none; b=Vax6Fs07RbM41tJKBTUbpqQu3rELlB7bwTKTL6jJcayf0SzMGqstoy+2vsjPKH6rb63YWw5/JhltosQmTDf0CuJIXSExx6PRoZK8JVGr5DZswDPXu3aSIwss3K3Or2Rj5QPS+6V6Tm3YHKyqKyeDVNlnKsGtF4QT0NFTrtwDFzw=
+	t=1739427283; cv=none; b=FOkD7wUfGllQwGkEV2K9TJ5+UE48Ndoihe8FhP1AJP8s9HYyeX4S4ELYj9y0qls1mwR6FAkV6kQAo0OWCHFuVM2J+R9ZYwq3/eiYT78rIdgO0xqltHBn6VP8VPiPBE5UXoM1gs0HPQK+PKWOh4mLIs9BrUgP9No+GJLFHLf2HSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739427180; c=relaxed/simple;
-	bh=GEJZwnWqsIMq3HKET1mdxf8SV5zMREPN381jd4cLlhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jn4RZAfOJVx1Z/nn+STINzCxIH/ROxnSXN3DctvPzulWG0dQ6PgoZus0nYbKf5JUenms/zq7dYQnJN9yLk4wR5jQQJQC2HODjrb7PegFoaHG63a8ubY+TCUrKRUmN1W6x3oqYKbXiF0F0qS1ZQ49WqbOvBRDb/ZHsIBxkm+btgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3B6dGVa; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739427178; x=1770963178;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GEJZwnWqsIMq3HKET1mdxf8SV5zMREPN381jd4cLlhM=;
-  b=Y3B6dGVaf4XgFtsnu/SpHcDfNJF19sAkVqkorop83pyJdV0+xMg2Tu1E
-   obdbhTVAHJtorV2VsusW2Jfblde7oZpQamVkmiEEnQu5sW5PfjmepNVVG
-   mhgQZ9+EC89hQemYNtLl8H2/hjv5I2Z4zdu6rNzYlT3Ag3JIMspKPlO8I
-   sZLgaIYBpSwGWdHMJdzmponi27jrRGLrMdet5eAV+w4SSoQnhk0RYsB81
-   N1tSPmrdF1vsHlllWh3uL/JoWufAErP0AP33N/WCTrme5f4RX9yY9T2Ll
-   F/yvo+s1GT779sHSZ2y1t/fq0wzL9UW+EFN0TLHfIuqT9E0TvSySAd5B9
-   A==;
-X-CSE-ConnectionGUID: Un/3OUz1QB2/kYlJ4JVB3w==
-X-CSE-MsgGUID: LPmm1REwTSuOj3+C7ySsqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="44046217"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="44046217"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:12:57 -0800
-X-CSE-ConnectionGUID: bkfrU6y2QB2L4ycTkHh9VA==
-X-CSE-MsgGUID: VzfZiVD2SRO52yQ6ry9WDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117156622"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.42.34]) ([10.247.42.34])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:12:50 -0800
-Message-ID: <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
-Date: Thu, 13 Feb 2025 14:12:47 +0800
+	s=arc-20240116; t=1739427283; c=relaxed/simple;
+	bh=1R8tWNZd0Yp5liGmyR9m/i7eEgtPLcC9uwsA3XfHu7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+JjnQJJj5Mpe1Fcxp45Bpy4h65SgEBqPoEvlTJswEMF1lPqAW9yFhvYWz4VFNnr8d6VugDWfWTT6VnXsOuQFd8YnCcmymifYHlP/Se2wx9bTLcBK0Prs2yIItzDg1UYSdwKFBnpoWfNNQ3iciVu8770S9LRPUNQc8/EcXxeDtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rfpa5Zy3; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Feb 2025 22:14:29 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739427277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5cjQWSwj8nKF9KoRQ2WmbNuDTwdSzRb9QicnW/ugG1M=;
+	b=rfpa5Zy3jCDew0wr+3Ap2UlABlwFrZ6W90clYvgaXHX+f1Y2+BkqgfWW+PofMQ7NrAgIYK
+	ztM5LIlQ1YH9ZBfGfUI6WM/fJ81qGfighs8088pa79LoCafpufn76YepsKUa5dEqQuJxK2
+	yr4wx4OSTqKC8VG+i0vLMqajSkxMh7c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Fuad Tabba <tabba@google.com>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v7] KVM: arm64: Fix confusion in documentation for pKVM
+ SME assert
+Message-ID: <Z62NxRzbOyt-nBmK@linux.dev>
+References: <20250212-kvm-arm64-sme-assert-v7-1-0f786db838d3@kernel.org>
+ <Z6yByMUBPDUyEWOr@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
- feature in IGC
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250212220121.ici3qll66pfoov62@skbuf>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20250212220121.ici3qll66pfoov62@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6yByMUBPDUyEWOr@J2N7QTR9R3>
+X-Migadu-Flow: FLOW_OUT
 
+On Wed, Feb 12, 2025 at 11:11:04AM +0000, Mark Rutland wrote:
+> On Wed, Feb 12, 2025 at 12:44:57AM +0000, Mark Brown wrote:
+> > As raised in the review comments for the original patch the assert and
+> > comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> > disabled in protected mode") are bogus. The comments says that we check
+> > that we do not have SME enabled for a pKVM guest but the assert actually
+> > checks to see if the host has anything set in SVCR which is unrelated to
+> > the guest features or state, regardless of if those guests are protected
+> > or not. This check is also made in the hypervisor, it will refuse to run
+> > a guest if the check fails, so it appears that the assert here is
+> > intended to improve diagnostics.
+> > 
+> > Update the comment to reflect the check in the code, and to clarify that
+> > we do actually enforce this in the hypervisor. While we're here also
+> > update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
+> > 
+> > Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+> > Reviewed-by: Fuad Tabba <tabba@google.com>
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
 
+I don't think a Fixes tag is warranted here, this doesn't fix any
+functional issue.
 
-On 13/2/2025 6:01 am, Vladimir Oltean wrote:
-> On Mon, Feb 10, 2025 at 02:01:58AM -0500, Faizal Rahim wrote:
->> Introduces support for the FPE feature in the IGC driver.
->>
->> The patches aligns with the upstream FPE API:
->> https://patchwork.kernel.org/project/netdevbpf/cover/20230220122343.1156614-1-vladimir.oltean@nxp.com/
->> https://patchwork.kernel.org/project/netdevbpf/cover/20230119122705.73054-1-vladimir.oltean@nxp.com/
->>
->> It builds upon earlier work:
->> https://patchwork.kernel.org/project/netdevbpf/cover/20220520011538.1098888-1-vinicius.gomes@intel.com/
->>
->> The patch series adds the following functionalities to the IGC driver:
->> a) Configure FPE using `ethtool --set-mm`.
->> b) Display FPE settings via `ethtool --show-mm`.
->> c) View FPE statistics using `ethtool --include-statistics --show-mm'.
->> e) Enable preemptible/express queue with `fp`:
->>     tc qdisc add ... root taprio \
->>     fp E E P P
+> > diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+> > index 4d3d1a2eb157047b4b2488e9c4ffaabc6f5a0818..e37e53883c357093ff4455f5afdaec90e662d744 100644
+> > --- a/arch/arm64/kvm/fpsimd.c
+> > +++ b/arch/arm64/kvm/fpsimd.c
+> > @@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+> >  	}
+> >  
+> >  	/*
+> > -	 * If normal guests gain SME support, maintain this behavior for pKVM
+> > -	 * guests, which don't support SME.
+> > +	 * Protected and non-protected KVM modes require that
+> > +	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> > +	 * host/guest SME state needs to be saved/restored by hyp code.
+> > +	 *
+> > +	 * In protected mode, hyp code will verify this later.
+> >  	 */
+> > -	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+> > -		read_sysreg_s(SYS_SVCR));
+> > +	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
+> > +		     read_sysreg_s(SYS_SVCR));
 > 
-> Any reason why you are only enabling the preemptible traffic classes
-> with taprio, and not with mqprio as well? I see there will have to be
-> some work harmonizing igc's existing understanding of ring priorities
-> with what Kurt did in 9f3297511dae ("igc: Add MQPRIO offload support"),
-> and I was kind of expecting to see a proposal for that as part of this.
+> As I mentioned on the last round, we can drop the is_protected_kvm_enabled()
+> check, i.e. have:
 > 
+> 	/*
+> 	 * Protected and non-protected KVM modes require that
+> 	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> 	 * host/guest SME state needs to be saved/restored by hyp code.
+> 	 *
+> 	 * In protected mode, hyp code will verify this later.
+> 	 */
+> 	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
+> 
+> Either way:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> Marc, are you happy to queue this atop the recent fixes from me? Those
+> try to ensure SVCR.{SM,ZA} == {0,0} regardless of whether KVM is in
+> protected mode.
 
-I was planning to enable fpe + mqprio separately since it requires extra 
-effort to explore mqprio with preemptible rings, ring priorities, and 
-testing to ensure it works properly and there are no regressions.
+I'll pick it up for 6.15 if Marc doesn't grab it as a fix.
 
-I’m really hoping that fpe + mqprio doesn’t have to be enabled together in 
-this series to keep things simple. It could be added later—adding it now 
-would introduce additional complexity and delay this series further, which 
-is focused on enabling basic, working fpe on i226.
-
-Would that be okay with you?
-
+-- 
+Thanks,
+Oliver
 
