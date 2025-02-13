@@ -1,165 +1,157 @@
-Return-Path: <linux-kernel+bounces-513788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631DFA34EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:52:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03840A34EB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D473A960D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CCEF1888E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D778324A06F;
-	Thu, 13 Feb 2025 19:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2802224A06D;
+	Thu, 13 Feb 2025 19:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="KV6je5oO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jNKk9yU4"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=ronja.re header.i=@ronja.re header.b="EcmWx9yo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="x3JF1fTt"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E400B245B05;
-	Thu, 13 Feb 2025 19:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74BE245B05;
+	Thu, 13 Feb 2025 19:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476321; cv=none; b=sVZxW6ymSfSmJmJx8tf9PykTDDIYxTwjeyf49jf8efNPdGOmhav6k+Ot4tfF2nNeVOB+srByfXAvMA2QqHSxokeUWIcifqviYWZ3oFa7SPbuUy1YetipuYRFDi+V6g/+I763gD8gxK4Vm0WQV29WHqY6p2a6fHmYG265YnsHPvo=
+	t=1739476339; cv=none; b=A8f0+YgLybWQmV+eFA9cbiL9URE8/GHIV1pdV3gEe8yxffcTuunQI+q3xEJrL3wtg/NQK7l9TFh0EhZuFNikD/CMORJWzVyygGFF9gTdchZqF5rrMmsuL1tg3458UYV14/Cvuf0XtxQqxP/Nvz2l4TqFyx/86wYpOrVsUDdtKko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476321; c=relaxed/simple;
-	bh=dvNGHrTeA6ys468eoHNYSsVhvMpC15PcGXt3+qXaffg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AT39sSkdu0vPHqZ54LCgLBWVVQ5fMi5ITySqIaFIJucWsXHE9brmzN72/zRZD1DEuwmDvTG5+nm5sWvl5/5r0tw8D5oSqGrmCO8nPFKWs0CdxGDgjOYrin+Gw3B6VuDs/2nNDUoJw4kxdIbGj2Kvdkfg2kSdmj/+55jm20TeoOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=KV6je5oO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jNKk9yU4; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DC5611140222;
-	Thu, 13 Feb 2025 14:51:57 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-10.internal (MEProxy); Thu, 13 Feb 2025 14:51:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1739476317; x=1739562717; bh=+1icS1ornuLOryc0NeZcleF/lysfwDHd
-	eIVIyTWVEzA=; b=KV6je5oOvDIlLt2IcOKKIavwfangEhqoB+zLeVLNjrhtb8ga
-	ko1I6oJrJzwJI0euTefgVhxm2kbY5xzyv2RV2XCFsCh7EnNqhbcvsRqV8TUI4Lsz
-	A3xdPdxGbH2jaoJGSDReNrRP3Mm0/JXhOouR4F7Aendba5svC5sVxkdbwzXI2lR8
-	D7ITQRsq4RMkmL2/PwqTGWO2IcgAGRQ4y5sz03KJ/NAh2wWA8sJBmdjeo5T2CnoN
-	TAC1AUr9D+bRPVP885VVIcHpLCS3Efyr83E6Y1jACHBmlbkBYVW//mF91GcdjpOy
-	lvcME+rNn7EC0Ob76NDXPOjKN7Z6cjgXTuokYw==
+	s=arc-20240116; t=1739476339; c=relaxed/simple;
+	bh=Ru7Do5ZTMBtYlmIPJrlF4RcaaHztY9haKkMBArKCyxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MR2Wlj6CldFYj+aK559QHcyl00B+QvNb3HdBO4GrRdyFs106/e7Syl0d48D6H1pE3gFD5zhCW8fxKpzjMC7Oj7BIKM4zS3lYMZ5Vnt0JQF983QM/ajD9OeITFlJL32ukO4yfB+zLEYIkiASQQJfCW6BvG6wFL5xVKhkOi2q8ijA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ronja.re; spf=pass smtp.mailfrom=ronja.re; dkim=pass (2048-bit key) header.d=ronja.re header.i=@ronja.re header.b=EcmWx9yo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=x3JF1fTt; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ronja.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ronja.re
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id C47861380229;
+	Thu, 13 Feb 2025 14:52:16 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 13 Feb 2025 14:52:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ronja.re; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1739476336;
+	 x=1739562736; bh=hBZh1E50TYghnLz92VGxm4YsBz6I+nkTA9ZWWpxdAFo=; b=
+	EcmWx9yoB+WoclcvN67Mzc6cR5blzOdOYUNgHc3OZrnCgLgaUFrHMAxClgaub/hp
+	E6yf54OkLfQF6ijEdk+6R4aSHzjh9qkfmrwJp/s3ZcQTEtQgr9dvI7qqlDjsqGmi
+	7Miw9RQg37PprFPKYH5ukBxt0Z8jcXjudMmIH/ngBAaVwlTpxAfGcDtOduNSRS+B
+	vT9oeCARRxdktY7BK+EP/hhTHzKni/BGfBxUyN6CE55BnuxhJE7T4Q6qBI/xQjgS
+	EuZe9Cox9Jkgt6HOqOc01cuSrLzV4DKCntATyiA8v95OwvpMmE3b8XqsGLAO8duF
+	8NGxRaKT1EAnEysjXn26bA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739476317; x=
-	1739562717; bh=+1icS1ornuLOryc0NeZcleF/lysfwDHdeIVIyTWVEzA=; b=j
-	NKk9yU4fJCx9uyRFkIOvviP8jixh33cVwdZSooMJ+mN45xl1qK8kPJ7gtQazgoKg
-	gZzzEtUpWM6MCbI0bVduq4FqPWQNZtmrc1oChTGj1eom9nJ9B5a/t5u3RuXXUzv0
-	6LAOM6CnoVuwaQHvVMzs88DEEWNPqzWjzaCa9nD1AlPjhsNsFY0/LrblA3ciQszb
-	va8AgUyDnN6tFl1In4C/7l1xs7JqONRMoyx5Gh3tLOm8qo7ZYXNMGS6F9EYtOZur
-	LQmqHnXKQXfpWzEbnJdfTElldsIwW7ZMMBVKMiVI7ToQDzO4tCtW+tdBKV1akjYx
-	cwbUuyl/aST1GzFrV7+lg==
-X-ME-Sender: <xms:XU2uZybhXhFLU0OeqFw5r7L3mpSEfL0QlDD6zoef10vdrtLeWXWdwA>
-    <xme:XU2uZ1YdrG79cucHNEjBZ2JiNE7dxcAYNFCF6qEx33LDHyzJK7N-rQANe6tywi4bv
-    BnyIcJJWSdZvs02QqM>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739476336; x=
+	1739562736; bh=hBZh1E50TYghnLz92VGxm4YsBz6I+nkTA9ZWWpxdAFo=; b=x
+	3JF1fTtnXYpNGJeilnYQzOMEyDaj5Zx4BAHRwNt/LHF2E7hCyWqNIrT5TZQU0Zrf
+	VHUukhpWroCnJfIlbrJUk21WzeVUdKiOcYIatom+WWKqeSNzXkVZCHw2ONC2aaPw
+	FtWwYQv+GIhZP/9A7gqFWO6OfBrcZQLiYt8boNPv3KIM3f8TuMn1GtW85iwYphp5
+	eYKhGLhVfi6s4e1n8brESrlk7J3P7y8v+Nu14IXLZGoG/lP7Lk3fzCoggaO+07SO
+	Y2o1biSM07VCcHB4vXMUww88afAA1350mAjP624qPwaR31P3lS+ftp2SQUt6mJZA
+	sAvLPpC54STzlwaTcor3A==
+X-ME-Sender: <xms:b02uZ9D0nZ1gfJXueusuJOgbJVxEWLjAlcdzlHt7aAix4ENurzPUHQ>
+    <xme:b02uZ7g46l1goqI6B1WEz0pDMLDBUQCmDZvM6ELpC40jgYdEoZB-beUnJA0iD_D47
+    xrv-TP5DOG_nDm1yA>
+X-ME-Received: <xmr:b02uZ4nOrzzHw6M2DkzVlg1Thlcz8nzELAdg915666Zfw5ctJcoIfR9o8byiaNgwR0xUFAXEs5Mlr1svROveWbKX2k-xH-goSItl>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeeiiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfuvhgvnhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvg
-    hrrdguvghvqeenucggtffrrghtthgvrhhnpeelfeetueegudduueduuefhfeehgeevkeeu
-    feffvdffkedtffffleevffdvvdeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghr
-    tghpthhtohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgrnhestg
-    horhgvlhhlihhumhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgv
-    rdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghr
-    rghlihhsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgriieskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehm
-    rghnihhvrghnnhgrnhdrshgrughhrghsihhvrghmsehlihhnrghrohdrohhrghdprhgtph
-    htthhopehkfieslhhinhhugidrtghomh
-X-ME-Proxy: <xmx:XU2uZ88ZTFgef8cAWzc8dX8o9v685TS2_ZzLi1GHY__qmJsqtlyaSQ>
-    <xmx:XU2uZ0pjTonlmsWbpyay6fwx5DEuaYtHCISTD-LlOH_Rt5IW_YyOfg>
-    <xmx:XU2uZ9qGENScLPwOvIevVSsLZZr_mP0EvPTI5fjO6sPoTgr-C4H8LA>
-    <xmx:XU2uZyTjDwJjL5mJ7S5FefJZ0FIiRnjdZGnvxbGeCdqbxiJwG7hfiA>
-    <xmx:XU2uZzZKl2o40-GDvILbgU7vTYyK6xpADGju3BZ9aQPnlOz7YPfR1-yP>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0C5C3BA0070; Thu, 13 Feb 2025 14:51:56 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomheptfhonhhjrgcuofgvhigvrhcuoehmvgdolhhkmhhlsehrohhnjhgrrd
+    hrvgeqnecuggftrfgrthhtvghrnhepffefjeehuddthfettedvueeuieefkefhheehteej
+    jeduleevtefhgeehteeviefhnecuffhomhgrihhnpehjohhfrhgvvghmrghnrdgtohhmne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvodhl
+    khhmlhesrhhonhhjrgdrrhgvpdhnsggprhgtphhtthhopeeftddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehgrhgv
+    ghesvghnjhgvlhhlihgtrdgtohhmpdhrtghpthhtohepthhorhhvrghlughssehlihhnuh
+    igqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrghrtggrnhesmhgrrhgt
+    rghnrdhsthdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepjhhgghesnhhvihguihgrrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhn
+    uhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepphhhrghsthgrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehhtghhsehlshhtrdguvg
+X-ME-Proxy: <xmx:b02uZ3xymUNtpFWWa5H7dLBbaepfiVImJa4aFJM_5ahv-iFGYEi0cQ>
+    <xmx:b02uZyTrxPNSashoUbV3FYxFqV5xrPv2zK6z7pB6t_xTvqUcT3Tc2g>
+    <xmx:b02uZ6YSMTS0ZehgNykR8IWIRT1QyYJQBO0sBSgHaBxLOueBFLJ8mA>
+    <xmx:b02uZzSmS-cfjxzK556kNfgEuElIaOpqI1hAzrArNhf05EWr9rWi4A>
+    <xmx:cE2uZzeECUh2NoEmbRxxGyDeSp560rCRqPg5fwmkQJKJ4iP2ogD8EkvV>
+Feedback-ID: i2f914587:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Feb 2025 14:52:11 -0500 (EST)
+Message-ID: <93fe2066-f181-420c-a3e3-016c98c54035@ronja.re>
+Date: Thu, 13 Feb 2025 20:52:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 13 Feb 2025 20:51:31 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Marc Zyngier" <maz@kernel.org>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>
-Cc: "Hector Martin" <marcan@marcan.st>, "Bjorn Helgaas" <bhelgaas@google.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Mark Kettenis" <kettenis@openbsd.org>,
- "Stan Skowronek" <stan@corellium.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <ae7bdc0c-c691-43a7-8cd7-b1c22c7623c0@app.fastmail.com>
-In-Reply-To: <86y0ybsd0d.wl-maz@kernel.org>
-References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io>
- <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
- <86y0ybsd0d.wl-maz@kernel.org>
-Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
+ coherent allocator abstraction.)
+To: Theodore Ts'o <tytso@mit.edu>, "Dr. Greg" <greg@enjellic.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Hector Martin <marcan@marcan.st>, Dave Airlie <airlied@gmail.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>,
+ phasta@kernel.org, Christoph Hellwig <hch@lst.de>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ daniel.almeida@collabora.com, aliceryhl@google.com, robin.murphy@arm.com,
+ rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, Bj??rn Roy Baron <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ DRI Development <dri-devel@lists.freedesktop.org>
+References: <2025013030-gummy-cosmic-7927@gregkh>
+ <20250130172437.GN5556@nvidia.com>
+ <2025013148-reversal-pessimism-1515@gregkh>
+ <20250131135421.GO5556@nvidia.com>
+ <2b9b75d1-eb8e-494a-b05f-59f75c92e6ae@marcan.st>
+ <Z6OzgBYZNJPr_ZD1@phenom.ffwll.local>
+ <CAPM=9tzPR9wd=3Wbjnp-T0W8-dDfGah-H3Ny52G85B+2Ev9ksA@mail.gmail.com>
+ <208e1fc3-cfc3-4a26-98c3-a48ab35bb9db@marcan.st>
+ <CAHk-=wi=ZmP2=TmHsFSUGq8vUZAOWWSK1vrJarMaOhReDRQRYQ@mail.gmail.com>
+ <20250207121638.GA7356@wind.enjellic.com> <20250208204416.GL1130956@mit.edu>
+Content-Language: en-US
+From: Ronja Meyer <me+lkml@ronja.re>
+In-Reply-To: <20250208204416.GL1130956@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 08.02.2025 21:44, Theodore Ts'o wrote:
+> I'll let you in a secret.  The maintainers are not "all-powerfui".  We
+> are the "thin blue line" that is trying to keep the code to be
+> maintainable and high quality.  Like most leaders of volunteer
+> organization, whether it is the Internet Engineerint Task Force (the
+> standards body for the Internet), we actually have very little power.
+ > […] structurelessness becomes a way of masking power, and […] is 
+usually most strongly advocated by those who are the most powerful 
+(whether they are conscious of their power or not). As long as the 
+structure of the group is informal, the rules of how decisions are made 
+are known only to a few and awareness of power is limited to those who 
+know the rules. Those who do not know the rules and are not chosen for 
+initiation must remain in confusion, or suffer from paranoid delusions 
+that something is happening of which they are not quite aware. […]
 
-On Wed, Feb 12, 2025, at 10:55, Marc Zyngier wrote:
-> On Tue, 11 Feb 2025 19:54:32 +0000,
-> Alyssa Rosenzweig <alyssa@rosenzweig.io> wrote:
->> 
->> From: Hector Martin <marcan@marcan.st>
->> 
->> This version of the hardware moved around a bunch of registers, so we
->> drop the old compatible for these and introduce register offset
->> structures to handle the differences.
->> 
->> Signed-off-by: Hector Martin <marcan@marcan.st>
->> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
->> ---
->>  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++------
->>  1 file changed, 105 insertions(+), 20 deletions(-)
->> 
->> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
->> index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac61143ae1d3ed744 100644
-...
->
->> +	else
->> +		rmw_set(PHY_LANE_CFG_REFCLKCGEN, port->phy + PHY_LANE_CFG);
->> +	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
->> +
->
-> Can you elaborate on this particular change?
->
-> I always assumed this was some clock-gating that needed to occur
-> *before* the link training was started. This is now taking place after
-> training, and the commit message doesn't say anything about it.
+ From "The Tyranny of Structurelessness", written by Jo Freeman in 1970. 
+https://www.jofreeman.com/joreen/tyranny.htm
 
-It's been a while but as far as I can tell APPCLK seems to be related
-to the IOMMUs attached to this controller. If it's disabled all reads
-from the respective IOMMU MMIO either came back as 0xffff.. or SError
-(don't remember which one it was) but pcie itself worked just fine
-(until any device tried DMA ofc).
+- Ronja
 
-At least on M1 this entire sequence only works because we already
-setup PORT_APPCLK_EN inside m1n1. If we didn't do this (like e.g
-for the thunderbolt pcie/dart) the DART probe would already fail.
-
-
-
-Sven
 
