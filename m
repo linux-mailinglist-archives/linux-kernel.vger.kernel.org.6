@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-513001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42A6A3405F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:28:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EE4A34063
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB7E188DAC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 055393A1CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A84A227EA3;
-	Thu, 13 Feb 2025 13:28:20 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A5923A980;
+	Thu, 13 Feb 2025 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ODzZaBT/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDB623F417
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26A223F405;
+	Thu, 13 Feb 2025 13:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453300; cv=none; b=E4tZ5YwOJjkPu1hXeb1TqgUC1Qi94Ofp+kwiC6meFai46Q4LHN1ku4WiiGRh9rtN2Pvvb/onFmJIlIedLvFdDcwRtUIsjLu3PCmF0aElu4zUswl55w433xnx9VcjeLpQQBvxkzgA12zDOE8WyxieSSUxI8u4b43/9o+MmpQjNhc=
+	t=1739453397; cv=none; b=KKFk7XlBUtmk85QNN7sh61o6gZpYEsjRs2D9JHV08lxG5pnJ1esh4yp0qCuboT7UJJvBP9sdNV1mM+z0Xit9om2mTYy02YrXYrOkgQafbHeimsTVE/d+4V8nRropG+/PyZWQG2o/osiMS8oDfkA73foFDvJWt2FdQubq8wejzCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453300; c=relaxed/simple;
-	bh=RQY6bGYDJeKZMLI7Z+sAL/C0yIu2KTRgxfUjPDXt8hI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pO6aB4eGcSP8nx1VAEP792HykQFzumU42HG9DvYR5AcaxGEDiRUqpD1e2NVYg/3yFo06EOQePoZP1GI/muFDFBlaDSQ8ODy8AWpwhG0Bs0G3l62DtsJGL+Zc7Sx3Ls7Psgi6Jmx0Ib+D5Q7DRPVKiboLiHg3hA7LFSimNftmf3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A2034441A0;
-	Thu, 13 Feb 2025 13:28:13 +0000 (UTC)
-Message-ID: <0a895286-2084-42d5-9d19-5a27d9cb6ef9@ghiti.fr>
-Date: Thu, 13 Feb 2025 14:28:13 +0100
+	s=arc-20240116; t=1739453397; c=relaxed/simple;
+	bh=u+0TFlvAcTgqS+Pq+6Q91tIBM3Sa6hihqUkBue9AVGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJJkbaGLGNh5bBnCp2uxJC7sVgT9rT4BJdRY8PxZF7PgYkW7ABotSLM2wqTIBv9Uo1RH9xdySCJmBWkAeKQ/nu30jNqcvQJVt37+31gkoGhK3dL+aFs2a6qWCgiFImX3GfH9bMKFmB4pePvXlv3g3/ytWw3yiWEXZRAMp8ESWT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ODzZaBT/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=LofFdn71YhJEfg4gK8mqJ2EQ/Xufw9Ujp/0BZNUiuSw=; b=OD
+	zZaBT/rDCeCpGiGnVgl4VG7kyi4r7LH/9K2ox5F62nicWoK8i2mLmNKkByiaAy2NSuSk8r3qvc5ch
+	ENTTTHgM30/v41WWLAEXjHmi7Mek6IZjtfCR/+O9p3Rd5TEjR8gtzOterexQlXHMnelpHb9xYAt/p
+	EGpe3aVaxfoZOZM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tiZHb-00DkP8-9Z; Thu, 13 Feb 2025 14:29:35 +0100
+Date: Thu, 13 Feb 2025 14:29:35 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "dqfext@gmail.com" <dqfext@gmail.com>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: phy: mediatek: Add token ring access
+ helper functions in mtk-phy-lib
+Message-ID: <64b70b2d-b9b6-4925-b3f6-f570ddb70e95@lunn.ch>
+References: <20250116012159.3816135-1-SkyLake.Huang@mediatek.com>
+ <20250116012159.3816135-2-SkyLake.Huang@mediatek.com>
+ <5546788b-606e-489b-bb1a-2a965e8b2874@lunn.ch>
+ <385ba7224bbcc5ad9549b1dfb60ace63e80f2691.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] riscv: Fix set up of vector cpu hotplug callback
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, charlie@rivosinc.com,
- jesse@rivosinc.com, Anup Patel <apatel@ventanamicro.com>
-References: <20250207161939.46139-11-ajones@ventanamicro.com>
- <20250207161939.46139-17-ajones@ventanamicro.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250207161939.46139-17-ajones@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegrjhhonhgvshesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrn
- hgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjvghsshgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegrphgrthgvlhesvhgvnhhtrghnrghmihgtrhhordgtohhm
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <385ba7224bbcc5ad9549b1dfb60ace63e80f2691.camel@mediatek.com>
 
+On Thu, Feb 13, 2025 at 07:39:39AM +0000, SkyLake Huang (黃啟澤) wrote:
+> On Sun, 2025-01-19 at 18:12 +0100, Andrew Lunn wrote:
+> > 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> > 
+> > 
+> > > +/* ch_addr = 0x1, node_addr = 0xf, data_addr = 0x1 */
+> > > +/* MrvlTrFix100Kp */
+> > > +#define MRVL_TR_FIX_100KP_MASK                       GENMASK(22,
+> > > 20)
+> > > +/* MrvlTrFix100Kf */
+> > > +#define MRVL_TR_FIX_100KF_MASK                       GENMASK(19,
+> > > 17)
+> > > +/* MrvlTrFix1000Kp */
+> > > +#define MRVL_TR_FIX_1000KP_MASK                      GENMASK(16,
+> > > 14)
+> > > +/* MrvlTrFix1000Kf */
+> > > +#define MRVL_TR_FIX_1000KF_MASK                      GENMASK(13,
+> > > 11)
+> > 
+> > What does the Mrvl prefix stand for?
+> > 
+> > This patch is pretty much impossible to review because it makes so
+> > many changes. Please split it up into lots of small simple changes.
+> > 
+> >     Andrew
+> > 
+> > ---
+> > pw-bot: cr
+> Those registers with Mrvl* prefix were originally designed for
+> connection with certain Marvell devices. It's our DSP parameters.
 
-On 07/02/2025 17:19, Andrew Jones wrote:
-> Whether or not we have RISCV_PROBE_VECTOR_UNALIGNED_ACCESS we need to
-> set up a cpu hotplug callback to check if we have vector at all,
-> since, when we don't have vector, we need to set
-> vector_misaligned_access to unsupported rather than leave it the
-> default of unknown.
->
-> Fixes: e7c9d66e313b ("RISC-V: Report vector unaligned access speed hwprobe")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->   arch/riscv/kernel/unaligned_access_speed.c | 31 +++++++++++-----------
->   1 file changed, 16 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> index c9d3237649bb..d9d4ca1fadc7 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -356,6 +356,20 @@ static void check_vector_unaligned_access(struct work_struct *work __always_unus
->   	per_cpu(vector_misaligned_access, cpu) = speed;
->   }
->   
-> +/* Measure unaligned access speed on all CPUs present at boot in parallel. */
-> +static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __always_unused)
-> +{
-> +	schedule_on_each_cpu(check_vector_unaligned_access);
-> +
-> +	return 0;
-> +}
-> +#else /* CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS */
-> +static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __always_unused)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->   static int riscv_online_cpu_vec(unsigned int cpu)
->   {
->   	if (!has_vector()) {
-> @@ -363,27 +377,16 @@ static int riscv_online_cpu_vec(unsigned int cpu)
->   		return 0;
->   	}
->   
-> +#ifdef CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
->   	if (per_cpu(vector_misaligned_access, cpu) != RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN)
->   		return 0;
->   
->   	check_vector_unaligned_access_emulated(NULL);
->   	check_vector_unaligned_access(NULL);
-> -	return 0;
-> -}
-> -
-> -/* Measure unaligned access speed on all CPUs present at boot in parallel. */
-> -static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __always_unused)
-> -{
-> -	schedule_on_each_cpu(check_vector_unaligned_access);
-> +#endif
->   
->   	return 0;
->   }
-> -#else /* CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS */
-> -static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __always_unused)
-> -{
-> -	return 0;
-> -}
-> -#endif
->   
->   static int __init check_unaligned_access_all_cpus(void)
->   {
-> @@ -409,10 +412,8 @@ static int __init check_unaligned_access_all_cpus(void)
->   	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
->   				  riscv_online_cpu, riscv_offline_cpu);
->   #endif
-> -#ifdef CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
->   	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
->   				  riscv_online_cpu_vec, NULL);
-> -#endif
->   
->   	return 0;
->   }
+Will this code work with real Marvell devices? Is this PHY actually
+licensed from Marvell?
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+	Andrew
 
