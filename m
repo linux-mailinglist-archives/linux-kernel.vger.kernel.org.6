@@ -1,224 +1,231 @@
-Return-Path: <linux-kernel+bounces-513430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09258A349F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28829A34A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38F77A6042
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484E117329F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB6E28A2B8;
-	Thu, 13 Feb 2025 16:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375624A04D;
+	Thu, 13 Feb 2025 16:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eMCOpdod"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wh56/45F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753F328960B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463701; cv=fail; b=mRPxQ1LWtkBr3af3rM4WSWcmatjpy8uhL4GFy2xhh4TFFZ3z/kOBJwiC0H2yLpDnxyNWhmlQu2DDdX8UQgeInBBY6+zOmURkgg1kmLFewwgQLq7WEybUebiONLg0MGtsjsk9vHqxXZUu4ZnNTvzvtalzoGT3THZTFBqiCkTdXjc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463701; c=relaxed/simple;
-	bh=EDlxYMoM65zZ8cVr9ue59rSB4mFHnNsj4zWWLl0SRy4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C/YN+Edn1vKbB9O3lUhcZCJVRYxMRI1ddSdx0OTfKkH4r/3XwUXXnjCNdgA/3By5Esj87KUIqSPhpVDqIemEv0dZgcQk4a7Mpnjp9Aec4hOJ7jGkYCRuqE2G3lW2dMw6aUUpciGVtjb18dlKUl8A2Z3BPCnE/LPXRwytFwo+2bM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eMCOpdod; arc=fail smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83A024A040
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739463781; cv=none; b=h4Xn132VeKKBALCl+N9XpL7VRUUf5jww7PWMQfL3Rnh9VnHVMSFkbPJOUE7OuLT/1hL+p1WDVre+e+1k5dL9YBEceEvqUiTdTWIEqnbAYyxI4lQhGzP7kKhYt0grXjgmK8HRn3TkhWP9L/lIZR7CYIJH8f+xK4aLrHa/bYMcgD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739463781; c=relaxed/simple;
+	bh=Bnyl5LtFtQR9/EzIuPGJzG2d59pl6dtmSlp6/rOZn3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mppwU8vUZ5ta54j4cQ1nMc+cwChceNzQKAXgVp8aTnyjKL2gGWuePrEWVz8mcC1lDhS1HHr7cGOAyUyHVjX4d2dQkN3WDTq6byH1+mH7yvrGFCbdVnMNTi/buKtL3dYlwqUDZre3A4esFTDmN/ts5rmHPElkSRrDvx4lg6eB0+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wh56/45F; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739463700; x=1770999700;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=EDlxYMoM65zZ8cVr9ue59rSB4mFHnNsj4zWWLl0SRy4=;
-  b=eMCOpdodAvrUx0Hmw5lYoWDe89od8aPfmVSOUmsnzryxdzmViBnKFrkb
-   7VgBjgM6EXNEpZUxfMEN5MlgGcXO1oUVXyW3o97inB8SGh4LUEcFAd3yp
-   P2rBmt25z9XoW9hJkksFS304zEJbgTAY1JHeiLZ6LEzVNwmbf6uoI7NnW
-   xJYq9mql4XhXYLb4dwfOFKJSskb+7PV2m6aMb9UdjJMmbVmYmOhDMt9Ky
-   zP81DnZe6BfpO+HdWBSngYCwPvVbpqIUlCi29OBq/4wDAQw+d5QuALU4E
-   1ioaSdw4CHbpm+4OCQKHTJ7bRe5xd/loUAdDrdpqDJb4exolvX2Hw2DE7
+  t=1739463780; x=1770999780;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Bnyl5LtFtQR9/EzIuPGJzG2d59pl6dtmSlp6/rOZn3k=;
+  b=Wh56/45FwBdqMVTHsjgyMNTnOWIWFL8aWduZc2KxQ60h9H5I7Vs3MQuN
+   wUvdBQ6buVaL5Qj2xV5ecXyhlAi+Z56BkT7hhQ5xgnP0j5didfvo0Gksy
+   2BF4TMMMsJW3UUjYgqpJvwBvtSX6yReYMZ/i3Pejf/6zRNye2t7610Eti
+   +EiRezrRekRZc91D1zfGuERLZ7BCV93g6hC9LnXFblgQTK7xovuoTOOO8
+   xoUUvxqS8RGlxQ4G97P+waFi+8rAPOnkGku+GRiyBK4m812irPQHuqh0X
+   N2DFLmVUUegE9I10DvELvTekgndxWX39Y9sq6+pxNQf8ZraGRQXyt3Yc3
    g==;
-X-CSE-ConnectionGUID: sbWuATmlS16x8u1rhvk+lw==
-X-CSE-MsgGUID: ZYCwkvyhT0aBTzSmasG3hw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="57580371"
+X-CSE-ConnectionGUID: Dh0WmMuHTNizc8sj0zSoxg==
+X-CSE-MsgGUID: cJcZ6oQZTq6MhzZixLy2/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43941185"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="57580371"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:21:36 -0800
-X-CSE-ConnectionGUID: zWI9NaFXSMCbutmSGSbIJQ==
-X-CSE-MsgGUID: z882zHQzQ+G7reYFWliumA==
+   d="scan'208";a="43941185"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:22:59 -0800
+X-CSE-ConnectionGUID: VwyDn76jQn6/xtpVvyKDqg==
+X-CSE-MsgGUID: z4mrvoy1TIShsijOOWLlkA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="118274934"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Feb 2025 08:21:35 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 13 Feb 2025 08:21:34 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Thu, 13 Feb 2025 08:21:34 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 13 Feb 2025 08:21:34 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wTh8Gp813llKVBqGeqq8j0obrCDiqvFMoqKnyE2NdOn2gXsHpul1SffkLmq6rvsNT8mtgh5/9DYLGA8rdTwVDwpvrSWNiVrPu5CVhbg7r9EZCnaTe3pwwOFkwtsjyCQpzQSR2HzCQK6qYo3OPVWUgOQE9NzQfUfHit6RjY0zfJwXlxS2YZazTI7ABfFo+fpf1072rVCdQzQ0KPAhnOltw1fg1CXkrQ2vo/xZXc5poOYQFh4DQhX7tL0HhfCvkBbFBCkwg9oYLNQc7Nxqu0ZBIcSUVJVXa1rZwK504k8VDwhRn0G3ZDPrKdfoyvmh3lmloJIIb7POJPn662ZvQxucUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qt86PNLnj9x08EPHEY5RtVbZwe1utxorvWi+UkMjU0w=;
- b=wwRee+nM/7Xb0mFh+OVVGsmPlGsDvKDdIdTozjQ7q9sIFhaBHGvpY+KnCWFJ2Xwm/jYcl7AWu0mdiQawGUou2nmnmpVeD+r2tbJa2RM7jjG0sUnhzlxUTAkfF2Q4hy4ypw1HkzoN9xeIdbEKpSLFO7cozV7LxTuT2mTRKDornH2c+wJouI/u7X8WYAzd+bDGx9cZxhREamWv2AipjXUsg/dNN3ZBmwWTtGBuM7r7BUb7fFjNWIZuYRpjc4jd2TMjpEqFsFm4z6GywQi+tQXYBiuatAHB1Dm9xzWkar4KGxhp9hO4MtxOKiPRVWMdk7NEWAiiT52QxvfSAqIh8MW26Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB6269.namprd11.prod.outlook.com (2603:10b6:8:97::14) by
- SA0PR11MB4751.namprd11.prod.outlook.com (2603:10b6:806:73::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Thu, 13 Feb 2025 16:21:32 +0000
-Received: from DS7PR11MB6269.namprd11.prod.outlook.com
- ([fe80::af1f:dcc:49bf:1a26]) by DS7PR11MB6269.namprd11.prod.outlook.com
- ([fe80::af1f:dcc:49bf:1a26%3]) with mapi id 15.20.8422.015; Thu, 13 Feb 2025
- 16:21:32 +0000
-Message-ID: <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
-Date: Thu, 13 Feb 2025 10:21:26 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
-To: Dave Hansen <dave.hansen@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>, "Kuppuswamy
- Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
- <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
-Content-Language: en-US
-From: "Xing, Cedric" <cedric.xing@intel.com>
-In-Reply-To: <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0040.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::15) To DS7PR11MB6269.namprd11.prod.outlook.com
- (2603:10b6:8:97::14)
+   d="scan'208";a="113157050"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Feb 2025 08:22:57 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tibzL-0018Q1-0V;
+	Thu, 13 Feb 2025 16:22:55 +0000
+Date: Fri, 14 Feb 2025 00:22:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250212 12/12]
+ drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5237:21: error: no
+ member named 'levels' in 'struct SISLANDS_SMC_SWSTATE_HDR'
+Message-ID: <202502140000.KIQUxLr5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB6269:EE_|SA0PR11MB4751:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fe6f6bd-4410-46fc-fbe8-08dd4c4a7a47
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YmFNNVZqamZ5RlE4S3NIZU9qNXJNWjRWNWZPaTVqU2orYUhwL3VncGNtelho?=
- =?utf-8?B?SnByTVowcERLVHhCbExUaEpDR3BrYVF2c0dLbGJ6YXhmeFdPRFVhcG0rc01h?=
- =?utf-8?B?anlhRDI0ckJGYzFla0prYlRhUWFlSXUxUitNZWtEbURkeTZkU2JRUkxjU2VE?=
- =?utf-8?B?ZFJOWU1WdmJiU1M4R2s3RkNYK3VuMXpUdWJxTTRaWXlFYWxIUXEvSTc1SjMz?=
- =?utf-8?B?aU5KNWwyVXYrQnFzUnV6OHFOVlh0Q0JCUUJjVXZKZGFQUEtSaXRiK3FBbU1Z?=
- =?utf-8?B?aDZydFZDdEtOTUtySTlPNjJFNVU4Y3EydUlqQi9HSUpHNkZLWGo5TGhoelBO?=
- =?utf-8?B?Z0lwdWtIZkZsdjlBNXVvVHpLZXFwbUhSZ1NLQjJDZUJJNVF1K3V0STBabW0z?=
- =?utf-8?B?blQ5VWE0OHFRTXpmM3NFSjJrU3hmQmljV1VjaTNITWMvdmdONnFyZTE3V0RN?=
- =?utf-8?B?NHVncHNncWt3ZUIyditsdHM2alRpRzdIMFF3ZzE0WHNscm5pRU1KTWg1MkZH?=
- =?utf-8?B?ZnFyREVQV242ckpVUWhUSEdCYjNYTTRFb2ZXTk9sNlVONEVFOVpscXRYbWR6?=
- =?utf-8?B?OG53M0Y0cDB0dGdZbG1Vc294NURJRjhmaC8xRnVwZnZ5L2R5SWhlclhLRFFZ?=
- =?utf-8?B?WVI3bWpkdnBhdU1YSWRxTEFvUHN5K1hjUmlIVHNyei9rcXJwMXRJQ2VERVlD?=
- =?utf-8?B?OWg3YXVUNDlVUGpTYkYyLzV3eDB1b0JQenBqYjR4ejM4TThXa0dST1BuN2d0?=
- =?utf-8?B?THN5QjNTUTdwUFVwN1B0cGNudHJzTlloNmpOQnJPRE9wZThWTjZRWEpnMk14?=
- =?utf-8?B?a1Uwb3IvQXpyRlFSQzV2bTdydmxMMS93Y1lYSVFxL2QrV3BqL2luZy9kTHMw?=
- =?utf-8?B?S2pMNE1sZ3hBWTNhZ2pMMFBIU1Q3MjNZNlM3aWcwWCtSOW1TbVVwZk9CSyta?=
- =?utf-8?B?d3hYZmI5dXE4OXJsWFpNOHAxUDZjZTdQZEkwb2NwYUZnUjZRSlNHaUtXdTFL?=
- =?utf-8?B?Rk1VcThLWHduQ3IxRWJ1ejdWL2N2NXpSa1hNQnM4Z2NSSFNlc2JJYUtpbm1p?=
- =?utf-8?B?REF6bFN2cHhRNzZXOWovTTdNS01wWFVLNkZkbkVwcFRVcG5PcWdnMksweGVn?=
- =?utf-8?B?OTA3dFBydWprWXNFdUU3eVF2Y1k5bDR5N2ljQlRSTmtwZkZoWmkrR1pWcmxR?=
- =?utf-8?B?ZnJLa2FRRDIvUWh0NkNvbkdQdi9Idy8ydVpmdVA3RGhCazBsRyswZnVycUJh?=
- =?utf-8?B?bEIvbG9lSzArL1FLOVhWaGxaZlZCRjFhZmxoTmw5N3d3SnBrQ0Z2UitzVmZQ?=
- =?utf-8?B?TjRCclg2TXJsZms5SmlqOVhtdmlaR1VPUGVRMHptWG9xVU9mTWFXU0VxL2VU?=
- =?utf-8?B?dWdQeFdIMkdOcysyYmxTekNXUzdoQk0zeHYvZi9WNVJublduY2ZxNU9tejlo?=
- =?utf-8?B?ZEttK1c0MWRCaHZOTjdWNTNFVk50QU9EQ1hnZE54SmgwSWdjSDlscWltVFUv?=
- =?utf-8?B?Z1JET0lRRVZtaU9QLzZHRzBhYy9kenZKa1lwRXVKbERLYmxFM1paT1JQVjRK?=
- =?utf-8?B?S3VEUFRDWHpjRndsUjB2NVBNSTMwR3hwcVpIZUc1UWxUdFlrYnUwTHBydjdU?=
- =?utf-8?B?S1oxRW84emx5NnZuWERNTGFLTVVuWFVycWdNK1JJa29JMHZ2TGh3ZFJ0Q0xO?=
- =?utf-8?B?clB6eENTK3dTaHZmclg3alJuaXpLMm5Mb1ZXV3VBTkI4Qjd3SktjSEVQRWRM?=
- =?utf-8?B?TEl2T2h4YWVpZkN6QTlZaWJNQmFEazJnL1AxS1N4a2dQYk9GcjJVVFhKRW14?=
- =?utf-8?B?UVM2VWR1NHpBWERRNFhsVm1qNGkzN1pBS0N2WW50SU41UkJzUUQxZVJZZUVk?=
- =?utf-8?Q?1P/3hu5ZtA/+x?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6269.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0MzeXlWSDFPTVNWY00zOVh4cWVhK2pSR0huK3lNSGlvYkhVZjdHU3VPSWNL?=
- =?utf-8?B?d0dMK2JiRlVyU1JlTUlnV0QrS2FyMXlVdmZIQVE4c0Q4clRGcFhFdTVxa3Bv?=
- =?utf-8?B?Z2NuVkRta1l2Q20vdWl4V0VUQzBCaTF3a0hOTG1GUjU1SWxFeGlrUSsxZE1Z?=
- =?utf-8?B?WnZueWNHSWRrTkpvVmNnSW03aU9IMlBNRE5ROU9zdWNzYWltRzlISHFyOGtT?=
- =?utf-8?B?ZzJLNSthWmlHVHQ4blJqU3lrd3lXbkVjQWNiQ2xRVXM2aTdqcEhHWEprTEV2?=
- =?utf-8?B?S1V0bC8rSjJQUFdzdENQWDdoTXBSd2oyb0NKRFBPcURmRWJzV3k5dzJzajNq?=
- =?utf-8?B?MS9Wd3gxUW5sOGs4dlZSeTFieTVRZ1BIWFFtc0Q5WGRWYm8zbjBZNzBHUmM0?=
- =?utf-8?B?a3pXSUF6S1lTRWFTMVBFTWJLa3h3aVBnOFRRdFZDaFVNakkyWUFXOUdoSWJB?=
- =?utf-8?B?Zk14Nm8zb2QyaFhHbDFsUVpJY1Y5K0I5K0Nud2YyWG9uZlFWV2d2TXJ0NGNm?=
- =?utf-8?B?aDcxTTJSaFZJRktGZzcyVzZtL0lWSGpYK0wxTGd1WS9DTS9XZHdreEdQWU5Y?=
- =?utf-8?B?SzVndU9CYXlCRHdUc2hHM1Fpcnd4QXBRTURLelljbk1od0R6ekhYbXFWd0Vi?=
- =?utf-8?B?eHdya2RHbkdNaU5GcU9LUWJzUjlZalI0cTRIVnhVb1ZMQkkzUTBUbG5lK1lL?=
- =?utf-8?B?anFkbWVrdWVNVEZUMUx6amlZV1Qwbm14MmxWUnZQdEk3QVYwZnUyc0U2NHpp?=
- =?utf-8?B?TW1vU1VKdlp1RXJUNjJOM1NFMUZJT3ozbVQ0SktpTC9WTzlXY2dENCtBQ1pT?=
- =?utf-8?B?anpLTHROS09idWwxUFJtM3IxOVVpM29oNUxGR21iczZ6UEZEdzN3RVRPdDJQ?=
- =?utf-8?B?Vlh3Rlo4dTZCclJ6WTliWXp0Uk11aVFtK1IzSm56d0swZHh5UEtQa0dXbncr?=
- =?utf-8?B?QmFDMXh4K2xtUjkrcXQ2OUFUTXkzRFJVTUZRMUpxc2tvUEZpQWxmckdKcHg0?=
- =?utf-8?B?L0FuUURWVWVJLy9wcU1wclhyUVBJYXJzRGhOWHA3Mk8xbitIWWJVS3A4OUNo?=
- =?utf-8?B?YkcvVm9NMFNLRVdycm13eWpVWVBWcm0vMFpWWkp4WWVPUmNtU1FuNlhLRFYv?=
- =?utf-8?B?bjg1THZrNHdKNWVrdzZKKytFK0oyUG9taFcrU2ZhOWJqYnBwS0xnUEFLWUVa?=
- =?utf-8?B?NVpEZFU1U2N6OThDVEhNUGlyN1d4V0o4NEIvUmtsTTBVVHFkaEJTWXlzaWY4?=
- =?utf-8?B?dU9yOVRtS1NybEtOekEzNTBYd0kycW42aG12eGFtejFuRVJLUnh2cmgvM1JG?=
- =?utf-8?B?YVZPTVZFVGtTVE1PMSs0UUtialp1OWxaeVBsT21EMnZ0M3ZvQ3RDMHVWQXJG?=
- =?utf-8?B?d3FNUFJqQW11REswRmpDZEsrbytYaW5BK1VUeXFTUHh2enNRRmNxYlByekgw?=
- =?utf-8?B?VDg5cUdPYmZha0RURFZnaFkzQ2tqNlAvalNpdUx5QUkySkZzZ0NvSmM3YVk5?=
- =?utf-8?B?dXNDeXorTk85T0RNWHRTOTZxMmVYcmt5WHFTV0JmZ09MVG80aTJORkxya1RF?=
- =?utf-8?B?QmJzT2s2a1VzOU9QNGY2STBqYldyc1lqSmx5dkZiNEo2Qk1Wb1dsYVA0Tmgv?=
- =?utf-8?B?MU10ZndKSGNvU3FHTll1d2JyRlJnV1NXZmFucjg3dGFOQThOczYycXdsTGty?=
- =?utf-8?B?VC9QTnBkam1EenNHVDF3aUtNQ1dySDYvaklIeFhyTEpmemR3b0hvek9IdU42?=
- =?utf-8?B?bkt3ZWt3dUplazBtN3o4amtacHgzY1EvN0U2d2RVa21mODdYdkxrNDc3Y09E?=
- =?utf-8?B?bWlSYU5xcjdzRDBZQmlsMG9mZ0NNZVFzVkw2NTNNTFI0Z04wUncrdTMyR0c3?=
- =?utf-8?B?dlRwaC8xbzdXQnpac00vSFU0L0I2V0xHQ3M4WWxuN2JBNUxUc1RkY3JmSEhL?=
- =?utf-8?B?OEpXM2M5RG9lMWtWSS8rcnZXcm9XaFE1OW12VDVvK0Vwdmo2bm90NEt3clJ0?=
- =?utf-8?B?aERPZTJtZWN3ZDNqUnFmdndTN2FIZXBVRXdSY21zUzZvN3pWcDZ3ZnM3QlQ3?=
- =?utf-8?B?WmNXcmkvbE40ZTYyRGN2RUNBSm1GQlhrTEkxK0wvSStMK2N6QXloMlpNT1A3?=
- =?utf-8?Q?9vfU+rFSWqv2QVdGd4GXw5FBV?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fe6f6bd-4410-46fc-fbe8-08dd4c4a7a47
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6269.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 16:21:32.1014
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yWfUVCVxrPD0J/M+w6RNzJDtibIOcXafMNAxmWXhUKENkNYrzzf/b78esztaOn/O32//1wnzaUDFdyyyWgvm7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4751
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 2/12/2025 10:50 PM, Dave Hansen wrote:
-> On 2/12/25 18:23, Cedric Xing wrote:
->> NOTE: This patch series introduces the Measurement Register (MR) ABI, and
->> is a continuation of the RFC series on the same topic [1].
-> 
-> Hi Cedric,
-> 
-> Could you please explain how the benefits of this series are helpful to
-> end users?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250212
+head:   513cdf5e772efc6cb8a92344b0f436e77c2b42f7
+commit: 513cdf5e772efc6cb8a92344b0f436e77c2b42f7 [12/12] drm/amd/pm: Avoid multiple -Wflex-array-member-not-at-end warnings
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250214/202502140000.KIQUxLr5-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140000.KIQUxLr5-lkp@intel.com/reproduce)
 
-This series exposes MRs as sysfs attributes, allowing end users to 
-access them effortlessly without needing to write any code. This 
-simplifies the process of debugging and diagnosing measurement-related 
-issues. Additionally, it makes the CC architecture more intuitive for 
-newcomers.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140000.KIQUxLr5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:24:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2193:
+   include/linux/vmstat.h:493:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     493 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     494 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:513:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     513 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     514 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5237:21: error: no member named 'levels' in 'struct SISLANDS_SMC_SWSTATE_HDR'
+    5237 |         table->driverState.levels[0] = table->initialState.level;
+         |         ~~~~~~~~~~~~~~~~~~ ^
+>> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5758:24: error: incompatible pointer types initializing 'SISLANDS_SMC_SWSTATE *' (aka 'struct SISLANDS_SMC_SWSTATE *') with an expression of type 'struct SISLANDS_SMC_SWSTATE_HDR *' [-Werror,-Wincompatible-pointer-types]
+    5758 |         SISLANDS_SMC_SWSTATE *smc_state = &si_pi->smc_statetable.driverState;
+         |                               ^           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   3 warnings and 2 errors generated.
+
+
+vim +5237 drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c
+
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5177  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5178  static int si_init_smc_table(struct amdgpu_device *adev)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5179  {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5180  	struct si_power_info *si_pi = si_get_pi(adev);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5181  	struct amdgpu_ps *amdgpu_boot_state = adev->pm.dpm.boot_ps;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5182  	const struct si_ulv_param *ulv = &si_pi->ulv;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5183  	SISLANDS_SMC_STATETABLE  *table = &si_pi->smc_statetable;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5184  	int ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5185  	u32 lane_width;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5186  	u32 vr_hot_gpio;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5187  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5188  	si_populate_smc_voltage_tables(adev, table);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5189  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5190  	switch (adev->pm.int_thermal_type) {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5191  	case THERMAL_TYPE_SI:
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5192  	case THERMAL_TYPE_EMC2103_WITH_INTERNAL:
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5193  		table->thermalProtectType = PPSMC_THERMAL_PROTECT_TYPE_INTERNAL;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5194  		break;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5195  	case THERMAL_TYPE_NONE:
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5196  		table->thermalProtectType = PPSMC_THERMAL_PROTECT_TYPE_NONE;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5197  		break;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5198  	default:
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5199  		table->thermalProtectType = PPSMC_THERMAL_PROTECT_TYPE_EXTERNAL;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5200  		break;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5201  	}
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5202  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5203  	if (adev->pm.dpm.platform_caps & ATOM_PP_PLATFORM_CAP_HARDWAREDC)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5204  		table->systemFlags |= PPSMC_SYSTEMFLAG_GPIO_DC;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5205  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5206  	if (adev->pm.dpm.platform_caps & ATOM_PP_PLATFORM_CAP_REGULATOR_HOT) {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5207  		if ((adev->pdev->device != 0x6818) && (adev->pdev->device != 0x6819))
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5208  			table->systemFlags |= PPSMC_SYSTEMFLAG_REGULATOR_HOT;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5209  	}
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5210  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5211  	if (adev->pm.dpm.platform_caps & ATOM_PP_PLATFORM_CAP_STEPVDDC)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5212  		table->systemFlags |= PPSMC_SYSTEMFLAG_STEPVDDC;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5213  
+770d13b19fdf36 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Christian König     2018-01-12  5214  	if (adev->gmc.vram_type == AMDGPU_VRAM_TYPE_GDDR5)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5215  		table->systemFlags |= PPSMC_SYSTEMFLAG_GDDR5;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5216  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5217  	if (adev->pm.dpm.platform_caps & ATOM_PP_PLATFORM_CAP_REVERT_GPIO5_POLARITY)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5218  		table->extraFlags |= PPSMC_EXTRAFLAGS_AC2DC_GPIO5_POLARITY_HIGH;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5219  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5220  	if (adev->pm.dpm.platform_caps & ATOM_PP_PLATFORM_CAP_VRHOT_GPIO_CONFIGURABLE) {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5221  		table->systemFlags |= PPSMC_SYSTEMFLAG_REGULATOR_HOT_PROG_GPIO;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5222  		vr_hot_gpio = adev->pm.dpm.backbias_response_time;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5223  		si_write_smc_soft_register(adev, SI_SMC_SOFT_REGISTER_vr_hot_gpio,
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5224  					   vr_hot_gpio);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5225  	}
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5226  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5227  	ret = si_populate_smc_initial_state(adev, amdgpu_boot_state, table);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5228  	if (ret)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5229  		return ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5230  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5231  	ret = si_populate_smc_acpi_state(adev, table);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5232  	if (ret)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5233  		return ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5234  
+939baec9e895e7 drivers/gpu/drm/amd/pm/powerplay/si_dpm.c Gustavo A. R. Silva 2021-05-10  5235  	table->driverState.flags = table->initialState.flags;
+939baec9e895e7 drivers/gpu/drm/amd/pm/powerplay/si_dpm.c Gustavo A. R. Silva 2021-05-10  5236  	table->driverState.levelCount = table->initialState.levelCount;
+939baec9e895e7 drivers/gpu/drm/amd/pm/powerplay/si_dpm.c Gustavo A. R. Silva 2021-05-10 @5237  	table->driverState.levels[0] = table->initialState.level;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5238  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5239  	ret = si_do_program_memory_timing_parameters(adev, amdgpu_boot_state,
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5240  						     SISLANDS_INITIAL_STATE_ARB_INDEX);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5241  	if (ret)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5242  		return ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5243  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5244  	if (ulv->supported && ulv->pl.vddc) {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5245  		ret = si_populate_ulv_state(adev, &table->ULVState);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5246  		if (ret)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5247  			return ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5248  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5249  		ret = si_program_ulv_memory_timing_parameters(adev);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5250  		if (ret)
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5251  			return ret;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5252  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5253  		WREG32(CG_ULV_CONTROL, ulv->cg_ulv_control);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5254  		WREG32(CG_ULV_PARAMETER, ulv->cg_ulv_parameter);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5255  
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5256  		lane_width = amdgpu_get_pcie_lanes(adev);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5257  		si_write_smc_soft_register(adev, SI_SMC_SOFT_REGISTER_non_ulv_pcie_link_width, lane_width);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5258  	} else {
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5259  		table->ULVState = table->initialState;
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5260  	}
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5261  
+6861c837e28e1b drivers/gpu/drm/amd/amdgpu/si_dpm.c       Alex Deucher        2016-09-13  5262  	return amdgpu_si_copy_bytes_to_smc(adev, si_pi->state_table_start,
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5263  					   (u8 *)table, sizeof(SISLANDS_SMC_STATETABLE),
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5264  					   si_pi->sram_end);
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5265  }
+841686df9f7d29 drivers/gpu/drm/amd/amdgpu/si_dpm.c       Maruthi Bayyavarapu 2016-08-01  5266  
+
+:::::: The code at line 5237 was first introduced by commit
+:::::: 939baec9e895e75149327c01b775f46c21e12be5 drm/amd/pm: Fix out-of-bounds bug
+
+:::::: TO: Gustavo A. R. Silva <gustavoars@kernel.org>
+:::::: CC: Alex Deucher <alexander.deucher@amd.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
