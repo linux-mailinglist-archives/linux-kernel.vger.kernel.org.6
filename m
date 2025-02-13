@@ -1,262 +1,279 @@
-Return-Path: <linux-kernel+bounces-512774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61238A33D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:16:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8AA8A33D9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF89A7A22D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A049188A30D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC90E2690C6;
-	Thu, 13 Feb 2025 11:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC008269D11;
+	Thu, 13 Feb 2025 11:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V3U9lK+V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qoQq24Fl"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2078.outbound.protection.outlook.com [40.107.95.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26F9268C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445368; cv=none; b=PtxtDyf35gdk//v6YJQD9ruIJKW9QR+rdbiEFgXcflaAYCxXbujOCbl36VfS7dOfHW0j1/RbL9tUy9x1KTqdFHqa0eTs8/S33bTiOr/TYjYPu55kBzJdTv30c7rnuLKu1zUsO6i5F9lxkBGJFz5nPOccFYc54Dpg6OIGBmm9p10=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445368; c=relaxed/simple;
-	bh=HZ8Dg27WUThGXXyr1DLe9QA6ph06DrAe0n7D2Y4KJ8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRc/8FxaFehb8EErsQHijOlAQm1WB+5qG8oxnf2QA/1uGI9WCD2u5iMgy3/VuZbTfbpeXJIL26rlYECN0Z8ymJ0qntE2hn5mvfFu9RO6v9amLHgX2w1V7KGs+0Vvhi3GcvhtewdvNLgMLMYbv0Pl8Nq4ZD5yqtn1iOtwm69UVM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V3U9lK+V; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739445366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MqBgnP/CgEjSGM61CsD0xppS2mhBqrdvYWeODyjEQ8M=;
-	b=V3U9lK+V4maViGHQ8wgT5H6Jr2VtLxzy2gvumL0nKL1FWe9GTIn8W34neVD2/GS2wPHNGK
-	f5URGt480GUIHxJHMR1l51QWoxxy18oQbsS0K0bM/xGcQ5SKqlShnPUZimDUyMYZ4VF499
-	pLR6BJwqrf2u4Hltc3Ieg89ynXhZU7I=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-RrmDI8VWPHSKlLL5NbsioA-1; Thu, 13 Feb 2025 06:16:04 -0500
-X-MC-Unique: RrmDI8VWPHSKlLL5NbsioA-1
-X-Mimecast-MFC-AGG-ID: RrmDI8VWPHSKlLL5NbsioA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38dce0d3d34so445331f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:16:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739445363; x=1740050163;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MqBgnP/CgEjSGM61CsD0xppS2mhBqrdvYWeODyjEQ8M=;
-        b=kcxg6jO07FBN6FU0IjuwgB4x8DWlCNBPEsS7gVfjservUz57oLcVX+EVH9qQJK5gkP
-         +IEVJuBsHAChRpoVcFhixW8EAtjoJxl002qDhUNy0jXU/stsCZtH05oIxkq2YU87CjIZ
-         kFkDGGfyxX1y4bx0y23Aka0KhGqjACVWZOhmRGf7SiJgszNsbiKuZTZCEcECMk9Ct621
-         2K03qjQCWwuoT8LLIBRdmE4ZrCkgYoW45DO7kJb5gpxD/eT57H78sLIg6uJSeCyVE5R3
-         yjiA0PejDIB5fgpHbd0IYZHN97N1UPzTpNOyKzZgRXglHGGgfA0gwc7S25MAgVNBXA/k
-         XPPA==
-X-Gm-Message-State: AOJu0YyBIBSREA68Ct/qbTsjUuPshnWZEnpjpDQEU+py6LmIuSfuynfo
-	ICY60bg7sRb2S73eH4SuJ4i2lR7JIygPWt1R5JqtzwDc3Yql8zIDdaeLFY1Ir+SUHONAJQtMivl
-	nY8+bu/X7dyiJsgAYMTvlcTJ6SKkWw3/ivNUnexYiIjYQr9aL7Cn1uKTJd4stag==
-X-Gm-Gg: ASbGnctadrFMUugajpDObcbXUQchEBG0HXmf7DS4Uvxc7Bd7obAHrMy5bovp0qjr9Xg
-	QrRAI0P32ytxQSIueEUVQBKItbPQQZOBgsrs1SLC8DESkfMVgQQa7oTKlS2mppELMdRi3YLtthU
-	lmeoMNXBsoMSiD9DRwnOzLuSAw1EAUdWhQajYbmQ+KAOG1kfgvQ/RDyDL/I/RblkhHcfoWAzTIG
-	6LKaoOenRwO8jDgAxA+0KMNAzgBFOh1Qtca9lnirRSyjZjQnh3yma7sOLCTbqbxxlfylySuiBad
-	bhmtiCLSSlPSuGAFtHFHA72ssfp1B7ZQl3ns/3Gemrt5nZuBzsYh3Og6BhLD2ElTaSE5If1bdqY
-	e3TfmB82agtT/8U7WMLhTohO90kXitw==
-X-Received: by 2002:a05:6000:2ce:b0:38f:287a:43e2 with SMTP id ffacd0b85a97d-38f287a45b1mr1243712f8f.11.1739445363512;
-        Thu, 13 Feb 2025 03:16:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFNb1T2Y6u+6rZWLCFG3K5jK4MKsiuwX2PBSjG3UR8Z0S96jlm3wlxln2RhnV2KuarUxPIcCQ==
-X-Received: by 2002:a05:6000:2ce:b0:38f:287a:43e2 with SMTP id ffacd0b85a97d-38f287a45b1mr1243510f8f.11.1739445361530;
-        Thu, 13 Feb 2025 03:16:01 -0800 (PST)
-Received: from ?IPV6:2003:cb:c718:100:347d:db94:161d:398f? (p200300cbc7180100347ddb94161d398f.dip0.t-ipconnect.de. [2003:cb:c718:100:347d:db94:161d:398f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25915785sm1623471f8f.58.2025.02.13.03.15.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 03:16:00 -0800 (PST)
-Message-ID: <039b2e48-1d7c-48dc-b832-24db12af216a@redhat.com>
-Date: Thu, 13 Feb 2025 12:15:58 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270F026A0A3;
+	Thu, 13 Feb 2025 11:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739445388; cv=fail; b=hXiOHjSSZiT4ZH/w0N1Uzxm897n3uLDtM8qTgApVznhIE359c1Fo0asJv/JiY97OLkHTVVXLPmfw6/P8FT0IU4wB/qzsp0tsGLwcUb8W3R1LgfNGZyTrO9FbddP2Um5Q3J9c73hPFLPor6aj1u0JR9bEc/LCmoa4fRGAoqNVoaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739445388; c=relaxed/simple;
+	bh=KPcWf3Y0z1COi4BQnCg4f7gjIsCrOTZiFaG9C+TEmik=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dVEtRzV0AJNmEKijmUBb4HPAVmss10x1z+fvFNfP4IF1dsYDqrYDIhh3rlp8zrqtu1817TH5NkP2JqsCSz5SF45lvs+PRQIDKaUdS7tR/dvbji9rvJwNKLp/sea2XhAl8201LOg83fLskntCTFqWD5PNSvhtDSf9mi21UJ2CW5Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qoQq24Fl; arc=fail smtp.client-ip=40.107.95.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dHKGyqRAP9EP6Vja0sNquEmIN/5i5poeTm1+onptMBXRkaY42myF0Js2R7H2808bseu7+q8uuj92fUgDGqDxTWBc1+xOE4RJk3FqcRS/7TNNBqiFuYePEq/RrP5UGhFLHuVfpE/wVJr7lHBV2GYnbdxaJZ3QD7YJDBrs8M09S7zFFT1B8yn/3gmkUHYWGKbVxxeOUMNM7uuJJ32RZTWmxJUSJxMu/MOB6U5qJt2ou6J7OsIqx+5KGfmF4u0HZoKEwxvdji6rtzn+AnpUrmqBpbu1SsP2kJSxcKOgWJAnqiTGtD8Ak+ocoD9f6U9/C+6WU9MfnSpaUnYAyqKCUxZWUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hic5Te4/qMTrCao5s3Ma/8xESaCxJSegfzlrkEGMJds=;
+ b=hrWi4zozBg60zYl7jTP2VE7gFSKkJPkci2WrfcrG+vTl4SXfzRXL0ucqJFdTO50SxHrS33QJjpH0OJ4a6OK7RmncdMVvCXRXtFz+3YGOiyGKBUNlqwXduA22tkSns3L10P12W8bOjIQtsrfXfAP+VY4W9/l6GiDGrHsQZBYlUnMkQF/WaGh36rPRhCWEzVOkQQB8sxJY7cqot94Nyx9MN9TkBDOP1eNc726WPAJHK3GVNszg557vxM7vHwvc9kvb33aBQ6P6+2BHNFMd9fcmfJC+J1UGlcLiY7lHOECXNbZfyN6Kon0sQPqn8BDjufiAGc9scdlXS0sCvvbRpDzegQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hic5Te4/qMTrCao5s3Ma/8xESaCxJSegfzlrkEGMJds=;
+ b=qoQq24Fl1AKIj0DZ0fcHz1vbTO5QmnZ5qAO51TF4YsPI00FleKPou9vcy5xrkKTQGETyDbXx32be4Sq4xwV3xZNn/b7LZwSoM7adhftYP3UPzcN1Xv3Y+Xxm5W0P/Ivi6tDK+8q521fK/AEe/8BC6P0O/XTmvAzuucEapGyoa2g=
+Received: from LV8PR12MB9206.namprd12.prod.outlook.com (2603:10b6:408:186::21)
+ by DS0PR12MB6631.namprd12.prod.outlook.com (2603:10b6:8:d1::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.17; Thu, 13 Feb
+ 2025 11:16:23 +0000
+Received: from LV8PR12MB9206.namprd12.prod.outlook.com
+ ([fe80::5447:387a:c920:8a4a]) by LV8PR12MB9206.namprd12.prod.outlook.com
+ ([fe80::5447:387a:c920:8a4a%3]) with mapi id 15.20.8445.008; Thu, 13 Feb 2025
+ 11:16:22 +0000
+From: "Jain, Ronak" <ronak.jain@amd.com>
+To: Rob Herring <robh@kernel.org>
+CC: "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, "Manne, Nava
+ kishore" <nava.kishore.manne@amd.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/3] dt-bindings: firmware: xilinx: Add conditional
+ pinctrl schema
+Thread-Topic: [PATCH 2/3] dt-bindings: firmware: xilinx: Add conditional
+ pinctrl schema
+Thread-Index: AQHbeKKktzakC2pjxUKURYxGjWc/ybNCrZ0AgAJyC8A=
+Date: Thu, 13 Feb 2025 11:16:22 +0000
+Message-ID:
+ <LV8PR12MB9206BA2BC6BBBA184B3E2FCD86FF2@LV8PR12MB9206.namprd12.prod.outlook.com>
+References: <20250206142244.2553237-1-ronak.jain@amd.com>
+ <20250206142244.2553237-3-ronak.jain@amd.com>
+ <20250211215354.GA1244436-robh@kernel.org>
+In-Reply-To: <20250211215354.GA1244436-robh@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV8PR12MB9206:EE_|DS0PR12MB6631:EE_
+x-ms-office365-filtering-correlation-id: 286ca788-79c5-47f3-915e-08dd4c1fd93f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?epiHskvyGsM4KTGSV4ITEZaXuY1XBL+ORownzZuQKQQDO+yBB54uxh8fmudS?=
+ =?us-ascii?Q?h34yTGKtDW7MAt6X5uxWu9JNK7DFGSuBtaIkT++UEqMHsC3AGBY4x9MMSrdo?=
+ =?us-ascii?Q?K8LR+qvpI6/3rjFlI4mfHS8yaZ0qd54iwF200V5VMDNhovBwZUGmvF0vCQrc?=
+ =?us-ascii?Q?B66emm6Z3aEVqKVL8TlO1VDyvANbLieDQc6bXDqK26CFSxDZ+NuJ5qmo5dlL?=
+ =?us-ascii?Q?lEPtaWbcMgix0VmD7JIDX7ji6S4Qt66b2Vg5Wf+EWNBrbrqn0bM78Me2ujjo?=
+ =?us-ascii?Q?BTPsNHJ169t0Wy1Im0qkNjsDSsr/lYnWgw8HXz5sTvVGE0q9Rd7dVHZeEq26?=
+ =?us-ascii?Q?L4MH1Wvuc2MGgoB/y9nDui97LYCg7KQhh9qgA/StMlPFHSjnk4PW9m9KMLt1?=
+ =?us-ascii?Q?/wtAfgtC2NR9tCxUgd8eElCUJjy6erZwWbBOQxFFvF/I3gdlHYp8RxZd9Uy9?=
+ =?us-ascii?Q?TFJhWv24mRP+yoQZUgQmoeQMsDfp/YuPGDPu/FQlvWhifGC/D8PT4h/yASzu?=
+ =?us-ascii?Q?1vsYIkfC87mmcozJ9Oxcq9uWynijA+R/7ZzEyKMNgqK4W2kHYKgvX3f9gZ00?=
+ =?us-ascii?Q?4hXwuwGklTTNL4IoDChLie6hg4QkNWtW4+lTt8WkV6FRH9RJ8AfJnWvuA0fH?=
+ =?us-ascii?Q?EEudOcCZvu20JdlZOhSIV5yZ4jcqBzZ+HjGOvwGhPxkiZZqgVqTj5tcOXG2E?=
+ =?us-ascii?Q?kqjNFojep2x/HajR/Q4yeN8MO6qZfNpAWI0XmCoxogbWvnQfmyifWGfncNIn?=
+ =?us-ascii?Q?EZX+YQlJ7BBVEQWSJxA9ek85844PgCUTpkFkj+L59amonwzdYJhc9z4gtbQb?=
+ =?us-ascii?Q?KXW7PMlgBGFLrbbRLV1kpOWazOMcecf4IsX/SkNls3bKYUZ0A+79IgxXZtEJ?=
+ =?us-ascii?Q?QepbyojRePEItJ8HhmSdiCcO+SwuJdhoLPu2+VBp1OGpznObrXq+dVYhaqft?=
+ =?us-ascii?Q?xxj1bSS8nv/T2qngq/NIWWhVVLIgrv8+WaLy5p3M5NtGmvkNt4hIv/i2ZvaX?=
+ =?us-ascii?Q?Z5wbihRpBRYxc4mSdBsOq9MSsKKO/RWMA3zJkuVf+K7NWbx67otzYVeMgLSH?=
+ =?us-ascii?Q?BHeWD51gcnu4DL/A5B5OvJWQ1Ng9nlfT0xg59SBXHgjV4Dis39SszZJJ+7jF?=
+ =?us-ascii?Q?c47FeF/DOoUypn1xKgc5vO+hYrIh08GqYWRYh0CBHSD9FNedk7KQWxQ7RbhC?=
+ =?us-ascii?Q?HOBi8Xl90DLz4zhWOd62unZyteRrYzVDEcqAnQIeWocmuIg7ydyEhFav1TJb?=
+ =?us-ascii?Q?eeN9pEngVeM0zLWYGSQizhn3vCfllgOxK6/oAi4HXoCTo0lYWMBDHvYt+vsc?=
+ =?us-ascii?Q?Ydj41J6BDiAPbvoGPYlMmeJauWBlM+1dMjx1K/vYQdESVAR8cBXCqrQFvG8q?=
+ =?us-ascii?Q?kqb8btkdBrzaUmC357uT+zZSLtDcYQ9wkwSmyhMkVJ5BdE11oTlCYl152FIM?=
+ =?us-ascii?Q?6IGLJ2R30EtNDJr9r0tUBX/dc7Bw7uqf?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9206.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?nMQ5B1VvB9UHodVJp8DmSRg2CVOjSLNnkSDUo+DMPDX217IX9wb8+jyVy+Mt?=
+ =?us-ascii?Q?f6/mGCgIUdh3jzRg2BRweO0wiZuekl/UH1zwtCg4Bg14EDaoC/sHG9lVP9qC?=
+ =?us-ascii?Q?h2DLb3kzYO9SqRqrEvMOJ/yG2ip3+dqS0gN0ozcIx5R6vakYXWMypK5E/ZCT?=
+ =?us-ascii?Q?P2lH2I73Sc12LhaO/u6mbtvkBo8O/PolQ22A2PsVaIckAqQVnilGx90fIyKv?=
+ =?us-ascii?Q?pqAT+N3/Sb4AbVb4sBFGkb7bhIjoQJuD7MgyDz19TNse1hl/WEtGo2AilWOl?=
+ =?us-ascii?Q?nxg0CYci1r9/cvrYfBCvPVLpQ+cSQAsQzt3DKoyH/8sDIlXRriaApIcdhgRm?=
+ =?us-ascii?Q?Sdt9ThQScD0ySpr/LlX3GNFiIgV0HNzeUe+hC/1ka4t3thZrWvTwja6TEWIM?=
+ =?us-ascii?Q?HKcIuJCaasTOMPMTfLIpgXu4hzFc9doNWr3IHCUluE/VMCj8Lw5a28+HCPnV?=
+ =?us-ascii?Q?dOaXfZf9d/+izJm5CICa918kOw10Z/bMfKJhMqE5TL6dd0enOIbLCfYA310L?=
+ =?us-ascii?Q?1MXzhr+BZVvq2+t/NCjqSEVLmEoEPMpqeQLAXz6x5bbCq6l+T4SoemWeXRnF?=
+ =?us-ascii?Q?q14ZCR80a/c8OrLqAgrzD4rb890G67lAxd3pc2U2itjhqEqq/woX/xNRM/mY?=
+ =?us-ascii?Q?EMM4MEPkw070RusRqXM+KvRGyuHZ6dnPvVOysc73TCvGi9shIFhqwg3H31+t?=
+ =?us-ascii?Q?iahtaVdUruptChB0LtaAG1Ohm3S490udyf9Eb92lxqnaryMfTASBxiXDCk7l?=
+ =?us-ascii?Q?i+L5kNulXy16Qu7pm7hUg9MxxfLZGHOyBorhB8fGnAvE/bQ7eJaMMe/jhMLw?=
+ =?us-ascii?Q?ZTv5NnzmVd/jdiSbVd4kjCM/0YxHtjeYc9GAbJG9YPbobw+FNst8JY6mdqKs?=
+ =?us-ascii?Q?KIbfDM2dytq+WMSF6TvmcV/ITgPPHDDMLysWGEFLvWMyI7IPh2HdfzJyPOG1?=
+ =?us-ascii?Q?0/T22gjqNjPmOLg09eBEkyWzXa6APrNKAZzuXC+xLnYBEXPQK5O5OVqi48+T?=
+ =?us-ascii?Q?377z8Xvg25KuT+vyX9HkYRdaDFDr4S9pvBUZjVa7zGXc0zwJzGLisAwV3Y50?=
+ =?us-ascii?Q?VLkPCoHbhPAWdH5M2QShf6mYAc5Kl3xbLdK5MOqo5RJB1ZBdfMt61cF21lMT?=
+ =?us-ascii?Q?k+Q2Hg5ugKqEdlwTKSwwz3tAK4AFA7a/KJLohAeMw1q0yEMivvDcSWni/pkv?=
+ =?us-ascii?Q?7qAAbc7oxBlS6dfZRV7NcSPkCr/p6SnKILJrtfEVE+QjTfZxJ/DD2eaEFKae?=
+ =?us-ascii?Q?+pstACAUucVyB7Ul/3M4mcJslv8hTrSxIiEtV1smOGd3Hsu2ShK3yY8c5za3?=
+ =?us-ascii?Q?rpwMv/2ik6MKa070YdisxmFIGm6JHmKBQ63l9Z268UMmvT36Knk2bDsjSA5x?=
+ =?us-ascii?Q?XG7Y4mT7VQKU36LVmyJJm5E+aenKs+G8qFPqfrnKtjwNpNKGbzy8DeoLO+hm?=
+ =?us-ascii?Q?kcWNiGCnIJGInOgHt6dtGNcReTn4C5xRWwmVIWSiatPC/SbGnzyFlw6Ql5mu?=
+ =?us-ascii?Q?bsRdz/x2LtjGqCgI4LUgnnoUDF9DQDk2tB9sWphhbP01wn7KZ9yB+SNH4T6l?=
+ =?us-ascii?Q?0JkHDiS17qA20C/i0ms=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/17] mm: fixes for device-exclusive entries (hmm)
-To: Alistair Popple <apopple@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
- nouveau@lists.freedesktop.org, linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, damon@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
- <jglisse@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Masami Hiramatsu <mhiramat@kernel.org>,
- Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- SeongJae Park <sj@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Peter Xu <peterx@redhat.com>,
- Jason Gunthorpe <jgg@nvidia.com>
-References: <20250210193801.781278-1-david@redhat.com>
- <6sejv2hauce3il5lq6sw53xmjjjglxkhz5copm62oryga6jioi@u66wl2nc3hoy>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6sejv2hauce3il5lq6sw53xmjjjglxkhz5copm62oryga6jioi@u66wl2nc3hoy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9206.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 286ca788-79c5-47f3-915e-08dd4c1fd93f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2025 11:16:22.8630
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5CFyv1t9OaIqUKfd1bY7Jgh7wCYjXlLYNLRD5a3mWqCLWPv7gkAz7XUbfFyOib/X
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6631
 
-On 13.02.25 12:03, Alistair Popple wrote:
-> On Mon, Feb 10, 2025 at 08:37:42PM +0100, David Hildenbrand wrote:
->> Against mm-hotfixes-stable for now.
->>
->> Discussing the PageTail() call in make_device_exclusive_range() with
->> Willy, I recently discovered [1] that device-exclusive handling does
->> not properly work with THP, making the hmm-tests selftests fail if THPs
->> are enabled on the system.
->>
->> Looking into more details, I found that hugetlb is not properly fenced,
->> and I realized that something that was bugging me for longer -- how
->> device-exclusive entries interact with mapcounts -- completely breaks
->> migration/swapout/split/hwpoison handling of these folios while they have
->> device-exclusive PTEs.
->>
->> The program below can be used to allocate 1 GiB worth of pages and
->> making them device-exclusive on a kernel with CONFIG_TEST_HMM.
->>
->> Once they are device-exclusive, these folios cannot get swapped out
->> (proc$pid/smaps_rollup will always indicate 1 GiB RSS no matter how
->> much one forces memory reclaim), and when having a memory block onlined
->> to ZONE_MOVABLE, trying to offline it will loop forever and complain about
->> failed migration of a page that should be movable.
->>
->> # echo offline > /sys/devices/system/memory/memory136/state
->> # echo online_movable > /sys/devices/system/memory/memory136/state
->> # ./hmm-swap &
->> ... wait until everything is device-exclusive
->> # echo offline > /sys/devices/system/memory/memory136/state
->> [  285.193431][T14882] page: refcount:2 mapcount:0 mapping:0000000000000000
->>    index:0x7f20671f7 pfn:0x442b6a
->> [  285.196618][T14882] memcg:ffff888179298000
->> [  285.198085][T14882] anon flags: 0x5fff0000002091c(referenced|uptodate|
->>    dirty|active|owner_2|swapbacked|node=1|zone=3|lastcpupid=0x7ff)
->> [  285.201734][T14882] raw: ...
->> [  285.204464][T14882] raw: ...
->> [  285.207196][T14882] page dumped because: migration failure
->> [  285.209072][T14882] page_owner tracks the page as allocated
->> [  285.210915][T14882] page last allocated via order 0, migratetype
->>    Movable, gfp_mask 0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO),
->>    id 14926, tgid 14926 (hmm-swap), ts 254506295376, free_ts 227402023774
->> [  285.216765][T14882]  post_alloc_hook+0x197/0x1b0
->> [  285.218874][T14882]  get_page_from_freelist+0x76e/0x3280
->> [  285.220864][T14882]  __alloc_frozen_pages_noprof+0x38e/0x2740
->> [  285.223302][T14882]  alloc_pages_mpol+0x1fc/0x540
->> [  285.225130][T14882]  folio_alloc_mpol_noprof+0x36/0x340
->> [  285.227222][T14882]  vma_alloc_folio_noprof+0xee/0x1a0
->> [  285.229074][T14882]  __handle_mm_fault+0x2b38/0x56a0
->> [  285.230822][T14882]  handle_mm_fault+0x368/0x9f0
->> ...
->>
->> This series fixes all issues I found so far. There is no easy way to fix
->> without a bigger rework/cleanup. I have a bunch of cleanups on top (some
->> previous sent, some the result of the discussion in v1) that I will send
->> out separately once this landed and I get to it.
->> I wish we could just use some special present PROT_NONE PTEs instead of
-> 
-> First off David thanks for finding and fixing these issues. If you have further
-> clean-ups in mind that you need help with please let me know as I'd be happy
-> to help.
+Hi Rob,
 
-Sure! I have some cleanups TBD as result of the previous discussion, but 
-nothing bigger so far.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Wednesday, February 12, 2025 3:24 AM
+> To: Jain, Ronak <ronak.jain@amd.com>
+> Cc: krzk+dt@kernel.org; conor+dt@kernel.org; Simek, Michal
+> <michal.simek@amd.com>; Manne, Nava kishore
+> <nava.kishore.manne@amd.com>; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/3] dt-bindings: firmware: xilinx: Add conditional p=
+inctrl
+> schema
+>=20
+> On Thu, Feb 06, 2025 at 06:22:43AM -0800, Ronak Jain wrote:
+> > Updates the Device Tree bindings for Xilinx firmware by introducing
+> > conditional schema references for the pinctrl node.
+> >
+> > Previously, the pinctrl node directly referenced
+> > xlnx,zynqmp-pinctrl.yaml. However, this patch modifies the schema to
+> > conditionally apply the correct pinctrl schema based on the compatible
+> > property. Specifically:
+> > - If compatible contains "xlnx,zynqmp-pinctrl", reference
+> >   xlnx,zynqmp-pinctrl.yaml.
+> > - If compatible contains "xlnx,versal-pinctrl", reference
+> >   xlnx,versal-pinctrl.yaml.
+> >
+> > Additionally, an example entry for "xlnx,versal-pinctrl" has been
+> > added under the examples section.
+> >
+> > Signed-off-by: Ronak Jain <ronak.jain@amd.com>
+> > ---
+> >  .../firmware/xilinx/xlnx,zynqmp-firmware.yaml | 20 ++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zyn=
+qmp-
+> firmware.yaml b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zy=
+nqmp-
+> firmware.yaml
+> > index 2b72fb9d3c22..d50438b0fca8 100644
+> > --- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-
+> firmware.yaml
+> > +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-
+> firmware.yaml
+> > @@ -76,7 +76,6 @@ properties:
+> >      type: object
+> >
+> >    pinctrl:
+> > -    $ref: /schemas/pinctrl/xlnx,zynqmp-pinctrl.yaml#
+> >      description: The pinctrl node provides access to pinconfig and pin=
+control
+> >        functionality available in firmware.
+> >      type: object
+> > @@ -106,6 +105,21 @@ properties:
+> >      type: object
+> >      deprecated: true
+> >
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: xlnx,zynqmp-firmware
+> > +    then:
+> > +      properties:
+> > +        pinctrl:
+> > +          $ref: /schemas/pinctrl/xlnx,zynqmp-pinctrl.yaml#
+> > +    else:
+> > +      properties:
+> > +        pinctrl:
+> > +          $ref: /schemas/pinctrl/xlnx,versal-pinctrl.yaml#
+>=20
+> The somewhat preferred way to do this would be to do this in the top
+> level:
+>=20
+> pinctrl:
+>   type: object
+>   additionalProperties: true
+>   properties:
+>     compatible:
+>       contains:
+>         enum:
+>           - xlnx,zynqmp-pinctrl
+>           - xlnx,versal-pinctrl
+>   required:
+>     - compatible
+>=20
+> Otherwise, the pinctrl schema ends up being applied twice.
 
-(removing the folio lock could be considered bigger, if we want to go 
-down that path)
+Thanks for the patch review and inputs. I'll update and send the next versi=
+on.
 
-> 
->> these (non-present, non-none) fake-swap entries; but that just results in
->> the same problem we keep having (lack of spare PTE bits), and staring at
->> other similar fake-swap entries, that ship has sailed.
->>
->> With this series, make_device_exclusive() doesn't actually belong into
->> mm/rmap.c anymore, but I'll leave moving that for another day.
->>
->> I only tested this series with the hmm-tests selftests due to lack of HW,
->> so I'd appreciate some testing, especially if the interaction between
->> two GPUs wanting a device-exclusive entry works as expected.
-> 
-> I'm still reviewing the series but so far testing on my single GPU system
-> appears to be working as expected. I will try and fire up a dual GPU system
-> tomorrow and test it there as well.
-
-Great, thanks a bunch for testing!
-
-Out of interest: does the nvidia driver make use of this interface as 
-well, and are you testing with that or with the nouveau driver? I saw 
-some reports that nvidia at least checks for it [1] when building the 
-module:
-
-	CONFTEST: make_device_exclusive_range
-
-[1] 
-https://www.googlecloudcommunity.com/gc/AI-ML/Can-t-Install-Nvidia-Drivers-on-6-1-0-18-Kernel/m-p/722596
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thanks,
+Ronak
+>=20
+> > +
+> >  required:
+> >    - compatible
+> >
+> > @@ -164,6 +178,10 @@ examples:
+> >          compatible =3D "xlnx,versal-fpga";
+> >        };
+> >
+> > +      pinctrl {
+> > +        compatible =3D "xlnx,versal-pinctrl";
+> > +      };
+> > +
+> >        xlnx_aes: zynqmp-aes {
+> >          compatible =3D "xlnx,zynqmp-aes";
+> >        };
+> > --
+> > 2.34.1
+> >
 
