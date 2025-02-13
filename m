@@ -1,281 +1,244 @@
-Return-Path: <linux-kernel+bounces-513019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5B6A340A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:45:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA733A34088
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A856D7A48B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78D816AA97
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D062222D0;
-	Thu, 13 Feb 2025 13:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F345923A990;
+	Thu, 13 Feb 2025 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etjmyCXo"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMBUdlwl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ACA2222CE;
-	Thu, 13 Feb 2025 13:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454209; cv=none; b=h/GtjK9Ip4QzXQQXlqjYagrzkiPJD5VuX4XTAizoS4qUkRKAwa8GCQe6cBhU9NLb4IbiWW4NjMY/THT2an8K4EnlvYDzRvpsYPvWw2e/w4bNIDHSRO7YQAKCUu4UIhNPfDUe5szwLlUZb13REo9Q46BgkX8yafF+kbpC/waquBg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454209; c=relaxed/simple;
-	bh=1THMgtBUVWtS8iZzrqo/yymnGZZkmDBdqurvA1tE8k4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3zECh3pqRKV+1sAvxRqNpljoU8QE+JlwmKAjT5sZ/grTJuEe0bVKcE0Toxgtcs9b6GJsXVmF3sSGYQqbcyttZAU5lSe0tglDRxXXk4m0qhMH/FBuuQvggoYmwz5PZ/I9E3pc0D0RZpj5e70MDFr4cJhxzt2SfGLluCKGYG+oWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etjmyCXo; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso6286755e9.3;
-        Thu, 13 Feb 2025 05:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739454205; x=1740059005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMPABjjogfdKDCcQgCBVWi5+k2BUL7XWDxcvghN5g/4=;
-        b=etjmyCXol/6m1PYRRYCdy6WjxtRTSheSJ60RCZXrJ84dufGk5KRhUucWS34hfJ8Poi
-         Q51mG0TvetlZmIXuLJ5FECs3pFltUDqJDurufvq+PvdeTEE2mGmpzCa7CHXbHyeQ7ZC5
-         EsM+6AyzBUTChbsL70iCf+keMS31mad/eNn9bJD7q/lmioY2b5Zm375WzWT0erOl/wSM
-         BsWr5SKgRaP44ePL8DNk3CeoaA82eLJdUVSg/yEQtRCORuv+E9Vrb4COkjlZH/Xt72lG
-         P+sQuNq1o2GYFiCToJF2YUZl9qpd06zEwJVcskRi34yGPqCUbU1F48qaLN8bhxnB1Vtg
-         UtNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739454205; x=1740059005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XMPABjjogfdKDCcQgCBVWi5+k2BUL7XWDxcvghN5g/4=;
-        b=JWXzzMNGyu/kE9t4FBaxOI1Ci7kGHWEbqKLuv7TkUvKwyKtxq1ZadVyplbIuC/oyT4
-         UuHsv1LCjXylKBhQc48U/EXbZbt9oh+jOp3A570A9pWKf939w6cwWeQrtmj66KophN0R
-         Pl4yvVg1LWJDL+V6N4OPZnsnlnqBeCseYZNdMrRonTMwupMumFmaG2/c2oZsScTzf2I6
-         OgS+DdVerORFyNfTqW/Dl2tHMjxs+oxZdFFnamRpF5EBOVZhLGsOfc050+2Xnw37RpSD
-         y+83ImOWEVJOsq2nJko0pm6sgWW3iq7i0GeOJg3LkwP/eFcR2UFcXGFm/7pgPBNSdGT5
-         217g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVw9pp9J3eDLgl32DV01m8SKc6J/OOTH5yKojqGyT2xGD4bj1W83YgzjfNdFFdA6btYJn8tR0v/+7JAxw=@vger.kernel.org, AJvYcCWwVwTBx/GqqAVMvWTQTpFccxXg4YtRHRhC86jEHUyGuwyWdJvWLtWy6nBnilH9/Dgm1jmpMZ0J@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVV+PDvo/3I2D3ZGvJOBHqLwF/MLs4TjBanUF6HM0q8Fu8Fndr
-	Dutvz4wp6p0DwT+fqUvqBq05ly0GIy9OYo/bgoHmgtriJYQqAPc1oVbah0iL
-X-Gm-Gg: ASbGncuNAdexQN2HEOWR0dp5RQo4m0JaNp6RytYpFJn3CgDTlxJfRcETpPKbymBBLbM
-	EeCHQgjDIBLMfS0cKDJu+i0vbD8LVEESiT5J0Rr05DW1dnsbjEZst4Z50g1BgltPnrZrVsVMcZr
-	FriHatWsFwl7VW+Vkg97N+D8Xn+M9qH0/DD+15Pk5bC+q7eB+K172huos9U4sAfabVGczkaqpKw
-	MwOr/IMc8LxuMsLwmPMW0d8rQp5PJiZ4CIhArJm1TIJH+5ryz8ts1OwJ2H7NdWhqTASgJbwOcjl
-	UXr6MZ539XSHMcRrvmzx6nmvPQZ5m09Dokme938=
-X-Google-Smtp-Source: AGHT+IHGh5hxeTTEn/ULQbgxjZRpnBSlL1VvOrm01LozDLNI/OQRJLTs0nLgEadHJzEMLliDtiQkEA==
-X-Received: by 2002:a5d:47c3:0:b0:38d:de92:adab with SMTP id ffacd0b85a97d-38dea28c762mr6807008f8f.29.1739454205306;
-        Thu, 13 Feb 2025 05:43:25 -0800 (PST)
-Received: from localhost.localdomain ([109.175.243.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccef7sm1982547f8f.31.2025.02.13.05.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 05:43:24 -0800 (PST)
-From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] HID: corsair-void: Update power supply values with a unified work handler
-Date: Thu, 13 Feb 2025 13:38:49 +0000
-Message-ID: <20250213133854.100866-3-stuart.a.hayhurst@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A94D23A983;
+	Thu, 13 Feb 2025 13:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739453966; cv=fail; b=Yu952gtsIiKt7MlyOkWV9Odv7q+C8QNrUnBkd9+2MxtNpeEiSyEnuXSyX4mTPqqbzAUdZoCuPCDm3rioK7iXTCcjXyZ+byH7jGXE0i4MLxef/nBS7rSdLbHwGAgV0JjUgeGbEeTKOS6ke73iMVXD8mIg6lm5WwO8YRGaJqafpAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739453966; c=relaxed/simple;
+	bh=ZlH23s0ZZTzmCXRhoGV9aFrxwAJswnFJsxSnm3OGCo8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n9+5J0eNodDNaQuodBpt0Gdwqjv64DaXZY0qX4AFbeuxHtGjGprdkOvbgFjB5CkRcjwGGnW812tqPdpQNv5B4h0TJqOnHt5p6HluUUrOpGkRujSqUJm4svG18Lfj7M4qo4nMG/YP3A+15wxg0I4CkpTPCNetdEokJ73UqAHYgCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMBUdlwl; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739453965; x=1770989965;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ZlH23s0ZZTzmCXRhoGV9aFrxwAJswnFJsxSnm3OGCo8=;
+  b=YMBUdlwlUA7eUmHS53mgu5yP4X0rcRICLaRaXOX0mzHuh2b0airJAPgi
+   oCxcGFOCtheyIWinxyZcoZolimrPjRlseELgD3srLlJ0wEQDHq4Q/rskJ
+   hgtwLJqJBqk6W/IxYnUkkdgbHPnCXDaeXEJLmMCbat028z4SkTyw5/LR3
+   2c/y1smrd/oAjY3CLFH6EP2zYnhk9yy7k0ykxQUBW7VJeh0BylRlD6Qpm
+   VQTk9dp4OI1fhiq0pORwTTTfqYSEtvzbx3RVv2CVGPKHIM0CYcaQ3kqIs
+   y7IbpJAsjEvfwngBQgrfQeXZASqmYdqfcrOacuYSYyRp2VTLwIiIr5j3E
+   g==;
+X-CSE-ConnectionGUID: YTnY8AYySsKg+7WWEXPV8A==
+X-CSE-MsgGUID: naDuOO3WRsSBCa6MPrdJTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50369419"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="50369419"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:39:24 -0800
+X-CSE-ConnectionGUID: vnwycQ5FQkOYGoTkjh1loA==
+X-CSE-MsgGUID: 5ncjEgdeQwuXd1J0h/BsnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113324505"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:39:23 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Thu, 13 Feb 2025 05:39:22 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 13 Feb 2025 05:39:22 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Feb 2025 05:39:21 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e8b2VdRgOELsRSCpVj1ltpymDNY6do1lhSYuKrPbufDbojfnzlZSQLKKM/lTBf3W5hszJUirftLIxqZB9P7WE4P4bnV8GZDqoT+seL7JhNJyx7xDW80VC7LnXORueNnRyFr3JRzzvTDS8Kkm7Ud4mhbPOWyVib/TwSdbxckBcJ4X+u2L24H2EUpsq7FkuVP3WHekOhFjTnFoAE2Nat6ZjB0UBgJL7IgpYuaDi53G5N2yUXZcDHrDHvciJ8NPe1dYjDWDswWpCNtyX4sVSUNDzK6VEwdOSVMcuQR1nRWDbAtWQPbVd0/YvpAdsWSLvR+d8ibZx9f9cIQY6LrRoxuiXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6a5R1gCt87FzaNuxZa2sT6M2TBXGCMBOeKOGqknrGUg=;
+ b=E8NCF5/7jWwdXMWOLeRpYWkkMC36oGrlfnhj2zrjRe2WeN+drLPgePshS58bae13pJFyrkaEqUlDdVoTzdn15jA4ZpNdrqJjzN7jji231aP2RAOaILxiJ+fndtoxWc9TvNKxqOUTZMPiBar2RVoqBPzpy3qmDO9ZZkfBk95WcqkQY+Ns++Vw72D4l72/K9iyDpvIXUKvCbhFaMazTKupS+Q7z5RwNAayG+MV2I1Ah1wamoyS7YR0GDC9wOgqAgjb4KxuKDgUxKZQGFrfBJi8cY/8tCvminkAkw+yo6auZJRIkM7kYvEDlWqn9Rh1aDWDc3e0Ae+dOMJc19ybz4uAyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB6375.namprd11.prod.outlook.com (2603:10b6:8:c9::21) by
+ CH3PR11MB8703.namprd11.prod.outlook.com (2603:10b6:610:1cd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
+ 2025 13:39:06 +0000
+Received: from DS0PR11MB6375.namprd11.prod.outlook.com
+ ([fe80::cd01:59f6:b0f8:c832]) by DS0PR11MB6375.namprd11.prod.outlook.com
+ ([fe80::cd01:59f6:b0f8:c832%4]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 13:39:06 +0000
+Message-ID: <8c59618b-a9a6-4a0f-8200-2b7152dfe40c@intel.com>
+Date: Thu, 13 Feb 2025 14:38:59 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: Intel: avs: Use str_on_off() in
+ avs_dsp_core_power()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Liam
+ Girdwood" <liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+References: <20250212091227.1217-3-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Cezary Rojewski <cezary.rojewski@intel.com>
+In-Reply-To: <20250212091227.1217-3-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR09CA0122.eurprd09.prod.outlook.com
+ (2603:10a6:803:78::45) To DS0PR11MB6375.namprd11.prod.outlook.com
+ (2603:10b6:8:c9::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB6375:EE_|CH3PR11MB8703:EE_
+X-MS-Office365-Filtering-Correlation-Id: dcef6f69-8e65-4e0c-9bf0-08dd4c33c921
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SEVUTWlHVFBuYWYvMFVlTWlvSDhRSlRHYVV6ZnhNcUQwRC90RDlQN1loMEwr?=
+ =?utf-8?B?T1d6RlFJUEtoQlVWMEdRbWtFdVRwK1FGUWg1OXNhdS9WbFZaWGoreVVuMTRU?=
+ =?utf-8?B?NDY1YUs3UUZFbk5TRVNERDkwMnVITDNwWXpJYTJIYXB2K3M4RUFJUE0vRDZO?=
+ =?utf-8?B?ME40SS90NUJDNzh2NHpvN1dFK05iMCswa1lybDB4b0RVcFJtb0lsRWdOQjNH?=
+ =?utf-8?B?ZXVXenhqSnB0TGNXZmd5WDUyalVnamkzbjNGUzkyNnB0QkpWdnJvejYvdmpP?=
+ =?utf-8?B?aHZhR2owLzI4ZlY4N0xCOHkxNmh3c1htNk1ma1RwbWExeDVRR0xXTW5vaWtp?=
+ =?utf-8?B?Vktkd1IzTmY1Zlo0M1J1STJjLytxUUpMTmc3VkhVNXkyUEdPVGp1TERkTHNI?=
+ =?utf-8?B?U3lrRlpYUUlob1JDRDIreThwOFlwdHp1Qi9WekE0SUR1L0E2Sy91YlB6SDht?=
+ =?utf-8?B?K0swUUlQK1VaRnNzdVo0Z2tGRXpxV1dXYjV5WXhCU1JRa2lwMjgyNGJ4ZWw1?=
+ =?utf-8?B?QUZ0YTk5ME1sdlVLd01LZnRXRTZVYUEwZGxBREpiMVdqSUZtcGp3YTZlbXd3?=
+ =?utf-8?B?bFhWMEQycnVSb05sUDNxdXFqbVNvdktWZWtEQzRtYVBxOXRMYlpBL2NDTU1i?=
+ =?utf-8?B?MnVZby92QlQ2KzVGdDVURmhVODNLMXFuL0p0dCtoMnUrNEdPQWdENk5KMXhU?=
+ =?utf-8?B?MWltTnpmc29uTU1LR0V5RGlOb1hST1ZMZEQrZm9UNlZCalhVMVMyYlBaRzRy?=
+ =?utf-8?B?dVJJK242TVdRRHNCd2x6VXQ4T3JVbURYUTVSdWRnYkYwbGFKUlpVNEEvTEUz?=
+ =?utf-8?B?b2N5U2RyT2JwSXN1dlhsUFZrd245OHM3c2hpV0VoWGhmVVpidDRFdVdOUUJp?=
+ =?utf-8?B?VU1CRFB6S1g3VktsYStLWERtb0J0WjRnL1djbkViVmJuSnRDWHAwUkhpa3dT?=
+ =?utf-8?B?MHN0MXN2emduZ0Z3UzdDcTlhczZTSXFyNkR1NkdjYWdXMlZQVlZTOWtZQlRv?=
+ =?utf-8?B?S1BqNXNQY3RhZGIyQU5KaDR0MU5oV0pVTG9HbjA1Wno3VnBXY2Fpa3BkZmpv?=
+ =?utf-8?B?VlkrOG9hRDZCUTR0cGE5d3ZxMlpuanlsU0M3a0FueXlxNGMySGhZd0d5dkk0?=
+ =?utf-8?B?dVVDRGlES0FaRkJwY2pmMDliVkdmcW03VWh5dXJpbXFqYXlKOVp3Rk1mV0R2?=
+ =?utf-8?B?RWJuazIyQjRwZU5zV2Z5WWlNY2xSeFBISEo5bWIySmp4eGV5MDV5enBKamhE?=
+ =?utf-8?B?S3Zoay9MNzA5L3k4QlpyUFFyOENlbE1pZG5sUXRMSU9lQXlvYlVIWmR4VExN?=
+ =?utf-8?B?T1gydFNxaXpxTGN6cWtJUDJ6UDk4bnY1eWxEb0RKem1seXM5WHluNFV6OXZT?=
+ =?utf-8?B?bFVWZU0yK2tyNDFJRVFPNHo1NHYrRXNhY2xYbi9kSklCQ0J4U09MMWR3Q09V?=
+ =?utf-8?B?TDA4Rm9JM0MrUHIwak92T3Uvdnlad1M1ekJYTTVmam1UZXNtM1lSdkVhVGY3?=
+ =?utf-8?B?R0RTV3lyb1I3UEVYcFhLajR4YXJPNXdKbHhhL1pZSm1pSjNkMDdQUVBnU1B5?=
+ =?utf-8?B?K0hTbzA5REVGMHFIQUNGTHJtUGRwMFJybXR3RXlGK2FHL1ZxamtodldHZ0V2?=
+ =?utf-8?B?OUJhckswcmpPbDlxZytQNnBkRkEwdjlNVko4Vm4wR0ozRTRrMUhlenlRRitz?=
+ =?utf-8?B?bTBmNnpDKzdTaXkrVnJ1bmp5ZFVibzdpMDhadk1FZnpta2JwbUNvcVZlcFVs?=
+ =?utf-8?B?YW93TnNzRXRqK29pLy9ZMFlGb3NKSXkyTmNnRmlwMUR4NUdUNEI4ZERDUWNM?=
+ =?utf-8?B?dmZTeWg2MDN5WnNnSzEydWlBc3dnMEsrV2hHenprZGdlQ3NPS3hveXAxSnpa?=
+ =?utf-8?Q?1lIVJhdxI2kYd?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6375.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cCtNVExWcXRjSDFDZzluM0JRcXpPOEw1cGlDS3lPVUcvWWcweTlPaWl5WSts?=
+ =?utf-8?B?TnY4NzRZU1RDN28yWi9IdmN6VGdRTGhzMHU3b0FGVkRKMGlZeFJySHdaTnIx?=
+ =?utf-8?B?dG1FbFdSamcwVkFFQXl1N2JQVmkyL3ZYbjBZeXhLZFBXN1VJTnptM3E1VWpa?=
+ =?utf-8?B?bUhJcWUya3ZONmJlK3MwbS9NanZBRzBUWlp2WmVDeVY5R0N4Z0RMcHZWQjh3?=
+ =?utf-8?B?SU55eHBDam5QZXdIeVBZWFlobWJLQUFuT3grdm9pMXNVVzRMZUMrTWRqWEZO?=
+ =?utf-8?B?NXhncVI3Mjl0REFFZEhYOS9BbXFHeG5IcnU3Wjg1WEN1SVNnYjdMZHptMTNH?=
+ =?utf-8?B?OVR0bVhHQllOS0R4OFkwTkRxMmpnd3VyNzgvWDNXTzMvdXdxem5CRksvTGI3?=
+ =?utf-8?B?TUhZNGhSWWlVbWltdUJuKzc4ZU51MEYwMXJodzJyQnp2L1dTNmJ3QUpJWHNm?=
+ =?utf-8?B?eHlOKzhzbHNtYlR4SHgraXd5M2NrZSt3cm56elBESGp2NGEwaUFRMnlMWTF2?=
+ =?utf-8?B?UUI2dWw2VE9vSVcvN3RxY0JxNFhGcjhMS1ZkZmdDREFvcFpwRTVvU3JqeEVV?=
+ =?utf-8?B?UERkZnR1OWNVMkMvZFgxS1NwYkFiN3hBa1JXbnFxUWdvRWVkSERwYnB1S0VR?=
+ =?utf-8?B?Q1lMZ2F1SmkxcE5qcjhGYWk2YzBMTjdoTzFwYWYwc3pEQnF6dFJMUWJ4L3Zo?=
+ =?utf-8?B?Z2FmSTJUVE41NEFJZnkrWTlCZUlUNVdqdFdMQ29HN1VXdkxFUXkwMWhxQVpS?=
+ =?utf-8?B?eGQvYmoxZU83YVdCUkZCdHM1eVVxcXpkOHNmcVBQVTJpVUFpd0x0bFo1OFlS?=
+ =?utf-8?B?Yk9RY3lmVDBDUGFZWEpmOTNLVjdBam9hQllVUzFjZ05zU3Z3OWtGcDFDYldo?=
+ =?utf-8?B?OXhhdmZoOTh1b2w5TUlaZ01JRFVLNVU1VDZtczUzQkhWQVFSNmlmV2ZycG5k?=
+ =?utf-8?B?T1hEZjVkYWtSb2x1OTdzcXdIenhzMzJhZ3BiczBwTVNCT0VUOXlDYllSbXd0?=
+ =?utf-8?B?bGZKNExIRElmRzllaEVDdjhWeG1lakZZWkcvTHlkdHFTYTMwY2dqZWlzeFVa?=
+ =?utf-8?B?UkpmeWFkVW9tSFcyNTJtRGVGUGF6c2tnK3FXODJBVWVUc0ZlNS9WQ1NrRHBv?=
+ =?utf-8?B?Smk5TzhYcTJmbTdtek1NSUtsSGM4ZnZJQ09SYWlhcjNvQlJCU0d5YlpmZFVJ?=
+ =?utf-8?B?ZU91MnFKUEQ3U05mU2JRTTJFV1VacURBL0EvUTRlYWhmbEJCS2pHa3RTZDg5?=
+ =?utf-8?B?bnV6YTZWUEtEQURQM1E1a0RNV2JITlBDckUzRWdYSE1LeUVidVkxT0NkbGRa?=
+ =?utf-8?B?UzZhdmR0cGhndi8rKzVoNHpPcEx5S3NINElPVTJrYmZlaTl6M0RVdlNZS3V5?=
+ =?utf-8?B?Q0YzNzM3em40dmxtUDM1VVVBNjNMWXNrTWVYYW5rVEIvVTJXalBvcTN1ZnBI?=
+ =?utf-8?B?SDBYK21PczJ3OWJPQ1hqOHZRUzB4NmJKaVVTdUptNmZYeFRwQ1JOZXhDQm5U?=
+ =?utf-8?B?NkV2US85Wjk4Y1lKRDJ6Y2tpMm1weTl2UW5VTTV3NFFaWVJqSFlXaXlGbm1I?=
+ =?utf-8?B?OHBVVnk5SEw5cVFvNWhYR0JLR3c3NVRKbzkvNGJrTG4zQ29WcG80T3MzS1NI?=
+ =?utf-8?B?SjYvTEZLMEJ3YmN6TEtUcVNTR2RJK2VoWlErVVR1akFFakUzc0hXcC9GcEk4?=
+ =?utf-8?B?ZkdzWitCZkJGRUV5VTNoeGxNSm5VRllocSs0S2thcjg5d090TVpxK05KR1BK?=
+ =?utf-8?B?M1dXTyt5ZUp0QU52ZUJCalZoZkNuUW1GZ204YzkxNzVhdWtua3Z6TTJrZUR3?=
+ =?utf-8?B?cTE1VnZNdG5xRnBoM1RJUjdsRS9nRVNxekRzTTJMbzNOTTMwQkYzdHpocDcv?=
+ =?utf-8?B?MW83VUU5TGJwR1lZbUFseTJaWnVnczJsVVNVZEJENzhTc2RlU0JnSkFkWVJi?=
+ =?utf-8?B?YXhFVXNEK3BXUTlmYzZibFR0Y2hTTnp6WFNvQ1FxTENBR2N1TlVqNEZnV2gz?=
+ =?utf-8?B?SnBmRVFtYkUvWGZma1Y1SU1DSHRGdUFHdG1UY045ejEwRE9qOW1DUlBaRjBv?=
+ =?utf-8?B?VzcxRW14MWdZdFc1NEhDMzhqM0tpQllhSk55WUJ4NStIcGFCMmplNU1Kb2o4?=
+ =?utf-8?B?eEJaOFdoWiswM1J6QnREZDQxbE94WGJyb0dXSEN6VUFmVGJyMWx6MFh2VExJ?=
+ =?utf-8?B?dFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcef6f69-8e65-4e0c-9bf0-08dd4c33c921
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6375.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 13:39:06.0716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l1P819PyWq+dUh0bZ1ruiH7ZQ/jpHxPOXvnHsaMBpchciXARY1ua+WEtolGxbich2WFzt20zIDe8ZYJwCgI79ixV4eWYZosv0ce/J4giwoc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8703
+X-OriginatorOrg: intel.com
 
-corsair_void_process_receiver can be called from an interrupt context,
-locking battery_mutex in it was causing a kernel panic.
-Fix it by moving the critical section into its own work, sharing this
-work with battery_add_work and battery_remove_work to remove the need
-for any locking
+On 2025-02-12 10:12 AM, Thorsten Blum wrote:
+> Remove hard-coded strings by using the str_on_off() helper function.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>   sound/soc/intel/avs/dsp.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/intel/avs/dsp.c b/sound/soc/intel/avs/dsp.c
+> index 7b47e52c2b39..b9de691e9b9b 100644
+> --- a/sound/soc/intel/avs/dsp.c
+> +++ b/sound/soc/intel/avs/dsp.c
+> @@ -6,6 +6,7 @@
+>   //          Amadeusz Slawinski <amadeuszx.slawinski@linux.intel.com>
+>   //
+>   
+> +#include <linux/string_choices.h>
+>   #include <sound/hdaudio_ext.h>
+>   #include "avs.h"
+>   #include "registers.h"
+> @@ -39,7 +40,7 @@ int avs_dsp_core_power(struct avs_dev *adev, u32 core_mask, bool power)
+>   				       AVS_ADSPCS_TIMEOUT_US);
+>   	if (ret)
+>   		dev_err(adev->dev, "core_mask %d power %s failed: %d\n",
+> -			core_mask, power ? "on" : "off", ret);
+> +			core_mask, str_on_off(power), ret);
+>   
+>   	return ret;
+>   }
 
-Closes: https://bugzilla.suse.com/show_bug.cgi?id=1236843
-Fixes: 6ea2a6fd3872 ("HID: corsair-void: Add Corsair Void headset family driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
----
+LGTM
 
-v2 -> v3:
- - Use an enum instead of a define for battery flag values
- - Use an integer instead of BIT() for the bit index
- - Drop unhelpful comments
- - Simplify corsair_void_battery_work_handler logic
- - Remove extra newline in commit message
-v1 -> v2:
- - Actually remove the mutex
-
----
- drivers/hid/hid-corsair-void.c | 83 ++++++++++++++++++----------------
- 1 file changed, 43 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/hid/hid-corsair-void.c b/drivers/hid/hid-corsair-void.c
-index 56e858066c3c..afbd67aa9719 100644
---- a/drivers/hid/hid-corsair-void.c
-+++ b/drivers/hid/hid-corsair-void.c
-@@ -71,11 +71,9 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
--#include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/hid.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/power_supply.h>
- #include <linux/usb.h>
- #include <linux/workqueue.h>
-@@ -120,6 +118,12 @@ enum {
- 	CORSAIR_VOID_BATTERY_CHARGING	= 5,
- };
- 
-+enum {
-+	CORSAIR_VOID_ADD_BATTERY	= 0,
-+	CORSAIR_VOID_REMOVE_BATTERY	= 1,
-+	CORSAIR_VOID_UPDATE_BATTERY	= 2,
-+};
-+
- static enum power_supply_property corsair_void_battery_props[] = {
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_PRESENT,
-@@ -155,12 +159,12 @@ struct corsair_void_drvdata {
- 
- 	struct power_supply *battery;
- 	struct power_supply_desc battery_desc;
--	struct mutex battery_mutex;
- 
- 	struct delayed_work delayed_status_work;
- 	struct delayed_work delayed_firmware_work;
--	struct work_struct battery_remove_work;
--	struct work_struct battery_add_work;
-+
-+	unsigned long battery_work_flags;
-+	struct work_struct battery_work;
- };
- 
- /*
-@@ -260,11 +264,9 @@ static void corsair_void_process_receiver(struct corsair_void_drvdata *drvdata,
- 
- 	/* Inform power supply if battery values changed */
- 	if (memcmp(&orig_battery_data, battery_data, sizeof(*battery_data))) {
--		scoped_guard(mutex, &drvdata->battery_mutex) {
--			if (drvdata->battery) {
--				power_supply_changed(drvdata->battery);
--			}
--		}
-+		set_bit(CORSAIR_VOID_UPDATE_BATTERY,
-+			&drvdata->battery_work_flags);
-+		schedule_work(&drvdata->battery_work);
- 	}
- }
- 
-@@ -536,29 +538,11 @@ static void corsair_void_firmware_work_handler(struct work_struct *work)
- 
- }
- 
--static void corsair_void_battery_remove_work_handler(struct work_struct *work)
--{
--	struct corsair_void_drvdata *drvdata;
--
--	drvdata = container_of(work, struct corsair_void_drvdata,
--			       battery_remove_work);
--	scoped_guard(mutex, &drvdata->battery_mutex) {
--		if (drvdata->battery) {
--			power_supply_unregister(drvdata->battery);
--			drvdata->battery = NULL;
--		}
--	}
--}
--
--static void corsair_void_battery_add_work_handler(struct work_struct *work)
-+static void corsair_void_add_battery(struct corsair_void_drvdata *drvdata)
- {
--	struct corsair_void_drvdata *drvdata;
- 	struct power_supply_config psy_cfg = {};
- 	struct power_supply *new_supply;
- 
--	drvdata = container_of(work, struct corsair_void_drvdata,
--			       battery_add_work);
--	guard(mutex)(&drvdata->battery_mutex);
- 	if (drvdata->battery)
- 		return;
- 
-@@ -583,16 +567,42 @@ static void corsair_void_battery_add_work_handler(struct work_struct *work)
- 	drvdata->battery = new_supply;
- }
- 
-+static void corsair_void_battery_work_handler(struct work_struct *work)
-+{
-+	struct corsair_void_drvdata *drvdata = container_of(work,
-+		struct corsair_void_drvdata, battery_work);
-+
-+	bool add_battery = test_and_clear_bit(CORSAIR_VOID_ADD_BATTERY,
-+					      &drvdata->battery_work_flags);
-+	bool remove_battery = test_and_clear_bit(CORSAIR_VOID_REMOVE_BATTERY,
-+						 &drvdata->battery_work_flags);
-+	bool update_battery = test_and_clear_bit(CORSAIR_VOID_UPDATE_BATTERY,
-+						 &drvdata->battery_work_flags);
-+
-+	if (add_battery && !remove_battery) {
-+		corsair_void_add_battery(drvdata);
-+	} else if (remove_battery && !add_battery && drvdata->battery) {
-+		power_supply_unregister(drvdata->battery);
-+		drvdata->battery = NULL;
-+	}
-+
-+	if (update_battery && drvdata->battery)
-+		power_supply_changed(drvdata->battery);
-+
-+}
-+
- static void corsair_void_headset_connected(struct corsair_void_drvdata *drvdata)
- {
--	schedule_work(&drvdata->battery_add_work);
-+	set_bit(CORSAIR_VOID_ADD_BATTERY, &drvdata->battery_work_flags);
-+	schedule_work(&drvdata->battery_work);
- 	schedule_delayed_work(&drvdata->delayed_firmware_work,
- 			      msecs_to_jiffies(100));
- }
- 
- static void corsair_void_headset_disconnected(struct corsair_void_drvdata *drvdata)
- {
--	schedule_work(&drvdata->battery_remove_work);
-+	set_bit(CORSAIR_VOID_REMOVE_BATTERY, &drvdata->battery_work_flags);
-+	schedule_work(&drvdata->battery_work);
- 
- 	corsair_void_set_unknown_wireless_data(drvdata);
- 	corsair_void_set_unknown_batt(drvdata);
-@@ -678,13 +688,7 @@ static int corsair_void_probe(struct hid_device *hid_dev,
- 	drvdata->battery_desc.get_property = corsair_void_battery_get_property;
- 
- 	drvdata->battery = NULL;
--	INIT_WORK(&drvdata->battery_remove_work,
--		  corsair_void_battery_remove_work_handler);
--	INIT_WORK(&drvdata->battery_add_work,
--		  corsair_void_battery_add_work_handler);
--	ret = devm_mutex_init(drvdata->dev, &drvdata->battery_mutex);
--	if (ret)
--		return ret;
-+	INIT_WORK(&drvdata->battery_work, corsair_void_battery_work_handler);
- 
- 	ret = sysfs_create_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
- 	if (ret)
-@@ -721,8 +725,7 @@ static void corsair_void_remove(struct hid_device *hid_dev)
- 	struct corsair_void_drvdata *drvdata = hid_get_drvdata(hid_dev);
- 
- 	hid_hw_stop(hid_dev);
--	cancel_work_sync(&drvdata->battery_remove_work);
--	cancel_work_sync(&drvdata->battery_add_work);
-+	cancel_work_sync(&drvdata->battery_work);
- 	if (drvdata->battery)
- 		power_supply_unregister(drvdata->battery);
- 
--- 
-2.47.2
-
+Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
 
