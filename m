@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-512107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C57A3341C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:39:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261E7A33420
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69525167CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:39:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89E5167ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3386B4F218;
-	Thu, 13 Feb 2025 00:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FE54CB5B;
+	Thu, 13 Feb 2025 00:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9qJdpiq"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFxbrUhc"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6142F44;
-	Thu, 13 Feb 2025 00:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D1070810;
+	Thu, 13 Feb 2025 00:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739407142; cv=none; b=rJXKbM/Pcu3omegKAf1+BZI363gnP6D9qEa/FVmkGCNLJWuMO7Nms7VT3n+q39e8H79KBFR5ua7hD4hEvwozq0N8t7+1F0DylevcRZ+peB3qeq2npi1kng+AV7Id/EXRw+4Pjs554yFWhdvhXS0kylxeIPtHvH1blQfuI3OgiVI=
+	t=1739407146; cv=none; b=cjD0Ga6XH0Zary68zCwQWlgVdnGJZDYFxudkrS2ysvsdzI275hXyxY9cQC3d7QoKhuEKP8N6PYPu0XhM/yqUw6YrM6P6sP7q5mfUbKU6ahXN0BE/ko8GEeQyhwoV/erSKDkZOjyHOxMTq/1mybyp1iFJFDUfCr9agjn/YMuvKBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739407142; c=relaxed/simple;
-	bh=ga/IOc7uLTg3IBgWOX8zypqySo2qZSM+QL53DLL3Gr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bhQy2z1Ovqo8m/mQBfSk3BgZMLel+grdPNmGBNYJ6s4QNH/ALeYlKe4zGp8Q12aF7K+1wUpVT/iYKzZpqGd/64+6YOkhLYJnVKTRcYWQQE7ACye++DXC+ZNRZ6h1G81eSwtas7jSD5XOGw0kbwIToeY+DO1ghuVwPuKIFxmDQKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9qJdpiq; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1739407146; c=relaxed/simple;
+	bh=a8Z67QJdO5v3ffSQOMXQWEvL4DdnSxV/Mk2ayYeqQ9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ORF26z8VbRTsbaBOIsLPZcCU8Ajo+Xr19YoK/g40ph5Ye3eVAU4IA8Tg1O/kmVE08kL4CrOmkKuRn5/9B8fp0h+0aj/MoYgyxHXSH5DaibzequvexhHDVnGvN+BEeR4Ig9f933nkxLZqYsDYSX5sKy/JPC0YDpTT7j1HDNAHXYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFxbrUhc; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dd1962a75bso2810516d6.3;
-        Wed, 12 Feb 2025 16:39:00 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4719768caf7so2344991cf.3;
+        Wed, 12 Feb 2025 16:39:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739407140; x=1740011940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BwWt+I1q21nIuXT9naaaYFBUTlLCTvDz09ET5qP1riw=;
-        b=m9qJdpiqCz8M7l5/UMBTK++cc5Tc0O8LMOkI31XeB1oRkOaGHBG5zcNkjZmS8L/lft
-         PtvJrpCZxPMwEkPuqOcAIj9MvYO5vDSFX51v5vQnEhevK4MRpVsKGfHCp91V8fUCcQZc
-         8lrgBd3TWt6izoY78ZnxNSiXq4IWjCcvVNnWHJ+PiyPjCPiVYx3OVDLkYekk8V1VKr67
-         Hs+RYlajAo02ElYp7MtEhjC1YTUhH7TxGjnAfRe7TucJXjXZvdUCYbl7Adiu2BFO0xbb
-         g9B1EsfuX6Arpnjn+WBomajOuap+hrJNpKaWgMPrT+U1c0pRrc8y+1G0MtaW3XPGC6Fh
-         JijQ==
+        d=gmail.com; s=20230601; t=1739407144; x=1740011944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U/dVS4QIgcS+IuNnmD54Uf/v25I+PAzsTeOUn9AzZIw=;
+        b=eFxbrUhclQ6sAINrhjRaptpDoNKvvD361DNv401YpiC4QS+tbhmYrnZomEtWeB8ZME
+         eZXIfxzt2ce7vOK1btrhKZx9975KMzhWAb8PRba0C3IlkwxFLdc32xt6nfZanwLkc0lI
+         N4qbvY6oOtFAf64cKAGq5BI3baJ6urjJgZacE0RU5SVzOFc4fxnfSmjsC+fz5+I13lau
+         cCw8SXPtS5EKISkNynLLa16+cNLbl95m4elMpxL/y+slybxXiPAi0ulh+7x75/1bheX3
+         Vr6oZzNp61YiVbliguMPxNcO3QcG6Y4WMix2E4Na8Wcq0JniNk1xjqCIU/VgiZ9r1WMW
+         X5hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739407140; x=1740011940;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BwWt+I1q21nIuXT9naaaYFBUTlLCTvDz09ET5qP1riw=;
-        b=q0u+BnyBmMbB9tdZdVWKikRDFCpEoKVJ0cigIE/JBAchKifZ0FQZcCDG9+dAQ+zqMH
-         rTFpwN0/0eu+QgRBzsBiW13xSlenBUP4Isu2cJu74UpxZm1+xiNg4sx/YTmTOT6GPdyY
-         n1rw28s8ie553oet+seQEZAL3qh8oEDpQFYxfM+nnwLzYd80k7XthKN8khOVgJkmNR+2
-         luvY95uDaa+FN/lx2AJ8K6Kk04cHFYIC+d0OH+iouUJIHPJIN5WqLjS//w+boDdtJ9UR
-         0s+1ydFMAWAeM/84zBrXIkcNgf+g7cDBWKUy4Mipyth7n4aiY+uT9p16eb7ixmzBYtqE
-         qywg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC4XSxJu7jAtrqgGqDETLc8Elrw7fSPDAaBsiI56pIJKiW8UzhELrsRkV7llvnek/VL84VYhlfZ3Ok3v6m@vger.kernel.org, AJvYcCUEdFuHQ/xEeKqhi2ZPVTi//7wQ7RCmTrj79++aeu8XLXj4haiQ0omXrr1TObUkI/vLEuRE7VMgqXU2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzja1GjTdaVpdQYCJWhlK9Rhf9bUxXw9/JO9GjfS9YJd3iSincF
-	vcj89sx9uMcBVNQHqcTdEhBo0gU4uf/2sglpwYmXgpZ1fsNq5udC
-X-Gm-Gg: ASbGncucgi0WzNUaonw/r8BP5xuBNPCJCRnwX8TK0vlDHdEFEoAssAIBLV9ityJbv5z
-	v2EfK1InGoJkDhYjR4cL3aw+NMAQlyVfNEQ/NjuBmpci5VgekL3rip4f5WJx2CtGCQD9DupCYMk
-	PhPzlI9wXUPIr+4GiHCb/4VTanNkyz6LFa4SoKen+02ZP3ddvWlWdOZkIDSexlfuzuvuW/LELEM
-	htTHjn9MjJlPhuidZqHuwWro65Sw+66F5wZEcSco24yxt7nOPr3aCsIRBJNx0K9YHs=
-X-Google-Smtp-Source: AGHT+IHHLL9ioBnDiGzkp+YhmlUcXtvqasDdyzPDZX4jep5Ey+c2ghcL5FH1R5QcGMY236A6mcEUuQ==
-X-Received: by 2002:a05:6214:410:b0:6d8:9b20:64e8 with SMTP id 6a1803df08f44-6e46ed82f7fmr97469676d6.10.1739407139724;
-        Wed, 12 Feb 2025 16:38:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739407144; x=1740011944;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U/dVS4QIgcS+IuNnmD54Uf/v25I+PAzsTeOUn9AzZIw=;
+        b=K5W1e4siuX3sVFZiIyBjuQTWIeT7ToW562YQ7XVUcBC0wWt+XAK0eP99if51vBfFwU
+         giSLU8LpCFcdiiog5ZsPfoIIdUeVrt5gRIXkyNqd5wsUonmY3+iDs4aTXHiKxtUxi84c
+         xPvY9SSmkunUXuqK/tvyfOTHagRu5bNPZ30wINCLmTEf/a0DJas+RnonK5qYS5316I6t
+         GPlYZwCJQ+fLPTJiGWON0rG9AP5DN69iuFa6umWn26HMMO2F7EB6oH5HyVutS+7XKD/5
+         gh4AtMKdvSlB8T7R3o5naWzzyziZ37xZ+wlG/E9MgyQ1Vs9PjpB5Ij72j+2xpEChyE35
+         Un2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkBAeUPtZ45ADcmUeVxnBIbdb5Tw0WLwdlygqm5dQdzurENrBhcS3bZbOx5MsoeH/Gmd0d/BjThV3I@vger.kernel.org, AJvYcCVbQJ6anGObOfmJwoHIWdoMIZDT8R+6Qhj9QwC/mIPG6pspqrAA0qnMWmpHdznbJMGLpCzR2mNmPtL9hDU/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBuY74wqsWBfPyo6+EdHg/tIFV7pO8Z4OxzNjtKBs52hmNxlLU
+	5nMU1lbrvFzIk3ZX3HRn0DYuyfwhNsK3/U1aVyCT5hA5scdP/Mis
+X-Gm-Gg: ASbGncvqrwoOqLgsss5TKglBAO67Ec9MuseklbkPPrDUSLMm4HuCIKZ/+UtM9V7JJOw
+	0li0CdBNGBl4Rw/QSPw3tFW72f+6iX0gcxEhbPp76yqaW1or2hkDL+l/yOd+TgcxuCW7pWJe0ZQ
+	LH/yxLZhHJJAmSPvP/3XIrsrms3qrp62T7gh1zX0I7Gbfm83110gz5RWmYiSL7vTTKJ49+RMJIy
+	9WRQbgfeuSGUBmX/cU3X/4/Gw/9KZGuIaB5zBTe+zbL/oxJgLp8pjAZO1eT8dXAcrw=
+X-Google-Smtp-Source: AGHT+IHspWsE6z8rbANPu1J4EJHGR6YUyo3bjSrXk+tx6Wy/U/d08EMp+rHEHGe9CzvstZnDSmahbQ==
+X-Received: by 2002:a05:622a:1a1c:b0:466:9d0e:1920 with SMTP id d75a77b69052e-471afe5fa85mr71820871cf.24.1739407143682;
+        Wed, 12 Feb 2025 16:39:03 -0800 (PST)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d9f3498sm1406996d6.84.2025.02.12.16.38.58
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471c29e9261sm1302281cf.5.2025.02.12.16.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 16:38:59 -0800 (PST)
+        Wed, 12 Feb 2025 16:39:02 -0800 (PST)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
@@ -92,49 +94,103 @@ Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v4 0/3] riscv: Add bfloat16 instruction support
-Date: Thu, 13 Feb 2025 08:38:44 +0800
-Message-ID: <20250213003849.147358-1-inochiama@gmail.com>
+	Longbin Li <looong.bin@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v4 1/3] dt-bindings: riscv: add bfloat16 ISA extension description
+Date: Thu, 13 Feb 2025 08:38:45 +0800
+Message-ID: <20250213003849.147358-2-inochiama@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250213003849.147358-1-inochiama@gmail.com>
+References: <20250213003849.147358-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Add description for the BFloat16 precision Floating-Point ISA extension,
 (Zfbfmin, Zvfbfmin, Zvfbfwma). which was ratified in commit 4dc23d62
 ("Added Chapter title to BF16") of the riscv-isa-manual.
 
-Changed from v3:
-1. rebase for v6.14-rc1
-2. patch2: add validate for zfbfmin, zvfbfmin, zvfbfwma
-3. patch2: apply Clément's tag
-
-Changed from v2:
-1. rebase for v6.13-rc1
-
-Changed from v1:
-1. patch3: add missing code in sys_hwprobe.c
-
-Inochi Amaoto (3):
-  dt-bindings: riscv: add bfloat16 ISA extension description
-  riscv: add ISA extension parsing for bfloat16 ISA extension
-  riscv: hwprobe: export bfloat16 ISA extension
-
- Documentation/arch/riscv/hwprobe.rst          | 12 +++++
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
  .../devicetree/bindings/riscv/extensions.yaml | 45 +++++++++++++++++++
- arch/riscv/include/asm/hwcap.h                |  3 ++
- arch/riscv/include/uapi/asm/hwprobe.h         |  3 ++
- arch/riscv/kernel/cpufeature.c                | 35 +++++++++++++++
- arch/riscv/kernel/sys_hwprobe.c               |  3 ++
- 6 files changed, 101 insertions(+)
+ 1 file changed, 45 insertions(+)
 
---
+diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+index a63b994e0763..f26997c3d34d 100644
+--- a/Documentation/devicetree/bindings/riscv/extensions.yaml
++++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+@@ -329,6 +329,12 @@ properties:
+             instructions, as ratified in commit 056b6ff ("Zfa is ratified") of
+             riscv-isa-manual.
+ 
++        - const: zfbfmin
++          description:
++            The standard Zfbfmin extension which provides minimal support for
++            16-bit half-precision brain floating-point instructions, as ratified
++            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
++
+         - const: zfh
+           description:
+             The standard Zfh extension for 16-bit half-precision binary
+@@ -525,6 +531,18 @@ properties:
+             in commit 6f702a2 ("Vector extensions are now ratified") of
+             riscv-v-spec.
+ 
++        - const: zvfbfmin
++          description:
++            The standard Zvfbfmin extension for minimal support for vectored
++            16-bit half-precision brain floating-point instructions, as ratified
++            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
++
++        - const: zvfbfwma
++          description:
++            The standard Zvfbfwma extension for vectored half-precision brain
++            floating-point widening multiply-accumulate instructions, as ratified
++            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
++
+         - const: zvfh
+           description:
+             The standard Zvfh extension for vectored half-precision
+@@ -673,6 +691,33 @@ properties:
+         then:
+           contains:
+             const: zca
++      # Zfbfmin depends on F
++      - if:
++          contains:
++            const: zfbfmin
++        then:
++          contains:
++            const: f
++      # Zvfbfmin depends on V or Zve32f
++      - if:
++          contains:
++            const: zvfbfmin
++        then:
++          oneOf:
++            - contains:
++                const: v
++            - contains:
++                const: zve32f
++      # Zvfbfwma depends on Zfbfmin and Zvfbfmin
++      - if:
++          contains:
++            const: zvfbfwma
++        then:
++          allOf:
++            - contains:
++                const: zfbfmin
++            - contains:
++                const: zvfbfmin
+ 
+ allOf:
+   # Zcf extension does not exist on rv64
+-- 
 2.48.1
 
 
