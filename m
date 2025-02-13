@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-513603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A378BA34C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:46:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3E0A34C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC7D16B4A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA92C188B271
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8729124291E;
-	Thu, 13 Feb 2025 17:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D683423F400;
+	Thu, 13 Feb 2025 17:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MqwOKrlM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ADA2040B7;
-	Thu, 13 Feb 2025 17:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4ia6jR0"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F6923A9B6;
+	Thu, 13 Feb 2025 17:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468744; cv=none; b=aLlTLwJHmY8nKXGKm/AlylExHNrctWj8TBzeVGJBy/8pl14xSdKhaDvVPHx3ceO6t6UkzGCgI+UPTMGBuj022y5G87uaEEaBstv7Tjjfw6umvNHfe25VRrs7Mvk+mvA4xFH6yg9jjcdlsSovncX6mtKmglc5WGcWmfGc8Jf2z7U=
+	t=1739468780; cv=none; b=DLYvlDA2CuqT/O5XBcO6E+UjSZdXcA6n369v4dMjH6KNGasFitlMiOCMvsty+GkODag1zs7AQl490lkpFYNF/uqU1f060beL14zD7RuoH0oyJMcLST6tZv5rDuau3SWGd+/EzAYfpG0kId5VhbuDn0Zxr0FsX+WyfXym4XhBo90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468744; c=relaxed/simple;
-	bh=9g9XvpJ4vTHZRdoVn0NNOAe0M9fMrmh7qRY4E5RBo5I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JaRg7IidlKAQiBO4hGtq62ejHDNeya3befkWh7RYalf+92TzzDR2PJFtN6D3BKgVriWc/QsnRwtmnQLNK0gKn0wLnbvi/aHzIh+06UuPRUEPj1t96ZRi2b9Xbh6ZWGsb79MRdTILvmmMji50gKfCVYe8c/Ic2c+52AHMy5M/UDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MqwOKrlM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.1.94] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D7186203D61D;
-	Thu, 13 Feb 2025 09:45:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7186203D61D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739468742;
-	bh=CjdDB9uvZBBF3c03e9VylpCG5WkQPsjk1qSKlO3MQtE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=MqwOKrlM0wNKTlUgCtpn9gJKIpfGiwVh9dHGNNF4ycPmXa/idcQ30iiksOd4FJJaH
-	 jrqNCD9r00CbzdjGOPFOZ+MnFU6woy29/+YEkOfP14iTKCcgK64o8pGQaLxlVNUpHe
-	 bIb4sXQD9rr6g8CsvFcC34/zgx+kxX5/LItW+SLg=
-Message-ID: <8f80b65e-724c-439c-a094-4bfbb1e296f1@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 09:45:41 -0800
+	s=arc-20240116; t=1739468780; c=relaxed/simple;
+	bh=QxRPxCT2SXIKeS7AM9F4ZzqBqhBtj2+FvXdMZ+XT7m4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Eo8Zsm/4ywthGGVJpr5IavlxI2bpdi9IfWC05XNAcVPcbX4p2BQIMLM4MqWaKFcC4+X9LUlH41lofZ0+wyNAT9nJ/R8EcqhSaZFasDhxwyp3PIitaXX0Snt8fRwiXINo8dGA7oeIAxdorwj4HhEgyHA+HV2MGoJEvu0/G0IpnE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4ia6jR0; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2b1a9cbfc8dso402085fac.2;
+        Thu, 13 Feb 2025 09:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739468778; x=1740073578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxRPxCT2SXIKeS7AM9F4ZzqBqhBtj2+FvXdMZ+XT7m4=;
+        b=b4ia6jR0MDz+dOojHlMRoe697P5qD5M2VIokyRc0Fxrxt4zY5sgO43DjwGtrV6AWN1
+         kL3Z0K3TeXqM7xsm7RoZvP1x6G/TmBe2x5h2AYX0NU68y4UaExU+Xz3z6QUXF0YiE6OD
+         GPi92lhqqLJjtinX9o0yX8dIfbCF6SoOtWDf/M/vP+XrwD/qV6Xct9M853iik2SyKTmR
+         3D2s9FeSb/mLdJ94mP0Sym4ZxkfnZStLLnWt9w+cyPHza6HjhQ1GmscX1AaLInVi8esh
+         EeKWM3GniNU/r7HLt1tAWzhuQuhoMyBYIBCZdop2XA3LVT9FeG60++6QlgebOl+pij2S
+         9taw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739468778; x=1740073578;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QxRPxCT2SXIKeS7AM9F4ZzqBqhBtj2+FvXdMZ+XT7m4=;
+        b=eSU/4K/tSY2rPJhNSo1jkUHzbv5U+hFFA+/BjDAZ7owv3s93UjD8OW1jRtMBy+I76N
+         /h8rcDfcGi0EngYbfWANXtz3EwmL/45l7MJHQCjPP+tkupekF94cvNi+YxareqDQWfUX
+         9Wf4sjrBNy4f16lOOXIngsxzYk7QgezBqz15JiD/+kM1OlY6RUlAdHk1GwEfpgGRSkt7
+         lkd9WnMurksFHQjyvPdEwPg2ds4rfMBW6Gqwc93J4+sLiDzwWQTLNU+48/OFCTrB00Az
+         e5HD5pRJ9QNzXuVfxsTZrpAfyMNxQghIA40vzlFCp2lChdponYjIQrjZk2ejDUYPPXb5
+         YUOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV42qRBdwDHb31K5LWU5eewtcM8Q9ajEeNQGAm+OjaoylC3XmIzAGj4z9jIt+GTOLbt9UIL1GEAlNVdDRg=@vger.kernel.org, AJvYcCX65pqDgVx9CAN6uM2qdxtrWbenwJylqc7xAYODIt/nfhmXX5ucYKk/vFJQfrnNHPBZsSenyPTnIJhBGRSao2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyObzGhTAzpgldd2jxUNlc8gVxy1NgpAKeyAgdWB/tlbgNF671t
+	qt4XJhbWMgQHHGeaq8yvQUisRbH9uBLi9fWgXESRgx3bUwJiP1gg
+X-Gm-Gg: ASbGncsAckurk5ybVLFt2KnAmin5OG2oZKZAEl4n83HvrKgyWWZyzXAkyTsDxB4k3zB
+	KT+Tu7J/GRP3q/ReudE3EyRR13bKd3Au1xqa+Bzuq6LRfjmr8KPtImDtTpLb7mBQQYK8Cf+njOe
+	ZR/zC3zArG8os8elU3XkfeF7mFXo7PF1uoikuTO6apBG4aeSER0VHNeJwG5szKBTDwlMUipNpMx
+	ggigvwBhy6z+b9g1SjluLk7DG9XKZtn8s77Ys1Q5aeM/ROGcou8f9B0NiXI0PC3iWPZp41/JODF
+	xPafEKPBKjTHYvVGNEYvXrsW
+X-Google-Smtp-Source: AGHT+IEkWpokV/xb/L2HYxC4TV6Sj5owcZa61zP8F6TSfHL3AFADa8AyZCWgBZtHtKcYwmzKDxO/Hg==
+X-Received: by 2002:a05:6870:89a3:b0:296:df26:8a6e with SMTP id 586e51a60fabf-2b8d68cbca2mr5198257fac.35.1739468777740;
+        Thu, 13 Feb 2025 09:46:17 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.154.251])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b9548e762csm901537fac.28.2025.02.13.09.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:46:17 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: gary@garyguo.net
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH 2/3] rust: macros: change author field to array
+Date: Thu, 13 Feb 2025 14:46:02 -0300
+Message-Id: <20250213174602.200524-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250213113420.5d2b7d97@eugeo>
+References: <20250213113420.5d2b7d97@eugeo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Yaron Avizrat <yaron.avizrat@intel.com>,
- Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, James Smart
- <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
- Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>,
- Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Selvin Xavier <selvin.xavier@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- cocci@inria.fr, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- linux-rdma@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 00/16] Converge on using secs_to_jiffies() part two
-To: Andrew Morton <akpm@linux-foundation.org>
-References: <20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com>
- <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 1/28/2025 4:16 PM, Andrew Morton wrote:
-> On Tue, 28 Jan 2025 18:21:45 +0000 Easwar Hariharan <eahariha@linux.microsoft.com> wrote:
-> 
->> This is the second series (part 1*) that converts users of msecs_to_jiffies() that
->> either use the multiply pattern of either of:
->> - msecs_to_jiffies(N*1000) or
->> - msecs_to_jiffies(N*MSEC_PER_SEC)
->>
->> where N is a constant or an expression, to avoid the multiplication.
->>
->> The conversion is made with Coccinelle with the secs_to_jiffies() script
->> in scripts/coccinelle/misc. Attention is paid to what the best change
->> can be rather than restricting to what the tool provides.
->>
->> Andrew has kindly agreed to take the series through mm.git modulo the
->> patches maintainers want to pick through their own trees.
-> 
-> I added patches 2-16 to mm.git.  If any of these later get merged into
-> a subsystem tree, Stephen will tell us and I'll drop the mm.git copy.
+Gary Guo <gary@garyguo.net> wrotes:
+> Spelling out commit SHA doesn't work for patches because it will change
+> when applied.
+Hmm, I was think that they would stayed the same
 
-Hi Andrew, I don't see these in mm-nonmm-unstable. Did these get dropped in the confusion around
-casting secs_to_jiffies() to unsigned long[1]? That has since been merged in 6.14-rc2 via tglx' tree,
-and I have a v2 for just the ceph patches that needed some fixups at [2].
-
-[1] https://lore.kernel.org/all/20250130192701.99626-1-eahariha@linux.microsoft.com/
-[2] https://lore.kernel.org/all/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com/
+> Also, this patch needs to be the same commit as the one changing
+> macros, otherwise the tree won't compile when bisecting.
+This really make sense, I will send a v2
 
 Thanks,
-Easwar (he/him)
+Guilherme
 
