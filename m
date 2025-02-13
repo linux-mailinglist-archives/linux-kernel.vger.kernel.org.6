@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-513468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8B8A34A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:43:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD40A34AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F99B7A4C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E76B3B2359
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5334F24501D;
-	Thu, 13 Feb 2025 16:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A316F245B1B;
+	Thu, 13 Feb 2025 16:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xy0f0yFg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7mMABg1"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC36200120;
-	Thu, 13 Feb 2025 16:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C5A200120
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464732; cv=none; b=Lv0nY+pXN+xWwGkFqIJ0TmGpLUEPaODsVqU4x1vKzCmOaVrcJJBCbnwfuLc8USxfv8jispK92NWmz1g2G4VYK9lDFuzOqMWlHvno34Xe6cTR6p3J16roDIrzenHqQ7bW8NHxVdxWvDixUSoH8EZniGo+CTV7lHkxbZ3JrbwJKuY=
+	t=1739464741; cv=none; b=ijVac5vC4kxEq5uydf05uYQnevXlWw1Njudo7axv1p4iJPfXsmTlasgtWCJ/eHWw+qRXjf1EkH0xnJQphk81vDclvWFEReRwH3nYNkRBbGglNg4cqV0ReCZ/PKcr1B0skvHHff5v35NigpgjtED4gO9mKwxpiY5BP6S/7Xu2rhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464732; c=relaxed/simple;
-	bh=sFwHX9CTm3DdV1wJQCyFsFmsgP8cMMqWejD1WdV7oY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=FkSCmkrv74OQ73StKLc51erHVfoPy6gYxnQS/4oFhVz9AoJgK07AdnSxAP2rpXNqawCN8mrF7VSQZ62PKDjTf6ig11T/XtqGym/jIFkNK5CdmOZJtnw/YT7UuMkEDt3GZgLfIPGqfnU5B8S+9WBhUtm8jD35IEhRjqXoP5jFv/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xy0f0yFg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE30C4CED1;
-	Thu, 13 Feb 2025 16:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739464732;
-	bh=sFwHX9CTm3DdV1wJQCyFsFmsgP8cMMqWejD1WdV7oY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Xy0f0yFgmhbZt8YZ0tcbVcXgjP8tiuEvpkU846dmHLfZCpU0ZaXmhmV58E5DofWFY
-	 W1X5I7nN5sa01M4VkzZDADENlB4nioJkUxyB8KElPQCmc3pYhEiTKu/9/cwveM55ju
-	 KosfVve2XA05wEX9YK1rB4elcsQMBVmAzq5LIUjfoToy2MRbcfZrIqX8MQjHk3yTBo
-	 WwsifM9HnaZLsensA+A/qA8IpIQ7+AnC1qwid1W3Xzlckpz3tvZM9twfp2XzzsGgy5
-	 ihQ/7WAYmi6ZxuKuio9AxgfVp9VYe6QdQ89MLcCP9dxWdBfq9wpFnQLxYGRVG8v5I6
-	 dZKfqFQfHIQ5w==
-Date: Thu, 13 Feb 2025 10:38:50 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/2] PCI: Avoid pointless capability searches
-Message-ID: <20250213163850.GA114277@bhelgaas>
+	s=arc-20240116; t=1739464741; c=relaxed/simple;
+	bh=44lcaXE4mZbp9Si6IyKQlcNtz9jCXuk7kEcj/Gs1qyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGyZxVdyyECB0e7LBlNxvHxOzYIiGFWjY0GtS4Gey6FDmIskZMS7Ycp2JbTn+zijftpeVu2gbPEf5q8Tc84xZExRiwygd9wWkincv49bVuOOnjaUSN1GxEjtjtR24ppjVLSjKVeGNJ6gySWA+BRF2unWVQ5hRYsa0XW/9IMBYxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7mMABg1; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30795988ebeso11666821fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:38:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739464737; x=1740069537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=25pk+Y/rMAdCCmKfH8WB0VaWkCY32GRlTZdE3DT84t4=;
+        b=u7mMABg1PPlkwVzBotvvwfGSldnE6O7OT/xh8cqFhvjDu1U/iCOkrvsC4ETb4LPpjb
+         9HrFvCxn7m8VvuPfQlIzN/RrLEVfh+kjJZPU1N64baLRP6/mRrbUtmgmhQFNIoZHBiT+
+         prwYWKqezo+R7UGCjYJuOtjGEt/tYXALggg5cTrXeCvqKC5RurrGewlGhOs2IZhtyRCE
+         C2zjbWA9QCHLrYAyoo1rWoIAD76hHTxIKHY5yejZp+2yZuNFabmZ0I4K1KGRxRIqnlM8
+         O+tPSVfxQIR/Z0gV4Hjvb7L1KYhKJ4iFLucoz686dtMiT4FUjWWCmFAEj0XvoFRJ5VcK
+         sNwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739464737; x=1740069537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=25pk+Y/rMAdCCmKfH8WB0VaWkCY32GRlTZdE3DT84t4=;
+        b=c7j7XqOuqPemeDkCU3/n4SibFmNBtHOi3zQ4EJXdn4vjPPDEI8KIENS3l17DoEz6Pl
+         fNreVS0YDApl02VO57k8DOQ7PCqgzD9Fb8R41K6kjuEc+9q25oHviod0X2qpUA0+Oxju
+         mpyMxmjrRu7N6jVICbMYKO0y1g0Qf3ibSSM1GLaFrbFgHxLhktoY8vJT2lpPbIcuN3VJ
+         v/XiDCYMDTWW0xe3KZxLuGI/OdIqUBnDHVpYDNWG2eBLilCML8VEYypssSQBkIo4+Ge+
+         GQTKTOW35c03L/AtoIQhs10sMwQV5ZpPCA9kmeNJQN0hHGcnHh1FqP3kDhjwrW+6MSmO
+         216w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCUok6dCxJ6r9cBhfTy2ewj3agmwcBRvhOVNW55HGdiXoaTA7hjnFhQ4LfSSipzOX68IAspU0YRe0UsOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygzmdbPsiHho01uz0sXgaE/EV06IwybZU01illLZ5GM8a5OibT
+	8FZ3eRsR0dBKPl7UaIMmDnPoKEVC4iXr+lk7owsEFLTRGUrOGg+46eU1vp2mhhI=
+X-Gm-Gg: ASbGncv5BNv5H9qSiu1G9Dt4bCa6RUhNnapL/bq/0ZYSu/5jHDNrUn+mQSywnwj5zm9
+	qBnFztETqomGoQ3tuZeou0GVEXnRou9tQTt6LIZWtUbxMHre5VFUYiXuuLLq9HrLPA0J+ZnQGCT
+	v1yr/4CxaIRMeWPY8YKSxxomsCBkCMNNixCk2T8r1IbeXIPRQqSX2P/uXCAF5jLWIeCeGEAijXO
+	dDeQ2GD3U3Pq9TZM8Uf+F0XVPuNxEtDgkc7gMYfXc2dhjqcBmjmN27rv65Rd7QQ/Br77ee3YKEt
+	u9YwgGwqbwyMGPb6j2PvA6udwvOqUfOAnTLoRL1EsM1o3p8KVO3Kv5o402yluOd3tU6DvX8=
+X-Google-Smtp-Source: AGHT+IFG26aozbwqiIe5TJo5u6EvRNj6wZxhVBO1uzGcxcCjum2AaOurE7QQZrKisXuepJZwYUmXcg==
+X-Received: by 2002:a05:651c:2205:b0:300:7f87:a65 with SMTP id 38308e7fff4ca-3090ddce939mr16010121fa.35.1739464737383;
+        Thu, 13 Feb 2025 08:38:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091011f453sm2405951fa.54.2025.02.13.08.38.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 08:38:56 -0800 (PST)
+Date: Thu, 13 Feb 2025 18:38:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 18/37] drm/bridge: Change parameter name of
+ drm_atomic_bridge_chain_pre_enable()
+Message-ID: <doyqz3odwcf6vxrmaitctcnwx723th667tfzpzmtialms4ymg6@og755erngglx>
+References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
+ <20250213-bridge-connector-v3-18-e71598f49c8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7dbb0d8b-3708-60ba-ee9e-78aa48bee160@linux.intel.com>
+In-Reply-To: <20250213-bridge-connector-v3-18-e71598f49c8f@kernel.org>
 
-On Thu, Feb 13, 2025 at 03:52:05PM +0200, Ilpo Järvinen wrote:
-> On Fri, 7 Feb 2025, Bjorn Helgaas wrote:
-> > Many of the save/restore functions in the pci_save_state() and
-> > pci_restore_state() paths depend on both a PCI capability of the device and
-> > a pci_cap_saved_state structure to hold the configuration data, and they
-> > skip the operation if either is missing.
-> > 
-> > Look for the pci_cap_saved_state first so if we don't have one, we can skip
-> > searching for the device capability, which requires several slow config
-> > space accesses.
-
-> > +++ b/drivers/pci/vc.c
-> > @@ -355,20 +355,17 @@ int pci_save_vc_state(struct pci_dev *dev)
-> >  	int i;
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(vc_caps); i++) {
-> > -		int pos, ret;
-> >  		struct pci_cap_saved_state *save_state;
-> > +		int pos, ret;
-> > +
-> > +		save_state = pci_find_saved_ext_cap(dev, vc_caps[i].id);
-> > +		if (!save_state)
-> > +			return -ENOMEM;
-> >  
-> >  		pos = pci_find_ext_capability(dev, vc_caps[i].id);
-> >  		if (!pos)
-> >  			continue;
-> >  
-> > -		save_state = pci_find_saved_ext_cap(dev, vc_caps[i].id);
-> > -		if (!save_state) {
-> > -			pci_err(dev, "%s buffer not found in %s\n",
-> > -				vc_caps[i].name, __func__);
-> > -			return -ENOMEM;
-> > -		}
+On Thu, Feb 13, 2025 at 03:43:37PM +0100, Maxime Ripard wrote:
+> drm_atomic_bridge_chain_pre_enable() enables all bridges affected by
+> a new commit. It takes the drm_atomic_state being committed as a
+> parameter.
 > 
-> I think this order change will cause a functional change because 
-> pci_allocate_vc_save_buffers() only allocated for those capabilities that 
-> are exist for dev. Thus, the loop will prematurely exit.
-
-Oof, thank you for catching this!  I'll drop this for now.
-
-It would be nice to make pci_save_vc_state() parallel with
-pci_restore_vc_state() (and with most other pci_save_*_state()
-functions) and have it return void.  But pci_save_state() returns the
-pci_save_vc_state() return value, and there are ~20 pci_save_state()
-callers that pay attention to that return value.
-
-I'm not convinced there's real value in pci_save_state() error
-returns, given that so few callers check it, but it definitely
-requires more analysis before removing it.
-
-> >  		ret = pci_vc_do_save_buffer(dev, pos, save_state, true);
-> >  		if (ret) {
-> >  			pci_err(dev, "%s save unsuccessful %s\n",
-> > @@ -392,12 +389,15 @@ void pci_restore_vc_state(struct pci_dev *dev)
-> >  	int i;
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(vc_caps); i++) {
-> > -		int pos;
-> >  		struct pci_cap_saved_state *save_state;
-> > +		int pos;
-> > +
-> > +		save_state = pci_find_saved_ext_cap(dev, vc_caps[i].id);
-> > +		if (!save_state)
-> > +			continue;
-> >  
-> >  		pos = pci_find_ext_capability(dev, vc_caps[i].id);
-> > -		save_state = pci_find_saved_ext_cap(dev, vc_caps[i].id);
-> > -		if (!save_state || !pos)
-> > +		if (!pos)
-> >  			continue;
-> >  
-> >  		pci_vc_do_save_buffer(dev, pos, save_state, false);
-> > 
+> However, that parameter name is called (and documented) as old_state,
+> which is pretty confusing. Let's rename that variable as state.
 > 
-> -- 
->  i.
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
