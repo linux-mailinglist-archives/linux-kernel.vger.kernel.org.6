@@ -1,334 +1,235 @@
-Return-Path: <linux-kernel+bounces-513766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0395AA34E74
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:25:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5621CA34E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07A9F7A4B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155B616BF71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C437F2661A3;
-	Thu, 13 Feb 2025 19:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9924A06A;
+	Thu, 13 Feb 2025 19:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="nfGM5Xt6"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0hmFSY/V"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E74A266184
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75510156237
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739474641; cv=none; b=nyk/RPfFRjCqYMK9ved0IXhuVZmoNWnibOA5b52/DyTwx8epAZw1Ap8AKJo/hv4Ka5LGLlWzFTuL6DzdodPPc0UGamJMR4lK8jaXGmeeVAb1TdjCyA602UPTfNADvP6ONKdBFUKl03eVW5eMYhPnu/eaMkcy3yHjpkQjy+upuRk=
+	t=1739474654; cv=none; b=RfEZhUI1wwla5RUwgus6jW6bgFJW0ebGZjl+/KYM6c9mjW28uPOWudzH5vrAqzCpXHs43MmI2VY28knkfirU+q10ZSN/I45/4c9HlNs4rz7SvYym0dNXsIyEmA4G7qHz1jI2trpKSQqHbeiop+fLliIDna5Y7YA+JfXMOhIgvdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739474641; c=relaxed/simple;
-	bh=CJWBPXmsxgPHyVpk2lWHbQwaPlDzlBXsV4FmAq+lo+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iWCBSqqXYShNTxjJVPd5Sp/wXil1oaKgx3RsxIUXpVOFHPKtbiPbiiqGjCS36j89UFRhDl6dXKszlVX0T1IFlZ4f2t25LsLXG7XeZewJYP5ikuxTNW3hKcCcap78WepDJ60KtlSf1MfEWX+D2zDonndlYiPi7xmM0IIAZzcyxmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=nfGM5Xt6; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21f92258aa6so32958925ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:23:59 -0800 (PST)
+	s=arc-20240116; t=1739474654; c=relaxed/simple;
+	bh=OXfwl5pm6fsT+D3ye4FMNi5X66v7vV6OhCLBmzkOt2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aUquI79MjobEPP3I7wV4L6ISOS0iZdXqEJALUKjBJ4XthOkGUFgLcwqKgYMn1gF+F5jSJ9/61ilfFJFz6kTcOcBig3Ys/79R24yhsjXLXAcIQE5+31VnvqqN+/DEeLI0ZQu30H3T49/6z/rn5s88DtWqrtgvO+Db0PmxOc3noHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0hmFSY/V; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5debc731ed5so1192a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:24:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1739474638; x=1740079438; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1739474651; x=1740079451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cwadMtANA8OqSE9WI8RE1a22pM7OUgQJRvEwfN3e/Eo=;
-        b=nfGM5Xt64V0IJ7PdjXLw60O4kBG7IfrFO4dNnZw0FTTGYk1Z4bul4zUp0NvDBLVm/A
-         h5gn77/6flk+QNUUJ+7LU0DplXmtw1QtYj3ZuiFgiwQYzfGtABZ2t1+HC3pQcDoP5ne2
-         NhhAUv3Qzeqbs1fw/WMfInIAopZBgLHiu41So=
+        bh=N9hfk310hpC0OcZw2W9H07lECBi97Cqb9jL3NKrXgy4=;
+        b=0hmFSY/V8ynXzcWEQzdaU2RR0Q1liKCNpFkjuwWoi6x6kEYI44UykJHT4bRM+YOc9Y
+         fyBAE6a5+dX+GoBco8UwaCS40gV2b8FGsuCMGKydFxp8oGOWOcY2PcWeRXlHQLtG5V+2
+         e4JMBc0r8kAZqDjoBnN0K2uWx9aTmwoflce9rJfW7oetzBcKyo1I5UzuAalYLrG4ltSP
+         /uDNiQwFIJ48Xc7TWklvapjHlii7UhK9nEgFGbEwHt09TTZCBkE2uH7ivaAWYWUIRPD2
+         3+bnh97ST5x3CJj8sd/TeLgVfFtoVjvj70phzq2C71LP2g9pGFQrcNmZqXqwDBBgGXUZ
+         XGEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739474638; x=1740079438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739474651; x=1740079451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cwadMtANA8OqSE9WI8RE1a22pM7OUgQJRvEwfN3e/Eo=;
-        b=NCscufP83LSbVkOSvjDixJBxF4VONMaHdRxsSYuG2or/gkRVOtx/uozYxDlO2h+mWY
-         nFA+JHPOrZtqjb6vsZgPTqk/4c9I9pmze2cO1sNrWNuSUr5tGwNtShWeDbzxno0kpLRj
-         dz974A92Okxn+fEj2lFqL43Zkiui9aUKO2ojLI3RBu9jqHZx2r4C015CdUSR4jC0LAII
-         t2/hsq3yR5WbvE9D99aq5COIoNzDVP6oQqCK8bNfQL2SdjVD5v9xPn5z3CBNhZGBB9KP
-         nTwn36olAQJnfkkm9TXfpEzd4mpRdmWw764d1NKxbZ0PstjlUmA0TQISrral8TYNT4Mm
-         EAbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb2lkT/wf/anMmirLO4LyUG4Gw4xwcWj9PEF3u5HiTdQVjY1MF19p8zqfpzcoaKadlkWix5kLarTfx/vU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzV0DHwfUspOTQ6/ZyxuQXrPSmtQlPd1WAHDkf/XAlk43BYs1j
-	4+89l20NXVKEaGUxvky/2oTIZPm2biLrJmcn3B7mvQEDqX8rMPeTddKm6kXNQHo=
-X-Gm-Gg: ASbGncuk9vkPYj7g8NN9Bau/m4xjAIGqoMV44DNurg405ZTued1gVMWGp9CFTQ6Hl40
-	s8sUH7Tg08iypOLHYS+SgLIcMUHLiQ7OnbA1UhlW9wldbWxKK3HDEjVGgwGjpOr2nFQ3C2PwL9j
-	7v+/7wPq3jgehCQr8uBRCGx/Vt4fI9mVbx2M28INZ6XGungR69svK86WpYMGJBr77/yoUsIks5/
-	bCncIgW+7vxxHCAbhUxtHD4p/H1122JaJOfa6UzYMJGacdBkk2RDca6lEXW6MeTl78HLsCkeooK
-	7vJWeMrfID0gicWebs1RxRY=
-X-Google-Smtp-Source: AGHT+IFB59MypCe1M67/gpnz3aEE1mKoo0YL/Ohl2o58HL0YFhqCLmbe4dCReCYupJtHWcKppaZayw==
-X-Received: by 2002:a05:6a00:2e84:b0:730:95a6:3761 with SMTP id d2e1a72fcca58-7322c373ebamr15784837b3a.3.1739474638497;
-        Thu, 13 Feb 2025 11:23:58 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568a9esm1633458b3a.45.2025.02.13.11.23.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 11:23:58 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: stfomichev@gmail.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
-Subject: [PATCH net-next RESEND v7 3/3] selftests: drv-net: Test queue xsk attribute
-Date: Thu, 13 Feb 2025 19:23:13 +0000
-Message-ID: <20250213192336.42156-4-jdamato@fastly.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213192336.42156-1-jdamato@fastly.com>
-References: <20250213192336.42156-1-jdamato@fastly.com>
+        bh=N9hfk310hpC0OcZw2W9H07lECBi97Cqb9jL3NKrXgy4=;
+        b=iqK+xHMdiGxmFH18TVGCWZeycAyKJCyN4CE+HoGhf2pGW9NeMTKl8i4Bwyo2+yQ/C2
+         Elx1HOtg7aPeWGZtZ+qoVe2NRF6WzSswAPA2sf71dFic8OauLSAqXQvFZZ15qWAWM900
+         XOf006xFUlz03X3LV7onnMGh8WrHtarc9OQwf4Ouu1GO6WrTQwzV43GLC0LNhmDvSnEF
+         za6TKE8UrbuTLikS/dNrqJbD3Txgo4wHxeBswPTMgdLgBsIMdop7HTEeg+fqcO+2jG95
+         CXV1CMjnu/+3FpVbppx/w69hXfd8WIcfNbgQ0JIr/enHaneBZ5wzO9kQVfHPa3WB2y1z
+         2azg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzun57dSAHvrqrhV5d/vquJ4Qgb3PtwHo00yaf1k1Knq8mUcjAKlXnlv0NH7gjHAQzJo21wOl6rugUf+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytx6v8DDabFpSQAOmF+A4s0BCUPB6/S+No5nvHRRPaey+8FeoL
+	2zd9dgWNVWa4sumyEittJO3VsPTZWNMoAUpM/oQITRvSFuFmQYn2Wc5C+E+Q+TZLLu9+9Yu/3Ko
+	bM7IQfRoW24jpFUol1We1afdyaaDxHP2xqi2j
+X-Gm-Gg: ASbGncsBtLVB8ng9itlJEQ3I1rSdfTeM0CdHGQdvhcoFCu+f0pVbsiwVROXukjVNcZ+
+	BJS8yuRiqDkE+f9yva0HxD7LaZvtcuzh/OKkyRhtW6bmaU+FZhzqkYBmcypyikQ8PUHcuax3mmy
+	FMpds0D5j5uuVMNlZRZxNpFcMq
+X-Google-Smtp-Source: AGHT+IH5z3eW2IsumZCkKHV5y6ZCOhJCEoe5ygOgaXRLr+aUtmO/YNHIcjGSSskjIwZUj0jp7aVdMljU56fMa/nVNqM=
+X-Received: by 2002:a50:cc9d:0:b0:5d0:eb21:264d with SMTP id
+ 4fb4d7f45d1cf-5dedd22ca53mr5762a12.1.1739474650173; Thu, 13 Feb 2025 11:24:10
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Z60NwR4w/28Z7XUa@ubun> <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <Z62N6cGmaN+OZfoY@ubun>
+In-Reply-To: <Z62N6cGmaN+OZfoY@ubun>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 13 Feb 2025 20:23:34 +0100
+X-Gm-Features: AWEUYZk85Gvs1xt5XoPVpD_Z1-wxEq4DVq2DnmezM0J-mRKw8DvqRHc40O50geE
+Message-ID: <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+To: Jennifer Miller <jmill@asu.edu>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org, kees@kernel.org, 
+	joao@overdrivepizza.com, samitolvanen@google.com, 
+	kernel list <linux-kernel@vger.kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Test that queues which are used for AF_XDP have the xsk nest attribute.
-The attribute is currently empty, but its existence means the AF_XDP is
-being used for the queue. Enable CONFIG_XDP_SOCKETS for
-selftests/drivers/net tests, as well.
+On Thu, Feb 13, 2025 at 7:15=E2=80=AFAM Jennifer Miller <jmill@asu.edu> wro=
+te:
+> On Wed, Feb 12, 2025 at 11:29:02PM +0100, Jann Horn wrote:
+> > +Andy Lutomirski (X86 entry code maintainer)
+> >
+> > On Wed, Feb 12, 2025 at 10:08=E2=80=AFPM Jennifer Miller <jmill@asu.edu=
+> wrote:
+> > > As part of a recently accepted paper we demonstrated that syscall
+> > > entrypoints can be misused on x86-64 systems to generically bypass
+> > > FineIBT/KERNEL_IBT from forwards-edge control flow hijacking. We
+> > > communicated this finding to s@k.o before submitting the paper and we=
+re
+> > > encouraged to bring the issue to hardening after the paper was accept=
+ed to
+> > > have a discussion on how to address the issue.
+> > >
+> > > The bypass takes advantage of the architectural requirement of entryp=
+oints
+> > > to begin with the endbr64 instruction and the ability to control GS_B=
+ASE
+> > > from userspace via wrgsbase, from to the FSGSBASE extension, in order=
+ to
+> > > perform a stack pivot to a ROP-chain.
+> >
+> > Oh, fun, that's a gnarly quirk.
+>
+> yeag :)
+>
+> > Since the kernel, as far as I understand, uses FineIBT without
+> > backwards control flow protection (in other words, I think we assume
+> > that the kernel stack is trusted?), could we build a cheaper
+> > check on that basis somehow? For example, maybe we could do something l=
+ike:
+> >
+> > ```
+> > endbr64
+> > test rsp, rsp
+> > js slowpath
+> > swapgs
+> > ```
+> >
+> > So we'd have the fast normal case where RSP points to userspace
+> > (meaning we can't be coming from the kernel unless our stack has
+> > already been pivoted, in which case forward edge protection alone
+> > can't help anymore), and the slow case where RSP points to kernel
+> > memory - in that case we'd then have to do some slower checks to
+> > figure out whether weird userspace is making a syscall with RSP
+> > pointing to the kernel, or whether we're coming from hijacked kernel
+> > control flow.
+>
+> I've been tinkering this idea a bit and came with something.
+>
+> In short, we could have the slowpath branch as you suggested, in the
+> slowpath permit the stack switch and preserving of the registers on the
+> stack, but then do a sanity check according to the __per_cpu_offset array
+> and decide from there whether we should continue executing the entrypoint
+> or die/attempt to recover.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
----
- .../testing/selftests/drivers/net/.gitignore  |  2 +
- tools/testing/selftests/drivers/net/Makefile  |  3 +
- tools/testing/selftests/drivers/net/config    |  1 +
- tools/testing/selftests/drivers/net/queues.py | 42 +++++++-
- .../selftests/drivers/net/xdp_helper.c        | 98 +++++++++++++++++++
- 5 files changed, 143 insertions(+), 3 deletions(-)
- create mode 100644 tools/testing/selftests/drivers/net/.gitignore
- create mode 100644 tools/testing/selftests/drivers/net/xdp_helper.c
+One ugly option to avoid the register spilling might be to say
+"userspace is not allowed to execute a SYSCALL instruction while RSP
+is a kernel address, and if userspace does it anyway, the kernel can
+kill the process". Then the slowpath could immediately start using the
+GPRs without having to worry about where to save their old values, and
+it could read the correct gsbase with the GET_PERCPU_BASE macro. It
+would be an ABI change, but one that is probably fairly unlikely to
+actually break stuff? But it would require a bit of extra kernel code
+on the slowpath, which is kinda annoying...
 
-diff --git a/tools/testing/selftests/drivers/net/.gitignore b/tools/testing/selftests/drivers/net/.gitignore
-new file mode 100644
-index 000000000000..ec746f374e85
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+xdp_helper
-diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-index 28b6d47f812d..68127c449c24 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -1,10 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0
-+CFLAGS += $(KHDR_INCLUDES)
- 
- TEST_INCLUDES := $(wildcard lib/py/*.py) \
- 		 $(wildcard lib/sh/*.sh) \
- 		 ../../net/net_helper.sh \
- 		 ../../net/lib.sh \
- 
-+TEST_GEN_PROGS := xdp_helper
-+
- TEST_PROGS := \
- 	netcons_basic.sh \
- 	netcons_fragmented_msg.sh \
-diff --git a/tools/testing/selftests/drivers/net/config b/tools/testing/selftests/drivers/net/config
-index a2d8af60876d..f27172ddee0a 100644
---- a/tools/testing/selftests/drivers/net/config
-+++ b/tools/testing/selftests/drivers/net/config
-@@ -4,3 +4,4 @@ CONFIG_CONFIGFS_FS=y
- CONFIG_NETCONSOLE=m
- CONFIG_NETCONSOLE_DYNAMIC=y
- CONFIG_NETCONSOLE_EXTENDED_LOG=y
-+CONFIG_XDP_SOCKETS=y
-diff --git a/tools/testing/selftests/drivers/net/queues.py b/tools/testing/selftests/drivers/net/queues.py
-index 38303da957ee..5fdfebc6415f 100755
---- a/tools/testing/selftests/drivers/net/queues.py
-+++ b/tools/testing/selftests/drivers/net/queues.py
-@@ -2,13 +2,16 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- from lib.py import ksft_disruptive, ksft_exit, ksft_run
--from lib.py import ksft_eq, ksft_raises, KsftSkipEx
-+from lib.py import ksft_eq, ksft_raises, KsftSkipEx, KsftFailEx
- from lib.py import EthtoolFamily, NetdevFamily, NlError
- from lib.py import NetDrvEnv
- from lib.py import cmd, defer, ip
- import errno
- import glob
--
-+import os
-+import socket
-+import struct
-+import subprocess
- 
- def sys_get_queues(ifname, qtype='rx') -> int:
-     folders = glob.glob(f'/sys/class/net/{ifname}/queues/{qtype}-*')
-@@ -21,6 +24,39 @@ def nl_get_queues(cfg, nl, qtype='rx'):
-         return len([q for q in queues if q['type'] == qtype])
-     return None
- 
-+def check_xdp(cfg, nl, xdp_queue_id=0) -> None:
-+    test_dir = os.path.dirname(os.path.realpath(__file__))
-+    xdp = subprocess.Popen([f"{test_dir}/xdp_helper", f"{cfg.ifindex}", f"{xdp_queue_id}"],
-+                           stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=1,
-+                           text=True)
-+    defer(xdp.kill)
-+
-+    stdout, stderr = xdp.communicate(timeout=10)
-+    rx = tx = False
-+
-+    if xdp.returncode == 255:
-+        raise KsftSkipEx('AF_XDP unsupported')
-+    elif xdp.returncode > 0:
-+        raise KsftFailEx('unable to create AF_XDP socket')
-+
-+    queues = nl.queue_get({'ifindex': cfg.ifindex}, dump=True)
-+    if not queues:
-+        raise KsftSkipEx("Netlink reports no queues")
-+
-+    for q in queues:
-+        if q['id'] == 0:
-+            if q['type'] == 'rx':
-+                rx = True
-+            if q['type'] == 'tx':
-+                tx = True
-+
-+            ksft_eq(q['xsk'], {})
-+        else:
-+            if 'xsk' in q:
-+                _fail("Check failed: xsk attribute set.")
-+
-+    ksft_eq(rx, True)
-+    ksft_eq(tx, True)
- 
- def get_queues(cfg, nl) -> None:
-     snl = NetdevFamily(recv_size=4096)
-@@ -81,7 +117,7 @@ def check_down(cfg, nl) -> None:
- 
- def main() -> None:
-     with NetDrvEnv(__file__, queue_count=100) as cfg:
--        ksft_run([get_queues, addremove_queues, check_down], args=(cfg, NetdevFamily()))
-+        ksft_run([get_queues, addremove_queues, check_down, check_xdp], args=(cfg, NetdevFamily()))
-     ksft_exit()
- 
- 
-diff --git a/tools/testing/selftests/drivers/net/xdp_helper.c b/tools/testing/selftests/drivers/net/xdp_helper.c
-new file mode 100644
-index 000000000000..2a40cc35d800
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/xdp_helper.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <sys/socket.h>
-+#include <linux/if_xdp.h>
-+#include <linux/if_link.h>
-+#include <net/if.h>
-+#include <inttypes.h>
-+
-+#define UMEM_SZ (1U << 16)
-+#define NUM_DESC (UMEM_SZ / 2048)
-+
-+/* this is a simple helper program that creates an XDP socket and does the
-+ * minimum necessary to get bind() to succeed.
-+ *
-+ * this test program is not intended to actually process packets, but could be
-+ * extended in the future if that is actually needed.
-+ *
-+ * it is used by queues.py to ensure the xsk netlinux attribute is set
-+ * correctly.
-+ */
-+int main(int argc, char **argv)
-+{
-+	struct xdp_umem_reg umem_reg = { 0 };
-+	struct sockaddr_xdp sxdp = { 0 };
-+	int num_desc = NUM_DESC;
-+	void *umem_area;
-+	int ifindex;
-+	int sock_fd;
-+	int queue;
-+	char byte;
-+
-+	if (argc != 3) {
-+		fprintf(stderr, "Usage: %s ifindex queue_id", argv[0]);
-+		return 1;
-+	}
-+
-+	sock_fd = socket(AF_XDP, SOCK_RAW, 0);
-+	if (sock_fd < 0) {
-+		perror("socket creation failed");
-+		/* if the kernel doesnt support AF_XDP, let the test program
-+		 * know with -1. All other error paths return 1.
-+		 */
-+		if (errno == EAFNOSUPPORT)
-+			return -1;
-+		return 1;
-+	}
-+
-+	ifindex = atoi(argv[1]);
-+	queue = atoi(argv[2]);
-+
-+	umem_area = mmap(NULL, UMEM_SZ, PROT_READ | PROT_WRITE, MAP_PRIVATE |
-+			MAP_ANONYMOUS, -1, 0);
-+	if (umem_area == MAP_FAILED) {
-+		perror("mmap failed");
-+		return 1;
-+	}
-+
-+	umem_reg.addr = (uintptr_t)umem_area;
-+	umem_reg.len = UMEM_SZ;
-+	umem_reg.chunk_size = 2048;
-+	umem_reg.headroom = 0;
-+
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_REG, &umem_reg,
-+		   sizeof(umem_reg));
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_FILL_RING, &num_desc,
-+		   sizeof(num_desc));
-+	setsockopt(sock_fd, SOL_XDP, XDP_UMEM_COMPLETION_RING, &num_desc,
-+		   sizeof(num_desc));
-+	setsockopt(sock_fd, SOL_XDP, XDP_RX_RING, &num_desc, sizeof(num_desc));
-+
-+	sxdp.sxdp_family = AF_XDP;
-+	sxdp.sxdp_ifindex = ifindex;
-+	sxdp.sxdp_queue_id = queue;
-+	sxdp.sxdp_flags = 0;
-+
-+	if (bind(sock_fd, (struct sockaddr *)&sxdp, sizeof(sxdp)) != 0) {
-+		munmap(umem_area, UMEM_SZ);
-+		perror("bind failed");
-+		close(sock_fd);
-+		return 1;
-+	}
-+
-+	/* give the parent program some data when the socket is ready*/
-+	fprintf(stdout, "%d\n", sock_fd);
-+
-+	/* parent program will write a byte to stdin when its ready for this
-+	 * helper to exit
-+	 */
-+	read(STDIN_FILENO, &byte, 1);
-+
-+	close(sock_fd);
-+	return 0;
-+}
--- 
-2.43.0
+> Here is some napkin asm for this I wrote for the 64-bit syscall entrypoin=
+t,
+> I think more or less the same could be done for the other entrypoints.
+>
+> ```
+>     endbr64
+>     test rsp, rsp
+>     js slowpath
+>
+>     swapgs
+>     ~~fastpath continues~~
+>
+> ; path taken when rsp was a kernel address
+> ; we have no choice really but to switch to the stack from the untrusted
+> ; gsbase but after doing so we have to be careful about what we put on th=
+e
+> ; stack
+> slowpath:
+>     swapgs
+>
+> ; swap stacks as normal
+>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+2=
+0>
+>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24=
+>
+>
+>     ~~normal push and clear GPRs sequence here~~
+>
+> ; we entered with an rsp in the kernel address range.
+> ; we already did swapgs but we don't know if we can trust our gsbase yet.
+> ; we should be able to trust the ro_after_init __per_cpu_offset array
+> ; though.
+>
+> ; check that gsbase is the expected value for our current cpu
+>     rdtscp
+>     mov rax, QWORD PTR [8*ecx-0x7d7be460] <__per_cpu_offset>
+>
+>     rdgsbase rbx
+>
+>     cmp rbx, rax
+>     je fastpath_after_regs_preserved
+>
+>     wrgsbase rax
+>
+> ; if we reach here we are being exploited and should explode or attempt
+> ; to recover
+> ```
+>
+> The unfortunate part is that it would still result in the register state
+> being dumped on top of some attacker controlled address, so if the error
+> path is recoverable someone could still use entrypoints to convert contro=
+l
+> flow hijacking into memory corruption via register dump. So it would kill
+> the ability to get ROP but it would still be possible to dump regs over
+> modprobe_path, core_pattern, etc.
 
+It is annoying that we (as far as I know) don't have a nice clear
+security model for what exactly CFI in the kernel is supposed to
+achieve - though I guess that's partly because in its current version,
+it only happens to protect against cases where an attacker gets a
+function pointer overwrite, but not the probably more common cases
+where the attacker (also?) gets an object pointer overwrite...
+
+> Does this seem feasible and any better than the alternative of overwritin=
+g
+> and restoring KERNEL_GS_BASE?
+
+The syscall entry point is a hot path; my main reason for suggesting
+the RSP check is that I'm worried about the performance impact of the
+gsbase-overwriting approach, but I don't actually have numbers on
+that. I figure a test + conditional jump is about the cheapest we can
+do... Do we know how many cycles wrgsbase takes, and how serializing
+is it? Sadly Agner Fog's tables don't seem to list it...
+
+How would we actually do that overwriting and restoring of
+KERNEL_GS_BASE? Would we need a scratch register for that?
 
