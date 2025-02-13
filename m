@@ -1,241 +1,257 @@
-Return-Path: <linux-kernel+bounces-513547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D693A34B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39353A34B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:16:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CB516AE6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674A816BA6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFB8202C39;
-	Thu, 13 Feb 2025 17:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93612200130;
+	Thu, 13 Feb 2025 17:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="LYSm3GUj"
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020118.outbound.protection.outlook.com [52.101.195.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzehUgkB"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BFE1632DD;
-	Thu, 13 Feb 2025 17:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466764; cv=fail; b=PzZ9U0ZzyXD/NgDqCUwOXv9Dw9Lzxn0M8r6YjehmL82VUtsQx2MEoHR9qKxHswsa++GnJHsnqV2uyzSEAnTVChJYx1GVg3kjrAPJU3VEx7VgAtR5PdgH3dNSUoNCCD3tvS3NtFQOEIzQ9DyS7CTe3Vkz3Q9wO2atjtAbaNkapXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466764; c=relaxed/simple;
-	bh=5QeAdDnr3Pn6drCN8L9dyUZwFsveu8A4SxB3u9hZDOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eZvzyV4GcqDB0/VqBHeSChMMED6Duh+2+7jExnjHFmGrs09Ioy04vxd9hBA4vZ27097sn/SoSZ2dnljvYkCtZFaZ8z+vGL5xBpGmpql+luQlStXXCx9WqIXNUTp+gJSx7UJBAJAEA0VDTrWDa+Bv+Q81psHJWUF1RZgi4wU1Eb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=LYSm3GUj; arc=fail smtp.client-ip=52.101.195.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FhKqf3HMHYrwklHmQKwk9VUxge7+FxKauCPEGWvOzp+PMY5nPIzUOrgUDHagNb1OH/wvzZCyezBZXa80Tjk0dEdyqIDnj465L1wxcOwP+9vwbsc9Dog+Fmuo52vMg/wysdiZ6pZx76g7pBZAAMOfw3YZ6H6tTPfPQn30t8wnVhkHcxDBF0KfZF59wwmAV/mmExPRoY2r2c1tRTJUXTGwUita0GuQewrS8EmoAjcKdiIyrbuQQeuMOueifBfmnrvcLWdJRcj5d8wf+Twf2cX5n60tyPmSJkwyubumA4eHBEz1Fn8xSczwjBx+ZSXzIy5EBBmLZdg0NGKCo85Rq6bRuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1CFBB5lObygAbTUsnAuTUNPnz4g5goUevyWdUtQNYNY=;
- b=FzmVOexjgII1quq1oDE4x1oFjSgNg4SAFOikDZgtfsOVn2qBKK0D6TlR7ZOXZlqkuJ7eXtxLSjawjWq1kEedHUXfCuzCJnkSqx3ldnXJEf71rnywdW4JkvvzWSqr8zPnYg37iEWoty8RleYK3AC0SEM+hJiUaZJ5t1ZtbMbxlB2uGMuhZkkGxyyRU2BYW5/tC2ox+R5kptaLrBtF/Z96GEjv+52EQV7jVzgmAOHFMC2oRSe4JP2o46PAVEr/y0OjlmfgByRI1eCwIhQ+cICDhXpEufCTbOaW8TbSV5SjbgyW12wzu7w8mTqrdm1sTaNCeYW3/pSGyY3jIpRHpK1CrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1CFBB5lObygAbTUsnAuTUNPnz4g5goUevyWdUtQNYNY=;
- b=LYSm3GUjmyJHh7j5BpuQmuSaaapRc/WeoxfrvCdMRi9GkBhXGk5Ndb7Ylnx4eBgBnJsWpxFLKrjvhXLD0l+fnlMEywR4bWk0Y0kDkMxjmdVKqQvOG0VSGTi843Y1lAdQbcTBTtA//7uRDBm2NRJYwhL3H/j04v5Oq6zleg4dbCQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB2787.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:a8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 13 Feb
- 2025 17:12:39 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8445.015; Thu, 13 Feb 2025
- 17:12:39 +0000
-Date: Thu, 13 Feb 2025 17:12:37 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Ralf Jung <post@ralfj.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, moderated for non-subscribers
- <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, stable@vger.kernel.org, Matthew Maurer
- <mmaurer@google.com>, Jubilee Young <workingjubilee@gmail.com>
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat
- target
-Message-ID: <20250213171237.08e0edec@eugeo>
-In-Reply-To: <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
-References: <20250210163732.281786-1-ojeda@kernel.org>
-	<CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
-	<9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0329.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::29) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232E62036FF;
+	Thu, 13 Feb 2025 17:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739466770; cv=none; b=VV0GXgUpSLBNis5BgydlLG3DHdPv8k8uP1gVeK6d6YS4FJTgtgO+MkD73qP+W7ksfA9rOJIN877141ZSSG7Mx+cb/3fbtb2Gz6tdfAsQj4g4G/BJLlJ2MXVvOJpbBXCyA3s+D35zcV1Ch/98Kkco0sTWjtXF6ugHW2zAcaGcGD4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739466770; c=relaxed/simple;
+	bh=oQMmCG0JieQzCQ+uaUeMIEGH/gb3IkxyxXVusVVC6Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cREBLs+Kde6OYMIdZZB0PxatsfPVfPZ2dPdT3EM71+wC/pZDJDFZBB1CNpPW8sfd9vVkyb9cdSbxX/WRtKFNe2Sl6dhJO2DnJvJhI4Qvjfn5FdfL2qFL4uUHlS1vDWKpFEyCv7rD5XfQtOCkV9hQkqpzuMftBa3XibgoepHa+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzehUgkB; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e4930eca0d4so878705276.3;
+        Thu, 13 Feb 2025 09:12:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739466768; x=1740071568; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7dBt47IiYkZ7hZiYejiIVfiEiNYrSx0WKx8EGdt/DhI=;
+        b=VzehUgkBcfxBmjE8NKPU3xrr2Vu+djrmMnhXaBbJ1oaaWPwjbcEgJQ5W9OioXErlnP
+         1nncvRkYJjkRxtVmdboM9JNhhdPVWteviKWsUuU67WKuslH7D2GivUk7N5X/0Tywjt35
+         +4LfrudSjvsFQ+6sJQ4RpCde85xhMJjKetixJSFcczHkIf0Apb2y7u4/6BUsR4UaN+6a
+         Snms2YAtdZHih7k4t9kg+ChiVtC8fZ5jFInO102oSHyb1cAWPTiLaca/P+Ajb6h3d98c
+         iTD04l1uWkESIcWs9kHJfdY41krfIdV6UqDTgCTtVNMZOi6gd1HDV7cCwV1LaJmqjPUj
+         SAOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739466768; x=1740071568;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7dBt47IiYkZ7hZiYejiIVfiEiNYrSx0WKx8EGdt/DhI=;
+        b=M547sZpGrUmgWBELr6D23LFF+ZLDRvVKegVw08wBa2RTsi7akRK/0KFuS3yOy/sqvz
+         AK3tE1snJRjUSTl2AtqHrlgR84ZOnYpGfxMzsUCbGYWD2jugpFxBWd01400En6zshOdh
+         oR4q10T16NyDyTMxJzk2MFnYpXnzJbcX66Qa2KUfSCBEmNGv3z/OADYIR9rArN7ZiNcY
+         aekp09eJrbEU5AhqWMtZWiuX391k28WlXnOjebnvBEoTQv7P/tZvRiA0TUf71BbgtvvO
+         NSXBYpww4P18X9L1bjJcIJkdrK8oXW/e7DRN5TCsSG/uiliWiANlEmENaTkMWdoBPt4p
+         pjTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYRiRh9xM5YSnTG5FURRbBcE8mCmcA+tNX9BKzcQEvsbpXkzNYJ6NtihzUbPm0++5wpEu9xtkzTFREAtJt@vger.kernel.org, AJvYcCWtOraG6Yh1YzSs1QmbltkZBD4dZix9tuyRLwbdVQv21IUhAhKHjeDK2qP6XsZNdNtiFbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVQeMDxsu/yhNxFejYW5dCNWCdl1VC+ZaAg+raHFB/1FaKlOFC
+	IKo4tTe88f8bGF0n4iYTlShCAXPVE6AW3PO8gWCMX23ljkF7/vuzQxc0t9hC
+X-Gm-Gg: ASbGnct7XCuEyXMvWsHyVkY89nWDwcopHi0YexBPGONqUdZFeIfYHwduJKenR8/ZvtC
+	oCNBp7yXuDLWHvE7FzWDujQpleA3mR94RHF3K39VQgp7O2BGzUTxo4TtE2MzBuPye0sMQJvLy5Z
+	n9LXEKZ7k6URyNJsDouH2RgDE7/+gVjEPZWJZui0zkZCgObizChEQTiIlwFe1ifUeh/rPGLspPl
+	VnEDRq/VhvVB3YCDeQlIgP2PfqhsfNMmxym1QSOvqRVxdhj6a8NgMd5mLO+dylJwNs+kw0a0eiv
+	YO4Vt/i1hEcrG75Oc02ThjOWYeUy293v6ufYyeuhYaVUGzK4abU=
+X-Google-Smtp-Source: AGHT+IFlB4wYC1w6uJ0YF4VXDz2MPTBEfcZ1VKUga6xphN2POd7ENGyQgY7rg62UdFf+Wpsmwy2RBA==
+X-Received: by 2002:a05:6902:1442:b0:e5b:42c7:8f21 with SMTP id 3f1490d57ef6-e5d9f0c75aamr7707277276.7.1739466767765;
+        Thu, 13 Feb 2025 09:12:47 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dadeca383sm483134276.29.2025.02.13.09.12.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:12:47 -0800 (PST)
+Date: Thu, 13 Feb 2025 12:12:46 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] mm/numa: Introduce nearest_node_nodemask()
+Message-ID: <Z64oDlh9vzvRYziL@thinkpad>
+References: <20250212165006.490130-1-arighi@nvidia.com>
+ <20250212165006.490130-3-arighi@nvidia.com>
+ <Z64WTLPaSxixbE2q@thinkpad>
+ <Z64brsSMAR7cLPUU@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB2787:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1862812c-3366-4604-063b-08dd4c519e62
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pIpMGcGpDiOHnjkan3y7P4yXOvw42Cqv/tS6gQS95aovnITsl5SK+IF+EcDV?=
- =?us-ascii?Q?fIO70xpOJjbJbHar2qDrxyy+V8/ZrLsu4WviPGa4BOMnT7UP02hqlUihN8Bn?=
- =?us-ascii?Q?BNHcp38auRM8+B0dyvA4qJ4h2oPwz8BJhZQJIbsXUcaB2SDU/aOzGUZnyvLm?=
- =?us-ascii?Q?7CgqgqA80JavHEpUXOvoLEkpuKQSK/N4F8NOCig1XzfjX3PLVxH3AHWFqS8N?=
- =?us-ascii?Q?MQzhqLHy9Qy+IhcePTfykK/qAVhdafoMT8156PQuBwU3lkH/pVnjlXnH1o5F?=
- =?us-ascii?Q?3+yW465BcCfvGoehvF50ffHkLLrzKUMlz5ConrIOi8j2Y2u/YEM9smp/rP8A?=
- =?us-ascii?Q?d9t82lLk3BHDWnJkAncS1XC3zxCb9OljcU2Js+2T9KNY2+t5OKtksDLrSz0P?=
- =?us-ascii?Q?PBUFARSnM7Z6QjtuG4F7WIECFimWodM6GmgUsZ3eSVukN7TyX4ptbEna5pwi?=
- =?us-ascii?Q?fDUDuSSpFN/PiKTGmvW3XNMJNgYkq1Jbi54dSYxN7EtTcJ1nKdo1eYxJ3gZj?=
- =?us-ascii?Q?t49OAqY5rDfmmR4jrTLewoVMZxyUKy0DC4VfDXDIXzzuxRwgiV7tHGPCupZ7?=
- =?us-ascii?Q?NAjDPQ6OAjCRtL1e8pxJmhYB/sy61ZqcuaA8UKIQgWx5dOCLgm3IO7G/sInJ?=
- =?us-ascii?Q?8KbTKeSg1ddrOIIUegmQYxFLv+xct3HnCwWUtVACy0Tba0BF2SWicRtf7nd8?=
- =?us-ascii?Q?L0HKQu8mjuwiJXmPnCuWC2pqnA5bAic/KkmAXF48RxWUQTTHW6Rz5RM8+Z6z?=
- =?us-ascii?Q?iTGvJZxSrMJkVWNCOboG1mEXsi1EMES43MxW4CASmBN0VYI3CM5UL1r+Cftw?=
- =?us-ascii?Q?NrgCpLdAfdEfW5FkKd+RNTwAlx0XGMu/YYyv+Y/LKjPMqMyUNQuVCsyNCtFm?=
- =?us-ascii?Q?YLAloeTKmKLPoTo5kBXgW/iFCAxmoWxUCbHQiXnWpkQ2fkncQ5MgU1GvB1mF?=
- =?us-ascii?Q?6AOwAujNfy68ojce4DViGdHQPEBIkjTt/lQd1MczhtGjG00IFBq7+4tNn/jP?=
- =?us-ascii?Q?EWXeiERypKy3+TyqV7hj3DnpT4YalaPsus1LIMJXLjauloD8mc7Cm8LOVkCe?=
- =?us-ascii?Q?+pHX9s4MOkgdhZtKIPhMJjHKTfi1H80RwF1WtZUaiyNFtBHE1VHx5WukBFjS?=
- =?us-ascii?Q?1fjW8/K1eUPJnkw+w8Ie14f2Ts5+H67Jc5qOrz25OkTdrn0mPficmyPM+2tg?=
- =?us-ascii?Q?3BswkhXmX/sCE9WbAz+rDfc+I9CoPG8JB83oFNcUxxvcVMybl81NYWHME+DD?=
- =?us-ascii?Q?kYwXQ/2ONDBvDep8OntXLRK5rIM+fTeADDmuB0agHrfpMiqme34q8WePgxst?=
- =?us-ascii?Q?SpCl2eiYZRHfimmKlfoLnVgrix4e+lwx2tVYqUCVAkgjjnj3L7DcwjgsvisI?=
- =?us-ascii?Q?DSB4ATS/yvCnYk/jDL6zOA9wxYLv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?npybuBDwlPeLUwIouI0XB8B9Guc/xAEyu+L4+sgbLSDwyeRj0jlKa+edsxCH?=
- =?us-ascii?Q?HmnOWnkH9f7CE82lEabqsQHONR3ZCdiN9pTfuYa7+Jw4Oxk4PF45nwlH1qZL?=
- =?us-ascii?Q?BKKohNftwvxmNmTVcAxzajyaaXEddNpHIaJ9pMBl9VBulQO1jrkB9rnZ19bc?=
- =?us-ascii?Q?5cejU/zA9zjS3UL6wPsBjrqgZAaJl83iMyMDEpXhlsPcm+pwnyMHO1ObUih9?=
- =?us-ascii?Q?LNyKgSZQJ6v954tach5+jvkMtsAU5VI9G9hGD/PU65dRmEwqDOOrLs5928MP?=
- =?us-ascii?Q?UTaSSGH9OXJciVyoGk6n0uiIwe3zSbjVKTNxD3I29d47xHD67mhND6zhtdAj?=
- =?us-ascii?Q?OkxTX7yccB/0EVikx/JMeDIbkGo84hvFdamhM+yuzml4jYJX6xKCU8NEBuq+?=
- =?us-ascii?Q?nUqa25A6GtXtqeSJfk/UjZi/HKoOLVGrkOkGg4QNPUzx0LDaOafETJo5BW0D?=
- =?us-ascii?Q?ZH84WNdXaBICAux0kyor811XShQeGRYpS8xZZRCxq9M867/FoXWdoNzb3aRc?=
- =?us-ascii?Q?vAUbbaldcOT4UjhBnx0qLSchW3oF1u5cs7BB4jpY2Wvk7MnNb+bgMoA5WlyH?=
- =?us-ascii?Q?6wZuoMAki0jlLtX3kp5zB8Z0KUUWEhDNyMkciE6RDXUPX57fW/0pUJ1Vhk+f?=
- =?us-ascii?Q?t5gy6KVcfn0aOiF8rtoFmpd17SXKCKJ8q45UWy3CwnCpJSYt9jnj9i8gOfka?=
- =?us-ascii?Q?MPmUNbpqHZVDZqGcKLMQswuLO4rK+8weesgAJQ23Dy1zoRpHwHw8RbBV7Mm/?=
- =?us-ascii?Q?Y3CIgzPihq3nMlr1l57Tw+s1OQnI+DeIpB2GQGqbUJQ4WavLsQ8cwpaC23Rr?=
- =?us-ascii?Q?9A6cLH4Jsgf7QSmI/ig+DBSCKoVq59ABgkVqcJ8lilh25vH2lpjv6oDTbKDH?=
- =?us-ascii?Q?HRvDDO7L63Vu5/NXhWaZroOCbG2Nzk2XLJ0Qb18YfX0HGoy9r6Lf24UjLtL+?=
- =?us-ascii?Q?495rj2+NTLLhgejlz5MLA+ikRMAv+scMYHOhl37RJvT7isMyVc9E53v8yrhp?=
- =?us-ascii?Q?zgH8ubvasor3X+9ih4H4uSGHBVNzbVcise0aya7Y6+rKAvCyedOtmHC2mRsq?=
- =?us-ascii?Q?P0QNuJi1EGgj6ue/67kHvY1gy6hywZZq+oXTNrThUKksTzgKlZjtPIxgPubz?=
- =?us-ascii?Q?UjmNKK/SBpY55Bbal8M41/mdVpJ8ZnBJVmWoRlKpI5xveKF1sdtZ/7U5s4e+?=
- =?us-ascii?Q?lMjWjt5Wdxv6pQRO7GpAadtVisKVVEkatUVlHHdsLBHQqOQZl6q/lqQ7jGvn?=
- =?us-ascii?Q?vUDHL6v9VlGnKwviO9DVvzryJhYisY3+xUvp6XXykcto0Mv8loZROZooCKx+?=
- =?us-ascii?Q?X+1rwNaT6XHEd2cT6BhRmkIp4Yl4OppGxY2IlPW+R4hTUfkgKxJVbJ5QKRmP?=
- =?us-ascii?Q?MD2Pl8EMuH2Wy5q2SQXbwXTNO2HSCLBzErMHFhif65nuhfYoC+9SCZJ2Oz43?=
- =?us-ascii?Q?TV2TM8tI18fl222awBNGy/SA8dp8ag4YyCTx57G8M1klkAwN7gZgOnk8Tbyd?=
- =?us-ascii?Q?DQBkuo2QNitFmEjJq441sylSOWOy3ILD8CPzr6XQBboEdrr2SyHaZDR5Uf5S?=
- =?us-ascii?Q?ZoeL2q01kHLrfpB7k7CJ2UHl/avusR5fdamx9MN1?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1862812c-3366-4604-063b-08dd4c519e62
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 17:12:39.1664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zO/Aqj0AskxAtRdBjxkPhazyAb5+he31RDPyMPSlEImsHWF/KafA3A0d+EtHggYihPfkLksanohcr1i0A/CHWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB2787
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z64brsSMAR7cLPUU@gpd3>
 
-On Thu, 13 Feb 2025 16:46:22 +0100
-Ralf Jung <post@ralfj.de> wrote:
-
-> Hi all,
-> 
-> > We have to carefully make the distinction here between codegen and ABI.
+On Thu, Feb 13, 2025 at 05:19:58PM +0100, Andrea Righi wrote:
+> On Thu, Feb 13, 2025 at 10:57:00AM -0500, Yury Norov wrote:
+> > On Wed, Feb 12, 2025 at 05:48:09PM +0100, Andrea Righi wrote:
+> > > Introduce the new helper nearest_node_nodemask() to find the closest
+> > > node in a specified nodemask from a given starting node.
+> > > 
+> > > Returns MAX_NUMNODES if no node is found.
+> > > 
+> > > Cc: Yury Norov <yury.norov@gmail.com>
+> > > Signed-off-by: Andrea Righi <arighi@nvidia.com>
 > > 
-> > The arm64 C code in the kernel is built with -mgeneral-regs-only
-> > because FP/SIMD registers are not preserved/restored like GPRs, and so
-> > they must be used only in carefully controlled circumstances, i.e., in
-> > assembler code called under kernel_neon_begin()/kernel_neon_end()
-> > [modulo some exceptions related to NEON intrinsics]
+> > Suggested-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> 
+> Ok.
+> 
 > > 
-> > This does not impact the ABI, which remains hard-float [this was the
-> > only arm64 calling convention that existed until about a year ago].
-> > Any function that takes or returns floats or doubles (or NEON
-> > intrinsic types) is simply rejected by the compiler.  
+> > > ---
+> > >  include/linux/numa.h |  7 +++++++
+> > >  mm/mempolicy.c       | 32 ++++++++++++++++++++++++++++++++
+> > >  2 files changed, 39 insertions(+)
+> > > 
+> > > diff --git a/include/linux/numa.h b/include/linux/numa.h
+> > > index 31d8bf8a951a7..e6baaf6051bcf 100644
+> > > --- a/include/linux/numa.h
+> > > +++ b/include/linux/numa.h
+> > > @@ -31,6 +31,8 @@ void __init alloc_offline_node_data(int nid);
+> > >  /* Generic implementation available */
+> > >  int numa_nearest_node(int node, unsigned int state);
+> > >  
+> > > +int nearest_node_nodemask(int node, nodemask_t *mask);
+> > > +
+> > 
+> > See how you use it. It looks a bit inconsistent to the other functions:
+> > 
+> >   #define for_each_node_numadist(node, unvisited)                                \
+> >          for (int start = (node),                                                \
+> >               node = nearest_node_nodemask((start), &(unvisited));               \
+> >               node < MAX_NUMNODES;                                               \
+> >               node_clear(node, (unvisited)),                                     \
+> >               node = nearest_node_nodemask((start), &(unvisited)))
+> >   
+> > 
+> > I would suggest to make it aligned with the rest of the API:
+> > 
+> >   #define node_clear(node, dst) __node_clear((node), &(dst))
+> >   static __always_inline void __node_clear(int node, volatile nodemask_t *dstp)
+> >   {
+> >           clear_bit(node, dstp->bits);
+> >   }
 > 
-> That's how C works. It is not how Rust works. Rust does not reject using floats 
-> ever. Instead, Rust offers softfloat targets where you can still use floats, but 
-> it won't use float registers. Obviously, that needs to use a different ABI.
+> Sorry Yury, can you elaborate more on this? What do you mean with
+> inconsistent, is it the volatile nodemask_t *?
 
-That's today's situation, although we do prefer to be able to turn off
-floats completely (and also not have to compile parts of libcore that's
-related to floats).
+What I mean is:
+  #define nearest_node_nodemask(start, srcp)
+                __nearest_node_nodemask((start), &(srcp))
+  int __nearest_node_nodemask(int node, nodemask_t *mask);
 
-We mentioned this to the lang team a couple of times, and they do
-acknolwedge there might be a need for it, although it's not something
-that today's Rust can handle well (i.e. no feature disabling for
-libcore).
+That way you'll be able to make the above for-loop looking more
+uniform:
 
-We have also listed this in
-https://github.com/Rust-for-Linux/linux/issues/2 and
-https://github.com/Rust-for-Linux/linux/issues/514.
+  #define for_each_node_numadist(node, unvisited)                                \
+         for (int __s = (node),                                                \
+              (node) = nearest_node_nodemask(__s, (unvisited));               \
+              (node) < MAX_NUMNODES;                                               \
+              node_clear((node), (unvisited)),                                     \
+              (node) = nearest_node_nodemask(__s, (unvisited)))
 
-> As you said, aarch64 does not have an official softfloat ABI, but LLVM 
-> implements a de-facto softfloat ABI if you ask it to generate functions that 
-> take/return float types while disabling the relevant target features. (Maybe 
-> LLVM should just refuse to generate such code, and then Rust may have ended up 
-> with a different design. But now this would all be quite tricky to change.)
+> > >  #ifndef memory_add_physaddr_to_nid
+> > >  int memory_add_physaddr_to_nid(u64 start);
+> > >  #endif
+> > > @@ -47,6 +49,11 @@ static inline int numa_nearest_node(int node, unsigned int state)
+> > >  	return NUMA_NO_NODE;
+> > >  }
+> > >  
+> > > +static inline int nearest_node_nodemask(int node, nodemask_t *mask)
+> > > +{
+> > > +	return NUMA_NO_NODE;
+> > > +}
+> > > +
+> > >  static inline int memory_add_physaddr_to_nid(u64 start)
+> > >  {
+> > >  	return 0;
+> > > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > > index 162407fbf2bc7..1e2acf187ea3a 100644
+> > > --- a/mm/mempolicy.c
+> > > +++ b/mm/mempolicy.c
+> > > @@ -196,6 +196,38 @@ int numa_nearest_node(int node, unsigned int state)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(numa_nearest_node);
+> > >  
+> > > +/**
+> > > + * nearest_node_nodemask - Find the node in @mask at the nearest distance
+> > > + *			   from @node.
+> > > + *
+> > > + * @node: the node to start the search from.
+> > > + * @mask: a pointer to a nodemask representing the allowed nodes.
+> > > + *
+> > > + * This function iterates over all nodes in the given state and calculates
+> > > + * the distance to the starting node.
+> > > + *
+> > > + * Returns the node ID in @mask that is the closest in terms of distance
+> > > + * from @node, or MAX_NUMNODES if no node is found.
+> > > + */
+> > > +int nearest_node_nodemask(int node, nodemask_t *mask)
+> > > +{
+> > > +	int dist, n, min_dist = INT_MAX, min_node = MAX_NUMNODES;
+> > > +
+> > > +	if (node == NUMA_NO_NODE)
+> > > +		return MAX_NUMNODES;
+> > 
+> > This makes it unclear: you make it legal to pass NUMA_NO_NODE, but
+> > your function returns something useless. I don't think it would help
+> > users in any reasonable scenario.
+> > 
+> > So, if you don't want user to call this with node == NUMA_NO_NODE,
+> > just describe it in comment on top of the function. Otherwise, please
+> > do something useful like 
+> > 
+> > 	if (node == NUMA_NO_NODE)
+> > 		node = current_node;
+> > 
+> > I would go with option 1. Notice, node_distance() doesn't bother to
+> > check against NUMA_NO_NODE.
 > 
-> > Changing this to softfloat for Rust modifies this calling convention,
-> > i.e., it will result in floats and doubles being accepted as function
-> > parameters and return values, but there is no code in the kernel that
-> > actually supports/implements that.  
-> 
-> As explained above, f32/f64 were already accepted as function parameters and 
-> return values in Rust code before this change. So this patch does not change 
-> anything here. (In fact, the ABI used for these functions should be exactly the 
-> same before and after this patch.)
-> 
-> > Also, it should be clarified
-> > whether using a softfloat ABI permits the compiler to use FP/SIMD
-> > registers in codegen. We might still need -Ctarget-feature="-neon"
-> > here afaict.  
-> 
-> Rust's softfloat targets do not use FP/SIMD registers by default. Ideally these 
-> targets allow selectively using FP/SIMD registers within certain functions; for 
-> aarch64, this is not properly supported by LLVM and therefore Rust.
-> 
-> > Ideally, we'd have a target/target-feature combo that makes this more
-> > explicit: no FP/SIMD codegen at all, without affecting the ABI,
-> > therefore making float/double types in function prototypes illegal.
-> > AIUI, this change does something different.  
-> 
-> Having targets without float support would be a significant departure from past 
-> language decisions in Rust -- that doesn't mean it's impossible, but it would 
-> require a non-trivial effort (starting with an RFC to lay down the motivation 
-> and design).
-> 
-> Kind regards,
-> Ralf
-> 
-> 
+> Hm... is it? Looking at __node_distance(), it doesn't seem really safe to
+> pass a negative value (maybe I'm missing something?).
 
+It's not safe, but inside the kernel we don't check parameters. Out of
+your courtesy you may decide to put a comment, but strictly speaking you
+don't have to.
+
+> Anyway, I'd also prefer to go with option 1 and not implicitly assuming
+> NUMA_NO_NODE == current node (it feels that it might hide nasty bugs).
+
+Yeah, very true
+
+> So, I can add a comment in the description to clarify that NUMA_NO_NODE is
+> forbidenx, but what is someone is passing it? Should we WARN_ON_ONCE() at
+> least?
+
+He will brick his testing board, and learn to read comments in a hard
+way.
+
+Speaking more seriously, you will be most likely CCed as an author of
+that function, and you will be able to comment that on review. Also,
+there's a great chance that it will be caught by KASAN or some other
+sanitation tool even before someone sends a buggy patch.
+
+This is an old as the world and very well known problem, and everyone
+is aware. 
+
+Thanks,
+Yury
 
