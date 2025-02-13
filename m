@@ -1,147 +1,154 @@
-Return-Path: <linux-kernel+bounces-513297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B37A34890
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:53:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAE9A34883
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF534188F9E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D6F47A3F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63B1EEA36;
-	Thu, 13 Feb 2025 15:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC441FF7B0;
+	Thu, 13 Feb 2025 15:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Grc/TklO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTI68t1z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2A31E3DED
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D626B0B1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461861; cv=none; b=lnNJ34VJedStMSo8QLqmD4oYmuxYZiB/JZGdAwHnGH92OwSGZAAdtPzAdXtDRvM9WTwCnmElRYga8sy7vZUj0wxOKDGTszN3InVvjQa2LAcVEiZeMHE9s727PSfUxVunWqf/GkhfaDpKeDpHYxE1/8zSInNmcvJPKIhzUwXFRYU=
+	t=1739461846; cv=none; b=bNw/3gIadXfPofgf3GzX2pb1WuxH7N7AdyQi2TfcFgSvWfE7BfJ5HCahzAPK6HJCiEKAdiZsnsBTMcWtzN/kKr6x9uQKAuXvCqZm6Bzc49+aKHLLEGZ0ZkOuYlGIqAQfopskSWsHrvX6l+6y6n17UltoO42UjzsV47UDdRp1O2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461861; c=relaxed/simple;
-	bh=/aoLSKIJznnbsjZ5Jh4GqZ88soBWly62WzaVs9lwiik=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NXm+ZAjqFxIeKdKOryA/7ZL1Q6mGO8RzBBp4Yao/r0epAIo5Gh+ySJd9YMnskW4STKmKVnGSaVVcP9j4/Angjl48MPJk4Jex5swFRNtZtYAz9A7f0v03Y1ptr5I887zIo/cYoEm68D10Bi3Oj8FinfSGA4/YlPFibi+fd07N8lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Grc/TklO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739461858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PjmfsPFlVVF5AWgzzAtVJttyvI0k7JVXMhFtVMQApJc=;
-	b=Grc/TklOlm7jeIK20gL4KiSrCYRar2vLZrxgAM6Lioz8lfzGFZH4V23Dk3diyKDydowSsf
-	jBJe8GfrR+ah2l0YTidtGabe4+qqp5tc/y8jom6MOGJ2d2Nw/Ud501mFIlSZntLLA6bUfU
-	BAHM7MPBDp+87I37NxqJ31VKXj1/7Tw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-250-fWiTjEI6PDuewe8qZoXD2A-1; Thu,
- 13 Feb 2025 10:50:54 -0500
-X-MC-Unique: fWiTjEI6PDuewe8qZoXD2A-1
-X-Mimecast-MFC-AGG-ID: fWiTjEI6PDuewe8qZoXD2A_1739461852
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC8641800873;
-	Thu, 13 Feb 2025 15:50:51 +0000 (UTC)
-Received: from [127.0.1.1] (unknown [10.44.33.58])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 005321800360;
-	Thu, 13 Feb 2025 15:50:45 +0000 (UTC)
-From: Sergio Lopez <slp@redhat.com>
-Date: Thu, 13 Feb 2025 16:49:19 +0100
-Subject: [PATCH RFC 5/5] drm/virtio: add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE
- to params
+	s=arc-20240116; t=1739461846; c=relaxed/simple;
+	bh=pKKOW+0rlAIXhNsy+k3pB2L0K5ftmPyShJsJGVMM3aE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pY/CiwFQhCiXaMujlpP9qS9sgEq6MIIelJHcDxrr+grzN0l0QaKIf3HJffl/AJsI5aJqg1SgycB6OhqSfHNT+uQ7+dn9+vFznxv6bSRFxfENIMiUz3GPMonw09Xt/IDqJz4xPi9bDRqfdXNZJE48GyB0ouZYeIw/D9Fm1BFFRk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTI68t1z; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739461844; x=1770997844;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pKKOW+0rlAIXhNsy+k3pB2L0K5ftmPyShJsJGVMM3aE=;
+  b=VTI68t1z36LXzAp0KWh23dF8iOWFKpw+eMFXWgmbgZ2H4GNw6wanQA4u
+   bLBrJw0HTiPlZbWd6MYJ/ywvoU4rKHSuJkQ0zDSM0cKFUxbccL+XaTANQ
+   Qv9OispgRXjFbbBMp/zrK2fIyLzWj0kQPaEmR+gWsBm4eZNierkbYhYle
+   9ROjJIuzjz3JVg9mCd6VNIHzAfzfrxap3wHs/DgNJxL2L02rT7+oN9WPI
+   06+5hAX1bEXnRPady0mVD9UagDhm/j8BaQ/Qb2GDbOWzTcB3xP6SFxDCA
+   lXda3UuFq+YBOnHAiTotkUuEfLgc8muaio0YvpnDblaw5mb5c7D8BElaQ
+   Q==;
+X-CSE-ConnectionGUID: d5JWeTuHR0SRzy2QgcMYLg==
+X-CSE-MsgGUID: +5eF8/6bQHqmVCn0i7W6pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39400963"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="39400963"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:50:44 -0800
+X-CSE-ConnectionGUID: RJHEPWKPQ6CqyH85gm2NpA==
+X-CSE-MsgGUID: b8aiYEQoR+C142Of0nSiqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117295307"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.188]) ([10.125.108.188])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:50:43 -0800
+Message-ID: <69dc7277-7aa8-4091-8993-ff1195ef4c3a@intel.com>
+Date: Thu, 13 Feb 2025 07:50:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] kexec_core: Accept unaccepted kexec segments'
+ destination addresses
+To: Yan Zhao <yan.y.zhao@intel.com>, ebiederm@xmission.com
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-coco@lists.linux.dev, x86@kernel.org, rick.p.edgecombe@intel.com,
+ kirill.shutemov@linux.intel.com, bhe@redhat.com
+References: <20241213094930.748-1-yan.y.zhao@intel.com>
+ <20241213095449.881-1-yan.y.zhao@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241213095449.881-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-virtio-shm-page-size-v1-5-5ee1f9984350@redhat.com>
-References: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
-In-Reply-To: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
- Gurchetan Singh <gurchetansingh@chromium.org>, 
- Chia-I Wu <olvaffe@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
- Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Sergio Lopez <slp@redhat.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1826; i=slp@redhat.com;
- h=from:subject:message-id; bh=/aoLSKIJznnbsjZ5Jh4GqZ88soBWly62WzaVs9lwiik=;
- b=owEBbQKS/ZANAwAIAfRpJ40vDAI1AcsmYgBnrhSwhjgi2huewIbD11jfJzeBM0pBvdx+QXdjZ
- 3DYvQQ1INGJAjMEAAEIAB0WIQS+1fz3US2GgJFC6KL0aSeNLwwCNQUCZ64UsAAKCRD0aSeNLwwC
- NYbtD/9ctHlsRxX0qc3/D6Bh638ZBZMa+fSdL8lFea6UYOw7mU4npndqsYsJPx/wr7U7n83Vaxr
- tUcKqrDkgaw8ya+Vm/2cD1JWs4+37Bf1qUBHArqwpTPzeNuBPJk4Z624Bma7rYalRNE9BHYmttg
- ImMXqognhOLVo3GvnG5GKufzxW6Q56ta8LMoQi3/otB0Lp4bwE/tevyOgBJRInuGjoj1MmKTNR8
- pcEbm65Nhdy1yhGxL1iJKVJCBaofqq2g1oNS8uq/mSaT9onuqhHdr3COGV9tlM5LoTJXN/kuNnk
- nChP1pIDBub/qUL495/Jxj90CDmmCxth/VET+s8B49dpCFNGj3SNzcVwjqj4bikjlObwuPv8NXA
- 0FBpGgpFLq3OdCDvd6e3TlrZMZ9MZp1U923btfwXJ7m65WU9MqRf67O4q2Vdw3/bzU1b6hUMR2x
- fULusPSIv6m+k7thSDqtWNrwAFSRQ3x4mrBCJDX2KryPkldQ3Qtj4NZOlnVCYAT+fL/XB7yfY5o
- c8YEStKGghk9W8RXB+Wfcvz2+uA9yPrpx3lZc6kG4W7YwSfciZm4c1upgMPktnF+HT68I65/Ksu
- fcvqVqY/pWDtFQgTriHjX6Xwbu3Uz+sAUwRcmODokFmPENr6xR4zb+qq8y8HB+1OVBvazTtTTej
- b1Xw9a5umUDKO/A==
-X-Developer-Key: i=slp@redhat.com; a=openpgp;
- fpr=BED5FCF7512D86809142E8A2F469278D2F0C0235
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Add VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE as a param that can be read with
-VIRTGPU_GETPARAM by userspace applications running in the guest to
-obtain the host's page size and find out the right alignment to be used
-in shared memory allocations.
+On 12/13/24 01:54, Yan Zhao wrote:
+> +	/*
+> +	 * The destination addresses are searched from system RAM rather than
+> +	 * being allocated from the buddy allocator, so they are not guaranteed
+> +	 * to be accepted by the current kernel.  Accept the destination
+> +	 * addresses before kexec swaps their content with the segments' source
+> +	 * pages to avoid accessing memory before it is accepted.
+> +	 */
+> +	for (i = 0; i < nr_segments; i++)
+> +		accept_memory(image->segment[i].mem, image->segment[i].memsz);
 
-Signed-off-by: Sergio Lopez <slp@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 5 +++++
- include/uapi/drm/virtgpu_drm.h         | 1 +
- 2 files changed, 6 insertions(+)
+The "searched from system RAM" phrase both here and in the changelog
+doesn't quite parse for me.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index c33c057365f85a2ace536f91655c903036827312..4b49635b4fe1d4256f219823341cef8e5fa8f029 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -117,6 +117,11 @@ static int virtio_gpu_getparam_ioctl(struct drm_device *dev, void *data,
- 	case VIRTGPU_PARAM_EXPLICIT_DEBUG_NAME:
- 		value = vgdev->has_context_init ? 1 : 0;
- 		break;
-+	case VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE:
-+		if (!vgdev->has_host_visible)
-+			return -EINVAL;
-+		value = vgdev->host_visible_region.page_size;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/include/uapi/drm/virtgpu_drm.h b/include/uapi/drm/virtgpu_drm.h
-index c2ce71987e9bb816d13a300679336cb756f1cbcf..72db6b3339e0dcaf550acbf5ac4381a6e5c2216d 100644
---- a/include/uapi/drm/virtgpu_drm.h
-+++ b/include/uapi/drm/virtgpu_drm.h
-@@ -98,6 +98,7 @@ struct drm_virtgpu_execbuffer {
- #define VIRTGPU_PARAM_CONTEXT_INIT 6 /* DRM_VIRTGPU_CONTEXT_INIT */
- #define VIRTGPU_PARAM_SUPPORTED_CAPSET_IDs 7 /* Bitmask of supported capability set ids */
- #define VIRTGPU_PARAM_EXPLICIT_DEBUG_NAME 8 /* Ability to set debug name from userspace */
-+#define VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE 9 /* Host SHM page size, with format PAGE_SIZE >> 12 */
- 
- struct drm_virtgpu_getparam {
- 	__u64 param;
+Also "System RAM" is the normal phrase that I use to describe the memory
+that mostly ends up _going_ into the buddy allocator. It's not just me:
 
--- 
-2.48.1
+	cat /proc/iomem  | grep 'System RAM'
+
+I think a more useful comment (and changelog) might be something like this:
+
+	The core kernel focuses on accepting memory which is known to be
+	System RAM. However, there might be areas that are reserved in
+	the memory map, not exposed to the kernel as "System RAM" and
+	not accepted by firmware. Accept the memory before kexec touches
+	it.
+
 
 
