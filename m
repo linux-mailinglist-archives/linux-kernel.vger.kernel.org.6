@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-512417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A91A3390B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E898FA34AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5D43A74C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:40:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30463BA3AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ED720ADFA;
-	Thu, 13 Feb 2025 07:40:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B472040AB;
+	Thu, 13 Feb 2025 16:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pc6MGpjb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA24F12BF24;
-	Thu, 13 Feb 2025 07:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BF6202C53;
+	Thu, 13 Feb 2025 16:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432430; cv=none; b=uHOSq6JbnRRDvTsiUQJHq67qbhQByWKr1NF1R6YP07VvZrYI2XAPsSxo8NOa9xqYzZzlq1Ru/9GOpfmHAi90mMR0TbQ1EOAjwfECWKxpnhMzzBDILmzHVJHXA7yoEy4pFU8pS6ACxXl0ML3fr+OrfndXI/fW0p3ZCt9wV1laD3A=
+	t=1739464632; cv=none; b=EdKADpwuizuzTjhBFbRMQjQJRFnUh3G1momE/fkOe+StTf6OwygoNMCA6SySPvJ4rRr6kxSOHXHKzz685h+lQ7jsBnO4OuK9x2iLpV5bwfA0O+/z1kEkXkiPH6EgiZhZUjJtHHbi2YhaHaR7KahX/YT9IgxVumykn5my7hixu84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432430; c=relaxed/simple;
-	bh=LCaCKoBbqnfW10Dhp71lZqFMwhbW5s29S+SnKD/4N9g=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=GAN6UTiB6LPNUoc7eXwATQLtR1tXTI6lavtxt15FU5MPuMVMOY2tXWBV/htgVEov+h3A4Rgou7YNjECYs2IxHZ8XG++kHdBNtkGJ6pz2GUNuxuibQYRPaTkKn8o8v3kJbBfdFtVnLoQRtSj6XW0zynwepLILLZyOC3lRtgSJFB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YtnCB75MZz4f3jt0;
-	Thu, 13 Feb 2025 15:40:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 192EB1A0838;
-	Thu, 13 Feb 2025 15:40:23 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgDnpGfloa1nx+vHDg--.7502S2;
-	Thu, 13 Feb 2025 15:40:22 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	geert@linux-m68k.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] test_xarray: fix failure in check_pause when CONFIG_XARRAY_MULTI is not defined
-Date: Fri, 14 Feb 2025 00:36:59 +0800
-Message-Id: <20250213163659.414309-1-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1739464632; c=relaxed/simple;
+	bh=sbbmkWE/R2bCCyJ/6gUWFB9ZcoZuMGcfquTsn87Iqp0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rr12oJkikEuZZeLtGr+eM96ks5W7w7jdFqbJmEbqwqUk/OzaVdMUwgzIEx/DQE9+5V84LXxeYM/1qBv+b/dQwG+qqKtsLGntuV5bTgZgQi72Www8GqKAH0qrb7DVFoKxkRSO9RN3xTNsZw0OaXw1L1ty4dJ3XthM5cE5fLkaqpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pc6MGpjb; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739464631; x=1771000631;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=sbbmkWE/R2bCCyJ/6gUWFB9ZcoZuMGcfquTsn87Iqp0=;
+  b=Pc6MGpjbvZ3XIALdKgbV0wESenyzFtFNzpKdmmiQnYcOK9xSbYPxzv9o
+   Zj4woGdCFG9WUCEFxWm05sluH07TN2x03ylnHF+/HztizO4KxcQNv/iHz
+   0KWtZcMMa1ttLhFr282BivkDnrtmoA3l6LPe5quhqAOGYzfaB45BZto+P
+   nYaejT+itC1I0VyyODGNDCQiPFI/n86Igp6Vy6cixx9KCV0+vLiRZRhtB
+   F1Pmp9Y2JgXGBBMOOGqceKYOpC7fwB46WYfsxrIobR+EWTrNfot7m3b69
+   F7Rfniov+nvtMlkp7mlgC5e8yw2XiGJnDeCaRXoxlYQ8wsYMLFn7Cs9Uq
+   Q==;
+X-CSE-ConnectionGUID: GlYLMqdATnmxGpKLyNe+xQ==
+X-CSE-MsgGUID: f4zWaU/FTa6e/HFAQkTlfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51577447"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51577447"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:37:11 -0800
+X-CSE-ConnectionGUID: W3VNhbcRSYeFkWd3XmfLAQ==
+X-CSE-MsgGUID: sEuhhK7cQdiQB1cBIOxlyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113720797"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 08:37:06 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ticD0-0000000BDu9-3wkb;
+	Thu, 13 Feb 2025 18:37:02 +0200
+Date: Thu, 13 Feb 2025 18:37:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 06/10] i2c: kempld: Use i2c_10bit_addr_*_from_msg()
+ helpers
+Message-ID: <Z64frt9vbdLVYbrB@smile.fi.intel.com>
+References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
+ <20250213141045.2716943-7-andriy.shevchenko@linux.intel.com>
+ <Z64ajR7CSIDNmIKz@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDnpGfloa1nx+vHDg--.7502S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr47tFyktFykZr1DuF17KFg_yoW8uFyfpF
-	W7Wa4Ivry8Jrn2yw1DAa1xu34Fgw1rWa13KrW5Gr10yF9xur12yw1UKFyqvr9rCFW0vay5
-	AanYgrnFganrAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_
-	tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gc
-	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
-	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
-	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAa
-	w2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
-	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jSYL9UUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z64ajR7CSIDNmIKz@shikoro>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-In case CONFIG_XARRAY_MULTI is not defined, xa_store_order can store a
-multi-index entry but xas_for_each can't tell sbiling entry from valid
-entry. So the check_pause failed when we store a multi-index entry and
-wish xas_for_each can handle it normally. Avoid to store multi-index
-entry when CONFIG_XARRAY_MULTI is disabled to fix the failure.
+On Thu, Feb 13, 2025 at 05:15:09PM +0100, Wolfram Sang wrote:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- lib/test_xarray.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+...
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 6932a26f4927..0e865bab4a10 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1418,7 +1418,7 @@ static noinline void check_pause(struct xarray *xa)
- {
- 	XA_STATE(xas, xa, 0);
- 	void *entry;
--	unsigned int order;
-+	int order;
- 	unsigned long index = 1;
- 	unsigned int count = 0;
- 
-@@ -1450,7 +1450,7 @@ static noinline void check_pause(struct xarray *xa)
- 	xa_destroy(xa);
- 
- 	index = 0;
--	for (order = XA_CHUNK_SHIFT; order > 0; order--) {
-+	for (order = order_limit - 1; order >= 0; order--) {
- 		XA_BUG_ON(xa, xa_store_order(xa, index, order,
- 					xa_mk_index(index), GFP_KERNEL));
- 		index += 1UL << order;
-@@ -1462,24 +1462,25 @@ static noinline void check_pause(struct xarray *xa)
- 	rcu_read_lock();
- 	xas_for_each(&xas, entry, ULONG_MAX) {
- 		XA_BUG_ON(xa, entry != xa_mk_index(index));
--		index += 1UL << (XA_CHUNK_SHIFT - count);
-+		index += 1UL << (order_limit - count - 1);
- 		count++;
- 	}
- 	rcu_read_unlock();
--	XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-+	XA_BUG_ON(xa, count != order_limit);
- 
- 	index = 0;
- 	count = 0;
--	xas_set(&xas, XA_CHUNK_SIZE / 2 + 1);
-+	/* test unaligned index */
-+	xas_set(&xas, 1 % (1UL << (order_limit - 1)));
- 	rcu_read_lock();
- 	xas_for_each(&xas, entry, ULONG_MAX) {
- 		XA_BUG_ON(xa, entry != xa_mk_index(index));
--		index += 1UL << (XA_CHUNK_SHIFT - count);
-+		index += 1UL << (order_limit - count - 1);
- 		count++;
- 		xas_pause(&xas);
- 	}
- 	rcu_read_unlock();
--	XA_BUG_ON(xa, count != XA_CHUNK_SHIFT);
-+	XA_BUG_ON(xa, count != order_limit);
- 
- 	xa_destroy(xa);
- 
+> >  	/* Second part of 10 bit addressing */
+> >  	if (i2c->state == STATE_ADDR10) {
+> > -		kempld_write8(pld, KEMPLD_I2C_DATA, i2c->msg->addr & 0xff);
+> > +		addr = i2c_10bit_addr_lo_from_msg(msg);
+> > +		i2c->state = STATE_START;
+> 
+> Any reason you moved this?
+
+Yes, I would like to be in sync in the above state machine case, just upper in
+the code which is not visible in this patch.
+
+> > +		kempld_write8(pld, KEMPLD_I2C_DATA, addr);
+> 
+> Maybe we could skip using 'addr' here?
+
+Same reason as above.
+
+> >  		kempld_write8(pld, KEMPLD_I2C_CMD, I2C_CMD_WRITE);
+> >  
+> > -		i2c->state = STATE_START;
+> >  		return 0;
+> >  	}
+
 -- 
-2.30.0
+With Best Regards,
+Andy Shevchenko
+
 
 
