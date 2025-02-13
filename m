@@ -1,297 +1,129 @@
-Return-Path: <linux-kernel+bounces-512977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E683A33FF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:11:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE00AA33FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE56F165941
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D487165EC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFEB23F423;
-	Thu, 13 Feb 2025 13:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UfCK7t1q"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417FF23F41C;
+	Thu, 13 Feb 2025 13:12:31 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E264923F414
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D6C23F40B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452292; cv=none; b=FsivINefO5qkyQoqrOPpZ+Rv/NBSk/gahsGyQyjkF93cRTyxlovHrrXfOmvA8ycAk9CP7nw0abnhsRqcomwbwo8LxGSBd2lRECiwgIIgizmXWMbf+jYSMWEedrplZsSxGjtc462/yHQK//7K5xqnRPZuhp7UeX5Mivi6oEzpMHw=
+	t=1739452350; cv=none; b=nbcdXeLutreQtNDtKWk3ahxCSFYJpgi8IYS93qcBr+98wHF651LUYwNxyXsA7ChAFHAEtNDf1QyDWXf/hoD1d4Gdqw5EExG97pGC/4MyncmVFCZCcM2se6y8Y2YTnHUZ0DE6bMxRsSm++ZdEal0ycNeJzYM+RUcMzHIFQFkWtBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452292; c=relaxed/simple;
-	bh=hsQGDLOWLG7bsVV5A0WVv5C1on4j51W1Qf35hZy+zOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kVgEP3FxEJFF2Vo4QMZjnfs34yKyhziksxlz23t8nSy8QQvoGJxZTI0/fzHSiBm3/llXUeUjaX+KOACqWz/PdNqdhgH8+LpvTIZzEoph2N9C3QqvAW2/U9S1vqRWe3lLv041HQkAQqcX2C9T8E9dF9L1qPhEtaPJTHteMKzm/t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UfCK7t1q; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5b638d3f83so726808276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739452290; x=1740057090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Av+4cXouFvBxiesIKZhu46IuHt9ZeCvayQcIT+brZhA=;
-        b=UfCK7t1qdCOCWWMSR1VkJxK1unzNkgq2eXlF9TjEUBWJMjOtGzY/19EKNZ1mWJpEhY
-         o2ujzAY8nlNC49yJUc37+W5emDwA2K7BzaNtIFlmDW4Ljr2ZRNBZwghhHtciUXWIT3sz
-         Yr19ZKwiZ0Sm0eboaYP4VpTT4PdElm5pgecoRobUIIMaRIhbLR6lMmsM1CTm0qSb1E0y
-         t6dWGkOdBkdrWxbQP8ZkHAXHQLDCNrkqwhZc6lOy5cwIMgDihqNaK+h3cmPuLUm7m7kL
-         mLGrk9i/+PVRc+xwhbc/3sKDCnUR/weZF8n8Q5+VBB6qTxSDRXc7lO97KRvdIAIYKno4
-         suHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739452290; x=1740057090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Av+4cXouFvBxiesIKZhu46IuHt9ZeCvayQcIT+brZhA=;
-        b=NsNAliSkDAFij7zve51MPK28V+5XHBCOfHXdsZ3lNRC+Ii0oAYW3gnhGLPJxMjXC/C
-         0JfQlIXasOX7E9LwRvjfAZFVuW7r0Oo7gnVtwhumkgULlN6n8Iwhid8Y9BqfUq7ZXp7N
-         a28hotQ52FwmBye5eOxH66nUIIjVDTLSAdjWWYvGXwkDjgImqQduvTWULNmvpJHpNsMN
-         8bDslN2g1EqRZlRoGXSpCUq4pzenhIk9/uVlVYqvr5uDyQyyHziZXFFTr6wS34UZnAuc
-         vdFO3wDA5jp6nutITdFLE/aPkF2NU91fISoRhS+2oHLcJLNaKMQa6/aEGzr788qNnv/3
-         NAGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv9bibS3shWfXX3Ml+jf4ZmWJ1pYOsGMraMhWt/f0I8vkBn8wWpF+eLxjIt5U3Dy8M3DX4bPqNg0Z5S3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx64w20BNBHtMru32PsqX7pXb6/th6lk2hPAZV6pvyPUBr83xum
-	jBNGe3G+x4KbEd0+aGdtNw5lAMzO1AAZnhb/YpGwlLiSlJpDZd0dboSdW3CeWrMh9zLAiAi0NQC
-	8FzL8ShwAkVUUuCQlFeJNKFf12zSK/x/Io1PhkQ==
-X-Gm-Gg: ASbGncsGMlcmdIzXPNWwsDC4YhHUfxz7AIlmjWu+i96J8eOCy8sZcFZlbl7Cu66ODJj
-	CmQFEJPj/+EjvZ9ysG49QZLePc7vuhpzZDH0fARGNAkE9ce5e0bDLeOD4r7jmd4u7Ff2E2fBk3g
-	==
-X-Google-Smtp-Source: AGHT+IHgm7mdZPTihkcGCH8GpaKCczS36kNq4savGYCrbmNbcGY8qk2znocOPE05fuZQ11NbKnUgoPiobR/3luTpXiY=
-X-Received: by 2002:a05:6902:1501:b0:e5b:4601:ed61 with SMTP id
- 3f1490d57ef6-e5da020b708mr4677952276.17.1739452289718; Thu, 13 Feb 2025
- 05:11:29 -0800 (PST)
+	s=arc-20240116; t=1739452350; c=relaxed/simple;
+	bh=FhrHHMtLFmbBN8/65Z4I0XPGXxIQ/8ARVV5MqM9sGuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6liyFgfFeaPXPZr5MQVEkplpnPNz1HYdswbYbjWEr/sMDzIf6zah0bgL4vqFxpI8zkuZyP68JcaFv52cgMZFEV/kufiNllg75Ylz1xJl5Sp/lDdMOeIuyTPGR5l4QTaCyYgdltrV/H8LHAaLAYNKfTg3wTbH6mnLZRqBrZSnlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A4F9544405;
+	Thu, 13 Feb 2025 13:12:18 +0000 (UTC)
+Message-ID: <1dc6fc96-1a3e-46fa-84be-ef6952d4fc35@ghiti.fr>
+Date: Thu, 13 Feb 2025 14:12:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2314745.iZASKD2KPV@rjwysocki.net> <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
- <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
- <CAJZ5v0iMZ=6YgKR3ZZuiv7DF4=vfoFRonSoXO_zV65oZH2rOgA@mail.gmail.com>
- <CAPDyKFq91JnCFhEuitOJPZtq78-Y3CUy4p0bNE1wK+eYCste6g@mail.gmail.com> <CAJZ5v0iuLA9N5Vi-JNa8=uTO-kpsKNsRGKegYnCYLEhAn=nW9g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iuLA9N5Vi-JNa8=uTO-kpsKNsRGKegYnCYLEhAn=nW9g@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 13 Feb 2025 14:10:53 +0100
-X-Gm-Features: AWEUYZnI88CYMCOiPxLcaQnzQiLgjFghUrHuCSNkCd9YTo-u2Cjsvvfj9YmOIfw
-Message-ID: <CAPDyKFr1LmYji1Yh=mrx03eeW8ukFr9rE0hk277iam174TjGig@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] PM: Make the core and pm_runtime_force_suspend/resume()
- agree more
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] riscv: Fix check_unaligned_access_all_cpus
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, charlie@rivosinc.com,
+ jesse@rivosinc.com, Anup Patel <apatel@ventanamicro.com>
+References: <20250207161939.46139-11-ajones@ventanamicro.com>
+ <20250207161939.46139-14-ajones@ventanamicro.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250207161939.46139-14-ajones@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemudgutggvmegvhedugeemheegjegvmegstdhfkegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegrjhhonhgvshesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrn
+ hgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjvghsshgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegrphgrthgvlhesvhgvnhhtrghnrghmihgtrhhordgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, 12 Feb 2025 at 18:05, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On 07/02/2025 17:19, Andrew Jones wrote:
+> check_vector_unaligned_access_emulated_all_cpus(), like its name
+> suggests, will return true when all cpus emulate unaligned vector
+> accesses. If the function returned false it may have been because
+> vector isn't supported at all (!has_vector()) or because at least
+> one cpu doesn't emulate unaligned vector accesses. Since false may
+> be returned for two cases, checking for it isn't sufficient when
+> attempting to determine if we should proceed with the vector speed
+> check. Move the !has_vector() functionality to
+> check_unaligned_access_all_cpus() in order for
+> check_vector_unaligned_access_emulated_all_cpus() to return false
+> for a single case.
 >
-> On Wed, Feb 12, 2025 at 4:15=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Wed, 12 Feb 2025 at 12:33, Rafael J. Wysocki <rafael@kernel.org> wro=
-te:
-> > >
-> > > On Wed, Feb 12, 2025 at 11:59=E2=80=AFAM Rafael J. Wysocki <rafael@ke=
-rnel.org> wrote:
-> > > >
-> > > > On Wed, Feb 12, 2025 at 10:12=E2=80=AFAM Ulf Hansson <ulf.hansson@l=
-inaro.org> wrote:
-> > > > >
-> > > > > On Tue, 11 Feb 2025 at 22:25, Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
-> > > > > >
-> > > > > > Hi Everyone,
-> > > > > >
-> > > > > > This series is a result of the discussion on a recently reporte=
-d issue
-> > > > > > with device runtime PM status propagation during system resume =
-and
-> > > > > > the resulting patches:
-> > > > > >
-> > > > > > https://lore.kernel.org/linux-pm/12619233.O9o76ZdvQC@rjwysocki.=
-net/
-> > > > > > https://lore.kernel.org/linux-pm/6137505.lOV4Wx5bFT@rjwysocki.n=
-et/
-> > > > > >
-> > > > > > Overall, due to restrictions related to pm_runtime_force_suspen=
-d() and
-> > > > > > pm_runtime_force_resume(), it was necessary to limit the RPM_AC=
-TIVE
-> > > > > > setting propagation to the parent of the first device in a depe=
-ndency
-> > > > > > chain that turned out to have to be resumed during system resum=
-e even
-> > > > > > though it was runtime-suspended before system suspend.
-> > > > > >
-> > > > > > Those restrictions are that (1) pm_runtime_force_suspend() atte=
-mpts to
-> > > > > > suspend devices that have never had runtime PM enabled if their=
- runtime
-> > > > > > PM status is currently RPM_ACTIVE and (2) pm_runtime_force_resu=
-me()
-> > > > > > will skip device whose runtime PM status is currently RPM_ACTIV=
-E.
-> > > > > >
-> > > > > > The purpose of this series is to eliminate the above restrictio=
-ns and
-> > > > > > get pm_runtime_force_suspend() and pm_runtime_force_resume() to=
- agree
-> > > > > > more with what the core does.
-> > > > >
-> > > > > For my understanding, would you mind elaborating a bit more aroun=
-d the
-> > > > > end-goal with this?
-> > > >
-> > > > The end goal is, of course, full integration of runtime PM with sys=
-tem
-> > > > sleep for all devices.  Eventually.
-> > > >
-> > > > And it is necessary to make the core and
-> > > > pm_runtime_force_suspend|resume() work together better for this
-> > > > purpose.
-> > > >
-> > > > > Are you trying to make adaptations for
-> > > > > pm_runtime_force_suspend|resume() and the PM core, such that driv=
-ers
-> > > > > that uses pm_runtime_force_suspend|resume() should be able to cop=
-e
-> > > > > with other drivers for child-devices that make use of
-> > > > > DPM_FLAG_SMART_SUSPEND?
-> > > >
-> > > > Yes.
-> > > >
-> > > > This is a more general case, though, when a device that was
-> > > > runtime-suspended before system suspend and is left in suspend duri=
-ng
-> > > > it, needs to be resumed during the system resume that follows.
-> > > >
-> > > > Currently, DPM_FLAG_SMART_SUSPEND can lead to this sometimes and it
-> > > > cannot happen otherwise, but I think that it is a generally valid
-> > > > case.
-> > > >
-> > > > > If we can make this work, it would enable the propagation of
-> > > > > RPM_ACTIVE in the PM core for more devices, but still not for all=
-,
-> > > > > right?
-> > > >
-> > > > It is all until there is a known case in which it isn't.  So either
-> > > > you know a specific case in which it doesn't work, or I don't see a
-> > > > reason for avoiding it.
-> > > >
-> > > > ATM the only specific case in which it doesn't work is when
-> > > > pm_runtime_force_suspend|resume() are used.
-> > > >
-> > > > > The point is, the other bigger issue that I pointed out in our ea=
-rlier
-> > > > > discussions; all those devices where their drivers/buses don't co=
-pe
-> > > > > with the behaviour of the DPM_FLAG_SMART_SUSPEND flag, will preve=
-nt
-> > > > > the PM core from *unconditionally* propagating the RPM_ACTIVE to
-> > > > > parents. I guess this is the best we can do then?
-> > > >
-> > > > OK, what are they?
-> > > >
-> > > > You keep saying that they exist without giving any examples.
-> > >
-> > > To put it more bluntly, I'm not aware of any place other than
-> > > pm_runtime_force_suspend|resume() that can be confused by changing th=
-e
-> > > runtime PM status of a device with runtime PM disabled (either
-> > > permanently, or transiently during a system suspend-resume cycle) to
-> > > RPM_ACTIVE, so if there are any such places, I would appreciate
-> > > letting me know what they are.
-> >
-> > Well, sorry I thought you were aware. Anyway, I believe you need to do
-> > your own investigation as it's simply too time consuming for me to
-> > find them all. The problem is that it's not just a simple pattern to
-> > search for, so we would need some clever scripting to move forward to
-> > find them.
-> >
-> > To start with, we should look for drivers that enable runtime PM, by
-> > calling pm_runtime_enable().
-> >
-> > Additionally, in their system suspend callback they should typically
-> > *not* use pm_runtime_suspended(), pm_runtime_status_suspended() or
-> > pm_runtime_active() as that is usually (but no always) indicating that
-> > they got it right. Then there are those that don't have system
-> > suspend/resume callbacks assigned at all (or uses some other subsystem
-> > specific callback for this), but only uses runtime PM.
-> >
-> > On top of that, drivers that makes use of
-> > pm_runtime_force_suspend|resume() should be disregarded, which has
-> > reached beyond 300 as this point.
-> >
-> > Anyway, here is just one example that I found from a quick search.
-> > drivers/i2c/busses/i2c-qcom-geni.c
+> Fixes: e7c9d66e313b ("RISC-V: Report vector unaligned access speed hwprobe")
+> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>   arch/riscv/kernel/traps_misaligned.c       |  6 ------
+>   arch/riscv/kernel/unaligned_access_speed.c | 11 +++++++----
+>   2 files changed, 7 insertions(+), 10 deletions(-)
 >
-> OK, I see.
->
-> It sets the status to RPM_SUSPENDED in geni_i2c_suspend_noirq(), if
-> not suspended already, and assumes it to stay this way across
-> geni_i2c_resume_noirq() until someone resumes it via runtime PM.
->
-> Fair enough, but somebody should tell them that they don't need to use
-> pm_runtime_disable/enable() in _noirq.
->
-> > >
-> > > Note that rpm_active() could start producing confusing results if the
-> > > runtime PM status of a device with runtime PM disabled is changed fro=
-m
-> > > RPM_ACTIVE to RPM_SUSPENDED because it will then start to return
-> > > -EACCES instead of 1, but changing the status to RPM_ACTIVE will not
-> > > confuse it the same way.
-> >
-> > Trust me, it will cause problems.
-> >
-> > Drivers may call pm_runtime_get_sync() to turn on the resources for
-> > the device after the system has resumed, when runtime PM has been
-> > re-enabled for the device by the PM core.
-> >
-> > Those calls to pm_runtime_get_sync() will then not end up invoking any
-> > if ->runtime_resume() callbacks for the device since its state is
-> > already RPM_ACTIVE. Hence, the device will remain in a low power state
-> > even if the driver believes it has been powered on. In many cases,
-> > accessing the device (like reading/writing a register) will often just
-> > just hang in these cases, but in worst cases we could end up getting
-> > even more difficult bugs to debug.
->
-> Sure, that would be a problem.
->
-> I think I need to find a different way to address the problem I'm
-> seeing, that is to resume devices that were runtime-suspended before
-> system suspend along with their superiors.
->
-> One way to do it would be to just defer their resume to the point when
-> the core has enabled runtime PM for them, which means that it has also
-> enabled runtime PM for all of their superiors, and then call
-> pm_runtime_resume().
->
-> This should work unless one of the superiors has runtime PM disabled
-> at that point, of course.
+> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+> index aacbd9d7196e..4354c87c0376 100644
+> --- a/arch/riscv/kernel/traps_misaligned.c
+> +++ b/arch/riscv/kernel/traps_misaligned.c
+> @@ -609,12 +609,6 @@ bool __init check_vector_unaligned_access_emulated_all_cpus(void)
+>   {
+>   	int cpu;
+>   
+> -	if (!has_vector()) {
+> -		for_each_online_cpu(cpu)
+> -			per_cpu(vector_misaligned_access, cpu) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
+> -		return false;
+> -	}
+> -
+>   	schedule_on_each_cpu(check_vector_unaligned_access_emulated);
+>   
+>   	for_each_online_cpu(cpu)
+> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
+> index 161964cf2abc..02b485dc4bc4 100644
+> --- a/arch/riscv/kernel/unaligned_access_speed.c
+> +++ b/arch/riscv/kernel/unaligned_access_speed.c
+> @@ -403,13 +403,16 @@ static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __alway
+>   
+>   static int __init check_unaligned_access_all_cpus(void)
+>   {
+> -	bool all_cpus_emulated, all_cpus_vec_unsupported;
+> +	bool all_cpus_emulated;
+> +	int cpu;
+>   
+>   	all_cpus_emulated = check_unaligned_access_emulated_all_cpus();
+> -	all_cpus_vec_unsupported = check_vector_unaligned_access_emulated_all_cpus();
+>   
+> -	if (!all_cpus_vec_unsupported &&
+> -	    IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
+> +	if (!has_vector()) {
+> +		for_each_online_cpu(cpu)
+> +			per_cpu(vector_misaligned_access, cpu) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
+> +	} else if (!check_vector_unaligned_access_emulated_all_cpus() &&
+> +		   IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
+>   		kthread_run(vec_check_unaligned_access_speed_all_cpus,
+>   			    NULL, "vec_check_unaligned_access_speed_all_cpus");
+>   	}
 
-Right, so typically users of pm_runtime_force_suspend|resume() from
-the regular ->suspend|resume() callbacks would not work, because they
-disable/enable runtime PM. Although, we could probably fix this quite
-easily by making some adaptations in
-pm_runtime_force_suspend|resume().
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-I am not sure if this approach would have any other issue though, but
-it seems like it could make sense to explore this approach. In general
-drivers should cope with their devices being runtime resumed if
-runtime PM is enabled, right!?
+Thanks,
 
-If this works, it seems like a generic and a good solution to me.
+Alex
 
-Kind regards
-Uffe
 
