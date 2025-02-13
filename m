@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-513063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B01DA3413C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:04:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAACA34142
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F24189112E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ABC6168131
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BCF2222DB;
-	Thu, 13 Feb 2025 13:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9242659CB;
+	Thu, 13 Feb 2025 13:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OGa3VQ+4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QcbxM6gz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F332222CE;
-	Thu, 13 Feb 2025 13:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6664126982E;
+	Thu, 13 Feb 2025 13:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455159; cv=none; b=e32MrrdLYwH9F3IY8C9F2jfgCpvln7gbNVc0Dq1Fj660rBTO7EtZi9YKymz9MfFx81ZxTt4xKww668WDNygp94Y9/f6/BHLKqblLESll8s1jo+MHXPhty87vLEAORzNTwl5ogpmLWL1ZlOTsiWR1S44rEptoVHmDZemi/F+BzhU=
+	t=1739455162; cv=none; b=V8w9NMBR+Y8F6XGPGvVmIX4RLflQNQlUc4AKDdQtQPAFKS1fF+aUJrl54DD7jjxL7HXbt53fjsVy3qGTXvakaltjcFg3UNA7HTazdzEH2fgXeXcZqy3J4VrMGMZsvEHntenD+XKH7Jo8gXU5yyOz3M12g2NmVSJx60zvu3zUL8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455159; c=relaxed/simple;
-	bh=euBBwIvDl7tFCURaGUj3PZmj5h1cb0chWSv5lC4FY7A=;
+	s=arc-20240116; t=1739455162; c=relaxed/simple;
+	bh=M1wZSTlysra8qn4RUhjimztIhsfk5rrbCEkwkFbEduw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUE9xVMKUTw5NnItVaQRDHOKpEkXfVZl0r7LDLG4nNiySq2Sk+GynAO00PaZ3oaSmRsXHw+EUB6kVhVyKqjzE2Gl9VuzRtei4eRfNQAEvLKEwiawaiSkSm91yfqmYhspazWwFJW7IWvtCJQNK8T4Cz5Qcd5aZzdb7cv6Ubo7U+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OGa3VQ+4; arc=none smtp.client-ip=198.175.65.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=pozEgjl6/0VaPEG+PzdaFfq/s+xiqh7qxw+agIuUJHdIG8UGfKBMFBWadjr1wI458qbkSwGu5L3yUDq//NacBGcTnq0zc4bbWL/cM9H4E/NZTParX9NU0jx2olHhv2UU8Q93/+hpETRx03dP8/EwYQRUUFo9P5ZGd7YIZhVOfPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QcbxM6gz; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739455158; x=1770991158;
+  t=1739455161; x=1770991161;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=euBBwIvDl7tFCURaGUj3PZmj5h1cb0chWSv5lC4FY7A=;
-  b=OGa3VQ+41bSQNmXGf9mCtwOiuJj9X+H08BpuYLdGxOn5yQqnK+4F3KdY
-   1mtPovJBu7niUknlYoA6w7CtDG05RCrjXjbDvJzsDKPtulRQ1PxvUyWaZ
-   ANoknf6biXf8H3ixSnA11dVCNPLXrk3JhY4Db1pNKpjaRS0Uy5MRp+e1T
-   px1MwvPcEAhcI7iDcXpGAiPcVmmlzmFajCivC6+wbbpQUo+x6nUruuD8c
-   9ZWNyRUy+7XpGgR12Xi89TnrvSTGN3K+7H8WhxAfpqq5+3L3PlEGL5yOV
-   7yL3DDuQlrO7jRo/MSIOPmCHwStt10cu/S3GghOonPA7mY3ZhhgIXlGxA
-   g==;
-X-CSE-ConnectionGUID: vcx5dfXkTgq0+GhUJWc9Mg==
-X-CSE-MsgGUID: FOtI2ojXQDmSp45Sv+y/pQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40189093"
+  bh=M1wZSTlysra8qn4RUhjimztIhsfk5rrbCEkwkFbEduw=;
+  b=QcbxM6gzLdZcDa3Cj95Tdky/avqRrgx9NQPOUgmETW/gRwBzaGIi1Oi3
+   i/darvnPpVVe7HMpRzl5FtEDDUjQOYtJtapaqLfnqR+FJm2lcevuz1uJw
+   +0ZWeFreuxu8xqVZX7WvafUV8Xde4T2ZLtPBBiOWhEXNiqJ6GKKA50Q0R
+   ccAyrPWZqRDSZ+xX3Huqf11aHCAl5VQBhFiEAoCnKDgX3x9704C/Ycy8U
+   PrdQocdZOTlAP1Qx3u9COe+aEERzDlvgEKpxnkagvQA0HL+0eokb1LfTX
+   YbXipuv+oz0V8za9YWhfWylxogz1YERizmZq/kZOjlYlR/B9XOJyYAdBb
+   Q==;
+X-CSE-ConnectionGUID: ktMyIf2jSxadjndoJt1k5g==
+X-CSE-MsgGUID: tty55IUPQGiRTP0rAEm5/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43807187"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40189093"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:16 -0800
-X-CSE-ConnectionGUID: tHRhaz9eRf6DnqbU8OsLZQ==
-X-CSE-MsgGUID: I2OxGvF3TRyCM+nntBIXpw==
+   d="scan'208";a="43807187"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:20 -0800
+X-CSE-ConnectionGUID: QT0KT4bSRIu59xZB+6WNGQ==
+X-CSE-MsgGUID: gVufrTrsREyvbArL7qnigw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="118157960"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 13 Feb 2025 05:59:13 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 99C9C1FD; Thu, 13 Feb 2025 15:59:11 +0200 (EET)
-Date: Thu, 13 Feb 2025 15:59:11 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Kenneth Crudup <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-Message-ID: <20250213135911.GG3713119@black.fi.intel.com>
-References: <20250210210502.GA15655@bhelgaas>
- <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+   d="scan'208";a="118236766"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:17 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiZkI-0000000BBEX-1KDE;
+	Thu, 13 Feb 2025 15:59:14 +0200
+Date: Thu, 13 Feb 2025 15:59:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, hvilleneuve@dimonoff.com, arnd@kernel.org,
+	geert+renesas@glider.be, robert.marko@sartura.hr,
+	schnelle@linux.ibm.com, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] serial: tegra-utc: Add driver for Tegra UART
+ Trace Controller (UTC)
+Message-ID: <Z636stK76iRkubEV@smile.fi.intel.com>
+References: <20250213125612.4705-1-kkartik@nvidia.com>
+ <20250213125612.4705-3-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+In-Reply-To: <20250213125612.4705-3-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi,
-
-On Mon, Feb 10, 2025 at 10:17:47PM -0800, Kenneth Crudup wrote:
+On Thu, Feb 13, 2025 at 06:26:12PM +0530, Kartik Rajput wrote:
+> The Tegra264 SoC supports the UART Trace Controller (UTC), which allows
+> multiple firmware clients (up to 16) to share a single physical UART.
+> Each client is provided with its own interrupt and has access to a
+> 128-character wide FIFO for both transmit (TX) and receive (RX)
+> operations.
 > 
-> The setup is fairly simple (once I'd figured out the failure mode):
-> 
-> - Have an ASMedia 246x NVMe-to-USB4 housing (with NVMe drive) attached to
-> the system via my TB4 dock (CalDigit TS4, but I've had it happen with a Dell
-> dock as well (either with the drive mounted, or not) when I suspend
-> 
-> - Resume with the drive disconnected (i.e., I've gone from home to the
-> office).
+> Add tegra-utc driver to support Tegra UART Trace Controller (UTC)
+> client.
 
-I see this is fairly normal use-case (sans the disk I guess). Steps to
-follow are then something like:
+LGTM now, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-1. Boot the system, nothing connected.
-2. Connect CalDigit TS4 (PCIe tunnel is enabled by the UI) to the host Type-C port.
-3. Connect ASMedia NVMe to CalDigit downstream Type-C port (PCIe tunnel is enabled by the UI).
-4. Verify that the NVMe is visible (lspci, lsblk).
+-- 
+With Best Regards,
+Andy Shevchenko
 
-The topology looks like below:
 
-  Host <- TB -> CalDigit TS4 <- TB -> NVMe
-
-5. Suspend the system (close the lid).
-6. Unplug the CalDigit TS4.
-7. Resume the system (open the lid).
-
-Expectation: system wakes up just fine.
-Actual behavior: system crashes and burns.
-
-Do you BTW, unmount the filesystem before you suspend?
-
-> It doesn't happen every time, and for some crazy reason elapsed time between
-> suspend and resume seems to make it more likely to happen. Plus it seems
-> directly attaching the drive (i.e., no dock in between) doesn't cause
-> resumes to fail.
-
-It would be good to see the dmesg output (with thunderbolt.dyndbg=+p) with
-these connected, even without suspending so see if there is anything
-missing. Since it is Dell system I would expect they have tested this in
-Linux pretty well so probably we don't see anything weird there.
-
-I have similar here (not the same devices though) so I can try on my end if
-this repros.
 
