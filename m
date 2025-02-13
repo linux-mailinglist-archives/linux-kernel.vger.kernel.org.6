@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-512144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE2CA334BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:33:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D24A334C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085A2166B34
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245821888A5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A39B81AC8;
-	Thu, 13 Feb 2025 01:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD648633F;
+	Thu, 13 Feb 2025 01:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs.org header.i=@ozlabs.org header.b="Nu1khmJb"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Dt2Qll0r"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16091A29A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAE01A29A;
+	Thu, 13 Feb 2025 01:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739410396; cv=none; b=B0om/vr+Lb+Xr5RXryOdEc4I6kO+UcZuHno93Z1HhPiS8nMjFyBnxxBSBLei1TlxUt1ZFHJDmc9HMwyzDLOSHJvpl5LI/yCxRMpCPNelNpK5PZoG9Z7Xs7VTq5GgDVJCeisUn0aEAG9dlOEeY/5ebReYfCid6kP8DpevZvOdZFQ=
+	t=1739410510; cv=none; b=lCAW44SEGLt6HjqhBobNB+G2fYHHtpACJObhBKmDqzhn8lywRkQWaRWT1D9qvpuQ6eWgbcEylHd8+j5Bs5ibXQe4UhjCoc+IIXxi06SvAGvnfaBpPmlWoRhv7b0zHhx4RITGD4ddnkaG0wmRnn5TVFKFKQDn0Tqt1WvRACVGTg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739410396; c=relaxed/simple;
-	bh=NvZbc79tmoA4Z330iQvo+kQeIxym98tc3NIyEQSAXsc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kc7LfzHY6bOQJE2fuh2Xs93zj2mi4K90hMC0fOhm3uPzDWd0d5ybZV7fWmfSHU+vqCen3jIJJy9xRZ0pkhE3o8nv5C6kPdGvvxiPMcA+os2A6pm9GBvtnpOwz0Iiu0QULCvbnQ3jNlLBx2la7YqK5S5yKJU2DZAIxL9/Ttq7eyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ozlabs.org; spf=pass smtp.mailfrom=ozlabs.org; dkim=pass (2048-bit key) header.d=ozlabs.org header.i=@ozlabs.org header.b=Nu1khmJb; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ozlabs.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ozlabs.org;
-	s=201707; t=1739410391;
-	bh=NvZbc79tmoA4Z330iQvo+kQeIxym98tc3NIyEQSAXsc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Nu1khmJbE9/annnaiBiWNDxwALKhf+chDyLE2L/txj9RcneLWny8rnV26JqSLQbFS
-	 ftvxesaDv1QdigXCCSrNiclaH9+lrslYM0ai0w1aiG3eMmycmdwewM/rWMSFKn1oKz
-	 rhY4k3+5dviG41FAdzHKmrr0CbQ7ynvr0ZHdLyL5oBfUpT2AFBBl8iKJo2PR9vSlC6
-	 7a4Ok2YE8bsm/VrdGiSLkIz7C4GZI0gLvkERhw1bTPkXdnWscEgqz2jopXZKIKvpZ+
-	 tissJqvTeZ05i6tXwm8Ld8feWa6Cn0iWdS+pN+5tADuP0r/ic4/q5vlhv9FZ1bOMUw
-	 EmUrGFMrJHRQQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ytd3q1P21z4wyh;
-	Thu, 13 Feb 2025 12:33:11 +1100 (AEDT)
-Message-ID: <7771db0e45a7152f42cbb45423ff9cca9a95dfd8.camel@ozlabs.org>
-Subject: Re: [PATCH] MAINTAINERS: change maintainer for FSI
-From: Jeremy Kerr <jk@ozlabs.org>
-To: Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, joel@jms.id.au, alistair@popple.id.au, 
-	linux-fsi@lists.ozlabs.org
-Date: Thu, 13 Feb 2025 09:33:10 +0800
-In-Reply-To: <20250212170827.1477102-1-eajames@linux.ibm.com>
-References: <20250212170827.1477102-1-eajames@linux.ibm.com>
+	s=arc-20240116; t=1739410510; c=relaxed/simple;
+	bh=7VGU4GfhPMqJEXler7778/nCovI5qCQgVoJqnQCQB0k=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OJkhuK0ayGFx3Gxq1VSh+VP5ZUwqTgzRKp40Vs74ourh0agEuzeBKRrnpZK0Dvy/VXHIwK7k6wAyiDwFFsku2gXdppar2/4xDjO28lz5RQCeSzpK+h1kZt1GN/M2GSqyt5iWUsmwV+nxVFjyOj6OiPceNAC13A8sXMNF32RX44g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Dt2Qll0r; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1739410506;
+	bh=7VGU4GfhPMqJEXler7778/nCovI5qCQgVoJqnQCQB0k=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=Dt2Qll0rbSoLUxnB0twbir6+FHpnuwPZEw8dZgzabM1BDg+KUDwwQcVYlTuaikOnZ
+	 SGgGTMO0TFLCJqvj044vDNGvijq11/Pm8Te9g86797aGwPePKFY0pQnseRcVH8qgMp
+	 Z//+afmjw9kXgkHxYCanUP+CukG217Kj//LdRx/rGVBLECQAbGcOEQys4prUg+mtWW
+	 GBdnKgf8Onu4LQJR44+chpQhPq49jydIXQGUoVVeGloOlTpXoPoKFGbWd3hu8iEVeI
+	 pNF3ribb00h9rECGOuNm/+HDM3sd2bErTVPglhvMODJK093Uvz1HeIr411vwXRR0Ae
+	 V+Wm6iVtQLjsA==
+Received: from [192.168.68.112] (203-173-7-184.dyn.iinet.net.au [203.173.7.184])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7D1B37576E;
+	Thu, 13 Feb 2025 09:35:05 +0800 (AWST)
+Message-ID: <5d84475dc07c43fada8f3e10169739d57348eaa4.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2] ARM: dts: nuvoton: Align GPIO hog name with bindings
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Avi Fishman <avifishman70@gmail.com>, 
+ Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+ Patrick Venture <venture@google.com>,  Nancy Yuen <yuenn@google.com>,
+ Benjamin Fair <benjaminfair@google.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,  openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Thu, 13 Feb 2025 12:05:02 +1030
+In-Reply-To: <bdd7b203-ccb3-453b-ae91-32f257fc909f@kernel.org>
+References: <20250116090047.87499-1-krzysztof.kozlowski@linaro.org>
+	 <bdd7b203-ccb3-453b-ae91-32f257fc909f@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -65,24 +68,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi Eddie,
+On Wed, 2025-02-12 at 21:36 +0100, Krzysztof Kozlowski wrote:
+> On 16/01/2025 10:00, Krzysztof Kozlowski wrote:
+> > Bindings expect GPIO hog names to end with 'hog' suffix, so correct
+> > it
+> > to fix dtbs_check warnings like:
+> >=20
+> > =C2=A0 nuvoton-npcm750-runbmc-olympus.dtb: G1A_P0_0: $nodename:0:
+> > 'G1A_P0_0' does not match '^.+-hog(-[0-9]+)?$'
+> >=20
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >=20
+> > ---
+> >=20
+> > Changes in v2:
+> > 1. Rename rest of the nodes I missed.
+> > ---
+> > =C2=A0.../boot/dts/nuvoton/nuvoton-npcm730-gbs.dts=C2=A0 |=C2=A0 12 +-
+> > =C2=A0.../nuvoton-npcm750-runbmc-olympus.dts=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 120 +++++++++-----
+> > ----
+> > =C2=A02 files changed, 66 insertions(+), 66 deletions(-)
+> >=20
+>=20
+> Any comments? Can this be merged?
 
-> Due to job transitions, both Joel and Jeremy can no longer maintain
-> the FSI subsystem. I will take over.
+Joel was taking NPCM SoC patches through the BMC tree. I'll pick this
+up. We should probably update MAINTAINERS so they don't get lost.
 
-Sounds good, thanks. Given Joel, Alistair and I no longer have hardware
-access, would it make sense to remove the R: entries completely?
-
-[I'm happy to do keep an eye on patches, but my usefulness would be
-limited to cursory review]
-
-Either way:
-
-Acked-by: Jeremy Kerr <jk@ozlabs.org>
-
-Cheers,
-
-
-Jeremy
-
+Andrew
 
