@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-513277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62996A34844
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:46:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E45A34829
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8564416BA3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1B01892118
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3D91FF1DF;
-	Thu, 13 Feb 2025 15:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFBE20100E;
+	Thu, 13 Feb 2025 15:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljt/AJ5u"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gHi5+LjJ"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4328419E975
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF421CEEBB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739460972; cv=none; b=Fmlg0O30JbFU4fafSOZSCuLZ7JEGTbZBE2g5lqmFBqWqQ3GP2xtEVF+dUu9FTJ7shiARdbTtfPe1E762T9nH416Eg3LVeOals11Tez8hYUnrm9L5TYQH3bTUAWoasrj+K71/sG387hOTHv2vWsDLoWBC4AqCk6r3Ui2rWvHpsfE=
+	t=1739460981; cv=none; b=jOtu5gNQPgh49MJReZiuF9+ObEmHHVBHLLM7aLpLU5oKpAPWbmb0Df7tU+fn+Odc2yRdaexGe0ucnwYa/MkVk3xRwzpMSqyN9Algt+S9znkVRc1XrV87tCj5EPfWoPQyiXy4ceekNkSsRFtPUYkhE/YcbmMyiq9VQWTrOoIg9hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739460972; c=relaxed/simple;
-	bh=nhl36UTqE0LW4DCJcT4lmamCR8RcofmmaoyPku3b5fI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5Cr1qditFYeEFnZHpY55f4mjOlSjdu3MTgsnqstsm9y2aEyHxvpubqfN3UikMYz4VniYO1D8D3t9gqBtw514A1T3ebcgWscmuuiiGQ9MXEoVsnG8cpwax4gsfFwD4GwBQCPrK7F9g2StwtDGyKb1OAAhoDtRGHKZmoFewA1ymM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljt/AJ5u; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dd935a267so807329f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:36:09 -0800 (PST)
+	s=arc-20240116; t=1739460981; c=relaxed/simple;
+	bh=rUUmr1qKa0raoRIrehordGqRHzgfGvgm6PX24wnH2XI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X6U0BjIpkTH7sJEyPG9d6MAoQUuOTeGxoPDXWMBPGbZRjgTm++bSmHhDlyKZUSMhMNj6LFGP1G21zhoTqOTy0L8PC1/X+C5gB1R3/4fLa6D2g5bCKEVMaQi+JwTAdrmiob+fp2BsgL/e7DRd+a8ifP3Q8taveGvWN4SLBTo3PE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gHi5+LjJ; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-ab39f65dc10so126026766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:36:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739460968; x=1740065768; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4IcXbcGrIKkvklFTibYCnGdgsV2fdSKmU8Z5nD/hPYI=;
-        b=ljt/AJ5uf3m+RJ693VCCy7MHLQD9iyBL8cS1QAewVZ/jc1upo9ALybW28kLBQ6K2bb
-         tkPXSnUmwGlxW27p4eK47oq6FrAz1ttOZWT/eXxCEEXroFqT31o/YhJJJC6kiakXn+tv
-         /EtQDIBsB4BQT1UQnNICCS5M9oWoAHpW3r2yZSruC4kIJ5b6rDXpb4ODwj/cwu9USFMz
-         GXS/hgeKxGeU4pu7UVc/5SY61ACIDaohCPOZjp956HAMRpmJ+ws+G3CEZBOUNPr4cx+p
-         neglNEmMF24GQjdahQnLX4oj8BOCIorlHI3naLarUdZhbH5Z1RgyKPiZPXCDztEAzhwO
-         rFYg==
+        d=google.com; s=20230601; t=1739460977; x=1740065777; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yY1niH8bXpIvQxfdtYMW2hEB9nSt1maMeFqvo9y07nE=;
+        b=gHi5+LjJ7N5vxzSNkNrM+6Ugu2Jj/m1kWQlmxkhSZFgOmKWUCoqawpPRM0W7rcTUl/
+         zqc9gt6LRHY6WGm3vBkcs3RvyLs+QThYHg8Ye6VHrs0sKHP4FzQqXtIdknlJ9hwPh5Tr
+         0NZtc2/8LynfTEMHERNmSVAF2QZfcQkLkiBU9VgOVeSM+w0rYAzDDJfvpwv7OzEf3gIh
+         qVfXty4YEcQSFXJ3CNt9vbV3R2GX3iH6Sankf2dValhDeCPLmu0LkKV/AKAPpjolRa1V
+         uqXXDIL+Viy2nxIzzsst/RcHahIRFZqwk4G/jGnZJvzkXzn4anOHQ3dSwvKukJg9GUF8
+         xjiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739460968; x=1740065768;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4IcXbcGrIKkvklFTibYCnGdgsV2fdSKmU8Z5nD/hPYI=;
-        b=tPEawZFl4pcIQG88HAm0GVtEcgbTVXn8l4ryaUHnRh6vzrhzxwDEsxdW7kMOeUDNUl
-         74awgdI76hL4Tjo9Lbfg6wpCKVltFafRnan9pKKfSj7yDVgG3X/7RnVnozup35jo2c3c
-         zSKL+fbVdhdkxXNOquXpKx/hNPLPI+9POZNuvqr4cbcye4ps50BYhxhct8OX39hiNRnG
-         PVLVPF48vedJBjV5yprYDK2YyK2HwkANC3C3ICIyHjau7KNIeSJ6yI93HD5pwQx1JjYW
-         7K1gznhGTBTIq7YTRRfO9dFvOC7brAbTtML7X7DvSqmi5QOKJdOuxgc6E0O+rB0Ea5hQ
-         znXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdxq9FcOzagMjFElDlpOSUyAFtWmMPdUNupHrnt97TyIqslG/arTVwa75Dc88BjKYYQkK8kCvSD7u+JcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yype6MyFj+3BiTH3L/3ile6KW/X2Ag5pKaQyp+UW8i/3BpO6NO/
-	nrEW28of/8Ob684KgtXFOrGD7qVaI1NdCEm/gw046Y/HQ2sUVfmB
-X-Gm-Gg: ASbGncv+7oeCNeSfOi5P7HwU4Wy9clLNnz2UypEHA2SltEW+fI0ivPYSXZwA2uR7blM
-	1tKYsRMZay8OwRngZqRoqUNa6QV3/hVKnk3qfZdNXd3gQ5NrLRmSTT59aFPxvq7ZJ6upYvJxYK6
-	xsu0dFBlyy1jLyhSkbfGioNNwZaOqzD640wGOd/XpqDFu99ErA83xsGkV5Lug9bFtEhCjaIANrH
-	bgyIMgyz6rldaSbdtl9b2D80eO37OyASkNxxk8ngchx/7lKCDz639qCbnMTHOBkEg9I54JHq4KF
-	Q8w+T+rYt6U6ouw=
-X-Google-Smtp-Source: AGHT+IGSGpgSdvmbWbgThw8kS11u5smsNhtdHae1iKQRr9jaVX3eewQTbXi+1AvJUCh2KKRudVkMkw==
-X-Received: by 2002:a05:6000:2a5:b0:385:fa3d:1988 with SMTP id ffacd0b85a97d-38dea259847mr7583799f8f.8.1739460968248;
-        Thu, 13 Feb 2025 07:36:08 -0800 (PST)
-Received: from fedora ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa1esm2154028f8f.100.2025.02.13.07.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 07:36:07 -0800 (PST)
-Date: Thu, 13 Feb 2025 16:36:06 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/15] drm/vkms: Extract vkms_config header
-Message-ID: <Z64RZu4HdoBOzroM@fedora>
-References: <20250211110912.15409-1-jose.exposito89@gmail.com>
- <20250211110912.15409-6-jose.exposito89@gmail.com>
- <Z636vaJLmJ9RGI6L@louis-chauvet-laptop>
+        d=1e100.net; s=20230601; t=1739460977; x=1740065777;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yY1niH8bXpIvQxfdtYMW2hEB9nSt1maMeFqvo9y07nE=;
+        b=eLr8xfTdxrhEQAdt22cHQnax319CPx0iRI87z/tTmjTyl1+tqEeYS4v88/DB+MbvN+
+         ZpvLcs1zWmxq+E8XnGsuSxdIRxTgy/Oev/wEWGaMGMyuwXPjheOSCQT7Obc8lmQq0Q52
+         FbcSb5GCxaJihLt+Nphna3//gD+1207ebT6e1STqo+Q6o1Z/ClVlqk0G0+xh2CT9a0Sz
+         c5986nbNCdF25cRMOblQOC/Hc0aAM3zWoKHwsUuwRfYC/J77PPn3o4oLbxgNpUAmn60h
+         pbH2/wb+zqMK/XhfNLVYVzG9q+uMl3/zaU0lCBGxpP1hRhCXVaHGE5j5K/ldrVGr9d3s
+         6YgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH4Akc1m0WGAAt0tB9SNUw8JM04U2O1U4l9XOZm7whT7oQ/hpfKCGWBqCQzErheJnQorC1xIP7Ns7sago=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAxYnkP3Hab3D4XxU/DFjl9yyymYrCYT2TIMydX/K0rxTe5tCH
+	fLDsvsro5Yzif94WDK3rmj656zALdW0dssLq5ZgofgU1zJzVrm/ywZUqsOFoX4KE6Aa7FNaGb5f
+	9TecMrA==
+X-Google-Smtp-Source: AGHT+IGNnBpl+X2qDDZkAqsl1W2uWg0qrWcC8MQ3Hvm0c9bsOTfUcxx6R0kvEkmQWiyS31Y+rdhEd3ntyWG8
+X-Received: from ejkk8.prod.google.com ([2002:a17:906:32c8:b0:ab7:bfda:26f5])
+ (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:730f:b0:aae:fd36:f511
+ with SMTP id a640c23a62f3a-aba501a9d85mr376452566b.47.1739460976992; Thu, 13
+ Feb 2025 07:36:16 -0800 (PST)
+Date: Thu, 13 Feb 2025 15:36:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z636vaJLmJ9RGI6L@louis-chauvet-laptop>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.502.g6dc24dfdaf-goog
+Message-ID: <20250213153615.3642515-1-qperret@google.com>
+Subject: [PATCH] KVM: arm64: Fix alignment of kvm_hyp_memcache allocations
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>
+Cc: Keir Fraser <keirf@google.com>, Ben Simner <ben.simner@cl.cam.ac.uk>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 13, 2025 at 02:59:25PM +0100, Louis Chauvet wrote:
-> On 11/02/25 - 12:09, José Expósito wrote:
-> > Creating a new vkms_config structure will be more complex once we
-> > start adding more options.
-> > 
-> > Extract the vkms_config structure to its own header and source files
-> > and add functions to create and delete a vkms_config and to initialize
-> > debugfs.
-> > 
-> > Refactor, no functional changes.
-> > 
-> > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> 
-> This does not build in module, can you add this in the next version?
+When allocating guest stage-2 page-table pages at EL2, pKVM can consume
+pages from the host-provided kvm_hyp_memcache. As pgtable.c expects
+zeroed pages, guest_s2_zalloc_page() actively implements this zeroing
+with a PAGE_SIZE memset. Unfortunately, we don't check the page
+alignment of the host-provided address before doing so, which could
+lead to the memset overrunning the page if the host was malicious.
 
-Interesting. I have "CONFIG_DRM_VKMS=m" in my config and it compiles here.
+Fix this by simply force-aligning all kvm_hyp_memcache allocations to
+page boundaries.
 
-What do you have as module? CONFIG_DRM_VKMS_KUNIT_TESTS=m?
+Fixes: 60dfe093ec13 ("KVM: arm64: Instantiate guest stage-2 page-tables at EL2")
+Reported-by: Ben Simner <ben.simner@cl.cam.ac.uk>
+Signed-off-by: Quentin Perret <qperret@google.com>
+---
+ arch/arm64/include/asm/kvm_host.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll rebuild every patch to make sure there are no errors.
-
-Thanks for the heads up!
-Jose
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 7cfa024de4e3..d9db6dfbad09 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -100,7 +100,7 @@ static inline void push_hyp_memcache(struct kvm_hyp_memcache *mc,
+ static inline void *pop_hyp_memcache(struct kvm_hyp_memcache *mc,
+ 				     void *(*to_va)(phys_addr_t phys))
+ {
+-	phys_addr_t *p = to_va(mc->head);
++	phys_addr_t *p = to_va(mc->head & PAGE_MASK);
  
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-> index 152b2ecd6aef..42caa421876e 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.c
-> +++ b/drivers/gpu/drm/vkms/vkms_config.c
-> @@ -4,6 +4,7 @@
-> 
->  #include <drm/drm_print.h>
->  #include <drm/drm_debugfs.h>
-> +#include <kunit/visibility.h>
-> 
->  #include "vkms_config.h"
-> 
-> @@ -17,11 +18,13 @@ struct vkms_config *vkms_config_create(void)
-> 
->         return config;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(vkms_config_create);
-> 
->  void vkms_config_destroy(struct vkms_config *config)
->  {
->         kfree(config);
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy);
-> 
->  static int vkms_config_show(struct seq_file *m, void *data)
->  {
-> 
-> With this:
-> 
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+ 	if (!mc->nr_pages)
+ 		return NULL;
+-- 
+2.48.1.502.g6dc24dfdaf-goog
+
 
