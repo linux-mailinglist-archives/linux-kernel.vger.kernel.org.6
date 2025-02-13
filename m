@@ -1,107 +1,168 @@
-Return-Path: <linux-kernel+bounces-513618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F51A34C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01614A34C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB9016BB2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714DF188CD92
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC080241684;
-	Thu, 13 Feb 2025 17:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACF523A9B6;
+	Thu, 13 Feb 2025 17:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NByeFNW2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQSCv8KV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4586023A9AE;
-	Thu, 13 Feb 2025 17:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C602063E1;
+	Thu, 13 Feb 2025 17:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469345; cv=none; b=ix8q3YxsjA3CQ3grRnmnK3OIu5JC5diQV0lIoKkXuw8CCPG4vpeeiH5XRQ88iM35AfnyNXWMEMgueiolSfumFXinr6bbKR3KlHZ5p7s3GqvDsC9n6cPw3qaDvB70qfMiL+sFSdiL3qKOmLDwy1i2UMVp6gZYeZlNZ7kE8rm79w8=
+	t=1739469393; cv=none; b=j0xwBA79IopgiOLzYX3ddJiSUWlG26nJ6EOfX8yGbgNhVMwY31telahMeBEn+1ECGZ8NugBNz4+Gv1CVe/VuOSUMMCDpf99yblyMZWXYbssjZsXZnUdIVtPPOJdPSa51gy60DM9bSG/v7nLKTV15iU7X8x/kZGJ8TIw1Vbc4KN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469345; c=relaxed/simple;
-	bh=/PNpSbgiLWG9bLBWpPA4uVPKXUWGs7jN8qVFPTrfZTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ar1Hn/hqVCDEbZSfKs13fV2SKQ4UG4+dsj6k29Wksev8kpNmjWQuiUHSRvfCRZksaOpp1wVEsOjRClDr8T/7Zf+ddS64s7ykPlt9OhJTLUcEQNrbEx2S0hP1GHiL74izRfm/WDEc9r2M+qELZm23mgiScbia5ZfNVr3NN6gFxFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NByeFNW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B818C4CEE5;
-	Thu, 13 Feb 2025 17:55:42 +0000 (UTC)
+	s=arc-20240116; t=1739469393; c=relaxed/simple;
+	bh=zu6XwvxRWfLZhbU+NQRFBvpihnBJdGqYI23riG2Rn94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJ98NOwgqDr7LMkjKwJcBYoMvGJ1kwZr7Z7YG+RzfOESA+k5eWN9YC3hGk1izSaQik7r0/AYKy8w2PpZfYUJ07p27cTaEEZkQUnIdP9/qrnGeWwPcbB2HefzI9AtcqKNmIr3OlawSnXxYmK/uvMy/p+O8i1/4WFw+FL6yqHl2vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQSCv8KV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B50CC4CEE7;
+	Thu, 13 Feb 2025 17:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469344;
-	bh=/PNpSbgiLWG9bLBWpPA4uVPKXUWGs7jN8qVFPTrfZTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NByeFNW2HNKG+Or1s9nAySboW83Ggzz0b+NOyt3FmxlW23UICV1ytS5xRVjQzEeeg
-	 4iJNSm97SoPyNAqfp5g1tVZ65hAFPAlED3c3qWsS4JwMZVlZaZPWHQc9EGpClUrkbA
-	 m/KKbHaNX/khx5EIpDIOHfXYOVdk0Ge+R3ZgWuKN7qbe4To0dT57j+dLf/I7tdjfSx
-	 j1LTxDNehVvEnZ+G1qUDffvJuopixRbVWOwUFno1lKLsmEhdPclEUeJFauTXsJn46I
-	 ufcJp0CbcbIcVx3oN0eZhgAeXsoEHxgx5PuyBh+K7P//iB8HlrciSItjHlYy+yXj12
-	 FG5rYbSe8wVDg==
-Date: Thu, 13 Feb 2025 10:55:39 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] kbuild: userprogs: fix bitsize and target detection
- on clang
-Message-ID: <20250213175539.GB2756218@ax162>
-References: <20250213-kbuild-userprog-fixes-v1-0-f255fb477d98@linutronix.de>
- <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
+	s=k20201202; t=1739469392;
+	bh=zu6XwvxRWfLZhbU+NQRFBvpihnBJdGqYI23riG2Rn94=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DQSCv8KVcTJfUl5QCqlb1aPWdpHME3qfxr2BivoYk1VpoYEyZwZG/Pk73Czq+skEu
+	 oKKCCD/YJjrItngdSK0146kMNHvpo0YkaPBs2GSQF3YY6jsjbUj1Qmd70VJ6dqs9vx
+	 GnfnwHfUjdQv3ruq2pVdRmm4oX3pqAjgUizmTb1TfQrk/IxgTI5462HQQ/XYudg5mb
+	 VCo1ECe0H2RaG8JXOcuWkm5I9C6hXAOnFQT2ZcXtvOPnPWmZjv3wiqBa2zd6tVfEYI
+	 d9oguZ7nRm0jEJEWZSDpj+xYvjAVtW1lSsY6CbbfbEt+iq73hNwrnGSNtLsgDGZlj+
+	 FOUMn/2lxIQfA==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d9837f201aso4621005a12.0;
+        Thu, 13 Feb 2025 09:56:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIfLZpIQshHB/gOvxJ0PCHLzF0trXLMiqv6HOS+uL9/mbPUS0rh7eOPnZFciinGxAC9g1CjSOSauG9@vger.kernel.org, AJvYcCV3zT8XUB2FMuEjBsRFJJFArZpb7/f2LoWnCNRRv300sNjbqyMqGAMCWY2vVemfOvoObOwRHDyknsZm@vger.kernel.org, AJvYcCVu+zJUXoWtTP3teq1jQdJIYmg32b4s6+4tIjoA0V+SkmCJnbtGu2q47dQY7TcIyim7T5kJqQXctWn4HK1d@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB0tnBpmMLm42Vh1PaH9KBAilQQLdTD3qIMaOIBYGGREUV62Da
+	/TM6XWR9GNhHrpWGyAX5l9RploI3QeKhmky4DsZww2B6Nwh6t83RWQ97ZEjfGhWdanIPAljuYkg
+	lvzXF/Jfj7mRHVvB40f4RXpoh9g==
+X-Google-Smtp-Source: AGHT+IHTeCe7WowntB6fs9UcxQzrutTfaoimXk6oistVCJvHwS4uUZuMCGZVr/Sa699J0jyvKNfSQ6RXSzn0q5mmsec=
+X-Received: by 2002:a05:6402:2755:b0:5de:a972:8c7 with SMTP id
+ 4fb4d7f45d1cf-5decba4bf54mr3906685a12.5.1739469390719; Thu, 13 Feb 2025
+ 09:56:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
+References: <20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io> <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
+In-Reply-To: <20250211-pcie-t6-v1-7-b60e6d2501bb@rosenzweig.io>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 13 Feb 2025 11:56:19 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
+X-Gm-Features: AWEUYZnNrV6AeqfriIoD2NAW7TvpHv4rdwKYJwl0y8ybKwiiM0n7mQqePyuXunc
+Message-ID: <CAL_JsqJ-sYsy-11_UiEKrKok49-a-VJUvm3vBGbpu9vY3TKLUw@mail.gmail.com>
+Subject: Re: [PATCH 7/7] PCI: apple: Add T602x PCIe support
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
+	Marc Zyngier <maz@kernel.org>, Stan Skowronek <stan@corellium.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 03:55:17PM +0100, Thomas Weiﬂschuh wrote:
-> scripts/Makefile.clang was changed in the linked commit to move --target from
-> KBUILD_CFLAGS to KBUILD_CPPFLAGS, as that generally has a broader scope.
-> However that variable is not inspected by the userprogs logic,
-> breaking cross compilation on clang.
-> 
-> Use both variables to detect bitsize and target arguments for userprogs.
-> 
-> Fixes: feb843a469fb ("kbuild: add $(CLANG_FLAGS) to KBUILD_CPPFLAGS")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
+On Tue, Feb 11, 2025 at 1:54=E2=80=AFPM Alyssa Rosenzweig <alyssa@rosenzwei=
+g.io> wrote:
+>
+> From: Hector Martin <marcan@marcan.st>
+>
+> This version of the hardware moved around a bunch of registers, so we
+> drop the old compatible for these and introduce register offset
+> structures to handle the differences.
+>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 > ---
->  Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 9e0d63d9d94b90672f91929e5e148e5a0c346cb6..bb5737ce7f9e79f4023c9c1f578a49a951d1e239 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1120,8 +1120,8 @@ LDFLAGS_vmlinux += --orphan-handling=$(CONFIG_LD_ORPHAN_WARN_LEVEL)
->  endif
->  
->  # Align the bit size of userspace programs with the kernel
-> -KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS))
-> -KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CFLAGS))
-> +KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
-> +KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
->  
->  # make the checker run with the right architecture
->  CHECKFLAGS += --arch=$(ARCH)
-> 
-> -- 
-> 2.48.1
-> 
+>  drivers/pci/controller/pcie-apple.c | 125 ++++++++++++++++++++++++++++++=
+------
+>  1 file changed, 105 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller=
+/pcie-apple.c
+> index 7f4839fb0a5b15a9ca87337f53c14a1ce08301fc..7c598334427cb56ca066890ac=
+61143ae1d3ed744 100644
+> --- a/drivers/pci/controller/pcie-apple.c
+> +++ b/drivers/pci/controller/pcie-apple.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/msi.h>
+> +#include <linux/of_device.h>
+
+Drivers should not need this...
+
+> +const struct reg_info t602x_hw =3D {
+> +       .phy_lane_ctl =3D 0,
+> +       .port_msiaddr =3D PORT_T602X_MSIADDR,
+> +       .port_msiaddr_hi =3D PORT_T602X_MSIADDR_HI,
+> +       .port_refclk =3D 0,
+> +       .port_perst =3D PORT_T602X_PERST,
+> +       .port_rid2sid =3D PORT_T602X_RID2SID,
+> +       .port_msimap =3D PORT_T602X_MSIMAP,
+> +       .max_rid2sid =3D 512, /* 16 on t602x, guess for autodetect on fut=
+ure HW */
+> +       .max_msimap =3D 512, /* 96 on t602x, guess for autodetect on futu=
+re HW */
+> +};
+> +
+> +static const struct of_device_id apple_pcie_of_match_hw[] =3D {
+> +       { .compatible =3D "apple,t6020-pcie", .data =3D &t602x_hw },
+> +       { .compatible =3D "apple,pcie", .data =3D &t8103_hw },
+> +       { }
+> +};
+
+You should not have 2 match tables.
+
+> @@ -750,13 +828,19 @@ static int apple_pcie_init(struct pci_config_window=
+ *cfg)
+>         struct platform_device *platform =3D to_platform_device(dev);
+>         struct device_node *of_port;
+>         struct apple_pcie *pcie;
+> +       const struct of_device_id *match;
+>         int ret;
+>
+> +       match =3D of_match_device(apple_pcie_of_match_hw, dev);
+> +       if (!match)
+> +               return -ENODEV;
+> +
+>         pcie =3D devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>         if (!pcie)
+>                 return -ENOMEM;
+>
+>         pcie->dev =3D dev;
+> +       pcie->hw =3D match->data;
+>
+>         mutex_init(&pcie->lock);
+>
+> @@ -795,6 +879,7 @@ static const struct pci_ecam_ops apple_pcie_cfg_ecam_=
+ops =3D {
+>  };
+>
+>  static const struct of_device_id apple_pcie_of_match[] =3D {
+> +       { .compatible =3D "apple,t6020-pcie", .data =3D &apple_pcie_cfg_e=
+cam_ops },
+>         { .compatible =3D "apple,pcie", .data =3D &apple_pcie_cfg_ecam_op=
+s },
+>         { }
+
+You are going to need to merge the data to 1 struct.
+
+And then use (of_)?device_get_match_data() in probe().
+
+Rob
 
