@@ -1,48 +1,74 @@
-Return-Path: <linux-kernel+bounces-512424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DA2A33922
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:46:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D86A33920
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC83188BA6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BB83A4AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E09720B213;
-	Thu, 13 Feb 2025 07:46:19 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746A520ADEE;
+	Thu, 13 Feb 2025 07:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="XBvW1UTo"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9310B13CF9C;
-	Thu, 13 Feb 2025 07:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5F3BA2D;
+	Thu, 13 Feb 2025 07:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432778; cv=none; b=HvspYv14SvmMl06ec8uKAx0dV59afsXmYjluHAxWETTC5NozDboG5P5cbqwYJqOuNrQEcLx5AZjTCFzaUwfO9XI828FhyxN++wxKQ5xfZ6Ha2FdH7K86XCxO309He+lVSWcxLnNwpQhlTMBXGnwemA40Cs97LyaXGYWBM4l1ul4=
+	t=1739432775; cv=none; b=l6VDpwTTxk4eA3K0ZGqAIofPw1x6p6JZUGnvsatcK2wvVbVKHYdS/Dy4+Nq8AWPfAfKFZW9WCVEqddbyn6Lbo2YBDBSWSoV+pcUgXybSXDMXMuHudv7KEzd776g8POdGfpeXAJP0NRX3y+v89gXA5gjvCpLsC7Esm3NU4O7HzIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432778; c=relaxed/simple;
-	bh=ZEB+/Qwgtx3GsqdRg27UH3TiVHs76hawzz/h1eaSTp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZYxQ0UOJqOMKaliflRocvMcT9XWqeC8wQoT5fhUOH6wibNJXN/uVW+RAfI51rqFSGvf2281G1QZSGbE/6M674HWlPXIK/G8pHXuSz2KlqbG0sNkcFwfnlI5pu3PXs4lc6C4kNRdCpkQy3dfR9loKSldFVKvEVsu6SWU2uOcHe6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowACnr287o61n96ziDA--.2695S2;
-	Thu, 13 Feb 2025 15:46:05 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: vulab@iscas.ac.cn,
-	cezary.rojewski@intel.com,
-	Julia.Lawall@inria.fr,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] ALSA: hda: Add error check for snd_ctl_rename_id() in snd_hda_create_dig_out_ctls()
-Date: Thu, 13 Feb 2025 15:45:43 +0800
-Message-ID: <20250213074543.1620-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1739432775; c=relaxed/simple;
+	bh=CyxknvaOEiYikBdtLM4EukNbG0aZA3Bdf2y1lR0exbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ue8tgQ1zD5lTsp4jbhHNbvjgCgYvqElJ84lziaQYpKv20l5mMb0V2gTQeS5j8VVhGAHrSKeWUShuS3U5fqsFvyg5NpEAm3G9uebzHehSy1WdQKWlcJ83/fv3vXU/GQ5QXHwMHFQJsPUFe3Xk76RIFz0MlaCn6BY1+WLNT7X+P+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=XBvW1UTo; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739432772; x=1770968772;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=D0cHoAmJCFDzyca0BXBQoIJ2zkSks/18FUWOioWw6J8=;
+  b=XBvW1UTohz/FytYaKzBC2XGkfJyRuj4jvVMGCYtoCVoELvbGa7jQjmmZ
+   53SO0aso//tu87Zj92A/mkGZdptYs7EzCZLZdlGWfsQ7r3ZCrdCsYabJz
+   YBgfA7HyzvSfeWBU5ayhwWsv4FDuYXj8e2QyAsMaOQI2rA+7azA3TyyXW
+   k=;
+X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
+   d="scan'208";a="22181104"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:46:10 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:54910]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.59:2525] with esmtp (Farcaster)
+ id eea6667e-3084-43a4-adc2-eeb014de29d1; Thu, 13 Feb 2025 07:46:09 +0000 (UTC)
+X-Farcaster-Flow-ID: eea6667e-3084-43a4-adc2-eeb014de29d1
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Thu, 13 Feb 2025 07:46:02 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Feb 2025 07:45:57 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.co.jp>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <ushankar@purestorage.com>
+Subject: Re: [PATCH net-next v3 3/3] arp: switch to dev_getbyhwaddr() in arp_req_set_public()
+Date: Thu, 13 Feb 2025 16:45:46 +0900
+Message-ID: <20250213074546.15468-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250212-arm_fix_selftest-v3-3-72596cb77e44@debian.org>
+References: <20250212-arm_fix_selftest-v3-3-72596cb77e44@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,52 +76,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACnr287o61n96ziDA--.2695S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4xCw1xCryfAFy8ZrWfGrg_yoWfZFb_Wr
-	4kZw4xWa4UAwn7Kr43JrnYvFnag34xZFy0grs2qF48J393Gr4Yqr45Kw1qkFWkWa48GF13
-	CrnrW3yq9ryxKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUjBWlPUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRAMA2etn6wN2QAAs7
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWB004.ant.amazon.com (10.13.139.164) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Check the return value of snd_ctl_rename_id() in
-snd_hda_create_dig_out_ctls(). Ensure that failures
-are properly handled.
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 12 Feb 2025 09:47:26 -0800
+> The arp_req_set_public() function is called with the RTNL lock held,
+> which provides enough synchronization protection. This makes the RCU
+> variant of dev_getbyhwaddr() unnecessary. Switch to using the simpler
+> dev_getbyhwaddr() function since we already have the required rtnl
+> locking.
+> 
+> This change helps maintain consistency in the networking code by using
+> the appropriate helper function for the existing locking context.
+> 
+> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Fixes: 5c219a340850 ("ALSA: hda: Fix kctl->id initialization")
-Cc: stable@vger.kernel.org # 6.4+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- sound/pci/hda/hda_codec.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Fixes: 941666c2e3e0 ("net: RCU conversion of dev_getbyhwaddr() and arp_ioctl()")
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
-index 14763c0f31ad..46a220404999 100644
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -2470,7 +2470,9 @@ int snd_hda_create_dig_out_ctls(struct hda_codec *codec,
- 				break;
- 			id = kctl->id;
- 			id.index = spdif_index;
--			snd_ctl_rename_id(codec->card, &kctl->id, &id);
-+			err = snd_ctl_rename_id(codec->card, &kctl->id, &id);
-+			if (err < 0)
-+				return err;
- 		}
- 		bus->primary_dig_out_type = HDA_PCM_TYPE_HDMI;
- 	}
--- 
-2.42.0.windows.2
+I still think patch 2 & 3 should be posted to net separately.
 
+Documentation/process/maintainer-netdev.rst
+
+---8<---
+the ``net`` tree is for fixes to existing code already in the
+mainline tree from Linus
+---8<---
 
