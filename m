@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-512284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597BBA3370C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:53:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49AAA336E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F071516628F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31844188B57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3B72066D6;
-	Thu, 13 Feb 2025 04:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E7F2063EB;
+	Thu, 13 Feb 2025 04:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QYaM+0B3"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWiEU3VL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F4B11CAF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EBF205E2E;
+	Thu, 13 Feb 2025 04:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739422388; cv=none; b=fQCAB4K52j2FASNteCYp4+gT381Rsbnub4wqU4sEdnU8bHTOqXjDIMwmd0Lrf2JkT/6by9RHgtbLRwF++qsP6q6kmxdhcQV3ezWnnURyAnvpYGggclyapjdNha/Vh8QH+OdosAOwMVdzeinYT3/iG4RuFV5pxZYELF5nLNsO+ZE=
+	t=1739420855; cv=none; b=MGYDAbUXutxoZMex7QCIlQvPNTQZa18ngRtQpvXarYyjeLNBNGouuV1ziFXLQoqz0IinV2WJNgfjXB2MS/WPWdZCxSVWSCwgkNerkts39JTKCp6q2PxvRakq/tz/S9JS/Z9F3YZ1LxRm6xuvG5w8zew4zSu7mHP/wxNguUnJilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739422388; c=relaxed/simple;
-	bh=btuuGAHN0yAwnIydrz9luogYPZ/niqFXv+Dh58AVsiA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=pJnG/9GMS21CKzEFmyuuzFJkK9PLHshCM8bN+6Us9hMpFqF7R6Hk5TISXU4wIhJokbXUgLcsVeUNmKnAxVKUekNyq9r3JKrrAU6mXhznXF/8UK7bjYNeMM5J8O/5P6ZiCg780g9ahl0UoCe5CXiSclkNKwyGTXuVHIAbaaN2Ql0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QYaM+0B3; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250213045303epoutp01ddfce1736369d7df07f00c2fe45cecf4~jq3ErCW0Z1737217372epoutp01v
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:53:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250213045303epoutp01ddfce1736369d7df07f00c2fe45cecf4~jq3ErCW0Z1737217372epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739422383;
-	bh=xYvadG4L9+uv4OCgstcXZU5FpbGiAZUr3Y8c/BN7ytA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QYaM+0B3j9pjY1TchDSszmCugRCkRiXQwm5wy3XOQifa1U+f5EuYFZON/x+IbH6UP
-	 EC8tRPtMHM05s0b3x5o+yqShojCi7Zd/rIbFesI8sRnAoCWFaK/r0NDNKnreHxkI9Q
-	 LBHnp6fGUCwOiVw6aavtMjtvOlbVYvGLsRWqbKbI=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20250213045303epcas5p19913f8bc0828c7d50bca0a2cd6c5c8fa~jq3ETvyCN2465924659epcas5p1E;
-	Thu, 13 Feb 2025 04:53:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4YtjVR1cyBz4x9QN; Thu, 13 Feb
-	2025 04:53:03 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250213042240epcas5p3c1ac4f97ebf36054abdccc962329273d~jqciYgmG22763127631epcas5p3Q;
-	Thu, 13 Feb 2025 04:22:40 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250213042240epsmtrp1b8af1613244bed48759d265c9aeff182~jqciXf9BW0967609676epsmtrp1E;
-	Thu, 13 Feb 2025 04:22:40 +0000 (GMT)
-X-AuditID: b6c32a28-9a4e470000005bc0-f0-67ad738f2189
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BA.C6.23488.F837DA76; Thu, 13 Feb 2025 13:22:39 +0900 (KST)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250213042237epsmtip16ed2c89451a5e8a08fdec56d33b3a3b1~jqcftTghr3115331153epsmtip1M;
-	Thu, 13 Feb 2025 04:22:37 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-	WeitaoWang-oc@zhaoxin.com, Thinh.Nguyen@synopsys.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, h10.kim@samsung.com, eomji.oh@samsung.com,
-	alim.akhtar@samsung.com, thiagu.r@samsung.com, muhammed.ali@samsung.com,
-	pritam.sutar@samsung.com, cpgs@samsung.com, Selvarasu Ganesan
-	<selvarasu.g@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH v2 2/2] usb: xhci: Fix unassigned variable 'bcdUSB' in
- xhci_create_usb3x_bos_desc()
-Date: Thu, 13 Feb 2025 09:51:26 +0530
-Message-ID: <158453976.61739422383216.JavaMail.epsvc@epcpadp2new>
-X-Mailer: git-send-email 2.46.0.windows.1
-In-Reply-To: <20250213042130.858-1-selvarasu.g@samsung.com>
+	s=arc-20240116; t=1739420855; c=relaxed/simple;
+	bh=EVHodv6A6OesPZihltvxpFqG5LLHT1ysJmum3ERHX50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIIZjUPjLnXUw5FUxgQKF6JGyIdusBHeBIFw6bZqeZJr+XPUObIuwKWJVrYfKG7xnVSOTjUiD4vRaViCttFan7VR+73Gs9z8ukT/NdxxnzWC6of/MIWotIB4TqQOeV7h0Jlre/nWfT2gwiBL1mIJ15idxBT7Jy/9bj+appnxfJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWiEU3VL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739420853; x=1770956853;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EVHodv6A6OesPZihltvxpFqG5LLHT1ysJmum3ERHX50=;
+  b=JWiEU3VL/iOqjTPtzRDW64+bKhBPRPod0nwuOUmxtLtr2FCmsRi/0XVY
+   td2qCfDHjh7jSOJ8BKxDVyChzK59KIrCKZImD7wZA7B/rlDcbm6g19wfS
+   WPTH5FaByInAM39Zeh6SbpV80DenoCE7LyqfuNq6wdXdV9fcZOP608Ka8
+   AqsY0tg99XXvKWffZstIFRAWpoGSwZfk4VQMwzT4p2TzO6eOxg2Mm1/1P
+   oayZMdLHIBXV7uQp/eImIB5EnQQRpx42piHnVr7wopSjyiPFKYTq6aHdv
+   Evun37whTaPrGwIWowvwcXcRaAaf4MGwQ2kdSrrj5odNmhtDNZMAU4opc
+   A==;
+X-CSE-ConnectionGUID: 43e2jfigS3KascU3V6bwFQ==
+X-CSE-MsgGUID: guseOe8IQASk1L6w7S2asg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39970242"
+X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
+   d="scan'208";a="39970242"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 20:27:33 -0800
+X-CSE-ConnectionGUID: TUD2K17MR3W67fq6LzJf8Q==
+X-CSE-MsgGUID: TpLnuZ1JTFKyvNCIbr/Yrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113930223"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 12 Feb 2025 20:27:30 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiQox-0016Vj-02;
+	Thu, 13 Feb 2025 04:27:27 +0000
+Date: Thu, 13 Feb 2025 12:27:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Robert Budai <robert.budai@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
+Message-ID: <202502131226.6CIBwO2c-lkp@intel.com>
+References: <20250211175706.276987-4-robert.budai@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJTre/eG26wef3NhZvrq5itXgwbxub
-	xctDmhZ3Fkxjsji1fCGTRfPi9WwWf29fZLW4+/AHi8XlXXPYLBYta2W2aN40hdXi/IsuVotP
-	R/+zWjy7t4LN4sjyj0wWCzY+YrRY0QxUsmrBAXaLRz/nMjkIeyze85LJY//cNewefVtWMXps
-	2f+Z0ePzJjmPX7dusQSwRXHZpKTmZJalFunbJXBlXL/+mLWgib3ix82VTA2MH1i7GDk5JARM
-	JJbMmsjUxcjFISSwm1HiyJU9UAlpidezuhghbGGJlf+es4PYQgJfGSXWrDbsYuTgYBMwlHh2
-	wgakV0RgA6PE1TOzWUEcZoFbTBIH/35gBmkQFkiWWPf9FhuIzSKgKjFvwgYmEJtXwEpi++sz
-	UMs0Jdbu3QMW5xSwlrjYeQFqmZVE/9bVjBD1ghInZz5hAbGZBeQlmrfOZp7AKDALSWoWktQC
-	RqZVjJKpBcW56bnJhgWGeanlesWJucWleel6yfm5mxjBcaWlsYPx3bcm/UOMTByMhxglOJiV
-	RHglpq1JF+JNSaysSi3Kjy8qzUktPsQozcGiJM670jAiXUggPbEkNTs1tSC1CCbLxMEp1cA0
-	cQvPtUoVDuMHs9VrBGt++7+YYX7YeO2Rzlrn89HyF+ZWV1l4Pjw36UZffqfNcwW2m7dU9R5a
-	Ns7q03wyn8PUmfusp+hPletK+qzO/luU15zneKlxa73mb+6XzjLOgjfeVboa7DYVerorMdvP
-	MWDBvlV8tkLrLwZ6C2somMprmm82mML859BW8XmJUus/XObqmcQ8IcqlWbG08MN3uzIHabm5
-	j4/m/Yy1O3Qv7PzF3Nz3AUde2O6asyDTy7n4cOgyvpmTHjOJhiewip4Knrz13s/96gZ6uV6P
-	g31W1hjWNJ++1B+Z5+rEMrXjbv7xVMaitZHHPmx6v6nvXEDhd9O7RcVNm3MZVBdHGNUf6FVi
-	Kc5INNRiLipOBADwarM9GgMAAA==
-X-CMS-MailID: 20250213042240epcas5p3c1ac4f97ebf36054abdccc962329273d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250213042240epcas5p3c1ac4f97ebf36054abdccc962329273d
-References: <20250213042130.858-1-selvarasu.g@samsung.com>
-	<CGME20250213042240epcas5p3c1ac4f97ebf36054abdccc962329273d@epcas5p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211175706.276987-4-robert.budai@analog.com>
 
-Fix the following smatch error:
-drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc() error: unassigned variable 'bcdUSB'
+Hi Robert,
 
-Fixes: eb02aaf21f29 ("usb: xhci: Rewrite xhci_create_usb3_bos_desc()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
----
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 9693464c0520..5715a8bdda7f 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -39,7 +39,7 @@ static int xhci_create_usb3x_bos_desc(struct xhci_hcd *xhci, char *buf,
- 	struct usb_ss_cap_descriptor	*ss_cap;
- 	struct usb_ssp_cap_descriptor	*ssp_cap;
- 	struct xhci_port_cap		*port_cap = NULL;
--	u16				bcdUSB;
-+	u16				bcdUSB = 0;
- 	u32				reg;
- 	u32				min_rate = 0;
- 	u8				min_ssid;
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on linus/master v6.14-rc2 next-20250212]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Robert-Budai/iio-imu-adis-Add-custom-ops-struct/20250212-040235
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250211175706.276987-4-robert.budai%40analog.com
+patch subject: [PATCH v7 3/6] iio: imu: adis: Add DIAG_STAT register
+config: sh-randconfig-001-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131226.6CIBwO2c-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131226.6CIBwO2c-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502131226.6CIBwO2c-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/imu/adis.c: In function '__adis_check_status':
+>> drivers/iio/imu/adis.c:319:42: error: passing argument 3 of '__adis_read_reg_16' makes pointer from integer without a cast [-Wint-conversion]
+     319 |                                          status_16);
+         |                                          ^~~~~~~~~
+         |                                          |
+         |                                          u16 {aka short unsigned int}
+   In file included from drivers/iio/imu/adis.c:19:
+   include/linux/iio/imu/adis.h:225:43: note: expected 'u16 *' {aka 'short unsigned int *'} but argument is of type 'u16' {aka 'short unsigned int'}
+     225 |                                      u16 *val)
+         |                                      ~~~~~^~~
+
+
+vim +/__adis_read_reg_16 +319 drivers/iio/imu/adis.c
+
+   298	
+   299	/**
+   300	 * __adis_check_status() - Check the device for error conditions (unlocked)
+   301	 * @adis: The adis device
+   302	 *
+   303	 * Returns 0 on success, a negative error code otherwise
+   304	 */
+   305	int __adis_check_status(struct adis *adis)
+   306	{
+   307		unsigned int status;
+   308		int diag_stat_bits;
+   309		u16 status_16;
+   310		int ret;
+   311		int i;
+   312	
+   313		if (adis->data->diag_stat_size)
+   314			ret = adis->ops->read(adis, adis->data->diag_stat_reg, &status,
+   315					      adis->data->diag_stat_size);
+   316		else
+   317		{
+   318			ret = __adis_read_reg_16(adis, adis->data->diag_stat_reg,
+ > 319						 status_16);
+   320			status = status_16;
+   321		}
+   322		if (ret)
+   323			return ret;
+   324	
+   325		status &= adis->data->status_error_mask;
+   326	
+   327		if (status == 0)
+   328			return 0;
+   329	
+   330		diag_stat_bits = BITS_PER_BYTE * (adis->data->diag_stat_size ?
+   331						  adis->data->diag_stat_size : 2);
+   332	
+   333		for (i = 0; i < diag_stat_bits; ++i) {
+   334			if (status & BIT(i)) {
+   335				dev_err(&adis->spi->dev, "%s.\n",
+   336					adis->data->status_error_msgs[i]);
+   337			}
+   338		}
+   339	
+   340		return -EIO;
+   341	}
+   342	EXPORT_SYMBOL_NS_GPL(__adis_check_status, "IIO_ADISLIB");
+   343	
+
 -- 
-2.17.1
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
