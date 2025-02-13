@@ -1,91 +1,215 @@
-Return-Path: <linux-kernel+bounces-513807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D896A34EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:59:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3AFA34EE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F6718905BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF7616D28C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7EE24BBEB;
-	Thu, 13 Feb 2025 19:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BA424BBFF;
+	Thu, 13 Feb 2025 20:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LHWbAqQs"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8zSjxz7"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB2924A076;
-	Thu, 13 Feb 2025 19:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD7024A07E;
+	Thu, 13 Feb 2025 20:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476787; cv=none; b=WF6UG1i1EYonhHxc85K43v+0RkIRH67cbyVmHdhJdmlZltrnH+Q+qst4ZzV0vwEn1aoIc0kQReZv8FeNaQ0FHFiY5OD7oWNXMjTe+yYH3Ai3vHH6FFd9EKyO2vz0wN6Fj4/xvHPBfUUWZnHnhgifW4zEjFG7mI1NRrY5UV5SKRM=
+	t=1739476802; cv=none; b=I1q/7MznZvhIDJEhZCp3dS21AlKqznkSQmdK1hzY48FrPUD+8W113OJbtll412Yyedy0Ir9Sof2tRmWdyPImcWuI+f/CTrSigNrseF7/DV0Yc15sSHUHW3atBROm1KqsWGXloVI+Eorl6KnGK5OEkGDR1sJ70hHVOzvIemRsj3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476787; c=relaxed/simple;
-	bh=3Sowh1r0kWd47yhxz2HEHH0eC2Ler+ksBAJZHwtixVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XqA3LjT8mCEec9YoRG69eHetvNhTmq/9I/X2QzyRoUwT5FXqNv3fZPICKalq9WXm1tey0lgBZAmW6VXDEcO1nwxbk8sO13ZvTzf4Bhtg2i2KedO3PTHBRvXq62Q32ovrGAfyr5gx0OpA2YpjDuLIGajgO4NX2GQYoiGbbeQRqcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LHWbAqQs; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=RZlI4HGYXokTX4zqJIJa74/QdyZEoxz2ZxabCm7uDZY=; b=LHWbAqQsNs8Xcff5WtgJG4/ujL
-	qWk/OzDcgaCgtZisxmAGVbkKlgq7ZYX1sDUxg9MweYPa+fQaY/GLYuUTpfODMeSvLCgd96Dxr8tSN
-	Bd5xru0cOVZfwBDAXsIasqAN3rIehsObeqHTrmdczlS6Grw8k97DSbN6p8rTQ+sbdg9s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tifN4-00DqVU-Hb; Thu, 13 Feb 2025 20:59:38 +0100
-Date: Thu, 13 Feb 2025 20:59:38 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add self test supported in
- this module
-Message-ID: <6501012c-fecf-42b3-a70a-2c8a968b6fbd@lunn.ch>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-3-shaojijie@huawei.com>
+	s=arc-20240116; t=1739476802; c=relaxed/simple;
+	bh=6A/tJxO/Tj0qrEAzN+EeAFZ+ugKQgrcetXab+VVZsmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LCFc9l7kd+BBQCyHV6dV5fxaI2czqD/9taEygvpxiI6DVGl8xtzj5100FIj0rLKr+AbDq815ptR6ls4WBH7PK5kHjUp8cJr56Uoa7tiBPAhO27lFd1wwgDSZFb5yE6bgiBDX5tyJuPtSOlVGwM6jAj8Izj4AgGJt5uHKVWws63E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8zSjxz7; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86718541914so1259583241.1;
+        Thu, 13 Feb 2025 12:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739476800; x=1740081600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6A/tJxO/Tj0qrEAzN+EeAFZ+ugKQgrcetXab+VVZsmc=;
+        b=T8zSjxz7+B6HdUxt5CPO09QQQABYMbYKSs7C83No36cqGWBR63gneX65fZToIQsekc
+         V8qn6vbiSampkwOYTPSjBqBBOMsKYsdAgGxDg966+7Xi9AI2AERZDC0CiOAxkJUE2TGn
+         XZoUcmP2tQg5KiZBi9LWJA+t1E5nYOSj2SBLbs64rvAhwMUb9CPt/fp38xHxEptfdHQW
+         5X7SQQow4F4JLpNUBfFiEsBZ2R+AH5H2nkCZsKXHLrEQ/jZoxqMoXXNI5BaxeqCR+zGY
+         q9DOVUMpMhZ5PmoRyMY3MiGTPjtA0nbbnm9nzTltFfCx1U9gbv3ja36ROVm5Hn7Lx5wH
+         EWhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739476800; x=1740081600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6A/tJxO/Tj0qrEAzN+EeAFZ+ugKQgrcetXab+VVZsmc=;
+        b=guvPmqGcCvJhXbgBK+g/0nO3Fc6V4NgLo2wKo6Jb/ptEQRR5pK2xhBi9uMdfgDog2w
+         pEk4RX5+k51NEY1jd4I3sllPQ3Pyuk3PNnbbZ/7tEs8oy2Tyib8qXixY8ooXuOifoITX
+         GsgvDVxX/TW8C/5SQMXTTdFaWfRrFDVct/319Fka07qjYRaQS+ou5wRRenQTvhBc0U2G
+         RQBBKtnhJJxhpbRmyWRuFChpdQEgYBgJOsBVbnqSx6TSJbrJvUC/8DFUDF7DgCjXm32t
+         wCJRx4lKP0J2StDdhNLFw8Zm8g0WTW3vAutNDpj44Fy9N1k4dhWcrt3VTfxqedUFP+Lv
+         hzmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9ne+1VHHmI6GNV8bMjwi9Bjw+jScYniUnobcGXvxp8+jCPmbkqt0p8C0HrjCcq4LO/+E79fQoubUYUBFPls=@vger.kernel.org, AJvYcCWe9YMHrX2hLPzt9eGaLryyCcSZrH1pYqRPFwAwMk9t4noQHNlVB/M1FV4uyc6GCFhy8+jESxUEfkIFWXe/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcFX+pOQFb/aCu9GwQ05MCDiNE4NNxty1cpptgKvT9hxYGhXej
+	mHibm30dP2eJj/zXxSvO1Plp/rONtmUHl3Wnd1VXGojy+kqSH+z9+8Xi8sIY7v840JWzORbJJeU
+	pmmCMWVocjRBiioQyFcYpQDk4AG4=
+X-Gm-Gg: ASbGnctOoSAMiZXD4o6JSIZJYRhq+BLBb2Ss+yFKODQppm/ky25Niyigna1X8FWRn2v
+	cOmN9INFOQ/+8KoSVIYvGa58mU9sjAGTZzUkm3Wnsw32r7JQ1AZ/YDLtqhNntqoSGL6JloFT8Um
+	nJ9g7Sn1mkpRkTKAAJNUj2y/FpUdCv
+X-Google-Smtp-Source: AGHT+IEO95cRIlLgN+fMIWfpOsxsRmwWcSyCKFAAZvLEYT9kzpmLQTi+dGvN2ibBkJmLjNqJiRwihu5i9SGiHmeJcgE=
+X-Received: by 2002:a05:6102:3f11:b0:4bb:c5ad:af1a with SMTP id
+ ada2fe7eead31-4bc04fba69dmr3372366137.7.1739476799879; Thu, 13 Feb 2025
+ 11:59:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213035529.2402283-3-shaojijie@huawei.com>
+References: <20250212032155.1276806-1-jeffxu@google.com> <b114f48a-a485-4ebd-9278-6c62a1f33d9c@lucifer.local>
+ <CAKbZUD0TAX8F9kDCEEvGSbcegDD4GLyra3ewtxncBbs45WJZ3g@mail.gmail.com> <7545d5eb-a16e-4cc8-a9e3-5431be01aade@lucifer.local>
+In-Reply-To: <7545d5eb-a16e-4cc8-a9e3-5431be01aade@lucifer.local>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Thu, 13 Feb 2025 19:59:48 +0000
+X-Gm-Features: AWEUYZnnvu0UeOQwhhCdIYitvKbnr-kOi8j-etdFPfc3PQhlVh6nUZJWVPm76sA
+Message-ID: <CAKbZUD3kaYEqQFU1TWfJWvtV02ESaMb0_ygadGgeAKo-b+GRcA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 0/7] mseal system mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org, 
+	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
+	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, hca@linux.ibm.com, willy@infradead.org, 
+	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, 
+	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
+	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org, 
+	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
+	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
+	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
+	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 11:55:24AM +0800, Jijie Shao wrote:
-> This patch supports many self test: Mac, SerDes and Phy.
-> 
-> To implement self test, this patch implements a simple packet sending and
-> receiving function in the driver. By sending a packet in a specific format,
-> driver considers that the test is successful if the packet is received.
-> Otherwise, the test fails.
-> 
-> The SerDes hardware is on the BMC side, Therefore, when the SerDes loopback
-> need enabled, driver notifies the BMC through an event message.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+On Wed, Feb 12, 2025 at 2:02=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> (sorry I really am struggling to reply to mail as lore still seems to be
+> broken).
+>
+> On Wed, Feb 12, 2025 at 12:37:50PM +0000, Pedro Falcato wrote:
+> > On Wed, Feb 12, 2025 at 11:25=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Wed, Feb 12, 2025 at 03:21:48AM +0000, jeffxu@chromium.org wrote:
+> > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > >
+> > > > The commit message in the first patch contains the full description=
+ of
+> > > > this series.
+> > >
+> > > Sorry to nit, but it'd be useful to reproduce in the cover letter too=
+! But
+> > > this obviously isn't urgent, just be nice when we un-RFC.
+> > >
+> > > Thanks for sending as RFC, appreciated, keen to figure out a way forw=
+ard
+> > > with this series and this gives us space to discuss.
+> > >
+> > > One thing that came up recently with the LWN article (...!) was that =
+rr is
+> > > also impacted by this [0].
+> > >
+> > > I think with this behind a config flag we're fine (this refers to my
+> > > 'opt-in' comment in the reply on LWN) as my concerns about this being
+> > > enabled in a broken way without an explicit kernel configuration are
+> > > addressed, and actually we do expose a means by which a user can dete=
+ct if
+> > > the VDSO for instance is sealed via /proc/$pid/[s]maps.
+> > >
+> > > So tools like rr and such can be updated to check for this. I wonder =
+if we
+> > > ought to try to liaise with the known problematic ones?
+> > >
+> > > It'd be nice to update the documentation to have a list of 'known
+> > > problematic userland software with sealed VDSO' so we make people awa=
+re.
+> > >
+> > > Hopefully we are acheiving the opt-in nature of the thing here, but i=
+t
+> > > makes me wonder whether we need a prctl() interface to optionally dis=
+able
+> > > even if the system has it enabled as a whole.
+> >
+> > Just noting that (as we discussed off-list) doing prctl() would not
+> > work, because that would effectively be an munseal for those vdso
+> > regions.
+> > Possibly something like a personality() flag (that's *not* inherited
+> > when AT_SECURE/secureexec). But personalities have other issues...
+>
+> Thanks, yeah that's a good point, it would have to be implemented as a
+> personality or something similar otherwise you're essentially relying on
+> 'unsealing' which can't be permitted.
+>
+> I'm not sure how useful that'd be for the likes of rr though. But I suppo=
+se
+> if it makes everything exec'd by a child inherit it then maybe that works
+> for a debugging session etc.?
+>
+> >
+> > FWIW, although it would (at the moment) be hard to pull off in the
+> > libc, I still much prefer it to playing these weird games with CONFIG
+> > options and kernel command line options and prctl and personality and
+> > whatnot. It seems to me like we're trying to stick policy where it
+> > doesn't belong.
+>
+> The problem is, as a security feature, you don't want to make it triviall=
+y
+> easy to disable.
+>
+> I mean we _need_ a config option to be able to strictly enforce only maki=
+ng
+> the feature enable-able on architectures and configuration option
+> combinations that work.
+>
+> But if there is userspace that will be broken, we really have to have som=
+e
+> way of avoiding the disconnect between somebody making policy decision at
+> the kernel level and somebody trying to run something.
+>
+> Because I can easily envision somebody enabling this as a 'good security
+> feature' for a distro release or such, only for somebody else to later tr=
+y
+> rr, CRIU, or whatever else and for it to just not work or fail subtly and
+> to have no idea why.
 
-Please take a look at the work Gerhard Engleder is doing, and try not
-to reinvent net/core/selftest.c
+Ok so I went looking around for the glibc patchset. It seems they're
+moving away from tunables and there was a nice
+GNU_PROPERTY_MEMORY_SEAL added to binutils.
+So my proposal is to parse this property on the binfmt_elf.c side, and
+mm would use this to know if we should seal these mappings. This seems
+to tackle compatibility problems,
+and glibc isn't sealing programs without this program header anyway. Though=
+ts?
 
-    Andrew
+>
+> I mean one option is to have it as a CONFIG_ flag _and_ you have to enabl=
+e
+> it via a tunable, so then it can become sysctl.d policy for instance.
 
----
-pw-bot: cr
+sysctl is also an option but the idea of dropping a random feature
+behind a CONFIG_ that's unusable by lots of people (including the
+general GNU/Linux ecosystem) is really really unappealing to me.
+
+--=20
+Pedro
 
