@@ -1,174 +1,147 @@
-Return-Path: <linux-kernel+bounces-513091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DB3A34160
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:10:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1E6A3416D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:11:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A187A5D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 655EE7A5275
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0420245016;
-	Thu, 13 Feb 2025 14:07:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47852222B3;
-	Thu, 13 Feb 2025 14:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30406221710;
+	Thu, 13 Feb 2025 14:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4/EjmP5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC9C281360;
+	Thu, 13 Feb 2025 14:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455643; cv=none; b=htUZBN0v208b7XwjiIIKKfuoUsasp/1vSL7d3igdIO87tBGOVGwRQDA1QXAajCDf4lmYsvU4yK4dVDWFhcXmElzCegFmEwGNoCqooi35BmA4YzDHRnMH+5aylAeQ4Wokn3Z6D64l8aopsHlk3C3U/3BfO1C/d88RmxI84zqlH6M=
+	t=1739455859; cv=none; b=Pv/mO6es6oMMY2ubEBGPqSMDOxiY0OvnhEaee764+AL1pNBLnNM5YiACcJAyec7GKigaxRRo2EdgKQ/CNXyX2foKv27JwGbqfv0gUSVPyxnCe9uU+Lp9WrqIxE/synZfamhnPRuaHWExXuprwigwlTNzGAJ9tDjydeIVKwW5hYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455643; c=relaxed/simple;
-	bh=ZXEIqVbXG564X53P+o//74YScKX9UeP3vYJ9OIagM5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dnGaQ2uSgNDeF1gV0ZSvnmvyh7p5rGUwElVoAqracSXRvELOueYZo+CVtXYovJHAG4BDFvD66hgOPL2KNjiYibO75HwTdg+wmUQiFVvDVPcRg+QMa/r3IJHwgYwmjkOBb0iwjTnzNKLw6b2O0goz9XdJ5TNzc+0IY3k7gFXRrwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F36CB16F3;
-	Thu, 13 Feb 2025 06:07:40 -0800 (PST)
-Received: from [10.1.30.41] (e127648.arm.com [10.1.30.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 027EE3F58B;
-	Thu, 13 Feb 2025 06:07:18 -0800 (PST)
-Message-ID: <8d147f4f-f511-4f44-b18e-2011b0fab17c@arm.com>
-Date: Thu, 13 Feb 2025 14:07:16 +0000
+	s=arc-20240116; t=1739455859; c=relaxed/simple;
+	bh=5ayFkGzSgHATsYNHDJUcvnqqtd8yZvVr8eovxy/IOis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qzMyiNk0sKTOlxknmoijFvtP5k1aSMksAODlwBGpYTvrNoJn0PH6Hq8cwmDDpJFPXq/yd4dlnvbQlcBHucle/m61x+uB0nUs+mN60nngNG99vdzGJ3RMOdGQGd2BmUOQN9KEdIe5nPDrXp//wg/Hyu43OvnRLjqa5K55ifFzFRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4/EjmP5; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739455858; x=1770991858;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5ayFkGzSgHATsYNHDJUcvnqqtd8yZvVr8eovxy/IOis=;
+  b=J4/EjmP5SkXJv7eI02UhKNJE7bYA572rPUtn3QhgDMZzqHM3w4qllpSA
+   uui4wE9b/0f5YYyNSFG2lfnn/qx1ivIg/62ZUpnIzMIvA4tnftVbra7yc
+   s1PJ2I/RynbdwmOWX9n0plOqDxRbXuRzWp+026P9RmhfIKcoY1iv+KOH/
+   qjiGjFKfHNnlaLo2WHf7miaQWFh4gu+uzIyGIttUD6F82V7k9S2ILEVje
+   3h8anOTivm082BBI4ee42A8akiBZznbuCs4Nv959RNyBRYd/tsQnG+tLy
+   zpdZ4NlSC2UHHg6vRDZmVCsO197ATXZ9P3M8+60k9JvnZW2PXvBGRP4wW
+   A==;
+X-CSE-ConnectionGUID: 8uhHfO2aSCi8uOhY4m0rdw==
+X-CSE-MsgGUID: cNT+s3ddRJeMns6Ia+gPbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40273338"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40273338"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 06:10:54 -0800
+X-CSE-ConnectionGUID: Fg6w4WWGQwiWwz3xKH3QUQ==
+X-CSE-MsgGUID: jHiuxOpcTsq10u94SUHpXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113815325"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 13 Feb 2025 06:10:48 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 431BF2CA; Thu, 13 Feb 2025 16:10:47 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v2 02/10] i2c: axxia: Use i2c_10bit_addr_*_from_msg() helpers
+Date: Thu, 13 Feb 2025 16:07:16 +0200
+Message-ID: <20250213141045.2716943-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+In-Reply-To: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
+References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH v1] cpuidle: teo: Avoid selecting deepest idle state
- over-eagerly
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, dsmythies@telus.net
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>
-References: <12630185.O9o76ZdvQC@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <12630185.O9o76ZdvQC@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/4/25 20:58, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> It has been observed that the recent teo governor update which concluded
-> with commit 16c8d7586c19 ("cpuidle: teo: Skip sleep length computation
-> for low latency constraints") caused the max-jOPS score of the SPECjbb
-> 2015 benchmark [1] on Intel Granite Rapids to decrease by around 1.4%.
-> While it may be argued that this is not a significant increase, the
-> previous score can be restored by tweaking the inequality used by teo
-> to decide whether or not to preselect the deepest enabled idle state.
-> That change also causes the critical-jOPS score of SPECjbb to increase
-> by around 2%.
-> 
-> Namely, the likelihood of selecting the deepest enabled idle state in
-> teo on the platform in question has increased after commit 13ed5c4a6d9c
-> ("cpuidle: teo: Skip getting the sleep length if wakeups are very
-> frequent") because some timer wakeups were previously counted as non-
-> timer ones and they were effectively added to the left-hand side of the
-> inequality deciding whether or not to preselect the deepest idle state.
-> 
-> Many of them are now (accurately) counted as timer wakeups, so the left-
-> hand side of that inequality is now effectively smaller in some cases,
-> especially when timer wakeups often occur in the range below the target
-> residency of the deepest enabled idle state and idle states with target
-> residencies below CPUIDLE_FLAG_POLLING are often selected, but the
-> majority of recent idle intervals are still above that value most of
-> the time.  As a result, the deepest enabled idle state may be selected
-> more often than it used to be selected in some cases.
-> 
-> To counter that effect, add the sum of the hits metric for all of the
-> idle states below the candidate one (which is the deepest enabled idle
-> state at that point) to the left-hand side of the inequality mentioned
-> above.  This will cause it to be more balanced because, in principle,
-> putting both timer and non-timer wakeups on both sides of it is more
-> consistent than only taking into account the timer wakeups in the range
-> above the target residency of the deepest enabled idle state.
-> 
-> Link: https://www.spec.org/jbb2015/
-> Tested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/teo.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -349,13 +349,13 @@
->  	}
->  
->  	/*
-> -	 * If the sum of the intercepts metric for all of the idle states
-> -	 * shallower than the current candidate one (idx) is greater than the
-> +	 * If the sum of the intercepts and hits metric for all of the idle
-> +	 * states below the current candidate one (idx) is greater than the
->  	 * sum of the intercepts and hits metrics for the candidate state and
->  	 * all of the deeper states, a shallower idle state is likely to be a
->  	 * better choice.
->  	 */
-> -	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
-> +	if (2 * (idx_intercept_sum + idx_hit_sum) > cpu_data->total) {
->  		int first_suitable_idx = idx;
->  
->  		/*
-> 
-> 
-> 
+Use i2c_10bit_addr_*_from_msg() helpers instead of local copy.
+No functional change intended.
 
-I'm curious, are Doug's numbers reproducible?
-Or could you share the idle state usage numbers? Is that explainable?
-Seems like a lot and it does worry me that I can't reproduce anything
-as drastic.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i2c/busses/i2c-axxia.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-I did a bit of x86 as well and got for Raptor Lake (I won't post the
-non-x86 numbers now, but teo-tweak performs comparable to teo mainline.)
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 48916cf45ff7..50030256cd85 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -255,11 +255,6 @@ static int i2c_m_rd(const struct i2c_msg *msg)
+ 	return (msg->flags & I2C_M_RD) != 0;
+ }
+ 
+-static int i2c_m_ten(const struct i2c_msg *msg)
+-{
+-	return (msg->flags & I2C_M_TEN) != 0;
+-}
+-
+ static int i2c_m_recv_len(const struct i2c_msg *msg)
+ {
+ 	return (msg->flags & I2C_M_RECV_LEN) != 0;
+@@ -439,20 +434,10 @@ static void axxia_i2c_set_addr(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
+ {
+ 	u32 addr_1, addr_2;
+ 
+-	if (i2c_m_ten(msg)) {
+-		/* 10-bit address
+-		 *   addr_1: 5'b11110 | addr[9:8] | (R/nW)
+-		 *   addr_2: addr[7:0]
+-		 */
+-		addr_1 = 0xF0 | ((msg->addr >> 7) & 0x06);
+-		if (i2c_m_rd(msg))
+-			addr_1 |= 1;	/* Set the R/nW bit of the address */
+-		addr_2 = msg->addr & 0xFF;
++	if (msg->flags & I2C_M_TEN) {
++		addr_1 = i2c_10bit_addr_hi_from_msg(msg);
++		addr_2 = i2c_10bit_addr_lo_from_msg(msg);
+ 	} else {
+-		/* 7-bit address
+-		 *   addr_1: addr[6:0] | (R/nW)
+-		 *   addr_2: dont care
+-		 */
+ 		addr_1 = i2c_8bit_addr_from_msg(msg);
+ 		addr_2 = 0;
+ 	}
+-- 
+2.45.1.3035.g276e886db78b
 
-Idle 5 min:
-device	 gov	 iter	 Joules	 idles	 idle_misses	 idle_miss_ratio	 belows	 aboves	
-teo 	0 	170.02 	12690 	646 	0.051 	371 	275
-teo 	1 	123.17 	8361 	517 	0.062 	281 	236
-teo 	2 	122.76 	7741 	347 	0.045 	262 	85
-teo 	3 	118.5 	8699 	668 	0.077 	307 	361
-teo 	4 	80.46 	8113 	443 	0.055 	264 	179
-teo-tweak 	0 	115.05 	10223 	803 	0.079 	323 	480
-teo-tweak 	1 	164.41 	8523 	631 	0.074 	263 	368
-teo-tweak 	2 	163.91 	8409 	711 	0.085 	256 	455
-teo-tweak 	3 	137.22 	8581 	721 	0.084 	261 	460
-teo-tweak 	4 	174.95 	8703 	675 	0.078 	261 	414
-teo 	0 	164.34 	8443 	516 	0.061 	303 	213
-teo 	1 	167.85 	8767 	492 	0.056 	256 	236
-teo 	2 	166.25 	7835 	406 	0.052 	263 	143
-teo 	3 	189.77 	8865 	493 	0.056 	276 	217
-teo 	4 	136.97 	9185 	467 	0.051 	286 	181
-
-At least in the idle case you can see an increase in 'above' idle_misses.
-
-Firefox Youtube 4K video playback 2 min:
-device	 gov	 iter	 Joules	 idles	 idle_misses	 idle_miss_ratio	 belows	 aboves	
-teo 	0 	260.09 	67404 	11189 	0.166 	1899 	9290
-teo 	1 	273.71 	76649 	12155 	0.159 	2233 	9922
-teo 	2 	231.45 	59559 	10344 	0.174 	1747 	8597
-teo 	3 	202.61 	58223 	10641 	0.183 	1748 	8893
-teo 	4 	217.56 	61411 	10744 	0.175 	1809 	8935
-teo-tweak 	0 	227.99 	61209 	11251 	0.184 	2110 	9141
-teo-tweak 	1 	222.44 	61959 	10323 	0.167 	1474 	8849
-teo-tweak 	2 	218.1 	64380 	11080 	0.172 	1845 	9235
-teo-tweak 	3 	207.4 	60183 	11267 	0.187 	1929 	9338
-teo-tweak 	4 	217.46 	61253 	10381 	0.169 	1620 	8761
-menu 	0 	225.72 	87871 	26032 	0.296 	25412 	620
-menu 	1 	200.36 	86577 	24712 	0.285 	24486 	226
-menu 	2 	214.79 	84885 	24750 	0.292 	24556 	194
-menu 	3 	206.07 	88007 	25938 	0.295 	25683 	255
-menu 	4 	216.48 	88700 	26504 	0.299 	26302 	202
-
-(Idle numbers aren't really reflective in energy used -> dominated by
-active power.)
 
