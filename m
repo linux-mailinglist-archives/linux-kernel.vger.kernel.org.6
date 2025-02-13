@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-513410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB7EA349F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3FEAA349D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28FAB172EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB5CC7A1B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0645B288C14;
-	Thu, 13 Feb 2025 16:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F73204C17;
+	Thu, 13 Feb 2025 16:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQVMx0NK"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KR8XVUU7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8E5288C2B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483C9288C39
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463503; cv=none; b=VLSUv44aywroqL7zQBo/kzQ/YXXP8/OcF7Ee55nnYOALjfxW2Wzcc94DcQ7JwWEWcWUrsoFDdhsTkbxZeNghJc/ujoAyo9tPtYI3GqI///PUEJGbwV5KJ80hqrX4wSSzBYhbNwkgXTJISRT/cMfOvQqx9zrR2sP0tek2HHpqa3Y=
+	t=1739463514; cv=none; b=B+KG8SF8uRRhqFDnwboqmCl/l/rDvFCdIrM/k/I/o90zpcjt0BUMAK61kBQxgfG6cV/C2ULJPlPXinaLW8vwAEXBl5tJxAYqH1/5Z2SLo93y/2iSwju62FXbtNe2OTRNXxNQJRGVR0qhM2mihdv80x/h+RWtohtOWBYjqOViucI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463503; c=relaxed/simple;
-	bh=8FRlYNJ3cuJXDSr7sQqOrKdEQqBSUZSSMCqz1zTh9uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oP5zaIkhnR42CbSt+tgHWmq5oxKhpgGDs7Ho4i+e/qfk7jmfKMqe5b878Hxd81EH9Vtlh5lcD3bN+xu+duMDneIeZsjNAeI2Y8ltdxe7uj0a3CNNz/SSw0wuxW/BI8xiwgZXgfF5opLLlYte00FuhSgmCEWT7qWP+RqxkonrjpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HQVMx0NK; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5450b91da41so868157e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:18:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739463500; x=1740068300; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=660cIh2qXJ+vc//CkK5JvvBCDsfnGT5N+OHMNTwvBmM=;
-        b=HQVMx0NKuFgz3rAMEmIvd0FgkQSxbwahkZzWaKUSlpuIJMXxLzD1iJoXeYAiu5XhY5
-         ydhpWQbA14nB2wP2HnbH4YLG25XQ8HLQl2NEZ9f+v5qXauNmaw90lG6FN22xD41GNVp1
-         3jRPbHczfy7CkaWMT/STi+CxWi6rko51yj/6qy30uVghqUEAAfY10ygvmJFnmF6jArAd
-         wf1FjTsgWaXoHZJ+JOpoPoDYk2EpzQwpR13qbclKcYY0fKQScWx7KY3lEbRy613eh6hj
-         KIUuII+IYmqf0SMSDWO33bxgV4tWMWwhCN3AJgLbgjof3Pi+T58Y8Wy7eVb5trdUOIqV
-         DfhA==
+	s=arc-20240116; t=1739463514; c=relaxed/simple;
+	bh=Vrn/4vwdmsdokkCuLMXfyT1nZ/jStbBCx0QhOmJ6E80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KIZAXk0HLi7q9pAEGE1AlUIlAoDrekybpbWjhlBawZIP0rjlb6utTlQHO740r9XVBJc6WIsrbRLN0piefXR38shqFrCAMhu7J1KsmPRiPwlZUYi0VjWS/sMi25am4BfWnRSa0zfD07QhAMDM/7z0cPPhwZcKtHyR7KejtTnOTaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KR8XVUU7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739463512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iKzjBSUkdHDLfZzf4JfzRiz+zb6GftCtkHoeHOHlZwU=;
+	b=KR8XVUU7DG7jD/zxb+lbHS5Yl7VFnGZpON/cBXmjqzj2KmxQOpQcMqX52jSqyCP8CWVgLV
+	NdAsg/reAu7LNebnW27WKUOi7k1UFnfbDJYzhiShkbzqsXFgeqU153YFy4GXTDqKQYH4fB
+	uCq6STplimvX5HkrXSLwTIewYHgueAU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-449-uAxN4IglNm2VFIyu96Bi6w-1; Thu, 13 Feb 2025 11:18:30 -0500
+X-MC-Unique: uAxN4IglNm2VFIyu96Bi6w-1
+X-Mimecast-MFC-AGG-ID: uAxN4IglNm2VFIyu96Bi6w
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4393e873962so5510845e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:18:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739463500; x=1740068300;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=660cIh2qXJ+vc//CkK5JvvBCDsfnGT5N+OHMNTwvBmM=;
-        b=LxrXRCbLyt3CLv7oiCHfhiD+RTdUa5Q7KDD0zpOzq6lFTDOzg1+plENhMJVb44FWet
-         LuOsygGRsamHXU8ZfKsePIcLfMQXSbury0yV0NX82dyy4R+LVaAtwLcblR1DuA3Ch20H
-         94H4VX16Y6ll+7ZId5+WOKlrhcS35n95OdbchYkhsyV0vu7plIE1ePXxhnNJHJBJYCgy
-         zZKSXrGj4ejB3p6X59PzVC8xmraaUraCRfcmVVMi5M0QOM1talFyyaTBQQ+D9xlJpCLT
-         dlP+rk2I7k4shRYzrNhxTxHsRkAbH2sqXcIjCO0FvnChy5xuzmqXb1pdi22q4K0buIXj
-         byuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNBK8MFbD/o3E5gFKVfsMlq/NzqAxa9LrvW21gMJvBlBuEWvJN+ZUQcEX1jdaKOEdrERmsXa+tf5wvuGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOkHKlnDncgi1RWR7OPvmxxvSpZxy5R55BVIX1qe9YL1xS4YLv
-	tBtmTJJORm/pBm1esr7Fzok/TpGlUiLDKK3em6/LqZ6jhTtOsi+x0AoRZsZo4F8=
-X-Gm-Gg: ASbGncuYHL2dEq6LQn8uQDAj+MkOyag1FPC8xQIgapXsJED9kR2AflquAKUoKC1JOyu
-	XGqOnUga8A0RDo3u1OWqsbnepCZvdYXF9YA1HHFOG9n7tVPgNgrK0hs/768MlyxJ1B86dchSGPW
-	Dmv4mpu2w+0AS4h/zOLPuxSBIpWfkXlPlMnFKk6GxAEgF1kSH5kX8zFUOcaMrMCqXaQIPFrVHw9
-	0h33+HC0zkcb8YECleM/TAXcUMiFGjif/8/7Yilk4eizhGY02SPUBF6UC/dMoZ0k8oFEoZnxZCO
-	T52hqu+dJ90h4xy4GSNqub5ohp+Jinr8RUDhS6b5vCWZF174CPaKOW4KtkxQ8RkPZrWt/oE=
-X-Google-Smtp-Source: AGHT+IHX4xTr3i/hkeM2pq8heGQs61yR4H6uZ1XyLtjHKcBwLlumouD2n2aSpi331YhaTvIal/nVnQ==
-X-Received: by 2002:a05:6512:124e:b0:545:576:cbd2 with SMTP id 2adb3069b0e04-545180de556mr2130058e87.10.1739463499616;
-        Thu, 13 Feb 2025 08:18:19 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f083137sm214209e87.21.2025.02.13.08.18.18
+        d=1e100.net; s=20230601; t=1739463509; x=1740068309;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iKzjBSUkdHDLfZzf4JfzRiz+zb6GftCtkHoeHOHlZwU=;
+        b=aVLncs8GY56nj1hHjUyURQ38E67mEhAkOYuWs09R9gKeg97W5jd2XY/guwqzoqLIU2
+         ukHkeEgjL1el5Pq/4P8PsGjPuHK1LzdZfp3wi+L2Yg2ixhJL8Y3j9WlbE+g7x0qQP7Sa
+         es457P5GwII8dppgbG6QEtLpYX3Tct0xwAQZ0k2zaRA02JFxzyjmP5LJIdIyTvxsQ4sw
+         ausAeX58jNclEYdbArT6YRUIc3MYTH5EeQVzL3QjW0ViHXPr3R/i3H2eLL1w6FtV2ZB3
+         xOCEhf9JzhWGJIDFlVPjo3lmkW8JE/LSka27iOOhSp9mvzioVT7egp797bYt+mxWG/uc
+         EoTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWtWAH4LCt0N+KQsj1NKyHYv0IZy+PuKo/6C3lvMHlJ5LQjdzBvUn5JQLpNPk4vGXx7MguCNGbPpsrRxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxsb//zC/TNXmxeeJHsSdsVgJSPGsfuulaaWedUmwybbWF43hG
+	BBcw3u4RF/6tyuTbK2bZ+bZFWjcmMS/c1zhtlSxeOWZBn3KjEWpUeFZS0karHI1nURAL58xH/OL
+	aLj9lkSOT6IBEQhKaruPbyuF8A3rIaNpLijzHwEnTLWw515bc2mJYZn/y5w9ddcoVUfbZ8Q==
+X-Gm-Gg: ASbGncsYQ2OsvsFsSpW1nIpk+KClRIg0fyimYAejlOa7fbbZvvrNypXUYIJKcIa6mKZ
+	1qu/sGuRvtcQ1L3O+sxo0jdlMzZVbAP2ZgQ1MWM91MCGm2upOdNaCAp2HXSfOOJ/EpRb953+9GH
+	V47SK/st9TTC1a9URMemwD2KZljNOFxUETpYTxfOKR6Van7mGsHVdeIGGX1tqZfsw+3UsewMORJ
+	tq0yzIgSntYQ2FABoNo7TTouONyZtvuC/Ohr4AR3vE+CKsHIjtTUnGqavQ1m4Uz1GcxxI56XOGP
+	BtZtoEvPE0I6Lo1Uuo0dAVcQEmG9l7AoREP/0hKpurJpjVQlJmYhGNM=
+X-Received: by 2002:a05:600c:698d:b0:439:574c:bf76 with SMTP id 5b1f17b1804b1-43960179b7amr57710605e9.7.1739463509156;
+        Thu, 13 Feb 2025 08:18:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFu6y21w757rvE76+QUOv51wsc6Q/8KLtoBTuUd9R2tuHYuDtc916mYTl90tlTU0umnS7sdnA==
+X-Received: by 2002:a05:600c:698d:b0:439:574c:bf76 with SMTP id 5b1f17b1804b1-43960179b7amr57709765e9.7.1739463508492;
+        Thu, 13 Feb 2025 08:18:28 -0800 (PST)
+Received: from stex1.redhat.com (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06d237sm52922715e9.21.2025.02.13.08.18.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 08:18:18 -0800 (PST)
-Date: Thu, 13 Feb 2025 18:18:16 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 16/37] drm/atomic-helper: Change parameter name of
- drm_atomic_helper_commit_planes()
-Message-ID: <vwkhzuek6g4kmhazk4i4tawbxbnqhe23f2k7tatxkhrwroqjij@qmiuy3fuyxcm>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-16-e71598f49c8f@kernel.org>
+        Thu, 13 Feb 2025 08:18:27 -0800 (PST)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: virtualization@lists.linux.dev
+Cc: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Matias Ezequiel Vara Larsen <mvaralar@redhat.com>,
+	linux-sound@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH] virtio_snd.h: clarify that `controls` depends on VIRTIO_SND_F_CTLS
+Date: Thu, 13 Feb 2025 17:18:25 +0100
+Message-ID: <20250213161825.139952-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-16-e71598f49c8f@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 03:43:35PM +0100, Maxime Ripard wrote:
-> drm_atomic_helper_commit_planes() updates all planes affected by a new
-> commit. It takes the drm_atomic_state being committed as a parameter.
-> 
-> However, that parameter name is called (and documented) as old_state,
-> which is pretty confusing. Let's rename that variable as state.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
+As defined in the specification, the `controls` field in the configuration
+space is only valid/present if VIRTIO_SND_F_CTLS is negotiated.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+  From https://docs.oasis-open.org/virtio/virtio/v1.3/virtio-v1.3.html:
 
+  5.14.4 Device Configuration Layout
+    ...
+    controls
+       (driver-read-only) indicates a total number of all available control
+       elements if VIRTIO_SND_F_CTLS has been negotiated.
+
+Let's use the same style used in virtio_blk.h to clarify this and to avoid
+confusion as happened in QEMU (see link).
+
+Link: https://gitlab.com/qemu-project/qemu/-/issues/2805
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/uapi/linux/virtio_snd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/virtio_snd.h b/include/uapi/linux/virtio_snd.h
+index 5f4100c2cf04..a4cfb9f6561a 100644
+--- a/include/uapi/linux/virtio_snd.h
++++ b/include/uapi/linux/virtio_snd.h
+@@ -25,7 +25,7 @@ struct virtio_snd_config {
+ 	__le32 streams;
+ 	/* # of available channel maps */
+ 	__le32 chmaps;
+-	/* # of available control elements */
++	/* # of available control elements (if VIRTIO_SND_F_CTLS) */
+ 	__le32 controls;
+ };
+ 
 -- 
-With best wishes
-Dmitry
+2.48.1
+
 
