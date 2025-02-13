@@ -1,183 +1,190 @@
-Return-Path: <linux-kernel+bounces-513036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8FDA340DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:54:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EADEFA340DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9973AAC1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E495D16AEBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC2B20B1FF;
-	Thu, 13 Feb 2025 13:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E141487ED;
+	Thu, 13 Feb 2025 13:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BOMK+YWj"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40A024BC1E;
-	Thu, 13 Feb 2025 13:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M3ntzWuX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D6924BC15;
+	Thu, 13 Feb 2025 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454868; cv=none; b=DNjRmyAWgzYewkxMjPAxbg9DkVXf8IXwu0yWaSz+U10wuYiNdpV33/lBQTPLIJC10heEQekgAk/yxlLr8oq8M7mAkt0Qa/BDHOlde0S9omlZNLjfYiW1RDWfMtjv7dg3AwEMot8Ubdwdw8wTmufYu8XckgARdBhit+NOZvFYqhU=
+	t=1739454886; cv=none; b=UtyCLM7hOATlLMb+Z3QdFVSngUOHJrWcd4HJWFzhls4k9aaqdtE+5DdpDs9VJ4L8kjx1Rz7/+oRu3hGkxgIR3+j9wlxm5Fnp4TBpek/1XiVIY2FLe6BxxkB2KJhrtPQ6d047v7Yd37ld5nE+/qg++R781C8TqR3CeGyepaQRRuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454868; c=relaxed/simple;
-	bh=zMItyBbGSYmQAzpnqDQb9rWBpA1LWiBaLeVIOo1yVAg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ZwJg8GjT+xeU9TPc7bUElhUf6pTDpdKq6l7fvxzd0jUj2Lj7ClSAanS/RzPR79k7bu8mTotYvbQ6Fs8ZVhFO3nddo7O3Rk3pKWTjjGrxqym75JhWv5ap3qZrFPEHvfrvcGjp2/ah96THmqez+4c71LhG5CVjsQWcpTLUPdWgVKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BOMK+YWj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3E2C3203F3E2;
-	Thu, 13 Feb 2025 05:54:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3E2C3203F3E2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739454866;
-	bh=JFaxEVSYN6WgTX1bl5HT8/R/u9MBfItqs9d9HDLPgJ8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BOMK+YWjJX01//ga3wPRLySsh0KaIIguB1ImY8ocatYv9Kjz8rsUmglfYTuz0zaYq
-	 pbqDNUvQwE3ckVwlWOru7EiRgmtzh/BfKmAUVnlYPcMemM3iEQItFetmeqeRJwqqfz
-	 bP1A6HJi/wxUO3d5FPWe8QCi4FMUos+pfioLJWg8=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	shirazsaleem@microsoft.com,
-	sharmaajay@microsoft.com,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next v2 1/1] RDMA/mana_ib: implement reg_user_mr_dmabuf
-Date: Thu, 13 Feb 2025 05:54:21 -0800
-Message-Id: <1739454861-4456-1-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1739454886; c=relaxed/simple;
+	bh=cJI7jSGBeMlBar7+EWkFpZ1IplMJwWUEjiBSpKW+aD0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=upokSkebtIE841HypjqzYlY07J/3bjxiu4235k5deF/0cfI3jFqJcd6/S/JiOjvJlZr+PoFYZdCp/cqKTd08l1t4LnX3HMnCIWcJq1PVA3piG37RVaKj9zTRtiiAuerS78Zp/7jsh/LDu7Ia5lHEjvQ/jIv1BfXpLIJzmPtNBS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M3ntzWuX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739454885; x=1770990885;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cJI7jSGBeMlBar7+EWkFpZ1IplMJwWUEjiBSpKW+aD0=;
+  b=M3ntzWuXKsu0Lsw78cFz5n0az1tE4psH0GMz1CFXZcRkqXSXFGpGt/nS
+   qgpUCL/KQVpdDNVgm7H8ezrAsXwNPlmyyKYo5C2zeeAspFEkayoivdnhf
+   nizNMqqI6GeWiMg6vcNpNGTPDdu7dFkGdLqadV8v92j0lrjEZYUmPbiA9
+   Wiy0hn24i8lktTiHEII58o0ZpfR3rAK93sp5MnWluyYwrFIEsKywl+NJ/
+   AxcWTlIHv6pkFav9X3CXQoyajwkv6aT5GsinP02pBzK+1zIoPibut9EVK
+   u17HG3QCHX2IUpiQagx+Ph8xjEfyuxFbk9ApFmbdQ55H6BSVHI9FtLm6S
+   g==;
+X-CSE-ConnectionGUID: oDUTqKLhTjWZXVuYcxoYVw==
+X-CSE-MsgGUID: 3NcqEwsgQUKDo4vN05Od0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51554182"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51554182"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:45 -0800
+X-CSE-ConnectionGUID: q185DkdGTQyur7kuyCwDkw==
+X-CSE-MsgGUID: vNmTYbuhT/Klxw9nmHksTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113020022"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:42 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 13 Feb 2025 15:54:39 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Alex Williamson <alex.williamson@redhat.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/2] PCI: Cache offset of Resizable BAR capability
+In-Reply-To: <20250208050329.1092214-3-helgaas@kernel.org>
+Message-ID: <75bb62bd-7944-1d74-ad84-fd676c8bfb91@linux.intel.com>
+References: <20250208050329.1092214-1-helgaas@kernel.org> <20250208050329.1092214-3-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-264264680-1739454879=:12944"
 
-From: Konstantin Taranov <kotaranov@microsoft.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add support of dmabuf MRs to mana_ib.
+--8323328-264264680-1739454879=:12944
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
-Reviewed-by: Long Li <longli@microsoft.com>
----
+On Fri, 7 Feb 2025, Bjorn Helgaas wrote:
 
-v2: removed debug prints
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Previously most resizable BAR interfaces (pci_rebar_get_possible_sizes(),
+> pci_rebar_set_size(), etc) as well as pci_restore_state() searched config
+> space for a Resizable BAR capability.  Most devices don't have such a
+> capability, so this is wasted effort, especially for pci_restore_state().
+>=20
+> Search for a Resizable BAR capability once at enumeration-time and cache
+> the offset so we don't have to search every time we need it.  No function=
+al
+> change intended.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pci.c   | 9 +++++++--
+>  drivers/pci/pci.h   | 1 +
+>  drivers/pci/probe.c | 1 +
+>  include/linux/pci.h | 1 +
+>  4 files changed, 10 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 503376bf7e75..cf2632080a94 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1872,7 +1872,7 @@ static void pci_restore_rebar_state(struct pci_dev =
+*pdev)
+>  =09unsigned int pos, nbars, i;
+>  =09u32 ctrl;
+> =20
+> -=09pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
+> +=09pos =3D pdev->rebar_cap;
+>  =09if (!pos)
+>  =09=09return;
+> =20
+> @@ -3719,6 +3719,11 @@ void pci_acs_init(struct pci_dev *dev)
+>  =09pci_enable_acs(dev);
+>  }
+> =20
+> +void pci_rebar_init(struct pci_dev *pdev)
+> +{
+> +=09pdev->rebar_cap =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBA=
+R);
+> +}
+> +
+>  /**
+>   * pci_rebar_find_pos - find position of resize ctrl reg for BAR
+>   * @pdev: PCI device
+> @@ -3733,7 +3738,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev,=
+ int bar)
+>  =09unsigned int pos, nbars, i;
+>  =09u32 ctrl;
+> =20
+> -=09pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
+> +=09pos =3D pdev->rebar_cap;
+>  =09if (!pos)
+>  =09=09return -ENOTSUPP;
+> =20
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 01e51db8d285..d7b46ddfd6d2 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -799,6 +799,7 @@ static inline int acpi_get_rc_resources(struct device=
+ *dev, const char *hid,
+>  }
+>  #endif
+> =20
+> +void pci_rebar_init(struct pci_dev *pdev);
+>  int pci_rebar_get_current_size(struct pci_dev *pdev, int bar);
+>  int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size);
+>  static inline u64 pci_rebar_size_to_bytes(int size)
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b6536ed599c3..24dd3dcfd223 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2564,6 +2564,7 @@ static void pci_init_capabilities(struct pci_dev *d=
+ev)
+>  =09pci_rcec_init(dev);=09=09/* Root Complex Event Collector */
+>  =09pci_doe_init(dev);=09=09/* Data Object Exchange */
+>  =09pci_tph_init(dev);=09=09/* TLP Processing Hints */
+> +=09pci_rebar_init(dev);=09=09/* Resizable BAR */
+> =20
+>  =09pcie_report_downtraining(dev);
+>  =09pci_init_reset_methods(dev);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 47b31ad724fa..9e5bbd996c83 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -353,6 +353,7 @@ struct pci_dev {
+>  =09struct pci_dev  *rcec;          /* Associated RCEC device */
+>  #endif
+>  =09u32=09=09devcap;=09=09/* PCIe Device Capabilities */
+> +=09u16=09=09rebar_cap;=09/* Resizable BAR capability offset */
+>  =09u8=09=09pcie_cap;=09/* PCIe capability offset */
+>  =09u8=09=09msi_cap;=09/* MSI capability offset */
+>  =09u8=09=09msix_cap;=09/* MSI-X capability offset */
 
- drivers/infiniband/hw/mana/device.c  |  1 +
- drivers/infiniband/hw/mana/mana_ib.h |  4 ++
- drivers/infiniband/hw/mana/mr.c      | 69 ++++++++++++++++++++++++++++
- 3 files changed, 74 insertions(+)
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
-index 97502bc..9324a5d 100644
---- a/drivers/infiniband/hw/mana/device.c
-+++ b/drivers/infiniband/hw/mana/device.c
-@@ -48,6 +48,7 @@ static const struct ib_device_ops mana_ib_dev_ops = {
- 	.query_pkey = mana_ib_query_pkey,
- 	.query_port = mana_ib_query_port,
- 	.reg_user_mr = mana_ib_reg_user_mr,
-+	.reg_user_mr_dmabuf = mana_ib_reg_user_mr_dmabuf,
- 	.req_notify_cq = mana_ib_arm_cq,
- 
- 	INIT_RDMA_OBJ_SIZE(ib_ah, mana_ib_ah, ibah),
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index cd771af..8332154 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -635,4 +635,8 @@ int mana_ib_post_send(struct ib_qp *ibqp, const struct ib_send_wr *wr,
- 
- int mana_ib_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *wc);
- int mana_ib_arm_cq(struct ib_cq *ibcq, enum ib_cq_notify_flags flags);
-+
-+struct ib_mr *mana_ib_reg_user_mr_dmabuf(struct ib_pd *ibpd, u64 start, u64 length,
-+					 u64 iova, int fd, int mr_access_flags,
-+					 struct uverbs_attr_bundle *attrs);
- #endif
-diff --git a/drivers/infiniband/hw/mana/mr.c b/drivers/infiniband/hw/mana/mr.c
-index 3a047f8..f99557e 100644
---- a/drivers/infiniband/hw/mana/mr.c
-+++ b/drivers/infiniband/hw/mana/mr.c
-@@ -173,6 +173,75 @@ err_free:
- 	return ERR_PTR(err);
- }
- 
-+struct ib_mr *mana_ib_reg_user_mr_dmabuf(struct ib_pd *ibpd, u64 start, u64 length,
-+					 u64 iova, int fd, int access_flags,
-+					 struct uverbs_attr_bundle *attrs)
-+{
-+	struct mana_ib_pd *pd = container_of(ibpd, struct mana_ib_pd, ibpd);
-+	struct gdma_create_mr_params mr_params = {};
-+	struct ib_device *ibdev = ibpd->device;
-+	struct ib_umem_dmabuf *umem_dmabuf;
-+	struct mana_ib_dev *dev;
-+	struct mana_ib_mr *mr;
-+	u64 dma_region_handle;
-+	int err;
-+
-+	dev = container_of(ibdev, struct mana_ib_dev, ib_dev);
-+
-+	access_flags &= ~IB_ACCESS_OPTIONAL;
-+	if (access_flags & ~VALID_MR_FLAGS)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
-+	mr = kzalloc(sizeof(*mr), GFP_KERNEL);
-+	if (!mr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	umem_dmabuf = ib_umem_dmabuf_get_pinned(ibdev, start, length, fd, access_flags);
-+	if (IS_ERR(umem_dmabuf)) {
-+		err = PTR_ERR(umem_dmabuf);
-+		ibdev_dbg(ibdev, "Failed to get dmabuf umem, %d\n", err);
-+		goto err_free;
-+	}
-+
-+	mr->umem = &umem_dmabuf->umem;
-+
-+	err = mana_ib_create_dma_region(dev, mr->umem, &dma_region_handle, iova);
-+	if (err) {
-+		ibdev_dbg(ibdev, "Failed create dma region for user-mr, %d\n",
-+			  err);
-+		goto err_umem;
-+	}
-+
-+	mr_params.pd_handle = pd->pd_handle;
-+	mr_params.mr_type = GDMA_MR_TYPE_GVA;
-+	mr_params.gva.dma_region_handle = dma_region_handle;
-+	mr_params.gva.virtual_address = iova;
-+	mr_params.gva.access_flags =
-+		mana_ib_verbs_to_gdma_access_flags(access_flags);
-+
-+	err = mana_ib_gd_create_mr(dev, mr, &mr_params);
-+	if (err)
-+		goto err_dma_region;
-+
-+	/*
-+	 * There is no need to keep track of dma_region_handle after MR is
-+	 * successfully created. The dma_region_handle is tracked in the PF
-+	 * as part of the lifecycle of this MR.
-+	 */
-+
-+	return &mr->ibmr;
-+
-+err_dma_region:
-+	mana_gd_destroy_dma_region(mdev_to_gc(dev), dma_region_handle);
-+
-+err_umem:
-+	ib_umem_release(mr->umem);
-+
-+err_free:
-+	kfree(mr);
-+	return ERR_PTR(err);
-+}
-+
- struct ib_mr *mana_ib_get_dma_mr(struct ib_pd *ibpd, int access_flags)
- {
- 	struct mana_ib_pd *pd = container_of(ibpd, struct mana_ib_pd, ibpd);
--- 
-2.43.0
+--=20
+ i.
 
+--8323328-264264680-1739454879=:12944--
 
