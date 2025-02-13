@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-513362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23EDA3497B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:18:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BA7A349B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D801890EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD4D3A7C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EA624169A;
-	Thu, 13 Feb 2025 16:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBE921D3FC;
+	Thu, 13 Feb 2025 16:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bmOGSEgv"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4UajAWy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEC5203703
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C73211A36;
+	Thu, 13 Feb 2025 16:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463313; cv=none; b=Y+gA5gkMZI8Ftiufjr/X4rna+NdoPCawFMPn5rwJG9o77PlcvkHSA4+o+a5XGCxuXfHGcIYrA1MzBv3Yf41gF2LxRI9y3+MtIPQndCuJIrYWiQlKxn1AMSD4r3jgKkFiYRxbtqWJX7klVoGSGMYgFSeaVMVHO9JPbUqP3TL653U=
+	t=1739463337; cv=none; b=cfcN9Q4J7+QkaRbks30U4bGZTw5nQhr/J7evTo0oRvQ3/3URKBy5TGDJrWmtdorTYVuRgWEL8HbgOWEp+NNsJIHY6xOaCInCqpaFbmxRaWH54ELvv1ML1YT7CbSXdOnijedYI8iZwSVNpfHa3TP9VYypEiKsuGOlXLiu46mi55U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463313; c=relaxed/simple;
-	bh=Xtu8WDPQHFE0nfu8De7jzGkDApIs7LU+ui80j8p9qmM=;
+	s=arc-20240116; t=1739463337; c=relaxed/simple;
+	bh=HbYnqyNNOZ3X0ssMhWFk2VYAZhe/38v3IVglUdJr+dM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WE65TLOJUnuJiV2x1vwABEYSFreWERkpICKzukSQsCCCQUc1KuzqbF4kFU60wkSuahD6cg87IBw0kl/fv88UjIyb7gz23Zcayx8fUyIYDGUER7Wky9jI2X48qzGc7Z8FdcOYhethFCluh758SR8au+zbwfkSPC+B5my1qiQkukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bmOGSEgv; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=C51i
-	iAHVT3vDNfkeqXUJtAutZGCOhAHahDQm3Gape3k=; b=bmOGSEgvInf30Ab23XEB
-	ZSvM8t2hj+wuVYy+0VNcnl2Oqzij9O9BDcizEid1xrPe7k69gHAyEm2scxbZqtY5
-	iHCIgL/rNquBKNnhD92Qp+/pw6Hzbme+/ha9sgDBuO/vfR0cE3ZhdidUjsSzzGBi
-	HH/AYcXyAlBSg5R1KHj0DnwdeyUYE6LChTeciXONrf/E9LCdoh8E8WN3p5ywLVf3
-	MaQsIqeSFs0UoYq8E3Kgjh25qSBKuBMmO29zVpKBOFlauXvSZAv76qAIjRYbM4Rb
-	z4cdCofFbykqrJ9wRQmS+zEJwB5kRX6VxkbmGtX3F7C0gwESETI4YGk8Vq0hoQq3
-	AA==
-Received: (qmail 1940101 invoked from network); 13 Feb 2025 17:15:09 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Feb 2025 17:15:09 +0100
-X-UD-Smtp-Session: l3s3148p1@TtimXAguZMtehh99
-Date: Thu, 13 Feb 2025 17:15:09 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH v2 06/10] i2c: kempld: Use i2c_10bit_addr_*_from_msg()
- helpers
-Message-ID: <Z64ajR7CSIDNmIKz@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
- <20250213141045.2716943-7-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoQnsoDB+P0BSEBDtUveM22gib36qnfQB0ynNLqIXF/HdWk+/BKFMiKJhsWCKAZ3Zw4HC/2I+Jww1S28irA/9wg+cYJMPeBW2nr7VDdMVUucCKVJslwTHytES316bVzVVuLn53HBEyYD9B57VZcFJEcn+seEwYoGRa4rK15fgE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4UajAWy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65272C4CED1;
+	Thu, 13 Feb 2025 16:15:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739463336;
+	bh=HbYnqyNNOZ3X0ssMhWFk2VYAZhe/38v3IVglUdJr+dM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i4UajAWyXVeEGHPfIH0T6x8Iucjj7jf4PwLRNWLc/TMhtGkd2+Lr94n4ORbzAsxXD
+	 imjfZzVdjTgWySoRZMNukQYcz1GgEkqAFhzooORTUlQhtZ6JUiajCkTeJ0/CDLptW/
+	 9mFwyMGXa028MgrHuzSkelTDBcf6yrU64RrcsEaW/qn+4HdwK4dSismi35oT6uklv9
+	 TBoIyJnCnHeS18V9om5MgRnFBx99HJOAF3KVZTSacwBGMvhziAKxRDz7wQWbhKn1/X
+	 y+vjNhbChzsq/y13ZhRb2eCbedSqq4HBd3ebc+nGLbwVItKX5dyfOOT2DFMVDolXeK
+	 jfzfhPWKxMo7w==
+Date: Thu, 13 Feb 2025 21:45:33 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev, bard.liao@intel.com
+Subject: Re: [PATCH 2/2] Revert "soundwire: intel_auxdevice: start the bus at
+ default frequency"
+Message-ID: <Z64apTrlAbvUDQLx@vaman>
+References: <20250205074232.87537-1-yung-chuan.liao@linux.intel.com>
+ <20250205074232.87537-3-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lJSRca1oCsfvYLnD"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250213141045.2716943-7-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250205074232.87537-3-yung-chuan.liao@linux.intel.com>
 
+On 05-02-25, 15:42, Bard Liao wrote:
+> Now, we can support more than 1 soundwire bus clock frequency.
+> 
+> This reverts commit c326356188f1dc2d7a2c55b30dac6a8b76087bc6.
 
---lJSRca1oCsfvYLnD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pls use full patch title and not just the sha
 
+> 
+> Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+> Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> ---
+>  drivers/soundwire/intel_auxdevice.c | 21 ---------------------
+>  1 file changed, 21 deletions(-)
+> 
+> diff --git a/drivers/soundwire/intel_auxdevice.c b/drivers/soundwire/intel_auxdevice.c
+> index b34b897400fc..5ea6399e6c9b 100644
+> --- a/drivers/soundwire/intel_auxdevice.c
+> +++ b/drivers/soundwire/intel_auxdevice.c
+> @@ -243,30 +243,9 @@ static int sdw_master_read_intel_prop(struct sdw_bus *bus)
+>  
+>  static int intel_prop_read(struct sdw_bus *bus)
+>  {
+> -	struct sdw_master_prop *prop;
+> -
+>  	/* Initialize with default handler to read all DisCo properties */
+>  	sdw_master_read_prop(bus);
+>  
+> -	/*
+> -	 * Only one bus frequency is supported so far, filter
+> -	 * frequencies reported in the DSDT
+> -	 */
+> -	prop = &bus->prop;
+> -	if (prop->clk_freq && prop->num_clk_freq > 1) {
+> -		unsigned int default_bus_frequency;
+> -
+> -		default_bus_frequency =
+> -			prop->default_frame_rate *
+> -			prop->default_row *
+> -			prop->default_col /
+> -			SDW_DOUBLE_RATE_FACTOR;
+> -
+> -		prop->num_clk_freq = 1;
+> -		prop->clk_freq[0] = default_bus_frequency;
+> -		prop->max_clk_freq = default_bus_frequency;
+> -	}
+> -
+>  	/* read Intel-specific properties */
+>  	sdw_master_read_intel_prop(bus);
+>  
+> -- 
+> 2.43.0
 
-> @@ -132,10 +130,12 @@ static int kempld_i2c_process(struct kempld_i2c_dat=
-a *i2c)
-> =20
->  	/* Second part of 10 bit addressing */
->  	if (i2c->state =3D=3D STATE_ADDR10) {
-> -		kempld_write8(pld, KEMPLD_I2C_DATA, i2c->msg->addr & 0xff);
-> +		addr =3D i2c_10bit_addr_lo_from_msg(msg);
-> +		i2c->state =3D STATE_START;
-
-Any reason you moved this?
-
-> +
-> +		kempld_write8(pld, KEMPLD_I2C_DATA, addr);
-
-Maybe we could skip using 'addr' here?
-
->  		kempld_write8(pld, KEMPLD_I2C_CMD, I2C_CMD_WRITE);
-> =20
-> -		i2c->state =3D STATE_START;
->  		return 0;
->  	}
-
---lJSRca1oCsfvYLnD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmeuGokACgkQFA3kzBSg
-KbZulg/+J22rNnR6Yu2i8QVlWFeEaAZKIv1ksHQrj0QpkW1k7ZiMG1gPZad043ax
-Dn4VnOCgTDfMGM0tRO+RslfP8QwFNhi7vj6SNHq1b5AAzArl0EJMQJbxOku03Uw6
-Rs6FZyjJd/9mdS64pjXBGpIrEqA032jxL0CgmMNZN8WXB4iJo4cUDkRnNHv8gY9Y
-W0EPAKWpLDbDIHge/zTd+x547y7qQUsp8pV5+h2z6Nfgbd5/k27rE87/yxcTG443
-nx0BtBAfODwujcrAhNXHyl/Q7eX4sImUOpz7wetHHAtIEioH3OOG4/D1Ggk1rtJT
-eL3nlGxlIPJH0P1yZtvj++PTL5HYwXbCD7oTD6JEdy3+Lt9MXEpsKpTX6X9NNB3S
-Fqz3Puo+Hd/2nPmJEIGuX30fKup7UO1a0b2e/AUoedNZGT1PpX8v/JIoqOvNU6I5
-htn1IeaHh16BvSSZZQ57wbAXbv2Z52xRVH/bjO+HWT3TJ5yCIMeY1SWdfw1tZ6ri
-palSy7QZgrvN7M2K+iymB+rhHrkDdHGh+NlgaEkW/kN2gDo/izjmQVFoXnH2vpMM
-bADn9rxmbM6u3vVfJESnbE6sik3kSbykAj1E6JqWq9huA+vnGXmvbJL+jxTQNP8G
-2G+F4nPACxsxrkJQIXA3m/1QZ6yZxp9KuKIcgGswsZpOLOlK5gs=
-=eGZz
------END PGP SIGNATURE-----
-
---lJSRca1oCsfvYLnD--
+-- 
+~Vinod
 
