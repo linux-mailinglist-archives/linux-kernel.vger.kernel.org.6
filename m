@@ -1,138 +1,184 @@
-Return-Path: <linux-kernel+bounces-512465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41A5A339A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:08:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B299A339B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88DB1165C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE3C188C66F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE6320B805;
-	Thu, 13 Feb 2025 08:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C85620B7F9;
+	Thu, 13 Feb 2025 08:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gx27qmYB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iY2m6CO8"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7B20B1ED;
-	Thu, 13 Feb 2025 08:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E4D20B818
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739434052; cv=none; b=tdlRlytyy+YAmAtI9V5+hO5eTf5Jod3Umg3TnywbkAHhSzZqOR5HP8REKbHwaFVigKebna68iXCtLAQXAAgGZL9A17wxtk4Nbu3E5TYSdg7fc79wSnLrDNVnBPBRb+G1P/5/Pc0gxXfKoSMKPDhH/rFLfdS5MRb4e3GSOB/f6k0=
+	t=1739434172; cv=none; b=EUizBYgcqLElC5MIyNve7agI8wKtRuY9laytYqk5+0fYAhNs0OpMHzSUuXGUa0zJq4V7Z69ZPEjf4mKwD9/zoY1icxJgaMhnNqXIg4IIlhyEWeWpEAz9hVkjRU0lDZh6nPOo7+zzYxJ1pcX6Ny9Qlg5V0XT5JMEPKbZ2NgULxUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739434052; c=relaxed/simple;
-	bh=usa/ZD9eo6oR2HXcMxracFfe5+vucFm+dr5h2mXZtcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgYnw3KSSk10YtkSr0F+DdjsBfeyawlUBxju7OLMoKbdLRjqzRvZ5j0lXGHEuCzHbrDboxCl6k+lYCJwGubo/LsxMn2vINniHUC8OUarQ6LGPzZUYh6MdcfwZQUJ82XnkMoky3VHKTSLfkSSciZPRAeNQidMnvvpZRbcxkkawC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gx27qmYB; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739434051; x=1770970051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=usa/ZD9eo6oR2HXcMxracFfe5+vucFm+dr5h2mXZtcE=;
-  b=Gx27qmYBe1G1vovqJyNXMPK9DcTKIqbcw08ty2mxWEp94cb5pTD2gIEj
-   bguGLwVzM5e/D74KcbeE2xP9JlXhIDHmPaIZQFsdJPZeGP+6ImkhkLFYW
-   bHOvJ81ZQ0MTNZedZSsayUHfd3eAacFiqXqfH/jnUsq391W3XSfnaD5nh
-   3eRrgcUqBUQ+YvBHW0z2b7bsJ3nXv8cFxz28nGHTjns84rx6rIeVLQRgn
-   kDseOa+XQNW3B/SrsLqDMhx+p5guvwzyqaRD8ntJeM3w0TmdzbIW7vJCw
-   k9Y40YA/7APWi+Bv7y+ePXh1qhtRN8I47usiQ9O2/GFLVcrnI3tsu2hMw
-   w==;
-X-CSE-ConnectionGUID: 9p+e3iB1Swen+4vBMC1j1Q==
-X-CSE-MsgGUID: ev/5A+/2TAS8HCExeqRU7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="51517529"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="51517529"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:07:12 -0800
-X-CSE-ConnectionGUID: DE0Db2kJTBuQiCzTf1puqg==
-X-CSE-MsgGUID: ZzeN7gI5RB+dIqKDLQxnLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118258626"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:07:10 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiUFX-0000000B6EX-1V9w;
-	Thu, 13 Feb 2025 10:07:07 +0200
-Date: Thu, 13 Feb 2025 10:07:07 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Felipe Balbi <balbi@kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v2 2/3] usb: dwc3: gadget: Add support for
- snps,reserved-endpoints property
-Message-ID: <Z62oKwwhBC9ufH5c@smile.fi.intel.com>
-References: <20250203191524.3730346-1-andriy.shevchenko@linux.intel.com>
- <20250203191524.3730346-3-andriy.shevchenko@linux.intel.com>
- <20250212011013.xumqgguhluxdslpz@synopsys.com>
- <Z6x5lB4hGpz-9IzS@smile.fi.intel.com>
- <Z6zvcF1oe4TklTlK@smile.fi.intel.com>
- <20250213011736.orc23wbgvjoybrbq@synopsys.com>
+	s=arc-20240116; t=1739434172; c=relaxed/simple;
+	bh=ljPgT1sFuCalfu0Uk3Du6RFDHpdGg4hwNFV66uJbmuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnY9sXjxtA6ldgpuC6BE8SrN542QwGiYqVgsflkpiDJyPEg/A5Hb4Yoy5A5KkutPCGWJeE5Ei1RzpniUXxMzifMaUyI2TT5eXoxgVf32hcQzuPoE19pWm7sJ2EJ91a2sK6OEll1GqOP5VTx9yn9WoU0cRaoUfLadCY3SGszIs6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iY2m6CO8; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-308ef06b4e1so5658261fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:09:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739434169; x=1740038969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hm48X7lqAOA0dqAbrf9aRcbVAhVDW4f4LNNKI9FF/e8=;
+        b=iY2m6CO8UF5Pwhw3mBFM8ch5kk1wpSI5uXr0Tl8tAPHcZ1ZOF1GUyHejekjgZ4yiPm
+         +1KVLB5TNaVuU+K0rH4/x3VKRoggkSL23z2/LCr61bawVV03ZaKLDLtOOlCiyDETGpZQ
+         BcCYa/DRyfEZiyZWx45exz2S5Sz1B5qsytNPS4KZwM7sBoJ9TbGf++0N46yfaPAqlruf
+         M4mcgYloe26BWstplwDzXfJLoISKMWAyRYDJqZ7NrFXZDfQ4maUvcn/9lAgOz3GyQ2ct
+         wstw+bTbFKI3IHW1On6ZLOoYWPiVAT4pgBvOYq0BEwBdTks1DgRRCEIJx1ZBxsXY4fT7
+         XRUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739434169; x=1740038969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hm48X7lqAOA0dqAbrf9aRcbVAhVDW4f4LNNKI9FF/e8=;
+        b=W60y8Mh5S5MRH8Iwyl4/iwQIg87pYuk7uzJxOEXG2BQI8naZq2hDvQ+iut7wnoiI+X
+         wXsCV9ZfDOiqw2Y5pCkaCZu7LQCDLkY7BRIiwMgx/kTcZbwM6bcG1Sa9MKMZqEi5uQPg
+         hjS3TkJ/B3daSin1XC3UrWavXPNw9LP/Tq58G6aOCK5XMjjrCrT5z/+tZgAW9s7ADRzl
+         fCJe+7bPyCKXTjFxTVY3Rpl44pcZQ2wJ08iLnxGBDW4V2X005v4osJzSNjcIP2f59KWa
+         xr3f+UPLnu88NKJTggiXYv0mezJ+BArNLwNSWIehCR1kFUMuNbOuhFufr5qk7RXo5wcN
+         CXxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtlLvjZU5aCGmatkt45dXczVBrQ6QGf/5Ny1qSsKYub9rWAIIL1FgOvhAXO39Bo5LYQnBOoD2dEdMm8ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq76jScG0mo8y8I6HotAGoF2ehH/pGVRo5k5WrdLubua/64gKP
+	uJPox50n9lGFmxxAtoUBKQ+ZwRJeM8VPSvR8j81sUFHKnIMvaYMz9sgIztHHch+dLCT7Up4oct8
+	tFE/KdA3p4JQLbMFrDizlJ3q7blB3WJXqN/ng
+X-Gm-Gg: ASbGncsdTZemJyKb9AqV8R3CCX8A2sPCqBRwS7JaN2kdcqBcfJAiAh8GVvOhBn146i3
+	lizkEPIIvax2Qp4ZlvLSPtPPzk3OLIDwkLpaWmdrj49/KXoAtKx1NxLHMopmncb7fzyftYmU=
+X-Google-Smtp-Source: AGHT+IEmpPPGGq0TkyXzSWbo270QTcdVB4AMwtq/Q7Fk3MRctFhGprBM179Axvf+UAmvyBdQylGglvzV/yxU/7hXKf8=
+X-Received: by 2002:a2e:bc83:0:b0:2fb:8c9a:fe3f with SMTP id
+ 38308e7fff4ca-3090dd56bd0mr9826931fa.22.1739434168471; Thu, 13 Feb 2025
+ 00:09:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213011736.orc23wbgvjoybrbq@synopsys.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241030171009.1853340-1-saravanak@google.com>
+ <20241204124826.2e055091@booty> <20241206103143.755f5e87@booty> <20250212163320.24d30adb@booty>
+In-Reply-To: <20250212163320.24d30adb@booty>
+From: Saravana Kannan <saravanak@google.com>
+Date: Thu, 13 Feb 2025 00:08:51 -0800
+X-Gm-Features: AWEUYZnBn-KXzThN1gAzgIG62fJwLZAG87XdCRdCGXUKPP5nnCbr9ljamDaIj_A
+Message-ID: <CAGETcx-iZ67NMZtAQLDj5CnftsYoEetMvu1fpsgJjb6ar7bCeQ@mail.gmail.com>
+Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize cycle
+ detection logic
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Francesco <francesco.dolcini@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley <conor@kernel.org>, 
+	=?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 01:17:41AM +0000, Thinh Nguyen wrote:
-> On Wed, Feb 12, 2025, Andy Shevchenko wrote:
-> > On Wed, Feb 12, 2025 at 12:36:04PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Feb 12, 2025 at 01:10:17AM +0000, Thinh Nguyen wrote:
-> > > > On Mon, Feb 03, 2025, Andy Shevchenko wrote:
+On Wed, Feb 12, 2025 at 7:33=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
+n.com> wrote:
+>
+> Hello,
+>
+> On Fri, 6 Dec 2024 10:31:43 +0100
+> Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+>
+> > > After rebasing my work for the hotplug connector driver using device
+> > > tree overlays [0] on v6.13-rc1 I started getting these OF errors on
+> > > overlay removal:
+> > >
+> > > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get=
+()/of_node_put() unbalanced - destroy cset entry: attach overlay node /addo=
+n-connector/devices/panel-dsi-lvds
+> > > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get=
+()/of_node_put() unbalanced - destroy cset entry: attach overlay node /addo=
+n-connector/devices/backlight-addon
+> > > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get=
+()/of_node_put() unbalanced - destroy cset entry: attach overlay node /addo=
+n-connector/devices/battery-charger
+> > > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get=
+()/of_node_put() unbalanced - destroy cset entry: attach overlay node /addo=
+n-connector/devices/regulator-addon-5v0-sys
+> > > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get=
+()/of_node_put() unbalanced - destroy cset entry: attach overlay node /addo=
+n-connector/devices/regulator-addon-3v3-sys
+> > >
+> > > ...and many more. Exactly one per each device in the overlay 'devices=
+'
+> > > node, each implemented by a platform driver.
+> > >
+> > > Bisecting found this patch is triggering these error messages, which
+> > > in fact disappear by reverting it.
+> > >
+> > > I looked at the differences in dmesg and /sys/class/devlink/ in the
+> > > "good" and "bad" cases, and found almost no differences. The only
+> > > relevant difference is in cycle detection for the panel node, which w=
+as
+> > > expected, but nothing about all the other nodes like regulators.
+> > >
+> > > Enabling debug messages in core.c also does not show significant
+> > > changes between the two cases, even though it's hard to be sure given
+> > > the verbosity of the log and the reordering of messages.
+> > >
+> > > I suspect the new version of the cycle removal code is missing an
+> > > of_node_get() somewhere, but that is not directly visible in the patc=
+h
+> > > diff itself.
+> >
+> > I collected some more info by adding a bit of logging for one of the
+> > affected devices.
+> >
+> > It looks like the of_node_get() and of_node_put() in the overlay
+> > loading phase are the same, even though not completely in the same
+> > order. So after overlay insertion we should have the same refcount with
+> > and without your patch.
+> >
+> > There is a difference on overlay removal however: an of_node_put() call
+> > is absent with 6.13-rc1 code (errors emitted), and becomes present by
+> > just reverting your patch (the "good" case). Here's the stack trace of
+> > this call:
+> >
+> >  Call trace:
+> >   show_stack+0x20/0x38 (C)
+> >   dump_stack_lvl+0x74/0x90
+> >   dump_stack+0x18/0x28
+> >   of_node_put+0x50/0x70
+> >   platform_device_release+0x24/0x68
+> >   device_release+0x3c/0xa0
+> >   kobject_put+0xa4/0x118
+> >   device_link_release_fn+0x60/0xd8
+> >   process_one_work+0x158/0x3c0
+> >   worker_thread+0x2d8/0x3e8
+> >   kthread+0x118/0x128
+> >   ret_from_fork+0x10/0x20
+> >
+> > So for some reason device_link_release_fn() is not leading to a
+> > of_node_put() call after adding your patch.
+> >
+> > Quick code inspection did not show any useful info for me to understand
+> > more.
+>
+> I just sent a patch fixing
+> this: https://lore.kernel.org/20250212-fix__fw_devlink_relax_cycles_missi=
+ng_device_put-v1-1-41818c7d7722@bootlin.com
 
-...
+Thanks a lot for debugging and fixing this! I'll review that patch.
 
-> > > > > static bool dwc3_gadget_endpoint_trbs_complete(struct dwc3_ep *dep,
-> > > 
-> > > > >  		for (i = 0; i < DWC3_ENDPOINTS_NUM; i++) {
-> > > > >  			dep = dwc->eps[i];
-> > > > > +			if (!dep)
-> > > > > +				continue;
-> > > > 
-> > > > It should be fine to ignore this check here. Something must be really
-> > > > wrong if there's an interrupt pointing to an endpoint that we shouldn't
-> > > > be touching. If we do add a check, we should print a warn or something
-> > > > here. But that should be a patch separate from this.
-> > > 
-> > > Theoretically everything is possible as it may be HW integration bug,
-> > > for example. But are you asking about separate patch even from the rest
-> > > of the checks? Please, elaborate what do you want to see.
-> > 
-> > Re-reading the code again, I don't understand. If we get to this loop
-> > ever (theoretically it might be an old IP with the reserved endpoints),
-> > we crash the kernel on the first gap in the array. And since the function
-> > is called on an endpoint, it doesn't mean that all endpoints are allocated,
-> > so I do not see the justification to issue a warning here.
-> > Or do you imply that DWC3_VER_IS_PRIOR(DWC3, 183A) may not have an HW
-> > integration similar to what we have on Intel Merrifield?
-> > 
-> > For now I'm going to leave this check as is.
-> 
-> Oops, you are correct. I read this as the same logic as below.
-
-NP. Thank you for the review, and thanks for acking the next version!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-Saravana
 
