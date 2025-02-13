@@ -1,254 +1,180 @@
-Return-Path: <linux-kernel+bounces-513289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2642A34885
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 064CFA3493B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:11:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E9A188A02B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D04188EFB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ABF1CBEAA;
-	Thu, 13 Feb 2025 15:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA7A1FC118;
+	Thu, 13 Feb 2025 16:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZqNNeqxW"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="hFRbf5mp"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D971B18F2FC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB15155326
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461660; cv=none; b=P/MHcrkSsrhzBc9etUBlfLQbUhoxFKKqi1p/LxW+H9cRuvWWMsDhqWYw94ZWIwon5t31zAHXcjZoInMkRFYSs6/MYk2iKH1jm76VlIkYK1I7UM9xNwc2Pe54LEJ3ScZuV4k5WkMNC32l1OigX7RfWFp5MA9nbgWqFlrNH6pYJ7U=
+	t=1739462997; cv=none; b=rqhTgEuTHi3ZLBphWwB3lfakAwS2ZTDXIyRQiXqk+uAVHYoM2QUZhw1iMZ9e/GNgIdHHNazvpwgA8egcp4r/ieSB2ZQHbI2FwNKIC6pusRKIhgC1LYpBKkwvbjDm38cqqI0UYbTejd2bENx/k4m5KdyPeoUR0OA5f3dmEQzDswY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461660; c=relaxed/simple;
-	bh=hIy5pXh4y/8Q0gYHXdsOqbcgQADp5AC8VTtbqfxyj04=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OSkZHlQ+GwzCEJ3dVPYSuI7b7igqZneX/Yh9tUH/XEEbqi7K3dVuci8IyCYfUiU8Bb9wxyBrtb+rnovapKuYEFCnlf15+0AS418HLTG1bnmHeTsPd7aBPG8TUVtkJ/OjiNcTkp0M7fJICE3fetwPeuNW9MdzYnAPcnt5W2VIxU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZqNNeqxW; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa6409c0baso3542045a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739461658; x=1740066458; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hmNpP4YGEk282karFXTLw7N03fUwb/8MuF654Jepnhw=;
-        b=ZqNNeqxWLUG5Rwx4awZZXcmo0L+HR2MWcWET0uq9XHh1W2mGG2q7tfXoN4QRY9ZjkP
-         SfB1crro1UYbI0+PQjYTGj4sSHTQDD4Q2UqZLPOrG6s4Zq/+ADuYCpwCNE1utFsYM9x5
-         BaG8XfRralEvsLNoCYzLfQqOtPgVbSEDVsE5YKmFnNKJ09Dj68ULhRWkBFbeK1meYmld
-         /iozPzCnrYRQ4q0uVGZTVw5bw/Km6qtfSn3Zvpe6KUd5YxXNd47JGeRYAEFRefjz39yT
-         aKygASU2CRFxoqs4tEfDO/uBg3semFO1Hn0kFl/vETVvAWU0WEttO0aemQV9yx4Ga8WJ
-         UTAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739461658; x=1740066458;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hmNpP4YGEk282karFXTLw7N03fUwb/8MuF654Jepnhw=;
-        b=YEU/9c0watHzHG9Nbq530b0xQ4BrRicT2ebf+L5cI5EprDPFbUa0KTDbvs1UvYY5hs
-         19wHb5I9i4NqNCUINlXm/saCkE3w/tPAWqvs0eNR7jSQDMb3JtHGiRtfR/k849DFqpR+
-         hXU41fKuWMN2kSoMHm2+LmCAF7ow0GFXafM1CppcUD2UqLzNjk0Pqj98AjFMLzhna87W
-         2f+TBhoH5D7jDdwfwiWVGs/kIiFlpt7METsq1SmyHOLvwr1pfYu6hy6PAO7sXw16Nhvf
-         IyLGZ75aTXqfcy9kNgKTX3tZH2aMwxRtOZ6SQrUtjF4ybKmYHsUwHMd5kUE5B2anAcUU
-         h8pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOPdm0J8jyJznvGfYp0Qn1UAJiKKFOdWixaqf99+0RJ5zkUt6vB1qBHfAL4JSPu6ePGXMrs/BB7Ueo1sQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUtITIx5wywGsaKT/KdJYioccU/PlODQlIEh+SVMya9DYC9mWk
-	an8syjmpOzfzsu5u/5HEuzqKsV0Fex2vJy4q/UOa9Gjd9BrOjdlYSYiv78Gae02r09GMY3yDLP4
-	Q8Q==
-X-Google-Smtp-Source: AGHT+IGaLcjab1UGvr0Z7pZ5+q0nKr8aYvYSyIXe+h+lvbdZI1DyQMlmxV/07FFHeYIbV83NKEBsUYCxYZk=
-X-Received: from pfbmb19.prod.google.com ([2002:a05:6a00:7613:b0:730:451c:475c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4fd0:b0:732:23ed:9457
- with SMTP id d2e1a72fcca58-7322c39b70amr11735578b3a.12.1739461658165; Thu, 13
- Feb 2025 07:47:38 -0800 (PST)
-Date: Thu, 13 Feb 2025 07:47:31 -0800
-In-Reply-To: <CADrL8HXZed987KOehV7-OroPqm8tQZ0WH0MCpfDzaSs-g_2-ag@mail.gmail.com>
+	s=arc-20240116; t=1739462997; c=relaxed/simple;
+	bh=aZFJkkj4PtEl8L9lHvWWk+I1PNHQuKnT37w57jFX4/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lndKsEaxbU7W9FTQhaDW+YV7pYRbl0IDJEDqrXYd/aSf8CToCxQgqwHd0mDEB/InyHJKj828QIH5B9u2wo0Bjdeg6PnszlgAu02tz8BTCw2thIwCe6VnE7adTQJsCCM4RItes+jBrZTfpLHG6hNP1z0Nd5NNLfi8XmPRXe03kaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=hFRbf5mp; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1739462994;
+ bh=OSqEFJEPXbKrFf4UCRw4Rj9UNsiFiIqusumOACEFv68=;
+ b=hFRbf5mpafQtW6BFE17ed7yRnJx4vHhqlaFKf80aE9kOhz4kV81vFQRCPnwt+eVpQ4ydruotT
+ Ia4HIRtsKKiBAmXB9nmnMmqXQL1PM04lTIqPSZSpvw3pAOIdl4iHpzvNgyZ4jtgyuVE0F2t8lld
+ WYMzlWVYhOLAQ72Xnv93RlJpnIkLovva4WL8ELMdn1PBVR9nJDUNTQ0ihWAI6toXuMhtEPjnsJi
+ kmODbQEcWDZSzJfOZ9vXqnZTSZrWXrSza8Npu1FumWuTXMNya7btNH2/IP2kVTq/YEqlnqE1qY2
+ cyvSqGPJ74Q6bcJZj6boMxwYBotnNSwV6IJgIoOTe5Bw==
+X-Forward-Email-ID: 67ae1441eeea92be259cebf3
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <b5977d21-aa39-4e91-863b-cc7f9dc6938c@kwiboo.se>
+Date: Thu, 13 Feb 2025 16:48:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <67689c62.050a0220.2f3838.000d.GAE@google.com> <20250212221217.161222-1-jthoughton@google.com>
- <Z60lxSqV1r257yW8@google.com> <CADrL8HXZed987KOehV7-OroPqm8tQZ0WH0MCpfDzaSs-g_2-ag@mail.gmail.com>
-Message-ID: <Z64UE0Uh_3DT1jFA@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device
+ tree
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Dragan Simic <dsimic@manjaro.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Tim Lunn <tim@feathertop.org>,
+ FUKAUMI Naoki <naoki@radxa.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Elon Zhang
+ <zhangzj@rock-chips.com>, Alexey Charkov <alchark@gmail.com>,
+ Stephen Chen <stephen@radxa.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+References: <20250213145921.133412-1-detlev.casanova@collabora.com>
+ <20250213145921.133412-3-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250213145921.133412-3-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025, James Houghton wrote:
-> On Wed, Feb 12, 2025 at 2:50=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Wed, Feb 12, 2025, James Houghton wrote:
-> > > Here's what I think is going on (with the C repro anyway):
-> > >
-> > > 1. KVM_RUN a nested VM, and eventually we end up with
-> > >    nested_run_pending=3D1.
-> > > 2. Exit KVM_RUN with EINTR (or any reason really, but I see EINTR in
-> > >    repro attempts).
-> > > 3. KVM_SET_REGS to set rflags to 0x1ac585, which has X86_EFLAGS_VM,
-> > >    flipping it and setting vmx->emulation_required =3D true.
-> > > 3. KVM_RUN again. vmx->emulation_required will stop KVM from clearing
-> > >    nested_run_pending, and then we hit the
-> > >    KVM_BUG_ON(nested_run_pending) in __vmx_handle_exit().
-> > >
-> > > So I guess the KVM_BUG_ON() is a little bit too conservative, but thi=
-s
-> > > is nonsensical VMM behavior. So I'm not really sure what the best
-> > > solution is. Sean, any thoughts?
-> >
-> > Heh, deja vu.  This is essentially the same thing that was fixed by com=
-mit
-> > fc4fad79fc3d ("KVM: VMX: Reject KVM_RUN if emulation is required with p=
-ending
-> > exception"), just with a different WARN.
-> >
-> > This should fix it.  Checking nested_run_pending in handle_invalid_gues=
-t_state()
-> > is overkill, but it can't possibly do any harm, and the weirdness can b=
-e addressed
-> > with a comment.
->=20
-> Thanks Sean! This works, feel free to add:
->=20
-> Tested-by: James Houghton <jthoughton@google.com>
->=20
-> I understand this fix as "KVM cannot emulate a nested vm-enter, so if
-> emulation is required and we have a pending vm-enter, exit to userspace."
-> (This doesn't seem overkill to me... perhaps this explanation is wrong.)
+Hi Detlev,
 
-Sort of.  It's a horribly convoluted scenario that's exists only because ea=
-rly Intel
-CPUs supported a half-baked version of VMX.
+On 2025-02-13 15:57, Detlev Casanova wrote:
+> From: Stephen Chen <stephen@radxa.com>
+> 
+> The Radxa ROCK 4D board is based on the Rockchip rk3576 SoC.
+> 
+> The device tree adds support for basic devices:
+>  - UART
+>  - SD Card
+>  - Ethernet
+>  - USB
+>  - RTC
+> 
+> It has 4 USB ports but only 3 are usable as the top left one is used
+> for maskrom.
+> 
+> It has a USB-C port that is only used for powering the board.
+> 
+> Signed-off-by: Stephen Chen <stephen@radxa.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../boot/dts/rockchip/rk3576-rock-4d.dts      | 651 ++++++++++++++++++
+>  2 files changed, 652 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> index def1222c1907e..a112aeb37948a 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -132,6 +132,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> new file mode 100644
+> index 0000000000000..f356742f9d643
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> @@ -0,0 +1,651 @@
 
-Emulation is "required" if and only if guest state is invalid, and VMRESUME=
-/VMLAUNCH
-VM-Fail (architecturally) if guest state is invalid.  Thus the only way for=
- emulation
-to be required when a nested VM-Enter is pending, i.e. after nested VMRESUM=
-E/VMLAUNCH
-has succeeded but before KVM has entered L2 to complete emulation, is if KV=
-M misses a
-VM-Fail consistency check, or as is the case here, if userspace stuffs inva=
-lid state
-while KVM is partway through VMRESUME/VMLAUNCH emulation.
+[snip]
 
-Stuffing state from userspace doesn't put KVM in harm's way, but KVM can't =
-emulate
-the impossible state, and more importantly, it trips KVM's sanity check tha=
-t detects
-missed consistency checks.  The KVM_BUG_ON() could also be suppressed by mo=
-ving the
-nested_run_pending check below the emulation_required checks (see below), b=
-ut that
-would largely defeat the purpose of the sanity check.
+> +&gmac0 {
+> +	phy-mode = "rgmii-id";
+> +	clock_in_out = "output";
+> +
+> +	snps,reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 20000 100000>;
 
-Just out of sight in the below diff is related handling for the case where =
-userspace,
-or the guest itself via modifying SMRAM before RSM, stuffs bad state.  I.e.=
- it's
-the same scenario this syzkaller program hit, minus hitting the nested_run_=
-pending=3Dtrue
-window.
+The snps,reset- props are deprecated and should be changed to reset-
+props in the phy node.
 
-		/*
-		 * Synthesize a triple fault if L2 state is invalid.  In normal
-		 * operation, nested VM-Enter rejects any attempt to enter L2
-		 * with invalid state.  However, those checks are skipped if
-		 * state is being stuffed via RSM or KVM_SET_NESTED_STATE.  If
-		 * L2 state is invalid, it means either L1 modified SMRAM state
-		 * or userspace provided bad state.  Synthesize TRIPLE_FAULT as
-		 * doing so is architecturally allowed in the RSM case, and is
-		 * the least awful solution for the userspace case without
-		 * risking false positives.
-		 */
-		if (vmx->emulation_required) {
-			nested_vmx_vmexit(vcpu, EXIT_REASON_TRIPLE_FAULT, 0, 0);
-			return 1;
-		}
+> +
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&eth0m0_miim
+> +		     &eth0m0_tx_bus2
+> +		     &eth0m0_rx_bus2
+> +		     &eth0m0_rgmii_clk
+> +		     &eth0m0_rgmii_bus
+> +		     &ethm0_clk0_25m_out>;
+> +
+> +	phy-handle = <&rgmii_phy0>;
+> +	status = "okay";
+> +};
 
-The extra wrinkle in all of this is that emulation_required is only ever se=
-t if
-the vCPU lacks Unrestricted Guest (URG).  All CPUs since Westmere support U=
-RG,
-while KVM does allow disabling URG via module param, AFAIK syzbot doesn't r=
-un in
-environments with enable_unrestricted_guest=3D0 (other people do run syzkal=
-ler in
-such setups, but syzbot does not).
+[snip]
 
-And so the only way guest state to be invalid (for emulation_required to be=
- set),
-is if L1 is running L2 with URG disabled.  I.e. KVM _could_ simply run L2, =
-but
-doing so would violate the VMX architecture from L1's perspective.
+> +&mdio0 {
+> +	rgmii_phy0: phy@1 {
 
-static inline bool vmx_guest_state_valid(struct kvm_vcpu *vcpu)
-{
-	return is_unrestricted_guest(vcpu) || __vmx_guest_state_valid(vcpu);
-}
+Maybe ethernet-phy@1 ?
 
-static inline bool is_unrestricted_guest(struct kvm_vcpu *vcpu)
-{
-	return enable_unrestricted_guest && (!is_guest_mode(vcpu) ||
-	    (secondary_exec_controls_get(to_vmx(vcpu)) &
-	    SECONDARY_EXEC_UNRESTRICTED_GUEST));
-}
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		reg = <0x1>;
+> +		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f72835e85b6d..42bee8f2cffb 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6492,15 +6492,6 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, =
-fastpath_t exit_fastpath)
-        if (enable_pml && !is_guest_mode(vcpu))
-                vmx_flush_pml_buffer(vcpu);
-=20
--       /*
--        * KVM should never reach this point with a pending nested VM-Enter=
-.
--        * More specifically, short-circuiting VM-Entry to emulate L2 due t=
-o
--        * invalid guest state should never happen as that means KVM knowin=
-gly
--        * allowed a nested VM-Enter with an invalid vmcs12.  More below.
--        */
--       if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
--               return -EIO;
--
-        if (is_guest_mode(vcpu)) {
-                /*
-                 * PML is never enabled when running L2, bail immediately i=
-f a
-@@ -6538,10 +6529,16 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu,=
- fastpath_t exit_fastpath)
-                        return 1;
-                }
-=20
-+               if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
-+                       return -EIO;
-+
-                if (nested_vmx_reflect_vmexit(vcpu))
-                        return 1;
-        }
-=20
-+       if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
-+               return -EIO;
-+
-        /* If guest state is invalid, start emulating.  L2 is handled above=
-. */
-        if (vmx->emulation_required)
-                return handle_invalid_guest_state(vcpu);
+Please add reset- props here.
 
+Changing to use reset- props may cause issue if a RTL8211F PHY is used
+on the board. Use a ethernet-phy-id compatible or mainline U-Boot to
+ensure the Ethernet PHY can be discovered during probe.
+
+Regards,
+Jonas
+
+> +	};
+> +};
+> +
+
+[snip]
 
