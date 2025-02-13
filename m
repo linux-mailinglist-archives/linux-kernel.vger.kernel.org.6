@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-513747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994DBA34E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:00:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E24A34E2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F37587A45C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64FA816D6F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454EB245AE8;
-	Thu, 13 Feb 2025 19:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72259245AF3;
+	Thu, 13 Feb 2025 19:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVD+8ciD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DRtoWhRN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D5E24169B;
-	Thu, 13 Feb 2025 19:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FA428A2BE;
+	Thu, 13 Feb 2025 19:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739473249; cv=none; b=H+RCx/6i9aNFwSthUuEqg83oTbFpMiydeSlAFV0aqAGJ2uBNBLTa3kNtz3kbWBqRt5hrorGkn1gfKWA4ZTstZs2t5JOnft8qYZgDcU/MvDwx9BsadtomMgAqFcD7QmptzIBHIn0g91uLe6BzCDXetmRvXIWstcxr35mcYhGd6dY=
+	t=1739473299; cv=none; b=haIz5iL7HD1OOptYt7vZVLQbBB1kag/lZ6XFi9LQ2LBUD6eIEeqzYp7wRR6LTX+9oiSNDAHKi/Vln+t7J/JewPfq2/ZvBMWtMuFD9NpZfLm2JFhHvbb7kP/uv6IUAl6fT52nop/ngJsl+GRDdwkXU/SBQKIL2lPHFu5hQojnfkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739473249; c=relaxed/simple;
-	bh=JaHqVJvQmb7a9rZUyK0wHWtLTa86pNWN6s+bx1cJ1Ak=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=Ur7bIz4FmQipKuKR8jgseaAh6MEt6+CFhoH+33G5af+/9emu8PUEA4jmoF4xIbvFl0r9vk7XvUlRPipO+V+c8fqzDaEB3c0HnR9pfluT5GaiySas3zWyyA5OQJZGfGZQcyOL9NeXzUR0Di72l1d11rTylSdBO5INjqXuGy4RHyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVD+8ciD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E4BC4CED1;
-	Thu, 13 Feb 2025 19:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739473249;
-	bh=JaHqVJvQmb7a9rZUyK0wHWtLTa86pNWN6s+bx1cJ1Ak=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qVD+8ciDjC4HxvjB4K5vtw6D1T+EDoaKITEtvnQLbyjI1WqyyOTvkQWSSTSP293XY
-	 3r+v8KH48E6uqM78U2ToujHudNIjb/MG0m0UP6MyAUQqCv0Mi5Vuc0YLysstiMh79/
-	 LLHnx3BsOte6vtmxgoccY/0QKzQC/56S8QWBYiISI4HtNqQ4vF4NkGnxNJtmQm7aJv
-	 lCjzURexykJwFFl8D+ryiTVYz6Uq8TbKE/MTIBDKHBP6k1xDEgyZH+KR/xAyCanZmc
-	 ORt9esb0+sPzc39x3zAXjiKZMOOHmMc/tMHRd01Z3afJvU2wUhWR+Hwse/wYxCJvWC
-	 58NZtkl483WBw==
-Message-ID: <2b29351684e99c02491f86ee5cce20a6.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.14-rc2
-Date: Thu, 13 Feb 2025 19:00:31 +0000
+	s=arc-20240116; t=1739473299; c=relaxed/simple;
+	bh=Q+9A+XPhqjom/iRBeDIijWx64bo72hPGQfck4ws9+vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mq2zlx6c5Wd0YJu5Yd7NWfUSb4P+Co/wr5SynI6LfU5bgVV4E5s1EtcXVlfeLri1LAF4lr0SCf8RmIIs62OfhMaOs0XSH3Jw14x1teWw6aEOd9k3xzH1Z+k1qLXSBXutUilnzUEDQRJWFX7uTV0VAlkJMVQE1HP7cCc/gIRESlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DRtoWhRN; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739473298; x=1771009298;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q+9A+XPhqjom/iRBeDIijWx64bo72hPGQfck4ws9+vI=;
+  b=DRtoWhRNFHUxFczFYfCam/DS7CzeJKUJYXqqQAC9pqv7fNpRzwEULaXv
+   orodGSNWzl7rdxYbfiMpFAebdB0tbbs36phri7snAXwOXNAhMuLzH3vf0
+   EAOOCu7TF8rCMuAG/tFld5ijirBWdUzLlHlOdiJoHFG0HVfe2gxpQJPgE
+   MRMwTA3BtETmQCBKahxlZM6jW0pGhJVC9XYPj24/bZuflyn3p8izP/OrB
+   2nIHnUeII7UXvA+nNDPnLBKhG+fOSq3nOXv0OPYica2t/9hgbhhA1mGgD
+   6LVyKBG08f9ISgqQRzyaZ+YMvJ9QbNiC9OtBcB0plnEcELmR/O8GGOG61
+   w==;
+X-CSE-ConnectionGUID: Keux1IiyRVCQbxbaQWx/3Q==
+X-CSE-MsgGUID: WuH8RpykTxO3tD5h4W0Hhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39904417"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="39904417"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:01:38 -0800
+X-CSE-ConnectionGUID: 5CWKBrssRMGyGx6vOVkWSA==
+X-CSE-MsgGUID: 6oLgLwqdRvqCFTMmNE6hwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113208216"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Feb 2025 11:01:15 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tieSX-0018bj-14;
+	Thu, 13 Feb 2025 19:01:13 +0000
+Date: Fri, 14 Feb 2025 03:00:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and
+ aliases
+Message-ID: <202502140220.nEdgzjof-lkp@intel.com>
+References: <20250213000226.277-1-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213000226.277-1-wachiturroxd150@gmail.com>
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Hi Denzeel,
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+kernel test robot noticed the following build errors:
 
-are available in the Git repository at:
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on linus/master v6.14-rc2 next-20250213]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.14-rc2
+url:    https://github.com/intel-lab-lkp/linux/commits/Denzeel-Oliva/arm64-dts-exynos-r8s-enable-UART-interfaces-and-aliases/20250213-080512
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250213000226.277-1-wachiturroxd150%40gmail.com
+patch subject: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and aliases
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250214/202502140220.nEdgzjof-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140220.nEdgzjof-lkp@intel.com/reproduce)
 
-for you to fetch changes up to 3588b1c0fde2f58d166e3f94a5a58d64b893526c:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140220.nEdgzjof-lkp@intel.com/
 
-  spi: sn-f-ospi: Fix division by zero (2025-02-06 11:33:51 +0000)
+All errors (new ones prefixed by >>):
 
-----------------------------------------------------------------
-spi: Fixes for v6.14
+>> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:122.1-10 Label or path usi_uart not found
+>> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:127.1-10 Label or path serial_0 not found
+>> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:131.1-13 Label or path usi_bt_uart not found
+>> Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:136.1-10 Label or path serial_1 not found
+   FATAL ERROR: Syntax error parsing input tree
 
-A small collection of driver specific fixes, none standing out in
-particular.
-
-----------------------------------------------------------------
-Bence Csókás (1):
-      spi: atmel-quadspi: Fix warning in doc-comment
-
-Kunihiko Hayashi (1):
-      spi: sn-f-ospi: Fix division by zero
-
-Mark Lord (1):
-      spi: pxa2xx: Fix regression when toggling chip select on LPSS devices
-
- drivers/spi/atmel-quadspi.c | 4 ++--
- drivers/spi/spi-pxa2xx.c    | 2 +-
- drivers/spi/spi-sn-f-ospi.c | 3 +++
- 3 files changed, 6 insertions(+), 3 deletions(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
