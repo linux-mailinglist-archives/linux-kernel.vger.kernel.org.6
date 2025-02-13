@@ -1,173 +1,163 @@
-Return-Path: <linux-kernel+bounces-512873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C852A33EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:02:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E08A33EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712EC16AA42
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B3B3A7EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA145221707;
-	Thu, 13 Feb 2025 12:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9EE22154E;
+	Thu, 13 Feb 2025 12:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2KjB/5D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gFnFW5Ur";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9+v/6FZN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F4721D3D0;
-	Thu, 13 Feb 2025 12:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADE6227E9A;
+	Thu, 13 Feb 2025 12:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739448040; cv=none; b=FD76h0NNLzX1U5613aCea8pi/ns0CWI1WX2iqFZcE9EtlDVAW3BR7r9Y+vyWeC7QmgEO05rpFOuAjVDi7Q6XSmwtlgo/DuImfpeyXTUv91sE2HCCXjvdsyFYx8BRu2dIZZ2Te5Lpt6RRcsc8zQhv75N9d0mWQJdOR6M7gUtgSbc=
+	t=1739448113; cv=none; b=tHTkkjYfevIrw8HtmvShLwdaZ73ZPgP80Hkt0zY7YvN2XZJouK/4e1KXpwrO3hIdnaJHAjt/0zvW1wUkUJjfMgwkX1yQeU7z1+0KoPUC1GBvQgvBynLEAYIbeWflpx4bEMtnwwcCzgMrm6skTk9dAInOmvEQzC4rr6+u4FJXFRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739448040; c=relaxed/simple;
-	bh=Im1yH1OaxGaQ2gF3haVRxuvOsoSb/cXP6pcFJC0G8lU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thDqGaw6QqvVObYc0Kt7d5UUtD/GzfYv6LYOzSKCnHEEQq5laEiZKTERIwdNXLVv0KhUzrTbmtYoaP3qLzXYXxLQ12QizpqnPYFjVejXdkeC8Kr0D8bFb3nKQwxoHzViUh8sAoQoD6nZA+wEypSTTPRmhv+rkazQaAGxvY+O9xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2KjB/5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D96C4CED1;
-	Thu, 13 Feb 2025 12:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739448039;
-	bh=Im1yH1OaxGaQ2gF3haVRxuvOsoSb/cXP6pcFJC0G8lU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e2KjB/5DklF5stBkR/Rwr1LFFRl0LF6gegGMYBLhQFTwRBv1gIkYeKv35kuKR9FVh
-	 qP3uXc1qZX4MK8kNpSnVGGFtdZsfDVe1qBwo7n/23DT2h8fT0NIPbGoXPlQSoqO4jj
-	 I6uQaXpROVvWWVbPZp0PDAUx5rsPnaWBmw1HfZekjeEOYxMoiSwgxmW5OLgbYlpddT
-	 kIETC45TRppDZpdYBZqHi7UztpMAaQ//7eLTy4GZh8SCoa5RAYdj1r9Th4v090W4Ie
-	 DoE3dWfH7u1H44sFwswMWQcTMtKALNOrsKc5FqKbO+H0W91Rk3EYnjEl/IqDH1sIjV
-	 gTYyYP86Nd/Xw==
-Message-ID: <27b0f5c5-ae51-4192-8847-20e471c55be7@kernel.org>
-Date: Thu, 13 Feb 2025 13:00:31 +0100
+	s=arc-20240116; t=1739448113; c=relaxed/simple;
+	bh=LKMHuNPPkuNjr4aP7tRkLW49lzIpoHFE3xxDh7u4ieE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HiMPSC5obgRrq60K1sP/5joHjfM05u7Vlz7XEcyPwqpEoSYSXrgWEGAyHl4EhIW+R0n4i07pmkarwAW8rDIbbyzuFiMvKK3KlLj9IzE3ejrJvBeNn72GAz8RMXOlNvs5PdnKIAVbqqhkC2CrVsNvsYNLDTB3NJwOZIY5bZ6jPAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gFnFW5Ur; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9+v/6FZN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739448108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRi2by4hF7BVnwNBoTgAL9CtmnTqhyTscqUsWMsbLkE=;
+	b=gFnFW5UrQOTpQ94swvZhMjxhGMXUmdllUKHeuFDQK0Iv3lEv7WPpWaXIeU5VL+qcOcmSEn
+	kGMFK7iK7mxHYqifI8t7JJaghZu2pWmuNoQZl0H/sS7hc2aAzfJY6uTiz/VUKKb7ufyDvV
+	GekiQzi55/iKXCpEU4TxkCFiALIeyIQPOqcDMIikhz9AHKLpm+BCrMkwt7jpDMpW6HskPB
+	hTRniWF9zZf9BG1JpYfgOZs2UR+ANvzHYViC0g9vGZOrDUFkZONfFBHYpZxzRzJbGw8yny
+	M+2fk9vdaXEG3xtJ/5zxxLJkdMMQyeOe1ee5wJ8rxGbSPv4p9zhZC5qrn+aYNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739448108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRi2by4hF7BVnwNBoTgAL9CtmnTqhyTscqUsWMsbLkE=;
+	b=9+v/6FZN9iYWg8vy7Kso1fLjYJd3UKBNQLlk/DBk8uSIJsOASKi30BUOPU3IuSdJHsDXLY
+	ZN2gspy0UDfIpSBw==
+To: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Simon Horman
+ <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>, Suraj Jaiswal
+ <quic_jsuraj@quicinc.com>, Kory Maincent <kory.maincent@bootlin.com>, Gal
+ Pressman <gal@nvidia.com>, Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>, Choong Yong Liang
+ <yong.liang.choong@linux.intel.com>, Kunihiko Hayashi
+ <hayashi.kunihiko@socionext.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
+ feature in IGC
+In-Reply-To: <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250212220121.ici3qll66pfoov62@skbuf>
+ <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
+Date: Thu, 13 Feb 2025 13:01:46 +0100
+Message-ID: <87cyfmnjdh.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
- bindings
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250213044624.37334-1-swathi.ks@samsung.com>
- <CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
- <20250213044624.37334-2-swathi.ks@samsung.com>
- <20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
- <009a01db7e07$132feb60$398fc220$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <009a01db7e07$132feb60$398fc220$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On 13/02/2025 12:04, Swathi K S wrote:
-> 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 13 February 2025 13:24
->> To: Swathi K S <swathi.ks@samsung.com>
->> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
->> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
->> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
->> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
->> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
->> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
->> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
->> bindings
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On Thu Feb 13 2025, Abdul Rahim, Faizal wrote:
+> On 13/2/2025 6:01 am, Vladimir Oltean wrote:
+>> On Mon, Feb 10, 2025 at 02:01:58AM -0500, Faizal Rahim wrote:
+>>> Introduces support for the FPE feature in the IGC driver.
+>>>
+>>> The patches aligns with the upstream FPE API:
+>>> https://patchwork.kernel.org/project/netdevbpf/cover/20230220122343.115=
+6614-1-vladimir.oltean@nxp.com/
+>>> https://patchwork.kernel.org/project/netdevbpf/cover/20230119122705.730=
+54-1-vladimir.oltean@nxp.com/
+>>>
+>>> It builds upon earlier work:
+>>> https://patchwork.kernel.org/project/netdevbpf/cover/20220520011538.109=
+8888-1-vinicius.gomes@intel.com/
+>>>
+>>> The patch series adds the following functionalities to the IGC driver:
+>>> a) Configure FPE using `ethtool --set-mm`.
+>>> b) Display FPE settings via `ethtool --show-mm`.
+>>> c) View FPE statistics using `ethtool --include-statistics --show-mm'.
+>>> e) Enable preemptible/express queue with `fp`:
+>>>     tc qdisc add ... root taprio \
+>>>     fp E E P P
+>>=20
+>> Any reason why you are only enabling the preemptible traffic classes
+>> with taprio, and not with mqprio as well? I see there will have to be
+>> some work harmonizing igc's existing understanding of ring priorities
+>> with what Kurt did in 9f3297511dae ("igc: Add MQPRIO offload support"),
+>> and I was kind of expecting to see a proposal for that as part of this.
 >>
->> On Thu, Feb 13, 2025 at 10:16:23AM +0530, Swathi K S wrote:
->>> +  clock-names:
->>> +    minItems: 5
->>> +    maxItems: 10
->>> +    contains:
->>> +      enum:
->>> +        - ptp_ref
->>> +        - master_bus
->>> +        - slave_bus
->>> +        - tx
->>> +        - rx
->>> +        - master2_bus
->>> +        - slave2_bus
->>> +        - eqos_rxclk_mux
->>> +        - eqos_phyrxclk
->>> +        - dout_peric_rgmii_clk
->>
->> This does not match the previous entry. It should be strictly ordered with
->> minItems: 5.
-> 
-> Hi Krzysztof,
-> Thanks for reviewing.
-> In FSD SoC, we have 2 instances of ethernet in two blocks.
-> One instance needs 5 clocks and the other needs 10 clocks.
+>
+> I was planning to enable fpe + mqprio separately since it requires extra=
+=20
+> effort to explore mqprio with preemptible rings, ring priorities, and=20
+> testing to ensure it works properly and there are no regressions.
 
-I understand and I do not think this is contradictory to what I asked.
-If it is, then why/how?
+Well, my idea was to move the current mqprio offload implementation from
+legacy TSN Tx mode to the normal TSN Tx mode. Then, taprio and mqprio
+can share the same code (with or without fpe). I have a draft patch
+ready for that. What do you think about it?
 
-> 
-> I tried to understand this by looking at some other dt-binding files as given below, but looks like they follow similar approach
-> Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-> 
-> Could you please guide me on how to implement this?
-> Also, please help me understand what is meant by 'strictly ordered'
+Thanks,
+Kurt
 
-Every other 99% of bindings. Just like your clocks property.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Krzysztof
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmet3yoTHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzgvLKD/9OQPyBrZSv022P25tXUsH7EuBaRKfA
+aeLF85hUvtWB9bw1NihFYJsALhL8ouo+CTO9pvlnFlsgtgiB14KLrjShhefXZfTI
+Prjpei01Kyb2te+XqjCBmnrz5DriDwUQjDVSxd8WlfuFhm/FquQCp3fATF083LBZ
+T7fIsaLnoehBkUj5oMTgFu9EGRD+Pdnq9pQT94pHVPfSc1azLAU8LXzsXqOuCelK
+VkM40CJm5hZwRAQz+rl2C6ji7qAukJ7tof61Cj6c6i7jTZAvbZ52QOUlubYNUNsL
+yh4fGcYxLIJDp6yZz05Nf3KuEISjRcpxlEQxZF9vcfgSFa8cgwAZdnFdAnG9RH5F
+BnO6hhrtoqi9jmDjQbnnROdxeK1zELqhRNmWe7aa6USiiziLg6OHVKBeB9gGQ0B6
+F5XuwQjdfb96Mewy4S67FxwN0Ze53X7cqmUfk5WLESArCxrN2LMTuwOCsfYbBgpc
+NXeqyFzLrHtvb7nMZkONVsXSAYDqsQ+Q3Ms9DLOUh5+jvn9c8XPEJkNNoG0sQznS
+HSGN81QFGjkDACF/D7eiWrA7e6NoJoPMOdeyruHj2ejkZH+0FFA+p7qrWvwytOEx
+rT4GG3JqWLcEs/W/1KZbNf7yioJf+kPIxbS7TxBxy+W+dy8DhDA6cJNEspn6uhqw
+mbELAM6QhMYsxg==
+=HZMH
+-----END PGP SIGNATURE-----
+--=-=-=--
 
