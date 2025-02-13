@@ -1,133 +1,235 @@
-Return-Path: <linux-kernel+bounces-512366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436A0A33823
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:47:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32556A3383D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C583A78C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:47:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB4897A178D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1F5207A27;
-	Thu, 13 Feb 2025 06:47:43 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ACD207A11;
+	Thu, 13 Feb 2025 06:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bzWGu+WG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC342063E8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955FA2063E3;
+	Thu, 13 Feb 2025 06:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739429262; cv=none; b=Fa85bddk+g4xcbmROQqslJUvoxkZUtJrhmRu3Hgc+dQRW6qgEshV5aXt1c67D4Pl2OyjI9NUrcj3FoYMN6B6KBtCAh7dmXDbnOOn4d5247b06oegeTHODxiyxNeeXNlNYp584SWx+ZUawVVWvKbV4bHzC6lg2iYQDkZeDGDOG5U=
+	t=1739429533; cv=none; b=VwpeuUGMRedAf+LywghvbPJ5zdtD01j3DPn1BW7wrTmsE7ZyGsCvA1hNfTKCehey7nZUaxq852btK/PDQaHvT0Tq/KyAluulbtYTgmCJmK29NF9eZd1VnLuBbdDUw72CgWVCgEJRG5+AzTUWxNHIhaOiFddXWaZ8IbOqVvkRiSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739429262; c=relaxed/simple;
-	bh=Ui9tV08ii4vDqsenJvS2hHYGvjrn1LMX+Edc6aM9628=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QATt5m/4Gk15EF4CmtcxmtkfLEjsyCoKbEyWKH688JdiziLPTws8xnzXgi7Jmu+0yUYPnjPvWXmONmssUeXYubOXJGqiBKyKjhEuWFsC3o1y28fzI35X01Wh1qdnnmaGa+UHYNjzH4MF5dmc+1C/+yz0VcHczOsIedivMKtuc28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tiT0P-0007gj-8H; Thu, 13 Feb 2025 07:47:25 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tiT0O-000hzs-1x;
-	Thu, 13 Feb 2025 07:47:24 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tiT0O-00CmQq-1c;
-	Thu, 13 Feb 2025 07:47:24 +0100
-Date: Thu, 13 Feb 2025 07:47:24 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Daniel Baluta <daniel.baluta@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] ASoC: dt-bindings: support imx95's CM7 core
-Message-ID: <20250213064724.kbmxsk5szpxwclj6@pengutronix.de>
-References: <20250211225808.3050-1-laurentiumihalcea111@gmail.com>
- <20250211225808.3050-2-laurentiumihalcea111@gmail.com>
- <20250212093610.x4ixrackmn3u2xrf@pengutronix.de>
- <CAEnQRZBeQdnC+K92+Udb5awTmom10YHHNt7Ld-pYK4A1i8sr3Q@mail.gmail.com>
- <d66996eb-f49b-448b-9743-d19a3c3eba52@sirena.org.uk>
- <e45411df-1b8b-4f21-878d-d52e1112e62d@gmail.com>
+	s=arc-20240116; t=1739429533; c=relaxed/simple;
+	bh=HIsQirg/QfSVOdumsSMLsN22L13lwLj+hm+E8Aa5z/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fI0z2Ty17QJGYUBL9uYsXVaXivC/LW4Zb+OPpkiud9QCtdf1I70w85JZCuNXZHWcptgwR6FUl2LIr769SRgFYbXGdeH8eeahxwXMe940HisxsV1r/p86Paei17hLUIoHM8LgwPxfr1hBhcXyJd6WSHwSnPoiYNO3U4Vrs0NNZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bzWGu+WG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CJCiMM025783;
+	Thu, 13 Feb 2025 06:52:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pSoWe0tkC6qoe3u34Vl9ApP4YwUG2Z+ydK+WaKmQ7kw=; b=bzWGu+WG3XlpNyH1
+	tXoqtpiap4vX841JbsQ2QViLmCuE54wxSuLbhlmsdvhtS5c5E/UzK5xPAWnuLRyJ
+	XqPnByxz6C3aR8ZpLO87YRmkucppLpyfwRXgVDRiBCITHXkUAnxwYa/zOYwD8F74
+	qXsKdc/QbukB1AFXu4FzUH2TIFwTveRpPuCx4/QJuAB5cRzTySbxtYd2MSMglYKu
+	KPv485bpJFHU03fCjilGedZjiRA6AE0jdAJqzMkNzZVf62QnXcop/IxUgF1aYmo/
+	paLGdbgGfDl7ZM9ycKs5V/1l7W1R7rn426yJ2hmg1+53XRAcXlxdjRE80vivk46V
+	yIAG2w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5e4sg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:52:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D6pxRm001266
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:51:59 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 22:51:54 -0800
+Message-ID: <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
+Date: Thu, 13 Feb 2025 12:21:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e45411df-1b8b-4f21-878d-d52e1112e62d@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
+ <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+ <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
+ <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UfpzANZj0WxZR_L58fQ8IpHUO76VBsY-
+X-Proofpoint-GUID: UfpzANZj0WxZR_L58fQ8IpHUO76VBsY-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130051
 
-Hi Laurentiu, Daniel,
 
-On 25-02-12, Laurentiu Mihalcea wrote:
-> 
-> On 2/12/2025 2:38 PM, Mark Brown wrote:
-> > On Wed, Feb 12, 2025 at 12:11:49PM +0200, Daniel Baluta wrote:
-> >> On Wed, Feb 12, 2025 at 11:38 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> >>> On 25-02-11, Laurentiu Mihalcea wrote:
-> >>>> +    const: fsl,imx95-cm7-sof
-> >>> Albeit Krzysztof already add his Reviewed-by, can I ask why we need to
-> >>> add the -sof suffix instead of -audio or so? SOF is a software project
-> >>> but you can clearly run different software on the audio-copro as well.
-> >> Sure you can run a different software project on the audio DSP but
-> >> you will need a way to distinguish between the different projects.
-> >> There might be different mailbox, memory configurations. So you will  need
-> >> to invent another suffix specific to the new project.
-> >> We can make  const: fsl,imx95-cm7-audio as the one used with SOF
-> >> and think about a different name later for when another project will
-> >> want to use the DSP.
-> > I think the point here was that the DT should stay the same even if the
-> > DSP firwmare changes, just as how changing the main OS shouldn't affect
-> > the DT.
-> 
-> It's rather unfortunate but based on the experience from the 8 series
-> (imx8qm, imx8qxp, imx8mp), the programming model can differ quite
-> a bit (e.g: remoteproc vs SOF) even if the core is the same (i.e: DSP core).
-> 
-> The different programming models also required different DT configurations
-> (e.g: dif. mboxes as Daniel mentioned, some extra properties (i.e: reg-names), etc...)
-> 
-> The "-sof" suffix was chosen here instead of the more generic "-audio" (or whatever else
-> alternative) because the DT configuration is specific to SOF's programming model. Other
-> audio applications running on the same core may have dif. configurations (e.g: use
-> DTCM/ITCM for memory instead of DDR, dif. mbox count, etc...). I suppose this kind of thing
-> is bound to happen to some degree since the DT node doesn't just describe the CM7 core
-> (but, rather, it also encompasses information on the memory, mboxes, etc. used)
-> but perhaps I'm wrong?
 
-Time will tell if there will be any other user except for SOF for the
-DSP but and this is what I wanted to point out: the DTS should abstract
-the HW. IMHO The CM7-Audio node should contain all properties required
-to turn power and reset the core (e.g. clocks, reset, pm-domains). I get
-your point regarding different configs but please have a look at
-mt8183-kukui.dtsi. Here the rpmsg config is a subnode of the actual
-system-control-proc. This makes much more sense to me since the HW part
-is part of the generic core-node and all the software config goes into a
-separate subnode.
+On 2/13/2025 1:30 AM, Dmitry Baryshkov wrote:
+> On Wed, 12 Feb 2025 at 19:15, Taniya Das <quic_tdas@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
+>>>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>>>> controller functionalities. But the LPASS resets are required to be
+>>>> controlled from the high level OS. The Audio SW driver should be able to
+>>>> assert/deassert the audio resets as required. Thus in clock driver add
+>>>> support for the resets.
+>>>>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>>>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
+>>>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> @@ -1,6 +1,7 @@
+>>>>  // SPDX-License-Identifier: GPL-2.0-only
+>>>>  /*
+>>>>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>   */
+>>>>
+>>>>  #include <linux/clk-provider.h>
+>>>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>>>>      [LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>>>>  };
+>>>>
+>>>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+>>>> +    .name = "lpassaudio_cc_reset",
+>>>> +    .reg_bits = 32,
+>>>> +    .reg_stride = 4,
+>>>> +    .val_bits = 32,
+>>>> +    .fast_io = true,
+>>>> +    .max_register = 0xc8,
+>>>> +};
+>>>> +
+>>>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>>>> -    .config = &lpass_audio_cc_sc7280_regmap_config,
+>>>> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>>>      .resets = lpass_audio_cc_sc7280_resets,
+>>>>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>>>  };
+>>>>
+>>>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>>>> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
+>>>> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+>>>> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+>>>>      { }
+>>>>  };
+>>>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+>>>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>>>      struct regmap *regmap;
+>>>>      int ret;
+>>>>
+>>>> +    desc = device_get_match_data(&pdev->dev);
+>>>> +
+>>>> +    if (desc->num_resets)
+>>>> +            return qcom_cc_probe_by_index(pdev, 1, desc);
+>>>
+>>> Won't this break SC7280 support by causing an early return?
+>>>
+>>
+>> The resets are not defined for SC7280.
+>> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+>>         .config = &lpass_audio_cc_sc7280_regmap_config,
+>>         .clks = lpass_audio_cc_sc7280_clocks,
+>>         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
+>> };
+>>
+>> The reset get registered for SC7280 after the clocks are registered.
+>> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
+> 
+> Could you please make this condition more obvious and error-prone
+> rather than checking one particular non-obvious property?
+> 
 
-Regards,
-  Marco
+Dmitry, we had earlier tried [1], but seems like we could not align on
+this patchset.
+
+If you are aligned, please let me know I can fall back on the approach.
+
+[1]:
+https://lore.kernel.org/all/20240318053555.20405-3-quic_tdas@quicinc.com/
+
+Do you have any suggestions that we could consider?
+
+>>
+>>>> +
+>>>>      ret = lpass_audio_setup_runtime_pm(pdev);
+>>>>      if (ret)
+>>>>              return ret;
+>>>>
+>>>>      lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+>>>>      lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+>>>> -    desc = &lpass_audio_cc_sc7280_desc;
+>>>>
+>>>>      regmap = qcom_cc_map(pdev, desc);
+>>>>      if (IS_ERR(regmap)) {
+>>>> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>>>      regmap_write(regmap, 0x4, 0x3b);
+>>>>      regmap_write(regmap, 0x8, 0xff05);
+>>>>
+>>>> -    ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
+>>>> +    ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+>>>>      if (ret) {
+>>>>              dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+>>>>              goto exit;
+>>>>
+>>>> --
+>>>> 2.45.2
+>>>>
+>>>
+>>
+> 
+> 
+
 
