@@ -1,128 +1,189 @@
-Return-Path: <linux-kernel+bounces-512827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE99A33E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:34:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA198A33E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A193A18E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B762E168ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6907720D4FA;
-	Thu, 13 Feb 2025 11:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAC121D3CB;
+	Thu, 13 Feb 2025 11:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VH9KUzDf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B55XHfs2"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC472227E9F;
-	Thu, 13 Feb 2025 11:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13449227EA8;
+	Thu, 13 Feb 2025 11:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739446465; cv=none; b=M12LOT8rG0cPRN1jCp6TMM9I0nur3JK1CIV0IFl76v919qNUZTbb7TlOg7ivCEv586sOIQeKIgXCyvpV4J5pepOxrMg9Uf3yhWjwzSerjmqKzQ24zGF64sDrE+0PYSxDFOs/dvPpe2fZUK0xqzwY06oWomLFmmC2MrBEzO8/Ccc=
+	t=1739446466; cv=none; b=m9TrVC4f03m2Vr9xjTmP/M3nJPWgVicRQQ5LqsrzROiZ43hBnyBV19AWb58ThQ1SVRmy/VlIFRm8VwQ6nmfiq+R05ytgzDL2Zyt1MPYvOMDsW8pKkHKrEckMo15cKsDby5m7rczvpf/rJGMtAdgmxnJswBV0nkjTJxxrbSInKoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739446465; c=relaxed/simple;
-	bh=OiHvXcKA8YEFpd9Ho+xwvuJZYb/UQvHhXv95Idt26nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZghI0fVQogNTdDiyTkxCZv3bMvkPH75jlnfRskDWpI4QBg3RL88O0GlHmV3dxjQCyI8ziowdEAW0HSz6WZFvbGSjp9Wx6QwQXHTjJG5Owi4tM8GlW9nPbIFCGq/eoMT/0Zo8QkNj0uDus0jvzsTNuxvUys7m09VopoX9w/IYr1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VH9KUzDf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6D1C4CED1;
-	Thu, 13 Feb 2025 11:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739446465;
-	bh=OiHvXcKA8YEFpd9Ho+xwvuJZYb/UQvHhXv95Idt26nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VH9KUzDf56JrzQWwxUKQHMH8PhlT80HnzwC6f0hEa7xiJQCHJbsULUpCwdDCBmV9p
-	 4/RNBZyLaNjWHoVMUjVajSj9gH1Fjn5HgF4y3mdZ6iAF/ljFCqjAzP5hOKD9mM9FES
-	 vbL3Sbr9Dl8VCdvhKsBYjFsZkoCO2mpjKWF5iDY1LgoMpz5x+ayMB//WKs2t7Gw0rF
-	 gOw8MspHlbKYeHnFl1/SRW2OXQkGeacM8F+lv8uX8THx9WHxBHO7D9Vf2zUs3F4cbp
-	 WXXJHtTBlik1+ymnomlNF/nEwUaqr3nF7dfBnPFS9gnSL06jeFRCYBvVdCcpub70k+
-	 0UNM8tgqXONtQ==
-Date: Thu, 13 Feb 2025 12:34:16 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Hector Martin <marcan@marcan.st>, Steven Rostedt <rostedt@goodmis.org>,
-	"Dr. Greg" <greg@enjellic.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Airlie <airlied@gmail.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>, phasta@kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	daniel.almeida@collabora.com, aliceryhl@google.com,
-	robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Bj??rn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
-	DRI Development <dri-devel@lists.freedesktop.org>
-Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
- coherent allocator abstraction.)
-Message-ID: <Z63YuDYEEXfurxpY@cassiopeiae>
-References: <Z6OzgBYZNJPr_ZD1@phenom.ffwll.local>
- <CAPM=9tzPR9wd=3Wbjnp-T0W8-dDfGah-H3Ny52G85B+2Ev9ksA@mail.gmail.com>
- <208e1fc3-cfc3-4a26-98c3-a48ab35bb9db@marcan.st>
- <CAHk-=wi=ZmP2=TmHsFSUGq8vUZAOWWSK1vrJarMaOhReDRQRYQ@mail.gmail.com>
- <20250207121638.GA7356@wind.enjellic.com>
- <Z6bdCrgGEq8Txd-s@home.goodmis.org>
- <1e8452ab-613a-4c85-adc0-0c4a293dbf50@marcan.st>
- <07c447b77bdac1f8ade1f93456f853f89d4842ee.camel@icenowy.me>
- <Z6nTxks3u-ErSalQ@cassiopeiae>
- <d7d1fb8af8857e7ebfdea48213849ea9ba446477.camel@icenowy.me>
+	s=arc-20240116; t=1739446466; c=relaxed/simple;
+	bh=m3AHHQoFaGLR86+j4ld8rPY7w4WnhBo3/AP5fP05v88=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NElMiWUM9cS6dotJfNhSDykS+9tNu8gK2ZQoxNwGgQbEfaLlYauV96URWVv3as0H/ptFVtq76Mxbvx/ZbR4PkMEdf4315/qKGmDjE4YOnpsZ4F8itBe0QjVnS5V+djrGN2acMCns0vxeGOUuoR19aA42a9cB8yt9Y8+/PTj4z78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B55XHfs2; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c05b700b78so67039885a.2;
+        Thu, 13 Feb 2025 03:34:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739446464; x=1740051264; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PX0bO32jzjh5GtB3wS0faQmyE7j9XJOMtbeWYVHOA9M=;
+        b=B55XHfs2oW2hR+3zZrAr55k+jOlOnndmQjS5Xo7e7XGo/IGrCxIiZr2+SuTRULlmVv
+         ABaSZQZfPq/tCF4Qagy81CC0FTEwGPoMnX2Dg6oGhvK5VZMUf7eA0LD0B056xHR11LmH
+         CNKZLGMTBTEuu4sBwpfNNfQ/g3wZS4v4mR3xDYv8dU4aH3/C1ex7DheTmAXR17GlE6TW
+         lDgDqZIh7S7SE+BSvL8/RIf2sGtfRQ8oT/DzOZHymqFLHjvrZ3rg2LEVoWdkbeCEJtYa
+         KqYPsbRI8Ybox4yJu56P9kK4GqaYECAO8nLQiWrih83LJLAbRh4lzmiQarwNmjrkSGjP
+         XB5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739446464; x=1740051264;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PX0bO32jzjh5GtB3wS0faQmyE7j9XJOMtbeWYVHOA9M=;
+        b=AzE2ERi0tUSfKY3998Xl86Z9tZGa8I2hEztEGA9pm8mqC03q8iERC/+XXJp/fkGfdK
+         2KQVkpM6sdIFEkCeGmJuDNAgu5spLvuJn2D2jJ0WpCw4GudxLTVOGGJdmEXNj059Vxzt
+         NlGiQVPta3j7FAWwFyp5ACoQiQUCqBDcRw2gnsLeIMymlwvYQJF+Zz+tzNSAradxbFP2
+         Ixe/bzLCmYq6ma/toZ7/RiUN05Y+80smNq8R/0elKszfFKK/Wwghd4jK5B9JgYUfc2kP
+         X+OmQFp+PnBa3CXqWf77uA2fFmzY71Bx+fTPChZPnW1NhqcQUbxHo4reND3mTkG1x4wp
+         +w2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX4H8ZCkv95VKHZEqiVKxgg8jHNvo1Gm8HPzrmfv8o3JCReKqvDkpYEjVzqud2jj37wWqjTikEcNkj29p8=@vger.kernel.org, AJvYcCX8SK90BByXv7nQS/90CX+KPpKODXdZ2EeAVd5R+4GuZ04WqmoAF7CXnCFJk5wJ6UB/ePkPNx3BcV42@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqFSdWCN0Gn9AqUZPTK/SF8GUA1oYBMriiyjiVpKsrV6fdI6+h
+	7SNBqmo2kv4Pvo6NTwm/ZbF8shOroM3GO+oQ890Ktxfm94Jizvxo
+X-Gm-Gg: ASbGncvkdDuY+P5dnJh6uz09AUUVVscV0qGTbKgBXa4FGCvyFgegRCrgV85Tzz4wvcE
+	XCUyNQnNwvWnmkeh+ld4lPwmXBgWoVX59kGoqjrT+zofy7mwJSh786NWZB0EE49PD6h9IZXMC/2
+	TZpJ66mMuYSKZpweSzEvNwWLZnD0SRew/uZFkXRZuqlBSP53z/d8Hk+bfPzs6bjDo5uNMY8OncZ
+	TIWb5YDYYv1tp1VJFoQjQF7NJtb9vli03NaKE5n4vxYUExcncAVSci552iVnh681kMRuOAVw+kd
+	W7vZ1ClK5pPByCglGs94CIImSO+u46vKs8MhQFFN8hUVqAw2q4i0GrwOLEeoKpBBIJbbPugdTWe
+	KpgTNKZ2YTHC201QD9oTSuhvXb03LREhZp1d9XA==
+X-Google-Smtp-Source: AGHT+IGCl7CGqLgLZYFetGFPsT/dSU7d2L5+Uq4Y3+gaKF3uIr+p3lmj1c4cI2W+zuKpCOFtCuG/Qw==
+X-Received: by 2002:a05:620a:2d86:b0:7c0:7207:600a with SMTP id af79cd13be357-7c072076255mr622841985a.46.1739446463808;
+        Thu, 13 Feb 2025 03:34:23 -0800 (PST)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4041:5be7:7c00:c8d8:9808:e9c7:ed5b])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c07c861b71sm75008785a.70.2025.02.13.03.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 03:34:23 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 13 Feb 2025 06:34:18 -0500
+Subject: [PATCH v7] rust: alloc: satisfy POSIX alignment requirement
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7d1fb8af8857e7ebfdea48213849ea9ba446477.camel@icenowy.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALnYrWcC/3XPwWrDMAwG4FcpPs9Dlmyn2WnvUXawZTs1pMlIR
+ ugoefc5PRmXncQv+H6kh1jjkuMqPk4PscQtr3meSujeToKvbhqizKFkgYAGEJR0Yx6mGMocZ5b
+ eIHskQ3xGUcz3ElO+P/suXyVf8/ozL7/P+k0d2/+aNiWV5L53HSViH/TncHN5fOf5Jo6mDWuNr
+ caijUvgTQpB29RqqrVtNRUN7BmcBwIbWq0rraDVumgLPZOzKSrqW21q/XK5Of42KoJXXYjxRdt
+ aU6tt0TqFLqE+WwBf633f/wB4WWUZ4AEAAA==
+X-Change-ID: 20250201-aligned-alloc-b52cb2353c82
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ DJ Delorie <dj@redhat.com>, Eric Blake <eblake@redhat.com>, 
+ Paul Eggert <eggert@cs.ucla.edu>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-On Thu, Feb 13, 2025 at 11:49:20AM +0800, Icenowy Zheng wrote:
-> 在 2025-02-10星期一的 11:24 +0100，Danilo Krummrich写道：
-> > 
-> > (Additionally, in this particular case even one of the reviewers of
-> > DMA MAPPING HELPERS offered to be a reviewer of the Rust abstractions
-> > too, in
-> > order to keep eye on the DMA API angle.)
-> 
-> Sorry, but I did a fact check on this, and I found that the only
-> "reviewer" of DMA MAPPING HELPERS is Robin Murphy, he has only one
-> reply in this thread, and the reply only says "Indeed, FWIW it seems
-> like the appropriate level of abstraction to me, 
-> judging by the other wrappers living in rust/kernel/ already", he
-> didn't offer to be a reviewer,
+ISO C's `aligned_alloc` is partially implementation-defined; on some
+systems it inherits stricter requirements from POSIX's `posix_memalign`.
 
-As Abdiel pointed out already, he did offer it in [1].
+This causes the call added in commit dd09538fb409 ("rust: alloc:
+implement `Cmalloc` in module allocator_test") to fail on macOS because
+it doesn't meet the requirements of `posix_memalign`.
 
-But that's not the relevant part, but I think how you handled being in doubt is
-relevant.
+Adjust the call to meet the POSIX requirement and add a comment. This
+fixes failures in `make rusttest` on macOS.
 
-I think the correct way would have been to just ask for a pointer that proves
-the statement in question.
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocator_test")
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v7:
+- Remove errant second `pad_to_align` call. (Gary Guo)
+- Link to v6: https://lore.kernel.org/r/20250213-aligned-alloc-v6-1-4fd7f248600b@gmail.com
 
-Instead you just went ahead with the big words "fact check" and then even got it
-wrong. In your "fact check" you did not put any disclaimer to e.g. indicate that
-you might not have the full picture, etc.
+Changes in v6:
+- Replace incorrect use of `build_error` with `map_err`. `build_error`
+  seems not to work correctly on the host. (Danilo Krummrich)
+- Link to v5: https://lore.kernel.org/r/20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com
 
-Ultimately, the way you replied to this, comes across as an immediate accuse of
-lying.
+Changes in v5:
+- Remove errant newline in commit message. (Miguel Ojeda)
+- Use more succinct expression. (Gary Guo)
+- Drop and then add Danilo's Acked-by again.
+- Link to v4: https://lore.kernel.org/r/20250210-aligned-alloc-v4-1-609c3a6fe139@gmail.com
 
-I really think that we should *not* pick up this way of arguing that nowadays
-became all too present.
+Changes in v4:
+- Revert to `aligned_alloc` and correct rationale. (Miguel Ojeda)
+- Apply Danilo's Acked-by from v2.
+- Rebase on v6.14-rc2.
+- Link to v3: https://lore.kernel.org/r/20250206-aligned-alloc-v3-1-0cbc0ab0306d@gmail.com
 
-- Danilo
+Changes in v3:
+- Replace `aligned_alloc` with `posix_memalign` for portability.
+- Link to v2: https://lore.kernel.org/r/20250202-aligned-alloc-v2-1-5af0b5fdd46f@gmail.com
 
-[1] https://lore.kernel.org/rust-for-linux/4956d01e-2d06-4edd-813b-9da94b482069@arm.com/
+Changes in v2:
+- Shorten some variable names. (Danilo Krummrich)
+- Replace shadowing alignment variable with a second call to
+  Layout::align. (Danilo Krummrich)
+- Link to v1: https://lore.kernel.org/r/20250201-aligned-alloc-v1-1-c99a73f3cbd4@gmail.com
+---
+ rust/kernel/alloc/allocator_test.rs | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+index e3240d16040b..c37d4c0c64e9 100644
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@ -62,6 +62,24 @@ unsafe fn realloc(
+             ));
+         }
+ 
++        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
++        //
++        // > The value of alignment shall be a valid alignment supported by the implementation
++        // [...].
++        //
++        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
++        // 1003.1-2001) defines `posix_memalign`:
++        //
++        // > The value of alignment shall be a power of two multiple of sizeof (void *).
++        //
++        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
++        // of writing, this is known to be the case on macOS (but not in glibc).
++        //
++        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
++        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
++        let layout = layout.align_to(min_align).map_err(|_| AllocError)?;
++        let layout = layout.pad_to_align();
++
+         // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
+         // exceeds the given size and alignment requirements.
+         let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
+
+---
+base-commit: 8a5aae7dbbfb612509c8a2f112f7e0f79029ed45
+change-id: 20250201-aligned-alloc-b52cb2353c82
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
