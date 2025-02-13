@@ -1,218 +1,117 @@
-Return-Path: <linux-kernel+bounces-513387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F98A349B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:26:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D2DA34A69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624981893E9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12033B3C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B5228380A;
-	Thu, 13 Feb 2025 16:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2082F26FA6B;
+	Thu, 13 Feb 2025 16:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UOUi8GQK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3G0+Az2"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95607283809
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968DB26FA5D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463405; cv=none; b=TE9NSlzp0aUI4XRGJhcit7wTlOuiD0HySfYzdJsMO61QHTaRp6gRFeHmYFbRACL0b+PjglWKyZit7b7miWtjrpP+5rNtDjC9gS0aJF6RXl0Bfd2r0+9sNX9yhDajbogXFB1wAwYPJ2ONRGkcKS03M2gZITysFrU25pad6CsB5+Q=
+	t=1739463475; cv=none; b=JhHtxv+7hW8RvNt/GsFQxudVQGynw82DdUq3+ckdqxfwTyiZuTTX/5PUzWB1MEwPz1+YEpyzMaT9yky9NwdQ+O/TU5VW+OazUrrrnXvwC3b0mVr5govPd3Rqkj63qwID8QliTG5DD4Qzl5p80xB5ujZ1p3GuNYxt65Cu9q92tMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463405; c=relaxed/simple;
-	bh=wQfQUDOlMKIqY8ONyz/bt5HloO+0R2vMZiTEsqnsuu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1StBNdo1gWu6EH87/Bw+D+8wXGWHAcYi2eBfW6WsmcUXT/eudZYSrBA2iduBcbPnyGx9ieiIqu5wXlc1zkmA4EDvxyOYwmc9+hx5526Nf/CCYS2hrAsmA0AqDdt/KOVBtOFj9zdJTx5TXrO+cdqo/yHTvvIHEcLAgDQWd3UJWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UOUi8GQK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739463402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=K9INglP8UbI2R4zAa8G0HHDOGm0nrMySeYcN3jzl1jQ=;
-	b=UOUi8GQKUcZKWP5NrlPfnd1d4Bk3o0B0dhqozGvRCVvbJIonhFjzFeNgq5CbgnHPdvtxa6
-	65iS9XhN0xJEV6ZQWslkpVijNuPgDz8NlARyfk3ljkGB0/pNnCHJRB1YO/rlzNBB/XV9Ld
-	lx72jVWyKioBgtUMVcia15hO8ue34Qk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-kGDM7ihbNWCDO9U0ZI6GrQ-1; Thu, 13 Feb 2025 11:16:41 -0500
-X-MC-Unique: kGDM7ihbNWCDO9U0ZI6GrQ-1
-X-Mimecast-MFC-AGG-ID: kGDM7ihbNWCDO9U0ZI6GrQ
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38dce0d3d34so719957f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:16:41 -0800 (PST)
+	s=arc-20240116; t=1739463475; c=relaxed/simple;
+	bh=NEodwUThL9+dcHiRmvWNXyuvZUMSic74t0Nbwh8HOyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=quD7ZzOZt/sQWGISIDFz7TqpIZS1nA1paJN4QZd+gStXPRoiKK+QIE47YZuBjDOZE/0nZ2FvicN8hczBqzkEP+7PWclysqtrk2QlxoWDZ4KyBrt37XV8ix4M2RBe4kZNYTlAbhq+Rx53e+04qW7xNun8PRAl8FzcMaoCzRR1vPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E3G0+Az2; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5439a6179a7so1082216e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:17:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739463472; x=1740068272; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDyhBZMln1bycs64uQnjujYs7wjZ1a8hAKD4vRr/hAU=;
+        b=E3G0+Az2RJQtJcJR3k4hsUg5PccAsXTk7Ru0Sckd9l9mbOGBYavT3aqN5GmxKVoVxP
+         dGfzBfXbrVHwSj4AiTsJ4rPkZF0KyrkyQm7n1bN0SMpgTvRVoIS2fQTfZU43GRE9tzXc
+         LEDZO7z8RSwplwlNGx+Yw66zQGsy9Q7NBsmPYhMxEqaSpU5yehYruPyOA9DWr1iYYxFF
+         e1BgW6uOwW5bpFZgOlCfCeIawpK28Knd+WvzcpsSjCTqtb5HpGWO6D6dvNJ9wgqJVh0K
+         9r5V5B8Ji5ZW4SPrrSIeeLcbk1x2t1oquX56VIeuLTdUJz747YX56i0uwAXGk5TOGPj8
+         A+oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739463400; x=1740068200;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K9INglP8UbI2R4zAa8G0HHDOGm0nrMySeYcN3jzl1jQ=;
-        b=c+qfjVwvvIb5AyUYP2ntoDnZby/zGhg/QXwJCJ22uJPeRJspfFSdP4EjnRioGeq6IW
-         Jwm5M/RkHLHYTcWQrzpWg0pO8bTFbrhszxcnv34ueBmCVICR3lrR1hIw32NJE95yXa5S
-         KyFSbuIFGRgHy3/iO7HzD4QGKVw6E6KJd7g2lsOMnNORF4nqKF9yc3JfbGbnBcnnxiZe
-         Hytnmpux11ZQVwdAxjZZbgMoOTyL68zONmEb3LHs0jfVxo5kJxc+5XOnCqOB3cvCatob
-         wzy50i9m9v6+LK1vA8K1nHDkysBJU0IQZw6MFJrmKln+h8jXU3Y4bMtG3ee5S4IqzVUp
-         usrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPGBWrwLnUZl4+EFcfyc7dRLGvz6yI/MXX3gqaduUMcaW6DLZk4X/9cf6yt0QD28leXH9W9ShGYx2MVa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhNpYWCynzVKVtNU6G7KObI2Ik28V6gFZFvvYhCgP/giHiAm8y
-	ou7urBWkROd01m/hohI0t7GVCw6P1KYfM7ow+guEetB1kILP4cR/iFdauy10neXXVJlW0jlbPRA
-	L8isQZF2pSoUgv3Pd9UZqhGlqmvLMOo0ZFWLV35gADPMPBMBcVGmQ/KyZf+C9ow==
-X-Gm-Gg: ASbGncs1oBiDDvZGqkLgvT0FVYL+db+ZCfLqqjFI9pO2RqhP8jxg+vMSFgXPGhHamFF
-	U6tc8bhBdvKEkZaoWUAI94IcDFHuIv/O+FpdwMuvYDl4GAZxo2AIbPm28NCsT+hscVdRRLmt1Em
-	gL4C5tkNGNA1j5hYc2qm5SnBf1sjDwBRRuzqmlq99B0AlmjhaXzx2JH3zGaYjiefSFuAe7nXX19
-	+quDCB1urxvAM30r42d58wvLacfCBtwIz8r9QvWMmK60ZNkdZicH6y7a54JyzqSnruzxF74XYVp
-	8ldUDytAfYe08jMm5NUPDS+LssTSVcCEc7KR6TfhjVdJC73H1srDVeePe34gHf8L2xxU6FO4YZz
-	LQSn3Cyu/dElia77IlJOEepky8o6iYg==
-X-Received: by 2002:adf:e78a:0:b0:38d:df05:4d9 with SMTP id ffacd0b85a97d-38dea5f6f0cmr6761894f8f.43.1739463399962;
-        Thu, 13 Feb 2025 08:16:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEaWYsikH2Lv8Z9qNVRrad0h+UPZ783FaoONtNdxJEhnSMR7NUvcampLUBmQfrbd517d1dGFg==
-X-Received: by 2002:adf:e78a:0:b0:38d:df05:4d9 with SMTP id ffacd0b85a97d-38dea5f6f0cmr6761850f8f.43.1739463399532;
-        Thu, 13 Feb 2025 08:16:39 -0800 (PST)
-Received: from ?IPV6:2003:cb:c718:100:347d:db94:161d:398f? (p200300cbc7180100347ddb94161d398f.dip0.t-ipconnect.de. [2003:cb:c718:100:347d:db94:161d:398f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04f217sm52297485e9.1.2025.02.13.08.16.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 08:16:38 -0800 (PST)
-Message-ID: <b2964ea1-a22c-4b66-89ef-3082b6d00d21@redhat.com>
-Date: Thu, 13 Feb 2025 17:16:37 +0100
+        d=1e100.net; s=20230601; t=1739463472; x=1740068272;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDyhBZMln1bycs64uQnjujYs7wjZ1a8hAKD4vRr/hAU=;
+        b=dLDksgoq+LtJL210LLSCyy7ZF5s4OGguPxUnBb/AUfEcoBTsxfy6ZiYHnRxwI7YT/f
+         SfFJxZiv0i1UgRuDLCrJ2xfebYcFYgpZUJ3dklhfyqMd/bp0oLK9r+Efe2ZY91Uj5NeI
+         b3Ht6bZ+XHdqT119WPgGZ2256sxmeWC3nrXyQT6gtmybavi8B/TnR9egNaRFeJqHj7bg
+         Sp9p5BsmgMavQE+qOHt76BmRqdJX/G5fKD2F9euai7TlIr4NTICjTHayGwDA5GoGKz8c
+         Iwy9FWFAY1t7YqAl9qJPE/5CWpxZcc4vpqHMY9TsWWZDasV6yR1OSCozmYWcG1E/lTQA
+         lj8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQg9T18Ejmedu97hUFrrmtn2b61ebgMwHB/Dix32p9Tyv/SzKaXDUp8HdWFDWAT12DrpAMLyXmQhnrHbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE4i2AalJZ5UgCCYFfIS/SvHFqk5pNTO9HMSA8oSle9PvJ+V4K
+	XYMJXdwYpnq58TMGftDt6BTuX9rn7TMJb2tGOf8P0Y+iLkzSZ7m1MneqRJcVgVo=
+X-Gm-Gg: ASbGncv5glvI3fqQdzhlYDyDV96Hs0XMFN9nGXVB3r7rMxhyt5tXT1Eb7JzRx+WD7E6
+	PggcwIqqYAYiCkz3nvD9CjM27oXgUJsFFIfFBoWnj/+XzXaP0N4prjcmvx+8cT+gJ6Pl+aoWCgz
+	2GCl1jPpQdrxny/roFZOgZafXLMD+zzU74CasXCK26A4wjoJ91TA2wpsflvKcXkw5PRkjrjhmRN
+	wab5GFuzzN3fUvoSmKwcaGACGsawHY6OPPd+cYjz61a1O9bEehQ2EX7WCsHBluL9nlruaziwgIe
+	nhboU/zaxo4+7WinYP1NpaPqPDVfHhwJ1T43IOh3n2WQYCxV7ipQCC5byVvufq/XDt8xHxI=
+X-Google-Smtp-Source: AGHT+IHN3tJKBCB+UaH1+WiBe+MXFHV+FlApLTdlK08d+t7mvXHf0yH9bADDvOWtecgwSkRMdcmKWA==
+X-Received: by 2002:a05:6512:128a:b0:545:1182:183f with SMTP id 2adb3069b0e04-5451dfc1418mr1293963e87.4.1739463471653;
+        Thu, 13 Feb 2025 08:17:51 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105d08sm209001e87.134.2025.02.13.08.17.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 08:17:51 -0800 (PST)
+Date: Thu, 13 Feb 2025 18:17:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 13/37] drm/bridge: Change parameter name of
+ drm_atomic_bridge_chain_post_disable()
+Message-ID: <s5fsxzk4kkaxv4fqtrjggvjvvaaln3eavyb7lwy7m2l2q6huwy@blttne5ir4rf>
+References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
+ <20250213-bridge-connector-v3-13-e71598f49c8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] arm64: mm: Populate vmemmap/linear at the page level
- for hotplugged sections
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
- will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
- mark.rutland@arm.com, joey.gouly@arm.com, dave.hansen@linux.intel.com,
- akpm@linux-foundation.org, chenfeiyang@loongson.cn, chenhuacai@kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com,
- stable@vger.kernel.org
-References: <20250213075703.1270713-1-quic_zhenhuah@quicinc.com>
- <9bc91fe3-c590-48e2-b29f-736d0b056c34@redhat.com> <Z64UcwSGQ53mFmWF@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z64UcwSGQ53mFmWF@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-bridge-connector-v3-13-e71598f49c8f@kernel.org>
 
-On 13.02.25 16:49, Catalin Marinas wrote:
-> On Thu, Feb 13, 2025 at 01:59:25PM +0100, David Hildenbrand wrote:
->> On 13.02.25 08:57, Zhenhua Huang wrote:
->>> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
->>> to 27, making one section 128M. The related page struct which vmemmap
->>> points to is 2M then.
->>> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
->>> vmemmap to populate at the PMD section level which was suitable
->>> initially since hot plug granule is always one section(128M). However,
->>> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
->>> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
->>> existing arm64 assumptions.
->>>
->>> Considering the vmemmap_free -> unmap_hotplug_pmd_range path, when
->>> pmd_sect() is true, the entire PMD section is cleared, even if there is
->>> other effective subsection. For example page_struct_map1 and
->>> page_strcut_map2 are part of a single PMD entry and they are hot-added
->>> sequentially. Then page_struct_map1 is removed, vmemmap_free() will clear
->>> the entire PMD entry freeing the struct page map for the whole section,
->>> even though page_struct_map2 is still active. Similar problem exists
->>> with linear mapping as well, for 16K base page(PMD size = 32M) or 64K
->>> base page(PMD = 512M), their block mappings exceed SUBSECTION_SIZE.
->>> Tearing down the entire PMD mapping too will leave other subsections
->>> unmapped in the linear mapping.
->>>
->>> To address the issue, we need to prevent PMD/PUD/CONT mappings for both
->>> linear and vmemmap for non-boot sections if corresponding size on the
->>> given base page exceeds SUBSECTION_SIZE(2MB now).
->>>
->>> Cc: <stable@vger.kernel.org> # v5.4+
->>> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
->>> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
->>
->> Just so I understand correctly: for ordinary memory-sections-size hotplug
->> (NVDIMM, virtio-mem), we still get a large mapping where possible?
+On Thu, Feb 13, 2025 at 03:43:32PM +0100, Maxime Ripard wrote:
+> drm_atomic_bridge_chain_post_disable() disables all bridges affected by
+> a new commit. It takes the drm_atomic_state being committed as a
+> parameter.
 > 
-> Up to 2MB blocks only since that's the SUBSECTION_SIZE value. The
-> vmemmap mapping is also limited to PAGE_SIZE mappings (we could use
-> contiguous mappings for vmemmap but it's not wired up; I don't think
-> it's worth the hassle).
+> However, that parameter name is called (and documented) as old_state,
+> which is pretty confusing. Let's rename that variable as state.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
 
-But that's messed up, no?
-
-If someone hotplugs a memory section, they have to hotunplug a memory 
-section, not parts of it.
-
-That's why x86 does in vmemmap_populate():
-
-if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-	err = vmemmap_populate_basepages(start, end, node, NULL);
-else if (boot_cpu_has(X86_FEATURE_PSE))
-	err = vmemmap_populate_hugepages(start, end, node, altmap);
-...
-
-Maybe I'm missing something. Most importantly, why the weird subsection 
-stuff is supposed to degrade ordinary hotplug of dimms/virtio-mem etc.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-Cheers,
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
