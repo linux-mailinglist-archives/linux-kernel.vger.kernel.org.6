@@ -1,105 +1,180 @@
-Return-Path: <linux-kernel+bounces-512092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DDBA333ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF5CA333EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3259316767E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48C916753F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D380038DC8;
-	Thu, 13 Feb 2025 00:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tTurbWUj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED8E2A1D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3C01CF8B;
 	Thu, 13 Feb 2025 00:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRql5tcK"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89BE4A29
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739406055; cv=none; b=QiKr0uqMQRZ731l+URvL5GNl4AGKbpOL5j0SEUj3rAa9fG4zf52ZsTvdW1l5sjJbO9ao8U6DslK5lyv1cQUVkVZBsDpd/SjWh8CwwDj13MFFo71mH0K5ftP5YFJ2j4QtTF7N3OVjmlqceFPToNIwo4OueNWSHYPlfb92aFDwdU4=
+	t=1739406048; cv=none; b=hQ4rFHjurJOFash/LMSQwZViVfN8MV53EBWCV0PP9s4lloevEx6fwUU8I50sgtjIFbK/fyURjoMQcBmCd0OIXC/adZzs5IoUwlTtorkaP2P3fgO/dcwAof9qpiRIyLwyl5t2iVx2MnyqbBic3PEWu7FbCexQbMZS+3rpxbeM31g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739406055; c=relaxed/simple;
-	bh=Uze1rABa8sIUopEhSCd6Hm49KaVlltIaf9z/O9ucjlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eGaBMp+FShXcHgr/rCGJNT8eI45rZqYZpvd0ebb2+nngVspwgSftjHnDm2vg+vXAQDYE8kwOifKnJAJj767ZdHky7FbANhLN4oGZDyQqt06UhuZOqSbRIltVBX/BDnHLkwhbylc1oh1hyfugPq3CvzGVtyFOaiCOwnRUcY3i1yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tTurbWUj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739406048;
-	bh=Uze1rABa8sIUopEhSCd6Hm49KaVlltIaf9z/O9ucjlo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tTurbWUj4apCgT7t5Zp/v3wfhV/4CISzmfyLg621YLWTtdS/dGumsk8toXDiCKYgy
-	 xGT87iSyY7BSiNO+oeFqSsEj0nvqYm6irzEL2oDb98l8LIf60YTaV7xSIIEJp14nmt
-	 2RPfE3civkBYBmsLmiv44EThezNIqsoM+YusavK5SG4Xr5Xt4rJgWSsgb8kmkXGWy2
-	 542+SQhsl8HTJTWuIOIru+6p4yfsT57IGujHcBOwa7itfMZH8u6mklagN5TT19hroR
-	 EdCoWuChaAXpbTy4t1nqmuQxBCj8HyRGK11UhHuLpGvQdPGNYbJ74NpRP9Cdwlj/nn
-	 Wo3Dr2xGyU87Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YtbSJ0J6pz4wcm;
-	Thu, 13 Feb 2025 11:20:47 +1100 (AEDT)
-Date: Thu, 13 Feb 2025 11:19:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the uml-fixes
- tree
-Message-ID: <20250213111906.1e8d2944@canb.auug.org.au>
-In-Reply-To: <2038149484.28376811.1739400158648.JavaMail.zimbra@nod.at>
-References: <20250213092427.4f149099@canb.auug.org.au>
-	<2038149484.28376811.1739400158648.JavaMail.zimbra@nod.at>
+	s=arc-20240116; t=1739406048; c=relaxed/simple;
+	bh=QiyX/b7o6aoVr7+FLINVljRVt+/cZ0yqMI8VVVXXSbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqIjh9sf095hJ8VZXc35bCq6rsU+e00gRbpgek7d11k2CrnzyvyFaXmWx68nlpWCPmIwKcvpDoQsogSAu0iHCB2tsDPasyK+jhyg05fmRCsPEWrrwranHL569oV49iO5p/KJ4gwoU45spRyNn8LLkUaICl/ZdKmPlT5+HuZE7GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRql5tcK; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4395561ab71so3102405e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739406045; x=1740010845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X84lYtUnaPKcu+sxp9VlxXdEt5jePr1I7AgWIclWzJo=;
+        b=CRql5tcKi81tgFBCK3mK+7Q1ZpwqpftD06KMwUx+0h44WeP/M27NvFO4jHDqiX1NXl
+         GwvC/pxOh+k/dHHMIkvdGrRm+3bgPDSPkt1h05Jh8whNmVmCLAgajyhSYPoI+vWCqr6c
+         kCFbj2+cZKwCKEYZdN7PIvEPxWmFK2J44RO6emhDYZaawBGREq5/LjZNJ7g834zgXrTP
+         3DVkfm/Zn9gP+CE61NJC+seN6anpvWtY4a55PA3/aRmK6ocixEqtgbiXdkydsxX/VsbO
+         s5gGiDqMsU7inA1MhQY7WCHdlAp03jxMNaahhNi6a4z8oKW3ur+GQxuWTtW60LR2cwyj
+         PNVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739406045; x=1740010845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X84lYtUnaPKcu+sxp9VlxXdEt5jePr1I7AgWIclWzJo=;
+        b=DU59elUWJjekeozxDGWeTAaIL/9xqerwcMWIbY1kHJtSnS3dWTtzt7rU4+cj2sgbC6
+         Fu7gJ8IofGCoLeKxi8QnOXNPNIWbztEwj0SuX6mGu4dnFeyIMV8mlF6VQ2bla+CYJMvD
+         aSCHsXG8NzQ4H8T0uYlNb4VTw+hgODSqGNnYdKDC2tWSfGRgRVNb+Uf8WREv/SrKFHyx
+         watvLeG0ih5AQKHjAYkfd52J+uqJ8XYQFHbCCATcK9rOo/m/xGLYP9Ws/u6eCxDV13Lv
+         Xyid/3qfkuq03EF6zIL3nfUQ4v3AY9S21/V4KSs0N4oq9n2hf1VtZ8vTz1GXoPrO38t1
+         FrIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhGvy7wdn/oSQk1k9AlC1N5Xe30iHtrxgcjyDo1lwmTCtur1j6bD+EvuIXEqutDjTC5DYZuvXHbXImxOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI6lA5ehEQ1niV4SmEUgsMZoT9rWvEJxKP+4pku5BB6fziFj3p
+	hCsIWq6hHZsPOXP3+bE+962ODsU91Zp0UAiggfqPX6vtCHN/cLWL
+X-Gm-Gg: ASbGncuEmzyq1zmxRlATBTqXzT/HFSRKby3wItRu6JaOpWv1xi1MsVchBsGjq8/EmOO
+	HWAPF3QwBoy05X3tZFlg2XiZyw9aPGE1x2Qi3QfP8yeHrBBauRZ6WjZNQZhwOSYWl6pAZuqxmCs
+	dDCAM0sFPkvjubxALb6enI4RR1gGPm/9sjY6l4CgGWh/KZHk4mW+7ce6LT7ZiqNBMVcPOG3uUwr
+	7vG25Js344WOWkfJ/aC8AIJngzADMLPrfr82SMA5drb3WmKq6MR/HcJdeukvJxgvs/s1eCqxtyA
+	DkFEHzpbzXcdKjXg
+X-Google-Smtp-Source: AGHT+IF9zrFLHKVKmPSx9KGxXSoCk0hMnf8jkpOryo17zak+fTnqo0TeSRGwZkokpw4GpxYL4MZ87g==
+X-Received: by 2002:a5d:588a:0:b0:38f:2073:14a7 with SMTP id ffacd0b85a97d-38f24526be2mr1294596f8f.47.1739406044857;
+        Wed, 12 Feb 2025 16:20:44 -0800 (PST)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:a5eb:311f:6a00:dedb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f2591570esm332014f8f.59.2025.02.12.16.20.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 16:20:43 -0800 (PST)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: shaggy@kernel.org,
+	zhaomengmeng@kylinos.cn,
+	llfamsec@gmail.com,
+	gregkh@linuxfoundation.org,
+	ancowi69@gmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+Subject: [PATCH] jfs: fix slab-out-of-bounds read in ea_get()
+Date: Thu, 13 Feb 2025 00:20:25 +0000
+Message-Id: <20250213002025.6602-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/q/qN0lDSPgE5cpW8L6DHXj6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/q/qN0lDSPgE5cpW8L6DHXj6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+During the "size_check" label in ea_get(), the code checks if the extended 
+attribute list (xattr) size matches ea_size. If not, it logs 
+"ea_get: invalid extended attribute" and calls print_hex_dump().
 
-Hi Richard,
+Here, EALIST_SIZE(ea_buf->xattr) returns 4110417968, which exceeds 
+INT_MAX (2,147,483,647). Then ea_size is clamped:
 
-On Wed, 12 Feb 2025 23:42:38 +0100 (CET) Richard Weinberger <richard@nod.at=
-> wrote:
->
-> The branch was prepared by Johannes before the merge window and now
-> I have rebased it to v6.14-rc2.
-> So, I'll add my SOB too, ok?
+	int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
 
-Yeah, that would be good, thanks.
+Although clamp_t aims to bound ea_size between 0 and 4110417968, the upper 
+limit is treated as an int, causing an overflow above 2^31 - 1. This leads 
+"size" to wrap around and become negative (-184549328).
 
---=20
-Cheers,
-Stephen Rothwell
+The "size" is then passed to print_hex_dump() (called "len" in 
+print_hex_dump()), it is passed as type size_t (an unsigned 
+type), this is then stored inside a variable called 
+"int remaining", which is then assigned to "int linelen" which 
+is then passed to hex_dump_to_buffer(). In print_hex_dump() 
+the for loop, iterates through 0 to len-1, where len is 
+18446744073525002176, calling hex_dump_to_buffer() 
+on each iteration:
 
---Sig_/q/qN0lDSPgE5cpW8L6DHXj6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	for (i = 0; i < len; i += rowsize) {
+		linelen = min(remaining, rowsize);
+		remaining -= rowsize;
 
------BEGIN PGP SIGNATURE-----
+		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
+				   linebuf, sizeof(linebuf), ascii);
+	
+		...
+	}
+	
+The expected stopping condition (i < len) is effectively broken 
+since len is corrupted and very large. This eventually leads to 
+the "ptr+i" being passed to hex_dump_to_buffer() to get closer 
+to the end of the actual bounds of "ptr", eventually an out of 
+bounds access is done in hex_dump_to_buffer() in the following 
+for loop:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmetOnsACgkQAVBC80lX
-0Gw2Cgf/avGBVjaUGpLm5VHUsgZziwPxV0yKsV/yugEHWmwfq73Nr5ljC8sGhR9Z
-kXpxhRoOiWIQTGPBoW6poUa580IeOb3hZIDfmThb8s6PXFPdzgC5xAg3m2brYRZo
-N/MFPjg/DnpfbjqOaqQQVDuI28SZAwIIhziNQq8vyq2MarFTv8SQ+NhBJVjfWdBn
-FK6K2JPS1cmVQN7lQV+/YT07gjBO0j8r2yhJwrg38rVLb+ZuwmUTJ0QSeyTUuEP5
-Sh4gxIiWzjouxQF6aRgmUoMOg2zZbgwd2I2BH1xqJ78A+ZuoRqURwRND3aE+Rlo/
-MH5XuVlOCU7bJQbl41JNiCP7NBLaRg==
-=5Tpo
------END PGP SIGNATURE-----
+	for (j = 0; j < len; j++) {
+			if (linebuflen < lx + 2)
+				goto overflow2;
+			ch = ptr[j];
+		...
+	}
 
---Sig_/q/qN0lDSPgE5cpW8L6DHXj6--
+To fix this we should validate "EALIST_SIZE(ea_buf->xattr)" 
+before it is utilised.
+
+Reported-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+Tested-by: syzbot <syzbot+4e6e7e4279d046613bc5@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=4e6e7e4279d046613bc5
+Fixes: d9f9d96136cb ("jfs: xattr: check invalid xattr size more strictly")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ fs/jfs/xattr.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/fs/jfs/xattr.c b/fs/jfs/xattr.c
+index 24afbae87225..7575c51cce9b 100644
+--- a/fs/jfs/xattr.c
++++ b/fs/jfs/xattr.c
+@@ -559,11 +555,16 @@ static int ea_get(struct inode *inode, struct ea_buffer *ea_buf, int min_size)
+ 
+       size_check:
+ 	if (EALIST_SIZE(ea_buf->xattr) != ea_size) {
+-		int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
+-
+-		printk(KERN_ERR "ea_get: invalid extended attribute\n");
+-		print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
+-				     ea_buf->xattr, size, 1);
++		if (unlikely(EALIST_SIZE(ea_buf->xattr) > INT_MAX)) {
++			printk(KERN_ERR "ea_get: extended attribute size too large: %u > INT_MAX\n",
++			       EALIST_SIZE(ea_buf->xattr));
++		} else {
++			int size = clamp_t(int, ea_size, 0, EALIST_SIZE(ea_buf->xattr));
++
++			printk(KERN_ERR "ea_get: invalid extended attribute\n");
++			print_hex_dump(KERN_ERR, "", DUMP_PREFIX_ADDRESS, 16, 1,
++				       ea_buf->xattr, size, 1);
++		}
+ 		ea_release(inode, ea_buf);
+ 		rc = -EIO;
+ 		goto clean_up;
+-- 
+2.39.5
+
 
