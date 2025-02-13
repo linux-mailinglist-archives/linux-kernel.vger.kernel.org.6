@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-512313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D150CA33768
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:42:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A021A3376C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B133A7344
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACA23A6D1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D60206F0A;
-	Thu, 13 Feb 2025 05:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1A8207646;
+	Thu, 13 Feb 2025 05:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUbgLWeo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUdH4Trm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E98386325;
-	Thu, 13 Feb 2025 05:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494E86325;
+	Thu, 13 Feb 2025 05:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739425351; cv=none; b=Yc8JI42886WAfzFA8qjXJd7hZHbwQHEp6EKoMf09tQLOfJ5XVK/GMDdvS75DHygxagaVzG0LI0MspgTzqJxeE0BH1fw/AbX/WKhDGX8OG9bxetDB5G7GrBiYMHejvWTyqT0PXpiDJdZLd9onm0t879ORdOCGUGQRtmb4VucswJk=
+	t=1739425355; cv=none; b=HTsI3J/55jAcszujl99rjy7acmW2Eo8G+ed4HaRcLxK5tNRpqCQEV4T1LfCRosD8TLsrvQe+q2sL0on5+dr+o71W9fv3pwrFwJ45ffeU11/ZfhY/vulxQLQqDnaUNGdMLRuXqfDyimnoG4nDD950W3TesJ/9yXumw+WMm95vIzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739425351; c=relaxed/simple;
-	bh=OMAF88mW0DbMb/Cbw2wyFI+BTWFfN75CmZJvWRlLJyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A0D3gD17WNPRfZqtTyoZRTkN1hcSUoGr4py4jtP/J+cgLwMFjya5XRfxZGPO6DEckpLUX2y/Ej8FlmzJwOcU+Q5CX1gYgIAxibdsIIH0/3JaiTa+fCqrXB1PEJQ6AZPvLhVqx9N9SrgD2EC4PlZz/t6gHxBI4MJK5Tl2xXZTEzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUbgLWeo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D75C4CED1;
-	Thu, 13 Feb 2025 05:42:28 +0000 (UTC)
+	s=arc-20240116; t=1739425355; c=relaxed/simple;
+	bh=1oy+f0Vu6QrT48bg7Fr1czgxZtf91HbCjHjLvrt5GRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lZcHOEy2n7aljqx8kYxfyzQ47KpjTVwBw++Y1/cDjh+MTFCyzFLGIblDAzFaYl8dVzu9+4u8TzPewMkmUn1H2ck0eyvi8jemQHWJBqxcKghR4oM7V5ddOxC37dKQri2tyAoL+CGbmsE7QTbzP6ecLDntQ1bWZSXAjwZr2fqXeNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUdH4Trm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824D8C4CEE4;
+	Thu, 13 Feb 2025 05:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739425350;
-	bh=OMAF88mW0DbMb/Cbw2wyFI+BTWFfN75CmZJvWRlLJyA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GUbgLWeoSmvEMjNj//Qig09maTQSCQM2Tbk+xu++cSZ6kFiq+g079P+M2VtQTGO3K
-	 iNF2zT04FkmDIZciEWuaVBbkVwP41cvGRsAAYkdjVxJomfYx5wpXDVI7RftUQTcEPZ
-	 +LNHatWVoh0N+pERxWYjNBPmTvSwM00jf442d+LtpgTQp153HQgyVdTvncLn5m/xj6
-	 M2IkGlGewxctCpRZcPIhdVIToZuPuYn2z0b65HRLM8tqlrCd1Lw5gNeN10kmGtDUAT
-	 bNx5IDyoUBHGBAx+KOq9c76QkzgC3RpO6oM7b/m2WyQFhF+zgSsQ93JrqTy8kShKsm
-	 XveraTnI30UCg==
+	s=k20201202; t=1739425354;
+	bh=1oy+f0Vu6QrT48bg7Fr1czgxZtf91HbCjHjLvrt5GRs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XUdH4TrmU3PSPCNlyk4h7mN5QouLNiNCyFDFtazYjadLZYVLYnDXpbDAYVyzUG7eZ
+	 x42pdan40CIzw19MPBD/lqCow1ApzMuOXlUG5G65r1hmlwtFbvE80XZqqUvvzAlYqQ
+	 rvqH8jOtXP+MAnTYJ50LAwhm/Y8Yhyjd4FJ2MQCb4FkQ8/wx97DmzeLBqdUJt16XdE
+	 Hsole4MN2PY8lj1QgLKU/k9Wc/LzDmRkcRdiueCdUq2kCpBj3nZuthGCjY7bbF+oPr
+	 zHnmnl/TFzWmE141A6pEsLVUsboYKpfcJ4VurLONAB20RNvDJfTH2O0KgMgynk9TRM
+	 2JlImTMW0uYdQ==
 From: alexs@kernel.org
 To: 
 Cc: Alex Shi <alexs@kernel.org>,
@@ -46,21 +47,24 @@ Cc: Alex Shi <alexs@kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] docs/zh_CN: add maintainer tree for Chinese doc pickup
-Date: Thu, 13 Feb 2025 13:42:14 +0800
-Message-ID: <20250213054222.21776-1-alexs@kernel.org>
+Subject: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
+Date: Thu, 13 Feb 2025 13:42:15 +0800
+Message-ID: <20250213054222.21776-2-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250213054222.21776-1-alexs@kernel.org>
+References: <20250213054222.21776-1-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-From now on, the Chinese translation doc should be aimed here for base.
+A good checked summit could save much time for linux-doc maintainer.
 
 Signed-off-by: Alex Shi <alexs@kernel.org>
 Cc: Yanteng Si <siyanteng@loongson.cn> 
@@ -68,21 +72,28 @@ Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org 
 Cc: linux-kernel@vger.kernel.org 
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/translations/zh_CN/index.rst | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c27f3190737f..dbb7f982e9c3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5306,6 +5306,7 @@ F:	Documentation/dev-tools/checkpatch.rst
- CHINESE DOCUMENTATION
- M:	Alex Shi <alexs@kernel.org>
- M:	Yanteng Si <siyanteng@loongson.cn>
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git
- S:	Maintained
- F:	Documentation/translations/zh_CN/
+diff --git a/Documentation/translations/zh_CN/index.rst b/Documentation/translations/zh_CN/index.rst
+index 7574e1673180..cc512ca54172 100644
+--- a/Documentation/translations/zh_CN/index.rst
++++ b/Documentation/translations/zh_CN/index.rst
+@@ -26,7 +26,13 @@
+ 顺便说下，中文文档也需要遵守内核编码风格，风格中中文和英文的主要不同就是中文
+ 的字符标点占用两个英文字符宽度，所以，当英文要求不要超过每行100个字符时，
+ 中文就不要超过50个字符。另外，也要注意'-'，'='等符号与相关标题的对齐。在将
+-补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试。
++补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试，确保
++在 ``make htmldocs/pdfdocs`` 中不增加新的告警，最后，安装检查你生成的
++html/pdf 文件，确认它们看起来是正常的。
++
++提交之前请确认你的补丁可以正常提交到中文文档维护库:
++https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git/
++如果你的补丁依赖于其他人的补丁, 可以与其他人商量后由某一个人合并提交。
  
+ 与Linux 内核社区一起工作
+ ------------------------
 -- 
 2.43.0
 
