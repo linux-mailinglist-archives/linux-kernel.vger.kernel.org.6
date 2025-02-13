@@ -1,238 +1,253 @@
-Return-Path: <linux-kernel+bounces-513736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213F8A34E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:49:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAB9A34E0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CAA16CC78
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:49:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFED16CD58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C726024292D;
-	Thu, 13 Feb 2025 18:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8DA245B05;
+	Thu, 13 Feb 2025 18:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSFh9gW3"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbRSWBCR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A424293A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739472547; cv=none; b=XO7hZiiz/ipU+AG58m/T5e8nyCbtaui0cWRqZampEvKZsHBRlpHj2P698++IEzhiZEgu77RAn/IdfQkPf9M/Grme1msns/lTjQnZKF2pAw4AOuohzzSZl9YEGuRUYRggGckDjf/8yscrp44REg4ncnt1zbO7HnS3MaoEKvU8bzs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739472547; c=relaxed/simple;
-	bh=VdCq+xtDMHL7BRy1o/OIDvxdZ3slqVLstb8+HrIaAhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/i9MXxq20rh57l4U7KBK5y2smWjQJdpvMaV1vjuVeC2Rt07hNljhquAnLT2HFHCx/E+npzO2+uqlUadRV5w/cRjEVfZQUDOVb68kA+kfEvZrv7qguLVbv2mMdCjqt1wrTK8mu/IkgoJf3ejq1V8QY1jL9gv6lnP2mEU63dX3XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSFh9gW3; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4bbf29bb21eso228371137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:49:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739472544; x=1740077344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v7boHwExjmVAJE837TzvXWkShByi/UK+LGMj8HpqhPk=;
-        b=hSFh9gW3/SPJ169bUhzjtXejI7Fc4grOyHsmsq6XTSzTqLPRgsNi24MzarM5WlQpnQ
-         8YLerSCtqvdz9xEYVri7GaHnsqukr2bkAFvIJaEYbybogkVHrmGxJ7wUnTHxtsMNcTT+
-         eYuraQMeCdLdOsa2PhkRC61jqTtA8eZQbblSYkvuHMO+bVMtYRB7tOaPWAktcN0M1uHl
-         0xy7ZfB60ih02KFenLJhIuN22Jte9rrXuEpbTYdNtH+v/v7E0jlbZbBso9y7a1ogvUoR
-         NVwRWPaeXA3Ix+/8Zos0YcRy129cYoLIUfhYsx7QTh1nm9p31a1GJd4/vZ4sJhx8WU0V
-         u7Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739472544; x=1740077344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v7boHwExjmVAJE837TzvXWkShByi/UK+LGMj8HpqhPk=;
-        b=fFUY19Q8rWyzCqEkK6Q67kqPxtMc4TA87E7kdo7jVC46jdTxhsU7JNUVFCpLN6o8vm
-         csvgduzooBEDvJmRy2NyvkiBaa8krwssHhV/SA7totaT1aAohnKcmz24sqRr81U1wVFw
-         qvrxsEiN63vQBJyNtrZErSBwND+9xCCGQ6wAaYADKof6VphTOwSQYFuTEf3fsRiOGhGj
-         PHwHSYgnsmyNQKnc+7lSPY14q9FDn2EbtN+6DHxAkDEvvqHeS7xuWgHQKDvfMjjkWAOo
-         b9TV7coxH2hZkJ3IEIQkUlAg79pgcpZ6NizJiQ/QtC3TeIyJ3Sww1eaz8oiYOvSuJRI5
-         VNzg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2ABWyLgPuZvFOD0NAJo2JJPsWJCo7fFa9c92G8j0toLNCfo0z9/DtctEtvwqwrBX+RggZQxQlhM75Lho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6G9Wu3us2WavJi9OaK4KeVyoMD0VaE5o2OHL81XwxIDW4J1uT
-	U4rztPd9QwqV/cRhDPqJpC1XG5nPMLNW0hvnwBund6e8aCNz1183Yq6ArRZoIPXOIGhWKZ8M2Dj
-	tIk2qbFmbHk8O6Qg/L3Jt8dfnQTQ=
-X-Gm-Gg: ASbGncvFWiVg40ZMN/6udfHZEgpGl76B7MHmIfD0OBAJwMlZijX0XXH09Z3lKZKYJHO
-	cmTW69/PwASENQc3QbusrAKPF98mUX8irT2MGq7YqHLOV3m3fe2BYsTDANhaAVQG/clyygZrlby
-	sOMN9nsrqd6IGdf/N+eFbNhslaJig=
-X-Google-Smtp-Source: AGHT+IHllIcsi3aUC71hMwNeu2lRyCQ1wpzzesNNV0/+8zMd7QG5KBTum2gcYayGUUMFrUY2gmN2IeXSdsWtezGirbY=
-X-Received: by 2002:a05:6102:4427:b0:4bb:ce42:40e3 with SMTP id
- ada2fe7eead31-4bc0374ab00mr4727166137.17.1739472544182; Thu, 13 Feb 2025
- 10:49:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D86E2222C4;
+	Thu, 13 Feb 2025 18:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739472632; cv=fail; b=kkGkzr9yemoWJ/ALclG5xtqoNG9lWrGecKyw9zT7pJjKnCtQYbU4gxMj4XCQw/jp7LugshABn77uY6Cr4Fw9n1bxrv5opDuYy/vK43VQsnBEDAGil0skJtvKLoW9nuBohAqfX0cTbV2ZOj8owTeD1fZlbmznyoQPgeX9vX6e2HE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739472632; c=relaxed/simple;
+	bh=hKcs5GEtfqGWReP718J4Ttulh4BIexzRvR5lIhA/MhA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tU/D+UxqWv/pLBuzC2ZVkAYhQAJbICwbKGGkUG+GgL05JtzLgJ4tzazQRIfD0PCUEFaQ08EusO+t+M51cuYdjiIdTR2CC4u9YDxdLigndu0sunP+a9+JsFeqhw6ZcWMXfGCSHMh8YjucjphCYS9IQilzcUgSh+UqSwfp0T8JhKA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbRSWBCR; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739472631; x=1771008631;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=hKcs5GEtfqGWReP718J4Ttulh4BIexzRvR5lIhA/MhA=;
+  b=hbRSWBCRCnc7vWfl06S+pkdx6EUKNFR+fmP5dDder1Nk0WPZ6Fqtcxzb
+   VA0eo0SUuot6LpnsCVRC50KwBosA8uOibeG6T6h6yFmz20BEQMwGR8iR0
+   zz2VjgaW7+1IBZhfRpFAtSg7XX/2TkYsdlfmj1kFv+nj+jwSWRWRh5H3M
+   8AGNToS2KBp7itlgKwle7VcjGWKgTob3dh0Rb2INHw8kmUlP0kt1p0RRl
+   d4Os0ZARYq6do6ZHbk4xbPfg3VJm95SEsQE8+hkekJGEaHc4i1YfTk/Nx
+   1/tvqLndUBzmS64WrOz6msimmh1YPxpsjqB2fU26q218DSNXDnSlQpdC4
+   A==;
+X-CSE-ConnectionGUID: Ttfp0Ce8R0iBiKbjBuSTqw==
+X-CSE-MsgGUID: SUze44oYTjO1/WeBUKExYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43965039"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="43965039"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:50:30 -0800
+X-CSE-ConnectionGUID: gZ3eVMtTTISQVoH5+o7WPA==
+X-CSE-MsgGUID: PoDo8/caTPKMjAU6nOXH8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113731960"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:50:30 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Feb 2025 10:50:27 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 13 Feb 2025 10:50:27 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Feb 2025 10:50:25 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ika6lSapgFw8GLLmbZo4VB2HUwseJSzhCANx38DhcUkLAqGv1atT69UP8e3sZG9kDtgUtPVMBAMjlTeEmHBulvJg5alIcHcpAv2tjHb7NwxjKWGK4X6rQXT182mWi1P4Zzp1oxweNjz4hERE60qVKTMTI9/dZ/15HiFuzmuBnKOLF5JQczOldW66l9SDhi3mTDsv5zT+5+AOrPpBPpYJs3CTlgLiFvPdQqgIJPQ+acI+uZonmqAW4Bgv4Up34iHpLp/qSyTN1mT73OXs7KoA1kz3lBO7X8IhdDTjbU/8Q80XX7O0nnXrP/a96malIwndaYkE2eI5+PU3Y0fdD4CRjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A3avRBD1OhYteha/CrcxZep/yXZHpIybS4tLDp3ZUDQ=;
+ b=fldprHFrLnFrXxEyTH8F5IIKpGxpunfY3Dqlyoh7rfSAq+8+F/YnFku5rL0o9qkrMZlgk8q49GMuS8tBAwh3qRO4O+dGk5yVSIes01Xzlr/bLUt3VV02upnzG3+jh4Uezayu00CS6A5buQRIh5d03t4akeTGQSBuh3oE6xkWN5YFad+2fCC8x3MZ+cliWFE4G23prmI+cJjRna761uJOJ52kCr1LyGNaaGGJYyM48vtZrtu8/dsm+xnLAysSPH7S3bALfYZzn2Z2bt/Mgn92bA55LEoRm/tW87VDQiCcOPhbO8axEg91y8lqECOF/GY6/ZGXS1q+gkVTicinnD1xFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
+ by SJ0PR11MB4880.namprd11.prod.outlook.com (2603:10b6:a03:2af::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Thu, 13 Feb
+ 2025 18:49:41 +0000
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b%6]) with mapi id 15.20.8422.015; Thu, 13 Feb 2025
+ 18:49:41 +0000
+Message-ID: <3123acc7-cc9d-4224-8fe4-7def3c02637b@intel.com>
+Date: Thu, 13 Feb 2025 10:49:40 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/17] cpufreq: Fix the efficient idle check for Intel
+ extended Families
+To: "Zhang, Rui" <rui.zhang@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>
+CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"luto@kernel.org" <luto@kernel.org>, "david.laight.linux@gmail.com"
+	<david.laight.linux@gmail.com>, "linux-hwmon@vger.kernel.org"
+	<linux-hwmon@vger.kernel.org>, "linux-perf-users@vger.kernel.org"
+	<linux-perf-users@vger.kernel.org>, "Hunter, Adrian"
+	<adrian.hunter@intel.com>, "jdelvare@suse.com" <jdelvare@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "irogers@google.com"
+	<irogers@google.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"fenghua.yu@intel.com" <fenghua.yu@intel.com>, "lenb@kernel.org"
+	<lenb@kernel.org>, "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+	"linux@roeck-us.net" <linux@roeck-us.net>, "hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "bp@alien8.de" <bp@alien8.de>, "acme@kernel.org"
+	<acme@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>,
+	"jolsa@kernel.org" <jolsa@kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "namhyung@kernel.org" <namhyung@kernel.org>
+References: <20250211194407.2577252-1-sohil.mehta@intel.com>
+ <20250211194407.2577252-7-sohil.mehta@intel.com>
+ <56eb1f8bda3932632cc0b17dde053f77fe7f3f89.camel@intel.com>
+Content-Language: en-US
+From: Sohil Mehta <sohil.mehta@intel.com>
+In-Reply-To: <56eb1f8bda3932632cc0b17dde053f77fe7f3f89.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ2PR07CA0009.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::6) To BYAPR11MB3320.namprd11.prod.outlook.com
+ (2603:10b6:a03:18::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208135414.417-1-yohan.joung@sk.com>
-In-Reply-To: <20250208135414.417-1-yohan.joung@sk.com>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Thu, 13 Feb 2025 10:48:52 -0800
-X-Gm-Features: AWEUYZlxYmvOwQTFXp17eT7krbTyJ3SD0g8BbY2UrGprqoYLvaVBXGruYXqJuEo
-Message-ID: <CACOAw_xqi7cy5j5FVNKJk=QLGzda+pzAmq=weHNOpiasG+zeog@mail.gmail.com>
-Subject: Re: [PATCH v1] f2fs: separate discard and zone reset command from
- pend list
-To: Yohan Joung <jyh429@gmail.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Yohan Joung <yohan.joung@sk.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|SJ0PR11MB4880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3af8f63c-bcc4-409e-1918-08dd4c5f2c93
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SGRtYzZvM1VYekFWMzlocEU2TDduazUvQlVJZC8zek9GdVVRWUhHRTUwZ1px?=
+ =?utf-8?B?cFJPT3ZCbEhVY3VWeXhwQ1dFVnNQTkN5Y0h0RUdRTHJ1cEdYRWFZNTdkb1k2?=
+ =?utf-8?B?aTBVd291c0pNQ0haMXQxenRMY2tqNHY1RU1UWW5DY2s1N0pJT0NHcDZhV3Rk?=
+ =?utf-8?B?SmRFdlRzbVJ2R2tGYlJ2MXFVRm12SnFpc0pqS01lZ2FHNVFUSmF3RGVIT3RL?=
+ =?utf-8?B?WVJaOGk2K01lZk9xSytDZzJOZW1NdktqQi82cXdkT2cyYVdGR1pRYU0waHRx?=
+ =?utf-8?B?czA1WlQwSXNtWUViQVRtc2ozOVhha0dCeXVsSTlrRnE4S2pOc0hkNkFaeVN3?=
+ =?utf-8?B?VzZUQ0dYd0pZT3NRMFlTMmJWajRnTDl0SFMrdzRWYjA5SXBQZkpWaEU5Ujdw?=
+ =?utf-8?B?YmNMS2V1VFBONWwvMSsxMnRWRThZQ3JiYW0zZGE1clpBd0t4RE82UHU1Nmkx?=
+ =?utf-8?B?S2tDVktTWktMTEk5L2MrVEFVUXc1eG1OWFJSRzJaUmJtKzQrMmMxNFEvOWtB?=
+ =?utf-8?B?TXh2UE1UQ2NacWpGcVFYeDN0ajhUS0d2aTQwQ2ExclB2K0FQdnhaWUVrZXpi?=
+ =?utf-8?B?eDNiYUJkdUpQbTJyMjFHckR5akVTVzN2UjJkQys3MVd4WHp3YXQydTRad2I0?=
+ =?utf-8?B?QktQcnpvQmxva1Y2d0VndDFoWnpwb1VwNGFROHUyQlFXTituNUliZUZub0hB?=
+ =?utf-8?B?bnBSV09TZjNnSC9Za0wyZ2laSnZrWHlLZzVkT0VNdmxTMlNTVUxuU2ZhenQw?=
+ =?utf-8?B?eEVFaXdUYTMwV0IvRFd5YWdtdE9abkRoalJuR0pyVjRZT0k2M1ZkOTIzTVlY?=
+ =?utf-8?B?TlQ3QUJERFNZWkk5UXRKU2VWTUVyMG9NZ0FTMHdra2d6eW1TbnFuUmZUNzN6?=
+ =?utf-8?B?TUI3YXoybzhid0pBZC9IUUlzMEJLWTdxRmsvZ04rYTc1VC92eGhyakVPVWVG?=
+ =?utf-8?B?dWx0R0VpYW11aXJId3FDQ0Qwa3h5QVo0RzVWQnp4aU5vVkEwejVHSnJ2TFFs?=
+ =?utf-8?B?eFAyNi9pcnI3VS9TMFJSS250dkJnV3Y4S3h5dzlSWUsyQTBJeXArZDdxeEJP?=
+ =?utf-8?B?STZ2dHJhMTFnRUV1L2sxbjNIOEhvdXJXRTkwNGFRNGFoZ2V4SXFSd3JUNlQ3?=
+ =?utf-8?B?YkdCcVJnN2NDdU9IdWxsU1ZOTG9zTDJRYUo3Sm9EazFNSlJNcy80bnZWTlBx?=
+ =?utf-8?B?dlVVWVpqVmZqcWdvZEYvWW82QW1sY1pZa3hIRkV4RjQ1RzladmNmaXNzRXJF?=
+ =?utf-8?B?U01BM1M3eHZ5bU85SmdSLzlMQk9MYXBzZ2NiL2ZPWVBmRndHamJKUi9Sb2Er?=
+ =?utf-8?B?Tk5oZTN4ZmYrTkdGM0pQM3JjVEdjVTIwMHlUQlorbTNCajJsU0laV1dkWW9G?=
+ =?utf-8?B?cmgvL2RwUmxpNTdCWm9EY2RRZ3V6ZXF6WUEyZTJjbW0rWExqMXY3Nzl1ZkR6?=
+ =?utf-8?B?SmJHbXJPT3Z1TEVLQ3BkeTRFU2tHUTlKOTJpdHpER1F4UkdkdjVmQ2VqQS9T?=
+ =?utf-8?B?WS95QW9xaHZueWExMUFDUHlhTjVaelMyY0p3bGRBQ0FOeU5LODNncUZZckJJ?=
+ =?utf-8?B?Q2lrd2NuWlN0eitUY2RaNHBEbGtrcE5ORnBnQUs2emFCMGhJc0M0Mk9ia0s1?=
+ =?utf-8?B?M0V4VDV0WU95dlhVK2JxdVpidUtzUlJhS29raHVCc1lvZ1poRjlDZFduN0E2?=
+ =?utf-8?B?alFDY01HZ1ViMTRmMUVRRkU3aXh2KzR1NGlWWWJGY0RrdnVZY3psNUJKYWY5?=
+ =?utf-8?B?cDlSZ3ZTSmJrMU9QL0FEdTJnckkva09MZzF0ZkE5UW44Uk10VG1oNTlpcTFB?=
+ =?utf-8?B?Wm1rOGhOSWdpOHV4aWJ4SFAzc3Jrd1kyK2xIRnhhU1M3R1RTRUJBU0VSbDRv?=
+ =?utf-8?Q?GDJ4r8B1tvIrC?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MEdaTlpaNVFLODUyb2VTYmhJSnpYZVBYd05maGVuWXpIR3hlNG5xU0dmZkJo?=
+ =?utf-8?B?V0M1eFBUS1ZtbUdzODBPMWJ3RGVSZjQrbjdmS2RFYVVKLzhBMlpzNVlCYVBO?=
+ =?utf-8?B?U05MbEpSTlBDcnVmQWF6ekgrbTJ3M1pMc3ZOb3JqRFEyREY4Z1h5cWc3c240?=
+ =?utf-8?B?WEFtbGJ1SlVocGFiQVNuN0tMdVlxVGIrREhicG1ud1NlT2xyQzVSbFhqRWhK?=
+ =?utf-8?B?WW9IUUVpUFYxTjVpQTEvZm5TaWd5eXlHNktEZXlUVncyanZqRmROL0ptZGY2?=
+ =?utf-8?B?NDYzZVl3MTBTMW0zbXNtdkNsV09hTlZ6bUVUTTBvVVBOOFMrNkx1QkEyRXQv?=
+ =?utf-8?B?NElsV0RmaTVCVzBjYmxZdXpySUVFMm5Xc09paVQ0S0hyUFMvQlFrTWtCdy9Y?=
+ =?utf-8?B?Wk1SMnhIb2ZicDRTd3M5dEt1cmZBVWRyaVpoMUZRZFBwUHlNVFByZmNIKzRt?=
+ =?utf-8?B?VmJxRGxTTUI1UkMxSTB1RTV3MlMyRy80TmVhemI2ZHppTkpOZCtDU1dhK1pW?=
+ =?utf-8?B?KzJHOXVMeWg3YjFqcEwrenFVYWJYRkRXeWl4R042V3VMcUxyMThBTGdyaGpx?=
+ =?utf-8?B?RW5OYUQzdG9lK3VJbVZsWXBHUjZOUkVhRW1na1hCQXhwWHMxL3FzTFR4b1BE?=
+ =?utf-8?B?TEpxMzlDZG4zVWt3RkZ6K2lhYXUvcUp2V3lydjNYSXRwQ1dtYTNsYTlqRWk3?=
+ =?utf-8?B?aUM0Rk9yVjhMbU1YOUpJSmNZeURnRWxtL1V0K1pNeHZTRUlMdXlUTXRnOGl5?=
+ =?utf-8?B?d1RBMUg5M2pFdXloZjBZdjY4TG9uYkhyU211U0RxRUZUS3BURHpRR1ZDMi9H?=
+ =?utf-8?B?eTExdFFtRGxVTWtUVUhDNU5EMFRJRW5MOEsxZnRzREZQdTNBOVJYdVpMVTdz?=
+ =?utf-8?B?eDR5RmJTamxWNCtObzNKZlkrMVNoMlpjUThIaTVXK2s1cUw4a3hYK3k1U3gw?=
+ =?utf-8?B?K0hldHU4TU90ZkZUR3AwczB4ejdxN1d6UlROT2Y2M0NERmRCTUN5RkowdWNo?=
+ =?utf-8?B?TzVSaktJMEgza3R2aFlXMUtJdmNBZXBzb3JVdkF4c1R4K0F4Z0pOeEFpMitZ?=
+ =?utf-8?B?SUhVS1VQcTdZMjc0elZvdmtyTi9IeXRrOFJndHIxS3ZSaVJyNDh3YnJITTV6?=
+ =?utf-8?B?bU5aRDYxN3grbGt3YW4yUWR3SmNpYWQ0RC9vbXIrdmZSSXM1WE9WeGZINE1n?=
+ =?utf-8?B?c1pReE9aMWJrUUhLWTEwL0Q1WVZUM3prU2VqNVBqWThJYzExZjhIS1FEdHIv?=
+ =?utf-8?B?TjNDQlFFcjRnVGZySDdFVlFTOWlFNnUzRENpa1lXZTFRU1ZZVHFjVy9KZWEv?=
+ =?utf-8?B?VW1PMWlCRm5pZTBNMlhzY3FlMzlTRlVnbEsrby9PRnEvV0FZNEhTTGxmbklO?=
+ =?utf-8?B?Tzd0K2gxeVA3ZWl1RlhTTS9PY1hoTGJDeUpWdlBhdkVrYmFKNndlTVVuYkww?=
+ =?utf-8?B?cnpLVTVqMjVOdzJSOGRCdFIxTDRQdk14d2I2cE9xd3BjMGlVQjB3NUpoMmdJ?=
+ =?utf-8?B?V2swWjJqNloxeGFiM2lRajRUU1pzMS9tNllmU2RoN2Y3OEtlWlRrWWFHd0pS?=
+ =?utf-8?B?Ry8xU0wxRjVJamNnTzI1MjZpQm1nUEx3ZTdiSEdhcjVDdWtQOG5JenBSTnI3?=
+ =?utf-8?B?cml2VVJ5YWNBaGFrOTY3Nld0cCt2OE9YNmlMNHdieW1JVUVuZmhJTHhvQW9o?=
+ =?utf-8?B?SzRRZzZjelIrbUNsYTUzcFRoRXZIeEp2VlR5Nm04V1JTRFk0YTFuT2JlSisy?=
+ =?utf-8?B?Y2JQT0RPVHBFRUVIWTlxRS9mMng1SFZnM0ZzZ21MZjhiRzZ2K0orV0hqeEdM?=
+ =?utf-8?B?b3hwb01uNjRNeGFYZmx2S2gzclZsUFo1VnJyTXRoUHhBdkRjN0pXcVNndE4y?=
+ =?utf-8?B?djhOeGJwNzdYSGZsbkpmbUpOVVZEMzBVRUh2ZzZ6d090ZlA2akZUMmc2bTlj?=
+ =?utf-8?B?LzZWQ3Y3R0RJYklFUFBiNEVnelJlTlZubFFhNUhOOGlZVHcrL1R3SjNQWmJL?=
+ =?utf-8?B?WFBTTG9GVm1WZXo3a29nVlpSTG5sWlV4YTN3aTdHUGttb09GNE9SYnhpemxt?=
+ =?utf-8?B?K3NYZElLTVdNbTdWcmgwczJTWXVrVG5EUC9XcGt5a3IzclQ3NFZiWkYrYjhn?=
+ =?utf-8?Q?rGXHPDF7W+3tddkTzDQXs/1SY?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3af8f63c-bcc4-409e-1918-08dd4c5f2c93
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 18:49:41.1824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: a5MEoN68nETrw1tWMkqVwzBATb8FdrB4CYDVNo9BBeIln6XNHA81+ahGi62g69De3WV7NiHi7iy19UM4udJb0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4880
+X-OriginatorOrg: intel.com
 
-On Sat, Feb 8, 2025 at 5:54=E2=80=AFAM Yohan Joung <jyh429@gmail.com> wrote=
-:
->
-> currently, zone reset only occurs when there is urgent utilization and
-> when pending blocks are reallocated. this causes performance
-> degradation, so we are modifying it to allow pending reset zones to be
-> issued.
->
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
-> ---
->  fs/f2fs/f2fs.h    |  3 ++-
->  fs/f2fs/segment.c | 21 +++++++++++++++------
->  2 files changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 1afa7be16e7d..09a7e13c0d00 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -349,6 +349,7 @@ struct discard_entry {
->
->  /* max discard pend list number */
->  #define MAX_PLIST_NUM          512
-> +#define ZONE_PLIST_NUM         1
->  #define plist_idx(blk_num)     ((blk_num) >=3D MAX_PLIST_NUM ?          =
- \
->                                         (MAX_PLIST_NUM - 1) : ((blk_num) =
-- 1))
->
-> @@ -410,7 +411,7 @@ struct discard_policy {
->  struct discard_cmd_control {
->         struct task_struct *f2fs_issue_discard; /* discard thread */
->         struct list_head entry_list;            /* 4KB discard entry list=
- */
-> -       struct list_head pend_list[MAX_PLIST_NUM];/* store pending entrie=
-s */
-> +       struct list_head pend_list[MAX_PLIST_NUM + ZONE_PLIST_NUM];/* sto=
-re pending entries */
->         struct list_head wait_list;             /* store on-flushing entr=
-ies */
->         struct list_head fstrim_list;           /* in-flight discard from=
- fstrim */
->         wait_queue_head_t discard_wait_queue;   /* waiting queue for wake=
--up */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index c282e8a0a2ec..1c32252db525 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -962,7 +962,10 @@ static struct discard_cmd *__create_discard_cmd(stru=
-ct f2fs_sb_info *sbi,
->
->         f2fs_bug_on(sbi, !len);
->
-> -       pend_list =3D &dcc->pend_list[plist_idx(len)];
-> +       if (f2fs_sb_has_blkzoned(sbi) && bdev_is_zoned(bdev))
-> +               pend_list =3D &dcc->pend_list[MAX_PLIST_NUM];
-> +       else
-> +               pend_list =3D &dcc->pend_list[plist_idx(len)];
->
->         dc =3D f2fs_kmem_cache_alloc(discard_cmd_slab, GFP_NOFS, true, NU=
-LL);
->         INIT_LIST_HEAD(&dc->list);
-> @@ -1649,6 +1652,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info =
-*sbi,
->         struct discard_cmd *dc, *tmp;
->         struct blk_plug plug;
->         int i, issued;
-> +       int plist_num =3D f2fs_sb_has_blkzoned(sbi) ?
-> +               MAX_PLIST_NUM + ZONE_PLIST_NUM : MAX_PLIST_NUM;
->         bool io_interrupted =3D false;
->
->         if (dpolicy->timeout)
-> @@ -1656,12 +1661,12 @@ static int __issue_discard_cmd(struct f2fs_sb_inf=
-o *sbi,
->
->  retry:
->         issued =3D 0;
-> -       for (i =3D MAX_PLIST_NUM - 1; i >=3D 0; i--) {
-> +       for (i =3D plist_num - 1; i >=3D 0; i--) {
->                 if (dpolicy->timeout &&
->                                 f2fs_time_over(sbi, UMOUNT_DISCARD_TIMEOU=
-T))
->                         break;
->
-> -               if (i + 1 < dpolicy->granularity)
-> +               if (i + 1 < dpolicy->granularity && i + 1 !=3D plist_num)
+On 2/11/2025 9:35 PM, Zhang, Rui wrote:
+>>  static int should_io_be_busy(void)
+>>  {
+>>  #if defined(CONFIG_X86)
+>>  	/*
+>> -	 * For Intel, Core 2 (model 15) and later have an efficient
+>> idle.
+>> +	 * Starting with Family 6 consider all Intel CPUs to have an
+>> +	 * efficient idle.
+>>  	 */
+>>  	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
+>> -			boot_cpu_data.x86 == 6 &&
+>> -			boot_cpu_data.x86_model >= 15)
+>> +	    boot_cpu_data.x86_vfm >= INTEL_PENTIUM_PRO)
+> 
+> This is "Starting from P4" rather than "Starting from Family 6", right?
+> 
 
-To me, this part is kind of a hack, since it just skips checking
-granularity for the largest pending list.
-It might not work for conventional devices. The fundamental problem is
-the current pend_list doesn't
-work with zoned devices now. So, I think we need a new design covering
-zoned devices for discard
-such as using another discard pending list for zoned devices and
-controlling it in a different way.
-Thanks for letting me know about this issue. I will come up with a new
-discard design for zoned devices.
+As described in the commit message, we are extending this to all
+relevant Intel processors. That would include Family 6, Family 15 and
+the upcoming Family > 15 processors as well.
 
->                         break;
->
->                 if (i + 1 < dcc->max_ordered_discard && dpolicy->ordered)=
- {
-> @@ -1720,6 +1725,8 @@ static bool __drop_discard_cmd(struct f2fs_sb_info =
-*sbi)
->         struct list_head *pend_list;
->         struct discard_cmd *dc, *tmp;
->         int i;
-> +       int plist_num =3D f2fs_sb_has_blkzoned(sbi) ?
-> +               MAX_PLIST_NUM + ZONE_PLIST_NUM : MAX_PLIST_NUM;
->         bool dropped =3D false;
->
->         mutex_lock(&dcc->cmd_lock);
-> @@ -2305,7 +2312,7 @@ int f2fs_start_discard_thread(struct f2fs_sb_info *=
-sbi)
->  static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  {
->         struct discard_cmd_control *dcc;
-> -       int err =3D 0, i;
-> +       int err =3D 0, i, plist_num;
->
->         if (SM_I(sbi)->dcc_info) {
->                 dcc =3D SM_I(sbi)->dcc_info;
-> @@ -2316,7 +2323,9 @@ static int create_discard_cmd_control(struct f2fs_s=
-b_info *sbi)
->         if (!dcc)
->                 return -ENOMEM;
->
-> -       dcc->discard_io_aware_gran =3D MAX_PLIST_NUM;
-> +       plist_num =3D f2fs_sb_has_blkzoned(sbi) ?
-> +               MAX_PLIST_NUM + ZONE_PLIST_NUM : MAX_PLIST_NUM;
-> +       dcc->discard_io_aware_gran =3D plist_num;
->         dcc->discard_granularity =3D DEFAULT_DISCARD_GRANULARITY;
->         dcc->max_ordered_discard =3D DEFAULT_MAX_ORDERED_DISCARD_GRANULAR=
-ITY;
->         dcc->discard_io_aware =3D DPOLICY_IO_AWARE_ENABLE;
-> @@ -2326,7 +2335,7 @@ static int create_discard_cmd_control(struct f2fs_s=
-b_info *sbi)
->                 dcc->discard_granularity =3D BLKS_PER_SEC(sbi);
->
->         INIT_LIST_HEAD(&dcc->entry_list);
-> -       for (i =3D 0; i < MAX_PLIST_NUM; i++)
-> +       for (i =3D 0; i < plist_num; i++)
->                 INIT_LIST_HEAD(&dcc->pend_list[i]);
->         INIT_LIST_HEAD(&dcc->wait_list);
->         INIT_LIST_HEAD(&dcc->fstrim_list);
-> --
-> 2.25.1
->
+A VFM check starting at INTEL_PENTIUM_PRO (Family 6, Model 1) is just a
+way to simplify that.
+
+
 
