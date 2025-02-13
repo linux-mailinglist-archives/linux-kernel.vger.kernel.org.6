@@ -1,626 +1,123 @@
-Return-Path: <linux-kernel+bounces-513933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3ACA35068
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:17:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA0FA35069
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C773188FE44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0A6A16D551
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA3A2661B1;
-	Thu, 13 Feb 2025 21:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281DB266B73;
+	Thu, 13 Feb 2025 21:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nK6gyF4U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6QnQQEJ"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D87269804
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B9428A2C1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739481426; cv=none; b=aLOE/ICC2+KCij6opMo7kBa8jykhn1DR4ld34YqXjuVsAqNCjWtgC5qVuhS9Y7bB1m8xD5GyV3luvmwu5Xi15oVzyXltLacJUn7DW8FzW7dZ9pc0bX8tvp4piCLdKSsV6LOdMSbKjhDuW6FIGoMCI0O//VvTjDVJ622I/5GnLZs=
+	t=1739481481; cv=none; b=RErw5CZYrugex4qJnCAyJckyJ1ZAgkYWdePefhLueqXdq3AQEMriGjLY0YBlXzFF16kCrKezjodF27fLjX/zXwwYdIfiTmlVcxXe8aQxeVz14NRjVzx5lODxVu4j1ksLnTTbBaHkjO1Xj5iqLS8uXddFuqVE0GuQyMaykjiVsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739481426; c=relaxed/simple;
-	bh=AQEhKoiu4fU+8Op/1jvMM9sgsk1zRyCUQFgEuj4rL+k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n5V+43s97PDNrjvMSnE1QNvn5ng0e7kvPNLPz59Y1j6/VscLDLCOGAktlruzpAp7qdn9pVTEUK7RSppwSELboGrr4Ax0jea+PCuriE8Vn41Ch2ARxowARJewQGD1k0/sEhkfqH0y2K8L2QliJKrev5f0uv9QX2H/WisWjlRZb0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nK6gyF4U; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739481424; x=1771017424;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AQEhKoiu4fU+8Op/1jvMM9sgsk1zRyCUQFgEuj4rL+k=;
-  b=nK6gyF4UpGd+/A22iz2wmXy0YUl2obiv+O+vxJH+6XjgKef/DJHB/ThN
-   pEVH/feMUFevFAeq5a3c1uwafSPUL86D5u9n4xBQSxMLWI8ZtihSEY9KX
-   dFuHPiDdppzqecfH0PyPdSygItdJT1HRoG48dz4acQPep19tJvMvG1i73
-   eqZ/71U61RuQ/362P/OtUYvxGxSgLPYdbw0800MQnvJpg3r3jK2c/KtHm
-   zWWORUHqQAI7/cOyLE44OdZuQVrGumnHdfq4+6H6AYJf9bW2Cxk+U853B
-   dD2yWLEJKKT4mwh6DzioXHo+/L5Qj3MzsCu+1mpzas09O18MMZ2h9Q+be
-   g==;
-X-CSE-ConnectionGUID: PUzQ3QOkTv+qRiVbySufHw==
-X-CSE-MsgGUID: ohpdmGQxSrO8hz3btAwdLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="44142416"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="44142416"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 13:16:59 -0800
-X-CSE-ConnectionGUID: SPltJ7MXSDuK52GpeLKvMg==
-X-CSE-MsgGUID: rGYaUMsOQ0yr6tIoGMZOag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118469506"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa005.jf.intel.com with ESMTP; 13 Feb 2025 13:16:59 -0800
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com,
-	eranian@google.com,
-	dapeng1.mi@linux.intel.com,
-	thomas.falcon@intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 5/5] perf/x86/intel: Support auto counter reload
-Date: Thu, 13 Feb 2025 13:17:18 -0800
-Message-Id: <20250213211718.2406744-6-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250213211718.2406744-1-kan.liang@linux.intel.com>
-References: <20250213211718.2406744-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1739481481; c=relaxed/simple;
+	bh=F7rtUO+sYK4IquZRwkwuLyyE8F7H0KKEoRfcHPzdTk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iZ0mHKoU6zylf+J6s+sk74i9PN0DCAu4GyVtL0yDjNOFmaS8UitrFZGyJ9GQPn3VRxdjplLE8mpMg0HEUgCQKhuyB0TSApEj+hDAhc0quuOkVCa1vnFEr4Vd6yKR5nKSbOgnbV1R9CvCZi8QegIxL8CI+pgaPOJjMjFpksMThqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6QnQQEJ; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-308edbc368cso13552621fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:17:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739481478; x=1740086278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F7rtUO+sYK4IquZRwkwuLyyE8F7H0KKEoRfcHPzdTk0=;
+        b=k6QnQQEJEGtHIAOf96yUfq5/yFOxRdI5txLaPlPhryWvwlMm8VPpKdLg6CQ2ZagklT
+         d4El+eJf6DV1Bgg/JSBVvuIiAbjoV3GldcwKYkPqTwx7cF8vOx6vDi9tOUposnvWKEvt
+         +axES4a1qkjc4BSMGMO6UBk6hDjFXMeoUHNvTnDb+1cLAH2m8VNvQTG9qf6ZrrvjqZIV
+         U7Izno3If3j8VzABIKU0ah2/ID6weO1fSAgoWEelFC0In0yqdxHr0vjTplwQu39c43/z
+         YEHVpqMpqwLY/Uhy8xs2dFhd48Wt9X9TtMCxDYbrVVlEuhBAOgT3IjXgZTyjkvhRoZDd
+         +E3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739481478; x=1740086278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F7rtUO+sYK4IquZRwkwuLyyE8F7H0KKEoRfcHPzdTk0=;
+        b=AZtf3sidqiqPw86v34fX9THRXvQYmaLtMXj9QCCThOwobgfzfWeuL6nBUxWxXn6OUA
+         CanAR91AukGARDmLl2r932IF5JF9szDDEsYiFrLoTBWQ8ib1FGh6s8NsXxeqf/xqw+P/
+         bMOZzIUBcsQ+j0Am3Q8r62o5tERjlfR36+KQL0JjdaT03UHWUF+HpEjnOj+UmRheWJET
+         XSSnziYHCodi3UsaZ079PxARQHapgElFh6VrKyGs4CyTpz0EpoxwJ+1FJ/t9sWbA7oUx
+         dW2KWbTiJC1q2Y6KW+EnfDXCT/AvEfyQ4wXytrVBJZjm55CSM3pp3R21u3leci/1OTix
+         GBQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg1KHa8wPLLZAQg0uvBwy4fmWkh/FNJx8Pk07cIqZ/ajKMKOjJZG215hL2NT4r9pAc1RgHe4zq0Q9BLcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL9Vm9k9zWUjR5bE1e+iutp+Lsf2X1ONoV853ziO5utg2SzuKG
+	o9xMvBcjWXumOr1KhM6QX5duE8L/2jbrbG/T/3q2e+0OOyz/3jBFQh5CXBzLF1ZoafZmv6MZ7ve
+	PD0jTuDTakK2nFyVJfAiO0YqrQ7g=
+X-Gm-Gg: ASbGncvJfF9R/44UGsc8dgicQDcfWZrySF1nAPVYJPhx2a+tetbNcSeaGNbe81551S1
+	/QPmW7HUcTtcKuHYFX/HhFj6lus7O0u0/3ggfc+53L63g2KbWRaoqzdhTXXjdXoenJvwvm83/
+X-Google-Smtp-Source: AGHT+IEvnBZVnHY++r9w+H+F+AX3dUBv/bc1/Z12RQwcp1pcz6fCp3zs5GOQA5mkjUz00oj0YxLPC0rUTqCIIzHMRno=
+X-Received: by 2002:a2e:a909:0:b0:307:e302:a34 with SMTP id
+ 38308e7fff4ca-3090500af87mr36218881fa.20.1739481477421; Thu, 13 Feb 2025
+ 13:17:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250213191457.12377-1-ubizjak@gmail.com> <04adffd9-2900-4cdb-a557-1c486a87b522@intel.com>
+In-Reply-To: <04adffd9-2900-4cdb-a557-1c486a87b522@intel.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 13 Feb 2025 22:17:45 +0100
+X-Gm-Features: AWEUYZlNLo7NNqMCySZKpk_F4CuhEY_hr8veiHVSaSPXExnCLmkQMrsiv5cCk1s
+Message-ID: <CAFULd4YUSCBSJQ1F0Rn45bwTonQJb2_=c2sZZEGV7RfgHBAOJA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/2] x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Feb 13, 2025 at 9:43=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+>
+> On 2/13/25 11:14, Uros Bizjak wrote:
+> > percpu_{,try_}cmpxchg{64,128}() macros use CALL instruction inside
+> > asm statement in one of their alternatives. Use ALT_OUTPUT_SP()
+> > macro to add required dependence on %esp register.
+>
+> Is this just a pedantic fix? Or is there an actual impact to end users
+> that needs to be considered?
 
-The relative rates among two or more events are useful for performance
-analysis, e.g., a high branch miss rate may indicate a performance
-issue. Usually, the samples with a relative rate that exceeds some
-threshold are more useful. However, the traditional sampling takes
-samples of events separately. To get the relative rates among two or
-more events, a high sample rate is required, which can bring high
-overhead. Many samples taken in the non-hotspot area are also dropped
-(useless) in the post-process.
+When call insn is embedded in the asm, then the compiler doesn't know
+that due to call insn asm now depends on stack pointer or frame
+pointer, so it is free to schedule the instruction outside the
+function frame prologue/epilogue. Currently, this only triggers
+objtool warning, but if we ever compile the kernel with redzone (IIRC,
+it was mentioned that this is possible with FRED enabled kernel), the
+call will clobber the redzone. Please note that alternative_call()
+family of functions, __alternative_atomic64() and
+__arch_{,try_}cmpxchg64_emu() all use the same macro exactly for the
+reason explained above.
 
-The auto counter reload (ACR) feature takes samples when the relative
-rate of two or more events exceeds some threshold, which provides the
-fine-grained information at a low cost.
-To support the feature, two sets of MSRs are introduced. For a given
-counter IA32_PMC_GPn_CTR/IA32_PMC_FXm_CTR, bit fields in the
-IA32_PMC_GPn_CFG_B/IA32_PMC_FXm_CFG_B MSR indicate which counter(s)
-can cause a reload of that counter. The reload value is stored in the
-IA32_PMC_GPn_CFG_C/IA32_PMC_FXm_CFG_C.
-The details can be found at Intel SDM (085), Volume 3, 21.9.11 Auto
-Counter Reload.
+OTOH, all recent x86_64 processors support CMPXCHG128 insn, so the
+call alternative will be rarely used.
 
-In the hw_config(), an ACR event is specially configured, because the
-cause/reloadable counter mask has to be applied to the dyn_constraint.
-Besides the HW limit, e.g., not support perf metrics, PDist and etc, a
-SW limit is applied as well. ACR events in a group must be contiguous.
-It facilitates the later conversion from the event idx to the counter
-idx. Otherwise, the intel_pmu_acr_late_setup() has to traverse the whole
-event list again to find the "cause" event.
-Also, add a new flag PERF_X86_EVENT_ACR to indicate an ACR group, which
-is set to the group leader.
+> Basically, you've told me what the patch does, but not why anyone should
+> care or why it should be applied.
 
-The late setup() is also required for an ACR group. It's to convert the
-event idx to the counter idx, and saved it in hw.config1.
+This is actually explained at length in the comment for
+ASM_CALL_CONSTRAINT, which ALT_OUTPUT_SP macro uses.
 
-The ACR configuration MSRs are only updated in the enable_event().
-The disable_event() doesn't clear the ACR CFG register.
-Add acr_cfg_b/acr_cfg_c in the struct cpu_hw_events to cache the MSR
-values. It can avoid a MSR write if the value is not changed.
-
-Expose an acr_mask to the sysfs. The perf tool can utilize the new
-format to configure the relation of events in the group. The bit
-sequence of the acr_mask follows the events enabled order of the group.
-
-Example:
-
-Here is the snippet of the mispredict.c. Since the array has a random
-numbers, jumps are random and often mispredicted.
-The mispredicted rate depends on the compared value.
-
-For the Loop1, ~11% of all branches are mispredicted.
-For the Loop2, ~21% of all branches are mispredicted.
-
-main()
-{
-...
-        for (i = 0; i < N; i++)
-                data[i] = rand() % 256;
-...
-        /* Loop 1 */
-        for (k = 0; k < 50; k++)
-                for (i = 0; i < N; i++)
-                        if (data[i] >= 64)
-                                sum += data[i];
-...
-
-...
-        /* Loop 2 */
-        for (k = 0; k < 50; k++)
-                for (i = 0; i < N; i++)
-                        if (data[i] >= 128)
-                                sum += data[i];
-...
-}
-
-Usually, a code with a high branch miss rate means a bad performance.
-To understand the branch miss rate of the codes, the traditional method
-usually samples both branches and branch-misses events. E.g.,
-perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions/u}"
-               -c 1000000 -- ./mispredict
-
-[ perf record: Woken up 4 times to write data ]
-[ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
-The 5106 samples are from both events and spread in both Loops.
-In the post-process stage, a user can know that the Loop 2 has a 21%
-branch miss rate. Then they can focus on the samples of branch-misses
-events for the Loop 2.
-
-With this patch, the user can generate the samples only when the branch
-miss rate > 20%. For example,
-perf record -e "{cpu_atom/branch-misses,period=200000,acr_mask=0x2/ppu,
-                 cpu_atom/branch-instructions,period=1000000,acr_mask=0x3/u}"
-                -- ./mispredict
-
-(Two different periods are applied to branch-misses and
-branch-instructions. The ratio is set to 20%.
-If the branch-instructions is overflowed first, the branch-miss
-rate < 20%. No samples should be generated. All counters should be
-automatically reloaded.
-If the branch-misses is overflowed first, the branch-miss rate > 20%.
-A sample triggered by the branch-misses event should be
-generated. Just the counter of the branch-instructions should be
-automatically reloaded.
-
-The branch-misses event should only be automatically reloaded when
-the branch-instructions is overflowed. So the "cause" event is the
-branch-instructions event. The acr_mask is set to 0x2, since the
-event index of branch-instructions is 1.
-
-The branch-instructions event is automatically reloaded no matter which
-events are overflowed. So the "cause" events are the branch-misses
-and the branch-instructions event. The acr_mask should be set to 0x3.)
-
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
-
- $perf report
-
-Percent       │154:   movl    $0x0,-0x14(%rbp)
-              │     ↓ jmp     1af
-              │     for (i = j; i < N; i++)
-              │15d:   mov     -0x10(%rbp),%eax
-              │       mov     %eax,-0x18(%rbp)
-              │     ↓ jmp     1a2
-              │     if (data[i] >= 128)
-              │165:   mov     -0x18(%rbp),%eax
-              │       cltq
-              │       lea     0x0(,%rax,4),%rdx
-              │       mov     -0x8(%rbp),%rax
-              │       add     %rdx,%rax
-              │       mov     (%rax),%eax
-              │    ┌──cmp     $0x7f,%eax
-100.00   0.00 │    ├──jle     19e
-              │    │sum += data[i];
-
-The 2498 samples are all from the branch-misses events for the Loop 2.
-
-The number of samples and overhead is significantly reduced without
-losing any information.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/core.c           |   2 +-
- arch/x86/events/intel/core.c     | 219 ++++++++++++++++++++++++++++++-
- arch/x86/events/perf_event.h     |  10 ++
- arch/x86/include/asm/msr-index.h |   4 +
- include/linux/perf_event.h       |   1 +
- 5 files changed, 233 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index b56fa6a9d7a4..c2525567a03f 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -756,7 +756,7 @@ void x86_pmu_enable_all(int added)
- 	}
- }
- 
--static inline int is_x86_event(struct perf_event *event)
-+int is_x86_event(struct perf_event *event)
- {
- 	int i;
- 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 8e3ad9efd798..89298cde7056 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2609,7 +2609,8 @@ static void intel_pmu_del_event(struct perf_event *event)
- 		intel_pmu_lbr_del(event);
- 	if (event->attr.precise_ip)
- 		intel_pmu_pebs_del(event);
--	if (is_pebs_counter_event_group(event))
-+	if (is_pebs_counter_event_group(event) ||
-+	    is_acr_event_group(event))
- 		this_cpu_ptr(&cpu_hw_events)->n_late_setup--;
- }
- 
-@@ -2888,6 +2889,54 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
- 	cpuc->fixed_ctrl_val |= bits;
- }
- 
-+static void intel_pmu_config_acr(int idx, u64 mask, u32 reload)
-+{
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+	int msr_b, msr_c;
-+
-+	if (!mask && !cpuc->acr_cfg_b[idx])
-+		return;
-+
-+	if (idx < INTEL_PMC_IDX_FIXED) {
-+		msr_b = MSR_IA32_PMC_V6_GP0_CFG_B;
-+		msr_c = MSR_IA32_PMC_V6_GP0_CFG_C;
-+	} else {
-+		msr_b = MSR_IA32_PMC_V6_FX0_CFG_B;
-+		msr_c = MSR_IA32_PMC_V6_FX0_CFG_C;
-+		idx -= INTEL_PMC_IDX_FIXED;
-+	}
-+
-+	if (cpuc->acr_cfg_b[idx] != mask) {
-+		wrmsrl(msr_b + x86_pmu.addr_offset(idx, false), mask);
-+		cpuc->acr_cfg_b[idx] = mask;
-+	}
-+	/* Only need to update the reload value when there is a valid config value. */
-+	if (mask && cpuc->acr_cfg_c[idx] != reload) {
-+		wrmsrl(msr_c + x86_pmu.addr_offset(idx, false), reload);
-+		cpuc->acr_cfg_c[idx] = reload;
-+	}
-+}
-+
-+static void intel_pmu_enable_acr(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	/* The PMU doesn't support ACR */
-+	if (!hybrid(event->pmu, acr_cntr_mask64))
-+		return;
-+
-+	if (!is_acr_event_group(event) || !event->attr.config2) {
-+		/*
-+		 * The disable doesn't clear the ACR CFG register.
-+		 * Check and clear the ACR CFG register.
-+		 */
-+		intel_pmu_config_acr(hwc->idx, 0, 0);
-+		return;
-+	}
-+
-+	intel_pmu_config_acr(hwc->idx, hwc->config1, -hwc->sample_period);
-+}
-+
- static void intel_pmu_enable_event(struct perf_event *event)
- {
- 	u64 enable_mask = ARCH_PERFMON_EVENTSEL_ENABLE;
-@@ -2903,8 +2952,11 @@ static void intel_pmu_enable_event(struct perf_event *event)
- 			enable_mask |= ARCH_PERFMON_EVENTSEL_BR_CNTR;
- 		intel_set_masks(event, idx);
- 		__x86_pmu_enable_event(hwc, enable_mask);
-+		intel_pmu_enable_acr(event);
- 		break;
- 	case INTEL_PMC_IDX_FIXED ... INTEL_PMC_IDX_FIXED_BTS - 1:
-+		intel_pmu_enable_acr(event);
-+		fallthrough;
- 	case INTEL_PMC_IDX_METRIC_BASE ... INTEL_PMC_IDX_METRIC_END:
- 		intel_pmu_enable_fixed(event);
- 		break;
-@@ -2922,6 +2974,31 @@ static void intel_pmu_enable_event(struct perf_event *event)
- 	}
- }
- 
-+static void intel_pmu_acr_late_setup(struct cpu_hw_events *cpuc)
-+{
-+	struct perf_event *event, *leader;
-+	int i, j, idx;
-+
-+	for (i = 0; i < cpuc->n_events; i++) {
-+		leader = cpuc->event_list[i];
-+		if (!is_acr_event_group(leader))
-+			continue;
-+
-+		/* The ACR events must be contiguous. */
-+		for (j = i; j < cpuc->n_events; j++) {
-+			event = cpuc->event_list[j];
-+			if (event->group_leader != leader->group_leader)
-+				break;
-+			for_each_set_bit(idx, (unsigned long *)&event->attr.config2, X86_PMC_IDX_MAX) {
-+				if (WARN_ON_ONCE(i + idx > cpuc->n_events))
-+					return;
-+				set_bit(cpuc->assign[i + idx], (unsigned long *)&event->hw.config1);
-+			}
-+		}
-+		i = j - 1;
-+	}
-+}
-+
- void intel_pmu_late_setup(void)
- {
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-@@ -2930,6 +3007,7 @@ void intel_pmu_late_setup(void)
- 		return;
- 
- 	intel_pmu_pebs_late_setup(cpuc);
-+	intel_pmu_acr_late_setup(cpuc);
- }
- 
- static void intel_pmu_add_event(struct perf_event *event)
-@@ -2938,7 +3016,8 @@ static void intel_pmu_add_event(struct perf_event *event)
- 		intel_pmu_pebs_add(event);
- 	if (intel_pmu_needs_branch_stack(event))
- 		intel_pmu_lbr_add(event);
--	if (is_pebs_counter_event_group(event))
-+	if (is_pebs_counter_event_group(event) ||
-+	    is_acr_event_group(event))
- 		this_cpu_ptr(&cpu_hw_events)->n_late_setup++;
- }
- 
-@@ -4093,6 +4172,22 @@ static u64 intel_pmu_freq_start_period(struct perf_event *event)
- 	return start;
- }
- 
-+static bool intel_pmu_is_acr_group(struct perf_event *event)
-+{
-+	if (!hybrid(event->pmu, acr_cntr_mask64))
-+		return false;
-+
-+	/* The group leader has the ACR flag set */
-+	if (is_acr_event_group(event))
-+		return true;
-+
-+	/* The acr_mask is set */
-+	if (event->attr.config2)
-+		return true;
-+
-+	return false;
-+}
-+
- static int intel_pmu_hw_config(struct perf_event *event)
- {
- 	int ret = x86_pmu_hw_config(event);
-@@ -4221,6 +4316,103 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	    event->attr.precise_ip)
- 		event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
- 
-+	if (intel_pmu_is_acr_group(event)) {
-+		struct perf_event *sibling, *leader = event->group_leader;
-+		struct pmu *pmu = event->pmu;
-+		u64 constraint = hybrid(pmu, acr_cntr_mask64);
-+		bool has_sw_event = false;
-+		int num = 0, idx = 0;
-+		u64 cause_mask = 0;
-+
-+		/* Not support perf metrics */
-+		if (is_metric_event(event))
-+			return -EINVAL;
-+
-+		/* Not support freq mode */
-+		if (event->attr.freq)
-+			return -EINVAL;
-+
-+		/* PDist is not supported */
-+		if (event->attr.config2 && event->attr.precise_ip > 2)
-+			return -EINVAL;
-+
-+		/* The reload value cannot exceeds the max period */
-+		if (event->attr.sample_period > x86_pmu.max_period)
-+			return -EINVAL;
-+		/*
-+		 * The counter-constraints of each event cannot be finalized
-+		 * unless the whole group is scanned. However, it's hard
-+		 * to know whether the event is the last one of the group.
-+		 * Recalculate the counter-constraints for each event when
-+		 * adding a new event.
-+		 *
-+		 * The group is traversed twice, which may be optimized later.
-+		 * In the first round,
-+		 * - Find all events which do reload when other events
-+		 *   overflow and set the corresponding counter-constraints
-+		 * - Add all events, which can cause other events reload,
-+		 *   in the cause_mask
-+		 * - Error out if the number of events exceeds the HW limit
-+		 * - The ACR events must be contiguous.
-+		 *   Error out if there are non-X86 events between ACR events.
-+		 *   This is not a HW limit, but a SW limit.
-+		 *   With the assumption, the intel_pmu_acr_late_setup() can
-+		 *   easily convert the event idx to counter idx without
-+		 *   traversing the whole event list.
-+		 */
-+		if (!is_x86_event(leader))
-+			return -EINVAL;
-+
-+		if (leader->attr.config2) {
-+			leader->hw.dyn_constraint &= constraint;
-+			cause_mask |= leader->attr.config2;
-+			num++;
-+		}
-+
-+		for_each_sibling_event(sibling, leader) {
-+			if (!is_x86_event(sibling)) {
-+				has_sw_event = true;
-+				continue;
-+			}
-+			if (!sibling->attr.config2)
-+				continue;
-+			if (has_sw_event)
-+				return -EINVAL;
-+			sibling->hw.dyn_constraint &= constraint;
-+			cause_mask |= sibling->attr.config2;
-+			num++;
-+		}
-+
-+		if (leader != event && event->attr.config2) {
-+			if (has_sw_event)
-+				return -EINVAL;
-+			event->hw.dyn_constraint &= constraint;
-+			cause_mask |= event->attr.config2;
-+			num++;
-+		}
-+
-+		if (hweight64(cause_mask) > hweight64(hybrid(pmu, acr_cause_mask64)) ||
-+		    num > hweight64(constraint))
-+			return -EINVAL;
-+		/*
-+		 * In the second round, apply the counter-constraints for
-+		 * the events which can cause other events reload.
-+		 */
-+		constraint = hybrid(pmu, acr_cause_mask64);
-+		if (test_bit(idx++, (unsigned long *)&cause_mask))
-+			leader->hw.dyn_constraint &= constraint;
-+
-+		for_each_sibling_event(sibling, leader) {
-+			if (test_bit(idx++, (unsigned long *)&cause_mask))
-+				sibling->hw.dyn_constraint &= constraint;
-+		}
-+
-+		if ((leader != event) && test_bit(idx, (unsigned long *)&cause_mask))
-+			event->hw.dyn_constraint &= constraint;
-+
-+		leader->hw.flags |= PERF_X86_EVENT_ACR;
-+	}
-+
- 	if ((event->attr.type == PERF_TYPE_HARDWARE) ||
- 	    (event->attr.type == PERF_TYPE_HW_CACHE))
- 		return 0;
-@@ -6070,6 +6262,21 @@ td_is_visible(struct kobject *kobj, struct attribute *attr, int i)
- 	return attr->mode;
- }
- 
-+PMU_FORMAT_ATTR(acr_mask,	"config2:0-63");
-+
-+static struct attribute *format_acr_attrs[] = {
-+	&format_attr_acr_mask.attr,
-+	NULL
-+};
-+
-+static umode_t
-+acr_is_visible(struct kobject *kobj, struct attribute *attr, int i)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+
-+	return hybrid(dev_get_drvdata(dev), acr_cntr_mask64) ? attr->mode : 0;
-+}
-+
- static struct attribute_group group_events_td  = {
- 	.name = "events",
- 	.is_visible = td_is_visible,
-@@ -6112,6 +6319,12 @@ static struct attribute_group group_format_evtsel_ext = {
- 	.is_visible = evtsel_ext_is_visible,
- };
- 
-+static struct attribute_group group_format_acr = {
-+	.name       = "format",
-+	.attrs      = format_acr_attrs,
-+	.is_visible = acr_is_visible,
-+};
-+
- static struct attribute_group group_default = {
- 	.attrs      = intel_pmu_attrs,
- 	.is_visible = default_is_visible,
-@@ -6126,6 +6339,7 @@ static const struct attribute_group *attr_update[] = {
- 	&group_format_extra,
- 	&group_format_extra_skl,
- 	&group_format_evtsel_ext,
-+	&group_format_acr,
- 	&group_default,
- 	NULL,
- };
-@@ -6410,6 +6624,7 @@ static const struct attribute_group *hybrid_attr_update[] = {
- 	&group_caps_lbr,
- 	&hybrid_group_format_extra,
- 	&group_format_evtsel_ext,
-+	&group_format_acr,
- 	&group_default,
- 	&hybrid_group_cpus,
- 	NULL,
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 2184ae0c9a4a..e43e5fe01905 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -120,6 +120,11 @@ static inline bool is_pebs_counter_event_group(struct perf_event *event)
- 	return event->group_leader->hw.flags & PERF_X86_EVENT_PEBS_CNTR;
- }
- 
-+static inline bool is_acr_event_group(struct perf_event *event)
-+{
-+	return event->group_leader->hw.flags & PERF_X86_EVENT_ACR;
-+}
-+
- struct amd_nb {
- 	int nb_id;  /* NorthBridge id */
- 	int refcnt; /* reference count */
-@@ -287,6 +292,10 @@ struct cpu_hw_events {
- 	u64			fixed_ctrl_val;
- 	u64			active_fixed_ctrl_val;
- 
-+	/* Intel ACR configuration */
-+	u64			acr_cfg_b[X86_PMC_IDX_MAX];
-+	u64			acr_cfg_c[X86_PMC_IDX_MAX];
-+
- 	/*
- 	 * Intel LBR bits
- 	 */
-@@ -1127,6 +1136,7 @@ static struct perf_pmu_format_hybrid_attr format_attr_hybrid_##_name = {\
- 	.pmu_type	= _pmu,						\
- }
- 
-+int is_x86_event(struct perf_event *event);
- struct pmu *x86_get_pmu(unsigned int cpu);
- extern struct x86_pmu x86_pmu __read_mostly;
- 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 9a71880eec07..4c9361d8f05d 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -591,7 +591,11 @@
- /* V6 PMON MSR range */
- #define MSR_IA32_PMC_V6_GP0_CTR		0x1900
- #define MSR_IA32_PMC_V6_GP0_CFG_A	0x1901
-+#define MSR_IA32_PMC_V6_GP0_CFG_B	0x1902
-+#define MSR_IA32_PMC_V6_GP0_CFG_C	0x1903
- #define MSR_IA32_PMC_V6_FX0_CTR		0x1980
-+#define MSR_IA32_PMC_V6_FX0_CFG_B	0x1982
-+#define MSR_IA32_PMC_V6_FX0_CFG_C	0x1983
- #define MSR_IA32_PMC_V6_STEP		4
- 
- /* KeyID partitioning between MKTME and TDX */
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 238879f6c3e3..24f2eba200ac 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -157,6 +157,7 @@ struct hw_perf_event {
- 	union {
- 		struct { /* hardware */
- 			u64		config;
-+			u64		config1;
- 			u64		last_tag;
- 			u64		dyn_constraint;
- 			unsigned long	config_base;
--- 
-2.38.1
-
+Uros.
 
