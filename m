@@ -1,321 +1,160 @@
-Return-Path: <linux-kernel+bounces-512599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F160A33B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:39:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9E4A33B61
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888C0164D8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0B6188981D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD24D20DD6E;
-	Thu, 13 Feb 2025 09:38:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3499120CCE3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F020E011;
+	Thu, 13 Feb 2025 09:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkiEtYVe"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618DE20DD79;
+	Thu, 13 Feb 2025 09:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739439539; cv=none; b=gRvVyadIcOG/5gnRK0455I5sZo3vSWlsLGZ/nkxWAcHNjdssqpjH+S/RgW5ioxA02BLdfvAvnZPL712dpVnqVoO3npgVkZrOw5ssaWJZLVGcZv93/P2PPoA4ucKEDEPK0EfOGwa1z3GDAa8UhW4REoJc+DlgQpXPjYIl37o26Pk=
+	t=1739439654; cv=none; b=NT4Zsx/OvRc/UyyZPXYBDj+Izer32dfIKlYgCD1f8FImCe+RsqKI33/FOdMSV4GpxvCYPNUTE6JTi3UM/NOGyLdpw5GlNvnetv7bDjwgDfosGX35wAZ14X+a/DJO/s/izWyUrWORFy2eE5s9ycwRi9t5QBIRyuEyJC4Ue9rYvJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739439539; c=relaxed/simple;
-	bh=GNP81FsTanUyAw08xdTu6brQEXA2ZkWv9g+tQ+ZECAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bofboX207XZZ+HEJxC/u2GA3xpMulXdjD0MOFrwl9FbszLriKPvExnmKQLAhhIgrdQFNkm1tDFPTRP12Lse5ThVKl1+kPXb++CqQUisuchj8kPmBvU1h0N430ffbcC7NV8+9IPTKhco+9gOJxSHlXGrLLHDtTFkjS0gMA6PVvQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9D4516F3;
-	Thu, 13 Feb 2025 01:39:16 -0800 (PST)
-Received: from [10.57.81.93] (unknown [10.57.81.93])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BC773F58B;
-	Thu, 13 Feb 2025 01:38:53 -0800 (PST)
-Message-ID: <43d852bb-ab5f-40be-b188-166c57ab795c@arm.com>
-Date: Thu, 13 Feb 2025 09:38:52 +0000
+	s=arc-20240116; t=1739439654; c=relaxed/simple;
+	bh=3Ty3TZPngzI8ImKj+JMeHI8wX24fjwqqQ9y/aUKCUXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tztjl6MRVB+FVYyFUGuVr/gkbv9UZeqkUg6Rdjnaqc8d1kMH7twVKw8agK5iO7AiME8eGguG1j8Gz/UKHIQTdw8mYPSESJfaCEq1LVsgUSS8r8mfZHqyfWc3CJO8zAddoNiL8XmqsFrE86BhLT06q0efFmlvkreVsnfYNIhGZ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkiEtYVe; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30761be8fa7so6798291fa.2;
+        Thu, 13 Feb 2025 01:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739439650; x=1740044450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mjlSL/XILbi3kwKJAgYk9svt+oaypPyLoMPUzXAfvac=;
+        b=EkiEtYVenLNkaY48Yw1LquMh4AMUSfa9P27YEjP5oTNBCA4d3merll5U5/6eoMx5Ql
+         a0WtsnFHIvBD0Km9K1q951Hw+yfI3R/n3s4zd4fvKUeD/PeIvy85i+OgGu1dJWh6A0j0
+         9Puu6vm0uIt2GuoxBjymM7OQgrRHc8452DgmcUUgF/4xpbDgLlke9ki2Ua1ifTtPXLeN
+         N8+Pwits9n9e062dyl/TtLyhFtoPzAph4GOhY6bHFZXdpSDpZHY7zDxFgOt/K76JvT+h
+         thh3nSV/+zp5xcGcSp7ew1UvEKlQHoJcEP3uCLwY4IxDDJYfG095IblI5BBG8ouNITw2
+         Cc+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739439650; x=1740044450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mjlSL/XILbi3kwKJAgYk9svt+oaypPyLoMPUzXAfvac=;
+        b=qn1MKj7md/GXDT0D+r4nI2OcsdbvLs2m2Bv1rjvtrQftZF1s4/q5aiF3FcZbG/sNwD
+         khseq4XgNvrXQ2s27ZjMRmgqGMd8ryf3MKA/l8ZbB/YAaHT8R0UaRbeAx9PIO4JPHtzi
+         lwY6e0dgUp7ntITGkf4mcikpxb9cZKv6AqYnqVX6wFDN/mDSnOL7Wmf/5xnm234JwvC7
+         bqIDfxoE9nJSk1vJWihHyPpBv8WZwydrFkNatdNGBtneP4v7z6OTnhBtWWDX6FsvO3Bj
+         Ij3JsA42FqtuDYYISi3mOy/aUf411JbtqN7H/Pj9JUrVjgoGUpAT6+VxQzrV+UR5c0uU
+         7rzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsxI0+hHGs5MuAzDYStPM7D/aWGhK1SK6hQay7Ovd1kEtzMIszX67KT+bPssirKEffNA5HEzURUGSR@vger.kernel.org, AJvYcCWeXqS07r2rlqD0pYVOshrebdl0zi7PdM4da+zOD0+VsZ4Dr8rwNxtKwV6TrDjYiBfMr2vnOGvtnH45@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ1KZr04RoIpeHuOB5PwAP/Lg+EKdkdwq36ILlu/orCytD/f9e
+	2JoVO/zC4p8nLFgNvRnNPoC6v8Xv8G8joFURZ2K7cvE7tF4pLkeON5qoZLRmQbAq
+X-Gm-Gg: ASbGncsHjX/mUiFyDgHDJrRioV8lbMyOROgXNwgB/AVevUmit7qFf139mPoSazFjobR
+	5YLzRic1t48opdjMoXrJ8awxMIfnBREmK4D3qnfBH9AFN1PsKdv8NZopBhlE8OrbRTWs/ObFeWE
+	hBOp9OEjzl3IKmRCd8wyHxyJXu7T7s1BlYsCZdAr/pOU+d8p8t8n87vmPRJYKEhVbH8bqJF4mmm
+	FxL4cWkkPjNyWqTo0AO7k+IWk9/bjdq46qjV4LhNng6H+iSckwE9IfIgN/ZcWA9rlWo0GNbrkcg
+	Z60vC610hAluoPb4rbfoT+57iywJcuc=
+X-Google-Smtp-Source: AGHT+IHvr3T6WF3qrEPOE/ncpkXsxhpveENebSm/95rH45l46XCcOYPEGrJRKlNkH6Z2V9/FiQs2Ew==
+X-Received: by 2002:a05:6512:3e14:b0:544:1093:ee3a with SMTP id 2adb3069b0e04-545181165a8mr2484582e87.24.1739439649595;
+        Thu, 13 Feb 2025 01:40:49 -0800 (PST)
+Received: from localhost.localdomain ([178.176.176.188])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f10cae7sm119518e87.183.2025.02.13.01.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 01:40:49 -0800 (PST)
+From: Aleksandr Shubin <privatesub2@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Aleksandr Shubin <privatesub2@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Cheo Fusi <fusibrandon13@gmail.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v11 0/3] Add support for Allwinner PWM on D1/T113s/R329 SoCs
+Date: Thu, 13 Feb 2025 12:40:11 +0300
+Message-Id: <20250213094018.134081-1-privatesub2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 16/16] arm64/mm: Defer barriers when updating kernel
- mappings
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250205151003.88959-1-ryan.roberts@arm.com>
- <20250205151003.88959-17-ryan.roberts@arm.com>
- <9bc5527e-16f4-45cc-aced-55b1ace6c143@arm.com>
- <a5d66063-c3a0-46fc-ab88-21ae2448c9f0@arm.com>
- <0052097e-2284-4f9e-b37c-2ca2de527667@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <0052097e-2284-4f9e-b37c-2ca2de527667@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/02/2025 05:30, Anshuman Khandual wrote:
-> 
-> 
-> On 2/10/25 16:42, Ryan Roberts wrote:
->> On 10/02/2025 08:03, Anshuman Khandual wrote:
->>>
->>>
->>> On 2/5/25 20:39, Ryan Roberts wrote:
->>>> Because the kernel can't tolerate page faults for kernel mappings, when
->>>> setting a valid, kernel space pte (or pmd/pud/p4d/pgd), it emits a
->>>> dsb(ishst) to ensure that the store to the pgtable is observed by the
->>>> table walker immediately. Additionally it emits an isb() to ensure that
->>>> any already speculatively determined invalid mapping fault gets
->>>> canceled.> 
->>>> We can improve the performance of vmalloc operations by batching these
->>>> barriers until the end of a set up entry updates. The newly added
->>>> arch_update_kernel_mappings_begin() / arch_update_kernel_mappings_end()
->>>> provide the required hooks.
->>>>
->>>> vmalloc improves by up to 30% as a result.
->>>>
->>>> Two new TIF_ flags are created; TIF_KMAP_UPDATE_ACTIVE tells us if we
->>>> are in the batch mode and can therefore defer any barriers until the end
->>>> of the batch. TIF_KMAP_UPDATE_PENDING tells us if barriers are queued to
->>>> be emited at the end of the batch.
->>>
->>> Why cannot this be achieved with a single TIF_KMAP_UPDATE_ACTIVE which is
->>> set in __begin(), cleared in __end() and saved across a __switch_to().
->>
->> So unconditionally emit the barriers in _end(), and emit them in __switch_to()
->> if TIF_KMAP_UPDATE_ACTIVE is set?
-> 
-> Right.
-> 
->>
->> I guess if calling _begin() then you are definitely going to be setting at least
->> 1 PTE. So you can definitely emit the barriers unconditionally. I was trying to
->> protect against the case where you get pre-empted (potentially multiple times)
->> while in the loop. The TIF_KMAP_UPDATE_PENDING flag ensures you only emit the
->> barriers when you definitely need to. Without it, you would have to emit on
->> every pre-emption even if no more PTEs got set.
->>
->> But I suspect this is a premature optimization. Probably it will never occur. So
-> 
-> Agreed.
+v2:
+ - fix dt-bindings
+ - fix a remark in the driver
 
-Having done this simplification, I've just noticed that one of the
-arch_update_kernel_mappings_begin/end callsites is __apply_to_page_range() which
-gets called for user space mappings as well as kernel mappings. So actually with
-the simplification I'll be emitting barriers even when only user space mappings
-were touched.
+v3:
+ - fix dt-bindings
+ - fix sunxi-d1s-t113.dtsi
 
-I think there are a couple of options to fix this:
+v4:
+ - fix a remark in the driver
 
-- Revert to the 2 flag approach. For the user space case, I'll get to _end() and
-notice that no barriers are queued so will emit nothing.
+v5:
+ - dropped unused varibale in the driver
+ - fix dt-bindings
 
-- Only set TIF_KMAP_UPDATE_ACTIVE if the address range passed to _begin() is a
-kernel address range. I guess that's just a case of checking if the MSB is set
-in "end"?
+v6:
+ - add apb0 clock
 
-- pass mm to _begin() and only set TIF_KMAP_UPDATE_ACTIVE if mm == &init_mm. I
-guess this should be the same as option 2.
+v7:
+ - fix a remark in the driver
+ - add maintainer
 
-I'm leaning towards option 2. But I have a niggling feeling that my proposed
-check isn't quite correct. What do you think?
+v8:
+ - fix compile driver for 6.8-rc
 
-Thanks,
-Ryan
+v9:
+ - fix a remark in the driver
+ - fix dt-bindings
+ - rename apb0 -> apb
 
+v10:
+ - fix a remark in the driver
+ - fix compile driver for 6.12-rc2
 
-> 
->> I'll simplify as you suggest.
->>
->> Thanks,
->> Ryan
->>
->>>
->>>>
->>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> ---
->>>>  arch/arm64/include/asm/pgtable.h     | 65 +++++++++++++++++++---------
->>>>  arch/arm64/include/asm/thread_info.h |  2 +
->>>>  arch/arm64/kernel/process.c          | 20 +++++++--
->>>>  3 files changed, 63 insertions(+), 24 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->>>> index ff358d983583..1ee9b9588502 100644
->>>> --- a/arch/arm64/include/asm/pgtable.h
->>>> +++ b/arch/arm64/include/asm/pgtable.h
->>>> @@ -39,6 +39,41 @@
->>>>  #include <linux/mm_types.h>
->>>>  #include <linux/sched.h>
->>>>  #include <linux/page_table_check.h>
->>>> +#include <linux/pgtable_modmask.h>
->>>> +
->>>> +static inline void emit_pte_barriers(void)
->>>> +{
->>>> +	dsb(ishst);
->>>> +	isb();
->>>> +}
->>>
->>> There are many sequence of these two barriers in this particular header,
->>> hence probably a good idea to factor this out into a common helper.
->>>>> +
->>>> +static inline void queue_pte_barriers(void)
->>>> +{
->>>> +	if (test_thread_flag(TIF_KMAP_UPDATE_ACTIVE)) {
->>>> +		if (!test_thread_flag(TIF_KMAP_UPDATE_PENDING))
->>>> +			set_thread_flag(TIF_KMAP_UPDATE_PENDING);
->>>> +	} else
->>>> +		emit_pte_barriers();
->>>> +}
->>>> +
->>>> +#define arch_update_kernel_mappings_begin arch_update_kernel_mappings_begin
->>>> +static inline void arch_update_kernel_mappings_begin(unsigned long start,
->>>> +						     unsigned long end)
->>>> +{
->>>> +	set_thread_flag(TIF_KMAP_UPDATE_ACTIVE);
->>>> +}
->>>> +
->>>> +#define arch_update_kernel_mappings_end arch_update_kernel_mappings_end
->>>> +static inline void arch_update_kernel_mappings_end(unsigned long start,
->>>> +						   unsigned long end,
->>>> +						   pgtbl_mod_mask mask)
->>>> +{
->>>> +	if (test_thread_flag(TIF_KMAP_UPDATE_PENDING))
->>>> +		emit_pte_barriers();
->>>> +
->>>> +	clear_thread_flag(TIF_KMAP_UPDATE_PENDING);
->>>> +	clear_thread_flag(TIF_KMAP_UPDATE_ACTIVE);
->>>> +}
->>>>  
->>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>  #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
->>>> @@ -323,10 +358,8 @@ static inline void __set_pte_complete(pte_t pte)
->>>>  	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
->>>>  	 * or update_mmu_cache() have the necessary barriers.
->>>>  	 */
->>>> -	if (pte_valid_not_user(pte)) {
->>>> -		dsb(ishst);
->>>> -		isb();
->>>> -	}
->>>> +	if (pte_valid_not_user(pte))
->>>> +		queue_pte_barriers();
->>>>  }
->>>>  
->>>>  static inline void __set_pte(pte_t *ptep, pte_t pte)
->>>> @@ -791,10 +824,8 @@ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
->>>>  
->>>>  	WRITE_ONCE(*pmdp, pmd);
->>>>  
->>>> -	if (pmd_valid_not_user(pmd)) {
->>>> -		dsb(ishst);
->>>> -		isb();
->>>> -	}
->>>> +	if (pmd_valid_not_user(pmd))
->>>> +		queue_pte_barriers();
->>>>  }
->>>>  
->>>>  static inline void pmd_clear(pmd_t *pmdp)
->>>> @@ -869,10 +900,8 @@ static inline void set_pud(pud_t *pudp, pud_t pud)
->>>>  
->>>>  	WRITE_ONCE(*pudp, pud);
->>>>  
->>>> -	if (pud_valid_not_user(pud)) {
->>>> -		dsb(ishst);
->>>> -		isb();
->>>> -	}
->>>> +	if (pud_valid_not_user(pud))
->>>> +		queue_pte_barriers();
->>>>  }
->>>>  
->>>>  static inline void pud_clear(pud_t *pudp)
->>>> @@ -960,10 +989,8 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
->>>>  
->>>>  	WRITE_ONCE(*p4dp, p4d);
->>>>  
->>>> -	if (p4d_valid_not_user(p4d)) {
->>>> -		dsb(ishst);
->>>> -		isb();
->>>> -	}
->>>> +	if (p4d_valid_not_user(p4d))
->>>> +		queue_pte_barriers();
->>>>  }
->>>>  
->>>>  static inline void p4d_clear(p4d_t *p4dp)
->>>> @@ -1098,10 +1125,8 @@ static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
->>>>  
->>>>  	WRITE_ONCE(*pgdp, pgd);
->>>>  
->>>> -	if (pgd_valid_not_user(pgd)) {
->>>> -		dsb(ishst);
->>>> -		isb();
->>>> -	}
->>>> +	if (pgd_valid_not_user(pgd))
->>>> +		queue_pte_barriers();
->>>>  }
->>>>  
->>>>  static inline void pgd_clear(pgd_t *pgdp)
->>>> diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
->>>> index 1114c1c3300a..382d2121261e 100644
->>>> --- a/arch/arm64/include/asm/thread_info.h
->>>> +++ b/arch/arm64/include/asm/thread_info.h
->>>> @@ -82,6 +82,8 @@ void arch_setup_new_exec(void);
->>>>  #define TIF_SME_VL_INHERIT	28	/* Inherit SME vl_onexec across exec */
->>>>  #define TIF_KERNEL_FPSTATE	29	/* Task is in a kernel mode FPSIMD section */
->>>>  #define TIF_TSC_SIGSEGV		30	/* SIGSEGV on counter-timer access */
->>>> +#define TIF_KMAP_UPDATE_ACTIVE	31	/* kernel map update in progress */
->>>> +#define TIF_KMAP_UPDATE_PENDING	32	/* kernel map updated with deferred barriers */
->>>>  
->>>>  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
->>>>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
->>>> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
->>>> index 42faebb7b712..1367ec6407d1 100644
->>>> --- a/arch/arm64/kernel/process.c
->>>> +++ b/arch/arm64/kernel/process.c
->>>> @@ -680,10 +680,10 @@ struct task_struct *__switch_to(struct task_struct *prev,
->>>>  	gcs_thread_switch(next);
->>>>  
->>>>  	/*
->>>> -	 * Complete any pending TLB or cache maintenance on this CPU in case
->>>> -	 * the thread migrates to a different CPU.
->>>> -	 * This full barrier is also required by the membarrier system
->>>> -	 * call.
->>>> +	 * Complete any pending TLB or cache maintenance on this CPU in case the
->>>> +	 * thread migrates to a different CPU. This full barrier is also
->>>> +	 * required by the membarrier system call. Additionally it is required
->>>> +	 * for TIF_KMAP_UPDATE_PENDING, see below.
->>>>  	 */
->>>>  	dsb(ish);
->>>>  
->>>> @@ -696,6 +696,18 @@ struct task_struct *__switch_to(struct task_struct *prev,
->>>>  	/* avoid expensive SCTLR_EL1 accesses if no change */
->>>>  	if (prev->thread.sctlr_user != next->thread.sctlr_user)
->>>>  		update_sctlr_el1(next->thread.sctlr_user);
->>>> +	else if (unlikely(test_thread_flag(TIF_KMAP_UPDATE_PENDING))) {
->>>> +		/*
->>>> +		 * In unlikely event that a kernel map update is on-going when
->>>> +		 * preemption occurs, we must emit_pte_barriers() if pending.
->>>> +		 * emit_pte_barriers() consists of "dsb(ishst); isb();". The dsb
->>>> +		 * is already handled above. The isb() is handled if
->>>> +		 * update_sctlr_el1() was called. So only need to emit isb()
->>>> +		 * here if it wasn't called.
->>>> +		 */
->>>> +		isb();
->>>> +		clear_thread_flag(TIF_KMAP_UPDATE_PENDING);
->>>> +	}
->>>>  
->>>>  	/* the actual thread switch */
->>>>  	last = cpu_switch_to(prev, next);
->>
+v11:
+ - fix a remark in the driver
+ - fix compile driver for 6.14.0-rc2
+
+Aleksandr Shubin (3):
+  dt-bindings: pwm: Add binding for Allwinner D1/T113-S3/R329 PWM
+    controller
+  pwm: Add Allwinner's D1/T113-S3/R329 SoCs PWM support
+  riscv: dts: allwinner: d1: Add pwm node
+
+ .../bindings/pwm/allwinner,sun20i-pwm.yaml    |  84 ++++
+ .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  12 +
+ drivers/pwm/Kconfig                           |  10 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-sun20i.c                      | 370 ++++++++++++++++++
+ 5 files changed, 477 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+ create mode 100644 drivers/pwm/pwm-sun20i.c
+
+-- 
+2.25.1
 
 
