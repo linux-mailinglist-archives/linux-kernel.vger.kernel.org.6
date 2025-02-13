@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-512857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FDEA33E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:54:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D4FA33E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F9D3A5A62
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:54:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBF13A648B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BAE21D3D6;
-	Thu, 13 Feb 2025 11:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323FA21D3E0;
+	Thu, 13 Feb 2025 11:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RNj5Dadh"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q3BI4qYO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jc11mgkW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B39211A06
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9CB2147F7;
+	Thu, 13 Feb 2025 11:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739447649; cv=none; b=UzCGGOpdrmMQD8SJzt2wmZH6jp21b1osWeUaUIqJbXo0WyoF9Pz6c+lYZ9NCbE4+x13Fjk9PQdeYkqpJuZbuipdg1iz3SmDdvMd5CfNwrMdX0SCvqoGZ0zuZ1j/ZDAo52fdlLQvI8GOs3JRqli2wUhcSswkAn0CpVrjKRahbIXo=
+	t=1739447659; cv=none; b=Bpo7yAMdOWJDslRl/BeXXQmbKqPYKBGhqk5gLpiO45mKj1anfHVN+GSFOWxRx04dWb21BTGheJAfaZJ29dHhCyqi8ZTUSjUo+ryJzIDTwIy4gC8bWFIU3H/eemWwRD0Z7sA9PiG3hElFOBlkZEb/9gMXT29MlZLfUmFSJTC3OUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739447649; c=relaxed/simple;
-	bh=qdkW8qVhkXrO1qQ34NhKHK7+tmQMaR4sdKcyxB0QKpc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oDjWy20C7A0liYJqlsLT9GOpv01eWZmhnnHEYXdjuwsLfXe9yRVkpXM5wcdDNayZ47qZlp686Y7CnFKdyzMiLyLw3ceuOhUugnEvaCDUqJ+uEvCrZ8oUStyiVdMduf7T69/hG4bGSJseLIZI/m5Qw3yRlzHa22cwdvbDjBhdmHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RNj5Dadh; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38ddfee3ba9so608374f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:54:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739447646; x=1740052446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EBrYoGQXFZ0WeFWAVcXCIsjpFEawdA5CdRolKv8MZAk=;
-        b=RNj5DadhQ+ume+LMXaSIFpGNnIaNmU6oJjsCYwrpBAii/FwRnTiPlZvlk8mIOrY51b
-         e8/nTy1d51AM20h3nc6uRsByPzimH8LTCHfhWcXD4WL3rBkpjHP72CN79XfbvzBCRRFI
-         YYiZiVVOmQvcRSUEDDIKIy+iegLLY9tZqNOWdRJCE0f4UFZsK+w+Gv5daPZjo66g+u9+
-         mJw0mPFrBnVQF+2yjUrqw55grQH1KcqCVeg2DziprVbAs2gLsSn6M0jC2lEA4yAC0IPO
-         ZvJrjjphzU22ofdRuTj1/Y7lCR473N6ZS5B1dUAA5u+7vauVlUQ8rVzQstA5AgQqgInn
-         l+yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739447646; x=1740052446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EBrYoGQXFZ0WeFWAVcXCIsjpFEawdA5CdRolKv8MZAk=;
-        b=B1LS2UZQnTrWv2otHUSpODEvWcmdaNmLutwJyntFpFTSl/FFVelsgyGnU6GhGYMXLz
-         WgJPrC7ZshNJmcSuBQy05QxbjWXZSsaqi9UqtzKVhj4ue2+8V3nfFL7//QVJ2srTL30l
-         CDxL1yfjCV1ilrHovNrhcopcgztY9jbDDETb9zvmEaEx3NXiee3kVHSLOg8HrkHjpDJR
-         AvWPxDLsfeK9nsjLgOyV3VSwjByATDDmMSu5fsI7DnZx8nUWHRaTJJZPPb/YImvVSgHd
-         tEi1g8A+2Lpj+Spa66TXle0Blxr/0I1HUvTBJRXuU0MQ9wQeI/XifeFKRXfsyQ2F+N1J
-         LavA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwqmacg8v1nhgOKjgPzzSkpHTg7yf1II+jL7hMWkNc9oKYON40mpjxrTnRPDU8d4PqbxoYCoNc4KxF+qY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx06J5JjGIKx+fh0EvtB01y3j7inye+aet4xA3KHt2MCouu7RL8
-	W5u/XrWVzCdVJ5qcXAGURVWTbEs06Es8flntdWq566TWMJ+kJts6WcyFzyQEkKBbaOOk6Wk+696
-	hPMsmQjWY/kcCw7HPPyAIALkY4vXzTEVq36qs
-X-Gm-Gg: ASbGnct0gaeix8WsPySsnAOlH7lxEu2dfPLI6MCY9s235ahujbXNFx7XdJY8Q0U43QH
-	Ey8K8uO8v6JFW+H7QJ4mtGIQho0PiTbPe79oPrdeRF/2Kh8KnsxV+ScwRWWwqXiI3mvAmkQ==
-X-Google-Smtp-Source: AGHT+IEe6v6MtacDeSEL/xLecSNxTwstqznSfHAOfDBwLvpFYDx3oaHfufee2aQ6e0ic/Zi9JnZINLqGhsXjmZIHMlM=
-X-Received: by 2002:a5d:5188:0:b0:385:fd07:85f4 with SMTP id
- ffacd0b85a97d-38dea290941mr5344862f8f.31.1739447644908; Thu, 13 Feb 2025
- 03:54:04 -0800 (PST)
+	s=arc-20240116; t=1739447659; c=relaxed/simple;
+	bh=MqDW9zds1aMzuxEr+ieIN3w8AUaeMBOtLSwPLf49hX4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qwa9QQqBS7Z5ZaFDP81yT1HNdjw2kCdkknVZaxymQZoICjUv9plzwiBFGhDyKnA98R8Qm7Zew1BmiIanJIQIafSWx+LV4/nLa06oHQJmmZBOcTiXGTy5LBSpTvRdM+r7lmt7x4WOT/Cj4GwqwERCeCdghhtkOhPGr2svUuM8PIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q3BI4qYO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jc11mgkW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739447656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nVCFtiwujzbXkpW5Uts1EM44uRKfVCoT8Jxt43kwJZs=;
+	b=Q3BI4qYOehHagnGv2BUg8gNnenIzTcCi1NMESdqL0fLyHd4Yzz9+IYpIkFW3DSmDQXC8IS
+	mDGtthYVDx2iQwWZwUnTh5RKYIrVO3hb0Gfqd1n1IKRRgimeBkq0ktFM6oTIF5/fZCTowq
+	Gq3dQ9PHcGRe4lFk/9u9qz7xDA+MuzWXW085gYb3gIveOvL3Y5trtL5vHA8iXcWnWTD0YW
+	N5txuktSnn/uYzDWCNP62XXc7dXXwAOMmprC65aAK79c1RgYmPW9hsupcNDm5bZgV/YLLR
+	o5Wz5nWNxmHCU6rp6EVQiJketXY0mDMiDZ3D3yWCHb/4u5bU1K44Ws+l+l30Fw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739447656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nVCFtiwujzbXkpW5Uts1EM44uRKfVCoT8Jxt43kwJZs=;
+	b=Jc11mgkW0InKn0tScvUbjLrXp5+HWbjchgXOPuZeADaKpvfZUaX8cj1bJW72TjyGhkpFQJ
+	YQ0RMmw6VpI9zhBw==
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+ kevin.tian@intel.com, maz@kernel.org
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ shuah@kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ eric.auger@redhat.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
+ yury.norov@gmail.com, jacob.pan@linux.microsoft.com,
+ patches@lists.linux.dev
+Subject: Re: [PATCH v1 01/13] genirq/msi: Store the IOMMU IOVA directly in
+ msi_desc instead of iommu_cookie
+In-Reply-To: <a580069c5e494ffffa668218b6fe3a207b01efec.1739005085.git.nicolinc@nvidia.com>
+References: <cover.1739005085.git.nicolinc@nvidia.com>
+ <a580069c5e494ffffa668218b6fe3a207b01efec.1739005085.git.nicolinc@nvidia.com>
+Date: Thu, 13 Feb 2025 12:54:15 +0100
+Message-ID: <87y0yajc0o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-vma-v14-0-b29c47ab21f5@google.com> <8130a6d5-a7e5-402b-b05c-2d0703ac1ed2@lucifer.local>
- <CANiq72nBx3cRTUC9HWVR8K64Jbq3GCVMss5wuABzra3OLhRUQw@mail.gmail.com> <c8e78762-1429-4ab6-9398-ce52370eec08@lucifer.local>
-In-Reply-To: <c8e78762-1429-4ab6-9398-ce52370eec08@lucifer.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 13 Feb 2025 12:53:51 +0100
-X-Gm-Features: AWEUYZlcKhn2J09IfN1Ume_UmXDcGf-Su7T6SzVglnPGleBem6pGdl5tq8gfdG4
-Message-ID: <CAH5fLgipyRs+0qMkMN4EZDewtEy_8FvcJgvB+gd=58RgaddN1Q@mail.gmail.com>
-Subject: Re: [PATCH v14 0/8] Rust support for mm_struct, vm_area_struct, and mmap
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Balbir Singh <balbirs@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Feb 13, 2025 at 12:50=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Sat, Feb 08 2025 at 01:02, Nicolin Chen wrote:
+> From: Jason Gunthorpe <jgg@nvidia.com>
 >
-> On Thu, Feb 13, 2025 at 12:32:27PM +0100, Miguel Ojeda wrote:
-> > On Thu, Feb 13, 2025 at 12:14=E2=80=AFPM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > the maintainers for the subsystem generally take series (though of co=
-urse,
-> > > it is entirely maintained and managed by rust people).
-> >
-> > Just in case: I am not sure what "rust people" means here, but if you
-> > meant the Rust subsystem, then it is not the case. Maintenance depends
-> > on what the subsystem wants to do (including how to handle patches,
-> > but also the actual maintenance), who steps up to maintain it, whether
-> > the subsystem wants new co-maintainers or sub-maintainers, etc.
-> >
-> >     https://rust-for-linux.com/rust-kernel-policy#how-is-rust-introduce=
-d-in-a-subsystem
-> >     https://rust-for-linux.com/rust-kernel-policy#who-maintains-rust-co=
-de-in-the-kernel
-> >
-> > That is why the cover letter asks about the `MAINTAINERS` file.
->
-> Right, I don't mean the rust subsystem, I mean designated rust
-> maintainers. The point being that this won't add workload to Andrew, nor
-> require him nor other mm C people to understand rust.
->
-> As stated, I agree we need to add an entry to MAINTAINERS for this, which
-> is why I explicitly chased this up.
+> All the iommu cases simply want to override the MSI page's address with
+> the IOVA that was mapped through the iommu. This doesn't need a cookie
+> pointer, we just need to store the IOVA and its page size in the
+> msi_desc.
 
-I am happy to be listed as a maintainer of this code.
+We need to do nothing :)
 
-Alice
+> Instead provide msi_desc_set_iommu_msi_iova() which allows the IOMMU side
+> to specify the IOVA that the MSI page is placed during
+> iommu_dma_prepare_msi(). This is stored in the msi_desc and then
+> iommu_dma_compose_msi_msg() is a simple inline that sets address_hi/lo.
+>
+> The next patch will correct the naming.
+>
+> This is done because we cannot correctly lock access to group->domain
+> in
+
+Now this gets really confusing. How is the next patch which corrects the
+naming related the locking problem?
+
+> the atomic context that iommu_dma_compose_msi_msg() is called under. Today
+> the locking miss is tolerable because dma_iommu.c operates under an
+> assumption that the domain does not change while a driver is probed.
+>
+> However iommufd now permits the domain to change while the driver is
+> probed and VFIO userspace can create races with IRQ changes calling
+> iommu_dma_prepare_msi/compose_msi_msg() and changing/freeing the
+> iommu_domain.
+>
+> Removing the pointer, and critically, the call to
+> iommu_get_domain_for_dev() during compose resolves this race.
+
+So this change log really fails to follow the basic structure:
+
+   The context, the problem and the solution
+
+Something like this:
+
+   The IOMMU translation for MSI message addresses is a two stage
+   process:
+
+     1) A cookie containing the IOVA address is stored in the MSI
+        descriptor, when a MSI interrupt is allocated
+
+     2) The compose callback uses this cookie to apply the translation
+        to the message address.
+
+   This worked so far because .......
+
+   With the iommufd rework this becomes racy, because ...
+
+   Fix this by storing ... instead of ... ....
+
+Hmm?
+
+        tglx
+
 
