@@ -1,176 +1,137 @@
-Return-Path: <linux-kernel+bounces-513586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F28A34C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:35:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA26A34C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E098916B66A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD8D3AD1D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F99241691;
-	Thu, 13 Feb 2025 17:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2E1212B3A;
+	Thu, 13 Feb 2025 17:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="gHt2sI3u"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZAdcG3d2"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A15241674;
-	Thu, 13 Feb 2025 17:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468019; cv=pass; b=IdJIYhUMF0VV2/OLpaG3V4USlAMWH+cKYdOoFDrIb3+K47zK3cwey0CR3D/vey0lSpmGHNVmhdu3HeaYXkbtbNVe1Yv1+mX44sm2Hd5zkaaoUQYBQOmP38KbkCc8rLJUIo/nwKghtriuYs/6q8Wc30DU7x3vexBL0DjWN6iMd1o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468019; c=relaxed/simple;
-	bh=6ByzMOuDBh5R+FUdNwn2gk3LwiXzk/aPZNyTOpzuZOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2JE5KJ3DmaGKhMZoK0uhx2pFjO77zVuu9ImaDEUkBCQISVHoy/Q2QHGgiDuCR+tKJ3i90UBnL+BwJ2HS49ZPW4nl86S976ivTpAW9f7oY4761tosIE3ZWADchN8+ve7LmZG9obOpNKL56o9i1aq3vH+WDy//4vl+jr517PFT6A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=gHt2sI3u; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739467992; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fsZ9tyPjguNsUc2+X1eFr5QgUPWPBVzABYeF+VSOoUx8sOk2o9TIpuy6IFgXZUjG9vZWe2oUATvThyog4cB1QGSF+7jMYZN0kw9K4ETfX3PdZ8MffVDq/wZ0EpgjNyprDhV/ILksMWZTFad0oAv+bAEhZnMftm6shmu4Q2uh+DQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739467992; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6ByzMOuDBh5R+FUdNwn2gk3LwiXzk/aPZNyTOpzuZOU=; 
-	b=bta+8ZPQPOcCe9SZHB2yjLV1NS6qrkM+JiDqDJdXEM7/kUS9MuT5tKC+9VCVfIfzD8aCiVovVkZOSqExBy9M8mRQ2Z1mRt6G56DXfOz4tq350B3ZIYmhlv8R4Xu045K9k3bY3npdzZbBAxK2WJU2vsEIWL+tbEYKPRv8yV6terI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739467992;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=6ByzMOuDBh5R+FUdNwn2gk3LwiXzk/aPZNyTOpzuZOU=;
-	b=gHt2sI3u9x/IyIOL7Gz7LHOOPs0dHmzj8DCoJ1j0HswtKdfzbJT6zBFQ67GzwLvu
-	MPP/pAtZ4COd1DYdY5C/SpKgmnR6xnfTJ29gG6h2mt4W0K63gqqZ94CkCqga8aVXh6i
-	twwysP6rbc9WuqaBcE7MNq1IW8GqH8cgBGP/ll5k=
-Received: by mx.zohomail.com with SMTPS id 1739467989609795.4274306368665;
-	Thu, 13 Feb 2025 09:33:09 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 858F21806DE; Thu, 13 Feb 2025 18:33:04 +0100 (CET)
-Date: Thu, 13 Feb 2025 18:33:04 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, 
-	Damon Ding <damon.ding@rock-chips.com>, heiko@sntech.de, robh@kernel.org, conor+dt@kernel.org, 
-	algea.cao@rock-chips.com, rfoss@kernel.org, devicetree@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, hjc@rock-chips.com, kever.yang@rock-chips.com, 
-	dmitry.baryshkov@linaro.org, vkoul@kernel.org, andy.yan@rock-chips.com, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
-Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
-Message-ID: <m3ovwhg3h2njsjpuj2wdahxex6zq2udmxonublgmnlrdfred4z@zxtyd6xvhram>
-References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
- <5044FFCB-B325-40D0-BA82-03AF64EAF029@gmail.com>
- <D7RH63Z1VBBD.1AIOQJIWPZIXS@cknow.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81256204C0B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739468016; cv=none; b=WBflQ98CXdiWjEqLaMc3ATKkW2PBvwC6Fy80CdlmniFLfv6iGUEjLhUizZ/4BC7eUiSCTuuf/H44ovxpO4TeMlHPE1x9FkMLcIBXWBNTdnIceaJsiayLkq4KOygW7qO7YDzSguaJFnyubDSt+w0UO+FDow1X9OAOdpNroLl+bQY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739468016; c=relaxed/simple;
+	bh=IBE3DqvfPltRFsm3mBAK8i9sdVtPitaS7V/S98s+J1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSc/lA3ERIlebKJ5F2tU2P6SsG12ppTbWZMxqmMavDhLu8lAPWBfuZSWNHwNkfov2nigk+RRrVjdzUm0EMTEJ/18/OvYLnAk8J0UWmCOV3/45YoYxn8s5YYqNVloWuYEGeef6VT2L7T871j5r4MsLJA01WrKfrHyNecM9Y2sc/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZAdcG3d2; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-545092d763cso6739e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:33:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739468013; x=1740072813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MGgVrzsAeNL3Ky4gN5+3YPP2m5D+SPcUN3lTNqfCOfc=;
+        b=ZAdcG3d2q4EirvAbbptmx24krGguX6P9vGMVWSJsyrWNpWGCepGpiVTMCx9cflDNX1
+         BxzYrLkAEfOwBkX30FngzCfzwVqA40ZJ3pez0NH9lY+mhl5xCXWy3e512zpsD1sW1zhK
+         Q+CdK78eLODpJXYsqNcS1t7PKCcf4xk0dum6lYg/4EGhEwKYOZzeSisNFdSUv7FHMr6x
+         /YN3lSQ37WP4dfdPqnOaEMrFOsRppUeArScX/QQGOcBYbFBYyAQ6p4qKrh1Y9xkbMj/n
+         +NuNpZ+ZjAPo7Oze3aIpb6nWLvGtp10ZNdQ5jt4Il/bB+Ths88rd0bTksVvmkproLnLm
+         Jmvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739468013; x=1740072813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MGgVrzsAeNL3Ky4gN5+3YPP2m5D+SPcUN3lTNqfCOfc=;
+        b=A4lRFWGfcTWEI070z22Bw7W/34gxGwomfsjqk+jarLELXS4T1itE9/rfSaeJA8K9Ux
+         QwCkBFAHhupovd8Dv1oyJvcn1mfwYgqLQr6xY9bQ6zc+OXaH6L1fXMg7TbS8zDL3Wfzm
+         Xb/xNfP89HFCjOu39HD+KXWHl7NKrSz94t2au2SZ3EBYp1I1Tb8NCta5Zvz9gqgYabqH
+         LvG4kGgvJ9NroCZRTmifvfoOPKtdnYTCvGnde+bTpP2afY/JnXPhsFuJXVWJIVK30c/h
+         RMnSoAdqWfm+SczhIXHmgIpkE0fY7iiuyC5e7DYgybX/axf/wuv/WbWqLvMdXkTLjN+T
+         Havw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6Kb3PsPteCezZdFJ7p02xilCt1ffSS7ec8CGHVQ+1M3eVcGdqsi2lUFNJYKh7VMzvpTOCwbXKOrM4oI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU6Z1GMj+lxY6GaojYMGFj3bg5WvjjXTiTJs1AZbhg1QCvkn/Y
+	DjbLM2Z4EUuU+64dsKDMhXmDY51/057YLC4VVJIbsCWklluobmx6haHyLj/hbN8U6m0aSnqGrtN
+	Sf01iei5Io0PcwARPjb7RkPC+efI0u63vxUWY
+X-Gm-Gg: ASbGncv7AVO21aODC3GE5gmu1lPZHE31O0jqip355RAaQEjNcgdcXD90EQCLxQUoqsV
+	Nbm1A1QHyb10MQfNJQWdF0UMr4rifHZ8oEFtePwzgbb5/N1+c9BY0IqHtLEAU9k1V0bbgz9wD97
+	csuP0BVmC+kVvrfXr3KEUBiv6ZTshj
+X-Google-Smtp-Source: AGHT+IET0OV89iYfpu0mSYog4w1SQPmfp2RBaQSQSyY+Bufo1G9ums2tRHgQYhjw7LlG2MpjYEKfhvU+TU3OvVYN8WM=
+X-Received: by 2002:a05:6512:1193:b0:543:e3c3:5a5e with SMTP id
+ 2adb3069b0e04-5451e020774mr343672e87.4.1739468012362; Thu, 13 Feb 2025
+ 09:33:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6djyuz6okfpd5ae6"
-Content-Disposition: inline
-In-Reply-To: <D7RH63Z1VBBD.1AIOQJIWPZIXS@cknow.org>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/239.467.69
-X-ZohoMailClient: External
-
-
---6djyuz6okfpd5ae6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250212000747.3403836-1-vannapurve@google.com>
+ <20250212000747.3403836-3-vannapurve@google.com> <ljdzupgyl2am4qgvirwpdonwuzwjaysemu43icrzxjt5olr3yx@dldbi5tqwhjh>
+In-Reply-To: <ljdzupgyl2am4qgvirwpdonwuzwjaysemu43icrzxjt5olr3yx@dldbi5tqwhjh>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 13 Feb 2025 09:33:20 -0800
+X-Gm-Features: AWEUYZlhzsA-Sl-KzuUXdz9zcP5QTmYOsipXxAYftqBemHGY7puDNPu9R37JLpc
+Message-ID: <CAGtprH9OVVMXLyPnKXZ+K=S7XuPePHLwco0sXV-irGVj-SCbkQ@mail.gmail.com>
+Subject: Re: [PATCH V4 2/4] x86/tdx: Route safe halt execution via tdx_safe_halt()
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
+	seanjc@google.com, erdemaktas@google.com, ackerleytng@google.com, 
+	jxgao@google.com, sagis@google.com, oupton@google.com, pgonda@google.com, 
+	dave.hansen@linux.intel.com, linux-coco@lists.linux.dev, 
+	chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
-MIME-Version: 1.0
 
-Hi,
+On Wed, Feb 12, 2025 at 4:54=E2=80=AFAM Kirill A. Shutemov <kirill@shutemov=
+.name> wrote:
+>
+> On Wed, Feb 12, 2025 at 12:07:45AM +0000, Vishal Annapurve wrote:
+> > Direct HLT instruction execution causes #VEs for TDX VMs which is route=
+d
+> > to hypervisor via TDCALL. safe_halt() routines execute HLT in STI-shado=
+w
+> > so IRQs need to remain disabled until the TDCALL to ensure that pending
+> > IRQs are correctly treated as wake events. So "sti;hlt" sequence needs =
+to
+> > be replaced with "TDCALL; raw_local_irq_enable()" for TDX VMs.
+>
+> The last sentence is somewhat confusing.
+>
+> Maybe drop it and add explanation that #VE handler doesn't have info abou=
+t
+> STI shadow, enables interrupts before TDCALL which can lead to missed
+> wakeup events.
 
-On Thu, Feb 13, 2025 at 05:56:55PM +0100, Diederik de Haas wrote:
-> On Thu Feb 13, 2025 at 3:54 PM CET, Piotr Oniszczuk wrote:
+Ack, will fix it in the next version.
+
+>
+> > @@ -409,6 +410,12 @@ void __cpuidle tdx_safe_halt(void)
+> >               WARN_ONCE(1, "HLT instruction emulation failed\n");
+> >  }
 > >
-> >
-> >> Wiadomo=C5=9B=C4=87 napisana przez Damon Ding <damon.ding@rock-chips.c=
-om> w dniu 23 sty 2025, o godz. 11:07:
-> >>=20
-> >> Picked from:
-> >> https://patchwork.kernel.org/project/linux-rockchip/list/?series=3D923=
-593
-> >>=20
-> >> These patchs have been tested with a 1536x2048p60 eDP panel on
-> >> RK3588S EVB1 board, and HDMI 1080P/4K display also has been verified
-> >> on RK3588 EVB1 board. Furthermore, the eDP display has been rechecked
-> >> on RK3399 sapphire excavator board.
-> >> ...
-> >> 9 files changed, 401 insertions(+), 89 deletions(-)
-> >>=20
-> >> --=20
-> >> 2.34.1
-> >>=20
-> >
-> > Damon,
-> >
-> > I=E2=80=99m playing with hdmi0 port enablement on radxa rock5 itx board=
- with 6.14 mainline.
-> >
-> > rock5 itx has 2 hdmi ports: hdmi0 is wired to rk3588 typeC1/eDP1 eDP wi=
-th ra620 eDP->HDMI converter and hdmi1 from hdmi/edp tx1
-> > (see page3 & page29 at https://dl.radxa.com/rock5/5itx/v1110/radxa_rock=
-_5itx_v1110_schematic.pdf)
-> >
-> > I=E2=80=99m on 6.14-rc2 with applied:=20
-> > [1] Cristicc hdmi code (https://gitlab.collabora.com/cristicc/linux-nex=
-t/-/commits/rk3588-hdmi-bridge)
-> > [2] eDP support for RK3588 (https://patchwork.kernel.org/project/linux-=
-rockchip/list/?series=3D927765)
-> > [3] Add eDP mode support for Rockchip Samsung HDPTX PHY (https://patchw=
-ork.kernel.org/project/linux-rockchip/cover/20250205105157.580060-1-damon.d=
-ing@rock-chips.com/)
-> >
-> > Is edp1 supported by yours [2] series?
-> >
-> > If yes - may you pls hint me about required dts additions in https://gi=
-t.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm64/boot=
-/dts/rockchip/rk3588-rock-5-itx.dts?h=3Dv6.14-rc2 ?
->=20
-> I don't know if it's relevant, but while HDMI0 got enabled for quite a
-> few devices in 6.13, it did NOT get enabled for Rock 5 ITX.
-> I made a local patch (which does the same thing as was done for Rock 5B)
-> but I have no idea if it actually works (I don't have the board).
+> > +static void __cpuidle tdx_safe_halt(void)
+> > +{
+> > +     tdx_halt();
+> > +     raw_local_irq_enable();
+>
+> What is justification for raw_? Why local_irq_enable() is not enough?
+>
+> To very least, it has to be explained.
 
-I don't have the board either, but the schematics suggests that your
-patch is not correct. On the Rock 5 ITX the RK3588's first HDMI/eDP
-port should be enabled in eDP mode to be used with an eDP panel via
-connector J11. This series is needed for that.
+Let me replace it with a more suitable arch specific <>_irq_enable()
+function in the next version. Intention here is to just enable
+interrupts.
 
-Greetings,
-
--- Sebastian
-
---6djyuz6okfpd5ae6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmeuLNAACgkQ2O7X88g7
-+pqj/g/+Ko9YwegFYiHHFc2NJHqSn9Er7V2IhdDxANKuYmDWkl238DIkPbx5N++z
-dP6qxCV8/YD123iERKtHSvIikWgw7rRaV8GKkT95xc3AAfYfyt4Zjf3wWwwOrNXH
-w1UK+68lroyq4n+JPwQuZlkRhKclMpv78w5lZJ2fXX/ni8PWf3m8DyBGzES03yDK
-l5e0sp6dEFaxL6plKIDdB7Xw/CYW75UiJStCuBYKka1pr3I5X8IgWMuQ+oK5Lde3
-hzO/3TLG9WKTiRoehs4ocJngsz0sS8o70GWVMXSiSybaMbK0NEf6NonBv1f6hA0J
-RrCYZGZEsKaPnveI+HlwnvXJlTnISIjs2jw7HF35HSVl4ZaYLf9k4HFE6vrl+y7N
-GPplG9bzgVKsZgK5rv1ddxBQbMZ30LlyP1/BxDPqY/78+ZyFg/9vjovfF7rG6DUa
-KIgcrgB/rD/4P1wdOGhz+bwbi2mwsc0yfzAWS6qXxCw70RQ0YNKhE/ha5cM0bfwh
-IyKOUaxLceZBVLXuXXXKo1aeOxLHiVSB+kblT/Dq85b4Vl71n5v81x/jfo47O80Z
-LjNdgoLngofz67wKl+BHJsJAvtRvXP/NI9nNpsSgY1tLzUeKsnllS1mWYh3WE24u
-vPH7IuyON+11TRur6JqaEd5LbafrMcQ2+Fqz0UdscgafmzsTyTw=
-=1OmE
------END PGP SIGNATURE-----
-
---6djyuz6okfpd5ae6--
+>
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
 
