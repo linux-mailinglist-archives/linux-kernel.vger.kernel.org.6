@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-512998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DFDA3404B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923C4A3405A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E395D7A2E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31133A68C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238AF227EB3;
-	Thu, 13 Feb 2025 13:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13CD227EB9;
+	Thu, 13 Feb 2025 13:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFv5DZ/H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/UUx3at"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D94723F417;
-	Thu, 13 Feb 2025 13:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157723F417;
+	Thu, 13 Feb 2025 13:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453185; cv=none; b=KFVSvtoaC2LqKu0jI6uuVh9Cdzk1H2fCMwTmWGccX7BDPQQlygwPwQfT4bPrqF4cDtEmTlWAPXgfoFeLtEN3s45SWxgNoijZgL/sXGTc05vrXLi0w68I85o1Ed50ZgCM6rxrclpXVlYqdgEot3vJ7R61JEW8Dxe9FefowPb9CJI=
+	t=1739453210; cv=none; b=TnDF5/oLOacfu9RBMLeqVRSdghRMysBws0V0h6zJolZr8ulAstmUTX8LJImOOPv1wwLbOLT3HfyBM+EpV6cg/Ty41Kn9QkyH7qq/n16/uKrDv5ZNC7lx3LejunfpG8B003tmDNCzabbVOp4hINNc5rKweZMPugVTxFQYGpgqQss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453185; c=relaxed/simple;
-	bh=QAeaR129c4R3fwn4Q9Lfhl3+6WKirmUB53yZflBZ2zQ=;
+	s=arc-20240116; t=1739453210; c=relaxed/simple;
+	bh=ZKIHzO3MmoYTOlkYq7wpIbMxe+b5FuF0Cg59iiDAdz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItA2g8xIfsYedeJFW+4TpdSGtQe6PpXTXjkxhsWyTPhUIxk42NuhTRzDU8qfWRbfhgLEnjaibg7oubEbMCu/2UJ81P6PYskrOqOV2ATcOOUEfZ5CuX7RB5zz8ZSceRDBUwKBXhkeHXEYhKr74prFqh6JK063dtzrpwGZjXWxXIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFv5DZ/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49732C4CEE2;
-	Thu, 13 Feb 2025 13:26:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gc7EGcZTBkLkgI1wY1Kos8pg/OYWDS+Q7Oj6/yv+mmdaAMkYP2VVx3vWc5EdWP2zx/oJkq2uTRft1I9STVxMMGXN/opRtAAYCFXzrsxtDZ3Oc9q2mQwL1/GmMxhSBYkCB7yw6wrrsgCLbjDcuEwT1wfrdUz7Kr6/0Xml9PYSTSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/UUx3at; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B13C4CED1;
+	Thu, 13 Feb 2025 13:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739453184;
-	bh=QAeaR129c4R3fwn4Q9Lfhl3+6WKirmUB53yZflBZ2zQ=;
+	s=k20201202; t=1739453209;
+	bh=ZKIHzO3MmoYTOlkYq7wpIbMxe+b5FuF0Cg59iiDAdz8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WFv5DZ/HqzrfRxHhWLS4zJGx05FXzx4149OOXKDH+jL69f+awyTCA0x2xo8nL0OHr
-	 W7ZsdGkgRJpOrL1Qlb8M8CoTmojdEcPmozt1nD8GoMZ9ZmAGcJA6nUs4kvdlAOzuyM
-	 FjJwvu3FoKWWPmT58tWSS8UctEZVPLtqirxBB7EuULCy4WpLu/nJh4DrS+LypVdLWn
-	 MtkigOU+E/U/8Qo4qTsQ+KBpSVvX8fthG85aP2TLyvjsaFaZZ9e0nq82AFS3CcQ9nL
-	 MvubrXOMUP8JzT+OMA/jkEYyFmwJZD/yCd0Wo04JhQID7obLeqdk9RWos6eD1QhvRf
-	 T+qkg3XYug/Lg==
-Date: Thu, 13 Feb 2025 15:26:20 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: kotaranov@microsoft.com, shirazsaleem@microsoft.com,
-	sharmaajay@microsoft.com, longli@microsoft.com, jgg@ziepe.ca,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH next 1/1] RDMA/mana_ib: implement reg_user_mr_dmabuf
-Message-ID: <20250213132620.GL17863@unreal>
-References: <1739180908-2833-1-git-send-email-kotaranov@linux.microsoft.com>
+	b=G/UUx3atwiIbNuSprBKdrXNY1FKJK5o5lggdnt3LGge622e7qvDIu1pSc39IXnrzV
+	 actNRAiam3iyq1AsBhMNPjoLzNqZgcmGjRlDP165L/mcRjp2oaNnf54Aaa6XZSQ+Tq
+	 SkAWSpXsvCmJglX5TyMFIrbhz55AEzAVV6KW1M1s9DUfH+HQ6OFJDqs++cVJV7+Tkp
+	 e+RHGPUnz/Dl5WrJsL9Lj32WvUadCxWtZ7ApzVmwpWKVScm58519VnXmllJEVBBW25
+	 3yAVfaHnnjVksYUOfJTbpOV90IHbiUWEDRNfxTFA4kAplTnd5TwOxtKh7ibxHUxG02
+	 XuRZwdBNX84xA==
+Date: Thu, 13 Feb 2025 14:26:44 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] misc: pci_endpoint_test: Fix irq_type to convey
+ the correct type
+Message-ID: <Z63zFBn6jDZG4s9d@ryzen>
+References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
+ <20250210075812.3900646-4-hayashi.kunihiko@socionext.com>
+ <Z6oi7lH7hhA3uN46@ryzen>
+ <9c465e4c-ed43-4fd1-b7a7-b4c49a996fe4@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,33 +67,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1739180908-2833-1-git-send-email-kotaranov@linux.microsoft.com>
+In-Reply-To: <9c465e4c-ed43-4fd1-b7a7-b4c49a996fe4@socionext.com>
 
-On Mon, Feb 10, 2025 at 01:48:28AM -0800, Konstantin Taranov wrote:
-> From: Konstantin Taranov <kotaranov@microsoft.com>
+On Thu, Feb 13, 2025 at 07:21:45PM +0900, Kunihiko Hayashi wrote:
+> Hi Niklas,
 > 
-> Add support of dmabuf MRs to mana_ib.
+> On 2025/02/11 1:01, Niklas Cassel wrote:
+> > On Mon, Feb 10, 2025 at 04:58:10PM +0900, Kunihiko Hayashi wrote:
+> > > There are two variables that indicate the interrupt type to be used
+> > > in the next test execution, "irq_type" as global and test->irq_type.
+> > > 
+> > > The global is referenced from pci_endpoint_test_get_irq() to preserve
+> > > the current type for ioctl(PCITEST_GET_IRQTYPE).
+> > > 
+> > > The type set in this function isn't reflected in the global "irq_type",
+> > > so ioctl(PCITEST_GET_IRQTYPE) returns the previous type.
+> > > As a result, the wrong type will be displayed in "pcitest" as follows:
+> > > 
+> > >      # pcitest -i 0
+> > >      SET IRQ TYPE TO LEGACY:         OKAY
+> > >      # pcitest -I
+> > >      GET IRQ TYPE:           MSI
+> > > 
+> > > Fix this issue by propagating the current type to the global "irq_type".
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: b2ba9225e031 ("misc: pci_endpoint_test: Avoid using module
+> > parameter to determine irqtype")
+> > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > > ---
+> > >   drivers/misc/pci_endpoint_test.c | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/misc/pci_endpoint_test.c
+> > b/drivers/misc/pci_endpoint_test.c
+> > > index f13fa32ef91a..6a0972e7674f 100644
+> > > --- a/drivers/misc/pci_endpoint_test.c
+> > > +++ b/drivers/misc/pci_endpoint_test.c
+> > > @@ -829,6 +829,7 @@ static int pci_endpoint_test_set_irq(struct
+> > pci_endpoint_test *test,
+> > >   		return ret;
+> > >   	}
+> > > +	irq_type = test->irq_type;
+> > 
+> > It feels a bit silly to add this line, when you remove this exact line in
+> > the next patch. Perhaps just drop this patch?
 > 
-> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
-> ---
->  drivers/infiniband/hw/mana/device.c  |  1 +
->  drivers/infiniband/hw/mana/mana_ib.h |  4 ++
->  drivers/infiniband/hw/mana/mr.c      | 77 ++++++++++++++++++++++++++++
->  3 files changed, 82 insertions(+)
+> This fix will be removed in patch 4/5, so it seems no means.
+> However, there is an issue in the stable version, as mentioned in the
+> commit message, so I fix it here.
 
-<...>
+Ok. Having a small fix first that can be backported, which is then followed
+by a bigger cleanup, makes sense in this case.
 
-> +	ibdev_dbg(ibdev,
-> +		  "dmabuf 0x%llx, iova 0x%llx length 0x%llx access_flags 0x%x",
-> +		  start, iova, length, access_flags);
-
-<...>
-
-> +	ibdev_dbg(ibdev,
-> +		  "created dma region for user-mr 0x%llx\n",
-> +		  dma_region_handle);
-
-Please reduce the amount of debug prints, especially copy-pasted one.
-
-Thanks
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
