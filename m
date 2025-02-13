@@ -1,141 +1,151 @@
-Return-Path: <linux-kernel+bounces-512804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6919EA33DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:25:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5801BA33DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0564A161E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:25:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11D317A4666
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37404227E99;
-	Thu, 13 Feb 2025 11:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69A7227E9C;
+	Thu, 13 Feb 2025 11:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kzck7Mel"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rc5YUrNt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C4F227E96
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8109A227E8B;
+	Thu, 13 Feb 2025 11:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445901; cv=none; b=mNPlk/T9ZJrixHBedpVi9Etk2coh/tgsEgRWHzRrXY3KRROuENavWWFgtHuEscfxHg28Ua6uYsPGipj3TEWoSQr3VlJz2MIzM4thittASGKjWHV0Pt1ZIDD+0J9FOTrzTgvu1TS/UHZb+xaQxyK0E9aOGusRz5gDntyp1Dek1Jo=
+	t=1739445944; cv=none; b=HZnIhc1EZgKhSfkVRlT6dyEvEiug+oBPXJ628G/nEAEUcXWfDTPeiE+G6fPelzfcWf4aYcHsEZlyTpaV65FwX1m0rLnu7ZszChH5gb8nNNMvJDlPM+RDUxEiL5OPeqKYeASzoa2rV2D5CnkX0YnnahiD0I9hw9Sz3DciJZcmV80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445901; c=relaxed/simple;
-	bh=TrqZQ55skZTEXJEjUlXW0jtm/l2cPFM8QthEOGpqvUU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Qgg273c1caj/lFbIPhRIEQgiHw338+rlOzCSNA8HzR3An6y5+6BNIajl81Z3EGAMmSOVkHKtRMcLnRh5WZ1qMtJBMkEE9HNbgOGkp4AXTMbY+Q3+/3pTDVKsVMQA0s8GDxLokDJD1kXurGe5FQeJY0CstUj4cAZLMnTvbPqrYN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kzck7Mel; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739445886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdHz7WZoxJQP/6i9ahhNRirmtERVrbghz+wuhiC82JQ=;
-	b=kzck7MelYDJxOSs2OcrmS9Gs1IT+TP/TVAqwA5gr/i2VAyNgkmCa0yGDpk18rPkp6namMf
-	8CRlgv6XYKf8LyGjjTx1NaTfc9Pe7yjYx8MT/jeQeZye6SWntn3cgHf5gjGDkvwImMbD/g
-	qAfaHzMcf4oERyXNWwvhuHQ35TCtvNQ=
+	s=arc-20240116; t=1739445944; c=relaxed/simple;
+	bh=EVAUuBDBMmfoOHTQ3D16fxtASQyPWClWKsW6lBNhEzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/qCESuG1ZM8kQCVIgjesPwRNF20LWxao5ph4RSkmujTJG5mai0eHk1QsDTewmOopUVfeHnwirl0BzWx5CP7UkiO6mbTkmL/qg31YlC5OK5kNp63MEBRoK8oJA/RF3nF9Hms1+2/Pkv058p7J+SVrZuclHVj0JCoCCCjyF0EA0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rc5YUrNt; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739445943; x=1770981943;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EVAUuBDBMmfoOHTQ3D16fxtASQyPWClWKsW6lBNhEzg=;
+  b=Rc5YUrNtSUxrPBtbJB2wQdLrnQpyYWvzOqxx1I9Za4CZpiTKdfdLywTE
+   OHU8pSGumQhBq3fERmj1NBBkb3QqBE3cmV8lUmu5tm85owNJ/Ip/r8+06
+   4dd2q9ZazkHbRzj5Tpgog6Lj8h//DGxJB9Hq6ZQo7+x6ALn5gD7wZ4nig
+   fu5bzlgUdgScH2L3Bw37uiEHPfR8xYPQNxR02RvU3ZCDqghWR3xQUN/FQ
+   Q6AN/er2gJ7J3lZ7kTWT9KpBuuOUeEt6kzj4x5tRqR/BezMLFSLN9bGKd
+   gew0A/KAZAVtVs36fs3s4hBMycfEVZ6WpXw3iwzCI4cZVv/KzE95soDcx
+   A==;
+X-CSE-ConnectionGUID: f7hjgxBeRjCiItQq7oYKqQ==
+X-CSE-MsgGUID: zU49gNWfTeWfOB+tmEI/fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43911389"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="43911389"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 03:25:42 -0800
+X-CSE-ConnectionGUID: eASTbBQoRtKW+uWVNLxbOA==
+X-CSE-MsgGUID: e7u4gQZ2Rn6BPVjTgQ5C7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112951902"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa010.jf.intel.com with SMTP; 13 Feb 2025 03:25:39 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Feb 2025 13:25:38 +0200
+Date: Thu, 13 Feb 2025 13:25:38 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Elson Roy Serrao <quic_eserrao@quicinc.com>
+Cc: gregkh@linuxfoundation.org, xu.yang_2@nxp.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: roles: set switch registered flag early on
+Message-ID: <Z63Wsng27QfhyjLd@kuha.fi.intel.com>
+References: <20250206193950.22421-1-quic_eserrao@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] scsi: hpsa: Replace deprecated strncpy() with strscpy()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250212222214.86110-2-thorsten.blum@linux.dev>
-Date: Thu, 13 Feb 2025 12:24:33 +0100
-Cc: linux-hardening@vger.kernel.org,
- Bart Van Assche <bvanassche@acm.org>,
- storagedev@microchip.com,
- linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <34BB4FDE-062D-4C1B-B246-86CB55F631B8@linux.dev>
-References: <20250212222214.86110-2-thorsten.blum@linux.dev>
-To: Don Brace <don.brace@microchip.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206193950.22421-1-quic_eserrao@quicinc.com>
 
-On 12. Feb 2025, at 23:22, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers [1]. =
-Use
-> strscpy() instead and remove the manual NUL-termination.
->=20
-> Use min() to simplify the size calculation.
->=20
-> Compile-tested only.
->=20
-> Link: =
-https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-=
-nul-terminated-strings [1]
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> Suggested-by: Bart Van Assche <bvanassche@acm.org>
+On Thu, Feb 06, 2025 at 11:39:50AM -0800, Elson Roy Serrao wrote:
+> The role switch registration and set_role() can happen in parallel as they
+> are invoked independent of each other. There is a possibility that a driver
+> might spend significant amount of time in usb_role_switch_register() API
+> due to the presence of time intensive operations like component_add()
+> which operate under common mutex. This leads to a time window after
+> allocating the switch and before setting the registered flag where the set
+> role notifications are dropped. Below timeline summarizes this behavior
+> 
+> Thread1				|	Thread2
+> usb_role_switch_register()	|
+> 	|			|
+> 	---> allocate switch	|
+> 	|			|
+> 	---> component_add()	|	usb_role_switch_set_role()
+> 	|			|	|
+> 	|			|	--> Drop role notifications
+> 	|			|	    since sw->registered
+> 	|			|	    flag is not set.
+> 	|			|
+> 	--->Set registered flag.|
+> 
+> To avoid this, set the registered flag early on in the switch register
+> API.
+> 
+> Fixes: b787a3e78175 ("usb: roles: don't get/set_role() when usb_role_switch is unregistered")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
-> drivers/scsi/hpsa.c | 10 ++++------
-> 1 file changed, 4 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 84d8de07b7ae..9399e101f150 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -460,9 +460,8 @@ static ssize_t =
-host_store_hp_ssd_smart_path_status(struct device *dev,
->=20
-> 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
-> 		return -EACCES;
-> -	len =3D count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> -	strncpy(tmpbuf, buf, len);
-> -	tmpbuf[len] =3D '\0';
-> +	len =3D min(count, sizeof(tmpbuf) - 1);
-> +	strscpy(tmpbuf, buf, len);
+> Changes in v2:
+>  - Set the switch registered flag from the get-go as suggested by
+>    Heikki.
+>  - Modified subject line and commit next as per the new logic.
+>  - Link to v1: https://lore.kernel.org/all/20250127230715.6142-1-quic_eserrao@quicinc.com/
+> 
+>  drivers/usb/roles/class.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+> index c58a12c147f4..30482d4cf826 100644
+> --- a/drivers/usb/roles/class.c
+> +++ b/drivers/usb/roles/class.c
+> @@ -387,8 +387,11 @@ usb_role_switch_register(struct device *parent,
+>  	dev_set_name(&sw->dev, "%s-role-switch",
+>  		     desc->name ? desc->name : dev_name(parent));
+>  
+> +	sw->registered = true;
+> +
+>  	ret = device_register(&sw->dev);
+>  	if (ret) {
+> +		sw->registered = false;
+>  		put_device(&sw->dev);
+>  		return ERR_PTR(ret);
+>  	}
+> @@ -399,8 +402,6 @@ usb_role_switch_register(struct device *parent,
+>  			dev_warn(&sw->dev, "failed to add component\n");
+>  	}
+>  
+> -	sw->registered = true;
+> -
+>  	/* TODO: Symlinks for the host port and the device controller. */
+>  
+>  	return sw;
+> -- 
+> 2.17.1
 
-With strscpy() it should probably just be sizeof(tmpbuf) without -1, and
-then add +1 to count for the number of copied bytes to be the same as
-with strncpy().
-
-Like this:
-
-	len =3D min(count + 1, sizeof(tmpbuf));
-
-This subtle difference between strncpy() and strscpy() regarding the
-number of bytes copied isn't really documented anywhere, is it? The
-documentation I came across so far seems to focus mostly on the
-different return values of the two functions.
-
-> 	if (sscanf(tmpbuf, "%d", &status) !=3D 1)
-> 		return -EINVAL;
-> 	h =3D shost_to_hba(shost);
-> @@ -484,9 +483,8 @@ static ssize_t =
-host_store_raid_offload_debug(struct device *dev,
->=20
-> 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
-> 		return -EACCES;
-> -	len =3D count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> -	strncpy(tmpbuf, buf, len);
-> -	tmpbuf[len] =3D '\0';
-> +	len =3D min(count, sizeof(tmpbuf) - 1);
-> +	strscpy(tmpbuf, buf, len);
-
-Same here.
-
-> 	if (sscanf(tmpbuf, "%d", &debug_level) !=3D 1)
-> 		return -EINVAL;
-> 	if (debug_level < 0)
-
-Maybe someone can confirm my reasoning before I submit a v2?
-
-Thanks,
-Thorsten
-
+-- 
+heikki
 
