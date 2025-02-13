@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-513979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FABA350F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDC4A350F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E8C3AB75F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A9A3AB17C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE759269810;
-	Thu, 13 Feb 2025 22:10:13 +0000 (UTC)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEBA206F15;
-	Thu, 13 Feb 2025 22:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DB4269822;
+	Thu, 13 Feb 2025 22:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nd+3PEos"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A3D1714B7;
+	Thu, 13 Feb 2025 22:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739484613; cv=none; b=f9LARJW3Zlombg5/NSuiZ9V6Nbm6kAxLxRG+KxOmFLIyLzm2VfCf5T1Jkcd0ZQUU9iWCH43kXTFCZpr9Lnc0IS9lDw+mu8nd18FEw+gQjiNu/IqTukIfIDFvDlZDv2LZ9zVo4CNWYxsSr/f1Nwmi4lMlIPppbH/2WlGBKAzwyb8=
+	t=1739484606; cv=none; b=HmFQnBiIiJnXuNmsFZlJZgvemuZ5LgLzhRK1fxky8F8oieRjCFa6eWkqj069IfFofrmMIZcLFAKJfQs/J/NBICkfbZeLHtnxkpMmFLHZztCionY5WafWLa2tW1xZDAhhBlEjU+2iae+5loxYPYKP86k3WpN4aNNlfUDbQEKHYkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739484613; c=relaxed/simple;
-	bh=+Cx6uQi9DEuIA58SpFtAbOYBmigfXtiBak9bUVX3VRc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=c6N1lQDtICSjCNeXVHg2B/a9eVyeR/aLBgPo9dAFV41nrt6YC+HELLbZ3tVycoMcccIZ4CWVufCMMiTU7nLXjWLAOD9Aes44Wt3svMVNhdhYTxvZsK5WbIS9h3dQkUMXX9neW23w1s0gT1pNynQabF30s+YfwhDiUqrbhnSTCWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id 8E432203F3E6; Thu, 13 Feb 2025 14:10:11 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8E432203F3E6
-From: Long Li <longli@microsoft.com>
-To: <stable@vger.kernel.org>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Long Li <longli@microsoft.com>,
-	stable@kernel.org,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.4.y] scsi: storvsc: Set correct data length for sending SCSI command without payload
-Date: Thu, 13 Feb 2025 14:09:54 -0800
-Message-Id: <1739484594-23512-1-git-send-email-longli@microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <2025021055-utensil-raven-b270@gregkh>
-References: <2025021055-utensil-raven-b270@gregkh>
+	s=arc-20240116; t=1739484606; c=relaxed/simple;
+	bh=tPJVDzkw9dZftCkEk7dg854tzrJWiG4yXXnjKTij19I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOzm+U2/rqVPo76OGg7pLIhZanI1F0gHxnPEfNr7/Zz2rrD/nPttrDDGy7pIpTqZAB7dr6NBg2gLfLUcUwqS0JL4KzxTXUCnSMUUMlxCfRTIgVdBSnZ7ORQlfJVbHuc6PZaw5u+il66ajjjV1ENG3PT+M7YdTjxLd84LesTJI+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nd+3PEos; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E24D4C4CED1;
+	Thu, 13 Feb 2025 22:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739484605;
+	bh=tPJVDzkw9dZftCkEk7dg854tzrJWiG4yXXnjKTij19I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nd+3PEoswO2bSOWtqU91NTcMcpUKScLnvzmglkXZGBL/lgGtdEyJncCYtzQkFC8y2
+	 ztBkkIWQsV6EOVNrYZWhBziAfWf9V2AVNhlhG0VAgJo5B+A3xmzC7W2KWzgTT2m5T3
+	 Lcb1H7+kkPNkkeKrEpwz6SyO1Pxd9oFfRa8ZhpqtIm2lIYsjZoBR/2unKLf5BaiMwF
+	 h3t3dwuiqVza4mAN4PuCyNYOqT81ibL/uKP5IMBh5UXOV5qcOBuSQ/pBc3DbcjYa3n
+	 C3A24+zB5drv7F1CS7O4vg9y/RCBv94jGUjJeWXio4on9p3Ap3ydkgJ8yNRQOVc0ae
+	 mumf/l3P9BLtA==
+Date: Fri, 14 Feb 2025 00:10:00 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+	peterhuewe@gmx.de, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org,
+	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	Yinggang Gu <guyinggang@loongson.cn>
+Subject: Re: [PATCH v2 3/3] tpm: Add a driver for Loongson TPM device
+Message-ID: <Z65tuC722nnuhWEO@kernel.org>
+References: <20250212033113.15137-1-zhaoqunqin@loongson.cn>
+ <20250212033113.15137-4-zhaoqunqin@loongson.cn>
+ <Z60SfDaWnbgddUnA@kernel.org>
+ <c825cd7b-a255-d296-baa0-c1a746cb1bce@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c825cd7b-a255-d296-baa0-c1a746cb1bce@loongson.cn>
 
-In StorVSC, payload->range.len is used to indicate if this SCSI command
-carries payload. This data is allocated as part of the private driver data
-by the upper layer and may get passed to lower driver uninitialized.
+On Thu, Feb 13, 2025 at 11:56:25AM +0800, Qunqin Zhao wrote:
+> 
+> 在 2025/2/13 上午5:28, Jarkko Sakkinen 写道:
+> > On Wed, Feb 12, 2025 at 11:31:13AM +0800, Qunqin Zhao wrote:
+> > > TPM2.0 is implemented in Loongson security engine. This is the driver
+> > TPM 2.0 or just TPM2 (either is fine with me). Quick reminder what
+> > Loongson security engine (I could not know that and it would be nice
+> > to have that in git log).
+> 
+> Looks like just TPM2 is better.
 
-For example, the SCSI error handling mid layer may send TEST_UNIT_READY or
-REQUEST_SENSE while reusing the buffer from a failed command. The private
-data section may have stale data from the previous command.
+Either is fine :-)
 
-If the SCSI command doesn't carry payload, the driver may use this value as
-is for communicating with host, resulting in possible corruption.
+> 
+> Some explanations about Loongson security engine will be added to git log.
+> 
+> > 
+> > > for it.
+> > > 
+> > > Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> > > ---
+> > >   MAINTAINERS                 |   1 +
+> > >   drivers/char/tpm/Kconfig    |   9 ++++
+> > >   drivers/char/tpm/Makefile   |   1 +
+> > >   drivers/char/tpm/tpm_lsse.c | 104 ++++++++++++++++++++++++++++++++++++
+> > >   4 files changed, 115 insertions(+)
+> > >   create mode 100644 drivers/char/tpm/tpm_lsse.c
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 6493d58436..6aad0f08ad 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -13484,6 +13484,7 @@ LOONGSON CRYPTO DRIVER
+> > >   M:	Qunqin Zhao <zhaoqunqin@loongson.com>
+> > >   L:	linux-crypto@vger.kernel.org
+> > >   S:	Maintained
+> > > +F:	drivers/char/tpm/tpm_lsse.c
+> > >   F:	drivers/crypto/loongson/
+> > >   LOONGSON-2 APB DMA DRIVER
+> > Probably MAINTAINERS update should be a separate patch.
+> 
+> Some  MAINTAINERS updates are not  separated form the driver patch.  Like
+> the submit of "drivers/mfd/max7714*".
+> 
+> So it seems whether the updates to MAINTAINERS  are separated or not is OK.
 
-Fix this by always initializing this value.
+I'd prefer them separated from code changes. They are separate tasks
+per se.
 
-Fixes: be0cf6ca301c ("scsi: storvsc: Set the tablesize based on the information given by the host")
-Cc: stable@kernel.org
-Tested-by: Roman Kisel <romank@linux.microsoft.com>
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-Signed-off-by: Long Li <longli@microsoft.com>
-Link: https://lore.kernel.org/r/1737601642-7759-1-git-send-email-longli@linuxonhyperv.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-(cherry picked from commit 87c4b5e8a6b65189abd9ea5010ab308941f964a4)
----
- drivers/scsi/storvsc_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index 44f4e10..ffba2c3 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1639,6 +1639,7 @@ static int storvsc_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *scmnd)
- 	length = scsi_bufflen(scmnd);
- 	payload = (struct vmbus_packet_mpb_array *)&cmd_request->mpb;
- 	payload_sz = sizeof(cmd_request->mpb);
-+	payload->range.len = 0;
- 
- 	if (sg_count) {
- 		if (sg_count > MAX_PAGE_BUFFER_COUNT) {
--- 
-1.8.3.1
-
+BR, Jarkko
 
