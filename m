@@ -1,484 +1,124 @@
-Return-Path: <linux-kernel+bounces-513240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE0DA3457F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:16:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293F6A34569
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E02B16E7D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E2116ECF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA4020100E;
-	Thu, 13 Feb 2025 15:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADD215539A;
+	Thu, 13 Feb 2025 15:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE0xrHhI"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y1R5GFSp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7870200105;
-	Thu, 13 Feb 2025 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FDA26B087
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739459023; cv=none; b=MvxuxyRhb3t8KKCsCSt7DWhogvoM0/UBDaoC2X1PqDLwHUIuvnofVNQnAa6ghg/wIeMvXvk4ndVV60az71USd12OYI+0+fsrNqmePr+JoVqG917sC7qv4vLntbnzXKwADZUpHE+EK1c2ZD3pvK4P3H4iEHBYIEcE2BFycaz9lRs=
+	t=1739459062; cv=none; b=Km5ILSVL1N6nvevQpJSpTNx0DusHTfQjJLrdOJDMzmmNYtDSYRNRzvjM6X5IixSNdLdSuFgn2sHyZ3ZdTl1vi0m1Tj7oYnwI57b/FkXJRoHD+E1xLHvh604nmFPVcyMZuDEwtcDf8B2eWLEtnqFQuqy/yGS52ilpiOILtsoI/e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739459023; c=relaxed/simple;
-	bh=bKy2/Khn0wBJ7ch0tZ8a2XFADxRpJkeSdk6pKJhI8Lc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3RVgsrir+4UslHS/gKR7+8sVx9T28w/7aUxLrxgOVFVfP674bbkqBJBLRl9goWI2TqvcSSXPA6YtKNokPlQ/ygo2Brp2+Gu9UJyn/3RxGlKseHKBmnAi0HOaWkfOO6YLA8o9uSoBi0He2hDIGQGKprUesYiGjyIjMn04UnRjzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XE0xrHhI; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f286b5281so317332f8f.1;
-        Thu, 13 Feb 2025 07:03:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739459020; x=1740063820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=il270moocRQxXWx9sDop2wPY9i++i0FF/XAOD2V/4TY=;
-        b=XE0xrHhIPMVYgfiT98LnTbdlMBtl849KMxHmRlaVogSu1mGZiCdYq7NxrfY7QF4jJx
-         ZoM7HvkxGt+v76DYAe0XiSNaVRrR9KOcDzJv+M1mO0xEMle+a9fhvvkde2XNYbXEwLOe
-         4z7uEXoTUh4/osy3Qjz2fAtmKklQvkx1PAyd89DdwK/Zy4C3CQTAJ8RFPtz7dC54v/8a
-         Tu4xs3xwGQH0qctVUyYIR15/+9dKIUrM16XB/GiWFrIV3P/9Z5SdkEfi/o5PFE3mf4BI
-         5tfXWRiYdP9pr0HlXSKxI6y6XrBa2u2EhElUabTBnzSqbQf4xNee2XTbDEm+dhnk/r+M
-         LRHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739459020; x=1740063820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=il270moocRQxXWx9sDop2wPY9i++i0FF/XAOD2V/4TY=;
-        b=pxPOthir2Y0bz1QvBwnz5U3PJejJWbtiFU1hSeL5aqwFLjOdxV/wc7ER+0dex/KlPC
-         a7Y+KfjlPGt0pi3+M5b4qIBOsF7WpFbyo6vSQBCml7cT9sfIx/zvQUmwHLUkW2KfwffZ
-         b5jZQZnPWc/IAvOfd6vaMFNO+t44M5anfIQ1lIGun/3ACckgWRfOJAWhhnm04qxnx8ZM
-         QK1FX42iwT86V389eSQcJ7S6s2mBLi5RskP6Yh07bl++pmfnrl+f7T7Bbw17w16llXh9
-         o/CaEOj+oyMKY931gBP7SfWpiSD5GTNnRbOEnqnRY8X6dIR0bUb+sOpBK5mHfTjcuSVq
-         VaGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi5tsB4Ql0H+NnqDug6DiNpT2B6ZSD6mNIveljugGwqZtIUgT9udMowQeuT6Gi0RermXwruFHT4cFTKg==@vger.kernel.org, AJvYcCX5Ssoc7K2/3fo9qx8glCxWoRctYJaTXfg97jlWzd1fR+vHqcflLhQ2nwRa0KXweheUtTQDFO5JqybP@vger.kernel.org, AJvYcCX6kDLLqXIjX9ieaOTtwbhAQLFvjTZn4CneTKR7PmrYVQUeghvojg9lO2SXe9bHl7PmU2g2P5l2lDqxLbQ=@vger.kernel.org, AJvYcCXGwBweVBsck9LBLy60nsZ1sxXhab+qy1DNWHnndM3F+5ggzXmhrJEQ4/33Ipr2v4ZIIYqhRKYG7HyC@vger.kernel.org, AJvYcCXcgl0w1G6/pd6kaWVkscwjWhyYqca2VqGpVFgFBg3GS1ywDPlWUZgyoYv4P7eKZcyLAESEE8QY5W1fMLlg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy43WRFMxfsB7v6im4xWlR1mZejggVBxsEqoPnSN3gEkwBD1blX
-	IprDNU1McppeMiCbg/wS3zXRKZCPexfoYAEiGf8iGpPY2tK0CUClhtIGvzdh3v8joQcjwZEWNmE
-	/tTBrOw0DAacY8i03dc1c2hVftIA=
-X-Gm-Gg: ASbGncuVckvyGSl9C24EEK8/MbLitFO1irg6hFxH8DJeX4gZv8ltYavNA/fuUZ178vA
-	H62MGVQuy36/VWBcn2/5AU0rGusa4xU9QQM0Mb/9LfeLJg958OYTxVZKMqQmWOnTF+sd921tDGQ
-	==
-X-Google-Smtp-Source: AGHT+IE8DKcyHRlcVZTAi4KF6Sh5KbjMdfB2KDTubvGG7HEDVbAuM4dGu6BtK52l5l2xucBK9g38u/USqfRqqkbnJB4=
-X-Received: by 2002:a05:6000:184b:b0:38d:b113:eb8 with SMTP id
- ffacd0b85a97d-38dea26ecebmr7135274f8f.20.1739459019532; Thu, 13 Feb 2025
- 07:03:39 -0800 (PST)
+	s=arc-20240116; t=1739459062; c=relaxed/simple;
+	bh=MDJFa426xk/Ppp9WGfIjSz/czZXmuJgOHlWi/zDydcA=;
+	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=PybFpzscm+T8mUhnXDepc/6UOj+ZwfRD0KYtHCu63aGBqsAi/HLJeSUhCvmOBONW0SY2YuNDvZnaHwOrA/zXiVx1cquOCd3z1yBRNWt66fzLbhPJUf/ql1hvOSlMY5ogrYaFb6sv95roPxcFcorctXu2hOo+7OsGdmCT6oee1cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y1R5GFSp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7WxUo014718;
+	Thu, 13 Feb 2025 15:04:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=9sn/0W+u2m5UU6jPKFLpLTgarS3M
+	TBh1n7M7FWMc4JM=; b=Y1R5GFSpjSwCdLCgzTuSSf6NVJzjllcJ/1+7VftuvxZP
+	UvJUPSvOYkESaRidAKys+BO1JhnHQVP8uZDcm+jckRGLIrZETwYcHXt60pcR1XSs
+	wMe/Z8lDeM5bwlMr0fyCAEjkj/M7APcKTB9P8FNrHO2Ehb0Eigg6QqBQ/AN9Xuny
+	VTJpM5Zv13gCruWzCVyAuJ/myD8YbZ97c8fmsMzSKRQjKH+GjEG1A7eL6Lr8zlwq
+	M2co3RNMXufbZjnZjVVfZKzvtAnKNvz+116mvuOTO/kOJigqVxzhNgEslzzbqn8U
+	bQBaECZoI1l0DT2iGXofAPLRCbC15/NiSxJgcRLoJA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44sceq27xp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 15:04:12 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DDxMjh028716;
+	Thu, 13 Feb 2025 15:04:11 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma1xbm6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 15:04:11 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DF49me19071714
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 15:04:10 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 976D858058;
+	Thu, 13 Feb 2025 15:04:09 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 915BB58057;
+	Thu, 13 Feb 2025 15:04:08 +0000 (GMT)
+Received: from [9.61.255.185] (unknown [9.61.255.185])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Feb 2025 15:04:08 +0000 (GMT)
+Message-ID: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+Date: Thu, 13 Feb 2025 20:34:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212075845.11338-1-clamor95@gmail.com> <20250212075845.11338-3-clamor95@gmail.com>
- <Z64IPpW5Uhad4HjU@smile.fi.intel.com>
-In-Reply-To: <Z64IPpW5Uhad4HjU@smile.fi.intel.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 13 Feb 2025 17:03:27 +0200
-X-Gm-Features: AWEUYZmUj-krca9nu8UVllaTPCZQMTjt3IELvxYIQkmFcH7UwZphBSmDpexxcjA
-Message-ID: <CAPVz0n3TTrkfARQNWfhgJd0sNnUTTdX8vx8hnHDZMq+p9aK_wA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] mfd: lm3533: convert to use OF
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, 
-	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
+Subject: [linux-next-20250212] syscall kexec_file_load not available
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ax8z4eh8gHPKYoV9oViK3KDvDxpM0D-S
+X-Proofpoint-ORIG-GUID: ax8z4eh8gHPKYoV9oViK3KDvDxpM0D-S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxlogscore=514
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130112
 
-=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:57 Andy=
- Shevchenko
-<andriy.shevchenko@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Feb 12, 2025 at 09:58:42AM +0200, Svyatoslav Ryhel wrote:
-> > Add ability to fill pdata from device tree. Common stuff is
-> > filled from core driver and then pdata is filled per-device
-> > since all cells are optional.
->
-> ...
->
-> >  #include <linux/module.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/mfd/core.h>
->
-> > +#include <linux/of.h>
->
-> Is it used? In any case, please no OF-centric APIs in a new (feature) cod=
-e.
->
-> >  #include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/uaccess.h>
->
-> ...
->
-> > +static int lm3533_pass_of_node(struct platform_device *pdev,
->
-> pass_of_node sounds a bit awkward.
-> Perhaps you thought about parse_fwnode ?
->
-> > +                            struct lm3533_als_platform_data *pdata)
-> > +{
-> > +     struct device *parent_dev =3D pdev->dev.parent;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct fwnode_handle *node;
-> > +     const char *label;
-> > +     int val, ret;
-> > +
-> > +     device_for_each_child_node(parent_dev, node) {
-> > +             fwnode_property_read_string(node, "compatible", &label);
-> > +
-> > +             if (!strcmp(label, pdev->name)) {
->
-> This is a bit strange. Why one need to compare platform device instance (=
-!)
-> name with compatible which is part of ABI. This looks really wrong approa=
-ch.
-> Needs a very good explanation on what's going on here.
->
-> Besides that the label is usually filled by LEDS core, why do we need to =
-handle
-> it in a special way?
->
-> > +                     ret =3D fwnode_property_read_u32(node, "reg", &va=
-l);
-> > +                     if (ret) {
-> > +                             dev_err(dev, "reg property is missing: re=
-t %d\n", ret);
-> > +                             return ret;
-> > +                     }
-> > +
-> > +                     if (val =3D=3D pdev->id) {
->
-> > +                             dev->fwnode =3D node;
-> > +                             dev->of_node =3D to_of_node(node);
->
-> No direct access to fwnode in struct device, please use device_set_node()=
-.
->
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
->
-> ...
->
-> >       pdata =3D dev_get_platdata(&pdev->dev);
-> >       if (!pdata) {
-> > -             dev_err(&pdev->dev, "no platform data\n");
-> > -             return -EINVAL;
-> > +             pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KE=
-RNEL);
-> > +             if (!pdata)
-> > +                     return -ENOMEM;
-> > +
-> > +             ret =3D lm3533_pass_of_node(pdev, pdata);
-> > +             if (ret)
-> > +                     return dev_err_probe(&pdev->dev, ret,
-> > +                                          "failed to get als device no=
-de\n");
->
-> With
->
->         struct device *dev =3D &pdev->dev;
->
-> at the top of the function will help a lot in making the code neater and =
-easier
-> to read.
->
-> > +             lm3533_parse_als(pdev, pdata);
-> >       }
->
-> ...
->
-> >  #include <linux/leds.h>
-> >  #include <linux/mfd/core.h>
-> >  #include <linux/mutex.h>
->
-> > +#include <linux/of.h>
->
-> Cargo cult? "Proxy" header? Please follow IWYU principle.
->
-> >  #include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> >  #include <linux/slab.h>
->
-> ...
->
-> > +static void lm3533_parse_led(struct platform_device *pdev,
-> > +                          struct lm3533_led_platform_data *pdata)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     int val, ret;
-> > +
-> > +     ret =3D device_property_read_string(dev, "default-trigger",
-> > +                                       &pdata->default_trigger);
-> > +     if (ret)
-> > +             pdata->default_trigger =3D "none";
->
-> Isn't this done already in LEDS core?
->
-> > +     /* 5000 - 29800 uA (800 uA step) */
-> > +     ret =3D device_property_read_u32(dev, "max-current-microamp", &va=
-l);
-> > +     if (ret)
-> > +             val =3D 5000;
-> > +     pdata->max_current =3D val;
-> > +
-> > +     /* 0 - 0x3f */
-> > +     ret =3D device_property_read_u32(dev, "pwm", &val);
-> > +     if (ret)
-> > +             val =3D 0;
-> > +     pdata->pwm =3D val;
-> > +}
->
-> ...
->
-> > +static int lm3533_pass_of_node(struct platform_device *pdev,
-> > +                            struct lm3533_led_platform_data *pdata)
->
-> I think I already saw exactly the same piece of code. Please make sure
-> you have no duplications.
->
-> > +}
->
-> ...
->
-> >       pdata =3D dev_get_platdata(&pdev->dev);
-> >       if (!pdata) {
-> > -             dev_err(&pdev->dev, "no platform data\n");
-> > -             return -EINVAL;
-> > +             pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KE=
-RNEL);
-> > +             if (!pdata)
-> > +                     return -ENOMEM;
-> > +
-> > +             ret =3D lm3533_pass_of_node(pdev, pdata);
-> > +             if (ret)
-> > +                     return dev_err_probe(&pdev->dev, ret,
-> > +                                          "failed to get led device no=
-de\n");
-> > +
-> > +             lm3533_parse_led(pdev, pdata);
->
-> Ditto.
->
-> >       }
->
-> ...
->
-> > -     led->cdev.name =3D pdata->name;
-> > +     led->cdev.name =3D dev_name(&pdev->dev);
->
-> Are you sure it's a good idea?
->
-> ...
->
-> > -     if (!pdata->als)
-> > +     if (!pdata->num_als)
-> >               return 0;
-> >
-> > -     lm3533_als_devs[0].platform_data =3D pdata->als;
-> > -     lm3533_als_devs[0].pdata_size =3D sizeof(*pdata->als);
-> > +     if (pdata->num_als > ARRAY_SIZE(lm3533_als_devs))
-> > +             pdata->num_als =3D ARRAY_SIZE(lm3533_als_devs);
->
-> Looks like you want
->
->         pdata->num_als =3D clamp(pdata->num_als, 0, ARRAY_SIZE(lm3533_als=
-_devs));
->         if (!pdata->num_als)
->                 return 0;
->
-> instead of the above. You would need minmax.h for that.
->
-> ...
->
-> > +     if (pdata->leds) {
->
-> This is strange. I would expect num_leds =3D=3D 0 in this case
->
-> > +             for (i =3D 0; i < pdata->num_leds; ++i) {
-> > +                     lm3533_led_devs[i].platform_data =3D &pdata->leds=
-[i];
-> > +                     lm3533_led_devs[i].pdata_size =3D sizeof(pdata->l=
-eds[i]);
-> > +             }
-> >       }
->
-> ...
->
-> > +static void lm3533_parse_nodes(struct lm3533 *lm3533,
-> > +                            struct lm3533_platform_data *pdata)
-> > +{
-> > +     struct fwnode_handle *node;
-> > +     const char *label;
-> > +
-> > +     device_for_each_child_node(lm3533->dev, node) {
-> > +             fwnode_property_read_string(node, "compatible", &label);
-> > +
-> > +             if (!strcmp(label, lm3533_bl_devs[pdata->num_backlights].=
-name))
-> > +                     pdata->num_backlights++;
-> > +
-> > +             if (!strcmp(label, lm3533_led_devs[pdata->num_leds].name)=
-)
-> > +                     pdata->num_leds++;
-> > +
-> > +             if (!strcmp(label, lm3533_als_devs[pdata->num_als].name))
-> > +                     pdata->num_als++;
-> > +     }
-> > +}
->
-> Oh, I don't like this approach. If you have compatible, you have driver_d=
-ata
-> available, all this is not needed as it may be hard coded.
->
-> ...
->
-> >       if (!pdata) {
->
-> I would expect actually that legacy platform data support will be simply =
-killed
-> by this patch(es). Do we have in-kernel users? If so, they can be easily
-> converted to use software nodes, otherwise we even don't need to care.
->
-> > -             dev_err(lm3533->dev, "no platform data\n");
-> > -             return -EINVAL;
-> > +             pdata =3D devm_kzalloc(lm3533->dev, sizeof(*pdata), GFP_K=
-ERNEL);
-> > +             if (!pdata)
-> > +                     return -ENOMEM;
-> > +
-> > +             ret =3D device_property_read_u32(lm3533->dev,
-> > +                                            "ti,boost-ovp",
-> > +                                            &pdata->boost_ovp);
-> > +             if (ret)
-> > +                     pdata->boost_ovp =3D LM3533_BOOST_OVP_16V;
-> > +
-> > +             ret =3D device_property_read_u32(lm3533->dev,
-> > +                                            "ti,boost-freq",
-> > +                                            &pdata->boost_freq);
-> > +             if (ret)
-> > +                     pdata->boost_freq =3D LM3533_BOOST_FREQ_500KHZ;
-> > +
-> > +             lm3533_parse_nodes(lm3533, pdata);
-> > +
-> > +             lm3533->dev->platform_data =3D pdata;
-> >       }
->
-> ...
->
-> > +static const struct of_device_id lm3533_match_table[] =3D {
-> > +     { .compatible =3D "ti,lm3533" },
-> > +     { },
->
-> No comma in the terminator entry.
->
-> > +};
->
-> ...
->
-> > +static void lm3533_parse_backlight(struct platform_device *pdev,
->
-> pdev is not actually used, just pass struct device *dev directly.
-> Same comment to other functions in this change. It will make code more
-> bus independent and reusable.
->
-> > +                                struct lm3533_bl_platform_data *pdata)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     int val, ret;
-> > +
-> > +     /* 5000 - 29800 uA (800 uA step) */
-> > +     ret =3D device_property_read_u32(dev, "max-current-microamp", &va=
-l);
-> > +     if (ret)
-> > +             val =3D 5000;
-> > +     pdata->max_current =3D val;
->
-> > +     /* 0 - 255 */
-> > +     ret =3D device_property_read_u32(dev, "default-brightness", &val)=
-;
-> > +     if (ret)
-> > +             val =3D LM3533_BL_MAX_BRIGHTNESS;
-> > +     pdata->default_brightness =3D val;
->
-> Isn't handled by LEDS core?
->
-> > +     /* 0 - 0x3f */
-> > +     ret =3D device_property_read_u32(dev, "pwm", &val);
-> > +     if (ret)
-> > +             val =3D 0;
-> > +     pdata->pwm =3D val;
-> > +}
->
-> ...
->
-> > +static int lm3533_pass_of_node(struct platform_device *pdev,
-> > +                            struct lm3533_bl_platform_data *pdata)
-> > +{
->
-> 3rd dup?
->
-> > +}
->
-> ...
->
-> >       pdata =3D dev_get_platdata(&pdev->dev);
-> >       if (!pdata) {
-> > -             dev_err(&pdev->dev, "no platform data\n");
-> > -             return -EINVAL;
-> > +             pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KE=
-RNEL);
-> > +             if (!pdata)
-> > +                     return -ENOMEM;
-> > +
-> > +             ret =3D lm3533_pass_of_node(pdev, pdata);
-> > +             if (ret)
-> > +                     return dev_err_probe(&pdev->dev, ret,
-> > +                                          "failed to get backlight dev=
-ice node\n");
-> > +
-> > +             lm3533_parse_backlight(pdev, pdata);
-> >       }
->
-> Ditto.
->
-> > -     bd =3D devm_backlight_device_register(&pdev->dev, pdata->name,
-> > -                                     pdev->dev.parent, bl, &lm3533_bl_=
-ops,
-> > -                                     &props);
-> > +     bd =3D devm_backlight_device_register(&pdev->dev, dev_name(&pdev-=
->dev),
->
-> I'm not sure the dev_name() is a good idea. We usually try to rely on the
-> predictable outcome, something like what "%pfw" prints against a certain =
-fwnode.
->
-> > +                                         pdev->dev.parent, bl,
-> > +                                         &lm3533_bl_ops, &props);
->
-> ...
->
-> Also I feel that this change may be split to a few separate logical chang=
-es.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Greetings!!!
 
-Acknowledged, thank you.
+ From kernel next-20250210, I am observing syscall kexec_file_load not 
+available, there by kdump service is failing to start.
+
+
+Logs:
+
+[root@ltc-zzci-1 ~]# kexec -p 
+--initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
+/boot/vmlinuz-6.14.0-rc2-next-20250212 -c
+Warning: append= option is not passed. Using the first kernel root partition
+Modified cmdline: elfcorehdr=311424K 
+root=UUID=b5b1f89c-d479-48b3-90e2-744a2fd05667
+[root@ltc-zzci-1 ~]# kexec -p 
+--initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
+/boot/vmlinuz-6.14.0-rc2-next-20250212 -s
+syscall kexec_file_load not available.
+[root@ltc-zzci-1 ~]# kexec -v
+kexec-tools 2.0.27
+[root@ltc-zzci-1 ~]# uname -r
+6.14.0-rc2-next-20250212
+
+
+Regards,
+
+Venkat.
+
 
