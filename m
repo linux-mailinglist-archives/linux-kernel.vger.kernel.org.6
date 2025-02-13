@@ -1,299 +1,176 @@
-Return-Path: <linux-kernel+bounces-513142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DAAA34210
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:31:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB97A341F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 055CC3A4F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569B9168A9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAA323A9A7;
-	Thu, 13 Feb 2025 14:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E703281375;
+	Thu, 13 Feb 2025 14:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZdLk4zAX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="O6l3FSKe"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD67D227E88;
-	Thu, 13 Feb 2025 14:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351E281353;
+	Thu, 13 Feb 2025 14:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739456922; cv=none; b=FmFECOjUqC7lF9PJNbu7aPxWuJ0JLjoAtEPV3Eu9vjDkknDiv3eNf9XA0YbaWJIunXUXLCb8fpm+FChLnXX6i4GNu5KyeP0wWn3VcUGD3ge7MnS7JCltsAnjtFZwN8jE55RaM9CsjtLWFQhGwK/j2qZJ/NOvGZ+4L1IBBFw0LD0=
+	t=1739456911; cv=none; b=MKiesUiyyib1KlWoizHDSqmUfUDh6B7IpRlQo1L1JHrW5xl3WbXHIhOVAKk17DpAQX444oXli67e0I7xyW7RWzjW2SWyJzcSs7Gt39dvuaRbLsXOWa2wTHNOuio7qMcmAZMjSG59PiNPDF7Dj+bgszgoqcVRufhnLpgS2fYu/YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739456922; c=relaxed/simple;
-	bh=sqMbVoTKvvkH5uAbIDEUIdsRpG+atbtgfcri7b3HgxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8Xjo+RcFXEH/m40IuH1dsf5nFF6TqwGXlmCeBQaMwSNYX4ixT4AwAux+wxukAb/bxPDX2keNWNl3hbpJHzC5jHCQLiPVnqvtjv9XCxEBS+v7aSXfpdYOC3S9u48C+6qhTJIJZZOWdAy7SfGkJcbWvTU58quzTwrKdzg8eS9kOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZdLk4zAX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A802240E0028;
-	Thu, 13 Feb 2025 14:28:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3THacUTJ44bs; Thu, 13 Feb 2025 14:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739456911; bh=JfK80UxQID4SsjIO6cABIn0sKoLEACSdQtwlOmNnbHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZdLk4zAXQ+TnAipMGJVXg+Dw4Hf2ue7uhk9LELqYGpet5CDNtrmHvqz981KorABx2
-	 DMPhmcoWrMw2o2y0l8HOg+o0S3DW+XTBMs7t/23dULrA/JP1rf9oq84M/2aojChmmD
-	 6Yd4Eiwj3JsyvvmMEPvqhta+w1BX7N/69RMFGqoGThqNFBh4ApAi+jBNGz0bJY8RBQ
-	 VIxwGCrmZxYAEstL4FhZm878bW6ZZonVRPngT7vA6yWX45WXv9NhFP7QJVEV7uWp/l
-	 JdTyAEP4u/yQ2g+Nw+Bx8PYxjFKplsTM+7OUxlMPv8Upmlhl15I39XqzHAX5o96V0Z
-	 jYXVC5Zr/y4kKmyCabHm6c0BuGyBeFC7h1WUBwg+xAGWyrsWEyrJQ9abB/ChxIN80b
-	 7RRoOX1uyyATdjtdq7K5a84o51xV9eTLKMILeA6RxOWLCX6Y8FIOore9BzQ36jPJKK
-	 lqZ34Q2iZ1H0WlcArcoaT/9ojpj9Aibh+L24/UVW5u5eiBTIJJL2FmiXWy71H17xdu
-	 u4jWPulKnl6kn2DIDnROWcMkEDdSS3rlFZpnWLke+XTn2tORQGk8db4Na0FwapupLr
-	 OgZMP39jtSptk6W055hNd8wiDRcFwUVWl32mS+yIf1rTiMMGHYAeIPxK6l7GSZ9yXf
-	 ZsnJm1pQARWiHxMGzGKT8P6E=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6705040E0191;
-	Thu, 13 Feb 2025 14:28:21 +0000 (UTC)
-Date: Thu, 13 Feb 2025 15:28:15 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Patrick Bellasi <derkling@google.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
-References: <20250213105304.1888660-1-derkling@google.com>
- <20250213134408.2931040-1-derkling@google.com>
+	s=arc-20240116; t=1739456911; c=relaxed/simple;
+	bh=wYD0RUznp+DEaOs1tysjcStXhd821oK1Ob+BaVOmgrk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LRxWEeehKET0R5HuZxcf7y/Ao4YyVScJRu1AO9No8DpDr5CyjceiO7cWkiVfa7vESzkwak6/mdczPvrHwH5eeQ0QoDI8uR3NgFdYBbN2FeVATPWD/mt8t4W9v0orKOZ8fLsWuZnLLSB1oWSzsKq0sLRLxgrf4XvvhpjXE9WxAqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=O6l3FSKe; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 890C91078C25;
+	Thu, 13 Feb 2025 17:28:18 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 890C91078C25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1739456898; bh=wYD0RUznp+DEaOs1tysjcStXhd821oK1Ob+BaVOmgrk=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=O6l3FSKe4V2qSjMWNxIAqxRyOLBLUztEKHAoF2Ov+wSKtOtGRSbLtWmDtLiFWI7mu
+	 Myvslgko+MS0JhpZTa6x1pRPDZhW/2b1v2JO7dqIZis1101kM+XgrkMWT8S+QkJcC8
+	 ihNQFDQbtQtXVvXuK5Bw/x4XIDc1dawYEtv0un6Y=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 8485A3066066;
+	Thu, 13 Feb 2025 17:28:18 +0300 (MSK)
+From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
+To: Ido Schimmel <idosch@idosch.org>
+CC: Neil Horman <nhorman@tuxdriver.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Topic: [PATCH net] drop_monitor: fix incorrect initialization order
+Thread-Index: AQHbfiOGmAoQ4r9V1UCj66xAcIdI7g==
+Date: Thu, 13 Feb 2025 14:28:17 +0000
+Message-ID: <899bc3c5-2c10-47c9-b385-5f9124d9c3d0@infotecs.ru>
+References: <20250212134150.377169-1-Ilia.Gavrilov@infotecs.ru>
+ <Z639kSZBWuEpNkIP@shredder>
+In-Reply-To: <Z639kSZBWuEpNkIP@shredder>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <525D52E2123F13499D96452807DA98EC@infotecs.ru>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250213134408.2931040-1-derkling@google.com>
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/02/13 13:14:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/02/13 08:24:00 #27203088
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-+ bjackman.
-
-On Thu, Feb 13, 2025 at 01:44:08PM +0000, Patrick Bellasi wrote:
-> Following (yet another) updated versions accounting for this.
-
-Here's a tested one. You could've simply waited as I told you I'm working on
-it.
-
-I'm going to queue this one next week into tip once Patrick's fix becomes part
-of -rc3.
-
-Thx.
-
----
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Wed, 13 Nov 2024 13:41:10 +0100
-Subject: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-
-Add support for
-
-  CPUID Fn8000_0021_EAX[31] (SRSO_MSR_FIX). If this bit is 1, it
-  indicates that software may use MSR BP_CFG[BpSpecReduce] to mitigate
-  SRSO.
-
-Enable BpSpecReduce to mitigate SRSO across guest/host boundaries.
-
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- Documentation/admin-guide/hw-vuln/srso.rst | 21 +++++++++++++++++++
- arch/x86/include/asm/cpufeatures.h         |  4 ++++
- arch/x86/include/asm/msr-index.h           |  1 +
- arch/x86/kernel/cpu/bugs.c                 | 24 ++++++++++++++++++----
- arch/x86/kvm/svm/svm.c                     | 14 +++++++++++++
- 5 files changed, 60 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/hw-vuln/srso.rst b/Documentation/admin-guide/hw-vuln/srso.rst
-index 2ad1c05b8c88..b856538083a2 100644
---- a/Documentation/admin-guide/hw-vuln/srso.rst
-+++ b/Documentation/admin-guide/hw-vuln/srso.rst
-@@ -104,6 +104,27 @@ The possible values in this file are:
- 
-    (spec_rstack_overflow=ibpb-vmexit)
- 
-+ * 'Mitigation: Reduced Speculation':
-+
-+   This mitigation gets automatically enabled when the above one "IBPB on
-+   VMEXIT" has been selected and the CPU supports the BpSpecReduce bit.
-+
-+   It gets automatically enabled on machines which have the
-+   SRSO_USER_KERNEL_NO=1 CPUID bit. In that case, the code logic is to switch
-+   to the above =ibpb-vmexit mitigation because the user/kernel boundary is
-+   not affected anymore and thus "safe RET" is not needed.
-+
-+   After enabling the IBPB on VMEXIT mitigation option, the BpSpecReduce bit
-+   is detected (functionality present on all such machines) and that
-+   practically overrides IBPB on VMEXIT as it has a lot less performance
-+   impact and takes care of the guest->host attack vector too.
-+
-+   Currently, the mitigation uses KVM's user_return approach
-+   (kvm_set_user_return_msr()) to set the BpSpecReduce bit when a vCPU runs
-+   a guest and reset it upon return to host userspace or when the KVM module
-+   is unloaded. The intent being, the small perf impact of BpSpecReduce should
-+   be incurred only when really necessary.
-+
- 
- 
- In order to exploit vulnerability, an attacker needs to:
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 508c0dad116b..43653f2704c9 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -468,6 +468,10 @@
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
- #define X86_FEATURE_SRSO_USER_KERNEL_NO	(20*32+30) /* CPU is not affected by SRSO across user/kernel boundaries */
-+#define X86_FEATURE_SRSO_BP_SPEC_REDUCE	(20*32+31) /*
-+						    * BP_CFG[BpSpecReduce] can be used to mitigate SRSO for VMs.
-+						    * (SRSO_MSR_FIX in the official doc).
-+						    */
- 
- /*
-  * Extended auxiliary flags: Linux defined - for features scattered in various
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 72765b2fe0d8..d35519b337ba 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -721,6 +721,7 @@
- 
- /* Zen4 */
- #define MSR_ZEN4_BP_CFG                 0xc001102e
-+#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
- #define MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT 5
- 
- /* Fam 19h MSRs */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a5d0998d7604..1d7afc40f227 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2522,6 +2522,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_SAFE_RET,
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
-+	SRSO_MITIGATION_BP_SPEC_REDUCE,
- };
- 
- enum srso_mitigation_cmd {
-@@ -2539,7 +2540,8 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_MICROCODE]		= "Vulnerable: Microcode, no safe RET",
- 	[SRSO_MITIGATION_SAFE_RET]		= "Mitigation: Safe RET",
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
--	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only"
-+	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
-+	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
- };
- 
- static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-@@ -2578,7 +2580,7 @@ static void __init srso_select_mitigation(void)
- 	    srso_cmd == SRSO_CMD_OFF) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
--		return;
-+		goto out;
- 	}
- 
- 	if (has_microcode) {
-@@ -2590,7 +2592,7 @@ static void __init srso_select_mitigation(void)
- 		 */
- 		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
- 			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
--			return;
-+			goto out;
- 		}
- 
- 		if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
-@@ -2670,6 +2672,12 @@ static void __init srso_select_mitigation(void)
- 
- ibpb_on_vmexit:
- 	case SRSO_CMD_IBPB_ON_VMEXIT:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+			break;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
- 			if (has_microcode) {
- 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-@@ -2691,7 +2699,15 @@ static void __init srso_select_mitigation(void)
- 	}
- 
- out:
--	pr_info("%s\n", srso_strings[srso_mitigation]);
-+	/*
-+	 * Clear the feature flag if this mitigation is not selected as that
-+	 * feature flag controls the BpSpecReduce MSR bit toggling in KVM.
-+	 */
-+	if (srso_mitigation != SRSO_MITIGATION_BP_SPEC_REDUCE)
-+		setup_clear_cpu_cap(X86_FEATURE_SRSO_BP_SPEC_REDUCE);
-+
-+	if (srso_mitigation != SRSO_MITIGATION_NONE)
-+		pr_info("%s\n", srso_strings[srso_mitigation]);
- }
- 
- #undef pr_fmt
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 7640a84e554a..6ea3632af580 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -257,6 +257,7 @@ DEFINE_PER_CPU(struct svm_cpu_data, svm_data);
-  * defer the restoration of TSC_AUX until the CPU returns to userspace.
-  */
- static int tsc_aux_uret_slot __read_mostly = -1;
-+static int zen4_bp_cfg_uret_slot __ro_after_init = -1;
- 
- static const u32 msrpm_ranges[] = {0, 0xc0000000, 0xc0010000};
- 
-@@ -1540,6 +1541,11 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
- 		kvm_set_user_return_msr(tsc_aux_uret_slot, svm->tsc_aux, -1ull);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-+		kvm_set_user_return_msr(zen4_bp_cfg_uret_slot,
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT),
-+					BIT_ULL(MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT));
-+
- 	svm->guest_state_loaded = true;
- }
- 
-@@ -5306,6 +5312,14 @@ static __init int svm_hardware_setup(void)
- 
- 	tsc_aux_uret_slot = kvm_add_user_return_msr(MSR_TSC_AUX);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+		zen4_bp_cfg_uret_slot = kvm_add_user_return_msr(MSR_ZEN4_BP_CFG);
-+		if (WARN_ON_ONCE(zen4_bp_cfg_uret_slot < 0)) {
-+			r = -EIO;
-+			goto err;
-+		}
-+	}
-+
- 	if (boot_cpu_has(X86_FEATURE_AUTOIBRS))
- 		kvm_enable_efer_bits(EFER_AUTOIBRS);
- 
--- 
-2.43.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+T24gMi8xMy8yNSAxNzoxMSwgSWRvIFNjaGltbWVsIHdyb3RlOg0KPiBPbiBXZWQsIEZlYiAxMiwg
+MjAyNSBhdCAwMTo0MTo1MVBNICswMDAwLCBHYXZyaWxvdiBJbGlhIHdyb3RlOg0KPj4gU3l6a2Fs
+bGVyIHJlcG9ydHMgdGhlIGZvbGxvd2luZyBidWc6DQo+Pg0KPj4gQlVHOiBzcGlubG9jayBiYWQg
+bWFnaWMgb24gQ1BVIzEsIHN5ei1leGVjdXRvci4wLzc5OTUNCj4+ICBsb2NrOiAweGZmZmY4ODgw
+NTMwM2YzZTAsIC5tYWdpYzogMDAwMDAwMDAsIC5vd25lcjogPG5vbmU+Ly0xLCAub3duZXJfY3B1
+OiAwDQo+PiBDUFU6IDEgUElEOiA3OTk1IENvbW06IHN5ei1leGVjdXRvci4wIFRhaW50ZWQ6IEcg
+ICAgICAgICAgICBFICAgICA1LjEwLjIwOSsgIzENCj4+IEhhcmR3YXJlIG5hbWU6IFZNd2FyZSwg
+SW5jLiBWTXdhcmUgVmlydHVhbCBQbGF0Zm9ybS80NDBCWCBEZXNrdG9wIFJlZmVyZW5jZSBQbGF0
+Zm9ybSwgQklPUyA2LjAwIDExLzEyLzIwMjANCj4+IENhbGwgVHJhY2U6DQo+PiAgX19kdW1wX3N0
+YWNrIGxpYi9kdW1wX3N0YWNrLmM6NzcgW2lubGluZV0NCj4+ICBkdW1wX3N0YWNrKzB4MTE5LzB4
+MTc5IGxpYi9kdW1wX3N0YWNrLmM6MTE4DQo+PiAgZGVidWdfc3Bpbl9sb2NrX2JlZm9yZSBrZXJu
+ZWwvbG9ja2luZy9zcGlubG9ja19kZWJ1Zy5jOjgzIFtpbmxpbmVdDQo+PiAgZG9fcmF3X3NwaW5f
+bG9jaysweDFmNi8weDI3MCBrZXJuZWwvbG9ja2luZy9zcGlubG9ja19kZWJ1Zy5jOjExMg0KPj4g
+IF9fcmF3X3NwaW5fbG9ja19pcnFzYXZlIGluY2x1ZGUvbGludXgvc3BpbmxvY2tfYXBpX3NtcC5o
+OjExNyBbaW5saW5lXQ0KPj4gIF9yYXdfc3Bpbl9sb2NrX2lycXNhdmUrMHg1MC8weDcwIGtlcm5l
+bC9sb2NraW5nL3NwaW5sb2NrLmM6MTU5DQo+PiAgcmVzZXRfcGVyX2NwdV9kYXRhKzB4ZTYvMHgy
+NDAgW2Ryb3BfbW9uaXRvcl0NCj4+ICBuZXRfZG1fY21kX3RyYWNlKzB4NDNkLzB4MTdhMCBbZHJv
+cF9tb25pdG9yXQ0KPj4gIGdlbmxfZmFtaWx5X3Jjdl9tc2dfZG9pdCsweDIyZi8weDMzMCBuZXQv
+bmV0bGluay9nZW5ldGxpbmsuYzo3MzkNCj4+ICBnZW5sX2ZhbWlseV9yY3ZfbXNnIG5ldC9uZXRs
+aW5rL2dlbmV0bGluay5jOjc4MyBbaW5saW5lXQ0KPj4gIGdlbmxfcmN2X21zZysweDM0MS8weDVh
+MCBuZXQvbmV0bGluay9nZW5ldGxpbmsuYzo4MDANCj4+ICBuZXRsaW5rX3Jjdl9za2IrMHgxNGQv
+MHg0NDAgbmV0L25ldGxpbmsvYWZfbmV0bGluay5jOjI0OTcNCj4+ICBnZW5sX3JjdisweDI5LzB4
+NDAgbmV0L25ldGxpbmsvZ2VuZXRsaW5rLmM6ODExDQo+PiAgbmV0bGlua191bmljYXN0X2tlcm5l
+bCBuZXQvbmV0bGluay9hZl9uZXRsaW5rLmM6MTMyMiBbaW5saW5lXQ0KPj4gIG5ldGxpbmtfdW5p
+Y2FzdCsweDU0Yi8weDgwMCBuZXQvbmV0bGluay9hZl9uZXRsaW5rLmM6MTM0OA0KPj4gIG5ldGxp
+bmtfc2VuZG1zZysweDkxNC8weGUwMCBuZXQvbmV0bGluay9hZl9uZXRsaW5rLmM6MTkxNg0KPj4g
+IHNvY2tfc2VuZG1zZ19ub3NlYyBuZXQvc29ja2V0LmM6NjUxIFtpbmxpbmVdDQo+PiAgX19zb2Nr
+X3NlbmRtc2crMHgxNTcvMHgxOTAgbmV0L3NvY2tldC5jOjY2Mw0KPj4gIF9fX19zeXNfc2VuZG1z
+ZysweDcxMi8weDg3MCBuZXQvc29ja2V0LmM6MjM3OA0KPj4gIF9fX3N5c19zZW5kbXNnKzB4Zjgv
+MHgxNzAgbmV0L3NvY2tldC5jOjI0MzINCj4+ICBfX3N5c19zZW5kbXNnKzB4ZWEvMHgxYjAgbmV0
+L3NvY2tldC5jOjI0NjENCj4+ICBkb19zeXNjYWxsXzY0KzB4MzAvMHg0MCBhcmNoL3g4Ni9lbnRy
+eS9jb21tb24uYzo0Ng0KPj4gIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDYyLzB4
+YzcNCj4+IFJJUDogMDAzMzoweDdmM2Y5ODE1YWVlOQ0KPj4gQ29kZTogZmYgZmYgYzMgNjYgMmUg
+MGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgMGYgMWYgNDAgMDAgNDggODkgZjggNDggODkgZjcgNDgg
+ODkgZDYgNDggODkgY2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4
+PiAzZCAwMSBmMCBmZiBmZiA3MyAwMSBjMyA0OCBjNyBjMSBiMCBmZiBmZiBmZiBmNyBkOCA2NCA4
+OSAwMSA0OA0KPj4gUlNQOiAwMDJiOjAwMDA3ZjNmOTcyYmYwYzggRUZMQUdTOiAwMDAwMDI0NiBP
+UklHX1JBWDogMDAwMDAwMDAwMDAwMDAyZQ0KPj4gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDog
+MDAwMDdmM2Y5ODI2ZDA1MCBSQ1g6IDAwMDA3ZjNmOTgxNWFlZTkNCj4+IFJEWDogMDAwMDAwMDAy
+MDAwMDAwMCBSU0k6IDAwMDAwMDAwMjAwMDEzMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDA3DQo+PiBS
+QlA6IDAwMDA3ZjNmOTgxYjYzYmQgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAw
+MDAwMDAwMA0KPj4gUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBS
+MTI6IDAwMDAwMDAwMDAwMDAwMDANCj4+IFIxMzogMDAwMDAwMDAwMDAwMDA2ZSBSMTQ6IDAwMDA3
+ZjNmOTgyNmQwNTAgUjE1OiAwMDAwN2ZmZTAxZWU2NzY4DQo+Pg0KPj4gSWYgZHJvcF9tb25pdG9y
+IGlzIGJ1aWx0IGFzIGEga2VybmVsIG1vZHVsZSwgc3l6a2FsbGVyIG1heSBoYXZlIHRpbWUNCj4+
+IHRvIHNlbmQgYSBuZXRsaW5rIE5FVF9ETV9DTURfU1RBUlQgbWVzc2FnZSBkdXJpbmcgdGhlIG1v
+ZHVsZSBsb2FkaW5nLg0KPj4gVGhpcyB3aWxsIGNhbGwgdGhlIG5ldF9kbV9tb25pdG9yX3N0YXJ0
+KCkgZnVuY3Rpb24gdGhhdCB1c2VzDQo+PiBhIHNwaW5sb2NrIHRoYXQgaGFzIG5vdCB5ZXQgYmVl
+biBpbml0aWFsaXplZC4NCj4+DQo+PiBUbyBmaXggdGhpcywgbGV0J3MgcGxhY2UgcmVzb3VyY2Ug
+aW5pdGlhbGl6YXRpb24gYWJvdmUgdGhlIHJlZ2lzdHJhdGlvbg0KPj4gb2YgYSBnZW5lcmljIG5l
+dGxpbmsgZmFtaWx5Lg0KPj4NCj4+IEZvdW5kIGJ5IEluZm9UZUNTIG9uIGJlaGFsZiBvZiBMaW51
+eCBWZXJpZmljYXRpb24gQ2VudGVyDQo+PiAobGludXh0ZXN0aW5nLm9yZykgd2l0aCBTVkFDRS4N
+Cj4+DQo+PiBGaXhlczogOWE4YWZjOGQzOTYyICgiTmV0d29yayBEcm9wIE1vbml0b3I6IEFkZGlu
+ZyBkcm9wIG1vbml0b3IgaW1wbGVtZW50YXRpb24gJiBOZXRsaW5rIHByb3RvY29sIikNCj4+IENj
+OiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQo+PiBTaWduZWQtb2ZmLWJ5OiBJbGlhIEdhdnJpbG92
+IDxJbGlhLkdhdnJpbG92QGluZm90ZWNzLnJ1Pg0KPj4gLS0tDQo+PiAgbmV0L2NvcmUvZHJvcF9t
+b25pdG9yLmMgfCAxMyArKysrKystLS0tLS0tDQo+PiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0
+aW9ucygrKSwgNyBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvbmV0L2NvcmUvZHJv
+cF9tb25pdG9yLmMgYi9uZXQvY29yZS9kcm9wX21vbml0b3IuYw0KPj4gaW5kZXggNmVmZDRjY2Nj
+OWRkLi45NzU1ZDIwMTBlNzAgMTAwNjQ0DQo+PiAtLS0gYS9uZXQvY29yZS9kcm9wX21vbml0b3Iu
+Yw0KPj4gKysrIGIvbmV0L2NvcmUvZHJvcF9tb25pdG9yLmMNCj4+IEBAIC0xNzM0LDYgKzE3MzQs
+MTEgQEAgc3RhdGljIGludCBfX2luaXQgaW5pdF9uZXRfZHJvcF9tb25pdG9yKHZvaWQpDQo+PiAg
+CQlyZXR1cm4gLUVOT1NQQzsNCj4+ICAJfQ0KPj4gIA0KPj4gKwlmb3JfZWFjaF9wb3NzaWJsZV9j
+cHUoY3B1KSB7DQo+PiArCQluZXRfZG1fY3B1X2RhdGFfaW5pdChjcHUpOw0KPj4gKwkJbmV0X2Rt
+X2h3X2NwdV9kYXRhX2luaXQoY3B1KTsNCj4+ICsJfQ0KPj4gKw0KPj4gIAlyYyA9IGdlbmxfcmVn
+aXN0ZXJfZmFtaWx5KCZuZXRfZHJvcF9tb25pdG9yX2ZhbWlseSk7DQo+IA0KPiBUaGlzIG1pZ2h0
+IGJlIGZpbmUgYXMtaXMsIGJ1dCBpdCB3b3VsZCBiZSBjbGVhbmVyIHRvIG1vdmUgdGhlDQo+IHJl
+Z2lzdHJhdGlvbiBvZiB0aGUgbmV0bGluayBmYW1pbHkgdG8gdGhlIGVuZCBvZiB0aGUgbW9kdWxl
+DQo+IGluaXRpYWxpemF0aW9uIGZ1bmN0aW9uLCBzbyB0aGF0IGl0J3MgZXhwb3NlZCB0byB1c2Vy
+IHNwYWNlIGFmdGVyIGFsbA0KPiB0aGUgcHJlcGFyYXRpb25zIGhhdmUgYmVlbiBkb25lLCBpbmNs
+dWRpbmcgdGhlIHJlZ2lzdHJhdGlvbiBvZiB0aGUgbmV0DQo+IGRldmljZSBub3RpZmllci4NCj4g
+DQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXcuIEknbGwgc2VuZCBpdCBpbiBWMi4NCg0KPj4g
+IAlpZiAocmMpIHsNCj4+ICAJCXByX2VycigiQ291bGQgbm90IGNyZWF0ZSBkcm9wIG1vbml0b3Ig
+bmV0bGluayBmYW1pbHlcbiIpOw0KPj4gQEAgLTE3NDksMTEgKzE3NTQsNiBAQCBzdGF0aWMgaW50
+IF9faW5pdCBpbml0X25ldF9kcm9wX21vbml0b3Iodm9pZCkNCj4+ICANCj4+ICAJcmMgPSAwOw0K
+Pj4gIA0KPj4gLQlmb3JfZWFjaF9wb3NzaWJsZV9jcHUoY3B1KSB7DQo+PiAtCQluZXRfZG1fY3B1
+X2RhdGFfaW5pdChjcHUpOw0KPj4gLQkJbmV0X2RtX2h3X2NwdV9kYXRhX2luaXQoY3B1KTsNCj4+
+IC0JfQ0KPj4gLQ0KPj4gIAlnb3RvIG91dDsNCj4+ICANCj4+ICBvdXRfdW5yZWc6DQo+PiBAQCAt
+MTc3MiwxMyArMTc3MiwxMiBAQCBzdGF0aWMgdm9pZCBleGl0X25ldF9kcm9wX21vbml0b3Iodm9p
+ZCkNCj4+ICAJICogQmVjYXVzZSBvZiB0aGUgbW9kdWxlX2dldC9wdXQgd2UgZG8gaW4gdGhlIHRy
+YWNlIHN0YXRlIGNoYW5nZSBwYXRoDQo+PiAgCSAqIHdlIGFyZSBndWFyYW50ZWVkIG5vdCB0byBo
+YXZlIGFueSBjdXJyZW50IHVzZXJzIHdoZW4gd2UgZ2V0IGhlcmUNCj4+ICAJICovDQo+PiArCUJV
+R19PTihnZW5sX3VucmVnaXN0ZXJfZmFtaWx5KCZuZXRfZHJvcF9tb25pdG9yX2ZhbWlseSkpOw0K
+PiANCj4gU2ltaWxhcmx5LCB1bnJlZ2lzdGVyIHRoZSBuZXRsaW5rIGZhbWlseSBhdCB0aGUgYmVn
+aW5uaW5nIG9mIHRoZSBtb2R1bGUNCj4gZXhpdCBmdW5jdGlvbiwgYmVmb3JlIHVucmVnaXN0ZXJp
+bmcgdGhlIG5ldCBkZXZpY2Ugbm90aWZpZXIuDQo+IA0KPj4gIA0KPj4gIAlmb3JfZWFjaF9wb3Nz
+aWJsZV9jcHUoY3B1KSB7DQo+PiAgCQluZXRfZG1faHdfY3B1X2RhdGFfZmluaShjcHUpOw0KPj4g
+IAkJbmV0X2RtX2NwdV9kYXRhX2ZpbmkoY3B1KTsNCj4+ICAJfQ0KPj4gLQ0KPj4gLQlCVUdfT04o
+Z2VubF91bnJlZ2lzdGVyX2ZhbWlseSgmbmV0X2Ryb3BfbW9uaXRvcl9mYW1pbHkpKTsNCj4+ICB9
+DQo+PiAgDQo+PiAgbW9kdWxlX2luaXQoaW5pdF9uZXRfZHJvcF9tb25pdG9yKTsNCj4+IC0tIA0K
+Pj4gMi4zOS41DQo+Pg0KDQo=
 
