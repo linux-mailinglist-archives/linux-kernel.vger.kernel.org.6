@@ -1,306 +1,169 @@
-Return-Path: <linux-kernel+bounces-512495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278EBA33A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:35:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCE0A33A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9726D3A9366
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7720F188C9FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5394C20C022;
-	Thu, 13 Feb 2025 08:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A00320C022;
+	Thu, 13 Feb 2025 08:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kkhE0lcF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RZNzLEyW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D721EF08E;
-	Thu, 13 Feb 2025 08:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9B720C008;
+	Thu, 13 Feb 2025 08:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739435746; cv=none; b=KXJPEEcFnr/E4cHDXcwS+Q9XlXdvREL03nMIfpnxJi/DhTEDsrGktiO3fkwXyfZ8MAqf890FCImdN6I4q5hta1VSMaIf/IRQiTBjxaikfvddh56f7sqidQeMaxLgpJJTiBVQdKO2Yz30EVvMTRw1j3PqGb/83aSaouR/aB/juIc=
+	t=1739435767; cv=none; b=gjykiplFykkZcd4u4Kb6xN5VtpICidq+aQDWpkKhQ9kWxrOtXXeF+T69/NGdcA1grE7X5NWto43t8/jnigRy7DUpvZxsyKPgSZJ4NiltLkeHpcgAHRBBMkwR5YcWIdXvPcst6yMbrvfRmQWqq5bUWTLfac2PcGIgF/dhho+5fJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739435746; c=relaxed/simple;
-	bh=evzxK7uTI4aJ6NKaIESUYYOKhPNXCflTacCAL5slQmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eEWH3zENN05Pfj4TdS+pL7SAkWPa6iROPHVN33nG2Zs5pnNmLFQehXgbFg6Sc775wyEmOoeCcTjWOXVqTZJGSFfEVywN5KXoSCsQCzsschjeBxN6ddPhVOVvVdEbTCv0m9p1AB8YF6HFhbfYuKJspWvWuR6krVZyCsuSZDPuz5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kkhE0lcF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D05dlI002169;
-	Thu, 13 Feb 2025 08:35:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mdNMrUbka+vEkjfm7h5OmjUYCZ4V3qbNAs/+bWU3Mxk=; b=kkhE0lcFyRmxBYn2
-	Rr6xdV4gIyRLWYHs7QAMtoB5dxY5NHNkxHGC6qbZFw7rhblC9PukkYMc3ZH4FWuj
-	Oef8SJNU/qMKkgWrWWE9Pz5QpH4dAuLakkBnZ58MU+neR67djrkJskcEZyz7ZihA
-	HmOduxf6TuXM57GFadmMX4pCNXZvG3FrTujBHYbK6X10giJf7vUuLdCgbi+ku2Iq
-	fWl3YTpSDPgEwj4S3WcUCieqGxaq1mVX1G8K7t8MX2/0dx6GOKHz2aNN5h26AIjA
-	q/5zDiX0DQIrbooapuGMfcITH978YuEhM4dEP0TFd/wxeF1JjKfl0tBc9TncfC/k
-	KkURPw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44s5w491wn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 08:35:35 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D8ZYbi011448
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 08:35:34 GMT
-Received: from [10.239.28.138] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Feb
- 2025 00:35:31 -0800
-Message-ID: <b35bea63-9030-6fa9-9b43-0e5558382715@quicinc.com>
-Date: Thu, 13 Feb 2025 16:35:29 +0800
+	s=arc-20240116; t=1739435767; c=relaxed/simple;
+	bh=0ljVmsCU5Z5rev84vqt4fS5crKIkLIWMPKtmSDok3Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X+nriegd3bIeRw1NQtrENpsHmD3OxMSSD/qBNMYyueTw1FG5ur8mbFdNY8Dyv/ZExbDM0i2KpQfb4k+OoYhlkDDtgsTzzsm+l81QrzFF/jGgo/v9Oq4hRE2COp+Df95fyxqLQ0qJVmcPUPy3Do+vXl7ePynZLNN83daXYBn7HoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RZNzLEyW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739435763;
+	bh=0ljVmsCU5Z5rev84vqt4fS5crKIkLIWMPKtmSDok3Cg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RZNzLEyW5od4bpV21W2GOLaB+EQf9NM3Vr/28YMK8Y3zqoCs/o8noc4abjJup+69D
+	 h+CtGYYRujty8aJDL3vRiUwVdW1tB7UqrBGkQQjkAJSNqGufNsHtsV+p5eRSIrhwXA
+	 5yU74D7snI9/gkHWlPM1XKv+X/lzlHZP+b8sIOrJzF1nUPCNY9xXA2rCd6GxHxhbTX
+	 QXJj16DbEu5wehPijt0JmwzwJ42ROjvMo1lijGkdXdl5Nm7Igju1Mc+VhbE9ej2DLL
+	 8FBAnNGeigkOXtznT1AUSH1ycFYkWmPnzRcUf6bd3BI9w9WuP/Pa1fyt3AUEbk9tSW
+	 P8r0QvjF/v22g==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7D15417E0F44;
+	Thu, 13 Feb 2025 09:36:02 +0100 (CET)
+Date: Thu, 13 Feb 2025 09:35:57 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Sumit Garg <sumit.garg@linaro.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org,
+ Olivier Masse <olivier.masse@nxp.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com,
+ Florent Tomasin <florent.tomasin@arm.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+Message-ID: <20250213093557.278f5d19@collabora.com>
+In-Reply-To: <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+	<20250212205613.4400a888@collabora.com>
+	<CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <abel.vesa@linaro.org>, <quic_qianyu@quicinc.com>,
-        <neil.armstrong@linaro.org>, <manivannan.sadhasivam@linaro.org>,
-        <quic_devipriy@quicinc.com>, <konrad.dybcio@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250211094231.1813558-1-quic_wenbyao@quicinc.com>
- <20250211094231.1813558-3-quic_wenbyao@quicinc.com>
- <7deghiadmomrz7w7vq3v7nkzq2kabq4xbhkouswjrexif7pip3@tvjlpvuulxvp>
- <791fa29e-a2b5-d5f6-3cbc-0f499b463262@quicinc.com>
- <ycunwk7pz4h2vvtztbo27ae64u2g6prsndks4uxtnyh75yvcka@4r6haszju6sw>
-From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-In-Reply-To: <ycunwk7pz4h2vvtztbo27ae64u2g6prsndks4uxtnyh75yvcka@4r6haszju6sw>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JTPIWHQvCXLFnNbGzXh-_RY3lERk_JYB
-X-Proofpoint-ORIG-GUID: JTPIWHQvCXLFnNbGzXh-_RY3lERk_JYB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_03,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130065
 
-On 2/12/2025 7:06 PM, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 04:31:21PM +0800, Wenbin Yao (Consultant) wrote:
->> On 2/12/2025 8:13 AM, Dmitry Baryshkov wrote:
->>> On Tue, Feb 11, 2025 at 05:42:31PM +0800, Wenbin Yao wrote:
->>>> From: Qiang Yu <quic_qianyu@quicinc.com>
->>>>
->>>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->>>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->>>> but retains register values, which means PHY setting can be skipped during
->>>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->>>> after that.
->>>>
->>>> Hence, determine whether the PHY has been enabled in bootloader by
->>>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->>>> available, skip BCR reset and PHY register setting to establish the PCIe
->>>> link with bootloader - programmed PHY settings.
->>>>
->>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->>>> ---
->>>>    drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 91 +++++++++++++++---------
->>>>    1 file changed, 58 insertions(+), 33 deletions(-)
->>>>
->>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>>> index ac42e4b01065..7f0802d09812 100644
->>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>>> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
->>>>    	const struct qmp_phy_cfg *cfg;
->>>>    	bool tcsr_4ln_config;
->>>> +	bool phy_initialized;
->>>>    	void __iomem *serdes;
->>>>    	void __iomem *pcs;
->>>> @@ -3976,6 +3977,7 @@ static int qmp_pcie_init(struct phy *phy)
->>>>    {
->>>>    	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>>>    	const struct qmp_phy_cfg *cfg = qmp->cfg;
->>>> +	void __iomem *pcs = qmp->pcs;
->>>>    	int ret;
->>>>    	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
->>>> @@ -3984,10 +3986,17 @@ static int qmp_pcie_init(struct phy *phy)
->>>>    		return ret;
->>>>    	}
->>>> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>> -	if (ret) {
->>>> -		dev_err(qmp->dev, "reset assert failed\n");
->>>> -		goto err_disable_regulators;
->>>> +	qmp->phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
->>>> +	/*
->>>> +	 * Toggle BCR reset for phy that doesn't support no_csr
->>>> +	 * reset or has not been initialized
->>>> +	 */
->>>> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->>> Instead of having phy_initialized please add another boolean field,
->>> qmp->skip_init = !!qmp->nocsr_reset && !!phy_initialized;
->>> Use qmp->skip_init through the code.
->> In qmp_pcie_power_off and qmp_pcie_exit, we only check qmp->nocsr_reset. It
->>
->> seems unnecessary to combine qmp->nocsr_reset with phy_initialized.
-> The PHY is going to be initialized after qmp_pcie_init() completes, but
-> you are not updating phy_initialized. On the other hand skip_init still
-> does what it is supposed to do: tells the driver to skip (re-)init of
-> the registers.
+On Thu, 13 Feb 2025 12:11:52 +0530
+Sumit Garg <sumit.garg@linaro.org> wrote:
 
-make sense, will use skip_init.
+> Hi Boris,
+> 
+> On Thu, 13 Feb 2025 at 01:26, Boris Brezillon
+> <boris.brezillon@collabora.com> wrote:
+> >
+> > +Florent, who's working on protected-mode support in Panthor.
+> >
+> > Hi Jens,
+> >
+> > On Tue, 17 Dec 2024 11:07:36 +0100
+> > Jens Wiklander <jens.wiklander@linaro.org> wrote:
+> >  
+> > > Hi,
+> > >
+> > > This patch set allocates the restricted DMA-bufs via the TEE subsystem.  
+> >
+> > We're currently working on protected-mode support for Panthor [1] and it
+> > looks like your series (and the OP-TEE implementation that goes with
+> > it) would allow us to have a fully upstream/open solution for the
+> > protected content use case we're trying to support. I need a bit more
+> > time to play with the implementation but this looks very promising
+> > (especially the lend rstmem feature, which might help us allocate our
+> > FW sections that are supposed to execute code accessing protected
+> > content).  
+> 
+> Glad to hear that, if you can demonstrate an open source use case
+> based on this series then it will help to land it. We really would
+> love to see support for restricted DMA-buf consumers be it GPU, crypto
+> accelerator, media pipeline etc.
+> 
+> >  
+> > >
+> > > The TEE subsystem handles the DMA-buf allocations since it is the TEE
+> > > (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up the
+> > > restrictions for the memory used for the DMA-bufs.
+> > >
+> > > I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
+> > > DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to choose
+> > > how to allocate the restricted physical memory.  
+> >
+> > I'll probably have more questions soon, but here's one to start: any
+> > particular reason you didn't go for a dma-heap to expose restricted
+> > buffer allocation to userspace? I see you already have a cdev you can
+> > take ioctl()s from, but my understanding was that dma-heap was the
+> > standard solution for these device-agnostic/central allocators.  
+> 
+> This series started with the DMA heap approach only here [1] but later
+> discussions [2] lead us here. To point out specifically:
+> 
+> - DMA heaps require reliance on DT to discover static restricted
+> regions carve-outs whereas via the TEE implementation driver (eg.
+> OP-TEE) those can be discovered dynamically.
 
->
->>>> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>> +		if (ret) {
->>>> +			dev_err(qmp->dev, "reset assert failed\n");
->>>> +			goto err_disable_regulators;
->>>> +		}
->>>>    	}
->>>>    	ret = reset_control_assert(qmp->nocsr_reset);
->>>> @@ -3998,10 +4007,12 @@ static int qmp_pcie_init(struct phy *phy)
->>>>    	usleep_range(200, 300);
->>>> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->>>> -	if (ret) {
->>>> -		dev_err(qmp->dev, "reset deassert failed\n");
->>>> -		goto err_assert_reset;
->>>> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->>>> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->>>> +		if (ret) {
->>>> +			dev_err(qmp->dev, "reset deassert failed\n");
->>>> +			goto err_assert_reset;
->>>> +		}
->>>>    	}
->>>>    	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->>>> @@ -4011,7 +4022,8 @@ static int qmp_pcie_init(struct phy *phy)
->>>>    	return 0;
->>>>    err_assert_reset:
->>>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>> +	if (!qmp->nocsr_reset || !qmp->phy_initialized)
->>>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>>    err_disable_regulators:
->>>>    	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
->>>> @@ -4023,7 +4035,10 @@ static int qmp_pcie_exit(struct phy *phy)
->>>>    	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>>>    	const struct qmp_phy_cfg *cfg = qmp->cfg;
->>>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>> +	if (!qmp->nocsr_reset)
->>>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>>> +	else
->>>> +		reset_control_assert(qmp->nocsr_reset);
->>>>    	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->>>> @@ -4042,16 +4057,22 @@ static int qmp_pcie_power_on(struct phy *phy)
->>>>    	unsigned int mask, val;
->>>>    	int ret;
->>>> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>> -			cfg->pwrdn_ctrl);
->>>> +	/*
->>>> +	 * Write CSR register for phy that doesn't support no_csr
->>> what is CSR register?
->> The registers of PHY.
->>>> +	 * reset or has not been initialized
->>>> +	 */
->>>> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->>>> +		qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>> +				cfg->pwrdn_ctrl);
->>>> -	if (qmp->mode == PHY_MODE_PCIE_RC)
->>>> -		mode_tbls = cfg->tbls_rc;
->>>> -	else
->>>> -		mode_tbls = cfg->tbls_ep;
->>>> +		if (qmp->mode == PHY_MODE_PCIE_RC)
->>>> +			mode_tbls = cfg->tbls_rc;
->>>> +		else
->>>> +			mode_tbls = cfg->tbls_ep;
->>>> -	qmp_pcie_init_registers(qmp, &cfg->tbls);
->>>> -	qmp_pcie_init_registers(qmp, mode_tbls);
->>>> +		qmp_pcie_init_registers(qmp, &cfg->tbls);
->>>> +		qmp_pcie_init_registers(qmp, mode_tbls);
->>>> +	}
->>>>    	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
->>>>    	if (ret)
->>>> @@ -4063,15 +4084,16 @@ static int qmp_pcie_power_on(struct phy *phy)
->>>>    		goto err_disable_pipe_clk;
->>>>    	}
->>>> -	/* Pull PHY out of reset state */
->>>> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>>> +	if (!qmp->nocsr_reset || !qmp->phy_initialized) {
->>>> +		/* Pull PHY out of reset state */
->>>> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>>> -	/* start SerDes and Phy-Coding-Sublayer */
->>>> -	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->>>> -
->>>> -	if (!cfg->skip_start_delay)
->>>> -		usleep_range(1000, 1200);
->>>> +		/* start SerDes and Phy-Coding-Sublayer */
->>>> +		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->>>> +		if (!cfg->skip_start_delay)
->>>> +			usleep_range(1000, 1200);
->>>> +	}
->>>>    	status = pcs + cfg->regs[QPHY_PCS_STATUS];
->>>>    	mask = cfg->phy_status;
->>>>    	ret = readl_poll_timeout(status, val, !(val & mask), 200,
->>>> @@ -4096,16 +4118,19 @@ static int qmp_pcie_power_off(struct phy *phy)
->>>>    	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
->>>> -	/* PHY reset */
->>>> -	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>>> -	/* stop SerDes and Phy-Coding-Sublayer */
->>>> -	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_START_CTRL],
->>>> -			SERDES_START | PCS_START);
->>>> +	if (!qmp->nocsr_reset) {
->>> Why this one doesn't check for the qmp->phy_initialized?
->> If a PHY supports no_csr reset but isn't enabled in the bootloader, we
->>
->> still need to program the phy settings only once so that we can reuse them
->>
->> during the D3cold -> D0 cycle. Therefore, we don't check
->>
->> qmp->phy_initialized here.
-> Please add a comment. In future please make sure that your answer
-> doesn't contain unnecessary empty lines. It makes it harder to read your
-> response.
+Hm, the system heap [1] doesn't rely on any DT information AFAICT.
+The dynamic allocation scheme, where the TEE implementation allocates a
+chunk of protected memory for us would have a similar behavior, I guess.
 
-Will add a comment in patch v3.
+> - Dynamic allocation of buffers and making them restricted requires
+> vendor specific driver hooks with DMA heaps whereas the TEE subsystem
+> abstracts that out with underlying TEE implementation (eg. OP-TEE)
+> managing the dynamic buffer restriction.
 
->
->>>> +		/* PHY reset */
->>>> +		qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>>> -	/* Put PHY into POWER DOWN state: active low */
->>>> -	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>> -			cfg->pwrdn_ctrl);
->>>> +		/* stop SerDes and Phy-Coding-Sublayer */
->>>> +		qphy_clrbits(qmp->pcs, cfg->regs[QPHY_START_CTRL],
->>>> +				SERDES_START | PCS_START);
->>>> +
->>>> +		/* Put PHY into POWER DOWN state: active low */
->>>> +		qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->>>> +				cfg->pwrdn_ctrl);
->>>> +	}
->>>>    	return 0;
->>>>    }
->>>> -- 
->>>> 2.34.1
->>>>
->> -- 
->> With best wishes
->> Wenbin
+Yeah, the lend rstmem feature is clearly something tee specific, and I
+think that's okay to assume the user knows the protection request
+should go through the tee subsystem in that case.
 
--- 
-With best wishes
-Wenbin
+> - TEE subsystem already has a well defined user-space interface for
+> managing shared memory buffers with TEE and restricted DMA buffers
+> will be yet another interface managed along similar lines.
 
+Okay, so the very reason I'm asking about the dma-buf heap interface is
+because there might be cases where the protected/restricted allocation
+doesn't go through the TEE (Mediatek has a TEE-free implementation
+for instance, but I realize vendor implementations are probably not the
+best selling point :-/). If we expose things as a dma-heap, we have
+a solution where integrators can pick the dma-heap they think is
+relevant for protected buffer allocations without the various drivers
+(GPU, video codec, ...) having to implement a dispatch function for all
+possible implementations. The same goes for userspace allocations,
+where passing a dma-heap name, is simpler than supporting different
+ioctl()s based on the allocation backend.
+
+[1]https://elixir.bootlin.com/linux/v6.13.2/source/drivers/dma-buf/heaps/system_heap.c#L424
 
