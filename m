@@ -1,228 +1,208 @@
-Return-Path: <linux-kernel+bounces-513455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E11A34A7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201EDA34A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFB31895284
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:40:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9CD97A42A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5AB2222C1;
-	Thu, 13 Feb 2025 16:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C082222D1;
+	Thu, 13 Feb 2025 16:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QtcBGyal"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ITm4ubeQ"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA919AD93;
-	Thu, 13 Feb 2025 16:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464341; cv=fail; b=CBoHaRkjIdz56LHvkrdsDJJqyK6LztbVOJHmFf+Q7vSiY8oLDF/CHYVhKWPWfjKLdyCiMo436tx7NDTm01QufWtPFezGpKgoXAj6wpJSvWRZ0NgBDbnM14hu508x8jIxkxgvUvCosDGQ58VLXyrmo6bt9PYydhlnDW7iz06Z3Ow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464341; c=relaxed/simple;
-	bh=xG5HICpx2QRDHkWvzdVlLeJQwJ52jgy0S2XO2HjIRXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gbUAs+NhUFOGPPT3hbUdrvQDeABC6lZNIjLOYLmdcyxkDcZX+b9qYuABagtVXnCpdxV3splbXP9Kks73lCccnRGLnkBIyPEyix62urb3XNrFumU4/GNBCmNNTqxUZUdOCGXJnTOSHsy2RfkV0jhrvc1p7dQpjhT8WwrrHFLGKfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QtcBGyal; arc=fail smtp.client-ip=40.107.220.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zd5NRlvyduVMp1vlS/3P5eIT5AlJrm5HLppu49G7nXVM//vE42fWPqBEm3obgXWCg2JRE5Pwo/qwtT4YqmNncKQzFt7exm2Jkqne749uP/SnHycnYYEo8oNDclNIH6NH7y2j8pbVrBhy7LWOtzR8Mrl6gq6xGnN2HOqxeEgLpFHyDP9hFMvo6EI3bzUZ+6FpQXMRtDw6xOb+GdYwO4q4L+QGEB3f1zFGpGWAO3ekGfkqtTwpZHI4bVzroikxJaBp94JLqhth7z2awJms4zIOTiNDqNury5p5xCloS5cFw8rb+OjPWAVeOuUv5ir6P/IVLDh2S0+4YdxMFBpBHXL8Zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cHzw6qoGzWu2iaxSDVdqLGSNFKYB9uu+fQcOGn9XR9c=;
- b=hhud6Rnfqvz+84liTC9BgopirzLPGNeQNqVpEGiJYmJb+j4DfBALNpPPSppyTP6FzYBzzFsU9hnYJISHsY3zcvXl+pcgoix5beMf4nBnPSpKL1SyEZFqA2STaeaUMrZCXKSx0vzwmSUp4biUMX7JPTHxpjOZ3SFoHIrhHDTb8YEma0bnpsYckI87LJiQY2IUvTYYh/sq1i641uquSYAwoxsvVi971OmNdK0Pz/P8TXvZKP0hUrlvXmnNUq0kq+bgSoZYMBupOUX5uYGj8D7LSghUqJkFZB34IdjP5VlC0aXoiP0efgk9K4MOZhseHy0bMWrcMOF/CEcHAST0ZDT2bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cHzw6qoGzWu2iaxSDVdqLGSNFKYB9uu+fQcOGn9XR9c=;
- b=QtcBGyal406/UPwZ04POT8oOjdEzKdbsZBBk6TSGKYX1EsLzX5fCPl34C34is8zqJwI104Lq9SRdlxRQQw6lL330UAC9FpKWRtYipnXsqwEiNIrB9N4y+y9hqPeZnLmr7oiHQlBCewrqNxDWutjIN7cKQU8hGkf9y5sq+MU55OJN+53dMl6asRmzd04MjYp4b+RRVbk46hmljia5DoSpqvAYG3JNTaAuWn0m5BbYmeP7gm6KGufGvGDwE1qtAcweNGDoXCHCZT72F8+bAQWx96QKLvVN9RFOGjD30WPqyeaYkMkq2vnYkojfG2wBfBUnW4/04wX6QyPnn1Kht4nGhA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by CY5PR12MB6575.namprd12.prod.outlook.com (2603:10b6:930:41::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 13 Feb
- 2025 16:32:17 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 16:32:17 +0000
-Date: Thu, 13 Feb 2025 17:32:13 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] sched/topology: Introduce for_each_node_numadist()
- iterator
-Message-ID: <Z64ejV9BvcN_mMXh@gpd3>
-References: <20250212165006.490130-1-arighi@nvidia.com>
- <20250212165006.490130-4-arighi@nvidia.com>
- <Z64XpKDZ0GQ673Eq@thinkpad>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z64XpKDZ0GQ673Eq@thinkpad>
-X-ClientProxiedBy: FR2P281CA0036.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:14::23) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EE32222C7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739464366; cv=none; b=RNFojTGMN9y/varaSoNRKNLv0L0lW36cqEKmXOyRTyQhvQezaLBtoisoNYPWox6C+QoJxTNvSr0R21Kk1IoVZjQ6fykn2FXlQ4Dx03IXEpYF5BQLdPsPk0jTWpseRjAtzLJ+6NmTpHxK/MuuP5WEjhwH1w9uAyV5AP9NVsZ3aLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739464366; c=relaxed/simple;
+	bh=Dt6WBmud37ktmJ4HGPJhRrTyTyR42hN2MTosdkdlT7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEUvIOUeU/B7jqtwnfi+vQvVmb7TmbGshDB/oEYlqy/eQlXdDMiHqIf5qRgGamKB8Qkhvu6ZL5OKELSzeBf3H5EUfRhhg10s3Wk4cHY1HrJmE/JKXmMO3dgTnk3OhefxbBF1adB+scVhrKSuLRMiPENgIiWadDNxSTI2TNK5d6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ITm4ubeQ; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-543e49a10f5so1116976e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739464363; x=1740069163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPHPNoshl1RcqwcSXICHqKvooCShtbqpBD0+IwmXNA4=;
+        b=ITm4ubeQ/y088sYqtRuaBlzyhmJ2ekqCfe7+4FmrI3XM+V+8EIxDEMBnRN3o6qnXJH
+         QoxVSlvaH5n1nH+AbnKusOu4huRVEGMdOf6YCdo5x1xm79zqeJjfP2KK3WubT91c2cXn
+         2JNVI3BEUPWTszc5wL4i3LVXVDR7MbJpHM19nt1lG6b3Zc2sK2GdlM1DB7pMkhM8oHt/
+         rryH5vd8077bCmst65AKVk3wADPOMHBWrLvdVQV2ZAWw82UviDAcMjrTeKl/DUTt5/TH
+         XHpYX7qO2jxWvZGJSH18qw7wTukXYfsttlcUOAfi3TUVntpsy5IGduV40XssZwkWV56+
+         9wwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739464363; x=1740069163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VPHPNoshl1RcqwcSXICHqKvooCShtbqpBD0+IwmXNA4=;
+        b=Qa7L269ZMwXVoFkdQ5i86t4EC2zsn+sJyUBxyHpUMW9IdkoUbywNrleNiRd6KxtThs
+         aOBDuo586OEv8V2UgERpn7Ukwvjt39g3DfNWxI1lMX2IMc2fT9ZWLzPik93GdBkUNpdl
+         zGc/hmWaYUFJy7jx5iklVtILMbqW+KEUdifw55vn6ruIKoqPtHs2yqcl/SzmaOmZbchz
+         36CNtVqAD7s9ycFq/APOCq+dHXQ7SelZiwdViHv4dPEYyTxcForgW/+kDRFUB18Tlu04
+         ZNxwQGTjDlseihvqVBRQAcvQRztO37pzWGVf7LdCQpm5sasgxN7MAqFwp+XAh3FpEgEV
+         kRVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8WSRny8MYKyPm5itRmtlBaaliU3lyAsISoM6/zHw6pJd00HRzrrOoenxXrMgvhBFIgIWrYtNTI8JAY5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTx0qp1tgiSIaw4AaS8tAxR/rqTSGWCNx1DmnPZJmOeuuxfzx+
+	pu1EGFdgK4OQNRm+D4DTvr7++ODnIOlbbdF5pMfVbkYwJQVuaWjxrgI/YnL8p1U=
+X-Gm-Gg: ASbGncsk7SABoR9H/d56I4RAAOpY598zg+PZLkHzF6/fBgl3exWiiD1R/TjMHvsVoye
+	AaWNxQJPVDlbzARuCMxyG4VR5oLAtKCYXEnkJWqbt9uDjjba+fuhsc/SWZq9x+4ZOKrVduIFqcZ
+	8OwK+/r9TN+BX02ADi9qzjJnk0wxrk0S70Q4JsM56upIwQAz1c6IQuu2M6KIkzb+jceNQcESXon
+	P1hTsFO7AXQeC0iosgVrkokJDbMTPdSSEwZq7jTOwLvQPeCRC0oEbWW9oX6RmQN9amfWSkEMay/
+	uFNJiiirtAPmG6kEpIM3Vi/Lhf4B4/h7B0Nj59v35SLv4bVIy6j1I9hR/Mzte2thx4gKMEk=
+X-Google-Smtp-Source: AGHT+IHYWp+sMLAjjpwVQxvBUjGuUYEk19nenxTiG1/XVXYJCYHZpVNR+G42KEVOd0IkKtkXJD85fg==
+X-Received: by 2002:a05:6512:3c96:b0:545:d35:6be2 with SMTP id 2adb3069b0e04-54518155288mr2789477e87.34.1739464362577;
+        Thu, 13 Feb 2025 08:32:42 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f0834d3sm215968e87.11.2025.02.13.08.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 08:32:42 -0800 (PST)
+Date: Thu, 13 Feb 2025 18:32:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 31/37] drm/bridge: Provide pointers to the connector
+ and crtc in bridge state
+Message-ID: <gyfchljgrqamb26sot4c26gcwupbst2zuu5fw6el5wsl6gl5xp@ruqbpsn4lpvx>
+References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
+ <20250213-bridge-connector-v3-31-e71598f49c8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CY5PR12MB6575:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bf2882e-4fb9-4abb-3f96-08dd4c4bfabc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cJ54i6RfxeCEJswq/j8KkWwT1X4QumFBpJAXzWGifzORjjHsUTCh5gQt9LJd?=
- =?us-ascii?Q?rDRgwF4ygnwDj+3Pt/0OD0P0WUTzDYJSgoDT7LL+ugFvIpoaVGSrdUrvPQpC?=
- =?us-ascii?Q?rEpICyQ1MYYu39elR1bp1ls1ZZnw5+t0nT6uuoSzw1VxTI28QL8dQqumqlr4?=
- =?us-ascii?Q?7aTBhnKYvVhD68Im6ONsu52G/BYJ5Gu2PN46jaxZIiCmj6jD8pM1P+j52C/C?=
- =?us-ascii?Q?1EFfNOGUeLs2kUclEljlj4uft9UBhXoBDUNDCHtQzo+QT3eCVg9Qs8ej9ZBT?=
- =?us-ascii?Q?2KhnxOjVHkRxn+GuTRFrUAFw/ofNShX1CBooWMYzdZjmiDc2xV6h03EKagvz?=
- =?us-ascii?Q?M2n1QBha7Zv0s+6IHTvHBSp1HUeyI9yt3BnQgtznc175kHoLDcPN3w0XoL0J?=
- =?us-ascii?Q?9cfoN9/jfiBlK/o7Uwll6CTG/1bN+6S7burY3owv3eQO9dCxt9tXgUI7eqxj?=
- =?us-ascii?Q?Ykhr+rCeE7PyL3oS/RXp3H233yujD+5Zsqsid+6SuwdMdXubmy04ON4GmMBt?=
- =?us-ascii?Q?0oDi3kPosUt0dFTicyfu4cKaDf9yrLqcUKAKpSARK2371iBAmr4AWgabdOVl?=
- =?us-ascii?Q?acSB7Z9oglnxt+FvZ5oQcukvO7XOyZA5yCi29zNA0WcuUQ+NdRgK0BKrwqhe?=
- =?us-ascii?Q?PSxDMfZQWAnhNWZ/GOANgImtqbNCI3BNZC9SVd8Z4MgStmGG/20rYcenM8Ar?=
- =?us-ascii?Q?TofhPUZsn/XNgpBnIWg2Dy/8x3FTFfsfY8n9uF0xwfEDkRIBJPp212IUNK+S?=
- =?us-ascii?Q?NsmoPUrs6G7BY98K3vNdKsXTs2v+uMbb3Vc8xwLCKXIy4iTFC5fBQO906uv7?=
- =?us-ascii?Q?XrnGn6dQkq6VTerpsYeT35UUunJcpCp0gDVIjuPs1eb8UsGEJ4Uyd6HVDLRr?=
- =?us-ascii?Q?TojT0bTWfq2/P0dJlpOmWDq2BbgI75ynNGTLOODu+nScN18eG6Qkjwu7sHlP?=
- =?us-ascii?Q?n+YqecGxHANl8owgO7cZW79cnbBCNUoueP2Yk+eAYtWVAmUgLIrGxTIxT0pY?=
- =?us-ascii?Q?lBcTFxtjqjF4DNj9yyUxKuWD8Hw1fyDyVCrw9dlpViK1VkWlqdexRaSEHzwl?=
- =?us-ascii?Q?gJ9+l3fP8nLuWi0ndIf4/X7vJvusFwa/f6RORL31j847MtNnd6mpyllJuB4h?=
- =?us-ascii?Q?eip7Ax8qhv/GBgdWL8OhSCBKLBETBNe8TfHQKGodeLkDfRTOGxnyCKRsTPL9?=
- =?us-ascii?Q?rW8MRbxyVZO4CbOJqcoYT8B1fsZVSdFdnfYgffvVh21he/8lcm6CvDQ2ZYeO?=
- =?us-ascii?Q?KbRd25X7LjuzQxkqhmnolZZkgXPw6XNyHE4pZBLu8dL9SwOrBm/qsjexibXw?=
- =?us-ascii?Q?sbm9VEJzwU9XW7lo8ezrqly9rz0B1mCD8PAdZHwOcYOh+Z3TZf87kjUeMgla?=
- =?us-ascii?Q?iXW7x4yCzPdZvyfQynB01G4SR0O9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SF03+NuTUHeVxf7bUvZPBaxJ3S4cr+zADgITuSI+PNssBgD0FCwGGzO04rLK?=
- =?us-ascii?Q?/rzFlUXowJ0OGtg77murYYsyJGqlsHUWHFPJHW2nakCdEC337B1M1saKUZyk?=
- =?us-ascii?Q?ebjm1kZpb2vDJw8C+u5QKVjtKTEagsaHVP+mVhKmjxq1ALoZAT+45B/lnk2b?=
- =?us-ascii?Q?vyMCqgmeXfpfFPPL4EeE3b54egz0oIMcrnlitrBKWnU8oV/m6CfWJweuctaW?=
- =?us-ascii?Q?6doxBkNby8e1CTZLypQjkjYHa3wTJf0CNbVNTEfEPzlj6tLj51HhaV5cdVP8?=
- =?us-ascii?Q?4VLbOHd4gm3JjyTyXB5nYiG96EMc2C3E9cKUsJoPYH0EyYdQXykWKGydT6VV?=
- =?us-ascii?Q?v8cEgjLh9iKbdW21WSMf+WXUccmbia18ZrmNFl/Ny5rdgT8w9DoBIgK3SgCW?=
- =?us-ascii?Q?a7oE8KFrQVbpGZeV1KH8ZBED0ntaV/gn1sC7FqEVdooFzITJ+iFmVo54vtRw?=
- =?us-ascii?Q?iEODBdT2TRzQm4KB+jR7JIDwoCDwTmWYZFD3QfSW4aZ1OVfNgEA3RL5gZbJx?=
- =?us-ascii?Q?RXC8zNgZLdILS/pE5oX2mwo5GldDxZOip4Wuv9vJDac/KrvLzmpXRZgTn6GE?=
- =?us-ascii?Q?YVrj+C4W2ToTBtOW2AJT2VSo6/6RmVs3YQspoatiU7sqkqWdzrM/0GNl4aA4?=
- =?us-ascii?Q?Bb/yjaM2uCIik39AHJc1E7Z2EROZSqIk99YeiEezxk9oxHmDngykZU8Pvcvf?=
- =?us-ascii?Q?s5wy0h8qyuBFd3ctAOwvKDG/LCjS21hV8kSrKUEqKY4pMQ7qcdyMkcHnTnUd?=
- =?us-ascii?Q?e7K2SaEYYjznJEV8HUHNjIKOF8zDXb8wkmuqxOOb7UQLZCMn1RdrrI25jGFM?=
- =?us-ascii?Q?Gg2ReuCxj3OdeQ1EFV7bfJPjdt5V/HGrwU0ejyuxNyUMYoKxIa1veQxb2o8x?=
- =?us-ascii?Q?DXQpNNXXNYIM8BgYdzSbVii53YP2C2prOEJAj8OJ2nHTV/ol0vrwH9MPWsUB?=
- =?us-ascii?Q?sF0eGmNko6bWIeb2On7RZtt3rDb6VV4Ivv4bI17y9CzOF3Cwlzvwy1gvIbNP?=
- =?us-ascii?Q?6oYEv2LomxyuA6ReWYIpGXlduxPG2Y+mQBqcFBxk8mXWvE3wIKspwhAeXul8?=
- =?us-ascii?Q?f2UoHclxYG0E/8yUz3SZlO26Ip3RmLjDQIVYWrV5EPWlj48LlZQdQAwzx8sU?=
- =?us-ascii?Q?cCv8js5vcIgMvExWveog9AHT5tVCK3hGWCGjuKJ0FtAwG/pz/NnKjicIyPHe?=
- =?us-ascii?Q?as5HBscQg64dIwauXT35pe6USvEjkOy8CRx1hJl/TWUeKxuNXfCF5QmqaHBr?=
- =?us-ascii?Q?CysCxYE6RYHE1cKinrLEsaQcHJX4FWwKCBjrmwp4V5YfQD2rCt98vdWXNld9?=
- =?us-ascii?Q?frDYFm8IMg98QPtCXkosXcWKcpg7T5w53CLBaTGsjUJcWL0h6hSo5GO7On/i?=
- =?us-ascii?Q?609XW9MrpJkdzFC1SwN5lW0/pEXsQBvKD0/KHiufNOLrQy+uLQlipPKLKbXf?=
- =?us-ascii?Q?UTlSN1O6h/eeno/gu1xzqdj3FVqvNYnnufH625nIMnl+cnGq4OwfMPnhM09x?=
- =?us-ascii?Q?747SGf0+F8JEiKJx0j/SF8sql1UoOqWnnDkXHhuvKSq3fLqrS5+Al/UU/HsY?=
- =?us-ascii?Q?acd0lZ2ASszATrdsbIdfZOTwxK7zh0Rnk42ax8CS?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bf2882e-4fb9-4abb-3f96-08dd4c4bfabc
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 16:32:17.1555
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XjM8DyKP7ZRuBf42YQoBZ0RTNMjVOtV+W7pm90AwlPB2k1E0+RZ+BpMP/OmLdwHkmGFvOA8XBDhmSN6IzSJZAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6575
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-bridge-connector-v3-31-e71598f49c8f@kernel.org>
 
-On Thu, Feb 13, 2025 at 11:02:44AM -0500, Yury Norov wrote:
-...
-> > Cc: Yury Norov <yury.norov@gmail.com>
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+On Thu, Feb 13, 2025 at 03:43:50PM +0100, Maxime Ripard wrote:
+> Now that connectors are no longer necessarily created by the bridges
+> drivers themselves but might be created by drm_bridge_connector, it's
+> pretty hard for bridge drivers to retrieve pointers to the connector and
+> CRTC they are attached to.
 > 
-> Suggested-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> Indeed, the only way to retrieve the CRTC is to follow the drm_bridge
+> encoder field, and then the drm_encoder crtc field, both of them being
+> deprecated.
+> 
+> And for the connector, since we can have multiple connectors attached to
+> a CRTC, we don't really have a reliable way to get it.
 
-Ok.
+The same comment as for v2:
+
+It's not very precise:
+
+ connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
+
+Is that unreliable somehow?
 
 > 
-> > ---
-> >  include/linux/topology.h | 30 ++++++++++++++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
-> > 
-> > diff --git a/include/linux/topology.h b/include/linux/topology.h
-> > index 52f5850730b3e..932d8b819c1b7 100644
-> > --- a/include/linux/topology.h
-> > +++ b/include/linux/topology.h
-> > @@ -261,6 +261,36 @@ sched_numa_hop_mask(unsigned int node, unsigned int hops)
-> >  }
-> >  #endif	/* CONFIG_NUMA */
-> >  
-> > +/**
-> > + * for_each_node_numadist() - iterate over nodes in increasing distance
-> > + *			      order, starting from a given node
-> > + * @node: the iteration variable and the starting node.
-> > + * @unvisited: a nodemask to keep track of the unvisited nodes.
-> > + *
-> > + * This macro iterates over NUMA node IDs in increasing distance from the
-> > + * starting @node and yields MAX_NUMNODES when all the nodes have been
-> > + * visited.
-> > + *
-> > + * Note that by the time the loop completes, the @unvisited nodemask will
-> > + * be fully cleared, unless the loop exits early.
-> > + *
-> > + * The difference between for_each_node() and for_each_node_numadist() is
-> > + * that the former allows to iterate over nodes in numerical order, whereas
-> > + * the latter iterates over nodes in increasing order of distance.
-> > + *
-> > + * This complexity of this iterator is O(N^2), where N represents the
-> > + * number of nodes, as each iteration involves scanning all nodes to
-> > + * find the one with the shortest distance.
-> > + *
-> > + * Requires rcu_lock to be held.
-> > + */
-> > +#define for_each_node_numadist(node, unvisited)					\
-> > +	for (int start = (node),						\
-> > +	     node = nearest_node_nodemask((start), &(unvisited));		\
-> > +	     node < MAX_NUMNODES;						\
-> > +	     node_clear(node, (unvisited)),					\
-> > +	     node = nearest_node_nodemask((start), &(unvisited)))
+> Let's provide both pointers in the drm_bridge_state structure so we
+> don't have to follow deprecated, non-atomic, pointers, and be more
+> consistent with the other KMS entities.
 > 
-> the 'node' should be protected with braces inside the macro, the start should
-> not because you declare it just inside. Also, the 'start' is a common word,
-> so there's a chance that you'll mask out already existing 'start' in the scope.
-> Maybe __start, or simply __s?
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic_state_helper.c |  5 +++++
+>  drivers/gpu/drm/drm_bridge.c              |  5 +++++
+>  include/drm/drm_atomic.h                  | 14 ++++++++++++++
+>  3 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+> index 519228eb109533d2596e899a57b571fa0995824f..66661dca077215b78dffca7bc1712f56d35e3918 100644
+> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> @@ -777,10 +777,15 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_duplicate_state);
+>   * that don't subclass the bridge state.
+>   */
+>  void drm_atomic_helper_bridge_destroy_state(struct drm_bridge *bridge,
+>  					    struct drm_bridge_state *state)
+>  {
+> +	if (state->connector) {
+> +		drm_connector_put(state->connector);
+> +		state->connector = NULL;
+> +	}
+> +
+>  	kfree(state);
+>  }
+>  EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index b6d24092674c8fa33d9b6ebab9ece0f91fb8f8ea..db2e9834939217d65720ab7a2f82a9ca3db796b0 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -812,10 +812,15 @@ static int drm_atomic_bridge_check(struct drm_bridge *bridge,
+>  		bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
+>  							       bridge);
+>  		if (WARN_ON(!bridge_state))
+>  			return -EINVAL;
+>  
+> +		bridge_state->crtc = crtc_state->crtc;
+> +
+> +		drm_connector_get(conn_state->connector);
+> +		bridge_state->connector = conn_state->connector;
+> +
+>  		if (bridge->funcs->atomic_check) {
+>  			ret = bridge->funcs->atomic_check(bridge, bridge_state,
+>  							  crtc_state, conn_state);
+>  			if (ret)
+>  				return ret;
+> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> index 4c673f0698fef6b60f77db980378d5e88e0e250e..293e2538a428bc14013d7fabea57a6b858ed7b47 100644
+> --- a/include/drm/drm_atomic.h
+> +++ b/include/drm/drm_atomic.h
+> @@ -1216,10 +1216,24 @@ struct drm_bridge_state {
+>  	/**
+>  	 * @bridge: the bridge this state refers to
+>  	 */
+>  	struct drm_bridge *bridge;
+>  
+> +	/**
+> +	 * @crtc: CRTC the bridge is connected to, NULL if disabled.
+> +	 *
+> +	 * Do not change this directly.
+> +	 */
+> +	struct drm_crtc *crtc;
+> +
+> +	/**
+> +	 * @connector: The connector the bridge is connected to, NULL if disabled.
+> +	 *
+> +	 * Do not change this directly.
+> +	 */
+> +	struct drm_connector *connector;
+> +
+>  	/**
+>  	 * @input_bus_cfg: input bus configuration
+>  	 */
+>  	struct drm_bus_cfg input_bus_cfg;
+>  
+> 
+> -- 
+> 2.48.0
+> 
 
-Right, will also fix this (good thing I needed to send a new version
-anyway, because the test robot found a build bug). :)
-
-Thanks!
--Andrea
+-- 
+With best wishes
+Dmitry
 
