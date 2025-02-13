@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-512895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BD7A33EED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:17:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9827A33EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314BA169E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:17:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7F8A7A1CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D8221563;
-	Thu, 13 Feb 2025 12:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A751D215059;
+	Thu, 13 Feb 2025 12:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gj50goYM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KGIXqOEX"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvfBdKMj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C8227EB4;
-	Thu, 13 Feb 2025 12:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120FA207E01
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449029; cv=none; b=EhgSIJIkqlxN1V++c5J7HVVLeymcm4wleVG63U65TddQJ0w+A52deI/8he7OVoKbhqzq4xOxZalNKhJ8ZSHhBaSuJVX7YT9jPpzZQ+QWlZSPKhY5Zb+yNptZoDm2Qyzy3trT0ryR3UAB7PCOt+cXhzOYVWRcQsSWtrHMGhCclz0=
+	t=1739449065; cv=none; b=O4cutOyU7LCNmL7ptmMiTpQrqpKOKGVzPcCz1Pxm4DxnmdR5fltd+9se57SsSbfjCp80sk4YhCEuZnPQt1XvXw0pFZSWFric92OEwPNQ9Q65Ohg8wNXF0kaEel55j+46w6Ul51bSS8TCpTZAQCM3WaBvSnAdb7rfpFY2dlYZuj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449029; c=relaxed/simple;
-	bh=vlhlBzSkIneMGWYQBwFyfnTl25nGWzLsKGHhhsEs/qs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=E6jJV1M3iln5CXusHDIk+9L9WvHDN5ygQXtdHzwl0W3wVM+WYTLyxCGRuw1y2psA0eZcMN/LMQdSZvo6t4VYS5ValGruu9JRIOK9YPrcNuv7BIaaKQREU+KCuOVG4CkWXbZIoGJlzdp2h6djLJLHNaAM54Qhzg3r3A2TbBHhHEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=gj50goYM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KGIXqOEX; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4B8C811401A0;
-	Thu, 13 Feb 2025 07:17:05 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Thu, 13 Feb 2025 07:17:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739449025;
-	 x=1739535425; bh=vlhlBzSkIneMGWYQBwFyfnTl25nGWzLsKGHhhsEs/qs=; b=
-	gj50goYMrgEWpERcjDoQkgN9f3pgpWRaH9UTa9EeXqLr+vNsHhkSI10rDN2pRbPs
-	0dMsVZxIK8KbQJ+T7z0GfbemKmz7GcdahAp3mx+r+hvixy8hF7f7FN4zuGEm0grg
-	+OIwutIYnvZv9OcE9iL+nhLx7OG2D2dV+ja54OB39VnqKVdjTR/Pl9L2ckVtpLYf
-	nTOuF3/3/bFKCEEYaN6BQIbqw6bhYP6BfvS50t7yqcgctyoWAG4ACjticINh6EMo
-	jyNIMqrJOUGp/xRm9Y81r2U55gJz7ysedkHH4N2Nmfocl6tineRAWXK30FfDarhb
-	QnVbj5L6tsNXrDuw38j+sQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739449025; x=
-	1739535425; bh=vlhlBzSkIneMGWYQBwFyfnTl25nGWzLsKGHhhsEs/qs=; b=K
-	GIXqOEXDGqLOiIjohIg/UsrKcsUsFtJQspSxYVUbqFU2MmRVSknGiAGOdHheWGKY
-	OT68kTYQCcvgc1Hr+5SJm0XWij0WkkhrP9aALWDJRbpMpu57WwTp6Md0Os+bSZ5j
-	v4JCkkKw6HtLiEW7PR0PT8cfTKOV/bw9r3rakcK8c81GB/mO/vWNxso1AwNTIlVP
-	JoTeaL8Kx0XIW8t/zEDvWal1fNogVXF/1apPPdqNUX4KgrCrGwJj1SJAmdDwOT5S
-	+KZxke609KApqoVkYMmInLZvrCjdGUc3chIcZyGQr8gwMJ0BIzXc83ULenyZfDvg
-	edV28qdFhn7EjVVoUkxQA==
-X-ME-Sender: <xms:weKtZxZ2Jx0SogXKgrce2SjWTjH38dKFCmZc39GEp1sDVs3S0TbyhA>
-    <xme:weKtZ4YnIxba5f_D6pt-4Ddpe2s4Uw3nT0sCRfd8VgWa25I8OCEAy8cHqGhtfw3Z-
-    _-vVmtxmZuU-ScxE3g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieejhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmtghhvghhrggsodhhuhgrfigvih
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhr
-    tghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:weKtZz-QYp083JbvMAwwfYxmY3dIwwRyfVC1pJyvFu4paKpmoSO4jg>
-    <xmx:weKtZ_pwh3ESfCs4C12dD4F52BjHrnepmhkcN64rV-I_fx4sFyqDzw>
-    <xmx:weKtZ8p65zSwpqVmaWg9jlnDriUkxQ4bY-czD3PyRW4ZE5sYXgzvaA>
-    <xmx:weKtZ1Rg_13YwDOe9KgRY6eNSAXZxhNHKHsmkvGB94yG2QK4j3psMQ>
-    <xmx:weKtZ1k722L4lapCobovkiUcJ5fLaEUOUgSgs--Xdnd5DGEk9anU9dE->
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EFD6F2220072; Thu, 13 Feb 2025 07:17:04 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739449065; c=relaxed/simple;
+	bh=8JAGRpkkF4BFORpO2ZXJZWdxCcVAaj9LxZ7dG60lCKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rn4FwAQ2oPOwUw2gvjIDrbKECYyRsdLO22KJKzpDYNPCqBzRwUeEFHhVq2KvtBgfCyHU7VqeswNCwM4VE/+k7rUk6kkPMwFwv06fDkEUTn+Rj0ye7a73t7soKbHgowfKJM0Ewf2zHKYPxTGCRHzD6QXVlSoj2BUpRMHgq/UsWNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvfBdKMj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83458C4CED1;
+	Thu, 13 Feb 2025 12:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739449064;
+	bh=8JAGRpkkF4BFORpO2ZXJZWdxCcVAaj9LxZ7dG60lCKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IvfBdKMjTF6yHhtWWJnipKdieoFAS1iI18bQ0krXYEafFa6Qci2NgBx/+El86NP/f
+	 w72sM+X3TUAr/B22Yl8YxF1/Dz6GxUlqkHllYQajGxy+3TbY6IQvJVyN/ivLdwSCIr
+	 UAbhuT4kRx7F7XudHWeLYscCY90UJas9N25Lbi5PVNfH5xSoPnyKrIr2eOzMVPmCq5
+	 IC1ZVeWkFHBP255v/9lk1d6GqFXRWM93ubR7asVl6wYLzHvqMZuQrJGZcyZ5y1sPG9
+	 6+JsvXU62+8aO3S1m60CM1zVgXzZKGkboNdqWSRPdr7gySmja6AF1Od0X29IeOhSg7
+	 ecQiItnBhlstg==
+Date: Thu, 13 Feb 2025 12:17:40 +0000
+From: Will Deacon <will@kernel.org>
+To: Junlong li <zhuizhuhaomeng@gmail.com>
+Cc: oleg@redhat.com, catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ptrace: Fix error handling in
+ ptrace_hbp_get_initialised_bp
+Message-ID: <20250213121738.GA11596@willie-the-truck>
+References: <CAN5X4L9L2ught_h4M3_oe_aTMALki6nJPh9M-3KmdDx6WswffQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 13 Feb 2025 13:16:34 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
- "Linux Doc Mailing List" <linux-doc@vger.kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <607d3acb-0950-4ce3-b8b4-46fdeca3ce0d@app.fastmail.com>
-In-Reply-To: 
- <6d69b25e9c720e0e7fc037928695ece7c8a35034.1739447912.git.mchehab+huawei@kernel.org>
-References: <cover.1739447912.git.mchehab+huawei@kernel.org>
- <6d69b25e9c720e0e7fc037928695ece7c8a35034.1739447912.git.mchehab+huawei@kernel.org>
-Subject: Re: [PATCH RFCv2 1/5] include/asm-generic/io.h: fix kerneldoc markup
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAN5X4L9L2ught_h4M3_oe_aTMALki6nJPh9M-3KmdDx6WswffQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Feb 13, 2025, at 13:06, Mauro Carvalho Chehab wrote:
-> Kerneldoc requires a "-" after the name of a function for it
-> to be recognized as a function.
->
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On Wed, Feb 12, 2025 at 07:35:46PM +0800, Junlong li wrote:
+>    From b824aece318ed38666621610af7807e70831f964 Mon Sep 17 00:00:00 2001
+>    From: lijunlong <[1]lijunlong@openresty.com>
+>    Date: Wed, 12 Feb 2025 19:15:46 +0800
+>    Subject: [PATCH] ptrace: Fix error handling in
+>    ptrace_hbp_get_initialised_bp
+> 
+>    The function ptrace_hbp_get_event() returns ERR_PTR(-EINVAL) on error,
+>    but ptrace_hbp_get_initialised_bp() was checking for NULL instead of
+>    using IS_ERR(). This could lead to incorrect error handling and
+>    potential issues when trying to create a new breakpoint event.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Can you please give an example of how this goes wrong?
 
-I assume this will be merged through the documentation tree,
-let me know if you prefer me to add it to the asm-generic
-tree instead.
+>    Change the condition from:
+>        if (!bp)
+>    to:
+>        if (IS_ERR(bp))
+> 
+>    This ensures proper error checking and maintains consistency with
+>    the error handling mechanism used by ptrace_hbp_get_event().
+> 
+>    Signed-off-by: lijunlong [2]zhuizhuhaomeng@gmail.com
+>    ---
+>     arch/arm64/kernel/ptrace.c | 2 +-
+>     1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+>    diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+>    index 0d022599eb61..3bf549b540b1 100644
+>    --- a/arch/arm64/kernel/ptrace.c
+>    +++ b/arch/arm64/kernel/ptrace.c
+>    @@ -414,7 +414,7 @@ static struct perf_event
+>    *ptrace_hbp_get_initialised_bp(unsigned int note_type,
+>     {
+>            struct perf_event *bp = ptrace_hbp_get_event(note_type, tsk, idx);
+>     
+>    -       if (!bp)
+>    +       if (IS_ERR(bp))
+>                    bp = ptrace_hbp_create(note_type, tsk, idx);
+
+I think this change actually causes a problem.
+
+In the current code, ptrace_hbp_get_event() can return:
+
+ - An error if the note type is unknown or the index is out-of-bounds
+ - NULL if the relevant breakpoint has not yet been created
+ - The breakpoint pointer if it exists
+
+So, in the case of getting NULL back, we lazily create the breakpoint.
+
+Is it pretty? Hell no! But I'm not entirely sure it's broken, either.
+
+Will
 
