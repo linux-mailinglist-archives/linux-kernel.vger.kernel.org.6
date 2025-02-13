@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-513059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506CCA34133
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91026A34135
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2FC31890A5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677C91890B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EF12222D2;
-	Thu, 13 Feb 2025 13:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9E323A9AB;
+	Thu, 13 Feb 2025 13:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKDpKnpQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLNnxG+k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3862222CA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88EA2222DB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455150; cv=none; b=T/QfB+rGKu+Chib1siEcwRyCjOtFI6oIR02W6CyAxCI2h9TY5KE3C5saMRGw3pLDKH4BoL5ONHrdxtwCQsEkNx7n14O9o1eBgp3qIVVQucdVl+uCmPbt9HRwKQZAuQKsDf3LeqaYm6QfDDLba8Ipz+cAQdf09eL90k9iGOG9w5Y=
+	t=1739455151; cv=none; b=axd64rE/wjIl5I02bqPZEH1c+ofzp7IikWk6oyu6S9nSuZUJk35zLH9RMMxTEpv1AV95eWso5Gpxy5xfno7vNn5708G5NWQljU0wKkdphtC6YUDsJDbSW7xV4d2vJog8+NYqzGfxAQqc10eqjhnfx2vi2W0k8NN9AjkzlsxdMW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455150; c=relaxed/simple;
-	bh=86lSLlfSnH3gLlHMarEFFkwpZl7BtgL5BOo2fiEcAXg=;
+	s=arc-20240116; t=1739455151; c=relaxed/simple;
+	bh=0VaVSZ3UJsiKIWWiUS2W95oJuWLkTjylWVmIEpR7Qzw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BdhJnX9NeNWyG7WNmj67R29i9NdKo2A+PkFB8mTSzq1wYsu2Jmr9eovSXEUcfOooq6uPfpiJoQ6HZXelndXa3sE63mRf6kqsRe7NLkWAg/TCuGPTA2BictMqoFfpiwZz45SwuYS0oBGUNtExoNPnLdqQwoyMPilil2oWW1k5RNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKDpKnpQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3DDBC4CED1;
-	Thu, 13 Feb 2025 13:59:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oJZ9W5XBAVnbeWV0FRjr29FtZl/NFUZoG5z2HDE1Sc2qCEsF+rHRT4sKJNvw/pgfJHENuc1Nt1cOYxyFPtl7knnOugKzgP4v6voy1svQU26qBl1hpebWvWeftyt6WRlsT/ZhU+Vv/nsnEH0H/8gYKsnO0YhDNeQRF57Bs5HJFkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLNnxG+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F22FC4CEE2;
+	Thu, 13 Feb 2025 13:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739455149;
-	bh=86lSLlfSnH3gLlHMarEFFkwpZl7BtgL5BOo2fiEcAXg=;
+	s=k20201202; t=1739455151;
+	bh=0VaVSZ3UJsiKIWWiUS2W95oJuWLkTjylWVmIEpR7Qzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TKDpKnpQZZLPLJkxSAp4NQrHabwTbI+1k6690/Wd6bz1VqhXT3WrSaJBXDJXe7n3V
-	 FAUMe0lEskBGSiui5Jd3oo3DNpCoZ3SzpqtjT8sNEYeLFc/XoMGz9vcOWDatH00MUF
-	 HQBIdOl2MyiU1/KXWpnCRdKFYXI0nqUfDnC9o9FR0mgOXL5loe+bISDAPfYsm2aeu0
-	 bdITb5rssub6wlOgZEM1Gcw6dhOb8KGXmUh8i9dEXTkpamTvbwbH7qky0fGGzRg/vj
-	 Gw9P/KhohA6y5uvdJUXmmdzWSbCmgzvTNVPOm3TZNCHsaOg+5vvBaeVajR3YPePneS
-	 r6IHchmUPbuZw==
+	b=sLNnxG+kJLjxC9frWJNXBoDNBmDPIi+MFrypungWEHk0c10WPWpiOzi5tvjkA2OyT
+	 XVNhAHhqE1y3OoOI3m4QtuX631nDsbWm8MLNwjT4/wsCCEC8+t/Dt3IJSfq5KKPj+4
+	 /g1Dxab5wRtugDfxmGIKcKtONMwQAmSA17RBfhvv7c2npNpxU3g5WaaNmNTEsvc022
+	 1xcBEdGRAeI7dBcJyzgTNj5lQScPKD/AZQBw6k+W0yKt13/FiAC6o6Ln0iQvd93BVc
+	 G09NGJFDPyl2fJ0YZLnDLiyKpjvZhrFGNDrsLJVEMgUZ1DeOvvbb//7zMsieUJDqad
+	 8dVzjqQCLX+Hw==
 From: Will Deacon <will@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com,
-	sudeep.holla@arm.com,
-	catalin.marinas@arm.com,
-	Beata Michalska <beata.michalska@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>
 Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	sumitg@nvidia.com,
-	ptsm@linux.microsoft.com
-Subject: Re: [PATCH] arm64: amu: Delay allocating cpumask for AMU FIE support
-Date: Thu, 13 Feb 2025 13:59:01 +0000
-Message-Id: <173944478263.2605897.5555784632946781698.b4-ty@kernel.org>
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: Add missing registrations of hwcaps
+Date: Thu, 13 Feb 2025 13:59:02 +0000
+Message-Id: <173944518997.2607340.9811586493482464841.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250131155842.3839098-1-beata.michalska@arm.com>
-References: <20250131155842.3839098-1-beata.michalska@arm.com>
+In-Reply-To: <20250212-arm64-fix-2024-dpisa-v2-1-67a1c11d6001@kernel.org>
+References: <20250212-arm64-fix-2024-dpisa-v2-1-67a1c11d6001@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +63,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 31 Jan 2025 15:58:42 +0000, Beata Michalska wrote:
-> For the time being, the amu_fie_cpus cpumask is being exclusively used
-> by the AMU-related internals of FIE support and is guaranteed to be
-> valid on every access currently made. Still the mask is not being
-> invalidated on one of the error handling code paths, which leaves
-> a soft spot with theoretical risk of UAF for CPUMASK_OFFSTACK cases.
-> To make things sound, delay allocating said cpumask
-> (for CPUMASK_OFFSTACK) avoiding otherwise nasty sanitising case failing
-> to register the cpufreq policy notifications.
+On Wed, 12 Feb 2025 00:30:42 +0000, Mark Brown wrote:
+> Commit 819935464cb2 ("arm64/hwcap: Describe 2024 dpISA extensions to
+> userspace") added definitions for HWCAP_FPRCVT, HWCAP_F8MM8 and
+> HWCAP_F8MM4 but did not include the crucial registration in
+> arm64_elf_hwcaps.  Add it.
 > 
-> [...]
+> 
 
 Applied to arm64 (for-next/fixes), thanks!
 
-[1/1] arm64: amu: Delay allocating cpumask for AMU FIE support
-      https://git.kernel.org/arm64/c/d923782b0412
+[1/1] arm64: Add missing registrations of hwcaps
+      https://git.kernel.org/arm64/c/a4cc8494f1d8
 
 Cheers,
 -- 
