@@ -1,171 +1,198 @@
-Return-Path: <linux-kernel+bounces-512220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8ECA335E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:04:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE631A335E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE227A1273
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778E33A76FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79128204698;
-	Thu, 13 Feb 2025 03:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A16E2046BB;
+	Thu, 13 Feb 2025 03:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu/X3FPv"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UGeF5RPn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A281FDA76;
-	Thu, 13 Feb 2025 03:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E809513D539;
+	Thu, 13 Feb 2025 03:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739415840; cv=none; b=TgjRhMPPqXBLE+4i0cV9TLBdoAj+0j3eYAAAYZ66USWwY32hrHqmkNpNBI5a4plvORHzguOnK0OiBDdbV2ijGOB23ZTj4GrWAexrSHnDg6CojtIu/XrbiRTR08CpD9uEGHVgTAFKyEl1EuITaIcwPQaFY2rZa76AWlTKgO7SJKQ=
+	t=1739415892; cv=none; b=MiZtv7Kf2lT/SPriSO3trHDevzfTl7l5fUOWJGoy6XYBJ4LOyYLlm3WzgXPFUImy28An1r9iHxOsA8svqZTMxmHBE7JjlcIhxjxxzQLU8MUDm5kTfTjsXk5CBEugM5vV6k1lzSFvwa+WDCvJjv4XbBKHMptTcGQSIEe3PaXioz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739415840; c=relaxed/simple;
-	bh=mSad1hkwmEAsAZOzR2l1cljwAyHO7zbd2n4TbREAdkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TAn8BEoy9r4PFV9SpYCM1J/49w7qyD/6D2CEaguPCmDWik3QzFeJJouxaGLd+8fPgmwG/N5xLfIIZwwGdAFqwTaTscqFLEY9dFQi1mlq6R0ugTDVhh5znt98Rsvsd5azfroVyM5RGvlWqI+IBLkPNdgHUjy2pQbnc7mqtLrBc2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu/X3FPv; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21f62cc4088so5705255ad.3;
-        Wed, 12 Feb 2025 19:03:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739415838; x=1740020638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WHp4alut19oloxCzjxoPjvEruLOotLPpNPsPCt3aeZg=;
-        b=Tu/X3FPvJqepHlqMpMgIFzN3cTyCO2XD9DAuxVrAaOeE5KRHbHGZ+qPpr1OCol6q4i
-         Sq6/2Liy7C5PtTjOdSxqS6BW3zHeXBVPngc1ELIOiF/qqCL53JrWd2HMlSI5kL9wenNc
-         NXnGRtW39DyHTnIIo9FvkI1KCq3Zv2aFq0Dl//22WKzEN6xGPcDcKJDWEXPK9zJ4Rc3j
-         hTgQycmoc2/9R5hdfgPhRI576DQtSFsKhWMWxK89EAUaBA92/Tumhc7M57Qgq2dJeB3k
-         EtoC7gG4hj/hnkJCLCUbQt33Cks9EosTLqhopHfuC//IzbVoUFBBn5fQ46m+4BcBZoDG
-         ouhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739415838; x=1740020638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WHp4alut19oloxCzjxoPjvEruLOotLPpNPsPCt3aeZg=;
-        b=j+mnxCT9fT6mdSCz4fm5Qn3S+x1iPaGoHw6KKwFlWvLCZBrsVY03yxX97erwsIjd8J
-         38Hvdw7R4LR2WoW/AwrGBPii8E1HPfzcuFyXtw6FYmZLGTGQxGpq6OfnWX1eaqz1obiV
-         yYak9k+UsgIaI6/qcMS6KH220c8WFAMGyZVP4coQj3zCpsyoQSk+XA5vr9y0Updk7ZCD
-         tKD2/9qASypy0Xh5jkeb3EKAF/punOPWFhe8jWzlbLoC5/5SBECYnAXqGpf6hAmfGLHv
-         OQXKFvcsnkTz75cj9DlcjIgDyFO5bpSgQGV8vScDf+EtCtzC31w8Y1uEGMvWj03TxvXS
-         QAhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCwRYQJEb0POyoK9JpaBU8Fb6CY114SSl0AVTWBVQKvvAR9gmXbQREXWgDG+E/oOa/a5Y9qi8gFa6sTuZf@vger.kernel.org, AJvYcCWtJ9P73jCGzQ5CJq20wun2SAebQ9lNC3wqWWvIMWBcBIwcAMco03Zv8tP6r9FEXGWlb4mYJXnTr4qHQQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YziYBmpAaf+vQ2AU9JDFpR0xU7Y3PoPsL6WAG5pJYjsEzuzipT6
-	Z/HndC7TNaM3DSmSrlK3igdjJuJpnFJc3RbvR++TfnNiJVBwqAWuppV0kiKKWkGzJtWRd0dgYlg
-	zsJ5RAdnqwac7yIdQyPv/+nh3AdHRDqMB4Wo=
-X-Gm-Gg: ASbGnctIhAsjxVYHhH2VVYBGC/QYMCmedtjXsDSb0NILxvc9jsdRjI//TDKvrwCBlng
-	sdCx9tzFIr3+6Yrzac8E1QG6pQ1tCJzCrQXVn0gwfxsnFR8clQdhF07PZtLNfXhPw2pfyVws=
-X-Google-Smtp-Source: AGHT+IGMD0q0aHtEH7IDH336JcRX6ZajiRUxtwyklpdMns7TMq3ADF8lBM1QgO3aok/6y0f51VjtOGjbKvYs+tR/OXE=
-X-Received: by 2002:a17:902:d549:b0:216:6901:d588 with SMTP id
- d9443c01a7336-220d1ed1f92mr29416855ad.15.1739415838106; Wed, 12 Feb 2025
- 19:03:58 -0800 (PST)
+	s=arc-20240116; t=1739415892; c=relaxed/simple;
+	bh=CWGfSb9TJO0ph2deZcmnsI0mPRh403CDKX/JSj5NJGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iqpn3+P/j9pzrM895CN00Z3xbaDVGvQxr+7UI9058r+3CkE1PxFK5OrnxasE4yHSRosRIg+pBwFE+JvH9RiqOltFBjb9xFUms4fEl8L0V/9Jijmi2iWLSHyWDgBL9CCzPySxnrH9U/qxssBuA4ITPOUN4OYFfE8dA3aQoH/FUkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UGeF5RPn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CILd5I008889;
+	Thu, 13 Feb 2025 03:03:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8CapTW4zK04vBcb3GwBXZvC4KW59paVIIL6A9X+9/BY=; b=UGeF5RPnTXHg+O+C
+	ZR26jzpIGrwNsd/LTOdk2yC3Qjaaj284PCnECF5fp9hvgo2x2u+TapecTYap673A
+	bL/ygeIEBqwcPG3qYCFBrqkUOaAhBeJG8jXqFVZq7dhDW5A+FuxAgynZSa4WGAVI
+	wbt8DJQJsy57UvfZ1Urp6amv4J8M2w6lgV7/6qwBaAnC6PutEvnc2Ot8ftTEFdjO
+	3gO9l8q/pnEWtobH2VS4aepUt78T1hNm/vN1wZmxAYn4HiJS8mYkVfhzg1O3/a49
+	2dN/pJ+/dDPw+Gk4v3Jp/mBjxr2WGC7uXEIlLYzwrqhk2t7HabMHtrvRYIWSpMU4
+	KJz5LA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rr1qtkxu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 03:03:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D33wni031773
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 03:03:58 GMT
+Received: from [10.71.110.136] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 19:03:57 -0800
+Message-ID: <4570ecc8-d991-4160-aba7-250f5580d58d@quicinc.com>
+Date: Wed, 12 Feb 2025 19:03:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212030055.407090-1-yizhou.tang@shopee.com> <e8de697b-e098-97cd-fe3c-800b59b2c7cf@huaweicloud.com>
-In-Reply-To: <e8de697b-e098-97cd-fe3c-800b59b2c7cf@huaweicloud.com>
-From: Yizhou Tang <tangyeechou@gmail.com>
-Date: Thu, 13 Feb 2025 11:03:45 +0800
-X-Gm-Features: AWEUYZmxkVDEYB0FDPASTKzoHC4PHeYsG13C0CnTyBZshm_HoVg1FXcFA3s7kLE
-Message-ID: <CAOB9oObJ6O374EnThRs4FSchTZeJ3v_153mVHCgXK8EOOGpCnQ@mail.gmail.com>
-Subject: Re: [PATCH] blk-wbt: Cleanup some comments
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] drm/msm/dp: Disable wide bus support for SDM845
+To: Marijn Suijten <marijn.suijten@somainline.org>,
+        "James A. MacInnes"
+	<james.a.macinnes@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie
+	<airlied@gmail.com>,
+        Simona Vetter <simona@ffwll.ch>,
+        Chandan Uddaraju
+	<chandanu@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Vara Reddy
+	<quic_varar@quicinc.com>,
+        Tanmay Shah <tanmay@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, "Guenter
+ Roeck" <groeck@chromium.org>,
+        Rob Clark <robdclark@chromium.org>
+References: <20250212-sdm845_dp-v2-0-4954e51458f4@gmail.com>
+ <20250212-sdm845_dp-v2-1-4954e51458f4@gmail.com>
+ <voecekzdacvrxedltgkiq5vwnaomchv2dryi6ukvk2xynw72wp@5nre7uesyvkk>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <voecekzdacvrxedltgkiq5vwnaomchv2dryi6ukvk2xynw72wp@5nre7uesyvkk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mr0b57-DXCcKKlBb2_x5gp4txnWhpPdB
+X-Proofpoint-ORIG-GUID: mr0b57-DXCcKKlBb2_x5gp4txnWhpPdB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_08,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130021
 
-On Thu, Feb 13, 2025 at 10:56=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> =
-wrote:
->
-> Hi,
->
-> =E5=9C=A8 2025/02/12 11:00, Tang Yizhou =E5=86=99=E9=81=93:
-> > From: Tang Yizhou <yizhou.tang@shopee.com>
-> >
-> > wbt_wait() no longer uses a spinlock as a parameter. Update the
-> > function comments accordingly.
-> >
-> > Additionally, revise other comments to ensure they align with the
-> > actual implementation.
-> >
-> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> > ---
-> >   block/blk-wbt.c | 17 +++++++----------
-> >   1 file changed, 7 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-> > index 6dfc659d22e2..f1754d07f7e0 100644
-> > --- a/block/blk-wbt.c
-> > +++ b/block/blk-wbt.c
-> > @@ -136,8 +136,9 @@ enum {
-> >       RWB_MIN_WRITE_SAMPLES   =3D 3,
-> >
-> >       /*
-> > -      * If we have this number of consecutive windows with not enough
-> > -      * information to scale up or down, scale up.
-> > +      * If we have this number of consecutive windows without enough
-> > +      * information to scale up or down, slowly return to center state
-> > +      * (step =3D=3D 0).
-> >        */
-> >       RWB_UNKNOWN_BUMP        =3D 5,
-> >   };
-> > @@ -446,9 +447,9 @@ static void wb_timer_fn(struct blk_stat_callback *c=
-b)
-> >               break;
-> >       case LAT_UNKNOWN_WRITES:
-> >               /*
-> > -              * We started a the center step, but don't have a valid
-> > -              * read/write sample, but we do have writes going on.
-> > -              * Allow step to go negative, to increase write perf.
-> > +              * We don't have a valid read/write sample, but we do hav=
-e
-> > +              * writes going on. Allow step to go negative, to increas=
-e
-> > +              * write performance.
->
-> Other than this clean up, the others are actually fix. Can you remove
-> this one and change the title to "Fix some comments"?
->
-> Thanks,
-> Kuai
->
 
-Will do.
 
-Thanks
-Yi
+On 2/12/2025 3:41 PM, Marijn Suijten wrote:
+> On 2025-02-12 15:03:46, James A. MacInnes wrote:
+>> SDM845 DPU hardware is rev 4.0.0 per hardware documents.
+>> Original patch to enable wide_bus operation did not take into account
+>> the SDM845 and it got carried over by accident.
+>>
+>> - Incorrect setting caused inoperable DisplayPort.
+>> - Corrected by separating SDM845 into its own descriptor.
+> 
+> If anything I'd have appreciated to see our conversation in v1 pasted here
+> verbatim which is of the right verbosity to explain this.  I can't do much with
+> a list of two items.
+> 
+> I don't have a clearer way of explaining what all I find confusing about this
+> description, so let me propose what I would have written if this was my patch
+> instead:
+> 
+> 	When widebus was enabled for DisplayPort in commit c7c412202623 ("drm/msm/dp:
+> 	enable widebus on all relevant chipsets") it was clarified that it is only
+> 	supported on DPU 5.0.0 onwards which includes SC7180 on DPU revision 6.2.
+> 	However, this patch missed that the description structure for SC7180 is also
+> 	reused for SDM845 (because of identical io_start address) which is only DPU
+> 	4.0.0, leading to a wrongly enbled widebus feature and corruption on that
+> 	platform.
+> 
+> 	Create a separate msm_dp_desc_sdm845 structure for this SoC compatible,
+> 	with the wide_bus_supported flag turned off.
+> 
+> 	Note that no other DisplayPort compatibles currently exist for SoCs older
+> 	than DPU 4.0.0 besides SDM845.
+> 
 
-> >                */
-> >               scale_up(rwb);
-> >               break;
-> > @@ -638,11 +639,7 @@ static void wbt_cleanup(struct rq_qos *rqos, struc=
-t bio *bio)
-> >       __wbt_done(rqos, flags);
-> >   }
-> >
-> > -/*
-> > - * May sleep, if we have exceeded the writeback limits. Caller can pas=
-s
-> > - * in an irq held spinlock, if it holds one when calling this function=
-.
-> > - * If we do sleep, we'll release and re-grab it.
-> > - */
-> > +/* May sleep, if we have exceeded the writeback limits. */
-> >   static void wbt_wait(struct rq_qos *rqos, struct bio *bio)
-> >   {
-> >       struct rq_wb *rwb =3D RQWB(rqos);
-> >
->
->
+Yes, this is good description. Thanks Marijn!
+
+> Hope I'm not considered being too picky.  I first sketch **how** the original
+> patch created a problem, then explain how this patch is intending to fix it,
+> and finally describe that we went a step further and ensured no other SoCs
+> are suffering from a similar problem.
+> 
+> - Marijn
+> 
+
+Its indeed a bug introduced due to msm_dp_desc_sc7180 re-use. There is 
+no widebus on this chipset.
+
+
+With the commit text fixed like above,
+
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>
+>> Fixes: c7c412202623 ("drm/msm/dp: enable widebus on all relevant chipsets")
+>> Signed-off-by: James A. MacInnes <james.a.macinnes@gmail.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_display.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+>> index aff51bb973eb..e30cccd63910 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+>> @@ -126,6 +126,11 @@ static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
+>>   	{}
+>>   };
+>>   
+>> +static const struct msm_dp_desc msm_dp_desc_sdm845[] = {
+>> +	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0 },
+>> +	{}
+>> +};
+>> +
+>>   static const struct msm_dp_desc msm_dp_desc_sc7180[] = {
+>>   	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+>>   	{}
+>> @@ -178,7 +183,7 @@ static const struct of_device_id msm_dp_dt_match[] = {
+>>   	{ .compatible = "qcom,sc8180x-edp", .data = &msm_dp_desc_sc8180x },
+>>   	{ .compatible = "qcom,sc8280xp-dp", .data = &msm_dp_desc_sc8280xp },
+>>   	{ .compatible = "qcom,sc8280xp-edp", .data = &msm_dp_desc_sc8280xp },
+>> -	{ .compatible = "qcom,sdm845-dp", .data = &msm_dp_desc_sc7180 },
+>> +	{ .compatible = "qcom,sdm845-dp", .data = &msm_dp_desc_sdm845 },
+>>   	{ .compatible = "qcom,sm8350-dp", .data = &msm_dp_desc_sc7180 },
+>>   	{ .compatible = "qcom,sm8650-dp", .data = &msm_dp_desc_sm8650 },
+>>   	{ .compatible = "qcom,x1e80100-dp", .data = &msm_dp_desc_x1e80100 },
+>>
+>> -- 
+>> 2.43.0
+>>
+
 
