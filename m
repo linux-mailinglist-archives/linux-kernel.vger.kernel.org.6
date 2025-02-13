@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-513696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AB0A34D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:22:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB7FA34D8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B418918878F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E3316EBBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127F0245022;
-	Thu, 13 Feb 2025 18:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D90245028;
+	Thu, 13 Feb 2025 18:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="eXD6QVlY"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKl3rQHe"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A651A14AD20;
-	Thu, 13 Feb 2025 18:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49D624501F;
+	Thu, 13 Feb 2025 18:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470867; cv=none; b=GM27rUKbB2KPq1omk2YWH0kk7irbsp+j6DM2FGirN7hFKkhGLT2wm2bdhSHLXp18CTVURt5fgfOICmTQUvaG2fbFjEQIkN8Now/bR24Rzg+FHas1uqtb3fflJPOsqi1HMt0iUqeuN4KkiRlxsneEvDNY2JDY85yTjhaGmm8ix9s=
+	t=1739470877; cv=none; b=oj6A/j0PXPC3M0xhNt0bf9fq/vthJs48pz71LeK/TSgr3TicHnQL2If4YlGVbjReRfhowNJNTo6g4duoV9LSmfA/9+8EWhyUIXuCBoWDk/mWJyxBdiAzK4hS2ANx4N9NsJpXgNoeBIfrMBmklzTJXVDz61Nq9avp1WDh7ewRRXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470867; c=relaxed/simple;
-	bh=HoGuwvkkZ61X0qjLx/+E4QKQ3NmWNVfOZHUa/voSrvc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NL0WGwUfQtUf4TYhCmEO18t8Zv3Y6SvLGkJkE95YOVsMTc8+gash5ZitseFfNPCh3TnUJyMFbyY3/Ut8yPD6piLwWCMt0HYWsM+dL6xZWUBLyys+Xt05P9SUKf/ouYiE9O6Lg60oqkRiIo7cTdJEsj4awlrBTGGoPXTJhWRP4LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=eXD6QVlY; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1739470877; c=relaxed/simple;
+	bh=GFVRQOMr5LkqU8Lku2OheFZ32wfU+LzSDcV5fBCXzok=;
+	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTwwGdz5uvlfICExjjZ5DV/f5tA02Zy95POTymmor4/mD8NxbATXybr9BCiAuTENwE19uwozMPLsJE+0gOfbqlZAaZ1yuuIUPO9fT9kHRj1rz6qRujP5Qb+2ucQxo7uUIcpdQi4wD/xnZIsOgQeXGuCTlD/e1BuJu05DByMT9x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKl3rQHe; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-219f8263ae0so20198075ad.0;
+        Thu, 13 Feb 2025 10:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739470875; x=1740075675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=s55JAvrkZ+mckTGI/dTfSx7v207w3H+pRifFPPJEuqg=;
+        b=ZKl3rQHe1oaxKjwvPfzUnFNpLCHGeXjW8XsWhGt0k2mVHDzoojrax06HC5B57O1a0x
+         XbPaWQmZb0H/CuGUy7iCeDeiu/psfJbaAAEqa/zHUeWRbCQTfGk8g27a0Qm6yyxnAETh
+         vOxiTbE+hXJc+VN1j90dw2heZ25EAbmeUGD85qr+Ixvrt1Yi88jXhIDkOWUQ3GjQj336
+         CxeQcGGzsdvwckcZVWqjn7efCayVx6hYW3em4D3u8vkttxCBTPizxmSGERwWADBNsoVu
+         UZ2pdxeVl4ZoSuMA7qVyRykF5nQtQz5J9PRZLm3BSd2liZ0cR+SAni61HnxlosRe0tYf
+         t1Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739470875; x=1740075675;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s55JAvrkZ+mckTGI/dTfSx7v207w3H+pRifFPPJEuqg=;
+        b=V51DCeT1L9Y+v9uehb4Vymg+rbv6RnySkCIxnpOPKOC663V0JECRW60JVJNa3MdsVc
+         TNiLM033Z5yg766KcZwmv7B49X1x7+XZcrefkbeQaILZIK3e/MsG55q8iNrgAD2CnAuU
+         SikwZmm80KGiGelvpLc7n84DZ/Zna7OVWqQ3yGCqkiGpCH6ZD2F4OvPxwglUJQS3PSfq
+         5+mvHMsk3nXejQnuL2eBy9eRDrT+oH7k09Ztuca/DrvKwK3YVzn3ORLCRlE95QveLukO
+         clV+pv6k3NdWfHjooJ1SOSQwAd6PTEOeOkJkjcarzCefqXz77I4AzBkW0m4W65PnoJpy
+         dnYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMJkb3YHlO69sNYFZNUi0lVB6cDQ/0dG7xD9R/8+SmYdWm3Av+LO7aKBLsEYJONmRjUU5rkJ8KrP/bNVUB@vger.kernel.org, AJvYcCXjHMMDYO418ZWcvAeNIVr0SoLmmiqEBLFp4u+5MVVQ1aFghg/D4P+HHc4O4Vnq4ltSQc7/k0BdYaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYz0Eb7I/TRQ4WAaNLtpe5OpFeM42OEJ0YURzzE0M94bUEkcir
+	HDHAknqxqXyG07IoltHczuYT1AbesbOkZ5qy+fesUxrsYJFiKCAR
+X-Gm-Gg: ASbGncvt71lMH5D+kjXvvND1K59ofH4th4Vg49R45jL16Okm1l6lswTpxjjFPRmPeG/
+	EJybocgwiMiscQCXhoB45nN1IZp9/N0cloJ2H1lP+M4nT44VRiGxxXlCK54DnQXqujB7/RckZmd
+	tMnDqcxpvHLfnrnpjX983Flq/xZB1QRg8Di+AxePuvrUNpOZcDyDmSvm5OGPGYqkKV8jLJn2frk
+	Lw2X/Oy7TSbPihtnxEdaGVx7X2noQJRTs3v4HnZZEh9yPqJKfVhcVsOsJWfPRNcQeeaup2UtbYG
+	zvAPWZQF8WgqLlEKF70knO63EorOzGUSqcfvuy8zMiM=
+X-Google-Smtp-Source: AGHT+IHHjbD3SCWpcLZyKdyhWklbzLgH1E7bHRn1Ff7UIDa2/tSONO7XHewrgjBHlMKmHedAoGZa+Q==
+X-Received: by 2002:a17:902:e946:b0:216:282d:c67b with SMTP id d9443c01a7336-220bbc67f90mr158799195ad.35.1739470874925;
+        Thu, 13 Feb 2025 10:21:14 -0800 (PST)
+Received: from asus. (c-73-189-148-61.hsd1.ca.comcast.net. [73.189.148.61])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585fbfsm15310745ad.226.2025.02.13.10.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 10:21:14 -0800 (PST)
+Message-ID: <67ae381a.170a0220.362a2c.8f42@mx.google.com>
+X-Google-Original-Message-ID: <Z644EoiqEy5YegEW@asus.>
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 13 Feb 2025 10:21:06 -0800
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] cxl/pmem: debug invalid serial number data
+References: <20250213064008.4032730-1-wangyuquan1236@phytium.com.cn>
+ <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1739470860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XESgz9twUHyVSNhT10Q8A1sgdFSZwNrxK44V9F1wSyY=;
-	b=eXD6QVlYZCbI39CJiNBmZxKbgLZ2ZCMbIqo5aN5UQVanZSN4yEzDI1esH2bv+uVa38TxLZ
-	mmrKt8pr/HZCYCbXLhpBKn24BB+oY9Vb/AReXJTnvu/Q5vtlplefGmm/MPSUIRaDucFEk9
-	Jx/cDOnq1am34NKE+8zffc3EXqCMrxA1zXL/57UTcAYDeMhx0+f5G6NPbXrMf97jbzn2Mn
-	vpBj9GNNzVZtO+lYy0EA6kzgYd02oxDqyBvuATvINC69xS4Jf6PvSIo5+W9cfGni0p4xu2
-	5PkqQJomY2vFcVhw7OEItbHb8jPP9PgRje7X2FhhzxSmQR7BxA0dSfUw4SvHPg==
-Content-Type: multipart/signed;
- boundary=d6b2ac2338a7d3d651a174d59cac49ab75295950d69be1697baac74a02d3;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Thu, 13 Feb 2025 19:20:49 +0100
-Message-Id: <D7RIYCL3ZCLT.2NAZXUAH4EQC9@cknow.org>
-Cc: "Piotr Oniszczuk" <piotr.oniszczuk@gmail.com>, "Damon Ding"
- <damon.ding@rock-chips.com>, <heiko@sntech.de>, <robh@kernel.org>,
- <conor+dt@kernel.org>, <algea.cao@rock-chips.com>, <rfoss@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <hjc@rock-chips.com>,
- <kever.yang@rock-chips.com>, <dmitry.baryshkov@linaro.org>,
- <vkoul@kernel.org>, <andy.yan@rock-chips.com>, <krzk+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <l.stach@pengutronix.de>
-Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Sebastian Reichel" <sebastian.reichel@collabora.com>
-References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
- <5044FFCB-B325-40D0-BA82-03AF64EAF029@gmail.com>
- <D7RH63Z1VBBD.1AIOQJIWPZIXS@cknow.org>
- <m3ovwhg3h2njsjpuj2wdahxex6zq2udmxonublgmnlrdfred4z@zxtyd6xvhram>
-In-Reply-To: <m3ovwhg3h2njsjpuj2wdahxex6zq2udmxonublgmnlrdfred4z@zxtyd6xvhram>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213064008.4032730-2-wangyuquan1236@phytium.com.cn>
 
---d6b2ac2338a7d3d651a174d59cac49ab75295950d69be1697baac74a02d3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu, Feb 13, 2025 at 02:40:08PM +0800, Yuquan Wang wrote:
+> In a nvdimm interleave-set each device with an invalid or zero
+> serial number may cause pmem region initialization to fail, but in
+> cxl case such device could still set cookies of nd_interleave_set
+> and create a nvdimm pmem region.
+> 
+> This adds the validation of serial number in cxl pmem region creation.
+> The event of no serial number would cause to fail to set the cookie
+> and pmem region.
+> 
+> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+> ---
+>  drivers/cxl/pmem.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> index f9c95996e937..89f4eac49313 100644
+> --- a/drivers/cxl/pmem.c
+> +++ b/drivers/cxl/pmem.c
+> @@ -384,6 +384,13 @@ static int cxl_pmem_region_probe(struct device *dev)
+>  		};
+>  		info[i].offset = m->start;
+>  		info[i].serial = cxlds->serial;
+> +
+> +		if (info[i].serial == 0) {
+> +			dev_dbg(dev, "%s: invalid serial number\n",
 
-Hi,
+Should we use dev_err() instead? 
 
-On Thu Feb 13, 2025 at 6:33 PM CET, Sebastian Reichel wrote:
-> On Thu, Feb 13, 2025 at 05:56:55PM +0100, Diederik de Haas wrote:
->> On Thu Feb 13, 2025 at 3:54 PM CET, Piotr Oniszczuk wrote:
->> > I=E2=80=99m playing with hdmi0 port enablement on radxa rock5 itx boar=
-d with 6.14 mainline.
->> >
->> > rock5 itx has 2 hdmi ports: hdmi0 is wired to rk3588 typeC1/eDP1 eDP w=
-ith ra620 eDP->HDMI converter and hdmi1 from hdmi/edp tx1
->> > (see page3 & page29 at https://dl.radxa.com/rock5/5itx/v1110/radxa_roc=
-k_5itx_v1110_schematic.pdf)
->> >
->> > I=E2=80=99m on 6.14-rc2 with applied:=20
->> > [1] Cristicc hdmi code (https://gitlab.collabora.com/cristicc/linux-ne=
-xt/-/commits/rk3588-hdmi-bridge)
->> > [2] eDP support for RK3588 (https://patchwork.kernel.org/project/linux=
--rockchip/list/?series=3D927765)
->> > [3] Add eDP mode support for Rockchip Samsung HDPTX PHY (https://patch=
-work.kernel.org/project/linux-rockchip/cover/20250205105157.580060-1-damon.=
-ding@rock-chips.com/)
->> >
->>=20
->> I don't know if it's relevant, but while HDMI0 got enabled for quite a
->> few devices in 6.13, it did NOT get enabled for Rock 5 ITX.
->> I made a local patch (which does the same thing as was done for Rock 5B)
->> but I have no idea if it actually works (I don't have the board).
->
-> I don't have the board either, but the schematics suggests that your
-> patch is not correct. On the Rock 5 ITX the RK3588's first HDMI/eDP
-> port should be enabled in eDP mode to be used with an eDP panel via
-> connector J11. This series is needed for that.
-
-Ah, then there was more to it then simply being overlooked/forgotten.
-Thanks for the clarification :-)
-
-Cheers,
-  Diederik
-
---d6b2ac2338a7d3d651a174d59cac49ab75295950d69be1697baac74a02d3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ644BQAKCRDXblvOeH7b
-btWkAQD7Rnz8K732UfDax3W2h4oUDuihiz5E2yvEznxKy0T19AD/Y9CH2/9L+kd9
-PlmYF17ranxTt4f2UCjh5/ZVNS9Mdgw=
-=MIH8
------END PGP SIGNATURE-----
-
---d6b2ac2338a7d3d651a174d59cac49ab75295950d69be1697baac74a02d3--
+Fan
+> +				dev_name(&cxlmd->dev));
+> +			rc = -ENXIO;
+> +			goto out_nvd;
+> +		}
+>  	}
+>  	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
+>  	ndr_desc.mapping = mappings;
+> -- 
+> 2.34.1
+> 
 
