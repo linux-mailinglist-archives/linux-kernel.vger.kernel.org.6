@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-513014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F360EA3408D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FD0A3408E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8C43A2AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D13A93BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9713023A98E;
-	Thu, 13 Feb 2025 13:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65723A991;
+	Thu, 13 Feb 2025 13:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UsNJuD4X"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a7KiYR8x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d/F0i+jH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F52227EB3;
-	Thu, 13 Feb 2025 13:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C452227EB3;
+	Thu, 13 Feb 2025 13:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454186; cv=none; b=o4iRU60bap7Q0nk/4FSohpWPsYCjWDOhrXQDB+2GZVtL6GmgARjPGTwVnT6dIbvVwu/pSrbgG0hgl6lxn/1FDf74xfcLkBdRZiKk9FLHupTnFtKq4iv69Q7TtMMpFIOhHM9yrNOOiQquBT19XBJWgRDvxSWxGD4vr01NgTUsTBc=
+	t=1739454199; cv=none; b=WWr+eIZRsyrW3ONDe3zBYufMfy+yHbpWR/AI1746kTF6wz83eYKGgF8m8l8+9mpimrcRLeorYQsKWsiqgu0WbkEWaVHbrWopcKLEHKzJyI5jOD5Lsoq0pDu+0ZqGQUJ97+nuZf5ZzytL/nxjzj4iCSs9vc4mUphQamzBttysKTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454186; c=relaxed/simple;
-	bh=k4RbEIyAR+ANn73bOtihxB6irmXjDRqcb9idZPMB5Yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IpiO/PGF4FOhJhw/Pw+0U5wBbluxL+tZEN76FusT9PtS0v80w1zbVlOp7RBVrYMsFZoleVafr6MHz3mpG4x+aEGWOSLuSx09AgoioISSzO44ieAZQu1LMdEtYxkEzO2xXXLuatOFfnd24xv+jyKOOBbhMom/jDmZRLrBw8PolDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UsNJuD4X; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0135D440EA;
-	Thu, 13 Feb 2025 13:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739454176;
+	s=arc-20240116; t=1739454199; c=relaxed/simple;
+	bh=ebgNp+yu/75osAcSngnR77FHcIFvn/fYZhFpRyoSv44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/xyJ/7fbECga8AAXffZO3T6ScNLCZpxmYAVdQ1sDNRImY0Ir5dpe0qlZvxSot3wOJmC32drb99FkBONikYvyDrhCWlaUZu0Yrs8Q5XdPt1BIAGN8t4RToYxZauJhQFPnZVN3+bXqEyH4Js1sUc/StRSUTu/dA+H68A1heRdLTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a7KiYR8x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d/F0i+jH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Feb 2025 14:43:06 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739454191;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Cm7XKVhBb29N/0ZGLeQV/Hvrssux+61wOZwuTX8KNK4=;
-	b=UsNJuD4XUBmjbgOSrbOsnmXWQjngrRl3HCRZ4AFsbr040l7wQWhGBAYM7ugvSPztEr404y
-	sG3AFOT35aee2kcyCcGkHVWHvDWLTMCVNE1ns8zVCQGnoWl+B0uAw9DpcqVXoo8ozUa6si
-	Jc1gBNVMH0/VFFCz0Rc0+nv4h3ejj3J77wPfgd91fgRYEn0cW0GJg3vXPzj0WO6lJY+UZm
-	MKNeonZzYcSWALUPCOm72eXlzDqM5xYBRM5AYeUyc7A4m5+2STYJhBFkV2mbfyCWgkViuB
-	ldlZfjaFDZunxqzdFCss+IKKZ0vP6wZ8nca4IX8LtwynwYIhz4hzGXWu5iWmbg==
-Message-ID: <64ec49f2-8c3b-4642-a910-32a656095c68@bootlin.com>
-Date: Thu, 13 Feb 2025 14:42:54 +0100
+	bh=ebgNp+yu/75osAcSngnR77FHcIFvn/fYZhFpRyoSv44=;
+	b=a7KiYR8xBV8RPvJSblYbogU2++Ph2RS10v+xmFFkZQuiy9UyJH5LKakgSMdvEns2TK2jKF
+	hD+zxyIcUjEc4TbRojYly/pWeF62EDiip7U8fG0YjeVaIhXLZSKU8OsNV7roDGjyFgV2w2
+	GRBdwP+d8/9qUgsrZPvUaYZy4YO9/wsQ+Pv4bZTJB5G1RmZSm44jhZlvvh7yZJIeVFjKEx
+	1ey5IDD7eAK5pzwilj6q6SzifANnIjR4d89YrH7mFEYpspsTmA0YjVjR2O9TMha61GXL0V
+	xP2lCt9Lmv0QhgD1VgvvjtcHjiCNFm2E6E+gzMSq04vxIg6qsgcAYXFf7KFSow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739454191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ebgNp+yu/75osAcSngnR77FHcIFvn/fYZhFpRyoSv44=;
+	b=d/F0i+jH7duEjQXv3ZYotuG7OmGmwZCMcuA9byuWB6Sj5F0rtvPDorEt1Bthg4Zubsnh/c
+	LXdicr2EzS7eFFAw==
+From: Nam Cao <namcao@linutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v2 23/31] watchdog: Switch to use hrtimer_setup()
+Message-ID: <20250213134306.4FjZjhmJ@linutronix.de>
+References: <cover.1738746821.git.namcao@linutronix.de>
+ <a5c62f2b5e1ea1cf4d32f37bc2d21a8eeab2f875.1738746821.git.namcao@linutronix.de>
+ <882031d8-5b8b-455c-9f5e-90090408304e@roeck-us.net>
+ <874j0yksc8.ffs@tglx>
+ <d94a8e53-41e4-40b9-aac4-0041ad5db9af@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: mctrl_gpio: add parameter to skip sync
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
- <2025021347-cling-smoked-9f28@gregkh>
-Content-Language: en-US
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-In-Reply-To: <2025021347-cling-smoked-9f28@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdetteektdehudelheehkeeggfejgfelveevgeevtdejudfgveetgefhtdduuedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddungdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugdrghgvnhhouhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghro
- hgthhhiphdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrsehtuhigohhnrdguvghvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvg
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d94a8e53-41e4-40b9-aac4-0041ad5db9af@roeck-us.net>
 
-Hello Greg,
+Hi Guenter,
 
-On 2/13/25 10:58, Greg Kroah-Hartman wrote:
-> On Thu, Feb 13, 2025 at 09:25:04AM +0100, Alexis Lothoré wrote:
+On Thu, Feb 13, 2025 at 04:24:25AM -0800, Guenter Roeck wrote:
+> I have no idea what changed since v1 or why. If you can see that
+> in the patch description, good for you.
 
-[...]
+The change log is in the cover letter [1]. I just noticed that I forgot to Cc
+the cover letter to the watchdog mailing list, sorry about that!
 
->> -	mctrl_gpio_disable_ms(up->gpios);
->> +	mctrl_gpio_disable_ms(up->gpios, false);
-> 
-> This a bad api.
-> 
-> When you read this line in the driver, do you know what "false" means
-> here?
-> 
-> Please make two functions, mctrl_gpio_disable_ms_sync() and
-> mctrl_gpio_disable_ms_no_sync() which can internally just call
-> mctrl_gpio_disable_ms() with the boolean, but no driver should have to
-> call that at all.
-> 
-> That way, when you read driver code, you KNOW what is happening and you
-> don't have to hunt around in a totally different C file to try to figure
-> it out and loose your concentration.
+This v2 is sent due to conflict with 6.14-rc1. Most patches (including this
+one) are the same.
 
-Makes sense, I'll spin a v2 with a more explicit API.
+Best regards,
+Nam
 
-Thanks,
-
-Alexis
-> 
-> thanks,
-> 
-> greg k-h
-
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+[1] https://lore.kernel.org/lkml/cover.1738746821.git.namcao@linutronix.de/
 
