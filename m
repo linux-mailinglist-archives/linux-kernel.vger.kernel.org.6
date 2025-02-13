@@ -1,226 +1,155 @@
-Return-Path: <linux-kernel+bounces-513893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D56A34FF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:51:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D19CA34FF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D77A16E1B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:49:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D733AFAE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8408266B47;
-	Thu, 13 Feb 2025 20:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2331FFC59;
+	Thu, 13 Feb 2025 20:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K1iIQcau"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbIPR2EJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297912222D4;
-	Thu, 13 Feb 2025 20:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739479663; cv=fail; b=EJsVKrEvCm67aP9znV1k7a7mnvX2JwA5cR/BrSxwmaFx17WbNaKhAsY3AVTDOCCr76k74pMuOlHhIvAQksIWrwPUD761ftdQVQ/6KFotCfRpmjbAaJePpUmYkQCMXA/oNgF19KfHlGBhV776eRuX5H1Q0M6CXeO9Xf8gd/+LnVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739479663; c=relaxed/simple;
-	bh=bBv/cHJoWP30EeIo3Bfq/0+joOKT/muTuW4K2Rodfdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ffjbVPnJIo5ZHRpY63L48air0fdFdLcQnnM8Df+vxHWlz9GUSB2vgXqVJk1jv+yT/1p1Mxa4A2PbqakVxAb08Bs3aPPqdDicsKv/0n6KXdNY0FzFWwlVDXlmH+wqgDr+S/mCCd46nDJzC82524xhgGIRseCRbquy6ZazK8ziK28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K1iIQcau; arc=fail smtp.client-ip=40.107.244.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=saM+HHQBoLltppBWq4Jg8Fh9AcwIZu3NMkI8KvT7qffXNxLhjDBygMm9hhsmB8kDvdR7aCXX+kFC+jbAb8TNNzPZLAcZotcwEDCLlv0dLYAnKbEsCofEaCFvex/bKSvwIg0nXRAvVKOUoxQmvZGbD3wEVPpzTGPlc+ULxt3byaA3EuAfd68phn6YGh5DDA6gmu9eOXqHUES/D0gvEEj8+HGCCePaP2w/s4NkyxyXjF4tT+YLNSDG9mHE56OTmqsUiAR5WQd7BU+ZmzUNRgcz0tWw2eGB9NWk0jccMsTJw8F1C3zUJRhb+wGOCh26L+MvV4sFbkXXBmGmbyY5SY/cAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AHqB7Db86HzeGpGgd+sEDolcgHdCq2uqF5v4s5Y2x8c=;
- b=qN63Jvmo08jjAHKWIoWJfDJ+O+NxZwOU9ze9wK4+pYgj0edRhUfeewHNSFWXb6XH/mxrzKB20NxzbjoJwQcbo6riiMgYJ0KaAwKGeFMEqEwafWLZ9WCvJNDTiJ3yV/SeLM1dypUC7qTBY1htn7ePbE86nwQvnP8UNa9gAUWjinWuLRvK8Dwf1uSG2anB1tCaSk4JwNJ/3tNqH1t8iGRZVTiJCrx+KpLYR0fnCSCeejvlxGGkbyeezstx9KvbaszEvniQEBsITFBIGtvcpIjDaGMExLKhWyHXgBQEuN2ZcNVYzSCH9iOexCmlfrqV3hT6WqSZO6RKwtp7esAHo6Aznw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AHqB7Db86HzeGpGgd+sEDolcgHdCq2uqF5v4s5Y2x8c=;
- b=K1iIQcauTvDj7ADDp0IvudpZH+XJKX8HmqaaECGUltBBsiVcurc7qR9usfchR/CUTHjYvoQnbm9HRN4464beameoPld6BxRSm3S71UC3g2498ngknm5TklNp/+ZMjRO+CB4qtYTDRRvO4LJvzO/Ki0/Y42l7p377HcCW+dyGpdFkjlMqH3Q+JZnwzSyBgY24gWmvEiNwkgr40S4Vebst89zCgO6EwmBeoIjzt5LffAqngqvIgi6hLvxqV0T0u5sanRNt0+8KUFOCm2P9d/Dqz83DTrHjBHaNZ/E7g3SCnwoUQrvQrGJpJN4FdafiwDouGDpDcv/SqpBcXpEpPoExcQ==
-Received: from BLAP220CA0023.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::28)
- by PH7PR12MB5782.namprd12.prod.outlook.com (2603:10b6:510:1d1::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.10; Thu, 13 Feb
- 2025 20:47:38 +0000
-Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
- (2603:10b6:208:32c:cafe::26) by BLAP220CA0023.outlook.office365.com
- (2603:10b6:208:32c::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.13 via Frontend Transport; Thu,
- 13 Feb 2025 20:47:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 20:47:38 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Feb
- 2025 12:47:21 -0800
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 13 Feb
- 2025 12:47:20 -0800
-Message-ID: <f2d3c4c4-0d5a-418b-9da0-f6f64f2c60ee@nvidia.com>
-Date: Thu, 13 Feb 2025 12:47:20 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F64266B54;
+	Thu, 13 Feb 2025 20:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739479668; cv=none; b=rJiVBRJt2xPbyo3GeqtVo3yutX3X9s7R0U6eJkf3R+AtGRo6Abum0CQQ8idHpT+JbOWJ5OaKwsL7o6yCmqVvc4BLWtu2CXrsK311aObKr2vF6IWSQQqru82hgVevg9UG30SPEKQMFOwGIjQCHR3TROrJD6bp/hm4YWi08oisckM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739479668; c=relaxed/simple;
+	bh=xsAbZvVEr/6Fsigt2bodFoyIOZi8VkbXaR8jtN+QkDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvpC/b30Rqsv2H3mug0rBxM0Z8XgLnLWyatdDysuFjPnXZzE+mXiv/MEXMiyvp0YO9O14eZZhxWa/DaWVh/Q+KI/Rf6t+Txo01Iedn2smyYtVmBB/SxlDLAqyNzmWjhTQvGVCrP2OgkDaLDj0u7/hWUwguVd+vECq3jfDtQ1FT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbIPR2EJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA490C4CED1;
+	Thu, 13 Feb 2025 20:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739479667;
+	bh=xsAbZvVEr/6Fsigt2bodFoyIOZi8VkbXaR8jtN+QkDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VbIPR2EJry14RyYsG9OCmVXECu2vsr0QZbP5dy8vQ+3FZtIl/NpwkB5HEH5/fh4us
+	 INQLijhO1RSLiewpXCDSOHETuy1rT42+mCLSnaiqRvT6KLftMmuV3p1Em0FQdkKusT
+	 e/51FOAu7XdYFlKIUjMrzgsvwdMBQgNHYojfPcPEm/j1heAvzysaBaOoTBtGo0M265
+	 HE+W36jwO68BOszt/wtWJS+7cePSXs8gdBUBcM2RAi4Nd6KMsOBna6wYdqHf+knkZO
+	 EX9iZ0yF3+UnbED0ge0nACKO0T1Wm6ME+68+NqBSZ+nZGq1KAzJrBo0HdTeCq97LTF
+	 AsmW36O62vZlA==
+Date: Thu, 13 Feb 2025 12:47:47 -0800
+From: Kees Cook <kees@kernel.org>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org,
+	akpm@linux-foundation.org, jannh@google.com,
+	torvalds@linux-foundation.org, vbabka@suse.cz,
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org,
+	oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
+	hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
+	adobriyan@gmail.com, johannes@sipsolutions.net, hca@linux.ibm.com,
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+	enh@google.com, rientjes@google.com, groeck@chromium.org,
+	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+	mike.rapoport@gmail.com
+Subject: Re: [RFC PATCH v5 0/7] mseal system mappings
+Message-ID: <202502131240.A57C749@keescook>
+References: <20250212032155.1276806-1-jeffxu@google.com>
+ <b114f48a-a485-4ebd-9278-6c62a1f33d9c@lucifer.local>
+ <CAKbZUD0TAX8F9kDCEEvGSbcegDD4GLyra3ewtxncBbs45WJZ3g@mail.gmail.com>
+ <7545d5eb-a16e-4cc8-a9e3-5431be01aade@lucifer.local>
+ <CAKbZUD3kaYEqQFU1TWfJWvtV02ESaMb0_ygadGgeAKo-b+GRcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] selftests/mm: remove local __NR_* definitions
-To: Li Wang <liwang@redhat.com>, Nico Pache <npache@redhat.com>
-CC: Dave Hansen <dave.hansen@intel.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>, Shuah Khan
-	<shuah@kernel.org>, Andrei Vagin <avagin@google.com>, Axel Rasmussen
-	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, "David
- Hildenbrand" <david@redhat.com>, Kees Cook <kees@kernel.org>, Kent Overstreet
-	<kent.overstreet@linux.dev>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Peter Xu
-	<peterx@redhat.com>, Rich Felker <dalias@libc.org>, <linux-mm@kvack.org>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20240614023009.221547-1-jhubbard@nvidia.com>
- <20240614023009.221547-7-jhubbard@nvidia.com>
- <dc585017-6740-4cab-a536-b12b37a7582d@intel.com>
- <12502c05-be51-4c9d-9cb7-5a40ba1fe307@nvidia.com>
- <CAEemH2eW=UMu9+turT2jRie7+6ewUazXmA6kL+VBo3cGDGU6RA@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAEemH2eW=UMu9+turT2jRie7+6ewUazXmA6kL+VBo3cGDGU6RA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|PH7PR12MB5782:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd5ec42b-545d-4a8a-094b-08dd4c6fa705
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0hpV2Z0WlQ4WFZsRWJ6UkxteklXWlFCcEZhUmFKU21tUWhYd0JJS1Z1OWZ5?=
- =?utf-8?B?NFJ5cm5iQVFSVUR1WDdDaHdzWTdaczlMU3VTcmNOeXltSmZNWDM2TlNrbk53?=
- =?utf-8?B?ZjI2NjVHTkRoTHdWaWh2RGswR0xXOWpDaUV6SkRtTEg0OWZKRXhKamluRjRV?=
- =?utf-8?B?SWxWR0xpR0R3ZCtTNDhpQi9LUlMxMWtDREtLMDZpQ21GcEpxQVNTS3dqTUJQ?=
- =?utf-8?B?TERON1dmU3RoQW1wSEdNVVNrL0w1ZVFaQlNqY0NOaEhFc2xmV1hMd1JXWGFV?=
- =?utf-8?B?MG1vRStHSjJPUWtVQ21HcEdIR3h6QzdPNkF1MmQrYmlvVm1zd3JoeG16NkQ5?=
- =?utf-8?B?U1daNXIxRkdRNzV5UU9KdzJxUmVRWGpaQWlVbmRoeGx3US9ocGt5UUk0VlVU?=
- =?utf-8?B?VFJpOXhBVXBMMFAzWDBHK1dDQi95NjlJa0Y1bGNjZCtzTURrZy9NWmF0K3hy?=
- =?utf-8?B?bld5V2QyMk4yUDFxWlVFdGlxMjRvZnpDckVhKzVESVBLWGcwS21XT1o0cVVX?=
- =?utf-8?B?UVN2Y1FhR2VrVVhtODR2aTBod1A0NnBRTzVWMnFuZFQ4MzdUaTJGVlFSN3JC?=
- =?utf-8?B?azJ5L3dKY0llNG9va0tZV1k2MkFlUk4wM0R2TU50eEFaaFkwQWpsMzYrczJk?=
- =?utf-8?B?WXUvaStHWlI3VDVQS2tJWlZkdFZxY1JJMHhMbklKWmVXUnJKWlFwOUthWXNQ?=
- =?utf-8?B?N3dIaUg5YUFNbzNsWFZyekNJSkd1Z05qeEx0MC9HRTBpMHNWNlZsaytScHoy?=
- =?utf-8?B?NnUycnkraWllNDE5aklOc3dLOFFUZ1BHbVJnL01QMDI5YnlmSTJFMlg2QkxJ?=
- =?utf-8?B?WnJvUUFzV2ZScHltYWFmeXNJeFhVcTlQcDJMOVJBVjFJcWxHRkFMQkUzZXlq?=
- =?utf-8?B?UWxwZGtHcUVFV1FhZ24xTDhDeERYNnZjT1M0NlBMNkwxZGE5c29KT2NMWDlD?=
- =?utf-8?B?cjdNakszKzhtVUx5RkxaWFk4Y0svdTluTnhRU2R6am1KVzhtbGpaNFFWTjFU?=
- =?utf-8?B?SUVxS1hXU0ZnWTR4VDhzbUJHR2lia09ZbFpoY0poM280enhnNVNLRitVSjdQ?=
- =?utf-8?B?YzhNc0diUDBoYm1GS3kwNldERHVGT01hTTVsZ0tGNThFZFZNWjlZUDRTdVIv?=
- =?utf-8?B?N00vdUZQb3FLVXI5RlVURXQ1Znl6V0N4Mks5UndOem9qZWY5RWhpMUp6STdC?=
- =?utf-8?B?NVBZTWNJSndLSHZRS3J5QlR1ZVZQV2oyN0xjcFhxZE9XV3k2Wk5kLzc4K3Z5?=
- =?utf-8?B?d0lPQjE0bkpVcjRmbERzcEU3ZkNGRUVWZURWNEVIMzhwY0xsK0ltdkMybDZX?=
- =?utf-8?B?eTArUVpKV2F5aFQ5bEU1Nk9uR1FyUjAvRWxJUVRhbVBUMFNhQ2FHVEFCOTg2?=
- =?utf-8?B?WmdqYjdYTzNLSUgvZnptRjFPdFdyenROZmhTTzVBYkMwMFFxNHI5aGFrYWdD?=
- =?utf-8?B?SmR3YjN5dENPWXhWVldyL0FicUZVT0VlOUtsL3NvbDRSd3pvZzQ0OHk1aHBD?=
- =?utf-8?B?Ynh6RW85WjNsd2dlSy9oZUg5REkxcCt4OEppNGtHODcwcUNzWkZyeFplME81?=
- =?utf-8?B?b3RNSWFJUUprRW5xaXVxY0ZQVnM0YytUTVJxVzl1d2h1WS9wamdkelRjTlV5?=
- =?utf-8?B?NGhGTWV5L1N1Z0NVUCtpN1VnaHAreGhUY0Nhek9hL0hYWkd4YVE5anFRQVBq?=
- =?utf-8?B?TEtuUXNSS2kzVWVLMjdqRE5teFBFd2t4Z2d6eEh4L0JTTVF2NUdycmVpcW4v?=
- =?utf-8?B?SmNFZGU1K041SCszWjlUNSs3YUh1enlRUHNtc2tUbDdoNStqZXNjUE94MnFD?=
- =?utf-8?B?V29iWFdPWW9uSkxOaCtlczBlVytpai9obHcvNXNhZ0pUTmxJaWYvalh1eUxp?=
- =?utf-8?B?dWpRQmorRUoyNW1teEhFYjkrRHBCdUNhMVJhWE9sZFBWdEIyRFh6WGhsNjdq?=
- =?utf-8?B?YmZlRWVEdUZMQWtJM3puVzlQQUw3TzFvK0hPUU1VcmN0NEJZT042OGJ1TDha?=
- =?utf-8?Q?R0Ub9wlQS04UKwN8ebgYdW4Djeo0wc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 20:47:38.1496
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd5ec42b-545d-4a8a-094b-08dd4c6fa705
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5782
+In-Reply-To: <CAKbZUD3kaYEqQFU1TWfJWvtV02ESaMb0_ygadGgeAKo-b+GRcA@mail.gmail.com>
 
-On 2/13/25 3:32 AM, Li Wang wrote:
-> Hi John,
+On Thu, Feb 13, 2025 at 07:59:48PM +0000, Pedro Falcato wrote:
+> On Wed, Feb 12, 2025 at 2:02 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > (sorry I really am struggling to reply to mail as lore still seems to be
+> > broken).
+> >
+> > On Wed, Feb 12, 2025 at 12:37:50PM +0000, Pedro Falcato wrote:
+> > > On Wed, Feb 12, 2025 at 11:25 AM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > >
+> > > > On Wed, Feb 12, 2025 at 03:21:48AM +0000, jeffxu@chromium.org wrote:
+> > > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > > >
+> > > > > The commit message in the first patch contains the full description of
+> > > > > this series.
+> > > >
+> > [...]
+> > >
+> > > FWIW, although it would (at the moment) be hard to pull off in the
+> > > libc, I still much prefer it to playing these weird games with CONFIG
+> > > options and kernel command line options and prctl and personality and
+> > > whatnot. It seems to me like we're trying to stick policy where it
+> > > doesn't belong.
+> >
+> > The problem is, as a security feature, you don't want to make it trivially
+> > easy to disable.
+> >
+> > I mean we _need_ a config option to be able to strictly enforce only making
+> > the feature enable-able on architectures and configuration option
+> > combinations that work.
+> >
+> > But if there is userspace that will be broken, we really have to have some
+> > way of avoiding the disconnect between somebody making policy decision at
+> > the kernel level and somebody trying to run something.
+> >
+> > Because I can easily envision somebody enabling this as a 'good security
+> > feature' for a distro release or such, only for somebody else to later try
+> > rr, CRIU, or whatever else and for it to just not work or fail subtly and
+> > to have no idea why.
 > 
-> On Thu, Feb 13, 2025 at 6:31 AM John Hubbard <jhubbard@nvidia.com <mailto:jhubbard@nvidia.com>> wrote:
+> Ok so I went looking around for the glibc patchset. It seems they're
+> moving away from tunables and there was a nice
+> GNU_PROPERTY_MEMORY_SEAL added to binutils.
+> So my proposal is to parse this property on the binfmt_elf.c side, and
+> mm would use this to know if we should seal these mappings. This seems
+> to tackle compatibility problems,
+> and glibc isn't sealing programs without this program header anyway. Thoughts?
+
+It seems to me that doing this ties it to the binary, rather than
+execution context, which may want to seal/not-seal, etc. I have a sense
+that it's be better as a secure bit, or prctl, or something like that. The
+properties seem to be better suited for "this binary _can_ do a thing"
+or "this binary _requires_ a thing", like the GNU_STACK bits, etc. But
+maybe there's more to this I'm not considering?
+
+> > I mean one option is to have it as a CONFIG_ flag _and_ you have to enable
+> > it via a tunable, so then it can become sysctl.d policy for instance.
 > 
->     On 2/12/25 12:34 PM, Dave Hansen wrote:
->      > Hi John,
->      >
->      > On 6/13/24 19:30, John Hubbard wrote:
->      >> --- a/tools/testing/selftests/mm/protection_keys.c
->      >> +++ b/tools/testing/selftests/mm/protection_keys.c
->      >> @@ -42,7 +42,7 @@
->      >>   #include <sys/wait.h>
->      >>   #include <sys/stat.h>
->      >>   #include <fcntl.h>
->      >> -#include <unistd.h>
->      >> +#include <linux/unistd.h>
->      >>   #include <sys/ptrace.h>
->      >>   #include <setjmp.h>
->      >
->      > I'm not quite sure how but this broke the protection_keys.c selftest for
->      > me. Before this commit (a5c6bc590094a1a73cf6fa3f505e1945d2bf2461) things
->      > are fine.  But after, I get:
->      >
->      >       running PKEY tests for unsupported CPU/OS
->      >
->      > The "unsupported" test just makes a pkey_alloc() syscall. It's probably
->      > calling the wrong syscall number or something.
->      >
->      > I think it's still broken in mainline. What's the right fix?
-> 
->     omg I think this is an asm-generic include mistake, I'll check
->     on it in an hour or so, in more depth.
-> 
-> 
-> I just found that mlock2_() return a wrong valuein mlock2-test,
-> I guess that was caused by including the wrong header file
-> <asm-generic/unistd.h>,which might define a different syscall
-> number than what the kernel uses on the test system.
+> sysctl is also an option but the idea of dropping a random feature
+> behind a CONFIG_ that's unusable by lots of people (including the
+> general GNU/Linux ecosystem) is really really unappealing to me.
 
-Agreed.
+I agree 100%, but I think we need to make small steps. Behind a CONFIG
+means we get it implemented, and then we can look at how to make it more
+flexible. I'm motivated to figure this out because I've long wanted to
+have a boot param to disable CRIU since I have distro systems that I
+don't use CRIU on, and I don't want the (very small) interface changes
+it makes available into seccomp filter visibility. And if CRIU could be
+run-time based, so could system mapping sealing. :)
 
-> 
-> Shouldn't we make use of <unistd.h> directly?
-
-Well, yes and no. For now, there appear to be two commits involved
-in causing these problems, and the __NR_* parts need to be reverted.
-
-I'll explain more when I post later today, but for the moment, the
-first, mseal- related commit below has some hints about how we got
-here:
-
-504d8a5e0fd4 selftests/mm: mseal, self_elf: fix missing __NR_mseal
-a5c6bc590094 selftests/mm: remove local __NR_* definitions
-
-
-thanks,
 -- 
-John Hubbard
-
+Kees Cook
 
