@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-512706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A14A33CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:37:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37952A33CD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9193B168F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B8F3A5454
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA686212F8F;
-	Thu, 13 Feb 2025 10:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B0121322B;
+	Thu, 13 Feb 2025 10:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yiYMFmlV"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2071.outbound.protection.outlook.com [40.107.101.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnsCqf8V"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2C41FAC42;
-	Thu, 13 Feb 2025 10:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443034; cv=fail; b=WXfQA6F9XJ07eIMnL3eEreZ7VCRb0giaTTbol1sZocAdKpZEsZInNiqUEiNesZNXKHtPzm41uRCzj0QMM8UZuGL1otXlCIb33R2Y6bCDrzGsnSjNEVvhspiNVEzjZwmxwee79lOaMjUJtNzT0VRH5HRrNEC40bvV9QSf6xdqGV4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443034; c=relaxed/simple;
-	bh=8fThFyPgopj9CxMl8VuUuX06i2MvK58ogjoqLB0sxag=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o4aLxIxjF0/AS24+DUbbpoi2de0U3h6tYeYzU/zWjQHlHLnH8vqQ/HcqKJd88MsQ7BaMMZ2eTSBDQAlyRiKi1EWLzpDlHQJPmLU8VrJP0Rx4G+02lknWm3h11743vePlwHZdL41YspmwTOAx74LSxvaZ8AyAn4sH90RNAVoVII0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yiYMFmlV; arc=fail smtp.client-ip=40.107.101.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IfGu884o+CXHKj93aYVApg27/zWy9/8ZLSNsbQYjmZIAI2+Jcb88su6xUprtzNQN5fB4FTDmu1sgCbstOzss9nhk+Q3DR9JxQVq2tpBpc6SL+t034iLPgCHKr3XVAKq6tu2G/I7aCSPokMDxMcLxUguSqG4MLM/q9z4ow/yeUt7QWPuAWGuUpb3Gg9Rdzjs6UjtQBJa64TzKDlKKdvxqDy6noOIx7Df9dg5FzGMnHcIR/cqlyv1jxyTLwMEEehps27LsDd23paj7r/8OP/D2xYno5CMcIWJaEcu9hwZZioDiohr4vyOUk4zmLPv+ZisOK+eScJDsAn1JYiq5HsWAFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MhexIHlToGnPYaq0r9lMR8jYHALG97KweOlNfijanVQ=;
- b=bw0uKMnGt4pAXYDaM5rGvp+9t7PYt48p/eoEqpK6IoaOxKCaj1W5QY17SB+dXaJk84cJOJ7gGKZ6zHs0bz7WfMdqKfi4lJ6/t8Aff6/XIrRfI+hNXINTow6hb6aEcnc/v006zyJQSz00yd3Al5bGPfoxb463816DLfZ5D9qVQF2oHbHItgspkZL6YcvoZz1VEfxWGw4Atm1xT5Q8ZmrmAm+d4XtrDGL58W+hV0SKyF5VeLWoRtfbUTe17wb5oRSf9IfJW20V2SrrArDNqEPgiDIQzo8YeOtyngTRgwPaM8gr0tTi+dm2h9GUr3nTeo0Bvdj9l9zpJBCJbgdNU7LLmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MhexIHlToGnPYaq0r9lMR8jYHALG97KweOlNfijanVQ=;
- b=yiYMFmlVgvuDZBZX35wsuPkWz+LAOjllMkT+zE2sZBMCn9rzxUQWDCs8gF7mSEhW7eCljOWo6xDgVkCveMEPcSbU9wVXM51sxOjEpOYMn5qsbRlqiKQxruXTgvCI28H9rU+nS9n+shk7QhuYm9PFUJKxWF5GVObkzfha0iIScQ0=
-Received: from DM6PR11CA0019.namprd11.prod.outlook.com (2603:10b6:5:190::32)
- by MW6PR12MB8867.namprd12.prod.outlook.com (2603:10b6:303:249::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 10:37:09 +0000
-Received: from DS2PEPF00003447.namprd04.prod.outlook.com
- (2603:10b6:5:190:cafe::34) by DM6PR11CA0019.outlook.office365.com
- (2603:10b6:5:190::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Thu,
- 13 Feb 2025 10:37:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003447.mail.protection.outlook.com (10.167.17.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 10:37:08 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 13 Feb 2025 04:37:03 -0600
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
-CC: <venkataprasad.potturu@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, <Syed.SabaKareem@amd.com>,
-	<Mario.Limonciello@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Subject: [PATCH] ASoC: amd: ps: use switch statements for acp pci revision id check
-Date: Thu, 13 Feb 2025 16:06:52 +0530
-Message-ID: <20250213103652.1082203-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F08210F5B;
+	Thu, 13 Feb 2025 10:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739443055; cv=none; b=AQtpPmeyH5W3wsTVNoKYcHiYWGtKBCM2fmbvkCkLIyNvET94IXhF4BwrMdcDcCZYYzn5bHgtEL7BnWdAz9Fce2bHZJ8ipcxXoMTaL89+VVzNFx4ldZ7sQ+RBq+fmywG8k8G0BfM7eyy8cpPBoHfBH/03Csdq4KFIwhKRisESGw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739443055; c=relaxed/simple;
+	bh=x59ELff3Ko9XV3P4AzW9q22BeUT9x3Uw9yDPdDi/YBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WyXE6+KEor5FuwzrmWE7o2PGGckZLpAQi+FRd7/QTepy9wLRbBKjrmFbfFHkEvKMnO4iTUHAQfiAva+aRvzbL2++0fWfcSbuz+xCH/EFjzuSkYuKkn5ZVJp2t/abuIT9Z3XwvuwqrQgyZvc2OOpXhpQrVH5oSYIbqnGhNgFvXLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnsCqf8V; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fa48404207so1600984a91.1;
+        Thu, 13 Feb 2025 02:37:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739443051; x=1740047851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fpTN9u4BUWo3INTZx8FXN6C9iuKB5h3rpN1TXdUrLeg=;
+        b=UnsCqf8VYwHzFg4I+QSZhpV2eMZC6iyBV4SM9KsFFI4dPlsedfGayKORt6cVuD6L+q
+         qCrx7rQHNs0kOrGniiMnykzAgnzgqcxwz2OJqneKDc9ks2SrFbXNS33iceEKHBcSdqh7
+         QNvXkwTcJPc6ygVrOD4z2Rudoo/CmG00NnUKGPdLyq0ooZa7aTEb/7sZ2ZeqLBBObYNa
+         r0mj1XeRWG+6jRGCiFcFHPwYNNWDEIh6rv8hn+rBAE478VqNxbUiCEm+0mz1w69Yu8qa
+         l8SI6pu3/mBCaENNj8q0GJEHhPoer701g4J2sC8PCksEu27g2Lv1aQK1tw7ZQs2hfpIb
+         6eag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739443051; x=1740047851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fpTN9u4BUWo3INTZx8FXN6C9iuKB5h3rpN1TXdUrLeg=;
+        b=rIc1EtOIwsa8kyV5BfW+bTq3Q3/1FZwyGS2rUsWyC8CS8SI+CiUKKV2Drk+HumBdk9
+         MiJnvtzoE/G/cTBw7oiSsRkjkPfzwwMpupmQF4OCeSEdwP76A+q+7qcI0S4qrZqPWpq3
+         vtK47SGuSbgG172YJYkCfMLRR96OAdlilj9v1uqQ5rHsO+qEyTrrrJuv3AxspjwI7+v+
+         Sa2AtAr/5/LrtTbV6pVf/44NmQBaGNs3bjBCZzOfxZ2jRhK8UdlH9Q2Hu/27fNrmzp9X
+         i1TJ0aULpTYbz5fZonlFFNfs6pvafA2DEEdZ3FpgxJ92MUG38pR6tWnmMG2q0PPF6LId
+         0OWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWl/mg741k/XjoPrm9RV1/R+rgrrBEw0P0Uhcgd/Z3Y0Sbto9p68iV2ojaKeBkMGvrcChyaJYgHDtJQ@vger.kernel.org, AJvYcCX9SG/tD8QMRQ+KcsXeuyoo+B42vMf1mEiA1IJCUE1kJhp5ufUOZcThednOslDgm/xQZt0dTttem3IhBMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5E/uOzLW2xRu+mcHB/oOHqo+w+1S5loQ8IZ0IY/SMe8eiohjb
+	lcshXFPUAewTwfj0YzJSJbqKBVlsdeuseYHYsGEyZjfNXdZh0Gnz
+X-Gm-Gg: ASbGncvU5W+okUCaHfZl6qfyeCOmcTa7TOQeJdVt0moHDoi3x9FL2HfkMsSrZbWWyHR
+	0MohwwSCnDtXXmpSfuTxNcWzBzbLEnt2ciz5VCdefRqGUaGDFCC150AB1AESMI8uxC1CESU9gzX
+	QoFnyJ01YvxKijPmig7+fiNxuJ5j/Umh3+FGyqJnyJXtuoVcZdkzNidQj5X7RrV69KOaxo+hqkT
+	ysfCAcNJfN3A3LnAJPhIf/wY2QH97gNRdCwW32ZvCTzf8CY6RXJUzbLDNtHUiifvW40zbic3cpD
+	sWhfBWCSH+8W/AmnJruX6A+Kq6Kz5oUxu585lv5dXuxgWtkqMCAQ/far92bkb4G0
+X-Google-Smtp-Source: AGHT+IFp9c4drkpPNFVMCkqQiOLv9O1FyLLSPt+myo1vKT8Z4QPUvCWKntfraEFXNe44f81QtBObXA==
+X-Received: by 2002:a05:6a00:3403:b0:72a:8461:d172 with SMTP id d2e1a72fcca58-7323c1055a2mr4933229b3a.3.1739443051413;
+        Thu, 13 Feb 2025 02:37:31 -0800 (PST)
+Received: from ?IPV6:2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e? ([2409:40c0:2e:ea4:cd5f:9fc:dd5e:c44e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324276175fsm991569b3a.143.2025.02.13.02.37.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 02:37:30 -0800 (PST)
+Message-ID: <93cb6da2-5bba-4574-88dc-1f3d03a9b8b9@gmail.com>
+Date: Thu, 13 Feb 2025 16:07:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003447:EE_|MW6PR12MB8867:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02b6295b-808c-44ce-b623-08dd4c1a5e44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NHvUiEZbpC9arqBm9vMOBANy8ZX1i85EGMw2N7PjWz5enph6z9KQirjdPDGe?=
- =?us-ascii?Q?Z8biudCrC0usWV0mYGXs8MpCmjc2qTbikjl/tLLtM5xv7Losbp3lZOhgfBxG?=
- =?us-ascii?Q?4F5WPD2IIlAaDYa23RdXiOcWFNycSrudCwFGZECCr5zO9k/yE7+eVfmNpcgk?=
- =?us-ascii?Q?oxyyfx3GA78rNH6WgWoVFYjLq3ngkGCJiYFw9NqMeryIXiqXADLPWNDJy2qG?=
- =?us-ascii?Q?E8miraEKXPzmVVEEBirBK/y8x5VpiZ+ZWpvPDFsVT/qawax7Rvw47jYuqxmF?=
- =?us-ascii?Q?+jETuXm5RKgVRqf5Qyx5vSe4aHBrX1JhoZ/AiFNPqdpCBCzDS4Zyib0OWNkc?=
- =?us-ascii?Q?IBzrRm3qgxymtwqwPoBHRwvuJ5J+CpsY/wzrj731dUh/kBExeZIvMUYyiFJZ?=
- =?us-ascii?Q?Z8tZzs0zX48Gt548euhYLb2SE+OYTJsCrgdbLJL2bUgXysMpXlKWTVjMiH/t?=
- =?us-ascii?Q?jlL4g+NecXGGDj53yagANvDW4m/vKJTCjDEvgWhygu5s/bBpq9Pj9/yy+WTz?=
- =?us-ascii?Q?dkrM50thX36G57+bpxqBKQck1pJykeK8QT45BODTXQTYsQXFwRizdI23L2JS?=
- =?us-ascii?Q?wfaIGkCkrItCNn7jeclIhCCTskv/hEGEeWHd9uI78FSh2NHqytGkokjKws1/?=
- =?us-ascii?Q?OMwjmHkrBTFiKv+sbH/c7deEpn9oLsYRW115YIGdAvWpoijCZM9paCgCyYPi?=
- =?us-ascii?Q?JyHTI6clGAHgQGi1bwhZAXCD+RE4Gn9tUEzKnJz26dQdfGwz80W1dZWVkFwL?=
- =?us-ascii?Q?GxepuK6tT6iDZhQSqHQ800R5au9FU4GaN1613AXgKAB3X1IrauLFaNJ1k/dw?=
- =?us-ascii?Q?jxyspeOYdETR++6oHwIR7TnoO+29Ejs/jvENgvLlJRAJkLA3JtWZHJNElnMy?=
- =?us-ascii?Q?Ix46nAFn5SULx/n62DEJSx6XoldaSWWuaKCOGAZ5kGgh3vf6zWqp/qFmfDho?=
- =?us-ascii?Q?YyOA9WXcLUVYV3Tt9ggfVXFcWZXxdT82IugHLhCZoyNsaUmP828nyXrsoG5P?=
- =?us-ascii?Q?SVYlE+ZjS9iWzckxv5S4vjzzxnE+ICepvROPdiDYxBBkurdGZDsoALaofozR?=
- =?us-ascii?Q?2tfZUPFA9yNsUvhkahZJQ1OYomb9rEQhVeLd5XJQbR7AbETxhI/orBI231hP?=
- =?us-ascii?Q?mxyqqjFDB8YPs3zaorzSJFr98O8Dh1YeJUpvXRrKjK6IjLwnpbMfSF+S+Nbq?=
- =?us-ascii?Q?WnpdHXiZR2ndGuXxKlYLaWZWqu4xkMPu1sLu6JCTOde73CKjI4FNhlzhWz2x?=
- =?us-ascii?Q?tsh7h86Y5EcI3mcfyMS0QKGO5sOgS2dvLEHWeR7ASXWivBV5wyDbfM2gzJ6U?=
- =?us-ascii?Q?6GiYpJIJOQO7dQJdqY9c2LBooY4HYYJIde54vGTakUUkwem5GPQt4qdjbY8j?=
- =?us-ascii?Q?TH7ROQaWfhEBnkCk0kdvuKQrJSkinGsIOymUOrglHQlihVnrhc8bCCCjj0NF?=
- =?us-ascii?Q?lpgiBXww4swwbcFjjmCLBo0R2D5QGrG0Lyz68gsQbg+PquOFknwX4zN2XssA?=
- =?us-ascii?Q?xn3FscIcrgZFsAY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 10:37:08.9806
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02b6295b-808c-44ce-b623-08dd4c1a5e44
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003447.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8867
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers: pci: Fix flexible array usage
+To: Keith Busch <kbusch@kernel.org>
+Cc: bhelgaas@google.com, skhan@linuxfoundation.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250210132740.20068-1-purvayeshi550@gmail.com>
+ <Z6qFvrf1gsZGSIGo@kbusch-mbp>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <Z6qFvrf1gsZGSIGo@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use switch statements for acp pci revision id check in SoundWire
-dma irq handling.
+On 11/02/25 04:33, Keith Busch wrote:
+> On Mon, Feb 10, 2025 at 06:57:40PM +0530, Purva Yeshi wrote:
+>> Fix warning detected by smatch tool:
+>> Array of flexible structure occurs in 'pci_saved_state' struct
+>>
+>> The warning occurs because struct pci_saved_state contains struct
+>> pci_cap_saved_data cap[], where cap[] has a flexible array member (data[]).
+>> Arrays of structures with flexible members are not allowed, leading to this
+>> warning.
+>>
+>> Replaced cap[] with a pointer (*cap), allowing dynamic memory allocation
+>> instead of embedding an invalid array of flexible structures.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>> ---
+>>   drivers/pci/pci.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 869d204a7..648a080ef 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -1929,7 +1929,7 @@ EXPORT_SYMBOL(pci_restore_state);
+>>   
+>>   struct pci_saved_state {
+>>   	u32 config_space[16];
+>> -	struct pci_cap_saved_data cap[];
+>> +	struct pci_cap_saved_data *cap;
+>>   };
+> 
+> I don't think this is right. Previously the space for "cap" was
+> allocated at the end of the pci_saved_state, but now it's just an
+> uninitialized pointer.
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/ps/pci-ps.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
-index 220dca8cba85..2ff8e67c19bd 100644
---- a/sound/soc/amd/ps/pci-ps.c
-+++ b/sound/soc/amd/ps/pci-ps.c
-@@ -111,16 +111,21 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
- 					stream_id = ACP63_SDW0_AUDIO2_RX;
- 					break;
- 				}
--				if (adata->acp_rev >= ACP70_PCI_REV)
--					adata->acp70_sdw0_dma_intr_stat[stream_id] = 1;
--				else
-+				switch (adata->acp_rev) {
-+				case ACP63_PCI_REV:
- 					adata->acp63_sdw0_dma_intr_stat[stream_id] = 1;
--
-+					break;
-+				case ACP70_PCI_REV:
-+				case ACP71_PCI_REV:
-+					adata->acp70_sdw0_dma_intr_stat[stream_id] = 1;
-+					break;
-+				}
- 				sdw_dma_irq_flag = 1;
- 			}
- 		}
- 	}
--	if (adata->acp_rev == ACP63_PCI_REV) {
-+	switch (adata->acp_rev) {
-+	case ACP63_PCI_REV:
- 		if (ext_intr_stat1 & ACP63_P1_AUDIO1_RX_THRESHOLD) {
- 			writel(ACP63_P1_AUDIO1_RX_THRESHOLD,
- 			       adata->acp63_base + ACP_EXTERNAL_INTR_STAT1);
-@@ -133,7 +138,9 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
- 			adata->acp63_sdw1_dma_intr_stat[ACP63_SDW1_AUDIO1_TX] = 1;
- 			sdw_dma_irq_flag = 1;
- 		}
--	} else  {
-+		break;
-+	case ACP70_PCI_REV:
-+	case ACP71_PCI_REV:
- 		if (ext_intr_stat1 & ACP70_P1_SDW_DMA_IRQ_MASK) {
- 			for (index = ACP70_P1_AUDIO2_RX_THRESHOLD;
- 			     index <= ACP70_P1_AUDIO0_TX_THRESHOLD; index++) {
-@@ -166,6 +173,7 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
- 				}
- 			}
- 		}
-+		break;
- 	}
- 	return sdw_dma_irq_flag;
- }
--- 
-2.34.1
-
+Thanks for your feedback. I understand your concern about the 
+uninitialized pointer. To verify this, I tested the file using 
+'~/smatch/smatch_scripts/kchecker drivers/pci/pci.c' smatch command, and 
+it did not report any errors indicating that cap was uninitialized. 
+Based on this, I initially believed the change to be safe.
 
