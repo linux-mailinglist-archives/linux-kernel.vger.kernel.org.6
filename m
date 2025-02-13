@@ -1,82 +1,156 @@
-Return-Path: <linux-kernel+bounces-512768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B4BA33D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:13:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C43F7A33D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24D0E16285F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7B9162CA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E0D2144B0;
-	Thu, 13 Feb 2025 11:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="naP3ufPc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ousbKIBZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BC020AF66;
-	Thu, 13 Feb 2025 11:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAC42147F7;
+	Thu, 13 Feb 2025 11:13:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4727B2144AF;
+	Thu, 13 Feb 2025 11:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445178; cv=none; b=oj+e7qr/vSctVppvmlBrjUHQN6F6aFLaiAnY32rjsJjX39OhbpPHt35MXAW9igudGnbvbwo/atKQ0cMjunLfC4nrCvjhw8aWzQWQdwpvhGSxXAQqngWXMh79PrQND6hOyGU+QmP1cFwDlgCuGPLxfxYvHEV+qcHuHnaLd760HnY=
+	t=1739445204; cv=none; b=MErwvVFdbMY1vZhFblAch3s/4tVuQCi7mzR0MT/t4ROoMCHqwxaS3pLB1M0Sq2iU+jY7rOPHdmzaIKzFuUFPabddlzpfg0Y2SHwqlf2fQ1+kr3pyFJpRbbEF3YeMFBC25pWWUeeyoeneELA+f9QKNCsMYuT/W80wp1/yfuY37fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445178; c=relaxed/simple;
-	bh=OR5nQBHI4HVMEigRRodM8Wtr5yOnyxnjuIFM4Grfh4s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mrMIBqAWY719cGT62i5t0pP+iyD4Al/WrIMdJE3OcoUJz/k2IS2RcIBw6Dwq9o9xl2vWGBOflyAJ2dvl6e8GMrW8yZlhFYXH0Al4Qc6KvVDZzQupktcmYpuSgfooLRfP9PEvgaLj0QN8lUROf6dLwF66We6jlOhGG8ym2urwh2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=naP3ufPc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ousbKIBZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739445174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OR5nQBHI4HVMEigRRodM8Wtr5yOnyxnjuIFM4Grfh4s=;
-	b=naP3ufPcsXpD2FEyWf/FFXqJeIE9MyRhwHSSAHdavTVrc6eeElAA5iJInFZZ5jjIh+7ua5
-	GM5I1LDIZFmIM1WFYFBX+1HubEHgt6GxFtGKW43pFfXdGGfnYVY/HbC8OyRLf8kpIh21VA
-	ZzsgdxL1Wz/ucEbNSCdntAHxZbGd4VY/Bh4HcEwzJAdqjkDrGXdMEFO8RiximKHja3Rs1o
-	P6upmhJQvljRilq7Rve85ZTBYqIN6ZN+OPUzSK83QvgTjYgV4/00nCZgwvl1MTGwUaGAoU
-	m6ocA9nHxCZECrrZTNXFcwpmXgO421QHn6M1jyQGD0isCfdJTAlKzCOakpTFFg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739445174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OR5nQBHI4HVMEigRRodM8Wtr5yOnyxnjuIFM4Grfh4s=;
-	b=ousbKIBZbG7igG+Vjg8sEvZRObAVn+UXLCggGNkX6tOMhtzaXpdf+EcNy77m7zSU0aaQ1T
-	opsxVfOCpFmZ9KBQ==
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Michael Kelley
- <mhklinux@outlook.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang
- Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] cpu: export lockdep_assert_cpus_held()
-In-Reply-To: <20250117203309.192072-1-hamzamahfooz@linux.microsoft.com>
-References: <20250117203309.192072-1-hamzamahfooz@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 12:12:54 +0100
-Message-ID: <877c5uksi1.ffs@tglx>
+	s=arc-20240116; t=1739445204; c=relaxed/simple;
+	bh=arRIVSK6KM+bn9LPg+TCwveAAMQvWokH45zS6QwuOOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7TP/giT72SSoejWGCU1WAVlvao6rNEGkj7VRUzOiHQ8N7PKrlvwpl6j4F+U5uuONFAzs3IRm5R9qZlJjKVE9iUJjgyhKeXYpPXwTR71RATAIIcW+PbWMTez9TFsZHPJHM2V/uaB3vwuT7UMl9Z/dxM5qo+QXvGdx1efZSFaFgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1109B113E;
+	Thu, 13 Feb 2025 03:13:42 -0800 (PST)
+Received: from [10.57.37.151] (unknown [10.57.37.151])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B8743F6A8;
+	Thu, 13 Feb 2025 03:13:19 -0800 (PST)
+Message-ID: <21ba3465-9e24-4b5a-a239-4a3ed5bf2309@arm.com>
+Date: Thu, 13 Feb 2025 11:13:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and register
+ regulator notifiers
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+ <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
+ <Z620Ei5FwhhPfBu9@pengutronix.de>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <Z620Ei5FwhhPfBu9@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 17 2025 at 15:33, Hamza Mahfooz wrote:
-> If CONFIG_HYPERV=m, lockdep_assert_cpus_held() is undefined for HyperV.
-> So, export the function so that GPL drivers can use it more broadly.
->
-> Cc: Michael Kelley <mhklinux@outlook.com>
-> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+On 2/13/25 08:57, Oleksij Rempel wrote:
+> On Wed, Feb 12, 2025 at 11:47:08PM +0000, Christian Loehle wrote:
+>> On 2/12/25 13:24, Oleksij Rempel wrote:
+>>> Extend the MMC core to handle undervoltage events by implementing
+>>> infrastructure to notify the MMC bus about voltage drops.
+>>>
+>>> Background & Decision at LPC24:
+>>>
+>>> This solution was proposed and refined during LPC24 in the talk
+>>> "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
+>>> Embedded Systems" which aimed to address how Linux should handle power
+>>> fluctuations in embedded devices to prevent data corruption or storage
+>>> damage.
+>>>
+>>> At the time, multiple possible solutions were considered:
+>>>
+>>> 1. Triggering a system-wide suspend or shutdown: when undervoltage is
+>>>    detected, with device-specific prioritization to ensure critical
+>>>    components shut down first.
+>>>    - This approach was disliked by Greg Kroah-Hartman, as it introduced
+>>>      complexity and was not suitable for all use cases.
+>>>
+>>> 2. Notifying relevant devices through the regulator framework: to allow
+>>>    graceful per-device handling.
+>>>    - This approach was agreed upon as the most acceptable: by participants
+>>>      in the discussion, including Greg Kroah-Hartman, Mark Brown,
+>>>      and Rafael J. Wysocki.
+>>>    - This patch implements that decision by integrating undervoltage
+>>>      handling into the MMC subsystem.
+>>>
+>>> This patch was tested on iMX8MP based system with SDHCI controller.
+>>
+>> Any details here? How long does it take from undervoltage to
+>> poweroff notification.
+> 
+> On this system, with current implementation, it takes 4.5 millisecond
+> from voltage drop detection to mmc_poweroff_notify.
+> 
+>> Roughly how long of a heads up would that yield in realistic
+>> undervoltage scenarios?
+> 
+> It depends on the board implementation and attached power supply.
+> In my case, the testing system provides about 100ms capacity on board.
+> The power supply provides additional 1-2 seconds.
+> 
+> If the power is cut between power supply and board, we will have max
+> 100ms.
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Thanks, that's not too bad then.
+
+> 
+>>> +static int _mmc_handle_undervoltage(struct mmc_host *host)
+>>> +{
+>>> +	return mmc_shutdown(host);
+>>> +}
+>>> +
+>>
+>> The poweroff notification part I understand, because it polls for busy
+>> (i.e. hopefully until the card thinks it's done committing to flash).
+>> Poweroff isn't always available though, the other paths of
+>> _mmc_suspend() are:
+>>
+>> 	else if (mmc_can_sleep(host->card))
+>> 		err = mmc_sleep(host);
+>> 	else if (!mmc_host_is_spi(host))
+>> 		err = mmc_deselect_cards(host);
+>>
+>> 	if (!err) {
+>> 		mmc_power_off(host);
+>>
+>> So we may also just deselect, which AFAIR succeeds as a FSM (i.e.
+>> doesn't mean anything was committed to flash) and then we just
+>> poweroff.
+>> Is that what we want in an undervoltage scenario?
+> 
+> Yes. In an undervoltage scenario, our primary priority is to protect the
+> hardware from damage. Data integrity is secondary in this case. The most
+> critical action is to immediately stop writing to the card.  
+
+Protect hardware from damage by not having the powerfail during a
+host-write? An active host-write command doesn't sound like the
+actual cause, any writing metadata to flash more likely, which in the
+deselect->poweroff case isn't ensured at all to not be the case.
+
+While I still think this should be handled at procurement instead of the
+kernel (especially if you don't even care about data integrity?), I'd
+still be interested how we would ensure we aren't doing more harm than
+good here.
+Any info from some vendors how they implement any of these? IME only
+poweroff notify would do anything at all to help and if that isn't
+available we should leave the voltage up for the card and idle.
+
+FWIW poweroff notify should probably be
+EXT_CSD_POWER_OFF_SHORT
+instead of the current EXT_CSD_POWER_OFF_LONG for your intended use case.
+
 
