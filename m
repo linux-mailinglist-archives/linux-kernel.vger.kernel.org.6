@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-513716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434BDA34DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:31:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E91A34DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FA3B16DA1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C0D188F18B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA8266182;
-	Thu, 13 Feb 2025 18:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441A82040AF;
+	Thu, 13 Feb 2025 18:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3Dmp82e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xYJqpOYl"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E4F24BC04;
-	Thu, 13 Feb 2025 18:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E1245AF2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739471416; cv=none; b=qtdJQ1kCJkHkaYMgdKUGRifywiiw27Cpm4CIRikU+VjasHCpawaKQorfyBTvmS6zmOJGIEJmaMxCuLqsfZnOA0lo1rDOBdyhTzSEnlONiKgJtfFD0Q6ga9sr5bX+l3qSejmaUZ+/bNLb6MYoj3wLw9SOVq/IzLTQBxGh90osCYc=
+	t=1739471479; cv=none; b=lN9dy/Sx6sBhhix6DpmtwLHOH64bPan+aVm5yCeo6SQd9ShYf0BVQSuAr/c9zKIiJwcMUtI1luixU+eGutwO59O2SJ87cX8oBaf9vODACwjnChqW3yXsUpugmCHmmTO0hhP9cum8bWjhZ50qL6zFZoKz0QQYKZUneCR/RJWcVG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739471416; c=relaxed/simple;
-	bh=ON39bWBP6obgADqKbPUp+DFPNKslG1W5VOxKxDu0CxQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Rc17WWeaj8kb/zT/10pCPtN43HiCHUX00VIBVWYJSvSPK5hn85q0ZRASEV9fa/1nuA+oLc2fMl+pgrJR3GqcWYRQabaki+MnLQNGoz/++6xRd7UOiuz7TZdehpaCVoDJmys0Awh8rZ8xA0a5LyJJAtC64enlcgHlTTtvlMwUbSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3Dmp82e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFB4C4CED1;
-	Thu, 13 Feb 2025 18:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739471415;
-	bh=ON39bWBP6obgADqKbPUp+DFPNKslG1W5VOxKxDu0CxQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q3Dmp82eDjCPua4n+tQAopIgyrBsAYio4ilKnXlDlYdi4+tOiajZ2JxlZMAyfReul
-	 qPd8/ovRKwZFmg+oA0DJUp2DvbQX4uyW042cxkTcBfE4/EKXtdEmtxX+ekMmV4x+0v
-	 pIzzjGqmQXDD3Ls/sW+lWbZX37ADrOCM3yYqGuY7YLL9fXP3D6seZR9Xy5mS6zs+7O
-	 8f6Yxgu4H0UBxFpbPTRVlbgeqG0ng5aE8lSGymDJi9Uz0wqC0e5uiYF2VhlWTtAv94
-	 xSX1njbd6pTuGvT9ikmw/E0HKvNA9fI1h/LgTQPuRYG+Ct0dcmDs7flbJCrHmOXPU7
-	 o0G+Of6bZ9QeQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FEA380CEEF;
-	Thu, 13 Feb 2025 18:30:46 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739471479; c=relaxed/simple;
+	bh=AClg6xc2pINbi7O+kuo4Rx5bxuLheIN5ymwYfO5cePk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BqBr9oAZgq3bCtVnUk+PtAioqmKsgzZlasZHPUvd4Gd1uZtsIDnzw3KMrqXdC2HxfI+G8RuoRqOK6s2762kLK2xUzCiKWEED5orR3Zpeo6bOhpPBJ7i4KCaCP+gTvIcox91SleTj6asFjoBQXEh/zlBOjjgQCo4Deb54yVsQAm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xYJqpOYl; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-471c9947bb5so16501cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:31:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739471475; x=1740076275; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AClg6xc2pINbi7O+kuo4Rx5bxuLheIN5ymwYfO5cePk=;
+        b=xYJqpOYlJo3kjqAPCli8QiMmrArQlv+5J9V3VHfHMzmF9CxzcxMvEV83+LBpPedChf
+         bC2m571lWSh+rslau73XgF3cVIG/qxXgreYAJz5Hvxk1RHLpnaBPBgnfz/NrWcFnZoD6
+         E9w4USXVTvGYmESdamup1SaOz1SG2g2qzm79JtsAnPci94yuzlIO1wKQP448St3v6/Em
+         vf0AGClNljNKibHMrGq8EiLp9izReM6kKujKdTcftqj3Te9KCb/bi2p+WSUPbXYlyTjs
+         H4X47ybPgDwSogGggkcRFURhPmDmfbqN0mJjDs2BgjhfLAIuzWR5OY9t+yWtwwGIsP9k
+         NYsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739471475; x=1740076275;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AClg6xc2pINbi7O+kuo4Rx5bxuLheIN5ymwYfO5cePk=;
+        b=GCffHzrML/cxUgS7BL+B/8XVyITJP6chof0ZuAm9NdKBqBB4waes02fZz+rmGa/2Wt
+         8n/2AgVVCEyMB7Gi5c6kyhpTXxHlEgmEC0P2Bo5b9f9+CsaljU/QAx4kDZM5fkoy3Pxo
+         VwRtzuqf6RYQHSPM5QsuRRWba/fznGqtE9VUPXIwSFY+nfv1r6mMp4k3nggTL0pBEAeI
+         CJgrt3Rhl3Fp7MJYIEI5EJ0XTz/pJR3uy8Pfn9PkqSV89IRwQHGhik24Bj7RDaUTnFpM
+         zEl1rrPNfBP4TI1OchVAbeQN7rs4Vh1lw302HuUDdDup6KkIJd16YYrm8/Cofnje40bw
+         bO1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDUE+GAD3ikZ+NGU1apIBSi5AYpcIsYpuFDwm7XH6HF3hluS1HOeszu2Yn2pcnpcLmCBxTZF48J2hL61o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxITMUPhM9TI5nQzdyddtFkvVnpqd2Zj49hgj5NlqQhDWTSYUlN
+	/1j/VOkyfLe0tXfvw4GqmTe2FT5CZd+2dxLG5CBFpG1r6kvI2+C6R73Wu+DM0DllF8Wfd+DWBSn
+	EeLqlINT39X26bcUpzh0nNljbCr4HBH8nPXf/
+X-Gm-Gg: ASbGncv7QHTVU24yUkgkVBIsEGVwQbmEOXvXk2zbfZRHiH0Wu/5w9caNIvRLc/nGVZv
+	JMcsm8mBj5FIkIa2QyjDfepQp7TTcNpCo1P0JSG8viLqpMleIabK8EfsIryTwUqayxjdR/efzjW
+	UR44sVfUuagCgo8L/ohgK4IpV98g==
+X-Google-Smtp-Source: AGHT+IEtgHQZO+Agvr4cec8OVb2FcFfoXiu+sNQ9JIBG1YL3nxxEozej4WhPuCORwdlehTizoZ2LejYVUqa9QraqCOY=
+X-Received: by 2002:a05:622a:90c:b0:465:18f3:79cc with SMTP id
+ d75a77b69052e-471c1fc26a6mr3898111cf.11.1739471474967; Thu, 13 Feb 2025
+ 10:31:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] rseq/selftests: Fix riscv rseq_offset_deref_addv inline
- asm
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <173947144478.1330575.14473914966753905352.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Feb 2025 18:30:44 +0000
-References: <20250114170721.3613280-1-shorne@gmail.com>
-In-Reply-To: <20250114170721.3613280-1-shorne@gmail.com>
-To: Stafford Horne <shorne@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- charlie@rivosinc.com, mathieu.desnoyers@efficios.com,
- skhan@linuxfoundation.org, peterz@infradead.org, paulmck@kernel.org,
- boqun.feng@gmail.com, shuah@kernel.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kselftest@vger.kernel.org
+References: <20250213161423.449435-1-riel@surriel.com>
+In-Reply-To: <20250213161423.449435-1-riel@surriel.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Thu, 13 Feb 2025 19:31:01 +0100
+X-Gm-Features: AWEUYZnY0TR-_0BlPhM5ws0toeVb1-Bf1wvQFlJo5QXbz9olhxBDK85xdDJADGE
+Message-ID: <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
+Subject: Re: [PATCH v11 00/12] AMD broadcast TLB invalidation
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
+	peterz@infradead.org, dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com, 
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com, 
+	mhklinux@outlook.com, andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+On Thu, 13 Feb 2025 at 17:20, Rik van Riel <riel@surriel.com> wrote:
+>
+> Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+Oh - what if the user sets nopcid. We need to disable invlpgb in that
+case right?
 
-On Tue, 14 Jan 2025 17:07:21 +0000 you wrote:
-> When working on OpenRISC support for restartable sequences I noticed
-> and fixed these two issues with the riscv support bits.
-> 
->  1 The 'inc' argument to RSEQ_ASM_OP_R_DEREF_ADDV was being implicitly
->    passed to the macro.  Fix this by adding 'inc' to the list of macro
->    arguments.
->  2 The inline asm input constraints for 'inc' and 'off' use "er",  The
->    riscv gcc port does not have an "e" constraint, this looks to be
->    copied from the x86 port.  Fix this by just using an "r" constraint.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] rseq/selftests: Fix riscv rseq_offset_deref_addv inline asm
-    https://git.kernel.org/riscv/c/b6059e2adc1e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+(I assume it could be made to work, but doesn't seem like a case worth
+optimising).
 
