@@ -1,218 +1,222 @@
-Return-Path: <linux-kernel+bounces-513076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AE1A34158
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:08:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD08A34162
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910243AB74A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E0116C852
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536DD22154F;
-	Thu, 13 Feb 2025 14:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6B3281354;
+	Thu, 13 Feb 2025 14:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GSZF2cJu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OudwsET9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4B724168D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFDE28134C;
+	Thu, 13 Feb 2025 14:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455222; cv=none; b=E/Xm25jbiSj98c2hRKksc/5SKcrZDifUxBjYjVlfqTF+p5o6RVFUXTFQE3JOLwnQ31prA4XnEo216Z4twoERPSzqInrwgJSJO0TqZtIz8aVAK4I/d7J0sgzRtJAVf6jAWF8PDDT6jZqRzXtk1tVsRsZZxV3SI2Ado8rI8hsZpbE=
+	t=1739455347; cv=none; b=CzGto7zr99seBuQTG4xL5TBbKULSr6yzcZd6imNI5ySakhxNEWyeY4qLeAzT+FvNMThEwNdhKYIBiR+IFXGAIRBu79d7zV7EtP7Ct9KVPk919hUnbASOz5R992EDPFPfqUCcpxGHvIYt03g3wmn6GgUTcKte8PlZK7hr7hH4c0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455222; c=relaxed/simple;
-	bh=Pbs5wodWxm/JR5Tynt+/hc1eTWJ3Bckhjm8JuRL44ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+httB6zYJ90ICj9Vn96C+zZjfa0ku5To/jV/A2VrA82mhplizbHzzpukUhCwQOtxmQhQ2lrkqX3+9bK0a3Z4YNk6YTEQ5e0oHfnJFtXE9xId9SYthx/r2puw1w6FggfhkI/X7EMl6Wg+78460pS2IgpligJAe6Xq8BQUaP7u9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GSZF2cJu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D9Hodi020896
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1cZ+v8WZaOBu2XxFF/U6ICJcJSWiyGa45lTYqCiTTmw=; b=GSZF2cJug7eVJgvO
-	O+zNUNLQQN+ooWI1Thb6LbscCytzKIANxt9fR2wYJ7blNR5HccnVzpCfwewdtxfh
-	VRzQP16cz12oT1ZG8L3US19WCSQnbvtL1xoGEL5EcsiEMUgHL9L/e0+uqBlwFpJT
-	WxNKmmd8ZkSG5wYuyyC/IiwWNnijYO8bo7tXFcULeisgJ10n5ELAhO7LJF7aMO46
-	wVCjROX8V0nBXLRSdDbMyyBzCZ3sLztq0X1IQvalYYsmH6SkNJn6KMHbIPtVLoHj
-	3+tVfxX8KdVYRzrWWoz195hZiQDddmSU+mNxEkh4WmHVm2zMeJ51Iph8zDkUHBuw
-	2SjWAQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sdyxrrek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:00:19 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4719ed0f8easo1495161cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:00:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739455206; x=1740060006;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cZ+v8WZaOBu2XxFF/U6ICJcJSWiyGa45lTYqCiTTmw=;
-        b=cap3Z6sOaimDxsdFTxaKpB8dK+G19F2zl3QBLCynLfcP7V3JRG9/dnm3CdlKpKzur+
-         8IFcKxWDaocbFPEdXhmGvgTgxB+gAykhQ150rZjFK6jR1b53rNsbeaNus/l4C2+8wgWZ
-         3xJqStYDrF1NuuSdIVwxGHkDlA8MF7lc8BY/kIRPqd2+/bqJSce8YYtlhdI+HR1OQl26
-         aSmptc01Ktms3Dn74mq/tuH4cjuc3EfoMeNNqWnl7Wm6tVK8lVl7sp+2Itdcy2B+Bp+R
-         gvMbOff/VdUN3saxOLKgjYbtrtommt2Q1IMagicYpfZZoQ6ORUkLdygNkfB8rg/ohWZG
-         IvdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBo7V3exiyT8j5YesGs4bi4sFEmoFvoYnDIySoLJ/pYoT94eciCc2u1dFat0CrYMoxms51jfgkzrKJoc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM9fWBv63iBgndXw8ktNYc8P3FZQvTfbCK9tG6mY99RYF8fCkm
-	xo11p/JvxlAavVefBMfkLN3s4Mq+vMs6NkGFRhVKypJo6lLlM7c2i2o7wsMMky7hLsM4q6ZSwTy
-	by6W5GuDrunLmYKxpmA0JCTlp5f8EFp7DA/qu0vpdFt6ckFF+H0kNHHT0EFTPFhI=
-X-Gm-Gg: ASbGncvR9s19WouKVVg3G6E2TDGuJ/hXXK8QVJTUgGlnVR6YK9tfqrEjDZ2VOzo74IC
-	Q7sr9OruCUOhAfzbDYDpz2Uo61jsa6LEoAlJ5QxcItmLmZFCquMz7dvikgaDPHyDZYG8VhhnJrv
-	RUpmJLfQagy1I68OAPMIB4fqswv+DVbM4uoK9CLoI+Oym0bxhVjp5t3jKXeCELbm7ZniIJ1GW8X
-	ZWpb/eNjQvnDztGT/341x4C9R/ahmQIf1KSUbIeNewRha/29bg2lNzCvIyYMXnY7UVUS5N0Ik5r
-	6x1cMwqz9ty5W9YZrFVh/IrsXpbTvNW13Dbr+w8vJdA2DlsOo015SvFjRQY=
-X-Received: by 2002:a05:622a:15d6:b0:471:c024:cd4 with SMTP id d75a77b69052e-471c024127fmr16353271cf.14.1739455205665;
-        Thu, 13 Feb 2025 06:00:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGXWuPWhuOM3zr3nn89KwhyQauBwMb8+7/3qbTtER/s8Z2C4MYAvDD3+Y4GoxvHhLzuZR90wg==
-X-Received: by 2002:a05:622a:15d6:b0:471:c024:cd4 with SMTP id d75a77b69052e-471c024127fmr16352991cf.14.1739455205175;
-        Thu, 13 Feb 2025 06:00:05 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322f1sm138352966b.19.2025.02.13.06.00.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 06:00:04 -0800 (PST)
-Message-ID: <d674d626-e6a3-4683-8f45-81b09200849f@oss.qualcomm.com>
-Date: Thu, 13 Feb 2025 15:00:00 +0100
+	s=arc-20240116; t=1739455347; c=relaxed/simple;
+	bh=dfjjIp21TJY7fS4AH9bHMvHT/5JmEUiDxAXDbMfZfGg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tO97crTZMPtEMePFTx2ZFRnHgTbFU4JADuORFVwj+6OBULgy/XjIyrWajGtXH1EcZvZFAOfCMbq18sMHWmY5zRn0NtCrix37MlSTYkYiK3R+yqM/bUoeFrAAUH1ec3DwW6birvkbBOWe/Z7C/kTUrIOBmHpFMOYXQsh9O0joAHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OudwsET9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DD3jNZ011317;
+	Thu, 13 Feb 2025 14:02:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=iF/S5k
+	F6Qnt/dB80jhL5Fes1ov9hlhV9dgpkal9K2xg=; b=OudwsET97k/KyHPZLgAo/z
+	pwOUCuszm2gGJVlRWaW/O7hFsfKaTtbCssAYtUEhvdAMTQ9HKRyAEbKKefyakcs6
+	cWqudMSXIJnZW8Gpgg62Z7BBIFLl9XwLZj6+KaE6k0vmSXBd/zHtXC0Bc8fQ8xH5
+	gjet4n4ZEbd8mw9TZwhI0XMoSuCLJZsu12zSNs5rjCIPlNhir6b9Mdvr0ASfZyiJ
+	O04BqnxbH1JTG+5rv9RMytnorvT54c/qbCs/rfl76/SZ/T6EEE6zbuF/1/ekGAH3
+	EpcVD0F50Da0RxnIxP+x2q4WJhDy/3VfQHrgVzcaDHQgQ9JGIFEpcCDxiaBSJO7w
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44s6ta38xn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 14:02:11 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DCJNab016689;
+	Thu, 13 Feb 2025 14:02:10 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kef51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 14:02:09 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DE287s21955196
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 14:02:08 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 598FD58063;
+	Thu, 13 Feb 2025 14:02:08 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 56C3458061;
+	Thu, 13 Feb 2025 14:02:05 +0000 (GMT)
+Received: from [9.171.82.253] (unknown [9.171.82.253])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Feb 2025 14:02:05 +0000 (GMT)
+Message-ID: <befb6c9bf710c61836339b2d2f744967db00780b.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 2/4] s390/pci: store DMA offset in bus_dma_region
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Matthew Rosato <mjrosato@linux.ibm.com>, joro@8bytes.org, will@kernel.org,
+        robin.murphy@arm.com, gerald.schaefer@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
+        clegoate@redhat.com, jgg@nvidia.com, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Date: Thu, 13 Feb 2025 15:02:04 +0100
+In-Reply-To: <20250212213418.182902-3-mjrosato@linux.ibm.com>
+References: <20250212213418.182902-1-mjrosato@linux.ibm.com>
+	 <20250212213418.182902-3-mjrosato@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] dt-bindings: dma: qcom: bam-dma: Add missing required
- properties
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Md Sadre Alam
- <quic_mdalam@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luca Weiss <luca.weiss@fairphone.com>
-References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
- <20250212-bam-dma-fixes-v1-7-f560889e65d8@linaro.org>
- <22ce4c8d-1f3b-42c9-b588-b7d74812f7b0@oss.qualcomm.com>
- <Z6231bBqNhA2M4Ap@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z6231bBqNhA2M4Ap@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: A6nHpPayktXL11snnaJAo_hdErPEpMrE
-X-Proofpoint-GUID: A6nHpPayktXL11snnaJAo_hdErPEpMrE
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZbPT6KIqOnr9JRYhzQU-XBeKJlb0e2Rp
+X-Proofpoint-GUID: ZbPT6KIqOnr9JRYhzQU-XBeKJlb0e2Rp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-13_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- spamscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 lowpriorityscore=0 phishscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130107
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ clxscore=1015 adultscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=897 malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130106
 
-On 13.02.2025 10:13 AM, Stephan Gerhold wrote:
-> On Wed, Feb 12, 2025 at 10:01:59PM +0100, Konrad Dybcio wrote:
->> On 12.02.2025 6:03 PM, Stephan Gerhold wrote:
->>> num-channels and qcom,num-ees are required when there are no clocks
->>> specified in the device tree, because we have no reliable way to read them
->>> from the hardware registers if we cannot ensure the BAM hardware is up when
->>> the device is being probed.
->>>
->>> This has often been forgotten when adding new SoC device trees, so make
->>> this clear by describing this requirement in the schema.
->>>
->>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>> ---
->>>  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> index 3ad0d9b1fbc5e4f83dd316d1ad79773c288748ba..5f7e7763615578717651014cfd52745ea2132115 100644
->>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>> @@ -90,8 +90,12 @@ required:
->>>  anyOf:
->>>    - required:
->>>        - qcom,powered-remotely
->>> +      - num-channels
->>> +      - qcom,num-ees
->>>    - required:
->>>        - qcom,controlled-remotely
->>> +      - num-channels
->>> +      - qcom,num-ees
->>
->> I think I'd rather see these deprecated and add the clock everywhere..
->> Do we know which one we need to add on newer platforms? Or maybe it's
->> been transformed into an icc path?
-> 
-> This isn't feasible, there are too many different setups. Also often the
-> BAM power management is tightly integrated into the consumer interface.
-> To give a short excerpt (I'm sure there are even more obscure uses):
-> 
->  - BLSP BAM (UART, I2C, SPI on older SoCs):
->     1. Enable GCC_BLSP_AHB_CLK
->     -> This is what the bam_dma driver supports currently.
-> 
->  - Crypto BAM: Either
->     OR 1. Vote for single RPM clock
->     OR 1. Enable 3 separate clocks (CE, CE_AHB, CE_AXI)
->     OR 1. Vote dummy bandwidth for interconnect
-> 
->  - BAM DMUX (WWAN on older SoCs):
->     1. Start modem firmware
->     2. Wait for BAM DMUX service to be up
->     3. Vote for power up via the BAM-DMUX-specific SMEM state
->     4. Hope the firmware agrees and brings up the BAM
-> 
->  - SLIMbus BAM (audio on some SoCs):
->     1. Start ADSP firmware
->     2. Wait for QMI SLIMBUS service to be up via QRTR
->     3. Vote for power up via SLIMbus-specific QMI messages
->     4. Hope the firmware agrees and brings up the BAM
-> 
-> Especially for the last two, we can't implement support for those
-> consumer-specific interfaces in the BAM driver. Implementing support for
-> the 3 variants of the Crypto BAM would be possible, but it's honestly
-> the least interesting use case of all these. It's not really clear why
-> we are bothing with the crypto engine on newer SoCs at all, see e.g. [1].
-> 
-> [1]: https://lore.kernel.org/linux-arm-msm/20250118080604.GA721573@sol.localdomain/
-> 
->> Reading back things from this piece of HW only to add it to DT to avoid
->> reading it later is a really messy solution.
-> 
-> In retrospect, it could have been cleaner to avoid describing the BAM as
-> device node independent of the consumer. We wouldn't have this problem
-> if the BAM driver would only probe when the consumer is already ready.
-> 
-> But I think specifying num-channels in the device tree is the cleanest
-> way out of this mess. I have a second patch series ready that drops
-> qcom,num-ees and validates the num-channels once it's safe reading from
-> the BAM registers. That way, you just need one boot test to ensure the
-> device tree description is really correct.
+On Wed, 2025-02-12 at 16:34 -0500, Matthew Rosato wrote:
+> PCI devices on s390 have a DMA offset that is reported via CLP.  In
+> preparation for allowing identity domains, setup the bus_dma_region
+> for all PCI devices using the reported CLP value.
+>=20
+> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> ---
+>  arch/s390/pci/pci_bus.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+> index 857afbc4828f..3fa113c4ad8f 100644
+> --- a/arch/s390/pci/pci_bus.c
+> +++ b/arch/s390/pci/pci_bus.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/jump_label.h>
+>  #include <linux/pci.h>
+>  #include <linux/printk.h>
+> +#include <linux/dma-direct.h>
+> =20
+>  #include <asm/pci_clp.h>
+>  #include <asm/pci_dma.h>
+> @@ -283,10 +284,34 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bo=
+ol topo_is_tid)
+>  	return zbus;
+>  }
+> =20
+> +static void pci_dma_range_setup(struct pci_dev *pdev)
+> +{
+> +	struct zpci_dev *zdev =3D to_zpci(pdev);
+> +	struct bus_dma_region *map;
+> +	u64 aligned_end;
+> +
+> +	map =3D kzalloc(sizeof(*map), GFP_KERNEL);
+> +	if (!map)
+> +		return;
+> +
+> +	map->cpu_start =3D 0;
+> +	map->dma_start =3D PAGE_ALIGN(zdev->start_dma);
+> +	aligned_end =3D PAGE_ALIGN_DOWN(zdev->end_dma + 1);
+> +	if (aligned_end >=3D map->dma_start)
+> +		map->size =3D aligned_end - map->dma_start;
+> +	else
+> +		map->size =3D 0;
+> +	WARN_ON_ONCE(map->size =3D=3D 0);
+> +
+> +	pdev->dev.dma_range_map =3D map;
+> +}
+> +
+>  void pcibios_bus_add_device(struct pci_dev *pdev)
+>  {
+>  	struct zpci_dev *zdev =3D to_zpci(pdev);
+> =20
+> +	pci_dma_range_setup(pdev);
+> +
+>  	/*
+>  	 * With pdev->no_vf_scan the common PCI probing code does not
+>  	 * perform PF/VF linking.
 
-Thanks for the detailed explanation!
+Looks good to me and I tested it again. So feel free to add my:
 
-Do you think it could maybe make sense to expose a clock/power-domain
-from the modem/adsp rproc and feed it to the DMUX / SLIM instances when
-an appropriate ping arrives? This way we'd also defer probing the drivers
-until the device is actually accessible.
-
-Konrad
+Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
