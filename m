@@ -1,246 +1,190 @@
-Return-Path: <linux-kernel+bounces-513143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2970EA34220
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:32:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B07BA34203
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3B0188D8D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E751F169E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89E13CA97;
-	Thu, 13 Feb 2025 14:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E49B28136B;
+	Thu, 13 Feb 2025 14:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mP48NQyN"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xxayU8/o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QOetGoEw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xxayU8/o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QOetGoEw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC223A9BF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8E4281343;
+	Thu, 13 Feb 2025 14:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739456926; cv=none; b=LJ6e51SQM77w0o9qRIMACwf6JOfJ7J2H8IcZWUnVhfqwLbpD/2zNrkyPSm1p9DCqQNTj09nVRyas+gswPyfKrM6Ak1rPfOHiD+q7IHZokaNtCfZ7OGwLVEClwb7rLZF92rtmfISPM9D+6qh7CCqUoWLlLFs0wLz+ErxDzwxZCRE=
+	t=1739456973; cv=none; b=t8wDIY5y33g+cfLBHBs5BjfcKl40nXrvU+i4tARShQ35ytqBhKDsGv6kJt1jpU98BhwfR9Jt5URtDMn0MPllPEUlyF4UKqQE1vOcBY/iX7iLmo++8596Vr2Wy6bhLy71sP3c7pJYtIVePvX/aLailXW7Ee8AGpe5uDv/H/ZPXH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739456926; c=relaxed/simple;
-	bh=olY4mBN5+LgaqDjLR1wm1qyN18oxeG0QjyL+rpLXqik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NofDok2AP+mP2a6nVVYLaDmeOnbIEGwZvvOIfUdeAurjTXmSCOUk/1ZcLhH+yMo2Y9pmJl+WI655M5gyXfGL76YHnKIYJgteczy8zk/MC6wyAxkuv3uTwuAHQKdNkdjKv+GhC/5Qo0bb8F1XVLXrVx9cLegIqbfGtWG1sDojsfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mP48NQyN; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6f754678c29so9400717b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:28:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739456923; x=1740061723; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfYpXrDl+rUlmnTpgbRJTwg81BgmauUKiaO1pjrmwJQ=;
-        b=mP48NQyNb2e3n5ftJWucGRlWUywwdWC4PS+Fu1FcXOFNcpCeKdORe2JX4W8XCyAjZx
-         pvV4V0klfTHQ3MyXoryQr1yrLnMOyraior907lZpnrqbhgPtPKf/ibldc7k/H/tSAq7/
-         zNLTXIa0jOk64EAQJYjWRA9aap1nLAKue2MTZvPPCh3NQcS4t0EC7uuIyRoOdW88nMka
-         U4YxCATNzccvqzO/faI9slOiG5bj5owUPJOnwGuZ4rn81v+noHNp4Omh1ubhQVcTWJJI
-         eQGFlC+1SRsXnrwN/oUER0vM0x5LYEBUcMjC7u2DWsV//iWPf0Yguhjxywx4hsSVKx8Y
-         PL8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739456923; x=1740061723;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pfYpXrDl+rUlmnTpgbRJTwg81BgmauUKiaO1pjrmwJQ=;
-        b=TLxx6BrJZIyveK+Lv/iaaMo3GKJj7K1pgD6UpJHrqG4+ElcqJgmpDhpYfFGBlgKlW4
-         0alG1HO+19aMxPgwdjPo5KkiDgGimjzsSpUrTUGvmiXNEZjBFRGZ5UJIireFEZHWmleL
-         BjpBhxFaOslXGqIDEOE+Q9ZdUltclk7xSntG0mHlx9OVmx4qZ+8cE3282OiJu1h1I0Mc
-         A4d/TF4164n37OqfPDDa6ifUkJ7p+oJOzIRMcFfFkfJvz84mrOhX2YGIQYMFzrjNYhCQ
-         Y0Nc/JRdIxDwJT8BnSJbnl9k6exVS4suEiNW2quLhUv8+b8lGOznINJoonI4Y/WIOiSg
-         PxNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT5f1K1/J6atjzWzhR2JMa6w7xlCf8Re0VA82IJPO7cyLoy3DIvtSexsKTS5lesE55AcFw08peDYVUjpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzJuGR6qXn+pAqixmjycqaLfaeb5oNcYLiJ9Uhy5ESpXbVOqf8
-	GJsmYTgAyOct/inr8XKUZVte3FYHQOp49cKVtVknC0ygUBqJ9kPsXUtJN3AGfa2ivTdgVm5qYdP
-	SWV4xM6Sawp0ov0vXyYM8SS4d5uoGehq51LkAiFCXwsSNOx0psynnsA==
-X-Gm-Gg: ASbGnctQqi0ILb0iHXxI9FWh/HZNQN/OqzZXP8W+MBxq+reppP3fLUZd6ONiRGyBuxh
-	EN6+r5R8n4pjsFIgKWoLuI0+bINlg/KLoeRVlzilCFU/Rq0aAZQlMPvtwlOiGH1UUtFAXaOWEaA
-	3ClPc1J6KQBBIVTqvJMVkrhnElyECf
-X-Google-Smtp-Source: AGHT+IEeJa44o+XSvJZx8Jdms+oYMNreohnRoUx+hnesCryJtVqnxtGNEIN81nIsmMg4dnxmRUZEPcuZvqeWVs6CE+Y=
-X-Received: by 2002:a05:690c:6488:b0:6f9:a6bd:2053 with SMTP id
- 00721157ae682-6fb32d6daa3mr33461967b3.34.1739456923002; Thu, 13 Feb 2025
- 06:28:43 -0800 (PST)
+	s=arc-20240116; t=1739456973; c=relaxed/simple;
+	bh=rAiv6TzHkeELsrLuZtk5FUe5Thv+lNBT27iUuGBHh7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCsYgkFXVNAFAuPZrMw0AGF9cWVudCTOwo1lVzvsPTy47Z6MEx3TWzDrp6oux8nIxDRdBnbLMBlUpD55emI/RUxzL5tpt/hkiNVr9gn6+DdlOjEDMwop0dcTJobyPVcwWka9XaPaoRSAq1QRcekz0Gy7004kDPbFNmJYct5VP4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xxayU8/o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QOetGoEw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xxayU8/o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QOetGoEw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B58B22652;
+	Thu, 13 Feb 2025 14:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739456964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b08r9aID4TkiRVyoZGQPuYyotWopcKELHRkumgjrwAc=;
+	b=xxayU8/o5cFo+GrXPM7qJd4gbNwPD3kf/QoA169ds6tqxxvhqWxNW+TFVTO0AHO+d52C6d
+	4fffugqvXbQ1mDuFgjeDEEBJNfF2aCJnlpJ1qJVkZQ2fyCqKTNkI6hpdGAU/jHeushiqx7
+	lbP+FAwb2F2xOupAtF/Aw7ydg/GH6RY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739456964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b08r9aID4TkiRVyoZGQPuYyotWopcKELHRkumgjrwAc=;
+	b=QOetGoEwa4d2cmE9zMTDCWidfZi2Zl2V5cH/PE+mzWMpM5oksGYasXFG/ShYkDKA74KMKQ
+	FUaJNtQW7k75sIAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739456964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b08r9aID4TkiRVyoZGQPuYyotWopcKELHRkumgjrwAc=;
+	b=xxayU8/o5cFo+GrXPM7qJd4gbNwPD3kf/QoA169ds6tqxxvhqWxNW+TFVTO0AHO+d52C6d
+	4fffugqvXbQ1mDuFgjeDEEBJNfF2aCJnlpJ1qJVkZQ2fyCqKTNkI6hpdGAU/jHeushiqx7
+	lbP+FAwb2F2xOupAtF/Aw7ydg/GH6RY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739456964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b08r9aID4TkiRVyoZGQPuYyotWopcKELHRkumgjrwAc=;
+	b=QOetGoEwa4d2cmE9zMTDCWidfZi2Zl2V5cH/PE+mzWMpM5oksGYasXFG/ShYkDKA74KMKQ
+	FUaJNtQW7k75sIAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00BC2137DB;
+	Thu, 13 Feb 2025 14:29:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vhwmAMQBrmc1aAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Feb 2025 14:29:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F373DA0A07; Thu, 13 Feb 2025 15:29:18 +0100 (CET)
+Date: Thu, 13 Feb 2025 15:29:18 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, bfoster@redhat.com, linux-kernel@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH] ext4: goto right label 'out_mmap_sem' in ext4_setattr()
+Message-ID: <c27l5iylz6t3qfd4v6sbwfvb4v6e4rifspbwts2u6w4i2wgqli@yorbu3soqgye>
+References: <20250213112247.3168709-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
- <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
- <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
- <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com> <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
- <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
-In-Reply-To: <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 13 Feb 2025 16:28:32 +0200
-X-Gm-Features: AWEUYZnOrZ0wV8U14CBBJrqDdK_JlTRGkwtYPMzrOyTphzKXgQHiPDt9IEDIQeA
-Message-ID: <CAA8EJpon5+R5s0HXUmoikjtuyEf3sQUqBVYvWrxuh14h2DvjQg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213112247.3168709-1-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Thu, 13 Feb 2025 at 08:52, Taniya Das <quic_tdas@quicinc.com> wrote:
->
->
->
-> On 2/13/2025 1:30 AM, Dmitry Baryshkov wrote:
-> > On Wed, 12 Feb 2025 at 19:15, Taniya Das <quic_tdas@quicinc.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
-> >>> On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
-> >>>> On the QCM6490 boards the LPASS firmware controls the complete clock
-> >>>> controller functionalities. But the LPASS resets are required to be
-> >>>> controlled from the high level OS. The Audio SW driver should be able to
-> >>>> assert/deassert the audio resets as required. Thus in clock driver add
-> >>>> support for the resets.
-> >>>>
-> >>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >>>> ---
-> >>>>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
-> >>>>  1 file changed, 19 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>>> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
-> >>>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >>>> @@ -1,6 +1,7 @@
-> >>>>  // SPDX-License-Identifier: GPL-2.0-only
-> >>>>  /*
-> >>>>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> >>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> >>>>   */
-> >>>>
-> >>>>  #include <linux/clk-provider.h>
-> >>>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-> >>>>      [LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-> >>>>  };
-> >>>>
-> >>>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
-> >>>> +    .name = "lpassaudio_cc_reset",
-> >>>> +    .reg_bits = 32,
-> >>>> +    .reg_stride = 4,
-> >>>> +    .val_bits = 32,
-> >>>> +    .fast_io = true,
-> >>>> +    .max_register = 0xc8,
-> >>>> +};
-> >>>> +
-> >>>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-> >>>> -    .config = &lpass_audio_cc_sc7280_regmap_config,
-> >>>> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
-> >>>>      .resets = lpass_audio_cc_sc7280_resets,
-> >>>>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-> >>>>  };
-> >>>>
-> >>>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
-> >>>> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
-> >>>> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
-> >>>> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
-> >>>>      { }
-> >>>>  };
-> >>>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
-> >>>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
-> >>>>      struct regmap *regmap;
-> >>>>      int ret;
-> >>>>
-> >>>> +    desc = device_get_match_data(&pdev->dev);
-> >>>> +
-> >>>> +    if (desc->num_resets)
-> >>>> +            return qcom_cc_probe_by_index(pdev, 1, desc);
-> >>>
-> >>> Won't this break SC7280 support by causing an early return?
-> >>>
-> >>
-> >> The resets are not defined for SC7280.
-> >> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
-> >>         .config = &lpass_audio_cc_sc7280_regmap_config,
-> >>         .clks = lpass_audio_cc_sc7280_clocks,
-> >>         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
-> >> };
-> >>
-> >> The reset get registered for SC7280 after the clocks are registered.
-> >> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
-> >
-> > Could you please make this condition more obvious and error-prone
-> > rather than checking one particular non-obvious property?
-> >
->
-> Dmitry, we had earlier tried [1], but seems like we could not align on
-> this patchset.
->
-> If you are aligned, please let me know I can fall back on the approach.
+On Thu 13-02-25 19:22:47, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Otherwise, if ext4_inode_attach_jinode() fails, a hung task will
+> happen because filemap_invalidate_unlock() isn't called to unlock
+> mapping->invalidate_lock. Like this:
+> 
+> EXT4-fs error (device sda) in ext4_setattr:5557: Out of memory
+> INFO: task fsstress:374 blocked for more than 122 seconds.
+>       Not tainted 6.14.0-rc1-next-20250206-xfstests-dirty #726
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:fsstress state:D stack:0     pid:374   tgid:374   ppid:373
+>                                   task_flags:0x440140 flags:0x00000000
+> Call Trace:
+>  <TASK>
+>  __schedule+0x2c9/0x7f0
+>  schedule+0x27/0xa0
+>  schedule_preempt_disabled+0x15/0x30
+>  rwsem_down_read_slowpath+0x278/0x4c0
+>  down_read+0x59/0xb0
+>  page_cache_ra_unbounded+0x65/0x1b0
+>  filemap_get_pages+0x124/0x3e0
+>  filemap_read+0x114/0x3d0
+>  vfs_read+0x297/0x360
+>  ksys_read+0x6c/0xe0
+>  do_syscall_64+0x4b/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Fixes: c7fc0366c656 ("ext4: partial zero eof block on unaligned inode size extension")
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-You have been using of_device_is_compatible(). Krzysztof suggested
-using mach data. Both approaches are fine with me (I'm sorry,
-Krzysztof, this is a clock driver for a single platform, it doesn't
-need to scale).
+Indeed. Feel free to add:
 
-You've settled on the second one. So far so good.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-But! The problem is in readability. Checking for desc->num_resets is a
-_hidden_ or cryptic way of checking whether to register only a first
-controller or both.
+								Honza
 
-BTW: the commit message also tells nothing about the dropped power
-domain and skipped PM code. Is it not required anymore? Is it handled
-automatically by the firmware? But I see that audio codecs still use
-that power domain.
-
->
-> [1]:
-> https://lore.kernel.org/all/20240318053555.20405-3-quic_tdas@quicinc.com/
->
-> Do you have any suggestions that we could consider?
->
-> >>
-> >>>> +
-> >>>>      ret = lpass_audio_setup_runtime_pm(pdev);
-> >>>>      if (ret)
-> >>>>              return ret;
-> >>>>
-> >>>>      lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
-> >>>>      lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
-> >>>> -    desc = &lpass_audio_cc_sc7280_desc;
-> >>>>
-> >>>>      regmap = qcom_cc_map(pdev, desc);
-> >>>>      if (IS_ERR(regmap)) {
-> >>>> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
-> >>>>      regmap_write(regmap, 0x4, 0x3b);
-> >>>>      regmap_write(regmap, 0x8, 0xff05);
-> >>>>
-> >>>> -    ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
-> >>>> +    ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
-> >>>>      if (ret) {
-> >>>>              dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
-> >>>>              goto exit;
-> >>>>
-> >>>> --
-> >>>> 2.45.2
-> >>>>
-> >>>
-> >>
-> >
-> >
->
-
-
+> ---
+>  fs/ext4/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 3cc8da6357aa..04ffd802dbde 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5452,7 +5452,7 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  			    oldsize & (inode->i_sb->s_blocksize - 1)) {
+>  				error = ext4_inode_attach_jinode(inode);
+>  				if (error)
+> -					goto err_out;
+> +					goto out_mmap_sem;
+>  			}
+>  
+>  			handle = ext4_journal_start(inode, EXT4_HT_INODE, 3);
+> -- 
+> 2.39.2
+> 
 -- 
-With best wishes
-Dmitry
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
