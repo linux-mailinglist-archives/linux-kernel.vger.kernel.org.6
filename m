@@ -1,266 +1,131 @@
-Return-Path: <linux-kernel+bounces-512797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5FEA33DD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:24:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19290A33D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A8387A4E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:22:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D8B3A9D9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9556B20E70C;
-	Thu, 13 Feb 2025 11:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qj29tY/i"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A2121576D;
+	Thu, 13 Feb 2025 11:04:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE611C84D4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0526021519F;
+	Thu, 13 Feb 2025 11:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445715; cv=none; b=BbQoNTKKvRXyTjo/81vbB6SOvMpQkiozFfBRDKwenfdjEgBkLi7ZgY/r/I12MYo+172Dere8ZCFaQQSoAKHFyw/pzzzEyoLbVPYg6k2SEYjhIMIuRjmNe3gnCcJE+ys7/I69cqNjKhbFMJzOFKNiiklMA+AwStzu3Nfneur6WnI=
+	t=1739444696; cv=none; b=NEwRfQ/xbaQdGyqLVyUhiD6/XqXhudlTSzb0U3ln3LHYaN97DqXqxXnE4zzsso1ouSKqr4j7zJdrVhBol1m0Rbpnzic1mUGXRC2tWusnNVs3O+qR9krQiUecD7SDz7yWHf/9aw24zQ4eoiP+KMl7DzHZm9mVX7wyANQfSr5F+zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445715; c=relaxed/simple;
-	bh=Pi4eMn80Vkv3stDJ2Ryeq1gBOrxrcjdgjXuoH7Kh8vw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=B8xrSqFQkmxSTdS3quzel8tQV3Pra608HcPGycyB3LkD9X/tH4pxyzrtqr0lnCnrzh62fMFMGJ8dP4CNYTqBAelTTJCqmTDwsHAn1QxVV/E+MFSrNdAWMsZL2EcOR1987fwAhRpoyvu5Dnu1LskY4tG7GoU2vfVS13nPBVlTltc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qj29tY/i; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250213112151epoutp03b8f3d9d01c23eea41504a060b269ed03~jwKikKnWj1967919679epoutp03O
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:21:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250213112151epoutp03b8f3d9d01c23eea41504a060b269ed03~jwKikKnWj1967919679epoutp03O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739445711;
-	bh=FYeA0egZv4FF41HWS+5lY5RJ3ar8Pphs0FsmtbhyRSE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=qj29tY/iSIOX/IKeNwEWLUhYSOojk/p0yq39MyLUD5o9EhMrlTrfigvInh/f3eecq
-	 84a7nGp1x9AltRNUKXaTRFq1GhRgM7M05Jp+LqCej7VEd5vtVEEIO+C/IeAU42+Yjt
-	 9eaRUYaXidA013VMkA3nAAG5lk5HvpMbpBwigtMw=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250213112150epcas5p432ded18de14682cc3b9c16d15c3a6f1b~jwKh9cVoO2775827758epcas5p4Q;
-	Thu, 13 Feb 2025 11:21:50 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Ytt710fwvz4x9Pr; Thu, 13 Feb
-	2025 11:21:49 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AF.8A.19710.CC5DDA76; Thu, 13 Feb 2025 20:21:48 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250213110439epcas5p4363f12d24845f86de9f5e0d1c15bcaf9~jv7hQbNb63061630616epcas5p4_;
-	Thu, 13 Feb 2025 11:04:39 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250213110439epsmtrp1713a253bece086c0e65de979af9e8830~jv7hPeule2200722007epsmtrp1E;
-	Thu, 13 Feb 2025 11:04:39 +0000 (GMT)
-X-AuditID: b6c32a44-363dc70000004cfe-d8-67add5cc2674
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.18.23488.7C1DDA76; Thu, 13 Feb 2025 20:04:39 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250213110436epsmtip2c8a8209a8c3b9ff20b96d86af3fac0e3~jv7ezI9zW2340823408epsmtip2R;
-	Thu, 13 Feb 2025 11:04:36 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <krzk+dt@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<rmk+kernel@armlinux.org.uk>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
-Subject: RE: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Date: Thu, 13 Feb 2025 16:34:29 +0530
-Message-ID: <009a01db7e07$132feb60$398fc220$@samsung.com>
+	s=arc-20240116; t=1739444696; c=relaxed/simple;
+	bh=PzBfe4atz6vSeVyd/u+d7DpT2Rrcjc+RgX6K/j/Og7I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JbuorxMCkmaxiL871lkJpgCLQGI4u0h6OvQYoGuOoiJj4DbEnxOSBl3YizRF5bp17jZi+nC8Qxlt6F2q31ehBok6bUQuSuivJyZoS5O+iSmkHKy/HxCSyBYZL1BUClWbuQ2XaiJW3acL+yGn9rhBu1rir3XbRD8L9Az4FIPKt4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Ytskr0xNwz4f3kvq;
+	Thu, 13 Feb 2025 19:04:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DB6FF1A0BDF;
+	Thu, 13 Feb 2025 19:04:42 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXul7J0a1nLFToDg--.14503S3;
+	Thu, 13 Feb 2025 19:04:42 +0800 (CST)
+Subject: Re: [PATCH v2 1/2] blk-wbt: Fix some comments
+To: Tang Yizhou <yizhou.tang@shopee.com>, yukuai1@huaweicloud.com,
+ axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250213100611.209997-1-yizhou.tang@shopee.com>
+ <20250213100611.209997-2-yizhou.tang@shopee.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <76cd73b1-52f5-1f19-ae37-c856a765ebc4@huaweicloud.com>
+Date: Thu, 13 Feb 2025 19:04:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFMfZy5LnHh86L+CikZ+hKlrx3PbgHP/Q5uAh59lGQBgzSo3LQ3hOaA
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta1BUZRjuO2cvB2mZ44LywUSuJ7twWdjFZT3bLFhKzhZWFD9yGJWOcGYX
-	2dvsLlJNTRZGiALSJLELrgsjFw1IF12X6wQhjkKAFzYoKBJIbjOMohgY0C4Hin/P9z7P+z3v
-	810wlD/NCcRStSbaoKXUBGcDy/FT8CvCrr4apWjotpycnygEZOWwk01WN3cjZEnPMRZ5tr2b
-	TY513OOSE5bfOWRPz0Uu2evIY5P2ERebvNNQwiFzXKNs0rpYwyY7bJvJuc5pQLZ3jaPk7fwC
-	hFxucnJf4yvuuG6hisvnBxDFWP4VrqLeMsRV2OzpCvuF4xxF3bnPFfXOWUQx09LHUbS2iBWz
-	9ufjvRPT5CqaSqENAlqbrEtJ1SqjibiEpN1JUVKRWCiWkTsIgZbS0NFE7N544Z5UtTsXIThC
-	qdPdpXjKaCQiYuQGXbqJFqh0RlM0QetT1HqJPtxIaYzpWmW4lja9KhaJIqPcwg/TVHXmZkTf
-	L/joQeEQ6yho9M8BXhjEJXDw7/sgB2zA+HgjgOaqRZaH4OMPAcy5F8YQcwDen/6StdZR9bAI
-	YYhmAK2OBpRZjAP4XfYj4FFx8BBYltfC9WA/XAjr+iu5HhGKD6PwZFHJylZeeAzMnc10Exjm
-	i78Hs675eMos/EVYUDLH8WAeLoNtrTdZDN4Ib5hHVzCKh8KK0imUmUgA58cq2IzXHvi0eAkw
-	Gn94bf7kynAQP+EFKx1ONtMQCwfrMjkM9oWT1y9zGRwIJ/KzVnES/D6vbzWyCg4tFKzqd8If
-	73rmx9wGwfCHhgimHARP36xFGF8fmPt0FGHqPOi0ruEX4OKUa3XLAOgon+GeAoRlXTTLumiW
-	dREs/7vZAOsCCKD1Ro2STo7Si7V0xn8XnqzT2MHKsw+JdYL+s0vhbQDBQBuAGEr48WBhtZLP
-	S6E+/oQ26JIM6Wra2Aai3OddgAZuSta5/43WlCSWyEQSqVQqkW2Xigl/Xmb9MSUfV1ImOo2m
-	9bRhrQ/BvAKPIgc6R20J2dih0IMR7KyNGO9464I690zYvi/eBI7HTwJcj4sOTVyJ9HZs23vu
-	ZdOmxbjSwb4y76L9w16/1XduaSWoLuuutPlk+tKIf6LQ/M6ULYgM3Uw0Fl/tiKm6WP3rQfR9
-	LeIzvlQxkLaj3CqMvH7a71NNwfmF7N3tQfWnmpb/GbYkbGFDyaQm8sHXR3wzUrfJ5Rr71pqr
-	5jFZ8K7Kv575Y1jfe2BfapP88I0Pen+Je/Qz/nbG5FuijlvWmbvdxW9cop6bebf3z5eeTYzM
-	bnrdpAz7Ft0pFwwcXlbXfmOuLaXPTA9FDQpkrv6ZphNSqq56ZHvtmKUs74ntM5+Y8v21X6ki
-	CJZRRYlDUIOR+hfqY4fEfwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsWy7bCSvO7xi2vTDTY+EbD4+XIao8XyBztY
-	LdbsPcdkMed8C4vF/CPnWC2eHnvEbvFy1j02i/PnN7BbXNjWx2qx6fE1VovLu+awWXRde8Jq
-	Me/vWlaLYwvELL6dfsNoceTMC2aLS/0TmSz+79nB7iDkcfnaRWaPLStvMnk87d/K7rFz1l12
-	jwWbSj02repk89i8pN5j547PTB7v911l8zi4z9Dj8ya5AO4oLpuU1JzMstQifbsErowFGyaw
-	FjyXr9jY3svcwHhCrIuRk0NCwERixacZTF2MXBxCArsZJWadX84MkZCU+NQ8lRXCFpZY+e85
-	O0TRM0aJvnUbGEESbAJaEov69rGD2CICuhKbbywHK2IW+MIsMfv+ZKixbxklrjYdYAGp4hSw
-	k+j93AzWISzgL/G+9ySYzSKgKjFxzjc2EJtXwFLi0MFTLBC2oMTJmU/AbGYBbYmnN5/C2csW
-	voY6VUHi59NlrBBXuEn8nv2PEaJGXOLozx7mCYzCs5CMmoVk1Cwko2YhaVnAyLKKUTK1oDg3
-	PTfZsMAwL7Vcrzgxt7g0L10vOT93EyM46rU0djC++9akf4iRiYPxEKMEB7OSCK/EtDXpQrwp
-	iZVVqUX58UWlOanFhxilOViUxHlXGkakCwmkJ5akZqemFqQWwWSZODilGpi6QvQf7P8iaav1
-	4mzOiq3nQy7PXRN8est2l/dRqXdY64ofqt09IMTynvtnrWVB0NezPutdg3yCGjhmeX06veyJ
-	mPB2izvXC/zU0vPPBuYdCJZJiBD1TEvhWnKrn4275uh649r6jXwL/GWz/M9+/uP2oNm//yfr
-	7xOvJ5eu8IrUd8zhV6n4/nTXuzuxFv95hZ6xG01qcFPiCTh5polz6oZ4Sx7Zd/mzN93f2Fcr
-	pl/w9u2cubtnyGiesm9R/Nebe/lY5nTBmqcPZvned5C0/6gmK1sWzrAs19Rk2tGGDcGzJOS2
-	dZX3TpvcO+POet7aXA6vFwGPUueLrJvacYm7b2NiNkuc7ZZNVlJThGt+7FBiKc5INNRiLipO
-	BACb1ffZaQMAAA==
-X-CMS-MailID: 20250213110439epcas5p4363f12d24845f86de9f5e0d1c15bcaf9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff
-References: <20250213044624.37334-1-swathi.ks@samsung.com>
-	<CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
-	<20250213044624.37334-2-swathi.ks@samsung.com>
-	<20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
+In-Reply-To: <20250213100611.209997-2-yizhou.tang@shopee.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXul7J0a1nLFToDg--.14503S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryDKr1fCry8GFW7ZF1UZFb_yoW8XF18p3
+	Z2kw1UuF1xKFWxuwnrXa9rZr4fGF4rGF18tryxWrnIqr13Wr1Fvan0kr40vr4FvrWfWr4x
+	X3Wj9F95AF48u3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbSfO7UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
+ÔÚ 2025/02/13 18:06, Tang Yizhou Ð´µÀ:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
+> 
+> wbt_wait() no longer uses a spinlock as a parameter. Update the function
+> comments accordingly.
+> 
+> RWB_UNKNOWN_BUMP is used when we gradually adjust scale_steps toward the
+> center state, which is a value of 0.
+> 
+> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> ---
+>   block/blk-wbt.c | 11 ++++-------
+>   1 file changed, 4 insertions(+), 7 deletions(-)
+> 
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 13 February 2025 13:24
-> To: Swathi K S <swathi.ks=40samsung.com>
-> Cc: krzk+dt=40kernel.org; andrew+netdev=40lunn.ch; davem=40davemloft.net;
-> edumazet=40google.com; kuba=40kernel.org; pabeni=40redhat.com;
-> robh=40kernel.org; conor+dt=40kernel.org; richardcochran=40gmail.com;
-> mcoquelin.stm32=40gmail.com; alexandre.torgue=40foss.st.com;
-> rmk+kernel=40armlinux.org.uk; netdev=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-stm32=40st-md-mailman.stormreply.com;
-> linux-arm-kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v6 1/2=5D dt-bindings: net: Add FSD EQoS device tre=
-e
-> bindings
->=20
-> On Thu, Feb 13, 2025 at 10:16:23AM +0530, Swathi K S wrote:
-> > +  clock-names:
-> > +    minItems: 5
-> > +    maxItems: 10
-> > +    contains:
-> > +      enum:
-> > +        - ptp_ref
-> > +        - master_bus
-> > +        - slave_bus
-> > +        - tx
-> > +        - rx
-> > +        - master2_bus
-> > +        - slave2_bus
-> > +        - eqos_rxclk_mux
-> > +        - eqos_phyrxclk
-> > +        - dout_peric_rgmii_clk
->=20
-> This does not match the previous entry. It should be strictly ordered wit=
-h
-> minItems: 5.
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-Hi Krzysztof,
-Thanks for reviewing.
-In FSD SoC, we have 2 instances of ethernet in two blocks.
-One instance needs 5 clocks and the other needs 10 clocks.
-
-I tried to understand this by looking at some other dt-binding files as giv=
-en below, but looks like they follow similar approach
-Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-
-Could you please guide me on how to implement this?
-Also, please help me understand what is meant by 'strictly ordered'
-
->=20
->=20
-> > +
-> > +  iommus:
-> > +    maxItems: 1
-> > +
-> > +  phy-mode:
-> > +    enum:
-> > +      - rgmii-id
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - clocks
-> > +  - clock-names
-> > +  - iommus
-> > +  - phy-mode
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - =7C
-> > +    =23include <dt-bindings/clock/fsd-clk.h>
-> > +    =23include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    soc =7B
-> > +        =23address-cells =3D <2>;
-> > +        =23size-cells =3D <2>;
-> > +        ethernet1: ethernet=4014300000 =7B
-> > +            compatible =3D =22tesla,fsd-ethqos=22;
-> > +            reg =3D <0x0 0x14300000 0x0 0x10000>;
-> > +            interrupts =3D <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-> > +            interrupt-names =3D =22macirq=22;
-> > +            clocks =3D <&clock_peric
-> PERIC_EQOS_TOP_IPCLKPORT_CLK_PTP_REF_I>,
-> > +                     <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_ACLK_I>,
-> > +                     <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_HCLK_I>,
-> > +                     <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_RGMII_CLK_=
-I>,
-> > +                     <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_RX_I>,
-> > +                     <&clock_peric PERIC_BUS_D_PERIC_IPCLKPORT_EQOSCLK=
->,
-> > +                     <&clock_peric PERIC_BUS_P_PERIC_IPCLKPORT_EQOSCLK=
->,
-> > +                     <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
-> > +                     <&clock_peric PERIC_EQOS_PHYRXCLK>,
-> > +                     <&clock_peric PERIC_DOUT_RGMII_CLK>;
-> > +            clock-names =3D =22ptp_ref=22, =22master_bus=22, =22slave_=
-bus=22,=22tx=22,
-> > +                          =22rx=22, =22master2_bus=22, =22slave2_bus=
-=22, =22eqos_rxclk_mux=22,
-> > +                          =22eqos_phyrxclk=22,=22dout_peric_rgmii_clk=
-=22;
-> > +            pinctrl-names =3D =22default=22;
-> > +            pinctrl-0 =3D <&eth1_tx_clk>, <&eth1_tx_data>, <&eth1_tx_c=
-trl>,
-> > +                        <&eth1_phy_intr>, <&eth1_rx_clk>, <&eth1_rx_da=
-ta>,
-> > +                        <&eth1_rx_ctrl>, <&eth1_mdio>;
-> > +            iommus =3D <&smmu_peric 0x0 0x1>;
-> > +            phy-mode =3D =22rgmii-id=22;
-> > +       =7D;
->=20
-> Misaligned/misindented.
-
-Ack
-
->=20
-> Best regards,
-> Krzysztof
-
+> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> index 6dfc659d22e2..8b73c0c11aec 100644
+> --- a/block/blk-wbt.c
+> +++ b/block/blk-wbt.c
+> @@ -136,8 +136,9 @@ enum {
+>   	RWB_MIN_WRITE_SAMPLES	= 3,
+>   
+>   	/*
+> -	 * If we have this number of consecutive windows with not enough
+> -	 * information to scale up or down, scale up.
+> +	 * If we have this number of consecutive windows without enough
+> +	 * information to scale up or down, slowly return to center state
+> +	 * (step == 0).
+>   	 */
+>   	RWB_UNKNOWN_BUMP	= 5,
+>   };
+> @@ -638,11 +639,7 @@ static void wbt_cleanup(struct rq_qos *rqos, struct bio *bio)
+>   	__wbt_done(rqos, flags);
+>   }
+>   
+> -/*
+> - * May sleep, if we have exceeded the writeback limits. Caller can pass
+> - * in an irq held spinlock, if it holds one when calling this function.
+> - * If we do sleep, we'll release and re-grab it.
+> - */
+> +/* May sleep, if we have exceeded the writeback limits. */
+>   static void wbt_wait(struct rq_qos *rqos, struct bio *bio)
+>   {
+>   	struct rq_wb *rwb = RQWB(rqos);
+> 
 
 
