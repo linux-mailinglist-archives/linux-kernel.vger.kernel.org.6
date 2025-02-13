@@ -1,194 +1,157 @@
-Return-Path: <linux-kernel+bounces-513555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D344EA34B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:19:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9CFA34B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9861888BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7ADE1633A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AE120766B;
-	Thu, 13 Feb 2025 17:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43362040B7;
+	Thu, 13 Feb 2025 17:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n8wGfp1k"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYjavnAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8183415689A;
-	Thu, 13 Feb 2025 17:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727815855E;
+	Thu, 13 Feb 2025 17:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467023; cv=none; b=XokJcihu/BY+zVDUiqXRxBe3WQeQCXYQhLv+mMbfKAiXM2CBgAlhMqYveRk1PP2pzTLkyPb6Za2kxs04C1rzVioo9Dsle8CEJo2NOSXJgc7EA8PFS+MH6bcHe5FHcA8GgQ6Moz2W4V8A8fv+sZo9fbkCQ+Ov6EW85PfGuluFAgo=
+	t=1739467149; cv=none; b=LFg6qFmk1J+5r4qqq1SHJ88a5KpgaNUAQ7n6eEGqmUkjLKLl5F3zRR4n+uai4BHIZiDJT8bKlxSIWNTEM9HEJvsfwIPIPd9Ax6l2DCmLdFrIq9RUj7R7U57k+uFKxhO7LQfEn4e4FJA3ZQR9I1UQkNhOEKR1NXDQ+LJaVgPJzdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467023; c=relaxed/simple;
-	bh=rwN68ZfFZpS+p7Snpl6+Vm3SkAwnIbf/+yQkfbEaAY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f1dIPeOL7QlQSjthceaOtymcNoWSgl0JmJ3T2m6ulJDNcO1yQfs3KxVz55R4aQVipuauzjdL1hthrujRTk2OCLaWO1gBL7r9ltR2eaLKEYaggfeIehDR5UXX+i2RzJF9RVfH7OiKacV4jdgpV02x7sGmyarbhsFnburef0Q0tyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n8wGfp1k; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DGrp5V008337;
-	Thu, 13 Feb 2025 17:16:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9wlBFv7Tbou/aWwuZJOkNHqYSnFsBzD7OpLRH3DjcgI=; b=n8wGfp1kx+Ww46ol
-	ltmCjQpJU3aOzBoaDeDY4u+maocy7k2uTi82/nUtkufbwtkHKKLndqXaOi9Y2Yt8
-	+pTEg8bDooUoEpskn6yVReNONteybJLKgFXjXVZFSWCxufFQICiSBmvTaCCs/Yej
-	OJ+uxVpmr5DWivVF8wbVvJCF0sDIq6/HJ5bVq9WmOyYz4MyIyaixYip2YO3aqXvV
-	kuNvAewXOkCqMtQbLkxfvIwMyxESmZKzl887iFr30MO2PE2gVQA+FBJA/ga08qeH
-	kikHG9YSuY+Ueef5eSeZI0YvRVshrHGb7NhHKlKG9EuXHT6t5foSc+PmKhlDN6WW
-	KolIBQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qewhbm77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 17:16:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51DHGlHA013022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 17:16:47 GMT
-Received: from [10.216.44.15] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Feb
- 2025 09:16:40 -0800
-Message-ID: <30c91617-8307-4ea5-8a56-4b3b987f2bdc@quicinc.com>
-Date: Thu, 13 Feb 2025 22:46:38 +0530
+	s=arc-20240116; t=1739467149; c=relaxed/simple;
+	bh=zKcbM6IcBXpQkvDiwQ/2d8+zEon4okynGxi4dN1iduQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TeQpekyYasXPoThI3/DcJ5H1oewPiDTaJoylgkOLQQ242PJpjl6H4/JxqYyXr68XZlfcSBKzidhjqaz9poAoKDo2KBAncC/zhmdvHkQHlwkNFMvbPHU7gSaayrByuT0V3pNHWGH9RVTBvu7tzq284AGAXrHJeSf7HTbcqQZF4yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYjavnAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87CBDC4AF0B;
+	Thu, 13 Feb 2025 17:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739467148;
+	bh=zKcbM6IcBXpQkvDiwQ/2d8+zEon4okynGxi4dN1iduQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fYjavnAgjG2ALVhU3n41CpcFyEECQXYNjeAbD5x55o34caZF2OembTmslX/NXoYiH
+	 zeAduvH//VNzZhkC5ViOZAzGblsV8fseHGzpZqg5tGl6vSyoSacECfunMG+uPJ1ojm
+	 Rn8IWOszs8CFlovgEXbRHxcfPrU8qOZX9YkbJKZu8XojMcf8JBZzW113LNzWs6vfXw
+	 59sInjBAvJhxqXcJ8ABZ+uXQJRFXl4o0pPFNiJpCo0mfQn5E9+NUfENidJEdN40tRv
+	 E9PYhxdf8RGCGr20maLcIs6D345DXeHoqDUJwgsvediNEY6op0B7DmcjSeTtXgDvEP
+	 VhnFPdu0wOJww==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-545039b6a67so1019946e87.0;
+        Thu, 13 Feb 2025 09:19:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUUeXWGIFxjM/d1EQXh6c3YScWADTqzIAUDwcjCIqNKJYJDwI8A86Q65xbRBUFjeYMhe1svWLA2@vger.kernel.org, AJvYcCUzU7o+NlTpB1nMBDMTBanacVGVoJArurALuj/NmWQGI+CqPpAhrINTS8TPiKBiP6HdD2qngv4og1g6t5c=@vger.kernel.org, AJvYcCV0d5tQLp67tZSFSSc2X7+JZ7cpWlWHdFj3oKeQYsSTAWnNkOJ+0Cd+reATYrbziDd21dyZsS4bzP8u8XwPDkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaXDnBcbgD3GUc9fQjMVdGAmQz3zfg/cC6q+kTZp3R5MiR9xtS
+	J0IYYHPINzkPgmQwRj8qA6Aub23glsnt+xIiJSvSf4T4zjHzz8FAJJREjzFkSnqcXKhOug3E/Vm
+	K0TX53Z+ESJ8F2laIUMlwzW3UHRg=
+X-Google-Smtp-Source: AGHT+IFBveEmZsMEZsyrxXtWamogvgck+sW2aQvGnVbR5VQvH4/CMwg5fT2sHta2nfxtlArh3COkxd584to+rMNeWCs=
+X-Received: by 2002:a05:6512:ba3:b0:545:cc2:accb with SMTP id
+ 2adb3069b0e04-5451811d29fmr2744992e87.28.1739467146599; Thu, 13 Feb 2025
+ 09:19:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Jie Zhang
-	<quic_jiezh@quicinc.com>
-References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
- <20250213-a623-gpu-support-v1-4-993c65c39fd2@quicinc.com>
- <p36nz6p6bbzur7uoitbzc63hv4qf7hhsix3mqa36igarasj67b@evcdfpeybgsh>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <p36nz6p6bbzur7uoitbzc63hv4qf7hhsix3mqa36igarasj67b@evcdfpeybgsh>
+References: <20250210163732.281786-1-ojeda@kernel.org> <CAMj1kXHgjwHkLsJkM3H2pjEPXDvD80V+XhH_Gsjv8N4Cf6Bvkw@mail.gmail.com>
+ <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
+In-Reply-To: <9430b26a-8b2b-4ad8-b6b0-402871f2a977@ralfj.de>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 13 Feb 2025 18:18:55 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
+X-Gm-Features: AWEUYZmMXwdsGWpyxIXpLuvhOOhu7SYkGwPGIA-pgYV0N-zrNn8_zzPI-Pd5f0o
+Message-ID: <CAMj1kXHbXfDz96C3ZPyyXB_dSRyxbc4BP3qNN_oemG9T68eTsQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat target
+To: Ralf Jung <post@ralfj.de>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>, Jubilee Young <workingjubilee@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5TEdcz_SSSncZOitpVLLRmj3C4D-DxYh
-X-Proofpoint-GUID: 5TEdcz_SSSncZOitpVLLRmj3C4D-DxYh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130123
 
-On 2/13/2025 10:26 PM, Dmitry Baryshkov wrote:
-> On Thu, Feb 13, 2025 at 09:40:09PM +0530, Akhil P Oommen wrote:
->> From: Jie Zhang <quic_jiezh@quicinc.com>
->>
->> Add gpu and gmu nodes for qcs8300 chipset.
->>
->> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 93 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 93 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> index f1c90db7b0e6..2dc487dcc584 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> @@ -2660,6 +2660,99 @@ serdes0: phy@8909000 {
->>  			status = "disabled";
->>  		};
->>  
->> +		gpu: gpu@3d00000 {
->> +			compatible = "qcom,adreno-623.0", "qcom,adreno";
->> +			reg = <0x0 0x03d00000 0x0 0x40000>,
->> +			      <0x0 0x03d9e000 0x0 0x1000>,
->> +			      <0x0 0x03d61000 0x0 0x800>;
->> +			reg-names = "kgsl_3d0_reg_memory",
->> +				    "cx_mem",
->> +				    "cx_dbgc";
->> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
->> +			iommus = <&adreno_smmu 0 0xc00>,
->> +				 <&adreno_smmu 1 0xc00>;
->> +			operating-points-v2 = <&gpu_opp_table>;
->> +			qcom,gmu = <&gmu>;
->> +			interconnects = <&gem_noc MASTER_GFX3D QCOM_ICC_TAG_ALWAYS
->> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->> +			interconnect-names = "gfx-mem";
->> +			#cooling-cells = <2>;
->> +
->> +			status = "disabled";
->> +
->> +			gpu_zap_shader: zap-shader {
->> +				memory-region = <&gpu_microcode_mem>;
->> +			};
->> +
->> +			gpu_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-877000000 {
->> +					opp-hz = /bits/ 64 <877000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
->> +					opp-peak-kBps = <12484375>;
->> +				};
->> +
->> +				opp-780000000 {
->> +					opp-hz = /bits/ 64 <780000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
->> +					opp-peak-kBps = <10687500>;
->> +				};
->> +
->> +				opp-599000000 {
->> +					opp-hz = /bits/ 64 <599000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
->> +					opp-peak-kBps = <8171875>;
->> +				};
->> +
->> +				opp-479000000 {
->> +					opp-hz = /bits/ 64 <479000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
->> +					opp-peak-kBps = <5285156>;
->> +				};
-> 
-> Does it have no speed bins or are they pending on the nvmem patchset?
+On Thu, 13 Feb 2025 at 16:46, Ralf Jung <post@ralfj.de> wrote:
+>
+> Hi all,
+>
+> > We have to carefully make the distinction here between codegen and ABI.
+> >
+> > The arm64 C code in the kernel is built with -mgeneral-regs-only
+> > because FP/SIMD registers are not preserved/restored like GPRs, and so
+> > they must be used only in carefully controlled circumstances, i.e., in
+> > assembler code called under kernel_neon_begin()/kernel_neon_end()
+> > [modulo some exceptions related to NEON intrinsics]
+> >
+> > This does not impact the ABI, which remains hard-float [this was the
+> > only arm64 calling convention that existed until about a year ago].
+> > Any function that takes or returns floats or doubles (or NEON
+> > intrinsic types) is simply rejected by the compiler.
+>
+> That's how C works. It is not how Rust works. Rust does not reject using floats
+> ever. Instead, Rust offers softfloat targets where you can still use floats, but
+> it won't use float registers. Obviously, that needs to use a different ABI.
+> As you said, aarch64 does not have an official softfloat ABI, but LLVM
+> implements a de-facto softfloat ABI if you ask it to generate functions that
+> take/return float types while disabling the relevant target features. (Maybe
+> LLVM should just refuse to generate such code, and then Rust may have ended up
+> with a different design. But now this would all be quite tricky to change.)
+>
+> > Changing this to softfloat for Rust modifies this calling convention,
+> > i.e., it will result in floats and doubles being accepted as function
+> > parameters and return values, but there is no code in the kernel that
+> > actually supports/implements that.
+>
+> As explained above, f32/f64 were already accepted as function parameters and
+> return values in Rust code before this change. So this patch does not change
+> anything here. (In fact, the ABI used for these functions should be exactly the
+> same before and after this patch.)
+>
 
-Product team hasn't shared the details of GPU SKUs or the SKU detection
-mechanism yet. The default assumption is single SKU.
+OK, so can I summarize the above as
 
--Akhil.
+- Rust calling Rust will work fine and happily use float types without
+using FP/SIMD registers in codegen;
+- Rust calling C or C calling Rust will not support float or double
+arguments or return values due to the restrictions imposed by the C
+compiler.
 
-> 
->> +			};
->> +		};
->> +
-> 
+?
 
+> > Also, it should be clarified
+> > whether using a softfloat ABI permits the compiler to use FP/SIMD
+> > registers in codegen. We might still need -Ctarget-feature="-neon"
+> > here afaict.
+>
+> Rust's softfloat targets do not use FP/SIMD registers by default. Ideally these
+> targets allow selectively using FP/SIMD registers within certain functions; for
+> aarch64, this is not properly supported by LLVM and therefore Rust.
+>
+
+I read this as 'this default behavior might change in the future', and
+so -Ctarget-feature="-neon" should be added even if it is redundant at
+this point in time.
+
+> > Ideally, we'd have a target/target-feature combo that makes this more
+> > explicit: no FP/SIMD codegen at all, without affecting the ABI,
+> > therefore making float/double types in function prototypes illegal.
+> > AIUI, this change does something different.
+>
+> Having targets without float support would be a significant departure from past
+> language decisions in Rust -- that doesn't mean it's impossible, but it would
+> require a non-trivial effort (starting with an RFC to lay down the motivation
+> and design).
+>
+
+Fair enough. The codegen is all that matters, and there are other
+cases (e.g., spilling) where the compiler may decide to use FP/SIMD
+registers without any floats or doubles in sight. In fact, there are
+swaths of non-performance critical floating point code in the AMDGPU
+driver where it would be useful to have float/double support using
+softfloat codegen too.
 
