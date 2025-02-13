@@ -1,95 +1,47 @@
-Return-Path: <linux-kernel+bounces-512408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C502A338EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:36:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156ACA338F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A82188962B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77BF1621DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E7A2080D3;
-	Thu, 13 Feb 2025 07:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6573D20ADD6;
+	Thu, 13 Feb 2025 07:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GFnd5iQ0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QhQWsKt1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p5Ri6t//";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="s/ZxUvYL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMUO0Hqu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7962054E7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19CD208984;
+	Thu, 13 Feb 2025 07:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432153; cv=none; b=P6UWoQWACKxKo0k4mh6n0NuyBYpEZ+LutLfrqGyFb54vC9IijEDxFQ2OH0+XA2iK+JGX0EPP2kffDOa4ks7gLFEo7bX6EyxY1/B01/qa5vC0ISiwBQR6hqi4kR4fc+qRJSa1yEGFIlCZL/qC8uhzsg4zJNqKWS/l6049a8A1IHc=
+	t=1739432181; cv=none; b=e4lLcNhjqf+GisvqDJz25uhLOkCDgEaYtnlYzy4BHoCPb0Xk8kASWrXsyc5KhNMZnHCFQcrTrphw3AMt4jtRac368MOchIrQA1cgRwg1bOvnw6HByyY/XNWjbbsu9wjDqlyspqAEEXm3JELRTXs5VBkURzyLnw2f8Ngm0+XSF7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432153; c=relaxed/simple;
-	bh=tyxTbBwkF0S46svpZStV2WAEk8kfONp6U+qDA9L3qEc=;
+	s=arc-20240116; t=1739432181; c=relaxed/simple;
+	bh=jgZWbR1LgPob7kORygAYU9eAvimwTdXQQn3JaJQgLEQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=obcW4jfgbdOjxxj5oAFTyiiHEhrRwSKB0D9LN2oKwM2nRjV+eGB1XYVcqvH4wxokYYvHk0tuBje24QQ+GQVcQhfA32FMSU3Rffdmar9NAWhGxkLF5slGBiQ5AiTnBrsnywxoWmE57Wc5g26SYOfhPQcNjp5RJnijQ2S+UnLfw4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GFnd5iQ0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QhQWsKt1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p5Ri6t//; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=s/ZxUvYL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DDF4E1F387;
-	Thu, 13 Feb 2025 07:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739432150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9AfcgSpcOpROCtOLQzsZn88AuA73w5Kfe8K85N+i94I=;
-	b=GFnd5iQ0hz8iNxdJB9c0nQbmdSNeRLtH8y+hB+xKwJpBpZ4782hxG/TDcPel8am2/SVFxz
-	bqnWqYKnXFzOqs7yniUYieX6hbFrlELE4iRY+41gQJocgxgG5u9qkK3+h37d9OxR5R7pwg
-	8KyAxQZlBNUoHvoM7MYAt0aDatP0YTs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739432150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9AfcgSpcOpROCtOLQzsZn88AuA73w5Kfe8K85N+i94I=;
-	b=QhQWsKt1fGV9bt0m+udl/QZnh0r0V9EDkbBMwn54D8q27Dnbb/pOWqUIn9R1xsfyDq1ayN
-	2ToMXXZWeOuvdSAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="p5Ri6t//";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="s/ZxUvYL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739432149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9AfcgSpcOpROCtOLQzsZn88AuA73w5Kfe8K85N+i94I=;
-	b=p5Ri6t//KtAb940dwIBIzek/ZCjW8M7gxpgNjXay0ZhszoLm0gEK9VfE2eD+ZnuS8f9A9j
-	4Qq+WhudFfpcFP1H19hl9P7ipuLNME1omszE+zNJVO50jbl6ScO/iQTxx3YtRoJjDNJeHG
-	Q1zubr+Z7I1dgfZ35cO2RqVruq795y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739432149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9AfcgSpcOpROCtOLQzsZn88AuA73w5Kfe8K85N+i94I=;
-	b=s/ZxUvYLvXPZZ/IgLjn5y4uWqO1PG+PKuwYaellawrH/AdcI8oqBHNdnYG+8411isgA10w
-	fAolFdl9QlXQJHCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C4B213874;
-	Thu, 13 Feb 2025 07:35:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oONtJNWgrWc5XQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 13 Feb 2025 07:35:49 +0000
-Message-ID: <f67a3650-9b7c-49e0-b5df-5694a5d06a66@suse.de>
-Date: Thu, 13 Feb 2025 08:35:49 +0100
+	 In-Reply-To:Content-Type; b=O8/6rpKFtvT2J/Uelh6OEB/+AB0rAYMQOElPsoh7yf4MB/99SSXwiZeJzaNclOqWK/oi+X0dDbOn/+AInOXvbtJuXkVdlhfXNjf6CLwQ75KZs5KhnqNKsj4+esW6uPj5/ZdbztPhFDjVY8CFp6rBbEpUugS7ujS5Gbff4GZAZ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMUO0Hqu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03794C4CED1;
+	Thu, 13 Feb 2025 07:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739432181;
+	bh=jgZWbR1LgPob7kORygAYU9eAvimwTdXQQn3JaJQgLEQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BMUO0HquFfkb1It5hc0fqis9/vcKjbMVZ8kocrdiM9Rzu2t6skGI2qWFWqqgnGXHS
+	 xYKukMKt3iAnnDs5jso0zt0pC4LSYiUJjoLrEyQSiW24G5wj9zq/SvdhGk6AboaQpP
+	 f8F/5OdLyGf0GynCjAhyAKkLLr1OPq02jmAFShCBut9BXZlLo/d6zrIeQcn53kHK2S
+	 d3nWNJecE5WOzTPRxeJrCM+AgUsJoqdYN7O5AW7X0a65byy32OozWb9jUNJL7Q99ZK
+	 FvM8HHBfEjAJuOY+xujpWuKCoaXl+8rbKUU3SvFlxulUFy8wxggXDoQoVBwix23LM0
+	 H17zqSob/NTpQ==
+Message-ID: <8879a35c-7ea6-4e98-98fe-76d607285696@kernel.org>
+Date: Thu, 13 Feb 2025 08:36:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,175 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Handheld gaming PC panel orientation quirks
-To: John Edwards <uejji@uejji.net>, Hans de Goede <hdegoede@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Wyatt <fewtarius@steamfork.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250212195934.91669-2-uejji@uejji.net>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: mripard@kernel.org, mchehab@kernel.org, jai.luthra@linux.dev,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com,
+ vaishnav.a@ti.com, r-donadkar@ti.com, u-kumar1@ti.com
+References: <20250212131244.1397722-1-y-abhilashchandra@ti.com>
+ <20250212131244.1397722-2-y-abhilashchandra@ti.com>
+ <912dc0d1-6236-43cf-b423-54368eeed2e7@kernel.org>
+ <94112ab7-5462-4a5b-90f3-636a7f8e5989@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250212195934.91669-2-uejji@uejji.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <94112ab7-5462-4a5b-90f3-636a7f8e5989@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: DDF4E1F387
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,steamfork.org,lists.freedesktop.org,vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Hi
-
-Am 12.02.25 um 20:59 schrieb John Edwards:
-> Hello, Thomas and Hans.
->
-> On Wed, Feb 12, 2025 at 5:14 AM Hans de Goede <hdegoede@redhat.com> wrote:
->> Hi,
->>
->> On 12-Feb-25 12:11 PM, Thomas Zimmermann wrote:
->>> Hi
+On 13/02/2025 08:16, Yemike Abhilash Chandra wrote:
+> 
+> On 13/02/25 00:58, Krzysztof Kozlowski wrote:
+>> On 12/02/2025 14:12, Yemike Abhilash Chandra wrote:
+>>> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
+>>> Enabling these interrupts will provide additional information about a CSI
+>>> packet or an individual frame. So, add support for optional interrupts
+>>> and interrupt-names properties.
 >>>
->>> Am 12.02.25 um 11:51 schrieb Hans de Goede:
->>>> Hi Thomas,
->>>>
->>>> On 11-Feb-25 2:55 PM, Thomas Zimmermann wrote:
->>>>> Hi
->>>>>
->>>>> Am 24.01.25 um 21:46 schrieb John Edwards:
->>>>>> Hello.
->>>>>>
->>>>>> I am submitting a small number of patches to add panel rotation quirks for
->>>>>> a few handheld gaming PCs.  These patches were created by the SteamFork
->>>>>> team and are in daily use by us and/or members of our community.
->>>>>>
->>>>>> The following devices are covered by these patches:
->>>>>> 1: AYANEO 2S
->>>>>> 2: AYANEO Flip DS, AYANEO Flip KB
->>>>>> 3: AYANEO Slide, Antec Core HS
->>>>>> 4: GPD Win 2 (with correct DMI strings)
->>>>>> 5: OneXPlayer Mini (Intel)
->>>>>>
->>>>>> Thank you for your consideration and for taking the time to review these
->>>>>> patches.
->>>>> Did you ever receive any response to this series? If not, then
->>>>>
->>>>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->>>> I had the following remark for 3 new entries added in patches 2/5 + 3/5:
->>>>
->>>> "Since this '}' is closing the .matches initializer it should be indented 2 tabs"
->>>>
->>>> With that fixed, you can add my:
->>>>
->>>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->>>>
->>>> to the entire series.
->>>>
->>>>> for the series. Let me know if you need assistance for getting the patch files merged.
->>>> Normally I pickup/merge these panel orientation quirks, but I've been swamped
->>>> which is why these have just been sitting on the list.
->>>>
->>>> Thomas, I would appreciate it if you can merge the set into drm-misc-fixes, with
->>>> the 3 minor indentation issues fixed.
->>> Sure, no problem. I'll wait for John to provide an update. Otherwise, I'll fix it myself while merging the series.
->> Great thank you.
+>>> [0]: http://www.ti.com/lit/pdf/spruil1
 >>
->> Note in the review comments I said that we could likely fixup the indentation
->> issues while merging. If you prefer a new version from John that is fine too,
->> but we need to make clear to John what we want :)
-> Thank you both for your comments and feedback.  I am more than happy to
-> provide a v3 with the noted changes if requested.
->
-> We have no other planned changes for this patch series, so if you wish to
-> implement the changes while merging that is also acceptable to us.
+>>
+>> Why is this RFC?
+>>
+> 
+> I sent this as an RFC to gather input from different vendors using the 
+> cdns,csi2rx driver
+> and its device tree bindings. so I just wanted to get their feedback as 
+> well.
 
-Please send an update.
+Then document it clearly that you do not expect review.
 
-Best regards
-Thomas
+> If there are no concerns from any of the them, I will proceed with 
+> sending this as v1.
 
->
-> Thank you both again.
->
-> John Edwards
->
->
->
->>>>>> v2:
->>>>>> - Minor rewording of commit messages
->>>>>> - Include Tested-by tag for Paco Avelar in AYANEO Flip DS/KB patch
->>>>>> - Add OneXPlayer Mini (Intel) patch
->>>>>>
->>>>>> v1:
->>>>>> https://lore.kernel.org/dri-devel/20250116155049.39647-2-uejji@uejji.net/
->>>>>>
->>>>>> Andrew Wyatt (5):
->>>>>>      drm: panel-orientation-quirks: Add support for AYANEO 2S
->>>>>>      drm: panel-orientation-quirks: Add quirks for AYA NEO Flip DS and KB
->>>>>>      drm: panel-orientation-quirks: Add quirk for AYA NEO Slide
->>>>>>      drm: panel-orientation-quirks: Add new quirk for GPD Win 2
->>>>>>      drm: panel-orientation-quirks: Add quirk for OneXPlayer Mini (Intel)
->>>>>>
->>>>>>     .../gpu/drm/drm_panel_orientation_quirks.c    | 40 ++++++++++++++++++-
->>>>>>     1 file changed, 38 insertions(+), 2 deletions(-)
->>>>>>
+No, this was v1.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
 
+
+Best regards,
+Krzysztof
 
