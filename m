@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-513079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86AD8A3415E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:09:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0E0A3415F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8715D3A4ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4770E16BCC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6626C27128D;
-	Thu, 13 Feb 2025 14:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37123274253;
+	Thu, 13 Feb 2025 14:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJr9EAYK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmE8Q5hu"
 Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5490B271281;
-	Thu, 13 Feb 2025 14:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3113E274244;
+	Thu, 13 Feb 2025 14:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455258; cv=none; b=m0gCTUGGShaarxa2quRy0f2GiMMnI07jBrUTXh72P9UXx3q9K2MyHMwONcA3kboBMDZmF0NKZWMZV2FJA2VJS/6mD8XyL5iMgH/oHBNQ2mMczdkADPvsaCNtXOZ5UzhIzRd+vMTm7YEb2uU0Lv6Hnwss0f8EtwCq0OEpwn/BVWw=
+	t=1739455266; cv=none; b=CDgref3Wk6sAcSa8ZlUY7rZdSHQbRE8X8VE3Zdiq0wcWZrw8f8N2C2hkaMEUc69Nqn2J0mjp/P1XqQuUrensVNi4638oLJrk6kUP6Un7VjKKQtbJDzx9Iaenad0f4csghDDifJs8osZ89zR73n3YtYKka7DUPL71kwQ0uisyZ5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455258; c=relaxed/simple;
-	bh=zKjcSUryVoDbQCRZ2x8lBFB/w5Bku/XsU/5WIanvQhE=;
+	s=arc-20240116; t=1739455266; c=relaxed/simple;
+	bh=Nn8KuzF9O6nRbRkZEq4R22MVH1XltQW/KfhFXKsiiKA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r1zrgdT61Gr71JlsQ2nWFhRU3fTsAAZUZaib+rOTxwqiMUrpZy7tgYewUOS0dbKkeMqipDdURZ8UuWZSFE7FYtA0GhvtygiH9NiYMajtnlzPQn3pwAQpUIIpoyhh3iS2KO8xA+rD1nRUkGkrm6CS0W1RJ/LAQhureRycr51TcJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJr9EAYK; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=sscfiPrvDijARzZr6IA5EXrvHXbbP7Ce9kOKHCghvi3y1w9qst0NOT3sDiV6GDHFHvXkXqhe++L0wtOv3GKtK2bTy5sGnbPdnlj4+vbfCGUJI0f5fh68TDw8NizzzZNGxOMnFr3JfYSQQvTK/66lS2xSxYwlll1l2mupIu7ybWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmE8Q5hu; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c92c857aso14349415ad.0;
-        Thu, 13 Feb 2025 06:00:57 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f44e7eae4so15296125ad.2;
+        Thu, 13 Feb 2025 06:01:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739455256; x=1740060056; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739455264; x=1740060064; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2+y6Ck4nUrrnZ5J/UDrnc3xAlfWqC0MtemaHjWH6P0w=;
-        b=IJr9EAYKlQ8C49VIlTdchnW4gRyzsff2+c2kyBhYAJMJH1RH7yBZ9HU4pR9Ha5yUN3
-         iyAg7tPAthjcQh6XgLILTTVAmAgC+6WRdLdE8d6RCKB1n/qGzBBysN22+TnCGBnqcajQ
-         XtxIY2pPTIxbmF7fJA+Iv5y7JQi0rroeqKwF4Q4EpR2/3CAhNfYo60R83vWiVQ3aS/EN
-         aycT+sGHY86fSODeSDDV7hW0A0py2mFDV3Jx3Zb4GXlqG7AtEjWoofszs72q/M573VNM
-         mj8xrQHkH8qZvZFUPzGUj3mRaxmBEqPYRGSjWPcwALHCPfj3Q24HkvNw3KWvfQX9fbBG
-         9MSw==
+        bh=6YTck7L/TM6YT4d7fP2I9343oTdjN2yh7jLib0/ivQs=;
+        b=OmE8Q5huspomm3W/DZd4aaiTB3AxD9fakvxGLfb57FTY9tlmnhZMf9wSK3kxsPMzSf
+         Uw2aGIW5JAAyjm4XCKb0Ho7obwbEwxUwMt8QiZu4k/ID7jJjr1N92F04OipE3ouPR2P8
+         uaZ0HF/MtaRM9+kndjtNYYdBFG68nFqdgaaHWPZN7Jo28fRA6T1DsU7xtyObLTNtLkjD
+         7Z5UdexchfYo3rvQXFfSJllliEXeb/x1fpjoWlKPwJOMjVrSBIBIzlZGGiY4lzRkfobJ
+         Z6t4Bg+oFkQq0N/PtkWF76CeCtfo6gYNJS/87MXraW4k0j7ABdqbaCVN5S8LnOVrSIry
+         qTmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739455256; x=1740060056;
+        d=1e100.net; s=20230601; t=1739455264; x=1740060064;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2+y6Ck4nUrrnZ5J/UDrnc3xAlfWqC0MtemaHjWH6P0w=;
-        b=aw787/UBQNYvN0pcfHNT0JhywJ1ri+ZQlMf4I/XGTYKBNeJfAa6joSqQ6FpPlkbu1d
-         IMEGcxxU1iJBNFwhTR1Fx42Xe4k+W2pO2/w7LY/zak63Py/pr0jwDc4l2SLCrbSAJWj+
-         Ax+FYt3TKmbUHD+fBlnNvqrjVr2HHMRIwo/TKImiSKIMwXmhrOX2HaH7Z8DITpGO/SSX
-         tznNFtkPTMwCyOA5PBG/eJwo6g7qBM7ZEFeXmOV1JXNdVcCgCcT801T+9Up1WN7kGVL6
-         8imHFXSyz8bKi2V0ewQfaWM3Evu0Q1E4kgFk0j5zKK5SnEqHaQlJc75qb/cWZkY49p2X
-         X1fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWCmphQcf86q0UYzH9/vcBzM2N8pKuKO6tfxV+v5VTRphUtJxEGc16U6Q/ZWTemXcM2Z/Yn4BufT2WxUmW8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3q/jrVrB7AsGdpXznpoqlIL1xmDrebZNlJV5s11OecR9xYT/z
-	XEqV0r9B+qdhnk2TvSdFyQMDjjbu227ablYh07EjqsI5+F4nFnBn4BgybG0l
-X-Gm-Gg: ASbGncuMBsRvKQ4QiO0HZCeMCInWWQXrznukY2msdEWlyghzn9rdeSpvGxLpJj+KHd2
-	3EN0Kakuqj5ITJtiUwtqvaBOxxq98XLrg2HGhZIYYUcyFRQEjaBxstgOrzKg+54DJXTCsCMb+rH
-	zubSOCjOcTPC3kfIeWqABl4ZpAv4OdVJKLhS4tVYrSZm7rLivgVP3yJ+JuZZb3+Uhidqja3uDQK
-	v4to9JJh3DhVmDNOP3ZzjKfFUeaiaUrBsxLpQioXcp1wIbLZ83y3u4gykErF8rGgnLIocX+0IqP
-	cjpG80TUlv/ClmyqzAYG6Owp5NC/x7ACfPa3PP5Jn8+H2yWy92uJiNhGU/y8dJayvPw=
-X-Google-Smtp-Source: AGHT+IH1Zqo9tPEvVGN2+sG3MuJAeMqjgEOo7xAq67fk4VjOAgBOooytYfL4WucnOp0CvNreEK3WqQ==
-X-Received: by 2002:a17:903:94b:b0:220:cfb7:56eb with SMTP id d9443c01a7336-220d376f061mr46259805ad.26.1739455256258;
-        Thu, 13 Feb 2025 06:00:56 -0800 (PST)
+        bh=6YTck7L/TM6YT4d7fP2I9343oTdjN2yh7jLib0/ivQs=;
+        b=DIgx21fN9OsLZDYuSVZcEHpMMFI+oXapQB3radS6ly/cwv8u4Y++YjqCadrfPo8tDV
+         6d/QCgxYH8Pfl3U20q36gGU4k5i2El5myW6f+M4CZajGlr0lrUo7e+cpH1XKJLv52AAN
+         PiZNA7Do8XMDdPPeSUn3jPwzkscv7hiTnx7vbdggzwXJrC1eSn7+HPbAEHXUlekbTfoL
+         GsjDg6Xs5c2rNPCnYfOQOdi/aStj0CZaFupNLxgacVoJEEFCfDUhuiWyiiZ4TmSjE6NF
+         P/783QjUDtuaOm38bPP3buxFWYpToeJ8uHWMJC/OwOCNJxEdnxxf3cJMcNGmqSTnQEwX
+         3K0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXlNDp8JLoBtZCUjaIChLP9Y8rnYf5BQ/p90PoNwaJ7z/FJ0Fz8nxhiJVfd+V+UFE9E1C/e+h3ZgG/SKtJ3IA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCR8IN9/8b/hzEA3rA3yTa5ABrYqSD9q+2OWtHG+EnwOqBpBar
+	kcj0CFv+e3QafVUszWDX2q7+Lt14v/Iq/0g6EyZX2sXQvLrSoeqnPdf36AhM
+X-Gm-Gg: ASbGnctdVVPZSiZPBrRu5Q4WAxnBmHLk304jzYxQY2nMs5VpLoqvyvmbE+ouON+FSTD
+	nbJLBvo8X1E8cHofKG34E547KeO7O/Af9TsH7lYyCwyrRoQiQoXyyvkSqbtMdDgpy8WpVxcKqQL
+	oyqOv13NY6ZKgZIQ9hb5/L+go6vpEzRHLGFmc4dN7PHY9amZlPSie9BNy6YYde4gS696Gq/0tDC
+	E+iOfnImpQRGIph7t8kYuv66ZEVWvhdu7KOMneS52s3710efc5PIOOVIiBMrawprCu8ZCxtkzOV
+	GMGF4U1vg+BlMBtIgCfGsIJjVtGI/uGpGduGhOrD1LJ7prd6bmfp8KCFpxBuImUsWiI=
+X-Google-Smtp-Source: AGHT+IH1x9tK23DwJyRFWv8i5Lca//kx4EQ6K/f/4h09IEIvt0Nq6qmEVopHA91pvULj+H6RHqZ0EQ==
+X-Received: by 2002:a17:902:e750:b0:220:e392:c73 with SMTP id d9443c01a7336-220e3920eebmr20624875ad.22.1739455264110;
+        Thu, 13 Feb 2025 06:01:04 -0800 (PST)
 Received: from mew.. (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55858d6sm12565225ad.223.2025.02.13.06.00.48
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55858d6sm12565225ad.223.2025.02.13.06.00.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 06:00:55 -0800 (PST)
+        Thu, 13 Feb 2025 06:01:03 -0800 (PST)
 From: FUJITA Tomonori <fujita.tomonori@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
@@ -103,9 +103,9 @@ Cc: x86@kernel.org,
 	a.hindborg@kernel.org,
 	aliceryhl@google.com,
 	tmgross@umich.edu
-Subject: [PATCH v3 2/5] riscv/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with Rust
-Date: Thu, 13 Feb 2025 22:57:56 +0900
-Message-ID: <20250213135759.190006-3-fujita.tomonori@gmail.com>
+Subject: [PATCH v3 3/5] arm64/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with Rust
+Date: Thu, 13 Feb 2025 22:57:57 +0900
+Message-ID: <20250213135759.190006-4-fujita.tomonori@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250213135759.190006-1-fujita.tomonori@gmail.com>
 References: <20250213135759.190006-1-fujita.tomonori@gmail.com>
@@ -124,83 +124,64 @@ No functional changes.
 
 Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 ---
- arch/riscv/include/asm/bug.h | 37 +++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+ arch/arm64/include/asm/asm-bug.h | 33 ++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
-index 1aaea81fb141..6ab13b56feb0 100644
---- a/arch/riscv/include/asm/bug.h
-+++ b/arch/riscv/include/asm/bug.h
-@@ -31,40 +31,45 @@ typedef u32 bug_insn_t;
- 
- #ifdef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
- #define __BUG_ENTRY_ADDR	RISCV_INT " 1b - ."
--#define __BUG_ENTRY_FILE	RISCV_INT " %0 - ."
-+#define __BUG_ENTRY_FILE(file)	RISCV_INT " " file " - ."
- #else
- #define __BUG_ENTRY_ADDR	RISCV_PTR " 1b"
--#define __BUG_ENTRY_FILE	RISCV_PTR " %0"
-+#define __BUG_ENTRY_FILE(file)	RISCV_PTR " " file
- #endif
- 
- #ifdef CONFIG_DEBUG_BUGVERBOSE
--#define __BUG_ENTRY			\
-+#define __BUG_ENTRY(file, line, flags)	\
- 	__BUG_ENTRY_ADDR "\n\t"		\
--	__BUG_ENTRY_FILE "\n\t"		\
--	RISCV_SHORT " %1\n\t"		\
--	RISCV_SHORT " %2"
-+	__BUG_ENTRY_FILE(file) "\n\t"	\
-+	RISCV_SHORT " " line "\n\t"	\
-+	RISCV_SHORT " " flags
- #else
--#define __BUG_ENTRY			\
--	__BUG_ENTRY_ADDR "\n\t"		\
--	RISCV_SHORT " %2"
-+#define __BUG_ENTRY(file, line, flags)		\
-+	__BUG_ENTRY_ADDR "\n\t"			\
-+	RISCV_SHORT " " flags
+diff --git a/arch/arm64/include/asm/asm-bug.h b/arch/arm64/include/asm/asm-bug.h
+index 6e73809f6492..a5f13801b784 100644
+--- a/arch/arm64/include/asm/asm-bug.h
++++ b/arch/arm64/include/asm/asm-bug.h
+@@ -21,16 +21,21 @@
  #endif
  
  #ifdef CONFIG_GENERIC_BUG
--#define __BUG_FLAGS(flags)					\
--do {								\
--	__asm__ __volatile__ (					\
+-
+-#define __BUG_ENTRY(flags) 				\
++#define __BUG_ENTRY_START				\
+ 		.pushsection __bug_table,"aw";		\
+ 		.align 2;				\
+ 	14470:	.long 14471f - .;			\
+-_BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
+-		.short flags; 				\
 +
-+#define ARCH_WARN_ASM(file, line, flags, size)			\
- 		"1:\n\t"					\
- 			"ebreak\n"				\
- 			".pushsection __bug_table,\"aw\"\n\t"	\
- 		"2:\n\t"					\
--			__BUG_ENTRY "\n\t"			\
--			".org 2b + %3\n\t"                      \
--			".popsection"				\
-+		__BUG_ENTRY(file, line, flags) "\n\t"		\
-+			".org 2b + " size "\n\t"                \
-+			".popsection\n"				\
++#define __BUG_ENTRY_END					\
+ 		.align 2;				\
+ 		.popsection;				\
+ 	14471:
 +
-+#define __BUG_FLAGS(flags)					\
-+do {								\
-+	__asm__ __volatile__ (					\
-+		ARCH_WARN_ASM("%0", "%1", "%2", "%3")		\
- 		:						\
- 		: "i" (__FILE__), "i" (__LINE__),		\
- 		  "i" (flags),					\
- 		  "i" (sizeof(struct bug_entry)));              \
- } while (0)
-+
- #else /* CONFIG_GENERIC_BUG */
- #define __BUG_FLAGS(flags) do {					\
- 	__asm__ __volatile__ ("ebreak\n");			\
-@@ -78,6 +83,8 @@ do {								\
++#define __BUG_ENTRY(flags)				\
++		__BUG_ENTRY_START			\
++_BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
++		.short flags;				\
++		__BUG_ENTRY_END
+ #else
+ #define __BUG_ENTRY(flags)
+ #endif
+@@ -41,4 +46,24 @@ _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
  
- #define __WARN_FLAGS(flags) __BUG_FLAGS(BUGFLAG_WARNING|(flags))
+ #define ASM_BUG()	ASM_BUG_FLAGS(0)
  
++#ifdef CONFIG_DEBUG_BUGVERBOSE
++#define __BUG_LOCATION_STRING(file, line)		\
++		".long " file "- .;"			\
++		".short " line ";"
++#else
++#define __BUG_LOCATION_STRING(file, line)
++#endif
++
++#define __BUG_ENTRY_STRING(file, line, flags)		\
++		__stringify(__BUG_ENTRY_START)		\
++		__BUG_LOCATION_STRING(file, line)	\
++		".short " flags ";"			\
++		__stringify(__BUG_ENTRY_END)
++
++#define ARCH_WARN_ASM(file, line, flags, size)		\
++	__BUG_ENTRY_STRING(file, line, flags)		\
++	__stringify(brk BUG_BRK_IMM)
++
 +#define ARCH_WARN_REACHABLE
 +
- #define HAVE_ARCH_BUG
- 
- #include <asm-generic/bug.h>
+ #endif /* __ASM_ASM_BUG_H */
 -- 
 2.43.0
 
