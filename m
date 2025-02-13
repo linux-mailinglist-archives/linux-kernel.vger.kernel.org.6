@@ -1,321 +1,100 @@
-Return-Path: <linux-kernel+bounces-513975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E73A350E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:06:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC39A350EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790B13AA984
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF316D622
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C40269804;
-	Thu, 13 Feb 2025 22:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F047266B78;
+	Thu, 13 Feb 2025 22:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXUA2vlV"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M3uOm+lX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA4F20B7EB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA21714B7;
+	Thu, 13 Feb 2025 22:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739484386; cv=none; b=FGWFadwSTDDGLe8N0EKf+wjxfIn3jdJoeBDs27hevxd4kIB3jRIrgH2+fXXe7apEMKich+z3KZEEhuiGmSEGDcDie1Tya7bToJDmEHHCeF+K/KL+1R54GMasL80bcKDwFxD27GTrD359ps57FVswzJ7V1Ga9C2COy7hpqYtqhC0=
+	t=1739484460; cv=none; b=kdGoOJlGirrrW0nloeGlAzv1e4dDVGZM9itjaed6oz69v6ez7YEsYBc/GialBLS5+1tv1ax1Bt0U9xn5pYkgE6uc3mkRDiQnv+NGapoRTH9GZe7SOAXB1qccUsLqw+oUQ+DDBry3MJDYP2MkNaSj3HEMzMaYx/eQ33wJfN7VBWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739484386; c=relaxed/simple;
-	bh=QgWauNEM6UChiF2hW2FQsCjcZMFqp8dWkRmKJhmndjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnhlQytQxQX/l77yLEHADobIinIOXeKZoOu1Yv2hJTnPBugUN2IlMowlrM7sjiUKy/zJIW9p4g8KaN9RNcJu5Jv3lgh81csEh7SYkP1dZ4R+k06XyE2LE48OOjG/orkXH5JOPJM3HCP4+l85ijFeyR3o9zVvwJI0kY6DvisrHy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iXUA2vlV; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-308ec50eb3dso14656791fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:06:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739484383; x=1740089183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qlRazb6ocQz7umyRulN57yH+ZOew3i+7PgD6ClWrb4=;
-        b=iXUA2vlVRNLQaNU5W7fYRG1X0wQovV1jb8ZnqNKacXPIbhINllHtmsBYhb7sJXT2lj
-         8qB0TzEiE92rRE5QZN3g16b+qiSqD8X0oOqOChtKbPqJDjz2oP9+zpGWeenE2iB6Ua8T
-         ZW7lueI8LT2F4p6Cw/C1efSs0amr0wbE1Iw5t1hrfdMrksmGHvsq8oy7N9+52AUuggYF
-         wbctdIR7++sm06LMKpNXVjF9dI2CW8K2agjr9WdvYrjJPKuxtni6v3oMQnGtCRIRj9fP
-         edRzeMIZ7o7tjEYwHBbZTIYoV0nLL5q7AD+CCkGyeZs5q1gtuKS2XiChzANdn6JsZxzV
-         qu+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739484383; x=1740089183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0qlRazb6ocQz7umyRulN57yH+ZOew3i+7PgD6ClWrb4=;
-        b=MiAsW7xVBzwW8lF6cWgV7hG2Wja3IGI/KcmupUWSLjpNA3FGvBA5hR7EDwxTWF124p
-         noRCi+058NYL2k4hL9HMDCGStdMOpEdcoEgUpib2tBU93k36ChXk7etcRKptnkviDn/Q
-         +nw464bHLNRNVOoryCgEU/iT6NqlIJGG12jv6L4cyAMDteJJXzbnVHvcdSkCIhIyyI82
-         7T9QElDYdztF1/km9Fj/QuPtnxO9NGNRafwIYf/9nVs4D5TNDBcfeA2E5JOElAJqkrVQ
-         wHUrV+w365JqB23kCB8P99w/FUAu4HFEHMdveGyPO2mRr/larRi8L3FfEyJe9awV6x/q
-         RHBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkLKMxKYTt0THwru5pGny3N/LKYFqs/eFEryYN4HoleBd0kZJAk0Y2NqgltOshwbhxAnX3RQQgEdD+Mrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj/etNHYPQhuhUWAo/+eAwSA1juOJ/w1r8S6mfhcmD5dM7BUbX
-	hWdMGBkGxjBJtB+TiwQ1eCVybLV09Gp7pwJQElyZ4n1jOFKa11JAdQHqTJD9DGI=
-X-Gm-Gg: ASbGncsq4yN89K3wHGo2vW4Uy4T0lvi0a3ka0m24tVi0tz4iFF8/Hr0CLkPZNeVoX/p
-	VX1lU7mv/7Nx93mTz4AO91VWzFeMQUk7O0yf+lNFRXS0Z76t4W20Hoh+n5J6MKEPyE37u3Klubg
-	DaC5fllK3bf7fDyHP/k0qlEolGCh6OlI0YuyXpmDzPUV+KH8JglfjUCR0sj4u+tH02Vu0F6MV08
-	nGpnOfjyPHNR+pJu4mCluoGqLuYhgVTaMAEv7J0b/RjDbYYbfVuLcZChfaVgAcJV1fgVhrRi5gl
-	i4bxOp7J9Nt62ry0gharv9EVhiAYJbfqaaT2JiymbeReHEZdNI+Wny0+HQOxZeVR2i/isL8=
-X-Google-Smtp-Source: AGHT+IGFdAPX0TuKH51GN0WgXQlA1GYV+eaaYHnYbmvkLSzL2/W7gj+s0MWz0QbrQTXEEAgNOhW9Gw==
-X-Received: by 2002:a2e:bc16:0:b0:300:2a29:d47c with SMTP id 38308e7fff4ca-309036d731bmr35324221fa.24.1739484382886;
-        Thu, 13 Feb 2025 14:06:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30910276839sm3248521fa.87.2025.02.13.14.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 14:06:21 -0800 (PST)
-Date: Fri, 14 Feb 2025 00:06:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	david.collins@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] thermal: qcom-spmi-temp-alarm: add support for GEN2
- rev 2 PMIC peripherals
-Message-ID: <3cwfckzxe32amd24b2mv72vuo63kra52dcjqksm4hux3vm3ckr@ym2ieq7w2ssq>
-References: <20250213210403.3396392-1-anjelique.melendez@oss.qualcomm.com>
- <20250213210403.3396392-4-anjelique.melendez@oss.qualcomm.com>
+	s=arc-20240116; t=1739484460; c=relaxed/simple;
+	bh=rR+PIPrrevgZsMne4OXF17fZy7PN9nS9mfmCS7vjRe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BlpOwY4wnC6gCryZbupcyynV0M//90NxvsA1mTCuxzPXD3uuiFYMh2R2m8xCA3PF9xPBRzj/EOoD3mUjXx9rQBIKWKLa6/W0v3gsDdC11LWWc1c8hOavjm1IeC6jEU4k2uba8Zzm8blXTQe2iISQC3+w3nDSmbWAHWn2miRC2j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M3uOm+lX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739484448;
+	bh=4EPYD/tsiZSSWO1CeLxlz8p0D/Nu6FBQx0Nm4r6j93c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=M3uOm+lXSbwqYcADCJMThHyozmfnqoJsVXkuwtZpvtosDsZR62KiLqzuZVFYgC3Kl
+	 B+KqRrFDJJO7gs/UaC20t7f4hoXRNRf4L7mOybtp5cp7OoG7X0pq1tdvjOVaNcRgjX
+	 AFh12GbaS+Vb0hQ6vbNTj5H4PPouVhHg1eEV9kKPMg7G5wl9xdu0ypigsGMHvyOqod
+	 q8O59kjccVOZ6Uo44vUeNydEPqZB3nRrHhx/tadWTZx+qHfWk9ZKhoLAdOtMgc6BKU
+	 huAyGt/eVG83/UY33rIGNpePwq48m/1V9HwjhurKpmlpvOrhM1DzkOxjD9EEXf8/SU
+	 t4bIjYUEn6IVA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yv8S01w73z4wcm;
+	Fri, 14 Feb 2025 09:07:28 +1100 (AEDT)
+Date: Fri, 14 Feb 2025 09:07:27 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+ <johan.hedberg@gmail.com>
+Cc: Dorian Cruveiller <doriancruveiller@gmail.com>, Luiz Augusto von Dentz
+ <luiz.von.dentz@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the bluetooth tree
+Message-ID: <20250214090727.518fd7a5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213210403.3396392-4-anjelique.melendez@oss.qualcomm.com>
+Content-Type: multipart/signed; boundary="Sig_/n.aW7=RYRJFW_.ridA=aWwY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Feb 13, 2025 at 01:04:02PM -0800, Anjelique Melendez wrote:
-> Add support for TEMP_ALARM GEN2 PMIC peripherals with digital major
-> revision 2.  This revision utilizes individual temp DAC registers
-> to set the threshold temperature for over-temperature stages 1,
-> 2, and 3 instead of a single register to specify a set of
-> thresholds.
-> 
-> Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> ---
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 136 ++++++++++++++++++++
->  1 file changed, 136 insertions(+)
-> 
-> diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> index af71d4238340..a10f368f2039 100644
-> --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> @@ -25,6 +25,11 @@
->  #define QPNP_TM_REG_SHUTDOWN_CTRL1	0x40
->  #define QPNP_TM_REG_ALARM_CTRL		0x46
->  
-> +/* TEMP_DAC_STGx registers are only present for TEMP_GEN2 v2.0 */
-> +#define QPNP_TM_REG_TEMP_DAC_STG1	0x47
-> +#define QPNP_TM_REG_TEMP_DAC_STG2	0x48
-> +#define QPNP_TM_REG_TEMP_DAC_STG3	0x49
-> +
->  #define QPNP_TM_TYPE			0x09
->  #define QPNP_TM_SUBTYPE_GEN1		0x08
->  #define QPNP_TM_SUBTYPE_GEN2		0x09
-> @@ -64,6 +69,25 @@ static const long temp_map_gen2_v1[THRESH_COUNT][STAGE_COUNT] = {
->  
->  #define TEMP_STAGE_HYSTERESIS		2000
->  
-> +/*
-> + * For TEMP_GEN2 v2.0, TEMP_DAC_STG1/2/3 registers are used to set the threshold
-> + * for each stage independently.
-> + * TEMP_DAC_STG* = 0 --> 80 C
-> + * Each 8 step increase in TEMP_DAC_STG* value corresponds to 5 C (5000 mC).
-> + */
-> +#define TEMP_DAC_MIN			80000
-> +#define TEMP_DAC_SCALE_NUM		8
-> +#define TEMP_DAC_SCALE_DEN		5000
-> +
-> +#define TEMP_DAC_TEMP_TO_REG(temp) \
-> +	(((temp) - TEMP_DAC_MIN) * TEMP_DAC_SCALE_NUM / TEMP_DAC_SCALE_DEN)
-> +#define TEMP_DAC_REG_TO_TEMP(reg) \
-> +	(TEMP_DAC_MIN + (reg) * TEMP_DAC_SCALE_DEN / TEMP_DAC_SCALE_NUM)
-> +
-> +static const long temp_dac_max[STAGE_COUNT] = {
-> +	119375, 159375, 159375
-> +};
-> +
->  /* Temperature in Milli Celsius reported during stage 0 if no ADC is present */
->  #define DEFAULT_TEMP			37000
->  
-> @@ -72,6 +96,7 @@ struct qpnp_tm_chip;
->  struct spmi_temp_alarm_data {
->  	const struct thermal_zone_device_ops *ops;
->  	const long (*temp_map)[THRESH_COUNT][STAGE_COUNT];
-> +	int (*setup)(struct qpnp_tm_chip *chip);
->  	int (*get_temp_stage)(struct qpnp_tm_chip *chip);
->  	int (*configure_trip_temps)(struct qpnp_tm_chip *chip);
->  };
-> @@ -87,6 +112,7 @@ struct qpnp_tm_chip {
->  	unsigned int			thresh;
->  	unsigned int			stage;
->  	unsigned int			base;
-> +	unsigned int			ntrips;
->  	/* protects .thresh, .stage and chip registers */
->  	struct mutex			lock;
->  	bool				initialized;
-> @@ -304,6 +330,52 @@ static const struct thermal_zone_device_ops qpnp_tm_sensor_ops = {
->  	.set_trip_temp = qpnp_tm_set_trip_temp,
->  };
->  
-> +static int qpnp_tm_gen2_rev2_set_temp_thresh(struct qpnp_tm_chip *chip, int trip, int temp)
-> +{
-> +	int ret, temp_cfg;
-> +	u8 reg;
-> +
-> +	if (trip < 0 || trip >= STAGE_COUNT) {
-> +		dev_err(chip->dev, "invalid TEMP_DAC trip = %d\n", trip);
-> +		return -EINVAL;
-> +	} else if (temp < TEMP_DAC_MIN || temp > temp_dac_max[trip]) {
-> +		dev_err(chip->dev, "invalid TEMP_DAC temp = %d\n", temp);
-> +		return -EINVAL;
-> +	}
-> +
-> +	reg = TEMP_DAC_TEMP_TO_REG(temp);
-> +	temp_cfg = TEMP_DAC_REG_TO_TEMP(reg);
-> +
-> +	ret = qpnp_tm_write(chip, QPNP_TM_REG_TEMP_DAC_STG1 + trip, reg);
-> +	if (ret < 0) {
-> +		dev_err(chip->dev, "TEMP_DAC_STG write failed, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	chip->temp_thresh_map[trip] = temp_cfg;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qpnp_tm_gen2_rev2_set_trip_temp(struct thermal_zone_device *tz,
-> +					   const struct thermal_trip *trip, int temp)
-> +{
-> +	unsigned int trip_index = THERMAL_TRIP_PRIV_TO_INT(trip->priv);
-> +	struct qpnp_tm_chip *chip = thermal_zone_device_priv(tz);
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, trip_index, temp);
-> +	mutex_unlock(&chip->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct thermal_zone_device_ops qpnp_tm_gen2_rev2_sensor_ops = {
-> +	.get_temp = qpnp_tm_get_temp,
-> +	.set_trip_temp = qpnp_tm_gen2_rev2_set_trip_temp,
-> +};
-> +
->  static irqreturn_t qpnp_tm_isr(int irq, void *data)
->  {
->  	struct qpnp_tm_chip *chip = data;
-> @@ -328,6 +400,58 @@ static int qpnp_tm_configure_trip_temp(struct qpnp_tm_chip *chip)
->  	return qpnp_tm_update_critical_trip_temp(chip, crit_temp);
->  }
->  
-> +/* Configure TEMP_DAC registers based on DT thermal_zone trips */
-> +static int qpnp_tm_gen2_rev2_configure_trip_temps_cb(struct thermal_trip *trip, void *data)
-> +{
-> +	struct qpnp_tm_chip *chip = data;
-> +	int ret;
-> +
-> +	trip->priv = THERMAL_INT_TO_TRIP_PRIV(chip->ntrips);
-> +	ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, chip->ntrips, trip->temperature);
-> +	chip->ntrips++;
-> +
-> +	return ret;
-> +}
-> +
-> +static int qpnp_tm_gen2_rev2_configure_trip_temps(struct qpnp_tm_chip *chip)
-> +{
-> +	int ret, i;
-> +
-> +	ret = thermal_zone_for_each_trip(chip->tz_dev,
-> +					 qpnp_tm_gen2_rev2_configure_trip_temps_cb, chip);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Verify that trips are strictly increasing. */
-> +	for (i = 1; i < STAGE_COUNT; i++) {
-> +		if (chip->temp_thresh_map[i] <= chip->temp_thresh_map[i - 1]) {
-> +			dev_err(chip->dev, "Threshold %d=%ld <= threshold %d=%ld\n",
-> +				i, chip->temp_thresh_map[i], i - 1,
-> +				chip->temp_thresh_map[i - 1]);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Read the hardware default TEMP_DAC stage threshold temperatures */
-> +static int qpnp_tm_gen2_rev2_init(struct qpnp_tm_chip *chip)
+--Sig_/n.aW7=RYRJFW_.ridA=aWwY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-qpnp_tm_gen2_rev2_setup() (or rename the field to .init)
+Hi all,
 
-> +{
-> +	int ret, i;
-> +	u8 reg = 0;
-> +
-> +	for (i = 0; i < STAGE_COUNT; i++) {
-> +		ret = qpnp_tm_read(chip, QPNP_TM_REG_TEMP_DAC_STG1 + i, &reg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		chip->temp_thresh_map[i] = TEMP_DAC_REG_TO_TEMP(reg);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct spmi_temp_alarm_data spmi_temp_alarm_data = {
->  	.ops = &qpnp_tm_sensor_ops,
->  	.temp_map = &temp_map_gen1,
-> @@ -349,6 +473,13 @@ static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev1_data = {
->  	.get_temp_stage = qpnp_tm_gen2_get_temp_stage,
->  };
->  
-> +static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev2_data = {
-> +	.ops = &qpnp_tm_gen2_rev2_sensor_ops,
-> +	.setup = qpnp_tm_gen2_rev2_init,
-> +	.configure_trip_temps = qpnp_tm_gen2_rev2_configure_trip_temps,
-> +	.get_temp_stage = qpnp_tm_gen2_get_temp_stage,
-> +};
-> +
->  /*
->   * This function initializes the internal temp value based on only the
->   * current thermal stage and threshold. Setup threshold control and
-> @@ -484,6 +615,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
->  
->  	if (subtype == QPNP_TM_SUBTYPE_GEN1)
->  		chip->data = &spmi_temp_alarm_data;
-> +	else if (subtype == QPNP_TM_SUBTYPE_GEN2 && dig_major >= 2)
-> +		chip->data = &spmi_temp_alarm_gen2_rev2_data;
->  	else if (subtype == QPNP_TM_SUBTYPE_GEN2 && dig_major >= 1)
->  		chip->data = &spmi_temp_alarm_gen2_rev1_data;
->  	else if (subtype == QPNP_TM_SUBTYPE_GEN2)
-> @@ -491,6 +624,9 @@ static int qpnp_tm_probe(struct platform_device *pdev)
->  	else
->  		return -ENODEV;
->  
-> +	if (chip->data->setup)
-> +		chip->data->setup(chip);
-> +
->  	/*
->  	 * Register the sensor before initializing the hardware to be able to
->  	 * read the trip points. get_temp() returns the default temperature
-> -- 
-> 2.34.1
-> 
+Commit
 
--- 
-With best wishes
-Dmitry
+  289a0dc9d7f9 ("Bluetooth: btusb: Add new VID/PID for WCN785x")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/n.aW7=RYRJFW_.ridA=aWwY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmeubR8ACgkQAVBC80lX
+0GwgmAgApWhaH6E2iz0PwRpZE4A3nYccytweX/ncrAoMcYWOPPZYjVZCENGwjinD
+7KbW/6prBCAWRzBaWK3NoXbLMaMnYMF/fghGnFquxi4wIOfhkGM8lUFQ/B3IS/5f
+3QTZdGXFOVo5IjexIV29B0Ei7wpeGgFlpchQV+NoBst8IDoKKk0/MYHZvgfd1/oC
+r2c4iVyGFIyndfL30awZ3+tQeEddqZf+p6o9Sq5+1vbYUqqBICR+2T1euGtrIxIa
+eSsfxsG5ICdlo9EO5DgWPDHjh8X4/S/Dkc1B1jeIRo/qxZyByld3O3NuuSyY6/Hm
+nRYb4R42DSe4U04yOGZxyX114+pNhw==
+=0kaV
+-----END PGP SIGNATURE-----
+
+--Sig_/n.aW7=RYRJFW_.ridA=aWwY--
 
