@@ -1,143 +1,231 @@
-Return-Path: <linux-kernel+bounces-513958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE66A350BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 681ADA350C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9EE1890AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02F11890BC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD426981F;
-	Thu, 13 Feb 2025 21:56:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D0526982D;
+	Thu, 13 Feb 2025 21:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhLnIRMg"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D60241673
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37611245AF6;
+	Thu, 13 Feb 2025 21:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739483764; cv=none; b=pM8dj5AU+wnUHTSHVB65yzLuvwC0fI5IZNpWMszzRQvap6i+uZO2FNCRZE4OKEo6yYZeaV/yI5Mk+R4h27QK1/Tm2IvAOL3QC4oyC573WKgCDOP0kmUXaM4IqghuAQRrKBgL+JqIM4RDeatXnqf+fcWbfQqWOHX+4WZmerWh0II=
+	t=1739483826; cv=none; b=i2yogb/rTWnpLlOsEfSbRR+VJ1rWWAYlHb+pWPcIdbB924YmMpOLD1t67CD0YJx02shr27JuJ8dBbfywjSNWlbWbTBYJ1x4LcoXTI/saBuOQdUfJBBVZ01PqGeRzRyzaR1/zpXOcOAgTxFccwUZT5esI1MneoCBwy2eZMXwQblE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739483764; c=relaxed/simple;
-	bh=AcVFEZ5AOpRTySMcxzb7NunA5u/vltuRkowFk6iG0I0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GJIgsmOltvl50zZ2NmkjPkCeMVOyV1RnoNvr4a8QmDKa+9jVBwjqmDyIGEgSbh5mDM5K/GkbzKmpPDcl/RZViar5Qsf+FX425Snpm++2nrDtFpc94gsGUTCQAzWBaScql/hT7cF2g/cRbhfEcDS3XVFmfnoUIzgpD7Xc2aUUYXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ce3bbb2b9dso9261125ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:56:02 -0800 (PST)
+	s=arc-20240116; t=1739483826; c=relaxed/simple;
+	bh=fgj0shuMufr7wTndkCWRL/JXLBXmF7UOuG9EsBz7HPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZV0YGW37zCZziFJJgjN3/e/wWPOGsM7KnZeAYFIVt5sB6q33y8SLT51daHuzRpQwGQ6LJZcRyZLq4kCul0p6P9F+lmDrUU0yQXPbs6GO02p3bFR1HWy7/fBE+UKkgzEmh54RUbhWJq75WHU2L2zagVfqPfJRM7GACmu9noGKtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhLnIRMg; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso2778675a12.0;
+        Thu, 13 Feb 2025 13:57:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739483822; x=1740088622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E+t6B+jgVmtMaFtzPH7+S0a4yoIONQBzjfTCZovjoAU=;
+        b=FhLnIRMgFCvsC3YSZxm7282Z9SZDKvsO1ESnWXY6aZFFAS7gOZsfXo2drxNrYmCPkT
+         Fg4UeqPt/0vxJG/WPWBTLhZgt8EzytcaNsrP6mUrrmG4VfLNGI7fkrMrnK/LpwfheEFw
+         165vKggyC+CQncfqZFpZpF0hVZj4vHXU7zzjrCtuxObDIqRN93k3YJn5oLhsKV2kJKRG
+         SX8EhMnwyeSJ4bJztWgLtkc3zCoLLz91HfeFGCF60Rn2F94+8aPW1Wm/wsyUyJbWYsCC
+         E4H0LJx7FQHYwS/Hn4xWEXNGFU3sgbwdaPsuBhAicsFKXm3sRHTEYwFCrp8p60QTcsG/
+         MQhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739483762; x=1740088562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XZLr94bZ+qtGEGXiAisgsopInXXV2Gu6e50W3A6RE8c=;
-        b=tgXL+0ATa5AI7Edls+6qYeZ6fL/xGMCmJjZWsv03ISloVsjVHwUM/bQiE3ry5lMD5c
-         GzcY8dzYwKXYDU+GI92Vnc8ogBefZ6jgzcIL2jsJkJS5wXv1ZnHLpZUrjoId2W/0o/do
-         uLEsFxloIlsk2Q6FJUaOdlIVXTAIXNBdM9NXRjd5kVRvQ4pEwpgtoopnw0S6ouuExNZ0
-         TVijHjPxgzyIliWsbh1IAULzoKdMxNjCt/tbFmqC4C73Ql7ATYb2QJrRfD2GO/mvI2yL
-         tw10spuJJQfVLTkANbVD2l1WprPsBsmHhQTzN2YQ2zSJoDJeKq182nWAjBk/edmH2hz+
-         kujQ==
-X-Gm-Message-State: AOJu0Yz7n7GkykrTXQzJSbYg4fUHxuWZirVSaSAIwv01vZ0x8GzGgQom
-	nwezZsFpQXnLX0JDVKGughaMCP6Y+Re1nrMSVWfZDbTSaipMro3qXA28p/hD+btdDKS7ArfuBbK
-	TlDiQiKBeKUClr0wy07S6dnFLaMVn/9sDf3jdMvMCtpT6rUH6dAQWHG4=
-X-Google-Smtp-Source: AGHT+IHmvG2WM0Q2YqAONYKnMM17/TH+tGPM8LfqFryWRupELrFqJfknDxH3oZW+B5rh19VlMIIOAQcSC23ycHs4C1z+dkXum/Hb
+        d=1e100.net; s=20230601; t=1739483822; x=1740088622;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E+t6B+jgVmtMaFtzPH7+S0a4yoIONQBzjfTCZovjoAU=;
+        b=Wm2QecY7EZbFqp3+jAPfsXWJ0MjzXOH8y1wH6pGR0yabo3X0zjZ2jlJfaJQP4nH/z3
+         ZqJIGgSUUZAm8tpAUWMIwaL/uqkyGYJIqDqYN5wiqaOqDMZ7MOWjgmnfQ+2wefyvB2vk
+         LrMP3+Lml7t8zgXe7gov/fWZRbRvZjMUWKCbmFkT7nGtyIqzcPE3T+KwpUmqLIMLf6h2
+         FAtigZwEXvlpMs+b3P67o7gFFnjDeCTzO2MZNTZwdYK/3wnEU0c1YxSuXAMy97I9lJst
+         C95jzrSESlD6X+d52b9D7dw9faMQi5DvYyorXjNRS/Odz2noI1mBs358zwlaImot4MG2
+         FLww==
+X-Forwarded-Encrypted: i=1; AJvYcCV7LVGWTFy3c/Egd1ZLzFeH6u7bBJ/deGu8pPgT9fssleOa3zXlbuCi5qkIDN8pk5cBteaPD10Q41bg@vger.kernel.org, AJvYcCX+Q1haAbrMqqlCERb5S/eP4PCg48qGR4iwWQFI6tBubkd809iQPWvhMjnIzBRc4+74sHN5V4PNcv0H0ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+RwDuepbA6W3q6oqlhMPUpQYjK0Bv3GUyxzcvSp13bucxI+0w
+	DFsOiLBjaMKRUCAqUN9OKVSY/2FRgVWK20kiQZUWR/zQQnlRiwzr+5z8tmwV
+X-Gm-Gg: ASbGncuffG3B0aukvbrpWU2Us2nC20nLLDCSgQ0b2QqObE4+3ebUe83tsq+1JvAGp0d
+	SmrXdlgcQfTnbpbyEJYs/Sf/s/p+jaFBVhWw0R9qifUIYi9Q4+40NQgI6IrWbU5ZobT9GheKrCB
+	T11kZL9CX0RXg00ERIolOZy7QFjfHILaAzDiwmVe9slt6b68Jdk23R/bgYyuuGJKzjGi5oLL/6q
+	vv26eCZfe5PomlnOF+SxRakc7ZXmi0husZ9rn/5OrGGgV1RzNzlAgC+wybUt2UNkLUgozkD3E/o
+	+WKproDSb5GBf5CrIFvgXmoQPF1r
+X-Google-Smtp-Source: AGHT+IFbUWokaBSyVOOLzgLUlMVYFf5zz41axl3e6IJ6OWk1r3JOQRJ5oLgxY2Nm8yuJxa4uuyLdiQ==
+X-Received: by 2002:a17:906:dc91:b0:ab7:c4db:a044 with SMTP id a640c23a62f3a-ab7f3714983mr925567766b.8.1739483822129;
+        Thu, 13 Feb 2025 13:57:02 -0800 (PST)
+Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532595dfsm209794266b.70.2025.02.13.13.57.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 13:57:01 -0800 (PST)
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-rtc@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	dlan@gentoo.org,
+	linux-kernel@vger.kernel.org,
+	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v11 0/3] riscv: rtc: sophgo: add rtc support for CV1800
+Date: Thu, 13 Feb 2025 22:56:44 +0100
+Message-ID: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c569:0:b0:3cf:b9b8:5052 with SMTP id
- e9e14a558f8ab-3d18c21e82cmr46207995ab.3.1739483762076; Thu, 13 Feb 2025
- 13:56:02 -0800 (PST)
-Date: Thu, 13 Feb 2025 13:56:02 -0800
-In-Reply-To: <CAMp3bLWfe3fx+c8D=N5Kb9Mrbp+7Sgiq=04NKsjFaxxjaHsZoQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ae6a72.050a0220.21dd3.0025.GAE@google.com>
-Subject: Re: [syzbot] [modules?] KMSAN: uninit-value in __request_module (6)
-From: syzbot <syzbot+1fcd957a82e3a1baa94d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Real Time Clock (RTC) is an independently powered module
+within the chip, which includes a 32KHz oscillator and
+a Power On Reset/POR submodule. It can be used for time
+display and timed alarm generation.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __request_module
+Changes since v10:
+- only start RTC on set_time;
+- add machine restart handler (as separate patch 3/3);
 
-=====================================================
-BUG: KMSAN: uninit-value in string_nocheck lib/vsprintf.c:636 [inline]
-BUG: KMSAN: uninit-value in string+0x3ec/0x5f0 lib/vsprintf.c:717
- string_nocheck lib/vsprintf.c:636 [inline]
- string+0x3ec/0x5f0 lib/vsprintf.c:717
- vsnprintf+0xa5d/0x1960 lib/vsprintf.c:2846
- __request_module+0x252/0x9f0 kernel/module/kmod.c:149
- team_mode_get drivers/net/team/team_core.c:480 [inline]
- team_change_mode drivers/net/team/team_core.c:607 [inline]
- team_mode_option_set+0x437/0x970 drivers/net/team/team_core.c:1401
- team_option_set drivers/net/team/team_core.c:375 [inline]
- team_nl_options_set_doit+0x1339/0x1f90 drivers/net/team/team_core.c:2661
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x1214/0x12c0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2543
- genl_rcv+0x40/0x60 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:733
- ____sys_sendmsg+0x877/0xb60 net/socket.c:2573
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2627
- __sys_sendmsg net/socket.c:2659 [inline]
- __do_sys_sendmsg net/socket.c:2664 [inline]
- __se_sys_sendmsg net/socket.c:2662 [inline]
- __x64_sys_sendmsg+0x212/0x3c0 net/socket.c:2662
- x64_sys_call+0x2ed6/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:47
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Changes since v9:
+- picked up orphaned series;
+- further simplified bitmask macros;
+- unconditional RTC start (rtc_enable_sec_counter());
+- dropped ANA_CALIB modification;
+- successfully tested on SG2000;
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4121 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- kmem_cache_alloc_node_noprof+0x907/0xe00 mm/slub.c:4216
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1331 [inline]
- netlink_alloc_large_skb+0x1b4/0x280 net/netlink/af_netlink.c:1196
- netlink_sendmsg+0xa96/0x11e0 net/netlink/af_netlink.c:1867
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:733
- ____sys_sendmsg+0x877/0xb60 net/socket.c:2573
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2627
- __sys_sendmsg net/socket.c:2659 [inline]
- __do_sys_sendmsg net/socket.c:2664 [inline]
- __se_sys_sendmsg net/socket.c:2662 [inline]
- __x64_sys_sendmsg+0x212/0x3c0 net/socket.c:2662
- x64_sys_call+0x2ed6/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:47
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+v9: https://lore.kernel.org/linux-riscv/20240428060848.706573-1-qiujingbao.dlmu@gmail.com/
 
-CPU: 0 UID: 0 PID: 6614 Comm: syz.0.16 Not tainted 6.14.0-rc2-syzkaller-gab68d7eb7b1a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-=====================================================
+Changes since v8:
+- delete unused macros
+- using 0/1 instead of the DISABLE/ENABLE macro
+- pass in the correct pointer when applying for IRQ
+- convert the incoming pointer into an appropriate
+  structure pointer in the irq handler
 
+v8: https://lore.kernel.org/all/20240204044143.415915-1-qiujingbao.dlmu@gmail.com/
 
-Tested on:
+Changes since v7:
+- pass checkpatch.pl --strict
+- using u32 replace uint32
+- using devm_kzalloc(*) replace
+  devm_kzalloc(sizeof())
+- sort header files alphabetically
+- delete unnecessary header files
+- fix wrap error
+- drop dependent description
+- using hardware automatic calibration replace
+  software calibration. see documentation 197 page
 
-commit:         ab68d7eb Merge tag 'loongarch-fixes-6.14-1' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=122893f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48f90cac5eea091a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fcd957a82e3a1baa94d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13a721a4580000
+v7: https://lore.kernel.org/all/20240122080500.2621-1-qiujingbao.dlmu@gmail.com/
+documentation: https://github.com/milkv-duo/duo-files/blob/main/duo/datasheet/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
+
+Changes since v6:
+- completely delete POR dt node
+- remove syscon tag
+- use devm_regmap_init_mmio() replace
+  syscon_node_to_regmap
+
+v6: https://lore.kernel.org/all/20240115160600.5444-1-qiujingbao.dlmu@gmail.com/
+
+Changes since v5:
+- remove unnecessary lock
+- fix cv1800_rtc_alarm_irq_enable()
+- remove duplicate checks
+- using alrm->enabled instead of unconditionally
+  enabling
+- remove disable alarms on probe
+- using rtc_update_irq() replace mess of alarm
+- remove leak clk
+- useing devm_rtc_allocate_device() and
+  devm_rtc_register_device() instead old way
+- add judgment for rtc_enable_sec_counter()
+- add POR nodes in DTS. This POR device shares
+  the register region with the RTC device
+
+v5: https://lore.kernel.org/all/20240108072253.30183-1-qiujingbao.dlmu@gmail.com/
+
+Changes since v4:
+- remove POR dt-bindings because it empty
+- remove MFD dt-bindings because SoC does
+  not have MFDs
+- add syscon attribute to share registers
+  with POR
+
+v4: https://lore.kernel.org/all/20231229090643.116575-1-qiujingbao.dlmu@gmail.com/
+
+Changes since v3:
+- temporarily not submitting RTC driver code
+  waiting for communication with IC designer
+- add MFD dt-bindings
+- add POR dt-bindings
+
+v3: https://lore.kernel.org/all/20231226100431.331616-1-qiujingbao.dlmu@gmail.com/
+
+Changes since v2:
+- add mfd support for CV1800
+- add rtc to mfd
+- using regmap replace iomap
+- merge register address in dts
+
+v2: https://lore.kernel.org/lkml/20231217110952.78784-1-qiujingbao.dlmu@gmail.com/
+
+Changes since v1
+- fix duplicate names in subject
+- using RTC replace RTC controller
+- improve the properties of dt-bindings
+- using `unevaluatedProperties` replace `additionalProperties`
+- dt-bindings passed the test
+- using `devm_platform_ioremap_resource()` replace
+  `platform_get_resource()` and `devm_ioremap_resource()`
+- fix random order of the code
+- fix wrong wrapping of the `devm_request_irq()` and map the flag with dts
+- using devm_clk_get_enabled replace `devm_clk_get()` and
+  `clk_prepare_enable()`
+- fix return style
+- add rtc clock calibration function
+- use spinlock when write register on read/set time
+
+v1: https://lore.kernel.org/lkml/20231121094642.2973795-1-qiujingbao.dlmu@gmail.com/
+
+Alexander Sverdlin (1):
+  rtc: sophgo: cv18xx: Add restart handler
+
+Jingbao Qiu (2):
+  dt-bindings: rtc: sophgo: add RTC support for Sophgo CV1800 series SoC
+  rtc: sophgo: add rtc support for Sophgo CV1800 SoC
+
+ .../bindings/rtc/sophgo,cv1800-rtc.yaml       |  53 ++++
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-cv1800.c                      | 277 ++++++++++++++++++
+ 4 files changed, 341 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+ create mode 100644 drivers/rtc/rtc-cv1800.c
+
+-- 
+2.48.1
 
 
