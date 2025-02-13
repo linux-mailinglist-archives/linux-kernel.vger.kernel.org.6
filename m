@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-513703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E82BA34DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:26:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44448A34D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14787188EB89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837CF3A2B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A1B24503A;
-	Thu, 13 Feb 2025 18:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F8724292A;
+	Thu, 13 Feb 2025 18:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H2oIPWI7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="bEoSDBnI"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08853245027;
-	Thu, 13 Feb 2025 18:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219C611CAF;
+	Thu, 13 Feb 2025 18:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739471143; cv=none; b=pqz4clgsgSS10rPyeAkas+gEpCf4Wjeyw+WOGEPCgX7CQeb+4wYqV7ghOFuQmRyMII6svYjld3zc1lz1Fyt4nhSUq9gFNN3rf+Vt25Zza5YHuNCXKhtt6On1nQ1a4BhN0HLFYFYzOBLWYc2kf8ncguG2XK/A+kdODoNxvUDZvCY=
+	t=1739471072; cv=none; b=uJnkJkaKr03PlUvpJSTkhNWlz8flPWpVuiOGQIAUDBcWaNgIxf2r0D5HLcn/eJ0uWRnQgJYRtj/t97mg3jFse81Kkg04PVbY4KFxRlGKmhIcJ46Nta9RFl4CzvP2sUYH0YC8a+xDK397dHdpA45BR8AtL87FH7nNUt8w1X6LfQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739471143; c=relaxed/simple;
-	bh=k7ua/KFoZaBYMvO6Q/O+0QUvgRzL0DRgto7N8H41V7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FJwQroB7BMcU5VddR8WYGFMxbxRjPDnUhJiZaWLBtNK/huBijMHHe729MDhpCo0fF3RoSb3hchZUCR1zaIz2GtkusEYI/Xf1TXWO8XZPGAdqgKah2oY2qIoW5cBl1+3wkdTbC0IHoN8kZQ/kR2iH7gxXiWr16RHOSuKWzrF2bkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H2oIPWI7; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739471142; x=1771007142;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k7ua/KFoZaBYMvO6Q/O+0QUvgRzL0DRgto7N8H41V7g=;
-  b=H2oIPWI7BdB1XK9LnqzUZ4WP9U//+Lx/QzIrIQk5q3IOuxLWDWb/qQTS
-   HIzEZzE9QnXmZho3UfHn4DNGdxk5r+mhkFpZa97qE2iain+9017WQe2Yi
-   M14s4US5rhTr42K9jrz4SNb/oO6ceo/dvygNvwmry9DTi5JY7G2dOgiSv
-   3d4RK+gzg8wD8qQO0/aYFZLUWS6b4tBTAYXf8nu6n/1HjBkLOTL77R09s
-   sdPQTEJT6wgtXSUYQbfkyUN+HoSVd2dQIT6+f2wGtb3TpQJvphE7cGlc5
-   xTmLTxCcgKU0KqzkuucIdgzlcvD0SRRrb7gvyCConIspf0gpG1U3NzMfr
-   Q==;
-X-CSE-ConnectionGUID: N+ZUfQGuR1ujI9DhJ+eNxQ==
-X-CSE-MsgGUID: +qkUdcD0SiuEPDmnurJG2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51177657"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="51177657"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:25:35 -0800
-X-CSE-ConnectionGUID: 2w/+92TyT6SEWaUrBCUo0A==
-X-CSE-MsgGUID: O+bpjhxARyus70Sw3d5X/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113721778"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 13 Feb 2025 10:25:30 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 1BE642CA; Thu, 13 Feb 2025 20:25:29 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 2/2] gpiolib: Switch to use for_each_if() helper
-Date: Thu, 13 Feb 2025 20:24:01 +0200
-Message-ID: <20250213182527.3092371-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
-In-Reply-To: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
-References: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1739471072; c=relaxed/simple;
+	bh=SWcQJVY6fjGqIc0KsyRyLC/M24sborSX2EWHracIT1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQ8yKk4SXc9uiHK8rA95KcpAma9/WfsTzig3TGpUouncSPBHXlvigy7Jangc1TIJRmOWNJFHm1Q9cvXmRNDGSbT7iIdDw88zsV7OwKC5imZytJEq9GJICZmmnF+b5pY/VsLst8qQ0bRn5kHmANhe3Z1sjJ5XVLWVyPRjvvZnUUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=bEoSDBnI; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Yv3Vk2YzTzlgTwy;
+	Thu, 13 Feb 2025 18:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1739471068; x=1742063069; bh=nQGC01Qrr3r1Q8S7grPrdh/m
+	BZKDKvIk8yNSvcve6yc=; b=bEoSDBnIz5eCwEtun/yujhj2OGNyMmqLiFxA/MEf
+	ZWuNXoMTeHhyssllR3HgZ3dyqArd7Kdw+0GigmGGsikIR9NdvxKHyXQl9gDkfZwC
+	pmklBxTBP8sgO1t982kJsV6K2rH5xnuzcufrwB+JyaN6LpkIxki1kHLn/F6V5Csx
+	DiDSvW1i+mnF5yZzm5mW6TwTXF9GrD0rM6kB9Th7A3rWqvBuLsQ5+sxDm56mV1tB
+	nJLITIDqV7lY3bnhHwGqpoWMSLAzm2r5QmhE7AmA+OhFvNszAgYoFv8b0hrI3amo
+	SgUhoDBcRwIyLB+naCWGfaWligdQXPgzNAAts/P/w/mDvw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id AKyf3espKj9y; Thu, 13 Feb 2025 18:24:28 +0000 (UTC)
+Received: from [100.118.141.233] (unknown [104.135.204.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Yv3Vd6zskzlgTwj;
+	Thu, 13 Feb 2025 18:24:25 +0000 (UTC)
+Message-ID: <2c1fcd13-ffac-4590-a345-c5389d1ccc9f@acm.org>
+Date: Thu, 13 Feb 2025 10:24:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: hpsa: Replace deprecated strncpy() with
+ strscpy_pad()
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Don Brace <don.brace@microchip.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-hardening@vger.kernel.org, storagedev@microchip.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250213114047.2366-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250213114047.2366-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The for_each_*() APIs that are conditional can be written shorter and
-less error prone with for_each_if() helper in use. Switch them to use
-this helper.
+On 2/13/25 3:40 AM, Thorsten Blum wrote:
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index c7ebae24b09f..968cefb497eb 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -7236,8 +7236,7 @@ static int hpsa_controller_hard_reset(struct pci_dev *pdev,
+>   
+>   static void init_driver_version(char *driver_version, int len)
+>   {
+> -	memset(driver_version, 0, len);
+> -	strncpy(driver_version, HPSA " " HPSA_DRIVER_VERSION, len - 1);
+> +	strscpy_pad(driver_version, HPSA " " HPSA_DRIVER_VERSION, len);
+>   }
+>   
+>   static int write_driver_ver_to_cfgtable(struct CfgTable __iomem *cfgtable)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/gpio/driver.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Has it been considered to introduce a Coccinelle semantic patch that
+performs this conversion? See also the scripts/coccinelle directory.
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index ae93f75170f2..af046f7fd4f5 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -14,6 +14,7 @@
- #include <linux/property.h>
- #include <linux/spinlock_types.h>
- #include <linux/types.h>
-+#include <linux/util_macros.h>
- 
- #ifdef CONFIG_GENERIC_MSI_IRQ
- #include <asm/msi.h>
-@@ -561,7 +562,7 @@ DEFINE_CLASS(_gpiochip_for_each_data,
- 	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i);			\
- 	     _i < _size;								\
- 	     _i++, kfree(_label), _label = NULL)					\
--		if (IS_ERR(_label = gpiochip_dup_line_label(_chip, _base + _i))) {} else
-+		for_each_if(!IS_ERR(_label = gpiochip_dup_line_label(_chip, _base + _i)))
- 
- /**
-  * for_each_hwgpio - Iterates over all GPIOs for given chip.
-@@ -583,7 +584,7 @@ DEFINE_CLASS(_gpiochip_for_each_data,
-  */
- #define for_each_requested_gpio_in_range(_chip, _i, _base, _size, _label)		\
- 	for_each_hwgpio_in_range(_chip, _i, _base, _size, _label)			\
--		if (_label == NULL) {} else
-+		for_each_if(_label)
- 
- /* Iterates over all requested GPIO of the given @chip */
- #define for_each_requested_gpio(chip, i, label)						\
-@@ -869,7 +870,7 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
- 
- #define for_each_gpiochip_node(dev, child)					\
- 	device_for_each_child_node(dev, child)					\
--		if (!fwnode_property_present(child, "gpio-controller")) {} else
-+		for_each_if(fwnode_property_present(child, "gpio-controller"))
- 
- static inline unsigned int gpiochip_node_count(struct device *dev)
- {
--- 
-2.45.1.3035.g276e886db78b
+Anyway:
 
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
