@@ -1,125 +1,199 @@
-Return-Path: <linux-kernel+bounces-514085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3EA3522D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:28:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D031DA35231
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D093A9D4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1D83A64D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB9F22D7B5;
-	Thu, 13 Feb 2025 23:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B8922D7B1;
+	Thu, 13 Feb 2025 23:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBnbq6ax"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cXAIzKUh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fqCj/4yq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF712753F5;
-	Thu, 13 Feb 2025 23:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6E2753EF;
+	Thu, 13 Feb 2025 23:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489297; cv=none; b=PE+PNrlAwgcXXvic/zB+Xl68uiiXeqvO+ceXXDqSLRAi8NwSEboJ8PgiIMc6/tql0VSmOR9eRm4GbmBhNM8yj2wbg1jeIT+SVHqI2lrbX89jNDZAnQVuw2MphZlGAUuC/CoOip2UjfKZ7XCBrPSUNH5yMTqmHHJXl1xHWcPmT4c=
+	t=1739489360; cv=none; b=YhCpzctiPp7rkjs2bZrc8YoBryDEULh6sDhSPtG0Ks1HaTmzvvrM4ssCmSEJ17/EonhUIsyL9d02d/sUVODFge5wTlaUvZAvtUkit5yNx82IL1i5hXOaCeGOkCcFHvQHJHSfOSoJdDGe2w7toDqX4KXoj2/Wkl7V1U5Sb4WKs/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489297; c=relaxed/simple;
-	bh=1hpRD32+oTSKw4Be5mPLXZd2/5+RD6HWdyhv83wdPbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOVzVhEINGKW7L1IrFN8UL4Am4owZMjPUsSvWDhfDlxX/C5UEtP7psHqTxDyTomXERfpI6MrkZifxBuOC3EztpR6c6CMqZDnSw77fENJOS5YCG+sZoV81Xyrh/TMxu1z7PRA9vTOzM5Fca/d+LUGD96F2c3UR0RuvxFmkVeewcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBnbq6ax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B44C4CED1;
-	Thu, 13 Feb 2025 23:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739489295;
-	bh=1hpRD32+oTSKw4Be5mPLXZd2/5+RD6HWdyhv83wdPbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lBnbq6axyW2OpH9mMeOGuPD2s5C5ZVNFJFk/dL32chk4zb4ivQ3puaxIOWYgoE9j/
-	 TgVEGIz3OwvM3laQ/nPEHYt4Oii8d4jzU6hB2pZJmoc4e+jrRKPnQsD7vXCEob6zxD
-	 qr8dc8jge7yERe168JfcdswqqgErPWXOh7M8sRivDd8zag7J57qC2hbRRy/GPCwiji
-	 ui+r/Sk3gyoSMnxuDGCGn0ylU4zb1g+5SuWfMw0gvOjtc+c9fv82S2fsLEWIi9nb+5
-	 wF5yeuyAkSjzH3D3NJENDYSiCRF6VcnnmEIK7tj53ztpluvjk3nditqs5/2nR+gEOn
-	 q/H6osl59cx9w==
-Date: Thu, 13 Feb 2025 15:28:13 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] perf lock: Update documentation for -o option in
- contention mode
-Message-ID: <Z66ADd48l6lJnQSt@google.com>
-References: <20250212222859.2086080-1-ctshao@google.com>
- <20250212222859.2086080-6-ctshao@google.com>
+	s=arc-20240116; t=1739489360; c=relaxed/simple;
+	bh=yCg+JHVGinmY71jeGMv9PqGMuyQ8s3jFb15Rdodj5zU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C3HXgHGTlPUocivxDwOszFja2Q/P3P9EkRRHbcc+PBF7nd13DpvjlE0TZZs6pk0OJdHgb5/m9jNGmpjSPN5pmnhaMc0Phu0M8aIuZXpvbLZxNzo9e56B/nbJ6vLtZAJcWELWj53euWtDpuUXnr+ZBE0DgnyhEtf3BxzKLaF2TPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cXAIzKUh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fqCj/4yq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739489356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SFcNt5odMLbKiXquXUnztFXtBhO5k6+W01eUJBMil2g=;
+	b=cXAIzKUh/DXopgkkyFWkTTBW8LgVQ+67V4PJk0k+1gyCqZPPD8+GLX4eY/sxRdThNwQhEi
+	IrUqQKXn/71/T1gVrYlfxNzGWxjPIxgSLwWGzIwNPefG/MXH6iUE+uWvWqrWwwI/pAp4G/
+	4pQp1rPTb0ZYbf8Fus8A7mxXgpF6BoXz3EunJ8M7xTx74TJJVDEr912IepD7b0En8C5C/M
+	e8ho3SZTUdsKXImSIs6eKNKxaO+WzTHl3cDlDAbtqVqnQ551Cw8zzbIbBnwtTm96vh7/S3
+	MAyy9vCA7wvS9sMzMP6GOLjDyWZhUTld0pVr2Qwu9EgaGb+Mkxwej220jMT+9g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739489356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SFcNt5odMLbKiXquXUnztFXtBhO5k6+W01eUJBMil2g=;
+	b=fqCj/4yqaHP++Z90jOneJHDu4njRFMgeh4MQsVWo4uGjsN8JOpmHUa21LAX9uP3y7Dv1QZ
+	ZiSyWWpRtUYoW5CA==
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Maulik Shah <quic_mkshah@quicinc.com>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, Johan
+ Hovold <johan.hovold@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/qcom-pdc: Workaround hardware register bug on
+ X1E80100
+In-Reply-To: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
+References: <20250213-x1e80100-pdc-hw-wa-v1-1-f8c248a48cba@linaro.org>
+Date: Fri, 14 Feb 2025 00:29:16 +0100
+Message-ID: <87h64xjuer.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250212222859.2086080-6-ctshao@google.com>
+Content-Type: text/plain
 
-On Wed, Feb 12, 2025 at 02:24:56PM -0800, Chun-Tse Shao wrote:
-> This patch also decouple -o with -t, and shows warning to notify the new
-> behavior for -ov.
-
-I think it's better to squash this commit to the previous.
-
-> 
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->  tools/perf/builtin-lock.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 3dc100cf30ef..e16bda6ce525 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -1817,7 +1817,7 @@ static void print_contention_result(struct lock_contention *con)
->  			break;
->  	}
->  
-> -	if (con->owner && con->save_callstack) {
-> +	if (con->owner && con->save_callstack && verbose > 0) {
->  		struct rb_root root = RB_ROOT;
->  
->  		if (symbol_conf.field_sep)
-> @@ -1978,6 +1978,11 @@ static int check_lock_contention_options(const struct option *options,
->  		}
->  	}
->  
-> +	if (show_lock_owner && !show_thread_stats) {
-> +		pr_warning("Now -o try to show owner's callstack instead of pid and comm.\n");
-> +		pr_warning("Please use -t option too to keep the old behavior.\n");
-> +	}
+On Thu, Feb 13 2025 at 18:04, Stephan Gerhold wrote:
 > +
->  	return 0;
+> +static void _pdc_reg_write(void __iomem *base, int reg, u32 i, u32 val)
+
+Please use two leading underscores to make this easy to
+distinguish. But ideally you provide a proper function name which makes
+it clear that this function operates on a given base address contrary to
+pdc_reg_write() which uses pdc_base unconditionally.
+
+> +{
+> +	writel_relaxed(val, base + reg + i * sizeof(u32));
+> +}
+>  
+>  static void pdc_reg_write(int reg, u32 i, u32 val)
+>  {
+> -	writel_relaxed(val, pdc_base + reg + i * sizeof(u32));
+> +	_pdc_reg_write(pdc_base, reg, i, val);
 >  }
 >  
-> @@ -2569,7 +2574,8 @@ int cmd_lock(int argc, const char **argv)
->  		     "Filter specific address/symbol of locks", parse_lock_addr),
->  	OPT_CALLBACK('S', "callstack-filter", NULL, "NAMES",
->  		     "Filter specific function in the callstack", parse_call_stack),
-> -	OPT_BOOLEAN('o', "lock-owner", &show_lock_owner, "show lock owners instead of waiters"),
-> +	OPT_BOOLEAN('o', "lock-owner", &show_lock_owner, "show lock owners instead of waiters.\n"
-> +		"\t\t\tThis option can be combined with -t, which shows owner's per thread lock stats, or -v, which shows owner's stacktrace"),
+>  static u32 pdc_reg_read(int reg, u32 i)
+> @@ -60,6 +69,26 @@ static u32 pdc_reg_read(int reg, u32 i)
+>  	return readl_relaxed(pdc_base + reg + i * sizeof(u32));
+>  }
+>  
+> +static void pdc_x1e_irq_enable_write(u32 bank, u32 enable)
+> +{
+> +	void __iomem *base = pdc_base; /* DRV2 */
 
-I think this description should go to the man page and leave the option
-as is.  You made it to show the warning when it's actually used.
+Please do not use tail comments. Also what is DRV2? 
+
+> +
+> +	/*
+> +	 * Workaround hardware bug in the register logic on X1E80100:
+> +	 *  - For bank 0-1, writes need to be made to DRV1, bank 3 and 4.
+> +	 *  - For bank 2-4, writes need to be made to DRV2, bank 0-2.
+> +	 *  - Bank 5 works as expected.
+> +	 */
+> +	if (bank <= 1) {
+> +		base = pdc_drv1;
+> +		bank += 3;
+> +	} else if (bank <= 4) {
+> +		bank -= 2;
+> +	}
+
+This is confusing at best. You map two different base addresses:
+
+  1) The existing pdc_base, which magically is associated to DRV2
+     (whatever that means)
+
+  2) A new magic pdc_drv1 mapping
+
+Then you implement the workaround logic in a pretty uncomprehensible
+way. I had to stare at it more than once to make sure that it matches
+the comment. What about:
+
+    /* Remap the bank access to work around the X1E hardware bug. */
+    switch (bank) {
+    case 0..1:
+         /* Use special mapping and shift to bank 3-4 */
+         base = pdc_base_x1e_quirk;
+         bank += 3;
+         break;
+    case 2..4:
+         /* Use regular mapping and shift to bank 0-2 */
+         base = pdc_base;
+         bank -= 2;
+         break;
+    case 5:
+         /* No fixup required */
+         base = pdc_base;
+         break;
+    }
+
+which makes it obvious what this is about. Hmm?
+
+> +	_pdc_reg_write(base, IRQ_ENABLE_BANK, bank, enable);
+
+> @@ -324,10 +357,21 @@ static int qcom_pdc_init(struct device_node *node, struct device_node *parent)
+>  	if (res_size > resource_size(&res))
+>  		pr_warn("%pOF: invalid reg size, please fix DT\n", node);
+>  
+> +	if (of_device_is_compatible(node, "qcom,x1e80100-pdc")) {
+> +		pdc_drv1 = ioremap(res.start - PDC_DRV_OFFSET, IRQ_ENABLE_BANK_MAX);
+
+What? This maps outside of the resource region. That's neither documented in
+the change log nor explained here.
+
+I assume this can't be properly fixed in the device tree for backwards
+compability reasons, but leaving this undocumented is a recipe for head
+scratching three month down the road.
+
+PDC_DRV_OFFSET is not obvious either.
+
+You really want to explain this properly at least in the change log,
+i.e.:
+
+    X1E80100 has a hardware bug related to the address decoding of write
+    accesses to the IRQ_ENABLE_BANK register.
+
+    Correct implementations access it linear from the base address:
+
+      addr[bank] = base_addr + IRQ_ENABLE_BANK + bank * sizeof(u32);
+
+    The X1E80100 bug requires the following address mangling:
+
+      addr[bank0] = base_addr - 0x10000 + IRQ_ENABLE_BANK + 3 * sizeof(u32);
+      addr[bank1] = base_addr - 0x10000 + IRQ_ENABLE_BANK + 4 * sizeof(u32);
+      addr[bank2] = base_addr           + IRQ_ENABLE_BANK + 0 * sizeof(u32);
+      addr[bank3] = base_addr           + IRQ_ENABLE_BANK + 1 * sizeof(u32);
+      addr[bank4] = base_addr           + IRQ_ENABLE_BANK + 2 * sizeof(u32);
+      addr[bank5] = base_addr           + IRQ_ENABLE_BANK + 5 * sizeof(u32);
+
+    The offset (0x10000) is outside of the resource region and requires
+    therefore a seperate mapping. This can't be expressed in the device
+    tree for $sensible reasons.
+
+    Mapping this region is safe because $sensible reason.
+
+I might have oracled this out of the patch/change log incorrectly, but
+you get the idea.
 
 Thanks,
-Namhyung
 
-
->  	OPT_STRING_NOEMPTY('x', "field-separator", &symbol_conf.field_sep, "separator",
->  		   "print result in CSV format with custom separator"),
->  	OPT_BOOLEAN(0, "lock-cgroup", &show_lock_cgroups, "show lock stats by cgroup"),
-> -- 
-> 2.48.1.502.g6dc24dfdaf-goog
-> 
+        tglx
 
