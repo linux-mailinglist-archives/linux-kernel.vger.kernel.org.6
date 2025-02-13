@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-513604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E2AA34C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:47:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A378BA34C49
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF3B3A4A12
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC7D16B4A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFE1245024;
-	Thu, 13 Feb 2025 17:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8729124291E;
+	Thu, 13 Feb 2025 17:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cjaP5ulX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4AA24167A;
-	Thu, 13 Feb 2025 17:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MqwOKrlM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ADA2040B7;
+	Thu, 13 Feb 2025 17:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468746; cv=none; b=uX7g6SrmWWJyaUAG5Sndj4Nzxo7wpN0a2ndZ7G/jL8fwYXSGSvC2tpQueebGiEEtgkVf1lodSyMq0DVAWxHwdcEr4Ns9KtoAzNnYZXvpEA3hEt99IUBqB+8kcXABcsxLs475u9IdvGov07ElkrdJn9N0VtVBpbyd2GPF7HeK27w=
+	t=1739468744; cv=none; b=aLlTLwJHmY8nKXGKm/AlylExHNrctWj8TBzeVGJBy/8pl14xSdKhaDvVPHx3ceO6t6UkzGCgI+UPTMGBuj022y5G87uaEEaBstv7Tjjfw6umvNHfe25VRrs7Mvk+mvA4xFH6yg9jjcdlsSovncX6mtKmglc5WGcWmfGc8Jf2z7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468746; c=relaxed/simple;
-	bh=lEggCUYbTk+GP5TUUiY50DmE28Zc//S9OpoLzZIcRLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcG67VHz1jWqKvg3UAtWDcT3Bk+WMdQb/loAXeSBcFqJowCvnHWQ785xKRkjmNiR8rbIMloS3kP5gE561dHez4uhrzoKREJCjsgkfEGIpKpZqT94bGeTt58WIQYMYmZbqniJ+6UnPg1gTmJ0A4GFslRSgirK1WyjRAMgh4Oxrjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cjaP5ulX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Cx4b9ljxXAEd//n/bsswHdYF1IR3q+eU4ODteiygmF8=; b=cjaP5ulXVtAF5UtU8yjn3p8bRx
-	vAw7A708oQfTl74++6PYDDfNE5Quqdg8w+JZ/3fW9xV+d9yeNy1L9zplg4DzFnCA8hgg/KUuJIBLU
-	5Z9PnHBVEh2LrFcEdUPmQgZB8j9j288L7m6WyEW7atimeHSwDrIjlLJD0ETW+vHcHPYU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tidHH-00DoRW-SC; Thu, 13 Feb 2025 18:45:31 +0100
-Date: Thu, 13 Feb 2025 18:45:31 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	bhelgaas@google.com, brgl@bgdev.pl,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
-	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
-	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, saravanak@google.com,
-	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
-	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com>
- <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+	s=arc-20240116; t=1739468744; c=relaxed/simple;
+	bh=9g9XvpJ4vTHZRdoVn0NNOAe0M9fMrmh7qRY4E5RBo5I=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JaRg7IidlKAQiBO4hGtq62ejHDNeya3befkWh7RYalf+92TzzDR2PJFtN6D3BKgVriWc/QsnRwtmnQLNK0gKn0wLnbvi/aHzIh+06UuPRUEPj1t96ZRi2b9Xbh6ZWGsb79MRdTILvmmMji50gKfCVYe8c/Ic2c+52AHMy5M/UDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MqwOKrlM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.1.94] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D7186203D61D;
+	Thu, 13 Feb 2025 09:45:40 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7186203D61D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739468742;
+	bh=CjdDB9uvZBBF3c03e9VylpCG5WkQPsjk1qSKlO3MQtE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=MqwOKrlM0wNKTlUgCtpn9gJKIpfGiwVh9dHGNNF4ycPmXa/idcQ30iiksOd4FJJaH
+	 jrqNCD9r00CbzdjGOPFOZ+MnFU6woy29/+YEkOfP14iTKCcgK64o8pGQaLxlVNUpHe
+	 bIb4sXQD9rr6g8CsvFcC34/zgx+kxX5/LItW+SLg=
+Message-ID: <8f80b65e-724c-439c-a094-4bfbb1e296f1@linux.microsoft.com>
+Date: Thu, 13 Feb 2025 09:45:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Yaron Avizrat <yaron.avizrat@intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, James Smart
+ <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
+ Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
+ Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>,
+ Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Selvin Xavier <selvin.xavier@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ cocci@inria.fr, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+ linux-rdma@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 00/16] Converge on using secs_to_jiffies() part two
+To: Andrew Morton <akpm@linux-foundation.org>
+References: <20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com>
+ <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > fan are directly on this custom board? You then want a board DTS which
-> > includes all these pieces?
+On 1/28/2025 4:16 PM, Andrew Morton wrote:
+> On Tue, 28 Jan 2025 18:21:45 +0000 Easwar Hariharan <eahariha@linux.microsoft.com> wrote:
 > 
-> That depends on whether you count the Raspberry Pi 5 as a custom board.
+>> This is the second series (part 1*) that converts users of msecs_to_jiffies() that
+>> either use the multiply pattern of either of:
+>> - msecs_to_jiffies(N*1000) or
+>> - msecs_to_jiffies(N*MSEC_PER_SEC)
+>>
+>> where N is a constant or an expression, to avoid the multiplication.
+>>
+>> The conversion is made with Coccinelle with the secs_to_jiffies() script
+>> in scripts/coccinelle/misc. Attention is paid to what the best change
+>> can be rather than restricting to what the tool provides.
+>>
+>> Andrew has kindly agreed to take the series through mm.git modulo the
+>> patches maintainers want to pick through their own trees.
+> 
+> I added patches 2-16 to mm.git.  If any of these later get merged into
+> a subsystem tree, Stephen will tell us and I'll drop the mm.git copy.
 
-So you mean the Pi 5 board would itself make use of the resources the
-RP1 device has? They are not simply connected to headers for plugin
-boards, but used by the main board? Hence you want to describe them in
-the board .DTS file.
+Hi Andrew, I don't see these in mm-nonmm-unstable. Did these get dropped in the confusion around
+casting secs_to_jiffies() to unsigned long[1]? That has since been merged in 6.14-rc2 via tglx' tree,
+and I have a v2 for just the ceph patches that needed some fixups at [2].
 
-	Andrew
+[1] https://lore.kernel.org/all/20250130192701.99626-1-eahariha@linux.microsoft.com/
+[2] https://lore.kernel.org/all/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com/
 
+Thanks,
+Easwar (he/him)
 
