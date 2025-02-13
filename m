@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-513624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129EBA34C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:58:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A13A34C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9943A7A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:58:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6B63A9913
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BE5242914;
-	Thu, 13 Feb 2025 17:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE9F24168C;
+	Thu, 13 Feb 2025 17:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gh7HbCjo"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKqet2+z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05924168B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C4C23F401
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469499; cv=none; b=h4Y2fdkMsZRnc5Ra8mDguuCZsW4A+QzsiH++tMusEpkZzCw8WsupK3OUDJStOyYivGEid25If75dOUKthZt2z1/+Du2s66T04UPDkPMDvo3ntlM7yI+FT57aK2wIvzIquc0JozNItPDdP9PLLFuPjxPYn6o+45RtVhjR2v5WVHM=
+	t=1739469522; cv=none; b=e66N8HJEpfpfwndy0AniycDV+Go+yIyvaaGh6Be1UkgUIRzIL7fe6FrX5bdNbtrQKzAfVSCT/K0+CQutihfJGwXMzP4ZUb5S99zlN/TRy4W03GijDG44sauLyFPzf21kLMg+OQcLpGfUKu5sCzRZ7rn7r3niaZg/Ze0Qt4oGaqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469499; c=relaxed/simple;
-	bh=T4wEjSRsVSrhRrn2h8DgpJJyTxIWuEpOmyBwmIva9Tw=;
+	s=arc-20240116; t=1739469522; c=relaxed/simple;
+	bh=iCD1EJbH1lIRLMhar/vubBdCo81+Zp/krmtY+yjRst0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iw1zs6b+a44rs5/7CDlXgVrBXUcnFLBQBWQumfnzru3ZggQSJ0WNgg/T87ULToUaxKPwq0gNYp2/Xm8TZqEAZ/hMrS2cCNPBKgA6IfObSZJJ4RrD8tbOtWTeEqjgX1vGj9TdCZjjvr+FXtRViBhTkk7p1KVSRBm3PelKVOnBmBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gh7HbCjo; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5450cf3ef63so1220904e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:58:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739469495; x=1740074295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1hJUq2FWMpiTubsUgXvXpT/cz5xlZO2FuryQMryqjCg=;
-        b=gh7HbCjoFmLKwD37kRFalbMy9C8mdaurTyq5yYYJejuNI0lKcrL/NKfzoW9VsjDPDd
-         7D4oPc75wZilDRIPWymRHPlb9xApBTn7klBmHMw+4c+xfwRy/awKxTzLZT2n7T6tCRJF
-         cwvRNR9rGoVyW2j0xWjD/czYlIDaE2LDNcvLLTKVMF3tYsqJ2ArpRPa2gAUUrmeMRJtM
-         UGfda+74pne77pvtLM/a/ke+kgg21rAR69cmnyCBCq9TK8SZ48MMTNB5DacIBQ1xri9c
-         FQX0sVHk8Yv70n6abXdyGaZ+b3iyDyNLoej9GzfaXkaKFCaPKd6sOc9Qx2qZba8BoFOs
-         zo9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739469495; x=1740074295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1hJUq2FWMpiTubsUgXvXpT/cz5xlZO2FuryQMryqjCg=;
-        b=sRJQTWRB5iWTvfDnG++3U6G5nCfUodXcZfMAkHeU97iys7unXRxG7yh+nnLSe0nFq9
-         1RAagD2gHVCZP9Myxbp30kS9biaNRu+0pA3uFrIQLO45W0URZpBpcxfzFh+6mcNylsMT
-         6WJWDMBoY1fqo1ATUhHpq+SGNfqeSX1xWkchXymoSDiPe5ZVv/YQRqBWXO00wq9Unh/k
-         jVp9pN8OlWHlCmxqwqA5gBWnoMoahGTWDSiHYkM4tZiYtMSp43/eAKYu4TBdHQmBUqQb
-         ZmkR1WjEZq0fsceP0efIhnhEphR9Rli05Nr2b0QYl03Mkga/1hTc94weUBd5PRsfSDIr
-         O79Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUObUlUnbhp/kf2Ocvb0XgBexLh/7FJA1EpHugzKQdwLmiS1zXdZy3Dc2X8A8cupy70eRaqTp9RXudwMmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTk0g42D+WDuFViW/036tHgLsbUlYCyEH2vzJAKjHleykiUYEx
-	3QZbBm12h1X4mjyTNIYUk/Y6HLzaC2+jt+f0h8tQuUtT6KhEVmfTrkO8Xc9t9bo4mIj8TeAmJ0L
-	tO5kyikYEyV32dCCn21Vxt6JZFBl2NgrYoI61Zw==
-X-Gm-Gg: ASbGncsTZ1l+2TuoVQi+pid0jtj0PrKNecN2KUdg/zgOBKzWW0CnA3UwcbV24PRUl2R
-	9fJWEiW5U6wAuuVKHD3ptfB7n7jMxTZs8Dh3XsK9jaPuR5hVco44Xw/7bTqLmKWRjA2roaaEBob
-	e7Io8Wpj4g5OZP7gHMfX6yiTi89IvT
-X-Google-Smtp-Source: AGHT+IGvl6mW9n7No7hloQAm0sjQgh6h7QTx9ok6twfTZlsAcsr3IPTDtYgCtgjq9SBpATIzjmWo0SWAoAL/h4h3bA0=
-X-Received: by 2002:a05:6512:230d:b0:545:8f7:8597 with SMTP id
- 2adb3069b0e04-5451dd953bdmr1828407e87.16.1739469495145; Thu, 13 Feb 2025
- 09:58:15 -0800 (PST)
+	 To:Cc:Content-Type; b=m7mWDeuZidY2XcKMC1lgQZKn++RBKYaUNz35oR94SRbXt5/A1gatVCCNEOQCGg3bWDZdq7ha6X3hu1pK3XaYhJ2m1JlaVyi22SMCUcI1E19EYpLIx96lheay3gOKUkboyr80AXUu+wZcysy4UpZSdEEyKKfy1XP6lFKK0fxWU/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKqet2+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7990EC4CEEF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739469522;
+	bh=iCD1EJbH1lIRLMhar/vubBdCo81+Zp/krmtY+yjRst0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PKqet2+zH1t97Tb9PYh+csE5Hdb00pQkostRd2H2ctUmml1g8pGaPSCFUWnd+A+O0
+	 bOMyt4JNMnU96lRXLcWJRor87iyLPNItlWNX/iX3dZG/1Uiu89IzQ4X1LtvLTcY/2O
+	 7WicsQQbKQWDPk3XgXrgyZQz+ak29vrd2BaMECULVVsLSjv6pwN53nd3BBp1r2DRDD
+	 pIZ75RwafjHlIFQ0r/x5yRo8Lo9WUvLtkAcvnfH1UGQHS0RIb9w282c8FYrQtCWJzD
+	 mHbM4bZhXbdkWtKXrrOa0kyfEtO0tPU8X02toteJqeRdwmKZL4nLi3fjSdEH7rvIaQ
+	 lI+jDpT9mbxmQ==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab2b29dfc65so190224966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:58:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX8J+k66yAF7P2+k0Yu3K7jCWzhQByQRdhbe2+aTXHjG9dS3e8XINguVburjjmlbDFGgc6kV+NueMtRgZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNBIPb8vNiYLiKWDhRya14vdwRmwi37X1XKdkLxbl81iK0sfCH
+	DUxIj3K+6AccDCLl8ANphNFDHcrIjHH1dLfhCU9xd1jCFvPYHPTdqYX8JW+qGFQKVlcuN4uwhOb
+	U9oFI8gbuCbVmKTTGb3srPVy774hvKlaj8VF5
+X-Google-Smtp-Source: AGHT+IFHopkCd1IJRkVGtcRhcYRjj+s4dlwwFJCs/2tuVCIcDrZdxsclaMkaSiHDnOZupJK47TfVKKdiSuDfdpu5g6U=
+X-Received: by 2002:a17:907:3ea2:b0:ab7:c43f:8382 with SMTP id
+ a640c23a62f3a-ab7f33cab3bmr916405866b.31.1739469520915; Thu, 13 Feb 2025
+ 09:58:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <173935301204.11039.10193374588878813157.b4-ty@linaro.org>
- <801b5364-129f-42e9-bf9a-a90d9eeb4629@baylibre.com> <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
- <7989a6a0-b761-416c-ad97-69bd23fdc2c4@sirena.org.uk>
-In-Reply-To: <7989a6a0-b761-416c-ad97-69bd23fdc2c4@sirena.org.uk>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Feb 2025 18:58:04 +0100
-X-Gm-Features: AWEUYZmrRaL2YjTM2r-jpirYN5EOkISNS2cmGOX2GIxOe7L0RqWQ7r8Dpd66z_c
-Message-ID: <CAMRc=Mea5imComkraP=v9TKsxLDoBm4XtbLL1QxCbhJ8d4uxcA@mail.gmail.com>
-Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, 
-	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250212220433.3624297-1-jolsa@kernel.org> <CALCETrVFdAFVinbpPK+q7pSQHo3=JgGxZSPZVz-y7oaG=xP3fA@mail.gmail.com>
+ <Z623ZcZj6Wsbnrhs@krava>
+In-Reply-To: <Z623ZcZj6Wsbnrhs@krava>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 13 Feb 2025 09:58:29 -0800
+X-Gmail-Original-Message-ID: <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
+X-Gm-Features: AWEUYZkKsWtgJBXXFU3xbPGAlALgrkQUHGzWNL5HcC7wERAjq_EEPmO7fwgtv2M
+Message-ID: <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
+Subject: Re: [PATCHv3 perf/core] uprobes: Harden uretprobe syscall trampoline check
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Eyal Birger <eyal.birger@gmail.com>, stable@vger.kernel.org, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
+	bpf@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 6:53=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
+On Thu, Feb 13, 2025 at 1:16=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
 >
-> On Thu, Feb 13, 2025 at 06:42:19PM +0100, Bartosz Golaszewski wrote:
-> > On Thu, Feb 13, 2025 at 6:25=E2=80=AFPM David Lechner <dlechner@baylibr=
-e.com> wrote:
+> On Wed, Feb 12, 2025 at 05:37:11PM -0800, Andy Lutomirski wrote:
+> > On Wed, Feb 12, 2025 at 2:04=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wr=
+ote:
+> > >
+> > > Jann reported [1] possible issue when trampoline_check_ip returns
+> > > address near the bottom of the address space that is allowed to
+> > > call into the syscall if uretprobes are not set up.
+> > >
+> > > Though the mmap minimum address restrictions will typically prevent
+> > > creating mappings there, let's make sure uretprobe syscall checks
+> > > for that.
+> >
+> > It would be a layering violation, but we could perhaps do better here:
+> >
+> > > -       if (regs->ip !=3D trampoline_check_ip())
+> > > +       /* Make sure the ip matches the only allowed sys_uretprobe ca=
+ller. */
+> > > +       if (unlikely(regs->ip !=3D trampoline_check_ip(tramp)))
+> > >                 goto sigill;
+> >
+> > Instead of SIGILL, perhaps this should do the seccomp action?  So the
+> > logic in seccomp would be (sketchily, with some real mode1 mess):
+> >
+> > if (is_a_real_uretprobe())
+> >     skip seccomp;
 >
-> > > Do you plan to pick up the other patches that have been acked
-> > > as well? It seems like most folks were OK with everything going
-> > > though the gpio tree since the changes are small.
->
-> > Jonathan requested a branch so I made one and sent out a PR. I figured
-> > people would just pick the relevant patches into their respective
-> > trees? For patches that won't be in next by rc5 - I will take them if
-> > Acked - just remind me.
->
-> If people are acking things that generally means they're expecting them
-> to go along with the rest of the series.  When you didn't apply the ASoC
-> patch I did actually put into CI but it was a bit surprising that you
-> seemed to be expecting that.
+> IIUC you want to move the address check earlier to the seccomp path..
+> with the benefit that we would kill not allowed caller sooner?
 
-There was no clear consensus. Some patches are still not acked.
+The benefit would be that seccomp users that want to do something
+other than killing a process (returning an error code, getting
+notified, etc) could retain that functionality without the new
+automatic hole being poked for uretprobe() in cases where uprobes
+aren't in use or where the calling address doesn't match the uprobe
+trampoline.  IOW it would reduce the scope to which we're making
+seccomp behave unexpectedly.
 
-No worries, I will take the acked ones. I didn't see any b4
-notifications from your side yet, so I assume the patches are still
-pending?
-
-Bart
+>
+> jirka
+>
+> >
+> > where is_a_real_uretprobe() is only true if the nr and arch match
+> > uretprobe *and* the address is right.
+> >
+> > --Andy
+>
 
