@@ -1,231 +1,288 @@
-Return-Path: <linux-kernel+bounces-512446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC114A33968
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 003E6A33965
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407183A4DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CB93A4EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2451F20AF96;
-	Thu, 13 Feb 2025 07:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ffz7bUjJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B677220C005;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA3C20B1F3;
 	Thu, 13 Feb 2025 07:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a7mSCrqz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rnsdqvtq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a7mSCrqz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rnsdqvtq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818C220B21B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739433461; cv=none; b=DG8yUwlrzZpPur52qZlH/DwvraeFPN4tMKv2nNbATjVuf4txiS25p0mLr2b9Fm9UP1tklAdfJ6HR6V9RxJolETwemUKtQbHrCHDoYJak6kKwFBoGY3S4rOHoHyrGJmhB6pfyiOHQ1v30baYjJHwz3O9jajTY1dy3WCWt3NP6m2E=
+	t=1739433458; cv=none; b=dFUDC9zM1zaRZRQ7tBpgemFoqs6BMiQRiQCuYVI7UwJDE4HrSXdvzUdbFL+RlqR0eMqEAa2rtKoCURSvCDXPRu08gaf6isM8jgl3u+l16EP8eG5j8AAFjK3X4Ar4eiFS1e3VXsHMVZzgRH0iY4tLpE3junIjfNRas/0HqDteGNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739433461; c=relaxed/simple;
-	bh=DzC8p66uMDtBbLzxN7sVrz7HCwyBdAGILEnjXu6aA7A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KjMXzsm1q6Chl3k5asalggWRdlTT2YrPOrfOdcsR2GN9LbC7CckP1E8p9773SrUIQa9Tqd1rfaz21RkIBsxQjiF4YQsqI+kzjQAD4974EIVVEVfl6D5CndyvQA2MFWbmeRWTc2ctdMLm2gU3O1piogFQ+kKAUXui/3x701oEWqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ffz7bUjJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CNcAes015814;
-	Thu, 13 Feb 2025 07:57:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=LK8EMWkhMYS1gFdylRdOCv
-	m20LCWNN8FbFwebWxLra8=; b=Ffz7bUjJwfQI3Ux112kDArRdwoWc/P9XT9/yCE
-	QZj1FPM6JpQb8qZB/hKj//Im5etRF3WuCoPI9pXcNvihjXvXWfai5sPYTnavL2hv
-	w41TqOiy06u7hCkP66GPCgj7LtNteG6vcxXXfSSBYaVbLA6kNiLYuYrJE6wXAVuL
-	SY4el6i2BTTLvxsgm9pcKHJgpCVyDCCHPS4BEyHOf/Gyyk1puHCw0P7uwzAyN4A0
-	pJKJzzVEVZtgXm5TxQxfc6pb5gS7uqUCKFpZzFBQQwAqUkB1eI3uF+aHzsm9VfY4
-	4ngg/9VPwet83eazGD76euZEv8behCJE2410Svp4ALkGINHA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rgpgm9th-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:57:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D7vL86012406
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:57:21 GMT
-Received: from ap-kernel-sh01-lnx.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Feb 2025 23:57:16 -0800
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-To: <anshuman.khandual@arm.com>, <catalin.marinas@arm.com>
-CC: <will@kernel.org>, <ardb@kernel.org>, <ryan.roberts@arm.com>,
-        <mark.rutland@arm.com>, <joey.gouly@arm.com>,
-        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
-        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
-        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        Zhenhua Huang <quic_zhenhuah@quicinc.com>, <stable@vger.kernel.org>
-Subject: [PATCH v6] arm64: mm: Populate vmemmap/linear at the page level for hotplugged sections
-Date: Thu, 13 Feb 2025 15:57:03 +0800
-Message-ID: <20250213075703.1270713-1-quic_zhenhuah@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739433458; c=relaxed/simple;
+	bh=Eizw/7v8wM615D5xp2j4MicBwNG2Yxv2F/qXcuv4zj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMPr0IyA1SC3/dRzK4DlodDir9FBN7w0x2uw8tmZDXNQj36Mf/O0kTLg0I+Z2CgyZsh2FaUcG4b/28nZQHTaA4wO/E6aPgX21dKpGmdPyvYg2KNdifqRcwI3RZxapS9Om4GI6CTErwKxwVVv7B3V/olLYU34ieQ7DJvBaNldnKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a7mSCrqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rnsdqvtq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a7mSCrqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rnsdqvtq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B79D22A46;
+	Thu, 13 Feb 2025 07:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739433454; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l64wye6SggNBhfX1dIvY42n1nqPIDcrBOBmwvGtFeqA=;
+	b=a7mSCrqzaJJKzwkheiVYHKkIMNuHnG7SZm9H6nNij0+FMIJgQT8WvSKK5L45tprIl4O8q5
+	YgDTqRnGs4/li0YOAN8m5F9W5m3xEw2EUBFEtmtwLmmKi3KtoiB2KmG10c/MQ7aXSwvMps
+	hjH6YT6MIyNtxCRJxccZ5tkP6iGZ0s8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739433454;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l64wye6SggNBhfX1dIvY42n1nqPIDcrBOBmwvGtFeqA=;
+	b=RnsdqvtqooGxfTt3e14Bo12x6x8ikJu7lzJjpAkra7JhVMpZm5taa8iVW48pkqEzKwYNao
+	KZeoI1s6feNh/ECg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=a7mSCrqz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Rnsdqvtq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739433454; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l64wye6SggNBhfX1dIvY42n1nqPIDcrBOBmwvGtFeqA=;
+	b=a7mSCrqzaJJKzwkheiVYHKkIMNuHnG7SZm9H6nNij0+FMIJgQT8WvSKK5L45tprIl4O8q5
+	YgDTqRnGs4/li0YOAN8m5F9W5m3xEw2EUBFEtmtwLmmKi3KtoiB2KmG10c/MQ7aXSwvMps
+	hjH6YT6MIyNtxCRJxccZ5tkP6iGZ0s8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739433454;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l64wye6SggNBhfX1dIvY42n1nqPIDcrBOBmwvGtFeqA=;
+	b=RnsdqvtqooGxfTt3e14Bo12x6x8ikJu7lzJjpAkra7JhVMpZm5taa8iVW48pkqEzKwYNao
+	KZeoI1s6feNh/ECg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DA1613874;
+	Thu, 13 Feb 2025 07:57:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id o64EAu6lrWc5YwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 13 Feb 2025 07:57:34 +0000
+Message-ID: <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
+Date: Thu, 13 Feb 2025 08:57:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+To: Nicolas Baranger <nicolas.baranger@3xo.fr>,
+ dri-devel@lists.freedesktop.org
+Cc: airlied@redhat.com, Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <194c4656963debcf074d87e89ab1a829@3xo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YteP1zGpHsG1DEWBdEJIhBRiGC-ECWUK
-X-Proofpoint-GUID: YteP1zGpHsG1DEWBdEJIhBRiGC-ECWUK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 mlxscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502130059
+X-Rspamd-Queue-Id: 4B79D22A46
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-to 27, making one section 128M. The related page struct which vmemmap
-points to is 2M then.
-Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-vmemmap to populate at the PMD section level which was suitable
-initially since hot plug granule is always one section(128M). However,
-commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-existing arm64 assumptions.
+Hi Nicolas
 
-Considering the vmemmap_free -> unmap_hotplug_pmd_range path, when
-pmd_sect() is true, the entire PMD section is cleared, even if there is
-other effective subsection. For example page_struct_map1 and
-page_strcut_map2 are part of a single PMD entry and they are hot-added
-sequentially. Then page_struct_map1 is removed, vmemmap_free() will clear
-the entire PMD entry freeing the struct page map for the whole section,
-even though page_struct_map2 is still active. Similar problem exists
-with linear mapping as well, for 16K base page(PMD size = 32M) or 64K
-base page(PMD = 512M), their block mappings exceed SUBSECTION_SIZE.
-Tearing down the entire PMD mapping too will leave other subsections
-unmapped in the linear mapping.
+Am 12.02.25 um 19:58 schrieb Nicolas Baranger:
+> Dear maintener
 
-To address the issue, we need to prevent PMD/PUD/CONT mappings for both
-linear and vmemmap for non-boot sections if corresponding size on the
-given base page exceeds SUBSECTION_SIZE(2MB now).
+That's mostly me and Jocelyn.
 
-Cc: <stable@vger.kernel.org> # v5.4+
-Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
----
- arch/arm64/mm/mmu.c | 46 ++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 9 deletions(-)
+>
+> I did include ast-drm driver version 1.15.1 (in replacement of version 
+> 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
+> dkms patch
+>
+> Last DKMS patch had been sucessfully tested on mainline.
+> And last ast.ko version 1.15.1 included in linux tree had also been 
+> sucessfully tested
+>
+> Online directory is updated with :
+> - new DKMS patch
+> - new DKMS srouces
+> - new DKMS debian package
+> - new tarball of mainline included ast_new ported in kernel tree
+> - new kernel debian package (mainline with ast_new)
+>
+>
+> NB: online directory is here: 
+> https://xba.soartist.net/ast-drm_nba_20250211/
+>
+> Please let me know what I should do to see this change in linux-next
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index b4df5bc5b1b8..b1089365f3e7 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -42,9 +42,13 @@
- #include <asm/pgalloc.h>
- #include <asm/kfence.h>
- 
--#define NO_BLOCK_MAPPINGS	BIT(0)
--#define NO_CONT_MAPPINGS	BIT(1)
--#define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
-+#define NO_PMD_BLOCK_MAPPINGS	BIT(0)
-+#define NO_PUD_BLOCK_MAPPINGS	BIT(1)  /* Hotplug case: do not want block mapping for PUD */
-+#define NO_BLOCK_MAPPINGS	(NO_PMD_BLOCK_MAPPINGS | NO_PUD_BLOCK_MAPPINGS)
-+#define NO_PTE_CONT_MAPPINGS	BIT(2)
-+#define NO_PMD_CONT_MAPPINGS	BIT(3)  /* Hotplug case: do not want cont mapping for PMD */
-+#define NO_CONT_MAPPINGS	(NO_PTE_CONT_MAPPINGS | NO_PMD_CONT_MAPPINGS)
-+#define NO_EXEC_MAPPINGS	BIT(4)	/* assumes FEAT_HPDS is not used */
- 
- u64 kimage_voffset __ro_after_init;
- EXPORT_SYMBOL(kimage_voffset);
-@@ -224,7 +228,7 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
- 
- 		/* use a contiguous mapping if the range is suitably aligned */
- 		if ((((addr | next | phys) & ~CONT_PTE_MASK) == 0) &&
--		    (flags & NO_CONT_MAPPINGS) == 0)
-+		    (flags & NO_PTE_CONT_MAPPINGS) == 0)
- 			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
- 
- 		init_pte(ptep, addr, next, phys, __prot);
-@@ -254,7 +258,7 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 
- 		/* try section mapping first */
- 		if (((addr | next | phys) & ~PMD_MASK) == 0 &&
--		    (flags & NO_BLOCK_MAPPINGS) == 0) {
-+		    (flags & NO_PMD_BLOCK_MAPPINGS) == 0) {
- 			pmd_set_huge(pmdp, phys, prot);
- 
- 			/*
-@@ -311,7 +315,7 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
- 
- 		/* use a contiguous mapping if the range is suitably aligned */
- 		if ((((addr | next | phys) & ~CONT_PMD_MASK) == 0) &&
--		    (flags & NO_CONT_MAPPINGS) == 0)
-+		    (flags & NO_PMD_CONT_MAPPINGS) == 0)
- 			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
- 
- 		init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
-@@ -358,8 +362,8 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
- 		 * For 4K granule only, attempt to put down a 1GB block
- 		 */
- 		if (pud_sect_supported() &&
--		   ((addr | next | phys) & ~PUD_MASK) == 0 &&
--		    (flags & NO_BLOCK_MAPPINGS) == 0) {
-+		    ((addr | next | phys) & ~PUD_MASK) == 0 &&
-+		    (flags & NO_PUD_BLOCK_MAPPINGS) == 0) {
- 			pud_set_huge(pudp, phys, prot);
- 
- 			/*
-@@ -1178,7 +1182,13 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- {
- 	WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
- 
--	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES))
-+	/*
-+	 * Hotplugged section does not support hugepages as
-+	 * PMD_SIZE (hence PUD_SIZE) section mapping covers
-+	 * struct page range that exceeds a SUBSECTION_SIZE
-+	 * i.e 2MB - for all available base page sizes.
-+	 */
-+	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) || system_state != SYSTEM_BOOTING)
- 		return vmemmap_populate_basepages(start, end, node, altmap);
- 	else
- 		return vmemmap_populate_hugepages(start, end, node, altmap);
-@@ -1340,9 +1350,27 @@ int arch_add_memory(int nid, u64 start, u64 size,
- 		    struct mhp_params *params)
- {
- 	int ret, flags = NO_EXEC_MAPPINGS;
-+	unsigned long start_pfn = PFN_DOWN(start);
-+	struct mem_section *ms = __pfn_to_section(start_pfn);
- 
- 	VM_BUG_ON(!mhp_range_allowed(start, size, true));
- 
-+	/* should not be invoked by early section */
-+	WARN_ON(early_section(ms));
-+
-+	/*
-+	 * Disallow BLOCK/CONT mappings if the corresponding size exceeds
-+	 * SUBSECTION_SIZE which now is 2MB.
-+	 *
-+	 * PUD_BLOCK or PMD_CONT should consistently exceed SUBSECTION_SIZE
-+	 * across all variable page size configurations, so add them directly
-+	 */
-+	flags |= NO_PUD_BLOCK_MAPPINGS | NO_PMD_CONT_MAPPINGS;
-+	if (SUBSECTION_SHIFT < PMD_SHIFT)
-+		flags |= NO_PMD_BLOCK_MAPPINGS;
-+	if (SUBSECTION_SHIFT < CONT_PTE_SHIFT)
-+		flags |= NO_PTE_CONT_MAPPINGS;
-+
- 	if (can_set_direct_map())
- 		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
- 
+I'm having a little trouble with figuring out which of the many driver 
+sources is the relevant one. Am I correct to assume it's the one at
+
+https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/
+
+
+About that driver: Although the official driver reports an ancient 
+version number, it is an up-to-date driver. It is actually more 
+up-to-date than Aspeed's package. Both drivers share source code and a 
+few years ago there was an effort to bring the kernel's driver up to the 
+same feature set. Since then, the kernel's driver has been updated, 
+reworked and improved.
+
+About the performance: From what I can tell, the only significant 
+difference in these drivers is memory management. Your ast_new driver 
+uses an older algorithm that we replaced quite a few releases ago. The 
+old version was unreliable on systems with little video memory, so we 
+had to replace it.  I don't know why the new code should be slower though.
+
+If I give you a patch against a recent Linux kernel, are you capable of 
+building the patched kernel and testing that change on your system?
+
+Best regards
+Thomas
+
+
+>
+> Thanks for help
+>
+> Kind regards
+> Nicolas Baranger
+>
+>
+> Le 2025-02-11 19:15, Nicolas Baranger a écrit :
+>
+>> Dear maintener
+>>
+>> For my own usage, I did make work the ASPEED ast-drm 1.15.1 video 
+>> driver on mainline kernel (6.13.0 + 6.13.1).
+>>
+>> ASPEED video driver is availiable here:
+>> https://www.aspeedtech.com/file/support/Linux_DRM_1.15.1_4.tar.gz
+>>
+>> But it only work for LTS kernel
+>> So I modify the DKMS package and I build a new Debian DKMS package 
+>> with the adapted  source.
+>> My patch can be find here :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/astdiff.patch
+>> See the README:
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/README
+>>
+>> Using this new 'ast 1.15.1' driver, performance are amazing compared 
+>> to the 'ast' driver include in kernel tree, specially when using a 
+>> discrete GPU and offloading VULKAN / 3D on it but using AST VGA card 
+>> as the main video card and as the main and only video output (the 
+>> discrete GPU is used only for offloading 3D or for cuda/opencl)
+>>
+>> So to make things easier, I include the new 'ast 1.15.1' driver in 
+>> kernel tree as AST_NEW : linux-6.13.1-ast/drivers/gpu/drm/ast_new'
+>> It's working fine as you can see on this video :
+>> https://xba.soartist.net/ast-drm_nba_20250211/vulcan_nvidia_prime_render_offload_on_ast_vga_card.webm 
+>>
+>>
+>> I upload all the work I've done here :
+>> https://xba.soartist.net/ast-drm_nba_20250211/
+>>
+>> See the global README :
+>> https://xba.soartist.net/ast-drm_nba_20250211/README
+>>
+>> and the README in nba-kernel sub-directory :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/README
+>>
+>> I'm not a developer so please let me know if I made the things the 
+>> right way and if this new 'ast 1.15.1' driver can be ported to 
+>> linux-next or linux-? ?
+>> If you need more explanations, do not hesitate to contact me, I would 
+>> be happy to help
+>>
+>> Kind regards
+>> Nicolas Baranger
+
 -- 
-2.25.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
