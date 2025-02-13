@@ -1,168 +1,318 @@
-Return-Path: <linux-kernel+bounces-513008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D1EA34078
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:36:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC289A34081
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0003016A8C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA7816A82D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A864227EB3;
-	Thu, 13 Feb 2025 13:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A8E23A983;
+	Thu, 13 Feb 2025 13:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kwt7lkya"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjYEL3uG"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D3A227EA3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB22221554
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453762; cv=none; b=Uqq1bUwGn128nDzthKWC8saBA9rXvAwG1v7pUlrS3WtPJRxfM60gwxs8vlMnp5EKGaAcAvroLTbLiV1zkNseQFVUm9sG8go9g0GdTFmjV+bE/ZoPLf8/xkqRNUubjLXRN0KaMlJOEn2DhKTmwebu+pxQtYGCRFEnwKL8R6DFMYg=
+	t=1739453916; cv=none; b=dhDMiEFzEvlAO/o/qttzPbhRIKbRLJMm/8va0GThNSgyVZb2LZEmfftsEYlVm9Xgwy2U3kF4YwdK04eWOr7i+inEISVU/Dph6hPfMeHKZNT1TXzibE6flkKt0ybTKBGAAPh5g24GyLy6Mi1hkOqPXDcLKgUB/HhFrpy4cB7vVhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453762; c=relaxed/simple;
-	bh=yVvqosbfBaZN59lYnyfV7wTLt5V4gEraGzYMEdvy9dQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZuWkd3NciHORxjbvyJ3Fq8QseBfv3e+h2s+JpQVSTDrw/46DyH38xqB0of+6ABswVfpKbFnF2m/cJCfhZzPLorEB4mUuiKJYWzqsBv8JLJXgQkvuXkps8rBIe0NhnY1bEUC9h8TuZABUZ+oedbrn1p/KPXo+YgiVzKbFjKBkIto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kwt7lkya; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4395f81db4dso5337145e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:36:00 -0800 (PST)
+	s=arc-20240116; t=1739453916; c=relaxed/simple;
+	bh=6ihWHeLTXIo3JWrgrTos9tTujT92CEbYIYJ4dUN8r04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aFbIhjw3uwDG4rUeLkxjmrMMmeJbrzosNyV/fsolx6I0mEN2rDHPb3Ih23nNXl7ruD0NwcFyQKns5IoIfcO/1xRODvq19CaM6EV8q9RBvQfEVxP/spnaMO/MuNeeaAT1pb/102sIxT54BcMWXFT0RtN+z3NHFrKv1QDQ/4CyKJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bjYEL3uG; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e53c9035003so715995276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:38:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739453759; x=1740058559; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lyrHtSipeKghn9xCx+8COWh0BWty29N6DnBPAUwOek=;
-        b=Kwt7lkyaR7i6RrsjyNhunBJrvwQ8PXiwnQrRIwvma4UE9b7JHJrXhnWmKdcHFUd412
-         vgm9xVjTo4qjZ/7U96UoghzM4axpKsuVKDaGOsPAg1CAU5hd6tl8gh4QSYcueulLlTHu
-         FOFu3Md9p8T/s9a0/YQyUG/UOD3FVUaXvm8N22vT6JNGk/nWq/9a0J/HyI9gZBY9p7ZQ
-         82VSje2duFX2/HKYxhCsKl0XibsWajIn52wj4a+mulVCLFUTii/5xS/04GoYzQkwpuIr
-         4K0edys8eZrTSRk52uIyTxC96ieJjwefLQETEldsFGRnnjeL71qnfYv+L1h529jznoOG
-         8kZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739453759; x=1740058559;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1739453914; x=1740058714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4lyrHtSipeKghn9xCx+8COWh0BWty29N6DnBPAUwOek=;
-        b=QofdEfdklwWVHKVkzxdS6GOzvo3BXGa04ErgSM84JA2vauWKIFQG3Gld0v3ZTXvk2U
-         qaLu7N8+fz/WXCfZxxCfInFjrxP7yFZuUpOvPbHvsifEE+QoR7ycKrXhm2YArvez0u/E
-         h2Edn/kF+OlQeA0IDnbZjryX8MC27UqdZU0FtzJYOiqgqI2LKJIOUBOjHYg3/rzKGilv
-         30JmODfhFd2YeuZlknv6tNlBoAoRAo+UNZaeYed1wgwinYE3G86MJuoqIl2djRk7V9ks
-         6i5mt0EjHsaebnHi1rkbEJbbadUBmtuYtTtoxcF1k4S7BcTedllz/8GWQ37nGSDHbiQP
-         eQFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8tDn8n20ngV2umpfcWeLv1Q2RjA/DrRhmSr6CJPySkb7T64vgfEbulWex4ijk8GdXOjCDgFfq9GNeXdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywWtH/LqylaKnCPdpKfJxl/N39ULKBwXkydZvIKAafYLlTwqOa
-	PU+pKMpCEqvMW9IvsRrLBH8NVGKuynnFMnLtikBhx0TDyXOxw4oZ87aRZWiCk4g=
-X-Gm-Gg: ASbGncsNO+/zcT8EtYThhEvXs9cXZqNZAkH88t8D6DOeeAsP6BeBjw/uP+VYlMCwQ32
-	s5EZOf9nz/0aXXm91N+8F5EsKJ9XsOW+hw4TLSliYgxNsRjWeRGmegWElSW+jvV8ozribB/gnPE
-	CtBtG89hFo2sXi38VD/ghyo2WCdqaGyN2cxw3UQGY9doPU+vcB2V8ndD1QQkwQ16H8yI3YpXlII
-	I3leeEZ+m9JSG+CS8FyYjdHulN4aDHESEa7rK5YuBiZH09D+9Y4sJli6UJCJqaIJw7FdC0h+IFi
-	biy+hTaDfGqm9w==
-X-Google-Smtp-Source: AGHT+IFlyyROQN/jp5N25OPHAwGGncnJ/FLwqH6qkR/P/8dmal2Zk5G/l0wZieziiMnBJNT5H1Y22g==
-X-Received: by 2002:a05:600c:a0c:b0:434:f1bd:1e40 with SMTP id 5b1f17b1804b1-43960e81b92mr29235125e9.6.1739453758160;
-        Thu, 13 Feb 2025 05:35:58 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b617:2c1:fc8c:2705])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a056151sm49618825e9.16.2025.02.13.05.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 05:35:57 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Dave Ertman"
- <david.m.ertman@intel.com>,  "Ira Weiny" <ira.weiny@intel.com>,  "Rafael J
- . Wysocki" <rafael@kernel.org>,  "Stephen Boyd" <sboyd@kernel.org>,
-  "Danilo Krummrich" <dakr@kernel.org>,  "Conor.Dooley"
- <conor.dooley@microchip.com>,  "Daire McNamara"
- <daire.mcnamara@microchip.com>,  "Philipp Zabel" <p.zabel@pengutronix.de>,
-  "Doug Anderson" <dianders@chromium.org>,  "Andrzej Hajda"
- <andrzej.hajda@intel.com>,  "Neil Armstrong" <neil.armstrong@linaro.org>,
-  "Robert Foss" <rfoss@kernel.org>,  "laurent.pinchart"
- <Laurent.pinchart@ideasonboard.com>,  "Jonas Karlman" <jonas@kwiboo.se>,
-  "Jernej Skrabec" <jernej.skrabec@gmail.com>,  "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
- <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "Dave
- Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,  "Hans de
- Goede" <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,  "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>,  "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>,  "Gregory Clement"
- <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
-  "Michael Turquette" <mturquette@baylibre.com>,  "Abel Vesa"
- <abelvesa@kernel.org>,  "Peng Fan" <peng.fan@nxp.com>,  "Shawn Guo"
- <shawnguo@kernel.org>,  "Sascha Hauer" <s.hauer@pengutronix.de>,
-  "Pengutronix Kernel Team" <kernel@pengutronix.de>,  "Fabio Estevam"
- <festevam@gmail.com>,  "Kevin Hilman" <khilman@baylibre.com>,  "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
-  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
-  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 7/7] clk: amlogic: axg-audio: use the auxiliary reset
- driver - take 2
-In-Reply-To: <73c1ab6b-fd5e-47e3-8815-8f74758535f1@app.fastmail.com> (Arnd
-	Bergmann's message of "Thu, 13 Feb 2025 13:26:12 +0100")
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
-	<20250211-aux-device-create-helper-v3-7-7edb50524909@baylibre.com>
-	<73c1ab6b-fd5e-47e3-8815-8f74758535f1@app.fastmail.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Thu, 13 Feb 2025 14:35:56 +0100
-Message-ID: <1j1pw20xxf.fsf@starbuckisacylon.baylibre.com>
+        bh=WSIA1g8dCvdQWwHOdRqoCKz8a95Er9ylHMZyQ9jLV7E=;
+        b=bjYEL3uGcwRreyJAWSOgm7QBnunxI6wOw2alE+Dp/1Jqw7aLb98/2GjZiG+7ghefE6
+         ELKP5f1bzL7y0Qhx3H5bIFXz7b5B5R6/YAYSerPhDyV90a63y4rrdtrxFcDOEQdZ6lz9
+         79yu2TD1Q0A+lmXK0sxS0OEiRysxUbg0/hPNk9eYNpZPbKhitMQ5OFPOFzq7G0J8ztPt
+         +9dKtaS5nF8VFfMdb1cbStSr1SmQL12MOTySZ+gSH9jBjCD0My0rpHo0O9u9WHLEBaBX
+         6zNSriokzrK6eMx43ZUN74LL9Qhxfk3uRQEul1Yrtq9Ed2kNFH3njnNbwBC0L9CvkmY0
+         qM3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739453914; x=1740058714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WSIA1g8dCvdQWwHOdRqoCKz8a95Er9ylHMZyQ9jLV7E=;
+        b=Gpnq/prt+K8P5Yq/sIV1QGSfMSm0jgoMEz9CsyucGd/5JbBtYnfypzKF8te12gNg0m
+         qPH9MyXnsvr8XTN2SXkeDRfpyt/PkYfrhT99BQMKbS/BlJb2Xky/CjBWI9R4VMGyK+gh
+         33ONxQUDrNA/y8YN2xbcOIeBaQM7QDTA9YppCG91mAvDuPsKIepPGNF8NZYmy5SWvqM5
+         HXfg0zBPWREK/FWcrvdINq7mquLFAWIivTaFIIuUrDKSB2vEO7nrMSb3IgDBV3UvHDJc
+         sI3kD78praFBQovX0X+a7c6w+U1MwwKSeoLvx3i9jzXVwl8r07+93kcaLyuZil4Hwb9E
+         Ltow==
+X-Forwarded-Encrypted: i=1; AJvYcCXqq8V5xFZcMQVhWVx+phR9gvqk2+Hrvs+r42SyQM43ng28rQK1BsndH4hz7ZLb+K/JBa3LebjGWBP+EDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAC2b11fm75QC7rTIkCmtubk3Z2tv83BhfEAFO7JrY2vVmmenr
+	LdvFKRCzlCwUkAOBtrOvSMYm5WeoiceJsnNUEcdLD9IbLz34RzTx6fVPJlnRZLWi5eXxRPdU3OB
+	ux6ErDLPnjhsX2HZCfoiAMBs4PkQ+x6hDkeZ6q2i51jW/3Ewft2hcLg==
+X-Gm-Gg: ASbGncuMKiKm152evSGoZqrPewnzZa5W478VVjSTDYtr00izAhuYZCyDrACoiJmzOwh
+	7njlZqrIoxPwLJWROb1DomBB9286UGM1AJHDFW7TEJFtgdzHzG8KjBR2J2xpNVXjb9q0Uzzj9qw
+	==
+X-Google-Smtp-Source: AGHT+IES4jC6u8cVgly3oXZNikm6zVqPJSCWWJ4Fv7cbxlVl5CnHgf0XyRsqDmh6GzFMCOQ42GsT8Xk1YkvyPkpqBYA=
+X-Received: by 2002:a05:6902:f10:b0:e5d:b542:f646 with SMTP id
+ 3f1490d57ef6-e5db542f992mr588160276.32.1739453913837; Thu, 13 Feb 2025
+ 05:38:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <2314745.iZASKD2KPV@rjwysocki.net> <CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQGwNWeteJWqpW29BojhQ@mail.gmail.com>
+ <CAJZ5v0h44Yxp95pHW+75gk5yWKviLO1_YK_cZNFKaGnid7nx9A@mail.gmail.com>
+ <CAJZ5v0iMZ=6YgKR3ZZuiv7DF4=vfoFRonSoXO_zV65oZH2rOgA@mail.gmail.com>
+ <CAPDyKFq91JnCFhEuitOJPZtq78-Y3CUy4p0bNE1wK+eYCste6g@mail.gmail.com>
+ <CAJZ5v0iuLA9N5Vi-JNa8=uTO-kpsKNsRGKegYnCYLEhAn=nW9g@mail.gmail.com> <CAJZ5v0gLDRhWySvoc6eLBTjQ_RdXL4AzOWGZrvUNaj_5ahxJwQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gLDRhWySvoc6eLBTjQ_RdXL4AzOWGZrvUNaj_5ahxJwQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 13 Feb 2025 14:37:58 +0100
+X-Gm-Features: AWEUYZk-W0hGa-gArD8WMGumRN_KUIYsXfodIIMGK87bmLdYGZghydBiEOAegb0
+Message-ID: <CAPDyKFqYzv-5O3k51W4rG=Qm4T3Uu0CcP2taMTYGrGXBj1pYUA@mail.gmail.com>
+Subject: Re: [PATCH v1 00/10] PM: Make the core and pm_runtime_force_suspend/resume()
+ agree more
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 13 Feb 2025 at 13:26, "Arnd Bergmann" <arnd@arndb.de> wrote:
-
-> On Tue, Feb 11, 2025, at 18:28, Jerome Brunet wrote:
->>
->>  I also think this is more readeable and maintainable than a bunch of
->>  'default CONFIG_FOO if CONFIG_FOO' for CONFIG_RESET_MESON_AUX. This approach
->>  also would have several pitfall, such as picking the value of the first config
->>  set or the config of RESET_MESON_AUX staying to 'n' if CONFIG_FOO is turned on
->>  with menuconfig.
+On Wed, 12 Feb 2025 at 20:04, Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> I still think you should just drop the 'imply' line, all it does it
-> force reviewers to double-check that you didn't make a mistake
-> here, so it's a waste of time.
-
-Arnd, you've made you preference clear and this note has been added
-specifically for this reason, and transparency. 
-
-I've exposed a technical reason for my choice. Going with the 'default'
-approach makes things more difficult in the long run for those
-maintaining this platform, me included.
-
-The trouble of having to coordinate changes in 2 different subsystems to
-have an appropriate configuration and the pitfalls of using 'default'
-outweigh the extra review trouble of using 'imply' ... especially when
-the pitfall mentioned in documentation is explicitly addressed in the
-description.
-
-If there something wrong with 'imply' existing and being used, maybe the
-Documentation should be updated to reflect this, or the support be
-removed entirely.
-
-ATM, it exists and it makes things a lot easier for me to support and
-maintain this device.
-
-This all started with a maintainer request to move some resets away
-from clock. More requests have been added along the way, making things
-more generic. I'm more than happy to have contributed my effort and
-time on this and I don't think anybody's time has been wasted so far.
-
+> On Wed, Feb 12, 2025 at 6:05=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Wed, Feb 12, 2025 at 4:15=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
+.org> wrote:
+> > >
+> > > On Wed, 12 Feb 2025 at 12:33, Rafael J. Wysocki <rafael@kernel.org> w=
+rote:
+> > > >
+> > > > On Wed, Feb 12, 2025 at 11:59=E2=80=AFAM Rafael J. Wysocki <rafael@=
+kernel.org> wrote:
+> > > > >
+> > > > > On Wed, Feb 12, 2025 at 10:12=E2=80=AFAM Ulf Hansson <ulf.hansson=
+@linaro.org> wrote:
+> > > > > >
+> > > > > > On Tue, 11 Feb 2025 at 22:25, Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> > > > > > >
+> > > > > > > Hi Everyone,
+> > > > > > >
+> > > > > > > This series is a result of the discussion on a recently repor=
+ted issue
+> > > > > > > with device runtime PM status propagation during system resum=
+e and
+> > > > > > > the resulting patches:
+> > > > > > >
+> > > > > > > https://lore.kernel.org/linux-pm/12619233.O9o76ZdvQC@rjwysock=
+i.net/
+> > > > > > > https://lore.kernel.org/linux-pm/6137505.lOV4Wx5bFT@rjwysocki=
+.net/
+> > > > > > >
+> > > > > > > Overall, due to restrictions related to pm_runtime_force_susp=
+end() and
+> > > > > > > pm_runtime_force_resume(), it was necessary to limit the RPM_=
+ACTIVE
+> > > > > > > setting propagation to the parent of the first device in a de=
+pendency
+> > > > > > > chain that turned out to have to be resumed during system res=
+ume even
+> > > > > > > though it was runtime-suspended before system suspend.
+> > > > > > >
+> > > > > > > Those restrictions are that (1) pm_runtime_force_suspend() at=
+tempts to
+> > > > > > > suspend devices that have never had runtime PM enabled if the=
+ir runtime
+> > > > > > > PM status is currently RPM_ACTIVE and (2) pm_runtime_force_re=
+sume()
+> > > > > > > will skip device whose runtime PM status is currently RPM_ACT=
+IVE.
+> > > > > > >
+> > > > > > > The purpose of this series is to eliminate the above restrict=
+ions and
+> > > > > > > get pm_runtime_force_suspend() and pm_runtime_force_resume() =
+to agree
+> > > > > > > more with what the core does.
+> > > > > >
+> > > > > > For my understanding, would you mind elaborating a bit more aro=
+und the
+> > > > > > end-goal with this?
+> > > > >
+> > > > > The end goal is, of course, full integration of runtime PM with s=
+ystem
+> > > > > sleep for all devices.  Eventually.
+> > > > >
+> > > > > And it is necessary to make the core and
+> > > > > pm_runtime_force_suspend|resume() work together better for this
+> > > > > purpose.
+> > > > >
+> > > > > > Are you trying to make adaptations for
+> > > > > > pm_runtime_force_suspend|resume() and the PM core, such that dr=
+ivers
+> > > > > > that uses pm_runtime_force_suspend|resume() should be able to c=
+ope
+> > > > > > with other drivers for child-devices that make use of
+> > > > > > DPM_FLAG_SMART_SUSPEND?
+> > > > >
+> > > > > Yes.
+> > > > >
+> > > > > This is a more general case, though, when a device that was
+> > > > > runtime-suspended before system suspend and is left in suspend du=
+ring
+> > > > > it, needs to be resumed during the system resume that follows.
+> > > > >
+> > > > > Currently, DPM_FLAG_SMART_SUSPEND can lead to this sometimes and =
+it
+> > > > > cannot happen otherwise, but I think that it is a generally valid
+> > > > > case.
+> > > > >
+> > > > > > If we can make this work, it would enable the propagation of
+> > > > > > RPM_ACTIVE in the PM core for more devices, but still not for a=
+ll,
+> > > > > > right?
+> > > > >
+> > > > > It is all until there is a known case in which it isn't.  So eith=
+er
+> > > > > you know a specific case in which it doesn't work, or I don't see=
+ a
+> > > > > reason for avoiding it.
+> > > > >
+> > > > > ATM the only specific case in which it doesn't work is when
+> > > > > pm_runtime_force_suspend|resume() are used.
+> > > > >
+> > > > > > The point is, the other bigger issue that I pointed out in our =
+earlier
+> > > > > > discussions; all those devices where their drivers/buses don't =
+cope
+> > > > > > with the behaviour of the DPM_FLAG_SMART_SUSPEND flag, will pre=
+vent
+> > > > > > the PM core from *unconditionally* propagating the RPM_ACTIVE t=
+o
+> > > > > > parents. I guess this is the best we can do then?
+> > > > >
+> > > > > OK, what are they?
+> > > > >
+> > > > > You keep saying that they exist without giving any examples.
+> > > >
+> > > > To put it more bluntly, I'm not aware of any place other than
+> > > > pm_runtime_force_suspend|resume() that can be confused by changing =
+the
+> > > > runtime PM status of a device with runtime PM disabled (either
+> > > > permanently, or transiently during a system suspend-resume cycle) t=
+o
+> > > > RPM_ACTIVE, so if there are any such places, I would appreciate
+> > > > letting me know what they are.
+> > >
+> > > Well, sorry I thought you were aware. Anyway, I believe you need to d=
+o
+> > > your own investigation as it's simply too time consuming for me to
+> > > find them all. The problem is that it's not just a simple pattern to
+> > > search for, so we would need some clever scripting to move forward to
+> > > find them.
+> > >
+> > > To start with, we should look for drivers that enable runtime PM, by
+> > > calling pm_runtime_enable().
+> > >
+> > > Additionally, in their system suspend callback they should typically
+> > > *not* use pm_runtime_suspended(), pm_runtime_status_suspended() or
+> > > pm_runtime_active() as that is usually (but no always) indicating tha=
+t
+> > > they got it right. Then there are those that don't have system
+> > > suspend/resume callbacks assigned at all (or uses some other subsyste=
+m
+> > > specific callback for this), but only uses runtime PM.
+> > >
+> > > On top of that, drivers that makes use of
+> > > pm_runtime_force_suspend|resume() should be disregarded, which has
+> > > reached beyond 300 as this point.
+> > >
+> > > Anyway, here is just one example that I found from a quick search.
+> > > drivers/i2c/busses/i2c-qcom-geni.c
+> >
+> > OK, I see.
+> >
+> > It sets the status to RPM_SUSPENDED in geni_i2c_suspend_noirq(), if
+> > not suspended already, and assumes it to stay this way across
+> > geni_i2c_resume_noirq() until someone resumes it via runtime PM.
+> >
+> > Fair enough, but somebody should tell them that they don't need to use
+> > pm_runtime_disable/enable() in _noirq.
+> >
+> > > >
+> > > > Note that rpm_active() could start producing confusing results if t=
+he
+> > > > runtime PM status of a device with runtime PM disabled is changed f=
+rom
+> > > > RPM_ACTIVE to RPM_SUSPENDED because it will then start to return
+> > > > -EACCES instead of 1, but changing the status to RPM_ACTIVE will no=
+t
+> > > > confuse it the same way.
+> > >
+> > > Trust me, it will cause problems.
+> > >
+> > > Drivers may call pm_runtime_get_sync() to turn on the resources for
+> > > the device after the system has resumed, when runtime PM has been
+> > > re-enabled for the device by the PM core.
+> > >
+> > > Those calls to pm_runtime_get_sync() will then not end up invoking an=
+y
+> > > if ->runtime_resume() callbacks for the device since its state is
+> > > already RPM_ACTIVE. Hence, the device will remain in a low power stat=
+e
+> > > even if the driver believes it has been powered on. In many cases,
+> > > accessing the device (like reading/writing a register) will often jus=
+t
+> > > just hang in these cases, but in worst cases we could end up getting
+> > > even more difficult bugs to debug.
+> >
+> > Sure, that would be a problem.
 >
->     Arnd
+> We may be making a logical mistake here by assuming that any of these
+> devices will end up in dependency chains starting at the devices that
+> I'm concerned about.
+>
+> > I think I need to find a different way to address the problem I'm
+> > seeing, that is to resume devices that were runtime-suspended before
+> > system suspend along with their superiors.
+>
+> Well, maybe not.
+>
+> So the "smart suspend" thing can be done only if all of the devices
+> above the given one in the dependency graph (including the parent,
+> suppliers etc) either opt in for "smart suspend" or are devices
+> without PM callbacks and the dependency graphs can be cut at devices
+> that don't support runtime PM.  This would require another flag in
+> struct dev_pm_info for the tracking of dependencies, but it should be
+> entirely doable because all of them are known at the device_prepare()
+> time.
+>
+> That should avoid involving anyone who can be surprised.
 
--- 
-Jerome
+This would be an improvement, while it is questionable for how
+valuable this would be in the end. As soon as there is a
+parent/supplier that has PM callbacks, we would need to prevent the
+propagation. I am also a bit worried about adding more corner cases to
+the PM core, as it's not entirely easy to understand them, I think.
+
+That said, maybe it's the best we can do.
+
+Kind regards
+Uffe
 
