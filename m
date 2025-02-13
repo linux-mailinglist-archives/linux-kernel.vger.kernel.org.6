@@ -1,212 +1,184 @@
-Return-Path: <linux-kernel+bounces-512808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709D1A33E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:29:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4C6A33DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C90D3A594E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:26:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 291EE161C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20350227EA6;
-	Thu, 13 Feb 2025 11:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3121D3E5;
+	Thu, 13 Feb 2025 11:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ModjNzAz"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmnLr5lU"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C7F227E82;
-	Thu, 13 Feb 2025 11:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F6F227EA9;
+	Thu, 13 Feb 2025 11:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445988; cv=none; b=p9uPtPA+Dr/bJjsQapMTTxzuKwbtWgoc3SXBZgTLHedCvrhcZushoamwRKo8mPQgSN9oDTGvsu6iXa998GV1gWWPY/l5dnI6AJWYyXEQiJbPIkd+NcDhLQ88oyX1tuFogrk/9dho6gtip80Q95bMfYtkQhyVRzdaTTEHzQc99dw=
+	t=1739446008; cv=none; b=dy7fnytYaBcxtzeSmqMVR7DE8ZjbK7ZjorIETlnoCMhY4nA8VcPo730hKnpGH8CzkXCCDVdiZXKf2JmEnSP0sAsBCuKXCT4ScV4+KtBamT/pzN78jJcCehgheRz9IQSErBLPbaTDmGovdp3sUGPMBfZ7YmVzVV06HLvrb7jLYMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445988; c=relaxed/simple;
-	bh=cnh/7/zjc5DJNspE8+HHSdkJj2bWRf+SQNBW74wjlrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BX0g542lGOAeqVrJfEPQ2pMXFf7ZekKWTChuieKBKYOHLUuHyHJdlnqLgrnPJrfmeCVOqjm9I3gGDcGP2uUNOOKnDXntfOR6HWi96KhJ0GOZzjnGCNXQ03RIg9FsR9wVYePSSDTQ4dLmhq4vd9KQveJPg9FPhUg7o0FieeAvMbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ModjNzAz; arc=none smtp.client-ip=209.85.160.175
+	s=arc-20240116; t=1739446008; c=relaxed/simple;
+	bh=UvF0qyEAeD84uggiYEODW362+ZzeFxJVzIiWPhGyHzc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U9Pjc/Pl/ALr8wiIbLC/TN49VWLME+ypO+/q0ImXk2c1ZYX0wV4T67RUI1jfAM9DFxetdaShGtnU8VWHytmZp4y3FFalgfRQp+j3k6MD/Vav/TpEOag5j/TPy8JUx8OR+q0tEUI6IywKL1t7FmJvfeAe55V/yGSGFRZ05N0hYeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmnLr5lU; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46fa764aac2so5150551cf.1;
-        Thu, 13 Feb 2025 03:26:26 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46c7855df10so12745231cf.3;
+        Thu, 13 Feb 2025 03:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739445985; x=1740050785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUTfDmvy5Bhdv7Ab6yYlWq1JIjBJXsMdnuekE4YJLOk=;
-        b=ModjNzAzJbMYhBnvvUnUcKyxR91nBIKPI7TAKCBFoyYZsYb2dz7ljqLZZRM4ujTsUJ
-         rLiGYPS2cdqxYpA1pFpRYbJb5ZHE5UuhxnTNvB0lspGE/qvn/EMwdRqiNKszpWFdwtT9
-         gzwi2xqDjbAlP40SPD6XGlcMESKYUtNog0RnnaaZXjHSZSqhJ6iVSKU8yC62Y+VFYPmf
-         wQG/YCEnD2gbconYVKlH8ukTXzTdgmJ6fJjrXcxOCBuY2ejrahdAT3koZZNdeeWyrn7i
-         hRco0uP0uScK1Ogh+1929Rgz4GmzA+t166QqTrlMS+95hzb8grcm4GSsYjmSPXvbCxTi
-         LIug==
+        d=gmail.com; s=20230601; t=1739446005; x=1740050805; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LHaCd/GVQXhCshi75jh/YdL77wv4MeC4IivvaIzYoSQ=;
+        b=jmnLr5lU5IaGcx0paRC9MntDoiurx7ANjTaUczkuMJZnNLK9tcScO9GB9JBW7nAnLT
+         xkWyywONA/tNIlW2B91WMnrs1djwDL0yCGZRTAiB3l5BS06JHAU+i2I7bnVgcktlDaCn
+         gj5Kl21KK5legZyTHKasRy9TFcXkc3Raqg5f66m3q0FYUJM+nFlPhh1eoFVu1JH3nTJ/
+         SDgy2UxGJHcAlhashMYKJBsQqLAXuiyBoSTfehHl83B90obKwfChRKXdOToVynKp6z2p
+         1kT52scQmi9Pa7VaQQgA9K4JzK9UkSMPoSRzCUuNBldqTs/U2DKVd5zHtjqqtpraRkht
+         78zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739445985; x=1740050785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QUTfDmvy5Bhdv7Ab6yYlWq1JIjBJXsMdnuekE4YJLOk=;
-        b=j8T4/jTwhP9yrwkZ4pOcZgw4miMuZii1pzXmWgJ73lvQZEwLvv2KGM77pTRFTzHqxd
-         ePBc6kF+z8aHkvR6DKhdCX1nwYF0c0yBKTFgv63rGk3npaRFZqARKRBpWiQdW6vkdayS
-         lyTzSGEEYxLDAY3xDVewpQwLeK6G6so9Co1v7dwphsUmI582g0SgGjxDiCzUKUPQZNPK
-         kB0nPZH1Izz5vNJekHCNcnJVaxr17Z/mXxY5Avl2NLr0pl6r0lh0X0BasDvrkXgmJl66
-         n7TP8FOZPN1TvnPWqMvkhbN7yt0ERv/wt2ESVorID82QFlUURFfkodMDu5DcUPkZNDxv
-         teSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXgNz7jhVD0OPKAVzTd7vMfiSNMaVkW4WF80eQwcXHEBs60Ftc9ZizJg6NjIY1bE/OhhFQ9VwKoP0msAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybx5h5dqX4R360idUHaOa0yd7Xzf2Ksf6ERTYT24o46j87cO1f
-	RIiaFnsTyLZ4LZQ42UfIw3d6/LPyRggwhgL7J6ksnp+qd5gYh4uc
-X-Gm-Gg: ASbGncsmrrKw21+WQwbBPWcnMLwn7N8IhDA6QWnwfV4DftnezdEXnsYws/ANzOHNaJV
-	Gvg8DB3BEhvxvz1Z99wdC25/LoviOUYWYcRKk3ycURv49Utzz7ygfEw4+wveSjM7ToUkbtBOyW2
-	SKpaTAx58qXbeMIcZflmYldgWP7AUmeqTh3zmsL/2/YDGBQIHv6DjSkPvlAjnn2d3hhYsYrLycQ
-	i3+JztwfkKrrakcxMPAs/uoZnHPrtNy52gL7AhzyokZ8P41ip4Dbme1Lm3Qihvw+2w=
-X-Google-Smtp-Source: AGHT+IHarKxPF7Mq1Va3dpnA4qdWkYz+da0eCf7AiIm5qMplxsfMjqtaZ8SbX7mt6EAyGdIMQeVqtQ==
-X-Received: by 2002:ac8:5ac5:0:b0:467:57c8:ca31 with SMTP id d75a77b69052e-471bedbbe05mr52875421cf.46.1739445985449;
-        Thu, 13 Feb 2025 03:26:25 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471c29e9428sm6781241cf.7.2025.02.13.03.26.24
+        d=1e100.net; s=20230601; t=1739446005; x=1740050805;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LHaCd/GVQXhCshi75jh/YdL77wv4MeC4IivvaIzYoSQ=;
+        b=p0zSWLsGI/V5a3UTeL2NeZomtgw6dEIARCLy6VhO1TzjZCZILaaAuslz94K0IEa40a
+         iTfZVaHDiunKH2u/hmxx5/3rfU3A88dXfdwPKA6p7wUXnSnA1YXokqr2RHiX9IlezD5G
+         Fa/9qwuRqodsqJFJ4La9NbPIT80mzkxB7pk4Awh63GHYdJRuUtpBs3nZSvoo1ufOBSMQ
+         KJxBbNLyCaqmW1AzWH4hx7zuduurKi0k6+8bh6uRyQv4n+07Dx76IAJEsYtDJHvMCXd1
+         Cfy13eAyYsB7R6gYgT03ExXjDDoOEcyeXYWFqzzognN6xLGKe+RVU+RKiM4zRbKGk5Z1
+         jwzw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ALHVZqGI5+KIiBW1vfb1F69LcfVP/hXSBgKK3s40WS0swhiTw6aZzTp3sJqukvurKTetaXeuuIKAqco=@vger.kernel.org, AJvYcCWFcmkAUMlMUIwEK58H6ItRJ9EA9P8BPLMYvNuHw+n/8UqDr5mLSkSIJ1+9ZsMt17Cf0G+njxd/nmRy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIbc1VBhO8lbrRTkzu31fhARZhFA3SDiPpXZIH1eIgPF2etGcd
+	LCV6tGesdq8jaH5L5niq0WZDlyobnlGXm/d4bIkgSXQJgrPnukZo
+X-Gm-Gg: ASbGncuYdaVuiLJ/oOFqv7ttsz5d7p4sKQBVQCUHQfYebFdlP+P7N1sQcVw7pV5RDey
+	2vu39O1jqq5AL0CKzDYazx4aQt+mJTs6SqWXehRbrrBjFDM7btyO4q8ImX96SYoqiGXQ6OWu1vl
+	LzDEnwvsPMm5YI6+QR+P/6s4UhnWozATdgLUly6Aab6OhUmB5e8xaz0wAsbyTKM4xQQRPzpk0Q7
+	g73Zfo9m4FSDX4Sjst92lf2qAFzVKnR+fs95r10ArVv5C8Z3BTYV8YWJD0jnxRzMPIf3lpvvMIv
+	CiTNg8MmcLwgNPJJ+GRht4LywUP2OdL9Gz30weM5tnbXrbgwV4qtNybuUn+E5uWfTVJIYzd0WBC
+	WPl7vT2DLAKQGXJsNe03HHNCXVYM8gmrcWMfg8w==
+X-Google-Smtp-Source: AGHT+IHGRagn7x8eSs7Z/JyfOoyd3nmFtQG9HGa52jb6SXFkz2tqApWeqtO3XMaNdGLZypac/vL7rA==
+X-Received: by 2002:a05:622a:1e85:b0:45d:8be9:b0e6 with SMTP id d75a77b69052e-471bee35d02mr50933101cf.43.1739446005044;
+        Thu, 13 Feb 2025 03:26:45 -0800 (PST)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4041:5be7:7c00:c8d8:9808:e9c7:ed5b])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471c2af335asm6641891cf.55.2025.02.13.03.26.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 03:26:24 -0800 (PST)
-Date: Thu, 13 Feb 2025 19:26:15 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, 
-	Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, 
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: reset: add generic bit reset controller
-Message-ID: <bzzwckg2ac2q4fkcp5jju5ubqmget3jdwmvcubdmc4xp3slmwn@hn4kmkotfnfw>
-References: <20250213020900.745551-1-inochiama@gmail.com>
- <20250213020900.745551-2-inochiama@gmail.com>
- <de7dedf98e2085c895a93ba56c4e5fa50e298d05.camel@pengutronix.de>
+        Thu, 13 Feb 2025 03:26:43 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 13 Feb 2025 06:26:41 -0500
+Subject: [PATCH v6] rust: alloc: satisfy POSIX alignment requirement
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de7dedf98e2085c895a93ba56c4e5fa50e298d05.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250213-aligned-alloc-v6-1-4fd7f248600b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAPDWrWcC/3XPwWrDMAwG4FcpPs9DlmJ36anvMXawZTk1pElJR
+ tgoefc5PWUuPYlf8P1IdzXLlGVWp8NdTbLkOY9DCe7toPjih050jiUrBLSAYLTvczdILLMfWQe
+ LHJAs8QeqYm6TpPzz6Pv8KvmS5+9x+n3UL2bbvmpajDaa29YfKRGH2Jy7q8/9O49XtTUtuNdYa
+ yza+gTBphgbl2pNe+1qTUUDBwYfgMDFWjc7baDWTdEOWibvkhhqa233+ulyu/1tjUAwxyjyT6/
+ r+gcSwogkogEAAA==
+X-Change-ID: 20250201-aligned-alloc-b52cb2353c82
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ DJ Delorie <dj@redhat.com>, Eric Blake <eblake@redhat.com>, 
+ Paul Eggert <eggert@cs.ucla.edu>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-man@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-On Thu, Feb 13, 2025 at 11:08:59AM +0100, Philipp Zabel wrote:
-> On Do, 2025-02-13 at 10:08 +0800, Inochi Amaoto wrote:
-> > Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
-> > a simple reset controller by toggling bit. It is a hard time
-> > for each device to add its own compatible to the driver.
-> > Since this device share a common design, it is possible to
-> > add a common device to reduce these unnecessary change.
-> > 
-> > Add common binding for these kind generic reset controller.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >  .../bindings/reset/reset-simple.yaml          | 42 +++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/reset/reset-simple.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/reset/reset-simple.yaml b/Documentation/devicetree/bindings/reset/reset-simple.yaml
-> > new file mode 100644
-> > index 000000000000..77584e23e8e8
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/reset/reset-simple.yaml
-> > @@ -0,0 +1,42 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/reset/reset-simple.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Generic BIT Reset Controller
-> > +
-> > +maintainers:
-> > +  - Inochi Amaoto <inochiama@gmail.com>
-> > +
-> > +description:
-> > +  Some reset controller devices uses a simple method to perform
-> > +  assert/deassert by toggling bit. Some SoCs from Aspeed, Allwinner,
-> > +  Sophgo and Synopsys have this kind of reset controller instances.
-> 
-> I think some properties should be documented that make reset
-> controllers "simple" according to this binding.
-> 
-> For example, right now, the reset-simple driver assumes the following:
-> 
->   - There is a single, contiguous range of 32-bit registers.
->   - All bits in each register directly control a reset line.
->      - There are no self-deasserting resets.
->      - There are no timing requirements.
->      - The bits are exclusively resets, nothing else.
->   - All bits behave the same, so all reset bits are either
->     active-high or all are active-low.
->   - The bits can be read back, but the read status may
->     be active-low independently from the writes.
-> 
+ISO C's `aligned_alloc` is partially implementation-defined; on some
+systems it inherits stricter requirements from POSIX's `posix_memalign`.
 
-Thanks, I will add these assumes in to the binding.
+This causes the call added in commit dd09538fb409 ("rust: alloc:
+implement `Cmalloc` in module allocator_test") to fail on macOS because
+it doesn't meet the requirements of `posix_memalign`.
 
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - reset-simple-high
-> > +      - reset-simple-low
-> 
-> I wonder if it would be better to have a single
-> 
->   compatible:
->     const: reset-simple
-> 
-> and a boolean property, e.g.
-> 
->   active-low:
->     type: boolean
-> 
-> like in leds/common.yaml. Also it should be documented clearly what
-> this means for reads and writes.
-> 
+Adjust the call to meet the POSIX requirement and add a comment. This
+fixes failures in `make rusttest` on macOS.
 
-Yeah, it is better to have a property instead of defining a base
-compatible. With this property, there are two ways to process this
-property with existing device:
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocator_test")
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v6:
+- Replace unsound use of build_error with map_err. (Danilo Krummrich)
+- Link to v5: https://lore.kernel.org/r/20250212-aligned-alloc-v5-1-c51e0b17dee9@gmail.com
 
-1. If device has defined the data, the active-low is ignored
-2. If device has defined the data, the active-low will overwrite
-   the device data.
+Changes in v5:
+- Remove errant newline in commit message. (Miguel Ojeda)
+- Use more succinct expression. (Gary Guo)
+- Drop and then add Danilo's Acked-by again.
+- Link to v4: https://lore.kernel.org/r/20250210-aligned-alloc-v4-1-609c3a6fe139@gmail.com
 
-I wonder which one is better?
+Changes in v4:
+- Revert to `aligned_alloc` and correct rationale. (Miguel Ojeda)
+- Apply Danilo's Acked-by from v2.
+- Rebase on v6.14-rc2.
+- Link to v3: https://lore.kernel.org/r/20250206-aligned-alloc-v3-1-0cbc0ab0306d@gmail.com
 
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#reset-cells":
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#reset-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    reset-controller@1000000 {
-> > +        compatible = "reset-simple-high";
-> 
-> The example should probably include a SoC specific compatible?
-> 
-> regards
-> Philipp
+Changes in v3:
+- Replace `aligned_alloc` with `posix_memalign` for portability.
+- Link to v2: https://lore.kernel.org/r/20250202-aligned-alloc-v2-1-5af0b5fdd46f@gmail.com
 
-I think it is OK. But I think it should be added when a
-specific compatible is coming.
+Changes in v2:
+- Shorten some variable names. (Danilo Krummrich)
+- Replace shadowing alignment variable with a second call to
+  Layout::align. (Danilo Krummrich)
+- Link to v1: https://lore.kernel.org/r/20250201-aligned-alloc-v1-1-c99a73f3cbd4@gmail.com
+---
+ rust/kernel/alloc/allocator_test.rs | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Regards,
-Inochi
+diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+index e3240d16040b..e68775078e90 100644
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@ -62,6 +62,24 @@ unsafe fn realloc(
+             ));
+         }
+ 
++        // ISO C (ISO/IEC 9899:2011) defines `aligned_alloc`:
++        //
++        // > The value of alignment shall be a valid alignment supported by the implementation
++        // [...].
++        //
++        // As an example of the "supported by the implementation" requirement, POSIX.1-2001 (IEEE
++        // 1003.1-2001) defines `posix_memalign`:
++        //
++        // > The value of alignment shall be a power of two multiple of sizeof (void *).
++        //
++        // and POSIX-based implementations of `aligned_alloc` inherit this requirement. At the time
++        // of writing, this is known to be the case on macOS (but not in glibc).
++        //
++        // Satisfy the stricter requirement to avoid spurious test failures on some platforms.
++        let min_align = core::mem::size_of::<*const crate::ffi::c_void>();
++        let layout = layout.align_to(min_align).map_err(|_| AllocError)?.pad_to_align();
++        let layout = layout.pad_to_align();
++
+         // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
+         // exceeds the given size and alignment requirements.
+         let dst = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
+
+---
+base-commit: 8a5aae7dbbfb612509c8a2f112f7e0f79029ed45
+change-id: 20250201-aligned-alloc-b52cb2353c82
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
