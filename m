@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-513600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F4AA34C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:42:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E4AA34C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F49169625
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B1416ACE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7B2222D2;
-	Thu, 13 Feb 2025 17:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B87241663;
+	Thu, 13 Feb 2025 17:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YsnRVMjz"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJcm7I66"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DED0221553
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D8B28A2AB;
+	Thu, 13 Feb 2025 17:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468554; cv=none; b=bQ3b1OSjAOmWz6jSTxG20/QLiyMGs/A3MEKLkFch7CuNBFfNNcbnoBDpgP/Ob1mRdROe52E4mgNxRor9lQe0URLpz6slf3Oi07By3bOZIa+qt4l85xMAFZgZ/iUc7DF4Nt9stO3ZXC3hENmywu1FbT8tBX4Ye187LsiWXVl3vYM=
+	t=1739468743; cv=none; b=buKOwgbaQ/8WeSaTfPp/gJ9YVg50m0Mwui/3v7rdHuxRAY7KrDOKEcSHol5ToCkw+Tyq9TPJ9e4TafGj7AAquQWHIH430rF+n80BdwIb3ajKeFv9lnQA2Yvallze0s8Zq8QL1nwYEfOdZuyW7QKBJRvp+QqQrpVDO7wj8gUrsv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468554; c=relaxed/simple;
-	bh=ry5HU2b5JpTWT9D21OGSEN89Xcj4kAma40gpiFnwdJE=;
+	s=arc-20240116; t=1739468743; c=relaxed/simple;
+	bh=PmAdWEbi90xoXbqeyhZd9i11ObSkywA5DyrbKNqngoU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QFt+CO9vlea+9DKqT0HRS2U2P5wC74PHxVy9CtK4VMY82ptRcvDY6N4gWAnjEDiMi114AORGbf295+Y2nQdavkV9TBb9TbraW+DMv5FRoe6S4iYAccMAL+ygz9n7fHAHzohUxkvQLIh4CKTTjoCVV2l8v4ZCABBRhKX58miE9sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YsnRVMjz; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5450cf0cb07so1044091e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:42:32 -0800 (PST)
+	 To:Cc:Content-Type; b=QO/IJHs6rDA8hK9I4SNklE8W9IRvLQo8Jd4zyIeJkJeYU1yVKvBiGyt8ZHFAf7AChP/Pah8oDKxjgvue6TKoXQgOnFoVony3iliwugSey8iN58g+2ZEG94oKsvZKEAFpUh2tlXakSbyYLp8vfD26hlbLkaqOgMx6RzEBrfz3STg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJcm7I66; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab7b80326cdso221291266b.3;
+        Thu, 13 Feb 2025 09:45:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739468551; x=1740073351; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739468740; x=1740073540; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o7poaTbadceb30IF+pZHsHhZOoR9b8z1fPvVtB4cPUk=;
-        b=YsnRVMjzJpPBywIoYZCkd40noCATJ91FhwUJPHKaTaC5FOJQEwcOwlDqAvaHXqvm0Z
-         CU4elwzrofsWwdQSvQiYO1hWORw3Z+62DEHhDGrCmIbikCcknlRFciQXerV2e2i3cDA/
-         AfD8pviyuSDCjbF5YE2hPy7fvBPLyJoLniHlKHa0DAvIUdNw1GLmZkpBZnIDjEfXfDfK
-         dMIv3VUkCFRVc46vU67s46hNoz2AZu4WCp41nITN1eB4E3qkxQLyljvBIG97NDXub+Zs
-         rPkwcTfCyY8cJ8mVpJr5xyE8ktDb017ab7j/XLJ7AYMKrfJXdki3HfDwesmN3gVeuFRh
-         gO1Q==
+        bh=+DxAeba9M2XA2A0lJ5DQh+1tf+Q3Gd7KjdbaW+Nt1Yo=;
+        b=fJcm7I66ysjF1ave9jCY4fBikPQutwNXtCWWT8sLa4eKOGxn/HprI8tlBY3OXhUsEP
+         GTkKaSldEQooezFyggXZjk7n0BA+ZO8ShnUO/a9OsC4HzoViSnU+uhtSWKuJMmhqc1Tj
+         S/jCCwXw4SP7f7aOr7QSNRnuBbqZye0dCz1qhd6kFeITHiyFwcVQhGG57L0rzr7OoZ51
+         IBIr3VDTwNvLGrTPrmhWjZ6/mh2OcmnP0xXorJfyKBXTj+IcIOf4nE2mR2ac4PSNEq+G
+         2oPLjh2qOQX/4MUH4idBJLkEk1DSDYNVcx+PxKXUNQw4WD7VYhGnr5xFqxuKuQAg+JEo
+         om+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739468551; x=1740073351;
+        d=1e100.net; s=20230601; t=1739468740; x=1740073540;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o7poaTbadceb30IF+pZHsHhZOoR9b8z1fPvVtB4cPUk=;
-        b=ltSYI85R3u1zG2OtZllSd3YgCw1gY9ih2CZ+hUzSRB5cPjlawFnu037tKp1cxGW5lX
-         cCJTUZjAPx5lxYUCUkVD1N0iK28tMtszRa0VgERqP0mFWAGe1OpLXCAPLjTX0Pxv80qP
-         Hrt+PRnIvc0de7YlCBwD5qPcro3vheog3OXsQJU22q6WvSQ54Uqi0cUJvdb5oJKdlG3q
-         Ms0jQ+gYJp+b0p092XVCMMdUfu7FWE4+l+7/zJFYZFlb1r24deZW9gS82qkRVn24ynwB
-         TeLHDVZOpNCFR7An0rGTfy/74knKWVrYcexJNOBeTcOd+uwtpaqmo5oM+kwQfSCKU6uG
-         QH6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjvXZFC5m5lccsYTSDrdQ5Sr/g2fRPgL/nleObsTB2tJj+4KZkLgrDDsYA1KndbI2AGvg3I5SX71tT/z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzDXZ2/Z9boKujLRI74B7Jt5gtxC9mYJSv9LVxSvEGNheG2VPh
-	iLIuAfA3wfLn8GnSNvJqhtlZeKqq51cm8m5KG69vWOYolN/RLZNwJj7monzK9AIexW2SQJAsb9h
-	JLOFfNGq5rUn1yu4VIoYybvQWSQncVIoFBXmxyQ==
-X-Gm-Gg: ASbGncseYwDhcT8S/UhoFkpOhPcpE2LSdmGF6rW6dO5Cg0ZMynft9aiYzfz7aapzUxk
-	XmqoXQFbvzXyp6VpGQQuMLK+U81Rav8gOWuC/EBWdnGJ4YNoTPwiSxaPC2VvW+naPnJmiBVDydz
-	Jl74MnlfWtlYJ3ZxNVVq22yXWYVl7C
-X-Google-Smtp-Source: AGHT+IF+fWjLMy4RC4fJfJhppdyGnDeRMMDIkKzyGd/CQOlFqBivCx8W/IGAYdJvOJJTC/43hOWG0nQaRr0ngZJNi/U=
-X-Received: by 2002:a05:6512:3d88:b0:545:8cb:2183 with SMTP id
- 2adb3069b0e04-54518122c71mr2468700e87.29.1739468550462; Thu, 13 Feb 2025
- 09:42:30 -0800 (PST)
+        bh=+DxAeba9M2XA2A0lJ5DQh+1tf+Q3Gd7KjdbaW+Nt1Yo=;
+        b=ZQILLvz3AjFDX/yfzhQVX+6zmbf9kSVs6HnRqdo2MgPn2QBS6GR4r4aClfEKDRaE5E
+         CKixGaO1Rz2TveF/Zv6x2te5VG91dMthn/LsokSLIKJGmuowai5Ewko128sP62MTeTc5
+         0Jg7/flLxHceNBbdspxld6xu+HsAab/5M4yY8Zc0cv8SMSL7v2AJEkmwTgTgwMciEdx5
+         TtQSmVWgnwVcWBUnrx4Nn0ksJa76NhR0zyIlKQdM+oaymdYrLwmF5FEeceFRxuOCYy/8
+         lDY8TQEGlG3GKAPA5u7zgbENjkqi0vXWLEd+NmkUh1mY856wBIrWJf1dNOU7xveS5gE+
+         D/cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDO7ZMzqEY6hoil2APwvn7cYDY81xMO5a0OLjfusGF4WTZMauH7oA6bFLoljY7ipQPsvNdZ/yWji5/qMy4@vger.kernel.org, AJvYcCXz43yBAEQvsVa8si+DpfrIKj00a90L3xKk3QbwQqtNg+Zlv4ksFKW6N64+4BsUGnludcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhT336rzVrcqods5tH4mCJsWWzG09ZHYN4pKz6YdIcCFegtfsb
+	NBdSXmvrglYJltLPBA+2ayUMsveMv0igTCWpA2V9gj7p/mB4hymKKWYoKF/zVbKPQ3m0ozbgTH9
+	xKy+3esqI7ZHL53WicTYDCyWFq20=
+X-Gm-Gg: ASbGncst1ECKNyB6AVmwaURHIX14eo7fMXDgHYg+argLphfQqG8IDGwapEbBxEnpEQ5
+	Al7K915nuHO3ryAOtpxhX/R/ncI05eP+/WYLzx6UlG4fkyU1dH2Rf84eyqwaQ2v197tX4i4D/PS
+	a6dkLVI6lIz6FE5/cRaRaa6wAvpyxk
+X-Google-Smtp-Source: AGHT+IHqeY5d+52cUyWchdA3Vyx85e0DJbAPSnBMk7d3/pOwkPFNLrSVtTvldPrjQfjfxc1TpwrAhxbSoV5cG/cv57g=
+X-Received: by 2002:a17:907:d0f:b0:ab7:d87:50f2 with SMTP id
+ a640c23a62f3a-aba5018c398mr418557766b.44.1739468739508; Thu, 13 Feb 2025
+ 09:45:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <173935301204.11039.10193374588878813157.b4-ty@linaro.org> <801b5364-129f-42e9-bf9a-a90d9eeb4629@baylibre.com>
-In-Reply-To: <801b5364-129f-42e9-bf9a-a90d9eeb4629@baylibre.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Feb 2025 18:42:19 +0100
-X-Gm-Features: AWEUYZkzHoDq5i_PpQBC_MEOqx6J4QYBMs6-RGY-gc-y6YI9Zv84ton-OV3XB6s
-Message-ID: <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
-Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
-To: David Lechner <dlechner@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250212084851.150169-1-changwoo@igalia.com>
+In-Reply-To: <20250212084851.150169-1-changwoo@igalia.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 13 Feb 2025 09:45:26 -0800
+X-Gm-Features: AWEUYZk0AK_5uP6Hf6gl3zD-S3O24aXnOI3BDH9qrEu9XNHWmPV9rS-7BIWOISE
+Message-ID: <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
+ when unit_alloc() fails
+To: Changwoo Min <changwoo@igalia.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Tejun Heo <tj@kernel.org>, Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 6:25=E2=80=AFPM David Lechner <dlechner@baylibre.co=
-m> wrote:
+On Wed, Feb 12, 2025 at 12:49=E2=80=AFAM Changwoo Min <changwoo@igalia.com>=
+ wrote:
 >
-> On 2/12/25 3:36 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> >
-> > On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
-> >> This series was inspired by some minor annoyance I have experienced a
-> >> few times in recent reviews.
-> >>
-> >> Calling gpiod_set_array_value_cansleep() can be quite verbose due to
-> >> having so many parameters. In most cases, we already have a struct
-> >> gpio_descs that contains the first 3 parameters so we end up with 3 (o=
-r
-> >> often even 6) pointer indirections at each call site. Also, people hav=
-e
-> >> a tendency to want to hard-code the first argument instead of using
-> >> struct gpio_descs.ndescs, often without checking that ndescs >=3D the
-> >> hard-coded value.
-> >>
-> >> [...]
-> >
-> > Applied, thanks!
-> >
-> > [06/15] gpio: max3191x: use gpiod_multi_set_value_cansleep
-> >         commit: eb2e9c308d2882d9d364af048eb3d8336d41c4bb
-> >
-> > Best regards,
->
-> Hi Bartosz,
->
-> Do you plan to pick up the other patches that have been acked
-> as well? It seems like most folks were OK with everything going
-> though the gpio tree since the changes are small.
->
+> (e.g., bpf_cpumask_create), allocate the additional free entry in an atom=
+ic
+> manner (atomic =3D true in alloc_bulk).
 
-Jonathan requested a branch so I made one and sent out a PR. I figured
-people would just pick the relevant patches into their respective
-trees? For patches that won't be in next by rc5 - I will take them if
-Acked - just remind me.
+...
+> +       if (unlikely(!llnode && !retry)) {
+> +               int cpu =3D smp_processor_id();
+> +               alloc_bulk(c, 1, cpu_to_node(cpu), true);
 
-Bart
+This is broken.
+Passing atomic doesn't help.
+unit_alloc() can be called from any context
+including NMI/IRQ/kprobe deeply nested in slab internals.
+kmalloc() is not safe from there.
+The whole point of bpf_mem_alloc() is to be safe from
+unknown context. If we could do kmalloc(GFP_NOWAIT)
+everywhere bpf_mem_alloc() would be needed.
+
+But we may do something.
+Draining free_by_rcu_ttrace and waiting_for_gp_ttrace can be done,
+but will it address your case?
+The commit log is too terse to understand what exactly is going on.
+Pls share the call stack. What is the allocation size?
+How many do you do in a sequence?
+Why irq-s are disabled? Isn't this for scx ?
+
+pw-bot: cr
 
