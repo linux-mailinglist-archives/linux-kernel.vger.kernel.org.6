@@ -1,115 +1,199 @@
-Return-Path: <linux-kernel+bounces-513798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29C2A34ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33333A34EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592F616D1B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67C33AAC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73D924BC17;
-	Thu, 13 Feb 2025 19:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF0C24BBE1;
+	Thu, 13 Feb 2025 19:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="cRduRGnx"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Q8JxXioJ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFF624A079;
-	Thu, 13 Feb 2025 19:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476520; cv=none; b=eKJq6NmfobsW0/cjcB33AU0IL17SxUUDJvzEvQE6tlGZLc3jmdqEPRTgCxQNFcl7JBiDL/dzbJeK0qbC+Uz+QoFFJ/9Ak3Iw4l5Zkyxmherfx18+SjPlelqC+inaY/pFxypr9aolWr936mKBuymHdFV6IRKXdSizkzjf3YbUVAs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476520; c=relaxed/simple;
-	bh=F7LqE1URqCuGoEQFHUM1HVqLqGoB41rk2iUP9g0/W7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNUEJf0B7KoBIML5gN9wy3Py3qtThCAfhPfW4bxbD3aYu+nCJZ7NoZ9B6gyGzuzF7ocbFylmeRu85LJDHSONOyR5D3DcJ9PzUgXt04TzXe52yjjIVwhwPYcKnA6J26/khy1Qk6SrxXxQRjwtgUcE5nma47XgC6bfVl6hMZjduUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=cRduRGnx; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43490103718D2;
-	Thu, 13 Feb 2025 20:55:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1739476509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uwSpogVphSkIKxtS8Irhggq5O+LrKrQVqm3lkNYpHoY=;
-	b=cRduRGnxua0U/fU6sNzJZhrcqX4qCqtT4Vxlmx82BUmH410Qi3MLWAgrsCJWD3LAdoF9SI
-	wWIZSfDpWf+NFLHQWhv6uwyaQxb0t41CCiP58mZa+/1BLVY3Nm51YtOsC8kVngl8VJVNdF
-	yVt3z3IYLIwvmQRIHJpB/l688XJoZynfbhblQtArHy/xasTkpcPZIrLZwhJmVHlzriTQiZ
-	Bn0cpxghPWZDLJnGXZDK0DA6BwOqOAsibqbo7ZZoEYaDaFlzr7yuLlB5uAvfpfz6Vdp3Xh
-	TZCeK1zTqwlTv6tu4rtL8cIyjT4a0dWlWG+AQHGpkK43PlKw8uuhK7LThy+nGA==
-Date: Thu, 13 Feb 2025 20:55:03 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc1 review
-Message-ID: <Z65OF7U5grQm3TR2@duo.ucw.cz>
-References: <20250213142440.609878115@linuxfoundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64DE24A077;
+	Thu, 13 Feb 2025 19:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739476668; cv=pass; b=R3t3H0EnkdzV8RGt6YP06j43ZqgQcZ05aezc8PoxMntO/NaTLBhNwyb+NDLZRqyyy2SqUzhlvgTK6pQzb0/TtvxSq+gWE/x4wu1z+wVCUQ2FrJw4SJ7ZozDwQu/DD/PyT4UFCEWng5/7yF8pUbg+rO35oSJv0joTuNAnBYYaYtY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739476668; c=relaxed/simple;
+	bh=UUG74ONh30vCq5cOPe65Lz2sQ6Akmb5m/0N/paSXXRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cXqfV2hMxv57sv4JZhBhBJ6i7hRetXsHw2wl4khLkXwzhIO6jfxHTBDC9u1A4jbX/oOIG1gnwJbZM2SFZQese7LDS44553V0F8kzqjATOt1t0MXNPZ4RzyGBczEEOYgQwbVzmp1HOUeqwU920q9AGn5rt5aSw8KtNCbADtCOpQ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Q8JxXioJ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739476614; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=esEGgr+Zc+tPVkIqhiCRV6/3ZsxDc/b/7YtkV3+NUknz0FJERHv4WjoZqgMDr0iDTIxSacyj5IPlCpt8EstN0ogUpvFHCO6Ksp0+hnliTj7wgOIMrvQdvM58YdUb1EBBZDXO2aeKLvNS2t5IrlANkgPMrKZlEmuKcOaOeJOaMv4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739476614; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=O9GUvvUpHX6LI0qZKWX7RNV6qQdN4u6UV5/FG212X8k=; 
+	b=UBUcN6htqFck41lfia/orvBJrZzH5gpvWL+MwUU7ojHmx+66zbMewaJEXL/ZRJyWve49TjgYNRjL2P0vaAdPK2OYYJgowrz0ZFKSyBDU4zl/aH4Konvn2RGJLFn2VQxYQEZY8au4FdJ9Et/985IvHoaa7AOjOSVVPHPx7dX1MR8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739476614;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=O9GUvvUpHX6LI0qZKWX7RNV6qQdN4u6UV5/FG212X8k=;
+	b=Q8JxXioJ4lXs0iSCkgZYzAYIWz6Xdvv38+VFAq1AWFxHY2R8ItKJ6JvNt55lWScE
+	bpnnMnehSwgma3fPFQvuLapE7XTGq1PPmnWWSzq/gNM0A7aBnTrD2ix6ArooKh8Cw+X
+	dB7WkHBWQz34nQuKkmOdnyO8Fk0bPKmBcNhiK1XE=
+Received: by mx.zohomail.com with SMTPS id 1739476611230565.2581804087819;
+	Thu, 13 Feb 2025 11:56:51 -0800 (PST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Tim Lunn <tim@feathertop.org>,
+ FUKAUMI Naoki <naoki@radxa.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Elon Zhang <zhangzj@rock-chips.com>,
+ Alexey Charkov <alchark@gmail.com>, Stephen Chen <stephen@radxa.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject:
+ Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device tree
+Date: Thu, 13 Feb 2025 14:56:48 -0500
+Message-ID: <5973630.DvuYhMxLoT@trenzalore>
+In-Reply-To: <b5977d21-aa39-4e91-863b-cc7f9dc6938c@kwiboo.se>
+References:
+ <20250213145921.133412-1-detlev.casanova@collabora.com>
+ <20250213145921.133412-3-detlev.casanova@collabora.com>
+ <b5977d21-aa39-4e91-863b-cc7f9dc6938c@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4CVjw4G1ZCejys6T"
-Content-Disposition: inline
-In-Reply-To: <20250213142440.609878115@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
+
+Hi Jonas,
+
+On Thursday, 13 February 2025 10:48:10 EST Jonas Karlman wrote:
+> Hi Detlev,
+> 
+> On 2025-02-13 15:57, Detlev Casanova wrote:
+> > From: Stephen Chen <stephen@radxa.com>
+> > 
+> > The Radxa ROCK 4D board is based on the Rockchip rk3576 SoC.
+> > 
+> > The device tree adds support for basic devices:
+> >  - UART
+> >  - SD Card
+> >  - Ethernet
+> >  - USB
+> >  - RTC
+> > 
+> > It has 4 USB ports but only 3 are usable as the top left one is used
+> > for maskrom.
+> > 
+> > It has a USB-C port that is only used for powering the board.
+> > 
+> > Signed-off-by: Stephen Chen <stephen@radxa.com>
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+> >  .../boot/dts/rockchip/rk3576-rock-4d.dts      | 651 ++++++++++++++++++
+> >  2 files changed, 652 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+> > b/arch/arm64/boot/dts/rockchip/Makefile index
+> > def1222c1907e..a112aeb37948a 100644
+> > --- a/arch/arm64/boot/dts/rockchip/Makefile
+> > +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> > @@ -132,6 +132,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=
+> > rk3568-wolfvision-pf5-display-vz.dtbo> 
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
+> > 
+> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
+> > 
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
+> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> > b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts new file mode 100644
+> > index 0000000000000..f356742f9d643
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> > @@ -0,0 +1,651 @@
+> 
+> [snip]
+> 
+> > +&gmac0 {
+> > +	phy-mode = "rgmii-id";
+> > +	clock_in_out = "output";
+> > +
+> > +	snps,reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
+> > +	snps,reset-active-low;
+> > +	snps,reset-delays-us = <0 20000 100000>;
+> 
+> The snps,reset- props are deprecated and should be changed to reset-
+> props in the phy node.
+
+Arg, second time I use deprectated props on new things. Are there plans or 
+ways to make dtbs_check warn about those ?
+
+> > +
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&eth0m0_miim
+> > +		     &eth0m0_tx_bus2
+> > +		     &eth0m0_rx_bus2
+> > +		     &eth0m0_rgmii_clk
+> > +		     &eth0m0_rgmii_bus
+> > +		     &ethm0_clk0_25m_out>;
+> > +
+> > +	phy-handle = <&rgmii_phy0>;
+> > +	status = "okay";
+> > +};
+> 
+> [snip]
+> 
+> > +&mdio0 {
+> > +	rgmii_phy0: phy@1 {
+> 
+> Maybe ethernet-phy@1 ?
+
+Indeed.
+
+> > +		compatible = "ethernet-phy-ieee802.3-c22";
+> > +		reg = <0x1>;
+> > +		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
+> 
+> Please add reset- props here.
+> 
+> Changing to use reset- props may cause issue if a RTL8211F PHY is used
+> on the board. Use a ethernet-phy-id compatible or mainline U-Boot to
+> ensure the Ethernet PHY can be discovered during probe.
+
+Using downstream u-boot, with the RTL8211F PHY, linux can still detect the PHY 
+and use it correctly, even with reset-* props at the PHY level.
+
+I guess I can keep those there then, unless the issues you mention are more 
+subtle than that ?
 
 
---4CVjw4G1ZCejys6T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Detlev.
 
-Hi!
 
-> This is the start of the stable review cycle for the 6.13.3 release.
-> There are 443 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.13.y
-
-6.12 passes our testing, too; 6.6 will likely be ok after retries.
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---4CVjw4G1ZCejys6T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ65OFwAKCRAw5/Bqldv6
-8rZYAJ9cFT/nMMToOE6xSZPJ35dFgqS0WACggMqWYByv/qlUBQWjgPFDUMjelQo=
-=B9tV
------END PGP SIGNATURE-----
-
---4CVjw4G1ZCejys6T--
 
