@@ -1,76 +1,128 @@
-Return-Path: <linux-kernel+bounces-512636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8815BA33BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:02:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503A8A33BEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19D3188435C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641CB16737A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74697213233;
-	Thu, 13 Feb 2025 10:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F9C211706;
+	Thu, 13 Feb 2025 10:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O0TPH38G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lJ3Ixv9P"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF97A2066D6;
-	Thu, 13 Feb 2025 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E84520F061
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440904; cv=none; b=JhuCoJ5HeVODN65vH1pC85sfb7kVV6paqhr0XaJvE5fN3JsVIBVSC7dogujYN2zAtPCCwDtRdw/Uxsf89Wtzw4KAhBPNrL05NLUQItESSt4537n6+GP1cqu5LBvRk5LnqUcKGCmmR6e23xMPOI9fwVrdblXlrfb0LjqevXj7MeU=
+	t=1739440980; cv=none; b=j7K1NbXQypmRY6mqF7Xe2OJcqFmpwk3mdG+8Jgf3CnR1MGvd5sEMl2oKom7akaWkTVQZDwVHLchyTIcDwzteS3V9MXnZwz0KQorX7MDT0plNw++QkJJeohJp7lH8xHL+M1Mrn/CbxsU1tjNMFl4RR1dj1z12T177cVYcl0XyKgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440904; c=relaxed/simple;
-	bh=EoGJfc9ifR6hXmDHsanG9hhvpDo5weaiWEA0/w0WM3w=;
+	s=arc-20240116; t=1739440980; c=relaxed/simple;
+	bh=UnlssmYuhIn+vcCNx5MG2qEpYo19Mi6vK6bTbOK52kg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uo6/WTxq9GdJh2IkKgATUJ4pvz36gHbwZr3WoXszxw/xqEBy091FlcEQrRHRqMTVlJXZRJH2FoNujxjji2p93z23tgM2GFojkRzfWNTjlFsEAypS38OgrtkGlSMQWB/JeGN7n1SyIwJKzPJm/NYCv7HCc8OoHpHVCVsKLAFqmsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O0TPH38G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8274C4CEE2;
-	Thu, 13 Feb 2025 10:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739440904;
-	bh=EoGJfc9ifR6hXmDHsanG9hhvpDo5weaiWEA0/w0WM3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O0TPH38GR/EpP2CpV7/w6E72VcgkuwpX3MknLXLIUez4Gk5qe2damJYpDjuBa9gfC
-	 v98W1ZKU+7blVsgurfOaVS6mfqnebqCUj2jt8eGcZXl2uKAgbgZtr+RfYnK0EOLXes
-	 euDtXiS+jg5ucC+B7SGxvppc4AuYGVaYBPaius0c=
-Date: Thu, 13 Feb 2025 11:01:41 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hsin-chen Chuang <chharry@google.com>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
-	chromeos-bluetooth-upstreaming@chromium.org,
-	Hsin-chen Chuang <chharry@chromium.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] Bluetooth: Add ABI doc for sysfs isoc_alt
-Message-ID: <2025021325-faction-upward-6395@gregkh>
-References: <20250213114400.v4.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <20250213034413.3808375-1-chharry@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVe3m5kePwirvjm1GWxgF0fiyrQHFI30oM2yGm4kKa3dY7QH3tZ3Xv6NOLWIM3XIjFQKGCZN6rxkXrjjBQyz97tozlKgkd+hIJnNU6/TnszDRXCiOJxA//AdaWsnFFe6fKmOVFTvEG543zhY2kJkzc6trHj76Fg3u9B5WCCEMLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lJ3Ixv9P; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Unls
+	smYuhIn+vcCNx5MG2qEpYo19Mi6vK6bTbOK52kg=; b=lJ3Ixv9PpDUPZy+veSDx
+	ziTRqgIsOzwTnHddIoiDBXPFEseEJoG1keRyAs9yKz58AyHx+dto1xstv6SsJBlD
+	cHh0saavR8n2B+kcgw2b0pnrG2gzY/ztdM/09hWnqBLizcPgmLQUbecXC5SKKpDU
+	0lBVwBH+NU21FsEcURx5TU51xG56lNRQ4cYcGyd1Zj7giHXpsot/m1SaWaseV37U
+	rZSXdttsmML8+ouc7rvSRfjF8fBgpYLVdnGE27n8N1qseFjWwd81RvoT8HYywvDD
+	wJePDoyrx4FO03lPiva4MOrX0sVKdZbaUOFD7RS0GpCP7NkQznf4wpdyC7ZIKbZU
+	0g==
+Received: (qmail 1823272 invoked from network); 13 Feb 2025 11:02:55 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Feb 2025 11:02:55 +0100
+X-UD-Smtp-Session: l3s3148p1@JVB1KQMusMxehh99
+Date: Thu, 13 Feb 2025 11:02:55 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
+Message-ID: <Z63DT_XdzEWrP4eR@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
+ <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
+ <Z6zwqbzd5evG0H2z@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="knIGSBLjShPS7lvY"
+Content-Disposition: inline
+In-Reply-To: <Z6zwqbzd5evG0H2z@smile.fi.intel.com>
+
+
+--knIGSBLjShPS7lvY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213034413.3808375-1-chharry@google.com>
 
-On Thu, Feb 13, 2025 at 11:44:01AM +0800, Hsin-chen Chuang wrote:
-> From: Hsin-chen Chuang <chharry@chromium.org>
-> 
-> The functionality was completed in commit c04f2e4f4ea1 ("Bluetooth: Fix
-> possible race with userspace of sysfs isoc_alt")
-> 
-> Fixes: c04f2e4f4ea1 ("Bluetooth: Fix possible race with userspace of sysfs isoc_alt")
 
-Where is this git id?  I don't see it in linux-next, are you sure it is
-correct?
+Just a generic comment: please don't spend too much energy on 10-bit
+support. I have never seen it used in the wild. It seems more like an
+academic excercise.
 
-thanks,
 
-greg k-h
+--knIGSBLjShPS7lvY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmetw0sACgkQFA3kzBSg
+Kba7ew/+Kqcp2Fze4DeH75uP2OB/QbNpx80sb7qHDvTBoOdL9TX6daJGbx9NejYD
+4cXfgTJtWcAuiwn1QkGFPTMUqUzpc/0KOK3GC6OAGvm5ey4/HDXKzBiue8zKbiOa
+da195dsvzjs7f9kMARVNMzzqXYr3NZXcLAZDPlR2ifCiFGVnK3xYkUPACWjZEWzI
+fy15U37jiPuCE/3TSHBc+1/q8p2T/vQ2h0AApKD8NgpsnORqYx5oeXMf/ztjI+RM
+vfzNPKvxb6Y2ppaPZWx6teAZfCA52Bn2twzmbwQBpsRdR8s8lUp00IO9aX/xZGQi
+zCVMD74Kz7B0lvmAvJHv/23vHofoRiZmIATiL0zl6u2wm1zlzsTv0zFk0PVqBLGZ
+ZZ3DEOORzPNpfx/csYx9U1J0L1OIoqgc+/y2FnfQIIXmTOvnwHNJb9AD5pTr7b1u
+YjfwprDAc9yJI/ps63zcYwioTc6CjTENNLeHwTSFgmjdvPn2KJTLNiG5GHB8zY5T
+QrOPvOGOI2hLs6LbWrCxQnRcrItIsjAV8ClxwlTRIllAXeqMZAc+2W6KhmukwsOs
+Uin3nyrmWNw1vx50tN/mJ+BeN7A5Kh9vhwLp1+40Auz5CUErrJtyfuPV8kNzH8wz
+5zooWxoWZMwZ2x2SFgTy1iVtPJZ9m0ytQi6P+Yv6Xu8uqDgy+Q0=
+=+YyW
+-----END PGP SIGNATURE-----
+
+--knIGSBLjShPS7lvY--
 
