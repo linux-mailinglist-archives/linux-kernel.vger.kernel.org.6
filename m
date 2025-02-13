@@ -1,150 +1,106 @@
-Return-Path: <linux-kernel+bounces-512643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78931A33C08
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:07:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8797EA33C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2033A28CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26830162CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9815D211A3C;
-	Thu, 13 Feb 2025 10:06:20 +0000 (UTC)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AFA212D84;
+	Thu, 13 Feb 2025 10:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="MHcRMTDr"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5951B20E717;
-	Thu, 13 Feb 2025 10:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4407A1B21AD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441180; cv=none; b=ZZeLkj3sEIfdf6/G3RtYcv1Kyp8pLvjjjnmL0OgZP90IxOpVbwTYIFjOsFiqgLsnW5knmb994uqoOGBX3iAvZnn//QDOHDATsl35S8RP2f4W47z1xVX7E0YrglFQWRiwTmpArAC+A+WtPGv3TmuqJORHqVftUjq7ID8tY7iwUig=
+	t=1739441181; cv=none; b=lP64ZIOXABSciA3zf+TMp+VoyNfR2kpUuzxEkq3ZHztYqdPD1AMTs096fR5nTdS75JT79toHpn+AJ1UfDZL83FN2Ve72ixXyF//b8qnqF6PaMyxpRReATrwdSMLZSIxKV2OlcWOfVP49qtf/TklUyV2tjUO8eC8Ri1JQ5K13AMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441180; c=relaxed/simple;
-	bh=T1BdMlO7VJaJKDxI8etm5Q6HJrt/8gfc9adcoeDYceo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KGwKsvqjYI/vxQLjXzwTaiAP+HZsRYUY1vdPKhqVPf722rWdhWIdFiWC4k4Ws87CT4qkk1+p3isS9llqYj83XFoGsm0p/4XzCdlLdYP/QPO1eueSfuHRyqdiMVKRF3gPPjx704Wvaunja4VIX4SKV21vvd2cIvrZGDIJAoo1EI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86712bc0508so223221241.2;
-        Thu, 13 Feb 2025 02:06:18 -0800 (PST)
+	s=arc-20240116; t=1739441181; c=relaxed/simple;
+	bh=IrFbBbfqEiJa0zHa0999cM4RYYVv3FsmmGN25izoDuQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vs747MF1oDYGH++zD2GOMNtZCdU+HV9uVbk/xdjzpnwDKX9TuwowMBJLJInEu/Uo83fnhHMGBth8XsuD+FxRtEUqtF5C52dqVDR6CEJpN06h+M3nI9BpmQv94O2oy8q1c7TVU4HrSVWdqd/VEJXbeLSiZtBsn9ouLtIwlF6y3cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=MHcRMTDr; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220c8cf98bbso13216095ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:06:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1739441178; x=1740045978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULrQM8jS/N8rKIapgYLPr6eiDKMqeLmtTdffubtbGqg=;
+        b=MHcRMTDrg+lsu0sUpHRMJjp+JMFX2lLQ2nFLlnE+AMbugCryu6Gn6YdQwcp9ao9YgN
+         y4t4svLPL3ri2aWYvIiEsgHo3ALVbQa+FElys5QvqCDxQG33438t5/okWNVF7uDtK+Mq
+         0BPlkYNCzOv/f+r9m6n4rd5zxOcoIdqA3kO7UkFb6a7VpoFJN58b5hBrsWXL/6laiDAZ
+         ExxPt6PVspAuZwzvMrIyINXuaObh+rFIuGi+vJiUCy38PFYm15A4sXkZ5sIP6xLNmjBm
+         VJl8RL46cVh+rIjDCoZhssuj3v4wBH8iN0nlnrIkAXJlXWH/EC7vwA0jzF3aE3TS/wqR
+         1XDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739441176; x=1740045976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739441178; x=1740045978;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5ET9GwN+uLjDsvjU0KoNteKFJwQHfNy0LS4Dkz43P3s=;
-        b=Ca+M329fsIdv/BiirchHDP7bZkiUwxhWMOnc0yeoyzPBdycc5gyEH23mpQwZ/QtNjT
-         Pg9NICtB7xw8xl4RVQ73lyW9NLZvUpef7bMfDLFimx9yhr2gHtXY8P/qvixEhs1Hpogd
-         43sxcN/I8/q+yORrdU9h3s5iiZHuKbdgRuLVRrexBToHzmzZiiwh7TPqlrPscQrccoTt
-         yVQ3y0SbWEW1y5AMMwYjHVqIymWlst+sFzXEfsgoxiAvXJJIZ1E/zReeUZER1DSY2Q61
-         srYtnTwckvdP3/uUmZlCOiOYxqGXW0zPrbPe4oc3yKMzdU/jw3AgphQP3PxQs08SIc4I
-         9OYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB9aESpdvFhtRoTfxTTFqt5KHjgef+gihYhUOdTimzzIxYH4IAWGO+xvS/S3UG6N55PJOGRL75IA==@vger.kernel.org, AJvYcCVqXXChvCKyJcJ37ZX7YXvkJTtGK3T79hlY2slt+zV4mVaQGDHkejG+dSehiaeALbhcpTyOGq5na7Wb@vger.kernel.org, AJvYcCVspMsVd74xHACDqlLHNPO3G+DEWSZF26wvAlz2hdxE/E4LlPVP0iNUNNtQSAovrh1kgT5OESK1ZYOnrzM8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPAQx7Uqwwd52ohN14mLrzRCjNULIsHfrmskOI8FsZXMNZO6+x
-	JmOrjcyemFKHE7kP9q865zM44qrnHTT9PEk/ciERJGkbf5Z0NAoZq5o9k8NMKSY=
-X-Gm-Gg: ASbGnctsPCCBrCBohKibuXIij2/kVHZxNefx/CNsgGWR1dNL+aOM6VC6kWOtPPlgtgg
-	DDXoqOciMC3TzxftX8SCyt9D9WVCvA6Y0G+VcHICiZseU2iCW7+4vdIIqwsl0bTYnzEjW5j9Jda
-	T4r8qgjWDLDRJeg5sj+6qD4JNNjQ2izHfS8/H0am1DIvtxKr97qrShylhcxU+PKQqOMcUQ9N+tY
-	T/ONEV92pJ+0h45dkJMW86l5fSPQ3P6QsDHO73rGJjL/rLHFlfhrUPc8hf3G+ALxYIi7bprFH5+
-	o1cEhL3WopwX+8Er/BJ8CXLzq59d4Kf8b3p5+QQRSPasCnOkA6jEVA==
-X-Google-Smtp-Source: AGHT+IGfNX90gCBdtZkdzhWrKS8JhWviOfIzc4W2sfpPM9ktet7w2YDVHo5/tEOjsvI+xoFCWKt2Tg==
-X-Received: by 2002:a05:6102:4410:b0:4bb:5d61:1252 with SMTP id ada2fe7eead31-4bbf231517emr6577066137.23.1739441175984;
-        Thu, 13 Feb 2025 02:06:15 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e857f2desm136820241.10.2025.02.13.02.06.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 02:06:14 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4bbb9a50baeso128476137.0;
-        Thu, 13 Feb 2025 02:06:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU168t336kiCfJUaXrT7fnCP427bbjJWlrBmWNYfly0Zb6Es4X704hAIKTyhK1/hpvzMgBic04ZobXi@vger.kernel.org, AJvYcCXcbnE15I4ZljSvXuP0EPBI/qpslXzSKYGPGZI0utKfcVLY5POyXg7NUFgfo1lO5g/m7Rwcmo3ZIQ==@vger.kernel.org, AJvYcCXx43eomOVokwZyR7Xh665mFUAKhwoEntkRuI1bMD1FTjfYrkw/GP9dSl7GNrkTK9/GiydBvIcjdBXHm6gN@vger.kernel.org
-X-Received: by 2002:a05:6102:3f94:b0:4b6:18b3:a4db with SMTP id
- ada2fe7eead31-4bbf21c8337mr7301506137.8.1739441174414; Thu, 13 Feb 2025
- 02:06:14 -0800 (PST)
+        bh=ULrQM8jS/N8rKIapgYLPr6eiDKMqeLmtTdffubtbGqg=;
+        b=mqS7uystAGS6G+DOSvMx27h4KU9A8P15vy6hDIs+Ezcyr7MAVwc1Yd8OycdiWOBIZQ
+         Lrphn6Au4FMmsUymjEoBnA35qkT46J9HFaPeWYaG6Au7rSnLlnXdYWhNEQkpkKs4z5U6
+         6bJ/DzoxnlK+c5rosoa4lndaJGuf/0PBp1E67M0B263UR0U6Skbc6PKR29DATG3t5cZE
+         zY14G4wOXU7dumJImgNU3Rzpv2IvcHGY4Ng9MALK0OfEp7zaGl6nqlOjfxlwO5lo5Uvq
+         defBY5rFxlnvP/0a8Bsyi+qYnTB7FQlYruz/pxmQ3SYmSQpjPBjzgnnIc/dt2Y8DwcQi
+         PXBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhWLxe9OOTejloQevIaa9A5a/3KuO/aBewJejnc2zLe0fbuKWB1qPeapmvM+D42s3UQEpq5CjCCEnDNAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUTibWmQmG53Gc+WTUH06fF/YozJANlIufgTnKwYeVFr4ANmzl
+	t20ql7GzfiydSQBuuzpwh9O0YllRBauyKc8J6ZdrCJFA0FCUAZ96JH1Tk7Sazz2XeFUnIVajdOy
+	3
+X-Gm-Gg: ASbGnctCxIpwBGvEY1Q6EeXqc9wL2wDvJxyLUxGMo2/lPCzPahhVA+CG04qpzUpgo3y
+	RISfL9OZhQdb3a5B3pGaOGiSfZq+8tZK2aKvQ8PmLpdrE3yCJ6znDzuLzbG8NkNzQUddiH7sI/Z
+	QS3KmFunNcvDMcNoyxpQ1Ak3mPpJ2wmCtD9D8wEk48yF9BReXWqyQDZgXVGQ/mSFemNW21yg5q4
+	r/eOP85hYGIA7d6+UmP0M9UWCwrH/TiinE4KEKMSJeRfiQyaApo7JHpgUEi+ZIaQPiTgn8U7Z/n
+X-Google-Smtp-Source: AGHT+IFZcuS+n+mUKTvU8TcdE7azW/glC+u+MrACA5Bttms/YcqUyP54Tik2TARGAWcwEBYeIi+8Qw==
+X-Received: by 2002:a05:6a00:1d99:b0:732:2170:b6aa with SMTP id d2e1a72fcca58-7322c3f4df1mr9438701b3a.16.1739441178506;
+        Thu, 13 Feb 2025 02:06:18 -0800 (PST)
+Received: from localhost.localdomain ([143.92.64.17])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242761569sm937442b3a.130.2025.02.13.02.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 02:06:17 -0800 (PST)
+From: Tang Yizhou <yizhou.tang@shopee.com>
+X-Google-Original-From: Tang Yizhou
+To: yukuai1@huaweicloud.com,
+	axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tang Yizhou <yizhou.tang@shopee.com>
+Subject: [PATCH v2 0/2] Fix and cleanup some comments in blk-wbt
+Date: Thu, 13 Feb 2025 18:06:09 +0800
+Message-Id: <20250213100611.209997-1-yizhou.tang@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com> <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
-In-Reply-To: <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Feb 2025 11:06:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWn+sKiC1B4MF1vHwS2ArFYQXGzpYi2EcsyERPSCc9bvQ@mail.gmail.com>
-X-Gm-Features: AWEUYZlvlExVgKAlPqcQ55dSJRN4GqYY50RVEAwpoHERFHUH_dWoi8JrSM7k46E
-Message-ID: <CAMuHMdWn+sKiC1B4MF1vHwS2ArFYQXGzpYi2EcsyERPSCc9bvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] clk: Introduce clk_hw_set_spread_spectrum
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Abel Vesa <abelvesa@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Peng,
+From: Tang Yizhou <yizhou.tang@shopee.com>
 
-On Wed, 5 Feb 2025 at 10:51, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Add clk_hw_set_spread_spectrum to configure a clock to enable spread
-> spectrum feature. set_spread_spectrum ops is added for clk drivers to
-> have their own hardware specific implementation.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+v2: Take Yuai's advice. Modify the subject of patch #1. Move the
+modifications to the comments for wb_timer_fn to patch #2.
 
-Thanks for your patch!
+Tang Yizhou (2):
+  blk-wbt: Fix some comments
+  blk-wbt: Cleanup a comment in wb_timer_fn
 
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -84,6 +84,28 @@ struct clk_duty {
->         unsigned int den;
->  };
->
-> +/* Aligned with dtschema/schemas/clock/clock.yaml */
-> +enum clk_ssc_method {
-> +       CLK_SSC_CENTER_SPREAD,
-> +       CLK_SSC_UP_SPREAD,
-> +       CLK_SSC_DOWN_SPREAD,
-> +};
-> +
-> +/**
-> + * struct clk_spread_spectrum - Structure encoding spread spectrum of a clock
-> + *
-> + * @modfreq:           Modulation frequency
-> + * @spreadpercent:     Modulation percent
-
-E.g. Renesas R-Car V4M also supports 0.5%, 1.5%, and 2.5%.
-
-> + * @method:            Modulation method
-> + * @enable:            Modulation enable or disable
-> + */
-> +struct clk_spread_spectrum {
-> +       unsigned int modfreq;
-> +       unsigned int spreaddepth;
-> +       enum clk_ssc_method method;
-> +       bool enable;
-
-Do you envision a use case for having a separate enable flag?
-The alternative would be to add an extra enum value above:
-
-    CLK_SSC_NO_SPREAD = 0,
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ block/blk-wbt.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
