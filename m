@@ -1,261 +1,108 @@
-Return-Path: <linux-kernel+bounces-513950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E258DA35090
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:36:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78560A35091
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9500F16D0A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3753A4C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC59266B7C;
-	Thu, 13 Feb 2025 21:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC59E266B56;
+	Thu, 13 Feb 2025 21:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="CVvIwUig"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+PYSzfA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jarwlFB8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B14245018
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992CC1487FA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739482604; cv=none; b=VL2go1r2ViM0sRel121WG93/q4TsbeyW1619nt45fgWTbwZJb/l+OBP9l1B1uLSSG4/2mhmv7RGs6OMMXJxDVHj5HB1UH6p3Y4Pz0KWqe/mSDAQ0Ny+HxCil9Me2fr6ar3hJgCcZow8psQ2yU6WkDDAF4qbFSXH3elqkkgng8QE=
+	t=1739482747; cv=none; b=R/oq4JCnY1CP44sF4UJ9blIcNLAPaAF84I6ChvYHzWgF1pGAoCKLmiUe0v/EgKTU98+OMK0S7EV8p9f5CAsF50gxS4gaPblRTVgCoFkwcTFdVirkd6yPJ2cJ2j60ToF8rxJG1tTo3uK8mlr3IbcZRfyW0J+5m4/e8JbM28ztDhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739482604; c=relaxed/simple;
-	bh=y9kaHwX3WWWfnPo9xpxWDyWUuMqA4NW0QsEmrgaeSIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUVSrfMcs0IILwmdBn4/VIUqdMf3u5gmHC5f3/jVUATJmF0Ly+SjQMvrcN4gFx5d+gbMKp5R1X45aL3roH3LxG3EH77dBCokYmer6wgPu8LDOol7iW/uhfUreAu1P4H66m3Wqlj6eZ8MuSREZzCksUObPSVO5NBWqmJ6Y7xGS+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=CVvIwUig; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e587cca1e47so1307515276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:36:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1739482601; x=1740087401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tN5YgbLMf1aDRtVPiBKlBRhDfg2WRlderUDGvHcqbTY=;
-        b=CVvIwUigfQdcm/VIjmCoTZkkscSL4yZbX9v/vRn28q7d328giDMCamPRrnK0TYSjoA
-         sDPom8C+hWRD9H3hC88Vsp7WtiadiW8i7xKqtJSEGUkxRf4K0+9+eBhRfIivt4zNrzwm
-         nT42HDGSB4BifhI5tTng8vYH/gbJPAhzwxypgxK1glj2DsUbK4lRiloTCfLCSfOJBiyj
-         RfDadwVDair9R8JAmA7CF0TAk4qMgJxcx/MYqDMgX1KY3fhvaVybCQQ+1NPoeXJL2tQ4
-         ixIpEAbyQwJe4GK4KY80lAtrDWyJuhpZfAC8uSjG10wwjwBXJZsq69itiTQVBIu3h/rV
-         QH4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739482601; x=1740087401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tN5YgbLMf1aDRtVPiBKlBRhDfg2WRlderUDGvHcqbTY=;
-        b=TlcDzV00pqGpyBRWe1XCICk/BUzSTgyfAX4jTIoSK8hdOyKzBHOIg/LKrKgvDp5hX4
-         KNRpi28n2Ygvrd1Gk0jyNHGJ8zWgG6SEy+i4pHdkQEF64QcIEpmoCafHbTwUiujL0CoN
-         WbnRoFg0a+trESjv5ysLcqnmN3JIgeZZTzF4paoyTwV0+KmJ4hSl5GNUqnkxDAYp2LOX
-         wmyg/AobQImLEJ0XUdLZVTQMsi8WXRXsieW2zPCLGj3XrjWeNVhsMVfFQhda6LjW3kil
-         Ye8HEhS9PnU3ffU3T3H8DdoIcciCmwkPAjXL2zyPqisOwRIPALnN6mbGV+mo/MhYHHXF
-         Fouw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVvX5hYmNTxXIHy1ecUaW0bBVIdnqdmlbnF9L+JzOIDrFVNykXYo76V5+jQQw5oUyOtpJtq8mHDPBmNpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqoNLTITQeH7XUOy3weP+0rxZDi8ESpDQ3Q15DkkBldI7rCQSW
-	VjEuGTfNcRykLobcTBiVRZ/tDnJ8uEoWa284sTR7xtW3NXvQDcm3d4ue8j50zsQ=
-X-Gm-Gg: ASbGncv1SISswa4dfa5ZaljTxY95WqnRmUu4aGlfQTs0n6wfMrlbpbXWlX6dvycR363
-	M4YyTBfT9+9foluZLJ9NyglQOEruwX3c1ZDDMpBsmWjnYsDsoMNZHnWiVrhTTFnXQpNYmyQfCtF
-	LCOi5+taXaPCC0r7o94k1f8TjwZfzgDIt61GtqyCaq9mcFADgvVALYyuZfiThy2oAQRYABbjSbm
-	SQfmmh1hvmWBIBSBSOGV9P2Kg8KPyMXt73oBnGB1hJO328QzFVz0nh/yc8WcD4MnVpnFJq5vfI+
-	e+c=
-X-Google-Smtp-Source: AGHT+IFrZXty2zvWMcfr9wxzGzvWLUXiH8mGsSyxSxV6zHOMIiY7RNEUKUZiPnL5TCqkmw//gUw1NA==
-X-Received: by 2002:a05:6902:1186:b0:e5b:1dda:8f6a with SMTP id 3f1490d57ef6-e5da0209accmr8160531276.12.1739482601327;
-        Thu, 13 Feb 2025 13:36:41 -0800 (PST)
-Received: from ghost ([50.146.0.9])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dae0da26csm595254276.44.2025.02.13.13.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 13:36:40 -0800 (PST)
-Date: Thu, 13 Feb 2025 13:36:39 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
-	Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>, linux-riscv@lists.infradead.org,
-	linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] raid6: Add RISC-V SIMD syndrome and recovery
- calculations
-Message-ID: <Z65l51hrDmKQP6dM@ghost>
-References: <20250127061529.2437012-1-zhangchunyan@iscas.ac.cn>
- <c0a2fbeb-9a0d-4b69-bc6b-e1652e13debf@molgen.mpg.de>
- <Z5gJ35pXI2W41QDk@ghost>
- <CAAfSe-utAb53278x9X4tKn6jWzdehsPKDRa_CoQy61ND=cXbxQ@mail.gmail.com>
+	s=arc-20240116; t=1739482747; c=relaxed/simple;
+	bh=h8gsnHUDTaalUikdwyXK5AuEjpJ4CdIAKQApKatXWz0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BVEDsxu7arAwNLaKwRJaj/an8mXtnueuCT3dyyTsF7UYd52r0ngiPNqnwZFt7Xlt/cSgErNxJHY0WNNL0ARjyDwNi0pOK/JikWOdUfkh26nJ9XuSU1kdmfhjK6osMcEg8mx0BNWEIfqrbGPZuie13uw7jUa6u9H3SqTfQNw8yYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+PYSzfA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jarwlFB8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739482743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yo4eFArIgov3x4sA3IQBHUqmHimcug5HUp2DC9+LcEU=;
+	b=f+PYSzfAXLKiarsgf2HCEvEJmHsgaTbYC9m3hZgu6puYZm3so4GooOX0VFsH2ZjvVQuXQJ
+	xyvjIeuxT/H9lBPPnc2+VLyG9eJrGX+aV4zvvXm8XPtVeZz3wCGYlK3hhO95bMVo9ctVxv
+	GSMVlg/BveVbevmhEjYKYPaDwe/KbBNKu0hsWcIkkx+ox1Q47YCsvIeoPn8m3nLb8lHBWz
+	JrpKQ6zXUxwDGJqozz5DoB0xCEKPGNLnCbRzsIRm3fKwHUIHc4A104ts94j5MGyRkHHLsy
+	ZoVJzV1jVISHD9xpyZBx3Q4oNiNwFWhuA3EGxmXZvxoyRt3tVeP2EbAL2tfFMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739482743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yo4eFArIgov3x4sA3IQBHUqmHimcug5HUp2DC9+LcEU=;
+	b=jarwlFB8K06T/bSG3WaGfZ2lQYxzwEbrwCTYsfu1KtaWITaU8sAXRLoeWO35AtL5n1KMZR
+	n+QyFcLxmaINV2Bw==
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Subject: Re: [rfc, PATCH v1 1/1] hrtimers: Refactor
+ hrtimer_clock_to_base_table initialisation
+In-Reply-To: <20250210082907.4059064-1-andriy.shevchenko@linux.intel.com>
+References: <20250210082907.4059064-1-andriy.shevchenko@linux.intel.com>
+Date: Thu, 13 Feb 2025 22:39:03 +0100
+Message-ID: <87pljljzig.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAfSe-utAb53278x9X4tKn6jWzdehsPKDRa_CoQy61ND=cXbxQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Feb 11, 2025 at 05:59:26PM +0800, Chunyan Zhang wrote:
-> On Tue, 28 Jan 2025 at 06:34, Charlie Jenkins <charlie@rivosinc.com> wrote:
-> >
-> > On Mon, Jan 27, 2025 at 09:39:11AM +0100, Paul Menzel wrote:
-> > > Dear Chunyan,
-> > >
-> > >
-> > > Thank you for the patch.
-> > >
-> > >
-> > > Am 27.01.25 um 07:15 schrieb Chunyan Zhang:
-> > > > The assembly is originally based on the ARM NEON and int.uc, but uses
-> > > > RISC-V vector instructions to implement the RAID6 syndrome and
-> > > > recovery calculations.
-> > > >
-> > > > Results on QEMU running with the option "-icount shift=0":
-> > > >
-> > > >    raid6: rvvx1    gen()  1008 MB/s
-> > > >    raid6: rvvx2    gen()  1395 MB/s
-> > > >    raid6: rvvx4    gen()  1584 MB/s
-> > > >    raid6: rvvx8    gen()  1694 MB/s
-> > > >    raid6: int64x8  gen()   113 MB/s
-> > > >    raid6: int64x4  gen()   116 MB/s
-> > > >    raid6: int64x2  gen()   272 MB/s
-> > > >    raid6: int64x1  gen()   229 MB/s
-> > > >    raid6: using algorithm rvvx8 gen() 1694 MB/s
-> > > >    raid6: .... xor() 1000 MB/s, rmw enabled
-> > > >    raid6: using rvv recovery algorithm
-> > >
-> > > How did you start QEMU and on what host did you run it? Does it change
-> > > between runs? (For me these benchmark values were very unreliable in the
-> > > past on x86 hardware.)
-> >
-> > I reported dramatic gains on vector as well in this response [1]. Note
-> > that these gains are only present when using the QEMU option "-icount
-> > shift=0" vector becomes dramatically more performant. Without this
-> > option we do not see a performance gain on QEMU. However riscv vector is
-> > known to not be less optimized on QEMU so having vector be less
-> > performant on some QEMU configurations is not necessarily representative
-> > of hardware implementations.
-> >
-> >
-> > My full qemu command is (running on x86 host):
-> >
-> > qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1\
-> >     -kernel arch/riscv/boot/Image \
-> >     -append "root=/dev/vda rw earlycon console=ttyS0" \
-> >     -drive file=rootfs.ext2,format=raw,id=hd0,if=none \
-> >     -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
-> >     -device virtio-blk-device,drive=hd0
-> >
-> > This is with version 9.2.0.
-> >
-> >
-> > I am also facing this issue when executing this:
-> >
-> > raid6: rvvx1    gen()   717 MB/s
-> > raid6: rvvx2    gen()   734 MB/s
-> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
-> >
-> > Only rvvx4 is failing. I applied this patch to 6.13.
-> 
-> I used your command to run but no issue on my side (x86 host, qemu
-> version is 9.2.0, kernel 6.13 too):
-> 
-> qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1 -icount shift=0 \
->         -kernel arch/riscv/boot/Image   \
->         -append "rootwait root=/dev/vda ro"     \
->         -drive file=rootfs.ext4,format=raw,id=hd0 \
->         -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
->         -device virtio-blk-device,drive=hd0
+On Mon, Feb 10 2025 at 10:26, Andy Shevchenko wrote:
+> Clang complains about overlapped initialisers in the
+> hrtimer_clock_to_base_table definition. With `make W=1` and
+> CONFIG_WERROR=y (which is default nowadays) this breaks
+> the build:
+>
+>   CC      kernel/time/hrtimer.o
+> kernel/time/hrtimer.c:124:21: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+>   124 |         [CLOCK_REALTIME]        = HRTIMER_BASE_REALTIME,
+>
+> kernel/time/hrtimer.c:122:27: note: previous initialization is here
+>   122 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
+>
+> (and similar for CLOCK_MONOTONIC, CLOCK_BOOTTIME, and CLOCK_TAI).
+>
+> Refactor hrtimer_clock_to_base_table initialisation to make
+> the compiler happy.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>
+> TBH, I don't like much this solution as it diminishes the point of that
+> override to be there in the first place. I haven't found better alternatives
+> as they may be too intrusive. Another one might be to remove this table,
+> but in such case the replacement might add latency to some cases (although
+> I haven't checked the generated code for, for example, switch-case approach).
 
-I am able to reproduce it with this defconfig:
+The only place this table is used is in __hrtimer_init(), which is not a
+hot-path. The four resulting comparisons are probably not even noticable.
 
-CONFIG_SYSVIPC=y
-CONFIG_NO_HZ_IDLE=y
-CONFIG_HIGH_RES_TIMERS=y
-CONFIG_BPF_SYSCALL=y
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_NAMESPACES=y
-CONFIG_USER_NS=y
-CONFIG_CHECKPOINT_RESTORE=y
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_EXPERT=y
-# CONFIG_SYSFS_SYSCALL is not set
-CONFIG_PROFILING=y
-CONFIG_SMP=y
-CONFIG_CPU_FREQ=y
-CONFIG_CPU_FREQ_STAT=y
-CONFIG_CPU_FREQ_GOV_USERSPACE=y
-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-CONFIG_CPUFREQ_DT=y
-CONFIG_JUMP_LABEL=y
-CONFIG_DEVTMPFS=y
-CONFIG_DEVTMPFS_MOUNT=y
-CONFIG_MTD=y
-CONFIG_MTD_BLOCK=y
-CONFIG_MTD_CFI=y
-CONFIG_MTD_CFI_ADV_OPTIONS=y
-CONFIG_BLK_DEV_LOOP=y
-CONFIG_VIRTIO_BLK=y
-CONFIG_MD=y
-CONFIG_BLK_DEV_MD=y
-CONFIG_MD_RAID456=y
-CONFIG_INPUT_MOUSEDEV=y
-CONFIG_SERIAL_8250=y
-CONFIG_SERIAL_8250_CONSOLE=y
-CONFIG_SERIAL_8250_DW=y
-CONFIG_SERIAL_OF_PLATFORM=y
-CONFIG_SERIAL_SIFIVE=y
-CONFIG_SERIAL_SIFIVE_CONSOLE=y
-CONFIG_VIRTIO_CONSOLE=y
-CONFIG_HW_RANDOM_VIRTIO=y
-CONFIG_PINCTRL=y
-CONFIG_GPIOLIB=y
-CONFIG_GPIO_DWAPB=y
-CONFIG_GPIO_SIFIVE=y
-CONFIG_SOUND=y
-CONFIG_RTC_CLASS=y
-CONFIG_RTC_DRV_GOLDFISH=y
-CONFIG_DMADEVICES=y
-CONFIG_DW_AXI_DMAC=y
-CONFIG_VIRTIO_BALLOON=y
-CONFIG_VIRTIO_INPUT=y
-CONFIG_VIRTIO_MMIO=y
-CONFIG_GOLDFISH=y
-CONFIG_MAILBOX=y
-CONFIG_RPMSG_CTRL=y
-CONFIG_RPMSG_VIRTIO=y
-CONFIG_PM_DEVFREQ=y
-CONFIG_IIO=y
-CONFIG_LIBNVDIMM=y
-CONFIG_EXT4_FS=y
-CONFIG_EXT4_FS_POSIX_ACL=y
-CONFIG_EXT4_FS_SECURITY=y
-CONFIG_AUTOFS_FS=y
-CONFIG_ISO9660_FS=y
-CONFIG_JOLIET=y
-CONFIG_ZISOFS=y
-CONFIG_MSDOS_FS=y
-CONFIG_VFAT_FS=y
-CONFIG_PRINTK_TIME=y
-CONFIG_SCHED_STACK_END_CHECK=y
-# CONFIG_RCU_TRACE is not set
-# CONFIG_FTRACE is not set
-# CONFIG_RUNTIME_TESTING_MENU is not set
+Thanks,
 
-I took the riscv/defconfig and added MD_RAID456 and it's dependencies.
-So that the message wasn't too long I started removing some unnecessary
-configs. Try this out and let me know if you encounter the issue.
-
-- Charlie
-
-> 
-> Thanks,
-> Chunyan
-> 
-> >
-> > - Charlie
-> >
+        tglx
 
