@@ -1,189 +1,128 @@
-Return-Path: <linux-kernel+bounces-514088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CDDA3523C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D99A3523D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:36:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D15188C36F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32E1188D5C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62091C84C1;
-	Thu, 13 Feb 2025 23:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DFC1C84C1;
+	Thu, 13 Feb 2025 23:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBLZpCPz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DT6cQfZp"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265462753F0;
-	Thu, 13 Feb 2025 23:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11E01C84A8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489742; cv=none; b=ayy2Q+1F4LMGaS7XvV0O7eLZxOHOQ/tgRNqimnk0M4W4Di5W9SURuaOidMGrFusyREeigLpX7IaWHeAE8nUGek5pgfp60SQLe+oWWCLfXqBjTeZL01yyHWFNCHm2k4gd2T3KwocYWBoMBbssMH8+WlYGose2jxQq036Dab7rEpU=
+	t=1739489758; cv=none; b=rgfV7FulrdHEeakNT4droBDnUDd0gDQ9sKWH6KjzTeQNR/Y+szgqaqd1dzdOEV5M5cLtf8MHi4cDPl5oAFhb8knnw5h/uLTw+QvA/MJ3dI+gVDOcN/u6EpQ2GA46D8cp8TCtlCVpLEDYe/JnJdAeOExE0ubhwJEWid2UPEAuNss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489742; c=relaxed/simple;
-	bh=EZkv+Ho0qnfwzKUpS/CiR6zEjhpxu4+amaaWviz+BWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OK/X1NZF6s8BFaiNUhfW1666HDSsoN9me1/3SxVZsu+rvGEX0WvOhlzOr7QCla5m55xR20bTE34rybze+LT0u/rDH0o7ERS/Q23R/64a+dTsm9xwH19YyJPyAzmUwLN6IjQD1D7YMLCbE513prq8TjzkbsJGCBUNX1kHnqyDpvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBLZpCPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFBFC4CED1;
-	Thu, 13 Feb 2025 23:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739489741;
-	bh=EZkv+Ho0qnfwzKUpS/CiR6zEjhpxu4+amaaWviz+BWg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sBLZpCPz1NoNgOSv1mxpSLs+FNjXdraZqNTFB3c5QkEZtldUDUwcEaHRoOGhH0jHV
-	 1+MpjqpsUOHqDB4AJB4IV6znZsNCAJOd6XknfAhEvR6NR7OzRFBfFLLc+KVFov4ByJ
-	 ubaNRl4pUfnAdNLtpv9T+Bva70o3kQrBNBDMlIozNFJ2WSZsYZn6huJNt516pff30S
-	 To0IExRLA/JEE/JULyszAdyy0i3FANVaqcixojumjfz3wFOYOedm4fwM9Nre1F5YIf
-	 HcWAFkE7/ldK3DKFPJJHo2O6qKVzfmeY/ryLli6G+F0eIVtBP0TOzGE/B28lQqM38Q
-	 VaszY5PZoYaMA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: [PATCH v2] perf report: Add 'tgid' sort key
-Date: Thu, 13 Feb 2025 15:35:40 -0800
-Message-ID: <20250213233540.600006-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+	s=arc-20240116; t=1739489758; c=relaxed/simple;
+	bh=lOAcTjwhKqo1NsvJDmUerGIYldSDWzpeMraUf4/CtFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WD7W6nThRpYCieyTEUT1/97+HGILqv6UETa/B9yisxD8m9ku9DNPAv4LVRsn+VieVh+SU7QSv0ZC5VPID5oc7wBZlRYotwmt6HG3GDFl6a5UJn+uf0ox3NTmEGhBrYwsS6ub/vactbICwy9b2Q7/OuyMPddWRSsmxsL3eWN/5S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DT6cQfZp; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 13 Feb 2025 23:35:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739489751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZVVBeRB4R/p/jAbEkhJ7/AqaFgJout4r3zmt9lw3r2Q=;
+	b=DT6cQfZpCOxdnphDHwOkRLYR+GDquD4//LAN2QijU/f4luFyUCS9hBZ7XUOa6Y0BBUQXG9
+	zQnCdCUawiz8hC7O9ddgJRs6qQ4YI8ZuRzL9xrsbw7/BFNUUukZW+UBvjVxRtzk9cf35fN
+	Anz7mQz2JMvVOqgazBimlflbLZUsst8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: gaoxu <gaoxu2@honor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Barry Song <21cnbao@gmail.com>, yipengxiang <yipengxiang@honor.com>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1t?= =?utf-8?Q?=3A?= Fix
+ possible NULL pointer dereference in __swap_duplicate
+Message-ID: <Z66B0T125JhdWo1n@google.com>
+References: <44655569e3a1419f800952004f07e714@honor.com>
+ <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
+ <da7e1ee115454cf8898b4bbe228a5a9c@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <da7e1ee115454cf8898b4bbe228a5a9c@honor.com>
+X-Migadu-Flow: FLOW_OUT
 
-Sometimes we need to analyze the data in process level but current sort
-keys only work on thread level.  Let's add 'tgid' sort key for that as
-'pid' is already taken for thread.
+On Thu, Feb 13, 2025 at 01:08:54PM +0000, gaoxu wrote:
+> > 
+> > On Wed, 12 Feb 2025 03:13:46 +0000 gaoxu <gaoxu2@honor.com> wrote:
+> > 
+> > > swp_swap_info() may return null; it is necessary to check the return
+> > > value to avoid NULL pointer dereference. The code for other calls to
+> > > swp_swap_info() includes checks, and __swap_duplicate() should also
+> > > include checks.
+> > 
+> > Actually very few of the swp_swap_info() callers check for a NULL return.
+> The swapfile.c file contains three instances where the return value of
+> swp_swap_info() is checked for a NULL return. In other files that call
+> swp_swap_info(), I have confirmed that there are no such checks.
+> The description in the patch is inaccurate, and I have made modifications
+> in patch v2.
+> > 
+> > > The reason why swp_swap_info() returns NULL is unclear; it may be due
+> > > to CPU cache issues or DDR bit flips.
+> > 
+> > Quite possibly it's a kernel bug.
+> > 
+> > > The probability of this issue is very
+> > > small, and the stack info we encountered is as follows：
+> > > Unable to handle kernel NULL pointer dereference at virtual address
+> > > 0000000000000058
+> > >
+> > > ...
+> > >
+> > > --- a/mm/swapfile.c
+> > > +++ b/mm/swapfile.c
+> > > @@ -3521,6 +3521,8 @@ static int __swap_duplicate(swp_entry_t entry,
+> > unsigned char usage, int nr)
+> > >  	int err, i;
+> > >
+> > >  	si = swp_swap_info(entry);
+> > > +	if (unlikely(!si))
+> > > +		return -EINVAL;
+> > >
+> > >  	offset = swp_offset(entry);
+> > >  	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+> > 
+> > OK, I guess avoiding the crash is good.  But please let's include a WARN so that
+> > we can perhaps fix the bug, if one is there.
+> Good. I'll change it as mentioned and send a new patch.
+> 	si = swp_swap_info(entry);
+> +	if (unlikely(!si)) {
+> +		WARN(1, KERN_ERR "%s: %s%08lx\n", __func__, Bad_file, entry.val);
 
-This will look mostly the same, but it only uses tgid instead of tid.
-Here's an example of a process with two threads (thloop).
+WARN() already contains unlikely(). Also, no need to print the function
+name it's already in the stack trace.
 
-  $ perf record -- perf test -w thloop
+We should probably just do if (WARN_ON_ONCE(!si)).
 
-  $ perf report --stdio -s tgid,pid -H
-  ...
-  #
-  #    Overhead  Tgid:Command / Pid:Command
-  # ...........  ..........................
-  #
-     100.00%     2018407:perf
-         50.34%     2018407:perf
-         49.66%     2018409:perf
-
-Suggested-by: Stephane Eranian <eranian@google.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-report.txt |  1 +
- tools/perf/util/hist.h                   |  1 +
- tools/perf/util/sort.c                   | 38 ++++++++++++++++++++++++
- tools/perf/util/sort.h                   |  1 +
- 4 files changed, 41 insertions(+)
-
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 87f86451940623f3..4050ec4038425bf0 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -79,6 +79,7 @@ OPTIONS
- 
- 	- comm: command (name) of the task which can be read via /proc/<pid>/comm
- 	- pid: command and tid of the task
-+	- tgid: command and tgid of the task
- 	- dso: name of library or module executed at the time of sample
- 	- dso_size: size of library or module executed at the time of sample
- 	- symbol: name of function executed at the time of sample
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 46c8373e314657fa..c164e178e0a48a8e 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -38,6 +38,7 @@ enum hist_column {
- 	HISTC_TIME,
- 	HISTC_DSO,
- 	HISTC_THREAD,
-+	HISTC_TGID,
- 	HISTC_COMM,
- 	HISTC_CGROUP_ID,
- 	HISTC_CGROUP,
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 3dd33721823f365d..b4034bd6629d4156 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -141,6 +141,43 @@ struct sort_entry sort_thread = {
- 	.se_width_idx	= HISTC_THREAD,
- };
- 
-+/* --sort tgid */
-+
-+static int64_t
-+sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
-+{
-+	return thread__pid(right->thread) - thread__pid(left->thread);
-+}
-+
-+static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf,
-+				       size_t size, unsigned int width)
-+{
-+	int tgid = thread__pid(he->thread);
-+	const char *comm = NULL;
-+
-+	/* display comm of the thread-group leader */
-+	if (thread__pid(he->thread) == thread__tid(he->thread)) {
-+		comm = thread__comm_str(he->thread);
-+	} else {
-+		struct maps *maps = thread__maps(he->thread);
-+		struct thread *leader = machine__find_thread(maps__machine(maps),
-+							     tgid, tgid);
-+		if (leader) {
-+			comm = thread__comm_str(leader);
-+			thread__put(leader);
-+		}
-+	}
-+	width = max(7U, width) - 8;
-+	return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width, comm ?: "");
-+}
-+
-+struct sort_entry sort_tgid = {
-+	.se_header	= "   Tgid:Command",
-+	.se_cmp		= sort__tgid_cmp,
-+	.se_snprintf	= hist_entry__tgid_snprintf,
-+	.se_width_idx	= HISTC_TGID,
-+};
-+
- /* --sort simd */
- 
- static int64_t
-@@ -2501,6 +2538,7 @@ static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
- 
- static struct sort_dimension common_sort_dimensions[] = {
- 	DIM(SORT_PID, "pid", sort_thread),
-+	DIM(SORT_TGID, "tgid", sort_tgid),
- 	DIM(SORT_COMM, "comm", sort_comm),
- 	DIM(SORT_DSO, "dso", sort_dso),
- 	DIM(SORT_SYM, "symbol", sort_sym),
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index a8572574e1686be6..6044eb1d61447c0d 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -72,6 +72,7 @@ enum sort_type {
- 	SORT_ANNOTATE_DATA_TYPE_OFFSET,
- 	SORT_SYM_OFFSET,
- 	SORT_ANNOTATE_DATA_TYPE_CACHELINE,
-+	SORT_TGID,
- 
- 	/* branch stack specific sort keys */
- 	__SORT_BRANCH_STACK,
--- 
-2.48.1.601.g30ceb7b040-goog
-
+> +		return -EINVAL;
+> +	}
+> 
+> 
 
