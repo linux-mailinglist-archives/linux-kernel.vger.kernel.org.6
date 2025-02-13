@@ -1,221 +1,120 @@
-Return-Path: <linux-kernel+bounces-513626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4A8A34CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:59:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA127A34CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9AF16C13A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C033A8000
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C9E24167D;
-	Thu, 13 Feb 2025 17:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249111CAF;
+	Thu, 13 Feb 2025 18:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R52iamQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="cJCGrLX+"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0368F23F400;
-	Thu, 13 Feb 2025 17:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C3203719
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469559; cv=none; b=h9NGXXWCCEjnClT7XuzFbHsGpwy9TPOuWw9qOcoqMwwcFM3LtPNHKnTueLk5AURp/IuywAEPDO1wcFzpUAdhvHGLJKOPMJBS5PPDgAfqV8tCokCaAKhVbwrFR3NCVV04uK3kBbWB3h5NQSctz24M9XpXmDRb9AE7b9eC1xUdYCY=
+	t=1739469659; cv=none; b=nrnNHLcWDZA2unpafxwCO8rdXNbLfThoDB5p3IYmwjPk4Syi8bhq95iHOip6LeJK1YBoDZqgmHNYTBrhhIIxqUyJiJOb4IdMSFLY34lWb2DzaTs//x+Z/rTdMpAbKG0Hu9WnUyrHC16XJ/b9VFD12NpaSw8RerROvdmMNqhMLLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469559; c=relaxed/simple;
-	bh=Pgn2vbpHZGhCOn5YhZz8fN0a5lPUgj2hH+tawYr3GvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCirjKBarElf9k30UWDEsANIbYgN0nssQvMJuOex6wGA1FXOaZpjkg9teMX8/+z8lR3DPJG/YzSd7JlQ/pqiNbGkP3960nckW9kCX8WcSQBam6XziGGUwNfEFV4/zXcXz9tYQJVAaMKvHw9io/+We43TaSJ67qVMCr1ztSOTVQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R52iamQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537F5C4CEE5;
-	Thu, 13 Feb 2025 17:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469558;
-	bh=Pgn2vbpHZGhCOn5YhZz8fN0a5lPUgj2hH+tawYr3GvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R52iamQnStdvdjPzrUWP5m3f6dlxeAVUJqqh2Zat/hZmMmlZ3FHIP25gpThz11R/D
-	 vg96qHC/2qAMYIMR6wmNuF/4329RLihz4GzMSQUEt68g3bpYzwf1dJzrZl3Rg7/t1p
-	 jvOBSQiBorqQZPb3p1svf5VOM8/TFStUBnvqPVCIw4pO27r3Z6Qnyi3pk4mD0z74yO
-	 B66OYoxbo/tqlkGISaWYvy3fvp2dC5W/XgM4ye3k/MUixPd3wsUdolVYLoaiZk9TAl
-	 7no88D98e6379shrdeW11gVSPGGHH/QAm4ezRmpsgWS00PbSjF8oG67spsPDlwYQfa
-	 cFQyhc2+LYypQ==
-Date: Thu, 13 Feb 2025 17:59:07 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation
- helper
-Message-ID: <20250213-crown-clustered-81c6434c892b@spud>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
+	s=arc-20240116; t=1739469659; c=relaxed/simple;
+	bh=4abGwX6CzCq8We7SpM6V7/PXsy+lszV/t7IY70ml+U4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JIXUlpsUv8P8oXiiWiw33sdF8GxFiQBm6GASvUcDtFoT7yotwZ4koRCcM74m+rD9WQ6SWcY0+3PacwhlgynfBSG723iY/q0R1ezEOyGs4BWQe0kIEHeVQaDNYMccLgdZuAvhI5YtSHnFmWnswhneqYcMmZens9ErrqfPrKO2iKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=cJCGrLX+; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7d58aa674so179440366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:00:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1739469656; x=1740074456; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4abGwX6CzCq8We7SpM6V7/PXsy+lszV/t7IY70ml+U4=;
+        b=cJCGrLX+wDKWARKqV36CmQ8v+Y8fjyp2liuM+b6HHeROpMu51/0IkJyyX9+E78Edx8
+         8BXOOyB8smbNCYf7SGv8GpQ6RN02D19CjPfSQn8vXnZhR0gFSFPRqf+OrbfzzdKwh+0R
+         VMlvu5+gB5geyZ+YsYgzBwrNBp6rE0BtISkAKInDyjNy6EQpEB6gFOyUGreWJ3LaeQsd
+         zd9fRqW+ErWYIBZeFeg+sGiwOyi3qvVWWw5aYY0JMvDCJFHkpB6VqBj6EJTfPFs17L5j
+         apV2zGKzMeMZaLDxTDfZh/BLXpPfEa2Qoooa/yYVgK7RNkUTYmHUac9MajCY5eyI9qSb
+         sbNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739469656; x=1740074456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4abGwX6CzCq8We7SpM6V7/PXsy+lszV/t7IY70ml+U4=;
+        b=vB7/43/pvOCwy3AV+ILrAKHLXwZ2GsHBuOXzhj7qsjX9diJwdHsuGkgarnMEYyrOzW
+         SqycnnmIeX5gjEA7ScyuPlzc3Xbnvmf6ZR+gAiWn0UytyZ9TrGoQPbmHidscwdWZ9JuY
+         pncW7ObAFCB/l1zOxqKsVoe6i+71dWrbVnCzF19zF1AtFAXoACAcJYfuQCKBdNrY41MR
+         SK5Ane4t7KD9Ts6L6wJyUifRFqeJT98KxpYNAe3SjGAdHk/CFMgcB1ZEVWWXMukaCim4
+         qQXe9PZAXS6OtUIW7QG4Tm3UOxKoruPnb19AdqfUNwnw8viIUpA0S/KKSPJx5jkdDl31
+         5Ozw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgGvRbb7Mr6ycNjnzrWxyqRb2Q7NyfEvasGc9U8mFQ38dmSUJ6yC307Ji69m+EIckRbTYrs0KE7KCsWno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyFb5t9qJBV4MnocB74NEXKVSdgUmDrNhe5DdVgIyxqI4hV4xb
+	eWvUK0fHCbE3qLMo0F3uKBdt42ul5DSK7VdhI5Tx65ikY3xVxsiFbiIGaeERwUH/Tu0Es+aRR7j
+	5QJimyYwWA47GsqwT0ahoAGj6YWvBfdOBN1cdVg==
+X-Gm-Gg: ASbGncuBRrdk3w1n1oY4Luz1FGn0Zt2hdEPdpVTo/O0IuWmovgtf6Sbpyql3rAKy9Oe
+	g1l+xhbsrpfAuXLAsZwmaC2sfffZYI0gJYSanx3OFhMC19tLV0ocku+B6Afl9+Y6VA2pHoom2yT
+	o1C5ld/JsB+pdaqJW63Pn+6/X6XFCR
+X-Google-Smtp-Source: AGHT+IEPn1vehWPEneMvy4h+MekCpIWgHCiWfjunKXP/Rg/zGzFsLUQXgBKZUi6VnPclc10evNFU6A3yPAiro3jiL5E=
+X-Received: by 2002:a17:906:7807:b0:ab7:6369:83fc with SMTP id
+ a640c23a62f3a-ab7f34af3d5mr742379366b.38.1739469655305; Thu, 13 Feb 2025
+ 10:00:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hayvwxyUW11W/dJv"
-Content-Disposition: inline
-In-Reply-To: <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+ <20250213180733.11999e07@bootlin.com> <CAMEGJJ2FB-wwyOtjjCmPJ-vUDpZaV-8MMXxV13qXnKxYSzt9pw@mail.gmail.com>
+ <07b973c1-4e35-440c-9009-85302a455912@lunn.ch>
+In-Reply-To: <07b973c1-4e35-440c-9009-85302a455912@lunn.ch>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Thu, 13 Feb 2025 18:00:44 +0000
+X-Gm-Features: AWEUYZk57dt7oMdE7oJWluEUSR6yrcUWkxTlMHydzKGl0ZQ5NYeC-9oOiQGkrQw
+Message-ID: <CAMEGJJ3++pZtOEvjAm2zMPVrLxQPtuzBWh4QQzGAt3NWuyyrJQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrea della Porta <andrea.porta@suse.com>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 13 Feb 2025 at 17:51, Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > etc. The same problem would exist for U-boot. Even though RP1 has a
+> > standard XHCI controller
+>
+> Although it is a standard XHCI controller, i assume it is not a PCIe
+> XHCI controller which can just be enumerated as a PCIe device?
 
---hayvwxyUW11W/dJv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are too many sub-devices in RP1 for them each to get their own
+function. Instead, they all share a single function, with DT to
+declare them.
 
-On Tue, Feb 11, 2025 at 06:27:59PM +0100, Jerome Brunet wrote:
-> The auxiliary device creation of this driver is simple enough to
-> use the available auxiliary device creation helper.
->=20
-> Use it and remove some boilerplate code.
->=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/reset/reset-mpfs.c | 52 +++-------------------------------------=
-------
->  1 file changed, 3 insertions(+), 49 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index 574e59db83a4fcf30b60cb5f638607a2ec7b0580..bbea64862181877eb7ae51fda=
-a9e50ffac17c908 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -155,62 +155,16 @@ static int mpfs_reset_probe(struct auxiliary_device=
- *adev,
->  	return devm_reset_controller_register(dev, rcdev);
->  }
-> =20
-> -static void mpfs_reset_unregister_adev(void *_adev)
-> -{
-> -	struct auxiliary_device *adev =3D _adev;
-> -
-> -	auxiliary_device_delete(adev);
-> -	auxiliary_device_uninit(adev);
-> -}
-> -
-> -static void mpfs_reset_adev_release(struct device *dev)
-> -{
-> -	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> -
-> -	kfree(adev);
-> -}
-> -
-> -static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk=
-_dev)
-> -{
-> -	struct auxiliary_device *adev;
-> -	int ret;
-> -
-> -	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
-> -	if (!adev)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	adev->name =3D "reset-mpfs";
-> -	adev->dev.parent =3D clk_dev;
-> -	adev->dev.release =3D mpfs_reset_adev_release;
-> -	adev->id =3D 666u;
-> -
-> -	ret =3D auxiliary_device_init(adev);
-> -	if (ret) {
-> -		kfree(adev);
-> -		return ERR_PTR(ret);
-> -	}
-> -
-> -	return adev;
-> -}
-> -
->  int mpfs_reset_controller_register(struct device *clk_dev, void __iomem =
-*base)
->  {
->  	struct auxiliary_device *adev;
-> -	int ret;
-> =20
-> -	adev =3D mpfs_reset_adev_alloc(clk_dev);
-> +	adev =3D devm_auxiliary_device_create(clk_dev, "reset-mpfs",
-> +					    (__force void *)base, 666u);
-
-Moving the boilerplate into a helper makes sense:
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-One think that's always felt a bit meh to me is this id number stuff,
-I just threw in 666 for meme value. The whole thing seems super
-arbitrary, do any of the users of this helper actually put meaningful
-values into the id parameter?
-
->  	if (IS_ERR(adev))
->  		return PTR_ERR(adev);
-> =20
-> -	ret =3D auxiliary_device_add(adev);
-> -	if (ret) {
-> -		auxiliary_device_uninit(adev);
-> -		return ret;
-> -	}
-> -
-> -	adev->dev.platform_data =3D (__force void *)base;
-> -
-> -	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, ad=
-ev);
-> +	return 0;
->  }
->  EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, "MCHP_CLK_MPFS");
-> =20
->=20
-> --=20
-> 2.45.2
->=20
-
---hayvwxyUW11W/dJv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ64y1gAKCRB4tDGHoIJi
-0tpDAQDNGTJm0hUvHu9/lgcEwur44fxS2Qlcl7n70eboDVTC6gD/VBr9uDAEKvks
-C7yxajoK6tXd6NFsVd0104wfqGk41QU=
-=kI4Q
------END PGP SIGNATURE-----
-
---hayvwxyUW11W/dJv--
+Phil
 
