@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-513458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECF2A34AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:50:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3878A34A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B57773AAA69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C3A1899E3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC53328A2A0;
-	Thu, 13 Feb 2025 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5D428A2D0;
+	Thu, 13 Feb 2025 16:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x7rlWs85"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/Bx2Yfx"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547D228A2AC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1144C28A2AC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464523; cv=none; b=RkE8M2Z8SNDPvAgZaY28oedRuIRsZsLxfIYuPbI7PDLPEyjJgWAAZMQIxTUZKyiBBvWFZnHVl7LC7jW206tmLURsjyrovFoenqmB2Q13BQ3i99p9FS7yNwgSRFYIRT+DBKKHXK2S01+g2DVylfaF110aKwnm2vFaiLqNZ0ZPEks=
+	t=1739464535; cv=none; b=HAh9ZtNORWKwu6WvAjoSNcYKn+fpxkOZt/bpmNX5wqhBUjZKEsC/JKT92G2BcJg8MAeX0+U+hpVYcjIpMXkkvWpfzACmsg5C+db+5vQLKKQoXhdKe8EIOvpkCbMJSAS+bsykRf2sZdNam8OwdpYE4rSuGoRNejvTEA/pFZEXz7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464523; c=relaxed/simple;
-	bh=yWnW/kJAYxgrx6fkyYdIWUpHfXoeR6EtTDT6T9Ppp8g=;
+	s=arc-20240116; t=1739464535; c=relaxed/simple;
+	bh=QkAlt2M1y0TiCkTxu4i1QewxxzLmHX9YtjLRB1QK7S8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoV3dHoID3PiFovogZsjqDaFLwrpk7cPhgg4Alp9PIIAeCUyK7v2/Lpc+kineWXEoG/+JbNhAlly+efKlp+6fZjSM4cbwlS1jRLThYW/5wzVgN0u264WlEkEAJKJ7YnZmC6Vb5W4FIOUzlPlIos8zaO8UL65a/hg8W8HPANmyss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x7rlWs85; arc=none smtp.client-ip=209.85.167.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNir2AAbdlSGUN+0j0y5skl16lcqERe0EdL0AHizPfY3BArLZEY0O7TuQd0bHFuvFDKqD9Q5GiPGwi6XqG1W81wQQ1PdMTQG88RtBYRXqaz0mbRfEdQOs8UVUi8RBPWf86c0l43lGIGEzOqM7XrR6BPIMshMXvTICrllykfHLvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/Bx2Yfx; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5450475df04so1089378e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:35:20 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4395817a7f2so7583585e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:35:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739464519; x=1740069319; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739464532; x=1740069332; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+g5BZbHHAPB1An6Dt98zb4sht9CAKT/HIRa43hMPclQ=;
-        b=x7rlWs85AjPPRdmuZ3507bvAb0GqWEDHf23WZVr8/YZJAd2vML1r8Ijzyrfxt/zzoX
-         cOotb1OLq4JI7wsGXBpdTIU+xCQKKnDpR643+50s8Y0mjNr9RfLbW0zQ1Bvh3KrRWewQ
-         A32K8r/lLsV8LgPJ4dAszHuhNW6dtjOsgy9hLjyO0uD/c5XYaTqPSC2Aa9A3UaJwNkRO
-         95GWRanIXC/0sUnp4cRUBey80P5gnN9q1edMJICmciAlnaPioYCkWLO/55k5CvTfcFhx
-         7KGSHuM/M5Fq+hxUC09pRT6Ah/FksZYq42tiqUZLrqPRhqMRnAyfAz0p4iGFtLpgnYiG
-         Iu/Q==
+        bh=VkUcjMmDcjBIWHZCqAgxZp7FU0Fk/ys2zKA4pFxdyX4=;
+        b=A/Bx2YfxJ3H/HP/rdLfR4EWreTMMX4HLrpxh8w5yfkvmBqyLggDUaecnulXLr3LrCe
+         XW7sodE6WsNXqO5hRSTLEoH6rztJcV7hJ1+9rCGMI6NqSBA8NCpiHQOKHPvsagvnPixy
+         T/nPCCnBkHDOMHkaroOXBbAnpLX2wJ1bzkEVKj6rk4Rt425NfxqU6eqzyvAee4842V12
+         Fd7WJ4Eu7IQF1trsQjMyz9VLJq/qtPhYCufStk4rdNer4eFHrdMgZqY0cJ8nCFbtGZG9
+         NVEuMzyhFFMa8YIV1SNn+RlvWMvKNBHqf1aUgov9etwHygegGUjir0ozWls4xlNG5S7S
+         ShjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739464519; x=1740069319;
+        d=1e100.net; s=20230601; t=1739464532; x=1740069332;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+g5BZbHHAPB1An6Dt98zb4sht9CAKT/HIRa43hMPclQ=;
-        b=DAO3h53/KQKKKiS11ki9RSoowzZrY1DtWXQDOypg2KJddYXWMUH+sLa/V2uqTi4IaT
-         mCXJg0DzGmfdKUAxhVxyJPJbFRKT67RBd2p7WW/jmtgm1074l7AAukikZyMUrPGKfS1W
-         HsyuaVTTeTTqNXGK5qGS9/ieG7MbpQa+7UYjUws0WkHC6zZaItwUWkLAEzPmO7LKgKw0
-         eS9bvpt+UWS/pEG5Vs/SZmvMm8/lJ45r9LQHHP0IHmOwQlrHyxrw9LBD2wxz1idzklRQ
-         bq2H1CmIMb26T772f4X4PwimZAwePGstINPIr3mFUQspe1LstP4A2AZKIqYp9gz7m0K0
-         ohsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvaKIcn8UerypbSpvzyPkWC3RKsK6AtAmblzC0eYw0bTeZ2JuD6517R3DoFfJwGdy9ExVLCuhYKeedoPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4+TROgVOUWEtWHXUS99LpEv6eN/NYla39n/ZNoKC53OnPXMpk
-	3niQKHzfMbKwj4L49sF/ZAgkJVZRaiInk7cYiE4EaBSRv0jNd9u9kS8CrocJiSA=
-X-Gm-Gg: ASbGncvxz7ME+Z3vmlitV2AU+Sgg/aywcai9cSEhlGCY/HlKloAh6EB+A/gzOUOgkja
-	xrC6inUlFAv4wnAhRySwi60zPyac90t2XzKKjWg1+VNeqQubwY3pBlX991CNx7/yWRnuOYE7epn
-	m3ZyyiJ7cwxZWwIkwIftb6jVlW3FQkCr+/JHFOMLTZaACQMSGgh5p3byGU3xbEjqAWuFfiFeyaK
-	BZIN/twtjt7frxLqLWOdwmCR+h2YfCiC0fIaseHA89NE+GHdggMrHPcII7PDKH1sGZWaseRlM+D
-	ZYuAw/lZy7CIX/iAvbMMVz+K3kqrOPOC+taDheK/L6rQXV27BeP55Wiukpv46mNyZPKFZWM=
-X-Google-Smtp-Source: AGHT+IGKjcVYYqdaHVsMaxCCVB5KBYPSpTeBQ8LjU/GvaZgQpd6IvYwsCf50qVtW9DHkVjgHmROd7w==
-X-Received: by 2002:a05:6512:3b2c:b0:545:95b:a335 with SMTP id 2adb3069b0e04-5451810cb35mr2704828e87.14.1739464519298;
-        Thu, 13 Feb 2025 08:35:19 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f11ebd6sm215877e87.214.2025.02.13.08.35.16
+        bh=VkUcjMmDcjBIWHZCqAgxZp7FU0Fk/ys2zKA4pFxdyX4=;
+        b=a3s5b9oyQJg5VIgfJB8PG1wWJOyuESwAMIuoLaDJ8dc2RgCfR/qeE+mKAl2V2xu/69
+         xI2mT3ZeQxCoEkj+qw2TCGmfzClc3wSjd0fCFjgKhsh/kcZp253KkWxR2zmlA6g3dXIr
+         fpkVJaK4X4DsF0i90apHzbiz+9vP7wLDuJwDjHQEHgEWYY6nsTTQtwTXwLgx+tWlVTC1
+         x7mxFclErbbHtZOtvQkR9XDpIkrm546jslzapuj+4Z5jyH5lez4KxGcqxSK1SFfw8xdi
+         CefoJCFtbtkBRZ7QorbKLh76PAq4ch6caBqMan4UwJStf8eb/PmI97DRys+MjL3SOF9C
+         wMKA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ZfANf1jeGIuKc5pLINSM87Ilt+IFFrsaOznpSGhzfUDEpsm3sV5d0s2w12e7yMnSZwiSbIl5f8CLI/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbIBgGNXmD9v3in2M17CIpsPYRofktRdjn9FNpcBpk0GconXjW
+	7KacR5GGPxLE3swrBc48DLTISCo84NqbLGp6c/60aNJM5QO0mJWmbSsgItjS6K8=
+X-Gm-Gg: ASbGncvXVsUowSfDf5MwFHWyVO0DBuMZexGBCoCKk3Lpn3cgq28pFfIwSvfe0i1T3IN
+	0kV6b64hiaNJxs2jW+XI4z1eaw3YmJsfhh44IgH1pwA5Ba3OiE3yNabrJtjNBJqFrY6gZO1wXQZ
+	sJ9SGVY5M7hs5HwY2ELzELZjnneYIoBNXzbKd8Vr0LqsJ37jubcdDgLth25oNeIIP9KXqiLaZOp
+	rKHJ3oK45luSdqW/0IthMEkUaf9AjZNi7uislvjyPw4duSFg1ZLlN+nMAGkls7YoTxkSs9jwOst
+	jkiWY6MPKcb2cA==
+X-Google-Smtp-Source: AGHT+IFM1kxdJteFvAGtFfb2y2uOiPSqES4FB6gOuR+NQII0SSEfN8Pt53ab+u81k2xRmqiGXbaHxQ==
+X-Received: by 2002:a7b:cbc7:0:b0:439:65c5:f28a with SMTP id 5b1f17b1804b1-43965c5f2f4mr12621705e9.16.1739464532321;
+        Thu, 13 Feb 2025 08:35:32 -0800 (PST)
+Received: from linaro.org ([86.123.96.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439653f0556sm7049395e9.1.2025.02.13.08.35.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 08:35:17 -0800 (PST)
-Date: Thu, 13 Feb 2025 18:35:15 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 32/37] drm/bridge: Make encoder pointer deprecated
-Message-ID: <nfb4fb6lzjw4j5brsh242htgw3au2moklqjalfa3zzxjsi2qn5@l3censelmgbz>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-32-e71598f49c8f@kernel.org>
+        Thu, 13 Feb 2025 08:35:31 -0800 (PST)
+Date: Thu, 13 Feb 2025 18:35:30 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] drm/msm/a6xx: Print GMU core firmware version at boot
+Message-ID: <Z64fUjIfFzs4R8Im@linaro.org>
+References: <20241219-topic-gmu_fw_ver-v1-0-d403a70052d8@oss.qualcomm.com>
+ <20241219-topic-gmu_fw_ver-v1-2-d403a70052d8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,30 +94,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-32-e71598f49c8f@kernel.org>
+In-Reply-To: <20241219-topic-gmu_fw_ver-v1-2-d403a70052d8@oss.qualcomm.com>
 
-On Thu, Feb 13, 2025 at 03:43:51PM +0100, Maxime Ripard wrote:
-> Other entities (drm_connector.crtc, drm_encoder.crtc, etc.) have
-> pointer to other currently bound entities. They are all considered
-> relevant only for non-atomic drivers, and generally perceived as
-> deprecated in favour of the equivalent pointers in the atomic states.
-
-I think there is a significant difference between mentioned fields and
-drm_bridge.encoder: the former fields are variable and can change. The
-latter one is static and set at the bridge attachment time. Nevertheless
-I think it is a good idea to deprecate it.
-
+On 24-12-19 23:36:56, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> It used to be useful because we didn't have alternatives, but now that
-> we do, let's make sure it's done for drm_bridge.encoder too.
+> Log the version for informational purposes, such as for keeping track
+> of possible GMU fw-related failures in crash / CI logs.
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Intentionally not implemented on the if (gmu->legacy) codepath, as
+> these registers seem not to be used on there.
+> 
+> Downstream additionally warns if the firmware version is too old for
+> a given GPU, but we already pair the binary to a given GPU, so let's
+> not go there at the moment.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
->  include/drm/drm_bridge.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index 14db7376c712d19446b38152e480bd5a1e0a5198..a7ea2b2af1dc3816906236df929df36e37d8f606 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -729,6 +729,7 @@ static int a6xx_gmu_fw_load(struct a6xx_gmu *gmu)
+>  	const struct firmware *fw_image = adreno_gpu->fw[ADRENO_FW_GMU];
+>  	const struct block_header *blk;
+>  	u32 reg_offset;
+> +	u32 ver;
+>  
+>  	u32 itcm_base = 0x00000000;
+>  	u32 dtcm_base = 0x00040000;
+> @@ -775,6 +776,12 @@ static int a6xx_gmu_fw_load(struct a6xx_gmu *gmu)
+>  		}
+>  	}
+>  
+> +	ver = gmu_read(gmu, REG_A6XX_GMU_CORE_FW_VERSION);
+> +	DRM_INFO("Loaded GMU firmware v%u.%u.%u\n",
+> +		 FIELD_GET(A6XX_GMU_CORE_FW_VERSION_MAJOR__MASK, ver),
+> +		 FIELD_GET(A6XX_GMU_CORE_FW_VERSION_MINOR__MASK, ver),
+> +		 FIELD_GET(A6XX_GMU_CORE_FW_VERSION_STEP__MASK, ver));
 
--- 
-With best wishes
-Dmitry
+I get the following spam:
+
+[  109.928924] [drm] Loaded GMU firmware v3.1.10
+[  110.301295] [drm] Loaded GMU firmware v3.1.10
+[  110.472620] [drm] Loaded GMU firmware v3.1.10
+[  111.164303] [drm] Loaded GMU firmware v3.1.10
+[  111.864830] [drm] Loaded GMU firmware v3.1.10
+...
+
+Stacktrace shows this being called from runtime resume:
+
+[   19.380390] Call trace:
+[   19.380391]  show_stack+0x18/0x24 (C)
+[   19.380399]  dump_stack_lvl+0x40/0x84
+[   19.380403]  dump_stack+0x18/0x24
+[   19.380405]  a6xx_gmu_resume+0x450/0xc44 [msm]
+[   19.380426]  a6xx_gmu_pm_resume+0x34/0x220 [msm]
+[   19.380437]  adreno_runtime_resume+0x28/0x34 [msm]
+[   19.380446]  pm_generic_runtime_resume+0x28/0x3c
+[   19.380451]  __rpm_callback+0x84/0x390
+[   19.380453]  rpm_resume+0x3d0/0x5c0
+[   19.380455]  __pm_runtime_resume+0x4c/0x94
+[   19.380457]  adreno_get_param+0xdc/0x274 [msm]
+[   19.380466]  msm_ioctl_get_param+0x5c/0x68 [msm]
+[   19.380475]  drm_ioctl_kernel+0xd4/0x10c [drm]
+[   19.380491]  drm_ioctl+0x26c/0x40c [drm]
+[   19.380499]  __arm64_sys_ioctl+0x90/0xcc
+[   19.380503]  invoke_syscall+0x40/0xf8
+[   19.380505]  el0_svc_common+0xac/0xdc
+[   19.380506]  do_el0_svc+0x1c/0x28
+[   19.380508]  el0_svc+0x34/0x7c
+[   19.380512]  el0t_64_sync_handler+0x84/0x108
+[   19.380513]  el0t_64_sync+0x198/0x19c
+
+So maybe DRM_INFO_ONCE instead ?
+
+> +
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.47.1
+> 
+> 
 
