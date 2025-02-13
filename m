@@ -1,230 +1,233 @@
-Return-Path: <linux-kernel+bounces-512129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A42A3347F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4ADBA33484
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357EC166144
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E903165117
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3160537E5;
-	Thu, 13 Feb 2025 01:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462D80034;
+	Thu, 13 Feb 2025 01:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GxlpIsNH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dBxP72GS"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B454A29
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739409440; cv=fail; b=qB2m0rD2VK2keTcAkFSjUhUuyMQUKgj5ciQiu9NMJjS6k99NinhisZMmEzoA/hiYz6ESbUdC2XfXXmATMuUdxKdMEdOiMmZukalezI5fdGgGypjVxXVXPXCew8wFr/IBjdqhXR8QRMuoZr1zNZFI4/F0LgBCKE3pzW5QeB2vSO0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739409440; c=relaxed/simple;
-	bh=aSZCFnlXcIiMfqvYN0YRSc1YJ3gsvnUC6gRr/HgQ2vA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Iog9C54K8TZqPQExh2yGc3IpQdTeL5Zs51DF2lcle6xXGVTjvfA4890z56HiYXkNzAOPTdIQeN1PqXUf8X7P5hzbbvJvZINxw27/lZSx/dw/5G/Tfz+SjbXjSerbAjCIE0vCkdaU9Y/lGw811sBQ0ZCLi0aY42H2InXjrDNsxhs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GxlpIsNH; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739409438; x=1770945438;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=aSZCFnlXcIiMfqvYN0YRSc1YJ3gsvnUC6gRr/HgQ2vA=;
-  b=GxlpIsNHl16lmg4vwYQsqX/fWGegNXKAKlkWJtcjq2KPiLrUxzQIzNVO
-   Krl0aVlVGlgDokSUHJAsFUCuwTtf+B2XM6FGg3qcoIwHqSshqTmDZJJ6u
-   +4jjDfXT5rMiw0KHB64fm+V/vOJt6mnytEuSsla40tVplMx3FqG2v+VBg
-   PGr/aG2cRi3+AFAr/CaMg2nkTKhMEclM1rBBDgALCcKWls7KtMGjEcHy7
-   DSn/A8glEidQRlP5zkkMlbYfeo9Vw5080DXpTFhc9DoDsUGYryHgpY7ol
-   dee98omnvXqF1tmAYzRXTAKsB7fTP01hntciYVbgY4+XQCBUbkugJeFoC
-   g==;
-X-CSE-ConnectionGUID: 5jpyAuBUSMq2PLPl59VWbQ==
-X-CSE-MsgGUID: BenpkXsPRwG3P0D+WGZ5jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39278946"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="39278946"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 17:17:17 -0800
-X-CSE-ConnectionGUID: m/FVbfFbQvaXzZB0GLha9g==
-X-CSE-MsgGUID: 8TX1VqROSgic/geC7hba5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150158498"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 17:17:06 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 12 Feb 2025 17:17:05 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Wed, 12 Feb 2025 17:17:05 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 12 Feb 2025 17:17:05 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OOizElYtrDlK2KcL1CRy/zego8IM14xhG9sR5qgLjLANVqVEqiEKYpX9ZMJ6eNmoD6vw+F8ulXUYA6s269UadpOmp/XtCsavZj/5XGKpn9GWJQIdm9jcvOxOnEhlLg35QUwzxvxu7TELjhK/Tuhux4F6Q98wd/XRMAevqQk8kIclJ3XF0AGLZR7j4Hdm+H3nrTlzr6DvHtn9BcrwOpzNhhv56kYetp+B2kBRVmvOONIIYGboZ5fK47hCCxtUwyfArHee0UmeS5EFte9R625f/XOcMgjS873zvBLu2Gi1WKa6umIkG8kl151FhFlYT1enCde5/D5wf5A42jNo4rbmFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HDMf+oZCKauNFdczl5ZlwPmmPjr27DBBGmtz4NEkXpc=;
- b=jeFCxQzdqyhpajnRtUVMbVqcxDMqmC+kjIM9AVNShLBaNQkZhaskYqn9bct4oNLxckB/h/6UsT30OZG0r7/9kKjucJ6kNaeYMVlRq+xVwSR7c0bJruC9KJdQOePi+Y6aSoaVsNjzMy9ynDP/nrhAqTvr8kBb2BagETil/2ss4vi46TGTUykFObVFA2r9JRVWUI+pUBY7hmiqiaUWGs1zbL5PqgvJ3LqBfAv4o8vLIdJUvGFHRPj+jmjKc54cbOuTrDpd2iWv/TWeWiyKNw29QitBlxwBSer9SQ5ko6THIuHfCZZ4ZSBtSB2Uqn07T7u4tt8zT6gCUTaGJgtoRskVJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by BY1PR11MB8030.namprd11.prod.outlook.com (2603:10b6:a03:522::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.15; Thu, 13 Feb
- 2025 01:17:02 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.8422.015; Thu, 13 Feb 2025
- 01:17:02 +0000
-Date: Wed, 12 Feb 2025 17:18:03 -0800
-From: Matthew Brost <matthew.brost@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, Liviu Dudau <liviu.dudau@arm.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Stephen
- Rothwell" <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] drm: drop i2c subdir from Makefile
-Message-ID: <Z61IS+WVVi049Dp5@lstrano-desk.jf.intel.com>
-References: <20250213-fix-tda-v1-1-d3d34b2dc907@linaro.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250213-fix-tda-v1-1-d3d34b2dc907@linaro.org>
-X-ClientProxiedBy: BYAPR05CA0040.namprd05.prod.outlook.com
- (2603:10b6:a03:74::17) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01C52B2CF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739409634; cv=none; b=t0C8tyLREsXCCPzdrkNW9tEzbTzp2szXn5CfNKGSotrShX1/7MDNohC+8zTcs84WPBz7ZKEJAH+P3GN0Tu55dC0NguflqgQMruH/mN3Mr/re0Xrx+aJWdSOoUS+pGGPRF+gBNkxxPI5J9PEUDMFsZFOR8+v+ajf3wIHZKtBdZ2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739409634; c=relaxed/simple;
+	bh=rddLN22d+/1D/2o2/F804ZOaB7V9MqCThiWg6yyHFnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spyQSWOsZAwR6Q/vbVIqEfuhSsZ+LiF7T4FRWIBT4dSByUV0H8kl1Bfdhk/vI+0ZA+lNbW01DcuZQX5vrR9ZEskzXH0iJI5opaWwPvys4eGn8dduHIjd/ZxHDGMNxrwEzSLXYkzZLGhq3mFfp/RqvduZIMrjQJU5EmbKTqee4sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dBxP72GS; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fa8ac56891so579918a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 17:20:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739409632; x=1740014432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5yzcW8oX5WUcT7aJd3CF5Y4NwhpvWpkNhi9XuFS/SQ=;
+        b=dBxP72GSiNGc96Ya8RdVj4rjminyhCqIth6cOhubHrmV/G/Jo5gVO2PlhKRpoxaeC7
+         Ovp/ILvmqGaSAGqXE+2kVeW2VfFPPApCTB39sb0nueIpjtiecrMC+zvN15/jlkdKywo7
+         22le2dg+QID2XMuBaKlD6Pc+CjelvJs+4DYYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739409632; x=1740014432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j5yzcW8oX5WUcT7aJd3CF5Y4NwhpvWpkNhi9XuFS/SQ=;
+        b=qkMel88ixsFSE5OcP0D+tB4w/wQE4Bvbsbtm3bJPuvL8oxEa+0+llmsqaf7yyjx0X2
+         kzB7voLe+Bj/TFIBM2bsasqbG6SE1ew0gl0WX8ehXY+X0L1yUtNoyHSDIQka+rYsIm/M
+         cyU84Xa3MU79oF9T3WZwm7OW0Mpb7ANyqAAZLE9jnXMy1JqLwcnz4/efzLj2PH/srF+9
+         5qbEPR3NdBmglbXRAcmOdKQJqLaUnF6k4jMfJehraxp2HkY1d25bTP/btLmPWDhHx5cQ
+         5TpT5puF+nRCewZNnt1CkXPfhQPWuYYzQiT13jrKhy3psR8mDX4Jx6aeM5vzp79AUc7m
+         vPxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXunUlQf2SkCxh0A8xhYhidi1eTtRLOfDYvrGeDjLeSGfJO0bI6srOeTr5mSrFm6y7mq8MFiuibbsHNoQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG7togi6y22kmamWTfpRdghq4tzifv9k+WbmR1ziQWN2kEMx3l
+	6i8qpl0nNcH+zL8uejuCUOK1jGUmoFdPnzTqhWALX89m72PeIRODpVANucX0Wg==
+X-Gm-Gg: ASbGnct1NgxgpNq4+RvO5wkzYZ/Kt11mGLpQHOdWz4IjDUS8Vk4pBUc3wZZmhpzsbte
+	adNGJp+HAJBU5z3ZG6Ef1Qh1pyAtR1ElWSRevXcLgJGouhbAhotwe6JFQNErGf0QIiazRQClkjL
+	23GHIC1ng2tPket8V1mmH8uo56OYfUA9b7XnMN9j24Tko6KqXieELtsmj6xK7FuNd/y1Ni8Plqc
+	Y1s8JfbYZ1NQwrHbPnPGFkwC/EAyMQaAjP1g6KKwEMJVtBf6lQHenpE3POU8+gY4RZsOtUMlU3P
+	Nqmw9Ud3m2rYU95xQ2w=
+X-Google-Smtp-Source: AGHT+IFz78SukHoa4AyFSSbifesUTDX5mA95Vm0b7xBenCGTT8D1XDGYUmY9XlGjCsqa6H9V082PRw==
+X-Received: by 2002:a17:90b:1b0b:b0:2ea:356f:51b4 with SMTP id 98e67ed59e1d1-2fc0e2c967bmr1874970a91.13.1739409631957;
+        Wed, 12 Feb 2025 17:20:31 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:69f5:6852:451e:8142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ac0a84sm91974a91.16.2025.02.12.17.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 17:20:31 -0800 (PST)
+Date: Thu, 13 Feb 2025 10:20:26 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 12/18] zsmalloc: make zspage lock preemptible
+Message-ID: <etumn4tax7g5c3wygn2aazmo5m7f4ydfji7ehno5i6jckkf27e@mu3fisrw5jcc>
+References: <20250212063153.179231-1-senozhatsky@chromium.org>
+ <20250212063153.179231-13-senozhatsky@chromium.org>
+ <Z6zXEktee8OS51hg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|BY1PR11MB8030:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2c41cc7-5c72-496b-5e4b-08dd4bcc1f02
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7bQTY/bvgfDvL0MbTuNPp7565MOxe8Lw3iL/jFLPl3183wq8D0zud7lF5m2G?=
- =?us-ascii?Q?8qWBoxIFuqYrLzSn1EtKEjE01e0mC7x7Q3XVGPOKRIjvkJXcqPeli7j2s5/V?=
- =?us-ascii?Q?KR47Ns1snINGGMwZPIoHeDTcqsdbMCYTf9pUIpJynhTz22sk7TdhfjgzVo5h?=
- =?us-ascii?Q?my/i6KONryU/tceFb5px74RBHDn5teXrKJ8QHjEu1CMKlL0K4k7xzBrJ8n7g?=
- =?us-ascii?Q?Llhlhhqtv7UT83YTb1ZMIeLY+jq7Mp4rLwAowE864kGBkl/RtUkeP5XlPXXW?=
- =?us-ascii?Q?MKToEhnVL3hb/XY3kaRcqU1+2AOcTJ1b0a6XaMX42WIdWedUzZQMnhu5uSFY?=
- =?us-ascii?Q?fHO6KTl7V946fihueTIiQcY3Y0OVWq64ptb4oAo0u16v/gziL1ihRJROFe8A?=
- =?us-ascii?Q?YrvQ6k6e8nJgFzWpEQuqQArxkwpoY/exuJ4CDn4H2RZuvgaaCJYn77ogAWLY?=
- =?us-ascii?Q?4juSyY2AHyXSnDRS7BRDnpgEtcqVV3ldJFVqLNFvMO/JiplrLnAYLqlKNbur?=
- =?us-ascii?Q?3WUfpEST7S+SaOhdofgV+CXoQxhtf21KWXVOyUvkFdoCL+ZtmgLQqjGddk/k?=
- =?us-ascii?Q?UnILlJ2Iv0UDd+vqBXI95KqEe85/rtQ0MHoWyKUlW1k0mpYcAtkQD02QCKYb?=
- =?us-ascii?Q?lBf49vC3NENn6r4JC4PSHznwhCRBEQEdSPp8xW+62N2rxXWjFG1VOOQsbBku?=
- =?us-ascii?Q?mN0xsvIxReRJSRqUtlICn0DrqQO6ugmiDd1NJOUwpS2LzMbGZNWv0FryNthK?=
- =?us-ascii?Q?lLxF1E21oYf3D8apIWUETW6vzWecXZj8Iemh7D+ae0uLDN4LQmo/sttfmWfm?=
- =?us-ascii?Q?ltZHTIap5EbfICXrLCeEfYC+fzQDVqHYOcf4DK7SJUTB9kgVQjmQIjT63z39?=
- =?us-ascii?Q?vuk5aRzNKSSME2cT3nvNWSll4oho3CCWBQF4IyhoOzKdfNd0akGLbDkQ+DmM?=
- =?us-ascii?Q?rb09iyjiLqPEdV+ZK32zMayqQlGpQ5Z5EqTBEA5K+frdRrWfh2BxAe4+Si/3?=
- =?us-ascii?Q?3QOFvDtV3t0e1JlRwhjunTyGFU4OU5dsgcS9SM/ga3VTmRhkCQqVsCpNtCm0?=
- =?us-ascii?Q?FEgkAYBKJErNF0Ab/xGBnFFUdjBxLm5VDD6qL5Buop3otEtnEsvS7HGhQSSw?=
- =?us-ascii?Q?bfP/st4yGT2K5muqTZrvC5bx+RmOA6gVtBezxayLPFansyc456TylClHfI3/?=
- =?us-ascii?Q?gAg7aCjfzbXDsZWaVxDhykUFG/lCpaSdgLnVABjALjeFmx9xRyQYJRSgai6f?=
- =?us-ascii?Q?YjVpHTFuYb4/GYrLLE5OYbltwq5ACTbop3Vyvzqtlcl5fFN1FzX98xrGpQhr?=
- =?us-ascii?Q?PIoJPWhsotb3yx0K3WrDMnR0z+z90sgqudBIiHtmkn50MjCM0nNlwuWERMzL?=
- =?us-ascii?Q?3ogQpvLYTfVvnB2vhDi7Ag4gKoQ1?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+M7O/qBXP5x7QcwsPJI+cLOVOVQmKQtJbE34akl/WeimYR2YJmm1+nUkY730?=
- =?us-ascii?Q?wr1gIdHsnuXY6mLHvebplIoFuSV3Zsjt6cHQkXh8AJwekU10KgvW5ZR2pzQo?=
- =?us-ascii?Q?OMd+4uDN9DJ4T4u88hzcgvw2wGEN9Rd8vASp94oe7AlaHh8gw/SfFI1XjY5Z?=
- =?us-ascii?Q?lBOr9XURFYm8x4K5C6MgKZffBygpijGqdJPO31G2gyoJCM5UNtFmEjIW/HvS?=
- =?us-ascii?Q?vwyv+DAQL4aLgmowBN+63PUpnJmVN3BuD5IsVaCM0c4gxX4xKwAXck8wv8GW?=
- =?us-ascii?Q?PjD1rVplESQVHBIwBPkLPzoqFHXtF8xaMhLWHmAWMaK8aHKTKOwVFqiD73s9?=
- =?us-ascii?Q?y0uR1HZsJY1FZ+FB+n936oMKWxpdjTtuLFO9kS3sMKSTR/W4ha9oTgiJmp5S?=
- =?us-ascii?Q?RsROxWVH4fanoWumWQuGjl0EqbigrGqOFes6KptygF+lIvbasOQjsmZNx1rq?=
- =?us-ascii?Q?JjJEKIZVx0nD9uAZSKDHxhLoTPcJQVfdbobXnBscXx5awQ1PHqVI6dIM0Mcv?=
- =?us-ascii?Q?/2oNCI0jJPLgsLdZgSg6x/U9yA4Q7voq5gA+r3727T8qz3Fmw/U4hHxdKwbn?=
- =?us-ascii?Q?yJabW9uMAvxVzSlnxm1Nnzgv9XMrse/8qI1rBXRFYD9OA5gevchWivH14/dJ?=
- =?us-ascii?Q?kTfYN5LPmtfLF1WTD6QekAG1mluSgki/FV/9fZYN56yTpJipIrgIyyTU1SRn?=
- =?us-ascii?Q?/AUvoDAIv3qvt6IFcDy6TZZHjlROoL/EFXBILDrXWGQ7639JxXn96gyKxKQ2?=
- =?us-ascii?Q?ne3NgyPGzIpq85IxVyryrbB6LLE+OJZh3DgGgLWgz/P+8JE9mklnjRAhc31S?=
- =?us-ascii?Q?Fitvc/1Jxb5n0zp4cMAumFOu9mgM2oxPv8puAWZ6l1+AQaazLFL22q3Msko5?=
- =?us-ascii?Q?DX89O8eS7ABXSnQtootw7a1wDUhn4aW0s7VkAUHUrkJKCS3F7mhqzq7Hb6Hp?=
- =?us-ascii?Q?tp5BN0fgWGkPUax4w8vYTLLzJirLoRXM721Z7iNowZGadB3sI9ysfJE2pRQw?=
- =?us-ascii?Q?gaWIAzj/e52k/8gN8z28Ked4QucZN6exUbeMFHVRsDxBRL+5IL4JAxOxwtKk?=
- =?us-ascii?Q?qZrAkHDXOR4s84Nzz9fDIF3LChnlqQvtiTKJBd/LKXk4q+ygSL7YxydDoPhv?=
- =?us-ascii?Q?M+uDQtD6mOd7qoPwMbyacF1FOBO73jLBWEUX8GAVVJQPEmgLWVJxopb2dTmZ?=
- =?us-ascii?Q?e2jXC/TJu8GRuaYaTTQpzOHTkvSpVL2ziR2xQewleeqpp493OCVjVoobW5v5?=
- =?us-ascii?Q?kNurZGe170+paA5ayikNFuXmEMII6YOiUMX91rx7dvyJ+rRNqANZfY07ezmW?=
- =?us-ascii?Q?7AwBGAPhgQ7wmce4hZYltxaXNadlwAjB8RtTVQYnc/WdQ9tbvBe/OvLlqlKv?=
- =?us-ascii?Q?lMWUxzo8O++ZLTFuVPTVN9RMgay1Ox+0k6wQlLDdsMjJBDuabr3U0x9y4vI7?=
- =?us-ascii?Q?bZcazDhxrK9UWsJ7XYgPuoGztEpPiNl6yDwlKMiJo7qPyATbjKpKbRDtI2HD?=
- =?us-ascii?Q?B1ZOG1J9JinverTmfgOowKCYfC1c2FmCcap38u8+srQBdiXl8uv+ZD17O1Aj?=
- =?us-ascii?Q?C2mHJQjt9BZzBvwElWzo48ndam4bmOj3uBDhfoyfeBsr+yT+j40VYb3uYu65?=
- =?us-ascii?Q?2A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2c41cc7-5c72-496b-5e4b-08dd4bcc1f02
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 01:17:02.3658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YZn/Z753bDgp/hZwii/qw5zQdfBz/hV8abFNTpV6l/i1/EKUCyS6TN5xyiFjaEMxG1V+Bs4Imrb3kw+72uGLuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8030
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6zXEktee8OS51hg@google.com>
 
-On Thu, Feb 13, 2025 at 02:49:41AM +0200, Dmitry Baryshkov wrote:
-> The commit 325ba852d148 ("drm/i2c: move TDA998x driver under
-> drivers/gpu/drm/bridge") deleted the drivers/gpu/drm/i2c/ subdir, but
-> didn't update upper level Makefile. Drop corresponding line to fix build
-> issues.
+On (25/02/12 17:14), Yosry Ahmed wrote:
+> On Wed, Feb 12, 2025 at 03:27:10PM +0900, Sergey Senozhatsky wrote:
+> > Switch over from rwlock_t to a atomic_t variable that takes negative
+> > value when the page is under migration, or positive values when the
+> > page is used by zsmalloc users (object map, etc.)   Using a rwsem
+> > per-zspage is a little too memory heavy, a simple atomic_t should
+> > suffice.
 > 
-> Fixes: 325ba852d148 ("drm/i2c: move TDA998x driver under drivers/gpu/drm/bridge")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/dri-devel/20250213113841.7645b74c@canb.auug.org.au
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> We should also explain that rwsem cannot be used due to the locking
+> context (we need to hold it in an atomic context). Basically what you
+> explained to me before :)
+>
+> > zspage lock is a leaf lock for zs_map_object(), where it's read-acquired.
+> > Since this lock now permits preemption extra care needs to be taken when
+> > it is write-acquired - all writers grab it in atomic context, so they
+> > cannot spin and wait for (potentially preempted) reader to unlock zspage.
+> > There are only two writers at this moment - migration and compaction.  In
+> > both cases we use write-try-lock and bail out if zspage is read locked.
+> > Writers, on the other hand, never get preempted, so readers can spin
+> > waiting for the writer to unlock zspage.
+> 
+> The details are important, but I think we want to concisely state the
+> problem statement either before or after. Basically we want a lock that
+> we *never* sleep while acquiring but *can* sleep while holding in read
+> mode. This allows holding the lock from any context, but also being
+> preemptible if the context allows it.
 
-Our CI caught this too. Thanks for the quick fix.
+Ack.
 
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+[..]
+> > +/*
+> > + * zspage locking rules:
+> 
+> Also here we need to state our key rule:
+> Never sleep while acquiring, preemtible while holding (if possible). The
+> following rules are basically how we make sure we keep this true.
+> 
+> > + *
+> > + * 1) writer-lock is exclusive
+> > + *
+> > + * 2) writer-lock owner cannot sleep
+> > + *
+> > + * 3) writer-lock owner cannot spin waiting for the lock
+> > + *   - caller (e.g. compaction and migration) must check return value and
+> > + *     handle locking failures
+> > + *   - there is only TRY variant of writer-lock function
+> > + *
+> > + * 4) reader-lock owners (multiple) can sleep
+> > + *
+> > + * 5) reader-lock owners can spin waiting for the lock, in any context
+> > + *   - existing readers (even preempted ones) don't block new readers
+> > + *   - writer-lock owners never sleep, always unlock at some point
+> 
+> 
+> May I suggest something more concise and to the point?
+> 
+> /*
+>  * The zspage lock can be held from atomic contexts, but it needs to remain
+>  * preemptible when held for reading because it remains held outside of those
+>  * atomic contexts, otherwise we unnecessarily lose preemptibility.
+>  *
+>  * To achieve this, the following rules are enforced on readers and writers:
+>  *
+>  * - Writers are blocked by both writers and readers, while readers are only
+>  *   blocked by writers (i.e. normal rwlock semantics).
+>  *
+>  * - Writers are always atomic (to allow readers to spin waiting for them).
+>  *
+>  * - Writers always use trylock (as the lock may be held be sleeping readers).
+>  *
+>  * - Readers may spin on the lock (as they can only wait for atomic writers).
+>  *
+>  * - Readers may sleep while holding the lock (as writes only use trylock).
+>  */
 
-> ---
->  drivers/gpu/drm/Makefile | 1 -
->  1 file changed, 1 deletion(-)
+Looks good, thanks.
+
+> > + */
+> > +static void zspage_read_lock(struct zspage *zspage)
+> > +{
+> > +	atomic_t *lock = &zspage->lock;
+> > +	int old = atomic_read_acquire(lock);
+> > +
+> > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > +	rwsem_acquire_read(&zspage->lockdep_map, 0, 0, _RET_IP_);
+> > +#endif
+> > +
+> > +	do {
+> > +		if (old == ZS_PAGE_WRLOCKED) {
+> > +			cpu_relax();
+> > +			old = atomic_read_acquire(lock);
+> > +			continue;
+> > +		}
+> > +	} while (!atomic_try_cmpxchg_acquire(lock, &old, old + 1));
+> > +}
+> > +
+> > +static void zspage_read_unlock(struct zspage *zspage)
+> > +{
+> > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > +	rwsem_release(&zspage->lockdep_map, _RET_IP_);
+> > +#endif
+> > +	atomic_dec_return_release(&zspage->lock);
+> > +}
+> > +
+> > +static __must_check bool zspage_try_write_lock(struct zspage *zspage)
 > 
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index 42901f877bf256765829b5fe25bf7844202338cb..50604b49d1ac4edd439ea73361118fd1e6a81d53 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -197,7 +197,6 @@ obj-$(CONFIG_DRM_INGENIC) += ingenic/
->  obj-$(CONFIG_DRM_LOGICVC) += logicvc/
->  obj-$(CONFIG_DRM_MEDIATEK) += mediatek/
->  obj-$(CONFIG_DRM_MESON)	+= meson/
-> -obj-y			+= i2c/
->  obj-y			+= panel/
->  obj-y			+= bridge/
->  obj-$(CONFIG_DRM_FSL_DCU) += fsl-dcu/
+> I believe zspage_write_trylock() would be closer to the normal rwlock
+> naming.
+
+It derived its name from rwsem "age".  Can rename.
+
+> > +{
+> > +	atomic_t *lock = &zspage->lock;
+> > +	int old = ZS_PAGE_UNLOCKED;
+> > +
+> > +	WARN_ON_ONCE(preemptible());
 > 
-> ---
-> base-commit: 325ba852d148434c5bcb06d513af1933a7f77b70
-> change-id: 20250213-fix-tda-74b6916aaa00
+> Hmm I know I may have been the one suggesting this, but do we actually
+> need it? We disable preemption explicitly anyway before holding the
+> lock.
+
+This is just to make sure that the precondition for
+"writer is always atomic" is satisfied.  But I can drop it.
+
+> >  	size_class_lock(class);
+> > -	/* the migrate_write_lock protects zpage access via zs_map_object */
+> > -	migrate_write_lock(zspage);
+> > +	/* the zspage write_lock protects zpage access via zs_map_object */
+> > +	if (!zspage_try_write_lock(zspage)) {
+> > +		size_class_unlock(class);
+> > +		pool_write_unlock(pool);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* We're committed, tell the world that this is a Zsmalloc page. */
+> > +	__zpdesc_set_zsmalloc(newzpdesc);
 > 
-> Best regards,
-> -- 
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+> We used to do this earlier on, before any locks are held. Why is it
+> moved here?
+
+I want to do that only if zspaage write-trylock has succeeded (we didn't
+have any error out paths before).
 
