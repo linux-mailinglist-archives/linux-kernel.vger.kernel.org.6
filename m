@@ -1,189 +1,190 @@
-Return-Path: <linux-kernel+bounces-512722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B9BA33CFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:52:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8939A33D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C15188B516
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691DA188B6AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50422080D4;
-	Thu, 13 Feb 2025 10:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32792139DB;
+	Thu, 13 Feb 2025 10:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ql+NBd07"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Mi6TSQLO"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8BB41C6A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF6E2135C0;
+	Thu, 13 Feb 2025 10:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739443933; cv=none; b=DJHcf48/vuqoBSyU39LrAGR185KU+3V2+fG5Y/p4bSJtS4ZViwqKMFubkWb97R36FdkCGEkE1qU0B9YKh3/OvJIEwYYTTE0fvOPIdPEohzH9/sXuCgHmpqXkchlwQHp6m/vtBwyFBH0OmcacOI9qtGXU2ynuar8RGsWTQ7umDN4=
+	t=1739443958; cv=none; b=TeL/WuPQ9ucNuejySdio6iwnHzz4q4c8T59mJyy40pW/3M4ylUznhzmXC/kHZrsxVPRiACgwv80ehy6/MlS7jr8H+cR3mpRr4XpP3zsy+N76WEQ3kkS29UwEvAVVv8AAJc2hCpFqxPeSQwJQQfP53jGUuq/Bh9SqQouD71mFc28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739443933; c=relaxed/simple;
-	bh=NNwffCnuthUEjMjoVnRCHsMOFoRrFLd5Mhj8Yauwhdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qx6pH7Ko5udpVldVoOqkmxtWSDSm2kVobmRJvqCZEJhMWBuwVU8Ia8kCQw+39gv8K2wKVHJE8daEh6PLmFVnSkgECzsRE3g4UzoQMq0Y84F/GXn8PWPx7Vj17/x5+13dpVloU5l6xuVurWxO/y8U7NpJooKxGn763ho6j5VcZqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ql+NBd07; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394a823036so7946405e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:52:10 -0800 (PST)
+	s=arc-20240116; t=1739443958; c=relaxed/simple;
+	bh=ly+HI5iL3ovE/Qp0+AEPxYcJXgikpZNZ61yNY81pso0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=orujBMxvzzfgmBbv1JKUnk0BNSTHiW8C1AbIU+hJejMEZAHZJo9ECBRRSCuUdnJIMdZjSQt4V3S/C0+/FSNDrJjbxaDb3M526O/HS5EZE0VkdofY9wwrx8yH/7kcRCznzgtuQ4jKMn73K2qBdsYHvsbFWXUtnQefRHwTMgq6dE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Mi6TSQLO; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739443929; x=1740048729; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfW5BGT5pTjwhGTP5m8htmZ9lluyeh+guldKWayNHGg=;
-        b=Ql+NBd07wdb2Wocy3/1v4nmddOreDXblFy8bt9LFQAgaMtumy9PoPw/TQO0gi0kXyZ
-         WmpDSe3A7cmnbEuuZ2SoalS8Ec9vf2RntUiPDVpw+ihmlLuLmuwV+VCDRxYfhK6uTbu0
-         ARS4ZVT6JxsvIRkQHSAfKurRgumkV5ppGtRN7kk7TXWYUhBGF7OEazHrR796YDpztpVf
-         PR+j5EkjVgqYQj+/YdBC45JZypvPjnpfRfJT7DsliPsXiBguXbA998zaTJpBTSkltxeV
-         GRvuAUZJmVvaDMbkR6bF/yCsBwxAvgF5zfSUHuQ6T87nHkiwrJuL46joem0tMS4tVVUh
-         mgOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739443929; x=1740048729;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfW5BGT5pTjwhGTP5m8htmZ9lluyeh+guldKWayNHGg=;
-        b=TYxxdXD9TNiqv9VTgDbw/SFonDKS1CuIFCG/hVhlOPFoBwW9RcZ0fL6leLty3lJopi
-         /KYAa8wY3FcMRbQp58QtPhG0KQOv9sQJ7k7w8aoGIWjhRw0guTp1mk34Uw1FDfCp1Y2b
-         cFdaN0swGdSaHnY55cRk6Miyilq5x2TVXE/llvclLnK08aaDdc1IZTMp/I6WUMowJydl
-         IecRbLW3FpvD9q+UtIsIxGTTqBqk1b3Yymvh46NHiPrEVixWo0QbeGUm7ePVSgMsEA28
-         cZZYhnO7Cf21Blij9uPkR2LMz1NDyLrDUqLeSGEX/h2AryjL8M237sRpTaXwcL7CQn7g
-         pjOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVScA8VWJWhDZv9MnZUO64KrdRph0LwSg+MqdA/7LGFUuD40DCyYPk6t4iPlstWk3A58FiGsuDuwW5JUGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznEFJYTZkx+vrkz/ooGL51jXBHbBgeFdGEbP46yjj3IHgTg3YP
-	8BcQgOzfBi7nOyK0CzmWwS98tUWEkEFYuhZyk2G/0QAxSA3w0G3elYmItLo3erw=
-X-Gm-Gg: ASbGncthNFOFMVMVQgrgPmuRrkClV4kY4s8L5Qh4E+RsbaRQyPeUjkAp4QuvaO1y1Fi
-	VJ9G2vGwscSPCtHbgzvnBe75YvF82sPGqxxfJf/DyEJPrXbYxT8sQhFSzvr3dFd1FAYk4Jx6NQm
-	9KbEsoHg43PHe3maSJ1plHdptHAOMae8zGLNObTfmQmp3ULHYHy9Vv6WpKeJw8kfJe2mIwV1+mP
-	KOEFdIqDiURxlN7h3weXmVmyUKiVgnIdrLnDuW6EN2QwMMuWJOYZBvfKfwHilN5Yx9Zc+uktQPm
-	dYA8pdAHLzwIrtyDn3kVrkzYWg==
-X-Google-Smtp-Source: AGHT+IE3cVCMFeTiplAdl6oIol2hwK+z0KRfMjE6tnhaJF9qrn7yWiTvmVjpIcI0wTDSh3lcSVhCfg==
-X-Received: by 2002:a05:600c:19cf:b0:439:5573:9348 with SMTP id 5b1f17b1804b1-439581b88ccmr64782085e9.22.1739443929479;
-        Thu, 13 Feb 2025 02:52:09 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.174])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617ffa28sm13991045e9.14.2025.02.13.02.52.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 02:52:08 -0800 (PST)
-Message-ID: <5f4e90f2-1956-4f12-b2f4-b355012beb6e@linaro.org>
-Date: Thu, 13 Feb 2025 10:52:07 +0000
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739443957; x=1770979957;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=IgkvtMvOSSagKNz50Lh9hAQXzCe7woRbEqIyJBXRz38=;
+  b=Mi6TSQLOk26Z7SPnCQffJxy+SBK9oNUmxyfB4aVl6AWweJwH6bEkzsUy
+   8QDIEmA1HxrnMXlowNRV3VDIeZWjEP5TgkCeFOfx4ESny/DmvnB+9A2P8
+   WAvrkEFUU6t3PBlU8NGPxro4+wodN+iCyHH1EDzs/9vRCiJgV1V/EfIlp
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
+   d="scan'208";a="270834013"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:52:33 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:32225]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.187:2525] with esmtp (Farcaster)
+ id 0f73d3cd-62b2-4599-a33c-974a909bd3bb; Thu, 13 Feb 2025 10:52:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 0f73d3cd-62b2-4599-a33c-974a909bd3bb
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Thu, 13 Feb 2025 10:52:31 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Feb 2025 10:52:26 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.co.jp>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <ushankar@purestorage.com>
+Subject: Re: [PATCH net-next v3 2/3] net: Add dev_getbyhwaddr_rtnl() helper
+Date: Thu, 13 Feb 2025 19:52:17 +0900
+Message-ID: <20250213105217.37429-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250213-prudent-olivine-bobcat-ffa64f@leitao>
+References: <20250213-prudent-olivine-bobcat-ffa64f@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf vendor events arm64: Fix incorrect CPU_CYCLE in
- metrics expr
-To: Yangyu Chen <cyy@cyyself.name>, linux-perf-users@vger.kernel.org,
- irogers@google.com, namhyung@kernel.org
-Cc: acme@kernel.org, adrian.hunter@intel.com,
- alexander.shishkin@linux.intel.com, fj3333bs@aa.jp.fujitsu.com,
- fj5100bi@fujitsu.com, john.g.garry@oracle.com, jolsa@kernel.org,
- kan.liang@linux.intel.com, leo.yan@linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- mark.rutland@arm.com, mike.leach@linaro.org, mingo@redhat.com,
- peterz@infradead.org, will@kernel.org
-References: <tencent_D4ED18476ADCE818E31084C60E3E72C14907@qq.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <tencent_D4ED18476ADCE818E31084C60E3E72C14907@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-
-
-On 13/02/2025 8:44 am, Yangyu Chen wrote:
-> Some existing metrics for Neoverse N3 and V3 expressions use CPU_CYCLE
-> to represent the number of cycles, but this is incorrect. The correct
-> event to use is CPU_CYCLES.
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 13 Feb 2025 02:29:38 -0800
+> Hello Kuniyuki,
 > 
-> I encountered this issue while working on a patch to add pmu events for
-> Cortex A720 and A520 by reusing the existing patch for Neoverse N3 and
-> V3 by James Clark [1] and my check script [2] reported this issue.
+> On Thu, Feb 13, 2025 at 04:31:29PM +0900, Kuniyuki Iwashima wrote:
+> > > Subject: [PATCH net-next v3 2/3] net: Add dev_getbyhwaddr_rtnl() helper
+> > 
+> > s/_rtnl//
 > 
-> [1] https://lore.kernel.org/lkml/20250122163504.2061472-1-james.clark@linaro.org/
-> [2] https://github.com/cyyself/arm-pmu-check
+> Ack!
 > 
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-
-Thanks for the fix. I'll report this issue on the source data.
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-> ---
->   .../perf/pmu-events/arch/arm64/arm/neoverse-n3/metrics.json | 6 +++---
->   .../perf/pmu-events/arch/arm64/arm/neoverse-v3/metrics.json | 6 +++---
->   2 files changed, 6 insertions(+), 6 deletions(-)
+> > looks like Uday's comment was missed due to the lore issue.
 > 
-> diff --git a/tools/perf/pmu-events/arch/arm64/arm/neoverse-n3/metrics.json b/tools/perf/pmu-events/arch/arm64/arm/neoverse-n3/metrics.json
-> index 1f7c9536cb88..eb3a35f244e7 100644
-> --- a/tools/perf/pmu-events/arch/arm64/arm/neoverse-n3/metrics.json
-> +++ b/tools/perf/pmu-events/arch/arm64/arm/neoverse-n3/metrics.json
-> @@ -169,7 +169,7 @@
->       },
->       {
->           "MetricName": "fp_ops_per_cycle",
-> -        "MetricExpr": "(FP_SCALE_OPS_SPEC + FP_FIXED_OPS_SPEC) / CPU_CYCLE",
-> +        "MetricExpr": "(FP_SCALE_OPS_SPEC + FP_FIXED_OPS_SPEC) / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by any instruction. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
-> @@ -383,7 +383,7 @@
->       },
->       {
->           "MetricName": "nonsve_fp_ops_per_cycle",
-> -        "MetricExpr": "FP_FIXED_OPS_SPEC / CPU_CYCLE",
-> +        "MetricExpr": "FP_FIXED_OPS_SPEC / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by an instruction that is not an SVE instruction. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
-> @@ -421,7 +421,7 @@
->       },
->       {
->           "MetricName": "sve_fp_ops_per_cycle",
-> -        "MetricExpr": "FP_SCALE_OPS_SPEC / CPU_CYCLE",
-> +        "MetricExpr": "FP_SCALE_OPS_SPEC / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by SVE instructions. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
-> diff --git a/tools/perf/pmu-events/arch/arm64/arm/neoverse-v3/metrics.json b/tools/perf/pmu-events/arch/arm64/arm/neoverse-v3/metrics.json
-> index d022ae25c864..4a671f55eaf3 100644
-> --- a/tools/perf/pmu-events/arch/arm64/arm/neoverse-v3/metrics.json
-> +++ b/tools/perf/pmu-events/arch/arm64/arm/neoverse-v3/metrics.json
-> @@ -169,7 +169,7 @@
->       },
->       {
->           "MetricName": "fp_ops_per_cycle",
-> -        "MetricExpr": "(FP_SCALE_OPS_SPEC + FP_FIXED_OPS_SPEC) / CPU_CYCLE",
-> +        "MetricExpr": "(FP_SCALE_OPS_SPEC + FP_FIXED_OPS_SPEC) / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by any instruction. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
-> @@ -383,7 +383,7 @@
->       },
->       {
->           "MetricName": "nonsve_fp_ops_per_cycle",
-> -        "MetricExpr": "FP_FIXED_OPS_SPEC / CPU_CYCLE",
-> +        "MetricExpr": "FP_FIXED_OPS_SPEC / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by an instruction that is not an SVE instruction. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
-> @@ -421,7 +421,7 @@
->       },
->       {
->           "MetricName": "sve_fp_ops_per_cycle",
-> -        "MetricExpr": "FP_SCALE_OPS_SPEC / CPU_CYCLE",
-> +        "MetricExpr": "FP_SCALE_OPS_SPEC / CPU_CYCLES",
->           "BriefDescription": "This metric measures floating point operations per cycle in any precision performed by SVE instructions. Operations are counted by computation and by vector lanes, fused computations such as multiply-add count as twice per vector lane for example.",
->           "MetricGroup": "FP_Arithmetic_Intensity",
->           "ScaleUnit": "1operations per cycle"
+> hmm, I haven't seen Uday's comment. Didn't it reach lore?
 
+I saw the reply and my another one on lore but somehow they
+were removed :)
+
+
+> 
+> > From: Breno Leitao <leitao@debian.org>
+> > Date: Wed, 12 Feb 2025 09:47:25 -0800
+> > > +/**
+> > > + *	dev_getbyhwaddr - find a device by its hardware address
+> > 
+> > While at it, could you replace '\t' after '*' to a single '\s'
+> > for all kernel-doc comment lines below ?
+> > 
+> > 
+> > > + *	@net: the applicable net namespace
+> > > + *	@type: media type of device
+> > > + *	@ha: hardware address
+> > > + *
+> > > + *	Similar to dev_getbyhwaddr_rcu(), but the owner needs to hold
+> > > + *	rtnl_lock.
+> > 
+> > Otherwise the text here is mis-aligned.
+> 
+> Sorry, what is misaligned specifically? I generated the documentation,
+> and I can't see it misaligned.
+> 
+> This is what I see when generating the document (full log at
+> https://pastebin.mozilla.org/YkotEoHh#L250,271)
+> 
+> 
+> 	dev_getbyhwaddr_rcu(9)                                                         Kernel Hacker's Manual                                                         dev_getbyhwaddr_rcu(9)
+> 
+> 	NAME
+> 	dev_getbyhwaddr_rcu - find a device by its hardware address
+> 
+> 	SYNOPSIS
+> 	struct net_device * dev_getbyhwaddr_rcu (struct net *net , unsigned short type , const char *ha );
+> 
+> 	ARGUMENTS
+> 	net         the applicable net namespace
+> 
+> 	type        media type of device
+> 
+> 	ha          hardware address
+> 
+> 			Search for an interface by MAC address. Returns NULL if the device is not found or a pointer to the device.  The caller must hold RCU.  The returned  device  has
+                        ^^^^^^
+This scentence starts from a weird position when we use '\t' after '*'.
+You will see it start from the head if '\s' follows '*'.
+
+
+> 			not had its ref count increased and the caller must therefore be careful about locking
+> 
+> 	RETURN
+> 	pointer to the net_device, or NULL if not found
+> 
+> 	dev_getbyhwaddr(9)                                                             Kernel Hacker's Manual                                                             dev_getbyhwaddr(9)
+> 
+> 	NAME
+> 	dev_getbyhwaddr - find a device by its hardware address
+> 
+> 	SYNOPSIS
+> 	struct net_device * dev_getbyhwaddr (struct net *net , unsigned short type , const char *ha );
+> 
+> 	ARGUMENTS
+> 	net         the applicable net namespace
+> 
+> 	type        media type of device
+> 
+> 	ha          hardware address
+> 
+> 			Similar to dev_getbyhwaddr_rcu, but the owner needs to hold rtnl_lock.
+> 
+> 	RETURN
+> 	pointer to the net_device, or NULL if not found
+> 
+> 
+> >   $ ./scripts/kernel-doc -man net/core/dev.c | \
+> >     scripts/split-man.pl /tmp/man && \
+> >     man /tmp/man/dev_getbyhwaddr.9
+> > 
+> > Also, the latter part should be in Context:
+> > 
+> > Context: rtnl_lock() must be held.
+> 
+> Sure. Should I do something similar for _rcu function as well?
+> 
+> 	Context: caller must hold rcu_read_lock
+
+Yes, that would be nice.
+
+https://lore.kernel.org/netdev/20250213073646.14847-1-kuniyu@amazon.com/
 
