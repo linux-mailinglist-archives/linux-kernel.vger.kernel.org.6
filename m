@@ -1,128 +1,212 @@
-Return-Path: <linux-kernel+bounces-512987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D49AA34023
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:19:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6E3A3400C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:17:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223EF16A8FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:19:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21BB97A2478
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D41227EA2;
-	Thu, 13 Feb 2025 13:18:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A2221738;
+	Thu, 13 Feb 2025 13:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QhRSisuz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B7C22172A;
-	Thu, 13 Feb 2025 13:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355A23F420;
+	Thu, 13 Feb 2025 13:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452734; cv=none; b=uHFTFBcMrEsh+fqamoTO6OwrAegMCGAqwSk8Ck3BgXGbOu9KWcyWL6iqZXMuT/9YcKrN5F1AYpMM92iGDTtlRxWv4MT8BgzzNCO1RXiJwEe9X3AUbHbI4kewUD/I+lW39kP8qyUQqOiq/0rOv+ODlPNXt3251A9aB2AUZ6mlJbA=
+	t=1739452634; cv=none; b=n1DG42NuhnurANz1cs7xmPgpeCnhF0hKS5xWGSDmSI/Jp8E2Bmtbc8IQ47f/ubNK2X/HlJ1sWEVtmRyJ4kFIVXS8kSI37+2siULkqurhV/pgynbH3VgseMmEK/YFnQde6SoGTveBx17LXmeNd8H7OnP/3xXUAEIFGvgZUlepUtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452734; c=relaxed/simple;
-	bh=XIzr+PvuXP2KTBlj+0Qas/W7CfoHCr/ilC9hkHMevkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CjPPqE6LWKdiMu0zbHGTYCycFUcj4vJH7B8c+NA8ImSLbwiqE7nhs4hmc1/xeo/7MKXg8Jxpq/Awwim3Wg32fqqxbSsSWFK+lHX7DNyLSC4QPcJNSSib65iwC2jsEcKyNaJfmKZ8eLY8W6B4FwD9Z4ELzs8CFEr2KiFh+Kc6bhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YtwjY3XVGz4f3kvt;
-	Thu, 13 Feb 2025 21:18:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 420A41A160B;
-	Thu, 13 Feb 2025 21:18:48 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe1828a1nMAXxDg--.16673S4;
-	Thu, 13 Feb 2025 21:18:48 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	zhangxiaoxu5@huawei.com,
-	wanghai38@huawei.com
-Subject: [PATCH] md: ensure resync is prioritized over recovery
-Date: Thu, 13 Feb 2025 21:15:30 +0800
-Message-Id: <20250213131530.3698600-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1739452634; c=relaxed/simple;
+	bh=B6LIoz76z42FvSq9wox6H1rI2ql14MAd7eBVBROWw34=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JRU2RptH90i9GgmipTpEK83sXiEsJbPMZTi2d1C2C2kA4Cpew5toRdmhkJY7a5qu1xubzE78ofDuuvvw5Y5GfVkDttlXXnlGgk/8VcTcfQ8g0W/dpAxM+z1IcszyUkd21tYB8G93OQzjtac+qICLSJau1T0W4DoddssQrfvZnII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QhRSisuz; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739452633; x=1770988633;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=B6LIoz76z42FvSq9wox6H1rI2ql14MAd7eBVBROWw34=;
+  b=QhRSisuzSTH1ZKt4gf4R4WARIYYi/8LNYjVp14KbdxjmabPsscz1nxOw
+   ySA15utEHCoSeZWLP+nZZcuws+sh3doTy6qrs/0nX65XtjlUOWI5nXsFn
+   4YyD/CnjN+y3yvaeMWKgcew0o352cmXpfY1SIXq/O/Qya4TDWTsTkJ40z
+   le4xMaNq/BSz4ciKD6wtYd/XhEIkql0s9zZYLghZuav2Pf0AgmUINrH5j
+   4RtTrgesGDZ50d6Cv51FPxOWVRtyf5PHwr1l3aNHozx2XnXEja8EEpG6c
+   vzV16563rzTcD2QqcTaJ2RR7geXPBT1t1KzgP7845STqq5Stfq07iOEVb
+   g==;
+X-CSE-ConnectionGUID: 6tcsXL7xSEeKExQ84x9H2Q==
+X-CSE-MsgGUID: eo4kq021QWq3zT7Yjppf9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51134996"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="51134996"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:17:12 -0800
+X-CSE-ConnectionGUID: Fv40il9nTj+lujsTW6THIw==
+X-CSE-MsgGUID: LbHAWfgGQ9SUcGg83Pgv2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113086389"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:17:08 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 13 Feb 2025 15:17:03 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: james@equiv.tech, markpearson@lenovo.com, jorge.lopez2@hp.com, 
+    jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, corbet@lwn.net, 
+    linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/7] platform/x86: think-lmi: Use WMI bus API when
+ accessing BIOS settings
+In-Reply-To: <20250203182322.384883-4-W_Armin@gmx.de>
+Message-ID: <0dd7bda3-bf76-228b-27f3-f057e80e3a03@linux.intel.com>
+References: <20250203182322.384883-1-W_Armin@gmx.de> <20250203182322.384883-4-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXe1828a1nMAXxDg--.16673S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar47XFy7Gw15tr1rCr17ZFb_yoW8Xw1fpa
-	1fJFsxurWrtFWfAFWUtw1kXay5Cry0yry8tFy3W3yrZry3tr13ArW5Wa1jvFyUGFyIqa1j
-	qr4kJrWfZF1fCw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjTa0DUUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=US-ASCII
 
-From: Li Nan <linan122@huawei.com>
+On Mon, 3 Feb 2025, Armin Wolf wrote:
 
-If a new disk is added during resync, the resync process is interrupted,
-and recovery is triggered, causing the previous resync to be lost. In
-reality, disk addition should not terminate resync, fix it.
+> Since the driver already binds to LENOVO_BIOS_SETTING_GUID, using
+> wmidev_block_query() inside tlmi_setting() allows for faster
+> access to BIOS settings.
+> 
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/think-lmi.c | 23 +++++++++--------------
+>  drivers/platform/x86/think-lmi.h |  2 ++
+>  2 files changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/think-lmi.c
+> index 2c94a4af9a1d..0fc275e461be 100644
+> --- a/drivers/platform/x86/think-lmi.c
+> +++ b/drivers/platform/x86/think-lmi.c
+> @@ -344,20 +344,14 @@ static int tlmi_opcode_setting(char *setting, const char *value)
+>  	return ret;
+>  }
+> 
+> -static int tlmi_setting(int item, char **value, const char *guid_string)
+> +static int tlmi_setting(struct wmi_device *wdev, int item, char **value)
+>  {
+> -	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+>  	union acpi_object *obj;
+> -	acpi_status status;
+>  	int ret;
+> 
+> -	status = wmi_query_block(guid_string, item, &output);
+> -	if (ACPI_FAILURE(status))
+> -		return -EIO;
+> -
+> -	obj = output.pointer;
+> +	obj = wmidev_block_query(wdev, item);
+>  	if (!obj)
+> -		return -ENODATA;
+> +		return -EIO;
 
-Steps to reproduce the issue:
-  mdadm -CR /dev/md0 -l1 -n3 -x1 /dev/sd[abcd]
-  mdadm --fail /dev/md0 /dev/sdc
+Hi Armin,
 
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+I'm trying to understand why there are these back and forth changes in the 
+error code.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 30b3dbbce2d2..827646b3eb59 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -9460,6 +9460,13 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
- 		return true;
- 	}
- 
-+	/* Check if resync is in progress. */
-+	if (mddev->recovery_cp < MaxSector) {
-+		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
-+		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
-+		return true;
-+	}
-+
- 	/*
- 	 * Remove any failed drives, then add spares if possible. Spares are
- 	 * also removed and re-added, to allow the personality to fail the
-@@ -9476,13 +9483,6 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
- 		return true;
- 	}
- 
--	/* Check if recovery is in progress. */
--	if (mddev->recovery_cp < MaxSector) {
--		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
--		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
--		return true;
--	}
--
- 	/* Delay to choose resync/check/repair in md_do_sync(). */
- 	if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery))
- 		return true;
+It almost looks to me like wmidev_block_query() would want to return the 
+error code itself because after you abstracted this code using 
+wmidev_block_query(), you had to change the error code because you no 
+longer have access to the key detail to decide which error code should be 
+returned. That is, use ERR_PTR() inside wmidev_block_query() and the 
+callers should just pass that error code on with IS_ERR & friends?
+
 -- 
-2.39.2
+ i.
 
+>  	ret = tlmi_extract_output_string(obj, value);
+>  	kfree(obj);
+> @@ -995,7 +989,7 @@ static ssize_t current_value_show(struct kobject *kobj, struct kobj_attribute *a
+>  	char *item, *value;
+>  	int ret;
+> 
+> -	ret = tlmi_setting(setting->index, &item, LENOVO_BIOS_SETTING_GUID);
+> +	ret = tlmi_setting(setting->wdev, setting->index, &item);
+>  	if (ret)
+>  		return ret;
+> 
+> @@ -1588,7 +1582,7 @@ static struct tlmi_pwd_setting *tlmi_create_auth(const char *pwd_type,
+>  	return new_pwd;
+>  }
+> 
+> -static int tlmi_analyze(void)
+> +static int tlmi_analyze(struct wmi_device *wdev)
+>  {
+>  	int i, ret;
+> 
+> @@ -1625,7 +1619,7 @@ static int tlmi_analyze(void)
+>  		char *item = NULL;
+> 
+>  		tlmi_priv.setting[i] = NULL;
+> -		ret = tlmi_setting(i, &item, LENOVO_BIOS_SETTING_GUID);
+> +		ret = tlmi_setting(wdev, i, &item);
+>  		if (ret)
+>  			break;
+>  		if (!item)
+> @@ -1648,6 +1642,7 @@ static int tlmi_analyze(void)
+>  			kfree(item);
+>  			goto fail_clear_attr;
+>  		}
+> +		setting->wdev = wdev;
+>  		setting->index = i;
+>  		strscpy(setting->display_name, item);
+>  		/* If BIOS selections supported, load those */
+> @@ -1666,7 +1661,7 @@ static int tlmi_analyze(void)
+>  			 */
+>  			char *optitem, *optstart, *optend;
+> 
+> -			if (!tlmi_setting(setting->index, &optitem, LENOVO_BIOS_SETTING_GUID)) {
+> +			if (!tlmi_setting(setting->wdev, setting->index, &optitem)) {
+>  				optstart = strstr(optitem, "[Optional:");
+>  				if (optstart) {
+>  					optstart += strlen("[Optional:");
+> @@ -1791,7 +1786,7 @@ static int tlmi_probe(struct wmi_device *wdev, const void *context)
+>  {
+>  	int ret;
+> 
+> -	ret = tlmi_analyze();
+> +	ret = tlmi_analyze(wdev);
+>  	if (ret)
+>  		return ret;
+> 
+> diff --git a/drivers/platform/x86/think-lmi.h b/drivers/platform/x86/think-lmi.h
+> index f267d8b46957..a80452482227 100644
+> --- a/drivers/platform/x86/think-lmi.h
+> +++ b/drivers/platform/x86/think-lmi.h
+> @@ -4,6 +4,7 @@
+>  #define _THINK_LMI_H_
+> 
+>  #include <linux/types.h>
+> +#include <linux/wmi.h>
+> 
+>  #define TLMI_SETTINGS_COUNT  256
+>  #define TLMI_SETTINGS_MAXLEN 512
+> @@ -87,6 +88,7 @@ struct tlmi_pwd_setting {
+>  /* Attribute setting details */
+>  struct tlmi_attr_setting {
+>  	struct kobject kobj;
+> +	struct wmi_device *wdev;
+>  	int index;
+>  	char display_name[TLMI_SETTINGS_MAXLEN];
+>  	char *possible_values;
+> --
+> 2.39.5
+> 
 
