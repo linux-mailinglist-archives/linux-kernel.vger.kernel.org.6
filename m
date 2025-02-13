@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-512933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC148A33F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65844A33F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:47:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99946165568
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E38953A49F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0CF221705;
-	Thu, 13 Feb 2025 12:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFC522154B;
+	Thu, 13 Feb 2025 12:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iSZiPgiH"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qi3RxPbz"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7721935951;
-	Thu, 13 Feb 2025 12:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38333FE;
+	Thu, 13 Feb 2025 12:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739450869; cv=none; b=Sd0SbCf9DKaaWgEIHXBWKw+o2VNpVzuIx/J40RP5ZaujWqARJ4cQ/1HN/QtEKA3ezpNVHVWbwi0mCmZRZZnYTqYANlate3gfxUbg/E2cwM6/40Ygl5MX3AZlih+3rLRtRdT3qut4hwmlPKJ3urO4pBIWq6JWPSeu+X1ttNtghmc=
+	t=1739450868; cv=none; b=glhqRs9dTVNzLSlnVyVfQscDFOGJlNAE+R+SM7RJmfpeoB5SDs44LFuF+DY6Sz3MsFnIeTpaRryl26jNAZfJQOkVclgaBr2qXKgJfS1zHth1nrBy7eaViCmQMd7UJAE1npKVcVAQns6Ht+n99pCXZxRTbHojZlIOsFq00tpMo78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739450869; c=relaxed/simple;
-	bh=UjqKuT7cBx0BC8IA1E06aYBT48DU6uO5RO8mYWBW0UY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPEkBZ6/xbfrykgEF6pk4ZMcLQK5j4SdvIdMIDSQpEgzT9GLVqtLD+VWU9UN1XjVF+nDT8LMFpdFJHXkm3l9iaP3AFC7A3ZSnIlvfv1VbH4MyjOLsoUPfch1QJXHYwcn7jVIZgJZ+rOUjBqHQv3/Ujwt9NTdD+kMheQP50QfNWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iSZiPgiH; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7WvfK014686;
-	Thu, 13 Feb 2025 12:47:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1eQPev
-	v+zfRx7xSJsTOA/iarbbLg4H24SjJBcTfyK/Q=; b=iSZiPgiHAOWHpB37SjtNaX
-	CtHomNChMfpYzkkb+dJljGWolAHFzQU4AyYYWvpxpE7FvJ92tpfi4Tp/okw+NcYw
-	ao44uffaQhrSt9NZYLx6JzNwKtaP1hy2HvevnDRkolU7r4b6f5DvfVC1HoaciP+3
-	mST2IU6hoiD61f51DTba93d77zbmPzTLBJcow8K3GXUoENjeHa7ibkpvryRfwKN4
-	wH0a70qokvI7gcZaA231vce0dJbyaezD+BgGkxq1cy29GmVY+KksqfARg7mSotxi
-	eWY1eAZYtwS9HWXQmnGXrVaBnkMmn7TPPqepVFUv0AXWUMruMqFJjE31hJuIQ+Cw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44sceq1hc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 12:47:29 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DBBSrj028197;
-	Thu, 13 Feb 2025 12:47:28 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyypcpa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 12:47:28 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DClQxF40436212
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 12:47:26 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 726B420040;
-	Thu, 13 Feb 2025 12:47:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 454FE2004B;
-	Thu, 13 Feb 2025 12:47:26 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Feb 2025 12:47:26 +0000 (GMT)
-Message-ID: <008b57f5-96d3-4aca-b304-19ced4fa1efd@linux.ibm.com>
-Date: Thu, 13 Feb 2025 13:47:26 +0100
+	s=arc-20240116; t=1739450868; c=relaxed/simple;
+	bh=oaUFfCoxZvNNh5R7lttLzT90zWoqWvaSgj+qgbPZbLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXOWYThtIUVtlnzHVv5dkB5RGHhpavMkMt3qKCoAWDRQtVnxVVCR0QgJ696QAQ3vDSBYl3x301bp5BIGVeNYMTAG7L/J+QC7UkfFvjVijtN7tEIkmIMdbAi/Q1WDCeIB5cTpMWGDKSKFPxrw+nxTScOkiXUc+j2gWOSQ3ksv690=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qi3RxPbz; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fa0f70bfecso185989a91.2;
+        Thu, 13 Feb 2025 04:47:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739450866; x=1740055666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oaUFfCoxZvNNh5R7lttLzT90zWoqWvaSgj+qgbPZbLw=;
+        b=Qi3RxPbzGXPeNgXgWM8UCf6LHhEy89Gdjz/sTdAr+b85eWilhTBso1W2Jwm6FTPGZr
+         ui56AOR4fYEaJdYYGnwqQvg6b4MbS6OWyzPILUZjCtHkkegXWTo21IUI1Kgjfx08DyFS
+         42yzZ4gOpMUcS8lUT8UvrNql9JBwQFf33tJpRbnhejUNnR91Jl5ly0ihPv/l/UUz3A/q
+         QPH0UyDt6rgoElQ51afgGnIGM/Qzqkwo/yrFX4pakyiQrXr7rIz7svzbMKpAtFjkHFh+
+         WxNXv9Rs6djf6oHBQPOdBn8PoIqzeEAoQU30a/TWApbvZiQVaHFIIDCj6o7WtyMoUIMG
+         H2GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739450866; x=1740055666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oaUFfCoxZvNNh5R7lttLzT90zWoqWvaSgj+qgbPZbLw=;
+        b=wRrna1kbhAchSFstK6HRP9Aj6PfRvuqPc7OEtnKORlhCIdOFC0uahNd4R1bccz9TaF
+         xQEvISJ4TlfOVO/Suipgs+sCi4W1OuPokRygOeFc05k/Py4ICQCV8gmNAz+3HD4LuR/r
+         vmqmhTVou0YEigpVlLB/5MoHTZ9uOH1L7FL+ARztX5SCfmFPPFL3XgRdvzl9uUrBRNMf
+         UIBRdL52Bm39GWcC9f5ACJFUuGa7DJEuPwaBvgwI7oFvLZYVfAtN+1/oDk+FwUeNfOXm
+         RfRt/JQIz5y/exRgMWpESdyxa3RTsP9EQuxFiptab9gHHB4k5PgDMp1GoNdqaItYwRHK
+         g14g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmiiaa0beCEdKdsNYzYxH0QiA7Ll6lLzzW2hi3tyRmrWQHmoRrrnW/QiE1Q+P9r8pDzD66xZeAPi41c00=@vger.kernel.org, AJvYcCVwdj9RZ2uU39xPv3b68PSEertxA5UXDbHRSgtGExxeFNT/UBs03G4urq711LJ1ui2JsSsE7AsmN6p4i6ot9TE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl3CWHtGuQp94dj5oxrC8Fo2HJtkJsdFwN4RkHaIHp2br4i+vi
+	t81XHdABzg/XF4J8DYf3xhNKH6kN4vB9MiRhn4If8EZ3Ax8OLDpTlHE2czprM5G7a1JxlC8nLfx
+	r8Ai3PvEYb8gSPabjYBQ8tRTEIw4=
+X-Gm-Gg: ASbGncvFBbCNd307Es6np8G7yzLX3+IA5yTyh4cWYtKQXGHBS1wUjL4UyQxc1ICdjB9
+	WQLkL026RHr5H5j1ARWZqeGuAX7fvWm+Yp+22EGoOFv5cgF6xb/hKJA+nWbnGJKwSIRis2o8T
+X-Google-Smtp-Source: AGHT+IH+xss/UegMB8XQoUZ41Agrh8mrGIWuK11EZoQlLBHoMAjtgW/81yjkyTUMUjbzRXjbETewC/iKXf34YwDR0A0=
+X-Received: by 2002:a17:90b:4c04:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2fbf5ad930cmr4237098a91.0.1739450865927; Thu, 13 Feb 2025
+ 04:47:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/vDSO: fix GNU hash table entry size for s390x
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Fangrui Song <i@maskray.me>,
-        Xi Ruoyao <xry111@xry111.site>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-        Heiko Carstens
- <hca@linux.ibm.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250213-selftests-vdso-s390-gnu-hash-v1-1-ace3bcc940a3@linutronix.de>
-From: Jens Remus <jremus@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250213-selftests-vdso-s390-gnu-hash-v1-1-ace3bcc940a3@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rVzIw933K76OpH6HmtqRR14uAtMfb1Kp
-X-Proofpoint-ORIG-GUID: rVzIw933K76OpH6HmtqRR14uAtMfb1Kp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
- clxscore=1011 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130096
+References: <20250212194717.191979-1-trintaeoitogc@gmail.com>
+In-Reply-To: <20250212194717.191979-1-trintaeoitogc@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 13 Feb 2025 13:47:33 +0100
+X-Gm-Features: AWEUYZnp5TfzVjASpt2eRmEUYK1ofOEDyl3qGkpFMBXk15OAxOFUo38BeCkN3uQ
+Message-ID: <CANiq72kQLizgq+uBEFz10MYPFcpXEA6zttXMz35cG6W93Z-Szw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] author field in module! macro should be a array
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
+	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com, 
+	ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, joe@perches.com, lukas.bulwahn@gmail.com, 
+	ojeda@kernel.org, pbonzini@redhat.com, tmgross@umich.edu, 
+	walmeida@microsoft.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13.02.2025 10:41, Thomas Weißschuh wrote:
-> Commit 14be4e6f3522 ("selftests: vDSO: fix ELF hash table entry size for s390x")
-> changed the type of the ELF hash table entries to 64bit on s390x.
-> However the *GNU* hash tables entries are always 32bit.
-> The "bucket" pointer is shared between both hash algorithms.
-> On s390x the GNU algorithm assigns and dereferences this 64bit pointer as a
-> 32bit pointer, leading to compiler warnings and runtime crashes.
+On Wed, Feb 12, 2025 at 8:47=E2=80=AFPM Guilherme Giacomo Simoes
+<trintaeoitogc@gmail.com> wrote:
+>
+> In the module! macro, the author field has a string type. Once that the
+> modules can has more than one author, this is impossible in the current
+> scenary.
 
-Nit: The compiler complains about assignments between incompatible pointer
-types (e.g. "Elf64_Xword *" and "Elf64_Word *").  The size of the pointers
-themselves is not different, as it is usually defined by the architecture
-regardless of the type of data pointed at.  The real issue is that the
-32-bit GNU hash entries are erroneously accessed as if they were 64-bit
-entries via "bucket" on s390x.
+I think this was a re-send -- in general, please change the title
+(e.g. increase the version number or at least add "[ PATCH RESEND" or
+similar) if you need to do a re-send, because otherwise it is hard to
+follow which is which (e.g. in Lore).
 
-> Introduce a new dedicated "gnu_bucket" pointer which is used by the GNU hash.
-> 
-> Fixes: e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH")
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
->   tools/testing/selftests/vDSO/parse_vdso.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+Also, for some reason, Lore has your #2 and #3 patch in another thread
+-- please try to see if you can fix that when you send the next
+version. Both `git send-email` and `b4` should do the right thing by
+default when sending a series.
 
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Thanks!
 
-Thanks for taking care!
-
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
-
+Cheers,
+Miguel
 
