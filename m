@@ -1,214 +1,237 @@
-Return-Path: <linux-kernel+bounces-513165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B57A342C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:42:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7478A342DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CFD188D96E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204003A76BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0D723A9BC;
-	Thu, 13 Feb 2025 14:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E909241690;
+	Thu, 13 Feb 2025 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JVDbSw2Q"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUhN9fRu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68D281375;
-	Thu, 13 Feb 2025 14:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739457444; cv=fail; b=lwNEnasrRgIJucc9hb9ecERnHGb6Nb2Qujqhg8FhNmSLu2EbhZc2bdM4IDtVTiAggopM8y6hlgmWBdANCZ7gcUC+lc8WZHiqkOC5vjYmfdSaFw6LfjrnNWFAs4cHfzppgaBnQhhULsrYXX2m5mPP4SzjDmJWj0FEGupQO3pIXGY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739457444; c=relaxed/simple;
-	bh=rQXs8AmhJtxeXT0/MIDKjqsdnwVqs7CEA2S/z6hQWOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kCXWV71WFimivdsFf0fozXxKjxWWRLbDXN2ichH1P+r/bO5S3WTOF4aoWBoWUOF9xjxtU3hUn69itd0MaOcHpIzOvz7ZnNipjIuTL50Nk7pUy/cva9Be3wuCvHPg10Vyey7s/68ghw+NCJCgGuN09jB8vSRZP7FDn9GXMJXaSdo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JVDbSw2Q; arc=fail smtp.client-ip=40.107.236.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T/6Jw8rSGNkxZyV0KAkam1+ZazkdndOdrBieStI47OqlHPxRsJRjNoyMugLIYegKdHxvQ5try15X6eM1sHQO8nQixF4rNEZsBOlNTUJJPqGPTenzrkRKn65ZlEDb6G3EKS0qH4vJkv7440b/zNqLU3ShTiB0Y61UUeF8+IU7lIdTgaDPzuYLATJgM873fhB7VUvpwH07ZFPNjMJUFenIPyOYZnYIdJdvOcHWMfgRgfnwO4c3KQm0reuhEHNQUnpZDGLOHQTaskxpoQ3kZ6sRWVgT6T+ZduiRD2yvLDSxZFNIzAaCRmTERq0bi0Wkrg595HDavcdfoSbd4Az13L/ZIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gMGQ+l2v+keaPXcLQ731dvu5wVPTSTMLAoED48MTqxY=;
- b=EkOTURSGhiuga9C6q3H3BoT2yOW4EF71NOnwPHpnZRWfgySbiIA9R20nv7ZBG/v4GJumMd5xrZranU492bjdcDVV8ZiyG04MBhXmjOxMdu4IgLQSk2wFCKb9ohsouhknfMik6addHzmbnbPXSm3EHblq/rCWFAY0h4nwW2H+o/i006Km77O7q1xHriujW9YXVcLR8/7hajtUYUuFFn8yIaksdy6azs/WDRMzW1v+ZP67xrNJ0gQm8e+0SfgV/jjIlsFRviluXza/HFhYazIHHfUe3jryF991VmnmJebyQOM5Fhw2E4nNccTGlT+M9H43KjcZCDS5Zhv/F5kAdxR6PQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gMGQ+l2v+keaPXcLQ731dvu5wVPTSTMLAoED48MTqxY=;
- b=JVDbSw2Qx2S5ZJQG7viQrWd2LZg4yZbdQNbSgeoNMWLUQROxajoPvlG+r6DRSnwDYRU+/S9uKOJjA7Zom7ecSW7mZtffgb+BcfHEjJEhWWp03kB6gyJbHQ0FnnLJDri0JLMeLpa9g8KWIO04nXfc9JiH0uL+zYirzRu7hfWDX7jmkKVFz2viq08H5vUSeGUZH1o7XWbujnPOccbB1iNigXIY3Q/xq+aep4anfX1GHdoQoQrkkHzidXWHZkfKQpYL/jPufsGC14OaXYp6cxOGTPrQJxXIkKXV66PZk5gbdN/UYE6U4BlNjHG3kWfjChCuwjPyJfIhBtZGmruPQEojaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CY8PR12MB7657.namprd12.prod.outlook.com (2603:10b6:930:9d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 14:37:19 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 14:37:19 +0000
-Date: Thu, 13 Feb 2025 10:37:17 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	maz@kernel.org, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, shuah@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
-	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
-Subject: Re: [PATCH v1 02/13] genirq/msi: Rename iommu_dma_compose_msi_msg()
- to msi_msg_set_addr()
-Message-ID: <20250213143717.GA3754072@nvidia.com>
-References: <cover.1739005085.git.nicolinc@nvidia.com>
- <0cfaefcc104e29aeb031f316537249d8d53ef7fa.1739005085.git.nicolinc@nvidia.com>
- <87v7tejb7q.ffs@tglx>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v7tejb7q.ffs@tglx>
-X-ClientProxiedBy: BN0PR07CA0024.namprd07.prod.outlook.com
- (2603:10b6:408:141::33) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403972222B1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739457476; cv=none; b=tTS9Z3z07Dbl5NogP46Ozx2m0XiGkgK3VN5MOmWkxCZLcm+UyqHnogpwiXx1mZejmCeCtm4b+iI5KRBUk4zqPMzApPR9dLjWrU2q+0tItws2uPedzLaBGtyVHwpbGoh2KwDdMTpLro9gslXp9CV5VlQ8FjeCEpQ5QuSclMBgULg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739457476; c=relaxed/simple;
+	bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YUz1WnTeD6T5Rk4GxrFDLI/NNBV6XYckQlGGcD92DTvgW+NnzsYdcOEjwvyzS3+8PSelv9AyRvrEy66eCdoJ2bP4acdWuDkHY5CoyOyJtSCN3mRiwKNmosS9YizkLXxrNE2Gm0wVKnfNOYTRswogVF7EFFzFtLKoC/GUpIcxsrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUhN9fRu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739457474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
+	b=NUhN9fRuKfk90pCALV78qKCZlBHDd9bIY5i91zQu0fcoVl+/o+Fw7GdTr691javKhHcUAm
+	r9Er3EwSM3ffitmGyL9BQ8CH3LhGtyPbmFNH+ZW05ZW+ZNk3x2adf4NcNoJh5nRSlQWLxv
+	lwPfPtarR8BaLQizGjkBs8ZEcgbyM98=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-3pUviAIMNzilej-0zkoJMw-1; Thu, 13 Feb 2025 09:37:51 -0500
+X-MC-Unique: 3pUviAIMNzilej-0zkoJMw-1
+X-Mimecast-MFC-AGG-ID: 3pUviAIMNzilej-0zkoJMw
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38dc88ed9c0so540537f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:37:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739457470; x=1740062270;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMsIkRsLOsVXj850WlfngMWu2xehoAAjf9EtoK8GX7I=;
+        b=MzBwubn/0xVsdiS44g7qczvqWyynOgjNyPQnnyIay+9gVgndwiBimbUfInj45v8v8C
+         gs2dR5Pt7emM/XAyA12baiudcYlGW0xt/rR7r40UNzIh3Q/KoI9oFCrZjL89rrZK18Be
+         WrK8liS3yn1dwgcOLKG1xQTDwVsvEw9EtJxTYexCL+7igjEXuTRkKCZ5Zi7AdJ65TUuZ
+         e4UJ4VnGFRzqcK3Q7GHz2vUl/4YiGnRn8ZYiJNGX89oPoxqVwrWaOyOr/ToZCUQvu1La
+         FuSddNMLHs9jWHz8XWdNNUshW352s/2btQ5uU70L1jgmQpD9DOW/q3yGmT3MVI9ngmm5
+         T6gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEx4To1gOvFitSNkBcfrmHj2s1LraHijSEFauxEXzdWqrCWyh/V8wWkHRz0hNEK7+XFcdOVpMyeYGzYQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1udBJrG/S4AHHXTiJAdhuyPHQM4lKZmlwaWT8CHQ3fAUo8ZV0
+	Cgd5KaOn3IwRFQ5vDH+27uG1/ZhaQcn0K6Ppjn/NWud8rYu+iYK6H2REC4msfFSRZ1CQIsSn23p
+	Jxrth3ypK0A5RR/rNssm1e1gw1d+fgjuTcg7zkXPjP134e39sbm1LzgLUiiXBzQ==
+X-Gm-Gg: ASbGnctPPBYrVwICl4Gbh96nIvuphRUh9GATPfm4f9uVk8b0ECdc3lCHYj38lYbo7AQ
+	thdaNTsjbh5SWQLdkidxHxm7tsLZ/oSusBvkPHPkR5vioP7sij4ElCmP+pyoQPdghrfmjdU83tt
+	D61K58ap0ttVytwfjxGiOPH/gRLp9Or1L7BcZ8Tnn/6DYmdqs69UZs0ZOKoiH+P0f3GbdQ3PLqo
+	k8sQe+/WTOszMVzwBea1CM26Mg1e6atGGZUzn5LgJlX+X/ZDl8xdhpzo4skRu3JmjZQxkBNSJ34
+	lDMNbtGTv3wMS2Qx3R14pQVzxWr92Kg=
+X-Received: by 2002:a5d:648f:0:b0:38f:277a:4eb3 with SMTP id ffacd0b85a97d-38f277a5258mr2651024f8f.8.1739457470391;
+        Thu, 13 Feb 2025 06:37:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHDTqe4qsYtkDP00ujYm7DVHNEfDKKsf9UNHm5PPWdZ5xhGE4IKSeM3/RqB5gJfr7CQu4AvKA==
+X-Received: by 2002:a5d:648f:0:b0:38f:277a:4eb3 with SMTP id ffacd0b85a97d-38f277a5258mr2650985f8f.8.1739457469974;
+        Thu, 13 Feb 2025 06:37:49 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b44a7sm2119604f8f.12.2025.02.13.06.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 06:37:49 -0800 (PST)
+Message-ID: <35fe8e74229af24f45954dd27789363dd5c2f8b8.camel@redhat.com>
+Subject: Re: [PATCH v6 2/3] sched: Move task_mm_cid_work to mm delayed work
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, aubrey.li@linux.intel.com, yu.c.chen@intel.com,
+ Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra	 <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ "Paul E. McKenney"	 <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>
+Date: Thu, 13 Feb 2025 15:37:47 +0100
+In-Reply-To: <1a295a1e-08da-4684-81be-9539773a1c94@efficios.com>
+References: <202502131405.1ba0803f-lkp@intel.com>
+	 <17bda9071b6962414f61668698fa840501819172.camel@redhat.com>
+	 <1a295a1e-08da-4684-81be-9539773a1c94@efficios.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY8PR12MB7657:EE_
-X-MS-Office365-Filtering-Correlation-Id: b90171e1-ec99-4910-f15e-08dd4c3beb43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OCsrLadiYS70MeC7QWziBI3BQuukZtSFb6xC1Lk6McJ0i31gMikaHCfNnMPJ?=
- =?us-ascii?Q?iNvXE318bZWdxhfilM4IbShQvUrhFeyrM2TBPW8pvbP5SQMWtJPKCYkU2q+Q?=
- =?us-ascii?Q?933cGqVsG8sHNiUjo1PnZrRiAfzD4msEkEIKNASHb20KmDTgC86X1ootpRQg?=
- =?us-ascii?Q?zFBpTi0MCTpsHSosJuqcYjidwGs7IeyxSFVU40ASSnhZ1qgbvYzn5KKkVbwi?=
- =?us-ascii?Q?VkmF2IT7m+oNvgScOsQPTPH/ZkbVi0qDpfH2GUMdFHAsnGAzPiEQUJ0KAkNE?=
- =?us-ascii?Q?1IEkxL9J2a6ICWNMTcWmJtCWq51AZa0/fZAk82r/y6I9lpWuzLfPIXqfpo9Y?=
- =?us-ascii?Q?NTJ9XULd8eRFJv1MzxRhL4uLoE+eNjEt+TcYkboDS3BkYJVZw1Pk3kBpb8/D?=
- =?us-ascii?Q?OW9/PGwANsRV6tr3NFUhXeVpvxF/2yH/d7xT/KGGv/Bepf2Bkao/ZxJxXg8G?=
- =?us-ascii?Q?MvRffX10Lq7RYSadnHFiJ0ttGDLGJ4fBCZdrrEorPE4DaYX7VeU1Pt+T+5nW?=
- =?us-ascii?Q?hKo/VZWO22oTT1rFbe1CSGBQXoCMr+7vPc4NbCv67fRx+IfXBiWlq+vmZ+Gi?=
- =?us-ascii?Q?U2mFsZBix71YT4JCQEHmrDPoVA6w4CylIXe5sgj2GULCkiFcVRsAVndEH8ry?=
- =?us-ascii?Q?O2iAGkp8/Iy/rcYoyXVe++sWLrmUi/OOu5dSLBidkrWTHR8fFDHD2w4W2JIm?=
- =?us-ascii?Q?JOHaSLjQOE/x3OLV3V3g/irMmWESFmGSpBfa0wMZV5SLOC4jAJkWCPfW8Vtx?=
- =?us-ascii?Q?CSOWtK2OudlRwCdML7tba6fCgibwmV7ecd10oeYR8v26WAKwU+tw3Q+7BB3G?=
- =?us-ascii?Q?ZN2eKH2vEj4olZQTiK9hSKo+w69IimEze8vpQ5Lwvn7+r8XMsZMfThSv+xSu?=
- =?us-ascii?Q?TApFeqOeX1LdFEhnRMTxTaz1AfQD3iadtCksNMm8gQXNnOPCx/pBlC1cc6GF?=
- =?us-ascii?Q?2HVL3BehfF24MQ3hTKghDYH0PkOuEpDxsPq2cvZrPd1d6K5vV2YWTCMIMKHw?=
- =?us-ascii?Q?jGafwYc6I8yKaVXeZ/+V3Gq+olmiKd7odrLu08fX20d/J1DSulC0IrYAFT/g?=
- =?us-ascii?Q?nY3lZcHkNCaQ0P+OjUteGDv8u2K68SUcYuoxuU7DGkkq27KdTmqrMjyO6B8L?=
- =?us-ascii?Q?1dZloJUDjTv3nl9l3ektYq2RZIRzYFwmOSXI8Pgu9XcqxhqQO3MtTfQIkmGl?=
- =?us-ascii?Q?y3Xm6H/c4Tyeb/kXNr6hrjvm4NoddahuesWpAYECu3FYI91NFcHCQq9/JAL1?=
- =?us-ascii?Q?UHlc5gaAS5rEUGywuzUmX53tGuPpVrU0zfrN/DGWRy6f6Mu79lUbd5/Ifktb?=
- =?us-ascii?Q?xCDVyiNBth4ZuNNAv74v8Z5Kn0aPqOUZKcFhzol0XBMORq2FLeMMiUG7VaoP?=
- =?us-ascii?Q?v1trOuxhCSjeWFeYDskntb47O9x7?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CbTa4EM9D4LG1E1cY0aJ7JYrWOraDjZ0Ar0Rycz6QDfjNFE7cXlY8yNkARJD?=
- =?us-ascii?Q?E4d4dSNc55DoKBs7+lPd3XK6yQAxvyQ0wALBEGZKLI8SSZhjJsYSR9kQuLXQ?=
- =?us-ascii?Q?NAy7LZp06ctM5pHQFhX+Rw/6o1kyXsVGUsCGHxCD5lnmsSnXE235Uekl+z81?=
- =?us-ascii?Q?6zatGfuYQbWajOw13Qo76SLz40SzHguF+zE9QqisMYqaTHYgZ9JmtiDYhux+?=
- =?us-ascii?Q?VqYpZ8E4vAOa5HCIos31OJVhyQuycTb9LLh6Ig/ICINCkhW81OjMDlz3isbz?=
- =?us-ascii?Q?Yypg4sNveF+7iu/jl6mgK3B8r7Ivoa65JsELnbhupfozjZJS45tsBwJcqtEV?=
- =?us-ascii?Q?rbCkCUZJLYI3Usx/3ZB5orCE7IzkTP0ZIW7oD43nW2cQP+L5JaOhr1mFSzft?=
- =?us-ascii?Q?ub8hlPotcs5EvgqXEnki/rXsN7nBu43F7GX3sNNnsAusWDrddZw1/2FFYJr/?=
- =?us-ascii?Q?jJOm24OwpTU9bTF/KUphTiapBhhLilwrDkrvlgd05fwI+UZHMtgfhu8W1HHL?=
- =?us-ascii?Q?HH9pdmPz7MvpmdWERAkfBIPdMntUaNFu2TlJSihGQ4yTLVwVpiYHkJyEn/v8?=
- =?us-ascii?Q?Z4WfsS4NReVGR6MNTB2h2zBHw3GbLFA+IVmskaIQrbYjdtW5yIQcmw/4RMFH?=
- =?us-ascii?Q?Zj7oT5YgnLYF5lnMe6k1Ub6C6g14Lk1p9WTh8O7MaNkW98U/2Zb3e/kpm5GQ?=
- =?us-ascii?Q?k5t9X+nWGhxsEUHBX7HBKPCi+AOoeodS6wkl1HqQVmaXV/3w5cXDgxYQFw3o?=
- =?us-ascii?Q?L1kCy1VPTE4VCIx3Kd/WEgujnvY9DhWunlhwbEDyByD8LWVffEB9A/+cJrKK?=
- =?us-ascii?Q?K3opqXxL8z31BuuvEHtLQ6xj8t/Inv6DS8NGebqAYqm0grdATCBjJVXHXeHb?=
- =?us-ascii?Q?2Pbbn+Rc6mC7rVNpj0CBdZxPSimktoOq4I2Dbpv/VYs2lUcwCLu4JeegcEF9?=
- =?us-ascii?Q?LvlfCf70h1TSgu0c2qMXzuiHjZqm91S9wiujxe3ctw9t+pppGql63dbiWfFZ?=
- =?us-ascii?Q?JYRixz9z9nXeUEjtyBh1feCwZgCXIV5T21fY+RXGRVLVWUPVTXmM4uWxfohB?=
- =?us-ascii?Q?TBb4XmgfgWH7MLjE8GvOQRltB26JhptzcvdQNPbpo2oKp1ztd2ejuSbtnbRM?=
- =?us-ascii?Q?DLL1BOJF1jDQ/sgAGgXNAgb0iDQOEl9/kcSbvXtyQZ1PJCzp2/UPMJesmhn3?=
- =?us-ascii?Q?QISYcGIgBPzbeE8FqpM3H8LNhc1+Cc84GkE59BPm7rbfBQdlL8Qf/UKluReX?=
- =?us-ascii?Q?DIoxYVw/mp9pxbdVuXn3fbvbZJPw614mvsPCwnZB/qjlMcI7LhuGdJhplKTT?=
- =?us-ascii?Q?AY5QxJlLpuUtCoio+7yZQLuIJ7X6spxigGRPbczpEjcz4te7+Yu8reWtTCze?=
- =?us-ascii?Q?P2LORQs8Yfu4eFVSWe+I5OL1Voud+R2F7OOZ89SXTusQr7q96k3LBLQ654oy?=
- =?us-ascii?Q?6ln5hA5i8fY13gY0n8uzQwF+gnPbcbIvY69MtLoiBn8SRmAObjuyHKcVsyBQ?=
- =?us-ascii?Q?+R6QvfCxU4ciuXPcSOmivset/R4cUIDQYI6aWK7m1qLdfp5GOWb/iez688hO?=
- =?us-ascii?Q?xionF5ZfFK6Qx7HWRCjzXjgbO0CQvp6Cd7PYuDd1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b90171e1-ec99-4910-f15e-08dd4c3beb43
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 14:37:19.1717
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3A0b7oC5JqSPwmgguOxClLLpuPvKPt+xdpR0TTjEVPhstk5TCFpOIRt0lFsiCqqb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7657
 
-On Thu, Feb 13, 2025 at 01:11:37PM +0100, Thomas Gleixner wrote:
-> On Sat, Feb 08 2025 at 01:02, Nicolin Chen wrote:
-> 
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> >
-> > The new function is used to take in a u64 MSI address and store it in the
 
-Assuming Nicolin moves the hunk as I suggested for patch 1 lets say:
 
-genirq/msi: Refactor iommu_dma_compose_msi_msg()
+On Thu, 2025-02-13 at 08:55 -0500, Mathieu Desnoyers wrote:
+> On 2025-02-13 08:25, Gabriele Monaco wrote:
+> > On Thu, 2025-02-13 at 14:52 +0800, kernel test robot wrote:
+> > > kernel test robot noticed
+> > > "WARNING:at_kernel/workqueue.c:#__queue_delayed_work" on:
+> > >=20
+> > > [=C2=A0=C2=A0=C2=A0 2.640924][=C2=A0=C2=A0=C2=A0 T0] ------------[ cu=
+t here ]------------
+> > > [ 2.641646][ T0] WARNING: CPU: 0 PID: 0 at
+> > > kernel/workqueue.c:2495
+> > > __queue_delayed_work (kernel/workqueue.c:2495 (discriminator 9))
+> > > [=C2=A0=C2=A0=C2=A0 2.642874][=C2=A0=C2=A0=C2=A0 T0] Modules linked i=
+n:
+> > > [=C2=A0=C2=A0=C2=A0 2.643381][=C2=A0=C2=A0=C2=A0 T0] CPU: 0 UID: 0 PI=
+D: 0 Comm: swapper Not
+> > > tainted
+> > > 6.14.0-rc2-00002-g287adf9e9c1f #1
+> > > [=C2=A0=C2=A0=C2=A0 2.644582][=C2=A0=C2=A0=C2=A0 T0] Hardware name: Q=
+EMU Standard PC (i440FX +
+> > > PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> > > [ 2.645943][ T0] RIP: 0010:__queue_delayed_work
+> > > (kernel/workqueue.c:2495 (discriminator 9))
+> >=20
+> > There seem to be major problems with this configuration, I'm trying
+> > to
+> > understand what's wrong but, for the time being, this patchset is
+> > not
+> > ready for inclusion.
+>=20
+> I think there is an issue with the order of init functions at boot.
+>=20
+> poking_init() calls mm_alloc(), which ends up calling mm_init().
+>=20
+> The WARN_ON() is about a NULL wq pointer, which I suspect happens
+> if poking_init() is called before workqueue_init_early(), which
+> allocates system_wq.
+>=20
+> Indeed, in start_kernel(), poking_init() is called before
+> workqueue_init_early().
+>=20
+> I'm not sure what are the init order dependencies across subsystems
+> here.
+> There is the following order in start_kernel():
+>=20
+> [...]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mm_core_init();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 poking_init();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ftrace_init();
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* trace_printk can be e=
+nabled here */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 early_trace_init();
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Set up the sched=
+uler prior starting any interrupts (such
+> as the
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * timer interrupt)=
+. Full topology setup happens at
+> smp_init()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * time - but meanw=
+hile we still have a functioning
+> scheduler.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched_init();
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (WARN(!irqs_disabled(=
+),
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Interrupts were enabled *very* early, fixin=
+g
+> it\n"))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 local_irq_disable();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 radix_tree_init();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maple_tree_init();
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Set up housekeep=
+ing before setting up workqueues to allow
+> the unbound
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * workqueue to tak=
+e non-housekeeping into account.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 housekeeping_init();
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Allow workqueue =
+creation and work item
+> queueing/cancelling
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * early.=C2=A0 Wor=
+k item execution depends on kthreads and
+> starts after
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * workqueue_init()=
+.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 workqueue_init_early();
+> [...]
+>=20
+> So either we find a way to reorder this, or we make sure
+> poking_init()
+> does not require the workqueue.
+>=20
+> Thanks,
+>=20
+> Mathieu
+>=20
 
-The two step process to translate the MSI address involves two
-functions, iommu_dma_prepare_msi() and iommu_dma_compose_msi_msg().
+Nice suggestion! That seems the culprit..
 
-Previously iommu_dma_compose_msi_msg() needed to be in the iommu layer
-as it had to dereference the opaque cookie pointer. The previous patch
-changed the cookie pointer into an integer so there is no longer any
-need for the iommu layer to be involved.
+From the full dmesg of the failure I've seen there's also a problem
+with disabling the delayed work synchronously, since mmdrop cannot
+sleep if we are not in PREEMPT_RT.
 
-Further, the call sites of iommu_dma_compose_msi_msg() all follow the
-same pattern of setting the MSI message address_hi/lo to
-non-translated and then immediately calling
-iommu_dma_compose_msi_msg().
-
-Refactor iommu_dma_compose_msi_msg() into msi_msg_set_addr() which
-directly accepts the u64 version of the address and simplifies all the
-callers.
-
-Move the implementation to linux/msi.h since it has nothing to do with
-iommu.
-
-Aside from refactoring, this logically prepares for the next patch
-which allows multiple implementation options for
-iommu_dma_prepare_msi(). It does not make sense to have the
-iommu_dma_compose_msi_msg() in dma-iommu.c when it no longer provides
-the only iommu_dma_prepare_msi() implementation.
-
-Ok?
-
-> > -static inline void iommu_dma_compose_msi_msg(struct msi_desc *desc,
-> > -					     struct msi_msg *msg)
-> > +static inline void msi_msg_set_addr(struct msi_desc *desc, struct msi_msg *msg,
-> > +				    u64 msi_addr)
-> 
-> No line break required. You have 100 characters available.
-
-Sure, I make alot of patches for places that only accept 80 :\ It is
-hard to keep track of everyones preferences. Thank you for having
-patience, it will get fixed - I think following a 100 char limit will
-resolve all of these notes.
+I'm trying to come with some satisfactory solution for both, ideally:
+1. the delayed work is not needed in early boot, we may have a better
+place where to start it
+2. we can cancel the work asynchronously on mmdrop and abort it if the
+pcpu_cid is null, but it seems racy, perhaps there's a better place for
+that too
 
 Thanks,
-Jason
+Gabriele
+
 
