@@ -1,155 +1,86 @@
-Return-Path: <linux-kernel+bounces-513741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C649A34E1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:53:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E391FA34E1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B53188F84B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664803A7E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37445245AFF;
-	Thu, 13 Feb 2025 18:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61F4245AF8;
+	Thu, 13 Feb 2025 18:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QQFIS6Yl"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xg+CZmr+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B0D28A2D4;
-	Thu, 13 Feb 2025 18:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F64245AE5;
+	Thu, 13 Feb 2025 18:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739472796; cv=none; b=Yd/OLZcQneDF+M9s+JaOfbqpmZpLmBz3U2ksl1kxBMxlG7UUE3fu1H9DZ/2DQfNOy8+GXYFRN3UgUq/wbOG6qL68CMbk9qzCnrzsmwEJCD3C+gLWukFl2LThl+CeVKPo9s4sjoxe/AHLIv2s6CXTrLOU5tiZFHEbvUZ74Ef9j0s=
+	t=1739472851; cv=none; b=dPdfwpDPGwxw2Zcp6lFDLTE/jJqq1U/bjn34Bh7qEgWuFfJp/5vrLHpD1mI3qIq+qmC0rEWYaVYQB2n+mOOj35VW/C5M0SSfIumzjz63M4cXiD9qwTpnybda/AY59d/YbxwxGMETTiTiXaXfck815qKekI2GS2LeXSnbthgENQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739472796; c=relaxed/simple;
-	bh=y2OXpJsSi9OIRanlMyx3KWqQShtlGo0AuzXqA9Fbzqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uZMuntwa3+cLGsp2OZzTzLmqOR+WdrSoQrs/7KL0w8Y209N8y4DScxTzJtbOJROIEah/TsqlOXSmVjoa69ggWRLqI8W/5aqZ4Fs84W64dHL/OALjZapoT0YXnqu+A5F7HeLuvQAbKg+fRNUPIGq+0e9tmYAOJJQDva8cul6e1aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QQFIS6Yl; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 44E1E4442E;
-	Thu, 13 Feb 2025 18:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739472790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6qH4iFmq2eCsp4gR0alhKpvz8JxjM4NdzNRGitctoQ=;
-	b=QQFIS6Yl0SPVIujgU2GPm4v6MzAaeFar1z+P8jxljvArnhEuso+Y/P/qcxiEHDYPns9Oe2
-	je9+Kk9CWdf/ZsYEv5gcGV6gh9WpYb42YK62QI6bB0wAUu3we0b6aprTdQJADCNWcrSAwx
-	9ycbaUf61H5QU/WHv8hmtogOn+6BAi7kQmiMc7MydcuHs8hj5eRXpVwGOvirzmuVhTb/Xp
-	kqAxyCa/lZbEnmksJuVGjvMa1RbnPT5GuzchNsyUEemWs5dhkGjLVNdJ4susBSgI35TH1b
-	M6SnAW8+yTKzKsCCoVguJ7nfcytgbsCz4gHn8GfhtBHVrRRIAJoC44hKvft1aw==
-Date: Thu, 13 Feb 2025 19:53:04 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
- <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
- "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
- <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
- brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
- dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
- kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
- list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
- ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
- lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
- manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
- thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
- <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <20250213195304.3a2df02c@bootlin.com>
-In-Reply-To: <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
-	<20250213171435.1c2ce376@bootlin.com>
-	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
-	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
-	<821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
-	<CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739472851; c=relaxed/simple;
+	bh=sw1QM8YNVs4tKquw8ExNDS9lGNe7mqqrDLLegMYkS2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZuDrXaSv/7By/d/lPkTZKkJtwQ2A+O56B1FWGtMj9sbocAcVh79KiuFain10ibO/3tr7Q2A5JTm9YV7SDzEXCAR7xQnHEDgLor8x1FHFNUKMw1NprfKfnqg789CQiMN2h1vNwm97ghKvckJ00jpH87eIL+6LzRCR3lUnvZcw25U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xg+CZmr+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6A0C4CED1;
+	Thu, 13 Feb 2025 18:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739472850;
+	bh=sw1QM8YNVs4tKquw8ExNDS9lGNe7mqqrDLLegMYkS2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xg+CZmr+kXKcUJnO2R5sjJI5xdtczkUza1MbIPMJHJ4CJqxpamFczCqjZHiyc3SKB
+	 P2k2i6SefDTEmk9in2O7Lv+9owltMrZ1iBWsGSopk+uBCCYlz80Ctdhv9tqiTMdJsZ
+	 lY70RAfCsC/nef0Lby33mb+z26G4KMhaipsobmHt0tMFgpBGgdxpkCTZUPTvLRR+FU
+	 3hUTxkXYa0NnmHt8AElAGmBgBdLWDbN4H+84+8WcNY6wHleHgPIUIUwW+68mrUxPVo
+	 C8Dj2Dz0VZvpR2sglVNtqxhwuCC6pFzTSAAMi8LG4dp3KubBwjXnOBisL/6JwwkO0S
+	 iY2e9ApNK8ZoA==
+Date: Thu, 13 Feb 2025 10:54:08 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] compiler.h: Specify correct attribute for
+ .rodata..c_jump_table
+Message-ID: <20250213185408.m5aogf2trvhvi2td@jpoimboe>
+References: <20240924062710.1243-1-yangtiezhu@loongson.cn>
+ <20250212175023.rsxsw7pno57gsxps@jpoimboe>
+ <b1e5e3ea-be4b-5dae-cc0d-34693429d060@loongson.cn>
+ <20250213023936.lzbpgou4eallaij3@jpoimboe>
+ <045d7e22-672c-b9da-38d6-8897e854f262@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffleegleetgedtuddugfffkefhgeeuheeugffhhfetgffhfeehkeejgeelfeetfeenucffohhmrghinheplhhptgdrvghvvghnthhspdhkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefhedprhgtphhtthhopehphhhilhesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvrgdrphhor
- hhtrgesshhushgvrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <045d7e22-672c-b9da-38d6-8897e854f262@loongson.cn>
 
-Hi Phil,
+On Thu, Feb 13, 2025 at 08:38:22PM +0800, Tiezhu Yang wrote:
+> Based on the above analysis, in order to avoid changing the behavior of
+> GNU assembler and silence the GNU assembler warning, is it possible to
+> rename ".rodata..c_jump_table" to ".c_jump_table"?
 
-On Thu, 13 Feb 2025 17:57:37 +0000
-Phil Elwell <phil@raspberrypi.com> wrote:
+Yeah, though for the final vmlinux link we'd still need it to end up in
+.rodata so it remains read-only at runtime.
 
-> On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
-> >  
-> > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > > > fan are directly on this custom board? You then want a board DTS which
-> > > > includes all these pieces?  
-> > >
-> > > That depends on whether you count the Raspberry Pi 5 as a custom board.  
-> >
-> > So you mean the Pi 5 board would itself make use of the resources the
-> > RP1 device has? They are not simply connected to headers for plugin
-> > boards, but used by the main board? Hence you want to describe them in
-> > the board .DTS file.  
-> 
-> That's correct. But even for plug-in devices, those which are on
-> non-discoverable buses need overlays to declare them, which causes a
-> problem when the overlay application happens before the kernel is
-> started.
-> 
+So we'd basically just have to add it to the RO_DATA() macro in
+include/asm-generic/vmlinux.lds.h.
 
-Hum, I see.
+Does it still work if we call it ..rodata.c_jump_table or so?  Then we
+could just add "*(..rodata.*) to RO_DATA().  That would be somewhat less
+surprising, and would also create a standard way for other code to do
+the same thing by prefixing with "..rodata.".
 
-We worked on overlay usage on non-discoverable buses wired to a connector
-and we did a talk about issues we are facing on at Plumber [0].
-
-You can also find our big picture in [1] and a last contribution introducing
-export-symbols feature in [2]. export-symbols is also under discussion on
-some other threads.
-
-Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
-an addon board to add devices on an i2c bus provided by a base board and
-wired to an connector the addon board is connected to.
-
-Maybe in your case, you can decouple resources (gpio, pwm) provided by the
-addon board and used by the base board using also nexus node.
-
-We use a nexus node [4] (not presented at the Plumbers talk because the idea
-came during 'out of talk' discussions in Plumbers) in order to allow our
-addon board to use resources provided by the base board.
-
-In your case, if I understood, you are in the other direction but why not
-using also a nexus node to decouple and translate resources in this other
-direction ?
-
-Don't know if this idea can help but feel free to ask for some more
-information if needed.
-
-[0] https://lpc.events/event/18/contributions/1696/
-[1] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
-[2] https://lore.kernel.org/all/20241209151830.95723-1-herve.codina@bootlin.com/
-[3] https://lore.kernel.org/all/20250205173918.600037-1-herve.codina@bootlin.com/
-[4] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
-
-Best regards,
-Hervé
+-- 
+Josh
 
