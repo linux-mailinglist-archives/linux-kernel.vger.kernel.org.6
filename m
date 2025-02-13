@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-512621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C3BA33BA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C9AA33BA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E983A63CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21BF93A5913
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A7320FA9B;
-	Thu, 13 Feb 2025 09:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E820F06D;
+	Thu, 13 Feb 2025 09:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="jSEwOGCZ"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BuuNI85o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C492080C8;
-	Thu, 13 Feb 2025 09:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440281; cv=pass; b=i0uxNDMyxJZ4f1wfuCGJVWqwOz/nYPSG+rBuqidin4X5r/rLZfwc8wGxpba7DnYyXAhtLmqrZkGTkK3CZLM5xjkaTyC8oWFW8Y+g5cfoCkkut1EooIbN5jEmduA99E8lhK8vO0ZhbfUJmdGZnMk788LDhoL4NqrWgoGXQePbQn0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440281; c=relaxed/simple;
-	bh=aSRyyPeM6e5hQFaheTBxy/WzU6InWEh4hO0nlSkJE6o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L9Ok3mRZNsK6nCeQVc4OzS0+hYtbn4lyjVQqwHwsoqloDaNNMIgOh+m7Mo5LjNxrDN49q4i/SMnlTFFr5upJRVLKV6ASjMOzGhQjfXE6LEYmU2yHBvPG9Lpo0k3S4Ukip4JNQjG7cLg6PWoua4HEBDguNhgw7l00oTHBhq5RHXU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=jSEwOGCZ; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1739440236; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cRWqjHO3xN30Cw8P6pNjxFBHiCsis+aZAywXAQQYz0GWTOzg1oiFFne67FvDzzHXxFXURB6pn6t9zRKK+0innD1DfTbe4wpQXyj08ECXCAZQEonjvmHTRwQmyjK43v+vQXRcp95/akdrW5jCorq02xdEyvArN9jJfyIcxciCJcg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739440236; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=aSRyyPeM6e5hQFaheTBxy/WzU6InWEh4hO0nlSkJE6o=; 
-	b=aMuTrwZ2XVBEhcXDtMCdnSsVoVsZziE1u76i99bG7mvbsPT9lvzPSeDi+2QA0nqkLPa1D4GXwCaJsOUQQIH/qhQ8baPca8WdM/FXSr+tlzyVMJ884F3JxiwojjCNlk8ACNa5n/h2vtK+SaBLLZfi9EmWSSNVXH4SSd2l6iQw9dI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739440236;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=aSRyyPeM6e5hQFaheTBxy/WzU6InWEh4hO0nlSkJE6o=;
-	b=jSEwOGCZw1I/yx2GrlRv6f9kQrS6mIJ7n6nMPE6VRODYffhsDVgZrLzBR3EGZKje
-	o/FnCSuNxR1g0M44IR5Y5fqTl2HupozZDOx2YrZpECMrEGWoDERDy1cUpeL1i5s736a
-	mktxmteFrD6x1efFzZ1jxYud5ZlOQNhbzpG9csJh5nPbdscUDKTTsCMOMkN6YvaWiZl
-	wcZ7ggGLARF+nzr7N/lQUEvlQRbp8IkZYcxGlIxnEdRGcmPQT1B4KWyl5m//85XVCaT
-	+BZWOHlEivDQWFWB/hfDVKGtOHu+w9eAzNoYuI/f/pd1Ab/recIDPshuoEgOPeyZMcE
-	pQqQCE0HGw==
-Received: by mx.zohomail.com with SMTPS id 1739440234709175.6616970322301;
-	Thu, 13 Feb 2025 01:50:34 -0800 (PST)
-Message-ID: <2e57e189de98a165e24bb0f65b2e0c9b17f51e40.camel@icenowy.me>
-Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
- coherent allocator abstraction.)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich
-	 <dakr@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Steven Rostedt <rostedt@goodmis.org>, 
- "Dr. Greg" <greg@enjellic.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Dave Airlie <airlied@gmail.com>, Jason
- Gunthorpe <jgg@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>,
- phasta@kernel.org, Christoph Hellwig <hch@lst.de>,  Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, daniel.almeida@collabora.com,
- aliceryhl@google.com,  robin.murphy@arm.com,
- rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, Bj??rn Roy Baron <bjorn3_gh@protonmail.com>, Benno
- Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, airlied@redhat.com, "open list:DMA MAPPING
- HELPERS" <iommu@lists.linux.dev>, DRI Development
- <dri-devel@lists.freedesktop.org>
-Date: Thu, 13 Feb 2025 17:50:20 +0800
-In-Reply-To: <b0efde29-248f-43f2-97bf-ab16b55af63a@gmail.com>
-References: <20250131135421.GO5556@nvidia.com>
-	 <2b9b75d1-eb8e-494a-b05f-59f75c92e6ae@marcan.st>
-	 <Z6OzgBYZNJPr_ZD1@phenom.ffwll.local>
-	 <CAPM=9tzPR9wd=3Wbjnp-T0W8-dDfGah-H3Ny52G85B+2Ev9ksA@mail.gmail.com>
-	 <208e1fc3-cfc3-4a26-98c3-a48ab35bb9db@marcan.st>
-	 <CAHk-=wi=ZmP2=TmHsFSUGq8vUZAOWWSK1vrJarMaOhReDRQRYQ@mail.gmail.com>
-	 <20250207121638.GA7356@wind.enjellic.com>
-	 <Z6bdCrgGEq8Txd-s@home.goodmis.org>
-	 <1e8452ab-613a-4c85-adc0-0c4a293dbf50@marcan.st>
-	 <07c447b77bdac1f8ade1f93456f853f89d4842ee.camel@icenowy.me>
-	 <Z6nTxks3u-ErSalQ@cassiopeiae>
-	 <d7d1fb8af8857e7ebfdea48213849ea9ba446477.camel@icenowy.me>
-	 <b0efde29-248f-43f2-97bf-ab16b55af63a@gmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DDD20D4FC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739440318; cv=none; b=PzjYeNdD6fuyerfVm4GWTJovJctLFXwNSUUbdYvK538U5/UJ3YQa+Aeu8wYyaJmLOodrZbk0yQpVu+hSWyO6i0CgjSMCB+DD3exNn8I078fS70+xNv6EmbmeMOSRoU9C9GtfmjHhUrOJtNygMberyNkiPI8ODu9LFbb2k5AJ/ww=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739440318; c=relaxed/simple;
+	bh=6N2+fbfxcDI9Fdms78thpwbZ8Rd9JuIdpkN1DJzK4fA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8/duZFjuAp+0cxzMSvbTT1gKvW2Jnh/AXMd/Xpexi5gBK5A+19D1XRTIvnGv1LjWM2C8n3wHemgy/i3rhVKgUCjbwX1bKeY/Thqpz+ME5G0HbXSumKns8Z5pTUykJ4OHAFsw615YXtsEEgImVgNfW5irHHZihGEet7FpVY4mSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BuuNI85o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556F9C4CEE2;
+	Thu, 13 Feb 2025 09:51:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739440317;
+	bh=6N2+fbfxcDI9Fdms78thpwbZ8Rd9JuIdpkN1DJzK4fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BuuNI85odlBNVCT77QpNuQsLRqoP0HQMPghKOCDad75bev6YCC9UfmLDLd+pMmSmc
+	 FapSAcwSWzrCze13lxLCe6sq9ZMHckCWIx44os8pknOsAhRMqsF/Z+s+t0m8bxCZOG
+	 jyOj4Y6C4LnDnNslBgXbeLwzVrqpNAz/10WeG9yw=
+Date: Thu, 13 Feb 2025 10:51:54 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Eddie James <eajames@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	alistair@popple.id.au, linux-fsi@lists.ozlabs.org
+Subject: Re: [PATCH] MAINTAINERS: change maintainer for FSI
+Message-ID: <2025021301-deniable-sequester-5a72@gregkh>
+References: <20250212170827.1477102-1-eajames@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <2e57e189de98a165e24bb0f65b2e0c9b17f51e40.camel@icenowy.me>+zmo_0_
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212170827.1477102-1-eajames@linux.ibm.com>
 
-=E5=9C=A8 2025-02-13=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 08:41 +0200=EF=BC=
-=8CAbdiel Janulgue=E5=86=99=E9=81=93=EF=BC=9A
-> Hi,
->=20
-> On 13/02/2025 05:49, Icenowy Zheng wrote:
-> >=20
-> > Sorry, but I did a fact check on this, and I found that the only
-> > "reviewer" of DMA MAPPING HELPERS is Robin Murphy, he has only one
-> > reply in this thread, and the reply only says "Indeed, FWIW it
-> > seems
-> > like the appropriate level of abstraction to me,
-> > judging by the other wrappers living in rust/kernel/ already", he
-> > didn't offer to be a reviewer,=20
->=20
-> Robin did offer:
->=20
-> https://lore.kernel.org/rust-for-linux/4956d01e-2d06-4edd-813b-9da94b4820=
-69@arm.com/
+On Wed, Feb 12, 2025 at 11:08:27AM -0600, Eddie James wrote:
+> Due to job transitions, both Joel and Jeremy can no longer maintain
+> the FSI subsystem. I will take over.
+> I also removed the link to Joel's FSI tree as he won't be maintaining
+> it.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+> 
+> Since there is no longer a tree associated with this subsystem, can we rely
+> on you, Greg, to merge changes to the FSI subsystem? Or will I need to create
+> a kernel.org account and an associated tree and send you merge requests?
 
-Well okay it's a further thing.
+Just ack patches and I can pick them up from the lists, no need for a
+kernel.org account for that at all.  Or you can batch them up and email
+them to me when you want as well, which ever is easier fo ryou.
 
+thanks,
+
+greg k-h
 
