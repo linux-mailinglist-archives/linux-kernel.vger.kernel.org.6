@@ -1,144 +1,147 @@
-Return-Path: <linux-kernel+bounces-513093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECAAA3417C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:13:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578D6A34163
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD516C4A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:10:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9256B7A26F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F87281369;
-	Thu, 13 Feb 2025 14:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339141487FA;
+	Thu, 13 Feb 2025 14:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2AQMbcW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="j+SsLrO5"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246028135D;
-	Thu, 13 Feb 2025 14:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4CE145A11
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455713; cv=none; b=Pvs12JX1nJ1Yc5AW/YubwSod3LiomlxTvPRJX5XM1/FWfk8PiMI7kANW0duiSDjftG8n3MhFVcUIQUVDBGT3+CdVvTzDWUZbCDfaLNawfkEQnsB4Ho62FOzbrWkdGwb8YzMxys+ZfnEBglqu9EXiR3EViYtGV+Fd61lACdiKWCg=
+	t=1739455775; cv=none; b=MePwjJGBZom9fgsvtmuaOc4RavwtdcKcQUAfTrQRLLzM/sigVmirZoyVS4IeSYKASPPH8lX5w6+2/ZZgePlJV4kp9dhm/ovrMy31REkqBVsPS47I8Q3AI5gdIEv3Skb9k+zTxPNnL+eubyCpjYQF90G/xPNTO0pLFotQWp+XNF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455713; c=relaxed/simple;
-	bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mUPtbQHxP/xVoKz09mm712dyHIC4Fyv4Aap12HOlGR8WkGanzXBk1a31vDRPSw4gL2bdNob+UA8LBjaF/Gf66rSYC0xq4ZnEJBcQ1FtbGMAIDg2ZpltuS2eNQn1lnERZXj9GlhUgzGh5urE8LLKpVcWY4SyavDW0/ElIMc6+7To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2AQMbcW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E84FC4CED1;
-	Thu, 13 Feb 2025 14:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739455713;
-	bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=G2AQMbcWIiltv4YQF1dCdzBJzyosDkOzWz+6pKrfrS4/ugEuos9FG8twISb17VG6f
-	 gP4K2A27eKMVNhzPWWE+Rmr6PeQATQPD5scFYM6f8duObt7Mh1LGtX0VZefutDX5AC
-	 nZiQjbl9Gnj2zaHSPLOlVvVPh8a5/4YDVLWZtsWjZsMK1JywqaEBNqBaEKwdlhCsS9
-	 3MH9TgazeaDtqHaREK1gwytR44VZR/uwq9TZl1kMGEqF5k50rvMxS4UDE+msPi4kjK
-	 sNe7EThewWBHJiBd5kVEGcaLHSwN8gRgzP/mhpJKIx+0pNIL9tILDfBm65lJchaj/3
-	 uAiR3/orlFwkA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 13 Feb 2025 09:08:29 -0500
-Subject: [PATCH v2] nfsd: allow SC_STATUS_FREEABLE when searching via
- nfs4_lookup_stateid()
+	s=arc-20240116; t=1739455775; c=relaxed/simple;
+	bh=bITAd8mMpklIAUS4JC6xN0NXMsNUvXCDm5eahLi6O7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aI/PozGTw2ru7RtcQI6j0ytGGlmlEahywcS+lXNAdlNYPCVjhqqm172eauF5AHOS7j2Teza1UvsKM8L0rSQ6CfFIOBNqAr/WpMwh9iazMQ+qkfl/nCi2DamyChTBQy0KyUbqJWyL2vom6N2j1SzVwbZyDbkAsvisWjOQaOWWg+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=j+SsLrO5; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 416943FE6F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739455765;
+	bh=uT1aaGr8G8g8+cxLYkpklpbAkzbJ8av1g9g9BSJeMyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=j+SsLrO5prjZQAikljdkXfD0SRYTa3VmPG2pNML2dUz+MUD/DQdkbXRcW3FCk82xT
+	 hJqsEi4LNi7FZgaa0Tk5bSFCxD06gfxC37Q9CsCYkgGf/7Kb/dr3y67bHjy5gVyRib
+	 hn66GjJgiKKEjfONrm4yHRS6fx2MrYgG1Xbesu5CVn1tS/Cfno8Od80NzC5B2Gqegs
+	 2DeZ6kLWQ4THBc66kVHgOwD6CALyRHtcamVX3AQ8nW7iLGdZriTf2Pii+/RtlIjcS7
+	 3ydWCh7AXECFKBf/tdnAZVEjd9KNi/wY/+L7goQxc4VK3JiQD2pw/53q51z8rtuFpd
+	 MZJFs8LC/rTcA==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fa3fd30d61so2166455a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:09:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739455763; x=1740060563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uT1aaGr8G8g8+cxLYkpklpbAkzbJ8av1g9g9BSJeMyk=;
+        b=F6DQzmG1eAyLXkWl6GiSCSXZe47G4hyGLkQmxsUfCIc/mpu1V4hlcdvs5qgzL7IOqX
+         nOM0F8DBtWQjTfmSXbq93mrqk161g7a+tnoVRosLe0ODA/uzMFwdBbyj4/R6/zXeiyGX
+         cSgTtRwhxxyNBhHldWAo2UZym8r8ILkguK/dptOIgJRvw2JmqnJK+cnUYLB6VJm5Ni/U
+         F3AP7WbgmQzh1zD/urFFHbG0Y3X1+eViqatIXpfznkA0oyjMV6vL6fntVP3TADMSPt82
+         9FKcqCstXaViqzR87FpGjVIel+njVy0EGNznB5EXIprQXVp1bX+U7CCXKwktSNossNE4
+         X5Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUseMNASDkaSWhcWuqgTIpVFlRWHaY+7ckl1SnheV5U3UbzTsuQF0JF0q3BuZ8LtmICjUKJgkk8hM9NgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTgCAeQ7PvVJPEl6y8wZLsRvrzlOXfZ2elrap0Ib93zO/VAe3p
+	9EHltV2sggHmuTpC5B+YJfVlXw2WZixxhYrrdhYpfk+WKvo9LDYL8Z6faRuMkfkabglRr5TeZEK
+	4cOFA/DnpdLTmmVBmsUoHBm/TsAsdnz4YyMtEsAQdg0TWKm5IrasRIBxXc9Vg5+VIGYl8EO+h22
+	fQWA==
+X-Gm-Gg: ASbGncvlK/3WWIqeurvMu+xGYUjaleg5OWYlqFr//uEA2IqkQ3IzivqyWR6t3TcigL3
+	nH/5NRMwVAcWZOKVaS3POk2ZkLp6czcfQzJoI/SadRg+vCh5uRGjByByy3VIFVoVC3v8iUk+MMi
+	Fa1af06BESPTLJWU3GtCi7tFhoO7Ibu7K3oEcHwmMXWLULPRcHKhcfQ8CQHAUTo09lsXcfE+fH5
+	/WUlu7hTWQ0fS5NVdIIGb/c6Pj1HyJ2+s6Jty4F//gVieCst1XVtXbvAOw+lmTGNgbIPA2svCZr
+	gz7MuUc=
+X-Received: by 2002:aa7:88c5:0:b0:725:e4b9:a600 with SMTP id d2e1a72fcca58-7322c5febe0mr8531715b3a.16.1739455763650;
+        Thu, 13 Feb 2025 06:09:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG2OC7Bly/7WjTJr49UdcU8b8bQ1YL9E84be+nLYkBfeQGCe4GDRRo2znH/scSBpDczXDVcaQ==
+X-Received: by 2002:aa7:88c5:0:b0:725:e4b9:a600 with SMTP id d2e1a72fcca58-7322c5febe0mr8531682b3a.16.1739455763273;
+        Thu, 13 Feb 2025 06:09:23 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:5439:d90c:a342:e2bb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324256f0dbsm1355536b3a.68.2025.02.13.06.09.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 06:09:22 -0800 (PST)
+Date: Thu, 13 Feb 2025 23:09:20 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] Introduce configfs-based interface for
+ gpio-aggregator
+Message-ID: <ziupltbphzkj6hngeqpjktwchqtj5ni2oum6cq5oa7agds5u2l@pwo7kdc3qiph>
+References: <20250203031213.399914-1-koichiro.den@canonical.com>
+ <CAMuHMdVoCf2VmgZOtNOPxhpTdYBWEWgCozLM+opaL7wOtF10_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-nfsd-fixes-v2-1-55290c765a82@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANz8rWcC/22MTQ7CIBBGr9LMWgwMJRZXvYfpgrRDSzRgBkM0D
- XcXu3b5vp+3QyYOlOHa7cBUQg4pNsBTB/Pm4koiLI0BJRqJCkX0eRE+vCkL7wbZX+SAWhtohyf
- TUbT9bWq8hfxK/DncRf3Sv5qihBJWG9Kut8r6ebwTR3qcE68w1Vq/9F3YG6UAAAA=
-X-Change-ID: 20250212-nfsd-fixes-fa8047082335
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2465; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=kgqP5pYJ/bpUOryhSSQygdgkcdkG/n6XTOBq4HLVNBc=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnrfzgaAgVp35tw3jiwtFWlWUPkiLVe/vqgWWfP
- d1sla5m2kyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ6384AAKCRAADmhBGVaC
- FaUcD/4pDvsQgqmZFuZw1lsrSiYhAUxs6EWKotDMSQ3E5sMZtjRGaOvntcs4vS60qxJ4nqqmh9d
- EOZeOkRGdaEmDeeclhoHGCDnk/ViUx1MhOhonJTSHwK8sYGHrMePG9VeOv3JbtVTQnJX+Bgt72J
- KbpHHfejnSzvgtvVIWNaUvGLGLM2RfuF7K7flncFIDLBAUJwoA9+2VlTJwhtciRgYy219SZ3GrC
- Q6qq1MShcmYS7S1UlAwKGERmt9pXiciYHZHs3XLBgIl2XCOwHGjJAkKSNkdZWmejzfb7JrZhzLd
- 4y3W/JPjIiAaLel8Qfn4jTNsBRIQHYYhAtWnSoytHIV0asWCF9eFl/PLEj42QqrQ/NvFjAOMJ6Q
- uX+wM082RaVODY4yHOQCKPJUVetLM88pj1Rx0vCUPPW1SljXR5cNYcxBrotca8/pXFWbWv2CqlM
- VwMbb3xDl3ypiZZ/5syQ2ih6L42DdwNqzDDxGSujm9eBQJpB3blVYzNA+BK+8MnORFKMkrm5lOk
- lI1NmXW0RaC2l/xeTv7pfvhOB+fcXI/gWLmOVF+AFa9dDhFod4A5HEaB5I+JDlMIV0P3GlKp/nu
- ul+Y8JnVCzQCloL7UcFx/5/mFow8fJfFjUS0KeLM3IEuFktXjo1llw7UJYj0Zny5l81goyeDQA6
- tDa3Unx5E0NLS6w==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVoCf2VmgZOtNOPxhpTdYBWEWgCozLM+opaL7wOtF10_A@mail.gmail.com>
 
-The pynfs DELEG8 test fails when run against nfsd. It acquires a
-delegation and then lets the lease time out. It then tries to use the
-deleg stateid and expects to see NFS4ERR_DELEG_REVOKED, but it gets
-bad NFS4ERR_BAD_STATEID instead.
+On Wed, Feb 12, 2025 at 02:14:23PM GMT, Geert Uytterhoeven wrote:
+> Hi Den-san,
+> 
+> On Mon, 3 Feb 2025 at 04:12, Koichiro Den <koichiro.den@canonical.com> wrote:
+> > This patch series introduces a configfs-based interface to gpio-aggregator
+> > to address limitations in the existing 'new_device' interface.
+> >
+> > The existing 'new_device' interface has several limitations:
+> >
+> >   #1. No way to determine when GPIO aggregator creation is complete.
+> >   #2. No way to retrieve errors when creating a GPIO aggregator.
+> >   #3. No way to trace a GPIO line of an aggregator back to its
+> >       corresponding physical device.
+> >   #4. The 'new_device' echo does not indicate which virtual gpiochip<N>
+> >       was created.
+> >   #5. No way to assign names to GPIO lines exported through an aggregator.
+> >
+> > Although Issue#1 to #3 could technically be resolved easily without
+> > configfs, using configfs offers a streamlined, modern, and extensible
+> > approach, especially since gpio-sim and gpio-virtuser already utilize
+> > configfs.
+> 
+> Thanks for your series!
+> 
+> I gave it a try using all three ways of configuration (sysfs, configs,
+> DT), and it works fine!
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
 
-When a delegation is revoked, it's initially marked with
-SC_STATUS_REVOKED, or SC_STATUS_ADMIN_REVOKED and later, it's marked
-with the SC_STATUS_FREEABLE flag, which denotes that it is waiting for
-s FREE_STATEID call.
+Thank you very much for the through review! I'll reply to each of your comment.
 
-nfs4_lookup_stateid() accepts a statusmask that includes the status
-flags that a found stateid is allowed to have. Currently, that mask
-never includes SC_STATUS_FREEABLE, which means that revoked delegations
-are (almost) never found.
+Koichiro
 
-Add SC_STATUS_FREEABLE to the always-allowed status flags, and remove it
-from nfsd4_delegreturn() since it's now always implied.
-
-Fixes: 8dd91e8d31fe ("nfsd: fix race between laundromat and free_stateid")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Changes in v2:
-- remove SC_STATUS_FREEABLE from the mask passed in nfsd4_delegreturn()
-- add note to changelog about pynfs test, and Fixes: tag
-- Link to v1: https://lore.kernel.org/r/20250212-nfsd-fixes-v1-1-935e3a4919fc@kernel.org
----
- fs/nfsd/nfs4state.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 153eeea2c7c999d003cd1f36cecb0dd4f6e049b8..83e078e52d3a5891f706023cf7d9fabdf26b6705 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -7051,7 +7051,7 @@ nfsd4_lookup_stateid(struct nfsd4_compound_state *cstate,
- 		 */
- 		statusmask |= SC_STATUS_REVOKED;
- 
--	statusmask |= SC_STATUS_ADMIN_REVOKED;
-+	statusmask |= SC_STATUS_ADMIN_REVOKED | SC_STATUS_FREEABLE;
- 
- 	if (ZERO_STATEID(stateid) || ONE_STATEID(stateid) ||
- 		CLOSE_STATEID(stateid))
-@@ -7706,9 +7706,7 @@ nfsd4_delegreturn(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0)))
- 		return status;
- 
--	status = nfsd4_lookup_stateid(cstate, stateid, SC_TYPE_DELEG,
--				      SC_STATUS_REVOKED | SC_STATUS_FREEABLE,
--				      &s, nn);
-+	status = nfsd4_lookup_stateid(cstate, stateid, SC_TYPE_DELEG, SC_STATUS_REVOKED, &s, nn);
- 	if (status)
- 		goto out;
- 	dp = delegstateid(s);
-
----
-base-commit: 4990d098433db18c854e75fb0f90d941eb7d479e
-change-id: 20250212-nfsd-fixes-fa8047082335
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
