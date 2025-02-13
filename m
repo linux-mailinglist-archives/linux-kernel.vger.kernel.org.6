@@ -1,171 +1,131 @@
-Return-Path: <linux-kernel+bounces-512653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE01A33C27
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:10:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7480FA33C2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7970D3A9B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB9B3A67AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10EA211A37;
-	Thu, 13 Feb 2025 10:09:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B61212F8F;
+	Thu, 13 Feb 2025 10:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QduZ+V/D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB5B20B7FF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39B4211460;
+	Thu, 13 Feb 2025 10:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441351; cv=none; b=JirVeTC53poR6CAxiNxNcsAScMUpjJaN1GzZDPcUGfFNfNnSCjv0RmFgTaOwC7+RAUNhm7l+k84wOGHUKtJxmt8u1btCFErwXE1q5HyQDQiuHtcR8U+eQ2zVkjxlJC2KN+nW4VFr41ed5Y/+sP+FCxs+Y4GcdXJIMdTVUvn8YlA=
+	t=1739441423; cv=none; b=O2cLktU/ypQMSZvBxBnQ+UznrWnMD7k6ib5cg8eI3QZpBzMxpJPY5vTryX1mwpJEqArDgodk2itubV5OdNfaKN1RBxQu7iKvu8ra27fhAJUZrqYpZ5Lcdf7ohe3dqFKmPvlHYlV4U4cpli78sRkH1VmgCKScLFCOUR20GplWTtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441351; c=relaxed/simple;
-	bh=Y5FUp5kLJYW5mox92ZooldkZMGROpVAVdRn0fHlo0FI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FDydcm+bgdUGaWHDSV5qbdCm31VZz9b5oouPb75gitnwHMwpIi/OCI8CKFIPcWgnjydCuMte5/XqQWmd0CkoOEfKkM2od2DQE93vlC9yRzAq+mdPfBB6D9kNcbr4Yh195ioRleTaSWUg7NosP4gzN+4ykvEN2lsCaWff5r/xw7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tiW9T-00079j-E1; Thu, 13 Feb 2025 11:08:59 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tiW9T-000jXg-0a;
-	Thu, 13 Feb 2025 11:08:59 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tiW9T-0002x5-0P;
-	Thu, 13 Feb 2025 11:08:59 +0100
-Message-ID: <de7dedf98e2085c895a93ba56c4e5fa50e298d05.camel@pengutronix.de>
-Subject: Re: [PATCH 1/4] dt-bindings: reset: add generic bit reset controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,  Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, Yixun Lan
-	 <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Date: Thu, 13 Feb 2025 11:08:59 +0100
-In-Reply-To: <20250213020900.745551-2-inochiama@gmail.com>
-References: <20250213020900.745551-1-inochiama@gmail.com>
-	 <20250213020900.745551-2-inochiama@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1739441423; c=relaxed/simple;
+	bh=42FVAKglSdA4GCM9HFlOhDKZOpyrLuyiIonz/DiE3L8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TFHKZJ5Fc/rWuU0ijpwao0zkxDmdFi33Rm42+nusNneoEeYuMLIM2nYFbtX6dfLTesl8iewXyRr39v8eX1Hajx/i6SsBhG/YWCt4/b1DIO9CNIdO0jUBLaYXjKedplpVwJWNMT9HI1lpZpjoErCs5ep4p09VZVZw8M/pHQvotNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QduZ+V/D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5470AC4CEE6;
+	Thu, 13 Feb 2025 10:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739441423;
+	bh=42FVAKglSdA4GCM9HFlOhDKZOpyrLuyiIonz/DiE3L8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QduZ+V/DRRjp2YWO++Ujfw3lygiGvik5JyzHxwkbzuCCpkjDQA2xTe9472qCN+Nmm
+	 g8UPJBRO1x11HRM2ivIE8CcqfDWwXrogX25VnK26nn9dKYYSxVlODPp0HlmILK/i/p
+	 ILEi1lvFLnbPFZ1RBFxCyUR9zSS2JVm7RVMD5EUeUO5vRTsL2pHLncYcwgGow9yA1I
+	 mYmv3jE4woQi5p93XX32ny0y8aYTG6xUG+cNojoNuN4gr//3nWs+4xcMdeJ3iK/26I
+	 8RMuhd8w68G4+i9xGt3TiXQciFWBB6LoanAcebArn+JtR6Jr1P+7tTOJogzdZMgjnR
+	 bu3Pc5MrK9oNg==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30761be8fa8so7688601fa.2;
+        Thu, 13 Feb 2025 02:10:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVb9ccK0jSaxkhh/Z/JG28X1YnieBlj7v1teeXPQSUDgVHWpdiMYy0TNXGEsZwbz6v4QTtUIBsQDgb7XQE=@vger.kernel.org, AJvYcCWwFS3C1M4aQO6e0+Lhko+k8b/2Ynh5vLNblv0uy1C9YACKr3uKEOd1JjoKYmenK63Cip6IjhpSbOVBedJg@vger.kernel.org, AJvYcCXkErUz+niTcjgSykqpjHaNOPza3lLBKX/cGQk69QtymOuEmGhR7/fDwAJ+tmS14z+4KEQusWXO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeNyQIcl6lazNEFA7UknbxtWuvkGdUaZBK9suLluzkeub6fGxn
+	Q9hKQjvF0R0J1kNXaGnIIWPS0Nlx8GCzePS5WhxjBKEiAq7rDsjVzz1ZtOSt5NgebHgdhHTupR9
+	GJEyU4gmtZkeCAksstJRigUD4CmI=
+X-Google-Smtp-Source: AGHT+IHR+xr20cYmx6lgB9lVJM3c3+XAiEna+ZFlbjgJt6DHiy1GJEpnHOR+KpKMxfjEGw7dyQYgQ9iz1/SKleqfvSQ=
+X-Received: by 2002:a05:6512:159b:b0:545:4d1:64c0 with SMTP id
+ 2adb3069b0e04-5451dd9e2admr736305e87.27.1739441421532; Thu, 13 Feb 2025
+ 02:10:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250212154718.44255-1-ebiggers@kernel.org> <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+In-Reply-To: <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 13 Feb 2025 11:10:10 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXE+K4XbmxkXwzj9tHE2DP_A5pKLPPFv6+Fa=CtH8rD24Q@mail.gmail.com>
+X-Gm-Features: AWEUYZkVud9S7L-5xo9HDDz6-H1l2qn4wDw7iDL4qi7FjFF8ciQmJoIc0opMONg
+Message-ID: <CAMj1kXE+K4XbmxkXwzj9tHE2DP_A5pKLPPFv6+Fa=CtH8rD24Q@mail.gmail.com>
+Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer hashing
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev, 
+	linux-crypto@vger.kernel.org, dm-devel@lists.linux.dev, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Mikulas Patocka <mpatocka@redhat.com>, David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Do, 2025-02-13 at 10:08 +0800, Inochi Amaoto wrote:
-> Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
-> a simple reset controller by toggling bit. It is a hard time
-> for each device to add its own compatible to the driver.
-> Since this device share a common design, it is possible to
-> add a common device to reduce these unnecessary change.
->=20
-> Add common binding for these kind generic reset controller.
->=20
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../bindings/reset/reset-simple.yaml          | 42 +++++++++++++++++++
->  1 file changed, 42 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/reset-simple.=
-yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/reset/reset-simple.yaml b/=
-Documentation/devicetree/bindings/reset/reset-simple.yaml
-> new file mode 100644
-> index 000000000000..77584e23e8e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/reset-simple.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/reset-simple.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic BIT Reset Controller
-> +
-> +maintainers:
-> +  - Inochi Amaoto <inochiama@gmail.com>
-> +
-> +description:
-> +  Some reset controller devices uses a simple method to perform
-> +  assert/deassert by toggling bit. Some SoCs from Aspeed, Allwinner,
-> +  Sophgo and Synopsys have this kind of reset controller instances.
+On Thu, 13 Feb 2025 at 05:17, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Wed, Feb 12, 2025 at 07:47:11AM -0800, Eric Biggers wrote:
+> > [ This patchset keeps getting rejected by Herbert, who prefers a
+> >   complex, buggy, and slow alternative that shoehorns CPU-based hashing
+> >   into the asynchronous hash API which is designed for off-CPU offload:
+> >   https://lore.kernel.org/linux-crypto/cover.1730021644.git.herbert@gondor.apana.org.au/
+> >   This patchset is a much better way to do it though, and I've already
+> >   been maintaining it downstream as it would not be reasonable to go the
+> >   asynchronous hash route instead.  Let me know if there are any
+> >   objections to me taking this patchset through the fsverity tree, or at
+> >   least patches 1-5 as the dm-verity patches could go in separately. ]
+>
+> Yes I object.  While I very much like this idea of parallel hashing
+> that you're introducing, shoehorning it into shash is restricting
+> this to storage-based users.
+>
+> Networking is equally able to benefit from paralell hashing, and
+> parallel crypto (in particular, AEAD) in general.  In fact, both
+> TLS and IPsec can benefit directly from bulk submission instead
+> of the current scheme where a single packet is processed at a time.
+>
+> But thanks for the reminder and I will be posting my patches
+> soon.
+>
 
-I think some properties should be documented that make reset
-controllers "simple" according to this binding.
+I have to second Eric here, simply because his work has been ready to
+go for a year now, while you keep rejecting it on the basis that
+you're creating something better, and the only thing you have managed
+to produce in the meantime didn't even work.
 
-For example, right now, the reset-simple driver assumes the following:
+I strongly urge you to accept Eric's work, and if your approach is
+really superior, it should be fairly easy making that point with
+working code once you get around to producing it, and we can switch
+over the users then.
 
-  - There is a single, contiguous range of 32-bit registers.
-  - All bits in each register directly control a reset line.
-     - There are no self-deasserting resets.
-     - There are no timing requirements.
-     - The bits are exclusively resets, nothing else.
-  - All bits behave the same, so all reset bits are either
-    active-high or all are active-low.
-  - The bits can be read back, but the read status may
-    be active-low independently from the writes.
+The increased flexibility you claim your approach will have does not
+mesh with my understanding of where the opportunities for improvement
+are: CPU-based SHA can be tightly interleaved at the instruction level
+to have a performance gain of almost 2x. Designing a more flexible
+ahash based multibuffer API that can still take advantage of this to
+the same extent is not straight-forward, and you going off and cooking
+up something by yourself for months at a time does not inspire
+confidence that this will converge any time soon, if at all.
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - reset-simple-high
-> +      - reset-simple-low
+Also, your network use case is fairly theoretical, whereas the
+fsverity and dm-verity code runs on 100s of millions of mobile phones
+in the field, so sacrificing any performance of the latter to serve
+the former seems misguided to me.
 
-I wonder if it would be better to have a single
+So could you please remove yourself from the critical path here, and
+merge this while we wait for your better alternative to materialize?
 
-  compatible:
-    const: reset-simple
-
-and a boolean property, e.g.
-
-  active-low:
-    type: boolean
-
-like in leds/common.yaml. Also it should be documented clearly what
-this means for reads and writes.
-
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#reset-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    reset-controller@1000000 {
-> +        compatible =3D "reset-simple-high";
-
-The example should probably include a SoC specific compatible?
-
-regards
-Philipp
+Thanks,
+Ard.
 
