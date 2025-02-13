@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-512197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6508AA33579
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:23:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519D5A3357A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437AD188A397
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF40168046
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD03420100E;
-	Thu, 13 Feb 2025 02:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B34202C40;
+	Thu, 13 Feb 2025 02:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gq4X4yc3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mLduJNIU"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD91FFC49
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0201820010B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739413406; cv=none; b=rejafqIYqkAqzpjV9zHZIknQMlh6yvJlb8YquMDaoKGdIdPmRI4jRE7b9pjpxfBh1Vgevgb78z0MYGfI5ZXw6BUFaHnTNlG5l+JqxjcFZkCnhwxo8IhV0HV2/BU7Eom6LglCC00gsmyZnlx0AX6U/SZcIkXQHiYV1sTLUNydP0M=
+	t=1739413407; cv=none; b=bENtzWwYx0m51QxoAP0zBecfyS5ksbL/k6+awcKQYcQyQq6kNzecdtoI6r6dJ0xXUcerVa9x6fzcCZq3y57LGz0sOjxj8EaDQJutQVgQGo+GcDcTTEVuvGt9hANNvKaxONohOwUJIg/IuX09zYKzEqKp5fRDzsSuWe8Kq/3A4/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739413406; c=relaxed/simple;
-	bh=ZSAnzdkmdJLNYcSofFL/U+XQeXOXxAeEjjNHEi9bfVw=;
+	s=arc-20240116; t=1739413407; c=relaxed/simple;
+	bh=KyIi0V4Mp6gPo+F4KA4qOFqrz0MVhzqomVxCnu29utQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LooyRUF447xOoq7hSvBevffIEFGtU+AsqUXu/QK3NAmSIPy0uEs1s067S6X1i8rguZk6B41C+T0AWoFhQdVUGPw7kZszOR/AYv9ln1B0ytksYCFQwmio9Wo/3vS2ldFrMIDlUcacvR2qbyeKNysS2UJ7RsWJgZKiWWldkBN2Dzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gq4X4yc3; arc=none smtp.client-ip=198.175.65.9
+	 In-Reply-To:To:Cc; b=JsnIZX/ziVTpy7D1gmF2AZri8UbuQLRpuF825Wfz9e+IOAZ2sW+OZO7du73pn1ooMKNZ57bePqlP49TCQAu6DIKz5taFbzYcFnqLHmXKfHAaQbLRxHnxipwYKR0FE8oIqVmscPIoNPjLljkhTYTIRsdnXWHzHF847GOM4ViffgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mLduJNIU; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739413405; x=1770949405;
+  t=1739413407; x=1770949407;
   h=from:date:subject:mime-version:content-transfer-encoding:
    message-id:references:in-reply-to:to:cc;
-  bh=ZSAnzdkmdJLNYcSofFL/U+XQeXOXxAeEjjNHEi9bfVw=;
-  b=Gq4X4yc3JAl0QeJLrFeRIJfApai+4/GTKj55ayBihcnpdJDc10t2bVYm
-   ZZVRxT25HSBsfsvuIedWOIgbZI61KiA24pYsEZHPH9dwvMcFeDl2yWz6h
-   jT/7DgV94VXjLlFlbHWN7ak60OE32BMUObLmuYAodKtZb0b+xEMSXjhk8
-   Kqm6crUYo1JxOFCCPepFznhWcL8jFiiu4slb7O05xj4B2Qmv27Newf1S5
-   RjGzdljozaZn/l7e9jMchsz2Xhhg0jDD9yRSOmRZaunp4puk7LmkBHP/V
-   ok3uLIYrYm5R8REZzDROrq2/mNtxRfX09/R/yBt/tJLAvfeG+JRV6ihL1
+  bh=KyIi0V4Mp6gPo+F4KA4qOFqrz0MVhzqomVxCnu29utQ=;
+  b=mLduJNIULksOSB9eejBp3rpCV9dLydy8YbPdRwX+9rleISEAD1+imQSl
+   mUjD+CLO59D2uClXQEgYCsL63JnnxgxhwyxBICHcdNZFVjoZdeUSWqM4m
+   vBZeSTeZjGoayE/w8iFdUa5ySpB48EuUNAlj9trXXjuWgD6hxaWWsVSjz
+   hmsKz2EaF4DNmKRKbmI0xHnVNMeTglJyku8b5T4zWLGHOVU9h3+LCVe+O
+   t3rQxP0pmZ7ErtiipRpNAeexiZstul4VdOcMGqkvG3SI4i+/30IhvRRjF
+   6LyF6HNC6u5/+uj8xQhzd8ce1T4s03ZRN3i5ZmDieuFn0SYASHM3r0//r
    w==;
-X-CSE-ConnectionGUID: OS1YE8GIRpKQPpSiEtuMDA==
-X-CSE-MsgGUID: xUczwo/HSFOWznQi1VX7zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62566638"
+X-CSE-ConnectionGUID: VYQ5zIQYR5i2IDaF3FrKrA==
+X-CSE-MsgGUID: e3Yyt3raR4KE6PmDsfy2VA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62566646"
 X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="62566638"
+   d="scan'208";a="62566646"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:25 -0800
-X-CSE-ConnectionGUID: shBFnaT5SPC9HQaY/L+M2Q==
-X-CSE-MsgGUID: hMMj0999S5ayvn3/EaqEzQ==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:26 -0800
+X-CSE-ConnectionGUID: hYXVCTrfT0eCv6yYg+g/TQ==
+X-CSE-MsgGUID: WDHwzdiOS9W3/MyhQCSt9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113905844"
+   d="scan'208";a="113905850"
 Received: from rtice-desk1.amr.corp.intel.com (HELO bxing-mobl1.clients.intel.com) ([10.246.116.160])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:23 -0800
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:23:24 -0800
 From: Cedric Xing <cedric.xing@intel.com>
-Date: Wed, 12 Feb 2025 20:23:06 -0600
-Subject: [PATCH 3/4] x86/tdx: Add tdx_mcall_rtmr_extend() interface
+Date: Wed, 12 Feb 2025 20:23:07 -0600
+Subject: [PATCH 4/4] x86/tdx: Expose TDX MRs through TSM sysfs interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250212-tdx-rtmr-v1-3-9795dc49e132@intel.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250212-tdx-rtmr-v1-4-9795dc49e132@intel.com>
 References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
 In-Reply-To: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
 To: Dan Williams <dan.j.williams@intel.com>, 
@@ -78,112 +78,243 @@ To: Dan Williams <dan.j.williams@intel.com>,
  Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
  "H. Peter Anvin" <hpa@zytor.com>
 Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
- Cedric Xing <cedric.xing@intel.com>, 
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+ Cedric Xing <cedric.xing@intel.com>
 X-Mailer: b4 0.13.0
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+TDX MRs are made accessible to user mode as files (attributes) in sysfs.
 
-The TDX guest exposes one MRTD (Build-time Measurement Register) and
-three RTMR (Run-time Measurement Register) registers to record the
-build and boot measurements of a virtual machine (VM). These registers
-are similar to PCR (Platform Configuration Register) registers in the
-TPM (Trusted Platform Module) space. This measurement data is used to
-implement security features like attestation and trusted boot.
+Below shows the directory structure of TDX MRs inside a TDVM.
 
-To facilitate updating the RTMR registers, the TDX module provides
-support for the `TDG.MR.RTMR.EXTEND` TDCALL which can be used to
-securely extend the RTMR registers.
+/sys/kernel/tsm
+└── tdx
+    ├── mrconfigid
+    │   └── sha384
+    │       └── digest
+    ├── mrowner
+    │   └── sha384
+    │       └── digest
+    ├── mrownerconfig
+    │   └── sha384
+    │       └── digest
+    ├── mrtd
+    │   └── sha384
+    │       └── digest
+    ├── report0
+    ├── reportdata
+    ├── rtmr0
+    │   └── sha384
+    │       └── digest
+    ├── rtmr1
+    │   └── sha384
+    │       └── digest
+    ├── rtmr2
+    │   └── sha384
+    │       └── digest
+    ├── rtmr3
+    │   └── sha384
+    │       └── digest
+    └── servtd_hash
+        └── sha384
+            └── digest
 
-Add helper function to update RTMR registers. It will be used by the
-TDX guest driver in enabling RTMR extension support.
+The digest attribute/file of each MR contains the MR's current value.
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Writing to the digest attribute/file of an RTMR extends the written value
+to that RTMR.
+
+The report0 and reportdata attributes offer a simple interface for user
+mode applications to request TDREPORTs. These 2 attributes can be
+enabled/disabled by setting CONFIG_TDX_GUEST_DRIVER_TSM_REPORT to Y/n.
+
+Signed-off-by: Cedric Xing <cedric.xing@intel.com>
 ---
- arch/x86/coco/tdx/tdx.c           | 36 ++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/shared/tdx.h |  1 +
- arch/x86/include/asm/tdx.h        |  2 ++
- 3 files changed, 39 insertions(+)
+ drivers/virt/coco/tdx-guest/Kconfig     |  15 ++++
+ drivers/virt/coco/tdx-guest/tdx-guest.c | 119 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 32809a06dab4..9267fffecbef 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -35,6 +35,7 @@
- /* TDX Module call error codes */
- #define TDCALL_RETURN_CODE(a)	((a) >> 32)
- #define TDCALL_INVALID_OPERAND	0xc0000100
-+#define TDCALL_OPERAND_BUSY	0x80000200
+diff --git a/drivers/virt/coco/tdx-guest/Kconfig b/drivers/virt/coco/tdx-guest/Kconfig
+index 22dd59e19431..effadcfd9918 100644
+--- a/drivers/virt/coco/tdx-guest/Kconfig
++++ b/drivers/virt/coco/tdx-guest/Kconfig
+@@ -9,3 +9,18 @@ config TDX_GUEST_DRIVER
  
- #define TDREPORT_SUBTYPE_0	0
- 
-@@ -135,6 +136,41 @@ int tdx_mcall_get_report0(u8 *reportdata, u8 *tdreport)
- }
- EXPORT_SYMBOL_GPL(tdx_mcall_get_report0);
- 
-+/**
-+ * tdx_mcall_rtmr_extend() - Wrapper to extend RTMR registers using
-+ *			     TDG.MR.RTMR.EXTEND TDCALL.
-+ * @index: Index of RTMR register to be extended.
-+ * @data: Address of the input buffer with RTMR register extend data.
-+ *
-+ * Refer to section titled "TDG.MR.RTMR.EXTEND leaf" in the TDX Module
-+ * v1.0 specification for more information on TDG.MR.RTMR.EXTEND TDCALL.
-+ * It is used in the TDX guest driver module to allow user extend the
-+ * RTMR registers (index > 1).
-+ *
-+ * Return 0 on success, -EINVAL for invalid operands, -EBUSY for busy
-+ * operation or -EIO on other TDCALL failures.
-+ */
-+int tdx_mcall_rtmr_extend(u8 index, u8 *data)
-+{
-+	struct tdx_module_args args = {
-+		.rcx = virt_to_phys(data),
-+		.rdx = index,
-+	};
-+	u64 ret;
+ 	  To compile this driver as module, choose M here. The module will
+ 	  be called tdx-guest.
 +
-+	ret = __tdcall(TDG_MR_RTMR_EXTEND, &args);
-+	if (ret) {
-+		if (TDCALL_RETURN_CODE(ret) == TDCALL_INVALID_OPERAND)
-+			return -EINVAL;
-+		if (TDCALL_RETURN_CODE(ret) == TDCALL_OPERAND_BUSY)
-+			return -EBUSY;
-+		return -EIO;
++if TDX_GUEST_DRIVER
++
++config TDX_GUEST_DRIVER_TSM_REPORT
++	bool "tdx-guest: Enable TSM raw TDREPORT interface"
++	default y
++	help
++	  This option adds 2 files, namely report0 and reportdata, to the TSM
++	  sysfs directory tree (/sys/kernel/tsm/tdx/).
++
++	  To request a TDREPORT, set REPORTDATA by writing to
++	  /sys/kernel/tsm/tdx/reportdata, then read
++	  /sys/kernel/tsm/tdx/report0.
++
++endif
+diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
+index 224e7dde9cde..c95aa17e728c 100644
+--- a/drivers/virt/coco/tdx-guest/tdx-guest.c
++++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2022 Intel Corporation
+  */
+ 
++#define pr_fmt(fmt)			KBUILD_MODNAME ": " fmt
++
+ #include <linux/kernel.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mm.h>
+@@ -18,6 +20,8 @@
+ #include <linux/tsm.h>
+ #include <linux/sizes.h>
+ 
++#include <crypto/hash_info.h>
++
+ #include <uapi/linux/tdx-guest.h>
+ 
+ #include <asm/cpu_device_id.h>
+@@ -304,6 +308,114 @@ static const struct tsm_ops tdx_tsm_ops = {
+ 	.report_bin_attr_visible = tdx_report_bin_attr_visible,
+ };
+ 
++enum {
++	TDREPORT_reportdata = 128,
++	TDREPORT_tdinfo = 512,
++	TDREPORT_mrtd = TDREPORT_tdinfo + 16,
++	TDREPORT_mrconfigid = TDREPORT_mrtd + 48,
++	TDREPORT_mrowner = TDREPORT_mrconfigid + 48,
++	TDREPORT_mrownerconfig = TDREPORT_mrowner + 48,
++	TDREPORT_rtmr0 = TDREPORT_mrownerconfig + 48,
++	TDREPORT_rtmr1 = TDREPORT_rtmr0 + 48,
++	TDREPORT_rtmr2 = TDREPORT_rtmr1 + 48,
++	TDREPORT_rtmr3 = TDREPORT_rtmr2 + 48,
++	TDREPORT_servtd_hash = TDREPORT_rtmr3 + 48,
++};
++
++static u8 tdx_mr_report[TDX_REPORT_LEN] __aligned(TDX_REPORT_LEN);
++
++#define TDX_MR_(r)	.mr_value = tdx_mr_report + TDREPORT_##r, TSM_MR_(r, SHA384)
++static const struct tsm_measurement_register tdx_mrs[] = {
++	{ TDX_MR_(rtmr0) | TSM_MR_F_RTMR | TSM_MR_F_W },
++	{ TDX_MR_(rtmr1) | TSM_MR_F_RTMR | TSM_MR_F_W },
++	{ TDX_MR_(rtmr2) | TSM_MR_F_RTMR | TSM_MR_F_W },
++	{ TDX_MR_(rtmr3) | TSM_MR_F_RTMR | TSM_MR_F_W },
++	{ TDX_MR_(mrtd) },
++	{ TDX_MR_(mrconfigid) },
++	{ TDX_MR_(mrowner) },
++	{ TDX_MR_(mrownerconfig) },
++	{ TDX_MR_(servtd_hash) },
++#ifdef CONFIG_TDX_GUEST_DRIVER_TSM_REPORT
++	{ .mr_value = tdx_mr_report, .mr_size = sizeof(tdx_mr_report),
++	  .mr_name = "report0", .mr_flags = TSM_MR_F_LIVE | TSM_MR_F_F },
++	{ .mr_value = tdx_mr_report + TDREPORT_reportdata,
++	  TSM_MR_(reportdata, SHA512) | TSM_MR_F_W | TSM_MR_F_F },
++#endif
++	{}
++};
++#undef TDX_MR_
++
++static int tdx_mr_refresh(struct tsm_measurement *tmr,
++			  const struct tsm_measurement_register *mr)
++{
++	u8 *reportdata, *tdreport;
++	int ret;
++
++	reportdata = tdx_mr_report + TDREPORT_reportdata;
++
++	/*
++	 * TDCALL requires a GPA as input. Depending on whether this module is
++	 * built as a built-in (Y) or a module (M), tdx_mr_report may or may
++	 * not be converted to a GPA using virt_to_phys. If not, a directly
++	 * mapped buffer must be allocated using kmalloc and used as an
++	 * intermediary.
++	 */
++	if (virt_addr_valid(tdx_mr_report))
++		tdreport = tdx_mr_report;
++	else {
++		tdreport = kmalloc(sizeof(tdx_mr_report), GFP_KERNEL);
++		if (!tdreport)
++			return -ENOMEM;
++
++		reportdata = memcpy(tdreport + TDREPORT_reportdata, reportdata,
++				    TDX_REPORTDATA_LEN);
 +	}
 +
-+	return 0;
++	ret = tdx_mcall_get_report0(reportdata, tdreport);
++	if (ret)
++		pr_err("GetReport call failed\n");
++
++	if (tdreport != tdx_mr_report) {
++		memcpy(tdx_mr_report, tdreport, sizeof(tdx_mr_report));
++		kfree(tdreport);
++	}
++
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(tdx_mcall_rtmr_extend);
 +
- /**
-  * tdx_hcall_get_quote() - Wrapper to request TD Quote using GetQuote
-  *                         hypercall.
-diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
-index fcbbef484a78..7b95c3113e79 100644
---- a/arch/x86/include/asm/shared/tdx.h
-+++ b/arch/x86/include/asm/shared/tdx.h
-@@ -12,6 +12,7 @@
- 
- /* TDX module Call Leaf IDs */
- #define TDG_VP_VMCALL			0
-+#define TDG_MR_RTMR_EXTEND		2
- #define TDG_VP_INFO			1
- #define TDG_VP_VEINFO_GET		3
- #define TDG_MR_REPORT			4
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index b4b16dafd55e..6c73ab759223 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -64,6 +64,8 @@ bool tdx_early_handle_ve(struct pt_regs *regs);
- 
- int tdx_mcall_get_report0(u8 *reportdata, u8 *tdreport);
- 
-+int tdx_mcall_rtmr_extend(u8 index, u8 *data);
++static int tdx_mr_extend(struct tsm_measurement *tmr,
++			 const struct tsm_measurement_register *mr, const u8 *data)
++{
++	u8 *buf;
++	int ret;
 +
- u64 tdx_hcall_get_quote(u8 *buf, size_t size);
++	if (virt_addr_valid(data))
++		buf = (u8 *)data;
++	else {
++		buf = kmalloc(64, GFP_KERNEL);
++		if (!buf)
++			return -ENOMEM;
++
++		memcpy(buf, data, mr->mr_size);
++	}
++
++	ret = tdx_mcall_rtmr_extend((u8)(mr - tmr->mrs), buf);
++	if (ret)
++		pr_err("Extending RTMR%ld failed\n", mr - tmr->mrs);
++
++	if (buf != data)
++		kfree(buf);
++
++	return ret;
++}
++
++static struct tsm_measurement tdx_measurement = {
++	.name = "tdx",
++	.mrs = tdx_mrs,
++	.refresh = tdx_mr_refresh,
++	.extend = tdx_mr_extend,
++};
++
+ static int __init tdx_guest_init(void)
+ {
+ 	int ret;
+@@ -326,8 +438,14 @@ static int __init tdx_guest_init(void)
+ 	if (ret)
+ 		goto free_quote;
  
- void __init tdx_dump_attributes(u64 td_attr);
++	ret = tsm_register_measurement(&tdx_measurement);
++	if (ret)
++		goto unregister_tsm;
++
+ 	return 0;
+ 
++unregister_tsm:
++	tsm_unregister(&tdx_tsm_ops);
+ free_quote:
+ 	free_quote_buf(quote_data);
+ free_misc:
+@@ -339,6 +457,7 @@ module_init(tdx_guest_init);
+ 
+ static void __exit tdx_guest_exit(void)
+ {
++	tsm_unregister_measurement(&tdx_measurement);
+ 	tsm_unregister(&tdx_tsm_ops);
+ 	free_quote_buf(quote_data);
+ 	misc_deregister(&tdx_misc_dev);
 
 -- 
 2.43.0
