@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-512638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678AEA33BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:05:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78931A33C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1010162F36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2033A28CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F955210F58;
-	Thu, 13 Feb 2025 10:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OxnvmkgF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9815D211A3C;
+	Thu, 13 Feb 2025 10:06:20 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F180B206F31
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5951B20E717;
+	Thu, 13 Feb 2025 10:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441117; cv=none; b=DaGfrGPrvzFy3xNjtyD9yjaHi5fJGflG5ZYwSN1374mKubLi2MOrtCvj2T0qyYcrGWfkI2mCLIIcJ6ew7si/IWimmRo/8nWepRZ9E150Gphlr/qqelFhh1xiMnLDO4Zz9L/KItVcA8a/KvzIYb4XW7oOBT3CIGI9NsFx+X71kD0=
+	t=1739441180; cv=none; b=ZZeLkj3sEIfdf6/G3RtYcv1Kyp8pLvjjjnmL0OgZP90IxOpVbwTYIFjOsFiqgLsnW5knmb994uqoOGBX3iAvZnn//QDOHDATsl35S8RP2f4W47z1xVX7E0YrglFQWRiwTmpArAC+A+WtPGv3TmuqJORHqVftUjq7ID8tY7iwUig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441117; c=relaxed/simple;
-	bh=0406GFPtDEjE5dIMqr9miDjxVI9YA3p9INMJF/p9PUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TnFAz9qveftp7rEtOjcJldPq/x0kxeJT0JVJvSmeaUjJvMxSZpdmT6CERUGpVwDnTFOo867u7fad/5Vj8UQgGocZCyXi7u4EMFR+yosDNHrtsifOcrEQu68nY1otN4WYrpWcwVdpTraYWg5v4RJVa1Hv5lE6AFFVwLElmomFaoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OxnvmkgF; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739441116; x=1770977116;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=0406GFPtDEjE5dIMqr9miDjxVI9YA3p9INMJF/p9PUQ=;
-  b=OxnvmkgFuQaeAM+L+ORo1Ok4Sr9Qdxqcw/4ZsCKLnCadxIOhYmKGWHd9
-   +O1JxG9i5lZLCEBH9uYMoXEbj4JCOWUQUxsuwb+s/3CleQWdu/faTQEY5
-   s3opnKDtG3yOXXXXNbDPLvxQt7nUD8WycQ9KuPZqcjJLPCYj0cvbn6LfN
-   PbsPrEGP8lMcUHdyPDq/DK389ZNs8efiDrDuUcCndyLsnp/F2IHj1DeU9
-   88xP5gcDcfIP18oi3+nMtLsagpI+gbnURtCVGyQTne7dp79jXRIxXP531
-   j+S24ppEAGkXrudlmz4ZTFnwwti5YeSgMblMrF4BJEhhhqCg/Ks2JCTmy
-   w==;
-X-CSE-ConnectionGUID: BzNh4Q5+SRqYjjmeQynEnA==
-X-CSE-MsgGUID: 9K4SJvseTL6QlG2N6eEmzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="65488297"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="65488297"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:05:15 -0800
-X-CSE-ConnectionGUID: ndRMcKpXS8KLBnxiHfgZzQ==
-X-CSE-MsgGUID: K4k22xYdSIuGToVNQnMcmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="112864984"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 13 Feb 2025 02:05:13 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiW5m-0016tm-1X;
-	Thu, 13 Feb 2025 10:05:10 +0000
-Date: Thu, 13 Feb 2025 18:05:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wang Qing <wangqing@vivo.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>
-Subject: arch/arm/mach-omap2/clockdomain.c:1303: warning: Function parameter
- or struct member 'unused' not described in '_clkdm_save_context'
-Message-ID: <202502131858.NrCAEuh6-lkp@intel.com>
+	s=arc-20240116; t=1739441180; c=relaxed/simple;
+	bh=T1BdMlO7VJaJKDxI8etm5Q6HJrt/8gfc9adcoeDYceo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KGwKsvqjYI/vxQLjXzwTaiAP+HZsRYUY1vdPKhqVPf722rWdhWIdFiWC4k4Ws87CT4qkk1+p3isS9llqYj83XFoGsm0p/4XzCdlLdYP/QPO1eueSfuHRyqdiMVKRF3gPPjx704Wvaunja4VIX4SKV21vvd2cIvrZGDIJAoo1EI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86712bc0508so223221241.2;
+        Thu, 13 Feb 2025 02:06:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739441176; x=1740045976;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ET9GwN+uLjDsvjU0KoNteKFJwQHfNy0LS4Dkz43P3s=;
+        b=Ca+M329fsIdv/BiirchHDP7bZkiUwxhWMOnc0yeoyzPBdycc5gyEH23mpQwZ/QtNjT
+         Pg9NICtB7xw8xl4RVQ73lyW9NLZvUpef7bMfDLFimx9yhr2gHtXY8P/qvixEhs1Hpogd
+         43sxcN/I8/q+yORrdU9h3s5iiZHuKbdgRuLVRrexBToHzmzZiiwh7TPqlrPscQrccoTt
+         yVQ3y0SbWEW1y5AMMwYjHVqIymWlst+sFzXEfsgoxiAvXJJIZ1E/zReeUZER1DSY2Q61
+         srYtnTwckvdP3/uUmZlCOiOYxqGXW0zPrbPe4oc3yKMzdU/jw3AgphQP3PxQs08SIc4I
+         9OYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB9aESpdvFhtRoTfxTTFqt5KHjgef+gihYhUOdTimzzIxYH4IAWGO+xvS/S3UG6N55PJOGRL75IA==@vger.kernel.org, AJvYcCVqXXChvCKyJcJ37ZX7YXvkJTtGK3T79hlY2slt+zV4mVaQGDHkejG+dSehiaeALbhcpTyOGq5na7Wb@vger.kernel.org, AJvYcCVspMsVd74xHACDqlLHNPO3G+DEWSZF26wvAlz2hdxE/E4LlPVP0iNUNNtQSAovrh1kgT5OESK1ZYOnrzM8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPAQx7Uqwwd52ohN14mLrzRCjNULIsHfrmskOI8FsZXMNZO6+x
+	JmOrjcyemFKHE7kP9q865zM44qrnHTT9PEk/ciERJGkbf5Z0NAoZq5o9k8NMKSY=
+X-Gm-Gg: ASbGnctsPCCBrCBohKibuXIij2/kVHZxNefx/CNsgGWR1dNL+aOM6VC6kWOtPPlgtgg
+	DDXoqOciMC3TzxftX8SCyt9D9WVCvA6Y0G+VcHICiZseU2iCW7+4vdIIqwsl0bTYnzEjW5j9Jda
+	T4r8qgjWDLDRJeg5sj+6qD4JNNjQ2izHfS8/H0am1DIvtxKr97qrShylhcxU+PKQqOMcUQ9N+tY
+	T/ONEV92pJ+0h45dkJMW86l5fSPQ3P6QsDHO73rGJjL/rLHFlfhrUPc8hf3G+ALxYIi7bprFH5+
+	o1cEhL3WopwX+8Er/BJ8CXLzq59d4Kf8b3p5+QQRSPasCnOkA6jEVA==
+X-Google-Smtp-Source: AGHT+IGfNX90gCBdtZkdzhWrKS8JhWviOfIzc4W2sfpPM9ktet7w2YDVHo5/tEOjsvI+xoFCWKt2Tg==
+X-Received: by 2002:a05:6102:4410:b0:4bb:5d61:1252 with SMTP id ada2fe7eead31-4bbf231517emr6577066137.23.1739441175984;
+        Thu, 13 Feb 2025 02:06:15 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e857f2desm136820241.10.2025.02.13.02.06.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 02:06:14 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4bbb9a50baeso128476137.0;
+        Thu, 13 Feb 2025 02:06:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU168t336kiCfJUaXrT7fnCP427bbjJWlrBmWNYfly0Zb6Es4X704hAIKTyhK1/hpvzMgBic04ZobXi@vger.kernel.org, AJvYcCXcbnE15I4ZljSvXuP0EPBI/qpslXzSKYGPGZI0utKfcVLY5POyXg7NUFgfo1lO5g/m7Rwcmo3ZIQ==@vger.kernel.org, AJvYcCXx43eomOVokwZyR7Xh665mFUAKhwoEntkRuI1bMD1FTjfYrkw/GP9dSl7GNrkTK9/GiydBvIcjdBXHm6gN@vger.kernel.org
+X-Received: by 2002:a05:6102:3f94:b0:4b6:18b3:a4db with SMTP id
+ ada2fe7eead31-4bbf21c8337mr7301506137.8.1739441174414; Thu, 13 Feb 2025
+ 02:06:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com> <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
+In-Reply-To: <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Feb 2025 11:06:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWn+sKiC1B4MF1vHwS2ArFYQXGzpYi2EcsyERPSCc9bvQ@mail.gmail.com>
+X-Gm-Features: AWEUYZlvlExVgKAlPqcQ55dSJRN4GqYY50RVEAwpoHERFHUH_dWoi8JrSM7k46E
+Message-ID: <CAMuHMdWn+sKiC1B4MF1vHwS2ArFYQXGzpYi2EcsyERPSCc9bvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] clk: Introduce clk_hw_set_spread_spectrum
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Abel Vesa <abelvesa@kernel.org>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wang,
+Hi Peng,
 
-FYI, the error/warning still remains.
+On Wed, 5 Feb 2025 at 10:51, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Add clk_hw_set_spread_spectrum to configure a clock to enable spread
+> spectrum feature. set_spread_spectrum ops is added for clk drivers to
+> have their own hardware specific implementation.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4dc1d1bec89864d8076e5ab314f86f46442bfb02
-commit: 320f6f90cbe4818cf0d0f9441772d23aa441c506 ARM: OMAP2+: fix spellint typo
-date:   4 years, 1 month ago
-config: arm-randconfig-r011-20220722 (https://download.01.org/0day-ci/archive/20250213/202502131858.NrCAEuh6-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131858.NrCAEuh6-lkp@intel.com/reproduce)
+Thanks for your patch!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131858.NrCAEuh6-lkp@intel.com/
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -84,6 +84,28 @@ struct clk_duty {
+>         unsigned int den;
+>  };
+>
+> +/* Aligned with dtschema/schemas/clock/clock.yaml */
+> +enum clk_ssc_method {
+> +       CLK_SSC_CENTER_SPREAD,
+> +       CLK_SSC_UP_SPREAD,
+> +       CLK_SSC_DOWN_SPREAD,
+> +};
+> +
+> +/**
+> + * struct clk_spread_spectrum - Structure encoding spread spectrum of a clock
+> + *
+> + * @modfreq:           Modulation frequency
+> + * @spreadpercent:     Modulation percent
 
-All warnings (new ones prefixed by >>):
+E.g. Renesas R-Car V4M also supports 0.5%, 1.5%, and 2.5%.
 
-   arch/arm/mach-omap2/clockdomain.c:546: warning: Function parameter or struct member 'user' not described in 'clkdm_for_each'
-   arch/arm/mach-omap2/clockdomain.c:1003: warning: expecting prototype for clkdm_deny_idle(). Prototype was for clkdm_deny_idle_nolock() instead
-   arch/arm/mach-omap2/clockdomain.c:1165: warning: Function parameter or struct member 'unused' not described in 'clkdm_clk_enable'
-   arch/arm/mach-omap2/clockdomain.c:1165: warning: Excess function parameter 'clk' description in 'clkdm_clk_enable'
-   arch/arm/mach-omap2/clockdomain.c:1303: warning: Function parameter or struct member 'clkdm' not described in '_clkdm_save_context'
->> arch/arm/mach-omap2/clockdomain.c:1303: warning: Function parameter or struct member 'unused' not described in '_clkdm_save_context'
-   arch/arm/mach-omap2/clockdomain.c:1316: warning: Function parameter or struct member 'clkdm' not described in '_clkdm_restore_context'
->> arch/arm/mach-omap2/clockdomain.c:1316: warning: Function parameter or struct member 'unused' not described in '_clkdm_restore_context'
+> + * @method:            Modulation method
+> + * @enable:            Modulation enable or disable
+> + */
+> +struct clk_spread_spectrum {
+> +       unsigned int modfreq;
+> +       unsigned int spreaddepth;
+> +       enum clk_ssc_method method;
+> +       bool enable;
 
+Do you envision a use case for having a separate enable flag?
+The alternative would be to add an extra enum value above:
 
-vim +1303 arch/arm/mach-omap2/clockdomain.c
+    CLK_SSC_NO_SPREAD = 0,
 
-d459bfe01f5239 Paul Walmsley 2008-08-19  1295  
-1096d1c10bb3d8 Russ Dill     2018-05-16  1296  /**
-1096d1c10bb3d8 Russ Dill     2018-05-16  1297   * _clkdm_save_context - save the context for the control of this clkdm
-1096d1c10bb3d8 Russ Dill     2018-05-16  1298   *
-1096d1c10bb3d8 Russ Dill     2018-05-16  1299   * Due to a suspend or hibernation operation, the state of the registers
-1096d1c10bb3d8 Russ Dill     2018-05-16  1300   * controlling this clkdm will be lost, save their context.
-1096d1c10bb3d8 Russ Dill     2018-05-16  1301   */
-320f6f90cbe481 Wang Qing     2020-09-17  1302  static int _clkdm_save_context(struct clockdomain *clkdm, void *unused)
-1096d1c10bb3d8 Russ Dill     2018-05-16 @1303  {
-1096d1c10bb3d8 Russ Dill     2018-05-16  1304  	if (!arch_clkdm || !arch_clkdm->clkdm_save_context)
-1096d1c10bb3d8 Russ Dill     2018-05-16  1305  		return -EINVAL;
-1096d1c10bb3d8 Russ Dill     2018-05-16  1306  
-1096d1c10bb3d8 Russ Dill     2018-05-16  1307  	return arch_clkdm->clkdm_save_context(clkdm);
-1096d1c10bb3d8 Russ Dill     2018-05-16  1308  }
-1096d1c10bb3d8 Russ Dill     2018-05-16  1309  
-1096d1c10bb3d8 Russ Dill     2018-05-16  1310  /**
-1096d1c10bb3d8 Russ Dill     2018-05-16  1311   * _clkdm_restore_context - restore context for control of this clkdm
-1096d1c10bb3d8 Russ Dill     2018-05-16  1312   *
-1096d1c10bb3d8 Russ Dill     2018-05-16  1313   * Restore the register values for this clockdomain.
-1096d1c10bb3d8 Russ Dill     2018-05-16  1314   */
-320f6f90cbe481 Wang Qing     2020-09-17  1315  static int _clkdm_restore_context(struct clockdomain *clkdm, void *unused)
-1096d1c10bb3d8 Russ Dill     2018-05-16 @1316  {
-1096d1c10bb3d8 Russ Dill     2018-05-16  1317  	if (!arch_clkdm || !arch_clkdm->clkdm_restore_context)
-1096d1c10bb3d8 Russ Dill     2018-05-16  1318  		return -EINVAL;
-1096d1c10bb3d8 Russ Dill     2018-05-16  1319  
-1096d1c10bb3d8 Russ Dill     2018-05-16  1320  	return arch_clkdm->clkdm_restore_context(clkdm);
-1096d1c10bb3d8 Russ Dill     2018-05-16  1321  }
-1096d1c10bb3d8 Russ Dill     2018-05-16  1322  
+Gr{oetje,eeting}s,
 
-:::::: The code at line 1303 was first introduced by commit
-:::::: 1096d1c10bb3d869b5630dfa88f4c18f3d579752 ARM: OMAP2+: Add functions to save and restore clockdomain context en-masse.
-
-:::::: TO: Russ Dill <Russ.Dill@ti.com>
-:::::: CC: Tony Lindgren <tony@atomide.com>
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
