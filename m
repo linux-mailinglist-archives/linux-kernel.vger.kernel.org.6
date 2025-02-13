@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-512908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE85A33F1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:27:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EDAA33F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC99B188C942
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D193A8002
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EF7221565;
-	Thu, 13 Feb 2025 12:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80DA221569;
+	Thu, 13 Feb 2025 12:27:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5D21129D;
-	Thu, 13 Feb 2025 12:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40D22156C;
+	Thu, 13 Feb 2025 12:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449645; cv=none; b=noKhz9J4aZ+Miu3gtizgDCRITwd/UA1vb7Y3RAPPSeZWqIuacbCyjfO4hamKjjQXW5iF/Xy0F9iYTMW/9Uu6IMGLlFVK0eAk4uF6RNK26T3ZoS/ymLp9QVpohnS+nqk9EcqWef9YLDZ6XYTCyCNootgOrS8IPUMeAX8CvQsP4XQ=
+	t=1739449647; cv=none; b=mDOMa1QhUOexcRnyNcBfPG4H83JR5oRXf2g1fByuPagAAUDuNZ59I9GSO+vQWcIF3UXQJMBbOaAktxvJMtmZ+nNPFeqkCOLTGy1TsbEkzvFAZhW1zMrf78204nqAvrYkAwhJdznRbxbelDYtdcV/RPTTXlcxwktpuzVQP3hgcqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449645; c=relaxed/simple;
-	bh=+QmYuPAHABMX4vLH2TEKmNj4lBa4gxCiB0qbdz4loiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qn/d84kZnrvpEOuO3wwRf1CNeYFiWPEfn7ettAAH9OiZ6ExJeZSLB/NvXTwoxFtKzNkdQd3XeqhN8/hl4wp1iLsyKpijC0weYhQDQ0TWVLMO2EFlwj5rj2+Ky1fS2K74CzoH5gEHoEiyAlD/nqde8qGqv1uoszekmMynkWptz3s=
+	s=arc-20240116; t=1739449647; c=relaxed/simple;
+	bh=2/ziptVSftJTxOiPxsAZHgMACpPrpG4kNt4SO8n64w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QDit3Dw4UIonLga7QSPcMrRIEzQPg8Bsi8ytKSDyaAvWCTm5eCUkZEebRpuyK/SqPkyXH2LgJOiXwPbEmrGwK7TcmGk4yIlWgdXgqIDLKdlsgpKJAFP2+oYnsw0XklrmeMRwCJzRphk0ND7Dm8s9DU5qfiHYeGDHSZR9sNgzbS8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2077616F3;
-	Thu, 13 Feb 2025 04:27:42 -0800 (PST)
-Received: from [10.1.30.41] (e127648.arm.com [10.1.30.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7841C3F6A8;
-	Thu, 13 Feb 2025 04:27:16 -0800 (PST)
-Message-ID: <c8f626ba-1be4-4c25-b283-d1e11a061aac@arm.com>
-Date: Thu, 13 Feb 2025 12:27:14 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A29571756;
+	Thu, 13 Feb 2025 04:27:45 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C05E3F6A8;
+	Thu, 13 Feb 2025 04:27:24 -0800 (PST)
+Date: Thu, 13 Feb 2025 12:27:19 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v19 09/11] arm64: Handle BRBE booting requirements
+Message-ID: <20250213122719.GE235556@e132581.arm.com>
+References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
+ <20250202-arm-brbe-v19-v19-9-1c1300802385@kernel.org>
+ <20250212121046.GB235556@e132581.arm.com>
+ <CAL_JsqK7eBmRKL0AC99hj5AipL4jki5rrhSvbZCbUxa0vnEKMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
- <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
- <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqK7eBmRKL0AC99hj5AipL4jki5rrhSvbZCbUxa0vnEKMg@mail.gmail.com>
 
-On 2/13/25 06:20, Juri Lelli wrote:
-> On 12/02/25 19:22, Dietmar Eggemann wrote:
->> On 11/02/2025 11:42, Juri Lelli wrote:
-> 
-> ...
-> 
->>> What about we actually ignore them consistently? We already do that for
->>> admission control, so maybe we can do that when rebuilding domains as
->>> well (until we find maybe a better way to deal with them).
->>>
->>> Does the following make any difference?
->>
->> It at least seems to solve the issue. And like you mentioned on irc, we
->> don't know the bw req of sugov anyway.
->>
->> So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
->>
->> dl_rq[0]:
->>   .dl_nr_running                 : 0
->>   .dl_bw->bw                     : 996147
->>   .dl_bw->total_bw               : 0       <-- !
->>
->> IMHO, people who want to run serious DL can always check whether there
->> are already these infrastructural DL tasks or even avoid schedutil.
-> 
-> It definitely not ideal and admittedly gross, but not worse than what we
-> are doing already considering we ignore sugovs at AC and the current
-> bandwidth allocation its there only to help with PI. So, duck tape. :/
-> 
-> A more proper way to work with this would entail coming up with sensible
-> bandwidth allocation for sugovs, but that's most probably hardware
-> specific, so I am not sure how we can make that general enough.
-> 
-> Anyway, looks like Jon was still seeing the issue. I asked him to verify
-> he is using all the proposed changes. Let's see what he reports.
+On Wed, Feb 12, 2025 at 03:21:46PM -0600, Rob Herring wrote:
 
-FWIW it also fixes my reproducer.
+[...]
 
-I agree that dummy numbers for sugov bw is futile, but real bw numbers
-also don't make a lot of sense (what if we exceed them? The system
-won't be able to change frequency, i.e. might not be able to provide
-bw for other DL tasks then either?).
-I'm slightly worried about now allowing the last legal CPU for a sugov
-cluster to offline, which would lead to a cluster still being active
-but sugov DL unable to run anywhere. I can't reproduce this currently
-though. Is this an issue in theory? Or am I missing something?
+> > > +  - If the kernel is entered at EL1 and EL2 is present:
+> > > +
+> > > +    - BRBCR_EL2.CC (bit 3) must be initialised to 0b1.
+> > > +    - BRBCR_EL2.MPRED (bit 4) must be initialised to 0b1.
+> >
+> > Should clarify BRBCR_EL2.TS to be initialised to 0b00 ?  Arm ARM
+> > claims the reset behaviour of the TS field is unknown value.  The
+> > assembly code below actually has initializes the TS field as zero.
+> 
+> Humm, we don't currently care what it is initialized to because the
+> timestamp is never used. We would care in the future if we use
+> timestamps. Will 0b00 be the only correct value? I'm not sure.
 
+In initializaton phase, if set BRBCR_EL2.TS = 0b00, then the timestamp
+will be decided by BRBCR_EL1.TS.  I expect the BRBE driver will always
+write BRBCR_EL1.TS.
+
+Thanks,
+Leo
 
