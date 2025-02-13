@@ -1,165 +1,233 @@
-Return-Path: <linux-kernel+bounces-512455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB769A33988
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9276BA33970
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25F71888E2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027911885BEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5880820F072;
-	Thu, 13 Feb 2025 08:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686CE20B20B;
+	Thu, 13 Feb 2025 08:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nmb/QxB+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOLQeRwy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3332620B7F3;
-	Thu, 13 Feb 2025 08:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94C6204C1E;
+	Thu, 13 Feb 2025 08:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739433684; cv=none; b=XL6yKxYw9B+Eqra+GvCTU4MJYE20ydWE2PJUNczru8o86pqjfmJ9UL95XZAtN+TBL9eODPSef0H6YqU8jrPjCbQn5+EKGyAGUU1rSpvo5LlSGXmu63F9h0TbrbTrY/5LD7Gzw7hekut0ul4uersXbt+Iw5D6yDkUH0SZVExidgo=
+	t=1739433629; cv=none; b=KLDpfo5IwPKkImUTNxPw8d42j4hm1dL2ihRHIqeEMEPHoYPZjOjlPVIEGq50LwLkydg6FTyRRZB0D9uLUrub7I9jFfdgTv77URrSCQolV54oCCeiAw+GAhg8+oZ/5qzcohLYqdwktGIbpAigk+UFy5KlgVqzN6mbBAn+evlITao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739433684; c=relaxed/simple;
-	bh=2HK6VWx6yAUzF3Tt49auVHEajJ0MfgYz8UUqOM9LsWc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MJDmOOmkjPBS+sVcJzUC2o/0+bTF6VY63ygTYjsAON22tTNbNPFGapeCUl8FhkaVrj7U6Vy45JLo5Kx+RahTLr3XS+aqT0BRj5g8snQJmdFpOOWt+poasIQYHC7DLefSSoWDy41W9Equ1ksPk9cD4e4Lp2n1k/DUePx82PX4tXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nmb/QxB+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7E0GM012216;
-	Thu, 13 Feb 2025 08:01:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=zeNKoNUXWN7
-	q38WKulb9c2j79Cq4wy2sVXGqubIieEY=; b=Nmb/QxB+pQOpGBRpXD/KTG6H/Dd
-	VLaBIeWXJhuCMwbV+wD9C8YNBaVdBUWVcv5Zlp6M6ulXoZc5cPHXbCazj6gRTJNJ
-	NRY+gzfUJWRyrF6slB0q/Pq8t7EsExyfiN6b9cprmAl7U3ycEsHjz9AhDDN6vfVs
-	XPL9auzZGvJMZwaillzO4UGt1EaBKnJQnQcHnjVUFETdtH+vK0OaBLUwAmFR8TdW
-	SVMyJ53zLAorM5IZ7wcpvqhgYlW2mrzCk72k3q/8a50/yWdL1YTdA7T961Z97K6V
-	H/fbjT7bSWFaUrOkjVRCJ9tee0UNoV50H0BBd4inFVE8LfHXbn6eNQkIQWg==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sc5u83g1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 08:01:02 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 51D80mnJ031719;
-	Thu, 13 Feb 2025 08:00:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 44p0bkyak7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 08:00:59 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51D80xIq032213;
-	Thu, 13 Feb 2025 08:00:59 GMT
-Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 51D80wKI032212
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 08:00:59 +0000
-Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
-	id F016840C04; Thu, 13 Feb 2025 16:00:57 +0800 (CST)
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
-        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
-        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
-        peter.wang@mediatek.com, quic_rampraka@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Keoseong Park <keosung.park@samsung.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 8/8] ABI: sysfs-driver-ufs: Add missing UFS sysfs attributes
-Date: Thu, 13 Feb 2025 16:00:08 +0800
-Message-Id: <20250213080008.2984807-9-quic_ziqichen@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250213080008.2984807-1-quic_ziqichen@quicinc.com>
-References: <20250213080008.2984807-1-quic_ziqichen@quicinc.com>
+	s=arc-20240116; t=1739433629; c=relaxed/simple;
+	bh=ofm3GeRHfD0mhMeYGLNiNgASQ8oj8xT5klGiVvoPLAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfrGmfeJtGhw1kBx0YYaoJ3d6YO967TWMtucQxfCE9HBJr7+dR8jPltVJEF5J2r1bCSgtFkZqi+3FHxOy3kQKSn/O1SbVZQJ0Et81B0lySmJFKw3LPNEfOcfBv8BH7IfY+nCXqamNwk02cT9W16DsmwM0I9r+r9qKaK9EwgL4Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOLQeRwy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437BCC4CED1;
+	Thu, 13 Feb 2025 08:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739433629;
+	bh=ofm3GeRHfD0mhMeYGLNiNgASQ8oj8xT5klGiVvoPLAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sOLQeRwy+EiETM1vmVNilnA2npGC1wqQlVLtBVuB1ubAX2qac3lKEuz9B56CHnscO
+	 YGK//9mviI6btp+oVzTfFVdPkTJG8Ts8b+SSM0DsDb0VKVcgsvvLPvltWuMI7jgp0p
+	 d/mSN3Jy9Q/I1ivh7ajKOem54W6jPBEMZGPQkBT7GGbKy5Lw9NA9B4xIMVgVVKE8YA
+	 Oc1GFc5lEPSBNDEr0lkTou/wdaQ+agF3fC9o1WaxvGpISXQEMYBTI5B3IUNss7Nq2o
+	 s/n0pJXyMKCfJJdEXuyKZnukhMO6iy4EUZ6GND6amsCc6Iw2j46z6HUhrBC7nGwgWC
+	 Iq+g+XO256fXA==
+Date: Thu, 13 Feb 2025 09:00:25 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: patrice.chotard@foss.st.com
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, christophe.kerello@foss.st.com
+Subject: Re: [PATCH v3 3/8] dt-bindings: memory-controllers: Add STM32 Octo
+ Memory Manager controller
+Message-ID: <20250213-adorable-conscious-pogona-4114cf@krzk-bin>
+References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
+ <20250210131826.220318-4-patrice.chotard@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ltfJGUWqJY3Ek81kOMh5sfRhD7Km-p8n
-X-Proofpoint-ORIG-GUID: ltfJGUWqJY3Ek81kOMh5sfRhD7Km-p8n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0 phishscore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502130060
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210131826.220318-4-patrice.chotard@foss.st.com>
 
-Add UFS driver sysfs attributes clkscale_enable, clkgate_enable and
-clkgate_delay_ms to this document.
+On Mon, Feb 10, 2025 at 02:18:21PM +0100, patrice.chotard@foss.st.com wrote:
+> From: Patrice Chotard <patrice.chotard@foss.st.com>
+> 
+> Add bindings for STM32 Octo Memory Manager (OMM) controller.
+> 
+> OMM manages:
+>   - the muxing between 2 OSPI busses and 2 output ports.
+>     There are 4 possible muxing configurations:
+>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>         output is on port 2
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>         OSPI2 output is on port 1
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>   - the split of the memory area shared between the 2 OSPI instances.
+>   - chip select selection override.
+>   - the time between 2 transactions in multiplexed mode.
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+>  .../memory-controllers/st,stm32mp25-omm.yaml  | 201 ++++++++++++++++++
+>  1 file changed, 201 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+> new file mode 100644
+> index 000000000000..c897e6bf490d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+> @@ -0,0 +1,201 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/st,stm32mp25-omm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32 Octo Memory Manager (OMM)
+> +
+> +maintainers:
+> +  - Patrice Chotard <patrice.chotard@foss.st.com>
+> +
+> +description: |
+> +  The STM32 Octo Memory Manager is a low-level interface that enables an
+> +  efficient OCTOSPI pin assignment with a full I/O matrix (before alternate
+> +  function map) and multiplex of single/dual/quad/octal SPI interfaces over
+> +  the same bus. It Supports up to:
+> +    - Two single/dual/quad/octal SPI interfaces
+> +    - Two ports for pin assignment
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp25-omm
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description: |
+> +      Reflects the memory layout with four integer values per OSPI instance.
+> +      Format:
+> +      <chip-select> 0 <registers base address> <size>
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  reg:
+> +    items:
+> +      - description: OMM registers
+> +      - description: OMM memory map area
+> +
+> +  reg-names:
+> +    items:
+> +      - const: regs
+> +      - const: memory_map
+> +
+> +  memory-region:
+> +    description: |
+> +      Memory region shared between the 2 OCTOSPI instance.
+> +      One or two phandle to a node describing a memory mapped region
+> +      depending of child number.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  memory-region-names:
+> +    description: |
+> +      OCTOSPI instance's name to which memory region is associated
+> +    items:
+> +      enum: [ospi1, ospi2]
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  access-controllers:
+> +    maxItems: 1
+> +
+> +  st,syscfg-amcr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      The Address Mapping Control Register (AMCR) is used to split the 256MB
+> +      memory map area shared between the 2 OSPI instance. The Octo Memory
+> +      Manager sets the AMCR depending of the memory-region configuration.
+> +      The memory split bitmask description is:
+> +        - 000: OCTOSPI1 (256 Mbytes), OCTOSPI2 unmapped
+> +        - 001: OCTOSPI1 (192 Mbytes), OCTOSPI2 (64 Mbytes)
+> +        - 010: OCTOSPI1 (128 Mbytes), OCTOSPI2 (128 Mbytes)
+> +        - 011: OCTOSPI1 (64 Mbytes), OCTOSPI2 (192 Mbytes)
+> +        - 1xx: OCTOSPI1 unmapped, OCTOSPI2 (256 Mbytes)
+> +    items:
+> +      - description: phandle to syscfg
+> +      - description: register offset within syscfg
+> +      - description: register bitmask for memory split
+> +
+> +  st,omm-req2ack-ns:
+> +    description: |
+> +      In multiplexed mode (MUXEN = 1), this field defines the time in
+> +      nanoseconds between two transactions.
 
-Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
----
-v1 -> v2:
-It is a new patch be added to this series since v2.
+default: ?
 
-v2 -> v3:
-1. Typo fixed for commit message.
-2. Improve the grammar of attributes' descriptions.
+> +
+> +  st,omm-cssel-ovr:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Configure the chip select selector override for the 2 OCTOSPIs.
+> +      - 0: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS1
+> +      - 1: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS1
+> +      - 2: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS2
+> +      - 3: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS2
+> +    minimum: 0
+> +    maximum: 3
 
-V3 -> v4:
-The use of words is more standardized.
----
- Documentation/ABI/testing/sysfs-driver-ufs | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+default: ?
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 5fa6655aee84..da8d1437d3f4 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -1559,3 +1559,36 @@ Description:
- 		Symbol - HCMID. This file shows the UFSHCD manufacturer id.
- 		The Manufacturer ID is defined by JEDEC in JEDEC-JEP106.
- 		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/clkscale_enable
-+What:		/sys/bus/platform/devices/*.ufs/clkscale_enable
-+Date:		January 2025
-+Contact:	Ziqi Chen <quic_ziqichen@quicinc.com>
-+Description:
-+		This attribute shows whether the UFS clock scaling is enabled or not.
-+		And it can be used to enable/disable the clock scaling by writing
-+		1 or 0 to this attribute.
-+
-+		The attribute is read/write.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/clkgate_enable
-+What:		/sys/bus/platform/devices/*.ufs/clkgate_enable
-+Date:		January 2025
-+Contact:	Ziqi Chen <quic_ziqichen@quicinc.com>
-+Description:
-+		This attribute shows whether the UFS clock gating is enabled or not.
-+		And it can be used to enable/disable the clock gating by writing
-+		1 or 0 to this attribute.
-+
-+		The attribute is read/write.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/clkgate_delay_ms
-+What:		/sys/bus/platform/devices/*.ufs/clkgate_delay_ms
-+Date:		January 2025
-+Contact:	Ziqi Chen <quic_ziqichen@quicinc.com>
-+Description:
-+		This attribute shows and sets the number of milliseconds of idle time
-+		before the UFS driver starts to perform clock gating. This can
-+		prevent the UFS from frequently performing clock gating/ungating.
-+
-+		The attribute is read/write.
--- 
-2.34.1
+> +
+> +  st,omm-mux:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Configure the muxing between the 2 OCTOSPIs busses and the 2 output ports.
+> +      - 0: direct mode, default
+
+Don't repeat constraints in free form text.
+
+> +      - 1: mux OCTOSPI1 and OCTOSPI2 to port 1
+> +      - 2: swapped mode
+> +      - 3: mux OCTOSPI1 and OCTOSPI2 to port 2
+> +    minimum: 0
+> +    maximum: 3
+
+default: ?
+
+None of them are required, so usually we expect defaults.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
