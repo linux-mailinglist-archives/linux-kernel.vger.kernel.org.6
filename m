@@ -1,124 +1,196 @@
-Return-Path: <linux-kernel+bounces-513116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87CFA341C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:21:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762AEA341B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180783A3FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9B616AD99
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B237281358;
-	Thu, 13 Feb 2025 14:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D7C281346;
+	Thu, 13 Feb 2025 14:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="mBdkXQ2f"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Mdu12z+t"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09A6281345
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104F9281355
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739456235; cv=none; b=O9lMiFZDvPFDoZVtqIeRZEHJdlUuINerTS5dGTUjGW89yvDMmZUbJh2lMDloKc6omtPkS8aY1DooGxK3Gv9+Q3bQfZ+wX8k72BeEkrr2CkxvkTxx19tjvxpCd+dCxSByGufr2MbLFfHJYP6++XEhDKe3HNCVTSVCe8DoK69UPAU=
+	t=1739456245; cv=none; b=A2/ZvkpShME27WY2LMHCms57dIgcBTRoH1HL1T3Hh9H3XZdpbIPS9wobMnySlnLMife9ldUXkAabpSZ5U24wiUZkomgLSd76Sbkai66w5gGRp30g/PHift0Hh3iHDuehL5kiLj7gT432+tKvnDyE1hAR8Cb4WglCxOOyvIgzTYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739456235; c=relaxed/simple;
-	bh=/mY48pFDXxj6a+JwYG2IJVoNuPx4K0DlQ+fKdubCr2g=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=S0qR9fd06k/sQzrBPXZkdXTbWbYp6XV/0j05AXkVkMo6XETtHL6Su1xEu1MygJG+RMygwub7/QXYaeMr2c2LUcDViJbyrn8E8h5vaj/9fPC5C8C0e0mc8vVEx96jA4lhhoU2L3NUNtl9sWw2zRa8luqZ9G9gahHjU3bY5sYqRL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=mBdkXQ2f; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21f6f18b474so11127565ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:17:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1739456233; x=1740061033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Th6lX7yB9qjmpn3x3XWkX4vhyaraeYuwBL7xGtC75O0=;
-        b=mBdkXQ2fUxQEoERAdR/GPjQh+Kb/L6qzxDYUHEQAxF8pqQq2YLg3mP3IZYhzFrmTZI
-         xyUwXKgz1YodOu4vHLFFoTGArJZndn0KLEGKZMwWE7HXEVFQUB/OOeakTSLM3zxUqCOt
-         CtqPjJyDGQtYC55DSsiEMnwboG0bXvgmgX0JyvKXS/QAI/sQaBHafbQZ4jX+srZD3xhi
-         bNlw46Iv8BBbSOaXYRsjHKgTR3HvfJmHa7B4VBMm9rC9oZ2/LVB4V5BhIOwjlHeftDSg
-         Efa6vkAvMpJyuZIqPwetmYbf7EEcsb9MqexjQTb7kScolb+jQ9rhep6w61hvHWzKFbLz
-         3HvQ==
+	s=arc-20240116; t=1739456245; c=relaxed/simple;
+	bh=b7VrcOU7oK8YTQhJRUnUa3IN6tl3MYeYj8nrKA8XOjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeJUBWF5NXhWd4ZozGqLB+rZcyrHgZUalifrXRtfZLsRXrj6/POUbkHdGuhUS5Mha9GoRTlr8hIPirU6jKWjHK3aZGSpXlGGv+WfcSIxflYNM5mE90RwtKEOH0VPCQt/vgDPHzyLFVe1bb87ZOsIUaHPFAQTBfvOZbYj0xsZKhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Mdu12z+t; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 098583FE6F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739456242;
+	bh=nS5XbWIMngQR391kF03GHPM/jrDd/f8Q40NauUQr+EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=Mdu12z+trlY/mil9wqqEXxoI3aLZxVpoOxghzdjztdLMeajccappCblivKGEySBZA
+	 1sG1H6ll24B2ESnp3noaNEAQUfhLABTB7Ur8xJnLk2M4HfXwZiUtPMPfMG9T1uB1cq
+	 IAB7tcCWW+OzbYHroDvlSPpAFA/EFqWpKwzeXldn+3I7zToddWn52UeP6zKZS/V5JS
+	 c//ufrKbPXxbhWTZhQhUb3ugWW9FFzyNA5+dLGooMuA488YFbXoHKUZmMol2bv3Dji
+	 V946n1gjn7NAlWH/iUXUTrSpfn/aBzrCch8Bc96Btl5cXazSdQFN65FfURFam3KsFL
+	 gMDDffw7taRJg==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220d9d98ea6so19705285ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:17:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739456233; x=1740061033;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1739456240; x=1740061040;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Th6lX7yB9qjmpn3x3XWkX4vhyaraeYuwBL7xGtC75O0=;
-        b=ET7gDtmlqqoZeT5Q56B0rm9ye+4T+r9ljoKGFYXflym1Xujm6/AR8ic9das1TJmi14
-         AbbE8t7YpGhyStRW1xkM5rjmoDZcVAXUIO6C2QlE1YOy2b+rdxPxAqZXnVHcVgZvyJMZ
-         QeFTF0eMR/AICn6EKfgBY/DwnHWknIAQ8Gh6nH16yIFTRvdzOH9v4kmX8FQuhYjUJ5aA
-         AMwTnUEzZ1pNH0cayOMWhSN/M0DjBqD2R6i0wK8JfGQusxK1EiZrvQTpf/5+BZOvLhwB
-         xwNrLytUnf9AZX9pAJ6ZvG36xy0ZpicxFwv1+6eKjdp2DH2SupsAPnKJBCUsD8b8qRX3
-         IFkg==
-X-Gm-Message-State: AOJu0Ywh4SBwMd36o6kf1D4nEhcfanNXYb7yE/Wk/jw7eZ9wfj11nV51
-	u74724jJ7ut8ADH5dyxZYdU5V5jI4ucxunWpzUzupdKvnc1ZUaWgy3JRV+26u/DHfbj7eitD5Ak
-	q
-X-Gm-Gg: ASbGncvi0pNE9C70dhwgPmoGwfVo5p9dDPmDoaFjH1gNS7Zfgwrj1gwlGCI0zcElaHO
-	IPUgCdV0zoBAiLktrEsGqFGMa8oxLvIsoBgIVZIWv2Ykg23wimuvgmng9iLXeJQDyx2HB+0FhLY
-	o2RXkxXmpwbsakds0bLRBuKR4eQKKqghCUJBsyUWLujufDPZgQnRjta5OqfYmQOGkfpeH5C/KcQ
-	D0hc+n7hW4SfQpBHH5qspHaHxpZN3ETXiz0QmkaPtYEacFLI3L66t+UFXi7slza2sS1bqZDIYXo
-	DUjxFRAoMI6N
-X-Google-Smtp-Source: AGHT+IEGdbnZBMKZzS1Nj16TfST25tvEcj38W13TegR/1BDT0XWfns6gOT9rmswIL2lBD8LhXfdYvA==
-X-Received: by 2002:a17:902:e54a:b0:216:7c33:8994 with SMTP id d9443c01a7336-220bbcc6cf5mr126074435ad.53.1739456232785;
-        Thu, 13 Feb 2025 06:17:12 -0800 (PST)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556f97dsm12958985ad.172.2025.02.13.06.17.12
+        bh=nS5XbWIMngQR391kF03GHPM/jrDd/f8Q40NauUQr+EQ=;
+        b=VrcSo8CNRI5w0z0z3VsJWrElV3Rhysa5PzUE3LGkl02krIp13bf2GnTewxDLOBg5h3
+         FCvUCL2iL6s8GqmkXLvrmMdgbOhxUXifV4jt5Cbd69j5hlA1f9egWWZQP6dozqJbGfQy
+         fU3mXtuDw9lYVcS83rmrREHUBH6GHNQV7PXKuF74/t5sS4RPd2qEpZ1IXCw6QI3lquN1
+         4Vh3BVO0YM6zLixLWMvnQpDKTgL9keQTKNy2ljKN2xdzm9tUrkNl3JMnWHfGjFP301d4
+         skyykwQKANaKt/k1G8X7K3uZ6fjgyxHOsQT31NZqyyp3WvNYRYLsqSz3GphCjJnEcWZD
+         kNYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbgfFCh8UCOROmwmzCIQbKiInl1Rw+YwbQiYFkD5gDeccd1Eubn5cmIfLUbxTE1gZ7sOpPjZCvVasR00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSt7nHhGqpFKuVdS9S/oNre/Cmite0ZeNHRpO0DwMs0ZR3sxMh
+	9tykFuydCHKcLKWyGOgTqUuk2FwODJjuvKu5aNb28iSsEzjddljO+AuzMbNPbP19+tytJlyRoeJ
+	5D+6hy/cqEWAkgDaHWZpJ0IjG9mmqFmulkwWiOLPCURwM6jV2Il7/UbjSirdDLx2NYlYtqR6DZL
+	SmsQ==
+X-Gm-Gg: ASbGnct7D305pflJgyvu3yWgPWZBLZTVD5apF9OTYnGiwBovg4dSyc3elR4xMvAEPvT
+	eN7APn2GsxNiPmTjWYhi7zFQQduqwS17/mIfyomSlDgv98nbsx3fAQ7fNDyDj/R41EZRgS9+RVF
+	t1FnTyjum0o758SxDg6+8ESbM2KAlz29G4By8bIluNi08IsGzeRJT2m+Ik9awQ1fNse0Dx2ncnR
+	2JaxcA1f2w8jqWzEeM42PQ5eALYc5E0Vu5W6C76K9CBh1s3UPJMZ+d6zNKIIiYJJ90zVFYGWklB
+	Zo0LvFQ=
+X-Received: by 2002:a17:902:e84b:b0:216:7cde:51a with SMTP id d9443c01a7336-220d20e930dmr56663545ad.28.1739456240584;
+        Thu, 13 Feb 2025 06:17:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEI90/3XbV0wlGO0YTPFUOWeqWNFQVomLPku4YtxNMRfN+eWQhSiqVG/zQ+9qp7rTnp+szq3g==
+X-Received: by 2002:a17:902:e84b:b0:216:7cde:51a with SMTP id d9443c01a7336-220d20e930dmr56663145ad.28.1739456240255;
+        Thu, 13 Feb 2025 06:17:20 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:5439:d90c:a342:e2bb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585072sm12749195ad.211.2025.02.13.06.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 06:17:12 -0800 (PST)
-Date: Thu, 13 Feb 2025 06:17:12 -0800 (PST)
-X-Google-Original-Date: Thu, 13 Feb 2025 06:17:09 PST (-0800)
-Subject:     Re: [PATCH 0/6] riscv: Relocatable NOMMU kernels
-In-Reply-To: <20241026171441.3047904-1-samuel.holland@sifive.com>
-CC: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-  akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, alexghiti@rivosinc.com,
-  samuel.holland@sifive.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: samuel.holland@sifive.com
-Message-ID: <mhng-25ab7f97-42b6-40a8-b96d-d387cbf54ad1@palmer-ri-x1c9>
+        Thu, 13 Feb 2025 06:17:19 -0800 (PST)
+Date: Thu, 13 Feb 2025 23:17:18 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/10] Documentation: gpio: document configfs
+ interface for gpio-aggregator
+Message-ID: <ylkqzw7u2mb24kow32xz6t37e56gcoqhztwzvl4wfrz4peuj6d@lf6i4whx4hbf>
+References: <20250203031213.399914-1-koichiro.den@canonical.com>
+ <20250203031213.399914-11-koichiro.den@canonical.com>
+ <CAMuHMdXBJhpWht4eo569h0kdY+evi=JTgMQtccUxf2X+tX-QPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXBJhpWht4eo569h0kdY+evi=JTgMQtccUxf2X+tX-QPQ@mail.gmail.com>
 
-On Sat, 26 Oct 2024 10:13:52 PDT (-0700), samuel.holland@sifive.com wrote:
-> Currently, RISC-V NOMMU kernels are linked at CONFIG_PAGE_OFFSET, and
-> since they are not relocatable, must be loaded at this address as well.
-> CONFIG_PAGE_OFFSET is not a user-visible Kconfig option, so its value is
-> not obvious, and users must patch the kernel source if they want to load
-> it at a different address.
->
-> Make NOMMU kernels more portable by making them relocatable by default.
-> This allows a single kernel binary to work when loaded at any address.
->
->
-> Samuel Holland (6):
->   riscv: Remove duplicate CONFIG_PAGE_OFFSET definition
->   riscv: Allow NOMMU kernels to access all of RAM
->   riscv: Support CONFIG_RELOCATABLE on NOMMU
->   asm-generic: Always define Elf_Rel and Elf_Rela
->   riscv: Support CONFIG_RELOCATABLE on riscv32
->   riscv: Remove CONFIG_PAGE_OFFSET
->
->  arch/riscv/Kconfig               | 10 +---
->  arch/riscv/Makefile              |  1 -
->  arch/riscv/include/asm/page.h    | 27 ++++-----
->  arch/riscv/include/asm/pgtable.h |  6 +-
->  arch/riscv/mm/init.c             | 97 ++++++++++++++++----------------
->  include/asm-generic/module.h     |  8 ---
->  6 files changed, 68 insertions(+), 81 deletions(-)
+On Wed, Feb 12, 2025 at 04:55:24PM GMT, Geert Uytterhoeven wrote:
+> Hi Den-san.
+> 
+> On Mon, 3 Feb 2025 at 04:14, Koichiro Den <koichiro.den@canonical.com> wrote:
+> > Add documentation for the newly added configfs-based interface for GPIO
+> > aggregator.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/Documentation/admin-guide/gpio/gpio-aggregator.rst
+> > +++ b/Documentation/admin-guide/gpio/gpio-aggregator.rst
+> > @@ -69,6 +69,99 @@ write-only attribute files in sysfs.
+> >                     $ echo gpio-aggregator.0 > delete_device
+> >
+> >
+> > +Aggregating GPIOs using Configfs
+> > +--------------------------------
+> > +
+> > +**Group:** ``/config/gpio-aggregator``
+> > +
+> > +    This is the root directory of the gpio-aggregator configfs tree.
+> > +
+> > +**Group:** ``/config/gpio-aggregator/<example-name>``
+> > +
+> > +    This directory represents a GPIO aggregator device. You can assign any
+> > +    name to ``<example-name>`` (e.g., ``agg0``), except names starting with
+> > +    ``_auto`` prefix, which are reserved for auto-generated configfs
+> > +    entries corresponding to devices created via Sysfs.
+> > +
+> > +**Attribute:** ``/config/gpio-aggregator/<example-name>/live``
+> > +
+> > +    The ``live`` attribute allows to trigger the actual creation of the device
+> > +    once it's fully configured. The accepted values are: ``1`` to enable the
+> > +    virtual device and ``0`` to disable and tear it down.
+> 
+> As the code uses kstrtobool(), it accepts variants of
+> yes/true/on/no/false/off, too.
 
-I'm getting some build failures
+Thanks for pointing that out. I'll modify this part.
 
-riscv64-unknown-linux-gnu-ld: arch/riscv/errata/sifive/errata.o: relocation R_RISCV_HI20 against `tlb_flush_all_threshold' can not be used when making a shared object; recompile with -fPIC
-riscv64-unknown-linux-gnu-ld: arch/riscv/errata/thead/errata.o: relocation R_RISCV_HI20 against `riscv_cbom_block_size' can not be used when making a shared object; recompile with -fPIC
+> 
+> > +
+> > +**Attribute:** ``/config/gpio-aggregator/<example-name>/dev_name``
+> > +
+> > +    The read-only ``dev_name`` attribute exposes the name of the device as it
+> > +    will appear in the system on the platform bus (e.g. ``gpio-aggregator.0``).
+> > +    This is useful for identifying a character device for the newly created
+> > +    aggregator. If it's ``gpio-aggregator.0``,
+> > +    ``/sys/devices/platform/gpio-aggregator.0/gpiochipX`` path tells you that the
+> > +    GPIO device id is ``X``.
+> > +
+> > +You must create subdirectories for each virtual line you want to
+> > +instantiate, named exactly as ``line0``, ``line1``, ..., ``lineY``, when
+> > +you want to instantiate ``Y+1`` (Y >= 0) lines.  Configure all lines before
+> > +activating the device by setting ``live`` to 1.
+> > +
+> > +**Group:** ``/config/gpio-aggregator/<example-name>/<lineY>/``
+> > +
+> > +    This directory represents a GPIO line to include in the aggregator.
+> > +
+> > +**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/key``
+> > +
+> > +**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/offset``
+> > +
+> > +    If ``offset`` is >= 0:
+> > +        * ``key`` specifies the name of the chip this GPIO belongs to
+> > +        * ``offset`` specifies the line offset within that chip.
+> > +    If ``offset`` is <0:
+> 
+> Missing space before 0.
+> Please add "(default)", so the user knows he can skip writing to this
+> file when specifying a GPIO line name.
+
+That makes sense. Thanks for the review!
+
+Koichiro
+
+> 
+> > +        * ``key`` needs to specify the GPIO line name.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
