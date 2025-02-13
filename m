@@ -1,138 +1,228 @@
-Return-Path: <linux-kernel+bounces-513454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C4EA34A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:45:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E11A34A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2031D179388
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFB31895284
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C3E1632DD;
-	Thu, 13 Feb 2025 16:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5AB2222C1;
+	Thu, 13 Feb 2025 16:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LLZWOp/k"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QtcBGyal"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19C202F72
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739464259; cv=none; b=dojJmnFbeVNfWIvxM1FXjlYiBjJ2PRXVayATVp2UMpKhpi7ugbKXuPiHSu3hzzU3Z+7+vGZnKTTxoEpuknpMUCdtzin8YSrpzCn1cbygzECvTxXNmaOUa2xZ28pxDj8BznpaM54yPDor6Gnhuy2v6+Z7SSTB9yviD4dS7k3qTyU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739464259; c=relaxed/simple;
-	bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dDF08W0QKjSm7xSRuwYGMkbTRwWS08zn+oudR7CpQdC1pA7HER+nU6YyqZ7DvOIkza3HjOOxQVk4R2vOnKJKisvHuSKsM4C7Dj7URfo9D7ye5fMY7R6KyGIuZ3AM45lNYxaDMl3ZGbftvoplJa/G946aPX97jKfX8Sskng86f9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LLZWOp/k; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7f838b92eso195146266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:30:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1739464256; x=1740069056; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
-        b=LLZWOp/k9O0iQdBoTYYkLC2opbafdJaOulLUXwXvahvC4NpRFlO4efhb49LikbQS44
-         DyjLuvXMZ8RTJM/9sZDT+pKaymsgQ1NUS3RtRqKGlGMtH4Hc6WqSE2Kag30lyYT6BPnK
-         2sdSgd+OaiF7rdiVqT8w0fvfeRCdP49MCQ02lQGeJdAx+7DtLUC/kDhjhdWVq+fJEYhn
-         qIApuq3jdCGeo1vOf3owgNVqYWcKNbig9H+iZzdH3C4RkJNnEdpghw7klAyVQbmcZkgl
-         yxevGvbxlbGA5G/Sm1mlvDvVmUe7JM1XfahWbQgkdJK/O5B+mHWqdJknptRkOH3fJeGY
-         5GXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739464256; x=1740069056;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o/51IyMp1iadw96C4sTg3+7DcvmfdS8ffzuD5PVOLzM=;
-        b=uRvc7VV/7qr6sc+zlXe2NYqujDqhwrAjJEnRNf/LkrB9QIgx2898tH3wpMiT92basT
-         bC+gJdyPt5/AtZXdkWydGXJASbRmSK8t5naezDBXcoW++SgOeJGSGfSvCG9n1WKHsx4f
-         i8lfU8GuQSjNrk1Cqrz7bVvUV83pBweFoq1m/YczJM8GEq1AnQ4ZATjICQ7D9Au6Qzpk
-         MmWKlsqsS9JcUQCAaczkLUQeHDAnDbsUFxfyV+k2N7Bk4fbjjhCeFxR8ndnO5TPR7J2+
-         tNoXOAB5IDsyM5ylZJ8MwoCPAWTW64b1ciaOzFP8GbN9vA4WXEe74a7Er+c3W8Z2Wz1a
-         fCAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz42/9GN3YNOZXXsstM1//1mIB1xgWKKkPGd/n2Rdq/TQnko7kRK4bOFgBhUmJ3Gp0O4occFSomoITMWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBwCWOwZ6l5y7+5FwvY1t4fHKLFGyQrmItoX/bsiJ5LWJSolJx
-	nFO+ghoNgYI57Y0uanBZS9kAlFHnyaPxS8M3/30cnuiZy9i8YDY4JLDBi4TpDs4bI53tl+wd7pR
-	JWyV61QRuAClvmOpy6uV8F2C+Mp+80e2rHi/b/A==
-X-Gm-Gg: ASbGncv+422DOG2i82GQDtYKWm707eTZ3VsPuR/jfI4uDuhl1L2U1yT06/cRUIUG5tn
-	aS9XzrPxaMLc2KU6fnfWMMaL4VQu31/XMR5J+Avc6D2qPJeyw6PcCaSnjuYB//iBJRnfck/0Y0n
-	gF5rdMuSEojoUlpRr7+XA0cB8wMafc
-X-Google-Smtp-Source: AGHT+IH5GCCG2j+0durJuW8Oa03Wrl0Cv4HeP5h1Abx+8pHhFwZ922emqHD5DAYivn9wYSdjWCmVxGwnF2qbKv7sLSM=
-X-Received: by 2002:a17:907:1909:b0:ab3:76fb:7523 with SMTP id
- a640c23a62f3a-aba501bce21mr457456966b.53.1739464255721; Thu, 13 Feb 2025
- 08:30:55 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA919AD93;
+	Thu, 13 Feb 2025 16:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739464341; cv=fail; b=CBoHaRkjIdz56LHvkrdsDJJqyK6LztbVOJHmFf+Q7vSiY8oLDF/CHYVhKWPWfjKLdyCiMo436tx7NDTm01QufWtPFezGpKgoXAj6wpJSvWRZ0NgBDbnM14hu508x8jIxkxgvUvCosDGQ58VLXyrmo6bt9PYydhlnDW7iz06Z3Ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739464341; c=relaxed/simple;
+	bh=xG5HICpx2QRDHkWvzdVlLeJQwJ52jgy0S2XO2HjIRXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gbUAs+NhUFOGPPT3hbUdrvQDeABC6lZNIjLOYLmdcyxkDcZX+b9qYuABagtVXnCpdxV3splbXP9Kks73lCccnRGLnkBIyPEyix62urb3XNrFumU4/GNBCmNNTqxUZUdOCGXJnTOSHsy2RfkV0jhrvc1p7dQpjhT8WwrrHFLGKfI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QtcBGyal; arc=fail smtp.client-ip=40.107.220.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zd5NRlvyduVMp1vlS/3P5eIT5AlJrm5HLppu49G7nXVM//vE42fWPqBEm3obgXWCg2JRE5Pwo/qwtT4YqmNncKQzFt7exm2Jkqne749uP/SnHycnYYEo8oNDclNIH6NH7y2j8pbVrBhy7LWOtzR8Mrl6gq6xGnN2HOqxeEgLpFHyDP9hFMvo6EI3bzUZ+6FpQXMRtDw6xOb+GdYwO4q4L+QGEB3f1zFGpGWAO3ekGfkqtTwpZHI4bVzroikxJaBp94JLqhth7z2awJms4zIOTiNDqNury5p5xCloS5cFw8rb+OjPWAVeOuUv5ir6P/IVLDh2S0+4YdxMFBpBHXL8Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cHzw6qoGzWu2iaxSDVdqLGSNFKYB9uu+fQcOGn9XR9c=;
+ b=hhud6Rnfqvz+84liTC9BgopirzLPGNeQNqVpEGiJYmJb+j4DfBALNpPPSppyTP6FzYBzzFsU9hnYJISHsY3zcvXl+pcgoix5beMf4nBnPSpKL1SyEZFqA2STaeaUMrZCXKSx0vzwmSUp4biUMX7JPTHxpjOZ3SFoHIrhHDTb8YEma0bnpsYckI87LJiQY2IUvTYYh/sq1i641uquSYAwoxsvVi971OmNdK0Pz/P8TXvZKP0hUrlvXmnNUq0kq+bgSoZYMBupOUX5uYGj8D7LSghUqJkFZB34IdjP5VlC0aXoiP0efgk9K4MOZhseHy0bMWrcMOF/CEcHAST0ZDT2bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cHzw6qoGzWu2iaxSDVdqLGSNFKYB9uu+fQcOGn9XR9c=;
+ b=QtcBGyal406/UPwZ04POT8oOjdEzKdbsZBBk6TSGKYX1EsLzX5fCPl34C34is8zqJwI104Lq9SRdlxRQQw6lL330UAC9FpKWRtYipnXsqwEiNIrB9N4y+y9hqPeZnLmr7oiHQlBCewrqNxDWutjIN7cKQU8hGkf9y5sq+MU55OJN+53dMl6asRmzd04MjYp4b+RRVbk46hmljia5DoSpqvAYG3JNTaAuWn0m5BbYmeP7gm6KGufGvGDwE1qtAcweNGDoXCHCZT72F8+bAQWx96QKLvVN9RFOGjD30WPqyeaYkMkq2vnYkojfG2wBfBUnW4/04wX6QyPnn1Kht4nGhA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by CY5PR12MB6575.namprd12.prod.outlook.com (2603:10b6:930:41::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 13 Feb
+ 2025 16:32:17 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 16:32:17 +0000
+Date: Thu, 13 Feb 2025 17:32:13 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] sched/topology: Introduce for_each_node_numadist()
+ iterator
+Message-ID: <Z64ejV9BvcN_mMXh@gpd3>
+References: <20250212165006.490130-1-arighi@nvidia.com>
+ <20250212165006.490130-4-arighi@nvidia.com>
+ <Z64XpKDZ0GQ673Eq@thinkpad>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z64XpKDZ0GQ673Eq@thinkpad>
+X-ClientProxiedBy: FR2P281CA0036.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:14::23) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
-In-Reply-To: <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
-From: Phil Elwell <phil@raspberrypi.com>
-Date: Thu, 13 Feb 2025 16:30:44 +0000
-X-Gm-Features: AWEUYZnIbvhJ2Gv987WOr8gH33pSGmprAqtfnZVU0XicGf3dfKPk3tqt9y_XRUs
-Message-ID: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
- a DT overlay
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrea della Porta <andrea.porta@suse.com>, 
-	Arnd Bergmann <arnd@arndb.de>, 
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
-	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
-	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
-	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
-	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CY5PR12MB6575:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7bf2882e-4fb9-4abb-3f96-08dd4c4bfabc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cJ54i6RfxeCEJswq/j8KkWwT1X4QumFBpJAXzWGifzORjjHsUTCh5gQt9LJd?=
+ =?us-ascii?Q?rDRgwF4ygnwDj+3Pt/0OD0P0WUTzDYJSgoDT7LL+ugFvIpoaVGSrdUrvPQpC?=
+ =?us-ascii?Q?rEpICyQ1MYYu39elR1bp1ls1ZZnw5+t0nT6uuoSzw1VxTI28QL8dQqumqlr4?=
+ =?us-ascii?Q?7aTBhnKYvVhD68Im6ONsu52G/BYJ5Gu2PN46jaxZIiCmj6jD8pM1P+j52C/C?=
+ =?us-ascii?Q?1EFfNOGUeLs2kUclEljlj4uft9UBhXoBDUNDCHtQzo+QT3eCVg9Qs8ej9ZBT?=
+ =?us-ascii?Q?2KhnxOjVHkRxn+GuTRFrUAFw/ofNShX1CBooWMYzdZjmiDc2xV6h03EKagvz?=
+ =?us-ascii?Q?M2n1QBha7Zv0s+6IHTvHBSp1HUeyI9yt3BnQgtznc175kHoLDcPN3w0XoL0J?=
+ =?us-ascii?Q?9cfoN9/jfiBlK/o7Uwll6CTG/1bN+6S7burY3owv3eQO9dCxt9tXgUI7eqxj?=
+ =?us-ascii?Q?Ykhr+rCeE7PyL3oS/RXp3H233yujD+5Zsqsid+6SuwdMdXubmy04ON4GmMBt?=
+ =?us-ascii?Q?0oDi3kPosUt0dFTicyfu4cKaDf9yrLqcUKAKpSARK2371iBAmr4AWgabdOVl?=
+ =?us-ascii?Q?acSB7Z9oglnxt+FvZ5oQcukvO7XOyZA5yCi29zNA0WcuUQ+NdRgK0BKrwqhe?=
+ =?us-ascii?Q?PSxDMfZQWAnhNWZ/GOANgImtqbNCI3BNZC9SVd8Z4MgStmGG/20rYcenM8Ar?=
+ =?us-ascii?Q?TofhPUZsn/XNgpBnIWg2Dy/8x3FTFfsfY8n9uF0xwfEDkRIBJPp212IUNK+S?=
+ =?us-ascii?Q?NsmoPUrs6G7BY98K3vNdKsXTs2v+uMbb3Vc8xwLCKXIy4iTFC5fBQO906uv7?=
+ =?us-ascii?Q?XrnGn6dQkq6VTerpsYeT35UUunJcpCp0gDVIjuPs1eb8UsGEJ4Uyd6HVDLRr?=
+ =?us-ascii?Q?TojT0bTWfq2/P0dJlpOmWDq2BbgI75ynNGTLOODu+nScN18eG6Qkjwu7sHlP?=
+ =?us-ascii?Q?n+YqecGxHANl8owgO7cZW79cnbBCNUoueP2Yk+eAYtWVAmUgLIrGxTIxT0pY?=
+ =?us-ascii?Q?lBcTFxtjqjF4DNj9yyUxKuWD8Hw1fyDyVCrw9dlpViK1VkWlqdexRaSEHzwl?=
+ =?us-ascii?Q?gJ9+l3fP8nLuWi0ndIf4/X7vJvusFwa/f6RORL31j847MtNnd6mpyllJuB4h?=
+ =?us-ascii?Q?eip7Ax8qhv/GBgdWL8OhSCBKLBETBNe8TfHQKGodeLkDfRTOGxnyCKRsTPL9?=
+ =?us-ascii?Q?rW8MRbxyVZO4CbOJqcoYT8B1fsZVSdFdnfYgffvVh21he/8lcm6CvDQ2ZYeO?=
+ =?us-ascii?Q?KbRd25X7LjuzQxkqhmnolZZkgXPw6XNyHE4pZBLu8dL9SwOrBm/qsjexibXw?=
+ =?us-ascii?Q?sbm9VEJzwU9XW7lo8ezrqly9rz0B1mCD8PAdZHwOcYOh+Z3TZf87kjUeMgla?=
+ =?us-ascii?Q?iXW7x4yCzPdZvyfQynB01G4SR0O9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SF03+NuTUHeVxf7bUvZPBaxJ3S4cr+zADgITuSI+PNssBgD0FCwGGzO04rLK?=
+ =?us-ascii?Q?/rzFlUXowJ0OGtg77murYYsyJGqlsHUWHFPJHW2nakCdEC337B1M1saKUZyk?=
+ =?us-ascii?Q?ebjm1kZpb2vDJw8C+u5QKVjtKTEagsaHVP+mVhKmjxq1ALoZAT+45B/lnk2b?=
+ =?us-ascii?Q?vyMCqgmeXfpfFPPL4EeE3b54egz0oIMcrnlitrBKWnU8oV/m6CfWJweuctaW?=
+ =?us-ascii?Q?6doxBkNby8e1CTZLypQjkjYHa3wTJf0CNbVNTEfEPzlj6tLj51HhaV5cdVP8?=
+ =?us-ascii?Q?4VLbOHd4gm3JjyTyXB5nYiG96EMc2C3E9cKUsJoPYH0EyYdQXykWKGydT6VV?=
+ =?us-ascii?Q?v8cEgjLh9iKbdW21WSMf+WXUccmbia18ZrmNFl/Ny5rdgT8w9DoBIgK3SgCW?=
+ =?us-ascii?Q?a7oE8KFrQVbpGZeV1KH8ZBED0ntaV/gn1sC7FqEVdooFzITJ+iFmVo54vtRw?=
+ =?us-ascii?Q?iEODBdT2TRzQm4KB+jR7JIDwoCDwTmWYZFD3QfSW4aZ1OVfNgEA3RL5gZbJx?=
+ =?us-ascii?Q?RXC8zNgZLdILS/pE5oX2mwo5GldDxZOip4Wuv9vJDac/KrvLzmpXRZgTn6GE?=
+ =?us-ascii?Q?YVrj+C4W2ToTBtOW2AJT2VSo6/6RmVs3YQspoatiU7sqkqWdzrM/0GNl4aA4?=
+ =?us-ascii?Q?Bb/yjaM2uCIik39AHJc1E7Z2EROZSqIk99YeiEezxk9oxHmDngykZU8Pvcvf?=
+ =?us-ascii?Q?s5wy0h8qyuBFd3ctAOwvKDG/LCjS21hV8kSrKUEqKY4pMQ7qcdyMkcHnTnUd?=
+ =?us-ascii?Q?e7K2SaEYYjznJEV8HUHNjIKOF8zDXb8wkmuqxOOb7UQLZCMn1RdrrI25jGFM?=
+ =?us-ascii?Q?Gg2ReuCxj3OdeQ1EFV7bfJPjdt5V/HGrwU0ejyuxNyUMYoKxIa1veQxb2o8x?=
+ =?us-ascii?Q?DXQpNNXXNYIM8BgYdzSbVii53YP2C2prOEJAj8OJ2nHTV/ol0vrwH9MPWsUB?=
+ =?us-ascii?Q?sF0eGmNko6bWIeb2On7RZtt3rDb6VV4Ivv4bI17y9CzOF3Cwlzvwy1gvIbNP?=
+ =?us-ascii?Q?6oYEv2LomxyuA6ReWYIpGXlduxPG2Y+mQBqcFBxk8mXWvE3wIKspwhAeXul8?=
+ =?us-ascii?Q?f2UoHclxYG0E/8yUz3SZlO26Ip3RmLjDQIVYWrV5EPWlj48LlZQdQAwzx8sU?=
+ =?us-ascii?Q?cCv8js5vcIgMvExWveog9AHT5tVCK3hGWCGjuKJ0FtAwG/pz/NnKjicIyPHe?=
+ =?us-ascii?Q?as5HBscQg64dIwauXT35pe6USvEjkOy8CRx1hJl/TWUeKxuNXfCF5QmqaHBr?=
+ =?us-ascii?Q?CysCxYE6RYHE1cKinrLEsaQcHJX4FWwKCBjrmwp4V5YfQD2rCt98vdWXNld9?=
+ =?us-ascii?Q?frDYFm8IMg98QPtCXkosXcWKcpg7T5w53CLBaTGsjUJcWL0h6hSo5GO7On/i?=
+ =?us-ascii?Q?609XW9MrpJkdzFC1SwN5lW0/pEXsQBvKD0/KHiufNOLrQy+uLQlipPKLKbXf?=
+ =?us-ascii?Q?UTlSN1O6h/eeno/gu1xzqdj3FVqvNYnnufH625nIMnl+cnGq4OwfMPnhM09x?=
+ =?us-ascii?Q?747SGf0+F8JEiKJx0j/SF8sql1UoOqWnnDkXHhuvKSq3fLqrS5+Al/UU/HsY?=
+ =?us-ascii?Q?acd0lZ2ASszATrdsbIdfZOTwxK7zh0Rnk42ax8CS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bf2882e-4fb9-4abb-3f96-08dd4c4bfabc
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 16:32:17.1555
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XjM8DyKP7ZRuBf42YQoBZ0RTNMjVOtV+W7pm90AwlPB2k1E0+RZ+BpMP/OmLdwHkmGFvOA8XBDhmSN6IzSJZAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6575
 
-Hi Andrew,
+On Thu, Feb 13, 2025 at 11:02:44AM -0500, Yury Norov wrote:
+...
+> > Cc: Yury Norov <yury.norov@gmail.com>
+> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> 
+> Suggested-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
-On Thu, 13 Feb 2025 at 16:27, Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:
-> > Hi Phil,
-> >
-> > On Thu, 13 Feb 2025 15:18:45 +0000
-> > Phil Elwell <phil@raspberrypi.com> wrote:
-> >
-> > > Hi Andrea,
-> > >
-> > > The problem with this approach (loading an overlay from the RP1 PCIe
-> > > driver), and it's one that I have raised with you offline, is that
-> > > (unless anyone can prove otherwise) it becomes impossible to create a
-> > > Pi 5 DTS file which makes use of the RP1's resources. How do you
-> > > declare something as simple as a button wired to an RP1 GPIO, or fan
-> > > connected to a PWM output?
->
-> Where is this button or fan? On a pluggable board? Isn't that what
-> overlays are for, and they are stackable. So when you probe the
-> pluggable board via its eeprom etc, you find the overlay and load it?
+Ok.
 
-In the Raspberry Pi ecosystem it would be the firmware that applies
-the overlay, and it can't do that if the resources the overlay refers
-to are not yet present in the dtb.
+> 
+> > ---
+> >  include/linux/topology.h | 30 ++++++++++++++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> > 
+> > diff --git a/include/linux/topology.h b/include/linux/topology.h
+> > index 52f5850730b3e..932d8b819c1b7 100644
+> > --- a/include/linux/topology.h
+> > +++ b/include/linux/topology.h
+> > @@ -261,6 +261,36 @@ sched_numa_hop_mask(unsigned int node, unsigned int hops)
+> >  }
+> >  #endif	/* CONFIG_NUMA */
+> >  
+> > +/**
+> > + * for_each_node_numadist() - iterate over nodes in increasing distance
+> > + *			      order, starting from a given node
+> > + * @node: the iteration variable and the starting node.
+> > + * @unvisited: a nodemask to keep track of the unvisited nodes.
+> > + *
+> > + * This macro iterates over NUMA node IDs in increasing distance from the
+> > + * starting @node and yields MAX_NUMNODES when all the nodes have been
+> > + * visited.
+> > + *
+> > + * Note that by the time the loop completes, the @unvisited nodemask will
+> > + * be fully cleared, unless the loop exits early.
+> > + *
+> > + * The difference between for_each_node() and for_each_node_numadist() is
+> > + * that the former allows to iterate over nodes in numerical order, whereas
+> > + * the latter iterates over nodes in increasing order of distance.
+> > + *
+> > + * This complexity of this iterator is O(N^2), where N represents the
+> > + * number of nodes, as each iteration involves scanning all nodes to
+> > + * find the one with the shortest distance.
+> > + *
+> > + * Requires rcu_lock to be held.
+> > + */
+> > +#define for_each_node_numadist(node, unvisited)					\
+> > +	for (int start = (node),						\
+> > +	     node = nearest_node_nodemask((start), &(unvisited));		\
+> > +	     node < MAX_NUMNODES;						\
+> > +	     node_clear(node, (unvisited)),					\
+> > +	     node = nearest_node_nodemask((start), &(unvisited)))
+> 
+> the 'node' should be protected with braces inside the macro, the start should
+> not because you declare it just inside. Also, the 'start' is a common word,
+> so there's a chance that you'll mask out already existing 'start' in the scope.
+> Maybe __start, or simply __s?
 
-> Or do you mean a custom board, which has a CPU, RP1 and the button and
-> fan are directly on this custom board? You then want a board DTS which
-> includes all these pieces?
+Right, will also fix this (good thing I needed to send a new version
+anyway, because the test robot found a build bug). :)
 
-That depends on whether you count the Raspberry Pi 5 as a custom board.
-
-Phil
+Thanks!
+-Andrea
 
