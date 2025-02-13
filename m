@@ -1,134 +1,202 @@
-Return-Path: <linux-kernel+bounces-512705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8ED9A33CD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:35:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A14A33CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30CD21888165
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9193B168F8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9179201006;
-	Thu, 13 Feb 2025 10:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA686212F8F;
+	Thu, 13 Feb 2025 10:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fTiOJD0Q"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yiYMFmlV"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2071.outbound.protection.outlook.com [40.107.101.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916922080D4;
-	Thu, 13 Feb 2025 10:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739442930; cv=none; b=XeG8bQR7I3FNxwdovrN0UeYDfvm5OVzmhSDQMSMdmWhpinSvMdw5Ijle0hqVhuFKOaLXWAVFqAZOBru0ydzEh4nyqMu2iEWmVQ8LxdtfICz1qGFeS/cQhbVrIPrwqD+Yp1EYn3UgjKuB/N7G9acS/CGcSmq0EiLqyghywsu2cwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739442930; c=relaxed/simple;
-	bh=iKv36wyBftopnQn1R7KeXZd6yqLH/bu5+0UtsjV6sCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iDfjfokdyZlkx83/YT/TDFogGQIOlZl3pCF2OQK/2zwgW5uk5X6TCgoo9bDPqBj024VDt/QwZR/QjOtWsENtf1uVdYGNL7BzwbvxZbMWPN1N5aogsAk9D6JcDV8wC5rvMoe4hv1cRwJojJ8RfJhqeUh8U6pmiTzXJvA3u+WLjy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fTiOJD0Q; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DA72kG032747;
-	Thu, 13 Feb 2025 10:35:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	thaTTbC4cBiLguF9ah5xmscjMUoW45H5aqGsBgUzVBM=; b=fTiOJD0QBHfRsC7n
-	rEOXeNDk+JHyU8vm7bh7ieRJ1SAxr1S9/WAtyeIeWt23iZaOOKzDiYU/D6hNIa9W
-	hRFwmDM41+MW3EO42iTf1txAFKIaHAPZSNl6FLyd03s/RUSTE6aAk0UK0bfg0x//
-	oPimVxL/+2rIfimZn1nMENDskcZ35C86KMzI3ZWXrbVuKhuuP6fOa+ZnmLgt4VDH
-	68sYqv69dfQbAZ1jmRbAKTi1+GBmpKGO/F4c+rlY9f8JO9pYlSbKDxZZse6A628r
-	9qvdkFsBgqtXD5F3Ql/SZqzYHwPjaWkLCZv1e0w/LW4jnrtMOCZmawSCAFmrrMbp
-	8A8GRQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44seq002hw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 10:35:23 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51DAZDXT018709
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 10:35:13 GMT
-Received: from [10.231.216.52] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Feb
- 2025 02:35:09 -0800
-Message-ID: <1b2dfb74-3c4e-4739-a5eb-6aa07386a9be@quicinc.com>
-Date: Thu, 13 Feb 2025 18:35:06 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2C41FAC42;
+	Thu, 13 Feb 2025 10:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739443034; cv=fail; b=WXfQA6F9XJ07eIMnL3eEreZ7VCRb0giaTTbol1sZocAdKpZEsZInNiqUEiNesZNXKHtPzm41uRCzj0QMM8UZuGL1otXlCIb33R2Y6bCDrzGsnSjNEVvhspiNVEzjZwmxwee79lOaMjUJtNzT0VRH5HRrNEC40bvV9QSf6xdqGV4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739443034; c=relaxed/simple;
+	bh=8fThFyPgopj9CxMl8VuUuX06i2MvK58ogjoqLB0sxag=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o4aLxIxjF0/AS24+DUbbpoi2de0U3h6tYeYzU/zWjQHlHLnH8vqQ/HcqKJd88MsQ7BaMMZ2eTSBDQAlyRiKi1EWLzpDlHQJPmLU8VrJP0Rx4G+02lknWm3h11743vePlwHZdL41YspmwTOAx74LSxvaZ8AyAn4sH90RNAVoVII0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yiYMFmlV; arc=fail smtp.client-ip=40.107.101.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IfGu884o+CXHKj93aYVApg27/zWy9/8ZLSNsbQYjmZIAI2+Jcb88su6xUprtzNQN5fB4FTDmu1sgCbstOzss9nhk+Q3DR9JxQVq2tpBpc6SL+t034iLPgCHKr3XVAKq6tu2G/I7aCSPokMDxMcLxUguSqG4MLM/q9z4ow/yeUt7QWPuAWGuUpb3Gg9Rdzjs6UjtQBJa64TzKDlKKdvxqDy6noOIx7Df9dg5FzGMnHcIR/cqlyv1jxyTLwMEEehps27LsDd23paj7r/8OP/D2xYno5CMcIWJaEcu9hwZZioDiohr4vyOUk4zmLPv+ZisOK+eScJDsAn1JYiq5HsWAFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MhexIHlToGnPYaq0r9lMR8jYHALG97KweOlNfijanVQ=;
+ b=bw0uKMnGt4pAXYDaM5rGvp+9t7PYt48p/eoEqpK6IoaOxKCaj1W5QY17SB+dXaJk84cJOJ7gGKZ6zHs0bz7WfMdqKfi4lJ6/t8Aff6/XIrRfI+hNXINTow6hb6aEcnc/v006zyJQSz00yd3Al5bGPfoxb463816DLfZ5D9qVQF2oHbHItgspkZL6YcvoZz1VEfxWGw4Atm1xT5Q8ZmrmAm+d4XtrDGL58W+hV0SKyF5VeLWoRtfbUTe17wb5oRSf9IfJW20V2SrrArDNqEPgiDIQzo8YeOtyngTRgwPaM8gr0tTi+dm2h9GUr3nTeo0Bvdj9l9zpJBCJbgdNU7LLmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MhexIHlToGnPYaq0r9lMR8jYHALG97KweOlNfijanVQ=;
+ b=yiYMFmlVgvuDZBZX35wsuPkWz+LAOjllMkT+zE2sZBMCn9rzxUQWDCs8gF7mSEhW7eCljOWo6xDgVkCveMEPcSbU9wVXM51sxOjEpOYMn5qsbRlqiKQxruXTgvCI28H9rU+nS9n+shk7QhuYm9PFUJKxWF5GVObkzfha0iIScQ0=
+Received: from DM6PR11CA0019.namprd11.prod.outlook.com (2603:10b6:5:190::32)
+ by MW6PR12MB8867.namprd12.prod.outlook.com (2603:10b6:303:249::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
+ 2025 10:37:09 +0000
+Received: from DS2PEPF00003447.namprd04.prod.outlook.com
+ (2603:10b6:5:190:cafe::34) by DM6PR11CA0019.outlook.office365.com
+ (2603:10b6:5:190::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Thu,
+ 13 Feb 2025 10:37:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF00003447.mail.protection.outlook.com (10.167.17.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 10:37:08 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 13 Feb 2025 04:37:03 -0600
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
+CC: <venkataprasad.potturu@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+	<tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <Syed.SabaKareem@amd.com>,
+	<Mario.Limonciello@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Subject: [PATCH] ASoC: amd: ps: use switch statements for acp pci revision id check
+Date: Thu, 13 Feb 2025 16:06:52 +0530
+Message-ID: <20250213103652.1082203-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: qcs8300-ride: enable BT on
- qcs8300-ride
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_jiaymao@quicinc.com>,
-        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <quic_mohamull@quicinc.com>
-References: <20250211104421.1172892-1-quic_chejiang@quicinc.com>
- <20250211104421.1172892-2-quic_chejiang@quicinc.com>
- <eebcc0e7-4f87-45d5-8ad4-9d24145ef5b2@kernel.org>
- <6149d02f-21a2-459e-91f2-6c91b5093807@quicinc.com>
- <b9edb462-bf94-4c6f-a6dc-e22024a8bcb2@kernel.org>
-Content-Language: en-US
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <b9edb462-bf94-4c6f-a6dc-e22024a8bcb2@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fRu9y3zPdUvbAL_-5l5tRR6KjwfPPkRJ
-X-Proofpoint-ORIG-GUID: fRu9y3zPdUvbAL_-5l5tRR6KjwfPPkRJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- mlxscore=0 malwarescore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=770 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130081
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003447:EE_|MW6PR12MB8867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02b6295b-808c-44ce-b623-08dd4c1a5e44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NHvUiEZbpC9arqBm9vMOBANy8ZX1i85EGMw2N7PjWz5enph6z9KQirjdPDGe?=
+ =?us-ascii?Q?Z8biudCrC0usWV0mYGXs8MpCmjc2qTbikjl/tLLtM5xv7Losbp3lZOhgfBxG?=
+ =?us-ascii?Q?4F5WPD2IIlAaDYa23RdXiOcWFNycSrudCwFGZECCr5zO9k/yE7+eVfmNpcgk?=
+ =?us-ascii?Q?oxyyfx3GA78rNH6WgWoVFYjLq3ngkGCJiYFw9NqMeryIXiqXADLPWNDJy2qG?=
+ =?us-ascii?Q?E8miraEKXPzmVVEEBirBK/y8x5VpiZ+ZWpvPDFsVT/qawax7Rvw47jYuqxmF?=
+ =?us-ascii?Q?+jETuXm5RKgVRqf5Qyx5vSe4aHBrX1JhoZ/AiFNPqdpCBCzDS4Zyib0OWNkc?=
+ =?us-ascii?Q?IBzrRm3qgxymtwqwPoBHRwvuJ5J+CpsY/wzrj731dUh/kBExeZIvMUYyiFJZ?=
+ =?us-ascii?Q?Z8tZzs0zX48Gt548euhYLb2SE+OYTJsCrgdbLJL2bUgXysMpXlKWTVjMiH/t?=
+ =?us-ascii?Q?jlL4g+NecXGGDj53yagANvDW4m/vKJTCjDEvgWhygu5s/bBpq9Pj9/yy+WTz?=
+ =?us-ascii?Q?dkrM50thX36G57+bpxqBKQck1pJykeK8QT45BODTXQTYsQXFwRizdI23L2JS?=
+ =?us-ascii?Q?wfaIGkCkrItCNn7jeclIhCCTskv/hEGEeWHd9uI78FSh2NHqytGkokjKws1/?=
+ =?us-ascii?Q?OMwjmHkrBTFiKv+sbH/c7deEpn9oLsYRW115YIGdAvWpoijCZM9paCgCyYPi?=
+ =?us-ascii?Q?JyHTI6clGAHgQGi1bwhZAXCD+RE4Gn9tUEzKnJz26dQdfGwz80W1dZWVkFwL?=
+ =?us-ascii?Q?GxepuK6tT6iDZhQSqHQ800R5au9FU4GaN1613AXgKAB3X1IrauLFaNJ1k/dw?=
+ =?us-ascii?Q?jxyspeOYdETR++6oHwIR7TnoO+29Ejs/jvENgvLlJRAJkLA3JtWZHJNElnMy?=
+ =?us-ascii?Q?Ix46nAFn5SULx/n62DEJSx6XoldaSWWuaKCOGAZ5kGgh3vf6zWqp/qFmfDho?=
+ =?us-ascii?Q?YyOA9WXcLUVYV3Tt9ggfVXFcWZXxdT82IugHLhCZoyNsaUmP828nyXrsoG5P?=
+ =?us-ascii?Q?SVYlE+ZjS9iWzckxv5S4vjzzxnE+ICepvROPdiDYxBBkurdGZDsoALaofozR?=
+ =?us-ascii?Q?2tfZUPFA9yNsUvhkahZJQ1OYomb9rEQhVeLd5XJQbR7AbETxhI/orBI231hP?=
+ =?us-ascii?Q?mxyqqjFDB8YPs3zaorzSJFr98O8Dh1YeJUpvXRrKjK6IjLwnpbMfSF+S+Nbq?=
+ =?us-ascii?Q?WnpdHXiZR2ndGuXxKlYLaWZWqu4xkMPu1sLu6JCTOde73CKjI4FNhlzhWz2x?=
+ =?us-ascii?Q?tsh7h86Y5EcI3mcfyMS0QKGO5sOgS2dvLEHWeR7ASXWivBV5wyDbfM2gzJ6U?=
+ =?us-ascii?Q?6GiYpJIJOQO7dQJdqY9c2LBooY4HYYJIde54vGTakUUkwem5GPQt4qdjbY8j?=
+ =?us-ascii?Q?TH7ROQaWfhEBnkCk0kdvuKQrJSkinGsIOymUOrglHQlihVnrhc8bCCCjj0NF?=
+ =?us-ascii?Q?lpgiBXww4swwbcFjjmCLBo0R2D5QGrG0Lyz68gsQbg+PquOFknwX4zN2XssA?=
+ =?us-ascii?Q?xn3FscIcrgZFsAY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 10:37:08.9806
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02b6295b-808c-44ce-b623-08dd4c1a5e44
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003447.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8867
 
-Hi Krzysztof,
+Use switch statements for acp pci revision id check in SoundWire
+dma irq handling.
 
-On 2/13/2025 3:36 PM, Krzysztof Kozlowski wrote:
-> On 13/02/2025 06:56, Cheng Jiang wrote:
->> Yes, label is not needed. 
->>>> +		compatible = "qcom,wcn6855-bt";
->>>> +		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
->>>> +
->>>> +		pinctrl-names = "default";
->>>> +		pinctrl-0 = <&bt_en_state>;
->>>> +		enable-gpios = <&tlmm 55 GPIO_ACTIVE_HIGH>; /* BT_EN */
->>>> +
->>>> +		vddio-supply       = <&vreg_conn_pa>;         /* bt-vdd-ctrl1-supply */
->>>> +		vddbtcxmx-supply   = <&vreg_conn_1p8>;        /* bt-vdd-ctrl2-supply */
->>>
->>> Only one space before '='.
->>>
->>> I think this has multiple test failures.
->>>
->> Ack, Will change in next version. 
-> 
-> Are you going to test it as well?
-> 
-Yes, I will test it. Thanks! 
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+---
+ sound/soc/amd/ps/pci-ps.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-> Best regards,
-> Krzysztof
+diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
+index 220dca8cba85..2ff8e67c19bd 100644
+--- a/sound/soc/amd/ps/pci-ps.c
++++ b/sound/soc/amd/ps/pci-ps.c
+@@ -111,16 +111,21 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
+ 					stream_id = ACP63_SDW0_AUDIO2_RX;
+ 					break;
+ 				}
+-				if (adata->acp_rev >= ACP70_PCI_REV)
+-					adata->acp70_sdw0_dma_intr_stat[stream_id] = 1;
+-				else
++				switch (adata->acp_rev) {
++				case ACP63_PCI_REV:
+ 					adata->acp63_sdw0_dma_intr_stat[stream_id] = 1;
+-
++					break;
++				case ACP70_PCI_REV:
++				case ACP71_PCI_REV:
++					adata->acp70_sdw0_dma_intr_stat[stream_id] = 1;
++					break;
++				}
+ 				sdw_dma_irq_flag = 1;
+ 			}
+ 		}
+ 	}
+-	if (adata->acp_rev == ACP63_PCI_REV) {
++	switch (adata->acp_rev) {
++	case ACP63_PCI_REV:
+ 		if (ext_intr_stat1 & ACP63_P1_AUDIO1_RX_THRESHOLD) {
+ 			writel(ACP63_P1_AUDIO1_RX_THRESHOLD,
+ 			       adata->acp63_base + ACP_EXTERNAL_INTR_STAT1);
+@@ -133,7 +138,9 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
+ 			adata->acp63_sdw1_dma_intr_stat[ACP63_SDW1_AUDIO1_TX] = 1;
+ 			sdw_dma_irq_flag = 1;
+ 		}
+-	} else  {
++		break;
++	case ACP70_PCI_REV:
++	case ACP71_PCI_REV:
+ 		if (ext_intr_stat1 & ACP70_P1_SDW_DMA_IRQ_MASK) {
+ 			for (index = ACP70_P1_AUDIO2_RX_THRESHOLD;
+ 			     index <= ACP70_P1_AUDIO0_TX_THRESHOLD; index++) {
+@@ -166,6 +173,7 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
+ 				}
+ 			}
+ 		}
++		break;
+ 	}
+ 	return sdw_dma_irq_flag;
+ }
+-- 
+2.34.1
 
 
