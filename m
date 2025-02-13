@@ -1,124 +1,171 @@
-Return-Path: <linux-kernel+bounces-512652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAACA33C1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:09:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE01A33C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C15188CE64
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:09:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7970D3A9B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F7E211A2E;
-	Thu, 13 Feb 2025 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BhWsbXVR"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10EA211A37;
+	Thu, 13 Feb 2025 10:09:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2080B211474;
-	Thu, 13 Feb 2025 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB5B20B7FF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441332; cv=none; b=fyWWZ6nf9Lm6pCXqmzmdbm97ZRBSuwA2x2Tj+g3vksjF5DFwMItTzy5vT5PNk64V2QJTiUTZ4pRnsmFerj64ZxIuogTd+vzIYN9ej0nHSQ9vP3Gys8iXAV/fUFmEsnUzNsR4kK4/QKFjSUGsUVDTaFXeN1SHWQl/W7Ai1ZE7kaE=
+	t=1739441351; cv=none; b=JirVeTC53poR6CAxiNxNcsAScMUpjJaN1GzZDPcUGfFNfNnSCjv0RmFgTaOwC7+RAUNhm7l+k84wOGHUKtJxmt8u1btCFErwXE1q5HyQDQiuHtcR8U+eQ2zVkjxlJC2KN+nW4VFr41ed5Y/+sP+FCxs+Y4GcdXJIMdTVUvn8YlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441332; c=relaxed/simple;
-	bh=gFpRK/JkdgX13UygTMKOHD6tsNu85A/NEUS8hn+Wmow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJcdUrh49Stw0bJIX5kZuPPuIp/lnaZXDvhLPOEVlD9C73sqvFh9Cf8bmENM7Q4d2Wk6HdQvTNuit5PfXEpOVYHizz8WuZ7Izd3JBwS9QSqZN3Eb2rKxbEbR2DmcWr0jXlMA3AFQwHq1CHimJYYvYrhyZvKHFYZKK9LbLsgxslc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BhWsbXVR; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=lkR5HccpBuZLkizNzU99y3bBaTyy+HSQ8rJU1fNxcTU=; b=BhWsbXVRFgyMTetQDG8EwW6EN/
-	NVwzdLblMFdudFFCF8L95wG55iZWI5gDUI7pJsXiZP1fVJTRudSfzel1yVH48lzQAEcvVwZ+9QWgO
-	QXhnJYFhWLNSc7JSnf6A1LBGkMmnj9+u8NP/I0bKx1R72s/3OGNDLct5tlV2Hu9RylYs6hybDSY/Z
-	DMjDXJLDnkGapDMMD0cvgMm6ayah2V0REsepDWT9/OzDkEkS3irK8IIRxeQ5VR0VZgwim4lb4KqhZ
-	Ox9063pwKwgt/3oCcZJCzr147MR8SrgCfEHaXUT9EHqxbEm29hNaNseaCDgfw5OE1NQtZGkMN8Yn+
-	pt1HL9IQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiW97-00000000xLl-1nvj;
-	Thu, 13 Feb 2025 10:08:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9DF49300155; Thu, 13 Feb 2025 11:08:36 +0100 (CET)
-Date: Thu, 13 Feb 2025 11:08:36 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Gabriel de Perthuis <g2p.code@gmail.com>,
-	Haiyue Wang <haiyuewa@163.com>, Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ftrace: x86: Fix a compile error about
- get_kernel_nofault()
-Message-ID: <20250213100836.GC28068@noisy.programming.kicks-ass.net>
-References: <173881156244.211648.1242168038709680511.stgit@devnote2>
- <20250206081225.GI7145@noisy.programming.kicks-ass.net>
- <20250206205449.5f83a585945ae6eb0cc15483@kernel.org>
- <20250206121328.GN7145@noisy.programming.kicks-ass.net>
- <20250206123307.GO7145@noisy.programming.kicks-ass.net>
- <20250207085959.b3e9d922eab33edf885368e3@kernel.org>
- <20250210173016.0ce79bc8@gandalf.local.home>
- <20250211100914.GA29593@noisy.programming.kicks-ass.net>
- <20250211105002.31b5a517@gandalf.local.home>
- <CABCJKudwf11wAbv9NdKh_FN-Z+pLaupMHJxNGtRKK1-1D94hCQ@mail.gmail.com>
+	s=arc-20240116; t=1739441351; c=relaxed/simple;
+	bh=Y5FUp5kLJYW5mox92ZooldkZMGROpVAVdRn0fHlo0FI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FDydcm+bgdUGaWHDSV5qbdCm31VZz9b5oouPb75gitnwHMwpIi/OCI8CKFIPcWgnjydCuMte5/XqQWmd0CkoOEfKkM2od2DQE93vlC9yRzAq+mdPfBB6D9kNcbr4Yh195ioRleTaSWUg7NosP4gzN+4ykvEN2lsCaWff5r/xw7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiW9T-00079j-E1; Thu, 13 Feb 2025 11:08:59 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiW9T-000jXg-0a;
+	Thu, 13 Feb 2025 11:08:59 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiW9T-0002x5-0P;
+	Thu, 13 Feb 2025 11:08:59 +0100
+Message-ID: <de7dedf98e2085c895a93ba56c4e5fa50e298d05.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] dt-bindings: reset: add generic bit reset controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,  Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, Yixun Lan
+	 <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Date: Thu, 13 Feb 2025 11:08:59 +0100
+In-Reply-To: <20250213020900.745551-2-inochiama@gmail.com>
+References: <20250213020900.745551-1-inochiama@gmail.com>
+	 <20250213020900.745551-2-inochiama@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCJKudwf11wAbv9NdKh_FN-Z+pLaupMHJxNGtRKK1-1D94hCQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Feb 12, 2025 at 08:52:27AM -0800, Sami Tolvanen wrote:
-> On Tue, Feb 11, 2025 at 7:49 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Tue, 11 Feb 2025 11:09:14 +0100
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > > I was aiming my patch for x86/core, but if there's a reason to expedite
-> > > them, I can stick it in x86/urgent I suppose.
-> > >
-> > > Just need a reason -- what's this compile error nonsense about, my
-> > > kernels build just fine?
-> >
-> > Masami,
-> >
-> > Do you have a config that fails to build without this fix? If so, can you
-> > please reply with it, and then this can go in as a quick fix.
-> 
-> x86 builds with both CONFIG_GENDWARFKSYMS and CONFIG_FUNCTION_TRACER
-> are broken without this fix. Here's how to reproduce:
-> 
-> $ make defconfig
-> $ ./scripts/config -e DEBUG_INFO -e DEBUG_INFO_DWARF5 -e MODVERSIONS
-> -e GENDWARFKSYMS -e FUNCTION_TRACER
-> $ make olddefconfig && make -j
-> ...
-> In file included from ./arch/x86/include/asm/asm-prototypes.h:2,
->                  from <stdin>:3:
-> ./arch/x86/include/asm/ftrace.h: In function ‘arch_ftrace_get_symaddr’:
-> ./arch/x86/include/asm/ftrace.h:46:21: error: implicit declaration of
-> function ‘get_kernel_nofault’ [-Wimplicit-function-declaration]
->    46 |                 if (get_kernel_nofault(instr, (u32
-> *)(fentry_ip - ENDBR_INSN_SIZE)))
-> ...
+On Do, 2025-02-13 at 10:08 +0800, Inochi Amaoto wrote:
+> Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
+> a simple reset controller by toggling bit. It is a hard time
+> for each device to add its own compatible to the driver.
+> Since this device share a common design, it is possible to
+> add a common device to reduce these unnecessary change.
+>=20
+> Add common binding for these kind generic reset controller.
+>=20
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  .../bindings/reset/reset-simple.yaml          | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/reset-simple.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/reset/reset-simple.yaml b/=
+Documentation/devicetree/bindings/reset/reset-simple.yaml
+> new file mode 100644
+> index 000000000000..77584e23e8e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/reset-simple.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/reset-simple.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic BIT Reset Controller
+> +
+> +maintainers:
+> +  - Inochi Amaoto <inochiama@gmail.com>
+> +
+> +description:
+> +  Some reset controller devices uses a simple method to perform
+> +  assert/deassert by toggling bit. Some SoCs from Aspeed, Allwinner,
+> +  Sophgo and Synopsys have this kind of reset controller instances.
 
-It breaks much sooner, complaining about not having dwarf.h.. let me go
-figure out what package provides that :/
+I think some properties should be documented that make reset
+controllers "simple" according to this binding.
 
-Anyway, thanks, I'll go see if my patch helps here.
+For example, right now, the reset-simple driver assumes the following:
+
+  - There is a single, contiguous range of 32-bit registers.
+  - All bits in each register directly control a reset line.
+     - There are no self-deasserting resets.
+     - There are no timing requirements.
+     - The bits are exclusively resets, nothing else.
+  - All bits behave the same, so all reset bits are either
+    active-high or all are active-low.
+  - The bits can be read back, but the read status may
+    be active-low independently from the writes.
+
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - reset-simple-high
+> +      - reset-simple-low
+
+I wonder if it would be better to have a single
+
+  compatible:
+    const: reset-simple
+
+and a boolean property, e.g.
+
+  active-low:
+    type: boolean
+
+like in leds/common.yaml. Also it should be documented clearly what
+this means for reads and writes.
+
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    reset-controller@1000000 {
+> +        compatible =3D "reset-simple-high";
+
+The example should probably include a SoC specific compatible?
+
+regards
+Philipp
 
