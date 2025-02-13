@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-513815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E045A34EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:04:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0ABA34EED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA333188F458
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E30316D363
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496472661A7;
-	Thu, 13 Feb 2025 20:03:03 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DFD24A07E;
+	Thu, 13 Feb 2025 20:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="dvPaCot+";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qaDHjsEv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D83266B65
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C10C28A2CB;
+	Thu, 13 Feb 2025 20:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476982; cv=none; b=Evm6zsY0LPcs4MceuPkkqHIV7G7eP5ICe8i/UipasaaBNddT75OkFx/5D+WYiltJ8RCBUPmSU39Z/Sn5pxQ4mCwtKHn8r1P/TQia5j7U/UpaQDPrz4KcYffDEsoFZSy9Pe4XrSe5YPJA4NgjZYD6540irq621c1uBt5Wes7j/f0=
+	t=1739476968; cv=none; b=Sr9OKO/PdCzTfpk1CnLLoRHL4ipjmQNWgcyxWCRgfjQQfmTJMd0qrWIbKDAiAkNnQ2PfPlvQBQAlCs/HYnnjU6OANaPI7XgBuNZPSiTyHRBdd7un9XtS1rxd7uiwqQ0mVGQDBXjYn/nsrDgvDIllI/QAVeq94bkcAEMzwQfofl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476982; c=relaxed/simple;
-	bh=kiDJ37lC/bFC/k5LpRlLaYmhcPUANLi7k+DPcMCgTnU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BfOygUVD5VSNlzdXkeFHBlRnD0q1wW5VdpVwAH1PSiw4i2/KfPRQ95Lb1TM6xRT5t9Ub566CAtca1szco0OG1BLO+JJxgoc9yO94fLT1c9l2VxQiOip51FpQMgrmaIUmX9yxTcoYy07EbBeQmbmkYHiVsNn8yoVcu2uiVRVgMMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tifQ0-000000007hf-1anO;
-	Thu, 13 Feb 2025 15:02:40 -0500
-Message-ID: <5d6130a40f173e341306faca897a0e42f8cd5a20.camel@surriel.com>
-Subject: Re: [PATCH v11 00/12] AMD broadcast TLB invalidation
-From: Rik van Riel <riel@surriel.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	peterz@infradead.org, dave.hansen@linux.intel.com,
- zhengqi.arch@bytedance.com, 	nadav.amit@gmail.com, thomas.lendacky@amd.com,
- kernel-team@meta.com, 	linux-mm@kvack.org, akpm@linux-foundation.org,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com
-Date: Thu, 13 Feb 2025 15:02:40 -0500
-In-Reply-To: <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
-References: <20250213161423.449435-1-riel@surriel.com>
-	 <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1739476968; c=relaxed/simple;
+	bh=vKI+/VyZyuyXDySF2CgE26qyrB7GCzu7H7S9aWPJHOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XImTnuctdfw+U54oo3j17TH5biRYEtYfkcev8voot/hv9kq2Lj/1twUyQirUso+uGoGIk7B5qFYR3zrxY6H6ecPZS61TvBGuM3PMrGsR1YCb+p/hT1i38z42y9fKgpRdx+Dw+OlLtdtB8ZIQ0p0kJciWZ9QVgqX6fkHZpueEuQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=dvPaCot+; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qaDHjsEv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E68A3220CF;
+	Thu, 13 Feb 2025 20:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1739476964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JE7zJK9MWCb/ubVE/xyIp52g1kxFJ07FN8eQVA5JPwc=;
+	b=dvPaCot+txYXRlgyLUM4Qt/vemdrBj6V9sk1Dw15Xb9iTHBv//KwWPYRKSVqcnS/zEKRvU
+	K4ji6JMpoMVQyFIQ1Y8QRqHKkFK57AlcbLaITdMV3KG6VKAmUZW9pbn4aTIlxs3ErIu95C
+	CCCmpu/yr1wTuize0kugQkb0kluZcyw=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=qaDHjsEv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1739476963; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JE7zJK9MWCb/ubVE/xyIp52g1kxFJ07FN8eQVA5JPwc=;
+	b=qaDHjsEv0wtyvXBezbzbAfvO1iXrq8ifCev/EqATNDoT2jjY1RixkX10YopZYRLOKDUfx9
+	SmZID2jTtuSIOnRg54H9fXw1Dx25AUmG4PVSaKCaE0sBcJMf0Cv0gy7PZsYHLFad3ceDcf
+	LaYa2hj3MJ9BPXpO0o3Ta+M471sU/T0=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DF70313874;
+	Thu, 13 Feb 2025 20:02:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lh6JNuNPrmepWAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Thu, 13 Feb 2025 20:02:43 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.14-rc3
+Date: Thu, 13 Feb 2025 21:02:41 +0100
+Message-ID: <cover.1739475780.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: E68A3220CF
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Thu, 2025-02-13 at 19:31 +0100, Brendan Jackman wrote:
-> On Thu, 13 Feb 2025 at 17:20, Rik van Riel <riel@surriel.com> wrote:
-> >=20
-> > Add support for broadcast TLB invalidation using AMD's INVLPGB
-> > instruction.
->=20
-> Oh - what if the user sets nopcid. We need to disable invlpgb in that
-> case right?
->=20
-That's automatic, when !X86_FEATURE_PCID,
-choose_new_asid() always returns 0, and
-we never assign a global ASID to a task
-on any CPU.
+Hi,
 
-I suppose we could make "nopcid" a little
-more efficient by short-circuiting the
-code in consider_global_asid() as well,
-but it should already work correctly.
+please pull, a few more btrfs fixes. Thanks.
 
-Peter, do you prefer a v12, or should
-additional small fixes and improvements
-just be sent in follow-up patches at
-this point?
+- fix stale page cache after race between readahead and direct IO write
 
---=20
-All Rights Reversed.
+- fix hole expansion when writing at an offset beyond EOF, the range
+  will not be zeroed
+
+- use proper way to calculate offsets in folio ranges
+
+----------------------------------------------------------------
+The following changes since commit fdef89ce6fada462aef9cb90a140c93c8c209f0f:
+
+  btrfs: avoid starting new transaction when cleaning qgroup during subvolume drop (2025-01-23 22:34:17 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.14-rc2-tag
+
+for you to fetch changes up to da2dccd7451de62b175fb8f0808d644959e964c7:
+
+  btrfs: fix hole expansion when writing at an offset beyond EOF (2025-02-11 23:09:03 +0100)
+
+----------------------------------------------------------------
+Filipe Manana (2):
+      btrfs: fix stale page cache after race between readahead and direct IO write
+      btrfs: fix hole expansion when writing at an offset beyond EOF
+
+Matthew Wilcox (Oracle) (1):
+      btrfs: fix two misuses of folio_shift()
+
+ fs/btrfs/extent_io.c | 29 ++++++++++++++++++++---------
+ fs/btrfs/file.c      |  4 +---
+ 2 files changed, 21 insertions(+), 12 deletions(-)
 
