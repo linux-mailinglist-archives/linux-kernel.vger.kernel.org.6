@@ -1,147 +1,111 @@
-Return-Path: <linux-kernel+bounces-513814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55A0A34EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:04:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E045A34EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3835F7A4E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA333188F458
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB82266B5F;
-	Thu, 13 Feb 2025 20:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RltJGkhT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496472661A7;
+	Thu, 13 Feb 2025 20:03:03 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDEE2661A7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D83266B65
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476979; cv=none; b=RWFzLZ1sRI0dXv3sMPzb+3fJ+rZ61NXRSC8rrGO/KAim8ogDStDV/Dot2T5eEfH3EaD66Zn/Jzjxv+1OIp0VAENM0GVLy7Ho/c+/vHNJm6Ty5iy+dmuVkcdDbQnWbwIBkFmRLYKtwuNxuoFj7gVED67u4D8iaocaZCzjxOxrYD0=
+	t=1739476982; cv=none; b=Evm6zsY0LPcs4MceuPkkqHIV7G7eP5ICe8i/UipasaaBNddT75OkFx/5D+WYiltJ8RCBUPmSU39Z/Sn5pxQ4mCwtKHn8r1P/TQia5j7U/UpaQDPrz4KcYffDEsoFZSy9Pe4XrSe5YPJA4NgjZYD6540irq621c1uBt5Wes7j/f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476979; c=relaxed/simple;
-	bh=nXCD/LXulwuMSZFXcozil2n1aFaawh8DejNvW9hLXYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ku8Jk/7VoBV5JcaJqmEWZvVWrmJKWwL7BNVOy4OFyGpiEqnpAPqFuyO/3M67MiJMBbtjbUvoke1Q3d5RXBGJvwxqv8tVc4ofzk6p3HaXkTpLvzi83UgBs2b7z0BlQkl66sl4ZzpFmZ04eAhW4CcUvmZh0uq5+vhQc1x8WRKo9Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RltJGkhT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739476976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oSXvIJINQIfUxBjAhkboBcPP4OyeZ0/nogoPQVNBBqQ=;
-	b=RltJGkhTpd6vOP9JUIdzT90QbVHB8/HxRpBI8ib6aiSKUQ5SM6FXba3w1H15z0tOXti1mk
-	z2vniJ5w1+8JqNGx+fUsa12ZT/BAVrLBpWy+BNZy9VisCUDJJl3kYb6jH62P1w/Yk7HS7Q
-	S8YOho00juYK0qXOo7UbuGjoKAKGQaw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-FV_rQcKIPGaILACE79EL4g-1; Thu,
- 13 Feb 2025 15:02:53 -0500
-X-MC-Unique: FV_rQcKIPGaILACE79EL4g-1
-X-Mimecast-MFC-AGG-ID: FV_rQcKIPGaILACE79EL4g
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 14C1B180087F;
-	Thu, 13 Feb 2025 20:02:51 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.88.174])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B57FC1800358;
-	Thu, 13 Feb 2025 20:02:48 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Marco Elver <elver@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 4/4] locking/lockdep: Add kasan_check_byte() check in lock_acquire()
-Date: Thu, 13 Feb 2025 15:02:28 -0500
-Message-ID: <20250213200228.1993588-5-longman@redhat.com>
-In-Reply-To: <20250213200228.1993588-1-longman@redhat.com>
-References: <20250213200228.1993588-1-longman@redhat.com>
+	s=arc-20240116; t=1739476982; c=relaxed/simple;
+	bh=kiDJ37lC/bFC/k5LpRlLaYmhcPUANLi7k+DPcMCgTnU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BfOygUVD5VSNlzdXkeFHBlRnD0q1wW5VdpVwAH1PSiw4i2/KfPRQ95Lb1TM6xRT5t9Ub566CAtca1szco0OG1BLO+JJxgoc9yO94fLT1c9l2VxQiOip51FpQMgrmaIUmX9yxTcoYy07EbBeQmbmkYHiVsNn8yoVcu2uiVRVgMMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tifQ0-000000007hf-1anO;
+	Thu, 13 Feb 2025 15:02:40 -0500
+Message-ID: <5d6130a40f173e341306faca897a0e42f8cd5a20.camel@surriel.com>
+Subject: Re: [PATCH v11 00/12] AMD broadcast TLB invalidation
+From: Rik van Riel <riel@surriel.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
+	peterz@infradead.org, dave.hansen@linux.intel.com,
+ zhengqi.arch@bytedance.com, 	nadav.amit@gmail.com, thomas.lendacky@amd.com,
+ kernel-team@meta.com, 	linux-mm@kvack.org, akpm@linux-foundation.org,
+ jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com
+Date: Thu, 13 Feb 2025 15:02:40 -0500
+In-Reply-To: <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
+References: <20250213161423.449435-1-riel@surriel.com>
+	 <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Sender: riel@surriel.com
 
-KASAN instrumentation of lockdep has been disabled as we don't need
-KASAN to check the validity of lockdep internal data structures and
-incur unnecessary performance overhead. However, the lockdep_map pointer
-passed in externally may not be valid (e.g. use-after-free) and we run
-the risk of using garbage data resulting in false lockdep reports. Add
-kasan_check_byte() call in lock_acquire() for non kernel core data
-object to catch invalid lockdep_map and abort lockdep processing if
-input data isn't valid.
+On Thu, 2025-02-13 at 19:31 +0100, Brendan Jackman wrote:
+> On Thu, 13 Feb 2025 at 17:20, Rik van Riel <riel@surriel.com> wrote:
+> >=20
+> > Add support for broadcast TLB invalidation using AMD's INVLPGB
+> > instruction.
+>=20
+> Oh - what if the user sets nopcid. We need to disable invlpgb in that
+> case right?
+>=20
+That's automatic, when !X86_FEATURE_PCID,
+choose_new_asid() always returns 0, and
+we never assign a global ASID to a task
+on any CPU.
 
-Suggested-by: Marco Elver <elver@google.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/lock_events_list.h |  1 +
- kernel/locking/lockdep.c          | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+I suppose we could make "nopcid" a little
+more efficient by short-circuiting the
+code in consider_global_asid() as well,
+but it should already work correctly.
 
-diff --git a/kernel/locking/lock_events_list.h b/kernel/locking/lock_events_list.h
-index 9ef9850aeebe..bed59b2195c7 100644
---- a/kernel/locking/lock_events_list.h
-+++ b/kernel/locking/lock_events_list.h
-@@ -95,3 +95,4 @@ LOCK_EVENT(rtmutex_deadlock)	/* # of rt_mutex_handle_deadlock()'s	*/
- LOCK_EVENT(lockdep_acquire)
- LOCK_EVENT(lockdep_lock)
- LOCK_EVENT(lockdep_nocheck)
-+LOCK_EVENT(lockdep_kasan_fail)
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 8436f017c74d..98dd0455d4be 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -57,6 +57,7 @@
- #include <linux/lockdep.h>
- #include <linux/context_tracking.h>
- #include <linux/console.h>
-+#include <linux/kasan.h>
- 
- #include <asm/sections.h>
- 
-@@ -5830,6 +5831,19 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (!debug_locks)
- 		return;
- 
-+	/*
-+	 * As KASAN instrumentation is disabled and lock_acquire() is usually
-+	 * the first lockdep call when a task tries to acquire a lock, add
-+	 * kasan_check_byte() here to check for use-after-free of non kernel
-+	 * core lockdep_map data to avoid referencing garbage data.
-+	 */
-+	if (unlikely(IS_ENABLED(CONFIG_KASAN) &&
-+		     !is_kernel_core_data((unsigned long)lock) &&
-+		     !kasan_check_byte(lock))) {
-+		lockevent_inc(lockdep_kasan_fail);
-+		return;
-+	}
-+
- 	if (unlikely(!lockdep_enabled())) {
- 		/* XXX allow trylock from NMI ?!? */
- 		if (lockdep_nmi() && !trylock) {
--- 
-2.48.1
+Peter, do you prefer a v12, or should
+additional small fixes and improvements
+just be sent in follow-up patches at
+this point?
 
+--=20
+All Rights Reversed.
 
