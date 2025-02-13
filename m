@@ -1,392 +1,170 @@
-Return-Path: <linux-kernel+bounces-513733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779FCA34DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:47:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876D7A34DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AD7188FC89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:47:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39FF37A1A61
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C99624BBEC;
-	Thu, 13 Feb 2025 18:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E5B245008;
+	Thu, 13 Feb 2025 18:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAPmn8F5"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A4p+OTWK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE2D24A048;
-	Thu, 13 Feb 2025 18:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F4328A2C4;
+	Thu, 13 Feb 2025 18:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739472391; cv=none; b=qEbdox3hKTUK4EeXhNDWf8cEZKOwz1lJcQbxCMx+98gnqf0q3FouRlEOq3SCuUUlBALe+LyiSRebuv9vTMI+wgbJpmoEM/A6RmNNuDQcxKJOk16GpLFqqPBNDm2apJ46+b80hB8NSHI4K1d53l7UUt0myOcDmCIzjwNZKo7iRiY=
+	t=1739472494; cv=none; b=dCiPaZ79R5bQV8D/LroK+lPaX4mq03tE1MzSkPw3w8ZY2laZJHItwVNvcTU49UOCLyYr9yGZkUGO/vnEmxWlt6X5kE6AF0Zo3B8c/foNq9dxgPV0TvgxQkh52aXJSZfh3WkRDbOcJUn8FjMAXx3ta5ICzvOPe+XsFHXLlfGjgRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739472391; c=relaxed/simple;
-	bh=zixQ5GhQTzBFHCTrvdtATSSH17XYTJ67wS2V/FdC7hc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DXulh6iXaOBrLRbC6RGcvsFJ8mUKFxA3GYvyYUPVJauM0AUf0UCHaS7ilnXGmwRbv84nNclKsHjSYUScuZGGvsLKCDM5z0rJETXWpRcmGfUuv+cBWsxPBjuw1ALk3H3okB/Rpw8Ntdoft7SxqBU5bpueemH5r84VEtPQOdtxCFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAPmn8F5; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaec61d0f65so290055566b.1;
-        Thu, 13 Feb 2025 10:46:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739472387; x=1740077187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HaEihAiyP6MocC5Oa52F4VzuNeOxClEAtoQkxcRqaYg=;
-        b=nAPmn8F5FJI6V+sEFCq/vfyEIAaj39m2iDSiHP8nFwG9arElScXkuK2c9DPKe0ITxp
-         gULwJph89d7F40xZ2Qq3e+D1ex2KmotOFr3WArn51kJFpVivisrQmjewtIblFIlVCIiJ
-         RPgau0BU7kXvoUTOmT0imQNUYwR/PTKaccFp3JuJW1NefM4tdj40JrxhxOmGQEGxtpSx
-         bfZHeHpRCKnS6+LBFHVnLp/k6jKSFgo2Xba1HRuYUWasiI3tgSwkO7Mc49vOE0bvqG5e
-         9RPYDqvQ4dKLIBulY5kal3trmMQ2nXBOsjlVLf97AzfGg+XOET7jX3BmlGUHPtA9nZb/
-         LoZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739472387; x=1740077187;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HaEihAiyP6MocC5Oa52F4VzuNeOxClEAtoQkxcRqaYg=;
-        b=Dkb39iXX9RksMapJH2NUrEDRBO7iIUbZzxuM3xjI5xMYpfl2USQvndBIJsogMQk/W1
-         pshT7YdbZWzSXtNVSZXXu39+WNSA75KfuxrR5+n37Hem0T8U58vd4Ood0P1YOzsdKjk/
-         AVnMkvk0RMhs/irUL+ElyCey4DWsvDIZEZlMd5cN3ixsADZIfiOBnoUCO4cvRSteMoOO
-         9jdNpo8/sy6pXd1e3ZOJblUaSG0mx1j0/oOXDkeuGjH4bBs/CJtfvgMZNdFQ4R5B1c1J
-         iSCQDgMtp7E/OGn5ZZxhLnBivRUPurT+x0PhJDN1DCywcwtCGukeXCjH5S0Mf3zheT2x
-         mThw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGHXxu5xAg8OzlCJkbf5UfM4sQbDD1DAQbXhMQ9qy5+0mUQO5EePHNxyZSOgXjYTSkWaGUrhSp8BRK@vger.kernel.org, AJvYcCUjeFh3KsfCMROy8g8FZh6Cvbfte0ys/ND5wF+koLPIATQ+7/6e2Y5hw1OSYoNnSyK2HDvTe4BUKgEo2pRw@vger.kernel.org, AJvYcCUufiGXF6kbHMRtTAvVbjdAptYAx4QkcPqcw3U+69Ns/sM+Jg/gcx4FYDt3pSjQAIxmwzVhcai8D91k@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAT50xVQSOe5E6asiqiSdjB29VJBpavAZ+wjtIGEph7fyS/RaE
-	OI5sKckFhOMi9oTT2ZTHx79P6uHotcGbMTvp3vWTDRO0opzs42uR
-X-Gm-Gg: ASbGncu+PhOhFcOCsVo5kXRSIWy0/th/4U5wKBJOTGPmDYa0lKPZ4PJkjD8P0B6V/MB
-	ODaLbjE0hkZEXpE6htW+P1hGOh7e9RYR+u44QGl0rehxJ3mu0ko6goY8dVJICmRfmrMcSFhLfCM
-	P/mCFbX2RMmeYgEdDsNezyXcrHu+FMgAXxH0IUANejKtPUta4wzxGuc9s5wCydZ5ZwqnEiChs/Q
-	KZTvBvbsMXrFKaBPTy6KpXx6E4U/wUbTVMwYngFBdY3H1Eou6EW9UZ8edPnVPSmzLQ39Qp0N0KR
-	CG0p4/lrp4ibHahMgtL+3iKVJqXD
-X-Google-Smtp-Source: AGHT+IGGkWWLaNNzOzd7hKMrdf41hfYgyJmTTQbUi197zNRcg+XO4S8rTNRAVGB7tDq/vKYEFmIXRw==
-X-Received: by 2002:a17:906:6a23:b0:ab6:dace:e763 with SMTP id a640c23a62f3a-aba5017e5d9mr408825466b.38.1739472387157;
-        Thu, 13 Feb 2025 10:46:27 -0800 (PST)
-Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533998e2sm181360466b.134.2025.02.13.10.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 10:46:26 -0800 (PST)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: linux-riscv@lists.infradead.org,
-	linux-rtc@vger.kernel.org
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	dlan@gentoo.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: [PATCH v10 2/2] rtc: sophgo: add rtc support for Sophgo CV1800 SoC
-Date: Thu, 13 Feb 2025 19:46:15 +0100
-Message-ID: <20250213184622.2099324-3-alexander.sverdlin@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250213184622.2099324-1-alexander.sverdlin@gmail.com>
-References: <20250213184622.2099324-1-alexander.sverdlin@gmail.com>
+	s=arc-20240116; t=1739472494; c=relaxed/simple;
+	bh=t2j9sCGbQIRyHgbP76ZlMlLU9OQTCcx8w8sYQUuOJXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YqrEbulKC9FDVrtZR21j9yoSf2aKH3kIp7X0kosrgYIqt9LnHZQPpsxzntReAqb5ekwLSwBKy5I0joldpBQHx2FpgNpBE7qugdJWJza2mLlFn65ZmtrvSTvlj4Wc0bEcQj3tcEl3g4hz+5WB1Xz/xTcW2m0huxc5OGuo1Ehmac8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A4p+OTWK; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739472493; x=1771008493;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=t2j9sCGbQIRyHgbP76ZlMlLU9OQTCcx8w8sYQUuOJXo=;
+  b=A4p+OTWKaShtuQRXMQeNsEjtvUN2WJiLwx9gAU94ITXMbG+I69YyXDS3
+   qRivsYwc3JI+B5gcDYserY6Wa2rejZfBQikf6F2AAbmzM3QRUnYcGXOsw
+   l9KxRTUmptlxhoRIqYxm5S0G4pxI375Mz3q75oRLMVQ/EL0XyADrd63J5
+   bx4jHej4+d+Eq/SZp3842Ld1p4LYcuq1fVLRUxU82fL7GafdOYDc/ibCX
+   r4r6PyiMFeIMmBiaGPPG923Gq2NTlmWwYZvIREqu0OToKm3nWa+/qTbgU
+   2RTbMxUneNWGLTlhOtqj1HZ5Vs3DkHfkSRtRKia4MIlNUanMvZE1Y76hX
+   g==;
+X-CSE-ConnectionGUID: jCxPKp/sQammNt78V1iAlQ==
+X-CSE-MsgGUID: FDPl5agNQ5mJBk4DzMrWkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43964345"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="43964345"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:48:12 -0800
+X-CSE-ConnectionGUID: QEsi/t42T6GRXflvKDGtTw==
+X-CSE-MsgGUID: 1qeSg+lTToahOc2h8flgSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="112974156"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.30])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:48:07 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>, Alexandru Ardelean
+ <aardelean@baylibre.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 1/2] drm: Move for_each_if() to util_macros.h for
+ wider use
+In-Reply-To: <20250213182527.3092371-2-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
+ <20250213182527.3092371-2-andriy.shevchenko@linux.intel.com>
+Date: Thu, 13 Feb 2025 20:48:02 +0200
+Message-ID: <87msepy93x.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+On Thu, 13 Feb 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> Other subsystem(s) may want to reuse the for_each_if() macro.
+> Move it to util_macros.h to make it globally available.
+>
+> Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Implement the RTC driver for CV1800, which able to provide time alarm.
+Yay!
 
-Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
-Changes since v9:
-- further simplified bitmask macros;
-- unconditional RTC start (rtc_enable_sec_counter()), otherwise
-didn't start on SG2000;
-- dropped ANA_CALIB modification (has been forgotten in v8 with
-the drop of SW calibration to switch to HW calibration);
-- successfully tested on SG2000;
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
- drivers/rtc/Kconfig      |  10 ++
- drivers/rtc/Makefile     |   1 +
- drivers/rtc/rtc-cv1800.c | 223 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 234 insertions(+)
- create mode 100644 drivers/rtc/rtc-cv1800.c
+If you want to go down the memory lane, see [1]. ;)
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 0bbbf778ecfa..019622db3e93 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1159,6 +1159,16 @@ config RTC_DRV_DS2404
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-ds2404.
- 
-+config RTC_DRV_CV1800
-+	tristate "Sophgo CV1800 RTC"
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  If you say yes here you get support the RTC driver
-+	  for Sophgo CV1800 chip.
-+
-+	  This driver can also be built as a module. If so, the
-+	  module will be called rtc-cv1800.
-+
- config RTC_DRV_DA9052
- 	tristate "Dialog DA9052/DA9053 RTC"
- 	depends on PMIC_DA9052
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 489b4ab07068..621b30a33dda 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_RTC_DRV_CADENCE)	+= rtc-cadence.o
- obj-$(CONFIG_RTC_DRV_CMOS)	+= rtc-cmos.o
- obj-$(CONFIG_RTC_DRV_CPCAP)	+= rtc-cpcap.o
- obj-$(CONFIG_RTC_DRV_CROS_EC)	+= rtc-cros-ec.o
-+obj-$(CONFIG_RTC_DRV_CV1800)	+= rtc-cv1800.o
- obj-$(CONFIG_RTC_DRV_DA9052)	+= rtc-da9052.o
- obj-$(CONFIG_RTC_DRV_DA9055)	+= rtc-da9055.o
- obj-$(CONFIG_RTC_DRV_DA9063)	+= rtc-da9063.o
-diff --git a/drivers/rtc/rtc-cv1800.c b/drivers/rtc/rtc-cv1800.c
-new file mode 100644
-index 000000000000..63d36f68a119
---- /dev/null
-+++ b/drivers/rtc/rtc-cv1800.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * rtc-cv1800.c: RTC driver for Sophgo cv1800 RTC
-+ *
-+ * Author: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
-+
-+#define SEC_PULSE_GEN          0x1004
-+#define ALARM_TIME             0x1008
-+#define ALARM_ENABLE           0x100C
-+#define SET_SEC_CNTR_VAL       0x1010
-+#define SET_SEC_CNTR_TRIG      0x1014
-+#define SEC_CNTR_VAL           0x1018
-+
-+/*
-+ * When in VDDBKUP domain, this MACRO register
-+ * does not power down
-+ */
-+#define MACRO_RO_T             0x14A8
-+#define MACRO_RG_SET_T         0x1498
-+
-+#define ALARM_ENABLE_MASK      BIT(0)
-+#define SET_SEC_CNTR_VAL_INIT  GENMASK(29, 28)
-+#define SEL_SEC_PULSE          BIT(31)
-+
-+struct cv1800_rtc_priv {
-+	struct rtc_device *rtc_dev;
-+	struct regmap *rtc_map;
-+	struct clk *clk;
-+	int irq;
-+};
-+
-+static const struct regmap_config cv1800_rtc_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
-+
-+static int cv1800_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+
-+	regmap_write(info->rtc_map, ALARM_ENABLE, enabled);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	unsigned long alarm_time;
-+
-+	alarm_time = rtc_tm_to_time64(&alrm->time);
-+
-+	cv1800_rtc_alarm_irq_enable(dev, 0);
-+
-+	regmap_write(info->rtc_map, ALARM_TIME, alarm_time);
-+
-+	cv1800_rtc_alarm_irq_enable(dev, alrm->enabled);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	u32 enabled;
-+	u32 time;
-+
-+	regmap_read(info->rtc_map, ALARM_ENABLE, &enabled);
-+
-+	alarm->enabled = enabled & ALARM_ENABLE_MASK;
-+
-+	regmap_read(info->rtc_map, ALARM_TIME, &time);
-+
-+	rtc_time64_to_tm(time, &alarm->time);
-+
-+	return 0;
-+}
-+
-+static void rtc_enable_sec_counter(struct cv1800_rtc_priv *info)
-+{
-+	u32 sec_ro_t;
-+	u32 sec;
-+
-+	/* select inner sec pulse */
-+	regmap_update_bits(info->rtc_map, SEC_PULSE_GEN, SEL_SEC_PULSE, 0);
-+
-+	sec = SET_SEC_CNTR_VAL_INIT;
-+
-+	/* load from MACRO register */
-+	regmap_read(info->rtc_map, MACRO_RO_T, &sec_ro_t);
-+	if (sec_ro_t > (SET_SEC_CNTR_VAL_INIT))
-+		sec = sec_ro_t;
-+
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_VAL, sec);
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_TRIG, 1);
-+}
-+
-+static int cv1800_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	u32 sec;
-+
-+	regmap_read(info->rtc_map, SEC_CNTR_VAL, &sec);
-+
-+	rtc_time64_to_tm(sec, tm);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	unsigned long sec;
-+
-+	sec = rtc_tm_to_time64(tm);
-+
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_VAL, sec);
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_TRIG, 1);
-+
-+	regmap_write(info->rtc_map, MACRO_RG_SET_T, sec);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t cv1800_rtc_irq_handler(int irq, void *dev_id)
-+{
-+	struct cv1800_rtc_priv *info = dev_id;
-+
-+	rtc_update_irq(info->rtc_dev, 1, RTC_IRQF | RTC_AF);
-+
-+	regmap_write(info->rtc_map, ALARM_ENABLE, 0);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct rtc_class_ops cv1800_rtc_ops = {
-+	.read_time = cv1800_rtc_read_time,
-+	.set_time = cv1800_rtc_set_time,
-+	.read_alarm = cv1800_rtc_read_alarm,
-+	.set_alarm = cv1800_rtc_set_alarm,
-+	.alarm_irq_enable = cv1800_rtc_alarm_irq_enable,
-+};
-+
-+static int cv1800_rtc_probe(struct platform_device *pdev)
-+{
-+	struct cv1800_rtc_priv *rtc;
-+	u32 ctrl_val;
-+	void __iomem *base;
-+	int ret;
-+
-+	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-+	if (!rtc)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	rtc->rtc_map = devm_regmap_init_mmio(&pdev->dev, base,
-+					     &cv1800_rtc_regmap_config);
-+	if (IS_ERR(rtc->rtc_map))
-+		return PTR_ERR(rtc->rtc_map);
-+
-+	rtc->irq = platform_get_irq(pdev, 0);
-+	if (rtc->irq < 0)
-+		return rtc->irq;
-+
-+	rtc->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(rtc->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk),
-+				     "clk not found\n");
-+
-+	platform_set_drvdata(pdev, rtc);
-+
-+	device_init_wakeup(&pdev->dev, 1);
-+
-+	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rtc->rtc_dev))
-+		return PTR_ERR(rtc->rtc_dev);
-+
-+	rtc->rtc_dev->ops = &cv1800_rtc_ops;
-+	rtc->rtc_dev->range_max = U32_MAX;
-+
-+	ret = devm_request_irq(&pdev->dev, rtc->irq, cv1800_rtc_irq_handler,
-+			       IRQF_TRIGGER_HIGH, "rtc alarm", rtc);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "cannot register interrupt handler\n");
-+
-+	rtc_enable_sec_counter(rtc);
-+
-+	return devm_rtc_register_device(rtc->rtc_dev);
-+}
-+
-+static const struct of_device_id cv1800_dt_ids[] = {
-+	{ .compatible = "sophgo,cv1800-rtc" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, cv1800_dt_ids);
-+
-+static struct platform_driver cv1800_rtc_driver = {
-+	.driver = {
-+		.name = "sophgo-cv1800-rtc",
-+		.of_match_table = cv1800_dt_ids,
-+	},
-+	.probe = cv1800_rtc_probe,
-+};
-+
-+module_platform_driver(cv1800_rtc_driver);
-+MODULE_AUTHOR("Jingbao Qiu");
-+MODULE_DESCRIPTION("Sophgo cv1800 RTC Driver");
-+MODULE_LICENSE("GPL");
+
+[1] https://lore.kernel.org/r/20180709083650.23549-1-daniel.vetter@ffwll.ch
+
+> ---
+>  include/drm/drm_util.h      | 16 +---------------
+>  include/linux/util_macros.h | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 15 deletions(-)
+>
+> diff --git a/include/drm/drm_util.h b/include/drm/drm_util.h
+> index 79952d8c4bba..440199618620 100644
+> --- a/include/drm/drm_util.h
+> +++ b/include/drm/drm_util.h
+> @@ -36,6 +36,7 @@
+>  #include <linux/kgdb.h>
+>  #include <linux/preempt.h>
+>  #include <linux/smp.h>
+> +#include <linux/util_macros.h>
+>  
+>  /*
+>   * Use EXPORT_SYMBOL_FOR_TESTS_ONLY() for functions that shall
+> @@ -47,21 +48,6 @@
+>  #define EXPORT_SYMBOL_FOR_TESTS_ONLY(x)
+>  #endif
+>  
+> -/**
+> - * for_each_if - helper for handling conditionals in various for_each macros
+> - * @condition: The condition to check
+> - *
+> - * Typical use::
+> - *
+> - *	#define for_each_foo_bar(x, y) \'
+> - *		list_for_each_entry(x, y->list, head) \'
+> - *			for_each_if(x->something == SOMETHING)
+> - *
+> - * The for_each_if() macro makes the use of for_each_foo_bar() less error
+> - * prone.
+> - */
+> -#define for_each_if(condition) if (!(condition)) {} else
+> -
+>  /**
+>   * drm_can_sleep - returns true if currently okay to sleep
+>   *
+> diff --git a/include/linux/util_macros.h b/include/linux/util_macros.h
+> index 825487fb66fa..3b570b765b75 100644
+> --- a/include/linux/util_macros.h
+> +++ b/include/linux/util_macros.h
+> @@ -4,6 +4,21 @@
+>  
+>  #include <linux/math.h>
+>  
+> +/**
+> + * for_each_if - helper for handling conditionals in various for_each macros
+> + * @condition: The condition to check
+> + *
+> + * Typical use::
+> + *
+> + *	#define for_each_foo_bar(x, y) \'
+> + *		list_for_each_entry(x, y->list, head) \'
+> + *			for_each_if(x->something == SOMETHING)
+> + *
+> + * The for_each_if() macro makes the use of for_each_foo_bar() less error
+> + * prone.
+> + */
+> +#define for_each_if(condition) if (!(condition)) {} else
+> +
+>  /**
+>   * find_closest - locate the closest element in a sorted array
+>   * @x: The reference value.
+
 -- 
-2.48.1
-
+Jani Nikula, Intel
 
