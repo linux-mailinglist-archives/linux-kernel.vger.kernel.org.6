@@ -1,87 +1,119 @@
-Return-Path: <linux-kernel+bounces-513818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2DBA34EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:05:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4678A34EFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F0ED16A02C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C983ADA3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201C7200100;
-	Thu, 13 Feb 2025 20:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7426E24A079;
+	Thu, 13 Feb 2025 20:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wo2J7mL7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/JH8jfV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC2728A2CF;
-	Thu, 13 Feb 2025 20:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BE828A2CB;
+	Thu, 13 Feb 2025 20:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477117; cv=none; b=H3945zLmJy6LSad7nqG3LfFWYO5KrAAg0i3VOGD7iCP+zKXFIneNRy5VSIPXm9t9YK6XB8h7Z7hf+qUF1SN38hS4gi+8/OHTGbR10hznEz8DUTxb1Cr1z0purBlaYG9Wq2wcT+PBbZmWm1HS0FeYt46EmOm5duTX3JySP2WXlaw=
+	t=1739477159; cv=none; b=EvPMgFqxpfcu924/14AWhehCNF7lMU92WmP+HAj/b24INeMUT9foD8v2lhOEiI6vpY0cPc7r3ngVt28urmdyiiNLXEW7/BzviAZDHYnFSlO5mdcCyAlwLxO3nylOit6cRmhK1Ikh2Eams1evc7aQ3j1EvowzqgcCBlUMvqNnz3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477117; c=relaxed/simple;
-	bh=3BHHUpa7DXsnveOQCqApXkhQSb06i8xLLd/CiXMTYnA=;
+	s=arc-20240116; t=1739477159; c=relaxed/simple;
+	bh=NACchtxeonADU5GQJHVdhJAYs1NUCFnsjx8N1JQdRrU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtZNT1cRgHmf9G4OKsv2/PuJUGrrdd2lUCfMtEtLEPhEr2moX3a9v2jsfOovLeZzRsnfudWfg17jaEIttQr+Nnrvpn1SVPgMnlg4mBiGk9FyzsHwGWY6QYS9HM7aDuyPAjkymsBG10umbeBscKVe82+RubfdpHwJFkBYk11UAcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wo2J7mL7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BopmD4ej1I3AySyHOCfQho1AKWCgy8rC+MWDvyWeOos=; b=wo2J7mL7Skv0L0q4St2tatLz+6
-	FsaFza7R224gXzAZh4QMQ68m9JL500OsUXuRH1AizeOGljHYnYsu1nbN5A4vWgwvSCkuSMqQxZGUb
-	57at/GYLvjYXCcLm0w5Z/oW7+1cNg9lqw3oIjwTDwk+3vLCiL47/N7VMqzt5ty7qDrKA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tifSN-00Dqa0-By; Thu, 13 Feb 2025 21:05:07 +0100
-Date: Thu, 13 Feb 2025 21:05:07 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 5/7] net: hibmcge: Add mac link exception
- handling feature in this module
-Message-ID: <dc22a252-2889-4b20-b72c-5e4d44d24f88@lunn.ch>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-6-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IYEiKiPTrvgB4Ru8yFRO3PFS10M1GCrSnHzEyOsIFyE7t4lWfbhSHBtQnrnadTehJZ+ELNEzku1ua1gY6mnORFDauTdi+zsd9JXPecl5u4BRT1/y87TgfHQ1Wk9iohJXiNtqjgqmDvYX4RjO2BM3rX8Al5/tn1hVYSKkWrlrpe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/JH8jfV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB8B6C4CED1;
+	Thu, 13 Feb 2025 20:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739477159;
+	bh=NACchtxeonADU5GQJHVdhJAYs1NUCFnsjx8N1JQdRrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O/JH8jfV1QVq1uasHTsNeuvpUp+d/jj3Sxg0GxQKCVk7MJyvAD+eV7i506He6qDkk
+	 CgczH1mXZqmixuHsk0D/2KtFkSCe/Wmi8P9wl7zCIUczWtl3sD9Vq+H2A5cpdDdnQF
+	 qNGJnP9y/5CtGu9vhXYx1B8p7h+0KKFG7NvnxjfzY6NPNfHSqEgpjg6KZXdcGWsLa9
+	 aw79CG0LR2+U1fZ2shFOmgWKUurnvnCGkvfOKwv3xXZMFivGXD6G8/TJk9OItg0FuJ
+	 zk2HZ3DJcceF9gUMbY0NZul7L33XU3Emvw5VLBcspBPrQFTtCjH/OY7sZFLz2zeqsk
+	 MyoYXycWED0Ew==
+Date: Thu, 13 Feb 2025 20:05:53 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, imx@lists.linux.dev,
+	loongarch@lists.linux.dev
+Subject: Re: (subset) [PATCH v1 0/4] Removal of non-existent DAC nodes
+Message-ID: <20250213-calamity-smuggler-5d606993be32@spud>
+References: <20240717-anvil-ashy-544e80a1317c@spud>
+ <173939339997.59416.11108011581545463665.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="t2TI/qcM7Hcs5rgZ"
+Content-Disposition: inline
+In-Reply-To: <173939339997.59416.11108011581545463665.b4-ty@linaro.org>
+
+
+--t2TI/qcM7Hcs5rgZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213035529.2402283-6-shaojijie@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 
-> +int hbg_reset_phy(struct hbg_priv *priv)
-> +{
-> +	struct phy_device *phydev = priv->mac.phydev;
-> +
-> +	if (phydev->drv->soft_reset)
-> +		return phydev->drv->soft_reset(phydev);
-> +
-> +	return genphy_soft_reset(phydev);
-> +}
+On Wed, Feb 12, 2025 at 09:49:59PM +0100, Krzysztof Kozlowski wrote:
+>=20
+> On Wed, 17 Jul 2024 10:37:52 +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Recently I've been getting triggered by abuse of the Rohm dh2228fv
+> > compatible to get the spidev driver probing in Linux on development
+> > kits by employees of various silicon vendors (like NXP or my own
+> > employer). I had a look around the kernel and all users other than the
+> > original Clearfontz board added by Maxime appear to be similar abuse.
+> > Drop the non-existent nodes from all of these devices :)
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [3/4] loongarch: dts: remove non-existent DAC from 2k1000-ref
+>       https://git.kernel.org/krzk/linux-dt/c/854a080f0b73ff966a813ec2dc53=
+891831daa28d
 
-A MAC driver should not be doing a soft reset on a PHY. For some
-devices, this clears out all the settings. I would suggest you use
-phy_stop(), phy_start() which are functions a MAC driver is allowed to
-use.
+Heh, funny that you picked this up yesterday - I noticed that it was
+there while poking at spidev doing some debugging yesterday and was
+going to grab the patch myself. Thanks.
+Noticed also that there's a user of it in riscv that I hadn't included
+in my original patch. No clue why I didn't include that, but I've sent
+out a patch for it now.
 
-	Andrew
+--t2TI/qcM7Hcs5rgZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ65QoQAKCRB4tDGHoIJi
+0hJOAP9qWBg0rjsbzm7opAMArAFEycQu0lJBHYdR+tfeeXkkhAEArfJdGry0AYEf
+b8lHjUhG8iocKhPAo6JWSZBlm8Sn4w8=
+=cxBE
+-----END PGP SIGNATURE-----
+
+--t2TI/qcM7Hcs5rgZ--
 
