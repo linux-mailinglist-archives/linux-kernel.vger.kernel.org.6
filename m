@@ -1,111 +1,152 @@
-Return-Path: <linux-kernel+bounces-512399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99FAA338C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4A4A338CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8058C188BEC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E101188C0B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D5F209F5E;
-	Thu, 13 Feb 2025 07:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B067320A5C6;
+	Thu, 13 Feb 2025 07:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G02y8nMl"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qx7v7ygt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249D5208992;
-	Thu, 13 Feb 2025 07:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E2420967F;
+	Thu, 13 Feb 2025 07:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739431596; cv=none; b=hXY8MMqdMmJXlUecSi+XZeZdKR6NQmd24Uog4VzUhLO/wfEfSKjcqiGX3o9v9sXy/m3CiQwXOAR1j58j3fMZhrqm6xRXliuzdvHWAPrx0wmu4lUnGneYvoB7ug4teHbClBgHWrdYONTPQWUNv5ktum0PIs+Kbrnrtkc8zZG0Zu0=
+	t=1739431616; cv=none; b=WqptW6yq0U4B1A/Sw+OF2dZPJbM+auCwSblx1Kg4dzpxg1jEl7oqddSqF1/q96YzsHzv+HUV4lTj2GTDGtQOlveT7C/SgSmel0yKf91YJVoPukL8feoOWYYrYSyNY+Db0yPlMr/V2OA2MjOR9jCO3jx8MDkUFMuzENP37eqBuqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739431596; c=relaxed/simple;
-	bh=OTiYJTw6dWzO6R+bnZPo5eajbZ/LQMlpQREGfDWsYh8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=oDMGR0hJFIjIOJO8mXU53gWFL5DyeDJEM7/MRq8q5ivThekoCwF71AfTjFnHhrI7Xxc3VFhZ0EcgyvrEVYxdCWu6aj08Y1RmSGHGiqYW1ljV2bmfyVzllLTwMupqWoYUHubts7lCGxJhG5Kt/ZIexlXs5q4L3AswcJwG/9sBotI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G02y8nMl; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739431587; x=1740036387; i=markus.elfring@web.de;
-	bh=OTiYJTw6dWzO6R+bnZPo5eajbZ/LQMlpQREGfDWsYh8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=G02y8nMl36P0PqPsSbh/94j3hGJZ8voPUGs4Syqukmyz1liCfWDSW5e9W6MynhOk
-	 0IAuxhtpJa6pO5i4jwGoR4pUnwRUPXfHLz8PZKiWz/5DBce15tpeI1m/QDew8XaC9
-	 rWsUzYcuMcEf61qDLfpfSkJwyRAHk07B2xDWTSWUbQKsjBYKXdpUEJoSTHPFBk5qR
-	 3xqEaSmea7W3iFzK2jDCJFK9OmeYyVBfMyMEaBkkp6AE9qCsYsyby7IcB4YkzwLam
-	 QyVHs5tJWJ5R/wP4oSf3mJVySvNvrPVYJt/rSIFO0v7rhxCAITcE31/LezKRhQc1a
-	 dOurSElu3+Qt6zCqOg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.78]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7QQD-1tIq7S0kof-00vmXo; Thu, 13
- Feb 2025 08:26:27 +0100
-Message-ID: <491e74f2-b503-4486-a8e0-b4eddc16b2be@web.de>
-Date: Thu, 13 Feb 2025 08:26:09 +0100
+	s=arc-20240116; t=1739431616; c=relaxed/simple;
+	bh=6+6SjTJ5zbBWxWy5yIkCvwaE38nvcNBxMZbRUBc8RBA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CkYscMO/qbGLFeposKYTinTYY1ZY8hTbROULKSlHnFz73lXnn2gvZb5lxkT6Pwcam1Px6FnGlRZ2kSCsuTbyXBMGkQmhNyGwhM/iLnU5wo7GKp4CecfX03fXwCa7L/HEuNC5sf9W1LxYQfEYuwVDRblvcpvZ9OZd8FQj5Oirgcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qx7v7ygt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41550C4CED1;
+	Thu, 13 Feb 2025 07:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739431615;
+	bh=6+6SjTJ5zbBWxWy5yIkCvwaE38nvcNBxMZbRUBc8RBA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Qx7v7ygtKrp5rSxpDmVmUIHnSzBbeYd8tFVfNhPCmnc0laghy1eF9UUW+hkp4axZI
+	 p+pkZQDVegMD0xm3EHURlq8KHEETkRi4ZQSmg2LGRy02CIxK4QTvgYjVG7OYGgSAUM
+	 wDn64yV+nIYRD0E3wkknwkG9WffPbzMxPvrRKhV1hnQUu12ZoEt9fZoTM55TA3RHfi
+	 k8oALO0XKrJs0K60AF3Kw677L0zcjITQDN1gQ/pNOPQV7teP9EGhnWtL1ubMEcQNaO
+	 4VePFaZzNZrk2k0ywsV8S9ceu3hzuiDC3V/XFtRqQsNzzt7raO65NF3Fj8nlVh+SGw
+	 ATXFLwjyl6NEg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Song Liu <song@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>
+Cc: Weinan Liu <wnliu@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+ roman.gushchin@linux.dev, Will Deacon <will@kernel.org>, Ian Rogers
+ <irogers@google.com>, linux-toolchains@vger.kernel.org,
+ linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+ joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+In-Reply-To: <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
+References: <20250127213310.2496133-1-wnliu@google.com>
+ <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+ <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com>
+ <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
+Date: Thu, 13 Feb 2025 07:26:40 +0000
+Message-ID: <mb61p1pw21f0v.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-sound@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Cezary Rojewski <cezary.rojewski@intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Julia Lawall <Julia.Lawall@inria.fr>,
- Takashi Iwai <tiwai@suse.com>
-References: <20250213070546.1572-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] ALSA: hda: Add error check for snd_ctl_rename_id() in
- snd_hda_create_dig_out_ctls()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250213070546.1572-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:A4/AA8rcihgpl6rsOFxSGFatHFrVBRGoijQL0IrZrjwgjadffvq
- S0FidvsMStG9EpfZtYOFtiL+iwZsXpcZBZu7OzXP7rgwUl4LCOIa4djO4IH/ZkeD4mpClTl
- qe54W6/8UBAcvnUZ+z8SiPsIHQ6DikdiOl18VjGVsrRofkMo6A30xXFT/oUT/o4eOFWQxCO
- Ee4CrlVdLkOna1IjKriTw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Dj6pCAqs3Ks=;XbWPrYIAhujbPECWV0/rzt+UUsY
- R+hCQFFiGkuvLCkdo2lTGMaMyd5tTaRD35SFIRRto61K7Wh3Pmt/LYaIOv07VoVO2KnN+MYxC
- D0DRAxbfLnOxnQDAayhHe/QXgNvxnTyoi1v8OIGu51hv0ZrRiqiTvtZksy5LdtFuMcdABlGST
- tuCnWwxij04KoewGBQKZ9cU8b/MmXX+YuU6+kOn45dqxgLByV0Lh8L8qIHosrrDV1RQl1EcSL
- rAI8UWmqu/VlrTb7LacPH0BhWfyWnPDX4axTK1zDz0DuL/+HcjczYzqzLM5ajED9m+vWxU91V
- KgkIgYOHAGsKaj/75SaU+EhwzqKga2B7MLZGCIyjOqF7ABOSb1IFuQFW29OuvxDvMQVOl4Tmi
- IBmvsStqiKOkMz4/nAg6aAv0y77gQ/0UhA/RULCs/8s1dzH9IDJTxeRSfHaGVhIvQTEpdprfA
- RMTBYgMqRsl+pfZ7/++QfZ6nYX1x5ljdZhxB4EYU9DfDOEmSJ4au8VerTyxDun+nHLR1Cped5
- r5tBlHyYNCFSQF1YAowmjgfj8qy0E6Yi0bz940OSyIVNjNr4GjDJ/aJveHTAb64WAP5830FD/
- zyn3Nu1p7yyvISKoAoXSYqLGSEq89tEy7KObCHgMr011q0y2kJptfsZQmBe1yRLmy429+q2yb
- iurlKfqfNqf2ihll9aU6XhXnkcBQ6+FXzfmDWgEvaTS6B+0lHilQImbi+1GPD11sBTtRv+dBP
- yhF60+Q80NX3cSvW4m/xoP8lpKARKM3bqMhd14OdYOcxjMPrjp3rm6A/CFev/WITautHpcSR1
- AFiD14mKBfyWSuJaq1PE6rKX9nLwfFiWQfOZl1pYgy9B8ESsWvPAIAnFLyHPwuJc3wRIYQd6r
- GICP4Ooud+5jh1tON2ykw244dXN68zG6m182Xlg3d//rTEPIMmipfp2Cmee0rlSfUv7g9AbOG
- DFMSJXYEcJbCiVb6y3iVOeaQWbE8jklthDH+gDGE5Icuq4v7+JqxC+AXwMhB8qCfJ2DueuSIt
- tlPNnnDFysmkLZPdlzZWpPL2lOarfqfDA1N1qNLl92zH3d/RU70T7o6oLiAu8+bPHXH/AQpAv
- vfcH/DWt37hB9BLws7SsRuyT9FhUOlExXL1eznXASLjvZLH35k7CA48JWNnPUIosaAaXMjzNd
- OUy0vx7PwZRsSXYu2TXJqjlJe+s7UO4UWEkFH24O5s78hnsnITyQ+0zZwQye14jN0rhUTnT+x
- ou1NXt8P7lWpZt0fCJPXArqBzlR7RqkgPwdRlAdwaW7B+iBDA2IGGs6OsxJBc/06Yid+J7jaf
- TZg9mKro6TZt4vr9maX5rxZgXJoRIH3DAQfdjuSaUEPh49GFKFE3U9uNPD2I1woEzFWO7W96g
- 1RyKNkLWmrzS2QC2dN84cVSmnrkA2eHgkTlxmb/SnbGwrfb+MSSqVrJeLaLOWsQQkvSBrCDSO
- AOfsjicdFL8QuzwoJD1NRb4nOubs=
 
-> Check the return value of snd_ctl_rename_id() in
-> snd_hda_create_dig_out_ctls(). Ensure that potential
-> failures are properly handled.
+Song Liu <song@kernel.org> writes:
 
-I would prefer a change description variant without the word =E2=80=9Cpote=
-ntial=E2=80=9D
-for this issue.
-https://cwe.mitre.org/data/definitions/252.html
+> On Wed, Feb 12, 2025 at 4:10=E2=80=AFPM Indu Bhagat <indu.bhagat@oracle.c=
+om> wrote:
+>>
+>> On 2/12/25 3:32 PM, Song Liu wrote:
+>> > I run some tests with this set and my RFC set [1]. Most of
+>> > the test is done with kpatch-build. I tested both Puranjay's
+>> > version [3] and my version [4].
+>> >
+>> > For gcc 14.2.1, I have seen the following issue with this
+>> > test [2]. This happens with both upstream and 6.13.2.
+>> > The livepatch loaded fine, but the system spilled out the
+>> > following warning quickly.
+>> >
+>>
+>> In presence of the issue
+>> https://sourceware.org/bugzilla/show_bug.cgi?id=3D32666, I'd expect bad
+>> data in SFrame section.  Which may be causing this symptom?
+>>
+>> To be clear, the issue affects loaded kernel modules.  I cannot tell for
+>> certain - is there module loading involved in your test ?
+>
+> The KLP is a module, I guess that is also affected?
+>
+> During kpatch-build, we added some logic to drop the .sframe section.
+> I guess this is wrong, as we need the .sframe section when we apply
+> the next KLP. However, I don't think the issue is caused by missing
+> .sframe section.
 
-Regards,
-Markus
+Hi, I did the same testing and did not get the Warning.
+
+I am testing on the 6.12.11 kernel with GCC 11.4.1.
+
+Just to verify, the patch we are testing is:
+
+=2D-- >8 ---
+
+diff -Nupr src.orig/kernel/fork.c src/kernel/fork.c
+=2D-- src.orig/kernel/fork.c      2023-01-12 11:20:05.408700033 -0500
++++ src/kernel/fork.c   2023-01-12 11:21:19.186137466 -0500
+@@ -1700,10 +1700,18 @@ static void posix_cpu_timers_init_group(
+        posix_cputimers_group_init(pct, cpu_limit);
+ }
+
++void kpatch_foo(void)
++{
++       if (!jiffies)
++               printk("kpatch copy signal\n");
++}
++
+ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ {
+        struct signal_struct *sig;
+
++       kpatch_foo();
++
+        if (clone_flags & CLONE_THREAD)
+                return 0;
+=2D-- 8< ---
+
+P.S. - I have a downstream patch for create-diff-object to generate .sframe=
+ sections for
+livepatch module, will add it to the PR after some cleanups.
+
+Thanks,
+Puranjay
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZ62esRQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nX0gAP9n3xA9wW2ZSrjqoyai0Z+h7Z03vgV0
+y4f2blTpucfZtQEA7lPQavqv8zaPQ1pd3nsRfki49/OkrgrXQxoA1aAalAY=
+=crNj
+-----END PGP SIGNATURE-----
+--=-=-=--
 
