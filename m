@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-513896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5623FA34FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:50:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03A5A34FFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B3177A1F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF1A3A43E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494EF266B4D;
-	Thu, 13 Feb 2025 20:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8D0266B43;
+	Thu, 13 Feb 2025 20:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XeTAcxIr"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EC91FFC59;
-	Thu, 13 Feb 2025 20:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOQzpPjr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A2320766C;
+	Thu, 13 Feb 2025 20:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739479819; cv=none; b=OcY7C5uzb0MUvdiOEZnPWJwQOPBVeOpEWw47JCHhVMZN+BHo8SEJxHMi5gvZDV6sdXlPKWUD9ZeY/xBV8W190sdOZifI6ZoVGrkwW/ilVAI6ijN0U+R970W/RANR00ily/zNyVwBGHIbjtt+191UwbtuJ/89lfxVom/lluxzpHI=
+	t=1739479879; cv=none; b=TxEeD1CNzS5Q3vOL8gjNwjn0+wHRHQETfW43DJ0+OBw5yFilxD1qdWHHP3HHgWflqs9R/GSI4j0e1rtZYL8Tg4/vq7zqwkW9OSfP/5rTzl/toSzIrOsCjslomai4kF2pyqDKfMtW6/uaG3pnjFoxAp7EwWBPJrfu8njFLHl8xEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739479819; c=relaxed/simple;
-	bh=U90uAXy+tD0A67ngT98YeZk8dh7Nxm1Nq0igEW7awIg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aftLjXNQB3KtSCk7CCTZOa91Y8L3h3cjghIKX5ql/a46yBSL4o5XqSZKdSP2omKi/gZhpZ2KOVVjytHKoqesihXdbN6jF8nmWm6oHHtHxQjGjaIbqnSXoB5283GOzd9x2TlngCetS8k71n0ZxdT/QAa7mCJGyXO/2dfRnTWf7hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XeTAcxIr; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 83E82203F3E5;
-	Thu, 13 Feb 2025 12:50:17 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 83E82203F3E5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739479817;
-	bh=XzQPYU9YfHy6ub9VigT3rtdUgbT32pzX4StInrVw1E4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=XeTAcxIrprlHTTTPMf8HhI8CE7pfNVAgM8QgQEmhFcRGXQvzr/nQBmciYK3jhEmJX
-	 tydKjmyGSzh+NZdxKyYLSaHG4PGn5nB5buGjbO5npIVqSIGOlOpl5UP27xsVYpBKIQ
-	 C2q46+OmyyevQ+L1KlcwRiLGpbRqE44dKts5w7gc=
-Message-ID: <a10abb83-1bb2-4e62-b537-8b8948b055ea@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 12:50:17 -0800
+	s=arc-20240116; t=1739479879; c=relaxed/simple;
+	bh=512cv4Hj1Kz9k8u6r5KTAHRKubmEdQ2373KIf+8y/nQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi/tShUgRT+F4gfD8pV+Uqrh6niTcM17Q9cfPUOAvyB+fWWgLF7QCAYUUIkkcBKFOfxMMGN9g527R3OZU1SoLFdK/tDISUIR3a7i+09ZzuAs0dOU+2tqQQYRVq97HoxzE39VQt+4fQzQvYoAzD5gxGqXkTLryZC+PLcW67C1FCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOQzpPjr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED96C4CED1;
+	Thu, 13 Feb 2025 20:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739479879;
+	bh=512cv4Hj1Kz9k8u6r5KTAHRKubmEdQ2373KIf+8y/nQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rOQzpPjrf+SK50+lfxnvf1j6ydyFhRq+h3/1SS37zqLNdyguRVlBObbP1/wRV0at/
+	 +cca9LNWhv8GMr4NpXlWyHwjN2EsM3Zze84WS+MnVfh5DDswhAOygzmSDUKi4RNEMw
+	 W9XTcRCyXaqAiS0YlOjJ93ByT9I6kNGLTbYgKNCFtL2uFjH6E3cpzuaQHLZrq5Fh43
+	 meI4vmlfv8CvQzjCMKOzSD9/HcXIvAWoRS+Zs0aZLI5YIsWmaBcg8f/mx+LgeXocUJ
+	 GwMtsdYdGuWko8E5Vr4XkKGEcj8pddoYRhOHKbgd6vfPEcY5H+KykSlOKqAoh7HEqH
+	 nTNI4vN7xs7jQ==
+Date: Thu, 13 Feb 2025 20:51:13 +0000
+From: Daniel Thompson <danielt@kernel.org>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v5 RESEND 2/3] backlight: apple_dwi_bl: Add Apple DWI
+ backlight driver
+Message-ID: <Z65bQeITMp1mpHp8@aspen.lan>
+References: <20250203115156.28174-1-towinchenmi@gmail.com>
+ <20250203115156.28174-3-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v4 4/6] dt-bindings: microsoft,vmbus: Add GIC
- and DMA coherence to the example
-From: Roman Kisel <romank@linux.microsoft.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
- decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
- krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mingo@redhat.com, robh@kernel.org,
- ssengar@linux.microsoft.com, tglx@linutronix.de, wei.liu@kernel.org,
- will@kernel.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-5-romank@linux.microsoft.com>
- <20250212-rough-terrier-of-serendipity-68a0db@krzk-bin>
- <bb863c8f-a92c-42d0-abc4-ff0b92f701c2@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <bb863c8f-a92c-42d0-abc4-ff0b92f701c2@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250203115156.28174-3-towinchenmi@gmail.com>
+
+On Mon, Feb 03, 2025 at 07:50:33PM +0800, Nick Chan wrote:
+> Add driver for backlight controllers attached via Apple DWI 2-wire
+> interface, which is found on some Apple iPhones, iPads and iPod touches
+> with a LCD display.
+>
+> Although there is an existing apple_bl driver, it is for backlight
+> controllers on Intel Macs attached via PCI, which is completely different
+> from the Samsung-derived DWI block.
+>
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  drivers/video/backlight/Kconfig        |  12 +++
+>  drivers/video/backlight/Makefile       |   1 +
+>  drivers/video/backlight/apple_dwi_bl.c | 123 +++++++++++++++++++++++++
+>  3 files changed, 136 insertions(+)
+>  create mode 100644 drivers/video/backlight/apple_dwi_bl.c
+>
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 3614a5d29c71..c6168727900a 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -290,6 +290,18 @@ config BACKLIGHT_APPLE
+>  	  If you have an Intel-based Apple say Y to enable a driver for its
+>  	  backlight.
+>
+> +config BACKLIGHT_APPLE_DWI
+> +	tristate "Apple DWI 2-Wire Interface Backlight Driver"
+> +	depends on ARCH_APPLE || COMPILE_TEST
+> +	default y
+
+Sorry to pick this up late and on a resend but... I can't come up with
+any justification for "default y" in this driver.
+
+Other than that this is a really tidy driver so with that changed please
+add:
+Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
 
 
-
-On 2/12/2025 3:57 PM, Roman Kisel wrote:
-> 
-
-[...]
-
-Thank you for your guidance!! The below passes tests and addresses the
-feedback you have provided. If no further comments from you, I'll
-send the file in this form in the next version of the patch series (also
-fixing the commit title and description).
-
-
-# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-%YAML 1.2
----
-$id: http://devicetree.org/schemas/bus/microsoft,vmbus.yaml#
-$schema: http://devicetree.org/meta-schemas/core.yaml#
-
-title: Microsoft Hyper-V VMBus
-
-maintainers:
-   - Saurabh Sengar <ssengar@linux.microsoft.com>
-
-description:
-   VMBus is a software bus that implement the protocols for communication
-   between the root or host OS and guest OSs (virtual machines).
-
-properties:
-   compatible:
-     const: microsoft,vmbus
-
-   ranges: true
-
-   '#address-cells':
-     const: 2
-
-   '#size-cells':
-     const: 1
-
-required:
-   - compatible
-   - ranges
-   - interrupts
-   - '#address-cells'
-   - '#size-cells'
-
-additionalProperties: true
-
-examples:
-   - |
-     #include <dt-bindings/interrupt-controller/irq.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     soc {
-         #address-cells = <2>;
-         #size-cells = <1>;
-         bus {
-             compatible = "simple-bus";
-             #address-cells = <2>;
-             #size-cells = <1>;
-             ranges;
-
-             vmbus@ff0000000 {
-                 compatible = "microsoft,vmbus";
-                 #address-cells = <2>;
-                 #size-cells = <1>;
-                 ranges = <0x0f 0xf0000000 0x0f 0xf0000000 0x10000000>;
-                 dma-coherent;
-                 interrupt-parent = <&gic>;
-                 interrupts = <GIC_PPI 2 IRQ_TYPE_EDGE_RISING>;
-             };
-         };
-     };
-
-
->> Best regards,
->> Krzysztof
-> 
-
--- 
-Thank you,
-Roman
-
+Daniel.
 
