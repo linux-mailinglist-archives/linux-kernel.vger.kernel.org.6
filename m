@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-512656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029A7A33C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:11:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C38A33C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728B91882CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809E81684C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61300211A3C;
-	Thu, 13 Feb 2025 10:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D692212FA8;
+	Thu, 13 Feb 2025 10:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QZaxwkOd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Esk0eTJx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214AE20DD72;
-	Thu, 13 Feb 2025 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C544820DD72;
+	Thu, 13 Feb 2025 10:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441486; cv=none; b=TO+YJ1U8x1bHXNxQiTCIylk07eQvlnqLql5pNn5Qs1deJr/VWLowG36YyiJIJfWzK5ygbsAKlrBza+vGF/eL6YIwFR5ZhFf8zhqWmzYuhER04sXmSZJOs7Xxlt9ciMrhCWyeYU4i1aCE+c5yM7lnseQWcxZGVSxln/HRQBkbgt8=
+	t=1739441492; cv=none; b=PAAMmFWK9u7B5nqadjhptq+38poVxuc15UGrLMJi8zusncQoHyGqp4nG1pYJqke/pVzLVnz+66yLGxIkQuAumqRs+ICPZ5Fwf1ogtf15hwdZnpIlprahwCg46sOad7sz8/kChwiTJoIb+zGukTS66Pt5Spur1w+N2jF/fEYRH6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441486; c=relaxed/simple;
-	bh=M+w9kabOMahmG52D1RxSaUfG2yewgL3Ce6/3SZBF4P8=;
+	s=arc-20240116; t=1739441492; c=relaxed/simple;
+	bh=e65N9TKu11IkRIhXe6iLKZRtrhHqv/Yn7JxdieTK06U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqRwQgocvQYIaRFbo98SC2mGxNVibBVOlgeu2BH8Pmu1zBTfD2memJcm+o9g8BuCJ6lRd6f6XbYB5VaQ7uQ8ilN5TEyzX+EWKTWlqvxHtuL9vF9injUrWQA5ls8Kf7PzXV+iOiz02bhgcoZJ8kCrjqxUnf1YDAs1q/eBE+P2Bl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QZaxwkOd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D9muVw015181;
-	Thu, 13 Feb 2025 10:11:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=U74TuyLY5AFY92KaNCGYKAz8R/LTgs
-	X6KqtfSKDyU1o=; b=QZaxwkOdw85j9Se0f9lFoCNeL1+646+DW0iQ9bHd+2mPPY
-	vWqtGD5BwxqpUxMC3zkNQG6+jdpgq0sEH4netftKyNmLYF0AqjSGG8qSZ1uAFMTf
-	yYXJ5vd/nCGKCSPisjrpkrFa0t2CwNoxqPFCh7cV7LL5zruKqtMA4JsEmSnKfsRY
-	VTrm8bvV8FxOrbK2QH9DJayp8jbFWDM0VNbQomc6h+4HG9plUjyeurYGWWSbm1tE
-	bfk5w58yHm3q+rgUy2LAQrlvjBR3KWyb4ONn6eNv8aFpEN6WObqjisa6wVZUQEd7
-	CIOdoMIDAihTrxKz55PhvnQ4yqut5eE0CtRRkelw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rxfu4u9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 10:11:10 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51DABAlR007340;
-	Thu, 13 Feb 2025 10:11:10 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rxfu4u99-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 10:11:10 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7LWPQ001358;
-	Thu, 13 Feb 2025 10:11:09 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkndpd5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 10:11:09 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DAB5CT29753996
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 10:11:05 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B348E2004E;
-	Thu, 13 Feb 2025 10:11:05 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA4E820065;
-	Thu, 13 Feb 2025 10:11:04 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.6.230])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 13 Feb 2025 10:11:04 +0000 (GMT)
-Date: Thu, 13 Feb 2025 11:11:03 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Frank van der Linden <fvdl@google.com>
-Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhao@google.com,
-        usamaarif642@gmail.com, joao.m.martins@oracle.com,
-        roman.gushchin@linux.dev, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 03/28] mm/cma: introduce cma_intersects function
-Message-ID: <Z63FN1+f+Ca2owdm@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20250129224157.2046079-1-fvdl@google.com>
- <20250129224157.2046079-4-fvdl@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2aWTnQlejq+zfWLV3m5GjRC2t7P/O+G+VRPwLVtDbmmul8vcmXx1dls/thJtvr7Uuu0Gw3Mj7lrJE18OiHTsDxoj6iyg5f9x+m8uQQyBjbrEvVmm6Km17pZlzfYQ+q5KSInW08eIbYFilTcePGaucUD2uujFxqk2/vfZI6Oexg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Esk0eTJx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA2FC4CED1;
+	Thu, 13 Feb 2025 10:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739441491;
+	bh=e65N9TKu11IkRIhXe6iLKZRtrhHqv/Yn7JxdieTK06U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Esk0eTJxTieq3Y1P9SUnNzPOBoXL+FPPJttxBWHqnf0Sm44a4c/fjI+bMlwLnir39
+	 2utlIMx/myKUJTF6GkLHjuFFI8/LxNuQOaUDCVe5YNPyiCLPs4jHgrsxQXwt6nGgNX
+	 cjCFhSyt5Pge2dyEmQf2oY7VIENvwxDJzedSh95k=
+Date: Thu, 13 Feb 2025 11:11:28 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: better interrupt name
+Message-ID: <2025021302-malformed-captivity-e862@gregkh>
+References: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250129224157.2046079-4-fvdl@google.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4-Nzm_kfKbiYH4HhdkDWG-rtcGAVd8YX
-X-Proofpoint-GUID: Vzn0MMqmK8Lalyo1VKVejFWob49y7KWE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_03,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1011 adultscore=0 mlxlogscore=491 phishscore=0 bulkscore=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130076
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
 
-On Wed, Jan 29, 2025 at 10:41:32PM +0000, Frank van der Linden wrote:
-> Now that CMA areas can have multiple physical ranges,
-> code can't assume a CMA struct represents a base_pfn
-> plus a size, as returned from cma_get_base.
+On Thu, Feb 13, 2025 at 09:37:54AM +0000, André Draszik wrote:
+> This changes the output of /proc/interrupts from the non-descriptive:
+>     1-0025
+> (or similar) to a more descriptive:
+>     1-0025-max33359
 > 
-> Most cases are ok though, since they all explicitly
-> refer to CMA areas that were created using existing
-> interfaces (cma_declare_contiguous_nid or
-> cma_init_reserved_mem), which guarantees they have just
-> one physical range.
+> This makes it easier to find the device, in particular if there are
+> multiple i2c devices, as one doesn't have to remember (or lookup) where
+> it is located.
 > 
-> An exception is the s390 code, which walks all CMA
-> ranges to see if they intersect with a range of memory
-> that is about to be hotremoved. So, in the future,
-> it might run in to multi-range areas. To keep this check
-> working, define a cma_intersects function. This just checks
-> if a physaddr range intersects any of the ranges.
-> Use it in the s390 check.
-> 
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Signed-off-by: Frank van der Linden <fvdl@google.com>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > ---
->  arch/s390/mm/init.c | 13 +++++--------
->  include/linux/cma.h |  1 +
->  mm/cma.c            | 21 +++++++++++++++++++++
->  3 files changed, 27 insertions(+), 8 deletions(-)
+>  drivers/usb/typec/tcpm/tcpci_maxim_core.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> index fd1b80593367..46fc626589db 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> @@ -420,12 +420,14 @@ static irqreturn_t max_tcpci_isr(int irq, void *dev_id)
+>  	return IRQ_WAKE_THREAD;
+>  }
+>  
+> -static int max_tcpci_init_alert(struct max_tcpci_chip *chip, struct i2c_client *client)
+> +static int max_tcpci_init_alert(struct max_tcpci_chip *chip,
+> +				struct i2c_client *client,
+> +				const char *name)
+>  {
+>  	int ret;
+>  
+>  	ret = devm_request_threaded_irq(chip->dev, client->irq, max_tcpci_isr, max_tcpci_irq,
+> -					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), dev_name(chip->dev),
+> +					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), name,
+>  					chip);
+>  
+>  	if (ret < 0)
+> @@ -485,6 +487,7 @@ static int max_tcpci_probe(struct i2c_client *client)
+>  	int ret;
+>  	struct max_tcpci_chip *chip;
+>  	u8 power_status;
+> +	const char *name;
+>  
+>  	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+>  	if (!chip)
+> @@ -531,7 +534,11 @@ static int max_tcpci_probe(struct i2c_client *client)
+>  
+>  	chip->port = tcpci_get_tcpm_port(chip->tcpci);
+>  
+> -	ret = max_tcpci_init_alert(chip, client);
+> +	name = devm_kasprintf(&client->dev, GFP_KERNEL, "%s-%s",
+> +			      dev_name(&client->dev), client->name);
+> +	if (!name)
+> +		return -ENOMEM;
 
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+Please always test your code before sending it out.  You just leaked a
+bunch of stuff here :(
+
+thanks,
+
+greg k-h
 
