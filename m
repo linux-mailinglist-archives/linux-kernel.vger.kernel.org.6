@@ -1,190 +1,114 @@
-Return-Path: <linux-kernel+bounces-513037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADEFA340DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:55:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A61A340E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E495D16AEBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467483AACAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E141487ED;
-	Thu, 13 Feb 2025 13:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32411487ED;
+	Thu, 13 Feb 2025 13:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M3ntzWuX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gkZtbL8j"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D6924BC15;
-	Thu, 13 Feb 2025 13:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F7F24BC0D;
+	Thu, 13 Feb 2025 13:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739454886; cv=none; b=UtyCLM7hOATlLMb+Z3QdFVSngUOHJrWcd4HJWFzhls4k9aaqdtE+5DdpDs9VJ4L8kjx1Rz7/+oRu3hGkxgIR3+j9wlxm5Fnp4TBpek/1XiVIY2FLe6BxxkB2KJhrtPQ6d047v7Yd37ld5nE+/qg++R781C8TqR3CeGyepaQRRuo=
+	t=1739454939; cv=none; b=ceQrW02MGDp9N21tgsTImlc2oQ8iMWo3t2we9k+wb+GmIFUfi4I0UQ5/DjPJxnxQTq+UULeqg27dtX3YTW25DOZihcpFy6Z7WolHTrBicMLGpAecCCEPVm/c+jpcT7V2A+KPykavJNhhJ/vrHuyTA3XMqBa3C3t9RRgLOBicnXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739454886; c=relaxed/simple;
-	bh=cJI7jSGBeMlBar7+EWkFpZ1IplMJwWUEjiBSpKW+aD0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=upokSkebtIE841HypjqzYlY07J/3bjxiu4235k5deF/0cfI3jFqJcd6/S/JiOjvJlZr+PoFYZdCp/cqKTd08l1t4LnX3HMnCIWcJq1PVA3piG37RVaKj9zTRtiiAuerS78Zp/7jsh/LDu7Ia5lHEjvQ/jIv1BfXpLIJzmPtNBS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M3ntzWuX; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739454885; x=1770990885;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=cJI7jSGBeMlBar7+EWkFpZ1IplMJwWUEjiBSpKW+aD0=;
-  b=M3ntzWuXKsu0Lsw78cFz5n0az1tE4psH0GMz1CFXZcRkqXSXFGpGt/nS
-   qgpUCL/KQVpdDNVgm7H8ezrAsXwNPlmyyKYo5C2zeeAspFEkayoivdnhf
-   nizNMqqI6GeWiMg6vcNpNGTPDdu7dFkGdLqadV8v92j0lrjEZYUmPbiA9
-   Wiy0hn24i8lktTiHEII58o0ZpfR3rAK93sp5MnWluyYwrFIEsKywl+NJ/
-   AxcWTlIHv6pkFav9X3CXQoyajwkv6aT5GsinP02pBzK+1zIoPibut9EVK
-   u17HG3QCHX2IUpiQagx+Ph8xjEfyuxFbk9ApFmbdQ55H6BSVHI9FtLm6S
-   g==;
-X-CSE-ConnectionGUID: oDUTqKLhTjWZXVuYcxoYVw==
-X-CSE-MsgGUID: 3NcqEwsgQUKDo4vN05Od0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51554182"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="51554182"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:45 -0800
-X-CSE-ConnectionGUID: q185DkdGTQyur7kuyCwDkw==
-X-CSE-MsgGUID: vNmTYbuhT/Klxw9nmHksTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113020022"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:54:42 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 13 Feb 2025 15:54:39 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Alex Williamson <alex.williamson@redhat.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/2] PCI: Cache offset of Resizable BAR capability
-In-Reply-To: <20250208050329.1092214-3-helgaas@kernel.org>
-Message-ID: <75bb62bd-7944-1d74-ad84-fd676c8bfb91@linux.intel.com>
-References: <20250208050329.1092214-1-helgaas@kernel.org> <20250208050329.1092214-3-helgaas@kernel.org>
+	s=arc-20240116; t=1739454939; c=relaxed/simple;
+	bh=dxAlnetG+xfsiBNq0fcAIpV/X+mjVmjq2DG/r9QyAWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMqluAM8vQwk2XllFJrmwfk8OdfvtZF8x+/VDQyTl0Z4ZMBNffwC9FjixdwRLQNQGICX6jEsu/hzuVNpRU0leacgGWC5saGALOm/6VQUzIjVfIl76eiWJAT7S9dsIwzVeqExBKQ3dbMWQ6AHFhhxuZ7jQzh0xUfrDetbVgkW3Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gkZtbL8j; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iSIJAx4EpNXrVsBR/rpvqubaa9T4PDr1XsPwpgCesCw=; b=gkZtbL8jtyFaX5I7SQPe1yOCe9
+	UWSxm5Ie8L9UyWPhu5BlROG5LnnlOBATL2gTmW8b7+NvDxFwlfulajbuPd/ZwZxWER6fDYhZIDIjB
+	64NFBb8/q7lqP1EXLk/fZAh5drzeQeTVYUA3BSGfq3Q8KnIUUrJv6qv5MPc1zdWHkZSw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tiZgZ-00DklN-Ck; Thu, 13 Feb 2025 14:55:23 +0100
+Date: Thu, 13 Feb 2025 14:55:23 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, joel@jms.id.au,
+	richardcochran@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] soc: aspeed: Add NULL pointer check in
+ aspeed_lpc_enable_snoop()
+Message-ID: <2d5c9d87-abbc-4118-9031-f2c7b5c96085@lunn.ch>
+References: <20250212212556.2667-1-chenyuan0y@gmail.com>
+ <f649fc0f8491ab666b3c10f74e3dc18da6c20f0a.camel@codeconstruct.com.au>
+ <CALGdzuoeYesmdRBG_QPW_rkFcX7v=0hsDr0iX3u5extEL5qYag@mail.gmail.com>
+ <8e6c7913fda39baa50309886f9f945864301660f.camel@codeconstruct.com.au>
+ <CALGdzurifZaqatjGRZGxA4FyNBHOYJdVXpKHSM4hQdA3qZtYvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-264264680-1739454879=:12944"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALGdzurifZaqatjGRZGxA4FyNBHOYJdVXpKHSM4hQdA3qZtYvQ@mail.gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Feb 12, 2025 at 07:50:49PM -0600, Chenyuan Yang wrote:
+> Hi Andrew,
+> 
+> I've drafted the following patch to address the resource cleanup issue:
 
---8323328-264264680-1739454879=:12944
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Please just follow the normal procedure of submitting a patch.
 
-On Fri, 7 Feb 2025, Bjorn Helgaas wrote:
+	Andrew
 
-> From: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> Previously most resizable BAR interfaces (pci_rebar_get_possible_sizes(),
-> pci_rebar_set_size(), etc) as well as pci_restore_state() searched config
-> space for a Resizable BAR capability.  Most devices don't have such a
-> capability, so this is wasted effort, especially for pci_restore_state().
->=20
-> Search for a Resizable BAR capability once at enumeration-time and cache
-> the offset so we don't have to search every time we need it.  No function=
-al
-> change intended.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pci.c   | 9 +++++++--
->  drivers/pci/pci.h   | 1 +
->  drivers/pci/probe.c | 1 +
->  include/linux/pci.h | 1 +
->  4 files changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 503376bf7e75..cf2632080a94 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1872,7 +1872,7 @@ static void pci_restore_rebar_state(struct pci_dev =
-*pdev)
->  =09unsigned int pos, nbars, i;
->  =09u32 ctrl;
-> =20
-> -=09pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
-> +=09pos =3D pdev->rebar_cap;
->  =09if (!pos)
->  =09=09return;
-> =20
-> @@ -3719,6 +3719,11 @@ void pci_acs_init(struct pci_dev *dev)
->  =09pci_enable_acs(dev);
->  }
-> =20
-> +void pci_rebar_init(struct pci_dev *pdev)
-> +{
-> +=09pdev->rebar_cap =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBA=
-R);
-> +}
-> +
->  /**
->   * pci_rebar_find_pos - find position of resize ctrl reg for BAR
->   * @pdev: PCI device
-> @@ -3733,7 +3738,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev,=
- int bar)
->  =09unsigned int pos, nbars, i;
->  =09u32 ctrl;
-> =20
-> -=09pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
-> +=09pos =3D pdev->rebar_cap;
->  =09if (!pos)
->  =09=09return -ENOTSUPP;
-> =20
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..d7b46ddfd6d2 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -799,6 +799,7 @@ static inline int acpi_get_rc_resources(struct device=
- *dev, const char *hid,
->  }
->  #endif
-> =20
-> +void pci_rebar_init(struct pci_dev *pdev);
->  int pci_rebar_get_current_size(struct pci_dev *pdev, int bar);
->  int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size);
->  static inline u64 pci_rebar_size_to_bytes(int size)
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b6536ed599c3..24dd3dcfd223 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2564,6 +2564,7 @@ static void pci_init_capabilities(struct pci_dev *d=
-ev)
->  =09pci_rcec_init(dev);=09=09/* Root Complex Event Collector */
->  =09pci_doe_init(dev);=09=09/* Data Object Exchange */
->  =09pci_tph_init(dev);=09=09/* TLP Processing Hints */
-> +=09pci_rebar_init(dev);=09=09/* Resizable BAR */
-> =20
->  =09pcie_report_downtraining(dev);
->  =09pci_init_reset_methods(dev);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 47b31ad724fa..9e5bbd996c83 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -353,6 +353,7 @@ struct pci_dev {
->  =09struct pci_dev  *rcec;          /* Associated RCEC device */
->  #endif
->  =09u32=09=09devcap;=09=09/* PCIe Device Capabilities */
-> +=09u16=09=09rebar_cap;=09/* Resizable BAR capability offset */
->  =09u8=09=09pcie_cap;=09/* PCIe capability offset */
->  =09u8=09=09msi_cap;=09/* MSI capability offset */
->  =09u8=09=09msix_cap;=09/* MSI-X capability offset */
+> 
+> ```
+>  drivers/soc/aspeed/aspeed-lpc-snoop.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> index 9ab5ba9cf1d6..4988144aba88 100644
+> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> @@ -200,11 +200,15 @@ static int aspeed_lpc_enable_snoop(struct
+> aspeed_lpc_snoop *lpc_snoop,
+>   lpc_snoop->chan[channel].miscdev.minor = MISC_DYNAMIC_MINOR;
+>   lpc_snoop->chan[channel].miscdev.name =
+>   devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME, channel);
+> + if (!lpc_snoop->chan[channel].miscdev.name) {
+> + rc = -ENOMEM;
+> + goto free_fifo;
+> + }
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+You were asked to first add cleanup, then fix this possible NULL
+pointer dereference.
 
---=20
- i.
+> I have a couple of questions regarding the cleanup order:
+> 
+> 1. Do we need to call misc_deregister() in this case, considering that
+> the registration happens before return -EINVAL?
+> 2. If misc_deregister() is required, is there a specific order we
+> should follow when calling misc_deregister() and
+> kfree(lpc_snoop->chan[channel].miscdev.name);?
 
---8323328-264264680-1739454879=:12944--
+As a general rule, cleanup is the opposite order to setup.
+
+Also, you want to do some research about that devm_ means.
+
+	Andrew
 
