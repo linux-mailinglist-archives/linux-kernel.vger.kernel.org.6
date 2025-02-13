@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-513568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A46A34BBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37AA8A34BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F5C162370
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891751628E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566A32222A6;
-	Thu, 13 Feb 2025 17:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611A22222D1;
+	Thu, 13 Feb 2025 17:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nor8JpPQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH16R/H2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE78E28A2D6;
-	Thu, 13 Feb 2025 17:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA122222B5;
+	Thu, 13 Feb 2025 17:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739467349; cv=none; b=Y3KSbA8yaBAYa5XajzF9E6GR7xmJmu8kVQ6nrE1/Jdc/Ge9Om5kH/TE4f6Z8GY8Ls3TNt0iINFCV17cJ9nhND2KMKizZ5BdiNBznGe+gFdO4PzOYjahkS9SqpMnUeGWsQ2fn2fHr+fhHVN1ttN/4FCWE5fhfD3n141GiSFgkUJM=
+	t=1739467351; cv=none; b=etvg/oGMoXJO7QL8CwQHlgglBRU9OxYGUH++uZVsx1YZ+mfXkq5xPP/YCs8i1o6o0coYnT4gAiqVU15Gtkga/mOV0UZ7jHeXbZnDnJSImVOm9He51M6TSIZiaPb2uN7KdE48ZOvIGoHKMuxoh5c7+VK0+K1THXYLMwMVW9CaklU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739467349; c=relaxed/simple;
-	bh=l0FlV3JhqBNb6Iht2yHMwP7PfD3TpYDSZvC58kqj4RM=;
+	s=arc-20240116; t=1739467351; c=relaxed/simple;
+	bh=S0OhMDWIGff52utNObwPzkVUWW6web7D0hUEz9SRg7I=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Qz1erVAmowLCXnZkUoChSMr8QWPGrYxbRcpvaLHiwBo7LPWYnTZPdtCONkOgjEzM6n3xjnokYFiJj6ReH5iUr0KksgbGuFjJMelkBDg4Kg3jzONQB6xhb2GwcJG3wNUvNQH9fcQDdVF+vaZbJakyzEp3EeXvGjeWtv+mfOiEdAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nor8JpPQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB04C4CEE4;
-	Thu, 13 Feb 2025 17:22:29 +0000 (UTC)
+	 Message-Id:Subject; b=FfJa2AQtff8s8g/j1x4Nt7U2RJU68UGzZ6xhwkVAKHtMxdHX6clPnpYfLZBGJBvA22DwSzwmX4GNNc+LYSBNZOqAhpy7Ql+MGXuFfid9jvtH8ieKybMMa6YiMIGG0mvtSxDhYskYhQZKpvRZjktedqAx8EhbwSEc+okCJwK5qbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH16R/H2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBAEC4CEE5;
+	Thu, 13 Feb 2025 17:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739467349;
-	bh=l0FlV3JhqBNb6Iht2yHMwP7PfD3TpYDSZvC58kqj4RM=;
+	s=k20201202; t=1739467351;
+	bh=S0OhMDWIGff52utNObwPzkVUWW6web7D0hUEz9SRg7I=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Nor8JpPQH4ysaE2ZABWo48WXNTp5scAGRpgLahkWwLdOn/x6ZOv5zuPNxKJJpWLR8
-	 cpkQYQkafOsOBwzpKKRaOTmIWZyf1wJj1dQfvofUjXwzC6BFbGTx+YYDO5WL53ENmv
-	 0axggrRHUfooRztP4qO1wrZ6cYro0D2FaKLbNwitKmQin7VsK1nJ0oS5Y7zDxbnD8W
-	 msJif7Y5XQFuxN/XZpIAk3hyo61SGscfzgkgDT6BJhEehzRgCJAeOl/zhi1k6s08bq
-	 EwLQ2ix4q5anihWhLRverV+znGn+FFT2SU6I9pLD+f+biNxDr/UI6pLc/t3RljXFOd
-	 U1Vl6ccUlhykA==
-Date: Thu, 13 Feb 2025 11:22:28 -0600
+	b=FH16R/H28sbPKn7EPgQPJsfz+nmj0y3nzBbR0EjMfaCwbetXv0ivK1A13IlWN4KYn
+	 xxh3mjPC0v273p7AuQPftFcvd8uxlNddFF8xf+N6cwk+/Wa22aeIXWXylmbbz+3k+1
+	 V4rf78TrK2EGyVh8M+OWZ105e0mtLiRIuntBfBvii2sqzsJ3PoBVxhwQrtzHVHyuEe
+	 DFT9W2L+P2eBWhOZMeCIuA8ryD97qx9iHlWx/vDPxYRiJqEG0HiQNHEPLQCzxJeycx
+	 QfmCplKmvyQI3L6/Q8R4xYTb2NFl637T3OBXR6MlUmQiLMzJtQlUN5bioH6BPvt9ir
+	 cucz4MO8FK2aQ==
+Date: Thu, 13 Feb 2025 11:22:29 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,37 +50,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250212204258.57514-1-krzysztof.kozlowski@linaro.org>
-References: <20250212204258.57514-1-krzysztof.kozlowski@linaro.org>
-Message-Id: <173946704368.3328478.14106859473786211510.robh@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: marvell: armada: Align GPIO hog name with
- bindings
+Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, 
+ linux-samsung-soc@vger.kernel.org, krzk+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ conor+dt@kernel.org
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+In-Reply-To: <20250213000226.277-1-wachiturroxd150@gmail.com>
+References: <20250213000226.277-1-wachiturroxd150@gmail.com>
+Message-Id: <173946704422.3328564.13834631635241088489.robh@kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: exynos: r8s: enable UART interfaces and
+ aliases
 
 
-On Wed, 12 Feb 2025 21:42:58 +0100, Krzysztof Kozlowski wrote:
-> Bindings expect GPIO hog names to end with 'hog' suffix, so correct it
-> to fix dtbs_check warnings like:
+On Thu, 13 Feb 2025 00:02:26 +0000, Denzeel Oliva wrote:
+>  - usi_uart: Main UART interface, required for debugging or
+>    communication.
+>  - usi_bt_uart: UART interface for Bluetooth connectivity.
+>  - Added serial0 and serial1 aliases for standard UART access.
 > 
->   armada-385-clearfog-gtr-s4.dtb: wifi-disable: $nodename:0: 'wifi-disable' does not match '^.+-hog(-[0-9]+)?$'
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 > ---
-> 
-> Changes in v2:
-> 1. Add forgotten Rb tag.
-> ---
->  arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi | 8 ++++----
->  arch/arm/boot/dts/marvell/armada-388-clearfog-base.dts | 2 +-
->  2 files changed, 5 insertions(+), 5 deletions(-)
+>  arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 23 ++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
 
 
@@ -98,18 +89,33 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/marvell/' for 20250212204258.57514-1-krzysztof.kozlowski@linaro.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250213000226.277-1-wachiturroxd150@gmail.com:
 
-arch/arm/boot/dts/marvell/armada-388-clearfog-base.dtb: gpio@18100: Unevaluated properties are not allowed ('gpio-ranges', 'phy1-reset-hog' were unexpected)
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-mvebu.yaml#
-arch/arm/boot/dts/marvell/armada-385-clearfog-gtr-s4.dtb: gpio@18100: Unevaluated properties are not allowed ('gpio-ranges', 'wifi-disable-hog' were unexpected)
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-mvebu.yaml#
-arch/arm/boot/dts/marvell/armada-385-clearfog-gtr-s4.dtb: gpio@18140: Unevaluated properties are not allowed ('gpio-ranges', 'lte-disable-hog', 'poe-reset-hog', 'sar-isolation-hog' were unexpected)
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-mvebu.yaml#
-arch/arm/boot/dts/marvell/armada-385-clearfog-gtr-l8.dtb: gpio@18100: Unevaluated properties are not allowed ('gpio-ranges', 'wifi-disable-hog' were unexpected)
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-mvebu.yaml#
-arch/arm/boot/dts/marvell/armada-385-clearfog-gtr-l8.dtb: gpio@18140: Unevaluated properties are not allowed ('gpio-ranges', 'lte-disable-hog', 'poe-reset-hog', 'sar-isolation-hog' were unexpected)
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-mvebu.yaml#
+Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:122.1-10 Label or path usi_uart not found
+Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:127.1-10 Label or path serial_0 not found
+Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:131.1-13 Label or path usi_bt_uart not found
+Error: arch/arm64/boot/dts/exynos/exynos990-r8s.dts:136.1-10 Label or path serial_1 not found
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos990-r8s.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/exynos990-r8s.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos990-r8s.dtb] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
+make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
 
 
 
