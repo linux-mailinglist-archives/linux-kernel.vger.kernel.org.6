@@ -1,110 +1,138 @@
-Return-Path: <linux-kernel+bounces-512901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD59A33F02
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:23:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD18DA33F03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649AD3A55A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56E2F3A57AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22EB221561;
-	Thu, 13 Feb 2025 12:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuL02+pi"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA12D22155B;
+	Thu, 13 Feb 2025 12:23:08 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE48227EB4;
-	Thu, 13 Feb 2025 12:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAD207E01;
+	Thu, 13 Feb 2025 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739449341; cv=none; b=ElyoCm9jH6RerL0yR7ilb00op774aBx/NvfxgC0i0trYIte1R4z01fay1LvihcoRDAugdppUZRg1j4U9ZB/u/4UDh64M0c/8iH8AN4uoUicGVHZHuZP1/P/Yj8tvzX1Emu5tCSHL7R12wT32oFMhlz42UIV4W4Jqw2BqUgHrfNU=
+	t=1739449388; cv=none; b=EEenRD3m/9mLUfLRJqngqGa8oxefzIOgvtLryL2uUtIjT0uknh5INjx75EALrErByGZHAk0PWy69A0G1QtZD+hfjvC+Y4pCMGmT69kyn05VneTRpvGlbfTUvMMG/56xalf0FDIR2Zn2qpspHxeTjefZUtPo/QS6OG4s82BZB9Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739449341; c=relaxed/simple;
-	bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTaaEif1UqHjL6LW207TNMSnpKoxtaul4+uEil1G1nD7zVLCklG5C4koiGSregPKvNPm9M+5iRYc6tTUPsSmXSrW4Yo6gPhb0a2moGFkhwA9MIAB4Ji56zPs5lojyE+96mClOSYFAQmDgvoM+uK0iJCC+dX4b9bX547wr/Giydw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuL02+pi; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fa18088594so173870a91.3;
-        Thu, 13 Feb 2025 04:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739449339; x=1740054139; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
-        b=YuL02+pi/HjOjeGea+ITDt4AQJLkzdt6HVb2sz4rKEixkSluBb/XeNpMwHAvz9VXU9
-         F8Cko2vpB84w1aL96P036hTceVevjyHpS+ykVHVseXVc9j3UQKqgJaSd4r26mofkJnDO
-         LUlqQQ394PQyYhpCiCH9YtuBz3ga614f542M7eDdUGYBV5UIhABYIsqogs5ocxzaOLvK
-         FbeRam9rb6LQWG3XvSBpfek8kjTg+UO6KFwdkMifkZeSDrkWAs7efzfgeumo/qf6YGY4
-         4WdIguC2+O62J5p2o0mi+PwX0OO00sdGq75yoUyYj0gZ9V1axejaW1Ad30U6CWXdidi6
-         sP7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739449339; x=1740054139;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JhQ8USlPxenG52f+etBxdWz9DV+4IdlE1eKF2Q41L/8=;
-        b=R0tuhZKO0jih0rZfXr2P7jLs8lwcqy52GU8Kqw/WqIDZT3T93Lp7U/WZY5NZgQtNkN
-         V6bmPF870legLBrDJBLzQkIziBWUp/hJ4HHw5adnnK553fZd9pYkuPnafPHfGJNACA17
-         kXBL074L351ZZUq0ZoricN+HcOKuOkDsjTQ4oIqo8v1iojTddYBZWFdxOOKY1PWHWx3n
-         Koh3d4pV/yhDeTQZjySiSlyL7JzQzhvf+gDVj+onsTwyykqsPOKTlx6CDbReBx1p6XCy
-         IqlH2xBu+PHfqqvNu/yT0clnNREvAjpyO5izQmFBkol9FPUfhg1Z5xQ7qVPZFio19/dA
-         zbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYNhdW8nnmtDZtwxgaSVGB18qfTnOVH362oPbC2RDUAGtA6Wh9U4fzgFackJCc9jT40BAxHwttChrOQM4=@vger.kernel.org, AJvYcCWjmVnE0zahJifbm2mSMQ5tXd9rqPoJ8/fLRYxWGrOcaR5za2H8R+lLeVXy0u1S0Pbbszq1TP2688xuKkGPOv8=@vger.kernel.org, AJvYcCX9vz4u/KK5aD9LugtIZOaeskYqmnxhsXCIdFGzk22T2sQQUlvPWfMfNO0dvTUNs8RW2Xyhm5AM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmJ2aiz6ftCd2LwCE0ipfZdUTUMq/zFVrrE0rF6yJAnUcx52ir
-	GOhxmddvcIKCEzBkEYT5HcaCZ+zs97CMuUTZFXaWRTBmcXLXjslZN+JsqQbmVJP0Bywm9EXuW5W
-	vp8wiVRDis0xfiP2islsYj7z+pps=
-X-Gm-Gg: ASbGncumbbUxTktnX+lo5diLw5dOP8Umy7l7W1NUB5H2jfIXOk9bRZ0mw7fFZ815gHC
-	Urzkv7iDItApmh0yx73LtfEyNZwmM3NGnUdZzRzht5IQPJDY/ElrXUz9cOvbnxdMm1Ofd/k1l
-X-Google-Smtp-Source: AGHT+IHmYvEzL9KGp/GiZCJityFb8+Au3r1Y0YDY9cYrjSKGnUmZw+tnh/sBiqD37rnyvyHdxym1Eq0TTuz5tYj63uE=
-X-Received: by 2002:a17:90b:33cb:b0:2ea:853a:99e0 with SMTP id
- 98e67ed59e1d1-2fbf5c75392mr4064811a91.5.1739449339042; Thu, 13 Feb 2025
- 04:22:19 -0800 (PST)
+	s=arc-20240116; t=1739449388; c=relaxed/simple;
+	bh=XrCZbI1KCwa0EfL5BDXDVd6ZESCjvqyob9kFh9a5CVM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=txuam7u/07suHx4qxvUq7Q5bPLZLiAcMNhtNX3k08LvvpH9IMnhAsA9gNfBIp+hwtDxQ0Z0K3PZk/vA9cgmyW3ZljNGM026wLetGIWdd8YVQKscxZoq7enjb56rIwgnWKbKtqQhR7avJRAZ27hpUEsrn2TG5HBZVDYRqR+F7HWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 13 Feb
+ 2025 15:23:00 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 13 Feb
+ 2025 15:23:00 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<accessrunner-general@lists.sourceforge.net>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<syzbot+ccbbc229a024fa3e13b5@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] usb: atm: cxacru: fix a flaw in existing endpoint checks
+Date: Thu, 13 Feb 2025 15:22:57 +0300
+Message-ID: <20250213122259.730772-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210163732.281786-1-ojeda@kernel.org> <20250211103333.GB8653@willie-the-truck>
-In-Reply-To: <20250211103333.GB8653@willie-the-truck>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 13 Feb 2025 13:22:06 +0100
-X-Gm-Features: AWEUYZnMSt2s3upFBai0wYaA0s4vfSFiHEc-syAvZrBIXeINByCQBVsZZ4yEXKc
-Message-ID: <CANiq72=n++Hb1KX5fHCN=XayfPOxgayb=sDG4AvyEnDOZqAsNA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: rust: clean Rust 1.85.0 warning using softfloat target
-To: Will Deacon <will@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, 
-	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Matthew Maurer <mmaurer@google.com>, Ralf Jung <post@ralfj.de>, 
-	Jubilee Young <workingjubilee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Tue, Feb 11, 2025 at 11:33=E2=80=AFAM Will Deacon <will@kernel.org> wrot=
-e:
->
-> Patch looks fine to me, but I'll wait for Matthew to confirm that it
-> works for them. I'm also fine with adding the rustc-min-version helper
-> at the same time, tbh -- it's not exactly rocket science, but it would
-> need an Ack from Masahiro.
+Syzbot once again identified a flaw in usb endpoint checking, see [1].
+This time the issue stems from a commit authored by me (2eabb655a968
+("usb: atm: cxacru: fix endpoint checking in cxacru_bind()")).
 
-Thanks Will -- happy to take it through the Rust tree for if needed
-with your Ack, I have to send a couple other bits anyway for -rc3.
+While using usb_find_common_endpoints() may usually be enough to
+discard devices with wrong endpoints, in this case one needs more
+than just finding and identifying the sufficient number of endpoints
+of correct types - one needs to check the endpoint's address as well.
 
-And, yeah, I went back and forth on whether to do the helper directly... :)
+Since cxacru_bind() fills URBs with CXACRU_EP_CMD address in mind,
+switch the endpoint verification approach to usb_check_XXX_endpoints()
+instead to fix incomplete ep testing.
 
-Cheers,
-Miguel
+[1] Syzbot report:
+usb 5-1: BOGUS urb xfer, pipe 3 != type 1
+WARNING: CPU: 0 PID: 1378 at drivers/usb/core/urb.c:504 usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
+...
+RIP: 0010:usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
+...
+Call Trace:
+ <TASK>
+ cxacru_cm+0x3c8/0xe50 drivers/usb/atm/cxacru.c:649
+ cxacru_card_status drivers/usb/atm/cxacru.c:760 [inline]
+ cxacru_bind+0xcf9/0x1150 drivers/usb/atm/cxacru.c:1223
+ usbatm_usb_probe+0x314/0x1d30 drivers/usb/atm/usbatm.c:1058
+ cxacru_usb_probe+0x184/0x220 drivers/usb/atm/cxacru.c:1377
+ usb_probe_interface+0x641/0xbb0 drivers/usb/core/driver.c:396
+ really_probe+0x2b9/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+...
+
+Reported-and-tested-by: syzbot+ccbbc229a024fa3e13b5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ccbbc229a024fa3e13b5
+Fixes: 2eabb655a968 ("usb: atm: cxacru: fix endpoint checking in cxacru_bind()")
+Cc: stable@kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+P.S. another option would be to try to use endpoints found by
+usb_find_common_endpoints() and use them to fill and send URBs.
+But this may interfere with real devices and I have no way of
+testing them myself.
+
+ drivers/usb/atm/cxacru.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/atm/cxacru.c b/drivers/usb/atm/cxacru.c
+index 0dd85d2635b9..47d06af33747 100644
+--- a/drivers/usb/atm/cxacru.c
++++ b/drivers/usb/atm/cxacru.c
+@@ -1131,7 +1131,10 @@ static int cxacru_bind(struct usbatm_data *usbatm_instance,
+ 	struct cxacru_data *instance;
+ 	struct usb_device *usb_dev = interface_to_usbdev(intf);
+ 	struct usb_host_endpoint *cmd_ep = usb_dev->ep_in[CXACRU_EP_CMD];
+-	struct usb_endpoint_descriptor *in, *out;
++	static const u8 ep_addrs[] = {
++		CXACRU_EP_CMD + USB_DIR_IN,
++		CXACRU_EP_CMD + USB_DIR_OUT,
++		0};
+ 	int ret;
+ 
+ 	/* instance init */
+@@ -1179,13 +1182,11 @@ static int cxacru_bind(struct usbatm_data *usbatm_instance,
+ 	}
+ 
+ 	if (usb_endpoint_xfer_int(&cmd_ep->desc))
+-		ret = usb_find_common_endpoints(intf->cur_altsetting,
+-						NULL, NULL, &in, &out);
++		ret = usb_check_int_endpoints(intf, ep_addrs);
+ 	else
+-		ret = usb_find_common_endpoints(intf->cur_altsetting,
+-						&in, &out, NULL, NULL);
++		ret = usb_check_bulk_endpoints(intf, ep_addrs);
+ 
+-	if (ret) {
++	if (!ret) {
+ 		usb_err(usbatm_instance, "cxacru_bind: interface has incorrect endpoints\n");
+ 		ret = -ENODEV;
+ 		goto fail;
 
