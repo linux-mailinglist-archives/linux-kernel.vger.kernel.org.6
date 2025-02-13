@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-512972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D8CA33FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:08:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B258A33FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571793AA9F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF94A3AB986
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB88A23F414;
-	Thu, 13 Feb 2025 13:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RYZa6kWD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA2223F41C;
+	Thu, 13 Feb 2025 13:09:06 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA0F23F42D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C063123F414
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452121; cv=none; b=lmipUHaL03fpo+mw/UBfvjc46K21ESuPYj0ZQASL73oaqUncwla7jhv4L+PM00CZ3H0aIR6qnot5rInTWW/3EmOuY9oVCHazL6qTzGj6xUiQlJfx+8YxbTJ/e2TvdeQLJAK7HptqWK9aHz98Mi9/nKAul5yOz1/ugTrrjRDPlpw=
+	t=1739452146; cv=none; b=UsEd2ORm8txI1qqNIfuZ4lD9m2l7k9UiQ7mWPPpsLBAaABUQuxsEjaNUAF6tuCQfS8oL0HbNQVUUfUFp2NL6nKkhFSYGdpdwwoBep5kCf73bOxqylfURowheKNk5ZHKTsfNjjt8ZspmuAXf40BtlfKTQIEzqHrYFrfyg8nX4ZKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452121; c=relaxed/simple;
-	bh=WB4utiqEoEE/vY/GQYhBmlPqe6tcH8mD5sNTsPpqeAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvuQdkDTaK5iZvzrmjvbhmYy2Q0vCwOY1lj9E1PgRqjzAr74lOP1ND48R5Lbw10QKge37DoOgwULOxU+4siX8V2hnv0IbbzGKh0Eld+Srcr85PEy7y9HKSw/GKHoJcY8jSP38w5JiWX2cf1w6KsSCwQi3dA4EHHBD0rtUwLNIVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RYZa6kWD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Aapw2IErGtlo9KJno5VNShbCsvVlA1z8qG2MhjGNFrk=; b=RYZa6kWD/sfxt+//pyVvCW0/aN
-	wwfbeYdcWxJ78NJsleXEWRLQGPxTfS/yVMPr0FxLlUaVLd8JhuJf1TzYYE3blhi4V240K3Z7P7Op4
-	5tqLpD3Hbfy7iucyUdEHtAXcgJtapko0PtOpY6iRy+1ph7HO9pEekzom5ssY5XwXtMRN8tvsRCjJZ
-	5IUfOU9NxKUKhnZA+eLCJeUfTghk8APUxVvDz6hqoKbsrjAkGdUppN+t7Ycmjp1amxJUnSjRoP5WF
-	A2OW3qb0Z0MuldnD2mz0hODqjJj61CvWhowSoMJFFC19EwDmlOO1W5ZeU4WdxqZZnny26NX+CraUp
-	ZDfSFhBA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tiYxG-00000000zsJ-0R1X;
-	Thu, 13 Feb 2025 13:08:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AF5A73001AC; Thu, 13 Feb 2025 14:08:33 +0100 (CET)
-Date: Thu, 13 Feb 2025 14:08:33 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com,
-	linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Subject: Re: [PATCH v2 24/24] perf: Make perf_pmu_unregister() useable
-Message-ID: <20250213130833.GH28068@noisy.programming.kicks-ass.net>
-References: <20250205102120.531585416@infradead.org>
- <20250205102450.888979808@infradead.org>
- <1f4e4bb1-ba5e-4e5f-b6e3-e7603e3d6b0e@amd.com>
- <20250212124945.GH19118@noisy.programming.kicks-ass.net>
- <57fa247d-9c85-4f20-9723-d568272651f9@amd.com>
+	s=arc-20240116; t=1739452146; c=relaxed/simple;
+	bh=ntM782/2jzL/G23Vl7z0e6iSOMLQDb1SW0hS+eVSL0E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AzWjBkQprYfYDtrgdXmxYRmfGORLmbpI67e+VL5/lia7OKe729WZ1hI9HdlLvbsWfSfoTCPlpwz8XzwpXVP8Ht/gCy1dXLLiPMZgPvg1mQrqgSgsHSwEAFb/93oA6pE+eK0HyX/auJN2SSf82itOe5Q7Qfp61iKNj1kdaUVqlmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4YtwTM24NfzYmW0V;
+	Thu, 13 Feb 2025 21:07:51 +0800 (CST)
+Received: from a003.hihonor.com (10.68.18.8) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
+ 2025 21:08:54 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a003.hihonor.com (10.68.18.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Feb
+ 2025 21:08:54 +0800
+Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
+ a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
+ 15.02.1544.011; Thu, 13 Feb 2025 21:08:54 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Barry
+ Song <21cnbao@gmail.com>, yipengxiang <yipengxiang@honor.com>, "Hugh Dickins"
+	<hughd@google.com>, Chris Li <chrisl@kernel.org>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2ludGVy?=
+ =?utf-8?B?IGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
+Thread-Topic: [PATCH] mm: Fix possible NULL pointer dereference in
+ __swap_duplicate
+Thread-Index: Adt8+0GogoLTL6hgQfOcUIXDGgpBSQAbnlYAACsSnkA=
+Date: Thu, 13 Feb 2025 13:08:54 +0000
+Message-ID: <da7e1ee115454cf8898b4bbe228a5a9c@honor.com>
+References: <44655569e3a1419f800952004f07e714@honor.com>
+ <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
+In-Reply-To: <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57fa247d-9c85-4f20-9723-d568272651f9@amd.com>
 
-On Thu, Feb 13, 2025 at 01:22:55PM +0530, Ravi Bangoria wrote:
-> > Does this work?
-> > 
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -2303,6 +2303,7 @@ static void perf_child_detach(struct per
-> >  
-> >  	sync_child_event(event);
-> >  	list_del_init(&event->child_list);
-> > +	event->parent = NULL;
-> >  }
-> >  
-> >  static bool is_orphaned_event(struct perf_event *event)
-> 
-> Apparently not, it ends up with:
-> 
->   ------------[ cut here ]------------
->   WARNING: CPU: 145 PID: 5459 at kernel/events/core.c:281 event_function+0xd2/0xf0
-
-Durr, do you have an updated test case?
-
-> Something like below instead? I haven't tested it thoroughly though.
-> 
-> ---
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index d2b87a425e75..4e131b1c37ad 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -13645,20 +13645,25 @@ perf_event_exit_event(struct perf_event *event,
->  	unsigned long detach_flags = DETACH_EXIT;
->  
->  	if (parent_event) {
-> -		/*
-> -		 * Do not destroy the 'original' grouping; because of the
-> -		 * context switch optimization the original events could've
-> -		 * ended up in a random child task.
-> -		 *
-> -		 * If we were to destroy the original group, all group related
-> -		 * operations would cease to function properly after this
-> -		 * random child dies.
-> -		 *
-> -		 * Do destroy all inherited groups, we don't care about those
-> -		 * and being thorough is better.
-> -		 */
-> -		detach_flags |= DETACH_GROUP | DETACH_CHILD;
->  		mutex_lock(&parent_event->child_mutex);
-> +		if (event->attach_state & PERF_ATTACH_CHILD) {
-> +			/*
-> +			 * Do not destroy the 'original' grouping; because of the
-> +			 * context switch optimization the original events could've
-> +			 * ended up in a random child task.
-> +			 *
-> +			 * If we were to destroy the original group, all group related
-> +			 * operations would cease to function properly after this
-> +			 * random child dies.
-> +			 *
-> +			 * Do destroy all inherited groups, we don't care about those
-> +			 * and being thorough is better.
-> +			 */
-> +			detach_flags |= DETACH_GROUP | DETACH_CHILD;
-> +		} else {
-> +			mutex_unlock(&parent_event->child_mutex);
-> +			parent_event = NULL;
-> +		}
->  	}
-
-Yeah, that might do, but not really nice. But perhaps its the best we
-can do. I'll give it some thought.
+PiANCj4gT24gV2VkLCAxMiBGZWIgMjAyNSAwMzoxMzo0NiArMDAwMCBnYW94dSA8Z2FveHUyQGhv
+bm9yLmNvbT4gd3JvdGU6DQo+IA0KPiA+IHN3cF9zd2FwX2luZm8oKSBtYXkgcmV0dXJuIG51bGw7
+IGl0IGlzIG5lY2Vzc2FyeSB0byBjaGVjayB0aGUgcmV0dXJuDQo+ID4gdmFsdWUgdG8gYXZvaWQg
+TlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLiBUaGUgY29kZSBmb3Igb3RoZXIgY2FsbHMgdG8NCj4g
+PiBzd3Bfc3dhcF9pbmZvKCkgaW5jbHVkZXMgY2hlY2tzLCBhbmQgX19zd2FwX2R1cGxpY2F0ZSgp
+IHNob3VsZCBhbHNvDQo+ID4gaW5jbHVkZSBjaGVja3MuDQo+IA0KPiBBY3R1YWxseSB2ZXJ5IGZl
+dyBvZiB0aGUgc3dwX3N3YXBfaW5mbygpIGNhbGxlcnMgY2hlY2sgZm9yIGEgTlVMTCByZXR1cm4u
+DQpUaGUgc3dhcGZpbGUuYyBmaWxlIGNvbnRhaW5zIHRocmVlIGluc3RhbmNlcyB3aGVyZSB0aGUg
+cmV0dXJuIHZhbHVlIG9mDQpzd3Bfc3dhcF9pbmZvKCkgaXMgY2hlY2tlZCBmb3IgYSBOVUxMIHJl
+dHVybi4gSW4gb3RoZXIgZmlsZXMgdGhhdCBjYWxsDQpzd3Bfc3dhcF9pbmZvKCksIEkgaGF2ZSBj
+b25maXJtZWQgdGhhdCB0aGVyZSBhcmUgbm8gc3VjaCBjaGVja3MuDQpUaGUgZGVzY3JpcHRpb24g
+aW4gdGhlIHBhdGNoIGlzIGluYWNjdXJhdGUsIGFuZCBJIGhhdmUgbWFkZSBtb2RpZmljYXRpb25z
+DQppbiBwYXRjaCB2Mi4NCj4gDQo+ID4gVGhlIHJlYXNvbiB3aHkgc3dwX3N3YXBfaW5mbygpIHJl
+dHVybnMgTlVMTCBpcyB1bmNsZWFyOyBpdCBtYXkgYmUgZHVlDQo+ID4gdG8gQ1BVIGNhY2hlIGlz
+c3VlcyBvciBERFIgYml0IGZsaXBzLg0KPiANCj4gUXVpdGUgcG9zc2libHkgaXQncyBhIGtlcm5l
+bCBidWcuDQo+IA0KPiA+IFRoZSBwcm9iYWJpbGl0eSBvZiB0aGlzIGlzc3VlIGlzIHZlcnkNCj4g
+PiBzbWFsbCwgYW5kIHRoZSBzdGFjayBpbmZvIHdlIGVuY291bnRlcmVkIGlzIGFzIGZvbGxvd3Pv
+vJoNCj4gPiBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2Ug
+YXQgdmlydHVhbCBhZGRyZXNzDQo+ID4gMDAwMDAwMDAwMDAwMDA1OA0KPiA+DQo+ID4gLi4uDQo+
+ID4NCj4gPiAtLS0gYS9tbS9zd2FwZmlsZS5jDQo+ID4gKysrIGIvbW0vc3dhcGZpbGUuYw0KPiA+
+IEBAIC0zNTIxLDYgKzM1MjEsOCBAQCBzdGF0aWMgaW50IF9fc3dhcF9kdXBsaWNhdGUoc3dwX2Vu
+dHJ5X3QgZW50cnksDQo+IHVuc2lnbmVkIGNoYXIgdXNhZ2UsIGludCBucikNCj4gPiAgCWludCBl
+cnIsIGk7DQo+ID4NCj4gPiAgCXNpID0gc3dwX3N3YXBfaW5mbyhlbnRyeSk7DQo+ID4gKwlpZiAo
+dW5saWtlbHkoIXNpKSkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPg0KPiA+ICAJb2Zmc2V0
+ID0gc3dwX29mZnNldChlbnRyeSk7DQo+ID4gIAlWTV9XQVJOX09OKG5yID4gU1dBUEZJTEVfQ0xV
+U1RFUiAtIG9mZnNldCAlIFNXQVBGSUxFX0NMVVNURVIpOw0KPiANCj4gT0ssIEkgZ3Vlc3MgYXZv
+aWRpbmcgdGhlIGNyYXNoIGlzIGdvb2QuICBCdXQgcGxlYXNlIGxldCdzIGluY2x1ZGUgYSBXQVJO
+IHNvIHRoYXQNCj4gd2UgY2FuIHBlcmhhcHMgZml4IHRoZSBidWcsIGlmIG9uZSBpcyB0aGVyZS4N
+Ckdvb2QuIEknbGwgY2hhbmdlIGl0IGFzIG1lbnRpb25lZCBhbmQgc2VuZCBhIG5ldyBwYXRjaC4N
+CglzaSA9IHN3cF9zd2FwX2luZm8oZW50cnkpOw0KKwlpZiAodW5saWtlbHkoIXNpKSkgew0KKwkJ
+V0FSTigxLCBLRVJOX0VSUiAiJXM6ICVzJTA4bHhcbiIsIF9fZnVuY19fLCBCYWRfZmlsZSwgZW50
+cnkudmFsKTsNCisJCXJldHVybiAtRUlOVkFMOw0KKwl9DQoNCg0K
 
