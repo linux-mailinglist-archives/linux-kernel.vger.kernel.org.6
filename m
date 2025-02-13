@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-513129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3749A341DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:26:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2596DA341D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D1E3AC07E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1262E166067
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6C2281363;
-	Thu, 13 Feb 2025 14:23:47 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4920281366;
+	Thu, 13 Feb 2025 14:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llstds95"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7081448E3;
-	Thu, 13 Feb 2025 14:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A1F281353;
+	Thu, 13 Feb 2025 14:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739456627; cv=none; b=rkzTizfQHDyLMR+stf35LWqRDLkod7vm6EnA+Z1HxjHWw81iF8YvNrsOvZMyc25Me/YuS45ydXvf+/MF/dCHsFIxdIO97YQIVVxYF1hl5Fa2gdvATWSjKMkQ9PtIQTsfGZicpPJ2vLDCil98pqmFLq8TY28uEMSHL+HQZySp7S0=
+	t=1739456637; cv=none; b=Kh4YYW3OZwpUrhY8CJ/1aJC8Nc04hfDFWdf+s0M5hpQ5UPsAE246i2AjUhPKTIk70vWp2EJrcmuknaAGSN6O6ZS/+UZTZ05HOvJnCfnPLcwQBP5siH9ykyEt6RXGUAnNTYo1CI6W8XXMX30c/Y7vdIj2zn8gCCNQVPN/xBnp25M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739456627; c=relaxed/simple;
-	bh=F6BRopu2Me//63E7XZUkAT+jprfQeLRcaKQajamFl3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g/ADACVgK/QR8Es54SljxbcGqy4RnhGhvFEYMH0cy07kI7PkjEwVLYUKiwHgh670s+9IHNenDibleTG82jzszACJtcI417oCOZigkXW7xlGJ7pX3ebsbJlwb2uQjvMb5umsa5ZpAiMyMA/0tJ5grLTtNe3NasxY9r/Sot9t//c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso155167666b.1;
-        Thu, 13 Feb 2025 06:23:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739456620; x=1740061420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VHSgJszfLDZeHaQS5NV0NOPYQsN3xJT9cATzZ4X1fNQ=;
-        b=SKFEoaUB/DHGlbUjqFYbLix5gE/g/7SI+3NnywtMXI8mQWN6kv+jhTXOOKkSguVbgh
-         obKBqYtE1kOKDgcwBeZxo5z37FQsMu16yVlZVnMENSIxr6nD76dYO2xF2U19o9i4u3It
-         rBQ79uZd7mrdxv0OhXH0z0Q/dlVgc0uVrDZhD+U7lHjQGWQ6dgXzNjQc7iD+mX3O/Hfo
-         vkzB08hPvgwDQlGuEOJExblWNrxmPyrC5cBHQgbfju41ns8YyxsoeyBMsOR0Dq0Hc2xk
-         b9h00kWnk1lY29m66qfaf2ZAyUJm2fZkeGdF02M2u05xxSHaU694d9zKvbXBD0xuNrgs
-         j1/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUGQscAX9qggAkQ28SCCWSOD1vAfbeuHmD9bG8aimoQ0rOYHM/4rtVFiMI0DmGWeHnOgs7oj9rRKfM=@vger.kernel.org, AJvYcCUtgT0DMKKh3IMS31xSfm2oZx66fFYeM/Rdp806fbPQAseHY0HcAFAZmguIbnYfmNGxRn2avEbICmanHxBW@vger.kernel.org, AJvYcCXchF0N3l+LAEciShD5nhMqDhKkH8QDPYyH2SbjvmKn3sYK15hDghlLP3BU70/VvOHG1ejQiA21Opa5AlHGX+Kh+hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoSlinQt1/7ar0umZ4GVrbZqCGjySrAZ78dknTQf0lHHYAaZCI
-	nsJ5UuYTu8k39YCiIM9WcwWvg3OvVIur3XeUq+PkgnE7mOaIrjENQtFltf97Kkw=
-X-Gm-Gg: ASbGncs5bAIn97v+RCo6v+O48aHGeVebCjleEKxrMA5WzrWYf9OnxOBcgvWgdQJ2PyQ
-	F2IfZuUgrED6FG0X3gCgVLyTFPAu318TzjvB9ejxk2SrVAaZkQd20S9J7mYS250M5Zk9tCRkkU1
-	BANZlYoCCkWc6nPAIju4J/v62BjtijXWMvacrDhJGRLxpU7/tCB7UgqC5PUzpWjJh/obLacGgzU
-	fhjLw717sSySD8ZsHbdhIXw6z0xpsc6KNCpbvqBDuLYhBNrTjt0h6Js2h6Vc0LOnrwxrnyqJLeq
-	+oUMI8wnFVZhfX4z8tM1LhbbVNxV+XXHh4iR90CicrRoZlbYXSpkVQ==
-X-Google-Smtp-Source: AGHT+IFYYKS5kSeyZiS3FH2bgkDEpXj8AC7vIzs7bmUkKzrj9dPyfLNRAfn+288ok9ovHPW0EgCR4w==
-X-Received: by 2002:a17:907:7208:b0:ab6:36fd:942a with SMTP id a640c23a62f3a-ab7f34d3138mr714516766b.50.1739456620007;
-        Thu, 13 Feb 2025 06:23:40 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bf70asm139192466b.180.2025.02.13.06.23.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 06:23:38 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dccc90a52eso1407914a12.0;
-        Thu, 13 Feb 2025 06:23:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWgPCiL0R/XNOtQTmSMnNYSMX2EXSS4dhb8EJbkGtziRTV8obXo9zCgOv7yEAg+RvGp7wztovlw/eLneQD2@vger.kernel.org, AJvYcCXScF9cfFBWRRqydzIyQ6VIir/uumxb7soxuu7T81v4Xb/cZKWW6QpnYmarFRP35ISHwyencKV1mLw=@vger.kernel.org, AJvYcCXbTv7dbCOiufzMM5Hr0/lj6EcyOE02lPhkwvQT8fJpW09uE3hg1SMDYcQMHY0VfAUhr1057XXAWxK0FcV9k2W/p54=@vger.kernel.org
-X-Received: by 2002:a05:6402:1f11:b0:5dc:cc90:a384 with SMTP id
- 4fb4d7f45d1cf-5deadde72b0mr6864574a12.22.1739456618709; Thu, 13 Feb 2025
- 06:23:38 -0800 (PST)
+	s=arc-20240116; t=1739456637; c=relaxed/simple;
+	bh=cBTRS+nmrHs4JvsqrD627WeGldxDcr6ZnR7AZDCpZug=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=A18XOV9Ss5lsP/jsQ/mki3g1jVi7XfvKtppHq3hYdQeoCpAG0+LjkeLpc4ic/2Je7vZQJRdAqodtbKBsyrZq79btviJHqQ6P4kqKpww9dI0ImgKHjMgeI3/5JlyrMyDSZJe3pCIoyTsr8CuXopVnYWeOxKmXqNBMaaRuy+FhTSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llstds95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF8BC4CED1;
+	Thu, 13 Feb 2025 14:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739456636;
+	bh=cBTRS+nmrHs4JvsqrD627WeGldxDcr6ZnR7AZDCpZug=;
+	h=Date:From:To:Cc:Subject:From;
+	b=llstds95XRxYEq8Dz4ulB1AduAXBP8oA0Jg3g28QYkglDRKculFtywpv6958sM8h3
+	 ijw6VK95/dhUqAQ/vGFx7XRZUlwuIDTYAbi5rKAkC9MMZfkaFRhg7Zurb3NdU/7RO8
+	 bDiYwXFQVvhKa1ASIHmNtCaoxbYCe9xzfzIyuDigKchxvQR8VdclcBdFrN6ROXPJRb
+	 O+lqIxQhHRcqXK+gw2HLPr7j35tqF+0SE7cZVmQYo4Q3h6qw5K5cJ3+yvhTcZaQ9NO
+	 I5/EgOuF9sEwj5C5OEZgK04NM86qLlPt/6AugHbcX1cAqQ6jinggAZUH/pE8XmUzh0
+	 YlIYTAJTs23TQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tia8M-000000003va-1WPd;
+	Thu, 13 Feb 2025 15:24:06 +0100
+Date: Thu, 13 Feb 2025 15:24:06 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] USB-serial device ids for 6.14-rc3
+Message-ID: <Z64AhiS7ENsTHAPb@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212221305.431716-1-fabrizio.castro.jz@renesas.com>
- <20250212221305.431716-7-fabrizio.castro.jz@renesas.com> <CAMuHMdVUr6Z1o6MhxOj18d8rwV8O-AJQxWFEpMT8pcvb=DHB3A@mail.gmail.com>
-In-Reply-To: <CAMuHMdVUr6Z1o6MhxOj18d8rwV8O-AJQxWFEpMT8pcvb=DHB3A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Feb 2025 15:23:25 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUV2LvjO=1MhZOp0K-ueVddAvwQeS_W5Bf8ojzzHv1g_w@mail.gmail.com>
-X-Gm-Features: AWEUYZnS9mM7jaxvK2a_ueemR04sc4fa_qPjkj5le4OuSMMkxbS1Lm4j_k4gSzQ
-Message-ID: <CAMuHMdUV2LvjO=1MhZOp0K-ueVddAvwQeS_W5Bf8ojzzHv1g_w@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Fabrizio,
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-On Thu, 13 Feb 2025 at 15:19, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Wed, 12 Feb 2025 at 23:13, Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com> wrote:
-> > The DMAC IP found on the Renesas RZ/V2H(P) family of SoCs is
-> > similar to the version found on the Renesas RZ/G2L family of
-> > SoCs, but there are some differences:
-> > * It only uses one register area
-> > * It only uses one clock
-> > * It only uses one reset
-> > * Instead of using MID/IRD it uses REQ NO/ACK NO
-> > * It is connected to the Interrupt Control Unit (ICU)
-> > * On the RZ/G2L there is only 1 DMAC, on the RZ/V2H(P) there are 5
-> >
-> > Add specific support for the Renesas RZ/V2H(P) family of SoC by
-> > tackling the aforementioned differences.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > ---
-> > v1->v2:
-> > * Switched to new macros for minimum values.
->
-> Thanks for the update!
->
-> > --- a/drivers/dma/sh/Kconfig
-> > +++ b/drivers/dma/sh/Kconfig
-> > @@ -53,6 +53,7 @@ config RZ_DMAC
-> >         depends on ARCH_R7S72100 || ARCH_RZG2L || COMPILE_TEST
-> >         select RENESAS_DMA
-> >         select DMA_VIRTUAL_CHANNELS
-> > +       select RENESAS_RZV2H_ICU
->
-> This enables RENESAS_RZV2H_ICU unconditionally, while it is only
-> really needed on RZ/V2H, and not on other arm64 SoCs, or on arm32
-> or riscv SoCs.
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-As ARCH_R9A09G057 already selects RENESAS_RZV2H_ICU, you could provide
-a dummy rzv2h_icu_register_dma_req_ack() for the !RENESAS_RZV2H_ICU
-case, or even disable all ICU-related code when it is not needed.
+are available in the Git repository at:
 
-Gr{oetje,eeting}s,
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.14-rc3
 
-                        Geert
+for you to fetch changes up to 6aa8a63c471eb6756aabd03f880feffe6a7af6c9:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  USB: serial: option: drop MeiG Smart defines (2025-02-11 17:08:58 +0100)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+----------------------------------------------------------------
+USB-serial device ids for 6.14-rc3
+
+Here are some new modem device ids and a couple of related cleanups of
+the device id table.
+
+All have been in linux-next with no reported issues.
+
+----------------------------------------------------------------
+Chester A. Unal (1):
+      USB: serial: option: add MeiG Smart SLM828
+
+Fabio Porcedda (2):
+      USB: serial: option: add Telit Cinterion FN990B compositions
+      USB: serial: option: fix Telit Cinterion FN990A name
+
+Johan Hovold (1):
+      USB: serial: option: drop MeiG Smart defines
+
+ drivers/usb/serial/option.c | 49 +++++++++++++++++++++++++++------------------
+ 1 file changed, 29 insertions(+), 20 deletions(-)
 
