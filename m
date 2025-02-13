@@ -1,248 +1,197 @@
-Return-Path: <linux-kernel+bounces-513938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45A3A35072
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:24:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD916A35073
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59E1F16D4EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52766188FC51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C37266B58;
-	Thu, 13 Feb 2025 21:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012952661BE;
+	Thu, 13 Feb 2025 21:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="OQs/72NF"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWJpYHTG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064FA266194
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DA8266194
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739481863; cv=none; b=cGSnro/b6LTMEkWDyTEgwZxJRKVQK8cR9QQsm6wadOI7YmpFegialI5LJtco28PwCAva52M/2sXcKL7VxY/vpQCoKRz8i1CNFBhYRM0qbnZejZhiRvhuv1kqGBV3gS/HUS9QgvkNhHM/dnF7Kzy4pzc7YjzmYUnsoSx6Z1jwLpc=
+	t=1739481879; cv=none; b=Q0ABX0rY2Op2zCfRPz9pwbvWa9zM/sunDXJUMKmVKiMrd4ct4Q8DjhUdYQQspxQaz/uSPYZTcpan7TvP5BHZU0kma17KxJCh7HRagxAFHt3yXIzfnYaOfjI6HGtR3QM25xXz1XiNfwCoEgPAfTOsGimFqnRzkFKhxAiUkWEWa4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739481863; c=relaxed/simple;
-	bh=iI6C26wleg084gzew4BdYNTkld9u5dqIEvcyFmn5298=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTTC4z9k9n01y6HwUdgK+iCLbFN+pIhkoufNLLTabsbtMhjRUcafISL0tRfInkrVd/UmkPnYUKwjz4VF33WDBzu8qyBziojJgIjqe4HfKYACIZ7mkl56L7IbwBpHIrHCKuoPvdBpRCFrBJ6tMIlOhyFCgwXQG1kYQYKdECT19QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=OQs/72NF; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso623186f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:24:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1739481860; x=1740086660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4C1/ZT8Zanwnf3nw3IJ3sq2VeuwdAnAJQZPxh7FXkd0=;
-        b=OQs/72NFdpmMjvoppiojGeUI/D8+llYBR57dcNOiAA9f4iFQqoIDsu26DLlwU9j6dR
-         UPmW9R2aBeNkek+MaCQHAE614nwaarPK9zCEZW3r4nKbzyyUVOQgOd58jodpaFCRwQq1
-         Pdn3bgQEy6WjUZW52BdMShkaKicVrmuaVVXMk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739481860; x=1740086660;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4C1/ZT8Zanwnf3nw3IJ3sq2VeuwdAnAJQZPxh7FXkd0=;
-        b=XW7dIUjwyWZEVwk7Ofy9/mDzfTyxE4i6Ymoyn7sGuEhoM8CwLfpns+kUjbKh0bPg1e
-         RxX7JjT1+/vGCGWwjinUJ1002o0xGOfIrZKpK836SoXT7F4BfNTqK0OT0lbd/zznoMhj
-         dYX6VSv9yUT936vuCPdSWFznDGkcSKDlBIjsK9Q51wqXnriJNvVNoJb3WX3CU6RkaIbE
-         hIh73mCOvxlPh/7yFv+9UIcJmWO07EzzuxyGurca04NIzjCsVPa3QFCP5hJ98/0FtYos
-         ouThPC5Co8kOM0VgX6a2JxLg2JTsHT95gZdolJRGjhMDNv+IAOsDFtjT8P6R5ldMsk/t
-         hCow==
-X-Forwarded-Encrypted: i=1; AJvYcCUVohr35CS6RPEXPE/38e6fZn0LpCZSsushOy6GpRU7GNuOnK5+pKXYZsllOjK8pZCccL4IBzU/sfGjKRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDP073sRUZPlpgoe9AeMDHk/YP1u5AUd/cU/1NC3uxWZfb/NHN
-	p3fpV8MWCzzNSAKNqPyB56CrINAE7vtfRBz8cF7zzxu5+SJlQ015kEnWD0TFXIY=
-X-Gm-Gg: ASbGncu8KUxE4cJLE/u36lGN5mUbz8AVQ2ZgYcgYgQeeaBlHHALfL3Oa06ktKgr9MPU
-	ussuyxzzEzHcdTucmVKxSPm1DVqcUIbholiNidWTn+Lc4ocRJ1+VjsIm/H0Zi7cyXhqC76qN4rv
-	gku96KTI/UtPCcUSZWbbCIvdou0yroBYS6QaNJKmT0hlUR9UztKVbJnbsZFhWzvlYvaC9i+a2/I
-	blIwqiQz+t6kvjwnYcTMgFUTQsy7B3XKhYtogxBVu3URESZF5nbX68kPUTSzU3QXW7jCZpf2ybb
-	y63Hon8EOtcstSeE6fsLfGR4QPNpTCqAm7E7GYQnXhscS3+0zGkzum8=
-X-Google-Smtp-Source: AGHT+IGBwzS/MNNlCwwPViJa+G8sfp4cLDzei/u3HwkccifrQNRaX0goflwqcbI5RnVxIh6MLHOibw==
-X-Received: by 2002:a05:6000:186b:b0:38f:268c:75d6 with SMTP id ffacd0b85a97d-38f268c772fmr3639761f8f.26.1739481860227;
-        Thu, 13 Feb 2025 13:24:20 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b44b2sm2827090f8f.20.2025.02.13.13.24.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 13:24:19 -0800 (PST)
-Message-ID: <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com>
-Date: Thu, 13 Feb 2025 21:24:18 +0000
+	s=arc-20240116; t=1739481879; c=relaxed/simple;
+	bh=pUzgfA7W7491Ugjo4Ip3TySm8TZnt0igo9Y5DzkI224=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zd9i2F/WMt4JweN7X0U2qO8uDNMiNS0Kh7fn1Tf+F2TpJzLscOK94RJXpeYOfHgVYuW3uxA3tBHGz9QqMJgOE4qNM4BFwAeDrX9zLt8Gynk6F4bbi2+N5Qq2uunRhcBYz40jHZftnUMIUVwlzSt5PMqAuHrtuZtwB09nIb8tiMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWJpYHTG; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739481878; x=1771017878;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pUzgfA7W7491Ugjo4Ip3TySm8TZnt0igo9Y5DzkI224=;
+  b=IWJpYHTGm1KY787ALDwnD6RlVtoFYr4YhDJ//R0XdVrW9Gl9fWUv2BkY
+   pYwykYh7Z20qcqLNr7xlphDLnou8gPX7qpvFZ09GhS6Am5ddfmYQL+ztD
+   U8bvtjw9k/g+PRPE/i0qMd7M4M+wXTZ7C+Hasq5cs6i1Q9vLmLO9a32u5
+   bQCoUW3J4zoSQEVWa2vSmzV2w1cerXqG1XgWHdPdlrRa/mrMiase4rPF1
+   opl81Tccn4xoFCQU+MhRdurjGuluUVxtrzZuxaig9ZZIgmsCdR25x51/4
+   nzN5ye/eaH6NqCC0MtDLHGht06l3Am0Ze4Bi9we//keoam9QNYYKIv6AN
+   g==;
+X-CSE-ConnectionGUID: OQHnag28QCOx/BRAT11s+g==
+X-CSE-MsgGUID: mHztwhI3Rm6TFRcPDt3wTA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51643479"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="51643479"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 13:24:37 -0800
+X-CSE-ConnectionGUID: U6737uRIRzylEfEarp+hrg==
+X-CSE-MsgGUID: kUMbJ2ovSpandGkutY9auQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113135713"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa010.jf.intel.com with ESMTP; 13 Feb 2025 13:24:36 -0800
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	srinivas.pandruvada@intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH] perf/x86/msr: Make SMI and PPERF on by default
+Date: Thu, 13 Feb 2025 13:24:53 -0800
+Message-Id: <20250213212453.2406942-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
-To: Jann Horn <jannh@google.com>, Jennifer Miller <jmill@asu.edu>
-Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org,
- kees@kernel.org, joao@overdrivepizza.com, samitolvanen@google.com,
- kernel list <linux-kernel@vger.kernel.org>
-References: <Z60NwR4w/28Z7XUa@ubun>
- <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
- <Z62N6cGmaN+OZfoY@ubun>
- <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 13/02/2025 7:23 pm, Jann Horn wrote:
-> On Thu, Feb 13, 2025 at 7:15 AM Jennifer Miller <jmill@asu.edu> wrote:
->> Here is some napkin asm for this I wrote for the 64-bit syscall entrypoint,
->> I think more or less the same could be done for the other entrypoints.
->>
->> ```
->>     endbr64
->>     test rsp, rsp
->>     js slowpath
->>
->>     swapgs
->>     ~~fastpath continues~~
->>
->> ; path taken when rsp was a kernel address
->> ; we have no choice really but to switch to the stack from the untrusted
->> ; gsbase but after doing so we have to be careful about what we put on the
->> ; stack
->> slowpath:
->>     swapgs
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I'm afraid I don't follow.  By this point, both basic blocks are the
-same (a single swapgs).
+The MSRs, SMI_COUNT and PPERF, are model-specific MSRs. A very long
+CPU ID list is maintained to indicate the supported platforms. With more
+and more platforms being introduced, new CPU IDs have to be kept adding.
+Also, the old kernel has to be updated to apply the new CPU ID.
 
-Malicious userspace can get onto the slowpath by loading a kernel
-pointer into %rsp.  Furthermore, if the origin of this really was in the
-kernel, then ...
+The MSRs have been introduced for a long time. There is no plan to
+change them in the near future. Furthermore, the current code utilizes
+rdmsr_safe() to check the availability of MSRs before using it.
 
->>
->> ; swap stacks as normal
->>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
->>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+Make them on by default. It should be good enough to only rely on the
+rdmsr_safe() to check their availability for both existing and future
+platforms.
 
-... these are memory accesses using the user %gs.  As you note a few
-lines lower, %gs isn't safe at this point.
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/msr.c | 80 ++-----------------------------------------
+ 1 file changed, 3 insertions(+), 77 deletions(-)
 
-A cunning attacker can make gs:[rip+0x7f02c56d] be a read-only mapping,
-at point we'll have loaded an attacker controlled %rsp, then take #PF
-trying to spill %rsp into pcpu_hot, and now we're running the pagefault
-handler on an attacker controlled stack and gsbase.
-
->>     ~~normal push and clear GPRs sequence here~~
->>
->> ; we entered with an rsp in the kernel address range.
->> ; we already did swapgs but we don't know if we can trust our gsbase yet.
->> ; we should be able to trust the ro_after_init __per_cpu_offset array
->> ; though.
->>
->> ; check that gsbase is the expected value for our current cpu
->>     rdtscp
->>     mov rax, QWORD PTR [8*ecx-0x7d7be460] <__per_cpu_offset>
->>
->>     rdgsbase rbx
->>
->>     cmp rbx, rax
->>     je fastpath_after_regs_preserved
->>
->>     wrgsbase rax
-
-Irrespective of other things, you'll need some compatibility strategy
-for the fact that RDTSCP and {RD,WR}{FS,GS}BASE cannot be used
-unconditionally in 64bit mode.  It might be as simple as making FineIBT
-depend on their presence to activate, but taking a #UD exception in this
-path is also a priv-esc vulnerability.
-
-While all CET-IBT capable CPUs ought to have RDTSCP/*BASE, there are
-virt environments where this implication does not hold.
-
->>
->> ; if we reach here we are being exploited and should explode or attempt
->> ; to recover
->> ```
->>
->> The unfortunate part is that it would still result in the register state
->> being dumped on top of some attacker controlled address, so if the error
->> path is recoverable someone could still use entrypoints to convert control
->> flow hijacking into memory corruption via register dump. So it would kill
->> the ability to get ROP but it would still be possible to dump regs over
->> modprobe_path, core_pattern, etc.
-> It is annoying that we (as far as I know) don't have a nice clear
-> security model for what exactly CFI in the kernel is supposed to
-> achieve - though I guess that's partly because in its current version,
-> it only happens to protect against cases where an attacker gets a
-> function pointer overwrite, but not the probably more common cases
-> where the attacker (also?) gets an object pointer overwrite...
->
->> Does this seem feasible and any better than the alternative of overwriting
->> and restoring KERNEL_GS_BASE?
-> The syscall entry point is a hot path; my main reason for suggesting
-> the RSP check is that I'm worried about the performance impact of the
-> gsbase-overwriting approach, but I don't actually have numbers on
-> that. I figure a test + conditional jump is about the cheapest we can
-> do...
-
-Yeah, this is the cheapest I can think of too.  TEST+JS has been able to
-macrofuse since the Core2 era.
-
-> Do we know how many cycles wrgsbase takes, and how serializing
-> is it? Sadly Agner Fog's tables don't seem to list it...
-
-Not (architecturally) serialising, and pretty quick IIRC.  It is
-microcoded, but the segment registers are renamed so it can execute
-speculatively.
-
-~Andrew
-
->
-> How would we actually do that overwriting and restoring of
-> KERNEL_GS_BASE? Would we need a scratch register for that?
+diff --git a/arch/x86/events/msr.c b/arch/x86/events/msr.c
+index 45b1866ff051..7659d145d01b 100644
+--- a/arch/x86/events/msr.c
++++ b/arch/x86/events/msr.c
+@@ -39,85 +39,11 @@ static bool test_therm_status(int idx, void *data)
+ 
+ static bool test_intel(int idx, void *data)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
+-	    boot_cpu_data.x86 != 6)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+ 		return false;
+ 
+-	switch (boot_cpu_data.x86_vfm) {
+-	case INTEL_NEHALEM:
+-	case INTEL_NEHALEM_G:
+-	case INTEL_NEHALEM_EP:
+-	case INTEL_NEHALEM_EX:
+-
+-	case INTEL_WESTMERE:
+-	case INTEL_WESTMERE_EP:
+-	case INTEL_WESTMERE_EX:
+-
+-	case INTEL_SANDYBRIDGE:
+-	case INTEL_SANDYBRIDGE_X:
+-
+-	case INTEL_IVYBRIDGE:
+-	case INTEL_IVYBRIDGE_X:
+-
+-	case INTEL_HASWELL:
+-	case INTEL_HASWELL_X:
+-	case INTEL_HASWELL_L:
+-	case INTEL_HASWELL_G:
+-
+-	case INTEL_BROADWELL:
+-	case INTEL_BROADWELL_D:
+-	case INTEL_BROADWELL_G:
+-	case INTEL_BROADWELL_X:
+-	case INTEL_SAPPHIRERAPIDS_X:
+-	case INTEL_EMERALDRAPIDS_X:
+-	case INTEL_GRANITERAPIDS_X:
+-	case INTEL_GRANITERAPIDS_D:
+-
+-	case INTEL_ATOM_SILVERMONT:
+-	case INTEL_ATOM_SILVERMONT_D:
+-	case INTEL_ATOM_AIRMONT:
+-
+-	case INTEL_ATOM_GOLDMONT:
+-	case INTEL_ATOM_GOLDMONT_D:
+-	case INTEL_ATOM_GOLDMONT_PLUS:
+-	case INTEL_ATOM_TREMONT_D:
+-	case INTEL_ATOM_TREMONT:
+-	case INTEL_ATOM_TREMONT_L:
+-
+-	case INTEL_XEON_PHI_KNL:
+-	case INTEL_XEON_PHI_KNM:
+-		if (idx == PERF_MSR_SMI)
+-			return true;
+-		break;
+-
+-	case INTEL_SKYLAKE_L:
+-	case INTEL_SKYLAKE:
+-	case INTEL_SKYLAKE_X:
+-	case INTEL_KABYLAKE_L:
+-	case INTEL_KABYLAKE:
+-	case INTEL_COMETLAKE_L:
+-	case INTEL_COMETLAKE:
+-	case INTEL_ICELAKE_L:
+-	case INTEL_ICELAKE:
+-	case INTEL_ICELAKE_X:
+-	case INTEL_ICELAKE_D:
+-	case INTEL_TIGERLAKE_L:
+-	case INTEL_TIGERLAKE:
+-	case INTEL_ROCKETLAKE:
+-	case INTEL_ALDERLAKE:
+-	case INTEL_ALDERLAKE_L:
+-	case INTEL_ATOM_GRACEMONT:
+-	case INTEL_RAPTORLAKE:
+-	case INTEL_RAPTORLAKE_P:
+-	case INTEL_RAPTORLAKE_S:
+-	case INTEL_METEORLAKE:
+-	case INTEL_METEORLAKE_L:
+-		if (idx == PERF_MSR_SMI || idx == PERF_MSR_PPERF)
+-			return true;
+-		break;
+-	}
+-
+-	return false;
++	/* Rely on perf_msr_probe() to check the availability */
++	return true;
+ }
+ 
+ PMU_EVENT_ATTR_STRING(tsc,				attr_tsc,		"event=0x00"	);
+-- 
+2.38.1
 
 
