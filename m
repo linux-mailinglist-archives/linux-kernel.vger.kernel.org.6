@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-513682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FD1A34D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:19:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DA1A34D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F673ABCE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B74818884C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52FC245B0B;
-	Thu, 13 Feb 2025 18:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0598245B14;
+	Thu, 13 Feb 2025 18:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNm6iLA/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJyaI6Te"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363B6245AFB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255EB24500D;
+	Thu, 13 Feb 2025 18:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470630; cv=none; b=HQBD4oetqt3aZb5MFWSQv5h/7cGnjUsNSl4YFKhnqKvjCVnjOg4Bx4RpKmE5CFCeFtNKOtJce0xK7dk3bWD1RiHwATFiopfJRyJcazoY1N0tAHR5LdTf4nrBYecTD2Ap1RIHUQBcabmReYC3I3ueYaIUsIh01V+H5Xhb/y2+7pM=
+	t=1739470634; cv=none; b=HF8U31m+w97zYsItXURuepHNYLU84EwwAf8mMhSLXCIZ804kEXOyPEFJf8XDcj8ECDlQYUGjzfGi5MiqZtpvfDmP9vCvblxQNOPC05iEKmbgfOUrx7/z7WkWyFr7cNX03evMdJmml6XOM/0+feC5ogTWY6loW6YbI+ggo8bw4oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470630; c=relaxed/simple;
-	bh=jqUXucE5Y4nnB+VCTZkmpXrxMC8l+mi2tGy84H4NNcY=;
+	s=arc-20240116; t=1739470634; c=relaxed/simple;
+	bh=+C2/z6pJuByUZnnepE4JKaFU3dsx4ZrFCxBYWNaFID4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lV291eGc7ppHzOAckaYh5LmhIDsFAgFdd5ZEp44FPGK4AUeSIw0Gtz0L4vf64nDnr5cdjL3fbNOQZNsQkHYOlHl3Tr1pXkMe6pbaj52L5W+GQnnQqRUGsGlYLc1b6jd1KkyaLCziSDIMKgcW4XUkReN2ZGxmv28qmvwJxXSJ94k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNm6iLA/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C31C4CEE4;
-	Thu, 13 Feb 2025 18:17:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=a4BC8jmsCcMPTOD+KkBgTDblzkUx7Hq2E/5WFK+m8GclKCXJWrK2bJ6D8FH07a2LNdbBpu8V8waylpFrv1apOw57TUGzM1hNHFhj0/8a02KruInjwFa5tbR53wI0PLXj/IAKC/y+t095/iBe44YjxbkK5zW6g2YXQRAGNHk69C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJyaI6Te; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0883C4CED1;
+	Thu, 13 Feb 2025 18:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739470630;
-	bh=jqUXucE5Y4nnB+VCTZkmpXrxMC8l+mi2tGy84H4NNcY=;
+	s=k20201202; t=1739470633;
+	bh=+C2/z6pJuByUZnnepE4JKaFU3dsx4ZrFCxBYWNaFID4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NNm6iLA/2zFOZ5gGKKqqyEklXzhKkN6DF7zk9/SE0CPtzhKVxtg7H6b5iDX1uul80
-	 +fjTtwk3SAHwZf6kXRtTo0+46PRebIOlPubE681TCKxKWypKRoN4H0G/s3mW2EQm8N
-	 UaAPnKrsP9F+4gUQ3t+AqeNKzVpmTjOKVr4h/+oqwKeeF9bLKF/5m0eXMBXf586emD
-	 AbjNWbxyRcUkSASnjgSMe/FY1sLGdb//Pt44OoS3oTZHFn/Va5+zCSVWeZkJA5teaS
-	 wkdGyLyosLv2TOMSN1hViIeZyGI2Z9ZidAuk1LJWhbl0R1z5zNU5hXZQwbvgs3iji6
-	 3PiAIHk+cSvKg==
+	b=VJyaI6TefJxF+QG5APQquNgcp2bi520XL6y2jA1XtvNgblgVB31e/w9p1AD85NxKw
+	 v/CC8GQ/dMVRgLUEDXha09uJTkTTfUGh/6TeAD1lYRxeSD2/IixxfdEzNngCjsJ4b/
+	 PuhADkbUecCSeGclnbvy5wfDZw8itA4rbgJpQx1IfGf7xfuGC6NrRSzlgDRXlS7TD8
+	 s1mJX4T0hsFvcOcNx3vFJn6POUwV0KH1enTuYlaTWoLJoFWQDyAkqocYUIctFKDjdA
+	 OX5UwNbKvqYNXFjtbHQK9CKHW5z4OFz/KujZGVG0Gk3rbcgAcsGZs2B57knJMYqEjP
+	 a0uBzVqF3SUCA==
 From: Vinod Koul <vkoul@kernel.org>
-To: kishon@kernel.org, heiko@sntech.de, 
- Damon Ding <damon.ding@rock-chips.com>
-Cc: dmitry.baryshkov@linaro.org, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250205105157.580060-1-damon.ding@rock-chips.com>
-References: <20250205105157.580060-1-damon.ding@rock-chips.com>
-Subject: Re: [PATCH v7 0/4] Add eDP mode support for Rockchip Samsung HDPTX
- PHY
-Message-Id: <173947062734.294083.3270476483137876424.b4-ty@kernel.org>
-Date: Thu, 13 Feb 2025 23:47:07 +0530
+To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, 
+ alim.akhtar@samsung.com, kishon@kernel.org, Sowon Na <sowon.na@samsung.com>
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20241226031142.1764652-1-sowon.na@samsung.com>
+References: <CGME20241226031145epcas2p4fa41b44749a7f675364437856d01a4c6@epcas2p4.samsung.com>
+ <20241226031142.1764652-1-sowon.na@samsung.com>
+Subject: Re: (subset) [PATCH v4 0/3] Support ExynosAutov920 ufs phy driver
+Message-Id: <173947063031.294083.4529476381190055729.b4-ty@kernel.org>
+Date: Thu, 13 Feb 2025 23:47:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,31 +62,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 05 Feb 2025 18:51:53 +0800, Damon Ding wrote:
-> Picked from:
-> https://patchwork.kernel.org/project/linux-rockchip/list/?series=927102
+On Thu, 26 Dec 2024 12:11:35 +0900, Sowon Na wrote:
+> This patchset introduces ExynosAuto v920 SoC ufs phy driver as
+> Generic PHY driver framework.
 > 
-> Damon Ding (4):
->   phy: phy-rockchip-samsung-hdptx: Swap the definitions of LCPLL_REF and
->     ROPLL_REF
->   phy: phy-rockchip-samsung-hdptx: Supplement some register names with
->     their full version
->   phy: phy-rockchip-samsung-hdptx: Add the '_MASK' suffix to all
->     registers
->   phy: phy-rockchip-samsung-hdptx: Add eDP mode support for RK3588
+> Changes from v3:
+> - Use lower case for all addresses
+> - Add empty line between macro and function
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] phy: phy-rockchip-samsung-hdptx: Swap the definitions of LCPLL_REF and ROPLL_REF
-      commit: 2947c8065e9efdd3b6434d2817dc8896234a3fc0
-[2/4] phy: phy-rockchip-samsung-hdptx: Supplement some register names with their full version
-      commit: f706024107204cb0b640bac35ea47e7b91b8c71f
-[3/4] phy: phy-rockchip-samsung-hdptx: Add the '_MASK' suffix to all registers
-      commit: 2dc8224e3758c5d6387786ea1d74d2d510149b1a
-[4/4] phy: phy-rockchip-samsung-hdptx: Add eDP mode support for RK3588
-      commit: 8f831f272b4c89aa13b45bd010c2c18ad97a3f1b
+[1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
+      commit: 0ee54dcfe76760a65d86437f66df7f93b8b81903
+[2/3] phy: samsung-ufs: support ExynosAutov920 ufs phy driver
+      commit: d2317767723b63d28e3b93da92760b7934935536
 
 Best regards,
 -- 
