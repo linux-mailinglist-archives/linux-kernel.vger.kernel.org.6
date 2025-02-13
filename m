@@ -1,59 +1,79 @@
-Return-Path: <linux-kernel+bounces-513601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97C4A34C3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:45:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E2AA34C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2325E3A3F8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:45:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF3B3A4A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCA82222BF;
-	Thu, 13 Feb 2025 17:45:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313E828A2AB;
-	Thu, 13 Feb 2025 17:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFE1245024;
+	Thu, 13 Feb 2025 17:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cjaP5ulX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4AA24167A;
+	Thu, 13 Feb 2025 17:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468737; cv=none; b=s88xKOU8JNZn9S51wk8zZ319klsom3bnAKjMybnJY+lrwCH/hNh/VKO4HCUhBGdJqCOPbRjP/oLDM1XF2ndl867Q8MjD9yMkYR+kM10ujpk73phgvvMSCMVAnN20/Q7SS1j90c2G/Puv//h20lFzojh4gdDK/eIxEVJiXS9BbyA=
+	t=1739468746; cv=none; b=uX7g6SrmWWJyaUAG5Sndj4Nzxo7wpN0a2ndZ7G/jL8fwYXSGSvC2tpQueebGiEEtgkVf1lodSyMq0DVAWxHwdcEr4Ns9KtoAzNnYZXvpEA3hEt99IUBqB+8kcXABcsxLs475u9IdvGov07ElkrdJn9N0VtVBpbyd2GPF7HeK27w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468737; c=relaxed/simple;
-	bh=sukV6k51DNSlBKIQdTonT1QfJeZstAGnIOitdYPlDMw=;
+	s=arc-20240116; t=1739468746; c=relaxed/simple;
+	bh=lEggCUYbTk+GP5TUUiY50DmE28Zc//S9OpoLzZIcRLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DG1aEljg5AkcfuMxtfPjDOekprq3QVtfm+Rr4PqPA/Em7COYbkE0QcJglSiZxMa9DNLga2uQXROcB6cu2dUw7sBr+k+HKpIpXiy5ULgQaIaJN9icRUMtyrsPmfgzB7zxXE3mmdv9mnelBsHcuXZ1m/lapLYXPq9PcH4fGkPZYOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C1FC113E;
-	Thu, 13 Feb 2025 09:45:56 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17F2A3F5A1;
-	Thu, 13 Feb 2025 09:45:34 -0800 (PST)
-Date: Thu, 13 Feb 2025 17:45:30 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcG67VHz1jWqKvg3UAtWDcT3Bk+WMdQb/loAXeSBcFqJowCvnHWQ785xKRkjmNiR8rbIMloS3kP5gE561dHez4uhrzoKREJCjsgkfEGIpKpZqT94bGeTt58WIQYMYmZbqniJ+6UnPg1gTmJ0A4GFslRSgirK1WyjRAMgh4Oxrjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cjaP5ulX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Cx4b9ljxXAEd//n/bsswHdYF1IR3q+eU4ODteiygmF8=; b=cjaP5ulXVtAF5UtU8yjn3p8bRx
+	vAw7A708oQfTl74++6PYDDfNE5Quqdg8w+JZ/3fW9xV+d9yeNy1L9zplg4DzFnCA8hgg/KUuJIBLU
+	5Z9PnHBVEh2LrFcEdUPmQgZB8j9j288L7m6WyEW7atimeHSwDrIjlLJD0ETW+vHcHPYU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tidHH-00DoRW-SC; Thu, 13 Feb 2025 18:45:31 +0100
+Date: Thu, 13 Feb 2025 18:45:31 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
+	bhelgaas@google.com, brgl@bgdev.pl,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v19 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-Message-ID: <20250213174530.GH235556@e132581.arm.com>
-References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
- <20250202-arm-brbe-v19-v19-11-1c1300802385@kernel.org>
- <20250213161628.GF235556@e132581.arm.com>
- <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
+	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, saravanak@google.com,
+	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
+	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com>
+ <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,61 +82,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+VmfibMVdh+9DxqU5Axiv_zMiznAh8_umFB1J2y8reig@mail.gmail.com>
+In-Reply-To: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
 
-On Thu, Feb 13, 2025 at 11:13:49AM -0600, Rob Herring wrote:
-
-[...]
-
-> > > +void brbe_enable(const struct arm_pmu *arm_pmu)
-> > > +{
-> > > +       struct pmu_hw_events *cpuc = this_cpu_ptr(arm_pmu->hw_events);
-> > > +       u64 brbfcr = 0, brbcr = 0;
-> > > +
-> > > +       /*
-> > > +        * Merge the permitted branch filters of all events.
-> > > +        */
-> > > +       for (int i = 0; i < ARMPMU_MAX_HWEVENTS; i++) {
-> > > +               struct perf_event *event = cpuc->events[i];
-> > > +
-> > > +               if (event && has_branch_stack(event)) {
-> > > +                       brbfcr |= event->hw.branch_reg.config;
-> > > +                       brbcr |= event->hw.extra_reg.config;
-> > > +               }
-> > > +       }
-> > > +
-> > > +       /*
-> > > +        * If the record buffer contains any branches, we've already read them
-> > > +        * out and don't want to read them again.
-> > > +        * No need to sync as we're already stopped.
-> > > +        */
-> > > +       brbe_invalidate_nosync();
-> > > +       isb(); // Make sure invalidate takes effect before enabling
-> > > +
-> > > +       /*
-> > > +        * In VHE mode with MDCR_EL2.HPMN set to PMCR_EL0.N, the counters are
-> > > +        * controlled by BRBCR_EL1 rather than BRBCR_EL2 (which writes to
-> > > +        * BRBCR_EL1 are redirected to). Use the same value for both register
-> > > +        * except keep EL1 and EL0 recording disabled in guests.
-> > > +        */
-> > > +       if (is_kernel_in_hyp_mode())
-> > > +               write_sysreg_s(brbcr & ~(BRBCR_ELx_ExBRE | BRBCR_ELx_E0BRE), SYS_BRBCR_EL12);
-> > > +       write_sysreg_s(brbcr, SYS_BRBCR_EL1);
-> > > +       isb(); // Ensure BRBCR_ELx settings take effect before unpausing
-> > > +
-> > > +       write_sysreg_s(brbfcr, SYS_BRBFCR_EL1);
-> >
-> > Seems to me, it is weird that first enable recording (BRBCR), then set
-> > control register BRBFCR.  And the writing SYS_BRBFCR_EL1 not guarded
-> > by a barrier is also a bit concerned.
+> > Or do you mean a custom board, which has a CPU, RP1 and the button and
+> > fan are directly on this custom board? You then want a board DTS which
+> > includes all these pieces?
 > 
-> We are always disabled (paused) when we enter brbe_enable(). So the
-> last thing we do is unpause. The only ordering we care about after
-> writing SYS_BRBFCR_EL1 is writing PMCR which has an isb before it is
-> written.
+> That depends on whether you count the Raspberry Pi 5 as a custom board.
 
-Maybe it is good to add a comment to record the info.
+So you mean the Pi 5 board would itself make use of the resources the
+RP1 device has? They are not simply connected to headers for plugin
+boards, but used by the main board? Hence you want to describe them in
+the board .DTS file.
 
-Thanks,
-Leo
+	Andrew
+
 
