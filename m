@@ -1,319 +1,255 @@
-Return-Path: <linux-kernel+bounces-513327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5DDA348FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D7FA348FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:06:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4C7162AD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B9BC16296E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F251D6DB4;
-	Thu, 13 Feb 2025 16:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5232C1FF1BF;
+	Thu, 13 Feb 2025 16:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="E11rlv/p"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011029.outbound.protection.outlook.com [52.103.68.29])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MkCVqolH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D3014037F;
-	Thu, 13 Feb 2025 16:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739462781; cv=fail; b=N9pk8iMzdr79pRYsQwRy5JmWrvZX1D5yYI608NIU3gSQ7ud4Ga0czp/W1xbQYmQ4tDZFmbtf4HdVhOg86ytX6tj0NfUa/Ux1xqbqmVHkNQDE5ucv/4qs4ehDgWtBYpU1SIisIxqiMDB1UC5kDaAVqsqHo6luh4WZIOStCz1JLUg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739462781; c=relaxed/simple;
-	bh=HUjGOwGORUUdfbMj5Xtobyxi3hxsyKmzoMQ2mXDXuxE=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WLd7ehDvX9Ez5ONwnyX4dqkXPBSibdmnDmOrl0w8J9wE/xNgcefOnE7JNW5LAIrxrkR6eQeVvwp3so3LWV4wYitoXUOqyb5liGHFcKyBILNslD5eLwE8bD1R+wri9NNyi8c9eO4kTbQxEEo5FGF+fjMDOiAwcPhjTEw2XOfmi1U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=E11rlv/p; arc=fail smtp.client-ip=52.103.68.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RqMztOi724b+sTlnuo7UBJGJI+rC1xzVnxAmbTY3Sh+QHR5cMf6JuOU8ExuD7XPg7tmMnPFD/zshrDYxj8K9JLFNLVZzZMaAnc6TwJkmQHC2A3YZz10dZJfmrN/J9nCGvkSaJD7s3QDjkZ2we1yy8666jarLVweKclAX7Xd7CyMb8IveaePtxZhqWwD2S2YMlwXebXwoRoTki7xKirvGFoDF60i3D97DB3d4vFXwPAyhjsr8fN5M5raZ4ycQLRODzwichBFQ8ClPqyl53btUf7G/E6julf3MZBTlUsW9dIULdXf3BT1PRm8x33ITvs6ytUAgeUcCaETdTwY0f6MSww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ln1hnXInMtsRD0oVrDyBi+11wZajyLpmLlIuaL4Oi7w=;
- b=Lst5J7UYQZGi17U2ce1szy6OHfgQyV1qvbpNut+t3Sng/sTr/P3p4UaM9wk4eAeZ0EfTcB9ZuUdb8EXlXQEbnpko/SrV6p8hKTi+MT68It2SbBmtoRhGQZNBNZfcn1iSHq9pMaRJw2Jledkh9/oHgVvorRMftNa1Mc/p6/lCPLez2XcG9hSv8GkbTszuddlZmd2OHR1t3ZPtLKe6uYESC9VVYn8oVxwukZjpre5G7U6BqB+DKQcJEl590glZ6awdvvh0QlXkXxN4US3riKHEd35wmGPkpkRWXhcGgEKJuS1IGtb4J/9tufyQcfL7Kuyj3LQXOeKyK64sOgoRr1PjNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ln1hnXInMtsRD0oVrDyBi+11wZajyLpmLlIuaL4Oi7w=;
- b=E11rlv/pTahIEyhqYFjMBjSPfGsYXyN6312sJ2WEbXPFSNlr5cCBrAICyRl6h3aii6G5QYC2z5YAbMS+d2/pZ9zXAfcEiBIDIk15SVLx0n5wffF53/23sKTJle5Lr4g75S6Nz+GuBVrLJrWtZ/AqOgqtfPqQS2n9sJDT7Ya4YNijedle4dAefW3gluV+ujbD2utdiy9HZ5Id1B3VIRTm4RfT91bdS1IKny5RwZLY528uBLaEfD8XTClVip+Plg7TEdTWD+805Zq91kDbJx7G8OXrCKmOEJ6L5XipdiWAnXC3SYiXOpAx6M0YobxDCnco9s80r/CkaNMHMTiWq6HDMQ==
-Received: from PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:110::10)
- by MAZPR01MB5470.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:69::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 16:06:13 +0000
-Received: from PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::972:abe8:752:bbde]) by PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::972:abe8:752:bbde%6]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 16:06:13 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: Alex Henrie <alexhenrie24@gmail.com>, "jose.exposito89@gmail.com"
-	<jose.exposito89@gmail.com>, "bruners@gmail.com" <bruners@gmail.com>,
-	"seobrien@chromium.org" <seobrien@chromium.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND 1/3] HID: apple: Use common table for MacBook Pro fn
- mapping
-Thread-Topic: [PATCH RESEND 1/3] HID: apple: Use common table for MacBook Pro
- fn mapping
-Thread-Index: AQHbfjE0JC6l/xNtMEOF3BbiHe3B0w==
-Date: Thu, 13 Feb 2025 16:06:13 +0000
-Message-ID: <FE7D2C98-2BF5-48C2-8183-68EC1085C1EC@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN0PR01MB9608:EE_|MAZPR01MB5470:EE_
-x-ms-office365-filtering-correlation-id: 9aa2d586-d68a-4871-3c9f-08dd4c48569c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|7092599003|461199028|15080799006|8062599003|8060799006|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QXqYWhHoyZeISGeyZTYlWMz34dJGgSiCfpRH4Vg6prGQxScrC4s8dv9Yu0F7?=
- =?us-ascii?Q?MIjU8rlcu9lH5GsEwfqBcU+mfLWXk24RUYuq2/bZ65E2fQ1pi63sfoansg2V?=
- =?us-ascii?Q?8EWgZzATRioUuAM1oHRwmbMKh5vHmrdPA9DF60awe8IBEfC8bPhOhXbFecn9?=
- =?us-ascii?Q?h5wRLg0yfkw5/zJrCP73GpF8K3CwThBrh5eHcdu+kRJgKNHX4bcCDTPQpFN5?=
- =?us-ascii?Q?eIevQ35mDaxs8n+bDUClyR0itX+j4O89P2YC0FivwXRuhVe/4AK3iYgUDH9M?=
- =?us-ascii?Q?rvfsBuo1kq8IJTF0pQxf8LT5frpcEEKYzs1v0bR597gY20LlcSFYo1+W7Vkr?=
- =?us-ascii?Q?ImfKQBfzraWyb93iQ0qNB10jk6LUVV1vq6k0i0FxCq2nLXXHAp5zFkbXUvsW?=
- =?us-ascii?Q?4VEGDSdvhT2lbLLkJkTQ8NrMUaZd0GCB2R63NWZelEZ8+dWHBFRY+wl8MlAv?=
- =?us-ascii?Q?eekRqKxW3I9F64osWVIwUW3djuV6NDmRSBrwQbIklOLt9C4p1Z8DObMODZye?=
- =?us-ascii?Q?iB1cb93P+FlKRFO6+SWgQn8CpJavdOdfUKIV4v4HpNx6234P/RgAnt2gk8S1?=
- =?us-ascii?Q?sqPT5dJdsXu3fVX0ucEvKnT6gsdwW/HeofMxtI9iXt7xGt1qhiu0/J0hJxuE?=
- =?us-ascii?Q?7iWa33duELs2pDEpUUWoOjHXJiW4+3XIt4INzYzOZ+q8izjN4XKPUv/tv9dS?=
- =?us-ascii?Q?16ld7+SLyFNvzpe6V4Q3tiB6qsJ05xmgVVa4rKxe404TkpiDhz2DsR+W9evf?=
- =?us-ascii?Q?9mveHNo1B0V8+AEszZTxeiLiaKfYsXIpyE1NgjGVnARsB9MbvAWLBTk7PquL?=
- =?us-ascii?Q?k5ZYS/3Vg00pOW3CQSzpcuT/QZzUD6p7YPxkcgV/tm4AXIOQqKD6WLPsqmmi?=
- =?us-ascii?Q?2WCAZwoBjn1gr7eyRV1wGzXVHbtG+bUQy0ebo0UNRFBM7+uOR1zva7bGBwzn?=
- =?us-ascii?Q?SeR1bXyXkzWaGdn8YUG77kBIX3ZlByGEoVM6B0QfBcXAwX4YpSWFyB2O+gZy?=
- =?us-ascii?Q?g8Rg1SePhfV4gHVjBihYIld1eomUaaE4hHzHkqaWLWhlRWir7b6pEg5wFEuM?=
- =?us-ascii?Q?0KWGxQtpqlcLdMxkn5igsRhiREsGvQ=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?GUMEwdYi1gEPWwNjYv+0UNmIxJSSE4/G1aJUsiq9RG5ivt3HXQSW1dOqLyD0?=
- =?us-ascii?Q?UEq0uCYiVu+HT+8vmt3Ye+uELtuc/TQIuYIpzoQZDNbKgHiEIlKPA3tf1V6+?=
- =?us-ascii?Q?Jbnjta1pykXF8phvuPrGyEBv6jAbRnfvplUeumLVFsny0PywXB+6z6rZYvTw?=
- =?us-ascii?Q?uOhOB4jgcNumGiHOrzdu+dgaZaL/deJZbJaeRcbj4XqODC4cLzZpGZ4Z3Sek?=
- =?us-ascii?Q?zF/wW7RmlovmKRRcBCg88J9JrHdB5W3adzxdeMm0/iOEJlx6FWwEbdIdTj54?=
- =?us-ascii?Q?ORegQdPyEjzX3nvyVvbCXlh72INISvmMMulOFDKdvl7hGXlCx3fMHQhMBlee?=
- =?us-ascii?Q?fwPraEKJNwz/by4+GpY/TuEI7EI7dkfYH2iftxBEoyT396/WIAaYCmY2/q4b?=
- =?us-ascii?Q?Mb8BLzHe+QKZ9qnDaGmiyc6LmqNPAfA0sJ8r16ZqDxjOH4ZeRmqDO8xbjNYh?=
- =?us-ascii?Q?zjiTmMtTNjeU/VnbDyagsqqKY7XG8USQtsPw3cdw1dL5RFc2RaozFTg6ZHpL?=
- =?us-ascii?Q?O8nQ0HhpCUCqfRJDYMsr2MHLdkIYwk07ypjDi0J/02JaxIO1BpD+BSVmMeI0?=
- =?us-ascii?Q?o5fDg51JF4XBiKgruGkP77+a6NEmr6F3Y3Kf14WMkwzO8h2k+FjjGmO7aWkc?=
- =?us-ascii?Q?fKS1cDBgs72badxdemElqiateC+uQ8PnoyDNw9E2qhamF/aUKBOzSQOX2V4n?=
- =?us-ascii?Q?GporMYANj1h0NbdJAEluAgAv0LXx114hhEkpSvy+gay4wHIwIw3t+YYVa5kI?=
- =?us-ascii?Q?pYAGnbFwZ8SRTV8EGGKh2JZtDxTbXMojsea6efZ1Dm7E3WdN4sEnbE/ZW6Oo?=
- =?us-ascii?Q?bcg3Gh6pcwc+WahN7rhvM+d65qKIhX4rAsfsg5LuGhWWIre1tijVa5equuHM?=
- =?us-ascii?Q?B+ZYp7dFBOmPj8fwEpZQQJB4JviDHHuw338JxIe5WRal55dZIA8rMDj3q0uL?=
- =?us-ascii?Q?gyyDbGY4MeoQWREOxLKFcuxtwp4leNOWyoJlG7SvuGaSKW6ab4buLIkPN5zN?=
- =?us-ascii?Q?uWXdUTPDEll0V5rYojetvUGWuAMA2jdurQqF/L0N7k0V/jHn7blL+NcrEoe4?=
- =?us-ascii?Q?B4LMwgOqRl+xKzmIulQks8CT/4OLr+KSiXN1fj/XUoKU34xqKlA43hdWrDs4?=
- =?us-ascii?Q?51AzixDrjUPFmdAhz4oYksyFpaPLEXPNMKhxgi0rvdUdUVfW9PK/vKAXdszD?=
- =?us-ascii?Q?uQmU6Y9/an1T6GjKhCetmZERsV89hRDgKHoiiLIYek1YSFmC6+JFoqCcryfm?=
- =?us-ascii?Q?L1k+5pxgldxqZ/IAlx2oF/mF+FWuwQT7LYB8M7TON/S3Iw0712Jx65mJ95r4?=
- =?us-ascii?Q?ffXarIrmGMQu7YKz5ygrCxQt?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24B13D873B767A43891350ECCD6225E0@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4171D6DB4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739462795; cv=none; b=u1XJ9sQMHTSFvTGgf65AZcFvFvBov2K116x1oJay28WBthLz+bVe92zsIDcBhagG2dpAmbrS7rWWUvIrJ2hMeIc801URcUB6F1u/ZUfcwc59HrSKUSyzkh89UWAAC6hP3d7oSvGwIOlNI5qQY99WSSb8LFuQKy5ZO1MmXa8QidI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739462795; c=relaxed/simple;
+	bh=KV2aEWLH2R/7cx6mRKbYbSOD5vnG/4sMS3Ly1eh+Ego=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ix7VfTOs89EiqbAzvNwks953WrzLNPr064rGKZN5Bld0VEhSZzjlu+JVah0LH53niva1eQ1QTBzc9p8O03dUqeQDK+iKJsLH2Oowl+zEJUyHC+Y/iGVajtwUX7jccBn803CUwXazIyx7QNQb6zsozGj8640mNy5H2G3KMiHo+Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MkCVqolH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DBW9pf011818
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:06:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VvHTiRUGdcHb5nqZ7XMr7+ruBS1SNJejca7slWkyh80=; b=MkCVqolHd7LKp6Q8
+	OdSDa/PFar4rFnwNagNmhSsZ544DLKvwfZvQwr/wHW6z9GAtTdfEeCGlrixQUYQO
+	ilyJuyZTTcARd2mLFvTJ6g1TmmyRWpxix2dJJn3jfIo2y8Dw5wHGC3ky6j84TwCX
+	mkgy2jsMPO0dxZIR9cyCN6t/tbsQbQY5o4GZN1YuKEYdWNW/Hrnpdhsmo43Kcum1
+	zrbQRRJZZs/REAUOLPGMd8IuyisnL4m0+K9aTkJBMUXeQkuUIAxGX2kIt1SFePRH
+	hGKJuaO/ZScQOBmh4eZCVYY1bhN19ouwxHkW19cEFvn7JdD5egxTLi/uwHKESYyG
+	2dovrA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sfxw8p3s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:06:31 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4718adef552so2095511cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:06:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739462790; x=1740067590;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VvHTiRUGdcHb5nqZ7XMr7+ruBS1SNJejca7slWkyh80=;
+        b=BV+IBDvJDpCzrDWzvup7vRmpU8Of4GkcC2+OX5298XHE1Ij2mJgfdqqhlj9GvWkIAc
+         coLsA6srsH03UG16v2ST140/gvinc/BT73kBFUb6XYFdV/Iy6f9ju+6GAlA06hhHq0KN
+         b76PQ+e0MxwGsVGgetqYGP7M2+EpM4/YDb0nkKat6b08KtmJHldtexAd4nnqlNpLsM1r
+         vC4vUnoACINYG6b40OxKOi1075rgWuJqhcz3nrF7P0B5weuw+DoJde9qWZfjSIbBQ/5Z
+         ycSIAtrSv3PapiQtI0ckw/8DbjXpG3Ll1WRNbCGuAt18q7Wp+qYO9U5OhJLr1Md+wZ9p
+         rElw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxmKka/CCWZZGhgDGk7zc4mIq6booadhpJFoumf3PEbm09Y1mfQ8kvz6SBSvkDJ6TcSLqhXEkdPe8qOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2L4nmmNClXVGnQdzSAEjUPSs7SjX5OPPw6kmsKZd5UCR+BBmd
+	hE5aYvapPCfEH3RTCbgf99FLHNQTIjtZpo74+79WAB6X7Zjdfv48H/0qBpNg0HYvEKRTTfC5VTs
+	htKzqwadUq1xzFzdDQvZyGIVOC+RoTWbeVT2yQu1cyipCX6xyU//VOihXKWufG6o=
+X-Gm-Gg: ASbGncum1o3eJp/0CKdAj8YJytSA3EQxWaZIHsNrBK5hAYdiugy1UCYXaRAmXCCiYBv
+	D2JGm3OmSRoHvnM0s9lT+vrYKi6BfeqKHC8Vwz47QRhv/5HkNIcjVYOF3PhO2Sqp67hu05/l0eb
+	f8lVqsISaxRC8zIRn34htE8PVnCWSETsu1NxS38HXUj/H2BUhXwiFtLaT34kgSxINxHoeb9i7Mu
+	U+EPxfxHkVTSerILJzl86pstRORE07qNUfwZlUOjc2FQwDMcbpI3O3PP1LdZ1PTq7ZnWlEDvrt8
+	6VQ1qybc8dfVqfAHyC5jWVIPFtkWwYZChviPIRC3c5gKjic5xIkhaQn9WCw=
+X-Received: by 2002:ac8:59cd:0:b0:467:6283:3c99 with SMTP id d75a77b69052e-471afe447e5mr41969341cf.4.1739462790097;
+        Thu, 13 Feb 2025 08:06:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGb1zpiJ7/1vpWuWkMOIVM1WBTQ2n0pQfryZ0ZNgISaCgGMemx6vczCYX77koJMMdKAblp4Tw==
+X-Received: by 2002:ac8:59cd:0:b0:467:6283:3c99 with SMTP id d75a77b69052e-471afe447e5mr41969181cf.4.1739462789646;
+        Thu, 13 Feb 2025 08:06:29 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d3619sm1384641a12.36.2025.02.13.08.06.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 08:06:28 -0800 (PST)
+Message-ID: <7f0bb7ce-92ee-4b22-8692-a851adf756a4@oss.qualcomm.com>
+Date: Thu, 13 Feb 2025 17:06:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa2d586-d68a-4871-3c9f-08dd4c48569c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2025 16:06:13.0406
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB5470
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] dt-bindings: dma: qcom: bam-dma: Add missing required
+ properties
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Md Sadre Alam
+ <quic_mdalam@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luca Weiss <luca.weiss@fairphone.com>
+References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
+ <20250212-bam-dma-fixes-v1-7-f560889e65d8@linaro.org>
+ <22ce4c8d-1f3b-42c9-b588-b7d74812f7b0@oss.qualcomm.com>
+ <Z6231bBqNhA2M4Ap@linaro.org>
+ <d674d626-e6a3-4683-8f45-81b09200849f@oss.qualcomm.com>
+ <Z64OKcj9Ns1NkUea@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <Z64OKcj9Ns1NkUea@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Xh8KYF7ASACVFIiDJeuivEjEDUQzK_LY
+X-Proofpoint-GUID: Xh8KYF7ASACVFIiDJeuivEjEDUQzK_LY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130117
 
-From: Aditya Garg <gargaditya08@live.com>
+On 13.02.2025 4:22 PM, Stephan Gerhold wrote:
+> On Thu, Feb 13, 2025 at 03:00:00PM +0100, Konrad Dybcio wrote:
+>> On 13.02.2025 10:13 AM, Stephan Gerhold wrote:
+>>> On Wed, Feb 12, 2025 at 10:01:59PM +0100, Konrad Dybcio wrote:
+>>>> On 12.02.2025 6:03 PM, Stephan Gerhold wrote:
+>>>>> num-channels and qcom,num-ees are required when there are no clocks
+>>>>> specified in the device tree, because we have no reliable way to read them
+>>>>> from the hardware registers if we cannot ensure the BAM hardware is up when
+>>>>> the device is being probed.
+>>>>>
+>>>>> This has often been forgotten when adding new SoC device trees, so make
+>>>>> this clear by describing this requirement in the schema.
+>>>>>
+>>>>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 4 ++++
+>>>>>  1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>>>>> index 3ad0d9b1fbc5e4f83dd316d1ad79773c288748ba..5f7e7763615578717651014cfd52745ea2132115 100644
+>>>>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>>>>> @@ -90,8 +90,12 @@ required:
+>>>>>  anyOf:
+>>>>>    - required:
+>>>>>        - qcom,powered-remotely
+>>>>> +      - num-channels
+>>>>> +      - qcom,num-ees
+>>>>>    - required:
+>>>>>        - qcom,controlled-remotely
+>>>>> +      - num-channels
+>>>>> +      - qcom,num-ees
+>>>>
+>>>> I think I'd rather see these deprecated and add the clock everywhere..
+>>>> Do we know which one we need to add on newer platforms? Or maybe it's
+>>>> been transformed into an icc path?
+>>>
+>>> This isn't feasible, there are too many different setups. Also often the
+>>> BAM power management is tightly integrated into the consumer interface.
+>>> To give a short excerpt (I'm sure there are even more obscure uses):
+>>>
+>>>  - BLSP BAM (UART, I2C, SPI on older SoCs):
+>>>     1. Enable GCC_BLSP_AHB_CLK
+>>>     -> This is what the bam_dma driver supports currently.
+>>>
+>>>  - Crypto BAM: Either
+>>>     OR 1. Vote for single RPM clock
+>>>     OR 1. Enable 3 separate clocks (CE, CE_AHB, CE_AXI)
+>>>     OR 1. Vote dummy bandwidth for interconnect
+>>>
+>>>  - BAM DMUX (WWAN on older SoCs):
+>>>     1. Start modem firmware
+>>>     2. Wait for BAM DMUX service to be up
+>>>     3. Vote for power up via the BAM-DMUX-specific SMEM state
+>>>     4. Hope the firmware agrees and brings up the BAM
+>>>
+>>>  - SLIMbus BAM (audio on some SoCs):
+>>>     1. Start ADSP firmware
+>>>     2. Wait for QMI SLIMBUS service to be up via QRTR
+>>>     3. Vote for power up via SLIMbus-specific QMI messages
+>>>     4. Hope the firmware agrees and brings up the BAM
+>>>
+>>> Especially for the last two, we can't implement support for those
+>>> consumer-specific interfaces in the BAM driver. Implementing support for
+>>> the 3 variants of the Crypto BAM would be possible, but it's honestly
+>>> the least interesting use case of all these. It's not really clear why
+>>> we are bothing with the crypto engine on newer SoCs at all, see e.g. [1].
+>>>
+>>> [1]: https://lore.kernel.org/linux-arm-msm/20250118080604.GA721573@sol.localdomain/
+>>>
+>>>> Reading back things from this piece of HW only to add it to DT to avoid
+>>>> reading it later is a really messy solution.
+>>>
+>>> In retrospect, it could have been cleaner to avoid describing the BAM as
+>>> device node independent of the consumer. We wouldn't have this problem
+>>> if the BAM driver would only probe when the consumer is already ready.
+>>>
+>>> But I think specifying num-channels in the device tree is the cleanest
+>>> way out of this mess. I have a second patch series ready that drops
+>>> qcom,num-ees and validates the num-channels once it's safe reading from
+>>> the BAM registers. That way, you just need one boot test to ensure the
+>>> device tree description is really correct.
+>>
+>> Thanks for the detailed explanation!
+>>
+>> Do you think it could maybe make sense to expose a clock/power-domain
+>> from the modem/adsp rproc and feed it to the DMUX / SLIM instances when
+>> an appropriate ping arrives? This way we'd also defer probing the drivers
+>> until the device is actually accessible.
+>>
+> 
+> Maybe, but that would result in a cyclic dependency between the DMA
+> provider and consumer. E.g.
+> 
+> 	bam_dmux_dma: dma-controller@ {
+> 		#dma-cells = <1>;
+> 		power-domains = <&bam_dmux>;
+> 	};
+> 
+> 	remoteproc@ {
+> 		/* ... */
+> 
+> 		bam_dmux: bam-dmux {
+> 			dmas = <&bam_dmux_dma 4>, <&bam_dmux_dma 5>;
+> 			dma-names = "tx", "rx";
+> 		};
+> 	};
+> 
+> fw_devlink will likely get confused by that.
+> 
+> At the end my thought process here is the following:
+> 
+>  1. BAM-DMA is a legacy block at this point, it doesn't look like there
+>     are any new use cases being added on new SoCs
+>  2. We need to preserve compatibility with the old bindings anyway
+>  3. I trimmed it down to having to specify just "num-channels"
+>  4. Everything else is read from the hardware registers, and
+>     num-channels gets validated when the first DMA channel is requested
+> 
+> I think it's the best we can do here at this point.
 
-The only difference between the fn mapping of the MacBook Pros with esc key
-and those without is of the presence of KEY_GRAVE in the translation table.
+Alright, let's go this route then.
 
-We can easily use a flag instead of writing the whole table again to omit
-it from the models that have an esc key.
-
-Additionally, APPLE_IGNORE_MOUSE quirk was unused in this driver, so has
-been removed in this commit.
-
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-apple.c | 72 ++++++++++++++++-------------------------
- 1 file changed, 27 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index 49812a76b..e31c9e8e8 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -30,7 +30,7 @@
- #include "hid-ids.h"
-=20
- #define APPLE_RDESC_JIS		BIT(0)
--#define APPLE_IGNORE_MOUSE	BIT(1)
-+/* BIT(1) reserved, was: APPLE_IGNORE_MOUSE */
- #define APPLE_HAS_FN		BIT(2)
- /* BIT(3) reserved, was: APPLE_HIDDEV */
- #define APPLE_ISO_TILDE_QUIRK	BIT(4)
-@@ -43,7 +43,8 @@
- #define APPLE_IS_NON_APPLE	BIT(11)
- #define APPLE_MAGIC_BACKLIGHT	BIT(12)
-=20
--#define APPLE_FLAG_FKEY		0x01
-+#define APPLE_FLAG_FKEY			0x01
-+#define APPLE_FLAG_DONT_TRANSLATE	0x02
-=20
- #define HID_COUNTRY_INTERNATIONAL_ISO	13
- #define APPLE_BATTERY_TIMEOUT_MS	60000
-@@ -89,6 +90,19 @@ struct apple_sc_backlight {
- 	struct hid_device *hdev;
- };
-=20
-+struct apple_backlight_config_report {
-+	u8 report_id;
-+	u8 version;
-+	u16 backlight_off, backlight_on_min, backlight_on_max;
-+};
-+
-+struct apple_backlight_set_report {
-+	u8 report_id;
-+	u8 version;
-+	u16 backlight;
-+	u16 rate;
-+};
-+
- struct apple_magic_backlight {
- 	struct led_classdev cdev;
- 	struct hid_report *brightness;
-@@ -152,20 +166,6 @@ static const struct apple_key_translation magic_keyboa=
-rd_2015_fn_keys[] =3D {
- 	{ }
- };
-=20
--struct apple_backlight_config_report {
--	u8 report_id;
--	u8 version;
--	u16 backlight_off, backlight_on_min, backlight_on_max;
--};
--
--struct apple_backlight_set_report {
--	u8 report_id;
--	u8 version;
--	u16 backlight;
--	u16 rate;
--};
--
--
- static const struct apple_key_translation apple2021_fn_keys[] =3D {
- 	{ KEY_BACKSPACE, KEY_DELETE },
- 	{ KEY_ENTER,	KEY_INSERT },
-@@ -209,32 +209,10 @@ static const struct apple_key_translation macbookair_=
-fn_keys[] =3D {
- 	{ }
- };
-=20
--static const struct apple_key_translation macbookpro_no_esc_fn_keys[] =3D =
-{
--	{ KEY_BACKSPACE, KEY_DELETE },
--	{ KEY_ENTER,	KEY_INSERT },
--	{ KEY_GRAVE,	KEY_ESC },
--	{ KEY_1,	KEY_F1 },
--	{ KEY_2,	KEY_F2 },
--	{ KEY_3,	KEY_F3 },
--	{ KEY_4,	KEY_F4 },
--	{ KEY_5,	KEY_F5 },
--	{ KEY_6,	KEY_F6 },
--	{ KEY_7,	KEY_F7 },
--	{ KEY_8,	KEY_F8 },
--	{ KEY_9,	KEY_F9 },
--	{ KEY_0,	KEY_F10 },
--	{ KEY_MINUS,	KEY_F11 },
--	{ KEY_EQUAL,	KEY_F12 },
--	{ KEY_UP,	KEY_PAGEUP },
--	{ KEY_DOWN,	KEY_PAGEDOWN },
--	{ KEY_LEFT,	KEY_HOME },
--	{ KEY_RIGHT,	KEY_END },
--	{ }
--};
--
--static const struct apple_key_translation macbookpro_dedicated_esc_fn_keys=
-[] =3D {
-+static const struct apple_key_translation macbookpro_fn_keys[] =3D {
- 	{ KEY_BACKSPACE, KEY_DELETE },
- 	{ KEY_ENTER,	KEY_INSERT },
-+	{ KEY_GRAVE,	KEY_ESC, APPLE_FLAG_DONT_TRANSLATE },
- 	{ KEY_1,	KEY_F1 },
- 	{ KEY_2,	KEY_F2 },
- 	{ KEY_3,	KEY_F3 },
-@@ -415,6 +393,7 @@ static int hidinput_apple_event(struct hid_device *hid,=
- struct input_dev *input,
- 	struct apple_sc *asc =3D hid_get_drvdata(hid);
- 	const struct apple_key_translation *trans, *table;
- 	bool do_translate;
-+	bool dont_translate_flagged_key =3D false;
- 	u16 code =3D usage->code;
- 	unsigned int real_fnmode;
-=20
-@@ -481,14 +460,14 @@ static int hidinput_apple_event(struct hid_device *hi=
-d, struct input_dev *input,
- 		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J132 ||
- 			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J680 ||
- 			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J213)
--				table =3D macbookpro_no_esc_fn_keys;
-+			table =3D macbookpro_fn_keys;
- 		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J214K ||
- 			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J223 ||
- 			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J152F)
--				table =3D macbookpro_dedicated_esc_fn_keys;
-+			table =3D macbookpro_fn_keys, dont_translate_flagged_key =3D true;
- 		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J140K ||
- 			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J230K)
--				table =3D apple_fn_keys;
-+			table =3D apple_fn_keys;
- 		else if (hid->product >=3D USB_DEVICE_ID_APPLE_WELLSPRING4_ANSI &&
- 				hid->product <=3D USB_DEVICE_ID_APPLE_WELLSPRING4A_JIS)
- 			table =3D macbookair_fn_keys;
-@@ -525,6 +504,10 @@ static int hidinput_apple_event(struct hid_device *hid=
-, struct input_dev *input,
- 					do_translate =3D asc->fn_on;
- 				}
-=20
-+				if (dont_translate_flagged_key &&
-+						trans->flags & APPLE_FLAG_DONT_TRANSLATE)
-+					do_translate =3D false;
-+
- 				if (do_translate)
- 					code =3D trans->to;
- 			}
-@@ -680,8 +663,7 @@ static void apple_setup_input(struct input_dev *input)
- 	apple_setup_key_translation(input, magic_keyboard_alu_fn_keys);
- 	apple_setup_key_translation(input, magic_keyboard_2015_fn_keys);
- 	apple_setup_key_translation(input, apple2021_fn_keys);
--	apple_setup_key_translation(input, macbookpro_no_esc_fn_keys);
--	apple_setup_key_translation(input, macbookpro_dedicated_esc_fn_keys);
-+	apple_setup_key_translation(input, macbookpro_fn_keys);
- }
-=20
- static int apple_input_mapping(struct hid_device *hdev, struct hid_input *=
-hi,
---=20
-2.43.0
-
+Konrad
 
