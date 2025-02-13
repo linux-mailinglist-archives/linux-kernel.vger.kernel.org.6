@@ -1,97 +1,153 @@
-Return-Path: <linux-kernel+bounces-513276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35935A34798
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:36:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62996A34844
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:46:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B7F7A1E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8564416BA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5096D1CB31D;
-	Thu, 13 Feb 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3D91FF1DF;
+	Thu, 13 Feb 2025 15:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="htRqOzQH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljt/AJ5u"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07857202F93;
-	Thu, 13 Feb 2025 15:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4328419E975
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739460919; cv=none; b=LcbUdO8N1HPq9suLEJo86gN602nP2YRaQsvzQZAYvNFlAzHOfBrLg5LR7nm64Vutb/TGZb5xVsRhXQYQCLhyAnjbBIPmhUQwXeru2H2/NSPTFxCAo27HTFrrvC46ZCeBfeidZAf5tloaSmOp2FA7wRx+MpSHntP4vvKOA7rDX5Q=
+	t=1739460972; cv=none; b=Fmlg0O30JbFU4fafSOZSCuLZ7JEGTbZBE2g5lqmFBqWqQ3GP2xtEVF+dUu9FTJ7shiARdbTtfPe1E762T9nH416Eg3LVeOals11Tez8hYUnrm9L5TYQH3bTUAWoasrj+K71/sG387hOTHv2vWsDLoWBC4AqCk6r3Ui2rWvHpsfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739460919; c=relaxed/simple;
-	bh=KIzQ6vooyU6QmwLx00RHWtl6/ppL9caxsWCQFHdtPas=;
+	s=arc-20240116; t=1739460972; c=relaxed/simple;
+	bh=nhl36UTqE0LW4DCJcT4lmamCR8RcofmmaoyPku3b5fI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfKo5SRMujYwUhWZT4hq+5YURs3NeMPLvVjOqL+NJg0iEO0foz9/vUGIV6H+XwLzuhI5UiHl8pVLbjl9cDsMEzTYkL4dP0L93Z01+tLocMypFO3Eueg8awelB5NmjANeiveCZJJnrzEGeVwE5gUnHS4ZQiHbviptEaV72J6Bjyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=htRqOzQH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=P9KCq207AYFiKquz58kkroM53MgkDG0PAHpKTjgiJoU=; b=htRqOzQHvtSCd7OSdJjBfJQwM+
-	kU1/R0KuL0nmL6BhJ6EOWiRmsFxRZ8Ptt13b8iomO4q7VywBTYXh1goom0LH5I9UZLuBTCOb4gtFd
-	NyC2+5mreJmgWNVU+YsR5uX/SRIrKj3bm2pD19BHnjVw1YykjnOhLtML/wAq5i+GUANM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tibEv-00DmDc-Mc; Thu, 13 Feb 2025 16:34:57 +0100
-Date: Thu, 13 Feb 2025 16:34:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-Subject: Re: [PATCH net-next 1/3] net: phy: mediatek: Add token ring access
- helper functions in mtk-phy-lib
-Message-ID: <81234e04-f37c-4b10-81e6-d8508c9fb487@lunn.ch>
-References: <20250116012159.3816135-1-SkyLake.Huang@mediatek.com>
- <20250116012159.3816135-2-SkyLake.Huang@mediatek.com>
- <5546788b-606e-489b-bb1a-2a965e8b2874@lunn.ch>
- <385ba7224bbcc5ad9549b1dfb60ace63e80f2691.camel@mediatek.com>
- <64b70b2d-b9b6-4925-b3f6-f570ddb70e95@lunn.ch>
- <Z633GUUhyxinwWiP@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5Cr1qditFYeEFnZHpY55f4mjOlSjdu3MTgsnqstsm9y2aEyHxvpubqfN3UikMYz4VniYO1D8D3t9gqBtw514A1T3ebcgWscmuuiiGQ9MXEoVsnG8cpwax4gsfFwD4GwBQCPrK7F9g2StwtDGyKb1OAAhoDtRGHKZmoFewA1ymM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljt/AJ5u; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dd935a267so807329f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:36:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739460968; x=1740065768; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4IcXbcGrIKkvklFTibYCnGdgsV2fdSKmU8Z5nD/hPYI=;
+        b=ljt/AJ5uf3m+RJ693VCCy7MHLQD9iyBL8cS1QAewVZ/jc1upo9ALybW28kLBQ6K2bb
+         tkPXSnUmwGlxW27p4eK47oq6FrAz1ttOZWT/eXxCEEXroFqT31o/YhJJJC6kiakXn+tv
+         /EtQDIBsB4BQT1UQnNICCS5M9oWoAHpW3r2yZSruC4kIJ5b6rDXpb4ODwj/cwu9USFMz
+         GXS/hgeKxGeU4pu7UVc/5SY61ACIDaohCPOZjp956HAMRpmJ+ws+G3CEZBOUNPr4cx+p
+         neglNEmMF24GQjdahQnLX4oj8BOCIorlHI3naLarUdZhbH5Z1RgyKPiZPXCDztEAzhwO
+         rFYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739460968; x=1740065768;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IcXbcGrIKkvklFTibYCnGdgsV2fdSKmU8Z5nD/hPYI=;
+        b=tPEawZFl4pcIQG88HAm0GVtEcgbTVXn8l4ryaUHnRh6vzrhzxwDEsxdW7kMOeUDNUl
+         74awgdI76hL4Tjo9Lbfg6wpCKVltFafRnan9pKKfSj7yDVgG3X/7RnVnozup35jo2c3c
+         zSKL+fbVdhdkxXNOquXpKx/hNPLPI+9POZNuvqr4cbcye4ps50BYhxhct8OX39hiNRnG
+         PVLVPF48vedJBjV5yprYDK2YyK2HwkANC3C3ICIyHjau7KNIeSJ6yI93HD5pwQx1JjYW
+         7K1gznhGTBTIq7YTRRfO9dFvOC7brAbTtML7X7DvSqmi5QOKJdOuxgc6E0O+rB0Ea5hQ
+         znXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdxq9FcOzagMjFElDlpOSUyAFtWmMPdUNupHrnt97TyIqslG/arTVwa75Dc88BjKYYQkK8kCvSD7u+JcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yype6MyFj+3BiTH3L/3ile6KW/X2Ag5pKaQyp+UW8i/3BpO6NO/
+	nrEW28of/8Ob684KgtXFOrGD7qVaI1NdCEm/gw046Y/HQ2sUVfmB
+X-Gm-Gg: ASbGncv+7oeCNeSfOi5P7HwU4Wy9clLNnz2UypEHA2SltEW+fI0ivPYSXZwA2uR7blM
+	1tKYsRMZay8OwRngZqRoqUNa6QV3/hVKnk3qfZdNXd3gQ5NrLRmSTT59aFPxvq7ZJ6upYvJxYK6
+	xsu0dFBlyy1jLyhSkbfGioNNwZaOqzD640wGOd/XpqDFu99ErA83xsGkV5Lug9bFtEhCjaIANrH
+	bgyIMgyz6rldaSbdtl9b2D80eO37OyASkNxxk8ngchx/7lKCDz639qCbnMTHOBkEg9I54JHq4KF
+	Q8w+T+rYt6U6ouw=
+X-Google-Smtp-Source: AGHT+IGSGpgSdvmbWbgThw8kS11u5smsNhtdHae1iKQRr9jaVX3eewQTbXi+1AvJUCh2KKRudVkMkw==
+X-Received: by 2002:a05:6000:2a5:b0:385:fa3d:1988 with SMTP id ffacd0b85a97d-38dea259847mr7583799f8f.8.1739460968248;
+        Thu, 13 Feb 2025 07:36:08 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fa1esm2154028f8f.100.2025.02.13.07.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 07:36:07 -0800 (PST)
+Date: Thu, 13 Feb 2025 16:36:06 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] drm/vkms: Extract vkms_config header
+Message-ID: <Z64RZu4HdoBOzroM@fedora>
+References: <20250211110912.15409-1-jose.exposito89@gmail.com>
+ <20250211110912.15409-6-jose.exposito89@gmail.com>
+ <Z636vaJLmJ9RGI6L@louis-chauvet-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Z633GUUhyxinwWiP@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z636vaJLmJ9RGI6L@louis-chauvet-laptop>
 
-> > > Those registers with Mrvl* prefix were originally designed for
-> > > connection with certain Marvell devices. It's our DSP parameters.
+On Thu, Feb 13, 2025 at 02:59:25PM +0100, Louis Chauvet wrote:
+> On 11/02/25 - 12:09, José Expósito wrote:
+> > Creating a new vkms_config structure will be more complex once we
+> > start adding more options.
 > > 
-> > Will this code work with real Marvell devices? Is this PHY actually
-> > licensed from Marvell?
+> > Extract the vkms_config structure to its own header and source files
+> > and add functions to create and delete a vkms_config and to initialize
+> > debugfs.
+> > 
+> > Refactor, no functional changes.
+> > 
+> > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > 
-> >From what I understood the tuning of those parameters is required
-> to connect to a Marvell PHY link partner on the other end.
+> This does not build in module, can you add this in the next version?
 
-If so, the naming is bad. I assume you need the same settings for
-Microchip, Atheros, Broadcom, etc. These settings just tune the
-hardware to be standards conforming?
+Interesting. I have "CONFIG_DRM_VKMS=m" in my config and it compiles here.
 
-	Andrew
+What do you have as module? CONFIG_DRM_VKMS_KUNIT_TESTS=m?
 
+I'll rebuild every patch to make sure there are no errors.
+
+Thanks for the heads up!
+Jose
+ 
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index 152b2ecd6aef..42caa421876e 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -4,6 +4,7 @@
+> 
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_debugfs.h>
+> +#include <kunit/visibility.h>
+> 
+>  #include "vkms_config.h"
+> 
+> @@ -17,11 +18,13 @@ struct vkms_config *vkms_config_create(void)
+> 
+>         return config;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(vkms_config_create);
+> 
+>  void vkms_config_destroy(struct vkms_config *config)
+>  {
+>         kfree(config);
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy);
+> 
+>  static int vkms_config_show(struct seq_file *m, void *data)
+>  {
+> 
+> With this:
+> 
+> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
