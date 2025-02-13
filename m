@@ -1,178 +1,157 @@
-Return-Path: <linux-kernel+bounces-513596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DACCA34C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:39:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD448A34C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD24188740F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:39:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65AA87A2ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD022157B;
-	Thu, 13 Feb 2025 17:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6204B211A36;
+	Thu, 13 Feb 2025 17:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5QuN7Ab"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="cXbg4Xsg"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39792211A36;
-	Thu, 13 Feb 2025 17:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEA9221700
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468385; cv=none; b=BQ3+z+QkRnuL8MhtVwg3TpIT3WFLouWTaAwETW5TKCHLNXiqtw/X+z2cBkRtg1AfCPbDO0KXULGp7LsHWUxqvLnXYRxm1vo5L8IXqjoe6f8/TyqDc82pw99Zte1e4sfoZvvnEdUxgrDmsZv7hg1oYqG/93uJSOnNGD7fMoI2kpQ=
+	t=1739468388; cv=none; b=efI2Ux3Ovo/B4TxSBCyaPhBxwIDBEq4Nv4Tf1fvwegvOI4XkUGWkrU6mTq35moQ9+QuhpHQkWTxMqwRCBXymT0ESaQn+6Ho3Y0kLt5W1BOlnx/ijb9nXKNKppBjxnwWv05qFdrMSAyQbObnm8Rij8hSxZVW69mHKn39XKvXgXto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468385; c=relaxed/simple;
-	bh=ch3lPgpH9FqpWF5yhIl3KdS/BSZwVZLBNQlPIEZ73z4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JYXd7Etod5swRcnNEz/wB9zitsDMjXwYd2rL02rRtnvdYWhpymkbsTHZdUCaYyAgInkUaF20mmgUggcYE4Ls3KW3ES6G5aXEK140II9wmFrC9srLMIFiOd2g9ymHFQa7ptij6Xql2g5gLieueCZPVvwvJXYOby83fSfZZHIbJvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5QuN7Ab; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-726f943b322so607554a34.3;
-        Thu, 13 Feb 2025 09:39:44 -0800 (PST)
+	s=arc-20240116; t=1739468388; c=relaxed/simple;
+	bh=6ZpVr1zXfeW4p4aAqTJktWD02PA9u9B2cOeDG/0jTAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EM99+N7yqQA7+lAb8sYD5+fOBnDrYZ1cS84hqSh4Wic5dY/C9SwoLDFdPjmUvhUwBLelZ0kqY15AU71PYyJPkES1W4NHHTbst5ys3slSOL4E2iRfdeN1N6XKw/5kNdWlnAvEg+mKwKAMhMrPNKd3T/53Vz8avLbQKuFZbM/Ce18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=cXbg4Xsg; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4717fe0735fso12028991cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:39:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739468383; x=1740073183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnUJdLyMGBvO/hIllptp513IAD0oBTKPE00WpFD+Cy8=;
-        b=K5QuN7AbsNLTWrY0fhyu++9hNFFcqmRl1zRyDzeanHiWYko0YdXJpsIEf7lgZzVyo4
-         nuKJnz6r2CMuactETW1moCoExVaX3jVQgN2DxkR9U22n5Zw3Icm6SCv3lkIjnr1dzg5V
-         HvhaqtTTypABWEspTHB6XpjMEwfZJKAcSMmYamXtvbIMYmT0gsVIAyKJ3PAKiX4jGvmo
-         7jAG0toa8mIEtITN1G55IJdP5mjOJaNWwJr4YCEHmcUSIqyQRFrGOtXR4HLV8x3sxw+D
-         XoHX3kMA44fKaPQj4P5wlCnKaIcIV+W6i9OVUztFWhJx8X1nXaPO5SUPSDtuMQz1bTe6
-         GXrQ==
+        d=fooishbar.org; s=google; t=1739468385; x=1740073185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=whhYbCC8Ye/92zXnbL6IJWDNwsx8j4boIogQLPts9MI=;
+        b=cXbg4XsgzmZTXsu7KJQYatRLkjyHCTikDhbFGnU/GtiLOp0SJ1Q0a2uj1CZwmYhzlv
+         pFG7b5yz9tlOyM7H1Vz3kRjnj5x5D+gNqVOQfLhzo7cguPOqeiE4h0r/ICI+0PXjIqPw
+         lnug7O0t1SxrBTg3kE3hX8EHfw8W/4m1IxfCGnNDR48KlbgYuPdOL/Hp+UciDsPj4BOa
+         Q31247c1kORCInSC0Dud/C9GIfNVXMJdZqBsHvZm6aTr8tEGb4nXyp2DBAVw2zSXZ/sL
+         Qe4Fg0TuaKODvbRpeQtgWZIRDBbwlZN4QQ5HuIMI05kr37DEvafZhDAZvSAlVV4v9UNg
+         5qrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739468383; x=1740073183;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BnUJdLyMGBvO/hIllptp513IAD0oBTKPE00WpFD+Cy8=;
-        b=tHXxvFqZasPNvEFlxqTMSzvbY2+cf3NoYvkiJdH3hD4GiEhr/9SerEHL9TMDWnkxfo
-         ndptVRHjka8zEXS+bRDieVkBzXpXfohJ5UowF5lfmlmnL1mnokFjRjcWNEkyoziQ+3rS
-         9j9Y9W1PUdmimNsiDuboG3Fv9i/UCmkte7n5T8gPqaDj1Upo0xbuxQRP3IMLlFepY8Ow
-         eDhDF9dPWOrlhfND8serw3/FCrN1cEJYwZZeRzLwHgMn1WHmuYh5QYZor/DNm4SZGmFG
-         himprZad37+Up2QwPa0Hyo9tH0ha3itMJZfqMPKjvo3qjWjvx7TsLZbshg63URZTBeMk
-         2GOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnbN+gVDs+8eATFBkxxIs2CgvFc2udZ/AmDIGk0pJasjPorLApDntSWzpMvARvupzsBvy/IVDEMigQ@vger.kernel.org, AJvYcCWn2H75TdCKQIZEj427b03+euAVz71WLDE9cYWoTgXh54r4+NK5/S0UXv691C3yfvsp/h+sW6LH3WMvCdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1ABeEwX0aWoVLyilZn7VzaCCJUeckHABmSjVnAvwBkP3wxKuC
-	Ek/FHeJRzqZ+H36smK13fyq53QuFE66khJdAkAR/y1XvBLssujAA
-X-Gm-Gg: ASbGncuoul2fztzf0Y5eZ6pPhVVoMQeXSU0YT2GZ4mSC+EG4Xcwkt8EcNHHnzK0gS/Z
-	CfzUMkbuLHuwHTFikVR4Av0FtZD/3ozGDPKIq2W89KMarkuzzc44mO/jlSriwdZLir3LNTEeWwn
-	vD1n9LQveGSEc8sBvOKZBeNhCvpFv4L4+iOksI5p32FUoOHHqYB/8eiNPkjWd9GzBe/A74rsQUv
-	ZVoc1wAb8zahtj59OhD+DFcV8oTTpGimIIvenAKIkOtVCyq8w+yqnFxee7NJmUIHdAv1RLQcN9t
-	TDtgp/4/7dKlcsHxi1M2kGRa
-X-Google-Smtp-Source: AGHT+IFvYIB/G0KZILSte8pJfISgj42H0XPT9hPv7ZXXXJSfaRjzTFXXOKVJTFw1PnRxrDQlxNbfnw==
-X-Received: by 2002:a05:6830:65c4:b0:726:e951:7b29 with SMTP id 46e09a7af769-726f1cefa51mr5734804a34.18.1739468383260;
-        Thu, 13 Feb 2025 09:39:43 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.154.251])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72700257ff7sm758460a34.54.2025.02.13.09.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 09:39:42 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: scott@spiteful.org,
-	bhelgaas@google.com
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] PCI: cpci: remove unused fields
-Date: Thu, 13 Feb 2025 14:39:25 -0300
-Message-Id: <20250213173925.200404-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1739468385; x=1740073185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=whhYbCC8Ye/92zXnbL6IJWDNwsx8j4boIogQLPts9MI=;
+        b=YgRfaNona5A/OBz8AauU53IaNI0wfd9gKz00QCQjCZIYsMYrnBjemHYd3lF12p4jYy
+         9cBJbhj3KbLT2uRTH3m+FQP34R/hqP1w0YxcCaBqxynsqRh5LSkYKEABk65vr3MXK1FZ
+         GJ5WkJgFipU+pRrPjtOqSfqVsBBJRwN8Ue1e4ozyaJB8OBS7/SXi0/375OH9UyU2OnIu
+         TTJI/yX6Y3tuucmu2BWS9GhC9rZ6O+Fh455duroNMmIJgaZEYYPrIZqIwnJKZFtrVRfq
+         Ew3s75oKBhwrp5ST6LbRvd0geYNQajGWbeLK+QcLxoADjPwcLgff9M3LZiLg7Kb4fRis
+         uEiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmXKcatDUWxYD1p7fwV/tTzno3LjpMljR37k4ejAOBzfroyDo2FCQpay7Dz9d/5HBe5Hqtp9vk57MUXDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/xSsLBd+PK0XbxQJz/sSyzDvoFm9TTlioT85awerPrXJKWwzy
+	CY9Thu5qEW2TAQDdlCWdgQnGR+7aa22mme8WOPioXrUUhD9h363LfRzJPKmZhFdTgRyUEsayIWg
+	ESofF8HGBka5Vm0Pm+YOCjytAGDXPgVNVUPDJsw==
+X-Gm-Gg: ASbGncvdybjHd2tr1ObN49Mfr9LKHoJW+5U2YLhGytYvHzAPBgkvKE4AJT76Ugn109R
+	W/04LCXeNJPb9dVFyv58Olesn39JcNlxneic+AeWEgYZ4WL7bInPFJ1LEaCIlDGJdwKzf2EM=
+X-Google-Smtp-Source: AGHT+IGE9qUAgteAk42h8NRzlwUiEVQLmyQkmiwetNHn7TWQ4JRreBJYCr8hrD0N2jIsyDYrKQ939hR7SXW12F654hE=
+X-Received: by 2002:a05:622a:418e:b0:471:bd5e:d5dd with SMTP id
+ d75a77b69052e-471bd5ed804mr90077321cf.16.1739468385599; Thu, 13 Feb 2025
+ 09:39:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+ <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+ <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
+ <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
+ <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
+In-Reply-To: <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Thu, 13 Feb 2025 17:39:33 +0000
+X-Gm-Features: AWEUYZlDafBpFokqUpKbJAhQu7Ep0JLs4xPUNmdO9fz5XX0E98BWFTHCpoumcPo
+Message-ID: <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Sumit Garg <sumit.garg@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Florent Tomasin <florent.tomasin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The `get_power()` and `set_power()` function pointers in the
-`cpci_hp_controller ops` struct were declared but never implemented by
-any driver. To improve code readability and reduce resource usage,
-remove this pointers and replace with a `flags` field.
+Hi,
 
-Use the new `flags` field in `enable_slot()`, `disable_slot()`, and
-`cpci_get_power_s atus()` to track the slot's power state using the
-`SLOT_ENABLED` macro.
+On Thu, 13 Feb 2025 at 15:57, Jens Wiklander <jens.wiklander@linaro.org> wr=
+ote:
+> On Thu, Feb 13, 2025 at 3:05=E2=80=AFPM Daniel Stone <daniel@fooishbar.or=
+g> wrote:
+> > But just because TEE is one good backend implementation, doesn't mean
+> > it should be the userspace ABI. Why should userspace care that TEE has
+> > mediated the allocation instead of it being a predefined range within
+> > DT?
+>
+> The TEE may very well use a predefined range that part is abstracted
+> with the interface.
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- drivers/pci/hotplug/cpci_hotplug.h      |  3 +--
- drivers/pci/hotplug/cpci_hotplug_core.c | 21 +++++++--------------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+Of course. But you can also (and this has been shipped on real
+devices) handle this without any per-allocation TEE needs by simply
+allocating from a memory range which is predefined within DT.
 
-diff --git a/drivers/pci/hotplug/cpci_hotplug.h b/drivers/pci/hotplug/cpci_hotplug.h
-index 03fa39ab0c88..c5cb12cad2b4 100644
---- a/drivers/pci/hotplug/cpci_hotplug.h
-+++ b/drivers/pci/hotplug/cpci_hotplug.h
-@@ -44,8 +44,7 @@ struct cpci_hp_controller_ops {
- 	int (*enable_irq)(void);
- 	int (*disable_irq)(void);
- 	int (*check_irq)(void *dev_id);
--	u8  (*get_power)(struct slot *slot);
--	int (*set_power)(struct slot *slot, int value);
-+	int flags;
- };
- 
- struct cpci_hp_controller {
-diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
-index d0559d2faf50..87a743c2a5f1 100644
---- a/drivers/pci/hotplug/cpci_hotplug_core.c
-+++ b/drivers/pci/hotplug/cpci_hotplug_core.c
-@@ -27,6 +27,8 @@
- #define DRIVER_AUTHOR	"Scott Murray <scottm@somanetworks.com>"
- #define DRIVER_DESC	"CompactPCI Hot Plug Core"
- 
-+#define SLOT_ENABLED 0x00000001
-+
- #define MY_NAME	"cpci_hotplug"
- 
- #define dbg(format, arg...)					\
-@@ -71,13 +73,12 @@ static int
- enable_slot(struct hotplug_slot *hotplug_slot)
- {
- 	struct slot *slot = to_slot(hotplug_slot);
--	int retval = 0;
- 
- 	dbg("%s - physical_slot = %s", __func__, slot_name(slot));
- 
--	if (controller->ops->set_power)
--		retval = controller->ops->set_power(slot, 1);
--	return retval;
-+	controller->ops->flags |= SLOT_ENABLED;
-+
-+	return 0;
- }
- 
- static int
-@@ -109,11 +110,7 @@ disable_slot(struct hotplug_slot *hotplug_slot)
- 	}
- 	cpci_led_on(slot);
- 
--	if (controller->ops->set_power) {
--		retval = controller->ops->set_power(slot, 0);
--		if (retval)
--			goto disable_error;
--	}
-+	controller->ops->flags &= ~SLOT_ENABLED;
- 
- 	slot->adapter_status = 0;
- 
-@@ -129,11 +126,7 @@ disable_slot(struct hotplug_slot *hotplug_slot)
- static u8
- cpci_get_power_status(struct slot *slot)
- {
--	u8 power = 1;
--
--	if (controller->ops->get_power)
--		power = controller->ops->get_power(slot);
--	return power;
-+	return controller->ops->flags & SLOT_ENABLED;
- }
- 
- static int
--- 
-2.34.1
+From the userspace point of view, why should there be one ABI to
+allocate memory from a predefined range which is delivered by DT to
+the kernel, and one ABI to allocate memory from a predefined range
+which is mediated by TEE?
 
+> >  What advantage
+> > does userspace get from having to have a different codepath to get a
+> > different handle to memory? What about x86?
+> >
+> > I think this proposal is looking at it from the wrong direction.
+> > Instead of working upwards from the implementation to userspace, start
+> > with userspace and work downwards. The interesting property to focus
+> > on is allocating memory, not that EL1 is involved behind the scenes.
+>
+> From what I've gathered from earlier discussions, it wasn't much of a
+> problem for userspace to handle this. If the kernel were to provide it
+> via a different ABI, how would it be easier to implement in the
+> kernel? I think we need an example to understand your suggestion.
+
+It is a problem for userspace, because we need to expose acceptable
+parameters for allocation through the entire stack. If you look at the
+dmabuf documentation in the kernel for how buffers should be allocated
+and exchanged, you can see the negotiation flow for modifiers. This
+permeates through KMS, EGL, Vulkan, Wayland, GStreamer, and more.
+
+Standardising on heaps allows us to add those in a similar way. If we
+have to add different allocation mechanisms, then the complexity
+increases, permeating not only into all the different userspace APIs,
+but also into the drivers which need to support every different
+allocation mechanism even if they have no opinion on it - e.g. Mali
+doesn't care in any way whether the allocation comes from a heap or
+TEE or ACPI or whatever, it cares only that the memory is protected.
+
+Does that help?
+
+Cheers,
+Daniel
 
