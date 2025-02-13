@@ -1,145 +1,192 @@
-Return-Path: <linux-kernel+bounces-513307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B848A348AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:57:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B759AA348B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424977A3840
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2787D1620B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EE61C863C;
-	Thu, 13 Feb 2025 15:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906641D6DB4;
+	Thu, 13 Feb 2025 15:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gqTKEFJO"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPCowkA4"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9124D18DF9D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA0E18DF9D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739462261; cv=none; b=a2sVKKRTbtRghWOEJGucuYif1iA90DgL80Iy/lbTuB1+9mUuGgs7dSjksfvam0c9nGPZo4YwTZ1bT4XHZXvyGrSG7l2N5QYf20HL2OES8pDt/4u4Ys22WvbbYpjlZm0IztBL2SA/YtWhjRSQxL5F4RmobMprQ3kjvoRu4WSfyLM=
+	t=1739462280; cv=none; b=uaov4gqNSRM7zcOJF6AhThLjN4R5oxOoLqoUMUeaa1qtIbNJCSnCj+SwlOKaWc93cDXdnypbhx66D+iNrDBioS97bqJP2YG/AcFRNGWlcFjoGYiVxsav0UQfOzXIMxZ9+1Wi9GzJlCsJqCQpMLLJ1BE8XbmyNeJYMCMR1/zRd8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739462261; c=relaxed/simple;
-	bh=frjmkr3xCPkO6AhMmYzJCUdfBDQUprIUBclYA5ZTRZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B6JzWOLLS6AKKYfYjGzhu17U85E/dIWE2Q6IFbH+wHk8m8yojgorIP+T/PYfrwvEKYZYHYMPuXaIJdgAQoyiFvd3tETf2GtYU6Fp0tzQx2/OnQ12wdD5BaybEEz9Dupk8Hec5UxlKuUy62FXeI10zZ6/1F3ryfrRvpjbhrL9af4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gqTKEFJO; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7f9d87b96so168690066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:57:39 -0800 (PST)
+	s=arc-20240116; t=1739462280; c=relaxed/simple;
+	bh=689LjFK8hKatdZaSaF9r6CCqoaXyMdM1aN6KF4TBO24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7WfNEetVvCUyeHQA2rw0cXlPYAF0dqs0zESf6xyX78dvXVy1ojF6JYlnEGoRI6R5WLQfZEqTQQ4RFB6ECCdvXnr0/gb55LN1CjQ8aAun7SRV4v7feN3e+aUgOVg+C8tVN/7STQG7OXDlyAhtibdpKwFzh4FRN0sHuaVYk2b3PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPCowkA4; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f3de1bdff2so241338b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:57:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739462258; x=1740067058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JZ7Cx13VrPkP8+VctSLdTrFIVV214IFQtD/nhF57l7Q=;
-        b=gqTKEFJO+AomWXRN9HA7VDm/nxelvTNwQh7S+UmRqQ0HLMpulKT7mg86dWnX2yfmLo
-         OT68bOQikZcCqifbXyekRMCR8NGFqtR0wUZZV/nh4U6LJw6AfUFzgHgxkOzgRcZWSHE4
-         QGA0SgGZtRHZO47o2qj0yEWeRFjqV/fXhTIjZtHpxZScL4SEp1V0AkbcO0pVcgmk814l
-         jXUHHS6dQ1LFuVbPeUjxgXHZPxS+mhMhNtRw4G8+ALS23wi8bHBxs/9Ndl4X01rnDT2W
-         o0bf1hvh2es+0N6oyBLnIIW4F+hda5AXGERnzGVKtneSfAJfyFbk7XTdWkv62Jp9i/LX
-         dhlg==
+        d=linaro.org; s=google; t=1739462278; x=1740067078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NHtO1l0Sm3xnCkozanEaDdmWEvTg249bwN+Pta/EflE=;
+        b=HPCowkA4a/oI6/25vr+EWCHaooAo/KFm2NwgXgk4wdf8hljv7TGFaUTwEO64M/cg/a
+         U47pO+FQZi5aIa0bDDkJ1mr1ffJgbVEXD8QleQ+wp33Ij0J9O9HZQuPvfCcjQqtHir6E
+         SkGY2vleJIy5y96XKyCdNZxW0jKuUtgdgqFVCO8L/unHUuz87khF68v1ZGo4TBf/eywh
+         bsgeUvcMfgI5/dzeDpJraUdyxA1frkeHa0fdYV6QxDuKkgFCcK4lMLMuStwXPpzWeEoF
+         0fieYcJGyj65RL5xgkYIUABTwQxUFhCYwK4nTNCz2r4JB9o0bDbZp/qlqdYQnXXNf5y8
+         fCzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739462258; x=1740067058;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZ7Cx13VrPkP8+VctSLdTrFIVV214IFQtD/nhF57l7Q=;
-        b=eDiNUhh1r1ivtlLjnxon4KwIQjPRKRgflzAzN4VTdShYtRsAFq4S+bqWKetECbGRv7
-         b7re9WNwM1UTbenm3zd2ip+CSxUEEZapgPZl4JstSB6p1VqZHoQdrepV9IQ1M1iID9aj
-         gzpCbFQgw4Q5q/sHH7gIFWlDNSUHgmlJENE98YNEZZgVyfEHlif6GMWqn7+A2H4984+P
-         SdPx5aCwzMY3wLAUzlzgaDlfRZz0pIruDM0VhMRKzKGwGbqIqF3/vc2oanbyzCHk13PS
-         O/pVQmcp5DpreGGBEY5u5ruynb27QMToI/sA2KzxKmq+bl439hSfPls96c3+7xs4XPgx
-         vZIg==
-X-Gm-Message-State: AOJu0YwzEI8yt0/YoeqJ7dGaJGNtHVRRoJ7XNIwtt1LZbWEnfiPf0ksA
-	r8KpmPtTA/vz/nCUjZYUHDQuSAXoDd3IDgn1VYVjb+Fcob3xjn7A/xkcmjvCMzo=
-X-Gm-Gg: ASbGncsu0rLvU9sss0Rh5m4+mcTSWXtMd3HnXm3ygUbQOaWzlP4zqQ1v2lpGC6m4jmZ
-	OS7cbe2DKaa07IDPyV2aDMGgVYCIzJYRazJnXzUb2fB+Q4309Pwt3Ge19G27ONcFh9zuTa5KLYh
-	A/xbUVyMrLwNzcsbB9qsQm9njJ0l3Ha78d9v/dJnnB+4FYVS0kx2t+G9JJ20wxMC7LEHoUnBMfJ
-	2epKqidpM1KSiqirVGmO8hdXALgReN0iOHiJ46xi1Exvwmk3ZvX++WOQRD2zMJGwO8JQ5yLX8wb
-	Owy+zWXWRBOSlB9yEtY=
-X-Google-Smtp-Source: AGHT+IHhqe1wbcVZq5bYL05C/nHzZU3ubfoUcIbOrRCAGceVtB02UDx0Y5OoVZE9bABlHjUFF9FIJg==
-X-Received: by 2002:a17:906:f8cd:b0:aba:620a:acf8 with SMTP id a640c23a62f3a-aba620accdbmr14943566b.24.1739462257718;
-        Thu, 13 Feb 2025 07:57:37 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53376af2sm155974866b.119.2025.02.13.07.57.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 07:57:37 -0800 (PST)
-Message-ID: <0631f7fb-423a-40a8-a6c1-1f307c1efe96@suse.com>
-Date: Thu, 13 Feb 2025 16:57:36 +0100
+        d=1e100.net; s=20230601; t=1739462278; x=1740067078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NHtO1l0Sm3xnCkozanEaDdmWEvTg249bwN+Pta/EflE=;
+        b=d1e44bb+AiC90ezM+2ra7lDnVVSLExJNXqZqUp0XisFN8oMvaCsYXjGjjj5IW/ftTX
+         5W1x4yQO8VYOkYCU2jCe7g0B/ME6NULDg77a0FWltfKXMY46pb9VT2GuM9peqobFU8II
+         9SBAwpG0Sf+QR8Hd5b9nKWLsE4jTuZVUlbebvp2CQPGSoXudOqJv89mNsMgZsZfOWXBi
+         UihnCbyaVOS4Iq6q+FunrVrvImQRMEyj0OlQFZFz1ysp2QP9I1HX0qK1UPeLiJKzZawz
+         gJARTpqXSOIIFI+z8fOxmYPi00KRpyCNdBw6X2n3HQ+nU/e4vpd2jwERjpQVnAD+fZDn
+         vT3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjMpfFM8Qntu3R6P9gQMi4ldAFKfcWtAlLBJj8SgpHIGcLKaA3EEmy0gr5SS/VHF6EaaWK2ZtF4sepZzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCIwptgcLSrQ46IykOtcTO+SO05XLP8Jh2GzfYdZ/P04wXY0MP
+	xhmxYHZBDHrIV6AscJEWtb0s6WlX9QOkUPMC+ApJU6Gq5BqibYTpHc10rDY3PPn5USOlPkkFF8M
+	5QouhGRDcLsiwijmZF1eZAe0r5oQrMsKqQwf/Hw==
+X-Gm-Gg: ASbGncspTMYjVg4PZVHaMDN+3sk9mVN8QGnlg08BPNOsmFjnrUVGnxS/oopkUIA33KE
+	sSxkKGa4roW4Cq8tmscyfgZY6VTQInUCPnglapKBhRv9aL/0Q3K3rTjnjK31uKfifZpigpkLVuw
+	==
+X-Google-Smtp-Source: AGHT+IFP5g43bicIDLt/S4uI2Sk6WesrFKEkZAgRcsR6UVnbplWcWySy+Pe58g7cxxxYF2yjdv9hpHSaFgfwFOWE+Ow=
+X-Received: by 2002:a05:6870:f112:b0:2b8:84d7:ddd5 with SMTP id
+ 586e51a60fabf-2b8d68c6af2mr4406581fac.39.1739462278059; Thu, 13 Feb 2025
+ 07:57:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] kernel: param: rename locate_module_kobject
-To: Shyam Saini <shyamsaini@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- code@tyhicks.com, linux@rasmusvillemoes.dk, christophe.leroy@csgroup.eu,
- hch@infradead.org, mcgrof@kernel.org, frkaya@linux.microsoft.com,
- vijayb@linux.microsoft.com, petr.pavlu@suse.com, linux@weissschuh.net,
- samitolvanen@google.com, da.gomez@samsung.com, gregkh@linuxfoundation.org,
- rafael@kernel.org, dakr@kernel.org
-References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
- <20250211214842.1806521-2-shyamsaini@linux.microsoft.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250211214842.1806521-2-shyamsaini@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
+ <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
+ <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
+ <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
+In-Reply-To: <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 13 Feb 2025 16:57:42 +0100
+X-Gm-Features: AWEUYZmgVASDSvu5hsJWJHBSSPIof2Z6xxr-T5u2MSp4prWGrnjV2aHs43vhfXo
+Message-ID: <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Sumit Garg <sumit.garg@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Florent Tomasin <florent.tomasin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/11/25 22:48, Shyam Saini wrote:
-> The locate_module_kobject() function looks up an existing
-> module_kobject for a given module name. If it cannot find the
-> corresponding module_kobject, it creates one for the given name.
-> 
-> This commit renames locate_module_kobject() to
-> lookup_or_create_module_kobject() to better describe its operations.
-> 
-> This doesn't change anything functionality wise.
-> 
-> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Shyam Saini <shyamsaini@linux.microsoft.com>
-> ---
->  kernel/params.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/params.c b/kernel/params.c
-> index 0074d29c9b80..4b43baaf7c83 100644
-> --- a/kernel/params.c
-> +++ b/kernel/params.c
-> @@ -763,7 +763,7 @@ void destroy_params(const struct kernel_param *params, unsigned num)
->  			params[i].ops->free(params[i].arg);
->  }
->  
-> -static struct module_kobject * __init locate_module_kobject(const char *name)
-> +static struct module_kobject * __init lookup_or_create_module_kobject(const char *name)
->  {
->  	struct module_kobject *mk;
->  	struct kobject *kobj;
-> @@ -805,10 +805,9 @@ static void __init kernel_add_sysfs_param(const char *name,
->  	struct module_kobject *mk;
->  	int err;
->  
-> -	mk = locate_module_kobject(name);
-> +	mk = lookup_or_create_module_kobject(name);
->  	if (!mk)
->  		return;
-> -
->  	/* We need to remove old parameters before adding more. */
->  	if (mk->mp)
->  		sysfs_remove_group(&mk->kobj, &mk->mp->grp);
+Hi,
 
-Nit: Please restore the accidentally removed empty line.
+On Thu, Feb 13, 2025 at 3:05=E2=80=AFPM Daniel Stone <daniel@fooishbar.org>=
+ wrote:
+>
+> Hi,
+>
+> On Thu, 13 Feb 2025 at 12:40, Boris Brezillon
+> <boris.brezillon@collabora.com> wrote:
+> > On Thu, 13 Feb 2025 14:46:01 +0530 Sumit Garg <sumit.garg@linaro.org> w=
+rote:
+> > > Yeah but all the prior vendor specific secure/restricted DMA heaps
+> > > relied on DT information.
+> >
+> > Right, but there's nothing in the DMA heap provider API forcing that.
+>
+> Yeah. DMA heaps are just a way to allocate memory from a specific
+> place. It allows people to settle on having a single way to do
+> allocations from weird platform-specific places; the only weird
+> platform-specific part userspace needs to deal with is figuring out
+> the name to use. The rest is at least a unified API: the point of
+> dma-heaps was exactly to have a single coherent API for userspace, not
+> to create one API for ZONE_CMA and DT ranges and everyone else doing
+> their own thing.
+>
+> > > Rather than that it's better
+> > > for the user to directly ask the TEE device to allocate restricted
+> > > memory without worrying about how the memory restriction gets
+> > > enforced.
+> >
+> > If the consensus is that restricted/protected memory allocation should
+> > always be routed to the TEE, sure, but I had the feeling this wasn't as
+> > clear as that. OTOH, using a dma-heap to expose the TEE-SDP
+> > implementation provides the same benefits, without making potential
+> > future non-TEE based implementations a pain for users. The dma-heap
+> > ioctl being common to all implementations, it just becomes a
+> > configuration matter if we want to change the heap we rely on for
+> > protected/restricted buffer allocation. And because heaps have
+> > unique/well-known names, users can still default to (or rely solely on)
+> > the TEE-SPD implementation if they want.
+> >
+> > > There have been several attempts with DMA heaps in the past which all
+> > > resulted in a very vendor specific vertically integrated solution. Bu=
+t
+> > > the solution with TEE subsystem aims to make it generic and vendor
+> > > agnostic.
+> >
+> > Just because all previous protected/restricted dma-heap effort
+> > failed to make it upstream, doesn't mean dma-heap is the wrong way of
+> > exposing this feature IMHO.
+>
+> To be fair, having a TEE implementation does give us a much better
+> chance of having a sensible cross-vendor plan. And the fact it's
+> already (sort of accidentally and only on one platform AFAICT) ready
+> for a 'test' interface, where we can still exercise protected
+> allocation paths but without having to go through all the
+> platform-specific setup that is inaccessible to most people, is also
+> really great! That's probably been the biggest barrier to having this
+> tested outside of IHVs and OEMs.
+>
+> But just because TEE is one good backend implementation, doesn't mean
+> it should be the userspace ABI. Why should userspace care that TEE has
+> mediated the allocation instead of it being a predefined range within
+> DT?
 
--- 
-Thanks,
-Petr
+The TEE may very well use a predefined range that part is abstracted
+with the interface.
+
+> How does userspace pick which TEE device to use?
+
+There's normally only one and even if there is more than one it should
+be safe to assume that only one of them should be used when allocating
+restricted memory (TEE_GEN_CAP_RSTMEM from TEE_IOC_VERSION).
+
+>  What advantage
+> does userspace get from having to have a different codepath to get a
+> different handle to memory? What about x86?
+>
+> I think this proposal is looking at it from the wrong direction.
+> Instead of working upwards from the implementation to userspace, start
+> with userspace and work downwards. The interesting property to focus
+> on is allocating memory, not that EL1 is involved behind the scenes.
+
+From what I've gathered from earlier discussions, it wasn't much of a
+problem for userspace to handle this. If the kernel were to provide it
+via a different ABI, how would it be easier to implement in the
+kernel? I think we need an example to understand your suggestion.
+
+Cheers,
+Jens
 
