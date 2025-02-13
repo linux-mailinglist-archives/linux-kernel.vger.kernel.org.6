@@ -1,79 +1,90 @@
-Return-Path: <linux-kernel+bounces-512627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69693A33BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F84A33BC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D3B3A5D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D4C3A87CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9671F210F58;
-	Thu, 13 Feb 2025 09:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF692116F7;
+	Thu, 13 Feb 2025 09:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkxiL1bY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YanKuDTp"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B18420DD5C;
-	Thu, 13 Feb 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA7B20E314
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440609; cv=none; b=KcZOHIKd4Tchx087ghLaB8wKxhruWybatTk869fIWVravZkxd66a4dgBgjuz9x88PwgCou3xw4T8SVGQ3W3/oBfeAlb1/P2dwtHbNfmKsfrcuu9tFPpYHRSPyNqzsN3/ZsgmnD8tI3mgFBiMwJt/3yT6LFiWu/J/2kymlkBNBXI=
+	t=1739440647; cv=none; b=GI2eVb656zkL+U0bQv0LhwqkmkGbA4dQTsi1pFZ4nGUaJ25lm8OlmaLH7p5yAb/goZkoXl4cgAnnk7G/ApkbLoQm9t2OwW+KJDlkATF4MbTKOfnd4aCErv4rRsrDLFTXhThlXqiHiKJeKBWsuESVPEGilQI+L3kD6XLRvLV/KLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440609; c=relaxed/simple;
-	bh=SJ/UzaavzQJpHfjZKxALqoOs5j5o6tpLEqhJ8NthZ1Y=;
+	s=arc-20240116; t=1739440647; c=relaxed/simple;
+	bh=UGc9ObOcc9fiqV8aJE7rZhVXFHRLNN9VsFOqM6VnTkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyXjuZ9bEQuL4Xx2LD5HnQ75V3HuZTsBuvURrfgn7w3Lx/kyDb/18Pm+wbZbpw1atezVQQ4QaShXctuyPB4V8PFvkbKlQ12gFTY4+Lvz9iF9/7FySy43gwyZekiPqjWkpO9ia8fxEIfFZQoQdr+9Sy9Eg+YG3uPc89lKFcrQEJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkxiL1bY; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739440608; x=1770976608;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SJ/UzaavzQJpHfjZKxALqoOs5j5o6tpLEqhJ8NthZ1Y=;
-  b=jkxiL1bYwYQ819+hg3L+jtjy8KhcEohWjTMt8E5lKDP5PPULYS2sv0/U
-   q17SWpZZXWFigT68w4vICYQmVHRpOXHvPpvI1pVSmHsfeWhPeV+RIP15H
-   ANurQPagiARLNr7XqW5MCNpzLV3zp+/20YM8SyIdfp19qsIhgVo8HoF/q
-   xyaAQxoxfkcRlYYXlX+XHGgmR5egkzF+HcJhwJqzE+0Pvo3X5b/GObeHu
-   L0b10D3NdJfqnET8rj0gStF325EojUP9B76afe/sQ4kguMIV1bp/74xiH
-   qoD0gLN/8IbFtGL7XmN8TMPDdHai35YsHDnEDmpKIWlPNC+5HF6b2+dDr
-   A==;
-X-CSE-ConnectionGUID: wGzSMESGRGaI2B1wq2xG6w==
-X-CSE-MsgGUID: ThK1UU/ESmukBBMlqsGWBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43901990"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="43901990"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 01:56:47 -0800
-X-CSE-ConnectionGUID: B3t23aX9QTOUleu8/qaS0Q==
-X-CSE-MsgGUID: RxlP/DoHTLmLy+VbE93uSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="118103089"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 01:56:45 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiVxZ-0000000B7w3-2Ov4;
-	Thu, 13 Feb 2025 11:56:41 +0200
-Date: Thu, 13 Feb 2025 11:56:41 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH v1 1/2] power: ip5xxx_power: Make use of
- i2c_get_match_data()
-Message-ID: <Z63B2dxEd0g1ppra@smile.fi.intel.com>
-References: <20250212165012.2413079-1-andriy.shevchenko@linux.intel.com>
- <20250212165012.2413079-2-andriy.shevchenko@linux.intel.com>
- <hnfdjznbvqbstcqd7rgrukqqdv7uasexojnujz63qgjnv7pja3@z4lanwhk4i6b>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzPNLKVTt/YVG+DGVmRcnpC8Pzm5rG0wf2xx1T8Pi+FlpwLoxAqDAz1zMm1dwBWfjYGMd9kpiuiO3WuLJdmbrS4iHduie7jxlGmp3unuAJypBu7YNYIIqXLsjB1ASH/1K7Bw8NX921tIBLJjYtvl8Tunr4413WFk1RAY/6+w1ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YanKuDTp; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7e80c4b55so153701966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:57:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739440643; x=1740045443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7dDnkFZgua1UqBGscNggAFQGfuNxy2VOU9Ws/6e96UA=;
+        b=YanKuDTpXT3WAR1fj0mZuuN8ORjEWwcfELM+8E4+pWYvwttnShGQc2MbdMXlXrpSXJ
+         D7SUlnf7oUPAQqgAdmPRyM+GOSojFQBiHHvzVi0uHOpDnhLOc/y6jkt0LhkrsQrk1NKl
+         Q7loB54Fd274jpK+c5YGLIGrEnzZhgRZUCQVtY5l5kketTVDZmPCemdtFWfAyGsRPhYN
+         kXw4Aij9CI/utHfSDpvdtt4r+TKD3gNFmOpm/Jdg6wJCngyYQIIy8QJtckGoXPBnMkH9
+         prNebnEdwYfaRkbMPpPjRnQbzwR/D+Y1xf8PWnBWmAmgMZmlnBeZHhXGnmaNlAFeUTCJ
+         rEdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739440643; x=1740045443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7dDnkFZgua1UqBGscNggAFQGfuNxy2VOU9Ws/6e96UA=;
+        b=d4dzqK1Ljr74p8nSoyweAJvsJtnjTntyvHQAKnEQc5cMlYREkdJst0TuAchbTayoOU
+         ErDka58nvgY9FNjaOrYFkyKD4aJ1FAegBEGq8CobPbK1IS8MWAidMBWxdubB3RXigbzP
+         Qb9iYuHUox2GdeI9bFuhks72uKp1LMF/cqFwD6YUjT06NSesiRh8J4DUNZ2LAV+HYOCt
+         KWkSuSyziDAI5OQKD0oLlLDmeznWiDdeQUhh/JmX+V3HHY32uglJlKtsI+YT95q/btka
+         4bLTZOfmcJMulYLOHA/MBx97UuQKpFwnq6db1YuJNErBwYzZpMv2Iv6mrkezeB89DYP0
+         AdRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOJnVp4Ng8F9oU9eJ0BwpkCuuT6Yq4RHD4x3skC6+KF78ZvgquuhZMOcJXCwvTDpUj9OpNiuwbiPpcm6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk1Jeg6lmi3KvSeaYeTKRZBbbITtJI2qZ6ZcuT4egGHkd8iCoi
+	Ey5zC7JBhJ5rWBnBw/aM3cD4A//dxC24/t90R3OLjRJMR09kofqYsJE+MOM/QY4=
+X-Gm-Gg: ASbGnctj3wf7CZibX1aSf1d6m8UaVcgitkfs6Vg1bFQqqu9o05q7FRF4BEYBCcFpDTh
+	LjbOYcNX1qJGAJV/yVGOAzgEXLf2wWKvunbHzvyOG1kt30gkjWB+Q0xfdF8pMDLYCpooxNaubUf
+	B4wczQH/qfnVrn36Xg1Z79jBc7f52wFnc/ZBAmPV4yCiuaFrdNxVuBbjmHQ93M0xOczHSCfncAF
+	gaUoqMyhcCgpLDR2/IZAkrouWLaYtxIS6uByU8suk7tm5lDvBUqvGjlvBS67bO+oZlHx3XNheph
+	Biu1WKmjcHIXpOrGzhRnCrSL
+X-Google-Smtp-Source: AGHT+IGADwhh1icVC7s+gezl0zQBAJHdG1XGHb5ZLRS19iiprTI4XevZdOeG/8A3plTf3PiJD+eKew==
+X-Received: by 2002:a17:907:3d8e:b0:ab7:7c58:7bd0 with SMTP id a640c23a62f3a-aba4eb88d83mr293589766b.10.1739440643187;
+        Thu, 13 Feb 2025 01:57:23 -0800 (PST)
+Received: from linaro.org ([2a02:2454:ff21:ef30:546e:a2d:e86:b3d6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532580e1sm97477466b.46.2025.02.13.01.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 01:57:22 -0800 (PST)
+Date: Thu, 13 Feb 2025 10:57:17 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz,
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net,
+	broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.com,
+	krzk+dt@kernel.org, pierre-louis.bossart@linux.intel.com,
+	Thinh.Nguyen@synopsys.com, robh@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v34 00/31] Introduce QC USB SND audio offloading support
+Message-ID: <Z63B_UE61OdrgEJY@linaro.org>
+References: <20250121210518.2436771-1-quic_wcheng@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,44 +93,223 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <hnfdjznbvqbstcqd7rgrukqqdv7uasexojnujz63qgjnv7pja3@z4lanwhk4i6b>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250121210518.2436771-1-quic_wcheng@quicinc.com>
 
-On Wed, Feb 12, 2025 at 06:07:19PM +0100, Sebastian Reichel wrote:
-> On Wed, Feb 12, 2025 at 06:46:23PM +0200, Andy Shevchenko wrote:
-> > Get matching data in one step by switching to use i2c_get_match_data().
+On Tue, Jan 21, 2025 at 01:04:47PM -0800, Wesley Cheng wrote:
+> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+> 
+> Several Qualcomm based chipsets can support USB audio offloading to a
+> dedicated audio DSP, which can take over issuing transfers to the USB
+> host controller.  The intention is to reduce the load on the main
+> processors in the SoC, and allow them to be placed into lower power modes.
+> There are several parts to this design:
+>   1. Adding ASoC binding layer
+>   2. Create a USB backend for Q6DSP
+>   3. Introduce XHCI interrupter support
+>   4. Create vendor ops for the USB SND driver
+> 
+>       USB                          |            ASoC
+> --------------------------------------------------------------------
+>                                    |  _________________________
+>                                    | |sm8250 platform card     |
+>                                    | |_________________________|
+>                                    |         |           |
+>                                    |      ___V____   ____V____
+>                                    |     |Q6USB   | |Q6AFE    |  
+>                                    |     |"codec" | |"cpu"    |
+>                                    |     |________| |_________|
+>                                    |         ^  ^        ^
+>                                    |         |  |________|
+>                                    |      ___V____    |
+>                                    |     |SOC-USB |   |
+>    ________       ________               |        |   |
+>   |USB SND |<--->|QC offld|<------------>|________|   |
+>   |(card.c)|     |        |<----------                |
+>   |________|     |________|___     | |                |
+>       ^               ^       |    | |    ____________V_________
+>       |               |       |    | |   |APR/GLINK             |
+>    __ V_______________V_____  |    | |   |______________________|
+>   |USB SND (endpoint.c)     | |    | |              ^
+>   |_________________________| |    | |              |
+>               ^               |    | |   ___________V___________
+>               |               |    | |->|audio DSP              |
+>    ___________V_____________  |    |    |_______________________|
+>   |XHCI HCD                 |<-    |
+>   |_________________________|      |
+> 
+> 
+> Adding ASoC binding layer
+> =========================
+> soc-usb: Intention is to treat a USB port similar to a headphone jack.
+> The port is always present on the device, but cable/pin status can be
+> enabled/disabled.  Expose mechanisms for USB backend ASoC drivers to
+> communicate with USB SND.
+> 
+> Create a USB backend for Q6DSP
+> ==============================
+> q6usb: Basic backend driver that will be responsible for maintaining the
+> resources needed to initiate a playback stream using the Q6DSP.  Will
+> be the entity that checks to make sure the connected USB audio device
+> supports the requested PCM format.  If it does not, the PCM open call will
+> fail, and userspace ALSA can take action accordingly.
+> 
+> Introduce XHCI interrupter support
+> ==================================
+> XHCI HCD supports multiple interrupters, which allows for events to be routed
+> to different event rings.  This is determined by "Interrupter Target" field
+> specified in Section "6.4.1.1 Normal TRB" of the XHCI specification.
+> 
+> Events in the offloading case will be routed to an event ring that is assigned
+> to the audio DSP.
+> 
+> Create vendor ops for the USB SND driver
+> ========================================
+> qc_audio_offload: This particular driver has several components associated
+> with it:
+> - QMI stream request handler
+> - XHCI interrupter and resource management
+> - audio DSP memory management
+> 
+> When the audio DSP wants to enable a playback stream, the request is first
+> received by the ASoC platform sound card.  Depending on the selected route,
+> ASoC will bring up the individual DAIs in the path.  The Q6USB backend DAI
+> will send an AFE port start command (with enabling the USB playback path), and
+> the audio DSP will handle the request accordingly.
+> 
+> Part of the AFE USB port start handling will have an exchange of control
+> messages using the QMI protocol.  The qc_audio_offload driver will populate the
+> buffer information:
+> - Event ring base address
+> - EP transfer ring base address
+> 
+> and pass it along to the audio DSP.  All endpoint management will now be handed
+> over to the DSP, and the main processor is not involved in transfers.
+> 
+> Overall, implementing this feature will still expose separate sound card and PCM
+> devices for both the platform card and USB audio device:
+>  0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
+>                       SM8250-MTP-WCD9380-WSA8810-VA-DMIC
+>  1 [Audio          ]: USB-Audio - USB Audio
+>                       Generic USB Audio at usb-xhci-hcd.1.auto-1.4, high speed
+> 
+> This is to ensure that userspace ALSA entities can decide which route to take
+> when executing the audio playback.  In the above, if card#1 is selected, then
+> USB audio data will take the legacy path over the USB PCM drivers, etc...
+> 
+> The current limitation is that the latest USB audio device that is identified
+> will be automatically selected by the Q6USB BE DAI for offloading.  Future
+> patches can be added to possibly add for more flexibility, but until the userpace
+> applications can be better defined, having these mechanisms will complicate the
+> overall implementation.
+> 
+> USB offload Kcontrols
+> =====================
+> Part of the vendor offload package will have a mixer driver associated with it
+> (mixer_usb_offload.c).  This entity will be responsible for coordinating with
+> SOC USB and the Q6USB backend DAI to fetch information about the sound card
+> and PCM device indices associated with the offload path.  The logic is done
+> based on the current implementation of how paths are controlled within the QC
+> ASoC implementation.
+> 
+> QC ASoC Q6Routing
+> -----------------
+> Within the Q6 ASOC design, the registered ASoC platform card will expose a set
+> of kcontrols for enabling the BE DAI links to the FE DAI link.  For example:
+> 
+> tinymix -D 0 contents
+> Number of controls: 1033
+> ctl     type    num     name                                    value
+> ...
+> 1025    BOOL    1       USB Mixer MultiMedia1                   Off
+> 1026    BOOL    1       USB Mixer MultiMedia2                   Off
+> 1027    BOOL    1       USB Mixer MultiMedia3                   Off
+> 1028    BOOL    1       USB Mixer MultiMedia4                   Off
+> 1029    BOOL    1       USB Mixer MultiMedia5                   Off
+> 1030    BOOL    1       USB Mixer MultiMedia6                   Off
+> 1031    BOOL    1       USB Mixer MultiMedia7                   Off
+> 1032    BOOL    1       USB Mixer MultiMedia8                   Off
+> 
+> Each of these kcontrols will enable the USB BE DAI link (q6usb) to be connected
+> to a FE DAI link (q6asm).  Since each of these controls are DAPM widgets, when
+> it is enabled, the DAPM widget's "connect" flag is updated accordingly.
+> 
+> USB Offload Mapping
+> -------------------
+> Based on the Q6routing, the USB BE DAI link can determine which sound card and
+> PCM device is enabled for offloading.  Fetching the ASoC platform sound card's
+> information is fairly straightforward, and the bulk of the work goes to finding
+> the corresponding PCM device index.  As mentioned above, the USB BE DAI can
+> traverse the DAPM widgets to find the DAPM path that is related to the control
+> for the "USB Mixer."  Based on which "USB Mixer" is enabled, it can find the
+> corresponding DAPM widget associated w/ the FE DAI link (Multimedia*).  From there
+> it can find the PCM device created for the Multimedia* stream.
+> 
+> Only one BE DAI link can be enabled per FE DAI.  For example, if the HDMI path is
+> enabled for Multimedia1, the USB Mixer will be disabled and switched over.
+> 
+> Examples of kcontrol
+> --------------------
+> tinymix -D 0 contents
+> Number of controls: 1033
+> ctl     type    num     name 
+> ...
+> 1025    BOOL    1       USB Mixer MultiMedia1                   Off
+> 1026    BOOL    1       USB Mixer MultiMedia2                   On
+> 1027    BOOL    1       USB Mixer MultiMedia3                   Off
+> 1028    BOOL    1       USB Mixer MultiMedia4                   Off
+> 1029    BOOL    1       USB Mixer MultiMedia5                   Off
+> 1030    BOOL    1       USB Mixer MultiMedia6                   Off
+> 1031    BOOL    1       USB Mixer MultiMedia7                   Off
+> 1032    BOOL    1       USB Mixer MultiMedia8                   Off
+> 
+> tinymix -D 2 contents
+> Number of controls: 10
+> ctl     type    num     name                                    value
+> 0       INT     2       Capture Channel Map                     0, 0 (range 0->36)
+> 1       INT     2       Playback Channel Map                    0, 0 (range 0->36)
+> 2       BOOL    1       Headset Capture Switch                  On
+> 3       INT     1       Headset Capture Volume                  10 (range 0->13)
+> 4       BOOL    1       Sidetone Playback Switch                On
+> 5       INT     1       Sidetone Playback Volume                4096 (range 0->8192)
+> 6       BOOL    1       Headset Playback Switch                 On
+> 7       INT     2       Headset Playback Volume                 20, 20 (range 0->24)
+> 8       INT     1       USB Offload Playback Card Route PCM#0   0 (range -1->32)
+> 9       INT     1       USB Offload Playback PCM Route PCM#0    1 (range -1->255)
+> 
+> The example highlights that the userspace/application can utilize the offload path
+> for the USB device on card#0 PCM device#1.
+> 
+> When dealing with multiple USB audio devices, only the latest USB device identified
+> is going to be selected for offload capable.
+> 
+> tinymix -D 1 contents
+> Number of controls: 9
+> ctl     type    num     name                                    value
+> 0       INT     2       Capture Channel Map                     0, 0 (range 0->36)
+> 1       INT     2       Playback Channel Map                    0, 0 (range 0->36)
+> 2       BOOL    1       Headset Capture Switch                  On
+> 3       INT     1       Headset Capture Volume                  1 (range 0->4)
+> 4       BOOL    1       Sidetone Playback Switch                On
+> 5       INT     1       Sidetone Playback Volume                4096 (range 0->8192)
+> 6       BOOL    1       Headset Playback Switch                 On
+> 7       INT     2       Headset Playback Volume                 20, 20 (range 0->24)
+> 8       INT     1       USB Offload Playback Card Route PCM#0   -1 (range -1->32)
+> 9       INT     1       USB Offload Playback PCM Route PCM#0    -1 (range -1->255)
+> 
+> "-1, -1" shows that this device has no route to the offload path.
+> 
+> This feature was validated using:
+> - tinymix: set/enable the multimedia path to route to USB backend
+> - tinyplay: issue playback on platform card
+> 
 
-...
+Could you share the device tree changes for a board upstream and any
+other changes needed to be able to test this series? E.g. for
+sm8250-mtp.dts, based on your examples above.
 
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+There are examples for qcom,q6usb etc in the bindings you submitted, but
+having a full example would be much easier.
 
-Thank you!
-
-...
-
-> >  static int ip5xxx_power_probe(struct i2c_client *client)
-> >  {
-> > -	const struct ip5xxx_regfield_config *fields = &ip51xx_fields;
-> > +	const struct ip5xxx_regfield_config *fields;
-> >  	struct power_supply_config psy_cfg = {};
-> >  	struct device *dev = &client->dev;
-
-> >  	const struct of_device_id *of_id;
-
-Seems I forgot to drop this (unused) variable.
-
-> > @@ -843,9 +843,7 @@ static int ip5xxx_power_probe(struct i2c_client *client)
-> >  	if (IS_ERR(ip5xxx->regmap))
-> >  		return PTR_ERR(ip5xxx->regmap);
-> >  
-> > -	of_id = i2c_of_match_device(dev->driver->of_match_table, client);
-> > -	if (of_id)
-> > -		fields = (const struct ip5xxx_regfield_config *)of_id->data;
-> > +	fields = i2c_get_match_data(client) ?: &ip51xx_fields;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Stephan
 
