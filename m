@@ -1,148 +1,223 @@
-Return-Path: <linux-kernel+bounces-512098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F87A333FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:27:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759BBA33400
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7303A734B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F26188A4B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E68B2A1D7;
-	Thu, 13 Feb 2025 00:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437FD282F1;
+	Thu, 13 Feb 2025 00:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="barvS0VC"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pztzV6t7"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB971804A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E71E52D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 00:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739406414; cv=none; b=IgBtC42CKtSMBa0yG6Za6mJ/8mQQJHcaxx4fyMbGHaR4n9v9WmqBfHNm+ev1Loywj4jbHHpCl//hI9yNUEIMbfNHbNtDQ3c31KJI/ANG/fYWBLofcz+rxO9hpie84jrZe8AHTfrm0edK+h7sP1tjtk9BuFeLBPtbiU1E6xgYS+4=
+	t=1739406748; cv=none; b=tEGw70KS7YB5SrwnMvhwxu5LsQz+pCDYMh9QmlCIDF4F08EpL82Tt8eu0wsIMTaI/shCXOLvDLkFX5K9zma4etcv/e256oxBs1cSNFbj2aUes4iu4J4Bo3o5XKtrqmcEbDar+3BQUphJa30yxuGh3lkKmD+4l9zvyK3oOgp/EYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739406414; c=relaxed/simple;
-	bh=btBR5N7uRHHuw3ht8npwHcy0kScz5qPCp2DfQ4EoDaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGkRJmy+7JdQiaaqEnJFDdqS1lDULCBDNWykf9CUJ5HMTSjnhplWjofhRUEOBbTbfpMGZ8nbRQxFWBXiHn89iSLvwua9yDBBMtOcsXv479J5oVPgoWQX/aFw9Sr/q0A/stzo3k3MR3HDi0tLaGbb3WbZ3wC+zjEW2/O5Pdm4rbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=barvS0VC; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f9cc6fefa8so2354597b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:26:52 -0800 (PST)
+	s=arc-20240116; t=1739406748; c=relaxed/simple;
+	bh=Kn4zM7b3EPE6Ji1OEBauBV1QiTYJkX+ASHAkrM4NuUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEXu4lJaASmrx3CkWKkidPR8TRQFOaMTbfrxcJ4LsOeqvCY0S5IMM6mEQTh2DJ+1DJCuoGVctB9DCo6xlDvwYs2/dQM6aPJWS7RImrJqpjQDrWt0efzcmKxn4zW+2Pl/Fi+vgdpLOWHnxyZZxmy+SPj+9jp8NfcXCfw3xcrMnJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pztzV6t7; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-308f53aef4fso3093291fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 16:32:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739406411; x=1740011211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1lQra2BGRqr8BJ2tXCVKhfWYo8wxpCnBIWRVHL8S1U=;
-        b=barvS0VCutBXeRNxi2W+7FmdXcYxT5tBeZlANHQ9FpSzuZDs6dSZMEgB0T3kqhqLdz
-         MFFl28gwq3W4W1IqTCsOyx6D0cIBIH31jIgZa09hIDfcKi1FEVS+Y9BIPnHvmUjmK54e
-         h+d6XlRUaUjlXxzgdAfmD20ALBSt5OEixd+fudxLrZmCnEvdscAfzvlWJt7RXuw3w89L
-         uKfpOr6fKhDZXzLoaf3CYJrkS9I+2Ow8UjafnPBu/5nyxI64kqcIee6+yFlQ569/4IjQ
-         nuBBRYLwXTkRXvVlnXDbcMFRMREnQXlYxzghk9cGZYum/BzrFVRGUGsTcpxr6D/i7U1T
-         +soA==
+        d=linaro.org; s=google; t=1739406744; x=1740011544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1zHhZW0PtiVglVCQQ6HaP/ZxVchC1gguQ+ErerQXn0c=;
+        b=pztzV6t7Mzi1p2BPXS+wZrY6SZEdRZC1iheujsx/RyNQr9E+diCfZG3eQPQb9iHByu
+         356rvJzd5O0d6UTKslnek5OKsBHfdQ9cMwxobZ4yrXrYSAQtrt4Pbv7Vy06Ct628W5Vs
+         IX9FU7g+z7cd7w0gVgt7cBJyL5Igb3rjczoG8cSkycZPKYcE64/i+qrcf3+g4/GpbfC4
+         FXT0nsNbhF8fBqe49NMmV1lAHM0C+CAX/YuV0S6Xjz8z7vLh8yKi7w97KIxhic1JOUr0
+         W3T0Ppd7pwhZiYPb9uLh1k2hgARBW7p+D3rwbpf+wKSkhsAynXNGeZif6fO5JieB39+t
+         Tw9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739406411; x=1740011211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1lQra2BGRqr8BJ2tXCVKhfWYo8wxpCnBIWRVHL8S1U=;
-        b=nhPeE/DTf4r7+OHwcRapQ46ZsywfGahpvYXG4caPfm4yrE1/hxWDKGidjmmcnpGezP
-         uBPxYfcpNISmLO4rpzDMPw6j2K0D77W0um2wODEEB9MSpYeRhS6kB9X7wyLihNjwGCD4
-         PS2o2RVzJrYAX7GJxTt788tBwHI37wlvYrErkeoVjTnO9jyQ7mFBrEb6QwRLj621tnS5
-         jdOzd8R9caEYzMpzsnlBtGXcqMQug2pXTBpu59KYSSFBch6nwhLj27U6kMtvfnEzgiHS
-         C3IxiAx9TXFNbtlfy5n02MxF3Iy4H86NfzNYL2vg9lPLL1WlbrYRF0gDNxT7SNrEOnvk
-         bV2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSdDvRbqIA2eDp78hECJ0OaX2ZH2vwSP8PToR413D+ohyYeDpTjKvBXKXg+NXocvF21FFiWjTd3k7fucA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPIVFyPmwXr0j2j8cd2y5WT6192GDFOLs1Q+DLZagL03YKjvRY
-	pTNiopL8evHiJeTIRKsBwdkGj/nykkm34mxAngYdt2QvZTV/hpMc9r0d8WZ4nnzCJ4izGID6gvn
-	TnRAaGqw9HjK52mQTxhbYl3SpmyrXOLbjaCZC
-X-Gm-Gg: ASbGncsbOfd3DGZguCpZ2rllNiop2mgAvkp6SzUU2C7I+nMTciMmFeqg1KvhEgQWnN2
-	9Y0MXpJc93iD2ST423RJWjvBEW+iOQCuGXRVPqtviGpmfCczCgA8x1MFoGippEvmcmK+8s19Bze
-	jyBZxZjlQNicu13fB6YEW8jxQQ4Q==
-X-Google-Smtp-Source: AGHT+IHF7oWRUxJv7dCUpYW2IfmB3aCv+yjHjliJNpKqm7wi+IQ41sadVcf4u51Avvxozru5EBha7WCpmy+tM7d3Ufk=
-X-Received: by 2002:a05:690c:6988:b0:6f6:cad6:6b5a with SMTP id
- 00721157ae682-6fb1f19ba28mr70396737b3.13.1739406411154; Wed, 12 Feb 2025
- 16:26:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739406744; x=1740011544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1zHhZW0PtiVglVCQQ6HaP/ZxVchC1gguQ+ErerQXn0c=;
+        b=pfbsayBLtOeyb3aHQcgwMLvtS3dbE/3OavZ9Rjzjq2w7jyOB6f9sGNSo27/OsWq8dn
+         5StFRod0uAszxOP9iiVkb92QNVcKRhVCL2ojh/KjOj4FLIYs03+/oetaXYBzbHEiGTeR
+         pqlziY+TU/kE78wqUnvNU12xje5P4elhG7GLbHzdeSmskv6NtmC5n7ceQjqaGh4rJ6pX
+         LF7GrZNIzDmuqJ1PVfvGEylw4KokF2M7rwPOfJFZDkXRPlJmSJkw5UqmM+zncWUHN9IW
+         Rx8r6j7EA/FhL5vR4b6mW+xqrG436E3VX/To1nzKxR9C09G7fCJM5AF6q11Fqho60thU
+         Hs3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuXTkBK6KqivxazHJby6MVftPd5c0ez2RJYloJNTavnhsTuwlt58rLc3CtUCdn4ofPaoIwZtLEQA38ctc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCZbcuk+7wb6ETAEDWM35glDkVgLUPSabI2mKp/Ut/LbUyucQT
+	9+XMpb6iWyg7RmPP6Yq9/wi9HQkbLLIdGVy2Z6rbxKVrYOaroefzgF7uQoCeq8M=
+X-Gm-Gg: ASbGncuYQ89hqrFWWGvQW3VjTUs+wtsWLfscyHAOcDUIqoJ14Ojwby4ojEcrpYCCum1
+	V3s3+qQK2e7Tf67MXhFt2Zuv2ZefkNteWF7DeuW+zqJj3/4vqOc7adR37iuvLWYdS9G062U2NVF
+	BHAyRlliQcucG5Fxce1YEmrpe9VqX06xSqpFew9qNyCQ336GjWeDLws5+LQ3Ep5Nmk88OLGokHF
+	dKZ2ry9zesIBeLner2NMK+oESs+KyXR4lDN6rOw7wHWz8oC8HFsMevfgU3cI64d4aejTAjrzqjR
+	t56oP3JBedX0Af5+J9S4H8BFSWoLdZE5LP/0lIBEQO40tCSVvHFbqAVqc/QeHqWMEhcN+JQ=
+X-Google-Smtp-Source: AGHT+IEArsUcvVPeYrZBwxnDDl7vuZk0nY8nJEpvr5fdwgUL8uWe2QI+7plrNZeEdVTvnOM7l92iSA==
+X-Received: by 2002:a05:651c:19a3:b0:302:2cdf:7fbb with SMTP id 38308e7fff4ca-3090362f7e6mr18558401fa.6.1739406744269;
+        Wed, 12 Feb 2025 16:32:24 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091029b34asm369751fa.97.2025.02.12.16.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 16:32:23 -0800 (PST)
+Date: Thu, 13 Feb 2025 02:32:20 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 drm-dp 6/7] drm/hisilicon/hibmc: Add drm debugfs
+ functions
+Message-ID: <afi5npgvnrp56oufhc7576auya26lbwgu377dprddode2kp3sb@u5ctx4o22w4v>
+References: <20250210144959.100551-1-shiyongbang@huawei.com>
+ <20250210144959.100551-7-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204004038.1680123-1-jthoughton@google.com>
- <20250204004038.1680123-6-jthoughton@google.com> <Z60cEcQ0P1G7oyFK@google.com>
-In-Reply-To: <Z60cEcQ0P1G7oyFK@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 12 Feb 2025 16:26:15 -0800
-X-Gm-Features: AWEUYZlW0xEqFDzX78EQEAIp-JOIdOgFVbgwEl-2uovs7RNjvbMVfq0Tz6WW5Vc
-Message-ID: <CADrL8HXchc0XVK3JVP17mhvzy9Ga9eKMEi-U8ibah2xBy=2bSg@mail.gmail.com>
-Subject: Re: [PATCH v9 05/11] KVM: x86/mmu: Rename spte_has_volatile_bits() to spte_needs_atomic_write()
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210144959.100551-7-shiyongbang@huawei.com>
 
-On Wed, Feb 12, 2025 at 2:09=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Tue, Feb 04, 2025, James Houghton wrote:
-> > spte_has_volatile_bits() is now a misnomer, as the an SPTE can have its
-> > Accessed bit set or cleared without the mmu_lock held, but the state of
-> > the Accessed bit is not checked in spte_has_volatile_bits().
-> > Even if a caller uses spte_needs_atomic_write(), Accessed bit
-> > information may still be lost, but that is already tolerated, as the TL=
-B
-> > is not invalidated after the Accessed bit is cleared.
-> >
-> > Signed-off-by: James Houghton <jthoughton@google.com>
-> > ---
->
-> ...
->
-> > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-> > index 59746854c0af..4c290ae9a02a 100644
-> > --- a/arch/x86/kvm/mmu/spte.h
-> > +++ b/arch/x86/kvm/mmu/spte.h
-> > @@ -519,7 +519,7 @@ static inline u64 get_mmio_spte_generation(u64 spte=
-)
-> >       return gen;
-> >  }
-> >
-> > -bool spte_has_volatile_bits(u64 spte);
-> > +bool spte_needs_atomic_write(u64 spte);
-> >
-> >  bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
-> >              const struct kvm_memory_slot *slot,
-> > diff --git a/arch/x86/kvm/mmu/tdp_iter.h b/arch/x86/kvm/mmu/tdp_iter.h
-> > index 05e9d678aac9..b54123163efc 100644
-> > --- a/arch/x86/kvm/mmu/tdp_iter.h
-> > +++ b/arch/x86/kvm/mmu/tdp_iter.h
-> > @@ -55,7 +55,7 @@ static inline bool kvm_tdp_mmu_spte_need_atomic_write=
-(u64 old_spte, int level)
-> >  {
-> >       return is_shadow_present_pte(old_spte) &&
-> >              is_last_spte(old_spte, level) &&
-> > -            spte_has_volatile_bits(old_spte);
-> > +            spte_needs_atomic_write(old_spte);
->
-> Unless you object, I'll change this to spte_needs_atomic_update(), and tw=
-eak
-> kvm_tdp_mmu_spte_need_atomic_write() accordingly.  "write" was a bad choi=
-ce by
-> me.  It's not just the store/write that needs to be atomic, it's the enti=
-re
-> read-modify-write.  E.g. KVM needs to preserve the existing value, but fo=
-r many
-> flows, it's even more important that KVM's snapshot of the old SPTE is ac=
-curate.
+On Mon, Feb 10, 2025 at 10:49:58PM +0800, Yongbang Shi wrote:
+> From: Baihan Li <libaihan@huawei.com>
+> 
+> We use the previous two patches as our debug functions and
+> generate two files. "hibmc-dp" and "color-bar".
+> hibmc-dp: read only, print the dp link status and dpcd version
 
-No objections, please make that change. Thanks!
+Please define a generic DP attribute for this, handle it in
+drm_dp_helper.c. Other drivers then can reuse this debugfs file.
+Also note drm_dp_downstream_debug(), it might also be helpful.
+Also see msm_dp_debug_show() for inspiration
+
+> color-bar: read/write
+>            write: cfg color bar and enable/disable it by your input
+>            read: print your current cfg info of color-bar
+
+This really should go into your color-bar patch.
+
+> 
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> ---
+> ChangeLog:
+> v1 -> v2:
+>   - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
+>   - using debugfs_init() callback, suggested by Dmitry Baryshkov.
+> ---
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+>  .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 124 ++++++++++++++++++
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |   1 +
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   2 +
+>  4 files changed, 129 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+> 
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> index 43de077d6769..1f65c683282f 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+> -	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o
+> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o \
+> +	       hibmc_drm_debugfs.o
+>  
+>  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+> new file mode 100644
+> index 000000000000..af2efb70d6ea
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright (c) 2024 Hisilicon Limited.
+> +
+> +#include <linux/debugfs.h>
+> +#include <linux/device.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/pci.h>
+> +
+> +#include <drm/drm_drv.h>
+> +#include <drm/drm_file.h>
+> +#include <drm/drm_debugfs.h>
+> +#include <drm/drm_edid.h>
+> +
+> +#include "hibmc_drm_drv.h"
+> +
+> +static int hibmc_dp_show(struct seq_file *m, void *arg)
+> +{
+> +	struct drm_info_node *node = m->private;
+> +	struct drm_device *dev = node->minor->dev;
+> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+> +	int idx;
+> +
+> +	if (!drm_dev_enter(dev, &idx))
+> +		return -ENODEV;
+> +
+> +	seq_printf(m, "enable lanes: %u\n", hibmc_dp_get_lanes(&priv->dp));
+> +	seq_printf(m, "link rate: %d\n", hibmc_dp_get_link_rate(&priv->dp) * 27);
+> +	seq_printf(m, "dpcd version: 0x%x\n", hibmc_dp_get_dpcd(&priv->dp));
+> +
+> +	drm_dev_exit(idx);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t hibmc_control_write(struct file *file, const char __user *user_buf,
+> +				   size_t size, loff_t *ppos)
+> +{
+> +	struct hibmc_drm_private *priv = file_inode(file)->i_private;
+> +	struct hibmc_dp_cbar_cfg *cfg = &priv->dp.cfg;
+> +	u32 input = 0;
+> +	int ret, idx;
+> +	u8 val;
+> +
+> +	ret = kstrtou32_from_user(user_buf, size, 0, &input);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = FIELD_GET(GENMASK(13, 10), input);
+> +	if (val > 9)
+> +		return -EINVAL;
+> +	cfg->pattern = val;
+> +	cfg->enable = FIELD_GET(BIT(0), input);
+> +	cfg->self_timing = FIELD_GET(BIT(1), input);
+> +	cfg->dynamic_rate = FIELD_GET(GENMASK(9, 2), input);
+
+Having a binary file format is really a sad idea. Can it be a text file
+instead?
+
+> +
+> +	ret = drm_dev_enter(&priv->dev, &idx);
+> +	if (!ret)
+> +		return -ENODEV;
+> +
+> +	hibmc_dp_set_cbar(&priv->dp, cfg);
+> +
+> +	drm_dev_exit(idx);
+> +
+> +	return size;
+> +}
+> +
+
+-- 
+With best wishes
+Dmitry
 
