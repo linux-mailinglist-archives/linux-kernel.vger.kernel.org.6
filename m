@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-514010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCDEA3514A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:30:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B93A3514C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C7F188CE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E87188E70C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8A028A2C7;
-	Thu, 13 Feb 2025 22:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B1226E17B;
+	Thu, 13 Feb 2025 22:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOtQy7LS"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/TXPIke"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DFA26E156;
-	Thu, 13 Feb 2025 22:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D920E034;
+	Thu, 13 Feb 2025 22:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739485806; cv=none; b=qzFqLxqyPDqvq1kOvYT84qHlW+UF6duzgRz5X1pBrq07cfhsxJ4UAIkxu/aHY0ZONnwR9EhGCUWX75yhrDMF0R1RsoR6j/UpmLoFacm/DB8tDzOq11ra0LxuOQWy+yMY+Uhk6o+szdJAIIzGqKX5yAETXHvR3enh+YxyjNx/uvY=
+	t=1739485837; cv=none; b=MrwV85K3j5uLjUnDDqXKp4qlHxC08eb6VjDFznoALswE6XR/SdRPjhGTWoIxIqhdey4OiR0B+ZjhV8k63LSfCcoAWIPUCY5/Jg4FNuP7GuULFclkPOgQJvpZpAD+RphpE2pEq7qiW+Al2X/4rGGBfR7D4RULWkZNpbgG61Co04I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739485806; c=relaxed/simple;
-	bh=K6WgcIpyeh4VCAjdJVyHzN62WGWQKJ1LafETnOr21F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGynxg+XWKY6CCxVXlYwnoD/sUA1JGBasjmKGz1Iird0Qvxr3WEhDVg9jCoCxFX3uBDXRN4e0y4ek0yPNTG3N8ig2FLc0bkJfLoWENgrh1hRvTsCYBMQKf0naMEbfO9jQFG9lfN2arx9jDUXT5X5GADNsUVOdxJYIy8DQsgAvs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOtQy7LS; arc=none smtp.client-ip=209.85.222.181
+	s=arc-20240116; t=1739485837; c=relaxed/simple;
+	bh=L7zfqJC4MpmnmDeMNG6teF//B8o8peRzpXrtxlAsFQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RSTeAWfcJXNeIdUSonSb4MkR7AxrXuXJR40TUfPidIKyFGAkZUJmIujmORdJq9vzDzE8HzEK2G6H/5g+mEQ0kG4+0F7A4M0oLA22SpSHdUngE0d62j7ELZ0X+uy1gsMQXqv6f1GBf8b3NC6dfO971qx0udpxyyieP2KybIIW9Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/TXPIke; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c077c9cbb9so115851585a.1;
-        Thu, 13 Feb 2025 14:30:05 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso9203075e9.1;
+        Thu, 13 Feb 2025 14:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739485804; x=1740090604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ShXovPaITATOcaXepBbTHEqdpsA8xygI7qSwseEtmVA=;
-        b=ZOtQy7LSZY2y6Ov5FPSTNJ/N6yTawdM6YvLCGy8ewRwiN24DINFvpB5h0q2qD5RiVk
-         oHLAU/jlL4uV9EyNcloGmgIN4VgGLgYJ2LyXTHNr/QMJ5x57C10BLf7QZxoBAQcx7ViK
-         WQKXaxdv3TKg/ofEe4cHKMZc7DoAgf0yHFLy2E69Dzq1ONAH/1qy0ucj8UVLZrMpvQfL
-         WovhAN2kC3U5KI0n7FaF0zbSRMgw9y3IJLq850nGeuk7jGuAh+AtPuPOCTsrYG6cABBz
-         Ce1uTmRLeffMCSkPxKk5xsBgpetc6hzQQWFNeg5FK/AqdodKJGbc2AsqtaGUFblDGNHv
-         aJQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739485804; x=1740090604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739485833; x=1740090633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ShXovPaITATOcaXepBbTHEqdpsA8xygI7qSwseEtmVA=;
-        b=Ni+u9lDkCQr2+2kNNi21mWIXnII4gebEGcxWM/3/6dZR3bDbj1ondE6wgEZjGqbEPI
-         Cw6pZIHqlGJOP9RxJmeNlyJXGHabRJpuy/pa/r+LWxW5vENXbNQiilBQow2eptl7BsuA
-         ZgxDkJC89rJvNTA0vcG4Yf0YQ4SACtPuu+Al2iDE9qz1SfrmZvzgq0drxpOUPIGuyrWd
-         wCieC8jE/r4evBrSjogFZeDuY+EPjIWiVotzwyXQhT910qOZCBvUxLPuae9A+B+YTYOo
-         UfvaXY19yHuzbgrJRs92cUx3GDusj1xwp0VJ54YKB8M5m/xsPZ2cQR28frFLcNRMX6d3
-         47Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaD6JRk/34tzyeFGvFn1IbI59KtzCz2DueiZvo2wQHarPv7707FcX/mZ0++XdOnzbC5+spF6X14jMS@vger.kernel.org, AJvYcCWlcylqTknuhAB9WbcwdFqeQyozk0IHe8pSDXAQb8ViIyZg+1kKcMuTG8sADBP7o+4ywZAKoUcPzT7iLjHu@vger.kernel.org, AJvYcCWspwm41yhZL6XRbxv0SEdmey8z4B8VpxqvDsIFec11AXW/q0m+0EV5mQwHPf87E3CkM+g8sfGNpL/b@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKuyKZeoNikrblpC96QmEZlCqT9YCJDW94xralU8qXGIWDhhO4
-	XdmhmkzwoA662AKiXUgKLTUT3nyCCWEZJU27iGEfGEzEW2ehkHLe
-X-Gm-Gg: ASbGncs7qCjuOOk8lSsIhX+Vgwav27rCtxUZH0EnIZGds3cOIZtFG+sVDEcN3rogNL+
-	nv/BZYFUXiSdfjwjVVAuI/uk/LJfJ3xRcKBfPTzgJznL9HGBZyLzTHx8SmfVM7xNyGmWscQuicn
-	9dmh8gPY4wFYZqY5LQnm2qJv+K4Cw4hhWlC7hPyH//pfplkcrHqmWY9ruXdhozd1c9kqSn8gBla
-	p4Yc7FeY08EQnPNNRy9A9RJlnJvXMFlQ6nndWuNCNVcy/YGLrQYFnnkAa5f5hCb6vc=
-X-Google-Smtp-Source: AGHT+IG45Dds1F1x6ndc483I9NQk+Amp3qv08smVydJSJhtH7qqr6jURVIBwtKjriGlCosvlZ5CFfA==
-X-Received: by 2002:a05:620a:6841:b0:7c0:78ec:1ece with SMTP id af79cd13be357-7c07a9acc99mr761190585a.7.1739485804152;
-        Thu, 13 Feb 2025 14:30:04 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c07c6088ccsm139655885a.33.2025.02.13.14.30.03
+        bh=n/iLgtKEagKiKrbu9N5uMGOzCeVNeqgYEIjWrTZEUX8=;
+        b=i/TXPIkeu3AcQspAiexZcolxBqlQpA9d2Jnvkbqqu+SlsE0vscc9U/f1h3n4PPR1Ow
+         HiVLHVLnSK8Ma/JMFjwLwGMykFns5DtWh50nrR+xSklxW0XN4I0WN8Qbuuo5e3b80yOa
+         cpZQ47wfe4wQNcsxgjkhpSpvFw1Rt92+OXWQENrmhJcw4bgp5nRSfJ95KDlG1FAbxoaO
+         bFcneNrkpzWf7VIgzz92c8TLsrc74AbV8HNAQWWt4CV6KrlOFuU0mGj9LB9M+TKoXspP
+         HyVx0DDk/vA74h43QnS+0Lp8YmZJeV+BOZxg68QecNwduhRKJR5FHEOapATR3M47ZSdC
+         38HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739485833; x=1740090633;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n/iLgtKEagKiKrbu9N5uMGOzCeVNeqgYEIjWrTZEUX8=;
+        b=DU8Qrpu+spiAz7x/vHopxhgIMpC/M/BV3YSYlvjQSP1WX81X8deP2NvFevbnwctFjz
+         HSvzW4gVbK2uyh4+PsQZsPNMn4eula1YK28EMk7eeogw4x2/emQ7E9huP1eY+73IJ9wl
+         GF0JWCaSrVQZo8F33hf3Zh0M1EhLuXRURpqRvpPc9kJlcnz5m4LXnXm/6oSS0BihHFSD
+         OAcGL1vyV4GMHfCppFA/0FGDkgQGF0T7bKAfg5IFtexD6UZAuV0MqmREjel0B4u+h40z
+         DjNU0Zkp36phItcagPzwZ28L5BYpW2JkktjAOTN9heyd+kn9BUazhtbcZdaeuFi1xRq6
+         ir3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqW/ZGb/bOO5TwkBmnKIF6hIoz9M/J2g4rBOyeMgYVnjD6cJb+UTuwqtgN9/9Px5OklqFcn4C7WaZhXtZhZ2g=@vger.kernel.org, AJvYcCXjNvJXn2s/biBOCoohavfMWqrsDUpwiyvPjPczm5PruQrrhWA3l7yUxJ9BI1m0wbdErYCA95fJJGNpRg==@vger.kernel.org, AJvYcCXkqFLTXLF2ETRFPafU9CO6Sri8gS1MA0nZXU4s9WfQV+Ypq1pU4dYjIySDGMrG6VHCat3rti4vSCI/OHy5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbeb08Ykiyxjhnmfe+LH/0DzPJjUeit3ydJijHKu+DqhVorhsG
+	EpVavYst8aahF95manNjpiJLFGh6URJxsIUqGgVoDSwEyxk8wpVY
+X-Gm-Gg: ASbGncsVNT9xpXb5HXSO0TdJIC+HFOgWZiTksrze3RvqB4vOZM8KEox1VNvXAQkAOrg
+	DWGUpxt5COubcd5b1FUctr4Vi3TC/IcGXV7S+sZ0zx0XJK/ErBNendbIJ7X322xoepNtXBeN5os
+	AcjIfFhXkCFls1ELwKdxxBhxW4OUPF+zDcVwraVP7tzpYsBoVNCfIJwO9yZ42X2GPPoWCJOIzja
+	eXNdFAgyXjSjMtfJMza/4sRy7QsyPXmCGChfTkopPAMjfDnSRFrfh8sHPV3aEB7bt72hNqpmGAH
+	nfRpYHdBeRksgf9U4empf7WgtcSot1oGTI0LkwPzrpRAWpTH2KP4qw==
+X-Google-Smtp-Source: AGHT+IGSJiMq9waWnU3twHfZdxNULB2eXCgTc8OLciDMxrLkg9MtHaBVnOEtNQVIOSUY+JHzU2kSig==
+X-Received: by 2002:a05:600c:1c1c:b0:439:3ef1:fc36 with SMTP id 5b1f17b1804b1-4395818fdfemr104530195e9.18.1739485833325;
+        Thu, 13 Feb 2025 14:30:33 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5d8bsm2959370f8f.70.2025.02.13.14.30.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 14:30:03 -0800 (PST)
-Date: Fri, 14 Feb 2025 06:29:56 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, alexandre.belloni@bootlin.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, unicorn_wang@outlook.com, 
-	inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, dlan@gentoo.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
- Sophgo CV1800 series SoC
-Message-ID: <afskjc2sltch5vqlegrliq32bpoejmzgko6vovfgj33sx6aqla@omeqr7mr77za>
-References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
- <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+        Thu, 13 Feb 2025 14:30:32 -0800 (PST)
+Date: Thu, 13 Feb 2025 22:30:32 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, Don Brace
+ <don.brace@microchip.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, linux-hardening@vger.kernel.org,
+ storagedev@microchip.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: hpsa: Replace deprecated strncpy() with
+ strscpy()
+Message-ID: <20250213223032.20d64851@pumpkin>
+In-Reply-To: <065b6317-8da8-42ec-8084-1a5058c0798a@acm.org>
+References: <20250213195332.1464-3-thorsten.blum@linux.dev>
+	<065b6317-8da8-42ec-8084-1a5058c0798a@acm.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 10:56:45PM +0100, Alexander Sverdlin wrote:
-> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+On Thu, 13 Feb 2025 12:34:55 -0800
+Bart Van Assche <bvanassche@acm.org> wrote:
+
+> On 2/13/25 11:53 AM, Thorsten Blum wrote:
+> > diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> > index 84d8de07b7ae..c7ebae24b09f 100644
+> > --- a/drivers/scsi/hpsa.c
+> > +++ b/drivers/scsi/hpsa.c
+> > @@ -460,9 +460,8 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
+> >   
+> >   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+> >   		return -EACCES;
+> > -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+> > -	strncpy(tmpbuf, buf, len);
+> > -	tmpbuf[len] = '\0';
+> > +	len = min(count + 1, sizeof(tmpbuf));
+> > +	strscpy(tmpbuf, buf, len);
+> >   	if (sscanf(tmpbuf, "%d", &status) != 1)
+> >   		return -EINVAL;
+> >   	h = shost_to_hba(shost);
+> > @@ -484,9 +483,8 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
+> >   
+> >   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+> >   		return -EACCES;
+> > -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+> > -	strncpy(tmpbuf, buf, len);
+> > -	tmpbuf[len] = '\0';
+> > +	len = min(count + 1, sizeof(tmpbuf));
+> > +	strscpy(tmpbuf, buf, len);
+> >   	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
+> >   		return -EINVAL;
+> >   	if (debug_level < 0)  
 > 
-> Add RTC devicetree binding for Sophgo CV1800 SoC.
+> Something I should have noticed earlier: this code occurs inside sysfs
+> write callbacks. The strings passed to sysfs write callbacks are
+> 0-terminated. Hence, 'buf' can be passed directly to sscanf() and
+> tmpbuf[] can be removed. From kernfs_fop_write_iter() in fs/kernfs.c:
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
->  .../bindings/rtc/sophgo,cv1800-rtc.yaml       | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> 	buf[len] = '\0';	/* guarantee string termination */
+
+You might also want to use one of the stroul() family rather than sscanf().
+
+	David.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
-> new file mode 100644
-> index 000000000000..b36b51a69166
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
-> @@ -0,0 +1,53 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Real Time Clock of the Sophgo CV1800 SoC
-> +
-> +description:
-> +  Real Time Clock (RTC) is an independently powered module
-> +  within the chip, which includes a 32KHz oscillator and a
-> +  Power On Reset/POR submodule. It can be used for time display
-> +  and timed alarm generation. In addition, the hardware state
-> +  machine provides triggering and timing control for chip
-> +  power on, off, and reset.
-> +
-> +maintainers:
-> +  - Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +
+> Thanks,
+> 
+> Bart.
+> 
 
-> +properties:
-> +  compatible:
-> +    const: sophgo,cv1800-rtc
-
-Now I prefer cv1800b to cv1800, using wildcard to provide base
-compatible is not a good idea. This old design should be changed.
-
-Otherwise, it looks good to me. With the compatible change:
-
-Reviewed-by: Inochi Amaoto <inochiama@gmail.com>
-
-Regards,
-Inochi
 
