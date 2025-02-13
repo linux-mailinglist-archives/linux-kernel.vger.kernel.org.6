@@ -1,258 +1,262 @@
-Return-Path: <linux-kernel+bounces-512342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCA8A337CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:16:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4692AA337CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E323A9A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB807A1DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D5205E3B;
-	Thu, 13 Feb 2025 06:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jCJJlMgZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462D20764B;
+	Thu, 13 Feb 2025 06:17:27 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B14207640
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476B7204F85
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739427393; cv=none; b=aEMxrdfZeAMeyugpev68st+XgYUeSI+3MDKN7B56blGTLya2B07pUBgA9LzP/xRh26pXdWUeb8ttsgQyixYrrg6Bta//3YS78xK27HPS3ijBnscSWq6H0+CRFsbUoKZI+j8S/rfiCZVDpJcAviTCE7jsS2Or3v2UuaKSp8tLyEo=
+	t=1739427447; cv=none; b=H5a+bGBJc7yAVK7cxoQl0g3ffROaaWNeRTAz8OHQ/qcgl6rQqW5txFl/NXVV8RzehHuYX70xQg3OtfLDW8Ctn2KXEFxgrrCjh0pz9NA9BopGFvC+eSbO/KAzF6hDyU//ZnBZSj5jvi6zDb6oQSltc2clT/rWaxu3A1/sIHadxuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739427393; c=relaxed/simple;
-	bh=l3J5xQ3WAS+AG7XbNQgsUgKdPzuTMrGLFTcUYVCNNJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZSdKwBy7XhXEzeOAi4EcoWyKVExHHHdKJvFoSJozQ1YjuwMydqIRI9hbv+trOLp1akorZMcnnYJH7kXExNXNoW6E1VU8VkHGzDva3QCwWDIb7xhIeYPbXl/wu6QlVpenYrz4ERURK8ZIjW6MCe8I/FIRhbh25ARNn8vCBS3O5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jCJJlMgZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739427390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Soif7C2aJynGEhg+D1h5RoXmJGd9fkc2utjkUojZ+0U=;
-	b=jCJJlMgZ+9Ck2OybCyUc6rTMq3+haH59I0BoKHdoYFWdxYJk+jtE0/BnKtXJgRsKaNX38p
-	adAzObO/SuTLt9EXpDVTasPMvTNnYZVggOME9OmQzypEd1oRYa1yExTnokkd3gS/6PYPzf
-	URVS9L30op6rS2oolTjN1RH6DFehdpE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-BjPFpbDTMYKSVIPUBCmBmQ-1; Thu, 13 Feb 2025 01:16:25 -0500
-X-MC-Unique: BjPFpbDTMYKSVIPUBCmBmQ-1
-X-Mimecast-MFC-AGG-ID: BjPFpbDTMYKSVIPUBCmBmQ_1739427384
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4393b6763a3so2353365e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:16:25 -0800 (PST)
+	s=arc-20240116; t=1739427447; c=relaxed/simple;
+	bh=GdSePiCTMC1pHCBgWU1dcTjP/ieVFcIZLTEfgNUidsA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sMEMkE/KshbsePWboQilrVkGGr82BxWNltox0ckRA/CvREbJ5B37jQDyy4Ezv+A8UALiu1ZvLNepLZldDGex3gIDT11DC20m0IMl1Qvsqqf0yTUBHOp1iC6EXUTrXaIkkyaKqwTfB1i09WYmeP3Y8V9uBe1rSTdG86MjZrAH+LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so10338615ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:17:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739427384; x=1740032184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Soif7C2aJynGEhg+D1h5RoXmJGd9fkc2utjkUojZ+0U=;
-        b=DyX4BMNaqly6BijUtRMO1I3nJggUqNJbKG+15Arv4cTEm+C1Tj643i80io7rsmaeKb
-         kYpphWJaWWBbxFfD9HW48qRwVUT5nZpTCk4hjBqxUMdSuyeiQ7B5wT/h9//GZJzlMXfI
-         UTUHG1XO/Rj45Szzp3K2VgUtOSpaoX0TzZm5whwOrAZLNtWYkfw8spCxuoqmHNaxzr5R
-         wJEWjm3QY3iPI8yqhNFlFCKs1P3n8HbD8rEBFkIYz3vDnP5RqR3meGClFgAlIn1pKc9X
-         be1S6CCNs/tPVwX/T6x2Uj4PUdRIHI+pHpuDaisldbGcu9sEajs9eu/rSvaVjyo3aG5h
-         ei2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXSLXwEaunPuaXmI1Xb6WAqnbVJHaleHb2Ulv/dUicT1wv8b5q0/0Eu+IkY/9mb9SviJu42rLhQs9UhSlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdWgwrRND2uHyy9G78L5sItf4D9/z5Gv8uAfOJpgjZ3FdvuSmZ
-	thtqtXwPgybluhbICpoG7gZ05TCvuh4vVflJFfFYk5pvK+P7HbLqJs2fqYc9LWfBcoVftYPz2P0
-	OS3A//wEOkYhiMgwZDFNun5OWd4MDD4aogX5yTtV/sHq0mNb+A7lbZ+mfixjjmA==
-X-Gm-Gg: ASbGncsrVvc86nSbPBgkiESY3XY8WLKyIoTYx18LEc8zg/aOeQD5QZpGKGqMfjoNtWg
-	QXg6AH3Fz2sKlmmBU4V8Nah5CNplXRFXsdVGkQpuh3c52OAI1xmMRApJIJXrJhzDwjnSKKpukli
-	FczeIWGuz99P8Ux/fN9N+vgSAYkHSKNgN4Kp+IPb2EX0ZXG+ZzPFEOh6xKfexKbxI5+hPRXHNMf
-	coSLwKg4LWGQH8Qo4S1VblpoH4wM4fS5ghp8TU9gdr2ZjLEwB12W39Uu9/lOAe3KN6EP3bFjfTx
-	e2L93/gzybRizZyIZ+RP/VS2jAVqjT5EdA==
-X-Received: by 2002:a05:600c:4314:b0:439:5ea4:c1e8 with SMTP id 5b1f17b1804b1-4395ea4c253mr30390615e9.26.1739427384367;
-        Wed, 12 Feb 2025 22:16:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH3qd6gNE08Qoznu6eYstSCD8IbCNOJYZXpKVv/3uEyMT3OV+NSSm0rQ2gWeAKMHrXzAWZ1cA==
-X-Received: by 2002:a05:600c:4314:b0:439:5ea4:c1e8 with SMTP id 5b1f17b1804b1-4395ea4c253mr30390015e9.26.1739427383991;
-        Wed, 12 Feb 2025 22:16:23 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fdad3sm7733905e9.10.2025.02.12.22.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 22:16:23 -0800 (PST)
-Date: Thu, 13 Feb 2025 07:16:20 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
-References: <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
- <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
- <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
+        d=1e100.net; s=20230601; t=1739427444; x=1740032244;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ErLpT+owluUcVoxZIbGCIZMLGWbp2TEoymv0LgM8X3s=;
+        b=IKeJs4awTk0ms4CTFgUyPKvXkg/V/AIlEUfA8R5IkgMDhgBsimC2Z5Z6lnd4M8++vX
+         psXdZ+jc4ead/c5/n50hQCleWvlunG7IS/D6a0CLgZT6TN3RwvvkhzGfQ+HE9ZCh+eRD
+         J0PVDVNkJufigTG3cKAYhJiy5Jk7f0GBeSM7QVOUkoqJelt/DGIW9moQtPJtZ7Inl6S0
+         bzh1HURjaw0RNv6rqmczgdX4JrgpxzmAf8COsBll1y6CkgrnUyfpRZ1RZpPddkrdaFBO
+         pwkp46M6x4SgpNB9Dgfm5/6eWnE/YTkr3fKN/7m/dVel3fyZUReCQMvOCq9DDq9AR867
+         A+dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfLptJrfC/xLgvLn7JrWVSJETjBvhzK1iObOD5KAlwE5DcFYNdq0MLwaCHalV5emv44wDvXyUb/oF8uIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCc6zHcNzog9HPC18+UDW13YkAIXlUX9AGouMzvr0lMkdd+jJB
+	NixOn61tS/ag0prg4WmptSAnrZF1yBwLF8Htsi7N09q5i8vvKIhl6vrQK1r64GVZ8Kp7f9tgqPF
+	ivgJ9XXJraxNQL54PSVtMY+22lQwlvxKKyz8t8zo6zWMbYfL0KsLATuc=
+X-Google-Smtp-Source: AGHT+IGyhBu9JRj2DsigdpzAQy/l26YGNG9bP/Tk4dK+Sw5lefnGMD7J7VD50K/1ErN48XqFRgWjkZ3m2LUnzD+2qD4J8wesNXEK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
+X-Received: by 2002:a05:6e02:1787:b0:3d0:618c:1b22 with SMTP id
+ e9e14a558f8ab-3d17bf3791emr49751825ab.11.1739427444332; Wed, 12 Feb 2025
+ 22:17:24 -0800 (PST)
+Date: Wed, 12 Feb 2025 22:17:24 -0800
+In-Reply-To: <000000000000ab44fc06203f0d28@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ad8e74.050a0220.110943.0058.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
+From: syzbot <syzbot+d16facb00df3f446511c@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	lizhi.xu@windriver.com, shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/02/25 23:01, Jon Hunter wrote:
-> 
-> On 11/02/2025 10:42, Juri Lelli wrote:
-> > On 11/02/25 10:15, Christian Loehle wrote:
-> > > On 2/10/25 17:09, Juri Lelli wrote:
-> > > > Hi Christian,
-> > > > 
-> > > > Thanks for taking a look as well.
-> > > > 
-> > > > On 07/02/25 15:55, Christian Loehle wrote:
-> > > > > On 2/7/25 14:04, Jon Hunter wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 07/02/2025 13:38, Dietmar Eggemann wrote:
-> > > > > > > On 07/02/2025 11:38, Jon Hunter wrote:
-> > > > > > > > 
-> > > > > > > > On 06/02/2025 09:29, Juri Lelli wrote:
-> > > > > > > > > On 05/02/25 16:56, Jon Hunter wrote:
-> > > > > > > > > 
-> > > > > > > > > ...
-> > > > > > > > > 
-> > > > > > > > > > Thanks! That did make it easier :-)
-> > > > > > > > > > 
-> > > > > > > > > > Here is what I see ...
-> > > > > > > > > 
-> > > > > > > > > Thanks!
-> > > > > > > > > 
-> > > > > > > > > Still different from what I can repro over here, so, unfortunately, I
-> > > > > > > > > had to add additional debug printks. Pushed to the same branch/repo.
-> > > > > > > > > 
-> > > > > > > > > Could I ask for another run with it? Please also share the complete
-> > > > > > > > > dmesg from boot, as I would need to check debug output when CPUs are
-> > > > > > > > > first onlined.
-> > > > > > > 
-> > > > > > > So you have a system with 2 big and 4 LITTLE CPUs (Denver0 Denver1 A57_0
-> > > > > > > A57_1 A57_2 A57_3) in one MC sched domain and (Denver1 and A57_0) are
-> > > > > > > isol CPUs?
-> > > > > > 
-> > > > > > I believe that 1-2 are the denvers (even thought they are listed as 0-1 in device-tree).
-> > > > > 
-> > > > > Interesting, I have yet to reproduce this with equal capacities in isolcpus.
-> > > > > Maybe I didn't try hard enough yet.
-> > > > > 
-> > > > > > 
-> > > > > > > This should be easy to set up for me on my Juno-r0 [A53 A57 A57 A53 A53 A53]
-> > > > > > 
-> > > > > > Yes I think it is similar to this.
-> > > > > > 
-> > > > > > Thanks!
-> > > > > > Jon
-> > > > > > 
-> > > > > 
-> > > > > I could reproduce that on a different LLLLbb with isolcpus=3,4 (Lb) and
-> > > > > the offlining order:
-> > > > > echo 0 > /sys/devices/system/cpu/cpu5/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu1/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu3/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu2/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu4/online
-> > > > > 
-> > > > > while the following offlining order succeeds:
-> > > > > echo 0 > /sys/devices/system/cpu/cpu5/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu4/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu1/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu2/online
-> > > > > echo 0 > /sys/devices/system/cpu/cpu3/online
-> > > > > (Both offline an isolcpus last, both have CPU0 online)
-> > > > > 
-> > > > > The issue only triggers with sugov DL threads (I guess that's obvious, but
-> > > > > just to mention it).
-> > > > 
-> > > > It wasn't obvious to me at first :). So thanks for confirming.
-> > > > 
-> > > > > I'll investigate some more later but wanted to share for now.
-> > > > 
-> > > > So, problem actually is that I am not yet sure what we should do with
-> > > > sugovs' bandwidth wrt root domain accounting. W/o isolation it's all
-> > > > good, as it gets accounted for correctly on the dynamic domains sugov
-> > > > tasks can run on. But with isolation and sugov affected_cpus that cross
-> > > > isolation domains (e.g., one BIG one little), we can get into troubles
-> > > > not knowing if sugov contribution should fall on the DEF or DYN domain.
-> > > > 
-> > > > Hummm, need to think more about it.
-> > > 
-> > > That is indeed tricky.
-> > > I would've found it super appealing to always just have sugov DL tasks activate
-> > > on this_cpu and not have to worry about all this, but then you have contention
-> > > amongst CPUs of a cluster and there are energy improvements from always
-> > > having little cores handle all sugov DL tasks, even for the big CPUs,
-> > > that's why I introduced
-> > > commit 93940fbdc468 ("cpufreq/schedutil: Only bind threads if needed")
-> > > but that really doesn't make this any easier.
-> > 
-> > What about we actually ignore them consistently? We already do that for
-> > admission control, so maybe we can do that when rebuilding domains as
-> > well (until we find maybe a better way to deal with them).
-> > 
-> > Does the following make any difference?
-> > 
-> > ---
-> >   kernel/sched/deadline.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index b254d878789d..8f7420e0c9d6 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -2995,7 +2995,7 @@ void dl_add_task_root_domain(struct task_struct *p)
-> >   	struct dl_bw *dl_b;
-> >   	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
-> > -	if (!dl_task(p)) {
-> > +	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
-> >   		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-> >   		return;
-> >   	}
-> > 
-> 
-> I have tested this on top of v6.14-rc2, but this is still not resolving the
-> issue for me :-(
+syzbot has found a reproducer for the following issue on:
 
-Thanks for testing.
+HEAD commit:    4dc1d1bec898 Merge tag 'mfd-fixes-6.14' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e47bdf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
+dashboard link: https://syzkaller.appspot.com/bug?extid=d16facb00df3f446511c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a8caa4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13dde3f8580000
 
-Was the testing using the full stack of changes I proposed so far? I
-believe we still have to fix the accounting of dl_servers for def
-root domain (there is a patch that should do that).
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4dc1d1be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69a70e883a61/vmlinux-4dc1d1be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e5f11135c484/bzImage-4dc1d1be.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/5c023dde1d54/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=15dde3f8580000)
 
-I updated the branch with the full set. In case it still fails, could
-you please collect dmesg and tracing output as I suggested and share?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d16facb00df3f446511c@syzkaller.appspotmail.com
 
-Best,
-Juri
+syz-executor386: attempt to access beyond end of device
+loop0: rw=2049, sector=30728, nr_sectors = 8 limit=0
+lbmIODone: I/O error in JFS log
+==================================================================
+BUG: KASAN: slab-use-after-free in lbmLogShutdown fs/jfs/jfs_logmgr.c:1863 [inline]
+BUG: KASAN: slab-use-after-free in lmLogInit+0xc9f/0x1c90 fs/jfs/jfs_logmgr.c:1416
+Read of size 8 at addr ffff888050158518 by task syz-executor386/6808
 
+CPU: 0 UID: 0 PID: 6808 Comm: syz-executor386 Not tainted 6.14.0-rc2-syzkaller-00041-g4dc1d1bec898 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ lbmLogShutdown fs/jfs/jfs_logmgr.c:1863 [inline]
+ lmLogInit+0xc9f/0x1c90 fs/jfs/jfs_logmgr.c:1416
+ open_inline_log fs/jfs/jfs_logmgr.c:1175 [inline]
+ lmLogOpen+0x55e/0x1040 fs/jfs/jfs_logmgr.c:1069
+ jfs_mount_rw+0xf1/0x6a0 fs/jfs/jfs_mount.c:257
+ jfs_reconfigure+0x632/0x9d0 fs/jfs/super.c:409
+ reconfigure_super+0x43a/0x870 fs/super.c:1083
+ do_remount fs/namespace.c:3100 [inline]
+ path_mount+0xc22/0xfa0 fs/namespace.c:3879
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea9edf35e9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fea9e59b168 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fea9ee804a8 RCX: 00007fea9edf35e9
+RDX: 0000000000000000 RSI: 0000400000000000 RDI: 0000000000000000
+RBP: 00007fea9ee804a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000001c0030 R11: 0000000000000246 R12: 00007fea9ee804ac
+R13: 000000000000000b R14: 00007ffe11bf4590 R15: 00007ffe11bf4678
+ </TASK>
+
+Allocated by task 6808:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4325
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ lbmLogInit fs/jfs/jfs_logmgr.c:1822 [inline]
+ lmLogInit+0x3b4/0x1c90 fs/jfs/jfs_logmgr.c:1270
+ open_inline_log fs/jfs/jfs_logmgr.c:1175 [inline]
+ lmLogOpen+0x55e/0x1040 fs/jfs/jfs_logmgr.c:1069
+ jfs_mount_rw+0xf1/0x6a0 fs/jfs/jfs_mount.c:257
+ jfs_reconfigure+0x632/0x9d0 fs/jfs/super.c:409
+ reconfigure_super+0x43a/0x870 fs/super.c:1083
+ do_remount fs/namespace.c:3100 [inline]
+ path_mount+0xc22/0xfa0 fs/namespace.c:3879
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6808:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2353 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kfree+0x196/0x430 mm/slub.c:4757
+ lbmLogShutdown fs/jfs/jfs_logmgr.c:1865 [inline]
+ lmLogInit+0xccd/0x1c90 fs/jfs/jfs_logmgr.c:1416
+ open_inline_log fs/jfs/jfs_logmgr.c:1175 [inline]
+ lmLogOpen+0x55e/0x1040 fs/jfs/jfs_logmgr.c:1069
+ jfs_mount_rw+0xf1/0x6a0 fs/jfs/jfs_mount.c:257
+ jfs_reconfigure+0x632/0x9d0 fs/jfs/super.c:409
+ reconfigure_super+0x43a/0x870 fs/super.c:1083
+ do_remount fs/namespace.c:3100 [inline]
+ path_mount+0xc22/0xfa0 fs/namespace.c:3879
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888050158500
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 24 bytes inside of
+ freed 192-byte region [ffff888050158500, ffff8880501585c0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x50158
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff88801ac413c0 ffffea0000d893c0 dead000000000002
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4797, tgid 4797 (kworker/0:3), ts 140090156794, free_ts 138950899992
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x8f/0x3a0 mm/slub.c:2587
+ new_slab mm/slub.c:2640 [inline]
+ ___slab_alloc+0xc27/0x14a0 mm/slub.c:3826
+ __slab_alloc+0x58/0xa0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4320
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ virtio_gpu_plane_duplicate_state+0x72/0xb0 drivers/gpu/drm/virtio/virtgpu_plane.c:79
+ drm_atomic_get_plane_state+0x247/0x500 drivers/gpu/drm/drm_atomic.c:545
+ drm_atomic_helper_dirtyfb+0xc5f/0xe60 drivers/gpu/drm/drm_damage_helper.c:171
+ drm_fbdev_shmem_helper_fb_dirty+0x151/0x2c0 drivers/gpu/drm/drm_fbdev_shmem.c:117
+ drm_fb_helper_fb_dirty drivers/gpu/drm/drm_fb_helper.c:376 [inline]
+ drm_fb_helper_damage_work+0x275/0x880 drivers/gpu/drm/drm_fb_helper.c:399
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3398
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+page last free pid 5356 tgid 5356 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2660
+ discard_slab mm/slub.c:2684 [inline]
+ __put_partials+0x160/0x1c0 mm/slub.c:3153
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3228
+ __slab_free+0x290/0x380 mm/slub.c:4479
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4171
+ getname_flags+0xb7/0x540 fs/namei.c:139
+ do_sys_openat2+0xd2/0x1d0 fs/open.c:1422
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888050158400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888050158480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff888050158500: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff888050158580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff888050158600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
