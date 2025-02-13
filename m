@@ -1,141 +1,145 @@
-Return-Path: <linux-kernel+bounces-513919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B1FA35040
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:09:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AC3A35042
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913D73ABA41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014BA3ACA2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF38266B55;
-	Thu, 13 Feb 2025 21:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C61266B7C;
+	Thu, 13 Feb 2025 21:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o5deJ2pD"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JLMjc8xX"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858A9266198
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A59194AD5;
+	Thu, 13 Feb 2025 21:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739480942; cv=none; b=VSOn27SKQ6oeRL3cGODrQqE1tfWEYwgyiVifIIWjygDqSi36bpndedzq6XtdR6htpdxlrL/tNT7cbMOb/h2x8Q0kQILwa6064Rn1gTuFAwO8UVLoHYEVJMRRUz+A9xWu6j9FFs7eu20/RRfU+rPKEtM7Ppp19E5VcyWe/ZubSXg=
+	t=1739480950; cv=none; b=jbfRKzPtFA9Y2htNGgG/w4MSuMJIgai+whjYlb/fpHdM1SR6PEFMrpv7gVgfiBLskfpaVbm4zdhTOxJRIEaVMa8NjFiNGJZnySgs+4IHxSrVwOLf/eW9hdpSiwn6ds0FhbI99xR2CxlWgvfY8KkZ3HlTFL+6cHKLf6/Ycmwp/vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739480942; c=relaxed/simple;
-	bh=U6wiO9BFzqs/502pytstj6KNgptL9YhRbQLkNh432rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9NSrzp00wf+wLEx2vraI0aONKJizWq2XUT2gb4oNwHTX8to7/AG/EUyOyyiTIuGlvBH9obpAJJSbAsfVhozWDBS5gK6AaUqJQeFws0TL1k/Dov+A/DXFUoeqGgGAmIBpHmnajRm2vMhEH/PP2gPsdtOWwY8vX9hEviexc/NtNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o5deJ2pD; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-308f71d5efcso13946331fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:09:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739480938; x=1740085738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TeNMrpUqpwoLFI0ojzBCoD9uOLScIV/Ka4QcI/0Cif0=;
-        b=o5deJ2pDVYGop2hCKG7D+rKckRfYnZeEj+01GRIql50N+birOV/2G/Z4p002NKD5B0
-         122W7+2nTh1wWD+IjyH4PIwY6fR0lzLELDV8ATrqbT5k1yr2elnBXKYncpd+Sz9omyyd
-         tx+6s1D5ScwjYEefsbQScEKskaPu5fgpddJqFJUYnCggLFMyjjLy4TaM9wDLpAwFcBVo
-         zKqhaWaKOePZ5kWqef8rMm+ktd/ySB8CnUxUCgl6gLMolFFYKzFOBKtx6p5jwzIiEuHZ
-         RWI8foZYa5QEu4MV/OuClaJYkpvylapnPphkjNQygAiMDybRzhgJ4s98G9JPKF1EeZQ3
-         Bu7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739480938; x=1740085738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TeNMrpUqpwoLFI0ojzBCoD9uOLScIV/Ka4QcI/0Cif0=;
-        b=vhOpI78gr0s4jdcxbW4/Gm1RvDAEM8QlpxLVxcQImgW/8QXyJlcu/Jo1bUUQ63v9J5
-         /rnkcunK29yKgernRX/uz9oC/r8V21eRAVFzryrbNV0qaOqi7Dms5nCLuiHHH1cvhFL7
-         j7CmlkxNCcQTpDOfu/t+uy+u+wkbHU0mBCpmTnYFLxC1MaFXz3sBdAA+nCUMQuA9gR2h
-         yWwebapJhGEJ2BjAK92zjXMLuKlssHK9QnPEFfjdDcsgS0gM+N4SfeWZnDxEvX2yyNzh
-         8ldww09hJVBU0idn9onR4vDNhKDmB1F4nSEuu7gcVUQFwpdpNyWsz1bB27TclPJYV44/
-         L/IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8JSGwcKd0se3+Eiqn6CvbI8a0oMNZkKdEu3sZq+1feUV8OKMSep/dL6VjpiJmNIlscYAXbeFvYsQnGeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvvKqrsRs7mcMEvxVnQrxyrr03YVKGkLiwjS/nss6rZu5rS7PQ
-	U5hBTnbZPC7X5BGaD+DWBJ01VreR/VGjlu4FSBNuNqDy7ZZwiKJk2CvF1DXPGSE=
-X-Gm-Gg: ASbGncuE1uGRC4g5Xydp3iVSKzx/PDYSFfOGaxf7N5NnN0eVh3FYMJnK3loIEbbqEJI
-	5nL+uDy+gOW91ToqMp+VeK4RHOJq36YE3cTi12i/LLGG8xIm5ftDj2PxQQCnnIMp2hwFUcsIz5G
-	MCTba4/5s/8L9wbBnESAOa1mb3aG3Mp274q42EvWE9GPkqjgNTrnWcW+f85SG7zvy2s7sQ2h3AP
-	FWUsWm6FYk/RIJtHXsukhfPRf0IBMyAZQz0L+blWEF7lcgBaCQZEISQnfGnoIskV5ZRX0jnWXEc
-	yVQTHkgPDrR9efcYXdp4wFBZN63vQyO1oD8W/+T4PAWntafxscLGqRwS3wvOb+qXGXbFlSM=
-X-Google-Smtp-Source: AGHT+IFoISTHPwl7NmM39tEjJazTxUu4ZlSD1ldej2CAwAd50t/8PacosIj09OljiXHD8nuiFDIq4g==
-X-Received: by 2002:a05:651c:211f:b0:2ff:a89b:4210 with SMTP id 38308e7fff4ca-3090379d3f6mr26646011fa.8.1739480938463;
-        Thu, 13 Feb 2025 13:08:58 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30914801757sm1997551fa.94.2025.02.13.13.08.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 13:08:57 -0800 (PST)
-Date: Thu, 13 Feb 2025 23:08:54 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Joel Selvaraj <jo@jsfamily.in>, 
-	Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Jianhua Lu <lujianhua000@gmail.com>, Robert Chiras <robert.chiras@nxp.com>, 
-	Artur Weber <aweber.kernel@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 03/20] drm/panel/asus-tm5p5-n35596: Move to using
- mipi_dsi_*_multi() variants
-Message-ID: <axar3e6jb7uzway52adqm27cox43uubkey7fcqqi5yu6wp3kfy@imipkyyg4ag7>
-References: <20250213-mipi_cocci_multi-v1-0-67d94ff319cc@redhat.com>
- <20250213-mipi_cocci_multi-v1-3-67d94ff319cc@redhat.com>
+	s=arc-20240116; t=1739480950; c=relaxed/simple;
+	bh=Y1I3Wu3T4m+Mdyx3XS2h7cgF7AqOrEoM3WwaR3Wyx78=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ll71opfULzK53W7AnFEXGGKble2zi2P9VHKf0OTixiozvvEG83zYU565aX+Kh0TRIf+qPq5lmiE1/DexA+bGEi4fFscKEGCzF82GQMdZUwqVI0wHlRHobzKnVrZOiHrgb8l9ztKNpbcnij3/RLwiHOidAFWlMUjHRnNgRkDeyTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JLMjc8xX; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DJwimBcRqLSyXYEID3ttBpVRmf268sK2AExRPEHgOEI=; b=JLMjc8xXqVS83EWPH15sVxIbDP
+	yKlFs7JwlHERsFF56d6h2cSeXBzC7u//NenkcNAvdYiQ09DmQCviukCuQM/igm0UvDRTKpmheit5t
+	ZZ+4f4+YcJRNI8Of8AwaytmsdhARr6vLIAGwNYEqPODpOr8SDOK3lkYJzZC9bEzjw4wheLGZjKMRL
+	g9dzDWyWxS2pBHaEXZ4EmIzOBz3NmWsueePys4hMtwR4ARF1wBDn/eOYFK0PjlzG3GheAc2LHoodc
+	ZOhad2aju/3KBddc2lo3HnKSIBFzMau2WgSWDjSQAeIA8nldPw1xHWU9+zmP/uk3Se9MfxZFg4a/c
+	+Dgof7Sg==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tigSG-0006a0-Mn; Thu, 13 Feb 2025 22:09:04 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quentin.schulz@cherry.de, sebastian.reichel@collabora.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dse@thaumatec.com
+Subject: Re: [PATCH v6 0/2] MIPI DSI phy for rk3588
+Date: Thu, 13 Feb 2025 22:09:03 +0100
+Message-ID: <6831884.31tnzDBltd@diego>
+In-Reply-To: <20250213210554.1645755-1-heiko@sntech.de>
+References: <20250213210554.1645755-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-mipi_cocci_multi-v1-3-67d94ff319cc@redhat.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Feb 13, 2025 at 03:44:20PM -0500, Anusha Srivatsa wrote:
-> Stop using deprecated API.
-> Used Coccinelle to make the change.
+Am Donnerstag, 13. Februar 2025, 22:05:46 MEZ schrieb Heiko Stuebner:
+> This adds the phy driver need for DSI output on rk3588.
 > 
+> The phy itself is used for both DSI output and CSI input, though the
+> CSI part for the whole chain needs a lot more work, so is left out for
+> now and only the DSI part implemented.
 > 
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
->  drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> This allows the rk3588 with its current VOP support to drive a DSI display
+> using the DSI2 controller driver I'll submit in a next step.
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-> index b05a663c134c974df2909e228d6b2e67e39d54c0..aedf644b4a81649fd9a17b6dfdcdb95be1d5762c 100644
-> --- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-> +++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-> @@ -168,14 +168,12 @@ static const struct drm_panel_funcs tm5p5_nt35596_panel_funcs = {
->  static int tm5p5_nt35596_bl_update_status(struct backlight_device *bl)
->  {
->  	struct mipi_dsi_device *dsi = bl_get_data(bl);
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->  	u16 brightness = backlight_get_brightness(bl);
-> -	int ret;
->  
->  	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
->  
-> -	ret = mipi_dsi_dcs_set_display_brightness(dsi, brightness);
-> -	if (ret < 0)
-> -		return ret;
-> +	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, brightness);
+> Only generic phy interfaces are used, so the DSI part is pretty straight
+> forward.
+> 
+> changes in v6:
+> - rebase onto 6.14-rc1
+> - add Krzysztof binding review
+> - v5 was sent at the beginning of december '24, so probably has been lost
+> 
+> changes in v5:
+> - add bitfield.h for the FIELD_PROP definition
+>   (reported by kernel-test-robot)
+> - add Sebastian's Reviewed-by
+> - add Conor's Ack to the dt-binding
+> 
+> changes in v4:
+> - moved to #phy-cells = 1 as suggested by Sebastian, with the argument
+>   denoting the requested phy-type (C-PHY, D-PHY). This works similarly
+>   how the Mediatek C/D-PHY already implements this, see mails around:
+>   https://lore.kernel.org/all/20230608200552.GA3303349-robh@kernel.org/
+> - dropped Krzysztof's review tag from the binding because of this
+> - dropped custom UPDATE macro and use FIELD_PREP instead
+> - build a FIELD_PREP_HIWORD macro for the GRF settings
+> - add received Tested-by tags
+> 
+> changes in v3:
+> - add Krzysztof review tag to the binding
+> - address Sebastian's review comments
+>   - better error handling
+>   - dropping empty function
+>   - headers
+>   - not using of_match_ptr - this should also make the
+>     test-robot happier
+> 
+> changes in v2:
+> - fix error in dt-binding example
+> - drop unused frequency table
+> - pull in some more recent improvements from the vendor-kernel
+>   which includes a lot less magic values
+> - already include the support for rk3576
+> - use dev_err_probe
+> 
+> Heiko Stuebner (2):
+>   dt-bindings: phy: Add Rockchip MIPI C-/D-PHY schema
+>   phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+> 
+>  .../phy/rockchip,rk3588-mipi-dcphy.yaml       |   87 +
+>  drivers/phy/rockchip/Kconfig                  |   12 +
+>  drivers/phy/rockchip/Makefile                 |    1 +
+>  .../phy/rockchip/phy-rockchip-samsung-dcphy.c | 1604 +++++++++++++++++
+>  4 files changed, 1704 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
+>  create mode 100644 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
 
-Lost return in the error case.
+Forgot to transplant from the v5 cover-letter - the series got a 
 
->  
->  	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
->  
-> 
-> -- 
-> 2.47.0
-> 
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
 
--- 
-With best wishes
-Dmitry
+on RK3588 Tiger with Haikou Video Demo in [0]
+
+
+[0] https://lore.kernel.org/r/63cda072-3671-42c9-9650-7a3ece39dec6@cherry.de
+
+
+
 
