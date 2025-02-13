@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-513704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF8AA34DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:26:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7FFA34DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59361188F336
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B1E216D56F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F58D245008;
-	Thu, 13 Feb 2025 18:26:16 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C28824502A;
+	Thu, 13 Feb 2025 18:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyYidiRl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A20E241679;
-	Thu, 13 Feb 2025 18:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CED24290E;
+	Thu, 13 Feb 2025 18:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739471176; cv=none; b=Wf/rpuNk4+A4StrrOFDf/JteRiHCdB2cte3IBcXrMupe6UhbhvXdSdTh7GjIu0GHIq67weE7skoUhUh01FZ2NhKAr4DupekGr/dlgU/iTV52TTR8mlASsFT8tsKkJ5QYRw/IRV+BTQf+dtAdiaDLgevNEOlUcj6/1hTRH6QDnd8=
+	t=1739471196; cv=none; b=PfUQT8z8wLgGit+B6xmm1+2yGE8WR6iW0HeHLf0I81nSNutFbHYCs3pdBV09MojtjciTmCJqvuUppPonmKdbw5lpxOPcLUqFkI6An5Vd1PwXMZJKZ58onjc8ZEAxndYFMdLHjgzo/mUXhJ9+/6KvU/vzI/zcWjFMsOKcoASkTW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739471176; c=relaxed/simple;
-	bh=QgNFYknL++CRvDU9kqQKgTXA5ywFzRlaC1gYQHKf3Vs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m7551IoNSe420i+0f6YxBA+Q6sUB0H9n+tFIHawKXZcK6tcVrlCrzNMBuBf4HpRfYHyhxtYqWcWguRgLERdOYYV6LoUnIiLllCGTm45iw3Cs1JeCn9gtseK8JlOMTdw1uwbt+Igm1Ox2xcllyF3AmROwomqPT/hcBhpsAT5PZ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 13 Feb
- 2025 21:26:08 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 13 Feb
- 2025 21:26:08 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
-	<hverkuil@xs4all.nl>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	<linux-media@vger.kernel.org>,
-	<syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v2] media: usb: hackrf: fix device unregister order in hackrf_probe()
-Date: Thu, 13 Feb 2025 21:26:06 +0300
-Message-ID: <20250213182608.757954-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739471196; c=relaxed/simple;
+	bh=NhDUxXj3oz4V8+R+gygt7nMUyVRevYRPQIQD8pzOLW4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IswPCtzf0KD8PDyFDqqdfUynTkYliqz3sBviD0vApmLsZAKuEb0NoXZxUCIpTD0x3krvp4o4j9j8LVETz7h2GGYt5iGRQIR/sJXTiX7rm7dStjIlHmPHgZycWwbWKdpVAkcHuynlbrrUKfFRloBhX3QVH8zt30D9bsm5W6tw9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyYidiRl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A484EC4CED1;
+	Thu, 13 Feb 2025 18:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739471196;
+	bh=NhDUxXj3oz4V8+R+gygt7nMUyVRevYRPQIQD8pzOLW4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HyYidiRl96qMUK43IQ2LEvdRgb7aV2nlKM2bLVVDdT0GLa2JiVVRRAqipVkb81xry
+	 FdB0y8AmenVdTI0LN6gNC315LwkL3WSjmGtmhbcYovNNpe4KcQUg6K80R+fSwNuSWN
+	 9Tvvdp9lXYLjA1wILVrcbu/9C54cWychEQaQ74rEDmEnNQYDHRUsjVkHjtYl2JnlRW
+	 k5b17R/FcBYhJkhchj9LuznGmJfEBUgCluEvJ4dyafeIi6pf+g6ZcpK7kyx08UM8a6
+	 mqHLPtCYVJmEpLmWGvO6BQDxpInUEMGAKW0soThrDxe0H28Ac2jqWQcqtOClR8v1mY
+	 v/NAMI419dweg==
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, David Lechner <dlechner@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-sound@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+In-Reply-To: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add
+ gpiod_multi_set_value_cansleep
+Message-Id: <173947119037.339941.1732579278867629226.b4-ty@kernel.org>
+Date: Thu, 13 Feb 2025 18:26:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Syzkaller reports [1] a slab-use-after-free error identified by KASAN
-sanitizer and most likely caused by the wrong order of device
-unregister steps once a call to video_register_device() fails.
+On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
+> This series was inspired by some minor annoyance I have experienced a
+> few times in recent reviews.
+> 
+> Calling gpiod_set_array_value_cansleep() can be quite verbose due to
+> having so many parameters. In most cases, we already have a struct
+> gpio_descs that contains the first 3 parameters so we end up with 3 (or
+> often even 6) pointer indirections at each call site. Also, people have
+> a tendency to want to hard-code the first argument instead of using
+> struct gpio_descs.ndescs, often without checking that ndescs >= the
+> hard-coded value.
+> 
+> [...]
 
-Fix aforementioned flaw by first freeing control and reference
-handlers, only then dealing with dev->v4l2_dev() via
-v4l2_device_unregister().
+Applied to
 
-[1] Syzkaller (partial) report:
-BUG: KASAN: slab-use-after-free in v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
-Read of size 8 at addr ffff8880502e80c8 by task v4l_id/7854
-...
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- v4l2_release+0x3e2/0x460 drivers/media/v4l2-core/v4l2-dev.c:453
- __fput+0x3f6/0xb60 fs/file_table.c:431
- __fput_sync+0x45/0x50 fs/file_table.c:516
- __do_sys_close fs/open.c:1567 [inline]
- __se_sys_close fs/open.c:1552 [inline]
- __x64_sys_close+0x86/0x100 fs/open.c:1552
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-...
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Allocated by task 6058:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- hackrf_probe+0xd1/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1353
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
-...
+Thanks!
 
-Freed by task 6058:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x14f/0x4b0 mm/slub.c:4727
- hackrf_probe+0x4c9/0x1cf0 drivers/media/usb/hackrf/hackrf.c:1525
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
-...
+[15/15] ASoC: adau1701: use gpiod_multi_set_value_cansleep
+        commit: ad0fbcebb5f6e093d433a0873758a2778d747eb8
 
-Reported-by: syzbot+6b52c2b24e341804a58c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6b52c2b24e341804a58c
-Fixes: 8bc4a9ed8504 ("[media] hackrf: add support for transmitter")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-v1 -> v2: fix overlong lines in patch description to remove warnings
-from checkpatch.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
- drivers/media/usb/hackrf/hackrf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
-index 0b50de8775a3..bc910b35f605 100644
---- a/drivers/media/usb/hackrf/hackrf.c
-+++ b/drivers/media/usb/hackrf/hackrf.c
-@@ -1513,12 +1513,12 @@ static int hackrf_probe(struct usb_interface *intf,
- 	return 0;
- err_video_unregister_device_rx:
- 	video_unregister_device(&dev->rx_vdev);
--err_v4l2_device_unregister:
--	v4l2_device_unregister(&dev->v4l2_dev);
- err_v4l2_ctrl_handler_free_tx:
- 	v4l2_ctrl_handler_free(&dev->tx_ctrl_handler);
- err_v4l2_ctrl_handler_free_rx:
- 	v4l2_ctrl_handler_free(&dev->rx_ctrl_handler);
-+err_v4l2_device_unregister:
-+	v4l2_device_unregister(&dev->v4l2_dev);
- err_kfree:
- 	kfree(dev);
- err:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
