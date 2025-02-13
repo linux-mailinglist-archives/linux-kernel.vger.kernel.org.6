@@ -1,185 +1,161 @@
-Return-Path: <linux-kernel+bounces-513831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C96A34F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:15:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D04A34F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51FB16DD44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A533ADBD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783E924BBEB;
-	Thu, 13 Feb 2025 20:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F85266181;
+	Thu, 13 Feb 2025 20:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="no4ZKzWc"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqdZwsfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07AE24BBF5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58132222DE;
+	Thu, 13 Feb 2025 20:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477722; cv=none; b=llXnOUoPxd+6aY6kDpUp3TB6eYG8u/FEhuy3BgYN4XX9VfbsPXUVS2y1xhRVKJmcFvLFi1TFZeF0gSD8NcdRsabId3kL48CyEmESYXMKJEJAtWhHBxlZsYYilWnRat3ADfgEFmfbNs5dM91GV273MR03kf/tVAz/gv4l5tdQBQQ=
+	t=1739477733; cv=none; b=XxedS2Ad6IAUwDySCl5mgvog7jFBRo5VuVY+J/AxhcZITwtPDYQbEk+vCen2SugVeBqUYX6KSzDM72/vbJVjhhK0tSW1tc1B7U4+/nQUPeEe9m0D/BMkwQWr5Rn4QngcYDQ7DqbflaHic3+lhTdg6gof3F8Br9FnESYK9zENk/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477722; c=relaxed/simple;
-	bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SQT1wwqD34zKZtPF8o9I6fTCND2tNTGaaF0AcDwijvzfumj4KkiSA/GTkPPy4ZKCBlGJvXbPlgqPGSZzsVJtwAG2E3uiHr8VoxfKexOmfURGWkl3Gl6yjGiDRqpepIvc8BgMUSKCvWsQBUsGb3WEXDzNYIDS/XOGiSB+9yWuT5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=no4ZKzWc; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7c501bbecso192860966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 12:15:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1739477719; x=1740082519; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
-        b=no4ZKzWc/LOkvUyqWR0AQdkzJcUgEE7TFl8r2EDvyFoKJqOHeZ2e3FTrjurl/g+Bq8
-         X/K+7tr1sUR8WL0P1DC+5UPkLxiANyp+3FNGmsv1TRol0m0SVBz2NoobCUnBIPSfxlOu
-         zs9faBPz58s/RFKrX0/iqYKs8g12m0GGdISX2ua2RbzpAeDlFNZimAqCiEunvX9fVBDJ
-         z8gN0zRie4AmRNXKgLCnk9WdHs8szYX70HCellANQj2piokQEsjw6RqaBNBydzGDPW6m
-         psTkAk949ew5+62kc6Rit1V4oEs8MxaUkSrBhZ8TtWAigAmZvdM6EYoJM/i63hbCBZN4
-         FoPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739477719; x=1740082519;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ku4ZpP8E0qi67O0cpk28B8iLxY+880CliqOyg+p90OQ=;
-        b=Asxfd01NlCUbVvn5XA6PBHS4s5qnfQIj+XYVvRpWJ9fLG8xjHUJO8j8LV0Mcf4gjsN
-         9DH1VyjW/k71/DCVG7MsK8ztNL9erG/p1G0LgvX8e0k8CsemFBnHeugiO0Z6Jq8sAJ1r
-         igNMSFTSjnaDxeXqWmJwNFKyRm9tuc3i7MhZBS7ZYldPaKX4XH9Eh7I61/jnoqbJ0fFk
-         yKaLlOOYaifT7D+1EnuFBMBRkK2w5Q1g8RJbxIozHKKArx/F8VxyKrbsAFgqjuu/Ztkm
-         bRMb4MUQLP79H/KxsFnxCxd2epSw/pJkoyMO7Ial4VpU7U/kMNY4+LEC/0UrKlIR/rAy
-         Mx/g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5jpDUUDWHNQdTxTR2qW3tUeKBQLTa7eJg6i3fh2XClh0UfjlBsKvgn09RJHgcrKxGrXrqOq/JBB1yZuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTJGhdMiZN9VsUoIEjXBGYsrEA8Wa9+/8fsLyRfdA4ymzqUzGm
-	Or3QkNJLOUH/g8hbqFt/wSDG2VGHZd3FG0fYsZ7YlfdEFsXxw/2RPboNIIErSHGK6hMhFXgMr9w
-	JMBAKisZ8a1Egf63AW2anDBEnojD3MrABaylXdA==
-X-Gm-Gg: ASbGncswKLyGlC7RrjHZlThWMVyk8l7P+ekLKMZhuXxGXFAL1KFEXyjrAkWLQDQNuiL
-	uUqtwVNOMP5Pb3Df9ycoBgeww/J7GNrmo78FnFBboUNwnIb13sSI6Fcwmt2bYXPRziSqWr3BN
-X-Google-Smtp-Source: AGHT+IHL8CM7ylsZCGYbhhurWPgsNzVEPTt0GbzqEVuFP8DGsWzaxgWDYP0kYEVOuE1FqVkeFZtnMkkFkhc6Mpf6ALQ=
-X-Received: by 2002:a17:907:94c5:b0:aab:740f:e467 with SMTP id
- a640c23a62f3a-ab7f33459c8mr965659466b.8.1739477719051; Thu, 13 Feb 2025
- 12:15:19 -0800 (PST)
+	s=arc-20240116; t=1739477733; c=relaxed/simple;
+	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml4M4yEPNAPXsipqUw65uv+IYHENcdt53D2Od1wV6Y5/9raUZsydxzaIt26tDvCbcc5BkEI+9U5rSH/SSa9oCTDiadFN1yIJ7AyNZDcTqoDmrS665o+4lJ+MAyYQgoLurYK6eIV9VsrJe445HbBSbiPGqDYSRu+Cwn8TH3Bt1PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqdZwsfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39819C4CED1;
+	Thu, 13 Feb 2025 20:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739477733;
+	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TqdZwsfx82xJagVlpspFyy/Vqw95aHWlQwiSyeXIdxGnjLmYIMhY9zqVEA+DoEkY4
+	 lcDlxACjZbZmLgFNIlt9Ic2vOKl/55wjlk8re2mb/TUUQGNz58EYUwWf8QXmPN/+rK
+	 Wogs0dSQiqmX5ixXI1DeRb7X7BPfxILNLZn/8nGD2EMu+G+3qMmMm0lqjN8SC3YiJh
+	 4LSMSWX8nax7zC6KcxhBb2PCP4xlaIths1HfnKr1/3Y/vsS9y18Bdt6oUU0dW0hXok
+	 1WsvsGjcng0HOhvXddBUxeF5NBXUermedA2vQUJwBlr8ideBdv4vsOXs4kdHZ0PWh4
+	 jauAh15stszMQ==
+Date: Thu, 13 Feb 2025 20:15:27 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250213-reflex-earlobe-ebbeaece6fad@spud>
+References: <20250212064657.5683-1-clamor95@gmail.com>
+ <20250212064657.5683-2-clamor95@gmail.com>
+ <20250212-unwritten-compile-7011777a11b3@spud>
+ <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
- <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
- <20250213195304.3a2df02c@bootlin.com>
-In-Reply-To: <20250213195304.3a2df02c@bootlin.com>
-From: Phil Elwell <phil@raspberrypi.com>
-Date: Thu, 13 Feb 2025 20:15:06 +0000
-X-Gm-Features: AWEUYZmyv_HkHTHpV0OY_0Sgq0DOC92t4GTNRz9-9baWq02Pyp8uQAKZdY6LeEY
-Message-ID: <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
- a DT overlay
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
-	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
-	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
-	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
-	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7dqWvGhGUC+okugZ"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
 
-Once more, with plain text, which I'd hoped the Android GMail client
-would work out for itself.
 
-On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com> wrote:
->
-> Hi Phil,
->
-> On Thu, 13 Feb 2025 17:57:37 +0000
-> Phil Elwell <phil@raspberrypi.com> wrote:
->
-> > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
-> > >
-> > > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > > > > fan are directly on this custom board? You then want a board DTS which
-> > > > > includes all these pieces?
-> > > >
-> > > > That depends on whether you count the Raspberry Pi 5 as a custom board.
-> > >
-> > > So you mean the Pi 5 board would itself make use of the resources the
-> > > RP1 device has? They are not simply connected to headers for plugin
-> > > boards, but used by the main board? Hence you want to describe them in
-> > > the board .DTS file.
+--7dqWvGhGUC+okugZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 Co=
+nor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 > >
-> > That's correct. But even for plug-in devices, those which are on
-> > non-discoverable buses need overlays to declare them, which causes a
-> > problem when the overlay application happens before the kernel is
-> > started.
+> > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> > > AL3000a is an ambient light sensor quite closely related to
+> > > exising AL3010 and can re-use exising schema for AL3010.
 > >
->
-> Hum, I see.
->
-> We worked on overlay usage on non-discoverable buses wired to a connector
-> and we did a talk about issues we are facing on at Plumber [0].
->
-> You can also find our big picture in [1] and a last contribution introducing
-> export-symbols feature in [2]. export-symbols is also under discussion on
-> some other threads.
->
-> Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
-> an addon board to add devices on an i2c bus provided by a base board and
-> wired to an connector the addon board is connected to.
->
-> Maybe in your case, you can decouple resources (gpio, pwm) provided by the
-> addon board and used by the base board using also nexus node.
->
-> We use a nexus node [4] (not presented at the Plumbers talk because the idea
-> came during 'out of talk' discussions in Plumbers) in order to allow our
-> addon board to use resources provided by the base board.
->
-> In your case, if I understood, you are in the other direction but why not
-> using also a nexus node to decouple and translate resources in this other
-> direction ?
->
-> Don't know if this idea can help but feel free to ask for some more
-> information if needed.
+> > Quite close you say, but the driver is entirely different it seems. How
+> > closely related is the hardware itself?
+> >
+>=20
+> Well, I can simply duplicate al3010 or al3320a schema if re-using
+> schema is not allowed. AL3000a has no available datasheet online.
+> Downstream code for al3000a and al3010 seems to have same principles,
+> apart from light measurements.
 
-Nexus nodes look interesting - I see them as adding a layer of
-abstraction such that, for example, boards can declare which of their
-specific resources performs a common function so that clients can
-treat them all the same. We do the same thing in a limited way by
-using common labels on nodes, but this goes much further.
+It's probably more of a question as to why you're duplicating the driver
+for them, rather than telling you not to put both bindings together.
+That said, information on what's actually different is helpful in the
+binding, to explain why you're not using a fallback compatible etc.
 
-In the case of Pi 5 and RP1, I imagine you are proposing that the Pi 5
-dtb declares the connector node and the overlay fills in the content
-with references to its GPIO controller, PWM controller etc. However, I
-think the overlay would also have to be board specific because it's
-not possible to patch part of a property from an overlay, so you'd end
-up overwriting the GPIO number as well as the controller reference.
+>=20
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++=
+--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al=
+3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > index a3a979553e32..6db4dfd5aa6c 100644
+> > > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > @@ -4,14 +4,16 @@
+> > >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
+> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >
+> > > -title: Dyna-Image AL3010 sensor
+> > > +title: Dyna-Image AL3000a/AL3010 sensor
+> > >
+> > >  maintainers:
+> > >    - David Heidelberg <david@ixit.cz>
+> > >
+> > >  properties:
+> > >    compatible:
+> > > -    const: dynaimage,al3010
+> > > +    enum:
+> > > +      - dynaimage,al3010
+> > > +      - dynaimage,al3000a
+> > >
+> > >    reg:
+> > >      maxItems: 1
+> > > --
+> > > 2.43.0
+> > >
 
-What is needed to make this work is the ability to cope with
-unresolved references in the base dtb, to be resolved as each overlay
-is applied, with runtime checking that each reference is resolved
-before it is used, all of which sounds like a nightmare. Plus, we
-really don't want to have to change the way all our camera and display
-overlays work on all Raspberry Pis just to accommodate somebody's idea
-of how RP1 should be handled.
+--7dqWvGhGUC+okugZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Besides, Occam's razor surely applies.
+-----BEGIN PGP SIGNATURE-----
 
-Phil
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ65S3gAKCRB4tDGHoIJi
+0pBLAP9DAfvM0GW8mfJUiDrGHRO8QboPxmy+oxCqMZyJ3p0YuwD/VCGGvaVtnZ7a
+l9NBlucIVYIqUW1e7vIi8IqvOfjpdgs=
+=U7G9
+-----END PGP SIGNATURE-----
+
+--7dqWvGhGUC+okugZ--
 
