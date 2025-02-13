@@ -1,90 +1,77 @@
-Return-Path: <linux-kernel+bounces-513438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3068AA34A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:42:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCDF2A34A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAF01897088
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54506189761B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1075124A073;
-	Thu, 13 Feb 2025 16:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4D24291E;
+	Thu, 13 Feb 2025 16:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eclslWL+"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ryWOgEXd"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE702241699
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360B720409A;
+	Thu, 13 Feb 2025 16:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463924; cv=none; b=euOm0J6NudPEz8mpjxNAuj7eIavxSQovYhkU0WvDJmyYi9/7z3FOlRZfSd08jBaGRaYvNAiGfZO7ltJInziL0Mt9YP1geVONkYAjjId6y8bkG/nivSXxYoFlEPxMQ87ZeumWkbBZVCEIUBsVA28Qx1uy5UthsmBPYa29+NTgzuA=
+	t=1739464025; cv=none; b=Z4Fiu2X2iQqLnxwY+dAFZXc8ET/q12iDNdwkpe5PeWKQZcMuvSMmzDnjvG36cB7fDqIxABzKBuO7d1yRn59/xTZq+l8uYtJgyAqUhIdl9jmXk6pUzYtyBr9FdoE/JBqJlgTfv0FSbUEtKvJuLZ3W7xuwWyQNvm8bQuGpO9PHdOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463924; c=relaxed/simple;
-	bh=hMCwLB7+OBaZ5P4MNokRsNDc+YfKyQ578hYF//of3Hs=;
+	s=arc-20240116; t=1739464025; c=relaxed/simple;
+	bh=ei82bSWuNyGv8cLA27Aq/GNRp+3+6ug5Q12OFTpXsdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBEYTYsJfRC8nVUbmidbKqoC1cRt9rWtQXdvF32954fi+63GJDbt6psCeIMjvyKYZClk6GM0kK7dBFcYKh1NTueNGMdwa86fF7ghDOepCxrSJYwtkJzV6UNly6JRxj+tfNiUeCn0THH73HAHxspLM5oFfOJoN6nII38s79aseKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eclslWL+; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-545097ff67cso1078114e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739463921; x=1740068721; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cSOs50TsU4X4YYQxYbnAMJ4ehCd3Gz/LqOB9FsJlXcU=;
-        b=eclslWL+K3mR32rTsTqIuxKgj1NAIx3feKv5jGhQVbaHBMBcJ8T9oPsCNksipBVnXm
-         uiJhSTHVoUFzrEYeyqYHNMs5w5JR+kyzq4uKPPe00g88JevPnn7k3J5KMf1JyVSZD5iH
-         sRd+sLCDvuEwI0oWQZ9mYybSc9MWWPrLB61IivsydvKdT4LNlYAvPZMw+8OC1zI/jxJf
-         ijb1F4sql01Og4F+ig1SHxenswtLS56JhhyrliE4lxa4h9MRlIB9vVt36a+yXv7gohxF
-         6HNcLOyKYCS26bsTUIU+oTjkT6zeMTgMBenpL81rFN/B+YDI/uQUOpkaijt0K5oAuoL5
-         zOTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739463921; x=1740068721;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cSOs50TsU4X4YYQxYbnAMJ4ehCd3Gz/LqOB9FsJlXcU=;
-        b=V7Gfn7GJ4HJ8puff7rmDZhdoA/zt0OWWQ9Tt1bgelJybpVqqu+ijNyXKSc7Q+yWRG2
-         iKfOpFiBNyU96j8m05RMzYSmsJketTBUuQX76PJvAYit3XRFUiFH7CG6g/B/1E5KPVDY
-         HpYxQFulEsK/WeQHbMQtXzfHtUlcVCBd6yjTmAjxyNFC1LL4E0OUASKHWKjsq97cx6sP
-         mWavY1HB0b8K7B2pFYMZ6uzcdmn7R+5hC5V/nv++fJ8F8Bi0WVfPpW/tfqll0/zL0v+s
-         60KK6jbKH/KuEiyNWQvdSnCZi4kqKUNCz0hg5fRQsbDnMduyhsI3J2QjQJfXho7ympcJ
-         sQMA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4HIREYJDp+TPYgRXNpynDIPFBjXqPM84keLIVfgw+0k1xOtDm4kvEDpTOojFF/oQ9BjETGECh30igABI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJVqWbBKg+z1zUgovQkWL5meG543K7BpxqKBdcWfHeddXJB6Wf
-	YSWwSMBHUEHMptJ/XHxPcSYU4VH7Gjo8KMFDZLtmGLKcL279JkJatfw6BZPqkBI=
-X-Gm-Gg: ASbGnctP99gO0cZ20gzP8IGQ4+VgPr738bvR7CnpmIjRlLW6q7OVElmr0fHaVKg+A+a
-	DkMBLMDRmxZJrD+JwMCaPWsR7QU+cRzqzO9Hl7AUUNnbhSK8+Wvo9jybl32D54Ae0tnQqLHOTtE
-	nBFkb0XUh4yVSAsTylpKTvjBQBzpw/7Puf8Gn1jV1AxP78Darrg4bkTnNpjmOUStTmAIV3vQbtH
-	YuNbAFQ1TZ6DoYo+n9hkqCuNsMRFt8LcJZAZBj7r6YZZYABtosDBNxFYwP9dmMcMJ1XJabnbshp
-	LpolL1IeKX6DDFsKwihxE2Ef36mtgdnK/nsZmtPh/MvcKRt2aWrxAb7n6YND6E2PGMHVPoo=
-X-Google-Smtp-Source: AGHT+IFChiazqWx/+2a2ZIZUghuFgsnsSdaCX/3eX3urzt33SaYJfC4xuJX7c2QAEv7EGv4JsO+x3A==
-X-Received: by 2002:a05:6512:3f25:b0:545:6ee:8396 with SMTP id 2adb3069b0e04-54518282967mr2782235e87.13.1739463920795;
-        Thu, 13 Feb 2025 08:25:20 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f11ea5asm211876e87.215.2025.02.13.08.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 08:25:19 -0800 (PST)
-Date: Thu, 13 Feb 2025 18:25:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 29/37] drm/bridge: Introduce drm_bridge_is_atomic()
- helper
-Message-ID: <5afaezaqggshwmcclrsfgnkd3kgxfhrspimqt2hvan35lsoz74@w4ytuxjgtqrc>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-29-e71598f49c8f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PA9J2ZsB8u0247UKQv+SALod/BC3SlV1t39xWzx/HeBwf/eGtW4WtI3dnnKFGxPkW5xAvLHKhdu/mXj0Lnm1yUm/JZlucFFmviPJ0/ij+Lm17nVp6fCl8bmSQIjCFfZNS2zRwmMYO0L1iXlw2D0yNpFuIVHWucqVE9/r1K7PZFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ryWOgEXd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hoCv9YGoA5llUMO1DS3w019F1tDGNYulVOCgZz2nIGs=; b=ryWOgEXdsk/TF9OOvLKmzxDMim
+	KyP7yPuREuTwPWt7nCQ0+ViCbXjiIY01szVCEiFXo5WxR+XLk1ztWSTxm2MOo/p06JiRwKwhyTcGE
+	Gb7R810BCsHOfsAn5CDRTtDX1VkxZlipdL73eoSwwWKm+D+M3pYS5zpG6PZG8kO+IZZc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tic39-00DnAG-62; Thu, 13 Feb 2025 17:26:51 +0100
+Date: Thu, 13 Feb 2025 17:26:51 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Phil Elwell <phil@raspberrypi.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
+	bhelgaas@google.com, brgl@bgdev.pl,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, saravanak@google.com,
+	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
+	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,22 +80,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-29-e71598f49c8f@kernel.org>
+In-Reply-To: <20250213171435.1c2ce376@bootlin.com>
 
-On Thu, Feb 13, 2025 at 03:43:48PM +0100, Maxime Ripard wrote:
-> We test for whether the bridge is atomic in several places in the source
-> code, so let's consolidate them.
+On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:
+> Hi Phil,
 > 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/drm_bridge.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> On Thu, 13 Feb 2025 15:18:45 +0000
+> Phil Elwell <phil@raspberrypi.com> wrote:
 > 
+> > Hi Andrea,
+> > 
+> > The problem with this approach (loading an overlay from the RP1 PCIe
+> > driver), and it's one that I have raised with you offline, is that
+> > (unless anyone can prove otherwise) it becomes impossible to create a
+> > Pi 5 DTS file which makes use of the RP1's resources. How do you
+> > declare something as simple as a button wired to an RP1 GPIO, or fan
+> > connected to a PWM output?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Where is this button or fan? On a pluggable board? Isn't that what
+overlays are for, and they are stackable. So when you probe the
+pluggable board via its eeprom etc, you find the overlay and load it?
 
--- 
-With best wishes
-Dmitry
+Or do you mean a custom board, which has a CPU, RP1 and the button and
+fan are directly on this custom board? You then want a board DTS which
+includes all these pieces?
+
+	Andrew
 
