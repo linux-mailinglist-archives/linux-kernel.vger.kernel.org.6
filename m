@@ -1,125 +1,205 @@
-Return-Path: <linux-kernel+bounces-512513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9159A33A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0ACA33A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77C9A7A3699
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7320B16887B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A248D20CCD2;
-	Thu, 13 Feb 2025 08:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDE720DD51;
+	Thu, 13 Feb 2025 08:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgFwiH1/"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LctM41cZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000E920C49E;
-	Thu, 13 Feb 2025 08:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6731820D510;
+	Thu, 13 Feb 2025 08:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739436952; cv=none; b=NnUGNX8qgNOgJdm6k/vpOKan2H4XEpM91W1d3fVzI70jYPeWLm2Jdn6xobYduXr23TzA4Ocwgvu8FBDOVkriDuSAsQRaRHS1JOYOTMDDxrm/jzUvMk9QBmg1+qNymkM6S+OiTs64AMP5cSxpV1p4Dgoh+wU3RrCQVpXXPDJYb8U=
+	t=1739436956; cv=none; b=ekJyEuEpG+g5QUMUVrnFnfxQHYPqsgp3eBOEOBGEEuD4qE4bUdNhJhrDtkM7T1EPgxOm3WdxAM9Th1h9iPCVi12kH8ofGjWbIFyZjTwh5m7BHsp4PLg3x7/1X7lzEgZMz3dl+7rQ5mbk0slap95x6sOqOLA8DnivtwvP/NoRhCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739436952; c=relaxed/simple;
-	bh=b9Piwl1nQzB7vJzY0MVy96I/7TITjuMOl/dFawyQO+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FAC1nqsGiw8Q3b0lO2CpL2Ppqtefj+rkKEJznLWdL5R1dcV9V9h7R+rdwsMsGXAKUaYxA4iJytUi+LEY0HQkL+BLrUJUEGzIAccFSRoOVScFyYtF1NGYSJmxKzJ/gOhW8dPTDKCWKwb9oDHdpre86AZqpP7ldTT6mMuNf4X5lUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgFwiH1/; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307bc125e2eso6948241fa.3;
-        Thu, 13 Feb 2025 00:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739436948; x=1740041748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ISvOoc8ZLh2lLWyF+k1j00TNjsRMMcy7FI/7Z6/03RE=;
-        b=NgFwiH1/f8kLzy9k7IRglRyuXKRV6jWAWxI5bZlgMQ8bnXhnhHn2d1sDU+Og0jE9FM
-         oXrNE7RmvHnToZAVzerp79w7giPNpy300Ph74U69H5fso+bGBhqiDMOX4x37IPgiFhe7
-         UkzblpJW6WItOvx65yomcupr7IwJulko79/BOL2dBOAblJHRZKdiv7+HqRyHUW/DxKBP
-         ZaxJK/yzylh5lPZcaCAisy9ybiWPZ+df5ZrigBQbX43GsYhEz8ebYOO39GlvA9A5X13/
-         HZWNwhrntZEPS6m+5aEJ+iJ8eZ+w4NdbM2QuH/lw+MWyZEnx7pnYhPJg173KKorvnPSL
-         NEgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739436948; x=1740041748;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISvOoc8ZLh2lLWyF+k1j00TNjsRMMcy7FI/7Z6/03RE=;
-        b=DyUrSvGkoHpJYVp+IrGjuUSE/Q/nzGSBRgSdAft+WvFi1PRtefnLIRTJ+c3fDBySop
-         Xr9nWAe9Wtlgl6M6j7TKdb5Rh3A/4pHJsKAMYRe5JcbYF8hmnco33XZJ6/2T2QPU+SjI
-         yTn7pVBnPsHeD/oMi/8SSdhe8thrRvEK4032T+uP0hCfxmmmit8anIj9rBqD5ZxokSfw
-         W2O6TxgelJZCugvYwh+3azVRqQGYP56+tRAUDZITkIN/juJQxbgfkbAOlVYNgm6jE6XE
-         3QPITqf/hz2dxR4qdZa3dw31BacWtSzPuBoxF+rvNiynx4tPclEsI2b5ZUtxtcwYM1+5
-         085g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+rtbmzZugtO1WzUtqk48TRgHUb1Br5md10ylNiieUqrplIw0GHkv35CfduFhig+YlXneT8488FiDUo5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf02yGFuvs8+ZeXTlsenBxDuVeD6YFrrUvl6M7zUzntqco3BJM
-	YGYN5WwtBNGc19fHWks0+41PEmxniYDTgKyTOTWFXMmAKtK7KJ9QWqpxEQ==
-X-Gm-Gg: ASbGncuaMCdybX+WaONKVhk27RJCJkb4G5trmtONTe6qwiowNT+iACR38B+R2ft0flz
-	BHPyRedljXUqsFboIokKSg9lgm+V7Jk5mPdZCHtaz/sN0GThER2OperoMQCB2Lcz2758jGxVlDg
-	WOvyKXIlu84JJrQ87U9GUoLym33lGEH7HjEoU7D9mN2CNarmWJubVpTpTaUXvh0PnlerGJ3IAmR
-	F1l3rR48ZCqhprgAQsVQKVom9IIJlBr3/s5yoy5CItWwrYJkSMb0YnOKaezF7W238cum4dpjH+Q
-	zJSd3GaDYrxlGE6UczRCHXYGw+/VAzLaHkYX8FCAIKLvs+PlRR//8f1sPwBbZBBfjLmMOD7W
-X-Google-Smtp-Source: AGHT+IGW8hG4ZSdW4/ynvfOmGmfyG4J7bnB6/czfWfePjml4V4zcl/kwzU92567pa0MdZPlL5FAAdw==
-X-Received: by 2002:a05:651c:2106:b0:305:d86a:4f01 with SMTP id 38308e7fff4ca-3090ddc6cf8mr7698091fa.31.1739436947507;
-        Thu, 13 Feb 2025 00:55:47 -0800 (PST)
-Received: from ?IPV6:2a00:1fa0:48f0:1acb:121e:9475:d238:84ad? ([2a00:1fa0:48f0:1acb:121e:9475:d238:84ad])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091011ed97sm1375651fa.48.2025.02.13.00.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 00:55:46 -0800 (PST)
-Message-ID: <309b356f-a7b8-4f1f-92b7-ed5b144bd039@gmail.com>
-Date: Thu, 13 Feb 2025 11:55:43 +0300
+	s=arc-20240116; t=1739436956; c=relaxed/simple;
+	bh=IOPMin/Lc5WunXnzEYcyj9XzsrWnvgg3E0AxmkqaTmI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pxjJNOKIldTr+ROGeigI9uhaI4azG2Q+xr33ke6THz+aeYUOnR96wiRaVcY1CLpsSUOHgaRCD5Tbp6WaD/ZUfZf4sl4qHTEtl2+o+leu08sNCN/YKZ936vJ1BsDt9Pko5gdGGSKv+OOVIJdmEjp7eU+hhqLyedl/+eFzn4zlmt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LctM41cZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6D9C4CEE2;
+	Thu, 13 Feb 2025 08:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739436954;
+	bh=IOPMin/Lc5WunXnzEYcyj9XzsrWnvgg3E0AxmkqaTmI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LctM41cZaQpOgGFyR4yaVnRHOglEmsj1vxHUK2Abf8tFgM8RJSRUUTB16t8OwY7TP
+	 yq0xilekRyINqV8yiHBuMHrmEGNpLRMfc23cQRR/FE7HyAzgsxU+JtWWTrqYGX/GAN
+	 n9iJUfv9ycsTaTB8jUjq3rtE9xNf8/qzSz27D7r9W/urwM9aPQ66IymdP7QtPbQOxF
+	 hglMXhZWkfjrTwv9I2Sq3r7vZsnvME9mfQIlUDATLmpYFHH5JBa04n15KGZbvn9IjD
+	 c56UYjT88K5+B+EW7pxM36cZeLQqLMWZM6p1hdr9zDuXxdERt3J5AsVB2yjB3NllV5
+	 v36Y7oNeTikug==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tiV0i-003bb5-Fo;
+	Thu, 13 Feb 2025 08:55:52 +0000
+Date: Thu, 13 Feb 2025 08:55:52 +0000
+Message-ID: <86tt8yrzon.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Fuad Tabba <tabba@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v7] KVM: arm64: Fix confusion in documentation for pKVM SME assert
+In-Reply-To: <Z6yByMUBPDUyEWOr@J2N7QTR9R3>
+References: <20250212-kvm-arm64-sme-assert-v7-1-0f786db838d3@kernel.org>
+	<Z6yByMUBPDUyEWOr@J2N7QTR9R3>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: fix error while OF and ACPI all config Y
-To: 412574090@163.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- weiyufeng <weiyufeng@kylinos.cn>
-References: <20250213060804.114558-1-412574090@163.com>
-Content-Language: en-US
-From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
-In-Reply-To: <20250213060804.114558-1-412574090@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: mark.rutland@arm.com, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, tabba@google.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2/13/25 9:08 AM, 412574090@163.com wrote:
-
-> From: weiyufeng <weiyufeng@kylinos.cn>
+On Wed, 12 Feb 2025 11:11:04 +0000,
+Mark Rutland <mark.rutland@arm.com> wrote:
 > 
-> When both OF and ACPI are configured as Y simultaneously，this may
-> cause error while install os with usb disk，while reading data from
-> the usb disk, the onboard_ hub driver will reinitialize the
-> hub, causing system installation exceptions.
+> On Wed, Feb 12, 2025 at 12:44:57AM +0000, Mark Brown wrote:
+> > As raised in the review comments for the original patch the assert and
+> > comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> > disabled in protected mode") are bogus. The comments says that we check
+> > that we do not have SME enabled for a pKVM guest but the assert actually
+> > checks to see if the host has anything set in SVCR which is unrelated to
+> > the guest features or state, regardless of if those guests are protected
+> > or not. This check is also made in the hypervisor, it will refuse to run
+> > a guest if the check fails, so it appears that the assert here is
+> > intended to improve diagnostics.
+> > 
+> > Update the comment to reflect the check in the code, and to clarify that
+> > we do actually enforce this in the hypervisor. While we're here also
+> > update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
+> > 
+> > Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+> > Reviewed-by: Fuad Tabba <tabba@google.com>
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > ---
+> > This has been sent with v6.10 with only positive review comments after
+> > the first revision, if there is some issue with the change please share
+> > it.
+> > 
+> > To: Marc Zyngier <maz@kernel.org>
+> > To: Oliver Upton <oliver.upton@linux.dev>
+> > To: James Morse <james.morse@arm.com>
+> > To: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > To: Catalin Marinas <catalin.marinas@arm.com>
+> > To: Will Deacon <will@kernel.org>
+> > To: Fuad Tabba <tabba@google.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > ---
+> > Changes in v7:
+> > - Reword the comment.
+> > - Link to v6: https://lore.kernel.org/r/20250210-kvm-arm64-sme-assert-v6-1-cc26c46d1b43@kernel.org
+> > 
+> > Changes in v6:
+> > - Rebase onto v6.14-rc1.
+> > - Link to v5: https://lore.kernel.org/r/20241210-kvm-arm64-sme-assert-v5-1-995c8dd1025b@kernel.org
+> > 
+> > Changes in v5:
+> > - Rebase onto v6.13-rc1.
+> > - Link to v4: https://lore.kernel.org/r/20240930-kvm-arm64-sme-assert-v4-1-3c9df71db688@kernel.org
+> > 
+> > Changes in v4:
+> > - Rebase onto v6.12-rc1
+> > - Link to v3: https://lore.kernel.org/r/20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org
+> > 
+> > Changes in v3:
+> > - Rebase onto v6.11-rc1.
+> > - Link to v2: https://lore.kernel.org/r/20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org
+> > 
+> > Changes in v2:
+> > - Commit message tweaks.
+> > - Change the assert to WARN_ON_ONCE().
+> > - Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org
+> > ---
+> >  arch/arm64/kvm/fpsimd.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+> > index 4d3d1a2eb157047b4b2488e9c4ffaabc6f5a0818..e37e53883c357093ff4455f5afdaec90e662d744 100644
+> > --- a/arch/arm64/kvm/fpsimd.c
+> > +++ b/arch/arm64/kvm/fpsimd.c
+> > @@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+> >  	}
+> >  
+> >  	/*
+> > -	 * If normal guests gain SME support, maintain this behavior for pKVM
+> > -	 * guests, which don't support SME.
+> > +	 * Protected and non-protected KVM modes require that
+> > +	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> > +	 * host/guest SME state needs to be saved/restored by hyp code.
+> > +	 *
+> > +	 * In protected mode, hyp code will verify this later.
+> >  	 */
+> > -	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+> > -		read_sysreg_s(SYS_SVCR));
+> > +	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
+> > +		     read_sysreg_s(SYS_SVCR));
 > 
-> Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
-> ---
->  drivers/usb/misc/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> As I mentioned on the last round, we can drop the is_protected_kvm_enabled()
+> check, i.e. have:
 > 
-> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-> index 6497c4e81e95..9ffb51191621 100644
-> --- a/drivers/usb/misc/Kconfig
-> +++ b/drivers/usb/misc/Kconfig
-> @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
->  
->  config USB_ONBOARD_DEV
->  	tristate "Onboard USB device support"
-> -	depends on OF
-> +	depends on (OF && !ACPI)
+> 	/*
+> 	 * Protected and non-protected KVM modes require that
+> 	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> 	 * host/guest SME state needs to be saved/restored by hyp code.
+> 	 *
+> 	 * In protected mode, hyp code will verify this later.
+> 	 */
+> 	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
+> 
+> Either way:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> Marc, are you happy to queue this atop the recent fixes from me? Those
+> try to ensure SVCR.{SM,ZA} == {0,0} regardless of whether KVM is in
+> protected mode.
 
-   I don't think () are needed here.
+In all honesty, I find that at this stage, the comment just gets in
+the way and is over-describing what is at stake here.
 
-[...]
+The
 
-MBR, Sergey
+ 	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
 
+is really the only thing that matters. It perfectly shows what we are
+checking for, and doesn't need an exegesis.
+
+As for the Fixes: tag, and given the magnitude of the actual fixes
+that are already queued, I don't think we need it.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
