@@ -1,103 +1,629 @@
-Return-Path: <linux-kernel+bounces-512962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FA7A33FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B269A33FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226137A46D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFF2188E29F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDA323F414;
-	Thu, 13 Feb 2025 13:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2FB23F411;
+	Thu, 13 Feb 2025 13:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gilxD+2N"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sj3Vgr7k"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7740523F421
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD1D23F403
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739451825; cv=none; b=TBvFHc9XBf9gN+Z0qgy80AQObbxLLRqrKBHqgbJkGwLoXfwmZuP7rrg29/TnbUrqlC6TYgIgiL5dAfS6kSs3z7FC3jHCu4ks5PICCk71BFlClz4q5jas9yiqXE7ErD6F7ZpU1omOq1cMZ71/gGxIzyLXuOJjAMyq1iFwDSGesO4=
+	t=1739451853; cv=none; b=NRKOoHl/JUp/w5Fqo2ss5K++0KXVIWzsrA6NGquk+hK8vngpZ0ShTeoy3osreCKwcEdyIwgyx6TTbZLC4aQvjD8Rh9X64ra8LEL/6iMAvyYhH+luta468NpRj7DRROCDlX1r98M/gq6wVQK4qEySUQfa9cklqEJ+7oF1k+4iY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739451825; c=relaxed/simple;
-	bh=YBujJtdVAbQwX/i31dVVrAgv+iZd7oY+ALf0PWoL+rI=;
+	s=arc-20240116; t=1739451853; c=relaxed/simple;
+	bh=48Cbj1Gv2juaiI9MUF0mIQeOSi07L9oZHp15TVNMDkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZcygK8F9UcJ2ss06gqJhgiS6N1UCQvLrfrnedHJwD67YT5Gd63gIxM6vSimgWWwf08UbkyS5ttpNzeoDPR7zU/jb9d95D6vY3raTJWc79R3xLn4V4DAb5gvxYv7z6+QNRfTN305tvbEHjQPnuwMQmqO2A3rSWSHgoVGMVuCNeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gilxD+2N; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E8E7840E0184;
-	Thu, 13 Feb 2025 13:03:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1uI8pMxjy8rk; Thu, 13 Feb 2025 13:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739451806; bh=p7U5fpaXzy7aPH0eVZosSY1ljTgN/VL+7617IAc0fbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gilxD+2NXMqYvrBaE+92gOngNygML2PTJNovultw18cJHm6+d8lQt1Xp5JuetjwYy
-	 OeAO6K3fghVKITGhmBRuvhKzCIBd2c0ZaaSg7CTXoS8qyv6ldaNMGxLiTJOwKq6Mw6
-	 JT0XcfDi1vxIrlNLDe0Gzt53j5Dlu4Sc/HvIXl07mCELeWLjXDFR+3CeP9UKY1hXSb
-	 THV+4kKAdwYOj5FCd4T4MZq2WKgg8Sba4yqbF+WoAfQHWxAdBb8A4/HhUN1fAtBHfx
-	 WSf/mTVMnLaCR44zOAVq2f4D5QDUbA7/XwQBloNNWegzDvkTIHC0eouh06aVwqHevr
-	 PSJQqnxXcvlsdYeO41G93R7kAKxE+EuQtquWXMJ2/LCXKspVcjdyJ3LLRHi+R/Z8gq
-	 YU8omQ3aDO8gzAoa45HyFIj7wzVl/oY0+SJeHqKzDSXT1L0cnyYlVAKHIYuX+DGo2z
-	 1xpNQiitoBp36FzCXX/ZYVWfEdFWhwLW6HTydDTH16CoTchqcsEbnqOCDQFbIbVFVP
-	 Hq0/J7w4h02sEpi2d5zhlaB4+k0xaTR7aa9eRIeK6INKgYZODoBXblIh0bp1RBF/Aq
-	 Fv0aX6vJnSu0ZOSiU2m3S8/du51jqoTafpl6YEtqoM9QiFnPLEYORlpgXMpwRc8ehc
-	 p/ziAMSrp/iV+AjshwN4T+Gs=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 082A640E015D;
-	Thu, 13 Feb 2025 13:03:10 +0000 (UTC)
-Date: Thu, 13 Feb 2025 14:03:04 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Brendan Jackman <jackmanb@google.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-	zhengqi.arch@bytedance.com, nadav.amit@gmail.com,
-	thomas.lendacky@amd.com, kernel-team@meta.com, linux-mm@kvack.org,
-	akpm@linux-foundation.org, jannh@google.com, mhklinux@outlook.com,
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH v10 00/12] AMD broadcast TLB invalidation
-Message-ID: <20250213130304.GAZ63tiJziORlbYhht@fat_crate.local>
-References: <20250211210823.242681-1-riel@surriel.com>
- <20250212102349.GE19118@noisy.programming.kicks-ass.net>
- <CA+i-1C0Sbgkyfan=srXL8dRrqaLoT1g1F5tZesC1rrh6v7L68w@mail.gmail.com>
- <20250212105945.GG19118@noisy.programming.kicks-ass.net>
- <7288e28d6ada409b1b7dd6e9abea77b596bacf3c.camel@surriel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJSjkyyJXi036/kk0sCPJlDxL7pjcqI+DhI/5HNetot1eeVJwE0VdJH91j3scXEWiJuVKwriYpsO+6T5jteOn/PYbuCLIu5iBJqWg6oP6MOnOSdr6pxuHuFxA97In7YVlL/Hz0AfZffVVBIsqdXDSInKFXmLAnckz7D1yGF8nHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sj3Vgr7k; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-308e3bd8286so9167201fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:04:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739451849; x=1740056649; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9M0Mt5WJSxElcIuCWOIqXan7km/lbDqEzpkYN84/dJA=;
+        b=Sj3Vgr7kJGxNiKlYdFRwro03OZDv0maa8VFI1SmMXbKrFXZ6j9oSXxo/FQpNH2h9S6
+         3zh/lKid6XWsfYvuY1r0bO7mp6P9Tpq7tWD7sm73LN0RXQ/+uUEGqyfvRV0nmcfjFiKj
+         cq9hSlSTc/aQTSAUO3e9kkT2bQqzMBHETMQJOo5yz8FGjhSixNtqpN5EZwBbEk1zqwAY
+         uxwv79clLLleQXHGoam13P9T3CaKO68zDCFc7rIcS05NNw8ecQFhohwzEK8fbn6/2DYp
+         +e0LNd9NsN+Kb3fNpa86bBVqmQjCdWlyjDJWLMyRv+Xy4JovbMMfsU35Tuba9TTdgjGz
+         OD9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739451849; x=1740056649;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9M0Mt5WJSxElcIuCWOIqXan7km/lbDqEzpkYN84/dJA=;
+        b=FyoPtD/5y2SSIJiB2mhb8x/g4JhUy1ayd9R7S4E+dWCxe5UA/RddBT5SikoXG3sflW
+         w9+ZZWDbxK4EtyVL18wQF4VVcn9d/E27IzeTjA+2G1PtHbWddAAmZEr3EkqAp/BoVw2G
+         rZHPWMwBgT8N9fgvR2xZiKl2xEr0vJ5grSURJK0rhToFkBbxXNb+0OHGW3DW/fadveG8
+         nzdu2zpZth5Sp06dV+YqNkM2atKTr/m5aoOgsPdGuqD83ZJh6c6xpxebtggSuB/J4jDF
+         Y9KBV0hywAfyVrJHOTMv96GZrNfeC0NcnfEPQMC60gsqoUsfLXZGfO90mxQPSOST+8/J
+         s28g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ml1bhTpufVvuwfdoSo9bv5O2T6mQNJ0O5s4/UNf96OJTA5HAEbDW+qUdKDho/HieF93XgvxijdzZNH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcUMQRKaeKg7x+ChsaNmq9OtXqfa9+rWkhxmQyyMIG53NohcaG
+	9MeTktwqnbrgPb/zeobHW51p1P+Ei1ff75ZisXgjCRDLPSSDFipZfUPNGhpBsQ8=
+X-Gm-Gg: ASbGncvjtoGTomtlgCmtrko00dsAfIS22Hp2oqK51iHnefiAOzW32wLMmo+0p13GtRK
+	2DZKr5KwNaluxoGeamwCk9yXnNKU5G1f0RWajqqHBc0gUIbssxPBUrVMMaGsbKbEY60GIw2sE8M
+	h3X33MaHm55xuN0TVc8ovw6QLUP4HZKOT27tDmjiKdCWKD8dcMZ42FNy2TI8Jsf5qsYX7hrtSrD
+	eAajT0gRzukGUvZe6cvUKNwTSzHlNQtMh+9ePQ7IW+HHYGCHmaTD42Gwqxl3Kn2E9DDT7b0Epb1
+	5xW3g8aJhsSuLAptfx8+Gj8T6sBkpITUyqqMto+igVdyukvEZOUAEwEnfC4HYbBxlLsoa/M=
+X-Google-Smtp-Source: AGHT+IEq/anpYLY9nEhE3VU25KR7Z1ZKd2FKBiwiGsolUNRY4mYoAnsSMu0kTE/IwrpYCut7+kAEZA==
+X-Received: by 2002:a2e:be84:0:b0:300:25f6:9b3d with SMTP id 38308e7fff4ca-3090dca0d0cmr12112541fa.10.1739451848323;
+        Thu, 13 Feb 2025 05:04:08 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30910276f05sm1870911fa.86.2025.02.13.05.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 05:04:07 -0800 (PST)
+Date: Thu, 13 Feb 2025 15:04:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xin Ji <xji@analogixsemi.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, bliang@analogixsemi.com, 
+	qwen@analogixsemi.com, treapking@google.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge:anx7625: Enable DSC feature
+Message-ID: <oi3q3xvwcdwps6vhjxubipl7oci5h74ovp4mkhzgcu6gla3zjt@m6yndg7rmp2i>
+References: <20250213123331.3016824-1-xji@analogixsemi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7288e28d6ada409b1b7dd6e9abea77b596bacf3c.camel@surriel.com>
+In-Reply-To: <20250213123331.3016824-1-xji@analogixsemi.com>
 
-On Wed, Feb 12, 2025 at 10:39:30AM -0500, Rik van Riel wrote:
-> Let me rebase these against current tip/x86/mm
-> and apply the latest suggested cleanups!
+On Thu, Feb 13, 2025 at 08:33:30PM +0800, Xin Ji wrote:
+> As anx7625 MIPI RX bandwidth(maximum 1.5Gbps per lane) and internal
+> pixel clock(maximum 300M) limitation. Anx7625 must enable DSC feature
+> while MIPI source want to output 4K30 resolution.
 
-Please use tip/master - this is and has always been the branch tip patches
-should be applied on.
+This commit message is pretty hard to read and understand for a
+non-native speaker. Please consider rewriting it so that it is easier to
+understand it.
 
-Thx.
+> 
+> Signed-off-by: Xin Ji <xji@analogixsemi.com>
+> ---
+>  drivers/gpu/drm/bridge/analogix/anx7625.c | 300 ++++++++++++++++++----
+>  drivers/gpu/drm/bridge/analogix/anx7625.h |  32 +++
+>  2 files changed, 284 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> index 4be34d5c7a3b..7d86ab02f71c 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> @@ -22,6 +22,7 @@
+>  
+>  #include <drm/display/drm_dp_aux_bus.h>
+>  #include <drm/display/drm_dp_helper.h>
+> +#include <drm/display/drm_dsc_helper.h>
+>  #include <drm/display/drm_hdcp_helper.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_bridge.h>
+> @@ -476,6 +477,138 @@ static int anx7625_set_k_value(struct anx7625_data *ctx)
+>  				 MIPI_DIGITAL_ADJ_1, 0x3D);
+>  }
+>  
+> +static int anx7625_set_dsc_params(struct anx7625_data *ctx)
+> +{
+> +	int ret, i;
+> +	u16 htotal, vtotal;
+> +
+> +	if (!ctx->dsc_en)
+> +		return 0;
+> +
+> +	/* Htotal */
+> +	htotal = ctx->dt.hactive.min + ctx->dt.hfront_porch.min +
+> +		ctx->dt.hback_porch.min + ctx->dt.hsync_len.min;
+> +	ret = anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				HORIZONTAL_TOTAL_PIXELS_L, htotal);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_TOTAL_PIXELS_H, htotal >> 8);
+> +	/* Hactive */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_ACTIVE_PIXELS_L,
+> +				 ctx->dt.hactive.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_ACTIVE_PIXELS_H,
+> +				 ctx->dt.hactive.min >> 8);
+> +	/* HFP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_FRONT_PORCH_L,
+> +				 ctx->dt.hfront_porch.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_FRONT_PORCH_H,
+> +				 ctx->dt.hfront_porch.min >> 8);
+> +	/* HWS */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_SYNC_WIDTH_L,
+> +				 ctx->dt.hsync_len.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_SYNC_WIDTH_H,
+> +				 ctx->dt.hsync_len.min >> 8);
+> +	/* HBP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_BACK_PORCH_L,
+> +				 ctx->dt.hback_porch.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 HORIZONTAL_BACK_PORCH_H,
+> +				 ctx->dt.hback_porch.min >> 8);
+> +	/* Vtotal */
+> +	vtotal = ctx->dt.vactive.min + ctx->dt.vfront_porch.min +
+> +		 ctx->dt.vback_porch.min + ctx->dt.vsync_len.min;
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client, TOTAL_LINES_L,
+> +				 vtotal);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client, TOTAL_LINES_H,
+> +				 vtotal >> 8);
+> +	/* Vactive */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client, ACTIVE_LINES_L,
+> +				 ctx->dt.vactive.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client, ACTIVE_LINES_H,
+> +				 ctx->dt.vactive.min >> 8);
+> +	/* VFP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 VERTICAL_FRONT_PORCH, ctx->dt.vfront_porch.min);
+> +	/* VWS */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 VERTICAL_SYNC_WIDTH, ctx->dt.vsync_len.min);
+> +	/* VBP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.tx_p2_client,
+> +				 VERTICAL_BACK_PORCH, ctx->dt.vback_porch.min);
+
+This code mostly duplicates anx7625_dsi_video_timing_config() with the
+I2C client being the only difference. Please consider extracting a
+common helper to write the timings.
+
+> +
+> +	/* Htotal */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client, TOTAL_PIXEL_L_7E,
+> +				 htotal);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client, TOTAL_PIXEL_H_7E,
+> +				 htotal >> 8);
+> +	/* Hactive */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 ACTIVE_PIXEL_L_7E, ctx->dt.hactive.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 ACTIVE_PIXEL_H_7E, ctx->dt.hactive.min >> 8);
+> +	/* HFP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_FRONT_PORCH_L_7E,
+> +				 ctx->dt.hfront_porch.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_FRONT_PORCH_H_7E,
+> +				 ctx->dt.hfront_porch.min >> 8);
+> +	/* HWS */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_SYNC_WIDTH_L_7E,
+> +				 ctx->dt.hsync_len.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_SYNC_WIDTH_H_7E,
+> +				 ctx->dt.hsync_len.min >> 8);
+> +	/* HBP */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_BACK_PORCH_L_7E,
+> +				 ctx->dt.hback_porch.min);
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
+> +				 HORIZON_BACK_PORCH_H_7E,
+> +				 ctx->dt.hback_porch.min >> 8);
+> +
+> +	/* Config DSC decoder internal blank timing for decoder to start */
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p1_client,
+> +				 H_BLANK_L,
+> +				 dsc_div(htotal - ctx->dt.hactive.min));
+> +	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p1_client,
+> +				 H_BLANK_H,
+> +				 dsc_div(htotal - ctx->dt.hactive.min) >> 8);
+> +
+> +	/* Compress ratio  RATIO bit[7:6] */
+> +	ret |= anx7625_write_and(ctx, ctx->i2c.rx_p0_client, R_I2C_1, 0x3F);
+> +	ret |= anx7625_write_or(ctx, ctx->i2c.rx_p0_client, R_I2C_1,
+> +				(5 - DSC_COMPRESS_RATIO) << 6);
+> +	/*PPS table*/
+> +	for (i = 0; i < PPS_SIZE; i += PPS_BLOCK_SIZE)
+> +		ret |= anx7625_reg_block_write(ctx, ctx->i2c.rx_p2_client,
+> +					       R_PPS_REG_0 + i, PPS_BLOCK_SIZE,
+> +					       &ctx->pps_table[i]);
+> +
+> +	return ret;
+> +}
+> +
+> +static int anx7625_timing_write(struct anx7625_data *ctx,
+> +				struct i2c_client *client,
+> +				u8 reg_addr, u16 reg_val, bool high_byte)
+> +{
+> +	u8 reg_data;
+> +
+> +	if (ctx->dsc_en)
+> +		reg_val = dsc_div(reg_val);
+> +
+> +	reg_data = (high_byte ? (reg_val >> 8) : reg_val) & 0xFF;
+> +
+> +	return anx7625_reg_write(ctx, client, reg_addr, reg_data);
+> +}
+
+Ugh, no. Calculate htotal in the calling function and call
+anx7625_reg_write() as you were doing that before.
+
+> +
+>  static int anx7625_dsi_video_timing_config(struct anx7625_data *ctx)
+>  {
+>  	struct device *dev = ctx->dev;
+> @@ -506,34 +639,33 @@ static int anx7625_dsi_video_timing_config(struct anx7625_data *ctx)
+>  	ret |= anx7625_write_or(ctx, ctx->i2c.rx_p1_client,
+>  				MIPI_LANE_CTRL_0, ctx->pdata.mipi_lanes - 1);
+>  
+> -	/* Htotal */
+>  	htotal = ctx->dt.hactive.min + ctx->dt.hfront_porch.min +
+> -		ctx->dt.hback_porch.min + ctx->dt.hsync_len.min;
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_TOTAL_PIXELS_L, htotal & 0xFF);
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_TOTAL_PIXELS_H, htotal >> 8);
+> +			 ctx->dt.hback_porch.min + ctx->dt.hsync_len.min;
+> +	/* Htotal */
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_TOTAL_PIXELS_L, htotal, false);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_TOTAL_PIXELS_H, htotal, true);
+>  	/* Hactive */
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_ACTIVE_PIXELS_L, ctx->dt.hactive.min & 0xFF);
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_ACTIVE_PIXELS_H, ctx->dt.hactive.min >> 8);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_ACTIVE_PIXELS_L, ctx->dt.hactive.min, false);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_ACTIVE_PIXELS_H, ctx->dt.hactive.min, true);
+>  	/* HFP */
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_FRONT_PORCH_L, ctx->dt.hfront_porch.min);
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_FRONT_PORCH_H,
+> -			ctx->dt.hfront_porch.min >> 8);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_FRONT_PORCH_L, ctx->dt.hfront_porch.min, false);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_FRONT_PORCH_H, ctx->dt.hfront_porch.min, true);
+
+Are porches also compressed? I think blanking signal timings are
+transferred as is, without compression.
+
+>  	/* HWS */
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_SYNC_WIDTH_L, ctx->dt.hsync_len.min);
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_SYNC_WIDTH_H, ctx->dt.hsync_len.min >> 8);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_SYNC_WIDTH_L, ctx->dt.hsync_len.min, false);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_SYNC_WIDTH_H, ctx->dt.hsync_len.min, true);
+>  	/* HBP */
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_BACK_PORCH_L, ctx->dt.hback_porch.min);
+> -	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client,
+> -			HORIZONTAL_BACK_PORCH_H, ctx->dt.hback_porch.min >> 8);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_BACK_PORCH_L, ctx->dt.hback_porch.min, false);
+> +	ret |= anx7625_timing_write(ctx, ctx->i2c.rx_p2_client,
+> +			HORIZONTAL_BACK_PORCH_H, ctx->dt.hback_porch.min, true);
+>  	/* Vactive */
+>  	ret |= anx7625_reg_write(ctx, ctx->i2c.rx_p2_client, ACTIVE_LINES_L,
+>  			ctx->dt.vactive.min);
+> @@ -663,9 +795,15 @@ static int anx7625_dsi_config(struct anx7625_data *ctx)
+>  
+>  	DRM_DEV_DEBUG_DRIVER(dev, "config dsi.\n");
+>  
+> -	/* DSC disable */
+> -	ret = anx7625_write_and(ctx, ctx->i2c.rx_p0_client,
+> -				R_DSC_CTRL_0, ~DSC_EN);
+> +	ret = anx7625_set_dsc_params(ctx);
+> +	if (ctx->dsc_en)
+> +		/* DSC enable */
+> +		ret |= anx7625_write_or(ctx, ctx->i2c.rx_p0_client,
+> +					R_DSC_CTRL_0, DSC_EN);
+> +	else
+> +		/* DSC disable */
+> +		ret |= anx7625_write_and(ctx, ctx->i2c.rx_p0_client,
+> +					 R_DSC_CTRL_0, ~DSC_EN);
+>  
+>  	ret |= anx7625_api_dsi_config(ctx);
+>  
+> @@ -2083,6 +2221,7 @@ static int anx7625_setup_dsi_device(struct anx7625_data *ctx)
+>  		MIPI_DSI_MODE_VIDEO_HSE	|
+>  		MIPI_DSI_HS_PKT_END_ALIGNED;
+>  
+> +	dsi->dsc = &ctx->dsc;
+>  	ctx->dsi = dsi;
+>  
+>  	return 0;
+> @@ -2186,20 +2325,68 @@ anx7625_bridge_mode_valid(struct drm_bridge *bridge,
+>  	struct anx7625_data *ctx = bridge_to_anx7625(bridge);
+>  	struct device *dev = ctx->dev;
+>  
+> -	DRM_DEV_DEBUG_DRIVER(dev, "drm mode checking\n");
+> +	dev_dbg(dev, "drm mode checking\n");
+> +	if (mode->clock > SUPPORT_PIXEL_CLOCK)
+> +		return MODE_CLOCK_HIGH;
+> +
+> +	if (mode->clock < SUPPORT_MIN_PIXEL_CLOCK)
+> +		return MODE_CLOCK_LOW;
+>  
+> -	/* Max 1200p at 5.4 Ghz, one lane, pixel clock 300M */
+> -	if (mode->clock > SUPPORT_PIXEL_CLOCK) {
+> -		DRM_DEV_DEBUG_DRIVER(dev,
+> -				     "drm mode invalid, pixelclock too high.\n");
+> +	if (mode->clock > DSC_PIXEL_CLOCK && (mode->hdisplay % 3 != 0))
+
+Magic number 3. Also is it actually required? I think DSC standard has
+no such requirement.
+
+>  		return MODE_CLOCK_HIGH;
+> -	}
+>  
+> -	DRM_DEV_DEBUG_DRIVER(dev, "drm mode valid.\n");
+> +	dev_dbg(dev, "drm mode valid.\n");
+>  
+>  	return MODE_OK;
+>  }
+>  
+> +static void anx7625_dsc_enable(struct anx7625_data *ctx, bool en)
+> +{
+> +	int ret;
+> +	struct device *dev = ctx->dev;
+> +
+> +	ctx->dsc_en = en;
+> +
+> +	if (en) {
+> +		ctx->dsc.dsc_version_major = 1;
+> +		ctx->dsc.dsc_version_minor = 1;
+> +		ctx->dsc.slice_height = 8;
+> +		ctx->dsc.slice_width = ctx->dt.hactive.min / DSC_SLICE_NUM;
+> +		ctx->dsc.slice_count = DSC_SLICE_NUM;
+> +		ctx->dsc.bits_per_component = 8;
+> +		ctx->dsc.bits_per_pixel = 8 << 4; /* 4 fractional bits */
+> +		ctx->dsc.block_pred_enable = true;
+> +		ctx->dsc.native_420 = false;
+> +		ctx->dsc.native_422 = false;
+> +		ctx->dsc.simple_422 = false;
+> +		ctx->dsc.vbr_enable = false;
+> +		ctx->dsc.rc_model_size = DSC_RC_MODEL_SIZE_CONST;
+> +		ctx->dsc.pic_width = ctx->dt.hactive.min;
+> +		ctx->dsc.pic_height = ctx->dt.vactive.min;
+> +		ctx->dsc.convert_rgb = 1;
+> +		ctx->dsc.vbr_enable = 0;
+
+A lot of this params should be coming from the sink device. You have to
+get them from the DPCD.
+
+> +
+> +		drm_dsc_set_rc_buf_thresh(&ctx->dsc);
+> +		drm_dsc_set_const_params(&ctx->dsc);
+> +
+> +		ctx->dsc.initial_scale_value = drm_dsc_initial_scale_value(&ctx->dsc);
+> +		ctx->dsc.line_buf_depth = ctx->dsc.bits_per_component + 1;
+> +		ret = drm_dsc_setup_rc_params(&ctx->dsc, DRM_DSC_1_2_444);
+> +		if (ret < 0)
+> +			dev_warn(dev, "drm_dsc_setup_rc_params ret %d\n", ret);
+> +
+> +		drm_dsc_compute_rc_parameters(&ctx->dsc);
+
+You have ignored return value. Please handle the function returning an
+error.
+
+> +
+> +		drm_dsc_pps_payload_pack((struct drm_dsc_picture_parameter_set *)&ctx->pps_table,
+> +					 &ctx->dsc);
+> +		dev_dbg(dev, "anx7625 enable dsc\n");
+> +	} else {
+> +		ctx->dsc.dsc_version_major = 0;
+> +		ctx->dsc.dsc_version_minor = 0;
+> +		dev_dbg(dev, "anx7625 disable dsc\n");
+> +	}
+> +}
+> +
+>  static void anx7625_bridge_mode_set(struct drm_bridge *bridge,
+>  				    const struct drm_display_mode *old_mode,
+>  				    const struct drm_display_mode *mode)
+> @@ -2244,6 +2431,11 @@ static void anx7625_bridge_mode_set(struct drm_bridge *bridge,
+>  	DRM_DEV_DEBUG_DRIVER(dev, "vsync_end(%d),vtotal(%d).\n",
+>  			     mode->vsync_end,
+>  			     mode->vtotal);
+> +
+> +	if (mode->clock > DSC_PIXEL_CLOCK)
+
+What if the sink doesn't support DSC? The decision whether to enable DSC
+or not should be happening in the atomic_check(). Likewise mode_valid
+should be able to check if your bridge and the sink can agree on DSC
+params and reject modes if they can not.
+
+> +		anx7625_dsc_enable(ctx, true);
+> +	else
+> +		anx7625_dsc_enable(ctx, false);
+>  }
+>  
+>  static bool anx7625_bridge_mode_fixup(struct drm_bridge *bridge,
+> @@ -2258,26 +2450,33 @@ static bool anx7625_bridge_mode_fixup(struct drm_bridge *bridge,
+>  
+>  	DRM_DEV_DEBUG_DRIVER(dev, "drm mode fixup set\n");
+>  
+> -	/* No need fixup for external monitor */
+> -	if (!ctx->pdata.panel_bridge)
+> -		return true;
+> -
+>  	hsync = mode->hsync_end - mode->hsync_start;
+>  	hfp = mode->hsync_start - mode->hdisplay;
+>  	hbp = mode->htotal - mode->hsync_end;
+>  	hblanking = mode->htotal - mode->hdisplay;
+>  
+> -	DRM_DEV_DEBUG_DRIVER(dev, "before mode fixup\n");
+> -	DRM_DEV_DEBUG_DRIVER(dev, "hsync(%d), hfp(%d), hbp(%d), clock(%d)\n",
+> -			     hsync, hfp, hbp, adj->clock);
+> -	DRM_DEV_DEBUG_DRIVER(dev, "hsync_start(%d), hsync_end(%d), htot(%d)\n",
+> -			     adj->hsync_start, adj->hsync_end, adj->htotal);
+> -
+> +	dev_dbg(dev, "before mode fixup\n");
+> +	dev_dbg(dev, "hsync(%d), hfp(%d), hbp(%d), clock(%d)\n",
+> +		hsync, hfp, hbp, adj->clock);
+> +	dev_dbg(dev, "hsync_start(%d), hsync_end(%d), htot(%d)\n",
+> +		adj->hsync_start, adj->hsync_end, adj->htotal);
+
+No. Please use drm_dbg_driver(), but not dev_dbg(). And anyway, this
+should go to a separate commit.
+
+>  	adj_hfp = hfp;
+>  	adj_hsync = hsync;
+>  	adj_hbp = hbp;
+>  	adj_hblanking = hblanking;
+>  
+> +	if (mode->clock > DSC_PIXEL_CLOCK) {
+> +		adj_hsync = DSC_HSYNC_LEN;
+> +		adj_hfp = DSC_HFP_LEN;
+> +		adj_hbp = DSC_HBP_LEN;
+> +		vref = (u64)adj->clock * 1000 * 1000 / (adj->htotal * adj->vtotal);
+> +		goto calculate_timing;
+> +	}
+> +
+> +	/* No need fixup for external monitor */
+> +	if (!ctx->pdata.panel_bridge)
+> +		return true;
+> +
+>  	/* HFP needs to be even */
+>  	if (hfp & 0x1) {
+>  		adj_hfp += 1;
+> @@ -2349,16 +2548,21 @@ static bool anx7625_bridge_mode_fixup(struct drm_bridge *bridge,
+>  			adj_hfp -= delta_adj;
+>  	}
+>  
+> -	DRM_DEV_DEBUG_DRIVER(dev, "after mode fixup\n");
+> -	DRM_DEV_DEBUG_DRIVER(dev, "hsync(%d), hfp(%d), hbp(%d), clock(%d)\n",
+> -			     adj_hsync, adj_hfp, adj_hbp, adj->clock);
+> +calculate_timing:
+> +
+> +	dev_dbg(dev, "after mode fixup\n");
+> +	dev_dbg(dev, "hsync(%d), hfp(%d), hbp(%d), clock(%d)\n",
+> +		adj_hsync, adj_hfp, adj_hbp, adj->clock);
+>  
+>  	/* Reconstruct timing */
+>  	adj->hsync_start = adj->hdisplay + adj_hfp;
+>  	adj->hsync_end = adj->hsync_start + adj_hsync;
+>  	adj->htotal = adj->hsync_end + adj_hbp;
+> -	DRM_DEV_DEBUG_DRIVER(dev, "hsync_start(%d), hsync_end(%d), htot(%d)\n",
+> -			     adj->hsync_start, adj->hsync_end, adj->htotal);
+> +	if (mode->clock > DSC_PIXEL_CLOCK)
+> +		adj->clock = (u64)vref * adj->htotal * adj->vtotal / 1000 / 1000;
+> +
+> +	dev_dbg(dev, "hsync_start(%d), hsync_end(%d), htot(%d), clock(%d)\n",
+> +		adj->hsync_start, adj->hsync_end, adj->htotal, adj->clock);
+>  
+>  	return true;
+>  }
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.h b/drivers/gpu/drm/bridge/analogix/anx7625.h
+> index eb5580f1ab2f..db931f5800b1 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.h
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.h
+> @@ -149,6 +149,8 @@
+>  #define HFP_HBP_DEF		((HBLANKING_MIN - SYNC_LEN_DEF) / 2)
+>  #define VIDEO_CONTROL_0	0x08
+>  
+> +#define  TOTAL_LINES_L          0x12
+> +#define  TOTAL_LINES_H          0x13
+>  #define  ACTIVE_LINES_L         0x14
+>  #define  ACTIVE_LINES_H         0x15  /* Bit[7:6] are reserved */
+>  #define  VERTICAL_FRONT_PORCH   0x16
+> @@ -166,6 +168,32 @@
+>  #define  HORIZONTAL_BACK_PORCH_L      0x21
+>  #define  HORIZONTAL_BACK_PORCH_H      0x22  /* Bit[7:4] are reserved */
+>  
+> +#define  H_BLANK_L                    0x3E
+> +#define  H_BLANK_H                    0x3F
+> +#define  DSC_COMPRESS_RATIO           3
+> +#define  dsc_div(X)                   ((X) / DSC_COMPRESS_RATIO)
+
+This assumes 1:3 ratio. Does anx7625 support only 8bpp / 8bpc mode? Or
+does 1:3 come from some other ratio?
+
+> +#define  DSC_SLICE_NUM                2
+> +#define  DSC_PIXEL_CLOCK              250000
+> +#define  DSC_HSYNC_LEN                90
+> +#define  DSC_HFP_LEN                  177
+> +#define  DSC_HBP_LEN                  297
+> +
+> +#define  TOTAL_PIXEL_L_7E             0x50
+> +#define  TOTAL_PIXEL_H_7E             0x51  /* bit[7:6] are reserved */
+> +#define  ACTIVE_PIXEL_L_7E            0x52
+> +#define  ACTIVE_PIXEL_H_7E            0x53  /* bit[7:6] are reserved */
+> +#define  HORIZON_FRONT_PORCH_L_7E     0x54
+> +#define  HORIZON_FRONT_PORCH_H_7E     0x55
+> +#define  HORIZON_SYNC_WIDTH_L_7E      0x56
+> +#define  HORIZON_SYNC_WIDTH_H_7E      0x57
+> +#define  HORIZON_BACK_PORCH_L_7E      0x58
+> +#define  HORIZON_BACK_PORCH_H_7E      0x59
+> +
+> +#define  PPS_SIZE                     128
+> +#define  PPS_BLOCK_SIZE               32
+> +#define  R_PPS_REG_0                  0x80
+> +#define  R_I2C_1                      0x81
+> +
+>  /******** END of I2C Address 0x72 *********/
+>  
+>  /***************************************************************/
+> @@ -415,6 +443,7 @@ enum audio_wd_len {
+>  #define MAX_EDID_BLOCK	3
+>  #define EDID_TRY_CNT	3
+>  #define SUPPORT_PIXEL_CLOCK	300000
+> +#define SUPPORT_MIN_PIXEL_CLOCK	50000
+>  
+>  /***************** Display End *****************/
+>  
+> @@ -454,6 +483,7 @@ struct anx7625_data {
+>  	int hpd_high_cnt;
+>  	int dp_en;
+>  	int hdcp_cp;
+> +	bool dsc_en;
+>  	/* Lock for work queue */
+>  	struct mutex lock;
+>  	struct device *dev;
+> @@ -479,6 +509,8 @@ struct anx7625_data {
+>  	struct drm_connector *connector;
+>  	struct mipi_dsi_device *dsi;
+>  	struct drm_dp_aux aux;
+> +	struct drm_dsc_config dsc;
+> +	char pps_table[PPS_SIZE];
+
+pps_table and drm_dsc_config can vary depending on the mode and
+connected sink. THey should be a part of the atomic state rather than a
+long-living anx7625_data. So does dsc_en.
+
+>  };
+>  
+>  #endif  /* __ANX7625_H__ */
+> -- 
+> 2.25.1
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+With best wishes
+Dmitry
 
