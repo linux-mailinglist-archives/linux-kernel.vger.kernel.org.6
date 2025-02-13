@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-513773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5C7A34E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:32:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873C5A34E83
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0465D18903A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56D96188D835
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CE324A079;
-	Thu, 13 Feb 2025 19:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E724C245B1A;
+	Thu, 13 Feb 2025 19:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fTgtnaQA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="habiQrF5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E624A06C;
-	Thu, 13 Feb 2025 19:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B76428A2CE;
+	Thu, 13 Feb 2025 19:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739475145; cv=none; b=iKfrbAgQeVu/7HuaG5ioCxAiK49kOXHsAHChVcaC4vk3CWc8Ftx/TRHNkHO4bz05HLsgiCCOQbDCJHjUUo9cbkzh7U7s3OWpV09vHUaYFYxIsqG0YJP2e2EDxTSfsuQJw0vQS3MeHYB5XknO522gJVPbs5JsdP2X52gt7ry3Pxs=
+	t=1739475250; cv=none; b=DcYgHhshj2liqpc6KwvfPQn/sUPwAVmaz4+uJ5jy6wpBuFqY7EhTIKd5MJghZQ3cd5dYrzF/SQCKGNn/8umRozwcwCpV4ngouLiRgQSt1nVCN9l77sdTZI5vO7QmhBVfTobQWxE2AhrBcG+dyouEoRhAuD9P0AnhpTuSxiQ/6pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739475145; c=relaxed/simple;
-	bh=Qj+F86dsqXkmAV7Wp0h+E2C2QouUJZ9pZ8c3ZCoW/Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIyOUiDUVEVs4m+AzdJHioPFjFZ8YypYWnw0dWXRyPsvSULWMY9DgRED0qhxudUAhTlK83ZNFiyKY/GUY0VwkFAtCXTor8iyb8kJ/EhC6SJPDdzg3l3dOMfM2O4b+3SnKk6gtuvDlE/mseCHhu0Xdpfg7oGKlX5E7tYUnA6wmVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fTgtnaQA; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739475142; x=1771011142;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Qj+F86dsqXkmAV7Wp0h+E2C2QouUJZ9pZ8c3ZCoW/Lo=;
-  b=fTgtnaQA3wW5KwrQFWZ+3YlPgSqWMp6bYRVq87avJOoTMHTIz+iPzHr4
-   N8i+h5/osJD/TFTJ7b7nL5lecznn1z1S1M0HpYY+zeq7fcsG7WfMDFjJt
-   wldDuDLmOGTkyI9XYLD9d6UPNQtWDiBF2ptIUgKQlE3W7UDiomoGbsbQ+
-   9PqMWC8UkHAUE3gC5uNUbRIhGQBXyFsulPGcC00TUbGObvrdlQ4Mk5p5V
-   W3JVByypqAlZxzgXNV3If6FHUvF7cg+N/Khxyr6TbmHJXsxNeny3K9KzJ
-   P9a9OnQNFQrwpDiylDfEyuXsf6pz3jck9JrBc9LC1OPcHLNTsjBj2+HoD
-   A==;
-X-CSE-ConnectionGUID: 3XIx1N+iSGCK0vwpOgtZHw==
-X-CSE-MsgGUID: 5pAEXOnvTOWFzoUt9Gkl+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="44132343"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="44132343"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:32:22 -0800
-X-CSE-ConnectionGUID: Cm3tK4RqQkm+dkgYGdCBBw==
-X-CSE-MsgGUID: U7H7sMZsTgey4v5itG7VNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113194614"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 13 Feb 2025 11:32:18 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiewa-0018d9-0v;
-	Thu, 13 Feb 2025 19:32:16 +0000
-Date: Fri, 14 Feb 2025 03:32:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cryolitia PukNgae via B4 Relay <devnull+Cryolitia.gmail.com@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Cryolitia PukNgae <Cryolitia@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
-	Yao Zi <ziyao@disroot.org>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	Marcin =?utf-8?Q?Str=C4=85gowski?= <marcin@stragowski.com>,
-	someone5678 <someone5678.dev@gmail.com>,
-	Justin Weiss <justin@justinweiss.com>
-Subject: Re: [PATCH v5 1/2] hwmon: add GPD devices sensor driver
-Message-ID: <202502140302.IkW9UALU-lkp@intel.com>
-References: <20250211-gpd_fan-v5-1-608f4255f0e1@gmail.com>
+	s=arc-20240116; t=1739475250; c=relaxed/simple;
+	bh=uxvsjaNh82I1/Ai/fST6DXeHd9m7K/+qT5V12SmKNto=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=I7gL2jOOUlXMGW8eYaHGyrYQlT4ZlJ3NixXPfaVuQjhLwt4Mi4/2FFiBOYQrSnViHzIe0aP19uWPhLydOa8oBFNyHJPGDndSxR8wwt1XpQFpfKTOuz6UBVQO19YRbWoFPDzzdPFrZyY/fK7lopAV2LG2JpahCGZpJv8b7Ov8U38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=habiQrF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09A9C4CED1;
+	Thu, 13 Feb 2025 19:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739475249;
+	bh=uxvsjaNh82I1/Ai/fST6DXeHd9m7K/+qT5V12SmKNto=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=habiQrF52mK4Y+HokO0aZIYhVrmehI3PnkD7DXVK+BH104wyltvtNsLqAQbsv+GuX
+	 pBc8FSHmfH1ASrLHv4YgiSJH7vszpoEYe+jvILWUFMgNBd43DxQt19t36YCXCYCFmc
+	 VFnmHc0ygvHs94FD6NRMlukpe1dcVFQFc0rbF1RhHee+x4hZJWRcg1nouRL704l44n
+	 4mE2LPZAbSBvanFTpP3ZhUKZ49u0zDR/cxCkLf+nTwldPBpW8IjWvcWL6TxfL7kCDB
+	 SEQD7I401n7ANI8/jz10ufHNX6gbPETFzw3A/cQZ4ZKjudj1deJ6nVL0SfdywK+WnG
+	 XylqhC58Ip4Zw==
+Date: Thu, 13 Feb 2025 11:34:07 -0800
+From: Kees Cook <kees@kernel.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+CC: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org,
+ akpm@linux-foundation.org, jannh@google.com, torvalds@linux-foundation.org,
+ vbabka@suse.cz, adhemerval.zanella@linaro.org, oleg@redhat.com,
+ avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org,
+ sroettger@google.com, hch@lst.de, ojeda@kernel.org,
+ thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
+ johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
+ willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
+ linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+ rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+ f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+ mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com,
+ peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com,
+ groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+ mike.rapoport@gmail.com
+Subject: Re: [RFC PATCH v5 0/7] mseal system mappings
+User-Agent: K-9 Mail for Android
+In-Reply-To: <fyqlqgtbscwh4fiwmjtkb74k4ratlelwh2vzfyaeatbc3tcicb@5uvfy4hq5xde>
+References: <20250212032155.1276806-1-jeffxu@google.com> <b114f48a-a485-4ebd-9278-6c62a1f33d9c@lucifer.local> <202502121401.B6EF2D4517@keescook> <fyqlqgtbscwh4fiwmjtkb74k4ratlelwh2vzfyaeatbc3tcicb@5uvfy4hq5xde>
+Message-ID: <CD0870ED-6857-45EF-9C28-F27475964D71@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-gpd_fan-v5-1-608f4255f0e1@gmail.com>
-
-Hi Cryolitia,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on ffd294d346d185b70e28b1a28abe367bbfe53c04]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Cryolitia-PukNgae-via-B4-Relay/hwmon-add-GPD-devices-sensor-driver/20250211-150418
-base:   ffd294d346d185b70e28b1a28abe367bbfe53c04
-patch link:    https://lore.kernel.org/r/20250211-gpd_fan-v5-1-608f4255f0e1%40gmail.com
-patch subject: [PATCH v5 1/2] hwmon: add GPD devices sensor driver
-config: i386-randconfig-002-20250214 (https://download.01.org/0day-ci/archive/20250214/202502140302.IkW9UALU-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140302.IkW9UALU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502140302.IkW9UALU-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/hwmon/gpd-fan.c:361:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     361 |                 const struct gpd_board_drvdata *drvdata = gpd_driver_priv.drvdata;
-         |                 ^
-   drivers/hwmon/gpd-fan.c:452:4: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     452 |                         int ret = gpd_read_pwm();
-         |                         ^
-   drivers/hwmon/gpd-fan.c:478:4: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     478 |                         u8 var = clamp_val(val, 0, 255);
-         |                         ^
-   3 warnings generated.
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-vim +361 drivers/hwmon/gpd-fan.c
 
-   352	
-   353	static int gpd_win_mini_set_pwm_enable(enum FAN_PWM_ENABLE pwm_enable)
-   354	{
-   355		switch (pwm_enable) {
-   356		case DISABLE:
-   357			return gpd_generic_write_pwm(255);
-   358		case MANUAL:
-   359			return gpd_generic_write_pwm(gpd_driver_priv.pwm_value);
-   360		case AUTOMATIC:
- > 361			const struct gpd_board_drvdata *drvdata = gpd_driver_priv.drvdata;
-   362	
-   363			return gpd_ecram_write(drvdata, drvdata->pwm_write, 0);
-   364		}
-   365		return 0;
-   366	}
-   367	
+On February 13, 2025 10:35:21 AM PST, "Liam R=2E Howlett" <Liam=2EHowlett@=
+oracle=2Ecom> wrote:
+>* Kees Cook <kees@kernel=2Eorg> [250212 17:05]:
+>> On Wed, Feb 12, 2025 at 11:24:35AM +0000, Lorenzo Stoakes wrote:
+>> > On Wed, Feb 12, 2025 at 03:21:48AM +0000, jeffxu@chromium=2Eorg wrote=
+:
+>> > > From: Jeff Xu <jeffxu@chromium=2Eorg>
+>> > >
+>> > > The commit message in the first patch contains the full description=
+ of
+>> > > this series=2E
+>> >=20
+>> > Sorry to nit, but it'd be useful to reproduce in the cover letter too=
+! But
+>> > this obviously isn't urgent, just be nice when we un-RFC=2E
+>>=20
+>> I advised Jeff against this because I've found it can sometimes cause
+>> "thread splitting" in that some people reply to the cover letter, and
+>> some people reply to the first patch, etc=2E I've tended to try to keep
+>> cover letters very general, with the bulk of the prose in the first
+>> patch=2E
+>
+>Interesting idea, but I think thread splitting is less of a concern than
+>diluting the meaning of a patch by including a lengthy change log with a
+>fraction of the text being about the code that follows=2E
+>
+>I think this is the reason for a cover letter in the first place; not
+>just version control=2E  After all, we could tack the version information
+>into the first patch too and avoid it being in the final commit message=
+=2E
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Okay, so to be clear: you'd prefer to put the rationales and other stuff i=
+n the cover, and put more specific details in the first patch? I've not lik=
+ed this because cover letters aren't (except for akpm's trees) included any=
+where in git, which makes archeology much harder=2E
+
+-Kees
+
+--=20
+Kees Cook
 
