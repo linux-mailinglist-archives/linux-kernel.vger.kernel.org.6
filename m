@@ -1,228 +1,184 @@
-Return-Path: <linux-kernel+bounces-513113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB516A341B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:20:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EC9A341BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A943AB9B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:14:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A321890B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016C6281359;
-	Thu, 13 Feb 2025 14:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67713281369;
+	Thu, 13 Feb 2025 14:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vQkUb4NM"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AmZYHUHw"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99428134F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E58D28135F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739456040; cv=none; b=E6R72BLv4cv783lHUVryhcYQJPswX3l6PwZjZf1ZmbpP3EXuGM9iKuWVSaw1Mzs73bs584pK1JCoJESOUx6XUdCujDCDQXnk4fxWM8cqyXTikB+5mRPPW2zYYeTxkTWEmh/QYf68NwZucnP777AR2OxGlh04/nUJTm9TiELM4nw=
+	t=1739456078; cv=none; b=l/tRKGyGMbTLQaRFluoSiQvlAaoHAmHe7h54d8J7Zry5XmsLw8mMy3oAqP4fdUO7A0N1PhCui4VoPRCaosZo+jP7MVU6Rec1toitgrvD4fBf7wzATWw/vt2nxPh5GFmhesbckgNS7s9K+BfOKdNLjwQJtdZYY0ptOojqqKlZ7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739456040; c=relaxed/simple;
-	bh=TP85lmVRyE+KR4Zw2gnBylM2ia+0k0p9M/nWkIy+aN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUMolCsaxbMZPYJVlcVL4H3LxlfUfM1y3HiRxf5j1e31EyM/09tUcDb8juYi9YhbsdacODhyYMljMNo77ScCBpSi4TJ/7fQv5Ociak0+SRsBpE8dOyyZBdnLdnswTXFewIdQ61CzFZZxX5dX+5xg10b1fB90lIxglH/vrK8j2E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vQkUb4NM; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E32573F31E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739456033;
-	bh=ezUubHoO+1qqHLhPhiofskdHAd2A0O/l0XRXixs/i4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=vQkUb4NM7THKfUgOi8S1KnPpMs21sUPGqVGFyKahWdgw46eBAphWic7y/PXNbfGUJ
-	 5mm4LZ5J+z5ruXiumJkJuw5o2wwPjiJEHkBGyiW4xaeeZ7PI20x7Wswm7D+OMSiuRW
-	 Ak1gQn/3GnMlM3UNU0AgwSNc6JFE5WUrp39idO3cvXtHFVI1sdKB6ugGsSzeHy3mzc
-	 0FJK9VtTFQfWyaotIh/gzp1k2pw81+eLB3m6hOonszejT+DYCBWJq4VhCXejtkVQwT
-	 q/ecOoJPqx0hBZ3TBX67fwuqpT+87u3+E9gBtmbViS9/QUY8Hrfwl70k1TkhF5+Nhm
-	 AFLu2oJri2ECQ==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-21f73260b22so20360635ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:13:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739456031; x=1740060831;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1739456078; c=relaxed/simple;
+	bh=GNESsdobWvElHx5uMVlUccaEq7W4UGcITpDJhinMpmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iBUGmGB6Me0UfmBnM8QuV4HvE6CsLr4+quZQtp1f8t92kO2QEa29+3qkV+0valR6UMqBx2CGdtFCD8+QShliDXQ24rd4mDPG97KD+r+QrQ6FOe7jUS9HLNnoym1/sLM0o/ZtM1UmC8Ge8eA2aC29F284eSOS3AZnELzE0fowlVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AmZYHUHw; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f3d80379d5so27165b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739456076; x=1740060876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ezUubHoO+1qqHLhPhiofskdHAd2A0O/l0XRXixs/i4o=;
-        b=VVAdZwqulEH5nX5HcXNW3/L4B8Qn3iLtEgI8DHu6pLkv+XpEiQlWR/dH68iXUvvWdL
-         vWPyTmYnJ6cJeSQ6mTv/iAOn1SH9h2Gn0inEJrT/TeKnU6S6PeEarDHTSkk3HYur0zVi
-         ZOSDRzQ/M7gNqJFmPmbSDsnv48SdkbntbWWF4IFgJ0ehngTwnZPsysLS/EE7dAJJX39e
-         5WV1wCheUTAw2aYGxZwpIjW4qOm1VZ3jWLPH0XqfrhV8EdCyb5/ol3BT7hltDjU3aBL8
-         XV49Ak2vhSO7v6TvM9OjWzBffEazBOn9HT+daPXD1fdIZPGU5EHXl/pxh3NdYL6x90IB
-         FJRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsMpAuwvy1uStosFsRL1lYvLw/Jtcinj1xChwRaYqFS+56Vt84+kQqgfDC6EC+sZsyZuw3UebU+p/nUJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+M4hewWCoyxQTd2Ud/3eB05vzg2dENLPao/B5bteWPuGDs61E
-	zLB/cfYc6GtCN1YsqD0SxymquNCA8x+lSMN9jCftDxRXiUHfms4IqZfeUJwL5eiKPdH6cKHebPU
-	85+eNUXGz9BoqlQ2XsqYacT+LUZE0mjJB8UEn8e7Eso1cRodu132+bro89uToW7/4OuxvLNCiQ8
-	GcMA==
-X-Gm-Gg: ASbGncunt1EEJCeyS/VY+iBSY8Lwuo7IY4lm2/L0+su9IeIXLozn1LfPgt//fzv3rfT
-	nqH1612d05T9t81KzE9CDq/6lmrEX42ulu6tQfXbSm78rLkFl4/RyMPyEHVxl1K85WYThh2vdeA
-	k9Qw1Q2Y0Wp8Witk+5pFpLHj09QYYMv+oBvC/LR1289ALh/1dJrU3e8ZjNeHvlzdfv2cw3e5CIf
-	XivZDrzc4Migaol1xyhdEmx90S4HXvvs1OCp0gizy4OfDaXa+4OC2hEAC2vxqbl/t8InQGqCYkW
-	BJxQHls=
-X-Received: by 2002:a17:903:943:b0:216:1cfa:2bbf with SMTP id d9443c01a7336-220bdfec94cmr132459965ad.35.1739456031457;
-        Thu, 13 Feb 2025 06:13:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEMaVPpgVc0PI+Sn0mSucAhml0OxrBdgDSYOokgidXq4tAbh4IB7TO1Ki6OQiYG20YaQAk0vA==
-X-Received: by 2002:a17:903:943:b0:216:1cfa:2bbf with SMTP id d9443c01a7336-220bdfec94cmr132459645ad.35.1739456031154;
-        Thu, 13 Feb 2025 06:13:51 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:5439:d90c:a342:e2bb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545cf8fsm12827245ad.152.2025.02.13.06.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 06:13:50 -0800 (PST)
-Date: Thu, 13 Feb 2025 23:13:49 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] gpio: aggregator: expose custom line names to
- forwarder gpio_chip
-Message-ID: <6ypcmewxmod2cu3j5ksbmvsisgr4qhsagwowiawitof2ll4npa@syrhmqagrtlo>
-References: <20250203031213.399914-1-koichiro.den@canonical.com>
- <20250203031213.399914-6-koichiro.den@canonical.com>
- <CAMuHMdVAiuvxD4ydtsWfWXBhHLDJz66Ay8w15WHr278OnB=ZKg@mail.gmail.com>
+        bh=KwgMpUGpPt83uP2kmDr1SGqVNltXn8RoI5FSgDbOZyI=;
+        b=AmZYHUHwi7GRWeguAjU8+vIA8FGLAMjSE4uwnpa7UuXrtw7932K8fhSUpK98LJnhzn
+         UVaW0Kiz3kGhiMMI/T4Xo6RXgLCGR5ICqKN64bfXXbuZMFn0eOzX3WfmYISuQzJrrgVk
+         ixRYD3XsfHVUjzF3Cz/vA1QLyTVdZ0O1ujnE8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739456076; x=1740060876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KwgMpUGpPt83uP2kmDr1SGqVNltXn8RoI5FSgDbOZyI=;
+        b=vP2AZ3igEpe7/S3rQ5vK+3EIPeThTL0KGc9b8cb5uXkyEST4RCVxn5vqt7+bGDDrAy
+         V+ugfhZ2NG0/jlHGtouUFDtmzp1nGdGJH+KJszm0IDfMB3PD90VCYPk6xr86rBTxeWGS
+         dYzFBW9X3TR+dBvAc6A1Niqh1rF2BCYCAhTZk25agLQ+dOITebscIevrero7jj4d/Poo
+         cdh0M60RNLaxTvvPUfYb1Z+MuF/qHBMeGpT0/M95x2qitJGfVAZuZJeBUeswYvPi1Bww
+         zJknTAAyZMSqk38BngxAkrQb21sL8/YRWcdFK+nxnCA63dEQ36LO/V1N/MiW7+kMwB6O
+         nJgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvzUyxhm4K69koGiWqs4hxieiZWf4mH2IpQ9WsnHXabImmiKcYZsmBsS5zF57hJod6jncFrJUK6fAs1rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0NniHgzjmZLdCsWxy6ED8OiZydePNQ15m1UHQJ80VikPwl1v8
+	AG8VxWbE4OS+rNCvdq47c0j/0KWM7rx1AgQEbbWW1S1ztPwtPl8Tu5mNvr9K2JrQli1sHY2GLEy
+	PxNKffN1tXQrlsuNH2pPcshWB76aKnbwYlcTw
+X-Gm-Gg: ASbGncvPmLyweOKrvPYuVzi3L/htRdu7qO28jiOPcYFDJZqc+HhxDuj2zdX+brYTM2t
+	J2+uE5nBY5CdXGjjQ9onQFUsegn63saT5x2iguBaV+2VjWVGIRsA12b7Yaoqm2/Pkllzpcax6
+X-Google-Smtp-Source: AGHT+IEtNnqaFNM3IFYkaevRL1voz6bW7MV+eHfloPEq3p2jBFOfznRwaq9+4MhkBWZc8DES3xDKYRxboQlSxD5GRww=
+X-Received: by 2002:a05:6808:189f:b0:3eb:6849:e89 with SMTP id
+ 5614622812f47-3f3cd5d31a2mr1761716b6e.3.1739456076093; Thu, 13 Feb 2025
+ 06:14:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVAiuvxD4ydtsWfWXBhHLDJz66Ay8w15WHr278OnB=ZKg@mail.gmail.com>
+References: <20250212032155.1276806-1-jeffxu@google.com> <20250212032155.1276806-3-jeffxu@google.com>
+ <20250212135000-861e6353-6e0a-43c3-9b28-649ae4dfc607@linutronix.de>
+In-Reply-To: <20250212135000-861e6353-6e0a-43c3-9b28-649ae4dfc607@linutronix.de>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 13 Feb 2025 06:14:00 -0800
+X-Gm-Features: AWEUYZn6agI683FCVewtEvJCU-TMhKcDzUvXDlTokG6FIGxk-prLy1E5md-55vU
+Message-ID: <CABi2SkUCviiTbd1roeBiqSk98S87R1WwSP9rUYh4t3JfSD+2ZA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 2/7] selftests: x86: test_mremap_vdso: skip if vdso
+ is msealed
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
+	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 03:44:46PM GMT, Geert Uytterhoeven wrote:
-> Hi Den-san,
-> 
-> Thanks for your patch!
-> 
-> On Mon, 3 Feb 2025 at 04:12, Koichiro Den <koichiro.den@canonical.com> wrote:
-> > Previously, GPIO lines in the aggregator had empty names. Now that the
-> 
-> That is only true for aggregators created through the sysfs interface,
-> right?  When created from DT, gpio-line-names is already supported:
-> https://elixir.bootlin.com/linux/v6.13.2/source/Documentation/admin-guide/gpio/gpio-aggregator.rst#L72
-
-You're absolutely right, I'll fix this commit message, along with the
-needless codes you mentioned below.
-
-> 
-> > configfs interface supports custom names, update the GPIO forwarder to
-> > use them.
+On Wed, Feb 12, 2025 at 5:04=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> On Wed, Feb 12, 2025 at 03:21:50AM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
 > >
-> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> 
-> > --- a/drivers/gpio/gpio-aggregator.c
-> > +++ b/drivers/gpio/gpio-aggregator.c
-> > @@ -425,6 +425,20 @@ static int gpiochip_fwd_setup_delay_line(struct device *dev, struct gpio_chip *c
+> > Add code to detect if the vdso is memory sealed, skip the test
+> > if it is.
+> >
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > ---
+> >  .../testing/selftests/x86/test_mremap_vdso.c  | 38 +++++++++++++++++++
+> >  1 file changed, 38 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/tes=
+ting/selftests/x86/test_mremap_vdso.c
+> > index d53959e03593..c68077c56b22 100644
+> > --- a/tools/testing/selftests/x86/test_mremap_vdso.c
+> > +++ b/tools/testing/selftests/x86/test_mremap_vdso.c
+> > @@ -14,6 +14,7 @@
+> >  #include <errno.h>
+> >  #include <unistd.h>
+> >  #include <string.h>
+> > +#include <stdbool.h>
+> >
+> >  #include <sys/mman.h>
+> >  #include <sys/auxv.h>
+> > @@ -55,13 +56,50 @@ static int try_to_remap(void *vdso_addr, unsigned l=
+ong size)
+> >
 > >  }
-> >  #endif /* !CONFIG_OF_GPIO */
 > >
-> > +static int gpiochip_fwd_line_names(struct device *dev, const char **names, int len)
+> > +#define VDSO_NAME "[vdso]"
+> > +#define VMFLAGS "VmFlags:"
+> > +#define MSEAL_FLAGS "sl"
+> > +#define MAX_LINE_LEN 512
+> > +
+> > +bool vdso_sealed(FILE *maps)
 > > +{
-> > +       int num = device_property_string_array_count(dev, "gpio-line-names");
-> > +       if (!num)
-> > +               return 0;
-> > +       if (num > len) {
-> > +               pr_warn("gpio-line-names contains %d lines while %d expected",
-> > +                       num, len);
-> > +               num = len;
-> > +       }
-> > +       return device_property_read_string_array(dev, "gpio-line-names",
-> > +                                                names, num);
+> > +     char line[MAX_LINE_LEN];
+> > +     bool has_vdso =3D false;
+> > +
+> > +     while (fgets(line, sizeof(line), maps)) {
+> > +             if (strstr(line, VDSO_NAME))
+> > +                     has_vdso =3D true;
+> > +
+> > +             if (has_vdso && !strncmp(line, VMFLAGS, strlen(VMFLAGS)))=
+ {
+> > +                     if (strstr(line, MSEAL_FLAGS))
+> > +                             return true;
+> > +
+> > +                     return false;
+>
+> This only tests that any mapping after the vdso is sealed.
+
+The code above begins by searching for the "[vdso]" string, then looks
+for the first line that starts with "VmFlags:", and looks for the "sl"
+substring within that line. We're assuming the format of smaps won't
+change from release to release.
+
+> There is a real parser for /proc/self/smaps in
+> tools/testing/selftests/mm/vm_util.[ch], see check_vmflag_io().
+>
+This test is in selftest/x86, which makes it hard to include the
+vm_util from selftest/mm, if that's what you're asking.
+
+If you are asking reusing the code logic from vm_util, the
+check_vmflag_io() calls __get_smap_entry(addr, "VmFlags:", ...), which
+begins by searching for address, then looks for the first line that
+started with "VmFlags:", then check for the "io" within that line.
+This is the same logic as my code, if I read the code correctly.
+
+Thanks
+-Jeff
+
+
+
+> > +             }
+> > +     }
+> > +
+> > +     return false;
 > > +}
-> > +
-> >  /**
-> >   * gpiochip_fwd_create() - Create a new GPIO forwarder
-> >   * @dev: Parent device pointer
-> > @@ -447,6 +461,7 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
-> >  {
-> >         const char *label = dev_name(dev);
-> >         struct gpiochip_fwd *fwd;
-> > +       const char **line_names;
-> >         struct gpio_chip *chip;
-> >         unsigned int i;
-> >         int error;
-> > @@ -458,6 +473,16 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
-> >
-> >         chip = &fwd->chip;
-> >
-> > +       if (!dev_of_node(dev)) {
-> > +               line_names = devm_kcalloc(dev, sizeof(*line_names), ngpios, GFP_KERNEL);
-> 
-> So this is always allocated, even when no names are specified?
-
-Yes. This is unreasonable. I'll fix this in v3. Thanks.
-
-> 
-> > +               if (!line_names)
-> > +                       return ERR_PTR(-ENOMEM);
-> > +
-> > +               error = gpiochip_fwd_line_names(dev, line_names, ngpios);
-> > +               if (error < 0)
-> > +                       return ERR_PTR(-ENOMEM);
-> > +       }
-> > +
-> >         /*
-> >          * If any of the GPIO lines are sleeping, then the entire forwarder
-> >          * will be sleeping.
-> > @@ -491,6 +516,9 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
-> >         chip->ngpio = ngpios;
-> >         fwd->descs = descs;
-> >
-> > +       if (!dev_of_node(dev))
-> > +               chip->names = line_names;
-> > +
-> 
-> Do you actually need to collect the names yourself?
-> Below, the driver does:
-> 
->      error = devm_gpiochip_add_data(dev, chip, fwd);
-> 
-> and gpiochip_add_data_with_key() already calls gpiochip_set_names()
-> to retrieve the names from the gpio-line-names property.
-> What is missing to make that work?
-
-Thanks for pointing it out. It was just my oversight. I'll drop the
-needless parts in v3.
-
-> 
-> >         if (chip->can_sleep)
-> >                 mutex_init(&fwd->mlock);
-> >         else
-> > @@ -530,10 +558,40 @@ to_gpio_aggregator_line(struct config_item *item)
-> >         return container_of(group, struct gpio_aggregator_line, group);
-> >  }
-> >
-> > +static struct fwnode_handle *aggr_make_device_swnode(struct gpio_aggregator *aggr)
-> > +{
-> > +       char **line_names __free(kfree) = NULL;
-> 
-> const (needed when gpio_aggregator_line.name becomes const)
-
-Will fix in v3.
-
-Thank you!
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+>
+> <snip>
 
