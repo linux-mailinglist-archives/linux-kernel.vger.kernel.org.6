@@ -1,66 +1,58 @@
-Return-Path: <linux-kernel+bounces-513367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8563DA34985
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD73BA349F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1DA188A481
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64391893562
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AC526619F;
-	Thu, 13 Feb 2025 16:15:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC52266190;
-	Thu, 13 Feb 2025 16:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CBD269802;
+	Thu, 13 Feb 2025 16:19:39 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228C203719
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463329; cv=none; b=S8h6uWBBtHt1dI6sSBlft7iXGF5xWiCWBM29Q5GwK8H26ROpUollQD4OlT9OOTBY4FvoNvKbE7+/nFWdErk867FvYhcJJlcwOT0aJpC3c73Tiit1F4IteBL2lZ5i7/zP2WGsE7DfrYtWnbE7w6r6dYTdrE2sKalGYZYp4Jd9+ws=
+	t=1739463579; cv=none; b=lxBdS28ZEyAzkA3RcX2K7GZ/W5L4jQspCFYHXSDT+jQd8XWwELzz8upf75jyOgFL+4ttLufo3lHwUBTSjM8da7aavLpXN4nAbKSsXYwQ3Vk0tzK+uxFUSqUZX8pPb0+ci5A03WRpJFaH48OzD37uF1u8mGF9MXiJSNzRwwnZSvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463329; c=relaxed/simple;
-	bh=1E64j88aDVOB7c7g9ppU9BGCpOa/kfWLpY2prPpZjbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CTdUi2Gg+5VpBTnGI/SqVHS6NCwG7VF0k6GdETRVGazykbOwAH9fwNysCEqWbQRt13EbrFXe/wiWCM1uZO/jVp0Lyqq56g1XPmHqnv4u5QOtsimi65IDXwBRAp6CLm7ySBIAAlIcP01T9Z1C+7n1Yh+NUZgcBH/E6OBOF/nYRwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A4B3106F;
-	Thu, 13 Feb 2025 08:15:48 -0800 (PST)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.32.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3C273F6A8;
-	Thu, 13 Feb 2025 08:15:23 -0800 (PST)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-Subject: [PATCH v7 10/45] arm64: kvm: Allow passing machine type in KVM creation
-Date: Thu, 13 Feb 2025 16:13:50 +0000
-Message-ID: <20250213161426.102987-11-steven.price@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
-References: <20250213161426.102987-1-steven.price@arm.com>
+	s=arc-20240116; t=1739463579; c=relaxed/simple;
+	bh=sOWWED6j1PayZ6+28u+YwWk1YzbV5xVUcMRE4IDBa7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uJ8mB96k7QhCabQbLY5h97QtbSbCKrj9CKImqENENVpeL5R5lXoC1B1HA/DWj3G5LVqlgE98m7c7PqJaCTfE0yo4CvoRUrBRENj10DdfUbKNcH2tcA5o6Q+KDnPxa/33HptXEX+yHIueE8lZ8nmPZLUxyGZ5+gPNJETApLaY05A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tibr7-000000003xx-0Flu;
+	Thu, 13 Feb 2025 11:14:25 -0500
+From: Rik van Riel <riel@surriel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bp@alien8.de,
+	peterz@infradead.org,
+	dave.hansen@linux.intel.com,
+	zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com,
+	thomas.lendacky@amd.com,
+	kernel-team@meta.com,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	jackmanb@google.com,
+	jannh@google.com,
+	mhklinux@outlook.com,
+	andrew.cooper3@citrix.com
+Subject: [PATCH v11 00/12] AMD broadcast TLB invalidation
+Date: Thu, 13 Feb 2025 11:13:51 -0500
+Message-ID: <20250213161423.449435-1-riel@surriel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,100 +60,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: riel@surriel.com
 
-Previously machine type was used purely for specifying the physical
-address size of the guest. Reserve the higher bits to specify an ARM
-specific machine type and declare a new type 'KVM_VM_TYPE_ARM_REALM'
-used to create a realm guest.
+Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Steven Price <steven.price@arm.com>
----
-Changes since v6:
- * Make the check for kvm_rme_is_available more visible and report an
-   error code of -EPERM (instead of -EINVAL) to make it explicit that
-   the kernel supports RME, but the platform doesn't.
----
- arch/arm64/kvm/arm.c     | 15 +++++++++++++++
- arch/arm64/kvm/mmu.c     |  3 ---
- include/uapi/linux/kvm.h | 19 +++++++++++++++----
- 3 files changed, 30 insertions(+), 7 deletions(-)
+This allows the kernel to invalidate TLB entries on remote CPUs without
+needing to send IPIs, without having to wait for remote CPUs to handle
+those interrupts, and with less interruption to what was running on
+those CPUs.
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index df6eb5e9ca96..917ee7c674f5 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -180,6 +180,21 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 	mutex_unlock(&kvm->lock);
- #endif
- 
-+	if (type & ~(KVM_VM_TYPE_ARM_MASK | KVM_VM_TYPE_ARM_IPA_SIZE_MASK))
-+		return -EINVAL;
-+
-+	switch (type & KVM_VM_TYPE_ARM_MASK) {
-+	case KVM_VM_TYPE_ARM_NORMAL:
-+		break;
-+	case KVM_VM_TYPE_ARM_REALM:
-+		if (!static_branch_unlikely(&kvm_rme_is_available))
-+			return -EPERM;
-+		kvm->arch.is_realm = true;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
- 	kvm_init_nested(kvm);
- 
- 	ret = kvm_share_hyp(kvm, kvm + 1);
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 8cda128aafef..f8ad8f88bbb8 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -886,9 +886,6 @@ static int kvm_init_ipa_range(struct kvm *kvm,
- 	if (kvm_is_realm(kvm))
- 		kvm_ipa_limit = kvm_realm_ipa_limit();
- 
--	if (type & ~KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
--		return -EINVAL;
--
- 	phys_shift = KVM_VM_TYPE_ARM_IPA_SIZE(type);
- 	if (is_protected_kvm_enabled()) {
- 		phys_shift = kvm_ipa_limit;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index fa8f45029dff..9cabf9b6a9b4 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -644,14 +644,25 @@ struct kvm_enable_cap {
- #define KVM_S390_SIE_PAGE_OFFSET 1
- 
- /*
-- * On arm64, machine type can be used to request the physical
-- * address size for the VM. Bits[7-0] are reserved for the guest
-- * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
-- * value 0 implies the default IPA size, 40bits.
-+ * On arm64, machine type can be used to request both the machine type and
-+ * the physical address size for the VM.
-+ *
-+ * Bits[11-8] are reserved for the ARM specific machine type.
-+ *
-+ * Bits[7-0] are reserved for the guest PA size shift (i.e, log2(PA_Size)).
-+ * For backward compatibility, value 0 implies the default IPA size, 40bits.
-  */
-+#define KVM_VM_TYPE_ARM_SHIFT		8
-+#define KVM_VM_TYPE_ARM_MASK		(0xfULL << KVM_VM_TYPE_ARM_SHIFT)
-+#define KVM_VM_TYPE_ARM(_type)		\
-+	(((_type) << KVM_VM_TYPE_ARM_SHIFT) & KVM_VM_TYPE_ARM_MASK)
-+#define KVM_VM_TYPE_ARM_NORMAL		KVM_VM_TYPE_ARM(0)
-+#define KVM_VM_TYPE_ARM_REALM		KVM_VM_TYPE_ARM(1)
-+
- #define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
- #define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
- 	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
-+
- /*
-  * ioctls for /dev/kvm fds:
-  */
--- 
-2.43.0
+Because x86 PCID space is limited, and there are some very large
+systems out there, broadcast TLB invalidation is only used for
+processes that are active on 3 or more CPUs, with the threshold
+being gradually increased the more the PCID space gets exhausted.
+
+Combined with the removal of unnecessary lru_add_drain calls
+(see https://lkml.org/lkml/2024/12/19/1388) this results in a
+nice performance boost for the will-it-scale tlb_flush2_threads
+test on an AMD Milan system with 36 cores:
+
+- vanilla kernel:           527k loops/second
+- lru_add_drain removal:    731k loops/second
+- only INVLPGB:             527k loops/second
+- lru_add_drain + INVLPGB: 1157k loops/second
+
+Profiling with only the INVLPGB changes showed while
+TLB invalidation went down from 40% of the total CPU
+time to only around 4% of CPU time, the contention
+simply moved to the LRU lock.
+
+Fixing both at the same time about doubles the
+number of iterations per second from this case.
+
+Some numbers closer to real world performance
+can be found at Phoronix, thanks to Michael:
+
+https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
+
+My current plan is to implement support for Intel's RAR
+(Remote Action Request) TLB flushing in a follow-up series,
+after this thing has been merged into -tip. Making things
+any larger would just be unwieldy for reviewers.
+
+v11:
+ - resolve conflict with CONFIG_PT_RECLAIM code
+ - a few more cleanups (Peter, Brendan, Nadav)
+v10:
+ - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
+ - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Brendan)
+ - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
+ - various cleanups (Brendan)
+v9:
+ - print warning when start or end address was rounded (Peter)
+ - in the reclaim code, tlbsync at context switch time (Peter)
+ - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (Jan)
+v8:
+ - round start & end to handle non-page-aligned callers (Steven & Jan)
+ - fix up changelog & add tested-by tags (Manali)
+v7:
+ - a few small code cleanups (Nadav)
+ - fix spurious VM_WARN_ON_ONCE in mm_global_asid
+ - code simplifications & better barriers (Peter & Dave)
+v6:
+ - fix info->end check in flush_tlb_kernel_range (Michael)
+ - disable broadcast TLB flushing on 32 bit x86
+v5:
+ - use byte assembly for compatibility with older toolchains (Borislav, Michael)
+ - ensure a panic on an invalid number of extra pages (Dave, Tom)
+ - add cant_migrate() assertion to tlbsync (Jann)
+ - a bunch more cleanups (Nadav)
+ - key TCE enabling off X86_FEATURE_TCE (Andrew)
+ - fix a race between reclaim and ASID transition (Jann)
+v4:
+ - Use only bitmaps to track free global ASIDs (Nadav)
+ - Improved AMD initialization (Borislav & Tom)
+ - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
+ - Fixes for subtle race conditions (Jann)
+v3:
+ - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
+ - More suggested cleanups and changelog fixes by Peter and Nadav
+v2:
+ - Apply suggestions by Peter and Borislav (thank you!)
+ - Fix bug in arch_tlbbatch_flush, where we need to do both
+   the TLBSYNC, and flush the CPUs that are in the cpumask.
+ - Some updates to comments and changelogs based on questions.
 
 
