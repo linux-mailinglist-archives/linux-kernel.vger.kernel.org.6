@@ -1,212 +1,162 @@
-Return-Path: <linux-kernel+bounces-512596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEDAA33B53
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:38:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA62DA33B52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA5518881CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C183A48E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3220AF87;
-	Thu, 13 Feb 2025 09:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAE320DD66;
+	Thu, 13 Feb 2025 09:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gfk40apN"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s0K3qtHM"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288D120D4EF;
-	Thu, 13 Feb 2025 09:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22BD20AF87
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739439488; cv=none; b=sKDJJwwoKz9BHzuLULpjSCwuV3GHIDIjzSyuJbWk9hCdhd8cjlGNa7EbuaqT+zaVk4Xgal1CU8NST2ExZmSKoYvNsdxGLJQ7jmLYy8OLpflzQzooSlHaFIBzEYqkZFFvKNyovoKfQfstVFTsCCla8zY0fmxTcQuavXSHygKDtqA=
+	t=1739439478; cv=none; b=DdNlU75yY0qeNOHbVCnatJYKA6wTY2kYh3KkU0mxqqaguFXl714vNTcUnOLe9jtEwWn3yaKLK7ULva67KiJaL50yPYibXFMgVkqc5qqh8SCkf5ETm55Ytnl09e8pK7+m5qufIMGCjccEpHqbskHhcq1IPj9EZBeviuHN+a1e65E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739439488; c=relaxed/simple;
-	bh=OJMyPvJ9Xja01/DX2ZKSXrF1TaukTR4zVn8V8THvDeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BAXF46fsHoW7j3iab0+PuppdroFNzyH/hBtFXUkOaR6xGNtKLgtkG7nB0u8dSg1jFImtlXi0PC3N3MPHoCR9xGp/VF50tfeFl1y4bO/GKLINgG6s+3IKxula7sHoN69/gJJzu+eDLGxEqm6SbcDVkTnbpdALsI7N6tobNu8W2OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gfk40apN; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51faf3342b3so189085e0c.2;
-        Thu, 13 Feb 2025 01:38:05 -0800 (PST)
+	s=arc-20240116; t=1739439478; c=relaxed/simple;
+	bh=RiEAHZGnT5RZjUeFLeN6bZFizTjIq+JiREuWrzH7QL8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uvMjLYKFVaWdErMy5sXYR4hOW41d+7pqe9aS+mineo7Z2h+Ijd9/vV814PbJOF78dUrvHge/IK7mF+svUpkgbSXQKW/Mufl6B9fd4PUdtcr41mnqeIXXl/phJFQvU4NRPncz/hF48WilBCC998CoyujzNjYULqBF0UUNQYNjgEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s0K3qtHM; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7f9d87b96so108763466b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:37:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739439485; x=1740044285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Do0/WPilau4ooK+L0ONiTGLsYWj0jYE1EjbzMsQjJp0=;
-        b=Gfk40apNiC9pXoLz11Nbiy+Qm83hJM2UdOBW2DllvOn/KFwIDv4pWPxskpy8vFqjxz
-         JjLYfY0pZTeduvKLvujF2ShrEvd+G8e68Npn9500FiVeui8e1sGSB20pyYHnqKz7Lk0q
-         EYpPii/yol3VZlF94epZ4/SxIeG8W5SVSiSmAPcPlouAeNN1WjPtn01i0Y/gOeQXgGsm
-         bUK64MeoZDcewqfvzAy6sjd9EPNd4CmDvTp3msS9mICV/bsmka6rOfZTxkaoP2Uj2Jig
-         YLvuj1ypTnDjTaDdLHJLiFPwFWSq+nWUL97PiO7omT5VfemgBmHY4mUYNyDHVvVhyxCu
-         Dlow==
+        d=linaro.org; s=google; t=1739439475; x=1740044275; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/2XAYuXD7fsybMjqk59PT3L6d5BOK7J3miorlIRVn0Q=;
+        b=s0K3qtHMRPjzYiypwczREBmqIa+laiD9CH6IIRLFyiQGPJAvTtIQfCY9de/KpH1efL
+         bCeEWrfFkBqov374oau61fDkyVJS+/vNiGzLlyPLsesaOUjWO+4DcblOBy8Ih9GD+O4d
+         aPPP94Er5b3f3Ja9qh2kzBKaZuK8+ehf0VQ4aVnUkFGZI9WeC04+xQ+BhNiJK+eLBBdD
+         ax/NpY7d5X3W6tvQRfh2C7y9spLehBFMssAwtL77giABTmCXenIHUBFp9Y1fIG48LrAK
+         HecGsYxuV6Nze0bWxfEfdOb+yEYDlE4YzpuEJw0M6tDSFTebsCaFEfQq1QIOb7ifqgkg
+         Wthw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739439485; x=1740044285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Do0/WPilau4ooK+L0ONiTGLsYWj0jYE1EjbzMsQjJp0=;
-        b=ddST9RRcCw9WTHfydfr6Snjt5tqyZNeC53iCj5n0VpAqRPdFHAXhutx2i9x8q8viU2
-         JojxBCeIjWKi8P72AvubIVyMYTZb+JyOfh2K37lunfP1xXPMyIVC0KRPvpeqidMHg6sU
-         aEiK+zKEFf1UeJ/ZEsmGcci6frxC2FvcC8d63p3IWVYU/xfuOqdcIN5ZL/XBG+JDKzTS
-         yJIL8OdrVzNA253zBReVpyOuNQ7UdNpoIyo+nlHC96ouJ1M2LCYTd2WBi0n+zXmukSxr
-         CAwpdyFQsfGWTBeWLAoVL6nLeUKG7rfSJkb7GLZ3ST9dUyvlZeHX5X74XX6/peoKptbx
-         4+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Hzl1e4+EYJLPMLZg4FyuObNw3EyNeKAIeK7AmaSbFB/p6L9nl+oXBR0g38BY49jYPGD48mO871ASPBkcwwoPFRg=@vger.kernel.org, AJvYcCX5WGbqA2W43tQQgR50yyAr1gHX8VcWTqZO1Xp2GkQfpkqd3CtpS9rP6/nWSzjNTdu40odRkUimVayK/UY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhOUmPGc0AMGnlKBlBVMNzLZqvpjN9FxbKgKXtHaJp7yUNSkYv
-	jhjm/G0mzknTg4MUcm/7GnJn8zz2B4Q/t5PSZUzvaeSeWv1BLL1l/p+JyQLIFol2ec4g7bVKpG4
-	HpDmoV2RMBrWiwyILmXy4NrqG9qk=
-X-Gm-Gg: ASbGncsVXc4hgoBgV9LRpob8tsYFxOTDZ/3TeFi+N7yb2BVQg1SyOAp4RdUWpwH7jDP
-	XLTAsfLcPdmxHi/I1LSH/IDK2SHus5h/rDcRrivy5Se+buBQfw4b+3PjdUPIGzEukrgdcN99vFm
-	2F7+Kwji+4y8TYOvjnKcUHJMsY0uU5/w==
-X-Google-Smtp-Source: AGHT+IHFRyFDSjT12HnWSaV6WILkXQSsSuLhFI4b+GzNUMD9PsTnXsgwe8zzsWccRhv4HeiIWGavFLpiIowjhUpYU+w=
-X-Received: by 2002:a05:6122:65a2:b0:515:4b68:c37f with SMTP id
- 71dfb90a1353d-52067cfe3b1mr6381091e0c.6.1739439484797; Thu, 13 Feb 2025
- 01:38:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739439475; x=1740044275;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/2XAYuXD7fsybMjqk59PT3L6d5BOK7J3miorlIRVn0Q=;
+        b=f9Dar0rOryyfOOVvB7LtO1sdLhXzfGqma+2YtgJJS4mQf89aCpKzUjACo91fQdOXNR
+         nMe/WMeKPU5U1Wa93YeYMWKMeYfq54optMbhtZYKc4K2uuT9e0FbzNnTWQ0m7Ucu2Ih2
+         0TDr/T5YNjox0LKQ5DTDFhJrq33cYclkcPRWPqwYMHpRp0NkYxqpNL0SqS2me0HH/ODu
+         9U4s1LWTXjnTVfJrcmnvf53k9h6O7167m9shKHD34wxmdJM7B0F9DfmRJnvNizHTxES3
+         0X18+oxBEMvdvd9ZNUnzmSxRPOuqmroqn49oNFh6KK3JrXgTscyLvlr+vx7raA4os26Z
+         jobA==
+X-Forwarded-Encrypted: i=1; AJvYcCUm0EtVwcOPfQ19eIeVu8a5AtJsiCpYX/IOzTP5NbUK3URCdDXedICK0h9sWJVVKajvHe9aiTdNHclUeYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyueEJ9/qPdxOkTKPs8ThFjzec47Uc4RmUlxL7CPVWtr8I0Kxwg
+	hHDmmSgVj3BFAFAl1Tq76NU/3mCBTDWC2DvMAk5XwLcH8lZ/5dmafb89yBCS9EM=
+X-Gm-Gg: ASbGnct+5s6QaGm6lxFMNPVuNyfFOkhZflNf7kw94r4abc4FIhjkFceCRaMcY2WmBQ8
+	MtDrXj1QVkV3GoR7sgDAX5GKrSoUuKeScCZWhXR3TZHZX9lkBVVCpl5VNVoHvdbiZ7CFobuUwHv
+	KDOKaqqJh32pQh942RZr6zvwRfLK2WqP/mDBzrjJNx9JObgK/o7u+3YtcvDx7QiE58ux6gm9Jix
+	KTJ1VQqDi/KLLC0rZhMXKQh2vaH+jdaU3RpLngZhaFuDElenlj32eGP63KyXmq3OhTiYYtyneF+
+	slZkZv4aNSfzsHxFHk1cKUurCGUEUE0+tSd9MY8TEARJ4YA3/An/NBbdvwfqYHu+aPOb8BXSks8
+	=
+X-Google-Smtp-Source: AGHT+IGSHlT76ESoFZYlChETipfyce+vKjhfMVr7jv201RI2UCweUCpjMlYnJ8WPbZICQbk40i9A6g==
+X-Received: by 2002:a17:907:940f:b0:ab7:66d3:bc88 with SMTP id a640c23a62f3a-ab7f34e7134mr532680166b.52.1739439474964;
+        Thu, 13 Feb 2025 01:37:54 -0800 (PST)
+Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f59sm866370a12.6.2025.02.13.01.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 01:37:54 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Thu, 13 Feb 2025 09:37:54 +0000
+Subject: [PATCH] usb: typec: tcpm/tcpci_maxim: better interrupt name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212182034.366167-1-fabrizio.castro.jz@renesas.com> <20250212182034.366167-2-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250212182034.366167-2-fabrizio.castro.jz@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Feb 2025 09:37:38 +0000
-X-Gm-Features: AWEUYZnlz0g0E5bM5VdYEG5J3JNA_zClGwtQILbF3AJ345HcSj1jSm26h_tutGE
-Message-ID: <CA+V-a8uPQxraOnVnafO-Ovk=inrzJWG+ySK5uO2uBOuXEDx+tA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] irqchip/renesas-rzg2l: Use local dev pointer in rzg2l_irqc_common_init()
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAHG9rWcC/x3MTQqAIBBA4avIrBvwB6W6SrSwnGoWWSlEEN49a
+ fkt3nshU2LK0IsXEt2c+YgVqhEwbz6uhByqQUttpVYGd/8YY2yHnC6MfieUztngJtdJ20LtzkQ
+ LP/9zGEv5AA2HbAVjAAAA
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Wed, Feb 12, 2025 at 6:22=E2=80=AFPM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> Replace direct references to `&pdev->dev` with the local `dev` pointer
-> in rzg2l_irqc_common_init() to avoid redundant dereferencing.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
-> Hi Geert,
->
-> I have taken the liberty of adding your Suggested-by, I hope that's
-> okay?
->
-> I have also added a few more patches to further tidy up
-> rzg2l_irqc_common_init().
->
-> Thanks!
->
-> Fab
-> ---
->  drivers/irqchip/irq-renesas-rzg2l.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This changes the output of /proc/interrupts from the non-descriptive:
+    1-0025
+(or similar) to a more descriptive:
+    1-0025-max33359
 
-Cheers,
-Prabhakar
+This makes it easier to find the device, in particular if there are
+multiple i2c devices, as one doesn't have to remember (or lookup) where
+it is located.
 
-> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
-nesas-rzg2l.c
-> index 99e27e01b0b1..a7c3a3cc6b9f 100644
-> --- a/drivers/irqchip/irq-renesas-rzg2l.c
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -542,40 +542,40 @@ static int rzg2l_irqc_common_init(struct device_nod=
-e *node, struct device_node *
->
->         parent_domain =3D irq_find_host(parent);
->         if (!parent_domain) {
-> -               dev_err(&pdev->dev, "cannot find parent domain\n");
-> +               dev_err(dev, "cannot find parent domain\n");
->                 return -ENODEV;
->         }
->
-> -       rzg2l_irqc_data =3D devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_d=
-ata), GFP_KERNEL);
-> +       rzg2l_irqc_data =3D devm_kzalloc(dev, sizeof(*rzg2l_irqc_data), G=
-FP_KERNEL);
->         if (!rzg2l_irqc_data)
->                 return -ENOMEM;
->
->         rzg2l_irqc_data->irqchip =3D irq_chip;
->
-> -       rzg2l_irqc_data->base =3D devm_of_iomap(&pdev->dev, pdev->dev.of_=
-node, 0, NULL);
-> +       rzg2l_irqc_data->base =3D devm_of_iomap(dev, dev->of_node, 0, NUL=
-L);
->         if (IS_ERR(rzg2l_irqc_data->base))
->                 return PTR_ERR(rzg2l_irqc_data->base);
->
->         ret =3D rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
->         if (ret) {
-> -               dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret)=
-;
-> +               dev_err(dev, "cannot parse interrupts: %d\n", ret);
->                 return ret;
->         }
->
-> -       resetn =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> +       resetn =3D devm_reset_control_get_exclusive(dev, NULL);
->         if (IS_ERR(resetn))
->                 return PTR_ERR(resetn);
->
->         ret =3D reset_control_deassert(resetn);
->         if (ret) {
-> -               dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n"=
-, ret);
-> +               dev_err(dev, "failed to deassert resetn pin, %d\n", ret);
->                 return ret;
->         }
->
-> -       pm_runtime_enable(&pdev->dev);
-> -       ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +       pm_runtime_enable(dev);
-> +       ret =3D pm_runtime_resume_and_get(dev);
->         if (ret < 0) {
-> -               dev_err(&pdev->dev, "pm_runtime_resume_and_get failed: %d=
-\n", ret);
-> +               dev_err(dev, "pm_runtime_resume_and_get failed: %d\n", re=
-t);
->                 goto pm_disable;
->         }
->
-> @@ -585,7 +585,7 @@ static int rzg2l_irqc_common_init(struct device_node =
-*node, struct device_node *
->                                               node, &rzg2l_irqc_domain_op=
-s,
->                                               rzg2l_irqc_data);
->         if (!irq_domain) {
-> -               dev_err(&pdev->dev, "failed to add irq domain\n");
-> +               dev_err(dev, "failed to add irq domain\n");
->                 ret =3D -ENOMEM;
->                 goto pm_put;
->         }
-> @@ -606,9 +606,9 @@ static int rzg2l_irqc_common_init(struct device_node =
-*node, struct device_node *
->         return 0;
->
->  pm_put:
-> -       pm_runtime_put(&pdev->dev);
-> +       pm_runtime_put(dev);
->  pm_disable:
-> -       pm_runtime_disable(&pdev->dev);
-> +       pm_runtime_disable(dev);
->         reset_control_assert(resetn);
->         return ret;
->  }
-> --
-> 2.34.1
->
->
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+index fd1b80593367..46fc626589db 100644
+--- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
++++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+@@ -420,12 +420,14 @@ static irqreturn_t max_tcpci_isr(int irq, void *dev_id)
+ 	return IRQ_WAKE_THREAD;
+ }
+ 
+-static int max_tcpci_init_alert(struct max_tcpci_chip *chip, struct i2c_client *client)
++static int max_tcpci_init_alert(struct max_tcpci_chip *chip,
++				struct i2c_client *client,
++				const char *name)
+ {
+ 	int ret;
+ 
+ 	ret = devm_request_threaded_irq(chip->dev, client->irq, max_tcpci_isr, max_tcpci_irq,
+-					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), dev_name(chip->dev),
++					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), name,
+ 					chip);
+ 
+ 	if (ret < 0)
+@@ -485,6 +487,7 @@ static int max_tcpci_probe(struct i2c_client *client)
+ 	int ret;
+ 	struct max_tcpci_chip *chip;
+ 	u8 power_status;
++	const char *name;
+ 
+ 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+@@ -531,7 +534,11 @@ static int max_tcpci_probe(struct i2c_client *client)
+ 
+ 	chip->port = tcpci_get_tcpm_port(chip->tcpci);
+ 
+-	ret = max_tcpci_init_alert(chip, client);
++	name = devm_kasprintf(&client->dev, GFP_KERNEL, "%s-%s",
++			      dev_name(&client->dev), client->name);
++	if (!name)
++		return -ENOMEM;
++	ret = max_tcpci_init_alert(chip, client, name);
+ 	if (ret < 0)
+ 		return dev_err_probe(&client->dev, ret,
+ 				     "IRQ initialization failed\n");
+
+---
+base-commit: 808eb958781e4ebb6e9c0962af2e856767e20f45
+change-id: 20250213-max33359-irq-name-0665d6b69058
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
