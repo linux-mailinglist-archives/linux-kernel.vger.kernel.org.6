@@ -1,66 +1,63 @@
-Return-Path: <linux-kernel+bounces-513373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1C9A34991
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:22:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A9CA34A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B33A1890602
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062E2164CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78C1274246;
-	Thu, 13 Feb 2025 16:15:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C085422172F;
-	Thu, 13 Feb 2025 16:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AC5274268;
+	Thu, 13 Feb 2025 16:21:05 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE8327425D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463351; cv=none; b=J0mRvH7CETJC449wIjFh5GJ4gHStbvJCbCgD2yDzp+gXprN8ItNx7t3FJsvpnJ0qCkcm33hNwkWKnTvnIrQNAv0ShSSuANfdA+b3j4DEB8fmM5Xl8swQwKLxS20QsMoEG3UKfvbJafm9a004TFfYcxpvU9w8TfLX89hOpa4KdOI=
+	t=1739463665; cv=none; b=ECKFREWYiGcjt1/JivYGPg3faFRuvH78RJ74HhNRIBo/laRlqKqX1KCo4CbEERyzcK7TVR9uRLnJ82BPI56x0vYS/+Y+fWygiNHkgPzibsxUoLfwLUcOTbtpqgchymbOLtls/1HsEah/AvNt9mc40tbb30id7dfcBikWaxd6Fco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463351; c=relaxed/simple;
-	bh=FgyGAmprgyg4UpkBsIAFjEjq7mu5ZlJylBUVYzcBHqI=;
+	s=arc-20240116; t=1739463665; c=relaxed/simple;
+	bh=NWF5mQQC/1hQylWBw2xsueMW2yz2vsjQyFZpHgbhfDM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uzB53vOVuPgVY9ZXsr/ORIhCfI0A8mp9Wnr6aSzPlGpl8EAAvzJcFaCZ3UWpbivQwfsITYe1mlpm1/Pe6xB1QqLJmL0r1lSmYElBfnWv8FMB2IPRoIgDAJHwpWF7Ql+K4m8PvBYwMh6EMwE9zSuoFC1sn3gcIKYaxwrbp1Tlyno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 059291756;
-	Thu, 13 Feb 2025 08:16:10 -0800 (PST)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.32.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4970B3F6A8;
-	Thu, 13 Feb 2025 08:15:45 -0800 (PST)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-Subject: [PATCH v7 15/45] KVM: arm64: Support timers in realm RECs
-Date: Thu, 13 Feb 2025 16:13:55 +0000
-Message-ID: <20250213161426.102987-16-steven.price@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
-References: <20250213161426.102987-1-steven.price@arm.com>
+	 MIME-Version; b=SY+q1yuWCUvkbGptpAr9Csurnswb2Vi9RUVVjAfbHAbY+QcLTwvwDidPjmmDEsZp3Z4kjXyOh2EXq9Gu9R5rX0bpj3tsofejTPrmb6IEL3ez2ZUvo63lpmi8a57EVmKLdZNXS7aSrbJlhnLW9g+P8vC+tufOMvoQrfeaIHRAQ+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tibr7-000000003xx-0gKp;
+	Thu, 13 Feb 2025 11:14:25 -0500
+From: Rik van Riel <riel@surriel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bp@alien8.de,
+	peterz@infradead.org,
+	dave.hansen@linux.intel.com,
+	zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com,
+	thomas.lendacky@amd.com,
+	kernel-team@meta.com,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	jackmanb@google.com,
+	jannh@google.com,
+	mhklinux@outlook.com,
+	andrew.cooper3@citrix.com,
+	Rik van Riel <riel@surriel.com>,
+	Manali Shukla <Manali.Shukla@amd.com>
+Subject: [PATCH v11 04/12] x86/mm: get INVLPGB count max from CPUID
+Date: Thu, 13 Feb 2025 11:13:55 -0500
+Message-ID: <20250213161423.449435-5-riel@surriel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250213161423.449435-1-riel@surriel.com>
+References: <20250213161423.449435-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,137 +65,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: riel@surriel.com
 
-The RMM keeps track of the timer while the realm REC is running, but on
-exit to the normal world KVM is responsible for handling the timers.
+The CPU advertises the maximum number of pages that can be shot down
+with one INVLPGB instruction in the CPUID data.
 
-A later patch adds the support for propagating the timer values from the
-exit data structure and calling kvm_realm_timers_update().
+Save that information for later use.
 
-Signed-off-by: Steven Price <steven.price@arm.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+Tested-by: Brendan Jackman <jackmanb@google.com>
+Tested-by: Michael Kelley <mhklinux@outlook.com>
 ---
- arch/arm64/kvm/arch_timer.c  | 45 ++++++++++++++++++++++++++++++++----
- include/kvm/arm_arch_timer.h |  2 ++
- 2 files changed, 43 insertions(+), 4 deletions(-)
+ arch/x86/Kconfig.cpu               | 5 +++++
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/include/asm/tlbflush.h    | 7 +++++++
+ arch/x86/kernel/cpu/amd.c          | 8 ++++++++
+ 4 files changed, 21 insertions(+)
 
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index d3d243366536..06b68bcd244f 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -148,6 +148,13 @@ static void timer_set_cval(struct arch_timer_context *ctxt, u64 cval)
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 2a7279d80460..abe013a1b076 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -395,6 +395,10 @@ config X86_VMX_FEATURE_NAMES
+ 	def_bool y
+ 	depends on IA32_FEAT_CTL
  
- static void timer_set_offset(struct arch_timer_context *ctxt, u64 offset)
++config X86_BROADCAST_TLB_FLUSH
++	def_bool y
++	depends on CPU_SUP_AMD && 64BIT
++
+ menuconfig PROCESSOR_SELECT
+ 	bool "Supported processor vendors" if EXPERT
+ 	help
+@@ -431,6 +435,7 @@ config CPU_SUP_CYRIX_32
+ config CPU_SUP_AMD
+ 	default y
+ 	bool "Support AMD processors" if PROCESSOR_SELECT
++	select X86_BROADCAST_TLB_FLUSH
+ 	help
+ 	  This enables detection, tunings and quirks for AMD processors
+ 
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 508c0dad116b..b5c66b7465ba 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -338,6 +338,7 @@
+ #define X86_FEATURE_CLZERO		(13*32+ 0) /* "clzero" CLZERO instruction */
+ #define X86_FEATURE_IRPERF		(13*32+ 1) /* "irperf" Instructions Retired Count */
+ #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* "xsaveerptr" Always save/restore FP error pointers */
++#define X86_FEATURE_INVLPGB		(13*32+ 3) /* INVLPGB and TLBSYNC instruction supported. */
+ #define X86_FEATURE_RDPRU		(13*32+ 4) /* "rdpru" Read processor register at user level */
+ #define X86_FEATURE_WBNOINVD		(13*32+ 9) /* "wbnoinvd" WBNOINVD instruction */
+ #define X86_FEATURE_AMD_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 3da645139748..e026a5cc388e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -183,6 +183,13 @@ static inline void cr4_init_shadow(void)
+ extern unsigned long mmu_cr4_features;
+ extern u32 *trampoline_cr4_features;
+ 
++/* How many pages can we invalidate with one INVLPGB. */
++#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
++extern u16 invlpgb_count_max;
++#else
++#define invlpgb_count_max 1
++#endif
++
+ extern void initialize_tlbstate_and_flush(void);
+ 
+ /*
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 54194f5995de..3e8180354303 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -29,6 +29,8 @@
+ 
+ #include "cpu.h"
+ 
++u16 invlpgb_count_max __ro_after_init;
++
+ static inline int rdmsrl_amd_safe(unsigned msr, unsigned long long *p)
  {
-+	struct kvm_vcpu *vcpu = ctxt->vcpu;
+ 	u32 gprs[8] = { 0 };
+@@ -1139,6 +1141,12 @@ static void cpu_detect_tlb_amd(struct cpuinfo_x86 *c)
+ 		tlb_lli_2m[ENTRIES] = eax & mask;
+ 
+ 	tlb_lli_4m[ENTRIES] = tlb_lli_2m[ENTRIES] >> 1;
 +
-+	if (kvm_is_realm(vcpu->kvm)) {
-+		WARN_ON(offset);
-+		return;
++	/* Max number of pages INVLPGB can invalidate in one shot */
++	if (boot_cpu_has(X86_FEATURE_INVLPGB)) {
++		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
++		invlpgb_count_max = (edx & 0xffff) + 1;
 +	}
-+
- 	if (!ctxt->offset.vm_offset) {
- 		WARN(offset, "timer %ld\n", arch_timer_ctx_index(ctxt));
- 		return;
-@@ -464,6 +471,21 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu, bool new_level,
- 	}
  }
  
-+void kvm_realm_timers_update(struct kvm_vcpu *vcpu)
-+{
-+	struct arch_timer_cpu *arch_timer = &vcpu->arch.timer_cpu;
-+	int i;
-+
-+	for (i = 0; i < NR_KVM_EL0_TIMERS; i++) {
-+		struct arch_timer_context *timer = &arch_timer->timers[i];
-+		bool status = timer_get_ctl(timer) & ARCH_TIMER_CTRL_IT_STAT;
-+		bool level = kvm_timer_irq_can_fire(timer) && status;
-+
-+		if (level != timer->irq.level)
-+			kvm_timer_update_irq(vcpu, level, timer);
-+	}
-+}
-+
- /* Only called for a fully emulated timer */
- static void timer_emulate(struct arch_timer_context *ctx)
- {
-@@ -889,6 +911,8 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
- 	if (unlikely(!timer->enabled))
- 		return;
- 
-+	kvm_timer_unblocking(vcpu);
-+
- 	get_timer_map(vcpu, &map);
- 
- 	if (static_branch_likely(&has_gic_active_state)) {
-@@ -902,8 +926,6 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
- 		kvm_timer_vcpu_load_nogic(vcpu);
- 	}
- 
--	kvm_timer_unblocking(vcpu);
--
- 	timer_restore_state(map.direct_vtimer);
- 	if (map.direct_ptimer)
- 		timer_restore_state(map.direct_ptimer);
-@@ -1094,7 +1116,9 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
- 
- 	ctxt->vcpu = vcpu;
- 
--	if (timerid == TIMER_VTIMER)
-+	if (kvm_is_realm(vcpu->kvm))
-+		ctxt->offset.vm_offset = NULL;
-+	else if (timerid == TIMER_VTIMER)
- 		ctxt->offset.vm_offset = &kvm->arch.timer_data.voffset;
- 	else
- 		ctxt->offset.vm_offset = &kvm->arch.timer_data.poffset;
-@@ -1117,13 +1141,19 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
- void kvm_timer_vcpu_init(struct kvm_vcpu *vcpu)
- {
- 	struct arch_timer_cpu *timer = vcpu_timer(vcpu);
-+	u64 cntvoff;
- 
- 	for (int i = 0; i < NR_KVM_TIMERS; i++)
- 		timer_context_init(vcpu, i);
- 
-+	if (kvm_is_realm(vcpu->kvm))
-+		cntvoff = 0;
-+	else
-+		cntvoff = kvm_phys_timer_read();
-+
- 	/* Synchronize offsets across timers of a VM if not already provided */
- 	if (!test_bit(KVM_ARCH_FLAG_VM_COUNTER_OFFSET, &vcpu->kvm->arch.flags)) {
--		timer_set_offset(vcpu_vtimer(vcpu), kvm_phys_timer_read());
-+		timer_set_offset(vcpu_vtimer(vcpu), cntvoff);
- 		timer_set_offset(vcpu_ptimer(vcpu), 0);
- 	}
- 
-@@ -1663,6 +1693,13 @@ int kvm_timer_enable(struct kvm_vcpu *vcpu)
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * We don't use mapped IRQs for Realms because the RMI doesn't allow
-+	 * us setting the LR.HW bit in the VGIC.
-+	 */
-+	if (vcpu_is_rec(vcpu))
-+		return 0;
-+
- 	get_timer_map(vcpu, &map);
- 
- 	ret = kvm_vgic_map_phys_irq(vcpu,
-diff --git a/include/kvm/arm_arch_timer.h b/include/kvm/arm_arch_timer.h
-index 681cf0c8b9df..f64e317c091b 100644
---- a/include/kvm/arm_arch_timer.h
-+++ b/include/kvm/arm_arch_timer.h
-@@ -113,6 +113,8 @@ int kvm_arm_timer_set_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
- int kvm_arm_timer_get_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
- int kvm_arm_timer_has_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
- 
-+void kvm_realm_timers_update(struct kvm_vcpu *vcpu);
-+
- u64 kvm_phys_timer_read(void);
- 
- void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu);
+ static const struct cpu_dev amd_cpu_dev = {
 -- 
-2.43.0
+2.47.1
 
 
