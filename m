@@ -1,125 +1,189 @@
-Return-Path: <linux-kernel+bounces-514087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED29A35238
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:34:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CDDA3523C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5CD3AB3D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D15188C36F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899B51C84BD;
-	Thu, 13 Feb 2025 23:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62091C84C1;
+	Thu, 13 Feb 2025 23:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLvcnPJY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBLZpCPz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB218C924;
-	Thu, 13 Feb 2025 23:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265462753F0;
+	Thu, 13 Feb 2025 23:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489659; cv=none; b=NyMb9PedBAcUxjHxuk9+oP/lyZ+PgvxOKSoGdBCKSGmVjqqOQSU53uFqQzi9v9bq3olWZ/7TO9FXY3vjqMNvvCH9BcVL6e2rMXiKvC8SErQe8CZOZVvTYvf1M9uBc/oxUDcs4qvsfC2OvCSAHetx4GXrqj8kHomo8a3ST2pBw00=
+	t=1739489742; cv=none; b=ayy2Q+1F4LMGaS7XvV0O7eLZxOHOQ/tgRNqimnk0M4W4Di5W9SURuaOidMGrFusyREeigLpX7IaWHeAE8nUGek5pgfp60SQLe+oWWCLfXqBjTeZL01yyHWFNCHm2k4gd2T3KwocYWBoMBbssMH8+WlYGose2jxQq036Dab7rEpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489659; c=relaxed/simple;
-	bh=N1peFMfD7vTD/DRcLqn0vJS+BR6mrfRHxFGLN+VrLow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFcIBgQnkm0+ACCUCMQjeWmH+d1leoTr2dcptYTW9XJ19uoiXKLJxStU52HA7pDIq/dfAQ0hMn7vq4EGWA2d6jS4/0e5mgOmseoogZnfrZWnekf6t6rDAzayh/HZQFN9Sn9csai77nqqdYatkmhVAR3+NhEss9/w0oXYIpm3VQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLvcnPJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9ADC4CEE6;
-	Thu, 13 Feb 2025 23:34:18 +0000 (UTC)
+	s=arc-20240116; t=1739489742; c=relaxed/simple;
+	bh=EZkv+Ho0qnfwzKUpS/CiR6zEjhpxu4+amaaWviz+BWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OK/X1NZF6s8BFaiNUhfW1666HDSsoN9me1/3SxVZsu+rvGEX0WvOhlzOr7QCla5m55xR20bTE34rybze+LT0u/rDH0o7ERS/Q23R/64a+dTsm9xwH19YyJPyAzmUwLN6IjQD1D7YMLCbE513prq8TjzkbsJGCBUNX1kHnqyDpvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBLZpCPz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFBFC4CED1;
+	Thu, 13 Feb 2025 23:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739489658;
-	bh=N1peFMfD7vTD/DRcLqn0vJS+BR6mrfRHxFGLN+VrLow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MLvcnPJYwq2TuORYaw1/ML8+YCaWUgLgFCcZ7doHINjH4PxQSZgvT3c8s4ETClKPv
-	 NAGTXBjLwXrrl2mPgwYjhtnWMUrLHmVqlEbjG0JTiFmJaGuXBfZZmTDZtrM6hIsDGr
-	 vL28499mUY1S2ydy4iAKtiO0YGJYJJcHe8tGbZ82pgMy+iIJa0MRSSfNfPWCYIPn0M
-	 Q4Oaul3kG5QInzMCdZ4u4OY8OYlAqs4DrEhf+PsiK0rslpAZ+ASavWBV6bl9Ouv3Z8
-	 nPIB4UpyH/B9Rdc7aJIcNkryK/Tw49y8n/6UOH2X87M1iEi09uRH1a9fSyMjRzBz/Z
-	 zomhVi+XKletg==
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d149f4c64aso3734585ab.0;
-        Thu, 13 Feb 2025 15:34:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1XANFv5ph0BL8hZ8E7/t+ifDAE4fJnqBqfMR+qkLRKffhO+kEucAwDQKVbQ2GwVjLGNt8CBPBXcaVTx3I8g==@vger.kernel.org, AJvYcCUK9YYWen3dh+z5BuaxYSnoFSr4NCe83inAqQJkvJ7JRWl01+24gu+K/jQSiUt9f/PxrUTUuvop2uqFNibLDYlw/A==@vger.kernel.org, AJvYcCV12rKqMS/bgoC2tB1BnNPZ5dfyBXBfVQazTaWyrwz3jkvgVqmtprm8OV971hg48u3DCqmjATfj7NfDlXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztdrz8m+rUm6BSVCmeGgGNqQLfUNEBFu5ewuHMzH0OC8UIWTFL
-	bRboZ0n3ee1Ay1Oey3X/Cu3TjfLAc1lfIUtX5t2FAlTXAb0lusO7DZvNBBocVUb9NdegqQ/OjFv
-	upZ6LYBmDJ+xvY5rM4J3b9xhmJwo=
-X-Google-Smtp-Source: AGHT+IG1rQV0yKmTd4ign51tXVmFd/3I3khtaLBM2gfno63cBPOt8//ZZKniEPA4RSgy4RfCpeSumDMFlaJlHY9wbAw=
-X-Received: by 2002:a05:6e02:1a61:b0:3a7:8720:9de5 with SMTP id
- e9e14a558f8ab-3d17bdff43fmr80793525ab.1.1739489657616; Thu, 13 Feb 2025
- 15:34:17 -0800 (PST)
+	s=k20201202; t=1739489741;
+	bh=EZkv+Ho0qnfwzKUpS/CiR6zEjhpxu4+amaaWviz+BWg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sBLZpCPz1NoNgOSv1mxpSLs+FNjXdraZqNTFB3c5QkEZtldUDUwcEaHRoOGhH0jHV
+	 1+MpjqpsUOHqDB4AJB4IV6znZsNCAJOd6XknfAhEvR6NR7OzRFBfFLLc+KVFov4ByJ
+	 ubaNRl4pUfnAdNLtpv9T+Bva70o3kQrBNBDMlIozNFJ2WSZsYZn6huJNt516pff30S
+	 To0IExRLA/JEE/JULyszAdyy0i3FANVaqcixojumjfz3wFOYOedm4fwM9Nre1F5YIf
+	 HcWAFkE7/ldK3DKFPJJHo2O6qKVzfmeY/ryLli6G+F0eIVtBP0TOzGE/B28lQqM38Q
+	 VaszY5PZoYaMA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: [PATCH v2] perf report: Add 'tgid' sort key
+Date: Thu, 13 Feb 2025 15:35:40 -0800
+Message-ID: <20250213233540.600006-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
- <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com> <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
- <mb61p1pw21f0v.fsf@kernel.org> <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
- <mb61pseoiz1cq.fsf@kernel.org> <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
- <mb61pr0411o57.fsf@kernel.org>
-In-Reply-To: <mb61pr0411o57.fsf@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Thu, 13 Feb 2025 15:34:06 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6C77if9-_j2sywHE4ZT3JUOAoDNiepiJPrRWCf8OAojA@mail.gmail.com>
-X-Gm-Features: AWEUYZnvF8YgL5a3ClR7_9YRs3GII1KO5ROPdxeyhHjRsChKmRJielirplxSTbQ
-Message-ID: <CAPhsuW6C77if9-_j2sywHE4ZT3JUOAoDNiepiJPrRWCf8OAojA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 2:22=E2=80=AFPM Puranjay Mohan <puranjay@kernel.org=
-> wrote:
->
-> Song Liu <song@kernel.org> writes:
->
-> > On Thu, Feb 13, 2025 at 12:38=E2=80=AFAM Puranjay Mohan <puranjay@kerne=
-l.org> wrote:
-> > [...]
-> >>
-> >> P.S. - The livepatch doesn't have copy_process() but only copy_signal(=
-),
-> >> yours had copy_process() somehow.
-> >
-> > In my build, copy_signal is inlined to copy_process, unless I add noinl=
-ine.
-> > If I do add noinline, the issue will not reproduce.
-> >
-> > I tried more combinations. The issue doesn't reproduce if I either
-> > 1) add noinline to copy_signal, so we are not patching the whole
-> >    copy_process function;
-> > or
-> > 2) Switch compiler from gcc 14.2.1 to gcc 11.5.0.
-> >
-> > So it appears something in gcc 14.2.1 is causing live patch to fail
-> > for copy_process().
->
-> So, can you test your RFC set (without SFRAME) with gcc 14.2.1, so we
-> can be sure that it is not a sframe problem?
+Sometimes we need to analyze the data in process level but current sort
+keys only work on thread level.  Let's add 'tgid' sort key for that as
+'pid' is already taken for thread.
 
-My RFC set is the same. No issue with gcc 11.5.0; but hits the same
-WARNING with gcc 14.2.1. My previous tests are all with clang. I didn't
-see a similar issue there.
+This will look mostly the same, but it only uses tgid instead of tid.
+Here's an example of a process with two threads (thloop).
 
-> And about having the .sframe section in the livepatch module, I realised
-> that this set doesn't include support for reading/using sframe data from
-> any module(livepatches included), so the patch I added for generating
-> .sframe in kpatch is irrelevant because it is a no-op with the current se=
-tup.
+  $ perf record -- perf test -w thloop
 
-Agreed, this issue should be irrelevant to the .sframe section in the .ko f=
-ile.
+  $ perf report --stdio -s tgid,pid -H
+  ...
+  #
+  #    Overhead  Tgid:Command / Pid:Command
+  # ...........  ..........................
+  #
+     100.00%     2018407:perf
+         50.34%     2018407:perf
+         49.66%     2018409:perf
 
-Thanks,
-Song
+Suggested-by: Stephane Eranian <eranian@google.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/Documentation/perf-report.txt |  1 +
+ tools/perf/util/hist.h                   |  1 +
+ tools/perf/util/sort.c                   | 38 ++++++++++++++++++++++++
+ tools/perf/util/sort.h                   |  1 +
+ 4 files changed, 41 insertions(+)
+
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index 87f86451940623f3..4050ec4038425bf0 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -79,6 +79,7 @@ OPTIONS
+ 
+ 	- comm: command (name) of the task which can be read via /proc/<pid>/comm
+ 	- pid: command and tid of the task
++	- tgid: command and tgid of the task
+ 	- dso: name of library or module executed at the time of sample
+ 	- dso_size: size of library or module executed at the time of sample
+ 	- symbol: name of function executed at the time of sample
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 46c8373e314657fa..c164e178e0a48a8e 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -38,6 +38,7 @@ enum hist_column {
+ 	HISTC_TIME,
+ 	HISTC_DSO,
+ 	HISTC_THREAD,
++	HISTC_TGID,
+ 	HISTC_COMM,
+ 	HISTC_CGROUP_ID,
+ 	HISTC_CGROUP,
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 3dd33721823f365d..b4034bd6629d4156 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -141,6 +141,43 @@ struct sort_entry sort_thread = {
+ 	.se_width_idx	= HISTC_THREAD,
+ };
+ 
++/* --sort tgid */
++
++static int64_t
++sort__tgid_cmp(struct hist_entry *left, struct hist_entry *right)
++{
++	return thread__pid(right->thread) - thread__pid(left->thread);
++}
++
++static int hist_entry__tgid_snprintf(struct hist_entry *he, char *bf,
++				       size_t size, unsigned int width)
++{
++	int tgid = thread__pid(he->thread);
++	const char *comm = NULL;
++
++	/* display comm of the thread-group leader */
++	if (thread__pid(he->thread) == thread__tid(he->thread)) {
++		comm = thread__comm_str(he->thread);
++	} else {
++		struct maps *maps = thread__maps(he->thread);
++		struct thread *leader = machine__find_thread(maps__machine(maps),
++							     tgid, tgid);
++		if (leader) {
++			comm = thread__comm_str(leader);
++			thread__put(leader);
++		}
++	}
++	width = max(7U, width) - 8;
++	return repsep_snprintf(bf, size, "%7d:%-*.*s", tgid, width, width, comm ?: "");
++}
++
++struct sort_entry sort_tgid = {
++	.se_header	= "   Tgid:Command",
++	.se_cmp		= sort__tgid_cmp,
++	.se_snprintf	= hist_entry__tgid_snprintf,
++	.se_width_idx	= HISTC_TGID,
++};
++
+ /* --sort simd */
+ 
+ static int64_t
+@@ -2501,6 +2538,7 @@ static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
+ 
+ static struct sort_dimension common_sort_dimensions[] = {
+ 	DIM(SORT_PID, "pid", sort_thread),
++	DIM(SORT_TGID, "tgid", sort_tgid),
+ 	DIM(SORT_COMM, "comm", sort_comm),
+ 	DIM(SORT_DSO, "dso", sort_dso),
+ 	DIM(SORT_SYM, "symbol", sort_sym),
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index a8572574e1686be6..6044eb1d61447c0d 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -72,6 +72,7 @@ enum sort_type {
+ 	SORT_ANNOTATE_DATA_TYPE_OFFSET,
+ 	SORT_SYM_OFFSET,
+ 	SORT_ANNOTATE_DATA_TYPE_CACHELINE,
++	SORT_TGID,
+ 
+ 	/* branch stack specific sort keys */
+ 	__SORT_BRANCH_STACK,
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
