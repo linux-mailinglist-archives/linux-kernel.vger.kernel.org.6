@@ -1,103 +1,134 @@
-Return-Path: <linux-kernel+bounces-513632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80967A34CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:03:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E327A34D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD63AA477
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1346B3AD5E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA3424167C;
-	Thu, 13 Feb 2025 18:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4TlgEEz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E07206F0C;
-	Thu, 13 Feb 2025 18:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1051C26989D;
+	Thu, 13 Feb 2025 18:03:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CC026983F;
+	Thu, 13 Feb 2025 18:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469761; cv=none; b=OQ5qthzbp/qm9SG1IoELkpRQkqJwUDfLVteeArRjphsRO0wgfdRk8nFjvlFFFjUfdC1LHXVXLNdlqlChxwZwqAmW2dwnHmnnnUj3rQ1Wm/9T1aHN9crT/SUOCfFol5Rm5YN3wrF4yVxU3N1mKf89Ocq23lF6jTN3aqVkFxVVvEg=
+	t=1739469807; cv=none; b=bvQPjemeJJ3s1KT0h5b0bzDOkr9Wn9FJToUCMBVGcfxKpSBcoc0doiYE8S8a9n/zKV/GPa+x9q75Tw9elAKQ/1WQ4gzbW2CsChsiKa3jtueDTE4K1Dfxlqexcnu7FfvRHSLGJUi+DKhSsj2y1K96LhMqSBqR1WgXT0kAkKcmESQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469761; c=relaxed/simple;
-	bh=KCXWCt1tfCPrXneMgT2CusbMh3K2XAvWCZTxxW+kCs4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o0m3ZTt/6UxCs4Hhxq/E2/vlEbKGazKfv84uurcAXWosRnMOdFPolYn80s8sYIGk3/Tx2XtLupw5o+sIZIe+xPps669GBZ7oJKNq4frYSU5+rhVngW5Tcr3IboWzuDf5PMHzkgrJpZJStZMB33sy925/yxgicTwGZYiMjTSLndU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4TlgEEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACAFC4CED1;
-	Thu, 13 Feb 2025 18:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469760;
-	bh=KCXWCt1tfCPrXneMgT2CusbMh3K2XAvWCZTxxW+kCs4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C4TlgEEz2SIOtgFa6lO18TAdRvksbF9Wc6+oD9Vqpiq7bGnLbTTqagyvRr/dKeLo7
-	 BapSmWlLvzEwd/0rNdVKBe2fGvEdR+XzfCEyQZkZKYDwMMil5tN8KsqHuruLCEZcJt
-	 AQhlkfgRcAU6pB1r6hLJXO7YYbAXtsf20wMFMivmYg+WpqrihiEEOf2XbQoeh7FBjI
-	 aPNKbj24qU4yUPWTXs31yTsPNDce6S+8ELHefezrbMwh4PrIOKfNnZBQTSLef00XKX
-	 CJrdbasTp6zPEnxO/XqPeTmRnlt1WnIHsQ1IrM5nwcpFoI3CSpacR+OBlYMU2XViIZ
-	 4jn3k0D2mhbbg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tidXq-003nWM-1J;
-	Thu, 13 Feb 2025 18:02:38 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
+	s=arc-20240116; t=1739469807; c=relaxed/simple;
+	bh=mDz0xlWp9rLv+KPhAgViY4OUn0Qp1EADLYFHesLlFSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ChBtJCj5ApQdDhXIs2F5atGD/YSLbM4g0cfIYk4XVmEV17qL5qJbUmLnloNBtCkJeL4YWLgvOu2LgxAXzFJwZjo4WlCZ+rdTNx6NjUuNHbFnkpcV518MAeyFLxMmeW5ulcrlkVlJCvQH/cuKUwT/7wqbwOsxQDHaiztsiFQ+vDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4535113E;
+	Thu, 13 Feb 2025 10:03:44 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D9713F5A1;
+	Thu, 13 Feb 2025 10:03:22 -0800 (PST)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
 	Will Deacon <will@kernel.org>,
-	Quentin Perret <qperret@google.com>
-Cc: Keir Fraser <keirf@google.com>,
-	Ben Simner <ben.simner@cl.cam.ac.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix alignment of kvm_hyp_memcache allocations
-Date: Thu, 13 Feb 2025 18:02:35 +0000
-Message-Id: <173946974570.2974684.11799250388121421778.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250213153615.3642515-1-qperret@google.com>
-References: <20250213153615.3642515-1-qperret@google.com>
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v5 0/8] arm64: dts: Add Arm Morello support
+Date: Thu, 13 Feb 2025 18:03:01 +0000
+Message-ID: <20250213180309.485528-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, keirf@google.com, ben.simner@cl.cam.ac.uk, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 13 Feb 2025 15:36:14 +0000, Quentin Perret wrote:
-> When allocating guest stage-2 page-table pages at EL2, pKVM can consume
-> pages from the host-provided kvm_hyp_memcache. As pgtable.c expects
-> zeroed pages, guest_s2_zalloc_page() actively implements this zeroing
-> with a PAGE_SIZE memset. Unfortunately, we don't check the page
-> alignment of the host-provided address before doing so, which could
-> lead to the memset overrunning the page if the host was malicious.
-> 
-> [...]
+The Morello architecture is an experimental extension to Armv8.2-A,
+which extends the AArch64 state with the principles proposed in
+version 7 of the Capability Hardware Enhanced RISC Instructions
+(CHERI) ISA [1].
 
-Applied to fixes, thanks!
+This series adds dts support for the Arm Morello System Development
+Platform.
 
-[1/1] KVM: arm64: Fix alignment of kvm_hyp_memcache allocations
-      commit: b938731ed2d4eea8e268a27bfc600581fedae2a9
+[1] https://www.morello-project.org/
 
-Cheers,
+To simplify the testing a linux tree rebased on 6.14-rc1 is accessible
+at [2].
 
-	M.
+[2] https://codeberg.org/vincenzo/linux/src/branch/morello/dts/v5
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org> 
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Changes
+=======
+v5:
+  - Add support for fvp.
+  - Add support for pmu.
+  - Address review comments.
+  - Rebase on 6.14-rc1.
+v4:
+  - Add cache information.
+  - Address review comments.
+v3:
+  - Address review comments.
+  - Rebase on 6.13-rc5.
+v2:
+  - Addressed review comments.
+  - Rebased on 6.13-rc4.
+  - Renamed arm,morello to arm,morello-sdp for clarity.
+
+
+Vincenzo Frascino (8):
+  dt-bindings: arm: Add Morello compatibility
+  dt-bindings: arm: Add Morello fvp compatibility
+  dt-bindings: arm: Add Rainier compatibility
+  perf: arm_pmuv3: Add support for ARM Rainier PMU
+  arm64: dts: morello: Add support for common functionalities
+  arm64: dts: morello: Add support for soc dts
+  arm64: dts: morello: Add support for fvp dts
+  MAINTAINERS: Add Vincenzo Frascino as Arm Morello Maintainer
+
+ .../bindings/arm/arm,vexpress-juno.yaml       |   8 +
+ .../devicetree/bindings/arm/cpus.yaml         |   1 +
+ .../devicetree/bindings/arm/pmu.yaml          |   1 +
+ MAINTAINERS                                   |   6 +
+ arch/arm64/boot/dts/arm/Makefile              |   1 +
+ arch/arm64/boot/dts/arm/morello-fvp.dts       |  78 +++++
+ arch/arm64/boot/dts/arm/morello-sdp.dts       | 157 +++++++++
+ arch/arm64/boot/dts/arm/morello.dtsi          | 323 ++++++++++++++++++
+ drivers/perf/arm_pmuv3.c                      |   2 +
+ 9 files changed, 577 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/arm/morello-fvp.dts
+ create mode 100644 arch/arm64/boot/dts/arm/morello-sdp.dts
+ create mode 100644 arch/arm64/boot/dts/arm/morello.dtsi
+
 -- 
-Without deviation from the norm, progress is not possible.
-
+2.43.0
 
 
