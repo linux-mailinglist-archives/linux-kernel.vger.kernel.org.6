@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-512511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519E2A33A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:55:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A43A33A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA657188AD4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BD23A7102
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E50120C469;
-	Thu, 13 Feb 2025 08:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F53C20C01E;
+	Thu, 13 Feb 2025 08:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TAVHyNJM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ajQAG182";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ajQAG182"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC8F2063DA;
-	Thu, 13 Feb 2025 08:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4B62063DA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 08:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739436932; cv=none; b=qmow+3VCr39l2Hk6xGo42eBCuY0FTNFJSyoibF+cm37Yw1qMJSwUO4DCB3rNhvEuhxPCRUMXOqjnrt5uFQmqH80KwyHpsbooj1ARsnOCMUrRJTAhCLKt44NoDTphu9421MU4skef+Z+Phvxyr7t68joOPnPFDYF43hj2ie2pNMM=
+	t=1739436944; cv=none; b=tKpefE6S1rlTlooEhVc4MUF75xuptxoUqAWiavdbQYus0vhYYFS+MW8piHQ4YXmkL5ZJSrnlSjhzwSbtEdAccAInoPAVLM/lHrODvUtXtQ6JQimh/zysbGVmopkcVn0lf+joqNJR+ZDL79BBidsBOHnKQ1LfwDjqXegHQGTbscI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739436932; c=relaxed/simple;
-	bh=MHpOzFsGTOMh0eNy8NM9PNMvsZ+5FJ1jTrK55cX6qck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FefZjT8TOX/oTFVikGG85jBCW0s8Jg0epcpV/pe35e1f6Bs8TR3Xfn0AdNAIhNlR2EdeAVIMbuB2qGX1O+8D6/H43f0gAjQbg+i9KQUYO6elhyc2ULC6Pz5FwU2FlRi/ZtZnOYteOapn6lS/VFQ5Ie8sJ8onAU7syzEVmE8sVss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TAVHyNJM; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739436930; x=1770972930;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MHpOzFsGTOMh0eNy8NM9PNMvsZ+5FJ1jTrK55cX6qck=;
-  b=TAVHyNJMdJIet4i4o1VZbctZb1Jv6P3jm3VhEk8v++ztEzZYzVgUTTOd
-   5GW5feUWOa/5c4pS3VHqMH2VqisNJqbHMoPTxvG9exUIQi3nXQoSmT5Yk
-   DPvm6In2AiAUMet8v7D5eMiQXAXc6gSQLS0MANSZ4eG+dVIRHEUwIM2Do
-   PiPpfzIqKGjPKIHw9NoFn80qILG9DDa1+iw3Y03Mz+JVkw55L1ojpF9NV
-   EwVj31zq5HEkMXInpHMIs5/WYxdLtiUEAyxZHoFJwjyVaihAqMgf2x6kH
-   6bFrMOmCmd4GaHHlLY2rAedyaeMM3jFkSCZWuKfIoy1pODfQZeeSzX6n8
-   w==;
-X-CSE-ConnectionGUID: GnqZmV+qTOu3SZcpNqGLqA==
-X-CSE-MsgGUID: FbTBCfQJSyaK46Vebg4AWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39315781"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="39315781"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:55:29 -0800
-X-CSE-ConnectionGUID: w5l3HZp3SqCCAvQRlF1pNg==
-X-CSE-MsgGUID: b/5oDf+eR8iyHeporrBATQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113263929"
-Received: from unknown (HELO [10.238.9.235]) ([10.238.9.235])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:55:27 -0800
-Message-ID: <6d817749-cb61-4406-9dfe-b8a0ef333a85@linux.intel.com>
-Date: Thu, 13 Feb 2025 16:55:24 +0800
+	s=arc-20240116; t=1739436944; c=relaxed/simple;
+	bh=l0geTxDlQteuQqauKvsshWGcclhOIB4qO6Um2LY9Biw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/VfE0JqhKvSMDDabrZXDqRdlwMWn0niJrjcvVkeVPG7X00/s/wNnwx0+Ygr2oovAvy3bdeKe+xmTrFHAFId/JkOztfc+xiMEV5PRMK/7/K6hAJbfHJZORGEClNiMe4/vXfdMKitGngKglvD7UdFGUhXqsNQpwKPfy9g/l0OUIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ajQAG182; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ajQAG182; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B4A52295F;
+	Thu, 13 Feb 2025 08:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1739436941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=dvp+2zva3b1OzC9c49Z/oXKVc7Zk8EYxQY79anNSCaA=;
+	b=ajQAG1827NLagTbTwYjbfqQpSVsCL9eywPM/N7ZN63lNQYOI5o/irGXlYPnLcGmryG1TwU
+	Bt2mljd+T16zbOo+h8qZA30lhYwzIjATaCPxa4HAPErBPIKbco6haDbLyPcmWJDhQAWtX7
+	UadBSlkpVPO2nglFEQoSN1iI2SoVrfQ=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=ajQAG182
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1739436941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=dvp+2zva3b1OzC9c49Z/oXKVc7Zk8EYxQY79anNSCaA=;
+	b=ajQAG1827NLagTbTwYjbfqQpSVsCL9eywPM/N7ZN63lNQYOI5o/irGXlYPnLcGmryG1TwU
+	Bt2mljd+T16zbOo+h8qZA30lhYwzIjATaCPxa4HAPErBPIKbco6haDbLyPcmWJDhQAWtX7
+	UadBSlkpVPO2nglFEQoSN1iI2SoVrfQ=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C2402137DB;
+	Thu, 13 Feb 2025 08:55:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8W7qLYyzrWcCdgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Thu, 13 Feb 2025 08:55:40 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	xen-devel@lists.xenproject.org,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v2 0/2] xen/swiotlb: two fixes
+Date: Thu, 13 Feb 2025 09:55:36 +0100
+Message-ID: <20250213085538.17060-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/17] KVM: TDX: Complete interrupts after TD exit
-To: Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com, tony.lindgren@intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, linux-kernel@vger.kernel.org
-References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
- <20250211025828.3072076-9-binbin.wu@linux.intel.com>
- <Z62rPgmS2RB/LaC7@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z62rPgmS2RB/LaC7@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 3B4A52295F
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
+Patch 1 removes an unneeded alignment requirement, which resulted in
+exhausting the SWIOTLB with normal use cases.
 
+Patch 2 allows to allocate larger continuous regions by reallocating
+the frame list if needed.
 
-On 2/13/2025 4:20 PM, Chao Gao wrote:
->> +static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
->> +{
->> +	/* Avoid costly SEAMCALL if no NMI was injected. */
->> +	if (vcpu->arch.nmi_injected) {
->> +		/*
->> +		 * No need to request KVM_REQ_EVENT because PEND_NMI is still
->> +		 * set if NMI re-injection needed.  No other event types need
->> +		 * to be handled because TDX doesn't support injection of
->> +		 * exception, SMI or interrupt (via event injection).
->> +		 */
->> +		vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
->> +							      TD_VCPU_PEND_NMI);
->> +	}
-> Why does KVM care whether/when an NMI is injected by the TDX module?
->
-> I think we can simply set nmi_injected to false unconditionally here, or even in
-> tdx_inject_nmi(). From KVM's perspective, NMI injection is complete right after
-> writing to PEND_NMI. It is the TDX module that should inject the NMI at the
-> right time and do the re-injection.
-Yes, it can/should be cleared unconditionally here.
+Changes in V2:
+- drop former patch 2 for now in order to avoid more lengthy discussion
+- new patch 2
 
-Previously (v19 and before), nmi_injected will impact the limit of pending nmi.
-Now, we don't care the limit of pending nmi because more pending NMIs will be
-collapsed to the one pending in the TDX module.
+Juergen Gross (2):
+  xen/swiotlb: relax alignment requirements
+  x86/xen: allow larger contiguous memory regions in PV guests
 
-Will update it.
-Thanks!
+ arch/x86/xen/mmu_pv.c     | 71 ++++++++++++++++++++++++++++++++++-----
+ drivers/xen/swiotlb-xen.c | 20 ++++++-----
+ 2 files changed, 74 insertions(+), 17 deletions(-)
 
->
->
->> +}
->> +
+-- 
+2.43.0
 
 
