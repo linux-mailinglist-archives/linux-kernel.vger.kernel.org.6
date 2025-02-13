@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-513613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8CCA34C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:53:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E05A34C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0025D16B780
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B553A7736
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F6923F42D;
-	Thu, 13 Feb 2025 17:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6A923A9BF;
+	Thu, 13 Feb 2025 17:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS2lLmVd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzNhcwV9"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F42428A2D6;
-	Thu, 13 Feb 2025 17:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0F723A9AD;
+	Thu, 13 Feb 2025 17:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469186; cv=none; b=eNnQr+rN+u0IbyLM7iOdGRD3YG8tMKwBpf7hWq6dxDxpQ5wwQC0bfv+4rWy7AEHTEl5fue8FylNtl1qAQpyR36O/4WobrdYOHRqbBHFHDQvFiYKLTkaEOsnObF3rjc8Wh63KsCC3m7+dAgXZ1w7Oi1HdmGaT3X1nC9ZDkJ0OWtg=
+	t=1739469225; cv=none; b=dNnZYizKAzfxZGtZy5efz/yGtmRO45a7nl7FB/dxy7K8qUrufYten/iZJETwNGn3NhCIz3cEWpT016fqWnFXER7RdOAebz3Xqb6LWJYRgJC9JXm8SVQV6riLGtdeFYRrQS8qaGRULnDQCTZBx+iNiYJk3KSnOSP/P7J2GJM8jsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469186; c=relaxed/simple;
-	bh=0/EZ08bVHan3Oir1oM3FqVRV3qOf4zQaimq6QliMxv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JY6yDt3qvEY7GByuphWWoFV6bfhzOGux+q8hk1rXOFIoEg6t2nfHHYERrcXILtvoG/lj11ghi+eENbIUM6lMdtvTo4rBzP/JtkBLazrKiDKLWFo22FrW9O1yA82XKFt2RLOsbxlaA1+8dZz4diZXfFr33wwwAAYxoSzk/uhsQQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS2lLmVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFEA1C4CED1;
-	Thu, 13 Feb 2025 17:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469186;
-	bh=0/EZ08bVHan3Oir1oM3FqVRV3qOf4zQaimq6QliMxv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tS2lLmVdPvAZXUu/UmlDRziM1qm9d2Bg4NRvDv5uzGqDYiZOSrgzi5no2n9N++ZdX
-	 oHRJkPLSZq+PrL7V5NEMyvzmmpeKsnPoXZNx42bTHsBpLj5Jxv68XPw3GHbduDjrJf
-	 qgF8Tmb+/6RUUNVT83x9CWZ41jUMN0XZq7jgyJ5WVa6Gj6LLFiIvFLcNN2tyxGpUjt
-	 VLVljmLmMshzHV7jEmI7CfmG6EC/KfO6/Y+nBzMu0p4O7UwC49DjNkXZsTy/8CPZiy
-	 wBY1c5w+Vwg0jyxI9nrF7NKhxt0MDnJsutq0jwETD6vEkiF37z7pigNaiWF04Zbfop
-	 X8TgFF+tmoELQ==
-Date: Thu, 13 Feb 2025 17:52:56 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
-	netdev@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add
- gpiod_multi_set_value_cansleep
-Message-ID: <7989a6a0-b761-416c-ad97-69bd23fdc2c4@sirena.org.uk>
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <173935301204.11039.10193374588878813157.b4-ty@linaro.org>
- <801b5364-129f-42e9-bf9a-a90d9eeb4629@baylibre.com>
- <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
+	s=arc-20240116; t=1739469225; c=relaxed/simple;
+	bh=TLrc2YZvYdJFq15z9JF4BK5oBdyJE7ePw8hoZu47Iuk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fTVMm7xY642Mluq7P3sr44NjfP+RaWUrDthHG7az24bXZOinvb/sWsVGb/8YOpiu1kSRO1jk/WEhHECNJrBfzmGoc3AIRzX4U9e4PTtFBuQcEE4RL7pIhT1BOMjdwz0/l/brbjcqy56vAYpd+vo9Ikgf/a+7Rr/fgPqIGIcpcYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzNhcwV9; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3f3a97b3e26so689371b6e.2;
+        Thu, 13 Feb 2025 09:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739469223; x=1740074023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TLrc2YZvYdJFq15z9JF4BK5oBdyJE7ePw8hoZu47Iuk=;
+        b=dzNhcwV9PXTczS5OCnvwd7XKEEGzhFuyUVdBNxEwxT6zHxixVPm4+GmOSQ69I+uH9Z
+         +azIkKOBF4v7QKuoLsHU3D1ZYh18c0KgTBhHkRof/qy79TFFsEqwVcdLvHlpFOKiCgyQ
+         rvw3Y6b1YTkoSfJRj21dBUP2fGDA9i9vV/7wkGdjjO30ghD7R+yJlOKcrZ8XFcLJ/krl
+         iPUc5UlsxrJEeSfS21bma3nzhkgzXp6jdEHXYMECCqLguyjHEn0+/qQvgQJmAYfEckAZ
+         49uyZU98trh11/uBjxjT2ZJ0yv2hXPwMnTfgyWQd4ra9gzHkRlfdl3eYMDT8Z3FavFVR
+         bUiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739469223; x=1740074023;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TLrc2YZvYdJFq15z9JF4BK5oBdyJE7ePw8hoZu47Iuk=;
+        b=mSOw59qv5xznDxFEAvbEhr2Smd31UDxnA5WTgJd0pcw616s9y0XZaCpIyS1yDJmvQi
+         Aj/sufiV3Vluq+vTOgomXDgF2A5UZkQwcbzzXf/sX4SiCdIPUFhVhw7gRRUrlJmFOLcR
+         FKJa8PHrLj9rwymKmrc1egHq4JHKkFz5XuuKPQ5PYNdwnEIv8WMTF5QRQBhwa1jj7Gh9
+         VeTtNNZbG9XoajRtLywgbnfDgID5JstBWVZ2j6cE9kKHYkJEJpfgqVeMT62Y15ShL8Yf
+         28w7f+kg3RoKEx1iANy9AuDhMX7OqHeMMcGiqYNLAN/8gPpfa8DvIWpq7pyLEYV7W/Q5
+         2Tgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Lv4NX64+qBhW9COl6kjMHgay6AOPrh6DCEeEbmeMVPEq6+DD9x+bR4exa0cOVNJbjl7pltsdA5uMk3w=@vger.kernel.org, AJvYcCXv3KMvot4d8IcapeHdSrP6nrS4Ho2q+aeByBY+EJX3s6m8oEfK0gnBkj97QcCgLt/oj936Eg7GVn4cyq3b0+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpu0Sq1nqv+bf8j248wU8OGIkIrDRtV+M3pjgU/W6Xq8anWuLV
+	NRWYw2Sk1HutX3Qty3TOQOJV/IOqpgHAmb821itwum2p7WdLLo/x
+X-Gm-Gg: ASbGncuc8POulR+0d9Egp/MyOMeAo79nVCDp64RoarHcTd7CtRDaE3CIRnN4+wn7G9w
+	z7hXl7f+DAAC6dYaiNMMdH1mCBwLm5bsCcP3UoFcSFISsMUbnYpxwFRd6YKnxPMSU8wnQ8O8rWA
+	Wqy2ZWABhS7XNcUVJ2JIdDOvghxCba4C6f43lB8/9aOHY7u9fBiPX7B9igmvFiSpsZmOVcxi+TT
+	TjsJ2YOVle4xMQ7hboma3HbN6wo95i90my6oQh065PFWUg3a+Y+AE0BZeP73sVtrXXf8psEAn9U
+	1K31yR432MTS9Aj9c3WOBwo1
+X-Google-Smtp-Source: AGHT+IF9flIbzrqTAqMgPf85cz8bXxNkg0DkuKPNR8VC6vMAkHQ/vvjaw5qT4GdlZ7dgoy0YQ+1nlA==
+X-Received: by 2002:a05:6808:198e:b0:3f3:c0ab:db3b with SMTP id 5614622812f47-3f3cd6193f8mr5795784b6e.21.1739469222756;
+        Thu, 13 Feb 2025 09:53:42 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.154.251])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3da966976sm696423b6e.27.2025.02.13.09.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:53:41 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH 0/3] author field in module! macro should be a array
+Date: Thu, 13 Feb 2025 14:53:26 -0300
+Message-Id: <20250213175326.200647-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANiq72kQLizgq+uBEFz10MYPFcpXEA6zttXMz35cG6W93Z-Szw@mail.gmail.com>
+References: <CANiq72kQLizgq+uBEFz10MYPFcpXEA6zttXMz35cG6W93Z-Szw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZlXg6mnu447oqkvT"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MeXTvPnEPjOmPd5Vw0FYKHzndsB0SVjQErA4CY_0MGsMQ@mail.gmail.com>
-X-Cookie: Take it easy, we're in a hurry.
+Content-Transfer-Encoding: 8bit
+
+Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrotes:
+> I think this was a re-send -- in general, please change the title
+> (e.g. increase the version number or at least add "[ PATCH RESEND" or
+> similar) if you need to do a re-send, because otherwise it is hard to
+> follow which is which (e.g. in Lore).
+This would can be a v2, because I already sended a patch for authors. But how
+this patch a lot of changes in comparison to the previous patch I was thinnk
+that is better send this patch how a new patch, but maybe was be a error.
+
+> Also, for some reason, Lore has your #2 and #3 patch in another thread
+> -- please try to see if you can fix that when you send the next
+> version. Both `git send-email` and `b4` should do the right thing by
+> default when sending a series.
+Yeah, I maked a mistake when I send via `git send-email`... inattention
 
 
---ZlXg6mnu447oqkvT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 13, 2025 at 06:42:19PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Feb 13, 2025 at 6:25=E2=80=AFPM David Lechner <dlechner@baylibre.=
-com> wrote:
-
-> > Do you plan to pick up the other patches that have been acked
-> > as well? It seems like most folks were OK with everything going
-> > though the gpio tree since the changes are small.
-
-> Jonathan requested a branch so I made one and sent out a PR. I figured
-> people would just pick the relevant patches into their respective
-> trees? For patches that won't be in next by rc5 - I will take them if
-> Acked - just remind me.
-
-If people are acking things that generally means they're expecting them
-to go along with the rest of the series.  When you didn't apply the ASoC
-patch I did actually put into CI but it was a bit surprising that you
-seemed to be expecting that.
-
---ZlXg6mnu447oqkvT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeuMXgACgkQJNaLcl1U
-h9BoDgf/W5CpihAHC/LYRf8SQvXiRwjxswvLLHFJuH31Mlm004xXbQEhnVGnx0y5
-BQuUSIV5VBOy8sV3etF5jay1rfAtGlXAa6tfyCNLSjF6164Pa3MmGuNcxlA6mijW
-bHTSKgw0661wFELE/2qvRoPQKQmeo6POj/IJBf5mM4u4keHyjlCm+3FaYkBMTz16
-Plm2wDHNvrjxP4KKza3/uwwcSJTSQrVF2SXDqi/bFgV18RrljglU4KJAiM+K08OB
-o0BJjYG+Rxesf072hc7kDvG/B3yk/8cC8bnDpdtIkeVN+dVcW2d7QktryNVqQgbM
-xlC6PgwJOwzMzOkxSTgIUpQqYYa8nQ==
-=Ir02
------END PGP SIGNATURE-----
-
---ZlXg6mnu447oqkvT--
+Thanks,
+Guilherme
 
