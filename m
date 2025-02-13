@@ -1,182 +1,262 @@
-Return-Path: <linux-kernel+bounces-513643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5B2A34CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:06:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05C1A34D31
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:12:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2F91623A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746623AD1AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE2824503E;
-	Thu, 13 Feb 2025 18:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4027127D;
+	Thu, 13 Feb 2025 18:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFlcFson"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r3F0j2tt"
+Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DF2245030;
-	Thu, 13 Feb 2025 18:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1400024BBEC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469803; cv=none; b=VKWVB5ukkQSqM1kmNI/D4u/EWkWCXtXQWKFiVTGmL8/ZDej+o4HuDjMMcboNWHqoR9EjG4vQY/YHGWppj+g4Pj/6IuQpT2dhIUfRrM1N/V8Rh1GsPJ/kSmis6nKLJQC0nAFfWSB9rJ1EOZ7RXconx0n/5b2nNQqSLc0ZXJ7u+mA=
+	t=1739469925; cv=none; b=GuZpT9vMpGe0n+UqigQA2WqEyGst3tu01YYwjiQs+ldvICuaEuTv4VAf3H0tV5v8bza9hLUiSGwrFjEsm4Zwe2W9u2/2TLxp904ZBjtWHw/C1mxCl5618jVT3/xE08N/9eAOBGSrBBqevU+fjcTI31+VRalN3T7iD2iNPl8MCXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469803; c=relaxed/simple;
-	bh=WbXwHDiWR7XWg4WjQ4/T8ldzDcjVVx3R4v88F9Z6gJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1V9iOpXXzXVDXSsRHlWIqCx/AXz6RqY5BozS7LQDpclPY4vutcTmGfDs1uKRKN7abVSpGbBEs9tNK3A4R0A7gEwJ1CicnbEVwWEKf8RdG1AVct1TKmYtbEKvgZM5UPiGDBYKJpRAn5vUTW+vi3uAP3CJ9dm+hPGbk7gnpkwGj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFlcFson; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC902C4CED1;
-	Thu, 13 Feb 2025 18:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739469802;
-	bh=WbXwHDiWR7XWg4WjQ4/T8ldzDcjVVx3R4v88F9Z6gJQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JFlcFsonbuTOSnOfR4qSEuNbP6OqQO4MkCgmkJkU3qk/lFWl4DcL9Ny7+hL5pGItP
-	 X8euWWBe+4vkvZ28rziKTnwiAN6h635psymMpbkwRtULAQulnND73pl1GQ0SEOLw+C
-	 bMyAgJM5CI6DnWYEqTMaRqqnyTOVWJthiT3yj0D3KTJ11oN0uKvQaP1eLSHQXp//sT
-	 x90CYDFiKV6X3Nbgav+6OERLLLgqLuZxAL1XgCN6K07OvJ3s1v8T36rfjAL06pX26I
-	 STTI/G/uteVexNzLyPLhM66cveAjEv+pRL9cAmHIazhxI4itpUtiWCaqBx8fK/eWWw
-	 BHRgRHaw2a2YQ==
-Message-ID: <e45c47bb-2c69-42b3-9c2d-7ec789f94cc5@kernel.org>
-Date: Thu, 13 Feb 2025 19:03:14 +0100
+	s=arc-20240116; t=1739469925; c=relaxed/simple;
+	bh=fZjI6jyXbj5J+H1dhYbBv4gfTLdsOoEZWMhRkLloJXs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FxAGNrkhm+Mhu8kji4ud32LdDcSVcUOI0p9a4NgLLYXsVeGUvA7xCUOQTRtgMZBCUMoqIeYgDq5o/Ryy7DMZswvorPBee9vmtJhEZ72Tez9m8jC/I7Z/M7Q0Gx+YSG7r9vBKQqBVQ2F/pLcErq2k6ETOUwMowokNMLcdE6MKzSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r3F0j2tt; arc=none smtp.client-ip=209.85.166.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-3d14a3f810fso7662885ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:05:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739469920; x=1740074720; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dq7JupJfqupn6bj3Nl6z9Mq+cMEnqj9ECjf86JM2UFM=;
+        b=r3F0j2ttnhiztQevbEbG8SKYzLlPGoEaMNDR5RXbe+ophYEJv1KIZykBU2jxs5tUry
+         tWuX+rg5QK6TIAw4UEKj/qNAR8ZejCvCn8sVng++OBACIbLSI2mg+JAS12igxVLX0Bcs
+         Wl4qe3a9wsEcVJrtMeAWiM61QD/oG6lY5mfVzDv0eXXr5u8WH0H5Mwx8rC3Icr+KbWJa
+         YgTGqje3xUQwvVMpRflN6yW9DshQI6KNNSHvc+zl6gcLfzbQdpU1jXcAnGILfGdDP9Lz
+         iahoqErOYFtjpVQQBVSCe0y8GXk16+EHYhb2ISdTn1tp8qKr1SY0TRfAHL1lzidmVN0i
+         b/TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739469920; x=1740074720;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dq7JupJfqupn6bj3Nl6z9Mq+cMEnqj9ECjf86JM2UFM=;
+        b=UyeHWvbXlrDVOXz82jtJOq0OX6wF06AUNy4PprxxU/h4UW9iFmJaduWZDJ5F910Y/b
+         eAdgyaiNmhoXgXx3o/1BBnKnH74kv1/GwqIsDZlHNIww+3QTkbhVShyQvm1DhVEYQEaG
+         2QojLB1kmsDsAayIwDaQLLLzsrtEHuQkRnAvIPPc/pdHwcwBaMVCazGgaK56hzChgPt+
+         I6kjlEiCoJRHuUyov3VR7qe8iy+hVR8qhi1vlO1RwGZBiboqz4LWmc3SDydQyeLc36u+
+         OovtM1w96f+0w75vtoDj8EFgEu/c4gVZ2DVq9CT/1RMsorSDSu9HwMrqxTYROIqhIgvP
+         V5AA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEgmmrSs5CVxSv/pmza5kSdO93Ed6Sv4yQvnF05IqFO5Du5pxQf8Pn/eXdmBvMQH//ahYdaNZVq8USV/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwvaEzW/OdBfOuoM8JTAi9Tex5SM8kU8hT00KWLgglpUyKawaX
+	8/DWoclkVSKeEmLTRivZ/tKvnLcAW8BOlopsiXKsUdUTztiD5+7CTZEsWcBlDWFYttlEj8rU/g3
+	sRyU7lGgEn7Pf3k/2+dBOJg==
+X-Google-Smtp-Source: AGHT+IG9yUY19PrB7CUAP1YCyZmOUqmjAlpEtfXNoKRyP2K6BA/Dl/Zm7nJWWsMJ2WVwqa/OpSnedg/QppfMvmglxw==
+X-Received: from ilbdz17.prod.google.com ([2002:a05:6e02:4411:b0:3d0:ebcd:cf64])
+ (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6e02:3989:b0:3d0:618c:1b29 with SMTP id e9e14a558f8ab-3d18c2167e2mr43303965ab.5.1739469920127;
+ Thu, 13 Feb 2025 10:05:20 -0800 (PST)
+Date: Thu, 13 Feb 2025 18:03:14 +0000
+In-Reply-To: <20250213180317.3205285-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/7] arm64: dts: agilex: Fix fixed-clock schema
- warnings
-To: matthew.gerlach@linux.intel.com
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, dinguyen@kernel.org, joyce.ooi@intel.com,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, matthew.gerlach@altera.com,
- peter.colberg@altera.com
-References: <20250211151725.4133582-1-matthew.gerlach@linux.intel.com>
- <20250211151725.4133582-3-matthew.gerlach@linux.intel.com>
- <8bf87b59-fe80-4bb5-a558-bff35d876e67@kernel.org>
- <d6b453b-5819-d663-7cc1-6ef154c5d965@linux.intel.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d6b453b-5819-d663-7cc1-6ef154c5d965@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250213180317.3205285-1-coltonlewis@google.com>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250213180317.3205285-6-coltonlewis@google.com>
+Subject: [RFC PATCH v3 5/8] KVM: arm64: Introduce module param to partition
+ the PMU
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/02/2025 18:37, matthew.gerlach@linux.intel.com wrote:
-> 
-> 
-> On Wed, 12 Feb 2025, Krzysztof Kozlowski wrote:
-> 
->> On 11/02/2025 16:17, Matthew Gerlach wrote:
->>> Add required clock-frequency property to fixed-clock nodes
->>> to fix schema check warnings.
->>>
->>> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->>> ---
->>> v6:
->>>  - New patch to series.
->>> ---
->>>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
->>> index 1235ba5a9865..42cb24cfa6da 100644
->>> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
->>> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
->>> @@ -114,21 +114,25 @@ clocks {
->>>  		cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
->>>  			#clock-cells = <0>;
->>>  			compatible = "fixed-clock";
->>> +			clock-frequency = <0>;
->>
->> That's not a correct frequency. You silence some error by introducing
->> incorrect properties. That's wrong.
-> 
-> A clock-frequency of 0 seems valid for a clock that is disabled or not 
-> used on a particular board. I chose this approach because it already has 
-> widespread usage in the kernel:
-> 
->  	grep 'clock-frequency = <0>' arch/arm64/boot/dts/*/*.dtsi | wc -l
->  	198
+For PMUv3, the register MDCR_EL2.HPMN partitiones the PMU counters
+into two ranges where counters 0..HPMN-1 are accessible by EL1 and, if
+allowed, EL0 while counters HPMN..N are only accessible by EL2.
 
-If the clock is not there, it should be removed or disabled. Otherwise
-what is the point of setting here clock frequency=0? To silence some
-warning. Why is there warning in the first place?
+Introduce a module parameter in KVM to set this register. The name
+reserved_host_counters reflects the intent to reserve some counters
+for the host so the guest may eventually be allowed direct access to a
+subset of PMU functionality for increased performance.
 
+Track HPMN and whether the pmu is partitioned in struct arm_pmu
+because both KVM and the PMUv3 driver will need to know that to handle
+guests correctly.
 
-> 
->>
->> Don't fix the warnings just to silence them, while keeping actual errors
->> still in the code.
-> 
-> I actually want to fix the existing warnings, but it seems appropriate to 
-> only address the existing warnings that are related to this patch set of 
-> adding PCIe Root Port support to the Agilex family of chips. This patch 
-> set requires touching the file, socfpga_agilex.dtsi; so I fixed the 
-> warnings I thought were in this file. I believe the other warnings need to 
-> be fixed by converting text binding descriptions to yaml or by touching 
-> files unrelated to this patch set.
-> 
-> Setting the value of the status property to "disabled" also silences the 
-> particular fixed-clock, but I didn't see any other usage by a fixed-clock. 
-> What do suggest is the best way to handle this warning?
+Due to the difficulty this feature would create for the driver running
+at EL1 on the host, partitioning is only allowed in VHE mode. Working
+on nVHE mode would require a hypercall for every register access
+because the counters reserved for the host by HPMN are now only
+accessible to EL2.
 
-DTSI and DTS represent actual hardware, so common DTSI should not have
-clocks which do not exist. Such clocks should be in DTS or some other
-common DTSI file, depending on how the hardware is organized.
+The parameter is only configurable at boot time. Making the parameter
+configurable on a running system is dangerous due to the difficulty of
+knowing for sure no counters are in use anywhere so it is safe to
+reporgram HPMN.
 
-Instead of fixing the warning, look at the cause - what is wrong in DTSI
-in this hardware description.
+Signed-off-by: Colton Lewis <coltonlewis@google.com>
+---
+ arch/arm64/include/asm/kvm_pmu.h |  4 +++
+ arch/arm64/kvm/Makefile          |  2 +-
+ arch/arm64/kvm/debug.c           |  9 ++++--
+ arch/arm64/kvm/pmu-part.c        | 47 ++++++++++++++++++++++++++++++++
+ arch/arm64/kvm/pmu.c             |  2 ++
+ include/linux/perf/arm_pmu.h     |  2 ++
+ 6 files changed, 62 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/kvm/pmu-part.c
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm64/include/asm/kvm_pmu.h b/arch/arm64/include/asm/kvm_pmu.h
+index 613cddbdbdd8..174b7f376d95 100644
+--- a/arch/arm64/include/asm/kvm_pmu.h
++++ b/arch/arm64/include/asm/kvm_pmu.h
+@@ -22,6 +22,10 @@ bool kvm_set_pmuserenr(u64 val);
+ void kvm_vcpu_pmu_resync_el0(void);
+ void kvm_host_pmu_init(struct arm_pmu *pmu);
+ 
++u8 kvm_pmu_get_reserved_counters(void);
++u8 kvm_pmu_hpmn(u8 nr_counters);
++void kvm_pmu_partition(struct arm_pmu *pmu);
++
+ #else
+ 
+ static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
+diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
+index 3cf7adb2b503..065a6b804c84 100644
+--- a/arch/arm64/kvm/Makefile
++++ b/arch/arm64/kvm/Makefile
+@@ -25,7 +25,7 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
+ 	 vgic/vgic-mmio-v3.o vgic/vgic-kvm-device.o \
+ 	 vgic/vgic-its.o vgic/vgic-debug.o
+ 
+-kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
++kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu-part.o pmu.o
+ kvm-$(CONFIG_ARM64_PTR_AUTH)  += pauth.o
+ kvm-$(CONFIG_PTDUMP_STAGE2_DEBUGFS) += ptdump.o
+ 
+diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+index 7fb1d9e7180f..b5ac5a213877 100644
+--- a/arch/arm64/kvm/debug.c
++++ b/arch/arm64/kvm/debug.c
+@@ -31,15 +31,18 @@
+  */
+ static void kvm_arm_setup_mdcr_el2(struct kvm_vcpu *vcpu)
+ {
++	u8 counters = *host_data_ptr(nr_event_counters);
++	u8 hpmn = kvm_pmu_hpmn(counters);
++
+ 	preempt_disable();
+ 
+ 	/*
+ 	 * This also clears MDCR_EL2_E2PB_MASK and MDCR_EL2_E2TB_MASK
+ 	 * to disable guest access to the profiling and trace buffers
+ 	 */
+-	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN,
+-					 *host_data_ptr(nr_event_counters));
+-	vcpu->arch.mdcr_el2 |= (MDCR_EL2_TPM |
++	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN, hpmn);
++	vcpu->arch.mdcr_el2 |= (MDCR_EL2_HPMD |
++				MDCR_EL2_TPM |
+ 				MDCR_EL2_TPMS |
+ 				MDCR_EL2_TTRF |
+ 				MDCR_EL2_TPMCR |
+diff --git a/arch/arm64/kvm/pmu-part.c b/arch/arm64/kvm/pmu-part.c
+new file mode 100644
+index 000000000000..e74fecc67e37
+--- /dev/null
++++ b/arch/arm64/kvm/pmu-part.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2025 Google LLC
++ * Author: Colton Lewis <coltonlewis@google.com>
++ */
++
++#include <linux/kvm_host.h>
++#include <linux/perf/arm_pmu.h>
++
++#include <asm/kvm_pmu.h>
++
++static u8 reserved_host_counters __read_mostly;
++
++module_param(reserved_host_counters, byte, 0);
++MODULE_PARM_DESC(reserved_host_counters,
++		 "Partition the PMU into host and guest counters");
++
++u8 kvm_pmu_get_reserved_counters(void)
++{
++	return reserved_host_counters;
++}
++
++u8 kvm_pmu_hpmn(u8 nr_counters)
++{
++	if (reserved_host_counters >= nr_counters) {
++		if (this_cpu_has_cap(ARM64_HAS_HPMN0))
++			return 0;
++
++		return 1;
++	}
++
++	return nr_counters - reserved_host_counters;
++}
++
++void kvm_pmu_partition(struct arm_pmu *pmu)
++{
++	u8 nr_counters = *host_data_ptr(nr_event_counters);
++	u8 hpmn = kvm_pmu_hpmn(nr_counters);
++
++	if (hpmn < nr_counters) {
++		pmu->hpmn = hpmn;
++		pmu->partitioned = true;
++	} else {
++		pmu->hpmn = nr_counters;
++		pmu->partitioned = false;
++	}
++}
+diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c
+index 85b5cb432c4f..7169c1a24dd6 100644
+--- a/arch/arm64/kvm/pmu.c
++++ b/arch/arm64/kvm/pmu.c
+@@ -243,6 +243,8 @@ void kvm_host_pmu_init(struct arm_pmu *pmu)
+ 	entry->arm_pmu = pmu;
+ 	list_add_tail(&entry->entry, &arm_pmus);
+ 
++	kvm_pmu_partition(pmu);
++
+ 	if (list_is_singular(&arm_pmus))
+ 		static_branch_enable(&kvm_arm_pmu_available);
+ 
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index 35c3a85bee43..ee4fc2e26bff 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -125,6 +125,8 @@ struct arm_pmu {
+ 
+ 	/* Only to be used by ACPI probing code */
+ 	unsigned long acpi_cpuid;
++	u8		hpmn; /* MDCR_EL2.HPMN: counter partition pivot */
++	bool		partitioned;
+ };
+ 
+ #define to_arm_pmu(p) (container_of(p, struct arm_pmu, pmu))
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
