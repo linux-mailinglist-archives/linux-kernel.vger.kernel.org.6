@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-512213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70DAA335A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B21BA335A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA7F3A4343
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC5C3A2853
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4F62045B6;
-	Thu, 13 Feb 2025 02:56:41 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBD2036FB;
+	Thu, 13 Feb 2025 02:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u1drbhpy"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73A54A08;
-	Thu, 13 Feb 2025 02:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60A54A08
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739415401; cv=none; b=SNpgaSF6bAPRYHB/3xUOHzuO5tHZq6E7NU/2ljSg02k86Ssl1v6Nw+pL1dWaF/7Utg/1BmJZCuKqLeKUlSa/eM11iXutwJJFQIfs0VbTb6LecBHc9qjkWZWHz9tfmwMC2GJI10YBaRX7LVka0VkyS39afnljBSeswW9M3m2sJO4=
+	t=1739415455; cv=none; b=fGYx2cnHf3CKgmcoAzgvAE+zR7CbYPOp7al8i31EEF7tTw6r55ml6NR7BqsKIDfEVKYTyShvYDE1GAunMhkAyZ0eC9s0IX+e/RfTrwNAYAO5J1stIykmIyilCM1qBQn4nTxwU0RgbmW47n2oaUIdIUnIddOa4qjbhzGoakXANZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739415401; c=relaxed/simple;
-	bh=dvZJGnR3IBV8iCwMPyCo3wGbBEKyPO60n1soK8uhBoo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iEhTyvbetziaHIQP8+W5sQ6Ohd6No+xtj8OylYMmeNfLgtQKdod1JskjMzr7st4btgvG2rroh6hK5SoaICa4I7w04LE7CyZ/kk+5tJDJBEPJd02Ek6QKBtSJPwc+VMDtYTV6YGQ3bRZyfmMS5b2vwfWv4rOb9woyNAwPm1mRxqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YtfvR6qPRz4f3kFm;
-	Thu, 13 Feb 2025 10:56:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 529C01A13C2;
-	Thu, 13 Feb 2025 10:56:25 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGBXX61n22LHDg--.12367S3;
-	Thu, 13 Feb 2025 10:56:25 +0800 (CST)
-Subject: Re: [PATCH] blk-wbt: Cleanup some comments
-To: Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250212030055.407090-1-yizhou.tang@shopee.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e8de697b-e098-97cd-fe3c-800b59b2c7cf@huaweicloud.com>
-Date: Thu, 13 Feb 2025 10:56:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1739415455; c=relaxed/simple;
+	bh=CpcRkamTjzxXr7oWqpFy5FD2Fuz+fACZLhbK+eoL7wA=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=W5k0Xx4G9vrMtzT+Ur2rh9pwNj0S67U66XXGW2ehuSYXoJ6ByYwlPIJc8HVApW8SlGpX/LIeXV2UkRD8llqM3fV74OvCbHeGSIkMOUFkvySxBVLgn9jCHzXMGFJ95/+90EC0piXT2kki5AXcnsdbrg357matIoKaVmAIdLNMMog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u1drbhpy; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250212030055.407090-1-yizhou.tang@shopee.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHrGBXX61n22LHDg--.12367S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AryDKr1fAw4fZrWkuFWfXwb_yoW8Zw1UpF
-	sakw13Zr47tF1xu3s7Xay7Gr4fG3Z5Kr18tr1xWwnIqrnIgrnYvF4UKr10vrWrZ34fGr4I
-	va1jgF4fGa18u3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUzi
-	SdDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739415450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NmWV5qLBGFJ380Q636JbOBAatzAC28wVNjP4Bc1s1jY=;
+	b=u1drbhpyXca+ZGXrN2eKhW797pCKeYFtckSmOgpaly4XqfrUi0RKF0Zi8FCQpWkVWcqLRG
+	wOdHIVDU29LKTCRpasCW+6ns0+bLvOaOi7ssmTz9Aax8GpIqgTGkswExqdQMYk8dCeCo42
+	HxSa1vj8ZjeGQdz/cjFa6wCr/yF6J0o=
+Date: Thu, 13 Feb 2025 02:57:28 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yosry Ahmed" <yosry.ahmed@linux.dev>
+Message-ID: <25268fbedb82a06ba0c13e2c490b164846ef508b@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCHv4 14/17] zsmalloc: make zspage lock preemptible
+To: "Sergey Senozhatsky" <senozhatsky@chromium.org>
+Cc: "Sergey Senozhatsky" <senozhatsky@chromium.org>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Minchan Kim" <minchan@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, "Kairui Song"
+ <ryncsn@gmail.com>
+In-Reply-To: <rbco2k74plqedtqvn6ebu6wwssy5urw5mjvsk6n576d3urbjnx@tq43anmdvq35>
+References: <lxottj72e7jcqw634qwudpsyqckfrvpmlhra43en4zlrlz4cip@erufv6w4n5j6>
+ <Z6JMIKlO9U5P-5gE@google.com>
+ <6vtpamir4bvn3snlj36tfmnmpcbd6ks6m3sdn7ewmoles7jhau@nbezqbnoukzv>
+ <Z6O2oPP7lyRGXer_@google.com>
+ <6uhsj4bckhursiblkxe54azfgyqal6tq2de3lpkxw6omkised6@uylodcjruuei>
+ <Z6ThGFt6wyNpx9xi@google.com>
+ <wnffho5jguo24wfy3qv5tvovoargezbu4kcvpk43ludrhyfo6i@6ogtvk5ivfjc>
+ <Z6Z2l9uovxAiED6q@google.com>
+ <droaoze6w4atf7guiv6t4imhcmkpteyvoaigdnw5p3vdg75ebx@m56xi2y527i4>
+ <Z6y_3xS_8pmZ2bCz@google.com>
+ <rbco2k74plqedtqvn6ebu6wwssy5urw5mjvsk6n576d3urbjnx@tq43anmdvq35>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+February 12, 2025 at 6:18 PM, "Sergey Senozhatsky" <senozhatsky@chromium.=
+org> wrote:
 
-ÔÚ 2025/02/12 11:00, Tang Yizhou Ð´µÀ:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
-> 
-> wbt_wait() no longer uses a spinlock as a parameter. Update the
-> function comments accordingly.
-> 
-> Additionally, revise other comments to ensure they align with the
-> actual implementation.
-> 
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> ---
->   block/blk-wbt.c | 17 +++++++----------
->   1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-> index 6dfc659d22e2..f1754d07f7e0 100644
-> --- a/block/blk-wbt.c
-> +++ b/block/blk-wbt.c
-> @@ -136,8 +136,9 @@ enum {
->   	RWB_MIN_WRITE_SAMPLES	= 3,
->   
->   	/*
-> -	 * If we have this number of consecutive windows with not enough
-> -	 * information to scale up or down, scale up.
-> +	 * If we have this number of consecutive windows without enough
-> +	 * information to scale up or down, slowly return to center state
-> +	 * (step == 0).
->   	 */
->   	RWB_UNKNOWN_BUMP	= 5,
->   };
-> @@ -446,9 +447,9 @@ static void wb_timer_fn(struct blk_stat_callback *cb)
->   		break;
->   	case LAT_UNKNOWN_WRITES:
->   		/*
-> -		 * We started a the center step, but don't have a valid
-> -		 * read/write sample, but we do have writes going on.
-> -		 * Allow step to go negative, to increase write perf.
-> +		 * We don't have a valid read/write sample, but we do have
-> +		 * writes going on. Allow step to go negative, to increase
-> +		 * write performance.
 
-Other than this clean up, the others are actually fix. Can you remove
-this one and change the title to "Fix some comments"?
 
-Thanks,
-Kuai
+>=20
+>=20On (25/02/12 15:35), Yosry Ahmed wrote:
+>=20
+>=20>=20
+>=20> Difference at 95.0% confidence
+> >=20
+>=20>  -1.03219e+08 +/- 55308.7
+> >=20
+>=20>  -27.9705% +/- 0.0149878%
+> >=20
+>=20>  (Student's t, pooled s =3D 58864.4)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Thanks for sharing these results, but I wonder if this will captur=
+e
+> >=20
+>=20>  regressions from locking changes (e.g. a lock being preemtible)? I=
+IUC
+> >=20
+>=20>  this is counting the instructions executed in these paths, and tha=
+t
+> >=20
+>=20>  won't change if the task gets preempted. Lock contention may be ca=
+ptured
+> >=20
+>=20>  as extra instructions, but I am not sure we'll directly see its ef=
+fect
+> >=20
+>=20>  in terms of serialization and delays.
+> >=20
+>=20
+> Yeah..
+>=20
+>=20>=20
+>=20> I think we also need some high level testing (e.g. concurrent
+> >=20
+>=20>  swapins/swapouts) to find that out. I think that's what Kairui's t=
+esting
+> >=20
+>=20>  covers.
+> >=20
+>=20
+> I do a fair amount of high-level testing: heavy parallel (make -j36 and
+>=20
+>=20parallel dd) workloads (multiple zram devices configuration - zram0 e=
+xt4,
+>=20
+>=20zram1 writeback device, zram2 swap) w/ and w/o lockdep. In addition I=
+ also
+>=20
+>=20run these workloads under heavy memory pressure (a 4GB VM), when oom-=
+killer
+>=20
+>=20starts to run around with a pair of scissors. But it's mostly regress=
+ion
+>=20
+>=20testing.
+>
 
->   		 */
->   		scale_up(rwb);
->   		break;
-> @@ -638,11 +639,7 @@ static void wbt_cleanup(struct rq_qos *rqos, struct bio *bio)
->   	__wbt_done(rqos, flags);
->   }
->   
-> -/*
-> - * May sleep, if we have exceeded the writeback limits. Caller can pass
-> - * in an irq held spinlock, if it holds one when calling this function.
-> - * If we do sleep, we'll release and re-grab it.
-> - */
-> +/* May sleep, if we have exceeded the writeback limits. */
->   static void wbt_wait(struct rq_qos *rqos, struct bio *bio)
->   {
->   	struct rq_wb *rwb = RQWB(rqos);
-> 
-
+If we can get some numbers from these parallel workloads that would be be=
+tter than the perf stats imo.
 
