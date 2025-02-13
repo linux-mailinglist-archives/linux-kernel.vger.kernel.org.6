@@ -1,325 +1,181 @@
-Return-Path: <linux-kernel+bounces-512632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FABA33BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:59:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC2EA33BD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0949416056F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48676188D3C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD41A211468;
-	Thu, 13 Feb 2025 09:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93E42116E0;
+	Thu, 13 Feb 2025 09:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XQdDti7X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WPw+oqHN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22CD8489
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC77211292;
+	Thu, 13 Feb 2025 09:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440748; cv=none; b=tiZDhIxImonlD3l7HFccn3bfX+6SIeJKhhugHJ5vEpeNQUK87hXN4kDu6kHFtk9x4Fmb3M6cL58mQe3AEOER1hglFvQgz8ro08OC7epePggR2uH9oNJ4YZNu64hZYBrRY3aApqUI1l7mLg8StKug8tW5DYE4bdnoKBJ1jlEPMWs=
+	t=1739440769; cv=none; b=ZwK3Yzx1B2SWD8Nm/qv3klAQAJBT7AQQG0Rqbe/OQMAG0alRV2JWO3RyvCMNo5qtLqYO/2IKOdqQru5i+BkgSFouqbNC985GMlRk2C0Syi2hpMqxfpKiM/nNeBnqY+x50tSPSd2QyQggWpMx7iFXVAcnUbgGfUy2qAtXVqXtyuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440748; c=relaxed/simple;
-	bh=mBlhcPbs/4AtW9iUm1sJpj2/mUf5xyUFvoRw2xJsEeU=;
+	s=arc-20240116; t=1739440769; c=relaxed/simple;
+	bh=80ywDfww+kmELyRiFn0bexIaEho8JtvhUo8i8AyBu3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d69RAIVd347KlWky7a9rgHqEl9i288BDVAdv5iG0ZEJv+B4HeNTiG1lxm8ClY37OcgZQ+Rt7dYLR2jfOFgR5YiQrhHPjnm+zs4d6RLFOLJK6E+AtRIE2o8iE1PlGiKLnzPekGeL4SUCHMWshr64qaUOATz/R20BjWPMaVW8Fm4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XQdDti7X; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739440744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VF9gmqLLZEfjcpfDgykC+OwEPvzUo3jEbA07776aV5k=;
-	b=XQdDti7XyJxUiF88ZH2ghud2l2ljqHiaj5T9cOWrpF3+gPlf7N2M+3j0/WuGHVHNJAxa55
-	JnMuioh43lRtpmC9STSHZoSKrOFrjluBF+du3tyq0CkpdDdm8WoMuuQKVsiKnCZuYmNDk6
-	nzVNEbwYp8T8jrqrkwPONVCYK0Vg370=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-nZG7Vj11Nmy1RtPjczQWNA-1; Thu, 13 Feb 2025 04:59:03 -0500
-X-MC-Unique: nZG7Vj11Nmy1RtPjczQWNA-1
-X-Mimecast-MFC-AGG-ID: nZG7Vj11Nmy1RtPjczQWNA
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso4922805e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:59:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739440742; x=1740045542;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VF9gmqLLZEfjcpfDgykC+OwEPvzUo3jEbA07776aV5k=;
-        b=DvUTJuQKXd5CtmXmdciG0oGACcV2BqCc+uml4DsABx36/XUlHWHatPn9OXj2qQ9aZ5
-         OmkQTLSox4EhRUeLUCGDqXgE92i/kHtM9lB3zVtCu7txjnx7/jkr3orvZl2giz3nxL+w
-         gpRipxIYmmr9+9/DmXB0wETqa+x5GPa97TeOCaOG6h3VGGmLskq7CCpf3R9q43WP+97p
-         0AGCiJQIQ5ohUuVByfX4aw9DXPbM5sT2xvsHEYR4w8sCL4bWrMcbFHozgcs54oSs/lN9
-         e6jxBFRKYIPCVHPRXbVcZWstH4LvG2mVElwznpYKf8rt3StIeaNh/a/BiBn0lURpQXia
-         mb8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRiycMUEqjoZdReOoU+ipPpz9vBUh0TyrEXU5Ug/zSYuf1qiXxxNs88DymdyS8L1BPYCNORwOt1GuUd7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTme1EamqDHeM1XTaQAosfhYIZ7OtpF3Hb02b03QG5oxLq99wB
-	ccj9FDhCjmoK9Ibs7WY6Of79K/5D4ZBtKkIhcsnKJaa9XMlwGoFPv07k5exBALWH6ym/zB8OQ3l
-	55aRJBZVM6fbEX1WgPKwR7r5jpcOiaqTekJYnq2T4HFMN33WQZbAYGp8BQitsWQ==
-X-Gm-Gg: ASbGnctTf1pXQoP4j/gFVwPGFALlkXy/FwGwu1IS9gynlVcL/AozA0BktOYN/x4QFMD
-	EE0HMNlcG6RSuFdCUKrwn0PaNS4AwPyMfgUob6FiH7js0TjwrjonqOO15q6jRV/FmmonzsXroAV
-	Wwkb6l+cnfwHwrMOBcGYNQUzQP3YOlOwieBduxJ4TU9ee1bUq0u8VrlaQHiBYLdwuJhHNPOyURm
-	0jFU0pje05qTm/LtOf2B9mvs60Too3lyzQ+yNM6lwUG89w7GzvyRIJ9/yIb9LhFykoxeiHhFYrO
-	Ye9Bza4l33r0y4QHB1JLTDXtZW+hW1DVb87ywfvNEXwfBKl9Uoa3NA==
-X-Received: by 2002:a05:600c:1d1d:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-439601c5066mr27870435e9.28.1739440741738;
-        Thu, 13 Feb 2025 01:59:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEkTmfUjduSY7E+Nry3MwnwedjswLGL+/ZdG16hsINMqSePv8Ea4KoXOATlChPRGWbJhBy8nw==
-X-Received: by 2002:a05:600c:1d1d:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-439601c5066mr27870035e9.28.1739440741082;
-        Thu, 13 Feb 2025 01:59:01 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04ee48sm44195805e9.3.2025.02.13.01.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 01:59:00 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:58:55 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Junnan Wu <junnan01.wu@samsung.com>
-Cc: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com, 
-	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org, kvm@vger.kernel.org, 
-	lei19.wang@samsung.com, linux-kernel@vger.kernel.org, mst@redhat.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, q1.huang@samsung.com, stefanha@redhat.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com, ying01.gao@samsung.com, 
-	ying123.xu@samsung.com
-Subject: Re: [PATCH 2/2] vsock/virtio: Don't reset the created SOCKET during
- s2r
-Message-ID: <vxz37vz262nujwe6qfyorblpkuvol3ix6ikzv7lpyx5pilx76e@s2wixscnvvuu>
-References: <iv6oalr6yuwsfkoxnorp4t77fdjheteyojauwf2phshucdxatf@ominy3hfcpxb>
- <CGME20250212044758epcas5p244c3add904f0ee06f669cd4c53a9e594@epcas5p2.samsung.com>
- <20250212044843.254862-1-junnan01.wu@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfAtTBZtW5rV04M4NGsFSBM7q6XYSlYjkdw80YDDsbI4kMimZagAJ2ps3ZLvRhWuGk706HGkLIhOff1zV5WuaCICRd+YRzNyorN8FcXVQdPCjZt13cubJFSeWW2rZBkWQNcJ3cAQ5q6wx7lKsn4TVr2iLdP3GUavbb3BdAIAqrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WPw+oqHN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pJc3YrbSrZjb+1WUbDYoQQxBsow526Z2Yq1LAQIerb4=; b=WPw+oqHNIzSpQadkIEozzuYPCc
+	QD+mVmk1T0MZVKzQvFvpAyjOg5GDQgMLWKWtdccpnC1bjnNtDQhUBlhUPK6PLYgFf5h/MJE+3Q/rN
+	oT7aUhrYy6jKadGcY4/mVAtseuFTfUG+b+VBL3V8IM2jqJBow6WoTA/Z48M/5Zsiq8w13GONkf23b
+	1CdwiX6+AZd/lmYib1M8wVMwgzVSK/CsZ7xg2ojI0XO/aSq/W6t1vbYPWm0LeHnMegImCBPK2Jxkg
+	kTopfL/r/vHQQ/fw/VbdzFDH9Prp+iUV6+fwdU2ObBrtzZBqzhC8o/11V9usdg1M0Am5aSWwbbtaT
+	K7W0k1DA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiW07-00000000xD3-0Ago;
+	Thu, 13 Feb 2025 09:59:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9D39A3002E5; Thu, 13 Feb 2025 10:59:18 +0100 (CET)
+Date: Thu, 13 Feb 2025 10:59:18 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will@kernel.org>, Waiman Long <llong@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>,
+	Dohyun Kim <dohyunkim@google.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH bpf-next v2 00/26] Resilient Queued Spin Lock
+Message-ID: <20250213095918.GB28068@noisy.programming.kicks-ass.net>
+References: <20250206105435.2159977-1-memxor@gmail.com>
+ <20250210093840.GE10324@noisy.programming.kicks-ass.net>
+ <20250210104931.GE31462@noisy.programming.kicks-ass.net>
+ <CAADnVQ+3wu0WB2pXs4cccxfkbTb3TK8Z+act5egytiON+qN9tA@mail.gmail.com>
+ <20250211104352.GC29593@noisy.programming.kicks-ass.net>
+ <CAADnVQJ=81PE19JWeNjq6aNOy+GM-wo6n7WU9StX1b6kevqCUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212044843.254862-1-junnan01.wu@samsung.com>
+In-Reply-To: <CAADnVQJ=81PE19JWeNjq6aNOy+GM-wo6n7WU9StX1b6kevqCUw@mail.gmail.com>
 
-On Wed, Feb 12, 2025 at 12:48:43PM +0800, Junnan Wu wrote:
->>On Mon, Feb 10, 2025 at 12:48:03PM +0100, leonardi@redhat.com wrote:
->>>Like for the other patch, some maintainers have not been CCd.
->>
->>Yes, please use `scripts/get_maintainer.pl`.
->>
->
->Ok, I will add other maintainers by this script in next push.
->
->>>
->>>On Fri, Feb 07, 2025 at 01:20:33PM +0800, Junnan Wu wrote:
->>>>From: Ying Gao <ying01.gao@samsung.com>
->>>>
->>>>If suspend is executed during vsock communication and the
->>>>socket is reset, the original socket will be unusable after resume.
->>
->>Why? (I mean for a good commit description)
->>
->>>>
->>>>Judge the value of vdev->priv in function virtio_vsock_vqs_del,
->>>>only when the function is invoked by virtio_vsock_remove,
->>>>all vsock connections will be reset.
->>>>
->>>The second part of the commit message is not that clear, do you mind
->>>rephrasing it?
->>
->>+1 on that
->>
->
->Well, I will rephrase it in next version.
->
->>Also in this case, why checking `vdev->priv` fixes the issue?
->>
->>>
->>>>Signed-off-by: Ying Gao <ying01.gao@samsung.com>
->>>Missing Co-developed-by?
->>>>Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
->>>
->>>
->>>>---
->>>>net/vmw_vsock/virtio_transport.c | 6 ++++--
->>>>1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>>diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->>>>index 9eefd0fba92b..9df609581755 100644
->>>>--- a/net/vmw_vsock/virtio_transport.c
->>>>+++ b/net/vmw_vsock/virtio_transport.c
->>>>@@ -717,8 +717,10 @@ static void virtio_vsock_vqs_del(struct virtio_vsock *vsock)
->>>>	struct sk_buff *skb;
->>>>
->>>>	/* Reset all connected sockets when the VQs disappear */
->>>>-	vsock_for_each_connected_socket(&virtio_transport.transport,
->>>>-					virtio_vsock_reset_sock);
->>>I would add a comment explaining why you are adding this check.
->>
->>Yes, please.
->>
->
->Ok, I left a comment here in next version
->
->>>>+	if (!vdev->priv) {
->>>>+		vsock_for_each_connected_socket(&virtio_transport.transport,
->>>>+						virtio_vsock_reset_sock);
->>>>+	}
->>
->>Okay, after looking at the code I understood why, but please write it
->>into the commit next time!
->>
->>virtio_vsock_vqs_del() is called in 2 cases:
->>1 - in virtio_vsock_remove() after setting `vdev->priv` to null since
->>     the drive is about to be unloaded because the device is for example
->>     removed (hot-unplug)
->>
->>2 - in virtio_vsock_freeze() when suspending, but in this case
->>     `vdev->priv` is not touched.
->>
->>I don't think is a good idea using that because in the future it could
->>change. So better to add a parameter to virtio_vsock_vqs_del() to
->>differentiate the 2 use cases.
->>
->>
->>That said, I think this patch is wrong:
->>
->>We are deallocating virtqueues, so all packets that are "in flight" will
->>be completely discarded. Our transport (virtqueues) has no mechanism to
->>retransmit them, so those packets would be lost forever. So we cannot
->>guarantee the reliability of SOCK_STREAM sockets for example.
->>
->>In any case, after a suspension, many connections will be expired in the
->>host anyway, so does it make sense to keep them open in the guest?
->>
->
->If host still holds vsock connection during suspend,
->I think guest should keep them open at this case.
->
->Because we find a scenario that when we do freeze at the time that vsock
->connection is communicating, and after restore, upper application
->is trying to continue sending msg via vsock, then error `ENOTCONN`
->returned in function `vsock_connectible_sendmsg`. But host does not realize
->this thing and still waiting to receive msg with old connect.
->If host doesn't close old connection, it will cause that guest
->can never connect to host via vsock because of error `EPIPE` returned.
->
->If we freeze vsock after sending and receiving data operation completed,
->this error will not happen, and guest can still connect to host after resume.
->
->For example:
->In suitaion 1), if we do following steps
->    step 1) Host start a vsock server
->    step 2) Guest start a vsock client which will no-limited sending data
->    step 3) Guest freeze and resume
->Then vsock connection will be broken and guest can never connect to host via
->vsock untill Host reset vsock server.
->
->And in suitaion 2), if we do following steps
->    step1) Host start a vsock server
->    step2) Guest start a vsock client and send some data
->    step3) After client completed transmit, Guest freeze and resume
->    step4) Guest start a new vsock client and send some data
->In this suitaion, host server don't need to reset, and guest client works well
->after resume.
+On Tue, Feb 11, 2025 at 10:33:00AM -0800, Alexei Starovoitov wrote:
 
-Okay, but this is not what this patch is doing, right?
-Or have I missed something?
+> Ohh. No unpriv here.
+> Since spectre was discovered unpriv bpf died.
+> BPF_UNPRIV_DEFAULT_OFF=y was the default for distros and
+> all hyperscalers for quite some time.
 
->
->>If you want to support this use case, you must first provide a way to
->>keep those packets somewhere (e.g. avoiding to remove the virtqueues?),
->>but I honestly don't understand the use case.
->>
->
->In cases guest sending no-reply-required packet via vsock,
->when guest suspend, the sending action will also suspend
->and no packets will loss after resume.
+Ah, okay. Time to remove the option then?
 
-You can try this simple example to check if it works or not:
+> > So much details not clear to me and not explained either :/
+> 
+> Yes. The plan is to "kill" bpf prog when it misbehaves.
+> But this is orthogonal to this res_spin_lock set which is
+> a building block.
+> 
+> > Right, but it might have already modified things, how are you going to
+> > recover from that?
+> 
+> Tracking resources acquisition and release by the bpf prog
+> is a normal verifier job.
+> When bpf prog does bpf_rcu_read_lock() the verifier makes sure
+> that all execution paths from there on have bpf_rcu_read_unlock()
+> before program reaches the exit.
+> Same thing with locks.
 
-guest$ dd if=/dev/urandom of=bigfile bs=1M count=10240
-guest$ md5sum bigfile
-e412f2803a89da265d53a28dea0f0da7  bigfile
+Ah, okay, this wasn't stated anywhere. This is rather crucial
+information.
 
-host$ nc --vsock -p 1234 -l > bigfile
-guest$ cat bigfile | nc --vsock 2 1234
+> If bpf_res_spin_lock() succeeds the verifier will make sure
+> there is matching bpf_res_spin_unlock().
+> If some resource was acquired before bpf_res_spin_lock() and
+> it returned -EDEADLK the verifier will not allow early return
+> without releasing all acquired resources.
 
-# while sending do a suspend/resume cycle
+Good.
 
-# Without your patch, nc should fail, so the user knows the
-# communication was wrong, with your patch should not fail.
+> > Have the program structured such that it must acquire all locks before
+> > it does a modification / store -- and have the verifier enforce this.
+> > Then any lock failure can be handled by the bpf core, not the program
+> > itself. Core can unlock all previously acquired locks, and core can
+> > either re-attempt the program or 'skip' it after N failures.
+> 
+> We definitely don't want to bpf core to keep track of acquired resources.
+> That just doesn't scale.
+> There could be rcu_read_locks, all kinds of refcounted objects,
+> locks taken, and so on.
+> The verifier makes sure that the program does the release no matter
+> what the execution path.
+> That's how it scales.
+> On my devserver I have 152 bpf programs running.
+> All of them keep acquiring and releasing resources (locks, sockets,
+> memory) million times a second.
+> The verifier checks that each prog is doing its job individually.
 
-host$ md5sum bigfile
+Well, this patch set tracks the held lock stack -- which is required in
+order to do the deadlock thing after all.
+
+> > It does mean the bpf core needs to track the acquired locks -- which you
+> > already do,
+> 
+> We don't. 
+
+This patch set does exactly that. Is required for deadlock analysis.
+
+> The bpf infra does static checks only.
+> The core doesn't track objects at run-time.
+> The only exceptions are map elements.
+> bpf prog might store an acquired object in a map.
+> Only in that case bpf infra will free that object when it frees
+> the whole map.
+> But that doesn't apply to short lived things like RCU CS and
+> locks. Those cannot last long. They must complete within single
+> execution of the prog.
+
+Right. Held lock stack is like that.
+
+> > > That was a conscious trade-off. Deadlocks are not normal.
+> >
+> > I really do think you should assume they are normal, unpriv and all
+> > that.
+> 
+> No unpriv and no, we don't want deadlocks to be considered normal
+> by bpf users. They need to hear "fix your broken prog" message loud
+> and clear. Patch 14 splat is a step in that direction.
+> Currently it's only for in-kernel res_spin_lock() usage
+> (like in bpf hashtab). Eventually we will deliver the message to users
+> without polluting dmesg. Still debating the actual mechanism.
+
+OK; how is the user supposed to handle locking two hash buckets? Does
+the BPF prog create some global lock to serialize the multi bucket case?
 
 
-Is the md5sum the same? If not it means you lost packets and we can't do 
-that.
+Anyway, I wonder. Since the verifier tracks all this, it can determine
+lock order for the prog. Can't it do what lockdep does and maintain lock
+order graph of all loaded BPF programs?
 
->
->And when host is sending packet via vsock when guest suspend and Vq disapper,
->like you mentioned, those packets will loss.
->But I think those packets should be keep in host device side,
->and promise that once guest resume,
->get them in host device and continue sending.
-
-The host will stop using virtqueue after the driver calls 
-`virtio_reset_device()`, so we should handle all the packets already 
-queued in the RX virtqueue, because when the host put them in the 
-virtqueue it doesn't have any way to track them, so should be up to the 
-driver in the guest to stop the device and then check all the buffer 
-already queued.
-
-But currently we also call 
-`virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);` which will 
-discard all the packets queued by application in the guests that weren't 
-even queued in the virtqueue.
-
-So again, this patch as it is, it's absolutely not right.
-
-I understand the use case and it's clear to me now, but please write it 
-in the commit description.
-
-In summary, if we want to support your use case (and that is fine by 
-me), we need to do better in the driver:
-
-- we must not purge `send_pkt_queue`
-- we need to make sure that all buffers that the host has put in the RX 
-   virtqueue are handled by the guest
-- we need to make sure that all buffers that the guest has put in the TX 
-   virtqueue are handled by the host or put back on top of send_pkt_queue
-
-Thanks,
-Stefano
-
->
->Thanks,
->Junnan Wu
->
->>To be clear, this behavior is intended, and it's for example the same as
->>when suspending the VM is the hypervisor directly, which after that, it
->>sends an event to the guest, just to close all connections because it's
->>complicated to keep them active.
->>
->>Thanks,
->>Stefano
->>
->>
->>
->>>>
->>>>	/* Stop all work handlers to make sure no one is accessing the device,
->>>>	 * so we can safely call virtio_reset_device().
->>>>--
->>>>2.34.1
->>>>
->>>
->>>I am not familiar with freeze/resume, but I don't see any problems
->>>with this patch.
->>>
->>>Thank you,
->>>Luigi
->>>
->
-
+This is load-time overhead, rather than runtime.
 
