@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-512502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BB6A33A31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:40:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D961A33A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:42:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221251677E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:40:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA230188372E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B9C20C469;
-	Thu, 13 Feb 2025 08:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6693E20C469;
+	Thu, 13 Feb 2025 08:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXARDgdd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="iQAtJYZF"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37BC1EF08E;
-	Thu, 13 Feb 2025 08:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA2B1EF08E;
+	Thu, 13 Feb 2025 08:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739436047; cv=none; b=fkHCMk2cxA7KBtCkd9GD+Qf8hE+ktHHcwPI7XvJLrlLwCygDa/Az3UjC27i5F71bzjfK4Gxj5eh3fMf7j+HYDTo5wYwwm8mINquicNOXywkwHpNDmk8qkyoqmJhLBXSEAKYAxb2p0ghhuUuQ+9wmbVX1o+dxpZaV43gcGP4ijtQ=
+	t=1739436118; cv=none; b=KD0OTn0gOY6FrTfbLR5SFfP/7TGOggCRMopxufC0zDSWJ7J2IMhccn78813PjUoMI7I2st3OaNkWG+vcxOzYPE6z2OzC7F/jC5CRc0F8Mux+uRQiY4wmPvaB/57D37N79TX/pKUOYkosDMu/Ye4sI8h9qsuhuYhLTpTlNY/dre4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739436047; c=relaxed/simple;
-	bh=YGYcP2FmKsgy9HgnE8UxulGQ674spwW+En1GZdlVwtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5sye0RmfZnGkPk9nWgqVe+rRK9J9GO+8dQfYomfIdig9h5l2fPFnVmLhqZdAb2spYm0Y/Uyj1tz+IjAsZW92gPbltyufOvbjEgrF48ar1CK16lVttBJ16GG7H7g53Yc54sc931WUkE0XW06qyVfYNl1xGiQ+7TWiGsi1rfCAEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXARDgdd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57361C4CED1;
-	Thu, 13 Feb 2025 08:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739436046;
-	bh=YGYcP2FmKsgy9HgnE8UxulGQ674spwW+En1GZdlVwtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZXARDgdd4NOLOVzh+oIQc0JC7bZUyY5J4n/BVkobvk/CiVDS9ngK5gbHObeGTrB6U
-	 nnZ2hWlp3nnedyujRw4FG51xpYinE4m6vZxSgn7PMHgYJhPbXTp3R5rGen9/2p8/XB
-	 5XfTwQl7bNAgF0M/CNXi1YDKqAOkCu1bqsEt0z+iRP0nYi6D0nVll45Xv7nw6kb5zr
-	 GnzrgWOC6xAERg282tZcnzTrayAoeOx0o2dPzgf1LYi5DcFG5ZiqZ8VCCO/1+2sh5w
-	 tHkcbB2XZy0wBEHXEO5mMp4r21U5P8kCHLdIQoUAladLnHyF8QfAC6sKZqsmHXPCRW
-	 LE1W65TncC2Fg==
-Date: Thu, 13 Feb 2025 09:40:42 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Pavel Machek <pavel@ucw.cz>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: dt-bindings: Convert Analog Devices ad5820 to DT
- schema
-Message-ID: <20250213-tough-mink-of-freedom-2acd95@krzk-bin>
-References: <20250209203940.159088-1-david@ixit.cz>
+	s=arc-20240116; t=1739436118; c=relaxed/simple;
+	bh=cy8MBkXlyj3eSMdMUvNtgdXMtyoeY+Pr19oxOv0dbIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9/PDF+DHg6keBm73oLKbwxIsvaW+mjGWZEv/gsEFTvtzoolu4ys7vIf5z0C1AraozCBO3cBbg43ErsXSGh1DJOP9CxJDZTbwMEetjqY5oZM33tXUh/rYILigAeHtugeRLEzzWWL+/AxF/WxGYgE1xylJHvW4mgpD01qe1IY3aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=iQAtJYZF; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fSxeiuquXkp18O4JLaAPVYZlalJiP/8aBnDqJX0M4GA=; b=iQAtJYZFy4ufak0Z7HGdc+1pf7
+	zS9jxycw42Sm7wSl0Fb/xfR2puVXxx5w/CRyac+GOYbIb6O8DCWpgi6FIBm64MJRv746pOFK2jJAl
+	XdvM98CYYG5SCw73BdEUnLHIee+Ff4a7t9KfF7S/e1G6vW73nWop75mOzUr2McgIhYOCaDIlzTdf/
+	rKVcaPQhcV6Z8kt+44wK1XVcggMwbUPYhFttz2valw7a4DZDM2ej8T5JhJtyNx2HUEyUQTfzkr+/v
+	m/qn+zJ0WpxDMWiZ6tBEujFhO1mc8hBmtLym2lw2xU/AsZPaBhhypRQMrcNcILRPZyKXizo3geuyg
+	4YmU2ASQ==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tiUmq-008suj-DZ; Thu, 13 Feb 2025 09:41:38 +0100
+Message-ID: <1a158ad7-f988-42bf-9a1e-b673ff9122c2@igalia.com>
+Date: Thu, 13 Feb 2025 17:41:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250209203940.159088-1-david@ixit.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
+ when unit_alloc() fails
+To: Song Liu <song@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, tj@kernel.org, arighi@nvidia.com,
+ kernel-dev@igalia.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250212084851.150169-1-changwoo@igalia.com>
+ <CAPhsuW44cRU6rfrpnkdd-+6MRm7fbQ2ucnhtueaD9wBKXYnn8Q@mail.gmail.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <CAPhsuW44cRU6rfrpnkdd-+6MRm7fbQ2ucnhtueaD9wBKXYnn8Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 09, 2025 at 09:39:25PM +0100, David Heidelberg wrote:
-> Convert the Analog Devices ad5820 to DT schema format.
+Hello Song,
+
+Thank you for the review!
+
+On 25. 2. 13. 03:33, Song Liu wrote:
+> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min <changwoo@igalia.com> wrote:
+>>
+>> When there is no entry in the free list (c->free_llist), unit_alloc()
+>> fails even when there is available memory in the system, causing allocation
+>> failure in various BPF calls -- such as bpf_mem_alloc() and
+>> bpf_cpumask_create().
+>>
+>> Such allocation failure can happen, especially when a BPF program tries many
+>> allocations -- more than a delta between high and low watermarks -- in an
+>> IRQ-disabled context.
 > 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Needs: media: dt-bindings: media: i2c: align filenames format with standard
+> Can we add a selftests for this scenario?
 
-Well, it shouldn't. No need to rename the TXT file if you are going to
-remove it in other patch,
+It would be a bit tricky to create an IRQ-disabled case in a BPF
+program. However, I think it will be possible to reproduce the
+allocation failure issue when allocating sufficiently enough
+small allocations.
 
 > 
->  .../bindings/media/i2c/adi,ad5820.txt         | 28 ---------
->  .../bindings/media/i2c/adi,ad5820.yaml        | 62 +++++++++++++++++++
->  2 files changed, 62 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/adi,ad5820.txt
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/adi,ad5820.yaml
+>>
+>> To address the problem, when there is no free entry, refill one entry on the
+>> free list (alloc_bulk) and then retry the allocation procedure on the free
+>> list. Note that since some callers of unit_alloc() do not allow to block
+>> (e.g., bpf_cpumask_create), allocate the additional free entry in an atomic
+>> manner (atomic = true in alloc_bulk).
+>>
+>> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+>> ---
+>>   kernel/bpf/memalloc.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/kernel/bpf/memalloc.c b/kernel/bpf/memalloc.c
+>> index 889374722d0a..22fe9cfb2b56 100644
+>> --- a/kernel/bpf/memalloc.c
+>> +++ b/kernel/bpf/memalloc.c
+>> @@ -784,6 +784,7 @@ static void notrace *unit_alloc(struct bpf_mem_cache *c)
+>>          struct llist_node *llnode = NULL;
+>>          unsigned long flags;
+>>          int cnt = 0;
+>> +       bool retry = false;
 > 
+> "retry = false;" reads weird to me. Maybe rename it as "retried"?
 
-...
+"retried" reads betters. Will fix it.
 
-> +  reg:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +    description:
-> +      GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is active low,
-> +      a high level on the pin enables the device.
-> +
-> +  VANA-supply:
-> +    description: supply of voltage for VANA pin
-> +
-> +  "#io-channel-cells":
-> +    const: 0
+> 
+>>
+>>          /* Disable irqs to prevent the following race for majority of prog types:
+>>           * prog_A
+>> @@ -795,6 +796,7 @@ static void notrace *unit_alloc(struct bpf_mem_cache *c)
+>>           * Use per-cpu 'active' counter to order free_list access between
+>>           * unit_alloc/unit_free/bpf_mem_refill.
+>>           */
+>> +retry_alloc:
+>>          local_irq_save(flags);
+>>          if (local_inc_return(&c->active) == 1) {
+>>                  llnode = __llist_del_first(&c->free_llist);
+>> @@ -815,6 +817,13 @@ static void notrace *unit_alloc(struct bpf_mem_cache *c)
+>>           */
+>>          local_irq_restore(flags);
+>>
+>> +       if (unlikely(!llnode && !retry)) {
+>> +               int cpu = smp_processor_id();
+>> +               alloc_bulk(c, 1, cpu_to_node(cpu), true);
+> cpu_to_node() is not necessary, we can just do
+> 
+> alloc_bulk(c, 1, NUMA_NO_NODE, true);
 
-This wasn't in original binding, so needs explanation why in the commit
-msg.
+Sure, will change it as suggested.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - VANA-supply
-> +  - '#io-channel-cells'
+> 
+> Also, maybe we can let alloc_bulk return int (0 or -ENOMEM).
+> For -ENOMEM, there is no need to goto retry_alloc.
+> 
+> Does this make sense?
 
-use consistent quotes, either ' or "
+Yup, I will change the alloc_bulk() as it returns 0 or -ENOMEM.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +            #address-cells = <1>;
-
-Use 4 spaces for example indentation.
-
-Best regards,
-Krzysztof
-
+Regards,
+Changwoo Min
 
