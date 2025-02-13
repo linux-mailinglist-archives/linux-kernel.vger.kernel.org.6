@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-512605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6720DA33B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:42:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58453A33B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69713A5BAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6749F188AF63
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73020DD7A;
-	Thu, 13 Feb 2025 09:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CED420E71F;
+	Thu, 13 Feb 2025 09:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gW+zx3Cn"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aUT7e9bU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RLpsJLbQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8249920E000;
-	Thu, 13 Feb 2025 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A12520E70A;
+	Thu, 13 Feb 2025 09:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739439692; cv=none; b=hGB9mN/c11FRon19mC1fFrDvqGtSOKDzAPwXLOucS8+aKATfNMboUSh5V2LFG2KddDXi+mhH07z3mrQSE02DMaYd3KfHERgnb88POVz2EvWjo3rJoY76TH0TGwdTHtsKj0iokiyshkeiut/jzdBbVj78qa2JP8YAFwblqDJ2q7w=
+	t=1739439713; cv=none; b=aQhJRzJIvF9V/RLLOW3As2qTzhSb7yh7JzSHhiX64+MPPWdBZ0guZFK7inqPc3ZnRQUw0rqHsewZR2YbcsGRuY9uip3JdlR/bExc+tASPL4ff3BW37Y0ECZaIjMYbsauQ1L+wvzMCujbKLaqZLp0Rr9Zxgi0e4pK9+tNdwHp8Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739439692; c=relaxed/simple;
-	bh=uFhapaUQfkxoA7dAZqiBdPzVXHQAqj/uXlnLguurdXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UjMWM8EfivRCkQ2hyXxcu3yZTqASV2vh75hgjia2D2IQ4ICz2+tM22FIDfJKYvyASoqqLd8sDpSibQSbboDplzOA3+4cEkvQpyqbxID8pUkzscaMj1/+XdnKPomlTWVMfH7HqMFDVdZaPOwA1T65Vts75npPSC2vLUWYtKdtRrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gW+zx3Cn; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5205539e38cso153005e0c.0;
-        Thu, 13 Feb 2025 01:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739439689; x=1740044489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37ciusaJ+8RMFR5h5MX5uauDdXI2VmQzbf/ScIuHlpo=;
-        b=gW+zx3CnNvQbVhL8AVPQre/JN7ei54UQXoF01KkMcMXGf0HovlmBwe9yOqLamxDw3c
-         DkMoFGdDXOO9qFvGxVVrfRzIcqWuqoIhM8vRAsC8f1SAdiVrsVyHVRi6/nxMw/kO8YIV
-         IInWxJVRgHxyxnrqmLfFsX7rmCjDrD/hkTGXbkwYDEWiT7dM8Dm737qP0KiDd1CorLF7
-         pir0WC9UCz8qKSBtWnZaCr/DSsrXd72o6Ag1gg29U6weci7hA1TohrHWbeX/oQEkSEbC
-         2Wi2Xj6V1UD0zeOCKqVnIL2Nfg2H70ps/nkEc33RFYrs48YrbO9GBsM0XpDDmxpZooVD
-         MzNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739439689; x=1740044489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=37ciusaJ+8RMFR5h5MX5uauDdXI2VmQzbf/ScIuHlpo=;
-        b=qQFa4PuyBrQPXc34QgUSoks55T9cQC0o1LeYCefzTPBzRVHZCNmGj5cVBfLpQ7VLDp
-         uls/ZlCVQEK8BtNWWODc6eLJVFUF7NhkYJnVMRA8x1cVPX18KG8+1VpPtibxeRQtE7Cw
-         2O2ffZIua1ZyXO/biM2IKORutvWSbme35mCI3fHXxNfVrwLjJ7O8NNFLkGSZPf1xtpv2
-         aaVoiRF4/5GWIf6rFtS5Yf7QAU1q2r9CfU6KVhhtfedTXn9aIHZIPrYqqH6j8g1LaCZ+
-         C6r4egvkwyzKv3DW0oJqc46c5RyCyhpBZnpH3kcgrETalJNI3TDWWBOo4Jj7u1NWkLFe
-         O+mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5yKJkJvYtTkyS6Yze6d3loqmo94xaUPmYed/FqWbdPflv0Ctskh1wCyEcC+b0vlv5EU16fnSKUf6vrE=@vger.kernel.org, AJvYcCXuGTFs1F0pcpvQ43CscdLa+3X6wZoapdDbr1shuSYCLHaGghW2J3r9Muo7t3Ec3fSYjprdfxsrcRtqXOZuG3hoJpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtg0OSVu4RsQesxt55vX0KSVxDysyte+tGJII0/nXxVfHx1bMU
-	y3pdO+YhuFwxTLaunMqzLmAIqjlqTO6XgPSLmRSPOEJ3SclW9plF4+gwXpHp8KBqiURiZLdL4YN
-	Ejw4HkwwobGCXfZlKKfRyu3sBhfc=
-X-Gm-Gg: ASbGncvpT5AxSpRJ20J5573dVOUKFgTXMFUe19iPP39wL45YKTcguGr99DR0BpArKrN
-	6cubUzZVtlOtz1HjdcG4migLO8ocBHgxUXIR/E06ONQFhmsCA9biDMr6yZWGO9AGKo1Ndli8/Ly
-	OC74bHam4zsD+RCEgQ1B5qlyU4fVKFQA==
-X-Google-Smtp-Source: AGHT+IEI4YtFBpNRLZFtF4xIZ/+cFLLhKtBQuSrv9pOnQoFq5seU3++mSfAibMAmYyi0UTdE6jsQWRjNBQm/hULjJCQ=
-X-Received: by 2002:a05:6122:2186:b0:518:791a:3462 with SMTP id
- 71dfb90a1353d-52069dd8b0bmr5611151e0c.9.1739439689320; Thu, 13 Feb 2025
- 01:41:29 -0800 (PST)
+	s=arc-20240116; t=1739439713; c=relaxed/simple;
+	bh=davAbf6rTCE+XvDGJl7h+YhckMtmJciY6jpQeFmgp/w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KGhLJKhvCuJp8iJt0Dhhmqs4p26U7EG7aIsgfLyAiCGM/WzW4KE9j8LoQz20Xjy+3YXxbqeEwchtJTJt76vVawclJEI1wXVMLIkovDNjlZKm/4XmqF7XHHqeb/Pie7WM8JW4DRdBEVVOC682blZL8/8ZikJuIiRUAiHAdnQTNwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aUT7e9bU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RLpsJLbQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739439710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=X/Pc7Lm5hpZtdxpchXc7KzNgwnIIFT8+i6ED6OooeNk=;
+	b=aUT7e9bUEMmYg/ml94p7QTLAQRSrL0CxrlFk7YZW5H8AO4XtS+4s/mP7qtMH77wY5i7PNy
+	K69mDDapFoBoxYvHT+bJgkgknFrFoW0Q7aGiEauqGkzOPO2eGerGmqrP2/4+oanI+6l4ki
+	qSCY5gNxhUCJQKhx/KZ8vI/gEs4lbwP5j+PEQCV5PWNuV+EJcYOpU7qTjDsffbQlBcFbwo
+	9xH2tFFA81FIJBp24qS9ZtLAide1o8br85u7xu/1AbK9k1d44aU+hAh03fn/p/yZSXuoYO
+	ohnOlouLMmN+XEAi24dhDPWTzu7PFbwO0iWGqEb6wH0cH2so/V70BxjSphmLlw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739439710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=X/Pc7Lm5hpZtdxpchXc7KzNgwnIIFT8+i6ED6OooeNk=;
+	b=RLpsJLbQmJ2fsbqjaJV73k6jxyuO016rJYlUM9hIAidr3wt74OgXmmMmyI8zXmqpKCZa5a
+	+zGD44/o0mEL7yBA==
+Date: Thu, 13 Feb 2025 10:41:21 +0100
+Subject: [PATCH] selftests/vDSO: fix GNU hash table entry size for s390x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212182034.366167-1-fabrizio.castro.jz@renesas.com> <20250212182034.366167-5-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250212182034.366167-5-fabrizio.castro.jz@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Feb 2025 09:41:03 +0000
-X-Gm-Features: AWEUYZnRRp0wvLZswZuXrKA-4zGh3tK3gjZ8eSbAGkGxKSEvw3LLx4lrIJcYVdc
-Message-ID: <CA+V-a8vV1omcm3ASq00KQVPj8Aj06fczmYqkUDu2Dte1YbVsuQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] irqchip/renesas-rzg2l: Remove pm_put label
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250213-selftests-vdso-s390-gnu-hash-v1-1-ace3bcc940a3@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAEC+rWcC/x3MQQqDMBAF0KvIrB1IImrrVcRFqqMZKFHyVQTx7
+ g1dvs27CZJUQF1xU5JToWvMsGVBY/BxEdYpm5xxtXG2Ysh33gU7+JywMqq34SUeHDwCt840TWv
+ 9Z3zVlIstyazXv++H5/kB0m6RrG4AAAA=
+X-Change-ID: 20250213-selftests-vdso-s390-gnu-hash-7206671abc85
+To: Shuah Khan <shuah@kernel.org>, Fangrui Song <i@maskray.me>, 
+ Xi Ruoyao <xry111@xry111.site>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+ Heiko Carstens <hca@linux.ibm.com>, Jens Remus <jremus@linux.ibm.com>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739439706; l=2491;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=davAbf6rTCE+XvDGJl7h+YhckMtmJciY6jpQeFmgp/w=;
+ b=0HC1gx+m3o6x/zWek8/MPE1C5y2ntJcD4kv6toi+n3YF1xQ8vzTcVGmEbiM01e+LYw0Cm1lfW
+ /LkaltOmg01ABxQ2QnuOUSw32cpdSisu6CaWa5PdH55Jf+2Q6acHPSV
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Wed, Feb 12, 2025 at 6:22=E2=80=AFPM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> No need to keep label `pm_put`, as it's only used once.
-> Call pm_runtime_put() directly from the error path.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
->  drivers/irqchip/irq-renesas-rzg2l.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Commit 14be4e6f3522 ("selftests: vDSO: fix ELF hash table entry size for s390x")
+changed the type of the ELF hash table entries to 64bit on s390x.
+However the *GNU* hash tables entries are always 32bit.
+The "bucket" pointer is shared between both hash algorithms.
+On s390x the GNU algorithm assigns and dereferences this 64bit pointer as a
+32bit pointer, leading to compiler warnings and runtime crashes.
 
-Cheers,
-Prabhakar
+Introduce a new dedicated "gnu_bucket" pointer which is used by the GNU hash.
 
-> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
-nesas-rzg2l.c
-> index c024023a1832..0f325ceb0f53 100644
-> --- a/drivers/irqchip/irq-renesas-rzg2l.c
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -586,9 +586,9 @@ static int rzg2l_irqc_common_init(struct device_node =
-*node, struct device_node *
->                                               node, &rzg2l_irqc_domain_op=
-s,
->                                               rzg2l_irqc_data);
->         if (!irq_domain) {
-> +               pm_runtime_put(dev);
->                 dev_err(dev, "failed to add irq domain\n");
-> -               ret =3D -ENOMEM;
-> -               goto pm_put;
-> +               return -ENOMEM;
->         }
->
->         register_syscore_ops(&rzg2l_irqc_syscore_ops);
-> @@ -605,11 +605,6 @@ static int rzg2l_irqc_common_init(struct device_node=
- *node, struct device_node *
->         dev =3D NULL;
->
->         return 0;
-> -
-> -pm_put:
-> -       pm_runtime_put(dev);
-> -
-> -       return ret;
->  }
->
->  static int __init rzg2l_irqc_init(struct device_node *node,
-> --
-> 2.34.1
->
->
+Fixes: e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH")
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ tools/testing/selftests/vDSO/parse_vdso.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+index 2fe5e983cb22f1ed066d0310a54f6aef2ed77ed8..f89d052c730eb43eea28d69ca27b56e897503e16 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.c
++++ b/tools/testing/selftests/vDSO/parse_vdso.c
+@@ -53,7 +53,7 @@ static struct vdso_info
+ 	/* Symbol table */
+ 	ELF(Sym) *symtab;
+ 	const char *symstrings;
+-	ELF(Word) *gnu_hash;
++	ELF(Word) *gnu_hash, *gnu_bucket;
+ 	ELF_HASH_ENTRY *bucket, *chain;
+ 	ELF_HASH_ENTRY nbucket, nchain;
+ 
+@@ -185,8 +185,8 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+ 		/* The bucket array is located after the header (4 uint32) and the bloom
+ 		 * filter (size_t array of gnu_hash[2] elements).
+ 		 */
+-		vdso_info.bucket = vdso_info.gnu_hash + 4 +
+-				   sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
++		vdso_info.gnu_bucket = vdso_info.gnu_hash + 4 +
++				       sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
+ 	} else {
+ 		vdso_info.nbucket = hash[0];
+ 		vdso_info.nchain = hash[1];
+@@ -268,11 +268,11 @@ void *vdso_sym(const char *version, const char *name)
+ 	if (vdso_info.gnu_hash) {
+ 		uint32_t h1 = gnu_hash(name), h2, *hashval;
+ 
+-		i = vdso_info.bucket[h1 % vdso_info.nbucket];
++		i = vdso_info.gnu_bucket[h1 % vdso_info.nbucket];
+ 		if (i == 0)
+ 			return 0;
+ 		h1 |= 1;
+-		hashval = vdso_info.bucket + vdso_info.nbucket +
++		hashval = vdso_info.gnu_bucket + vdso_info.nbucket +
+ 			  (i - vdso_info.gnu_hash[1]);
+ 		for (;; i++) {
+ 			ELF(Sym) *sym = &vdso_info.symtab[i];
+
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250213-selftests-vdso-s390-gnu-hash-7206671abc85
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
