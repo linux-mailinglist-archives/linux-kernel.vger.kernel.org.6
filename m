@@ -1,94 +1,161 @@
-Return-Path: <linux-kernel+bounces-512288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEECA33716
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F495A3371C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97A1188B482
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B945D3A06AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20CA2063E2;
-	Thu, 13 Feb 2025 04:56:21 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BC21FBE80;
-	Thu, 13 Feb 2025 04:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060C32063E2;
+	Thu, 13 Feb 2025 04:57:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E3C11CAF;
+	Thu, 13 Feb 2025 04:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739422581; cv=none; b=bFX3fwLQMNffIvl/qg7Yi8RI79C3sprTalNvZKj2Bn6jLBt94FenW7v+Im+0LF5hFr9VsjEnuH344t3JP3hBEa+qDi4uJD8oimEHwVgIj0LjHwmd9mUlj6ufxd2Z/EkXjY3xiWFy3XnuW64e4Al2CJcXvm6skqcZv166kMzKvxI=
+	t=1739422670; cv=none; b=k4rYJ9D84ZEtlXR3EuyTx7vH9QiyX24KgiGTLzmq0l072TgX9/ybGsqibwLXQUVh89vjcLwG7atpfcGv7mGyff1T+k0RU9oWgF4eOAkySr05tAaMkjEpUY/sZB2OJEokz4bxNACBLc8FpVFn5I0n+I8TkVbA3P77x8yCheQ7ouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739422581; c=relaxed/simple;
-	bh=N8p5qa++4nVZSAnRKJ/tqr5QpmCFNX686rlWEztOYho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTCQprCYxODFOE0IoCLyc6XelX2qotyKioSDQsAwDIMFhaFqccM8f2OSJO4Aw7xlVq6m/pdBZD/I0MxB0JKp9B0s39AHg2ewMcshZtiuOJQqBG0RQGQwZjV+DpcBl1jMdeZA2XVrzRzE8WXUBmJODGCqsf2m68hu+bX5TDVp7eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 7C0A7100DA1C2;
-	Thu, 13 Feb 2025 05:56:09 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 48D0D34D01D; Thu, 13 Feb 2025 05:56:09 +0100 (CET)
-Date: Thu, 13 Feb 2025 05:56:09 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Lleyton Gray <lleyton@fyralabs.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH] x86/efistub: Add options for forcing Apple set_os
- protocol
-Message-ID: <Z617aePOV7Vj_ffv@wunner.de>
-References: <20241228202212.89069-1-lleyton@fyralabs.com>
- <Z3EdkuCBzTGzTHK3@wunner.de>
- <CAMj1kXHWoD78QdFnEY_=Mtz02zN3rhN5+Skgv=fHG91TD8Mmvw@mail.gmail.com>
- <Z3EmoNWbkbYZ7NZO@wunner.de>
- <CAMj1kXEb9NPSwEr2brHYJtFQhnW55hoPycjcAgoPAfjU5ZFqZw@mail.gmail.com>
- <abe2274b-4341-4212-85a8-113273ce1b18@fyralabs.com>
- <PN3PR01MB7728B4C94846673A5FFACE29B80B2@PN3PR01MB7728.INDPRD01.PROD.OUTLOOK.COM>
- <Z6paeFrjdv7L3mtv@wunner.de>
- <52B0B784-2FB5-4B7D-8FB6-A7B694EDDFC3@live.com>
+	s=arc-20240116; t=1739422670; c=relaxed/simple;
+	bh=wTGwHkJdRaXAAdzTyd/cuMKVQLRJxzSq645yRDQNfik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CW/jwh6V0zoDOUWzoTsRFCHPw0yoBNOPSxv80AarfQVrzBwa2lKl/ncuzzB3LJrsly4hveFo0Dnqkf4c0bGQm21g5R5txAWrRiz5DCKfSehACyfS7wJzSlgyyY++TPLk98sMO6l69Ep+RfaSm3dG35pRgVVuTQik4d/+1djeWNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 914621756;
+	Wed, 12 Feb 2025 20:58:08 -0800 (PST)
+Received: from [10.162.16.135] (a077893.blr.arm.com [10.162.16.135])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFAC93F6A8;
+	Wed, 12 Feb 2025 20:57:42 -0800 (PST)
+Message-ID: <49149fa7-4775-4d44-91f6-ce67c1b0ac2c@arm.com>
+Date: Thu, 13 Feb 2025 10:27:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52B0B784-2FB5-4B7D-8FB6-A7B694EDDFC3@live.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 03/16] arm64: hugetlb: Fix flush_hugetlb_tlb_range()
+ invalidation level
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-4-ryan.roberts@arm.com>
+ <e2809c59-6453-4a90-88ad-0b22e82f869f@arm.com>
+ <b2485f33-73fb-44b3-be36-9c5b6bae4d09@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <b2485f33-73fb-44b3-be36-9c5b6bae4d09@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 11, 2025 at 04:05:12PM +0000, Aditya Garg wrote:
-> > On 11 Feb 2025, at 1:28AM, Lukas Wunner <lukas@wunner.de> wrote:
-> > FWIW, below would be my suggestion for replacing the DMI-based quirk
-> > with one that is based on the number of GPUs.
-> > 
-> > It should invoke the apple_set_os protocol both on dual GPU laptops
-> > as well as ones with an eGPU, hence my expectation is that it should
-> > fix the issue reported by Lleyton.
+
+
+On 2/6/25 18:34, Ryan Roberts wrote:
+> On 06/02/2025 06:46, Anshuman Khandual wrote:
+>>
+>>
+>> On 2/5/25 20:39, Ryan Roberts wrote:
+>>> commit c910f2b65518 ("arm64/mm: Update tlb invalidation routines for
+>>> FEAT_LPA2") changed the "invalidation level unknown" hint from 0 to
+>>> TLBI_TTL_UNKNOWN (INT_MAX). But the fallback "unknown level" path in
+>>> flush_hugetlb_tlb_range() was not updated. So as it stands, when trying
+>>> to invalidate CONT_PMD_SIZE or CONT_PTE_SIZE hugetlb mappings, we will
+>>> spuriously try to invalidate at level 0 on LPA2-enabled systems.
+>>>
+>>> Fix this so that the fallback passes TLBI_TTL_UNKNOWN, and while we are
+>>> at it, explicitly use the correct stride and level for CONT_PMD_SIZE and
+>>> CONT_PTE_SIZE, which should provide a minor optimization.
+>>>
+>>> Cc: <stable@vger.kernel.org>
+>>> Fixes: c910f2b65518 ("arm64/mm: Update tlb invalidation routines for FEAT_LPA2")
+>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>> ---
+>>>  arch/arm64/include/asm/hugetlb.h | 20 ++++++++++++++------
+>>>  1 file changed, 14 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+>>> index 03db9cb21ace..8ab9542d2d22 100644
+>>> --- a/arch/arm64/include/asm/hugetlb.h
+>>> +++ b/arch/arm64/include/asm/hugetlb.h
+>>> @@ -76,12 +76,20 @@ static inline void flush_hugetlb_tlb_range(struct vm_area_struct *vma,
+>>>  {
+>>>  	unsigned long stride = huge_page_size(hstate_vma(vma));
+>>>  
+>>> -	if (stride == PMD_SIZE)
+>>> -		__flush_tlb_range(vma, start, end, stride, false, 2);
+>>> -	else if (stride == PUD_SIZE)
+>>> -		__flush_tlb_range(vma, start, end, stride, false, 1);
+>>> -	else
+>>> -		__flush_tlb_range(vma, start, end, PAGE_SIZE, false, 0);
+>>> +	switch (stride) {
+>>> +	case PUD_SIZE:
+>>> +		__flush_tlb_range(vma, start, end, PUD_SIZE, false, 1);
+>>> +		break;
+>>
+>> Just wondering - should not !__PAGETABLE_PMD_FOLDED and pud_sect_supported()
+>> checks also be added here for this PUD_SIZE case ?
 > 
-> This patch does not enable the os set protocol on my MacBook Pro 16 inch 2019
+> Yeah I guess so. TBH, it's never been entirely clear to me what the benefit is?
+> Is it just to remove (a tiny amount of) dead code when we know we don't support
+> blocks at the level? Or is there something more fundamental going on that I've
+> missed?
+
+There is a generic fallback for PUD_SIZE in include/asm-generic/pgtable-nopud.h when
+it is not defined on arm64 platform and pud_sect_supported() might also get optimized
+by the compiler.
+
+static inline bool pud_sect_supported(void)
+{
+        return PAGE_SIZE == SZ_4K;
+}
+
+IIUC this just saves dead code from being compiled as you mentioned.
+
 > 
-> journalctl -k: https://pastebin.com/7etWy0D5
+> We seem to be quite inconsistent with the use of pud_sect_supported() in
+> hugetlbpage.c.
 
-Hm, perhaps Apple's EFI disables the iGPU by default and re-enables it
-upon the set_os protocol call.  Or I've botched the patch, but I just
-double-checked the logic and it seems fine to me.
+PUD_SIZE switch cases in hugetlb_mask_last_page() and arch_make_huge_pte() ? Those
+should be fixed.
 
-Could somebody with an eGPU test whether the patch results in the
-expected invocation of set_os (and thus a working eGPU)?
+> 
+> Anyway, I'll add this in, I guess it's preferable to follow the established pattern.
 
-If it does, we'd just have to keep apple_match_product_name() as an
-alternative condition under which set_os is called.
+Agreed.
 
-Thanks,
-
-Lukas
+> 
+> Thanks,
+> Ryan
+> 
+>>
+>>> +	case CONT_PMD_SIZE:
+>>> +	case PMD_SIZE:
+>>> +		__flush_tlb_range(vma, start, end, PMD_SIZE, false, 2);
+>>> +		break;
+>>> +	case CONT_PTE_SIZE:
+>>> +		__flush_tlb_range(vma, start, end, PAGE_SIZE, false, 3);
+>>> +		break;
+>>> +	default:
+>>> +		__flush_tlb_range(vma, start, end, PAGE_SIZE, false, TLBI_TTL_UNKNOWN);
+>>> +	}
+>>>  }
+>>>  
+>>>  #endif /* __ASM_HUGETLB_H */
+> 
 
