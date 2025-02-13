@@ -1,289 +1,238 @@
-Return-Path: <linux-kernel+bounces-514077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB22A35221
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:24:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F014A35222
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189623AB5FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4023AB3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17AB22D7BB;
-	Thu, 13 Feb 2025 23:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBDE2753F5;
+	Thu, 13 Feb 2025 23:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aufp7fKv"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4646D22D7BC;
-	Thu, 13 Feb 2025 23:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b="QH5fFDzk"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D73F22D794
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739489038; cv=none; b=RRWhIzT2x2ZzQYE0WHefIbNN9E0AYi+wACbHiQ/RPGFeA4NtW7dzyR6WEu2UMYBiK7eg7uYiRvpNXTr2UKxG1y4f6UPTd0k9pIk6/SsqyzFHrsrpxZ9iXq24r+Az9b23/HjIY6eM+WUARNGlJaOqHvp1391IXLy0iFwXfcMCRBc=
+	t=1739489053; cv=none; b=ellL1mHR3B6rIFeDw0w7C6LuU0EQeFXVqvlmy5zUaylO1pDdbC/jqC/SEJlbDv5w6amyG4jEbM78M/JUJ4eVFpE1vxyI7AFlNHfYQKwv1f+wgO1s34xxKKYTip8qr2jINj2HRHMRA0KwYFizIr4qUCZfpRHYRUXD3vSnANx/hV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739489038; c=relaxed/simple;
-	bh=l+cSvSfFeSSvWEX+0CLmMC7EeXoOaYuP0euT1eP9zjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FMJe5+nxBoN+9sF8gur2u3TcmUplWHU+fwqSRe2qtAX/79qaEscKY830fH9Fz53pLi45fOu/zeHUq0Mb5paQbS5gzCks3a1UcLHdQVc3VS65w/y9SzVMVi6o31O3xvFUVNRufQfCFElbpCxlN1LrZluRupkO69dZLnKuqer6qg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aufp7fKv; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7A9B7203F3E8;
-	Thu, 13 Feb 2025 15:23:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A9B7203F3E8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739489036;
-	bh=Hk/UhzyNXmtkIV3ySCx19ki8dNWuqGbbCLmGSDE/xLs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aufp7fKvZThXkNOUfRjDldRf0rvzjk9ePefQmU34QNQDzjKEBlugM1QQnoyaGdByr
-	 UvcGblhHXCbjBa/k4MpcRsnzZtdKGCD/hDb4AqXA9uZUdtcTEEmtCsn/SbibhrumUh
-	 FawOmhzoUKT+be6mPRofqUQ3NjSfwRNz4fTK8QNo=
-Message-ID: <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 15:23:56 -0800
+	s=arc-20240116; t=1739489053; c=relaxed/simple;
+	bh=ZreTuX/D9xC0BRibCmr0wVreHyDz6310muxD3riD1C0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCcjEAWRtAA6yuEVAXJXFzWwhEZXF3M8aLKu8dIviCDSIsiLm1dA5SQ2BNBKbdFZth/usG/xZ22Odca/ftSfx5hQU1kAcxEW5/fMmdCqi3r1JasvWeQ5xqIiPvDboMHsDQTuPgrFBXSEGlcukcyTiJfm3nobU4SeJ9UgqRbGUIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu; spf=pass smtp.mailfrom=asu.edu; dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b=QH5fFDzk; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asu.edu
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220dc3831e3so16367605ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:24:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=asu.edu; s=google; t=1739489050; x=1740093850; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qp/gjetAdFdX7c6LEKRIoNpBN6vuc3LKqtmSQ/LdU40=;
+        b=QH5fFDzkhOI9RRhdrkh9EBmR5m3VfY6UNtpf4nAxxvPkFHetvAymbieEejyVjYlTa5
+         bqsIrpKJq34c2yvzvUnpkFChuxJCXuLV0tRjXODQOIpaH1xLwjqR5cKLJs+BbsRdLTo2
+         12j5/B4oTfUzfrif6hPq9zqtw7qMX5UQBuFhBd/8awtYYGYbWVNh9wet/GTZFKFsuuDe
+         TifszhRUUKayGnqwpaKMCoGiPN3QgvB0jdRn9EYbm22pR2JOdL4/McMW3X+vbWzpdcPP
+         z/IDnU9Q7JweVGoiiRhqw7XBDvac9prC/I9gVapAwliwri73t/iXhefvTLPW8IIf1hVc
+         umfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739489050; x=1740093850;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qp/gjetAdFdX7c6LEKRIoNpBN6vuc3LKqtmSQ/LdU40=;
+        b=GxfHIbsV2/ZBFxss5SG1wHXCBaJcCjpLaYisH//E3HApHPom+YsSpa91edf70CARJK
+         N+DOjusqHhD3yA1kKORKCpmY4z6spbA71bXwOGDlX0ETHDsIHzknx+QrssXSl7SAkCIJ
+         UUCrq3+Rk1w2c1iM4TVKKIU2/O67oAOTpKiQc8dxryJRxNoDKw//J1QXxTj6glUhUvzf
+         kPxPtMTp7rmpgu66qIqkaW7NR+gnZkgEuh7E3AmDu70Pve9R2tKLEaUCUdZq6kyz4IlK
+         T6ej5P/pEI0i5HxTO8uGTTAHxf302IIl3PQiZLNuJ5IXriAwu69N5trsBX0J3fTrjYlK
+         1DGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeed1TbXZMmScnOqNJuRKVXuPTFat+zXzeB62W04vZ3c32yPkOgQFERwrFUb6IJJYdHET9sGlL7rDGtnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj/JRyhH8zyc1vR5E6TW9QNeXrW7t01nBVU3Lr1I/xN792G8rI
+	+TxTjVEFW9ktk38dolnTjUBHVbcoBFfTvbBZtoNRKbk4N+wNW+0B3eOejFYv2w==
+X-Gm-Gg: ASbGncvW6xQvpLZRCHv18hbyIJUV9s9X9bYPuKx2u75ytSgq1kFJ2SSxXrq6aX9Esv3
+	4GAAo9kC2pCHdsiIb6bOfK444IsiycIXaP60XOvgTRxNDm8J11XLIWFPnWhjXH9Am027m88Rr4G
+	dllDEAQN36PBy/LQpQcRBP4LjGsg/LzuTxNG5YUqMohyQD1UoMbTxLw9HiieVGq8CLVBnib368Z
+	IuWAy+x8x3DKj0CgROGgC4nc2BcM8zrw4amMUVwdQynF6dlhR6B+NYz8M4gDG+DVNfHT5hCilb2
+	TQ==
+X-Google-Smtp-Source: AGHT+IGLtuJxSqRI4nthlUDDkKg7XvGKGwcUQ17nvqDoBisfU00E2fqXx+w9i3u+ydNAI1dx4+sgHg==
+X-Received: by 2002:a05:6a20:9383:b0:1ea:f941:8d8e with SMTP id adf61e73a8af0-1ee6c9cf2abmr7504562637.16.1739489050570;
+        Thu, 13 Feb 2025 15:24:10 -0800 (PST)
+Received: from ubun ([2600:8800:1689:e500:401f:7374:956f:20c5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e2fesm1847678b3a.118.2025.02.13.15.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 15:24:09 -0800 (PST)
+Date: Thu, 13 Feb 2025 16:24:06 -0700
+From: Jennifer Miller <jmill@asu.edu>
+To: Andrew Cooper <andrew.cooper3@citrix.com>, Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org,
+	kees@kernel.org, joao@overdrivepizza.com, samitolvanen@google.com,
+	kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <Z65/Fpd9cnUk8TjE@ubun>
+References: <Z60NwR4w/28Z7XUa@ubun>
+ <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <Z62N6cGmaN+OZfoY@ubun>
+ <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+ <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect
- hypervisor presence
-To: Arnd Bergmann <arnd@arndb.de>, bhelgaas@google.com,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Conor Dooley <conor+dt@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, Dexuan Cui <decui@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
- krzk+dt@kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Ingo Molnar <mingo@redhat.com>, Rob Herring <robh@kernel.org>,
- ssengar@linux.microsoft.com, Thomas Gleixner <tglx@linutronix.de>,
- Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
- devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-2-romank@linux.microsoft.com>
- <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com>
 
-
-
-On 2/11/2025 10:54 PM, Arnd Bergmann wrote:
-> On Wed, Feb 12, 2025, at 02:43, Roman Kisel wrote:
->> +static bool hyperv_detect_via_smccc(void)
->> +{
->> +	struct arm_smccc_res res = {};
->> +
->> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
->> +		return false;
->> +	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
->> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
->> +		return false;
->> +
->> +	return res.a0 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0 &&
->> +		res.a1 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1 &&
->> +		res.a2 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2 &&
->> +		res.a3 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3;
->> +}
+On Thu, Feb 13, 2025 at 09:24:18PM +0000, Andrew Cooper wrote:
+> On 13/02/2025 7:23 pm, Jann Horn wrote:
+> > On Thu, Feb 13, 2025 at 7:15 AM Jennifer Miller <jmill@asu.edu> wrote:
+> >> Here is some napkin asm for this I wrote for the 64-bit syscall entrypoint,
+> >> I think more or less the same could be done for the other entrypoints.
+> >>
+> >> ```
+> >>     endbr64
+> >>     test rsp, rsp
+> >>     js slowpath
+> >>
+> >>     swapgs
+> >>     ~~fastpath continues~~
+> >>
+> >> ; path taken when rsp was a kernel address
+> >> ; we have no choice really but to switch to the stack from the untrusted
+> >> ; gsbase but after doing so we have to be careful about what we put on the
+> >> ; stack
+> >> slowpath:
+> >>     swapgs
 > 
-> I had to double-check that this function is safe to call on
-> other hypervisors, at least when they follow the smccc spec.
+> I'm afraid I don't follow.  By this point, both basic blocks are the
+> same (a single swapgs).
+
+Ah sure, the test/js could be moved occur after swapgs to save an 
+instruction.
+
+>
+> Malicious userspace can get onto the slowpath by loading a kernel
+> pointer into %rsp.  Furthermore, if the origin of this really was in the
+> kernel, then ...
 > 
-> Seeing that we have the same helper function checking for
-> ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_* and there was another
-> patch set adding a copy for gunyah, I wonder if we can
-> put this into a drivers/firmware/smccc/smccc.c directly
-> the same way we handle soc_id, and make it return a uuid_t,
-> or perhaps take a constant uuid_t to compare against.
+> >>
+> >> ; swap stacks as normal
+> >>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
+> >>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+> 
+> ... these are memory accesses using the user %gs.  As you note a few
+> lines lower, %gs isn't safe at this point.
+> 
+> A cunning attacker can make gs:[rip+0x7f02c56d] be a read-only mapping,
+> at point we'll have loaded an attacker controlled %rsp, then take #PF
+> trying to spill %rsp into pcpu_hot, and now we're running the pagefault
+> handler on an attacker controlled stack and gsbase.
+> 
 
-That would be very neat! I implemented the idea [1], please let me know
-what you think. I can use that in the next version of the patch series
-if looks good.
+I don't follow, the spill of %rsp into pcpu_hot occurs first, before we
+would move to the attacker controlled stack. This is Intel asm syntax,
+sorry if that was unclear.
 
-There is a function and a macro to make calling
-the function easier. As the SMCCC header is used by the assembler, too,
-hence I had to add __ASSEBLER__ guardrails. Another option could be to
-pass four u32's not to use uuid_t so the header stays a healthy food
-for the assembler :) For Gunyah, that would be
+Still, I hadn't considered misusing readonly/unmapped pages on the GPR
+register spill that follows. Could we enforce that the stack pointer we get
+be page aligned to prevent this vector? So that if one were to attempt to
+point the stack to readonly or unmapped memory they should be guaranteed to
+double fault?
 
-ARM_SMCCC_HYP_PRESENT(GUNYAH)
+> >>     ~~normal push and clear GPRs sequence here~~
+> >>
+> >> ; we entered with an rsp in the kernel address range.
+> >> ; we already did swapgs but we don't know if we can trust our gsbase yet.
+> >> ; we should be able to trust the ro_after_init __per_cpu_offset array
+> >> ; though.
+> >>
+> >> ; check that gsbase is the expected value for our current cpu
+> >>     rdtscp
+> >>     mov rax, QWORD PTR [8*ecx-0x7d7be460] <__per_cpu_offset>
+> >>
+> >>     rdgsbase rbx
+> >>
+> >>     cmp rbx, rax
+> >>     je fastpath_after_regs_preserved
+> >>
+> >>     wrgsbase rax
+> 
+> Irrespective of other things, you'll need some compatibility strategy
+> for the fact that RDTSCP and {RD,WR}{FS,GS}BASE cannot be used
+> unconditionally in 64bit mode.  It might be as simple as making FineIBT
+> depend on their presence to activate, but taking a #UD exception in this
+> path is also a priv-esc vulnerability.
 
-when using the change below.
-
-
- From f0d645e900c24f5be045b0f831f1e11494967b7f Mon Sep 17 00:00:00 2001
-From: Roman Kisel <romank@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 15:10:45 -0800
-Subject: [PATCH] drivers, smcc: Introduce arm_smccc_hyp_present
-
----
-  arch/arm64/hyperv/mshyperv.c       | 18 +----------------
-  drivers/firmware/smccc/kvm_guest.c |  9 +--------
-  drivers/firmware/smccc/smccc.c     | 24 ++++++++++++++++++++++
-  include/linux/arm-smccc.h          | 32 ++++++++++++++++++++++++++++++
-  4 files changed, 58 insertions(+), 25 deletions(-)
-
-diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
-index 16e721d8e5df..0c5babe9e1ff 100644
---- a/arch/arm64/hyperv/mshyperv.c
-+++ b/arch/arm64/hyperv/mshyperv.c
-@@ -41,22 +41,6 @@ static bool hyperv_detect_via_acpi(void)
-  #endif
-  }
-
--static bool hyperv_detect_via_smccc(void)
--{
--	struct arm_smccc_res res = {};
--
--	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
--		return false;
--	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
--	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
--		return false;
--
--	return res.a0 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0 &&
--		res.a1 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1 &&
--		res.a2 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2 &&
--		res.a3 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3;
--}
--
-  static int __init hyperv_init(void)
-  {
-  	struct hv_get_vp_registers_output	result;
-@@ -69,7 +53,7 @@ static int __init hyperv_init(void)
-  	 *
-  	 * In such cases, do nothing and return success.
-  	 */
--	if (!hyperv_detect_via_acpi() && !hyperv_detect_via_smccc())
-+	if (!hyperv_detect_via_acpi() && !ARM_SMCCC_HYP_PRESENT(HYPERV))
-  		return 0;
-
-  	/* Setup the guest ID */
-diff --git a/drivers/firmware/smccc/kvm_guest.c 
-b/drivers/firmware/smccc/kvm_guest.c
-index f3319be20b36..ae37476cabc1 100644
---- a/drivers/firmware/smccc/kvm_guest.c
-+++ b/drivers/firmware/smccc/kvm_guest.c
-@@ -17,14 +17,7 @@ void __init kvm_init_hyp_services(void)
-  	struct arm_smccc_res res;
-  	u32 val[4];
-
--	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
--		return;
--
--	arm_smccc_1_1_invoke(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
--	if (res.a0 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0 ||
--	    res.a1 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1 ||
--	    res.a2 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2 ||
--	    res.a3 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3)
-+	if (!ARM_SMCCC_HYP_PRESENT(KVM))
-  		return;
-
-  	memset(&res, 0, sizeof(res));
-diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
-index a74600d9f2d7..86f75f44895f 100644
---- a/drivers/firmware/smccc/smccc.c
-+++ b/drivers/firmware/smccc/smccc.c
-@@ -67,6 +67,30 @@ s32 arm_smccc_get_soc_id_revision(void)
-  }
-  EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
-
-+bool arm_smccc_hyp_present(const uuid_t *hyp_uuid)
-+{
-+	struct arm_smccc_res res = {};
-+	struct {
-+		u32 dwords[4]
-+	} __packed res_uuid;
-+
-+	BUILD_BUG_ON(sizeof(res_uuid) != sizeof(uuid_t));
-+
-+	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
-+		return false;
-+	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
-+	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
-+		return false;
-+
-+	res_uuid.dwords[0] = res.a0;
-+	res_uuid.dwords[1] = res.a1;
-+	res_uuid.dwords[2] = res.a2;
-+	res_uuid.dwords[3] = res.a3;
-+
-+	return uuid_equal((uuid_t *)&res_uuid, hyp_uuid);
-+}
-+EXPORT_SYMBOL_GPL(arm_smccc_hyp_present);
-+
-  static int __init smccc_devices_init(void)
-  {
-  	struct platform_device *pdev;
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index 67f6fdf2e7cd..63925506a0e5 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -7,6 +7,11 @@
-
-  #include <linux/args.h>
-  #include <linux/init.h>
-+
-+#ifndef __ASSEMBLER__
-+#include <linux/uuid.h>
-+#endif
-+
-  #include <uapi/linux/const.h>
-
-  /*
-@@ -333,6 +338,33 @@ s32 arm_smccc_get_soc_id_version(void);
-   */
-  s32 arm_smccc_get_soc_id_revision(void);
-
-+#ifndef __ASSEMBLER__
-+
-+/**
-+ * arm_smccc_hyp_present(const uuid_t *hyp_uuid)
-+ *
-+ * Returns `true` if the hypervisor advertises its presence via SMCCC.
-+ *
-+ * When the function returns `false`, the caller shall not assume that
-+ * there is no hypervisor running. Instead, the caller must fall back to
-+ * other approaches if any are available.
-+ */
-+bool arm_smccc_hyp_present(const uuid_t *hyp_uuid);
-+
-+#define ARM_SMCCC_HYP_PRESENT(HYP) 								\
-+	({															\
-+		const u32 uuid_as_dwords[4] = {							\
-+			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_0,			\
-+			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_1,			\
-+			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_2,			\
-+			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_3			\
-+		};														\
-+																\
-+		arm_smccc_hyp_present((const uuid_t *)uuid_as_dwords);	\
-+	})															\
-+
-+#endif /* !__ASSEMBLER__ */
-+
-  /**
-   * struct arm_smccc_res - Result from SMC/HVC call
-   * @a0-a3 result values from registers 0 to 3
--- 
-2.43.0
-
-
+Sure, we could rdmsr IA32_TSC_AUX in place of rdtscsp. After the wrgsbase 
+we could switch to the expected kernel stack now that gsbase is fixed 
+before taking any #UD.
 
 > 
->        Arnd
+> While all CET-IBT capable CPUs ought to have RDTSCP/*BASE, there are
+> virt environments where this implication does not hold.
+> 
+> >>
+> >> ; if we reach here we are being exploited and should explode or attempt
+> >> ; to recover
+> >> ```
+> >>
+> >> The unfortunate part is that it would still result in the register state
+> >> being dumped on top of some attacker controlled address, so if the error
+> >> path is recoverable someone could still use entrypoints to convert control
+> >> flow hijacking into memory corruption via register dump. So it would kill
+> >> the ability to get ROP but it would still be possible to dump regs over
+> >> modprobe_path, core_pattern, etc.
+> > It is annoying that we (as far as I know) don't have a nice clear
+> > security model for what exactly CFI in the kernel is supposed to
+> > achieve - though I guess that's partly because in its current version,
+> > it only happens to protect against cases where an attacker gets a
+> > function pointer overwrite, but not the probably more common cases
+> > where the attacker (also?) gets an object pointer overwrite...
+> >
+> >> Does this seem feasible and any better than the alternative of overwriting
+> >> and restoring KERNEL_GS_BASE?
+> > The syscall entry point is a hot path; my main reason for suggesting
+> > the RSP check is that I'm worried about the performance impact of the
+> > gsbase-overwriting approach, but I don't actually have numbers on
+> > that. I figure a test + conditional jump is about the cheapest we can
+> > do...
+> 
+> Yeah, this is the cheapest I can think of too.  TEST+JS has been able to
+> macrofuse since the Core2 era.
+> 
+> > Do we know how many cycles wrgsbase takes, and how serializing
+> > is it? Sadly Agner Fog's tables don't seem to list it...
+> 
+> Not (architecturally) serialising, and pretty quick IIRC.  It is
+> microcoded, but the segment registers are renamed so it can execute
+> speculatively.
+> 
+> ~Andrew
+> 
+> >
+> > How would we actually do that overwriting and restoring of
+> > KERNEL_GS_BASE? Would we need a scratch register for that?
+> 
 
--- 
-Thank you,
-Roman
+I think we can do the overwrite at any point before actually calling into 
+the individual syscall handlers, really anywhere before potentially 
+hijacked indirect control flow can occur and then restore it just after 
+those return e.g., for the 64-bit path I am currently overwriting it at the
+start of do_syscall_64 and then restoring it just before 
+syscall_exit_to_user_mode. I'm not sure if there is any reason to do it
+sooner while we'd still be register constrained.
 
+~Jennifer
 
