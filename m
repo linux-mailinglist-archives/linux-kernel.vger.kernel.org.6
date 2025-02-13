@@ -1,168 +1,264 @@
-Return-Path: <linux-kernel+bounces-512362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B7BA33810
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:42:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59384A33816
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B703A802C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267A47A47E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0522207DEF;
-	Thu, 13 Feb 2025 06:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CDF207DE5;
+	Thu, 13 Feb 2025 06:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Thtf4hO5"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMW2gz/W"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54971206F2A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4420207A06;
+	Thu, 13 Feb 2025 06:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739428926; cv=none; b=UD1SQMP0Wztil89N1p/RnFFfsBlhCzjWfP4AbZbaHzA1NvPjcO6GDYByG/hCERw4fzBKbFE20c5NeInfuUsBbMCNIBtXJzkLZdUg/UTDAKD5Ohc/Mkk1Yxo8XuKvbmj6ApQdeY0Q4Vp2VwTL1Y5jDL/7BJMx7KS4VC5VGZ57+1c=
+	t=1739428954; cv=none; b=qlArydv1RrrMOaQgnCYKaQXF59iiiYW9HBv6h7BAp/rVL83gPlzzl1hznAzQN9phfpIGsKYhAG6tATMN4hPoN3QgirqZtY/EIHtUJLVKL6wbRVoPoJgCPct+KbJUeGT2Giw9jCtrzxfltEq+I+mX3qBD/U7NZbP8D+8U+JKYa/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739428926; c=relaxed/simple;
-	bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
+	s=arc-20240116; t=1739428954; c=relaxed/simple;
+	bh=XExwgq0rMCNZ8mOkbmgMP1G6kyfh4uMQkVaMtzoD+64=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8xLx4/Fu4T+F+Q9UIe+3uZD20jbh8bfzeZryzP8w0cCt761yGv9YHK8MTnJIHoR6tRRnsxchatD2K/Av8qCgYS9MPGKlfcR7SO4dKzn8AkhGboKFiLDWLIQeKzKU4XxU8kAXMRyF44oAkunJMlqmlXEvuwdRE6cffHKnNqnMCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Thtf4hO5; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4bbeb009101so136335137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:42:04 -0800 (PST)
+	 To:Cc:Content-Type; b=BqbR+u4f+vT/QQfgzA96n0Egvmko7Qs72F1S4noKv4gBqXPe1BFXWXr2DV7JTjCepWFws9gLzbgz1A9xCog52zYeuInJEBts1FHj9qjwAIHCZmGS5eUjUJgNTWCWCtkGkCN0geFw0E0uIeUGcdIZJi/mwar8DqeLgrtVV+eNac0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMW2gz/W; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5deae16ab51so1058378a12.1;
+        Wed, 12 Feb 2025 22:42:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739428923; x=1740033723; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739428951; x=1740033751; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
-        b=Thtf4hO5DCGU3BEzEy00+Dy3ebWOuQt2rpooh0TWuYvocBm0Z9P818nDy+VXE8acj0
-         2eAOTA96a6H9BoCElR6U/I0gmedIol0+F8eAuxBSkoFEsPjDt8J9U+P1MN86oHlsP8xr
-         oqBwUYesQk7N+WAnaEM7kZAXWQsaBwXPyRn6S+u2125pgQEGd+Dlvi0nC3+YylM+KKBu
-         5JC+Ws2XClqgtgjQ1ZhCQA0Yn/jAe4qa6rO8yyMcmPtBU4kVyffry7B1/aNNmjs+BBnU
-         aiutxWKo99nbfF2YnxFAmAqHdtRCqUlq+Q9mN9r7BKXBLDlXiHkvtvnHfESrkwEskGrp
-         XzAg==
+        bh=WyzA7Briisr+Eb0T4txsGUK8feDh27QiFqA7IYyWowI=;
+        b=iMW2gz/W6nm2gcTQlm29dyaAHD5dI3limMB2qd+q+oq/CPMNQHX1XRMKvn6pb5Luzp
+         NpJzCHmvpoJ5Q5zc8Y9/vhoX8QNeTFdiir28nBnsXReY7D52bqBCla3PZNiShPtlBqdT
+         3a8X36lFHqmAY0f7C3vNM05xy+e0omfdibUqhI0ZYrQCD75hZ+Rr3mJIJkCEcWVXR5s4
+         b6kVXRK797WhcCVGGDcMtvAOU+JFTbGMyaoVQk/0rJQlccPbkVtIcT/SwT03bkHtwLfp
+         EPVQtOWX7ufigf0xCtBoVWcSQ5qjgIwAFtKGz7lzkXbAtuzYnjOHq3PYwEYCPv02yYhb
+         LoBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739428923; x=1740033723;
+        d=1e100.net; s=20230601; t=1739428951; x=1740033751;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oTmB7Ig1eQii2PQt8Vq5KK5KdLNWvxjjdgsBUW1hd1Q=;
-        b=rWOo+AI/PLXW8vW1EoKqKsU6KLfEKo+RK8YXj4TT4mTPJ/5jRHt22VZYKRxI9vSauQ
-         MuheuXtAgW4CDBanBOIAgL9HbinG/GaiipcARIg2oNxR5ZvNpg0q1Ld57g7g0lwJBHvz
-         li+XNZU8X6aRfE3DXSaAWtN6szIg/N5NbgLKO6LpoDOiKhIK1lbmGS5aVC2h7KmetwbD
-         dXyKT0EhAjBNU3QB6aMmf+EmTmuMvoRQJTgoB9EZmPqf42PvvMJsDfVBpo8yz4ivrkca
-         fedTCrT6/e2BkSpShIOejQhRchtYEm2frxjWajQSDMeDynuiQ1pRuPTSonu3QXdyt5Jz
-         NxBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSgjYkcLGNxBVKcVZeAkipBEpF2ueVDcvV398oS9BlOmZmTPRa20IhMjL29gTrpE1nrrC7u41fdCiLitk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqcxUGDUPxgz2ZsLtSdECE8u+IwGXzbVNjaqamGEi+JF0l6xog
-	R1RDGBGCrALAFTR3duEBQaSA1RzM1bgTAwSmgoY+O5UJgO708A562ESgPR03TFL/kds6+rWJgFp
-	sbvw0TifCKUKAXTekVsm9vpcmtVLuT6HB2UcukA==
-X-Gm-Gg: ASbGnctfvUjcrx5WKNHnL2e9w4PjxxDyX/Xrf6ihH6geUbsYthOZJgFJwfxesIVaOGX
-	Hh0LL8Cqjt1/DU1JnJ6oWWqYFcwvHxiBNxtIKfurttffGbNfMzsEWPbOcd17gYzr1hV/RUg6Mn5
-	s=
-X-Google-Smtp-Source: AGHT+IFhSui+oRYa0yiUwlfe4d8Dd+KjfAVoX7QGNMnwQAifah82de3Os5iBk5Pb0QFnrRe9uhZGgxrDA5ujKbbjaVg=
-X-Received: by 2002:a05:6102:2c08:b0:4ba:eb24:fb06 with SMTP id
- ada2fe7eead31-4bc03562833mr2668789137.6.1739428923140; Wed, 12 Feb 2025
- 22:42:03 -0800 (PST)
+        bh=WyzA7Briisr+Eb0T4txsGUK8feDh27QiFqA7IYyWowI=;
+        b=gqLtNV6B6wCTg0vWAxYAfwdZ760Ne986ObYDsrs0e+rhI4dQoKXmJlssfO/DFFHaNu
+         Z2Umu1joNT/Xg1uZBFAR37rF03oI8xyj4BnOy1E5JQ1gevtpmP3u/XMIrNnTtaUpGbSd
+         FMBdXw8pXb1AIjFXORmR2ftqND/wI2COYe7jyvsndDtMFXYGrrEgfGYQsT/lKANTqlZK
+         93MY8vd04GEvryFgIejGr/q2BP7eqwj36sZvucHRrfnDHdKpUQ/ZHUC3DeMQnLnLCkJ0
+         RxmzZ5Ed53JojAL6bIdWEcCa/ZyiR6j/J7X2QcrQo2dFhFeeSMVK5Ws+i9WNxeUZskCO
+         YZyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCJX6k8bXMJsUIf+lunTT6+f/oGPw85g/dOVkO8CWW88NCC17SzViv6dLvf4SgPXMS14YBXHn/Yj2Fl+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7HBLKGAjYwp6ETnRD8LNopyGwRNgPuMI1OmPJBhj+M4ccZpF1
+	UyWwFORCJ3qS4sm/JSxEj/5jeOX0r0VhPHbtwDsoVOkVaEDHmyeKq71f2hm4OR/me2G77HkIffk
+	PFWe5iQ878yy+exm1uHUaPSFJRFY=
+X-Gm-Gg: ASbGnct+rpgJOkOHLQzZ7he3xbDyuIxO2pR/UjxHaqtsy6h7OakvePqSQm6citj4Lx6
+	2G8CzwZmG6tBvpNLRgm7Z3WuUslfOjNAkVWiyNZKLzOXmWKpj9zvepvoomRKuQtdj8aAJ+PXYlQ
+	==
+X-Google-Smtp-Source: AGHT+IHRfeMzQ0Aoh2xYhp+Cojt7wbuWGTtiptGxslp7oMIdwuFGnaF7qYdJ9otu3MJ4zJT7MTKS8k5hiyeMHC9PvCA=
+X-Received: by 2002:a05:6402:3708:b0:5de:a960:11ee with SMTP id
+ 4fb4d7f45d1cf-5dec9d2c13bmr4213243a12.5.1739428951028; Wed, 12 Feb 2025
+ 22:42:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org> <20250212205613.4400a888@collabora.com>
-In-Reply-To: <20250212205613.4400a888@collabora.com>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Thu, 13 Feb 2025 12:11:52 +0530
-X-Gm-Features: AWEUYZkoZwXb13fMynlvth-g3hUZ-u2ftHq4Gn9B-5c6gMjO7S6PRx1iL7ELE6c
-Message-ID: <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
+References: <20250206105435.2159977-1-memxor@gmail.com> <20250206105435.2159977-25-memxor@gmail.com>
+ <a10a2865242dc217e71de54f75fa4289aefb2fa9.camel@gmail.com>
+In-Reply-To: <a10a2865242dc217e71de54f75fa4289aefb2fa9.camel@gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Thu, 13 Feb 2025 07:41:53 +0100
+X-Gm-Features: AWEUYZlfy_N9yrlNYupazWcc5kxeGZIJKXLNp7IF_SyEvvcsIVXNR_AiGEpDZc8
+Message-ID: <CAP01T76VpVsKabq0cMjX07oDW2WTrQ2dW9NJfB0tvoXFEV5ZoQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 24/26] bpf: Implement verifier support for rqspinlock
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Will Deacon <will@kernel.org>, Waiman Long <llong@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Dohyun Kim <dohyunkim@google.com>, 
+	linux-arm-kernel@lists.infradead.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Boris,
-
-On Thu, 13 Feb 2025 at 01:26, Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
+On Wed, 12 Feb 2025 at 01:08, Eduard Zingerman <eddyz87@gmail.com> wrote:
 >
-> +Florent, who's working on protected-mode support in Panthor.
->
-> Hi Jens,
->
-> On Tue, 17 Dec 2024 11:07:36 +0100
-> Jens Wiklander <jens.wiklander@linaro.org> wrote:
->
-> > Hi,
+> On Thu, 2025-02-06 at 02:54 -0800, Kumar Kartikeya Dwivedi wrote:
+> > Introduce verifier-side support for rqspinlock kfuncs. The first step is
+> > allowing bpf_res_spin_lock type to be defined in map values and
+> > allocated objects, so BTF-side is updated with a new BPF_RES_SPIN_LOCK
+> > field to recognize and validate.
 > >
-> > This patch set allocates the restricted DMA-bufs via the TEE subsystem.
->
-> We're currently working on protected-mode support for Panthor [1] and it
-> looks like your series (and the OP-TEE implementation that goes with
-> it) would allow us to have a fully upstream/open solution for the
-> protected content use case we're trying to support. I need a bit more
-> time to play with the implementation but this looks very promising
-> (especially the lend rstmem feature, which might help us allocate our
-> FW sections that are supposed to execute code accessing protected
-> content).
-
-Glad to hear that, if you can demonstrate an open source use case
-based on this series then it will help to land it. We really would
-love to see support for restricted DMA-buf consumers be it GPU, crypto
-accelerator, media pipeline etc.
-
->
+> > Any object cannot have both bpf_spin_lock and bpf_res_spin_lock, only
+> > one of them (and at most one of them per-object, like before) must be
+> > present. The bpf_res_spin_lock can also be used to protect objects that
+> > require lock protection for their kfuncs, like BPF rbtree and linked
+> > list.
 > >
-> > The TEE subsystem handles the DMA-buf allocations since it is the TEE
-> > (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up the
-> > restrictions for the memory used for the DMA-bufs.
+> > The verifier plumbing to simulate success and failure cases when calling
+> > the kfuncs is done by pushing a new verifier state to the verifier state
+> > stack which will verify the failure case upon calling the kfunc. The
+> > path where success is indicated creates all lock reference state and IRQ
+> > state (if necessary for irqsave variants). In the case of failure, the
+> > state clears the registers r0-r5, sets the return value, and skips kfunc
+> > processing, proceeding to the next instruction.
 > >
-> > I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
-> > DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to choose
-> > how to allocate the restricted physical memory.
+> > When marking the return value for success case, the value is marked as
+> > 0, and for the failure case as [-MAX_ERRNO, -1]. Then, in the program,
+> > whenever user checks the return value as 'if (ret)' or 'if (ret < 0)'
+> > the verifier never traverses such branches for success cases, and would
+> > be aware that the lock is not held in such cases.
+> >
+> > We push the kfunc state in check_kfunc_call whenever rqspinlock kfuncs
+> > are invoked. We introduce a kfunc_class state to avoid mixing lock
+> > irqrestore kfuncs with IRQ state created by bpf_local_irq_save.
+> >
+> > With all this infrastructure, these kfuncs become usable in programs
+> > while satisfying all safety properties required by the kernel.
+> >
+> > Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+> > ---
 >
-> I'll probably have more questions soon, but here's one to start: any
-> particular reason you didn't go for a dma-heap to expose restricted
-> buffer allocation to userspace? I see you already have a cdev you can
-> take ioctl()s from, but my understanding was that dma-heap was the
-> standard solution for these device-agnostic/central allocators.
+> Apart from a few nits, I think this patch looks good.
+>
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+>
 
-This series started with the DMA heap approach only here [1] but later
-discussions [2] lead us here. To point out specifically:
+Thanks!
 
-- DMA heaps require reliance on DT to discover static restricted
-regions carve-outs whereas via the TEE implementation driver (eg.
-OP-TEE) those can be discovered dynamically.
-- Dynamic allocation of buffers and making them restricted requires
-vendor specific driver hooks with DMA heaps whereas the TEE subsystem
-abstracts that out with underlying TEE implementation (eg. OP-TEE)
-managing the dynamic buffer restriction.
-- TEE subsystem already has a well defined user-space interface for
-managing shared memory buffers with TEE and restricted DMA buffers
-will be yet another interface managed along similar lines.
+> [...]
+>
+> > diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+> > index 32c23f2a3086..ed444e44f524 100644
+> > --- a/include/linux/bpf_verifier.h
+> > +++ b/include/linux/bpf_verifier.h
+> > @@ -115,6 +115,15 @@ struct bpf_reg_state {
+> >                       int depth:30;
+> >               } iter;
+> >
+> > +             /* For irq stack slots */
+> > +             struct {
+> > +                     enum {
+> > +                             IRQ_KFUNC_IGNORE,
+>
+> Is this state ever used?
+> mark_stack_slot_irq_flag() is always called with either NATIVE or LOCK.
 
-[1] https://lore.kernel.org/lkml/mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge/T/
-[2] https://lore.kernel.org/lkml/CAFA6WYPtp3H5JhxzgH9=z2EvNL7Kdku3EmG1aDkTS-gjFtNZZA@mail.gmail.com/
-
--Sumit
+Hm, no, it was just the default / invalid value, I guess it can be dropped.
 
 >
-> Regards,
+> > +                             IRQ_NATIVE_KFUNC,
+> > +                             IRQ_LOCK_KFUNC,
+> > +                     } kfunc_class;
+> > +             } irq;
+> > +
+> >               /* Max size from any of the above. */
+> >               struct {
+> >                       unsigned long raw1;
 >
-> Boris
+> [...]
 >
-> [1]https://lwn.net/ml/all/cover.1738228114.git.florent.tomasin@arm.com/#t
+> > @@ -8038,36 +8059,53 @@ static int process_spin_lock(struct bpf_verifier_env *env, int regno,
+> >       }
+> >
+> >       rec = reg_btf_record(reg);
+> > -     if (!btf_record_has_field(rec, BPF_SPIN_LOCK)) {
+> > -             verbose(env, "%s '%s' has no valid bpf_spin_lock\n", map ? "map" : "local",
+> > -                     map ? map->name : "kptr");
+> > +     if (!btf_record_has_field(rec, is_res_lock ? BPF_RES_SPIN_LOCK : BPF_SPIN_LOCK)) {
+> > +             verbose(env, "%s '%s' has no valid %s_lock\n", map ? "map" : "local",
+> > +                     map ? map->name : "kptr", lock_str);
+> >               return -EINVAL;
+> >       }
+> > -     if (rec->spin_lock_off != val + reg->off) {
+> > -             verbose(env, "off %lld doesn't point to 'struct bpf_spin_lock' that is at %d\n",
+> > -                     val + reg->off, rec->spin_lock_off);
+> > +     spin_lock_off = is_res_lock ? rec->res_spin_lock_off : rec->spin_lock_off;
+> > +     if (spin_lock_off != val + reg->off) {
+> > +             verbose(env, "off %lld doesn't point to 'struct %s_lock' that is at %d\n",
+> > +                     val + reg->off, lock_str, spin_lock_off);
+> >               return -EINVAL;
+> >       }
+> >       if (is_lock) {
+> >               void *ptr;
+> > +             int type;
+> >
+> >               if (map)
+> >                       ptr = map;
+> >               else
+> >                       ptr = btf;
+> >
+> > -             if (cur->active_locks) {
+> > -                     verbose(env,
+> > -                             "Locking two bpf_spin_locks are not allowed\n");
+> > -                     return -EINVAL;
+> > +             if (!is_res_lock && cur->active_locks) {
+>
+> Nit: having '&& cur->active_locks' in this branch but not the one for
+>      'is_res_lock' is a bit confusing. As far as I understand this is
+>      just an optimization, and active_locks check could be done (or dropped)
+>      in both cases.
+
+Yeah, I can make it consistent by adding the check to both.
+
+>
+> > +                     if (find_lock_state(env->cur_state, REF_TYPE_LOCK, 0, NULL)) {
+> > +                             verbose(env,
+> > +                                     "Locking two bpf_spin_locks are not allowed\n");
+> > +                             return -EINVAL;
+> > +                     }
+> > +             } else if (is_res_lock) {
+> > +                     if (find_lock_state(env->cur_state, REF_TYPE_RES_LOCK, reg->id, ptr)) {
+> > +                             verbose(env, "Acquiring the same lock again, AA deadlock detected\n");
+> > +                             return -EINVAL;
+> > +                     }
+> >               }
+>
+> Nit: there is no branch for find_lock_state(... REF_TYPE_RES_LOCK_IRQ ...),
+>      this is not a problem, as other checks catch the imbalance in
+>      number of unlocks or unlock of the same lock, but verifier won't
+>      report the above "AA deadlock" message for bpf_res_spin_lock_irqsave().
+>
+
+Good point, will fix.
+
+> The above two checks make it legal to take resilient lock while
+> holding regular lock and vice versa. This is probably ok, can't figure
+> out an example when this causes trouble.
+
+Yeah, that shouldn't cause a problem.
+
+
+>
+> > -             err = acquire_lock_state(env, env->insn_idx, REF_TYPE_LOCK, reg->id, ptr);
+> > +
+> > +             if (is_res_lock && is_irq)
+> > +                     type = REF_TYPE_RES_LOCK_IRQ;
+> > +             else if (is_res_lock)
+> > +                     type = REF_TYPE_RES_LOCK;
+> > +             else
+> > +                     type = REF_TYPE_LOCK;
+> > +             err = acquire_lock_state(env, env->insn_idx, type, reg->id, ptr);
+> >               if (err < 0) {
+> >                       verbose(env, "Failed to acquire lock state\n");
+> >                       return err;
+> >               }
+> >       } else {
+> >               void *ptr;
+> > +             int type;
+> >
+> >               if (map)
+> >                       ptr = map;
+>
+> [...]
+>
 
