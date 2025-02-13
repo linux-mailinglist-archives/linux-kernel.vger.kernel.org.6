@@ -1,84 +1,81 @@
-Return-Path: <linux-kernel+bounces-512397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7851A338C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:25:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C94A33880
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93E0A7A31D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24ED23A90F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E5C209695;
-	Thu, 13 Feb 2025 07:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6EB208995;
+	Thu, 13 Feb 2025 07:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBqEN41o"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QgfaSyLr"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF162AD21;
-	Thu, 13 Feb 2025 07:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF9F20764A;
+	Thu, 13 Feb 2025 07:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739431547; cv=none; b=SvUfHjAnHH/Ys2rUdwVwWLT5E2imWS8teMF53bQvsMpTz0dcUaCWbiFBw/Wlnt9QXKcR6JhKTfPUmjWQhF5guRMFK7wLei7MZJGATge/gNGnfqUNfGMRYXCedlJI7fCzQZ9y4Lh39VCW/dKj99B9qvtovXkA8qdAA0fpVXpwY2s=
+	t=1739430358; cv=none; b=Ge3JwAu16qDyA+sPwZ3b/HstrfdVrB40OqvYx7G0foin6/MkQFrQDWLoRfdx70og90UM3U4MSAs2ALTEB21Rsp0+X1Vxjvcf7EM2lBSdaTJKH/KULQzuU8pMUf4MtNJ1KoInGP7cqqbi1yv2cP8vYWwf+DNC5/9CE9TFKMifgWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739431547; c=relaxed/simple;
-	bh=Mdhn4iY3/7ldgAmeXQDc31wnKUIyr6Cj0fSP8rx9KqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ADzRsucLS7AFcTOmEBzTkJCYcjR0X/xaG3F6TrBsRuYxF05FMywQonDMGCtr2EYAHE5+BfyNq2DLJ2skp/lFkwCHfJ1aj3wAmwzA4MG/4St/zSfadhq46hruBCXtzBqRSWohvllGrqIadp8Gh3KoHuMmk3XqJLtS5kyT7ISmlzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBqEN41o; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21f78b1fb7dso7988275ad.3;
-        Wed, 12 Feb 2025 23:25:44 -0800 (PST)
+	s=arc-20240116; t=1739430358; c=relaxed/simple;
+	bh=kmgtqvckZ0e6iFNH8XDXdMK5sQI2GFWf7IJ95MBADfA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K5gWreDSseocFp+5sW6swJWeKNKPHwe+tp2E7y4Ef59dfBikrDYmZzKPoJTvv5Y4A7lJ2C6/luZTV0J4Z2jlSuDgaf9D5D67oAhubxb+nN0W/cxfA7UwQeBmlfSLkgj1UAqfFHKWc89YkWCKXditO9czA0CailBD7mF+LixWabY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=QgfaSyLr; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739431544; x=1740036344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdhKtYnDPgRCWPUyQUqaukbPuM9+6e0p6cBMMadCyTQ=;
-        b=KBqEN41oaonEfoiGJC0SMQQbSJdQLZaowm3sf7B7Bc03EKFbsTlZyQgeLpDyTS4W92
-         RcV9E26fjYoWlEAdWxRXEC7+C08tYd92DWRQ1rYJ30C3Pte169+Msi+gwxB1l4TRzSwP
-         5Iol8XBKf26xPota0rVJcuZ//+vLmKFTnIq8LVVTTClTH9QmYlo8mJnGaxcDCi5Ad3/p
-         g7owDL7qQrgeuPZrfpvHC6h4nxf1tzZ8RV1alKcpD2Yrxzjy+/F4RPmjSwXn/iQ5gz6W
-         QM/qOBRMARYi7OY4kxeV8gRaSC1nnCrpgELBMnv8sGFbLJQdJgvzmG0SN9/RsLEu9tBp
-         vmjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739431544; x=1740036344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RdhKtYnDPgRCWPUyQUqaukbPuM9+6e0p6cBMMadCyTQ=;
-        b=Up8Ma6zTx2K5iXFa4uBZo36Wwy1T8QC3rkiOL+GJCBtfDCWbFbd5nfonk/g1/n0i5R
-         zo9fEQcVnNCzW91LBfD5O4Vq1TlK4tPMt1QwAcmnCLGBkUZ0Irc0BW1TZXp0XNgHuDLC
-         zWFr8F7GYIsRZVcThlkLqtYuWkvLtOclyBPYXPp/8rRtp2kUKpi+V6ETVim6XObU3lGD
-         YBOdXC6hBkqHrmW7NLRY4AVlH3V2i9hX7Lox6iLbuA0k+sRt+7TQRhljgod1QUQ+YOsY
-         puqHTE+3K9K2d63nwKjf5dde7KrVFVtREdbUVyI9TTg3vupR1rSGjtzKDC51/3Szngh6
-         xmRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVReKCIP3NSXfsjWsrQXb/wuh9++EXUIMUGjMAnMWGR9J2c0dS5vb5gPPgV3LH46Bll6i8V3zDeNmXMx8kT@vger.kernel.org, AJvYcCVpKMS5gD7jIGTzQprMqrn8Av4CRNGp0hv9nzj1L2cdCs1wGbQ5YUogmKKkYftdYT+ywI1L8UsrPsAfRqCvs1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVEgYWJKVf3c9I2ITVpO64qXF7/J2KX3fvvnOJIbGJT7Sp1c7P
-	KyGqGOvKy7WAa3MXSrR2L4f9RFRlmfbv0yVKF+4oXyZm29hXHw3ZDhi6xg==
-X-Gm-Gg: ASbGncu+TykVm7g7JaBz4RHrx0LZIPxe4LL3e/A0SFV6z0wdBDgiYLAp862s7oCrhjI
-	NiXcNLeK/LBJMp9BuL3lyMSdENztX4LZoPN2b15FPl0P/wAXYFY7UtQn9nS6sr4r3oqJqb15+Kw
-	I4YKqXu5T6mlkkxsFEBkm3H9UCacrb9DhF84f4N0PkCHpIzr7Kqgb6Iq57RJYxjKqGmBxGwWH7T
-	BO2tAebStVKr3xYJvZrgYoN+PX+VYg5mbAkuPUuqIH3j20EavnVZxzzoeaaUxvpRfcoKDkI6EHT
-	yIhHoqqmVLy5b6uEykZ9RKmNRTkIYy4UhA==
-X-Google-Smtp-Source: AGHT+IHqB2fpwOa0FDVZHD+N9cSkpCkJYHc9SkXnbZBWOwy1PCL+FrnhEpwdY+L10Y1edbOMLwTc7g==
-X-Received: by 2002:a17:903:2451:b0:21d:cd54:c7ef with SMTP id d9443c01a7336-220bbab32e7mr95596175ad.9.1739431544126;
-        Wed, 12 Feb 2025 23:25:44 -0800 (PST)
-Received: from localhost.localdomain ([212.102.51.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5348f12sm6427185ad.46.2025.02.12.23.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 23:25:43 -0800 (PST)
-From: Tatsuya S <tatsuya.s2862@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btbcm: Fix reset errors at setup
-Date: Thu, 13 Feb 2025 16:05:22 +0900
-Message-ID: <20250213070520.9308-4-tatsuya.s2862@gmail.com>
-X-Mailer: git-send-email 2.48.1
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739430357; x=1770966357;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HIz1Atlqpi5tnoN7n4BPu3eHETPxx2TUlMkVpEwhuEo=;
+  b=QgfaSyLrgHl/mTSXPfa1O1cScChJD9IlWGd8eMDbkZuzCWMyBI5znAao
+   +oebj9g9O3QcE4mKdwnQ324nwwAjpwy0Ll9o74E1a4i7iPpaPXhr9EYbH
+   Bz+dF79qwKu5tSpHFMLm+9JFzuSw5Q33bGG/M3J5HJNyiPfAy7o+cNlGM
+   w=;
+X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
+   d="scan'208";a="462133403"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:05:51 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:18133]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.208:2525] with esmtp (Farcaster)
+ id 044845a0-eb50-4d20-a33f-ef53eec55ed0; Thu, 13 Feb 2025 07:05:50 +0000 (UTC)
+X-Farcaster-Flow-ID: 044845a0-eb50-4d20-a33f-ef53eec55ed0
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Thu, 13 Feb 2025 07:05:50 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 13 Feb 2025 07:05:42 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <shaw.leon@gmail.com>
+CC: <alex.aring@gmail.com>, <andrew+netdev@lunn.ch>,
+	<b.a.t.m.a.n@lists.open-mesh.org>, <bpf@vger.kernel.org>,
+	<bridge@lists.linux.dev>, <davem@davemloft.net>, <donald.hunter@gmail.com>,
+	<dsahern@kernel.org>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-ppp@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
+	<netdev@vger.kernel.org>, <osmocom-net-gprs@lists.osmocom.org>,
+	<pabeni@redhat.com>, <shuah@kernel.org>, <stefan@datenfreihafen.org>,
+	<steffen.klassert@secunet.com>, <wireguard@lists.zx2c4.com>
+Subject: Re: [PATCH net-next v9 06/11] net: ipv6: Use link netns in newlink() of rtnl_link_ops
+Date: Thu, 13 Feb 2025 16:05:33 +0900
+Message-ID: <20250213070533.9926-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250210133002.883422-7-shaw.leon@gmail.com>
+References: <20250210133002.883422-7-shaw.leon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,36 +83,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-After the Bluetooth USB controller is connected, error may occur
-on the first reset HCI command.
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Mon, 10 Feb 2025 21:29:57 +0800
+> When link_net is set, use it as link netns instead of dev_net(). This
+> prepares for rtnetlink core to create device in target netns directly,
+> in which case the two namespaces may be different.
+> 
+> Set correct netns in priv before registering device, and avoid
+> overwriting it in ndo_init() path.
+> 
+> Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
+> ---
+>  net/ipv6/ip6_gre.c    | 20 ++++++++++----------
+>  net/ipv6/ip6_tunnel.c | 13 ++++++++-----
+>  net/ipv6/ip6_vti.c    | 10 ++++++----
+>  net/ipv6/sit.c        | 11 +++++++----
+>  4 files changed, 31 insertions(+), 23 deletions(-)
+> 
+> diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+> index 863852abe8ea..108600dc716f 100644
+> --- a/net/ipv6/ip6_gre.c
+> +++ b/net/ipv6/ip6_gre.c
+> @@ -1498,7 +1498,8 @@ static int ip6gre_tunnel_init_common(struct net_device *dev)
+>  	tunnel = netdev_priv(dev);
+>  
+>  	tunnel->dev = dev;
+> -	tunnel->net = dev_net(dev);
+> +	if (!tunnel->net)
+> +		tunnel->net = dev_net(dev);
 
-[    5.678408] Bluetooth: hci0: command 0x0c03 tx timeout
-[    5.678435] Bluetooth: hci0: BCM: Reset failed (-110)
-[   18.030627] usb 1-8: Failed to suspend device, error -110
+Same question as patch 5 for here and other parts.
+Do we need this check and assignment ?
 
-To reduce this error, insert a little sleep for warmup.
-
-Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
----
- drivers/bluetooth/btbcm.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index 0a60660fc8ce..026d8571adf5 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -733,6 +733,9 @@ int btbcm_setup_apple(struct hci_dev *hdev)
- 	struct sk_buff *skb;
- 	int err;
- 
-+	/* Waiting for hardware warmup */
-+	msleep(200);
-+
- 	/* Reset */
- 	err = btbcm_reset(hdev);
- 	if (err)
--- 
-2.48.1
-
+ip6gre_newlink_common
+-> nt->net = dev_net(dev)
+-> register_netdevice
+  -> ndo_init / ip6gre_tunnel_init()
+    -> ip6gre_tunnel_init_common
+      -> tunnel->net = dev_net(dev)
 
