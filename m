@@ -1,182 +1,204 @@
-Return-Path: <linux-kernel+bounces-512223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C21A335EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:07:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB189A33600
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F406D188B215
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46129188B1B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B315D2046BB;
-	Thu, 13 Feb 2025 03:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12F8204C20;
+	Thu, 13 Feb 2025 03:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M82ODiF9"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1EB13D539;
-	Thu, 13 Feb 2025 03:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739416013; cv=none; b=HIvT4/o1UvPrhh15wPo8RDsgJ6sR2DmZwe15H2/13wIzwtkflrq1GtHfw8qaSdbIcpyqBXH0aBA8zbojI2aegF+wzBbGkweuQSHMIr6tATotkWM4FHF6lrNhhsda9BZ9zYJ8Rc3eQpCJWyjrjKD6IyBGioJgcZK80NVnBrJZA7c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739416013; c=relaxed/simple;
-	bh=h5gxzzrrzWcmj0oqnFTojHFpZwzkb+vfOC9mY41Ihzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f4EjThZiEej7gJMN7PYfOXKvki9PDHEb3sxTdk1gnGhfWgvlwpnIen04x+SVmfOzQ8pTtyqKIOWGbsixnJs00AXraLm8KolhgKV4pcfNEofTU3jxnnF8TxUOEQNO2qoYHKEi9tuTGcfpJb6CUTxxqwG3lY9eEiEeFCfxQDbCemM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M82ODiF9; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id EC17A203F3CE; Wed, 12 Feb 2025 19:06:50 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC17A203F3CE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739416010;
-	bh=ildVpwYVvhezs9I8BAi45vYVgvdz4RusC9W0T4n7tYM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M82ODiF9MEKCEK3Udr0lBzPDkB5D8YITWC5xTs/2eDqu2oaIdA5nZlWXCLAb28fd7
-	 goZD8RNvMFKG8ghFK5p/QomP+KYlTeyAcKUuNcWLJPM+P7qkPPBpFLdOKITywWR1TV
-	 wb9qyCfwapQvMvYRJLBq7PXC76e8TuBQtPqDgdK4=
-Date: Wed, 12 Feb 2025 19:06:50 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"deller@gmx.de" <deller@gmx.de>,
-	"weh@microsoft.com" <weh@microsoft.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: Re: [PATCH 1/1] fbdev: hyperv_fb: iounmap() the correct memory when
- removing a device
-Message-ID: <20250213030650.GA24166@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250209235252.2987-1-mhklinux@outlook.com>
- <20250210124043.GA17819@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157B0F36D7B99A5BF01471CD4F22@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20250210145825.GA12377@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20250210165221.GA3465@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157C1DF0A0101EEF4CA79E2D4FF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LEBnynsm";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VY2HxzTm"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D5CB663;
+	Thu, 13 Feb 2025 03:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739416678; cv=fail; b=m/E/uLX1U/iokiJPIGMQYfjAs6P6piO389a8m3aKC77816hVGD6ki1iKwTLruBp0gm3ZzFw+wrVzbcKrg0vN99tV6GP2zCAKcwAHIoqSEibhnL3Et/peTeYvDRiPy6WNDbYqTW61X+WNJ67sSn22C3WLKhA5PBL//giNF7Nctas=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739416678; c=relaxed/simple;
+	bh=Cd0VkbuyMzlwQh906fwidrP+6ALcw+Qawf6Gmv2hgy8=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=go0roLL/FUOjflGoaGGyaRN6TQrNK9/p5R/e9bvLVDhL+DEqWgoVGyIPMFVNWJON9kdu+cZu3Qmt+TltujNL7dhJ4Ku2wNpV2HjZMCeRDSgCkPDUEueWkERflvotJJGOUndz3lUt7j75lR+SksQopvyesdrnSzkN5WGwxyc8Kcs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LEBnynsm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VY2HxzTm; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D1pg6m028232;
+	Thu, 13 Feb 2025 03:17:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=9i0jsNDJJdM4ppzVoa
+	lSVllcTjwpgSehgajtH8LqHYU=; b=LEBnynsmBCBzzNyHoOgLSakpLtybRCSHvQ
+	NuGqeSQLf/aTZd2sBgA4S9NxJ9VJvyXCVj8L/RiANgL0YOjLDZChiUxZeT+kOaFF
+	YmxBR12Q2qkqfq7yM1p3Hf70yMrqpCld94RbZVr2AQg96Joz/P06yFS9ukV9L1bg
+	ijwcgDXGDMTGrnaBqAZIPMz50pkbHk5bwQ4oyR7dXZfHHY28d5Za362hAz1BBeQB
+	VCYXIUJtrkTLI/hH9DEuPhUnCCAOG+1vAL8c2a3/VYW/rtO7M40sFwsCYekJ7UI/
+	K86mCfL0MxXBYv88OJz5daqNmUAVb+dXoLPPQRAiZjIixTyg9zxQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44p0tg8uqv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 03:17:51 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51D2Bpqc002336;
+	Thu, 13 Feb 2025 03:17:50 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44nwqhpa84-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 03:17:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fpJsICWDf8EuMW2ba7LzSR8aXAINh8sNznCBOXzJ56Lu+JYxtgxACQqUd58I0bVMPY06lgMmlamw672GShDcVzl0SYLWLwBf4IPXl9ywBsel2dCfRwN5bYUGRQ2YaDoKIxmGqsaW5CAixx5WkdqzXgvVzhzdfYDXJxlR+7jGPy2Vm3XuFIvgjx/8VECkiKnmoagXDHhDkH2tKzHKLuSvGDrMHAgU1+m7e6s/c8/714jciW7xCGiP21Jc50hiO6UYgkWQgzDgl9W8qZd+en3OeFG0FJlcxBU1A/obA5U/lo7JLteZlHAz5Xj4ZXZiZlGJuBXbv511A8XTcYvhGcX8dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9i0jsNDJJdM4ppzVoalSVllcTjwpgSehgajtH8LqHYU=;
+ b=dk2E23gFB/Ml9e0jpbcbX9JmfHWeURM9AnmKDcSSlHILr5hVtuPEBR0aK6dkiAz/pYT5JzXpEjZZRvynNR7FQ8E8OLh9swElptjr/QyEPrYb3758U4V2353omuxLW5HyJMQEiPpnKvYnSwPidp6oQdyibsC6OHRxKXMwziHcNIlSq6xTdOUdg0zyEdFtP1pvbdNw6qcq9Y1/gx1EZGkU/NyMQx1ZoWCVJqvVR/hVprYwX/Ou24Hc2xDUV3TiK/XN+Kc8ijGY8unz8/CQXA5iw922vOpzVKSoCnt7q9Tm9JjwTvzI5WcXV4kBRP4E9IOx0GJzOBw7A18kuqqssvTCGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9i0jsNDJJdM4ppzVoalSVllcTjwpgSehgajtH8LqHYU=;
+ b=VY2HxzTmG+qrt3wAKC0aERN/YGbwcDubYOu9NhCAHFWayYHt7yeoYFqdE8zAfCRIKZJ0wG6udADXds1lkZKmxbtQaFjJ4U3erzkkpZRgg7M3GlKJr/XeJfm+siEZlJ18uGhUPGsOb2VSvGVXAvlSRPFwX6A7Wb8AfCYGbpbRuMI=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by BN0PR10MB5064.namprd10.prod.outlook.com (2603:10b6:408:114::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
+ 2025 03:17:48 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%4]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 03:17:48 +0000
+To: Avri Altman <avri.altman@wdc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart Van
+ Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v4] scsi: ufs: critical health condition
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250211065813.58091-1-avri.altman@wdc.com> (Avri Altman's
+	message of "Tue, 11 Feb 2025 08:58:13 +0200")
+Organization: Oracle Corporation
+Message-ID: <yq1ed02v8hk.fsf@ca-mkp.ca.oracle.com>
+References: <20250211065813.58091-1-avri.altman@wdc.com>
+Date: Wed, 12 Feb 2025 22:17:44 -0500
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0106.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::21) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157C1DF0A0101EEF4CA79E2D4FF2@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|BN0PR10MB5064:EE_
+X-MS-Office365-Filtering-Correlation-Id: 670f1c4b-6faf-4feb-341d-08dd4bdcfdfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7u0b68VpDZrqiMUW+MeRKpdhY9E559X1MmcieUdyg6SZS96/Gb9X+TrGBNJJ?=
+ =?us-ascii?Q?9h4O0z/dw6ShWYMbS0cHmdBI2b+JGnodXay8XJLcZ3w6g5ZnJUfljUUif1b1?=
+ =?us-ascii?Q?s/j3NqrDzWzYO4HCaG7dRXokuQtDUHzzxxJaNKfQ+2dxbIsk5HeA2Am63Y9z?=
+ =?us-ascii?Q?Ol+bfYCp8gzSQ/dW68D5l5oezeakOJAZsrtp4QTDDSyKSff9J+CG2TkiIeSR?=
+ =?us-ascii?Q?CHnAAC5vi1esgCedKFViXar36QnK/w+m5z4juKZonX+/Tn/XTu5+6QvAeqWP?=
+ =?us-ascii?Q?JDmEJvDelXsz+XsZjllLQtXPqwIRfmAfzXzpwPkVaDYu8bgzFNljfu81jEVe?=
+ =?us-ascii?Q?xZyIyWXiFD4Z5E9S+3Ede2PBf7XfHstSJr1KrAd5GKfXGBaLZm+tzRM90NiT?=
+ =?us-ascii?Q?Jfe0OnNMcWVhMYWQcMVSUOs+jAAAzRHCTFy5bMDcm8kUJEDARgYHCBG7ITL5?=
+ =?us-ascii?Q?M9E88HfQ57kfFD1emVCuRv57T07RYfEXVIBHQI2rUB//mkT/gzN9JnZH9lr5?=
+ =?us-ascii?Q?hFRgl75OcmrR+wPrFxYBpXZTpeXB+rnI7w4BKpcOIiLqFjVv69fRHboR1abh?=
+ =?us-ascii?Q?YdqShV0i8dSEesz8HyagMG4NelmXiHTkk/WZmM3MF6pRVP+7nQLDuuyBDIBs?=
+ =?us-ascii?Q?evoPJeAVAExCZEwwZldzegBFolW2zf0YqHs4GP21666xTumwNfpyhRGzzJb8?=
+ =?us-ascii?Q?OQusQc5neKs/7/o4fGn+r5IBPIdka85kouO1AumgABaUyCSg2bxdWbDeq5hW?=
+ =?us-ascii?Q?HwVD+CChP168myP7JyiReoB6jHDydJ5qHzyA/wVngwjhcjFiLlJQo2/oQDvK?=
+ =?us-ascii?Q?h3bQmVlbl4VgN7+VOAY4myiR+7o/Ounhu4ag6C0bN56NFIWIo4pbVH+913Vj?=
+ =?us-ascii?Q?aMIsE+U5pNprFF5Unw1mjZ98dtC4yYTFCeANUpvjgSw+gpMYvWW9Fgu9xasm?=
+ =?us-ascii?Q?FxsOc5gYSLb76JcZeDHdED/cAg1uBCWGDpm6nS0SZVk2EsxA9SSKzRJSH0Bc?=
+ =?us-ascii?Q?bIwEKS7NmP5lb93kVkLrXZQXZz3Luk1Po2mLoO+KpPOX+OYpUmQLVbuiEtwP?=
+ =?us-ascii?Q?rspalsEAJLYsXzaMpqVTkbSwP5ikivwaKZjQ5yTQGU/nAykK/R8KQmXB0jfU?=
+ =?us-ascii?Q?7gCez0OqpOyVFwgwQAWu/B2GJ43Xqx1OYHUluTOiIv5RUFrOCP90IvcKDsUc?=
+ =?us-ascii?Q?zfupaQYChvFMkKiBjm65eWUDc6io+bvhVWToAatE2JFUJFeqZQ+rpFI8Luig?=
+ =?us-ascii?Q?+ASuqjnNjievxhIeTf2o78pLUIyzzcpqbxH/8LHV61LWPmEBb0ppXWDOtymY?=
+ =?us-ascii?Q?HZiaM8psNPm8mFdB1DjgMQqSYO2UQPN9XvExHkwPtTnKTYIVratAWcsCrIyy?=
+ =?us-ascii?Q?gzg4DGI7i6v99K4PRD4dhzFds/Qj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?V2f9/zb5cBnf2+kblfC/BgNE4l9h7G+HLdZQmY/9pqUyKcVmsoxZp+ZceZeY?=
+ =?us-ascii?Q?0dwPMo6j3fbwJ2/3qCkNRzpU3NyOBU57NScmgLn6lGYj7MJJOQoo/Ees92rE?=
+ =?us-ascii?Q?mt4reCV7zJ5tWtm0I6pXRF0Gi2OLCN80XZEqc0ZdMoROxp/B9YbSKTLy5Msj?=
+ =?us-ascii?Q?eV0Z/G8U124IhceAZYCaolmLhncECNcFf3Gshe0GcqTJbhwZ76zQICOqUjlF?=
+ =?us-ascii?Q?/WKjIIRAUcvXMWs2+Pf0+CRB9og9vzjTpQY7y+pARA6hRwFbGE67BOvRE/2J?=
+ =?us-ascii?Q?o/ZY60L1OhPRAJ4moX7WSQlUS4FYFWrxLzGr620M49zbBBxFS0ZM9Ajo2na3?=
+ =?us-ascii?Q?9tptpBr1TsGwumbY2+G8/QuaqsfB4Wn7iSHuVGoQ/z5QZamtxGA9EiG34iBb?=
+ =?us-ascii?Q?uGpLWjjt7+Nsi4kJ8lbnAfbK0KEUirFS+tBufSY+ljgJD/EKTZv297DdiSpk?=
+ =?us-ascii?Q?9ps6IidZdlZhbN4fyc95J3oFpKIZPIvFhiTjUlhr+nq267W3VrxckqLk98eZ?=
+ =?us-ascii?Q?KKjQDeLXCY5iaoAaVjin7BEQUpFXUQlTI7d18lwnN0gzGs0pL+2uT4rv/Y1h?=
+ =?us-ascii?Q?JU799wxJa9wQB1sgWQLAiVLXgsZ0fYyI1qs+l0X1VimR0YDVtePLubw31hVw?=
+ =?us-ascii?Q?JGa39ieGfW1kgvn7h5mUKc+EVLy44S1NsVcqCfDiWClS7myzpDz/b/mm22NF?=
+ =?us-ascii?Q?tWX3AYgS8lVRegfTDDqxVdEpaFjIoN6u2iFkTctc1gsD+wgHaZTAzZfhJHgK?=
+ =?us-ascii?Q?xrIiR03lqHdYXfoyXy86CS3JDh1ySlGgFtJwEDSK8/Hi27d8TOwdEgaDptZr?=
+ =?us-ascii?Q?mwNAf1LCz0INlzTh38ncb5to1YXIlzXEkxftcVcFIY7eWnTTAy6gPVLlyYFL?=
+ =?us-ascii?Q?lbvKg8zZbinsWw3jWi08JRZ3u//txvq2Huu35ltIzQHe7Lq5/qeo1KMI8Cr2?=
+ =?us-ascii?Q?6DKhs6JXsWnK7hf9k73N98bN1YQY461VKqc81NxQrW0656rcNaOJS/dcdF05?=
+ =?us-ascii?Q?XuyM2OgqmcCyxINhZ89lSLAWpUYesatbX0aaZC3ICFIujfkZwa/AqoWzU3re?=
+ =?us-ascii?Q?1ovn+DvPxp5qvJFRGKhGaB0SqF8v23yXEcCjrtKoqm6iDQJoStlDqO7ZPRfD?=
+ =?us-ascii?Q?YzkqU6VEKVuOpa1yy2DaYCqHziR+eOa7QYVs5nr+TywmyA5w7fDBJdOWCwiv?=
+ =?us-ascii?Q?kkuPkbzwB7gTUo0NpROYLqGdTofoeYzRgSdnv4d+WapjWVpiIkskR7sOQIj9?=
+ =?us-ascii?Q?4IAqpvT1sng/D/YYiqOCPkYA4m4fixMvaCa/hFI6YWVxsmqVygEcioLl6E89?=
+ =?us-ascii?Q?tw/+0XoLfNIjyTcL+Dd5lL6RtI3O2vuweUlTjmKvPxZctILOc4p8LAQ0nr6t?=
+ =?us-ascii?Q?MR29WbzkOZjYOiSnwMkzNGiinwBUlW1F7aIN9U8gEfqGdw9NH4HRNRTlgS0q?=
+ =?us-ascii?Q?UY8i0K9BKFf8ymMWBZwtSky84K+gyzHO6nKgNw9Jfe6OyQa5DPZf5Nz2vesW?=
+ =?us-ascii?Q?z8YyBqxSPYzE86zdZ/s8L76ZT9vQM3KcbJaokbw6o/qePilcVbBcs2Mm4fF8?=
+ =?us-ascii?Q?XYeRSUH8y2Mmb+CB4ErwVEoAt6/nOIm855ecWcBjIkzv0nQyXSmInsRzwoPG?=
+ =?us-ascii?Q?tQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	F6PfFHot7LFY25DPeyF9NdSf/0haHISFnqnImdhQvqBu9y7oBlhK0HDO4g43UIlE2PbpPBSldCOzAty0/AwkbfdnloP/5pEJujImW55Yz2tWU4x0gjjPW66xzJIfc6vDZ2rH6BFCioDmIBuKJqB2/SXn2t9iHgz6kEjgCkMAFIN+uswgCQf4RZDsp9LNUd2jqVzNYjMY6WSi7g0hnsKnSXd6XNW2rErli2/yrtNQHYPc1p0qoJtGQ10B0cTPE7DPvF8yvyCraI4h/bHzvC4FfknGsRYNMTGOEg9/gcKico4CeroPxi3/HutQq17bAnscUd7dZHZ8pWEr5ykumCUDjg3YbOUqzyqIrJaXKvhlebu32/CSPmKmNqmFY5/c6h0jcb/OJ56U9iUY6wrICKpUhROv5qO+U4ZmyVJLeibcdueSZGfuZzJb54wPh7+QYY2hu+d6yssPUA1Ua0DKxypvarnS9LJEzXrwuBITUjnA1VwinLbzeDhe6DyYdHfm6aHH297onLuzG7NTbUp4+6SnzbMJmYDY1p+Xd6/TrYjkKWNsBVAdwxLlSHHZfr7N7kOX5IpuyToYaUxU2SPAiiedjCPPjKA05OnRarNBpVbxAr4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 670f1c4b-6faf-4feb-341d-08dd4bdcfdfc
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 03:17:48.3564
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dTOPKb5wF07kAx5SmuOoGMJKYg84Aq1fpS5GbBoqTt/T74waNyOqdyAOoqOxEYsanauepTkYdaWfvaOL/qIXZxhszw78NhvA0poSDd1hZTE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5064
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_01,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=742
+ phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2501170000 definitions=main-2502130024
+X-Proofpoint-GUID: c7uLeDc-x3rlAdrVJegRY6PGLiiF0_7D
+X-Proofpoint-ORIG-GUID: c7uLeDc-x3rlAdrVJegRY6PGLiiF0_7D
 
-On Thu, Feb 13, 2025 at 01:35:22AM +0000, Michael Kelley wrote:
-> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Monday, February 10, 2025 8:52 AM
-> > 
-> [snip]
-> > > > >
-> > > > > While we are at it, I want to mention that I also observed below WARN
-> > > > > while removing the hyperv_fb, but that needs a separate fix.
-> > > > >
-> > > > >
-> > > > > [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_info.c:70 framebuffer_release+0x2c/0x40
-> > > > > < snip >
-> > > > > [   44.111289] Call Trace:
-> > > > > [   44.111290]  <TASK>
-> > > > > [   44.111291]  ? show_regs+0x6c/0x80
-> > > > > [   44.111295]  ? __warn+0x8d/0x150
-> > > > > [   44.111298]  ? framebuffer_release+0x2c/0x40
-> > > > > [   44.111300]  ? report_bug+0x182/0x1b0
-> > > > > [   44.111303]  ? handle_bug+0x6e/0xb0
-> > > > > [   44.111306]  ? exc_invalid_op+0x18/0x80
-> > > > > [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
-> > > > > [   44.111311]  ? framebuffer_release+0x2c/0x40
-> > > > > [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
-> > > > > [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
-> > > > > [   44.111323]  device_remove+0x40/0x80
-> > > > > [   44.111325]  device_release_driver_internal+0x20b/0x270
-> > > > > [   44.111327]  ? bus_find_device+0xb3/0xf0
-> > > > >
-> > > >
-> > > > Thanks for pointing this out. Interestingly, I'm not seeing this WARN
-> > > > in my experiments. What base kernel are you testing with? Are you
-> > > > testing on a local VM or in Azure? What exactly are you doing
-> > > > to create the problem? I've been doing unbind of the driver,
-> > > > but maybe you are doing something different.
-> > > >
-> > > > FWIW, there is yet another issue where after doing two unbind/bind
-> > > > cycles of the hyperv_fb driver, there's an error about freeing a
-> > > > non-existent resource. I know what that problem is, and it's in
-> > > > vmbus_drv.c. I'll be submitting a patch for that as soon as I figure out
-> > > > a clean fix.
-> > > >
-> > > > Michael
-> > >
-> > > This is on local Hyper-V. Kernel: 6.14.0-rc1-next-20250205+
-> > > I run below command to reproduce the above error:
-> > > echo "5620e0c7-8062-4dce-aeb7-520c7ef76171" >
-> > /sys/bus/vmbus/devices/5620e0c7-8062-4dce-aeb7-520c7ef76171/driver/unbind
-> > >
-> > > When hvfb_remove is called I can see the refcount for framebuffer is 2 when ,
-> > > I expect it to be 1. After unregistering this framebuffer there is still 1 refcount
-> > > remains, which is the reason for this WARN at the time of framebuffer_release.
-> > >
-> > > I wonder who is registering/using this extra framebuffer. Its not hyperv_drm or
-> > > hyperv_fb IIUC.
-> > >
-> > > - Saurabh
-> > 
-> > Here are more details about this WARN:
-> > 
-> > Xorg opens `/dev/fb0`, which increases the framebuffer's reference
-> > count, as mentioned above.  As a result, when unbinding the driver,
-> > this WARN is expected, indicating that the framebuffer is still in use.
-> > 
-> > I am open to suggestion what could be the correct behavior in this case.
-> > There acan be two possible options:
-> > 
-> >  1. Check the framebuffer reference count and prevent the driver from
-> >     unbinding/removal.
-> > OR
-> > 
-> >  2. Allow the driver to unbind while issuing this WARN. (Current scenario)
-> > 
-> 
-> >From looking at things and doing an experiment, I think there's a 3rd
-> option, which gets rid of the of the WARN while still allowing the unbind.
-> 
-> The experiment is to boot Linux in a Gen2 Hyper-V guest with both the
-> Hyper-V FB and Hyper-V DRM modules removed. In this case, the
-> generic EFI framebuffer driver (efifb) should get used. With this driver,
-> a program can open /dev/fb0, and while it is open, unbind the efifb
-> driver (which is in /sys/bus/platform/drivers/efi-framebuffer).
-> Interestingly, there's no WARN generated. But when the hyperv_fb
-> driver is loaded and used, the WARN *is* generated, as you observed.
-> 
-> So I looked at the code for efifb.  It does the framebuffer_release()
-> call in a function that hyperv_fb doesn't have. Based on the comments
-> in efifb.c, we need a similar function to handle the call to
-> framebuffer_release().  And the efifb driver also does the iounmap()
-> in that same function, which makes we wonder if the hyperv_fb
-> driver should do similarly. It will need a little more analysis to
-> figure that out.
-> 
-> You found the bug.  Do you want to work on fixing the hyperv_fb
-> driver? And maybe the Hyper-V DRM driver needs the same fix.
-> I haven't looked. Alternatively, if you are busy, I can work on the fix.
-> Let me know your preference.
-> 
-> Michael
 
-Thanks for your analysis, its a good to know about fbib driver is not having
-this issue. We can take it as a reference.
+Avri,
 
-At the first look I see efib driver is having a fb_ops.fb_destroy function
-which gets called after put_fb_info (responsible for decrementing the
-ref count). Also it uses devm_register_framebuffer which handles the registration
-and unregister of framebuffer more gracefully.
+> The UFS4.1 standard, released on January 8, 2025, added a new
+> exception event: HEALTH_CRITICAL, which notifies the host of a
+> device's critical health condition. This notification implies that the
+> device is approaching the end of its lifetime based on the amount of
+> performed program/erase cycles.
 
-I will work on this.
+Applied to 6.15/scsi-staging, thanks!
 
-- Saurabh
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
