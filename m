@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-513223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08535A344A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:07:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3EAA344DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7F21894D50
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E527E3B2E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517CD1D63C5;
-	Thu, 13 Feb 2025 14:54:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E38E1C07C3;
-	Thu, 13 Feb 2025 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1D6200120;
+	Thu, 13 Feb 2025 14:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jhvWygYo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gMdo1Fxu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A50A2A1D1;
+	Thu, 13 Feb 2025 14:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458490; cv=none; b=h2E4TV5TJGOqWBnP81coFg/SjtBOjAD5k8KMvgOMLNGFJTwN9JBKnN5ypnmCXfEV1XNt31dUYHyH2awofrIWDULV4w2gw8k3BShVOzO0Elz1k229msHyPE7JCADDZOCsnEHwzrZfYnJczk08MfRyj3llqMZRs015aI+hqsRBSr8=
+	t=1739458536; cv=none; b=nVJSX4Lu9V8KBh7NHJlfVeBy+whbRwIgkD0n60cClJ7BqVGarnX13/MbBCHw78N+L3dhuyiicVRS33blauKZwNVvmGJZTDfMCzi+elDk6V9nGJpd+N6ub9qMQhxxBT8kqjfylSLJrAzeMPKQwa5LtZBn+yz1VdoCwg5S/e87Hiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458490; c=relaxed/simple;
-	bh=IfuxON9f1+mt0J5dXUHTZ8LLFpSbXwaRfsyQDzivT8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UJrM0RBeevITjjeqUjjHl4dQljGs6DLenBg39/+qlANSNvHiiS0p5EgPRwAvveqwcyas4QiFHtEVFbCfgX0TOn3ljCz4aAT1A9kqGiFwhFVLAUtcUl7C2WKG12Bo6gBPGxg0eCy0G63Mf6FZY5d8OJ+YBSCh7vSOgFsMm3XPW6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C074106F;
-	Thu, 13 Feb 2025 06:55:08 -0800 (PST)
-Received: from [10.44.160.94] (e126510-lin.lund.arm.com [10.44.160.94])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 677FC3F58B;
-	Thu, 13 Feb 2025 06:54:42 -0800 (PST)
-Message-ID: <c16a24b9-1258-4976-827d-db3335bf6e83@arm.com>
-Date: Thu, 13 Feb 2025 15:54:40 +0100
+	s=arc-20240116; t=1739458536; c=relaxed/simple;
+	bh=vodOrnA+mp/Kiz6MLJ6Gms4MHuag31+UDR9YzBcrYwU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XsAJRm5pJjR/KJy3pgrGPhmifhz3YaQuMRDJekCHv0EQX+93+MRAKYarhWulW316BVzANzweLFTOqJbzjTznYCZqkxMd1ZMytJ02xQnZKhdLpQ8iPMcznFxAAiY6KFvZKRwn0MMU9AxCanugTlEw02RW1qmeg7HSGvyUI1bDMqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jhvWygYo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gMdo1Fxu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739458533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U9uQyD9MxiTKtzDeq5SkjdXy3TxsjG73sLxqRoM0omM=;
+	b=jhvWygYorfUcEr4jsOp6nTps494CSDslJzFbvopeMHTFVsOIkr/Vk+n/TFk9Nln8/Mlwhb
+	kIcv0zSccNdh2fNMMvatrWKLWpKetypX/OYUpsDhJ6FuKWlffg8+wTcbeaZhOEQK+wn4U1
+	bZlJTG23de1q+TBV0n/yl2XjB2IpZcc+XVPQ5Y9vf5aBJ6/RhNI9qfJ1KP4aXOW65UT0eJ
+	ZuTkZvxpU+hSaybfvEWGKL+e9wMFO9PIes1UWPu/dWjtRJqJeTHV2hDc8gQNIz6pcuetxi
+	fk15leYRewDcJGFN/lUcwk8UWVTNCj/sHePMNNjGoPdwwysY+a+3iFWSPXysmw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739458533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U9uQyD9MxiTKtzDeq5SkjdXy3TxsjG73sLxqRoM0omM=;
+	b=gMdo1FxuD9SidanWXipL9Lv4ACmkefZFyTNtMze37yMRx4bfcept1gupP1JuQOVq/aX+Xu
+	rGK8/fgILPYi0PBQ==
+Subject: [PATCH 0/2] kbuild: userprogs: two fixes for LLVM=1
+Date: Thu, 13 Feb 2025 15:55:16 +0100
+Message-Id: <20250213-kbuild-userprog-fixes-v1-0-f255fb477d98@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 00/15] pkeys-based page table hardening
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Jann Horn <jannh@google.com>,
- Jeff Xu <jeffxu@chromium.org>, Joey Gouly <joey.gouly@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>, Andy Lutomirski <luto@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Pierre Langlois <pierre.langlois@arm.com>,
- Quentin Perret <qperret@google.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
-References: <20250203101839.1223008-1-kevin.brodsky@arm.com>
- <202502061422.517A57F8@keescook>
- <fd101c51-d3fc-4a4f-afcc-364b8d3c4a0b@arm.com>
-Content-Language: en-GB
-In-Reply-To: <fd101c51-d3fc-4a4f-afcc-364b8d3c4a0b@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANQHrmcC/x3LSQqAMAxA0auUrA20dSpeRVw4RA1KKy2KIN7d4
+ PLzeQ8kikwJGvVApIsTBy9hMgXj2vuFkCdpsNqW2poct+HkfcJT3BHDgjPflLCYdT1UtidnHIg
+ 9Iv1DaNu97wdn91mfZwAAAA==
+X-Change-ID: 20250213-kbuild-userprog-fixes-4f07b62ae818
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739458532; l=992;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=vodOrnA+mp/Kiz6MLJ6Gms4MHuag31+UDR9YzBcrYwU=;
+ b=4cIfzXuaJsZ1Sg5xxpN9sCsSCIyYL4yS+JkK2zcNv5fYt6Ts1JtfWrRmDece8We8pFRhr95YV
+ E5pFV93gukJC/yPiRsLzEugJnIDqW+rlo0Rxfdzl7rYzIEwyc7q14vS
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 10/02/2025 15:23, Kevin Brodsky wrote:
-> [...]
->
->>> Any comment or feedback will be highly appreciated, be it on the
->>> high-level approach or implementation choices!
->> As hinted earlier with my QEMU question... what's the best way I can I
->> test this myself? :)
-> As mentioned above I tested this series on Arm FVP. By far the easiest
-> way to run some custom kernel/rootfs on FVP is to use the Shrinkwrap
-> tool [3]. First install it following the quick start guide [4] (I would
-> recommend using the Docker backend if possible). Then build the firmware
-> stack using:
->
-> $ shrinkwrap build -o arch/v9.0.yaml ns-edk2.yaml
->
-> To make things easy, the runtime configuration can be stored in a file.
-> Create ~/.shrinkwrap/config/poe.yaml with the following contents:
->
-> ----8<----
->
-> %YAML 1.2
-> ---
-> layers:
->   - arch/v9.0.yaml
+Fix two issues when cross-building userprogs with clang.
 
-Apologies, this is incorrect - it will not work with the most recent FVP
-builds. POE is a v9.4 feature so this line should be replaced with:
+Reproducer, using nolibc to avoid libc requirements for cross building:
 
-> - arch/v9.4.yaml
+$ tail -2 init/Makefile
+userprogs-always-y += test-llvm
+test-llvm-userccflags += -nostdlib -nolibc -static -isystem usr/ -include $(srctree)/tools/include/nolibc/nolibc.h
 
-(No need to change the shrinkwrap build line, it only matters for the
-FVP runtime parameters.)
+$ cat init/test-llvm.c
+int main(void)
+{
+	return 0;
+}
 
-- Kevin
+$ make ARCH=arm64 LLVM=1 allnoconfig headers_install init/
 
-> run:
->   rtvars:
->     CMDLINE:
->       type: string
->       # nr_cpus=1 can be added to speed up the boot
->       value: console=ttyAMA0 earlycon=pl011,0x1c090000 root=/dev/vda rw
->   params:
->     -C cluster0.has_permission_overlay_s1: 1
->     -C cluster1.has_permission_overlay_s1: 1
->
-> ----8<----
->
-> Finally start FVP using:
->
-> $ shrinkwrap run -o poe.yaml ns-edk2.yaml -r
-> KERNEL=<out>/arch/arm64/boot/Image -r ROOTFS=<rootfs.img>
->
-> (Use Ctrl-] to terminate the model if needed.)
->
-> <rootfs.img> is a file containing the root filesystem (in raw format,
-> e.g. ext4). The kernel itself is built as usual (defconfig works just
-> fine), just make sure to select CONFIG_KPKEYS_HARDENED_PGTABLES to
-> enable the feature. You can also select
-> CONFIG_KPKEYS_HARDENED_PGTABLES_TEST to run the tests in patch 15.
+Validate that init/test-llvm builds and has the correct binary format.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (2):
+      kbuild: userprogs: fix bitsize and target detection on clang
+      kbuild: userprogs: use lld to link through clang
+
+ Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250213-kbuild-userprog-fixes-4f07b62ae818
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
