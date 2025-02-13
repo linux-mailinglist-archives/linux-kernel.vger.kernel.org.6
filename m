@@ -1,184 +1,176 @@
-Return-Path: <linux-kernel+bounces-512110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA72A33426
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:39:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9CFA3342D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488B6188ABB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:39:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDBC167F08
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A758633F;
-	Thu, 13 Feb 2025 00:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57B37083C;
+	Thu, 13 Feb 2025 00:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrStPF+H"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UEnWYm6G"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEF081AC8;
-	Thu, 13 Feb 2025 00:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17E92F44;
+	Thu, 13 Feb 2025 00:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739407154; cv=none; b=jaW3ekh3qSCPqUz4HAJN4eW382MFP2pbd5DC+Luf+C/nVpuBT7g7MbI8d+NgyGjg3+dOlIhE2KqIR3QvNKvP7NybFpEwvJyTPnhgPbIQ4GsURLT4MXN7svvBXCd5sR0Vt9ZyCrk77yzfnsBjSDf5YsNEzAcFt3Z+LsBgm6CfueU=
+	t=1739407261; cv=none; b=EageJZ8JTITu1V6z5eZMnPrCvkkaGzpSpvg68bDIUC5JpAuz4cV5b5Js5xbALiihImL8yHzLx101CDrkXOADGTINTldiE/b73KcXZQLsg3OBkMFP3gakacWvfQyOWb1fH84BEpdu7LPmlbsWCTgAMB2MidwhEG7vpMGexlOeozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739407154; c=relaxed/simple;
-	bh=/+w6HiAUlBc+kRrinIioqfpoFWtrMKoB/DUDSDW3RCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nfUGJCLTaxHFEQxZ/S+6qTRsmFRJi0aR46bwRPsx7kXuTo0NtOWYlxr498qQlOeZTk4nvPMm0UKpjYX0T0xczhQO5E6L/qr8a42oE44O/PxoZxzbUUhB3BCFy0SquA1B1ThstCFr4MM/wrq5XGtfoQvNyJG9FZj+oc5FuiKvTdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrStPF+H; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46c8474d8daso2140031cf.3;
-        Wed, 12 Feb 2025 16:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739407151; x=1740011951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1VKAEXIbPsMighQ8qKly+RRtipWoEJVN3H+Ie+l08Lw=;
-        b=MrStPF+Hb3N+pc/qdtGgDFGMcV3YJ6WmF3rUVxCVJ3HMDYeG/YL0WpzTwXM0HnsRUX
-         ovKOV/efqY+JmU/BEeF4/Uk46wLCsihmkAu6cVV4bU3nVH3C+7zTn3IsyjCdGMOqPCzz
-         rWegswOkfyBcBfZ5okJyay4UgxU3+uadSWuEP/pIyQano55DPX2/mMOarR1zjcYtgeE4
-         tiGclw77V3c1fKCNLzId8D6lxhGg/fnuYRIaKk/tz1pRv85AJUPzfj1h/U4lqtu60Zj6
-         3MkqnuWfCZy2n92lneHZUjebOEbY2E1N6Tt62AZs0oL6TILZbN3UCPwowI4oTN/6Y3uu
-         abhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739407151; x=1740011951;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1VKAEXIbPsMighQ8qKly+RRtipWoEJVN3H+Ie+l08Lw=;
-        b=fbqWkcA5ViqOHYyeHSzzgpgJqA84O7FRUxvLJb5Lqit7qGIu1pDNKE5UWNInIwbLa2
-         AQraijsgiXy27tJMJmGlwqJPqNRApp2OSvturij6e1qM8NPbBWS2Fr1/4IQmt0bJhrkX
-         rsabeCXzZhZQl89Aorr9wl6IP7sptccA6Oz0ddjteiRNRsGsBUZoghiX7JDUzhb+G5Ig
-         qubB5vc+IwmlEiqSyFrv9LSrJ6J5z9bULL1lDoickevaZ4oXy9WuHIx7Cu9MR+iQzquf
-         baEhCjcLAeRMovSCFRKpSu8uC0nQZJjGTbbZc175IuqHDyLr0ChzOuF84sVxhngret53
-         g/RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdUMumqZuMO1/gIj8B+9xy/HdDGOSLVVnPOxVctnW0gyLUz3QchEXVbL3hTjNo3pPM3Yj2OluBKTZ4fbpx@vger.kernel.org, AJvYcCX5KW4f0VECAZAW7UoNtxJXPc7KX0vlhX/UTVZiGMEZL+XbzmJNowkOmNkKejrXbsROTDWmy0bc5mab@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH7g9vX3y89aW1qkMez3EjCBPURahDgRkn8g3M1se2UwK/Ty4+
-	iB0cNcnYDUiwTxZ+q/+nBAgUXOvjIaJQ4oPCl7vEGtgkcF/4mKDz
-X-Gm-Gg: ASbGncvNgo2a1ME7+VlJTlfrNEsrla4OqyKOZT3Ib0tqZeOZjaZ8Ci05ul4S/eE0xBL
-	HsuQDtQFysroBGTIEOMcm+xAgae0tMH9YPHRC2YNhaS1ECoYcwt0MqnIL8LG28RiPp3YJvx3IT6
-	HY4UaPVCtv6oM0K3U+ad/dFZCdlCArEJNipVE8DsQi4GNg+u/Nl8pYLBklEb/jygEsdF8pWugeD
-	lH4WB15dyY00U7r2T+kO9CEhoME+54+jVaUd31XmbOnZUsisZRmTel/Hv6r//9Rpg4=
-X-Google-Smtp-Source: AGHT+IHBc4LTnAwtHYivgaNgVKDo5w4ZaLaXgX6Xpv7NQpTgZYGhBYw2IsMuK7NVT7OfDxlvlEfZdw==
-X-Received: by 2002:ac8:7dd0:0:b0:471:9174:53ba with SMTP id d75a77b69052e-471afde1e0fmr56132161cf.9.1739407151127;
-        Wed, 12 Feb 2025 16:39:11 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471c2b04b18sm1163941cf.72.2025.02.12.16.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 16:39:10 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	Yu Chien Peter Lin <peterlin@andestech.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v4 3/3] riscv: hwprobe: export bfloat16 ISA extension
-Date: Thu, 13 Feb 2025 08:38:47 +0800
-Message-ID: <20250213003849.147358-4-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250213003849.147358-1-inochiama@gmail.com>
-References: <20250213003849.147358-1-inochiama@gmail.com>
+	s=arc-20240116; t=1739407261; c=relaxed/simple;
+	bh=/5BdimO5ChYxqdyBHcKxk64mNtH5uMwvVg3cjZH2rKw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DcNAM9MAHppBk82uBdLd9NKjYo6hL8ahSN1O0U8fDI0djDkFfcDhYZUf8/tTYWWawvo7nVRCnoGSOzG39DvZUYW3r8S2eErbB44Q9wzTBS5C5WeI8a7Tbkna1m5kB3ETefrUl1RYhhwOIL7H+u1y6R2fEf9mu+pUfXaToZEPCOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UEnWYm6G; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CKG8FP004594;
+	Thu, 13 Feb 2025 00:39:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kvPsau
+	XDyf47SKQKq4L7sX8eCJo/Sjkz/am1Ygpjog8=; b=UEnWYm6GywtAWklet8Kgpk
+	ry9C4dDxYoUnjlmbMhR0g8vGlzqt9nrrYlr4pT4ZH/HFnl+aUieYO9JL0FaV0Z2X
+	wgnsvrixboTeC4h3j7FLogqEFZHRQqvix/eL8cCK2Ohx0ukW8Mgs4enLAb/QXKed
+	VHf0IriPmvQU0LL44IJypBnfxnTjiGkgyDoX6VdWGBzB420z/iDMFHPM7E6e13Cj
+	VfefLAUgEiGzBKNAz19wwzO3mdB2I/np6ENZCNvI2pgs8XbKcNCg3/flpn8DJAt/
+	g0RNpy4h0c26wxoO9h3vCnPGRgWEL2uboa5tLC5aq+yuCQ90coVWd+e2UlBVHyxA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rhqaefkc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 00:39:48 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51D0Yq7p011254;
+	Thu, 13 Feb 2025 00:39:47 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rhqaefka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 00:39:47 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CNV6bh016749;
+	Thu, 13 Feb 2025 00:39:46 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kbmxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 00:39:46 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51D0diJD39125320
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 00:39:44 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2372E20040;
+	Thu, 13 Feb 2025 00:39:44 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9747620043;
+	Thu, 13 Feb 2025 00:39:43 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Feb 2025 00:39:43 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (unknown [9.36.5.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 0DEA2600D7;
+	Thu, 13 Feb 2025 11:39:26 +1100 (AEDT)
+Message-ID: <835f0504d85398707997b7fe96b4f1a44179ff9a.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/9] Extend automarkup support for ABI symbols
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Bagas Sanjaya
+	 <bagasdotme@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet	
+ <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        "David S. Miller"	
+ <davem@davemloft.net>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Avadhut
+ Naik	 <avadhut.naik@amd.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Eric Dumazet	 <edumazet@google.com>,
+        Hu Haowen
+ <2023002089@link.tyut.edu.cn>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg	
+ <mika.westerberg@linux.intel.com>,
+        Paolo Abeni <pabeni@redhat.com>, Sean
+ Young	 <sean@mess.org>,
+        Yanteng Si <si.yanteng@linux.dev>,
+        Yehezkel Bernat	
+ <YehezkelShB@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael
+ Ellerman	 <mpe@ellerman.id.au>,
+        Shrikanth Hegde <sshegde@linux.ibm.com>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>,
+        James Morse	 <james.morse@arm.com>,
+        "Nysal Jan K.A" <nysal@linux.ibm.com>,
+        Tom Lendacky	
+ <thomas.lendacky@amd.com>,
+        Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Frederic Barrat
+ <fbarrat@linux.ibm.com>,
+        Madhavan Srinivasan	 <maddy@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy	
+ <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        workflows@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 13 Feb 2025 11:39:20 +1100
+In-Reply-To: <20250212135808.58d2f032@foz.lan>
+References: <cover.1739254867.git.mchehab+huawei@kernel.org>
+		<Z6yFG_NntQfkwYli@archie.me> <20250212135808.58d2f032@foz.lan>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: OZ4Ih_TXKxH9HgohVnb0WeQrzyi138qF
+X-Proofpoint-GUID: _CytR_Qn18YZDyX1vFuvKdYXq73CWqPh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_08,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=609 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130002
 
-Export Zfbmin, Zvfbfmin, Zvfbfwma ISA extension through hwprobe.
+On Wed, 2025-02-12 at 13:58 +0100, Mauro Carvalho Chehab wrote:
+> > WARNING: Documentation/ABI/testing/sysfs-class-cxl not found
+>=20
+> I need to double-check verify this one, as it didn't appear on
+> my tests. Are you getting it against docs-next or linux-next?
+>=20
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Reviewed-by: Clément Léger <cleger@rivosinc.com>
----
- Documentation/arch/riscv/hwprobe.rst  | 12 ++++++++++++
- arch/riscv/include/uapi/asm/hwprobe.h |  3 +++
- arch/riscv/kernel/sys_hwprobe.c       |  3 +++
- 3 files changed, 18 insertions(+)
+This is moved to obsolete/ by 5731d41af924b which was merged in rc1,
+and will be moved again to removed/ by [0].
 
-diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-index f273ea15a8e8..feefe5ea24ea 100644
---- a/Documentation/arch/riscv/hwprobe.rst
-+++ b/Documentation/arch/riscv/hwprobe.rst
-@@ -242,6 +242,18 @@ The following keys are defined:
-   * :c:macro:`RISCV_HWPROBE_EXT_SUPM`: The Supm extension is supported as
-        defined in version 1.0 of the RISC-V Pointer Masking extensions.
- 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZFBFMIN`: The Zfbfmin extension is supported as
-+       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-+       ("Added Chapter title to BF16").
-+
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFMIN`: The Zvfbfmin extension is supported as
-+       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-+       ("Added Chapter title to BF16").
-+
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFWMA`: The Zvfbfwma extension is supported as
-+       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-+       ("Added Chapter title to BF16").
-+
- * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
-      :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
-      mistakenly classified as a bitmask rather than a value.
-diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-index c3c1cc951cb9..e4e286c63629 100644
---- a/arch/riscv/include/uapi/asm/hwprobe.h
-+++ b/arch/riscv/include/uapi/asm/hwprobe.h
-@@ -73,6 +73,9 @@ struct riscv_hwprobe {
- #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
- #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
- #define		RISCV_HWPROBE_EXT_SUPM		(1ULL << 49)
-+#define		RISCV_HWPROBE_EXT_ZFBFMIN	(1ULL << 50)
-+#define		RISCV_HWPROBE_EXT_ZVFBFMIN	(1ULL << 51)
-+#define		RISCV_HWPROBE_EXT_ZVFBFWMA	(1ULL << 52)
- #define RISCV_HWPROBE_KEY_CPUPERF_0	5
- #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
- #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-index bcd3b816306c..f76163958e27 100644
---- a/arch/riscv/kernel/sys_hwprobe.c
-+++ b/arch/riscv/kernel/sys_hwprobe.c
-@@ -132,6 +132,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
- 			EXT_KEY(ZVE64D);
- 			EXT_KEY(ZVE64F);
- 			EXT_KEY(ZVE64X);
-+			EXT_KEY(ZVFBFMIN);
-+			EXT_KEY(ZVFBFWMA);
- 			EXT_KEY(ZVFH);
- 			EXT_KEY(ZVFHMIN);
- 			EXT_KEY(ZVKB);
-@@ -148,6 +150,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
- 			EXT_KEY(ZCD);
- 			EXT_KEY(ZCF);
- 			EXT_KEY(ZFA);
-+			EXT_KEY(ZFBFMIN);
- 			EXT_KEY(ZFH);
- 			EXT_KEY(ZFHMIN);
- 		}
--- 
-2.48.1
+Andrew
 
+[0]
+https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20250203072801.3655=
+51-3-ajd@linux.ibm.com/
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
