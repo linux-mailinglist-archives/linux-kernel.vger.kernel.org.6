@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-512805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5801BA33DF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:27:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B061A33E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11D317A4666
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC6C3AA72B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69A7227E9C;
-	Thu, 13 Feb 2025 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E68B1C863A;
+	Thu, 13 Feb 2025 11:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rc5YUrNt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ClNjhBiU"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8109A227E8B;
-	Thu, 13 Feb 2025 11:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C3F227E8C;
+	Thu, 13 Feb 2025 11:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445944; cv=none; b=HZnIhc1EZgKhSfkVRlT6dyEvEiug+oBPXJ628G/nEAEUcXWfDTPeiE+G6fPelzfcWf4aYcHsEZlyTpaV65FwX1m0rLnu7ZszChH5gb8nNNMvJDlPM+RDUxEiL5OPeqKYeASzoa2rV2D5CnkX0YnnahiD0I9hw9Sz3DciJZcmV80=
+	t=1739445977; cv=none; b=rM04/yEJGXuqd/kgdJfkgUVcfpQtgPw78AebFNCxW4I0rHiF3Yrmuc9kSfCQmXkiSQmddwl7ijmuSY7HhjfmwhIM8/94HD2SLJ4MKvKkeSSAjtrJV/iJ5/KkuKcb3VhxKw2RvdNqeOenI84uH7Qglt9PEHu9QnrOqd0w1FSBvWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445944; c=relaxed/simple;
-	bh=EVAUuBDBMmfoOHTQ3D16fxtASQyPWClWKsW6lBNhEzg=;
+	s=arc-20240116; t=1739445977; c=relaxed/simple;
+	bh=a76uEsEM5QEz1KJiDQYQrLivs/y81VdE+BXmBQrGiJo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/qCESuG1ZM8kQCVIgjesPwRNF20LWxao5ph4RSkmujTJG5mai0eHk1QsDTewmOopUVfeHnwirl0BzWx5CP7UkiO6mbTkmL/qg31YlC5OK5kNp63MEBRoK8oJA/RF3nF9Hms1+2/Pkv058p7J+SVrZuclHVj0JCoCCCjyF0EA0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rc5YUrNt; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739445943; x=1770981943;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EVAUuBDBMmfoOHTQ3D16fxtASQyPWClWKsW6lBNhEzg=;
-  b=Rc5YUrNtSUxrPBtbJB2wQdLrnQpyYWvzOqxx1I9Za4CZpiTKdfdLywTE
-   OHU8pSGumQhBq3fERmj1NBBkb3QqBE3cmV8lUmu5tm85owNJ/Ip/r8+06
-   4dd2q9ZazkHbRzj5Tpgog6Lj8h//DGxJB9Hq6ZQo7+x6ALn5gD7wZ4nig
-   fu5bzlgUdgScH2L3Bw37uiEHPfR8xYPQNxR02RvU3ZCDqghWR3xQUN/FQ
-   Q6AN/er2gJ7J3lZ7kTWT9KpBuuOUeEt6kzj4x5tRqR/BezMLFSLN9bGKd
-   gew0A/KAZAVtVs36fs3s4hBMycfEVZ6WpXw3iwzCI4cZVv/KzE95soDcx
-   A==;
-X-CSE-ConnectionGUID: f7hjgxBeRjCiItQq7oYKqQ==
-X-CSE-MsgGUID: zU49gNWfTeWfOB+tmEI/fQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43911389"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="43911389"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 03:25:42 -0800
-X-CSE-ConnectionGUID: eASTbBQoRtKW+uWVNLxbOA==
-X-CSE-MsgGUID: e7u4gQZ2Rn6BPVjTgQ5C7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112951902"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa010.jf.intel.com with SMTP; 13 Feb 2025 03:25:39 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Feb 2025 13:25:38 +0200
-Date: Thu, 13 Feb 2025 13:25:38 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Elson Roy Serrao <quic_eserrao@quicinc.com>
-Cc: gregkh@linuxfoundation.org, xu.yang_2@nxp.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: roles: set switch registered flag early on
-Message-ID: <Z63Wsng27QfhyjLd@kuha.fi.intel.com>
-References: <20250206193950.22421-1-quic_eserrao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qStXQ6+jZ99muCH8m2VLZv6rWjVu4nccV1LEodU/LORQTOyYPBnK794HkxHbWgk1pJaj0X0Z2Gm6DXzjjVGDny8zkf7UyhjGXTrQjyEDyHrPu7DeQYobwObLgM5p/Uu8D/XnpRy6bR+XsmwW0M2AcevpcCs+/V34odPkEXVwbdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ClNjhBiU; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3BB9B204A5;
+	Thu, 13 Feb 2025 11:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739445966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rUZkMEvJv2/Nc54eZXgalM3L01O0l7yfmrIgB7KhrLk=;
+	b=ClNjhBiU7bSJ2LVuVj3MhNmAjBfG5wdPHJR51Gst5UBx+tZo172PGsyFbW/ciciZ5Ih2te
+	bePvC1qsSkNduxfr6W2DMo1Dt4H+HMBdal9tgCTfPZYTl2b58SxaQirU3X3n6M4xtEQCD+
+	T+hsOlT+VbYJhcyn+1jF6QAkreHWn1IBAqbaTUQoclk1OT8TQEJppckzb5IrHgVzqrShBu
+	Jn+PgHEuATNkPCv84wny9UR0TyAaZbYr+hQVZEpEti6Rj4Qb7z6XDU2tjEiwPZci7Oo52p
+	alAUavb9fHcqfoqu0H/IITUwRgmvh4ftAnpzdYt83jle9DuCOCTbgP0pgl2VJQ==
+Date: Thu, 13 Feb 2025 12:26:05 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
+	"cristian.marussi@arm.com" <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
+Subject: Re: [PATCH 0/4] rtc/scmi: Support multiple RTCs
+Message-ID: <202502131126057bac6f7a@mail.local>
+References: <20250120-rtc-v1-0-08c50830bac9@nxp.com>
+ <20250120102117538ef59b@mail.local>
+ <PAXPR04MB8459968DFDE5979802CC034A88E62@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <Z6uCCeG2d395ZGDS@bogus>
+ <20250212063532.GB15796@localhost.localdomain>
+ <Z6x7TBSjBFBxGo77@bogus>
+ <20250212170147ee6863dc@mail.local>
+ <20250213033033.GA21937@localhost.localdomain>
+ <20250213082032315c4327@mail.local>
+ <20250213105257.GA29804@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,77 +77,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206193950.22421-1-quic_eserrao@quicinc.com>
+In-Reply-To: <20250213105257.GA29804@localhost.localdomain>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegukeejvgemudgsudgsmeeltdekgeemtggtfhgtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegukeejvgemudgsudgsmeeltdekgeemtggtfhgtpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehpvghnghdrfhgrnhesohhsshdrnhigphdrtghomhdprhgtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehpvghnghdrf
+ hgrnhesnhigphdrtghomhdprhgtphhtthhopegtrhhishhtihgrnhdrmhgrrhhushhsihesrghrmhdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Thu, Feb 06, 2025 at 11:39:50AM -0800, Elson Roy Serrao wrote:
-> The role switch registration and set_role() can happen in parallel as they
-> are invoked independent of each other. There is a possibility that a driver
-> might spend significant amount of time in usb_role_switch_register() API
-> due to the presence of time intensive operations like component_add()
-> which operate under common mutex. This leads to a time window after
-> allocating the switch and before setting the registered flag where the set
-> role notifications are dropped. Below timeline summarizes this behavior
+On 13/02/2025 18:52:57+0800, Peng Fan wrote:
+> On Thu, Feb 13, 2025 at 09:20:32AM +0100, Alexandre Belloni wrote:
+> >On 13/02/2025 11:30:33+0800, Peng Fan wrote:
+> >> >> IIUC on any pure DT based system, a device node exists per RTC and hence
+> >> >> platform device associated with it. And the RTC devices are created with
+> >> >> parent pointing to unique platform device.
+> >> >> 
+> >> >> > However i.MX SCMI BBM exports two RTCs(id: 0, id: 1), so to make it work for
+> >> >> > current RTC framework, we could only pick one RTC and pass the id to BBM
+> >> >> > server side.
+> >> >> >
+> >> >> > I am not sure whether Alexandre wanna me to update the code following each
+> >> >> > parent could only support one RTC or else.
+> >> >> >
+> >> >
+> >> >I want you to keep your changes local to your driver. I already stated
+> >> >back in 2018 that you were on your own with the imx-sc driver and that I
+> >> >don't like seeing multiple abstractions for existing RTCs. What is the
+> >> >actual use case behind needing to access both RTCs using Linux?
+> >> >Shouldn't this be handled on your firmware side?
+> >> 
+> >> The firmware exports two RTCs, RTC0 could be handled by Linux, RTC1
+> >> could only be read by Linux and configuable by M7 per current i.MX95 EVK
+> >> firmware.
+> >
+> >This doesn't answer the main question, why is this useful? Where is the
+> >time of RTC1 coming from and why would linux set a different time on
+> >RTC0 ? Can't the firwmare just set the same time on both RTC0 and RTC1?
 > 
-> Thread1				|	Thread2
-> usb_role_switch_register()	|
-> 	|			|
-> 	---> allocate switch	|
-> 	|			|
-> 	---> component_add()	|	usb_role_switch_set_role()
-> 	|			|	|
-> 	|			|	--> Drop role notifications
-> 	|			|	    since sw->registered
-> 	|			|	    flag is not set.
-> 	|			|
-> 	--->Set registered flag.|
+> To current i.MX95 EVK SCMI firmware, RTC0 is SoC internal RTC, RTC1 is
+> board level RTC which is more acurrate.
 > 
-> To avoid this, set the registered flag early on in the switch register
-> API.
+> There are safety island in i.MX95, M7 safety core is assigned owner of
+> RTC1. Linux non-safety is assigned owner of RTC0, but Linux could read RTC1
+> time, Linux not able to set alarm of RTC1.
 > 
-> Fixes: b787a3e78175 ("usb: roles: don't get/set_role() when usb_role_switch is unregistered")
-> cc: stable@vger.kernel.org
-> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+> I need ask firmware developer to see whether RTC1 time could be synced to
+> RTC0 from firmware level. But considering RTC1 is more accurate, should we
+> use RTC1?
+> 
+> The current firmware design is RTC0 is always there and exported, because
+> it is SoC internal RTC. RTC1 is board level one, it could be optional per
+> board design and firmware design.
+> 
+> The firmware could update to only export RTC1 if no safety need it,
+> but this needs big change to the firmware BBM part, I need check with
+> firmware developer. But things may not change.
+> 
+> >What would someone do if RTC0 and RTC1 don't agree on the time?
+> 
+> RTC1 is more accurate if it is there.
+> 
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Well, yes, you have your answer here, if the firmware knows RTC1 is more
+accurate and will be your source of truth, then simply use this one.
 
-> ---
-> Changes in v2:
->  - Set the switch registered flag from the get-go as suggested by
->    Heikki.
->  - Modified subject line and commit next as per the new logic.
->  - Link to v1: https://lore.kernel.org/all/20250127230715.6142-1-quic_eserrao@quicinc.com/
-> 
->  drivers/usb/roles/class.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-> index c58a12c147f4..30482d4cf826 100644
-> --- a/drivers/usb/roles/class.c
-> +++ b/drivers/usb/roles/class.c
-> @@ -387,8 +387,11 @@ usb_role_switch_register(struct device *parent,
->  	dev_set_name(&sw->dev, "%s-role-switch",
->  		     desc->name ? desc->name : dev_name(parent));
->  
-> +	sw->registered = true;
-> +
->  	ret = device_register(&sw->dev);
->  	if (ret) {
-> +		sw->registered = false;
->  		put_device(&sw->dev);
->  		return ERR_PTR(ret);
->  	}
-> @@ -399,8 +402,6 @@ usb_role_switch_register(struct device *parent,
->  			dev_warn(&sw->dev, "failed to add component\n");
->  	}
->  
-> -	sw->registered = true;
-> -
->  	/* TODO: Symlinks for the host port and the device controller. */
->  
->  	return sw;
-> -- 
-> 2.17.1
 
 -- 
-heikki
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
