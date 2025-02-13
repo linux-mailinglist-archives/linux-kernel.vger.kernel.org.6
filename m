@@ -1,111 +1,166 @@
-Return-Path: <linux-kernel+bounces-512629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C21A33BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:57:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C9EA33BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:58:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664C01677C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37B916057A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AD521148B;
-	Thu, 13 Feb 2025 09:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBE221128A;
+	Thu, 13 Feb 2025 09:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M2WPbCU3"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b8/8WoyV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C27E20DD5C;
-	Thu, 13 Feb 2025 09:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908DD20DD5C;
+	Thu, 13 Feb 2025 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440663; cv=none; b=ooWWomGCJG88wv/X1JkIAGhZvJAGoxMrN+TSVaeA4p//PLPNPq5hm7+ZHaqwypxTUMwoOf/JHsHdK3XoFly8boL3o8QwaRlnsLKd9SDuD2wqV/yf013mWU9pDOcCgVgjK/HmFfE8tgbHpJkDhMethKWoTJIWUgPpCudYrsbR+9s=
+	t=1739440684; cv=none; b=N4ixj67n2zyJBTIoserCQQPbUcnx2HpEreGRLy+LjL1YA6IU7y5PGN4VeWYgp+O0VI/Eqh4XIadsHYrg8O/WpsOnlAxVGfNjrbefkKlSMoqhfTQ2cTJuwAE57cirU5aw5aRt8FAfkOHq+XJxbVZ5lsue0m83LXorwyiU4dwemkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440663; c=relaxed/simple;
-	bh=1CWo1aSTUjGr3FP97hGZrr4McNp8udH6R08vZAVU5eM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kvpLCNGZdIpayWRx04cE9OVu2X+u1Ms5A0jcqRQSQ8mW+QKLh7O0wjuDTahYrBBU3n5gqrl43J6ObU3BTvfF8aGr14Sco3bxb8OgR5OV3169n2w4EB4mSCCZzYEjFIp0uTm15W9MyLQ/Ni7IZMqPqcGNgrZc84lkwJKoyAjRqhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M2WPbCU3; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 09F6244284;
-	Thu, 13 Feb 2025 09:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739440658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wCrNDPpSmr0ghjZQHln3wrW9wdkB0T1+1LgU4/+ksGM=;
-	b=M2WPbCU3Ms+NJaOcFhYVZLVfK0a36bi/qXyx2rTssWCj/fOmmXL4sbCZz+wjRTIGub5h2f
-	FyV4oEb73P7f6eiGZAllSvelM5XC20sDXUcK04NLaYvIgTFhajq87hSEPqKwFgk2QnfjXL
-	IG3ovhR8GO5T5SEBXrsGQDzvjtGJ/6xc247bBIky9fKPeZ5+PeCltHqdT/mIrSv9HmR9+A
-	51xpZ9tBkO+0jfc1hA6zgANbs8ZRpRfxIlRQVcmtzQapYd9GYZab5yKaqL2jQtApf5IzNy
-	Hn7nMYU0qr3olfg+nqaIbLFjPLS/7kZktfzC+6V6Be+J/aa3nPccWdi2cIp98w==
-Date: Thu, 13 Feb 2025 10:57:35 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next 00/13] Introduce an ethernet port
- representation
-Message-ID: <20250213105735.748b5d1d@fedora.home>
-In-Reply-To: <20250212194808.GA130810-robh@kernel.org>
-References: <20250207223634.600218-1-maxime.chevallier@bootlin.com>
-	<20250212194808.GA130810-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739440684; c=relaxed/simple;
+	bh=Oqtou6ex2ZovnqK8tj3tuIXnnbRe2REcT3xMiDQmKmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jB8BKw1ZHy9VaB5Rs9Azmx+p6SHHg3JGdJ4wWJ81v3M6hYez3owATs7BP/+luGh5yKEBMfd7V+lR5YZ3MNLjwyZMUVyColWSHPoW92V+7+XVakYTUFbn+Pk4xh+LWI+AZj3zcL5DNAbPVBdlQVvAqycNXISg3hT26uENWYS3ZSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b8/8WoyV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDB5C4CED1;
+	Thu, 13 Feb 2025 09:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739440684;
+	bh=Oqtou6ex2ZovnqK8tj3tuIXnnbRe2REcT3xMiDQmKmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8/8WoyVsel2U/9lZYawTcA0EpGS/8C8U1Jegh4xK7SLoZCDoabMYKzR+8MQR0c8D
+	 IRjmgcetxywX+e6X18JzO29Dhok/zGYihc7UUULzB1vx+HjLFp4BiOvgUCqCFD74No
+	 S1+pUQ7HhjIreXprrvApDNcj9wOJON6+0sV1glOk=
+Date: Thu, 13 Feb 2025 10:58:00 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] serial: mctrl_gpio: add parameter to skip sync
+Message-ID: <2025021347-cling-smoked-9f28@gregkh>
+References: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegieegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugfelledvtdffvdekudeijeduueevvdevffehudehvdeuudetheekheeigfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdekpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepnhgvthguvghvs
- ehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqmhhsmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250213-atomic_sleep_mctrl_serial_gpio-v1-1-201ee6a148ad@bootlin.com>
 
-Hello Rob,
-
-On Wed, 12 Feb 2025 13:48:08 -0600
-Rob Herring <robh@kernel.org> wrote:
-
-> On Fri, Feb 07, 2025 at 11:36:19PM +0100, Maxime Chevallier wrote:
-> > Hello everyone,
-> > 
-> > This series follows the 2 RFC that were sent a few weeks ago :
-> > RFC V2: https://lore.kernel.org/netdev/20250122174252.82730-1-maxime.chevallier@bootlin.com/
-> > RFC V1: https://lore.kernel.org/netdev/20241220201506.2791940-1-maxime.chevallier@bootlin.com/  
+On Thu, Feb 13, 2025 at 09:25:04AM +0100, Alexis Lothoré wrote:
+> The following splat has been observed on a SAMA5D27 platform using
+> atmel_serial:
 > 
-> That makes this series v3. RFC is not a version, but a condition the 
-> patches are in (not ready to merge).
+> BUG: sleeping function called from invalid context at kernel/irq/manage.c:738
+> in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 27, name: kworker/u5:0
+> preempt_count: 1, expected: 0
+> INFO: lockdep is turned off.
+> irq event stamp: 0
+> hardirqs last  enabled at (0): [<00000000>] 0x0
+> hardirqs last disabled at (0): [<c01588f0>] copy_process+0x1c4c/0x7bec
+> softirqs last  enabled at (0): [<c0158944>] copy_process+0x1ca0/0x7bec
+> softirqs last disabled at (0): [<00000000>] 0x0
+> CPU: 0 UID: 0 PID: 27 Comm: kworker/u5:0 Not tainted 6.13.0-rc7+ #74
+> Hardware name: Atmel SAMA5
+> Workqueue: hci0 hci_power_on [bluetooth]
+> Call trace:
+>   unwind_backtrace from show_stack+0x18/0x1c
+>   show_stack from dump_stack_lvl+0x44/0x70
+>   dump_stack_lvl from __might_resched+0x38c/0x598
+>   __might_resched from disable_irq+0x1c/0x48
+>   disable_irq from mctrl_gpio_disable_ms+0x74/0xc0
+>   mctrl_gpio_disable_ms from atmel_disable_ms.part.0+0x80/0x1f4
+>   atmel_disable_ms.part.0 from atmel_set_termios+0x764/0x11e8
+>   atmel_set_termios from uart_change_line_settings+0x15c/0x994
+>   uart_change_line_settings from uart_set_termios+0x2b0/0x668
+>   uart_set_termios from tty_set_termios+0x600/0x8ec
+>   tty_set_termios from ttyport_set_flow_control+0x188/0x1e0
+>   ttyport_set_flow_control from wilc_setup+0xd0/0x524 [hci_wilc]
+>   wilc_setup [hci_wilc] from hci_dev_open_sync+0x330/0x203c [bluetooth]
+>   hci_dev_open_sync [bluetooth] from hci_dev_do_open+0x40/0xb0 [bluetooth]
+>   hci_dev_do_open [bluetooth] from hci_power_on+0x12c/0x664 [bluetooth]
+>   hci_power_on [bluetooth] from process_one_work+0x998/0x1a38
+>   process_one_work from worker_thread+0x6e0/0xfb4
+>   worker_thread from kthread+0x3d4/0x484
+>   kthread from ret_from_fork+0x14/0x28
+> 
+> This warning is emitted when trying to toggle, at the highest level,
+> some flow control (with serdev_device_set_flow_control) in a device
+> driver. At the lowest level, the atmel_serial driver is using
+> serial_mctrl_gpio lib to enable/disable the corresponding IRQs
+> accordingly.  The warning emitted by CONFIG_DEBUG_ATOMIC_SLEEP is due to
+> disable_irq (called in mctrl_gpio_disable_ms) being possibly called in
+> some atomic context (some tty drivers perform modem lines configuration
+> in regions protected by port lock).
+> 
+> Add a flag to mctrl_gpio_disable_ms to allow controlling whether the
+> function should block, depending the context in which it is called.
+> Update mctrl_gpio_disable_ms calls with the relevant flag value,
+> depending on whether the call is protected by some port lock.
+> 
+> Suggested-by: Jiri Slaby <jirislaby@kernel.org>
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> ---
+> This series follows a report made here:
+> https://lore.kernel.org/linux-serial/3d227ebe-1ee6-4d57-b1ec-78be59af7244@bootlin.com/
+> ---
+>  drivers/tty/serial/8250/8250_port.c    | 2 +-
+>  drivers/tty/serial/atmel_serial.c      | 2 +-
+>  drivers/tty/serial/imx.c               | 2 +-
+>  drivers/tty/serial/serial_mctrl_gpio.c | 9 +++++++--
+>  drivers/tty/serial/serial_mctrl_gpio.h | 4 ++--
+>  drivers/tty/serial/sh-sci.c            | 2 +-
+>  drivers/tty/serial/stm32-usart.c       | 2 +-
+>  7 files changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index d7976a21cca9ce50557ca5f13bb01448ced0728b..b234c6c1fe8b3dae4efc2091c8aecf1f1dddc9f8 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -1680,7 +1680,7 @@ static void serial8250_disable_ms(struct uart_port *port)
+>  	if (up->bugs & UART_BUG_NOMSR)
+>  		return;
+>  
+> -	mctrl_gpio_disable_ms(up->gpios);
+> +	mctrl_gpio_disable_ms(up->gpios, false);
 
-Fair enough, next iteration will be V4 then :)
+This a bad api.
 
-Thanks,
+When you read this line in the driver, do you know what "false" means
+here?
 
-Maxime
+Please make two functions, mctrl_gpio_disable_ms_sync() and
+mctrl_gpio_disable_ms_no_sync() which can internally just call
+mctrl_gpio_disable_ms() with the boolean, but no driver should have to
+call that at all.
 
-> Rob
+That way, when you read driver code, you KNOW what is happening and you
+don't have to hunt around in a totally different C file to try to figure
+it out and loose your concentration.
 
+thanks,
+
+greg k-h
 
