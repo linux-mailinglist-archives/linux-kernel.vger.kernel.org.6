@@ -1,84 +1,124 @@
-Return-Path: <linux-kernel+bounces-512264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E95A336A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:10:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B96A3369F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:09:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD6E188CA72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F961884828
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 04:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0038C2063F3;
-	Thu, 13 Feb 2025 04:09:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0709205516
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 04:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2960205E06;
+	Thu, 13 Feb 2025 04:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qP2gGj9T"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB841EA84;
+	Thu, 13 Feb 2025 04:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739419787; cv=none; b=dE9R65BJJnRiggYjRCEwQwZ8V0D6S65MNbh7Ox6yZFNHlIM3EZD8ArE6IXFSwheQ7i1So35D7mBGzmPfw32fZ5kyfCgvT44ny/jqB1gdFCWuvIMrOenChXcYBB+s9DlBUplcwdzPdJQezrYPH0kX5yWXSCGTlirc0zperLCVAC4=
+	t=1739419776; cv=none; b=ELpPgB7eQXNpDHzpVt5r/lRo7a+/2G/MqIT4RblKIWe7Xqww+IekE7f6t3FEDVfCaCtjFkor8IHNlmElulZgELyCmyfxnxPDlsuINbBY/3UCLutepAayuT5pobcnpDOpnPcIw7B5XTvWCTlB8CHI1K8Y2l9t/7VDEmgkuLzIWR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739419787; c=relaxed/simple;
-	bh=weL/r20d8+Z+/j8PfQ9Ur3v6J833zCYgy8dzDgx5vC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EsOSYaZgc15fmZq74X7Djk2YSfUbmulI7o3VK7h9tcr2+Firm5aUNemcE8ymfCrSgqVovF7PKKDpVHgpJpx+TufBAIgqv52S0TA5oxvrZxRI8Ab/xjrSwD1PiBUoCgtZZY9EnjN51+6RkDtgC14Eu4kdDW3WwqR+Stn8oKiRvR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 178101762;
-	Wed, 12 Feb 2025 20:10:06 -0800 (PST)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.135])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3BB513F58B;
-	Wed, 12 Feb 2025 20:09:42 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: steven.price@arm.com,
-	christophe.leroy@csgroup.eu,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	s=arc-20240116; t=1739419776; c=relaxed/simple;
+	bh=Vu1hdB6sAQ/ZEPKuBnxx14OA4oc/gBW/ght14YZxFqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Trwtiry1BVgo8X3uCB8PBXJWQ/Q9HtwgE6LvbmjuovsJONTEyfEwZ7Ryt/TQWoiSWCHwNU864dNQdX4v7mT55mp8zJaXNHScqUq3bBkHoWT1kvTnX+8ijbe0kxjQ07jYxFHPkpwNXwSYgpcV0w9muqzGxCuLYL5EJX5yqQIGWuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qP2gGj9T; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7xYKvL/4eIqDcYKwZsggORcTcfd4KIZ9CC7qacZwf7U=; b=qP2gGj9TGvBJVVVl3uhLwitPzd
+	DR8zAFoOTQX1/+Afh0D7dgn74eleW8UWciDdX1OQKgIkYs/ma9KIfCmoNwyTjCLEaj4QLKGAVYbF9
+	WLBGK/g42ShS0lAOWBdcjmu2hTNxIYlCL18JeqJn2nrGd4+s9REi6dhv/DsnLHoWk/FeCa8uBsQPT
+	NxHe6KNxF2IoXXaPMfM+2f8jiWkLkISRC6gfkOjIHJNK9mWeBuunsqkiWLh3pVeo636PL2tTozOwf
+	QtPPTz3HArUosIvOcrQsGxt0a9sLO+J7O5WMTPhfx6J9Kw0BpavzlRGPyFlXgzz/d2Rywy3nOV4mw
+	+m1puGFg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiQXb-0000000CQwA-0kAL;
+	Thu, 13 Feb 2025 04:09:31 +0000
+Date: Thu, 13 Feb 2025 04:09:31 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] configs: Drop GENERIC_PTDUMP from debug.config
-Date: Thu, 13 Feb 2025 09:39:31 +0530
-Message-Id: <20250213040934.3245750-2-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250213040934.3245750-1-anshuman.khandual@arm.com>
-References: <20250213040934.3245750-1-anshuman.khandual@arm.com>
+Subject: Re: [PATCH 19/19] nfs: switch to _async for all directory ops.
+Message-ID: <20250213040931.GU1977892@ZenIV>
+References: <20250206054504.2950516-1-neilb@suse.de>
+ <20250206054504.2950516-20-neilb@suse.de>
+ <20250213035116.GT1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213035116.GT1977892@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The platforms that support GENERIC_PTDUMP select the config explicitly. But
-enabling this feature on platforms that don't really support - does nothing
-or might cause a build failure. Hence just drop GENERIC_PTDUMP from generic
-debug.config
+On Thu, Feb 13, 2025 at 03:51:16AM +0000, Al Viro wrote:
+> On Thu, Feb 06, 2025 at 04:42:56PM +1100, NeilBrown wrote:
+> >  nfs_sillyrename(struct inode *dir, struct dentry *dentry)
+> >  {
+> >  	static unsigned int sillycounter;
+> > @@ -447,7 +451,8 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
+> >  	struct dentry *sdentry;
+> >  	struct inode *inode = d_inode(dentry);
+> >  	struct rpc_task *task;
+> > -	int            error = -EBUSY;
+> > +	struct dentry *base;
+> > +	int error = -EBUSY;
+> >  
+> >  	dfprintk(VFS, "NFS: silly-rename(%pd2, ct=%d)\n",
+> >  		dentry, d_count(dentry));
+> > @@ -461,10 +466,11 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
+> >  
+> >  	fileid = NFS_FILEID(d_inode(dentry));
+> >  
+> > +	base = d_find_alias(dir);
+> 
+> Huh?  That would better be dentry->d_parent and all operations are in
+> that directory, so you don't even need to grab a reference...
+> 
+> >  	sdentry = NULL;
+> >  	do {
+> >  		int slen;
+> > -		dput(sdentry);
+> > +
+> >  		sillycounter++;
+> >  		slen = scnprintf(silly, sizeof(silly),
+> >  				SILLYNAME_PREFIX "%0*llx%0*x",
+> > @@ -474,14 +480,19 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
+> >  		dfprintk(VFS, "NFS: trying to rename %pd to %s\n",
+> >  				dentry, silly);
+> >  
+> > -		sdentry = lookup_one_len(silly, dentry->d_parent, slen);
+> > -		/*
+> > -		 * N.B. Better to return EBUSY here ... it could be
+> > -		 * dangerous to delete the file while it's in use.
+> > -		 */
+> > -		if (IS_ERR(sdentry))
+> > -			goto out;
+> > -	} while (d_inode(sdentry) != NULL); /* need negative lookup */
+> > +		sdentry = lookup_and_lock_one(NULL, silly, slen,
+> > +					      base,
+> > +					      LOOKUP_CREATE | LOOKUP_EXCL
+> > +					      | LOOKUP_RENAME_TARGET
+> > +					      | LOOKUP_PARENT_LOCKED);
+> > +	} while (PTR_ERR_OR_ZERO(sdentry) == -EEXIST); /* need negative lookup */
+> 
+> What's wrong with sdentry == ERR_PTR(-EEXIST)?
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- kernel/configs/debug.config | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
-index 20552f163930..8aafd050b754 100644
---- a/kernel/configs/debug.config
-+++ b/kernel/configs/debug.config
-@@ -73,7 +73,6 @@ CONFIG_DEBUG_VM=y
- CONFIG_DEBUG_VM_PGFLAGS=y
- CONFIG_DEBUG_VM_RB=y
- CONFIG_DEBUG_VM_VMACACHE=y
--CONFIG_GENERIC_PTDUMP=y
- CONFIG_KASAN=y
- CONFIG_KASAN_GENERIC=y
- CONFIG_KASAN_INLINE=y
--- 
-2.25.1
-
+BTW, do you need to mess with NFS_DATA_BLOCKED with that thing in place?
 
