@@ -1,337 +1,145 @@
-Return-Path: <linux-kernel+bounces-513776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC94A34E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:40:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B9EA34E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1170516B7A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F23188E680
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F2D245B1C;
-	Thu, 13 Feb 2025 19:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63F7206F2A;
+	Thu, 13 Feb 2025 19:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXvhnW+v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8uFnfRO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2BF206F2A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB1E245B1B;
+	Thu, 13 Feb 2025 19:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739475602; cv=none; b=iYfaHbEPo4UiwvNvsb92Q8UqEDGJPBLguQtTaGakBifzMdGZXgs++bn23tbYWyhgWC8OQqDDqfMMNHsPMwRTvIl0+tvWPzyXC6e2E1+l4IvRbKNk7ypEhIjAXflphi6zeDnnIfQMfQYKEGfMyO6PvxhTjgC2J6wUG+iJbyieFxk=
+	t=1739475656; cv=none; b=LllbnK5Svsg9s3QNLZjwYxkxdEiXe/ZnK3yP+23wxocCqSsyBN57T9uirAroEVoTe8gzU/Ae+A5eZD+BMV51aEf16RE5RsC0uPkwmivop9utx8FGLAKu2WBLTchDXWjDxzyKvnJSptD3wpwIeVJVjB3JWxdAqXYU91WArLMXqsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739475602; c=relaxed/simple;
-	bh=mBtUNyOMMbsKw8iHJKq3/ku1fI8mpdnzRali3R3HMEE=;
+	s=arc-20240116; t=1739475656; c=relaxed/simple;
+	bh=2fD/8NcdfM1XFbfMLJwPpFgwUB/k7cAYGRhasfPcpQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PCs3duyYVEH4xiJavKyz0LvbGrGv4Bi8fLOm/oYvqyFys0QJbj7vsfGuKhuhL+NX8Afvrmjo4j8dB56kAoE51hFmhAf/RVKDQErVxzQggK7V9jNboxq1QRhqby+6g4ZS3JxV1s9m8Rb7AtpXPgQge/1wRG/aJ41t3IADk2cWxz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXvhnW+v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739475599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=boxr+nl3iRxI8kwf7+INrSdGJaLkpDQVEcqU+I9NPyg=;
-	b=WXvhnW+vRUVS575g65rN8Nkr4I2nmMCNRH05ufPu8IFSWhAqNv5I8321AzUGTXANhgmMSM
-	p25tUlFOsykOgkwZ4xuWnKBcvy292YsfplDgtPGuaPBHNIqdVdv0b/swkyFX5eStom49AC
-	+TxOojOmB6a+3Dtr/xxy+W6mLwssJ4k=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-385-RdTT4SoKNXew1tB4wnk7zA-1; Thu, 13 Feb 2025 14:39:57 -0500
-X-MC-Unique: RdTT4SoKNXew1tB4wnk7zA-1
-X-Mimecast-MFC-AGG-ID: RdTT4SoKNXew1tB4wnk7zA
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e582bfcada6so1863947276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:39:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739475597; x=1740080397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=boxr+nl3iRxI8kwf7+INrSdGJaLkpDQVEcqU+I9NPyg=;
-        b=RfICDYxCpRqTfiDpYhD7QJ9FERkrW8NLCJa8mN43WXmD/dtvVyLyjrwkmb9X3tWNwP
-         4m4Mm6SC+GrX+UusRaUzkuCVsohuSrj5BsNYpGeV6iVdXhkuA69O9Jld1Ps5ukr+91+L
-         88WfhHOVmaRCJsxU/WaH8J7Aa7nfHgY509welbF57dCu0FLf/hyc9YBz+kJNIFiuMm+v
-         2tLi8NoQl+t8DbeBBuHb63DvJK3tEcXVaiZVbaLjmvrSqrbwEdMzhUkqfqlQZc+xNe6M
-         L9P1hBqW6spGBirGqiXMgb/+RmELrNJsEdNub6HnFITMXuWqZqsA3if0P7pqzN1ULs2G
-         6E3g==
-X-Gm-Message-State: AOJu0YyGVcVihRLM+Js883B98oGTouMDf1qgtIJvDFznkEs/NUvjS680
-	U+dK5lUdDr2Ha0Dq6Ai/tjWsieCekEvEIZMwA9JPl0dVjSHF9DKHlc5MRj9zF5Pa6NESADiSlKn
-	xgHeXtiwwaYKnEruh9Bi5/5rOrnKWxLuoNQHOTi0meWNIe9bm+lJZSSWMOmbtOyIe1Eczpci3M7
-	0E+Ws4Nsqw5Cs/F/qZpVVHMNR4YBfUqKxXyUFs
-X-Gm-Gg: ASbGncu7p7fNxft9kKci/i/xhuukNmBzg/uMb24FCZkdEfA0t0QMZl8HaeNOd/cZc47
-	ZzIAzV6saMJrDIVd6Gdy7dBiGBQPGfSU5jkREeiBadbxk5wGz64+u15s4sL/XHufYs7sMKACbtO
-	s=
-X-Received: by 2002:a05:6902:13c6:b0:e5b:4080:ad89 with SMTP id 3f1490d57ef6-e5da81e9e95mr4522314276.38.1739475597148;
-        Thu, 13 Feb 2025 11:39:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHfp2KDNuPnNnUtf/P7iXlml3POI4m+epxhSgL0vVylmbj3I2dY+iGX0H+VqmLQZwtrr+P5xL+59PtJpBPimPg=
-X-Received: by 2002:a05:6902:13c6:b0:e5b:4080:ad89 with SMTP id
- 3f1490d57ef6-e5da81e9e95mr4522251276.38.1739475596599; Thu, 13 Feb 2025
- 11:39:56 -0800 (PST)
+	 To:Cc:Content-Type; b=TY/U5k2i5bvyFPw2eANE4G24Az2yffZvthn4gx7I2ASZowaHJzy/agCB/wK3tA5iYSThPrkhJBFk8jz6UfsIyEnVmtmHAPT54+TJxO8qFK3IeaWhHWVrqeSqZJHzfhWUoBSwQrPpjgRD5R2CGvZaVLsM/gazRlSicTGKkA6vxAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8uFnfRO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE15C4AF0B;
+	Thu, 13 Feb 2025 19:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739475655;
+	bh=2fD/8NcdfM1XFbfMLJwPpFgwUB/k7cAYGRhasfPcpQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H8uFnfROeMJpAeSDmyUkDIVWosH2ICc28ajPKK3oO2cVTP4saSj/Jxpk1Il/cz+/R
+	 DG8UBXzjBNXDGb07I+nxpw5t4+Az5MXk9bFeZHXyIcDO9oA5CWf+FwLneFU0Ze5QmI
+	 KNR/Gyv04bJfehFfRA9/GNJDToYqZSZ1QNEO3lQS7k1MdjEcjqtnvkZ/TnjDiXVp22
+	 /YP+WpUNHYvOcjjHxQZjKGcIiKgDhXt6iQkj+LZ41LPCDLtlbPW4WBz66iDXu6zCQq
+	 X9xuH6VO5fLgtZL1Ut0K98Q+pKj0RGOtg6nozKkEmm9PA/eqbOkdaP+KH1s4dDcOdE
+	 jLRel+GaosQuw==
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d03ac846a7so4038935ab.2;
+        Thu, 13 Feb 2025 11:40:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVKQL6O1FRUb19Qeh10qdoQ6UepnWlTFPs0/VUibaLdscMOp3Qn7dJJnMg7pgrRCv9OjFuLLIjhU8DyD7+B8g==@vger.kernel.org, AJvYcCW9eXK+7d6JSrtg3L8CQj1Wm9RT/HtCSpODAPoNew2wfvsHov7Jc3L12RLJbArHGPMh37bMcTBXOwILqoE=@vger.kernel.org, AJvYcCXK2OOU53OtgBYrucSKNpSRjoMKxHt8o8pOLGfBhJUyk9YhhQCU4bBi4WdS7qPOAdgBCsjyL+NZaJ5gspQOPY7Mhw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVws3WbqmOobVHU++zX+LUEuOb+bT8YudhhEk8M0Nrh+TrjSLq
+	RX3BUTdgwJJvWnAW43eTWPyEFoVug8aymBZbCgGt3Ajol8sLoVxWe2tFF6ZSIuUFCIofjJiXi+H
+	eHy5mBIsiPIFtxba5/V5spA0f4Ew=
+X-Google-Smtp-Source: AGHT+IF+5ylYJUZMlWYWg/QDJ6Iijw0EymWMIzglKMEAh/hwvS5o8pbwP7TnThM1fM/rhQGM0ldnxer/uBQ+WAhXQyY=
+X-Received: by 2002:a05:6e02:17ce:b0:3d0:24c0:bd3e with SMTP id
+ e9e14a558f8ab-3d17be19829mr79268695ab.7.1739475654602; Thu, 13 Feb 2025
+ 11:40:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211003028.213461-1-npache@redhat.com> <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
- <CAA1CXcCo3eCH-5axnw3WUqPfL-EPCbLVFo_AFYXkbnExfX=KLQ@mail.gmail.com> <4ba52062-1bd3-4d53-aa28-fcbbd4913801@arm.com>
-In-Reply-To: <4ba52062-1bd3-4d53-aa28-fcbbd4913801@arm.com>
-From: Nico Pache <npache@redhat.com>
-Date: Thu, 13 Feb 2025 12:39:30 -0700
-X-Gm-Features: AWEUYZltvpqxvurvt8_8gd179zfEGjGrl_F1jfl5niXu58DgsMbTO7GZCLo_WGk
-Message-ID: <CAA1CXcCeFjCx-6VDCjOUUniLHXMUYpjesOhcHQapMS5i7=RR4A@mail.gmail.com>
-Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
-To: Dev Jain <dev.jain@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, ryan.roberts@arm.com, anshuman.khandual@arm.com, 
-	catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, 
-	apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org, 
-	baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu, 
-	haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org, 
-	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, 
-	wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com, 
-	surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com, 
-	zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com, 
-	willy@infradead.org, kirill.shutemov@linux.intel.com, david@redhat.com, 
-	aarcange@redhat.com, raquini@redhat.com, sunnanyong@huawei.com, 
-	usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org, 
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
+References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+ <20250212234946.yuskayyu4gx3ul7m@jpoimboe> <CAPhsuW5TeMXi_Mn8+jR9Qoa=rAWasMo7M3Hs=im6NT6=+CrxqA@mail.gmail.com>
+ <20250213024507.mvjkalvyqsxihp54@jpoimboe> <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
+ <mb61py0yaz3qq.fsf@kernel.org>
+In-Reply-To: <mb61py0yaz3qq.fsf@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Thu, 13 Feb 2025 11:40:43 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
+X-Gm-Features: AWEUYZleA2B0b6poFrS6Aosm-qV1fwd6duC3JQfY8JcX-3-CY1Sgbtn8ypNzvx0
+Message-ID: <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Weinan Liu <wnliu@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
+	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 1:26=E2=80=AFAM Dev Jain <dev.jain@arm.com> wrote:
+On Wed, Feb 12, 2025 at 11:46=E2=80=AFPM Puranjay Mohan <puranjay@kernel.or=
+g> wrote:
 >
+> Song Liu <song@kernel.org> writes:
 >
->
-> On 12/02/25 10:19 pm, Nico Pache wrote:
-> > On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Dev Jain <dev.jain@arm.com> wro=
-te:
+> > On Wed, Feb 12, 2025 at 6:45=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel=
+.org> wrote:
 > >>
+> >> On Wed, Feb 12, 2025 at 06:36:04PM -0800, Song Liu wrote:
+> >> > > > [   81.261748]  copy_process+0xfdc/0xfd58 [livepatch_special_sta=
+tic]
+> >> > >
+> >> > > Does that copy_process+0xfdc/0xfd58 resolve to this line in
+> >> > > copy_process()?
+> >> > >
+> >> > >                         refcount_inc(&current->signal->sigcnt);
+> >> > >
+> >> > > Maybe the klp rela reference to 'current' is bogus, or resolving t=
+o the
+> >> > > wrong address somehow?
+> >> >
+> >> > It resolves the following line.
+> >> >
+> >> > p->signal->tty =3D tty_kref_get(current->signal->tty);
+> >> >
+> >> > I am not quite sure how 'current' should be resolved.
 > >>
+> >> Hm, on arm64 it looks like the value of 'current' is stored in the
+> >> SP_EL0 register.  So I guess that shouldn't need any relocations.
 > >>
-> >> On 11/02/25 6:00 am, Nico Pache wrote:
-> >>> The following series provides khugepaged and madvise collapse with th=
-e
-> >>> capability to collapse regions to mTHPs.
-> >>>
-> >>> To achieve this we generalize the khugepaged functions to no longer d=
-epend
-> >>> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pa=
-ges
-> >>> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
-> >>> using a bitmap. After the PMD scan is done, we do binary recursion on=
- the
-> >>> bitmap to find the optimal mTHP sizes for the PMD range. The restrict=
-ion
-> >>> on max_ptes_none is removed during the scan, to make sure we account =
-for
-> >>> the whole PMD range. max_ptes_none will be scaled by the attempted co=
-llapse
-> >>> order to determine how full a THP must be to be eligible. If a mTHP c=
-ollapse
-> >>> is attempted, but contains swapped out, or shared pages, we dont perf=
-orm the
-> >>> collapse.
-> >>>
-> >>> With the default max_ptes_none=3D511, the code should keep its most o=
-f its
-> >>> original behavior. To exercise mTHP collapse we need to set max_ptes_=
-none<=3D255.
-> >>> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "cre=
-ep" and
-> >>> constantly promote mTHPs to the next available size.
-> >>>
-> >>> Patch 1:     Some refactoring to combine madvise_collapse and khugepa=
-ged
-> >>> Patch 2:     Refactor/rename hpage_collapse
-> >>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
-> >>> Patch 6-9:   The mTHP patches
-> >>>
-> >>> ---------
-> >>>    Testing
-> >>> ---------
-> >>> - Built for x86_64, aarch64, ppc64le, and s390x
-> >>> - selftests mm
-> >>> - I created a test script that I used to push khugepaged to its limit=
-s while
-> >>>      monitoring a number of stats and tracepoints. The code is availa=
-ble
-> >>>      here[1] (Run in legacy mode for these changes and set mthp sizes=
- to inherit)
-> >>>      The summary from my testings was that there was no significant r=
-egression
-> >>>      noticed through this test. In some cases my changes had better c=
-ollapse
-> >>>      latencies, and was able to scan more pages in the same amount of=
- time/work,
-> >>>      but for the most part the results were consistant.
-> >>> - redis testing. I tested these changes along with my defer changes
-> >>>     (see followup post for more details).
-> >>> - some basic testing on 64k page size.
-> >>> - lots of general use. These changes have been running in my VM for s=
-ome time.
-> >>>
-> >>> Changes since V1 [2]:
-> >>> - Minor bug fixes discovered during review and testing
-> >>> - removed dynamic allocations for bitmaps, and made them stack based
-> >>> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
-> >>> - Updated trace events to include collapsing order info.
-> >>> - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
-> >>> - No longer require a chunk to be fully utilized before setting the b=
-it. Use
-> >>>      the same max_ptes_none scaling principle to achieve this.
-> >>> - Skip mTHP collapse that requires swapin or shared handling. This he=
-lps prevent
-> >>>      some of the "creep" that was discovered in v1.
-> >>>
-> >>> [1] - https://gitlab.com/npache/khugepaged_mthp_test
-> >>> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redh=
-at.com/
-> >>>
-> >>> Nico Pache (9):
-> >>>     introduce khugepaged_collapse_single_pmd to unify khugepaged and
-> >>>       madvise_collapse
-> >>>     khugepaged: rename hpage_collapse_* to khugepaged_*
-> >>>     khugepaged: generalize hugepage_vma_revalidate for mTHP support
-> >>>     khugepaged: generalize alloc_charge_folio for mTHP support
-> >>>     khugepaged: generalize __collapse_huge_page_* for mTHP support
-> >>>     khugepaged: introduce khugepaged_scan_bitmap for mTHP support
-> >>>     khugepaged: add mTHP support
-> >>>     khugepaged: improve tracepoints for mTHP orders
-> >>>     khugepaged: skip collapsing mTHP to smaller orders
-> >>>
-> >>>    include/linux/khugepaged.h         |   4 +
-> >>>    include/trace/events/huge_memory.h |  34 ++-
-> >>>    mm/khugepaged.c                    | 422 +++++++++++++++++++------=
-----
-> >>>    3 files changed, 306 insertions(+), 154 deletions(-)
-> >>>
-> >>
-> >> Does this patchset suffer from the problem described here:
-> >> https://lore.kernel.org/all/8abd99d5-329f-4f8d-8680-c2d48d4963b6@arm.c=
-om/
-> > Hi Dev,
+> >> > The size of copy_process (0xfd58) is wrong. It is only about
+> >> > 5.5kB in size. Also, the copy_process function in the .ko file
+> >> > looks very broken. I will try a few more things.
 > >
-> > Sorry I meant to get back to you about that.
+> > When I try each step of kpatch-build, the copy_process function
+> > looks reasonable (according to gdb-disassemble) in fork.o and
+> > output.o. However, copy_process looks weird in livepatch-special-static=
+.o,
+> > which is generated by ld:
 > >
-> > I understand your concern, but like I've mentioned before, the scan
-> > with the read lock was done so we dont have to do the more expensive
-> > locking, and could still gain insight into the state. You are right
-> > that this info could become stale if the state changes dramatically,
-> > but the collapse_isolate function will verify it and not collapse.
->
-> If the state changes dramatically, the _isolate function will verify it,
-> and fallback. And this fallback happens after following this costly
-> path: retrieve a large folio from the buddy allocator -> swapin pages
-> from the disk -> mmap_write_lock() -> anon_vma_lock_write() -> TLB flush
-> on all CPUs -> fallback in _isolate().
-> If you do fail in _isolate(), doesn't it make sense to get the updated
-> state for the next fallback order immediately, because we have prior
-> information that we failed because of PTE state? What your algorithm
-> will do is *still* follow the costly path described above, and again
-> fail in _isolate(), instead of failing in hpage_collapse_scan_pmd() like
-> mine would.
-
-You do raise a valid point here, I can optimize my solution by
-detecting certain collapse failure types and jump to the next scan.
-I'll add that to my solution, thanks!
-
-As for the disagreement around the bitmap, we'll leave that up to the
-community to decide since we have differing opinions/solutions.
-
->
-> The verification of the PTE state by the _isolate() function is the "no
-> turning back" point of the algorithm. The verification by
-> hpage_collapse_scan_pmd() is the "let us see if proceeding is even worth
-> it, before we do costly operations" point of the algorithm.
->
-> >  From my testing I found this to rarely happen.
->
-> Unfortunately, I am not very familiar with performance testing/load
-> testing, I am fairly new to kernel programming, so I am getting there.
-> But it really depends on the type of test you are running, what actually
-> runs on memory-intensive systems, etc etc. In fact, on loaded systems I
-> would expect the PTE state to dramatically change. But still, no opinion
-> here.
-
-Yeah there are probably some cases where it happens more often.
-Probably in cases of short lived allocations, but khugepaged doesn't
-run that frequently so those won't be that big of an issue.
-
-Our performance team is currently testing my implementation so I
-should have more real workload test results soon. The redis testing
-had some gains and didn't show any signs of obvious regressions.
-
-As for the testing, check out
-https://gitlab.com/npache/khugepaged_mthp_test/-/blob/master/record-khuge-p=
-erformance.sh?ref_type=3Dheads
-this does the tracing for my testing script. It can help you get
-started. There are 3 different traces being applied there: the
-bpftrace for collapse latencies, the perf record for the flamegraph
-(not actually that useful, but may be useful to visualize any
-weird/long paths that you may not have noticed), and the trace-cmd
-which records the tracepoint of the scan and the collapse functions
-then processes the data using the awk script-- the output being the
-scan rate, the pages collapsed, and their result status (grouped by
-order).
-
-You can also look into https://github.com/gormanm/mmtests for
-testing/comparing kernels. I was running the
-config-memdb-redis-benchmark-medium workload.
-
->
+> > ld -EL  -maarch64linux -z norelro -z noexecstack
+> > --no-warn-rwx-segments -T ././kpatch.lds  -r -o
+> > livepatch-special-static.o ./patch-hook.o ./output.o
 > >
-> > Also, khugepaged, my changes, and your changes are all a victim of
-> > this. Once we drop the read lock (to either allocate the folio, or
-> > right before acquiring the write_lock), the state can change. In your
-> > case, yes, you are gathering more up to date information, but is it
-> > really that important/worth it to retake locks and rescan for each
-> > instance if we are about to reverify with the write lock taken?
+> > I have attached these files to the email. I am not sure whether
+> > the email server will let them through.
 >
-> You said "reverify": You are removing the verification, so this step
-> won't be reverification, it will be verification. We do not want to
-> verify *after* we have already done 95% of latency-heavy stuff, only to
-> know that we are going to fail.
+> I think, I am missing something here,
 >
-> Algorithms in the kernel, in general, are of the following form: 1)
-> Verify if a condition is true, resulting in taking a control path -> 2)
-> do a lot of stuff -> "no turning back" step, wherein before committing
-> (by taking locks, say), reverify if this is the control path we should
-> be in. You are eliminating step 1).
+> I did :
 >
-> Therefore, I will have to say that I disagree with your approach.
+> objdump -Dr livepatch-special-static.o | less
 >
-> On top of this, in the subjective analysis in [1], point number 7 (along
-> with point number 1) remains. And, point number 4 remains.
+> and
+>
+> objdump -Dr output.o | less
+>
+> and the disassembly of copy_process() looks exactly same.
 
-for 1) your worst case of 1024 is not the worst case. There are 8
-possible orders in your implementation, if all are enabled, that is
-4096 iterations in the worst case.
-This becomes WAY worse on 64k page size, ~45,000 iterations vs 4096 in my c=
-ase.
->
-> [1]
-> https://lore.kernel.org/all/23023f48-95c6-4a24-ac8b-aba4b1a441b4@arm.com/
->
-> >
-> > So in my eyes, this is not a "problem"
->
-> Looks like the kernel scheduled us for a high-priority debate, I hope
-> there's no deadlock :)
->
-> >
-> > Cheers,
-> > -- Nico
-> >
-> >
-> >>
-> >
->
+Yeah, objdump does show the same disassembly. However, if
+I open the file with gdb, and do "disassemble copy_process",
+the one in livepatch-special-static.o looks very weird.
 
+Thanks,
+Song
 
