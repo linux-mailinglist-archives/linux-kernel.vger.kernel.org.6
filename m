@@ -1,138 +1,200 @@
-Return-Path: <linux-kernel+bounces-512339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868AFA337C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:14:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F050A337C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:15:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440A4168B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1893E188C5CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3CA207663;
-	Thu, 13 Feb 2025 06:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F37207A0C;
+	Thu, 13 Feb 2025 06:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rfpa5Zy3"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b="U+70MTw/"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBA21E376E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7A3207666
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739427283; cv=none; b=FOkD7wUfGllQwGkEV2K9TJ5+UE48Ndoihe8FhP1AJP8s9HYyeX4S4ELYj9y0qls1mwR6FAkV6kQAo0OWCHFuVM2J+R9ZYwq3/eiYT78rIdgO0xqltHBn6VP8VPiPBE5UXoM1gs0HPQK+PKWOh4mLIs9BrUgP9No+GJLFHLf2HSg=
+	t=1739427312; cv=none; b=TrL/eh89nzKG4oF4YnpYzW4eEUP23cnGEsbB4gjK4eCJK0HrTSS527p69XJMaBA42J/+Q2WhutNdEb0uRbI4CdpzI9l8HoDOhSjcmmZMdgvA9maJUDE8VXkV6xz4IAeUNmHsiQJnIP+IKGlAYD4Et9of9WBkHLCoDUE+CAF10jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739427283; c=relaxed/simple;
-	bh=1R8tWNZd0Yp5liGmyR9m/i7eEgtPLcC9uwsA3XfHu7c=;
+	s=arc-20240116; t=1739427312; c=relaxed/simple;
+	bh=lryOgHxrEqjvbzXvBVu4CYThrFm2z5P6W7EZnj9HWwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+JjnQJJj5Mpe1Fcxp45Bpy4h65SgEBqPoEvlTJswEMF1lPqAW9yFhvYWz4VFNnr8d6VugDWfWTT6VnXsOuQFd8YnCcmymifYHlP/Se2wx9bTLcBK0Prs2yIItzDg1UYSdwKFBnpoWfNNQ3iciVu8770S9LRPUNQc8/EcXxeDtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rfpa5Zy3; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 12 Feb 2025 22:14:29 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739427277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cjQWSwj8nKF9KoRQ2WmbNuDTwdSzRb9QicnW/ugG1M=;
-	b=rfpa5Zy3jCDew0wr+3Ap2UlABlwFrZ6W90clYvgaXHX+f1Y2+BkqgfWW+PofMQ7NrAgIYK
-	ztM5LIlQ1YH9ZBfGfUI6WM/fJ81qGfighs8088pa79LoCafpufn76YepsKUa5dEqQuJxK2
-	yr4wx4OSTqKC8VG+i0vLMqajSkxMh7c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Fuad Tabba <tabba@google.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v7] KVM: arm64: Fix confusion in documentation for pKVM
- SME assert
-Message-ID: <Z62NxRzbOyt-nBmK@linux.dev>
-References: <20250212-kvm-arm64-sme-assert-v7-1-0f786db838d3@kernel.org>
- <Z6yByMUBPDUyEWOr@J2N7QTR9R3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUG/pVluTM7/iAsKvVIkZzXrg1XB1+acqRbDXQqdfbW580KBFz1d7xrtnT1aCETTz+up94KJkgbtuf9Mt2Je3u1HfgLWOb1iRKHurrZp5QLbEvKl82oe3fMC8rvhhUgw/mShJHGnXOQKaWE7i8PAkynMF4IhNXCxkmioGuvSLpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu; spf=pass smtp.mailfrom=asu.edu; dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b=U+70MTw/; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asu.edu
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21f710c17baso8053225ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 22:15:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=asu.edu; s=google; t=1739427310; x=1740032110; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z4VxL/zyepaWHZgmId6GZcp34gMB2D39WAfctzQKlLI=;
+        b=U+70MTw/DT3O9JvCbXCbA2PqmEkHPEwvB2f65QmAMtPVKLU8lGPuasVL9wx/lJQx2N
+         Ly1LOY5tk1xuiePnhPHeIHcMTpV1oroWXHCtmwgL3w/YqZLen9+CmIug2cTRF4R6vUxr
+         4NjVnmgVJ+zMEUNaP4AK+LV2C06pChUKcyoIJe8M0d6wcI4cpNzUqQI5HCmJVlUzbrD3
+         uaZzFBSPhywF/qf7u06B7qfZOMr4JpgvAWZwEAth831Wkk5YJW31PHBA0KjNCG36gscm
+         tmKU3DudtZfrhgoX23gbzy3q33dLf4SKIba7qG6RvgwTT+LRRfikcPxmtEBbp/3v5974
+         4ZMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739427310; x=1740032110;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z4VxL/zyepaWHZgmId6GZcp34gMB2D39WAfctzQKlLI=;
+        b=lkxyR73SeAn7BF5lb5cjzogVU2pS4k58RPvITcyYE3UCpVk+AqdTFgzHQX0F8WM/JC
+         nFQSm2XmlHs7Qa3FdmTTW2hEveoyOau+vaZUScosrjChkx4ddoxUbR69pf70ZaIv5xuk
+         h1PTOyBS/Vlk35fruHevqPqLGuNnHo4A/0Amlmm04KmKfHhCGRdxyJNM0U9X1nbSr+8x
+         EVF+FnblLB2GcyAA66BCI0O9Ry5RLCssWyOSRo9UtWY9SuLthPlmIRKmqSArCl3Iq6rL
+         CuMNTQu0MWUqJ9rPEiInyuQ2jVKgXv4ArpGfq3Iy0f0/4fyM4uriorOmc3/u7mcnp8Zq
+         lYIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwdeffg9yWaYLdyT1eDZ/DYI13zFHHUGcdQ/jd4sRFwtj8jzHGaRMN+P+e9gqR6SHJ7NkC4tK8DDPxKdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4u27+/26vK681xlJU7a0Z1YY5cMy9XuSmgCsw2C8QiQ6lPFLS
+	UVgJThFMQWn15yi7W4DMsJAWjfEPzvu/U9XUOFx7Tg11enVrn9weLldt2/7s9w==
+X-Gm-Gg: ASbGncv0Tbs1PP/o2Xh+Sj14fnMBtXowomh+7jjoZvwDKuyypmsAFtXlVo3y5/FBhgU
+	bz8QaLeDU86vNRP6xag7oVEqhjLTqPOGhjAVnlITVI44Mn8/AhS2BT4x3wOw3OFWfK9IhTH0Nq6
+	A/H8BWHGMM5MpFQLZPFwrzqi/XzxMXnR5iEuDksGkt3BOHi8Hv2F3RLK4h30Ym1Tj0TCGTlCfYe
+	vhMpP6GoALijsu6ji6T8GsmJdGuvYjf43GZjsFXV3Th2rt4HOIbi6237hnTKp2m6enmnG29pKgs
+	BQ==
+X-Google-Smtp-Source: AGHT+IG9vGAydq7Mx2WbSjnNhXx0ebFUv3OwPmdgmJrDHus0XcoOuUXBvHAazFQI/32udtjzZ80UJw==
+X-Received: by 2002:a17:902:e948:b0:215:b058:289c with SMTP id d9443c01a7336-220bbab33e1mr82940335ad.8.1739427309788;
+        Wed, 12 Feb 2025 22:15:09 -0800 (PST)
+Received: from ubun ([2600:8800:1689:e500:5937:c524:3617:55d5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf9757365sm2465084a91.0.2025.02.12.22.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 22:15:09 -0800 (PST)
+Date: Wed, 12 Feb 2025 23:15:05 -0700
+From: Jennifer Miller <jmill@asu.edu>
+To: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org,
+	kees@kernel.org, joao@overdrivepizza.com, samitolvanen@google.com,
+	kernel list <linux-kernel@vger.kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <Z62N6cGmaN+OZfoY@ubun>
+References: <Z60NwR4w/28Z7XUa@ubun>
+ <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z6yByMUBPDUyEWOr@J2N7QTR9R3>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
 
-On Wed, Feb 12, 2025 at 11:11:04AM +0000, Mark Rutland wrote:
-> On Wed, Feb 12, 2025 at 12:44:57AM +0000, Mark Brown wrote:
-> > As raised in the review comments for the original patch the assert and
-> > comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
-> > disabled in protected mode") are bogus. The comments says that we check
-> > that we do not have SME enabled for a pKVM guest but the assert actually
-> > checks to see if the host has anything set in SVCR which is unrelated to
-> > the guest features or state, regardless of if those guests are protected
-> > or not. This check is also made in the hypervisor, it will refuse to run
-> > a guest if the check fails, so it appears that the assert here is
-> > intended to improve diagnostics.
-> > 
-> > Update the comment to reflect the check in the code, and to clarify that
-> > we do actually enforce this in the hypervisor. While we're here also
-> > update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
-> > 
-> > Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
-> > Reviewed-by: Fuad Tabba <tabba@google.com>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
+On Wed, Feb 12, 2025 at 11:29:02PM +0100, Jann Horn wrote:
+> +Andy Lutomirski (X86 entry code maintainer)
+> 
+> On Wed, Feb 12, 2025 at 10:08 PM Jennifer Miller <jmill@asu.edu> wrote:
+> > As part of a recently accepted paper we demonstrated that syscall
+> > entrypoints can be misused on x86-64 systems to generically bypass
+> > FineIBT/KERNEL_IBT from forwards-edge control flow hijacking. We
+> > communicated this finding to s@k.o before submitting the paper and were
+> > encouraged to bring the issue to hardening after the paper was accepted to
+> > have a discussion on how to address the issue.
+> >
+> > The bypass takes advantage of the architectural requirement of entrypoints
+> > to begin with the endbr64 instruction and the ability to control GS_BASE
+> > from userspace via wrgsbase, from to the FSGSBASE extension, in order to
+> > perform a stack pivot to a ROP-chain.
+> 
+> Oh, fun, that's a gnarly quirk.
 
-I don't think a Fixes tag is warranted here, this doesn't fix any
-functional issue.
+yeag :)
 
-> > diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
-> > index 4d3d1a2eb157047b4b2488e9c4ffaabc6f5a0818..e37e53883c357093ff4455f5afdaec90e662d744 100644
-> > --- a/arch/arm64/kvm/fpsimd.c
-> > +++ b/arch/arm64/kvm/fpsimd.c
-> > @@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
-> >  	}
-> >  
-> >  	/*
-> > -	 * If normal guests gain SME support, maintain this behavior for pKVM
-> > -	 * guests, which don't support SME.
-> > +	 * Protected and non-protected KVM modes require that
-> > +	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
-> > +	 * host/guest SME state needs to be saved/restored by hyp code.
-> > +	 *
-> > +	 * In protected mode, hyp code will verify this later.
-> >  	 */
-> > -	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
-> > -		read_sysreg_s(SYS_SVCR));
-> > +	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
-> > +		     read_sysreg_s(SYS_SVCR));
+> Since the kernel, as far as I understand, uses FineIBT without
+> backwards control flow protection (in other words, I think we assume
+> that the kernel stack is trusted?), could we build a cheaper
+> check on that basis somehow? For example, maybe we could do something like:
 > 
-> As I mentioned on the last round, we can drop the is_protected_kvm_enabled()
-> check, i.e. have:
+> ```
+> endbr64
+> test rsp, rsp
+> js slowpath
+> swapgs
+> ```
 > 
-> 	/*
-> 	 * Protected and non-protected KVM modes require that
-> 	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
-> 	 * host/guest SME state needs to be saved/restored by hyp code.
-> 	 *
-> 	 * In protected mode, hyp code will verify this later.
-> 	 */
-> 	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
-> 
-> Either way:
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Marc, are you happy to queue this atop the recent fixes from me? Those
-> try to ensure SVCR.{SM,ZA} == {0,0} regardless of whether KVM is in
-> protected mode.
+> So we'd have the fast normal case where RSP points to userspace
+> (meaning we can't be coming from the kernel unless our stack has
+> already been pivoted, in which case forward edge protection alone
+> can't help anymore), and the slow case where RSP points to kernel
+> memory - in that case we'd then have to do some slower checks to
+> figure out whether weird userspace is making a syscall with RSP
+> pointing to the kernel, or whether we're coming from hijacked kernel
+> control flow.
 
-I'll pick it up for 6.15 if Marc doesn't grab it as a fix.
+I've been tinkering this idea a bit and came with something.
 
--- 
-Thanks,
-Oliver
+In short, we could have the slowpath branch as you suggested, in the 
+slowpath permit the stack switch and preserving of the registers on the
+stack, but then do a sanity check according to the __per_cpu_offset array
+and decide from there whether we should continue executing the entrypoint
+or die/attempt to recover.
+
+Here is some napkin asm for this I wrote for the 64-bit syscall entrypoint, 
+I think more or less the same could be done for the other entrypoints.
+
+```
+    endbr64
+    test rsp, rsp
+    js slowpath
+
+    swapgs
+    ~~fastpath continues~~
+
+; path taken when rsp was a kernel address
+; we have no choice really but to switch to the stack from the untrusted
+; gsbase but after doing so we have to be careful about what we put on the
+; stack
+slowpath:
+    swapgs
+
+; swap stacks as normal
+    mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
+    mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+
+    ~~normal push and clear GPRs sequence here~~
+
+; we entered with an rsp in the kernel address range.
+; we already did swapgs but we don't know if we can trust our gsbase yet.
+; we should be able to trust the ro_after_init __per_cpu_offset array
+; though.
+
+; check that gsbase is the expected value for our current cpu
+    rdtscp
+    mov rax, QWORD PTR [8*ecx-0x7d7be460] <__per_cpu_offset>
+
+    rdgsbase rbx
+
+    cmp rbx, rax
+    je fastpath_after_regs_preserved
+
+    wrgsbase rax
+
+; if we reach here we are being exploited and should explode or attempt
+; to recover
+```
+
+The unfortunate part is that it would still result in the register state
+being dumped on top of some attacker controlled address, so if the error
+path is recoverable someone could still use entrypoints to convert control
+flow hijacking into memory corruption via register dump. So it would kill
+the ability to get ROP but it would still be possible to dump regs over
+modprobe_path, core_pattern, etc.
+
+Does this seem feasible and any better than the alternative of overwriting
+and restoring KERNEL_GS_BASE?
+
+~Jennifer
 
