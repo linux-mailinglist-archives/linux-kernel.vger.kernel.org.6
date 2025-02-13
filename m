@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-512939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F50CA33F86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:53:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF49BA33F8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA021188BFF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4923C1681CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9B5221570;
-	Thu, 13 Feb 2025 12:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9AA221706;
+	Thu, 13 Feb 2025 12:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mkv988nV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d1T/yWN0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6C02C182;
-	Thu, 13 Feb 2025 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D567221558;
+	Thu, 13 Feb 2025 12:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739451203; cv=none; b=CgKnXk7cS6xwBc9Sy3zEeZApcIk4eDTP3rPjm1LpueOAF7gKap871d3wraQy6olrdci8IZPmpIrz/Tv6Ebxbx6meFtCNdsKcx/quWKtYF/feaEe8oGIuoO+wRcRqcotV0H6kolkzprWRS0K1t1M+aokeRSbv1dlb+z9tnGOHQj0=
+	t=1739451271; cv=none; b=RlX4LkZRL1CjKRk+rRLxhN9Z2mgrFMBCqHuEmGZPl+AF1DDySMUjWF+paZOlR9PuBTDqYPbIFo1f9/iPIBhtmaJ47OAHmuNty87vVEXY/GGhZykOCAsYWhLUD8wuxkgeYi2eobLkFVWEMdMIAlsP79T7zPVUplm4as9ULpJRJMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739451203; c=relaxed/simple;
-	bh=eWWChd9+g97MF6wnnaelU20oPUkpPav1lgJJQci8f6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxuIHLqY6lIhYvV7vLHQISI4QIvGmTXvWPWLM1q1zKMvT9EpQuU52BEsO/Ah+0j9bEHcIv7kQiTb2dtu9eCGaO/irfvresUFaWxzTryKjWTProbu17DrIxsy4ZtJY8Z/mnca88IRBVtNXlAafqJIwlb64ZYc7VCuN8vovDucLeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mkv988nV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DCmkYW012578;
-	Thu, 13 Feb 2025 12:53:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=eWPNAIgOiUaqeYRzBZnoWTnufMu8O3
-	aad3DcxE2TisE=; b=mkv988nVqKFI+Q6OrBWS2ipxPqBTWh94TEwCx5ur0CW5tE
-	gFbmuMsKaNXIBWlbpy9XXzuqt8Q0SYtWLu5xw5dicWbmtK4cnhHK/N/mmO32y0Kt
-	GpxgaLbUIE+WtPwE5YYqiBZ+byC9GxDxMuwNYQn050np1UxVh3j/D4JLRuKI7MKx
-	qnE39AotUl1IWNJO8+Ftlv1OKxIIJ/IXGkgDbdH3t9eDuti41obAiU46MnGoLJHZ
-	BBkoakKAE6C0M/vRvP7cbEBdY4a8uahULG/ptd//n6izD71nSjIDUuS/h4zdd0Kd
-	0X3cjD9wjHovI3bb6RqoeEn9YfZJq2oiDEDhxYWA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44s7k0tsn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 12:53:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DBlMZ1001051;
-	Thu, 13 Feb 2025 12:53:08 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkne8ya-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 12:53:07 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DCr4JY22675828
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 12:53:04 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2997620043;
-	Thu, 13 Feb 2025 12:53:04 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F256620040;
-	Thu, 13 Feb 2025 12:53:03 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 13 Feb 2025 12:53:03 +0000 (GMT)
-Date: Thu, 13 Feb 2025 13:53:02 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH] arm64: scripts/sorttable: Implement sorting mcount_loc
- at boot for arm64
-Message-ID: <20250213125302.12012-A-hca@linux.ibm.com>
-References: <20250210142647.083ff456@gandalf.local.home>
+	s=arc-20240116; t=1739451271; c=relaxed/simple;
+	bh=UN3Y9x428Mk8h/CXSju3Mtr+T4Cd2Rs3PZKgk+wNRiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hhwd0kI/NV6ty1FoewKXaMGacmgqPT5AThv5/mJHCO+ThJEnOJc0UzuehWf6ONsOscoeZ620uhiiZypjiQZGwuRZJIdcUjDQdqkxkUf8uKNx6fcrt35YfE9VcsXKqjBYXY+GJyXGIC71OBBks2HXTsFiTDjK2z28Xqwb/xqYd0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d1T/yWN0; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739451271; x=1770987271;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UN3Y9x428Mk8h/CXSju3Mtr+T4Cd2Rs3PZKgk+wNRiA=;
+  b=d1T/yWN0G92sRqAYEX3xaQwqApgD/o8kSIcCuyLvRSriiL/c5oBO6YEV
+   vqdDEjyC9xsS1df9nc7FCSp2iBJfDwjgyuZBWNL9d6SKfSp81k5mDYpk+
+   ItkM+ja5oX2OjwC1prNg79tHMlgGk1SPf/j6NcyBPzcPopyCYAjS4pyRA
+   S6XP6OwB5hkH/Fgu4RT/qBBIOky2AiFjS2Ywm4lQvCUQQfc3GLynHNtgz
+   NWLiBjGmLVf1natKrFI5xbh73coLdHhGnvUffmfGWe5DYZaHJycPFIRmi
+   AQcbTQJesmc6LEsCO/hPOW3CKIWwdj272ooq3/in0OmqcRA3EMomw9z0m
+   Q==;
+X-CSE-ConnectionGUID: 8D7kJjl+SzqGoMmApzEUrg==
+X-CSE-MsgGUID: IlSqQsgsReeKAe7Kf1SKmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40266538"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40266538"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 04:54:30 -0800
+X-CSE-ConnectionGUID: hz/02A95Toi+RKP8+COzSA==
+X-CSE-MsgGUID: 3oCHI4xJSWuWUpbQsVvUsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150303991"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.42.34]) ([10.247.42.34])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 04:54:22 -0800
+Message-ID: <5902cc28-a649-4ae9-a5ba-83aa265abaf8@linux.intel.com>
+Date: Thu, 13 Feb 2025 20:54:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210142647.083ff456@gandalf.local.home>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ric8tIwk28XGa8a184QYg1kdT_6Gbzhn
-X-Proofpoint-GUID: ric8tIwk28XGa8a184QYg1kdT_6Gbzhn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=878
- malwarescore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130096
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
+ feature in IGC
+To: Kurt Kanzenbach <kurt@linutronix.de>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250212220121.ici3qll66pfoov62@skbuf>
+ <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
+ <87cyfmnjdh.fsf@kurt.kurt.home>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <87cyfmnjdh.fsf@kurt.kurt.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 02:26:47PM -0500, Steven Rostedt wrote:
-> For the s390 folks. I cross compiled a s390 and looked at the mcount_loc
-> section, and I have no idea how to implement this for that. I wrote a elf
-> parser to dump sections based symbols:
-> 
->   https://rostedt.org/code/dump_elf_sym.c
-> 
-> And ran it on the s390 vmlinux:
-> 
->  $ ./dump_elf_sym vmlinux __start_mcount_loc __stop_mcount_loc
->  1801620: .. .. .. .. .. .. .. ..   00 00 00 00 00 11 70 20  ......... .....p 
->  1801630: 00 00 00 00 00 11 70 90   00 00 00 00 00 11 70 a0  ......p.. .....p.
->  1801640: 00 00 00 00 00 11 71 10   00 00 00 00 00 11 71 20  ......q.. .....q 
->  1801650: 00 00 00 00 00 11 71 90   00 00 00 00 01 7c 70 00  ......q.. ....|p.
->  1801660: 00 00 00 00 01 7c 70 20   00 00 00 00 01 7c 70 40  .....|p . ....|p@
->  1801670: 00 00 00 00 01 7c 70 60   00 00 00 00 01 7c 70 70  .....|p`. ....|pp
->  1801680: 00 00 00 00 01 7c 70 98   00 00 00 00 01 7c 70 c0  .....|p.. ....|p.
->  1801690: 00 00 00 00 01 7c 70 d0   00 00 00 00 01 7c 71 68  .....|p.. ....|qh
-> [..]
-> 
-> It looks like addresses in that section...
 
-Those are the addresses of the mcount locations. After looking at
-sorttable.c it really looks like that for s390 we can simply select
-HAVE_BUILDTIME_MCOUNT_SORT without any further changes.
 
-I just tested it with different compiler options (fentry vs hotpatch),
-including selecting FTRACE_SORT_STARTUP_TEST, and as expected everything
-works.
+On 13/2/2025 8:01 pm, Kurt Kanzenbach wrote:
+> On Thu Feb 13 2025, Abdul Rahim, Faizal wrote:
+>> On 13/2/2025 6:01 am, Vladimir Oltean wrote:
+>>> On Mon, Feb 10, 2025 at 02:01:58AM -0500, Faizal Rahim wrote:
+>>>> Introduces support for the FPE feature in the IGC driver.
+>>>>
+>>>> The patches aligns with the upstream FPE API:
+>>>> https://patchwork.kernel.org/project/netdevbpf/cover/20230220122343.1156614-1-vladimir.oltean@nxp.com/
+>>>> https://patchwork.kernel.org/project/netdevbpf/cover/20230119122705.73054-1-vladimir.oltean@nxp.com/
+>>>>
+>>>> It builds upon earlier work:
+>>>> https://patchwork.kernel.org/project/netdevbpf/cover/20220520011538.1098888-1-vinicius.gomes@intel.com/
+>>>>
+>>>> The patch series adds the following functionalities to the IGC driver:
+>>>> a) Configure FPE using `ethtool --set-mm`.
+>>>> b) Display FPE settings via `ethtool --show-mm`.
+>>>> c) View FPE statistics using `ethtool --include-statistics --show-mm'.
+>>>> e) Enable preemptible/express queue with `fp`:
+>>>>      tc qdisc add ... root taprio \
+>>>>      fp E E P P
+>>>
+>>> Any reason why you are only enabling the preemptible traffic classes
+>>> with taprio, and not with mqprio as well? I see there will have to be
+>>> some work harmonizing igc's existing understanding of ring priorities
+>>> with what Kurt did in 9f3297511dae ("igc: Add MQPRIO offload support"),
+>>> and I was kind of expecting to see a proposal for that as part of this.
+>>>
+>>
+>> I was planning to enable fpe + mqprio separately since it requires extra
+>> effort to explore mqprio with preemptible rings, ring priorities, and
+>> testing to ensure it works properly and there are no regressions.
+> 
+> Well, my idea was to move the current mqprio offload implementation from
+> legacy TSN Tx mode to the normal TSN Tx mode. Then, taprio and mqprio
+> can share the same code (with or without fpe). I have a draft patch
+> ready for that. What do you think about it?
+> 
+> Thanks,
+> Kurt
 
-I'm going to give it some more testing in our CI - but if nothing breaks a
-patch which selects HAVE_BUILDTIME_MCOUNT_SORT for s390 will go upstream
-with the next merge window.
+Hi Kurt,
+
+I’m okay with including it in this series and testing fpe + mqprio, but I’m 
+not sure if others might be concerned about adding different functional 
+changes in this fpe series.
+
+Hi Vladimir,
+Any thoughts on this ?
+
+
 
