@@ -1,95 +1,136 @@
-Return-Path: <linux-kernel+bounces-513062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4184DA34131
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:02:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B01DA3413C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3E297A24C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F24189112E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC41924292E;
-	Thu, 13 Feb 2025 13:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BCF2222DB;
+	Thu, 13 Feb 2025 13:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAwhYkup"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OGa3VQ+4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494F8242910;
-	Thu, 13 Feb 2025 13:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F332222CE;
+	Thu, 13 Feb 2025 13:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739455158; cv=none; b=QS8wjSNybbm1gCRjKRS/sqrgnMSEyYp9h07G6Bygb2DIdjVC+MQmxRpaHEd2lv4mrO/c8gTYvlqfEnui5EB4v6UwcYVQtsY9jjlEk8BsmC6niGlm9ozjBdV+ziu+LrgOgah0LO+MH39dnq4bj9vAbJTYH5fZG4gq3HmGXRFZ03Y=
+	t=1739455159; cv=none; b=e32MrrdLYwH9F3IY8C9F2jfgCpvln7gbNVc0Dq1Fj660rBTO7EtZi9YKymz9MfFx81ZxTt4xKww668WDNygp94Y9/f6/BHLKqblLESll8s1jo+MHXPhty87vLEAORzNTwl5ogpmLWL1ZlOTsiWR1S44rEptoVHmDZemi/F+BzhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739455158; c=relaxed/simple;
-	bh=+yOaOrU3SfpDJ08BIfLD5TlmYaKF+rtZSYB5MoqJ7iQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h0GQPcAuu4KQIaP5Us9Cx2nDtt+3hpqAUGbq9AEuXDn0iN1Ly90JTv+ifA58t40O/gowpatLm/B6jErG6EyziOrt15bL6puEaeXcuNVmkjax5Vc7UORp1XLsKul2JTXSUD7V40OQrCDE2FzB8DKtc4jQbIEJwXo82/cPpDIZalY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAwhYkup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D265FC4CEE8;
-	Thu, 13 Feb 2025 13:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739455158;
-	bh=+yOaOrU3SfpDJ08BIfLD5TlmYaKF+rtZSYB5MoqJ7iQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JAwhYkup5eKlG2Xz6cQXi9HNC/yphKU1h/lW3n9rqNux8T2iM8CXW4RCb5NOGjjbR
-	 PZWvmCdXQ+Jgt7079SBSvV/Fwf7aSoytMLIC88CBu2CAnOQvAJ1DuEZe155IBuJBew
-	 UQsmwW8Z3XJ+na7FaxgZXDy6TCqhby7tBdP5BcuaUde4rPps/sbWdGJWDP8ZMndljR
-	 iPwO3eBZG4l6wHuesirxe1+hhYj4dnYrUBDoel1Cttmg8ke0TFWhThvUtjUS0r9xpU
-	 Tuyi7RtzcdtaydK8ZvxBSvAQGzje7kw7gOMlfXLP3wZK06asvU10m+jqrs84NRZ07x
-	 ApWRLwUfiaa+A==
-From: Will Deacon <will@kernel.org>
-To: linux-acpi@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1739455159; c=relaxed/simple;
+	bh=euBBwIvDl7tFCURaGUj3PZmj5h1cb0chWSv5lC4FY7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUE9xVMKUTw5NnItVaQRDHOKpEkXfVZl0r7LDLG4nNiySq2Sk+GynAO00PaZ3oaSmRsXHw+EUB6kVhVyKqjzE2Gl9VuzRtei4eRfNQAEvLKEwiawaiSkSm91yfqmYhspazWwFJW7IWvtCJQNK8T4Cz5Qcd5aZzdb7cv6Ubo7U+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OGa3VQ+4; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739455158; x=1770991158;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=euBBwIvDl7tFCURaGUj3PZmj5h1cb0chWSv5lC4FY7A=;
+  b=OGa3VQ+41bSQNmXGf9mCtwOiuJj9X+H08BpuYLdGxOn5yQqnK+4F3KdY
+   1mtPovJBu7niUknlYoA6w7CtDG05RCrjXjbDvJzsDKPtulRQ1PxvUyWaZ
+   ANoknf6biXf8H3ixSnA11dVCNPLXrk3JhY4Db1pNKpjaRS0Uy5MRp+e1T
+   px1MwvPcEAhcI7iDcXpGAiPcVmmlzmFajCivC6+wbbpQUo+x6nUruuD8c
+   9ZWNyRUy+7XpGgR12Xi89TnrvSTGN3K+7H8WhxAfpqq5+3L3PlEGL5yOV
+   7yL3DDuQlrO7jRo/MSIOPmCHwStt10cu/S3GghOonPA7mY3ZhhgIXlGxA
+   g==;
+X-CSE-ConnectionGUID: vcx5dfXkTgq0+GhUJWc9Mg==
+X-CSE-MsgGUID: FOtI2ojXQDmSp45Sv+y/pQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40189093"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40189093"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:16 -0800
+X-CSE-ConnectionGUID: tHRhaz9eRf6DnqbU8OsLZQ==
+X-CSE-MsgGUID: I2OxGvF3TRyCM+nntBIXpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="118157960"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 13 Feb 2025 05:59:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 99C9C1FD; Thu, 13 Feb 2025 15:59:11 +0200 (EET)
+Date: Thu, 13 Feb 2025 15:59:11 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Kenneth Crudup <kenny@panix.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Zheng Zengkai <zhengzengkai@huawei.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ACPI: GTDT: Relax sanity checking on Platform Timers array count
-Date: Thu, 13 Feb 2025 13:59:04 +0000
-Message-Id: <173944516851.2607091.1871789456035802538.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250128001749.3132656-1-oliver.upton@linux.dev>
-References: <20250128001749.3132656-1-oliver.upton@linux.dev>
+	=?utf-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+Message-ID: <20250213135911.GG3713119@black.fi.intel.com>
+References: <20250210210502.GA15655@bhelgaas>
+ <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
+ <20250211055722.GW3713119@black.fi.intel.com>
+ <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
 
-On Tue, 28 Jan 2025 00:17:49 +0000, Oliver Upton wrote:
-> Perhaps unsurprisingly there are some platforms where the GTDT isn't
-> quite right and the Platforms Timer array overflows the length of the
-> overall table.
+Hi,
+
+On Mon, Feb 10, 2025 at 10:17:47PM -0800, Kenneth Crudup wrote:
 > 
-> While the recently-added sanity checking isn't wrong, it makes it
-> impossible to boot the kernel on offending platforms. Try to hobble
-> along and limit the Platform Timer count to the bounds of the table.
+> The setup is fairly simple (once I'd figured out the failure mode):
 > 
-> [...]
+> - Have an ASMedia 246x NVMe-to-USB4 housing (with NVMe drive) attached to
+> the system via my TB4 dock (CalDigit TS4, but I've had it happen with a Dell
+> dock as well (either with the drive mounted, or not) when I suspend
+> 
+> - Resume with the drive disconnected (i.e., I've gone from home to the
+> office).
 
-Applied to arm64 (for-next/fixes), thanks!
+I see this is fairly normal use-case (sans the disk I guess). Steps to
+follow are then something like:
 
-[1/1] ACPI: GTDT: Relax sanity checking on Platform Timers array count
-      https://git.kernel.org/arm64/c/f818227a2f3d
+1. Boot the system, nothing connected.
+2. Connect CalDigit TS4 (PCIe tunnel is enabled by the UI) to the host Type-C port.
+3. Connect ASMedia NVMe to CalDigit downstream Type-C port (PCIe tunnel is enabled by the UI).
+4. Verify that the NVMe is visible (lspci, lsblk).
 
-Cheers,
--- 
-Will
+The topology looks like below:
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+  Host <- TB -> CalDigit TS4 <- TB -> NVMe
+
+5. Suspend the system (close the lid).
+6. Unplug the CalDigit TS4.
+7. Resume the system (open the lid).
+
+Expectation: system wakes up just fine.
+Actual behavior: system crashes and burns.
+
+Do you BTW, unmount the filesystem before you suspend?
+
+> It doesn't happen every time, and for some crazy reason elapsed time between
+> suspend and resume seems to make it more likely to happen. Plus it seems
+> directly attaching the drive (i.e., no dock in between) doesn't cause
+> resumes to fail.
+
+It would be good to see the dmesg output (with thunderbolt.dyndbg=+p) with
+these connected, even without suspending so see if there is anything
+missing. Since it is Dell system I would expect they have tested this in
+Linux pretty well so probably we don't see anything weird there.
+
+I have similar here (not the same devices though) so I can try on my end if
+this repros.
 
