@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-513513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6832EA34AFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:57:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BDBA34B02
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1409B1896CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463DB1747A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C49D242934;
-	Thu, 13 Feb 2025 16:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC92424503A;
+	Thu, 13 Feb 2025 16:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/mO1hzW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RS3GpLPS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C22328A2A8;
-	Thu, 13 Feb 2025 16:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20524245029;
+	Thu, 13 Feb 2025 16:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739465405; cv=none; b=juAM0nKQOUhEPTA8nyQWZKcNzQOTAEnPH/dRFGB3dbGZCUW0BtWRtxqh2biGnep/PuLqOtHTFB06Kp41GM/xKT5hob8UuouE9AMqLIw19+JLjlVOMRH3K0mPFfxw4rTfhSR85VIWaY0B2PBkfCbR/phgpk5quUosS/PiYNF2SsA=
+	t=1739465411; cv=none; b=Ms+cpEtxVM4DlxMGfzlOu8VLl6deQg23WBpynUPiA176fZbAKMjntkJo2xZi/hMqCDd1aaR4bAAwFSYNxlPpZRC29YNL0HUzASzmHoWTjNiSNExaNqz4GSTi33k+mqAQso6vRMd5+ONShNDH1NpX59FIbJqlER14G+ebmL2KRJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739465405; c=relaxed/simple;
-	bh=vWc8VKBxp9o18AQbWPY+q8CPpm+dcXnTK5NFlS4VvS8=;
+	s=arc-20240116; t=1739465411; c=relaxed/simple;
+	bh=wVRUJW0e3QS5h6vZL/XOGPhvMENMUgZ34deORxSJCmw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LwcmF+dE0eZbPXVgGyoiQqkLhs+ttOxuz5WdV0fY4p3PHNL3M7Ac6Vl17ZF6EOSB4zf1XH3aSvxTvRN6eL6LHXrQ+ey31WZCpEGrgxOHbJlZz4KkDdgVoJsnGgqQ89smdoSYURsHFmDSLG5LRRdNtiXgHFuZgIMdf/STFB+UvDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/mO1hzW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CE8C4CED1;
-	Thu, 13 Feb 2025 16:50:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=gqAUr6Nc0jy6TsyNWvGI9Fo2XRnddMbZifFNQpw5E8UY52DlHi8keC8SoervvWQGJwqew5hBd53iBS3mkYS9Kn8WK4TLcKksv3o0G0IjCwSUrY9Vm2dS3ohaW8JHvGSxM0d4NUrmYTf3Ua8ZynkQ6pqAcyKEe0GL08QxYUA3fm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RS3GpLPS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FE0C4CED1;
+	Thu, 13 Feb 2025 16:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739465404;
-	bh=vWc8VKBxp9o18AQbWPY+q8CPpm+dcXnTK5NFlS4VvS8=;
+	s=k20201202; t=1739465410;
+	bh=wVRUJW0e3QS5h6vZL/XOGPhvMENMUgZ34deORxSJCmw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=i/mO1hzWbXLsKolCeYD/qTERCl+u/4XCY8eQkko6o8kLWPf+elrjpiH6B25qLcCsV
-	 cC3P9s/aDm/Ss9Hn+4Unuz3BXfp1HoHxVf1M1xLPbThdvW5YfuvQBIsh7xXRRxZ8Qj
-	 jfI95o1XzcNx4SsaDc47vqt1yg3YpByt400T2go07GA57SZRs9iQ1klAJqAiI8oTVO
-	 frkCgnDgohm/efty09pFsE6IBjTw82c5dXvwvWlwhR/OYoBFkfLVwMUa212JAXIIe6
-	 mk56LcEnOhBhlWFykWhiKUPmdXKj5fEE7zvKJUl48oVvCseNsLIshUoPrIaxXNAbDI
-	 wsPyNd4MYBGlA==
+	b=RS3GpLPSbWEJynhx5YlHQC5U/FGlFmSKjKMwQJPc7Vx5wek7ptJapiqyklsZm9s2A
+	 pHJx7NsMVaa4fMDaqcc6d4TsxSmGwJKIEhZ8lDBTE38JRk+Wrf2qK/l71F5e60M1gS
+	 tPhG1l2gCPMckXR0ZVyWqdWMYKzB7Z91kAiNpccypj2qfWx3Z++1DyBB47/LIGNCma
+	 xAAgy2thk+JEr+jxVW7tw52wxoBT0qCQrMFPWuP6DXiu7SapT9MzP2ZGOLigvMQZsm
+	 2O/UUOioB/RKo5klZE6+jb9iBHqs7OaIrSIae8Lh4SjwWcKZlQdygaJrQEfw9ej0FF
+	 6XizU+X5m8RsA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FB7380CEEF;
-	Thu, 13 Feb 2025 16:50:35 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2DB380CEEF;
+	Thu, 13 Feb 2025 16:50:40 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] mlxsw: Add return value check for
- mlxsw_sp_port_get_stats_raw()
+Subject: Re: [PATCH net-next] sctp: Remove commented out code
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173946543381.1295234.12436241481892534091.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Feb 2025 16:50:33 +0000
-References: <20250212152311.1332-1-vulab@iscas.ac.cn>
-In-Reply-To: <20250212152311.1332-1-vulab@iscas.ac.cn>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: idosch@nvidia.com, petrm@nvidia.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ <173946543949.1295234.12177039099324481218.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Feb 2025 16:50:39 +0000
+References: <20250211102057.587182-1-thorsten.blum@linux.dev>
+In-Reply-To: <20250211102057.587182-1-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: marcelo.leitner@gmail.com, lucien.xin@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 12 Feb 2025 23:23:11 +0800 you wrote:
-> Add a check for the return value of mlxsw_sp_port_get_stats_raw()
-> in __mlxsw_sp_port_get_stats(). If mlxsw_sp_port_get_stats_raw()
-> returns an error, exit the function to prevent further processing
-> with potentially invalid data.
+On Tue, 11 Feb 2025 11:20:56 +0100 you wrote:
+> Remove commented out code.
 > 
-> Fixes: 614d509aa1e7 ("mlxsw: Move ethtool_ops to spectrum_ethtool.c")
-> Cc: stable@vger.kernel.org # 5.9+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> 
-> [...]
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  include/linux/sctp.h | 1 -
+>  1 file changed, 1 deletion(-)
 
 Here is the summary with links:
-  - mlxsw: Add return value check for mlxsw_sp_port_get_stats_raw()
-    https://git.kernel.org/netdev/net/c/fee5d6889406
+  - [net-next] sctp: Remove commented out code
+    https://git.kernel.org/netdev/net-next/c/34dba73b231f
 
 You are awesome, thank you!
 -- 
