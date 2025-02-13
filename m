@@ -1,620 +1,314 @@
-Return-Path: <linux-kernel+bounces-513549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE4FA34BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:21:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21A2A34B89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6523A8645
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4DB1882292
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD5D28A2A5;
-	Thu, 13 Feb 2025 17:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD4F203711;
+	Thu, 13 Feb 2025 17:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="jx839Jqc"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EhQ9qg9l"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908CC142903;
-	Thu, 13 Feb 2025 17:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466812; cv=pass; b=jxPLToJc8N4xwmdD+UVfODMc9nvC198uhvNLqhoy095lSCxukkwy6hjioJpUyyWU6WE79NKnfz1pZ6pJQiC7bzjIpbul6f7viAY0u/0AhG9b0n8XI6Y4p2RxHSHAN9R/HFJAxkU1QuFrtPuEhAi0kSTcftWjeonJ3cIlK7y5C3c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466812; c=relaxed/simple;
-	bh=kVFDbjxlEv95bUwjRxRQpVfJeriseEEqwa7JIOOagfQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=t1XCUvJcdBvekUWPb/WA29lWzHx680+y11OV66e0MLw2vY0m98AlBDkRbbegNL00HndWv9g3NZxdNDxtZ32xO7cw/dg0VTaMdcOXpdkeFhHcvlKfAIz8COTz4FJI0r0W3XcSy2NaAugH+2GJ3wa96QHBHXxukUKAXbbvj4FazBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=jx839Jqc; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739466778; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C2fXEUaOtIOQXZdIRxbhIpS3klsCivl1CeJ765NNazXEKY8Ma+geQ9PF4jpRGll+XhE9gsy4o5lJgOnAgYO5BU/P34Cl77rFGVVqg8H1FQBrCHuoOhaUgIbBTRh0mkT7NLlGUc2ZCXegexOurRtvbqvdiPW3q19Zbw1UrPz98h8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739466778; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Sc2tCoVzh/+ZGjCc6bh58Q9enhkMLIH+KNmL21GVAkY=; 
-	b=k08k0h07iA78dtblBgjBvt32ctxVyZ8LMNR+5uWKDV9RKPkU8lcLXUOnoYOZFShzJhxECixCZkTvWRgRJ2mAn+cKsysEaz6p5lJL46uLPlYjpz+AWAHqdPkvl+MrE2Vmq56+SOPQ/d/PZSUxl2geHbxawLsa2o9LEKwX1IVjm9M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739466778;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Sc2tCoVzh/+ZGjCc6bh58Q9enhkMLIH+KNmL21GVAkY=;
-	b=jx839Jqciln0AuaMsVqXeejQXGlMrTaWjj7RIMh5ESkv90jda8KPPNZkC8Kq8x89
-	Wmn6TJlQaqrEGUXnttxXw7HC1hwt3379gKhrTGF1PsJt7yMR/MXNq4hYMxLhR7mX59I
-	Ojh+LLEMLbrvm0292OJq2/8I81dcSLvVOcDGPaDM=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1739466776672559.5472934228393; Thu, 13 Feb 2025 09:12:56 -0800 (PST)
-Date: Thu, 13 Feb 2025 18:12:56 +0100
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: "Emmanuel Gil Peyrot" <linkmauve@linkmauve.fr>
-Cc: "linux-sunxi" <linux-sunxi@lists.linux.dev>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Paul Kocialkowski" <paul.kocialkowski@bootlin.com>,
-	"Mauro Carvalho Chehab" <mchehab@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Chen-Yu Tsai" <wens@csie.org>,
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
-	"Samuel Holland" <samuel@sholland.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-media" <linux-media@vger.kernel.org>,
-	"linux-staging" <linux-staging@lists.linux.dev>,
-	"linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <195004ca004.ef71c4611135398.5819587479420404546@collabora.com>
-In-Reply-To: <20240731164422.206503-3-linkmauve@linkmauve.fr>
-References: <20240731164422.206503-1-linkmauve@linkmauve.fr> <20240731164422.206503-3-linkmauve@linkmauve.fr>
-Subject: Re: [PATCH 2/4] media: cedrus: Add JPEG decoder
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C09202F60
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739466817; cv=none; b=JFwMZqUfFSfWyOJY63GotY/2qMPHawvrUj9Opki4AfGzxv3YIgzDpX9T0PLwhAw0qjE+oJYqwDK6+CYJzGFdDLmmZ8oNJ4iGmbTUz4+/AkOeASq3W3oAixx6d4q8blxkeYVJdhEROrKPksYyCQFBMytlBlgw9CDWElKSXgFM6Gs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739466817; c=relaxed/simple;
+	bh=Z1gx+d9KD+fwXgkW7noVLO3LRyUNlol61dY2QcSnYmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTCkFURX5MVLv0t5ebEZ84oSFW/1Y+oTvkRlkyl+ENo7OckL4XUOqJOeWWM0m/kxYP99Lh7RAfnyrL0UVDUWFgKyB0CO0s2MFJzl6MjMfXPf5qmtJRkDNb78fIuznBjAtFzOeITfQ6nGE7YB6yrYpnOcebzlYhBCV2PvV0L0qiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EhQ9qg9l; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f74b78df93so12060027b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:13:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739466814; x=1740071614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T4N4dnRJLEMfc5wr2E5ElHWH+c2BgiHQLnksgHaawHw=;
+        b=EhQ9qg9lGkZzsgq2QoPMuQXlYkJKfksvtiMnm1DLiWkJy1zRVVYj9ToE8P+YhUIfba
+         gql3bJz6iHX3w7xmNZmTl6I2qsAwV/X2FUIG/qlXK5su08dt1zQB/Og3UgiFGh2Ckxtv
+         8qVCinIhJfCzaNKJsHz1nAN/qEdORd0u0RRM3X/aOFDdqW6uMfVaX9tqJi8nnRuAH2sE
+         RhmgaDcVt+cMWD2iGthGe9rnKAthhLPApkvKYKZVPsUSF4dpXJWxgV5fKLKGOTeE+sk3
+         pOHMcAW6Rw/E2c6RKa2S4kWDZSnYzp4p9VyEjtBHXS7KHkL1QkJh5HtU2wFUPeADxDK0
+         L6Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739466814; x=1740071614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T4N4dnRJLEMfc5wr2E5ElHWH+c2BgiHQLnksgHaawHw=;
+        b=kra6/0BeDjwZOGBWhiepB9g/JlpqLy8qkGGd5D3yjxgr2+H/iZxkw7D29o0tAlGZhQ
+         7QtpyVRKL4E9cMl7PFB4A+nNuDuiYeSb/nYkGi5wkjXd0QkA6P3Gk7Qq5DzqXOaPO6fx
+         6++y7/jKIeLQ6F2abnC0PlMSPImkC1zJQqSaQiLQZ8/1fGxXoFCyNipEKtU3/v+btkNS
+         snh2M6fw5umW4tvS3cC8liFSdn5ZoCFqJDWH4sbLVCj9DV9cIrv2+0kQ2CPTlHgj0dw9
+         3MWD5t61AZi3Yp8TwIbWyCkjzw9qxTMyNsk1T3oBX1hWNrT5ZK0xkaRxf3gwvVl5JK1+
+         N/7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTBxBEb0B+1hwvf0jgux30LVUfDd8/79iVj4hlxWG229OaDFi+wouS+wbZNEc46xmHUt1m0ejFlKfkECY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx4H9Q0go7hoktq/7P4oFMJSJ24AWM0AlHLhFaNWPVLJI2K65F
+	3ndWs9+pLDmmOSZvw1fa3lXdww7Qf7UreNqNs4FCJyOAih9PXCxOWAoZKYivHkDBI0hhQH37gKY
+	Q93zeCQJPRL/j3FoWx1G7xQHQ7rFSJQ18wG+i
+X-Gm-Gg: ASbGncu2CUaBOs9z9dBuxbJFpA32yxre7s6z5Q5wHqYU8T4V8y4tfaSyDq+2CWHdeFS
+	JwlWkvuWOrfkj679YUebgrT37w9xc6iVdFX3KgfQnLgYyGr0vPsPrpqWb1YhrV6+BpWrdA6zRaJ
+	zbKAYwxxlOeJsQWCFapk7CXolwIsjJIA==
+X-Google-Smtp-Source: AGHT+IHTlYjRsYcli7xRTU3j9viOC5Jiu+MtNYMPzgb/YmalFnLJw3O3OS3xWtv5cL1TBiwzIVBKACTWlBtYkF2kmN8=
+X-Received: by 2002:a05:690c:3802:b0:6f9:957b:e14b with SMTP id
+ 00721157ae682-6fb1f1ab110mr91023677b3.16.1739466814396; Thu, 13 Feb 2025
+ 09:13:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <Z60p755gE1aDiimC@slm.duckdns.org>
+In-Reply-To: <Z60p755gE1aDiimC@slm.duckdns.org>
+From: Neel Natu <neelnatu@google.com>
+Date: Thu, 13 Feb 2025 09:13:23 -0800
+X-Gm-Features: AWEUYZlDzNzG3JLWcQs7k_AUvVuvwO3aKr2Xni0KqgBEw4p_80WsE_EtrqXYiJ8
+Message-ID: <CAJDe-OLcEe8AuOeffusdxhktTyoAkCgG-7zWAvcuSWWGfDrakQ@mail.gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: Implement SCX_OPS_ALLOW_QUEUED_WAKEUP
+To: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, David Vernet <void@manifault.com>, 
+	Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, Barret Rhoden <brho@google.com>, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: quoted-printable
 
-Hey Emmanuel,
+Thanks Tejun!
 
-first of all sorry for taking that long to reply to your patches ...
+On Wed, Feb 12, 2025 at 3:08=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> A task wakeup can be either processed on the waker's CPU or bounced to th=
+e
+> wakee's previous CPU using an IPI (ttwu_queue). Bouncing to the wakee's C=
+PU
+> avoids the waker's CPU locking and accessing the wakee's rq which can be
+> expensive across cache and node boundaries.
+>
+> When ttwu_queue path is taken, select_task_rq() and thus ops.select_cpu()
+> are skipped. As this confused some BPF schedulers, there wasn't a good wa=
+y
 
-I notice that there has been no movement on this so I wonder how we should proceed with this patch, our CI shows at least that you have some style issues on the patches (https://gitlab.freedesktop.org/linux-media/users/sebastianfricke/-/jobs/71044070) and I would like to have a reviewer first before I can think about merging this.
+A minor nit in that the commit msg suggests that if ttwu_queue() path is ta=
+ken
+to do the wakeup on remote cpu then select_task_rq()->ops.select_cpu() is
+always skipped as opposed to "sometimes" skipped.
 
-For a start can you rebase this patch series and apply the required fixes to make our CI happy and then we have to look for a reviewer as this is a new driver and I don't want to solely rely on my opinion as I am not well versed in the Cedrus driver.
+In my understanding select_task_rq() is skipped in a very specific path:
+try_to_wake_up() observes 'p->on_cpu=3D1' and does ttwu_queue_wakelist().
 
-Regards,
-Sebastian
+In all the other cases ttwu_queue() will be preceded by select_task_rq().
 
- ---- On Wed, 31 Jul 2024 18:44:12 +0200  Emmanuel Gil Peyrot <linkmauve@linkmauve.fr> wrote --- 
- > Basically all Cedrus variants support JPEG decoding. Add code for it.
- > 
- > Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
- > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
- > ---
- >  drivers/staging/media/sunxi/cedrus/Kconfig    |   1 +
- >  drivers/staging/media/sunxi/cedrus/Makefile   |   2 +-
- >  drivers/staging/media/sunxi/cedrus/cedrus.h   |   5 +
- >  .../staging/media/sunxi/cedrus/cedrus_hw.c    |   2 +
- >  .../staging/media/sunxi/cedrus/cedrus_jpeg.c  | 352 ++++++++++++++++++
- >  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  16 +
- >  .../staging/media/sunxi/cedrus/cedrus_video.c |   9 +
- >  7 files changed, 386 insertions(+), 1 deletion(-)
- >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_jpeg.c
- > 
- > diff --git a/drivers/staging/media/sunxi/cedrus/Kconfig b/drivers/staging/media/sunxi/cedrus/Kconfig
- > index cb07a343c9c2..5683519aead0 100644
- > --- a/drivers/staging/media/sunxi/cedrus/Kconfig
- > +++ b/drivers/staging/media/sunxi/cedrus/Kconfig
- > @@ -9,6 +9,7 @@ config VIDEO_SUNXI_CEDRUS
- >      select SUNXI_SRAM
- >      select VIDEOBUF2_DMA_CONTIG
- >      select V4L2_MEM2MEM_DEV
- > +    select V4L2_JPEG_HELPER
- >      help
- >        Support for the VPU found in Allwinner SoCs, also known as the Cedar
- >        video engine.
- > diff --git a/drivers/staging/media/sunxi/cedrus/Makefile b/drivers/staging/media/sunxi/cedrus/Makefile
- > index a647b3690bf8..fa3e949e0788 100644
- > --- a/drivers/staging/media/sunxi/cedrus/Makefile
- > +++ b/drivers/staging/media/sunxi/cedrus/Makefile
- > @@ -3,4 +3,4 @@ obj-$(CONFIG_VIDEO_SUNXI_CEDRUS) += sunxi-cedrus.o
- >  
- >  sunxi-cedrus-y = cedrus.o cedrus_video.o cedrus_hw.o cedrus_dec.o \
- >           cedrus_mpeg2.o cedrus_h264.o cedrus_h265.o \
- > -         cedrus_vp8.o
- > +         cedrus_vp8.o cedrus_jpeg.o
- > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/staging/media/sunxi/cedrus/cedrus.h
- > index 522c184e2afc..555f8d124d47 100644
- > --- a/drivers/staging/media/sunxi/cedrus/cedrus.h
- > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
- > @@ -34,6 +34,7 @@
- >  #define CEDRUS_CAPABILITY_MPEG2_DEC    BIT(3)
- >  #define CEDRUS_CAPABILITY_VP8_DEC    BIT(4)
- >  #define CEDRUS_CAPABILITY_H265_10_DEC    BIT(5)
- > +#define CEDRUS_CAPABILITY_JPEG_DEC    BIT(6)
- >  
- >  enum cedrus_irq_status {
- >      CEDRUS_IRQ_NONE,
- > @@ -152,6 +153,9 @@ struct cedrus_ctx {
- >              u8        *entropy_probs_buf;
- >              dma_addr_t    entropy_probs_buf_dma;
- >          } vp8;
- > +        struct {
- > +            unsigned int    subsampling;
- > +        } jpeg;
- >      } codec;
- >  };
- >  
- > @@ -201,6 +205,7 @@ extern struct cedrus_dec_ops cedrus_dec_ops_mpeg2;
- >  extern struct cedrus_dec_ops cedrus_dec_ops_h264;
- >  extern struct cedrus_dec_ops cedrus_dec_ops_h265;
- >  extern struct cedrus_dec_ops cedrus_dec_ops_vp8;
- > +extern struct cedrus_dec_ops cedrus_dec_ops_jpeg;
- >  
- >  static inline void cedrus_write(struct cedrus_dev *dev, u32 reg, u32 val)
- >  {
- > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
- > index 582b6cb796ea..e237f7d66f7e 100644
- > --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
- > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
- > @@ -43,7 +43,9 @@ int cedrus_engine_enable(struct cedrus_ctx *ctx)
- >      reg |= VE_MODE_DDR_MODE_BW_128;
- >  
- >      switch (ctx->src_fmt.pixelformat) {
- > +    /* MPEG2 and JPEG both use the same decoding mode bit. */
- >      case V4L2_PIX_FMT_MPEG2_SLICE:
- > +    case V4L2_PIX_FMT_JPEG:
- >          reg |= VE_MODE_DEC_MPEG;
- >          break;
- >  
- > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_jpeg.c b/drivers/staging/media/sunxi/cedrus/cedrus_jpeg.c
- > new file mode 100644
- > index 000000000000..1e8978ebf9dd
- > --- /dev/null
- > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_jpeg.c
- > @@ -0,0 +1,352 @@
- > +// SPDX-License-Identifier: GPL-2.0
- > +/*
- > + * Cedrus VPU driver
- > + *
- > + * Copyright (C) 2022 Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
- > + */
- > +
- > +#include <media/videobuf2-dma-contig.h>
- > +#include <media/v4l2-jpeg.h>
- > +
- > +#include "cedrus.h"
- > +#include "cedrus_hw.h"
- > +#include "cedrus_regs.h"
- > +
- > +static enum cedrus_irq_status cedrus_jpeg_irq_status(struct cedrus_ctx *ctx)
- > +{
- > +    struct cedrus_dev *dev = ctx->dev;
- > +    u32 reg;
- > +
- > +    reg = cedrus_read(dev, VE_DEC_MPEG_STATUS);
- > +    reg &= VE_DEC_MPEG_STATUS_CHECK_MASK;
- > +
- > +    if (!reg)
- > +        return CEDRUS_IRQ_NONE;
- > +
- > +    if (reg & VE_DEC_MPEG_STATUS_CHECK_ERROR)
- > +        return CEDRUS_IRQ_ERROR;
- > +
- > +    return CEDRUS_IRQ_OK;
- > +}
- > +
- > +static void cedrus_jpeg_irq_clear(struct cedrus_ctx *ctx)
- > +{
- > +    struct cedrus_dev *dev = ctx->dev;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_STATUS, VE_DEC_MPEG_STATUS_CHECK_MASK);
- > +}
- > +
- > +static void cedrus_jpeg_irq_disable(struct cedrus_ctx *ctx)
- > +{
- > +    struct cedrus_dev *dev = ctx->dev;
- > +    u32 reg = cedrus_read(dev, VE_DEC_MPEG_CTRL);
- > +
- > +    reg &= ~VE_DEC_MPEG_CTRL_IRQ_MASK;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_CTRL, reg);
- > +}
- > +
- > +static int cedrus_write_table_header(struct cedrus_dev *dev,
- > +                                     struct v4l2_jpeg_reference *table)
- > +{
- > +    u16 start_codes[16], code;
- > +    u8 offsets[16], *ptr;
- > +    unsigned int count;
- > +    u32 *ptr32;
- > +    int i;
- > +
- > +    ptr = table->start;
- > +    if (!ptr)
- > +        return -EINVAL;
- > +
- > +    count = 0;
- > +    code = 0;
- > +    for (i = 0; i < 16; i++) {
- > +        offsets[i] = count;
- > +        start_codes[i] = code;
- > +        count += ptr[i];
- > +        code += ptr[i];
- > +        code *= 2;
- > +    }
- > +
- > +    for (i = 15; i >= 0 && !ptr[i]; i--)
- > +        start_codes[i] = 0xffff;
- > +
- > +    ptr32 = (u32*)start_codes;
- > +    for (i = 0; i < 8; i++)
- > +        cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, ptr32[i]);
- > +
- > +    ptr32 = (u32*)offsets;
- > +    for (i = 0; i < 4; i++)
- > +        cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, ptr32[i]);
- > +
- > +    for (i = 0; i < 4; i++)
- > +        cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, 0);
- > +
- > +    return 0;
- > +}
- > +
- > +static int cedrus_jpeg_write_dh_tables(struct cedrus_dev *dev,
- > +                                       struct v4l2_jpeg_header *hdr)
- > +{
- > +    struct v4l2_jpeg_reference *tables[4], *table;
- > +    struct v4l2_jpeg_scan_component_spec *comp;
- > +    unsigned int i, j, ret;
- > +    size_t length;
- > +    u32 *ptr, val;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_OFFSET, 0);
- > +
- > +    j = 0;
- > +    for (i = 0; i < 2; i++) {
- > +        comp = &hdr->scan->component[i];
- > +
- > +        tables[j++] = &hdr->huffman_tables[comp->dc_entropy_coding_table_selector];
- > +        tables[j++] = &hdr->huffman_tables[comp->ac_entropy_coding_table_selector + 2];
- > +    }
- > +
- > +    for (i = 0; i < 4; i++) {
- > +        ret = cedrus_write_table_header(dev, tables[i]);
- > +        if (ret)
- > +            return ret;
- > +    }
- > +
- > +    for (i = 0; i < 192; i++)
- > +        cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, 0);
- > +
- > +    for (i = 0; i < 4; i++) {
- > +        table = tables[i];
- > +        ptr = (u32*)&table->start[16];
- > +        length = table->length - 16;
- > +
- > +        for (j = 0; j < length / 4; j++)
- > +            cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, ptr[j]);
- > +
- > +        if (length & 3) {
- > +            val = 0;
- > +            for (j = 0; j < (length & 3); j++)
- > +                val = (val << 8) | table->start[15 + length - j];
- > +            cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, val);
- > +        }
- > +
- > +        for (j = 0; j < 64 - DIV_ROUND_UP(length, 4); j++)
- > +            cedrus_write(dev, VE_DEC_MPEG_SRAM_RW_DATA, 0);
- > +    }
- > +
- > +    return 0;
- > +}
- > +
- > +static int cedrus_write_quantization_matrix(struct cedrus_dev *dev, u32 flags,
- > +                                            struct v4l2_jpeg_reference *table)
- > +{
- > +    const u8 *matrix;
- > +    u32 reg, val;
- > +    int i;
- > +
- > +    matrix = table->start;
- > +    if (!matrix)
- > +        return -EINVAL;
- > +
- > +    for (i = 0; i < 64; i++) {
- > +        /* determine if values are 8 or 16 bits */
- > +        val = *matrix++;
- > +        if (table->length > 64)
- > +            val = (val << 8) | *matrix++;
- > +
- > +        reg = VE_DEC_MPEG_IQMINPUT_WEIGHT(i, val);
- > +        reg |= flags;
- > +
- > +        cedrus_write(dev, VE_DEC_MPEG_IQMINPUT, reg);
- > +    }
- > +
- > +    return 0;
- > +}
- > +
- > +static int cedrus_jpeg_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
- > +{
- > +    struct cedrus_dev *dev = ctx->dev;
- > +    dma_addr_t src_buf_addr, dst_luma_addr, dst_chroma_addr;
- > +    struct v4l2_jpeg_scan_header scan_header;
- > +    struct v4l2_jpeg_reference quantization_tables[4] = { };
- > +    struct v4l2_jpeg_reference huffman_tables[4] = { };
- > +    struct v4l2_jpeg_header header = {
- > +        .scan = &scan_header,
- > +        .quantization_tables = quantization_tables,
- > +        .huffman_tables = huffman_tables,
- > +    };
- > +    struct vb2_buffer *src_buf = &run->src->vb2_buf;
- > +    struct v4l2_jpeg_frame_component_spec *components;
- > +    u32 reg, subsampling;
- > +    unsigned long size;
- > +    int ret, index;
- > +    u8 hmax, vmax;
- > +    u16 width, height;
- > +
- > +    size = vb2_get_plane_payload(src_buf, 0);
- > +    ret = v4l2_jpeg_parse_header(vb2_plane_vaddr(src_buf, 0), size, &header);
- > +    if (ret < 0) {
- > +        v4l2_err(&dev->v4l2_dev,
- > +                 "failed to parse JPEG header: %d\n", ret);
- > +        return -EINVAL;
- > +    }
- > +
- > +    width = header.frame.width;
- > +    height = header.frame.height;
- > +    if (width > 2048 || height > 2048) {
- > +        v4l2_err(&dev->v4l2_dev,
- > +                 "unsupported JPEG of resolution %ux%u (max 2048x2048)\n",
- > +                 width, height);
- > +        return -EINVAL;
- > +    }
- > +
- > +    if (header.frame.precision != 8) {
- > +        v4l2_err(&dev->v4l2_dev,
- > +                 "unsupported JPEG with %u bits of precision (8 required)\n",
- > +                 header.frame.precision);
- > +        return -EINVAL;
- > +    }
- > +
- > +    if (header.frame.num_components != 3) {
- > +        v4l2_err(&dev->v4l2_dev,
- > +                 "unsupported JPEG with %u components (3 required)\n",
- > +                 header.frame.num_components);
- > +        return -EINVAL;
- > +    }
- > +
- > +    components = header.frame.component;
- > +    index = components[0].horizontal_sampling_factor << 20 |
- > +        components[0].vertical_sampling_factor << 16 |
- > +        components[1].horizontal_sampling_factor << 12 |
- > +        components[1].vertical_sampling_factor << 8 |
- > +        components[2].horizontal_sampling_factor << 4 |
- > +        components[2].vertical_sampling_factor;
- > +
- > +    switch (index) {
- > +    case 0x221111:
- > +        subsampling = VE_DEC_MPEG_TRIGGER_CHROMA_FMT_420;
- > +        break;
- > +    case 0x211111:
- > +        subsampling = VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422;
- > +        break;
- > +    case 0x111111:
- > +        subsampling = VE_DEC_MPEG_TRIGGER_CHROMA_FMT_444;
- > +        break;
- > +    case 0x121111:
- > +        subsampling = VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422T;
- > +        break;
- > +    default:
- > +        v4l2_err(&dev->v4l2_dev, "unsupported subsampling %d\n", index);
- > +        return -EINVAL;
- > +    }
- > +
- > +    ctx->codec.jpeg.subsampling = subsampling;
- > +
- > +    /* Activate MPEG engine and select JPEG subengine. */
- > +    cedrus_engine_enable(ctx);
- > +
- > +    reg = VE_DEC_MPEG_TRIGGER_JPEG | subsampling;
- > +    cedrus_write(dev, VE_DEC_MPEG_TRIGGER, reg);
- > +
- > +    /* Set restart interval. */
- > +    cedrus_write(dev, VE_DEC_MPEG_JPEG_RES_INT, header.restart_interval);
- > +
- > +    /* Set resolution in blocks. */
- > +    hmax = components[0].horizontal_sampling_factor;
- > +    vmax = components[0].vertical_sampling_factor;
- > +    for (index = 1; index < 3; index++) {
- > +        if (hmax < components[index].horizontal_sampling_factor)
- > +            hmax = components[index].horizontal_sampling_factor;
- > +        if (vmax < components[index].vertical_sampling_factor)
- > +            vmax = components[index].vertical_sampling_factor;
- > +    }
- > +
- > +    reg = VE_DEC_MPEG_JPEG_SIZE_WIDTH(DIV_ROUND_UP(width, 8 * hmax));
- > +    reg |= VE_DEC_MPEG_JPEG_SIZE_HEIGHT(DIV_ROUND_UP(height, 8 * vmax));
- > +    cedrus_write(dev, VE_DEC_MPEG_JPEG_SIZE, reg);
- > +
- > +    /* Set intra quantisation matrix. */
- > +    index = components[0].quantization_table_selector;
- > +    ret = cedrus_write_quantization_matrix(dev,
- > +                                           VE_DEC_MPEG_IQMINPUT_FLAG_INTRA,
- > +                                           &quantization_tables[index]);
- > +    if (ret)
- > +        return ret;
- > +
- > +    /* Set non-intra quantisation matrix. */
- > +    index = components[1].quantization_table_selector;
- > +    ret = cedrus_write_quantization_matrix(dev,
- > +                                           VE_DEC_MPEG_IQMINPUT_FLAG_NON_INTRA,
- > +                                           &quantization_tables[index]);
- > +    if (ret)
- > +        return ret;
- > +
- > +    /* Set Diffie-Huffman tables. */
- > +    ret = cedrus_jpeg_write_dh_tables(dev, &header);
- > +    if (ret)
- > +        return ret;
- > +
- > +    /* Destination luma and chroma buffers. */
- > +
- > +    dst_luma_addr = cedrus_dst_buf_addr(ctx, &run->dst->vb2_buf, 0);
- > +    dst_chroma_addr = cedrus_dst_buf_addr(ctx, &run->dst->vb2_buf, 1);
- > +
- > +    /* JPEG outputs to rotation/scale down output buffers */
- > +    cedrus_write(dev, VE_DEC_MPEG_ROT_LUMA, dst_luma_addr);
- > +    cedrus_write(dev, VE_DEC_MPEG_ROT_CHROMA, dst_chroma_addr);
- > +
- > +    /* Disable rotation and scaling. */
- > +    cedrus_write(dev, VE_DEC_MPEG_SD_ROT_DBLK_CTL, 0);
- > +
- > +    /* Source offset and length in bits. */
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_VLD_OFFSET, 8 * header.ecs_offset);
- > +
- > +    reg = size * 8;
- > +    cedrus_write(dev, VE_DEC_MPEG_VLD_LEN, reg);
- > +
- > +    /* Source beginning and end addresses. */
- > +
- > +    src_buf_addr = vb2_dma_contig_plane_dma_addr(src_buf, 0);
- > +
- > +    reg = VE_DEC_MPEG_VLD_ADDR_BASE(src_buf_addr);
- > +    reg |= VE_DEC_MPEG_VLD_ADDR_VALID_PIC_DATA;
- > +    reg |= VE_DEC_MPEG_VLD_ADDR_LAST_PIC_DATA;
- > +    reg |= VE_DEC_MPEG_VLD_ADDR_FIRST_PIC_DATA;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_VLD_ADDR, reg);
- > +
- > +    reg = src_buf_addr + size;
- > +    cedrus_write(dev, VE_DEC_MPEG_VLD_END_ADDR, reg);
- > +
- > +    /* Enable appropriate interrupts and components. */
- > +
- > +    reg = VE_DEC_MPEG_CTRL_IRQ_MASK;
- > +    if (subsampling == VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422 ||
- > +        subsampling == VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422T ||
- > +        subsampling == VE_DEC_MPEG_TRIGGER_CHROMA_FMT_444)
- > +        reg |= VE_DEC_MPEG_CTRL_JPEG_FORCE_420;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_CTRL, reg);
- > +
- > +    return 0;
- > +}
- > +
- > +static void cedrus_jpeg_trigger(struct cedrus_ctx *ctx)
- > +{
- > +    struct cedrus_dev *dev = ctx->dev;
- > +    u32 reg;
- > +
- > +    /* Trigger JPEG engine. */
- > +    reg = VE_DEC_MPEG_TRIGGER_HW_JPEG_VLD | VE_DEC_MPEG_TRIGGER_JPEG;
- > +    reg |= ctx->codec.jpeg.subsampling;
- > +
- > +    cedrus_write(dev, VE_DEC_MPEG_TRIGGER, reg);
- > +}
- > +
- > +struct cedrus_dec_ops cedrus_dec_ops_jpeg = {
- > +    .irq_clear   = cedrus_jpeg_irq_clear,
- > +    .irq_disable = cedrus_jpeg_irq_disable,
- > +    .irq_status  = cedrus_jpeg_irq_status,
- > +    .setup       = cedrus_jpeg_setup,
- > +    .trigger     = cedrus_jpeg_trigger,
- > +};
- > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
- > index 3acc05e0fb54..cb8b4bb4f44e 100644
- > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
- > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
- > @@ -144,6 +144,7 @@
- >  
- >  #define VE_DEC_MPEG_CTRL_MC_CACHE_EN        BIT(31)
- >  #define VE_DEC_MPEG_CTRL_SW_VLD            BIT(27)
- > +#define VE_DEC_MPEG_CTRL_JPEG_FORCE_420        BIT(18)
- >  #define VE_DEC_MPEG_CTRL_SW_IQ_IS        BIT(17)
- >  #define VE_DEC_MPEG_CTRL_QP_AC_DC_OUT_EN    BIT(14)
- >  #define VE_DEC_MPEG_CTRL_ROTATE_SCALE_OUT_EN    BIT(8)
- > @@ -165,6 +166,7 @@
- >  #define VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422    (0x02 << 27)
- >  #define VE_DEC_MPEG_TRIGGER_CHROMA_FMT_444    (0x03 << 27)
- >  #define VE_DEC_MPEG_TRIGGER_CHROMA_FMT_422T    (0x04 << 27)
- > +#define VE_DEC_MPEG_TRIGGER_CHROMA_FMT_400    (0x05 << 27)
- >  
- >  #define VE_DEC_MPEG_TRIGGER_MPEG1        (0x01 << 24)
- >  #define VE_DEC_MPEG_TRIGGER_MPEG2        (0x02 << 24)
- > @@ -255,10 +257,24 @@
- >  #define VE_DEC_MPEG_IQMINPUT_WEIGHT(i, v) \
- >      (SHIFT_AND_MASK_BITS(i, 13, 8) | SHIFT_AND_MASK_BITS(v, 7, 0))
- >  
- > +#define VE_DEC_MPEG_JPEG_SIZE            (VE_ENGINE_DEC_MPEG + 0xb8)
- > +
- > +#define VE_DEC_MPEG_JPEG_SIZE_WIDTH(w) \
- > +    SHIFT_AND_MASK_BITS((w) - 1, 10, 0)
- > +#define VE_DEC_MPEG_JPEG_SIZE_HEIGHT(h) \
- > +    SHIFT_AND_MASK_BITS((h) - 1, 26, 16)
- > +
- > +#define VE_DEC_MPEG_JPEG_MCU            (VE_ENGINE_DEC_MPEG + 0xbc)
- > +#define VE_DEC_MPEG_JPEG_RES_INT        (VE_ENGINE_DEC_MPEG + 0xc0)
- >  #define VE_DEC_MPEG_ERROR            (VE_ENGINE_DEC_MPEG + 0xc4)
- >  #define VE_DEC_MPEG_CRTMBADDR            (VE_ENGINE_DEC_MPEG + 0xc8)
- >  #define VE_DEC_MPEG_ROT_LUMA            (VE_ENGINE_DEC_MPEG + 0xcc)
- >  #define VE_DEC_MPEG_ROT_CHROMA            (VE_ENGINE_DEC_MPEG + 0xd0)
- > +#define VE_DEC_MPEG_SD_ROT_DBLK_CTL        (VE_ENGINE_DEC_MPEG + 0xd4)
- > +#define VE_DEC_MPEG_JPEG_MCU_START        (VE_ENGINE_DEC_MPEG + 0xd8)
- > +#define VE_DEC_MPEG_JPEG_MCU_END        (VE_ENGINE_DEC_MPEG + 0xdc)
- > +#define VE_DEC_MPEG_SRAM_RW_OFFSET        (VE_ENGINE_DEC_MPEG + 0xe0)
- > +#define VE_DEC_MPEG_SRAM_RW_DATA        (VE_ENGINE_DEC_MPEG + 0xe4)
- >  
- >  #define VE_DEC_H265_DEC_NAL_HDR            (VE_ENGINE_DEC_H265 + 0x00)
- >  
- > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
- > index b00feaf4072c..7205c2315bc5 100644
- > --- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
- > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
- > @@ -55,6 +55,11 @@ static struct cedrus_format cedrus_formats[] = {
- >          .directions    = CEDRUS_DECODE_SRC,
- >          .capabilities    = CEDRUS_CAPABILITY_VP8_DEC,
- >      },
- > +    {
- > +        .pixelformat    = V4L2_PIX_FMT_JPEG,
- > +        .directions    = CEDRUS_DECODE_SRC,
- > +        .capabilities    = CEDRUS_CAPABILITY_JPEG_DEC,
- > +    },
- >      {
- >          .pixelformat    = V4L2_PIX_FMT_NV12,
- >          .directions    = CEDRUS_DECODE_DST,
- > @@ -118,6 +123,7 @@ void cedrus_prepare_format(struct v4l2_pix_format *pix_fmt)
- >      case V4L2_PIX_FMT_H264_SLICE:
- >      case V4L2_PIX_FMT_HEVC_SLICE:
- >      case V4L2_PIX_FMT_VP8_FRAME:
- > +    case V4L2_PIX_FMT_JPEG:
- >          /* Zero bytes per line for encoded source. */
- >          bytesperline = 0;
- >          /* Choose some minimum size since this can't be 0 */
- > @@ -350,6 +356,9 @@ static int cedrus_s_fmt_vid_out_p(struct cedrus_ctx *ctx,
- >      case V4L2_PIX_FMT_VP8_FRAME:
- >          ctx->current_codec = &cedrus_dec_ops_vp8;
- >          break;
- > +    case V4L2_PIX_FMT_JPEG:
- > +        ctx->current_codec = &cedrus_dec_ops_jpeg;
- > +        break;
- >      }
- >  
- >      /* Propagate format information to capture. */
- > -- 
- > 2.45.2
- > 
- > 
- > 
+best
+Neel
 
+> for a BPF scheduler to tell whether idle CPU selection has been skipped,
+> ops.enqueue() couldn't insert tasks into foreign local DSQs, and the
+> performance difference on machines with simple toplogies were minimal,
+> sched_ext disabled ttwu_queue.
+>
+> However, this optimization makes noticeable difference on more complex
+> topologies and a BPF scheduler now has an easy way tell whether
+> ops.select_cpu() was skipped since 9b671793c7d9 ("sched_ext, scx_qmap: Ad=
+d
+> and use SCX_ENQ_CPU_SELECTED") and can insert tasks into foreign local DS=
+Qs
+> since 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct
+> dispatches").
+>
+> Implement SCX_OPS_ALLOW_QUEUED_WAKEUP which allows BPF schedulers to choo=
+se
+> to enable ttwu_queue optimization.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Neel Natu <neelnatu@google.com>
+> Reported-by: Barret Rhoden <brho@google.com>
+> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/sched/core.c |    9 ++-------
+>  kernel/sched/ext.c  |   30 ++++++++++++++++++++++++------
+>  kernel/sched/ext.h  |   10 ++++++++++
+>  3 files changed, 36 insertions(+), 13 deletions(-)
+>
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3921,13 +3921,8 @@ bool cpus_share_resources(int this_cpu,
+>
+>  static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+>  {
+> -       /*
+> -        * The BPF scheduler may depend on select_task_rq() being invoked=
+ during
+> -        * wakeups. In addition, @p may end up executing on a different C=
+PU
+> -        * regardless of what happens in the wakeup path making the ttwu_=
+queue
+> -        * optimization less meaningful. Skip if on SCX.
+> -        */
+> -       if (task_on_scx(p))
+> +       /* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
+> +       if (!scx_allow_ttwu_queue(p))
+>                 return false;
+>
+>         /*
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -96,7 +96,7 @@ enum scx_ops_flags {
+>         /*
+>          * Keep built-in idle tracking even if ops.update_idle() is imple=
+mented.
+>          */
+> -       SCX_OPS_KEEP_BUILTIN_IDLE =3D 1LLU << 0,
+> +       SCX_OPS_KEEP_BUILTIN_IDLE       =3D 1LLU << 0,
+>
+>         /*
+>          * By default, if there are no other task to run on the CPU, ext =
+core
+> @@ -104,7 +104,7 @@ enum scx_ops_flags {
+>          * flag is specified, such tasks are passed to ops.enqueue() with
+>          * %SCX_ENQ_LAST. See the comment above %SCX_ENQ_LAST for more in=
+fo.
+>          */
+> -       SCX_OPS_ENQ_LAST        =3D 1LLU << 1,
+> +       SCX_OPS_ENQ_LAST                =3D 1LLU << 1,
+>
+>         /*
+>          * An exiting task may schedule after PF_EXITING is set. In such =
+cases,
+> @@ -117,13 +117,13 @@ enum scx_ops_flags {
+>          * depend on pid lookups and wants to handle these tasks directly=
+, the
+>          * following flag can be used.
+>          */
+> -       SCX_OPS_ENQ_EXITING     =3D 1LLU << 2,
+> +       SCX_OPS_ENQ_EXITING             =3D 1LLU << 2,
+>
+>         /*
+>          * If set, only tasks with policy set to SCHED_EXT are attached t=
+o
+>          * sched_ext. If clear, SCHED_NORMAL tasks are also included.
+>          */
+> -       SCX_OPS_SWITCH_PARTIAL  =3D 1LLU << 3,
+> +       SCX_OPS_SWITCH_PARTIAL          =3D 1LLU << 3,
+>
+>         /*
+>          * A migration disabled task can only execute on its current CPU.=
+ By
+> @@ -136,7 +136,21 @@ enum scx_ops_flags {
+>          * current CPU while p->nr_cpus_allowed keeps tracking p->user_cp=
+us_ptr
+>          * and thus may disagree with cpumask_weight(p->cpus_ptr).
+>          */
+> -       SCX_OPS_ENQ_MIGRATION_DISABLED =3D 1LLU << 4,
+> +       SCX_OPS_ENQ_MIGRATION_DISABLED  =3D 1LLU << 4,
+> +
+> +       /*
+> +        * Queued wakeup (ttwu_queue) is an optimization during wakeups w=
+hich
+> +        * bypasses ops.select_cpu() and invokes ops.enqueue() on the wak=
+ee's
+> +        * previous CPU via IPI (inter-processor interrupt) to reduce cac=
+heline
+> +        * transfers. As the BPF scheduler may depend on ops.select_cpu()=
+ being
+> +        * invoked during wakeups, queued wakeup is disabled by default.
+> +        *
+> +        * If this ops flag is set, queued wakeup optimization is enabled=
+ and
+> +        * the BPF scheduler must be able to handle ops.enqueue() invoked=
+ on the
+> +        * wakee's CPU without preceding ops.select_cpu() even for tasks =
+which
+> +        * may be executed on multiple CPUs.
+> +        */
+> +       SCX_OPS_ALLOW_QUEUED_WAKEUP     =3D 1LLU << 5,
+>
+>         /*
+>          * CPU cgroup support flags
+> @@ -147,6 +161,7 @@ enum scx_ops_flags {
+>                                   SCX_OPS_ENQ_LAST |
+>                                   SCX_OPS_ENQ_EXITING |
+>                                   SCX_OPS_ENQ_MIGRATION_DISABLED |
+> +                                 SCX_OPS_ALLOW_QUEUED_WAKEUP |
+>                                   SCX_OPS_SWITCH_PARTIAL |
+>                                   SCX_OPS_HAS_CGROUP_WEIGHT,
+>  };
+> @@ -897,6 +912,7 @@ DEFINE_STATIC_KEY_FALSE(__scx_switched_a
+>  static struct sched_ext_ops scx_ops;
+>  static bool scx_warned_zero_slice;
+>
+> +DEFINE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
+>  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_last);
+>  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_exiting);
+>  static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_migration_disabled);
+> @@ -4717,6 +4733,7 @@ static void scx_ops_disable_workfn(struc
+>         static_branch_disable(&__scx_ops_enabled);
+>         for (i =3D SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
+>                 static_branch_disable(&scx_has_op[i]);
+> +       static_branch_disable(&scx_ops_allow_queued_wakeup);
+>         static_branch_disable(&scx_ops_enq_last);
+>         static_branch_disable(&scx_ops_enq_exiting);
+>         static_branch_disable(&scx_ops_enq_migration_disabled);
+> @@ -5348,9 +5365,10 @@ static int scx_ops_enable(struct sched_e
+>                 if (((void (**)(void))ops)[i])
+>                         static_branch_enable(&scx_has_op[i]);
+>
+> +       if (ops->flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
+> +               static_branch_enable(&scx_ops_allow_queued_wakeup);
+>         if (ops->flags & SCX_OPS_ENQ_LAST)
+>                 static_branch_enable(&scx_ops_enq_last);
+> -
+>         if (ops->flags & SCX_OPS_ENQ_EXITING)
+>                 static_branch_enable(&scx_ops_enq_exiting);
+>         if (ops->flags & SCX_OPS_ENQ_MIGRATION_DISABLED)
+> --- a/kernel/sched/ext.h
+> +++ b/kernel/sched/ext.h
+> @@ -8,6 +8,8 @@
+>   */
+>  #ifdef CONFIG_SCHED_CLASS_EXT
+>
+> +DECLARE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
+> +
+>  void scx_tick(struct rq *rq);
+>  void init_scx_entity(struct sched_ext_entity *scx);
+>  void scx_pre_fork(struct task_struct *p);
+> @@ -34,6 +36,13 @@ static inline bool task_on_scx(const str
+>         return scx_enabled() && p->sched_class =3D=3D &ext_sched_class;
+>  }
+>
+> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p)
+> +{
+> +       return !scx_enabled() ||
+> +               static_branch_likely(&scx_ops_allow_queued_wakeup) ||
+> +               p->sched_class !=3D &ext_sched_class;
+> +}
+> +
+>  #ifdef CONFIG_SCHED_CORE
+>  bool scx_prio_less(const struct task_struct *a, const struct task_struct=
+ *b,
+>                    bool in_fi);
+> @@ -52,6 +61,7 @@ static inline void scx_rq_activate(struc
+>  static inline void scx_rq_deactivate(struct rq *rq) {}
+>  static inline int scx_check_setscheduler(struct task_struct *p, int poli=
+cy) { return 0; }
+>  static inline bool task_on_scx(const struct task_struct *p) { return fal=
+se; }
+> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { r=
+eturn true; }
+>  static inline void init_sched_ext_class(void) {}
+>
+>  #endif /* CONFIG_SCHED_CLASS_EXT */
 
