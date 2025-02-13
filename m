@@ -1,63 +1,78 @@
-Return-Path: <linux-kernel+bounces-512384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752D3A33894
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:11:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24579A33892
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5719D3A4BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:11:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696757A3715
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4422080DD;
-	Thu, 13 Feb 2025 07:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51EC207E15;
+	Thu, 13 Feb 2025 07:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vZOSeXUa"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="um1hTdoP"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3252A20764A;
-	Thu, 13 Feb 2025 07:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F4B207DF5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739430673; cv=none; b=k0qcAI1wjqxrvwroWS9v2SUhOnrP6sW/mN4SMrVBsx0JiGKnOJ1S5ke0KxG1HJ4N+ziPHrOA6MVFKi5+oPlS0lOV4xRdzEhRN6AQexZ/lUvTIyH6F4xB//YSVbEmB/XVbciALUa1xMgolI0KD/Wiic35RzeDAeQ7UFC7O0VPzp4=
+	t=1739430661; cv=none; b=h5EiIqdKyQ89nf7oalSLUkE5C0yso0Zv6sDYWcV3b5PPvjke860NHIIt7+aJa2v1v91/vPFSyuFwi6+WDtW2mg8HfTp3k/bojpk4tqeeQuRRWyZGxTjcTadVUXth/2HH7SN3mUHId08rUgKrfmcaCIUFaHr0jJowY2ub0qxW1js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739430673; c=relaxed/simple;
-	bh=SDlhNPTc+IJPTQYfd10RVnRI/DFPzcEU8dyGKrFH2/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GczQolCxKqyWewsEUrHkBZ35GoLHHLHjVC9ECepGlGF664lehcmkRtif6F4CDDIV1J0MVesdOYgJ+rpxCBxkywL2N/8E02xICNE6HTAfI7qgYfmTB2jQasNLk9KHdvh26lxGW3+BK/bF29r8QtIsImXTNldCS6iPW2Y7Wk1DvK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vZOSeXUa; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51D7AsoI593886
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 01:10:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739430655;
-	bh=4eQgfyqqS0+d1JZoc8rzTZkCyEzl8R/5sOSoxNwKzPo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=vZOSeXUa5ABJlGKuudF+QOIkdj4x1KW0IosftQvdiCX9wsTtcLqGCqR2Nhfv7ymh/
-	 rAX3VsRlxFksC/ZKSiWGYlDNJ+uF4YL8NnpGn+WaxDHU0n45S6SXoZdKw9bR+EY2zO
-	 UA0qMIUGByhRjgdgrVrymKlqWwsWCvmQk1SaLzFY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51D7AsnH109641
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 13 Feb 2025 01:10:54 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
- Feb 2025 01:10:54 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 13 Feb 2025 01:10:54 -0600
-Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51D7AoAS071134;
-	Thu, 13 Feb 2025 01:10:50 -0600
-Message-ID: <eb95288f-c777-4823-a5d2-dd837046f360@ti.com>
-Date: Thu, 13 Feb 2025 12:40:49 +0530
+	s=arc-20240116; t=1739430661; c=relaxed/simple;
+	bh=1JzLXGxL0QmiLI5Q7L2Av98JRC5DJw0hUHJfC6Qg2Bw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JBV1aO+s4a9+mFBW8xE5WFqUKT3prN5ykXDu2lapWEvi17Tw9ebRRhmX2HQ7wJrg7dCT8dpAaypgTw8TLEqnn0XkoJ6v3Ngansvu9/vTNuZ5BQWkeRTHHHbZYV73ajoGyL9EcxO92M87hVWQ5vElECPHcYRO9gek2LlKaHSG8W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=um1hTdoP; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso92192766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 23:10:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739430657; x=1740035457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fM8nRNJfG7rUd02T8erTfV5HvN4Rbdhc15q2XjlMewU=;
+        b=um1hTdoPBVMHAK/ZiGthqfaEd0BOvHcMehdhyGzNN+ELhG8nX3Q+kt3fSJ+4jMuN1W
+         14UgncLJRs71GaPq/kRoZ9MFvParFrkUvKnRC3aa9ZRDiOYGsSJZZiKYqlqaWE81sF+I
+         Frfj2avDxONZP9QTmKgXCAND2AAJQiTLtreLza8ti+GeLfHuX24jPqEHFWeKCoekWnE1
+         awRAfC5weqdh+orzdee16f3p9X8Bfc9uIpd0ia46JMAa2aRishrNo4tx3T8nOoBc63ln
+         oBPnrxrAOcKAlxlaSraoHGr6d+pSY5Ab4E4GJ+NL1HXvy7chia+tqOPQP9Uy2gUn9JiT
+         jIYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739430657; x=1740035457;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fM8nRNJfG7rUd02T8erTfV5HvN4Rbdhc15q2XjlMewU=;
+        b=ip2JSGBxKQro3XxOP7ZWbYGTRBI07hI0hfd9kcozRKAnmz66MXbtmO/fpR3MzQ7bnh
+         YyU5o4nXih8aSrcyVvMxZoJVY1o20VEHLC00FoiWf97ZCeXvuVgY7XPyyyMiOBNg8pkI
+         ka70XoApWnBK7ud6u+AL9C/pmPdXmjxXBx28HICf5QGroB+fZPaKJCdMuDniLGT/fG6z
+         o+Ze3fiY24tRCviP/A7wyWMz9wLEa4+9bZcE9xNr8Su8b/fk0vGQlb0H9bJ6VjiiMOkM
+         UQj3+Rz91crVnUuZMK/RKAJKHBKFr1Fcfe3oUbDQtCtjc4ds1JUs6dwr/2S24oTPgwoz
+         NKPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUtmKL0lFZcO7Us0KaiC0t/5v+O0gbKLlBOAcM/YdwdfqnoERfkECf9aovG0WpQaAzumZgx4ThChD7vJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyurYJED9ZZIJnugD0PsLulPOnGDj+xUQI5A1WqghmAyksEtjU
+	FIvGziKIpwm8U0nghcKtPaku48SNUrITX6v8h5XDRh28KqLFflUlF13pA1Dy0FU=
+X-Gm-Gg: ASbGnctxaRpPesFYvsB565bPWZbvg3PPVOf5Ftk2krBhfvRFawvCkeOTvsPKmFZe7Cg
+	6f1a+lkuRYWZZpfDX1TBcxnFcq6Ou4bVrEg4nF81Z0qOZaYCZnw4oJJ+D7c6M80wexVTc/oOXMH
+	FIJIZ61KG8A4P021OCua725aUz/leRt25GN6PwWj3YIOKjuZbBHw4bAIn7PpotNWpUWjWa/kerr
+	V1bSx5pRuK5TvYh7xyKAfxU9usd9U2s7ZVfCoXjfJj6i8FLpthj5bA8HT380rF5nGD3JqKqCHlg
+	emqMb1K1chq+KGhvXC6o8Ony
+X-Google-Smtp-Source: AGHT+IHtrPRE46nXKkFCt4DHjiN8hmdANTLc5iX661OAdX/npX13cIu7Ky0HIkuVU57aNRMuRQab9w==
+X-Received: by 2002:a17:907:3d93:b0:ab7:8520:e953 with SMTP id a640c23a62f3a-ab7f34d4f0dmr512307166b.55.1739430657085;
+        Wed, 12 Feb 2025 23:10:57 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d349esm659748a12.33.2025.02.12.23.10.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2025 23:10:56 -0800 (PST)
+Message-ID: <feefbcf2-e441-4cd1-a3de-40bfd4d7197a@linaro.org>
+Date: Thu, 13 Feb 2025 07:10:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +80,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Enable support for error detection in CSI2RX
-To: Conor Dooley <conor@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <mripard@kernel.org>,
-        <mchehab@kernel.org>, <jai.luthra@linux.dev>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devarsht@ti.com>,
-        <vaishnav.a@ti.com>, <r-donadkar@ti.com>, <u-kumar1@ti.com>
-References: <20250212131244.1397722-1-y-abhilashchandra@ti.com>
- <20250212-caramel-darkish-6b1bbd8f562e@spud>
+Subject: Re: [PATCH v1 2/2] spi: s3c64xx: add support exynos990-spi to new
+ port config data
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, andi.shyti@kernel.org,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, peter.griffin@linaro.org,
+ andre.draszik@linaro.org, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250212191241.280-1-wachiturroxd150@gmail.com>
+ <20250212191241.280-3-wachiturroxd150@gmail.com>
 Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <20250212-caramel-darkish-6b1bbd8f562e@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250212191241.280-3-wachiturroxd150@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-On 13/02/25 00:46, Conor Dooley wrote:
-> On Wed, Feb 12, 2025 at 06:42:41PM +0530, Yemike Abhilash Chandra wrote:
->> This patch series enables the csi2rx_err_irq interrupt to record any errors
->> that occur during streaming. It also adds support for the VIDIOC_LOG_STATUS
->> ioctl, which outputs the current device status to the kernel log.
->>
->> The IRQ handler records any errors encountered during streaming.
->> Additionally, VIDIOC_LOG_STATUS can be invoked from user space to retrieve
->> the latest status.
->>
->> Logs with interrupt in DT: https://gist.github.com/Yemike-Abhilash-Chandra/58ced4df0158efad6f453b4d96463723
->> Logs without interrupt in DT: https://gist.github.com/Yemike-Abhilash-Chandra/d807230b2a624b7a38effed89efdd148
-> 
-> What is actually RFC about this patchset, rather than just being v1?
 
-I sent this as an RFC to gather input from different vendors using the
-cdns,csi2rx driver and its device tree bindings. so I just wanted to
-get their feedback as well. If there are no concerns from any of the them,
-I will proceed with sending this as v1.
+On 2/12/25 7:12 PM, Denzeel Oliva wrote:
+> +static const struct s3c64xx_spi_port_config exynos990_spi_port_config = {
+> +	/* fifo-depth must be specified in the device tree. */
+> +	.fifo_depth	= 0,
 
-Thanks and Regards,
-Yemike Abhilash Chandra
+have you tried testing without specifying the fifo_depth in DT?
+
+You'll probably hit a divide by zero at:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/spi/spi-s3c64xx.c#n664
+
+I assume the controller can work with 0 sized FIFO depth, and if so, the
+driver has to be updated to allow 0 sized FIFOs.
+
+btw, how did you test the set?
 
