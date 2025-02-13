@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-513673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A41BA34D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:15:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD3DA34D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B33161B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:15:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9D0161282
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6F824169B;
-	Thu, 13 Feb 2025 18:15:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC72F24166D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57CF242926;
+	Thu, 13 Feb 2025 18:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYufC8Wn"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003F24167D;
+	Thu, 13 Feb 2025 18:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470544; cv=none; b=oFmw5kotV45qMMS79nEkyEexEmzmxWwCOhpiXNxuyZYb//46i1gsOxBzQ3pTrj1QHG6EHk/KxDrO01Ut+D99HLHyuf7FnRg0CMrFFOLjPQKDZUZKGk9GiKmHyCDXECxruOq2mXuCimwIKmlMUldRwlr8jEEl0FELFM0qQ/Hmlkc=
+	t=1739470602; cv=none; b=grOYOKo7PJcW9EGs0hPD3qMCajqyfudRv4PaK+aRjZ4lAOSy7LBPyobpyerHNz0t5ANB5C8dXK3w9y9oLxCMdeiD6PfxMNJHoUWyc5qeETFObOArE/vO6EFy1riUYOoUnrtZdsXJITqEz5cnqXzXuQU0CgkT2giNxwp1PQke9Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470544; c=relaxed/simple;
-	bh=8PZEmGXiV6pVd97uS7r+2Qg+cgLSJWnlAYS4C/wVFvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CTCg7J5EgI4KOn4DsFLVf5scqBV4oyREuKeIv7zCxly+epkLMoW1Jt07XhfF3Xxe/MXVgj+6lakjRujzVhBms1mEYlghpH5bxIuipBg4FXeVWf0HbIPthSiVHc7GyNuN1gGe8NVsWZO6LjPmxmI/fKXXTPlFpofNR9s+W99X94k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3CFB113E;
-	Thu, 13 Feb 2025 10:16:02 -0800 (PST)
-Received: from [10.57.79.221] (unknown [10.57.79.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA4A93F5A1;
-	Thu, 13 Feb 2025 10:15:38 -0800 (PST)
-Message-ID: <d7713049-5b44-4e86-8c0d-ca2c365c925f@arm.com>
-Date: Thu, 13 Feb 2025 18:15:37 +0000
+	s=arc-20240116; t=1739470602; c=relaxed/simple;
+	bh=L0OREqdY+y/o1a+FBGpKuy/3qSthMcAa/bxvgooC9bc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W8b8lAu5AnQzlW3Q7qcju3laytBfuilR33yEZl7rI6A0qWTdxZYpOIXHVpOXWA89ToFdwDtLKl5c7dY5i4d8fb2Bniw8aB1jYWCYJ+ziD+CILFT4HSkiblspVX0ly59aaMg5AtQ2BL8HmbRT10RoxPBfalILUp1iRfE5JL5K3Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYufC8Wn; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43963935585so9185345e9.0;
+        Thu, 13 Feb 2025 10:16:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739470599; x=1740075399; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1cwn72nFWVMoRcX7Ta6FaedrWfQ45c684gfv/c7Ix0=;
+        b=GYufC8WnuVXnLuHMu3vslzfUJ+Jkag7INHWcK99AlGV7Ge+/39eUJtpJhGt3Yk2+gO
+         GSnA5eoAHGrIpVX+wgtCJqAP4k6JaaR7bLomAgT2b69HxyFy5OYAfOs0u4Vjxa/AA57Z
+         /SnxceRCMNk/RLhYImIBRPp9iPWmKe5DIYnnbSnqgf7q2u73Y8G51HOS7oyVhfAZeAVm
+         Px1bmIr0yyXoaa04of9Xtbgy0rpCY6G9iWL6IrnAiRAFWwcsZsadYE6iVZb6uUvOOn+D
+         50dPxq2tK7UMIUTNXFADljxC/ksC4wAzrr3OmBcOEg/0j8JJFN/zI6+/TxTuY9noi/uJ
+         A2vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739470599; x=1740075399;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F1cwn72nFWVMoRcX7Ta6FaedrWfQ45c684gfv/c7Ix0=;
+        b=wE8D9OoG72AU6/vVZEgygkdHh3xOIdu4rhIGnCMrdggmTK/spq/Fi5fNBJD3+hUbb7
+         S7ENzHa/MELjt1wJ9Kk64C9+bIQq45KA+5JYaQLVqr7oV6H1wvnZn5dzJ2klUd7wCoc3
+         VLn4RqAiokP3KOUYEqvckAVwLBeq8fZPcIVJsap7VOx2ieonNq3ObW45T6f9kARFEaVa
+         a3LRRslReYy3BtycxqKDP5uW5BnLwdMwI1ck79FhuY8MMW1cPpbsjOTRmB30tBoNjTKi
+         l5Jw7KgcwDCLGDorYX570MOecMmZsF8ukVS/vBzmeaWHtYwE2bzQJbs5ZeJkY30tR233
+         HeSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUUiFDNTtNOt3RfJDASTAwHBp/XWugFByoYRf4JLXeQttg1Ah6wkKXfz4WorXoWILg3A09wkKJwdts@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy969Y3Fm2zIrwdeciIutopYH2l/90/UoFiyOfOdSEAr3fJemaQ
+	UuND/WxD2C6ve6BTKvrusb3dJPvR/vJZgJTVxHVr4rQ81vgx0/86
+X-Gm-Gg: ASbGncvLsV+rRP/DEazgg4Q+Y+m/mSLk9AENsLWgRJ92fS56wR/voMj2Klfg9fAUhws
+	rsayUxO69qD+D4XEsyuymj5j5QHeZMlea2lMOSYBgr4jFNlMauj0hN7rO+3UyhLMCGDt0V6IGXC
+	R/VRx19RDUCR6PQWNKhlqOhELyE/RnP6uz4vBwBbTcCXWz8pptH1VWHor39u3kUFb5ikmO1cNcC
+	gdcZAbav3AU6RnrnxIx0ishe+Z4+B1H5Z4g52bUHRkIxWBPry6garLFrLO8lbYQC5BZFi4ju2Wq
+	Wc/Fui8Lfn7FT7Gd
+X-Google-Smtp-Source: AGHT+IEs+27ELYHrFDfK8te2RTx1vST5AAiOB5rfr5KnwDnwxj6fjZdgNLHnRRECdTI/Pr+TlHj/Aw==
+X-Received: by 2002:a05:600c:4509:b0:439:5590:6d2f with SMTP id 5b1f17b1804b1-4395817aa0cmr107359355e9.12.1739470598462;
+        Thu, 13 Feb 2025 10:16:38 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-439618264a3sm24065575e9.23.2025.02.13.10.16.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 10:16:38 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ACPI: OSL: ratelimit ACPICA kernel messages
+Date: Thu, 13 Feb 2025 18:16:10 +0000
+Message-ID: <20250213181610.718343-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] sched/uclamp: Alaways using uclamp_is_used()
-To: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, qyousef@layalina.io,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
- linux-kernel@vger.kernel.org
-References: <20250213091554.2593-1-xuewen.yan@unisoc.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250213091554.2593-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2/13/25 09:15, Xuewen Yan wrote:
-> Now, we have the uclamp_is_used() func to judge the uclamp enabled,
-> so replace the static_branch_unlikely(&sched_uclamp_used) with it.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->  kernel/sched/core.c  |  4 ++--
->  kernel/sched/sched.h | 28 ++++++++++++++--------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 165c90ba64ea..841147759ec7 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1756,7 +1756,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
->  	 * The condition is constructed such that a NOP is generated when
->  	 * sched_uclamp_used is disabled.
->  	 */
-> -	if (!static_branch_unlikely(&sched_uclamp_used))
-> +	if (!uclamp_is_used())
->  		return;
->  
->  	if (unlikely(!p->sched_class->uclamp_enabled))
-> @@ -1783,7 +1783,7 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
->  	 * The condition is constructed such that a NOP is generated when
->  	 * sched_uclamp_used is disabled.
->  	 */
-> -	if (!static_branch_unlikely(&sched_uclamp_used))
-> +	if (!uclamp_is_used())
->  		return;
->  
->  	if (unlikely(!p->sched_class->uclamp_enabled))
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 38e0e323dda2..f5de05354d80 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3394,6 +3394,19 @@ static inline bool update_other_load_avgs(struct rq *rq) { return false; }
->  
->  unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
->  
-> +/*
-> + * When uclamp is compiled in, the aggregation at rq level is 'turned off'
-> + * by default in the fast path and only gets turned on once userspace performs
-> + * an operation that requires it.
-> + *
-> + * Returns true if userspace opted-in to use uclamp and aggregation at rq level
-> + * hence is active.
-> + */
-> +static inline bool uclamp_is_used(void)
-> +{
-> +	return static_branch_likely(&sched_uclamp_used);
-> +}
-> +
->  static inline unsigned long uclamp_rq_get(struct rq *rq,
->  					  enum uclamp_id clamp_id)
->  {
-> @@ -3417,7 +3430,7 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
->  	unsigned long rq_util;
->  	unsigned long max_util;
->  
-> -	if (!static_branch_likely(&sched_uclamp_used))
-> +	if (!uclamp_is_used())
->  		return false;
->  
->  	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-> @@ -3426,19 +3439,6 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
->  	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
->  }
->  
-> -/*
-> - * When uclamp is compiled in, the aggregation at rq level is 'turned off'
-> - * by default in the fast path and only gets turned on once userspace performs
-> - * an operation that requires it.
-> - *
-> - * Returns true if userspace opted-in to use uclamp and aggregation at rq level
-> - * hence is active.
-> - */
-> -static inline bool uclamp_is_used(void)
-> -{
-> -	return static_branch_likely(&sched_uclamp_used);
-> -}
-> -
->  #define for_each_clamp_id(clamp_id) \
->  	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
->  
+In cases where the ACPI AML contains errors there can be quite a large
+amount of ACPICA kernel log spamming. Reduce this by rate limiting
+the messages.
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/acpi/osl.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 5ff343096ece..d4ece68e0fd6 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -159,17 +159,21 @@ void __printf(1, 0) acpi_os_vprintf(const char *fmt, va_list args)
+ 	if (acpi_in_debugger) {
+ 		kdb_printf("%s", buffer);
+ 	} else {
+-		if (printk_get_level(buffer))
+-			printk("%s", buffer);
+-		else
+-			printk(KERN_CONT "%s", buffer);
++		if (printk_ratelimit()) {
++			if (printk_get_level(buffer))
++				printk("%s", buffer);
++			else
++				printk(KERN_CONT "%s", buffer);
++		}
+ 	}
+ #else
+ 	if (acpi_debugger_write_log(buffer) < 0) {
+-		if (printk_get_level(buffer))
+-			printk("%s", buffer);
+-		else
+-			printk(KERN_CONT "%s", buffer);
++		if (printk_ratelimit()) {
++			if (printk_get_level(buffer))
++				printk("%s", buffer);
++			else
++				printk(KERN_CONT "%s", buffer);
++		}
+ 	}
+ #endif
+ }
+-- 
+2.47.2
+
 
