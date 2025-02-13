@@ -1,135 +1,104 @@
-Return-Path: <linux-kernel+bounces-512690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13192A33CAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:25:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CB3A33CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419E03AAAA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704AE3AABC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E302139DF;
-	Thu, 13 Feb 2025 10:22:04 +0000 (UTC)
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71280213235;
-	Thu, 13 Feb 2025 10:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CAB213E88;
+	Thu, 13 Feb 2025 10:22:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4838213E72
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739442123; cv=none; b=NfZj7vBNIGluUKUsIOULFLaRavD5gv97q9wD6s4DuB84j42PLxB24MS1rk8djh2glYp0zBX30nIn04Ah7dbtXICc2f6TWP30kH9i0xStXI1WA8PrAgj/CqscqhDqnkFccuiK7GKPzNAgZ4ddEVoKnYmrLQWlZNK7Z1x+WxLlza8=
+	t=1739442141; cv=none; b=Z5SBHp8ayt235pogkgvr/8mbu5d9yq5hVyLpRIbheNA8vV8O4XyEPMBjrR+2viO6f7FzdqCAL8QlgL03nLcF/cBMLJ9NoZW5sh0z9DHH2aqVFFpYgHG7jyEsW42Qvy46oLgM/nzXMSQzNLWgbRR4gdzu3LPIdsbr/tzH9c3zjGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739442123; c=relaxed/simple;
-	bh=+q53LnfrA6EYakFJ3FWR+JUaxFhluc3CaTr5OLQFS1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0EYqesmwoeUAGe5GJODEYxgG7iEQh28i81DxaGRHHbzAl6YRBKHU2F+HILBvT8xZfdiFWFKTKnkufEAldivuMqSB9TuPceqcIHsPDJQ2cXn/xzw5uzCx13BACSYniCGIEWhOxk5FYYVX3ox5Cwtb2wVwbF1rNb0IIZBQZB8ocQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 13 Feb 2025 19:22:00 +0900
-Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
-	by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id 54A8120090C9;
-	Thu, 13 Feb 2025 19:22:00 +0900 (JST)
-Received: from iyokan2.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Thu, 13 Feb 2025 19:22:00 +0900
-Received: from [10.212.246.222] (unknown [10.212.246.222])
-	by iyokan2.css.socionext.com (Postfix) with ESMTP id 8E49E388;
-	Thu, 13 Feb 2025 19:21:59 +0900 (JST)
-Message-ID: <fe8763e5-2d59-4b14-8a1c-b72e6df95520@socionext.com>
-Date: Thu, 13 Feb 2025 19:21:59 +0900
+	s=arc-20240116; t=1739442141; c=relaxed/simple;
+	bh=p+GnX/qBn0tmrY1mpd3KjfQNTyibWtkyaubFDEJRmsI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E+uzR0jsjpHZNwTVYQRfLIpjM0KkFTnrGXJQYFNoYg/CTyWD20oC8NU5mFH+NghJ+p52vCj5HpwKsQuyuB4+ZTk09gexB/s8mlL0y6OvFHezSbfJRvf2MIOOx3f09ggCkKAVsOCrC4CM7oVOOB9ZBkRFd8lKl8bhfvknlvZcw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiWMC-0000vH-7c; Thu, 13 Feb 2025 11:22:08 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiWMB-000jZp-2V;
+	Thu, 13 Feb 2025 11:22:07 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tiWMB-0003C6-2H;
+	Thu, 13 Feb 2025 11:22:07 +0100
+Message-ID: <619128481807b279e5d3b7967b00e7f094dae7ba.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] dt-bindings: reset: add generic bit reset controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Inochi Amaoto
+ <inochiama@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
+ <guoren@kernel.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, 
+ linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, Longbin Li
+ <looong.bin@gmail.com>
+Date: Thu, 13 Feb 2025 11:22:07 +0100
+In-Reply-To: <20250213-cordial-elated-grebe-57aaae@krzk-bin>
+References: <20250213020900.745551-1-inochiama@gmail.com>
+	 <20250213020900.745551-2-inochiama@gmail.com>
+	 <20250213-cordial-elated-grebe-57aaae@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] misc: pci_endpoint_test: Remove global irq_type
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
- <20250210075812.3900646-5-hayashi.kunihiko@socionext.com>
- <Z6opssGJ91MVWgRC@ryzen>
-Content-Language: en-US
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-In-Reply-To: <Z6opssGJ91MVWgRC@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+On Do, 2025-02-13 at 10:35 +0100, Krzysztof Kozlowski wrote:
+> On Thu, Feb 13, 2025 at 10:08:54AM +0800, Inochi Amaoto wrote:
+> > Some SoCs from Aspeed, Allwinner, Sophgo and Synopsys have
+> > a simple reset controller by toggling bit. It is a hard time
+> > for each device to add its own compatible to the driver.
+> > Since this device share a common design, it is possible to
+> > add a common device to reduce these unnecessary change.
+>=20
+> SoC components are rarely that simple and even if it is just a bit,
+> usually it is part of one or few registers.
 
-On 2025/02/11 1:30, Niklas Cassel wrote:
-> On Mon, Feb 10, 2025 at 04:58:11PM +0900, Kunihiko Hayashi wrote:
->> The global variable "irq_type" preserves the current value of
->> ioctl(GET_IRQTYPE), however, it's enough to use test->irq_type.
->> Remove the variable, and replace with test->irq_type.
-> 
-> I think the commit message is missing the biggest point.
-> 
-> ioctl(SET_IRQTYPE) sets test->irq_type.
-> PCITEST_WRITE/PCITEST_READ/PCITEST_COPY all use test->irq_type when
-> writing the PCI_ENDPOINT_TEST_IRQ_TYPE register in test_reg_bar.
-> 
-> The endpoint function driver (pci-epf-test) will look at
-> PCI_ENDPOINT_TEST_IRQ_TYPE register in test_reg_bar when determining
-> which type of IRQ it should raise.
-> 
-> This means that the kernel module parameter is basically useless,
-> since it is unused if anyone has called ioctl(SET_IRQTYPE).
-> 
-> Both the old pcitest.sh and the new pci_endpoint_test kselftest call
-> ioctl(SET_IRQTYPE), so in practice the irq_type kernel module parameter
-> is dead code.
+Yes, in those cases (which are probably most of them), I would argue
+this binding doesn't really fit.
 
-Thank you for pointing out.
+> Anyway, there are already bindings for reset-simple and I do not
+> understand why this has to be duplicated.
 
-Surely, global "irq_type" is only used for return value of ioctl(GET_IRQTYPE).
-It isn't used in the test case, and the test is completed with test->irq_type
-and the register.
+I think the motivation is to not have to add a new binding document and
+modify reset-simple.c every time there is a new SoC. I wonder if some
+of this can be mitigated by adding just the binding document similar to
+trivial-devices.yaml, without the actual "reset-simple" compatible.
 
-I'll add this point to the explanation.
-
->>
->> The ioctl(GET_IRQTYPE) returns an error if test->irq_type has
->> IRQ_TYPE_UNDEFINED.
->>
->> Suggested-by: Niklas Cassel <cassel@kernel.org>
->> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->> ---
->>   drivers/misc/pci_endpoint_test.c | 13 ++++---------
->>   1 file changed, 4 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/misc/pci_endpoint_test.c
-> b/drivers/misc/pci_endpoint_test.c
->> index 6a0972e7674f..8d98cd18634d 100644
->> --- a/drivers/misc/pci_endpoint_test.c
->> +++ b/drivers/misc/pci_endpoint_test.c
->> @@ -100,10 +100,6 @@ static bool no_msi;
->>   module_param(no_msi, bool, 0444);
->>   MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
-> 
-> Considering that you are removing the irq_type kernel module parameter,
-> it doesn't make sense to keep the no_msi kernel module parameter IMO.
-> 
-> The exact same argument for why we are removing irq_type, can be made for
-> no_msi.
-
-Agreed.
-Even if chip doesn't have MSI, test->irq_type starts with IRQ_TYPE_UNDEFINED
-and will be changed with ioctl(SET_IRQTYPE).
-"no_msi" can also be removed.
-
-Thank you,
-
----
-Best Regards
-Kunihiko Hayashi
+>=20
+regards
+Philipp
 
