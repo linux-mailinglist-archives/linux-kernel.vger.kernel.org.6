@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-513671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3F4A34D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:16:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A41BA34D49
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296CE1884021
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B33161B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CC924292B;
-	Thu, 13 Feb 2025 18:14:10 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6CE24167D;
-	Thu, 13 Feb 2025 18:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6F824169B;
+	Thu, 13 Feb 2025 18:15:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC72F24166D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470450; cv=none; b=dNPYwkrJvTwGErz3PnpXcQPY5EVBpF/73OLNXX9afWAY3jHE1pX6eMCYgNrGh01oRuLc/zyWYnpTRt6HTejooan3AE6kKc6c1baCOrslcZ4BtH61LDuJBYvgwCaNJSXAfXkR2SwXn9r3SOqDOTrw9k3Dx6ZhRHyN6Ef7v6hEzzw=
+	t=1739470544; cv=none; b=oFmw5kotV45qMMS79nEkyEexEmzmxWwCOhpiXNxuyZYb//46i1gsOxBzQ3pTrj1QHG6EHk/KxDrO01Ut+D99HLHyuf7FnRg0CMrFFOLjPQKDZUZKGk9GiKmHyCDXECxruOq2mXuCimwIKmlMUldRwlr8jEEl0FELFM0qQ/Hmlkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470450; c=relaxed/simple;
-	bh=Jt7S6MGjAZ7Za+Gaqb6iJTq7tHpUSIgR+BeyvqBL0Jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N98msQuoBDlS9IwWqZBhTzTGvR6diqHUjVnytTKZY9hRBu9Czq5kPrz7OLXRg1/zI1wbNFJTZE+aryBsrKHgsO8v0WUyVECiqJnwkgTk+eReZBMkpw2deltTee8AFFLZuocyqS192l3TkwKVqtnD9ME1eLGR/4U1yPRUL9gNs1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7c14b880dso258421966b.1;
-        Thu, 13 Feb 2025 10:14:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739470447; x=1740075247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V1vsGOWJdttwhEgzm+cLPJc4SNcZ4v2S44Lb53K2njg=;
-        b=ezfBSE1o59qk4NBHkjMfvCmOjknhF05NNCGagmfZH07KvGQB4wZX8e92Z1MkIDTth+
-         nZj78M2yPFGMEEmZ7GhpkhywMf6coxcXpieTOhBeIkN6C5uuiv/llhZ7jC2NYYqkHbQe
-         Jx8TytiSrDkUzinIWfjpt1zYP41F4Hiw/fx+a5OV3ZWAPFtmKPyWgqtdyCNXwdiTLIal
-         o2Lrtowo/0NA/mVKFoSy2wNK9ecJyO5rBWhu2DiViIxBKzlp2HSFsBBgxnYZrQICfnED
-         VG9LYRp8L9cPg7h9Eo8jiOAx2dw5i0cNDQVy/03+oFT8/Sm33Y2HSo9+6/oGnYhAY5/Y
-         HHBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSui9WthKEkOgJrPDqy1PM1RDs1KwLEyQt5Yd1+PBSkacAKawdimxbZfyRqlCy7ySFdSScvRXO@vger.kernel.org, AJvYcCVWA0wAqB3RxOtFBw7pJFUBb0GxCxDhMmXagNRNEDU6JLWrPReCNmlCaa8KxA7PhKAi8EiCmb9cliwW@vger.kernel.org, AJvYcCWjhcv/PgpyuiSde73+DTj9ybMSeBU/ThNGUi5xaIkikfzzSLvYpiXSVHNb5TnyWpU43BHQQBUBAfIibSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSaNAQ/mifFHjEDz3Ii3MblL6iQyMD9I9THhDuF1n0fAfl3HAX
-	ukIlNOFLUKPPIJl9CD5UXu2Yp2paagY4kFqtzVrcxwh5+1xhaN4r
-X-Gm-Gg: ASbGncsbcK9lMGkbXLrA0SgFopueGZLMNXr0347msQtopK6PbgZQAAbPOYXWO41dEa/
-	Q11aNWE4ZbWf1A+osDvLdYohmTzcpjL0M1Ueo0TINmM4uYl4VfvtUuxGGcyW2sn5ilpTCA+vjOG
-	GrKeG7Agyh5Tzrkf1mXuGOq7mV2ky3nBZSeDdc1R+wNDaRM3MSCsfsKdy+Wn+4gau6My9A0tQx+
-	YgLaP+iLQdG1X3PNXNCmERaYPuzvAOe1DVPN9Ob9BH/LgF9wtVGGGS7ZPJQy98fzFtTyVEsBVJa
-	oL/ZCw==
-X-Google-Smtp-Source: AGHT+IHRMfC8d2zMDpBDVeM9qS3ZR89TcB/t7rDOFosvDV+9y0bC55JTHxfVgnIsHG4ZY2r0xZnlcw==
-X-Received: by 2002:a17:907:35c4:b0:ab7:fbb2:b47c with SMTP id a640c23a62f3a-ab7fbb2b6c7mr529013866b.35.1739470446371;
-        Thu, 13 Feb 2025 10:14:06 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:1::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece271223sm1582535a12.59.2025.02.13.10.14.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 10:14:05 -0800 (PST)
-Date: Thu, 13 Feb 2025 10:14:02 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Hayes Wang <hayeswang@realtek.com>,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: Assert proper context while calling
- napi_schedule()
-Message-ID: <20250213-camouflaged-shellfish-of-refinement-79e3df@leitao>
-References: <20250212174329.53793-1-frederic@kernel.org>
- <20250212174329.53793-2-frederic@kernel.org>
- <20250212194820.059dac6f@kernel.org>
- <20250213-translucent-nightingale-of-upgrade-b41f2e@leitao>
- <20250213071426.01490615@kernel.org>
+	s=arc-20240116; t=1739470544; c=relaxed/simple;
+	bh=8PZEmGXiV6pVd97uS7r+2Qg+cgLSJWnlAYS4C/wVFvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CTCg7J5EgI4KOn4DsFLVf5scqBV4oyREuKeIv7zCxly+epkLMoW1Jt07XhfF3Xxe/MXVgj+6lakjRujzVhBms1mEYlghpH5bxIuipBg4FXeVWf0HbIPthSiVHc7GyNuN1gGe8NVsWZO6LjPmxmI/fKXXTPlFpofNR9s+W99X94k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3CFB113E;
+	Thu, 13 Feb 2025 10:16:02 -0800 (PST)
+Received: from [10.57.79.221] (unknown [10.57.79.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA4A93F5A1;
+	Thu, 13 Feb 2025 10:15:38 -0800 (PST)
+Message-ID: <d7713049-5b44-4e86-8c0d-ca2c365c925f@arm.com>
+Date: Thu, 13 Feb 2025 18:15:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213071426.01490615@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] sched/uclamp: Alaways using uclamp_is_used()
+To: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, qyousef@layalina.io,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
+ linux-kernel@vger.kernel.org
+References: <20250213091554.2593-1-xuewen.yan@unisoc.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250213091554.2593-1-xuewen.yan@unisoc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Jakub,
-
-On Thu, Feb 13, 2025 at 07:14:26AM -0800, Jakub Kicinski wrote:
-> On Thu, 13 Feb 2025 01:58:17 -0800 Breno Leitao wrote:
-> > > Looks like netcons is hitting this warning in netdevsim:
-> > > 
-> > > [   16.063196][  T219]  nsim_start_xmit+0x4e0/0x6f0 [netdevsim]
-> > > [   16.063219][  T219]  ? netif_skb_features+0x23e/0xa80
-> > > [   16.063237][  T219]  netpoll_start_xmit+0x3c3/0x670
-> > > [   16.063258][  T219]  __netpoll_send_skb+0x3e9/0x800
-> > > [   16.063287][  T219]  netpoll_send_skb+0x2a/0xa0
-> > > [   16.063298][  T219]  send_ext_msg_udp+0x286/0x350 [netconsole]
-> > > [   16.063325][  T219]  write_ext_msg+0x1c6/0x230 [netconsole]
-> > > [   16.063346][  T219]  console_emit_next_record+0x20d/0x430
-> > > 
-> > > https://netdev-3.bots.linux.dev/vmksft-net-drv-dbg/results/990261/7-netcons-basic-sh/stderr
-> > > 
-> > > We gotta fix that first.  
-> > 
-> > Thanks Jakub,
-> > 
-> > I understand that it will be fixed by this patchset, right?
+On 2/13/25 09:15, Xuewen Yan wrote:
+> Now, we have the uclamp_is_used() func to judge the uclamp enabled,
+> so replace the static_branch_unlikely(&sched_uclamp_used) with it.
 > 
-> The problem is a bit nasty, on a closer look. We don't know if netcons
-> is called in IRQ context or not. How about we add an hrtimer to netdevsim,
-> schedule it to fire 5usec in the future instead of scheduling NAPI
-> immediately? We can call napi_schedule() from a timer safely.
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+>  kernel/sched/core.c  |  4 ++--
+>  kernel/sched/sched.h | 28 ++++++++++++++--------------
+>  2 files changed, 16 insertions(+), 16 deletions(-)
 > 
-> Unless there's another driver which schedules NAPI from xmit.
-> Then we'd need to try harder to fix this in netpoll.
-> veth does use NAPI on xmit but it sets IFF_DISABLE_NETPOLL already.
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 165c90ba64ea..841147759ec7 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1756,7 +1756,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>  	 * The condition is constructed such that a NOP is generated when
+>  	 * sched_uclamp_used is disabled.
+>  	 */
+> -	if (!static_branch_unlikely(&sched_uclamp_used))
+> +	if (!uclamp_is_used())
+>  		return;
+>  
+>  	if (unlikely(!p->sched_class->uclamp_enabled))
+> @@ -1783,7 +1783,7 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+>  	 * The condition is constructed such that a NOP is generated when
+>  	 * sched_uclamp_used is disabled.
+>  	 */
+> -	if (!static_branch_unlikely(&sched_uclamp_used))
+> +	if (!uclamp_is_used())
+>  		return;
+>  
+>  	if (unlikely(!p->sched_class->uclamp_enabled))
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 38e0e323dda2..f5de05354d80 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -3394,6 +3394,19 @@ static inline bool update_other_load_avgs(struct rq *rq) { return false; }
+>  
+>  unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+>  
+> +/*
+> + * When uclamp is compiled in, the aggregation at rq level is 'turned off'
+> + * by default in the fast path and only gets turned on once userspace performs
+> + * an operation that requires it.
+> + *
+> + * Returns true if userspace opted-in to use uclamp and aggregation at rq level
+> + * hence is active.
+> + */
+> +static inline bool uclamp_is_used(void)
+> +{
+> +	return static_branch_likely(&sched_uclamp_used);
+> +}
+> +
+>  static inline unsigned long uclamp_rq_get(struct rq *rq,
+>  					  enum uclamp_id clamp_id)
+>  {
+> @@ -3417,7 +3430,7 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
+>  	unsigned long rq_util;
+>  	unsigned long max_util;
+>  
+> -	if (!static_branch_likely(&sched_uclamp_used))
+> +	if (!uclamp_is_used())
+>  		return false;
+>  
+>  	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
+> @@ -3426,19 +3439,6 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
+>  	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+>  }
+>  
+> -/*
+> - * When uclamp is compiled in, the aggregation at rq level is 'turned off'
+> - * by default in the fast path and only gets turned on once userspace performs
+> - * an operation that requires it.
+> - *
+> - * Returns true if userspace opted-in to use uclamp and aggregation at rq level
+> - * hence is active.
+> - */
+> -static inline bool uclamp_is_used(void)
+> -{
+> -	return static_branch_likely(&sched_uclamp_used);
+> -}
+> -
+>  #define for_each_clamp_id(clamp_id) \
+>  	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+>  
 
-Just to make sure I follow the netpoll issue. What would you like to fix
-in netpoll exactly?
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
