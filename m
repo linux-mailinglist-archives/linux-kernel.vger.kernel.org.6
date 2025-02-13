@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-514011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B93A3514C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:30:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99D5A35150
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E87188E70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:30:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77C587A2FBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B1226E17B;
-	Thu, 13 Feb 2025 22:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC2D266B74;
+	Thu, 13 Feb 2025 22:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/TXPIke"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DpNeBKWz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D920E034;
-	Thu, 13 Feb 2025 22:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5F028A2BF;
+	Thu, 13 Feb 2025 22:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739485837; cv=none; b=MrwV85K3j5uLjUnDDqXKp4qlHxC08eb6VjDFznoALswE6XR/SdRPjhGTWoIxIqhdey4OiR0B+ZjhV8k63LSfCcoAWIPUCY5/Jg4FNuP7GuULFclkPOgQJvpZpAD+RphpE2pEq7qiW+Al2X/4rGGBfR7D4RULWkZNpbgG61Co04I=
+	t=1739485951; cv=none; b=HlycdKIw1D1AoRNjlLiCNsqjlNF32L14lpRF+t4m8rKHXHqX96Sxqj7YkyA9QqjvKSpgZTLo2phDok7Mxc6O/Eo4M5qx7v7aEExZVQtSzYw60jNB8IcuC8pXZSvdICkJK3GdwzvEMULDmKzX5EKcQ/sSI+Y6g5Omwd6bBorW7bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739485837; c=relaxed/simple;
-	bh=L7zfqJC4MpmnmDeMNG6teF//B8o8peRzpXrtxlAsFQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RSTeAWfcJXNeIdUSonSb4MkR7AxrXuXJR40TUfPidIKyFGAkZUJmIujmORdJq9vzDzE8HzEK2G6H/5g+mEQ0kG4+0F7A4M0oLA22SpSHdUngE0d62j7ELZ0X+uy1gsMQXqv6f1GBf8b3NC6dfO971qx0udpxyyieP2KybIIW9Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/TXPIke; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso9203075e9.1;
-        Thu, 13 Feb 2025 14:30:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739485833; x=1740090633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/iLgtKEagKiKrbu9N5uMGOzCeVNeqgYEIjWrTZEUX8=;
-        b=i/TXPIkeu3AcQspAiexZcolxBqlQpA9d2Jnvkbqqu+SlsE0vscc9U/f1h3n4PPR1Ow
-         HiVLHVLnSK8Ma/JMFjwLwGMykFns5DtWh50nrR+xSklxW0XN4I0WN8Qbuuo5e3b80yOa
-         cpZQ47wfe4wQNcsxgjkhpSpvFw1Rt92+OXWQENrmhJcw4bgp5nRSfJ95KDlG1FAbxoaO
-         bFcneNrkpzWf7VIgzz92c8TLsrc74AbV8HNAQWWt4CV6KrlOFuU0mGj9LB9M+TKoXspP
-         HyVx0DDk/vA74h43QnS+0Lp8YmZJeV+BOZxg68QecNwduhRKJR5FHEOapATR3M47ZSdC
-         38HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739485833; x=1740090633;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/iLgtKEagKiKrbu9N5uMGOzCeVNeqgYEIjWrTZEUX8=;
-        b=DU8Qrpu+spiAz7x/vHopxhgIMpC/M/BV3YSYlvjQSP1WX81X8deP2NvFevbnwctFjz
-         HSvzW4gVbK2uyh4+PsQZsPNMn4eula1YK28EMk7eeogw4x2/emQ7E9huP1eY+73IJ9wl
-         GF0JWCaSrVQZo8F33hf3Zh0M1EhLuXRURpqRvpPc9kJlcnz5m4LXnXm/6oSS0BihHFSD
-         OAcGL1vyV4GMHfCppFA/0FGDkgQGF0T7bKAfg5IFtexD6UZAuV0MqmREjel0B4u+h40z
-         DjNU0Zkp36phItcagPzwZ28L5BYpW2JkktjAOTN9heyd+kn9BUazhtbcZdaeuFi1xRq6
-         ir3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUqW/ZGb/bOO5TwkBmnKIF6hIoz9M/J2g4rBOyeMgYVnjD6cJb+UTuwqtgN9/9Px5OklqFcn4C7WaZhXtZhZ2g=@vger.kernel.org, AJvYcCXjNvJXn2s/biBOCoohavfMWqrsDUpwiyvPjPczm5PruQrrhWA3l7yUxJ9BI1m0wbdErYCA95fJJGNpRg==@vger.kernel.org, AJvYcCXkqFLTXLF2ETRFPafU9CO6Sri8gS1MA0nZXU4s9WfQV+Ypq1pU4dYjIySDGMrG6VHCat3rti4vSCI/OHy5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbeb08Ykiyxjhnmfe+LH/0DzPJjUeit3ydJijHKu+DqhVorhsG
-	EpVavYst8aahF95manNjpiJLFGh6URJxsIUqGgVoDSwEyxk8wpVY
-X-Gm-Gg: ASbGncsVNT9xpXb5HXSO0TdJIC+HFOgWZiTksrze3RvqB4vOZM8KEox1VNvXAQkAOrg
-	DWGUpxt5COubcd5b1FUctr4Vi3TC/IcGXV7S+sZ0zx0XJK/ErBNendbIJ7X322xoepNtXBeN5os
-	AcjIfFhXkCFls1ELwKdxxBhxW4OUPF+zDcVwraVP7tzpYsBoVNCfIJwO9yZ42X2GPPoWCJOIzja
-	eXNdFAgyXjSjMtfJMza/4sRy7QsyPXmCGChfTkopPAMjfDnSRFrfh8sHPV3aEB7bt72hNqpmGAH
-	nfRpYHdBeRksgf9U4empf7WgtcSot1oGTI0LkwPzrpRAWpTH2KP4qw==
-X-Google-Smtp-Source: AGHT+IGSJiMq9waWnU3twHfZdxNULB2eXCgTc8OLciDMxrLkg9MtHaBVnOEtNQVIOSUY+JHzU2kSig==
-X-Received: by 2002:a05:600c:1c1c:b0:439:3ef1:fc36 with SMTP id 5b1f17b1804b1-4395818fdfemr104530195e9.18.1739485833325;
-        Thu, 13 Feb 2025 14:30:33 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5d8bsm2959370f8f.70.2025.02.13.14.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 14:30:32 -0800 (PST)
-Date: Thu, 13 Feb 2025 22:30:32 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Don Brace
- <don.brace@microchip.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-hardening@vger.kernel.org,
- storagedev@microchip.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: hpsa: Replace deprecated strncpy() with
- strscpy()
-Message-ID: <20250213223032.20d64851@pumpkin>
-In-Reply-To: <065b6317-8da8-42ec-8084-1a5058c0798a@acm.org>
-References: <20250213195332.1464-3-thorsten.blum@linux.dev>
-	<065b6317-8da8-42ec-8084-1a5058c0798a@acm.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739485951; c=relaxed/simple;
+	bh=ClKK8pK76nA2cO1GR4j5G4YWIdO763ukS/L4obDgrLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aF8zK3m4/kaYlLVxf8KU7lo4zOlMsvMHRSYEUSbiglQq6751h8PfhN78zhlcaBcT1uwNNTVWrRLnWM6t6yH6mfTUDxyr4xZyMcluZN3JwJOh9oeHdWhb0Vp4RHHrHVBAGmTix88dcWG1n36QwqGUojtsnisBBM9VXkClrgj97RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DpNeBKWz; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739485950; x=1771021950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ClKK8pK76nA2cO1GR4j5G4YWIdO763ukS/L4obDgrLY=;
+  b=DpNeBKWzvzPmgBQYLSwAA0Oo868diAoYTIzhr+5nc1QPDHFG/wadPj10
+   /1psOb5E41IZWqCQLzIP1r1pB4Ixn5ah3irJrsG+r6np6EmQTN3xjwBnw
+   vlStK8va4+QxHg57CyIbKmO9c2p0Slrmk0mA5HSbyqVM52MfFzRvy7RAT
+   NnZB3PhjAutM/sVjI/xEGfCczJPOjbfuYxbBu2pJNKFulIcDCUZZCBQTQ
+   auR6s7ao0KV6ufCQbtC0aZ6FdzFJepfAQpuSR0mukJI0uCCpa0tG9bglW
+   Mll4GUZUxE7KOcYnwNEm1lLDaaKimEns6Mo4mVJV9JeXlvMXeus6iHHQR
+   A==;
+X-CSE-ConnectionGUID: uTT1COZqS96GOhGL0miS/g==
+X-CSE-MsgGUID: k3/xC1HUSI2YfYaBdie1kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43984113"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="43984113"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:32:29 -0800
+X-CSE-ConnectionGUID: fxUlZAlHT+iGDCq0t/teUQ==
+X-CSE-MsgGUID: 327b0TjWSS2zrazCVTA0jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="118293777"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 14:32:28 -0800
+Date: Thu, 13 Feb 2025 14:32:27 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v2 05/16] x86/mce: Cleanup bank processing on init
+Message-ID: <Z65y-1IQKmCLOhXu@agluck-desk3>
+References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
+ <20250213-wip-mca-updates-v2-5-3636547fe05f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-wip-mca-updates-v2-5-3636547fe05f@amd.com>
 
-On Thu, 13 Feb 2025 12:34:55 -0800
-Bart Van Assche <bvanassche@acm.org> wrote:
-
-> On 2/13/25 11:53 AM, Thorsten Blum wrote:
-> > diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> > index 84d8de07b7ae..c7ebae24b09f 100644
-> > --- a/drivers/scsi/hpsa.c
-> > +++ b/drivers/scsi/hpsa.c
-> > @@ -460,9 +460,8 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
-> >   
-> >   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
-> >   		return -EACCES;
-> > -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> > -	strncpy(tmpbuf, buf, len);
-> > -	tmpbuf[len] = '\0';
-> > +	len = min(count + 1, sizeof(tmpbuf));
-> > +	strscpy(tmpbuf, buf, len);
-> >   	if (sscanf(tmpbuf, "%d", &status) != 1)
-> >   		return -EINVAL;
-> >   	h = shost_to_hba(shost);
-> > @@ -484,9 +483,8 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
-> >   
-> >   	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
-> >   		return -EACCES;
-> > -	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
-> > -	strncpy(tmpbuf, buf, len);
-> > -	tmpbuf[len] = '\0';
-> > +	len = min(count + 1, sizeof(tmpbuf));
-> > +	strscpy(tmpbuf, buf, len);
-> >   	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
-> >   		return -EINVAL;
-> >   	if (debug_level < 0)  
+On Thu, Feb 13, 2025 at 04:45:54PM +0000, Yazen Ghannam wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> Something I should have noticed earlier: this code occurs inside sysfs
-> write callbacks. The strings passed to sysfs write callbacks are
-> 0-terminated. Hence, 'buf' can be passed directly to sscanf() and
-> tmpbuf[] can be removed. From kernfs_fop_write_iter() in fs/kernfs.c:
+> Unify the bank preparation into __mcheck_cpu_init_clear_banks(), rename
+> that function to what it does now - prepares banks. Do this so that
+> generic and vendor banks init goes first so that settings done during
+> that init can take effect before the first bank polling takes place.
 > 
-> 	buf[len] = '\0';	/* guarantee string termination */
-
-You might also want to use one of the stroul() family rather than sscanf().
-
-	David.
-
+> Move __mcheck_cpu_check_banks() into __mcheck_cpu_init_prepare_banks()
+> as it already loops over the banks.
 > 
-> Thanks,
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
 > 
-> Bart.
+> Notes:
+>     Link:
+>     https://lore.kernel.org/r/20221206173607.1185907-2-yazen.ghannam@amd.com
+>     
+>     v1->v2:
+>     * New in v2, but based on old patch (see link).
+>     * Kept old tags for reference.
 > 
+>  arch/x86/include/asm/mce.h     |  3 +-
+>  arch/x86/kernel/cpu/mce/core.c | 63 ++++++++++++------------------------------
+>  2 files changed, 19 insertions(+), 47 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+> index 2701aca04aec..36ff81c1b3b1 100644
+> --- a/arch/x86/include/asm/mce.h
+> +++ b/arch/x86/include/asm/mce.h
+> @@ -290,8 +290,7 @@ DECLARE_PER_CPU(mce_banks_t, mce_poll_banks);
+>  enum mcp_flags {
+>  	MCP_TIMESTAMP	= BIT(0),	/* log time stamp */
+>  	MCP_UC		= BIT(1),	/* log uncorrected errors */
+> -	MCP_DONTLOG	= BIT(2),	/* only clear, don't log */
 
+MCP_DONTLOG is removed in this patch. But no mention of this change in
+the commit description.
+
+-Tony
 
