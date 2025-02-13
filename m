@@ -1,79 +1,50 @@
-Return-Path: <linux-kernel+bounces-513619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BCEA34C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54F3A34C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5417416B9C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C763A480E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDAE23A9BC;
-	Thu, 13 Feb 2025 17:56:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753B2063E1;
-	Thu, 13 Feb 2025 17:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06C23F401;
+	Thu, 13 Feb 2025 17:56:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644A823A9BA;
+	Thu, 13 Feb 2025 17:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469389; cv=none; b=J2FfI7ABvxZIuPqN4qEyvMVdnbn6i0RljwSxK/ijJ8hGgKHITWwTSVbOU7bFOFQ0PdHVk3c8ozR1w/o7ZM3U84PeqfEK16SWcr/8rIqVvzwp6AhT8PpdT8nRm717I+szeY2S6hIYJ5IoSZnplKlSK9NA7oubZVYX0cQ2qXTSiOw=
+	t=1739469419; cv=none; b=ORWWxP+Uh330omxq5KitABzOF/kQESzz/lrfwS9BuCvxFxykQ6/sdtkoZfkxGJDCmsOt4fr10V6mmi/bh6PfAXTqIvlB/FjunSqyHLE+ND5akkspmiahMcAgYfHXx7OTAZWL2QpbaUTFyrNBHH0LGzUNJ2/LdsYFs8cMnYISC8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469389; c=relaxed/simple;
-	bh=VJ9/7u5dm3yhevUGmYiN3uNdAeAmMy1lBqGWU8RiYq4=;
+	s=arc-20240116; t=1739469419; c=relaxed/simple;
+	bh=0WV2CmcTZUiH+zQk/eImcSLFCn6EHvq25FoHekBJf6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZffHj+lJBgb12qZP82t6+z1FONUmXVAetXrOW0093G63mQ01aJUvIFbgSwyshxDYHSfZl11gm+p4dJns8qOBUo+nxber710u0Qg+/2NnO7HW9xlNT/gd6U+wT9E7x9FPnQr882lrpTFZnft5hp14nbS1Gx9WFQPzkixs+rekCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8239B113E;
-	Thu, 13 Feb 2025 09:56:47 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 202C73F5A1;
-	Thu, 13 Feb 2025 09:56:23 -0800 (PST)
-Date: Thu, 13 Feb 2025 17:56:20 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>,
-	Babu Moger <babu.moger@amd.com>,
-	"peternewman@google.com" <peternewman@google.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"thuth@redhat.com" <thuth@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"xiongwei.song@windriver.com" <xiongwei.song@windriver.com>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"perry.yuan@amd.com" <perry.yuan@amd.com>,
-	"sandipan.das@amd.com" <sandipan.das@amd.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Li, Xin3" <xin3.li@intel.com>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"mario.limonciello@amd.com" <mario.limonciello@amd.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"tan.shaopeng@fujitsu.com" <tan.shaopeng@fujitsu.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	"Eranian, Stephane" <eranian@google.com>
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Message-ID: <Z64yRKyaG+yUhc2N@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <Z6zeXby8ajh0ax6i@e133380.arm.com>
- <9e849476-7c4b-478b-bd2a-185024def3a3@intel.com>
- <SJ1PR11MB6083A2CD66FAE5DBEDCB96C0FCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha6eaXpPiA+MVWaYPHynquYne2hrTGsL2/5eb8ZxObU5uCfas3uwsuL4/JYn1oj1SLkUShR8dK1iVeHmtvI7xnCzyBfK8arDtTf+mpSZ+g7ELjXus6MsahgubF1pEwF3LeysjKrjaPOiSZSWjZVceFIIe7eyVnn3IhppqVbdWtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220B4C4CED1;
+	Thu, 13 Feb 2025 17:56:55 +0000 (UTC)
+Date: Thu, 13 Feb 2025 17:56:53 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
+	will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
+	mark.rutland@arm.com, joey.gouly@arm.com,
+	dave.hansen@linux.intel.com, akpm@linux-foundation.org,
+	chenfeiyang@loongson.cn, chenhuacai@kernel.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	quic_tingweiz@quicinc.com, stable@vger.kernel.org
+Subject: Re: [PATCH v6] arm64: mm: Populate vmemmap/linear at the page level
+ for hotplugged sections
+Message-ID: <Z64yZRPpyR9A_BiR@arm.com>
+References: <20250213075703.1270713-1-quic_zhenhuah@quicinc.com>
+ <9bc91fe3-c590-48e2-b29f-736d0b056c34@redhat.com>
+ <Z64UcwSGQ53mFmWF@arm.com>
+ <b2964ea1-a22c-4b66-89ef-3082b6d00d21@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,33 +53,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083A2CD66FAE5DBEDCB96C0FCFF2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <b2964ea1-a22c-4b66-89ef-3082b6d00d21@redhat.com>
 
-Hi Tony,
-
-On Thu, Feb 13, 2025 at 12:11:13AM +0000, Luck, Tony wrote:
-> > I do not think that resctrl's current support of the mbm_total_bytes and
-> > mbm_local_bytes should be considered as the "only" two available "slots"
-> > into which all possible events should be forced into. "mon_features" exists
-> > to guide user space to which events are supported and as I see it new events
-> > can be listed here to inform user space of their availability, with their
-> > associated event files available in the resource groups.
+On Thu, Feb 13, 2025 at 05:16:37PM +0100, David Hildenbrand wrote:
+> On 13.02.25 16:49, Catalin Marinas wrote:
+> > On Thu, Feb 13, 2025 at 01:59:25PM +0100, David Hildenbrand wrote:
+> > > On 13.02.25 08:57, Zhenhua Huang wrote:
+> > > > On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
+> > > > to 27, making one section 128M. The related page struct which vmemmap
+> > > > points to is 2M then.
+> > > > Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
+> > > > vmemmap to populate at the PMD section level which was suitable
+> > > > initially since hot plug granule is always one section(128M). However,
+> > > > commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> > > > introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
+> > > > existing arm64 assumptions.
+> > > > 
+> > > > Considering the vmemmap_free -> unmap_hotplug_pmd_range path, when
+> > > > pmd_sect() is true, the entire PMD section is cleared, even if there is
+> > > > other effective subsection. For example page_struct_map1 and
+> > > > page_strcut_map2 are part of a single PMD entry and they are hot-added
+> > > > sequentially. Then page_struct_map1 is removed, vmemmap_free() will clear
+> > > > the entire PMD entry freeing the struct page map for the whole section,
+> > > > even though page_struct_map2 is still active. Similar problem exists
+> > > > with linear mapping as well, for 16K base page(PMD size = 32M) or 64K
+> > > > base page(PMD = 512M), their block mappings exceed SUBSECTION_SIZE.
+> > > > Tearing down the entire PMD mapping too will leave other subsections
+> > > > unmapped in the linear mapping.
+> > > > 
+> > > > To address the issue, we need to prevent PMD/PUD/CONT mappings for both
+> > > > linear and vmemmap for non-boot sections if corresponding size on the
+> > > > given base page exceeds SUBSECTION_SIZE(2MB now).
+> > > > 
+> > > > Cc: <stable@vger.kernel.org> # v5.4+
+> > > > Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> > > > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> > > > Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+> > > 
+> > > Just so I understand correctly: for ordinary memory-sections-size hotplug
+> > > (NVDIMM, virtio-mem), we still get a large mapping where possible?
+> > 
+> > Up to 2MB blocks only since that's the SUBSECTION_SIZE value. The
+> > vmemmap mapping is also limited to PAGE_SIZE mappings (we could use
+> > contiguous mappings for vmemmap but it's not wired up; I don't think
+> > it's worth the hassle).
 > 
-> 100%  I have a number of "events" in the pipeline that do not fit these
-> names. I'm planning on new files with descriptive[1] names for the events
-> they report.
+> But that's messed up, no?
 > 
-> -Tony
+> If someone hotplugs a memory section, they have to hotunplug a memory
+> section, not parts of it.
 > 
-> [1] When these are ready to post we can discuss the names I chose and
-> change them if there are better names that work across architectures.
+> That's why x86 does in vmemmap_populate():
+> 
+> if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> 	err = vmemmap_populate_basepages(start, end, node, NULL);
+> else if (boot_cpu_has(X86_FEATURE_PSE))
+> 	err = vmemmap_populate_hugepages(start, end, node, altmap);
+> ...
+> 
+> Maybe I'm missing something. Most importantly, why the weird subsection
+> stuff is supposed to degrade ordinary hotplug of dimms/virtio-mem etc.
 
-Do any of the approaches discussed in [2] look viable for this?
+I think that's based on the discussion for a previous version assuming
+that the hotplug/unplug sizes are not guaranteed to be symmetric:
 
-(Ideally, reply over there.)
+https://lore.kernel.org/lkml/a720aaa5-a75e-481e-b396-a5f2b50ed362@quicinc.com/
 
-Cheers
----Dave
+If that's not the case, we can indeed ignore the SUBSECTION_SIZE
+altogether and just rely on the start/end of the hotplugged region.
 
-[2] https://lore.kernel.org/lkml/Z64tw2NbJXbKpLrH@e133380.arm.com/
+-- 
+Catalin
 
