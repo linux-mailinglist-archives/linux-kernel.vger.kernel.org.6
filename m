@@ -1,210 +1,140 @@
-Return-Path: <linux-kernel+bounces-512655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4789A33C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:10:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029A7A33C2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B28A167D07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728B91882CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E0321325A;
-	Thu, 13 Feb 2025 10:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61300211A3C;
+	Thu, 13 Feb 2025 10:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DWV/mKp6"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QZaxwkOd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1345B213259
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214AE20DD72;
+	Thu, 13 Feb 2025 10:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441430; cv=none; b=ObIdHK4lFPUNsJ2aiE+5/Jgy55nxXGm/I43LxYDnUdjZ6w2IzcRBCTl65srWo3ei7mnAQyamQGn2ZZNiOZHubI4TYjJDKhf53bGqYmklcMFup2p9eaUUEAJSGKmsZ54wnJY10+fmqXo+xn7CRCWRyddTOki+zs3nBjHE+K5HUb8=
+	t=1739441486; cv=none; b=TO+YJ1U8x1bHXNxQiTCIylk07eQvlnqLql5pNn5Qs1deJr/VWLowG36YyiJIJfWzK5ygbsAKlrBza+vGF/eL6YIwFR5ZhFf8zhqWmzYuhER04sXmSZJOs7Xxlt9ciMrhCWyeYU4i1aCE+c5yM7lnseQWcxZGVSxln/HRQBkbgt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441430; c=relaxed/simple;
-	bh=bzt6k+aa5u1/W7RojxBuWDr/44deao41NZx9GmrqMJM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LXjcPfD0H6AXPgN/DEavI+Ob75BzC40GytWLIMzIyYsNFo19fhuV4g0OqX05erQLRA+99saH5p/+LS0PrrT3bpeihl+9lEThwVsXHum67ncoOwNnaIU5ygrtrfx0I95mYh03zBmPWDyW0iBQCB8yqjoNb7L5sacPtRofuBronzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DWV/mKp6; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4395a917f33so9666315e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:10:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739441426; x=1740046226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cb9z6DcnNl0g9HoZcHoRWOLXyD9UxXMHyf9eNtzv3So=;
-        b=DWV/mKp63pxV+LA8XqcAjES7sNx/RxS5s2nhyBO4QxSxHMSa+Bws8aXeY20e5icFSk
-         6sYVUPP70NmjzUHLrPqPIreJ7Doe2aoAHvCGFX/HMBp4FrtiT0iOSHtBSml1Vx+HAS7S
-         i4np6BhStsjGRt7Sdbx98cHWw61wAg3VrbHRTX4X6KFuiPjqZkDUwX7FI+PGOL+fRtTj
-         swzf5oWzp8FkXzqonBgJYo6SLy2DU+g+grnVV9s9D076X7KsL2ePlkuJS9+crlnxoYB6
-         iGb/w+TnuulCh4hF+8zxCalza/M/n6Gw8Ft+GVFjTNn8bp2h11oUrZqJv2UyLifZtVZS
-         WkPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739441426; x=1740046226;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Cb9z6DcnNl0g9HoZcHoRWOLXyD9UxXMHyf9eNtzv3So=;
-        b=MTlvMl2dpUG3ALSHDOjrfSHj/xX8N9DqNOryO8Tbvr40YKDzRqjGMT4l5j2Rkjcaja
-         GHLZMjRiXHySKusL+BpCXJW1G4c400viVdrnYiQdn5E9mlQvcClvfqwGMjJLxk3MWXV7
-         i09KKcRvjHprwvPisejRgtPEfrczDwKgxF37T/JcATlfwCuLrogfPCPef2djehgTQ/M9
-         6WKVZ3bRbSudXUhdBorsAdOryw3s5By11Yxbp8rPQR9RLhOlvOLF6Ad3byqd+e2BJN41
-         YQ2OtMai2OKWlt/dWZuhBjit8NwtCCZTU21ZrInentjAggZBgmT0kH/Fia++qbF5JZMf
-         Rg+A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/7XHhbJ+K4kNRWXhn0+Uk0pLZBeiw7f5O0rSkCO9cjM8HzrY3HHOPBzJqWcTOBjaJ/RfHdeSPNyg7+fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9e3+lwqUYnUfyYUmnNAjIJrEHxH21/CvUfSgNaOYxhAxEDpEQ
-	w/jyPvwjZEn1DM1EP/p+ya8Dg93dSSJmmPTfusFqs8U4deb8Awy2Cdu7MvCRj9g=
-X-Gm-Gg: ASbGnctPhB5L873S7lkFIWi+5CY7hrPm/SjNcqz375p4VWJWxN7J6kkV3GanddheGq3
-	8LLuGjhx7nvzJHfHtzvqK/h7ofvnvlNVNUROKht0tIxSRItnTbMJlqSCHj9Pb/2BTGwcEytYNNl
-	ddCyQ4paO2Ltm9OY+A/CBcgco4++JD3YbL/mko/XpGwMdERUa2Xx4iAg5VaEJyurToN43ZjtxG1
-	IhS9j9nYASZS4SpaYwFyiBmrxe1SOBAeipO8sms+wlGYk+xr78CKdIv59cgCLp7O61iuMByuQjv
-	XtJwe79sZEH7Pw==
-X-Google-Smtp-Source: AGHT+IFnAzzmsoX/LnTlYKfUwdNafAjQwt9ZvkB3qt0FKjzX4kx3PyzgxFabDyvJ+Y073z4cgUVqUg==
-X-Received: by 2002:a5d:648b:0:b0:386:3327:4f21 with SMTP id ffacd0b85a97d-38f24f9cc70mr1962954f8f.27.1739441426065;
-        Thu, 13 Feb 2025 02:10:26 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b617:2c1:fc8c:2705])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5c36sm1435555f8f.67.2025.02.13.02.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 02:10:25 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Dave Ertman
- <david.m.ertman@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  "Rafael J.
- Wysocki" <rafael@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Arnd
- Bergmann <arnd@arndb.de>,  Danilo Krummrich <dakr@kernel.org>,  Conor
- Dooley <conor.dooley@microchip.com>,  Daire McNamara
- <daire.mcnamara@microchip.com>,  Philipp Zabel <p.zabel@pengutronix.de>,
-  Andrzej Hajda <andrzej.hajda@intel.com>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>,  Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>,  Jonas Karlman
- <jonas@kwiboo.se>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>,  David
- Airlie <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Hans de
- Goede <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,  "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>,  Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>,  Gregory CLEMENT
- <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
-  Michael Turquette <mturquette@baylibre.com>,  Abel Vesa
- <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Shawn Guo
- <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
-  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
-  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 3/7] drm/bridge: ti-sn65dsi86: use the auxiliary
- device creation helper
-In-Reply-To: <CAD=FV=WQsFzAmpcqSG-eAm6SW-i3Q7EdbxEKyuhyovVXVRxC8A@mail.gmail.com>
-	(Doug Anderson's message of "Wed, 12 Feb 2025 08:38:25 -0800")
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
-	<20250211-aux-device-create-helper-v3-3-7edb50524909@baylibre.com>
-	<CAD=FV=WQsFzAmpcqSG-eAm6SW-i3Q7EdbxEKyuhyovVXVRxC8A@mail.gmail.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Thu, 13 Feb 2025 11:10:24 +0100
-Message-ID: <1jfrki17fz.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1739441486; c=relaxed/simple;
+	bh=M+w9kabOMahmG52D1RxSaUfG2yewgL3Ce6/3SZBF4P8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqRwQgocvQYIaRFbo98SC2mGxNVibBVOlgeu2BH8Pmu1zBTfD2memJcm+o9g8BuCJ6lRd6f6XbYB5VaQ7uQ8ilN5TEyzX+EWKTWlqvxHtuL9vF9injUrWQA5ls8Kf7PzXV+iOiz02bhgcoZJ8kCrjqxUnf1YDAs1q/eBE+P2Bl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QZaxwkOd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D9muVw015181;
+	Thu, 13 Feb 2025 10:11:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=U74TuyLY5AFY92KaNCGYKAz8R/LTgs
+	X6KqtfSKDyU1o=; b=QZaxwkOdw85j9Se0f9lFoCNeL1+646+DW0iQ9bHd+2mPPY
+	vWqtGD5BwxqpUxMC3zkNQG6+jdpgq0sEH4netftKyNmLYF0AqjSGG8qSZ1uAFMTf
+	yYXJ5vd/nCGKCSPisjrpkrFa0t2CwNoxqPFCh7cV7LL5zruKqtMA4JsEmSnKfsRY
+	VTrm8bvV8FxOrbK2QH9DJayp8jbFWDM0VNbQomc6h+4HG9plUjyeurYGWWSbm1tE
+	bfk5w58yHm3q+rgUy2LAQrlvjBR3KWyb4ONn6eNv8aFpEN6WObqjisa6wVZUQEd7
+	CIOdoMIDAihTrxKz55PhvnQ4yqut5eE0CtRRkelw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rxfu4u9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 10:11:10 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51DABAlR007340;
+	Thu, 13 Feb 2025 10:11:10 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rxfu4u99-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 10:11:10 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7LWPQ001358;
+	Thu, 13 Feb 2025 10:11:09 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjkndpd5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 10:11:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DAB5CT29753996
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 10:11:05 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B348E2004E;
+	Thu, 13 Feb 2025 10:11:05 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EA4E820065;
+	Thu, 13 Feb 2025 10:11:04 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.6.230])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 13 Feb 2025 10:11:04 +0000 (GMT)
+Date: Thu, 13 Feb 2025 11:11:03 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Frank van der Linden <fvdl@google.com>
+Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yuzhao@google.com,
+        usamaarif642@gmail.com, joao.m.martins@oracle.com,
+        roman.gushchin@linux.dev, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 03/28] mm/cma: introduce cma_intersects function
+Message-ID: <Z63FN1+f+Ca2owdm@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250129224157.2046079-1-fvdl@google.com>
+ <20250129224157.2046079-4-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250129224157.2046079-4-fvdl@google.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4-Nzm_kfKbiYH4HhdkDWG-rtcGAVd8YX
+X-Proofpoint-GUID: Vzn0MMqmK8Lalyo1VKVejFWob49y7KWE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_03,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1011 adultscore=0 mlxlogscore=491 phishscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130076
 
-On Wed 12 Feb 2025 at 08:38, Doug Anderson <dianders@chromium.org> wrote:
+On Wed, Jan 29, 2025 at 10:41:32PM +0000, Frank van der Linden wrote:
+> Now that CMA areas can have multiple physical ranges,
+> code can't assume a CMA struct represents a base_pfn
+> plus a size, as returned from cma_get_base.
+> 
+> Most cases are ok though, since they all explicitly
+> refer to CMA areas that were created using existing
+> interfaces (cma_declare_contiguous_nid or
+> cma_init_reserved_mem), which guarantees they have just
+> one physical range.
+> 
+> An exception is the s390 code, which walks all CMA
+> ranges to see if they intersect with a range of memory
+> that is about to be hotremoved. So, in the future,
+> it might run in to multi-range areas. To keep this check
+> working, define a cma_intersects function. This just checks
+> if a physaddr range intersects any of the ranges.
+> Use it in the s390 check.
+> 
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
+> ---
+>  arch/s390/mm/init.c | 13 +++++--------
+>  include/linux/cma.h |  1 +
+>  mm/cma.c            | 21 +++++++++++++++++++++
+>  3 files changed, 27 insertions(+), 8 deletions(-)
 
-> Hi,
->
-> On Tue, Feb 11, 2025 at 9:28=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.c=
-om> wrote:
->>
->> The auxiliary device creation of this driver is simple enough to
->> use the available auxiliary device creation helper.
->>
->> Use it and remove some boilerplate code.
->>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 84 +++++++++-------------------=
--------
->>  1 file changed, 20 insertions(+), 64 deletions(-)
->
-> Thanks for creating the helpers and getting rid of some boilerplate!
-> This conflicts with commit 574f5ee2c85a ("drm/bridge: ti-sn65dsi86:
-> Fix multiple instances") which is in drm-next, though. Please resolve.
-
-Noted. this is based on v6.14-rc1 ATM
-
->
-> Since nothing here is urgent, I would assume patch #1 would land and
-> then we'd just wait until it made it to mainline before landing the
-> other patches in their respective trees?
-
-That would simplest way to handle it I think. No rush.
-I'll rebase when the time comes.
-
->
->
->> -static int ti_sn65dsi86_add_aux_device(struct ti_sn65dsi86 *pdata,
->> -                                      struct auxiliary_device **aux_out,
->> -                                      const char *name)
->> -{
->> -       struct device *dev =3D pdata->dev;
->> -       struct auxiliary_device *aux;
->> -       int ret;
->> -
->> -       aux =3D kzalloc(sizeof(*aux), GFP_KERNEL);
->> -       if (!aux)
->> -               return -ENOMEM;
->> -
->> -       aux->name =3D name;
->> -       aux->dev.parent =3D dev;
->> -       aux->dev.release =3D ti_sn65dsi86_aux_device_release;
->> -       device_set_of_node_from_dev(&aux->dev, dev);
->> -       ret =3D auxiliary_device_init(aux);
->> -       if (ret) {
->> -               kfree(aux);
->> -               return ret;
->> -       }
->> -       ret =3D devm_add_action_or_reset(dev, ti_sn65dsi86_uninit_aux, a=
-ux);
->> -       if (ret)
->> -               return ret;
->> -
->> -       ret =3D auxiliary_device_add(aux);
->> -       if (ret)
->> -               return ret;
->> -       ret =3D devm_add_action_or_reset(dev, ti_sn65dsi86_delete_aux, a=
-ux);
->> -       if (!ret)
->> -               *aux_out =3D aux;
->
-> I notice that your new code has one fewer devm_add_action_or_reset()
-> than the code here which you're replacing. That means it needs to call
-> "uninit" explicitly in one extra place.
-
-... but it needs one memory allocation less ;)
-
-> It still seems clean enough,
-> though, so I don't have any real objections to the way you're doing it
-> there. ;-)
-
-Both ways are valid indeed. Just a matter of personal taste I guess.
-
->
-> -Doug
-
---=20
-Jerome
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
