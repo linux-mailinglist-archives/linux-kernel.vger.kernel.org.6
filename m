@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-512728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81FBA33D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:55:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5D6A33D10
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA4C188B3B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A035B3A81F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10B2135BD;
-	Thu, 13 Feb 2025 10:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4162135B7;
+	Thu, 13 Feb 2025 10:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fD9ywQCV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+u3coxc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127472080D4;
-	Thu, 13 Feb 2025 10:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264B3190477;
+	Thu, 13 Feb 2025 10:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444101; cv=none; b=qstCZgsRrXFnHqpywE0oSYuiqeDFsdaFvF1ruZVVj0Vf/rKzss5sRy9KVzriw5qzXrUwu7XHdP+QCLh5BRmR+gzVJulvU2etpS5f/kEDmXV94qZExNnDGUKK2I3GQSHtyKeszTZlMm6FxzZNusSQO3dbuKvGPedNOxQgo3dbCVs=
+	t=1739444186; cv=none; b=hLkAg2XhEIaZYNjvblJHidhEtc7dfqE7B9wM330/oNjl0eX9GJcr6Ws0l3LY3C1Q7oz5Ayh5Z9gULwwa9lPY2yPmoDRHBgJRpB6l3pSh3LnmsHvHhlwRsoZoKR+A99/ayOVGRT/P1rVD4DMwIK4/Ryxu7DurJ1zlOT6guukllt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444101; c=relaxed/simple;
-	bh=FC+osHMM1wMl321HcyQTgueNyff8+QNBAFPiwB2uKhA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KplAdQOrM8MRDRg3EXTwFwlNbAVw/nw/439mydLaLBd+9uvkWCFbNKW8t0RoFgJRRoIZPT7SJw59nyTZd7Cm9wnYW7sasB7OGUVHxcNnQLxo8di4SRUkjaDQG6pwXt642xwpUrx4Q21Qru/zJDnjrD3cHv9jIPK0OqFY/gPFfWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fD9ywQCV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739444100; x=1770980100;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=FC+osHMM1wMl321HcyQTgueNyff8+QNBAFPiwB2uKhA=;
-  b=fD9ywQCVVFS5poMpcIhvz1Qn5xemPV+daill3TqDq6QLJr0r3OitD5Nn
-   RRKP5FHX4XYfo1Bo1NyIRYPE+M1gCLZQJ6/Lm2Aux2fm4f6LG4wFROWWO
-   8W6hcHVQOp6asrbt1cPQxorPClEAlkTcw17ncjcbBSLs14KjFCk2kqSrn
-   WHxF2tfBe6enIGSZ78S2GtRc1AFJLwHxCXLGbpHqxj3OzXFnjYzgJlf/p
-   Y5bTvCXIu89NarEM8/yS6hD9b+XXPhEzbuFgMvNscj8S/8XIlMGm7wjuG
-   aegjKppc+BcxzjVCfBIIlOp7QkBBRGX/WMsq6W5lFDl2TIlXQILUzSXWC
-   w==;
-X-CSE-ConnectionGUID: pQUG0r1vR92RAZ0faSmmUw==
-X-CSE-MsgGUID: X6rHjMlpSCWyngjdH0vcrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51568223"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="51568223"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:54:59 -0800
-X-CSE-ConnectionGUID: gH7RkWeCSpOd3hLhl3vVuA==
-X-CSE-MsgGUID: qaKLpqIXQIm8x0zlic78AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118049979"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:54:55 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiWrr-0000000B8iO-2JGV;
-	Thu, 13 Feb 2025 12:54:51 +0200
-Date: Thu, 13 Feb 2025 12:54:51 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stefan Roese <sr@denx.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH v1 1/8] i2c: Introduce i2c_10bit_addr_from_msg()
-Message-ID: <Z63Pe1clM4VZBmIX@smile.fi.intel.com>
-References: <20250212163359.2407327-1-andriy.shevchenko@linux.intel.com>
- <20250212163359.2407327-2-andriy.shevchenko@linux.intel.com>
- <CAMuHMdW1wxQ0cddeE72D+Sii4HkT4bJfeTWX4-8FfHiFr+=3DA@mail.gmail.com>
- <Z6zwqbzd5evG0H2z@smile.fi.intel.com>
- <Z63DT_XdzEWrP4eR@shikoro>
+	s=arc-20240116; t=1739444186; c=relaxed/simple;
+	bh=AWQ9Pe1GOHo90EUe82d6uyA1a+MiIOWdBo0xg647hR4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gtK1Jygaa+Pfgz0LYL8g/DiKdH+dgHNTjESIfoPDkLoJSbBjlDP3WsEHdQVe3Ht5Uyaa/5xHYD6zE/E8itvcCOYYtbXFqYmPI6ecOwxluJRTiW520RfdGfQjWGAv4v7Pvqrv7r75COW3KlloueX+LT5FBgsauhySH8GPy/8k/Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+u3coxc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B18C4CED1;
+	Thu, 13 Feb 2025 10:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739444185;
+	bh=AWQ9Pe1GOHo90EUe82d6uyA1a+MiIOWdBo0xg647hR4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X+u3coxc8I8AO5CVa23DSr3lHAzSa2nGrfJOg2QM+FG+j261Z3D5lhIJLUbE6JeTB
+	 vTgLsKL7HnHlQ7B4Wzm2dqvvS5Pd5aZjjEyHu98M7HYFLqDZcyUxGOrBsiFiU+118C
+	 yKrlFCWrTRRCkjn9UDvee07GVuWz+7T32CkpdMPFrvbPIexF7oi5Yy7hJe/E8ltlum
+	 uq75zhqkP7WkPqRhx+0na1IE14xIekfL50odCkvQkiBOP4jP40Q2FDyP8b7XiRT21e
+	 53IXHDUoB12kyEOWvjbDiQ8ss0LM/F+VptTDm6HmHdFciA7Ug0jl54ZNY8CHTuN1LB
+	 oxGvSfPDcrRSQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tiWtK-003e0Q-Sv;
+	Thu, 13 Feb 2025 10:56:22 +0000
+Date: Thu, 13 Feb 2025 10:56:22 +0000
+Message-ID: <86seoiru3t.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Fuad Tabba <tabba@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v7] KVM: arm64: Fix confusion in documentation for pKVM SME assert
+In-Reply-To: <Z626RqzA3HMskwJd@J2N7QTR9R3>
+References: <20250212-kvm-arm64-sme-assert-v7-1-0f786db838d3@kernel.org>
+	<Z6yByMUBPDUyEWOr@J2N7QTR9R3>
+	<86tt8yrzon.wl-maz@kernel.org>
+	<Z626RqzA3HMskwJd@J2N7QTR9R3>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z63DT_XdzEWrP4eR@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: mark.rutland@arm.com, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, tabba@google.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Feb 13, 2025 at 11:02:55AM +0100, Wolfram Sang wrote:
+On Thu, 13 Feb 2025 09:24:22 +0000,
+Mark Rutland <mark.rutland@arm.com> wrote:
 > 
-> Just a generic comment: please don't spend too much energy on 10-bit
-> support. I have never seen it used in the wild. It seems more like an
-> academic excercise.
+> On Thu, Feb 13, 2025 at 08:55:52AM +0000, Marc Zyngier wrote:
+> > On Wed, 12 Feb 2025 11:11:04 +0000,
+> > Mark Rutland <mark.rutland@arm.com> wrote:
+> > > On Wed, Feb 12, 2025 at 12:44:57AM +0000, Mark Brown wrote:
+> > > > diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+> > > > index 4d3d1a2eb157047b4b2488e9c4ffaabc6f5a0818..e37e53883c357093ff4455f5afdaec90e662d744 100644
+> > > > --- a/arch/arm64/kvm/fpsimd.c
+> > > > +++ b/arch/arm64/kvm/fpsimd.c
+> > > > @@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+> > > >  	}
+> > > >  
+> > > >  	/*
+> > > > -	 * If normal guests gain SME support, maintain this behavior for pKVM
+> > > > -	 * guests, which don't support SME.
+> > > > +	 * Protected and non-protected KVM modes require that
+> > > > +	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> > > > +	 * host/guest SME state needs to be saved/restored by hyp code.
+> > > > +	 *
+> > > > +	 * In protected mode, hyp code will verify this later.
+> > > >  	 */
+> > > > -	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+> > > > -		read_sysreg_s(SYS_SVCR));
+> > > > +	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
+> > > > +		     read_sysreg_s(SYS_SVCR));
+> > > 
+> > > As I mentioned on the last round, we can drop the is_protected_kvm_enabled()
+> > > check, i.e. have:
+> > > 
+> > > 	/*
+> > > 	 * Protected and non-protected KVM modes require that
+> > > 	 * SVCR.{SM,ZA} == {0,0} when entering a guest so that no
+> > > 	 * host/guest SME state needs to be saved/restored by hyp code.
+> > > 	 *
+> > > 	 * In protected mode, hyp code will verify this later.
+> > > 	 */
+> > > 	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
+> > > 
+> > > Either way:
+> > > 
+> > > Acked-by: Mark Rutland <mark.rutland@arm.com>
+> > > 
+> > > Marc, are you happy to queue this atop the recent fixes from me? Those
+> > > try to ensure SVCR.{SM,ZA} == {0,0} regardless of whether KVM is in
+> > > protected mode.
+> > 
+> > In all honesty, I find that at this stage, the comment just gets in
+> > the way and is over-describing what is at stake here.
+> > 
+> > The
+> > 
+> >  	WARN_ON_ONCE(system_supports_sme() && read_sysreg_s(SYS_SVCR));
+> > 
+> > is really the only thing that matters. It perfectly shows what we are
+> > checking for, and doesn't need an exegesis.
+> > 
+> > As for the Fixes: tag, and given the magnitude of the actual fixes
+> > that are already queued, I don't think we need it.
+> 
+> That's fair; if you haven't spun a patch for that already, I guess we're
+> after the following?
 
-True, but still it makes sense to reduce the respective code base.
+Yup. Applied to fixes.
+
+Thanks,
+
+	M.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Without deviation from the norm, progress is not possible.
 
