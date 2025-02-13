@@ -1,119 +1,202 @@
-Return-Path: <linux-kernel+bounces-512685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3107CA33CA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:24:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D87A33CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B497D3A942D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F37E3AA679
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE6C212F9A;
-	Thu, 13 Feb 2025 10:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0FF213E77;
+	Thu, 13 Feb 2025 10:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RRJKNTPq"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b4x4Wbeq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9950A20DD79
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 10:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C13B212F98;
+	Thu, 13 Feb 2025 10:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441956; cv=none; b=U5RSRSdGZ3GS0hhwQGWNq80CrC/tFqZ4DSzAKv/rHL5q/5K6T/5Z1gO8WWPqnWOlGM27TkiIjECUs7oWN6qhtHQMIc/Vz1k1YqHPTGCqx+A0zY2KdIfXLQgzDmFeAofpU37C0I+fwIoE0I4ypw6NVhSQ9wEPWbDk+zcVKhCCVWo=
+	t=1739441965; cv=none; b=mdEXIDaHloMoEwci4grjrU9bmgATSTnGNvU47tXCnZdZPqNdz0fFHvyB2pbmf0NJu4nrh2EZtRSO4fZYZaSdJpENNaOVU40UxDGTa+VkUGDEk/mA1BS6vQ9hH1/851cEZUXmJaX8jhlhzGIU5STK4Cv7ZQdq2YdWTR2o/sC8Xsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441956; c=relaxed/simple;
-	bh=gobRm5klG9qLpLtL0cXlyf1R+Cz3ToKa1X3k9IhyBOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEF5VPNS7/e2333Dgh3blVxzSNXBjxYqF65qu+QuTdIRuijeDTN8xrBcys5FKKxzl6pAMINBpVfwu8b/gi0UsEJ4u7rr8LgzRmFBD2D06X5okp33WZYB7OoRDJkUl3ABmjaL449CrA+KcAnNTpIx0Lvz78HhKpRuPaeSQ8s+HUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RRJKNTPq; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739441941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDjLygtCi1vCtbRpum5K/rvtczS1k9PvMWQ8Pv/Of7U=;
-	b=RRJKNTPqn12IyLN+yh0a5aQBIxXfLKOa83lncsYP5oCcdVbnklF6jZasoZBCVaizrRnB5a
-	Gs2aOLTPmvEnq0PfNPaW5/NqX0fbSEcsjX8Nl0wqXhZ6Ew2Bms/wLeHBtHb2NuQcvr0aRL
-	7t2tKDzH3EhwC8dOW7kmxrZuJ5Cdi6w=
-Date: Thu, 13 Feb 2025 18:18:40 +0800
+	s=arc-20240116; t=1739441965; c=relaxed/simple;
+	bh=24IKPVvko7AYF/JdQjmDU6yGxxREmdCEYd1XuYo9HmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1Dzz3t8kc1b4XlTuB6+j6lXO8OlnwK/1q4OYKzGvTJPIar+onf260UYzV4Vd/r9jI3O2+VT5eZbGrz/n+wl0kEkGLu0UH7gEG35AxiwXnRPLYMsbbhYaCiqeWkBJVcluzwr/mNM36FiZE3FMr0Iv2VgGfS4iOiXhbCoS88LwL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b4x4Wbeq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3024B6AF;
+	Thu, 13 Feb 2025 11:17:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739441876;
+	bh=24IKPVvko7AYF/JdQjmDU6yGxxREmdCEYd1XuYo9HmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b4x4WbeqsNvXxNQyuRFhAU3Ed8ZwGP1OT+MWvlY7JpGqB4kloKWwzB07v7/KYld/M
+	 xhgJYJKvH5epfyl0iH9cIVSUPBxVmB2dn+7uBvY+GVu8/+400FhuklOcNVwR8sBwVh
+	 501sXqmw6+sS/O1SyCmfn3cavrs0GH0+UP06p6Ac=
+Date: Thu, 13 Feb 2025 12:19:03 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sebastian LaVine <slavine@d3embedded.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	=?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Achath Vaishnav <vaishnav.a@ti.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Jianzhong Xu <xuj@ti.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Nishanth Menon <nm@ti.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stuart Burtner <sburtner@d3embedded.com>,
+	Tero Kristo <kristo@kernel.org>, Thakkar Devarsh <devarsht@ti.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Will Deacon <will@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>
+Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
+Message-ID: <20250213101903.GH5888@pendragon.ideasonboard.com>
+References: <20250212195656.69528-1-slavine@d3embedded.com>
+ <20250212195656.69528-3-slavine@d3embedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
-To: alexs@kernel.org
-Cc: Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250213054222.21776-1-alexs@kernel.org>
- <20250213054222.21776-2-alexs@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250213054222.21776-2-alexs@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250212195656.69528-3-slavine@d3embedded.com>
 
+Hi Sebastian,
 
-在 2/13/25 1:42 PM, alexs@kernel.org 写道:
-> From: Alex Shi <alexs@kernel.org>
->
-> A good checked summit could save much time for linux-doc maintainer.
->
-> Signed-off-by: Alex Shi <alexs@kernel.org>
-> Cc: Yanteng Si <siyanteng@loongson.cn>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+Thank you for the patch.
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+I'll start with a partial review.
 
-
-
+On Wed, Feb 12, 2025 at 02:56:54PM -0500, Sebastian LaVine wrote:
+> Adds a driver for the Sony IMX728 image sensor.
+> 
+> Signed-off-by: Sebastian LaVine <slavine@d3embedded.com>
+> Mentored-by: Stuart Burtner <sburtner@d3embedded.com>
 > ---
->   Documentation/translations/zh_CN/index.rst | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/translations/zh_CN/index.rst b/Documentation/translations/zh_CN/index.rst
-> index 7574e1673180..cc512ca54172 100644
-> --- a/Documentation/translations/zh_CN/index.rst
-> +++ b/Documentation/translations/zh_CN/index.rst
-> @@ -26,7 +26,13 @@
->   顺便说下，中文文档也需要遵守内核编码风格，风格中中文和英文的主要不同就是中文
->   的字符标点占用两个英文字符宽度，所以，当英文要求不要超过每行100个字符时，
->   中文就不要超过50个字符。另外，也要注意'-'，'='等符号与相关标题的对齐。在将
-> -补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试。
-> +补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试，确保
-> +在 ``make htmldocs/pdfdocs`` 中不增加新的告警，最后，安装检查你生成的
-> +html/pdf 文件，确认它们看起来是正常的。
+>  MAINTAINERS                  |    1 +
+>  arch/arm64/configs/defconfig |    1 +
+>  drivers/media/i2c/Kconfig    |   12 +
+>  drivers/media/i2c/Makefile   |    1 +
+>  drivers/media/i2c/imx728.c   | 9655 ++++++++++++++++++++++++++++++++++
+>  5 files changed, 9670 insertions(+)
+>  create mode 100644 drivers/media/i2c/imx728.c
+
+[snip]
+
+> diff --git a/drivers/media/i2c/imx728.c b/drivers/media/i2c/imx728.c
+> new file mode 100644
+> index 000000000000..75120ca01ce6
+> --- /dev/null
+> +++ b/drivers/media/i2c/imx728.c
+> @@ -0,0 +1,9655 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Sony IMX728 CMOS Image Sensor Driver
+> + *
+> + * Copyright (c) 2024-2025 Define Design Deploy Corp
+> + */
+
+[snip]
+
+> +static const struct cci_reg_sequence imx728_wdr_12bit_3856x2176[] = {
+
+This table is way too big, with over 8000 entries. Some are even
+duplicated, with identical or different values for the same register. It
+will take more than a second at 400kHz to program this.
+
+At the very least I would expect a way to compact the table and make use
+of I2C register address auto-increment. Default power-up values should
+also likely be just dropped.
+
+I haven't checked in details, but doesn't this table also contain tuning
+data for your specific camera ?
+
+[snip]
+
+> +};
+
+[snip]
+
+> +static int imx728_get_frame_interval(struct v4l2_subdev *sd,
+> +                                    struct v4l2_subdev_state *sd_state,
+> +                                    struct v4l2_subdev_frame_interval *fi)
+> +{
+> +       struct imx728 *imx728 = to_imx728(sd);
 > +
-> +提交之前请确认你的补丁可以正常提交到中文文档维护库:
-> +https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git/
+> +       fi->interval.numerator = 1;
+> +       fi->interval.denominator = imx728->fps;
+> +       return 0;
+> +}
+> +
+> +static int imx728_set_frame_interval(struct v4l2_subdev *sd,
+> +                                    struct v4l2_subdev_state *sd_state,
+> +                                    struct v4l2_subdev_frame_interval *fi)
+> +{
+> +       struct imx728 *imx728 = to_imx728(sd);
+> +       u32 req_fps;
+> +
+> +       mutex_lock(&imx728->lock);
+> +
+> +       if (fi->interval.numerator == 0 || fi->interval.denominator == 0) {
+> +               fi->interval.denominator = IMX728_FRAMERATE_DEFAULT;
+> +               fi->interval.numerator = 1;
+> +       }
+> +
+> +       req_fps = clamp_val(DIV_ROUND_CLOSEST(fi->interval.denominator,
+> +                                             fi->interval.numerator),
+> +                           IMX728_FRAMERATE_MIN, IMX728_FRAMERATE_MAX);
+> +
+> +       fi->interval.numerator = 1;
+> +       fi->interval.denominator = req_fps;
+> +
+> +       imx728->fps = req_fps;
+> +
+> +       mutex_unlock(&imx728->lock);
+> +       dev_dbg(imx728->dev, "%s frame rate = %d\n", __func__, imx728->fps);
+> +
+> +       return 0;
+> +}
 
-> +如果你的补丁依赖于其他人的补丁, 可以与其他人商量后由某一个人合并提交。
+The frame rate on raw sensors is controlled through h/v blanking. You
+can drop thse functions, especially given that imx728->fps isn't used
+anywhere else.
 
-I think this requires a detailed tutorial. Otherwise, it
+-- 
+Regards,
 
-will increase the difficulty for beginners to get started.
-
-How about removing it for now? I have a plan to write
-
-a translation guidebook. What's your opinion?
-
-
-Thanks,
-
-Yanteng
-
->   
->   与Linux 内核社区一起工作
->   ------------------------
+Laurent Pinchart
 
