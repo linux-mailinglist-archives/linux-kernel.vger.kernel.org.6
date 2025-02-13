@@ -1,154 +1,248 @@
-Return-Path: <linux-kernel+bounces-513937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EA8A35070
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C45A3A35072
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 22:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE00316D6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:22:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59E1F16D4EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EB3266B59;
-	Thu, 13 Feb 2025 21:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C37266B58;
+	Thu, 13 Feb 2025 21:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6rnflM+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="OQs/72NF"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485E823A9AC;
-	Thu, 13 Feb 2025 21:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064FA266194
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 21:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739481717; cv=none; b=apl1KCPUrn8KmdRvmRgNzfUeh1MacivHS5rqL45uGcATPA9sr7L0VCKKGIa58SXm/PS6ebIQca/IpMJSkIFWyQrY7k0IafMVUrLIvVgrM2mHVtl2p+cev91icPd/+sxaCUgOIwE+z+tmzYUGeWNWAcbLfb2PlSiq3HgpEMZnEk8=
+	t=1739481863; cv=none; b=cGSnro/b6LTMEkWDyTEgwZxJRKVQK8cR9QQsm6wadOI7YmpFegialI5LJtco28PwCAva52M/2sXcKL7VxY/vpQCoKRz8i1CNFBhYRM0qbnZejZhiRvhuv1kqGBV3gS/HUS9QgvkNhHM/dnF7Kzy4pzc7YjzmYUnsoSx6Z1jwLpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739481717; c=relaxed/simple;
-	bh=24Yt0x6szBYWV3z1QRdGHcFKvazuY392t8ua427mapY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=G04xkJUl+4hRojYJ0AQxyTU0oqZLtpj/wPvZd/nbNZrLYw8ySYR6uLtkqxhirhL2qwZxa2X1RQ6ysIDNvmbN3dwvGB38/h0/m5OCQw/W35v5MiC5MH6QGVgfEzOLTm2Sx6uvj3J9PM6afwdFhifcRPfkuJAy+eZJ/6C9+radt/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6rnflM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 963C3C4CED1;
-	Thu, 13 Feb 2025 21:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739481716;
-	bh=24Yt0x6szBYWV3z1QRdGHcFKvazuY392t8ua427mapY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=F6rnflM+ZR2MGQ5IppUfs5zVBJJXYtlxfCAO4Ql/for7ec9mKs+2V2y1CFiFkpTjA
-	 nz5dWPWOYMnCYDz4SNRNxGZYFIB0z7j6nf9XgXoLuf5X0pzUnK8t/gK+KiVTMPEftb
-	 Y/kaLQJdZWrE/jkLx4Xn4vh5lgSDzvRVa9uhVH4sQRWneNolSjXY618fVSY7Zko7DJ
-	 noehUtSWqgv3ikJQSv/H/leGtbyYXrUbVGvnMQKxk7Mkoz1HKCIHPRCwFmVtgJKLPa
-	 c7uCyBu5ddaNrLAwLz+3Tfv0hv/qmk7VqRi6DXqhfFmo3xI7m3ZwT4krRdp/R7UZW1
-	 GLBCD1Wcrp52g==
-Date: Thu, 13 Feb 2025 15:21:55 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: bhelgaas@google.com, mika.westerberg@linux.intel.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Carol Soto <csoto@nvidia.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Chris Chiu <chris.chiu@canonical.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>
-Subject: Re: [PATCH v2] PCI: Use downstream bridges for distributing resources
-Message-ID: <20250213212155.GA129006@bhelgaas>
+	s=arc-20240116; t=1739481863; c=relaxed/simple;
+	bh=iI6C26wleg084gzew4BdYNTkld9u5dqIEvcyFmn5298=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oTTC4z9k9n01y6HwUdgK+iCLbFN+pIhkoufNLLTabsbtMhjRUcafISL0tRfInkrVd/UmkPnYUKwjz4VF33WDBzu8qyBziojJgIjqe4HfKYACIZ7mkl56L7IbwBpHIrHCKuoPvdBpRCFrBJ6tMIlOhyFCgwXQG1kYQYKdECT19QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=OQs/72NF; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso623186f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:24:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1739481860; x=1740086660; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4C1/ZT8Zanwnf3nw3IJ3sq2VeuwdAnAJQZPxh7FXkd0=;
+        b=OQs/72NFdpmMjvoppiojGeUI/D8+llYBR57dcNOiAA9f4iFQqoIDsu26DLlwU9j6dR
+         UPmW9R2aBeNkek+MaCQHAE614nwaarPK9zCEZW3r4nKbzyyUVOQgOd58jodpaFCRwQq1
+         Pdn3bgQEy6WjUZW52BdMShkaKicVrmuaVVXMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739481860; x=1740086660;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4C1/ZT8Zanwnf3nw3IJ3sq2VeuwdAnAJQZPxh7FXkd0=;
+        b=XW7dIUjwyWZEVwk7Ofy9/mDzfTyxE4i6Ymoyn7sGuEhoM8CwLfpns+kUjbKh0bPg1e
+         RxX7JjT1+/vGCGWwjinUJ1002o0xGOfIrZKpK836SoXT7F4BfNTqK0OT0lbd/zznoMhj
+         dYX6VSv9yUT936vuCPdSWFznDGkcSKDlBIjsK9Q51wqXnriJNvVNoJb3WX3CU6RkaIbE
+         hIh73mCOvxlPh/7yFv+9UIcJmWO07EzzuxyGurca04NIzjCsVPa3QFCP5hJ98/0FtYos
+         ouThPC5Co8kOM0VgX6a2JxLg2JTsHT95gZdolJRGjhMDNv+IAOsDFtjT8P6R5ldMsk/t
+         hCow==
+X-Forwarded-Encrypted: i=1; AJvYcCUVohr35CS6RPEXPE/38e6fZn0LpCZSsushOy6GpRU7GNuOnK5+pKXYZsllOjK8pZCccL4IBzU/sfGjKRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDP073sRUZPlpgoe9AeMDHk/YP1u5AUd/cU/1NC3uxWZfb/NHN
+	p3fpV8MWCzzNSAKNqPyB56CrINAE7vtfRBz8cF7zzxu5+SJlQ015kEnWD0TFXIY=
+X-Gm-Gg: ASbGncu8KUxE4cJLE/u36lGN5mUbz8AVQ2ZgYcgYgQeeaBlHHALfL3Oa06ktKgr9MPU
+	ussuyxzzEzHcdTucmVKxSPm1DVqcUIbholiNidWTn+Lc4ocRJ1+VjsIm/H0Zi7cyXhqC76qN4rv
+	gku96KTI/UtPCcUSZWbbCIvdou0yroBYS6QaNJKmT0hlUR9UztKVbJnbsZFhWzvlYvaC9i+a2/I
+	blIwqiQz+t6kvjwnYcTMgFUTQsy7B3XKhYtogxBVu3URESZF5nbX68kPUTSzU3QXW7jCZpf2ybb
+	y63Hon8EOtcstSeE6fsLfGR4QPNpTCqAm7E7GYQnXhscS3+0zGkzum8=
+X-Google-Smtp-Source: AGHT+IGBwzS/MNNlCwwPViJa+G8sfp4cLDzei/u3HwkccifrQNRaX0goflwqcbI5RnVxIh6MLHOibw==
+X-Received: by 2002:a05:6000:186b:b0:38f:268c:75d6 with SMTP id ffacd0b85a97d-38f268c772fmr3639761f8f.26.1739481860227;
+        Thu, 13 Feb 2025 13:24:20 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b44b2sm2827090f8f.20.2025.02.13.13.24.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 13:24:19 -0800 (PST)
+Message-ID: <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com>
+Date: Thu, 13 Feb 2025 21:24:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204022457.51322-1-kaihengf@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+To: Jann Horn <jannh@google.com>, Jennifer Miller <jmill@asu.edu>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org,
+ kees@kernel.org, joao@overdrivepizza.com, samitolvanen@google.com,
+ kernel list <linux-kernel@vger.kernel.org>
+References: <Z60NwR4w/28Z7XUa@ubun>
+ <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <Z62N6cGmaN+OZfoY@ubun>
+ <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 10:24:57AM +0800, Kai-Heng Feng wrote:
-> Commit 7180c1d08639 ("PCI: Distribute available resources for root
-> buses, too") breaks BAR assignment on some devcies:
-> [   10.021193] pci 0006:03:00.0: BAR 0 [mem 0x6300c0000000-0x6300c1ffffff 64bit pref]: assigned
-> [   10.029880] pci 0006:03:00.1: BAR 0 [mem 0x6300c2000000-0x6300c3ffffff 64bit pref]: assigned
-> [   10.038561] pci 0006:03:00.2: BAR 0 [mem size 0x00800000 64bit pref]: can't assign; no space
-> [   10.047191] pci 0006:03:00.2: BAR 0 [mem size 0x00800000 64bit pref]: failed to assign
-> [   10.055285] pci 0006:03:00.0: VF BAR 0 [mem size 0x02000000 64bit pref]: can't assign; no space
-> [   10.064180] pci 0006:03:00.0: VF BAR 0 [mem size 0x02000000 64bit pref]: failed to assign
-> [   10.072543] pci 0006:03:00.1: VF BAR 0 [mem size 0x02000000 64bit pref]: can't assign; no space
-> [   10.081437] pci 0006:03:00.1: VF BAR 0 [mem size 0x02000000 64bit pref]: failed to assign
-> 
-> The apertures of domain 0006 before the commit:
-> 6300c0000000-63ffffffffff : PCI Bus 0006:00
->   6300c0000000-6300c9ffffff : PCI Bus 0006:01
->     6300c0000000-6300c9ffffff : PCI Bus 0006:02
->       6300c0000000-6300c8ffffff : PCI Bus 0006:03
->         6300c0000000-6300c1ffffff : 0006:03:00.0
->           6300c0000000-6300c1ffffff : mlx5_core
->         6300c2000000-6300c3ffffff : 0006:03:00.1
->           6300c2000000-6300c3ffffff : mlx5_core
->         6300c4000000-6300c47fffff : 0006:03:00.2
->         6300c4800000-6300c67fffff : 0006:03:00.0
->         6300c6800000-6300c87fffff : 0006:03:00.1
->       6300c9000000-6300c9bfffff : PCI Bus 0006:04
->         6300c9000000-6300c9bfffff : PCI Bus 0006:05
->           6300c9000000-6300c91fffff : PCI Bus 0006:06
->           6300c9200000-6300c93fffff : PCI Bus 0006:07
->           6300c9400000-6300c95fffff : PCI Bus 0006:08
->           6300c9600000-6300c97fffff : PCI Bus 0006:09
-> 
-> After the commit:
-> 6300c0000000-63ffffffffff : PCI Bus 0006:00
->   6300c0000000-6300c9ffffff : PCI Bus 0006:01
->     6300c0000000-6300c9ffffff : PCI Bus 0006:02
->       6300c0000000-6300c43fffff : PCI Bus 0006:03
->         6300c0000000-6300c1ffffff : 0006:03:00.0
->           6300c0000000-6300c1ffffff : mlx5_core
->         6300c2000000-6300c3ffffff : 0006:03:00.1
->           6300c2000000-6300c3ffffff : mlx5_core
->       6300c4400000-6300c4dfffff : PCI Bus 0006:04
->         6300c4400000-6300c4dfffff : PCI Bus 0006:05
->           6300c4400000-6300c45fffff : PCI Bus 0006:06
->           6300c4600000-6300c47fffff : PCI Bus 0006:07
->           6300c4800000-6300c49fffff : PCI Bus 0006:08
->           6300c4a00000-6300c4bfffff : PCI Bus 0006:09
-> 
-> We can see that the window of 0006:03 gets shrunken too much and 0006:04
-> eats away the window for 0006:03:00.2.
-> 
-> The offending commit distributes the upstream bridge's resources
-> multiple times to every downstream bridges, hence makes the aperture
-> smaller than desired because calculation of io_per_b, mmio_per_b and
-> mmio_pref_per_b becomes incorrect.
-> 
-> Instead, distributing downstream bridges' own resources to resolve the
-> issue.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219540
-> Cc: Carol Soto <csoto@nvidia.com>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Chris Chiu <chris.chiu@canonical.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Tested-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-> Fixes: 7180c1d08639 ("PCI: Distribute available resources for root buses, too")
-> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+On 13/02/2025 7:23 pm, Jann Horn wrote:
+> On Thu, Feb 13, 2025 at 7:15 AM Jennifer Miller <jmill@asu.edu> wrote:
+>> Here is some napkin asm for this I wrote for the 64-bit syscall entrypoint,
+>> I think more or less the same could be done for the other entrypoints.
+>>
+>> ```
+>>     endbr64
+>>     test rsp, rsp
+>>     js slowpath
+>>
+>>     swapgs
+>>     ~~fastpath continues~~
+>>
+>> ; path taken when rsp was a kernel address
+>> ; we have no choice really but to switch to the stack from the untrusted
+>> ; gsbase but after doing so we have to be careful about what we put on the
+>> ; stack
+>> slowpath:
+>>     swapgs
 
-Applied with Mika's Reviewed-by to pci/resource for v6.15, thanks!
+I'm afraid I don't follow.  By this point, both basic blocks are the
+same (a single swapgs).
 
-> ---
->  drivers/pci/setup-bus.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 23082bc0ca37..a6e653a4f5b1 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -2105,8 +2105,7 @@ pci_root_bus_distribute_available_resources(struct pci_bus *bus,
->  		 * in case of root bus.
->  		 */
->  		if (bridge && pci_bridge_resources_not_assigned(dev))
-> -			pci_bridge_distribute_available_resources(bridge,
-> -								  add_list);
-> +			pci_bridge_distribute_available_resources(dev, add_list);
->  		else
->  			pci_root_bus_distribute_available_resources(b, add_list);
->  	}
-> -- 
-> 2.47.0
-> 
+Malicious userspace can get onto the slowpath by loading a kernel
+pointer into %rsp.  Furthermore, if the origin of this really was in the
+kernel, then ...
+
+>>
+>> ; swap stacks as normal
+>>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
+>>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+
+... these are memory accesses using the user %gs.  As you note a few
+lines lower, %gs isn't safe at this point.
+
+A cunning attacker can make gs:[rip+0x7f02c56d] be a read-only mapping,
+at point we'll have loaded an attacker controlled %rsp, then take #PF
+trying to spill %rsp into pcpu_hot, and now we're running the pagefault
+handler on an attacker controlled stack and gsbase.
+
+>>     ~~normal push and clear GPRs sequence here~~
+>>
+>> ; we entered with an rsp in the kernel address range.
+>> ; we already did swapgs but we don't know if we can trust our gsbase yet.
+>> ; we should be able to trust the ro_after_init __per_cpu_offset array
+>> ; though.
+>>
+>> ; check that gsbase is the expected value for our current cpu
+>>     rdtscp
+>>     mov rax, QWORD PTR [8*ecx-0x7d7be460] <__per_cpu_offset>
+>>
+>>     rdgsbase rbx
+>>
+>>     cmp rbx, rax
+>>     je fastpath_after_regs_preserved
+>>
+>>     wrgsbase rax
+
+Irrespective of other things, you'll need some compatibility strategy
+for the fact that RDTSCP and {RD,WR}{FS,GS}BASE cannot be used
+unconditionally in 64bit mode.  It might be as simple as making FineIBT
+depend on their presence to activate, but taking a #UD exception in this
+path is also a priv-esc vulnerability.
+
+While all CET-IBT capable CPUs ought to have RDTSCP/*BASE, there are
+virt environments where this implication does not hold.
+
+>>
+>> ; if we reach here we are being exploited and should explode or attempt
+>> ; to recover
+>> ```
+>>
+>> The unfortunate part is that it would still result in the register state
+>> being dumped on top of some attacker controlled address, so if the error
+>> path is recoverable someone could still use entrypoints to convert control
+>> flow hijacking into memory corruption via register dump. So it would kill
+>> the ability to get ROP but it would still be possible to dump regs over
+>> modprobe_path, core_pattern, etc.
+> It is annoying that we (as far as I know) don't have a nice clear
+> security model for what exactly CFI in the kernel is supposed to
+> achieve - though I guess that's partly because in its current version,
+> it only happens to protect against cases where an attacker gets a
+> function pointer overwrite, but not the probably more common cases
+> where the attacker (also?) gets an object pointer overwrite...
+>
+>> Does this seem feasible and any better than the alternative of overwriting
+>> and restoring KERNEL_GS_BASE?
+> The syscall entry point is a hot path; my main reason for suggesting
+> the RSP check is that I'm worried about the performance impact of the
+> gsbase-overwriting approach, but I don't actually have numbers on
+> that. I figure a test + conditional jump is about the cheapest we can
+> do...
+
+Yeah, this is the cheapest I can think of too.  TEST+JS has been able to
+macrofuse since the Core2 era.
+
+> Do we know how many cycles wrgsbase takes, and how serializing
+> is it? Sadly Agner Fog's tables don't seem to list it...
+
+Not (architecturally) serialising, and pretty quick IIRC.  It is
+microcoded, but the segment registers are renamed so it can execute
+speculatively.
+
+~Andrew
+
+>
+> How would we actually do that overwriting and restoring of
+> KERNEL_GS_BASE? Would we need a scratch register for that?
+
 
