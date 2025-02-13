@@ -1,131 +1,189 @@
-Return-Path: <linux-kernel+bounces-512859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F2EA33E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:55:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A172A33E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E44188A525
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:55:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837413A8049
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA0C21D3E0;
-	Thu, 13 Feb 2025 11:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EB521D3CC;
+	Thu, 13 Feb 2025 11:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="iLubYIt3"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="asilKgaf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F36B227EBF;
-	Thu, 13 Feb 2025 11:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4336520AF82
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739447702; cv=none; b=pYr8Nv5sKmMKvFc+gAgyh1WwxuhlJhNcPzw0Atd5F2bAfOGX1Rv5OTQWGAaBkfNJ058BI6QnHBr18r1Gx5SRY4DmhcK6cuqL6uuznOCpBLO3L76kNjx9ObMqp7C/MEzMgSjOx8wNlWppF0pj+Ab2eqXE+fGbiv+tFEJAbx8UkZw=
+	t=1739447198; cv=none; b=edqvlcQdXOeUu+rpsf1TU4Poq25XD6nkRnUdCWI/RqsxK93M6VRuG98gJva0F3jr7DSptk3CoqZUv7+w9b9O2tMyfA7nae9J3fJ8KxXSw0zHiJ3CiU7DysamMkqIAMwcjFpnbjnIagoihKsAQDJiHBW7oDjZi1BDtzmNs6l7BMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739447702; c=relaxed/simple;
-	bh=ieZWzMZqBI8FH3s2gNhdd0n0BwsPNVH2lECzKfx9PAg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s9OhDuH0m4OM7xb1YUSzu0DCOjZCbhg7Fu5/MMI9yd97kYuDqB3p7cY3WzSEBm/B/Lf5crwtVG05/yCEiZxf4fSufVl3MSU9/h2qASQAMQOXzzPEJGN/H0iZlzB4/u7C0Zu9K40E1A7OVklipidy4cZ9UfvDMD+t/3dGk2EDWqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=iLubYIt3; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id ECE89C0008;
-	Thu, 13 Feb 2025 14:47:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru ECE89C0008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1739447274; bh=TfIdG5Tk5nQELjuNn8VsvdhDZYi8sjTVviMHcjs+d7I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=iLubYIt3ACamDuUdrKEoOWkcjlkoO658LPc7cDxLLfbrTIfyDlQcjC3QUwmz+IkA+
-	 9I4dcINAwHcdXI/iEucRZd+t0OsBrrxc4/K5GzW9h9qvj3gMDSYAezhkz8EgGCi5JB
-	 7qRkD1bOEZb1trqSgOG1/564kwd2vgNNNlmzxzSQ92c2QjfILcTXrVEHQZWUZCUrN2
-	 suePJh2CwbCb7YsarERi98YOq9WbjIIDbfXu2yEHCjKVjIgFfm+FSpPNyZBatfWD0l
-	 hogVjLXY0bkQ8BMqy8CQq3DjxpCu+CxgsQA5lkFLxjWazT+TTcOMrrh8A5r25URjSj
-	 5LIVP2VzB4q1A==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu, 13 Feb 2025 14:47:54 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (5.1.51.172) by mmail-p-exch01.mt.ru
- (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Thu, 13 Feb
- 2025 14:47:53 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
-CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>, Mitko Haralanov
-	<mitko.haralanov@intel.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH resend] IB/hfi1: fix buffer underflow in fault injection code
-Date: Thu, 13 Feb 2025 16:46:27 +0500
-Message-ID: <20250213114630.2384-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739447198; c=relaxed/simple;
+	bh=Gt0tMFFzR5IlIKVaO3OfCljuPflErhSeAuqyN39sKfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R+o5MLih7P7En8o+wH1U6YT5pYTgmDShEvJoaJdDKuQz8OcCpTVa2Y4BsgQpdxqMumePZQ/9PaV7b6RROHrz478KvzbljQpy73IuHLp+e0OteJMb71USrYxxxG1EDE4LdNb88f4tqQa9fA3Z/HFBHnc1Uw5rc6HIvxF59ETw3V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=asilKgaf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394a823036so8557485e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 03:46:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1739447194; x=1740051994; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLvkb9HlJyUozDiDHO4/drWQgsoe+VSaExuzLx0XOw4=;
+        b=asilKgafl9i0ISeFFmLW+GbaWANQDfufF85l3jcp/7fMv1EM07FN8Xvu+M777rF55d
+         rjyKhHCLztpaxK6ODjjm9z5bWRfdCoSQtChv3PUc5SVo1Rk74C5dVpgD5nVCHvpoX959
+         V4bUAntmme/R05biFpXM5gxoRCBza5CKpNbBRp7tyTVJR1JQgFYEN8EPwyo8dbXk1tv4
+         znVXNfZFlB0uCbsE6UKxgXlCA/qboU43F9W8a8Iwj5pUG+d5OIPF9w1Bp5YM5/kbPlQG
+         ZQNq5QiTyakSCVd8o9OR+HRWEK4wiGwElK7VfKHpW94ZV2SysvKBG65kQS4lfZ6o5PW2
+         hSPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739447194; x=1740051994;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pLvkb9HlJyUozDiDHO4/drWQgsoe+VSaExuzLx0XOw4=;
+        b=IDcVbzCWAVAieuYeljNPLq9UhofzIhQhVSYtx1YW30p9Oqqf8vMzXKjIKXtbRLWkyX
+         tRexPJajbC87+TAEANZSMcM0ros4fTUinlHuK6any1DyULYM4AJqw9pTHV+zgo+mbv5T
+         WKA+6sUPFzus/j+iZB/J+6kFFayAx9OUDQ8cBoxLcRY8QZtwjvIhorFRP8dGd7njU79N
+         fq8fIz4wiQaTeZW6pCSS//xRTGASeOKwTZAgRAT+X8lZXT1EE2UT6ZGRvsI4O2OoT/JZ
+         tEEQVh5z8L3e6LJ9O+CDxLpYZzD/l5C3v2YkxAjmpcmKib8A4buUFNe+BCI3WoTQFqfB
+         r7kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXMOccS6o4YsD4sGE3mK73T7ef70IkLNOEeli6A4jL6FPakCRkGWweyp3ymihD9f3LjjtklHnJGzY9MII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUQDAGZmDuY+t1X+MWxJwDKmIop9UBf7B8A5H+j0VqgsqvUx5p
+	Kk46L6gcJzrLqnGZkuOSwYm/RWfou5oxjUjbHogRD7tCS7xazEIOjPtXff0/yvg=
+X-Gm-Gg: ASbGncv0sm+hyxwokDZ4qif0Hw+vxcunxisy9nakwh/2GXoKAWk5PHv+eYdCkZqVXuE
+	pRBvi1/IUpMRaHSwIcoW0F/2GDoOtsexEZ2IxyIMXWtWCKxAQQqhpfDytwr8Qv5w4lRqudWJ8SD
+	/ikJ25J9cuvMKSlDUJ9Qi+ZykYJxojyo/2sy3LW+6KARLNyAf7cj65TIJ5L5sOW+I8ukyUapLI8
+	Y2OWBXITG7XHXTOtVfvPeP1xsMXuVMmiudGK3YLWABTxen2JhJy6l7gZIOU590Hem1twDdcfRt1
+	N+cHNntmEY0rBLcKB7HZtzOoIJSwcstAsj5KSNv/eazgYRVjqeXBYQ==
+X-Google-Smtp-Source: AGHT+IGc0R4jikBYLoD4kdApspmKli3hWqBkBAV/vMF0JaPNaKhRS5GIlRqwwYV+GGz7ZQ8tBLD2Fg==
+X-Received: by 2002:a05:6000:1ace:b0:38d:d0ca:fbad with SMTP id ffacd0b85a97d-38dea270cf3mr6983294f8f.14.1739447194514;
+        Thu, 13 Feb 2025 03:46:34 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:9591:8141:43d0:1ca6? ([2001:67c:2fbc:1:9591:8141:43d0:1ca6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8217sm1658833f8f.90.2025.02.13.03.46.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 03:46:34 -0800 (PST)
+Message-ID: <090524ac-724d-4915-8699-fe2ae736ab8c@openvpn.net>
+Date: Thu, 13 Feb 2025 12:46:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 190981 [Feb 13 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/02/13 05:44:00 #27202047
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v19 00/26] Introducing OpenVPN Data Channel
+ Offload
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+ steffen.klassert@secunet.com, antony.antony@secunet.com,
+ willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Shuah Khan <skhan@linuxfoundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20250211-b4-ovpn-v19-0-86d5daf2a47a@openvpn.net>
+ <Z60wIRjw5Id1VTal@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z60wIRjw5Id1VTal@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+On 13/02/2025 00:34, Sabrina Dubroca wrote:
+> Hello,
+> 
+> 2025-02-11, 01:39:53 +0100, Antonio Quartulli wrote:
+>> All minor and major reported problems have been finally addressed.
+>> Big thanks to Sabrina, who took the time to guide me through
+>> converting the peer socket to an RCU pointer.
+> 
+> Something is off (not sure if it's new to this version): if I use
+> test-tcp.sh to setup a set of interfaces and peers (I stop the test
+> just after setup to keep the environment alive), then remove all netns
+> with "ip -all netns delete", I expect all devices to go away, but they
+> don't. With debug messages enabled I'm seeing some activity from the
+> module ("tun0: sending keepalive to peer 3" and so on), and
+> ovpn_net_uninit/ovpn_priv_free never got called.
 
-[Why]
-The fault injection code may have a buffer underflow, which may cause
-memory corruption by writing a newline character before the base address of
-the array. This can happen if the fault->opcodes bitmap is empty.
+I can reproduce it. If later I rmmod ovpn I then get all the "Deleting 
+peer" messages.
+So instances are not being purged on netns exit.
 
-Since a file in debugfs is created with an empty bitmap, it is possible to
-read the file before any set bits are written to it.
+Will dive into it.
 
-[How]
-Fix this by checking that the size variable is greater than zero, otherwise
-return zero as the number of bytes read.
+> 
+> [...]
+>> So there is NO risk of deadlock (and indeed nothing hangs), but I
+>> couldn't find a way to make the warning go away.
+> 
+> I've spotted another splat on strparser cleanup that looked like an
+> actual deadlock, but it's not very reproducible. Still looking into
+> it, but I'm not convinced it's ok to call strp_done (as is done from
+> ovpn_tcp_socket_detach) while under lock_sock, because AFAIU
+> cancel_work_sync(&strp->work) may be waiting for a work that needs to
+> lock the socket (cb.lock in do_strp_work). I guess tcp_tx_work would
+> have the same problem.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
+Will have a look here too.
 
-Fixes: a74d5307caba ("IB/hfi1: Rework fault injection machinery")
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
----
- drivers/infiniband/hw/hfi1/fault.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/infiniband/hw/hfi1/fault.c b/drivers/infiniband/hw/hfi1/fault.c
-index ec9ee59fcf0c..2d87f9c8b89d 100644
---- a/drivers/infiniband/hw/hfi1/fault.c
-+++ b/drivers/infiniband/hw/hfi1/fault.c
-@@ -190,7 +190,8 @@ static ssize_t fault_opcodes_read(struct file *file, char __user *buf,
- 		bit = find_next_bit(fault->opcodes, bitsize, zero);
- 	}
- 	debugfs_file_put(file->f_path.dentry);
--	data[size - 1] = '\n';
-+	if (size)
-+		data[size - 1] = '\n';
- 	data[size] = '\0';
- 	ret = simple_read_from_buffer(buf, len, pos, data, size);
- free_data:
+
 -- 
-2.47.1
+Antonio Quartulli
+OpenVPN Inc.
 
 
