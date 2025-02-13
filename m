@@ -1,76 +1,63 @@
-Return-Path: <linux-kernel+bounces-513806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B4BA34EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:59:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D896A34EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D52116C73C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F6718905BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD4E24A07F;
-	Thu, 13 Feb 2025 19:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7EE24BBEB;
+	Thu, 13 Feb 2025 19:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bPLZTLDk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LHWbAqQs"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8669520764A;
-	Thu, 13 Feb 2025 19:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB2924A076;
+	Thu, 13 Feb 2025 19:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739476740; cv=none; b=nc2Fseq9Nyn544inF+YLB6RnRXcEDOrv+y2Rei3NfwANhemLOlQw9/3VqRpFJJ+wBaZdnAxp4W8Bd/yUNEEOgyVD5goeowMi+q9vKQR8w9ZquBmU0iy60w5+1FILNoZG35LBw45RWURHkrKyQcwLr0fpQd+Ka0cYDEf6UW9LR1E=
+	t=1739476787; cv=none; b=WF6UG1i1EYonhHxc85K43v+0RkIRH67cbyVmHdhJdmlZltrnH+Q+qst4ZzV0vwEn1aoIc0kQReZv8FeNaQ0FHFiY5OD7oWNXMjTe+yYH3Ai3vHH6FFd9EKyO2vz0wN6Fj4/xvHPBfUUWZnHnhgifW4zEjFG7mI1NRrY5UV5SKRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739476740; c=relaxed/simple;
-	bh=RyreHDxBizlFiBJyVrYaLJTxuTc8Y9j30c42u9G6/UU=;
+	s=arc-20240116; t=1739476787; c=relaxed/simple;
+	bh=3Sowh1r0kWd47yhxz2HEHH0eC2Ler+ksBAJZHwtixVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TITEwhYk3aogoDBAFicpw/0lHIctnepvtervQOyhkPvX1kvYkindNPd3VgGOSrwNT32A4t+fkPAxscHQnVJj46nZ551LU3RuX309G3/eBtZQWfqdyZUJjiHytIvuViz09R+pwR0dq1Pb12JIVN1XAfPagOkTS3/6C7nS4ncpEwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bPLZTLDk; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739476739; x=1771012739;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RyreHDxBizlFiBJyVrYaLJTxuTc8Y9j30c42u9G6/UU=;
-  b=bPLZTLDkVchks+IH7FOwrA3oXr089NiQS8blMg08Xsj02uFYPmveesxE
-   JV5v8ZDhW4CuFZLCDSxPm24Z8vYIBTu22s5Y/7EzOfrnOO2106NV2e5OY
-   W8czmsAiK2KutRbASW5mbYGazGit75Wu86anSJbl3ATYvR+xky8hQEY0z
-   ZOsAphbcGchmEPVMJpGKbXbfXN8cNV2hq01X1/zaQ8/vNMxbyYjcH6Oqf
-   iM+SEMh3mNTTHzUKvyZPoaJL9cWeLbZcW1Am9gyk1Uu6TRz+mUXmC811q
-   MG8R4b73aXoSgMeunBUOgqDfIeAOkuRQM8eRNnTAXbR20qzZ1bHDofM+k
-   Q==;
-X-CSE-ConnectionGUID: 51ssCiAEQS+z1KgrRA4YGg==
-X-CSE-MsgGUID: pjbd9bCVTM2P6wPiE8TCYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40355413"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="40355413"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:58:58 -0800
-X-CSE-ConnectionGUID: RZOTy1WsQEiPhZdbmarpAQ==
-X-CSE-MsgGUID: zdlZnutgQw+nzLEJWQLRWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117373760"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 11:58:56 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tifML-0000000BGwD-3DSN;
-	Thu, 13 Feb 2025 21:58:53 +0200
-Date: Thu, 13 Feb 2025 21:58:53 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqA3LjT8mCEec9YoRG69eHetvNhTmq/9I/X2QzyRoUwT5FXqNv3fZPICKalq9WXm1tey0lgBZAmW6VXDEcO1nwxbk8sO13ZvTzf4Bhtg2i2KedO3PTHBRvXq62Q32ovrGAfyr5gx0OpA2YpjDuLIGajgO4NX2GQYoiGbbeQRqcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LHWbAqQs; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=RZlI4HGYXokTX4zqJIJa74/QdyZEoxz2ZxabCm7uDZY=; b=LHWbAqQsNs8Xcff5WtgJG4/ujL
+	qWk/OzDcgaCgtZisxmAGVbkKlgq7ZYX1sDUxg9MweYPa+fQaY/GLYuUTpfODMeSvLCgd96Dxr8tSN
+	Bd5xru0cOVZfwBDAXsIasqAN3rIehsObeqHTrmdczlS6Grw8k97DSbN6p8rTQ+sbdg9s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tifN4-00DqVU-Hb; Thu, 13 Feb 2025 20:59:38 +0100
+Date: Thu, 13 Feb 2025 20:59:38 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: : Switch to use for_each_gpiochip_node()
- helper
-Message-ID: <Z65O_SaoSUcAY-rt@smile.fi.intel.com>
-References: <20250213193152.3120396-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add self test supported in
+ this module
+Message-ID: <6501012c-fecf-42b3-a70a-2c8a968b6fbd@lunn.ch>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-3-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,21 +66,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213193152.3120396-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250213035529.2402283-3-shaojijie@huawei.com>
 
-On Thu, Feb 13, 2025 at 09:31:52PM +0200, Andy Shevchenko wrote:
-> Switch the code to use for_each_gpiochip_node() helper.
+On Thu, Feb 13, 2025 at 11:55:24AM +0800, Jijie Shao wrote:
+> This patch supports many self test: Mac, SerDes and Phy.
 > 
-> While at it, correct header inclusion as device property APIs
-> are provided in property.h.
+> To implement self test, this patch implements a simple packet sending and
+> receiving function in the driver. By sending a packet in a specific format,
+> driver considers that the test is successful if the packet is received.
+> Otherwise, the test fails.
+> 
+> The SerDes hardware is on the BMC side, Therefore, when the SerDes loopback
+> need enabled, driver notifies the BMC through an event message.
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Linus, I forgot to update prefix. So, I will wait for other comments, etc.
-If no problems appear, can you fix that when applying, please?
+Please take a look at the work Gerhard Engleder is doing, and try not
+to reinvent net/core/selftest.c
 
--- 
-With Best Regards,
-Andy Shevchenko
+    Andrew
 
-
+---
+pw-bot: cr
 
