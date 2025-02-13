@@ -1,244 +1,166 @@
-Return-Path: <linux-kernel+bounces-514073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43B4A35215
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:19:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EC1A35217
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3821918904C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820CE16AAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 23:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A135A22D7A5;
-	Thu, 13 Feb 2025 23:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F1120C033;
+	Thu, 13 Feb 2025 23:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dP6jyFG8"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MaArMl49"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EED2753F5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4DE22D79E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739488774; cv=none; b=IoE1/EoBj8tBWL5vDOjzjuhJoW/7dQ1jZEpI7HUzQAjwMMbWhOGH4I8j62bCSPh8bDWmSbwRHWfUqI7ulwMBy8P900Q6p9bKWuJxFR+smmR1ibDSB/uF+YprIvMlcyjFmFMNO8Z3KQ2M03pQZFLQAnbr3dJaHXfxdkZ6At0ujtk=
+	t=1739488799; cv=none; b=iMFZ7XLYU5ABV8OfO9c3Ja3+SGabBv9YBSc2VeJ1R4qr03Hz2+6v8W8piUVZ8qu/eEaBeOZhzBd1k/8RTJvvD+JD784lJY61MinTsu95nEIRd469zcHyBcKSsdAaJBesKPuN/UdyJBbSl9hXmVYyt/nAfgAeohOpi233aSFYbEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739488774; c=relaxed/simple;
-	bh=mNuwk6eJJ3BTsUjIoxVw5EJ/v1CJeWZ3gHvSoarZpvA=;
+	s=arc-20240116; t=1739488799; c=relaxed/simple;
+	bh=A+h5agGwrDnZFBycmKAezBcfsgMpiv3ol3i+J+di2ZA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH7lwcMjLSpCro8x9r/nkO9drYjoYk2TGhNMKxjrdaDGaM0G+kkWTy23s1i41lCeGlHYSy8+Y3A1gMfPz0XLHVJVAC3bX3U5dkG77XKUsoI61wH/V9yxq35qjTGmf1R4nnhCS0/RA385DY6XSyu3d7vWyd8SgjQeFbVgCX11usI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dP6jyFG8; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4533d108-9617-4021-b7a9-befe209926da@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739488769;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oSXPrZoxLzPNG/Euhy17lhZtrC9rFIYBlvCtIyCZ97c=;
-	b=dP6jyFG80jsnyy08pXy455fiuID36V4Dtr5F+GP8o7gohIoGF1hfeMl6WBeJeESJUwn6Il
-	g/syUcKlWodHDLSRQ/sBdbsL1r1o2sHuC2vaLjY0/77XVluwijvsAwOR8TYmoi7ySKVUVK
-	QRXRM1Z9CYm/yUc0Kbck9UzH56TQPNc=
-Date: Thu, 13 Feb 2025 15:19:20 -0800
+	 In-Reply-To:Content-Type; b=ILmDHq5QSH47ycvWAtktHaQHI+FrWM/32qX+V50IAPFSwV3Lp8PIexdDuZBpRaRRU/IeSuptuKfmhk1JXgnR5RHJbvH/Vqir5ysZSv7O1FV7Fpciyi1T2rHk3/6/fMgMtYIcS+gNY8f5APWJS0hNcZe+7WuEmJljwxWLNvsTH0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MaArMl49; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739488798; x=1771024798;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=A+h5agGwrDnZFBycmKAezBcfsgMpiv3ol3i+J+di2ZA=;
+  b=MaArMl494Cos4ge3jEuZN+fm7TQqOcdptgidqUzXcM5a+rfWT/Vgi3gI
+   bpt5djOfIq+6cyOA8HdjmcP+jS8XWBIfRNKf2+ae1jf43aIDyKX0sr1Iy
+   eSh7T0N4BLskql53IOFmdfdPODp+U0l0dh5FAw5lI4lQsQZzagEj0t+z8
+   uls46kMEL+v2m4qpbLbCzNUWubeknSpoN2T3R3qBK4GUe7zmysC3tBv5z
+   L7MmIkQK4Y3e+BMTvdu119gm7WlUybC97mfBCzIagsBjsWGYKm/7oEQSs
+   zgg85SPTR/rmggyB/Or+1aSAjGm20WCx1ILIZi/9HUFhe4ySA8f0fJZEn
+   A==;
+X-CSE-ConnectionGUID: 0VWU5w8MT++sCUdjZKbO2Q==
+X-CSE-MsgGUID: eVzJ+8R1RYO7kYKqQ6TVhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39407943"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="39407943"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 15:19:57 -0800
+X-CSE-ConnectionGUID: Emd0lxTVSHuX265sd4q04Q==
+X-CSE-MsgGUID: QlSt+aKVRL2F6y+w5TqBaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="144224972"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.188]) ([10.125.108.188])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 15:19:56 -0800
+Message-ID: <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com>
+Date: Thu, 13 Feb 2025 15:19:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] bpf-next: selftest for TCP_ULP in bpf_setsockopt
-To: zhangmingyi <zhangmingyi5@huawei.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, song@kernel.org,
- yhs@fb.com, john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, yanan@huawei.com, wuchangye@huawei.com,
- xiesongyang@huawei.com, liuxin350@huawei.com, liwei883@huawei.com,
- tianmuyang@huawei.com
-References: <20250210134550.3189616-1-zhangmingyi5@huawei.com>
- <20250210134550.3189616-3-zhangmingyi5@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
+To: "Xing, Cedric" <cedric.xing@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
+ <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
+ <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
+ <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
+ <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20250210134550.3189616-3-zhangmingyi5@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2/10/25 5:45 AM, zhangmingyi wrote:
-> From: Mingyi Zhang <zhangmingyi5@huawei.com>
+On 2/13/25 13:50, Xing, Cedric wrote:
+> On 2/13/2025 10:58 AM, Dave Hansen wrote:
+...
+>> Wait a sec, so there's already ABI for manipulating these? This just
+>> adds a parallel sysfs interface to the existing ABI?
+>>
+> No, this is new. There's no existing ABI for accessing measurement
+> registers from within a TVM (TEE VM). Currently, on TDX for example,
+> reading TDX measurement registers (MRs) must be done by getting a TD
+> quote. And there's no way to extend any RTMRs. Therefore, it would be
+> much easier end users to debug/diagnose measurement related issues
+> (which would almost always require reading MRs) with this patch.
+
+Ok, that makes sense.
+
+But if this is for debug, wouldn't these belong better in debugfs? Do we
+really want to maintain this interface forever? There's no shame in debugfs.
+
+>> Also, you're saying that users don't need to write any code, but then
+>> provide... sample code. That's unexpected.
+>>
+> The sample code is to demo how to expose MRs from a CC guest driver, but
+> not for end users to access those MRs.
 > 
-> We try to use bpf_set/getsockopt to set/get TCP_ULP in sockops, and "tls"
-> need connect is established.To avoid impacting other test cases, I have
-> written a separate test case file.
-> 
-> Signed-off-by: Mingyi Zhang <zhangmingyi5@huawei.com>
-> Signed-off-by: Xin Liu <liuxin350@huawei.com>
-> ---
->   .../bpf/prog_tests/setget_sockopt_tcp_ulp.c   | 78 +++++++++++++++++++
->   .../bpf/progs/setget_sockopt_tcp_ulp.c        | 33 ++++++++
->   2 files changed, 111 insertions(+)
->   create mode 100644 tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
->   create mode 100644 tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
-> new file mode 100644
-> index 000000000000..748da2c7d255
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt_tcp_ulp.c
-> @@ -0,0 +1,78 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
+>> Oh, and you seem to have forgotten to attach the sysfs ABI documentation
+>> patch to the series. You did write the required documentation, right? ;)
+> Documentation/ABI/testing/sysfs-kernel-tsm (new file added by patch 1)
+> contains a description on the attributes added by the patch.
 
-This is not right.
+Whoops! I went looking for it but I'm blind, evidently. Thanks for
+pointing it out.
 
-> +
-> +#define _GNU_SOURCE
-> +#include <net/if.h>
-> +
-> +#include "test_progs.h"
-> +#include "network_helpers.h"
-> +
-> +#include "setget_sockopt_tcp_ulp.skel.h"
-> +
-> +#define CG_NAME "/setget-sockopt-tcp-ulp-test"
-> +
-> +static const char addr4_str[] = "127.0.0.1";
-> +static const char addr6_str[] = "::1";
-> +static struct setget_sockopt_tcp_ulp *skel;
-> +static int cg_fd;
-> +
-> +static int create_netns(void)
-> +{
-> +	if (!ASSERT_OK(unshare(CLONE_NEWNET), "create netns"))
-> +		return -1;
-> +	if (!ASSERT_OK(system("ip link set dev lo up"), "set lo up"))
-> +		return -1;
-> +	return 0;
-> +}
-> +
-> +static int modprobe_tls(void)
-> +{
-> +	if (!ASSERT_OK(system("modprobe tls"), "tls modprobe failed"))
-> +		return -1;
-> +	return 0;
-> +}
-> +
-> +static void test_tcp_ulp(int family)
-
-First, the bpf CI still fails to compile for the same reason as v1. You should 
-have received an email from bpf CI bot. Please ensure it is addressed first 
-before reposting. This repeated bpf CI error is an automatic nack.
-
-pw-bot: cr
-
-The subject tagging should be "[PATCH v2 bpf-next ...] selftests/bpf: ... ". 
-There are many examples to follow in the mailing list if it is not clear.
-
-Regarding the v1 comment: "...separate it out into its own BPF program..."
-
-The comment was made at the bpf prog file, "progs/setget_sockopt.c". I meant 
-only create a separate bpf program. The user space part can stay in 
-prog_tests/setget_sockopt.c.
-
-Move this function, test_tcp_ulp, to prog_tests/setget_sockopt.c. Then all the 
-above config preparation codes and the test_setget_sockopt_tcp_ulp() can be 
-saved. modprobe_tls() is not needed also. Do it after the test_ktls().
-Take a look at test_nonstandard_opt() in prog_tests/setget_sockopt.c.
-It is testing another bpf prog in the same prog_tests/setget_sockopt.c.
-
-Also, for the bpf prog, do you really need to test at 
-BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB? If not, just testing at 
-SEC("lsm_cgroup/socket_post_create") will be easier. You can detach the 
-previously attached skel->links.socket_post_create by using bpf_link__destroy() 
-first and then attach yours bpf prog to do the test.
-
-> +{
-> +	struct setget_sockopt_tcp_ulp__bss *bss = skel->bss;
-> +	int sfd, cfd;
-> +
-> +	memset(bss, 0, sizeof(*bss));
-> +	sfd = start_server(family, SOCK_STREAM,
-> +			   family == AF_INET6 ? addr6_str : addr4_str, 0, 0);
-> +	if (!ASSERT_GE(sfd, 0, "start_server"))
-> +		return;
-> +
-> +	cfd = connect_to_fd(sfd, 0);
-> +	if (!ASSERT_GE(cfd, 0, "connect_to_fd_server")) {
-> +		close(sfd);
-> +		return;
-> +	}
-> +	close(sfd);
-> +	close(cfd);
-> +
-> +	ASSERT_EQ(bss->nr_tcp_ulp, 3, "nr_tcp_ulp");
-> +}
-> +
-> +void test_setget_sockopt_tcp_ulp(void)
-> +{
-> +	cg_fd = test__join_cgroup(CG_NAME);
-> +	if (cg_fd < 0)
-> +		return;
-> +	if (create_netns() && modprobe_tls())
-> +		goto done;
-> +	skel = setget_sockopt_tcp_ulp__open();
-> +	if (!ASSERT_OK_PTR(skel, "open skel"))
-> +		goto done;
-> +	if (!ASSERT_OK(setget_sockopt_tcp_ulp__load(skel), "load skel"))
-> +		goto done;
-> +	skel->links.skops_sockopt_tcp_ulp =
-> +		bpf_program__attach_cgroup(skel->progs.skops_sockopt_tcp_ulp, cg_fd);
-> +	if (!ASSERT_OK_PTR(skel->links.skops_sockopt_tcp_ulp, "attach_cgroup"))
-> +		goto done;
-> +	test_tcp_ulp(AF_INET);
-> +	test_tcp_ulp(AF_INET6);
-> +done:
-> +	setget_sockopt_tcp_ulp__destroy(skel);
-> +	close(cg_fd);
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> new file mode 100644
-> index 000000000000..bd1009766463
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/setget_sockopt_tcp_ulp.c
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) Meta Platforms, Inc. and affiliates. */
-
-Same here.
-
-> +
-> +#include "vmlinux.h"
-> +#include "bpf_tracing_net.h"
-> +#include <bpf/bpf_helpers.h>
-> +
-> +int nr_tcp_ulp;
-> +
-> +SEC("sockops")
-> +int skops_sockopt_tcp_ulp(struct bpf_sock_ops *skops)
-> +{
-> +	static const char target_ulp[] = "tls";
-> +	char verify_ulp[sizeof(target_ulp)];
-> +
-> +	switch (skops->op) {
-> +	case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
-> +		if (bpf_setsockopt(skops, IPPROTO_TCP, TCP_ULP, (void *)target_ulp,
-> +							sizeof(target_ulp)) != 0)
-> +			return 1;
-> +		nr_tcp_ulp++;
-> +		if (bpf_getsockopt(skops, IPPROTO_TCP, TCP_ULP, verify_ulp,
-> +							sizeof(verify_ulp)) != 0)
-> +			return 1;
-> +		nr_tcp_ulp++;
-> +		if (bpf_strncmp(verify_ulp, sizeof(target_ulp), "tls") != 0)
-> +			return 1;
-> +		nr_tcp_ulp++;
-> +	}
-> +	return 1;
-> +}
-> +
-> +char _license[] SEC("license") = "GPL";
-> \ No newline at end of file
 
 
