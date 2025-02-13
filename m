@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-512769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43F7A33D8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B413A33D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7B9162CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DEB165034
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAC42147F7;
-	Thu, 13 Feb 2025 11:13:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4727B2144AF;
-	Thu, 13 Feb 2025 11:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1CD214A65;
+	Thu, 13 Feb 2025 11:13:43 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F1D20AF66;
+	Thu, 13 Feb 2025 11:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445204; cv=none; b=MErwvVFdbMY1vZhFblAch3s/4tVuQCi7mzR0MT/t4ROoMCHqwxaS3pLB1M0Sq2iU+jY7rOPHdmzaIKzFuUFPabddlzpfg0Y2SHwqlf2fQ1+kr3pyFJpRbbEF3YeMFBC25pWWUeeyoeneELA+f9QKNCsMYuT/W80wp1/yfuY37fQ=
+	t=1739445222; cv=none; b=eEdBHXCUlTISt8RKmFfEKQTCzLlqkdSt6kxtbw/UtvnC1qKNtdEC4K5pPUrmc4rLMWOg/heBoVXY3VsDdXZZy8c2BoyEthkL7H4Zo+GkBUVPFil5s228LuzdynaDLjBRfINdZu8BrQY04S7ezj9JmizsDOn9HScswIo0zosoKS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445204; c=relaxed/simple;
-	bh=arRIVSK6KM+bn9LPg+TCwveAAMQvWokH45zS6QwuOOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P7TP/giT72SSoejWGCU1WAVlvao6rNEGkj7VRUzOiHQ8N7PKrlvwpl6j4F+U5uuONFAzs3IRm5R9qZlJjKVE9iUJjgyhKeXYpPXwTR71RATAIIcW+PbWMTez9TFsZHPJHM2V/uaB3vwuT7UMl9Z/dxM5qo+QXvGdx1efZSFaFgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1109B113E;
-	Thu, 13 Feb 2025 03:13:42 -0800 (PST)
-Received: from [10.57.37.151] (unknown [10.57.37.151])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B8743F6A8;
-	Thu, 13 Feb 2025 03:13:19 -0800 (PST)
-Message-ID: <21ba3465-9e24-4b5a-a239-4a3ed5bf2309@arm.com>
-Date: Thu, 13 Feb 2025 11:13:17 +0000
+	s=arc-20240116; t=1739445222; c=relaxed/simple;
+	bh=uBbuyzSkt8awEsdjpCoyug75xEtJcJzY3ERuKiAc0z4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q5Jdhdnf7ac6bha3KNoN0ROIoIi24r2engAcs/9AQJim9X4vS+aaNV5w+yLMkO7sHLHCf240NeeF9hprEpvxTLwlxXKN6gZRHXpI7vyD8lhK1yJJrI8tRtcr+1wWo65YkWa3uWeRIMHlgj3G+mdmxk0wz/294RCQFZf+66cMnOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Ytsrv5vcRz2FdXd;
+	Thu, 13 Feb 2025 19:09:35 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0608A180042;
+	Thu, 13 Feb 2025 19:13:23 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Feb 2025 19:13:22 +0800
+Message-ID: <febbedb5-4d37-4799-83f6-6f1add26a2fd@huawei.com>
+Date: Thu, 13 Feb 2025 19:13:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,116 +47,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and register
- regulator notifiers
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
- <96959ef4-2287-4601-85fb-2ce457c605d2@arm.com>
- <Z620Ei5FwhhPfBu9@pengutronix.de>
+Subject: Re: [PATCH net-next v9 0/4] fix the DMA API misuse problem for
+ page_pool
+To: Matthew Wilcox <willy@infradead.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<zhangkun09@huawei.com>, <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Robin Murphy
+	<robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, Andrew
+ Morton <akpm@linux-foundation.org>, IOMMU <iommu@lists.linux.dev>, MM
+	<linux-mm@kvack.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <netdev@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+References: <20250212092552.1779679-1-linyunsheng@huawei.com>
+ <Z6zuLJU7o_gRsQRu@casper.infradead.org>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z620Ei5FwhhPfBu9@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <Z6zuLJU7o_gRsQRu@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2/13/25 08:57, Oleksij Rempel wrote:
-> On Wed, Feb 12, 2025 at 11:47:08PM +0000, Christian Loehle wrote:
->> On 2/12/25 13:24, Oleksij Rempel wrote:
->>> Extend the MMC core to handle undervoltage events by implementing
->>> infrastructure to notify the MMC bus about voltage drops.
->>>
->>> Background & Decision at LPC24:
->>>
->>> This solution was proposed and refined during LPC24 in the talk
->>> "Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
->>> Embedded Systems" which aimed to address how Linux should handle power
->>> fluctuations in embedded devices to prevent data corruption or storage
->>> damage.
->>>
->>> At the time, multiple possible solutions were considered:
->>>
->>> 1. Triggering a system-wide suspend or shutdown: when undervoltage is
->>>    detected, with device-specific prioritization to ensure critical
->>>    components shut down first.
->>>    - This approach was disliked by Greg Kroah-Hartman, as it introduced
->>>      complexity and was not suitable for all use cases.
->>>
->>> 2. Notifying relevant devices through the regulator framework: to allow
->>>    graceful per-device handling.
->>>    - This approach was agreed upon as the most acceptable: by participants
->>>      in the discussion, including Greg Kroah-Hartman, Mark Brown,
->>>      and Rafael J. Wysocki.
->>>    - This patch implements that decision by integrating undervoltage
->>>      handling into the MMC subsystem.
->>>
->>> This patch was tested on iMX8MP based system with SDHCI controller.
+On 2025/2/13 2:53, Matthew Wilcox wrote:
+> On Wed, Feb 12, 2025 at 05:25:47PM +0800, Yunsheng Lin wrote:
+>> This patchset fix the dma API misuse problem as mentioned in [1].
 >>
->> Any details here? How long does it take from undervoltage to
->> poweroff notification.
+>> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
 > 
-> On this system, with current implementation, it takes 4.5 millisecond
-> from voltage drop detection to mmc_poweroff_notify.
+> That's a very long and complicated thread.  I gave up.  You need to
+> provide a proper description of the problem.
+
+The description of the problem is in the commit log of patch 2
+as something below:
+"Networking driver with page_pool support may hand over page
+still with dma mapping to network stack and try to reuse that
+page after network stack is done with it and passes it back
+to page_pool to avoid the penalty of dma mapping/unmapping.
+With all the caching in the network stack, some pages may be
+held in the network stack without returning to the page_pool
+soon enough, and with VF disable causing the driver unbound,
+the page_pool does not stop the driver from doing it's
+unbounding work, instead page_pool uses workqueue to check
+if there is some pages coming back from the network stack
+periodically, if there is any, it will do the dma unmmapping
+related cleanup work.
+
+As mentioned in [1], attempting DMA unmaps after the driver
+has already unbound may leak resources or at worst corrupt
+memory. Fundamentally, the page pool code cannot allow DMA
+mappings to outlive the driver they belong to."
+
+
+The description of the fixing is also in the commit log of patch 2
+as below:
+"By using the 'struct page_pool_item' referenced by page->pp_item,
+page_pool is not only able to keep track of the inflight page to
+do dma unmmaping if some pages are still handled in networking
+stack when page_pool_destroy() is called, and networking stack is
+also able to find the page_pool owning the page when returning
+pages back into page_pool:
+1. When a page is added to the page_pool, an item is deleted from
+   pool->hold_items and set the 'pp_netmem' pointing to that page
+   and set item->state and item->pp_netmem accordingly in order to
+   keep track of that page, refill from pool->release_items when
+   pool->hold_items is empty or use the item from pool->slow_items
+   when fast items run out.
+2. When a page is released from the page_pool, it is able to tell
+   which page_pool this page belongs to by masking off the lower
+   bits of the pointer to page_pool_item *item, as the 'struct
+   page_pool_item_block' is stored in the top of a struct page. And
+   after clearing the pp_item->state', the item for the released page
+   is added back to pool->release_items so that it can be reused for
+   new pages or just free it when it is from the pool->slow_items.
+3. When page_pool_destroy() is called, item->state is used to tell if
+   a specific item is being used/dma mapped or not by scanning all the
+   item blocks in pool->item_blocks, then item->netmem can be used to
+   do the dma unmmaping if the corresponding inflight page is dma
+   mapped."
+
+it is worth to mention that the changing of page->pp to page->pp_item
+for the above fix may be able to enable the decoupling page_pool from
+using the metadata of 'struct page' if folios only provide a memdesc
+pointer to the page_pool subsystem in the future as pp_item may be
+used as the metadata replacement of existing 'struct page'.
+
 > 
->> Roughly how long of a heads up would that yield in realistic
->> undervoltage scenarios?
-> 
-> It depends on the board implementation and attached power supply.
-> In my case, the testing system provides about 100ms capacity on board.
-> The power supply provides additional 1-2 seconds.
-> 
-> If the power is cut between power supply and board, we will have max
-> 100ms.
-
-Thanks, that's not too bad then.
-
-> 
->>> +static int _mmc_handle_undervoltage(struct mmc_host *host)
->>> +{
->>> +	return mmc_shutdown(host);
->>> +}
->>> +
->>
->> The poweroff notification part I understand, because it polls for busy
->> (i.e. hopefully until the card thinks it's done committing to flash).
->> Poweroff isn't always available though, the other paths of
->> _mmc_suspend() are:
->>
->> 	else if (mmc_can_sleep(host->card))
->> 		err = mmc_sleep(host);
->> 	else if (!mmc_host_is_spi(host))
->> 		err = mmc_deselect_cards(host);
->>
->> 	if (!err) {
->> 		mmc_power_off(host);
->>
->> So we may also just deselect, which AFAIR succeeds as a FSM (i.e.
->> doesn't mean anything was committed to flash) and then we just
->> poweroff.
->> Is that what we want in an undervoltage scenario?
-> 
-> Yes. In an undervoltage scenario, our primary priority is to protect the
-> hardware from damage. Data integrity is secondary in this case. The most
-> critical action is to immediately stop writing to the card.  
-
-Protect hardware from damage by not having the powerfail during a
-host-write? An active host-write command doesn't sound like the
-actual cause, any writing metadata to flash more likely, which in the
-deselect->poweroff case isn't ensured at all to not be the case.
-
-While I still think this should be handled at procurement instead of the
-kernel (especially if you don't even care about data integrity?), I'd
-still be interested how we would ensure we aren't doing more harm than
-good here.
-Any info from some vendors how they implement any of these? IME only
-poweroff notify would do anything at all to help and if that isn't
-available we should leave the voltage up for the card and idle.
-
-FWIW poweroff notify should probably be
-EXT_CSD_POWER_OFF_SHORT
-instead of the current EXT_CSD_POWER_OFF_LONG for your intended use case.
-
 
