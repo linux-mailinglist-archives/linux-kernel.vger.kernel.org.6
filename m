@@ -1,369 +1,371 @@
-Return-Path: <linux-kernel+bounces-513285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA27A3487A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D02A3487C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0B13A8F7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9369518840FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457CC19CD07;
-	Thu, 13 Feb 2025 15:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F41CBEAA;
+	Thu, 13 Feb 2025 15:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="R4dLRC8a"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="Crcp0V80";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="erq+gZpb"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1182D14658D;
-	Thu, 13 Feb 2025 15:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739461429; cv=fail; b=VrMF+N+SVOzRtAH2AJCxZAw9jnWYo1fYFjE3AVgODDCCHBaK2+Eqa4U+BRHUnbK+gP8iwP9Os1uXgaboHDtag8+yQ3Gja5F9kacNQgl7Z5bfykx1oDJ83fTs74aOJVyK12jpub3xdKjn/V+qfjwUynkDe5ge0tU/S6zxe33758U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739461429; c=relaxed/simple;
-	bh=0dXvG93vVhqHBKF9kLIHeR49Bfo7CpqDPfB0bkRhhvo=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iCz1i6A9MC5qJ/JIzGPnddlxFislyQaTyefVRRf66dNsummbg7v+2DI9vtSmQitXkx/d55FI1xQHnmkyeDbMjr9xH3sl90jaOzE+piBz+8EERxB9OCtoUBAqTQW8RWs7WPeZmtl8H0aR8M+c+ble5sPAE7AhLCcYKBZTIug2F7k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=R4dLRC8a; arc=fail smtp.client-ip=40.107.223.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nva37x0x9QTHQBaBT6AzvkxpRHlyrcvebitR+fsqFlHV00D2RS00F/FSfLFUsi9qpSX9vQvCXC0RlZPoTZA23zIkTqooUHtZc/ugARglS89WrbT10L6aUJPZO4gR5O+B0ARz/DiArkO+cAZ02WR0HY1BIINoMXxjqyDuCUD7UG5WKp/ur5S8AvKWbtqgW8hY7Ky8WXRerAIMGY9xo7/ALwGybCSN2A03QRbnmWqtrFZrM7YnllvtMlfzARiDEyxLcXv8J4TT21NvOsIzmbcKHvAeIQlcSqoqyIUp9pVe4BKDiDTlnH+0HRa/RCAZ+z0vrkvrg6/+zUIWhubcsAL+qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zun6O4wdV1a+kedfzZgxB6TgKTJv0H5rfttt1BTvN70=;
- b=Pfw7CpHjCqkOXI44U4ymOiMfeW5kBFRus/LEXQayAKpMkKJog4xtB8oJLiyRXeo4AFOCnmwPbluG1i3LjoEzbdk7WAY16S+oKPxJlXAZchmbQ6vnohdGFZDr16oKVnHCekJgibm3fL/Q1HDMn7lF6dhmG3k5jzxjmTDxp1Xm/6XUBPe6/qPC8kZ/fPXQhMa2WjNE3J83KNzuJjk6rP/Y/9QRzqzGQfO23TbLugmw3liEe4zHmY1DI3VaMWs+vEPTjPT3tsTUhVrekqfa+KxjoICQ+eRvnlBbYNfwdvSAScDqugpzdTo6+SLYWpIGmeZorOyKlVm54TO4LeNyV2Ztqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zun6O4wdV1a+kedfzZgxB6TgKTJv0H5rfttt1BTvN70=;
- b=R4dLRC8ayzvxLIaZTAI43LRLQG0++CSApNvfpQAfP5eu5tCyYo+Pafa4z5aTMk+ES4UyJ+FWHEy9tivLcGK2GhwZW5PmP6+QYIAe3uFo3i/F3NzzZ4BCfKBQyHYugsycpbARJfYRKodAxhzmX9oISv9KNICogWyP+Ktx6xy1DJw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Thu, 13 Feb 2025 15:43:44 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8422.010; Thu, 13 Feb 2025
- 15:43:44 +0000
-Message-ID: <609a02bb-3271-4021-9499-8b281a959f62@amd.com>
-Date: Thu, 13 Feb 2025 09:43:40 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 07/17] cxl/pci: Map CXL PCIe Root Port and Downstream
- Switch Port RAS registers
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com,
- lukas@wunner.de, ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-8-terry.bowman@amd.com>
- <67abf81f4617b_2d1e2946a@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <67abf81f4617b_2d1e2946a@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1PR03CA0014.namprd03.prod.outlook.com
- (2603:10b6:806:2d3::10) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6D244C7C;
+	Thu, 13 Feb 2025 15:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739461580; cv=none; b=qIaPN1o/0SfSBGx3yUHJi43uUYLXuA46NnxU2Y74eHy6YfLSjqNsSDXp6YwYXZ3OI9+U21n7A39Mr93MlntYUMtdLA3x347BP+/xiM7fhpIOiWhqFZ0mAVwxhSoTNwBtIi61X+LZeisGkxdQy/f60IcYLbsK9iSMvGUmL4iZ+Mg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739461580; c=relaxed/simple;
+	bh=gvUZcnnQ5S3I/6Ed9Im/T5u1wze2xU99aehyrFj4ZGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aj/F49WHKuf5Jgrg716MkQMoWn66MAa/Kp7cdGNZwvZeitzukNjeSvbk63ie3W0v/227+wLKxDfTjn+Og0ZRcUBQYIaTtDE730USzyVYG1co6b0BPq4NhJI8yDKDkvQTq+FyQjKk1W3e+th5snEnkX1uQ+GOJBGrgkXfcIPmBBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=Crcp0V80; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=erq+gZpb; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id A812D1140105;
+	Thu, 13 Feb 2025 10:46:14 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 13 Feb 2025 10:46:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1739461574; x=
+	1739547974; bh=flUcINtEEcqp3xh3oLozl64817tCecBtw4bDJgRumQM=; b=C
+	rcp0V80x1cf0mq+BpDJSAYlErFSXbbhdvLiBBFJVaGKMfPih2bCOsnNSpeIAo2EM
+	tHCKM4fekrRzm62x4Z2Ljy/qOIqE5vrY0YgtJ296dChT/plfDsybjU6+nfcgg4tF
+	gK5kubDNE7ucFDKG4TcL4dRtERlYAuSjJTwppc/ytMJCPNLKCWKYdJS/AgXHgULG
+	qLMBTW+7N47er+KX4GegfiKXXnPgKDa8DI6EyNMGPFgVcD2S/NxeFaGRziX8a3j4
+	AvGg5+khktWWYSVIBg30O54OZVo/wOPydVTPhyINR/OVsnNhm7u+0KItz8xoUPwK
+	jg26Q+tsyO5m0D6K3DwbA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739461574; x=1739547974; bh=flUcINtEEcqp3xh3oLozl64817tCecBtw4b
+	DJgRumQM=; b=erq+gZpbkIbDaZZuEIzUD7wvbwy8vVeVxjAGNsjd375/0HfE+4H
+	hj/lwF/1RXPmws4Q3IskMOHPeXAkBGgZejqJSbzGIV8lc+bV1xRf3BdFUvzWCXj3
+	jyUtSfS62C02TfTqumlBfjFhDdrRb23KhBKuD/F7QQuJV3JBYklEQ01MzllTNaWi
+	oaz50IakiG7omIc+JrZ78SyreoW6MrBSqLzlnfioDE58ydwiQkFdvqwQLlnDO63S
+	XVIURPfG67vKl8NggdO2lcbG9HO0fBRW+h4pJ/t4Ql6GPFindTxeuI4WeuqKfFCb
+	uoCASrVthMaviR9jh+uJqjNJGUewdWGd3GA==
+X-ME-Sender: <xms:xROuZy2mIyZeJDbj8B1k5QYFQC6NKBl_QDNzDTTCkc59OUNMWrSInA>
+    <xme:xROuZ1FL7MMBa44A9pD_7PdXzHbldSZOGn38fYh5HkCY1mYeO-1sCH1WPpOSWyRvg
+    PH1M03dp0hGhVUhVjA>
+X-ME-Received: <xmr:xROuZ64vU1tDisaGoqwKxUqYia3WkAvhTbn3bQbgIXIccaC_IeI_CfFe4qu8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
+    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefh
+    keegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgs
+    pghrtghpthhtohepvddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtoh
+    hnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
+    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvg
+    hrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpth
+    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-ME-Proxy: <xmx:xROuZz0NjbwXMzJydHsm2742v2z4qALWwOm3wq8icwmkKBFdyHbd4Q>
+    <xmx:xROuZ1E1c1gPBXYJGWxXLd6fpkC2YnrEmMzPSZDPb7eTQ_ttos-2aw>
+    <xmx:xROuZ88VhxBCBghNvOXb0OPfZ6q0A9QnOqj4sJcDCFmGYvgLTXpzFQ>
+    <xmx:xROuZ6nUjXZtrJM4B05ZutU4fPAGBCY4kxK_cwy1S63_mT1oblHUzA>
+    <xmx:xhOuZwkmbS0PbxX_jvq7qHkyFKyWfYmY3Y1mXyxkUXeIYYaCdXdiT8Kv>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Feb 2025 10:46:13 -0500 (EST)
+Date: Thu, 13 Feb 2025 16:46:11 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+	steffen.klassert@secunet.com, antony.antony@secunet.com,
+	willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH net-next v19 00/26] Introducing OpenVPN Data Channel
+ Offload
+Message-ID: <Z64Tw02PO433bob8@hog>
+References: <20250211-b4-ovpn-v19-0-86d5daf2a47a@openvpn.net>
+ <Z60wIRjw5Id1VTal@hog>
+ <090524ac-724d-4915-8699-fe2ae736ab8c@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|DM4PR12MB7767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2d799f4e-eb9a-425b-87f4-08dd4c4532bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VksxSHhlYjhLV3BiVjZIOU9hU2pXUzRpdFdoaGZ3YkpIajExZFE1b3I5ZGNN?=
- =?utf-8?B?VjhlTkpkRXIxa0xQaXo2L21vcmJYVldSQXB5dzM1RU8rTzgvTnNYMGEzMkFi?=
- =?utf-8?B?VWkwNVY1cEs0LzdsSDBWTE5mcjR5M1RaRms2d2xnYlZ4M2lCU1Y4VjhVNjU0?=
- =?utf-8?B?NWpFNERaKzJKK1F5M2R0aWdwbVd0MWZhRnBOTC9YcWVGeitRMERJRTlsZDNv?=
- =?utf-8?B?NFBGTUdNWHRlcXF3S0hQa0Z5Q3Y2ZEY3b0tLQ2tWMmUreExkUk1xTm5Oc05Q?=
- =?utf-8?B?UitkSlVsUTNtcHUxWHVGL1RuM0JTTHQ5dGp0Ui9GcUpYdXVWS2h1bnBXclR6?=
- =?utf-8?B?NEZMQnpFUHdLWHN5NWtTRFQxWnYvMXdzaU1Rc2VHbjV4VW53V0hMelgxUG1n?=
- =?utf-8?B?Y1JtN1FRTmJMMnZ6RTRHR05wSkkxV21zME9BS292V3h4NlgwanhVSGxUNk9P?=
- =?utf-8?B?SFdhWWdSQmxkZTY0SkFtR2FVTEl4UVFWNVVQQlNHOE10TCtmMFNFbXc4aGtn?=
- =?utf-8?B?czNIVDBGS3JyaHEvc0tMOGJ4SCszemY3OGlneGpnNDdqN0ZOMEpKbDRybUE3?=
- =?utf-8?B?OVBJTEh2YzhSVkd4Qy9aSEF2RlBZNlpYYUpVVTdBcnNRdXFjdGxRd0hBNWJ1?=
- =?utf-8?B?WDBELzlQdkJUK3hDRzZnVzBwRHhjbzhYdCs5U0FLcmY2QW5WOHUvUExxOTkx?=
- =?utf-8?B?MktuT29pRU5iZGdkblJsanU4UWJPUUtnRnFlcTh5eEpPRSt1RlRqSVpOWFdU?=
- =?utf-8?B?N1JOR0xab2xlNEhTVndhVU9rNUFDZTBHTnljVW9UMmRhYU8vRlFTYkZsQVpO?=
- =?utf-8?B?d1lxZEVhRnVrZ0FjRmw2ZlFoQWhzQ1JBc084MGxpMnpDMFcyRTNSNklNeXhw?=
- =?utf-8?B?NndMWVRycjQvTmZSOCtTVGVKVFU1MFFBckRJRnNIbjltVzNpYkg3UTdwOXY2?=
- =?utf-8?B?a2pHTzVPWDQvbDdiaTBEaU14YjdZY1lrQnNTY1owMmRFcVpzVDQ2SXRZdkdn?=
- =?utf-8?B?ZU55SVpBbjVRNktwVlpENU5kaDlYSVRBLy9LVFhIcFVPb0pwbnI4K3ZCZUVa?=
- =?utf-8?B?aGVaM2twKzhRMWNkTFQ3NTlFbm9kSFJXT241Ukp1cDJ4YjBNNXBXbVVGczJY?=
- =?utf-8?B?SmNXaUJxeDNkVGg5QXVTQ2RMTDhadjlkSjY1V3k5Z1JuRzZDcUN0c3hjbUJD?=
- =?utf-8?B?ZUVxUUtaWHp2bUlKUFBuQmlYYWtnMW9EZDl1anBUVzhPRzVRY1F2VHRzRHdW?=
- =?utf-8?B?b3p2M0dxdFVZd2pMUXRQeURoWi9iT05EU2djcUZNT2NWQWpGVEl4SjN6NU9m?=
- =?utf-8?B?V2d6Y3pqQW93ZHJ6eHQwQmtDZE00RjFXVTV0RGlQMWpmcWtkTkRpWWNPRlRr?=
- =?utf-8?B?SkFxV296Qy9VdDN0SExpYVlCUTByME80c2VJV0t1RloxZjFpYk5wRzU2YWQ4?=
- =?utf-8?B?UTVFZ1ByTVFWcldBZTJpdTU5eHV6SGtTT2pFdUJjNnpHQ010RTFaQ3JkZmhu?=
- =?utf-8?B?UnVEeHVSZDZSL3dDb0hudktRVTFPSDl4S1JUTVZCK1RkRURFOENwdGJhSTZa?=
- =?utf-8?B?Z0M2Y0dtQm9CWUpwWEEzRUROYzZJZndVekRlS0wzUlZHMGF2Tkh6T1VSWGpy?=
- =?utf-8?B?N0JJemQ0aXhUQzErYmxPM2JYWTNvYkkrbXY2YTJ2WmNNRlNHRjg5Vjd3dlQx?=
- =?utf-8?B?R1ZRVEF0V3h0c1VlaGxNZC9JeDRneE83NDdmV2NDUjNrTGt1T3dHcGIwYnFL?=
- =?utf-8?B?V2ZiRnBvMXRyb2JNRmtTT3c2ZnkrWERKMkRBeWFFYWdjZjRNWE12bTRXUkFq?=
- =?utf-8?B?OWplRGRYL3JjYlpBVGFrSVV1M3JyYUZ1RWRSVnRFalZPa0xINEpBZlN4UU1O?=
- =?utf-8?B?OFg4Tm5NRFhyQm1TcjZwNGw1eGUwNC9HMHBCMEFZVGhVNWxZTGR0SWR4d2kv?=
- =?utf-8?Q?JQaQCOnhiUc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NTQ0THp3RnpWeG5NM1BYY3ExcnNCaGtMTS94UzE0K25HRVdNQzNKWGlYdzlT?=
- =?utf-8?B?TGpkUDRsZEE5eTFIVmtDa0hEV1VmTzVDNC9sa3drSURTMGtHV3Ivekw1WXJR?=
- =?utf-8?B?Z2FlZHFZUEdPcWEybkUwUEFvYnhaN1hLeGhHbGkrMmpSbjJUUEw5QzlvSDJa?=
- =?utf-8?B?Q3NkM2lHem5BUWdFNGczcXRROVRGanZ6ckFiSEwxZFFHTW9WWG5kY0Jpc1Vu?=
- =?utf-8?B?ZHVTVEUwaUI3S2d2VW9Qbk1QMGFZclE1OGxQa1NSeW1mTWdOTHJRK3FNRVpV?=
- =?utf-8?B?cXNUS3psQWozenFJRjh1N1hMeHFreUlkMFNTNEt6OUUzT1lDK1NnZXE5Ky9F?=
- =?utf-8?B?azFvS2d0WkZhVVlVNnBxd3FvcjhBYUVZcmVJNE54d2duTllIT3drSWFuN0l3?=
- =?utf-8?B?V1g2d3pYUDlrWW92RzdwWTdhNThJL1EydjFNVUh0SnA3Z1hReVNHNVZaUytJ?=
- =?utf-8?B?blN5aGFlR3c2MjJjWkVKLzBsOEZvSkVLQjhPeDFSbE9KbnR6N1VXaGlBcHBp?=
- =?utf-8?B?QWdaUWVsQVY1dUFMaGV6ZklKU3NRWlVodi82VWt3R29Nb2FJOGtXbTFhekRY?=
- =?utf-8?B?TWt1WktkWjRJbDAxQW44ZUwxYW5hMmRPMStVN2lnbXpSczhLYi9kMVFmQzJM?=
- =?utf-8?B?V242UUFDbFdaczlnaTdQTkpSYURBdmVxSTlnWWs2Z3B4MC9IZ1A5RXdDRm8r?=
- =?utf-8?B?c0V4WU4yOEsrMW4zWTZUNldRckdzT0tGMkxVT1RDTVEzNUlBb2ltREZCRkhP?=
- =?utf-8?B?ZXNyK0ROSk1LRjBSZytxOEtTWXJmRE14cTFIUVZwMFVFM2lHMWtsVERabjh3?=
- =?utf-8?B?enUrUndmbnJQSnQwWWUwR0JYTWNQQWVOTEhwWG9iWTZYNkQ5OHlmcEQvcTV3?=
- =?utf-8?B?bFBGUHNkck1ZeTRJVThtZDg3LzliTlhzSCt3WnFpbUxrcEEwYk5tWWZmWXRv?=
- =?utf-8?B?blNXMGd5V21UMFVzZkxneGpCMUFZTVQ3dGp3MjJtZUJydEw1YzlsNERkelZQ?=
- =?utf-8?B?dDg2b1E1UXB1TXA1TDV3RkhLYm5kSTB4dnN1WXFUcGE5QUdqVWY4WkVUWHMy?=
- =?utf-8?B?eVRCMkUwV3dvdDdSeHdFaThRRzFEajdOcVRrTEpiNnNiek1kZzlvclYyWU1q?=
- =?utf-8?B?N3k2cmZ2bGhRWHoxa2JmK1dXSklMejJEZ3NkZDlENVpVbmRWVEVPUDM1NTd5?=
- =?utf-8?B?NmV5USsyUTErSG4yaFc2NE9ZMGdvRzZVaC9zRm1YWWhIVzdjSUNsUlliNld2?=
- =?utf-8?B?cjFhUkpuUWwyVTJGQjZTV0s3Vm5zVzVlKzhsT2xKOGo3Q3hRU2dhYXRSenY5?=
- =?utf-8?B?TGNCMGRDRGd4U3NTY1FNcVZxNnNjNExvY3h6ZWlOZzNLS3ZqSXdHc2JKR0hC?=
- =?utf-8?B?dG9Xb05BbWpEcUNvclE5aTRpZ2RlVDdXdytmbHVha0JUOTBGUVBQTzJyMFY1?=
- =?utf-8?B?dTBDUHNyYlErT25vNGUzS2RPUXBSL01TKy92WmNQdGVpYW9RS3d5dkdJUHBU?=
- =?utf-8?B?TVY5cXZzcmtyMnNuV1BYczQ1ZzJLYUxNNDBCY2IyQWVVc3JCVld1cU1lWmt3?=
- =?utf-8?B?MWRiMXJVRUJTd2lQd2NTZFNZQnloUFM2dDZGd0xiOG9VSDM3NWtRMXVRUDNl?=
- =?utf-8?B?STM1cFdvcnVoVEY2NGlYN1R2RUtYd0tQemZoOE5MZzk0djlwS1FycDRnMXFT?=
- =?utf-8?B?UlhQTTRmWDN2aXhKVDRlQ3F3a0RGTk52UXVlSG5ud2FvcDZrMUtTaGlBbTRl?=
- =?utf-8?B?c2psNk9jQ1FWWFhTR2duMHY3ZTBXQ01zVnROejFDNDlWOUpGSWZCelNiOVEz?=
- =?utf-8?B?eXJBU1M4aFVtYmU3cmVoNE1lVUdRZjdjTHlVZHVvMW1YckFaUnk4Q0pBTWFF?=
- =?utf-8?B?OTFhaEMrYTY5bmZqV0c1Y2kzZ252cjlEZkpwZUVqZzRKOHgrV1czeUZQTStL?=
- =?utf-8?B?K1dRclVQMk05SkdPbHhsazYxMXF2SHVWOEFnK1htdWFVOUlTZkZKYzdjUXBJ?=
- =?utf-8?B?eGY4RHZLS1l5cDZnSjRiekJJSm1uWDdhbCtrZytrZERwWFlPMXJ3V2hVVHh5?=
- =?utf-8?B?LzdjalJ1MGdxWTNqWkw3bGczR3lkTTBSSkEva1VDbjhNd3h5WnU5eEtCQjUr?=
- =?utf-8?Q?FaZj168r0TsTSeu6hpasG9XLW?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d799f4e-eb9a-425b-87f4-08dd4c4532bd
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 15:43:44.6724
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RXP8DWzqwSAifDRQzx45RBIGihZU8fKDE9Y4FogIcZYNHOBidJwh42tq4ox8rduTqw892cItAkzcTHqdA5KHlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7767
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <090524ac-724d-4915-8699-fe2ae736ab8c@openvpn.net>
+
+2025-02-13, 12:46:34 +0100, Antonio Quartulli wrote:
+> On 13/02/2025 00:34, Sabrina Dubroca wrote:
+> > Hello,
+> > 
+> > 2025-02-11, 01:39:53 +0100, Antonio Quartulli wrote:
+> > > All minor and major reported problems have been finally addressed.
+> > > Big thanks to Sabrina, who took the time to guide me through
+> > > converting the peer socket to an RCU pointer.
+> > 
+> > Something is off (not sure if it's new to this version): if I use
+> > test-tcp.sh to setup a set of interfaces and peers (I stop the test
+> > just after setup to keep the environment alive), then remove all netns
+> > with "ip -all netns delete", I expect all devices to go away, but they
+> > don't. With debug messages enabled I'm seeing some activity from the
+> > module ("tun0: sending keepalive to peer 3" and so on), and
+> > ovpn_net_uninit/ovpn_priv_free never got called.
+> 
+> I can reproduce it. If later I rmmod ovpn I then get all the "Deleting peer"
+> messages.
+> So instances are not being purged on netns exit.
+> 
+> Will dive into it.
+
+I think the socket holds a ref on the netns, so it's not getting
+destroyed, simply "removed" from iproute's point of view. And the
+socket isn't going away as long as it's used by a peer.
+
+If I delete the peer(s) for the ovpn device and then the netns it was
+in, the netns is fully removed, and the ovpn device is gone. Also no
+issue if I delete the ovpn device before its netns, then everything is
+destroyed as expected.
+
+I'm not sure that can be solved, as least under the current refcount
+scheme.
+
+But I don't think there's a way to re-attach to that netns afterwards
+if we wanted to clean up manually (something similar to "ip netns
+attach <name> <pid>", but that won't work if whatever created the
+socket is not running anymore -- as is the case with ovpn-cli).
+
+> > 
+> > [...]
+> > > So there is NO risk of deadlock (and indeed nothing hangs), but I
+> > > couldn't find a way to make the warning go away.
+> > 
+> > I've spotted another splat on strparser cleanup that looked like an
+> > actual deadlock, but it's not very reproducible. Still looking into
+> > it, but I'm not convinced it's ok to call strp_done (as is done from
+> > ovpn_tcp_socket_detach) while under lock_sock, because AFAIU
+> > cancel_work_sync(&strp->work) may be waiting for a work that needs to
+> > lock the socket (cb.lock in do_strp_work). I guess tcp_tx_work would
+> > have the same problem.
+> 
+> Will have a look here too.
+
+The only ways I've managed to reproduce it is by using some ugly
+kernel-side hacks to try to force that path being hit. Either forcing
+the strp work to be queued just as we detach the socket (in
+strp_stop), or this:
+
+ - hack some code path to do a big sleep() under lock_sock(), to give
+   me the time to do the next steps
+ - ping over ovpn, or any other way to add packets on the receive
+   socket
+ - delete the peer for the sleeping socket (while it's still sleeping)
+
+When that big sleep is over, strp_data_ready will kick off and queue
+its worker (because at this point the socket lock is still owned),
+then I think del_peer proceeds toward tcp_detach and I got the splat
+below. So that's maybe a bit hard to trigger in real life (I don't
+remember what I was doing the first time I got it, I think something
+messing with the RCU stuff we discussed earlier).
 
 
+[  922.681435][  T300] ======================================================
+[  922.686247][  T300] WARNING: possible circular locking dependency detected
+[  922.690971][  T300] 6.14.0-rc1-net-00276-g95f1f7ea224e-dirty #279 Tainted: G                 N
+[  922.696584][  T300] ------------------------------------------------------
+[  922.699697][  T300] kworker/1:2/300 is trying to acquire lock:
+[  922.702105][  T300] ffff88800a662160 ((work_completion)(&strp->work)){+.+.}-{0:0}, at: start_flush_work+0x407/0xa50
+[  922.705716][  T300] 
+[  922.705716][  T300] but task is already holding lock:
+[  922.707779][  T300] ffff8880113edd98 (sk_lock-AF_INET){+.+.}-{0:0}, at: ovpn_socket_release+0x8a/0x1a0
+[  922.710238][  T300] 
+[  922.710238][  T300] which lock already depends on the new lock.
+[  922.710238][  T300] 
+[  922.712628][  T300] 
+[  922.712628][  T300] the existing dependency chain (in reverse order) is:
+[  922.714443][  T300] 
+[  922.714443][  T300] -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+[  922.716127][  T300]        __lock_acquire+0xc4d/0x1ee0
+[  922.717250][  T300]        lock_acquire+0x1a9/0x500
+[  922.718266][  T300]        lock_sock_nested+0x40/0xf0
+[  922.719325][  T300]        strp_work+0x95/0x1e0
+[  922.720240][  T300]        process_one_work+0xe28/0x1460
+[  922.721307][  T300]        worker_thread+0x674/0xee0
+[  922.722283][  T300]        kthread+0x3c3/0x760
+[  922.723101][  T300]        ret_from_fork+0x46/0x80
+[  922.723792][  T300]        ret_from_fork_asm+0x1a/0x30
+[  922.724532][  T300] 
+[  922.724532][  T300] -> #0 ((work_completion)(&strp->work)){+.+.}-{0:0}:
+[  922.726038][  T300]        check_prev_add+0x1af/0x2400
+[  922.726927][  T300]        validate_chain+0xdcf/0x1a10
+[  922.727847][  T300]        __lock_acquire+0xc4d/0x1ee0
+[  922.728721][  T300]        lock_acquire+0x1a9/0x500
+[  922.729590][  T300]        start_flush_work+0x41a/0xa50
+[  922.730434][  T300]        __flush_work+0xee/0x210
+[  922.731213][  T300]        cancel_work_sync+0xb8/0xd0
+[  922.732022][  T300]        strp_done.cold+0x51/0xcf
+[  922.732830][  T300]        ovpn_tcp_socket_detach+0x28e/0x2de
+[  922.733752][  T300]        ovpn_socket_release_kref+0x1ef/0x350
+[  922.734713][  T300]        ovpn_socket_release+0xe7/0x1a0
+[  922.735577][  T300]        ovpn_peer_remove_work+0x2b/0x90
+[  922.736468][  T300]        process_one_work+0xe28/0x1460
+[  922.737357][  T300]        worker_thread+0x674/0xee0
+[  922.737985][  T300]        kthread+0x3c3/0x760
+[  922.738545][  T300]        ret_from_fork+0x46/0x80
+[  922.739177][  T300]        ret_from_fork_asm+0x1a/0x30
+[  922.739846][  T300] 
+[  922.739846][  T300] other info that might help us debug this:
+[  922.739846][  T300] 
+[  922.741159][  T300]  Possible unsafe locking scenario:
+[  922.741159][  T300] 
+[  922.742165][  T300]        CPU0                    CPU1
+[  922.743055][  T300]        ----                    ----
+[  922.743943][  T300]   lock(sk_lock-AF_INET);
+[  922.744638][  T300]                                lock((work_completion)(&strp->work));
+[  922.745786][  T300]                                lock(sk_lock-AF_INET);
+[  922.746837][  T300]   lock((work_completion)(&strp->work));
+[  922.747788][  T300] 
+[  922.747788][  T300]  *** DEADLOCK ***
+[  922.747788][  T300] 
+[  922.748856][  T300] 4 locks held by kworker/1:2/300:
+[  922.749474][  T300]  #0: ffff888008499b48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0xd80/0x1460
+[  922.750588][  T300]  #1: ffffc90002527d30 ((work_completion)(&peer->remove_work)){+.+.}-{0:0}, at: process_one_work+0xddf/0x1460
+[  922.751894][  T300]  #2: ffff8880113edd98 (sk_lock-AF_INET){+.+.}-{0:0}, at: ovpn_socket_release+0x8a/0x1a0
+[  922.752983][  T300]  #3: ffffffff854de980 (rcu_read_lock){....}-{1:3}, at: start_flush_work+0x39/0xa50
+[  922.754018][  T300] 
+[  922.754018][  T300] stack backtrace:
+[  922.754734][  T300] CPU: 1 UID: 0 PID: 300 Comm: kworker/1:2 Tainted: G                 N 6.14.0-rc1-net-00276-g95f1f7ea224e-dirty #279
+[  922.754748][  T300] Tainted: [N]=TEST
+[  922.754752][  T300] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
+[  922.754761][  T300] Workqueue: events ovpn_peer_remove_work
+[  922.754779][  T300] Call Trace:
+[  922.754785][  T300]  <TASK>
+[  922.754791][  T300]  dump_stack_lvl+0xa5/0x100
+[  922.754803][  T300]  print_circular_bug.cold+0x38/0x48
+[  922.754820][  T300]  check_noncircular+0x2f2/0x3d0
+[  922.754922][  T300]  check_prev_add+0x1af/0x2400
+[  922.754942][  T300]  validate_chain+0xdcf/0x1a10
+[  922.754991][  T300]  __lock_acquire+0xc4d/0x1ee0
+[  922.755023][  T300]  lock_acquire+0x1a9/0x500
+[  922.755104][  T300]  start_flush_work+0x41a/0xa50
+[  922.755128][  T300]  __flush_work+0xee/0x210
+[  922.755198][  T300]  cancel_work_sync+0xb8/0xd0
+[  922.755211][  T300]  strp_done.cold+0x51/0xcf
+[  922.755222][  T300]  ovpn_tcp_socket_detach+0x28e/0x2de
+[  922.755237][  T300]  ovpn_socket_release_kref+0x1ef/0x350
+[  922.755253][  T300]  ovpn_socket_release+0xe7/0x1a0
+[  922.755268][  T300]  ovpn_peer_remove_work+0x2b/0x90
+[  922.755282][  T300]  process_one_work+0xe28/0x1460
+[  922.755330][  T300]  worker_thread+0x674/0xee0
+[  922.755402][  T300]  kthread+0x3c3/0x760
+[  922.755472][  T300]  ret_from_fork+0x46/0x80
+[  922.755497][  T300]  ret_from_fork_asm+0x1a/0x30
+[  922.755521][  T300]  </TASK>
 
-On 2/11/2025 7:23 PM, Dan Williams wrote:
-> Terry Bowman wrote:
->> The CXL mem driver (cxl_mem) currently maps and caches a pointer to RAS
->> registers for the endpoint's Root Port. The same needs to be done for
->> each of the CXL Downstream Switch Ports and CXL Root Ports found between
->> the endpoint and CXL Host Bridge.
->>
->> Introduce cxl_init_ep_ports_aer() to be called for each CXL Port in the
->> sub-topology between the endpoint and the CXL Host Bridge. This function
->> will determine if there are CXL Downstream Switch Ports or CXL Root Ports
->> associated with this Port. The same check will be added in the future for
->> upstream switch ports.
->>
->> Move the RAS register map logic from cxl_dport_map_ras() into
->> cxl_dport_init_ras_reporting(). This eliminates the need for the helper
->> function, cxl_dport_map_ras().
-> Not sure about the motivation here...
->
->> cxl_init_ep_ports_aer() calls cxl_dport_init_ras_reporting() to map
->> the RAS registers for CXL Downstream Switch Ports and CXL Root Ports.
-> Ok, makes sense...
->
->> cxl_dport_init_ras_reporting() must check for previously mapped registers
->> before mapping. This is required because multiple Endpoints under a CXL
->> switch may share an upstream CXL Root Port, CXL Downstream Switch Port,
->> or CXL Downstream Switch Port. Ensure the RAS registers are only mapped
->> once.
-> Sounds broken. Every device upstream-port only has one downstream port.
->
-> A CXL switch config looks like this:
->
->            │             
-> ┌──────────┼────────────┐
-> │SWITCH   ┌┴─┐          │
-> │         │UP│          │
-> │         └─┬┘          │
-> │    ┌──────┼─────┐     │
-> │    │      │     │     │
-> │   ┌┴─┐  ┌─┴┐  ┌─┴┐    │
-> │   │DP│  │DP│  │DP│    │
-> │   └┬─┘  └─┬┘  └─┬┘    │
-> └────┼──────┼─────┼─────┘
->     ┌┴─┐  ┌─┴┐  ┌─┴┐     
->     │EP│  │EP│  │EP│     
->     └──┘  └──┘  └──┘     
->
-> ...so how can an endpoint ever find that its immediate parent downstream
-> port has already been mapped?
 
+And then come the hung task warnings:
+ - del_peer waiting on the completion
+ - strp waiting on lock_sock
+ - peer cleanup/socket detach waiting on cancel_work_sync/strp
 
-            ┌─┴─┐
-            │RP1│
-            └─┬─┘
-  ┌───────────┼───────────┐
-  │SWITCH   ┌─┴─┐         │
-  │         │UP1│         │   RP1 - 0c:00.0
-  │         └─┬─┘         │   UP1 - 0d:00.0
-  │    ┌──────┼─────┐     │   DP1 - 0e:00.0
-  │    │      │     │     │
-  │  ┌─┴─┐  ┌─┴─┐ ┌─┴─┐   │
-  │  │DP1│  │DP2│ │DP3│   │
-  │  └─┬─┘  └─┬─┘ └─┬─┘   │
-  └────┼──────┼─────┼─────┘
-     ┌─┴─┐  ┌─┴─┐ ┌─┴─┐
-     │EP1│  │EP2│ │EP3│
-     └───┘  └───┘ └───┘
+[ 1106.347400][   T39] INFO: task kworker/u16:0:11 blocked for more than 122 seconds.
+[ 1106.348547][   T39]       Tainted: G                 N 6.14.0-rc1-net-00276-g95f1f7ea224e-dirty #279
+[ 1106.349671][   T39] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 1106.350748][   T39] task:kworker/u16:0   state:D stack:0     pid:11    tgid:11    ppid:2      task_flags:0x4208160 flags:0x00004000
+[ 1106.352454][   T39] Workqueue: kstrp strp_work
+[ 1106.353133][   T39] Call Trace:
+[ 1106.353659][   T39]  <TASK>
+[ 1106.354143][   T39]  __schedule+0xace/0x2620
+[ 1106.360659][   T39]  schedule+0xd0/0x210
+[ 1106.361266][   T39]  __lock_sock+0x137/0x230
+[ 1106.365430][   T39]  lock_sock_nested+0xcb/0xf0
+[ 1106.366173][   T39]  strp_work+0x95/0x1e0
+[ 1106.366845][   T39]  process_one_work+0xe28/0x1460
+[ 1106.369231][   T39]  worker_thread+0x674/0xee0
+[ 1106.371594][   T39]  kthread+0x3c3/0x760
+[ 1106.375692][   T39]  ret_from_fork+0x46/0x80
+[ 1106.377040][   T39]  ret_from_fork_asm+0x1a/0x30
+[ 1106.377851][   T39]  </TASK>
+[ 1106.378355][   T39] INFO: task kworker/1:2:300 blocked for more than 122 seconds.
+[ 1106.379590][   T39]       Tainted: G                 N 6.14.0-rc1-net-00276-g95f1f7ea224e-dirty #279
+[ 1106.381079][   T39] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 1106.382372][   T39] task:kworker/1:2     state:D stack:0     pid:300   tgid:300   ppid:2      task_flags:0x4208060 flags:0x00004000
+[ 1106.384211][   T39] Workqueue: events ovpn_peer_remove_work
+[ 1106.385072][   T39] Call Trace:
+[ 1106.385648][   T39]  <TASK>
+[ 1106.386139][   T39]  __schedule+0xace/0x2620
+[ 1106.393518][   T39]  schedule+0xd0/0x210
+[ 1106.394195][   T39]  schedule_timeout+0x18c/0x240
+[ 1106.398840][   T39]  __wait_for_common+0x3e3/0x610
+[ 1106.403079][   T39]  __flush_work+0x14f/0x210
+[ 1106.406874][   T39]  cancel_work_sync+0xb8/0xd0
+[ 1106.407519][   T39]  strp_done.cold+0x51/0xcf
+[ 1106.408109][   T39]  ovpn_tcp_socket_detach+0x28e/0x2de
+[ 1106.408851][   T39]  ovpn_socket_release_kref+0x1ef/0x350
+[ 1106.409588][   T39]  ovpn_socket_release+0xe7/0x1a0
+[ 1106.410271][   T39]  ovpn_peer_remove_work+0x2b/0x90
+[ 1106.410973][   T39]  process_one_work+0xe28/0x1460
+[ 1106.413075][   T39]  worker_thread+0x674/0xee0
+[ 1106.416968][   T39]  kthread+0x3c3/0x760
+[ 1106.419983][   T39]  ret_from_fork+0x46/0x80
+[ 1106.421172][   T39]  ret_from_fork_asm+0x1a/0x30
+[ 1106.421829][   T39]  </TASK>
+[ 1106.422260][   T39] INFO: task ovpn-cli:1213 blocked for more than 122 seconds.
+[ 1106.423215][   T39]       Tainted: G                 N 6.14.0-rc1-net-00276-g95f1f7ea224e-dirty #279
+[ 1106.424451][   T39] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 1106.425643][   T39] task:ovpn-cli        state:D stack:0     pid:1213  tgid:1213  ppid:514    task_flags:0x400100 flags:0x00000002
+[ 1106.427145][   T39] Call Trace:
+[ 1106.427610][   T39]  <TASK>
+[ 1106.428005][   T39]  __schedule+0xace/0x2620
+[ 1106.431820][   T39]  schedule+0xd0/0x210
+[ 1106.432351][   T39]  schedule_timeout+0x18c/0x240
+[ 1106.435050][   T39]  __wait_for_common+0x3e3/0x610
+[ 1106.439809][   T39]  ovpn_nl_peer_del_doit+0x270/0x6e0
+[ 1106.442825][   T39]  genl_family_rcv_msg_doit+0x1ea/0x2e0
+[ 1106.445602][   T39]  genl_family_rcv_msg+0x3a7/0x5b0
+[ 1106.450559][   T39]  genl_rcv_msg+0xb1/0x160
+[ 1106.451154][   T39]  netlink_rcv_skb+0x13e/0x3d0
+[ 1106.455220][   T39]  genl_rcv+0x29/0x40
+[ 1106.455737][   T39]  netlink_unicast+0x491/0x730
+[ 1106.457107][   T39]  netlink_sendmsg+0x77d/0xc00
+[ 1106.458517][   T39]  ____sys_sendmsg+0x7c5/0xac0
+[ 1106.461329][   T39]  ___sys_sendmsg+0x163/0x1b0
+[ 1106.468146][   T39]  __sys_sendmsg+0x135/0x1d0
+[ 1106.471564][   T39]  do_syscall_64+0x64/0x140
+[ 1106.472173][   T39]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[ 1106.472947][   T39] RIP: 0033:0x7faa76628e56
+[ 1106.473558][   T39] RSP: 002b:00007ffe757311e0 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+[ 1106.474674][   T39] RAX: ffffffffffffffda RBX: 00007faa7654f740 RCX: 00007faa76628e56
+[ 1106.475715][   T39] RDX: 0000000000000000 RSI: 00007ffe75731270 RDI: 0000000000000003
+[ 1106.476847][   T39] RBP: 00007ffe757311f0 R08: 0000000000000000 R09: 0000000000000000
+[ 1106.477959][   T39] R10: 0000000000000000 R11: 0000000000000202 R12: 00005617490cf490
+[ 1106.479064][   T39] R13: 00005617490d04f0 R14: 00007ffe75731270 R15: 0000561733d62d78
+[ 1106.480175][   T39]  </TASK>
+[ 1106.480646][   T39] INFO: lockdep is turned off.
 
-
-It cant but the root RP and USP have duplicate calls for each EP in the example diagram.
-The function's purpose is to map RAS registers and cache the address. This reuses the
-same function for RP and DSP. The DSP will never be previously mapped as you indicated.
-
->> Introduce a mutex for synchronizing accesses to the cached RAS mapping.
-> I suspect the motivation for the lock and "previously mapped" check was
-> due to noticing that the ras registers are not being unmapped, but
-> that's due to a devm bug below.
-The synchronization was added as result of review recommendation because it is
-a racy area. It's possible that multiple endpoints using the same switch could
-call this function from devm_cxl_add_endpoints()->cxl_init_ep_ports().
-> Even if it were the case that multiple resources need to share 1 devm
-> mapping, that would need to look something like the logic around
-> cxl_detach_ep(). In that arrangement, the first endpoint in the door
-> sets up the 'struct cxl_port' and its 'struct cxl_dport' instances, and
-> the last endpoint out the door tears it all down and turns off the
-> lights.
->
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Gregory Price <gourry@gourry.net>
->> ---
->>  drivers/cxl/core/pci.c | 42 ++++++++++++++++++++----------------------
->>  drivers/cxl/cxl.h      |  6 ++----
->>  drivers/cxl/mem.c      | 31 +++++++++++++++++++++++++++++--
->>  3 files changed, 51 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
->> index a5c65f79db18..143c853a52c4 100644
->> --- a/drivers/cxl/core/pci.c
->> +++ b/drivers/cxl/core/pci.c
->> @@ -24,6 +24,8 @@ static unsigned short media_ready_timeout = 60;
->>  module_param(media_ready_timeout, ushort, 0644);
->>  MODULE_PARM_DESC(media_ready_timeout, "seconds to wait for media ready");
->>  
->> +static DEFINE_MUTEX(ras_init_mutex);
->> +
->>  struct cxl_walk_context {
->>  	struct pci_bus *bus;
->>  	struct cxl_port *port;
->> @@ -749,18 +751,6 @@ static void cxl_dport_map_rch_aer(struct cxl_dport *dport)
->>  	}
->>  }
->>  
->> -static void cxl_dport_map_ras(struct cxl_dport *dport)
->> -{
->> -	struct cxl_register_map *map = &dport->reg_map;
->> -	struct device *dev = dport->dport_dev;
->> -
->> -	if (!map->component_map.ras.valid)
->> -		dev_dbg(dev, "RAS registers not found\n");
->> -	else if (cxl_map_component_regs(map, &dport->regs.component,
->> -					BIT(CXL_CM_CAP_CAP_ID_RAS)))
->> -		dev_dbg(dev, "Failed to map RAS capability.\n");
->> -}
->> -
->>  static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->>  {
->>  	void __iomem *aer_base = dport->regs.dport_aer;
->> @@ -788,22 +778,30 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->>  /**
->>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
->>   * @dport: the cxl_dport that needs to be initialized
->> - * @host: host device for devm operations
->>   */
->> -void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->> +void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
->>  {
->> -	dport->reg_map.host = host;
->> -	cxl_dport_map_ras(dport);
->> -
->> -	if (dport->rch) {
->> -		struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport->dport_dev);
->> -
->> -		if (!host_bridge->native_aer)
->> -			return;
->> +	struct device *dport_dev = dport->dport_dev;
->> +	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
->>  
->> +	dport->reg_map.host = dport_dev;
-> This seems to be confused about how devm works. @host is passed in
-> because the cxl_memdev instance being probed in cxl_mem_probe() is doing
-> setup work on behalf of @dport_dev.
->
-> When the cxl_memdev goes through a ->remove() event, unbind from
-> cxl_mem, it tears down that mapping.
->
-> However, when using @dport_dev as the devm host, that mapping will not
-> be torn down until either the @dport_dev goes through a ->remove() event
-> or the device is unregistered altogether. There is no CXL subsystem
-> coordination with a driver for @dport_dev. The PCIe portdrv might have
-> an interest in it, but CXL can not depend on portdrv to map CXL
-> registers or keep the device bound while CXL has an interest those
-> registers. The devres_release_all() triggered by a
-> "device_del(@dport_dev)" is also uncoordinated with any CXL interest. In
-> general, it is a devm anti-pattern to depend on a device_del() event to
-> trigger devres_release_all().
->
->
->> +	if (dport->rch && host_bridge->native_aer) {
->>  		cxl_dport_map_rch_aer(dport);
->>  		cxl_disable_rch_root_ints(dport);
->>  	}
->> +
->> +	/* dport may have more than 1 downstream EP. Check if already mapped. */
->> +	mutex_lock(&ras_init_mutex);
-> I suspect this lock and check got added to workaround "Failed to request
-> region" messages coming out of devm_cxl_iomap_block() in testing? Per
-> above, that's not "more than 1 downstream EPi", that's "failure to clean
-> up the last mapping for the next cxl_mem_probe() event of the same
-> endpoint".
-Synchronization was added to handle the concurrent accesses. I never observed
-issues due to the race condition for RP and USP but I confirmed through further
-testing it is a real potential issue for the RP and USP.
-
-You recommended, in the next patch, to map USP RAS registers from cxl_endpoint_port_probe().
-Would you like the RP and DSP mapping to be called from cxl_endpoint_port_probe() as well? Terry
-
+-- 
+Sabrina
 
