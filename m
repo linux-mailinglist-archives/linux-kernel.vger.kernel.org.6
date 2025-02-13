@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-513740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA166A34E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:52:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C649A34E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15677A460A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B53188F84B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C500245AF9;
-	Thu, 13 Feb 2025 18:52:45 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37445245AFF;
+	Thu, 13 Feb 2025 18:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QQFIS6Yl"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3A8245AF2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B0D28A2D4;
+	Thu, 13 Feb 2025 18:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739472764; cv=none; b=AZGhwuzaGpJHN9JS9K/PWK86AJNDMssDUFkhrGCda++4gL5V0AoI01ATfyzcquR9dsvk3L8IKnPHh7Ek+XxiyABBHNkz0A1DJS+pwL2ZuswXtAdJTMpvuvh69kza5K+5hPz154cFyaDJLbWiElf+UxSttGKQ/mAr4jMNpj3t8+E=
+	t=1739472796; cv=none; b=Yd/OLZcQneDF+M9s+JaOfbqpmZpLmBz3U2ksl1kxBMxlG7UUE3fu1H9DZ/2DQfNOy8+GXYFRN3UgUq/wbOG6qL68CMbk9qzCnrzsmwEJCD3C+gLWukFl2LThl+CeVKPo9s4sjoxe/AHLIv2s6CXTrLOU5tiZFHEbvUZ74Ef9j0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739472764; c=relaxed/simple;
-	bh=RSALijCH6oG8xA04buFXAlVZne7UppEJdwslExTCEsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUiqVl/7cSGffQJwCLaFU1+iOSUOL7bKAA/g4HhSVK8BwcOQV/T3w0q2ovYxh51quB+5TgWKmI8UGhmwuV0oLS0lf7X9ZcITwvYE+puKZFPhfFn0iDoLit7Z2hrCxQhJ/ifcEJHFLSCBYectobztV6UTHjA7jG4usOxaiBQ/SvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51DIqMsE001272
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 13:52:23 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 6A78515C0009; Thu, 13 Feb 2025 13:52:22 -0500 (EST)
-Date: Thu, 13 Feb 2025 13:52:22 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [next-20250212] FStests generic/451 on EXT4 FS resulting in
- kernel OOPs
-Message-ID: <20250213185222.GA398915@mit.edu>
-References: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
+	s=arc-20240116; t=1739472796; c=relaxed/simple;
+	bh=y2OXpJsSi9OIRanlMyx3KWqQShtlGo0AuzXqA9Fbzqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uZMuntwa3+cLGsp2OZzTzLmqOR+WdrSoQrs/7KL0w8Y209N8y4DScxTzJtbOJROIEah/TsqlOXSmVjoa69ggWRLqI8W/5aqZ4Fs84W64dHL/OALjZapoT0YXnqu+A5F7HeLuvQAbKg+fRNUPIGq+0e9tmYAOJJQDva8cul6e1aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QQFIS6Yl; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 44E1E4442E;
+	Thu, 13 Feb 2025 18:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739472790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J6qH4iFmq2eCsp4gR0alhKpvz8JxjM4NdzNRGitctoQ=;
+	b=QQFIS6Yl0SPVIujgU2GPm4v6MzAaeFar1z+P8jxljvArnhEuso+Y/P/qcxiEHDYPns9Oe2
+	je9+Kk9CWdf/ZsYEv5gcGV6gh9WpYb42YK62QI6bB0wAUu3we0b6aprTdQJADCNWcrSAwx
+	9ycbaUf61H5QU/WHv8hmtogOn+6BAi7kQmiMc7MydcuHs8hj5eRXpVwGOvirzmuVhTb/Xp
+	kqAxyCa/lZbEnmksJuVGjvMa1RbnPT5GuzchNsyUEemWs5dhkGjLVNdJ4susBSgI35TH1b
+	M6SnAW8+yTKzKsCCoVguJ7nfcytgbsCz4gHn8GfhtBHVrRRIAJoC44hKvft1aw==
+Date: Thu, 13 Feb 2025 19:53:04 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
+ <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+ "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
+ brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
+ dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+ kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
+ list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
+ ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+ lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+ manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
+ thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
+ <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <20250213195304.3a2df02c@bootlin.com>
+In-Reply-To: <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+	<20250213171435.1c2ce376@bootlin.com>
+	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+	<821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
+	<CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f43bd29-d72b-4a39-b931-7b1b47c7cc06@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffleegleetgedtuddugfffkefhgeeuheeugffhhfetgffhfeehkeejgeelfeetfeenucffohhmrghinheplhhptgdrvghvvghnthhspdhkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefhedprhgtphhtthhopehphhhilhesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvrgdrphhor
+ hhtrgesshhushgvrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, Feb 13, 2025 at 11:21:22AM +0530, Venkat Rao Bagalkote wrote:
-> Greetings!!!
+Hi Phil,
+
+On Thu, 13 Feb 2025 17:57:37 +0000
+Phil Elwell <phil@raspberrypi.com> wrote:
+
+> On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
+> >  
+> > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
+> > > > fan are directly on this custom board? You then want a board DTS which
+> > > > includes all these pieces?  
+> > >
+> > > That depends on whether you count the Raspberry Pi 5 as a custom board.  
+> >
+> > So you mean the Pi 5 board would itself make use of the resources the
+> > RP1 device has? They are not simply connected to headers for plugin
+> > boards, but used by the main board? Hence you want to describe them in
+> > the board .DTS file.  
 > 
-> I am observing kernel OOPs, while running FStests generic/451 on EXT4 with
-> linux-next kernel(next-20250212) on IBM Power Servers.
+> That's correct. But even for plug-in devices, those which are on
+> non-discoverable buses need overlays to declare them, which causes a
+> problem when the overlay application happens before the kernel is
+> started.
+> 
 
-I'm running daily spinnner tests on the fs-next branch on the
-linux-next tree, via:
+Hum, I see.
 
-   gce-xfstests ltm -c ext4/all,xfs/all,btrfs/all,f2fs/all -g auto --repo \
-       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next \
-       --watch fs-next
+We worked on overlay usage on non-discoverable buses wired to a connector
+and we did a talk about issues we are facing on at Plumber [0].
 
-The fs-next branch is a subset of linux-next which only has file
-system related branches.  This avoids instability caused by non-fs
-related changes.  I'm not seeing any kernel oops on today's fs-next
-running on an x86 cloud server, using a standardized config.
+You can also find our big picture in [1] and a last contribution introducing
+export-symbols feature in [2]. export-symbols is also under discussion on
+some other threads.
 
-Looking at the kernel stack trace of your report, it appears that a
-linked list used by the workqueue handler (in process_one_work) had
-gotten corrupted.  This could be caused by anything (which is one of
-the reasons why I test using fs-next instead of linux-next; we didn't
-want to spend time debugging problems that aren't under our control).
+Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
+an addon board to add devices on an i2c bus provided by a base board and
+wired to an connector the addon board is connected to.
 
-Is this something which you can easily reproduce?  If so, can you try
-seeing if it reproduces on the fs-next branch, and could you try
-bisecting the to find the guilty commit?  If this was something we
-could reproduce in my test infrastructure, the bisection could be
-trivially accomplished via:
+Maybe in your case, you can decouple resources (gpio, pwm) provided by the
+addon board and used by the base board using also nexus node.
 
-   gce-xfstests ltm -c ext4/4k generic/451 --repo linux-next.git \
-      --bisect-bad linux-next --bisect-good v6.14-rc1
+We use a nexus node [4] (not presented at the Plumbers talk because the idea
+came during 'out of talk' discussions in Plumbers) in order to allow our
+addon board to use resources provided by the base board.
 
-... and then wait for an e-mailed report to land in my inbox.   :-)
+In your case, if I understood, you are in the other direction but why not
+using also a nexus node to decouple and translate resources in this other
+direction ?
 
-Can you do something similar using your test infrastructure?
+Don't know if this idea can help but feel free to ask for some more
+information if needed.
 
-Unfortuantely, given the stack trace, I doubt kernel developers would
-be able to do much more with your report.
+[0] https://lpc.events/event/18/contributions/1696/
+[1] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
+[2] https://lore.kernel.org/all/20241209151830.95723-1-herve.codina@bootlin.com/
+[3] https://lore.kernel.org/all/20250205173918.600037-1-herve.codina@bootlin.com/
+[4] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
 
-Thanks,
-
-					- Ted
+Best regards,
+Hervé
 
