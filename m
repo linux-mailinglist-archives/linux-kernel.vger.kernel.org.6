@@ -1,83 +1,103 @@
-Return-Path: <linux-kernel+bounces-513630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138D7A34CBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80967A34CCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BDB83A99B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD63AA477
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1062623A9BF;
-	Thu, 13 Feb 2025 18:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA3424167C;
+	Thu, 13 Feb 2025 18:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kLRdeKr0"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4TlgEEz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1000811CAF;
-	Thu, 13 Feb 2025 18:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E07206F0C;
+	Thu, 13 Feb 2025 18:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469717; cv=none; b=GwGzvhPxxFZG3gItuKWBPMi6CEMzf5qfI6LLlmz9Wq5AdRPalobxKiIIC5CK4CsI2uw/nHh9+TzdwFS9jkUOGqXEdm0ERF9PJ+98hIz8ctByy0+uI280+uXVyof1FfsweLSbu/PN53TrjxP+7FlwYXKB07aqVgXUeUgjdmIB3Vo=
+	t=1739469761; cv=none; b=OQ5qthzbp/qm9SG1IoELkpRQkqJwUDfLVteeArRjphsRO0wgfdRk8nFjvlFFFjUfdC1LHXVXLNdlqlChxwZwqAmW2dwnHmnnnUj3rQ1Wm/9T1aHN9crT/SUOCfFol5Rm5YN3wrF4yVxU3N1mKf89Ocq23lF6jTN3aqVkFxVVvEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469717; c=relaxed/simple;
-	bh=iyhqa4FySUjQ5g0GozFIhZ9M1QVxH9ovbvFV+x1tQmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWz4+bfDvvStC+GXLEqc0Z5xdWi7qBlABFtu0wcRkBv9AD5mg3uW0HcWbCo2WZaO8hXaxWBeqTY19sm7sS2amADi/lkRk5A19qvFvJtnMdA/SRZ+CEvnM5dZEEF2yWjOZofuIciEWzxatRLiMlxbdN18/8BV8Iv6bdUtbNhwqcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kLRdeKr0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=N/YGsSevGDKmsz4LAefFC+UEHA9OmLmk4wbOJrxTVu8=; b=kLRdeKr0dKZDhXr64HOZS652ZS
-	2waUMiIGGakszULoeykRUGX1NpC8m6N8tg5U0gvYm131ahaYGnHDv21o9kA/7mfCmovSepwGAOab6
-	OCNFt1XG9rIiYuPeB6eTpdKg6kQUu8dlpIpTIgrM+o3zH+nKcLTqOIAkJ/8dao8RlVprldUV8Q31/
-	zcuyGJa18scY52Y9Hb6oF1I+CCAp9AA7yI0VxFgmSqLEbX6OpQcRWYmv7nh1uSV3ZBbXvSjnXScUH
-	Za39SwzC3209qdTpPFFOrahPRtmdvf94XrhIGxTQx633u1P0xA4MCAr1FzENW9Dqu8cNc5USrf1DX
-	hyWx1Eyw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tidX5-0000000CwYA-1VgB;
-	Thu, 13 Feb 2025 18:01:51 +0000
-Date: Thu, 13 Feb 2025 18:01:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1739469761; c=relaxed/simple;
+	bh=KCXWCt1tfCPrXneMgT2CusbMh3K2XAvWCZTxxW+kCs4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o0m3ZTt/6UxCs4Hhxq/E2/vlEbKGazKfv84uurcAXWosRnMOdFPolYn80s8sYIGk3/Tx2XtLupw5o+sIZIe+xPps669GBZ7oJKNq4frYSU5+rhVngW5Tcr3IboWzuDf5PMHzkgrJpZJStZMB33sy925/yxgicTwGZYiMjTSLndU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4TlgEEz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACAFC4CED1;
+	Thu, 13 Feb 2025 18:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739469760;
+	bh=KCXWCt1tfCPrXneMgT2CusbMh3K2XAvWCZTxxW+kCs4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=C4TlgEEz2SIOtgFa6lO18TAdRvksbF9Wc6+oD9Vqpiq7bGnLbTTqagyvRr/dKeLo7
+	 BapSmWlLvzEwd/0rNdVKBe2fGvEdR+XzfCEyQZkZKYDwMMil5tN8KsqHuruLCEZcJt
+	 AQhlkfgRcAU6pB1r6hLJXO7YYbAXtsf20wMFMivmYg+WpqrihiEEOf2XbQoeh7FBjI
+	 aPNKbj24qU4yUPWTXs31yTsPNDce6S+8ELHefezrbMwh4PrIOKfNnZBQTSLef00XKX
+	 CJrdbasTp6zPEnxO/XqPeTmRnlt1WnIHsQ1IrM5nwcpFoI3CSpacR+OBlYMU2XViIZ
+	 4jn3k0D2mhbbg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tidXq-003nWM-1J;
+	Thu, 13 Feb 2025 18:02:38 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Quentin Perret <qperret@google.com>
+Cc: Keir Fraser <keirf@google.com>,
+	Ben Simner <ben.simner@cl.cam.ac.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 19/19] nfs: switch to _async for all directory ops.
-Message-ID: <20250213180151.GW1977892@ZenIV>
-References: <20250206054504.2950516-1-neilb@suse.de>
- <20250206054504.2950516-20-neilb@suse.de>
- <20250213035116.GT1977892@ZenIV>
- <20250213040931.GU1977892@ZenIV>
+Subject: Re: [PATCH] KVM: arm64: Fix alignment of kvm_hyp_memcache allocations
+Date: Thu, 13 Feb 2025 18:02:35 +0000
+Message-Id: <173946974570.2974684.11799250388121421778.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250213153615.3642515-1-qperret@google.com>
+References: <20250213153615.3642515-1-qperret@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213040931.GU1977892@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, keirf@google.com, ben.simner@cl.cam.ac.uk, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Feb 13, 2025 at 04:09:31AM +0000, Al Viro wrote:
-> > > +	} while (PTR_ERR_OR_ZERO(sdentry) == -EEXIST); /* need negative lookup */
-> > 
-> > What's wrong with sdentry == ERR_PTR(-EEXIST)?
+On Thu, 13 Feb 2025 15:36:14 +0000, Quentin Perret wrote:
+> When allocating guest stage-2 page-table pages at EL2, pKVM can consume
+> pages from the host-provided kvm_hyp_memcache. As pgtable.c expects
+> zeroed pages, guest_s2_zalloc_page() actively implements this zeroing
+> with a PAGE_SIZE memset. Unfortunately, we don't check the page
+> alignment of the host-provided address before doing so, which could
+> lead to the memset overrunning the page if the host was malicious.
 > 
-> BTW, do you need to mess with NFS_DATA_BLOCKED with that thing in place?
+> [...]
 
-That'd be NFS_FSDATA_BLOCKED, of course, and apparently it's still needed for
-the "not busy, not sillyrenaming" cases in rename and unlink...
+Applied to fixes, thanks!
 
-Nevermind, just looking into getting rid of d_drop/d_rehash on the AFS side
-of things.
+[1/1] KVM: arm64: Fix alignment of kvm_hyp_memcache allocations
+      commit: b938731ed2d4eea8e268a27bfc600581fedae2a9
+
+Cheers,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
+
 
