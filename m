@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-513148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F31A34218
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:31:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B07EA34244
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AC6168CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C871886083
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C40214A69;
-	Thu, 13 Feb 2025 14:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAcmDLI4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A16281360;
-	Thu, 13 Feb 2025 14:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165B02222B3;
+	Thu, 13 Feb 2025 14:32:04 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7102222CD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739457108; cv=none; b=jzjrtjgMA0zpDQOrhx1Fl/YcvRoYpTAmDtkyzqElqtG04sDrJAztKY+6/YZ/EJAVC/dmHoLvfNbU8NFwz2SEURL8AXPS84Alv2FTk5PwhCMRkN4nFrN0WC6FkpTxLvKZcicWESd1uEsxfK99pNt4rRvb/W95/FDpQ2tIjfGYCE8=
+	t=1739457123; cv=none; b=EY4A5qVT+ws7tyaK5Ihhn8dmlAt7peIP2jQalvKMTqI4rzM2SNEay8R/1Ioh4iD5WLsdfZVETKmiFokCXqxCacGA5IIMIPmxV1gy9ysQNmX9QLxh96PsBGc+CrnGDRTb8y0Yl70ic+JflgbphnRk2+r87whn2uf/IyaweVveitM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739457108; c=relaxed/simple;
-	bh=OA53EvUVXv1GhM5nFaZwYKdlhJhq0PlyQ6nM6WoxQ5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cJtyWu65pryRRB5IFQCyfk+d47obdEI2V0ztKuP0sYyHs7WKPpWJqUUI7oOScquUrL52po2Wl+AbQ4pXHpvv93GGKs26fbYpsQjOt3de+Yd78sXPnhRJ5M7WlgDmkzbX153Bc59FTa05nzrcne50lum3Qh/1Onzd978Qc+3aV0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAcmDLI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654C1C4CEE8;
-	Thu, 13 Feb 2025 14:31:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739457107;
-	bh=OA53EvUVXv1GhM5nFaZwYKdlhJhq0PlyQ6nM6WoxQ5k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NAcmDLI49tnhWxwzXDphQWUBEilB0AbJCqZ9K6H6jvIOO8naxJwJtPt9cM3IfrzWm
-	 GtGGHbCU9ER3G7KV2zY65oplYowGGiD+XVwvhsB2aBpz2M6MP3U+Ota0H2CnnJ+BNk
-	 g0QoaZCKCXEW+nsO2pMweI5bMFk0JCBih2oipLuVaDa/HTF9e0shquxyZ+HW51KCpX
-	 9rsNEkya68f+EHItQFVFLJszS9loxH/1JvBczkJXL8Ks598xN6sL4FjihPURumLbRD
-	 qRd+EPVprlcVbdGEF9Zf0Ldw3GZ+cukfo+yN8aGNUD1FRsjwJw8qn0XyT4nZsHBh5Z
-	 krPQ+swBN9oog==
-From: cel@kernel.org
-To: jlayton@kernel.org,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	linux-nfs@vger.kernel.org,
+	s=arc-20240116; t=1739457123; c=relaxed/simple;
+	bh=MbKSHc6S9QS5zxVP19dlAsVUWqhbyd3VguIpTvCey6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vAyjavZ0Z2cCkTIcRMXMekgwSxB1Fdpbqd+4YxIwTrYuDvHeSAuXI9HJ7j8U5+XJU7YU75M/LdvYdxkD9kWSEGFBHNAR/f5ZPfsHfgBM8yojWxASMOpDwbnq9/aF1/XGn/TzZD7ihUoRwiagoQvlcu5FsBvPeHRlgZ19Ec1YHaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.156])
+	by gateway (Coremail) with SMTP id _____8AxWXFfAq5n1EN0AA--.5453S3;
+	Thu, 13 Feb 2025 22:31:59 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.156])
+	by front1 (Coremail) with SMTP id qMiowMAxSsRbAq5nLSUQAA--.1557S2;
+	Thu, 13 Feb 2025 22:31:58 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Li Lingfeng <lilingfeng3@huawei.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	yukuai1@huaweicloud.com,
-	houtao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	lilingfeng@huaweicloud.com
-Subject: Re: [PATCH v2] nfsd: put dl_stid if fail to queue dl_recall
-Date: Thu, 13 Feb 2025 09:31:43 -0500
-Message-ID: <173945704787.138332.16372203572251102866.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250213144220.156089-1-lilingfeng3@huawei.com>
-References: <20250213144220.156089-1-lilingfeng3@huawei.com>
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch fixes for v6.14-rc3
+Date: Thu, 13 Feb 2025 22:31:48 +0800
+Message-ID: <20250213143148.1450556-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxSsRbAq5nLSUQAA--.1557S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7AF4UGrW5GrWfZr17KF17Arc_yoW8CFW3pr
+	y3urnxJr45GrW3X3Zrt347Wr1DXr1xGr1IqF1ay348AF1UZr1UXr18WrykXFyUJ34rJr1F
+	qF1rJw1qqF1UJacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
+	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
+	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jepB-UUUUU=
 
-From: Chuck Lever <chuck.lever@oracle.com>
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-On Thu, 13 Feb 2025 22:42:20 +0800, Li Lingfeng wrote:
-> Before calling nfsd4_run_cb to queue dl_recall to the callback_wq, we
-> increment the reference count of dl_stid.
-> We expect that after the corresponding work_struct is processed, the
-> reference count of dl_stid will be decremented through the callback
-> function nfsd4_cb_recall_release.
-> However, if the call to nfsd4_run_cb fails, the incremented reference
-> count of dl_stid will not be decremented correspondingly, leading to the
-> following nfs4_stid leak:
-> unreferenced object 0xffff88812067b578 (size 344):
->   comm "nfsd", pid 2761, jiffies 4295044002 (age 5541.241s)
->   hex dump (first 32 bytes):
->     01 00 00 00 6b 6b 6b 6b b8 02 c0 e2 81 88 ff ff  ....kkkk........
->     00 6b 6b 6b 6b 6b 6b 6b 00 00 00 00 ad 4e ad de  .kkkkkkk.....N..
->   backtrace:
->     kmem_cache_alloc+0x4b9/0x700
->     nfsd4_process_open1+0x34/0x300
->     nfsd4_open+0x2d1/0x9d0
->     nfsd4_proc_compound+0x7a2/0xe30
->     nfsd_dispatch+0x241/0x3e0
->     svc_process_common+0x5d3/0xcc0
->     svc_process+0x2a3/0x320
->     nfsd+0x180/0x2e0
->     kthread+0x199/0x1d0
->     ret_from_fork+0x30/0x50
->     ret_from_fork_asm+0x1b/0x30
-> unreferenced object 0xffff8881499f4d28 (size 368):
->   comm "nfsd", pid 2761, jiffies 4295044005 (age 5541.239s)
->   hex dump (first 32 bytes):
->     01 00 00 00 00 00 00 00 30 4d 9f 49 81 88 ff ff  ........0M.I....
->     30 4d 9f 49 81 88 ff ff 20 00 00 00 01 00 00 00  0M.I.... .......
->   backtrace:
->     kmem_cache_alloc+0x4b9/0x700
->     nfs4_alloc_stid+0x29/0x210
->     alloc_init_deleg+0x92/0x2e0
->     nfs4_set_delegation+0x284/0xc00
->     nfs4_open_delegation+0x216/0x3f0
->     nfsd4_process_open2+0x2b3/0xee0
->     nfsd4_open+0x770/0x9d0
->     nfsd4_proc_compound+0x7a2/0xe30
->     nfsd_dispatch+0x241/0x3e0
->     svc_process_common+0x5d3/0xcc0
->     svc_process+0x2a3/0x320
->     nfsd+0x180/0x2e0
->     kthread+0x199/0x1d0
->     ret_from_fork+0x30/0x50
->     ret_from_fork_asm+0x1b/0x30
-> Fix it by checking the result of nfsd4_run_cb and call nfs4_put_stid if
-> fail to queue dl_recall.
-> 
-> [...]
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
-I replaced the Fixes: tag with Cc: stable.
+are available in the Git repository at:
 
-Applied to nfsd-testing, thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.14-1
 
-[1/1] nfsd: put dl_stid if fail to queue dl_recall
-      commit: d520b70859e0fb6d62ca12eee601a3d6ff4a11b6
+for you to fetch changes up to 3011b29ec5a33ec16502e687c4264d57416a8b1f:
 
---
-Chuck Lever
+  LoongArch: KVM: Set host with kernel mode when switch to VM mode (2025-02-13 12:02:56 +0800)
+
+----------------------------------------------------------------
+LoongArch fixes for v6.14-rc3
+
+Fix bugs about idle, kernel_page_present(), IP checksum and KVM, plus
+some trival cleanups.
+----------------------------------------------------------------
+Bibo Mao (3):
+      LoongArch: KVM: Fix typo issue about GCFG feature detection
+      LoongArch: KVM: Remove duplicated cache attribute setting
+      LoongArch: KVM: Set host with kernel mode when switch to VM mode
+
+Huacai Chen (1):
+      LoongArch: Fix kernel_page_present() for KPRANGE/XKPRANGE
+
+Marco Crivellari (1):
+      LoongArch: Fix idle VS timer enqueue
+
+Yuli Wang (3):
+      LoongArch: Use str_yes_no() helper function for /proc/cpuinfo
+      LoongArch: Remove the deprecated notifier hook mechanism
+      LoongArch: csum: Fix OoB access in IP checksum code for negative lengths
+
+ arch/loongarch/include/asm/cpu-info.h | 21 ---------------------
+ arch/loongarch/include/asm/smp.h      |  2 ++
+ arch/loongarch/kernel/genex.S         | 28 +++++++++++++++-------------
+ arch/loongarch/kernel/idle.c          |  3 +--
+ arch/loongarch/kernel/proc.c          | 29 +++--------------------------
+ arch/loongarch/kernel/reset.c         |  6 +++---
+ arch/loongarch/kvm/main.c             |  4 ++--
+ arch/loongarch/kvm/switch.S           |  2 +-
+ arch/loongarch/kvm/vcpu.c             |  3 ---
+ arch/loongarch/lib/csum.c             |  2 +-
+ arch/loongarch/mm/pageattr.c          |  3 ++-
+ 11 files changed, 30 insertions(+), 73 deletions(-)
 
 
