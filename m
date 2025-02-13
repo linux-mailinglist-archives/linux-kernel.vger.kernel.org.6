@@ -1,100 +1,122 @@
-Return-Path: <linux-kernel+bounces-512314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A021A3376C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:42:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCD9A3376F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 06:43:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACA23A6D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:42:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C497A3D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 05:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1A8207646;
-	Thu, 13 Feb 2025 05:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A1B206F18;
+	Thu, 13 Feb 2025 05:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUdH4Trm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fqzdhc3x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494E86325;
-	Thu, 13 Feb 2025 05:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE50B206F05;
+	Thu, 13 Feb 2025 05:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739425355; cv=none; b=HTsI3J/55jAcszujl99rjy7acmW2Eo8G+ed4HaRcLxK5tNRpqCQEV4T1LfCRosD8TLsrvQe+q2sL0on5+dr+o71W9fv3pwrFwJ45ffeU11/ZfhY/vulxQLQqDnaUNGdMLRuXqfDyimnoG4nDD950W3TesJ/9yXumw+WMm95vIzo=
+	t=1739425361; cv=none; b=BLrs+OpT6sWZIxxp30amHTLCfqmcl82JoxZsX4wjwgEJjSIv4BMjfJ14swtoS7y5+es0hg2nGw0BXoQc/o0AtXXdfHt9FzHUK6O/gPIhXarMMFDHjV0CSrmR00bNJxhq/HucTO3f6fkZBsRCyqEbA/MP5Z3HZCxo51u389O2BZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739425355; c=relaxed/simple;
-	bh=1oy+f0Vu6QrT48bg7Fr1czgxZtf91HbCjHjLvrt5GRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lZcHOEy2n7aljqx8kYxfyzQ47KpjTVwBw++Y1/cDjh+MTFCyzFLGIblDAzFaYl8dVzu9+4u8TzPewMkmUn1H2ck0eyvi8jemQHWJBqxcKghR4oM7V5ddOxC37dKQri2tyAoL+CGbmsE7QTbzP6ecLDntQ1bWZSXAjwZr2fqXeNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUdH4Trm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824D8C4CEE4;
-	Thu, 13 Feb 2025 05:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739425354;
-	bh=1oy+f0Vu6QrT48bg7Fr1czgxZtf91HbCjHjLvrt5GRs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XUdH4TrmU3PSPCNlyk4h7mN5QouLNiNCyFDFtazYjadLZYVLYnDXpbDAYVyzUG7eZ
-	 x42pdan40CIzw19MPBD/lqCow1ApzMuOXlUG5G65r1hmlwtFbvE80XZqqUvvzAlYqQ
-	 rvqH8jOtXP+MAnTYJ50LAwhm/Y8Yhyjd4FJ2MQCb4FkQ8/wx97DmzeLBqdUJt16XdE
-	 Hsole4MN2PY8lj1QgLKU/k9Wc/LzDmRkcRdiueCdUq2kCpBj3nZuthGCjY7bbF+oPr
-	 zHnmnl/TFzWmE141A6pEsLVUsboYKpfcJ4VurLONAB20RNvDJfTH2O0KgMgynk9TRM
-	 2JlImTMW0uYdQ==
-From: alexs@kernel.org
-To: 
-Cc: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
-Date: Thu, 13 Feb 2025 13:42:15 +0800
-Message-ID: <20250213054222.21776-2-alexs@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213054222.21776-1-alexs@kernel.org>
-References: <20250213054222.21776-1-alexs@kernel.org>
+	s=arc-20240116; t=1739425361; c=relaxed/simple;
+	bh=s1+zMW0r7uW6tCZ4MRxVO4Jw77rHPs73bHu8Fg5RZuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FAlTF9XLp/apadJ1XD04f+zXQMkZcxuR6gILBsgbqNW6dKHyRzcQyU/wfjM9OH+gDr5HXYWZfiDMbg8a4UuISfCxOPb0lwZZbBmoUKErlorYIj8f60zsbP+8aSuK/k6ajsDWdcNyuJPrSVe3+RzRwYsG0glcwI5WiTvv5u2v6is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fqzdhc3x; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739425360; x=1770961360;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s1+zMW0r7uW6tCZ4MRxVO4Jw77rHPs73bHu8Fg5RZuA=;
+  b=Fqzdhc3xkAFSv4ZfrEh8z+g5RK13ayGpI1bBAhenxwrAX4MZBXyjOr43
+   j8cN0+VSdJcXrjXrRqwKjW+MFkcYNL+qfwTLpCtgfGA8unAl2/DDsBeH3
+   VrcElUhz2q951scF+KUqTyR6VrGWnhftvd3hofZn6XZziMf35/qkCa5QW
+   mi45Ib93ofQc5gOG+Z9NlsI60mOMHN5dNB3stG4Bejl7TIGKw/vg8aVPs
+   2zuoPBFzbyeeoc3n+XCWwcPqhcfyTGJ25QXen9Zwu7dEo9bFvItrvY+BB
+   xQNei/nPvvfl1/BbptNGVWanrPGhWUmJQrjz9u9rA9BzxcgFU/P5g5qbg
+   A==;
+X-CSE-ConnectionGUID: BVJ6e4aoTXOU+pVHjUiVPg==
+X-CSE-MsgGUID: bPyTzJtvTuGNMjcTcji4bA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="40144840"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="40144840"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 21:42:39 -0800
+X-CSE-ConnectionGUID: absVRYFWTE6GjFbSpIfu3A==
+X-CSE-MsgGUID: Rc56qI39ThGchxAi5S5+/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="118128278"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.42.34]) ([10.247.42.34])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 21:42:31 -0800
+Message-ID: <74a324de-7a64-4d67-8167-79bf6e4ae8da@linux.intel.com>
+Date: Thu, 13 Feb 2025 13:42:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v4 9/9] igc: Add support to get frame preemption
+ statistics via ethtool
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-10-faizal.abdul.rahim@linux.intel.com>
+ <20250212215408.v47eb42zx67ij6vp@skbuf>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20250212215408.v47eb42zx67ij6vp@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Alex Shi <alexs@kernel.org>
 
-A good checked summit could save much time for linux-doc maintainer.
 
-Signed-off-by: Alex Shi <alexs@kernel.org>
-Cc: Yanteng Si <siyanteng@loongson.cn> 
-Cc: Jonathan Corbet <corbet@lwn.net> 
-Cc: linux-doc@vger.kernel.org 
-Cc: linux-kernel@vger.kernel.org 
----
- Documentation/translations/zh_CN/index.rst | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On 13/2/2025 5:54 am, Vladimir Oltean wrote:
+> On Mon, Feb 10, 2025 at 02:02:07AM -0500, Faizal Rahim wrote:
+>> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+>> index f15ac7565fbd..cd5160315993 100644
+>> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+>> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+>> @@ -3076,6 +3076,7 @@ static bool igc_clean_tx_irq(struct igc_q_vector *q_vector, int napi_budget)
+>>   			break;
+>>   
+>>   		if (static_branch_unlikely(&igc_fpe_enabled) &&
+>> +		    adapter->fpe.mmsv.pmac_enabled &&
+> 
+> This bit is misplaced in this patch.
 
-diff --git a/Documentation/translations/zh_CN/index.rst b/Documentation/translations/zh_CN/index.rst
-index 7574e1673180..cc512ca54172 100644
---- a/Documentation/translations/zh_CN/index.rst
-+++ b/Documentation/translations/zh_CN/index.rst
-@@ -26,7 +26,13 @@
- 顺便说下，中文文档也需要遵守内核编码风格，风格中中文和英文的主要不同就是中文
- 的字符标点占用两个英文字符宽度，所以，当英文要求不要超过每行100个字符时，
- 中文就不要超过50个字符。另外，也要注意'-'，'='等符号与相关标题的对齐。在将
--补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试。
-+补丁提交到社区之前，一定要进行必要的 ``checkpatch.pl`` 检查和编译测试，确保
-+在 ``make htmldocs/pdfdocs`` 中不增加新的告警，最后，安装检查你生成的
-+html/pdf 文件，确认它们看起来是正常的。
-+
-+提交之前请确认你的补丁可以正常提交到中文文档维护库:
-+https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git/
-+如果你的补丁依赖于其他人的补丁, 可以与其他人商量后由某一个人合并提交。
- 
- 与Linux 内核社区一起工作
- ------------------------
--- 
-2.43.0
-
+My bad, thanks for catching that.
 
