@@ -1,97 +1,86 @@
-Return-Path: <linux-kernel+bounces-513668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EEAAA34D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:13:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6393A34D4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 19:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209191612C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0863A9D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BC8241693;
-	Thu, 13 Feb 2025 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFB923A9AE;
+	Thu, 13 Feb 2025 18:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAs7UjPc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1hdXR3SS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5DE2222D2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 18:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83218F2FC;
+	Thu, 13 Feb 2025 18:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739470279; cv=none; b=kA8NuhQirYtwfLP4B2TUdHCXSSk9juIUEMtn6yzNlZjLLlxQV9UI1l4pOBUk2WwTDSATS8zpdXvsSYkRL2babcHuE0xP0WPfUDWM0M1oOqz6bYpx7oQfb9FroQ7c8fRN4bW9lzkptauXcwbESYF1i3cd5Zh3tjSBNrzgM7K4b8o=
+	t=1739470406; cv=none; b=OCfnWfvbiCxsfGWElnjJQs5F1nVRe5iZfwoS7d0Kpg1juyQx87ZaYZ9MMYh0C0TsYt7PyjAG4ZsV2fUJhyJ6wrpJQQVh3agkDDQmWr1e1AaChhYWJ5TTUca1bS3vFVL+MFEGC6/LHlH2Z91s0O82SVNaSja05T0MSjGtLr6gDmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739470279; c=relaxed/simple;
-	bh=i/aKh+UG4eFXBFc2spO6dzy+TGHEer6l9Vaf+E4l828=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d4xH98hoCPYQ8BbS5peE/omJCrKjEQAsen6LC8JFXY1c1Ulp+4/cwNeAcZ9XHVNjJjAF6YNCsk1F2q+jHoOSzCblliWlYSCBcE+SiYqb7e/XTqdCmquJ4L392Dp0UDzRWn15Mj0LQz6mKicgMo9HKq8PaWPbSn5epub+siZ5vxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAs7UjPc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B488EC4CED1;
-	Thu, 13 Feb 2025 18:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739470278;
-	bh=i/aKh+UG4eFXBFc2spO6dzy+TGHEer6l9Vaf+E4l828=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=GAs7UjPcMZYhRHW/VAhhAbTZSdfuBh9xCaKTHWp7t15bb68giQEhn4MIaFygJMQdq
-	 ssG2FoTYFTaBSjWkQp8DUClgwLoUy0KHuRQ6fHs+nVoihMyA4B/hYowSGHJfO+lvns
-	 bgqSceD0iFLtiW72ZzwR79bgIpZ4Vbs376bNOpBegBziQI7Us3g/IiU0U4uF4R2m8a
-	 SNVZRLrZv1mBflF7CSkejlRBuEsX5c39yJDTO4kObxpZgYwPTiwI4y3OCBH8LvPsT/
-	 HrbhNgUNdQel7UslBUZYHxovQaCdo+PTQgZbkofby+VgmzKvFlTlwQc96+yyk71NpB
-	 GkMcEbKqLfkQA==
-From: Vinod Koul <vkoul@kernel.org>
-To: aford173@gmail.com, kishon@kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, xiaopeitux@foxmail.com
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <tencent_6F503D43467AA99DD8CC59B8F645F0725B0A@qq.com>
-References: <tencent_6F503D43467AA99DD8CC59B8F645F0725B0A@qq.com>
-Subject: Re: [PATCH V6] phy: freescale: fsl-samsung-hdmi: Limit PLL lock
- detection clock divider to valid range
-Message-Id: <173947027636.282331.3484983514931257187.b4-ty@kernel.org>
-Date: Thu, 13 Feb 2025 23:41:16 +0530
+	s=arc-20240116; t=1739470406; c=relaxed/simple;
+	bh=KhQ5pIUvGHNGqvTWgKzFALgA+RVPd/dKhvRIXrwv1E8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBznrpseFDn7nm7L36g1jhRdBgic2IVD6q1Qi7WwS3NS8ThdiXfyl4SmlWLrbi+KKeEJYVPU5E5F8QYmo7Q/V82Z8CvUEt3NrswAVdh/IfPh83lh2Nca974JgjxocIlgIkT1+kiyHq1ie9GovgsjXGWw9p1+C+fxRn67cL+TBbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1hdXR3SS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA2FC4CED1;
+	Thu, 13 Feb 2025 18:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739470406;
+	bh=KhQ5pIUvGHNGqvTWgKzFALgA+RVPd/dKhvRIXrwv1E8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1hdXR3SSe3t8L83nJTFyxWi/2606ekdBtj1k4qle83P5v2nPfyk/LN3CeXDocjhmv
+	 r6UCfOXtt8wVHk1vlM6C4CViQfAA0xSz7jQI+FIDsv0/DmgxUlTODc3E7fbd1X0gDK
+	 cCmMWRde94kEqplAn7ixDcQ884vIH1dvNanKvhBU=
+Date: Thu, 13 Feb 2025 19:13:22 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Marco Elver <elver@google.com>, tglx@linutronix.de
+Subject: Re: [PATCH v8 0/6] kernfs: Use RCU to access
+ kernfs_node::{parent|name}.
+Message-ID: <2025021343-ranking-applause-aa5f@gregkh>
+References: <20250213145023.2820193-1-bigeasy@linutronix.de>
+ <Z64e6gdsFL9i7Cl3@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z64e6gdsFL9i7Cl3@slm.duckdns.org>
 
-
-On Tue, 11 Feb 2025 10:29:48 +0800, xiaopeitux@foxmail.com wrote:
-> FIELD_PREP() checks that a value fits into the available bitfield,
-> but the index div equals to 4,is out of range.
+On Thu, Feb 13, 2025 at 06:33:46AM -1000, Tejun Heo wrote:
+> On Thu, Feb 13, 2025 at 03:50:17PM +0100, Sebastian Andrzej Siewior wrote:
+> > This started as a bug report by Hillf Danton and aims to access
+> > kernfs_node::{name|parent} with RCU to avoid the lock during
+> > kernfs_path_from_node().
+> > 
+> > I've split the individual fixes in separate patches (#1 to #4). I've
+> > also split the ::parent and ::name RCU conversation into a single patch
+> > (#5 and #6).
 > 
-> which gcc complains about:
-> In function ‘fsl_samsung_hdmi_phy_configure_pll_lock_det’,
-> inlined from ‘fsl_samsung_hdmi_phy_configure’ at
-> drivers/phy/freescale/phy-fsl-samsung-hdmi.c :470:2:
-> ././include/linux/compiler_types.h:542:38: error: call to ‘__compiletime_assert_538’
-> declared with attribute error: FIELD_PREP: value too large for the field
->   542 |  _compiletime_assert(condition, msg, __compiletime_assert_,
-> __COUNTER__)
->       |                                      ^
-> ././include/linux/compiler_types.h:523:4: note: in definition of
-> macro ‘__compiletime_assert’ 523 |    prefix ## suffix();
->       |    ^~~~~~
-> ././include/linux/compiler_types.h:542:2: note: in expansion of macro
-> ‘_compiletime_assert’
->   542 |  _compiletime_assert(condition, msg, __compiletime_assert_,
->  __COUNTER__)
-> 
-> [...]
+> Greg, the whole series looks good to me. Probably ready to iterate in tree
+> even if there are more updates to make?
 
-Applied, thanks!
+Give me a chance to catch up with my pending patch review queue, I've
+been in CRA meetings lately and am way behind...
 
-[1/1] phy: freescale: fsl-samsung-hdmi: Limit PLL lock detection clock divider to valid range
-      commit: cd57e4327707126dca3f9517b84274c001d4c184
+Don't worry, it's not lost.
 
-Best regards,
--- 
-~Vinod
+thanks,
 
-
+greg k-h
 
