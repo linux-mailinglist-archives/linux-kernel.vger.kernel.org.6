@@ -1,248 +1,155 @@
-Return-Path: <linux-kernel+bounces-512731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B27A33D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:58:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E961FA33D17
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B89C47A436D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DDD3A6435
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5427C2139D4;
-	Thu, 13 Feb 2025 10:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23C72135D9;
+	Thu, 13 Feb 2025 10:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j30VancN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ewD05as5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6C32139B0;
-	Thu, 13 Feb 2025 10:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E3621325A;
+	Thu, 13 Feb 2025 10:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444306; cv=none; b=ujd0zvTRbWVPs8pd6f2xyCu4s7zktiGSYizJskoVDIkuchBRg4ZSOnq+jJhOg0p9vGRd0bOaJvkXcj3DcHOod5m5Fq560iKOV2Tmdq+Qax5vJq9dliFfZr6u+39+VKCUaUEXFYh5inmN1Hggsy2CakipAt6wlDpcdPwbu9Vjo7Y=
+	t=1739444264; cv=none; b=a95eu/oCenK0QcxH9Y50CzDc+Zq0CBNCBlVurdNny5bmss+ahHGd9j4YACmTS9ZZTBaWkQbDN1bs4J7qXgWRQo7WkNIYZ17Tnvnc0lNqeZ4mbu/ecLImCktJQkex1C07MQcmIsh1xob8a3Xpwv1I3Hx3WXNIUmZ60xRjC8UfOPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444306; c=relaxed/simple;
-	bh=pTt4Dk/mWDy0iReP/udyoCzdyuN4y/N0LeolOL9CKSo=;
+	s=arc-20240116; t=1739444264; c=relaxed/simple;
+	bh=pyF2QmNloyMOS+ooiXdEaWxfi2Vx+bDKuVx6p+SkU6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIJ3CDhiOc/LhvwCkZq2TWup5XC/1HXoctK9GJkQxOQDGyo2FdO8e1u0CXO3d03gR1VeXH/arV3uXu9Apcr1b2SvyIAsqS1wg6ct8VSggWj/HJXam8V4ox580k+5FVURowk5j0sV2Mub0SWmdTz4o2slKuccrnpFsCKz0y0ImGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j30VancN; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYrqCLStKJteLbicCnhD1hWeahrb9TlxDGKMvvN/Oge1nNGF3bPAXtkWywqpw1LvmgoIcbtRHh4K+OnNZHSMh40Oe0GOrWC0tcLuJWzZY9Zt3gSsUZx9NqsFGCJaQIFspB+BKAU0gSSdGJaU/p0jFHNNe7OvoBV62o5yK266yXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ewD05as5; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739444304; x=1770980304;
+  t=1739444262; x=1770980262;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pTt4Dk/mWDy0iReP/udyoCzdyuN4y/N0LeolOL9CKSo=;
-  b=j30VancNgMMQOMCDRfluWbQhe2NYbPUNnpY4Nu2Ibx+yQCAdLUFKxvWM
-   ygbpivIf+VxOl63qysB1Kocz4LPsnJK93yZsj5X3F3ej7OSV8bprhHPXj
-   QV2o1/4a1K5qIxHkiwlqGqrNTTuNfkpzt+HTfl/JhafAfa8JUOPY61uOm
-   Z7L9wALx2CzBNLIXfEyjTYqXsb4m4tJTMuIliVXhXmuyy5rK60ukZu+iG
-   HnyIr0w8L0qP5J0HLyT4xISUes7JXD8AjuK3kH4P6HyAOkZqXaN94r6mf
-   Pr7bOgYMOOnN4wIhKjdFurFPCHBBudPFrieyMl30dTzKnosupFBwh1fEn
-   A==;
-X-CSE-ConnectionGUID: MIKYbMxvSE629s8YAMZJ+w==
-X-CSE-MsgGUID: 9WT2fEaETSum8ONvDLIbjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57542064"
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pyF2QmNloyMOS+ooiXdEaWxfi2Vx+bDKuVx6p+SkU6c=;
+  b=ewD05as5swo7iwL2SqdBFwse7ftzTOb6b7CaO1cXbgNSyeEfkhwfnj1D
+   Gy0pqBRwaSpTIOmWmcTgVDAwDG6ahj0lRPnOqdu6NPSzxg/rNnOA/hD92
+   lPRYX1FAZx9+hPHbBi5dUTFS2L3+YKsOLdi8YdnxsYSE0mSEt/+b/VdHv
+   6w83KXAMUMU4vLgu3l/TTu51bW+z571cOt42RxnlQbFI959u8PPTolpzH
+   6EYUPB2Vh/LiGV69uFnrlGPCApNevTfpX9vWJki/+O4xkd4VZHkXWaLZd
+   M6cvRAuwobBbiwYgqHeb8iGApwVvTedST6b/fG8pCLDYBVqLi/xrb7RXx
+   Q==;
+X-CSE-ConnectionGUID: lnH5xp24T1KyGOKkpRfm7w==
+X-CSE-MsgGUID: qVNyYJJ8Sr+QUKYke6/7YA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57673742"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="57542064"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:58:23 -0800
-X-CSE-ConnectionGUID: zI83mEhvQIKfX2/42nUXVg==
-X-CSE-MsgGUID: ubMBOrkqR02OfjXgd6sv2A==
+   d="scan'208";a="57673742"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:57:41 -0800
+X-CSE-ConnectionGUID: P9Bh1cBQShitd1WRAq7ksg==
+X-CSE-MsgGUID: R1RQoslhSjeSCVtbJOXViQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112942474"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 13 Feb 2025 02:58:18 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiWvA-0016wl-0J;
-	Thu, 13 Feb 2025 10:58:16 +0000
-Date: Thu, 13 Feb 2025 18:57:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH 6/7] sched_ext: idle: Per-node idle cpumasks
-Message-ID: <202502131834.ni8ojoRO-lkp@intel.com>
-References: <20250212165006.490130-7-arighi@nvidia.com>
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="112974706"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:57:38 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiWuV-0000000B8kk-0Vn6;
+	Thu, 13 Feb 2025 12:57:35 +0200
+Date: Thu, 13 Feb 2025 12:57:34 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, "robh@kernel.org" <robh@kernel.org>,
+	"robert.marko@sartura.hr" <robert.marko@sartura.hr>,
+	"arnd@kernel.org" <arnd@kernel.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"jirislaby@kernel.org" <jirislaby@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"hvilleneuve@dimonoff.com" <hvilleneuve@dimonoff.com>,
+	"schnelle@linux.ibm.com" <schnelle@linux.ibm.com>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] serial: tegra-utc: Add driver for Tegra UART
+ Trace Controller (UTC)
+Message-ID: <Z63QHvayYRS0U8Ln@smile.fi.intel.com>
+References: <20250212104132.61060-1-kkartik@nvidia.com>
+ <20250212104132.61060-3-kkartik@nvidia.com>
+ <Z6y5vRGyouZsQWyj@smile.fi.intel.com>
+ <ec06322386adbf4404e2fbc5d7656e3465eb4320.camel@nvidia.com>
+ <Z63Bk6sgQryG1pFK@smile.fi.intel.com>
+ <88a54c9bf88dac0a3316224b08d0e2378e8fc6f0.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250212165006.490130-7-arighi@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <88a54c9bf88dac0a3316224b08d0e2378e8fc6f0.camel@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Andrea,
+On Thu, Feb 13, 2025 at 10:11:36AM +0000, Kartik Rajput wrote:
+> On Thu, 2025-02-13 at 11:55 +0200, andriy.shevchenko@linux.intel.com
+> wrote:
+> > On Thu, Feb 13, 2025 at 09:05:36AM +0000, Kartik Rajput wrote:
+> > > On Wed, 2025-02-12 at 17:09 +0200, Andy Shevchenko wrote:
+> > > > On Wed, Feb 12, 2025 at 04:11:32PM +0530, Kartik Rajput wrote:
 
-kernel test robot noticed the following build errors:
+...
 
-[auto build test ERROR on next-20250212]
-[cannot apply to tip/sched/core akpm-mm/mm-everything tip/master linus/master tip/auto-latest v6.14-rc2 v6.14-rc1 v6.13 v6.14-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > > > +     for (i = 0; i < len; i++) {
+> > > > > +             if (!nbcon_enter_unsafe(wctxt))
+> > > > > +                     break;
+> > > > > +
+> > > > > +             read_poll_timeout_atomic(tegra_utc_tx_readl, val,
+> > > > > !(val & TEGRA_UTC_FIFO_FULL),
+> > > > > +                                      0, USEC_PER_SEC, false,
+> > > > > tup,
+> > > > > TEGRA_UTC_FIFO_STATUS);
+> > > > 
+> > > > No error check?
+> > > 
+> > > I'm not sure about this. The case where the TX FIFO doesn't clear
+> > > up,
+> > > even after polling for 1 second, is highly unlikely, especially
+> > > since
+> > > there's no flow control involved here. Even if that did happen,
+> > > writing
+> > > to the TX FIFO should just result in an overflow, which is probably
+> > > acceptable in this scenario.
+> > 
+> > Perhaps a warning (debug?) message in such a case?
+> 
+> I would prefer avoiding any prints in this function, as we are writing
+> debug messages to the UART HW here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-Righi/mm-numa-Introduce-nearest_node_nodemask/20250213-014857
-base:   next-20250212
-patch link:    https://lore.kernel.org/r/20250212165006.490130-7-arighi%40nvidia.com
-patch subject: [PATCH 6/7] sched_ext: idle: Per-node idle cpumasks
-config: i386-buildonly-randconfig-005-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131834.ni8ojoRO-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131834.ni8ojoRO-lkp@intel.com/reproduce)
+Not every printf() goes to UART, but to your point the NBCON should solve that
+issue to some extent. Of course, if the HW in a broken (unrecoverable) state,
+nothing won't help.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131834.ni8ojoRO-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/sched/build_policy.c:63:
-   kernel/sched/ext.c:6014:31: warning: bitwise operation between different enumeration types ('enum scx_enq_flags' and 'enum scx_deq_flags') [-Wenum-enum-conversion]
-    6014 |         WRITE_ONCE(v, SCX_ENQ_WAKEUP | SCX_DEQ_SLEEP | SCX_KICK_PREEMPT |
-         |                       ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:61:18: note: expanded from macro 'WRITE_ONCE'
-      61 |         __WRITE_ONCE(x, val);                                           \
-         |                         ^~~
-   include/asm-generic/rwonce.h:55:33: note: expanded from macro '__WRITE_ONCE'
-      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
-         |                                        ^~~
-   In file included from kernel/sched/build_policy.c:64:
->> kernel/sched/ext_idle.c:136:9: error: '__section__' attribute only applies to functions, global variables, Objective-C methods, and Objective-C properties
-     136 |         static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
-         |                ^
-   include/linux/percpu-defs.h:115:2: note: expanded from macro 'DEFINE_PER_CPU'
-     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
-         |         ^
-   include/linux/percpu-defs.h:93:2: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
-      93 |         __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;                   \
-         |         ^
-   include/linux/percpu-defs.h:54:2: note: expanded from macro '__PCPU_DUMMY_ATTRS'
-      54 |         __section(".discard") __attribute__((unused))
-         |         ^
-   include/linux/compiler_attributes.h:321:56: note: expanded from macro '__section'
-     321 | #define __section(section)              __attribute__((__section__(section)))
-         |                                                        ^
-   In file included from kernel/sched/build_policy.c:64:
->> kernel/sched/ext_idle.c:136:9: error: non-extern declaration of '__pcpu_unique_per_cpu_unvisited' follows extern declaration
-   include/linux/percpu-defs.h:115:2: note: expanded from macro 'DEFINE_PER_CPU'
-     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
-         |         ^
-   include/linux/percpu-defs.h:93:26: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
-      93 |         __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;                   \
-         |                                 ^
-   <scratch space>:82:1: note: expanded from here
-      82 | __pcpu_unique_per_cpu_unvisited
-         | ^
-   kernel/sched/ext_idle.c:136:9: note: previous declaration is here
-   include/linux/percpu-defs.h:115:2: note: expanded from macro 'DEFINE_PER_CPU'
-     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
-         |         ^
-   include/linux/percpu-defs.h:92:33: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
-      92 |         extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;            \
-         |                                        ^
-   <scratch space>:81:1: note: expanded from here
-      81 | __pcpu_unique_per_cpu_unvisited
-         | ^
-   In file included from kernel/sched/build_policy.c:64:
->> kernel/sched/ext_idle.c:136:9: error: 'section' attribute only applies to functions, global variables, Objective-C methods, and Objective-C properties
-     136 |         static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
-         |                ^
-   include/linux/percpu-defs.h:115:2: note: expanded from macro 'DEFINE_PER_CPU'
-     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
-         |         ^
-   include/linux/percpu-defs.h:95:2: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
-      95 |         __PCPU_ATTRS(sec) __weak __typeof__(type) name
-         |         ^
-   include/linux/percpu-defs.h:50:26: note: expanded from macro '__PCPU_ATTRS'
-      50 |         __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))     \
-         |                                 ^
-   In file included from kernel/sched/build_policy.c:64:
->> kernel/sched/ext_idle.c:136:36: error: non-extern declaration of 'per_cpu_unvisited' follows extern declaration
-     136 |         static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
-         |                                           ^
-   kernel/sched/ext_idle.c:136:36: note: previous declaration is here
->> kernel/sched/ext_idle.c:136:9: error: weak declaration cannot have internal linkage
-     136 |         static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
-         |                ^
-   include/linux/percpu-defs.h:115:2: note: expanded from macro 'DEFINE_PER_CPU'
-     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
-         |         ^
-   include/linux/percpu-defs.h:95:20: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
-      95 |         __PCPU_ATTRS(sec) __weak __typeof__(type) name
-         |                           ^
-   include/linux/compiler_attributes.h:403:56: note: expanded from macro '__weak'
-     403 | #define __weak                          __attribute__((__weak__))
-         |                                                        ^
-   1 warning and 5 errors generated.
-
-
-vim +/__section__ +136 kernel/sched/ext_idle.c
-
-   133	
-   134	static s32 pick_idle_cpu_from_other_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
-   135	{
- > 136		static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
-   137		nodemask_t *unvisited = this_cpu_ptr(&per_cpu_unvisited);
-   138		s32 cpu = -EBUSY;
-   139	
-   140		preempt_disable();
-   141		unvisited = this_cpu_ptr(&per_cpu_unvisited);
-   142	
-   143		/*
-   144		 * Restrict the search to the online nodes, excluding the current
-   145		 * one.
-   146		 */
-   147		nodes_clear(*unvisited);
-   148		nodes_or(*unvisited, *unvisited, node_states[N_ONLINE]);
-   149		node_clear(node, *unvisited);
-   150	
-   151		/*
-   152		 * Traverse all nodes in order of increasing distance, starting
-   153		 * from @node.
-   154		 *
-   155		 * This loop is O(N^2), with N being the amount of NUMA nodes,
-   156		 * which might be quite expensive in large NUMA systems. However,
-   157		 * this complexity comes into play only when a scheduler enables
-   158		 * SCX_OPS_BUILTIN_IDLE_PER_NODE and it's requesting an idle CPU
-   159		 * without specifying a target NUMA node, so it shouldn't be a
-   160		 * bottleneck is most cases.
-   161		 *
-   162		 * As a future optimization we may want to cache the list of nodes
-   163		 * in a per-node array, instead of actually traversing them every
-   164		 * time.
-   165		 */
-   166		for_each_node_numadist(node, *unvisited) {
-   167			cpu = pick_idle_cpu_in_node(cpus_allowed, node, flags);
-   168			if (cpu >= 0)
-   169				break;
-   170		}
-   171		preempt_enable();
-   172	
-   173		return cpu;
-   174	}
-   175	
+> > > > > +             uart_console_write(&tup->port, wctxt->outbuf + i,
+> > > > > 1,
+> > > > > tegra_utc_console_putchar);
+> > > > > +
+> > > > > +             if (!nbcon_exit_unsafe(wctxt))
+> > > > > +                     break;
+> > > > > +     }
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
