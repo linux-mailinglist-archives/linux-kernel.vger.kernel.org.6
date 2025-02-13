@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-512967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9259A33FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:06:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655BDA33FE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35FA316B0FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB237A1BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E688F221575;
-	Thu, 13 Feb 2025 13:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D000A23F40D;
+	Thu, 13 Feb 2025 13:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQDEeelf"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RmhUzOeb"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567623F41E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6986E23F400
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 13:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739451922; cv=none; b=jvBhwvgH12XcLpCaHM8h9twE/CRdiHnt9gvHS1LYl+XEHg0CCE4BxYOM9/foCQLoHIeub/jXoSpzBgB8SR92bzHJIjxNDw+DHumng5utACt5FmDHx327aRAOfpWqqyBDhyKkugN3D941wS0PRmvaEW25Uih5L40epL8Tm1oZQYA=
+	t=1739452036; cv=none; b=soamSn12PwYy6ZY4Ow1zPtVkwLLlQCSw6to7haOqx55o3zN4i0WBGgNJnCJ3MiNGcSAFT/gthIpRDCU4I23F4qj6hRIWL/srfSSLHCDgGhRo5HjEOg5BVzp8/bukSyc0FuthBvcJbnTNiBxSPjT4BSzpJHE3l254PSORCKznkXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739451922; c=relaxed/simple;
-	bh=mxio+qKZ0oCarMDdKVLWSkQ5r9o/ZU/FWiQSXWeFPIk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MPBOhQKyaA10RMDbl+iiJqm0J/gHmnHpVECmvJhE1iqdJDO3++kmWz7hwvYRHOUOB061Wms7b/iAAFPLfHvK4XOm4LVt42MTxXIbcu8EOde/GTCuMrXY4rjRciPgiCix09uzBLL3r9w7LR/4pWu0r+1PnpR/T/2n6kJ3xMhMknk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HQDEeelf; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4395560cc13so9487035e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 05:05:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739451918; x=1740056718; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zHOUQzUPyOdT3w4jRKuGIg3i9ApsudVpLcIIKx7XFPI=;
-        b=HQDEeelf+j/E4ptkdMLkkstJuvqV1DKHDRsXonj6R2YCHoao753LThTulU4siSq00i
-         dCd2C/TRnMyIq8PVbnArynpw2gnQUHmLwtGfFRx4uqcKSlzYJfZXyLMRoTe88ksOokT6
-         h4/5R1FRWmMuyUB2K7hGuuu8hNxTfKq99BEKnsduDEt2k+WlHNQ0DmEZ1gGWg/L+UrAV
-         cvbYy4Mf6fRS6flVjZb+VwAdOq+9k5iLfsMTuoDsb+51SsY1okdOs/6OoJlWdW4n1SRk
-         InoIrhk3iecG/u/2hOsJVsAp8jA+b85D3ftwvUYQ5TsCydwRmYQOeLXDUc7muogzdV//
-         WelA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739451918; x=1740056718;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zHOUQzUPyOdT3w4jRKuGIg3i9ApsudVpLcIIKx7XFPI=;
-        b=TSgLn5g9lLrgSDAUqMSHSMGoD4mcw3iUeJMbHIpyeIWzILMdYmjJe4+7a2p2sqqccB
-         yE7Pd4V6ev6Qyxk4RSz4qMVDnCvk8WnHiWq9eZO6Spqv1XJKDIqOCmSoGZxKLNmgu6Xo
-         5vPRSgTwfwMOuNUG+uMmvlrozk9XqEZJad1U9ZdSzySMkTDrDGDBhgTQKCSH8cOY6G0F
-         27STgT8pUw3qHGsLH2VAJI2wcuW+K39eIiPyTsHeAuRAzBhWrM9FRWvOpPE9/NzZ9Q7/
-         T8irTTfAK66B6/IM7HuwWwcqvvTmUL9k26y1ifkn8CuPmOoMPkijP39r0ie+8TseysWx
-         wpsg==
-X-Gm-Message-State: AOJu0YzPmq+pponImMPafy5AiAD1rZBhp18+WtTbyaXoeVs7DsVQn43C
-	4eIfHYceWHbKBg6XZKUJ0vUuBLDzIRcBspKPGBAEd/b4sTv32yoazuJ+LPirxP8=
-X-Gm-Gg: ASbGncu482yeRmzIfyrJS8o1WmpxAFREsjKjlMKcXKakXGssk+Uzdo9EJDdhj8u/jU+
-	RgOIkHKukoUORR07Ei7snlKmvxE/J3y/PyZqeVSDwm09KxKUAec7tt5PF9k9QnAzKvIouuTwRmL
-	1/t8aYjO4Inp5Pnsue4SsjiFz03UNXGHdrnoiG4zNCNL7B6zYvt9kldkJU4hW2gBVfM07rEjmqf
-	TrbguUeBcRwdVgwlF8C7UpqyWngfZIZrKQiHQxcc8SdZ2ZWp+v0xonnSXjXT6IodHP/68ggbDCX
-	ebfPbWyVtaOsHIzrG8lZuNENzcgvikTSeKfXQjj8hKr8Bp/229tsYk8iADYiwb5x9St9i78=
-X-Google-Smtp-Source: AGHT+IHgAl/NTXWukWtRPOrcZw6v4KuAstgKfnNDDXq/WjRE7Xg59rRDQuiiCesGIdxFPL7opskBkw==
-X-Received: by 2002:a05:600c:3b92:b0:439:44eb:2db0 with SMTP id 5b1f17b1804b1-4395817ab18mr78523335e9.15.1739451918162;
-        Thu, 13 Feb 2025 05:05:18 -0800 (PST)
-Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43961884251sm17004025e9.31.2025.02.13.05.05.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 05:05:17 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 13 Feb 2025 13:05:16 +0000
-Subject: [PATCH v9 3/3] MAINTAINERS: add entry for the Samsung Exynos ACPM
- mailbox protocol
+	s=arc-20240116; t=1739452036; c=relaxed/simple;
+	bh=9AGuksxWME13+i3DmZ2reGSF4MYUhV4H+W/okayIy6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFBCHv4XbMjpgzfnPoldfv6r5yDc5hP8l2E4BgZR9L2Q5+cEcAwL0FWIUC2Go3jWEKO1q2FqQ9Rm20OBu7yEjHcGGtBd+wjom36Cvzs8N4W4aJ6rt7F9m8tDAQ0U//LWYHRHOcSXAxweD8sIXGcxphMiPkI5Hm56g1M1K+30X1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RmhUzOeb; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8jApXK6h1YFXRBUpbQbvIE5r0DHPlvCvz1gmWx3VreY=; b=RmhUzOebAO+KMdxKUy8iDALgGq
+	WgF0sf2/OwPUkf5lnZe9JM6lBtgU4VBMBYI2BXhuBmuaVMifioJEKg9tvlsST82lPyc7h8JvYnsCl
+	HqmUTIqY6GtRrBnTqs+0I5YCZHuj5xWj4DXCP1JyHmQAEW1cHMPQaUjcU/5npjPTukIXBeOON+iXo
+	Wh2mKUs+3GJJtC2HPxXfGvjCYMwnlTWMY74VhtOJubf+0N7L3wgOh5ktyMjatNOhoi4wOM01BRkqM
+	ZISxj1SNO34AogOXDzzYXk3dNsCqYPf5WrijogjDK0pkhlM26ZcEBaL4XyjS1a0mk5J2YIfGj4IAP
+	gNyPEEwQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tiYvp-00000000zrn-3Szu;
+	Thu, 13 Feb 2025 13:07:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 83FBC3001AC; Thu, 13 Feb 2025 14:07:04 +0100 (CET)
+Date: Thu, 13 Feb 2025 14:07:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH v2 24/24] perf: Make perf_pmu_unregister() useable
+Message-ID: <20250213130704.GG28068@noisy.programming.kicks-ass.net>
+References: <20250205102120.531585416@infradead.org>
+ <20250205102450.888979808@infradead.org>
+ <50723a74-7d7c-4613-97fa-f4ee4ae0bbee@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-gs101-acpm-v9-3-8b0281b93c8b@linaro.org>
-References: <20250213-gs101-acpm-v9-0-8b0281b93c8b@linaro.org>
-In-Reply-To: <20250213-gs101-acpm-v9-0-8b0281b93c8b@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- peter.griffin@linaro.org, daniel.lezcano@linaro.org, 
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739451915; l=1230;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=mxio+qKZ0oCarMDdKVLWSkQ5r9o/ZU/FWiQSXWeFPIk=;
- b=GiT09Wr16zJYvD7p0ZCHkOHEx8QQPR1xqF7gPsJekwN511IOr3sW5U1/bKSFoCjDMsYO7zMub
- 7HYPPkCkvERCkZePKsrvCh1pUdoxfmcR4KxfZzUNiIkht1bVjzHd0Sa
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50723a74-7d7c-4613-97fa-f4ee4ae0bbee@amd.com>
 
-Add entry for the Samsung Exynos ACPM mailbox protocol.
+On Mon, Feb 10, 2025 at 12:29:21PM +0530, Ravi Bangoria wrote:
+> On 05-Feb-25 3:51 PM, Peter Zijlstra wrote:
+> > Previously it was only safe to call perf_pmu_unregister() if there
+> > were no active events of that pmu around -- which was impossible to
+> > guarantee since it races all sorts against perf_init_event().
+> > 
+> > Rework the whole thing by:
+> > 
+> >  - keeping track of all events for a given pmu
+> > 
+> >  - 'hiding' the pmu from perf_init_event()
+> > 
+> >  - waiting for the appropriate (s)rcu grace periods such that all
+> >    prior references to the PMU will be completed
+> > 
+> >  - detaching all still existing events of that pmu (see first point)
+> >    and moving them to a new REVOKED state.
+> > 
+> >  - actually freeing the pmu data.
+> > 
+> > Where notably the new REVOKED state must inhibit all event actions
+> > from reaching code that wants to use event->pmu.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> Another race between perf_event_init_task() failure path and
+> perf_pmu_unregister():
+> 
+>         CPU 1                                          CPU 2
+> 
+>   perf_event_init_task()
+>     perf_event_free_task()
+>       perf_free_event(event1)
+>       /* event1->refcount is 1 */
+>                                                   perf_pmu_unregister()
+>                                                     pmu_detach_events()
+>                                                       pmu_get_event(pmu) /* Picks event1 */
+>                                                         atomic_long_inc_not_zero(&event1->refcount) /* event1 */
+>       /* event1->refcount became 2 (by CPU 2) */
+>         free_event(event1)
+>           WARN()
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I've unified perf_event_free_task() and perf_event_exit_task(). This
+makes both use perf_event_exit_event() and as such should no longer have
+this free_event().
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 896a307fa065..79ac2f3abff0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3070,6 +3070,7 @@ F:	drivers/*/*s3c24*
- F:	drivers/*/*s3c64xx*
- F:	drivers/*/*s5pv210*
- F:	drivers/clocksource/samsung_pwm_timer.c
-+F:	drivers/firmware/samsung/
- F:	drivers/mailbox/exynos-mailbox.c
- F:	drivers/memory/samsung/
- F:	drivers/pwm/pwm-samsung.c
-@@ -20899,6 +20900,15 @@ F:	arch/arm64/boot/dts/exynos/exynos850*
- F:	drivers/clk/samsung/clk-exynos850.c
- F:	include/dt-bindings/clock/exynos850.h
- 
-+SAMSUNG EXYNOS ACPM MAILBOX PROTOCOL
-+M:	Tudor Ambarus <tudor.ambarus@linaro.org>
-+L:	linux-kernel@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-+F:	drivers/firmware/samsung/exynos-acpm*
-+F:	include/linux/firmware/samsung/exynos-acpm-protocol.h
-+
- SAMSUNG EXYNOS MAILBOX DRIVER
- M:	Tudor Ambarus <tudor.ambarus@linaro.org>
- L:	linux-kernel@vger.kernel.org
-
--- 
-2.48.1.502.g6dc24dfdaf-goog
 
 
