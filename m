@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-513844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB61BA34F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:29:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BF7A34F5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 21:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7365516D14E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1343ADF8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 20:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4323266B62;
-	Thu, 13 Feb 2025 20:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1A4266194;
+	Thu, 13 Feb 2025 20:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSok0Nm4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iahmU/xL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D207266180;
-	Thu, 13 Feb 2025 20:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721B2222DE;
+	Thu, 13 Feb 2025 20:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739478484; cv=none; b=fmIluHaw3rlhVw+8kXUu25tGG0iBRHV1JE0W9MhXW9IMl637482V4i2dWPpdScaJwLhqe8f8aXXFngU1vScxZVCsjav4+Y8ay6aigzYBzz6RW7AC5UmhQzT3nkxAWF5oCdfOe1DKj9bcqfyxPh1eR9sR34DSxQpHETONC5OWbMI=
+	t=1739478513; cv=none; b=MqlchFaRGIffVHToDde+wlloiOusZ84B5ZY8a5Kgxs5fywJvxhtqlBGyHLICE/nNRqQ3/Lt1nSgHSBhgXrqMNO5bD9wOF5/S/J+kkzk+BLkW+39CMlm1WtFnDrzb7gljQZ7qnuLGgEld4qJOuWpMCiTOOiq6fxEnmvKFIQ0SOhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739478484; c=relaxed/simple;
-	bh=VkSdCVH98io6CNEmEYvxLbvDdssNIGv6artedm8Mfzg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d46K5kl6i7kti0mA3onzhvthPAw8YoEly1EYtjtpr8fhPHigfPDG7nOXMtX17CI/ESOCAMYwBSvfrhAAJVmmsDNgOhOzFfjtgvKqfjDkVFHCuIEy0ldykQQTDA+c+ztwF3BoqFDNTgD+I1QOWPqTRjufmsv9lXBcsYOW9i3EO/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSok0Nm4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BF4C4CED1;
-	Thu, 13 Feb 2025 20:28:03 +0000 (UTC)
+	s=arc-20240116; t=1739478513; c=relaxed/simple;
+	bh=kONj13IcqgHJ804P/bAafBVxsgQtnFkjDzMz0OaRA5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vAcy7miTltYn357Z1syOgxAc2nTHcWEdCr7kpKTRWXHUoOa/La1uIDYrOUmLpTMEyLzfHHqa0uYL8a5x+JcH8aLkNTqr9gfD9E0ubTAFgAorey3jA6hs4DwfK3htTFQ/IrSDBXX54dNtZMQwHUXLRjf4hrObyQjCV9SopHREKAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iahmU/xL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1BDC4CED1;
+	Thu, 13 Feb 2025 20:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739478483;
-	bh=VkSdCVH98io6CNEmEYvxLbvDdssNIGv6artedm8Mfzg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=QSok0Nm4YBf+5KP0sLu67l+H8Ok26mMkz7YGjj3ZKBdTynF/SEetb7TRgrC07YIDY
-	 s5Q++U7qP5P7j0BAhImUuIrgA2Upcn2O0Z9gZp85rStwYuqG7kmx4uNnLee/xIZvDj
-	 ZxNj7hcHG7p3BBwwz749Gjrw+hB4zOU2Hm5ETsLUbbZ862J/K74vmjWZU7b7erDKEq
-	 UMrXjpURj0FQ4emkrIDExGC1TSpDAorT0cO6664X5f0QVaYCRgS2nqK9hd2O4vaRi2
-	 z/Iy35emiBOL0rGwFN3IiM/2cmgefivex9zoS3p/nu9gxsjdGSMlZ++6kQwGAVfEWa
-	 ZPJ4KkOl0bp0w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F4D380CEF1;
-	Thu, 13 Feb 2025 20:28:34 +0000 (UTC)
-Subject: Re: [GIT PULL] Btrfs fixes for 6.14-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1739475780.git.dsterba@suse.com>
-References: <cover.1739475780.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1739475780.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.14-rc2-tag
-X-PR-Tracked-Commit-Id: da2dccd7451de62b175fb8f0808d644959e964c7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 945ce413ac14388219afe09de84ee08994f05e53
-Message-Id: <173947851292.1363830.5512428614962600136.pr-tracker-bot@kernel.org>
-Date: Thu, 13 Feb 2025 20:28:32 +0000
-To: David Sterba <dsterba@suse.com>
-Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1739478513;
+	bh=kONj13IcqgHJ804P/bAafBVxsgQtnFkjDzMz0OaRA5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iahmU/xLEyQ5W/x8G1XXoCuN03pzKYwXt5cjuLid0J2kmowncl+TcJsBFiFdnXAAw
+	 G2ImJXb8GEatewBIrpkPliLaVlqt+YwGGaUUe7ZSu+QTYYixOnY8NQ2L7bIeTRgQUv
+	 XKnoPM2jM1FoMZeunPhWxtFsi2R5Y5hFOZiAaOJoy/mpOM4gWxkgDqxt6cxdKUlMuU
+	 BoApdn8Ievmh5OjxdKpuGyto3xVNRAyh7XmFvutyOt9T/k4TTYgxr4QRgZbm8S/7vs
+	 LNDWpa83WcAlnkwCZMlGuxN6RkOyoj8ufbHuvlgSph2scXDoaLz4qnczlhAkx5/TP9
+	 F+nNPktOc/3gg==
+Date: Thu, 13 Feb 2025 12:28:33 -0800
+From: Kees Cook <kees@kernel.org>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: jannh@google.com, jmill@asu.edu, joao@overdrivepizza.com,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	luto@kernel.org, samitolvanen@google.com,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <202502131224.D6F5A235@keescook>
+References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
 
-The pull request you sent on Thu, 13 Feb 2025 21:02:41 +0100:
+On Thu, Feb 13, 2025 at 01:31:30AM +0000, Andrew Cooper wrote:
+> >> Assuming this is an issue you all feel is worth addressing, I will
+> >> continue working on providing a patch. I'm concerned though that the
+> >> overhead from adding a wrmsr on both syscall entry and exit to
+> >> overwrite and restore the KERNEL_GS_BASE MSR may be quite high, so
+> >> any feedback in regards to the approach or suggestions of alternate
+> >> approaches to patching are welcome :) 
+> >
+> > Since the kernel, as far as I understand, uses FineIBT without
+> > backwards control flow protection (in other words, I think we assume
+> > that the kernel stack is trusted?),
+> 
+> This is fun indeed.  Linux cannot use supervisor shadow stacks because
+> the mess around NMI re-entrancy (and IST more generally) requires ROP
+> gadgets in order to function safely.  Implementing this with shadow
+> stacks active, while not impossible, is deemed to be prohibitively
+> complicated.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.14-rc2-tag
+And just validate my understanding here, this attack is fundamentally
+about FineIBT, not regular CFI (IBT or not), as the validation of target
+addresses is done at indirect call time, yes?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/945ce413ac14388219afe09de84ee08994f05e53
-
-Thank you!
+-Kees
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kees Cook
 
