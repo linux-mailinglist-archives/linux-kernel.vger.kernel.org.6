@@ -1,171 +1,165 @@
-Return-Path: <linux-kernel+bounces-512393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E95A338B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:20:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96397A338BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C5C188C218
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67AD1688C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C780B20AF6D;
-	Thu, 13 Feb 2025 07:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0D720967F;
+	Thu, 13 Feb 2025 07:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XCqDiaxB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="OHgeQudZ"
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9BF20A5E5;
-	Thu, 13 Feb 2025 07:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090632080D2;
+	Thu, 13 Feb 2025 07:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739431179; cv=none; b=bI9oYbDoqESL/j9MKXOciPaP3ILIq9HcIn72Kj/EaADeoXVmyjel0DboqTggyH6QCctMEvoLPj6My9IvfGKy/9dOWXKCi0MHtRU9T9CYOZmD7y6nSPNjzWlBii9OckZX2pNsgWfIIWF+BsO/y3dTfrIqxjqkLpxEKOJVOcoYU/4=
+	t=1739431241; cv=none; b=KioYGiwgm6fuMhkJeCRt1m1aqaPJ9CJTYiHUEW0Ie45PPBA0ljCE2B+27dLWB6dX1uxvD/rYlmZVYYb/9PBqwI8xYjTsN/WQYwai82Q2989k8vXC8unPIluNz96uCEo57sPbNnLQc0ijRcjQd2hC4N+I+A8DTCFpKHW/Uw18yNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739431179; c=relaxed/simple;
-	bh=8Tt06UtQsEQgjyEseWRGpJM8tmicPO67FJ2ZmCsVAyc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i5/fFb/q0dAeDZtFVJH3ULpb7QSCXDZWTfR54qoXlymAuZ6gvyksTuYCWqgU8rcHtVN+OPTJlGn8AYEPeRqXanw4vcGdAWXYaVIckXxYSqcOyzCRhKje92zlyVVwCr3IAiZ9fIsRLROo4ZaddYZ+P+1BVP5rOFAm1C3dcpGwFsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XCqDiaxB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CMVPKO026400;
-	Thu, 13 Feb 2025 07:19:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PkZJQTjco+jvCkkufJNW/Aq/zfBLz5Cr/KVE2amtQQA=; b=XCqDiaxBDNlwGakT
-	bL/uUC4j/wqc8/UIcLDERvWh8dYBevXc0CdLJxkG16zCI7gs7NP8M2iUo/F5ZLo6
-	zT+RqoMGlmpfvO98zkORUPRs/g5Azqnm7aMzkBvYhX1s81mZHVQykSCX3MaFPE39
-	F5gYbeeM+n0nKUMjUaOeoOpqapI2ucbUXx3iUa/tmV+kD8MM0CrnDpWbcBRZbZfs
-	yINZZBCFI0Zthw9Nf02JQ7o4sqlWd6LqSvRZocDXKAvZQTFe6SrZxh4JwaIjKi1+
-	QX7E70OPDWk4pgTyFNWiPlZYxCpfVRwmj/9kyXxXdasDZbw2gIdtIRwsfBZuvCZ3
-	ez+qsQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5e6r2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:19:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D7JW8b020514
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 07:19:32 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Feb 2025 23:19:29 -0800
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH v4 2/2] arm64: dts: qcom: ipq5424: Enable PCIe PHYs and controllers
-Date: Thu, 13 Feb 2025 12:49:12 +0530
-Message-ID: <20250213071912.2930066-3-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250213071912.2930066-1-quic_mmanikan@quicinc.com>
-References: <20250213071912.2930066-1-quic_mmanikan@quicinc.com>
+	s=arc-20240116; t=1739431241; c=relaxed/simple;
+	bh=+UmDyGFYqbRGqxiUXDzk0wYia4DEJ/qtggUagtruh1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/g0UPOzXzj81+/sLY+uDBkBiGRzip4yA1ndUWX73gOyq4vsgM4jGBgt12TrhR97Woclf1C5F7bXEn0d8dTuAcGKpVP3R7pUShsVi2j9uF95bWLCft/WpVqRTFksEKoDxxW9A9cji3ocTBGs+/bKoNwI0k0rME0xGOdsuQDEupk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=OHgeQudZ; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1739431188; bh=+UmDyGFYqbRGqxiUXDzk0wYia4DEJ/qtggUagtruh1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OHgeQudZxxT0wgi5FGAagv7q2QLFdFIkd0t7eygA7wxw/marKM8WnD45X7azm8HUM
+	 31EnxHXdDNyET2f/Y/k98z4tGVCY2lYF5djVeG+CkfRgpvh9dAeohwS1GgQ4F+LZK3
+	 zzyqrcRmkF8IiVKSYPI8wXg1bR22JFIxo0Lypzwg=
+Received: from [212.42.244.71] (helo=mail.avm.de)
+	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
+	(envelope-from <n.schier@avm.de>)
+	id 67ad9d14-038b-7f0000032729-7f0000018ad4-1
+	for <multiple-recipients>; Thu, 13 Feb 2025 08:19:48 +0100
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Thu, 13 Feb 2025 08:19:48 +0100 (CET)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 39DA480175;
+	Thu, 13 Feb 2025 08:19:49 +0100 (CET)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id 2A47B182D0A; Thu, 13 Feb 2025 08:19:49 +0100 (CET)
+Date: Thu, 13 Feb 2025 08:19:49 +0100
+From: Nicolas Schier <n.schier@avm.de>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH] kbuild: rust: add rustc-min-version support function
+Message-ID: <20250213-masked-wombat-of-painting-8afb53@buildd>
+References: <20250210164245.282886-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lko6zocSLQBdENPd0Z3uPR0-t2isjdQN
-X-Proofpoint-GUID: lko6zocSLQBdENPd0Z3uPR0-t2isjdQN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
- mlxlogscore=785 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130054
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210164245.282886-1-ojeda@kernel.org>
+X-purgate-ID: 149429::1739431188-4EA08E17-E08D2BED/0/0
+X-purgate-type: clean
+X-purgate-size: 3033
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
 
-Enable the PCIe controller and PHY nodes corresponding to RDP466.
+On Mon, Feb 10, 2025 at 05:42:45PM +0100, Miguel Ojeda wrote:
+> Introduce `rustc-min-version` support function that mimics
+> `{gcc,clang}-min-version` ones, following commit 88b61e3bff93
+> ("Makefile.compiler: replace cc-ifversion with compiler-specific macros").
+> 
+> In addition, use it in the first use case we have in the kernel (which
+> was done independently to minimize the changes needed for the fix).
+> 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> This is based on top of the fix so that the fix remains as simple as
+> possible:
+> 
+>     https://lore.kernel.org/rust-for-linux/20250210163732.281786-1-ojeda@kernel.org/
+> 
+>  Documentation/kbuild/makefiles.rst | 14 ++++++++++++++
+>  arch/arm64/Makefile                |  2 +-
+>  scripts/Makefile.compiler          |  4 ++++
+>  3 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index d36519f194dc..2608aa32c762 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -670,6 +670,20 @@ cc-cross-prefix
+>              endif
+>      endif
+> 
+> +$(RUSTC) support functions
+> +--------------------------
+> +
+> +rustc-min-version
+> +  rustc-min-version tests if the value of $(CONFIG_RUSTC_VERSION) is greater
+> +  than or equal to the provided value and evaluates to y if so.
+> +
+> +  Example::
+> +
+> +    rustflags-$(call rustc-min-version, 108500) := -Cfoo
+> +
+> +  In this example, rustflags-y will be assigned the value -Cfoo if
+> +  $(CONFIG_RUSTC_VERSION) is >= 1.85.0.
+> +
+>  $(LD) support functions
+>  -----------------------
+> 
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 2b25d671365f..1d5dfcd1c13e 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -48,7 +48,7 @@ KBUILD_CFLAGS	+= $(CC_FLAGS_NO_FPU) \
+>  KBUILD_CFLAGS	+= $(call cc-disable-warning, psabi)
+>  KBUILD_AFLAGS	+= $(compat_vdso)
+> 
+> -ifeq ($(call test-ge, $(CONFIG_RUSTC_VERSION), 108500),y)
+> +ifeq ($(call rustc-min-version, 108500),y)
+>  KBUILD_RUSTFLAGS += --target=aarch64-unknown-none-softfloat
+>  else
+>  KBUILD_RUSTFLAGS += --target=aarch64-unknown-none -Ctarget-feature="-neon"
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index 8c1029687e2e..8956587b8547 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -67,6 +67,10 @@ gcc-min-version = $(call test-ge, $(CONFIG_GCC_VERSION), $1)
+>  # Usage: cflags-$(call clang-min-version, 110000) += -foo
+>  clang-min-version = $(call test-ge, $(CONFIG_CLANG_VERSION), $1)
+> 
+> +# rustc-min-version
+> +# Usage: rustc-$(call rustc-min-version, 108500) += -Cfoo
+> +rustc-min-version = $(call test-ge, $(CONFIG_RUSTC_VERSION), $1)
+> +
+>  # ld-option
+>  # Usage: KBUILD_LDFLAGS += $(call ld-option, -X, -Y)
+>  ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
+> --
+> 2.48.1
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
-Changes in V4:
-	- Added a new line before status in pcie2 and pcie3 nodes.
-	- Dropped 'output-low' property from pcie2-default-state and
-	  pcie3-default-state nodes.
-
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 41 ++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index b6e4bb3328b3..e73f61266012 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -53,6 +53,32 @@ &dwc_1 {
- 	dr_mode = "host";
- };
- 
-+&pcie2 {
-+	pinctrl-0 = <&pcie2_default_state>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie2_phy {
-+	status = "okay";
-+};
-+
-+&pcie3 {
-+	pinctrl-0 = <&pcie3_default_state>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 34 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie3_phy {
-+	status = "okay";
-+};
-+
- &qusb_phy_0 {
- 	vdd-supply = <&vreg_misc_0p925>;
- 	vdda-pll-supply = <&vreg_misc_1p8>;
-@@ -147,6 +173,20 @@ data-pins {
- 			bias-pull-up;
- 		};
- 	};
-+
-+	pcie2_default_state: pcie2-default-state {
-+		pins = "gpio31";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
-+
-+	pcie3_default_state: pcie3-default-state {
-+		pins = "gpio34";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
- };
- 
- &uart1 {
-@@ -166,4 +206,3 @@ &usb3 {
- &xo_board {
- 	clock-frequency = <24000000>;
- };
--
--- 
-2.34.1
-
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
