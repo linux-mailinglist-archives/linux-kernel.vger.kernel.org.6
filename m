@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-512762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6859A33D7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28703A33D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877701885A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E33188DB3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 11:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8DB2144CB;
-	Thu, 13 Feb 2025 11:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3B6so7R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555392144B4;
+	Thu, 13 Feb 2025 11:09:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898421323A;
-	Thu, 13 Feb 2025 11:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC8620AF66
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739444918; cv=none; b=R6Hd7JgEBv5Pmtn76OjEezchct1QbEp+5KSoRv5hGalOtpS1mlkHAdmcY3Z2d04x+ey1d2Vb6k3+xK0VvyDDc4mk0hAZeJvJeqTfYhA2e/EmRl/Jbtz0yZ+Cih6f5Z3HhkgoF8ygF1HMovTnGHbygB6OAAHDnI1ZNVkn20N5YF4=
+	t=1739444994; cv=none; b=EVJCFWbjTOvRq492Rqh7kMijWYxRBRGLyI2Bz+1eKpSQ0jBoL9JSPLMAOwS53dcPpNnpgnmaMWCIcQBTaziMDuBZcvkirNIi151d+18Uqnsif+c/oOFA9EKzVYmnGXdBYBBB7xP4TI15R5gO2xwV4iYb+1q6xEHCGfO6ndfNAcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739444918; c=relaxed/simple;
-	bh=NzeAgOEUcs1QCtjHEiz1U/3sMurLrKohd3+BYTsEIm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KqT/vxyLQy6h+puhu3yhrWY7HcIrGRPWJcacdx90lC1d+D8ExTy2WQyCWsKma0nd4pzEHNL+4TuvGLfoIdBmhzE/YC2jSVzP492fD7yZr674yXkqXJvb7kprx9/ZW6zC1AV+vuU69+N9WC3zsNesKNR3Ao1YLATbj1oEBNC1j6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3B6so7R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EDCC4CED1;
-	Thu, 13 Feb 2025 11:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739444917;
-	bh=NzeAgOEUcs1QCtjHEiz1U/3sMurLrKohd3+BYTsEIm4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f3B6so7RtGdEdY1n55i816+qWWtGUmOwoJrHGIYJj4ODxYsSHFcw5V9tDasFO13uL
-	 Ns7IjsoQX2V/8YMlGLXQJfUIhXUi6gQXBkmKGsfXlQCxsNcvSCagCX2uhmYxGF0I5P
-	 W8L5bRG7L13FGtzZ2LyDbc2knelqlxARTmY5Y4MtTBkScvF5UQF8dilWWEWptQcfi6
-	 tSf3MnZBS2iV2tubIoE15GRZ3/nQ8EjgKIcxnOqtJuE+UK40d+lew/BAQX1VMR02yV
-	 Xxpv1cRNhW7CaNEiKLD2CkQegwmWXUcrNF8+Ds/pjsyMTcBOzRJxg77PxQK6GUZ+Mi
-	 A0Dk3gPTPj+RA==
-Message-ID: <5d3c0ffd-2661-415c-8008-3f09523a82af@kernel.org>
-Date: Thu, 13 Feb 2025 12:08:33 +0100
+	s=arc-20240116; t=1739444994; c=relaxed/simple;
+	bh=VD0c+OPc0seUh3YTRx7sZu7G1wp5gYG+LsPTC74ne3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKvGASYBa0zxP/gwVEvGS8oZ263qfiL2Stk9YlhehOetsRn/XwvAYOi49na+EPzC0MLUt8ezrC1u2JtBr/I9Bxm3raCs8+yKfuGip+SZ/gJBU2hqlQ+qmkrDSTGN+a+f0oJvi6WxHPb1q9YvR+8ry/bbuCJqoWcooSmd6BMdvAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tiX6J-0007jb-K1; Thu, 13 Feb 2025 12:09:47 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tiX6J-000k1B-0L;
+	Thu, 13 Feb 2025 12:09:47 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tiX6J-00CqV5-01;
+	Thu, 13 Feb 2025 12:09:47 +0100
+Date: Thu, 13 Feb 2025 12:09:46 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Avri Altman <Avri.Altman@sandisk.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v1 1/1] mmc: core: Handle undervoltage events and
+ register regulator notifiers
+Message-ID: <Z63S-nQKwPws2-C3@pengutronix.de>
+References: <20250212132403.3978175-1-o.rempel@pengutronix.de>
+ <PH7PR16MB619609C650452062D6BC2385E5FF2@PH7PR16MB6196.namprd16.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: fix gpio0 address
-To: niravkumar.l.rabara@intel.com, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, nirav.rabara@altera.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250213105036.3170943-1-niravkumar.l.rabara@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <PH7PR16MB619609C650452062D6BC2385E5FF2@PH7PR16MB6196.namprd16.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 13/02/2025 11:50, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> 
-> Use the correct gpio0 address for Agilex5.
-> 
-> Fixes: 3f7c869e143a ("arm64: dts: socfpga: agilex5: Add gpio0 node and spi dma handshake id")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> ---
+On Thu, Feb 13, 2025 at 10:14:00AM +0000, Avri Altman wrote:
+> > Extend the MMC core to handle undervoltage events by implementing
+> > infrastructure to notify the MMC bus about voltage drops.
+> > 
+> > Background & Decision at LPC24:
+> > 
+> > This solution was proposed and refined during LPC24 in the talk "Graceful
+> > Under Pressure: Prioritizing Shutdown to Protect Your Data in Embedded
+> > Systems" which aimed to address how Linux should handle power fluctuations
+> > in embedded devices to prevent data corruption or storage damage.
+> > 
+> > At the time, multiple possible solutions were considered:
+> > 
+> > 1. Triggering a system-wide suspend or shutdown: when undervoltage is
+> >    detected, with device-specific prioritization to ensure critical
+> >    components shut down first.
+> >    - This approach was disliked by Greg Kroah-Hartman, as it introduced
+> >      complexity and was not suitable for all use cases.
+> > 
+> > 2. Notifying relevant devices through the regulator framework: to allow
+> >    graceful per-device handling.
+> >    - This approach was agreed upon as the most acceptable: by participants
+> >      in the discussion, including Greg Kroah-Hartman, Mark Brown,
+> >      and Rafael J. Wysocki.
+> >    - This patch implements that decision by integrating undervoltage
+> >      handling into the MMC subsystem.
+> > 
+> > This patch was tested on iMX8MP based system with SDHCI controller.
+> Has it been considered, to rely on user-space and not the kernel to handle
+> those extreme conditions?
+> E.g. a pollable sysfs that would be monitored by select(), poll(), etc.
+> As Android might use?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Yes, the advantage of solving this in the kernel is:  
 
-Best regards,
-Krzysztof
+- The regulator framework already provides all the necessary components,
+  including event support.  
+- The MMC framework already supports regulators, making the implementation
+  straightforward.  
+- This approach works even if userspace is not ready at boot time.  
+
+On the other hand, you are right that a userspace implementation would offer
+more flexibility. However, I believe this can be built as an extension of the
+current implementation. The regulator framework supports Netlink notifications
+to userspace, eliminating the need for sysfs polling. The MMC framework would
+also require a sysfs interface to force a quick shutdown - if such an interface
+does not already exist - and a filter for regulator notifications to ignore
+undervoltage events when they are handled in userspace.  
+
+Best Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
