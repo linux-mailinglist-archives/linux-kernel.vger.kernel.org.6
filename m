@@ -1,134 +1,97 @@
-Return-Path: <linux-kernel+bounces-512613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D0BA33B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:47:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0168EA33B8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 10:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1759E3A6335
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C59188AAA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 09:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEBF20F061;
-	Thu, 13 Feb 2025 09:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20136211464;
+	Thu, 13 Feb 2025 09:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NwnbyiS6"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wwBF2vEO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBD3202C31
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 09:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61C210F5B;
+	Thu, 13 Feb 2025 09:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739440057; cv=none; b=JLxSkeVbViI8EyhRpCA2CUD55XGEH7qUo6aTC36BBWyX3yXzFucPVxtClf7jacD9WkR4q77tNFXOWcJvC1LVcOYNzsEoifZkK6k8hTbZEII7usoa9IpISzTyu/CJdVc8oFggYEalufADdsuIrW0LkTGDaDrondh4hcD0gJzlH/c=
+	t=1739440060; cv=none; b=eAzoB+QqVmZWeL9Crq2MQ1ChFKx0yKYT8y3AdrqcM1M/F7WY5GBMUpYH/fSUIsdjLjHOYoOqXJoYKtJQWgkrirDzRQOfK9eYOWiISeAqTJVjnTNxrcR4RBslRM0Bj7EF2zbZS63mPsE/buZM8iGgnBSajK2SGERoarfk4Z8eWTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739440057; c=relaxed/simple;
-	bh=qzJGD2b+cbjGe2N6+DgDif/b8vffJoz0V+ySZt7b4BI=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=fEsbZxMrafidI8CxFnrCxabt+nMyguRhWNX85q2KjDbV+TAAlkaNOMZPGT7q6HEEWRluj09ZDdnpq2g7RO0pooh58zvbp2BI83srDgL2bJU1kJGvdoUjb6Il1QLk7fcEEpX+OMPhBDIVFZOA4azxIwEHL2Z1egnmoQenpx8UQdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NwnbyiS6; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so445956a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 01:47:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739440055; x=1740044855; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PuoEoBk1WxA1QM7rSYL5IAeW1R6CE44HE0t4+Ea+Jjs=;
-        b=NwnbyiS6AzjDitoE3i/JvqabdY0H083Quox50BgWrq7l6EXhLMU94d9S3Tzv6t8Rvt
-         zY0gs76Bc5llVbdwoCiwDCzP+X+GP6SM/r1k70gDcdAp2IvO0Kivd158O4oL2Clz3L6B
-         HYCG0qG5e30MeJTm42S8I8NA1fRhS6uNX2OWZxvb+oJgGxoJdqLphl2UjpJcN0Sih3TY
-         McsNSXaWfn/oFkIP621sY3KD37wpCP+Sqg3lh8rP/b92s/oNicuHYAyMQmgiZVDXlFPP
-         kmiJaIwVA387jjH0XG/uDUAFk1ON2UoNe0m3jWUZkSbbYXJQdyiyrypcJWTpHAOtE+Eg
-         GCyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739440055; x=1740044855;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PuoEoBk1WxA1QM7rSYL5IAeW1R6CE44HE0t4+Ea+Jjs=;
-        b=J+UcxPaxgBXT8lsfghvibbggTYQiIW66jnygRlrWTnydcihkU0ojcL5EpzlMHDo2lW
-         +qNOsIf7TtyAVwduucH7Sv/ojbCc303SoCkHRk6R0eG/RolQKSGfH8BG+5pKsTF+YWgW
-         UFyuF3cE1+f9k3wx45kYArFqnah9IBeXO8iCaNxQO2rcXFHqUDaXXml5shiE0+InRI0m
-         jpbmXj9li1RhCTfCn75/3yQvSM5XFVoon56r/Ib+yVK1lijzW3Sm8HFMVRCQdEcFcUa/
-         FDh7BIa9MAVxpt+0upU8DgZhZ0athmMQPyhTZLMsN/ED0qI4EM7RHkXv3FQk9YgHebIX
-         wvzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0m0QkcPILi2SjqlarHd3kjtmVhGW3osIPvrAWmK+MJHhtrD2Xp8NOEJUs4zb5DXw4OxQACBshbcFQKgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6iPL2yvsYJDHN0J/M9Zs2nzwIsiNSGSBI55C9lEHdVfXH3Cp8
-	1d9sGuqr1FSV2O31EwHmYwLIhSLw6vCCWNH2H+fC0dhK1mz85CquDeUvkHYPRJTIs/o6TocGjc9
-	LgzdltAy9e16KxefP3p8DaQ==
-X-Google-Smtp-Source: AGHT+IFjo0o7W8BMmhgfzjT1fZjgSjJW+Epialp3pC2emFjR4ZguxthbuHETUF+drifrj4mBdX3+3nB91gHNlOu2NQ==
-X-Received: from pjbmp3.prod.google.com ([2002:a17:90b:1903:b0:2fa:a101:755])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3a89:b0:2f4:423a:8fb2 with SMTP id 98e67ed59e1d1-2fc0e98dd17mr3572208a91.20.1739440055202;
- Thu, 13 Feb 2025 01:47:35 -0800 (PST)
-Date: Thu, 13 Feb 2025 09:47:33 +0000
-In-Reply-To: <Z0ykBZAOZUdf8GbB@x1n> (message from Peter Xu on Sun, 1 Dec 2024
- 12:59:33 -0500)
+	s=arc-20240116; t=1739440060; c=relaxed/simple;
+	bh=IdTti4DK2JAgX7yyitUoJaoRdhgKEdmEW6WOnrGZpi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aj7osk8TYJqE1U7wdJKi6M7duJoCWHozc7uq+2Pi97rG2/cH+XmuBo16GiPPjPXgML3kcUKAIQsrXuw/lSfZgt3DLGJ5YWJxIH081iTWQiarfC1TX5MSQf2piFXEpgikG9MFam8GBmnCIx+4stGNcev8pX01eW1omno3faSC2J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wwBF2vEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AD3C4CEE6;
+	Thu, 13 Feb 2025 09:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739440059;
+	bh=IdTti4DK2JAgX7yyitUoJaoRdhgKEdmEW6WOnrGZpi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wwBF2vEO3L0pfnOJVHbGXrV1gssyl5Iucvja0uqDMmb5uLq2kqxTkmm6Gds1SYu+u
+	 0wQiLIY79BaNfBPvdNa+VsmjjVZYeyHSMxyqfozgkJWW3jJpQ5WXq6A0adMl6R9xPX
+	 SJ76wo/kvr5axwtAJAJ8fGQY7WlkmwkWw+kBqBLk=
+Date: Thu, 13 Feb 2025 10:47:36 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: vulab@iscas.ac.cn, linux-sound@vger.kernel.org, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Julia Lawall <Julia.Lawall@inria.fr>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH] ALSA: hda: Add error check for snd_ctl_rename_id() in
+ snd_hda_create_dig_out_ctls()
+Message-ID: <2025021323-paparazzi-ahead-22ec@gregkh>
+References: <20250213070546.1572-1-vulab@iscas.ac.cn>
+ <491e74f2-b503-4486-a8e0-b4eddc16b2be@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqz5xle9nwq.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and cleanup
-From: Ackerley Tng <ackerleytng@google.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
-	jgg@nvidia.com, david@redhat.com, rientjes@google.com, fvdl@google.com, 
-	jthoughton@google.com, seanjc@google.com, pbonzini@redhat.com, 
-	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
-	isaku.yamahata@intel.com, muchun.song@linux.dev, mike.kravetz@oracle.com, 
-	erdemaktas@google.com, vannapurve@google.com, qperret@google.com, 
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <491e74f2-b503-4486-a8e0-b4eddc16b2be@web.de>
 
-Peter Xu <peterx@redhat.com> writes:
+On Thu, Feb 13, 2025 at 08:26:09AM +0100, Markus Elfring wrote:
+> > Check the return value of snd_ctl_rename_id() in
+> > snd_hda_create_dig_out_ctls(). Ensure that potential
+> > failures are properly handled.
+> 
+> I would prefer a change description variant without the word “potential”
+> for this issue.
+> https://cwe.mitre.org/data/definitions/252.html
+> 
+> Regards,
+> Markus
+> 
 
-> On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
->> +/**
->> + * Removes folios in range [@lstart, @lend) from page cache of inode, updates
->> + * inode metadata and hugetlb reservations.
->> + */
->> +static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
->> +						   loff_t lstart, loff_t lend)
->> +{
->> +	struct kvm_gmem_hugetlb *hgmem;
->> +	struct hstate *h;
->> +	int gbl_reserve;
->> +	int num_freed;
->> +
->> +	hgmem = kvm_gmem_hgmem(inode);
->> +	h = hgmem->h;
->> +
->> +	num_freed = kvm_gmem_hugetlb_filemap_remove_folios(inode->i_mapping,
->> +							   h, lstart, lend);
->> +
->> +	gbl_reserve = hugepage_subpool_put_pages(hgmem->spool, num_freed);
->> +	hugetlb_acct_memory(h, -gbl_reserve);
->
-> I wonder whether this is needed, and whether hugetlb_acct_memory() needs to
-> be exported in the other patch.
->
-> IIUC subpools manages the global reservation on its own when min_pages is
-> set (which should be gmem's case, where both max/min set to gmem size).
-> That's in hugepage_put_subpool() -> unlock_or_release_subpool().
->
+Hi,
 
-Thank you for pointing this out! You are right and I will remove
-hugetlb_acct_memory() from here.
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
->> +
->> +	spin_lock(&inode->i_lock);
->> +	inode->i_blocks -= blocks_per_huge_page(h) * num_freed;
->> +	spin_unlock(&inode->i_lock);
->> +}
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
 
