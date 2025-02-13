@@ -1,211 +1,752 @@
-Return-Path: <linux-kernel+bounces-512100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB22A33402
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:33:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805F4A33406
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 01:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149063A59E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2879C166A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 00:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3566C2D613;
-	Thu, 13 Feb 2025 00:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66C435951;
+	Thu, 13 Feb 2025 00:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="X3eHv0l+"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FWp7ltq1"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84980271823;
-	Thu, 13 Feb 2025 00:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF6425777;
+	Thu, 13 Feb 2025 00:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739406795; cv=none; b=TNU5NlJV0WwEr39V+5ld93uPotGMQgMdgpfouv9CmJ+XElpqQuJsUyMDPKUvPz/Xvv9LIBfYUuUkdvs7iqoIQGyrsHqK8JXhpMhc1q27I8y7Yau9JBK2sCe/x+3q3Bh+Gg+9zBQBu2n9qeKT7zOV4d5Ga/hnqBtHhFWqNa0JZfg=
+	t=1739406820; cv=none; b=VWktcsFWut5MK1ityeplMuj/C5U9qjeQGBmJ6nGhkE/0+1abF3F7sxTyhIRMVKdPWHoOXrSShsQW+PeMqiwxYvH+QQfGtt94etmOYJB4dmGUznRyQcOKn/d3MbQvk91Rjq2Cj/9WAT6KF8ebwRyUoaYUtmfbPf+AOW66LzITFjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739406795; c=relaxed/simple;
-	bh=MK36XIGnJyPf3ZbpM6QOJ+5JLqK7b45u3BQX2LiHhGE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V1PbxwwiTLtrOff/BlIeIo+Q6p33G6yazUUS6t4AR0QZeooJPY/WzYXSEBqttW9aP2EfkXazyb1yHFJ9IheiucOiOnbhAwCG0Q/XjEy2PdPheiqLBSBXi/vMDM50huTrruYsnlNVKHH5/+k/VCiumriWA9GZNRTJUcBxt7r7fQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=X3eHv0l+; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1739406791;
-	bh=MK36XIGnJyPf3ZbpM6QOJ+5JLqK7b45u3BQX2LiHhGE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=X3eHv0l+lt4JR0lILwWPS8oeZleTTgKLAHdO2tMej1PDT+NUdmup0Pwe7aagUlaug
-	 hTSmO8JAmzxnTiOM8uk8P23PWl72+Iw9lqC1C5s2jyJfZjky+p7GlYAebj077vIa/M
-	 DMnXBJJDj/eLVlBslzUjkjFV9tSV6/AcUD6Z5cveqUd3itpWizKGqAaph2eAuvTIBp
-	 /ma5hUuxV54fkeNsWO34mMDpv5WE+QN3Dp6dM3fZjWMgj6pZtOKrY16hLuSJHyZfqt
-	 yd8LFb/1164Jgqx2Q+0eX/K075mOKjDw5t6k5A6p/5+6OEIzlaQ3ENTSbhpi2hTY+E
-	 hQ4OuUUCX37Sg==
-Received: from [192.168.68.112] (203-173-7-184.dyn.iinet.net.au [203.173.7.184])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 908847576E;
-	Thu, 13 Feb 2025 08:33:10 +0800 (AWST)
-Message-ID: <dfb902083154ef3f8c7fc3bf15852b7c372f8c60.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ir38060: Move & update dt
- binding
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Conor Dooley <conor@kernel.org>
-Cc: Naresh Solanki <naresh.solanki@9elements.com>, Guenter Roeck
- <linux@roeck-us.net>, broonie@kernel.org, Jean Delvare <jdelvare@suse.com>,
-  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>,
- linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Thu, 13 Feb 2025 11:03:08 +1030
-In-Reply-To: <20250212-estate-tapeless-08fcdf5b5ca5@spud>
-References: <20250204180306.2755444-1-naresh.solanki@9elements.com>
-	 <20250204-mulled-evaluate-8a690cdfbd4d@spud>
-	 <CABqG17jHKfwJEfZxto_YA4opS8=QwqTqfNdkku8kcEv2_iW+XA@mail.gmail.com>
-	 <20250205-purge-debating-21273d3b0f40@spud>
-	 <CABqG17j4tKXnMZ5=vcjBvfe6JwCLQ6NbkQmJC9ySK_bmGEv=iQ@mail.gmail.com>
-	 <20250206-camera-mashed-48cf0cf1715f@spud>
-	 <4619661d7375c71710a22520f6ebbf353a5aff59.camel@codeconstruct.com.au>
-	 <20250212-estate-tapeless-08fcdf5b5ca5@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1739406820; c=relaxed/simple;
+	bh=/aaMCV2nQaSYuHpoT8EIjJYt6AgAzAEqxYtj39NocO4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U0oOS5/NG3WCXPW1dcYhY8JO+ZtR0QvkDwEmFd7wAnC+RPDq1kdYm516dHC1Gfp22cL2bJyE4joRD0MAJtgEpNOXaS0wmq6Nz++nZOcD1Qa+N7FggDcAS2qQjjmRJ7hk1bFcPqEVb81js7NBmxRKLi5A0bFFZA/HvhgLaF5DuFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FWp7ltq1; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1739406807; x=1739666007;
+	bh=fd2BKfpW/O0FEpO2NbiCO+2hcsstqB4EkikVckGXvzg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=FWp7ltq1TlSia4q1n6oPEcLeXwQNJkX+7KoWa9DcD4jTh16RrfMOarCUQ/+UXgnZj
+	 yoY7QwuGux/UKq0JFqraXyLZYkQG2BmztfG+sughaUuWXq+iSyD//B0CeWWcmsZWiD
+	 yhBUsVjA+BANubGtvaumbtmg8vYGKUzL37PWKBFbYeDH7G/wRtJLVN4eSpebue5Fjf
+	 ouZX7ae+6R/qGaEBLqFPFU9KyesHQklTcwTvH7RlrX8O7ezbEntAH2UUJY/aAwMfc/
+	 7MEe51q2HJOGdlAuzwcDwTlwuFcBhrruxYJzM4m+64hryOD/YRDQqk5F7M6R5HWjse
+	 qC/YeQcsmrayg==
+Date: Thu, 13 Feb 2025 00:33:21 +0000
+To: Alistair Popple <apopple@nvidia.com>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com, pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] gpu: nova-core: add initial documentation
+Message-ID: <82296c50-66dc-4be5-8c56-66f891047fe9@proton.me>
+In-Reply-To: <xaj6mg4rgm5teesapw5d2npkr3oagaon5baqiplhzjag2fwv2j@kscfzjg3cfbv>
+References: <20250209173048.17398-1-dakr@kernel.org> <20250209173048.17398-2-dakr@kernel.org> <xaj6mg4rgm5teesapw5d2npkr3oagaon5baqiplhzjag2fwv2j@kscfzjg3cfbv>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 358ef0d57b7297b1326814d2d557d3f1881a5d48
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-02-12 at 18:56 +0000, Conor Dooley wrote:
-> On Wed, Feb 12, 2025 at 09:13:11PM +1030, Andrew Jeffery wrote:
-> > On Thu, 2025-02-06 at 18:09 +0000, Conor Dooley wrote:
-> > > On Thu, Feb 06, 2025 at 09:23:03PM +0530, Naresh Solanki wrote:
-> > > > On Thu, 6 Feb 2025 at 01:43, Conor Dooley <conor@kernel.org> wrote:
-> > > > > On Wed, Feb 05, 2025 at 03:51:25PM +0530, Naresh Solanki wrote:
-> > > > > > On Wed, 5 Feb 2025 at 00:52, Conor Dooley <conor@kernel.org>
-> > > > > > wrote:
-> > > > > > > On Tue, Feb 04, 2025 at 11:33:03PM +0530, Naresh Solanki
-> > > > > > > wrote:
-> > > > > > > > +=C2=A0 regulators:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 type: object
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 description:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list of regulators provided=
- by this controller.
-> > > > > > >=20
-> > > > > > > Can you explain why this change is justified? Your commit
-> > > > > > > message is
-> > > > > > > explaining what you're doing but not why it's okay to do.
-> > > > >=20
-> > > > > > This is based on other similar dt-bindings under hwmon/pmbus.
-> > > > >=20
-> > > > > Okay, but what I am looking for is an explanation of why it is
-> > > > > okay to
-> > > > > change the node from
-> > > > >=20
-> > > > > > regulator@34 {
-> > > > > > =C2=A0 compatible =3D "infineon,ir38060";
-> > > > > > =C2=A0 reg =3D <0x34>;
-> > > > > >=20
-> > > > > > =C2=A0 regulator-min-microvolt =3D <437500>;
-> > > > > > =C2=A0 regulator-max-microvolt =3D <1387500>;
-> > > > > > };
-> > > > As I have understood the driver, this isn't supported.
-> > > > >=20
-> > > > > to
-> > > > >=20
-> > > > > > regulator@34 {
-> > > > > > =C2=A0=C2=A0=C2=A0 compatible =3D "infineon,ir38060";
-> > > > > > =C2=A0=C2=A0=C2=A0 reg =3D <0x34>;
-> > > > > >=20
-> > > > > > =C2=A0=C2=A0=C2=A0 regulators {
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vout {
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 regulator-name =3D "p5v_aux";
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 regulator-min-microvolt =3D <437500>;
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 regulator-max-microvolt =3D <1387500>;
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > > > > > =C2=A0=C2=A0=C2=A0 };
-> > > > Above is the typical approach in other pmbus dt bindings.
-> > > > Even pmbus driver expects this approach.
-> > > > >=20
-> > > > > ?
-> > > > >=20
-> > > > > Will the driver handle both of these identically? Is backwards
-> > > > > compatibility with the old format maintained? Was the original
-> > > > > format
-> > > > > wrong and does not work? Why is a list of regulators needed when
-> > > > > the
-> > > > > device only provides one?
-> > > > Driver doesn't support both.
-> > > > Based on the pmbus driver original format was wrong.
-> > > > pmbus driver looks for a regulator node to start with.
-> > > >=20
-> > > > Reference:
-> > > > https://github.com/torvalds/linux/blob/master/drivers/hwmon/pmbus/p=
-mbus.h#L515
-> > >=20
-> > > Then all of the in-tree users are all just broken? They're in aspeed
-> > > bmcs, so I would not be surprised at all if that were the case.
-> >=20
-> > Can you unpack the intent of this remark for me a little?
-> >=20
-> > The history of the problem from what I can see looks like:
-> >=20
-> > =C2=A0=C2=A0 1. pmbus regulator support exploiting "regulators" as an O=
-F child
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node was merged for 3.19[1]
-> > =C2=A0=C2=A0 2. The infineon driver support was merged with trivial bin=
-dings[2]
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and released in v5.17
-> > =C2=A0=C2=A0 3. A patch was proposed that extracted the Infineon regula=
-tor
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatibles and provided a dedicated bin=
-ding[3], however it
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lacked the "regulators" object property=
-=20
-> > =C2=A0=C2=A0 4. The patch in 3 was merged as [4] with relevant tags, an=
-d was
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 released in v6.9
-> > =C2=A0=C2=A0 5. The system1 devicetree was merged and released in v6.10=
-, and sbp1
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is merged in v6.14-rc1 for release in v6=
-.14. Both devicetrees, as
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 far as I'm aware, conform to the binding=
- as written.
-> >=20
-> > In addition to keeping an eye out for Rob's bot, I check all Aspeed-
-> > related devicetree patches against the bindings using the usual tooling
-> > while applying them. I would like to avoid diving into driver
-> > implementations as a blocker to applying devicetree patches where
-> > possible - the formalised bindings and tooling should exist to separate
-> > us from having to do that.
-> >=20
-> > If the complaint is that people submitting Aspeed devicetree patches
-> > are regularly not testing them to make sure they behave correctly on
-> > hardware, then sure, that's something to complain about. Otherwise, I'm
-> > well aware of the (Aspeed) bindings and warnings situation; we've
-> > spoken about it previously. If there's something I should change in my
-> > process (beyond eventually addressing all the warnings) please let me
-> > know, but I don't see that there is in this specific instance.
+On 13.02.25 00:27, Alistair Popple wrote:
+> On Sun, Feb 09, 2025 at 06:30:25PM +0100, Danilo Krummrich wrote:
 >=20
-> Ye, it's not a jab at aspeed maintainership, it's about the bmc stuff in
-> particular. I saw far too many warnings from Rob's bot on series with a
-> version number where the submitter should know better, so the idea that
-> it had not been tested in other ways wasn't exactly a stretch.
+> [...]
+>=20
+>> +FromPrimitive API
+>> +-----------------
+>> +
+>> +Sometimes the need arises to convert a number to a value of an enum or =
+a
+>> +structure.
+>> +
+>> +A good example from nova-core would be the ``Chipset`` enum type, which=
+ defines
+>> +the value ``AD102``. When probing the GPU the value ``0x192`` can be re=
+ad from a
+>> +certain register indication the chipset AD102. Hence, the enum value ``=
+AD102``
+>> +should be derived from the number ``0x192``. Currently, nova-core uses =
+a custom
+>> +implementation (``Chipset::from_u32`` for this.
+>> +
+>> +Instead, it would be desirable to have something like the ``FromPrimiti=
+ve``
+>> +trait [1] from the num crate.
+>=20
+> I took a quick look at this, mainly to get more up to speed on Rust macro=
+s.
+>=20
+> It seemed to me that bulk of the work here is actually in getting enough
+> functionality added to rust/macros/quote.rs to make writing procedural ma=
+cros
+> pleasant. That seemed reasonably involved (probably beyond beginner level=
+) and
+> not the most pressing thing so I'm not currently looking at it, but thoug=
+ht I'd
+> drop this note here in case it's useful for anyone else that is/wants to =
+take
+> a look.
 
-Thanks for elaborating :)
+We're already aware of this and actively working on a solution.
+
+Note that we don't actually have to write this code ourselves, as it
+already exists in the user-space ecosystem in the form of the quote
+crate [1].
+Also, since this is a dependency of the macros kernel crate, its fine to
+use user-space rust, since proc-macros end up as "compiler plugins", so
+they run on the host and not inside of the kernel that is being built
+(so they also have access to std).
+The only problem is that we need access to quote and since we don't use
+cargo, it's not as easy as adding it as a dependency. Currently we're
+working on a solution that will give us not only the quote crate but
+also the syn crate [2] which will make building proc-macros feasible.
+
+(Note that both crates are highly used in the Rust ecosystem and IIRC
+also the compiler depends on them. So it is not just any random Rust
+library that we would add to our dependencies.)
+
+[1]: https://crates.io/crates/quote
+[2]: https://crates.io/crates/syn
+
+---
+Cheers,
+Benno
 
 >=20
-> I made a mistake how I pulled these devices out of trivial-devices.yaml,
-> given the existing driver didn't work with that binding, but I don't
-> really see why there's a requirement for a regulator child here in the
-> first place. I get it for something like the lm25066 that is a monitor
-> IC that you connect a regulator to, as the regulator is a distinct
-> device - but the ir38060 is a regulator that has a pmbus interface so
-> both describe the same device.
+>  - Alistair
+>=20
+>> +Having this generalization also helps with implementing a generic macro=
+ that
+>> +automatically generates the corresponding mappings between a value and =
+a number.
+>> +
+>> +| Complexity: Beginner
+>> +| Link: https://docs.rs/num/latest/num/trait.FromPrimitive.html
+>> +
+>> +Generic register abstraction
+>> +----------------------------
+>> +
+>> +Work out how register constants and structures can be automatically gen=
+erated
+>> +through generalized macros.
+>> +
+>> +Example:
+>> +
+>> +.. code-block:: rust
+>> +
+>> +=09register!(BOOT0, 0x0, u32, pci::Bar<SIZE>, Fields [
+>> +=09   MINOR_REVISION(3:0, RO),
+>> +=09   MAJOR_REVISION(7:4, RO),
+>> +=09   REVISION(7:0, RO), // Virtual register combining major and minor =
+rev.
+>> +=09])
+>> +
+>> +This could expand to something like:
+>> +
+>> +.. code-block:: rust
+>> +
+>> +=09const BOOT0_OFFSET: usize =3D 0x00000000;
+>> +=09const BOOT0_MINOR_REVISION_SHIFT: u8 =3D 0;
+>> +=09const BOOT0_MINOR_REVISION_MASK: u32 =3D 0x0000000f;
+>> +=09const BOOT0_MAJOR_REVISION_SHIFT: u8 =3D 4;
+>> +=09const BOOT0_MAJOR_REVISION_MASK: u32 =3D 0x000000f0;
+>> +=09const BOOT0_REVISION_SHIFT: u8 =3D BOOT0_MINOR_REVISION_SHIFT;
+>> +=09const BOOT0_REVISION_MASK: u32 =3D BOOT0_MINOR_REVISION_MASK | BOOT0=
+_MAJOR_REVISION_MASK;
+>> +
+>> +=09struct Boot0(u32);
+>> +
+>> +=09impl Boot0 {
+>> +=09   #[inline]
+>> +=09   fn read(bar: &RevocableGuard<'_, pci::Bar<SIZE>>) -> Self {
+>> +=09      Self(bar.readl(BOOT0_OFFSET))
+>> +=09   }
+>> +
+>> +=09   #[inline]
+>> +=09   fn minor_revision(&self) -> u32 {
+>> +=09      (self.0 & BOOT0_MINOR_REVISION_MASK) >> BOOT0_MINOR_REVISION_S=
+HIFT
+>> +=09   }
+>> +
+>> +=09   #[inline]
+>> +=09   fn major_revision(&self) -> u32 {
+>> +=09      (self.0 & BOOT0_MAJOR_REVISION_MASK) >> BOOT0_MAJOR_REVISION_S=
+HIFT
+>> +=09   }
+>> +
+>> +=09   #[inline]
+>> +=09   fn revision(&self) -> u32 {
+>> +=09      (self.0 & BOOT0_REVISION_MASK) >> BOOT0_REVISION_SHIFT
+>> +=09   }
+>> +=09}
+>> +
+>> +Usage:
+>> +
+>> +.. code-block:: rust
+>> +
+>> +=09let bar =3D bar.try_access().ok_or(ENXIO)?;
+>> +
+>> +=09let boot0 =3D Boot0::read(&bar);
+>> +=09pr_info!("Revision: {}\n", boot0.revision());
+>> +
+>> +| Complexity: Advanced
+>> +
+>> +Delay / Sleep abstractions
+>> +--------------------------
+>> +
+>> +Rust abstractions for the kernel's delay() and sleep() functions.
+>> +
+>> +There is some ongoing work from FUJITA Tomonori [1], which has not seen=
+ any updates
+>> +since Oct. 24.
+>> +
+>> +| Complexity: Beginner
+>> +| Link: https://lore.kernel.org/netdev/20241001112512.4861-2-fujita.tom=
+onori@gmail.com/ [1]
+>> +
+>> +IRQ abstractions
+>> +----------------
+>> +
+>> +Rust abstractions for IRQ handling.
+>> +
+>> +There is active ongoing work from Daniel Almeida [1] for the "core" abs=
+tractions
+>> +to request IRQs.
+>> +
+>> +Besides optional review and testing work, the required ``pci::Device`` =
+code
+>> +around those core abstractions needs to be worked out.
+>> +
+>> +| Complexity: Intermediate
+>> +| Link: https://lore.kernel.org/lkml/20250122163932.46697-1-daniel.alme=
+ida@collabora.com/ [1]
+>> +| Contact: Daniel Almeida
+>> +
+>> +Page abstraction for foreign pages
+>> +----------------------------------
+>> +
+>> +Rust abstractions for pages not created by the Rust page abstraction wi=
+thout
+>> +direct ownership.
+>> +
+>> +There is active onging work from Abdiel Janulgue [1] and Lina [2].
+>> +
+>> +| Complexity: Advanced
+>> +| Link: https://lore.kernel.org/linux-mm/20241119112408.779243-1-abdiel=
+.janulgue@gmail.com/ [1]
+>> +| Link: https://lore.kernel.org/rust-for-linux/20250202-rust-page-v1-0-=
+e3170d7fe55e@asahilina.net/ [2]
+>> +
+>> +Scatterlist / sg_table abstractions
+>> +-----------------------------------
+>> +
+>> +Rust abstractions for scatterlist / sg_table.
+>> +
+>> +There is preceding work from Abdiel Janulgue, which hasn't made it to t=
+he
+>> +mailing list yet.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Abdiel Janulgue
+>> +
+>> +ELF utils
+>> +---------
+>> +
+>> +Rust implementation of ELF header representation to retrieve section he=
+ader
+>> +tables, names, and data from an ELF-formatted images.
+>> +
+>> +There is preceding work from Abdiel Janulgue, which hasn't made it to t=
+he
+>> +mailing list yet.
+>> +
+>> +| Complexity: Beginner
+>> +| Contact: Abdiel Janulgue
+>> +
+>> +PCI MISC APIs
+>> +-------------
+>> +
+>> +Extend the existing PCI device / driver abstractions by SR-IOV, config =
+space,
+>> +capability, MSI API abstractions.
+>> +
+>> +| Complexity: Beginner
+>> +
+>> +Auxiliary bus abstractions
+>> +--------------------------
+>> +
+>> +Rust abstraction for the auxiliary bus APIs.
+>> +
+>> +This is needed to connect nova-core to the nova-drm driver.
+>> +
+>> +| Complexity: Intermediate
+>> +
+>> +Debugfs abstractions
+>> +--------------------
+>> +
+>> +Rust abstraction for debugfs APIs.
+>> +
+>> +| Reference: Export GSP log buffers
+>> +| Complexity: Intermediate
+>> +
+>> +Vec extensions
+>> +--------------
+>> +
+>> +Implement ``Vec::truncate`` and ``Vec::resize``.
+>> +
+>> +Currently this is used for some experimental code to parse the vBIOS.
+>> +
+>> +| Reference vBIOS support
+>> +| Complexity: Beginner
+>> +
+>> +GPU (general)
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +Parse firmware headers
+>> +----------------------
+>> +
+>> +Parse ELF headers from the firmware files loaded from the filesystem.
+>> +
+>> +| Reference: ELF utils
+>> +| Complexity: Beginner
+>> +| Contact: Abdiel Janulgue
+>> +
+>> +Build radix3 page table
+>> +-----------------------
+>> +
+>> +Build the radix3 page table to map the firmware.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Abdiel Janulgue
+>> +
+>> +vBIOS support
+>> +-------------
+>> +
+>> +Parse the vBIOS and probe the structures required for driver initializa=
+tion.
+>> +
+>> +| Contact: Dave Airlie
+>> +| Reference: Vec extensions
+>> +| Complexity: Intermediate
+>> +
+>> +Initial Devinit support
+>> +-----------------------
+>> +
+>> +Implement BIOS Device Initialization, i.e. memory sizing, waiting, PLL
+>> +configuration.
+>> +
+>> +| Contact: Dave Airlie
+>> +| Complexity: Beginner
+>> +
+>> +Boot Falcon controller
+>> +----------------------
+>> +
+>> +Infrastructure to load and execute falcon (sec2) firmware images; handl=
+e the
+>> +GSP falcon processor and fwsec loading.
+>> +
+>> +| Complexity: Advanced
+>> +| Contact: Dave Airlie
+>> +
+>> +GPU Timer support
+>> +-----------------
+>> +
+>> +Support for the GPU's internal timer peripheral.
+>> +
+>> +| Complexity: Beginner
+>> +| Contact: Dave Airlie
+>> +
+>> +MMU / PT management
+>> +-------------------
+>> +
+>> +Work out the architecture for MMU / page table management.
+>> +
+>> +We need to consider that nova-drm will need rather fine-grained control=
+,
+>> +especially in terms of locking, in order to be able to implement asynch=
+ronous
+>> +Vulkan queues.
+>> +
+>> +While generally sharing the corresponding code is desirable, it needs t=
+o be
+>> +evaluated how (and if at all) sharing the corresponding code is expedie=
+nt.
+>> +
+>> +| Complexity: Expert
+>> +
+>> +VRAM memory allocator
+>> +---------------------
+>> +
+>> +Investigate options for a VRAM memory allocator.
+>> +
+>> +Some possible options:
+>> +  - Rust abstractions for
+>> +    - RB tree (interval tree) / drm_mm
+>> +    - maple_tree
+>> +  - native Rust collections
+>> +
+>> +| Complexity: Advanced
+>> +
+>> +Instance Memory
+>> +---------------
+>> +
+>> +Implement support for instmem (bar2) used to store page tables.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Dave Airlie
+>> +
+>> +GPU System Processor (GSP)
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>> +
+>> +Export GSP log buffers
+>> +----------------------
+>> +
+>> +Recent patches from Timur Tabi [1] added support to expose GSP-RM log b=
+uffers
+>> +(even after failure to probe the driver) through debugfs.
+>> +
+>> +This is also an interesting feature for nova-core, especially in the ea=
+rly days.
+>> +
+>> +| Link: https://lore.kernel.org/nouveau/20241030202952.694055-2-ttabi@n=
+vidia.com/ [1]
+>> +| Reference: Debugfs abstractions
+>> +| Complexity: Intermediate
+>> +
+>> +GSP firmware abstraction
+>> +------------------------
+>> +
+>> +The GSP-RM firmware API is unstable and may incompatibly change from ve=
+rsion to
+>> +version, in terms of data structures and semantics.
+>> +
+>> +This problem is one of the big motivations for using Rust for nova-core=
+, since
+>> +it turns out that Rust's procedural macro feature provides a rather ele=
+gant way
+>> +to address this issue:
+>> +
+>> +1. generate Rust structures from the C headers in a separate namespace =
+per version
+>> +2. build abstraction structures (within a generic namespace) that imple=
+ment the
+>> +   firmware interfaces; annotate the differences in implementation with=
+ version
+>> +   identifiers
+>> +3. use a procedural macro to generate the actual per version implementa=
+tion out
+>> +   of this abstraction
+>> +4. instantiate the correct version type one on runtime (can be sure tha=
+t all
+>> +   have the same interface because it's defined by a common trait)
+>> +
+>> +There is a PoC implementation of this pattern, in the context of the no=
+va-core
+>> +PoC driver.
+>> +
+>> +This task aims at refining the feature and ideally generalize it, to be=
+ usable
+>> +by other drivers as well.
+>> +
+>> +| Complexity: Expert
+>> +
+>> +GSP message queue
+>> +-----------------
+>> +
+>> +Implement low level GSP message queue (command, status) for communicati=
+on
+>> +between the kernel driver and GSP.
+>> +
+>> +| Complexity: Advanced
+>> +| Contact: Dave Airlie
+>> +
+>> +Bootstrap GSP
+>> +-------------
+>> +
+>> +Call the boot firmware to boot the GSP processor; execute initial contr=
+ol
+>> +messages.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Dave Airlie
+>> +
+>> +Client / Device APIs
+>> +--------------------
+>> +
+>> +Implement the GSP message interface for client / device allocation and =
+the
+>> +corresponding client and device allocation APIs.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Dave Airlie
+>> +
+>> +Bar PDE handling
+>> +----------------
+>> +
+>> +Synchronize page table handling for BARs between the kernel driver and =
+GSP.
+>> +
+>> +| Complexity: Beginner
+>> +| Contact: Dave Airlie
+>> +
+>> +FIFO engine
+>> +-----------
+>> +
+>> +Implement support for the FIFO engine, i.e. the corresponding GSP messa=
+ge
+>> +interface and provide an API for chid allocation and channel handling.
+>> +
+>> +| Complexity: Advanced
+>> +| Contact: Dave Airlie
+>> +
+>> +GR engine
+>> +---------
+>> +
+>> +Implement support for the graphics engine, i.e. the corresponding GSP m=
+essage
+>> +interface and provide an API for (golden) context creation and promotio=
+n.
+>> +
+>> +| Complexity: Advanced
+>> +| Contact: Dave Airlie
+>> +
+>> +CE engine
+>> +---------
+>> +
+>> +Implement support for the copy engine, i.e. the corresponding GSP messa=
+ge
+>> +interface.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Dave Airlie
+>> +
+>> +VFN IRQ controller
+>> +------------------
+>> +
+>> +Support for the VFN interrupt controller.
+>> +
+>> +| Complexity: Intermediate
+>> +| Contact: Dave Airlie
+>> +
+>> +External APIs
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +nova-core base API
+>> +------------------
+>> +
+>> +Work out the common pieces of the API to connect 2nd level drivers, i.e=
+. vGPU
+>> +manager and nova-drm.
+>> +
+>> +| Complexity: Advanced
+>> +
+>> +vGPU manager API
+>> +----------------
+>> +
+>> +Work out the API parts required by the vGPU manager, which are not cove=
+red by
+>> +the base API.
+>> +
+>> +| Complexity: Advanced
+>> +
+>> +nova-core C API
+>> +---------------
+>> +
+>> +Implement a C wrapper for the APIs required by the vGPU manager driver.
+>> +
+>> +| Complexity: Intermediate
+>> +
+>> +Testing
+>> +=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +CI pipeline
+>> +-----------
+>> +
+>> +Investigate option for continuous integration testing.
+>> +
+>> +This can go from as simple as running KUnit tests over running (graphic=
+s) CTS to
+>> +booting up (multiple) guest VMs to test VFIO use-cases.
+>> +
+>> +It might also be worth to consider the introduction of a new test suite=
+ directly
+>> +sitting on top of the uAPI for more targeted testing and debugging. The=
+re may be
+>> +options for collaboration / shared code with the Mesa project.
+>> +
+>> +| Complexity: Advanced
+>> diff --git a/Documentation/gpu/nova/guidelines.rst b/Documentation/gpu/n=
+ova/guidelines.rst
+>> new file mode 100644
+>> index 000000000000..13ab13984a18
+>> --- /dev/null
+>> +++ b/Documentation/gpu/nova/guidelines.rst
+>> @@ -0,0 +1,69 @@
+>> +.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +Guidelines
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +This document describes the general project guidelines that apply to no=
+va-core
+>> +and nova-drm.
+>> +
+>> +Language
+>> +=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +The Nova project uses the Rust programming language. In this context, a=
+ll rules
+>> +of the Rust for Linux project as documented in
+>> +:doc:`../../rust/general-information` apply. Additionally, the followin=
+g rules
+>> +apply.
+>> +
+>> +- Unless technically necessary otherwise (e.g. uAPI), any driver code i=
+s written
+>> +  in Rust.
+>> +
+>> +- Unless technically necessary, unsafe Rust code must be avoided. In ca=
+se of
+>> +  technical necessity, unsafe code should be isolated in a separate com=
+ponent
+>> +  providing a safe API for other driver code to use.
+>> +
+>> +Style
+>> +-----
+>> +
+>> +All rules of the Rust for Linux project as documented in
+>> +:doc:`../../rust/coding-guidelines` apply.
+>> +
+>> +For a submit checklist, please also see the `Rust for Linux Submit chec=
+klist
+>> +addendum <https://rust-for-linux.com/contributing#submit-checklist-adde=
+ndum>`_.
+>> +
+>> +Documentation
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +The availability of proper documentation is essential in terms of scala=
+bility,
+>> +accessibility for new contributors and maintainability of a project in =
+general,
+>> +but especially for a driver running as complex hardware as Nova is targ=
+eting.
+>> +
+>> +Hence, adding documentation of any kind is very much encouraged by the =
+project.
+>> +
+>> +Besides that, there are some minimum requirements.
+>> +
+>> +- Every non-private structure needs at least a brief doc comment explai=
+ning the
+>> +  semantical sense of the structure, as well as potential locking and l=
+ifetime
+>> +  requirements. It is encouraged to have the same minimum documentation=
+ for
+>> +  non-trivial private structures.
+>> +
+>> +- uAPIs must be fully documented with kernel-doc comments; additionally=
+, the
+>> +  semantical behavior must be explained including potential special or =
+corner
+>> +  cases.
+>> +
+>> +- The APIs connecting the 1st level driver (nova-core) with 2nd level d=
+rivers
+>> +  must be fully documented. This includes doc comments, potential locki=
+ng and
+>> +  lifetime requirements, as well as example code if applicable.
+>> +
+>> +- Abbreviations must be explained when introduced; terminology must be =
+uniquely
+>> +  defined.
+>> +
+>> +- Register addresses, layouts, shift values and masks must be defined p=
+roperly;
+>> +  unless obvious, the semantical sense must be documented. This only ap=
+plies if
+>> +  the author is able to obtain the corresponding information.
+>> +
+>> +Acceptance Criteria
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +- Patches must only be applied if reviewed by at least one other person=
+ on the
+>> +  mailing list; this also applies for maintainers.
+>> diff --git a/Documentation/gpu/nova/index.rst b/Documentation/gpu/nova/i=
+ndex.rst
+>> new file mode 100644
+>> index 000000000000..2701b3f4af35
+>> --- /dev/null
+>> +++ b/Documentation/gpu/nova/index.rst
+>> @@ -0,0 +1,30 @@
+>> +.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +nova NVIDIA GPU drivers
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +The nova driver project consists out of two separate drivers nova-core =
+and
+>> +nova-drm and intends to supersede the nouveau driver for NVIDIA GPUs ba=
+sed on
+>> +the GPU System Processor (GSP).
+>> +
+>> +The following documents apply to both nova-core and nova-drm.
+>> +
+>> +.. toctree::
+>> +   :titlesonly:
+>> +
+>> +   guidelines
+>> +
+>> +nova-core
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +The nova-core driver is the core driver for NVIDIA GPUs based on GSP. n=
+ova-core,
+>> +as the 1st level driver, provides an abstraction around the GPUs hard- =
+and
+>> +firmware interfaces providing a common base for 2nd level drivers, such=
+ as the
+>> +vGPU manager VFIO driver and the nova-drm driver.
+>> +
+>> +.. toctree::
+>> +   :titlesonly:
+>> +
+>> +   core/guidelines
+>> +   core/todo
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 5d5b7ed7da9e..ed618e8757a5 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7454,6 +7454,7 @@ Q:=09https://patchwork.freedesktop.org/project/nou=
+veau/
+>>  B:=09https://gitlab.freedesktop.org/drm/nova/-/issues
+>>  C:=09irc://irc.oftc.net/nouveau
+>>  T:=09git https://gitlab.freedesktop.org/drm/nova.git nova-next
+>> +F:=09Documentation/gpu/nova/
+>>  F:=09drivers/gpu/nova-core/
+>>
+>>  DRM DRIVER FOR OLIMEX LCD-OLINUXINO PANELS
+>> --
+>> 2.48.1
+>>
+>>
 
-Makes sense. Maybe it's best to support the existing description in
-pmbus core as Rob's already suggested in another part of the thread.
-
-Andrew
 
