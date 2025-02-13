@@ -1,220 +1,231 @@
-Return-Path: <linux-kernel+bounces-512183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9966AA33557
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:13:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7058FA3355B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 03:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D83A7CB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:13:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02FCC7A1E23
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 02:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F79149C55;
-	Thu, 13 Feb 2025 02:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67214A0B5;
+	Thu, 13 Feb 2025 02:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fcd8m4r2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HyyqECEt"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6F2146588;
-	Thu, 13 Feb 2025 02:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739412780; cv=fail; b=pLcstoSmpq0kz7exXH0yvKaRgeLShQqnAw4j1HllC9L9aFc6nAUCtCjJPjrjtpq8upp2smcIRq7W2QISyxQc37SyU1Y+q+PP6gSpxRVUh+QNBXa1vULqIlvSdN+OyWEVRze488yWvNc/boXsWiR+ibcK9snPXVOSajuNFM+ABfk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739412780; c=relaxed/simple;
-	bh=6Xhf/qhLPebvBmfYZTbxvZQtqZHrfI55uP3ck1qMM7Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=X97oANQP2ZK5EddCynaP1+e/ISSeKLkO4Tk37NXj5O1Yco7jrZYm4Y2iBOK7ReqPDPGGP8XIf2uZwoRTvdZnpZwUpaul3CZQA+FC9ALnNs4+xZG6q2pI7zY+0ktmPlWk1yXmgvAMOpJcN7/181i5edz/bNntHmY8AevwGycGjLo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fcd8m4r2; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739412779; x=1770948779;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=6Xhf/qhLPebvBmfYZTbxvZQtqZHrfI55uP3ck1qMM7Q=;
-  b=fcd8m4r2JVY+MVBPNbZpd9vkM2aHrAGii3PF/n816dqBsj8+pMghxzUQ
-   YyErlyZRipYRAJHfHaLM6WGF+A7niL6tTsB5nytjGjJv/CBBKjHwkh2Xx
-   ymjo+UaRCNcFrO7kpqeflI0fGAxtv+8145xigbFzW//hpk0AN5LZZz7J4
-   HsZehUzElUaftJU9/prtgwagG0zeWyt7GnONbS80gzcxhiDhBmhUdwkcr
-   KgNxY+mOVS1r8MBroEz6PUPiEkMEcB0uzx+89DPnbZKQuJUOoLllvbA+B
-   +AgaNfqDZSGvbOg4/bSu1albtvojop/yktyKACWCCitU1pFbczaYQmMl6
-   w==;
-X-CSE-ConnectionGUID: 9zJN787OQOirqYdWb0RCnA==
-X-CSE-MsgGUID: cmfkAS19RaKhuQX6BMyHGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43753523"
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="43753523"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 18:12:59 -0800
-X-CSE-ConnectionGUID: THOiyXjxTg6TKFb8YgArMQ==
-X-CSE-MsgGUID: MVhHwNJAQJmzexIIfouxxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,281,1732608000"; 
-   d="scan'208";a="118008987"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Feb 2025 18:12:59 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 12 Feb 2025 18:12:58 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 12 Feb 2025 18:12:58 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.44) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 12 Feb 2025 18:12:58 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GtBT7J2gWtFtqoQ0ZJSzBXSVq30EiqE8TorCkKQNnVuCQMsmOU9nfeYa/BeinqBAHRBhAkqGVUVlQX77kdMnAtl1dQWeTZmALyW/o8Ic/1d42gwV1njgoSVlfH32TcWx5MnURzQRCQ1AY4OBgafvj7WnR2FRB8gHHo21r2o1+nUlehA2Io/gK3+98oe2gXTPm/MJsJd1ETcyuqRtV75lCSUUaT92fb9lGgTzPwxeMbDn9TJH0Zf71IPGj/hVQfyAXzXNVKyIR5ze1sq76G3i3v71vzfplll9jok8vl+aXkY8ipICS0EaF9JJjLaw02f6CPn/byKLOdc7Ctw8ICl9Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ebLK6L4jpm+E3fSec7o2Wbj3Q/f5QfGluqjJWf6393A=;
- b=JwnMoIbhPe+KqqaPLRdRmEwLO6wFgV94X4zKb/u9OXvndz/a5Gbz4D4v9whNsttKIi5I08H7YgXcy6D3BFOUWAB/jb1DDQGKi9mkVAqSSs4Ob0onuojlJaOF0AGL4GKcjJV/LGvgEegAG4G4b6vOWm2gcm3mpRj7ETFQ4xGO3pPceLcUk3sKQdcjvjOUY8NZuSqYDj/UqZE1uE5b7K/dx1tiCTGsRXKDN3T2o+jn8bQO2E/uzIguqf4SUZpjPgOlMcnSW6cpWrHWzGQtvc2bP7s9e18U/V3wybnmNrivhiKDj99DkgmuGnfQGwesvZuh7TYM7tuoHXaQr2u3iOFYMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8665.namprd11.prod.outlook.com (2603:10b6:8:1b8::6) by
- SA1PR11MB8574.namprd11.prod.outlook.com (2603:10b6:806:3b1::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 02:12:56 +0000
-Received: from DS0PR11MB8665.namprd11.prod.outlook.com
- ([fe80::8e7e:4f8:f7e4:3955]) by DS0PR11MB8665.namprd11.prod.outlook.com
- ([fe80::8e7e:4f8:f7e4:3955%4]) with mapi id 15.20.8422.015; Thu, 13 Feb 2025
- 02:12:56 +0000
-Date: Thu, 13 Feb 2025 10:12:46 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Binbin Wu <binbin.wu@linux.intel.com>, <pbonzini@redhat.com>,
-	<kvm@vger.kernel.org>, <rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
-	<adrian.hunter@intel.com>, <reinette.chatre@intel.com>,
-	<xiaoyao.li@intel.com>, <tony.lindgren@intel.com>,
-	<isaku.yamahata@intel.com>, <yan.y.zhao@intel.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 01/17] KVM: TDX: Add support for find pending IRQ in a
- protected local APIC
-Message-ID: <Z61VHleTg9oV6xgY@intel.com>
-References: <20250211025828.3072076-1-binbin.wu@linux.intel.com>
- <20250211025828.3072076-2-binbin.wu@linux.intel.com>
- <Z6xX6PCjW0PZe59D@intel.com>
- <Z6zGoXjONvY8wOgG@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z6zGoXjONvY8wOgG@google.com>
-X-ClientProxiedBy: SI2PR01CA0051.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::6) To DS0PR11MB8665.namprd11.prod.outlook.com
- (2603:10b6:8:1b8::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E67113D53B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 02:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739412794; cv=none; b=auhkOyEDj7UpZq9KaG46PXXdDM0okFjNkscrHnOzF6mUkdnipl89uTQg5ydSz/HiVeHAAG9bzvW3KJWClmX40X2HPGPkBuSGiI3upLFzpHBygNBgJlYR/VWDSyzLwTssctDDqSR1FxwtMDFt4ler501xVVTZYuTg6GJZJk/qOAQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739412794; c=relaxed/simple;
+	bh=8MJIRbb7WsM8a3n0MKIH5Jbu69Pr1rZ/BDRDPU7I4wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=scPBULV9/H58rJvDWhF5HFzkkWnPjQJ+IWiYg+NAK9mlfyO6h18hE9vwpx5HrZdrPpkAjN2+rDhuha+6N993J1g8I0cwWd0QcMYvQ8MAPyyR45C6LjnlBYqYO0pdjwE0B6OMQ3WcX8VAuPT1RC4eS49H1XYjTnsygLZV1jUXS0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HyyqECEt; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-308ef06b4e1so3558721fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Feb 2025 18:13:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739412790; x=1740017590; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JGMi3Hp+9/bQmjultqdLIF1nZcd4s1BR7J7PwlZZx/0=;
+        b=HyyqECEt1uqagSxdVMcR85dODeGb63118e6yXi/xPpEF7dW0RfzmKx+DR/qaEISmkv
+         4/mAVvDfvkQwOE4mYiNpK4KusiCYNYQvTt6Eo7iE/E6SQgfIooDb7TaauouqkSNn3usc
+         py5OuQWLp5DrrS+zxxXklL2amh07DGjlh2Ak6M7+2i1jWlkmogC22/zOADCtYO27vb91
+         b4lxkgWN50V0TpJcwRDlC1L/bUu965U4Q5XJSwe60PYQACYbCKo8UYCNSXiUuBYrR0Le
+         SLC8r5G0xza4vGWytySZzCmgCwt5wRTZwQIpqaJeDYBY1CyAE3l39jEoO7A+LLXbNXg0
+         /DTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739412790; x=1740017590;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGMi3Hp+9/bQmjultqdLIF1nZcd4s1BR7J7PwlZZx/0=;
+        b=og8yScb4JNd3Kypwlw3VpicvdfK3rfc53AOB/u8e1muwKAuXITvqWjNdVIO/Zz/tKx
+         uEmGaihkQnce0RoNPevLSIx/8+uhtApPfm64LsQoJW0kUoEyyZwvpQwX7rsEqvybdn7V
+         ymW6fVMKeRUM0kR6QF6fQTATvyHLIDBE+stbsHWJ7pgYkk3tuOeaF5yP1gMGVOVeI3hr
+         mSe/9YniukQKl+VjvUjamf2iFf1v4IepNdAN2xW5UctTNdvERWlmjxJQ/v1f1D+7nyJi
+         NKLEQqFVB+WGi/rHOv+KyryegOLf8Mv4y6yuhXja+9oDcpw22XzfW8o5NteLQR7wN/tF
+         eGUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK6RsNdRwmIlV2cJ02CcAk1yFa6zs4Mw/8/WPFp1jpIAh2jdbqmoHgDxuDCYHS9YA0PJ2j3ThgHExZ3dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH4n9//lgaZ94uQQ12sPYDJRkauhQapovYnqIx1NSkgGzN3/vd
+	l/aicpZXdSZoh0e0OHP8L9tfmliuqHzTp7CXkp6WdZm/zCib+bGtwh+7agtRLOwNvJ+EC0gMMoJ
+	ArEQ=
+X-Gm-Gg: ASbGncvEq82+5yZjtbmXhZLZqfF5oRRYo2S6s1WtjxLWcWNQJhxodUSNrhHBFJlrsr4
+	UUrvQ8n8Q8HAppFwQd5GPoSsShYxuNOwQ/EVvdVEZd30lZ0q1O22Dh3HSfgdHuzb+c8CeDC9qjJ
+	pGYMy+j1rg6uYO3xwjtyVMVumMEoO/5HfOncQBwl64/5EtI0RsFq0eqrJuQXbYWeDd5KHXoaEdB
+	D0UtYWvjeyaxYaRUQuhMiYO0U9K4iKJZoP0DaQFaIicLUSICc6nG43j+dqxtZP2sGDZ5GmzSVEy
+	chIY05zUt7tMov1tgJ0p3xz6rrDtZ400qLhpDnWj0E463Cho2GaahSqVbSQxsah+6XQ7N1M=
+X-Google-Smtp-Source: AGHT+IEmMbELCnUbRJwClshsnX4iixkLoQEOYZtcE+7298TlajRpBP1u+uXg5U1gx43ozlPd0fUbow==
+X-Received: by 2002:a05:651c:211b:b0:308:fac7:9cc3 with SMTP id 38308e7fff4ca-3090dce23b7mr6496371fa.14.1739412790482;
+        Wed, 12 Feb 2025 18:13:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309100effbasm548781fa.29.2025.02.12.18.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 18:13:09 -0800 (PST)
+Date: Thu, 13 Feb 2025 04:13:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Vinod Koul <vkoul@kernel.org>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Jordan Crouse <jordan@cosmicpenguin.net>, ~postmarketos/upstreaming@lists.sr.ht, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Martin Botka <martin.botka@somainline.org>, 
+	Jami Kettunen <jami.kettunen@somainline.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/3] drm/msm/dsi: Set PHY usescase (and mode) before
+ registering DSI host
+Message-ID: <hvwpqzvdoeosz34ptbksc44ad7ohi6uwioy6o7qc4ewwcvx4d4@g3kksn3rwk6j>
+References: <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-0-9a60184fdc36@somainline.org>
+ <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-2-9a60184fdc36@somainline.org>
+ <nzm3tokbvho3hxz3e5vblp5ndagfcv5ah3j7gtkqjmt7ynr6f3@v36juvu73i5v>
+ <vsxfi43d7rxh5xxc7ctivjslf6w4yy5iprqpqid3u3diylrtwd@wayafjlgzz7v>
+ <x4jced57uhdfnq4d7tdqsozxbdosu2fcmsjlqtuuvh25ltx2rc@2eqsa7e4vcdv>
+ <c5503020-0224-428a-9452-f8d668b47caf@quicinc.com>
+ <ca80bd37-3b3f-48d3-a57d-2440d20d0c6c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8665:EE_|SA1PR11MB8574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38de4270-cd7b-4742-2543-08dd4bd3ee18
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NOEd1FYHPRvHiC4OHMWdztpveQRCO3qY4P2tKCOsAhyY8bUYgVWL8IsdKGt3?=
- =?us-ascii?Q?qPMG16SyjFlGpYOxPzW9hLcKuND9w01IJAl1wIemQTKqQobO4Aq48yZvrL0V?=
- =?us-ascii?Q?RUM0EcnVWCf/nq6//iMVNKJSMCb2j2YtuRiv/7hjTdc7SUTEarFTqrBpjZ1p?=
- =?us-ascii?Q?Or2OFHLgWN43gocIU3y7jSDCEj2kZ3fSs/iWN7qO4qB1rR35qtq5rbr4QBFF?=
- =?us-ascii?Q?mSFCMsmUyKFQINXkxz/a/Z8f1NXrKarZrCJ6eGok+7Vb8+qntCLvQBChaIbX?=
- =?us-ascii?Q?AmUhcyvrFngTMAJCadq9V9eJtQzwOMN6IvYtheZzSuu7FG4h9WV3wK2YcvKR?=
- =?us-ascii?Q?X5bWbNerMVe5F9g+5GR+nmpG2onRqdu+ggeof9IrEDuX+RhVgXUhgCoaUiN5?=
- =?us-ascii?Q?qnLyAUvFNzGVklS4u5t2F+5BfAbMAEOZ79BtLCQuB+Xbfa1/dx4WGkIO8UnG?=
- =?us-ascii?Q?9Bz+apOty+3H07Fs4F6nWNikC6by5exxBdA5XwwCQaiFY4fCbx6GSe8dIpEw?=
- =?us-ascii?Q?K7TcfcqckOe09OL2B/nc/PYrdyS/M2Yd+cc9i/6QWSuRBxD1Lv8wBwK2L/ta?=
- =?us-ascii?Q?V+8ymWQv2BU2xRNv2/+tNKJBAf6c4G626Mzakdmv68Jo1UdlfNAwA9MklQd6?=
- =?us-ascii?Q?Ixafsjt11l3F0oD08V/IhV2I2DAkrziPVU7ky4l6tBbwoqh7mFVhdwdysecA?=
- =?us-ascii?Q?QW3jiFOnUEKHCCKUzRXh2bbzJ/tkLnWcde3YXXp9u3RUEqTvDTswGq6s4dEn?=
- =?us-ascii?Q?nIouZFPLWkoeccMmikPV7Z1uOd6xX0311sE0dN6Lm4YnGUW4x55+59kAx1Kp?=
- =?us-ascii?Q?9MircMToZhpY8ttyxya6jQAsBuf3nkJCQ5zQqlyqiWO7HwPkZ2a+rF0ccT6e?=
- =?us-ascii?Q?9Umu4ARJqqwGQqxtV5gPAa73a3Wo4zC0teImsNIrAnK7eEqykljvp5iptViT?=
- =?us-ascii?Q?XPNzOhRbrGrc2Mo2X4/FM0LDCKhANb5J6Vg2X6hUqrk076cgMPmRm3pJR+H8?=
- =?us-ascii?Q?PobFIN/ODapX1sBW1bcJ9meVyz+bCV5O0CNsX7xYmjnRALL514Dxz6kt6XyX?=
- =?us-ascii?Q?hNMBiQsYhVyQjidFBcu8jNFVoExUhjvoSK70XkNTXBuRAfCIKeLA3MEP8Toz?=
- =?us-ascii?Q?gsPVnyuUktYu27yX72ZGMtIkk8XlZ7FGxC/7+EV9VlHmg1Pp9g5u3jzw5SmR?=
- =?us-ascii?Q?ST1PIl/8/b3/97igmm/7KcASRVSbFU01fv03Y7cen3MRcWl+9V69NTsAti6D?=
- =?us-ascii?Q?vJyyO2rAeioaxIfr5qd1yqjr3T6kALlxEJ3J8zgl4tUnlsymOppy82Sy0hsZ?=
- =?us-ascii?Q?mfFa7MPgleQBgKlInCxRGUHE1xmCipBUZMIOJUxgN0u758Adl/tkHe+OHo3y?=
- =?us-ascii?Q?AmYZR+m3tp+GivzXepCCPh3bOPzj?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8665.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MpcbOPyZLVWEQTqYHSnMeP7s/GdhP5bjUX3xb7pV8rIXygGgh2kteQkRxffb?=
- =?us-ascii?Q?ZkGP/eTxBdGCDKPOrcNzz7gd0jEsp82BSw7BRKMjQFJ/XLXkefNjhS5OyQss?=
- =?us-ascii?Q?x+8rpqpYVRNYCBu1NSpPIRQc93hsISBn1Bfsok5FkOsKMgASlWj083u6MB7/?=
- =?us-ascii?Q?fFcLSTEBGCRjruiTwFwfHGI61Kq3CxDWnbkcqpUBkJ+B4t8XABc44enKMuPT?=
- =?us-ascii?Q?wDmsxAK+uJb3ZrE11jFErMQ97+c3jJqm5akEymg5ezcf5CWDR7/FDTLfjQPa?=
- =?us-ascii?Q?PxWM3GeKaTZ2tyNORQuZTDlHM+V2rNziDAfpHtbqx5Vlm8JjNImbah0z9LaC?=
- =?us-ascii?Q?8FveQHP4Rqc0VYkR8bGkdDFW593nK7+DgnquwTXSkk8Ouo4/TL8gu/kwWjou?=
- =?us-ascii?Q?jizVJlotsaWyGLfgH6jJxcYhEh30kLmhO3R6Oz3M+LIM9NtdPd1QuD24SYOt?=
- =?us-ascii?Q?aRA6ZMpdOUwoYCySXjx0kxT6sx2M6cgf/sF49d1z5P1B4bGmq7laTSw8vtTQ?=
- =?us-ascii?Q?8Z3G3RDpyO1Gry+JLxjbp0roORiFJ0MW+eBVuQ+c+a0qzp6leg/P9/tDR9Sl?=
- =?us-ascii?Q?XB2DTaewb92vQ2lAjnldEItyxlf/qH3NbBqrG9THhGcSNmcaeV0LKLWicwvH?=
- =?us-ascii?Q?o4yW/wQPMTRjVMdHvM/boQQg3VkBM7L81kHmZvxhNYunlNkXlW2iMMzTlzzQ?=
- =?us-ascii?Q?3SNN1ZCj1/SdAx+oXEYADG4HJ22ghfMxPdis49MVa0A1B0n3aCGtlxlHO3Ty?=
- =?us-ascii?Q?x/4Z+IpxQaTVY8v6DyJz/pzPS1wTUvbCNFGvECIH+rG9iERnFPcSKjgFiV/0?=
- =?us-ascii?Q?sBoaM+WcUqZk1jX2sPU5dG638WjTabOob88/eieF3FLmmMLY4eB3zj8qm1t+?=
- =?us-ascii?Q?6ogGtwpfzKpTLgaj/A8wnEu6B4hhgGQ22EricNKUNqOyA2afjbqaEU/6AzPT?=
- =?us-ascii?Q?6F3AC8J1Ukh2XxgDBSnpV6/irtCRDz7561ZBK057JsgN2QcjL/Y7QgfOWdZe?=
- =?us-ascii?Q?Vaa0uG2umus2hY2jrUTnRz1h3vt35T5whZcwbQqT9MnT8PcToMkpga6KQePu?=
- =?us-ascii?Q?SZJZoBu+CFGRmX/jRoAOxCgZA+a6LmXjnyhZKcZvMPL477Uy90sWt8gEVXfb?=
- =?us-ascii?Q?j6Lvb5vZ8pOPEw+6osnBkOf1x0Gsrc+AFNkPfoqI3UeJBxEMMejxePtHLiZ1?=
- =?us-ascii?Q?bjbAai0CkT5vzE3DzDbKXLnjcpH9RMiw/wS3PlzkCovj35wWDT8aY0LRSzWy?=
- =?us-ascii?Q?TuWAQOU6r8PZfZoIp8jzuP7aiwcDWDy7HTtx8R2jGpSB0fTl/aap7pE1YQSt?=
- =?us-ascii?Q?3yywBQloVek40db6Y5IRIFhJR2L6AaoNLatPVDtx+ofDo7JKB/VgArPMYXmo?=
- =?us-ascii?Q?lCH0HUOlzlkMZb79Qpu7XJG6kbf99lKAHvP2R6ZOi9WX2/8hP9tmVupJoE2u?=
- =?us-ascii?Q?tlklJ9eGcKL2WeyHRTz2EBlASQlkEj0LpXRVxqwBSCBctYz4r/edMJffAg8m?=
- =?us-ascii?Q?ZLHtBrKB9O0QC4hjD4QRhPEQviiIO+ZVEGSn2DVJDkCSqccWZX5o8ueQHKXn?=
- =?us-ascii?Q?XIT2c3dP+kG0YM7EduqqRelHuueAvVwBJrsEB6NK?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38de4270-cd7b-4742-2543-08dd4bd3ee18
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8665.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 02:12:56.3096
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jjqUz3QwD2xoSu4JR4ZenhSEmhHCVoy+rEHdwpQp2vJQyVudey2dGAUAlEbwxZqixiE6+U9jcrGcwkv2ZzORlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8574
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca80bd37-3b3f-48d3-a57d-2440d20d0c6c@quicinc.com>
 
-On Wed, Feb 12, 2025 at 08:04:49AM -0800, Sean Christopherson wrote:
->On Wed, Feb 12, 2025, Chao Gao wrote:
->> >diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
->> >index 7f1318c44040..2b1ea57a3a4e 100644
->> >--- a/arch/x86/kvm/vmx/main.c
->> >+++ b/arch/x86/kvm/vmx/main.c
->> >@@ -62,6 +62,8 @@ static __init int vt_hardware_setup(void)
->> > 		vt_x86_ops.set_external_spte = tdx_sept_set_private_spte;
->> > 		vt_x86_ops.free_external_spt = tdx_sept_free_private_spt;
->> > 		vt_x86_ops.remove_external_spte = tdx_sept_remove_private_spte;
->> 
->> Nit: I think it would be more consistent to set up .protected_apic_has_interrupt
->> if TDX is enabled (rather than clearing it if TDX is disabled).
->
->I think my preference would be to do the vt_op_tdx_only() thing[*], wire up all
->TDX hooks by default via vt_op_tdx_only(),
+On Wed, Feb 12, 2025 at 05:13:08PM -0800, Abhinav Kumar wrote:
+> Hi Marijn
+> 
+> On 2/10/2025 2:17 PM, Abhinav Kumar wrote:
+> > 
+> > 
+> > On 2/10/2025 6:24 AM, Dmitry Baryshkov wrote:
+> > > On Mon, Feb 10, 2025 at 01:54:29PM +0100, Marijn Suijten wrote:
+> > > > On 2025-02-10 01:11:59, Dmitry Baryshkov wrote:
+> > > > > On Sun, Feb 09, 2025 at 10:42:53PM +0100, Marijn Suijten wrote:
+> > > > > > Ordering issues here cause an uninitialized (default STANDALONE)
+> > > > > > usecase to be programmed (which appears to be a MUX) in some cases
+> > > > > > when msm_dsi_host_register() is called, leading to the slave PLL in
+> > > > > > bonded-DSI mode to source from a clock parent (dsi1vco) that is off.
+> > > > > > 
+> > > > > > This should seemingly not be a problem as the actual
+> > > > > > dispcc clocks from
+> > > > > > DSI1 that are muxed in the clock tree of DSI0 are way
+> > > > > > further down, this
+> > > > > > bit still seems to have an effect on them somehow and causes the right
+> > > > > > side of the panel controlled by DSI1 to not function.
+> > > > > > 
+> > > > > > In an ideal world this code is refactored to no longer have such
+> > > > > > error-prone calls "across subsystems", and instead model the "PLL src"
+> > > > > > register field as a regular mux so that changing the clock parents
+> > > > > > programmatically or in DTS via `assigned-clock-parents` has the
+> > > > > > desired effect.
+> > > > > > But for the avid reader, the clocks that we *are* muxing into DSI0's
+> > > > > > tree are way further down, so if this bit turns out to be a simple mux
+> > > > > > between dsiXvco and out_div, that shouldn't have any effect as this
+> > > > > > whole tree is off anyway.
+> > > > > > 
+> > > > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > > > > > ---
+> > > > > >   drivers/gpu/drm/msm/dsi/dsi_manager.c | 30
+> > > > > > ++++++++++++++++++ +-----------
+> > > > > >   1 file changed, 19 insertions(+), 11 deletions(-)
+> > > > > 
+> > > > > 
+> > > > > Fixes: 57bf43389337 ("drm/msm/dsi: Pass down use case to PHY")
+> > > > 
+> > > > I'm not exactly confident about that.  Abhinav pointed out in
+> > > > https://gitlab.freedesktop.org/drm/msm/-/issues/41#note_2375646 that
+> > > > msm_dsi_host_register() was not supposed to be enabling the PHY, which I
+> > > > provided a counter-stacktrace for to show that is indeed the case.
+> > > > 
+> > > > Either this was always a problem that's only become visible now
+> > > > (and it's an
+> > > > issue with that patch), or a different change causes
+> > > > msm_dsi_host_register()
+> > > > to enable the PHY and program the usecase too early?
+> > > 
+> > > As currently usecase is being programmed after the DSI host being
+> > > registered, there might be a race condition between panel driver probe
+> > > _and_ usecase programming.
+> > > 
+> > > > 
+> > > > What do you think?
+> > > > 
+> > > > - Marijn
+> > > > 
+> > 
+> > Yes I agree with Dmitry's explanation. The race condition between the
+> > two can cause this. Hence I am also fine with this change.
+> > 
+> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > 
+> > > > > > 
+> > > > > > diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > b/drivers/gpu/ drm/msm/dsi/dsi_manager.c
+> > > > > > index a210b7c9e5ca281a46fbdb226e25832719a684ea..b93205c034e4acc73d536deeddce6ebd694b4a80
+> > > > > > 100644
+> > > > > > --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > @@ -74,17 +74,33 @@ static int dsi_mgr_setup_components(int id)
+> > > > > >       int ret;
+> > > > > >       if (!IS_BONDED_DSI()) {
+> > > > > > +        /* Set the usecase before calling
+> > > > > > msm_dsi_host_register(), which would
+> > > > > > +         * already program the PLL source mux based on
+> > > > > > a default usecase.
+> > > > > > +         */
+> > > > > > +        msm_dsi_phy_set_usecase(msm_dsi->phy,
+> > > > > > MSM_DSI_PHY_STANDALONE);
+> > > > > > +        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
+> > > > > > +
+> > > > > >           ret = msm_dsi_host_register(msm_dsi->host);
+> > > > > >           if (ret)
+> > > > > >               return ret;
+> > > > > > -
+> > > > > > -        msm_dsi_phy_set_usecase(msm_dsi->phy,
+> > > > > > MSM_DSI_PHY_STANDALONE);
+> > > > > > -        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
+> > > > > >       } else if (other_dsi) {
+> > > > > >           struct msm_dsi *master_link_dsi = IS_MASTER_DSI_LINK(id) ?
+> > > > > >                               msm_dsi : other_dsi;
+> > > > > >           struct msm_dsi *slave_link_dsi = IS_MASTER_DSI_LINK(id) ?
+> > > > > >                               other_dsi : msm_dsi;
+> > > > > > +
+> > > > > > +        /* PLL0 is to drive both DSI link clocks in bonded DSI mode.
+> > > > > > +         *
+> > > > > > +        /* Set the usecase before calling
+> > > > > > msm_dsi_host_register(), which would
+> > > > > > +         * already program the PLL source mux based on
+> > > > > > a default usecase.
+> > > > > > +         */
+> 
+> My compiler is throwing a warning here
+> 
+> drivers/gpu/drm/msm/dsi/dsi_manager.c: In function
+> 'dsi_mgr_setup_components':
+> drivers/gpu/drm/msm/dsi/dsi_manager.c:94:3: warning: "/*" within comment
+> [-Wcomment]
+>    /* Set the usecase before calling msm_dsi_host_register(), which would
+>    ^
+> drivers/gpu/drm/msm/dsi/dsi_manager.c: At top level:
+> 
+> Can you pls address this one so that I can pick this one up?
 
-Yes, that makes sense. I am fine as long as the hooks are set up in the same way.
+While you are at it, Marijn, could you please also fix the first comment
+to be properly formatted?
 
->and then nullify them if TDX support
->isn't enabled.  Or even just leave them set, e.g. based on the comment in
->vt_hardware_setup(), that can happen anyways.
-
-Indeed. No need to nullify the hooks.
-
->
->https://lore.kernel.org/all/Z6v9yjWLNTU6X90d@google.com
->
+-- 
+With best wishes
+Dmitry
 
