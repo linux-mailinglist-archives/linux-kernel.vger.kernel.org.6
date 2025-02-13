@@ -1,108 +1,159 @@
-Return-Path: <linux-kernel+bounces-512423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D86A33920
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:46:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040A1A33924
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 08:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BB83A4AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D5C1666C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 07:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746A520ADEE;
-	Thu, 13 Feb 2025 07:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1201920B818;
+	Thu, 13 Feb 2025 07:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="XBvW1UTo"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lw3o8Wtt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5F3BA2D;
-	Thu, 13 Feb 2025 07:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47B520AF96;
+	Thu, 13 Feb 2025 07:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432775; cv=none; b=l6VDpwTTxk4eA3K0ZGqAIofPw1x6p6JZUGnvsatcK2wvVbVKHYdS/Dy4+Nq8AWPfAfKFZW9WCVEqddbyn6Lbo2YBDBSWSoV+pcUgXybSXDMXMuHudv7KEzd776g8POdGfpeXAJP0NRX3y+v89gXA5gjvCpLsC7Esm3NU4O7HzIQ=
+	t=1739432791; cv=none; b=UnJI1l0ui1zvWBLtmETpXhakdh7QVBqhbDbAw+dMqor9oY7O2WJHCbAUgCfTm9wmJJAf8a/FhMsZaqhk74UPudDzfbUoE+ni3HcPq11n+a9XLZlcBp7swwwgUSOE81/+CeRow8T0E9vjCyZqTaawk4s8wzDwLWM/fZeB+9tuTcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432775; c=relaxed/simple;
-	bh=CyxknvaOEiYikBdtLM4EukNbG0aZA3Bdf2y1lR0exbQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ue8tgQ1zD5lTsp4jbhHNbvjgCgYvqElJ84lziaQYpKv20l5mMb0V2gTQeS5j8VVhGAHrSKeWUShuS3U5fqsFvyg5NpEAm3G9uebzHehSy1WdQKWlcJ83/fv3vXU/GQ5QXHwMHFQJsPUFe3Xk76RIFz0MlaCn6BY1+WLNT7X+P+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=XBvW1UTo; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739432772; x=1770968772;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=D0cHoAmJCFDzyca0BXBQoIJ2zkSks/18FUWOioWw6J8=;
-  b=XBvW1UTohz/FytYaKzBC2XGkfJyRuj4jvVMGCYtoCVoELvbGa7jQjmmZ
-   53SO0aso//tu87Zj92A/mkGZdptYs7EzCZLZdlGWfsQ7r3ZCrdCsYabJz
-   YBgfA7HyzvSfeWBU5ayhwWsv4FDuYXj8e2QyAsMaOQI2rA+7azA3TyyXW
-   k=;
-X-IronPort-AV: E=Sophos;i="6.13,282,1732579200"; 
-   d="scan'208";a="22181104"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 07:46:10 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:54910]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.59:2525] with esmtp (Farcaster)
- id eea6667e-3084-43a4-adc2-eeb014de29d1; Thu, 13 Feb 2025 07:46:09 +0000 (UTC)
-X-Farcaster-Flow-ID: eea6667e-3084-43a4-adc2-eeb014de29d1
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 13 Feb 2025 07:46:02 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.37.244.7) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 13 Feb 2025 07:45:57 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <leitao@debian.org>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <horms@kernel.org>, <kernel-team@meta.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.co.jp>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <ushankar@purestorage.com>
-Subject: Re: [PATCH net-next v3 3/3] arp: switch to dev_getbyhwaddr() in arp_req_set_public()
-Date: Thu, 13 Feb 2025 16:45:46 +0900
-Message-ID: <20250213074546.15468-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250212-arm_fix_selftest-v3-3-72596cb77e44@debian.org>
-References: <20250212-arm_fix_selftest-v3-3-72596cb77e44@debian.org>
+	s=arc-20240116; t=1739432791; c=relaxed/simple;
+	bh=LTlk+Q+OqAOJUrN6UgQEpR0w+zfSfFCR6/DNGGUlgc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qo8jqA3VvlxU/TKHms1pP1nvJzADOLdu3I2/RJKX8Mv9YMuwr99KpU4Rt70yDDthrSuT1Sqij4Nmw4icdQu/ngTe189CWkjTrArUze4xSqdYfMYXQ48UnmI6PsVxH24iHYJ2wG05dBQgA/8CzhKig5WfY/5QKKgIruoe74x8KH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lw3o8Wtt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CIlBdn001335;
+	Thu, 13 Feb 2025 07:46:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nbm7pMR3sppbaW6MivVssSNUZKFF+Yg1bC2W6Ym5u8c=; b=Lw3o8WtttHYwMIEc
+	eR0749HKN1mOosx+2n65ajRX7+SP0M0JS2mS/1SJwCP+new4pXVbgyw0nTJTBUYO
+	84VvFZJlwnCUvLu3G5Q8WMto3pqD7i+H3d3i/Uf3uHO/rSzH2jf2DsOtx60aBD0s
+	HgccnCr17KQfSNC7KhXrDYwTUgwjbcYflXram8et1Y0WQDztJMRMdejbP5yVnDMz
+	OCA/AoOTJxjR03WIwARwKvZIOWJGez63NoEF9+rUrgoWRvAAoq3aLs3UpPXV4L6P
+	qgXa0g8/dNE8mY/ROf8AiKMFkuGq8gW7/cww/4EL5ZXC7U9is2qFdwAYc+OR2udu
+	NdbUgw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44rrnfu322-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 07:46:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D7k1nO029626
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 07:46:01 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 23:45:57 -0800
+Message-ID: <dc69cc0e-c3ca-4e2a-8d0e-998643f31ccf@quicinc.com>
+Date: Thu, 13 Feb 2025 15:45:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWB004.ant.amazon.com (10.13.139.164) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] arm64: mm: Populate vmemmap/linear at the page level
+ for hotplugged sections
+To: Catalin Marinas <catalin.marinas@arm.com>
+CC: <anshuman.khandual@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
+        <ryan.roberts@arm.com>, <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
+        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
+        <stable@vger.kernel.org>
+References: <20250109093824.452925-1-quic_zhenhuah@quicinc.com>
+ <Z6zoWMejCDlN2YF9@arm.com>
+Content-Language: en-US
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <Z6zoWMejCDlN2YF9@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oD5n2ERUG7vEUbsd4pslOiDQ1za_FgFG
+X-Proofpoint-ORIG-GUID: oD5n2ERUG7vEUbsd4pslOiDQ1za_FgFG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=859 lowpriorityscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130058
 
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 12 Feb 2025 09:47:26 -0800
-> The arp_req_set_public() function is called with the RTNL lock held,
-> which provides enough synchronization protection. This makes the RCU
-> variant of dev_getbyhwaddr() unnecessary. Switch to using the simpler
-> dev_getbyhwaddr() function since we already have the required rtnl
-> locking.
+
+
+On 2025/2/13 2:28, Catalin Marinas wrote:
+>> @@ -1339,9 +1349,27 @@ int arch_add_memory(int nid, u64 start, u64 size,
+>>   		    struct mhp_params *params)
+>>   {
+>>   	int ret, flags = NO_EXEC_MAPPINGS;
+>> +	unsigned long start_pfn = PFN_DOWN(start);
+>> +	struct mem_section *ms = __pfn_to_section(start_pfn);
+>>   
+>>   	VM_BUG_ON(!mhp_range_allowed(start, size, true));
+>>   
+>> +	/* should not be invoked by early section */
+>> +	WARN_ON(early_section(ms));
+> I don't remember the discussion, do we still need this warning here if
+> the sections are not marked as early? I guess we can keep it if one does
+> an arch_add_memory() on an early section.
 > 
-> This change helps maintain consistency in the networking code by using
-> the appropriate helper function for the existing locking context.
-> 
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+> I think I suggested to use a WARN_ON_ONCE(!present_section()) but I
+> completely forgot the memory hotplug code paths.
 
-Fixes: 941666c2e3e0 ("net: RCU conversion of dev_getbyhwaddr() and arp_ioctl()")
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Dear Catalin,
 
-I still think patch 2 & 3 should be posted to net separately.
+The previous discussion can be found at 
+https://lore.kernel.org/lkml/aedbbc4f-8f6c-46d8-a8d7-53103675a816@quicinc.com/, 
+I highlighted the key points from conversation between me and Anshuman 
+for your reference:
+"
+ >>
+ >> BTW, shall we remove the check for !early_section since 
+arch_add_memory is only called during hotplugging case? Correct me 
+please if I'm mistaken :)
+ >
+ > While this is true, still might be a good idea to keep the 
+early_section()
+ > check in place just to be extra careful here. Otherwise an WARN_ON() 
+might
+ > be needed.
 
-Documentation/process/maintainer-netdev.rst
+Make sense. I would like to add some comments and WARN_ON() if
+early_section().
+"
+Regarding your suggestion, I believed it was intended for the 
+vmemmap_populate() function ?(Discussion: 
+https://lore.kernel.org/linux-mm/Z3_d59kp4CuHQp97@arm.com/), but as 
+workflow below indicates:
+Hot plug:
+1. section_activate -> vmemmap_populate
+2. mark PRESENT
 
----8<---
-the ``net`` tree is for fixes to existing code already in the
-mainline tree from Linus
----8<---
+In contrast, the early flow:
+1. memblocks_present -> mark PRESENT
+2. __populate_section_memmap -> vmemmap_populate
+
+Could this result in a false warning during hotplugging? I replied with 
+the doubt in above link before but seems you missed :) Could you please 
+share your thoughts if you have a different idea ?
+
+I will include your tags, correct capitalization nit and post one new 
+version.
 
