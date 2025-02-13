@@ -1,165 +1,125 @@
-Return-Path: <linux-kernel+bounces-513210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA65CA343C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:57:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6137AA343C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F38163F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7BA163C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 14:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0892A24BBE8;
-	Thu, 13 Feb 2025 14:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA9824BBEA;
+	Thu, 13 Feb 2025 14:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ENTsJjDT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk4Xe4vs"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1A5245027
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 14:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD8F241693;
+	Thu, 13 Feb 2025 14:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458045; cv=none; b=jBOAB2EZYkx6821I5JewSMQdgt1aTWziW3Y1SWOWEh6QK8Uz8DVS9oZR2sIS8aNuIJ3Fmw3OV8F+W8+kSJkzK90mY+cDt89PZTVh4M+9KkSI3i1MfhYMt0uvYDAD2mb9PBa3d4ln3Ph3WTHOSS07C0FbtgnovRCc5xw+hxf5DEY=
+	t=1739458044; cv=none; b=QdSOHbqO/bHhVUSmy4cTPlVaAlph6n0+rkPHEUK72kmUSIgQAQugQk6sZAlvL7A9R0Qm3L81VL00SZYkDIckY2Tw41EbNAhobdlaZKDXRu2MD0Ivh73BRpMqdfPkGCtwdF9o67VuvgUQrgDO/Q5gycDWTW9HRBZVVNOvJ+Kv67Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458045; c=relaxed/simple;
-	bh=tPhyVVJDg+eB9kkF+HosG3iztKpJSHNf3iCVuHVuR0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecFibFLmWntMkh6Gh4oKOGCDHJHyKw7ox3x1vWBN7GNGj8Tlk9PO8vgDbgV48OfFOhL6UhAATxxGSFMj8x5WKHl4MbgL3DJ3bNGvEb6N4YQkGqBU/IYGj95DtVlQqI3ugmNGbtLeMz3B03BqDqzvrDlnkWAfZZj17bSRZih0yJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ENTsJjDT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739458042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZAKfOutKaK2ALg6/h1nMfRqlupNtDP/2Xy+rsmNojjc=;
-	b=ENTsJjDTM5+8wVNgEKEWPJlEFc7ttqtQtMT36YUqwRCQNDHrRUiosRx9A57Dt+f57HNKVT
-	g/M1QUm06byNA8WuovkNcHJuYUaiXul2MAi9JGWxfq4yyoptVL9a8ks0SbDfWLNbIfGdQG
-	LjirFsHh3JI0FuMTVAuWVnOQvIe7Q2E=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-360-zrC_Pg_cPVSzjBM16jfo_g-1; Thu, 13 Feb 2025 09:47:19 -0500
-X-MC-Unique: zrC_Pg_cPVSzjBM16jfo_g-1
-X-Mimecast-MFC-AGG-ID: zrC_Pg_cPVSzjBM16jfo_g
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6f9a88fc521so13616317b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 06:47:19 -0800 (PST)
+	s=arc-20240116; t=1739458044; c=relaxed/simple;
+	bh=I3jFuvHS8o4agGi7brMj/lvLVs781SP/e6tBVZBxD7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tOA5ESgSxDagDgmIJPo+y77yg1vBQEzJ3An8N981CGvuDlv0++XdQC9yiURmsqqnL7mQgsvn9slVmmxocOpDoO7PH/DVQy4LiHZlsrH5lIJMLHvFsPVe7br/FL1KcoVSbnuiZlh665iNn4NOc10w9cb/sSAKoztH8bPpwUSq27Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk4Xe4vs; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7d451f7c4so148157766b.0;
+        Thu, 13 Feb 2025 06:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739458041; x=1740062841; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=06OYv2TswrzKR1suFIolZWczB03Gq9L+IFYKoiouClM=;
+        b=Gk4Xe4vsLntXmeiIh0yrnhbAgP3GZB/xuk7qrbHh2nRWwKrEj0gMzbdEoOC5G/03dK
+         ew97tpml7YIYKyDquRPsAlBci5Ge41mp3nhEwGnMj+BGPTQqQFnk6L+7IxiLeer9EAnV
+         4jOPHvUtgFUe15Xf6LhgUFuJTb6QfyOPbkWm8Y03U/lV40UudU5WoB+tiHU8GkTG5R7l
+         fhK3YaIPZMmBOSl7kDX70RwQL+CkLCTtB4xbwtcKHUNRFXekf7Xhd0/wLWVPIqwYBEiA
+         NK/naRvyJko9ig4ECgbls6rOQ85S6Oyqn72q0khINqiqd42aXWE/TZGIx+ScVUPw7wMP
+         nmKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739458038; x=1740062838;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZAKfOutKaK2ALg6/h1nMfRqlupNtDP/2Xy+rsmNojjc=;
-        b=LPUfSxVBXTAmfxJbWo91eZhuHP5cTUyULrnp/OjaSTYf+sM+WLY5gjh5nJanMRf8k+
-         xwSBQ+E4xkjOqgWH2muOziVskn7MKmrKB4kROvjlXFsVPq9UwQ5L9jdnCJgdu1PAJ2BE
-         oPViyIWlfr9q7l6sd8yLDQGwTc2QsI6VxS8TUjFhuVb/UHu2j8imis+uF9Q5AgjAsIQr
-         q11Pk2NzVzBKxeYqO8QmyTDJQWt9XrBFz/rEWkP4tuCu/lvpyTCIJzX2uUTRcuf4umvi
-         0h2Jtz1wAzeSA7vmyDDjmpfkf3J03sd15ipKbWSJLZUAj/yHAcBqCWuyO0Fo3RBtBQQT
-         hRtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo5NbBRGtkbt92TN0jv1w3JCXYi+9TowZfKFlKKsYm3IAyfWTJcHbR0+t59HGcQ0XTQE1FqdNGAwxIIAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc8oadeYQCUYT+tfmIOPm8Gl97vL3kiyQOwHN71PHegOSVDaQt
-	06UEi2s0ZabY/pIlU7LcT+7g1h4DCox9OzE4apI7suTGRq7gk+qJOF74cQmS+1JKuAN/iTy/nWJ
-	4BIT7jJtW/nmmaVGmHYQUujA9dCjQ7abDqQAucJGZM5x22Z+xJud/4sFiuu3HZH6GlMjQfY6UEl
-	bbOjsYELuqNeuHtWo0DnajqK0CJC1UwVB0bey+
-X-Gm-Gg: ASbGncs7RtIEruarbPoqj3JQobuTiRiZulir4zk5TtioI2ABbDxxbzhwCv9QY6SPwy2
-	2v1Qr8GOOZEEdsDEa9CruZ7uzIfzGZAtPFTS/Zdr4cBg+Btpan4PXWAdLMkiB
-X-Received: by 2002:a05:690c:690e:b0:6f7:406e:48d with SMTP id 00721157ae682-6fb1f29bcfdmr76979517b3.35.1739458038734;
-        Thu, 13 Feb 2025 06:47:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHEeHYNZFDgV2vgtp07+EXLG6diJ0WLxws7MaPqF2P91HH13rbU2aou20GjoSl6bzof2WHxUqurRf5pGgUAIn4=
-X-Received: by 2002:a05:690c:690e:b0:6f7:406e:48d with SMTP id
- 00721157ae682-6fb1f29bcfdmr76979187b3.35.1739458038365; Thu, 13 Feb 2025
- 06:47:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739458041; x=1740062841;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=06OYv2TswrzKR1suFIolZWczB03Gq9L+IFYKoiouClM=;
+        b=xKfdloMSXbIBtHtt4gzfVorziigBgOjJGSyijxUlBVKzCtL7a3/srhil/BMHST5QcE
+         WXDoyga1/VfvgSFG1q0xpjFwNPOv9VPergSPv6a771SlT5Pa1urPTihZoUUd8aMdkDMN
+         AHVqRtgEYBNnEAOPOKua1fGVc9S3K1ujl7RMANaKkXQBM3b6fbAa/R527+BOu1/vJw3x
+         IFOwxRceHFVs05u4r9OUxhcUq2Yw20uQEUH7dmVC5pZdp5721SMVYj98BABUIa7+laVo
+         0iTV+YhrLarNS+aqULrKGAUmndG+38KAbDL/nr2R++oqSe/ix2I5akiyGsLmEXy2CiZZ
+         HeLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLL1cpE0NN62lUXf1i9UTB7YBQjzAy0poqs06oR8ao18tAi2xqFEvI0xunZAFssXftP8xhggygdp07cOD/@vger.kernel.org, AJvYcCVjbknwekLJYk/tAbuwvX/G6ZjsgwdPlCmsoNU/BoZZV+M9D+ofrlSnxhgYij7LCPF3oUkc51B63Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwHuK/f3hBQg1m+lwhaT91wtDMB3gbV0QnVPgO5IrMJBwft8T0
+	jsNZ9Y3f4cwPPpZbXLDoDgeYxdmG9BT0rRkb/t09Zw6Eoku7SD2Q
+X-Gm-Gg: ASbGnctQxBQby8QS4BrEZEkyd08oh6HZ9wAg6bW/Xbmwex21Mxw2WwYwRy8YD/xxTj/
+	vvZ4Wg9TRZ4QSzhbFO+OCJGul8ncLbzUp8vd2pZOSRBgw3t1FoqmlYFPwDn7aGgEN6GDe3T4+5m
+	IxkoIu8L83TEDm6EYKioQJh24f7lcKE0n0A8tmip6ctb54tUlmi6yoT8uBQQURi491nYhsRf/9G
+	UyGhMFvR8sLzdtvwJUXfFbmYJID8MZCaPhZ5GqZzp/Ss0E5Du6X7eAnxO/ssKgTWe+iHRWUNIjc
+	ejUJmm6dRvCs57S4IlZJvF6Ok4XulcDANYs00T18qTvN3bvI
+X-Google-Smtp-Source: AGHT+IEitT4dyOw7PhDa6cc/O9Vw8vdiY1AHe/URB28OVtMRKKGyh0KUaTeNhJOT9eQLnFtj5scH4Q==
+X-Received: by 2002:a17:907:7ea8:b0:ab7:10e1:8779 with SMTP id a640c23a62f3a-ab7f33d24e4mr804277566b.27.1739458040964;
+        Thu, 13 Feb 2025 06:47:20 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:1cb7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5a4f4cb4sm65403866b.118.2025.02.13.06.47.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 06:47:20 -0800 (PST)
+Message-ID: <5a8d2867-68fe-4c73-bf5f-dcecb6501fb6@gmail.com>
+Date: Thu, 13 Feb 2025 14:48:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <gr5rqfwb4qgc23dadpfwe74jvsq37udpeqwhpokhnvvin6biv2@6v5npbxf6kbn>
- <CGME20250213012722epcas5p23e1c903b7ef0711441514c5efb635ee8@epcas5p2.samsung.com>
- <20250213012805.2379064-1-junnan01.wu@samsung.com> <4n2lobgp2wb7v5vywbkuxwyd5cxldd2g4lxb6ox3qomphra2gd@zhrnboczbrbw>
-In-Reply-To: <4n2lobgp2wb7v5vywbkuxwyd5cxldd2g4lxb6ox3qomphra2gd@zhrnboczbrbw>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Thu, 13 Feb 2025 15:47:07 +0100
-X-Gm-Features: AWEUYZk5_r-tBhZvoaLYlDqhO9_sUVYkjzi-JYbjI9o8ZFZY67uC4S7eLbX9jnQ
-Message-ID: <CAGxU2F7PKH34N7Jd5d=STCAybJi-DDTB-XGiXSAS9BBvGVN4GA@mail.gmail.com>
-Subject: Re: [Patch net 1/2] vsock/virtio: initialize rx_buf_nr and
- rx_buf_max_nr when resuming
-To: Junnan Wu <junnan01.wu@samsung.com>
-Cc: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com, 
-	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org, kvm@vger.kernel.org, 
-	lei19.wang@samsung.com, linux-kernel@vger.kernel.org, mst@redhat.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, q1.huang@samsung.com, 
-	stefanha@redhat.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com, ying01.gao@samsung.com, ying123.xu@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
+To: Jens Axboe <axboe@kernel.dk>,
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250212204546.3751645-1-csander@purestorage.com>
+ <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Feb 2025 at 10:25, Stefano Garzarella <sgarzare@redhat.com> wrote:
->
-> On Thu, Feb 13, 2025 at 09:28:05AM +0800, Junnan Wu wrote:
-> >>You need to update the title now that you're moving also queued_replies.
-> >>
-> >
-> >Well, I will update the title in V3 version.
-> >
-> >>On Tue, Feb 11, 2025 at 03:19:21PM +0800, Junnan Wu wrote:
-> >>>When executing suspend to ram twice in a row,
-> >>>the `rx_buf_nr` and `rx_buf_max_nr` increase to three times vq->num_free.
-> >>>Then after virtqueue_get_buf and `rx_buf_nr` decreased
-> >>>in function virtio_transport_rx_work,
-> >>>the condition to fill rx buffer
-> >>>(rx_buf_nr < rx_buf_max_nr / 2) will never be met.
-> >>>
-> >>>It is because that `rx_buf_nr` and `rx_buf_max_nr`
-> >>>are initialized only in virtio_vsock_probe(),
-> >>>but they should be reset whenever virtqueues are recreated,
-> >>>like after a suspend/resume.
-> >>>
-> >>>Move the `rx_buf_nr` and `rx_buf_max_nr` initialization in
-> >>>virtio_vsock_vqs_init(), so we are sure that they are properly
-> >>>initialized, every time we initialize the virtqueues, either when we
-> >>>load the driver or after a suspend/resume.
-> >>>At the same time, also move `queued_replies`.
-> >>
-> >>Why?
-> >>
-> >>As I mentioned the commit description should explain why the changes are
-> >>being made for both reviewers and future references to this patch.
-> >>
-> >
-> >After your kindly remind, I have double checked all locations where `queued_replies`
-> >used, and we think for order to prevent erroneous atomic load operations
-> >on the `queued_replies` in the virtio_transport_send_pkt_work() function
-> >which may disrupt the scheduling of vsock->rx_work
-> >when transmitting reply-required socket packets,
-> >this atomic variable must undergo synchronized initialization
-> >alongside the preceding two variables after a suspend/resume.
->
-> Yes, that was my concern!
->
-> >
-> >If we reach agreement on it, I will add this description in V3 version.
->
-> Yes, please, I just wanted to point out that we need to add an
-> explanation in the commit description.
->
-> And in the title, in this case though listing all the variables would
-> get too long, so you can do something like that:
->
->      vsock/virtio: fix variables initialization during resuming
+On 2/12/25 20:55, Jens Axboe wrote:
+> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
+...
+>> However, uring_cmd's can be issued async in other cases not enumerated
+>> by 5eff57fa9f3a, also leading to SQE corruption. These include requests
+>> besides the first in a linked chain, which are only issued once prior
+>> requests complete. Requests waiting for a drain to complete would also
+>> be initially issued async.
+>>
+>> While it's probably possible for io_uring_cmd_prep_setup() to check for
+>> each of these cases and avoid deferring the SQE memcpy(), we feel it
+>> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
+>> As discussed recently in regard to the ublk zero-copy patches[1], new
+>> async paths added in the future could break these delicate assumptions.
+> 
+> I don't think it's particularly delicate - did you manage to catch the
+> case queueing a request for async execution where the sqe wasn't already
+> copied? I did take a quick look after our out-of-band conversation, and
+> the only missing bit I immediately spotted is using SQPOLL. But I don't
+> think you're using that, right? And in any case, lifetime of SQEs with
+> SQPOLL is the duration of the request anyway, so should not pose any
 
-I forgot to mention that IMHO it's better to split this series.
-This first patch (this one) seems ready, without controversy, and it's
-a real fix, so for me v3 should be a version ready to be merged.
+Not really, it's not bound to the syscall, but the user could always
+check or wait (i.e. IORING_ENTER_SQ_WAIT) for empty sqes and reuse
+them before completion.
 
-While the other patch is more controversial and especially not a fix
-but more of a new feature, so I don't think it makes sense to continue
-to have these two patches in a single series.
-
-Thanks,
-Stefano
+-- 
+Pavel Begunkov
 
 
