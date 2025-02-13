@@ -1,251 +1,151 @@
-Return-Path: <linux-kernel+bounces-512923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-512925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35970A33F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:40:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E6FA33F5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 13:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CBC168176
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:40:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE46A7A28E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 12:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11321221571;
-	Thu, 13 Feb 2025 12:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bMkTKxxY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528E122171D;
+	Thu, 13 Feb 2025 12:42:59 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB2021128A;
-	Thu, 13 Feb 2025 12:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137C5221541;
+	Thu, 13 Feb 2025 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739450419; cv=none; b=ZlEGqcejqdfUucj27gqkNAYF7tQ7RJrtxdK8bB3j5ZvaFsrSaRQoc9GiegnkdRNI3ssUjTt1RstBE/swhO5jRMEQP/TsEJx5O/2BIKV5DPR6oIMl3vCUT/u1DrgGBvA8J/bmse4EOYxDNkIX0E5T+nPt7MjIKgrc0wdD1I1rGhM=
+	t=1739450578; cv=none; b=fuG/PJfSb7FgFUhTNZ8UrEiH/gRhoDv//TDs/ZnO0DB1cHnylcZyrOPh3D4HGJj9hRvFVNlHkFj0VWABBox6vnG0Fm0UvWZu12e2e0EaPP/7SPhBy9hRn5sIDfu6MVbFKyhUYw4co2kvQQb2f5w9FFMODwqfKIOcIChdRIgPw8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739450419; c=relaxed/simple;
-	bh=1NKid35ms3rwfl1WIWHKmj/E2Et68QQEMclUR1o1Qdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sol8sk1ywZ6bYn9BvgyFQ6uabYBGNGOghcbQajtXItTrajYR880b0FhaJmkHLQCU2mPidGFTpUu4pSgvleyAKkF32X9LJv614KEe5IA5oPKZc3skX/2OWfx9w0M4dG92Hwt/YpFL6A/Oa3SH04P6JHnFL5l0CvJhsMN8Tuc8JXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bMkTKxxY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739450413;
-	bh=1NKid35ms3rwfl1WIWHKmj/E2Et68QQEMclUR1o1Qdg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bMkTKxxYuPtmtWitDL/buUOxZCQPiW370lhrTbobkEtQW5nHiPgc+fUDZCC6Qm8lW
-	 ocYzeEJeH8O1ho7q+uM7bMJUDmVn+EUelDE/6Iz6b4OIKHvGOwv0eavTa/dwJzV23X
-	 VpfRMv1hYurl0MsfzzmCBrZuakjiJV+DLpuluiObEgvzY0D6XfMbTGy3q7K5M7k/pP
-	 xkuPFmo0UFqqvdBVoq/mG/XSRSpLSI1cGB/MOfjyFem9MBoe2eMUdrNl0eVSrRKL2h
-	 40Bk5Mfjk2IS5V+s3rwxF60Y3BkgfIDgi1/aAlZ3PEV3xGQ4As0uzLBcmcFgqOUmYz
-	 dJ1K+AMTtq31g==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1CAD417E153C;
-	Thu, 13 Feb 2025 13:40:13 +0100 (CET)
-Date: Thu, 13 Feb 2025 13:40:08 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Sumit Garg <sumit.garg@linaro.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org,
- Olivier Masse <olivier.masse@nxp.com>, Thierry Reding
- <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, Sumit Semwal
- <sumit.semwal@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
- John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com,
- Florent Tomasin <florent.tomasin@arm.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-Message-ID: <20250213134008.4cbef142@collabora.com>
-In-Reply-To: <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
-	<20250212205613.4400a888@collabora.com>
-	<CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
-	<20250213093557.278f5d19@collabora.com>
-	<CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739450578; c=relaxed/simple;
+	bh=5nfG5tUKDdRVZPtqKEh7WSS8/lacPy6VbllvjiwvSRQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c6y3I/dJgbWmHVKwilrB4dtjV17UTeRsCxV6YCvpwBHOYgNqxmnfOcaW1PHrdUrPbgBd/CCwMrK+pMBqTri2KDB9BZkvny8fjGhWRc8ghrOpg4vnRvxO+w5SIknSySXqT7KfJJiWbQiFbNiXFyntchVhmUgnd3jEy1Fn758HsGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso1076506a12.2;
+        Thu, 13 Feb 2025 04:42:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739450575; x=1740055375;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2GMmkLuL/V4kseKjdmtm/VGsp39ORCaWEvGR5hbaRH4=;
+        b=BngFP6YdCoGLjgEaEQGgsqavdd+i2flUQmKKchHYviZw/g/uXBtByqmW/B1duJgYS1
+         qvbkJ6ZWBr+9o18vDLtwq2065RQ7A4XwRONBw42nMz8UvfCFn8WANss3h0tfhmkyz9S5
+         0NiCRSDFsXrFZpMXbZH4WXdZ4bFrWpyiF7ZvI848Wo2BjjdCYU3I8HiZQ0h7/UqjkmpE
+         pOBbFLFs6GhSQohZwVJEvKYajBFMESwPXxowC+fCOuPheUm/LeymLZDXYszbwZQY7RMt
+         VLrry1JFVuHXXDJNAT/VSwBjeiYlWv3yUE3ngIdylOR03Q9jVAA+SPWJLqOUUn8XIOEy
+         IA3w==
+X-Forwarded-Encrypted: i=1; AJvYcCW2fkJuwhFf1fnhieB27nykNOCYZhcHOoJyJg6fpONTGlxhgvVYWatJFj3/WmWaHfPEOPZ9UyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmWzi99J2N2/phwv6X3dUQM1rfNuJJbA5DrjU03wyjSeuONuxV
+	QoZKGh9nb9H+HgI/tJpDOnDBPj9P3V2IEXtLRGNqwiJI5OeoZOc9
+X-Gm-Gg: ASbGnctG5NgPD2jkkEy05gKKScb/x5z7zTOwTxXEZJ6MmxHc3lDrF/EyG2+uUB1J453
+	WOZs+RKuubNxFgSo4ognc457YIGLwUVsz+wI1R/8T3eEyoGr2Ik6y89MRNImeJ4bm4mAxf3RxAG
+	p+PqCdgF7gFc8KyF8NPulNrtrjowztpFvqmCJDorgmo2Np6kDd9aqjTIZdJx1qP6UM0OHVg0zu3
+	1o8ARdkJhw23YJep74DiUnE2uauBxL4rGc/xFolCCmCYqG8T6HZQW2Mt7QoonubHUx3h2aZHqOY
+	HO1gpA==
+X-Google-Smtp-Source: AGHT+IF5Zordi6LTdV7cuo+hosGJiCrqw1j4H66eYJcF3InIl7h8JsByUgKPucE1W3fUjP31fi6bwQ==
+X-Received: by 2002:a05:6402:13c9:b0:5dc:796f:fc86 with SMTP id 4fb4d7f45d1cf-5dec9d4a4ccmr6754672a12.16.1739450575149;
+        Thu, 13 Feb 2025 04:42:55 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5b3f8557sm36064766b.21.2025.02.13.04.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 04:42:54 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net v4 0/2] net: core: improvements to device lookup by
+ hardware address.
+Date: Thu, 13 Feb 2025 04:42:36 -0800
+Message-Id: <20250213-arm_fix_selftest-v4-0-26714529a6cf@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL3orWcC/4XOTWrDMBCG4auIWXuKNJYs2aveo5Sgn3EiaO0gG
+ ZMSfPcSr1ya0vXwPe/coXLJXGEQdyi85prnCQahGwHx4qczY04wCCBJRpK06Mvnacy3U+WPceG
+ 6IDP1KcS29bKDRsC18JhvO/kGEy/w3gi45LrM5WvPrGo//S2uChXK1DEHqanv+TVxyH56mcv5U
+ fhnqZ01yiUak4rH5eOPlQ5tJZ8IhBKDdzqYEI2L7pfQHgV6IrQo0ZLpuxisZa1/CNu2fQO04Gt
+ 3dAEAAA==
+X-Change-ID: 20250207-arm_fix_selftest-ee29dbc33a06
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Eric Dumazet <eric.dumazet@gmail.com>, Breno Leitao <leitao@debian.org>, 
+ kuniyu@amazon.co.jp, ushankar@purestorage.com, kuniyu@amazon.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1829; i=leitao@debian.org;
+ h=from:subject:message-id; bh=5nfG5tUKDdRVZPtqKEh7WSS8/lacPy6VbllvjiwvSRQ=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnrejN2Q9iKbGwkQhjrt0jll9UpquRhU1JB1SKG
+ B3yufxTElqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ63ozQAKCRA1o5Of/Hh3
+ bTRUEACUZ6y6xB8FTQBm08G3t7+VjUy5nAd7u6q3QNQsZHj5girpvSPBIn0BpkposveXpcx27Tj
+ nmmeJ/in6Zb3wIl1O5g3swQHxHjPwRamFyJapo8rIY9Ks7kF7G2XSV1dtVpERG8VwM1LpDlQaUA
+ go1RfkOPJzTDuAESL0x4hMAJYjgN4AO9xOTKDpX4KEkHChIioryWP+W8cxSpxGKQFZYztbX56BP
+ Qh7el00HjEqPd2GiffWSUQCUT3XQ9gbk8XmFcq4UDQKDB2eni6vtN4eooPZSgfRJxq+++yNkwJw
+ ltYqcVJx7FQeySihbRDJisD1+xgiqlu/KIm93+8tknknpkD9H+CYFj4CB2dY191OgHYfGSQh1iW
+ CMuLrlxqAT5rCA6KL2Q5OjAak0kIvrme1OiqTrvyRPvqIFOwGiSRQy4Qr2Aa7yJAgDlNTUkyl/r
+ MPWqjisxCSz9rX3YLSzGRzpUbYMYONBNVjEKamOxPUfBWAYnZBgYxwZIl56hYMmqAT7tWxMJfiQ
+ xv+zqZhIZKk3Sd14xrmlVxE/byF7kvOpW6VTlogGWYI5915lgI3561ylLuIQPvYrKEBZJ2OF15m
+ yzrqmjwCVA0YthGbfCxstk/m5ieE179itsCqtXt2ckQaQgQ+U6WY9XR8beEoR5W/XhuSal+lKD3
+ ZtRy7dJHDSa0Z9A==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Thu, 13 Feb 2025 14:46:01 +0530
-Sumit Garg <sumit.garg@linaro.org> wrote:
+The first patch adds a new dev_getbyhwaddr() helper function for
+finding devices by hardware address when the rtnl lock is held. This
+prevents PROVE_LOCKING warnings that occurred when rtnl lock was held
+but the RCU read lock wasn't. The common address comparison logic is
+extracted into dev_comp_addr() to avoid code duplication.
 
-> On Thu, 13 Feb 2025 at 14:06, Boris Brezillon
-> <boris.brezillon@collabora.com> wrote:
-> >
-> > On Thu, 13 Feb 2025 12:11:52 +0530
-> > Sumit Garg <sumit.garg@linaro.org> wrote:
-> >  
-> > > Hi Boris,
-> > >
-> > > On Thu, 13 Feb 2025 at 01:26, Boris Brezillon
-> > > <boris.brezillon@collabora.com> wrote:  
-> > > >
-> > > > +Florent, who's working on protected-mode support in Panthor.
-> > > >
-> > > > Hi Jens,
-> > > >
-> > > > On Tue, 17 Dec 2024 11:07:36 +0100
-> > > > Jens Wiklander <jens.wiklander@linaro.org> wrote:
-> > > >  
-> > > > > Hi,
-> > > > >
-> > > > > This patch set allocates the restricted DMA-bufs via the TEE subsystem.  
-> > > >
-> > > > We're currently working on protected-mode support for Panthor [1] and it
-> > > > looks like your series (and the OP-TEE implementation that goes with
-> > > > it) would allow us to have a fully upstream/open solution for the
-> > > > protected content use case we're trying to support. I need a bit more
-> > > > time to play with the implementation but this looks very promising
-> > > > (especially the lend rstmem feature, which might help us allocate our
-> > > > FW sections that are supposed to execute code accessing protected
-> > > > content).  
-> > >
-> > > Glad to hear that, if you can demonstrate an open source use case
-> > > based on this series then it will help to land it. We really would
-> > > love to see support for restricted DMA-buf consumers be it GPU, crypto
-> > > accelerator, media pipeline etc.
-> > >  
-> > > >  
-> > > > >
-> > > > > The TEE subsystem handles the DMA-buf allocations since it is the TEE
-> > > > > (OP-TEE, AMD-TEE, TS-TEE, or perhaps a future QCOMTEE) which sets up the
-> > > > > restrictions for the memory used for the DMA-bufs.
-> > > > >
-> > > > > I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
-> > > > > DMA-bufs. This IOCTL reaches the backend TEE driver, allowing it to choose
-> > > > > how to allocate the restricted physical memory.  
-> > > >
-> > > > I'll probably have more questions soon, but here's one to start: any
-> > > > particular reason you didn't go for a dma-heap to expose restricted
-> > > > buffer allocation to userspace? I see you already have a cdev you can
-> > > > take ioctl()s from, but my understanding was that dma-heap was the
-> > > > standard solution for these device-agnostic/central allocators.  
-> > >
-> > > This series started with the DMA heap approach only here [1] but later
-> > > discussions [2] lead us here. To point out specifically:
-> > >
-> > > - DMA heaps require reliance on DT to discover static restricted
-> > > regions carve-outs whereas via the TEE implementation driver (eg.
-> > > OP-TEE) those can be discovered dynamically.  
-> >
-> > Hm, the system heap [1] doesn't rely on any DT information AFAICT.  
-> 
-> Yeah but all the prior vendor specific secure/restricted DMA heaps
-> relied on DT information.
+The second coverts arp_req_set_public() to the new helper.
 
-Right, but there's nothing in the DMA heap provider API forcing that.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v4:
+- Split the patchset in two, and now targeting `net` instead of
+  `net-next` (Kuniyuki Iwashima)
+- Identended the kernel-doc in the new way. The other functions will
+  come in a separate patchset. (Kuniyuki Iwashima)
+- Link to v3: https://lore.kernel.org/r/20250212-arm_fix_selftest-v3-0-72596cb77e44@debian.org
 
-> 
-> > The dynamic allocation scheme, where the TEE implementation allocates a
-> > chunk of protected memory for us would have a similar behavior, I guess.  
-> 
-> In a dynamic scheme, the allocation will still be from CMA or system
-> heap depending on TEE implementation capabilities but the restriction
-> will be enforced via interaction with TEE.
+Changes in v3:
+- Fixed the cover letter (Kuniyuki Iwashima)
+- Added a third patch converting arp_req_set_public() to the new helper
+  (Kuniyuki Iwashima)
+- Link to v2:
+  https://lore.kernel.org/r/20250210-arm_fix_selftest-v2-0-ba84b5bc58c8@debian.org
 
-Sorry, that's a wording issue. By dynamic allocation I meant the mode
-where allocations goes through the TEE, not the lend rstmem thing. BTW,
-calling the lend mode dynamic-allocation is kinda confusing, because in
-a sense, both modes can be considered dynamic allocation from the user
-PoV. I get that when the TEE allocates memory, it's picking from its
-fixed address/size pool, hence the name, but when I first read this, I
-thought the dynamic mode was the other one, and the static mode was the
-one where you reserve a mem range from the DT, query it from the driver
-and pass it to the TEE to restrict access post reservation/static
-allocation.
+Changes in v2:
+- Fixed the documentation (Jakub)
+- Renamed the function from dev_getbyhwaddr_rtnl() to dev_getbyhwaddr()
+  (Jakub)
+- Exported the function in the header (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250207-arm_fix_selftest-v1-1-487518d2fd1c@debian.org
 
-> 
-> >  
-> > > - Dynamic allocation of buffers and making them restricted requires
-> > > vendor specific driver hooks with DMA heaps whereas the TEE subsystem
-> > > abstracts that out with underlying TEE implementation (eg. OP-TEE)
-> > > managing the dynamic buffer restriction.  
-> >
-> > Yeah, the lend rstmem feature is clearly something tee specific, and I
-> > think that's okay to assume the user knows the protection request
-> > should go through the tee subsystem in that case.  
-> 
-> Yeah but how will the user discover that?
+---
+Breno Leitao (2):
+      net: Add non-RCU dev_getbyhwaddr() helper
+      arp: switch to dev_getbyhwaddr() in arp_req_set_public()
 
-There's nothing to discover here. It would just be explicitly specified:
+ include/linux/netdevice.h |  2 ++
+ net/core/dev.c            | 37 ++++++++++++++++++++++++++++++++++---
+ net/ipv4/arp.c            |  2 +-
+ 3 files changed, 37 insertions(+), 4 deletions(-)
+---
+base-commit: 0469b410c888414c3505d8d2b5814eb372404638
+change-id: 20250207-arm_fix_selftest-ee29dbc33a06
 
-- for in-kernel users it can be a module parameter (or a DT prop if
-  that's deemed acceptable)
-- for userspace, it can be an envvar, a config file, or whatever the
-  app/lib uses to get config options
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-> Rather than that it's better
-> for the user to directly ask the TEE device to allocate restricted
-> memory without worrying about how the memory restriction gets
-> enforced.
-
-If the consensus is that restricted/protected memory allocation should
-always be routed to the TEE, sure, but I had the feeling this wasn't as
-clear as that. OTOH, using a dma-heap to expose the TEE-SDP
-implementation provides the same benefits, without making potential
-future non-TEE based implementations a pain for users. The dma-heap
-ioctl being common to all implementations, it just becomes a
-configuration matter if we want to change the heap we rely on for
-protected/restricted buffer allocation. And because heaps have
-unique/well-known names, users can still default to (or rely solely on)
-the TEE-SPD implementation if they want.
-
-> 
-> >  
-> > > - TEE subsystem already has a well defined user-space interface for
-> > > managing shared memory buffers with TEE and restricted DMA buffers
-> > > will be yet another interface managed along similar lines.  
-> >
-> > Okay, so the very reason I'm asking about the dma-buf heap interface is
-> > because there might be cases where the protected/restricted allocation
-> > doesn't go through the TEE (Mediatek has a TEE-free implementation
-> > for instance, but I realize vendor implementations are probably not the
-> > best selling point :-/).  
-> 
-> You can always have a system with memory and peripheral access
-> permissions setup during boot (or even have a pre-configured hardware
-> as a special case) prior to booting up the kernel too. But that even
-> gets somehow configured by a TEE implementation during boot, so
-> calling it a TEE-free implementation seems over-simplified and not a
-> scalable solution. However, this patchset [1] from Mediatek requires
-> runtime TEE interaction too.
-> 
-> [1] https://lore.kernel.org/linux-arm-kernel/20240515112308.10171-1-yong.wu@mediatek.com/
-> 
-> > If we expose things as a dma-heap, we have
-> > a solution where integrators can pick the dma-heap they think is
-> > relevant for protected buffer allocations without the various drivers
-> > (GPU, video codec, ...) having to implement a dispatch function for all
-> > possible implementations. The same goes for userspace allocations,
-> > where passing a dma-heap name, is simpler than supporting different
-> > ioctl()s based on the allocation backend.  
-> 
-> There have been several attempts with DMA heaps in the past which all
-> resulted in a very vendor specific vertically integrated solution. But
-> the solution with TEE subsystem aims to make it generic and vendor
-> agnostic.
-
-Just because all previous protected/restricted dma-heap effort
-failed to make it upstream, doesn't mean dma-heap is the wrong way of
-exposing this feature IMHO.
-
-Regards,
-
-Boris
 
