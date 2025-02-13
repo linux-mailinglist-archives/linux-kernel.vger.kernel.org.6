@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-513414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350E4A349FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6CFA34A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6CF1750A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A158116FDBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC86221541;
-	Thu, 13 Feb 2025 16:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E77E27127D;
+	Thu, 13 Feb 2025 16:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B5zWVvwt"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dNqNK1VW"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBDC200105;
-	Thu, 13 Feb 2025 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BFD26983B;
+	Thu, 13 Feb 2025 16:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739463577; cv=fail; b=AOweQ3EfdO9lh6o3OOIOGwc2U34VraJk52zEok+sbMnTHfnNkTP922maav5BO+IWQQFrhOj1qX9mWy/jizCWmCrOgQDIGkBJXD46iJizSqBLIuwCAelEnvbVcXUAtmZM/AI2FWXG64SgOO+Rh0mYETv9iXwEMJeZn41fj4fYV04=
+	t=1739463609; cv=fail; b=RwYgGNnEWs9RbYwURMim7+MLbpPrUh3AwdC2bGAQ7g7Eyu8rC1I/qpgWCMXBiRru4YqPa9MQckTWv1XYgWzV/MlvL0V+YWFwlLq8yB2d607uJXyKe93xaXdoRqKL7urLNxHdz4FuAGC05y+/ZnCqMSeS2ymhvo3bHsv9XhEtnNs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739463577; c=relaxed/simple;
-	bh=vz3u19nZDw9vngkkWlA4NxxZ+h0wnO4ce6ZPxjkVuJY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NL+qpNvZM4H2RRQYLy3HyBv0ivEKD7aGdP634UkZSf+0hSN5cviOf0todFijK3y1otvhjIgZVHZKrUIpw4N/x0o8o5Ud/c5sdy3KZdRO794A8/dvD4xdFA2Q6K+SJiA71auCIGy1xIDV4BwZHyMZlE0MzaMf4hT7njvxrQQyVuw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B5zWVvwt; arc=fail smtp.client-ip=40.107.220.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1739463609; c=relaxed/simple;
+	bh=4ictYMlziRCp6L8II/fXXpUdnkWHudBEG0c/Aw362jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NBfOr93rdzds2WuhG8ejMQL9jKd8GxcMJlfHPNkbh7hPIulkqQZWrPhMNxmgiRA/xMitSuc5LCTOG9yG5FtZxA6XkLCfczuh4kDn2eri10jQjt6sUu077xaRUZxLDwWx/hjVGYJX3hGuhrtbP0QDKYhgbtlPQQj14T9mYEky660=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dNqNK1VW; arc=fail smtp.client-ip=40.107.101.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cYdWpFiJVFxUshWPfILvi4kye6ve2rdzWVnZClpqQRiA8dLheNY/Q8gRZX89XJ+20ZptVbXXUG4nI35qA6QAdszkHy7okkiXo3dyGiMSQguPXMafefqAtkPAKYF0/7KmJZ4Rb06krVKjypTHjrfA6KB0Hn5b4FbU7EfL2EvkZ5JUWkaylGwIrWnzWqhpkT/6rRG5OBfmBGa1UsMUgx2DSG91hpXoLstumpZ8DWHnMMRKICeF9RZ7BjV64SUugLTUviw9/oqEflo1hn4v2iPsYiqW4/1OJQnOXbdXE1P/0nd0zvlA7Yyyc0wvDlDg2w8+4p0XFagCTS9dPQHgXC9VsA==
+ b=wR0kKpx42ifTWa9paN7iZh7HG5WqVTTb1dgemR9THzGtrP+Nf5+jWfiN8ti562//1BIVvWR7pbytpdeUKQDnoLZOzqcZknBJEB5R+uFvVUAxeoPtIhc9XnabCNG8JAwyOTMF8UVj+aUX99YXsm84Z2YEXyTi9+HPADL2QHbZd032QMRt+32Vekf0/61Kgz16jz+vhIZMc8U8pJdko7AuqJm+7bsgSQwQ0xlUDqYx/2EFOghTlMBXL82J7Kgdqhy3PO5lNf76eBj22wkhpmzW476O6+SuVieUzAthe0Kt+01sHD8Jqm+QumonIVY225a44EsQnfiyvcv7s4CMmvgzqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wJm+EstFihzGRaj9wdsIc53ZMmVRciwrWqe7lpJrFec=;
- b=wxvMWL9VAflMbQ5mAC+W3UfKRXpuY0Ge/MrzJps7uQWhhrFTpaezr3EUtXYJhjg9i1xARnie+122vx37uZpGVNeun56Qxl4YMnUjDKdbqYJEz5CI1KXFkW1YaAEzE9ndlAly55v1dVEME1bnvBr0K+8n+ZQkXkWD9HKqs+tfcHpmblVTzZTnxcnHl9iRa1DKgkQWmfGi22pFrRIeAxM1EwB/nWRKW6iq7LHYDnEFAPiyvTE8gxsOPfVNP10fZTgxD8TEHVcfb+bcOPsPFW5++DugXp9WLI7uYdHC5O893f1XpN0x09uRcJhmuLeDz0X8DUCeFHM4qvboZVV5GnPJGQ==
+ bh=091fYQ1YOhYq20dGze67J0ib65qrsRoNX2OsBHxNiOA=;
+ b=MDDqq+kh2QRYiEAawn3UPbF7DuuKSdcMhJ6pbaXnOLhRxjl0d5SVbcjUjLrvg24L6x5gqpleh0ImfIzDXf+J9ROSrC6+x8DuqL46Pi7MgWKmL4qwPL+o99tRQOaO4NdHpx7BCPaZq5ix5neqnfzFfyFD7JF20Ojdd7n6//V2IEtDe/p2aEWfU+8GvUEeT8V87Tb/nY61d3h+wS555hhJR0nBEvlIyPSi7yAcuZzmUjV7YnhVJJsV16go2/zrwr8rIa1Khy699DLrfLr/Kwn5ryqRtWTC0Wa2i+0bgJty4wbFW7zktFaqLH7n1Jte9wiWWAVQc+4eF2EUV33VyM8fWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wJm+EstFihzGRaj9wdsIc53ZMmVRciwrWqe7lpJrFec=;
- b=B5zWVvwtQ6vN/rcBL46LqFFhknTDkR7Q0CcmRAEm91M37TFNBvqppCsD1BXFC7Vhgg80pASTKR43xxeZebtc92qRAs8DTAbzydYRAfcoC76iW/xuKbHE6YRuKjgmixHMVuDpqoHeaLSFOlwe09bam259L9ZlhwewDtyobrIFW9o=
+ bh=091fYQ1YOhYq20dGze67J0ib65qrsRoNX2OsBHxNiOA=;
+ b=dNqNK1VW79mjJ1RMAlCBJRCazJXoJQ7uB9GdvyFpuwKucGdF61yuVAvdu5x+iPWhqnnZzVnCxySAs0x2/2gYYV7RCOCUNHNONhhRNDGIP6zI1h0dgsbhGOw5DpyxzNbMrUfSSxatfSp6XwYwHfz3i7+Q2bUWAnFiJSLTKNtLdUE532cV2RBy75aAV5ghlpM90uIV9LOx6igm1Ri7pZk90VE/CBKBKNcOJXDdGbr2I4K+I6hXaq0RAiaVBpcEIvQ/cQpTOX7LSRHt9YlTaiWQsBxJrg511z/oeacyL5ynjSin9u94O3oXzFQqg8aexrE3GwjSO2ewHLXh7sarQ9PhrA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by MW3PR12MB4378.namprd12.prod.outlook.com (2603:10b6:303:52::7) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by DS0PR12MB9058.namprd12.prod.outlook.com (2603:10b6:8:c6::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 16:19:33 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
- 16:19:33 +0000
-Message-ID: <5e9a5b3e-793c-4873-a1d2-33b62614ec31@amd.com>
-Date: Thu, 13 Feb 2025 10:19:29 -0600
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-To: Dave Martin <Dave.Martin@arm.com>, peternewman@google.com
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- tony.luck@intel.com, x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
- akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
- xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
- daniel.sneddon@linux.intel.com, jpoimboe@kernel.org, perry.yuan@amd.com,
- sandipan.das@amd.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- seanjc@google.com, xin3.li@intel.com, andrew.cooper3@citrix.com,
- ebiggers@google.com, mario.limonciello@amd.com, james.morse@arm.com,
- tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
- eranian@google.com
-References: <cover.1737577229.git.babu.moger@amd.com>
- <Z6zeXby8ajh0ax6i@e133380.arm.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <Z6zeXby8ajh0ax6i@e133380.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0068.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::27) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Thu, 13 Feb
+ 2025 16:20:02 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8445.013; Thu, 13 Feb 2025
+ 16:20:02 +0000
+Date: Thu, 13 Feb 2025 17:19:58 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] mm/numa: Introduce nearest_node_nodemask()
+Message-ID: <Z64brsSMAR7cLPUU@gpd3>
+References: <20250212165006.490130-1-arighi@nvidia.com>
+ <20250212165006.490130-3-arighi@nvidia.com>
+ <Z64WTLPaSxixbE2q@thinkpad>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z64WTLPaSxixbE2q@thinkpad>
+X-ClientProxiedBy: FR3P281CA0063.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4b::13) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,306 +88,219 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MW3PR12MB4378:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3e890b1-51e7-4f67-7295-08dd4c4a337f
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|DS0PR12MB9058:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a606c97-60f8-4f86-0fee-08dd4c4a44cc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OTlDQXBBMFgwK1dEa2gzVXFvdFZ6b3RtOEFLSVI1ZFVKSWpFWktudjhNM1pr?=
- =?utf-8?B?Vi9adFprbmpCam5FTXkwQlpreHF6UmExWDRrQ2dxM1g4R0g0WGVoNEpNU09u?=
- =?utf-8?B?eDhmMHd6RmhMc2RnNnhkUkdnazZiK1B3UjFnZVVLZEc2endmbDQwVzRIRGVn?=
- =?utf-8?B?cmhvNUpjV2FUbWN6ZXBwb2k2dHRJK2luZFRwZHU4aUV1bVNjVkdrYXA5RG9x?=
- =?utf-8?B?YU9VRmRRUXY0QXZVbkM2OXN4V2NFU2M5Ny9sb1c5aTFYT3orTVIwNmJVbXUr?=
- =?utf-8?B?ZlZ1SVlOUmhqWlhMblVJeEhzZUdjS1Q5NWxMcHdJaVh2SEFkYm11ZlRiaFI2?=
- =?utf-8?B?VDNONVR0SkJoeTNEVVhBWHJWM1hFMXNEaEpYeUpZWVM4VmZPR0kzdjZnMHJZ?=
- =?utf-8?B?THJQeVlLbmJ3YkRjcXFXUkJFQm1GWkN1YThrb0I1VW9KVG02UEwwa0tEeHRV?=
- =?utf-8?B?KzJHMXBMQmU0MWNpbXNVaVM4R0x5UTJrK29RZjdlQUwrQzhYUiszQ2xoSDlQ?=
- =?utf-8?B?MUxteEsyUVFyS2Y5Y2tRNGI1OVJVM1UybDlOZElTZTZ2OHFxN2VCV0x2bEZ6?=
- =?utf-8?B?MkdVUkZMUFJXZW5Xdy90dzZOVXBYZlR1dXprUXhoRVNacnpMVDllMXZKQ0Mw?=
- =?utf-8?B?YjdaUkhkenZsWWFQNzd1d2RUbzZjYnpxR2pJdFoyWi8rWVhSV0dPZlVaOHcr?=
- =?utf-8?B?Y1JhNUt4VkZGQzdybTBFQUNvOE9qUFpDekdqWU1mYUkrRGxwVCtNNlVkLzRH?=
- =?utf-8?B?MWQwNnlSTkFyWVd4ZzliNFMrZnFJN1BORjc0TVIrdlAxTjlsc2lwcmcrdmFQ?=
- =?utf-8?B?eVFNYnlpUmQzNHpFUEhMSjdxVzRBM0dPME9BTjU5a0Z5SGpIOE1zRWZKQlpa?=
- =?utf-8?B?TW02WTA1Uk1WTVB2a2xnb3dsZ3hwcGNZSENMT2RKT3ZnVlJyYjhUNEFUeXBu?=
- =?utf-8?B?b1VCT3BwcWlyZDQ2MkJlbmEzVFpZeW0xZEgrZUVaVU9RTUMrNllWTVpQMU5z?=
- =?utf-8?B?cUg3ZXVMSnl1cUl4cldFYzMzTS94Z1JGaDd0SHZkZ3YvYmFwbG1oS1IyMnNY?=
- =?utf-8?B?dTZueXVqZENZRnBGYWU5YW5jczZPL2Y5MDc1MmtZdmpBZHdkak5YZjMxQ3p6?=
- =?utf-8?B?NU5PcyswOXl3VTZJY1VFSmdka0ZwMWRVYTQxZjByQzB1OGpUS3owSnpYL0xC?=
- =?utf-8?B?MXdmZDM5K0VHb1RtN1Q1MEJJbTg4Zm83ZVBTMytWUTFyWThnT1RYWTB4ZHZt?=
- =?utf-8?B?ek9kT2Y0cGhOUkVlb2lNL0Q5Yi83Z1dBbklPWTFIaUgwYUhNVStIVXNKWHR3?=
- =?utf-8?B?a2dNUk4yQUVpWFQ2STRmYmFaZnBXTGFSaEZSaFpTRTNxNG5qTFlRZEJDOHM2?=
- =?utf-8?B?R1NzYUxwRld6YklXak9EdjlwdU1BaG52WktreWVhZ01DSnlrN0JMeE4rejBx?=
- =?utf-8?B?REFKRHA0bC9aK1JwUkxmeTJyM3RWN3JjanNkTktvU0N6T0o3YjRDdTk2ZmR6?=
- =?utf-8?B?dll1cWpSSjl5QndmNzNzWU90eTFqeXFiWkgzU2RiWlYyL1EwZ1hNUWlLMGpL?=
- =?utf-8?B?eTBGcFpBQVNia0JRV2xBWkJ3S2tOZEVjbnpKaG1hT1NSZ0l5NjNyUTZmNWw0?=
- =?utf-8?B?OXQvSFFtUGlzWTRXNGR6dnE1N3lpMmhUUmxxUU96RndIY3U3NUc3NnkvYkww?=
- =?utf-8?B?M1dHekVjbXdpdzlVQ3NTKytnR1o2UnJuVWxNTU5CUnNBYjVSUDdKc09zcDFj?=
- =?utf-8?B?NXVCcGVhK2x4THVhL3lUMVdNMDluOUt0c3BpRE1Vc2ROK2JkZ01pWmI0NllG?=
- =?utf-8?B?T2prQnJOUGJXRVVpK0ZiZz09?=
+	=?us-ascii?Q?72PdwnZUUPY2yN8w9k8Zq/zmGdjooGN0WX8O1mlHehiFyaUBrhu8mMh4URlD?=
+ =?us-ascii?Q?BAGgTQwfpDBAS43dXGwGk1pJvu/0RS3hRnbPjYRI/ZeicUtRnCMuGSn7BPyn?=
+ =?us-ascii?Q?RT3hz5ZHttGrDIDJRJJa6LPiwJglJvRWZC/pRXpxQfDlrU1UhKfkmKgiZCdM?=
+ =?us-ascii?Q?32gGQLYrP0BNd67TFDeJ1bKmsvUplmvsuKadHpCBlSzZUro/5pJM5MRDqLzW?=
+ =?us-ascii?Q?lGo/DYES1BXKc9/ezlC4c2oteCQ2IywzxhwGShVX3ubWC+WpeVhPZ3bZUn3u?=
+ =?us-ascii?Q?IhlvTMdJfqycwjL45tfzUfvpY0r7DQ4zBJk+39vbIGDrhdarZQqIYrZhapgX?=
+ =?us-ascii?Q?pW+TkaW/Ty6756xezzOonsHrjUUh8zZg6GTxlIi5W+x4U/5lqPoaKDCjyEoT?=
+ =?us-ascii?Q?1Sz/VCNlNHVTXrROhrrqmAGwT4QWACJLXmcKiA298eqE+CgpF5to0W5o8S6m?=
+ =?us-ascii?Q?/5606/X5oOXNzzAGXOaR3WhyDRuS0Oc8Vq4zf9xaq9+r61b8fXd1f1XEWyHG?=
+ =?us-ascii?Q?7QOWteJ1hWYwQ3wz4HydLgqdWjKOSOj6ci0dPNBUfISOc/AvS1ybwU851lX8?=
+ =?us-ascii?Q?2KGrDOTwbqxCVMQ0aFNZpSr7iUJ2Mv2m9eOheYXqgmf5f3uDperMWCXRLCKc?=
+ =?us-ascii?Q?lbP3nbSN1l64njLif6ihb2F/WgSjStWaJIEE38fIld8iZyfJQi6ZhGca4NdI?=
+ =?us-ascii?Q?w+NyT5UlAXpIgh3/z5/HrcrXVC5VsfGjJCunWUghtKCUP0Rwjdpf45VqxHX3?=
+ =?us-ascii?Q?cpmHJO69bAdgvBl8OWZWF9npnwrdYy7oh44EOw1HbGgnmG8TZK1zi+/l5uIF?=
+ =?us-ascii?Q?ap+i13qJyTkH9GMs8OOMsRZp6G3jNYtPGRtB5nhBED6gbT0Q0mblsquMskX1?=
+ =?us-ascii?Q?sWpPx/o50xaAe5VDN5j+O6NMoWf4KLiNXZZ0mq98GY184A90EYdwo7D3UOrp?=
+ =?us-ascii?Q?x8S27WaKVI+JxldnuMIFI1OTHfCUb9odVP+QlM/qer7LLzGRfsEoBr5/S5W2?=
+ =?us-ascii?Q?iyMEhBMZvwTfiG24htC+ew9UuiLHUX/oDedDCC8gEjP0S6tejiEgIk/J2mdL?=
+ =?us-ascii?Q?HCn5eioYY9PInM4acdsZFbR3D8+NrMIcGgOfzssttEuvu0dCXGDOaaBipa9L?=
+ =?us-ascii?Q?P8ljkGiuysuDGXKgbuIBSrIedPTtiNls110G/HWpdCGL+nV0Duf0EqP0URLU?=
+ =?us-ascii?Q?WXbYydBZpcLgz4aBKXUTdllYlb8oA6gBK4bVgv9Zzonk4gaMFO/5jkZqwbF2?=
+ =?us-ascii?Q?/3XXS2FER2jPK71yZTP/5aNs/KJ2ZprojOY4u5mLDGFtpt+AT7LS3NpKHME7?=
+ =?us-ascii?Q?dcAUnk9SKJ9HpAY7W02RGrWJELhyI38FDXDGUVnfmvJbro9kLVMDfO5FPOPY?=
+ =?us-ascii?Q?xzk+t2YNddyOrPt3f4PVikkeL2QE?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R0hiZ25xcGtTZWNUWVphajdqMmNYSFJRNUVwVGpVanJPNkJ1ZU5NcnJkM0dV?=
- =?utf-8?B?QW56bmJOZDJLMGZVYkE1eGF4bEFuVHU3UDkzMWRzQ3BjU2RHYVA5MkJOQUJy?=
- =?utf-8?B?akdoNUpaNTRucUVVekVxS1N4QlczSXRJSy9UdmlrUnhmWm5oL0t2UWR2TjNr?=
- =?utf-8?B?VTJBcElYT2NxdDM4Z1JBc3VJRGFGcEY2NzUvblZDSjg5ZHVIMUROSVc5U0la?=
- =?utf-8?B?R2drcFBrd1BmQ3JFV3pTcXpsdTFvaUVRc0Rxd0x4YmtNbHJMM1B4RW9HZ01S?=
- =?utf-8?B?RWhtem9nTk1VQTRWVEhwcnd5dEQzb3NFYUpZcjR3WTJERWhUWExNb1haOGkv?=
- =?utf-8?B?TlFWOCtjamEvb2Q2bW5SeDRhdys1S2lUOUpieEJxM0JycTIzcVZnUEd1aWVW?=
- =?utf-8?B?RjlCbnBZQXg4bDZDYmlUQXVlTVR5aVBFVEVCVUV0aXdlY0k0dlMxWjFTZVY0?=
- =?utf-8?B?a3YxMmd3d3pKay9jSHFuWXJmM3c2eU5FYjFicW1aNlNQdTR6T29iUUJRMkZS?=
- =?utf-8?B?MldLY3R6ZDY5OWtneUlQOTl2aG1vMjNiaVVENjF5TlVCcnd6bDZoajdLUHg2?=
- =?utf-8?B?akM1cmxDSFpOQTU2eE5aU1FRenBEbUViZzIwdzFQNy9VMVlMdkQvbi9CQitP?=
- =?utf-8?B?dmdQc1pVOHYrL0hOemtkczNpRE5MSThITldpZlcydW5TbmZ2NDBmWjFzS2s2?=
- =?utf-8?B?Y3djZ2c2UkJhOEp2YStkT3ZuYmhVeVRnY1M4aUQyWjl6QkpxRERqZFRtTEpv?=
- =?utf-8?B?dDhOZDQ4WnR1ZXV5bWJHODFjMDM0TDBNbG5LalN5b2RtcGpmN2tUaWlpODN6?=
- =?utf-8?B?cHp3UzIwK3FFVGFReTlxWTNycEFIMm5jSDdJOVA2REtpMUtMQVA3aEJJL2lu?=
- =?utf-8?B?aWFwajVJNStsV016K0FPQmo4SDZ5UisrQnByaHpFbC9MbWJxUzBjUEVPZXhH?=
- =?utf-8?B?SDE5Z0c5QmFWZFY5VmdtQVFQTFlSTmc0QXBIMVArL1E5RXJCditjUThnQXJz?=
- =?utf-8?B?QXlCR1V6aWM5ZGFlK09LSmNDcUd4TGtsenA1QnpIR3hzL25OS1hLcjBtQjBi?=
- =?utf-8?B?VlpuNklKWWloWVNIQjBrL0RiVW8yTTJqV2tEaEhVR1QzalFaSjlrSkx6Wmlr?=
- =?utf-8?B?UzVwN2xHWjZ2ZDFqUzB3cFk3cUR6WnlBdFJwMHBVWWdjQzdZbmVlTGlkTGNN?=
- =?utf-8?B?MnVjME9ZM0R6TkwxNnhESzR0RzFXanVCT0tUbzNYYTNFMW93UEJzOEpWK0pU?=
- =?utf-8?B?and1cWdSNmpOUnhsejY5NzNuazZ5b0ZCMWdVQ0Z2eEZkYXh0MjROV0JHV3gy?=
- =?utf-8?B?dEltSitibEZjbi8rYUJ4UjNwUkdoU3pDVDVWU29DdG82TmRyZjB0Y2lJbGpP?=
- =?utf-8?B?ZzVMcXpCZ0FlZWVFaHU3ZEpXRGJmMnVBM2gzZkVuRWlZSEpGalJJQWh0WnJ5?=
- =?utf-8?B?S085alYwcjQyeXNaS2RPaU0ySDkrN1R5RmdTSC9uSHg1Ykk0N29QWmFSMzdE?=
- =?utf-8?B?Q0tMY3hubFFpN2F6bmp1bFNDdFRMeWNDbmVyWm1mZ2xpZmFlT0dVVWxjZlR4?=
- =?utf-8?B?bFBiZzBFK2lPOWZvVEtYNHlmV1kwUWpuS05INFdYUlkrYWVJaUN6OHF6SnFN?=
- =?utf-8?B?V1lXd29PL0Z3dUtYQ2NXN0lpczhKSDZSdVJlNElEZ0pyelVyRWFMVmV3eTFT?=
- =?utf-8?B?OS9wWjVGZFhrM0xjbGkzU1puZXc1V1krL2k4eHNNWFhkYzBVdy9jdkg4NzVm?=
- =?utf-8?B?R3YwTmFUekQzdGhnNFN4bXRTclkrSWdyM0todGlxYSthTkM5NjlYdmtPdWha?=
- =?utf-8?B?WDdYM3pEZWRPaUpweHQvOUJuUTdCYlZWc0tPTEpoeEVnMjBVajBBaFdweUFH?=
- =?utf-8?B?OGJkZGxmRE91Wm1ld0dGcEJHbXhaTTdubTdibFpZRSt5dFF1L1RDa21DMmZh?=
- =?utf-8?B?NUF2VTBra2pQNUUyNlpyWG4yQ285dVFob0NKYzloT0Z6TU52NTh2a3ZuNEhK?=
- =?utf-8?B?NzdDU1ZhZGI1NnNHMVdkaklHRkFLcHB4Q3haVDZ6QTlXOHVCTmxLQ3Awdktv?=
- =?utf-8?B?Vnk2STIxMTV0Rmo3UElXZVcxVklhQ3NER3RyTnVteThXaUwySllLOG1BWnB0?=
- =?utf-8?Q?5VFs=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3e890b1-51e7-4f67-7295-08dd4c4a337f
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+	=?us-ascii?Q?Zf+Q/0IPGpTd5DfY5H1OCYX6sXau1hF5Jq1OWihc8qzzTMBKvqD1tlvC7qh+?=
+ =?us-ascii?Q?UtsRJUwkIN897Gbm2PizM4+G/gQpRqlW1Xe20fUHFGeGi1UKvyEi2B5cqsM0?=
+ =?us-ascii?Q?dCalKYl7OzWcjsMAS9CFcQ/clP65MM62KB3R/73lZzwpmFh0oUzCDHP4em0N?=
+ =?us-ascii?Q?58YtkXd+eYyvoklZfnrld7FPSal4HVBaBUbahsasX9Neyx0i+XngpSzRh32t?=
+ =?us-ascii?Q?ZTrDzBNVxG0YgxynV7Ppk7/dU1T19uAwvh70bhEl+gyFKbKdC1W32PeY13Cu?=
+ =?us-ascii?Q?LOosvpkmbBAg+9N9FOT2ow0p/b4A3+LKOfMMVdAeWG/NCsA9zMs8h4HFo1fv?=
+ =?us-ascii?Q?d44UrBqRfJKOLLCk4gnq+kgEsFfmajsToraxw96R/jrOD+lD3Na471DEELz1?=
+ =?us-ascii?Q?YpaTTsKX/PRJKA6fKoQqJ3oMS0VII1IB7LOS5yiKuuuI2WrSUli6QDHUGBm2?=
+ =?us-ascii?Q?jJnOjZ0f5KcwN0QKTX4FtAcba/COUmsRdVF1DseXIklBO+SyZEuSPEKYwv31?=
+ =?us-ascii?Q?/919uol8GUso8f4/EpwLO0NwJ9QylfpndXTFO7qoGR3OOmKz7vsnZisossZw?=
+ =?us-ascii?Q?uOOnesaQAKWd4SpRgkjiG0W7Gl6sWDCDfTVbCphE9z8IZn1Fqjn6vpeqOJkJ?=
+ =?us-ascii?Q?o5O9cE4ggmc7OjgcpXxhJXAIdab6haQEHjRnkRedzxbiJ8aOdoA+6CS/5OSM?=
+ =?us-ascii?Q?oz07Df4OUfLBYD1ya7PJiH1nzDgFVpw+5kAWt2KtGTPlFp8T/b7jsq/2CO8B?=
+ =?us-ascii?Q?tNNGSKIKhalA2/on0kKQlla8+SLwd4FS1rH9eVWxBoTy+H9yqER3/QBrJ773?=
+ =?us-ascii?Q?6w+PjlD8ZxZjWafTyIeP6QV4Jy4tVyvkbbpxJ9AdwN/nSd4OMA9+7ZVBAWTk?=
+ =?us-ascii?Q?4DmbOlzD/VRmmNm3HgpluC+qLUlOqfafZ/aMn1qh2bfOXBnlL9h5i0cf6r6s?=
+ =?us-ascii?Q?FyjEFl6OBdiJCP+g1c2nxq0CDWnFSKRCzO6w0quw2J9C3q0m03LfO2yYcsa8?=
+ =?us-ascii?Q?DyAk5sNlwTa2iZuaVMW/RUqkBNuVyn1ptee4MsU9Brc1Fw2fKa25RuFY/joL?=
+ =?us-ascii?Q?1lksHgmCIhAhgNA8htioAb/uK3gfpF5GCvo3qhRPYLpJMpsZIqaPYqyqED0y?=
+ =?us-ascii?Q?O2gvCxk9TsYPeMKm1X3Kz55Ue9mMADx0LibfCNPuTB8P8m0HvL572uON/hJi?=
+ =?us-ascii?Q?CIJzgF1L0H5xZD8Nv/cvN5rRvROUsdsyydDvZo/6EzFCuVP0oYqKshFQcQ0t?=
+ =?us-ascii?Q?pZI/udhru+2eX+z0Rr7cfXwzDMLDLj8v0y/GnOBr2Wda+YYIPoKThyB1cCGq?=
+ =?us-ascii?Q?TuLo6b+GSCG+xBj1iBTL0cJ+nM2OR0krFECC9xmfzVjXKg7Ptre5f4HsOyUf?=
+ =?us-ascii?Q?C/7IKw1NJureSIa0pRP/WObcqYu1CWsnSeP3DOVtiOTgZ4pcqFBxH6PGJ528?=
+ =?us-ascii?Q?A/ZHUELJz4Yv7fNXwmbA1ntT0shGYT84ccf6foDph/JRsUdVZF0SgEVFbOGB?=
+ =?us-ascii?Q?mRWabPHk5X6hh3TRQSlgXWYkIrbewQrCcQSeij1RBOzd1iQC7g9Vr10ByJqU?=
+ =?us-ascii?Q?Kxrj22R7qJmJT7ZnCmZ3mr4R+jqrTPRSnty5SEUi?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a606c97-60f8-4f86-0fee-08dd4c4a44cc
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 16:19:33.3472
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 16:20:02.3352
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TX9Tt9QRW6esmN0jGi87zCABbkGYKS5DPJ+vocnD13Jy+ZpYOsT4ywqL58vq99Tn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4378
+X-MS-Exchange-CrossTenant-UserPrincipalName: jg39kh3kr0rdsnFBvZqnvNe78D4RLo7OSazZj8Eraz5vjNQHTxtpBy0MOR02ruEXrzYckocTW7jrKMYTkAbsLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9058
 
-Hi Dave,
+On Thu, Feb 13, 2025 at 10:57:00AM -0500, Yury Norov wrote:
+> On Wed, Feb 12, 2025 at 05:48:09PM +0100, Andrea Righi wrote:
+> > Introduce the new helper nearest_node_nodemask() to find the closest
+> > node in a specified nodemask from a given starting node.
+> > 
+> > Returns MAX_NUMNODES if no node is found.
+> > 
+> > Cc: Yury Norov <yury.norov@gmail.com>
+> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> 
+> Suggested-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
-Thanks for your help. Reinette has asked few questions already. I have few
-more questions on top of that.
-
-On 2/12/25 11:46, Dave Martin wrote:
-> Hi there,
-> 
-> On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger wrote:
->>
->> This series adds the support for Assignable Bandwidth Monitoring Counters
->> (ABMC). It is also called QoS RMID Pinning feature
->>
->> Series is written such that it is easier to support other assignable
->> features supported from different vendors.
->>
->> The feature details are documented in the  APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
->> Monitoring (ABMC). The documentation is available at
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->>
->> The patches are based on top of commit
->> d361b84d51bfe (tip/master) Merge branch into tip/master: 'x86/tdx'
->>
->> # Introduction
-> 
-> [...]
-> 
->> # Examples
->>
->> a. Check if ABMC support is available
->> 	#mount -t resctrl resctrl /sys/fs/resctrl/
->>
->> 	# cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
->> 	[mbm_cntr_assign]
->> 	default
-> 
-> (Nit: can this be called "mbm_counter_assign"?  The name is already
-> long, so I wonder whether anything is gained by using a cryptic
-> abbreviation for "counter".  Same with all the "cntrs" elsewhere.
-> This is purely cosmetic, though -- the interface works either way.)
-
-Yes. We can do that.
+Ok.
 
 > 
->> 	ABMC feature is detected and it is enabled.
->>
->> b. Check how many ABMC counters are available. 
->>
->> 	# cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs 
->> 	32
+> > ---
+> >  include/linux/numa.h |  7 +++++++
+> >  mm/mempolicy.c       | 32 ++++++++++++++++++++++++++++++++
+> >  2 files changed, 39 insertions(+)
+> > 
+> > diff --git a/include/linux/numa.h b/include/linux/numa.h
+> > index 31d8bf8a951a7..e6baaf6051bcf 100644
+> > --- a/include/linux/numa.h
+> > +++ b/include/linux/numa.h
+> > @@ -31,6 +31,8 @@ void __init alloc_offline_node_data(int nid);
+> >  /* Generic implementation available */
+> >  int numa_nearest_node(int node, unsigned int state);
+> >  
+> > +int nearest_node_nodemask(int node, nodemask_t *mask);
+> > +
 > 
-> Is this file needed?
+> See how you use it. It looks a bit inconsistent to the other functions:
 > 
-> With MPAM, it is more difficult to promise that the same number of
-> counters will be available everywhere.
+>   #define for_each_node_numadist(node, unvisited)                                \
+>          for (int start = (node),                                                \
+>               node = nearest_node_nodemask((start), &(unvisited));               \
+>               node < MAX_NUMNODES;                                               \
+>               node_clear(node, (unvisited)),                                     \
+>               node = nearest_node_nodemask((start), &(unvisited)))
+>   
 > 
-> Rather than lie, or report a "safe" value here that may waste some
-> counters, can we just allow the number of counters to be be discovered
-> per domain via available_mbm_cntrs?
+> I would suggest to make it aligned with the rest of the API:
+> 
+>   #define node_clear(node, dst) __node_clear((node), &(dst))
+>   static __always_inline void __node_clear(int node, volatile nodemask_t *dstp)
+>   {
+>           clear_bit(node, dstp->bits);
+>   }
 
-As  Reinette suggested below we can display per domain supported counters
-here.
-https://lore.kernel.org/lkml/9e849476-7c4b-478b-bd2a-185024def3a3@intel.com/
-
-> 
-> num_closids and num_rmids are already problematic for MPAM, so it would
-> be good to avoid any more parameters of this sort from being reported
-> to userspace unless there is a clear understanding of why they are
-> needed.
-> 
-> Reporting number of counters per monitoring domain is a more natural
-> fit for MPAM, as below:
-> 
->> c. Check how many ABMC counters are available in each domain.
->>
->> 	# cat /sys/fs/resctrl/info/L3_MON/available_mbm_cntrs 
->> 	0=30;1=30
-> 
-> For MPAM, this seems supportable.  Each monitoring domain will have
-> some counters, and a well-defined number of them will be available for
-> allocation at any one time.
-> 
->> d. Create few resctrl groups.
->>
->> 	# mkdir /sys/fs/resctrl/mon_groups/child_default_mon_grp
->> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp
->> 	# mkdir /sys/fs/resctrl/non_default_ctrl_mon_grp/mon_groups/child_non_default_mon_grp
->>
->> e. This series adds a new interface file /sys/fs/resctrl/info/L3_MON/mbm_assign_control
->>    to list and modify any group's monitoring states. File provides single place
->>    to list monitoring states of all the resctrl groups. It makes it easier for
->>    user space to learn about the used counters without needing to traverse all
->>    the groups thus reducing the number of file system calls.
->>
->> 	The list follows the following format:
->>
->> 	"<CTRL_MON group>/<MON group>/<domain_id>=<flags>"
->>
->> 	Format for specific type of groups:
->>
->> 	* Default CTRL_MON group:
->> 	 "//<domain_id>=<flags>"
-> 
-> [...]
-> 
->>        Flags can be one of the following:
->>
->>         t  MBM total event is enabled.
->>         l  MBM local event is enabled.
->>         tl Both total and local MBM events are enabled.
->>         _  None of the MBM events are enabled
->>
->> 	Examples:
-> 
-> [...]
-> 
-> I think that this basically works for MPAM.
-> 
-> The local/total distinction doesn't map in a consistent way onto MPAM,
-> but this problem is not specific to ABMC.  It feels sensible for ABMC
-> to be built around the same concepts that resctrl already has elsewhere
-> in the interface.  MPAM will do its best to fit (as already).
-> 
-> Regarding Peter's use case of assiging multiple counters to a
-> monitoring group [1], I feel that it's probably good enough to make
-> sure that the ABMC interface can be extended in future in a backwards
-> compatible way so as to support this, without trying to support it
-> immediately.
-> 
-> [1] https://lore.kernel.org/lkml/CALPaoCjY-3f2tWvBjuaQPfoPhxveWxxCxHqQMn4BEaeBXBa0bA@mail.gmail.com/
-> 
-> 
-> For example, if we added new generic "letters" -- say, "0" to "9",
-> combined with new counter files in resctrlfs, that feels like a
-> possible approach.  ABMC (as in this series) should just reject such
-> such assignments, and the new counter files wouldn't exist.
-
-What is "combined with new counter files"? Does MPAM going to add new
-files to support counter assignment in ARM?
-
-Also what is  "0" to "9"? Is this counter ids?
-
+Sorry Yury, can you elaborate more on this? What do you mean with
+inconsistent, is it the volatile nodemask_t *?
 
 > 
-> Availability of this feature could also be reported as a distinct mode
-> in mbm_assign_mode, say "mbm_cntr_generic", or whatever.
+> >  #ifndef memory_add_physaddr_to_nid
+> >  int memory_add_physaddr_to_nid(u64 start);
+> >  #endif
+> > @@ -47,6 +49,11 @@ static inline int numa_nearest_node(int node, unsigned int state)
+> >  	return NUMA_NO_NODE;
+> >  }
+> >  
+> > +static inline int nearest_node_nodemask(int node, nodemask_t *mask)
+> > +{
+> > +	return NUMA_NO_NODE;
+> > +}
+> > +
+> >  static inline int memory_add_physaddr_to_nid(u64 start)
+> >  {
+> >  	return 0;
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 162407fbf2bc7..1e2acf187ea3a 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -196,6 +196,38 @@ int numa_nearest_node(int node, unsigned int state)
+> >  }
+> >  EXPORT_SYMBOL_GPL(numa_nearest_node);
+> >  
+> > +/**
+> > + * nearest_node_nodemask - Find the node in @mask at the nearest distance
+> > + *			   from @node.
+> > + *
+> > + * @node: the node to start the search from.
+> > + * @mask: a pointer to a nodemask representing the allowed nodes.
+> > + *
+> > + * This function iterates over all nodes in the given state and calculates
+> > + * the distance to the starting node.
+> > + *
+> > + * Returns the node ID in @mask that is the closest in terms of distance
+> > + * from @node, or MAX_NUMNODES if no node is found.
+> > + */
+> > +int nearest_node_nodemask(int node, nodemask_t *mask)
+> > +{
+> > +	int dist, n, min_dist = INT_MAX, min_node = MAX_NUMNODES;
+> > +
+> > +	if (node == NUMA_NO_NODE)
+> > +		return MAX_NUMNODES;
+> 
+> This makes it unclear: you make it legal to pass NUMA_NO_NODE, but
+> your function returns something useless. I don't think it would help
+> users in any reasonable scenario.
+> 
+> So, if you don't want user to call this with node == NUMA_NO_NODE,
+> just describe it in comment on top of the function. Otherwise, please
+> do something useful like 
+> 
+> 	if (node == NUMA_NO_NODE)
+> 		node = current_node;
+> 
+> I would go with option 1. Notice, node_distance() doesn't bother to
+> check against NUMA_NO_NODE.
 
-Yes. That should be fine.
+Hm... is it? Looking at __node_distance(), it doesn't seem really safe to
+pass a negative value (maybe I'm missing something?).
+
+Anyway, I'd also prefer to go with option 1 and not implicitly assuming
+NUMA_NO_NODE == current node (it feels that it might hide nasty bugs).
+
+So, I can add a comment in the description to clarify that NUMA_NO_NODE is
+forbidenx, but what is someone is passing it? Should we WARN_ON_ONCE() at
+least?
 
 > 
-> 
-> A _sketch_ of this follows.  This is NOT a proposal -- the key
-> question is whether we are confident that we can extend the interface
-> in this way in the future without breaking anything.
-> 
-> If "yes", then the ABMC interface (as proposed by this series) works as
-> a foundation to build on.
-> 
-> --8<--
-> 
-> [artists's impression]
-> 
-> # cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
->  	mbm_cntr_generic
->  	[mbm_cntr_assign]
->  	default
+> > +	for_each_node_mask(n, *mask) {
+> > +		dist = node_distance(node, n);
+> > +		if (dist < min_dist) {
+> > +			min_dist = dist;
+> > +			min_node = n;
+> > +		}
+> > +	}
+> > +
+> > +	return min_node;
+> > +}
+> > +EXPORT_SYMBOL_GPL(nearest_node_nodemask);
+> > +
+> >  struct mempolicy *get_task_policy(struct task_struct *p)
+> >  {
+> >  	struct mempolicy *pol = p->mempolicy;
+> > -- 
+> > 2.48.1
 
-Yes. This looks good.
-
-
-> # echo mbm_cntr_generic >/sys/fs/resctrl/info/L3_MON/mbm_assign_mode
-> # echo '//0=01;1=23' >/sys/fs/resctrl/info/L3_MON/mbm_assign_control
-
-Looks like you are assigning counter ids to domains here. That is
-different than ABMC. In ABMC, we assign events (local or total) to the
-domain. We internally handle the counter ids based on the availability.
-
-Can MPAM follow the same concept?  It is possible?
-
-
-> # echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter0_bytes_type 
-> # echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter1_bytes_type 
-> # echo t >/sys/fs/resctrl/info/L3_MON/mbm_counter2_bytes_type 
-> # echo l >/sys/fs/resctrl/info/L3_MON/mbm_counter3_bytes_type 
-
-This also looks different that we are have right now in resctrl fs.
-
-Are you creating separate file for each counter id in
-/sys/fs/resctrl/info/L3_MON/?
-
-
-> 
-> ...
-> 
-> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_counter1_bytes
-> 
-> etc.
-> 
-> -->8--
-> 
-> Any thoughts on this, Peter?
-> 
-> [...]
-> 
-> Cheers
-> ---Dave
-> 
-
--- 
-Thanks
-Babu Moger
+Thanks,
+-Andrea
 
