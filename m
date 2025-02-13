@@ -1,175 +1,254 @@
-Return-Path: <linux-kernel+bounces-513337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57B7A34962
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:15:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2642A34885
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8263AE98A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E9A188A02B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D394E201271;
-	Thu, 13 Feb 2025 16:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ABF1CBEAA;
+	Thu, 13 Feb 2025 15:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="muKJc5EI"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZqNNeqxW"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2CB19AD93;
-	Thu, 13 Feb 2025 16:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D971B18F2FC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739462929; cv=none; b=UPEfg4f8fHS10Px2O/+ek6FPawiLTa19Bo79NEayk16TufSFL0/1dzGlFIcu0/MqiiGyP5fELC1ewF+hHUZbkPDbGi0FBRaPbkKBpYkr4SCGjzaV63Rbr65nsttwYSmaLm3eGrfXOxOWrVIbopm7y6eu/6z0lps1jZuys0DZAmc=
+	t=1739461660; cv=none; b=P/MHcrkSsrhzBc9etUBlfLQbUhoxFKKqi1p/LxW+H9cRuvWWMsDhqWYw94ZWIwon5t31zAHXcjZoInMkRFYSs6/MYk2iKH1jm76VlIkYK1I7UM9xNwc2Pe54LEJ3ScZuV4k5WkMNC32l1OigX7RfWFp5MA9nbgWqFlrNH6pYJ7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739462929; c=relaxed/simple;
-	bh=+3dGEXxe1J9c8jze7I42nDGbJ+yy6cckMRbHsaZ5cnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YwB4Oe/5J/prqZ7AzK9degluhW5lYHKMOgiF9AZCFCpTyQf8K7TCWpFNu2r1Lu+ibHkPj75FKX2ux2O7cojBRXX1fkBW6A4FX/YIDzb9hx9Y8nGbZD6satPfQJlri57MfyNY2dBp9HinJqK0RYQsKH6FJ5N2Fazym+uH6l0QNGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=muKJc5EI; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (pd9e59260.dip0.t-ipconnect.de [217.229.146.96])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id D303A2FC0177;
-	Thu, 13 Feb 2025 17:08:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1739462918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ymx5FJjRZUlDUtXNEhGGI4i4e1P/l6fPNUrTmYEgLY=;
-	b=muKJc5EIBeiC7D3bJ1bwRkgl5uZ2fB9el32gHyy93myP28GYoeY0YEFpQufEVRa6RWGNiR
-	SWfb9m40FekwFOYLwPnAl6bnF8f70SMLnmpdNYAkrvVb8+E33TNtlsP26fsQ39GueP4+pd
-	m+KXcDNOYd5pgMMiAYunEG/4eEBqPCQ=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] Input: i8042: Swap old quirk combination with new quirk for more devices
-Date: Thu, 13 Feb 2025 16:47:12 +0100
-Message-ID: <20250213160832.74484-4-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250213160832.74484-1-wse@tuxedocomputers.com>
-References: <20250213160832.74484-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1739461660; c=relaxed/simple;
+	bh=hIy5pXh4y/8Q0gYHXdsOqbcgQADp5AC8VTtbqfxyj04=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OSkZHlQ+GwzCEJ3dVPYSuI7b7igqZneX/Yh9tUH/XEEbqi7K3dVuci8IyCYfUiU8Bb9wxyBrtb+rnovapKuYEFCnlf15+0AS418HLTG1bnmHeTsPd7aBPG8TUVtkJ/OjiNcTkp0M7fJICE3fetwPeuNW9MdzYnAPcnt5W2VIxU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZqNNeqxW; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fa6409c0baso3542045a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 07:47:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739461658; x=1740066458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hmNpP4YGEk282karFXTLw7N03fUwb/8MuF654Jepnhw=;
+        b=ZqNNeqxWLUG5Rwx4awZZXcmo0L+HR2MWcWET0uq9XHh1W2mGG2q7tfXoN4QRY9ZjkP
+         SfB1crro1UYbI0+PQjYTGj4sSHTQDD4Q2UqZLPOrG6s4Zq/+ADuYCpwCNE1utFsYM9x5
+         BaG8XfRralEvsLNoCYzLfQqOtPgVbSEDVsE5YKmFnNKJ09Dj68ULhRWkBFbeK1meYmld
+         /iozPzCnrYRQ4q0uVGZTVw5bw/Km6qtfSn3Zvpe6KUd5YxXNd47JGeRYAEFRefjz39yT
+         aKygASU2CRFxoqs4tEfDO/uBg3semFO1Hn0kFl/vETVvAWU0WEttO0aemQV9yx4Ga8WJ
+         UTAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739461658; x=1740066458;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hmNpP4YGEk282karFXTLw7N03fUwb/8MuF654Jepnhw=;
+        b=YEU/9c0watHzHG9Nbq530b0xQ4BrRicT2ebf+L5cI5EprDPFbUa0KTDbvs1UvYY5hs
+         19wHb5I9i4NqNCUINlXm/saCkE3w/tPAWqvs0eNR7jSQDMb3JtHGiRtfR/k849DFqpR+
+         hXU41fKuWMN2kSoMHm2+LmCAF7ow0GFXafM1CppcUD2UqLzNjk0Pqj98AjFMLzhna87W
+         2f+TBhoH5D7jDdwfwiWVGs/kIiFlpt7METsq1SmyHOLvwr1pfYu6hy6PAO7sXw16Nhvf
+         IyLGZ75aTXqfcy9kNgKTX3tZH2aMwxRtOZ6SQrUtjF4ybKmYHsUwHMd5kUE5B2anAcUU
+         h8pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOPdm0J8jyJznvGfYp0Qn1UAJiKKFOdWixaqf99+0RJ5zkUt6vB1qBHfAL4JSPu6ePGXMrs/BB7Ueo1sQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUtITIx5wywGsaKT/KdJYioccU/PlODQlIEh+SVMya9DYC9mWk
+	an8syjmpOzfzsu5u/5HEuzqKsV0Fex2vJy4q/UOa9Gjd9BrOjdlYSYiv78Gae02r09GMY3yDLP4
+	Q8Q==
+X-Google-Smtp-Source: AGHT+IGaLcjab1UGvr0Z7pZ5+q0nKr8aYvYSyIXe+h+lvbdZI1DyQMlmxV/07FFHeYIbV83NKEBsUYCxYZk=
+X-Received: from pfbmb19.prod.google.com ([2002:a05:6a00:7613:b0:730:451c:475c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4fd0:b0:732:23ed:9457
+ with SMTP id d2e1a72fcca58-7322c39b70amr11735578b3a.12.1739461658165; Thu, 13
+ Feb 2025 07:47:38 -0800 (PST)
+Date: Thu, 13 Feb 2025 07:47:31 -0800
+In-Reply-To: <CADrL8HXZed987KOehV7-OroPqm8tQZ0WH0MCpfDzaSs-g_2-ag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <67689c62.050a0220.2f3838.000d.GAE@google.com> <20250212221217.161222-1-jthoughton@google.com>
+ <Z60lxSqV1r257yW8@google.com> <CADrL8HXZed987KOehV7-OroPqm8tQZ0WH0MCpfDzaSs-g_2-ag@mail.gmail.com>
+Message-ID: <Z64UE0Uh_3DT1jFA@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING in vmx_handle_exit (2)
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: syzbot+ac0bc3a70282b4d586cc@syzkaller.appspotmail.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some older Clevo barebones have problems like no or laggy keyboard after
-resume or boot which can be fixed with the SERIO_QUIRK_FORCENORESTORE
-quirk.
+On Wed, Feb 12, 2025, James Houghton wrote:
+> On Wed, Feb 12, 2025 at 2:50=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >
+> > On Wed, Feb 12, 2025, James Houghton wrote:
+> > > Here's what I think is going on (with the C repro anyway):
+> > >
+> > > 1. KVM_RUN a nested VM, and eventually we end up with
+> > >    nested_run_pending=3D1.
+> > > 2. Exit KVM_RUN with EINTR (or any reason really, but I see EINTR in
+> > >    repro attempts).
+> > > 3. KVM_SET_REGS to set rflags to 0x1ac585, which has X86_EFLAGS_VM,
+> > >    flipping it and setting vmx->emulation_required =3D true.
+> > > 3. KVM_RUN again. vmx->emulation_required will stop KVM from clearing
+> > >    nested_run_pending, and then we hit the
+> > >    KVM_BUG_ON(nested_run_pending) in __vmx_handle_exit().
+> > >
+> > > So I guess the KVM_BUG_ON() is a little bit too conservative, but thi=
+s
+> > > is nonsensical VMM behavior. So I'm not really sure what the best
+> > > solution is. Sean, any thoughts?
+> >
+> > Heh, deja vu.  This is essentially the same thing that was fixed by com=
+mit
+> > fc4fad79fc3d ("KVM: VMX: Reject KVM_RUN if emulation is required with p=
+ending
+> > exception"), just with a different WARN.
+> >
+> > This should fix it.  Checking nested_run_pending in handle_invalid_gues=
+t_state()
+> > is overkill, but it can't possibly do any harm, and the weirdness can b=
+e addressed
+> > with a comment.
+>=20
+> Thanks Sean! This works, feel free to add:
+>=20
+> Tested-by: James Houghton <jthoughton@google.com>
+>=20
+> I understand this fix as "KVM cannot emulate a nested vm-enter, so if
+> emulation is required and we have a pending vm-enter, exit to userspace."
+> (This doesn't seem overkill to me... perhaps this explanation is wrong.)
 
-We could not activly retest these devices because we no longer have them in
-our archive, but based on the other old Clevo barebones we tested where the
-new quirk had the same or a better behaviour I think it would be good to
-apply it on these too.
+Sort of.  It's a horribly convoluted scenario that's exists only because ea=
+rly Intel
+CPUs supported a half-baked version of VMX.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/input/serio/i8042-acpipnpio.h | 27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+Emulation is "required" if and only if guest state is invalid, and VMRESUME=
+/VMLAUNCH
+VM-Fail (architecturally) if guest state is invalid.  Thus the only way for=
+ emulation
+to be required when a nested VM-Enter is pending, i.e. after nested VMRESUM=
+E/VMLAUNCH
+has succeeded but before KVM has entered L2 to complete emulation, is if KV=
+M misses a
+VM-Fail consistency check, or as is the case here, if userspace stuffs inva=
+lid state
+while KVM is partway through VMRESUME/VMLAUNCH emulation.
 
-diff --git a/drivers/input/serio/i8042-acpipnpio.h b/drivers/input/serio/i8042-acpipnpio.h
-index d4ff34d36b42c..78e0d9c20800d 100644
---- a/drivers/input/serio/i8042-acpipnpio.h
-+++ b/drivers/input/serio/i8042-acpipnpio.h
-@@ -1175,22 +1175,19 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_NAME, "LAPQC71B"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_NAME, "N140CU"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_NAME, "N141CU"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		.matches = {
-@@ -1257,8 +1254,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_NAME, "NJ50_70CU"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		.matches = {
-@@ -1275,16 +1271,14 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P65xH"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		/* Clevo P650RS, 650RP6, Sager NP8152-S, and others */
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P65xRP"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		/*
-@@ -1295,8 +1289,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P65_P67H"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		/*
-@@ -1307,8 +1300,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P65_67RP"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		/*
-@@ -1330,8 +1322,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.matches = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P67xRP"),
- 		},
--		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
--					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
- 	},
- 	{
- 		.matches = {
--- 
-2.43.0
+Stuffing state from userspace doesn't put KVM in harm's way, but KVM can't =
+emulate
+the impossible state, and more importantly, it trips KVM's sanity check tha=
+t detects
+missed consistency checks.  The KVM_BUG_ON() could also be suppressed by mo=
+ving the
+nested_run_pending check below the emulation_required checks (see below), b=
+ut that
+would largely defeat the purpose of the sanity check.
+
+Just out of sight in the below diff is related handling for the case where =
+userspace,
+or the guest itself via modifying SMRAM before RSM, stuffs bad state.  I.e.=
+ it's
+the same scenario this syzkaller program hit, minus hitting the nested_run_=
+pending=3Dtrue
+window.
+
+		/*
+		 * Synthesize a triple fault if L2 state is invalid.  In normal
+		 * operation, nested VM-Enter rejects any attempt to enter L2
+		 * with invalid state.  However, those checks are skipped if
+		 * state is being stuffed via RSM or KVM_SET_NESTED_STATE.  If
+		 * L2 state is invalid, it means either L1 modified SMRAM state
+		 * or userspace provided bad state.  Synthesize TRIPLE_FAULT as
+		 * doing so is architecturally allowed in the RSM case, and is
+		 * the least awful solution for the userspace case without
+		 * risking false positives.
+		 */
+		if (vmx->emulation_required) {
+			nested_vmx_vmexit(vcpu, EXIT_REASON_TRIPLE_FAULT, 0, 0);
+			return 1;
+		}
+
+The extra wrinkle in all of this is that emulation_required is only ever se=
+t if
+the vCPU lacks Unrestricted Guest (URG).  All CPUs since Westmere support U=
+RG,
+while KVM does allow disabling URG via module param, AFAIK syzbot doesn't r=
+un in
+environments with enable_unrestricted_guest=3D0 (other people do run syzkal=
+ler in
+such setups, but syzbot does not).
+
+And so the only way guest state to be invalid (for emulation_required to be=
+ set),
+is if L1 is running L2 with URG disabled.  I.e. KVM _could_ simply run L2, =
+but
+doing so would violate the VMX architecture from L1's perspective.
+
+static inline bool vmx_guest_state_valid(struct kvm_vcpu *vcpu)
+{
+	return is_unrestricted_guest(vcpu) || __vmx_guest_state_valid(vcpu);
+}
+
+static inline bool is_unrestricted_guest(struct kvm_vcpu *vcpu)
+{
+	return enable_unrestricted_guest && (!is_guest_mode(vcpu) ||
+	    (secondary_exec_controls_get(to_vmx(vcpu)) &
+	    SECONDARY_EXEC_UNRESTRICTED_GUEST));
+}
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f72835e85b6d..42bee8f2cffb 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6492,15 +6492,6 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, =
+fastpath_t exit_fastpath)
+        if (enable_pml && !is_guest_mode(vcpu))
+                vmx_flush_pml_buffer(vcpu);
+=20
+-       /*
+-        * KVM should never reach this point with a pending nested VM-Enter=
+.
+-        * More specifically, short-circuiting VM-Entry to emulate L2 due t=
+o
+-        * invalid guest state should never happen as that means KVM knowin=
+gly
+-        * allowed a nested VM-Enter with an invalid vmcs12.  More below.
+-        */
+-       if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
+-               return -EIO;
+-
+        if (is_guest_mode(vcpu)) {
+                /*
+                 * PML is never enabled when running L2, bail immediately i=
+f a
+@@ -6538,10 +6529,16 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu,=
+ fastpath_t exit_fastpath)
+                        return 1;
+                }
+=20
++               if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
++                       return -EIO;
++
+                if (nested_vmx_reflect_vmexit(vcpu))
+                        return 1;
+        }
+=20
++       if (KVM_BUG_ON(vmx->nested.nested_run_pending, vcpu->kvm))
++               return -EIO;
++
+        /* If guest state is invalid, start emulating.  L2 is handled above=
+. */
+        if (vmx->emulation_required)
+                return handle_invalid_guest_state(vcpu);
 
 
