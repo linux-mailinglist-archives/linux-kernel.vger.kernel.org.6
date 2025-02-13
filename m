@@ -1,124 +1,94 @@
-Return-Path: <linux-kernel+bounces-513241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293F6A34569
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:15:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB0CA345A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 16:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E2116ECF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835E53A5A41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 15:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADD215539A;
-	Thu, 13 Feb 2025 15:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D75218784A;
+	Thu, 13 Feb 2025 15:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y1R5GFSp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5bPOXko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FDA26B087
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 15:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6973C16D4E6;
+	Thu, 13 Feb 2025 15:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739459062; cv=none; b=Km5ILSVL1N6nvevQpJSpTNx0DusHTfQjJLrdOJDMzmmNYtDSYRNRzvjM6X5IixSNdLdSuFgn2sHyZ3ZdTl1vi0m1Tj7oYnwI57b/FkXJRoHD+E1xLHvh604nmFPVcyMZuDEwtcDf8B2eWLEtnqFQuqy/yGS52ilpiOILtsoI/e4=
+	t=1739459120; cv=none; b=gksSc9e4R7G4rYnSsHrp4X3fCTXnGDZHG+bDKZ1atweDZwyqSVuDTicgPFBhQG/RgGF6Dua2Oga4aPflQzRQyzbcWRmZZFqixqYMQIWWYCz+2quUacve1CIL+Ah/tbN7xu0ZHLlWngRd9ziFTKkt/F0aD8SqBk+YN/9dDnIjVaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739459062; c=relaxed/simple;
-	bh=MDJFa426xk/Ppp9WGfIjSz/czZXmuJgOHlWi/zDydcA=;
-	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=PybFpzscm+T8mUhnXDepc/6UOj+ZwfRD0KYtHCu63aGBqsAi/HLJeSUhCvmOBONW0SY2YuNDvZnaHwOrA/zXiVx1cquOCd3z1yBRNWt66fzLbhPJUf/ql1hvOSlMY5ogrYaFb6sv95roPxcFcorctXu2hOo+7OsGdmCT6oee1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y1R5GFSp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D7WxUo014718;
-	Thu, 13 Feb 2025 15:04:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=9sn/0W+u2m5UU6jPKFLpLTgarS3M
-	TBh1n7M7FWMc4JM=; b=Y1R5GFSpjSwCdLCgzTuSSf6NVJzjllcJ/1+7VftuvxZP
-	UvJUPSvOYkESaRidAKys+BO1JhnHQVP8uZDcm+jckRGLIrZETwYcHXt60pcR1XSs
-	wMe/Z8lDeM5bwlMr0fyCAEjkj/M7APcKTB9P8FNrHO2Ehb0Eigg6QqBQ/AN9Xuny
-	VTJpM5Zv13gCruWzCVyAuJ/myD8YbZ97c8fmsMzSKRQjKH+GjEG1A7eL6Lr8zlwq
-	M2co3RNMXufbZjnZjVVfZKzvtAnKNvz+116mvuOTO/kOJigqVxzhNgEslzzbqn8U
-	bQBaECZoI1l0DT2iGXofAPLRCbC15/NiSxJgcRLoJA==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44sceq27xp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 15:04:12 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51DDxMjh028716;
-	Thu, 13 Feb 2025 15:04:11 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma1xbm6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 15:04:11 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51DF49me19071714
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Feb 2025 15:04:10 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 976D858058;
-	Thu, 13 Feb 2025 15:04:09 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 915BB58057;
-	Thu, 13 Feb 2025 15:04:08 +0000 (GMT)
-Received: from [9.61.255.185] (unknown [9.61.255.185])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Feb 2025 15:04:08 +0000 (GMT)
-Message-ID: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
-Date: Thu, 13 Feb 2025 20:34:07 +0530
+	s=arc-20240116; t=1739459120; c=relaxed/simple;
+	bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YR5JG9InX/Jywdno8Z2DgX4Pm1dINZuCPdadIahA9IApQBb00vh/NGb0MwiFkp813eA2w170FKYkKEkbp3kgdXsY2dl36BU2HqL6xE64s2ZO/ARHJI8yHLOdZ5H/SPZKR5H++0yLvWdYcPqwnWtqPlChni2YBCnjfcIQU1pPV1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5bPOXko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F56C4CED1;
+	Thu, 13 Feb 2025 15:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739459120;
+	bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=U5bPOXkodSTE4SU2bByq6qLxDe52q1exxLaMKzQCp+dm9nQFZZfPwtNXypVzLdSYs
+	 9DNzIXFEzRBKG43yVlQ/Jzz2xyptDPQimMp1UO1tjgChDj99rgBfNps0xxvy9OVkP7
+	 NR850+gITCE49yaRod7fng0i8Jpg6hEkjl+QQo9/Wcn8AoQTBVV1f9NK0ikOOKrBfL
+	 KbFn6dQfluGcDRW8mtwIUx5FlYlAJI5M/nDjw+r2UB+lvORlV3xEH0C7AHZGOmq7K8
+	 GRRucLyA+ciqlrR9Dor+rGzrvLTfjub2Um+dB26+TYiHhq84pUn3AWEmfWbX2Dkyyc
+	 Hiv3QCN8roeuQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: inline new_inode_pseudo() and de-staticize alloc_inode()
+Date: Thu, 13 Feb 2025 16:05:13 +0100
+Message-ID: <20250213-knabe-sitzbank-c74871dc3e38@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250212180459.1022983-1-mjguzik@gmail.com>
+References: <20250212180459.1022983-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
-Subject: [linux-next-20250212] syscall kexec_file_load not available
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ax8z4eh8gHPKYoV9oViK3KDvDxpM0D-S
-X-Proofpoint-ORIG-GUID: ax8z4eh8gHPKYoV9oViK3KDvDxpM0D-S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_07,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxlogscore=514
- clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130112
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=brauner@kernel.org; h=from:subject:message-id; bh=WJMQWBQFwuhi/gc3R8BLmRiHN8CmAmzH+WpsOlb8MLM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSv49L6upPv+obqdol7wr4/Or0Dg76pHe5xb9YLS9S++ vGmT/qijlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIls/s7IcPfSOmaGyuMBZ/fE nl3IlfRaNUbyf8pdtWXsn+wj2f698mNk2KCW8SNjvdZX+83rDNyuVSz59qY469Ahp2T3eM+aT0u M2AE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Greetings!!!
+On Wed, 12 Feb 2025 19:04:59 +0100, Mateusz Guzik wrote:
+> The former is a no-op wrapper with the same argument.
+> 
+> I left it in place to not lose the information who needs it -- one day
+> "pseudo" inodes may start differing from what alloc_inode() returns.
+> 
+> In the meantime no point taking a detour.
+> 
+> [...]
 
- From kernel next-20250210, I am observing syscall kexec_file_load not 
-available, there by kdump service is failing to start.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Logs:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-[root@ltc-zzci-1 ~]# kexec -p 
---initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
-/boot/vmlinuz-6.14.0-rc2-next-20250212 -c
-Warning: append= option is not passed. Using the first kernel root partition
-Modified cmdline: elfcorehdr=311424K 
-root=UUID=b5b1f89c-d479-48b3-90e2-744a2fd05667
-[root@ltc-zzci-1 ~]# kexec -p 
---initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
-/boot/vmlinuz-6.14.0-rc2-next-20250212 -s
-syscall kexec_file_load not available.
-[root@ltc-zzci-1 ~]# kexec -v
-kexec-tools 2.0.27
-[root@ltc-zzci-1 ~]# uname -r
-6.14.0-rc2-next-20250212
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
 
-Regards,
-
-Venkat.
-
+[1/1] vfs: inline new_inode_pseudo() and de-staticize alloc_inode()
+      https://git.kernel.org/vfs/vfs/c/e298fc4edca8
 
