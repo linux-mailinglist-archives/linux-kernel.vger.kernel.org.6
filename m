@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-513542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-513543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2668EA34B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:14:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79399A34B71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 18:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80C21654F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1700616B6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Feb 2025 17:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E3200115;
-	Thu, 13 Feb 2025 17:08:03 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBC2200BB7;
+	Thu, 13 Feb 2025 17:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="y0MOSX0N"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC611FFC41;
-	Thu, 13 Feb 2025 17:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A678E1514F6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466482; cv=none; b=aWT0KhmPdPr0t/3uGl+t2yUKF2P7Lx7anSKcxa4/Blhhyh8pSRFaA/Sb5N1DSoAu8RqOhiFvjE3PMsUjfjdHS8Pio7+yWMMMuk31Hk6j/1iDo6sQi3UOXveYkLlVdxxHVq2TPZaU9wTYO/rEbhCH6JxteXj21/gbModYpCuK4EE=
+	t=1739466525; cv=none; b=SJf155jln6alwy1bWODJ39Leo+nh/PN4kAoIj/0CazXZIW+7Q5Ka9DgRlF/ZQW9t2jZtUuCyUVNGsPcvoR3P+Tx7K14iuF1y5qcTYhfzcW6mdnaSV/LfJBFHP8+T4WxSsg+6fW3/uD78Jik/Uhu7E0hGdckZ4lh3sPvymAlmSq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466482; c=relaxed/simple;
-	bh=9OZZS9cRGpm80QHsvhNO3U2VncDvKFA706oVsF0GWbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZYddq46DsEJME+uYO4y4dlM3wq6F52sfK2/tQq1DJz+0eRBcBFaiFiML4UbhCLMfwpg4qv6IMH7GaQa1lYbKd7Yxna8z8kWJqjyWpdqAdESC5oy/m1ySTl0EofsONNg0io2dB9UQ3UJQHf2iYNvXQisq7xnrzOYamCzmJ9tFwNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e65d6e1f12so11272656d6.0;
-        Thu, 13 Feb 2025 09:08:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739466479; x=1740071279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YF3/2kfrsJYjoCEIlZrwDWAfYUEZcN2JfotI765XeoQ=;
-        b=CzCUW6ONt2mbhcBkLI08cpk30u/NYyChHoJ1tq66FjTqzErnN5GFG41wQCJakSlMiq
-         DTVJmVLf9RyJOJWiA+QPsik/gSxtY8qt5q9IErRRUSb3LWzCEdL5zZVtpSIJ2HMBKpoI
-         kYKcnR4CpuOLlsqBNACZ8Ls7lRjXCpwd2dyPwTDN/7rMJbbpi0QYS5brERz7RAhFD14n
-         P5pDiK+rlWqvtGD71ghLNnktgupxJXwI0uHDgjlVmMob47E1q7GVTX/ujlKu/uTh6YCo
-         tulIQueuSci59j7SjnNZ0R7EWxOPiK1vk/fqBepbJcHbNhIFF1v8gPyG9I48ypyhygQk
-         S5IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDP47OLnvVtSH4PggN9AEqB31RJs5MhRiLJds2397q1XZfyeK6U+MfdjbOKBu+2+SWyME7dp/eUNWdEcFHBXsD7mA=@vger.kernel.org, AJvYcCVDlcuoxNrguD8/j+I3CgGJyl8wief7Ev4wka2+DnuqA1V8SG39nfokPi95JwkFGtLW0fbcbZw2+aO956Ic@vger.kernel.org, AJvYcCXW8iMGasXG5DDdLF8toM+hqw+V+5rEhSWzk2dHxbrWySW1tx2l/bxYs7hWq3HWS5VajpGLAQonV3+4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY3t/1Kc55WdcarXttJ2UPyVuzlvpa4hS8KTPJCFGBPa6rxW6K
-	OsOzDRL9hMMqAxGRp/Myhvmh9KUIwkIh/hLUrszdYtJP9jQ/SoeFtiKlVw+aGLk=
-X-Gm-Gg: ASbGnct8sRr/nHY1+eYkK1m2uZrILUxFY8B+ae2f+aHDSbCF8xESBjRwYeANdnvLNb7
-	01iNg9saRP3s8cdSDfnOr0M/65Ix+Bha4IBxcUTiqECtUmzAtc9X+g9+0CNuGclZS4jfbDKK3XE
-	EJGTiC++kXpdq/riDXLFXnYvt+OEDzATrJ5rbKd3IdIqFLV7BlqPynO4W1BqazWZhW/ZaiwTpJr
-	WxwkTZuvNUB1m7ICj+9C/x5qsT6355Oa6Dw4BZW1Jcq7QFG7O7rOel8HZ8C//RMUDC0DSx7X5J/
-	0XkaxkcBzhiWS0GCiNsDcmXAtxtvrb+ZisOdJ6d2+vP2OXtTRoEbq9t2LQ==
-X-Google-Smtp-Source: AGHT+IEy+KunYZY6G3NJ/O3g9KwQRhOSkcsMDPpxHa4PQpQ5+j41Tr7Cbb1/wezUefx8Iu9l8gEOBw==
-X-Received: by 2002:ad4:4444:0:b0:6e6:610d:a4e5 with SMTP id 6a1803df08f44-6e6610da767mr22842896d6.42.1739466479450;
-        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65daff735sm11364986d6.105.2025.02.13.09.07.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c07351d2feso167913985a.3;
-        Thu, 13 Feb 2025 09:07:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVDeBjanXw/OUvd29dwSZFJlCgp2Zo9nhbOjFA15LfdnXxD8hn4mo/Kv/R2MvyFlHl4vOnN6O46nGbZ@vger.kernel.org, AJvYcCWi6ZeP8ErchvqgaAVqdrRWUBaMIGYUOFzIWUQwr5y11oDemVUs+qrScb7No4Xs2QxYgqWQsd3/t/Oh5K4j@vger.kernel.org, AJvYcCXZoP95oKT5J+Lv2rnITB8dR/y5r8bv3byKam1b6tfQL83jKVlw6mR8rcwffrvHh8vVjIaDqvhH/kSpRixQYIdmz1s=@vger.kernel.org
-X-Received: by 2002:ad4:5e8c:0:b0:6d8:9124:8795 with SMTP id
- 6a1803df08f44-6e65bf20a4dmr62008406d6.1.1739466479037; Thu, 13 Feb 2025
- 09:07:59 -0800 (PST)
+	s=arc-20240116; t=1739466525; c=relaxed/simple;
+	bh=CEXSnh9z1BB5hZBm+Fb7GgL/oH61L+ClWNAlOGCKlIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jXO/D3WlS2GaaOfKKvgC4Ch1O+OAUcGSa32cSJi1+B1OkxUpJpfh+kAWWKhVKpBiejA8irYGFC3ukScE8VYArtoGR9jEpdZAMWO1vvNqI8v8yFDAQ5wXggpUKyBD4Ru+zUZw+gId+XLGyBcnHpumS+o2cIGHhv7qA3QWCgdXjoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tronnes.org; spf=pass smtp.mailfrom=tronnes.org; dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b=y0MOSX0N; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tronnes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tronnes.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org
+	; s=ds202412; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=Fj9cPXNBzdjUMe00oNdIkZqBOoISrAcz9RO9oXC9vBs=; b=y
+	0MOSX0NHaQu3BNw4/MIOQ5IZ9IVsCl9Xjl04n0YQa617awB+Dl8JfdEjYwzTApevlJu+yAbE4+mDk
+	MVgzxaC1PVhUm5y3z7fs0p8gUOPIDWybc8rf6b+vCMRntcmqkQwlft3ZqTbjpOm4bdLiPR7A+inCg
+	/eVb5UQSSIXCF/Kmm6ATxX9IuIcnkXRDr0reoTnGNIK1T92ip6gXWCb/vX6huj49xDO3H04MXTp2K
+	NutoW7906oUcBuofabSvTSa5uKBa7ytjiEsTxolQqlUgu4NsaVld5jkI0bHZ/djhhT3XJSjZk9fj1
+	QM6HD+F39/MD2iNT+tcKQcy0uImqOQf+Q==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1tichY-0016gn-5f;
+	Thu, 13 Feb 2025 18:08:36 +0100
+Message-ID: <cac5924e-5653-4385-b18f-6c7f1f8d6e8b@tronnes.org>
+Date: Thu, 13 Feb 2025 18:08:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250209180616.160253-1-marek.vasut+renesas@mailbox.org> <20250209180616.160253-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250209180616.160253-2-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Feb 2025 18:07:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWBNtxfQiOK-KMsibdKHyr5mN9N+hv+c1ABaiEZSPbWjg@mail.gmail.com>
-X-Gm-Features: AWEUYZkos6MVmaIXRjsuTUlAMc2WWtF5h5-89JnjDflsSFca0ymwfS_ZVV3LF2E
-Message-ID: <CAMuHMdWBNtxfQiOK-KMsibdKHyr5mN9N+hv+c1ABaiEZSPbWjg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: Add boot phase tags marking to
- Renesas R-Car Gen3 and Gen4
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/repaper: fix integer overflows in repeat functions
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Alex Lanzano <lanzano.alex@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+ <d9e1c3a9-0a82-4908-b455-99227c5a2bd5@fintech.ru>
+Content-Language: en-US
+From: =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+In-Reply-To: <d9e1c3a9-0a82-4908-b455-99227c5a2bd5@fintech.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 9 Feb 2025 at 19:06, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
-> to describe various node usage during boot phases with DT. Add bootph-all for
-> all nodes that are used in the bootloader on Renesas R-Car SoC.
->
-> All SoC require CPG clock and its input clock, RST Reset, PFC pin control and
-> PRR ID register access during all stages of the boot process, those are marked
-> using bootph-all property, and so is the SoC bus node which contains these IP.
->
-> Each board console UART is also marked as bootph-all to make it available in
-> all stages of the boot process.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Adding Alex who is now the driver maintainer.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.15.
 
-Gr{oetje,eeting}s,
+On 13.02.2025 17:57, Nikita Zhandarovich wrote:
+> Gentle ping :)
+> 
+> On 1/16/25 16:48, Nikita Zhandarovich wrote:
+>> There are conditions, albeit somewhat unlikely, under which right hand
+>> expressions, calculating the end of time period in functions like
+>> repaper_frame_fixed_repeat(), may overflow.
+>>
+>> For instance, if 'factor10x' in repaper_get_temperature() is high
+>> enough (170), as is 'epd->stage_time' in repaper_probe(), then the
+>> resulting value of 'end' will not fit in unsigned int expression.
+>>
+>> Mitigate this by casting 'epd->factored_stage_time' to wider type before
+>> any multiplication is done.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with static
+>> analysis tool SVACE.
+>>
+>> Fixes: 3589211e9b03 ("drm/tinydrm: Add RePaper e-ink driver")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>> ---
+>>  drivers/gpu/drm/tiny/repaper.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
+>> index 77944eb17b3c..d76c0e8e05f5 100644
+>> --- a/drivers/gpu/drm/tiny/repaper.c
+>> +++ b/drivers/gpu/drm/tiny/repaper.c
+>> @@ -456,7 +456,7 @@ static void repaper_frame_fixed_repeat(struct repaper_epd *epd, u8 fixed_value,
+>>  				       enum repaper_stage stage)
+>>  {
+>>  	u64 start = local_clock();
+>> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
+>> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
+>>  
+>>  	do {
+>>  		repaper_frame_fixed(epd, fixed_value, stage);
+>> @@ -467,7 +467,7 @@ static void repaper_frame_data_repeat(struct repaper_epd *epd, const u8 *image,
+>>  				      const u8 *mask, enum repaper_stage stage)
+>>  {
+>>  	u64 start = local_clock();
+>> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
+>> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
+>>  
+>>  	do {
+>>  		repaper_frame_data(epd, image, mask, stage);
+> 
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
