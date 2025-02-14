@@ -1,152 +1,179 @@
-Return-Path: <linux-kernel+bounces-515417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BCEA36488
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:26:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9754A36474
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF30162C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782371895D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B58C268C45;
-	Fri, 14 Feb 2025 17:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF96267F78;
+	Fri, 14 Feb 2025 17:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="bmrZCM8z"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7QfDX8G"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B422686A3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5336D267F6F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553992; cv=none; b=M3v4ClsnvS5GQpBx7JnDqUWefiAsPd36G2pBN94TFRHjS886S0LH7NtcnPmxVyuHN6BIft7l1JTlzdFRNhILFwHBKJJOrxlMGU7ngsgBB+V56R37RzLUPkw732G3gNXb1DhK0pQNEI8jOAF51QC0dOb+3EPA5DF+GSHVmCPecNo=
+	t=1739553705; cv=none; b=tr/m52qwn8iAevKddfXlkUg38utewxbJ7KmjiT9SmKE49O6j9s0xG1iQT69n48469msWDNSKnxOAqpFD0Nvs8V3dM5GkQy746gjemn+IDZDJkfpfYz5okePik63EqMx9MC2N4H+usQGHaWcjHEgniLnxpP5+8jPNpaqqoJ439ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553992; c=relaxed/simple;
-	bh=ZMS5QlrnOFWtvu0XBY1Um3NZgokE8bFYmW8jBJp4Qcc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ottSlT+Ghb0Temy37e9sr4icYX4UqOmkUTW/UeqXt8pXtBAlrsdLCZvOQ6uFqTU2jECFMrLVYwpWzu+VT5ckoglIgk7uKYc5dokEOgYrFoT1umZEH8dRWqYmUcNq36/Ta3IZUKF5et55x0w796nRZvGsJwmYD992IJESZ9dx1zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=bmrZCM8z; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=bmrZCM8zfP3zPV+6RHqJ7z9QaatJZOhI8+JcPVp9U5w5pRXGtkQcrP6JMG+FS9sSZ4w+1jwKKhm2APGywDnOG/Ile+9PEapdbiXPutxaKMQ964g1JjrUxg9zvUZMR98f0kVYCmHy7nD+me16C96WzzNNPNt8lL+st0bdai/a8knGL+/aubvudmUSREPVO3dfcSXPeX91zNy2AafroDJYcK/VXMNK0Q/3R5v7uEaY2G4KpdVhJBfaE15lXTp6VUIJMublm76sR2fsRAApJqOCEgG4nG2+K8B/0Zdbj0JxtRUxZRh186PYDZ9POGy9gPezwHk64ZL7/H/vmPwLggj/RQ==; s=purelymail3; d=purelymail.com; v=1; bh=ZMS5QlrnOFWtvu0XBY1Um3NZgokE8bFYmW8jBJp4Qcc=; h=Feedback-ID:Received:From:Date:Subject:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1457029256;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Fri, 14 Feb 2025 17:25:53 +0000 (UTC)
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Date: Fri, 14 Feb 2025 18:21:08 +0100
-Subject: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos990
- usbdrd phy
+	s=arc-20240116; t=1739553705; c=relaxed/simple;
+	bh=q7gQgr616uVOQTMZ77imFQirud5OxtnWyayh475uip0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pteqpK5unlzMdif23ykvTjEsvIJK8suiW7oJDhc2IHKpduRF7Oywiikc3D2Ru3KoUqlZazlt1QmIZ9w2Cq2Q5D7oILg2f9oXIoRbooi21F7ek3haMtrdBiPY96126ZpjgKXfQwDmC9btpKe1tTinDnCrZpjm+P9Nx9OyTu5Bu0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7QfDX8G; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22101839807so8042305ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739553703; x=1740158503; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/PVsVZnYuQ/wni7IvzfZedmUg/Flzek4tKSKCxL8mts=;
+        b=I7QfDX8GYTv0bYvHmRotwx156koiyCrZsSmMz9c9f4HZITTuCZ5CYG4JfsM7i0ljBR
+         qHelGRtKwnkAMgTq6NSwMkq+On67JleQo2V40YQkMe42mplnQxHdkMbIvUAiT+dzM2tJ
+         kjN5P4wQbGEYffaogdMjAdpikWi2rowIFGIow4g3uXMaXINjv/5M6vYKLY6pOfGScOsG
+         AlnRa/xeKdBD0Wpgo0PAVPhHWm1tDma7e79WiN/eZXq24Wc2DVRJel+dqbdh7c7W/qIb
+         vKmc26gz60XyVX61c9rsH4znNMZe+Ft5wb2zFxdhdJqdrSppQoPZrWHMggZ3HkeXbaeU
+         CxwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739553703; x=1740158503;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PVsVZnYuQ/wni7IvzfZedmUg/Flzek4tKSKCxL8mts=;
+        b=dBA0SOM1zgng6JmALQie8X+N6IyW0vkwTvBDeB6xrhQONcSs5L9LIPwTrZgK0COic7
+         hNEJNkHbYPmZeMCKw+VaK0+DWrYaydnhek8Ev52mizggC3ktVthE2q+IRuOy9D52UPei
+         x+AU9t9BF8r72Zl5en5TnmBUdSABckESaSlSkojuOUHgB9RGzPsTXZ17YgoLBIClcQxZ
+         QBu4TKge0iDvkEXZnoWJjuE4E1Mk2dACOWAiq3QLQLc9gMizk6CmcI5C9iElbnBi7bnV
+         feDkFDqvnV9zpD/2s47YiJotMwu+4uVVsnnXhzxYatcJxQq9v+j8TcySja2okU/KnuXp
+         knXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWik4ILPT8sdGAhk/4AvDHNLp56aiAMwtGfOphUuDQTp0C1OXyPeNDkPDpCcRYkxamUP5MFzv32XjJnJBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqYDJr/EyjD3N00nSm6WtUHyZvGPyyqIFlOX4kP4uLHvQn4rzq
+	mvo67VNvw9jMySxAdpm0bu5pT2/MTu2jdgKpCMw8HtunIBPyyWyjD6iqUyEenA==
+X-Gm-Gg: ASbGncvcLLVsacvUgXTB/EwWZ7WIpQtWGnJvDkDbbvz/WRmsN6fkYNkAGlKWwvUClrd
+	+HuiAmKprr9EqbKO5fau9Q/pdihv7fZ0yBDEBwjyZE1dSrfL4SQk2Y5Ixk9du972i4eia2IeUia
+	zIow2vQXg+lZ2GGtDrZ5QG50j6ypzxDQh/wNxQ2zchsgQGGTihLnduUB/Qj41xxPOQr3z3WZgK8
+	ZiwsI+K4uAchb8Y8Sx+DoEZvjdDnxWRtCqiNG0uUqYNvWVSFBsTG+rsScaOyK61xztlC28CZDoV
+	UQ7yxFj2Q7gEtBhr0jGRhqGDZgk=
+X-Google-Smtp-Source: AGHT+IGcRo+nLJC59NjoyRCElAIfb+jisUP5T3miAi6A+0NQw62kcP9lRVYfGrAftSB0L9zhfWHPdQ==
+X-Received: by 2002:a05:6a00:2eaa:b0:732:5164:3bb with SMTP id d2e1a72fcca58-732617b7772mr183432b3a.9.1739553703494;
+        Fri, 14 Feb 2025 09:21:43 -0800 (PST)
+Received: from thinkpad ([120.60.134.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e4e2sm3375480b3a.116.2025.02.14.09.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 09:21:43 -0800 (PST)
+Date: Fri, 14 Feb 2025 22:51:38 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Krzysztof Wilczynski <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] misc: pci_endpoint_test: Avoid issue of
+ interrupts remaining after request_irq error
+Message-ID: <20250214172138.setswcgqz3dbf65t@thinkpad>
+References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
+ <20250210075812.3900646-2-hayashi.kunihiko@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-exynos990-dwusb-v1-2-d68282c51ba8@mentallysanemainliners.org>
-References: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
-In-Reply-To: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739553946; l=3061;
- i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=ZMS5QlrnOFWtvu0XBY1Um3NZgokE8bFYmW8jBJp4Qcc=;
- b=UhII8j++lRo2aszFpw+aipjHGRN4tJaQcZ+oQ/kVHElfiT6lQwtG+5aK0x+j1CpDieX4mV0/L
- lYHw68ag4nzCjvfwPlZSAPVgop/S2q2id3tf3cvybz9w1tWWKKc/eWX
-X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
- pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250210075812.3900646-2-hayashi.kunihiko@socionext.com>
 
-The Exynos990 usbdrd PHY is a combo PHY which supports USB SS, HS and
-DisplayPort outputs. This commit adds support only for UTMI+ (USB HS).
+On Mon, Feb 10, 2025 at 04:58:08PM +0900, Kunihiko Hayashi wrote:
+> After devm_request_irq() fails with error in
+> pci_endpoint_test_request_irq(), pci_endpoint_test_free_irq_vectors() is
+> called assuming that all IRQs have been released.
+> 
+> However some requested IRQs remain unreleased, so there are still
+> /proc/irq/* entries remaining and we encounters WARN() with the following
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c    | 32 +++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
- 2 files changed, 35 insertions(+)
+s/we encounters/this results in WARN()
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index ff2436f11d6842b2503b2a603eb7a512d2f85018..a68926ac3b6a00282e51e552cb9ffdad95ab5152 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1584,6 +1584,35 @@ static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
- 
-+static const struct exynos5_usbdrd_phy_tuning exynos990_tunes_utmi_postinit[] = {
-+	PHY_TUNING_ENTRY_PHY(EXYNOS850_DRD_HSPPARACON,
-+			     (HSPPARACON_TXVREF |
-+			      HSPPARACON_TXPREEMPAMP | HSPPARACON_SQRX |
-+			      HSPPARACON_COMPDIS),
-+			     (FIELD_PREP_CONST(HSPPARACON_TXVREF, 7) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPAMP, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_SQRX, 5) |
-+			      FIELD_PREP_CONST(HSPPARACON_COMPDIS, 7))),
-+	PHY_TUNING_ENTRY_LAST
-+};
-+
-+static const struct exynos5_usbdrd_phy_tuning *exynos990_tunes[PTS_MAX] = {
-+	[PTS_UTMI_POSTINIT] = exynos990_tunes_utmi_postinit,
-+};
-+
-+static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
-+	.phy_cfg		= phy_cfg_exynos850,
-+	.phy_ops		= &exynos850_usbdrd_phy_ops,
-+	.phy_tunes		= exynos990_tunes,
-+	.pmu_offset_usbdrd0_phy	= EXYNOS990_PHY_CTRL_USB20,
-+	.clk_names		= exynos5_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+	.regulator_names	= exynos5_regulator_names,
-+	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
-+};
-+
- static const struct exynos5_usbdrd_phy_config phy_cfg_gs101[] = {
- 	{
- 		.id		= EXYNOS5_DRDPHY_UTMI,
-@@ -1781,6 +1810,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-usbdrd-phy",
- 		.data = &exynos850_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynos990-usbdrd-phy",
-+		.data = &exynos990_usbdrd_phy
- 	},
- 	{ },
- };
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index ce1a3790d6fb0400021f5cc22394afedfb742152..4b2c44640b17c6c87acf26a82fd9c5003b65d433 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -657,6 +657,9 @@
- #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
- #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
- 
-+/* For Exynos990 */
-+#define EXYNOS990_PHY_CTRL_USB20				(0x72C)
-+
- /* For Tensor GS101 */
- #define GS101_SYSIP_DAT0					(0x810)
- #define GS101_SYSTEM_CONFIGURATION				(0x3A00)
+> message:
+> 
+>     remove_proc_entry: removing non-empty directory 'irq/30', leaking at
+>     least 'pci-endpoint-test.0'
+>     WARNING: CPU: 0 PID: 202 at fs/proc/generic.c:719 remove_proc_entry
+>     +0x190/0x19c
+> 
+> And show the call trace that led to this issue:
+
+You can remove this backtrace.
+
+> 
+>     [   12.050005] Call trace:
+>     [   12.051226]  remove_proc_entry+0x190/0x19c (P)
+>     [   12.053448]  unregister_irq_proc+0xd0/0x104
+>     [   12.055541]  free_desc+0x4c/0xd0
+>     [   12.057155]  irq_free_descs+0x68/0x90
+>     [   12.058984]  irq_domain_free_irqs+0x15c/0x1bc
+>     [   12.061161]  msi_domain_free_locked.part.0+0x184/0x1d4
+>     [   12.063728]  msi_domain_free_irqs_all_locked+0x64/0x8c
+>     [   12.066296]  pci_msi_teardown_msi_irqs+0x48/0x54
+>     [   12.068604]  pci_free_msi_irqs+0x18/0x38
+>     [   12.070564]  pci_free_irq_vectors+0x64/0x8c
+>     [   12.072654]  pci_endpoint_test_ioctl+0x870/0x1068
+>     [   12.075006]  __arm64_sys_ioctl+0xb0/0xe8
+>     [   12.076967]  invoke_syscall+0x48/0x110
+>     [   12.078841]  el0_svc_common.constprop.0+0x40/0xe8
+>     [   12.081192]  do_el0_svc+0x20/0x2c
+>     [   12.082848]  el0_svc+0x30/0xd0
+>     [   12.084376]  el0t_64_sync_handler+0x144/0x168
+>     [   12.086553]  el0t_64_sync+0x198/0x19c
+>     [   12.088383] ---[ end trace 0000000000000000 ]---
+> 
+> To solve this issue, set the number of remaining IRQs to test->num_irqs
+> and release IRQs in advance by calling pci_endpoint_test_release_irq().
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e03327122e2c ("pci_endpoint_test: Add 2 ioctl commands")
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/misc/pci_endpoint_test.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index d5ac71a49386..bbcccd425700 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -259,6 +259,9 @@ static int pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
+>  		break;
+>  	}
+>  
+> +	test->num_irqs = i;
+> +	pci_endpoint_test_release_irq(test);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
 
 -- 
-2.47.2
-
+மணிவண்ணன் சதாசிவம்
 
