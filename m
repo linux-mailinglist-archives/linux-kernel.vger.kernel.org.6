@@ -1,187 +1,198 @@
-Return-Path: <linux-kernel+bounces-515220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E27A361F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:40:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB1EA361FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7863AF838
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D00171248
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D72266F11;
-	Fri, 14 Feb 2025 15:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004B267385;
+	Fri, 14 Feb 2025 15:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2HKVxDc"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLW0E1nM"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17B1266EE4;
-	Fri, 14 Feb 2025 15:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680A2266EFD
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547619; cv=none; b=mxTKarN3Fl4JIl8XItVC067AqdcAPRO3Hy+0bngDXDFTMp3JxjYFh0G6SVV9mxEVseuuRZOAr+54dhvk3XrmW+IEeY0mzrADb9lYgMZ7EWFnxUvzuqlZPlfp3wLl86k+4abw8+embzhVtZRYfSSZCMWCx5v6ZMquGFX7AEZjmNE=
+	t=1739547606; cv=none; b=PN4LSIM42gPIEnCDWPZjyhqROESdHVxt5QeHsZNNmdjpeUG3p3MvDOPgdBzcVMJDEaYqokXqhVieHTubspsbhtLh/sZPBvB2s/leoGBeCfjKk4cc0s4420OPygGqXzoJrz81X7mVz/K7jaQDqpRu5hTCpxXr61nZeSqcIRqTc6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547619; c=relaxed/simple;
-	bh=+QmiX/j6oLuhc8wlluKKM+QbhJ04+U1GOJmtRacp7YY=;
+	s=arc-20240116; t=1739547606; c=relaxed/simple;
+	bh=Ur1csxx5e9sT2v6HE7Bvi1Gidx/ecW+iVa1/b716UdY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jo6VGNEZsviCfqHlWQeBTrPhwjWLrMYAiIvV+/kcVVoFwtlQxVoKopJ12XCeLh2SDvcae55KkUZMORUvIF2mNIo636TajGDXgLe2hylX5NyO2oxywGVQEOjaDxUN8wzAy/MAHCc5DpE7DYqMf8X9PTWiJddvnuGDBoc+risFwws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2HKVxDc; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-308f71d5efcso21731211fa.3;
-        Fri, 14 Feb 2025 07:40:17 -0800 (PST)
+	 To:Cc:Content-Type; b=Ah1+e82jBcv4BxP19uh3eH1skqMfYySv1QUuEsAWJlxyXaRhJSoUg31eR/1S/nUV92eAPJa0BWXMbyyrPm5VVVMtDstBhATyiDwsxX180WDVzXcO86Y5eWwCqNgiqwA0YXqmWREb4fo9l0d9faWAKGTjOjPT0Ffgtu3PCof2YE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bLW0E1nM; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef7c9e9592so18090467b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:40:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739547616; x=1740152416; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739547603; x=1740152403; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=apgvojEvDMH2926nB2eKFMcoV7wtc42+Vp3yl/XLDJ4=;
-        b=J2HKVxDcEybboGhgcXWGVN89EJyP/2ilJ+rtmPOmKqfBD1c5akQFbs3fLNaX2lAlyk
-         IoMqrn/7F7KX/hxgak2aq9l3dRfiwbu7Ir3O1xBGlMrtUiJmlkCcsCDz0AFGJlMUt3Hy
-         LIetkz3gipn/3SVU+QBruaPshn1UwaMcpN5XVMJko9dIarDDPBL+Hs+Ma56bWAiC4lfJ
-         BuElj7+F1IaN8+oi6yQihNB8WMHW51kwIh1KRhBiTy6Vi4VBtLUk2LALio1HdxYEqV6i
-         VBrIaMOuspmLfjqD4Zi172B5RPEXAg9qt57QM2571vg9+VCYRKlF+BoarCppV3HCDON1
-         wFbw==
+        bh=GDlfNVO3NueDu0Qi3f7HcF0fEdO1uHUOCWWSlLIIhqA=;
+        b=bLW0E1nMAvMJv7DVSgBs/pbO0Eo91IPzwo+XP6qFqlKS7sDRfHesMHtHo4w4KRuCAV
+         qH3nr8wsBMDTS/Fm7xeL7SgCMz4gAq539W8EIbXJvMaKpJ7eynb+3kx+PLr3QOVVR5Hs
+         rNZCQ7wioP9rzyB4OstwAh/ECXNgsosdm8i2VbHrGG2O2ockuQkSL0wf7byDfmgGZax8
+         7Pc/vykyOHvOX4qYN3zqZQM6Tj4N967NqD+mvHGSVldkTfG317ksIv8bzJW6DGBaK8dh
+         57IG1vYnKGWQ01QtJQPsDuhBqGBvveXO6ObSlLtMr2XsUf9luNHHIVl5EfP+jHIVMJE6
+         HAQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739547616; x=1740152416;
+        d=1e100.net; s=20230601; t=1739547603; x=1740152403;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=apgvojEvDMH2926nB2eKFMcoV7wtc42+Vp3yl/XLDJ4=;
-        b=TksUJ1NC9qrDXUCByKgwLuYniyBYUIQ+9xOoYp/XcigK+vWkoea1KhI63diE9WHDBM
-         9XiTyjK1a4BaX9N5jEhQDf7F67kDOnv9lw8kDCSGJ1pBaZG85+kWYYt/qtOWdLTtsZ8h
-         ItmiovF9pMle+tniRI/EYe6JGIyycR5LlPATUH21jGefWGkas4OajVjQvbkjNlHUbMfp
-         VBTHYOG14ltCMj12e6nzBdTb0X/e4UlSxjx1rVzz0cvoK/DQ49QItjCv3rstjDEA9+3z
-         k3+8zcpxw3hqJzx3JIgV6d0CSawz0zjEC8MpmpL5vCA/CgC09JpUHa67oKJ3KEalKyyA
-         uX5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuAENsG6TydrfrbTmrqXJeUvVvq3vK1UH0YFQT6tSBgYVb5pgxrMiTLHpPFPy3lRoYRypEgvWs35AX58=@vger.kernel.org, AJvYcCX6F/IjraTWGWvXneh1M8XBrVh5BQUD6EBC2GAD+vF46PQZ/hypaI1JdZUcC3nqcHJHyli6YtYON7ulQX5YjSke@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0CrGEgRyISs0k5K+mxPwr/HlQ1whRycvpZ9F76tJT1+OO1V/T
-	ap2h9J+DtOBYS9unOgaUXPwmfIgf8tTPhArxt68UPXC1qJTvpUxyhmI1e0icmG0jD4cFHX7WyqM
-	qWThIqosaQllUNCTwX6BSbD6JJ68=
-X-Gm-Gg: ASbGnctMY4bUrZs1tlyawghwjK/wqknEZi/ISDUFSsnD3lavpFocbBesDXjEXpNC8gh
-	XFOf8ro1GSvXFjjrZXF86uHEJo79AcxKwNxdIgsYPsBw8H0hUogaGr/Ny/aBd7u35Gharvvt7vI
-	wzEpl8U8r1awWyDddeDBCLgcv3AAucjHY=
-X-Google-Smtp-Source: AGHT+IFAQDNDWBcp2bHDIQeQSvrdGYlj1gLZPnpl4bAInHrn2ILYGX2CPz2+oHopIC+aB5h4aCPXO9POpdgCfdnPoTM=
-X-Received: by 2002:a05:651c:542:b0:308:e9ae:b5a9 with SMTP id
- 38308e7fff4ca-3090379da66mr43812201fa.6.1739547615971; Fri, 14 Feb 2025
- 07:40:15 -0800 (PST)
+        bh=GDlfNVO3NueDu0Qi3f7HcF0fEdO1uHUOCWWSlLIIhqA=;
+        b=XLaSlSmutcMAkGqwnXddymmZeFKKGKBYfRFCcxR091SZTGzNsMUeSKhA9nV9VynCQB
+         avChxyuVMoTM4vfF1hczjrbarZnzR4tKQyrLY7meWrK/Nb46zjE4SmOXpiSMjcrm8JbD
+         4sJw/dNPDlBQ9oI2jRTXpdPRL25Zsad/8KPruu3iFlSTpRrbEAd3CP0WA78MH2dHYfWY
+         7tZi8gCzqxVGrQvjv9a2oPZr4ypExekZUETorajqufKhLoefN3CkD6BjfZntKt5VWbxL
+         2QqW/xwMYunKvF9oHX5mTAA9nN3zgTNBTbXeBoXSdZUqmfrpNuSKCHMGDA9i/GhbyCC8
+         u/lA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvgg3t2o/jeb0/21gVjuwOHlGqLqY460HX8HOhboltP+DuS7MyJ6kB0DN34K2Hbh86/WBrrQ9LgYPDxTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/TW8UmEXBXhTgtLwR4y1Qi5xMFCpLoHLlKUbWrojkWcBOwTNw
+	IPz9WwhJE0RJ1JvcMyezPNEeoYPIVPWjBRtRhKxorCncaIAY3068jgWGonbMxmLXPUYkDbZa7iO
+	TsQk7uIZ1ddLw7Lh27XrhmNmgVr8h2a1LO+ZAWKzWLPVtYHyY
+X-Gm-Gg: ASbGncsTGt8uxrWqfgGVhfDXRUXZvUR90G5PoN99u7337GCJXr5P5FhVNaTIqVLcWqr
+	TgcDAN+uLF3f67cnmKEG5wYazUWFQcBojLg0hIXbWqe/mB/osZgX6e0TiSzGAgqZ+1JWAjZBQmi
+	6BWaz6PKFBe60yiCVx0CNEu4+uveS5PrU=
+X-Google-Smtp-Source: AGHT+IH8EDa+4ekuWWbXXBr/riLIN3JlPX6Dn3pM/FPKZAsai8Udd4H0wlop9vjoHOYPmZSk7PdvYO6YAK4exwTSyGU=
+X-Received: by 2002:a05:6902:188e:b0:e58:173e:abcc with SMTP id
+ 3f1490d57ef6-e5da8102d3fmr8204636276.8.1739547603265; Fri, 14 Feb 2025
+ 07:40:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-scanf-kunit-convert-v7-0-c057f0a3d9d8@gmail.com>
- <Z6tvciJpQgTwYpGx@smile.fi.intel.com> <CAJ-ks9mcxW7zY33FPB+mZ75dQ2Xqo-viM9CpbL=0i0WXUPJRhw@mail.gmail.com>
- <Z6tytjvT1A-5TOrq@smile.fi.intel.com> <CAJ-ks9kSBMh0=dgPC-NiOhibnK_LhBjBdZ_AQ91h-DBZfYR1sw@mail.gmail.com>
- <Z6uGPZZ7LioJmekz@smile.fi.intel.com> <CAJ-ks9mGwXmiJ3_Kk4j0MnEqn24A9UJJXVhqtUjcG8W5ifodsA@mail.gmail.com>
- <CAJ-ks9k9d4aX+P9F10h3TqHPOCHEQ5m=QyMAv7bU+Xyb3LRsOQ@mail.gmail.com> <Z69GLMVPCuKKz1gk@pathway.suse.cz>
-In-Reply-To: <Z69GLMVPCuKKz1gk@pathway.suse.cz>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Feb 2025 10:39:39 -0500
-X-Gm-Features: AWEUYZmr-3UjtPNIc3R37HyLXKuEGwEx_3ZnSHBlKWjogJRc-JRriPQO_ICZEHI
-Message-ID: <CAJ-ks9mwBzvS+izME-DU2rOxKZmbM7GtWydxXMLBdkRz3rna-Q@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] scanf: convert self-test to KUnit
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <20250212234034.284-1-wachiturroxd150@gmail.com>
+ <20250212234034.284-4-wachiturroxd150@gmail.com> <40370a0e-775b-42e3-bb6c-8cacaa0482cf@linaro.org>
+ <Z67f+lDxISVubiJJ@droid-r8s> <2ed6c5d8-b559-4ffc-b08e-412bab1f7917@linaro.org>
+In-Reply-To: <2ed6c5d8-b559-4ffc-b08e-412bab1f7917@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 14 Feb 2025 09:39:52 -0600
+X-Gm-Features: AWEUYZlElBm9hQ_fT18iHek-VpX4yHKDlxdz_rBItX0Tc5O4FlTpOcx5z1N4lMA
+Message-ID: <CAPLW+4mbJoLHJ7TDcn9z8-WOEAFSiH7wBMt4Rk3fsw0h1wSSMA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] arm64: dts: exynos990: define all PERIC USI nodes
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>, alim.akhtar@samsung.com, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-serial@vger.kernel.org, robh@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 8:33=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
-e:
+On Fri, Feb 14, 2025 at 12:49=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
+o.org> wrote:
 >
-> On Wed 2025-02-12 11:54:52, Tamir Duberstein wrote:
-> > On Tue, Feb 11, 2025 at 12:26=E2=80=AFPM Tamir Duberstein <tamird@gmail=
-.com> wrote:
-> > >
-> > > > Is it me who cut something or the above missing this information (t=
-otal tests)?
-> > > > If the latter, how are we supposed to answer to the question if the=
- failed test
-> > > > is from new bunch of cases I hypothetically added or regression of =
-the existing
-> > > > ones? Without this it seems like I need to go through all failures.=
- OTOH it may
-> > > > be needed anyway as failing test case needs an investigation.
-> > >
-> > > I assume you mean missing from the new output. Yeah, KUnit doesn't do
-> > > this counting. Instead you get the test name in the failure message:
-> > >
-> > > > > > > > >     vsscanf("0 1e 3e43 31f0 0 0 5797 9c70", "%1hx %2hx %4=
-hx %4hx %1hx %1hx %4hx %4hx", ...) expected 837828163 got 1044578334
-> > > > > > > > >             not ok 1 " "
-> > > > > > > > >         # numbers_list_field_width_val_width: ASSERTION F=
-AILED at lib/scanf_kunit.c:92
-> > >
-> > > I think maybe you're saying: what if I add a new assertion (rather
-> > > than a new test case), and I start getting failure reports - how do I
-> > > know if the reporter is running old or new test code?
-> > >
-> > > In an ideal world the message above would give you all the informatio=
-n
-> > > you need by including the line number from the test. This doesn't
-> > > quite work out in this case because of the various test helper
-> > > functions; you end up with a line number in the test helper rather
-> > > than in the test itself. We could fix that by passing around __FILE__
-> > > and __LINE__ (probably by wrapping the test helpers in a macro). What
-> > > do you think?
 >
-> I am not sure how many changes are needed to wrap the test helpers in
-> a macro.
 >
-> > I gave this a try locally, and it produced this output:
+> On 2/14/25 6:17 AM, Denzeel Oliva wrote:
+> > On Thu, Feb 13, 2025 at 07:38:35AM +0000, Tudor Ambarus wrote:
+>
+> >> node properties shall be specified in a specific order. Follow similar
+> >> nodes that are already accepted, gs101 is one.
 > >
-> > >     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/sca=
-nf_kunit.c:94
-> > > lib/scanf_kunit.c:555: vsscanf("0 1e 3e43 31f0 0 0 5797 9c70", "%1hx =
-%2hx %4hx %4hx %1hx %1hx %4hx %4hx", ...) expected 837828163 got 1044578334
-> > >         not ok 1 " "
-> > >     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/sca=
-nf_kunit.c:94
-> > > lib/scanf_kunit.c:555: vsscanf("dc2:1c:0:3531:2621:5172:1:7", "%3hx:%=
-2hx:%1hx:%4hx:%4hx:%4hx:%1hx:%1hx", ...) expected 892403712 got 28
-> > >         not ok 2 ":"
-> > >     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/sca=
-nf_kunit.c:94
-> > > lib/scanf_kunit.c:555: vsscanf("e083,8f6e,b,70ca,1,1,aab1,10e4", "%4h=
-x,%4hx,%1hx,%4hx,%1hx,%1hx,%4hx,%4hx", ...) expected 1892286475 got 757614
-> > >         not ok 3 ","
-> > >     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/sca=
-nf_kunit.c:94
-> > > lib/scanf_kunit.c:555: vsscanf("2e72-8435-1-2fc-7cbd-c2f1-7158-2b41",=
- "%4hx-%4hx-%1hx-%3hx-%4hx-%4hx-%4hx-%4hx", ...) expected 50069505 got 9938=
-1
-> > >         not ok 4 "-"
-> > >     # numbers_list_field_width_val_width: ASSERTION FAILED at lib/sca=
-nf_kunit.c:94
-> > > lib/scanf_kunit.c:555: vsscanf("403/0/17/1/11e7/1/1fe8/34ba", "%3hx/%=
-1hx/%2hx/%1hx/%4hx/%1hx/%4hx/%4hx", ...) expected 65559 got 1507328
-> > >         not ok 5 "/"
+> > Not all Exynos SoCs will follow the same order
 >
-> But I really like that the error message shows the exact line of the
-> caller. IMHO, it is very helpful in this module. I like it.
+> you an fix them then. Please follow
+> https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-o=
+f-properties-in-device-node
 >
-> IMHO, it also justifies removing the pr_debug() messages (currently 1st p=
-atch).
+> >
+> >> <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_4>;
+> >
+> > Is
+> >
+> > GATE(CLK_GOUT_PERIC0_TOP0_IPCLK_4, "gout_peric0_top0_ipclk_4",
+> >      "dout_peric0_uart_dbg",
+> >      CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_IPCLK_4,
+> >      21, 0, 0), [Mainline CLK]
 >
-> > Andy, Petr: what do you think? I've added this (and the original
-> > output, as you requested) to the cover letter for when I reroll v8
-> > (not before next week).
+> I don't get this reasoning, sorry.
+> >
+> > You can find it in the cmucal-node.c driver downstream of the kernel. [=
+0]
+> >
+> >>> +                   };
+> >>> +           };
+> >>> +
+> >>> +           usi0: usi@105500c0 {
 >
-> I suggest, to do the switch into macros in the 1st patch.
-> Remove the obsolete pr_debug() lines in 2nd patch.
-> Plus two more patches switching the module to kunit test.
+> cut
 >
-> I am personally fine with this change.
+> >>> +                   serial_2: serial@10550000 {
+> >>
+> >> why not serial_0 since you're in USI0.
+> >
+> > Because it is simply displayed in the exynos9830-usi.dtsi [1]
 >
-> Best Regards,
-> Petr
+> I don't think it matters what downstream specifies for labels. Use what
+> common sense says.
+>
 
-Thanks Petr. I'll send v8 now, then.
+Yeah, in upstream we don't care about downstream at all. Downstream
+code is very often is quite low-quality and doesn't follow mainline
+kernel conventions and best practices. Mentioning the downstream code
+as an answer to questions like "why it was done this way?" would often
+trigger people. In this case I think it should be consecutive
+ordering, if there are no very good explanation why it shouldn't be
+so. Then aliases can be used in the board dts if you need to keep a
+fixed order in the system.
+
+> >
+> >>> +           };
+> >>> +
+> >>> +           usi_i2c_0: usi@105600c0 {
+> >>> +                   compatible =3D "samsung,exynos990-usi", "samsung,=
+exynos850-usi";
+> >>> +                   reg =3D <0x105600c0 0x20>;
+> >>> +                   samsung,sysreg =3D <&sysreg_peric0 0x1008>;
+> >>> +                   samsung,mode =3D <USI_V2_I2C>;
+> >>> +                   #address-cells =3D <1>;
+> >>> +                   #size-cells =3D <1>;
+> >>> +                   ranges;
+> >>> +                   clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_PCLK=
+_6>,
+> >>> +                            <&cmu_peric0 CLK_GOUT_PERIC0_TOP0_IPCLK_=
+6>;
+> >>> +                   clock-names =3D "pclk", "ipclk";
+> >>> +                   status =3D "disabled";
+> >>> +
+> >>> +                   hsi2c_1: i2c@10560000 {
+> >>> +                           compatible =3D "samsung,exynos990-hsi2c",
+> >>> +                                        "samsung,exynosautov9-hsi2c"=
+;
+> >>> +                           reg =3D <0x10560000 0xc0>;
+> >>> +                           interrupts =3D <GIC_SPI 398 IRQ_TYPE_LEVE=
+L_HIGH>;
+> >>> +                           pinctrl-names =3D "default";
+> >>> +                           pinctrl-0 =3D <&hsi2c1_bus>;
+> >>> +                           clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_T=
+OP0_IPCLK_6>,
+> >>> +                                    <&cmu_peric0 CLK_GOUT_PERIC0_TOP=
+0_PCLK_6>;
+> >>> +                           clock-names =3D "hsi2c", "hsi2c_pclk";
+> >>> +                           #address-cells =3D <1>;
+> >>> +                           #size-cells =3D <0>;
+> >>> +                           status =3D "disabled";
+> >>> +                   };
+> >>
+> >> shouldn't you define serial and SPI too?
+> >
+> > As shown in the node it only uses i2c which
+> > corresponds to the exynos9830-usi.dts. [2]
+>
+> If you can't specify all the protocol modes for all the USI nodes, then
+> make it clear in the commit message.
+>
 
