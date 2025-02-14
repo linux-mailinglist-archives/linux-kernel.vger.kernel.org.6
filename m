@@ -1,228 +1,177 @@
-Return-Path: <linux-kernel+bounces-515622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577A4A366C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:16:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC32A366C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED43016BE43
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4704A3ABEB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EDD1DAC81;
-	Fri, 14 Feb 2025 20:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2C1C861D;
+	Fri, 14 Feb 2025 20:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lDdgc3y7"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AxrNtJ8b"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25ECC1C8606
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739564081; cv=none; b=JrBzZsR1KIJVreO5/MV5BrA0vBucjXzEaF58w2w3LAPjgjoKZ7mfiw+VMdGJMmcf2LEIhG3LdIPFktc5nQYBm3cVW4L+89GMBEJYGxKnGITfRXWS4eHisIGGKW/jHDrm1Pxs55VhlsL3nS4aAguXtthA+/6qmi7NdZW1XYh8OoU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739564081; c=relaxed/simple;
-	bh=YNsBtJJ9+cy2UshunM7rNUNI3Qb2RchH6uhbFDj9n5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+mfto67bEfSSHgiPA3UZVjmcLIkOc5Zg8Yk6jGqe0jIuHxGEjOdWNkKoK27q3qmbR/M/pVfFAOn5qxy6djs12L618tQj1NAs6VK+C8Jzj/QTzLweozxNTplInx1/Bdyy6uPRyTjhCY8m9r/pESz/GThztdK0vlHjCQurLST/TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lDdgc3y7; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e66d4f3be2so1173416d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1739564077; x=1740168877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aitcMe7WROI3inmWPb5j5yTibRGZT3eFja/8dsNPCSo=;
-        b=lDdgc3y71bo8L0V8hpCdEtVgcsYESprTduXIi+kFt0zRyUBJTudrWt7COhlV/BBLji
-         5ZkMyQmRRCnytLs+RviwSVnWQOUoM5cP3ErSy21ZoSWjTaurrbfAeOLlOz47ThtY1fmC
-         FUlgo2rNZt2vfHG+MFiY/pf6R6M/Ppt/VKABJ4J0S5yCZTzfNBiG/G8XHBO7ymhTkzq4
-         20ubMy9bEoplUkIsMCUNIc3rJPoNAuW8WmZphPHnp6uSlSve6YYVLYFopk6107RDJFBN
-         7obB/RiGZMO7NKpkJS8XE23hj8SP8OqV5dlORQbhZ8Cw+0rpdqFpPn+NC5hiIEfe8k0v
-         yuTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739564077; x=1740168877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aitcMe7WROI3inmWPb5j5yTibRGZT3eFja/8dsNPCSo=;
-        b=hfCCa/FmtMrlxi5mGZ4zWF73gTaeabhgxrqOuUylm31VVXHGbmoZTGG7IW7Yvo5lc4
-         sc+oKoMDXF7y7mE1vtU4z//cj7rFnz5YI4VUzkQWuvE5o5jznidD2CEtWjnX4ThZXFOd
-         Ep3TCtI7JkrGaLqc2ojhMaYW3m6CtvFpgWHzJFjUJ/l8k7JWnpIrsWRzSvSSGjut9Pgg
-         KBlhV2NACNAwJYefkNJbSmVmbK0JyAstVXy751hihg9dUpORg+Um2Vsv+/cozWfaDUw6
-         Eo0nkxweXm1eOgEcMXu8bfWRrO8cS+LralCFrAwl22wjCfJ2uHFWD9SUmdfiwjaA1ZzP
-         ZLsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLcglJTKi/7eEupomp6TlOL2uToxYBlK4wGxAPe5+ABeWz9jnFvmI1l2OlcqepmES0RkTaxgaVy+0ba2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPk6QvM7MP/zZ3z17+RMpwk4JjTBPwgLtioR6as7luSsJPFDha
-	ECIPX1RcKhdmSlWZhKn3ttODpLfX9TVCbCt6NVUw4eOASIJM+D5khl0qRigImrw=
-X-Gm-Gg: ASbGncv2D7Y2QvNOjq0EZiwTWp6W/9+UOSrlL33JNxmdHTqVVKTbzwNDPEr1DGGahbp
-	ZMMxfmdqo80lFjqs2QlzGiOuRCPMmEcEVJMRbM4I/Tp67+XaigYokwzt20VXAhAJw3kqmhFOLjI
-	Q2cw8xgA9c5CCMOlbeJDh0ig+q4BzPpk8ShT4NBIr9Z4BSY+D5XiwNU9CX6AkRceNRuNfXpUZGb
-	8bcSMBwu1N2hPoa96tiGTH8RtnjCxFCdnfRB1yHfk/DWF7wt/RH1jP/tq2r7TAUuSpUN6TKWZoO
-	cFKL2b4uaG18enkliI9qJCriZkD7MoLcf4RBl89OYX0R70ddK4qp0UqM0VGEyzb3
-X-Google-Smtp-Source: AGHT+IGnMpUVAQSaoCinCLx2FBIU+4N7ViIjMJqQfxMTZ4fEWvtSzvHCiXUgAsqSsNDrtdOvrjsIMg==
-X-Received: by 2002:ad4:4eed:0:b0:6d4:e0a:230e with SMTP id 6a1803df08f44-6e66ccc114cmr11243186d6.16.1739564077030;
-        Fri, 14 Feb 2025 12:14:37 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65daffdbbsm24455776d6.99.2025.02.14.12.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 12:14:36 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tj255-0000000GmgQ-3jtW;
-	Fri, 14 Feb 2025 16:14:35 -0400
-Date: Fri, 14 Feb 2025 16:14:35 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Charan Teja Kalla <quic_charante@quicinc.com>
-Subject: Re: [PATCH 2/2] iommu: Get DT/ACPI parsing into the proper probe path
-Message-ID: <20250214201435.GF3696814@ziepe.ca>
-References: <cover.1739486121.git.robin.murphy@arm.com>
- <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8F2193079;
+	Fri, 14 Feb 2025 20:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739564127; cv=fail; b=KrYf4W7e4QRDaRFsJ5prgtcbW+sqf2tO23TEfeGcQC/mJZe783KbSQo5EovpPcYSOxfbAm9acZUDLmXr+SISOjPooWQ10eG7FYeYxRsNKBXzq4SSet4IeMhT6HHxt++GSIiWxSjqFCnCvk6/bwhb78+GY8VN0OzcyArQmWQLtn0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739564127; c=relaxed/simple;
+	bh=Hbc7g0QZxGRwlAC3XVNjZWJcybuHyYbzJOUwUnMaCjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DRDihZcPq7vzFTuHiuQp0rl8cG4njGx+2w8PzouUNh3uAQLLmkEXd9U7zSnzysjRO8Bf7HhTO4nSOiE6b4UCb1LzN4ncQ180i7r67q9CE9yw/rR+ld1ewwPKlZExgr9UKJnXnNsXeLrHHyJGsYkk0dUR6EIoOVesr42Q0L8iOmo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AxrNtJ8b; arc=fail smtp.client-ip=40.107.94.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xXa4c0Q+sv3qLv1Qclk2k/8Bcv1NqYjmU2g3N9PSeBW4TF0jAbNIaB92x6lov5gqm3EUqCZnd9BiMAinmGOTG0bUTKKt0iWGNoNekAl0eKu8EbPucyy0CzTsu3IAeaV3ZSPvFd8/584LlsFjINZezsP2pkKHVEksA3iyg/DrSBNbONWbbQ0TU8mX7gnI3r2FJ7dv9lCjj28vV6LpwSmjBlvUr1UvFAPM1c5bfM1OfQxqBqfY7hekK6NHL15jCNQHzc+00eX2uSSAVFMXXXfMXQroOP2BNzX73+bKBwJGQciKEqNDlXfUN/gwDmH2DeKxONbbD8GvNhgGbWmLZN4cvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zUBJ2RXXtCnuTCtbDrnRwIcfeHJ4e1DE9WxBzBw2JIw=;
+ b=kyOeSiZIRVwBOwHXhf9a31HGqTKiEPYz3C/ixrXl3WeFzPpEHM59PkU7jIeeIxng/vuPoliX1Vrib+7m8/oe00Gj8E5FiFYdDglP9yQcdfTcsAnkpKA9J99ha7qtQEZHNO/mZb4CmPTjWvHIUv+wEBm3Djbw7HnK2X72cO1q+Ima85Nwg0nEzEFhPkq2YVwK9FgX3Bk+C79U57YqxsO4dLup3+d4b72h/sfwrnxFkG/uMo+FCUHAJXNIPVpb+OrS/B6E18tILE6rVk5tJXM496IyP+v0Cb2iaNicWzO2f2dk3Ejlgw6X0v7O3rHNTlkK1Dbh+tg7NH/2YjQoiOgLgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zUBJ2RXXtCnuTCtbDrnRwIcfeHJ4e1DE9WxBzBw2JIw=;
+ b=AxrNtJ8b3RCsP/L3cAtWWLDzYqJFiQVL94JKJdKVZleT2/DZFuwsv6LVACVbjUZdiaFO5tY1E8pGELFMktcjx6SR4Hm95syf3I+pCIKDg4rpEoVqW6+ASvPULQ3Fdgr4jR2ErCQ71rdcEiGlcUbvjKkTBieVO3LbGOkBWRBUkiyKkOZw9gZ4IHpa35/AHN1fXO0WPHalaRoO1ch1AlGXh/ruWXBbDpo0Fyg3N2FcxGmRQK1mIqEcxEEWgcV5UYivNQpDgoWTLsYwZx1qalypfYEucjo3ZAnxSQXuEdG84ID/wbnkclRuD15KXvt/arX/+q6vdEpOPWvU6Tfr33fJiw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS7PR12MB9528.namprd12.prod.outlook.com (2603:10b6:8:252::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Fri, 14 Feb
+ 2025 20:15:23 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
+ 20:15:23 +0000
+Date: Fri, 14 Feb 2025 16:15:20 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v6 01/14] iommufd/fault: Move two fault functions out of
+ the header
+Message-ID: <20250214201520.GI3886819@nvidia.com>
+References: <cover.1737754129.git.nicolinc@nvidia.com>
+ <d47fb648e36a6a5f04e0d98d02fa71e47c4a77e8.1737754129.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d47fb648e36a6a5f04e0d98d02fa71e47c4a77e8.1737754129.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: MN0PR05CA0022.namprd05.prod.outlook.com
+ (2603:10b6:208:52c::22) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS7PR12MB9528:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7b83640-991c-4a7a-29b9-08dd4d344f58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?663E0sEcJCp4QcGFqVOSm6D2AlbxhRzq2oLDkqUKsnmBnvvId/OwTwEZXnSZ?=
+ =?us-ascii?Q?lP1A2AzwE0ofDzEWnVvQ3L6nUY1eyyNWf4oTOMHT1N1it/wwQekXWKDitSpL?=
+ =?us-ascii?Q?TnoB9P6sJTXxVIaI49dnm30IIuEqyCYvywQKK9/+bY1G+nOyY0XH7O2S5oe5?=
+ =?us-ascii?Q?yu5YmbPVExr6vQHq0PdyaWOVERDyTEz5GWZi8Er8J6OTc6UERmPjN/Y3gPs8?=
+ =?us-ascii?Q?tBA8C8VcABYI4VXPfFhgKYWAuahQC+JKOcRnPSlr8fCKH2nJp/usOS8OOkAP?=
+ =?us-ascii?Q?uxtcEEF5NoCvOnwDvuIDLn0TmIzsB7knc3dy/ru37T/3xB7cXZJxd93WIzNv?=
+ =?us-ascii?Q?KjgCJY3zhEo+b88aPg2Gi6Gb/RYoddhekqp2U/84vealqI4kW7brdVWNrccN?=
+ =?us-ascii?Q?Y4htXhmgN3x1J6ppzZrWk9gzeYuv+/rrFe/4C2IxRoAg2CrL/BVCC/t+wS5g?=
+ =?us-ascii?Q?auJFPLRYdrIZZlvq52Pe678S485IazeKFBnEjcOP/2MUwOVw4PfwX0+jdUBC?=
+ =?us-ascii?Q?7SmUXQHUEUrQVKq6NaTwASiCLGJq/O67x70EVZNv8Y7T7dqI14T0PzcTxKBt?=
+ =?us-ascii?Q?QNfy5KisOxvzDTK4EHcX81pvEoMf4GQ4ktL+KdTAn2PWwIflIYDepyikfFLo?=
+ =?us-ascii?Q?X/wkH6qcyyFe7O0SEJnY13bkLjXOh/3OoLQPFHMDTJ9uRiDN0LqEYffhXHv9?=
+ =?us-ascii?Q?Rni3o+r0ZqWCQFc/qJlTKbzpXtt5dP6O/pcw0XYG7tkHZ+XPtJXVtlkNfaDg?=
+ =?us-ascii?Q?vWc4NHWkJN0M0xqq/crCmkUdVC4ND8ARTDvfE58qkzeCD9sPJvtPAmP7ZsWz?=
+ =?us-ascii?Q?+4TgdanA1YZ2glpmh/1nJ1sMVAw9WjoZvOu+4iYnmDclxff7t9FOG/wmqhQE?=
+ =?us-ascii?Q?OQH77b93736/0ACXNlAVpTPSHd5hd5vk+HrdXJ7Ho7LxPR62XB6TWwRf1MkC?=
+ =?us-ascii?Q?5wm+76RXIZByBsP3AjVXTl9/hukguQ+NAqtQ4HxH6gGYxuTuD4D+cSRQ5/pt?=
+ =?us-ascii?Q?ZXUl/ZVplGag3g5+NH8Lt/Pk/bytw/IbUiqJyq9M5u4wwD1FbWqnNmEH7hjH?=
+ =?us-ascii?Q?qopXMYSPBofSnsAmMeAgL+9FWZS4Q0umud92Og41fEPj3Vrp8ORThZ4r7cU3?=
+ =?us-ascii?Q?BDw/nTx59ztvnVHy5AR4yAM+ngaGQWaP7eyN0N3u0kPDUiVHebmqEYFFHbxD?=
+ =?us-ascii?Q?kxEfRAmPuSLzo1ZfRMM16cMWYi9pPLLrSHwQ/xfFwRZv9hyGX+FhqjjeLnUd?=
+ =?us-ascii?Q?EsJL6Jtk7XH2GyOGmdpl2uHtJXK5CCFKu7/CqU/CrCenyWUSXJXBbzHDVdLX?=
+ =?us-ascii?Q?bOX6nhp8Z6H85yTwkI3KWlCQaEnWFDSaByDJ6jVjscdnn6JfQvKZVXU7tWa6?=
+ =?us-ascii?Q?a9OXJ37ZLnZkyCOl4WBGgXmMIyEk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QwV2qHW7LiiBC+wTtwLRnvBXuNGrPJKC975u5aUUg3304Rfy58RQZgoLUVMf?=
+ =?us-ascii?Q?TrCBWVcEaFZnyD/7g2wO1Y51WmbxyURZPQHxJu+oRjKNcC9mWxrr/nP7x0QZ?=
+ =?us-ascii?Q?YGC9bfyq1AP8gL9uG/mDyyuPgHM24nxyg9pSojk+mljS0eBPM5TvSO+L02in?=
+ =?us-ascii?Q?lILsz9W3tkzhwH/bAi1Jm2JsZHl+/wwC25iWrfdAPSjsNT264kc4mozmjnZY?=
+ =?us-ascii?Q?l6mTo04P8g8pgUWjtV9mcmBCqH9C9RrmTpNC8fuTZMqyj4RMRHGb/08IgV95?=
+ =?us-ascii?Q?EHdmPsPsoqfAy1T1zC10OWQhvvnVifDviVhttzUkDS/jEBRP2EPtxHegXei0?=
+ =?us-ascii?Q?k/cEoCeUR3EpxHoUpIAQBrSXMi0Bqu1K4TcyLiEJFSniPXP++Z9YZkN0TNI5?=
+ =?us-ascii?Q?BNa7YnR+i4k513ypi6QR5BDJXzAfUZ0LRPKKacq08PDutz14vZjWsXwOCHeh?=
+ =?us-ascii?Q?pr521bTE9QnW2d1zwmMzCNoL8jri6Rv6bdKeU6K67D/PLwS0ypwJ/XVR1mM2?=
+ =?us-ascii?Q?1R4PTp7LvcvQ0ybJVQeeRIzoZEzBl2QAnnDaicfLW6tjhpikt3mbUTNPOWcn?=
+ =?us-ascii?Q?TOBpgNR61tn2tbbgZfaraaxeVmvuib19hqU7db1KEYgd0whtlVIPtIsbFWOG?=
+ =?us-ascii?Q?gPy5I59yOK3j7ZrcxuYk+qOLR4EP+ROHcEGKV1kj4rt+CWSKJc3Z3dCN3Bt6?=
+ =?us-ascii?Q?ZpXuOy1Ngv4I7WG97eEXUSDktvsbJbLtpskjWv5KBhPuoeAf4p/LF6B4cr2e?=
+ =?us-ascii?Q?zc79R0wIVTctOib4ZPtQEXi3yLcASK4mgevbf8WO1Gr/x8enH+dtlvuJqbGx?=
+ =?us-ascii?Q?RARFmFvA49zGzNhHqakXijCcsbfG83xRRhL1UL6BD3y+1hK/zrdqJpXxMlwi?=
+ =?us-ascii?Q?PbdVuVrYLKQrf0QC8Hcvm958yU2IoBeZHQIeJ3X3X9ImwIIDcBI7vt9N7F0M?=
+ =?us-ascii?Q?cg8byzR5eJZp9DaNN+aMqYxNxDPWAebyI3PzxVGTWziGNQ75osdIST87MqhZ?=
+ =?us-ascii?Q?u64tZPRV6RshaQZEQJQzSAKYx8dssLCAzD019ECbyaLbMnmhNeU0eKwk32SD?=
+ =?us-ascii?Q?Wvn86yj89T1Q2Os2gtczYYSBblKs0T/nB468hWoBf4tvA3QgiD5xB0LDW16v?=
+ =?us-ascii?Q?UFeX2nbziY3sLbLdtxjgUlSXubeewNjYQngX2xMSRquiO/l6BqzGDuZXXjnR?=
+ =?us-ascii?Q?Y19w/5xLwZaq+NOOmNLL08G+zUsPHysLfZZCtmaQ3Ue0uyiPXem8sUekO3KR?=
+ =?us-ascii?Q?8pqGBIEFK6cbC6u06kcRw7gDj6kwTFyDI+c7uVxFgXFS+d0t6MreaHBhsrfn?=
+ =?us-ascii?Q?YVz/Edin9T0BMbE3grbOM6SGWytLquL+LU5Q/po31fXgKM58BHRHnUzBPaVK?=
+ =?us-ascii?Q?/4rnNedFoE2S/xGIMqxsxtxq7edD6ls/l8GmuEN+rx7pM8afFIlY5nUfKCkf?=
+ =?us-ascii?Q?47D13qzggWRauNUyB8pckM7S0tofAjMOo1aTwriJr30QUx1DXAEetEoVdSY6?=
+ =?us-ascii?Q?cLwpPCI8QaLv2+55pNdIpAhxo7ye/6fVczBuqdQOI83s2UESZZRgYWeCksFU?=
+ =?us-ascii?Q?QaM3VEsCvPfmfTNzOrI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7b83640-991c-4a7a-29b9-08dd4d344f58
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 20:15:22.4814
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NheWwpdg78emlYa/L7Xt6H/on6U7apyd8SRBWUp0fSYcYNRiyx8fp5Kh/jHBmLAf
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9528
 
-On Thu, Feb 13, 2025 at 11:49:00PM +0000, Robin Murphy wrote:
+On Fri, Jan 24, 2025 at 04:30:30PM -0800, Nicolin Chen wrote:
+> There is no need to keep them in the header. The vEVENTQ version of these
+> two functions will turn out to be a different implementation and will not
+> share with this fault version. Thus, move them out of the header.
+> 
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h | 25 -------------------------
+>  drivers/iommu/iommufd/fault.c           | 25 +++++++++++++++++++++++++
+>  2 files changed, 25 insertions(+), 25 deletions(-)
 
-> much just calling the same path twice. At client driver probe time,
-> dev->driver is obviously set; conversely at device_add(), or a
-> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
-
-Could you put the dev->driver test into iommu_device_use_default_domain()?
-
-It looks like many of the cases are just guarding that call.
-
-> should *not* have a driver already, so we can use that as a condition to
-> disambiguate the two cases, and avoid recursing back into the IOMMU core
-> at the wrong times.
-
-Which sounds like this:
-
-> +		mutex_unlock(&iommu_probe_device_lock);
-> +		dev->bus->dma_configure(dev);
-> +		mutex_lock(&iommu_probe_device_lock);
-> +	}
-
-Shouldn't call iommu_device_use_default_domain() ?
-
-But... I couldn't guess what the problem with calling it is?
-
-In the not-probed case it will see dev->iommu_group is NULL and succeed.
-
-The probed case could be prevented by checking dev->iommu_group sooner
-in __iommu_probe_device()?
-
-Anyhow, the approach seems OK
-
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index 9f4efa8f75a6..42b8f1833c3c 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1619,6 +1619,9 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
->  {
->  	int err;
->  
-> +	if (device_iommu_mapped(dev))
-> +		return 0;
-
-This is unlocked and outside a driver context, it should have a
-comment explaining why races with probe can't happen?
-
-> +	/*
-> +	 * For FDT-based systems and ACPI IORT/VIOT, the common firmware parsing
-> +	 * is buried in the bus dma_configure path. Properly unpicking that is
-> +	 * still a fairly big job, so for now just invoke the whole thing. Our
-> +	 * bus_iommu_probe() walk may see devices with drivers already bound,
-> +	 * but that must mean they're already configured - either probed by
-> +	 * another IOMMU, or there was no IOMMU for iommu_fwspec_init() to wait
-> +	 * for - so either way we can safely skip this and avoid worrying about
-> +	 * those recursing back here thinking they need a replay call.
-> +	 */
-> +	if (!dev->driver && dev->bus->dma_configure) {
-> +		mutex_unlock(&iommu_probe_device_lock);
-> +		dev->bus->dma_configure(dev);
-> +		mutex_lock(&iommu_probe_device_lock);
-> +	}
-> +
-> +	/*
-> +	 * At this point, either valid devices now have a fwspec, or we can
-> +	 * assume that only one of Intel, AMD, s390, PAMU or legacy SMMUv2 can
-> +	 * be present, and that any of their registered instances has suitable
-> +	 * ops for probing, and thus cheekily co-opt the same mechanism.
-> +	 */
-> +	ops = iommu_fwspec_ops(dev_iommu_fwspec_get(dev));
-> +	if (!ops)
-> +		return -ENODEV;
-> +
->  	/* Device is probed already if in a group */
->  	if (dev->iommu_group)
->  		return 0;
-
-This is the test I mean, if iommu_group is set then
-dev->iommu->iommu_dev->ops is supposed to be valid too. It seems like
-it should be done earlier..
-
-> +	/*
-> +	 * And if we do now see any replay calls, they would indicate someone
-> +	 * misusing the dma_configure path outside bus code.
-> +	 */
-> +	if (dev_iommu_fwspec_get(dev) && dev->driver)
-> +		dev_WARN(dev, "late IOMMU probe at driver bind, something fishy here!\n");
-
-WARN_ON_ONCE or dump_stack() to get the stack trace out?
-
-> @@ -121,6 +121,9 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
->  	if (!master_np)
->  		return -ENODEV;
->  
-> +	if (device_iommu_mapped(dev))
-> +		return 0;
-
-Same note
-
-> @@ -151,7 +154,12 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
->  		iommu_fwspec_free(dev);
->  	mutex_unlock(&iommu_probe_device_lock);
->  
-> -	if (!err && dev->bus)
-> +	/*
-> +	 * If we have reason to believe the IOMMU driver missed the initial
-> +	 * iommu_probe_device() call for dev, try to fix it up. This should
-> +	 * no longer happen unless of_dma_configure() is being misused.
-> +	 */
-> +	if (!err && dev->driver)
->  		err = iommu_probe_device(dev);
-
-This is being conservative? After some time of nobody complaining
-it can be removed?
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
 Jason
 
