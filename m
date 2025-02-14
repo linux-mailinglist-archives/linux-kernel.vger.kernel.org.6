@@ -1,163 +1,192 @@
-Return-Path: <linux-kernel+bounces-515703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C038DA367E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:57:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AF5A367E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69F13AEA2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C907189014D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506BB1DC9AA;
-	Fri, 14 Feb 2025 21:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FCD1DDC08;
+	Fri, 14 Feb 2025 21:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hbVoXDb1"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sw9Yp+Hj"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44661192D97
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E8D6AAD;
+	Fri, 14 Feb 2025 21:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739570249; cv=none; b=tEyjdg145FVRbhfZzJxz1wqfmkH105O6jQ107g/RJhcMY1e7Aq/X8R6BJU0r7oHYe6CHrzwUDQaPT2DTRhGCXY77sGU1vCmLgvT0HwJ6YAlPpcYeYandUS7NNNMY5ehiNhWv1BJ5oQ+WChukKmYEKMR8EUOJ/YPXpgImv06DijI=
+	t=1739570314; cv=none; b=Op46RcDJRZtW4gtLdMKC4t+6DGFsQw7GTWGPne2v0Zr0ltKMkVvMGjn/iKfBk4UdSbeXhz1OmF8VYiE0itgivnI/8cz0bewlyY7n2D1t98ZVndu5ZPCRRnBW0THObrJNiiLhsccZF0PS2bBIK6PKniyBu8K/HKlC9/VgVxGkpjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739570249; c=relaxed/simple;
-	bh=J2jwGq9qpPorpXDenwVkAsbmo0Fz+ziYV4jByJMgWc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZscK26KM09Jl89diR4a5By8KsoVAYs4Ym6m2RND5gB4vMY10Kh6ueJOkmHX5BuH2900Wf1jjk7YOYsCkOJscvEpUpGXbu4Su3KSfiSJiriinb6SQVToL6hHUgYYeMqRVvGJ0Y7Cwhrxc6eCrdmzmAXpTySSHIRtYzB2jQy1w/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hbVoXDb1; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c665ef4cso38613505ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:57:28 -0800 (PST)
+	s=arc-20240116; t=1739570314; c=relaxed/simple;
+	bh=iSUEhgvx0wFV9+Nn3QSRw8A/ciA7RcP9dHPQWTkLMTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ciTYG28JlbWc1OwODriWK7rwZe6lSup2Hl018MDZwiORGqyO2Vz/8N54aqbexK/l9OiCTVTc+CVvbeQwzHfZ+0tN+qx17WYlZn+xwBedgEeBW4CDbIGjljHuOUyi87Mq7VtG+SmyMf0aFrBP6czz8D8ZH1qv+vb8eTuim7yHzyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sw9Yp+Hj; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f24fc466aso1742208f8f.2;
+        Fri, 14 Feb 2025 13:58:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739570247; x=1740175047; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wRWtn1ykS3Bkkf2XIvb7lfKIw3peefiZqLW6ILRvMlk=;
-        b=hbVoXDb1gDyeGuQ+T4mEJaZifgLQU0bEwi42pgsft8IVrb5mXoV56/pL1UhmedFpMh
-         XwucjXhBOAo2p8gH5viBqPJpg5RPj7NMXpXrcuRObEBf19KeK7C9IT5hMSerTxslc4+X
-         nOutU19/CDnSAnm0IH9Q3m5ZpFtRiBIS1mqg+cpAMXa4NWywea95H71txHuJXtbE3Hk8
-         ogu/gDlKe/Xmao2YtvgSBzoIMGrpQRTx+SqFsi8kM27jSDbCc955exzKqrOjcxSW0s+L
-         P+f/2jDsyPr6+p2mBKnEgrm09JC8J7r/cfLsqCgVtEy3Kd7O7D0HqJoVJHZM3egiCaZP
-         hUuw==
+        d=gmail.com; s=20230601; t=1739570311; x=1740175111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HjHdIFNpacetIZjKxU9WkI1c16gFjSb3NmTyh+Z5Omw=;
+        b=Sw9Yp+HjBcDyzpEDucWhsAQBzpaaUREOt63f5DpR/JeGT04obvJoJL1rgk9aIMcIQV
+         taeiSSVSVyDrj5K8uQfUgOQwMPO2IMnxecBxWi7HTFu2PtTynFQfTvtyDyRMLir+yz9A
+         fgVgVkYDzYje9VUfd93AN/M0y5My+A5ah4kl8aNwUvZjeJCtaCS4ApLCuYYcgZ6GeE+G
+         5s6Xn/XmChAZ0oej1kuq9kz7Caww6HE3MRVWwx5LvbtIjkWwCtBcdecFy4XuY0MKq39O
+         HtxKjcBKa58D8GhYUKw2DeyegIIb4LXgFIdrbKfuLCJRPBAK9B2aJZxaZMrMYnBO1ahG
+         sh9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739570247; x=1740175047;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wRWtn1ykS3Bkkf2XIvb7lfKIw3peefiZqLW6ILRvMlk=;
-        b=gcwBJl08etZdMH1ZxYVigQmSdy5JzbsmESjKVhm9J4rGS8vHSn+1vvtmi9CR0uCtv6
-         kj2HaEcc8KtoBlGDDXKw+wL3ztQHY1vIQcxpw0Tm3w1BOwPGUu//QhLjs90p/j4V4xd+
-         FthvKhMQr8iCqi/sCP8nLlf8qaRbVj8cyaHiJpm4Fm9GlKh2wfvVdZCb1pBGwW9VVPx1
-         KU4ln0+a4DtYr00AiADqErwrd293rMHyJWCNtuVad34UHG3MQRqeOu7rbNwJbukGBdzu
-         6rv6oF/LO76/2NzCWOZg/t3OJ4OIp9787JSfXLsa7qkwT724NiNPwwbheUsF16RAHo2x
-         uKEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHal9vD5tLjukvJKmlARop5cndZ3sEaEw4FFsyhpbzIbrIlcvLmYc+oEJRithdvzYW2bysc2V2PrVonI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/tLP2chIBAUBLEoUxYpDU7d/4+vsRPd6AVcnzKvVl8bAKKX9j
-	Jkl1WNXnQy8+O3yl68nt3n07bDAw99Z+Z3q8eypr0+wijzm6JT7xEqrtEKHs3Q==
-X-Gm-Gg: ASbGncs3oq0HkvAcr9TbLSsDDK8/sQd6o6HvlCEjAAGVTsKb1TpAWqKg3a6hHa8zJ+Q
-	jvg92rF0wj43PuKU3sjVnroZjMqVvlQ/ti/vdcjtGs18uZm5vuTBsN8P4Y2u4qS0rLRUaHmS2Py
-	ZU4GmFnDf64T/wy//OWvGuTOd5cqE3U0mWpOaFFuNDFpghFWqNtLr80jBDF0Cqn0sbpyT+8AfwC
-	ekeICvh4D+4ArNnX3vR0gse9NCtS4nzo+BZ5d+k8ziLGm7TzBBhSK0OhBYsK4kA+53/xe0cJxGL
-	5hg3I8Lq9kGtUtJYX1Yi0TK7jSJ+YcaQPgpbZmroNNx+ZFTkjFcA2DAk
-X-Google-Smtp-Source: AGHT+IFZkKyWI5cbOzU+tAQBXH6DK01VJZJyEtEn7GBkrLBMpC5lv7rkqivWWjlmMr5gTo9wQl2d1g==
-X-Received: by 2002:a17:902:cec9:b0:21f:7880:8473 with SMTP id d9443c01a7336-22103efa562mr12942065ad.11.1739570247291;
-        Fri, 14 Feb 2025 13:57:27 -0800 (PST)
-Received: from google.com (139.11.82.34.bc.googleusercontent.com. [34.82.11.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d663sm33080155ad.120.2025.02.14.13.57.26
+        d=1e100.net; s=20230601; t=1739570311; x=1740175111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HjHdIFNpacetIZjKxU9WkI1c16gFjSb3NmTyh+Z5Omw=;
+        b=FEGYQNTyGL+PQn3Y4K+sA4wF5AYbwS3dHfs1N/uRdgv5zfyw1cs8EeLscixCUeAzSf
+         8beWjgsAkV6+j5I+TzZyGUfF1oCTM90dW2Gd3vkNX+mmjvW/GO8K2ZEMcxM7I88snwQB
+         n0u0goLGCzfqoM6EUHEHber7/YM/RHIdYBfQi7X9aeifsL+2cDxEXwV39jXdG2uju+ip
+         iB2gzUBCWD9y9rkBKVCOmFutwKb9b6bpeqscHVsw8NQykuUUx8L9JS9rXgzEN9xHFWe0
+         K2v9YkiM9lGBb+m26+tUfCs03t2qZG4aFiUaMF9nSc1pTqi2KORYAUWeXJZPcQ+r6hpg
+         IVjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDneO98C5hMPWn+i8SNDufwb6t6yfZgfVXSp786APd0I6lYj3sDhvgGuWioSNVY4KyEYHvSK+TaCXAn3Tj@vger.kernel.org, AJvYcCWEQ1uh1VwKm8z/MCTGbVXQJho5uS6Nqo1cu9OdfPoFiU9oNmq17NCgxTa/I7Y6WLJiBk9fHvb0oAih@vger.kernel.org, AJvYcCWutmffxp13awfiTmawuBRkHQ1zp6fcoc+KK+PtSfW8u12YbFtWl9PQtvTkJcFXxRiXVUKJiMK7lKMF6Ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEiEE9UTbrPUIhpawqNvQcRR2yEfOOvwXMevfJEwyWFft4sFTD
+	+kSADs4V+iKRcUOL6WHJ5rkKVaBC27YbpGxaC7lCY527ukkqVXmP
+X-Gm-Gg: ASbGncvP9huvHBd9lD5HKuq0hxHfOi8o2EhylqZDijQsqji6ckRDF/irLAoCCIRGWl9
+	fp2QihROUZHYO/FlXpJ7htCm8B8Xbjj1ry3vJA6G3B74glWdZSz8+eiQom+bJcBRQqi0SOSy+dc
+	CSiOju3uPGOZeIpaEB4zDk3Qag5D1j5SXh0XHxRzNHgWjmDYCNE+Q77LCULxzLCIu9XtZHZjiuW
+	OJAyvGekDEWjAfEiw9x0uuaYme5OaopheSgwbD/jgQtluZC5Cq3IjNSC7tltQVNWjsHVibZ9bsl
+	BAfpna83oFTHUCwIZDIeXbP5AUEo3VQ=
+X-Google-Smtp-Source: AGHT+IFAkyA+auhZYxZHiiVU7CrJjKC7m/ayNJTLshQZe6et28NL4/Sd0WpkVR3JHBODymhMpQQ05Q==
+X-Received: by 2002:a05:6000:1845:b0:385:fd07:8616 with SMTP id ffacd0b85a97d-38f33e80e93mr985951f8f.0.1739570310711;
+        Fri, 14 Feb 2025 13:58:30 -0800 (PST)
+Received: from CYBER-ABAKUS.kucica ([87.116.134.57])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38f259d5ee2sm5558903f8f.80.2025.02.14.13.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 13:57:26 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:57:23 -0800
-From: William McVicker <willmcvicker@google.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>, kernel-team@android.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: better interrupt name
-Message-ID: <Z6-8Q9oDj04NurJ5@google.com>
-References: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
+        Fri, 14 Feb 2025 13:58:29 -0800 (PST)
+From: Nikola Jelic <nikola.jelic83@gmail.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: rwalton@cmlmicro.com
+Subject: [PATCH 1/2 V4] ASoC: dt-bindings: Add cmx655 codec
+Date: Fri, 14 Feb 2025 22:58:01 +0100
+Message-ID: <20250214215826.80878-1-nikola.jelic83@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250213-max33359-irq-name-v1-1-1900da7a1e79@linaro.org>
 
-On 02/13/2025, André Draszik wrote:
-> This changes the output of /proc/interrupts from the non-descriptive:
->     1-0025
-> (or similar) to a more descriptive:
->     1-0025-max33359
-> 
-> This makes it easier to find the device, in particular if there are
-> multiple i2c devices, as one doesn't have to remember (or lookup) where
-> it is located.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  drivers/usb/typec/tcpm/tcpci_maxim_core.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> index fd1b80593367..46fc626589db 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> @@ -420,12 +420,14 @@ static irqreturn_t max_tcpci_isr(int irq, void *dev_id)
->  	return IRQ_WAKE_THREAD;
->  }
->  
-> -static int max_tcpci_init_alert(struct max_tcpci_chip *chip, struct i2c_client *client)
-> +static int max_tcpci_init_alert(struct max_tcpci_chip *chip,
-> +				struct i2c_client *client,
-> +				const char *name)
->  {
->  	int ret;
->  
->  	ret = devm_request_threaded_irq(chip->dev, client->irq, max_tcpci_isr, max_tcpci_irq,
-> -					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), dev_name(chip->dev),
-> +					(IRQF_TRIGGER_LOW | IRQF_ONESHOT), name,
->  					chip);
->  
->  	if (ret < 0)
-> @@ -485,6 +487,7 @@ static int max_tcpci_probe(struct i2c_client *client)
->  	int ret;
->  	struct max_tcpci_chip *chip;
->  	u8 power_status;
-> +	const char *name;
->  
->  	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
->  	if (!chip)
-> @@ -531,7 +534,11 @@ static int max_tcpci_probe(struct i2c_client *client)
->  
->  	chip->port = tcpci_get_tcpm_port(chip->tcpci);
->  
-> -	ret = max_tcpci_init_alert(chip, client);
-> +	name = devm_kasprintf(&client->dev, GFP_KERNEL, "%s-%s",
-> +			      dev_name(&client->dev), client->name);
-> +	if (!name)
-> +		return -ENOMEM;
-> +	ret = max_tcpci_init_alert(chip, client, name);
->  	if (ret < 0)
->  		return dev_err_probe(&client->dev, ret,
->  				     "IRQ initialization failed\n");
+Signed-off-by: Nikola Jelic <nikola.jelic83@gmail.com>
 
-Can you just change the `init_name` instead like this?
+---
+V3 -> V4: review remarks
+V2 -> V3: fixed dt_binding_check + yamllint warnings
+V1 -> V2: removed the txt file, fixed review remarks
+---
+ .../bindings/sound/cml,cmx655d.yaml           | 62 +++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
 
-  chip->client->dev.init_name = name;
+diff --git a/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml b/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
+new file mode 100644
+index 000000000000..577e1d4942c6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/cml,cmx655d.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/cml,cmx655d.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: CML Micro CMX655D codec
++
++maintainers:
++  - Richard Walton <rwalton@cmlmicro.com>
++  - Nikola Jelic <nikola.jelic83@gmail.com>
++
++description:
++  The CMX655D is an ultra-low power voice codec.
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: cml,cmx655d
++
++  reg:
++    maxItems: 1
++
++  "#sound-dai-cells":
++    const: 0
++
++  reset-gpios:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: cmx-irq
++
++required:
++  - compatible
++  - reg
++  - '#sound-dai-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        audio-codec@54 {
++            compatible = "cml,cmx655d";
++            reg = <0x54>;
++            #sound-dai-cells = <0>;
++            reset-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
++            interrupt-parent = <&gpio>;
++            interrupts = <25 IRQ_TYPE_EDGE_RISING>;
++        };
++
++    };
++...
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index dac80c62b742..74f925f3e3cb 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -310,6 +310,8 @@ patternProperties:
+     description: Carl Cloos Schweisstechnik GmbH.
+   "^cloudengines,.*":
+     description: Cloud Engines, Inc.
++  "^cml,.*":
++    description: CML Micro, Ltd.
+   "^cnm,.*":
+     description: Chips&Media, Inc.
+   "^cnxt,.*":
+-- 
+2.47.2
 
-That way calling `dev_name()` will get you this more informative name as well?
-
-
-Thanks,
-Will
 
