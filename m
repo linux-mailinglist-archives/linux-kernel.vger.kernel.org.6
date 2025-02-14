@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-515224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A77EA36204
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:42:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA36A36205
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC627189328D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717643B0978
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09057266F19;
-	Fri, 14 Feb 2025 15:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBB4267391;
+	Fri, 14 Feb 2025 15:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Efn4KlxN"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ndcCe9LN"
 Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE41266F01
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448DF266EFE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547749; cv=fail; b=AdVT5hbBqcjLOs/rsP6LPPGtizUrlhoy5W+SeverCQ4HfdxBfR5DOCGVCckuXL/XMR38U4VfZEDJkNasm4NX5QIGzBbSptReuYPCcIB65gkjnx3CLHnzKWzG/X4Cs0sAXTc6veKeoeuLCbSmsf3SopbFPFVXLR0bgjhqED5kFDg=
+	t=1739547750; cv=fail; b=XUivfRk8cXMbcknhnhTbmFpNWaz3VvP/ocIiKdvLaIyQDe43puHQIQoPGVgW7k0tulkrHnIS/JTUExxCdlVipluIiAXgkVbd/zInzlRraal1IOPaAHNFatCDHuzCtS45LH2iYKxaMejJTxB8TUiC1h2bscdGPo/i98AL7eIIpGQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547749; c=relaxed/simple;
-	bh=NyzKCEEXo8ytf7vmWr6ixCM2/6VtRyMxP9js1S52rDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TgFNJO5egfd39DpXR9KBImWll6FNOf153HPTCOzKx/GLTw4Z/VoxMcWOO32vm2ybL63PIq9lGu9mivEvjH7BjgaLIHIjaTZOm2tytZ5uTmDfQtse28/fPH8Ngn/mN/GqFjqo3Q4C2RNIpG/WmlLWllz19ATqL3YBz1UhvtmGahM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Efn4KlxN; arc=fail smtp.client-ip=40.107.94.43
+	s=arc-20240116; t=1739547750; c=relaxed/simple;
+	bh=t+ojR14eNEZc6uxP0HjYSPTvSlOZcN+q/vemDcmLcRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uws6RPIGjPEBVQsgkuAWvtf0cPvYmYgKhabgsBbeWwHQXJU6GRAdpsyOm0Jg0psd7dFxGoi17xOi7nSbCBlmTP61d2EBXzT/jFnaBnoZvVkjYktJtIn3MA78Dge/hLD54RwTymTRFRpW7ZQ97jI/QurFkbeIbpSG557EWv2Tw/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ndcCe9LN; arc=fail smtp.client-ip=40.107.94.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dAlLKEETq8AJ7RSxwOKC3fkA2CMHm2U8Ddkw9t4H5zXvgK5sDXWRiVI/MyCLxcvuv6Hf2Go+R4VI1mvEQDxYi+OZsPKnsD/EgF6Fe0fo+M785Rd0MUFA4brwHGi1AbyX+TcFhejv3nXPw1/oQbdk+soFkhk8pnutD8umhDejpEAe7LUcs9u9DxnevUy6uqIXfSFE+88PuV3oeNnq+RPAx5Bn6pgSM3oL6tfzmPk0niXdMNH3+BPJJhvV/vnutagdhhZJovo3mwvq1NO1yfjWcAc6ryONsCbCt9JvLM1z5eNH/H4kwpX/NJJMXqjeRC0e9DTCmINh3EkTILBYk3yccA==
+ b=JPHg5r7ppzyYSV2+BCHWue17bD8SpU+9hKde0Mpvzd2hQ4Gcgiqlshh7r+x+/sZ6/cbw7661/j0jwek6f/+lGvEOPKvR9XmLwC9III1DeZU4R/8SA5ZA/XGnhEq7AoEj0vghcXRlH6RAuJFm8fkrRhzPTS6JNtHYmr2KdK0g12hrX1bW/5R8iUhza66p6MwRwGMsO9OTurjSZ1+WB2iy1WdilS3yYFxOs3a/fpXhp/Gual5bZXLAq2NQiT6LNKoxdMrjtONKQPBbThdrIIoUqLA0dVgypK66u3euhJ7/ATxouuCc4CuwzoDIVv4KldDoZLXEN4niYHzt+1k6nFYF8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zlA3cFZdEXtrsC0PjbObJxBPZ26KdwF0auVLorp7Jck=;
- b=yhhMakOuwrTj0QQezsT+fwZXt9T8cDnmYw/iFrigrfdijn/ka5DFqlHdErn0GNHr6cFvE8W2v6bm4qsVqJV1Eh18xqgzeXyIuGmnlWXuVOw9FLUZaHJpQ/3/7IDrhx0FRFJfpxtzrH/BKjDTXLbxC1fpY+m+71Lok/F6ykeIM9vAlmLLZ4owmjZwWeEOqSD/SY8IrkfENP27HaNTeRNdkXXCXEALayAI2Esfb2YBYI7Sk6BIDEOWln9mvQRR+S3NDjLpNHszNgkXSqXXvL/zR50jRBwYD7QsBN35WkrPtWu8GtVxZbtZGbvE00q23wTgyxQSe/ypdol+EHBD+Q7Q6A==
+ bh=AebmBmJkIAuQ7h16HolSR4JegMPa7EHSV1KqsaK63Ow=;
+ b=oQeKuA88qfEU3vyO/V7GMhWE1JZRGfEM8qvwh+kBGYW/VJ4Mc0RpPYxoLuQwW04ReFDx1r9TisuxKwvlfJxlOFqYXxUR+SKTSt8fIe2FR0nzPTg2IRvikILA5ONGGR0BTXpJj6rgP19UKMnS1gmjGrfgfP/iRyb/feFvLmHiRgyYnU/mbAF5ZXKUMW3RK3e7mnWdD1XCmuRqHxR5xUCSsvb0PTy/nbfd32xVZV7U+k5KCzcTdBEFvxKoFI4zA08nFSs0fJMiNwh4hnSvnWNz8jcEeRuueRMRr8396afBsCkk1wMX3OqU7e+RCMoBHTPBSbbW4KnQKsEIb3+Lwc4ueQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zlA3cFZdEXtrsC0PjbObJxBPZ26KdwF0auVLorp7Jck=;
- b=Efn4KlxNDL70yfaBoGPso2OuLgyK4QpRwbHh1s+NivKTOLWSKoBiQDcTvdG3FrDoTn3MyZFtJimekuxuuVdqgk950PP+iL8+OH4yq8WRk55xsYM859FHB8b4+OrC98DnNY1RSe3sJblIKDnXoM6t4CbQA+K0HtXtmLtlF15jQt4MvDG7PGpSarK54NGwfxeI/mgtnQyJU9QvKtvR8IqQaUtQenpaV3rkvfyYprqNq/6jDepeS24pUSHDxsv0XrgwNwijoP++cHcVvOTBjCWmWg/SDG55zxFRiFZRwkR5+rE/IRSiNNiCa7fb7LNofMdnXh3JDKZiXfu7SEDSQubwlA==
+ bh=AebmBmJkIAuQ7h16HolSR4JegMPa7EHSV1KqsaK63Ow=;
+ b=ndcCe9LNbuiXBcEVO7xZfNKtkrXt4mzQP3JP1rfh8uOlitgLwpFb6E4KiiljeiMsspM7jtG9a8Vo0HA4c9yJ41oaZPgR7WPiSVZw6rKByhoFlkpY5EKj1C8UVT1qHh82g5XzR3w2jH2M0UiLtwR1lohbU1qm2RwSr+hdW+yjgEjRgzSwaR3M5nU86RTIkIcOOg5mRZZVOsXM9cw2tVytWBKbBWxchHBtqvQNV9z5p7yijYGJV5tMD4j7BnBVJaXFyvKF6npWhnfMudb377dPO4APcFCPnpc+lGgW4YU1hpP5W8clVWcRe/EVL7yrLGZUjILrgjbFKpW4qfZS5HgzJQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
  CY8PR12MB8339.namprd12.prod.outlook.com (2603:10b6:930:7e::17) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.14; Fri, 14 Feb 2025 15:42:23 +0000
+ 15.20.8445.14; Fri, 14 Feb 2025 15:42:24 +0000
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8445.016; Fri, 14 Feb 2025
- 15:42:23 +0000
+ 15:42:24 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: linux-mm@kvack.org,
 	David Hildenbrand <david@redhat.com>
@@ -65,14 +66,16 @@ Cc: Oscar Salvador <osalvador@suse.de>,
 	Mel Gorman <mgorman@suse.de>,
 	linux-kernel@vger.kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v2 0/4] Make MIGRATE_ISOLATE a standalone bit
-Date: Fri, 14 Feb 2025 10:42:11 -0500
-Message-ID: <20250214154215.717537-1-ziy@nvidia.com>
+Subject: [PATCH v2 1/4] mm/page_isolation: make page isolation a standalone bit.
+Date: Fri, 14 Feb 2025 10:42:12 -0500
+Message-ID: <20250214154215.717537-2-ziy@nvidia.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250214154215.717537-1-ziy@nvidia.com>
+References: <20250214154215.717537-1-ziy@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: MN0PR04CA0021.namprd04.prod.outlook.com
- (2603:10b6:208:52d::32) To DS7PR12MB9473.namprd12.prod.outlook.com
+X-ClientProxiedBy: MN0PR04CA0009.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::30) To DS7PR12MB9473.namprd12.prod.outlook.com
  (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,137 +85,239 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY8PR12MB8339:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28354c4f-d7cf-432a-21c6-08dd4d0e2c95
+X-MS-Office365-Filtering-Correlation-Id: f2ba1d9f-37c0-476f-09b7-08dd4d0e2d56
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lC1rNUBHhuVVtZnB3+0/5pwKU5YFT4gz+DdiAMeqS2yTr5+0r3VxjXFK266B?=
- =?us-ascii?Q?UX8GMc+7nfKLDT2Ug9/wp09FFtoTHhtT9QJ1yY4dSelCOzvnJg2HQR4mh9Jd?=
- =?us-ascii?Q?RTifBeHnCXbNZT1H39T/956sIfFw5xNsatiz0k3PoNV/ei5E8F59jWH46s1D?=
- =?us-ascii?Q?SYqFYPuvl5R98dPmjQFBbiBNKpruXtBQJb9jCljEHq9aJxLfWLauW4Bs7ZWl?=
- =?us-ascii?Q?W3jT4G+vCPuhXpDdnm4f5jUeGGxFChDV0XG7AhWM7cNCvSIvOj2RaXVaFKPf?=
- =?us-ascii?Q?yO+LOZvrUXeCx9sJOZ9TKjs3eP+1WszRgJFTD1EbMIWh81V/WUW8aZ4LQal+?=
- =?us-ascii?Q?jiGIaFh2xYB9RuWqAelb+yAiD3nkPPA759fr1YycAua4DOVR3M5TlKaFbJzY?=
- =?us-ascii?Q?W87heWE6hubhbIu0rPNkF43n8fXbP1yva9l36O4yTnF/DZSI4O2mqfnDNJ6B?=
- =?us-ascii?Q?L0QVAot1fmifbx62QUJDN0rgGcOvtguoVi1NkV46AjonLz8AccJCPYnbmrb7?=
- =?us-ascii?Q?RMqEenJoASgUHzc4eWl2unMOHaQHs/OL2Og6kwFQwyo3VODHF8qipo3GeZrB?=
- =?us-ascii?Q?p5WRwLSDz/+tbbbVM3GZT38PgFjFJMsF9MB3y7dwvzOjIrpbDd5RxM4f+TrV?=
- =?us-ascii?Q?Zr/eZT5Qmk8ol1gmoF9oL3uAWZz4CjjADTzCt0x7JmNXLYZrpJhEh4l3VH3R?=
- =?us-ascii?Q?p6pbAc4QKsekN3BiSZFNacwcK54MYQ7G63zHmk+5dDNXf9LM7HL/qpN5R9xi?=
- =?us-ascii?Q?q7GcxhIvtB6qGSSDCGFETrqXuA39InftZ0DKZ4GHz9mC9xxn3hjH1l3pnueS?=
- =?us-ascii?Q?AbcEKEU/oV3lsvJyyKhiybW0l5xS7ped/fiRTIrZSoVn1WY/L7ESObYuRrjU?=
- =?us-ascii?Q?NOpcOFWRM5qfVax3GLulp+8+41KYQ3tPyg/404EmpykH8kWnW0peLgxWIi52?=
- =?us-ascii?Q?tNrW4xjLDgfxK2HsBdEkeyy3isUUzOPjgXlDwawFXHZdX6FR2nQv4bkGD8Z3?=
- =?us-ascii?Q?I4JjgWwIVe0jvXvqHxu0mKJO/7ZyH17ASPCmjeiSOZOZ7RTB7fY2p+VDojAI?=
- =?us-ascii?Q?Klx9CLBzSTF+1V/KUKPgOmrJk69aG61h7Xz64f4lS0bfpKRODRZlnJAlJ2BI?=
- =?us-ascii?Q?wv+XexplKQip74EKfv1pSvEJvMCS770yCZZYPOuIyr7Z4f6Ni3NEaPmcMOFa?=
- =?us-ascii?Q?4xmI+IcBTJAGLUptRuBNP8rgHMU1fujUZK7A9QXoK8AvIMQKQ/MzfW7pF0ll?=
- =?us-ascii?Q?QW9TDFjox/x9Kfpgr3G8hAIO1FelCY/pa5XHDor0bwMRsV80Jr1aBSGnJmd5?=
- =?us-ascii?Q?ArCgmpJzYhT5xv5c8f3EaHHJo2sLsPcgAM7cg1IvznsArQW79eRyilemx2fh?=
- =?us-ascii?Q?VQ+UFv4LXjP4QU7EcAmfXeL2XrZx?=
+	=?us-ascii?Q?lxmdowwLmZYoXQfU1A24v2y++AMfGflHKUgGPAM9v4ZygP7eLkowhmD/YW12?=
+ =?us-ascii?Q?YMHDA8pW4zh0GsNWxQ8SlMiRBR2LgiIruSNPEPCunDsOgNNNdUE2D2o89ab4?=
+ =?us-ascii?Q?G5ZVKDQ3tG0bLQTBUaayFvYR9klgfcV9BaCmS8z++AYavghnKHWVvdBOztXL?=
+ =?us-ascii?Q?7kwFepXhf5t5PBHtM5d5rQKy+FJoOY+YYxRA/ObJ8Gw8xQpxqJSad4yx5oWj?=
+ =?us-ascii?Q?kW0sQoK4bHnnv/ihF4KbCIlEq54dQg6yjLbLJtfvQhJNc6gXGhkYXxuAMJmH?=
+ =?us-ascii?Q?5Faa5rsHEOhdM/LXTLIVxZcKneb/4FPy0Z7i0Ac8cSRg5go0Wh82+UevSesd?=
+ =?us-ascii?Q?hKrMhZdUGcH1H3XzIr6rypHFaCcRGMMaSaC8yx6XiGzyaE6TET69mmc0xIAk?=
+ =?us-ascii?Q?rnGtrJCxcb6TclgkioQ5Dd4mj9KJlr2xWKpdPpDfdELurA2Y1m8eplMYo2M5?=
+ =?us-ascii?Q?il1i39taUlTZWZW/NZEU/svFJZbI31v1+Vwq9MF81+jI4z1lZ90XUxxUq8Zm?=
+ =?us-ascii?Q?XwjyhWPfWq1fen4vIWgIjNJ+Nc5ggI96gBZGN4k2EiAruBFaebGIlbrcIsr8?=
+ =?us-ascii?Q?dHl7KHTChLfKicWH5ZPYt+aVEL8GdvY8zQ+R7U9HA3JLWl7HPj1Cl0q0uQqN?=
+ =?us-ascii?Q?RY6eStQ7TVPn9flVsB4GrPRVZUEzymV0tE+lI8GwXfbG2V+S5mWIwkSpoNDv?=
+ =?us-ascii?Q?rJfgij723XBt0MibxR9fiXYkGtyDrdeq94B+AHsexsFWZLGG2/IeSPixCaOq?=
+ =?us-ascii?Q?LZHSaJmrJNfuHmq5uWVMYj8z2zTNKUBEgbV/INaI6edHDF3CCQ98dWn06fHM?=
+ =?us-ascii?Q?RRdCrNpZozvbIIZLNofP1WSrzyMKoxWirWd004fywG7hCpJjzvA9VTFxPIZj?=
+ =?us-ascii?Q?lFrXDH3jqKOTXtMCh7/7suVCD2srisOSfV9S4VijU9488PYZqErDbT0QNwiA?=
+ =?us-ascii?Q?F6tDj25XYFe22jzXpEaVGsP2B6f6YX5lDFBQNj6lB5idPI8hhO7/Xosub/hn?=
+ =?us-ascii?Q?T1mO91yUOwnfrGGeGAb24NuuPWRPdS/zIDOJ9S4K/oU3UBuT4m39+igy0vFT?=
+ =?us-ascii?Q?jSdbaucgUm+oCsKtT6zm7lVT1un3+y9TLPDT3mGktu/DvF1DlTwatwlNruFW?=
+ =?us-ascii?Q?mzricjdZBEfem0y8AmZ1NqmIazkzS6GxeuoIHBjr/cWA1/SWDrYpaAFpJmkL?=
+ =?us-ascii?Q?dl77nZK2j4a8f0Kz2zyoKSt94BiRNsUDaeC2TfMXqpo1Ocr8YM51xeIwgHvk?=
+ =?us-ascii?Q?dTrYsG7i7IHCMTevqTApqLkOMH8Oxla7bG0+Vc98qLSCLwVu/TUIr1UrHtrA?=
+ =?us-ascii?Q?IqCRBxSjAsYTiB8pcvsda5z92MhzghqCnASqKtiGH0v3VAByvEea1nq73B7/?=
+ =?us-ascii?Q?TzUwwOnl1DmLnmgVWLyLI9viTKEq?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/12nIk4dMWGxJufNb1CCkdJxhNR2kMbhODAgUuFKiILlysM7zy2hGBYnDyGL?=
- =?us-ascii?Q?v8MRrXWi2UTDLt+IMQt8iFWBDaWCAFxtEI+cbb1LAVYbQylKpYWX6fACeasB?=
- =?us-ascii?Q?pqUkH/PMaBalb9OLUDiGzKTdzdyzJiX1/q1hqZxjiA7t9BxcGaBlekX57+CD?=
- =?us-ascii?Q?shJSkSXEqk57P9pVw+60aMqO1NT668PTIVWtQTYcaoDtvfnEUkE3ZV64NoOh?=
- =?us-ascii?Q?orNBapsx+mvf0a0HBBth305ADLvYCvYtA4yROQhEfJBa81rYFZbe8qpr5t2E?=
- =?us-ascii?Q?BHKlWAbBofG3DLyMI2p1mSUGohsmUyQDECdYbA6cncMqEe1QNUCB10TQkmwZ?=
- =?us-ascii?Q?5kdH9EYtQSSZrhGovbbvSf/CRKos1o7PO7YL1KOyfUcU20VvrfxdKPEGwLSK?=
- =?us-ascii?Q?sFoBc5vtqjCwjMsHMz1lKJ1NeaEM9UskAiF8akssmkocOjO+3XEajI/EywNC?=
- =?us-ascii?Q?BFBbxTcKsV0SM+N5PTHDmAU6Z0nO+SUx3lE/GfiA0yYzpn4vuIXvJ1zwl0x+?=
- =?us-ascii?Q?jfQiO+udJ4ShQbPycBrGcRYhVOrxDdTZzeg+g/4ZsuURIBFHPO3rg0z3zwHx?=
- =?us-ascii?Q?iGqO/g/fQoQk/mjEf1m9ANPsE+8cdqdjYVF1poAXU4NZ07o09PEzHErpKfXX?=
- =?us-ascii?Q?jOOveBxUwNTRlzFQWSXKD84BXcB7CfqogzN7AUQY5mpjFfDYiRln8gwUFE2A?=
- =?us-ascii?Q?9dxYbTN+bwBsu6WF3+uSikyDi1VaUXKsvJzb6IWUH4Lmz8q4e3s9QuwrlVHe?=
- =?us-ascii?Q?N072mpdeePpWhwHxNSiLrXxLchHqVW6Ol4tXzfU3wxgFXFrmX4PqwKlHk/p8?=
- =?us-ascii?Q?vNEMne/TR8gizeFVsqb5JChAO1IvtayyQwVPe8yjJPkGHpcJ5cPfH5hy4sHE?=
- =?us-ascii?Q?Qnug0lZVFKGfRBk9USKd7Eh7bWt8dEInkLLlAA2pfCI9YQkqOZh5taH5bQeM?=
- =?us-ascii?Q?zmZMz411ydE32qlhI7UhlFnwM52JpsN8MQMfP3lmKJ3XqJyyHnElVlfWhQPb?=
- =?us-ascii?Q?c1UpVlRpIlymjbsKBTpNt8cG62XpN3LI8GDlA2JCoVbP39jreZU2Yo9yJRou?=
- =?us-ascii?Q?Fqy8/EnfenZhucXPxzfi1ykUvxzJ2MJhYwnu9j51Ii+3pwc3v/tDVDsU+ayB?=
- =?us-ascii?Q?CXiGcOi8aZNMFTuamo6YpMny6VWCIYzvRtMoy3RG8NieFKMSmIYGuw3GRwHB?=
- =?us-ascii?Q?CAcE/xkCsaPk/sMtvrXvcEhlMTM4glFsvoJ3ry1953Cp34XjS4VKuXt7uqvm?=
- =?us-ascii?Q?+36Yp/r8AQZGIh4/3SKpgKsUyjlVdD/PqKP5iQY5yKylZWpWtd2owyed6+34?=
- =?us-ascii?Q?u6PHU1GigpUcNiZaOeT93TsLQLDWE1zAopKTLjxsiA0pYi4pM6TITZbe6g/I?=
- =?us-ascii?Q?P5f9SeOHKCDsLjl8ulpjcBibbFNlAbz+MAAUMXPR0Jq+ZQJjvsA7AiBIolX8?=
- =?us-ascii?Q?O/ewkjZD6Sn0aGrTEiZlug8PDFAtRpyiW75JIxpv8pRtn1DfVnTfloDwmKxC?=
- =?us-ascii?Q?N9kz1IZ2nwpt06X89aaGpH1jDB9uRH6dw961Nfs8th8xK8UliRYWJKnyNDLd?=
- =?us-ascii?Q?wSR0pBRAUyyoiqH2tur5alp4Tf8b9ZyNcKWdntgX?=
+	=?us-ascii?Q?8UW9o0egujEIDx9Hat6VaHAeAqpnhtDpooDZCaodjDnI2E3ZAIHQrDuvIMXj?=
+ =?us-ascii?Q?vgUzDi6kIJoaFSC/5gAUsoTjE8G6U6ay33sJM/w0BxyCK8+2t9YRDgmFOacX?=
+ =?us-ascii?Q?A5ZT8vmujNYWCf1d3Ey1SaDrvjCKsntT/gLJVFla18VqUoFQHn5emHjEVqeS?=
+ =?us-ascii?Q?icpXcTMfTrmfT41rnceGRW7FeA5N091+qt+i6/vS2tfyjrKQ4Nl3pUhDvDxF?=
+ =?us-ascii?Q?f2JRHFBgSpolnU+N0iOAMnppSvUgzdDRrtWmrdSWyvrXB/mkNtjntz+OC/eA?=
+ =?us-ascii?Q?u+d3+jmJUyJaeXr64uxA9yGK32GPg8WaCC10deMthawcwLoXpPGXaBqwURUT?=
+ =?us-ascii?Q?pT5Kbz0kfwsBx/bNBXWLVWaK5gcc9/ozLZtrjIno/ABS+l4MQg2T/atwRmPb?=
+ =?us-ascii?Q?hiCETU4f45WUeQKr+kZKdZj4SZfp0wotfKuhthavBliXGmudW9ZGKjme86fF?=
+ =?us-ascii?Q?fqU2Rxau4N3CThtma/J4SqcTCtcFHct/jxExGt4XnwGLtLvqpCHlelZy/+sC?=
+ =?us-ascii?Q?YBJfmohC0HornGHjW6XKjLR01DffN4iLYkfWl/SzUoxFfaDY7Rgdlamh+BxG?=
+ =?us-ascii?Q?RJF7CcZyz/Oaa9gnGVjrxnVd3hH7lquGRpSJ7KiwdnyJYdfgyvi4in1l1tk7?=
+ =?us-ascii?Q?ab9t+U+wMiZGQFjpWVgNQQtnAVqkG063Oe6JAgkG12z29zKyaDJOFVf+jUQ1?=
+ =?us-ascii?Q?ocJWQ5pTgVxMJMiAHudM3JPHXcktYR0W88+Bbk5IK4QtQihH92qIKCCuY6mU?=
+ =?us-ascii?Q?RuQBFiDdjcKThhGLZudWa3VgKDS3+2vq3sk3gU4TftK1PcEvSl3QRZ09RrVJ?=
+ =?us-ascii?Q?GW6eVeHYyuWiRpxl9MTiRi587ahX9UKcEYZUf1q88ZQOxQTMuqEjomUJKQjO?=
+ =?us-ascii?Q?35ykwgKQXmCOkpg62SOqDtQuW1oEJJ3FB4VL+B3kyUmJ7YcxO55hjNp/mHde?=
+ =?us-ascii?Q?IzbMGQWoipgO9NjDnUWXnrxxWAmNIshw4T9/AJ8/yTql/XWVT1c2Aq5WWuMu?=
+ =?us-ascii?Q?zY8+6AmR7znT+OP47DviGjpPxTxac8tduq179N7EJL3q2zr7+9mmSGMu9eGQ?=
+ =?us-ascii?Q?DWvLtTP0GBmUlmCIIXF9wrdL2GWGnUMtbhacXg+a1KGOiJONSt6Jml+fzXky?=
+ =?us-ascii?Q?wwO/ONOTbu6NSoKP0C0vcHM2ye/bh+23fcd98EWSmrcJcjE2eHSBGjNN7vdz?=
+ =?us-ascii?Q?bWyiYFTYvXP4YyLURBH7gWWjq6B+TKkwxwOYSdBZ7n22sVm+88HguY/97AtT?=
+ =?us-ascii?Q?Qu/l8OHgkWgKd5bKIZRPb4a5WVi4rwaarva7t/kdyljmWrdNi0iR0DzAVgMh?=
+ =?us-ascii?Q?YXX4xnT1y63STu8jX3nlbORnAlJbqO5wgwuYTZFBPA5UN4lcxCXhKDTQEbI0?=
+ =?us-ascii?Q?imIvsxiMp81KCOmYvr+pGOIe7RqLwKX8dvY60WWWZeN/X/+vOrfgnYA+3Hu6?=
+ =?us-ascii?Q?2v8gyS63PdvdOeyhVO9kuaN200bYXEYDCiZFY97DNu4uPRDvAb5DJFUf59Ik?=
+ =?us-ascii?Q?Se+QrPrsSpugTXr9rNaMsMefm8PTQDBwG9cieMKIqSnpjw41lOIV9dL0fnA+?=
+ =?us-ascii?Q?rXA53ttkAwWuqqVRBj8Jb4T4l7LJssyvjXUfkq14?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28354c4f-d7cf-432a-21c6-08dd4d0e2c95
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2ba1d9f-37c0-476f-09b7-08dd4d0e2d56
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 15:42:23.0207
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 15:42:24.3016
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4/sy7sLM0j5xCUTRxnI0UmirUugfPGSXGojxFBZS2Nfb2pM/PRQvyQwUWXshRweZ
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9BQljV9wq+4Fgs4DmRO1GFk0C538OvTrgMr2IS2dZ4JqZoJEyyOoHzLamhDfD2QK
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8339
 
-Hi all,
+During page isolation, the original migratetype is overwritten, since
+MIGRATE_* are enums. Change MIGRATE_ISOLATE to be a standalone bit like
+PB_migrate_skip. pageblock bits needs to be word aligned, so expand
+the number of pageblock bits from 4 to 8 and make migrate isolate bit 7.
 
-This patchset moves MIGRATE_ISOLATE to a standalone bit to avoid
-being overwritten during pageblock isolation process. Currently,
-MIGRATE_ISOLATE is part of enum migratetype (in include/linux/mmzone.h),
-thus, setting a pageblock to MIGRATE_ISOLATE overwrites its original
-migratetype. This causes pageblock migratetype loss during
-alloc_contig_range() and memory offline, especially when the process
-fails due to a failed pageblock isolation and the code tries to undo the
-finished pageblock isolations.
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ include/linux/mmzone.h          | 18 +++++++++++++-----
+ include/linux/page-isolation.h  |  2 +-
+ include/linux/pageblock-flags.h | 33 ++++++++++++++++++++++++++++++++-
+ mm/page_alloc.c                 | 21 +++++++++++++++++++--
+ 4 files changed, 65 insertions(+), 9 deletions(-)
 
-It is on top of mm-everything-2025-02-13-23-42.
-
-In terms of performance for changing pageblock types, no performance
-change is observed:
-
-1. I used perf to collect stats of offlining and onlining all memory of a
-200GB VM 10 times and see that set_pfnblock_flags_mask() takes about
-0.13% of the whole process with and without this patchset across 3 runs.
-
-2. I used perf to collect stats of dd from /dev/zero to a 200GB tmpfs file
-and find get_pfnblock_flags_mask() takes about 0.30% of the process with and
-without this patchset across 3 runs.
-
-
-Design
-===
-
-Pageblock flags are read in words to achieve good performance and existing
-pageblock flags take 4 bits per pageblock. To avoid a substantial change
-to the pageblock flag code, pageblock flag bits are expanded to use 8
-and MIGRATE_ISOLATE is moved to use the last bit (bit 7).
-
-It might look like the pageblock flags have doubled the overhead, but in
-reality, the overhead is only 1 byte per 2MB/4MB (based on pageblock config),
-or 0.0000476 %.
-
-
-Any comment and/or suggestion is welcome. Thanks.
-
-Zi Yan (4):
-  mm/page_isolation: make page isolation a standalone bit.
-  mm/page_isolation: remove migratetype from
-    move_freepages_block_isolate()
-  mm/page_isolation: remove migratetype from undo_isolate_page_range()
-  mm/page_isolation: remove migratetype parameter from more functions.
-
- drivers/virtio/virtio_mem.c     |  3 +-
- include/linux/gfp.h             |  6 ++-
- include/linux/mmzone.h          | 18 +++++--
- include/linux/page-isolation.h  | 24 ++++++---
- include/linux/pageblock-flags.h | 33 +++++++++++-
- include/trace/events/kmem.h     | 14 ++---
- mm/cma.c                        |  2 +-
- mm/memory_hotplug.c             |  5 +-
- mm/page_alloc.c                 | 96 ++++++++++++++++++++++++---------
- mm/page_isolation.c             | 66 +++++++++--------------
- 10 files changed, 175 insertions(+), 92 deletions(-)
-
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 8aecbbb0b685..3c7d3f22ccb2 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -106,14 +106,22 @@ static inline bool migratetype_is_mergeable(int mt)
+ 
+ extern int page_group_by_mobility_disabled;
+ 
+-#define MIGRATETYPE_MASK ((1UL << PB_migratetype_bits) - 1)
++#ifdef CONFIG_MEMORY_ISOLATION
++#define MIGRATETYPE_NO_ISO_MASK (BIT(PB_migratetype_bits) - 1)
++#define MIGRATETYPE_MASK (MIGRATETYPE_NO_ISO_MASK | PB_migrate_isolate_bit)
++#else
++#define MIGRATETYPE_NO_ISO_MASK (BIT(PB_migratetype_bits) - 1)
++#define MIGRATETYPE_MASK (BIT(PB_migratetype_bits) - 1)
++#endif
+ 
+-#define get_pageblock_migratetype(page)					\
+-	get_pfnblock_flags_mask(page, page_to_pfn(page), MIGRATETYPE_MASK)
++#define get_pageblock_migratetype(page) \
++		get_pfnblock_flags_mask(page, page_to_pfn(page), \
++			MIGRATETYPE_MASK)
+ 
+-#define folio_migratetype(folio)				\
+-	get_pfnblock_flags_mask(&folio->page, folio_pfn(folio),		\
++#define folio_migratetype(folio) \
++		get_pfnblock_flags_mask(&folio->page, folio_pfn(folio), \
+ 			MIGRATETYPE_MASK)
++
+ struct free_area {
+ 	struct list_head	free_list[MIGRATE_TYPES];
+ 	unsigned long		nr_free;
+diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+index 898bb788243b..51797dc39cbc 100644
+--- a/include/linux/page-isolation.h
++++ b/include/linux/page-isolation.h
+@@ -5,7 +5,7 @@
+ #ifdef CONFIG_MEMORY_ISOLATION
+ static inline bool is_migrate_isolate_page(struct page *page)
+ {
+-	return get_pageblock_migratetype(page) == MIGRATE_ISOLATE;
++	return get_pageblock_isolate(page);
+ }
+ static inline bool is_migrate_isolate(int migratetype)
+ {
+diff --git a/include/linux/pageblock-flags.h b/include/linux/pageblock-flags.h
+index fc6b9c87cb0a..d6fe17bf0c9b 100644
+--- a/include/linux/pageblock-flags.h
++++ b/include/linux/pageblock-flags.h
+@@ -20,7 +20,10 @@ enum pageblock_bits {
+ 	PB_migrate_end = PB_migrate + PB_migratetype_bits - 1,
+ 			/* 3 bits required for migrate types */
+ 	PB_migrate_skip,/* If set the block is skipped by compaction */
+-
++#ifdef CONFIG_MEMORY_ISOLATION
++	PB_migrate_isolate = 7, /* If set the block is isolated */
++			/* set it to 7 to make pageblock bit word aligned */
++#endif
+ 	/*
+ 	 * Assume the bits will always align on a word. If this assumption
+ 	 * changes then get/set pageblock needs updating.
+@@ -28,6 +31,10 @@ enum pageblock_bits {
+ 	NR_PAGEBLOCK_BITS
+ };
+ 
++#ifdef CONFIG_MEMORY_ISOLATION
++#define PB_migrate_isolate_bit BIT(PB_migrate_isolate)
++#endif
++
+ #if defined(CONFIG_HUGETLB_PAGE)
+ 
+ #ifdef CONFIG_HUGETLB_PAGE_SIZE_VARIABLE
+@@ -99,4 +106,28 @@ static inline void set_pageblock_skip(struct page *page)
+ }
+ #endif /* CONFIG_COMPACTION */
+ 
++#ifdef CONFIG_MEMORY_ISOLATION
++#define get_pageblock_isolate(page) \
++	get_pfnblock_flags_mask(page, page_to_pfn(page),	\
++			(1 << (PB_migrate_isolate)))
++#define clear_pageblock_isolate(page) \
++	set_pfnblock_flags_mask(page, 0, page_to_pfn(page),	\
++			(1 << PB_migrate_isolate))
++#define set_pageblock_isolate(page) \
++	set_pfnblock_flags_mask(page, (1 << PB_migrate_isolate),	\
++			page_to_pfn(page),			\
++			(1 << PB_migrate_isolate))
++#else
++static inline bool get_pageblock_isolate(struct page *page)
++{
++	return false;
++}
++static inline void clear_pageblock_isolate(struct page *page)
++{
++}
++static inline void set_pageblock_isolate(struct page *page)
++{
++}
++#endif /* CONFIG_MEMORY_ISOLATION */
++
+ #endif	/* PAGEBLOCK_FLAGS_H */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 16dfcf7ade74..f17f4acc38c6 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -362,6 +362,7 @@ unsigned long get_pfnblock_flags_mask(const struct page *page,
+ 	unsigned long *bitmap;
+ 	unsigned long bitidx, word_bitidx;
+ 	unsigned long word;
++	unsigned long flags;
+ 
+ 	bitmap = get_pageblock_bitmap(page, pfn);
+ 	bitidx = pfn_to_bitidx(page, pfn);
+@@ -373,7 +374,13 @@ unsigned long get_pfnblock_flags_mask(const struct page *page,
+ 	 * racy, are not corrupted.
+ 	 */
+ 	word = READ_ONCE(bitmap[word_bitidx]);
+-	return (word >> bitidx) & mask;
++	flags = (word >> bitidx) & mask;
++
++#ifdef CONFIG_MEMORY_ISOLATION
++	if (flags & PB_migrate_isolate_bit)
++		return MIGRATE_ISOLATE;
++#endif
++	return flags;
+ }
+ 
+ static __always_inline int get_pfnblock_migratetype(const struct page *page,
+@@ -397,8 +404,18 @@ void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
+ 	unsigned long bitidx, word_bitidx;
+ 	unsigned long word;
+ 
++#ifdef CONFIG_MEMORY_ISOLATION
++	BUILD_BUG_ON(NR_PAGEBLOCK_BITS != 8);
++	/* keep other migratetype bits if MIGRATE_ISOLATE is set */
++	if (flags == MIGRATE_ISOLATE) {
++		mask &= ~((1UL << PB_migratetype_bits) - 1);
++		flags = PB_migrate_isolate_bit;
++	}
++#else
+ 	BUILD_BUG_ON(NR_PAGEBLOCK_BITS != 4);
+-	BUILD_BUG_ON(MIGRATE_TYPES > (1 << PB_migratetype_bits));
++#endif
++	/* extra one for MIGRATE_ISOLATE */
++	BUILD_BUG_ON(MIGRATE_TYPES > (1 << PB_migratetype_bits) + 1);
+ 
+ 	bitmap = get_pageblock_bitmap(page, pfn);
+ 	bitidx = pfn_to_bitidx(page, pfn);
 -- 
 2.47.2
 
