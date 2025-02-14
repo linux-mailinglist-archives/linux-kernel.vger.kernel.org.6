@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-514200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8155A353E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:55:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0139A353EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52DFB3ACAAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EFC3AD1C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20E184FAD;
-	Fri, 14 Feb 2025 01:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED63E86337;
+	Fri, 14 Feb 2025 01:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXNPRkR+"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="R+dIYQyM"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD9E347CC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F2B7083A;
+	Fri, 14 Feb 2025 01:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739498109; cv=none; b=VAdnzRZYgWNzZmt5uAHtwuwL+EdWpQ8EAKtq6y6UowWc0iRLPbRbVf8jMJBZNS2TvBJq531z+piuwjfq8ly228uD0kaFTvLVmGWwsIwbE9zqeU5FL6AKYbaYaWJ+PPRWzwAo7UWCixFPDzo4a+e2Zhx0bu4Ij7QP3ztuKqoBHe4=
+	t=1739498149; cv=none; b=CcBIcHDancQ9o/HfeKa3frgA2+7ms2pASSKAMht0kvnAeou4sOPCmHFOmCbQInM3fY07iFJncTo+hKWiYwMtKdHaFH8MF+MEV91pwdOd/vsSZQXZnruXhZXZlGQPnDUkUhgGjG2LfgEcU9X6YLcNWzKXnSE/z3spFWNknkgRqzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739498109; c=relaxed/simple;
-	bh=/5JTL84Qk0znyiDqF3HvwuK3EXkIWxHTi1kPb6Nah28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8fHINMI2I1ZnFjkZN470ssmiXp2U1aAv/EIK51TzSLHh32RqlV0rjE23DHrEuSmSFl9PCWv8OBBrFwLVOnpklfmaUQ79VSRstHCWNYXlisFXGGq3z53F4zqkIIRgdGJJFTxfjXJV2zIVK3+K9KnjFjhkDZE2EI66xSlOzmMHpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXNPRkR+; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e442b79de4so14185036d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:55:06 -0800 (PST)
+	s=arc-20240116; t=1739498149; c=relaxed/simple;
+	bh=VcjAQ3B4mQjDUypYSd6nbGJXNoRWezJBNsnpycoJKa8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rk/yK5D567Uv+Ax5dFmpRswDO3HpzBdWDEDxK/T97lWXem4c9U9JdWbJ3ciTW7sE1nbXOFsS812Cc7hgvRGuXGlrUtyQ7XdtEd6DzZl2z779gqnWb6BW2/TB0oBmWyrSCU27BrsQYZGhfgYRKHz0sBeeq28fZXrjva3Da3e2lhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=R+dIYQyM; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4395f66a639so9836305e9.0;
+        Thu, 13 Feb 2025 17:55:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739498106; x=1740102906; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v7hcmi3D52Q8E6QfNbGo+6Scsa2Zp9WSOQdDFyzodKM=;
-        b=hXNPRkR+fjMiUcbW8oVDpIOLV1liuASREMm0DqY+3XT7X5YTZpMBuaUrS+6XCt4qLQ
-         cVN7jnIxBg2eJwgPkWJP0bkhxXlsTtIsEL0qzN61Uh4W7vWA+6Mt+Fxq7peaWStSfXJb
-         5wyvBmi75ujpNl3Bpk1HRI3wnt9wZ9B9hzPTD8/mXYYXLHQLBHH5prjXVS6eoszny1iF
-         k21dZw1jlURfRM+KM5S9npb6ShKXh6eL0kxQHrnRmZnn9O0YPYv25NAr4PGLhWOCsf9+
-         Ct4cEIUEsdJJNcZFG/OKa/mn7jhC7UO6aoGqS1GejKYfe2swI3s91uN7sCePSSixxX3w
-         Dyww==
+        d=googlemail.com; s=20230601; t=1739498146; x=1740102946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eEKId/k+euMe1WkATnBM1ya6ihDrHX3GOG9+SISZlPA=;
+        b=R+dIYQyMqjjfl+F4KNPEnWYoWzqC2d6N3nJ0YkBX+VH8bpgH0SUzX2CaGPmgbct+8e
+         xjlpnINbeS7RSBZ5aOC78zfN65P6UzXF5Wpm7d7QiQLHqRQqGfDYysb+u6rhguhFU/dW
+         9CtS6zyMIfQgxauc/Zn9uLX7mLfkJqq8mydreoJM6x4fI+fS2YxbpdiZUbpmPbyNPO8+
+         LCzLPh6L4Z45kff7NcsHZRfnZILzWwbigEYH+7ypvda/OoomXOfTp4k8j8k+ayVPcH1j
+         GPu1A3LMuU1LaM2V35no14TUlsq6UzFSF9pJBmAmAjeXTcGzR6ZIyQ/w2w3uTGE4n3IL
+         N1yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739498106; x=1740102906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v7hcmi3D52Q8E6QfNbGo+6Scsa2Zp9WSOQdDFyzodKM=;
-        b=C/FlUES0V/t/UEsiDZtVJAdMtqIj01gdb98g4KQnOrYMQcVBmZT5jCuFU5I/SdA4w4
-         ZSPFJyXK4YfNAqcJzK6B/am0IhWptPGlbadDGkgQFSu1/n7XI4+O8CXSxFrhfhRb0mMW
-         PYakFqxzu/Il8k7TJuizS2q5QjZMqtvdmKUbqa4Yl1doF3FjzY/ap3APAxtB6bG2QSPX
-         +WGYC+L2oDKM8MYx4+CbYcWXipIYaVAaf3OCXVbhWU6BaJSpGV5HLQv+cIWsL3FK3RKI
-         Qb/MFFDcAUiwLo+vG/7CA4QNQS60QvdOULTROqs/YBLLCL8s2mPtnsqFw5z1vUyewwuc
-         WQpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbb1/BXM24E8fUqvDwVfnuv8/k4q9aoa3vU/UJsPOG3HI3KWQjK6XUq0Uf9oYsHFOBkLgeZ1Yll5m4cZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPgS9Nutuon9uIS0ZLq3+/STf16nS8AaH94Y3HDB1DDUTGQ5H
-	lFeHmAvg9HvtcZc51WT0LzpbeA2A8rD/ZA6QmewjEL+BTDk/eTcLLDvK0Gv7
-X-Gm-Gg: ASbGncusVj1IIyS9Zkf5EOsgKF1gXrfxZmtw5soIAdkda6Nsgm5hbFaPFy3TCI7nLKT
-	su2Bg8s9V3Fpg4M2edZCGqNf3yTJLpTJhAl4rnqWFZHMzr2Fr7v2I09Heiv3F/39m6Y/TCdR+tL
-	2oU7ogfzDEliaL8TRa73sOz3YM3JmpAUFFKzMxhxAIkNbf4Oe68Wl0z5otb79rPrLwciflGFEpD
-	NM7J/QAw1/uzdr7+Gq9mUVVZ/6tpTsVa7gTT10ZJig7nBe3fQHs0y37MJWAlAEALYOy+ZSzEeyo
-	nlQgRFryvBDDGMHyKXwD3cYbwvQYZEOfzKVdByen0BOLRt2wX6gT
-X-Google-Smtp-Source: AGHT+IFKc3TLG8LG8D3zxGwyYTUjO6FC4U/JBOmsUrPI1nqXN6jqDdFrM4DpEVmDCbZNaeOPBA4Kjw==
-X-Received: by 2002:ad4:5c46:0:b0:6e6:6686:afcf with SMTP id 6a1803df08f44-6e66686c9aemr3613236d6.4.1739498105872;
-        Thu, 13 Feb 2025 17:55:05 -0800 (PST)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d7a3caesm15936166d6.54.2025.02.13.17.55.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 17:55:04 -0800 (PST)
-Date: Thu, 13 Feb 2025 20:54:59 -0500
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH] drm/repaper: fix integer overflows in repeat functions
-Message-ID: <ejsf4dwcyg7j4wdpdtbs56lbwokzlq65fxn2gxio4l5xg6di2r@pmnpafv3nwxz>
-References: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+        d=1e100.net; s=20230601; t=1739498146; x=1740102946;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eEKId/k+euMe1WkATnBM1ya6ihDrHX3GOG9+SISZlPA=;
+        b=JnNfYepU90zoIWinfecPSpWtOwVSNQ1OUaePoa/tDA+WZu7cSpZkzyOi3ffwyxSdXK
+         fea713Gc3tqth42gQOpO1J4isKBqzqKX4YaGHSLlJNNDLjLBAdJjX4lZYegw29kzadJg
+         gHA6Jgd29wWnRf+Q8q1y444zLCIT4Drg5jmwL/Rcp06mJZPs9YNxKfdRw3rdAvdyzF5g
+         mur3UrWhrLuUscY6IYEWyEoUfrq8fDSpnUsPC1t8494In6cU0p4ak9qNKENSS72W+nn7
+         1ZSEjCLF1qSSsTb8pOHPpcS6Dws92xuGdr9/+kEJXiec7/P8/0rJKvMNZqjHooP8ogf0
+         eMlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlL6N5byhBNqTdlMUyZR/HdMVVA7ZoqjAU1624pnXLRaMFGf+YwedHOuf2b3hOm1OFe9Anye+l@vger.kernel.org, AJvYcCWDAvv9HUsTVeKmf+qx1YP4uJvP8PNrR+YL3N9WoPpQmsnpTJv7faXsQwJrUZOAloUW/rf74mc/cKcICz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQcoXpyxit9K3b6LjXJe98jHWZ/dR3iArF/AYLLHcW7Tn6fE6G
+	/vMrSpm1TIif+JA16e0c1ePMxypsc9AwjK2oOmxDbNLsjbR3ttY=
+X-Gm-Gg: ASbGnctzurZTO8fGZdP0z2KQQ/wmNJDWq0npyXPEgQxDdmAbYl3XPgv3OR2fNGkAZ7B
+	alKlt9WXJHHzaYUM94x3iqwkg4CSLMR3hEgt5xbxo0VNgPnP+BEOVo83qPq6XRt++OxOjxYRYaR
+	SczUuI/FmQegRvTkDlgY8BWpsd1cK30EoOJzmnF9RadeBtpoumIRIX40+Vg55nGrGKhpFPLkI20
+	erDMwE5/DjG9Q31hXWLuie1NYQsR8UzQWJRuITbuTtlf6fqIMGIObR+FWFeLuAknYprH0VNfG18
+	mLbUiy2bqbHLJv/m8EI0+CeT7h3S+ZVaKVX9RgrIM15T3WH+CNHdkE52wUOPag3tbe+X
+X-Google-Smtp-Source: AGHT+IGAFqLoCM9XcT7iiED4OM3G31gTMLs6si60SuowTMy1yKm8m0Y8Y1g9lSJEe43V1rJv7W6nQA==
+X-Received: by 2002:a05:600c:35c9:b0:439:65c3:3310 with SMTP id 5b1f17b1804b1-43965c3365emr30595945e9.28.1739498145653;
+        Thu, 13 Feb 2025 17:55:45 -0800 (PST)
+Received: from [192.168.1.3] (p5b2b4779.dip0.t-ipconnect.de. [91.43.71.121])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06cf2fsm62498165e9.19.2025.02.13.17.55.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 17:55:43 -0800 (PST)
+Message-ID: <66f89945-dd39-466b-a6cb-5f67b2f0940c@googlemail.com>
+Date: Fri, 14 Feb 2025 02:55:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/422] 6.12.14-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250213142436.408121546@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250213142436.408121546@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 16, 2025 at 05:48:01AM -0800, Nikita Zhandarovich wrote:
-> There are conditions, albeit somewhat unlikely, under which right hand
-> expressions, calculating the end of time period in functions like
-> repaper_frame_fixed_repeat(), may overflow.
-> 
-> For instance, if 'factor10x' in repaper_get_temperature() is high
-> enough (170), as is 'epd->stage_time' in repaper_probe(), then the
-> resulting value of 'end' will not fit in unsigned int expression.
-> 
-> Mitigate this by casting 'epd->factored_stage_time' to wider type before
-> any multiplication is done.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
-> 
-> Fixes: 3589211e9b03 ("drm/tinydrm: Add RePaper e-ink driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
->  drivers/gpu/drm/tiny/repaper.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-> index 77944eb17b3c..d76c0e8e05f5 100644
-> --- a/drivers/gpu/drm/tiny/repaper.c
-> +++ b/drivers/gpu/drm/tiny/repaper.c
-> @@ -456,7 +456,7 @@ static void repaper_frame_fixed_repeat(struct repaper_epd *epd, u8 fixed_value,
->  				       enum repaper_stage stage)
->  {
->  	u64 start = local_clock();
-> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
->  
->  	do {
->  		repaper_frame_fixed(epd, fixed_value, stage);
-> @@ -467,7 +467,7 @@ static void repaper_frame_data_repeat(struct repaper_epd *epd, const u8 *image,
->  				      const u8 *mask, enum repaper_stage stage)
->  {
->  	u64 start = local_clock();
-> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
->  
->  	do {
->  		repaper_frame_data(epd, image, mask, stage);
+Am 13.02.2025 um 15:22 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.14 release.
+> There are 422 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-It might be best to change the underlying type in the struct instead of
-type casting
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Best regards,
-Alex
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
