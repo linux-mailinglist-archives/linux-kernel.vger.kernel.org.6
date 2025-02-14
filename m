@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-514109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14C0A35292
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:20:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EA8A35294
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C428016CD4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:19:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C08F17A455A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44904C7D;
-	Fri, 14 Feb 2025 00:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BD34C7D;
+	Fri, 14 Feb 2025 00:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VYdpPoTg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EDoLko4N"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A6B2753FA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E698115D1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739492393; cv=none; b=VlEP9JsW+J0pIHlOluyBy88cjiJsHnRfTEhYEnEXkACZWIQoH9oZsQNhYDwHtjRjcXzGVQdL1DmIp4laKRtK+jR2ed8WU6VesweD5DNCZL0jEDb2r2NUD42rEijQ2lNo/nkC5KxYVVhDW+g4cVcuiaYzhWNPY7NwStudC735fRM=
+	t=1739492404; cv=none; b=uD/gKtJx33vNRj+V17U1KIG/2+PmVcuBI3kTtTZ2e3v0EsDCyb/37Rn6x+0gnQ0/TkVWvqYdOz1KvWXsN/QuRqzbwPGUvPxeb4rnOPjB8hcvhDbm+lwoNK+r7ji/Lh9IylzEPPAY6l/55RexqSpYcvCq+xCivBDzAwHk2ug6pzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739492393; c=relaxed/simple;
-	bh=EiZLkZhOyAW9xsLWltUT3PNY16MrDfjY5hC7dVEFLOM=;
+	s=arc-20240116; t=1739492404; c=relaxed/simple;
+	bh=8Mr23W/+G1uZ617GLarMPiY6eX2ezkHI6A58kZ43cp4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IwLAEbTTp40zDSFExjhtiRLEnF+439hP3pNIzjX6eKXs5yWx8qNABaxoskquZ5PTzJaKz1doAOElSsN3bLWI7rjV1hQm+6pUJimST7G+48SLMQLnBTq9Cg7Avr1pcNU3FpQT6yS7a2+snv5jwwQwSVqtOhYZEnLXFBYg5/LKXh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VYdpPoTg; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=XdD/MtZs3rSsJHk+D0/YUh+WBJVJcmHt9sZ1qvas6ibNnXEMtsivV+LNJfSroUPWzu4zWUmwMWdO6VHi8ZXixCoWowy81x21JOe+5Zzv+TJK1nBAIe8Lx2p3+mSHWuHbs8R2AnZKG33YC87uluLIXpLJqH6G+FyqIBpKbzH/CFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EDoLko4N; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739492390;
+	s=mimecast20190719; t=1739492402;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xMGlgFMnw8m0fqnHlMzqGgmx7iSobyGCc1e2rGwWxUo=;
-	b=VYdpPoTgZtp2RX0c4jbgr36FOrS9wocRnV60+SXBfOe+AcfmY4zF2Uf4NziTwTTzrSSrsp
-	9Uy+zUtFTnnenZ1XPKFUzXqSG5bhe9ck0SgJqlQlDFBJZZdcD6eRluqFwpcZJyQwDO+S5U
-	iqSiqsi5amaoJU5qhCITomuCIAAJBg4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=qItC1tMYOWKCL7xMXToSIOhC8XUwskbCivBq7IFZWAE=;
+	b=EDoLko4NCMMY9GxiJMakMXUOaW3btdzNxHelSl1gzqts9e1HewrX7dQZbEw6HMln46yuxO
+	gHYOYBOU99Anz815E7ogkS2nYT5YHwPS//gYFbcZI3wNd3GTZ12B3DPCO8wA+a95agBMGI
+	4paeXSLT0M12sMREULNlKEHFu2XaDoc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-25-qyFZAa5UMMal7J8JWdPi0Q-1; Thu,
- 13 Feb 2025 19:19:48 -0500
-X-MC-Unique: qyFZAa5UMMal7J8JWdPi0Q-1
-X-Mimecast-MFC-AGG-ID: qyFZAa5UMMal7J8JWdPi0Q_1739492383
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-_ZGgu7BcNVOmNPp1z6MqOA-1; Thu,
+ 13 Feb 2025 19:20:00 -0500
+X-MC-Unique: _ZGgu7BcNVOmNPp1z6MqOA-1
+X-Mimecast-MFC-AGG-ID: _ZGgu7BcNVOmNPp1z6MqOA_1739492395
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 730FD1975AFC;
-	Fri, 14 Feb 2025 00:19:42 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCF971800373;
+	Fri, 14 Feb 2025 00:19:52 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.199])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BE8E6191D7C9;
-	Fri, 14 Feb 2025 00:19:30 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C0CE119373C4;
+	Fri, 14 Feb 2025 00:19:42 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 13 Feb 2025 19:19:14 -0500
-Subject: [PATCH 01/12] drm/aspeed: move to devm_platform_ioremap_resource()
- usage
+Date: Thu, 13 Feb 2025 19:19:15 -0500
+Subject: [PATCH 02/12] drm/fsl-dcu: move to
+ devm_platform_ioremap_resource() usage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-mem-cocci-v3-v1-1-93466d165349@redhat.com>
+Message-Id: <20250213-mem-cocci-v3-v1-2-93466d165349@redhat.com>
 References: <20250213-mem-cocci-v3-v1-0-93466d165349@redhat.com>
 In-Reply-To: <20250213-mem-cocci-v3-v1-0-93466d165349@redhat.com>
 To: Joel Stanley <joel@jms.id.au>, 
@@ -111,11 +111,11 @@ Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
  linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
  linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739492356; l=1480;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739492356; l=1621;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=EiZLkZhOyAW9xsLWltUT3PNY16MrDfjY5hC7dVEFLOM=;
- b=IZhFM41JiOZfIy9a/1KZpKk1Br3XnDxb5m/NX2S1O6K2UXCQ+/uQJ0C22bHSxvWhNzlnX/FP1
- wm9WGalQDOsAXERwNbai1KRsziDODOZ0OJOzdnU3hgZxX3mEGZvDUFs
+ bh=8Mr23W/+G1uZ617GLarMPiY6eX2ezkHI6A58kZ43cp4=;
+ b=n2tNXdlh5rQHn34kimaBoWcVbHfFakTA8EXZqZAZhLnnn5o28ZQNlIJVeAszxG7oq2QBVHOzI
+ cKIyaYzxeTMCIHXWgXlkHwumd9YBsNaQmbk5wnP4D2uSBSOGUG55dCT
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
@@ -135,31 +135,36 @@ identifier pdev;
 -ioremap_res = devm_ioremap_resource(...);
 +ioremap_res = devm_platform_ioremap_resource(pdev,0);
 
-Cc: Joel Stanley <joel@jms.id.au>
-Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Alison Wang <alison.wang@nxp.com>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/aspeed/aspeed_gfx_drv.c | 4 +---
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-index 397e677a691c2c6d199063f44358196a4569b389..46094cca297479d1cf19f6db99538c5e7a0fec92 100644
---- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-+++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-@@ -144,11 +144,9 @@ static int aspeed_gfx_load(struct drm_device *drm)
- 	struct aspeed_gfx *priv = to_aspeed_gfx(drm);
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct aspeed_gfx_config *config;
+diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+index 03b076db9381a5db0bff6576cda2772495a61fed..3bbfc1b56a6557e2f54d2b7ed099531053871341 100644
+--- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
++++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+@@ -260,7 +260,6 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
+ 	struct fsl_dcu_drm_device *fsl_dev;
+ 	struct drm_device *drm;
+ 	struct device *dev = &pdev->dev;
 -	struct resource *res;
- 	int ret;
+ 	void __iomem *base;
+ 	struct clk *pix_clk_in;
+ 	char pix_clk_name[32];
+@@ -278,8 +277,7 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	fsl_dev->soc = id->data;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(drm->dev, res);
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		ret = PTR_ERR(base);
+ 		return ret;
 
 -- 
 2.47.0
