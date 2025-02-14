@@ -1,301 +1,153 @@
-Return-Path: <linux-kernel+bounces-514428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA98A356ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:17:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB001A356E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E098E3AE4ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:15:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D1F7A620F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC691FCCEE;
-	Fri, 14 Feb 2025 06:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8221FFC5D;
+	Fri, 14 Feb 2025 06:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Myw/mRV1"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MptpSou7"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F8A1FC7CF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642AA149C64;
+	Fri, 14 Feb 2025 06:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513722; cv=none; b=jv0atKg2CRp0j1JXoxV5NGnENsdeAWXyeetjtT0TVGv4UXwxB6sgVcsyWQVs7DE+GOvquqW3/LQn2XF/c75kDZUQuN7TS0IOcmE+szzWNfNAtWqyyRRHs1Mnvtr8Bkz0bvyBz4LyEX6+rldRyDOmmHx1iSAs4oCZYbfTWTBZqbQ=
+	t=1739513753; cv=none; b=OzVOFvqNkjnnzwY62YrUCsnO8NhpyA6gMbiwFrjjUQLwOGitQug2AM9lGDza7YcE1pG9IhGsfar2GAZ5zWe5uCZyKyZZBQ/rIeCqMETTXvU/HjbasWt2ja7YDc+vhfsNt98pSff5NHFHnyOw26zSEMlULnX7VeYLwgYFI8UwKso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513722; c=relaxed/simple;
-	bh=1DonSn/LHoukADZsHlHNOctnxJ/2J8fqMCCdZt1/DsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9nJK8q4t4VIgtbNdVTzKBKKccWApbUhV1nm2NylmovYYPGuNlddz6HofcC7X5F903LQFsLlVmAJB3OlVhV6sh783v0YT/S3Yvyzpg5MuwQ/Rq4w1Pv1g/UT65bJoNondRVWUNkIfYNdv4uNo0evfoRzNdv/722OuQFwi5B92ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Myw/mRV1; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Feb 2025 11:44:57 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739513707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J07zWXS0SWtytEBV7PJUJH6kXT7LOJozPMw0GGqXxuY=;
-	b=Myw/mRV1/9tBAxTpCRw1CNE5o2QW6ZHsswwe0l+q5EE8rYMfKfAXl+lAVXUr9A1QEiwqFD
-	Y7FKB5zPVgSIIIXjEbG3z20BWRVBILDByRzqER35FX80g5j14ouvEmkzhWspgP3q/R/bFS
-	AjWToufiYbJ/eQgVWSlpGVrAFgCw0ys=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jai Luthra <jai.luthra@linux.dev>
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, 
-	r-donadkar@ti.com, u-kumar1@ti.com
-Subject: Re: [RFC PATCH 2/3] media: cadence: csi2rx: Enable csi2rx_err_irq
- interrupt and add support for VIDIOC_LOG_STATUS
-Message-ID: <s7xhbinc4m3le57f3y5je2ejmpxkgwrvukb7u3cjkg3zy4i63r@6fdctkuv5wrz>
-X-PGP-Key: http://jailuthra.in/files/public-key.asc
-References: <20250212131244.1397722-1-y-abhilashchandra@ti.com>
- <20250212131244.1397722-3-y-abhilashchandra@ti.com>
+	s=arc-20240116; t=1739513753; c=relaxed/simple;
+	bh=aM14EfTf7kxGF6E6MWp7m7oiNKQeF7djPzQHqGzU97I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=At6dsh/iNoBKXSD2ElnaYm01d1H0z6kBkxFIVfR3is4FvCekAWGskiSx4POGjwjy2fM68/OPwuU5NdjKiuwU4ALwi41EOlbwdtlan44CuDyTtXwF8NVD7vKB8eFu5SeBsbltnyS8SClgyiAe/onWQJRm15t+SXTaJ6SXArlw0Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MptpSou7; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f1e8efef5so877644f8f.1;
+        Thu, 13 Feb 2025 22:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739513749; x=1740118549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jhnYXc5eLU/qb2LmGA7DVYyAfoe6L2fU4LUv/RW7nLY=;
+        b=MptpSou7BpvLsUzPvkDuJEAqq/mf3iAPNjUXk0ACnGYsX50iOSxtQAxU8PgEkfqzYR
+         Wb4fI+N7rEPw/prtAdWjttGLc5o949nErteAWBUB35wGwu1oYfSmUA927uv0rhPqXQPf
+         VPc081l0jXLgviflhpt/G3005W7f5zi9j+RLRzGelT44Fq6Lng1C6GHaKPH3EGf0VC00
+         z6HW4IwZvREXXn2J99HEoSb66yQwqp8B/TtfK2QL306yYgdFXU05X9o/c941sNWN400U
+         Hcogy0aSNj/j8uYYkIr1rulFkkfnKt0+Xim1AxGJMSCfRU+Z2Ew31qdFbFDm9AFLMFyC
+         b2rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739513749; x=1740118549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhnYXc5eLU/qb2LmGA7DVYyAfoe6L2fU4LUv/RW7nLY=;
+        b=E3s/TQ00v0umQ2mVZEUmqw1d8P5kykYekXMtrMjPxL/a5DiA8GV2Dk5ycoMH6wImRc
+         4oAVT/ZrMlUHdDNFCDE67nBSi+ztOYNmKPIiDHk6vrQPRDkIIJ2TewTwh2bXTpWsHmM/
+         b3pbe7syEjnjfqhvrupR2gHQf5mHPQ+oVNuzZpXvHZHdmzMman700cwzhmO9+vUduLLD
+         9S8BP6v3155Y0OmGgMP0bjERdi70Iw43nSsSWcOwWZwTv/OQudULlRCEQeWjNC69kLhJ
+         62TAaiWZSVqyMzZ3kzLusH0O5519Ohv2FSaHewsy5ezOGF3Tzg2j0UuNrKbvcaehgNKZ
+         BAJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAeFXILJkO+xM4Bxc/j3pv7Sx9p6/RXsuAYzk8Q8JEajN4kH/iHLUw9m/II7ATOd6ouGkdD5tz1BtX@vger.kernel.org, AJvYcCW9dOmNvkrtfskaXuflkJ4BFh9u/WoWM8uaniovPFX/6ZdDucchkIS3Y4rmAAYlFm4CszRcGd5m635i@vger.kernel.org, AJvYcCWUgEdxq08xG6+8aDvneeYRLUJJwHrNqTnKf+2mMoU454Cmin55WJLbJ0AnZZb/zqBHFe8PgLvasd8fggML@vger.kernel.org, AJvYcCWaOn9rersQRJ7QO5+Zb9k+S2a/xfbA5lISD/2UDsD9ZDhrB67B80U3JF3fJtoqupnto15Ypf5QVlhlUA==@vger.kernel.org, AJvYcCXVQTs/MY2BdqJZ3QEvRQc1smfYCv0hVkWg/BjU/Q/sGeTH6mFjt1mzzFr62WR7sX2+DB4HeAl0jhlj5bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXAl/6RLI4oKcoZPn1r5sNe9pzYZQ5FXqLh9UToQATAbcn35Yj
+	U5HBLash4GNqQWsUsffAL7WKcjQvrjzXKuYU7NAWYrK2AOlj5RwoUv7V87Yn54CEOLrjZod+Apx
+	GL1oI0ev840iCWY3XFE00vFdjOyk=
+X-Gm-Gg: ASbGncvtsi+E7GrV85P8UumbjyjDRU/GIk8Y9F+Wj3613hm+37x+QqeADh5YRC+PCJK
+	xHgbZg9SrDMpQhgj2uDcGZLXO1MsXH5asivwvzv1kARzkdtTEdvYRCiPdday++VSukXIyAEpDBQ
+	==
+X-Google-Smtp-Source: AGHT+IEheasLNiOFDe5gQUVHdJ2tXdveZ64cTF1VIIUAvU9iciSBae2zDTq5NTHytPqUSQySTKC3ggW2wMA/FnoTyEQ=
+X-Received: by 2002:a5d:6484:0:b0:38d:a879:4778 with SMTP id
+ ffacd0b85a97d-38f24505651mr8245160f8f.33.1739513747960; Thu, 13 Feb 2025
+ 22:15:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yhmthg2swa7li7p5"
-Content-Disposition: inline
-In-Reply-To: <20250212131244.1397722-3-y-abhilashchandra@ti.com>
-X-Migadu-Flow: FLOW_OUT
-
-
---yhmthg2swa7li7p5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250212075845.11338-1-clamor95@gmail.com> <20250212075845.11338-2-clamor95@gmail.com>
+ <Z65k-fi78DnKVN1K@aspen.lan>
+In-Reply-To: <Z65k-fi78DnKVN1K@aspen.lan>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 14 Feb 2025 08:15:36 +0200
+X-Gm-Features: AWEUYZkYeN4e2_mTmoivB54FQVa-QU7otnFSUN4kc54MQBDIFepRTqtzY9BzDCE
+Message-ID: <CAPVz0n2p2OS=nhBY13huPEew0XjReH+LF+zxLMAXLWo0kU-jSA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: mfd: Document TI LM3533 MFD
+To: Daniel Thompson <daniel@riscstar.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, 
+	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 2/3] media: cadence: csi2rx: Enable csi2rx_err_irq
- interrupt and add support for VIDIOC_LOG_STATUS
-MIME-Version: 1.0
 
-Hi Abhilash,
+=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 23:32 Dani=
+el Thompson <daniel@riscstar.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Feb 12, 2025 at 09:58:41AM +0200, Svyatoslav Ryhel wrote:
+> > Add bindings for the LM3533 - a complete power source for
+> > backlight, keypad, and indicator LEDs in smartphone handsets.
+> > The high-voltage inductive boost converter provides the
+> > power for two series LED strings display backlight and keypad
+> > functions.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../devicetree/bindings/mfd/ti,lm3533.yaml    | 221 ++++++++++++++++++
+> >  include/dt-bindings/mfd/lm3533.h              |  19 ++
+> >  2 files changed, 240 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/ti,lm3533.yam=
+l
+> >  create mode 100644 include/dt-bindings/mfd/lm3533.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/ti,lm3533.yaml b/Doc=
+umentation/devicetree/bindings/mfd/ti,lm3533.yaml
+> > new file mode 100644
+> > index 000000000000..d0307e5894f8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/ti,lm3533.yaml
+> > @@ -0,0 +1,221 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/ti,lm3533.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TI LM3533 Complete Lighting Power Solution
+> > +
+> > +description: |
+> > +  The LM3533 is a complete power source for backlight,
+> > +  keypad, and indicator LEDs in smartphone handsets. The
+> > +  high-voltage inductive boost converter provides the
+> > +  power for two series LED strings display backlight and
+> > +  keypad functions.
+> > +  https://www.ti.com/product/LM3533
+> > +
+> > +maintainers:
+> > +  - Johan Hovold <jhovold@gmail.com>
+>
+> This looks like it has been copied from the lm3533 driver. Did Johan
+> agree to this?
+>
 
-On Wed, Feb 12, 2025 at 06:42:43PM +0530, Yemike Abhilash Chandra wrote:
-> Enable the csi2rx_err_irq interrupt to record any errors during streaming
-> and also add support for VIDIOC_LOG_STATUS ioctl. The VIDIOC_LOG_STATUS
-> ioctl can be invoked from user space to retrieve the device status,
-> including details about any errors.
->=20
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> ---
->  drivers/media/platform/cadence/cdns-csi2rx.c | 104 ++++++++++++++++++-
->  1 file changed, 103 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media=
-/platform/cadence/cdns-csi2rx.c
-> index 4d64df829e75..b3d76f0678fa 100644
-> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
-> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
-> @@ -57,6 +57,28 @@
->  #define CSI2RX_LANES_MAX	4
->  #define CSI2RX_STREAMS_MAX	4
-> =20
-> +#define CSI2RX_ERROR_IRQS_REG			0x28
-> +#define CSI2RX_ERROR_IRQS_MASK_REG		0x2C
-> +
-> +#define CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ	BIT(19)
-> +#define CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ	BIT(18)
-> +#define CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ	BIT(17)
-> +#define CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ	BIT(16)
-> +#define CSI2RX_FRONT_TRUNC_HDR_IRQ		BIT(12)
-> +#define CSI2RX_PROT_TRUNCATED_PACKET_IRQ	BIT(11)
-> +#define CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ		BIT(10)
-> +#define CSI2RX_SP_INVALID_RCVD_IRQ		BIT(9)
-> +#define CSI2RX_DATA_ID_IRQ			BIT(7)
-> +#define CSI2RX_HEADER_CORRECTED_ECC_IRQ	BIT(6)
-> +#define CSI2RX_HEADER_ECC_IRQ			BIT(5)
-> +#define CSI2RX_PAYLOAD_CRC_IRQ			BIT(4)
-> +
-> +#define CSI2RX_ECC_ERRORS		GENMASK(7, 4)
-> +#define CSI2RX_PACKET_ERRORS		GENMASK(12, 9)
-> +#define CSI2RX_STREAM_ERRORS		GENMASK(19, 16)
-> +#define CSI2RX_ERRORS			(CSI2RX_ECC_ERRORS | CSI2RX_PACKET_ERRORS | \
-> +					CSI2RX_STREAM_ERRORS)
-> +
->  enum csi2rx_pads {
->  	CSI2RX_PAD_SINK,
->  	CSI2RX_PAD_SOURCE_STREAM0,
-> @@ -71,6 +93,28 @@ struct csi2rx_fmt {
->  	u8				bpp;
->  };
-> =20
-> +struct csi2rx_event {
-> +	u32 mask;
-> +	const char *name;
-> +};
-> +
-> +static const struct csi2rx_event csi2rx_events[] =3D {
-> +	{ CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 3 FIFO dete=
-cted" },
-> +	{ CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 2 FIFO dete=
-cted" },
-> +	{ CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 1 FIFO dete=
-cted" },
-> +	{ CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 0 FIFO dete=
-cted" },
-> +	{ CSI2RX_FRONT_TRUNC_HDR_IRQ, "A truncated header [short or long] has b=
-een received" },
-> +	{ CSI2RX_PROT_TRUNCATED_PACKET_IRQ, "A truncated long packet has been r=
-eceived" },
-> +	{ CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ, "A truncated long packet has been rec=
-eived. No payload" },
-> +	{ CSI2RX_SP_INVALID_RCVD_IRQ, "A reserved or invalid short packet has b=
-een received" },
-> +	{ CSI2RX_DATA_ID_IRQ, "Data ID error in the header packet" },
-> +	{ CSI2RX_HEADER_CORRECTED_ECC_IRQ, "ECC error detected and corrected" },
-> +	{ CSI2RX_HEADER_ECC_IRQ, "Unrecoverable ECC error" },
-> +	{ CSI2RX_PAYLOAD_CRC_IRQ, "CRC error" },
-> +};
-> +
-> +#define CSI2RX_NUM_EVENTS		ARRAY_SIZE(csi2rx_events)
-> +
->  struct csi2rx_priv {
->  	struct device			*dev;
->  	unsigned int			count;
-> @@ -95,6 +139,7 @@ struct csi2rx_priv {
->  	u8				max_lanes;
->  	u8				max_streams;
->  	bool				has_internal_dphy;
-> +	u32				events[CSI2RX_NUM_EVENTS];
-> =20
->  	struct v4l2_subdev		subdev;
->  	struct v4l2_async_notifier	notifier;
-> @@ -124,6 +169,29 @@ static const struct csi2rx_fmt formats[] =3D {
->  	{ .code	=3D MEDIA_BUS_FMT_BGR888_1X24,  .bpp =3D 24, },
->  };
-> =20
-> +static void csi2rx_configure_err_irq_mask(void __iomem *base)
-> +{
-> +	writel(CSI2RX_ERRORS, base + CSI2RX_ERROR_IRQS_MASK_REG);
-> +}
-> +
-> +static irqreturn_t csi2rx_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct csi2rx_priv *csi2rx =3D dev_id;
-> +	int i;
-> +	u32 error_status;
-> +
-> +	error_status =3D readl(csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-> +
-> +	for (i =3D 0; i < CSI2RX_NUM_EVENTS; i++)
-> +		if (error_status & csi2rx_events[i].mask)
-> +			csi2rx->events[i]++;
-> +
-> +	writel(CSI2RX_ERRORS & error_status,
-> +	       csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static const struct csi2rx_fmt *csi2rx_get_fmt_by_code(u32 code)
->  {
->  	unsigned int i;
-> @@ -209,12 +277,26 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
->  	unsigned int i;
->  	unsigned long lanes_used =3D 0;
->  	u32 reg;
-> -	int ret;
-> +	int irq, ret;
-> =20
->  	ret =3D clk_prepare_enable(csi2rx->p_clk);
->  	if (ret)
->  		return ret;
-> =20
-> +	irq =3D platform_get_irq_byname_optional(to_platform_device(csi2rx->dev=
-), "error");
+Thank you for pointing this out, maintainers field should have been
+amended with my name. It seems that this slipped from me on
+submitting. I initially though that maintainers should contain driver
+author hence set Johan, but that is obviously not correct.
 
-Why is this interrupt acquired everytime somebody starts the stream, as=20
-opposed to once at probe-time?
-
-> +
-> +	if (irq < 0) {
-> +		dev_warn(csi2rx->dev, "Optional interrupt not defined, proceeding with=
-out it\n");
-
-Given this is an optional interrupt, and different SoC vendors may or may n=
-ot=20
-integerate it, I don't think bothering the end-user with a warning everytim=
-e=20
-is best. This could be dev_dbg.
-
-> +	} else {
-> +		csi2rx_configure_err_irq_mask(csi2rx->base);
-> +		ret =3D devm_request_irq(csi2rx->dev, irq, csi2rx_irq_handler, 0,
-> +					"csi2rx-irq", csi2rx);
-> +		if (ret) {
-> +			dev_err(csi2rx->dev, "Unable to request interrupt: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	reset_control_deassert(csi2rx->p_rst);
->  	csi2rx_reset(csi2rx);
-> =20
-> @@ -361,6 +443,21 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
->  	}
->  }
-> =20
-> +static int csi2rx_log_status(struct v4l2_subdev *sd)
-> +{
-> +	struct csi2rx_priv *csi2rx =3D v4l2_subdev_to_csi2rx(sd);
-> +	unsigned int i;
-> +
-> +	for (i =3D 0; i < CSI2RX_NUM_EVENTS; i++) {
-> +		if (csi2rx->events[i])
-> +			dev_info(csi2rx->dev, "%s events: %d\n",
-> +				 csi2rx_events[i].name,
-> +				 csi2rx->events[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
->  {
->  	struct csi2rx_priv *csi2rx =3D v4l2_subdev_to_csi2rx(subdev);
-> @@ -466,7 +563,12 @@ static const struct v4l2_subdev_video_ops csi2rx_vid=
-eo_ops =3D {
->  	.s_stream	=3D csi2rx_s_stream,
->  };
-> =20
-> +static const struct v4l2_subdev_core_ops csi2rx_core_ops =3D {
-> +	.log_status	=3D csi2rx_log_status,
-> +};
-> +
->  static const struct v4l2_subdev_ops csi2rx_subdev_ops =3D {
-> +	.core		=3D &csi2rx_core_ops,
->  	.video		=3D &csi2rx_video_ops,
->  	.pad		=3D &csi2rx_pad_ops,
->  };
-> --=20
-> 2.34.1
->=20
-
---yhmthg2swa7li7p5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmeu32EACgkQQ96R+SSa
-cUWt2g/+NR/m8BArB6eY7pFE5Uqp4hLYIl9bX4xKJXYY1pqsT3r9uwo7Q+OAZXKb
-/rjiCSxLrW5F7QDgobT2R4aVqwvznn0Cy4O2T2FwAlFON/RdgnU+OlbGG9+x63Pg
-p1tVPA4135HX/nvi1wozpL6oPW0+2k0CM0bDiA/Fia0sc6VJL3x1TpLAD0w+LirU
-8W+8Wb92lKHZ9mLfj6YiIJuRb5Pk0uz0tRhz5oRdG3orNkdO6wEYzxm9t8OeYmNM
-BKb8rSuaw+MU+Ml2eU8I64roZbyGUmTzwWrUwiiUS5vo52zaQSbknG5WTGojSATt
-FbMHITT2RnI3Mv2vQHJIX3cGydV6Ji9sIa50FOF4c7YDEzZXJaqJeREzE7G4jyVl
-7aGegNsO4Hxv+tAejCvTprnnNgA31/7drm2o2mCCjmH+EDgtqIDUky2mm9DSxPSc
-1csXGlTvv1IgFTnZ2dTaaa2NhHzDYQnZUK2TbMG8roeT3bVy1jPdERTnwtvcin6w
-nZ2P3oU1nRBgHUdqLVX4qG/+VFkh47LzH9Zn8+X2UwhnLoeuW1W7wBamsROXir+A
-OF2EOf3vXmWxKVZ+R14J1MNwiYRL8yaw3BM7nDZHrT5kJXR1rPBR5cI8+t8F5zW5
-MM/wBU9GzV4HRvIbPbPDqiUzcOitlZyJTj5duKqYB+to1sISrUk=
-=DuUi
------END PGP SIGNATURE-----
-
---yhmthg2swa7li7p5--
+>
+> Daniel.
 
