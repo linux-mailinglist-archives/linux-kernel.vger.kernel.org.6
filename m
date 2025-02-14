@@ -1,222 +1,106 @@
-Return-Path: <linux-kernel+bounces-514780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C03A35B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:24:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982ECA35B82
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:25:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAC623ADA33
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6FA16F120
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221312586C2;
-	Fri, 14 Feb 2025 10:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C07D2586D2;
+	Fri, 14 Feb 2025 10:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVAMCT6n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dR8dTbRQ"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928C12222B1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F901228375
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739528638; cv=none; b=ShafJ7TW04xODiYUYlutdia8p2P4gbVgepgazFEqI0GhP+MXEKWtOh/P6IwyEQ1gwMOHLYzeCpM7fqv5Lr/tUy8XCVx28q9Bp0jt0BwKYfR4qfW2WpC04nSLi5KItyt++FqY7jlqg+jcWAVn5ianLzeBFFqGRWtcAnqdY2XbXsA=
+	t=1739528734; cv=none; b=QWP16bbObmPMkY1r1NUaeQMwLsUNIcYU8x0fq/ewEOzlrvySA3Hs0n3Qy+uiwiqKNefithoCVeTSp5mn/Czydv4CMQc60YyFQrzvb8Nf9QaHbq1ohHf64CYY52Yrq5/DjBf6PabeTagzRJkfG1ZwNM33pN5JTFi/LD/XA4QPCq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739528638; c=relaxed/simple;
-	bh=kAva56f6qZp6XFVL66Z2i5vc02q098e1Up3Oy+esCHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RXGzY6WPit87pLcMZlGKu18jdfdFjXwQUnEWeXpgoN4T1OkhfwPAiJuuVCLjRL9EoC3GLlwyfSVkMvaHCZjPMwIHXcvngguO/GQwd9vGdmJSlXpDRAj2bRlZl5bbAEco9yofKeqm6MzWfJfJGD8lgcrNEQzfkSZB/5x85FMPx38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVAMCT6n; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739528637; x=1771064637;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=kAva56f6qZp6XFVL66Z2i5vc02q098e1Up3Oy+esCHk=;
-  b=UVAMCT6nATDoOsGK2beqkeJXX0aRjkNYDDClbR79ltQOciftofyodn+I
-   IESdlHbmhf8RQv3p9U0YA/FOLUCmDOcHyeYOOq5AUuAZX/qs2XiyuTAl8
-   DOQOgCRVuY2sCOPur5/L7wYqbRx83m/WDw8uVXr+0NYe65aBNE+94loKs
-   4KWIPgfIK+kW6oLb5Px/UGiogW3GCitgiSdZmxm0MpVk8Db3LnpmTBIqP
-   SeUrSRfZHvaBBhiIR6bs0swuQ74Z5GUY14Czm+bUALlVzadxwAQ7Q6iWe
-   Hh3bgnPEZnHTDuugOPxTWRTzG3x7lSmj7BLR4C2zY4zIU7V2nkrZ/vkY5
-   Q==;
-X-CSE-ConnectionGUID: LJweT9enRhW71xk2seQYkw==
-X-CSE-MsgGUID: 7TPGe974T+yF8S6F2UGQWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="65623313"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="65623313"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 02:23:56 -0800
-X-CSE-ConnectionGUID: DxjjD+SZR7+C2OEVtMLkkA==
-X-CSE-MsgGUID: hNkPyUETTCCP1WVlA37yBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117550043"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 14 Feb 2025 02:23:55 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tisrQ-0019OI-1k;
-	Fri, 14 Feb 2025 10:23:52 +0000
-Date: Fri, 14 Feb 2025 18:23:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jason Gerecke <jason.gerecke@wacom.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: drivers/input/touchscreen/wacom_w8001.c:637:29: warning: ' Pen'
- directive output may be truncated writing 4 bytes into a region of size
- between 1 and 64
-Message-ID: <202502141827.HXdTfrgb-lkp@intel.com>
+	s=arc-20240116; t=1739528734; c=relaxed/simple;
+	bh=k0ZA9ZOZTnv0fajLPHLG7bzzy2Bw8GSC45UzvaKQ3pM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W50b8OirVKlpdMi+qVmNI75iTFmtktZKXy1ny2ldE+8bU5LDsF35PhykJgeTKa3Ng6PUEIEZ+WVZQ/3wNEcAYgwFwgh219cQEBYPfaKQywuJrI51/WSQWITLMsOfpgP0LqFyxEEuiKyFNUDIsyiwK5tJLyFsUMiKHhJUC8N8ipU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dR8dTbRQ; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30762598511so20376241fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:25:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739528729; x=1740133529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k0ZA9ZOZTnv0fajLPHLG7bzzy2Bw8GSC45UzvaKQ3pM=;
+        b=dR8dTbRQt22xnk4ZypUGOO7iU+X/uwhuyRr4WIN28RMqoYqktRDq7M4uuMpz0WJXMO
+         L2vt2QOsdc3iVGTUndnZ3rTdbiz+jM949+7Cm/gbf3/b1hGrvg08CX45OsW3KIHB69Vv
+         N1csjluvm2OULfmEZJ1OHqsRgHGrLwD39n8oxniR2CmLoJQBLvmXbmLvLRiqdA0KR+kz
+         aukezJVu8kGNDCGMwLCkcvd24TgFztKI3SUWIdVOm1ihdBei/T2cHirCqvABa8+oDcN5
+         BRP5OkgTNi6weGUkUqaQFXhUFYj+9inOUIKIGTNn2uU5xzZ+oweKdA+rkJ9zXzyOdL2j
+         D9ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739528729; x=1740133529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k0ZA9ZOZTnv0fajLPHLG7bzzy2Bw8GSC45UzvaKQ3pM=;
+        b=m7xZN6QzPa2BMBSmSQc/xRPPmnzJYc4WZDGk+jZrcOb0oCgNNpaZRO3YWm9Wp07Au/
+         t67nkszJBTXRABD8kISdNJM1ZeS2YnsNErVJCC/o4yUI8NuLwbc79lBufRhkiHL7NbBE
+         MoTmO0tCPpe7GX0YSN4s2wZPNjRCVv10hFXFyEzeiMlM/x0Q5vTLvmUt/Ph01flZZ7/g
+         QoRYQVbm38XxfyLH/IL6u1RV76N8YSyn01X3jOICQuQ4ojFT+73oMhkiNTTj95VUGZWp
+         rwmj5ZdtGNRU9LMTe9vwb9sAwUp4h/23HyuG+AJus1wLPk22laxTKCFYHbJurfCQ/Vcr
+         C+CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHhuhARw7TggNRB8O3clFf6MiUH4tpB0nPQ3apediGvkdo8uR+06xnrX013hCkecJ4RdqQ9P8Gm3M6GLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgtAPFrSYOYvNc6ryoZHY39Ah1oTWs5DQ/OgrwZvrWTEhm5QPn
+	WmVQkVrB4WGE55y5cNhL9zMSWp/xGadP+Z3Ff0U7h2LP3L0OPll4UEJS0NWXul2Y/H2/hJCm4Rz
+	HETV8D7PNfcoK0MZwu0Oc6G2k+2sRJC8szJ7CSg==
+X-Gm-Gg: ASbGncvJvLUElzVCI/sKCDSy796iyRDNrE37fxzgKRMtEJ6owweeQMkf2aQE307f4qp
+	lKl1Ev55WpAzGgLlkJXp4YRIyFd6prXBpx47xV+tvBVt0kYYxmjZf9sSKFbz9dhVuxXahJ+u7
+X-Google-Smtp-Source: AGHT+IE9Hh8FY7yC6rWfR8h5HiUv5X+JqNPHfu9DuGImiZxAFDUtqBx67po7/8F/mivoIIRcv6W3Us9lZpgR3fWcZMk=
+X-Received: by 2002:a2e:a595:0:b0:308:f580:72a4 with SMTP id
+ 38308e7fff4ca-3090dcb712cmr21363841fa.1.1739528729288; Fri, 14 Feb 2025
+ 02:25:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250212100532.4317-1-hanchunchao@inspur.com>
+In-Reply-To: <20250212100532.4317-1-hanchunchao@inspur.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Feb 2025 11:25:15 +0100
+X-Gm-Features: AWEUYZm3QlH_GBZnkUEfNjfulhzgaPXWxFksRd157QzemkZUnJaOAOo2a3cEisA
+Message-ID: <CACRpkdbiNg66sToZ2X+G7J_qJSTpkRj1BgWbYX1_YmbGKdCmGQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: nuvoton: npcm8xx: Add NULL check in npcm8xx_gpio_fw
+To: Charles Han <hanchunchao@inspur.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+On Wed, Feb 12, 2025 at 11:05=E2=80=AFAM Charles Han <hanchunchao@inspur.co=
+m> wrote:
 
-FYI, the error/warning still remains.
+> devm_kasprintf() calls can return null pointers on failure.
+> But the return values were not checked in npcm8xx_gpio_fw().
+> Add NULL check in npcm8xx_gpio_fw(), to handle kernel NULL
+> pointer dereference error.
+>
+> Fixes: acf4884a5717 ("pinctrl: nuvoton: add NPCM8XX pinctrl and GPIO driv=
+er")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   128c8f96eb8638c060cd3532dc394d046ce64fe1
-commit: 6c7cc1a29d1e679be4a98b01141f1ba491e5775e Input: wacom_w8001 - simplify device name generation
-date:   9 months ago
-config: sparc-randconfig-002-20241212 (https://download.01.org/0day-ci/archive/20250214/202502141827.HXdTfrgb-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502141827.HXdTfrgb-lkp@intel.com/reproduce)
+Patch applied.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502141827.HXdTfrgb-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/input/touchscreen/wacom_w8001.c: In function 'w8001_connect':
->> drivers/input/touchscreen/wacom_w8001.c:637:29: warning: ' Pen' directive output may be truncated writing 4 bytes into a region of size between 1 and 64 [-Wformat-truncation=]
-     637 |                          "%s Pen", basename);
-         |                             ^~~~
-   drivers/input/touchscreen/wacom_w8001.c:636:17: note: 'snprintf' output between 5 and 68 bytes into a destination of size 64
-     636 |                 snprintf(w8001->pen_name, sizeof(w8001->pen_name),
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     637 |                          "%s Pen", basename);
-         |                          ~~~~~~~~~~~~~~~~~~~
->> drivers/input/touchscreen/wacom_w8001.c:653:29: warning: ' Finger' directive output may be truncated writing 7 bytes into a region of size between 1 and 64 [-Wformat-truncation=]
-     653 |                          "%s Finger", basename);
-         |                             ^~~~~~~
-   drivers/input/touchscreen/wacom_w8001.c:652:17: note: 'snprintf' output between 8 and 71 bytes into a destination of size 64
-     652 |                 snprintf(w8001->pen_name, sizeof(w8001->pen_name),
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     653 |                          "%s Finger", basename);
-         |                          ~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +637 drivers/input/touchscreen/wacom_w8001.c
-
-   586	
-   587	/*
-   588	 * w8001_connect() is the routine that is called when someone adds a
-   589	 * new serio device that supports the w8001 protocol and registers it as
-   590	 * an input device.
-   591	 */
-   592	
-   593	static int w8001_connect(struct serio *serio, struct serio_driver *drv)
-   594	{
-   595		struct w8001 *w8001;
-   596		struct input_dev *input_dev_pen;
-   597		struct input_dev *input_dev_touch;
-   598		char basename[64] = "Wacom Serial";
-   599		int err, err_pen, err_touch;
-   600	
-   601		w8001 = kzalloc(sizeof(struct w8001), GFP_KERNEL);
-   602		input_dev_pen = input_allocate_device();
-   603		input_dev_touch = input_allocate_device();
-   604		if (!w8001 || !input_dev_pen || !input_dev_touch) {
-   605			err = -ENOMEM;
-   606			goto fail1;
-   607		}
-   608	
-   609		w8001->serio = serio;
-   610		w8001->pen_dev = input_dev_pen;
-   611		w8001->touch_dev = input_dev_touch;
-   612		mutex_init(&w8001->mutex);
-   613		init_completion(&w8001->cmd_done);
-   614		snprintf(w8001->phys, sizeof(w8001->phys), "%s/input0", serio->phys);
-   615	
-   616		serio_set_drvdata(serio, w8001);
-   617		err = serio_open(serio, drv);
-   618		if (err)
-   619			goto fail2;
-   620	
-   621		err = w8001_detect(w8001);
-   622		if (err)
-   623			goto fail3;
-   624	
-   625		/* For backwards-compatibility we compose the basename based on
-   626		 * capabilities and then just append the tool type
-   627		 */
-   628		err_pen = w8001_setup_pen(w8001, basename, sizeof(basename));
-   629		err_touch = w8001_setup_touch(w8001, basename, sizeof(basename));
-   630		if (err_pen && err_touch) {
-   631			err = -ENXIO;
-   632			goto fail3;
-   633		}
-   634	
-   635		if (!err_pen) {
-   636			snprintf(w8001->pen_name, sizeof(w8001->pen_name),
- > 637				 "%s Pen", basename);
-   638			input_dev_pen->name = w8001->pen_name;
-   639	
-   640			w8001_set_devdata(input_dev_pen, w8001, serio);
-   641	
-   642			err = input_register_device(w8001->pen_dev);
-   643			if (err)
-   644				goto fail3;
-   645		} else {
-   646			input_free_device(input_dev_pen);
-   647			input_dev_pen = NULL;
-   648			w8001->pen_dev = NULL;
-   649		}
-   650	
-   651		if (!err_touch) {
-   652			snprintf(w8001->pen_name, sizeof(w8001->pen_name),
- > 653				 "%s Finger", basename);
-   654			input_dev_touch->name = w8001->touch_name;
-   655	
-   656			w8001_set_devdata(input_dev_touch, w8001, serio);
-   657	
-   658			err = input_register_device(w8001->touch_dev);
-   659			if (err)
-   660				goto fail4;
-   661		} else {
-   662			input_free_device(input_dev_touch);
-   663			input_dev_touch = NULL;
-   664			w8001->touch_dev = NULL;
-   665		}
-   666	
-   667		return 0;
-   668	
-   669	fail4:
-   670		if (w8001->pen_dev)
-   671			input_unregister_device(w8001->pen_dev);
-   672	fail3:
-   673		serio_close(serio);
-   674	fail2:
-   675		serio_set_drvdata(serio, NULL);
-   676	fail1:
-   677		input_free_device(input_dev_pen);
-   678		input_free_device(input_dev_touch);
-   679		kfree(w8001);
-   680		return err;
-   681	}
-   682	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yours,
+Linus Walleij
 
