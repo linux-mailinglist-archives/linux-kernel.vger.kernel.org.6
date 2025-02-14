@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-514686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4AEA35A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7945BA35A53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F1B18917EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A23F3AF575
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8EF23A994;
-	Fri, 14 Feb 2025 09:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FDF24BBF6;
+	Fri, 14 Feb 2025 09:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E3OmgN/Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tp+9/aRN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC3F245AFB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A590241660
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739525195; cv=none; b=UDFNVLlXEedqCoXWrcuuV/B6rKCxuU/i2utLWPj7+wG9uuQLJLBsSd0YpBlcB1kAlflE7ny8ALmdPqu/Og84p8d3FcjtZ1ISlGmOX4NBDuIBuVkdyGtPUIlnSspJVhQYbGk7kkJGvpkY+2qSENpEDnvVoPJrNMKhccWtQlFm9QE=
+	t=1739525205; cv=none; b=T6ypsO5h+zU9jYCTRhIgQ0EvZI5dfaJVeFhkEMI0mrQCGe8mwQ+TVPxUJZgRntvKHSnzumJmOXZbk6U9GYjoP6nwcqgI/hyu5bvfrSbG+Az8OQyaX6lHeIoFFrbSUaz+IYJUfcwOW+QLHrqK2/OvUGIUC/HS5j/oGAMMIvo32rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739525195; c=relaxed/simple;
-	bh=4P7NHYYSKtgFEeSL1UlVi4Y4nrP7Wh1c8q5HhmAfHcc=;
+	s=arc-20240116; t=1739525205; c=relaxed/simple;
+	bh=x5kMJ4mU0WKHiZVsxuXd5IALFSW1mdQ4Wq66TNlusUQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kCnw/nEvs8BEeWWahCzzQzXjTLoLm9dOPoRcD9Dskp0uttRjtCZVIcOXVZVoVyQ66I0mAg+soQjj8OjDWS1+FRIITkvIiqtyGxBjqWvtYLDNcGyGcs0pSx6IlPEY0lpx0DYWYkoXizc6JHGYrrNGmlAcNq+w71AVy7KO4NLU8k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E3OmgN/Q; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=mQMw4loG42vYQ3BOLaBqIW1fNHAyz+GReQH5YVpLyvX2ApHcsw9fmfzoFAwXTexsBkQNPXOpi92xj7v56/JQZWhyqz7sCW4xoabZg+ozN2hgMN9hpK6o45UCcfNyHRRnRYAQ7LI2oDBRGesAATPfwhR78NdYiZHjhXlN40hjKOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tp+9/aRN; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739525192;
+	s=mimecast20190719; t=1739525203;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=A/iOHN4fbDXRvVOvU4QvhNnYIvEUngK4UBIFBCG6hns=;
-	b=E3OmgN/QeZJdTevjvLLi5u8/Ovpe9r/b92DDOSEEHxn3IMnCLLqusEpCsJ7iienQ92PFRH
-	RYFGDj6mXfwUt0uxM7ZhAHV9Jb6JJ58H+diskZl+dq+RmrEAGq/XZwn5B1fLU4QvxMCCO+
-	UJoOPlP0jpKHQ038IJO0vhc0eVbmVeM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=JK04INHG5UyOm3qCRe/HTI+C1zqotKR2ndPyjDYxCQQ=;
+	b=Tp+9/aRNf0xvtdcl5CSwIc/2z2sMj2VJfSQhqFC8lMysHXXPzaMoTmvyV5Md0MT4vhIdzl
+	6zroNV4bIAKNe4oD7nJJFT81LhVtVskrgbELBzsfbw2bm/ZZAM9pG4ZAM3CishVI/lD/WA
+	OZf+XcxFteQqYqkyszGYFMD0Ay6hNBE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-532-iF9t9NmBNNmvTXwZtJqDxg-1; Fri,
- 14 Feb 2025 04:26:28 -0500
-X-MC-Unique: iF9t9NmBNNmvTXwZtJqDxg-1
-X-Mimecast-MFC-AGG-ID: iF9t9NmBNNmvTXwZtJqDxg_1739525187
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-_QOfwnhAOJ2q1aR2jhJgAg-1; Fri,
+ 14 Feb 2025 04:26:34 -0500
+X-MC-Unique: _QOfwnhAOJ2q1aR2jhJgAg-1
+X-Mimecast-MFC-AGG-ID: _QOfwnhAOJ2q1aR2jhJgAg_1739525191
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A7D61975AFC;
-	Fri, 14 Feb 2025 09:26:26 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E405918EB2CB;
+	Fri, 14 Feb 2025 09:26:30 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.45.225.79])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6BB12180087C;
-	Fri, 14 Feb 2025 09:26:22 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A13B180035E;
+	Fri, 14 Feb 2025 09:26:26 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Jani Nikula <jani.nikula@linux.intel.com>,
 	Rodrigo Vivi <rodrigo.vivi@intel.com>,
@@ -68,9 +68,9 @@ To: Jani Nikula <jani.nikula@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
 Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v5 1/8] drm/i915/fbdev: Add intel_fbdev_get_map()
-Date: Fri, 14 Feb 2025 10:21:36 +0100
-Message-ID: <20250214092608.2555218-2-jfalempe@redhat.com>
+Subject: [PATCH v5 2/8] drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+Date: Fri, 14 Feb 2025 10:21:37 +0100
+Message-ID: <20250214092608.2555218-3-jfalempe@redhat.com>
 In-Reply-To: <20250214092608.2555218-1-jfalempe@redhat.com>
 References: <20250214092608.2555218-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -82,133 +82,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The vaddr of the fbdev framebuffer is private to the struct
-intel_fbdev, so this function is needed to access it for drm_panic.
-Also the struct i915_vma is different between i915 and xe, so it
-requires a few functions to access fbdev->vma->iomap.
+drm_panic draws in linear framebuffer, so it's easier to re-use the
+current framebuffer, and disable tiling in the panic handler, to show
+the panic screen.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
+ drivers/gpu/drm/i915/display/i9xx_plane.c     | 23 +++++++++++++++++++
+ .../drm/i915/display/intel_display_types.h    |  2 ++
+ 2 files changed, 25 insertions(+)
 
-v2:
- * Add intel_fb_get_vaddr() and i915_vma_get_iomap() to build with Xe driver.
+diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
+index aef8d8b7ea85f..d5538adbb3624 100644
+--- a/drivers/gpu/drm/i915/display/i9xx_plane.c
++++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
+@@ -866,6 +866,27 @@ static const struct drm_plane_funcs i8xx_plane_funcs = {
+ 	.format_mod_supported = i8xx_plane_format_mod_supported,
+ };
  
-v4:
- * rename to get_map(), and return the struct iosys_map mapping.
- * implement the Xe variant.
-
- drivers/gpu/drm/i915/display/intel_fb_pin.c | 5 +++++
- drivers/gpu/drm/i915/display/intel_fb_pin.h | 2 ++
- drivers/gpu/drm/i915/display/intel_fbdev.c  | 5 +++++
- drivers/gpu/drm/i915/display/intel_fbdev.h  | 6 +++++-
- drivers/gpu/drm/i915/i915_vma.h             | 5 +++++
- drivers/gpu/drm/xe/display/xe_fb_pin.c      | 5 +++++
- 6 files changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.c b/drivers/gpu/drm/i915/display/intel_fb_pin.c
-index 204e7e3e48cac..91feb18bbb822 100644
---- a/drivers/gpu/drm/i915/display/intel_fb_pin.c
-+++ b/drivers/gpu/drm/i915/display/intel_fb_pin.c
-@@ -330,3 +330,8 @@ void intel_plane_unpin_fb(struct intel_plane_state *old_plane_state)
- 			intel_dpt_unpin_from_ggtt(fb->dpt_vm);
++static void i9xx_disable_tiling(struct intel_plane *plane)
++{
++	struct intel_display *display = to_intel_display(plane);
++	enum i9xx_plane_id i9xx_plane = plane->i9xx_plane;
++	u32 dspcntr;
++	u32 reg;
++
++	dspcntr = intel_de_read_fw(display, DSPCNTR(display, i9xx_plane));
++	dspcntr &= ~DISP_TILED;
++	intel_de_write_fw(display, DSPCNTR(display, i9xx_plane), dspcntr);
++
++	if (DISPLAY_VER(display) >= 4) {
++		reg = intel_de_read_fw(display, DSPSURF(display, i9xx_plane));
++		intel_de_write_fw(display, DSPSURF(display, i9xx_plane), reg);
++
++	} else {
++		reg = intel_de_read_fw(display, DSPADDR(display, i9xx_plane));
++		intel_de_write_fw(display, DSPADDR(display, i9xx_plane), reg);
++	}
++}
++
+ struct intel_plane *
+ intel_primary_plane_create(struct intel_display *display, enum pipe pipe)
+ {
+@@ -1001,6 +1022,8 @@ intel_primary_plane_create(struct intel_display *display, enum pipe pipe)
+ 		}
  	}
- }
+ 
++	plane->disable_tiling = i9xx_disable_tiling;
 +
-+void intel_fb_get_map(struct i915_vma *vma, struct iosys_map *map)
-+{
-+	iosys_map_set_vaddr_iomem(map, i915_vma_get_iomap(vma));
-+}
-diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.h b/drivers/gpu/drm/i915/display/intel_fb_pin.h
-index 01770dbba2e08..81ab79da1af74 100644
---- a/drivers/gpu/drm/i915/display/intel_fb_pin.h
-+++ b/drivers/gpu/drm/i915/display/intel_fb_pin.h
-@@ -12,6 +12,7 @@ struct drm_framebuffer;
- struct i915_vma;
- struct intel_plane_state;
- struct i915_gtt_view;
-+struct iosys_map;
+ 	modifiers = intel_fb_plane_get_modifiers(display, INTEL_PLANE_CAP_TILING_X);
  
- struct i915_vma *
- intel_fb_pin_to_ggtt(const struct drm_framebuffer *fb,
-@@ -27,5 +28,6 @@ void intel_fb_unpin_vma(struct i915_vma *vma, unsigned long flags);
- int intel_plane_pin_fb(struct intel_plane_state *new_plane_state,
- 		       const struct intel_plane_state *old_plane_state);
- void intel_plane_unpin_fb(struct intel_plane_state *old_plane_state);
-+void intel_fb_get_map(struct i915_vma *vma, struct iosys_map *map);
+ 	if (DISPLAY_VER(display) >= 5 || display->platform.g4x)
+diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drivers/gpu/drm/i915/display/intel_display_types.h
+index 6a82c6ade549b..38e2108b01ff6 100644
+--- a/drivers/gpu/drm/i915/display/intel_display_types.h
++++ b/drivers/gpu/drm/i915/display/intel_display_types.h
+@@ -1507,6 +1507,8 @@ struct intel_plane {
+ 			   bool async_flip);
+ 	void (*enable_flip_done)(struct intel_plane *plane);
+ 	void (*disable_flip_done)(struct intel_plane *plane);
++	/* For drm_panic */
++	void (*disable_tiling)(struct intel_plane *plane);
+ };
  
- #endif
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 301b5fd301a23..50c3919703cd9 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -699,3 +699,8 @@ struct i915_vma *intel_fbdev_vma_pointer(struct intel_fbdev *fbdev)
- {
- 	return fbdev ? fbdev->vma : NULL;
- }
-+
-+void intel_fbdev_get_map(struct intel_fbdev *fbdev, struct iosys_map *map)
-+{
-+	intel_fb_get_map(fbdev->vma, map);
-+}
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.h b/drivers/gpu/drm/i915/display/intel_fbdev.h
-index 24a3434558cb6..f6ccd0a7a6836 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.h
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.h
-@@ -12,13 +12,14 @@ struct drm_device;
- struct drm_i915_private;
- struct intel_fbdev;
- struct intel_framebuffer;
-+struct iosys_map;
- 
- #ifdef CONFIG_DRM_FBDEV_EMULATION
- void intel_fbdev_setup(struct drm_i915_private *dev_priv);
- void intel_fbdev_set_suspend(struct drm_device *dev, int state, bool synchronous);
- struct intel_framebuffer *intel_fbdev_framebuffer(struct intel_fbdev *fbdev);
- struct i915_vma *intel_fbdev_vma_pointer(struct intel_fbdev *fbdev);
--
-+void intel_fbdev_get_map(struct intel_fbdev *fbdev, struct iosys_map *map);
- #else
- static inline void intel_fbdev_setup(struct drm_i915_private *dev_priv)
- {
-@@ -38,6 +39,9 @@ static inline struct i915_vma *intel_fbdev_vma_pointer(struct intel_fbdev *fbdev
- 	return NULL;
- }
- 
-+static inline void intel_fbdev_get_map(struct intel_fbdev *fbdev, struct iosys_map *map)
-+{
-+}
- #endif
- 
- #endif /* __INTEL_FBDEV_H__ */
-diff --git a/drivers/gpu/drm/i915/i915_vma.h b/drivers/gpu/drm/i915/i915_vma.h
-index 6a6be8048aa83..4ae610927fa77 100644
---- a/drivers/gpu/drm/i915/i915_vma.h
-+++ b/drivers/gpu/drm/i915/i915_vma.h
-@@ -353,6 +353,11 @@ static inline bool i915_node_color_differs(const struct drm_mm_node *node,
- 	return drm_mm_node_allocated(node) && node->color != color;
- }
- 
-+static inline void __iomem *i915_vma_get_iomap(struct i915_vma *vma)
-+{
-+	return READ_ONCE(vma->iomap);
-+}
-+
- /**
-  * i915_vma_pin_iomap - calls ioremap_wc to map the GGTT VMA via the aperture
-  * @vma: VMA to iomap
-diff --git a/drivers/gpu/drm/xe/display/xe_fb_pin.c b/drivers/gpu/drm/xe/display/xe_fb_pin.c
-index 11a6b996d739b..6f5ace065da01 100644
---- a/drivers/gpu/drm/xe/display/xe_fb_pin.c
-+++ b/drivers/gpu/drm/xe/display/xe_fb_pin.c
-@@ -462,3 +462,8 @@ u64 intel_dpt_offset(struct i915_vma *dpt_vma)
- {
- 	return 0;
- }
-+
-+void intel_fb_get_map(struct i915_vma *vma, struct iosys_map *map)
-+{
-+	*map = vma->bo->vmap;
-+}
+ #define to_intel_atomic_state(x) container_of(x, struct intel_atomic_state, base)
 -- 
 2.47.1
 
