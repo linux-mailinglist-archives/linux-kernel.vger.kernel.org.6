@@ -1,195 +1,177 @@
-Return-Path: <linux-kernel+bounces-514760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB28A35B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:07:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FADA35B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167C43A406E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C571892D2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996C256C67;
-	Fri, 14 Feb 2025 10:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFC32586D2;
+	Fri, 14 Feb 2025 10:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VxzMaDyd"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JwS8nXJA"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17D722CBDC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9BE2505C2;
+	Fri, 14 Feb 2025 10:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527669; cv=none; b=jyZG8Xb56/nTHxWPhvtn0zahtIiPsafgsl8KGe5RQLXLobDSaWSshe5A9S3028xZ/Ti1zO3IfoFxFd7HyoNf2KWK+K7VlsjTE1wF13r9byhRPeY8HY600TdLLWt9W9sNsDq5JwsESip4MUBhgLRkhkrxdHV4asgRsT0M2AOk+7s=
+	t=1739527699; cv=none; b=AMTbZtyi7XCN1iRvFvJzxSOPGdphwKYfzFh8SVHyiimNadfuHl2ffqA1eIgQaGCm5CqRBW8VrX5QIl4g9fA+FTNvxE+aAFEH4Yy8oEmzeP+B6lUFAONI/HYvsPnCRx2QLY7yRGn1iF4lbNvgQLNA8FW8ITfeazMBa/j6zLZAZNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527669; c=relaxed/simple;
-	bh=pzZaUXAf0bDBlXLKU1mlFS2safOQaXzmF8fJ3GKjIkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVkIcXXAvN6E3gFCUBqsy6EAcGmXfrZvX2KZDzXEK5uEc+S/sjtVvbF7nF2LVgvODEkl83lnEVR2hyvaey2mxmr6Nq9Fw8EW8tRAYrIYvDeidSSNipEpwC3Xh7ptN21r0Dh13scv0VZflFPW4PYNCTNlL7m4BTKs+jTNJNtYT/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VxzMaDyd; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2b199bb8af9so1818044fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:07:47 -0800 (PST)
+	s=arc-20240116; t=1739527699; c=relaxed/simple;
+	bh=Jogrd7O7L0fZyAc7FlJcz8HqG9ZjCfH+uLAxpQ2sT9U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aObDIdq7kCVzPQtbNhDiuDMEa38Eqw8HPTgMJH3fAOCrguk3V1cZj0ZsdnzmCx47Uontp0OYzkubEiJMe0nrNOKCP0zu8fyN8p1iYG4LDtQnlhnUwbBN1onedZNTjOkvgURYlFZACmEwQbCN341yLgX4wED+JbPbNVuKOjdgGAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JwS8nXJA; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so525530a12.0;
+        Fri, 14 Feb 2025 02:08:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739527667; x=1740132467; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sn3pvbBqfTOyOoOU/Jw94BfwIPh6Cc8Y6dRoDktCRzw=;
-        b=VxzMaDydNCUeZQYAtqSbuGxnsJogD2DtHwBMELgPt11jAZq8OAHPG5nyHwGT0DmyV+
-         VQwUH30svjUAVexsh2CDwQSSOau/52iLMRav4U1hOZw+Y+mQuzFno5O54rfW3HZjoxGY
-         nxDQ3E0LFJaYFts3oRzw7lmW9EivU1opCw+MMeWcP1c90wF4pXFOVc2bXvn2TZSBqlBf
-         rFJ0HviGFasoC7Apnsni0xi09Ta59pO3K0dpGz543XuCEEp2i3mbBFm91g1S5Yenn8ex
-         SgQekh4q0Xi8WVaBZO0+bIAeQYEK+VusQnQRly5FK/unoaR3gpb5tJbFFZMRzn9xAyhB
-         TTbg==
+        d=gmail.com; s=20230601; t=1739527696; x=1740132496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PK881UT06YXsyKuTqU0MnqGvntUnhpOAf0QXivCUVQA=;
+        b=JwS8nXJAylYFB6CYGdNrk9l+KL+k6jl1LvFb3DGhHNjlnrp1ZjkRrPpkYHooeGkk6H
+         veYqjYAurbg2SNw9Cyj8u1lnZUNQ1h5Qor4H6z0sQ2raclA3D/hvba4X1Nn2lp/Q5LlK
+         EjXHSQVBAnbymOpTAqyDTlnxIBQCAA6NVOUweCjtCeS3mOkf+Mod7YVr+c53Ka1EVfpj
+         BgvK64a2rLTj2naopA/xokgvilna+xIXWrDBk6PJYNSP7n4r2zlYNWr5q8wQDcoavRWQ
+         mlbeMSeFtUTxT/epP52thKvgGVNehOp/2mkX/kpKhZRLhTgSvqxVzk65ectNJ4IQYxVs
+         lPLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739527667; x=1740132467;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sn3pvbBqfTOyOoOU/Jw94BfwIPh6Cc8Y6dRoDktCRzw=;
-        b=YRSpljiIs78D9OFjLS9RzoqMVcixbIlE9/40HnEMicH08JKkChB7Mq7toppS9GHDOK
-         Jj6pYiEbIWWd9SeE+knzKzEfJKLPVwwZoyJlOmBjXo+dkBlDwLz8h8KDhSVD3ItfXHax
-         TI7o7bYQcNzHWaW4mjiSaChWTB7TPR+HThj4lfwHGt0NBGEkMkKuQV9kDE9fD8Qhl1st
-         YcX5Jj7xmtlATW0nGb2ELE0qosEJzSJDeUo9KUaKnj7Dl1ymCwXFL+/iTi+h7TFNodb9
-         2qmaIuE7mjBQG0jXx6A+/HweW7xQ4LYreZVKcImCUTd9L21sPtR9swIATNMCAblFUdgA
-         +AWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPxJ7b1wfW3IHu0GZYSVuM1qdWmtAwBfqzawwcYBagnbaSQrN2c+TVKHgzPvuBqlbxeBxwVvJpPWmOl7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnuL9yZX/TpoEWEo2ZeviA2Jq0QO8bkewEP7lCk/EH0Zisz8dF
-	E2WYz3pPS2k9rY5sSp6ROBNyzGOUX3IuHqWEk5Z8gVuFam6UvImfTL5mINItWFup84gh5A8hvKN
-	Zam/ihNXewdzDfpzeiMUzmgsstZwFymMjfHtTfA==
-X-Gm-Gg: ASbGncs460OD94LNbIw0pxwov7NmOv3WTdi+cVek3q7SbZvxT8zP2AZm5lI58Niy6SX
-	/d7+KaoocMkK9UfXJBVyQoN48WCz43MmECljpUnmls7/TUo+MMx1Ufo0/KKntn39XMuGsvOT5DQ
-	==
-X-Google-Smtp-Source: AGHT+IEmoLNj+r+ZI1bJGO2H/c+/OPghMcihwjxAvNbcnoyp3QyJqGjGScO1azD/YZ9Oqyybj/A6hKXzadalRsb9RgA=
-X-Received: by 2002:a05:6870:ac94:b0:29e:1962:7a23 with SMTP id
- 586e51a60fabf-2b8fb13c9d8mr3994694fac.4.1739527666842; Fri, 14 Feb 2025
- 02:07:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739527696; x=1740132496;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PK881UT06YXsyKuTqU0MnqGvntUnhpOAf0QXivCUVQA=;
+        b=k6qO9ovJYrPnTePzF5uqtsisvIBjBSj+uFOMzjeXpxhHoT7MDBxh5/OWa/kDKqV/h5
+         4yuRACqt0wrpWjWbJFKlYWslaMjx3rZbY42y6I9Wk+D+DSVmRxOr9IxcwpVMMy59TV9j
+         hpvaoh2OaLM+pDAuaUSgD3dJTQICVsG7XMHxNuJlyOUBEvCuJ5RB8tUoQ8rVmUIo4OPz
+         c6s9QTl+xPAgip/JoMSTzy0iRsX0Q/V0yqX1hfnKobWWb9Fyeio38oIvBkP+bHNMvK3K
+         8P2kjT7bPwhuNDeDc6jFhmfHCuXxUnRRCGGQxN9zXV/WvUX6vBtyT2ZrDct0zOU+XL1Y
+         hmRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ObGWxTq3O6Q+hqlQ/KmUbFa6eyJFzLnvsrNnGyA9+m1lxznePc6sbObmaMlZ1RTDSXKUgodqkzBjxThMK+tm9jh7@vger.kernel.org, AJvYcCWVmG/Eqz+0KyEgCqH0PnCi+uHmg+MXFN5tRByZqVjgfImYEgFxGWnkvlCINfzA6FlZL3k5XhDL1wcFdgs=@vger.kernel.org, AJvYcCWnSSnUNbJj4rzrunOzy28ptVtQdy6o1Wjb0ufCaW0NfBbNYBJX2Sz5w2pdXAhGxNqhBK66VET6hgnN6+MesQ46@vger.kernel.org, AJvYcCWvPkUvlh+9k6IDMXoI2jUMKF5RjVlJCWvKwM9nyg33oI2iY13CLgMwukv5XsF484W2XZk=@vger.kernel.org, AJvYcCX4Rs9h/tj+nxYAhRliR8YQLSBN4zjFAG/9VRyxSOcry5PhDKcku5fo9wGmGFTlQsA62tDduUB6NzE8nw5QwuEY3A==@vger.kernel.org, AJvYcCXH1aMSiGO0gzSKKpFqx5hy571KmA7mvHpK9Zo3/HMI5vJR+SCuzy6zQy5pnS5dpvr96Vo7n/KBL4I=@vger.kernel.org, AJvYcCXyREquk7YhI8rtD5ORCdlOYd0P/YHmVfEbpqKbkVuBQHJGlcIfz28IADOE1/Kb2Ksb2t77FUCAjex1HIvu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKn/DWsz9nGJ49EMr4qjGzAvusowzPO9Wo3LxG7JucMndGg/kW
+	Cr+69FXxSdoZzNbVrv8S2PBGntSIaigPqedwtMh37c3BSpX2InbQ
+X-Gm-Gg: ASbGnctjLX8oQ9BRgk+soUDkzQula6M/uGbOmsAZZFj9OWVmFoR8IPKk18/nL0VOFBs
+	W0tb8nufufyOADI8s2b6dmTuIEFuhIvrRbkBqn1kppmYxoz/ommmYaIrnZnR/mjtIVP/Uv/Ia52
+	w4qrtGyM1yjKbJQTy5HX965e+3IehI8DELwsX2FVL98JD/Hwj3yurO6ufScoub9j/SkKaCbMXKL
+	Vp7Lo+SjNWfNc2pgKmBwZvPCKjU9ynBFShNC1SWjySl6311FPHjO6Df5Qn/RJrQ+JGyGaEdKmdh
+	ZA==
+X-Google-Smtp-Source: AGHT+IHfUA9MbFKK0cGZxcq1fnHrJJMJoWr8y/oBmtSB3GGdubTXz3Fdqd2b5Ipl+F4XZpRsok2xqA==
+X-Received: by 2002:a05:6402:4616:b0:5dc:d8e6:62a7 with SMTP id 4fb4d7f45d1cf-5deadd84b7bmr9556320a12.14.1739527695955;
+        Fri, 14 Feb 2025 02:08:15 -0800 (PST)
+Received: from krava ([173.38.220.59])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c43a0sm2672253a12.28.2025.02.14.02.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 02:08:14 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 14 Feb 2025 11:08:10 +0100
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Quentin Monnet <qmo@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] tools: Unify top-level quiet infrastructure
+Message-ID: <Z68WCtRqdrgqC5iN@krava>
+References: <20250213-quiet_tools-v3-0-07de4482a581@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
- <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
- <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
- <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
- <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com> <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
-In-Reply-To: <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Fri, 14 Feb 2025 11:07:34 +0100
-X-Gm-Features: AWEUYZloh0UdTJdZ2i2yB5o6l3a8WiHqKi_BGzWtYbrdKFQsIhzEcrv-aDyLaSw
-Message-ID: <CAHUa44Gs0D1fBD0=+EDgcQUMeDv4knci9trUkYEc1J98qFV7HQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Sumit Garg <sumit.garg@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-quiet_tools-v3-0-07de4482a581@rivosinc.com>
 
-Hi,
+On Thu, Feb 13, 2025 at 01:06:20PM -0800, Charlie Jenkins wrote:
+> The quiet infrastructure was moved out of Makefile.build to accomidate
+> the new syscall table generation scripts in perf. Syscall table
+> generation wanted to also be able to be quiet, so instead of again
+> copying the code to set the quiet variables, the code was moved into
+> Makefile.perf to be used globally. This was not the right solution. It
+> should have been moved even further upwards in the call chain.
+> Makefile.include is imported in many files so this seems like a proper
+> place to put it.
+> 
+> To: 
+> 
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+> Changes in v3:
+> - Add back erroneously removed "silent=1" (Jiri)
+> - Link to v2: https://lore.kernel.org/r/20250210-quiet_tools-v2-0-b2f18cbf72af@rivosinc.com
 
-On Thu, Feb 13, 2025 at 6:39=E2=80=AFPM Daniel Stone <daniel@fooishbar.org>=
- wrote:
->
-> Hi,
->
-> On Thu, 13 Feb 2025 at 15:57, Jens Wiklander <jens.wiklander@linaro.org> =
-wrote:
-> > On Thu, Feb 13, 2025 at 3:05=E2=80=AFPM Daniel Stone <daniel@fooishbar.=
-org> wrote:
-> > > But just because TEE is one good backend implementation, doesn't mean
-> > > it should be the userspace ABI. Why should userspace care that TEE ha=
-s
-> > > mediated the allocation instead of it being a predefined range within
-> > > DT?
-> >
-> > The TEE may very well use a predefined range that part is abstracted
-> > with the interface.
->
-> Of course. But you can also (and this has been shipped on real
-> devices) handle this without any per-allocation TEE needs by simply
-> allocating from a memory range which is predefined within DT.
->
-> From the userspace point of view, why should there be one ABI to
-> allocate memory from a predefined range which is delivered by DT to
-> the kernel, and one ABI to allocate memory from a predefined range
-> which is mediated by TEE?
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-We need some way to specify the protection profile (or use case as
-I've called it in the ABI) required for the buffer. Whether it's
-defined in DT seems irrelevant.
+thanks,
+jirka
 
->
-> > >  What advantage
-> > > does userspace get from having to have a different codepath to get a
-> > > different handle to memory? What about x86?
-> > >
-> > > I think this proposal is looking at it from the wrong direction.
-> > > Instead of working upwards from the implementation to userspace, star=
-t
-> > > with userspace and work downwards. The interesting property to focus
-> > > on is allocating memory, not that EL1 is involved behind the scenes.
-> >
-> > From what I've gathered from earlier discussions, it wasn't much of a
-> > problem for userspace to handle this. If the kernel were to provide it
-> > via a different ABI, how would it be easier to implement in the
-> > kernel? I think we need an example to understand your suggestion.
->
-> It is a problem for userspace, because we need to expose acceptable
-> parameters for allocation through the entire stack. If you look at the
-> dmabuf documentation in the kernel for how buffers should be allocated
-> and exchanged, you can see the negotiation flow for modifiers. This
-> permeates through KMS, EGL, Vulkan, Wayland, GStreamer, and more.
-
-What dma-buf properties are you referring to?
-dma_heap_ioctl_allocate() accepts a few flags for the resulting file
-descriptor and no flags for the heap itself.
-
->
-> Standardising on heaps allows us to add those in a similar way.
-
-How would you solve this with heaps? Would you use one heap for each
-protection profile (use case), add heap_flags, or do a bit of both?
-
-> If we
-> have to add different allocation mechanisms, then the complexity
-> increases, permeating not only into all the different userspace APIs,
-> but also into the drivers which need to support every different
-> allocation mechanism even if they have no opinion on it - e.g. Mali
-> doesn't care in any way whether the allocation comes from a heap or
-> TEE or ACPI or whatever, it cares only that the memory is protected.
->
-> Does that help?
-
-I think you're missing the stage where an unprotected buffer is
-received and decrypted into a protected buffer. If you use the TEE for
-decryption or to configure the involved devices for the use case, it
-makes sense to let the TEE allocate the buffers, too. A TEE doesn't
-have to be an OS in the secure world, it can be an abstraction to
-support the use case depending on the design. So the restricted buffer
-is already allocated before we reach Mali in your example.
-
-Allocating restricted buffers from the TEE subsystem saves us from
-maintaining proxy dma-buf heaps.
-
-Cheers,
-Jens
-
->
-> Cheers,
-> Daniel
+> 
+> Changes in v2:
+> - Fix spacing around Q= (Andrii)
+> - Link to v1: https://lore.kernel.org/r/20250203-quiet_tools-v1-0-d25c8956e59a@rivosinc.com
+> 
+> ---
+> Charlie Jenkins (2):
+>       tools: Unify top-level quiet infrastructure
+>       tools: Remove redundant quiet setup
+> 
+>  tools/arch/arm64/tools/Makefile           |  6 -----
+>  tools/bpf/Makefile                        |  6 -----
+>  tools/bpf/bpftool/Documentation/Makefile  |  6 -----
+>  tools/bpf/bpftool/Makefile                |  6 -----
+>  tools/bpf/resolve_btfids/Makefile         |  2 --
+>  tools/bpf/runqslower/Makefile             |  5 +---
+>  tools/build/Makefile                      |  8 +-----
+>  tools/lib/bpf/Makefile                    | 13 ----------
+>  tools/lib/perf/Makefile                   | 13 ----------
+>  tools/lib/thermal/Makefile                | 13 ----------
+>  tools/objtool/Makefile                    |  6 -----
+>  tools/perf/Makefile.perf                  | 41 -------------------------------
+>  tools/scripts/Makefile.include            | 30 ++++++++++++++++++++++
+>  tools/testing/selftests/bpf/Makefile.docs |  6 -----
+>  tools/testing/selftests/hid/Makefile      |  2 --
+>  tools/thermal/lib/Makefile                | 13 ----------
+>  tools/tracing/latency/Makefile            |  6 -----
+>  tools/tracing/rtla/Makefile               |  6 -----
+>  tools/verification/rv/Makefile            |  6 -----
+>  19 files changed, 32 insertions(+), 162 deletions(-)
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250203-quiet_tools-9a6ea9d65a19
+> -- 
+> - Charlie
+> 
 
