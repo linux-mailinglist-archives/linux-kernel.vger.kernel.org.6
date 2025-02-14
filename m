@@ -1,248 +1,205 @@
-Return-Path: <linux-kernel+bounces-515144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07B6A360C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:51:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D675FA360CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6570716F301
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82988188FC17
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB726656F;
-	Fri, 14 Feb 2025 14:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41472266583;
+	Fri, 14 Feb 2025 14:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjWgDJvl"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wd83DjEd"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C621CA02
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544681; cv=none; b=pkQUCkvbtkMNLpzSr9wrn3oI9pznRgvrOfw1+pXIzjBIupMqtr2jAfiHSak9t0kPim5CC+oZri3PUmGts8t6/PhZep5KoSta+heO7sbvE9u3dC91VhcmNGyUTAeta2ogMOyCIU4peEd9/a9PrhNTszBMgSGnG1SQjoG8F3H2KOk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544681; c=relaxed/simple;
-	bh=bdbMeH8oaPRgL3u9VvU6Dw1az7CyzfRo1NDkgGXUVSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d90W/jBkKCOoubM3tsa/YxL2UNd6OD8M9fr6xBzpm06FiXaA/dipxq/pnfyHXImSitWb0QCgjOglKW56VZkz2I27brlJvLJo8foCfteZjaVTNV6kCerHiZWYT8Mh/XJ9ZD/TAOG3YJQMQgb+vstqK7o0iqLWYH9ptLB5H+OPwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjWgDJvl; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f42992f608so3522516a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:51:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739544679; x=1740149479; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UtkO3BfS7RUR3ZvPkv2iNZwz0HqEh2TlEN4hK+R6VZs=;
-        b=BjWgDJvlj0L8VxAAC4mD4mT1DmsAEYE6y/t6i3OIGoFjF+tfziuoHhPfwnDCmDWkal
-         ORghkAhY3XjjmIys/YwE823WbHU3TnA9Qmc/b5OukRBCI1j2eNW9ytgfT26UWgp2bOZb
-         +x1qLFqnqLEViBT2EYHn6DaqZIa98+xtmbVIBSZ4t4xhcnGrGikxmhF9PwY+m1q8uGs4
-         +Qj0gYCPRn6PSeyDfawE0wA3oBmhpm1Qp9uOZYv0FjRz5I9aQzQHmLea+usTt9fTwlKy
-         8dJrKbaK5v4ZccCnDryeWloP8AlA75dOF/DwykiSpCV/GPy6oKrOa/ex4M7ydx6VsOXW
-         hmAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739544679; x=1740149479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UtkO3BfS7RUR3ZvPkv2iNZwz0HqEh2TlEN4hK+R6VZs=;
-        b=MXlp0j0BVmShhjK8L06ePSi06p/xprWAj1WBURmQQO5unbqRWEC3/JPNr/VLelpMzY
-         9Vy3cFkjNozd0XUaRzYiGL+ENAndoAfeeM7MiICdlF0mJt8vpoK3RyZB7OUiZcP0xNPt
-         sLP6X4CRNGUjs/R0SIJbg8u4lipQOfGlOiCYtPQ04WroyTbuvrPdtai94utVLVgRUKtk
-         ZUn3rvScQnASusMORqEOf6BZEVDOW0H+TP3HzZ0yNoGmN+mmBOEVq0TSZUZNgvmyvtde
-         8PVDh3jVOUTKCAs72D57hOXXyl87P+Hcs65YjSAyaB1klFH5eXLdHYKOmAvrfHfFUonz
-         8UlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVM8fLLuAS8QlDploOwJu07OrHzLL+itclHy8Ft1d/1JL6UZGNQ67XIq7+YOTHbbfDkFSIjUOhT5hx4B3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU9UA31uBovb2+mbvaOqRGfjMUnqcKrPG0EWUr1YODmJ7Y+LDq
-	XImTZQvcVOYiIt1P2FYJlPN/G5lIIfKjv7Z/g9RQp6XpK0T0phPc
-X-Gm-Gg: ASbGncsU1CjECgLDW+FBqvRN8+XsWeRk3A2h7Vq1Y2FlZ9sS+3zUapEMd3bTn5L28gn
-	mLMrZjjDHBacf6fS5GUNatK8drWjRF8rM+4VjG+dC70AXoyoIi59rZtgkUffTQrlTDWnmQeNvn7
-	uDBTpYUJwqVBL1OH82edKu9WvdzGe4GFSkEBxyYWqRB+fK040e9oVxCcerXsEkTSRMZSTzWvQJL
-	DLQWl7zv/M+QksR18eULuSVueRt95wUyFQOP28xeiV1lMmV1Dgjw9IOyxE2vBT+mdB0NQ4MRiVe
-	Fwt0uK6n23jea86elfHg5XXyQfc5es7A
-X-Google-Smtp-Source: AGHT+IFshQ2u48OOIlxtH9By/ZtXEpcmtkK2VSxnuv7nA6QWRQLbgOVaJ4JYV6mRWu6zNaDuCDH2Yg==
-X-Received: by 2002:a17:90b:2248:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2fc0e2c0d3cmr11021077a91.8.1739544678687;
-        Fri, 14 Feb 2025 06:51:18 -0800 (PST)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:2434:f20a:5d9e:5136])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc327f1158sm670693a91.0.2025.02.14.06.51.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 06:51:18 -0800 (PST)
-Date: Fri, 14 Feb 2025 22:51:13 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: anshuman.khandual@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw, skhan@linuxfoundation.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/2] uapi: Refactor __GENMASK() for speed-up
-Message-ID: <Z69YYeQB5E5Mi3Jf@vaxr-BM6660-BM6360>
-References: <20250211162412.477655-1-richard120310@gmail.com>
- <20250211162412.477655-2-richard120310@gmail.com>
- <Z6uZZPpQ9YYfrL-I@thinkpad>
- <Z6uaW9XzaKjSrWYC@thinkpad>
- <Z6ypqCN_KI2gaSJ4@vaxr-BM6660-BM6360>
- <Z65N81jXcyKIu95l@thinkpad>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FE4264FB0;
+	Fri, 14 Feb 2025 14:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739544791; cv=fail; b=WJuZ2KpQM6b/jsCebuexSiaAstSxuSaG1DikEQg2uo1NGPRXIzkW3WSe2+OFlNrLPVbpEY3EnwpKuWOnfJS5JN78ltWmTJ/2OLls3hRHcrbRjdDNhW6VgZe4pTwV1mXI1W8xxFGJgw7OZCaKUVvC95lkXtRiGyS1DyPkQapH8no=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739544791; c=relaxed/simple;
+	bh=DH991YFGcVx/mflYxGvDYs/lXw3Q/fkQ41wo1hngORY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jm8vTj6PgU+x5fAzHpCdmeZAdEwSFFLx/0oo1jifGG5hwg4z9ajCAlKhPjElEMs3aukhJh33etRX23/DNJDndPCncrme/KNQdSNELqamIyOXO/YGUqCzJulw7SunxYZywVZEfBFrHZ7XuJQVMnuZurhyWDxDxlWgXqPSH5CoU1Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wd83DjEd; arc=fail smtp.client-ip=40.107.237.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vEuKVRFcdlxNSRUVm+ls8CxTPBG5SyDn9XOYc0pcc3kKAZAEFwVFGtcnNbwp++zzKCizxKou/N3vYXlPhuYsS82BcP1EeewDXw7/H/b7TViVKKjhBabXBrTW16XbDQjl34rQv2nrbNw3wiBVlnWfQdrjuPzsgPea09Yra+jDMK+N1NSEhPehzL3AKP4PxxMtIve0PmcL58HJyVxNdacTqhy6nJOsbBiM4k6yOrmfkCGBvQEBefDTbYBb97Vr4pMHO1NiIQA5H2l3+lY4UOKCvOPSDJRUO6E8kLqjlPwP1AqVfPq1ggVL6LOaDASaRHxxgA1Vk6GBwaG8rTWXnaCsQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fq7oRvN9aMxxIUsqvOugS9wwAi8nPz3c3hghwDvopaI=;
+ b=DZaEnOhaDd+gdPXijYC/8YkwsuDnEkjJGYBO3j8kpu2AhD8U1bkGBgoUzAen4M9OsUpxTCD/F9zyYT9IJJrFF6zGkN6PP4QI21mCyuGi1GqYyBEdWDTCedxrNr2+fOut4mV0Bi1u7JdR4pLhLomquOYXg3GIdbg9NQa+AEwmioKnyVYqb+G+0Y+XuRNbHi2CG06dEGB4SILthu6NFbTSUvK8vjGZQc6tcDa7FXZl+7UzX8vLIWYlfau37Nnm5m+dBu6k88AMlPpBIzItSj16eXxxP1it+Op/DvtXHM1QDfTMgrby1oCHe7QvDOROk0ej7iBzkzlC2V8zgEnNCq++zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fq7oRvN9aMxxIUsqvOugS9wwAi8nPz3c3hghwDvopaI=;
+ b=wd83DjEdcmpOPkh1Lwnhn/yPTxU4DB5quIWW2UF8PqPxyz6L/RhJLCk0QaeXgHV0L/qHbPf++Vnnw1soNsJgNUoM8qkbQc7heJ4ciPWCFPZj8SFRF+HGDgKcwMfiLGMarbRvZoSqMwcD5Y076PM44UeAKcJ5HduHmyRGpPbXczY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by SJ2PR12MB9210.namprd12.prod.outlook.com (2603:10b6:a03:561::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Fri, 14 Feb
+ 2025 14:53:06 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8445.008; Fri, 14 Feb 2025
+ 14:53:06 +0000
+Message-ID: <8050badb-8671-400f-8bb6-04255c761ba0@amd.com>
+Date: Fri, 14 Feb 2025 08:53:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] KVM: SVM: snp_alloc_firmware_pages: memory leak
+To: Alexey Kardashevskiy <aik@amd.com>, linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>
+References: <20250214035932.3414337-1-aik@amd.com>
+Content-Language: en-US
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20250214035932.3414337-1-aik@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR13CA0004.namprd13.prod.outlook.com
+ (2603:10b6:806:130::9) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z65N81jXcyKIu95l@thinkpad>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SJ2PR12MB9210:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae4f7b68-55a7-4704-6dcb-08dd4d074a42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEVNU253MzJxUDhMb1FON3dXQ044bU1jbm9PL2RKUTdVVlo4eVMzQlNoM0VR?=
+ =?utf-8?B?WjNTcUVZYnVUWnRVRTNCblVHTnY0VFcwVEw3djlqRHhIditTV2F0aGR4TWFt?=
+ =?utf-8?B?WWtDbkowUGNyOWpYWXF1YjVRT3RKazJzN2V4cnd1UWtOVitSWDVIOUsxUm9x?=
+ =?utf-8?B?K2tyaHJZVWJhQy9ndW4vN2VDMnlvdTJ4TDF1MEtIS0M2RDNyYnlnMXBkeFNT?=
+ =?utf-8?B?RGdURlh5RWk2d1o3SHJmWGJxS0VCSmtOS2tTU3IrSktnZGQxR3pOem1QWjBD?=
+ =?utf-8?B?RmtwdkpIUElnaWRiWi9WNEtBQ3NBNzBhYkpLMGt5dk80ME1oRFZjUWZwdGRy?=
+ =?utf-8?B?YU5ZVFdKRmJybmlXVU9lZ0hKMjVFUjRnYmg0c3pMS1Q2WXExSzFUY0tJb0Zn?=
+ =?utf-8?B?ZnZRM1hHOUhMaDl2bmlyYnk4aHB3bHFmaXltSzlEdVV4L0Z5MDc1MVpYeDVX?=
+ =?utf-8?B?cjlHVUJYaEN3T2pYVXlMalBjUFZwaHBZSTAyaEh3U1dFZElSd2M3QlczYklG?=
+ =?utf-8?B?QmM0OEZsUVNpZjhGa3A4QmNkUnhKQWI2elREYkp0aDJXQ0xTMCt6bEhoRVZJ?=
+ =?utf-8?B?cjhxcjdwTEVJdVlsOEdqUDlJeThIbGFLRGJ2WGF2VDcwZW55N1hHUUttMzBq?=
+ =?utf-8?B?SlM5QlJlNWxVNldJN3BubHFpek9mc1dlU0JkbU0zbnR5d3BiN2JlS2lLNDV6?=
+ =?utf-8?B?WktHK2JuWG9yemJiOHFFa3ZTYjhabldGdDlqdHhHTi9iTTZGMmY2U1hDb29t?=
+ =?utf-8?B?b1FqbXdzWkNWeVY3ZEsxZ2c0TlM5M3Zna3NhbVFxaFVraXJLL3ZwOUN1U3R6?=
+ =?utf-8?B?OGo1dE92YnFFdnprcjJSVW9kTTVrZW4wY1VHZWptUmgxeG1GbXFwYlRFcGtm?=
+ =?utf-8?B?WThMWWZzWlkxS25Xbk10TkxQU1RsL0FpVklOSE1tQytNd1lXVVExVHgxdkk1?=
+ =?utf-8?B?Mk5SbmpjZk85SDI2Mk1hYzlkckJoY0RBTlp1VDIycWMybHNxRU9ENXRNajNo?=
+ =?utf-8?B?RzlKQXRhQms5NldpMnAwVFoyUFVsOGFiWGxXbTFVcEtDWVA1bWkwK0VSSHZH?=
+ =?utf-8?B?ZDJYZU9UWXI3TkkzU0NGSDdneXRZY3FYUllUZGV1NC8wTXk3WFBJQlEzUlhS?=
+ =?utf-8?B?S3ZmTE5KcTZHV1hVZmtSMVdCYmFyYU5zR3ZOYXFoWG1tRk85TVdwRFdaTXNU?=
+ =?utf-8?B?OHIydnlQNFVZNjZWRk5WTUZMUE5BL3plclFMalUzYkI1VE41UDRZbXJjcG44?=
+ =?utf-8?B?RE5IakJrd1FHcUkxUDdjR1AvZDVxR0prekZ6OXRWYlhlOENNUmY4TW9CcmZv?=
+ =?utf-8?B?M1ZxK3JVLzdCRzRzTWgxSU5tdksyZkdPekcwTU9xZEV3TFVCc1BibFpwMWZQ?=
+ =?utf-8?B?K3lNeGVGRkRXZjJUWVRocHpPM25hMjA3MGFXbENCMmdTcnVjMC9xOS9YZkZZ?=
+ =?utf-8?B?M21iajloUURDYnVWbzRnK3B5dC9VOGU5MjdaWTR5aHRHekcybUJrK0J6V2JL?=
+ =?utf-8?B?c2hDd3pibVh6bFhvamZ2YUFFcDUwTm9OSFNBMDF2dngwMU83KzE4N05DVHUx?=
+ =?utf-8?B?ZUdMYWtQTS9peTY1ai90VFJqL2o2cDR5aFVYMjRWaFl2VlVHMG1WSlF2cEVX?=
+ =?utf-8?B?aUtib2IzMTY2R09YcEJxTzN2dENGTWlkMmJhK3d0dEROQ2FvR0UyUFBrTy9s?=
+ =?utf-8?B?dmdWNGpEdWdsNFFqazR1V0k5ZG5xcVBReWJkWmJuTVY2RlJsQnZLTXR1RWZt?=
+ =?utf-8?B?QTZabzB6eUYrWFVBVE1ITWFpbHgwaTMwWmR4VnNIMGZLeTVXZ0lTNzd4cDdp?=
+ =?utf-8?B?TzdsMnI2SXpWUVJpZlNHbW5nREZGQ2NUMFhTY05VWU95Lzc4Mmp2OWQ4WmhS?=
+ =?utf-8?Q?w67EAqds2lO7+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b0ZxR0t0UjVzYjVFck9tc1k0YmR0d3N1a2x4V1RxMEdCOWhXb0ZQQW9Ccnpw?=
+ =?utf-8?B?YjFmQmRWM1dnYXlPUWk3dk5sZkU3dVpUb0dXM2ZKSEJwVjhNREVtUlkzc3hR?=
+ =?utf-8?B?WWxEOU5kYklCS0EvRkZyVHhhcHVUMjd0ZkhvV1kvNHppUDRTc2xDdHN6Q3Fi?=
+ =?utf-8?B?MjdtZVppbTVoRFVCNjRuQWY5YXgxQ2F5ZkYrYkQwU002cjhxajZhcnhvS1ZD?=
+ =?utf-8?B?Z0NmbFhUV0ROcTBFY0RSaXZMbWRHYWNib0NVVkpQWFI3SHRqWHg3RlBMbVZN?=
+ =?utf-8?B?a0pyOW1rRWV3WUdXOUxzbEczK0l2SEVmZGRqNVVxbUxIaWVMRUVvdzVDcTlL?=
+ =?utf-8?B?Ti95TUdlYlB4L203c2RFZDh0WENxd2RyMnRnZlo4dzdSWmYrWm5TbG10NjFS?=
+ =?utf-8?B?Z1MzOVBsZTdZODVJTGtaZnJEYUx6ZHhXNis5cW4zL3FISkp1aEQvZDd0WkpI?=
+ =?utf-8?B?d0JMaHEreXVGZ0c3NVh4cHN6enl1bHh6M01qSWNVQ1FCWlZFQmJHSEZoWDJv?=
+ =?utf-8?B?dHd3S00vc2tNVGpsYVMwOURJTzVCTkpJeWFiMG15cGZHM254Y0NlbWxENFJQ?=
+ =?utf-8?B?akdhZWNNNWo4QlBydDNoVGErRUV0S1hjSXFBRzdMNHRuYmdaOG5wN1VJRDUy?=
+ =?utf-8?B?NGV1MVNiRGExNThrYXRQM3NYamU4ZU8wTnB6T04zRDdaUVF0Nmh6NXBwYTVo?=
+ =?utf-8?B?ZStrbEFuZGpmeFR4VjF4ZUZCQWVUVWFXakg0d2UxdTArUElVRjVCQ2szVDVG?=
+ =?utf-8?B?R1NNcHoxNEZBd3libUk0VTRrZy82TFhPaWxVRFcyNzIyRmlqcFFoODhxbTg1?=
+ =?utf-8?B?aVVBMnZrY1RRSTE3YlB1WXc4TW4wVHJTNDRFb3NJYWZHbis4emJYYnZ3SE5h?=
+ =?utf-8?B?bytSUWpkVG1BMDBEVjVzSzREdDdZbVFJR1duVlRrMGNXQXE1UzNkVTRHVXVK?=
+ =?utf-8?B?MWZ6UHM5OTZKTG02c2FJdWtiTlVSbzVoS0w3UWxuQlIydXF3N0RWcFJjVmpi?=
+ =?utf-8?B?NEdLbnI1Mk83M1Brck5BVllqVmtqZjhjZHZ1QmduUnBwOWJNcnZyU1lXRmhp?=
+ =?utf-8?B?Q1JmbS9SdnV2NEg5RG9Ib0RhbXhkRXlFc1F4dnE1NGRpaVE5MVBLU21IcGdT?=
+ =?utf-8?B?SkhBT3UxbGRjZlZrUTZmVXFYcDNrZ3Y0OHFtMHR2UnpSWlBHaGhCYzZCc2c5?=
+ =?utf-8?B?RnNJV3loT3NjV3R1WWtqRjRGUzZKSDZxVmF3b1djL054WHgxanpHdndPUmtR?=
+ =?utf-8?B?aXZiZDk5RXVrbitRK2pQNW5uQUlqODBSWlhYTS9TRkZxT1lmc1hoT0hhWWdE?=
+ =?utf-8?B?V2FGSXpRa1ROZlp3RFp2dXZvU0VDNFFIZzJzN08vZlpmTjdoUm5KQWFqeXcy?=
+ =?utf-8?B?N2lKSk95OUpYM3c4OFFVRG53SHRzMGl6SW9oYUlTeWlZb1hucU4wOWJiM0M4?=
+ =?utf-8?B?NFlnNWt4N1pHU3hhejBXeGRGbVRoUGRQeHMreVNiVzl6Nm1lb0EvVm1JRW53?=
+ =?utf-8?B?cmF6RGJsK2xta3ZkT09nMFVBbVcybndiMlljTmRnQkUrenBOckhuQnpka3FB?=
+ =?utf-8?B?eXFkbVUxMlg3S1dja3Ntdm82VXJ0L2tTeFZNdkh4bzdBMlZIa250L0FIdDFO?=
+ =?utf-8?B?UWoyMDlDdjB2bTlDcmRCYlNEcjhxeWF1SzREVk5aajIrWVJ3a0lkc3pjTysx?=
+ =?utf-8?B?VEh2OHZBcDFyYXpUNXFNcUkzbWFaMHhsbXZVWVBzWXJWRjc4SFJHdWV1dm1Q?=
+ =?utf-8?B?VDNBRXNYOUVQUmlCbEVYTi93RTMvTWU2OXhydWNTRGxqbXdVMXU1dEZqc0Jw?=
+ =?utf-8?B?bVdSVjlUUDBPQmpyTGxLbWNVdlRqb1Y0dldBKzJVZ2NCamhHWTUvQUZGZTRy?=
+ =?utf-8?B?ejZ3REg0SjJjSmVmc3dmYThnbFR6bEVUd0QrTkowOXQraEdVZmpaRTVIZVg5?=
+ =?utf-8?B?T0lhT2NoS1dYV3p6KzBMRHBDMVg0ZjFicXF3eWphZ0JKSm5hcndWNVl6cHFj?=
+ =?utf-8?B?enNBaGdhRUZFcnI0eUxmdmxEdVBnSlR6TDRyMXMwZkg2eDJMQ2RUQlMzSXBB?=
+ =?utf-8?B?NFBZQ1FtQXpOcXRoWXZ4ZkhSSUZRSWtDWlA1aGNzZDlzdmVXdi9aSmhqeU1H?=
+ =?utf-8?Q?rK/yv0cP7VpkPluXsi+VJ/nE5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae4f7b68-55a7-4704-6dcb-08dd4d074a42
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 14:53:06.3995
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xeuecHNXtJETgluGuEq5WxV5LFzWrOKhCko574WDn3suJpJyp4Cpsqi97dyMeUthqfANdTlrNdftST+luh9ddg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9210
 
-On Thu, Feb 13, 2025 at 02:54:27PM -0500, Yury Norov wrote:
-> + Andrew, Matthias
+On 2/13/25 21:59, Alexey Kardashevskiy wrote:
+> Failure to rmpupdate leads to page(s) leak, fix that.
 > 
-> On Wed, Feb 12, 2025 at 10:01:12PM +0800, I Hsin Cheng wrote:
-> > On Tue, Feb 11, 2025 at 01:44:18PM -0500, Yury Norov wrote:
-> > > On Tue, Feb 11, 2025 at 01:39:34PM -0500, Yury Norov wrote:
-> > > > On Wed, Feb 12, 2025 at 12:24:11AM +0800, I Hsin Cheng wrote:
-> > > > > The calculation of "((~_UL(0)) - (_UL(1) << (l)) + 1)" is to generate a
-> > > > > bitmask with "l" trailing zeroes, which is equivalent to
-> > > > > "(~_UL(0) << (l))".
-> > > > 
-> > > > I used to think that GENMASK() is a compile-time macro. __GENMASK() is
-> > > > not, but it has very limited usage through the kernel, all in the uapi.
-> > > >  
-> > > > > Refactor the calculation so the number of arithmetic instruction will be
-> > > > > reduced from 3 to 1.
-> > > > 
-> > > > I'd like to look at it! Please share disassembly.
-> > > > 
-> > > > > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> > > > > ---
-> > > > > Test is done to show the speed-up we can get from reducing the number of
-> > > > > instruction. The test machine runs with 6.9.0-0-generic kernel on x86_64
-> > > > > architecture with processor AMD Ryzen 7 5700X3D 8-Core Processor.
-> > > > 
-> > > > So you CC arm maintainers and provide tests against x86_64. Are your
-> > > > improvements consistent for arm, power and other arches?
-> > > > 
-> > > > Can you run bloat-o-meter against your change?
-> > > 
-> > > Ah, sorry, overlooked you bloat-o-meter results in cover letter.
-> > > Anyways, can you provide it for each patch individually?
-> > 
-> > Oh ok, let me paste them here first, I'll attach them along with v2 as
-> > well.
-> > 
-> > In the section below, vmlinux_old uses old version of GENMASK() and
-> > GENMASK_ULL(), vmlinux_p1 use new version of GENMASK() and old version
-> > of GENMASK_ULL(), vmlinux_p2 use new version of GENMASK() and new
-> > version of GENMASK_ULL().
-> > 
-> > $ ./scripts/bloat-o-meter vmlinux_old vmlinux_p1
-> > add/remove: 0/2 grow/shrink: 46/505 up/down: 464/-1717 (-1253)
+> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> So, I ran the build myself and I confirm that reverting c32ee3d9abd284b4
-> (which this patch actually does) helps to save over 1k of .text. In my
-> case it's 1269 bytes on x86_64 + defconfig for GENMASK() only.
-> 
-> I looked at some functions affected by this revert, and I found that
-> they call for_each_*_cpu() macros. This eventually boils down to bitmap
-> functions like this:
-> 
->   static __always_inline
->   unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
->                               unsigned long offset)
->   {
->           if (small_const_nbits(size)) {
->                   unsigned long val;
->   
->                   if (unlikely(offset >= size))
->                           return size;
->   
->                   val = *addr & GENMASK(size - 1, offset);
->                   return val ? __ffs(val) : size;
->           }   
->   
->           return _find_next_bit(addr, size, offset);
->   }
-> 
-> The 'size' here is NR_CPUS, which on my machine is 64. 
-> 
-> GENMASK is used with non-constant parameters, but it's OK because
-> from compiler's point of view, the GENMASK_INPUT_CHECK() which is
-> just:
->         BUILD_BUG_ON_ZERO(const_true((l) > (h)))
-> 
-> It is passed as the 'offset > size', and it's is indeed a constant
-> expression at that point because it's explicitly tested before.
-> 
-> Is this for_each_cpu() thing the only case - I don't know, but it's
-> enough to consider reverting back to the original version.
-> 
-> I Hsing,
-> 
-> At first, thank you for catching this up.
-> 
-> I think performance testing part is trivial here, so let's focus on
-> code generation and consistency.
-> 
-> Can you please run your build against few recent GCC and clang versions?
-> Can you also build the kernel for ARM64? You don't need to run it on
-> real hardware (but maybe on VM). I just need to make sure that the
-> result is consistent for all important arches.
-> 
-> Matthias didn't mention how did he build his kernel. Did clang emit
-> that warning against W=0, 1 or higher, and which code triggered the
-> warning? Maybe clang already fixed it?
-> 
-> Can you please check how would it work if NR_CPUS is set to be say 1024?
-> This way the small_const_nbits optimization will be disabled.
-> 
-> If you will find that clang still emits warnings at lower than W=2,
-> can you please resend this patches together with a patch that
-> suppresses clang warning?
-> 
-> Can you also please attach one or two examples of code generation for
-> real functions, not an artificial one as you did before. And maybe a
-> link to goldbolt?
-> 
-> For the next iteration can you please make sure that you refer your
-> series as a revert of Matthias's patch? 
-> 
-> Thank you for discovering this. I realize that I'm asking you to do
-> some extra work, but we all need to be 100% sure that it's not a fluke
-> before reverting the c32ee3d9abd284b4 because it potentially leads to
-> suppressing another clang warning.
-> 
-> Thanks,
-> Yury
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 2e87ca0e292a..0b5f8ab657c5 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -443,8 +443,10 @@ static struct page *__snp_alloc_firmware_pages(gfp_t gfp_mask, int order)
+>  		return page;
+>  
+>  	paddr = __pa((unsigned long)page_address(page));
+> -	if (rmp_mark_pages_firmware(paddr, npages, false))
+> +	if (rmp_mark_pages_firmware(paddr, npages, false)) {
+> +		__free_pages(page, order);
 
-Hi Yury,
+I'm not sure we can do this. On error, rmp_mark_pages_firmware() attempts
+to cleanup and restore any pages that were marked firmware. But
+snp_reclaim_pages() will leak pages that it can't restore and we don't
+pass back any info to the caller of rmp_mark_pages_firmware() to let it
+know what pages are truly available to free.
 
-No problem ! I'll be happy to help with these tests, I'll send the next
-iteration when I complete the things you mentioned.
+Thanks,
+Tom
 
-> Is this for_each_cpu() thing the only case - I don't know, but it's
-> enough to consider reverting back to the original version.
-
-So basically the reason of sizing up is because for_each_cpu() put
-non-constant parameter in GENMASK(), which is supposed to be used by
-constant only?
-
-> Can you also please attach one or two examples of code generation for
-> real functions, not an artificial one as you did before. And maybe a
-> link to goldbolt?
-
-I have no problem of other tests but this one, I wrote a simple
-artificial use case because most functions I found according to the
-report generated by bloat-o-meter, doesn't use GENMASK() directly or
-they're super long and GENMASK() only accounts for very small part of
-them, it wasn't very trivial to sense the difference of disassembly at
-least for me. Should I just pick 1~2 random use cases? or do you have
-any suggestions?
-
-Btw, are you talking about Online Compiler Explorer? I don't really know
-what goldbolt means here, sorry XD .
-
-Best regards,
-I Hsin Cheng
-
+>  		return NULL;
+> +	}
+>  
+>  	return page;
+>  }
 
