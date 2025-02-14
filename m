@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-514676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB3FA35A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:20:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4603CA35A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29613164D3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE56E1890F49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA71322F3B8;
-	Fri, 14 Feb 2025 09:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F0C22F388;
+	Fri, 14 Feb 2025 09:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CryCj59+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p1FEnFa0"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9763122D799
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C4522D799
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524823; cv=none; b=Ez5HTDU9x5qSGP8yoSfek9rTQkmuEyMVyTUzjWVpG6oCdYS3wlknaJkPRDEJyQiCIlvpgOAQ8S/qy2E3Q83/pKl4y7hBP/Qa0wVLgWdpx4NAp4NZqj/5ukWPNRiprOiYcB8WGqX9EgAv6bKKMyQbXN+r0CLTviCjJBGQGIhxo+k=
+	t=1739524875; cv=none; b=pULp2pidsqMvLZ78lSCMLcOn1BGQvCwGWLtKxB6Zrva9sBu5oAl7OQSVqvJscaVGDR95oO1/o6zPV0gP4oF8gDoO5/YHR4nIOMcAWMtcA1GQ85CTt5FeAF4G5ld9DQa07R+JIcYfW3whXtlXGsypk8g0v43X3ZckOhpGvbScw8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524823; c=relaxed/simple;
-	bh=ZR/58w+1L+EYFW6tjt18wTp/81X9JhLePAFSHTKPVMs=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aQQoTmD6n4+GopAjHJgQmBCdbsmVVC4v1h1FyAjRhfmSX5yOozkLGsgUxj9eO7CEa/maCOnYw7VuyPG+JdrPQlBY4S72gCSdh6LdaBdu9Fx2RzfOKdKk8cqlR6LNT/xSTR8vG9Kg5vFNKEwTVZ0gNLjoJDLjTCyIvU/9DOpmGSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CryCj59+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739524820;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZR/58w+1L+EYFW6tjt18wTp/81X9JhLePAFSHTKPVMs=;
-	b=CryCj59+PpLj5mgNzCGDcZoyv/nf5nx9maqXC3pEssCc29CfooB83jhHR9095zZExJnR9q
-	z9wY0DpHinsgVFNP2JW0wUWk38T4pS/kwuc8MeuSFXOrRiBfGT5Gp72YcZFWSjepLhUrmT
-	Vw7ZDbnfnsDcnBz0SSK9AQ4LFO1ygzw=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-463-Nw7jbvLYNFCXv6-mSgdhXQ-1; Fri, 14 Feb 2025 04:20:17 -0500
-X-MC-Unique: Nw7jbvLYNFCXv6-mSgdhXQ-1
-X-Mimecast-MFC-AGG-ID: Nw7jbvLYNFCXv6-mSgdhXQ_1739524816
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc17c3eeb5so3180193a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:20:16 -0800 (PST)
+	s=arc-20240116; t=1739524875; c=relaxed/simple;
+	bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Um9sBw0ii3GXMGSOW6TKwnSuq4f85bk3vyHTyxSfVN9Ib7mvZEitW+94aEdXmDoaHO72UwbSejtW2TOQEmBV5ZvnvwYbm1HuuKCZ8X9CmDdhECJ8ego4pl0XPtsrK7f0npYm0b4KakK/AAfx69mW7RuyOV8KG/QYJKGk8qVGr5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p1FEnFa0; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5452e6f2999so10256e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:21:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739524871; x=1740129671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
+        b=p1FEnFa09lSugOKK9Nd0m6W6AHH3ieDTsFDkP1QwHrAY+sW6fc3okIq4krLCLAsWE1
+         jsth5OoOunMQ3K1Wl47X8fA4dXSQPHT0zFWbf4wYRkVXXAKknN2fsqid6JF0AYdYEenX
+         5ft8Oi+9u/MD0xi8zbIhkKQdUl/J3WoE7W4O4ZRCsBokAYgsXt6TSVJb0Q3/4lpuxe8a
+         hY+LuL9xrQqdF0zu1faslNIAG+Px9D7Ym/EdjEV2T8P/ht1WMtVoG6YA4rgHDU3oP/lP
+         fRhfK3POOUF2rkn0TRiTozy6rfv6GSidaFq4KP5Y7ieGDN37xkr3HWGnZCBaH+09S3wK
+         47kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739524816; x=1740129616;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZR/58w+1L+EYFW6tjt18wTp/81X9JhLePAFSHTKPVMs=;
-        b=dxHvgCBJgzj9P5R5NCpeC1k1B9tnqZK29olp2iogtudp0dLDGJ51x7wxIQotUqZnkT
-         eu0zv7GH1LHKwrnMHuotLukcYee8odmXUI2nvWzxpn6TYX5cRiLLVm8RgYTmzMf1Gcik
-         ir+1VWxS/wh7TqLbnbY9/53dtiEgieg3gUFVer+h5Ls1qVDg6hKrBTyopCRg4jHlPV8t
-         T4bsWzQjbi3DU3W1daQFasJ9gXbgJGT8MimPNlYh1/Vv0OXj4GWuHQs4D6Sr6pGPX5rr
-         jomwTNkAlBPqnC14uM6kxg7omknVMaId+Dwnx+btXNiFPn766GMMLvIxCTyRaWrjTbmo
-         5hxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRk0/M39mErI4Ttrei5Z8AsmLbwtjm1vjZmkCxWFUIoJnprF/e//F84kicEtxJj7Em6xkmX5F8LnNFX8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr+W0+UxYQrlYWnqLiYOazgQIv85RkNSLz0viiRjoACOoRiSO1
-	ba8/TSNuvqWybg9pkzJXHM2KGn8WFRAHKb/szfcw5s3U5/g6N1grJlsNtdYSgVdYXg1nzHX4sZx
-	wAte1uRxGl8Zec8CN3c07S5mv1sYVke18K7XCRaoZw0uqyQNgQoUlDveBvv2SXcLzKt1KumYlT3
-	lEbAqxbEFo05F7GwJJM4CWCL/1MX/lZGsP+Utb
-X-Gm-Gg: ASbGncsNJ7S4bvtD7oanerQHPnvndoZlGPPkC5RAn7jtYjBJ30SnmE9VCL8L+5gw3M5
-	s+xU2x55xOKhIMWg7dVfwcX/h2mzc0Hnj2zbugww03I9O/sRwic+9Wl9fFw==
-X-Received: by 2002:a17:90a:c88e:b0:2fa:20f4:d277 with SMTP id 98e67ed59e1d1-2fbf5c59edamr17083879a91.24.1739524815982;
-        Fri, 14 Feb 2025 01:20:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGV70tYKaoD72ZWgJewS3S3Ws/yTe5Co7t1AkVMiygQbOPGvw6IrjqyLyAEgiPWE34Qlyn+BspH/JPNCc6Sah8=
-X-Received: by 2002:a17:90a:c88e:b0:2fa:20f4:d277 with SMTP id
- 98e67ed59e1d1-2fbf5c59edamr17083840a91.24.1739524815700; Fri, 14 Feb 2025
- 01:20:15 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 14 Feb 2025 01:20:15 -0800
-From: Sergio Lopez Pascual <slp@redhat.com>
-In-Reply-To: <20250213105231-mutt-send-email-mst@kernel.org>
-References: <20250213-virtio-shm-page-size-v1-0-5ee1f9984350@redhat.com> <20250213105231-mutt-send-email-mst@kernel.org>
+        d=1e100.net; s=20230601; t=1739524871; x=1740129671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
+        b=UQLSqRJ2uo0+fOI2+xxHH6l19zWtyB5L5elnq8aQj8E1fcioRx5y1atvGELfTKOchu
+         2v1VJROXgVRNxksPHjlj7P6SNaFgg6RGYACI3bxB8E+o7hOaKuPK1O5Mos8kwHh3m9yB
+         8bYd2zZRuhBxmqt1AmTjSJt4bzGflcdJLcRcy00WZEep8hFBe/a16AikbnObz++8tL9r
+         1bCGPFEk3lh7QquK5+qXPEbtzDDJkYrGVnkfcQMAQU4OMgP2BgW20AoIOy6dvlyJWfqg
+         CjwotD5lNey0dbv7ghHQrwM+NoatY0pd2ZRtOq9V01WLRU6QZUxHE+Kg8zBxTZjlLEqz
+         3o8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHBRTt6zh//FNsgm4JW2/S0Yis4vQaet/JxC8STTDB3nDjZa/1T4Ik+/ppG5EZP2V8HawhDxcmQj5b/BQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYILMP1tXvsZ4N1VCL77PbpAJ2g/tFn4CmOFDPYQ947weyRl5v
+	CzgJnZK/pbGnyoVUn66YrcCBVTB5DTpc1XMvzArf0BFZXbe7k1mEy/fHkPSrg1M481aQk6T5Bee
+	OC61MJshMg9vntJaRV+0Wg7UY7RnlRr5HklDddA==
+X-Gm-Gg: ASbGncvl/309q6h+x8m7tUDYHj1iJ7dpIuhOdFll//l/8xt0jqq6oZGHH+Qg9H3y/WD
+	tbIuKdkofgSbGrBrz+2crgrEjJKz3WOwrmUC7qyGqWfaWjR8JNye7G7Wbbd5lfcCHMGHq8sW8
+X-Google-Smtp-Source: AGHT+IE90b6o1JJv5clQNldUi4eegVlq4Ca3JgGfeUcZ+3CP/urShfREcnZbwFVUloZzXxIeSNiZtb/EuXTKGiYXpXY=
+X-Received: by 2002:a05:6512:110d:b0:545:191:81db with SMTP id
+ 2adb3069b0e04-5451ddda5d7mr2106191e87.50.1739524871552; Fri, 14 Feb 2025
+ 01:21:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 14 Feb 2025 01:20:15 -0800
-X-Gm-Features: AWEUYZkLDCiAVkg75a5t11ITS9fRDi5xZ4oLEnr_uyiN6ZHVdlUxn8cPTzWG8SU
-Message-ID: <CAAiTLFViXr7gVPd3oRhfHSnUxxexPDEJ-MJJOuFrctrr+XvTfQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] virtio: obtain SHM page size from device
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, fnkl.kernel@gmail.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+In-Reply-To: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Feb 2025 10:21:00 +0100
+X-Gm-Features: AWEUYZkpajzFykICl53b_t6wma0KSzpRBNdWfZ389OoEnBSGFtcIchXCSCVghNU
+Message-ID: <CACRpkdYYj6MO-xAQAJ7dnD22YRbfBZFm18Zg1T9P0sd=5kd8-w@mail.gmail.com>
+Subject: Re: [PATCH 0/8] gpiolib: sanitize return values of callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Michael S. Tsirkin" <mst@redhat.com> writes:
+On Mon, Feb 10, 2025 at 11:52=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
 
-> On Thu, Feb 13, 2025 at 04:49:14PM +0100, Sergio Lopez wrote:
->> There's an incresing number of machines supporting multiple page sizes
->> and, on these machines, the host and a guest can be running with
->> different pages sizes.
->>
->> In addition to this, there might be devices that have a required and/or
->> preferred page size for mapping memory.
->>
->> In this series, we extend virtio_shm_region with a field to hold the
->> page size. This field has a 16-bit size to accommodate into the existing
->> padding virtio_pci_cap, simplifying the introduction of this additional
->> data into the structure. The device will provide the page size in format
->> PAGE_SIZE >> 12.
->>
->> The series also extends the PCI and MMIO transports to obtain the
->> corresponding value from the device. For the PCI one, it should be safe
->> since we're using an existing 16-bit padding in the virtio_pci_cap
->> struct. For MMIO, we need to access a new register, so there's a risk
->> the VMM may overreact and crash the VM. I've checked libkrun,
->> firecracker, cloud-hypervisor and crosvm, and all of them should deal
->> with the unexpected MMIO read gracefully. QEMU doesn't support SHM for
->> the MMIO transport, so that isn't a concern either.
->>
->> How the SHM page size information is used depends on each device. Some
->> may silently round up allocations, some may expose this information to
->> userspace. This series includes a patch that extends virtio-gpu to
->> expose the information via the VIRTGPU_GETPARAM ioctl, as an example of
->> the second approach.
->>
->> This patch series is an RFC because it requires changes to the VIRTIO
->> specifications. This patch series will be used as a reference to
->> propose such changes.
->>
->> Signed-off-by: Sergio Lopez <slp@redhat.com>
+> We've had instances of drivers returning invalid values from gpio_chip
+> calbacks. In several cases these return values would be propagated to
+> user-space and confuse programs that only expect 0 or negative errnos
+> from ioctl()s. Let's sanitize the return values of callbacks and make
+> sure we don't allow anyone see invalid ones.
 >
+> The first patch checks the return values of get_direction() in kernel
+> where needed and is a backportable fix.
 >
-> don't you want to negotiate the page size with the
-> driver then?
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-It's not really a negotiation. If the device presents the feature, the
-driver must honor the page size, either directly by rejecting or
-rounding up allocations, indirectly by informing userspace, or both.
+This seems reasonable.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-If the driver can't accomodate to the page size, it must refrain from
-using the Shared Memory Region.
-
-Thanks,
-Sergio.
-
+Yours,
+Linus Walleij
 
