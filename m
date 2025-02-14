@@ -1,169 +1,200 @@
-Return-Path: <linux-kernel+bounces-514195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B2DA353DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:44:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D75A353E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEAEE7A1B52
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F99D18909C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F8D5464E;
-	Fri, 14 Feb 2025 01:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7NozJMI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700A139FD9;
+	Fri, 14 Feb 2025 01:46:04 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E2D78F35
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21183211
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739497446; cv=none; b=fmKyZtinWZjRGC40o/qKD5zcrC3RUqzsda8NxT887+WX5f4ykZ8hLnP3K8aL8Jqvfcf82YKF+5ouKHSUhwQWducaFmtcYgBFCtRoC+oSVnHNuvC51chQXsrMU8y7dpgnnO5q7KznxZHqZhpliqKXE0SJAKiohFr/9XS4TPtt3Ys=
+	t=1739497564; cv=none; b=nnB3AHhbxzpBbklPSCQhwZBVoJCpOg96X0AJnF9f5cmYa8BJFB+p09wcQi707SUVY0dSx2yKpsTGpppxk42fm95PHRy5MLu7uV7Sg6Cm7I7HJYcrZh+wsnyNIVAzsQi0JefQUmIw8MTopvBjpF82wwda0Kdlo0wM91ebiJ64cNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739497446; c=relaxed/simple;
-	bh=srHnIBrfKhu2UDIBKLlSsyLyAHlxsbiKD5o0g6U58jQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lKw9tflJs4ULmSC6G02rh7ko1fX20zebPRSrA0F7gHndUoK9jzRDT5SaV8DCQ8FFXFg8dF0q4H5ytzr+0DQ9jiu7sB+anhzVmZdsKwljX+Wrp5usa7gglDpDLt9pf25U7pRJf3sXJu9YdEsL75bJi/cN7MFVolPjqg/ZAHxJaEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7NozJMI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDA5C4CED1;
-	Fri, 14 Feb 2025 01:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739497445;
-	bh=srHnIBrfKhu2UDIBKLlSsyLyAHlxsbiKD5o0g6U58jQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=g7NozJMIgQj6eZmzKYVzMg+NXJPGqyPPZZeGlC/8BwP+Y5h0N+LEgXhx7GDU/gQuw
-	 zq7wyv4Z1VH9VApf6TEMpxqsR662ZwDDbXpx9GAIiUjXA8P0E/056rheg/bA4Hmt66
-	 +Gnd6Z8n1hP1HBVRo5FYWQKkkdgAKSeBgxWwSObnHJRLuN9tON1XiFt8HqDKP5JCNf
-	 qQBTEopNfEVQU2LU7ZHxt+AhP8LKZmSc+tdYe/Au6jIVvq19foaUB+kB+IaUHIXUMm
-	 Kkva7r0Kg6b+wr/LqoEJf/7XdPcpfSEPEsI2O254oDBfEXphdQTPbsAy75RbyK2wfx
-	 pFvYsL0N3O3xQ==
-Message-ID: <666e62d1-3446-485e-bac9-0cc8089b04de@kernel.org>
-Date: Fri, 14 Feb 2025 09:44:02 +0800
+	s=arc-20240116; t=1739497564; c=relaxed/simple;
+	bh=49OIpETPrJNTC2rqyGG+Y/jRQHLWQaKbwThN8sV7n0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u6zMjKC/UvMkmCvhTFHozqPcfUGlelvpMI4MAu62jRguaR4rhVATyCABMJ3LHgg3gw8KftSjz2AqCHZgUuhjJSTrASLOC81T+YSA54LqOUg26zZyzia5i351eOtG5lN6DBgmXuwDga224jn+EW8ZiUUHX1U2i1gDEBvL99WNq4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YvFBx5FCVz1W5g8;
+	Fri, 14 Feb 2025 09:41:29 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id CA0DB18032E;
+	Fri, 14 Feb 2025 09:45:58 +0800 (CST)
+Received: from [10.174.179.234] (10.174.179.234) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 14 Feb 2025 09:45:56 +0800
+Message-ID: <6aecab97-5ba8-38dd-1df7-87e5f557017e@huawei.com>
+Date: Fri, 14 Feb 2025 09:45:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Leo Stone <leocstone@gmail.com>,
- syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] f2fs: add check for deleted inode
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250212072742.977248-1-chao@kernel.org>
- <Z6zQoyNp5td-Wgd1@google.com>
- <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
- <Z64uA2ys4nhV54lI@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Z64uA2ys4nhV54lI@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
+To: Catalin Marinas <catalin.marinas@arm.com>
+CC: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Mauro Carvalho Chehab
+	<mchehab+huawei@kernel.org>, Will Deacon <will@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
+	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
+	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
+ Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
+	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<kasan-dev@googlegroups.com>, <wangkefeng.wang@huawei.com>, Guohanjun
+	<guohanjun@huawei.com>
+References: <20241209024257.3618492-1-tongtiangen@huawei.com>
+ <20241209024257.3618492-5-tongtiangen@huawei.com> <Z6zWSXzKctkpyH7-@arm.com>
+From: Tong Tiangen <tongtiangen@huawei.com>
+In-Reply-To: <Z6zWSXzKctkpyH7-@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On 2/14/25 01:38, Jaegeuk Kim wrote:
-> On 02/13, Chao Yu wrote:
->> On 2/13/25 00:47, Jaegeuk Kim wrote:
->>> On 02/12, Chao Yu wrote:
->>>> From: Leo Stone <leocstone@gmail.com>
->>>>
->>>> The syzbot reproducer mounts a f2fs image, then tries to unlink an
->>>> existing file. However, the unlinked file already has a link count of 0
->>>> when it is read for the first time in do_read_inode().
->>>>
->>>> Add a check to sanity_check_inode() for i_nlink == 0.
->>>>
->>>> [Chao Yu: rebase the code and fix orphan inode recovery issue]
->>>> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
->>>> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
->>>> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
->>>> Signed-off-by: Leo Stone <leocstone@gmail.com>
->>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>> ---
->>>>  fs/f2fs/checkpoint.c | 4 ++++
->>>>  fs/f2fs/f2fs.h       | 1 +
->>>>  fs/f2fs/inode.c      | 6 ++++++
->>>>  3 files changed, 11 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>> index bd890738b94d..ada2c548645c 100644
->>>> --- a/fs/f2fs/checkpoint.c
->>>> +++ b/fs/f2fs/checkpoint.c
->>>> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>  	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
->>>>  		f2fs_info(sbi, "orphan cleanup on readonly fs");
->>>>  
->>>> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>
->>> What about using SBI_POR_DOING?
+
+
+在 2025/2/13 1:11, Catalin Marinas 写道:
+> On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
+>> Currently, many scenarios that can tolerate memory errors when copying page
+>> have been supported in the kernel[1~5], all of which are implemented by
+>> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
 >>
->> SBI_POR_DOING will cover most flow of f2fs_fill_super(), I think we can add a
->> separated flag just covering f2fs_recover_orphan_inodes(), so that we can allow
->> iget() of root_inode and all inodes during roll-forward recovery to do sanity
->> check nlink w/ zero. What do you think?
+>> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
+>> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
+>> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
+>>
+>> Add new helper copy_mc_page() which provide a page copy implementation with
+>> hardware memory error safe. The code logic of copy_mc_page() is the same as
+>> copy_page(), the main difference is that the ldp insn of copy_mc_page()
+>> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
+>> main logic is extracted to copy_page_template.S. In addition, the fixup of
+>> MOPS insn is not considered at present.
 > 
-> Can we do this sanity check after f2fs_iget in the f2fs_unlink() only?
+> Could we not add the exception table entry permanently but ignore the
+> exception table entry if it's not on the do_sea() path? That would save
+> some code duplication.
 
-Sure, we need to cover f2fs_rename() as well, please check this:
+The location of the added exception table entry is likely to appear on
+the a path, which should not be avoided. What we can do is merge
+duplicate code as much as possible, and extract common code into common
+files, as we did in this patch.
 
-https://lore.kernel.org/all/67450f9a.050a0220.21d33d.0003.GAE@google.com
-
-Thanks,
 
 > 
->>
->> Thanks,
->>
->>>
->>>> +
->>>>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
->>>>  	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
->>>>  
->>>> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>  		}
->>>>  		f2fs_put_page(page, 1);
->>>>  	}
->>>> +
->>>>  	/* clear Orphan Flag */
->>>>  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
->>>>  out:
->>>> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>>  	set_sbi_flag(sbi, SBI_IS_RECOVERED);
->>>>  
->>>>  	return err;
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 05879c6dc4d6..1c75081c0c14 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -1322,6 +1322,7 @@ enum {
->>>>  	SBI_IS_CLOSE,				/* specify unmounting */
->>>>  	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
->>>>  	SBI_POR_DOING,				/* recovery is doing or not */
->>>> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
->>>>  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
->>>>  	SBI_NEED_CP,				/* need to checkpoint */
->>>>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
->>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>> index d6ad7810df69..02f1b69d03d8 100644
->>>> --- a/fs/f2fs/inode.c
->>>> +++ b/fs/f2fs/inode.c
->>>> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>>>  		}
->>>>  	}
->>>>  
->>>> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
->>>> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
->>>> +			  __func__, inode->i_ino);
->>>> +		return false;
->>>> +	}
->>>> +
->>>>  	return true;
->>>>  }
->>>>  
->>>> -- 
->>>> 2.48.1.502.g6dc24dfdaf-goog
+>> diff --git a/arch/arm64/lib/copy_mc_page.S b/arch/arm64/lib/copy_mc_page.S
+>> new file mode 100644
+>> index 000000000000..51564828c30c
+>> --- /dev/null
+>> +++ b/arch/arm64/lib/copy_mc_page.S
+>> @@ -0,0 +1,37 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +
+>> +#include <linux/linkage.h>
+>> +#include <linux/const.h>
+>> +#include <asm/assembler.h>
+>> +#include <asm/page.h>
+>> +#include <asm/cpufeature.h>
+>> +#include <asm/alternative.h>
+>> +#include <asm/asm-extable.h>
+>> +#include <asm/asm-uaccess.h>
+>> +
+>> +/*
+>> + * Copy a page from src to dest (both are page aligned) with memory error safe
+>> + *
+>> + * Parameters:
+>> + *	x0 - dest
+>> + *	x1 - src
+>> + * Returns:
+>> + * 	x0 - Return 0 if copy success, or -EFAULT if anything goes wrong
+>> + *	     while copying.
+>> + */
+>> +	.macro ldp1 reg1, reg2, ptr, val
+>> +	KERNEL_MEM_ERR(9998f, ldp \reg1, \reg2, [\ptr, \val])
+>> +	.endm
+>> +
+>> +SYM_FUNC_START(__pi_copy_mc_page)
+>> +#include "copy_page_template.S"
+>> +
+>> +	mov x0, #0
+>> +	ret
+>> +
+>> +9998:	mov x0, #-EFAULT
+>> +	ret
+>> +
+>> +SYM_FUNC_END(__pi_copy_mc_page)
+>> +SYM_FUNC_ALIAS(copy_mc_page, __pi_copy_mc_page)
+>> +EXPORT_SYMBOL(copy_mc_page)
+> [...]
+>> diff --git a/arch/arm64/lib/copy_page_template.S b/arch/arm64/lib/copy_page_template.S
+>> new file mode 100644
+>> index 000000000000..f96c7988c93d
+>> --- /dev/null
+>> +++ b/arch/arm64/lib/copy_page_template.S
+>> @@ -0,0 +1,70 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2012 ARM Ltd.
+>> + */
+>> +
+>> +/*
+>> + * Copy a page from src to dest (both are page aligned)
+>> + *
+>> + * Parameters:
+>> + *	x0 - dest
+>> + *	x1 - src
+>> + */
+>> +
+>> +#ifdef CONFIG_AS_HAS_MOPS
+>> +	.arch_extension mops
+>> +alternative_if_not ARM64_HAS_MOPS
+>> +	b	.Lno_mops
+>> +alternative_else_nop_endif
+>> +
+>> +	mov	x2, #PAGE_SIZE
+>> +	cpypwn	[x0]!, [x1]!, x2!
+>> +	cpymwn	[x0]!, [x1]!, x2!
+>> +	cpyewn	[x0]!, [x1]!, x2!
+>> +	ret
+>> +.Lno_mops:
+>> +#endif
+> [...]
+> 
+> So if we have FEAT_MOPS, the machine check won't work?
+> 
+> Kristina is going to post MOPS support for the uaccess routines soon.
+> You can see how they are wired up and do something similar here.
+> 
+> But I'd prefer if we had the same code, only the exception table entry
+> treated differently. Similarly for the MTE tag copying.
 
+Does MOPS also support features similar to memory error safe? I'll see
+how he handles it.
+
+> 
 
