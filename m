@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-514581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4EFA358D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:26:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C8AA358CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47A2188C4BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B200716A660
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF9022259B;
-	Fri, 14 Feb 2025 08:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ECD223304;
+	Fri, 14 Feb 2025 08:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WySG346z"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD320221D9B;
-	Fri, 14 Feb 2025 08:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5CJGSy4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81931215F50;
+	Fri, 14 Feb 2025 08:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739521603; cv=none; b=m7kzjmE1MgaQRgYdT/CdddqE4AHKm5Y2ogiEACXl5T+Rfx7uLWXp44Xg1rcvebONZHCSCny3a3Xoi9olVFScikLQuuT5O/ooXVKRnj/SG/64tZ0UMb57NW8nfEHE4+YFkooA2VyL2r8u5UUD/s2JwASjMiLuC0s8mGNV47btakk=
+	t=1739521483; cv=none; b=c7Ig2QOvrd0PQMeUM+SZB3Cv2oAGbfHJlD+dh9bugMJpzWkYdISqFugKWpIK8uHJQfqbQCHNm0ADvvZHwck/35yu8cxoTfS+usuH8eCchL2lIyQHLa4zTWxbmY8iIw7Ky2mrXL9dGfL2Jt2M7nIN4taHIcnn1FWS5HyeP7BcvZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739521603; c=relaxed/simple;
-	bh=b2MiWfQHSB0RAB0pmFHuqacCfz92l6CK7wHPtW/rt94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cg82gUTXxfGMsDDnHH1vgOc6kZ5zxd1Yrr2PkcYd6gVfuLInlE0sD/DbNBxt7HgoqcjJostUjcAVU9Y2zPJ8x9tYMrJCga7vXZTCcbBKreAE24c2s5P7O3fdsSqGlIW+u4alVwqnH0Tus46T6AGjB6Lqt79K/U16XEVNj73x4TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WySG346z; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=xnxR2UO6iMifdgzSi2xLADILm1SOZ4TrzsLhURcsqJ0=;
-	b=WySG346z1/VS/KXE6t1xl/LfFVDscC3exq0jV0ZI2Mf9f2SR6cpjvDxyMGiegL
-	gyq+xyCcZ3aHzlw2DveOASaQ2Qgs5y1paib46G69NMr7ZePkeO41HiH2iokyN9kg
-	K69/7YcU6LsGgK9IUPC/gaPMdft3F+AY0/AE2B43OXM9A=
-Received: from [192.168.243.52] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3nxuF_a5nW8PgMA--.37922S2;
-	Fri, 14 Feb 2025 16:23:34 +0800 (CST)
-Message-ID: <7eb9fedc-67c9-4886-9470-d747273f136c@163.com>
-Date: Fri, 14 Feb 2025 16:23:33 +0800
+	s=arc-20240116; t=1739521483; c=relaxed/simple;
+	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=e3G9LDWdaBDMF2S9fcZb0ZCnHFGO5E0sGGVUl4fOqwm1xUgtqZTU/vm3LzRlV7CkoLbCVYeOtruW6+Lq1pa/GhM90j1+cZZBbdTeDE1Wjj2DFLYqYqiBDdXXF8g+2vLBY/ykrYhUi6paB2jwT5SqTOFO2Q4Kl8H4lpDG+Qt+nBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5CJGSy4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685E2C4CED1;
+	Fri, 14 Feb 2025 08:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739521483;
+	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=t5CJGSy4HiRPiH8vNQtZuSZwsO964YIu1gx4R/CvgT+ucz/2XnZkgAUWL/KuZKwUe
+	 8V7XAMucl7JBu+KlZAe2wQVd6hMf2iA3u2A+WYIwWif4dXszmnVfttr9ftSDbdybJd
+	 dH2fpluPZiMsgR+ny3Ljgiu7A3hOvtTAMyPDTHe1nAXQbl9vAmhxP8OADXCI0V8mcj
+	 9L6NvTND1nw+0gCeYiMtlsk+uJ3MNHGwwitY85rP6Zh9TI/1kcIZcj+xANj1NIRQWE
+	 FNA7V1mlHM8GxvuTizSj1kYAw1s2tcGS8JVxZnx349spZuabGP861OzkKFHzaUooK5
+	 E8WGoBY8ZQc5w==
+Message-ID: <835a1381-1dd2-4928-b929-efc0078e30f3@kernel.org>
+Date: Fri, 14 Feb 2025 09:24:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,87 +49,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] PCI: cadence: Fix sending message with data or without data
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, bwawrzyn@cisco.com, cassel@kernel.org,
- wojciech.jasko-EXT@continental-corporation.com, a-verma1@ti.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rockswang7@gmail.com
-References: <20250207103923.32190-1-18255117159@163.com>
- <20250214073030.4vckeq2hf6wbb4ez@thinkpad>
+Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: exynos-sysreg: add
+ compatibles peric0/1 sysreg for Exynos990
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250212155943.269-1-wachiturroxd150@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250214073030.4vckeq2hf6wbb4ez@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250212155943.269-1-wachiturroxd150@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3nxuF_a5nW8PgMA--.37922S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF1xXw4xXryxJrW8uFy7Awb_yoW5XFW3pF
-	W8GFyFy3WxtrW3ua1kZ3W8GF13tan3tay7Gw4q934fuFnrZFy8GF129F15JFWUGrWvqr12
-	yw4DtF9rKFsIyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHVbkUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxvzo2eu9yyeNgAAsq
 
-
-
-On 2025/2/14 15:30, Manivannan Sadhasivam wrote:
-> On Fri, Feb 07, 2025 at 06:39:23PM +0800, Hans Zhang wrote:
->> View from cdns document cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf.
->> In section 9.1.7.1 AXI Subordinate to PCIe Address Translation
->> Registers below:
->>
->> axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
->>
->> Signed-off-by: hans.zhang <18255117159@163.com>
->> ---
->> Changes since v1-v2:
->> - Change email number and Signed-off-by
->> ---
->>   drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 +--
->>   drivers/pci/controller/cadence/pcie-cadence.h    | 2 +-
->>   2 files changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> index e0cc4560dfde..0bf4cde34f51 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> @@ -352,8 +352,7 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
->>   	spin_unlock_irqrestore(&ep->lock, flags);
->>   
->>   	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
->> -		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code) |
->> -		 CDNS_PCIE_MSG_NO_DATA;
->> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
->>   	writel(0, ep->irq_cpu_addr + offset);
->>   }
->>   
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
->> index f5eeff834ec1..39ee9945c903 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence.h
->> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
->> @@ -246,7 +246,7 @@ struct cdns_pcie_rp_ib_bar {
->>   #define CDNS_PCIE_NORMAL_MSG_CODE_MASK		GENMASK(15, 8)
->>   #define CDNS_PCIE_NORMAL_MSG_CODE(code) \
->>   	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
->> -#define CDNS_PCIE_MSG_NO_DATA			BIT(16)
->> +#define CDNS_PCIE_MSG_DATA			BIT(16)
+On 12/02/2025 16:59, Denzeel Oliva wrote:
+> Downstream from the Exynos990 kernel source it has more sysreg in
+> flexpmu, but for now only those two will be added.
 > 
-> Oops! So how did you spot the issue? Did INTx triggering ever worked? RC should
-> have reported it as malformed TLP isn't it?
-> 
-In our first generation SOC, sending messages did not work, and the 
-length of messages was all 1. Cadence fixed this problem in the second 
-generation SOC. And I have verified in the EMU environment that it is OK 
-to send various messages, including INTx.
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml           | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-And that's what Cadence's release documentation says:
-axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
-The final verification results are also consistent with the 
-documentation description.
+Why is this a v1 while v1 was here:
+https://lore.kernel.org/all/20250205222223.613-7-wachiturroxd150@gmail.com/
 
-Due to the RTL bug in Cadence IP of our SOC in the first generation, the 
-AER Error reported at that time was Unsupported Request Error Status.
+and both patches differ?
 
-Best regards
-Hans
+Where is the changelog?
 
+Best regards,
+Krzysztof
 
