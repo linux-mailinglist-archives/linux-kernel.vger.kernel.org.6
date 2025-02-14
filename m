@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-515293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8ADEA362FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:25:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1060CA362F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDD316B9FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEAB3A613D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A60267AF7;
-	Fri, 14 Feb 2025 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B1C2676E8;
+	Fri, 14 Feb 2025 16:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="H105/2Jg"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K+Zfg8WB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E81A267739;
-	Fri, 14 Feb 2025 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A67514D28C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550259; cv=none; b=UHFJi7bu5taWkEalA5AU/WTRV9uc/DISisZO9Pd69mqe71uHIOTdJK/MJ9jx/5lhsde9305+0TyDEn0Olttm4m7Z3CZGAnc58pmwePlMHK7XdVJrkNCplAqYg+/WC1wCBqJGB3dBFzOlfskPH8cgn297XsSz3+IVtZGIYcUKakI=
+	t=1739550212; cv=none; b=PPDN+pLPIP+DK4TSjkXc8MbM6SkJ/n/GZjrG4n0mM+xfLFnvHia1jvHgJi7FRCqa/2/Dgw51XmnM+4LV3hd7QakMDeH2pyQwfevMa7LLjtd/orvZhhs2XU6FaxTL2b44b+LKzGeXLwSzRh+5nrVk+zkNlvfhG2Dj0KWLI3/DFas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550259; c=relaxed/simple;
-	bh=7AgIKn7csdyYxmF3m/Q7J4+PJzNeiOLf9q091XJ4E/4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y8yQpiuHIkBfBS/ffAmrf/r/4rMDbIknuS4xhRWl4VjGdvlNPx40oZMR3vGF+9SFhNGvydRPMKJ97jX++utD+dZORFhGa5kDCrgzh9xTb2xEEg+G9KQlWh8tszSahov7xlJRi6KK+TMxK4cypVo4DG8H+T+LD3oWSToGlzu1G/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=H105/2Jg; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E4od4M018291;
-	Fri, 14 Feb 2025 10:24:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=0VhoGhsglbZJj1oXUFMWOU4f5t2yztkzd93wyUTPzZY=; b=
-	H105/2JgbrA/WYv3hsQb3DdrPqxFmYe1eURYuGZwqywplmHsLdBRy7SFG9rAX3SV
-	+ajzfrON5XUCtGCY3F7M1H5CleZrlaKPvCT32uO+X3WzWfsFhhN3O2QzXAFMflZh
-	ZOuijwwZCAltfP9iqSFe83mohBzkECHICoAfeEWY7urydM+6ob7ZDASYQxg3MtMx
-	clwzASLLgSQX4LPvObjDmzVLidWbAQ+454btL23XAIAoeIVp8ZdEo28wZQ36cU/7
-	E6Y90VqqB8K9eKiqP3xsEeB3Nr4j109JD8ur8VyL1Bz8IyEoG6ZQlKacSsXCf1Zg
-	tmrL7BHnYgnecvNlYXl6yw==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44rpsvcvvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 10:24:04 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 14 Feb
- 2025 16:24:02 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 16:24:02 +0000
-Received: from lonswws03.ad.cirrus.com (lonswws03.ad.cirrus.com [198.90.188.34])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 2A48B82025A;
-	Fri, 14 Feb 2025 16:24:02 +0000 (UTC)
-From: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
-To: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Vitaly Rodionov
-	<vitalyr@opensource.cirrus.com>
-Subject: [PATCH 2/2] ALSA: hda/cirrus: Reduce codec resume time
-Date: Fri, 14 Feb 2025 16:23:26 +0000
-Message-ID: <20250214162354.2675652-2-vitalyr@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250214162354.2675652-1-vitalyr@opensource.cirrus.com>
-References: <20250214162354.2675652-1-vitalyr@opensource.cirrus.com>
+	s=arc-20240116; t=1739550212; c=relaxed/simple;
+	bh=RuFPE7tH8iXuaxYoHMyQIMoz2rfjTwbF3j603jW5s9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EnmGEVoECN2BX9135xWLSfR5TQKVQaOSC06L9KhFVoIB1/litEzBWpoyLyG6uemZ5k9jo/prAInvh84NQIZ80Ujlz59Nf8d5+4ZoWivxxqNL2zzp6nWW67OyYU0GaublN6flRjHvznf8aY/29ON6uvPLF6MIwlXfHAI+h+yTKCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K+Zfg8WB; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739550211; x=1771086211;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RuFPE7tH8iXuaxYoHMyQIMoz2rfjTwbF3j603jW5s9c=;
+  b=K+Zfg8WBU0LP+1JyCx3nv+UqMwxG17cbFYOfQV5GuoHC5koDWArX7F5G
+   4aGf4nWuv+adHM44C70UvryBVMK60/Qe93yhRnfXNqO/JH8hmmPAjqspc
+   j1hm107gJ9uRoMcswr1w2QvI+iwqVB7HxhpK3/+ofoOVY8jpHEXS1HTEX
+   q4ipC8Zl/P9pkQ6u3bd2ZCQJPunAYl1J3Mlo+MDlvO+PDZmRhibX38I4h
+   gs72/27q2OPKPq6i2imwLV/ojfZtcrueaTewabFPqIlBHRpgBTO6qIJuo
+   bnpPjWnjlUNOT1kPAgqgoB8ljfce/QE6nYszz4Kybwu1BaHHu12c4cIxS
+   Q==;
+X-CSE-ConnectionGUID: e8iJyyQ1RuebjYO6EDyQRA==
+X-CSE-MsgGUID: aGRP7T4LRB+mNMhq/2lPHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="50516440"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="50516440"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:23:30 -0800
+X-CSE-ConnectionGUID: Ok4W50BGREy+s7b0NgP6DA==
+X-CSE-MsgGUID: blT7/6HSQQqbO6UizSicuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="144430041"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.21]) ([10.125.109.21])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:23:29 -0800
+Message-ID: <6ec8839e-cdd9-4607-8556-dd412aed41a5@intel.com>
+Date: Fri, 14 Feb 2025 08:23:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=O73DvA9W c=1 sm=1 tr=0 ts=67af6e24 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=U9z2HhxXZIhU2ysfx1IA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=GIWBuCPpE9siKy2bWEcf:22
- a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-ORIG-GUID: yjz1QX87CfhbG4UR3NR9bStIaeQ14Hgh
-X-Proofpoint-GUID: yjz1QX87CfhbG4UR3NR9bStIaeQ14Hgh
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpu: Add two Intel CPU model numbers
+To: Peter Zijlstra <peterz@infradead.org>, "Luck, Tony" <tony.luck@intel.com>
+Cc: "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "patches@lists.linux.dev" <patches@lists.linux.dev>,
+ "x86@kernel.org" <x86@kernel.org>
+References: <20240923173750.16874-1-tony.luck@intel.com>
+ <c8545ed5-b822-43a0-a347-d077bccf9d6f@citrix.com>
+ <SJ1PR11MB6083F36D7C68AE8DF5AAA39DFCFC2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250214130205.GK14028@noisy.programming.kicks-ass.net>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250214130205.GK14028@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch reduces the resume time by half and introduces an option to
-include a delay after a single write operation before continuing.
+On 2/14/25 05:02, Peter Zijlstra wrote:
+> Isn't the only reason we're doing a new Family because we can out of
+> module number space? It's not magically different from Fam6.
 
-Signed-off-by: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
----
- sound/pci/hda/patch_cs8409-tables.c | 6 +++---
- sound/pci/hda/patch_cs8409.c        | 6 +++++-
- sound/pci/hda/patch_cs8409.h        | 2 +-
- 3 files changed, 9 insertions(+), 5 deletions(-)
+Right. That was the primary motivation.
 
-diff --git a/sound/pci/hda/patch_cs8409-tables.c b/sound/pci/hda/patch_cs8409-tables.c
-index 621f947e3817..09240138e087 100644
---- a/sound/pci/hda/patch_cs8409-tables.c
-+++ b/sound/pci/hda/patch_cs8409-tables.c
-@@ -131,7 +131,7 @@ static const struct cs8409_i2c_param cs42l42_init_reg_seq[] = {
- 	{ CS42L42_RSENSE_CTL3, 0x00 },
- 	{ CS42L42_TSENSE_CTL, 0x80 },
- 	{ CS42L42_HS_BIAS_CTL, 0xC0 },
--	{ CS42L42_PWR_CTL1, 0x02 },
-+	{ CS42L42_PWR_CTL1, 0x02, 10000 },
- 	{ CS42L42_ADC_OVFL_INT_MASK, 0xff },
- 	{ CS42L42_MIXER_INT_MASK, 0xff },
- 	{ CS42L42_SRC_INT_MASK, 0xff },
-@@ -328,7 +328,7 @@ static const struct cs8409_i2c_param dolphin_c0_init_reg_seq[] = {
- 	{ CS42L42_RSENSE_CTL3, 0x00 },
- 	{ CS42L42_TSENSE_CTL, 0x80 },
- 	{ CS42L42_HS_BIAS_CTL, 0xC0 },
--	{ CS42L42_PWR_CTL1, 0x02 },
-+	{ CS42L42_PWR_CTL1, 0x02, 10000 },
- 	{ CS42L42_ADC_OVFL_INT_MASK, 0xff },
- 	{ CS42L42_MIXER_INT_MASK, 0xff },
- 	{ CS42L42_SRC_INT_MASK, 0xff },
-@@ -384,7 +384,7 @@ static const struct cs8409_i2c_param dolphin_c1_init_reg_seq[] = {
- 	{ CS42L42_RSENSE_CTL3, 0x00 },
- 	{ CS42L42_TSENSE_CTL, 0x80 },
- 	{ CS42L42_HS_BIAS_CTL, 0xC0 },
--	{ CS42L42_PWR_CTL1, 0x06 },
-+	{ CS42L42_PWR_CTL1, 0x06, 10000 },
- 	{ CS42L42_ADC_OVFL_INT_MASK, 0xff },
- 	{ CS42L42_MIXER_INT_MASK, 0xff },
- 	{ CS42L42_SRC_INT_MASK, 0xff },
-diff --git a/sound/pci/hda/patch_cs8409.c b/sound/pci/hda/patch_cs8409.c
-index b760332a4e35..e50006757a2c 100644
---- a/sound/pci/hda/patch_cs8409.c
-+++ b/sound/pci/hda/patch_cs8409.c
-@@ -346,6 +346,11 @@ static int cs8409_i2c_bulk_write(struct sub_codec *scodec, const struct cs8409_i
- 
- 		if (cs8409_i2c_wait_complete(codec) < 0)
- 			goto error;
-+		/* Certain use cases may require a delay
-+		 * after a write operation before proceeding.
-+		 */
-+		if (seq[i].delay)
-+			fsleep(seq[i].delay);
- 	}
- 
- 	mutex_unlock(&spec->i2c_mux);
-@@ -888,7 +893,6 @@ static void cs42l42_resume(struct sub_codec *cs42l42)
- 
- 	/* Initialize CS42L42 companion codec */
- 	cs8409_i2c_bulk_write(cs42l42, cs42l42->init_seq, cs42l42->init_seq_num);
--	msleep(CS42L42_INIT_TIMEOUT_MS);
- 
- 	/* Clear interrupts, by reading interrupt status registers */
- 	cs8409_i2c_bulk_read(cs42l42, irq_regs, ARRAY_SIZE(irq_regs));
-diff --git a/sound/pci/hda/patch_cs8409.h b/sound/pci/hda/patch_cs8409.h
-index 14645d25e70f..e4bd2e12110b 100644
---- a/sound/pci/hda/patch_cs8409.h
-+++ b/sound/pci/hda/patch_cs8409.h
-@@ -229,7 +229,6 @@ enum cs8409_coefficient_index_registers {
- #define CS42L42_I2C_SLEEP_US			(2000)
- #define CS42L42_PDN_TIMEOUT_US			(250000)
- #define CS42L42_PDN_SLEEP_US			(2000)
--#define CS42L42_INIT_TIMEOUT_MS			(45)
- #define CS42L42_ANA_MUTE_AB			(0x0C)
- #define CS42L42_FULL_SCALE_VOL_MASK		(2)
- #define CS42L42_FULL_SCALE_VOL_0DB		(0)
-@@ -291,6 +290,7 @@ enum {
- struct cs8409_i2c_param {
- 	unsigned int addr;
- 	unsigned int value;
-+	unsigned int delay;
- };
- 
- struct cs8409_cir_param {
--- 
-2.43.0
+But the new scheme should also make a little more logical sense. The
+family numbers are supposed to move up at a steady rate and also
+separate desktop and server.
 
+Or maybe we'll realize we miss all the fun of family 6 and just start
+shoving everything as models in family 19 randomly instead. ;)
 
