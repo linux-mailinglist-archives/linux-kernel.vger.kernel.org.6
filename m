@@ -1,170 +1,203 @@
-Return-Path: <linux-kernel+bounces-514830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A90A35C49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:16:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CD5A35C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7CF218934A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C8016F377
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ABE260A4F;
-	Fri, 14 Feb 2025 11:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779C5261579;
+	Fri, 14 Feb 2025 11:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VhkovlFz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OI2otWP4"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179C425A652
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB5025C6F2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531741; cv=none; b=DpoBe/Ek54B5KTl7UElYAC+OzCRVele2azPi8ystTsMEljlDes2K1ebJrwSghw/4fLaihlRRg3F5GPSvrOIX+5RRU0t4rkDgWGwIeCABc1ZcEdSAW9x7ekCQfzXDyijwFyWBzR1nnxlMF7VV1XImKVIQw80JxBq/ANQx5iNZoAM=
+	t=1739531796; cv=none; b=tAwQXD7Ozl9KDAqi8pV3R8aUeOr9wCfSxv4EWQrspNnq2E/NEC7x3Vh/ONSRSSmc5AoZNKvtUAq2+jRhR/LfAc1CKqxIk/Rqm73TcUYLow8qFbkbT2X/5n4zD3bCdILilFikDe+TeES9viteQ9v0QQGc9HM2l5YfK9ebdeiwQ68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531741; c=relaxed/simple;
-	bh=Q1iQIbvDhgSHZ4WT/gbEt1daMYEMQVwHES/A7FJ/qNY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PVnhX1TgoCVbn4WzVWgv18A6i7AV2kIj/Jdpn0yVOQxJ4w2ECUVZ/97EJD254oE98AM+UFvMxVqF+BU7GS9sDZfZyhjhk2rqi7Y9iCpQS/ia1kwXwNxwEtWN4EWqBa8M0//9z76uKGRluNOkXja6sWNitAFJob8FekzO8huKlTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VhkovlFz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739531738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Q1iQIbvDhgSHZ4WT/gbEt1daMYEMQVwHES/A7FJ/qNY=;
-	b=VhkovlFzoQ+pezq9aShmI1ig64tWJnAbGMR0eB7OS5nFzjRw5IlWrEgifsKa4buhSDYyei
-	gBM+1X5spfVjyvu+0lsWxhIt+CDYISRgBJZY6BdU++rAw3Y0iI9iZPCYmSQnwcHiIvhJMh
-	xlMrhX4bmXlkxQo4zWf7gsy/7BggvS4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-soo9juPRP5aht2AX8uZ1lw-1; Fri, 14 Feb 2025 06:15:37 -0500
-X-MC-Unique: soo9juPRP5aht2AX8uZ1lw-1
-X-Mimecast-MFC-AGG-ID: soo9juPRP5aht2AX8uZ1lw_1739531736
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-439622e9113so12571035e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:15:37 -0800 (PST)
+	s=arc-20240116; t=1739531796; c=relaxed/simple;
+	bh=Nv+6Ycy+r/YLOTrYHkPYwU3kd5MfJvihnaHXExKMBQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jMk/yB1+DWPIXIQMEPLO3AIny7TVfaNsYcuYDuC/UKOCwrquZf3AIPOp5pd1ph9n9nAs8TYbohv/PZTjngEiCl3o8yznkBGIc3KTfUER1sJXM3+7fJ/tn4LW/B7oBch1nCWJGPAJ7+/offWaH/ESzcjZ6jVz0xpii2VGx8rQnkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OI2otWP4; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e46ebe19489so1346380276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:16:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739531794; x=1740136594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
+        b=OI2otWP44QmJsoWW6RJiWch/jCTDIewr6cfpbcKwj/F7m36rqzqlUgKidAe42S+0S4
+         Z7sl3GyDZudsFFofQHZvvXpLyBBeIxAlhSPSmFD2b9fQ8MrDh8lYn64YjwcrstwGrPph
+         UcOOQIc6sq3RMSX77WwLDimMAqZosz21ge6REELimIcopeiS/RZF2FNLUhbWcGDpUgbu
+         0PACkJqPTYGriSinpNaJtPZooZGLlY1F1SA2cVH4oMNuYPeCktrvhZSCMCgYqCRidG9r
+         WD/sauw0CRoqsGpFsTrR1EpxCRtFdzkud54FGFRQCIJlNQzwkGVPWnAEZz9jH/S/AUCV
+         PVQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531736; x=1740136536;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q1iQIbvDhgSHZ4WT/gbEt1daMYEMQVwHES/A7FJ/qNY=;
-        b=ZKgj1sRRfNn17P8DhTHbTnocVoAerrGtxL3GcAch2BV7hpp77/DnKsrymLN9o+Arvr
-         P2YfAprexgH1j6v/5bhddP/+3+o8C9mz5Zo7KGM7D3tEDz7mjSj7isVA1OVFVIB411xA
-         uGDBsW7v7PjOJcqqLGC0Y11Ls6VN55ikPxGe+CLepysuf3W0BQ5Fn5En2TQJ1o7LkT84
-         mQf3h8ENLiDQTxM5+kXrl/b101/32KMB0yOVJ1Ilap/SWSyst/o7YYr5mImyPogAo7wI
-         YiSEpCEOhSsUY/Oj7qk8gqiCEuxUF+34aYkUUZIWg53LfeKL97nEPkx6oL3UOyk12gjq
-         t90Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX21uTxdkXGlLnl8KZGqKgoGgFKObrCActi4RO4i6I4HDIAHKVWKf5oSlUFVw9Ig6w0Cy7kgWpO2avj1N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkNh8SjJNjGZG9HeGKwstBAwAxLMsmkLF0nCG2J2LI5JLNoijU
-	Fn1qj+cVxGA3PHxZmD31XXZrJOO5jX8AmkcMFhe/HxLOiVi0SvnKj9vZDOOjMuS8ZX9RfwQqk2y
-	V7qHrB1OWWkyix/4YU93wj59jZGUm/FrdKqTdY3KWxl1TscYL47F0OE+ON2udDMV3R3AbYhQx
-X-Gm-Gg: ASbGnct15CsoecDlyPB5IyYYYfBq9gEHAh6jqm2QJgiZ13W/j0pumdPXNQEURGAnMJS
-	B18TFC2aTzW2NetutM6hC+nze9Cjlvmp9qopRBl4vldNFEMpHp0yLH3QvIsdlzg3StiO4M40VOH
-	VCBbR8Qbbo/EuGuVF2f3GxMus4DTayVvoyXu2T6yrdsdfaUfxNAnmAesi2N6tlPe3/LtBDq6MfB
-	BJMPcqQBcMf/ONqAmN1TRpJNNIppVMpHRCCcc7huSu6x9o3msq73G46lBn694IX7QZR0eLhjlIf
-	0LcxuPFBMH6oUn7LC3nut7eoL68oLIL3vw==
-X-Received: by 2002:a05:600c:19cf:b0:439:5573:9348 with SMTP id 5b1f17b1804b1-439581b88ccmr119294135e9.22.1739531736300;
-        Fri, 14 Feb 2025 03:15:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGkfOw2bzXtZt2kXV8bZhrLtsOBgcZjNkpTqtdBEsmjzhSmT9IDyjozv2rFlJKM3Au+7OdF3w==
-X-Received: by 2002:a05:600c:19cf:b0:439:5573:9348 with SMTP id 5b1f17b1804b1-439581b88ccmr119293675e9.22.1739531735938;
-        Fri, 14 Feb 2025 03:15:35 -0800 (PST)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([195.174.133.197])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43961645422sm27024865e9.2.2025.02.14.03.15.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 03:15:35 -0800 (PST)
-Message-ID: <789b56973c0e6419a6a44210a18d1b31d0daf8e6.camel@redhat.com>
-Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org, Steven
- Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>,  Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Juri Lelli <juri.lelli@redhat.com>
-Date: Fri, 14 Feb 2025 12:15:31 +0100
-In-Reply-To: <202502141516.OkUInaxw-lkp@intel.com>
-References: <20250213090819.419470-4-gmonaco@redhat.com>
-	 <202502141516.OkUInaxw-lkp@intel.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        d=1e100.net; s=20230601; t=1739531794; x=1740136594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
+        b=ss7+evrYV6uE3SSBnOp22FPnJReuU7co8O2Vn3C6S5ziW3+LdBIyrxGrNwPly0KIId
+         WZiHipoUXUjG38hOl6ArmLcJNfjxKBwHyBnZKoxHMOby41ipyl5t/djydhdtyNMwtD52
+         Kj2/oEGHNdl5GQEXloOteBsVCKiQ1iYVXrv986XUsI5ma7nAbukkY0D8j+OtgllXufLi
+         JcPLsnfjRjBnyD399PQq/XA2k6Rl3pT3/7DfOs8dDYFNdC2TWukTqdwmm5qkDDcZbGfE
+         Jzser2jZoE9ijP8dYYR+GfGFDYtrhE55a+sxTdjsLhrlyvxIVTU1qe8Scivht2bKoEOI
+         cv7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbv0hN884X4CzqQqTsZINZJ0ocoSe4TTZDrZCqzJc/5ghqKq1B5MUvu09Vr14iJGR5DA7Vm5qkGwoI1V4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw0atBtg0NTcXxospWGlwHKDc03Dfxtj2hN7A1PqJXp2UomZOZ
+	5AcUrBCx4d9q/3rQrAm9ePFVY1FK9JelII9lkA3AnflAUOfZ3umaYjMZSp4UlsL/aPV+2bneE5N
+	mnOFzC8FangSeGWpCSkkdqoQ9H6+hi93URhAWgw==
+X-Gm-Gg: ASbGncs2a19jfYkOKBko3tTPPKWCQu6pHoe0JoPyC4UfBMmt4vEmLJODIZMGvxIOcED
+	NCGYmUIWmouofXildeMu3u6dWYGatkKsXtdrJuBD5CGmpdO0DyEvizNqRP++H51ivB+j+aShG6Q
+	==
+X-Google-Smtp-Source: AGHT+IE6woj8oPDle191tVLCdn9IrSTd52LbGDiCC/HBR/zbujT5GVfsySFK4K0WQQyEViMhqMK63WlGFClc8+pjkbk=
+X-Received: by 2002:a05:6902:841:b0:e5b:323b:a1a4 with SMTP id
+ 3f1490d57ef6-e5d9f180dc6mr10461212276.41.1739531793901; Fri, 14 Feb 2025
+ 03:16:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CGME20250128194832eucas1p15db9ed3575703812ecc0374ffc5b2861@eucas1p1.samsung.com>
+ <20250128194816.2185326-1-m.wilczynski@samsung.com> <20250128194816.2185326-7-m.wilczynski@samsung.com>
+In-Reply-To: <20250128194816.2185326-7-m.wilczynski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 14 Feb 2025 12:15:58 +0100
+X-Gm-Features: AWEUYZmWRXn0bzCrMyNA_HXGOtxuTTirzpyDWms-8p0mq8f1JPxvJIR_18CPMCg
+Message-ID: <CAPDyKFrcs5Hc-X6qExEA992MoQcakCuKRjw7cek3KpYZihsLFw@mail.gmail.com>
+Subject: Re: [PATCH v4 06/18] pmdomain: thead: Add power-domain driver for TH1520
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, jszhang@kernel.org, 
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-=20
-On Fri, 2025-02-14 at 16:00 +0800, kernel test robot wrote:=20
-=20
-> =C2=A0> =C2=A0=C2=A0 kernel/sched/core.c: In function
-> '__do_trace_set_current_state':=20
-> =C2=A0
-=20
-> =C2=A0
-> > =C2=A0
-> > > =C2=A0> > > kernel/sched/core.c:503:9: error: implicit declaration of=
-=20
-> > > > > > function '__do_trace_sched_set_state_tp'; did you mean=20
-> > > > > > 'trace_sched_set_state_tp'?=20
-> > > > > > [-Werror=3Dimplicit-function-declaration]=20
-> > > =C2=A0
-> > =C2=A0
-> =C2=A0
-=20
-> =C2=A0> =C2=A0=C2=A0=C2=A0=C2=A0 503 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 __do_trace_sched_set_state_tp(current,=20
-> > current->__state, state_value);=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 trace_sched_set_state_tp=20
-> > =C2=A0=C2=A0 cc1: some warnings being treated as errors=20
-> >=20
-> >=20
-> > vim +503 kernel/sched/core.c=20
-> >=20
-> > =C2=A0=C2=A0 496=20
-> > =C2=A0=C2=A0 497 /*=20
-> > =C2=A0=C2=A0 498 * Do not call this function directly since it won't ch=
-eck if
-> > the tp is enabled.=20
-> > =C2=A0=C2=A0 499 * Call the helper macro trace_set_current_state instea=
-d.=20
-> > =C2=A0=C2=A0 500 */=20
-> > =C2=A0=C2=A0 501 void __do_trace_set_current_state(int state_value)=20
-> > =C2=A0=C2=A0 502 {=20
-> > =C2=A0> 503 __do_trace_sched_set_state_tp(current, current->__state,=
-=20
-> > state_value);=20
-> > =C2=A0=C2=A0 504 }=20
-> > =C2=A0=C2=A0 505 EXPORT_SYMBOL(__do_trace_set_current_state);=20
-> > =C2=A0=C2=A0 506=20
-> =C2=A0
-=20
-I honestly don't get why this build failed. The function __do_trace_
-exists since cff6d93eab00ba ("tracepoint: Reduce duplication of
-__DO_TRACE_CALL"), a while before that it was just a macro and not an
-inline function, reason why no one so far used it directly.
+On Tue, 28 Jan 2025 at 20:48, Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> The T-Head TH1520 SoC contains multiple power islands that can be
+> programmatically turned on and off using the AON (Always-On) protocol
+> and a hardware mailbox [1]. The relevant mailbox driver has already been
+> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
+> Introduce support for T-head TH1520 Mailbox driver");
+>
+> Introduce a power-domain driver for the TH1520 SoC, which is using AON
+> firmware protocol to communicate with E902 core through the hardware
+> mailbox. This way it can send power on/off commands to the E902 core.
+>
+> The interaction with AUDIO power island e.g trying to turn it OFF proved
+> to crash the firmware running on the E902 core. Introduce the workaround
+> to disable interacting with the power island.
+>
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
 
-Both failed builds are based on 4dc1d1bec898 (where my patchset is
-based) and there __do_trace_ does exist.
+[...]
 
-Unless there's a strong opinion not to use it although the compiler
-allows it, I'd consider the two kernel robot results false negatives.
+> +
+> +static int th1520_pd_probe(struct platform_device *pdev)
+> +{
+> +       struct generic_pm_domain **domains;
+> +       struct genpd_onecell_data *pd_data;
+> +       struct th1520_aon_chan *aon_chan;
+> +       struct device *dev = &pdev->dev;
+> +       int i;
+> +
+> +       aon_chan = dev_get_drvdata(dev->parent);
+> +       if (!aon_chan) {
+> +               dev_err(dev, "Failed to get AON channel from parent\n");
+> +               return -EINVAL;
+> +       }
 
-Or am I missing something?
+As pointed out on patch4. Rather than receiving the aon_chang from the
+parent device like this, it seems better to receive it from a call to
+a library function provided by the FW library.
 
+> +
+> +       domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
+> +                              sizeof(*domains), GFP_KERNEL);
+> +       if (!domains)
+> +               return -ENOMEM;
+> +
+> +       pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
+> +       if (!pd_data)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
+> +               struct th1520_power_domain *pd;
+> +
+> +               if (th1520_pd_ranges[i].disabled)
+> +                       continue;
+> +
+> +               pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
+> +               if (IS_ERR(pd))
+> +                       return PTR_ERR(pd);
+> +
+> +               pd->aon_chan = aon_chan;
+> +               domains[i] = &pd->genpd;
+> +               dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
+> +       }
+> +
+> +       pd_data->domains = domains;
+> +       pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
+> +       pd_data->xlate = th1520_pd_xlate;
+> +
+> +       /*
+> +        * Initialize all power domains to off to ensure they start in a
+> +        * low-power state. This allows device drivers to manage power
+> +        * domains by turning them on or off as needed.
+> +        */
+> +       th1520_pd_init_all_off(domains, dev);
+> +
+> +       return of_genpd_add_provider_onecell(dev->parent->of_node, pd_data);
+> +}
+> +
+> +static struct platform_driver th1520_pd_driver = {
+> +       .driver = {
+> +               .name = "th1520-pd",
+> +       },
+> +       .probe = th1520_pd_probe,
+> +};
+> +module_platform_driver(th1520_pd_driver);
+
+There is no ->remove() callback.
+
+Either add one or make this a builtin_platform_driver() with
+"suppress_bind_attrs = true".
+
+> +
+> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
+> +MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.34.1
+>
+
+Besides the minor thing above, this looks good to me!
+
+Kind regards
+Uffe
 
