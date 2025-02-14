@@ -1,171 +1,179 @@
-Return-Path: <linux-kernel+bounces-514682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EF0A35A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:24:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DABEA35A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670523AC9E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2189316D820
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC4022D7AC;
-	Fri, 14 Feb 2025 09:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FD723A9AC;
+	Fri, 14 Feb 2025 09:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nOeSA79P"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDWIymUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583D323F422;
-	Fri, 14 Feb 2025 09:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F124227BAB;
+	Fri, 14 Feb 2025 09:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739525068; cv=none; b=rqPSRM1acZ2bHlS0gqrNiUmOW7ZuKO67kccwI4/MDBo5H6Mi3G3lQy7KKACMyMTMXl4MBarqLxiLSFki3zS+ecUjuAt6ulXl571BihvE+/KgLscYF/EWJKIpGVxrE4rbnWgjnjKoX9iIeOthhYIru7SUlbm2hJ1KTovd9tpn9HY=
+	t=1739525047; cv=none; b=jtqUjNH0hWLs96cfhU7bVzeq8QfpnwQ/+DN/XsXC/w2Ux2rwysXmbJ+ORF7rhYqq/WxxqhToQJ+Gy2c0MlmGNG+CR1x/HEAkTxcbQn5deIVhM+K8FoiI1d+RfdGQRS358Bshs7O2H2g6dEMnbDQ6daXLMF0Qkrc9+NkDOrmKze0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739525068; c=relaxed/simple;
-	bh=X/sa3uIY8vGLToJUOET8MPdnJJI3A248eVnXpWF62yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fGgJNFNLBFPFffSVdgpbBbpiDSZXQj4YAbLorjdU3qK+Cnz30LF6tF4nONFI5vZxIG6q7vrF4wGZQjUUBlC2uJAdk8fU3uIzEpz2O3NFNn0WD8+nJOr6H8kLWJEOJbhMddRxlXVE52qjiA28mlOiRGPfXWS6l7L6qmDblV3krAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nOeSA79P; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=e87K5BME7QYyxriMEQKz8vW/Cg+m3JIePxp/P/BX5Nk=; b=nOeSA79PVD64loBRv+KHuRaE7f
-	haPG28cMGQU/jxO8oBRjV+BOKLcZstJeK782tbNpjmkpit9RE6ZltRHCa365vqh57N5KOeYb3QoVC
-	PnRKhtt06J7H8Qrd8Q4WVmj2QBM/SKp6peQ4nLMmzBNAmfdcZoYlqf18pnrkLS91tsOHHcr6lm84j
-	+f4Hl3hKEp2FjE+WfGLFSlIZXTtMqc2gKpy49bpW8S3UHx1VbcFYsU1Qx9eQJZt/iMlxIBtMUs8Q/
-	fcjbvKR3YwEx49snD1rUxylwiD5xWsVmGEHDsSMUG/PukufXU0arBaAEoEm3IUuiaZVU/RtPz5oPR
-	cmyfoRdg==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tirvV-00H6fn-Pn; Fri, 14 Feb 2025 10:24:08 +0100
-Message-ID: <4fd39e4b-f2dc-4b7d-a3be-ec3eae8d592a@igalia.com>
-Date: Fri, 14 Feb 2025 18:23:55 +0900
+	s=arc-20240116; t=1739525047; c=relaxed/simple;
+	bh=Mfy+ddENg5qvhmHKsXDrCIS3v98wZceAIoRgJrBPpiE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Uma7oPVlQuxsQWFm/3LOe517wE8k5qjV2Rt3WJ6iogv5usc+P5oEhf/62sguAcVOqOmlHtwKDh7hsFj2uHEWsphvYVrefMNWmzjjQ3SqXVNfzDJrV8lK5eU8X3NDQUDuMJ02t4XG4ZKgo4gRDjcUjqSDkkT3je9dkLopKuIijFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDWIymUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F31C4CED1;
+	Fri, 14 Feb 2025 09:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739525046;
+	bh=Mfy+ddENg5qvhmHKsXDrCIS3v98wZceAIoRgJrBPpiE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QDWIymUw7wH10bLW2shWeKckkb0k5SLz7UsvShpl02/TVwsNy+jWlkSE9VZIPeB+O
+	 6DQe7BXlahbQY5v4V9BCdhnXBUfrbwbzO7GsYsHNXeIYlSNWlcWkP1M+4ML/fzfPv4
+	 LSkqE1iD/nLQI5ZIuu7p174UBm4WINc9D37mgl73PgRR6ddnAI66xzkpgskmsYqmIB
+	 CHuqLZJslaE+wQ13WMoMH7eLgKQ5Cl1hnjPzyDNllLEuVf6Yhv6YxvEvz6D+gD94Rg
+	 lXjC7ou10W7jkPVjsQSFjXekuaZkk7UZ6qrVHb5iBsiA2XIYLW3oK9Ezc2lLimq1wb
+	 DZJsROpGN5toA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tirvX-00412s-VH;
+	Fri, 14 Feb 2025 09:24:04 +0000
+Date: Fri, 14 Feb 2025 09:24:03 +0000
+Message-ID: <86pljkswuk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 00/27] KVM: arm64: Implement support for SME in non-protected guests
+In-Reply-To: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
+References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
- when unit_alloc() fails
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Tejun Heo <tj@kernel.org>,
- Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250212084851.150169-1-changwoo@igalia.com>
- <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, Dave.Martin@arm.com, tabba@google.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello Alexei,
-
-Thank you for the comments! I reordered your comments for ease of 
-explanation.
-
-On 25. 2. 14. 02:45, Alexei Starovoitov wrote:
-> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min <changwoo@igalia.com> wrote:
-
-> The commit log is too terse to understand what exactly is going on.
-> Pls share the call stack. What is the allocation size?
-> How many do you do in a sequence?
-
-The symptom is that an scx scheduler (scx_lavd) fails to load on
-an ARM64 platform on its first try. The second try succeeds. In
-the failure case, the kernel spits the following messages:
-
-[   27.431380] sched_ext: BPF scheduler "lavd" disabled (runtime error)
-[   27.431396] sched_ext: lavd: ops.init() failed (-12)
-[   27.431401]    scx_ops_enable.isra.0+0x838/0xe48
-[   27.431413]    bpf_scx_reg+0x18/0x30
-[   27.431418]    bpf_struct_ops_link_create+0x144/0x1a0
-[   27.431427]    __sys_bpf+0x1560/0x1f98
-[   27.431433]    __arm64_sys_bpf+0x2c/0x80
-[   27.431439]    do_el0_svc+0x74/0x120
-[   27.431446]    el0_svc+0x80/0xb0
-[   27.431454]    el0t_64_sync_handler+0x120/0x138
-[   27.431460]    el0t_64_sync+0x174/0x178
-
-The ops.init() failed because the 5th bpf_cpumask_create() calls
-failed during the initialization of the BPF scheduler. The exact
-point where bpf_cpumask_create() failed is here [1]. That scx
-scheduler allocates 5 CPU masks to aid its scheduling decision.
-
-Also, it seems that there is no graceful way to handle the
-allocation failure since it happens during the initialization of
-the scx scheduler.
-
-In my digging of the code, bpf_cpumask_create() relies on
-bpf_mem_cache_alloc(), and bpf_mem_alloc_init() prefills only
-4 entries per CPU (prefill_mem_cache), so the 5th allocation of
-the cpumask failed.
-
-Increasing the prefill entries would be a solution, but that
-would cause unnecessary memory overhead in other cases, so
-I avoided that approach.
-
-> But we may do something.
-> Draining free_by_rcu_ttrace and waiting_for_gp_ttrace can be done,
-> but will it address your case?
-
-Unfortunately, harvesting free_by_rcu_ttrace and
-waiting_for_gp_ttrace does not help (I tested it). In my case,
-the memory allocation fails when loading an scx scheduler, so
-free_by_rcu_ttrace and waiting_for_gp_ttrace are empty, and there
-is nothing to harvest.
-
-
-> Why irq-s are disabled? Isn't this for scx ?
-
-In this particular scenario, the IRQ is not disabled. I just
-meant such allocation failure can happen easily with excessive
-allocation when IRQ is disabled.
-
->> (e.g., bpf_cpumask_create), allocate the additional free entry in an atomic
->> manner (atomic = true in alloc_bulk).
+On Fri, 14 Feb 2025 01:57:43 +0000,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> ...
->> +       if (unlikely(!llnode && !retry)) {
->> +               int cpu = smp_processor_id();
->> +               alloc_bulk(c, 1, cpu_to_node(cpu), true);
+> I've removed the RFC tag from this version of the series, but the items
+> that I'm looking for feedback on remains the same:
 > 
-> This is broken.
-> Passing atomic doesn't help.
-> unit_alloc() can be called from any context
-> including NMI/IRQ/kprobe deeply nested in slab internals.
-> kmalloc() is not safe from there.
-> The whole point of bpf_mem_alloc() is to be safe from
-> unknown context. If we could do kmalloc(GFP_NOWAIT)
-> everywhere bpf_mem_alloc() would be needed.
+>  - The userspace ABI, in particular:
+>   - The vector length used for the SVE registers, access to the SVE
+>     registers and access to ZA and (if available) ZT0 depending on
+>     the current state of PSTATE.{SM,ZA}.
+>   - The use of a single finalisation for both SVE and SME.
+> 
+>  - The addition of control for enabling fine grained traps in a similar
+>    manner to FGU but without the UNDEF, I'm not clear if this is desired
+>    at all and at present this requires symmetric read and write traps like
+>    FGU. That seemed like it might be desired from an implementation
+>    point of view but we already have one case where we enable an
+>    asymmetric trap (for ARM64_WORKAROUND_AMPERE_AC03_CPU_38) and it
+>    seems generally useful to enable asymmetrically.
+> 
+> This series implements support for SME use in non-protected KVM guests.
 
-I didn't think about the NMI case, where GFP_NOWAIT and GFP_ATOMIC are 
-not safe.
+[...]
 
-Hmm.. maybe, we can extend 'bpf_mem_alloc_init()' or 'struct
-bpf_mem_alloc' to specify the (initial) prefill count. This way
-we can set a bit larger prefill count (say 8) for bpf cpumask.
-What do you think?
+Just to be clear: I do not intend to review a series that doesn't
+cover the full gamut of KVM from day 1. Protected mode is an absolute
+requirement. It is the largest KVM deployment, and Android phones the
+only commonly available platform with SME. If CCA gets merged prior to
+SME support, supporting it will also be a requirement.
 
-[1] 
-https://github.com/sched-ext/scx/blob/f17985cac0a60ba0136bbafa3f546db2b966cec0/scheds/rust/scx_lavd/src/bpf/main.bpf.c#L1970
+> Much of this is very similar to SVE, the main additional challenge that
+> SME presents is that it introduces a new vector length similar to the
+> SVE vector length and two new controls which change the registers seen
+> by guests:
+> 
+>  - PSTATE.ZA enables the ZA matrix register and, if SME2 is supported,
+>    the ZT0 LUT register.
+>  - PSTATE.SM enables streaming mode, a new floating point mode which
+>    uses the SVE register set with the separately configured SME vector
+>    length.  In streaming mode implementation of the FFR register is
+>    optional.
+> 
+> It is also permitted to build systems which support SME without SVE, in
+> this case when not in streaming mode no SVE registers or instructions
+> are available.  Further, there is no requirement that there be any
+> overlap in the set of vector lengths supported by SVE and SME in a
+> system, this is expected to be a common situation in practical systems.
+> 
+> Since there is a new vector length to configure we introduce a new
+> feature parallel to the existing SVE one with a new pseudo register for
+> the streaming mode vector length.  Due to the overlap with SVE caused by
+> streaming mode rather than finalising SME as a separate feature we use
+> the existing SVE finalisation to also finalise SME, a new define
+> KVM_ARM_VCPU_VEC is provided to help make user code clearer.  Finalising
+> SVE and SME separately would introduce complication with register access
+> since finalising SVE makes the SVE regsiters writeable by userspace and
+> doing multiple finalisations results in an error being reported.
+> Dealing with a state where the SVE registers are writeable due to one of
+> SVE or SME being finalised but may have their VL changed by the other
+> being finalised seems like needless complexity with minimal practical
+> utility, it seems clearer to just express directly that only one
+> finalisation can be done in the ABI.
+>
+> Access to the floating point registers follows the architecture:
+> 
+>  - When both SVE and SME are present:
+>    - If PSTATE.SM == 0 the vector length used for the Z and P registers
+>      is the SVE vector length.
+>    - If PSTATE.SM == 1 the vector length used for the Z and P registers
+>      is the SME vector length.
+>  - If only SME is present:
+>    - If PSTATE.SM == 0 the Z and P registers are inaccessible and the
+>      floating point state accessed via the encodings for the V registers. 
+>    - If PSTATE.SM == 1 the vector length used for the Z and P registers
+>  - The SME specific ZA and ZT0 registers are only accessible if SVCR.ZA is 1.
+> 
+> The VMM must understand this, in particular when loading state SVCR
+> should be configured before other state.
 
-Regards,
-Changwoo Min
+Why SVCR? This isn't a register, just an architected accessor to
+PSTATE.{ZA,SM}. Userspace already has direct access to PSTATE, so I
+don't understand this requirement.
+
+Isn't it that there is simply a dependency between restoring PSTATE
+and any of the vector stuff? Also, how do you preserve the current ABI
+that do not have this requirement?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
