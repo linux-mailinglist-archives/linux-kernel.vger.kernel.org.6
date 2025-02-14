@@ -1,198 +1,135 @@
-Return-Path: <linux-kernel+bounces-515127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EF0A36094
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:36:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA1AA36099
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DFE83A2822
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB441891847
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A112661B9;
-	Fri, 14 Feb 2025 14:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E53266569;
+	Fri, 14 Feb 2025 14:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUdwSNmi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CN3KP+5P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B7E86346;
-	Fri, 14 Feb 2025 14:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9815199A;
+	Fri, 14 Feb 2025 14:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543777; cv=none; b=VvXx0NEa8gjH3f+WPVeT8AkmJDFfxKVGK/iGJRUx6qaUuyAdXc16hgL1U6NpJ7nYE9f7tepZoyi5Qw5cpBzOgmKXmD19c/5hWPz5WFqSCorp06p38S8E0SxDH7b2fltQo9kCwWNfb2iva6o2lANJ0IfcooyK6EyehSGdZlMvJWs=
+	t=1739543857; cv=none; b=EM0LlMO4NSq/YmxwTzTUjJU8S13H2m/1Pr8W6ulBM2kYwkSzrWN51/HDd2jKko23gRHRqjIcze3sp5s1yGdP3uznembrsp4rvzypf+LRtSPqnrJqNh0rspJIbFRVRlPa9me9lIOTeqI4wUIYVHyGpqO472dPbLEqz7qsjDN6S1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543777; c=relaxed/simple;
-	bh=orzrmR8/qa3ucQ6xBucX3yLnXyJJkOmswiAW80DJzOg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PxmAnnAMCV4tbcS5k5+iyuixqSiROR90gwDbvjaRM6dFZgGVBnAoNyHjBt0n7kUPstcR+j2fhnluZ6jYE0LbBjBp+WnzdcLpc2Y/qxmsoNAGB3V4eq8Y+RrzBe+SG109A0s1ygoyYlvgT0dGsAveuMG/zxbIAvJyForitpC07MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUdwSNmi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33702C4CED1;
-	Fri, 14 Feb 2025 14:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739543776;
-	bh=orzrmR8/qa3ucQ6xBucX3yLnXyJJkOmswiAW80DJzOg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sUdwSNmi9mJ266fAiUgl02jrqwzA+1PSgpPBfhQ4S48lhs/3VJZg8vvGe1TTvVuYK
-	 sM81w7QkbytNeBvYs3RGDH9sJAaUS/7R1T+i4XQvr+w+A/MmuCNZ6+mLp1Zg/ZKePh
-	 ZnSJuj9rXsM6H8J5N/AWz51qa6NY3xUrHTEJ/eDvdmNTbBqSTHPt1r6MulzqV39vYx
-	 boLcdboOnTg2cOioiiB5clgazbEqDXix/kdZDi8aAqDHQf/EGpgzgJVhzbXCa3rRpS
-	 fnAV0x1x8TMdFy2jXZisJENWAdc2VFa6NXwbP5xNB7I59Rxl+80DiMpNH5JCV8BMEw
-	 4JjVNFSK/Vx0g==
-Date: Fri, 14 Feb 2025 23:36:13 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH] tracing: Do not allow mmap() of persistent ring buffer
-Message-Id: <20250214233613.bde0638f393186f56f0b30eb@kernel.org>
-In-Reply-To: <20250214070712.01997ea1@gandalf.local.home>
-References: <20250213180737.061871ae@gandalf.local.home>
-	<20250214110722.7eaf35b42c4858e6b74500f7@kernel.org>
-	<20250213212147.6511b235@gandalf.local.home>
-	<20250214161332.8797b20f09e068c33f872698@kernel.org>
-	<20250214070712.01997ea1@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739543857; c=relaxed/simple;
+	bh=iP9rILo1pieoX7MujpuvZrfyhcl6FWNIG3xPCJe47D8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=V8tnI2nkWkK2HzYiWurSPnAv8FUdILhYk+2uD61bhqJjh/hFXpRQ9PWBCAsBww334k2BcbQR9KZlJ8dAdVRjZ044UiUxjDVU25tWykaVaaYFDMMtEUcnMXHs/Pvo2EpD9CjiUFQDJikfNs/xm/R9gKQkFqsC4wIw+om2bXoRmPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CN3KP+5P; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739543856; x=1771079856;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=iP9rILo1pieoX7MujpuvZrfyhcl6FWNIG3xPCJe47D8=;
+  b=CN3KP+5PtSMcPVFEYrFDskyCN3a3SSo+XiyMg0pCnTcbI5InuePlamSa
+   OG2Fqc6KM0U5xKslJPTkorDffw3df7/h7Ew8/Z4ON/ZziaacxY+mMZaL5
+   Mxt/1p8TWk7n/hGsV7bVHY53z9M+shU8RCMJCYp6ICzl1ceooHWB1Qwv8
+   TBuHerSIV0unLVehmFozs8MuhtFX5zwnN6ZIP8KjOxYQo9zdCnsaWunME
+   Kz35sUKIcx0JHYg5QrVfMkWloTvInag+4DQf2Wy3kmZ33XyNFFSN4+g51
+   GJmii3SB/fbBzIj8A2uItm2+ZbtZBCp1+18Y/LpaN2RuOsH+1yB5r7ihi
+   w==;
+X-CSE-ConnectionGUID: GOfeAuWIRBifHbwW0tKI4g==
+X-CSE-MsgGUID: +tRJ9aauRfKzXpuzk+DTGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40157595"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="40157595"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 06:37:36 -0800
+X-CSE-ConnectionGUID: qH+p86lhRk6Y+78IEsYq6g==
+X-CSE-MsgGUID: uOBG/QX5SeO3uRT0KYLYGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="136699809"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 06:37:33 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Feb 2025 16:37:30 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    Karolina Stolarek <karolina.stolarek@oracle.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>
+Subject: Re: [PATCH 3/4] PCI: shpchp: Cleanup logging and debug wrappers
+In-Reply-To: <20250213220453.GA135512@bhelgaas>
+Message-ID: <582c718e-568d-7f70-aef7-b0206600d3a3@linux.intel.com>
+References: <20250213220453.GA135512@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-872026427-1739543850=:944"
 
-On Fri, 14 Feb 2025 07:07:12 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Fri, 14 Feb 2025 16:13:32 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
-> > On Thu, 13 Feb 2025 21:21:47 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > On Fri, 14 Feb 2025 11:07:22 +0900
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > >   
-> > > > This may be good for fixing crash short term but may not allow us to read the
-> > > > subbufs which is read right before crash. Can we also add an option to reset
-> > > > the read pointer in the previous boot for the persistent ring buffer?  
-> > > 
-> > > I'm not sure what you mean here.
-> > > 
-> > > Note, this is just for mmapping the buffers. Currently we never tried it as
-> > > if we did, it would have crashed. But this does not affect normal reads.  
-> > 
-> > But reading buffer via mmap() is already supported. Can we read all pages,
-> > which had been read by trace_pipe_raw in previous boot, again on this boot?
-> 
-> It's not supported. If you try it, it will crash. This prevents reading via
-> mmap() on a boot buffer. I don't know what you are asking. Once this patch
-> is applied, mmap() will always fail on the boot buffer before or after you
-> start it.
+--8323328-872026427-1739543850=:944
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Hmm, I meant it is supported for other non-persisten ring buffer, isn't it?
+On Thu, 13 Feb 2025, Bjorn Helgaas wrote:
 
-> 
-> > 
-> > Anyway, I made another patch to fix it to allow mmap() on persistent ring
-> > buffer here. I thought I can get the phys_addr from struct vm_area, but
-> > it could not for vmap()'d area. So this stores the phys_addr in trace_buffer.
-> 
-> Which is way too complex and intrusive. If you want to allow mapping, all
-> it needs is this:
+> On Mon, Dec 16, 2024 at 06:10:11PM +0200, Ilpo J=C3=A4rvinen wrote:
+> > The shpchp hotplug driver defines logging wrappers ctrl_*() and another
+> > set of wrappers with generic names which are just duplicates of
+> > existing generic printk() wrappers. Only the former are useful to
+> > preserve as they handle the controller dereferencing (the latter are
+> > also unused).
+> >=20
+> > The "shpchp_debug" module parameter is used to enable debug logging.
+> > The generic ability to turn on/off debug prints dynamically covers this
+> > usecase already so there is no need to module specific debug handling.
+> > The ctrl_dbg() wrapper also uses a low-level pci_printk() despite
+> > always using KERN_DEBUG level.
+>=20
+> I think it's great to get rid of the module param.  Can you include
+> a hint about how users of shpchp_debug should now enable debug prints?
+>=20
+> The one I have in my notes is to set CONFIG_DYNAMIC_DEBUG=3Dy and boot
+> with 'dyndbg=3D"file drivers/pci/* +p"'.
 
-Ah, vmalloc_to_page() works, I see.
+Sure, I'll add the info and split the change as you suggested below.
 
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 07b421115692..9339adc88ad5 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -5927,12 +5941,18 @@ static void rb_clear_buffer_page(struct buffer_page *page)
->  static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->  {
->  	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-> +	struct page *page;
->  
->  	if (!meta)
->  		return;
->  
->  	meta->reader.read = cpu_buffer->reader_page->read;
-> -	meta->reader.id = cpu_buffer->reader_page->id;
-> +	/* For boot buffers, the id is the index */
-> +	if (cpu_buffer->ring_meta)
-> +		meta->reader.id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-> +						     cpu_buffer->reader_page->page);
-> +	else
-> +		meta->reader.id = cpu_buffer->reader_page->id;
->  	meta->reader.lost_events = cpu_buffer->lost_events;
->  
->  	meta->entries = local_read(&cpu_buffer->entries);
-> @@ -5940,7 +5960,12 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->  	meta->read = cpu_buffer->read;
->  
->  	/* Some archs do not have data cache coherency between kernel and user-space */
-> -	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-> +	if (virt_addr_valid(cpu_buffer->meta_page))
-> +		page = virt_to_page(cpu_buffer->meta_page);
-> +	else
-> +		page = vmalloc_to_page(cpu_buffer->meta_page);
-> +
-> +	flush_dcache_folio(page_folio(page));
->  }
->  
->  static void
-> @@ -7041,7 +7066,10 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->  			goto out;
->  		}
->  
-> -		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-> +		if (virt_addr_valid(cpu_buffer->subbuf_ids[s]))
-> +			page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-> +		else
-> +			page = vmalloc_to_page((void *)cpu_buffer->subbuf_ids[s]);
->  
->  		for (; off < (1 << (subbuf_order)); off++, page++) {
->  			if (p >= nr_pages)
-> @@ -7187,6 +7215,7 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  	unsigned long missed_events;
->  	unsigned long reader_size;
->  	unsigned long flags;
-> +	struct page *page;
->  
->  	cpu_buffer = rb_get_mapped_buffer(buffer, cpu);
->  	if (IS_ERR(cpu_buffer))
-> @@ -7255,7 +7291,12 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  
->  out:
->  	/* Some archs do not have data cache coherency between kernel and user-space */
-> -	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-> +	if (virt_addr_valid(cpu_buffer->meta_page))
-> +		page = virt_to_page(cpu_buffer->meta_page);
-> +	else
-> +		page = vmalloc_to_page(cpu_buffer->meta_page);
-> +
-> +	flush_dcache_folio(page_folio(page));
->  
->  	rb_update_meta_page(cpu_buffer);
->  
-> But this still doesn't work, as the index is still off (I'm still fixing it).
+> > Convert ctrl_dbg() to use the pci_dbg() and remove "shpchp_debug" check
+> > from it.
+> >=20
+> > Removing the non-ctrl variants of logging wrappers and "shpchp_debug"
+> > module parameter as they are no longer used.
+>=20
+> > -#define dbg(format, arg...)=09=09=09=09=09=09\
+> > -do {=09=09=09=09=09=09=09=09=09\
+> > -=09if (shpchp_debug)=09=09=09=09=09=09\
+> > -=09=09printk(KERN_DEBUG "%s: " format, MY_NAME, ## arg);=09\
+> > -} while (0)
+> > -#define err(format, arg...)=09=09=09=09=09=09\
+> > -=09printk(KERN_ERR "%s: " format, MY_NAME, ## arg)
+> > -#define info(format, arg...)=09=09=09=09=09=09\
+> > -=09printk(KERN_INFO "%s: " format, MY_NAME, ## arg)
+> > -#define warn(format, arg...)=09=09=09=09=09=09\
+> > -=09printk(KERN_WARNING "%s: " format, MY_NAME, ## arg)
+>=20
+> The above are unused, aren't they?  Can we make a separate patch to
+> remove these, for ease of describing and reviewing?
 
-Ah, OK. Thanks for fixing it.
+--=20
+ i.
 
-> 
-> The persistent ring buffer uses the page->id for one thing but the user
-> space mmap() uses it for something else.
-
-Thanks you,
-
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--8323328-872026427-1739543850=:944--
 
