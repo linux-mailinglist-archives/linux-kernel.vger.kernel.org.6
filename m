@@ -1,144 +1,166 @@
-Return-Path: <linux-kernel+bounces-515738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720B2A36856
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:37:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6A8A36893
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C13B1D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1571B1895B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D421FC7F2;
-	Fri, 14 Feb 2025 22:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DBD213227;
+	Fri, 14 Feb 2025 22:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hWbPBGNw"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxcAraYI"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C41DE2B4;
-	Fri, 14 Feb 2025 22:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D87520E6EE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 22:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739572640; cv=none; b=jf5KmH62rz06yd5v3IC4OpqQpuceO1RObqYDAvvk6gOtby57O/hjHWlwRW2fqQH+EaieIr7sRlZ6aBQ0Zz6Stir8q6+0HZH2XaSm12Hx/tRjbzg4Mff3YKCWOB7TFJtfvAOmoz9Tgfy/K3Htp/mBfO3xG5+hEbPqQyV4XS4hbQA=
+	t=1739572723; cv=none; b=V+yROP2s1IbebTB+1qFcjKlD9R5qre2MB7oGpFWf9K1Pp/E6H/qsxby7vdlUWrf8JZ0wdZAbvV3K2LmDMeNcBufTiPfz+ywOH1Xixo8BcrqDXqI1ZhdcWH7oxfOZyZecYlCQ/g98IlUvBlmbg8HzLz2soDoGll5CRQshc396Ao4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739572640; c=relaxed/simple;
-	bh=r/NYCYjMogkoPU8rkXkhPxSGNwsywVNs1fQ8IZdA0n4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vx3uZIgq5f8qh+l7vC9k0TH/PhfN8eVLQhweE1mU0Uars5QFhYm92rOsCIUsZesdgUl5d4sK/dDTyHXGkqaiOk86e+9xHqgTzbQrAuPvO+WiZjJc2Vn+WXk/XPiDDk9AoqvY77qLPkrn+z7GYJ85samrfIljmC3H/dHWP8/td3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hWbPBGNw; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51EMb3Nc1043280
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 14 Feb 2025 16:37:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739572624;
-	bh=PSnKZ9pgEEZ6nNIIZ9dM7rFmu3IDFEefyD7U0e7a6so=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=hWbPBGNwNNtgiRAJOFdPM4u/GvQuf1BrvUi2N42/b7mUgj0g9ooN1VSt2mPP8O5P0
-	 sjbSOkhSp3d/M34ei97ktwEYN9lzC7bFLfFByLT/ZS7g+63VzJpgyVdha3tOfgLT0Y
-	 sV76BPCsP8lE+fF9E+uJ/eQmpGzKqV5qX7Z32z60=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51EMb3Zd083376;
-	Fri, 14 Feb 2025 16:37:03 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Feb 2025 16:37:03 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Feb 2025 16:37:03 -0600
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51EMb3Ow035234;
-	Fri, 14 Feb 2025 16:37:03 -0600
-Message-ID: <b3e96184-e20c-4935-b86c-73c95b00b9fc@ti.com>
-Date: Fri, 14 Feb 2025 16:37:03 -0600
+	s=arc-20240116; t=1739572723; c=relaxed/simple;
+	bh=C9A3LWRVVEvM4OBlqT9wYA0yWCdJj2Hpz7Z1pzmG8wU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LRvDKpxmKUN1/NXRqTVsT4SCm8/3hTRtF02RPnECmaD3Pp1bGv+iX4xVStAmP2IvDWKhpojjnPsJho3RNJQs8LrOWoLGROrL9oh/giS4dqPa6zP+IPm8kMDqFavvQqV64IJAjo3TqcN55inApIX3HPdEfpmK9boywML70HsPv3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxcAraYI; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22101839788so9659105ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739572720; x=1740177520; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tUNETmfCcN16mATl/cudDdX8wxXBFFNsGuPJIeAzz7o=;
+        b=sxcAraYIu8e44pbbpWvNWlVzGDnWXj9fvzGXJoI3ud6pQhIXCm3l1OyrxGN97VUurH
+         j69o/zPBGz3+GMwqj26NfTzpsVEsCQj3/9gvxgptvmXPmbewn0l6AEoOwqyacqddFdRG
+         KPT4uL+TfceQGU3IIRu2eWBlGcyMJkLz06GWFP8up+JJOBw18bcFs/D1Cs+WmyyzkrAl
+         fusNzDskDpaR13JYdQDSCit5r/ltMjyhJdTsJxanznqxe9JbsZlM7H1nKOJB8QcZzo1j
+         jEhvfjV4ytx485xPX6MnJVmLf3bjTGsuiKV4BN9V30ZvPMDLuhXIJG0tcglJJk5Q06AL
+         4lkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739572720; x=1740177520;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tUNETmfCcN16mATl/cudDdX8wxXBFFNsGuPJIeAzz7o=;
+        b=rikuj5jmGpphl5KtBjMR2LBi+pzfQSwAVyA4iZ5qNKQUC23poND0GmVc2U76fCzVux
+         LwFAZ9nrsrBTddtDtcYl38n4fUOcvFAVUw4iylL51goh9ju/yF+XMYXBJcViTrPVNWOr
+         mcXGh6ciduowPXqDst7ZyBuNvKNFPY6UKhE5/BovABMV/lZLEPyn3h9iVU1AeiB9Y0I+
+         58HGbWnXxrfzNA8xDiJ6vdVhED4yEIbFkKbvOjfgdhdimyz2AXLClvepLnJsqvSJ+v/V
+         rQOaiPjcP2HpKxYvvuIi9WcBkcHca8ACJrTl8Tu+OJavNOgO1uQc749CiVJs5ZlIP9r1
+         ujWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGqPeWZlZmOqwogLZAjlzUXJUX6nevFE3ds7iV5Wa8Ozk52UtlOTlDxag4mmZGntTsAZGK6yT2nay+fvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfIpm3ZIN6yd8XzN3OxkFMWZQNRuI3MDdqwt1FRyzXjTu5C6Xt
+	9+nQd0St+3PuUP7i+Qd8Nb0oRYTZEMLSUkXlLuIzvxmclEN2TkMKOvfWJ2ytgdveAvF+e0b6j/M
+	2J570xQHF6w==
+X-Google-Smtp-Source: AGHT+IGx5EUUJ6Z4zMDYclDQP+PzCMwRDfETHpFgm91+oQRalpeSgNTUDtjKw58EJXrDOCaT//TmCaudpiMQ9Q==
+X-Received: from pfbdn12.prod.google.com ([2002:a05:6a00:498c:b0:730:92d9:52e3])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:1583:b0:1ee:8a27:364c with SMTP id adf61e73a8af0-1ee8cbe7e09mr2160416637.34.1739572719877;
+ Fri, 14 Feb 2025 14:38:39 -0800 (PST)
+Date: Fri, 14 Feb 2025 14:38:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62a7-sk: Add alias for RTC
-To: Dhruva Gole <d-gole@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <msp@baylibre.com>,
-        <khilman@baylibre.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20250212210604.745175-1-k-willis@ti.com>
- <20250214062141.gdmkepuuyqb22xuh@lcpd911>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250214062141.gdmkepuuyqb22xuh@lcpd911>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250214223829.1195855-1-joshwash@google.com>
+Subject: [PATCH] gve: set xdp redirect target only when it is available
+From: joshwash@google.com
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, kuba@kernel.org, stable@kernel.org, 
+	Joshua Washington <joshwash@google.com>, stable@vger.kernel.org, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Willem de Bruijn <willemb@google.com>, Ziwei Xiao <ziweixiao@google.com>, 
+	Shailend Chand <shailend@google.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/14/25 00:21, Dhruva Gole wrote:
-> On Feb 12, 2025 at 15:06:04 -0600, Kendall Willis wrote:
->> From: Vibhore Vardhan <vibhore@ti.com>
->>
->> Adds alias for SoC RTC so that it gets assigned rtc0. PMIC node is
->> assisgned rtc1 so that PMIC RTC gets probed as rtc1. This makes it
-> 
-> Nit: Fix the spelling of assigned please.
-> 
->> consistent for testing rtcwake with other AM62 devices where rtc0
->> is SoC RTC.
->>
->> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
->> [k-willis@ti.com: Reworded commit message]
->> Signed-off-by: Kendall Willis <k-willis@ti.com>
->> ---
->> Tested with rtcwake on AM62A.
-> 
-> Any test logs you can provide would be great!
-> 
->>
->> Original patch for AM62A existed in the TI Vendor tree with Vibhore's
->> authorship:
->> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=ti-linux-6.6.y&id=f745d9063212d1088dcfb068ecb4b16648b96487
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> index a6f0d87a50d8..51ea961f166e 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> @@ -22,6 +22,8 @@ aliases {
->>   		serial3 = &main_uart1;
->>   		mmc0 = &sdhci0;
->>   		mmc1 = &sdhci1;
->> +		rtc0 = &wkup_rtc0;
->> +		rtc1 = &tps659312;
->>   	};
->>   
->>   	chosen {
->>
->> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> 
-> It's nice that you've mentioned this, but it seems to be from Feb2.
-> Can you please base it on latest linux-next when you send in future?
-> This will avoid any merge conflicts in advance.
-> 
-> For this though, you may get away with it because nobody else may have
-> touched this file so far...
-> 
-> If you do send a v2, feel free to pick:
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> 
+From: Joshua Washington <joshwash@google.com>
 
-Hi Dhruva,
+Before this patch the NETDEV_XDP_ACT_NDO_XMIT XDP feature flag is set by
+default as part of driver initialization, and is never cleared. However,
+this flag differs from others in that it is used as an indicator for
+whether the driver is ready to perform the ndo_xdp_xmit operation as
+part of an XDP_REDIRECT. Kernel helpers
+xdp_features_(set|clear)_redirect_target exist to convey this meaning.
 
-Thanks for the feedback and the review. I will be adding the changes 
-mentioned by you in v2 :)
+This patch ensures that the netdev is only reported as a redirect target
+when XDP queues exist to forward traffic.
 
-Best,
-Kendall Willis
+Fixes: 39a7f4aa3e4a ("gve: Add XDP REDIRECT support for GQI-QPL format")
+Cc: stable@vger.kernel.org
+Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+Reviewed-by: Jeroen de Borst <jeroendb@google.com>
+Signed-off-by: Joshua Washington <joshwash@google.com>
+---
+ drivers/net/ethernet/google/gve/gve.h      | 10 ++++++++++
+ drivers/net/ethernet/google/gve/gve_main.c |  6 +++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
+index 8167cc5fb0df..78d2a19593d1 100644
+--- a/drivers/net/ethernet/google/gve/gve.h
++++ b/drivers/net/ethernet/google/gve/gve.h
+@@ -1116,6 +1116,16 @@ static inline u32 gve_xdp_tx_start_queue_id(struct gve_priv *priv)
+ 	return gve_xdp_tx_queue_id(priv, 0);
+ }
+ 
++static inline bool gve_supports_xdp_xmit(struct gve_priv *priv)
++{
++	switch (priv->queue_format) {
++	case GVE_GQI_QPL_FORMAT:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ /* gqi napi handler defined in gve_main.c */
+ int gve_napi_poll(struct napi_struct *napi, int budget);
+ 
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 533e659b15b3..92237fb0b60c 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -1903,6 +1903,8 @@ static void gve_turndown(struct gve_priv *priv)
+ 	/* Stop tx queues */
+ 	netif_tx_disable(priv->dev);
+ 
++	xdp_features_clear_redirect_target(priv->dev);
++
+ 	gve_clear_napi_enabled(priv);
+ 	gve_clear_report_stats(priv);
+ 
+@@ -1972,6 +1974,9 @@ static void gve_turnup(struct gve_priv *priv)
+ 		napi_schedule(&block->napi);
+ 	}
+ 
++	if (priv->num_xdp_queues && gve_supports_xdp_xmit(priv))
++		xdp_features_set_redirect_target(priv->dev, false);
++
+ 	gve_set_napi_enabled(priv);
+ }
+ 
+@@ -2246,7 +2251,6 @@ static void gve_set_netdev_xdp_features(struct gve_priv *priv)
+ 	if (priv->queue_format == GVE_GQI_QPL_FORMAT) {
+ 		xdp_features = NETDEV_XDP_ACT_BASIC;
+ 		xdp_features |= NETDEV_XDP_ACT_REDIRECT;
+-		xdp_features |= NETDEV_XDP_ACT_NDO_XMIT;
+ 		xdp_features |= NETDEV_XDP_ACT_XSK_ZEROCOPY;
+ 	} else {
+ 		xdp_features = 0;
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
