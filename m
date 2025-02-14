@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-514297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EE5A3553A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:11:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DB2A3553E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 026637A4903
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3831890D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6F31519A1;
-	Fri, 14 Feb 2025 03:10:49 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F14D77F11;
-	Fri, 14 Feb 2025 03:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1C41519AD;
+	Fri, 14 Feb 2025 03:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AKWE8J9o"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B152CCC5;
+	Fri, 14 Feb 2025 03:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739502648; cv=none; b=T4n1C4DgHe4j2bs8SRtNOF+mUSC5RiPctXdvRfgVszQH7SYhSm4um6V5e42JjJiQNtDCyCErvq1ANNPSQyPqu69WKzMMdiUFI3n64SIpA6dgC7cy9v0jYY5vZxYu/jHKfgtFSCHGSmu+rQeZmbAngqJYP28VlzBQBBlJOxk0cdM=
+	t=1739502935; cv=none; b=OkYtGkohYDmSuZVZR2VDPNAvAZBPQTxFeB30PBjFFcIbAQMpxDM9gsiWyHOZIw3PBz5TaxrnoXZ5arD86waBw58DUSc7AQvXmWP6v2xxMUWUib9gY1aK3SrveoNW+Zv9Zwltf24TtCruLwszJ4ycmjlsVJvLuIr793i51ShJ/18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739502648; c=relaxed/simple;
-	bh=UPsU2fwceXEeyqYpbVC8GWYctW1Q2dnHUuLzGyuLWzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ADYvkoOgWUp18J9h4SNFl17gcD36RiBkYWn+2VE0YPQ+z56zvE5TtdfEdF+VD9JW4wgp/kkOGWo3P1eA0GqEg0GTGXs/LfbjEVBKMx7iMMkg0r2ukD2gOCUgwL8J/tWEtmTjTSkexdkEcmiljIItL1dD1FYBwKeh2DtJgkG7CQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwDHzWkZtK5nxWbnAg--.29056S2;
-	Fri, 14 Feb 2025 11:10:17 +0800 (CST)
-Received: from phytium.com.cn (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwA3PYkTtK5n+U4mAA--.10696S4;
-	Fri, 14 Feb 2025 11:10:15 +0800 (CST)
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenbaozi@phytium.com.cn,
-	Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Subject: [PATCH v2 1/1] cxl/pmem: debug invalid serial number data
-Date: Fri, 14 Feb 2025 11:09:52 +0800
-Message-Id: <20250214030952.4047438-2-wangyuquan1236@phytium.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250214030952.4047438-1-wangyuquan1236@phytium.com.cn>
-References: <20250214030952.4047438-1-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1739502935; c=relaxed/simple;
+	bh=o6A7xuEyy0GYKf1mHa6EnId2Hk3+EkEYN+UcBfQPBps=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PpCPWJbM9/JqePfT5wQAPehlyzG0cGDZlvDnX7fl/4u2QAkcQgCI0QWGvlFO6rOYeaYAeqmLhwITzRSWWNbGN8m20RGvel6UnDd9WfyYaw2nkNJuqLAL3kCnTR8rpQo7nKS/qu2iHUkdf0PywCx1I+zW0DGOQU26e07OWu3kYH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AKWE8J9o; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=SpBZhNJf9VAwv3CM2HFINMYiP5ZKV41Iw5vGkWokPz4=; b=AKWE8J9oC+5cmKIq9GbkJKtXdx
+	LItUBTq2j2PEbYqbUMl/INRK9ByLQ3YAZSE8zwb2g/Vzj9tufoyLYRR1pkyiEjcvAH3PINn6dF6ns
+	+49IdfCX5Zr7c51z/ubgpFdWNuv/NfTBM1m5j7dd4W4HYCmQcIZWBt4JAAA41Jwyfip/l5hA6CB9c
+	g+7tJV1yVEe4Sl8g3ezkic6QMloPZPkhX20Fp0ayRrrfbTpQrCKQYjSzrE8ksaVS3C5vjZ1+mzdRY
+	m6eicNPjC4Eg6pjBYQ1ZGWe9TNNCbkxVR3q/Ix6yAXJ0wAcZvBXIpwDF669rD/iueneE9dVcrh/jN
+	CelKw3Ng==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1timAt-0000000A2yV-2TCl;
+	Fri, 14 Feb 2025 03:15:31 +0000
+Message-ID: <6958d7a5-2403-423d-a0a3-0c43931a7d30@infradead.org>
+Date: Thu, 13 Feb 2025 19:15:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwA3PYkTtK5n+U4mAA--.10696S4
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQABAWeuT6cBawAAsK
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7tryfXF4rJr47GrWxWrykXwb_yoW8AF1rpr
-	48tayYkrW3CF13Zw4xZFy8ZFyYg3Z7W3yxGryjvwn8urn5tF1IqFWxta1jya43Ca95tw4a
-	934j9ryUuFWUW3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+User-Agent: Mozilla Thunderbird
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH RFCv2 0/5]Implement kernel-doc in Python
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <cover.1739447912.git.mchehab+huawei@kernel.org>
+Content-Language: en-US
+In-Reply-To: <cover.1739447912.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In a nvdimm interleave-set each device with an invalid or zero
-serial number may cause pmem region initialization to fail, but in
-cxl case such device could still set cookies of nd_interleave_set
-and create a nvdimm pmem region.
+Hi Mauro,
 
-This adds the validation of serial number in cxl pmem region creation.
-The event of no serial number would cause to fail to set the cookie
-and pmem region.
 
-For cxl-test to work properly, always +1 on mock device's serial
-number.
+On 2/13/25 4:06 AM, Mauro Carvalho Chehab wrote:
+> Hi Jon,
+> 
+> That's the second version of the Python kernel-doc tool.
+> 
+> As the previous version, I tried to stay as close as possible of the original
+> Perl implementation, as it helps to double check if each function was 
+> properly translated to Python.  This have been helpful debugging troubles
+> that happened during the conversion.
 
-Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
----
- drivers/cxl/pmem.c           | 7 +++++++
- tools/testing/cxl/test/mem.c | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Since this new version is supposed to be bug-for-bug compatible, I will wait
+until later to test the current known bugs that I know about in (Perl) kernel-doc.
 
-diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-index f9c95996e937..cc854169e50b 100644
---- a/drivers/cxl/pmem.c
-+++ b/drivers/cxl/pmem.c
-@@ -384,6 +384,13 @@ static int cxl_pmem_region_probe(struct device *dev)
- 		};
- 		info[i].offset = m->start;
- 		info[i].serial = cxlds->serial;
-+
-+		if (info[i].serial == 0) {
-+			dev_err(dev, "%s: invalid serial number\n",
-+				dev_name(&cxlmd->dev));
-+			rc = -ENXIO;
-+			goto out_nvd;
-+		}
- 	}
- 	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
- 	ndr_desc.mapping = mappings;
-diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-index 8d731bd63988..9e098cf06603 100644
---- a/tools/testing/cxl/test/mem.c
-+++ b/tools/testing/cxl/test/mem.c
-@@ -1533,7 +1533,7 @@ static int cxl_mock_mem_probe(struct platform_device *pdev)
- 	mds->event.buf = (struct cxl_get_event_payload *) mdata->event_buf;
- 	INIT_DELAYED_WORK(&mds->security.poll_dwork, cxl_mockmem_sanitize_work);
- 
--	cxlds->serial = pdev->id;
-+	cxlds->serial = pdev->id + 1;
- 	if (is_rcd(pdev))
- 		cxlds->rcd = true;
- 
+For a preview of most of them, you can read:
+https://lore.kernel.org/linux-doc/3a6a7dd0-72f1-44c6-b0bc-b1ce76fca76a@infradead.org/
+
+and its follow-up email (today).
+
+There are quite a few problems with parsing function parameters that use
+typedefs.
+
+
 -- 
-2.34.1
+~Randy
 
 
