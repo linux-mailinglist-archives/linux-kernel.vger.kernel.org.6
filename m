@@ -1,210 +1,150 @@
-Return-Path: <linux-kernel+bounces-514708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5D5A35A98
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B686BA35AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46C33AE733
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150933AFA88
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D53F24501F;
-	Fri, 14 Feb 2025 09:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FA7245AFC;
+	Fri, 14 Feb 2025 09:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKgThIZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g4i/Wqpm"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE2F24291F;
-	Fri, 14 Feb 2025 09:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDD2253B63;
+	Fri, 14 Feb 2025 09:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526247; cv=none; b=FNZEKDXrtJml8xQFLqaYXG193Ravv7S/W94vesIaInGaJwQVMHcZIToif6Rd2EreAt8g/YN0lIYWftE3yeyv5wCz8VU8dHcSbx5MCgfoEghubtBm1pbshUTsDocL5KEGd1mzhd8t07pA9TPM7fTEQpi1kM1H2vfXFgE0Ov/u86U=
+	t=1739526263; cv=none; b=GoHSca4mPs8j8+B+t9G5sBylv0lrRNOEZon/Csl1XPGMwtdEciUyF6QF5P/C5pePHeU3kb4/VDC4lWG2OGmfGsZ1+GDolGK4VekaRCI4EgaXrPR66RUO3HNH1QD0a3L8GDZMUfDW+fULMqAr48Z1CNICepvhtpKr1D/95T4IVQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526247; c=relaxed/simple;
-	bh=euxH5xTB3npndNEOhGf9KR+p/1GlHm5dq8S6R5vtFvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sz/EC3fnPRtTCTZqo5LDh3yqwLqR5b49uxwhG/15Cotg+TrmuQ9yrqu0fraoQZ+6o/1+C1UDLKNDYmtK72L2cMBH55iGzezcLr9AJX9kZYY7OoY9c9qYae9TUZI5S6lP+R7JYqS1zcrkgQmBTfd8ioXota8ARr5M+I8Mtbwg1qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKgThIZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C057C4CED1;
-	Fri, 14 Feb 2025 09:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739526247;
-	bh=euxH5xTB3npndNEOhGf9KR+p/1GlHm5dq8S6R5vtFvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QKgThIZQsDXvHi250nXVACftNulY+hDA56lG4gV0mWDqpQmEI/IeByxEkZ30VumCF
-	 L+r2W1g/8OTElc/khx4mIaSFrKtauo7k7wzOS5jT9SBbtUlYjgOkI86coP9+s3NYwT
-	 y3Pkf0q3FPGmXw9gDN2jBCwdfFjlwHIM6NMKxRNfAHvOj6MfdWa4J64sZrCZ+2mWp8
-	 rvLAPOGA4lz6JczHmcz0aTOHczOZk73pBCHAN90DCEiXiuHnMIe8lrWw5JBzcFdPvS
-	 NBKHdwztH01NncybK/yA9xE55/oALEeW+VtQObpTVt07tlkncpFvbP/wa1DsJj+6au
-	 giWDWVolgoUpA==
-Date: Fri, 14 Feb 2025 10:44:04 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Joel Stanley <joel@jms.id.au>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>, 
-	Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>, 
-	Tian Tao <tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
-	John Stultz <jstultz@google.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Alexey Brodkin <abrodkin@synopsys.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 11/12] drm/vc4: move to devm_platform_ioremap_resource()
- usage
-Message-ID: <20250214-quixotic-fossa-of-art-b8bb9f@houat>
-References: <20250205-mem-cocci-newapi-v1-0-aebf2b0e2300@redhat.com>
- <20250205-mem-cocci-newapi-v1-11-aebf2b0e2300@redhat.com>
- <20250206-hallowed-ultra-tiger-cfec8e@houat>
- <CAN9Xe3SpTG7r2UkN7_pH0uMXhU5u+dkWhaM9+w5VyOQZp9byNg@mail.gmail.com>
+	s=arc-20240116; t=1739526263; c=relaxed/simple;
+	bh=b7kk20Vy7kIAWPb5mHOyRWhQF+a76Ol5POv8++vJ45I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3dvmlpalUT3e3mwJ3Ekrqy8J9eykqPa0Ta7cM1frp8mlJGVQeilLVla+W57iS9k/m/j85zDcpQPLb3eR7wOkXPuEllf9AN+T/q+9vqWkzvfEvOtyZAKb4xdOEjja42psduQqM+d79p+o/dPTSQfzcPYIcDKMIhEn5e/dddQnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g4i/Wqpm; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E455643288;
+	Fri, 14 Feb 2025 09:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739526258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dSMUyOt0IHc5cBv2WcgqbOcbVpTKb7K35N8tucB1ktE=;
+	b=g4i/WqpmeYhRhhT12N4NHTn5dp5IX6SGs/vWShcebhLKP/zPPhyt1QPhmTnlRUkj3wDaUQ
+	2ui98n/ZPzZNgRkC4voWK0rVUpsFD7IvJb18bp9XCVkiqxzLMQ2aC+PUph41exvLdd6VRz
+	f72t+7FuPP5O5gugfx0qJGz4hkhPlHel8OSdwDs6nrzbALocuIjsMut1B6tFLfwVFdGdCf
+	ZduNcQx94Xbrj+kA7N5bOtrMbKXWcuumIWqXveyX7Jz/yVwBddCrjW9RkT2HpYO5szitwz
+	B9cmYj1Ol1+D6o3Vs3N3EKoVfaf9joPDvvfgiRhHZ1y37JUDcbb+YtNASP4iow==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH net-next] Documentation: net: phy: Elaborate on RGMII delay handling
+Date: Fri, 14 Feb 2025 10:44:13 +0100
+Message-ID: <20250214094414.1418174-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="tmymxs4x7znmvcxa"
-Content-Disposition: inline
-In-Reply-To: <CAN9Xe3SpTG7r2UkN7_pH0uMXhU5u+dkWhaM9+w5VyOQZp9byNg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfelieehgfffiefftdffiedvheefteehkedukefgteffteevffeuueejiedtveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpt
+ hhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+As discussed here [1], the RGMII delays may be inserted by either the
+MAC, the PHY or the Board through the PCB traces.
 
---tmymxs4x7znmvcxa
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 11/12] drm/vc4: move to devm_platform_ioremap_resource()
- usage
-MIME-Version: 1.0
+Elaborate more on what the firmware properties represent, and what is
+the expected role of MAC and PHY in delay insertion, with a preference
+on PHY-side delay insertion.
 
-On Tue, Feb 11, 2025 at 12:08:57PM -0500, Anusha Srivatsa wrote:
-> On Thu, Feb 6, 2025 at 11:13=E2=80=AFAM Maxime Ripard <mripard@kernel.org=
-> wrote:
->=20
-> > On Wed, Feb 05, 2025 at 03:08:07PM -0500, Anusha Srivatsa wrote:
-> > > Replace platform_get_resource_byname + devm_ioremap_resource
-> > > with just devm_platform_ioremap_resource()
-> > >
-> > > Used Coccinelle to do this change. SmPl patch:
-> > > //rule s/(devm_)platform_get_resource_byname +
-> > > //(devm_)ioremap/devm_platform_ioremap_resource.
-> > > @rule_3@
-> > > identifier res;
-> > > expression ioremap;
-> > > identifier pdev;
-> > > constant mem;
-> > > expression name;
-> > > @@
-> > > -struct resource *res;
-> > > <+...
-> > > -res =3D platform_get_resource_byname(pdev,mem,name);
-> > > <...
-> > > -if (!res) {
-> > > -...
-> > > -}
-> > > ...>
-> > > -ioremap =3D devm_ioremap(...);
-> > > +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
-> > > ...+>
-> > >
-> > > v2: Change the SmPl patch to work on multiple occurences of
-> > > the pattern. This also fixes the compilation error.
-> > >
-> > > Cc: Maxime Ripard <mripard@kernel.org>
-> > > Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > > Cc: Ma=C3=ADra Canal <mcanal@igalia.com>
-> > > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 55
-> > +++++++++++-------------------------------
-> > >  1 file changed, 14 insertions(+), 41 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > index
-> > 47d9ada98430634cfd8c1e21c2a4d00d501bab7e..066f1246dab420ee889845b0c573d=
-80ce7c88595
-> > 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > @@ -2951,71 +2951,44 @@ static int vc5_hdmi_init_resources(struct
-> > drm_device *drm,
-> > >  {
-> > >       struct platform_device *pdev =3D vc4_hdmi->pdev;
-> > >       struct device *dev =3D &pdev->dev;
-> > > -     struct resource *res;
-> > >       int ret;
-> > >
-> > > -     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "hdm=
-i");
-> > > -     if (!res)
-> > > -             return -ENODEV;
-> > > -
-> > > -     vc4_hdmi->hdmicore_regs =3D devm_ioremap(dev, res->start,
-> > > -                                            resource_size(res));
-> > > +     vc4_hdmi->hdmicore_regs =3D
-> > devm_platform_ioremap_resource_byname(pdev,
-> > > +
-> >  "hdmi");
-> > >       if (!vc4_hdmi->hdmicore_regs)
-> > >               return -ENOMEM;
-> > >
-> > > -     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "hd"=
-);
-> > > -     if (!res)
-> > > -             return -ENODEV;
-> > > -
-> > > -     vc4_hdmi->hd_regs =3D devm_ioremap(dev, res->start,
-> > resource_size(res));
-> > > +     vc4_hdmi->hd_regs =3D devm_platform_ioremap_resource_byname(pde=
-v,
-> > "hd");
-> > >       if (!vc4_hdmi->hd_regs)
-> > >               return -ENOMEM;
-> >
-> > I *think* that one is shared between both HDMI controllers on the
-> > RaspberryPi4, so we can't claim them from both instances. We should add
-> > a comment there to document that it's on purpose.
->
-> How about vc4_hdmi->hdmicore_regs? It also has another instance
-> vc4_hdmi_init_resources(). Looks like that also doesnt need any converting
-> and shold be left as is.
+[1] : https://lore.kernel.org/netdev/c83f0193-ce24-4a3e-87d1-f52587e13ca4@lunn.ch/
 
-No, each controller will have its own set of registers there, so it can
-be converted.
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ Documentation/networking/phy.rst | 36 +++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-Maxime
+diff --git a/Documentation/networking/phy.rst b/Documentation/networking/phy.rst
+index f64641417c54..c6b8fa611548 100644
+--- a/Documentation/networking/phy.rst
++++ b/Documentation/networking/phy.rst
+@@ -73,8 +73,16 @@ The Reduced Gigabit Medium Independent Interface (RGMII) is a 12-pin
+ electrical signal interface using a synchronous 125Mhz clock signal and several
+ data lines. Due to this design decision, a 1.5ns to 2ns delay must be added
+ between the clock line (RXC or TXC) and the data lines to let the PHY (clock
+-sink) have a large enough setup and hold time to sample the data lines correctly. The
+-PHY library offers different types of PHY_INTERFACE_MODE_RGMII* values to let
++sink) have a large enough setup and hold time to sample the data lines correctly.
++
++The device tree property phy-mode describes the hardware. When used
++with RGMII, its value indicates if the hardware, i.e. the PCB,
++provides the 2ns delay required for RGMII. A phy-mode of 'rgmii'
++indicates the PCB is adding the 2ns delay. For other values, the
++MAC/PHY pair must insert the needed 2ns delay, with the strong
++preference the PHY adds the delay.
++
++The PHY library offers different types of PHY_INTERFACE_MODE_RGMII* values to let
+ the PHY driver and optionally the MAC driver, implement the required delay. The
+ values of phy_interface_t must be understood from the perspective of the PHY
+ device itself, leading to the following:
+@@ -106,14 +114,22 @@ Whenever possible, use the PHY side RGMII delay for these reasons:
+   configure correctly a specified delay enables more designs with similar delay
+   requirements to be operated correctly
+ 
+-For cases where the PHY is not capable of providing this delay, but the
+-Ethernet MAC driver is capable of doing so, the correct phy_interface_t value
+-should be PHY_INTERFACE_MODE_RGMII, and the Ethernet MAC driver should be
+-configured correctly in order to provide the required transmit and/or receive
+-side delay from the perspective of the PHY device. Conversely, if the Ethernet
+-MAC driver looks at the phy_interface_t value, for any other mode but
+-PHY_INTERFACE_MODE_RGMII, it should make sure that the MAC-level delays are
+-disabled.
++The MAC driver may fine tune the delays. This can be configured
++based on firmware "rx-internal-delay-ps" and "tx-internal-delay-ps"
++properties. These values are expected to be small, not the full 2ns
++delay.
++
++A MAC driver inserting these fine tuning delays should always do so
++when these properties are present and non-zero, regardless of the
++RGMII mode specified.
++
++For cases where the PHY is not capable of providing the 2ns delay,
++the MAC must provide it, if the phy-mode indicates the PCB is not
++providing the delays. The MAC driver must adjust the
++PHY_INTERFACE_MODE_RGMII_* mode it passes to the connected PHY
++device (through :c:func:`phy_connect <phy_connect>` for example) to
++account for MAC-side delay insertion, so that the PHY device
++does not add additional delays.
+ 
+ In case neither the Ethernet MAC, nor the PHY are capable of providing the
+ required delays, as defined per the RGMII standard, several options may be
+-- 
+2.48.1
 
---tmymxs4x7znmvcxa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ68QXwAKCRAnX84Zoj2+
-dnJFAX44qxSqH4/9r1lPWe6YsBKR9clH1sZQRZaWBdRICp0iE+/MJiNA/tJghQgy
-Xb2262kBgMGvJFpuBmHvz9HJegWf00i39I2+ctkME/qrOcHQhoIwF07ezVrQyZOZ
-z9Q+kadHOg==
-=d/Gf
------END PGP SIGNATURE-----
-
---tmymxs4x7znmvcxa--
 
