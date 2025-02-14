@@ -1,272 +1,198 @@
-Return-Path: <linux-kernel+bounces-515141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A55A360C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:46:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E613A360C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11C33A5B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92BD91894F4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7303C21CA02;
-	Fri, 14 Feb 2025 14:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB19266B66;
+	Fri, 14 Feb 2025 14:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/p8TvJm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDog0RD0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3542566D9;
-	Fri, 14 Feb 2025 14:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9902641F7;
+	Fri, 14 Feb 2025 14:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544393; cv=none; b=UreQOdh0vdg8f6gOlCrwvE+z3EgvbFAxVdDWkY1h1SCuXxal/bJTrLL2clKe0MU8AZpTwVbwKKzKcseBDyIJtvfF1hJ3dhFFFDMnne16fPPjStoi7R8v2FdML5eHlNYN9XwULYyro+PhoaUp9vtPHo46mkFVwJy9dUV9CpDr1rQ=
+	t=1739544425; cv=none; b=VN8WE3nZebmj6d24E/7q80jCgVimbmIcdf4lQF8rSS/Y5e4EdZPPsKCEUCykxStNNj4RTWv7Z66d21f0qmwIrQ2+WDFbY+xP3crcbnajej/ezkbH4xBoO3ekd84fW9O1sTAkr8J9npPtd6Eh8M4/BamdleoGXasH1R3ZmGh5m+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544393; c=relaxed/simple;
-	bh=1ZIAdu+aSSt1qC8VM5ZVLtO6FmpvBX1T9i94FheNL/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYALHJtJTdwtvYieoYf7czB46eqmRjkJ/ezYi7sZHr5hy7XHE1xVFGLOrOWMN3mrJIQ8rL+EuaDv8C5eEzE7bi9QcEIRFPm1l30++/VcpoClf6mqHG3To+IM/rpcbDxU7OKXreF4uoTWLRhVNvS0M5i8NbGKqADWezwPWtADXzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/p8TvJm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233ADC4CED1;
-	Fri, 14 Feb 2025 14:46:27 +0000 (UTC)
+	s=arc-20240116; t=1739544425; c=relaxed/simple;
+	bh=SyLU6IbvipwhDabpk1usdLGba4ULwr4q4Ssvnk0UWkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qB1z762kv4Jvb0m1hKz3u8o2+7B0osLZzEOt1zRnW2aclcFNH/EvceMIDLtJ1I6AtfRYaziPoaVAZVC0NhZdRqe4+/pjDXBsP+mH7lPWH89QtguJD/TEX/eW2MZ5keLBtnf4M7B0Poj74Xw45sNf9grGu+1Kfbip/X26+XfGl3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDog0RD0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52213C4CEDF;
+	Fri, 14 Feb 2025 14:47:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739544393;
-	bh=1ZIAdu+aSSt1qC8VM5ZVLtO6FmpvBX1T9i94FheNL/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z/p8TvJmNnyb/FDEwTABnBmhygKIYcRvdQkPr9V6S2Cj4WKiHk+gAAeXdG9pba5ae
-	 r5UoipNEZQlz7bjEHruuyVSodzZquFtQUyEi3Cd1aGE3V8DWwa9deGh41ib77pJkff
-	 GGes0f2dVmm9FWNfkVIuIodx7wVT7ftw9cA/VU2mhBWDUUa4zQT9OlhhFMpS2BuJRb
-	 ME4M7dTaJXcz3/2SOf5ioENWk48PnEhNOjrwgOQrmmDICslKZcWdeymXXlzA2Xflk2
-	 bV9Yr6V5T7LbaD540hmWF3YuYjaDrYh1K6K45s4v/LRq/Onknmh3O/0jVzb8W9APSU
-	 HC6yxiL507AOg==
-Date: Fri, 14 Feb 2025 20:16:23 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Wenbin Yao <quic_wenbyao@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
-	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
-	quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
-	manivannan.sadhasivam@linaro.org, quic_devipriy@quicinc.com,
-	konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Message-ID: <20250214144623.fvjr2bytliqhektr@thinkpad>
-References: <20250214104539.281846-1-quic_wenbyao@quicinc.com>
- <20250214104539.281846-3-quic_wenbyao@quicinc.com>
+	s=k20201202; t=1739544424;
+	bh=SyLU6IbvipwhDabpk1usdLGba4ULwr4q4Ssvnk0UWkQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XDog0RD0zyKTUqYTNfkdQ9i5DtlIr2wbzNHfRbfGqX0mkCexjvzTruiY/kjLnK8J3
+	 +xH+ahja8v4AX7rkW+0b3hBsG/sk1t09wxK/YXH6ACQ80OKnOY4xCcAl28f3ciXFkP
+	 5CAzKyvRKHHgEsgGaUZSbZt5JJtd9iYjqmmcJIRp5bMjgw+gXz5IUGpl5En7yEMPFf
+	 xjphbfPTs8wXkwHjl5yxGzCFjHH5G8yc6YzWFCpjVzdcNJQq2+7tLopdDeJaXsGf0A
+	 hivuSAu0ZxLSIb3xI5SY1oHsdMWfXQHLxC70x4cIIjvQbGZc299L6eP7Xw9Nwv+OP5
+	 jb61l0lRfE7aA==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso4308616a12.0;
+        Fri, 14 Feb 2025 06:47:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV/SX+kW9A3mmRrSgRpPzqg5RahHe/B9ZFEHf9gycvGzu6sklMEZjBx1IbtO9uLnGpo/0b8OcxrR1WK+xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylHGuoEwUfk2o24cpiOWKeb5F+szqQZWZvGuUv74mr+w4qv3Vi
+	CAfICTQr4zt3bc0Vfdds+e6x54UUl+0NpqHO0zMFh3sR2Iml8vxzcr7OJ5j2PmsP75l3eWimLC3
+	GhWpjyCY1D4Zf254Vic6pDxzU4Ao=
+X-Google-Smtp-Source: AGHT+IGLP2hfLxyhDNLDMFXVxFjF7thUSuEvL0i10rfKHQr5NwdBRqYExxq+8zSv4dyiGdV3AS67Or9gUJzpXwcXVXo=
+X-Received: by 2002:a17:907:770f:b0:abb:2e65:96f7 with SMTP id
+ a640c23a62f3a-abb2e660cd1mr57018866b.43.1739544422884; Fri, 14 Feb 2025
+ 06:47:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250214104539.281846-3-quic_wenbyao@quicinc.com>
+References: <20250214105047.150835-1-marco.crivellari@suse.com> <20250214105047.150835-2-marco.crivellari@suse.com>
+In-Reply-To: <20250214105047.150835-2-marco.crivellari@suse.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 14 Feb 2025 22:46:52 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
+X-Gm-Features: AWEUYZnwAMKYhkoagxpnGYT5f00p8m0OnzKLWg0cGlI_vqI7kw1yteYhWCjuifs
+Message-ID: <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: Fix idle VS timer enqueue
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 06:45:39PM +0800, Wenbin Yao wrote:
-> From: Qiang Yu <quic_qianyu@quicinc.com>
-> 
-> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
-> whole PHY (hardware and register), no_csr reset only resets PHY hardware
-> but retains register values, which means PHY setting can be skipped during
-> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
-> after that.
-> 
-> Hence, determine whether the PHY has been enabled in bootloader by
-> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
-> available, skip BCR reset and PHY register setting to establish the PCIe
-> link with bootloader - programmed PHY settings.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+Hi, Marco,
+
+On Fri, Feb 14, 2025 at 6:51=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
+>
+> MIPS re-enables interrupts on its idle routine and performs
+> a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
+>
+> The IRQs firing between the check and the 'wait' instruction may set the
+> TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
+> interrupting __r4k_wait() rollback their return address to the
+> beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
+> again before going back to sleep.
+>
+> However idle IRQs can also queue timers that may require a tick
+> reprogramming through a new generic idle loop iteration but those timers
+> would go unnoticed here because __r4k_wait() only checks
+> TIF_NEED_RESCHED. It doesn't check for pending timers.
+>
+> Fix this with fast-forwarding idle IRQs return address to the end of the
+> idle routine instead of the beginning, so that the generic idle loop
+> handles both TIF_NEED_RESCHED and pending timers.
+>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 96 ++++++++++++++++--------
->  1 file changed, 63 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 219266125cf2..b3912c1a6de8 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
->  
->  	const struct qmp_phy_cfg *cfg;
->  	bool tcsr_4ln_config;
-> +	bool skip_init;
->  
->  	void __iomem *serdes;
->  	void __iomem *pcs;
-> @@ -3976,7 +3977,9 @@ static int qmp_pcie_init(struct phy *phy)
+>  arch/mips/kernel/genex.S | 36 ++++++++++++++++++++----------------
+>  arch/mips/kernel/idle.c  |  1 -
+>  2 files changed, 20 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> index a572ce36a24f..a78d5132c940 100644
+> --- a/arch/mips/kernel/genex.S
+> +++ b/arch/mips/kernel/genex.S
+> @@ -104,18 +104,16 @@ handle_vcei:
+>
+>         __FINIT
+>
+> -       .align  5       /* 32 byte rollback region */
+> +       .align  5
+>  LEAF(__r4k_wait)
+>         .set    push
+>         .set    noreorder
+> -       /* start of rollback region */
+> -       LONG_L  t0, TI_FLAGS($28)
+> -       nop
+> -       andi    t0, _TIF_NEED_RESCHED
+> -       bnez    t0, 1f
+> -        nop
+> -       nop
+> -       nop
+> +       /* start of idle interrupt region */
+> +       MFC0    k0, CP0_STATUS
+> +       /* Enable Interrupt */
+> +       ori     k0, 0x1f
+> +       xori    k0, 0x1e
+> +       MTC0    k0, CP0_STATUS
+>  #ifdef CONFIG_CPU_MICROMIPS
+>         nop
+>         nop
+> @@ -123,11 +121,17 @@ LEAF(__r4k_wait)
+>         nop
+>  #endif
+>         .set    MIPS_ISA_ARCH_LEVEL_RAW
+> +       /*
+> +        * If an interrupt lands here, between enabling interrupts above =
+and
+> +        * going idle on the next instruction, we must *NOT* go idle sinc=
+e the
+> +        * interrupt could have set TIF_NEED_RESCHED or caused a timer to=
+ need
+> +        * resched. Fall through -- see rollback_handler below -- and hav=
+e
+> +        * the idle loop take care of things.
+> +        */
+>         wait
+> -       /* end of rollback region (the region size must be power of two) =
+*/
+> -1:
+> +       /* end of idle interrupt region (the region size must be power of=
+ two) */
+> +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
+You can also use label 1 as the LoongArch version.
+
+>         jr      ra
+> -        nop
+>         .set    pop
+>         END(__r4k_wait)
+>
+> @@ -136,10 +140,10 @@ LEAF(__r4k_wait)
+>         .set    push
+>         .set    noat
+>         MFC0    k0, CP0_EPC
+> -       PTR_LA  k1, __r4k_wait
+> -       ori     k0, 0x1f        /* 32 byte rollback region */
+> -       xori    k0, 0x1f
+> -       bne     k0, k1, \handler
+> +       PTR_LA  k1, __r4k_wait_exit
+> +       /* 3 instructions rollback region */
+For MIPS the rollback region is not 3 instructions, and so you cannot
+use 0xc below. I think there is no chance for the wait instruction
+after this patch.
+
+Huacai
+
+> +       ori     k0, k0, 0x0c
+> +       bne     k0, k1, \handler
+>         MTC0    k0, CP0_EPC
+>         .set pop
+>         .endm
+> diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
+> index 5abc8b7340f8..1f74c0589f7e 100644
+> --- a/arch/mips/kernel/idle.c
+> +++ b/arch/mips/kernel/idle.c
+> @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
+>
+>  void __cpuidle r4k_wait(void)
 >  {
->  	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> +	void __iomem *pcs = qmp->pcs;
->  	int ret;
-> +	bool phy_initialized;
->  
->  	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
->  	if (ret) {
-> @@ -3984,10 +3987,18 @@ static int qmp_pcie_init(struct phy *phy)
->  		return ret;
->  	}
->  
-> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
-> -	if (ret) {
-> -		dev_err(qmp->dev, "reset assert failed\n");
-> -		goto err_disable_regulators;
-> +	phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
-> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
-> +	/*
-> +	 * Toggle BCR reset for phy that doesn't support no_csr
-
-s/phy/PHY. Here and below.
-
-> +	 * reset or has not been initialized
-> +	 */
-> +	if (!qmp->skip_init) {
-> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
-> +		if (ret) {
-> +			dev_err(qmp->dev, "reset assert failed\n");
-> +			goto err_disable_regulators;
-> +		}
->  	}
->  
->  	ret = reset_control_assert(qmp->nocsr_reset);
-> @@ -3998,10 +4009,12 @@ static int qmp_pcie_init(struct phy *phy)
->  
->  	usleep_range(200, 300);
->  
-> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
-> -	if (ret) {
-> -		dev_err(qmp->dev, "reset deassert failed\n");
-> -		goto err_assert_reset;
-> +	if (!qmp->skip_init) {
-> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
-> +		if (ret) {
-> +			dev_err(qmp->dev, "reset deassert failed\n");
-> +			goto err_assert_reset;
-> +		}
->  	}
->  
->  	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
-> @@ -4011,7 +4024,8 @@ static int qmp_pcie_init(struct phy *phy)
->  	return 0;
->  
->  err_assert_reset:
-> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
-> +	if (!qmp->skip_init)
-> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->  err_disable_regulators:
->  	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
->  
-> @@ -4023,7 +4037,10 @@ static int qmp_pcie_exit(struct phy *phy)
->  	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
->  
-> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
-> +	if (!qmp->nocsr_reset)
-> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
-> +	else
-> +		reset_control_assert(qmp->nocsr_reset);
-
-I'd flip the if condition for readability:
-
-	if (qmp->nocsr_reset)
-		...
-	else
-		...
->  
->  	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->  
-> @@ -4042,16 +4059,22 @@ static int qmp_pcie_power_on(struct phy *phy)
->  	unsigned int mask, val;
->  	int ret;
->  
-> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
-> -			cfg->pwrdn_ctrl);
-> +	/*
-> +	 * Write CSR register for phy that doesn't support no_csr
-> +	 * reset or has not been initialized
-> +	 */
-> +	if (!qmp->skip_init) {
-
-How about:
-	if (qmp->skip_init)
-		goto skip_phy_init;
-
-This is my personal preference btw. If anyone feels the other way, feel free
-to drop this suggestion.
-
-> +		qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
-> +				cfg->pwrdn_ctrl);
->  
-> -	if (qmp->mode == PHY_MODE_PCIE_RC)
-> -		mode_tbls = cfg->tbls_rc;
-> -	else
-> -		mode_tbls = cfg->tbls_ep;
-> +		if (qmp->mode == PHY_MODE_PCIE_RC)
-> +			mode_tbls = cfg->tbls_rc;
-> +		else
-> +			mode_tbls = cfg->tbls_ep;
->  
-> -	qmp_pcie_init_registers(qmp, &cfg->tbls);
-> -	qmp_pcie_init_registers(qmp, mode_tbls);
-> +		qmp_pcie_init_registers(qmp, &cfg->tbls);
-> +		qmp_pcie_init_registers(qmp, mode_tbls);
-> +	}
->  
->  	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
->  	if (ret)
-> @@ -4063,15 +4086,16 @@ static int qmp_pcie_power_on(struct phy *phy)
->  		goto err_disable_pipe_clk;
->  	}
->  
-> -	/* Pull PHY out of reset state */
-> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +	if (!qmp->skip_init) {
-
-	if (qmp->skip_init)
-		goto skip_serdes_start;
-
-> +		/* Pull PHY out of reset state */
-> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->  
-> -	/* start SerDes and Phy-Coding-Sublayer */
-> -	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
-> -
-> -	if (!cfg->skip_start_delay)
-> -		usleep_range(1000, 1200);
-> +		/* start SerDes and Phy-Coding-Sublayer */
-> +		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->  
-> +		if (!cfg->skip_start_delay)
-> +			usleep_range(1000, 1200);
-> +	}
->  	status = pcs + cfg->regs[QPHY_PCS_STATUS];
->  	mask = cfg->phy_status;
->  	ret = readl_poll_timeout(status, val, !(val & mask), 200,
-> @@ -4096,16 +4120,22 @@ static int qmp_pcie_power_off(struct phy *phy)
->  
->  	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
->  
-> -	/* PHY reset */
-> -	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +	/* If a PHY supports no_csr reset but isn't enabled in the bootloader,
-> +	 * phy settings can be reused during the D3cold -> D0 cycle. So it is
-
-I cannot parse this sentence. If PHY is not initialized, how can you reuse the
-settings? Also what is the D3cold->D0 reference?
-
-> +	 * unnecessary to check qmp->skip_init.
-> +	 */
-> +	if (!qmp->nocsr_reset) {
-
-	if (qmp->nocsr_reset)
-		goto skip_phy_reset;
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> -       raw_local_irq_enable();
+>         __r4k_wait();
+>         raw_local_irq_disable();
+>  }
+> --
+> 2.48.1
+>
+>
 
