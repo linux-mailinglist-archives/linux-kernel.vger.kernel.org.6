@@ -1,187 +1,182 @@
-Return-Path: <linux-kernel+bounces-515335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE3FA36356
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:43:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F303A3635B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D5F7A2325
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A973F3ADEBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EA7267AEB;
-	Fri, 14 Feb 2025 16:43:35 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3257A2676E8;
+	Fri, 14 Feb 2025 16:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pLaNPYTz"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6118635A;
-	Fri, 14 Feb 2025 16:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31AB8635A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739551415; cv=none; b=NdHu8gW54+Wiqxufuc65RCc8BCwG/few0ZRBAx5Ty2wznQ3rHyWBM9iVmKTCLckUDGFo0jmFLAX7OUdMTtHpwL3nIePAxJEALFyDwfaoatelkGwymiPyvt8ObCk7E7868ToJ01daYjH5dNLlLOtbSBS8jNKjP+5sVVNGTzHpJAE=
+	t=1739551455; cv=none; b=h/xzukmB/nz8ANaqpukGHkPB3YjWUIi75cCuDT23buHQ8125V6JoTB0YjeJZ6zIXwJ9vF3WUZFelE6b0hUeXMZeQGwZUZOvy58XYCf6nU703xtp8OMHc9jErxanGbyMu/Hz8W0DH4tYb5xDZJ8ySPm+l+aweOZMtR1wlhTH6xGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739551415; c=relaxed/simple;
-	bh=675U55SFM8sU4+EhaPernPFOC39d5e7xO/3frydYZ2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CjlsU767CPn7Pn3hOO/PJ2lrz49uZxVuKd29V1yytQioAlf7iV1W9JcpqAa6b6bdEVI0XI9y5LW6m7LJeyNbEQ+2VNHKkrDCQpmgV6mSREibNmswV8+bjnCcLgECUzQfeXoYFrHQPoT/LVObpbykBvDGa/xxnsQMy5oUogSFOPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de3c29ebaeso2874477a12.3;
-        Fri, 14 Feb 2025 08:43:33 -0800 (PST)
+	s=arc-20240116; t=1739551455; c=relaxed/simple;
+	bh=VDFiejMUnw/DtOjJtb3Srtkq8VX8gIjaGAC8zqYWng0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fGTC91Y4kL4Lr2LUuE+mnhPps3z5V/55kzh5JmMA3qFun6dixg0DtE3C3Y198HwEt6zWLImHnDMd2aziPn3HEfMj9rVUmn2rbj3hL0ziJqPT40diC2UbYyoaui+hMsLqML5dhsI5r8sVIka9lynHguugiAO/pAVDCLpJORHYa+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pLaNPYTz; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f44353649aso3417823a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:44:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739551453; x=1740156253; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oO9d0oAKrGz4vkv7SRxKDd5I1l3i0mTcuTEqRSmTOSM=;
+        b=pLaNPYTzge/WNCp3thHJJJRKspyJTPC+PNNPZMPk4pbmsT8i2nbc/dt5cSb7VRfpFB
+         FtS0+oImtnfFy4CCCMI8Qwi7XhTZXkVv0fh6dcHHU2GUfYMUhGt0EZzI/pgphCaTEy1Y
+         12LcbeJyE94RFI1j9DSZOqv0FyFlFiyNqF3pY2vyKwrsyzP9ImU2veDB3GdXwuQM8rTF
+         o+B+Xvox3i92zbV6QZPbBH45zqAPpOUwnwMks8Qy/UqL8HPBA+PZaukVTTn6zrQNfqpH
+         iavJG9hQTRIwpTZCcr5eRF+RUZSdia3elgANuSzGkbHaV+7X45miwCFUjtM/PqGnFNXn
+         dZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739551412; x=1740156212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/t1Ns3NcaYBFWtkLRF5Ic7g1dCvI6biRGojqgTrE5Gw=;
-        b=BH+1quUYchT/1DAs4iY8/YICD/xAnDTWRDxtFDHUcRLfQMegOQyc0uzt+9goEySGkZ
-         L/QVGAJba5vbdhaDSRBctQHTfT3NqFtW6/r3yUNwDGwjS+WXi4F4xp9Rj2BC1cwyghri
-         n+pG8PwXst2iig3AN48Nl0uCWXUV4NKgXJCJUd6O7ygAWOmL84urPGOacYlpDuekmcEF
-         M964PmO1dbC6ihFpujB3q/900Hx5clbVkWNczG/Kh5Ki+4HpkbznVEoHENNWX/0MMGrg
-         jx/vYiR6k3HTUbRJ+HF5rmaGYEfuVRqK1wsFyZ8rvE2W39gHvwDwJRO1jBZPnmc8tZCq
-         2Y4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUkWokDy5yD/qhPbpcLhrOZK2NFPlSYfQ+tTaHT7lujdh/M7aG3dbjAZWMWFsJPqkmB9aOSXX8N@vger.kernel.org, AJvYcCW37Hzhg2WxFeUSuY/p05RBr3O6dkA/nF6/chPr5WCRHUgOJIj9OgDd6OPnU/nsJLrYA26Dep1ysweL@vger.kernel.org, AJvYcCXRn5Ut1vyFxcVUNCav8wx1cR3LKqtuddd74t32MZm5D+7Hm9qDZLUa0dWgg7KaTdORNi6qtF63xYhQflE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi/ZWV4fMDCtphBn5BmAjGjEMc2eg6gloJYg9x4BY7I99odu9z
-	aMbcSLU/CwYkvPVjSqe3cNY3Q4eXnMsE0EoO3AQR4b/WJnvHmY+u
-X-Gm-Gg: ASbGncuiQid9+rgC6pZrXD/WSV1gmjVFT633Bi4RCQ62dLiDvqZ9yqbaRmJH/y+4FmZ
-	tuG/AzrXH0FVS6fCdJqbaA+674D3NIwKS2eshOz56Mi6gj3Ehx5NytZX6jglcHx7V0x7hTVWIQZ
-	IZ/reLcvSgO04HDTIZ/F7R0hmthL77uL3DmHY97pVyA+UMIohbRCuGzw+c0fZPyH4MUHu7hZYkZ
-	ZD0Yg1EOYO1zk2Z5gCQJM46x84jtv6AelbEqUY+rmMUSxGRLAk9qBT4WZf744sVRwfiUH280TuK
-	IRol0Q==
-X-Google-Smtp-Source: AGHT+IFBPPEELc2QJatVUYw0kOEPlaAq+EmZ03OI1xZEzH4jy5P0OOSZPQ0pK4HjxYlqMW0G7zWgkw==
-X-Received: by 2002:a17:907:948f:b0:ab6:e10e:2f5 with SMTP id a640c23a62f3a-ab7f347e62amr1376490366b.37.1739551411728;
-        Fri, 14 Feb 2025 08:43:31 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53398364sm373948266b.128.2025.02.14.08.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:43:31 -0800 (PST)
-Date: Fri, 14 Feb 2025 08:43:28 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Hayes Wang <hayeswang@realtek.com>,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: Assert proper context while calling
- napi_schedule()
-Message-ID: <20250214-grinning-upbeat-chowchow-5c0e2f@leitao>
-References: <20250212174329.53793-1-frederic@kernel.org>
- <20250212174329.53793-2-frederic@kernel.org>
- <20250212194820.059dac6f@kernel.org>
- <20250213-translucent-nightingale-of-upgrade-b41f2e@leitao>
- <20250213071426.01490615@kernel.org>
+        d=1e100.net; s=20230601; t=1739551453; x=1740156253;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oO9d0oAKrGz4vkv7SRxKDd5I1l3i0mTcuTEqRSmTOSM=;
+        b=vu2LzAJBk1KxagYPONG6HfOF9ciYUtfKm1/EvJSL0h/QnKkRkclq+vswBwSBNpD4C7
+         D+hd/Sa1zmgPQa/JaWzVcMnk1VN952mpfIeoYlHSz1UMq+SxaM7VvNiMaX85Q20wZkXm
+         6uDRyqFtq+NwwjNHJxHjJhG2bTOaZzyASDKlniTqxkPcRu2UIFed5gyFMrvlHTi6FXOL
+         TRVA5UTgq8UNcX9Kwu+fwH4MU44g13AfVMoIKEK/XEdA2AkpnYI6pVIq4bOXmUsJYQ5c
+         wVEx/n0b5I82xrgeFrYYt0TJFl8wInmQ7TbroR5g3cHlG2dhYjZP8vLU1hvsfupHI2aQ
+         VifQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWC7HOGvXNI7BpGeNd/0pOooVufQwpCodG1/cM46hSyHkfSA60OC3xp221fuQrgyn6R7vy2P4zMQsqewZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhAbcHRqTEIF2UWoPZqyVy38fkZrG37AhoEIZHZM2aAtDJyVqS
+	a3V+EaQNnd0Qh5BsEOg92cTCDOFuUgQ6eYWTjN0zhwKhqSl9c5/VXiVOCyMtdNdgkVXPHA5AeAY
+	dQtkczpEaytXOx5Kn9bfxWGbkq4/OVBSMR7D/
+X-Gm-Gg: ASbGnctq4KMtlB6Ud3UIpCftEKAqfuNwbi0FCqnWcGiwpVlUKSdTwijUyiwZ69PvDXn
+	1lMI3HM+xy9ZclN/D2uFKlO9MSqCqA5sENgp3jxuPAJhuxFd/YXTKSDWpz6IbdpEiqvlgu9ZG3G
+	BFqVE7QQGARLS02WuKv3SZfHfogfsX
+X-Google-Smtp-Source: AGHT+IHsxXgR7VSiG7/7i3Y5aqSfDn5igt/FPuXvtlbRSQZKc/y9AhuaB5Koc9EAhdG+mw8ENuEbMJV5EK3MSwztfWU=
+X-Received: by 2002:a17:90b:23cf:b0:2ef:33a4:ae6e with SMTP id
+ 98e67ed59e1d1-2fbf8f32e01mr20276708a91.12.1739551452914; Fri, 14 Feb 2025
+ 08:44:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213071426.01490615@kernel.org>
+References: <20250213200228.1993588-1-longman@redhat.com> <20250213200228.1993588-5-longman@redhat.com>
+ <CANpmjNM-uN81Aje1GE9zgUW-Q=w_2gPQ28giO7N2nmbRM521kA@mail.gmail.com>
+ <3d069c26-4971-415a-9751-a28d207feb43@redhat.com> <CANpmjNNLn9=UA+cai=rL+6zsEQyppf6-4_YL4GAFi+dLt+4oSA@mail.gmail.com>
+ <f2f006e8-3987-4aa2-b4f5-114b4e869e86@redhat.com>
+In-Reply-To: <f2f006e8-3987-4aa2-b4f5-114b4e869e86@redhat.com>
+From: Marco Elver <elver@google.com>
+Date: Fri, 14 Feb 2025 17:43:36 +0100
+X-Gm-Features: AWEUYZlhsid88jbBXlrCRzO_gVgGmSd_N7t21Ty9NLxBg4_xXnC-cahHoi81xvE
+Message-ID: <CANpmjNPYFjv4TTCG+t0zyr2efCtjPKV7zQQu-ccsgX5XtGtDLg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] locking/lockdep: Add kasan_check_byte() check in lock_acquire()
+To: Waiman Long <llong@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Jakub,
+On Fri, 14 Feb 2025 at 17:18, Waiman Long <llong@redhat.com> wrote:
+>
+> On 2/14/25 9:44 AM, Marco Elver wrote:
+> > On Fri, 14 Feb 2025 at 15:09, Waiman Long <llong@redhat.com> wrote:
+> >> On 2/14/25 5:44 AM, Marco Elver wrote:
+> >>> On Thu, 13 Feb 2025 at 21:02, Waiman Long <longman@redhat.com> wrote:
+> >>>> KASAN instrumentation of lockdep has been disabled as we don't need
+> >>>> KASAN to check the validity of lockdep internal data structures and
+> >>>> incur unnecessary performance overhead. However, the lockdep_map pointer
+> >>>> passed in externally may not be valid (e.g. use-after-free) and we run
+> >>>> the risk of using garbage data resulting in false lockdep reports. Add
+> >>>> kasan_check_byte() call in lock_acquire() for non kernel core data
+> >>>> object to catch invalid lockdep_map and abort lockdep processing if
+> >>>> input data isn't valid.
+> >>>>
+> >>>> Suggested-by: Marco Elver <elver@google.com>
+> >>>> Signed-off-by: Waiman Long <longman@redhat.com>
+> >>> Reviewed-by: Marco Elver <elver@google.com>
+> >>>
+> >>> but double-check if the below can be simplified.
+> >>>
+> >>>> ---
+> >>>>    kernel/locking/lock_events_list.h |  1 +
+> >>>>    kernel/locking/lockdep.c          | 14 ++++++++++++++
+> >>>>    2 files changed, 15 insertions(+)
+> >>>>
+> >>>> diff --git a/kernel/locking/lock_events_list.h b/kernel/locking/lock_events_list.h
+> >>>> index 9ef9850aeebe..bed59b2195c7 100644
+> >>>> --- a/kernel/locking/lock_events_list.h
+> >>>> +++ b/kernel/locking/lock_events_list.h
+> >>>> @@ -95,3 +95,4 @@ LOCK_EVENT(rtmutex_deadlock)  /* # of rt_mutex_handle_deadlock()'s    */
+> >>>>    LOCK_EVENT(lockdep_acquire)
+> >>>>    LOCK_EVENT(lockdep_lock)
+> >>>>    LOCK_EVENT(lockdep_nocheck)
+> >>>> +LOCK_EVENT(lockdep_kasan_fail)
+> >>>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> >>>> index 8436f017c74d..98dd0455d4be 100644
+> >>>> --- a/kernel/locking/lockdep.c
+> >>>> +++ b/kernel/locking/lockdep.c
+> >>>> @@ -57,6 +57,7 @@
+> >>>>    #include <linux/lockdep.h>
+> >>>>    #include <linux/context_tracking.h>
+> >>>>    #include <linux/console.h>
+> >>>> +#include <linux/kasan.h>
+> >>>>
+> >>>>    #include <asm/sections.h>
+> >>>>
+> >>>> @@ -5830,6 +5831,19 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+> >>>>           if (!debug_locks)
+> >>>>                   return;
+> >>>>
+> >>>> +       /*
+> >>>> +        * As KASAN instrumentation is disabled and lock_acquire() is usually
+> >>>> +        * the first lockdep call when a task tries to acquire a lock, add
+> >>>> +        * kasan_check_byte() here to check for use-after-free of non kernel
+> >>>> +        * core lockdep_map data to avoid referencing garbage data.
+> >>>> +        */
+> >>>> +       if (unlikely(IS_ENABLED(CONFIG_KASAN) &&
+> >>> This is not needed - kasan_check_byte() will always return true if
+> >>> KASAN is disabled or not compiled in.
+> >> I added this check because of the is_kernel_core_data() call.
+> >>>> +                    !is_kernel_core_data((unsigned long)lock) &&
+> >>> Why use !is_kernel_core_data()? Is it to improve performance?
+> >> Not exactly. In my testing, just using kasan_check_byte() doesn't quite
+> >> work out. It seems to return false positive in some cases causing
+> >> lockdep splat. I didn't look into exactly why this happens and I added
+> >> the is_kernel_core_data() call to work around that.
+> > Globals should have their shadow memory unpoisoned by default, so
+> > that's definitely odd.
+> >
+> > Out of curiosity, do you have such a false positive splat? Wondering
+> > which data it's accessing. Maybe that'll tell us more about what's
+> > wrong.
+>
+> The kasan_check_byte() failure happens very early in the boot cycle.
+> There is no KASAN report, but the API returns false. I inserted a
+> WARN_ON(1) to dump out the stack.
 
-On Thu, Feb 13, 2025 at 07:14:26AM -0800, Jakub Kicinski wrote:
-> ... How about we add an hrtimer to netdevsim,
-> schedule it to fire 5usec in the future instead of scheduling NAPI
-> immediately? We can call napi_schedule() from a timer safely.
+I see - I suspect this is before ctors had a chance to run, which is
+the way globals are registered with KASAN.
 
-I hacked a way to do so. Is this what you had in mind?
+I think it'd be fair to just remove the lockdep_kasan_fail event,
+given KASAN would produce its own report on a real error anyway.
 
-Author: Breno Leitao <leitao@debian.org>
-Date:   Wed Feb 12 09:50:51 2025 -0800
-
-    netdevsim: call napi_schedule from a timer context
-    
-    The netdevsim driver was experiencing NOHZ tick-stop errors during packet
-    transmission due to pending softirq work when calling napi_schedule().
-    This issue was observed when running the netconsole selftest, which
-    triggered the following error message:
-    
-      NOHZ tick-stop error: local softirq work is pending, handler #08!!!
-    
-    To fix this issue, introduce a timer that schedules napi_schedule()
-    from a timer context instead of calling it directly from the TX path.
-    
-    Create an hrtimer for each queue and kick it from the TX path,
-    which then schedules napi_schedule() from the timer context.
-    
-    Suggested-by: Jakub Kicinski <kuba@kernel.org>
-    Signed-off-by: Breno Leitao <leitao@debian.org>
-
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 42f247cbdceec..cd56904a39049 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -87,7 +87,7 @@ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	if (unlikely(nsim_forward_skb(peer_dev, skb, rq) == NET_RX_DROP))
- 		goto out_drop_cnt;
- 
--	napi_schedule(&rq->napi);
-+	hrtimer_start(&rq->napi_timer, ns_to_ktime(5), HRTIMER_MODE_REL);
- 
- 	rcu_read_unlock();
- 	u64_stats_update_begin(&ns->syncp);
-@@ -426,6 +426,25 @@ static int nsim_init_napi(struct netdevsim *ns)
- 	return err;
- }
- 
-+static enum hrtimer_restart nsim_napi_schedule(struct hrtimer *timer)
-+{
-+	struct nsim_rq *rq;
-+
-+	rq = container_of(timer, struct nsim_rq, napi_timer);
-+	napi_schedule(&rq->napi);
-+	/* TODO: Should HRTIMER_RESTART be returned if napi_schedule returns
-+	 * false?
-+	 */
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static void nsim_rq_timer_init(struct nsim_rq *rq)
-+{
-+	hrtimer_init(&rq->napi_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	rq->napi_timer.function = nsim_napi_schedule;
-+}
-+
- static void nsim_enable_napi(struct netdevsim *ns)
- {
- 	struct net_device *dev = ns->netdev;
-@@ -436,6 +455,7 @@ static void nsim_enable_napi(struct netdevsim *ns)
- 
- 		netif_queue_set_napi(dev, i, NETDEV_QUEUE_TYPE_RX, &rq->napi);
- 		napi_enable(&rq->napi);
-+		nsim_rq_timer_init(rq);
- 	}
- }
- 
-@@ -461,6 +481,7 @@ static void nsim_del_napi(struct netdevsim *ns)
- 	for (i = 0; i < dev->num_rx_queues; i++) {
- 		struct nsim_rq *rq = ns->rq[i];
- 
-+		hrtimer_cancel(&rq->napi_timer);
- 		napi_disable(&rq->napi);
- 		__netif_napi_del(&rq->napi);
- 	}
-diff --git a/drivers/net/netdevsim/netdevsim.h b/drivers/net/netdevsim/netdevsim.h
-index dcf073bc4802e..2b396c517ac1d 100644
---- a/drivers/net/netdevsim/netdevsim.h
-+++ b/drivers/net/netdevsim/netdevsim.h
-@@ -97,6 +97,7 @@ struct nsim_rq {
- 	struct napi_struct napi;
- 	struct sk_buff_head skb_queue;
- 	struct page_pool *page_pool;
-+	struct hrtimer napi_timer;
- };
- 
- struct netdevsim {
+I.e. just do the kasan_check_byte(), and don't bail even if it returns
+false. The KASAN report would appear before everything else (incl. a
+bad lockdep report due to possible corrupted memory) and I think
+that's all we need to be able to debug a real bug.
 
