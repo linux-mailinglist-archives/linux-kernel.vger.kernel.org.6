@@ -1,182 +1,178 @@
-Return-Path: <linux-kernel+bounces-514294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485B1A35530
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:06:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADD7A35536
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0CC93AC7F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3EBC18915C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8200615198F;
-	Fri, 14 Feb 2025 03:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789391519A4;
+	Fri, 14 Feb 2025 03:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFH2ibma"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="dEN3We9e"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAC714F9E7
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41982753FD;
+	Fri, 14 Feb 2025 03:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739502388; cv=none; b=oZZ9tqMPbYM6gQZ4CprEJJJX8qxHrY2hR5hhMvc+g50CY1Z/TdnBSjiPXY68Jq3SCAyvHAvVcB0nc3hEtUuw4qu5OxmjXjH8MXOfXfFAxA2Dv/JueVFnh2DYPhbigDUJLbHJ/G6LjsL2zD0yLnYCotRSYtsr8v7gR9H7JYFkktc=
+	t=1739502444; cv=none; b=Vkp7QpBAnFtSzxy59l74yYYmvUU3jxOrnLsQeJ8RZ4ndYUSXVYzKgIC1I9ccM2CVevYBTnxMu/12CFNCVWi5kYscIbIj7iRbFzIZ9rve/+Eb583zyJHm8bKglOiuP0fCYvPxZdySeN0a2y3gPt9HKDIE1ElpnQYTmrBXYD+YV/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739502388; c=relaxed/simple;
-	bh=0K/PTc71xjBZUApYX5o5uWwqga4NZP0tGvsckTou8oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPuIAH9U1qPKrfduRwtnrW03rNCBCN/L+V5fv33ezypA2x6+wjf2WB3zZ5nzQ09NZKz695XkK/dEthu8z5tHhJAU1jQ5qGieItMISl2D5GRhmVwE8S3lhyWczMORZ2HqAAsShgwUTu5al+/LOkc1Durj9FnB+irto8wClcl0x/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFH2ibma; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54505a75445so1819572e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:06:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739502385; x=1740107185; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=He2OIlDaNSIcCdHM62LGFcAoOxAi/2Xh8uAl3w+TWBk=;
-        b=fFH2ibma+ySwscNfnmju3oPUNH8nzpbTq+fk6CVbBJFekVVuMjQemSj0aJtbZzvEyl
-         mkf7Son33TfL8zTwC9o8GmcFyejyun9BgHI1kWyjaBQMp1PvjRq89XONstsIamN4ilRA
-         E4NtKGCxAOyuWxj54zil9gmWvXnLlPoOQPIlFlXiSyOLwx5/rsdZb3Tt5oWzYAaD5Kpw
-         tmWjHInjnomIo2jRolDORFyLJM5NFaV7O2vmyaj0da/fZHsBXkMWttwgUmT5cEzc5Ds7
-         uT3XCifpOxTZXjlKAWAH68BJA/yi8TIeGwLI9NsIn2ShTvzHonWNOqXaPI2IbkFL3SIA
-         vaLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739502385; x=1740107185;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=He2OIlDaNSIcCdHM62LGFcAoOxAi/2Xh8uAl3w+TWBk=;
-        b=FSXyfzSQS8vSAofYT0o8cGa83JYjq/B7Hb7glDDdY/XnZEq6xftvkRYNEQ8MNjJSqU
-         66Mnt/LR79aLGE16lYIjId2ng1udtTWbyCnOo7TRDSlnX4jO3WEL95UWkxtrH+spO/zd
-         bAZyIlz8uzEerKsl2e8ipnpZP5JMWRSppGRnfkOBYC4ek/GrfUtvIKg0l2ryyrERD3g8
-         Xo2vH4m9xpRllxZYMmHkyMlWqiVic/76oUo98X5pvs8ZEWuaKPlOVhkk6a22tBFpO6cR
-         heFePFRGKCXYAJWMjhOkYGqdt2tDRyXeRkGHlndfDg5Af8PS7wZI5kC/sLQksRZ6Rlzu
-         yrsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeIERTxzT6mDxLIjpSXeKW9kbrlsAgFybH0mNgGSLze/ynDGwZHE3LQccQHM3MvLZmVY2G9Amg/hKQMx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsN9mkhZtjhSpVQo1nw+9V7UuK2j+JRhc0iBhBoA+NdwX5MNe5
-	T8teGFM/FEVMj83T4R5y1MkYZGsDOpH/GjUO5NfHfP6QvABCT6rhmodUg0EMTyM=
-X-Gm-Gg: ASbGncu4XGW5/RtUH4kBT0PnAyv3RrOmF2psskDwYy/Eh+eAo7kWJ29OLrlwBNt/uKm
-	96LHFRvJyUv8LWLx6sQOmBjW9EE0xJSLpTQ5kCMnr/yI5avOELik8UUlf+l5EYAZ5e9/LkxK/zd
-	4TglvSKzCTQRy+IPuwQb2M7rlYPzK0o+xkvddMHK4kWXZywVg85USPj9GFPgi0XuxaZAToeBfDD
-	eOR4CXVBcextmtf7rzHdLhtVWQ26ZF+4dBkCRFXt2Xh/g/cIozmld36rSjA1Er03KX1FyHUoG6B
-	pbbfaKWXvEBRVNV0Ty0phJP3Izol4u7PT875W8H7r6fW0JLQUoaB/mXvEYI3IgNvzDOf60s=
-X-Google-Smtp-Source: AGHT+IFsXPcFopquxx1KRlpAtXCuAqVjlzWfUjGSA8wzv2ScYBwMsM/cTrSxeOJpapLYhZ/a6P9XGg==
-X-Received: by 2002:a05:6512:10cb:b0:544:ee5:87aa with SMTP id 2adb3069b0e04-545180ea29cmr3055900e87.4.1739502384732;
-        Thu, 13 Feb 2025 19:06:24 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f11edbbsm358441e87.248.2025.02.13.19.06.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 19:06:23 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:06:21 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sui Jingfeng <sui.jingfeng@linux.dev>, Aleksandr Mishin <amishin@t-argos.ru>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Tomi Valkeinen <tomi.valkeinen@ti.com>, 
-	Jyri Sarha <jsarha@ti.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, 
-	Swapnil Jakhade <sjakhade@cadence.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Fedor Pchelkin <pchelkin@ispras.ru>, Alexey Khoroshilov <khoroshilov@ispras.ru>, 
-	Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] gpu: cdns-mhdp8546: fix call balance of mhdp->clk
- handling routines
-Message-ID: <nhklokfut4vz7ijfxdzy64qngzmdsk4ji3xq2nj2c6uhrvonru@tn3y5b4madyx>
-References: <20250213112801.1611525-1-mordan@ispras.ru>
+	s=arc-20240116; t=1739502444; c=relaxed/simple;
+	bh=U3iLt2jTVvFU0CrH4KAjwFp/wrFL6Fai2J1A7HCeWvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VshFjDbzRlLs+lYIGMRIMM3MKVIHkT87g2LtLUPuy8DdfvTbxa++MLMVg0sZIqW71OxHcigD3UlBrcIOKdLCcD5QJOQx4BVKt7O9ixAe3F6C38DDEP0yd6i76whHvxJvBc/c2kYxwR5aYbugySVafkVjKsuMsD33ujfM+0CnQ34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=dEN3We9e; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1739502434; x=1740107234; i=w_armin@gmx.de;
+	bh=UkVu9TB9y3bg528X+5UCDMdueq5YjpPbMSyJYp2IyZA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dEN3We9ef2XfOawN+NEw7U4xlzDzWpAowENjqY+KmkA7OVQ8rElf+O+aeiNnfVbq
+	 liyq+23GMTMbRik+MoGg1xo4ByCkQcO3zxfKxj0IqwqJF7BGsJYyvwwjj8cqxyn4A
+	 a18Lg2khXyzFp+WLOTmYjSxKf/Lx5LGzpcCi7Szrb5Hq1e6SDISj8HrRducNxIreC
+	 Vgo/lwNyt5u2gPZHTeW1jW8OTqzWuWuUrWJhqgj1gE7WPc+ug1tuqzMBEdNyAzoQN
+	 Scr41vutcN1f9oOIHOWCM0oco4VmqaiFLtHJE0osauuLaosn6NWIIgC9OhzhrvVQw
+	 xYFwHzLi2BsfeXRvoA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.24] ([87.177.78.219]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mzyuc-1tTqER3isg-014D2j; Fri, 14
+ Feb 2025 04:07:14 +0100
+Message-ID: <62e5b2f6-23e8-44e2-80f8-2509dd8e5a17@gmx.de>
+Date: Fri, 14 Feb 2025 04:07:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213112801.1611525-1-mordan@ispras.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] platform/x86: think-lmi: Use WMI bus API when
+ accessing BIOS settings
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: james@equiv.tech, markpearson@lenovo.com, jorge.lopez2@hp.com,
+ jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org, corbet@lwn.net,
+ linux-doc@vger.kernel.org
+References: <20250203182322.384883-1-W_Armin@gmx.de>
+ <20250203182322.384883-4-W_Armin@gmx.de>
+ <0dd7bda3-bf76-228b-27f3-f057e80e3a03@linux.intel.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <0dd7bda3-bf76-228b-27f3-f057e80e3a03@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7OWgTiuneYVq8FpBOEoyTSddAPhgwOL3QU9g3CpiK8oF7t5sbYv
+ vm4Gfz3ze46FCkApkUgdWCnjY5dtJM7FvvudeAN9MTB/l3Lc5krFEmHzpTNi+IqQv3fsUbP
+ FBCHKSO+z/yH2tyJ+PnIuT2RoD4tcbXpJIBZViuf0XPPOn5QptwISobBk5KhaOtWG6JFdjh
+ InoP4BwP99ZyGaU5h0uGQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9oFAX8DxaHU=;AZ76pu+mJr308YybNs+pLiNTG/2
+ am67VWgfC/ASgx1PrP/gSHIZLHGKXGZGaZK+SHgpqcJFb2dt4AwV9pT/y0BhwUVeh8tljMgV5
+ OYpDF6nnuZcfqJO6HNedInVLUkL59Ypzc2jeyZnFkkOpB4vW5ft3uHmZmEmvYy+dzXw/cGdBB
+ f8bhxz7WJRypBqN5V7eO+LWy2slOJSVIRaD14JEopBaHmeFsv3wHFdJK+vx/aMwoNd9PGfJ2s
+ Mg8bOn69bfTqIQJOKbvEOobpYgdr4sTy4o6DddzH9FfHEBUJ5POSGoG8xj4IkJkizJOmU45i2
+ tlQcwcTWzd8feFIeAbF207OrCKDtyXK12/1Kivnkcx+Zgyi5KM0Qbnfm1xu7HVS9l0Qzoke93
+ cgCSX+CAddJCIhenZFJ5Tp6gLfLSRcgjPoN1JHGOHqB75L1oeJq6DQMcBGBtz8uKe+gwCz1OD
+ 9iZNjyxAEbI8d8rS+hwWChuVDD0SIR16GwoMAuy45vO6lzuZ22rirXn1IkQx8UDkrjuyZeFPJ
+ eGdBun7MGm5VxhrGWwir+6ZygCWElfStiNT70IXWLGaeAqWVy/pOvsvHXQIKtEP4OQPX5s7O3
+ /ZfOnAzSTELbhNEXxLxJDD9RzgO9gKXB+LMbuC9WZLMjhNnSlIb/lkPGvouubBtVuwfsWPDeU
+ qLkht91RfQmNbw0JXk89urcD6PQMqQTiOv825Yi4/7ZY2ROT72Gu3mK+qn1qu9VlR8LSPN6Xi
+ WhObR3cvXbzrHj53wifNIYR5sjIkkPZ8GfSeruxNfFir4/20s5Y4vLCSsvfnDx7DFp12OI1hJ
+ Y/nh+UeldcN1t3oAWje/4LrP3sCrOi1tYIMYDH3Ueqc2lYYxMCX8bO2IhIelCHUA1sEL1GFDp
+ 0ps8Q1Ij0uMXX/swpnOaU7/iHXXFi7gqCUH//3KVf2i5kCwjwleZAXyOiH31aXs36tWKjKLv7
+ LlzIJJGrKsi301p/Z2j2akNtRDagXnfZ2oJ10kjrOB1ZSrObYsqmc4d3X84lbaeuMeLtrwBEU
+ K5uj4V5V7nYRlUhp5Vb8ys9agZKXYkZVZyOVdrFC935aNsBQU1QHYVq316izc/0WbOGluSgaX
+ gKWWoP+wqgi8gcdxKFZtF4DscV4X6UiYvk9tiJV6MXYUHZ04fB+n6zB5fyG1U7oZblfSOWEsr
+ 3Y2AXWDzht+viRN/AoPWDKCid3FvKUgXR9me4PSL7o07f2fUloCLVfzngLok7v+iGF8NqOyCk
+ BAicXNF7u155wSK4a0BnGlOTIO9TNsvUp+Tm6gbClIHA5Js+M527dR0y6ICkOrVBs/K5aeI2E
+ W8saGvBT3FpA8GnTODTLQK013sDhd3A3duMqTkJhu+WK6X5hXnk2kV9G3aKuP2sJaAHULNoA7
+ fD5vpeMt2npe/8azwhkez7yLvSYjzUuG6sfwxHpNxSFqxh+TcFFlXhLvoE
 
-On Thu, Feb 13, 2025 at 02:28:01PM +0300, Vitalii Mordan wrote:
-> If the clock mhdp->clk was not enabled in cdns_mhdp_probe(), it should not
-> be disabled in any path.
-> 
-> Use the devm_clk_get_enabled() helper function to ensure proper call
-> balance for mhdp->clk.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
-> 
-> Fixes: fb43aa0acdfd ("drm: bridge: Add support for Cadence MHDP8546 DPI/DP bridge")
+Am 13.02.25 um 14:17 schrieb Ilpo J=C3=A4rvinen:
 
-Please describe, what is the actual issue that is being fixed. In other
-words, which path leads to unbalanced enable or disable call. Otherwise
-it seems to be a valid patch, not qualified as a fix.
+> On Mon, 3 Feb 2025, Armin Wolf wrote:
+>
+>> Since the driver already binds to LENOVO_BIOS_SETTING_GUID, using
+>> wmidev_block_query() inside tlmi_setting() allows for faster
+>> access to BIOS settings.
+>>
+>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+>> ---
+>>   drivers/platform/x86/think-lmi.c | 23 +++++++++--------------
+>>   drivers/platform/x86/think-lmi.h |  2 ++
+>>   2 files changed, 11 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/th=
+ink-lmi.c
+>> index 2c94a4af9a1d..0fc275e461be 100644
+>> --- a/drivers/platform/x86/think-lmi.c
+>> +++ b/drivers/platform/x86/think-lmi.c
+>> @@ -344,20 +344,14 @@ static int tlmi_opcode_setting(char *setting, con=
+st char *value)
+>>   	return ret;
+>>   }
+>>
+>> -static int tlmi_setting(int item, char **value, const char *guid_strin=
+g)
+>> +static int tlmi_setting(struct wmi_device *wdev, int item, char **valu=
+e)
+>>   {
+>> -	struct acpi_buffer output =3D { ACPI_ALLOCATE_BUFFER, NULL };
+>>   	union acpi_object *obj;
+>> -	acpi_status status;
+>>   	int ret;
+>>
+>> -	status =3D wmi_query_block(guid_string, item, &output);
+>> -	if (ACPI_FAILURE(status))
+>> -		return -EIO;
+>> -
+>> -	obj =3D output.pointer;
+>> +	obj =3D wmidev_block_query(wdev, item);
+>>   	if (!obj)
+>> -		return -ENODATA;
+>> +		return -EIO;
+> Hi Armin,
+>
+> I'm trying to understand why there are these back and forth changes in t=
+he
+> error code.
+>
+> It almost looks to me like wmidev_block_query() would want to return the
+> error code itself because after you abstracted this code using
+> wmidev_block_query(), you had to change the error code because you no
+> longer have access to the key detail to decide which error code should b=
+e
+> returned. That is, use ERR_PTR() inside wmidev_block_query() and the
+> callers should just pass that error code on with IS_ERR & friends?
+>
+Hi,
 
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
-> ---
-> v2: Use devm_clk_get_enabled() helper function, as per Dmitry Baryshkov's
-> request.
-> 
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> index d081850e3c03..d4e4f484cbe5 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> @@ -2463,9 +2463,9 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
->  	if (!mhdp)
->  		return -ENOMEM;
->  
-> -	clk = devm_clk_get(dev, NULL);
-> +	clk = devm_clk_get_enabled(dev, NULL);
->  	if (IS_ERR(clk)) {
-> -		dev_err(dev, "couldn't get clk: %ld\n", PTR_ERR(clk));
-> +		dev_err(dev, "couldn't get and enable clk: %ld\n", PTR_ERR(clk));
->  		return PTR_ERR(clk);
->  	}
->  
-> @@ -2504,14 +2504,12 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
->  
->  	mhdp->info = of_device_get_match_data(dev);
->  
-> -	clk_prepare_enable(clk);
-> -
->  	pm_runtime_enable(dev);
->  	ret = pm_runtime_resume_and_get(dev);
->  	if (ret < 0) {
->  		dev_err(dev, "pm_runtime_resume_and_get failed\n");
->  		pm_runtime_disable(dev);
-> -		goto clk_disable;
-> +		return ret;
->  	}
->  
->  	if (mhdp->info && mhdp->info->ops && mhdp->info->ops->init) {
-> @@ -2590,8 +2588,6 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
->  runtime_put:
->  	pm_runtime_put_sync(dev);
->  	pm_runtime_disable(dev);
-> -clk_disable:
-> -	clk_disable_unprepare(mhdp->clk);
->  
->  	return ret;
->  }
-> @@ -2632,8 +2628,6 @@ static void cdns_mhdp_remove(struct platform_device *pdev)
->  	cancel_work_sync(&mhdp->modeset_retry_work);
->  	flush_work(&mhdp->hpd_work);
->  	/* Ignoring mhdp->hdcp.check_work and mhdp->hdcp.prop_work here. */
-> -
-> -	clk_disable_unprepare(mhdp->clk);
->  }
->  
->  static const struct of_device_id mhdp_ids[] = {
-> -- 
-> 2.25.1
-> 
+the reason why wmidev_block_query() only returns NULL in case of an error =
+is that
+according to the WMI-ACPI specification, querying a WMI data block should =
+return data.
 
--- 
-With best wishes
-Dmitry
+So we have two error scenarios:
+
+- ACPI error =3D> firmware error =3D> EIO
+- no data returned =3D> violation of firmware spec =3D> EIO
+
+Because of this always returning EIO is the correct approach in my opinion=
+.
+
+Thanks,
+Armin Wolf
+
 
