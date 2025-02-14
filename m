@@ -1,98 +1,103 @@
-Return-Path: <linux-kernel+bounces-514547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DDCA35856
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D2AA3585C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702D63AB51D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B88153A5E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0252222A7;
-	Fri, 14 Feb 2025 08:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C6B21E0A2;
+	Fri, 14 Feb 2025 08:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KjpeEtUt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPpiH/bF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88967221550;
-	Fri, 14 Feb 2025 08:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890EE1632C8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520062; cv=none; b=EpDONLsynKNQhfaKQjEq5DKpTIWYLxyw6rhdD40KzL0YEjaKNoPj1Fjp3anR9g2cmIdyRwPP6/SUn/ky7OlNFvoVnAke6hFFVK9Na0W24psy3OnjMctrAmIlwAFqHZOfnQV5dXkEEmu0u8z2bmpmG37W+1PDWspHQNZZE9cBC60=
+	t=1739520137; cv=none; b=u/8KMMdFYWg6DMxfVRkFz4gzcGCyu1tcNYwTAnJdz3eA7Lma+OeQGGASBKapBbx4LSLAI69mPrhaW9wVclL/ZqoMZX2EjpdA84nMdWT53HEKV54uTxJVK+79sJMjg2q1qQb0Sk2padbh1kL77hj1YZvt6SNVziklMz9g8zmlxIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520062; c=relaxed/simple;
-	bh=GKKFPhOHTbLnldzFhimOJsuL88ApoB+sH3SCD1/GUSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fMMoJOQEhqI9lP0RGFL26KQtV6F2NO1lDqp2Zb5f6y39Kc3o2guY1xhcPRQZsWGfRVQLlZ8XC2MoYe1B01ZVr4I00Xx9D4qXIYRJTEpHZ5qL6Zl8yuh0GfiQFZcUcXH8FH1qZrcq4kJbk/lWUIkcmLV+kjLQ2aDIRDiv97Yo/qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KjpeEtUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DB7C4CED1;
-	Fri, 14 Feb 2025 08:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739520062;
-	bh=GKKFPhOHTbLnldzFhimOJsuL88ApoB+sH3SCD1/GUSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjpeEtUtGfjUi3Rci7goJY6v7wxiLxsXoQpbTieMjlrIs0Qdlo93cSY6xtBQp61Nt
-	 Cuut4nOr6+kp36rpzd2vuHc7PsKwZmG6z0jtey79G7mZaz1ErxVqL2W1dyfBuehFP2
-	 vG645LM5c3oR3VSRgQYKhrnZlrXUOxTWvKZoY83E=
-Date: Fri, 14 Feb 2025 09:00:58 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: Ferry Toth <ftoth@exalondelft.nl>,
-	Ricardo B Marliere <ricardo@marliere.net>,
-	Kees Cook <kees@kernel.org>, linux-usb@vger.kernel.org,
-	Elson Roy Serrao <quic_eserrao@quicinc.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: u_ether: Set is_suspend flag if remote
- wakeup fails
-Message-ID: <2025021436-seizing-prankish-ebf2@gregkh>
-References: <20250212100840.3812153-1-prashanth.k@oss.qualcomm.com>
+	s=arc-20240116; t=1739520137; c=relaxed/simple;
+	bh=+DvmIDAFvzsza7cyWGZSUdLzfYbcKamkNgmexqX3s/U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oNwBgsutSL1J0/XSo2IYMETdG8QPF38yUgnDDn8X+ttxyQeGQBidzXZmq8Pt9r9JzHPnzaBJq6NRiFaxsz93Fylb+lhI3SwtrBE77Y6fhyfdedKTGSmaBEHp/kH4kmtidheEteERrAPzaPgHWroLPo2zSlFSaAVW0oMn/dkvHbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPpiH/bF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D68C4CED1;
+	Fri, 14 Feb 2025 08:02:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739520136;
+	bh=+DvmIDAFvzsza7cyWGZSUdLzfYbcKamkNgmexqX3s/U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uPpiH/bFpw69xtS5sKK7gmd7o3r520yn2Q4g6FCCcXrbg04d3qMiGCQumJX780sZ4
+	 hrLfPK1CsFy1cDR2UXju4iGl9IWXCA3PJ+COggZYHsJrWlxWsCGmK6aH+Gl/8LYiDd
+	 jVSCwb/QmPmlxUObac7iLlfbjrOe92aQEq54MgQLVVjtOvyIIYylMDDAtCXuK5FaPW
+	 x1xF7Ksgkwk73xWPb6DZeYTIh2BS9+yKQ17qMATO3AuCJHN+PD5lWhPRKfMOv5+QTU
+	 0t3VqmBFtmtHiokSxfcACSpe50eREKjRivoVKm04S9nROjzfgdu2HC5G15skRLyeHq
+	 xSH1bGxo7yylQ==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH 0/2] nvme-fc: fix schedule in atomic context
+Date: Fri, 14 Feb 2025 09:02:02 +0100
+Message-Id: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212100840.3812153-1-prashanth.k@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHr4rmcC/x3LQQqAIBBG4avIrBtwlDZdJVpI/tYsslCIILx70
+ vLj8V6qKIpKk3mp4NaqZ+6QwdC6h7yBNXaTs260Tjzn+wCnlZM+qIwYJIiNSH6k/lwFf+jLvLT
+ 2AcszEpxfAAAA
+X-Change-ID: 20250213-nvme-fc-fixes-eda1a10def35
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+ James Smart <james.smart@broadcom.com>, Hannes Reinecke <hare@suse.de>, 
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Feb 12, 2025 at 03:38:40PM +0530, Prashanth K wrote:
-> Currently while UDC suspends, u_ether attempts to remote wakeup
-> the host if there are any pending transfers. However, if remote
-> wakeup fails, the UDC remains suspended but the is_suspend flag
-> is not set. And since is_suspend flag isn't set, the subsequent
-> eth_start_xmit() would queue USB requests to suspended UDC.
-> 
-> To fix this, bail out from gether_suspend() only if remote wakeup
-> operation is successful.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0a1af6dfa077 ("usb: gadget: f_ecm: Add suspend/resume and remote wakeup support")
-> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
-> ---
->  drivers/usb/gadget/function/u_ether.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-> index 09e2838917e2..f58590bf5e02 100644
-> --- a/drivers/usb/gadget/function/u_ether.c
-> +++ b/drivers/usb/gadget/function/u_ether.c
-> @@ -1052,8 +1052,8 @@ void gether_suspend(struct gether *link)
->  		 * There is a transfer in progress. So we trigger a remote
->  		 * wakeup to inform the host.
->  		 */
-> -		ether_wakeup_host(dev->port_usb);
-> -		return;
-> +		if (!ether_wakeup_host(dev->port_usb))
-> +			return;
+Shinichiro reported [1] the recent change in the nvme-fc setup path [2]
+introduced a bug. I didn't spot the schedule call in
+nvme_change_ctrl_state.
 
-What about the other place in the driver where this function is called
-but the return value is ignored?
+It turns out the locking is not necessary if we make the state machine a
+bit more restrictive and only allow entering the LIVE state from
+CONNECTING. If we do this, it's possible to ensure we either enter LIVE
+only if there was no connection loss event. Also the connection loss
+event handler should always trigger the reset handler to avoid a
+read-write race on the state machine state variable.
 
-thanks,
+I've tried to replicate the original problem once again and wrote a new
+blktest which tries to trigger the race condition. I let it run a for a
+while and nothing broke, but I can't be sure it is really gone. The rest
+of the blktests also passed. Unfortunatly, the test box with FC hardware
+is currently not working, so I can't test this with real hardware.
 
-greg k-h
+[1] https://lore.kernel.org/all/denqwui6sl5erqmz2gvrwueyxakl5txzbbiu3fgebryzrfxunm@iwxuthct377m/
+[2] https://lore.kernel.org/all/20250109-nvme-fc-handle-com-lost-v4-3-fe5cae17b492@kernel.org/
+
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Daniel Wagner (2):
+      nvme: only allow entering LIVE from CONNECTING state
+      nvme-fc: rely on state transitions to handle connectivity loss
+
+ drivers/nvme/host/core.c |  2 --
+ drivers/nvme/host/fc.c   | 67 +++++-------------------------------------------
+ 2 files changed, 6 insertions(+), 63 deletions(-)
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250213-nvme-fc-fixes-eda1a10def35
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
+
 
