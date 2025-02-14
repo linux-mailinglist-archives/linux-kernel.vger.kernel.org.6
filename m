@@ -1,203 +1,398 @@
-Return-Path: <linux-kernel+bounces-515217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F61A361E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:37:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC1DA361F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63291896610
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A6661894057
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FE9266F02;
-	Fri, 14 Feb 2025 15:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EdL9ymag"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D971D266F02;
+	Fri, 14 Feb 2025 15:39:39 +0000 (UTC)
+Received: from n169-114.mail.139.com (n169-114.mail.139.com [120.232.169.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269C5266EF6
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205902753E5;
+	Fri, 14 Feb 2025 15:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547319; cv=none; b=GUp3Mj3K01ZQuyynRZdmHIzwpPp0O3y/g/nuR3gcnuS3S9cDfDAMyirOTWjxx0FtUesUB62FcVtx1UVj9byx1xaGE3uQZjTBff5I5dlkxMZ0kHnqN4E865E52Lc9MvMXcTxGGNUICRWHclmaGhjIg6CxP3UnnbGPi+JCWBmlO0I=
+	t=1739547579; cv=none; b=rsWGppW9eHJmufuPKgHfi6VutEXZ+jwllr9fMo/izUq2AuLcHQW08ofCtyhoGhvI/qO8I0Fhix8FjBF1vn256mUuom945XfwTy04/VYieA6RglWT4nN8j9vvBo2U9U/H4lOA6QQUmPP7BhFIqHX6L4GNRguoF44YxX+UVjx/Gw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547319; c=relaxed/simple;
-	bh=3ROhaNH5ZNiBeQTZmiDfZeP6mXeJ+t8KXtX+3B8JUv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOhn7Htuy8DHT0R80G9PRkj1pF5xWgLc7d0lHenBEJ39dQe9tFaaCKF+/oWvrWhMC+/F38UwWbAsbkxX6xV5JG4NZlA9m7LVkC6oTwRJnM2fzSu81PxIR6+DsvtOtTx17kdK97VS5V6hLSJKV9cE+8wquxF+3Ri0QZOdOlN7qbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EdL9ymag; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7cb1154abso300534166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:35:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739547315; x=1740152115; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Epi7Q+7wQY9RKlfsXwKc7BTRBEAbnD6Wjsq4fX0UxxY=;
-        b=EdL9ymagkWy3zPMNNDaXw/RPpHF28fvKPhelcYIjQ7kRsOyg/OXHNmaT1JN8dM3IYy
-         QEZd/Ku81JjWY6ZzbyY90nv5XOHMedjpvNhbTDsQlaVYilEvHLiW90TLP5YiX0waGs5V
-         vQMudZzPQxWaPYhliqRy91IiemOleK9mPxUwuGgYSwaYEma/mOthV8cQzksIQpYWBEhA
-         XOf5aqGxu7TfmjvpIV2En6oIVqz2HaLuy6h23l57wrtEU7laMJ5e3FX2p4tOIP3h1FFL
-         UJzNNoSeQDR7X3ewCVzOxG8+ITw61govNyRMxOGfqERCE2C9DQJupRvvhxZyI5z+JWGi
-         zDFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739547315; x=1740152115;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Epi7Q+7wQY9RKlfsXwKc7BTRBEAbnD6Wjsq4fX0UxxY=;
-        b=uMJ6r37yara6wLMqj6vhznmVEAPTyXjP/mynZZF2mMNwlDecVREqYwQCbTZ017zvC8
-         A/DtKFClAi2ydFI/erAZ9jtA5b6OwZz0K6fG2RLwNpsB0KkPYcTNL441XzMGXwm/4jIc
-         afznlGd8JCATQuHVhc07ASuC+HFxZFODGmiYF4j3sz3xAM9VibvRsLXvHg602xE5SQ4Y
-         EXnA8LaIS8nYZ6u4O63i1SneYJ96+LU3R2DEdkj3+yTuUhkZNns8L8jRQnpSAHe3ME+l
-         40Gn96BBuz2cyEP7BupDWcbtWbCxYBxFLPGUOq9gogSW7fm3upF+D9dFjHO7EKNNuNAu
-         1pCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzQKHEW4k7JZMzHTySwqBUoE9G7Y+EbygBVc3PJDyWzVaUpl7h06rKNo6B5/YlBbbQlHez4kKads/aOg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0w687PI/Q17xEKrRRqDkXR5ESlXsIMo2yXL7D8rXvkFSOjyk6
-	7/O7Bc2kgfKAsO7NmcDYd4hnDn2n+le9mLWjkKTzLMd6ReORnZzITRmsRBTjoKs=
-X-Gm-Gg: ASbGncu5BLTiaMh3uHF/YHnHXvi3dNrQekg3Ujqdsscv3iuNfxH9711j0p2kaH+10Aw
-	RzZABgXIubOfhzYYIsVh38DkSTZTKcgzVVeguoc2+u1Zq7ygRzd5Q4QOseNY36Lp8n7/8gLAZ95
-	3zaAwv+reP96mWz2dAZ+d6oDSvdZ2ZdR2tO2nkLsJaUy1iGVCX3OGD1lgh782uFyMA3Ix0yu17Q
-	BP+Pf3886Fa8FtXx14LuexuGMzm4wXJxoaJrTQtb7KI0Wjok3d80DnK4lB1PtDqVWjHKX8j1ijf
-	LQSdwG1HVJlvPFJEDQ==
-X-Google-Smtp-Source: AGHT+IGJzwISDCnvraLVLyP20Cfh4hPSTu9kDD0t/YPlFJMdBbmRyuUpNouBSir5X0Q630+BioQj3Q==
-X-Received: by 2002:a05:6402:2387:b0:5de:d98c:3b4e with SMTP id 4fb4d7f45d1cf-5ded98c4a30mr6607100a12.21.1739547315302;
-        Fri, 14 Feb 2025 07:35:15 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d369esm3052385a12.37.2025.02.14.07.35.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 07:35:14 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:35:12 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Arpitha Raghunandan <98.arpi@gmail.com>,
-	David Gow <davidgow@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 0/2] printf: convert self-test to KUnit
-Message-ID: <Z69isDf_6Vy8gGcS@pathway.suse.cz>
-References: <20250210-printf-kunit-convert-v3-0-ee6ac5500f5e@gmail.com>
+	s=arc-20240116; t=1739547579; c=relaxed/simple;
+	bh=cmKSs81Yfpp1SXDEIObhzD1XJI6Ce1SUaTS/MQNGIao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ak1ByU+6adP0qd4uSkw1eC53DprGgPbMdhs21LKzi7G/3QuljFgfmao3h020T7EIpbSEcbA4J0lg1YJmuHRK0tLWTen66wJGYL7zAUWvqrQ4B6RMIxnpNnuc4cqhr6huR5wTXDh20FzfGLfN5j0Ox0vpUZiqTHK05bewBYr/6r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG:00000000
+Received:from [IPV6:2409:8a00:7877:4fa0:b447:118:24f7:471a] (unknown[2409:8A00:7877:4FA0:B447:118:24F7:471A])
+	by rmsmtp-lg-appmail-45-12076 (RichMail) with SMTP id 2f2c67af63a5903-7af4a;
+	Fri, 14 Feb 2025 23:39:22 +0800 (CST)
+X-RM-TRANSID:2f2c67af63a5903-7af4a
+Message-ID: <71d8eef3-ae69-4e3f-8793-0f4f43f6f896@139.com>
+Date: Fri, 14 Feb 2025 23:39:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210-printf-kunit-convert-v3-0-ee6ac5500f5e@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] platform/x86:lenovo-wmi-hotkey-utilities
+To: Kurt Borja <kuurtb@gmail.com>, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ W_Armin@gmx.de, dongeg1@lenovo.com, Mark Pearson <mpearson-lenovo@squebb.ca>
+References: <20250214072347.4297-1-xy-jackie@139.com>
+ <D7S96Y9MGJIY.2ULAIX8G4KNPF@gmail.com>
+Content-Language: en-US
+From: Jackie Dong <xy-jackie@139.com>
+In-Reply-To: <D7S96Y9MGJIY.2ULAIX8G4KNPF@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 2025-02-10 13:23:21, Tamir Duberstein wrote:
-> This is one of just 3 remaining "Test Module" kselftests (the others
-> being bitmap and scanf), the rest having been converted to KUnit.
+On 2/14/25 22:54, Kurt Borja wrote:
+> Hi Jackie,
 > 
-> I tested this using:
+> On Fri Feb 14, 2025 at 2:23 AM -05, Jackie Dong wrote:
+>> Implement Lenovo utility data WMI calls needed to make LEDs
+>> work on Ideapads that support this GUID.
+>> This enables the mic and audio LEDs to be updated correctly.
+>>
+>> Tested on below samples.
+>> ThinkBook 13X Gen4 IMH
+>> ThinkBook 14 G6 ABP
+>> ThinkBook 16p Gen4-21J8
+>> ThinkBook 16 G8 IRL
+>> ThinkBook 16 G7+ ASP
+>>
+>> Signed-off-by: Jackie Dong <xy-jackie@139.com>
+>> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 > 
-> $ tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=1 printf
+> I noticed this driver lacks a MAINTAINERS entry, could you add one
+> please?
 > 
-> I have also sent out a series converting scanf[0].
+> After addressing that and some last nitpicks bellow:
 > 
-> Link: https://lore.kernel.org/all/20250204-scanf-kunit-convert-v3-0-386d7c3ee714@gmail.com/T/#u [0]
+> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
 > 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Hi Kurt,
+OK, I'll add it.
+>> ---
+>> Changes in v6:
+>>   - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
+>>   - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
+>>     NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
+>>   - Align items in enum hotkey_set_feature
+>>   - Drop some brances and return error message directly
+>>   - Check return value of lenovo_super_hotkey_wmi_led_init() in
+>>     lenovo_super_hotkey_wmi_leds_setup
+>>
+>> Changes in v5:
+>>   - Take out union acpi_object *obj __free(kfree) = output.pointer from
+>>     if-else block
+>>   - Remove lsk_wmi_context_lud_keys related source code
+>>
+>> Changes in v4:
+>>   - Add related head files include cleanup.h, dev_printk.h, device.h,
+>>     module.h
+>>   - Replaced kfree() by __free()
+>>   - Remove double free for obj
+>>   - Remove wpriv->cdev[led_type].dev = dev
+>>   - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private *)context
+>>   - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
+>>   - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
+>> Changes in v3:
+>>   - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
+>>   - Renamed everything in this driver which contains the name "ideapad"
+>>     to instead contain the name of this driver.
+>>   - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
+>>     and use container_of() to the led_wdev pointer.
+>>   - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
+>>   - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
+>>     and free the ACPI object after get the required value.
+>>   - Removed led_classdev_unregister() after led_reg_failed label, but
+>>     add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
+>>     resource.
+>>   - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
+>>     source codes and only keep LUD_WMI_METHOD_GUID.
+>>
+>> Changes in v2:
+>>   - Update code layout and formatting as recommended in review
+>>   - Improved error handling in ideapad_wmi_led_init
+>>   - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
+>>     ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
+>>
+>>   drivers/platform/x86/Kconfig                  |  11 +
+>>   drivers/platform/x86/Makefile                 |   1 +
+>>   .../x86/lenovo-wmi-hotkey-utilities.c         | 227 ++++++++++++++++++
+>>   3 files changed, 239 insertions(+)
+>>   create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>>
+>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+>> index 0258dd879d64..715bcfbe992f 100644
+>> --- a/drivers/platform/x86/Kconfig
+>> +++ b/drivers/platform/x86/Kconfig
+>> @@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
+>>   	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
+>>   	  rfkill switch, hotkey, fan control and backlight control.
+>>   
+>> +config LENOVO_WMI_HOTKEY_UTILITIES
+>> +	tristate "Lenovo Hotkey Utility WMI extras driver"
+>> +	depends on ACPI_WMI
+>> +	depends on IDEAPAD_LAPTOP
+>> +	select NEW_LEDS
+>> +	select LEDS_CLASS
+>> +	help
+>> +	  This driver provides WMI support for Lenovo customized hotkeys function,
+>> +	  such as LED control for audio/mic mute event for Ideapad, YOGA, XiaoXin,
+>> +	  Gaming, ThinkBook and so on.
+>> +
+>>   config LENOVO_YMC
+>>   	tristate "Lenovo Yoga Tablet Mode Control"
+>>   	depends on ACPI_WMI
+>> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+>> index e1b142947067..131fcf974477 100644
+>> --- a/drivers/platform/x86/Makefile
+>> +++ b/drivers/platform/x86/Makefile
+>> @@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
+>>   # IBM Thinkpad and Lenovo
+>>   obj-$(CONFIG_IBM_RTL)		+= ibm_rtl.o
+>>   obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad-laptop.o
+>> +obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+= lenovo-wmi-hotkey-utilities.o
+>>   obj-$(CONFIG_LENOVO_YMC)	+= lenovo-ymc.o
+>>   obj-$(CONFIG_SENSORS_HDAPS)	+= hdaps.o
+>>   obj-$(CONFIG_THINKPAD_ACPI)	+= thinkpad_acpi.o
+>> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> new file mode 100644
+>> index 000000000000..e50914a76970
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> @@ -0,0 +1,227 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
+>> + *
+>> + *  Copyright (C) 2025	Lenovo
+>> + */
+>> +
+>> +#include <linux/cleanup.h>
+>> +#include <linux/dev_printk.h>
+>> +#include <linux/device.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/wmi.h>
+>> +
+>> +/* Lenovo Super Hotkey WMI GUIDs */
+>> +#define LUD_WMI_METHOD_GUID	"CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
+>> +
+>> +/* Lenovo Utility Data WMI method_id */
+>> +#define WMI_LUD_GET_SUPPORT 1
+>> +#define WMI_LUD_SET_FEATURE 2
+>> +
+>> +#define WMI_LUD_GET_MICMUTE_LED_VER   20
+>> +#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
+>> +
+>> +#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
+>> +#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
+>> +
+>> +/* Input parameters to mute/unmute audio LED and Mic LED */
+>> +struct wmi_led_args {
+>> +	u8 id;
+>> +	u8 subid;
+>> +	u16 value;
+>> +};
+>> +
+>> +/* Values of input parameters to SetFeature of audio LED and Mic LED */
+>> +enum hotkey_set_feature {
+>> +	MIC_MUTE_LED_ON	   = 1,
+>> +	MIC_MUTE_LED_OFF   = 2,
+>> +	AUDIO_MUTE_LED_ON  = 4,
+>> +	AUDIO_MUTE_LED_OFF = 5,
+> 
+> We usually align these with tabs like this:
+> 
+> <tab>MIC_MUTE_LED_ON<tab><tab>= 1,
+> ...
+> 
+> For each line, without adding spaces before tabs.
+> 
+OK, I'll update it.
+>> +};
+>> +
+>> +#define LSH_ACPI_LED_MAX 2
+>> +
+>> +struct lenovo_super_hotkey_wmi_private {
+>> +	struct led_classdev cdev[LSH_ACPI_LED_MAX];
+>> +	struct wmi_device *led_wdev;
+>> +};
+>> +
+>> +enum mute_led_type {
+>> +	MIC_MUTE,
+>> +	AUDIO_MUTE,
+>> +};
+>> +
+>> +static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct led_classdev *led_cdev,
+>> +				enum led_brightness brightness)
+>> +
+>> +{
+>> +	struct lenovo_super_hotkey_wmi_private *wpriv = container_of(led_cdev,
+>> +			struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
+>> +	struct wmi_led_args led_arg = {0, 0, 0};
+>> +	struct acpi_buffer input;
+>> +	acpi_status status;
+>> +
+>> +	switch (led_type) {
+>> +	case MIC_MUTE:
+>> +		led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : MIC_MUTE_LED_OFF;
+>> +		break;
+>> +	case AUDIO_MUTE:
+>> +		led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : AUDIO_MUTE_LED_OFF;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	input.length = sizeof(led_arg);
+>> +	input.pointer = &led_arg;
+>> +	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_SET_FEATURE, &input, NULL);
+>> +	if (ACPI_FAILURE(status))
+>> +		return -EIO;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
+>> +				     enum led_brightness brightness)
+>> +
+>> +{
+>> +	return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
+>> +}
+>> +
+>> +static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
+>> +				   enum led_brightness brightness)
+>> +{
+>> +	return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct device *dev)
+>> +{
+>> +	struct lenovo_super_hotkey_wmi_private *wpriv = dev_get_drvdata(dev);
+>> +	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+>> +	struct acpi_buffer input;
+>> +	int led_version, err = 0;
+>> +	unsigned int wmiarg;
+>> +	acpi_status status;
+>> +
+>> +	switch (led_type) {
+>> +	case MIC_MUTE:
+>> +		wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
+>> +		break;
+>> +	case AUDIO_MUTE:
+>> +		wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	input.length = sizeof(wmiarg);
+>> +	input.pointer = &wmiarg;
+>> +	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_GET_SUPPORT, &input, &output);
+>> +	if (ACPI_FAILURE(status))
+>> +		return -EIO;
+>> +
+>> +	union acpi_object *obj __free(kfree) = output.pointer;
+>> +	if (obj && obj->type == ACPI_TYPE_INTEGER)
+>> +		led_version = obj->integer.value;
+>> +	else
+>> +		return -EIO;
+>> +
+>> +	wpriv->cdev[led_type].max_brightness = LED_ON;
+>> +	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
+>> +
+>> +	switch (led_type) {
+>> +	case MIC_MUTE:
+>> +		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
+>> +			return -EIO;
+>> +
+>> +		wpriv->cdev[led_type].name = "platform::micmute";
+>> +		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
+>> +		wpriv->cdev[led_type].default_trigger = "audio-micmute";
+>> +
+>> +		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
+>> +		if (err < 0)
+>> +			goto led_reg_failed;
+>> +
+>> +		break;
+>> +	case AUDIO_MUTE:
+>> +		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
+>> +			return -EIO;
+>> +
+>> +		wpriv->cdev[led_type].name = "platform::mute";
+>> +		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
+>> +		wpriv->cdev[led_type].default_trigger = "audio-mute";
+>> +
+>> +		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
+>> +		if (err < 0)
+>> +			goto led_reg_failed;
+>> +
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Unknown LED type %d\n", led_type);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +led_reg_failed:
+>> +	dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
+>> +	return err;
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
+>> +{
+>> +	int err;
+>> +
+>> +	err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, const void *context)
+>> +{
+>> +	struct lenovo_super_hotkey_wmi_private *wpriv;
+>> +	int err;
+>> +
+>> +	wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
+>> +	if (!wpriv)
+>> +		return -ENOMEM;
+>> +
+>> +	dev_set_drvdata(&wdev->dev, wpriv);
+>> +	wpriv->led_wdev = wdev;
+>> +	err = lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
+> 
+> return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
+> 
+> Other than that this looks good to me :)
+> 
+Yes, it's better than my code.
+Thanks Kurt for your review the patch again and again and give helpful 
+comments.
+I'll send v7 patch later.
 
-I have just quickly tested this before leaving for a week.
-And I am fine with the result.
+Jackie Dong
 
 
-I tried to simmulate an error.
-
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 59dbe4f9a4cb..d2a1af31a540 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -590,7 +590,7 @@ time_and_date(void)
- 	test("15:32:23|0119-00-04", "%ptTtr|%ptTdr", &t, &t);
- 
- 	test("2019-01-04 15:32:23", "%ptTs", &t);
--	test("0119-00-04 15:32:23", "%ptTsr", &t);
-+	test("0119-00-04 15:32:24", "%ptTsr", &t);
- 	test("15:32:23|2019-01-04", "%ptTts|%ptTds", &t, &t);
- 	test("15:32:23|0119-00-04", "%ptTtrs|%ptTdrs", &t, &t);
- }
-
-
-The original result was:
-
-[  787.626709] test_printf: loaded.
-[  787.627398] test_printf: vsnprintf(buf, 256, "%ptTsr", ...) wrote '0119-00-04 15:32:23', expected '0119-00-04 15:32:24'
-[  787.628496] test_printf: kvasprintf(..., "%ptTsr", ...) returned '0119-00-04 15:32:23', expected '0119-00-04 15:32:24'
-[  787.629939] test_printf: failed 2 out of 448 tests
-
-
-The new output is:
-
-[  585.652278] KTAP version 1
-[  585.652675] 1..1
-[  585.653085]     KTAP version 1
-[  585.653382]     # Subtest: printf
-[  585.653702]     # module: printf_kunit
-[  585.653716]     1..28
-[  585.655223]     ok 1 test_basic
-[  585.655908]     ok 2 test_number
-[  585.656824]     ok 3 test_string
-[  585.657522]     ok 4 hash_pointer
-[  585.658547]     ok 5 null_pointer
-[  585.659572]     ok 6 error_pointer
-[  585.661057]     ok 7 invalid_pointer
-[  585.662290]     ok 8 symbol_ptr
-[  585.663390]     ok 9 kernel_ptr
-[  585.665162]     ok 10 struct_resource
-[  585.666231]     ok 11 struct_range
-[  585.667257]     ok 12 addr
-[  585.668399]     ok 13 escaped_str
-[  585.670212]     ok 14 hex_string
-[  585.671903]     ok 15 mac
-[  585.673389]     ok 16 ip4
-[  585.674886]     ok 17 ip6
-[  585.676255]     ok 18 uuid
-[  585.677875]     ok 19 dentry
-[  585.679138]     ok 20 struct_va_format
-[  585.679783]     # time_and_date: EXPECTATION FAILED at lib/printf_kunit.c:97
-               vsnprintf(buf, 256, "%ptTsr", ...) wrote '0119-00-04 15:32:23', expected '0119-00-04 15:32:24'
-[  585.680264]     # time_and_date: EXPECTATION FAILED at lib/printf_kunit.c:135
-               kvasprintf(..., "%ptTsr", ...) returned '0119-00-04 15:32:23', expected '0119-00-04 15:32:24'
-[  585.682436]     not ok 21 time_and_date
-[  585.683115]     ok 22 struct_clk
-[  585.685807]     ok 23 bitmap
-[  585.686576]     ok 24 netdev_features
-[  585.687243]     ok 25 flags
-[  585.687875]     ok 26 errptr
-[  585.688930]     ok 27 fwnode_pointer
-[  585.689544]     ok 28 fourcc_pointer
-[  585.689886]     # printf: ran 448 tests
-[  585.690215] # printf: pass:27 fail:1 skip:0 total:28
-[  585.690582] # Totals: pass:27 fail:1 skip:0 total:28
-[  585.691013] not ok 1 printf
-
-
-I still have to look at the implementation before I add an ack.
-
-And of course, I am also curious about what other reviewers think
-about it. And if this is OK for Rasmus.
-
-Best Regards,
-Petr
 
