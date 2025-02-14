@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-514233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1461CA3546E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:09:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23B0A353F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B06747A3BEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CBF188FEE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833D1FECBF;
-	Fri, 14 Feb 2025 02:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA14886348;
+	Fri, 14 Feb 2025 01:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbDoNZLH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIrX+yVY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38631632E4;
-	Fri, 14 Feb 2025 02:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C641E502;
+	Fri, 14 Feb 2025 01:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739498562; cv=none; b=DSAMAULkSKPQC7yo9kdRIkUbmzd3h0XM0/jTcELjZ/OdNJJcJjkGFRWXgLaF6qAqDYUqMFiYdskdtONrutwVmSi2IRnq/F7Zba6MIjtWF7K4D6Q7lFf6e0lgC47Pit4feFz2Ldx1vB9cNKRfwLCXNu6BCD747J7HiI1pxoc9g+A=
+	t=1739498339; cv=none; b=ADE6urtNouMfyMKDfaO9F/gf/pNbHyYfwiOy1sa7YFotCFWoHwR53eC6gk0VyWHAAXuyvhXFItG8dgiiIc5hSrVy1a3sAe0Tp7TxZKZagykhZ+hxS2N9iYldaYSUVUyRyIXzK/W9ZOtyiF+fxETMKK0LSJkJ64XYgDN+JTuisIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739498562; c=relaxed/simple;
-	bh=4XsjRO/Pqa3vD4B4LvvjSYJqhR/Q8my3VF4j5+psy/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kyqTJmwaueHL9GCjn2xbDcCA3ZG2Z2AcnxjgvAyU0B96E/kvhh8kzHq0NgkGvCF6JJAQeMn9XXp5WqxEwHZ6YhVe3vF1w+sMEu7JjyOIE432E4zm/tH4ONfr+tXwLQqfHLZ05GvyjgvSUM4YDw6RsI9/5Vm0+cXMO8a0PChahiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbDoNZLH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5148C4CEE2;
-	Fri, 14 Feb 2025 02:02:38 +0000 (UTC)
+	s=arc-20240116; t=1739498339; c=relaxed/simple;
+	bh=AtX4TcfqYpcyFBoqwkZl/9Tr2hyNSYfyQ73TsT0oaxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJLxJH05+g+fXBCl+Mcme2vfo7xRbTbHjI8Qwce/jtmT/q0KVrW/jx29wQRScoF6HbBPPHye8gnrwduKCIOj/2V3Fa9AnFoKwLtkuSsbcafNPCGLSzSaPvdR2eNDMaBq2OYdQe2bzKqOC0HcyvUSkcgRVj6QjuJiOccNzgFG9S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIrX+yVY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BE8C4AF09;
+	Fri, 14 Feb 2025 01:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739498562;
-	bh=4XsjRO/Pqa3vD4B4LvvjSYJqhR/Q8my3VF4j5+psy/8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lbDoNZLH/npPV3CAYGJt7QFlOtgWhlVYENiulv/8XMb58njzpEUpl8nVZb7jbTURe
-	 6hSK1MQZ8PfI4FHsXWEXTKNu70mG2nfcJCjqumUjpxiSdcjGV5xwg56OW9vQn3wB3G
-	 cSU/V2pMe2+17QVsaQuqdlbLMnLedMWjmjXm6L2ggdqiVvr833prCbL4KPo5QNYBuN
-	 FE68MnzV83bmP1rcaHN0WLwnEvAgBrqgfhTWvaE/H1KjzT2OvptiHv8Rc87iClPFGh
-	 +zxHphnXK8JX48q4yQkq2A0+THWp2ceF9+LdQYKM8BxfYxPfNb1pgTUT/cgTeCchqy
-	 G7MvHDbRKo3Qg==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 14 Feb 2025 01:58:10 +0000
-Subject: [PATCH v4 27/27] KVM: arm64: selftests: Add SME to set_id_regs
- test
+	s=k20201202; t=1739498338;
+	bh=AtX4TcfqYpcyFBoqwkZl/9Tr2hyNSYfyQ73TsT0oaxY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jIrX+yVYWf1RwTCwUJj45RkaeiCeljgDw36fV1NgqYFjAkzl4tA844QxIw5V5h/8v
+	 2vMo389vb32CV0lTnK0lke6FeQOMPajW64imBOxkDerHs+CcZi+/TmETRwZhfut9yX
+	 GQEbgyQLD2hwF3WQmwJWpfE0I+EO0SOkySN2hIMRL9M5ytO2P5BVxxIHhXECx8zPTl
+	 L0O1ys9thxERhTMz0P1BVXn/aiyl2f2JO9389OYuLZNgsPcrLczEFu7MMJopqnFasm
+	 HKY8MVmp6bvwuJu4g9BfGmbZMM3eh7jQwg6B2PHm6RCxQBvlby5KOw5COjmqJ7vhEp
+	 ByCaRaveCOMhg==
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8551c57cb8aso27379539f.3;
+        Thu, 13 Feb 2025 17:58:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV76IAtzyPhTxaTGC8nHYJGgH3asPU4uTSwmFriJIHzzehUqMeejSak/zsPih5aLUkf9Hi4+rePyDbtjmFVcg==@vger.kernel.org, AJvYcCWdRUIjkdazyixJQyOfq8LfT/HCDClv3CMnJfWpFnlK+3Bl8+qHnepZFuCI9bpecXMPZ9pc4bAjZZs1/3avpEZBHw==@vger.kernel.org, AJvYcCXcVJLiUfwE8CE1+tDiU1F32pIPDlXO84CogcU7TFQu/K7gbgiHal1hOerH2bpCHnr+xaQxDZS5MeCcqCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy56uhdRT/ZbjlUZW4uY5nvbWADontoHqm9nrbriEL/LTt7SVrq
+	3Esw7GdrBZUiecmScGQxQT4IVR+wq2nk0zT5zNat9Pd9lxlAGTRb44lShkShZbn4Y6kmfOUA9AR
+	nj3RGJD47O+Gi6kPesehaAJ+8bbg=
+X-Google-Smtp-Source: AGHT+IEqPgzO3lIvmSnLrOqQOZvaJ4xeAqJ3kVghhzVWZb4fCDChRFA3LLGruPGAyM1QQHijD9esbVZGX8Xo8nR1bnE=
+X-Received: by 2002:a05:6e02:184b:b0:3cf:cd3c:bdfd with SMTP id
+ e9e14a558f8ab-3d18c23caa4mr42155035ab.12.1739498337729; Thu, 13 Feb 2025
+ 17:58:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-kvm-arm64-sme-v4-27-d64a681adcc2@kernel.org>
-References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
-In-Reply-To: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>, 
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>, 
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3734; i=broonie@kernel.org;
- h=from:subject:message-id; bh=4XsjRO/Pqa3vD4B4LvvjSYJqhR/Q8my3VF4j5+psy/8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnrqPVhF/rm1Hv+EDc0crKIVE9eZzvnD7KQi7+Xcuq
- BToVxzeJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ66j1QAKCRAk1otyXVSH0EKyB/
- 46ZNQvr34wuZ+41q3A8QM4rtKDn9mqBlEEHWAAKtOO/RahHBnmn7c3sABa+vN2iSS2Im3JQHca/3j1
- xoEANRnDiA/WjBm9tuMO/yFu1B4QO9GjB+AGTQU8rqMw1iJBgDQpTBo+efrNS9uPxK+xkxXE5U5iSy
- 1gL6gNmOnu0LfBKPSiop8+oW5jOoF6/e/hAo0fRRE19TIjuDMoaeEpuP1cBS0XDLw4xr7Pb2jKbmrn
- o1OHN/XsbBGqPda0D46kRC9ZvnTvd9ndqHaxlce05AS4kJes9Fo1hu8ixMUaCaiND+vk5+QsIde4Uj
- unleftWfgAFAET/vRMBY81YzWBFgjF
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
+ <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com> <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
+ <mb61p1pw21f0v.fsf@kernel.org> <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
+ <mb61pseoiz1cq.fsf@kernel.org> <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
+ <mb61pr0411o57.fsf@kernel.org>
+In-Reply-To: <mb61pr0411o57.fsf@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Thu, 13 Feb 2025 17:58:46 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
+X-Gm-Features: AWEUYZkpF5BMZbHzv8MzSiy1Gtx3WEyGX_vqexyd5VIB8KHI8VbVKVkNRfn3dfk
+Message-ID: <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
+	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add coverage of the SME ID registers to set_id_regs, ID_AA64PFR1_EL1.SME
-becomes writable and we add ID_AA64SMFR_EL1 and it's subfields.
+On Thu, Feb 13, 2025 at 2:22=E2=80=AFPM Puranjay Mohan <puranjay@kernel.org=
+> wrote:
+>
+> Song Liu <song@kernel.org> writes:
+>
+> > On Thu, Feb 13, 2025 at 12:38=E2=80=AFAM Puranjay Mohan <puranjay@kerne=
+l.org> wrote:
+> > [...]
+> >>
+> >> P.S. - The livepatch doesn't have copy_process() but only copy_signal(=
+),
+> >> yours had copy_process() somehow.
+> >
+> > In my build, copy_signal is inlined to copy_process, unless I add noinl=
+ine.
+> > If I do add noinline, the issue will not reproduce.
+> >
+> > I tried more combinations. The issue doesn't reproduce if I either
+> > 1) add noinline to copy_signal, so we are not patching the whole
+> >    copy_process function;
+> > or
+> > 2) Switch compiler from gcc 14.2.1 to gcc 11.5.0.
+> >
+> > So it appears something in gcc 14.2.1 is causing live patch to fail
+> > for copy_process().
+>
+> So, can you test your RFC set (without SFRAME) with gcc 14.2.1, so we
+> can be sure that it is not a sframe problem?
+>
+> And about having the .sframe section in the livepatch module, I realised
+> that this set doesn't include support for reading/using sframe data from
+> any module(livepatches included), so the patch I added for generating
+> .sframe in kpatch is irrelevant because it is a no-op with the current se=
+tup.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/arm64/set_id_regs.c | 29 +++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+Puranjay,
 
-diff --git a/tools/testing/selftests/kvm/arm64/set_id_regs.c b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-index 217541fe653601a82697134c8d773e901a205cfe..16a4cd84f45472451479c6a5502c67adb4d64490 100644
---- a/tools/testing/selftests/kvm/arm64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-@@ -138,6 +138,7 @@ static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 
- static const struct reg_ftr_bits ftr_id_aa64pfr1_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, CSV2_frac, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, SME, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, SSBS, ID_AA64PFR1_EL1_SSBS_NI),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, BT, 0),
- 	REG_FTR_END,
-@@ -182,6 +183,28 @@ static const struct reg_ftr_bits ftr_id_aa64mmfr2_el1[] = {
- 	REG_FTR_END,
- };
- 
-+static const struct reg_ftr_bits ftr_id_aa64smfr0_el1[] = {
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, FA64, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, LUTv2, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, SMEver, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, I16I64, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F64F64, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, I16I32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, B16B16, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F16F16, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F8F16, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F8F32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, I8I32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F16F32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, B16F32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, BI32I32, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, F32F32, 0)
-+,	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, SF8FMA, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, SF8DP4, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64SMFR0_EL1, SF8DP2, 0),
-+	REG_FTR_END,
-+};
-+
- static const struct reg_ftr_bits ftr_id_aa64zfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ZFR0_EL1, F64MM, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ZFR0_EL1, F32MM, 0),
-@@ -212,6 +235,7 @@ static struct test_feature_reg test_regs[] = {
- 	TEST_REG(SYS_ID_AA64MMFR0_EL1, ftr_id_aa64mmfr0_el1),
- 	TEST_REG(SYS_ID_AA64MMFR1_EL1, ftr_id_aa64mmfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR2_EL1, ftr_id_aa64mmfr2_el1),
-+	TEST_REG(SYS_ID_AA64SMFR0_EL1, ftr_id_aa64smfr0_el1),
- 	TEST_REG(SYS_ID_AA64ZFR0_EL1, ftr_id_aa64zfr0_el1),
- };
- 
-@@ -228,6 +252,7 @@ static void guest_code(void)
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR1_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR2_EL1);
-+	GUEST_REG_SYNC(SYS_ID_AA64SMFR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64ZFR0_EL1);
- 	GUEST_REG_SYNC(SYS_CTR_EL0);
- 
-@@ -675,8 +700,8 @@ int main(void)
- 		   ARRAY_SIZE(ftr_id_aa64isar2_el1) + ARRAY_SIZE(ftr_id_aa64pfr0_el1) +
- 		   ARRAY_SIZE(ftr_id_aa64pfr1_el1) + ARRAY_SIZE(ftr_id_aa64mmfr0_el1) +
- 		   ARRAY_SIZE(ftr_id_aa64mmfr1_el1) + ARRAY_SIZE(ftr_id_aa64mmfr2_el1) +
--		   ARRAY_SIZE(ftr_id_aa64zfr0_el1) - ARRAY_SIZE(test_regs) + 2 +
--		   MPAM_IDREG_TEST;
-+		   ARRAY_SIZE(ftr_id_aa64zfr0_el1) + ARRAY_SIZE(ftr_id_aa64smfr0_el1) - ARRAY_SIZE(test_regs) +
-+		   2 + MPAM_IDREG_TEST;
- 
- 	ksft_set_plan(test_cnt);
- 
+Could you please try the following?
 
--- 
-2.39.5
+1. Use gcc 11.4.1;
+2. Add __always_inline to copy_signal();
+3. Build kernel, and livepatch with the same test (we need to
+    add __always_inline to the .patch file).
+4. Run gdb livepatch-xxx.ko
+5. In gdb do disassemble copy_process.
 
+In my tests, both gcc-14.2.1 and gcc-11.5.0 generated a .ko file
+that looks weird in gdb-disassemble. Specifically, readels shows
+copy_process is about 5.5kB, but gdb-disassemble only shows
+140 bytes or so for copy_process. clang doesn't seem to have
+this problem.
+
+I am really curious whether you have the same problem in your
+setup.
+
+Thanks,
+Song
 
