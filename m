@@ -1,184 +1,138 @@
-Return-Path: <linux-kernel+bounces-514956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA7DA35DF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE268A35DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0721E16E856
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D6316FD0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F76A25A64B;
-	Fri, 14 Feb 2025 12:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880DC1EA91;
+	Fri, 14 Feb 2025 12:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FaAzXhG6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="l9RDNYQW"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337001EA91
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382A920C00B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739537663; cv=none; b=oCSmezAinTTinBk2uRKzsYZMJoK3icoRInyx+zUvTzX0wQthezxjNoAzEDRVrjul7M6aGKRHmdkUQIiWkhJzXwBJjqMLYVfmHT69c+ugAVFX8BsbgA7SmiD2XJIn8sbKYIxJQgfbSwxhTmX0Nsf2CDCyNFi0Y2m2KWCnPZxli28=
+	t=1739537698; cv=none; b=DgANvlg5gM8nMpVrAhktFxeXBvPLSYOpS2OJrAzm5LriPeUv6jgbsp2VFXEdrKBMggXgmQJmUeaCJSp+IByOh0eQzGAhUQc7wgEpmp/jnGp/Olcz9S+TmiSCsphnPOJDuWlTPscW7Ocwjdg5bxS5dgFkv2oFbG5fjvC1oyoQ5iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739537663; c=relaxed/simple;
-	bh=EWzn8T8wkAbVAiA4txJzP3ETH8av+74Rp35RKVO/xwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qNB1WhFmTn4l/dt6EUzUh6rLPm/+2p+7V6KLwSvHYKgpWznKm+1NG6g0/0v33AEK5OngBokYuOeYp4pQczFuoNVTydyGiTKfxt1BQlDNOK8uFh424iSfDW/1fWyEa28q+cgXL8+0weIHAIceLo7EnGIIxWxDtJEQwl/vU/vOk34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FaAzXhG6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51EAPt9H000666;
-	Fri, 14 Feb 2025 12:54:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=FjT8dSaAT+lOi/YMEolFGYFqGJzx8VOdPbUby3MGc
-	6M=; b=FaAzXhG6jighwx/li5GEt566XZkWqYU+oFNuTzHc+Wocu9L2NFfIReCES
-	nm8A6EfvWFz2GUtWlXL15i3A16w2MdXljcaBliVlSDYChMYUAhe+Bhho44tN0t/4
-	+d9n3AJgDoPr7rGYSnTX5VPbf7mXJA8t6cV+ymfGOXFZTyjEWel5g4PODMZ3MMEQ
-	nhgROOwgGJIUxl3kpW7a5DpTJI9+iUgRZYLeRQmap+2bSPSUEI70kFobRt4nnBEw
-	dRD67fyqZu4rUnFkapGf+xrCI785ZZuGfnrUhaGlgAdFwH5/99K5PMuUVXGpZzaS
-	u8Snu4Ey+sicoCGQ8fR4OShgsf4fw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ssvab9b2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 12:54:12 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8vDDF028667;
-	Fri, 14 Feb 2025 12:54:11 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma23732-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 12:54:11 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51ECs7HW42926508
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 12:54:08 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D812920043;
-	Fri, 14 Feb 2025 12:54:07 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E647C20040;
-	Fri, 14 Feb 2025 12:54:04 +0000 (GMT)
-Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.43.78.252])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Feb 2025 12:54:04 +0000 (GMT)
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: akpm@linux-foundation.org
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
-        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-        Alexander Graf <graf@amazon.com>, Baoquan he <bhe@redhat.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kexec: Fix kexec_locate_mem_hole() for missing CONFIG_KEXEC_HANDOVER
-Date: Fri, 14 Feb 2025 18:24:02 +0530
-Message-ID: <20250214125402.90709-1-sourabhjain@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739537698; c=relaxed/simple;
+	bh=0mYcHvTTq+lgf1qomm4p1Qr7bp8yKjlUDa+0QhmoQaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvf3T/WpAjb8cmkiL4Uc1qAv4T5E9f2CSwPh/5Dms3Ghtyyx7RVRjdfpYj3b4M19t9YBJXswP4QzID5AnbHHAf/r4snHo6C5UInX3ctF6Z9SZ0NNIL+WKDbHTMRk0sV3wpekuFlnurRnk9Jp3kvTjwA4bJzZc61V6YYWlGLltJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=l9RDNYQW; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f31f7732dso100087f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1739537694; x=1740142494; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+lEmaDHN5QnNQZg6dCs36v4GP8d4TTbF6P3QQiuPAQ=;
+        b=l9RDNYQWjNIhbSF1bOL77lG+Xu/R8rt0bhOvuqx4U191NKle1j+tUzwvg8Z0WygHaO
+         1ZPGcUbiW4hi9bMdI3WjDbUdu5zhUw0/KL+dg54bxTSrSWi354QS/iYdEIUe/1kLFD/i
+         c71vhWDbAClalxsTyUAI3YpHv2Mo+9a1KO0Lx/yaQiov6KzW3VN9wi5LSAp8wVF39Q7y
+         vmhvbc4n6ADdW8392GcwMVt1UWQiTCev1M9lWy9q0D8ycszm3NXai2SqxTikMnTm19U4
+         GH0ZX3ctFLLGtCP5x52gQ4x6kEejF3WrIucOSrxnFjUw3Uu6Wtq9q+ZX/IHyWbNFXkmH
+         CzPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739537694; x=1740142494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+lEmaDHN5QnNQZg6dCs36v4GP8d4TTbF6P3QQiuPAQ=;
+        b=tINFVn0gSzSMUuVVodGGAs5xkYeGjHPPikcKZTssUs129nsJw7DbrQjVgCZS4BF73p
+         psE3SeWBiR43aXEzeql0red1dmzxtLMyB5d31ZlM8N0YOdaWH2uZ1sVavQjr7sBQgF1j
+         OwIMOhkjpdVih5GlKKRYlfOSYr0LJ1kp3MOZHCS8kBMej+yWRA6g+UAY+SbyjIDLYZgZ
+         PicI7JagxJP+VVmJJvXQDEV7LL5wonwMfev0z6+1BTVC4BlZORFRckUixPFVEf3kvxqo
+         IIYnY/CcO2ck/+IztUTncfdJNDnpDw2fHt2CBHPuZZGFz+k//N8MoToLGuVFKJfxpxj2
+         /6Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCW2LsI1qJ93uIizKlZOgNJ5aurOWUA5q96sBQjtn6V+lq4VmYuGly58IBrNkCD2IyrRf+ak+foX/bToIVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDEcwFxUqahMsBrTPiW4Qeyu3HE7/J/q7xwwC+PhKQEzm+WP8k
+	t2Q9STF2JnJQB7nVCaTuPWEluZ3hp4Fz0bGd7BeKnBo10PLcHb/ikBKqk3kNFx8=
+X-Gm-Gg: ASbGnctHPoMQbbPqhy6Ouop7QZCen2cXKEMr5RGVNsFw+iipqb/OOxGVbDUdLK+sd9P
+	xKVnZYCNOaewQaixM3qsMD6Fo0q/ykWyNIMY69GKx+B7t1AVls1kwfQmuYTCx0jcq107MIXtSzd
+	nxRkof5MStAgAu3C3qMvtMxMUTyUvOdop9Lz564LXvpPc6EDs6/AlKOMsrVYyOFSXiwXfcVQlKt
+	YyL2nF3zp2EpkCGBfqlu9iSAVbIQHkKv957tRKeO+zmf85FmdJNzwyQ/JQTppOffhWF6z4akCir
+	w4Jslom5Z5cwZF2c+p+aP/g=
+X-Google-Smtp-Source: AGHT+IEk52uqZohTXf0fCVa4pieNwKGseiJ6YLDBEGNj11Ir7TJrVFFZcb2vaITJ1n0RtedVoY/5lA==
+X-Received: by 2002:a5d:6d09:0:b0:38d:b349:2db2 with SMTP id ffacd0b85a97d-38f24f948bbmr9416003f8f.22.1739537694226;
+        Fri, 14 Feb 2025 04:54:54 -0800 (PST)
+Received: from jiri-mlt ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5ef9sm4545091f8f.76.2025.02.14.04.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 04:54:53 -0800 (PST)
+Date: Fri, 14 Feb 2025 13:54:43 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jiri Pirko <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, 
+	Carolina Jubran <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate domains
+Message-ID: <ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
+References: <20250213180134.323929-1-tariqt@nvidia.com>
+ <20250213180134.323929-4-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ERu89rXI1toBcblDuM23P6X9jJATPNiB
-X-Proofpoint-ORIG-GUID: ERu89rXI1toBcblDuM23P6X9jJATPNiB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 clxscore=1011
- impostorscore=0 mlxlogscore=777 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502140092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213180134.323929-4-tariqt@nvidia.com>
 
-While adding KHO support, commit 7d128945e003 ("kexec: add KHO support
-to kexec file loads") returns early from kexec_locate_mem_hole() if
-CONFIG_KEXEC_HANDOVER is not defined.
+Thu, Feb 13, 2025 at 07:01:27PM +0100, tariqt@nvidia.com wrote:
+>From: Cosmin Ratiu <cratiu@nvidia.com>
+>
+>Access to rates in a rate domain should be serialized.
+>
+>This commit introduces two new functions, devl_rate_domain_lock and
+>devl_rate_domain_unlock, and uses them whenever serial access to a rate
+>domain is needed. For now, they are no-ops since access to a rate domain
+>is protected by the devlink lock.
+>
+>Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+>Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
+>Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+>---
+> net/devlink/devl_internal.h |   4 ++
+> net/devlink/rate.c          | 114 +++++++++++++++++++++++++++---------
+> 2 files changed, 89 insertions(+), 29 deletions(-)
+>
+>diff --git a/net/devlink/devl_internal.h b/net/devlink/devl_internal.h
+>index 209b4a4c7070..fae81dd6953f 100644
+>--- a/net/devlink/devl_internal.h
+>+++ b/net/devlink/devl_internal.h
+>@@ -121,6 +121,10 @@ static inline void devl_dev_unlock(struct devlink *devlink, bool dev_lock)
+> 		device_unlock(devlink->dev);
+> }
+> 
+>+static inline void devl_rate_domain_lock(struct devlink *devlink) { }
+>+
+>+static inline void devl_rate_domain_unlock(struct devlink *devlink) { }
 
-Due to this, kexec_locate_mem_hole() does not locate a hole for the
-kexec segment, and kbuf.mem holds 0x0. This leads to a kexec_file_load
-syscall failure in sanity_check_segment_list(). This impacts both
-kexec and kdump kernels.
 
-Without this patch included:
-----------------------------
-kexec --initrd=initrd.img ./vmlinuz --append="`cat /proc/cmdline`" -lsd
-Try gzip decompression.
-Try LZMA decompression.
-[   59.745154] kexec_file: kernel: 000000003473b9a0 kernel_size: 0x2cdacf0
-[   59.753713] ima: kexec measurement buffer for the loaded kernel at 0x0.
-[   59.753759] kexec_elf: Loaded the kernel at 0x0
-[   59.753777] kexec_elf: Loaded purgatory at 0x0
-[   59.753783] kexec_elf: Loaded initrd at 0x0
-[   59.758657] kexec_elf: Loaded device tree at 0x0
-syscall kexec_file_load not available.
+For the record, I'm still not convinced that introducing this kind of
+shared inter-devlink lock is good idea. We spent quite a bit of painful
+times getting rid of global devlink_mutex and making devlink locking
+scheme nice and simple as it currently is.
 
-With this patch included:
--------------------------
-kexec --initrd=initrd.img ./vmlinuz --append="`cat /proc/cmdline`" -lsd
-Try gzip decompression.
-Try LZMA decompression.
-[  112.091308] kexec_file: kernel: 000000009eb0432d kernel_size: 0x2cdacf0
-[  112.099881] ima: kexec measurement buffer for the loaded kernel at 0x3fd9c0000.
-[  112.099935] kexec_elf: Loaded the kernel at 0x2f60000
-[  112.099953] kexec_elf: Loaded purgatory at 0x3fd9b0000
-[  112.099969] kexec_elf: Loaded initrd at 0x5eb0000
-[  112.104993] kexec_elf: Loaded device tree at 0x3fd650000
-[  113.484422] kexec_file: nr_segments = 5
-[  113.484452] kexec_file: segment[0]: buf=0x00000000b6970fc9 bufsz=0x82 mem=0x3fd9c0000 memsz=0x10000
-[  113.484473] kexec_file: segment[1]: buf=0x00000000cabe3fe7 bufsz=0x2cc9ca4 mem=0x2f60000 memsz=0x2f50000
-[  113.489144] kexec_file: segment[2]: buf=0x00000000deec4aaf bufsz=0x310 mem=0x3fd9b0000 memsz=0x10000
-[  113.489195] kexec_file: segment[3]: buf=0x0000000081960708 bufsz=0x581a9c6 mem=0x5eb0000 memsz=0x5820000
-[  113.498768] kexec_file: segment[4]: buf=0x00000000c1be9ac7 bufsz=0x6632 mem=0x3fd650000 memsz=0x10000
-[  113.498819] kexec_file: kexec_file_load: type:0, start:0x3fd9b0000 head:0x5f1c0002 flags:0x8
+But at the same time I admit I can't think of any other nicer solution
+to the problem this patchset is trying to solve.
 
-To fix this, return 1 from kexec_locate_mem_hole() in kexec_internal.h.
-This ensures that kexec_locate_mem_hole() locates a memory hole if
-CONFIG_KEXEC_HANDOVER is not defined.
-
-Note: The kexec tool printing "kexec_file_load not available" does not
-necessarily mean that the kernel lacks support for the kexec_file_load
-syscall. Instead, it occurs because multiple errors are handled under
-the same condition.
-
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Closes: https://lore.kernel.org/all/8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com/
-Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: Alexander Graf <graf@amazon.com>
-Cc: Baoquan he <bhe@redhat.com>
-Cc: Hari Bathini <hbathini@linux.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Cc: kexec@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
-
-Rebased on top of next-20250213
-
----
- kernel/kexec_internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
-index c535dbd3b5bd..66ce6872fda1 100644
---- a/kernel/kexec_internal.h
-+++ b/kernel/kexec_internal.h
-@@ -50,7 +50,7 @@ int kho_fill_kimage(struct kimage *image);
- static inline int kho_locate_mem_hole(struct kexec_buf *kbuf,
- 				      int (*func)(struct resource *, void *))
- {
--	return 0;
-+	return 1;
- }
- 
- static inline int kho_fill_kimage(struct kimage *image) { return 0; }
--- 
-2.48.1
-
+Jakub, any thoughts?
 
