@@ -1,108 +1,168 @@
-Return-Path: <linux-kernel+bounces-515595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01730A3668D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:55:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B11A36690
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A8416A8ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74B73B23D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4771C84D3;
-	Fri, 14 Feb 2025 19:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AAA1C8638;
+	Fri, 14 Feb 2025 19:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atWkLEFO"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iutVvo0X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C321C84AF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3091C8622
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562920; cv=none; b=TeLLG86k4/PUK+0El0K4obDjdilo47XCIeQ8Vi7qv0f6WFK4F1JzS4FXI8WPk8xlN6IZJhu6zHdQ0tu2x89cKhoHfnBDXYEecDU8TDNYI8e02e7vIad17tCNBuBOXwe38M8qHwCwPlVuBycR2HEJNaao/xPv1D+KEs0ItH1aysc=
+	t=1739562938; cv=none; b=mYQlhtQbxNAibadH0WB8k15FDdRWXTVrzZ+mk2NG1J0EcVkXUedned8FE6USGGmfDrsT0kwQGgMlcGQHcuh1bf1cgaCux9JFAbAynT0Oeq4kRysRpaMG7cO1A3/Iyw5lYMXRskwO6lC0BgYW99Oe+aOac7XyvDMNEg9DIwiQJxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562920; c=relaxed/simple;
-	bh=yMZ2/JPlJNhfijRUmJA7R1MnwXY6ka17JZFq0S/gLV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Siud7XPHldpjJplBfiPDBVMqjoRc1Hf+Cp851sdQa+9eMm6vB6xZ19+Gb2NXpishkBK1WBW/VdFn5Xm8u+4SsqHsRXPSWBbOiGuJowpNZ4EwYnndSl+ww4x/iUVd8q/f+WPaI2hoIXrUKmyv6ZTZ6c55bo0pd813BElgW/bJm40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atWkLEFO; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30920855d5bso10277471fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:55:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739562917; x=1740167717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yMZ2/JPlJNhfijRUmJA7R1MnwXY6ka17JZFq0S/gLV4=;
-        b=atWkLEFOn/lEhJWNraCHKrv4sm4eGGkn826R+IL2HGYZjoPR6hpvXw+TZP6ZD8aIgx
-         EHCQEk8Ey0zXZE7qpGw3ViL0KeoBP5wMu3WiO5vOay3r77PPUVv4kIAcfpxB72GI3Jx4
-         H1crNSw4gJiHR/CFYFUMVLXDfhDKy8ji+A1QoE19qdVjMz2WZZyD5KOc0widUF+/iCX+
-         fpLodGSUtFibFl7EeDkYoglWjXjJMiTQHN1juVmOdrCYc+Mup/itIeBT3TGGA4ksHc8c
-         Z1j/zNQnSPrPwl+9pdeVkaWuPXcnJanTCSpBVCa/NQV9jOWmBr82JeEAwnHf0Ot9FRDs
-         3iIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739562917; x=1740167717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yMZ2/JPlJNhfijRUmJA7R1MnwXY6ka17JZFq0S/gLV4=;
-        b=S0oFyQ3CoCXtt5qix4xcqQpJ0pOPP/f2l1wdPzrJPwJ/RKxckOc20pkuPM3pPv/sw5
-         xBGrvhbm4CW9PFh1Yc5RvnegvbYSxUagCnUca2Q6XSdeWpXUPXyTikLgHJlS93/Q9EQa
-         7xjfcADY5FuYwZNYPVXzauaxR63ZRCi52uCZpwNDsrBIdRcUdJirK42Gh5P2K6utXT/C
-         Pplp1Lp3ho8YFxZDwfcnf73EOmEQAHyDwDqrcUmULMvwZd3z/3M3qBIC5VR0kS2zgsbB
-         t/ggUuOhhgBXTxTiasTLkw9z4IQYa9mdmyAaKdX5UxVRfcmQaXobyhjnxK9dAyouGNJM
-         esaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeq9KE9Xuza6Qjy1w6cgfhOUYgLA/mmJhG/fu+3UhsSuvrZ91Z0AIvyP/atrwfMtdPLIAflxo5vP81Nno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQfWDXfRCemg6qgomLI4sPmQIdZ0Q36AOCMPGaxVMD/MlJs1Ns
-	sXe4QI48QVHWTIh/TgxjAWLcZ8mM4zuwfta0TtMlSuramzkrVFFKiXLalsRK7xpEl1+bltwzNi9
-	eOiATBsGeg06Nigp8/QVnwxKAazY=
-X-Gm-Gg: ASbGnct3uQKSSWsruDgUyxMljd8M+fFZEB9J4BLbUjXPk7jpdeCj+TPKdPO1Yc9RBh6
-	WyAWgm1YjvMuCeyh/Z2F9NsNZ7J880sOtMhic7t3OOF0GwZQFe2AY9o9k3IfBnurCHV0E+zG1
-X-Google-Smtp-Source: AGHT+IF9G5bgV9D1yOsWCWwuw4d1/Gl5fDFWq+7odiFv+8Ue3CHnTgi05GcstQFuYH9sUv9ys/X0oeL32RpkkpPR+a0=
-X-Received: by 2002:a2e:8657:0:b0:308:eabd:297b with SMTP id
- 38308e7fff4ca-309288b1b6bmr1582711fa.4.1739562916294; Fri, 14 Feb 2025
- 11:55:16 -0800 (PST)
+	s=arc-20240116; t=1739562938; c=relaxed/simple;
+	bh=OYYhEDQ1tch4O5reJkYOXYrvSejqt7GywKWwMTBWQOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bqmNwd+qNWjglp7naRnCz7tMljrFV/a2I5CKFgc3AjFyk9wY+4MRmXbjF0Ns37iYFCjkAneXOvcqqj7X1V+EkJD+yO44aL+ffmymkyI5NgJIYA2Q0KXQ+3QBf7tSTBCZTmGDYTaOBMu9oD/rFjpcxZ5uJZQVKtRWt0q+CohLdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iutVvo0X; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739562937; x=1771098937;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OYYhEDQ1tch4O5reJkYOXYrvSejqt7GywKWwMTBWQOA=;
+  b=iutVvo0XB+01uTwwzkEBb1cjXF5Ar0+MX5ZGijStWMR3rN7nLG69gUke
+   Cdf5FVjOPweaILJzDKPdEqtxduXuId1Uzxwm18fsvpGaPSQckeBLMbWhi
+   6W9ZF7LhKJ6icMOiCWPUn0P5GJt0bzJzOBdpXjnWGIZNKVGKevATmR5FK
+   O79sZm3YILnN/qsAP1Q2dVVjtmY0LbcAc7pOVdDSxFhq6coZ8VBnPMgzS
+   k5KbgYTB+SVT9BjeJvoDEcYSalUMOzNDY0BZfupeD8LGRyZcIAzaxIdi7
+   D8l894Zd5G2xfnvb4+sZ8YYaUWZBdOw/NAqNjsCeETUUAAiky98vMtasO
+   g==;
+X-CSE-ConnectionGUID: JyxQ8ZpwTe+CDc8zNAtj6g==
+X-CSE-MsgGUID: dsgCJrAeTWSki8x3KOXm4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40247133"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="40247133"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:55:36 -0800
+X-CSE-ConnectionGUID: QEDwI6BIQDioSNA4kmn/pQ==
+X-CSE-MsgGUID: Me5V3t4gT4yvmI0AE7PoUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="118649613"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.21]) ([10.125.109.21])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:55:34 -0800
+Message-ID: <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
+Date: Fri, 14 Feb 2025 11:55:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213191457.12377-1-ubizjak@gmail.com> <04adffd9-2900-4cdb-a557-1c486a87b522@intel.com>
- <CAFULd4YUSCBSJQ1F0Rn45bwTonQJb2_=c2sZZEGV7RfgHBAOJA@mail.gmail.com> <cf264b5f-be03-af53-3de3-a97051f9577e@gentwo.org>
-In-Reply-To: <cf264b5f-be03-af53-3de3-a97051f9577e@gentwo.org>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Fri, 14 Feb 2025 20:55:09 +0100
-X-Gm-Features: AWEUYZndtUFuHUobZ9uYTlaAdtqql4J2p04GR3tREOBJhVdZI8n7MmcYI8IZAjo
-Message-ID: <CAFULd4YMNsSzNS8wBZBC8iy2uNnoV8kDWpp70r4Wx+-wJ1j1Rg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/2] x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ zhengqi.arch@bytedance.com, nadav.amit@gmail.com, thomas.lendacky@amd.com,
+ kernel-team@meta.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+ jackmanb@google.com, jannh@google.com, mhklinux@outlook.com,
+ andrew.cooper3@citrix.com, Manali Shukla <Manali.Shukla@amd.com>
+References: <20250213161423.449435-1-riel@surriel.com>
+ <20250213161423.449435-7-riel@surriel.com>
+ <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
+ <20250214194013.GA2198@noisy.programming.kicks-ass.net>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250214194013.GA2198@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 7:22=E2=80=AFPM Christoph Lameter (Ampere)
-<cl@gentwo.org> wrote:
->
-> On Thu, 13 Feb 2025, Uros Bizjak wrote:
->
-> > OTOH, all recent x86_64 processors support CMPXCHG128 insn, so the
-> > call alternative will be rarely used.
->
-> Do we still support processors without cmpxchg128? If not then lets just
-> drop the calls from the kernel.
+On 2/14/25 11:40, Peter Zijlstra wrote:
+> On Fri, Feb 14, 2025 at 10:35:40AM -0800, Dave Hansen wrote:
+>> On 2/13/25 08:13, Rik van Riel wrote:
+>>> -	if (info->end == TLB_FLUSH_ALL)
+>>> +	if (broadcast_kernel_range_flush(info))
+>>> +		; /* Fall through. */
+>>> +	else if (info->end == TLB_FLUSH_ALL)
+>>>  		on_each_cpu(do_flush_tlb_all, NULL, 1);
+>>>  	else
+>>>  		on_each_cpu(do_kernel_range_flush, info, 1);
+>> We've got to find a better name for broadcast_kernel_range_flush().
+>> Because IPIs are broadcast too. The naming makes it confusing. Why would
+>> be broadcast, and then start trying IPIs that are also broadcast?
+> IIRC the more general name is indeed broadcast tlbi; as in other
+> architectures use this naming to mean this very thing too.
+> 
+> But yes, I see the confusion, but I don't think changing the naming
+> really helps a lot here :-/
 
-I'm not aware of any discussion about that decision.
+Fair enough. If we don't have a better name, we can at least do:
 
-Thanks,
-Uros.
+	if (new_bad_name()) {
+		new_thing();
+	} else {
+		old_thing();
+	}
+
+My real heartburn is with:
+
+	if (new_bad_name()) {
+		new_thing();
+	} else if (need_thing_1()) {
+		old_thing1();
+	} else {
+		old_thing2();
+	}
+
+Where new and old are logically squished together.
 
