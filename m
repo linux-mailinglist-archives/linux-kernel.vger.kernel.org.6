@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-514391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDBEA35683
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:47:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501A6A3568E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0598C188FD92
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:47:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18681622AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4999B18A6B2;
-	Fri, 14 Feb 2025 05:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE15A18A6D3;
+	Fri, 14 Feb 2025 05:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQ4v0Hiy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="L1zOALvi"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52772753E8;
-	Fri, 14 Feb 2025 05:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2ED127E18;
+	Fri, 14 Feb 2025 05:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739512041; cv=none; b=uXKysY5AFOLg8BD/Rw53X0WdR8gS31vEl9FuGmsNpCxPVEYt5gJ06I11nxoHOrkFBSKaRsKw30KPZqeC7J9vyg0Gj3Z99+7WISpV1TMaF+wK46rwMojlY5wY3cd3WMSaJzpAT/tN5swiAIt3a2zdjJdJVDAS5J9coX50iYf4ElI=
+	t=1739512198; cv=none; b=cjjo1WFvP+4QB9vlgaNQEd3yMUXujr2gjtQSosGUaeNGbV1cehEqs7woXO5cn1UJfEFy6zpEEAzdSrcwZAvB430e2IWzBGpPrspXVYYHnGWXM6R+DfYo94DDg0u0g6hDMmKojFHAB3oFaj32GB1pdEXCrCzTov8ztQNZqJCKcgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739512041; c=relaxed/simple;
-	bh=cbLJRPAe4FdB5zSYAAPI2ZPCnC8vpVyAmNNQXNv+Cvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EP+4MO3sckI/DIHp+GvbEwSDYggzlNbDvCHFog+JawBQ+pFUuPG5oBOImggCU5Ydro8eRjwPhXpFdySAbwW9vJN3kIKHEPknUxRNZJhT1mQTg3tgUByyo/86BkS22PnvgQ4IBTh2pbYQI7ZBRspeUApf9GV06K3k8wtT/j+pofg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQ4v0Hiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E80DC4CEE7;
-	Fri, 14 Feb 2025 05:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739512041;
-	bh=cbLJRPAe4FdB5zSYAAPI2ZPCnC8vpVyAmNNQXNv+Cvc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RQ4v0Hiyv0Mpbt0YtL9v26nqfFa667WYkJ19hhTepnSpVVDb3FwLGIAoGN3mx5Nrj
-	 A6UvOVb4dkpT3jMQ7v9FZo5WJRS39LL5nfojx6KusU31NlFaFCCS/bAQ7CZpPA61Kf
-	 fhUCqFH74Yv15y4atuz12+QwEfOTrgvGeoOBjI60iTXoqIF/C6b4uOmaxoCWOiFcFQ
-	 sCu6d9lb4VY5bj2XM7p0Vrota+KAJzI9w0dCRBicBy+47/Fm3WR9mc+K6eRBlPhQXL
-	 r5JZH/QK1QeFnDsAIekBKKMA2kP8bZJJI8SckQNsZzeyR6vdI9vLThzxe/Hkgzjkrq
-	 cT63c+XLaKVgA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2bc607b392dso383056fac.1;
-        Thu, 13 Feb 2025 21:47:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXUK7nelLAZEC/BrTh7g7Ubdqo6PxtzT7SE0TQUjDzG5ona7/8nBqWwt+3o388+VxxTRwXNUBwv2308UOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCligQRa72WhDEPYQSznAU/yYn7wXFHfYTEfME2JG2khCiL28Y
-	YUBFWXb7qehua/6AeJK1pvTkwGxYuVfKIfZUjwmYpp3iGMHccgRRF0PmwV7CYyszBdafJGzBrGl
-	bZkox2SYCANbsPcQSpu4OGpfxL5A=
-X-Google-Smtp-Source: AGHT+IFKtHl12gRyRy8GEfNzWvLPuYkAxv9JLwwND3g0cljwilOKO0hWHpBhFj/caMPidrnKD+ZXi8K1eQbEkkAEwZY=
-X-Received: by 2002:a05:6870:d111:b0:29e:7d35:2319 with SMTP id
- 586e51a60fabf-2b8d646fb53mr6119392fac.4.1739512040419; Thu, 13 Feb 2025
- 21:47:20 -0800 (PST)
+	s=arc-20240116; t=1739512198; c=relaxed/simple;
+	bh=3jKyV18LFmgYLxpuucKcetXSHzqgvh9BdkLbMFvsvjE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oYSl1lmq6exLcUCw4qj6GGKtvB5Dmy8uzlJHJkC2rdTZwqIGoYP2PXA8gyp+bOku65iawEuWpPC/siUizR3CU9N0DTITJsBu5vyb591QzjnpEKLTu4WwcHVUgUpfm2YGpG6FsO5aY+svTSA60U3QYET1QhkYuq2Hbiq6u9fNamg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=L1zOALvi; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739512197; x=1771048197;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=fwi3SYRz7OJYvCQ//NqHT2FoZqr7nOZd+Nwcc7+rJKI=;
+  b=L1zOALviFrS3noxyqfQ2M2Cy0yeHhqzQDtq5spvUa3/gCQj36/tjhPhY
+   Nvt2crMjy600hBPl5Zuy52ZrM6HXZsYs2GsSNEvyWSKljVpUjZjp+lTCp
+   3w8DXTu7LHpNyQ6eV/SAps6M1uY24VaJzTmWvEvNjfyYyrZB9bCykq/2Y
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,284,1732579200"; 
+   d="scan'208";a="271092905"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 05:49:51 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:19409]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.3.186:2525] with esmtp (Farcaster)
+ id acd706fd-cf7a-4fe2-b1d2-eb82d5063ced; Fri, 14 Feb 2025 05:49:50 +0000 (UTC)
+X-Farcaster-Flow-ID: acd706fd-cf7a-4fe2-b1d2-eb82d5063ced
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Fri, 14 Feb 2025 05:49:49 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.118.254.117) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 14 Feb 2025 05:49:44 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <eric.dumazet@gmail.com>, <horms@kernel.org>,
+	<kuba@kernel.org>, <kuniyu@amazon.co.jp>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <ushankar@purestorage.com>
+Subject: Re: [PATCH net v4 1/2] net: Add non-RCU dev_getbyhwaddr() helper
+Date: Fri, 14 Feb 2025 14:49:33 +0900
+Message-ID: <20250214054933.62409-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250213-arm_fix_selftest-v4-1-26714529a6cf@debian.org>
+References: <20250213-arm_fix_selftest-v4-1-26714529a6cf@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
- <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn> <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
- <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn> <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
- <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn> <CAKYAXd_ebG4L_mRwCqoGgt9kQ6BxcCf6M5UUJ1djnbMkBLUbgg@mail.gmail.com>
- <CBA1218B-888D-4FB1-A5CF-7B0541B37AA0@m.fudan.edu.cn>
-In-Reply-To: <CBA1218B-888D-4FB1-A5CF-7B0541B37AA0@m.fudan.edu.cn>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 14 Feb 2025 14:47:09 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
-X-Gm-Features: AWEUYZniF1xHrqwFj4JZP8HVIMupcrH7Y2r7JE6py5cxUCUr6UbXPY-37E5vqE4
-Message-ID: <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
-Subject: Re: Bug: soft lockup in exfat_clear_bitmap
-To: Kun Hu <huk23@m.fudan.edu.cn>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWA003.ant.amazon.com (10.13.139.47) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, Feb 14, 2025 at 11:05=E2=80=AFAM Kun Hu <huk23@m.fudan.edu.cn> wrot=
-e:
->
->
-> > Can you check an attached patch ?
-> >
-> >
-> Hi Namjae,
->
-> I wanted to follow up as I haven=E2=80=99t yet seen the fix you provided,=
- titled =E2=80=9C0001-exfat-fix-infinite-loop.patch,=E2=80=9D in the kernel=
- tree. Could you kindly confirm if this resolves the issue we=E2=80=99ve be=
-en discussing? Additionally, I would greatly appreciate it if you could sha=
-re any updates regarding the resolution of this matter.
-The patch for this issue is in the exFAT dev queue. Additionally, I am
-waiting for a performance improvement patch from Yuezhang. I plan to
-send a PR along with that patch.
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 13 Feb 2025 04:42:37 -0800
+> Add dedicated helper for finding devices by hardware address when
+> holding rtnl_lock, similar to existing dev_getbyhwaddr_rcu(). This prevents
+> PROVE_LOCKING warnings when rtnl_lock is held but RCU read lock is not.
+> 
+> Extract common address comparison logic into dev_comp_addr().
+> 
+> The context about this change could be found in the following
+> discussion:
+> 
+> Link: https://lore.kernel.org/all/20250206-scarlet-ermine-of-improvement-1fcac5@leitao/
+> 
+> Cc: kuniyu@amazon.com
+> Cc: ushankar@purestorage.com
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Thanks.
->
-> =E2=80=94=E2=80=94=E2=80=94=E2=80=94
-> Thanks=EF=BC=8C
-> Kun Hu
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+
+Thanks!
 
