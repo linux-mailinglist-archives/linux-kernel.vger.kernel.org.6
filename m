@@ -1,164 +1,202 @@
-Return-Path: <linux-kernel+bounces-514318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542C0A35575
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:00:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DFAA35574
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B146F3ACDEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A16B18904C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB42286334;
-	Fri, 14 Feb 2025 03:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YJJopdZ+"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34721537C8;
+	Fri, 14 Feb 2025 03:59:50 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2A7149C7D;
-	Fri, 14 Feb 2025 03:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739505592; cv=fail; b=Owa5zc5d+FTc21davVkv4YDxKz0BAXyDh0wDYVt55+7jno2zMYCL90TZ0mtyjQNCnVQlv36MA6OI5u9uOd12L1oTR7jQEIXq8TvApy3SWLF309Z6y3Fi0H+z1emI6WhTMTuwwGgl+UqMuIWKeZqeAECDVJbD7mRQ3IvYtOY6kcc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739505592; c=relaxed/simple;
-	bh=Y9ujkOxV3KdwYpO+g/9C3TH3sFuhFuFQpWgsljZ3S4Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3NXkz2Z4Q3zJPmDpW1XW9OeumzIGFsape+WOakaD1iILSmAXvYD1/cua80taL1VJN1kjngXKyh4/nF5q5KOGJS25KGHIT5Q/P3bD6pYgddLWSJlhIy7WNDQMag8PGS/oBL6YTxZYznuKHDdw+rX/jYxlRkYkuxFlJPASsgy4Ao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YJJopdZ+; arc=fail smtp.client-ip=40.107.220.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UhVXapSyftfOQJ5+OwkfNB2RzV+Db4kXlKQ3EyB3NlcXjpOTYCvBJ2e2eQC8gpcNguQdWumkirwG/CTYZgT57vxoX0tnzvwChPQZBs0npC6jMdEy7RkhqeAVUcxEMX6wPqDAWM5WNADGM3lc86IEG8ts6fNy6bKGwYhoZJ6fDcYewyMjMt1fe0m/8hDpOVojctUh5jpPerEsf26DZbVIvUavqgitR8qpdVoQQj6aXqyP68d/2QqqWqKn8w7eM2YrhdJNXnlK9DcR6RPswJr0WPbPlMSsJv23eSlDntFalOUKe2qoQPqNy9AJXVAU6rbqp91iLuQWqI/L6R0biijRKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=94vFyjtYj12n4PfD/DXCekJzCKn4Jyh5o0dR62PvklU=;
- b=gtkb8SEaldSALtQe/+elNv+6hrAPZ1ZCVO6244LGxLP4AMYVB/UpBChJjByW+f3wqG8aBQ6X3VfRS9Ud2d68muid7bhBCK03YY1XHcqwHBV17cwEqNMHP2WkUikds48+XQFt1xHx9ZVPjTQXHgi4P2Bne+hAmPKyMTt8qtBxJH9EuhsHygQzEwVOI/abjEggaG34U1KPBwmEBebc2taRo06fTByu8DP+ts5k9PTL6XdSCdKdA5y9YO2WVzdogvU16qVqN2SC/E2JhbjIVuiWKZsfEO1OgjzEiVaD9GKY2Z95Myqq0mnxRLouHpQC6cuXaahnYpw37cGZa/fyZsR7pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=94vFyjtYj12n4PfD/DXCekJzCKn4Jyh5o0dR62PvklU=;
- b=YJJopdZ+XNmFwvL1RZhh1t6UjeWhJUf475s5k9sD5zHg05xTYARPomQi33htFO39Y0jDibllTyp4TIQ2q7sCo+4zWMyS0C6N0xrOYK52B5X+HaySv8DmgX/FhX9pkOUroc3l3Pa9N5gWBIFBJ+hXbguFqqG8qZ3m9hpFrpIIt48=
-Received: from BN9PR03CA0054.namprd03.prod.outlook.com (2603:10b6:408:fb::29)
- by PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
- 2025 03:59:46 +0000
-Received: from BN2PEPF000055DC.namprd21.prod.outlook.com
- (2603:10b6:408:fb:cafe::d4) by BN9PR03CA0054.outlook.office365.com
- (2603:10b6:408:fb::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Fri,
- 14 Feb 2025 03:59:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000055DC.mail.protection.outlook.com (10.167.245.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.0 via Frontend Transport; Fri, 14 Feb 2025 03:59:45 +0000
-Received: from aiemdee.l.aik.id.au (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Feb
- 2025 21:59:43 -0600
-From: Alexey Kardashevskiy <aik@amd.com>
-To: <linux-crypto@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Ashish Kalra <ashish.kalra@amd.com>, "Tom
- Lendacky" <thomas.lendacky@amd.com>, Alexey Kardashevskiy <aik@amd.com>
-Subject: [PATCH] KVM: SVM: snp_alloc_firmware_pages: memory leak
-Date: Fri, 14 Feb 2025 14:59:32 +1100
-Message-ID: <20250214035932.3414337-1-aik@amd.com>
-X-Mailer: git-send-email 2.47.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC5586334
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739505590; cv=none; b=Fvq4ayQAUP3bpxx4mSABEm4eex1FfusK3IrDFgPgmpP2yi5OxBxDKHXw9OTtO1xAIoVqWkFAoa23919vhTToUGV9cr1Dsiu9FvuNVbI2wY6V0dEsJ8kZGnzOv2vwYnZ/1HkFJX/T2D2Q47+RFlX7vwQoR93ppQm5LRzYhXZtpdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739505590; c=relaxed/simple;
+	bh=c8wpzyDcFA+kGoRgoZFYEpNTaxICNHsFZc3A453mq4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZWuzs/b/vDi9A8GR8klM4ad1Jsu1k8PYuG2sKN0fLIXkg01Cr77NZUyWlFvvKyR7VMENr9J3WzTMrG4R6fr0WGmK4zdCtX4whUzr4jXb35x+cmo7nwi8y14bBCGIdY2RBcBye8YIwJsx5+Dz06L/m/uSSrbICTRb58bFfjWhf6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YvJB40Nv7z1ltY9;
+	Fri, 14 Feb 2025 11:55:56 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id E317F1401E9;
+	Fri, 14 Feb 2025 11:59:43 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Feb 2025 11:59:42 +0800
+Message-ID: <c58be715-a93e-4cda-9473-c2e862fc4537@huawei.com>
+Date: Fri, 14 Feb 2025 11:59:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DC:EE_|PH0PR12MB7982:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8a4c640-5641-48ae-345e-08dd4cac04f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VB5BXK5EydO2iU6TlqjSq628/foEsaKwd1Ig8UGsmmYHymgax/oxLjcbSScT?=
- =?us-ascii?Q?bbQHK1XzhFC4AHFbizA+YQz7T7klP7xQXN3hBwKRTHvlK4FEfuShaoxWkNn1?=
- =?us-ascii?Q?0K0X9N4YgPWB6Et6nAPie7jlWYP5TX8vax0TCwW0x/mqYggwNudedrhC0Hur?=
- =?us-ascii?Q?DSKWHcc3wAOP+h0IdLIOxxedR8DZQ2JVuq77zocxOExZZbkIoIu4wCnrLJ46?=
- =?us-ascii?Q?np620zM7kdA3ZpD/phpK8IssbxgLB++KUupSUIphD2xvHtdWDhuu22gog82q?=
- =?us-ascii?Q?u7tgsRB33zikSqJ0dTJXWdJzzxY+WYhuhQJGR8wPTUEhxvCceiSQYFcUXO9I?=
- =?us-ascii?Q?eCN7Y0sbZQIgf+b4vl3zQB5ONqrHkO1yZzj/abF4y64N0kb1ccLsIoIKMZv1?=
- =?us-ascii?Q?yd4gxgYm7BAgZ5E0NDodN0Eza3gAIMiFj83y4lCge0Kifz4yh1x2FEnujHIJ?=
- =?us-ascii?Q?7l4YA+jX2sVusB2PV90bOBlX1ZYPMEWUz1lDE86N35wziteWXEi/iUoM5JwQ?=
- =?us-ascii?Q?dqxrWgGOD3TtYS4aof/jfw6mseXZ7a6hmYdN3hlnSLadaFuCcn22kgPlM0Vf?=
- =?us-ascii?Q?HLLIjq6lo8VuXrE9oPz4eg4tX1gDMZ5Hi/yifBhXh3rqDelU/MF6ILQKLmg0?=
- =?us-ascii?Q?YzaNsKBjAnNFrhIIpOyGkAHcim9xeKoP1MBDPLHNNywDis3K/PHSxokczmrU?=
- =?us-ascii?Q?n0VExJzypduHN+Obp6qhS20c7HDK5gvKx1eCG5V2yCRSHgzNgGtM+ZjQSCRK?=
- =?us-ascii?Q?4J/RIVK5P7vm/Yd+QRWkIOGe7I5gA0m06BpbedBzRt1Z75fUG20S+W38h570?=
- =?us-ascii?Q?ivrPZOEbho1Y6WcKsfO5N/nMIBLXChzOYX4aHQ8FFbYxXPrNFfcjcQwvEUJF?=
- =?us-ascii?Q?TWgWW+EV8A3OlET0+6AoSrK5JVZTWJUxQuk/kJuL4uC0ywUb4b9HwE8dOhcs?=
- =?us-ascii?Q?rOkr108CUp/IGUfzGG/Mw6TBcsmIpGJW/PcCyen1a2r1Lu4KYbaQcDXAJXxo?=
- =?us-ascii?Q?UeRypziZFwMPbrskX7BGiQVkYPDVHMoFYxJ3scOS2jLSker7eGh2Kp/mEJlj?=
- =?us-ascii?Q?Tla6KMGlpSS6uxled/4XeDy9y/PzhzAngw+vcP4hmWNWCXU4mmg9WDeuaRHp?=
- =?us-ascii?Q?cRIT4Zspm9UVcB7SctiT10MJXdZncFPh2AB/VHLj6YPPA+I4iTNOeXHTrWkI?=
- =?us-ascii?Q?g+6lfR0u/ooItTJhpq3OClQ0z7+/0IC5So0BzZOUEXfhB0WRQw2Nvg15g/6/?=
- =?us-ascii?Q?z6q7hdcpDHgl9n+w0PN/nFE0p1Yv2yH9HPzyzoGkfsTq50WH/ODQflFJCHEn?=
- =?us-ascii?Q?3amMc9V+Swb/8Sj/FbXrRvtOGCHxN0qfXy71d1H5n2+k04B8S9H73d1KmMgp?=
- =?us-ascii?Q?OugDidpZmk0zGqF0xFb84HnkK7rFSpQugaux6UEgpbVqUQ2WO91ix9sgBLPI?=
- =?us-ascii?Q?HvzDa+PU+SUuaoRrkokRDFCw7HQx7LUYltZOoMP4LvA3Atu15NhUROcTyqkW?=
- =?us-ascii?Q?zwdtIMf8iEGbU9E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 03:59:45.7134
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8a4c640-5641-48ae-345e-08dd4cac04f6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055DC.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7982
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 drm-dp 6/7] drm/hisilicon/hibmc: Add drm debugfs
+ functions
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250210144959.100551-1-shiyongbang@huawei.com>
+ <20250210144959.100551-7-shiyongbang@huawei.com>
+ <afi5npgvnrp56oufhc7576auya26lbwgu377dprddode2kp3sb@u5ctx4o22w4v>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <afi5npgvnrp56oufhc7576auya26lbwgu377dprddode2kp3sb@u5ctx4o22w4v>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-Failure to rmpupdate leads to page(s) leak, fix that.
 
-Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
----
- drivers/crypto/ccp/sev-dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> On Mon, Feb 10, 2025 at 10:49:58PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> We use the previous two patches as our debug functions and
+>> generate two files. "hibmc-dp" and "color-bar".
+>> hibmc-dp: read only, print the dp link status and dpcd version
+> Please define a generic DP attribute for this, handle it in
+> drm_dp_helper.c. Other drivers then can reuse this debugfs file.
+> Also note drm_dp_downstream_debug(), it might also be helpful.
+> Also see msm_dp_debug_show() for inspiration
 
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index 2e87ca0e292a..0b5f8ab657c5 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -443,8 +443,10 @@ static struct page *__snp_alloc_firmware_pages(gfp_t gfp_mask, int order)
- 		return page;
- 
- 	paddr = __pa((unsigned long)page_address(page));
--	if (rmp_mark_pages_firmware(paddr, npages, false))
-+	if (rmp_mark_pages_firmware(paddr, npages, false)) {
-+		__free_pages(page, order);
- 		return NULL;
-+	}
- 
- 	return page;
- }
--- 
-2.47.1
+Hi Dmitry,
 
+Thanks for your much advising! I will consider all of them and fix them with detailed explanations.
+And I will try to make it in drm_dp_helper.c for here.
+
+Sincerely,
+Baihan Li
+
+
+>> color-bar: read/write
+>>             write: cfg color bar and enable/disable it by your input
+>>             read: print your current cfg info of color-bar
+> This really should go into your color-bar patch.
+
+Ok.
+
+
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v1 -> v2:
+>>    - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
+>>    - using debugfs_init() callback, suggested by Dmitry Baryshkov.
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+>>   .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 124 ++++++++++++++++++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |   1 +
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   2 +
+>>   4 files changed, 129 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 43de077d6769..1f65c683282f 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,6 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o \
+>> +	       hibmc_drm_debugfs.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+>> new file mode 100644
+>> index 000000000000..af2efb70d6ea
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+>> @@ -0,0 +1,124 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +// Copyright (c) 2024 Hisilicon Limited.
+>> +
+>> +#include <linux/debugfs.h>
+>> +#include <linux/device.h>
+>> +#include <linux/seq_file.h>
+>> +#include <linux/pci.h>
+>> +
+>> +#include <drm/drm_drv.h>
+>> +#include <drm/drm_file.h>
+>> +#include <drm/drm_debugfs.h>
+>> +#include <drm/drm_edid.h>
+>> +
+>> +#include "hibmc_drm_drv.h"
+>> +
+>> +static int hibmc_dp_show(struct seq_file *m, void *arg)
+>> +{
+>> +	struct drm_info_node *node = m->private;
+>> +	struct drm_device *dev = node->minor->dev;
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>> +	int idx;
+>> +
+>> +	if (!drm_dev_enter(dev, &idx))
+>> +		return -ENODEV;
+>> +
+>> +	seq_printf(m, "enable lanes: %u\n", hibmc_dp_get_lanes(&priv->dp));
+>> +	seq_printf(m, "link rate: %d\n", hibmc_dp_get_link_rate(&priv->dp) * 27);
+>> +	seq_printf(m, "dpcd version: 0x%x\n", hibmc_dp_get_dpcd(&priv->dp));
+>> +
+>> +	drm_dev_exit(idx);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static ssize_t hibmc_control_write(struct file *file, const char __user *user_buf,
+>> +				   size_t size, loff_t *ppos)
+>> +{
+>> +	struct hibmc_drm_private *priv = file_inode(file)->i_private;
+>> +	struct hibmc_dp_cbar_cfg *cfg = &priv->dp.cfg;
+>> +	u32 input = 0;
+>> +	int ret, idx;
+>> +	u8 val;
+>> +
+>> +	ret = kstrtou32_from_user(user_buf, size, 0, &input);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	val = FIELD_GET(GENMASK(13, 10), input);
+>> +	if (val > 9)
+>> +		return -EINVAL;
+>> +	cfg->pattern = val;
+>> +	cfg->enable = FIELD_GET(BIT(0), input);
+>> +	cfg->self_timing = FIELD_GET(BIT(1), input);
+>> +	cfg->dynamic_rate = FIELD_GET(GENMASK(9, 2), input);
+> Having a binary file format is really a sad idea. Can it be a text file
+> instead?
+>
+>> +
+>> +	ret = drm_dev_enter(&priv->dev, &idx);
+>> +	if (!ret)
+>> +		return -ENODEV;
+>> +
+>> +	hibmc_dp_set_cbar(&priv->dp, cfg);
+>> +
+>> +	drm_dev_exit(idx);
+>> +
+>> +	return size;
+>> +}
+>> +
 
