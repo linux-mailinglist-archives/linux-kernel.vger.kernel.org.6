@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-514617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1516EA35956
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:50:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E1DA359C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB1D18911A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08D03AEBBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF9227BB2;
-	Fri, 14 Feb 2025 08:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C14622D79E;
+	Fri, 14 Feb 2025 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="AKsbYQM3"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZE+Z5v5O"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04379275401;
-	Fri, 14 Feb 2025 08:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1D922D793;
+	Fri, 14 Feb 2025 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523010; cv=none; b=dmeyWP8N7RwvigG8JgUDeHAxwyM8j/alGZjqFw/sqPfESWVctj6FOD29Z4Ru6AdfG51IFKjKDmal6Rvru/qnWTqQaAAu6Ybm/+/SgVNJaYILk0N88MfJyXzejJZ8Ub5JoDhSMx3ZEgOODEx3dBilaIA59GkmsAB+yiO4W4LEano=
+	t=1739524134; cv=none; b=cxuWRLr4lbhrle0yhGMCcQBL/2h3q56uxteksCprs/V4otcITKc089U5b8bsVv92l7EU/243MQ8F7p1JEZm7GhX9pM6bYdmf+p2+ooKa0xd3IV7p6dpBeNByJP1H3Ib/r6sXvKFDWXM6Zg4Alx7dItP1TkWxExEFMhXN6Hyv/50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523010; c=relaxed/simple;
-	bh=eHsbsd/eFKbVVaYr4omsL/Cx88B0Q51hlfhaRwPY0RA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WXo9o4MXBkVyE7juKHi/FQxwgCcKEnEj1cB0pid75TXuq5eUpxYBjv/QLzPnHPJ/Kd5Vb3505OYucxe+S0lqD9fkQbieGKzuH7KuQHKxWfR8hxX08Vz0P3Sqr2/Gm0rvbX7FMd5IQMH6+T0BBjc6LOEx2HIxsUGxDWmA93cxQFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=AKsbYQM3; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ae86e8d2eab011efb8f9918b5fc74e19-20250214
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SZTKFrboegu1pyLSyq2HcY2eKZBWe3hXG4JUqZ8ZU0c=;
-	b=AKsbYQM3lxBAVEii1KIMqewju/FjqyPgdG/pUaVAs7cOTyqevlueh+KQSCI65TLtIhivjCOOuuzUYdB5d+5fHVu5MrdzQY51KAsAfzY7rg+H8OEMPZ3FVdQaFKBqB4WJBRLHBpz4doIJZ9XpXOu4jh5I2K5mizdJqbIUPbMtixQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:46e23ee0-5498-40be-8e8a-c3aa7291560b,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:fcecbf24-96bd-4ac5-8f2e-15aa1ef9defa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ae86e8d2eab011efb8f9918b5fc74e19-20250214
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 94671838; Fri, 14 Feb 2025 16:50:03 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 14 Feb 2025 16:50:02 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Fri, 14 Feb 2025 16:50:02 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Sen Chu <sen.chu@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-usb@vger.kernel.org>, <stable@vger.kernel.org>, Chris-qj chen
-	<chris-qj.chen@mediatek.com>
-Subject: [PATCH v3] arm64: dts: mediatek: mt6359: fix dtbs_check error for RTC and regulators
-Date: Fri, 14 Feb 2025 16:49:54 +0800
-Message-ID: <20250214084954.1181435-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1739524134; c=relaxed/simple;
+	bh=Eo5DuTvQ0qKs2Jp3vi/N35mfegrhtFBJq5aOGSjyD2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPAB2g4kCcJcEZLq82ivO9y4pXCoJmT/QANp9ZrCkfxs5wZBAQ6aB+V8jXd8fYfA4s4rkq1eT2mYPXj55vKx5eoNREzeQ32NotvwQ3FZf2ghUm8nMzoAeVAStXW8wpKIh2yxJybOM/IMlwprl6lOcjE846x1TykOv06ARvzDTnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZE+Z5v5O; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739524133; x=1771060133;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Eo5DuTvQ0qKs2Jp3vi/N35mfegrhtFBJq5aOGSjyD2I=;
+  b=ZE+Z5v5O6jYf5J3H/abx0p6pnhQoVSHc3wxN9M/D4Mmn0oUp5tzLLEuC
+   Mz7NfGvnhMedgKy7xY5l1HZ+ZYdQ/9k9hKG8d0j9jS/GJ8QRYNeaxpaaR
+   ViqX3xUxxQyN6RP1e9npinRq+vTIRuFV9IPfd1/HdBVagdTXKOXp0DRRy
+   ooos4cQyCqM3rJApCl9WQGh+w/I8yB9vUcrp9ToyP29i8ODglvWt+gTqn
+   N9ZsCxBazXJsvzHIeHYUwfC2E8ydA22ci8qjtDGV9BXw4Qq3004yKZkZX
+   kn3xRacPSL3MXYY6oKfXbo9Pz51MpdgbgfCXi+Rt95baYJN7IKgyWQ3+f
+   Q==;
+X-CSE-ConnectionGUID: 92jHz167SmWlbQZ06OMJUg==
+X-CSE-MsgGUID: bzCd5kikQvebxo4kg+FalQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="65617699"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="65617699"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 01:08:52 -0800
+X-CSE-ConnectionGUID: ob2CyOKURkuqgQey6bTE+A==
+X-CSE-MsgGUID: l9XtpCizQ6iCBPA9lcT5XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="113145423"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by orviesa009.jf.intel.com with ESMTP; 14 Feb 2025 01:08:49 -0800
+Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 6789F37B80;
+	Fri, 14 Feb 2025 09:08:47 +0000 (GMT)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	intel-wired-lan@lists.osuosl.org
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Mateusz Pacuszka <mateuszx.pacuszka@intel.com>
+Subject: [PATCH iwl-next v4 0/6] ice: LLDP support for VFs
+Date: Fri, 14 Feb 2025 09:50:34 +0100
+Message-ID: <20250214085215.2846063-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,51 +84,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-This patch fixes the following dtbs_check errors:
-1. 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
- - Update 'mt6359rtc' in 'mt6359.dtsi' with a generic device name 'rtc'
-2. 'pmic: regulators: 'compatible' is a required property'
- - Add 'mediatek,mt6359-regulator' to compatible property.
+Allow to:
+* receive LLDP packets on a VF in legacy mode
+* receive LLDP packets on a VF in switchdev mode
+* transmit LLDP from a VF in switchdev mode
 
-Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt6359.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Many VSIs can receive LLDP packets, but only one VSI
+per port can transmit LLDP, therefore LLDP TX from VF
+requires adding an egress drop rule to the PF, this is
+implemented in these series too.
 
-Changes for v2:
- - No change.
+There are no patches that explicitly address LLDP RX in
+switchdev mode, because it just works after adding support
+in legacy mode.
 
-Changes for v3:
- - Add "Reviewed-by:" tag, Thanks!
+Usage
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-index 150ad84d5d2b..3d97ca4e2098 100644
---- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-@@ -19,6 +19,8 @@ mt6359codec: mt6359codec {
- 		};
- 
- 		regulators {
-+			compatible = "mediatek,mt6359-regulator";
-+
- 			mt6359_vs1_buck_reg: buck_vs1 {
- 				regulator-name = "vs1";
- 				regulator-min-microvolt = <800000>;
-@@ -297,7 +299,7 @@ mt6359_vsram_others_sshub_ldo: ldo_vsram_others_sshub {
- 			};
- 		};
- 
--		mt6359rtc: mt6359rtc {
-+		mt6359_rtc: rtc {
- 			compatible = "mediatek,mt6358-rtc";
- 		};
- 	};
+To receive LLDP packets on VF in legacy mode:
+On host:
+ip link set dev <pf_ifname> vf <n> trust on
+On VM:
+service lldpd restart
+
+To receive LLDP packets on VF in switchdev mode (host config):
+tc qdisc add dev <pf_ifname> clsact
+tc filter add dev <pf_ifname> protocol lldp ingress \\
+   flower skip_sw action mirred egress mirror dev <repr_ifname>
+
+To transmit LLDP packets from VF (host config):
+tc qdisc add dev <pf_ifname> clsact
+tc qdisc add dev <repr_ifname> clsact
+tc filter add dev <pf_ifname> egress protocol lldp \\
+   flower skip_sw action drop
+tc filter add dev <repr_ifname> ingress protocol lldp \\
+   flower skip_sw action mirred egress redirect dev <pf_ifname>
+
+For all abovementioned functionalities to work, private flag
+fw-lldp-agent must be off.
+
+v3->v4:
+* add "Return: " to the touched kernel-doc
+* reunite return type and declaration for ice_add_cls_flower()
+  and ice_del_cls_flower()
+
+v2->v3:
+* fix sparse warning caused by part of .sw_act members being initialized
+  inside the curly braces and others being initialized directly
+* reorder members inside the rinfo initializer according to struct
+  definition in ice_drop_vf_tx_lldp(), while fixing the warning above
+
+v1->v2:
+* get rid of sysfs control
+* require switchdev for VF LLDP Tx
+* in legacy mode, for VF LLDP Rx rely on configured MAC addresses
+
+Larysa Zaremba (4):
+  ice: do not add LLDP-specific filter if not necessary
+  ice: remove headers argument from ice_tc_count_lkups
+  ice: support egress drop rules on PF
+  ice: enable LLDP TX for VFs through tc
+
+Mateusz Pacuszka (2):
+  ice: fix check for existing switch rule
+  ice: receive LLDP on trusted VFs
+
+ drivers/net/ethernet/intel/ice/ice.h          |   1 +
+ drivers/net/ethernet/intel/ice/ice_common.c   |  14 +-
+ drivers/net/ethernet/intel/ice/ice_common.h   |   3 +-
+ drivers/net/ethernet/intel/ice/ice_dcb_lib.c  |   2 +-
+ drivers/net/ethernet/intel/ice/ice_eswitch.c  |   6 +
+ drivers/net/ethernet/intel/ice/ice_ethtool.c  |   2 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c      |  71 ++++-
+ drivers/net/ethernet/intel/ice/ice_lib.h      |   3 +-
+ drivers/net/ethernet/intel/ice/ice_main.c     |  63 ++++-
+ drivers/net/ethernet/intel/ice/ice_repr.c     |  10 +-
+ drivers/net/ethernet/intel/ice/ice_sriov.c    |   4 +
+ drivers/net/ethernet/intel/ice/ice_switch.c   |   4 +-
+ drivers/net/ethernet/intel/ice/ice_tc_lib.c   | 258 +++++++++++++++---
+ drivers/net/ethernet/intel/ice/ice_tc_lib.h   |  11 +-
+ drivers/net/ethernet/intel/ice/ice_txrx.c     |  17 +-
+ drivers/net/ethernet/intel/ice/ice_vf_lib.c   |  26 ++
+ drivers/net/ethernet/intel/ice/ice_vf_lib.h   |  12 +
+ drivers/net/ethernet/intel/ice/ice_virtchnl.c |  53 +++-
+ 18 files changed, 480 insertions(+), 80 deletions(-)
+
 -- 
-2.45.2
+2.43.0
 
 
