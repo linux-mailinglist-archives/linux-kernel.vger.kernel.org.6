@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-515625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F29A366CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:20:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58D8A366D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B67A4AEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5BD16FBB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F141A2385;
-	Fri, 14 Feb 2025 20:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B518B19DF41;
+	Fri, 14 Feb 2025 20:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="WHV1mtgy"
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iC5l64CT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1B419066D;
-	Fri, 14 Feb 2025 20:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739564445; cv=pass; b=d/H/t1UeGqPNgPn4Qo8oEjFhsChzuO/95f36hYkGf7str954uKTIkkMry6OnJBroPrYDG5cZsCuWPB4lijQrFnY793GLRLcl2TYHAabnfwbfj2xdixoMDD39nsChlhK2kCaSrBx8ngZIw2UAKuQjGgb4DlrRYOBPZ9gdN9zjYp4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739564445; c=relaxed/simple;
-	bh=PnzvwBB4pI3+DP39vXExTLlnwBwf+qwiTB8gGaPqw74=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Kl/NiZ4UCFe0837xUiqGyCjWm2xRN04V06oCun/HFV3iLrM6SmHkXjZNz2jepwQ/naPUCIL9fK/Rc6ncrqeW21rHuPBh7EULsmSELiQ35M0fNiOfgc050fJq3/zBonfe609TpHPMScuNXGePvTP0BmFOVsp7ni4ONDMhs/l5YOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=WHV1mtgy; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739564430; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=goflvi9jAIVrizOs8HAMfz9P6xsSRiAVP1kJDCkvg6DSiv1QuOhaK5FLKqW53jZRtjIe9+UJrWDk5GeRX5l1QUQAm/WRUl4UOYK2qOtAOg1F5D/KpBvOGhHDdesaroDsKnqTeqRW34URJlQLQL/S/GeDFGNPDCoMb9woF1ynhhQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739564430; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SqOfoj2KSrjVqeuyp909FB717ygPmWnh3bKUWLSJo4w=; 
-	b=Mu8xyI5z9zsc2sqR1sWZ+4zfneVTC+KVXQ28e/rYFLsqbTgXdjE+JJKhCpzyvV4dskZKybtQkP+Jjhil4Rh69yG7EoGCWZ9McLk7rfjf8toHEf1BtqJNIgZXOkXOPakvldAF+x3oowY7Lx34c9RKT8HJHnneynjl3vQCj87yMlE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739564430;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=SqOfoj2KSrjVqeuyp909FB717ygPmWnh3bKUWLSJo4w=;
-	b=WHV1mtgydivRLBm2fKfMEu/VYfQQmNABRuysJXeudaEXSJ/orR4qWCErPkFkvGNJ
-	PNDIPSFaJChmW6N+8Rcz73L+whm9AtITOrgp0WZ46er8A8DrK6EN3gCylp4A6Tgzy32
-	7YqlBJZk4j3IlnExKMSfbuFrb5H9r/YrNrCNQBU8=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1739564427824276.79924110833304; Fri, 14 Feb 2025 12:20:27 -0800 (PST)
-Date: Fri, 14 Feb 2025 21:20:27 +0100
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: "Jiasheng Jiang" <jiashengjiangcool@gmail.com>
-Cc: "tiffany.lin" <tiffany.lin@mediatek.com>,
-	"andrew-ct.chen" <andrew-ct.chen@mediatek.com>,
-	"yunfei.dong" <yunfei.dong@mediatek.com>,
-	"mchehab" <mchehab@kernel.org>,
-	"matthias.bgg" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno" <angelogioacchino.delregno@collabora.com>,
-	"fullwaywang" <fullwaywang@outlook.com>,
-	"linux-media" <linux-media@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mediatek" <linux-mediatek@lists.infradead.org>
-Message-ID: <195061eaa10.dcfe0edc1589793.425795569509706466@collabora.com>
-In-Reply-To: <20250131012830.22394-1-jiashengjiangcool@gmail.com>
-References: <20250131012830.22394-1-jiashengjiangcool@gmail.com>
-Subject: Re: [PATCH] media: mediatek: vcodec: Add scp_put() to free the scp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186AE19066D;
+	Fri, 14 Feb 2025 20:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739564526; cv=none; b=bY5omDHr2nBzFxUq48hhjOtmOzubjH0Ua7rWDFFbvEurQryl/CG9iXBAEp3n+USr5Q+W5bFwq4BerJhaltcgk6AR+9Umtt/z9LU17yL18gYjKTagvWfs+eL+o6gmB16l3vGSVRaqQvnsHtEQXnA2S2sVT5bofdcNyNDKs8Oldt4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739564526; c=relaxed/simple;
+	bh=1V7cvRrDBCKZmbki793VHS9b7cxIjb5kzH35XSGmoKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MbhURlnJg74njOodw94VlKvCY4+rDRNFvAPAZ8anhRdCUcgLOis7YLM6SwIBQ+Sa0WVnJGyEfvlLpD45dS3/WQyNof0o2cJkn8LtL2Kywu+goUMSxlZDE3KHXxMm6xaDB3gicjdLl6BE8/UD5qZQaytEVvgX5rAca7+uVOAGo30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iC5l64CT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D260C4CEDD;
+	Fri, 14 Feb 2025 20:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739564525;
+	bh=1V7cvRrDBCKZmbki793VHS9b7cxIjb5kzH35XSGmoKE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iC5l64CTZfThIfw/CwrCgbFpAmq9Yiy1WQNL5Ohn7RMKMspHh0J5Gjiq9Yww5nCOE
+	 aO+nNM4DDTIYsKhkUK05DYidqJnhTYfwdEek/DrDIFCCP3PQ/JyZqnfTrzEquoeN9L
+	 Jqghd6pJQuwbbA7UoW3zJX6Ayiu68Xk6fWXMmLPyJucpab8mibGE3yFM8vJmRt9sGY
+	 U+bsmTgX4n4u6tWP/guXwjJc6MkS+bs9JtG2OBPbUEVMVOXuXKJMMdD6MII8H6ug2x
+	 Xr3hBX7NvT+HqHIhKGdCqo/JjSs2ulxxY2RVR7+EsBwRxMrFzHxRgsSzIQExvEc+00
+	 M7XHxEHUudYFQ==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2b8e2606a58so1251574fac.0;
+        Fri, 14 Feb 2025 12:22:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUXhqn410eXqT5LZ8GHZ7e3D7kup/mHKKlRCCJWtVoJlbfpaUJlPAZDAmqTvv2qHCQx/nQ5KCNlNgdw@vger.kernel.org, AJvYcCWPRhohgCGZAFOze3mlmyShefVLCgI7AUcCyKZUuMSVE1+e4uYtOR29CyYKqRL/ssg8tv/SpwVgfxbzaI5f@vger.kernel.org
+X-Gm-Message-State: AOJu0YyplpVX4chxNPfD3Kkhrb87bONDqD8+yqTGB/0vfuprLaGR3EGQ
+	O7GcJEo6/ROAWvibYn2tW/5NFTsE5bA9CbHwHEFueHSX6EKfp9OzpWtD3zJYQjU1e/kccmBgPad
+	zWATczGhHvDgy5RqsByxqML1srkY=
+X-Google-Smtp-Source: AGHT+IFe9EtaS2cXc9jG5FB+Lqd7giY07d/UZzAhghPMmRW2fZwZ6dsjKfEoIMGicCXyuv5tFHithfFjoLDJF5O1JXI=
+X-Received: by 2002:a05:6870:3d93:b0:2b3:55b3:e38 with SMTP id
+ 586e51a60fabf-2bc99b4b057mr290385fac.21.1739564524845; Fri, 14 Feb 2025
+ 12:22:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250125100711.70977-1-josh@joshuagrisham.com>
+ <77eb01a6-2905-4776-96ce-eb936c04956b@gmx.de> <CAMF+KeZrdkfwoab4zvBYJMuYaScCDFPbvijo9o6d-9CS96238g@mail.gmail.com>
+ <0053b236-79cc-496d-936b-5f8b12b39f10@gmx.de>
+In-Reply-To: <0053b236-79cc-496d-936b-5f8b12b39f10@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Feb 2025 21:21:52 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hMpyANvOgGS8fbWWEZKw+ND-7uwYYfGsHesWLkoPd6FA@mail.gmail.com>
+X-Gm-Features: AWEUYZlqT3QzvCztNNjU-FHFVVo7W9x2uLfMsql19O2I-Xb8v2ZX7kkIZAmgrCY
+Message-ID: <CAJZ5v0hMpyANvOgGS8fbWWEZKw+ND-7uwYYfGsHesWLkoPd6FA@mail.gmail.com>
+Subject: Re: [PATCH v3] ACPI: fan: Add fan speed reporting for fans with only _FST
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Joshua Grisham <josh@joshuagrisham.com>, rafael@kernel.org, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: quoted-printable
 
-Hey Jiasheng,
+On Fri, Feb 14, 2025 at 5:47=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> Am 06.02.25 um 08:37 schrieb Joshua Grisham:
+>
+> > Den tors 6 feb. 2025 kl 06:05 skrev Armin Wolf <W_Armin@gmx.de>:
+> >> Am 25.01.25 um 11:07 schrieb Joshua Grisham:
+> >>
+> >>> Add support for ACPI fans with _FST to report their speed even if the=
+y do
+> >>> not support fan control.
+> >>>
+> >>> As suggested by Armin Wolf [1] and per the Windows Thermal Management
+> >>> Design Guide [2], Samsung Galaxy Book series devices (and possibly ma=
+ny
+> >>> more devices where the Windows guide was strictly followed) only impl=
+ement
+> >>> the _FST method and do not support ACPI-based fan control.
+> >>>
+> >>> Currently, these fans are not supported by the kernel driver but this=
+ patch
+> >>> will make some very small adjustments to allow them to be supported.
+> >>>
+> >>> This patch is tested and working for me on a Samsung Galaxy Book2 Pro=
+ whose
+> >>> DSDT (and several other Samsung Galaxy Book series notebooks which
+> >>> currently have the same issue) can be found at [3].
+> >> Any updates on this patch? For me it seems ready for mainline.
+> >>
+> >> Thanks,
+> >> Armin Wolf
+> >>
+> > Hi Armin, thanks for checking in on this!
+> >
+> > For me I have no further updates that I planned or intended to send.
+> > If it looks good to Rafael or anyone else who wants or needs to review
+> > then I would be glad to see it applied.
+> >
+> > If needed then I can re-send with Armin's Reviewed-by tag inline in
+> > the commit message but otherwise everything is as I would have wished
+> > it to be, for what that is worth :)
+> >
+> > Thanks again!
+> >
+> > Best regards,
+> > Joshua
+>
+> I was hoping to get Rafaels attention so that he can give your patch a cl=
+oser look.
 
- ---- On Fri, 31 Jan 2025 02:28:30 +0100  Jiasheng Jiang <jiashengjiangcool@gmail.com> wrote --- 
- > Add scp_put() to free the scp if devm_kzalloc() fails to avoid memory
- > leak.
+I'm a bit busy with other things ATM, but I'm planning to get to this
+next week (and to a bunch of other pending patches for that matter).
 
-Your commit message sounds a bit like you copy-pasted your code into the commit message.
-What kind of memory is leaking here? Are we talking about SRAM memory?
-I'd reword the commit message to something like this to give a bit more context:
-
-On Mediatek devices with a system companion processor (SCP) the mtk_scp structure has to be removed explicitly to avoid a memory leak.
-Free the structure in case the allocation of the firmware structure fails during the firmware initialization.
-
----
-
-Additionally, the commit title says close to nothing to the reader as well.
-How about: Fix memory leak in FW initialization
-
-But as I stated above you should clarify what kind of memory we are talking about here.
-
-Also just out of interest have you ever actually experienced issues with this?
-It seems to me that the situation where you run out of Kernel memory should be quite rare.
-
-Regards,
-Sebastian
-
- > 
- > Fixes: 53dbe0850444 ("media: mtk-vcodec: potential null pointer deference in SCP")
- > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
- > ---
- >  .../platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c      | 5 ++++-
- >  1 file changed, 4 insertions(+), 1 deletion(-)
- > 
- > diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
- > index ff23b225db70..1b0bc47355c0 100644
- > --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
- > +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_scp.c
- > @@ -79,8 +79,11 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(void *priv, enum mtk_vcodec_fw_use
- >      }
- >  
- >      fw = devm_kzalloc(&plat_dev->dev, sizeof(*fw), GFP_KERNEL);
- > -    if (!fw)
- > +    if (!fw) {
- > +        scp_put(scp);
- >          return ERR_PTR(-ENOMEM);
- > +    }
- > +
- >      fw->type = SCP;
- >      fw->ops = &mtk_vcodec_rproc_msg;
- >      fw->scp = scp;
- > -- 
- > 2.25.1
- > 
- > 
- > 
-
+Thanks!
 
