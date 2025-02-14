@@ -1,110 +1,111 @@
-Return-Path: <linux-kernel+bounces-515064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942C1A35F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:40:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD12A35F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309DF3AAED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0C13ACFC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A383594C;
-	Fri, 14 Feb 2025 13:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8F8264F80;
+	Fri, 14 Feb 2025 13:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xqsIgHpT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZGUCpVMc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CE0188713;
-	Fri, 14 Feb 2025 13:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA3D264A78;
+	Fri, 14 Feb 2025 13:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739540220; cv=none; b=fpYt3J4NR0bwLAT/0uBrnBJitJGf3nNJihSsJnhh9f9/96168iuGLBWbrC3WOWP4lZcmKd/2y3CSTuFVFdnyQftB+Ubanq8d1agQpDAnPGJnGIazwyBpeUZxdc6QY/0QK/7504hRqHauPUGtLgAfaSenKAhPOAswBxPaE4tm05Q=
+	t=1739540255; cv=none; b=IvVXLeUfS0RkbFaKS5pCxUDvXKHAspi33l0uHWheBnhq9zUiXtP1v6pXxctN5UiZ5AIPLt7JVqmYAdPI8mMgZwDi5mP6rxbiwFyXHLboBuTiv2QD0T1uqliFo1j2TIa2YcwcV3YOmJHh058zQKI8bW3W83D4jPZ+rMvce9qsORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739540220; c=relaxed/simple;
-	bh=583K14ihYPs7s9bkquTFFzsz3XER8F4uZKQtK+ocAsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouivVDn4SNHoV3iDLk4YS4a+NbGHYveGiHUxDvWs6KE4cyU8jegn3AxlptyKop6wHEjXl6G2ARxeu2FWiTcyGQlPAWw3G+Rh9nqFFT9eMWeK6e0+NwtjH3LdQCnN8BTUUiljpRoEOd6RoIJtAdcR/nNkOCQcmC3o7+Qu1Xl5WsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xqsIgHpT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C433AC4CED1;
-	Fri, 14 Feb 2025 13:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739540219;
-	bh=583K14ihYPs7s9bkquTFFzsz3XER8F4uZKQtK+ocAsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xqsIgHpTFapERtnxOK5Q7wMBP0S+9V5fWII8f0M9pATCkf+kxQoOY2aRbVFUoMCdo
-	 Pr9ev6ucnPhC9EJz8/pO8RDenfewrlEyyQjWuSq7BzB9dUilrUmq7W4xSw4U8qdbyX
-	 oOBeuUjVLpqsf86e4xKMjs+b8UZGWfjlbV2KdIxo=
-Date: Fri, 14 Feb 2025 14:36:56 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>, linux-xfs@vger.kernel.org,
-	chandan.babu@oracle.com, "Darrick J. Wong" <djwong@kernel.org>,
-	Long Li <leo.lilong@huawei.com>, Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH 6.12 000/422] 6.12.14-rc1 review
-Message-ID: <2025021448-ignition-aluminum-b304@gregkh>
-References: <20250213142436.408121546@linuxfoundation.org>
- <CA+G9fYuVj+rhFPLshE_RKfBMyMvKiHaDzPttZ1FeqqeJHOnSbQ@mail.gmail.com>
- <CA+G9fYsVFoLTXYBqpeUN1VUTwy5kXTB82fztK62fMPR6tYxChA@mail.gmail.com>
+	s=arc-20240116; t=1739540255; c=relaxed/simple;
+	bh=UtFCl9EjM9ixUzfjjGTOmEQy3HOW2RDlRoM6DAj4ysE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TNhO3kL/enLitZt/WXFsBCZcUgkEYTILb9kUWqgsCwqYjrKM7y8MKZEDR9rqmenhC8IPY/r1Xz6NZpR050Vg5ic7CRGeLF8tHylAlHQzjU8YoaKfngCdnitOjplWLWz5A67r0uC0b34EAT8AuqgZMhz7/AhpgsmWbZHKTdnlWOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZGUCpVMc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from neptunite.hamster-moth.ts.net (unknown [IPv6:2404:7a81:160:2100:c0c:59da:a44c:57ce])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 01A4373B;
+	Fri, 14 Feb 2025 14:36:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739540167;
+	bh=UtFCl9EjM9ixUzfjjGTOmEQy3HOW2RDlRoM6DAj4ysE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZGUCpVMcvxduX5cQNKDwpwXkGR3IKsNvhGwHIolf0O2RZs0NyfTJXV6yA5KI+w0k+
+	 QBGWhANMBSY5be8t/YM78GmZ01Jd+tfwD/b2DG1K1Xlsg47qSrViaRRpXGxO/Gil/X
+	 m8yrm1vQf2a16oHtCUkC92ffiepZ/bnQbE8qGqAU=
+From: Paul Elder <paul.elder@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: kieran.bingham@ideasonboard.com,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] media: imx335: Set vblank immediately
+Date: Fri, 14 Feb 2025 22:37:09 +0900
+Message-Id: <20250214133709.1290585-1-paul.elder@ideasonboard.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsVFoLTXYBqpeUN1VUTwy5kXTB82fztK62fMPR6tYxChA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 05:59:40PM +0530, Naresh Kamboju wrote:
-> On Fri, 14 Feb 2025 at 14:16, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> >
-> > On Thu, 13 Feb 2025 at 20:02, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 6.12.14 release.
-> > > There are 422 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Sat, 15 Feb 2025 14:23:11 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.14-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > Regressions on the arm64, powerpc builds failed with gcc-8/13 and clang
-> > on the Linux stable-rc 6.12.14-rc1.
-> >
-> > Build regression: arm, powerpc, fs/xfs/xfs_trans.c too few arguments
-> >
-> > Good: v6.12.13
-> > Bad:  6.12.14-rc1 (v6.12.13-423-gfb9a4bb2450b)
-> 
-> Anders bisected this to,
-> # first bad commit:
->    [91717e464c5939f7d01ca64742f773a75b319981]
->    xfs: don't lose solo dquot update transactions
+When the vblank v4l2 control is set, it does not get written to the
+hardware immediately. It only gets updated when exposure is set. Change
+the behavior such that the vblank is written immediately when the
+control is set.
 
-Offending commit now dropped, thanks.
+Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+---
+ drivers/media/i2c/imx335.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-greg k-h
+diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+index fcfd1d851bd4..e73a23bbbc89 100644
+--- a/drivers/media/i2c/imx335.c
++++ b/drivers/media/i2c/imx335.c
+@@ -559,12 +559,12 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+ 			imx335->vblank,
+ 			imx335->vblank + imx335->cur_mode->height);
+ 
+-		return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+-						IMX335_EXPOSURE_MIN,
+-						imx335->vblank +
+-						imx335->cur_mode->height -
+-						IMX335_EXPOSURE_OFFSET,
+-						1, IMX335_EXPOSURE_DEFAULT);
++		 __v4l2_ctrl_modify_range(imx335->exp_ctrl,
++					  IMX335_EXPOSURE_MIN,
++					  imx335->vblank +
++					  imx335->cur_mode->height -
++					  IMX335_EXPOSURE_OFFSET,
++					  1, IMX335_EXPOSURE_DEFAULT);
+ 	}
+ 
+ 	/*
+@@ -575,6 +575,13 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		return 0;
+ 
+ 	switch (ctrl->id) {
++	case V4L2_CID_VBLANK:
++		exposure = imx335->exp_ctrl->val;
++		analog_gain = imx335->again_ctrl->val;
++
++		ret = imx335_update_exp_gain(imx335, exposure, analog_gain);
++
++		break;
+ 	case V4L2_CID_EXPOSURE:
+ 		exposure = ctrl->val;
+ 		analog_gain = imx335->again_ctrl->val;
+-- 
+2.39.2
+
 
