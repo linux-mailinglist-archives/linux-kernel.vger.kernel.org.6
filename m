@@ -1,172 +1,157 @@
-Return-Path: <linux-kernel+bounces-514442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CCBA35717
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:30:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23516A35718
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9EE3A5428
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC68E18920B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7803620103A;
-	Fri, 14 Feb 2025 06:30:17 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B2200BA8;
+	Fri, 14 Feb 2025 06:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQburBFk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E09200BB3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D117E;
+	Fri, 14 Feb 2025 06:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514617; cv=none; b=FOyAJGEeoIn19UP1eJLHNf+c+jSPZf7Tx2OBtye7M7XwlbaN07sXvrdnCAiFPAWiR8E2rP2RK3Wmtn6tw8FEO1/XCvAbbZ/LB7qTHTZIwdTf4BbpCn7uQPxHa+8+jMH464W7O1MQwINdUwQdckRawcasa6MMbOvOCeEoofFGtaQ=
+	t=1739514638; cv=none; b=QdDNMiR2KXp3mPhbJEY/H4rokDx2EgOu4eQFa/4o4+gLEph4/hkkdcU6As4pDi31pmwcj1E2EO9eeK3w8nL31XcPOpdc/bgxp5HCU7MPL7C/HclM7kQ9vt6dTqYFP9LATu9yzVCE405jdl1O+czHpufvNKGg0T13gJJXkNVDZhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514617; c=relaxed/simple;
-	bh=ONnE7smu8/9nIlmyt9HAOZbYmNQ170FAywkKcOU+mRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNYkk1wCpeg+r1p+q7TPMnSuc3NbOEjlJPtzu2OK7QdFbWcsLq+PhfuUs5KGdk7ySlPt4rCVprIcNMa5M7lKD092x+rVjs4ndPAiCCv4w40NN9LGBGZ/byQu/0G4lj2PXd8SiEfKbVSGqEwE537M2R0maP6sbji3olYtFJBJg8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tipDB-0006zp-I1; Fri, 14 Feb 2025 07:30:05 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tipDB-000s8w-0M;
-	Fri, 14 Feb 2025 07:30:05 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tipDB-00EbY2-01;
-	Fri, 14 Feb 2025 07:30:05 +0100
-Date: Fri, 14 Feb 2025 07:30:04 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, marex@denx.de,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3] soc: imx8m: Unregister cpufreq and soc dev in cleanup
- path
-Message-ID: <20250214063004.jvz5vukaxszcucd7@pengutronix.de>
-References: <20241219145029.1776006-1-peng.fan@oss.nxp.com>
- <20250214034923.GA20275@localhost.localdomain>
+	s=arc-20240116; t=1739514638; c=relaxed/simple;
+	bh=sc9N/uNaRNgOeJWUsanP4id4E/Fnl5devE1ySb7Fy94=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qiZ+HKyHNo+ua+wxNJYTHQYeYlQCDFRD5rPVuPbv+DZ2q6bMiDIlunmjhad6a1Me5aMVCN8NBFDyCBU+pTDIBSCyLkwNy0T3KjvthqnI1sVv9ps+MOrYohK4Qh29Ml1ZziIkJV1W0i6HNd9aEmG4ftvRc1cdfZCGPwY+270QhoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQburBFk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D05BC4CED1;
+	Fri, 14 Feb 2025 06:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739514637;
+	bh=sc9N/uNaRNgOeJWUsanP4id4E/Fnl5devE1ySb7Fy94=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dQburBFkFGaghvvgWMBt5at99Dy86yJe20KM+alTJlaayPItw6j6f+VQpiUa07wvy
+	 GIpVCigG9iF4VO1nXP3OBRDd1FVCKmu82en1brOdeKF8Zmdc6rL53vvPhYK+GguHoH
+	 NYHqHD1eSUweGLuCvoPcTaNdViziAB1duGW+sCKaltC/RXhlpYFFJ6cB8bH03rLrJw
+	 IsvbduPfBslf9X3VJhvO1frO57gi2iT9jdnKGSyLhO5dRKOom7r5PrVzGXEscgNpu7
+	 sRd3o8DFjX0uOzP4h8atC0loEF9k92ZiTXcniRvnkE3d3Bj8BrgSqyGaDye53uFG4M
+	 UXnqejim3XIeg==
+Date: Fri, 14 Feb 2025 07:30:27 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/kernel-doc: remove an obscure logic from
+ kernel-doc
+Message-ID: <20250214073027.28aedc63@foz.lan>
+In-Reply-To: <45cec6dc-2071-4d5a-a0bd-8ad895b19000@infradead.org>
+References: <fd3b28dec36ba1668325d6770d4c4754414337fc.1739340170.git.mchehab+huawei@kernel.org>
+	<87wmdt6bv5.fsf@trenco.lwn.net>
+	<20250214032457.6444ee93@foz.lan>
+	<45cec6dc-2071-4d5a-a0bd-8ad895b19000@infradead.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214034923.GA20275@localhost.localdomain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Peng,
+Em Thu, 13 Feb 2025 18:38:47 -0800
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
-On 25-02-14, Peng Fan wrote:
-> Hi Shawn,
+> Hi--
 > 
-> On Thu, Dec 19, 2024 at 10:50:29PM +0800, Peng Fan (OSS) wrote:
-> >From: Peng Fan <peng.fan@nxp.com>
-> >
-> >Unregister the cpufreq device and soc device when resource unwinding,
-> >otherwise there will be warning when do removing test:
-> >sysfs: cannot create duplicate filename '/devices/platform/imx-cpufreq-dt'
-> >CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-rc1-next-20241204
-> >Hardware name: NXP i.MX8MPlus EVK board (DT)
-> >
-> >Fixes: 9cc832d37799 ("soc: imx8m: Probe the SoC driver as platform driver")
-> >Cc: Marco Felsch <m.felsch@pengutronix.de>
-> >Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >---
-> 
-> Any comments?
-> 
-> Thanks,
-> Peng
-> 
-> >
-> >V3:
-> > Per Marco, drop remove function, use devm_add_action and update the patch
-> > title accordingly.
-> >
-> >V2:
-> > Add err check when create the cpufreq platform device
-> > https://lore.kernel.org/all/20241217015826.1374497-1-peng.fan@oss.nxp.com/
-
-This is got lost. Albeit platform_device_unregister() can handle
-IS_ERROR() cases I don't like the fact that we do not return the error
-if there is any during probe. Please see below.
-
-> >
-> > drivers/soc/imx/soc-imx8m.c | 23 +++++++++++++++++++++--
-> > 1 file changed, 21 insertions(+), 2 deletions(-)
-> >
-> >diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
-> >index 8ac7658e3d52..585631b7ae44 100644
-> >--- a/drivers/soc/imx/soc-imx8m.c
-> >+++ b/drivers/soc/imx/soc-imx8m.c
-> >@@ -192,9 +192,20 @@ static __maybe_unused const struct of_device_id imx8_soc_match[] = {
-> > 	devm_kasprintf((dev), GFP_KERNEL, "%d.%d", ((soc_rev) >> 4) & 0xf, (soc_rev) & 0xf) : \
-> > 	"unknown"
+> On 2/13/25 6:24 PM, Mauro Carvalho Chehab wrote:
+> > Em Thu, 13 Feb 2025 09:35:58 -0700
+> > Jonathan Corbet <corbet@lwn.net> escreveu:
+> >   
+> >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> >>  
+> >>> Kernel-doc has an obscure logic that uses an external file
+> >>> to map files via a .tmp_filelist.txt file stored at the current
+> >>> directory. The rationale for such code predates git time,
+> >>> as it was added on Kernel v2.4.5.5, with the following description:
+> >>>
+> >>> 	# 26/05/2001 -         Support for separate source and object trees.
+> >>> 	#              Return error code.
+> >>> 	#              Keith Owens <kaos@ocs.com.au>
+> >>>
+> >>> from commit 396a6123577d ("v2.4.5.4 -> v2.4.5.5") at the historic
+> >>> tree:
+> >>> 	https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
+> >>>
+> >>> Support for separate source and object trees is now done on a different
+> >>> way via make O=<object>.
+> >>>
+> >>> There's no logic to create such file, so it sounds to me that this is
+> >>> just dead code.
+> >>>
+> >>> So, drop it.
+> >>>
+> >>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> >>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> >>> ---
+> >>>  scripts/kernel-doc | 19 +------------------
+> >>>  1 file changed, 1 insertion(+), 18 deletions(-)    
+> >>
+> >> Weird ... I went and looked, and can't find anything that ever created
+> >> that tmp_filelist.txt file; I wonder if this code ever did anything?  
 > > 
-> >+static void imx8m_unregister_soc(void *data)
-> >+{
-> >+	soc_device_unregister(data);
-> >+}
-> >+
-> >+static void imx8m_unregister_cpufreq(void *data)
-> >+{
-> >+	platform_device_unregister(data);
-> >+}
-> >+
-> > static int imx8m_soc_probe(struct platform_device *pdev)
-> > {
-> > 	struct soc_device_attribute *soc_dev_attr;
-> >+	struct platform_device *cpufreq_dev;
-> > 	const struct imx8_soc_data *data;
-> > 	struct device *dev = &pdev->dev;
-> > 	const struct of_device_id *id;
-> >@@ -239,11 +250,19 @@ static int imx8m_soc_probe(struct platform_device *pdev)
-> > 	if (IS_ERR(soc_dev))
-> > 		return PTR_ERR(soc_dev);
+> > I wonder the same ;-) Anyway, better to remove this now, as, if people
+> > complain, it would be easier to revert than after switching to the
+> > Python version.
+> >   
+> >> Don't put that functionality into the Python version :)  
 > > 
-> >+	ret = devm_add_action(dev, imx8m_unregister_soc, soc_dev);
-> >+	if (ret)
-> >+		return ret;
-> >+
-> > 	pr_info("SoC: %s revision %s\n", soc_dev_attr->soc_id,
-> > 		soc_dev_attr->revision);
+> > Yeah, I started implementing it, but it sounded a waste of time, so
+> > I dropped it from the RFC versions. It sounded too complex for people
+> > to maintain a separate tmp file when make O=dir would do it on a much
+> > better and automated way.
 > > 
-> >-	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
-> >-		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
-> >+	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT)) {
-> >+		cpufreq_dev = platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
-		if (IS_ERROR(cpufreq_dev))
-			return dev_err_probe(dev, "Failed to imx-cpufreq-dev device\n",
-					     PTR_ERR(cpufreq_dev));
-
-Regards,
-  Marco
-
-> >+		ret = devm_add_action(dev, imx8m_unregister_cpufreq, cpufreq_dev);
-> >+		if (ret)
-> >+			return ret;
-> >+	}
+> > -
 > > 
-> > 	return 0;
-> > }
-> >-- 
-> >2.37.1
-> >
-> >
+> > With regards to the Python transition, since our Makefile allows
+> > switching to a different script since ever[1], I'm playing with 
+> > the idea of sending a patch series with:
+> > 
+> > Patch 1: 
+> >   - drops Sphinx version check from both kerneldoc 
+> >     (-sphinx-version parameter) and the corresponding Sphinx extension;
+> >   
 > 
+> It's currently scripts/kernel-doc. Are you planning to change it to
+> scripts/kerneldoc and break other scripts and makefiles?
+
+No, the idea is to keep it as kernel-doc.
+
+I always confuse the names as we have both, depending on where you
+look at:
+	
+	- scripts/kernel-doc
+	- Documentation/sphinx/kerneldoc.py
+
+The Python version was written to support all command-line parameters
+as the original one - although I introduced both a single line and a
+two dash alternative.
+
+It also expects the file name(s) to be after the parameters, just like
+kernel-doc.
+
+I just changed the logger formatter to be similar to what we have
+on kernel-doc:
+
+	Warning: <msg>
+
+So, I expect that such change will cause minimal impact on existing
+scripts.
+
+Thanks,
+Mauro
 
