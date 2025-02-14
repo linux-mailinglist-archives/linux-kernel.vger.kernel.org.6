@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-515779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B21A368F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:15:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEF1A368EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4F81896411
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992D33B24A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72A41FCFCA;
-	Fri, 14 Feb 2025 23:15:02 +0000 (UTC)
-Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C81FCD0C;
+	Fri, 14 Feb 2025 23:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="agIi6qRj"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4FC1FC7C1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96BD1A83F2;
+	Fri, 14 Feb 2025 23:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739574902; cv=none; b=ljI2R4H/DIgX9+GGEF49p3ju/QYv9OxJxEQZwCn5fMVWn3szV1oD4M+buHTFSnPA/wNFFyivg1x0g/Qu9n1pxhNJYUOkcUDsDqHMo3VSgdd5KAONxcO3xotJmMKd26vf1UbsD3SAsG7cV1aDB+pT70evLTa2SL+Q9/PFi7jIfE8=
+	t=1739574887; cv=none; b=tfRjPQ1c3B7D2AmdTl74nXhGCpjaNLPDNX/c8bdsafl1j2CMV2gFtj5zzvT5OgOmIO4vOt2XFEhET8G6DOza+We64eYAHjUzFjZvqOLrD6b6UCF9Ew6NvCtSwRj06tgRz/nbT5Cd4gAGfdgpyghDE5SWav3QnIfJhbMcGuiQ4Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739574902; c=relaxed/simple;
-	bh=4X471InxMmtfF4A7bgweUnPLjIAku6Oe2oJBgud8gCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T0P+3IEk7TW4dC93h9Q04Nv4elCFhmNYaNC9bDO/45LcHUe5LP7RPkK/+4Qj/pB/nXNbm/gzpFXmhS1XOXK4aCAwYputPX2IUp8c6UI/oCAMev2pJnrm+aziY5HhE5PguDcks4cMMKUtMkc/bmPK5XMPoM/I3ieDW02X59qqEYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.48.83])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67AFCE3E00003E80; Fri, 15 Feb 2025 07:14:09 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 335883408230
-X-SMAIL-UIID: D2D8C46820C44DE5B594D046E3844EE2-20250215-071409-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
-Date: Sat, 15 Feb 2025 07:13:53 +0800
-Message-ID: <20250214231356.2285-1-hdanton@sina.com>
-In-Reply-To: <67aee51d.050a0220.21dd3.002f.GAE@google.com>
-References: 
+	s=arc-20240116; t=1739574887; c=relaxed/simple;
+	bh=1GnOUs9v0zeK9+TBQU6oA2dEewTonpB1L5pwtVU3N6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aw8fqsFp8oAWYwrc+nGn6E1Ya/fVUpcPOPS3xTp4Q+7lpj8VnwUtkLwBBRMkI5UNZtndWUsDJnjpQgDW/oFJRJOvNrwYCcCO0eICI0O7ABLT9Qjww4qDxlC7euWnscTnLDzizKi/aD6vrX9HsvGdG36qRvSRJH3iWlpxVy7dGTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=agIi6qRj; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=lrMbF6SKpzRsZcdU5n3Dhh4SWTlhmlrTpgLKCFyuhaE=; b=agIi6qRjp/+97QHQ6Zdgmr9Rwm
+	VSqMZ1gHLlGHfexaWHWdMJ5GWLuKRvkmnu1FPpVjV9mOsrH9p/qeDI+gtiCAZOuxujn/8jsc6YHvJ
+	O5eMBNlfyB2xGczQ1otEUA7ClLhAj1Ruhce+hbYXi0eN8WsKruHs/AWB74HgYIla3XHM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tj4tH-00EDSy-1v; Sat, 15 Feb 2025 00:14:35 +0100
+Date: Sat, 15 Feb 2025 00:14:35 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: cadence: macb: Report standard stats
+Message-ID: <19e578ec-b71d-4b22-b1db-016f19c5801d@lunn.ch>
+References: <20250214212703.2618652-1-sean.anderson@linux.dev>
+ <20250214212703.2618652-3-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214212703.2618652-3-sean.anderson@linux.dev>
 
-On Thu, 13 Feb 2025 22:39:25 -0800
-> syzbot found the following issue on:
-> 
-> HEAD commit:    69b54314c975 Merge tag 'kbuild-fixes-v6.14' of git://git.k..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13aafdf8580000
+> +static const struct ethtool_rmon_hist_range gem_rmon_ranges[] = {
+> +	{   64,    64 },
+> +	{   65,   127 },
+> +	{  128,   255 },
+> +	{  256,   511 },
+> +	{  512,  1023 },
+> +	{ 1024,  1518 },
+> +	{ 1519, 16384 },
+> +	{ },
+> +};
 
-#syz test upstream   master
+static const struct ethtool_rmon_hist_range a5psw_rmon_ranges[] = {
+	{ 0, 64 },
+	{ 65, 127 },
+	{ 128, 255 },
+	{ 256, 511 },
+	{ 512, 1023 },
+	{ 1024, 1518 },
+	{ 1519, A5PSW_MAX_MTU },
+	{}
+};
 
---- x/fs/netfs/read_collect.c
-+++ y/fs/netfs/read_collect.c
-@@ -289,6 +289,10 @@ reassess:
- 		/* Remove if completely consumed. */
- 		stream->source = front->source;
- 		spin_lock(&rreq->lock);
-+		if (front != stream->front) {
-+			spin_unlock(&rreq->lock);
-+			goto reassess;
-+		}
- 
- 		remove = front;
- 		trace_netfs_sreq(front, netfs_sreq_trace_discard);
-@@ -345,6 +349,7 @@ static void netfs_rreq_assess_dio(struct
- 	struct netfs_io_subrequest *subreq;
- 	struct netfs_io_stream *stream = &rreq->io_streams[0];
- 	unsigned int i;
-+	struct kiocb *iocb = NULL;
- 
- 	/* Collect unbuffered reads and direct reads, adding up the transfer
- 	 * sizes until we find the first short or failed subrequest.
-@@ -369,12 +374,16 @@ static void netfs_rreq_assess_dio(struct
- 		}
- 	}
- 
-+	spin_lock(&rreq->lock);
- 	if (rreq->iocb) {
- 		rreq->iocb->ki_pos += rreq->transferred;
- 		if (rreq->iocb->ki_complete)
--			rreq->iocb->ki_complete(
--				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
-+			iocb = rreq->iocb;
-+		rreq->iocb = NULL;
- 	}
-+	spin_unlock(&rreq->lock);
-+	if (iocb)
-+		iocb->ki_complete(iocb, rreq->error ? rreq->error : rreq->transferred);
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
- 	if (rreq->origin == NETFS_DIO_READ)
---
+static const struct ethtool_rmon_hist_range axienet_rmon_ranges[] = {
+        {   64,    64 },
+        {   65,   127 },
+        {  128,   255 },
+        {  256,   511 },
+        {  512,  1023 },
+        { 1024,  1518 },
+        { 1519, 16384 },
+        { },
+};
+
+static const struct ethtool_rmon_hist_range bcmasp_rmon_ranges[] = {
+        {    0,   64},
+        {   65,  127},
+        {  128,  255},
+        {  256,  511},
+        {  512, 1023},
+        { 1024, 1518},
+        { 1519, 1522},
+        {}
+};
+
+static const struct ethtool_rmon_hist_range mlxsw_rmon_ranges[] = {
+        {    0,    64 },
+        {   65,   127 },
+        {  128,   255 },
+        {  256,   511 },
+        {  512,  1023 },
+        { 1024,  1518 },
+        { 1519,  2047 },
+        { 2048,  4095 },
+        { 4096,  8191 },
+        { 8192, 10239 },
+        {}
+};
+
+static const struct ethtool_rmon_hist_range mlx5e_rmon_ranges[] = {
+        {    0,    64 },
+        {   65,   127 },
+        {  128,   255 },
+        {  256,   511 },
+        {  512,  1023 },
+        { 1024,  1518 },
+        { 1519,  2047 },
+        { 2048,  4095 },
+        { 4096,  8191 },
+        { 8192, 10239 },
+        {}
+};
+
+Could we maybe have one central table which drivers share? I assume
+IETF defined these bands as part or RMON?
+
+	Andrew
 
