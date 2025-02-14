@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-514444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64ADFA3571A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:31:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0190CA3571E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762533AD34F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:31:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9ED17A6B93
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D191200BA8;
-	Fri, 14 Feb 2025 06:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26057202C47;
+	Fri, 14 Feb 2025 06:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X8YU8RP5"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GTq+bIyv"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E3917E;
-	Fri, 14 Feb 2025 06:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F3A17E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514675; cv=none; b=WY4WHQBwXHAprzlpZGehqE7vnnk/EYk4vboCpygb2W6RCFW1jzBhr7VGJ7iknoHUGKF/UABlhdNeItmmgVTDyNfcWMa317WH95I9C4yti8/2d+wRRV1V7+KexfeF6hPzIGc4Ay5o84DjCru+gX+X7wP6gwlCSmRiUTw3JSoT5ho=
+	t=1739514683; cv=none; b=kMVc4xqNcd5X2xm4LqEmAaeIA9QeCEPqPRz7/UPM+VCNqkRakUHrHO0KhnyPkKPvZffRkF14VupCIdEe7/Xlxjj1MsSOhFT7SxSqavedUnEhsGoTqTQ0i+DDBeFT+YHc+M0VcTRUCw9DKJ2THYsBD4DcQaWL0SajbJYTGFhueHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514675; c=relaxed/simple;
-	bh=A1FbOq1iows2Sv/bNsx+GZoO3j1Yqqb3gf7/FDhFvPg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cw9snFdpD80dIOmou0618CJ6JsvVpynECeIFO9ujB+CtHqvcwAi6mUgvZFRgSdYHY8cBFOYP6F1p8j8K5UUHPpcd38z6O2gOZGTxAB23edYg9tCJ4/8bi9lSqMs++rbqezN5hA2xF9bDoaxBmv7Pz/RejfOW6l0DwtTIjR9Z+Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X8YU8RP5; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6V0kt899872
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 00:31:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739514660;
-	bh=6Jta8SCvtFAKEEUc/90d7iKXUlrgbGqW9xLB321U+JU=;
-	h=From:To:CC:Subject:Date;
-	b=X8YU8RP5LuZm/PU/X+upariCwGLkPzb7L2QxScspfwpAGYtNchPKq2QFn4vS5wZyP
-	 LypUpoDqaKBgeCSTpS83Cn5gMMmU/72C0cYFGNoq+/5azEq/X/JAIJzlvVc2AYlh43
-	 KrHFX5oHrRpqfuZl7MaHe8nh4yoBYwbIcRq3ePEA=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6V0mG019376
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Feb 2025 00:31:00 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Feb 2025 00:30:59 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Feb 2025 00:31:00 -0600
-Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51E6UtCc108646;
-	Fri, 14 Feb 2025 00:30:56 -0600
-From: Baojun Xu <baojun.xu@ti.com>
-To: <jwboyer@kernel.org>
-CC: <shenghao-ding@ti.com>, <linux-firmware@kernel.org>, <13916275206@139.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Baojun Xu <baojun.xu@ti.com>
-Subject: [PATCH v1] ASoC: tas2781: Change regbin firmwares for single device
-Date: Fri, 14 Feb 2025 14:30:30 +0800
-Message-ID: <20250214063030.6396-1-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1739514683; c=relaxed/simple;
+	bh=bd3Ix1OlxqfISy3/YXIyFe4/qznReagdpNKuiCq9fzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jXLB2Kf8tdzKc+no2dZmbcDQDHNVYN3vlkqN238flJwBAO5aVJi6FFSh7baVQxrqQNe62jlwMwiRsboawTrgzcZl/0qSfhqeK+x9cUIcbMe/KwEKjf4L0dVHYTFbvG6NVldzDvK1KKoBqQrM00IQVbmURtd3kBDdP5/gXPI/QWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GTq+bIyv; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dea50ee572so2465748a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:31:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739514680; x=1740119480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RS4NhYdSKIq0ZCVoddU4UM3ba+/5N5wTfgewbJrHpVM=;
+        b=GTq+bIyvVaCw26jlpZ9dhBnWI1Scr3lEuVZhWSEHpar+mQi4qnTNxJiM18DPvM44V5
+         vLaw7lAvoZ5HT3MgnNDZ+q8apl0N2jj1zU22I8OME9DaKcylJ6ZnlQj+wFErF/xYxlf0
+         hdEKG9Q5ZagUhG2331Ixj6hSuLvKgOUuLP4GFD6J7846BqgHTFxwIyALqhU2rBb6dQw1
+         1YHCAthQuli0sOuix8qqKsIbotyIr9QvNu5Ubrl6/0NtYxoTi6FaRsslYgaKK1BAf7ww
+         B7xcpEItFgdl8g3zGMsYD09bL3PBGyl2OpQaVJevPjB0hKqs19dtkStQyxAIOs6c81ji
+         OyqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739514680; x=1740119480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RS4NhYdSKIq0ZCVoddU4UM3ba+/5N5wTfgewbJrHpVM=;
+        b=H9nxrKxg/8uQlU9B+6jYw3j/p8jFHUQT9Ny2gEnavGTFZ1QyiPWKLk/KfsI8xXPbCS
+         q5e6JcRQu3fN/zJDmc2/Iw0EowSIZYenHKZDjmrX+gUGf2kta62MXn4dO8YJZ6hWMbpH
+         Js98U0S0UZifhraP7HaV1xzKA5JoXJ6SE+dleqaSCr3LvFCwMxQX8az8zUNcpdwhPdiy
+         R07wyGokIJtwv0fU4lKOSyOLyCHkVFcAkn1uEBxNTBL0+xEadAv7ueis+gfO3MweGY+P
+         fy5Fmxozkw7oU3XhzNdJcdcSoz/e7+ScBKmTmKGmnKWqOuS+D1Wfu77ZvcUfv/ky8ViL
+         7ozA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPkCnljv1pTLEb6ftYXW4VAbdAdCml3u24xwMqqK4KuopvvJtQcdtSA85yzBeUjjRC5kZ7yzW4RnY9jCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFi6mK2JuqzS92Qqxm9GI8lmALz9mxmnWCTWuPNUjT0owFPoW9
+	gGXDgWT4mcm9Vc0qKCrP3Ckr93POljg4VwV75v8ULHE788KFo0DaqvkFGPD5fJc=
+X-Gm-Gg: ASbGncu58GT7pkWKi7JBp83dkcdExVePf+VZFpLfMFwVwMy/QxM+Pu/ytdS9QuksugY
+	8YQ8Ao4JZUC2+9u8Pf3UKqhoTw+jtXSnIuYIBKjldL/d61WaXvcY+DOO4ie6pfuI996xdjzhHZd
+	BgbldtbA7LqaDfSmyhJhwAThSMn2WCIq7PjneCC2QXrZL9YuVCoq/oFzGT2i/w3KXWUBieIvBn6
+	iII/RTKQCT8Q3JrrsAb9O5xzC1oqYLxzYC2XxlTLHXq6cDZLxyFQexoVYFDNkRU7qaK33s2p6u3
+	medZqq6r89IXBI5E+Bzkf6nz
+X-Google-Smtp-Source: AGHT+IEN/RRE5hxQ5xNZNtT7rJsPTV3GPjWwm8qrFkScK0MAqhU1b09AXyINMIOW8g0Zg6OABiY4tw==
+X-Received: by 2002:a17:907:3da8:b0:aa6:79fa:b47d with SMTP id a640c23a62f3a-ab7f336d454mr924285066b.1.1739514680163;
+        Thu, 13 Feb 2025 22:31:20 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece288e38sm2350948a12.79.2025.02.13.22.31.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 22:31:18 -0800 (PST)
+Message-ID: <49ce4bf7-fec2-4d1a-aff0-e342b31c4f57@linaro.org>
+Date: Fri, 14 Feb 2025 06:31:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] spi: s3c64xx: add support exynos990-spi to new
+ port config data
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, andi.shyti@kernel.org,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250213204044.660-1-wachiturroxd150@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250213204044.660-1-wachiturroxd150@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Change regbin firmware for single device.
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
----
- ti/tas2781/TXNW2781RCA0.bin | Bin 868 -> 812 bytes
- ti/tas2781/TXNW2781RCA1.bin | Bin 868 -> 812 bytes
- 2 files changed, 0 insertions(+), 0 deletions(-)
 
-diff --git a/ti/tas2781/TXNW2781RCA0.bin b/ti/tas2781/TXNW2781RCA0.bin
-index 9718640b529e324bc5975d7d66bcfbdef8d4ad6e..49d64fb0912acc339f2b573997898c31a89e28c5 100644
-GIT binary patch
-literal 812
-zcmZQzVAiQr6Ubs<U}Obi#`JXugcv~#1~^~_vT}g<3=m&{i;f_Mfq|~4QLwI|SyE<+
-zZfbHyeo<;#YEf!la;k1|PJW325kbMkzyc0Y4xm~_Fl1n2U|?o+1M-o@qznwfb|oj~
-zWF{3QmSpDV5n(#25|CXtfI=Byvl$uK7#R4DFfi~tFfi}}9U;KNz#!(tz$ktK=mZu9
-z7O?Xf!E6o*h)Ez9a>y`1#55Ry8X;^h4~RTSA6EoK9HbVPUyQ(hNvbSJEG~xVB$WjD
-W#So|ol>Rt?HnC&(3zGsp`~v_rY$nG5
+On 2/13/25 8:40 PM, Denzeel Oliva wrote:
+> - Added a default "fifo_depth = 64" to prevent crashes when "fifo-depth"
+>   is missing in the device tree (avoids divide-by-zero issues).
 
-literal 868
-zcmZQzU`{#U%krFofsqx68Pj~{%w_~J7~p^z$m#*&J3xE`E;@o3Da8f4hGt2bCA!5q
-z`6UMA_?(H6g>eB;qXrN&GcW=nL(EJD76y9;1}-Te4;c2mKrt}~1_nN$5`G|NVqj!u
-z1aUZk7^DLz&&1?u6byAsYH~(?QEFOhQEFatDk&}lxn&8^%nBgp0-6epU%n$iI~~y6
-z!~$`X0FVZ{i&6Xp&`B%|EMWgLg4rArKqG(v<Tef&kds*$I5Zd>Kw=;^mj{RiWk*27
-zA^yPXx1`E~#NuLz7BWeot&EjGy(K`*33eAKDKmrp2@FTLKW{QHBnSY#uLlozeEuWB
-JUkq5{3;=u;DgFQe
+no, you shouldn't use fifo_depth as a fallback, it's misleading.
+fifo_depth shall be used only if all your SPI instances use the same
+FIFO size. If that's not the case, as in yours, you specify the FIFO
+depth via DT.
 
-diff --git a/ti/tas2781/TXNW2781RCA1.bin b/ti/tas2781/TXNW2781RCA1.bin
-index f92631f8477b78cd8714e9941fa57d8346323df8..49d64fb0912acc339f2b573997898c31a89e28c5 100644
-GIT binary patch
-literal 812
-zcmZQzVAiQr6Ubs<U}Obi#`JXugcv~#1~^~_vT}g<3=m&{i;f_Mfq|~4QLwI|SyE<+
-zZfbHyeo<;#YEf!la;k1|PJW325kbMkzyc0Y4xm~_Fl1n2U|?o+1M-o@qznwfb|oj~
-zWF{3QmSpDV5n(#25|CXtfI=Byvl$uK7#R4DFfi~tFfi}}9U;KNz#!(tz$ktK=mZu9
-z7O?Xf!E6o*h)Ez9a>y`1#55Ry8X;^h4~RTSA6EoK9HbVPUyQ(hNvbSJEG~xVB$WjD
-W#So|ol>Rt?HnC&(3zGsp`~v_rY$nG5
+You need to determine whether your IP works with 0 sized FIFOs and if
+not, make the the DT fifo-depth mandatory and check that its value is > 0.
 
-literal 868
-zcmZQzU`}~`QE(3f10yRCGp6~@`OgSqFu(ybkaY)$dw}=`Tyz96JdJ{N4b74=OLS9{
-zGxCd4(^894^O93_i*xcz42TN{CI%M9B|xPWK+MI!$N&sez9S3_{0<BZF*6xh80>+<
-zT0n6Y1_oYW&<g-*F$V@l@e>R{oeV5sTNuG?4he{jj6l^KG7Jzg4F;e=5H^<wL>{D%
-zD*_@8QVUebz|6=8l;i+nkO)YODW$jo>NgU61F-={g8T+@pau{#L(B#H2`C2k6EIzY
-z`~>t51IT)QAja;Nq{@QC;$omQ`2ge=Pym$xF(<?=z@*F!4s)Qtk;0rIK>+AJE4bV6
-Mg*7NFImi!V0F@^x`v3p{
-
--- 
-2.34.1
-
+If the IP works with 0 sized FIFOs, you need to update the driver to
+allow that and let the fifo-depth property optional in DT.
 
