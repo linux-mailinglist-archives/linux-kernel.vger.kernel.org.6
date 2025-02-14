@@ -1,117 +1,176 @@
-Return-Path: <linux-kernel+bounces-514433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD26FA356F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:18:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BEAA356FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2CB1891ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9C43A129A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1966A1FF7DB;
-	Fri, 14 Feb 2025 06:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88AE1FFC72;
+	Fri, 14 Feb 2025 06:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HZQIWECm"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1vOSeLL"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44A118CC15
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A5019007F;
+	Fri, 14 Feb 2025 06:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513915; cv=none; b=Ee6R/Z0bAl1gZjIW+nXgwpI+onO9HC7DzaXkszox8V6KCNv0uExPgRqFJ0jqZqDNN4ha2/8AGlpcg1nWHZlND7yrm3Ynsvd32y43wHvwEMpwhwleoD2lXIIU4e2qIhoYMBfCBdyWSV+CA/OVDO4f/LD27Bp7uL6T888EQIGRD/0=
+	t=1739514080; cv=none; b=gFwcFMHdVGMjkky2ZiyZVJb4K5ixvlj6KdJA9iL5MiZ24XA8DnJ+J2l957b4BKphFVXJ/6hslGdT3htAM41m4mh8LJ6M8sI4v0cjHr3/bItOEnjNieQtgnZE5brh2E1xPJFP7aYBeOd+0RqOc0+LHDT1zYKSri7MC+henTyEJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513915; c=relaxed/simple;
-	bh=0HETSp4pmmvjNN1DgIVpNcce5dCbtglud0p0QHKoMzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cxALgSdsgGnQ1iLlmRDzx/FG8Ooz3syr+vpdKa+obS/93HaL3Bc3lvr6i5Q2s3qZjt9wbsM0qdPWObOawj81JJ3oK+6X+IOSfGLlW/McyxlNGNOe00EAxg1TC3fr6PRCbFBc4PMFQybiyVsWXgXSGHsBfrMr85BfjFWaIZb3ELY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HZQIWECm; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739513904; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PuYGKsFncvAhPtWK3+j5Q+//S+1/fBy7fbKsaBB8yNo=;
-	b=HZQIWECmxcrvvXqsyXrtazfn5p9MWDg7m2gNbVRE2KZh2HjpQkI6alFCazduNTosh/OK0Ch7DZvbHYjmdNo1N43yp7uC2s6WFiNzJ1HUVSo4aIsmsw3n+55katVkxEIYmRgJsmk6yzi/nzzPluKzXMZ4kNnCjmeYuDLRbGQVG/I=
-Received: from 30.221.128.236(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WPPo2Gj_1739513903 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Feb 2025 14:18:24 +0800
-Message-ID: <2d12eb70-5fbe-415b-9970-78af2ab7945c@linux.alibaba.com>
-Date: Fri, 14 Feb 2025 14:18:22 +0800
+	s=arc-20240116; t=1739514080; c=relaxed/simple;
+	bh=NAU3AVm4eV/usC6vbc9yMMvy4cwmwfP9l346LdyuCYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jEFVOM+3X+4f5oEqHDoowuO25q8HTsf2+ZFELxTfEZZ36EJBo3NxyMppkH9qMJ5AggoXAYOs6n3lL/ElyvgXxAQrkGUi/36gJEnVfnK5mkl44r939Bcg7+bAf0k98gFt2ArA7s/kqJguxWrsQ27ND5LN1xLlkq92HC+zjN6AYxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1vOSeLL; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso1741339f8f.0;
+        Thu, 13 Feb 2025 22:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739514074; x=1740118874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RCsOlKlhoB3KyOaKJojj7jOpAy8XUWuEdDWgdN66pjs=;
+        b=h1vOSeLLzG0Gti10pCMFoXbwdgmvo4kvoheOamW43wpJZYP1A3QjICwjsJMFJXFGHs
+         FaD3qcQzmjNItZN5f7RBLsyzAC/g9G7gKph5BJmu6KruFj5mV7oVDqD0AgLeuHWj9Tqq
+         DzDX4ZbMmya92kioFM8D/CIb5hvYe/TVQs0T4T2LB3T8nlAqJR3kPbATXWRsh1FNlkaG
+         PwjzWONMVCQdGJ8HSWDbktZqsg7te0DpDl+PgxIVvuzucn5gcbuOd4Gn8j76oVmLviHL
+         vs1Kmu2G+1Q5GulzPjPBD9ytonzxNOKo5p4XQcdu9PTq5o5C5ToRYJofpEyT3M5ZULn7
+         1s9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739514074; x=1740118874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RCsOlKlhoB3KyOaKJojj7jOpAy8XUWuEdDWgdN66pjs=;
+        b=r/dEGQ6EVvEkeA5oIB+9nFUuW1l6DITXWURmC7EA4jANsvYRIVcID8YzK/g/Zp9vpT
+         tjK0CpmospconEPuEo6pICvJVQLnx58sycj1Fflh9M++jvfHNmSmCW7JhZWtxvtpRGXL
+         II+Xj7GL1lfBIccGWFLuLZOlcAgYFkMt/tifpEqfeubThTxGuMK42rXSH2Hzkgp9HM1G
+         JSOAqxJVAhedv/+oFSypevXf66yqowq0MEsGV93Qn+xtD+M5JD8DEj7DjKJhHHD7C40W
+         OZ1cvLxmXM3ROxW1aRCEtVZVxzFja7NEjB+XGf4bc61MQI0Rf293QKMyHt0iEi6FXukw
+         OKZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDfGoBouiLM6xDfLht//yQIQkMgcrO8uk6cSghCBPkYXaWB6lfN9Sk+rpbzX5DtmcXNtASN5vfM+pG@vger.kernel.org, AJvYcCVQXuBVoE+xHRvrYMCxKiaBiB/ZRYcU/vJzm9h9zr96mFKTPQ+dYciqJfV7WilFfJbFkwWgZq5tJsibEBM=@vger.kernel.org, AJvYcCVTfC1Zvd25q5Vuz54OP7iseyYZXLzp/1WDxECbfPVrp0oT6kHox45EsscZ+z8bW42yas6k5iIMvJ5RecJ7@vger.kernel.org, AJvYcCWs2uVv3u2g/FPBukZaLFoIK+MX+7mKyhuHyWUSoppNY8DchheHJIUVjQmBIj7QRRcWT3I+uG3rmX8h@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLd+hqMtpj5wkYRVKyL2Le/TSKaHhKr6/Q7xPu7/KCaYgBAEgV
+	TbApTM0YhazM+HV11qnZIr5zzL4rvZHtUOpk9CX7P1gArnbO/cKyss9TjzRZKmxCTGl/2qX0kR9
+	hNn8hhE92t+qCOENG1jlqZ4jqYqQ=
+X-Gm-Gg: ASbGncuXCbHhUT59c7sr+V9imUOCPRVYvRXESRQL3Q26z5Zvrf9UYPRLqbRGjKb+1dH
+	MdRQ9pCnQ3+pvozLw6GCqHhHqQfd5B1pN9S/ZPr+1gH4GlSdnLUIMqnLf5dzASGnokM5pyffa8g
+	==
+X-Google-Smtp-Source: AGHT+IG8BOtiCxNf6QI0vU+mnOel6R4Bjz0DlGpwWvpzOVrQGjoe4i+7P8GUXY5Iqx8vx2Br9ut6AYt4WMmQGGBxKHs=
+X-Received: by 2002:a5d:6da9:0:b0:38d:ae1e:2f3c with SMTP id
+ ffacd0b85a97d-38f24f96284mr7091087f8f.25.1739514074226; Thu, 13 Feb 2025
+ 22:21:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: validate l_tree_depth to avoid out-of-bounds
- access
-To: Vasiliy Kovalev <kovalev@altlinux.org>
-Cc: lvc-project@linuxtesting.org,
- syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ocfs2-devel@lists.linux.dev" <ocfs2-devel@lists.linux.dev>,
- Kurt Hackel <kurt.hackel@oracle.com>, Joel Becker <jlbec@evilplan.org>,
- Mark Fasheh <mark@fasheh.com>
-References: <20250213191642.720812-1-kovalev@altlinux.org>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20250213191642.720812-1-kovalev@altlinux.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-2-clamor95@gmail.com>
+ <20250212-unwritten-compile-7011777a11b3@spud> <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
+ <20250213-reflex-earlobe-ebbeaece6fad@spud>
+In-Reply-To: <20250213-reflex-earlobe-ebbeaece6fad@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 14 Feb 2025 08:21:03 +0200
+X-Gm-Features: AWEUYZmVS1XUCLAzw9vAyVc_HXeyFlMuZvE7KiYkZpLOEfJLCqTLk6pkIqA4BQ0
+Message-ID: <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a support
+To: Conor Dooley <conor@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
+	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:15 Cono=
+r Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 =
+Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> > > > AL3000a is an ambient light sensor quite closely related to
+> > > > exising AL3010 and can re-use exising schema for AL3010.
+> > >
+> > > Quite close you say, but the driver is entirely different it seems. H=
+ow
+> > > closely related is the hardware itself?
+> > >
+> >
+> > Well, I can simply duplicate al3010 or al3320a schema if re-using
+> > schema is not allowed. AL3000a has no available datasheet online.
+> > Downstream code for al3000a and al3010 seems to have same principles,
+> > apart from light measurements.
+>
+> It's probably more of a question as to why you're duplicating the driver
+> for them, rather than telling you not to put both bindings together.
+> That said, information on what's actually different is helpful in the
+> binding, to explain why you're not using a fallback compatible etc.
+>
 
+Quoting writing-bindings.rst:
+DON'T refer to Linux or "device driver" in bindings. Bindings should
+be based on what the hardware has, not what an OS and driver currently
+support.
 
-On 2025/2/14 03:16, Vasiliy Kovalev wrote:
-> The l_tree_depth field in struct ocfs2_extent_list is defined
-> as __le16, but according to the comments in the structure
-> definition, the high 8 bits must not be used, meaning its
-> maximum valid value is 255.
-> 
-> Add a check to prevent out-of-bounds access if l_tree_depth
-> has an invalid value, which may occur when reading from a
-> corrupted mounted disk [1].
-> 
-> Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
-> Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd [1]
-> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> ---
->  fs/ocfs2/extent_map.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-> index 930150ed5db15..0d9c25fdec029 100644
-> --- a/fs/ocfs2/extent_map.c
-> +++ b/fs/ocfs2/extent_map.c
-> @@ -415,6 +415,15 @@ static int ocfs2_get_clusters_nocache(struct inode *inode,
->  	tree_height = le16_to_cpu(el->l_tree_depth);
->  
->  	if (tree_height > 0) {
-> +		if (unlikely(tree_height > 255)) {
+From all available data, hw configuration of al3000a closely matches
+al3010 and seems to be part of same sensor lineup. It is not
+prohibited to add new compatibles to existing schema. Schema does not
+take in account way of processing data generated by sensor and this is
+the main difference between al3000a and al3010
 
-In fact we won't allow larger tree depth.
-IIRC, it is OCFS2_MAX_PATH_DEPTH, refer ocfs2_new_path().
-BTW, I'd like add this check in __ocfs2_find_path() instead.
-
-> +			ocfs2_error(inode->i_sb,
-> +				    "Inode %lu has too large l_tree_depth=%u in leaf block %llu\n",
-
-It's not leaf, but root.
-
-Thanks,
-Joseph
-
-> +				    inode->i_ino, tree_height,
-> +				    (unsigned long long)di_bh->b_blocknr);
-> +			ret = -EROFS;
-> +			goto out;
-> +		}
-> +
->  		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, v_cluster,
->  				      &eb_bh);
->  		if (ret) {
-
+> >
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++=
+++--
+> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,=
+al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
+yaml
+> > > > index a3a979553e32..6db4dfd5aa6c 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
+yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
+yaml
+> > > > @@ -4,14 +4,16 @@
+> > > >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml=
+#
+> > > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > >
+> > > > -title: Dyna-Image AL3010 sensor
+> > > > +title: Dyna-Image AL3000a/AL3010 sensor
+> > > >
+> > > >  maintainers:
+> > > >    - David Heidelberg <david@ixit.cz>
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    const: dynaimage,al3010
+> > > > +    enum:
+> > > > +      - dynaimage,al3010
+> > > > +      - dynaimage,al3000a
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > --
+> > > > 2.43.0
+> > > >
 
