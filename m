@@ -1,117 +1,240 @@
-Return-Path: <linux-kernel+bounces-514290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8F1A35528
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:02:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74429A3552D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BCA16A540
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389C03AC309
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BA318EA2;
-	Fri, 14 Feb 2025 03:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA59815198E;
+	Fri, 14 Feb 2025 03:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6DfKkJe"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GRwzHSOw"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AA7376F1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9E82753FD
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739502171; cv=none; b=UiyhHBhZHWq3Y7oFWrjqzielJPLodh5LfFWpM9lSHjK0LllJQOYj3iEE6wpJ6piTL/jJtYVAwrZ1naCGdYulZ3KGusWFp+PSNglR5oAwWR1Oqc0cbWo+tksP7wDSNQqwfSzmpcBX/ZTBYL6OtMYjt5WCDfcNbSIC6e99ntLoE1w=
+	t=1739502338; cv=none; b=aXHUh70PDBadDpvsm33UaFFJseWH2zOSujNeGNxcCGsQ6nNB2M7st1qDlvlc1cfArEV8IQJa/HfCiEy/uLXFVOAnMw6OXRxdO+4lgMYZnxZdQVUd+AFnkzVS/+qv5mXDQMB0aqu9KB92BzlfdC1il7Md3EryXlQHcnfIArr5rSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739502171; c=relaxed/simple;
-	bh=310SCreLOWjVMoQwtab8Ic7phC4zW26IofrQVnTjjNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FV0kFoS8A/m4xY6eDMFDwgaTn/lAic3DtDD1I5oFJUN8MO5cJ48aD5PAzM7GtBCTnfkX3LAw39PxmS2x3IndeDnTzBzXiMC5G/pOvzK//+CRHYJy3Vtja1gFBbFizemom8nL6AL310aVpA37HcEgohondG57khxeBqiAMQlA1yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z6DfKkJe; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5450c8b5b3aso2648242e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:02:49 -0800 (PST)
+	s=arc-20240116; t=1739502338; c=relaxed/simple;
+	bh=TJDCSBAj2ec3338N/q1YZZCvJ2Une4i1PCUFYWpwQNY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XnXoYdVLwBzo1HumfXdHDCUpVMAmer75noClJGE4CQ6TMK4MSBXcXavbIl8g0vU1GTq3w8k3SzfaXMIM5/fGqZ6GItlCQQFoV2ZYa1iuYZxwX8mMsJ/STazQcBaXGkrCJx5j1BLxCaridDVetrxri4DL4f+UiyYdyR+PN3OVi/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GRwzHSOw; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fa7465baceso3241292a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:05:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739502168; x=1740106968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YMXPC0n9S8Wq9vfM8cZ2cyfmYZ/PuB3p3mPS4Blfh8I=;
-        b=Z6DfKkJeoEr2ShQFHS4sNa/MMjw77/qdh5KWqTCSdz2vkve9jlaOLTMEk/S2kLku7G
-         8zOuJGO/GVhIIvpce/sH9XDbGFwD/fD6jSizTu08j8qxFZ3Ww2xuex3C/kEx+/EqlHuk
-         7Pa4H2fAeW5h0MfidjbuTbkFlD530mMmSEiA1WS1H1prYACqIk1ynBfIJKMcchyqq9oW
-         v0u932dGcDPD44GJ+inuDilzPKepUltKhvU8be7VU4SC4kPfKNYKVvP+NRsMoAe4SFDo
-         JaI4Hw9L9wiTjMYiGs4WZUMuIEc2Dzj3t6C1lpl2a9UIeOrCyk5ujmgMPN/XBbfghJUR
-         eGlw==
+        d=bytedance.com; s=google; t=1739502334; x=1740107134; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=880EogUQ7YhTtxOXOr4zFxC4yPI4QQKvoHhCveXLots=;
+        b=GRwzHSOwGUOCdTx1eJgNHclXW8qxNa8otx49Y24oxx94G8lZUn6Rn94o/o/Jrwh+eW
+         SjvTdrdlQwRixDeUKAFs05674s+hwHbNFe/WNZ3MtsTBwStmePCc/O1l04oXGNM1WFVa
+         P+BRcL8BR/wl3AhwVtVyl2T3cYiaOq39l3H+7bR1lEntl/GcN3B+yU315gyGlPcC3/CZ
+         R8X4uv+FxNzdSjIGXhnOXstWALCXxOY2TwuayPdVqzSZ0a/M+ouWeMp7A/70mRFEUrUR
+         dpao/Y6NpUAPTVIkMHsck9wWXEuIqdmb2l15PP0bLAlqsOIz/A5zkswpA0u3fWgi7kxI
+         69Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739502168; x=1740106968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YMXPC0n9S8Wq9vfM8cZ2cyfmYZ/PuB3p3mPS4Blfh8I=;
-        b=jM1JNy9qZeDDpVxMVHT1whXkVTqdnFLPh/cgRUxtbi7vyqOdAElejaKUZb8eS9MuM0
-         p/ck/CBjtQlZqzg0ove3bPt279avEi3BELIBO/XfmT9YUKoEjCqEVUk3uC+UrbHLdBXK
-         t6JKTAUu3EIrBkvTqNEKud1agc08esPiu3i90uz90Ty2MoImicShCwPxVUD1AJY1U9yE
-         JdpVGaZkvnFY4P0FC8YvIS8OVU9M0a8r94d6dIP0Gb+Bn7kIdnO/DxtfABxYO1JqJdUi
-         6UJO3uQWOpsbhSKT7mxcTzPQByueeTHsso5Sfk0fP5oSOQzASxPKYRZ0rg5eeXogmx9h
-         AvPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWybzPiVXfJqg4niGqGXTJ0CJK3EbMEUaLyuJioW0XGxgrp0e2Sn30rjdflZW4rBU4FocPzb/xmvFuOwkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5kq2g7yOJ0/w5XRBb52bryPTPDQttbH9vJ6ii52JJbiQs3dhP
-	Qi7FpUuePpi9i8poxDWrKtzhRhCzsGYR8xajmGTgPZb+JRbwxd2K2V6kzZf+wi8=
-X-Gm-Gg: ASbGnct+AfADWl5gq8djmtyLcTkdNjSxfxGU4YayhLV9GskInisOFA2FJxAM28YKBmh
-	OUm7bsBskvIQhskzDsVuOuzWNYQVkjmVvOOfOCRfijR3XBvAs6YeKNVV4E56hyrpkwWAk4CbfaW
-	NIfem4KenVdEpu3wvaZHF6dym5KDNWo1xHI7zH+BqGhTtx7iGRMR17UpFHLQ4X+xO8atenjRzuP
-	TDizqXbN8mJ/jcO3gjhLJNl1ztH1yPOrXodp1sW3xfLAvHGR5K5V8QTdWpkgKx4nTgFJKLuS6sw
-	B2w0UQFP1NGJcG83z2T+ESuaz3+TMshuW6oy24p0YS+GXXAffrNjeMDNOeeKsBbGUdvg5ic=
-X-Google-Smtp-Source: AGHT+IEiisR2Dr3bIqWPVy/kYxhsVVznWxSw11t3tOyaPR+gHNxORbGD6+GOA3VnDVeXzhuCObwtWg==
-X-Received: by 2002:a05:6512:e97:b0:545:2a89:5673 with SMTP id 2adb3069b0e04-5452a897ec3mr41274e87.9.1739502167443;
-        Thu, 13 Feb 2025 19:02:47 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f09ab7dsm370613e87.61.2025.02.13.19.02.45
+        d=1e100.net; s=20230601; t=1739502334; x=1740107134;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=880EogUQ7YhTtxOXOr4zFxC4yPI4QQKvoHhCveXLots=;
+        b=i0wTgAQ5ly7ZlXI6g7noXPLGa+Lx7iHEQ9VadgURTDfKiP6jFAQItivFNeLewgNArV
+         ue/42OlH5UQtEOKUqCbNYgL5TByJdNYzqkPLoAaf8oaw46/9vqk7V64cWOgyKq4ih480
+         vK5JodoyCCbeHAbE6Otf8pk65GMwmVHAL6yrwOTML2tWGjm1+jx10/cPRpSElgggdPrf
+         X3+K63YDJZmRcfV0iADC413OFGFF40qxsXTcO21DFcILm8X9zoSUIWiAgEC+OAr8JL2U
+         qa+Ia5If+fnCOkOdbc84xYC1nc7N0tUh0eiMKeUSxTV1yBf4qIZhs8Lo7u8Oh2kScuSn
+         8jFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVX/yrA2H+V9UDgVMiHR7N789pUFUdRMVAE/eCiYpnPwPOYR3VIoVhoEdE3lc6+jsp2lfOwg/UBRxtnHVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmDBQpoxabxdiqEbZhu0YAmu9tf/KGrxEixHSD9a4vvqqEYS7Y
+	Hl7Qy3VDE/e6c0Z5fGETJbjv8XmjEQvCfa9b8woNecfIk2mPRftLYFJgpL3dJSo=
+X-Gm-Gg: ASbGnctCoLYUF9cLwky+huCmzKflbgjRF9r/xsr/fs2GE87Url45KvvY8TyrOR849Cq
+	TNtEjuUprDuGHoR55mDNLbZ/6erEvKxwC3nk691SEaM5YNgGNOHHKOnbzLqbLS3opMSxSg5v3WR
+	dP9NGetiFHbKlO8cHUTWygTkio69Pp4kiqgvvIzee/WjinwgmMjP+0uQhOj2QsJ0GJRRWcgz4cs
+	3e2rh+9GZ2fe6I2MfO0nwJhg7pZrFid0i6mcHtmEBe4QWfFP7WMiCKOtkjnDwcyrs/Qj+QOnEuh
+	49I3/j/bq5i5V3Qfnio4APOGVDocq1542/6rSMqvFqN0Ti/XnVkNhMBi
+X-Google-Smtp-Source: AGHT+IE0j4ifNKT9H6YLxFTZoD5WzE6IGo9wOiQNtVXNtqnV2ixJQoeneDIT/l4UNMn6vQM3UgH1KQ==
+X-Received: by 2002:a05:6a20:431b:b0:1ee:6032:b1e9 with SMTP id adf61e73a8af0-1ee6b360aa3mr9894032637.21.1739502334088;
+        Thu, 13 Feb 2025 19:05:34 -0800 (PST)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568a78sm2130486b3a.55.2025.02.13.19.05.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 19:02:46 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:02:43 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rudraksha Gupta <guptarud@gmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sam Day <me@samcday.com>
-Subject: Re: [PATCH v2] ARM: dts: qcom: msm8960: Add BAM
-Message-ID: <v5eipkz7daurxueft66f5kxzm7fnjamtzivzoldztxjy2f7vbv@2ju4jvcrpefc>
-References: <20250209-expressatt-bam-v2-1-e6c01c5d8292@gmail.com>
- <e0ef29dd-afe4-4ad7-95db-d21326744c92@oss.qualcomm.com>
- <CABhZbsXo69FL-xUfg3a20RybO_uRmsOKyMJ2w3qnpk+8pYyUqw@mail.gmail.com>
- <e2b31450-c428-43c3-b25c-3ec130171011@oss.qualcomm.com>
- <CABhZbsVUY5n3bL-vbzO-xdDH6amC7FYmZHuRTh3Cb3OiQSa-3Q@mail.gmail.com>
+        Thu, 13 Feb 2025 19:05:33 -0800 (PST)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: linux@armlinux.org.uk,
+	ezra@easyb.ch,
+	david@redhat.com,
+	hughd@google.com,
+	ryan.roberts@arm.com,
+	akpm@linux-foundation.org,
+	muchun.song@linux.dev
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Ezra Buehler <ezra.buehler@husqvarnagroup.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] arm: pgtable: fix NULL pointer dereference issue
+Date: Fri, 14 Feb 2025 11:03:49 +0800
+Message-Id: <20250214030349.45524-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABhZbsVUY5n3bL-vbzO-xdDH6amC7FYmZHuRTh3Cb3OiQSa-3Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 05:25:58PM -0800, Rudraksha Gupta wrote:
-> > Did you keep your changes that shortened the sd controllers address space?
-> 
-> No, I changed sdcc3, sdcc3bam, sdcc1, sdcc1bam from 0x2000 to 0x4000
-> (2nd param of reg) as you requested, however, I got a splat.
-> 
-> Please let me know if I did anything wrong. Thanks.
+When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
+parameter is NULL, which will cause a NULL pointer dereference issue in
+adjust_pte():
 
-Konrad asked you to increase the size of the BAM devices. You've
-increased it for both BAM and SDCC controllers. Please revert the size
-of the arm,pl18x devices (sdcc1, sdcc3) to 0x2000.
+Unable to handle kernel NULL pointer dereference at virtual address 00000030 when read
+Hardware name: Atmel AT91SAM9
+PC is at update_mmu_cache_range+0x1e0/0x278
+LR is at pte_offset_map_rw_nolock+0x18/0x2c
+Call trace:
+ update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
+ remove_migration_pte from rmap_walk_file+0xcc/0x130
+ rmap_walk_file from remove_migration_ptes+0x90/0xa4
+ remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
+ migrate_pages_batch from migrate_pages+0x188/0x488
+ migrate_pages from compact_zone+0x56c/0x954
+ compact_zone from compact_node+0x90/0xf0
+ compact_node from kcompactd+0x1d4/0x204
+ kcompactd from kthread+0x120/0x12c
+ kthread from ret_from_fork+0x14/0x38
+Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
 
-> 
-> >
-> > Konrad
+To fix it, do not rely on whether 'ptl' is equal to decide whether to hold
+the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
+enabled. In addition, if two vmas map to the same PTE page, there is no
+need to hold the pte lock again, otherwise a deadlock will occur. Just add
+the need_lock parameter to let adjust_pte() know this information.
 
+Reported-by: Ezra Buehler <ezra.buehler@husqvarnagroup.com>
+Closes: https://lore.kernel.org/lkml/CAM1KZSmZ2T_riHvay+7cKEFxoPgeVpHkVFTzVVEQ1BO0cLkHEQ@mail.gmail.com/
+Fixes: fc9c45b71f43 ("arm: adjust_pte() use pte_offset_map_rw_nolock()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+Changes in v2:
+ - change Ezra's email address (Ezra Buehler)
+ - some cleanups (David Hildenbrand)
+
+ arch/arm/mm/fault-armv.c | 38 ++++++++++++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mm/fault-armv.c b/arch/arm/mm/fault-armv.c
+index 2bec87c3327d2..ea4c4e15f0d31 100644
+--- a/arch/arm/mm/fault-armv.c
++++ b/arch/arm/mm/fault-armv.c
+@@ -62,7 +62,7 @@ static int do_adjust_pte(struct vm_area_struct *vma, unsigned long address,
+ }
+ 
+ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
+-		      unsigned long pfn, struct vm_fault *vmf)
++		      unsigned long pfn, bool need_lock)
+ {
+ 	spinlock_t *ptl;
+ 	pgd_t *pgd;
+@@ -99,12 +99,11 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
+ 	if (!pte)
+ 		return 0;
+ 
+-	/*
+-	 * If we are using split PTE locks, then we need to take the page
+-	 * lock here.  Otherwise we are using shared mm->page_table_lock
+-	 * which is already locked, thus cannot take it.
+-	 */
+-	if (ptl != vmf->ptl) {
++	if (need_lock) {
++		/*
++		 * Use nested version here to indicate that we are already
++		 * holding one similar spinlock.
++		 */
+ 		spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+ 		if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
+ 			pte_unmap_unlock(pte, ptl);
+@@ -114,7 +113,7 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
+ 
+ 	ret = do_adjust_pte(vma, address, pfn, pte);
+ 
+-	if (ptl != vmf->ptl)
++	if (need_lock)
+ 		spin_unlock(ptl);
+ 	pte_unmap(pte);
+ 
+@@ -123,16 +122,18 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
+ 
+ static void
+ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
+-	      unsigned long addr, pte_t *ptep, unsigned long pfn,
+-	      struct vm_fault *vmf)
++	      unsigned long addr, pte_t *ptep, unsigned long pfn)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct vm_area_struct *mpnt;
+ 	unsigned long offset;
++	unsigned long pmd_start_addr, pmd_end_addr;
+ 	pgoff_t pgoff;
+ 	int aliases = 0;
+ 
+ 	pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
++	pmd_start_addr = ALIGN_DOWN(addr, PMD_SIZE);
++	pmd_end_addr = pmd_start_addr + PMD_SIZE;
+ 
+ 	/*
+ 	 * If we have any shared mappings that are in the same mm
+@@ -141,6 +142,14 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
+ 	 */
+ 	flush_dcache_mmap_lock(mapping);
+ 	vma_interval_tree_foreach(mpnt, &mapping->i_mmap, pgoff, pgoff) {
++		/*
++		 * If we are using split PTE locks, then we need to take the pte
++		 * lock. Otherwise we are using shared mm->page_table_lock which
++		 * is already locked, thus cannot take it.
++		 */
++		bool need_lock = IS_ENABLED(CONFIG_SPLIT_PTE_PTLOCKS);
++		unsigned long mpnt_addr;
++
+ 		/*
+ 		 * If this VMA is not in our MM, we can ignore it.
+ 		 * Note that we intentionally mask out the VMA
+@@ -151,7 +160,12 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
+ 		if (!(mpnt->vm_flags & VM_MAYSHARE))
+ 			continue;
+ 		offset = (pgoff - mpnt->vm_pgoff) << PAGE_SHIFT;
+-		aliases += adjust_pte(mpnt, mpnt->vm_start + offset, pfn, vmf);
++		mpnt_addr = mpnt->vm_start + offset;
++
++		/* Avoid deadlocks by not grabbing the same PTE lock again. */
++		if (mpnt_addr >= pmd_start_addr && mpnt_addr < pmd_end_addr)
++			need_lock = false;
++		aliases += adjust_pte(mpnt, mpnt_addr, pfn, need_lock);
+ 	}
+ 	flush_dcache_mmap_unlock(mapping);
+ 	if (aliases)
+@@ -194,7 +208,7 @@ void update_mmu_cache_range(struct vm_fault *vmf, struct vm_area_struct *vma,
+ 		__flush_dcache_folio(mapping, folio);
+ 	if (mapping) {
+ 		if (cache_is_vivt())
+-			make_coherent(mapping, vma, addr, ptep, pfn, vmf);
++			make_coherent(mapping, vma, addr, ptep, pfn);
+ 		else if (vma->vm_flags & VM_EXEC)
+ 			__flush_icache_all();
+ 	}
 -- 
-With best wishes
-Dmitry
+2.20.1
+
 
