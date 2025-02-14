@@ -1,128 +1,290 @@
-Return-Path: <linux-kernel+bounces-515254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52EFA36261
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:56:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D215A36273
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D731634A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B8DE7A466A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492C62673A6;
-	Fri, 14 Feb 2025 15:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064EE2673A7;
+	Fri, 14 Feb 2025 15:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="h9e4iHHv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qDO8ls/k"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Obkl0/L1"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7916245002;
-	Fri, 14 Feb 2025 15:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23412673A8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548594; cv=none; b=W6SQ9iPdjPD+V98YQakHDYF8el+xcNxXOw3a2xb+svpXBqCPMjBGvF0NcVooD+TuizxUoX3B4bOoU4rMCfEPEy28063SJMSXuWqAqWVjV8NPazP7zK3AeR/D9bV1uSMRC6G6MrHg72yQLonBrdmKzK91Hll8XKjoUv8CZGoWdYo=
+	t=1739548658; cv=none; b=cDY9CmTCgjNp9/GIFPHOjURtap88Bxk+NB35k+gbF9wQmrhCvgLUnCR5flCYCKHQwiCGqg3h7UoXNg82xITQ56aLd+LIrdC6T+JUSOsOmIEKz7Z796plGFUfnehe8qyX5u8fIvixr34B8EXKMxpZZIDaiUkwq3od/qg4ZygY/HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548594; c=relaxed/simple;
-	bh=sJWLktPwg1h3G6VV5+ecqTqYYtdm9bToScdqv2kD09I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VwXU/vgE44klKG49NrSeeoGTe0mhXJPlZHv8ygsQWZdJft/5Ipvtsk4DWXdJcrNYVaI3ac+S+N/sg+zwyaajA0igK+ep89GxKlQVTxyK5+IriiVmwuABLPyi8eD/B7NDPEvdhHrfOzfHhoykGMjTRSt7BVVT3+l2bGQ2GjK8zMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=h9e4iHHv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qDO8ls/k; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 9A35411400DC;
-	Fri, 14 Feb 2025 10:56:30 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 14 Feb 2025 10:56:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1739548590; x=
-	1739634990; bh=MYcXSQKh0TuY+v6i2lcldICSMO0inJiOvhcsSMmQmgA=; b=h
-	9e4iHHviRZVZa+R7xB7nz8lQLFi11jRJKFRzpdL4s9uRYIyeQtXqELoXsxhKSV6E
-	Zuo/kvBtJ6n9falchGSifBHrFoN/r/sMfv3J5vW7MZQbPsrlfUTiFTsotOkubhtI
-	gTI3kb81PwS1G9lZWFzD/2tGiUwPsbnLyQmxRUhAJeeRATqRmHChVPDsObzokooD
-	U/ELqb69ltqTR8pfjkvQtpdumlmZLoPD+xU5EmPTzZ1MsA7CLNItTiMU6Ifyl4L+
-	VRTVO8SOFm6gcxZxtHi0yNjZjlLqVB//ShZQkfK+eZ5FB0z+5XrdAOSMHSWizYmB
-	FMuxUZHfFNL2/yX36u/JQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739548590; x=1739634990; bh=MYcXSQKh0TuY+v6i2lcldICSMO0inJiOvhc
-	sSMmQmgA=; b=qDO8ls/kcaegZK3AA5i9IkVD4yfFlKAai32VNQDFHaa+hR3joUZ
-	x6rWY5jGzlfiY4r0vdLuLLgkqzK2mHwsGaP786zslOhnEm71jrQcoRSMnk/ERiAF
-	Ou2pXBvsav7MmnuWszha7RPLF2S+PRyvUlBa3EpzygMXK6x78fWm0b7Y/KkQwjhN
-	OlfQ54moXs3GS8qAajJe+Gl5tnLS20VXcwlvIiXjQcfj65IE9DVClRwdGQHJEFDh
-	1F52qi+weSaLGWb2+uJ6Kn7zU1JBFK4ce/5h1HdVbsgDzw1SKpi6rT1Lv7wvLKJO
-	tePvS8orhDbzhLLArtMfYyy6qOlMOpCVm8Q==
-X-ME-Sender: <xms:rmevZz-gHQtE74qyX4i79oE5cIv072dlABjaj6mRc9OnAPVWc9KreA>
-    <xme:rmevZ_vwn_12P0SwGe7XB2iG5hVv_AnIMbj4ekhly5VMSVmcYJcToBU5R3YqkOkCA
-    ykyHAcJFBplVGUOrqQ>
-X-ME-Received: <xmr:rmevZxB1X3hBrOGjI-9ukei9Rl_XqAd8WJd3F9hviEeyX2zEjvpvZ6UIQ4e5ya1ROu_uFhG2HPRylxCu--uG9B8LE3-cOA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehtddtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtsehttdertddtredt
-    necuhfhrohhmpeffrghvihguucftvggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrh
-    drtghomheqnecuggftrfgrthhtvghrnhepudetjefhvdeujefhkefhteelffelheevtddu
-    ueelkeeludevteekteekjeevvddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepmhgvsegurghvihgurhgvrghvvghrrdgtohhmpdhnsggprhgt
-    phhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgs
-    lhhotghksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqug
-    hotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkohgtthelihesghhm
-    rghilhdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpth
-    htoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegtohhr
-    sggvtheslhifnhdrnhgvth
-X-ME-Proxy: <xmx:rmevZ_ejdBOhlcKAsgqBCZgiV2_MWx6MeZjQTeSoJ0G6bYrJrLcrew>
-    <xmx:rmevZ4N-8akXwTpyLhSatqCQzmsrVcDr_gKnQfQ9wihtZBoSEcLVCg>
-    <xmx:rmevZxksJw8ybNFxq3ruEaWOOvQl61EMcDJn20-fVUWpKNl8qDDrhQ>
-    <xmx:rmevZyvO9WwSyag2aRtwQ6IB8AWZ3gM4Q2-xT6qPqWXhfqrvctSYXQ>
-    <xmx:rmevZ_evo-nxu2mvPuAYkHfXPTSXxU3qOfETu8cSMuJfO7XoWbxeXz5_>
-Feedback-ID: i67e946c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Feb 2025 10:56:28 -0500 (EST)
-From: David Reaver <me@davidreaver.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>,  Jens Axboe <axboe@kernel.dk>,
-  Konstantin Khlebnikov <koct9i@gmail.com>,  linux-doc@vger.kernel.org,
-  linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: iostats: Rewrite intro, remove outdated formats
-In-Reply-To: <87frkgzfwg.fsf@trenco.lwn.net> (Jonathan Corbet's message of
-	"Fri, 14 Feb 2025 08:48:15 -0700")
-References: <0e8c8ead-423a-45f3-9e10-020334ef8907@infradead.org>
-	<20250214051432.207630-1-me@davidreaver.com>
-	<87frkgzfwg.fsf@trenco.lwn.net>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 14 Feb 2025 07:56:26 -0800
-Message-ID: <86frkgy0yd.fsf@davidreaver.com>
+	s=arc-20240116; t=1739548658; c=relaxed/simple;
+	bh=D1wbEsB7TFyizka/IHeRNqhm2Jh1CbExzVJuyDFMVEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pbkPNqDp6lfUrKAIhQ/EK66blAj+dWHSbKcYgXQZToFOwP96xmjYd2VQtzx52y5sou6I1wAP8MJURwV8u0WPjKGg/GK1o+WXRx6L2WRIu7u3keeN8KnNc7bEMz3VtrC2rC7sAPLJeKx/RGgd0p1QALWpQJuhfKYz8+ryJNeDJqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Obkl0/L1; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543cc81ddebso2338434e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:57:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739548654; x=1740153454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WHx17WFnnFivJUIFv2m7lVrUVyw09kYPGsIsDDqzOlQ=;
+        b=Obkl0/L1x2AiN7doUxuzjyi0YeaCXQArwsDYJJLgVvCZes/rl7E1XKWDht/ipvDzRw
+         hLTH3D52oNM0lIlQxkpmi0py1tSSAauL2dNlaPpCbff6hELXVrAg0FefXJPs1J/0Yz/G
+         qoitE9y2dWuox0PRZrwvkZN1NXh1MyGbLAh36ZjmT0Sm+y//k7XT+FSgGIaxjbLjZXpw
+         M8MzYevFpiKxMyo0TSoM+zRdtPd+RhxnqQjIw/Q0Xf0r8SXhJGBAooiSOqfe0NSvDzJS
+         /Dv1JMzao1KCiXUts3qz/UcwIr1KOO4rIdpaOlI2MSxSIZJ7riwlWjDKCvL09OE9NzK0
+         4SVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739548654; x=1740153454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WHx17WFnnFivJUIFv2m7lVrUVyw09kYPGsIsDDqzOlQ=;
+        b=f5QHMrjieE8CXZmjlnstLxXbSACHPeGQXAt1lAAPWEmqZQa4UIqnJdn3ITReqTfajh
+         HPfEH1NzjdsXGwN1J5r8Fy0r+ECKxNzAW15h5RDo7CaabUXHf0/Tmphbx2cv3dK2vqgy
+         zuLQ828bZa/x8dp5UEqi9RWqf1RXjSiZz/pCadj4cZSo+M8Va7/X0z6PctSbBeGCYc4C
+         5aK7zPJt18zsDQKMJiLLhyP35572xJ3SWJs5ncs2a6ZPuGe0BP4yjrXgH9J7v4UGAbAT
+         0Cx9j31YmF5XylbcinEv7U36CoM4TRYa814bubstYc9woOyHQO41vLPgWL42tCZ2ENZi
+         1DdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxXAAw607u5RlVKHcqSJBeifY1ddMwT768NajErWqdVDI0IjlEAzWLngDFwFItI8BqOKe8xnA+OLuK9Vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo10i0c4Ff6DkYp4KNkyctw18WIElWXIcHnpyXBZK8ZjeodNgR
+	33pHW4G8YoXfuxCs0t2rQlbq6GrKjk9TLhmRRLJzyXI2onWiIBFUHZk1GO9GdXtJgE7kDxE8MPh
+	hIv3NyBNOoZrZFpfl4oRDo2SAjX+6TzII9yJd4Q==
+X-Gm-Gg: ASbGncuXJIGJDyTqKwTb6+D83FUcBTMkS4CaIMj2YvUj8xe1zZyLxm8Dmgmm72gd3NH
+	kp+hgmG4OVKJ9iW7BVzeqlbRc90kmBXL27Fm6R29T0S1zjhglQusl3NZQUqQxBfXO1/7GRf2Hay
+	3m8/9/ekGMvRVIQAWyPwCMeBoWkSgKaA==
+X-Google-Smtp-Source: AGHT+IF6cLtumKw5gwUmJWDnoposzLT4HXNcBKi3JpGDWlZkrz1UmThgne6q7oRD/FA6ofAqMRYp7Q+YqVZLueSHux0=
+X-Received: by 2002:a05:6512:1111:b0:545:6cf:6f3e with SMTP id
+ 2adb3069b0e04-5451dde81aemr2973561e87.49.1739548653921; Fri, 14 Feb 2025
+ 07:57:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250214105047.150835-1-marco.crivellari@suse.com>
+ <20250214105047.150835-2-marco.crivellari@suse.com> <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
+In-Reply-To: <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Fri, 14 Feb 2025 16:57:22 +0100
+X-Gm-Features: AWEUYZk6Vjn3NzgRt01zDBdJAFiUfGq908c3RjrX1jgAjpL0SbUS3Wge4zdYVXs
+Message-ID: <CAAofZF4PVYehyonsmyTC=gKTgucs-jZYzzoQ2dvFcqK9YgsKVw@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: Fix idle VS timer enqueue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jonathan Corbet <corbet@lwn.net> writes:
+Hi, thanks for the replies!
 
+Huacai: I used the '1' label when I compiled the first time, but I
+noticed this warning, so I decided to use the label to avoid this:
+
+"WARNING: modpost: vmlinux: section mismatch in reference:
+rollback_except_vec_vi+0x4 (section: .text) -> except_vec4 (section:
+.init.text)"
+
+By the way, I will use the 1 label like you suggested.
+
+> For MIPS the rollback region is not 3 instructions, and so you cannot
+> use 0xc below. I think there is no chance for the wait instruction
+> after this patch.
+
+About this, does it look better if i don't change this part of the
+code (except for PTR_LA  k1, 1b) ?
+eg.
+
+@@ -136,7 +144,7 @@ LEAF(__r4k_wait)
+       .set    push
+       .set    noat
+       MFC0    k0, CP0_EPC
+-       PTR_LA  k1, __r4k_wait
++       PTR_LA  k1, 1b
+       ori     k0, 0x1f        /* 32 byte rollback region */
+       xori    k0, 0x1f
+       bne     k0, k1, \handler
+
+So the real change would be:
+
+-       /* start of rollback region */
+-       LONG_L  t0, TI_FLAGS($28)
++       /* start of idle interrupt region */
++       MFC0    k0, CP0_STATUS
+       nop
+-       andi    t0, _TIF_NEED_RESCHED
+-       bnez    t0, 1f
+-        nop
++       /* Enable Interrupt */
++       ori     k0, 0x1f
++       xori    k0, 0x1e
++       MTC0    k0, CP0_STATUS
+       nop
+       nop
+
+Maybe what I'm going to say is silly...
+But considering the region should be a power of 2, maybe can also be
+changed with:
+ori   k0, 0x0f
+addi  k0, 1
+
+Thanks for your time!
+
+On Fri, Feb 14, 2025 at 3:47=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org>=
+ wrote:
 >
-> As a separate thread is generally better; no need to resend, though, if
-> there are no other changes.
+> Hi, Marco,
 >
+> On Fri, Feb 14, 2025 at 6:51=E2=80=AFPM Marco Crivellari
+> <marco.crivellari@suse.com> wrote:
+> >
+> > MIPS re-enables interrupts on its idle routine and performs
+> > a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
+> >
+> > The IRQs firing between the check and the 'wait' instruction may set th=
+e
+> > TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
+> > interrupting __r4k_wait() rollback their return address to the
+> > beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
+> > again before going back to sleep.
+> >
+> > However idle IRQs can also queue timers that may require a tick
+> > reprogramming through a new generic idle loop iteration but those timer=
+s
+> > would go unnoticed here because __r4k_wait() only checks
+> > TIF_NEED_RESCHED. It doesn't check for pending timers.
+> >
+> > Fix this with fast-forwarding idle IRQs return address to the end of th=
+e
+> > idle routine instead of the beginning, so that the generic idle loop
+> > handles both TIF_NEED_RESCHED and pending timers.
+> >
+> > Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> > ---
+> >  arch/mips/kernel/genex.S | 36 ++++++++++++++++++++----------------
+> >  arch/mips/kernel/idle.c  |  1 -
+> >  2 files changed, 20 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > index a572ce36a24f..a78d5132c940 100644
+> > --- a/arch/mips/kernel/genex.S
+> > +++ b/arch/mips/kernel/genex.S
+> > @@ -104,18 +104,16 @@ handle_vcei:
+> >
+> >         __FINIT
+> >
+> > -       .align  5       /* 32 byte rollback region */
+> > +       .align  5
+> >  LEAF(__r4k_wait)
+> >         .set    push
+> >         .set    noreorder
+> > -       /* start of rollback region */
+> > -       LONG_L  t0, TI_FLAGS($28)
+> > -       nop
+> > -       andi    t0, _TIF_NEED_RESCHED
+> > -       bnez    t0, 1f
+> > -        nop
+> > -       nop
+> > -       nop
+> > +       /* start of idle interrupt region */
+> > +       MFC0    k0, CP0_STATUS
+> > +       /* Enable Interrupt */
+> > +       ori     k0, 0x1f
+> > +       xori    k0, 0x1e
+> > +       MTC0    k0, CP0_STATUS
+> >  #ifdef CONFIG_CPU_MICROMIPS
+> >         nop
+> >         nop
+> > @@ -123,11 +121,17 @@ LEAF(__r4k_wait)
+> >         nop
+> >  #endif
+> >         .set    MIPS_ISA_ARCH_LEVEL_RAW
+> > +       /*
+> > +        * If an interrupt lands here, between enabling interrupts abov=
+e and
+> > +        * going idle on the next instruction, we must *NOT* go idle si=
+nce the
+> > +        * interrupt could have set TIF_NEED_RESCHED or caused a timer =
+to need
+> > +        * resched. Fall through -- see rollback_handler below -- and h=
+ave
+> > +        * the idle loop take care of things.
+> > +        */
+> >         wait
+> > -       /* end of rollback region (the region size must be power of two=
+) */
+> > -1:
+> > +       /* end of idle interrupt region (the region size must be power =
+of two) */
+> > +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
+> You can also use label 1 as the LoongArch version.
+>
+> >         jr      ra
+> > -        nop
+> >         .set    pop
+> >         END(__r4k_wait)
+> >
+> > @@ -136,10 +140,10 @@ LEAF(__r4k_wait)
+> >         .set    push
+> >         .set    noat
+> >         MFC0    k0, CP0_EPC
+> > -       PTR_LA  k1, __r4k_wait
+> > -       ori     k0, 0x1f        /* 32 byte rollback region */
+> > -       xori    k0, 0x1f
+> > -       bne     k0, k1, \handler
+> > +       PTR_LA  k1, __r4k_wait_exit
+> > +       /* 3 instructions rollback region */
+> For MIPS the rollback region is not 3 instructions, and so you cannot
+> use 0xc below. I think there is no chance for the wait instruction
+> after this patch.
+>
+> Huacai
+>
+> > +       ori     k0, k0, 0x0c
+> > +       bne     k0, k1, \handler
+> >         MTC0    k0, CP0_EPC
+> >         .set pop
+> >         .endm
+> > diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
+> > index 5abc8b7340f8..1f74c0589f7e 100644
+> > --- a/arch/mips/kernel/idle.c
+> > +++ b/arch/mips/kernel/idle.c
+> > @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
+> >
+> >  void __cpuidle r4k_wait(void)
+> >  {
+> > -       raw_local_irq_enable();
+> >         __r4k_wait();
+> >         raw_local_irq_disable();
+> >  }
+> > --
+> > 2.48.1
+> >
+> >
 
-Understood! Thanks.
 
-> But ... I'm not quite sure what "mutually exclusive" means here.  That
-> they don't conflict, or that they cannot both be applied...?
 
-Sorry, bad wording :) This patch conflicts with the original patch since
-I rewrote that whole paragraph, so I ignore the first patch I sent.
+--=20
 
-Thanks,
-David Reaver
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+
+
+
+marco.crivellari@suse.com
 
