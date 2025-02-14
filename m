@@ -1,208 +1,186 @@
-Return-Path: <linux-kernel+bounces-514819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35196A35C1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:02:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE1AA35C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1DF18901B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA19016F1D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0EA25A64D;
-	Fri, 14 Feb 2025 11:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NuQYe3/x"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E6F262179;
+	Fri, 14 Feb 2025 11:10:38 +0000 (UTC)
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59FA25A64C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932D25D539;
+	Fri, 14 Feb 2025 11:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739530946; cv=none; b=gavIxLJwCWeXIwJeSEBB9mHhraoAvZ7GVTGg2ncT/8SiiXzpGdMMPqMKFmQ2IMVDYxiktk44OpFi5ZWK8J1HNoi+oZxVZ/0/NgXFsVlKAlvoR2VEY6F8zD8+kvwnAIud2cgtOemQXCTRYpNYLQfOEFvh2r6WcL7vXZM/2+nugEU=
+	t=1739531438; cv=none; b=ftg4dXxg4D/TXtXtr3QT213O5Azw3ZtE+ciPKa2/v2QzcUcuIaAYxEM1L/lReYLm4GSe8oaNSwvgszIP8WFumruBktHlAOtxpaF0Q4SCq6hya8MjvaQjj0YbeinPKPqldQUVI1ndfKLrVXfHuZTu0h1vIh+O1mDaUqrK7sXv7J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739530946; c=relaxed/simple;
-	bh=0oIRrtnr+c7cwXNcyE/LI0nu17hvVOSCrYcVsn19aTQ=;
+	s=arc-20240116; t=1739531438; c=relaxed/simple;
+	bh=hdsgSjQQ8qgcIp8XrQEUL7+bx/XSkrcszbmnaoinpo4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tZtDhpUSyZUmXOOSrGQHKpgCBRpNWPWfIFCgUswp+Q8dO1RcoVNWCVKfI47xBIl6xpl9Glhf9rjhmjzCd7F1CxP6KL8qiwNKEHNuLyMJiRTJpZZeELX2gNzbO2vzsyRms/Hr72hcRKVw1sPi7+CDwnghqU9VdzvSpiia6CZ+ku8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NuQYe3/x; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ef60e500d7so17098777b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:02:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739530943; x=1740135743; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rzLryw/XAyJKRphNFTyQsyFqFFX/jhMAED6ZmtSxJ5A=;
-        b=NuQYe3/xoqaBjlHK/cM9QdVPH2vtuGzVRxzflbD81fGp9QSbUSUI+XdbsVd5ZhJTht
-         G27MLk/ikrps+tYXYkxVOyjPaB7m7CqYdOmJM5kItSLtDG/pPgyuLuOqQsSEt4/10wVB
-         hqseoWL2q1aNdR7VK5aBmwZTtUCQNPyifsUQVXiF3m398IfynDyA4y2drUL86GaBf+pM
-         61/1chSux2vTt9sifz0vAa+j+8tgeatyKAw8fUS9L3LYzeMifBwaMSAIWVI+azbsWey9
-         Z7anlUhAX7dPZc7dpQH03tJwUXflWSktAmyih7gODjgh0tkdgxIGjwEz532rC0+QS6l7
-         6K6w==
+	 To:Cc:Content-Type; b=OTACUON0S9b2/1hwURkwaq/Y/en56w2Ix+F3c0NaMa/4c3DKSJiGjD0nvrXNORXouKNJxvj8+FNhLxKhJe3KnT0qfoI+zpaxzPxaVyb/DW+2Z2H2hGVSuM85uvNqkgcsrrKyHsTXX7w3LoaOb70+WPSY1yaHQ/R+v4VwD7cXHpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3f3b93e4e32so1796708b6e.0;
+        Fri, 14 Feb 2025 03:10:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739530943; x=1740135743;
+        d=1e100.net; s=20230601; t=1739531435; x=1740136235;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rzLryw/XAyJKRphNFTyQsyFqFFX/jhMAED6ZmtSxJ5A=;
-        b=dYUAnmcQIpD2i9VPSNATJc69XT5V7IZy594DbNO3r+BLmghYuHAEeYr4RB+DAOS/QF
-         swh4SWx8lg7WsvGhvRv3p+9gjesbi5H3AxgaKSMsrq6+YhTIz6H+TA9B5YybrlpL4LFR
-         uV5jZgIRShSbQVoZCQ0GqDv1hIUkNGWARJ+EVlV8Gfk9XlkYOhw6H7TJkRWZI/BMDyR2
-         tqboyZUvRY5tzQcd4SSvPzNsVDpwT27TsRjzuwOzBL8PHPNLKAGN01wJImEY2XffWR6D
-         r6FRZn2ZKp6xji5sLj+knH3CnXQnoL+CLHZd0t/dN7lou38v+3l0mRHxE1LgAnAYleZJ
-         yPIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+J2P/hJCQY615vpzewQodWK4NrPe+z8pvXCNLlUYOaNPATIPcOJilkGUYxtdySE1g+1W/hAxcKlMzG5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRFpOmY9Zl/6U+um4nGCGK8smLx6TZBWe/J10yRaweEsLLsopM
-	/K5tTXfq/sfAUKcpYfA5yw7xGVdTt6VyiCky6NchkAJvJ7ar904CraKRVd1QelPdBaTiO9Xl471
-	7uMMO0uu4l8ebrtqSbYyzXBeiiXQbTBuBTO0EmQ==
-X-Gm-Gg: ASbGncvxktqXRbv4fxZ/Od/nwf6ook84yxLlfqc5MYoUGznrfVpJzHnpfyaBMJkVRck
-	fc5X4dpAipF+kUf2fWu20KZtvPVpBEvdlldCfvVqQBkuIwPVrCjAhiLhdhOPFJ0i6h6qU7igrow
-	==
-X-Google-Smtp-Source: AGHT+IEKcq28b+1jm6W/qMPjV397BfFJUY6Ro0y3t74MU1oh8ipE5HyvHwkyR5H+34Nm6ywfG6DdYeLN9CCigPMkqzw=
-X-Received: by 2002:a05:6902:11c7:b0:e57:4db7:6d51 with SMTP id
- 3f1490d57ef6-e5d9f170324mr10340809276.32.1739530943472; Fri, 14 Feb 2025
- 03:02:23 -0800 (PST)
+        bh=r+/2I2hmbkU9zkmHuYX1t9oqaBOTTvF7uTNap3Wsbsk=;
+        b=n+gFbF+9HQy32m63+iRfU7baomTogRZt8Q0x+8p1o1I9VNtjyMgiSGmrWFtaOCJWOx
+         dbXd7ASszWZp7+nJFerhuQlESYXG1au5TAw8zwj0rnqkNbDHNjTW/zvBrVJgbh8jK5v+
+         hTPxf4M+elrzhwfKUADHYwCg6zdPhc1FPuR9yoxDOSbNdZ/ZrYnkxfln5pEr0258OWP+
+         ObRSjx7bTgA+uxEdA7EmOtmi6IUqhJkfbZSlWuVesMmpuqqmcxUBhvphOIzgD9SmpOr+
+         Lwc1LYPyG4BnC15MkYla0AxiBBxq/3hmajbV0X6Xa6xu4p0DsZk7RSp79XKK2vc4ai+R
+         R4wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDVCUK6c/F3iml1NpIaVqopvbCyJAh8oxLb9I3BOXnjFJic1zL0taRowjbrVA1MN9gPwp4Ow3VqssDNqY=@vger.kernel.org, AJvYcCUbTOYIh1mG8TPX0Bi4c5rn5098w8UcKyqORjVAaFM6JCLn+hHFFsIHaVUAey5iUsTrMdJHJD1VP5m2@vger.kernel.org, AJvYcCUiHv7z7osjvN7WSDwCff0AV7rGVxgWHrJvyZ9rTEQKdFwO6pTmPaQfAIoLZDiUUPvNRm7eYV0CP3U=@vger.kernel.org, AJvYcCVKS/5ZYXsPcouogUjX1/7d56V4NXP/ZjViLwkHqpkfOss36i9fu9SRTbrEmpmaWJPmKDlOCowPguWnDfof@vger.kernel.org, AJvYcCVguviZY4vRnP70NorWp75Xw2fv1Z+mhtQ7r/c2apzkZCIQeecTjcRkaiJlyVgLCQFH0O4os6pGlYjO7xOcHtk83Y8=@vger.kernel.org, AJvYcCW5cx1lF5pOHqZKo0CKzLdtS/2tTkQ6kcS3kq/p/UyobKPe/lUIHCDmYAQxQPsWHXXO8AV9FC2r+Q853Q==@vger.kernel.org, AJvYcCWnpjvqjCh5ARprm5JFHRwhBOZw3EWQkHBoFYxXJRJFUA8O2rUsa4QoCi2nZTZVKsp5NHQFDhR8yHSAhCCq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6f0rdew3/WcRh9++9RoN6tQciQDyRPIlq7sLsYoQfh066Cs8g
+	Mc0oOV5ObrC61jrHfYNxtQuyyPVwW88b2iJhchQVVmOUJIQawZk50r4Pyts8Tp0=
+X-Gm-Gg: ASbGncvRkLVEyhKe5BvrB7ocx1yBnp4UQJczt0gdj48+Ag/O7lqsGg/ePTEm1kgz3c0
+	p3RJHBPUXeN8tSav7dtbLxFOJWGeOr0WVXhfOP6ITcqod3O6QC3CtR557+tbHvpKoFjUcSzMaXZ
+	AeqtIXfz7q7Y6TKq0TFL9I8quBxoQkeLzI04g/Ec8PUB70GM0TrYmX44/DgwLPu6R3RHTTPxHCf
+	djR4v9ZsrpWL6gwYqW4KN1lmRXKWW7zWH7pUWTxavgT8zJHZR/P0rYWqWoXGDrqA8F4gNRZqa4t
+	CB+P+cFPzq4PT0nIHeCdhOREwjqDTcQj71p5JtdawaCDM4Tk4l0PKA==
+X-Google-Smtp-Source: AGHT+IEmOpncqw55JDATPBMdgoevFZbTsL+l4QREB3q5EOlWtwZuqK0wyAgTzC8TAmqM9FoNpjSQ/g==
+X-Received: by 2002:a05:6808:2508:b0:3f3:b97d:769e with SMTP id 5614622812f47-3f3d90dc9b8mr4185959b6e.7.1739531435211;
+        Fri, 14 Feb 2025 03:10:35 -0800 (PST)
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com. [209.85.160.51])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3daa1a4b8sm1191927b6e.49.2025.02.14.03.10.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bc607b3190so788701fac.1;
+        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUy1lu/GJ6ERAmnfIqzVmu3C/Md9NgZanbZ9AlBkuxSikVLdWVTmv16zY9OytdJ9x+1bOD1xBdZoVtQDc2H@vger.kernel.org, AJvYcCVgqycNxfL55R6c69VsRIV//3UbVnRy1LsM6IXcdNZYTodYYbT5innUZI6qyiaXzFTDRrBAWAEYH0aK@vger.kernel.org, AJvYcCVpGAmsVWktjDWORoOa8SWbZwR93fR8IPXy2OueOJIEQibrvap3HctBV43GhtrSUSFdRoQjJT5SbI6afK3k8MmVtH0=@vger.kernel.org, AJvYcCWWolf/nrJ/6oXgSTgl4K14aY2GU29mdny1O3QmYSTUlOy83g0aI8cAUH46uNcAE8RT4WEzhyw79zid0g==@vger.kernel.org, AJvYcCWpxs59d1sDbltZAD01S8wzlCfefYW8qP+/tZshXhdVgrZs0TFBeWYfiGZaBJEEMeoH8TTdo0ifxNACHlY5@vger.kernel.org, AJvYcCXjdZfphJOJxdL4qtr/C2vSJUbLZss3zvveDNYzH/+JwLUMPqZ4sgGhNUqedcDrwir7VegLfNqsyVQ=@vger.kernel.org, AJvYcCXnbvOjDVxkbOaz9rzFBCQak2a0XzV/FMhTNT9F6vcz8d4anXpU42wkjTw7eso94fv0n53k7Wnu03YBCgE=@vger.kernel.org
+X-Received: by 2002:a05:6102:829:b0:4bb:c670:7ef4 with SMTP id
+ ada2fe7eead31-4bc04dbedfdmr3900426137.3.1739531008576; Fri, 14 Feb 2025
+ 03:03:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250128194830eucas1p134d566631b5622c85d843f5d811c3c00@eucas1p1.samsung.com>
- <20250128194816.2185326-1-m.wilczynski@samsung.com> <20250128194816.2185326-5-m.wilczynski@samsung.com>
-In-Reply-To: <20250128194816.2185326-5-m.wilczynski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 14 Feb 2025 12:01:47 +0100
-X-Gm-Features: AWEUYZlteGTa4T3_RQ0f5ZiaQGtHVX2-gpRxvu_zXmJT0uvPZbTFwTKkU3epoaE
-Message-ID: <CAPDyKFp6OTa07Lv+jsMy=Rn7U_NYFb_0MfNUXT3cjN_Gkwqs9g@mail.gmail.com>
-Subject: Re: [PATCH v4 04/18] firmware: thead: Add AON firmware protocol driver
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, jszhang@kernel.org, 
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	linux-pm@vger.kernel.org
+References: <cover.1738329458.git.geert+renesas@glider.be> <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+ <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr> <Z5-xMUqrDuaE8Eo_@thinkpad>
+ <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
+ <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr> <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
+ <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr> <Z6DzQHebEKBb12Wo@thinkpad>
+In-Reply-To: <Z6DzQHebEKBb12Wo@thinkpad>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Feb 2025 12:03:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+X-Gm-Features: AWEUYZnx82TO-9m0J2Kj8kCR7cxX7DuFclptN97k0_3_zHZhXPo2iBI5bXbywtI
+Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	qat-linux@intel.com, linux-gpio@vger.kernel.org, 
+	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S . Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Alex Elder <elder@ieee.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 28 Jan 2025 at 20:48, Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
+Hu Yury,
+
+On Mon, 3 Feb 2025 at 17:48, Yury Norov <yury.norov@gmail.com> wrote:
+> On Tue, Feb 04, 2025 at 12:41:55AM +0900, Vincent Mailhol wrote:
+> > On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
+> > > On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
+> > >> On 03/02/2025 at 16:44, Johannes Berg wrote:
+> > >>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
+> > >>>>> Instead of creating another variant for
+> > >>>>> non-constant bitfields, wouldn't it be better to make the existing macro
+> > >>>>> accept both?
+> > >>>>
+> > >>>> Yes, it would definitely be better IMO.
+> > >>>
+> > >>> On the flip side, there have been discussions in the past (though I
+> > >>> think not all, if any, on the list(s)) about the argument order. Since
+> > >>> the value is typically not a constant, requiring the mask to be a
+> > >>> constant has ensured that the argument order isn't as easily mixed up as
+> > >>> otherwise.
+> > >>
+> > >> If this is a concern, then it can be checked with:
+> > >>
+> > >>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
+> > >>                    __builtin_constant_p(_val),
+> > >>                    _pfx "mask is not constant");
+> > >>
+> > >> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
+> > >> any other combination.
+> > >
+> > > Even that case looks valid to me. Actually there is already such a user
+> > > in drivers/iio/temperature/mlx90614.c:
+> > >
+> > >     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
+> > >
+> > > So if you want enhanced safety, having both the safer/const upper-case
+> > > variants and the less-safe/non-const lower-case variants makes sense.
 >
-> The T-Head TH1520 SoC uses an E902 co-processor running Always-On (AON)
-> firmware to manage power, clock, and other system resources [1]. This
-> patch introduces a driver implementing the AON firmware protocol,
-> allowing the Linux kernel to communicate with the firmware via mailbox
-> channels.  Through an RPC-based interface, the kernel can initiate power
-> state transitions, update resource configurations, and perform other
-> AON-related tasks.
+> I agree with that. I just don't want the same shift-and operation to be
+> opencoded again and again.
 >
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+> What I actually meant is that I'm OK with whatever number of field_prep()
+> macro flavors, if we make sure that they don't duplicate each other. So
+> for me, something like this would be the best solution:
 >
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
+>  #define field_prep(mask, val) \
+>        (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))
+>
+>  #define FIELD_PREP(mask, val)                                         \
+>          (                                                             \
+>                  FIELD_PREP_INPUT_CHECK(_mask, _val,);                 \
+>                  field_prep(mask, val);                                \
+>          )
+>
+> #define FIELD_PREP_CONST(_mask, _val)                                  \
+>         (                                                              \
+>                 FIELD_PREP_CONST_INPUT_CHECK(mask, val);
+>                 FIELD_PREP(mask, val); // or field_prep()
+>         )
+>
+> We have a similar macro GENMASK() in linux/bits.h. It is implemented
+> like this:
+>
+>  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
+>  #define GENMASK(h, l) \
+>          (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+>
+> And it works just well. Can we end up with a similar approach here?
 
-[...]
+Note that there already exists a FIELD_PREP_CONST() macro, which is
+intended for struct member initialization.
 
-> +
-> +static int th1520_aon_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct th1520_aon_chan *aon_chan;
-> +       struct mbox_client *cl;
-> +       int ret;
-> +       struct platform_device_info pdevinfo = {
-> +               .name = "th1520-pd",
-> +               .id = PLATFORM_DEVID_AUTO,
-> +               .parent = dev,
-> +       };
-> +
-> +       aon_chan = devm_kzalloc(dev, sizeof(*aon_chan), GFP_KERNEL);
-> +       if (!aon_chan)
-> +               return -ENOMEM;
-> +
-> +       cl = &aon_chan->cl;
-> +       cl->dev = dev;
-> +       cl->tx_block = true;
-> +       cl->tx_tout = MAX_TX_TIMEOUT;
-> +       cl->rx_callback = th1520_aon_rx_callback;
-> +
-> +       aon_chan->ch = mbox_request_channel_byname(cl, "aon");
-> +       if (IS_ERR(aon_chan->ch))
-> +               return dev_err_probe(dev, PTR_ERR(aon_chan->ch),
-> +                                    "Failed to request aon mbox chan\n");
-> +
-> +       mutex_init(&aon_chan->transaction_lock);
-> +       init_completion(&aon_chan->done);
-> +
-> +       platform_set_drvdata(pdev, aon_chan);
-> +
-> +       aon_chan->pd = platform_device_register_full(&pdevinfo);
-> +       ret = PTR_ERR_OR_ZERO(aon_chan->pd);
-> +       if (ret) {
-> +               dev_err(dev, "Failed to register child device 'th1520-pd': %d\n", ret);
-> +               goto free_mbox_chan;
-> +       }
-> +
-> +       ret = devm_of_platform_populate(dev);
-> +       if (ret)
-> +               goto unregister_pd;
-> +
-> +       return 0;
-> +
-> +unregister_pd:
-> +       platform_device_unregister(aon_chan->pd);
-> +free_mbox_chan:
-> +       mbox_free_channel(aon_chan->ch);
-> +
-> +       return ret;
-> +}
+Gr{oetje,eeting}s,
 
-Rather than implementing this as a driver, I suggest limiting this to
-a set of exported library functions.
+                        Geert
 
-In this way, you don't need to register a platform device, but can
-instead let the power-domain provider driver in patch6, to be the one
-that matches on the "thead,th1520-aon" compatible to probe.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +
-> +static void th1520_aon_remove(struct platform_device *pdev)
-> +{
-> +       struct th1520_aon_chan *aon_chan = platform_get_drvdata(pdev);
-> +
-> +       platform_device_unregister(aon_chan->pd);
-> +       mbox_free_channel(aon_chan->ch);
-> +}
-> +
-> +static const struct of_device_id th1520_aon_match[] = {
-> +       { .compatible = "thead,th1520-aon" },
-> +       { /* Sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, th1520_aon_match);
-> +
-> +static struct platform_driver th1520_aon_driver = {
-> +       .driver = {
-> +               .name = "th1520-aon",
-> +               .of_match_table = th1520_aon_match,
-> +       },
-> +       .probe = th1520_aon_probe,
-> +       .remove = th1520_aon_remove,
-> +};
-> +module_platform_driver(th1520_aon_driver);
-> +
-> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-> +MODULE_DESCRIPTION("T-HEAD TH1520 Always-On firmware driver");
-> +MODULE_LICENSE("GPL");
-
-[...]
-
-Kind regards
-Uffe
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
