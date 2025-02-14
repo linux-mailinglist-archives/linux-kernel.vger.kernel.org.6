@@ -1,183 +1,160 @@
-Return-Path: <linux-kernel+bounces-515291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59287A362FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:24:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE824A36301
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21B73A669C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE7C1895724
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8FB2676FB;
-	Fri, 14 Feb 2025 16:24:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8239267725;
+	Fri, 14 Feb 2025 16:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E0q3Q8fe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4552753FD;
-	Fri, 14 Feb 2025 16:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF292676CE;
+	Fri, 14 Feb 2025 16:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550255; cv=none; b=tgy0Dmdw8EY05lve7WuKUfxA7Xp4f0TNC5fum1BalR/N7Ji5YKfaW8wWBnWVpd/ZEx17kFwvIXz72nOWt76FzVC5/pdiOEyyZrrEnpCNUmhWufyCUvcBpI8l6HcTIFB3iWW1jz1Pb00Z+7E9R79Vqjn4PPygNaxFuZKhbKKm0IE=
+	t=1739550300; cv=none; b=mXGGbBPsee1DqUmlCpsepLvT1YWj8+Q6aU5OEY4kDUC4EI14RSVoBFAV92GfvvN6oJ8qpvs0QrmquZQQ+jBBp4mCMw4/zSYFLGu5xMxfuP73SC43goKHUiep/G3yKgGDldJ5K+UfHdT+5JGtvQoZluoyHKd0lnKI8skRqcCoR9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550255; c=relaxed/simple;
-	bh=cto20RyuLyDQiiltYRvN29tUDL44aemys6qjqds3B3Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aA5hDnJ4LA+/0Jls7RLiidr6Avx/+TC6vmRMXQJ09YmBR2MGFa3dFqUlDfEwHO4cvqcHVIHNOpRpeWdrW64PcVuEtguVhWhnxEFTdzLiBQk/XHOzRm1EfgnQi7Rf/67s61MKh5fpOg5Dw6EEfoq7jCseSfRwlN16uoOj/lcSLHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YvckX55M3z6H7Kd;
-	Sat, 15 Feb 2025 00:21:40 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2961A140A77;
-	Sat, 15 Feb 2025 00:24:09 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 17:24:08 +0100
-Date: Fri, 14 Feb 2025 16:24:07 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 11/18] cxl/region: Split region registration into an
- initialization and adding part
-Message-ID: <20250214162407.00002efc@huawei.com>
-In-Reply-To: <20250211095349.981096-12-rrichter@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-12-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739550300; c=relaxed/simple;
+	bh=LsWihSEDqmW2ynjjlF9YkNchxOjrOyCby77qfHSZnAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FcXYlBe3TIep3SEwB0bHY+yiXz6KvbVDBMWEvx9kMlSLa6aQE4gnLVEBAu1wwafv/CLtuDwJB8VSOwFncdAa3obXiuVh2SlqAuDIdhHf6NEkVVNGHtGIiFyHPAUeFcQ6ieammrDEY/I5gmGn5WL7ec+dXi7/zr8Vkc5utiT8HaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E0q3Q8fe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51EBAgNh000518;
+	Fri, 14 Feb 2025 16:24:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=pjx1l8vRjPsMgVy1+/X/PVrWefQm6fL9MGARtv2sl
+	sE=; b=E0q3Q8feKaa3pljJhfPXsUbOo13cXTtao9KoK0GTGC8j2igNhANF1ZzWY
+	fIvhpV3kFCMzoby9A7MS/wzPUQItHsikqq+QdyLq0+1txJfivg8NFP/b5OuEyCpb
+	rJWfjIuxf5++BrTVNDLsQ8MLrKIzi7j8MxSjOkpuwv208yhf3f+pVxRYhIU9nrR5
+	TGrk0NQ4ytqH0UziW1Ul3iBTjZIGbG55gBkpao0gVeppYt8NnuDbFoTK7DHZbQJG
+	L/z9bR3DY2boab7c8Egg5zhBjXWtQxSDASd3kg8TwWROJFJs9AyQDKcETZ9okuWt
+	vIxtcovDmXMadYjKFCOLCsd8sptnA==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ssvacbbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 16:24:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51EFWsLH016752;
+	Fri, 14 Feb 2025 16:24:54 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kmd4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 16:24:54 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51EGOpZY27329042
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 16:24:51 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6485F58056;
+	Fri, 14 Feb 2025 16:24:51 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 352C05803F;
+	Fri, 14 Feb 2025 16:24:51 +0000 (GMT)
+Received: from li-4c4c4544-0047-5210-804b-b8c04f323634.lan (unknown [9.61.91.157])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 16:24:51 +0000 (GMT)
+From: Nick Child <nnac123@linux.ibm.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: haren@linux.ibm.com, ricklind@us.ibm.com, nick.child@ibm.com,
+        jacob.e.keller@intel.com, horms@kernel.org,
+        Nick Child <nnac123@linux.ibm.com>
+Subject: [PATCH v2 0/3] Use new for_each macro to create hexdumps
+Date: Fri, 14 Feb 2025 10:24:33 -0600
+Message-ID: <20250214162436.241359-1-nnac123@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mIdPVQ06Q4rkXpArDOB5AZYYNaCAvUFl
+X-Proofpoint-ORIG-GUID: mIdPVQ06Q4rkXpArDOB5AZYYNaCAvUFl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_07,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502140114
 
-On Tue, 11 Feb 2025 10:53:41 +0100
-Robert Richter <rrichter@amd.com> wrote:
+Apologies, not sure what mailing list/tree to target. First 2 patches look
+like *-next and last patch should go to net-next.
 
-> Before adding an endpoint to a region, the endpoint is initialized
-> first. Move that part to a new function
-> cxl_endpoint_decoder_initialize(). The function is in preparation of
-> adding more parameters that need to be determined in a setup.
-> 
-> The split also helps better separating the code. After initialization
-> the addition of an endpoint may fail with an error code and all the
-> data would need to be reverted to not leave the endpoint in an
-> undefined state. With separate functions the init part can succeed
-> even if the endpoint cannot be added.
-> 
-> Function naming follows the style of device_register() etc. Thus,
-> rename function cxl_add_to_region() to
-> cxl_endpoint_decoder_register().
-Hi Robert,
+Currently, obtaining a hexdump can be done through one of the following:
+ 1. hex_dump_to_buffer - takes at most 32 bytes of a buffer and returns a 
+     hexdump string representation
+ 2. print_hex_dump - prints output of hex_dump_to_buffer iteratively over
+    a large buffer
 
-Superficially I'd expect a call of that name to be registering
-the device for the decoder.  i.e. being the thing that makes
-/sys/bus/cxl/devices/decoder3.2 appear.
+There is no functionality for iterating over a large buffer and receiving
+the string representation. It seems most users of hex_dump_to_buffer are
+calling hex_dump_to_buffer within the body of a loop which iterates
+through a buffer.
 
-This register naming is based on the other two being initalize
-and add, but they aren't initializing and adding the
-endpoint decode device. Hence I don't think those names work either.
+This patchset creates a for_each macro that accepts a buffer and fills
+out an output string with the converted hexdump. This loops over the
+buffer and takes care of incrementing pointers. Hopefully this makes
+writing sequential calls to hex_dump_to_buffer more straightforward.
 
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-> ---
->  drivers/cxl/core/region.c | 36 ++++++++++++++++++++++++++++--------
->  drivers/cxl/cxl.h         |  6 ++++--
->  drivers/cxl/port.c        |  9 +++++----
->  3 files changed, 37 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 9ce0282c0042..fb43e154c7b9 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3345,7 +3345,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  		dev_name(&cxlr->dev), p->res, p->interleave_ways,
->  		p->interleave_granularity);
->  
-> -	/* ...to match put_device() in cxl_add_to_region() */
-> +	/* ...to match put_device() in cxl_endpoint_decoder_add() */
->  	get_device(&cxlr->dev);
->  	up_write(&cxl_region_rwsem);
->  
-> @@ -3357,19 +3357,28 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  	return ERR_PTR(rc);
->  }
->  
-> -int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
-> +static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
-So far this looks like it should be called something like
+From a users perspective there should be no difference in output.
 
-cxl_endpoint_decoder_init_region_decoder()
-or something like that. The cxled is already intialized more generally
-and the cxled->cxld.dev is registered.
+The inspiration here was I wanted to use print_hex_dump in ibmvnic code
+but I wanted to print through netdevice printing functions to maintain
+formatting. Looking at other users of hex_dump_to_buffer it seems they had
+similar intentions.
 
->  {
-> -	struct range *hpa = &cxled->cxld.hpa_range;
->  	struct cxl_root_decoder *cxlrd;
-> -	struct cxl_region_params *p;
-> -	struct cxl_region *cxlr;
-> -	bool attach = false;
-> -	int rc;
->  
->  	cxlrd = cxl_find_root_decoder(cxled);
->  	if (!cxlrd)
->  		return -ENXIO;
->  
-> +	cxled->cxlrd = cxlrd;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_endpoint_decoder_add(struct cxl_endpoint_decoder *cxled)
-It's not adding what I'd expect such a function to add.
-Rather it is performing an association with a region.
+Side question:
+  hex_dump_to_buffer automatically sets groupsize to 1 if user given
+  groupsize is not a multiple of len. When printing large buffers this
+  makes non-uniform output. For example, this is a 31 byte 8 groupsize
+  buffer:
+   ibmvnic 30000003 env3: 6c6774732e737561 2e6d62692e736261
+   ibmvnic 30000003 env3: 63 6f 6d 00 03 00 05 65 6e 76 33 00 00 00 00
+  Since the second line is only 15 bytes, the group size is set to 1. I
+  have written a patch which keeps groupsize so output would be:
+   ibmvnic 30000003 env3: 6c6774732e737561 2e6d62692e736261
+   ibmvnic 30000003 env3: 636f6d0003000565 6e763300000000
+  But since I am not sure if this would break some dependency for someone,
+  and my justification for change is purely pedantic, I chose to omit
+  that patch in this patchset. Let me know if there is any interest and
+  I will send a different patchset for that. 
 
-> +{
-> +	struct range *hpa = &cxled->cxld.hpa_range;
-> +	struct cxl_root_decoder *cxlrd = cxled->cxlrd;
-> +	struct cxl_region_params *p;
-> +	struct cxl_region *cxlr;
-> +	bool attach = false;
-> +	int rc;
-> +
->  	/*
->  	 * Ensure that if multiple threads race to construct_region() for @hpa
->  	 * one does the construction and the others add to that.
-> @@ -3406,7 +3415,18 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  
->  	return rc;
->  }
-> -EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
-> +
-> +int cxl_endpoint_decoder_register(struct cxl_endpoint_decoder *cxled)
-> +{
-> +	int rc;
-> +
-> +	rc = cxl_endpoint_decoder_initialize(cxled);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return cxl_endpoint_decoder_add(cxled);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_endpoint_decoder_register, "CXL");
+Thanks for your consideration/review. And thanks to Simon and Jacob for v1
+review!
 
+Changes since v1:
+ - add Jacob's Reviewed-by
+ - fix kernel doc typo in patch 1 noted by Simon
 
+v1: https://lore.kernel.org/lkml/20250113221721.362093-1-nnac123@linux.ibm.com/
+
+Nick Child (3):
+  hexdump: Implement macro for converting large buffers
+  hexdump: Use for_each macro in print_hex_dump
+  ibmvnic: Print data buffers with kernel API's
+
+ drivers/net/ethernet/ibm/ibmvnic.c | 23 ++++++++++++++---------
+ include/linux/printk.h             | 21 +++++++++++++++++++++
+ lib/hexdump.c                      | 11 +++--------
+ 3 files changed, 38 insertions(+), 17 deletions(-)
+
+-- 
+2.48.0
 
 
