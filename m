@@ -1,444 +1,252 @@
-Return-Path: <linux-kernel+bounces-515707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DE6A367EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:00:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDCFA367F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7412171961
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4813AEA4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C241DC9B1;
-	Fri, 14 Feb 2025 22:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98461E3DFD;
+	Fri, 14 Feb 2025 22:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ia7V3/Dr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4KdX392"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39D61DC198
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739570399; cv=none; b=cxlE0NHHRpKFZgDC7IWkIHo6v+NcFPa5qD2EAVhnGSCVwkpN+sIrEjHA2fUP/lR4pffh6FTiNBK08wHE2f7iq7DGxEOP+E3WXXPH2gJkgYC5COEfTmY6zMt3M2x/9Zswt1Vh0jNrzHho/DHihvuJJRr7+IC8pP+hi6/BjL+DnvE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739570399; c=relaxed/simple;
-	bh=aK6nlOumBwwBE8fp0+hFXtCE3Vt5FrP5EL6BMMIp2bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UpjEYYxvamMralJfc1n5+T3xuf85U+io0bl92zTSNOOYrNDENxUfeofpTE9+kDn2di0qrfeebdpmx+xEaQoRG0SHgUVRl8GLSzJsAoEKLY+5HAf0mGleviU6aJQExX1xiVBnqq4u1XQtqQJU00ym+n4d4W+ddLtGC8e2W6AX2zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ia7V3/Dr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739570395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1UXxy6mQxDzeF30KOcZxZ8FOown0bDjggxUSAN6E34g=;
-	b=Ia7V3/Dr79l3dauZRbjjve+NHssO1GUUabvE0zZ1TYJqEAyM64WYc9StAzepADOGvFUA33
-	WgHz3L/OIOPBPMfFrjz5fdHiDwguri6VGLqLs87Q7iRDCu/yZRodRswplPDP0sH77SRvgT
-	tt8BPZrSG8G2eo96LLdh6QmhAB10CYQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-J_tMKe6kPuCDOFtAi7y5Mw-1; Fri, 14 Feb 2025 16:59:54 -0500
-X-MC-Unique: J_tMKe6kPuCDOFtAi7y5Mw-1
-X-Mimecast-MFC-AGG-ID: J_tMKe6kPuCDOFtAi7y5Mw_1739570393
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-439640a1a8dso11718405e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:59:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739570393; x=1740175193;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1UXxy6mQxDzeF30KOcZxZ8FOown0bDjggxUSAN6E34g=;
-        b=nWYlCx5zGAsWUAqLSOT9lPohOo1PL/c3kA/Inf8s9VXsnp82SFXrSfcvRxtGOrCNcs
-         Ee1RvZ8SLkokPWY6NGXz20Ph/Rf9A57fCUxD0JFqmdv/yMJYq3dNBxfbzHUNBoHu17o/
-         aCE/KoYH3Nn+Cv1SB+nZd41Rgs8Ka+UoFx0z3m/gpHRvEiAfol35T2woFATCOse7kWdJ
-         iMf7sQlwKaznZdd/DlABzIZSu3JdepKnwvX05qeASNqyJ3I+LvlyAW8xJLiSjJyj7cZT
-         SUNLQbxwiEHiiRqha849AtDRlpc68qSQPAv9pCYmmFbZge7oIg1MT5pUSzk8pJTkHak0
-         l3aA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWUq4CiymCjbCTNbgLWC6MxZNhNlybKB1vq7iSNIZ6Ejn7RgPZe0NOoFrV2jEL+8gIZHXPbsWgUn6wJQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwodmAiR9ZLapTInybyZF/KX5dQbtjnpf3fpvwAKYQm4IYXpT9
-	7mykS3/VF3ooAEsOEKSulmra0g8P5V4KU+I5n/dkm7XPS5qqWS6lNtxUxOkou9rOKoxgv531byF
-	6JmUrMkuvWGc5GfHyDhzClYhvAIffp+GvMiKOnKkW9yQC095mRSQm3y3UZZG1Tw==
-X-Gm-Gg: ASbGncv3fxo1JMQhpgkzucTIjw2C3FriV58qQmorXJ+alfRfXapB0jQjAECg9/ZUe/8
-	6v/rgiWaM/NfAZ1Ui1+kEXiDkaMFO8p0YrSiLceUx9d/pG0+OPtNGnlCfxXjMmK4IyLAe2DTdJG
-	sceflmjHWu71ixKQnJEF2VYfAiw1Y4U3zqYIs+YLqA2UpM1o/PE3TAgo4mm+VLuNAf4aL/8P3cR
-	YYTibKLzG/QBOzM04ZRqwMHYFxkzobuZxasuMWeQYlCfIoJmIZfXWdXNCYAM7asqV6x41JXanKW
-	m1mJa5RPUoqP3rskJNoypQunAoeMtBMEVcFE/gmAl5VKFTvTyPz2crDYeL1PFdwToEypZHyZhu5
-	PGRA4z+kTPTRuBkOI8QX0eBDalrPRgc8n
-X-Received: by 2002:a05:600c:1c97:b0:439:403a:6b77 with SMTP id 5b1f17b1804b1-4396e6c944dmr11952375e9.10.1739570393133;
-        Fri, 14 Feb 2025 13:59:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF2oEBu1OS6oJJ34rUUqc1BPOBx9m8tNT2xQLLSgNg9HQNPbmC+/jnLVSFbyq6TTxeC5btulw==
-X-Received: by 2002:a05:600c:1c97:b0:439:403a:6b77 with SMTP id 5b1f17b1804b1-4396e6c944dmr11952055e9.10.1739570392683;
-        Fri, 14 Feb 2025 13:59:52 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f22:1000:d72d:fd5f:4118:c70b? (p200300d82f221000d72dfd5f4118c70b.dip0.t-ipconnect.de. [2003:d8:2f22:1000:d72d:fd5f:4118:c70b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06da56sm85991305e9.23.2025.02.14.13.59.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 13:59:51 -0800 (PST)
-Message-ID: <db77d017-4a1e-4a47-9064-e335cb0313af@redhat.com>
-Date: Fri, 14 Feb 2025 22:59:50 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1885E1FBEB5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 22:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739570404; cv=fail; b=rXPJ8JcwbRsUMeR+vdlMnmIC/K67i+5kkDLmuLqjyVCxc3HICkmkyFpfMMTpSDOWU06LD1AhqcGnkfBTyvt1Hxf0KXmUIvfbTmmQ3I1hYagYiIQVUXeFGxekrzyKD3Mc4HpWFHCs408gvbucvZSbim3eE0qI2dM1a0at00xALSE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739570404; c=relaxed/simple;
+	bh=48902MydtAI3pnWfosPUiEWihwADgPaNMG1SpNlt6tQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b5/Pe5zFaEjXKb/pT3nuyiHjBhh5PH0r5KzAzKd8w6mW2INq2DklmH3FWAUkAmYx13+18idKEJgNbOMaGt4L1HiD+ZGQORkj65cwg+kEChnRqN3hpQcj4LWi3vsKOBxOtJtoavuJXvdFgSH+jzVbtcxBlgjtz5wHuG2bjmhX2Xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4KdX392; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739570402; x=1771106402;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=48902MydtAI3pnWfosPUiEWihwADgPaNMG1SpNlt6tQ=;
+  b=U4KdX392Hct8G3JzS1vNg9U6sRDwkYYjAKKYKp6nw1pEiz0dUDaUNwdk
+   HrqtWc3EvHqqmb4vQSrju9b0ZCKd5Yy322qZjPIYHNXuL5LRcw442JJQU
+   psI+GG7MXfhEw1BWiX3ZLIP1zs5cnjquzhORA49QSSgiIWUmGtSgUDrar
+   ymvAqqHvvfUkIWHCoWt4J15Pc7IvaKv1K8NlOH2WG6Xo0a7lbaMo5+q5Y
+   wrutA4Qy4cnavscua3kZR0RGDpM5tgluQ3S8jqY0HX6VxOXnRg6YJQph1
+   9Rmeqtnu+Ac8/YjqZqMp3p7RDMaFEMthXLZ3AK4wNXF166fIMfqMtrep4
+   Q==;
+X-CSE-ConnectionGUID: TwfkhzEmRMmjX/eFa3rFmA==
+X-CSE-MsgGUID: h4a/wWNpR0m3WS3F7zHkAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="65685288"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="65685288"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 14:00:01 -0800
+X-CSE-ConnectionGUID: D12urSl8RMCHnDFeA4t2sg==
+X-CSE-MsgGUID: rT/m8FjHRcOZePFsGaus7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113429345"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Feb 2025 14:00:01 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 14 Feb 2025 14:00:00 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Fri, 14 Feb 2025 14:00:00 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.171)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 14 Feb 2025 13:59:59 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UJMHre9d+ogOqNK4/HKoxI0pjF7l4rJ91HaT2Wg/seTCWF1HuQKPwG2sMt1t9FEK21c6LitUGWTImD0+RsWhsj+QvJS7qvc3tSKkETGb3RCwsVM+uUzAJgX5+mn9tsMWaISEqYAuFLakbaFaomJmDBn/zbVH3yFEZjOs7hkD06Biu4bjDN+lgOWmenk+i7F6xbWF4dvPwa+PbD9vrqpPS39ScnzEnDM3/tYoZy/wTKvgzIVjZzQHa3LX1kcYUUPdgzclRVS2x2gxUYol+alEH2fJOtAxeZQT+xVJ2lmbKdPenpaKu2W1zTgeBEaFYFA9QJQwlJy63CFY+f/UzbBjZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n481rG78dgPqfAMCoQbvaMreY9fh+dNwYQsgBdmTYyw=;
+ b=OQCn/BdVCR4a8cNpTaJEkkOnGbSkyWfYAqFecdFhYLiRAdjp/i7mGwBnKKmkE2Zj2F/DgywnC1ve6uDwqTz99z+OparbMtsS06X6C4ujmtXkXgiiGEG4DTIUwjO4qdamTEsQT/O9w4WvglXRsotyn/KGuWdv3zAM/zYJtc8U3bzJ0W1IG14OLUXisfgo2IlbBh/RaxAoTXNDe7m5MzxyqHfMf2Q3vywpMlLFDkTLI7aooz5wMFFixOJOGzjyjUzEm9JQ8kP/8xBk960li/4JnL/Jm4bB+gmRYympv95IDm+DbLI1hWeJ8FOcvBEOkZXWAJ/rWS+Wu/zupb+BW6RtCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB6269.namprd11.prod.outlook.com (2603:10b6:8:97::14) by
+ PH7PR11MB6547.namprd11.prod.outlook.com (2603:10b6:510:211::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Fri, 14 Feb
+ 2025 21:59:56 +0000
+Received: from DS7PR11MB6269.namprd11.prod.outlook.com
+ ([fe80::af1f:dcc:49bf:1a26]) by DS7PR11MB6269.namprd11.prod.outlook.com
+ ([fe80::af1f:dcc:49bf:1a26%3]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
+ 21:59:56 +0000
+Message-ID: <12ed2ab1-e97d-4a20-8370-8c60cabffc77@intel.com>
+Date: Fri, 14 Feb 2025 15:59:52 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
+To: Dave Hansen <dave.hansen@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>, "Kuppuswamy
+ Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
+ <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
+ <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
+ <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
+ <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+ <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com>
+ <c2cf2184-7753-454e-ac99-8c4f3c9c3d16@intel.com>
+ <01fc0997-a0e7-4086-b0aa-67b4a51b328a@intel.com>
+Content-Language: en-US
+From: "Xing, Cedric" <cedric.xing@intel.com>
+In-Reply-To: <01fc0997-a0e7-4086-b0aa-67b4a51b328a@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0146.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::31) To DS7PR11MB6269.namprd11.prod.outlook.com
+ (2603:10b6:8:97::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250211155034.268962-1-ziy@nvidia.com>
- <20250211155034.268962-3-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250211155034.268962-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB6269:EE_|PH7PR11MB6547:EE_
+X-MS-Office365-Filtering-Correlation-Id: b547fbcd-faba-4885-cf9b-08dd4d42eae1
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dHlZN0lHSGxLNXZzZDBKSlljQ3Q3N0N4WTU5Zy90eGZ3cmJKM0RublNmMDlT?=
+ =?utf-8?B?SWVJZXBOTHM2Um5qd2tlajVBNHBRT1p1aThaV1ZDVk9KVlVRYkRWTUlRMVND?=
+ =?utf-8?B?VWdOU3R3MDNEcDR5WnVPODlhMlE0SGR4cUpZSkRkVHpjYytuNUQ0WHpBU2VW?=
+ =?utf-8?B?cHh2b1F3TDU2eWZYTTRaVnFxOWIzRS9BNW1UUnNyTGpsbmRIdE5Jc1JZL0pD?=
+ =?utf-8?B?eUpUZzhBSEVSa01NU2NXRVVnZmpsd3JkbGNaRnlyODhLblQrenc3NmJqYmdR?=
+ =?utf-8?B?WjRhaUs4V2lsQ3VBWjV1cVBDcnhST2VtRzJ1YUNkcmNWOElNWHFQUGNFaGty?=
+ =?utf-8?B?TXc2Z0xVQnYyaTZvSURvdTkzOXAwdFA1cXoxa3l1Z3lLSWtPRWYvQm9IRE56?=
+ =?utf-8?B?Z2xnUktPbDlSWnhmbitwajZMRUhGVDhtVEdUcUdqWTQ1Z1Nqd2tRSTNyRG9s?=
+ =?utf-8?B?L0FVYVh6THdteVRvZVQ3N09QQlptK0xhNHcxZHZqZjFSZDZTTk5sQUFDczVW?=
+ =?utf-8?B?R0NyTVBoMDZoUE9NR2ZPc0pCQmVwVlRSV3YyZkdBdUgzcHRwQVR4RTRSUCtl?=
+ =?utf-8?B?MGdVcTM3VXpLZnRSajg5MUROT04rdjYxM1hXUlBGdGJ2VzNQUXd0R1gvR0ZW?=
+ =?utf-8?B?SXVhWWxZMDRNeE9DcVFWdktUbkZlZE9WZU9DQzBDWWJOSy9kQlduREVPck94?=
+ =?utf-8?B?MGxTcE4wUEdwNmtVVkc0YVlYN0xHS1hmeVU3NG80MlNCd0VFMEVHZDA3QTZs?=
+ =?utf-8?B?dko2aWFCRXpvMWtNRjk3Zkp3ckNmeW5LNU9Rb2lvNHI5TlBESUJuS0VPMTV0?=
+ =?utf-8?B?VVZEbjdUZDhsOFNRc21qYTFKSFJaMW9FMnpyeEhFVHBwNERBNFllUjBhNURP?=
+ =?utf-8?B?NGlYLzJJa2xGT0pvY2Z5L3I2aHhWR1dwYmFySmpKV0pUeUtCVm1tZmppTEI0?=
+ =?utf-8?B?amxzZWQ0eHdCeXp4dUJ4dFFUdmNKT2xmbXUwLzhFa3gxVUc5VTZNbmRNMnlQ?=
+ =?utf-8?B?M3VpSzVCeUpPV3lrc2l6NXhTb1lqWTh6cTdSR2p5dU1GMzNMbUxqNGcySG4y?=
+ =?utf-8?B?UlIxUFJtZnBoektlTm5xTFRqQ09FK013SU5vdTNNckttSk9JNmVOcy8zWE9o?=
+ =?utf-8?B?WG5YY2Zrby9sUGt4dUlPdlE0Si9BRUxLc1dxY2hzbCs1U3FsL1E0YnBpdHYv?=
+ =?utf-8?B?TXdnWGNaczRvQ3JSN0FDLzh6TEV2ZUVFNDZ2V01QYnpNOE5yMnlGcmZmeWF6?=
+ =?utf-8?B?dEVqZm9wTENDK0wyTW1uakxDeTdIclNxNVdtTXd0MzNHWms4VHdxcmhkNEZl?=
+ =?utf-8?B?S1h0M0lDVDdFRitZWERVcXRBME55bjRaN1RZMGc2YkdJUWpiNlBoU2pnczJj?=
+ =?utf-8?B?dit3Z0xON2NVcTFUSVVJTVUzbkdWU2VETHJZVjJMOEd5Qm85SkdoT1hEVFZv?=
+ =?utf-8?B?bjV2V0VKTC9aVXVWV2tIK1NvYmswSUIxQWh3YitJNzU2aUtpekxMMlNUbmRi?=
+ =?utf-8?B?M3pJelNqeVE4MVVXMldpUEZIVVJBTWRsUDJlTERNamF6SXZibHFvUWd3R0Qx?=
+ =?utf-8?B?dHdrald0eTB1WkJRRThXeDB1UDVldjlZbTJ1Qmh1amVwUWh6TitDakc3Qkt2?=
+ =?utf-8?B?cC9tNy9yRkFRSXFyR1pRZEpNTFhVNXlHR2JwUFg5VFh2VHgvQUdvQnJEWVJ6?=
+ =?utf-8?B?MWxER3RWdnIwbzNLVXk4UDMwODVUZzhjQ3BQS0pvMVlEQ0g2SGpzNU9EblZX?=
+ =?utf-8?B?c0s3dHM2VE1JSmxERXIrLzRVVGF0L3Z0MXFjME12R0cvcnFVYUJtWHFaRXVI?=
+ =?utf-8?B?L0x3VGZyZW85UTFuRkxqK0ZZb1BHSVpKTTZRUTJ6Y1piM2R4NHp5c3ZVanBx?=
+ =?utf-8?Q?UbGAN8CUunE1T?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6269.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dGx1TmlFN0lBRSt4ZjBoV2pQcHRaMnBacXVSVm9TUE1nbFdyK3ZVcnpxV1dI?=
+ =?utf-8?B?UDEyaEY2d3lGRDlibG11d3BRSnJSdnNrSGZuVVdpa2RhOFF5TjZ0aHVWMExI?=
+ =?utf-8?B?OE9IWlMzMDF6aDhDMHFGUytvdkJaYU4ybzhVMHZGbUI1alZRUWMxbkdrdFJI?=
+ =?utf-8?B?eXYvaStCTnorQ0RIelZ1SmpOc3YrUkx6UmZObG9UOHpHY3lZM25QUDJnWnBX?=
+ =?utf-8?B?dVQ0eHI1MFA3YTBLbHBjNUR2TW1VanFhUEdvTldsYU5iV0FvcVNNb3RnYUJ3?=
+ =?utf-8?B?b3ZKcnhrMUNyeVRlWXpWUG9pejhGRWM0aXFxN2VRZmZRb2lwc3Y0RlhEWC9T?=
+ =?utf-8?B?RjU0cTNKaTAwdk9qQTNjamxhVktwNndtcGV3Q0JwZ1JWNnFTVVlMdzZoMHd3?=
+ =?utf-8?B?aVdway9aY0FyYytiOG9VV0g2RnZ6akNhWWk2NkdlU2pkcGROb1daODdzWTNm?=
+ =?utf-8?B?Yyt5R3RmdUcwcFNQSnRkcGpVT3VvcWJxR2w2UUMyUUxLWWxWdXhVaUsvbzR3?=
+ =?utf-8?B?aU9ua2JGSlk4aGVlNGplcUY1YUdJUkNTQm4yNlNSUHhHYzRWK0dLQzVBbE5L?=
+ =?utf-8?B?RTBiVDhKNW5aUEJOdDNhRktBZkQySk04QnFBbjdrLzRBMHRMUU1YaHdiajM3?=
+ =?utf-8?B?UVFYdHMzVG45bnNtMU4zUURnWDREZFY5Qi9mQ21ZQysrYnQwNHUyZEdOaHpm?=
+ =?utf-8?B?RGpUV3FIMGF1U1dZbGR0Zld3bjBmQXRNU0dLN1F2M2hNQ0FQRWdGZWN3QlV2?=
+ =?utf-8?B?MklxZHhYcXYzZFNmQmRkMFFTYUxQdEl6RWlTbnRpMU96c0M4R08zR0hkMWZr?=
+ =?utf-8?B?dlUxSEZWOWwxcjV2c1Q1QndKME04VmNFeG5ZT0ZXNklSUE5lbld5T29mTWhB?=
+ =?utf-8?B?cXpIWHVPQ0NRc3lqR3QwdDU3MHE2RVE1RVJrcnFOWEZwYzhIZ2tTTGNVTjNZ?=
+ =?utf-8?B?ZXUvQWtFVmlkNjBVOXJ3RWRjRm5BQTBIdWQ3KzJvYUxMUkZwRG8yTWxOWTFM?=
+ =?utf-8?B?ZzZUSEZkQWpGUWl2ZjF3YytWMDZMaUY3L3cvbU10VEFCSWZFQUlvMjAxZmh6?=
+ =?utf-8?B?dERmRFEvZjVKYXh3M0xXR1FQV08rMFlkWmovMUt4NDNCb0NUdzNLc0lHS2J4?=
+ =?utf-8?B?VWorbG9rbFljajFvSWwxVWtxam11bWV0ZnFoT1RjT2YwQXlJWG81V05hdUZl?=
+ =?utf-8?B?MTFlN0JmZXZPejZ0bzFuWGtreWMrOHVoVHZBZWY2TUJUTHd3Y0l2Nmh6TmVo?=
+ =?utf-8?B?cVNjbUdpRElXV1BqVnkyaXpEOGNzbnhWTjNlQWdoZVgraTdjUGFjL0xtaXNv?=
+ =?utf-8?B?SENSWExmalBROVJaSnM1Z0hXNVNSa3VuOWFuMHJlOTR6QTRld2VES2VxZ0ZT?=
+ =?utf-8?B?QldpRnJ0ZW9yTFZSV2wrTnc1UVVncjFuTGMyNm00Y0phOUFHSnhEWkg4dThm?=
+ =?utf-8?B?eUo1RFN1Qm9lVHcydUhxRzhpTTlmQ25TY242MlgxTjdIM05xbFNTK1MvaGVy?=
+ =?utf-8?B?VzlCOG9WOFlGcVlFUkE0K3Vvc0tDM3pwb0dSUVNYUFZEc1MrTE80U2dFNUxx?=
+ =?utf-8?B?bUIrRDcrZ2hLUVc4UWJ0eXBqckFTRUlnQUdrVkIxWUoxS3NoTFVQVFNxNi9z?=
+ =?utf-8?B?MEx6NHRHdW9NTC9DWE1ac29ncjRCOGhMV3FEb005Qk11enQwZDllTll2VXZq?=
+ =?utf-8?B?S1RaZlNmMW5kVmlWSGtLbHV2TEFidE1YNDFSK3VOTk5KQVpPK1k5N2U1S3NF?=
+ =?utf-8?B?VGpPa2VpVTg4QW9RNWhiWVNPWmVTbC8xelpoZ2dVMWgyc2Z1aUYxeXhxekx0?=
+ =?utf-8?B?eU15WXU5eTRhWnRXNkI1STlKQmpmWHFOWmc0cjZKdVVQNVVpTWdqM1Nyalpk?=
+ =?utf-8?B?NFFQdGFjMTZXdDVOVjluRmZ3L0RvZWljSWpSditSVmJoK0xnbDc3OG1RSzc0?=
+ =?utf-8?B?bU1OZGx5NDVLakh1Y1lIVHRsTUxpekVUNnNYbGVjZGR0OUF5MnI3b1ZMcFJp?=
+ =?utf-8?B?SVBXWTRZMU5JTktZeVcyS0JDUngveXdweGRwWWFZTHhSRGFMY3drMWZTNGRu?=
+ =?utf-8?B?ZXc5SkszNGppeEJMWktvU0hwTjFTTHRrWjJpUk1GQlprOFZFeW1ENDB1UVpw?=
+ =?utf-8?Q?4UkAivuPqBmPOb2f5dWD8Jmm8?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b547fbcd-faba-4885-cf9b-08dd4d42eae1
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6269.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 21:59:56.2346
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C+cd1/OEdgcXxJs9ODPAT+pQabY5PaCr5lkt/5sOaTexwin2AKuvVqLtpCfMal8acYQ9iC4kjSmX6OCIdxyKIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6547
+X-OriginatorOrg: intel.com
 
-On 11.02.25 16:50, Zi Yan wrote:
-> This is a preparation patch, both added functions are not used yet.
+On 2/14/2025 10:26 AM, Dave Hansen wrote:
+> On 2/14/25 08:19, Xing, Cedric wrote:
+>>> But if this is for debug, wouldn't these belong better in debugfs? Do we
+>>> really want to maintain this interface forever? There's no shame in
+>>> debugfs.
+>>>
+>> There are many other (more important/significant) uses besides debugging.
+>>
+>> For example, any applications that make use of runtime measurements must
+>> extend RTMRs, and this interface provides that exact functionality.
+>>
+>> Another example, a policy may be associated with a TD (e.g., CoCo) by
+>> storing its digest in MRCONFIGID, so that the policy could be verified
+>> against its digest at runtime. This interface allows applications to
+>> read MRCONFIGID.
 > 
-> The added __split_unmapped_folio() is able to split a folio with
-> its mapping removed in two manners: 1) uniform split (the existing way),
-> and 2) buddy allocator like split.
+> The attestation world is horrifically complicated, and I don't
+> understand the details at _all_. You're going to have to explain this
+> one to me like I'm five.
 > 
-> The added __split_folio_to_order() can split a folio into any lower order.
-> For uniform split, __split_unmapped_folio() calls it once to split
-> the given folio to the new order. For buddy allocator split,
-> __split_unmapped_folio() calls it (folio_order - new_order) times
-> and each time splits the folio containing the given page to one lower
-> order.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   mm/huge_memory.c | 349 ++++++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 348 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index a0277f4154c2..12d3f515c408 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3262,7 +3262,6 @@ static void remap_page(struct folio *folio, unsigned long nr, int flags)
->   static void lru_add_page_tail(struct folio *folio, struct page *tail,
->   		struct lruvec *lruvec, struct list_head *list)
->   {
-> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->   	VM_BUG_ON_FOLIO(PageLRU(tail), folio);
->   	lockdep_assert_held(&lruvec->lru_lock);
->   
-> @@ -3506,6 +3505,354 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->   					caller_pins;
->   }
->   
-> +/*
-> + * It splits @folio into @new_order folios and copies the @folio metadata to
-> + * all the resulting folios.
-> + */
-> +static int __split_folio_to_order(struct folio *folio, int new_order)
-> +{
-> +	int curr_order = folio_order(folio);
-> +	long nr_pages = folio_nr_pages(folio);
-> +	long new_nr_pages = 1 << new_order;
-> +	long index;
-> +
-> +	if (curr_order <= new_order)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Skip the first new_nr_pages, since the new folio from them have all
-> +	 * the flags from the original folio.
-> +	 */
-> +	for (index = new_nr_pages; index < nr_pages; index += new_nr_pages) {
-> +		struct page *head = &folio->page;
-> +		struct page *new_head = head + index;
-> +
-> +		/*
-> +		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
-> +		 * Don't pass it around before clear_compound_head().
-> +		 */
-> +		struct folio *new_folio = (struct folio *)new_head;
-> +
-> +		VM_BUG_ON_PAGE(atomic_read(&new_head->_mapcount) != -1, new_head);
-> +
-> +		/*
-> +		 * Clone page flags before unfreezing refcount.
-> +		 *
-> +		 * After successful get_page_unless_zero() might follow flags change,
-> +		 * for example lock_page() which set PG_waiters.
-> +		 *
-> +		 * Note that for mapped sub-pages of an anonymous THP,
-> +		 * PG_anon_exclusive has been cleared in unmap_folio() and is stored in
-> +		 * the migration entry instead from where remap_page() will restore it.
-> +		 * We can still have PG_anon_exclusive set on effectively unmapped and
-> +		 * unreferenced sub-pages of an anonymous THP: we can simply drop
-> +		 * PG_anon_exclusive (-> PG_mappedtodisk) for these here.
-> +		 */
-> +		new_head->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
-> +		new_head->flags |= (head->flags &
-> +				((1L << PG_referenced) |
-> +				 (1L << PG_swapbacked) |
-> +				 (1L << PG_swapcache) |
-> +				 (1L << PG_mlocked) |
-> +				 (1L << PG_uptodate) |
-> +				 (1L << PG_active) |
-> +				 (1L << PG_workingset) |
-> +				 (1L << PG_locked) |
-> +				 (1L << PG_unevictable) |
-> +#ifdef CONFIG_ARCH_USES_PG_ARCH_2
-> +				 (1L << PG_arch_2) |
-> +#endif
-> +#ifdef CONFIG_ARCH_USES_PG_ARCH_3
-> +				 (1L << PG_arch_3) |
-> +#endif
-> +				 (1L << PG_dirty) |
-> +				 LRU_GEN_MASK | LRU_REFS_MASK));
-> +
-> +		/* ->mapping in first and second tail page is replaced by other uses */
-> +		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_head->mapping != TAIL_MAPPING,
-> +			       new_head);
-> +		new_head->mapping = head->mapping;
-> +		new_head->index = head->index + index;
-> +
-> +		/*
-> +		 * page->private should not be set in tail pages. Fix up and warn once
-> +		 * if private is unexpectedly set.
-> +		 */
-> +		if (unlikely(new_head->private)) {
-> +			VM_WARN_ON_ONCE_PAGE(true, new_head);
-> +			new_head->private = 0;
-> +		}
-> +
-> +		if (folio_test_swapcache(folio))
-> +			new_folio->swap.val = folio->swap.val + index;
-> +
-> +		/* Page flags must be visible before we make the page non-compound. */
-> +		smp_wmb();
-> +
-> +		/*
-> +		 * Clear PageTail before unfreezing page refcount.
-> +		 *
-> +		 * After successful get_page_unless_zero() might follow put_page()
-> +		 * which needs correct compound_head().
-> +		 */
-> +		clear_compound_head(new_head);
-> +		if (new_order) {
-> +			prep_compound_page(new_head, new_order);
-> +			folio_set_large_rmappable(new_folio);
-> +
-> +			folio_set_order(folio, new_order);
-> +		}
-> +
-> +		if (folio_test_young(folio))
-> +			folio_set_young(new_folio);
-> +		if (folio_test_idle(folio))
-> +			folio_set_idle(new_folio);
-> +
-> +		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
-> +	}
-> +
-> +	if (!new_order)
-> +		ClearPageCompound(&folio->page);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * It splits an unmapped @folio to lower order smaller folios in two ways.
-> + * @folio: the to-be-split folio
-> + * @new_order: the smallest order of the after split folios (since buddy
-> + *             allocator like split generates folios with orders from @folio's
-> + *             order - 1 to new_order).
-> + * @page: in buddy allocator like split, the folio containing @page will be
-> + *        split until its order becomes @new_order.
-> + * @list: the after split folios will be added to @list if it is not NULL,
-> + *        otherwise to LRU lists.
-> + * @end: the end of the file @folio maps to. -1 if @folio is anonymous memory.
-> + * @xas: xa_state pointing to folio->mapping->i_pages and locked by caller
-> + * @mapping: @folio->mapping
-> + * @uniform_split: if the split is uniform or not (buddy allocator like split)
-> + *
-> + *
-> + * 1. uniform split: the given @folio into multiple @new_order small folios,
-> + *    where all small folios have the same order. This is done when
-> + *    uniform_split is true.
-> + * 2. buddy allocator like (non-uniform) split: the given @folio is split into
-> + *    half and one of the half (containing the given page) is split into half
-> + *    until the given @page's order becomes @new_order. This is done when
-> + *    uniform_split is false.
-> + *
-> + * The high level flow for these two methods are:
-> + * 1. uniform split: a single __split_folio_to_order() is called to split the
-> + *    @folio into @new_order, then we traverse all the resulting folios one by
-> + *    one in PFN ascending order and perform stats, unfreeze, adding to list,
-> + *    and file mapping index operations.
-> + * 2. non-uniform split: in general, folio_order - @new_order calls to
-> + *    __split_folio_to_order() are made in a for loop to split the @folio
-> + *    to one lower order at a time. The resulting small folios are processed
-> + *    like what is done during the traversal in 1, except the one containing
-> + *    @page, which is split in next for loop.
-> + *
-> + * After splitting, the caller's folio reference will be transferred to the
-> + * folio containing @page. The other folios may be freed if they are not mapped.
-> + *
-> + * In terms of locking, after splitting,
-> + * 1. uniform split leaves @page (or the folio contains it) locked;
-> + * 2. buddy allocator like (non-uniform) split leaves @folio locked.
-> + *
-> + *
-> + * For !uniform_split, when -ENOMEM is returned, the original folio might be
-> + * split. The caller needs to check the input folio.
-> + */
-> +static int __split_unmapped_folio(struct folio *folio, int new_order,
-> +		struct page *page, struct list_head *list, pgoff_t end,
-> +		struct xa_state *xas, struct address_space *mapping,
-> +		bool uniform_split)
-> +{
-> +	struct lruvec *lruvec;
-> +	struct address_space *swap_cache = NULL;
-> +	struct folio *origin_folio = folio;
-> +	struct folio *next_folio = folio_next(folio);
-> +	struct folio *new_folio;
-> +	struct folio *next;
-> +	int order = folio_order(folio);
-> +	int split_order;
-> +	int start_order = uniform_split ? new_order : order - 1;
-> +	int nr_dropped = 0;
-> +	int ret = 0;
-> +	bool stop_split = false;
-> +
-> +	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
-> +		/* a swapcache folio can only be uniformly split to order-0 */
-> +		if (!uniform_split || new_order != 0)
-> +			return -EINVAL;
-> +
-> +		swap_cache = swap_address_space(folio->swap);
-> +		xa_lock(&swap_cache->i_pages);
-> +	}
-> +
-> +	if (folio_test_anon(folio))
-> +		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
-> +
-> +	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-> +	lruvec = folio_lruvec_lock(folio);
-> +
-> +	folio_clear_has_hwpoisoned(folio);
-> +
-> +	/*
-> +	 * split to new_order one order at a time. For uniform split,
-> +	 * folio is split to new_order directly.
-> +	 */
-> +	for (split_order = start_order;
-> +	     split_order >= new_order && !stop_split;
-> +	     split_order--) {
-> +		int old_order = folio_order(folio);
-> +		struct folio *release;
-> +		struct folio *end_folio = folio_next(folio);
-> +		int status;
-> +
-> +		/* order-1 anonymous folio is not supported */
-> +		if (folio_test_anon(folio) && split_order == 1)
-> +			continue;
-> +		if (uniform_split && split_order != new_order)
-> +			continue;
-> +
-> +		if (mapping) {
-> +			/*
-> +			 * uniform split has xas_split_alloc() called before
-> +			 * irq is disabled to allocate enough memory, whereas
-> +			 * non-uniform split can handle ENOMEM.
-> +			 */
-> +			if (uniform_split)
-> +				xas_split(xas, folio, old_order);
-> +			else {
-> +				xas_set_order(xas, folio->index, split_order);
-> +				xas_try_split(xas, folio, old_order,
-> +						GFP_NOWAIT);
-> +				if (xas_error(xas)) {
-> +					ret = xas_error(xas);
-> +					stop_split = true;
-> +					goto after_split;
-> +				}
-> +			}
-> +		}
-> +
-> +		/* complete memcg works before add pages to LRU */
-> +		split_page_memcg(&folio->page, old_order, split_order);
-> +		split_page_owner(&folio->page, old_order, split_order);
-> +		pgalloc_tag_split(folio, old_order, split_order);
-> +
-> +		status = __split_folio_to_order(folio, split_order);
-> +
+> Could you also explain how this is different from the hardware and
+> virtual TPMs and why this doesn't fit into that existing framework? How
+> are TVMs novel? What justifies all this new stuff?
+TVM (TEE VM) is a broad term referring to encrypted/protected VMs on 
+various confidential computing (CC) architectures, such as AMD SEV, Arm 
+CCA, Intel TDX, etc. Each of these architectures includes hardware 
+components for storing software measurements, known as measurement 
+registers (MRs). This patch series aims to provide the necessary 
+functionality for applications that need to access these MRs.
 
-Stumbling over that code (sorry for the late reply ... ).
+There are no real/hardware TPMs but only virtual ones in TVMs. Virtual 
+TPMs can be built upon the native MRs provided by the underlying CC 
+architectures.
 
-That looks weird. We split memcg/owner/pgalloc ... and then figure out 
-in __split_folio_to_order() that we don't want to ... split?
-
-Should that all be moved into __split_folio_to_order() and performed 
-only when we really want to split?
-
--- 
-Cheers,
-
-David / dhildenb
-
+If you need more detailed information, I'd be happy to discuss it 
+further offline to avoid cluttering the mailing list.
 
