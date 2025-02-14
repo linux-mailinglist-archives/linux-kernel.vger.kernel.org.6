@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-515697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABBDA367D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:52:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477D3A367CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FFE189399B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF80B7A18A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC661DB128;
-	Fri, 14 Feb 2025 21:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iacj/Ej8"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB1D1D7E47;
+	Fri, 14 Feb 2025 21:52:07 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7121C861A;
-	Fri, 14 Feb 2025 21:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C161940A1;
+	Fri, 14 Feb 2025 21:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739569943; cv=none; b=eY3ZVzThk5lnJ1lJE6QoGeirHEEjhMwvjcARCuC75DQXNwj7qe9IRcqKBZFZ7vlUIGd/IbeaXlMS39tcgvbG0jy+7hYuoEIwQ6pMHVfKE9vgcuovvQkK34Rv1dBAQPrAyTGzTyWVGAEBrh6ZZiyeXaph4soOyiAF8JrAgtC+UHg=
+	t=1739569926; cv=none; b=cm/AYR5zxvm9Pt7t12VfNk71pqjz3oPD39oRVcHb4RTR1mIRxo62yCB60jgOsQdxP9MfIXg5MW9RlQbTXMpZvDfS4HklR5gy5XdIOFOKD7lc6RhxnVaeVtBoImX1iZPGAEyn+rVoPUyx9yKXylz1eTP46p61iEBdZPhpjUsI7OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739569943; c=relaxed/simple;
-	bh=/KKHLAaMFAEPJleSikTB6lnzt8UjdnvqiBRPZj74hNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mrpMd7CjmS7O9muZixpkBmx42v2syDbbBas54+i5O9h3r+qMjaaiCBdqJtJEx3v8+n/k4E9S3ChDiBDB45QqWzc3OgeB/jm07WmCILlzwv6JEXxdKrThg7zdaZgyb0hLD95Qc45gAZZBi/OH+vO+4k0zP0vD5SVk13MJFCU65kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iacj/Ej8; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-308ec50eb3dso26197531fa.1;
-        Fri, 14 Feb 2025 13:52:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739569940; x=1740174740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JRqlyd6oGO0KdHznSNNqTI/AEXRx3zHfr08E+Px4USU=;
-        b=iacj/Ej868u+bqloWORuC1SwfrqJdp1CikMl/XuTF3rIkt5pKinDfNgiXnN1zqtLly
-         Vyoqtt4KaLdCpDa+6jbIWNZcmLEn9nDplijl/6hqUvr7Ud67LIZl9VTuR8+XrwnHaANu
-         wnf+pPa4xLE1gRuDst/Nby3B32L8/haHqMX+Aw3ydL/94vmxlvPqMgrUsGIZAn49C2JA
-         iEnmL2HWcmFx4mlyumAKpfCk/WZDlc9Vff/FZrIbRU93KIy7eLUF90knIwPIedIsNDIV
-         LCnzNT6fMWPE1I1mTeOTCUo5mGuLXe+GZL/LCQULBGN9g43WJcHrUD50jZ81aiEmOL/9
-         jmYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739569940; x=1740174740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JRqlyd6oGO0KdHznSNNqTI/AEXRx3zHfr08E+Px4USU=;
-        b=sjVsWcLT31zmTpmUzSZpNAyJNQAWapXuUHK0jARZfSjKkk/6kJyyaNs6fdWH6rY7/t
-         7bFSaxmXONHimNbR2m61wUYd5XhhM7tDDLr1CcPV0Sldnz45pWYDl7k7j0ER9N+HPQx5
-         hyik4NGByourGyQK9cAgP1rFHtQZ7BzdJ+NUVjmXi9OVNs/w9NbsS4wuSwdXakWc8uYU
-         oS5pEvbRrpPrDjekUWqXCExa347Iv629iVN8p4EV7SrZo/PRNhBzbwZsasEGW/YW7eCn
-         CPRvBkNo1AYeBC7qd9DANWi9sF2U5UxKYM/cT8Ad/jF3ZnePjnNn9gLradsbRZk/cxGe
-         QtIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Aep9+ILPQTK2kyM/SHdrz33LIjeCT0+TU8dfcRyIypXF8uP0rPmwYcWPSqtv5zXUVwDvz9YGDlQ=@vger.kernel.org, AJvYcCWCc+yDFSwUPbT/EgOY1P6Hm8Ecq08Ln0YwTn0quJ74Ycjstgj9uPbqk7BhRWS1MNqn9Cl5hoblmriFvW3W@vger.kernel.org, AJvYcCWl4nJsJcrGmS26nrgcUWZ+kFW1xdb7QZrDfcRrF5AjyIqCj2NWEB/bHeUA4kH/2VF6LVyYrMzxFJs5hQsNohEL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9+mbT8p2uY1S/S9qmo/lZuCBG7Ps8lDOi6PXt4UP1Yg1vg+v9
-	tXrx7Q1hYYiQT015Z9t5aDNqqQkl+4Tlnhxyr+4/1qL+/WFHp+KTD95yQfvu5x0EJn9SCFdY+jH
-	Zv+pTiojRtz3EiA/g26+LRKWw6k8=
-X-Gm-Gg: ASbGncsar62XaJiQvVEeWazT+Jy8fBFP+mUjO4raOwXrq/ct5Lsj6STfi6stueTN+Xe
-	cCXowMoCgkPBjKVB8q83HJc/ehikML7xjH8SM9DvA6kbt4Sh+ZKfw5y7voUmzpkTm7JgDn/d0I+
-	vyrPKTdqcont+fzF3u94yhz46PKsEWMGw=
-X-Google-Smtp-Source: AGHT+IHSpHMu+d9yxfeM9fhEh2exQCFb02zAuHKSY+JxD0Uew6ExTEbIBTjpVBPP5XMmM53Pc3kzV0IcmY9YkC9NKA4=
-X-Received: by 2002:a2e:95c4:0:b0:308:ee65:7f4e with SMTP id
- 38308e7fff4ca-309279505ddmr4289291fa.0.1739569939469; Fri, 14 Feb 2025
- 13:52:19 -0800 (PST)
+	s=arc-20240116; t=1739569926; c=relaxed/simple;
+	bh=G3K95h94iYD9zS9lmKkAWqoCHpM/BvBxxToKhcC252A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KRABveyawN/12lxY7VubfDU8A0aA8H9H580Wh4JvWUF7ta2DEZgrH6KB3mWRbJS5OOvvB42ybxKTyf0cNm0R2Tvbi1SzWnj5+N3yfbSe9Tw8FCFwagUUXc1cwwnGPdYGzTtB8XDteynxRg38vMdQXhAuWVSuBYwSOwOqnnqt9js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	(Authenticated sender: kovalevvv)
+	by air.basealt.ru (Postfix) with ESMTPSA id 7CD582336E;
+	Sat, 15 Feb 2025 00:51:54 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Gao Xiang <xiang@kernel.org>,
+	linux-unionfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	kovalev@altlinux.org,
+	syzbot+316db8a1191938280eb6@syzkaller.appspotmail.com
+Subject: [PATCH] ovl: fix UAF in ovl_dentry_update_reval by moving dput() in ovl_link_up
+Date: Sat, 15 Feb 2025 00:51:48 +0300
+Message-Id: <20250214215148.761147-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-printf-kunit-convert-v3-0-ee6ac5500f5e@gmail.com>
- <Z69isDf_6Vy8gGcS@pathway.suse.cz> <Z69oxhkUzTfJ6YKi@smile.fi.intel.com>
- <CAJ-ks9mck4DzX+WANxKSmcN=mP9ztgwWETXLmX_F-gy=EhmLNg@mail.gmail.com> <CAKwiHFjnY-c01rvkzNRz=h=L-AxRMyUtp2G0b17akF82tAOHQg@mail.gmail.com>
-In-Reply-To: <CAKwiHFjnY-c01rvkzNRz=h=L-AxRMyUtp2G0b17akF82tAOHQg@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Feb 2025 16:51:43 -0500
-X-Gm-Features: AWEUYZlIzjGDNjdcMbGasiSVuX4TBnRVStLmaQbB724z7yxjnP4i1AoyHu0JSSg
-Message-ID: <CAJ-ks9=T7JJ2W4+fDKeysQ9QOtquMHoGwYU3g8a-A2OJrgL9Sg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] printf: convert self-test to KUnit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Petr Mladek <pmladek@suse.com>, 
-	Arpitha Raghunandan <98.arpi@gmail.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 4:47=E2=80=AFPM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On Fri, 14 Feb 2025 at 17:53, Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > On Fri, Feb 14, 2025 at 11:02=E2=80=AFAM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > On Fri, Feb 14, 2025 at 04:35:12PM +0100, Petr Mladek wrote:
->
-> > > > I have just quickly tested this before leaving for a week.
-> > > > And I am fine with the result.
-> > >
->
-> Thanks, Petr, for demonstrating how it looks in a failure case.
->
-> > > Seems reasonable to me. But I want a consensus with Rasmus.
-> >
-> > I have a local v4 where I've added the same enhancement as the scanf
-> > patches so that assertions log the line in the top-level test.
-> >
-> > I'll wait for Rasmus' reply before sending.
->
-> I think all my concerns are addressed, with the lines printed in case
-> of error telling what is wrong and not that memcmp() evaluating to 1
-> instead of 0, and with the final free-form comment including that "ran
-> 448 tests". If you feel that word is confusing when there's
-> "obviously" only 28 "test" being done, feel free to change that to
-> "did 448 checks" or "did 448 individual checks" any other better
-> wording.
->
-> Rasmus
+The issue was caused by dput(upper) being called before
+ovl_dentry_update_reval(), while upper->d_flags was still
+accessed in ovl_dentry_remote().
 
-Personally, I don't feel strongly about this wording, so I'm hewing
-close to the original:
+Move dput(upper) after its last use to prevent use-after-free.
 
-    ....
-    ok 25 flags
-    ok 26 errptr
-    ok 27 fwnode_pointer
-    ok 28 fourcc_pointer
-    # printf: ran 448 tests
-# printf: pass:28 fail:0 skip:0 total:28
-# Totals: pass:28 fail:0 skip:0 total:28
-ok 1 printf
+BUG: KASAN: slab-use-after-free in ovl_dentry_remote fs/overlayfs/util.c:162 [inline]
+BUG: KASAN: slab-use-after-free in ovl_dentry_update_reval+0xd2/0xf0 fs/overlayfs/util.c:167
 
-I'll send v4 momentarily. Thanks, all!
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ ovl_dentry_remote fs/overlayfs/util.c:162 [inline]
+ ovl_dentry_update_reval+0xd2/0xf0 fs/overlayfs/util.c:167
+ ovl_link_up fs/overlayfs/copy_up.c:610 [inline]
+ ovl_copy_up_one+0x2105/0x3490 fs/overlayfs/copy_up.c:1170
+ ovl_copy_up_flags+0x18d/0x200 fs/overlayfs/copy_up.c:1223
+ ovl_rename+0x39e/0x18c0 fs/overlayfs/dir.c:1136
+ vfs_rename+0xf84/0x20a0 fs/namei.c:4893
+...
+ </TASK>
+
+Fixes: b07d5cc93e1b ("ovl: update of dentry revalidate flags after copy up")
+Reported-by: syzbot+316db8a1191938280eb6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=316db8a1191938280eb6
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ fs/overlayfs/copy_up.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 0c28e5fa34077..d7310fcf38881 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -618,7 +618,6 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
+ 	err = PTR_ERR(upper);
+ 	if (!IS_ERR(upper)) {
+ 		err = ovl_do_link(ofs, ovl_dentry_upper(c->dentry), udir, upper);
+-		dput(upper);
+ 
+ 		if (!err) {
+ 			/* Restore timestamps on parent (best effort) */
+@@ -626,6 +625,7 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
+ 			ovl_dentry_set_upper_alias(c->dentry);
+ 			ovl_dentry_update_reval(c->dentry, upper);
+ 		}
++		dput(upper);
+ 	}
+ 	inode_unlock(udir);
+ 	if (err)
+-- 
+2.42.2
+
 
