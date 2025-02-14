@@ -1,149 +1,367 @@
-Return-Path: <linux-kernel+bounces-515492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8DCA36586
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:13:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E460A36584
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B901118971BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C427A3B9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073142690C6;
-	Fri, 14 Feb 2025 18:11:23 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8BC2690E2;
+	Fri, 14 Feb 2025 18:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YMatHjwu"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2DC268FD3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 18:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739556682; cv=none; b=S7KDQWVQr+orAzfVexyzzXUNYw+28NxUut6PPx+IcSV7iDROzSJR6Xo5ruoz6r8ir91isA/KVv9STds9BlVAq0HRJ1hY2VDDOQhvzkDEhmri5wVpo/+1JYdFOSvj593Yf2M8SBpVBRzEiaJxs9X+jryVVRVSviTufhVf1sw8pdE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739556682; c=relaxed/simple;
-	bh=wMTSRR3nLw+E5ph/idKPu0M3zjjn9ZloRQmQltBey8c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=P4XkVHoAz1RCPbkOXFusv0WjJD+FQcIHcAaD91jbTQcY83vQd6UDwnogmZl9yNaVnoaCtA/VD1txGf5EgaE18B2VYOP1w8cPzOCLkFzRuQwEx4mG2BI748lQXc7W4l4CY8r3hpL178Oc+MoHOlMf/lah87FdKNqO9yiRwS7C/5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d187cab068so37292895ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:11:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739556680; x=1740161480;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUNDXA5tzQyM8ahjKOdY1vF1qJ/6CjWQSKnc3bXlmWo=;
-        b=AjK2N/TDbcfD/vWiT/iPiYwgOmK924apHB96hTAdwxByIsERTYGeeC3SDsWMhJtHcG
-         Pd1Ep5bWIoe8fDPFVzXUb9aGOrg6a7peRuuUHk9La+u4XGN925pQUeZsm93u6s/RPfH1
-         kiXZlrNf1PCC72SIGGIvZ2ZcmB8VxGHD0QJbBCA3WtwF5qwRZPdNNhSH1dIY3zer/BLu
-         NX2Ecc2vdr7738F7+6hi/TGaWOVWvdhz+fUJxk+X1mze2CbGr+LaWNVZoIwC6mv2refi
-         L9ybOPcb8uOHYllBJrfPp9jLR9Hr1133GUNu6ADEmcLe5j2G5oS0e08z3Ufz4OAKz71Q
-         e+ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUukwWpfaDQuQoAk8XmIQe3Cl8cWy7fNhqYtnq5xki8UFbW1/kZjYDacg8Q7WSv/4BF22g5NdsCTIV2v6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOVO3FoWkQBin+tXXh9WmqJTQucpFjft/sYonkWf6HfsasL+yJ
-	6oGhT7PoXxCcXgDKCI5a5Uq24cotPfMCAUGnTK1phtNXCS5woCxmpSMiIdtBODOrJa3OqE5/R0O
-	dm2iUN1kZIgd+8fPQAsCdMZeOzYgHUmlxbZtxV/oXxOHlQZt/RQd70JA=
-X-Google-Smtp-Source: AGHT+IEGXMmhpIMcPBMXR3pV3ntpTw614J0LLbrDiT1df4YTP3Ugn9wIaZyPVGAZlQMx3KRo/pf0FS0DLEP2GzYAgFuG0Wrcc/ki
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BAF268FD7;
+	Fri, 14 Feb 2025 18:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739556743; cv=fail; b=S6VFGSH8nv8TfDmnNEOxo7+x8IFokyDpiqhwd69x02EL1S/AU9SOn9lDvsS/RhzqONMLhTRxk8YAnL0E/ZMIlukCMm22Jr7vLN7U8HUT8PhFHCm4Zgifmq3Cf3GUkTO39XpIA+u9qWodnKQCWGSiSu5T9ORgjExsUJ6UbP3UuBs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739556743; c=relaxed/simple;
+	bh=Jy6KzncL6w2NoKj0iijFoP9bDz/DX6totiVLuQKFUlc=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q++bflZMrUoJg5mHdlxkIXUv/+GH3vYVYvA+TvrjStrSELrWYOIqr2pljeqzTzoHZN0qIKAUHvG+Ue1972Jx+9k37xEshim1IZIcxr0XncPpp6RVBV64Df+W2fhW63bMxgQuOoffKcXkuyvQ8gulc4BZy/h+qyPxKkNaG/FlJAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YMatHjwu; arc=fail smtp.client-ip=40.107.244.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mSo8nNBNQe0No3quJMln5aDfg1eqBDePkkhHfNt3dr964ye/Z7FhUcGaSoo0BNplYS9PkRNDIjSYEvIBsK8dfVeaIuESmMarYzjzQO4Lt/oGqc0ALGevP+ksiN8lIHSBgxXI6FcEmhGJbKzRQyH/UnYEd5htEvMd2/0LZVnF4sE98W5NehKBiLVbXy9WZAjLviqRugP0WChRNBN71wNUyKbGj9cb/EDisLnSCWK8sNLZCxKycs9Xq3HztfgPS/ejWj3koLP/AUprZ9YTkHT3Lai2EwAlpwbrNvHN9cc6EIyod6wqNgB4clAdMRSRxp11GC3f0la/tRq7hCcqtumIag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cjhq6kkUyImM7huZY2JmAPwlynmUjdC0B+hCOyU+eLc=;
+ b=XDaHQbzGGlenUEQIqnAaME8pUrYTEcLPtUBU+w/EB5X6Ljb5hRO4Aun/p2qUb9GTxmz56+gaiFVpTC8HPCbPFo3787OFoIVKP+vNFZTjmyHpiiqJwPUxKOdTbT4rAuan0FlB3TlPraA4YblFNXMSWc5PF7D35TV2+xOOnLo1tU5aTudqAPxaWwdrtblKrlvMf+KW0KLhbNi/6105V1XEH3hTaHFaSV2fjttlrNrBiiUmol8s70S1+Zj9QkJraxT/xg8Mt54791XpJJkfpnVBP4D0b+9RwEeE/iCI3tmoVx+0XEy3z1oAINHEEqzmI334fXi00wusYpvuUY0sylCIWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cjhq6kkUyImM7huZY2JmAPwlynmUjdC0B+hCOyU+eLc=;
+ b=YMatHjwu75+eIoF1DVzznejqa4WEkKmI6lxUXEMLZT6Wt4h+yFYAIODHcxMcZW4Y3jFWAn8eg3AO1E+0QqBRHnwEFbehZ4lHzB1oZBJk81uVjrvKfJjs7/8JtA8fn0l7X0gxTXNPB6GvrEE0BBgLRAn2+2PePXvgHm+C14Jspng=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7093.namprd12.prod.outlook.com (2603:10b6:510:21d::14)
+ by CYYPR12MB9013.namprd12.prod.outlook.com (2603:10b6:930:c2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Fri, 14 Feb
+ 2025 18:12:20 +0000
+Received: from PH0PR12MB7093.namprd12.prod.outlook.com
+ ([fe80::ebda:ae6f:3e32:2f7f]) by PH0PR12MB7093.namprd12.prod.outlook.com
+ ([fe80::ebda:ae6f:3e32:2f7f%4]) with mapi id 15.20.8445.017; Fri, 14 Feb 2025
+ 18:12:19 +0000
+Message-ID: <ecaee27e-c121-4831-9764-043d2e6230cf@amd.com>
+Date: Fri, 14 Feb 2025 12:12:18 -0600
+User-Agent: Mozilla Thunderbird
+From: Pratik Rajesh Sampat <prsampat@amd.com>
+Subject: Re: [PATCH v6 6/9] KVM: selftests: Add library support for
+ interacting with SNP
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ shuah@kernel.org, pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com,
+ pankaj.gupta@amd.com, michael.roth@amd.com, sraithal@amd.com
+References: <20250203223205.36121-1-prsampat@amd.com>
+ <20250203223205.36121-7-prsampat@amd.com> <Z6wDiOGjSElatLBd@google.com>
+Content-Language: en-US
+In-Reply-To: <Z6wDiOGjSElatLBd@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0019.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::24) To PH0PR12MB7093.namprd12.prod.outlook.com
+ (2603:10b6:510:21d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1689:b0:3d0:21f0:98f3 with SMTP id
- e9e14a558f8ab-3d2809a9d26mr2839135ab.21.1739556679952; Fri, 14 Feb 2025
- 10:11:19 -0800 (PST)
-Date: Fri, 14 Feb 2025 10:11:19 -0800
-In-Reply-To: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67af8747.050a0220.21dd3.004c.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
-From: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
-	kasong@tencent.com, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, ryncsn@gmail.com, 
-	sashal@kernel.org, shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com, 
-	willy@infradead.org, yuzhao@google.com, zhengqi.arch@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7093:EE_|CYYPR12MB9013:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4645b251-8f1a-4000-31b3-08dd4d231f0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTR6T3gzZzNNWjVtbWJVOElZUXNmOU55djc5eHNZalRPYWRETk00c3F2K0x2?=
+ =?utf-8?B?M0FUR0wyeDkweWlMbENjTzBzaWx0M1I1UHhna3BZL3FGZTJHNkRvZ0drREls?=
+ =?utf-8?B?TTcyYlFjNE5PbmdGRnF6d1B2c3hkM0lrdjhiZUJHc2JGblNiT0h2UytvUm5D?=
+ =?utf-8?B?MXQ5VStvaWwwTElicFNkMDBlN3YxTE45bjFhRm84Y3ZxSXl0aGEvRncxc0dv?=
+ =?utf-8?B?TEpzVFhQWUcva2oxRWR6NHE5RjJIY0V5bkgzUStuTkVVM29iVG5GV3paTFpw?=
+ =?utf-8?B?dW9yaEUvWWxaVmtybUNDMCtwdysydDBuQjFaZDhJL1ZVN2dVUXhJbFhFeGlm?=
+ =?utf-8?B?SFdHVWR5cnFJYkVSWEh2akdXaE1nYlFkcFVTQmZjNWZud1VDYzlIbXk1d0F0?=
+ =?utf-8?B?WXoxbHhZRGVpYzBBWlljQTdDOHlMVWJ0ay92QUcwTEhCekpJRnk5V0MzcHlN?=
+ =?utf-8?B?Q1AyRk5UaDVpakhVTHg5NG9zY2RLYzJldmcrTFdsOHZwMC9oNVZCWFR2a0JD?=
+ =?utf-8?B?YmNVUnFwVlVIWWRlRi8yaDQxM1JhZ0taZElUWk5tTXJLNDl3OUlwbmVVV0Jp?=
+ =?utf-8?B?TytwY1N0UGFYVWJTTHJPY05ma0VCeVcrN0VJaDdHUVlIalltNjlXRWNPNlRN?=
+ =?utf-8?B?ZXcxaVZ6VTEwaTZhV2g0TWJBdmtkSEFCa3pMeXpMMW52SXo1dVFiTUtxRkhL?=
+ =?utf-8?B?V3lIbjVIY255RExFa1FJSWhaeUhGblpub1lXNW5EQm0xQ3BUNG1OZkN1VHdh?=
+ =?utf-8?B?dU1rM1Q5eFF6emlLUlA4N2VOeEVLcmw3MHJzRzFVeldhSXUzZ3ZweTM1eGVa?=
+ =?utf-8?B?RnNrNVJxREo5SWYwMUExbURkVG41R1RrNXhwcTlQaU1RaGtCcHlyQWRhWHRi?=
+ =?utf-8?B?Um1ReG1lcmxSRUl6Wkw3ekkxSFhIRmZRWllJbno2QjFvaUNZZUM1dCsvS1BD?=
+ =?utf-8?B?ZWhGMnYxSVNNU1NWWnoyTDU3UGRxWlBHdTBhQmVXL1N1QjlRWmtKRnQyV1Rt?=
+ =?utf-8?B?Sk92aVVkeFJxNGxtTVBscWt4RlBCSnQyNWhDaTlLekNldlIwM1RLREgzUmNm?=
+ =?utf-8?B?WENBbSsvL1QrNCtSdjFlY1FBc1dUL04yblR5dFJkSUI0T09iOEptb0pzeWVm?=
+ =?utf-8?B?cGtjM1NQQXlzdjJHVURRSSs1Z1VjLzlGSSt3cDRYNkN6cGJZL1V6eW91QklG?=
+ =?utf-8?B?TVU5VDhVU3BWWXFSMjFYcFZ0Mzg5WDZ6a1B1RTRYQzRDMEZtR3prQmxvZzBp?=
+ =?utf-8?B?V2JLNzBmV0Eya0piTnhWZ3NZczhkbGdOSVlxSm9ObEYxdEFLQ2dCZ1pDNVky?=
+ =?utf-8?B?S3dwdldkMTRRaFhXSXpjRmFMemJEbkpTcFJENVpKekFVL1dVZTFrRExPdkVM?=
+ =?utf-8?B?SkxqdU1hUVFSUGdJdHVaTGMzaTk4QThLYXVsUUpFUWt6OW1haDgyeWFpQS9U?=
+ =?utf-8?B?KytZSHppZlpaU3QyWW4vR0pnTUhweUMxaEVCaG9oOGxoN2VQZzVncWJPbTFr?=
+ =?utf-8?B?UU1uV0pvSFlzTlMzYXJzUWNBRWN3WjVlSTJwWUM0aUU0eFp5NkNQS2VPcngw?=
+ =?utf-8?B?U0dKVmF1MU55dUZLMHllVWljN0xGdWpiWXBqKzBvUXpDVVhGbzVwOVgzek5U?=
+ =?utf-8?B?eGIyYTJQa0JwUXBaR3RvRGwzWDJhUnMwL0ZSUXFwc2ovclEzSXMzYlpKNUVG?=
+ =?utf-8?B?WWVPNHRqL1hCd01QQmNCb0JEc0d6YWwycG9iZlRKNnJGR1k0VmRwOWg1RlJ5?=
+ =?utf-8?B?MndLM1E2c3ZoM0lNR3hpWmZReHVSWmdLcUlGZlZRUW5TUzRsWUFEemtqZUdm?=
+ =?utf-8?B?Q25kSHBTdnh6M29hcHc1d3VYNG9uVXFESXRFZ09wTktEMWpYdjkzclU0WFhE?=
+ =?utf-8?Q?Jn3Yaf7aknda3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7093.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2xHUVZBRkhLMUtpVXlpdWJGTzZiSDJockVNMVlIQStSMW9SNHFiWGdiRyth?=
+ =?utf-8?B?NSt0bVNOak9yeDRoOXNWNVFrQjBGM3lUQ2NIOCtsWWRZZk5zTFhnSi9EaFp3?=
+ =?utf-8?B?Y2NXc1JTNTBYeXh0dVF6Yk9VeVlYcnBWeHBuWllrTWsyWUR6U2J1YTZOTlFL?=
+ =?utf-8?B?TUlMMjZsYUJDeGRZQjhkVzZhWkFSYUJlbWlBQ1NWVWNiV01BSzJoTzJra1dk?=
+ =?utf-8?B?a3Q5NS9NamxkU1E5SjRxSERVMkY0OTErNnBTR2dXT0cwRXFzMTMzWDh1ZnBa?=
+ =?utf-8?B?V3hwQzdmL01wVVhCcEZMRTdTSlBua0FlRnQranNGS1k0a1JTRzN1UnVoWVB2?=
+ =?utf-8?B?NmQvME9Pci9VdHRmazV0OVlYTm52YVNtL3h4MWVRVUs3dUNFblE4ZGNCQlp3?=
+ =?utf-8?B?QU1iallDdlkvZ2creVkxVGgrbmtXaDI2dUl1dUxsbTV6bDlpLzdHOCtQWUR4?=
+ =?utf-8?B?MmsvTCtnWUY5cGJRVDRNcVZNUzlNWThURGZJMkthSnNKWHU1RkJXS3p6YzF6?=
+ =?utf-8?B?a2xhUXdzWEhIVVQ4WEhpL2pLRW9sWkJMeE9EUHd0cWdIQXcrU3IzWXhNWDlr?=
+ =?utf-8?B?c3hkZWx3ZDZIUGg2MXpWM1JDOTZIVjlPMW1MVXR5eGJHbkFRK1Y5cHVUajBn?=
+ =?utf-8?B?SHFKcDNINWIxN09ZaU40UmZCMTZYQzZJTW9xem9GUzRUcUJuQllGQ2Y5dTI5?=
+ =?utf-8?B?bWs5UUdwNlJGUm9iZzJ5emlEM1pnL2I2U0VJMlRBSExYNDd1V1Mzc1dDbTdr?=
+ =?utf-8?B?YnVWemgwZ1c5UjdYSHk2S2hDOXZzRWkxb3pPTEJ6Q2VvdUU4OTVYdjdrcWpa?=
+ =?utf-8?B?MHMxbERBcElCYkNnNWRlOFpMU0pDL3VYdkd0UHRIaUY1aDE4YldkYWhocHMr?=
+ =?utf-8?B?L2Y4cVRtQUVNTm92R2cyaGNkWjhYWHJlVGY1YXVmSWhOV2d4UFgxaGw0ZHBL?=
+ =?utf-8?B?Zjl3U0NKRXY3RVZNbXoyTFpMQWpkL2x5SVpKUDJ3eTArMzhQUGdKdk1uMFFG?=
+ =?utf-8?B?cVVFZFA3ZnE5ZUQ2QURYck1jRlBBMlZocmV6NEpYWGpvYmFaMjNPN1hMbS9j?=
+ =?utf-8?B?RjFETmU0NWZjcGtyNWJjemU5MXAxMHJiT0gzTWN3VGZDQ1B2Ly82RHNxanRS?=
+ =?utf-8?B?QWtVdlBKNjlGbjdJN281UlR1RTdCTG9ybnYzRktmQkhlUXhqdk8wdWxvZkRZ?=
+ =?utf-8?B?Z09PMDFMVkMvbXFqSGs1blVFc2pwY0hVcDJodWRBanlia2FJQUZXbUhaSzdO?=
+ =?utf-8?B?dEVvT1BjeWxlNE56V0lydE16SURiODhncEdxYkJYbWp4ZjNueDB0SWp1S0ll?=
+ =?utf-8?B?cUFzM2RrRUNuOE9jb3RSN1VrNFVzMVJaVFZqaThrU1V3THIzREkzYVIzV0lq?=
+ =?utf-8?B?VzRJcGFYOHNsVGFacHJnOE5ucFJPaThWU2dWWG8vOVF5cUtwVndVMlFlbldx?=
+ =?utf-8?B?aXY0WXdLSnpOVEN2aTlHcjM2ekFRSEM1MnRRcE9wRk4zOWs4TTJWVE9nTGpu?=
+ =?utf-8?B?bzN1S2FvT1VhM01FcXUyTGgxbkZPMkpYVWFFVkZHclVPc1BacnYzdnQzTDFU?=
+ =?utf-8?B?bjhXWUlyc3BEYzB5dmcwQUFtdVlKTG1pNWEyODVBck1vS3orRUtENVZuYVNZ?=
+ =?utf-8?B?dU13NUpaL1A0WlJNbVZnbzhVMUpVNWpjOXpiWG1MeUtXQjJaaEo3VUNlKzN1?=
+ =?utf-8?B?WnJKZkJrMlNwc05ZZ25jWWNZZnhFeFNWM2NzakVkcnVFTWw0NzBPRjJWUGVs?=
+ =?utf-8?B?bzhlYmR3aTJqZWZpeS9oNzdMNHlwZ01OMSs3K25TQzNKdktobkNKVDFTTDZj?=
+ =?utf-8?B?ZVVQc3BUVHdEaERNakRQeVhmNU5FbmN5TndRMTJqd0VFbUNVQ0tsZ3RNUDlK?=
+ =?utf-8?B?ZlJlWWQwUFhmVllkVjFvK3J6UWtPMTJTQmg5dHJWODNTbG1xWXNiNjV2dXl3?=
+ =?utf-8?B?bE9JMlB0ekxnUjZtZXNjMUZ6MG15dTBWVVFwNFgxSW9xVHdCd08vQnc0Qmph?=
+ =?utf-8?B?YnVjVUkyelJISS85V0F3eDlTc1hmMXlpVHh0RXFqSFk4WXFqOE4yNVZ6SUpi?=
+ =?utf-8?B?dUpOVXJEUHBYaDVBOUVNWU9wOGI5dTVtMzJTYlE2amFTYnNZSGJLbVRLMVRh?=
+ =?utf-8?Q?KfSaFB+OwnpnZKaaHBPSOxL8S?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4645b251-8f1a-4000-31b3-08dd4d231f0f
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7093.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 18:12:19.8792
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QJaZTbyOY7xYRsO6rBITSxEuvWRA/9et1CZHRfq8Ba4XvPJF8BaH4kNYsQDSLnw3u1nElICAp76MhRpu5WYE1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB9013
 
-syzbot has found a reproducer for the following issue on:
+On 2/11/25 8:12 PM, Sean Christopherson wrote:
+> On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
+>> Extend the SEV library to include support for SNP ioctl() wrappers,
+>> which aid in launching and interacting with a SEV-SNP guest.
+>>
+>> Tested-by: Srikanth Aithal <sraithal@amd.com>
+>> Signed-off-by: Pratik R. Sampat <prsampat@amd.com>
 
-HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=148019a4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
-dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12328bf8580000
+[..snip..]
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
+>> +/*
+>> + * A SEV-SNP VM requires the policy reserved bit to always be set.
+>> + * The SMT policy bit is also required to be set based on SMT being
+>> + * available and active on the system.
+>> + */
+>> +static inline u64 snp_default_policy(void)
+>> +{
+>> +	bool smt_active = false;
+>> +	FILE *f;
+>> +
+>> +	f = fopen("/sys/devices/system/cpu/smt/active", "r");
+> 
+> Please add a helper to query if SMT is enabled.  I doubt there will ever be many
+> users of this, but it doesn't seem like something that should buried in SNP code.
+> 
+> Ha!  smt_possible() in tools/testing/selftests/kvm/x86/hyperv_cpuid.c is already
+> guilty of burying a related helper, and it looks like it's a more robust version.
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
+You're right, a more general helper is in order here.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
-Modules linked in:
-CPU: 0 UID: 0 PID: 5459 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
-Code: e9 19 fe ff ff e8 72 f2 b5 ff 4c 8b 7c 24 08 45 84 f6 0f 84 40 ff ff ff e9 22 01 00 00 e8 5a f2 b5 ff eb 05 e8 53 f2 b5 ff 90 <0f> 0b 90 eb 97 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 71 fd ff ff 48
-RSP: 0018:ffffc9000d70f3a0 EFLAGS: 00010293
-RAX: ffffffff820bc50d RBX: 0000000000000000 RCX: ffff8880382d4880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880351ac054 R08: ffffffff820bc49f R09: 1ffffffff2079b8e
-R10: dffffc0000000000 R11: fffffbfff2079b8f R12: ffffffff820bc19e
-R13: ffff88801ee9a798 R14: 0000000000000000 R15: ffff8880351ac000
-FS:  000055557d70b500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff6826de40 CR3: 000000005680c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- list_lru_del+0x58/0x1f0 mm/list_lru.c:202
- list_lru_del_obj+0x17b/0x250 mm/list_lru.c:223
- d_lru_del fs/dcache.c:481 [inline]
- to_shrink_list+0x136/0x340 fs/dcache.c:904
- select_collect+0xce/0x1b0 fs/dcache.c:1472
- d_walk+0x1f5/0x750 fs/dcache.c:1295
- shrink_dcache_parent+0x144/0x3b0 fs/dcache.c:1527
- d_invalidate+0x11c/0x2d0 fs/dcache.c:1632
- proc_invalidate_siblings_dcache+0x3fb/0x6e0 fs/proc/inode.c:142
- release_task+0x168e/0x1830 kernel/exit.c:279
- wait_task_zombie kernel/exit.c:1249 [inline]
- wait_consider_task+0x1a14/0x2e60 kernel/exit.c:1476
- do_wait_thread kernel/exit.c:1539 [inline]
- __do_wait+0x1b0/0x850 kernel/exit.c:1657
- do_wait+0x1e9/0x550 kernel/exit.c:1691
- kernel_wait4+0x2a7/0x3e0 kernel/exit.c:1850
- __do_sys_wait4 kernel/exit.c:1878 [inline]
- __se_sys_wait4 kernel/exit.c:1874 [inline]
- __x64_sys_wait4+0x134/0x1e0 kernel/exit.c:1874
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f93f3983057
-Code: 89 7c 24 10 48 89 4c 24 18 e8 45 1b 03 00 4c 8b 54 24 18 8b 54 24 14 41 89 c0 48 8b 74 24 08 8b 7c 24 10 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 89 44 24 10 e8 95 1b 03 00 8b 44
-RSP: 002b:00007fff6826e9b0 EFLAGS: 00000293 ORIG_RAX: 000000000000003d
-RAX: ffffffffffffffda RBX: 0000000000000019 RCX: 00007f93f3983057
-RDX: 0000000040000001 RSI: 00007fff6826ea1c RDI: 00000000ffffffff
-RBP: 00007fff6826ea1c R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000001388
-R13: 00000000000927c0 R14: 000000000002f011 R15: 00007fff6826ea70
- </TASK>
+Since the hyperv_cpuid selftest only seems to care about whether SMT is
+possible (i.e., it may or may not be enabled) and we care about it being
+enabled as well, for the flag to be set. I should make a more generic
+variant(s) that can be accessible to both. Maybe I can implement it
+within testing/selftests/kvm/include/x86_processor.h?
 
+>> +	if (f) {
+>> +		smt_active = fgetc(f) - '0';
+>> +		fclose(f);
+>> +	}
+>> +
+>> +	return SNP_POLICY_RSVD_MBO | (smt_active ? SNP_POLICY_SMT : 0);
+>> +}
+>> +
+>>  /*
+>>   * The KVM_MEMORY_ENCRYPT_OP uAPI is utter garbage and takes an "unsigned long"
+>>   * instead of a proper struct.  The size of the parameter is embedded in the
+>> @@ -76,6 +109,7 @@ kvm_static_assert(SEV_RET_SUCCESS == 0);
+>>  
+>>  void sev_vm_init(struct kvm_vm *vm);
+>>  void sev_es_vm_init(struct kvm_vm *vm);
+>> +void snp_vm_init(struct kvm_vm *vm);
+>>  
+>>  static inline void sev_register_encrypted_memory(struct kvm_vm *vm,
+>>  						 struct userspace_mem_region *region)
+>> @@ -99,4 +133,17 @@ static inline void sev_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
+>>  	vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_DATA, &update_data);
+>>  }
+>>  
+>> +static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
+>> +					  uint64_t hva, uint64_t size, uint8_t type)
+>> +{
+>> +	struct kvm_sev_snp_launch_update update_data = {
+>> +		.uaddr = hva,
+>> +		.gfn_start = gpa >> PAGE_SHIFT,
+>> +		.len = size,
+>> +		.type = type,
+>> +	};
+>> +
+>> +	vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
+>> +}
+>> +
+>>  #endif /* SELFTEST_KVM_SEV_H */
+>> diff --git a/tools/testing/selftests/kvm/lib/x86/sev.c b/tools/testing/selftests/kvm/lib/x86/sev.c
+>> index 280ec42e281b..17d493e9907a 100644
+>> --- a/tools/testing/selftests/kvm/lib/x86/sev.c
+>> +++ b/tools/testing/selftests/kvm/lib/x86/sev.c
+>> @@ -31,7 +31,8 @@ bool is_sev_vm(struct kvm_vm *vm)
+>>   * and find the first range, but that's correct because the condition
+>>   * expression would cause us to quit the loop.
+>>   */
+>> -static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region)
+>> +static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *region,
+>> +			   uint8_t page_type)
+>>  {
+>>  	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
+>>  	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+>> @@ -41,13 +42,35 @@ static void encrypt_region(struct kvm_vm *vm, struct userspace_mem_region *regio
+>>  	if (!sparsebit_any_set(protected_phy_pages))
+>>  		return;
+>>  
+>> -	sev_register_encrypted_memory(vm, region);
+>> +	if (!is_sev_snp_vm(vm))
+>> +		sev_register_encrypted_memory(vm, region);
+>>  
+>>  	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
+>>  		const uint64_t size = (j - i + 1) * vm->page_size;
+>>  		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
+>>  
+>> -		sev_launch_update_data(vm, gpa_base + offset, size);
+>> +		if (is_sev_snp_vm(vm)) {
+> 
+> Curly braces are unnecessary.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Ack. Will be remove them.
+
+> 
+>> +			snp_launch_update_data(vm, gpa_base + offset,
+>> +					       (uint64_t)addr_gpa2hva(vm, gpa_base + offset),
+>> +					       size, page_type);
+>> +		} else {
+>> +			sev_launch_update_data(vm, gpa_base + offset, size);
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +static void privatize_region(struct kvm_vm *vm, struct userspace_mem_region *region)
+> 
+> Can't this just be a param to encrypt_region() that also says "make it private"?
+> 
+
+Sure, I can parameterize encrypt_region() to have a private boolean.
+The idea was essentially to ensure that privatizing and encryption can
+be called separately if they wanted to. However, since this is
+currently only used in tandem (by SNP) I can remove this to reduce
+duplication.
+
+>> +{
+>> +	const struct sparsebit *protected_phy_pages = region->protected_phy_pages;
+>> +	const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+>> +	const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
+>> +	sparsebit_idx_t i, j;
+>> +
+>> +	sparsebit_for_each_set_range(protected_phy_pages, i, j) {
+>> +		const uint64_t size = (j - i + 1) * vm->page_size;
+>> +		const uint64_t offset = (i - lowest_page_in_region) * vm->page_size;
+>> +
+>> +		vm_mem_set_private(vm, gpa_base + offset, size);
+>>  	}
+>>  }
+>>  
+>> @@ -77,6 +100,14 @@ void sev_es_vm_init(struct kvm_vm *vm)
+>>  	}
+>>  }
+>>  
+>> +void snp_vm_init(struct kvm_vm *vm)
+>> +{
+>> +	struct kvm_sev_init init = { 0 };
+>> +
+>> +	assert(vm->type == KVM_X86_SNP_VM);
+> 
+> Use TEST_ASSERT(), or do nothing, don't use assert().
+> 
+
+Alright, I can do that.
+I will also send another cleanups patch to remove asserts() in the
+SEV, SEV-ES counterparts too in that case!
+
+>> +	vm_sev_ioctl(vm, KVM_SEV_INIT2, &init);
+>> +}
+>> +
+>>  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
+>>  {
+>>  	struct kvm_sev_launch_start launch_start = {
+>> @@ -93,7 +124,7 @@ void sev_vm_launch(struct kvm_vm *vm, uint32_t policy)
+>>  	TEST_ASSERT_EQ(status.state, SEV_GUEST_STATE_LAUNCH_UPDATE);
+>>  
+>>  	hash_for_each(vm->regions.slot_hash, ctr, region, slot_node)
+>> -		encrypt_region(vm, region);
+>> +		encrypt_region(vm, region, 0);
+> 
+> Please add an enum/macro instead of open coding a literal '0'.  I gotta assume
+> there's an appropriate name for page type '0'.
+> 
+
+For SNP, we supply this parameter to determine the page type for SNP
+launch update defined as KVM_SEV_SNP_PAGE_TYPE_*. For SEV/SEV-ES,
+however, the page type doesn't really get factored in and falls through
+unaccounted in that case, so I had passed a zero to it.
+
+Having said that, having a literal here is quite unclean. Maybe I can
+pass one of the existing page types to it or, better yet, define a new
+KVM_SEV_PAGE_TYPE_[RESERVED|UNUSED] type instead for our selftest
+header?
+
+>>  
+>>  	if (policy & SEV_POLICY_ES)
+>>  		vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_VMSA, NULL);
+
 
