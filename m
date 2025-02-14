@@ -1,291 +1,202 @@
-Return-Path: <linux-kernel+bounces-514717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546DDA35ABB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6111A35A73
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9524A7A424C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50246189036D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005B324A049;
-	Fri, 14 Feb 2025 09:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D702253E8;
+	Fri, 14 Feb 2025 09:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EM4HbyTQ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P6I0aDEA"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821602163A5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11674227BB4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526475; cv=none; b=ulBylR8Ozj2PFXr5cO7FGoWLS4wOm5a0Kq86xZ3SrP4tmzVtnmJ5rq4CJieHol02imIPTFIkkNwvFZ0qj00q31nUYpG6cOQ0XVZDl6/37ARPUC0PeK+uYyQ1zT/SXDzNqOu93J/3aZXGAcFEJAl3qNwwJdvVf63aefFerHxAh9o=
+	t=1739525663; cv=none; b=D6zbUsDZnnxdx163isrtqH8Gx9T8e6egkdRsyoG2e5jV1ogFHuLgDWvjjsxD29xaNlzjdeXOktnTclpbU5LMY86JFxDz5Hy0IYr0x2ogZc9DLnNiUTxGVRC2Qf6nT36Ny0JtLsZlzj6weQYS2qwdYuYugwW//4PCVgneIvruv1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526475; c=relaxed/simple;
-	bh=B204w+oW1OvxJVTTwQwlv3Wo/ImEDCQ4Ci69l8gqu4Y=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=tgtSvQYg/q3AxR5iueEu1QWzD4TKX201tDMsI5LFtFWMCT+mg7LoKoajr1VdphZMK4VrOvsLsURgJnLz5Tkda3XKBOjaVPpRckiHO+jaoB+uOwu8ZsxoIiPMxCD4sOgeQL24BeFOsAHxZ2Xy1h/UvsD8g+63eahHB1rAKqUzcTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EM4HbyTQ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250214094750epoutp01ccc0cca52e6e3a1f60a17585bedaa1cb~kChvCYn8X1579015790epoutp01X
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:47:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250214094750epoutp01ccc0cca52e6e3a1f60a17585bedaa1cb~kChvCYn8X1579015790epoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1739526470;
-	bh=1KPxF4Nw7vEPDGlJw17L3iwsGbaEnoaLPgVLab6d4Tw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=EM4HbyTQebG6jPrmcAxo8EXhbjBA8XaOkwYHOTkghe082cT8j6FUTj2wlAWHiHW1i
-	 wHtNW69MKl6/skZ4wB7EU2oekaVELPL7G7iaaKe3yxci663nrraWy0zd2AVYd/mS9f
-	 V3i/4bWGHgxu8j6vnmxkTuJzuVi0cc+EiqW4CH9g=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250214094749epcas5p443bd5f798d0035f7f20f05e525014acf~kChugsb2n3165931659epcas5p4l;
-	Fri, 14 Feb 2025 09:47:49 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4YvS036CqHz4x9Px; Fri, 14 Feb
-	2025 09:47:47 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	ED.0E.19956.3411FA76; Fri, 14 Feb 2025 18:47:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250214093326epcas5p4f53cf59ec2592203d8465e04fa9b6c76~kCVKt75SB2301023010epcas5p4D;
-	Fri, 14 Feb 2025 09:33:26 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250214093326epsmtrp2761241611125c39e6b2e61523e974e61~kCVKs60lp2248822488epsmtrp2W;
-	Fri, 14 Feb 2025 09:33:26 +0000 (GMT)
-X-AuditID: b6c32a4b-8408b24000004df4-12-67af1143d138
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.19.18949.6ED0FA76; Fri, 14 Feb 2025 18:33:26 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250214093324epsmtip17a62cf7e37c2409e00b59e359fb6b124~kCVIKWFhd2759327593epsmtip1T;
-	Fri, 14 Feb 2025 09:33:23 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <krzk+dt@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<rmk+kernel@armlinux.org.uk>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"'Pankaj Dubey'" <pankaj.dubey@samsung.com>
-In-Reply-To: <7d50f55d-d0cd-4741-ab55-2f54dc45d6ab@kernel.org>
-Subject: RE: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Date: Fri, 14 Feb 2025 15:03:15 +0530
-Message-ID: <00ce01db7ec3$7f9ab750$7ed025f0$@samsung.com>
+	s=arc-20240116; t=1739525663; c=relaxed/simple;
+	bh=2tRaXOF0v8LaZTAj5JP6mDSWvTyNjRID6Lm1XvMJFxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+zUIuin/Wgy7iB6BCJ2huaSFIovW1oW7j2J3/ZCRhHTnheCjwEsrL7HdzsAzD2hhDXwX+GxvJCDrRrVYA8GZS1b2uflFnKSMgsqWt2Go2V/Q4wx5sn8TVqmhzaO67tKDF+35HCR8Zkb1rLEuLxkQU7RpzY7MjwBMI82Dl+uGpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P6I0aDEA; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21c2f1b610dso42819965ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:34:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739525661; x=1740130461; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=u26Rj75SNGL2cIMYIyNITm7VqBxru2ajzzSchaDjSJ4=;
+        b=P6I0aDEAAo2m2Wtx5cFN/bvOWlrTwAAiFb8NFixm46nkSSECiLwNwq2NTKd4QeX8Gh
+         wLtvo2AjyHwyts9y4uLTZxFORupb5QR3/wYXHKWOP4+T8ytrQw6slqDA35yMlmWUBMBn
+         bs8fSUIGNuwsmZeYQb1wVstSG626Bl8K0I2H5af4/5/6bsyubuqGyxfOlzt1tPuTpD+D
+         eXo9QgsmYxQixYXkQ2yCUoxRxMjSeEVAETsRIpPBFGKV/a8yKBkPAaSTCwP7mhwSiJsb
+         upVEluZ6L1FaC5WAWtBb7Crw1KTMfkAGGuqyOCLYBdVJ5DFl2ks1p+wNr56JP82wP4vp
+         Zr+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739525661; x=1740130461;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u26Rj75SNGL2cIMYIyNITm7VqBxru2ajzzSchaDjSJ4=;
+        b=ETV84EIMjSbw122dQ+1X4V7LWfAWfTd97IOz8wiHsueQxKGBapusXWOYFrWP8AfQRI
+         2wzCTBSRuea+ZwAjQLikO7mVgBhT8jDnhKNfXK+z/Hi6k5tf4+gor7RjzjgpNMk2V4kk
+         HGTj1MX2zZOYNE68C9Lp9IIc7O2ZW+iE8GjaUClFhdvW6ZccsnpazoJ2HwFJaqlBK7jg
+         ciNCMOogu3ArKnvIwOAxUxkOX3Zv6nWLqqsAKPJ8e9A8+/7VLHCa3p2tond8eNX0gHKy
+         FGLpcbpmSIXxy/O6z7LDi9ZVOuxFnJMgfpsmEsnlAhoZafkzF5dOn4p0rI61U3jzP0PY
+         QCPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfe0UB7Xh0UmNCSrMnp0mXAFhtD1+mwqDr5LhvoGYOBADXOpZ+J7nEGKeOOX61CghQdAuceA6Z5Pu+5Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzazscar8H+CA7ldChdY4rph3+M9LWEIdhbLtBn9aR8dD12sMvX
+	brY608SaVlWuOkJ9Q17kiNoIGg/j0eXLllq/nczI9xVza6YJC5/f9jiXiOFjOA==
+X-Gm-Gg: ASbGncuDZ5FXFPiqGhI8UhWJNxGUmCBhiSSOUb7zJ/F1naz7QqarqEWzl2eUDwVqjuF
+	6br4wXSc+RIQ02rjL17paJcqjyBjSOI+iPiCM0uiOhX4mNh1x+abvrcaDivNCOHaBEnE34YdERp
+	e+Suoqk7O8xaJPocAIiYPOiEd/qp8kNLrDx7tlNI5x0K8eOmL6ZlxhGGCLgUqlWMhbZPd9hgAUO
+	ewR58V0J3dGtAq9AlzbjWfakZ98tPF8g9+ZT++f1y9pZh9JiFPtjUR+/Cc/ZFfN+UtIvBzOoE6w
+	oFAX1kKY7pa1FA+cComF2vgRP5EtBbw=
+X-Google-Smtp-Source: AGHT+IFZVE4yp9yE89oIpu/FQ04E4OEh1OdT4RRLsnSnVNmqpa4GLTJHeV+HTwobROJu0Q6OkCB1tg==
+X-Received: by 2002:a05:6a20:728c:b0:1ee:67a2:f67d with SMTP id adf61e73a8af0-1ee6b36026cmr13591167637.22.1739525661324;
+        Fri, 14 Feb 2025 01:34:21 -0800 (PST)
+Received: from thinkpad ([2409:40f4:304f:ad8a:a164:8397:3a17:bb49])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb586186c9sm2480167a12.35.2025.02.14.01.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 01:34:20 -0800 (PST)
+Date: Fri, 14 Feb 2025 15:04:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v6 4/4] PCI: dwc: Add support for configuring lane
+ equalization presets
+Message-ID: <20250214093414.pvx6nab7ewy4nvzb@thinkpad>
+References: <20250210-preset_v6-v6-0-cbd837d0028d@oss.qualcomm.com>
+ <20250210-preset_v6-v6-4-cbd837d0028d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFMfZy5LnHh86L+CikZ+hKlrx3PbgHP/Q5uAh59lGQBgzSo3AGBIR3uAawmoOABkF4oKQJdFV+JtAAkiQA=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xbZRjO6Tk9bYfg4TL4YNmsZzoFgbVSutMFmLvEncgSu7Co0R/sSI8t
-	Am3tab2ghombhstgLGNIV0vBAgHGIB1gy1Y27hsjdBepbBm7QBEQgQnKBEO0pUX597yX533e
-	5/vycuGgp2gEN12ppTVKKhNHNyFt3ZEvxewPbJILhlYExPL0WYiofWRlE+ftQyzC4DiOEBU9
-	Q2xiom+MQ0zrH6CEw9HMIW62FbEJy7iTTdxpN6BEvtPFJoyrjWyizxRKLN34DSKqWv/gED2D
-	UzBxu7iERfxz2cp5LZi847wFky11d1nkRHErh7TpRzmkyaIjLfV5KHnRnEParIsscr5jGCWL
-	WuohsrNDSC5atkmfeTcjQUFTMlrDp5VpKlm6Up6IJ6ek7k+NFwuEMUIJsQvnK6ksOhE/cEga
-	83p6ptshzv+YytS5U1KKYfCdSQkalU5L8xUqRpuI02pZplqkjmWoLEanlMcqae1uoUDwary7
-	8WiGouf3e4h65eVPyytz4WPQBD8f4nEBJgIF9ztY+dAmbhB2CQKXy1wcb7AAAetTJ9sbLEHA
-	fNLMWacYq2Z8BTsEWmvv+yhTEHCVmdieLhSLAlVFHWuMECwGXBypXWuCsWIE/DJ1AvUUeFgS
-	aLllcmMuNxg7DL7pDfCkEexFMN2aC3uwPyYBpgsLqBcHguvlLsSDYewVUFM5A3s34oPliRq2
-	V+t98NdAPeTtCQO9y4WwRxdg53jg3lc/s72EA6DR7nHtwcHg1/4Wn7UIsDhnR704FTQUDSNe
-	rACjKyW+/B5w9ScD4tkZxiJBU/tOb3orKB24wPLqBoCTf7t84/2B1biOt4PVGadvZDhoq57n
-	nIJw/QZr+g3W9Bss6P9XM0FIPRROq5ksOc3Eq+OU9Cf//XiaKssCrV1AVLIVGnv0JLYLYnGh
-	LghwYTzEH5w9Lw/yl1GfZdMaVapGl0kzXVC8+71L4IjNaSr3CSm1qUKRRCASi8UiSZxYiIf5
-	f207Lg/C5JSWzqBpNa1Z57G4vIhjrIa7l75/tiln5s3VJqhz8ofJ6oQjZXXvOTHDeKPNdlig
-	MIZcCez7InSvfTEgbPBahXjxgzMFBTtOxwVHN8tz81wL0bndGWk1IuHtI1+aHUzFsmXWsDmv
-	c370x2wir7RaGNc8Uji8VHiUuTYpReNlS7xIB/HGw849/CV6Tir9lsUbmTVHnppP2qF8sNXY
-	HT09+NwV+fho6OPndQfBR9ld0X7tOY3a634NWE3dd09uyPbGHZwtuhowYp47h+3uTx89HRZU
-	F5D8wpnPK/tTZrYYwrdtf4eq+/DExEPrYz94S+lbb48F8mzRrt6kmypJ9ord4NhXLykfTomo
-	GPiz95BxEInZhSOMghJGwRqG+hem42BbigQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsWy7bCSnO4z3vXpBp8+q1v8fDmN0WL5gx2s
-	Fmv2nmOymHO+hcVi/pFzrBZPjz1it3g56x6bxfnzG9gtLmzrY7XY9Pgaq8XlXXPYLLquPWG1
-	mPd3LavFsQViFt9Ov2G0WLT1C7vFkTMvmC0u9U9ksvi/Zwe7g7DH5WsXmT22rLzJ5PG0fyu7
-	x85Zd9k9Fmwq9di0qpPNY/OSeo+dOz4zebzfd5XNo2/LKkaPg/sMPT5vkgvgieKySUnNySxL
-	LdK3S+DKWNB/kLWgSaOibU9qA+NL+S5GTg4JAROJeYtes3YxcnEICexmlLjX8ooRIiEp8al5
-	KiuELSyx8t9zdoiiZ4wS09p2gBWxCWhJLOrbxw5iiwjoSmy+sRysiFlgMYvE1EOdTBAda5kl
-	3r5fCjaKU8BOYsvFBWwgtrCAv8T73pNg3SwCqhIvtzYxg9i8ApYSC9Z9YoOwBSVOznzCAmIz
-	C2hLPL35FM5etvA1M8R5ChI/ny5jhbgiSeLHqVWMEDXiEkd/9jBPYBSehWTULCSjZiEZNQtJ
-	ywJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmbGMFpQEtrB+OeVR/0DjEycTAeYpTg
-	YFYS4ZWYtiZdiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3170pQgLpiSWp2ampBalFMFkmDk6p
-	BqaQG7MqSmuPzRTymaTWeH6Lw8zgy1qW9XHNqbsOBu6YsunysURrK9/NAge8Q9IE9RclH/hr
-	X/BXgXtCzp8sT5ckrTOnr9hE//z1IIa//SSr6J0umesafjw7Szh0vwqaPb4keX3T7AoR7wgO
-	dllntUTJtytemVnJHg5IvP0iJ+PQ06Mc/02u39gjmPy3PULIwehgmOrPu+Iva89Ov7lluZbK
-	m66pAis3/ToUYV//dmeuucOr00kpe+zmP9CQjL3aMntmxerKe46rJ5i81Ln491H8N1aVvfLe
-	k/7bZO7k7OJZZevmfumw9v58rf75rbVeH/qYavcZmTCes9t/8z9fQatb0TXJY4ffCqleuCL9
-	PUuJpTgj0VCLuag4EQCpME5UcgMAAA==
-X-CMS-MailID: 20250214093326epcas5p4f53cf59ec2592203d8465e04fa9b6c76
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff
-References: <20250213044624.37334-1-swathi.ks@samsung.com>
-	<CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
-	<20250213044624.37334-2-swathi.ks@samsung.com>
-	<20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
-	<009a01db7e07$132feb60$398fc220$@samsung.com>
-	<27b0f5c5-ae51-4192-8847-20e471c55be7@kernel.org>
-	<00ad01db7e9c$76c288a0$644799e0$@samsung.com>
-	<7d50f55d-d0cd-4741-ab55-2f54dc45d6ab@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250210-preset_v6-v6-4-cbd837d0028d@oss.qualcomm.com>
 
+On Mon, Feb 10, 2025 at 01:00:03PM +0530, Krishna Chaitanya Chundru wrote:
+> PCIe equalization presets are predefined settings used to optimize
+> signal integrity by compensating for signal loss and distortion in
+> high-speed data transmission.
+> 
+> Based upon the number of lanes and the data rate supported, write
+> the preset data read from the device tree in to the lane equalization
+> control registers.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 53 +++++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h      |  3 ++
+>  include/uapi/linux/pci_regs.h                     |  3 ++
+>  3 files changed, 59 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index dd56cc02f4ef..7d5f16f77e2f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -507,6 +507,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	if (pci->num_lanes < 1)
+>  		pci->num_lanes = dw_pcie_link_get_max_link_width(pci);
+>  
+> +	ret = of_pci_get_equalization_presets(dev, &pp->presets, pci->num_lanes);
+> +	if (ret)
+> +		goto err_free_msi;
+> +
+>  	/*
+>  	 * Allocate the resource for MSG TLP before programming the iATU
+>  	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
+> @@ -808,6 +812,54 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  	return 0;
+>  }
+>  
+> +static void dw_pcie_program_presets(struct dw_pcie_rp *pp, enum pci_bus_speed speed)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	u8 lane_eq_offset, lane_reg_size, cap_id;
+> +	u8 *presets;
+> +	u32 cap;
+> +	int i;
+> +
+> +	if (speed == PCIE_SPEED_8_0GT) {
+> +		presets = (u8 *)pp->presets.eq_presets_8gts;
+> +		lane_eq_offset =  PCI_SECPCI_LE_CTRL;
+> +		cap_id = PCI_EXT_CAP_ID_SECPCI;
+> +		/* For data rate of 8 GT/S each lane equalization control is 16bits wide*/
+> +		lane_reg_size = 0x2;
+> +	} else if (speed == PCIE_SPEED_16_0GT) {
+> +		presets = pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS];
+> +		lane_eq_offset = PCI_PL_16GT_LE_CTRL;
+> +		cap_id = PCI_EXT_CAP_ID_PL_16GT;
+> +		lane_reg_size = 0x1;
+> +	}
+> +
+> +	if (presets[0] == PCI_EQ_RESV)
+> +		return;
+> +
+> +	cap = dw_pcie_find_ext_capability(pci, cap_id);
+> +	if (!cap)
+> +		return;
+> +
+> +	/*
+> +	 * Write preset values to the registers byte-by-byte for the given
+> +	 * number of lanes and register size.
+> +	 */
+> +	for (i = 0; i < pci->num_lanes * lane_reg_size; i++)
+> +		dw_pcie_writeb_dbi(pci, cap + lane_eq_offset + i, presets[i]);
+> +}
+> +
+> +static void dw_pcie_config_presets(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	enum pci_bus_speed speed = pcie_link_speed[pci->max_link_speed];
+> +
 
+Please add a comment stating that the equalization needs to be performed at all
+lower data rates for each lane.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 14 February 2025 13:02
-> To: Swathi K S <swathi.ks=40samsung.com>
-> Cc: krzk+dt=40kernel.org; andrew+netdev=40lunn.ch; davem=40davemloft.net;
-> edumazet=40google.com; kuba=40kernel.org; pabeni=40redhat.com;
-> robh=40kernel.org; conor+dt=40kernel.org; richardcochran=40gmail.com;
-> mcoquelin.stm32=40gmail.com; alexandre.torgue=40foss.st.com;
-> rmk+kernel=40armlinux.org.uk; netdev=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-stm32=40st-md-mailman.stormreply.com;
-> linux-arm-kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v6 1/2=5D dt-bindings: net: Add FSD EQoS device tre=
-e
-> bindings
->=20
-> On 14/02/2025 05:53, Swathi K S wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >> Sent: 13 February 2025 17:31
-> >> To: Swathi K S <swathi.ks=40samsung.com>
-> >> Cc: krzk+dt=40kernel.org; andrew+netdev=40lunn.ch;
-> davem=40davemloft.net;
-> >> edumazet=40google.com; kuba=40kernel.org; pabeni=40redhat.com;
-> >> robh=40kernel.org; conor+dt=40kernel.org; richardcochran=40gmail.com;
-> >> mcoquelin.stm32=40gmail.com; alexandre.torgue=40foss.st.com;
-> >> rmk+kernel=40armlinux.org.uk; netdev=40vger.kernel.org;
-> >> devicetree=40vger.kernel.org; linux-stm32=40st-md-
-> mailman.stormreply.com;
-> >> linux-arm-kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> >> Subject: Re: =5BPATCH v6 1/2=5D dt-bindings: net: Add FSD EQoS device
-> >> tree bindings
-> >>
-> >> On 13/02/2025 12:04, Swathi K S wrote:
-> >>>
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >>>> Sent: 13 February 2025 13:24
-> >>>> To: Swathi K S <swathi.ks=40samsung.com>
-> >>>> Cc: krzk+dt=40kernel.org; andrew+netdev=40lunn.ch;
-> >> davem=40davemloft.net;
-> >>>> edumazet=40google.com; kuba=40kernel.org; pabeni=40redhat.com;
-> >>>> robh=40kernel.org; conor+dt=40kernel.org; richardcochran=40gmail.com=
-;
-> >>>> mcoquelin.stm32=40gmail.com; alexandre.torgue=40foss.st.com;
-> >>>> rmk+kernel=40armlinux.org.uk; netdev=40vger.kernel.org;
-> >>>> devicetree=40vger.kernel.org; linux-stm32=40st-md-
-> >> mailman.stormreply.com;
-> >>>> linux-arm-kernel=40lists.infradead.org; linux-kernel=40vger.kernel.o=
-rg
-> >>>> Subject: Re: =5BPATCH v6 1/2=5D dt-bindings: net: Add FSD EQoS devic=
-e
-> >>>> tree bindings
-> >>>>
-> >>>> On Thu, Feb 13, 2025 at 10:16:23AM +0530, Swathi K S wrote:
-> >>>>> +  clock-names:
-> >>>>> +    minItems: 5
-> >>>>> +    maxItems: 10
-> >>>>> +    contains:
-> >>>>> +      enum:
-> >>>>> +        - ptp_ref
-> >>>>> +        - master_bus
-> >>>>> +        - slave_bus
-> >>>>> +        - tx
-> >>>>> +        - rx
-> >>>>> +        - master2_bus
-> >>>>> +        - slave2_bus
-> >>>>> +        - eqos_rxclk_mux
-> >>>>> +        - eqos_phyrxclk
-> >>>>> +        - dout_peric_rgmii_clk
-> >>>>
-> >>>> This does not match the previous entry. It should be strictly
-> >>>> ordered with
-> >>>> minItems: 5.
-> >>>
-> >>> Hi Krzysztof,
-> >>> Thanks for reviewing.
-> >>> In FSD SoC, we have 2 instances of ethernet in two blocks.
-> >>> One instance needs 5 clocks and the other needs 10 clocks.
-> >>
-> >> I understand and I do not think this is contradictory to what I asked.
-> >> If it is, then why/how?
-> >>
-> >>>
-> >>> I tried to understand this by looking at some other dt-binding files
-> >>> as given below, but looks like they follow similar approach
-> >>> Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> >>> Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-> >>>
-> >>> Could you please guide me on how to implement this?
-> >>> Also, please help me understand what is meant by 'strictly ordered'
-> >>
-> >> Every other 99% of bindings. Just like your clocks property.
-> >
-> > Hi Krzysztof,
-> > Thanks for your feedback.
-> > I want to make sure I fully understand your comment.
-> > I can see we have added clocks and clock names in the same order.
->=20
-> No, you did not. You can see syntax is very different - one uses items, o=
-ther
-> uses contains-enum. And now test it, change the order in DTS and see if y=
-ou
-> see any warning.
->=20
-> > Could you please help in detail what specifically needs to be modified
-> regarding the ordering and minItems/maxItems usage?
-> You did not try hard enough.
->=20
-> Open other bindings and look how they list clocks. For example any Samsun=
-g
-> clock controller bindings. Or any qcom bindings.
+> +	if (speed >= PCIE_SPEED_8_0GT)
+> +		dw_pcie_program_presets(pp, PCIE_SPEED_8_0GT);
+> +
+> +	if (speed >= PCIE_SPEED_16_0GT)
+> +		dw_pcie_program_presets(pp, PCIE_SPEED_16_0GT);
 
-Thanks for your insight. I tried understanding the dt-binding implementatio=
-ns from Samsung/ qcom as you suggested.
-I am thinking of making the following modification in clock-names:
+I think we need to check 'Link Equalization Request' before performing
+equalization? This will also help us to warn users if they didn't specify the
+property in DT if hardware expects equalization.
 
-clock-names:
-     minItems: 5
-     items:
-         - const: ptp_ref
-         - const: master_bus
-         - const: slave_bus
-         - const: tx
-         - const: rx
-         - const: master2_bus
-         - const: slave2_bus
-         - const: eqos_rxclk_mux
-         - const: eqos_phyrxclk
-         - const: dout_peric_rgmii_clk
-		=20
-Does this align with your feedback or do you suggest any further changes?
+Currently, even if DT specifies equalization presets for 32GT/s, driver is not
+making use of them.
 
--Swathi
+- Mani
 
->=20
-> Best regards,
-> Krzysztof
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
