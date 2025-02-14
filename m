@@ -1,193 +1,297 @@
-Return-Path: <linux-kernel+bounces-514440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B579A35713
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F82A35716
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 177607A3C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180E73ACE67
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C461B1FFC7F;
-	Fri, 14 Feb 2025 06:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346EC1FFC7C;
+	Fri, 14 Feb 2025 06:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqPLzfZ0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbLt3n8L"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A522071;
-	Fri, 14 Feb 2025 06:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A270022071;
+	Fri, 14 Feb 2025 06:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514523; cv=none; b=mD/tY/Tyt/diLm++5yQoLsZOVPd5L8Q9J8gqZuvwNHQjDPVoTKlY8H9bKjGtYyJlNl6gJd0cDzISuLZ7nkTN2iZyMmKdErrVufZeN9zk2Jk0dd/8yAeTPuodebZTLfyBNFeF4mWi/iA/Wzq0sQ+DyaUVuIwardezhXWR7nJhq/s=
+	t=1739514579; cv=none; b=YGLdPhQ9RnojD3dJb5lCCGWKY57/VrBAG2yLNXIrsPw6mmJfuIVuoYD9Oyt0Ugd0jDJdHXVbMm79X1K7ma2gGAEsk5ytNTfx4NlDfhU52fCrtKlE0Xfd28EyUogoQbDK+cx7QOmuGe178bT98X84C45CekO0nX8hWO1vYmJWJGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514523; c=relaxed/simple;
-	bh=47qx1ydYEzMXs6DoEUh9wHDFEAVnOccBF+VDM4L/lUE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xos57Fx86OuciPjVscvxjPYjkiMtyyVhOJyvW2WS4kRjQ4Cr8AA+bsPvvVI2WW1mS6DWO5K/WVOwE0c9KMQvELAUXQCjm0a2Wqu7Otjoc6I6kiqmICg58/+4QF3N1kH6ojAAiRq5mKBmADtSJ0uaTz8UZwEceqiasul/G//sNGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqPLzfZ0; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1739514579; c=relaxed/simple;
+	bh=UsEB+A/XPaEDIkHx8pGbAsIhq7XByBu36IKvE9bh6Jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhEPX2Ga2m17NTls98MRiKBKGIlHto9WU9u8QnGvIYkP36wkch0A19xSxh0i/SJjUy24ngRthgod+3qT8eksk6yWGJxEzzE39LvGeO9RHiP9aO0NKGs1j0jTmKpZa2HjzUZJnTYG/IAcn7JXELa51WkAySZhmzTYMqKP/RwiCW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbLt3n8L; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21c2f1b610dso39559495ad.0;
-        Thu, 13 Feb 2025 22:28:41 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4395817a7f2so10961405e9.1;
+        Thu, 13 Feb 2025 22:29:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739514520; x=1740119320; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVGmeaGTz9AtBJup5q3xK7+XQzry8LR1zEoqK2c+Ghk=;
-        b=ZqPLzfZ0++pKXV34q+NihVfQoylwqLEFwwFJ1WTMzOSKuWU/97Igq5VSpkTSs65Kvk
-         WopV0lcvPq1tYlDm0DaZircmU3fxX7/FoMHDbp6ZCyK7IRvmVAEAjp/QiEaQIIm6bOUm
-         oK4hg2mwF+riuVu5QuxVBa0Kr1oDoM4/vm47GbtukG68FTNzg2qnxvjC7qhhqzVvQkrj
-         15MUX9WCh/jHyQ5GIcVCyDAkOPHP46uI6iEhWNbPs/EUm5VAmHYj3KNzTTPGwS4XCRhW
-         9t5NCXBUSAO+VqdXmWZ2znUhqRIgf0A6GFN5sdXegsfoHEn7YmI1JG5afFuGf7BcTFrm
-         bNGg==
+        d=gmail.com; s=20230601; t=1739514576; x=1740119376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q0DNrIkpi+rgWunP8esx8b13URNUv1qzTHQGLBvyHZQ=;
+        b=cbLt3n8LXAuQmxb0dfusApdrR+FZt1tFpuAGD9114XlSylgVjdqCc7v8QRSLJFrfqm
+         XK45aezwr9N8LmHX6fcKYObWy89N/etNeXimItZFi0X0rvN481ez3B8eaMfKGrymZ4Z3
+         tbi1b0oxvHcMTWnU5tGS00kQkpQl9hxNiLHWpuaR+Zki/KORsezze8fX1YXon+Q1pd3R
+         OqoUC9xF0E6JaZTkEsmBjAFfMdrSY8qWET2YE/1sH+rg3DKvQb1T90kUaHhKCyl01LX6
+         2ctj8JUqcBFikzDcbRvEOF01W+N+SToGP3ed1aAlgDXCOpg3uXCzBG5+91yQrLwFDdnY
+         S08w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739514520; x=1740119320;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SVGmeaGTz9AtBJup5q3xK7+XQzry8LR1zEoqK2c+Ghk=;
-        b=uLDLyOTT2zt8Vg4wQE60+7Jeu6GBR4jz5LeD+h2P0vaE6QWD4HdpNnh5w0/kv4B5ls
-         vKJ9LgrWIzZM5eay9TbhMZyk0l0avPtfbq/wDAZaLuVRC4H61v3QTiQe+OBzXIxozXex
-         ynz5z819yRWTu+ZPV0M/t1Q+qmkXwepptYPdDmBU92Dib6Aisvmmpyyg1homOF++xD6J
-         G8PyQXEPcY4YPpj+w1YOitCl4NMr8EhxIOXCRfKGsqta+FvRpEMeW2cI7ylJPhgFxfMe
-         up9M1sOxgr5uDLUV2sExRPTbX3DVwzKy4HHqAkOT5AgCh9jNedJl413ptrx++9GuXZ0C
-         KULg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk7sZIDZQ6iFWcl32BnUTHmKRwnQRAU8fQwL7KSy60mAI5DU8x3TLX8zisHaqOgzNCJWnQZ5qeO7sUTKNq@vger.kernel.org, AJvYcCXmbkXL7fx1t5RU9qI3TkxmsI/LexcJaWQJzNbHuTrdrwIzYEKOWj+agyjgCGwaY3eFGg+nEnQkQ2Oa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjnbxGee3diMvEIr/8UV2wiRBuxwfAoZgOhJfu8tOtNvR7+B8/
-	RouDu13qIt7APRCLy7TJ6l3WqvOpFg4OBkvKi95ACYqvKXkpR68KTJ65gA4O7iw=
-X-Gm-Gg: ASbGncsEjsxZI/2N4PUnE0/aDT15oTYwCdQyky6pNS5ipvdR/6lHC6UlptlOlAR8Y4z
-	bJGd5haLgK93GMl66sQAbZ8jcADu83LVqkrQAH1U7IuiKsnPlUVIQa+GqY+cArbTObalvUo3Y65
-	tfC6LHjf0oEGSeTCcrDcmD06L7gtMPeqvrTOGTWv3AZ2FjLAuOPVANi7m23N5TNmVgZs/C8W+hy
-	5X1o+NiVQLuuSfoIJl8+lSucz6f4uKSbh9tIkDDMSoIKpFG3rmP9wZiWBaFEGu7EXuqAsuGZ2vm
-	3uJ6obYfs2DVxc2A
-X-Google-Smtp-Source: AGHT+IFeSmvfTmxWPt9XSROvbn4nXKaKJF5igEnu/0fYb7L853tmf6/z/U745jCxay8jqyGw5Rpjxw==
-X-Received: by 2002:a17:902:d58c:b0:20c:6399:d637 with SMTP id d9443c01a7336-220d2132be5mr105133115ad.40.1739514520611;
-        Thu, 13 Feb 2025 22:28:40 -0800 (PST)
-Received: from [127.0.1.1] ([2601:644:8501:1640:119c:d54f:786b:76df])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ab103dsm2328417a91.6.2025.02.13.22.28.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 22:28:40 -0800 (PST)
-From: Rudraksha Gupta <guptarud@gmail.com>
-Date: Thu, 13 Feb 2025 22:28:39 -0800
-Subject: [PATCH v3] ARM: dts: qcom: msm8960: Add BAM
+        d=1e100.net; s=20230601; t=1739514576; x=1740119376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q0DNrIkpi+rgWunP8esx8b13URNUv1qzTHQGLBvyHZQ=;
+        b=c6zivmkr5k4CcD+hGZH8zmxPC//yKii4Dzp7ywZPCOQid/FcEwgP6IhQnqhf3Lw6f/
+         fZSG5yDqn/pDhOsojoYj+NutcfWSrY+9UdBpT2E20AghgS4Zi42s+OIR++OBIGZEMn/a
+         w8zd0nM5IrHRjYZ9b2r3uvW8jcG3ljV6Pi3HdQHt7QGlEux0/3PArbKcxKwrey/wAbV8
+         zoIr8zYOPYtzwOeADrEuvxOVDY80jvLKpw4Q74s73qYXLqYaduKa8k0Rb6XeKz8rJoB2
+         NM7fu32ONeSK234l8OV3fY+T131sZICvotV1IrnBmf831ZNHT3Aef8LupFZ6AA+uhp/n
+         JUJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF/FUDV/FoiRZO6KeRzJ5L+f4m3PRE6kiAyLAsxpZel3WsGH+Orl7i3kfmwq1hufnMPKUJ7+MzfNYptNdW@vger.kernel.org, AJvYcCUVj0Ft0Lb16PBX5MEq0L+kyPgtmyiThW10A2s/FLsJuMnEw/xJiZB7ZfZLqWK9TvViwJkO3vv0tLlW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/LARIyxEy2+W8LAQIpUKAUHNstkns5T5L91GKoMIBIRsiykyq
+	TB5h9FokE4c7b96BbIihfIJ9E19OqvnLCxhgiEc2uQCs3bpBqcJ7LoEbnvOHIdpeiODonuXYcjd
+	0cHB4d4WZZKtNz9mwfj4WmCGLLP0=
+X-Gm-Gg: ASbGncuO5T3X53vjijtjqtuSHnV+/AP1ARvhlXUSWElMxHzbHYevXpK2tnGuFSbhHpc
+	uAWQtScSsNmHgCScpt3zS7as709zgoW6RcM7zTp1khmOYHfmUnd1Oly/d4F7zspLVngKH4Cnh6Q
+	==
+X-Google-Smtp-Source: AGHT+IGY5xLuVN8j9KsxRf6bcc1+me7BVeaaH17aSLDBupkE+g+TY2Q6JdeoAWh5pe090nZSLG814Kwqa2FtZu049v4=
+X-Received: by 2002:a05:600c:870a:b0:439:42c6:f11f with SMTP id
+ 5b1f17b1804b1-43960169268mr80052915e9.4.1739514575486; Thu, 13 Feb 2025
+ 22:29:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250213-expressatt-bam-v3-1-0ff338f488b2@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJbirmcC/3WMyw7CIBBFf6WZtRiYtgiu/A/jAmFsSewj0JCap
- v8u7UpjXJ57c84CkYKnCOdigUDJRz/0GcpDAbY1fUPMu8yAHGuOXDGax0Axmmlid9Mxx8lpJUs
- jUUKW8vnw8x683jK3Pk5DeO39JLb1byoJJpg66YqsqsuqwkvTGf882qGDLZXwU9c/OmadpOXC1
- k6h/tLXdX0DaGHduesAAAA=
-X-Change-ID: 20250208-expressatt-bam-d0ed9863a626
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sam Day <me@samcday.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Rudraksha Gupta <guptarud@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739514519; l=2931;
- i=guptarud@gmail.com; s=20250208; h=from:subject:message-id;
- bh=47qx1ydYEzMXs6DoEUh9wHDFEAVnOccBF+VDM4L/lUE=;
- b=gyGK8vgOzaIF2KJeScbf1R1RNco6n2f74XjfMtro5Q8DurMDU/Ugq3OakovqK73HTv0romD1K
- 1tYXs9PHhaBByMGGHNaiOvMlOCBSGFfwMIPiXoW2jibNk39CPX0jzOF
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=5lJNaiR/Bu7edToWFLriO5zXOrVqSQWrBKbAKwuEw04=
+References: <20250213135605.157650-1-clamor95@gmail.com> <20250213135605.157650-2-clamor95@gmail.com>
+ <20250213-pumice-overcrowd-6c22b0d5d66c@spud>
+In-Reply-To: <20250213-pumice-overcrowd-6c22b0d5d66c@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 14 Feb 2025 08:29:22 +0200
+X-Gm-Features: AWEUYZn67J7NbLVEkrwrIx99cgEMyRnxO5YdBiYvqEdfxjG1cBd7qt5e9I3cnEU
+Message-ID: <CAPVz0n1CpoAFvwwvoTOFQu4mgg57jCwS5W4GXCiUZ3eLEAdwZA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: display: bridge: Document Solomon SSD2825
+To: Conor Dooley <conor@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Copy bam nodes from qcom-ipq8064.dtsi and change
-the reg values to match msm8960.
+=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:34 Cono=
+r Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Feb 13, 2025 at 03:56:04PM +0200, Svyatoslav Ryhel wrote:
+> > Add bindings for Solomon SSD2825 MIPI master bridge chip that connects =
+an
+> > application processor with traditional parallel LCD interface and an LC=
+D
+> > driver with MIPI slave interface. The SSD2825 supports both parallel RG=
+B
+> > interface and serial SPI interface.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../display/bridge/solomon,ssd2825.yaml       | 140 ++++++++++++++++++
+> >  1 file changed, 140 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/so=
+lomon,ssd2825.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/solomon,s=
+sd2825.yaml b/Documentation/devicetree/bindings/display/bridge/solomon,ssd2=
+825.yaml
+> > new file mode 100644
+> > index 000000000000..cd7ff971495c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/solomon,ssd2825.=
+yaml
+> > @@ -0,0 +1,140 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/bridge/solomon,ssd2825.yaml=
+#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Solomon SSD2825 RGB to MIPI-DSI bridge
+> > +
+> > +maintainers:
+> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: solomon,ssd2825
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  reset-gpios: true
+> > +
+> > +  dvdd-supply:
+> > +    description: Regulator for 1.2V digital power supply.
+> > +
+> > +  avdd-supply:
+> > +    description: Regulator for 1.2V analog power supply.
+> > +
+> > +  vddio-supply:
+> > +    description: Regulator for 1.8V IO power supply.
+> > +
+> > +  spi-max-frequency:
+> > +    maximum: 1000000
+> > +
+> > +  spi-cpha: true
+> > +  spi-cpol: true
+>
+> Should these be required? Supplies should really be required too, since
+> the device probably cannot function without them?
+>
 
-Co-developed-by: Sam Day <me@samcday.com>
-Signed-off-by: Sam Day <me@samcday.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
-Changes in v3:
-- Revert the size of sdcc{1,3} back to 0x2000
-- Link to v2: https://lore.kernel.org/r/20250209-expressatt-bam-v2-1-e6c01c5d8292@gmail.com
+No, since spi-* define mode in which device works. If both are present
+it is mode 3, if none it is mode 0.
 
-Changes in v2:
-- Reorganize sdcc{3,1}bam to be after sdcc{3,1} respectively
-- Link to v1: https://lore.kernel.org/r/20250208-expressatt-bam-v1-1-8794ec853442@gmail.com
----
- arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+About supplies, device cannot work without power supply obviously, but
+often exact supplies are not known and I would like to not enforce
+someone to add random regulators just because they are mandatory.
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-index 865fe7cc39511d7cb9ec5c4b12100404f77e2989..1a98a4a9a586164451e2777c53d978cf47ce3d24 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-@@ -279,7 +279,7 @@ sdcc3: mmc@12180000 {
- 			compatible = "arm,pl18x", "arm,primecell";
- 			arm,primecell-periphid = <0x00051180>;
- 			status = "disabled";
--			reg = <0x12180000 0x8000>;
-+			reg = <0x12180000 0x2000>;
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc SDC3_CLK>, <&gcc SDC3_H_CLK>;
- 			clock-names = "mclk", "apb_pclk";
-@@ -289,13 +289,25 @@ sdcc3: mmc@12180000 {
- 			max-frequency = <192000000>;
- 			no-1-8-v;
- 			vmmc-supply = <&vsdcc_fixed>;
-+			dmas = <&sdcc3bam 2>, <&sdcc3bam 1>;
-+			dma-names = "tx", "rx";
-+		};
-+
-+		sdcc3bam: dma-controller@12182000 {
-+			compatible = "qcom,bam-v1.3.0";
-+			reg = <0x12182000 0x4000>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc SDC3_H_CLK>;
-+			clock-names = "bam_clk";
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
- 		};
- 
- 		sdcc1: mmc@12400000 {
- 			status = "disabled";
- 			compatible = "arm,pl18x", "arm,primecell";
- 			arm,primecell-periphid = <0x00051180>;
--			reg = <0x12400000 0x8000>;
-+			reg = <0x12400000 0x2000>;
- 			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc SDC1_CLK>, <&gcc SDC1_H_CLK>;
- 			clock-names = "mclk", "apb_pclk";
-@@ -305,6 +317,18 @@ sdcc1: mmc@12400000 {
- 			cap-sd-highspeed;
- 			cap-mmc-highspeed;
- 			vmmc-supply = <&vsdcc_fixed>;
-+			dmas = <&sdcc1bam 2>, <&sdcc1bam 1>;
-+			dma-names = "tx", "rx";
-+		};
-+
-+		sdcc1bam: dma-controller@12402000 {
-+			compatible = "qcom,bam-v1.3.0";
-+			reg = <0x12402000 0x4000>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc SDC1_H_CLK>;
-+			clock-names = "bam_clk";
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
- 		};
- 
- 		tcsr: syscon@1a400000 {
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    const: tx_clk
+>
+> Drop the _clk, since this cannot be anything else! clock-names isn't
+> really useful when you have just one, so I'd be inclined to say remove
+> it entirely...
+>
 
----
-base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-change-id: 20250208-expressatt-bam-d0ed9863a626
+TX_CLK is the name which datasheet refers to hence I have included
+clock name solely to have clear link between datasheet clock
+references and clock used here.
 
-Best regards,
--- 
-Rudraksha Gupta <guptarud@gmail.com>
+> > +  solomon,hs-zero-delay-ns:
+> > +    description:
+> > +      HS zero delay period
+> > +    default: 133
+> > +
+> > +  solomon,hs-prep-delay-ns:
+> > +    description:
+> > +      HS prep delay period
+> > +    default: 40
+>
+> Do these two have limits? Use maximum/minimum to set them if so.
+> Cheers,
+> Conor.
+>
 
+Datasheet does not specify limits actually, only defaults. I will try
+to calculate boundaries.
+
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +
+> > +    properties:
+> > +      port@0:
+> > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > +        unevaluatedProperties: false
+> > +        description:
+> > +          Video port for RGB input
+> > +
+> > +        properties:
+> > +          endpoint:
+> > +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> > +            unevaluatedProperties: false
+> > +
+> > +            properties:
+> > +              bus-width:
+> > +                enum: [ 16, 18, 24 ]
+> > +
+> > +      port@1:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          Video port for DSI output (panel or connector)
+> > +
+> > +    required:
+> > +      - port@0
+> > +      - port@1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - ports
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    spi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        dsi@2 {
+> > +            compatible =3D "solomon,ssd2825";
+> > +            reg =3D <2>;
+> > +
+> > +            spi-max-frequency =3D <1000000>;
+> > +
+> > +            spi-cpha;
+> > +            spi-cpol;
+> > +
+> > +            reset-gpios =3D <&gpio 114 GPIO_ACTIVE_LOW>;
+> > +
+> > +            dvdd-supply =3D <&vdd_1v2>;
+> > +            avdd-supply =3D <&vdd_1v2>;
+> > +            vddio-supply =3D <&vdd_1v8_io>;
+> > +
+> > +            solomon,hs-zero-delay-ns =3D <300>;
+> > +            solomon,hs-prep-delay-ns =3D <65>;
+> > +
+> > +            clocks =3D <&ssd2825_tx_clk>;
+> > +            clock-names =3D "tx_clk";
+> > +
+> > +            ports {
+> > +                #address-cells =3D <1>;
+> > +                #size-cells =3D <0>;
+> > +
+> > +                port@0 {
+> > +                    reg =3D <0>;
+> > +
+> > +                    bridge_input: endpoint {
+> > +                        remote-endpoint =3D <&dpi_output>;
+> > +                        bus-width =3D <24>;
+> > +                    };
+> > +                };
+> > +
+> > +                port@1 {
+> > +                    reg =3D <1>;
+> > +
+> > +                    bridge_output: endpoint {
+> > +                        remote-endpoint =3D <&panel_input>;
+> > +                    };
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > --
+> > 2.43.0
+> >
 
