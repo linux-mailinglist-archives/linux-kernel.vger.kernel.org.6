@@ -1,135 +1,221 @@
-Return-Path: <linux-kernel+bounces-514407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36827A356B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:05:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B233A356BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57CA33AD821
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C4F1891F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64871DC198;
-	Fri, 14 Feb 2025 06:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890BB1DC070;
+	Fri, 14 Feb 2025 06:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ho/Sxa1b"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKSwJXxt"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1A21DA2E5;
-	Fri, 14 Feb 2025 06:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E211DB54C;
+	Fri, 14 Feb 2025 06:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513144; cv=none; b=Gqv6CTVTu8FJOAIamak6jNREvJ5FKRolsqVX4INxUH2PJuoAMOhzAW5K4X5Kx2B6J9aLyA7RABGP4UCiP4Er2Rng6IC5ScY1kfSt738QWTnhGo7dqR6tIEmBgFl7qduWYKbRskshD9khzWFEKlejlgERvPEAbZwLsjpznktZRvA=
+	t=1739513190; cv=none; b=U371IFmWAB44s9EfsWQpn23ASWHaaTuOdauIUABa5DrWSzh0GetsZhvLfPTzaXFVQ94P2FEWLTdCkrnkJGGCq7rFAgicDsnDK5M2kX6L+meO0r6wFRDPgjAHvSDGUxyoCHdMAcDD1TAQejn1Btg6hylqAVuP8bynpEgQJzoLrZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513144; c=relaxed/simple;
-	bh=VgutWXKUxrpUBj1Z0jT3oDJdo2f6anV/Udr1h+4FdEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YnViGrF4T+xjI5zxWXeKjJGQ5tTfMgXb9YaoB1FNsa4yAfydfm/Cf+wEyB/zHBXRmDwG20aL54i7Hr7jAYcXSSR0mKU4VR0VtY8ib7C5YQCYPvHNPbaFwwUHcxCm2RuQggZJAxcpcHrAE3BQZr2onaeqtP7bl/UeI9ddpyrr3+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ho/Sxa1b; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51E65E9V4158044
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 00:05:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739513114;
-	bh=Qw7XIK846oCUWiLOfnk5Jrq4uCGhW+CbWo1jUtxsbSc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Ho/Sxa1bQv3IKJlC684wTKz5EGQBl7q/G4t7WCcZ2uoZ2OesrcT78b/ESjjagB28v
-	 r33YtHlV7Yp6EVrK9QTfMndgoyTHkrh38aJAY4zRDwTzLgmOviK11/T8qgY7g8kt0H
-	 +JQOCqwyESXT09/V14jVNF7f5cgGZ/mYS6ZwegJE=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51E65EVo053089
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Feb 2025 00:05:14 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Feb 2025 00:05:13 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Feb 2025 00:05:13 -0600
-Received: from [10.249.140.156] ([10.249.140.156])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51E658er104524;
-	Fri, 14 Feb 2025 00:05:09 -0600
-Message-ID: <66f30c0f-dec8-4ad5-9578-a9dcc422355a@ti.com>
-Date: Fri, 14 Feb 2025 11:35:07 +0530
+	s=arc-20240116; t=1739513190; c=relaxed/simple;
+	bh=ayIdhlNLb2GKZSSeWxAq9c/c2OPatpC52A3/OfNRRcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TYHrGbl8u3Xcuo1ChRsxOBB4ix+MfXYyfvhrP3UwPimS4UfEYrjnqu19h6JU7J1+LTaB6EEYkuMvKX0p+zo7NW7koA8Lt2wfsnSFQcXupSUeTxKslAo8TuIYU1oE/xHDMYoKdCi16NWv2cWCFXDnHan1OS1u0e0XWX1ZJPgHgD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKSwJXxt; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-307bc125e2eso17505091fa.3;
+        Thu, 13 Feb 2025 22:06:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739513187; x=1740117987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gqAdZtNTVsfW+y8D7cFv5lvL1LQWxEuSxZZ2eTAoaGc=;
+        b=dKSwJXxtgs3O6zhryozE5DEKy0HhaTMp7GZ9RQBzVYcHN4YHr5SM5B/DEq6oaVmqTf
+         Et2Ze8obCjVfkRibTX64S8Ei/+HHWGXov0ct4We9flak1oHiT0SYcUEQ4bkjhg/ZqJ9F
+         kybWic+kO9CcT55AzRym3YLVcMslizRiUYT7hrjXDAjs60a+itxYFuCfcb2od5fSmXXo
+         jiPV2nQh0lNxFY7s1+448GV1g9+G0cjStShyMYdeJ7od5kEIPQolwL7hdA7JNvv5xe/n
+         eWRruyOWKPXD0EpCkycb0ijyP31NXW7+h45M4BsERJBpVMfl9pTGcICtrubv6BrxZODz
+         whaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739513187; x=1740117987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gqAdZtNTVsfW+y8D7cFv5lvL1LQWxEuSxZZ2eTAoaGc=;
+        b=U4lUJCu5MrkznYy61ZcImRxhqZhdXXLMgpqZsJJduNysP7elkHZAwlB2vrbe3RoB8e
+         32c+2OoeGc5EZ2OuYFJDw+1nUrShK1Fzg74300ZJDZA2Nve8zMG9+Oh9LCtD1s0NDNJI
+         I4HNAR10r6kUZnwTxQQlwIvZOieWSVIF0I4nit7aM8i8qUjaIJWYepXOqmHq+iVsMWLB
+         8/cJ12blDOhqg6axElZIVzWJ/unqpgwMjexhBfu5AXq6Gp5FKzpPPdtZv1vzvYCe/bEu
+         fgAAJX5oPDXgfsnXvdASAXoma3vtD4GbAOpR7YRs1y37ZvjfzBQ+Eou3o7ZevWAFhCM4
+         EiKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrwp5oVUDAfsELvXra85hq7mkCH4pg8GcM5cfv4k6SX0OcqxkbhMpCR78FlmA6x2Hib6PrsPtNYptbYi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUwQZPd5ufdSD8P9JDrPB4Zpnxop/rZHmIv41EH41+JT9eM2/1
+	Hn/Sz09pOW3zp3bx5y4yxbGPopdsoE1X8Ice0Ub37hIkvx7VzRVkNdLkLvsr9UKIuFlT+C9SEA5
+	lvxkMZ1GmiY0LbBJ1Xnj7X0gTDa4=
+X-Gm-Gg: ASbGncsRRw5qsazQkBf6vEn/WxX/Bja13IXQKeR1lk6aMT6f7DnXr3qzN6wxSIq/d7s
+	j6xvl9rOAhUdFtFHnvZ5BVLNzmyNBFFP+s5QgICXPqrPTYIk7fNTK7cDzX5XNai0psw+H6wpl
+X-Google-Smtp-Source: AGHT+IHPqui+cXa8lH/ms719wR+czTAzvCdYJZEYAhb8mlpoe3XX6QltZFbLJDP0xvxV6GBUE8HKHPteKhMAAWdehUI=
+X-Received: by 2002:a05:651c:a0a:b0:307:dc1f:e465 with SMTP id
+ 38308e7fff4ca-3090dd06af3mr18151961fa.22.1739513186599; Thu, 13 Feb 2025
+ 22:06:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH net 1/2] net: ti: icss-iep: Fix pwidth
- configuration for perout signal
-To: Paolo Abeni <pabeni@redhat.com>, <javier.carrasco.cruz@gmail.com>,
-        <diogo.ivo@siemens.com>, <horms@kernel.org>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20250211103527.923849-1-m-malladi@ti.com>
- <20250211103527.923849-2-m-malladi@ti.com>
- <3a979b56-e9d6-41c9-910b-63b5371b9631@redhat.com>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <3a979b56-e9d6-41c9-910b-63b5371b9631@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250125000202.20868-1-coolreader18@gmail.com>
+In-Reply-To: <20250125000202.20868-1-coolreader18@gmail.com>
+From: Daniel Ogorchock <djogorchock@gmail.com>
+Date: Fri, 14 Feb 2025 01:06:14 -0500
+X-Gm-Features: AWEUYZnZBpXqrOIQvba5AWr20SzZvvKiaCRfp898MjSVIAl4QLUruh9S104uiQA
+Message-ID: <CAEVj2t=mHasbuve8cwWpuPRsN=Wvsfrf+u5hLP_16GR3XqkMfg@mail.gmail.com>
+Subject: Re: [PATCH] Enable HW LED blinking for hid-nintendo controllers
+To: Noa <coolreader18@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Noa,
+
+Thanks for this patch. Integrating the firmware LED blinking support
+is something I've wanted the driver to have for a long time.
+Especially for joycond when it places the controller in "pairing"
+mode.
+
+Can you prepend the commit title with "HID: nintendo: " to match the
+convention for other commits in the hid folder?
+
+On Fri, Jan 24, 2025 at 7:02=E2=80=AFPM Noa <coolreader18@gmail.com> wrote:
+>
+> This is my first patch, so hopefully I'm doing this right. I noticed
+> when trying to use `ledtrig-timer` on the Joycon LEDS that it at times
+> would hang for a while (I assume the firmware isn't a fan of frequent
+> LED subcommands, or something), and I've tested with this patch and it
+> blinks consistently with carefree abandon.
+>
+> Separately, I was also thinking about exposing the LEDs as evdev codes,
+> but it doesn't seem like there's any good options of the `LED_*`
+> constants to represent them.
+>
+> Signed-off-by: Noa <coolreader18@gmail.com>
+> ---
+>  drivers/hid/hid-nintendo.c | 45 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
+> index 11ac246176ae..83dff0c4f7e1 100644
+> --- a/drivers/hid/hid-nintendo.c
+> +++ b/drivers/hid/hid-nintendo.c
+> @@ -2183,14 +2183,13 @@ static int joycon_input_create(struct joycon_ctlr=
+ *ctlr)
+>         return 0;
+>  }
+>
+> -/* Because the subcommand sets all the leds at once, the brightness argu=
+ment is ignored */
+> -static int joycon_player_led_brightness_set(struct led_classdev *led,
+> -                                           enum led_brightness brightnes=
+s)
+> +/* Update the on/flash status of the leds according to their led_classde=
+v fields */
+> +static int joycon_update_player_leds(struct device *dev)
+>  {
+> -       struct device *dev =3D led->dev->parent;
+>         struct hid_device *hdev =3D to_hid_device(dev);
+>         struct joycon_ctlr *ctlr;
+>         int val =3D 0;
+> +       int flash =3D 0;
+>         int i;
+>         int ret;
+>
+> @@ -2200,16 +2199,47 @@ static int joycon_player_led_brightness_set(struc=
+t led_classdev *led,
+>                 return -ENODEV;
+>         }
+>
+> -       for (i =3D 0; i < JC_NUM_LEDS; i++)
+> -               val |=3D ctlr->leds[i].brightness << i;
+> +       for (i =3D 0; i < JC_NUM_LEDS; i++) {
+> +               if (ctlr->leds[i].blink_delay_on || ctlr->leds[i].blink_d=
+elay_off)
+> +                       flash |=3D 1 << i;
+> +               else if (ctlr->leds[i].brightness)
+> +                       val |=3D 1 << i;
+> +       }
+>
+>         mutex_lock(&ctlr->output_mutex);
+> -       ret =3D joycon_set_player_leds(ctlr, 0, val);
+> +       ret =3D joycon_set_player_leds(ctlr, flash, val);
+>         mutex_unlock(&ctlr->output_mutex);
+>
+>         return ret;
+>  }
+>
+> +static int joycon_player_led_brightness_set(struct led_classdev *led,
+> +                                           enum led_brightness brightnes=
+s)
+> +{
+> +       led->brightness =3D brightness;
+> +
+> +       if (!brightness)
+> +               led->blink_delay_on =3D led->blink_delay_off =3D 0;
+> +
+> +       return joycon_update_player_leds(led->dev->parent);
+> +}
+> +
+> +/* the blink period of the leds can't be changed, and is always these va=
+lues */
+> +static const JC_LED_BLINK_DELAY_ON =3D 500;
+> +static const JC_LED_BLINK_DELAY_OFF =3D 200;
+
+nit: it might be nice to append the constant names with "_MS" for
+clarity on the time unit used.
 
 
+> +/* the different leds on a joycon can't actually be set to hw blink inde=
+pendently
+> + * of each other, since they all use the same one subcommand, so this fu=
+nction
+> + * actually resets the cycle of all the leds */
+> +static int joycon_player_led_blink_set(struct led_classdev *led,
+> +                                    unsigned long *delay_on,
+> +                                    unsigned long *delay_off)
+> +{
+> +       led->blink_delay_on =3D *delay_on =3D JC_LED_BLINK_DELAY_ON;
+> +       led->blink_delay_off =3D *delay_off =3D JC_LED_BLINK_DELAY_OFF;
+> +
+> +       return joycon_update_player_leds(led->dev->parent);
+> +}
+> +
+>  static int joycon_home_led_brightness_set(struct led_classdev *led,
+>                                           enum led_brightness brightness)
+>  {
+> @@ -2268,6 +2298,7 @@ static int joycon_leds_create(struct joycon_ctlr *c=
+tlr)
+>                 led->max_brightness =3D 1;
+>                 led->brightness_set_blocking =3D
+>                                         joycon_player_led_brightness_set;
+> +               led->blink_set =3D joycon_player_led_blink_set;
+>                 led->flags =3D LED_CORE_SUSPENDRESUME | LED_HW_PLUGGABLE;
+>
+>                 led_val |=3D joycon_player_led_patterns[player_led_patter=
+n][i] << i;
+> --
+> 2.48.1
+>
 
-On 2/13/2025 4:53 PM, Paolo Abeni wrote:
-> On 2/11/25 11: 35 AM, Meghana Malladi wrote: > @@ -419,8 +426,9 @@ 
-> static int icss_iep_perout_enable_hw(struct icss_iep *iep, > 
-> regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp)); > if 
-> (iep->plat_data->flags &
-> ZjQcmQRYFpfptBannerStart
-> This message was sent from outside of Texas Instruments.
-> Do not click links or open attachments unless you recognize the source 
-> of this email and know the content is safe.
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
-> updqdzavl0dbisXOnfkDHxHqGlQUHEro3tgnljLa7x4DRPBIRKu8Nqm3bW1LeMtXFyqz6yM7_tLlrvUmslKj9m_IL0hUlNU$>
-> ZjQcmQRYFpfptBannerEnd
-> 
-> On 2/11/25 11:35 AM, Meghana Malladi wrote:
->> @@ -419,8 +426,9 @@ static int icss_iep_perout_enable_hw(struct icss_iep *iep,
->>  			regmap_write(iep->map, ICSS_IEP_CMP1_REG0, lower_32_bits(cmp));
->>  			if (iep->plat_data->flags & ICSS_IEP_64BIT_COUNTER_SUPPORT)
->>  				regmap_write(iep->map, ICSS_IEP_CMP1_REG1, upper_32_bits(cmp));
->> -			/* Configure SYNC, 1ms pulse width */
->> -			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG, 1000000);
->> +			/* Configure SYNC, based on req on width */
->> +			regmap_write(iep->map, ICSS_IEP_SYNC_PWIDTH_REG,
->> +				     (u32)(ns_width / iep->def_inc));
-> 
-> This causes build errors on 32bits:
-> 
-> ERROR: modpost: "__udivdi3" [drivers/net/ethernet/ti/icssg/icss_iep.ko]
-> undefined!
-> make[3]: *** [../scripts/Makefile.modpost:147: Module.symvers] Error 1
-> make[2]: *** [/home/nipa/net/wt-0/Makefile:1944: modpost] Error 2
-> make[1]: *** [/home/nipa/net/wt-0/Makefile:251: __sub-make] Error 2
-> make: *** [Makefile:251: __sub-make] Error 2
-> ERROR: modpost: "__udivdi3" [drivers/net/ethernet/ti/icssg/icss_iep.ko]
-> 
-> You should use div_u64()
-> 
 
-I see, thanks.
-Can you tell me how can I reproduce this on my end for 32 bits.
-Will fix this in v2.
+Looks good overall to me other than the commit message format.
 
-> /P
-> 
-
+Thanks,
+Daniel
 
