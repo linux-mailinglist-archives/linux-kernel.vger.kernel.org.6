@@ -1,54 +1,61 @@
-Return-Path: <linux-kernel+bounces-514837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A7EA35C5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:20:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4E2A35C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB8016E294
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D5218911F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117ED263C7C;
-	Fri, 14 Feb 2025 11:19:57 +0000 (UTC)
-Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770522D793
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBA9260A42;
+	Fri, 14 Feb 2025 11:19:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651015198D;
+	Fri, 14 Feb 2025 11:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531996; cv=none; b=N39A6GzIfu3YLNIbeV7vJs2KYPtuzErBO9RMTdsjlQdcYWXe1MH5RtK3rJ20VVAYr+t900YZWhbr28Szr2W9+GO/ViERkpgebbGKjohrcoiOjZq2omg6tM682EOM5dcwv56M1/jQ8pJZY5H35N7CG3vduvh1IDnT2kpXv4pDc/w=
+	t=1739531988; cv=none; b=cLEJnmQ3p7qU63s4EiwMm1Rgda5r9JH0NG4Ri4icffYdfffKpeVwvHhy8EgpXlxw+U0mL9k71RutAHEHOglFeNAbXh30OO6/vFfG2Yrgddg76+eqj7YmIXYfjEXWfMfp7QDWpgzwStaK1Xtr9BXG2PD79AVaUMGer04d1isUlgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531996; c=relaxed/simple;
-	bh=kCiaoqVGMtRRyZ3Plxx+d8Hk0iILnb50XoSXLMuk5Vw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uw0JEnIyw90wkyqFobjyqfpGTD18aUiFVWe0W6LdoK/37e589R1nQRtta+xrPvUVKZQ4BLKko2LWVIEeeFDL0Xv85ZB6EwY7NZKVrkMAGNxDriMJmPLxAyZ16GndftpAzi11iciwCJ0xxCPHCCoWnc+Xe9vN008hPGYCzhtHNgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.10.141])
-	by sina.com (10.185.250.24) with ESMTP
-	id 67AF26C80000540B; Fri, 14 Feb 2025 19:19:39 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 82597310748366
-X-SMAIL-UIID: 056145AE50A7447B9E880A924A6E2B12-20250214-191939-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
-Date: Fri, 14 Feb 2025 19:19:25 +0800
-Message-ID: <20250214111926.2252-1-hdanton@sina.com>
-In-Reply-To: <67aee51d.050a0220.21dd3.002f.GAE@google.com>
-References: 
+	s=arc-20240116; t=1739531988; c=relaxed/simple;
+	bh=k7cjByK1WncgTU3cqnmiwIHHfHv75v+aYAfUQMtxIqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pPTfdvZlF++naZ0YAbyW0o3cVSuOU+W6jIBAI9nZHB7jLy/MOyVnJ51NSp1LzYvT2n8T5zZylrsbkaGvOlIZTGtQ7drOcoROzts4Vu8XEqNBHviWoUtqYBAkwyiIM7Gnxv54JsH4UbFJswrIK3EUV5xojWRx8UY9N5tDIo9F97A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25516113E;
+	Fri, 14 Feb 2025 03:20:06 -0800 (PST)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 079573F6A8;
+	Fri, 14 Feb 2025 03:19:42 -0800 (PST)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Graham Woodward <graham.woodward@arm.com>,
+	Paschalis.Mpeis@arm.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v2 00/11] perf script: Refactor branch flags for Arm SPE
+Date: Fri, 14 Feb 2025 11:19:25 +0000
+Message-Id: <20250214111936.15168-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,27 +64,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Feb 2025 22:39:25 -0800
-> syzbot found the following issue on:
-> 
-> HEAD commit:    69b54314c975 Merge tag 'kbuild-fixes-v6.14' of git://git.k..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13aafdf8580000
+This patch series refactors branch flags for support Arm SPE.  The patch
+set is divided into two parts, the first part is for refactoring common
+code and the second part is for enabling Arm SPE.
 
-#syz test upstream   master
+For refactoring branch flags, the sample flaghs are classified as branch
+types and events.  A program branch type can be conditional branch,
+function call, return or expection taken.  A branch event happens when
+taking a branch.  This series combines branch types and the associated
+events to present a sample flag.
 
---- x/fs/netfs/read_collect.c
-+++ y/fs/netfs/read_collect.c
-@@ -289,6 +289,10 @@ reassess:
- 		/* Remove if completely consumed. */
- 		stream->source = front->source;
- 		spin_lock(&rreq->lock);
-+		if (front != stream->front) {
-+			spin_unlock(&rreq->lock);
-+			goto reassess;
-+		}
- 
- 		remove = front;
- 		trace_netfs_sreq(front, netfs_sreq_trace_discard);
---
+The second part is to enable Arm SPE's sample flags for expressing
+branch types and events, and support branch stack.
+
+Patches 01 - 03 are to refactor branch types and branch events.
+Patches 04, 05 extend to support not-taken event.
+
+Patches 06 - 09 enables branch flags in Arm SPE.  This allows to print
+out sample flags for samples.
+
+Patch 10 supports branch stack for Arm SPE.  Patch 11 is an enhancement
+for PBT feature.
+
+Changes from v1:
+- For patch 05, changed to append the 'not_taken' bit in the branch_flags.
+  This can avoid altering bit layout and cause breakage.
+- Added Ian's review tags.
+
+
+Leo Yan (11):
+  perf script: Make printing flags reliable
+  perf script: Refactor sample_flags_to_name() function
+  perf script: Separate events from branch types
+  perf script: Add not taken event for branches
+  perf script: Add not taken event for branch stack
+  perf arm-spe: Extend branch operations
+  perf arm-spe: Decode transactional event
+  perf arm-spe: Fill branch operations and events to record
+  perf arm-spe: Set sample flags with supplement info
+  perf arm-spe: Add branch stack
+  perf arm-spe: Support previous branch target (PBT) address
+
+ tools/perf/builtin-script.c                   |  30 ++--
+ .../util/arm-spe-decoder/arm-spe-decoder.c    |  23 ++-
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  11 +-
+ .../arm-spe-decoder/arm-spe-pkt-decoder.c     |  14 +-
+ .../arm-spe-decoder/arm-spe-pkt-decoder.h     |  12 +-
+ tools/perf/util/arm-spe.c                     | 135 ++++++++++++++++++
+ tools/perf/util/branch.h                      |   3 +-
+ tools/perf/util/event.h                       |  12 +-
+ tools/perf/util/trace-event-scripting.c       | 116 +++++++++++----
+ tools/perf/util/trace-event.h                 |   2 +
+ 10 files changed, 307 insertions(+), 51 deletions(-)
+
+-- 
+2.34.1
+
 
