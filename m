@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-515723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73593A36826
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:14:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76286A3682C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:15:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176D53AA846
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC9A172D36
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2161FCCEA;
-	Fri, 14 Feb 2025 22:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AB1FC108;
+	Fri, 14 Feb 2025 22:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="exJYMU0T"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYKGEZP9"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF91DDA18;
-	Fri, 14 Feb 2025 22:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347741DDA18;
+	Fri, 14 Feb 2025 22:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739571220; cv=none; b=bQKyamMbcV9mMXy2IRD4eK3T5nZKYcTzSPtLJwilxAvHjN4/SVPg2mLMcClrlPga+sHgd2aAuJ7HhxsVGN6ONbXey6chdma3FiOxuGAYiNuJGhHyoc35bGqYun8mtp+r0iYHeQodRC7iA+hEWzvg2bSFNUXg9IadzS1Fu1Ff0js=
+	t=1739571272; cv=none; b=Qb7ujbdRLk63GM4nAEtHpb36Nzvot3P5ChpIpkFNVX+sQuSVLTI2XC6fTogR3x331Q14d6T0bfebML12UZ/sYbe5pCqQU08dug4TQtIn2fzsWqWXCiy/uTAhWQnIDRIdCeAnq/0jDSZDj0l3KuG18Jd6grVCW1UN4S3Bks2t0X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739571220; c=relaxed/simple;
-	bh=ba+hn+IBiz5wojCra6hymsACBfDSU5cpcyTnl70wcJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r4+owbehTWmAWg0P95QT3WZuVMAtyXiBDZIe02ibgj/C4M9AdPUUtyt+YND7PL4xrTqx28tEsTZAIMH1m3b5Qpvu7HXZvxILbflnApE3qXUCs9ob0dh0XSs9TMeylJhpcmvg7LUg1PfYGhqKgy+m93xW1HYqtThCy3oJdU/q404=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=exJYMU0T; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739571216; x=1740176016; i=w_armin@gmx.de;
-	bh=xB8nfcIGfWAml1wS6DRi4V1OxOYZOMijucslZC0RTIw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=exJYMU0TwtBR1SJjNOn4BYPTgJBVumYgbz7U0sDChGBSyEVUxcHDK0eTpCUto/af
-	 XrGdbxXwYtolEy1wQrhB1jX7oCKmrGmAifLTG8+XMTbXiL90K3KzR9U6RCjd8BebL
-	 MUQ9ZV0dm94HmggwZVOgAPTIqMlM4I4itU+68caOA9tkZ87HIPmIpEzn7vvKTycXq
-	 aq+4BFcrx6QeevptHZmTWBUx9/IuFy5Ni+l+l89JppQWOZPw8LEisp1rFKLhV2idR
-	 5KTYdLMXrdyo3btz3R0xoPUrfEBZInNBpfFBCgkHv7nFu/e6JgYsTRj9uaAgeGtbD
-	 /5aIyxrmPUB0KVDXeg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1N5VHM-1tKAfl44ja-00zr26; Fri, 14 Feb 2025 23:13:36 +0100
-From: Armin Wolf <W_Armin@gmx.de>
-To: jlee@suse.com,
-	basak.sb2006@gmail.com,
-	rayanmargham4@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 3/3] platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
-Date: Fri, 14 Feb 2025 23:13:22 +0100
-Message-Id: <20250214221322.47298-4-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250214221322.47298-1-W_Armin@gmx.de>
-References: <20250214221322.47298-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1739571272; c=relaxed/simple;
+	bh=HIsehv+iWAWVMHHYckz3gqMXnT7YI+cVRjsvqR6vsrQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRpCo9FjoVST6lBK6YWsF8YkGWDIEQWp9xsq6W9QjJ5JFkw62iV195bdi7LxjY6mskY9uEq/Fh5vVGP0WuSI0Qt7xKrpF9Oa638m/Ex96bUkr1q+ZpDOeDi1KYAciVnH2MFO1/FPqUezjxIPgplfox19NhGl7jYVrGUY/B2cFiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYKGEZP9; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5de4d3bbc76so4090234a12.3;
+        Fri, 14 Feb 2025 14:14:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739571269; x=1740176069; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bEB+wipqpxDExoX7XkJyi7zxDfuglvJ+HC5Ljm+PuFY=;
+        b=EYKGEZP95Mh5IUFfOEHxXs2I9qpTnoCE2q/sbx98ayfP2Kb92NBL7w9N2Q3Y1nisDR
+         ulFPQcJA2mNxp/BiFLODSGtO1X5YZt/6C9nRtYmkKfYuRhp19ab0HR4r2rYhznHq1byD
+         xrXUXr31gPU1MpT4dmPlchcoeLI/EJbxjX8f0bGlDTHORPF1S0Du9GabCvbX+4ohEaRM
+         E954HyhnQnpxWdZsoqyUlO5G9fLJKvyNFngqiIwwVTts2iYavQJAMU177YlYvQCsH8cQ
+         RiR+6W7gfVPKLVk3nL20RxgW9FaEqwt2LUCPjbChbAFNBygt3kTgZ9827DPmlKXklbOg
+         qXhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739571269; x=1740176069;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bEB+wipqpxDExoX7XkJyi7zxDfuglvJ+HC5Ljm+PuFY=;
+        b=B/mXjqKwD7TzZE6AUZXztYny1vlYpi9Yrj8JPC4DhNmJizJMlS+/Qfqz9nQwzaHYgQ
+         oAF2WnRpCdnr6KZP/8EJYdcYFFQnwJJ0T6o9SurcNQNPBA5INphKZZ2C2dtjirFcC/9C
+         QYQXW8JxyQF4+++tnYIoltFcDlEguC6t1o4yo1y/AYLuk50Iiwn+YU4/kjFnU+pkBqEN
+         S+UDs9UcsWV3F+2gHw47iDjxBeZlkH6fLoe3MT+XZPXmnsq2zDJULa1niKuHT1CUSeVj
+         GNqhrcvQ1yow6ena8TxqbPldZG1XodgrUqRyqMie/JpHeK3r0l4ghzqUa5G9dSGQ2QzD
+         MIOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBNVGf7FF6B6I0k4Rr5WWRtuk+xq3++ip9uZS7K5Wr4ZbRgOJ72WPY8UFIrvKWUK6thhmr+lVrj85eWg==@vger.kernel.org, AJvYcCUBtk0+AVl/cF/Qbul9soD61IUE6n29xpTAQIoKkMccBgbVVqVopaDgdiC1igNrZM/dvGI=@vger.kernel.org, AJvYcCVZq7ROyxVQ7xL1NaOry5yXMnmuMyi9TsUM5GPDDA4nweSSIwAu8dz9DBd0CSzol/gKhLP/hCaLoGBBZZcG@vger.kernel.org, AJvYcCW78kdoJUbcS8Ci6PKzpGQPGj2K1sYN09N93CfyCIDPsIFW8zibRlsCocBlczC2r3E5m76+sx9kpPUIoYk6Rk9gMTIC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGsfeTYTwNLFispEsCCZDhEZnrNEah6/HwYlXIUXxm4UUvm+4g
+	pdYh/EFMuTSm3xX9lKPHYCoW+KSnuRShtalrdY4Pm7duNp305I1x
+X-Gm-Gg: ASbGncu26dkFW4irT/qU9laTdGnVt+5Jwaiq2AFdjjE8qcYp+NT2Yq2sQ68tPCDw8Br
+	SRSQMebSMuk0+YEA9o28s1wCwDEvAVOkaAwSPUz4fn7EH4hA+mziSkYk5Ho1AFf9q8tIJnKRS1m
+	HuJCQtjh2g8GYF+rpwcuyiqmdVcuNaWjbiJG343huimvzS/nJpdSsy6rDk3X9iSLKnaK/FlLW3I
+	xwAYgp+7RvQP8UH/T5hcFlqk1yOSANRMFEuECEIHDFpOhc7VdWpg/+RnQZ62zM0JAdb8ka3P/0e
+	8DR0+9x6BbYFNBpS9s96FZxPROiXWZymowmN
+X-Google-Smtp-Source: AGHT+IGhKMUt6pQQ2eEdpEq9Kp47Mlkh7KYX18Dx2znHH1AwQvYGHh0IRemg9M7NamftnrBLcT9VIw==
+X-Received: by 2002:a05:6402:5210:b0:5de:dc08:9cc5 with SMTP id 4fb4d7f45d1cf-5e0360a1fb6mr766609a12.7.1739571269178;
+        Fri, 14 Feb 2025 14:14:29 -0800 (PST)
+Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c46b3sm3547034a12.21.2025.02.14.14.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 14:14:28 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 14 Feb 2025 23:14:26 +0100
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Zheng Yejian <zhengyejian1@huawei.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3 4/6] scripts/sorttable: Zero out weak functions in
+ mcount_loc table
+Message-ID: <Z6_AQmaUWAekeB5B@krava>
+References: <20250213162047.306074881@goodmis.org>
+ <20250213162145.986887092@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:h7/6J+EORcteXthSIviSokhcGBTy+kDnJLN+kTO/DlegZ23urgd
- p7volsIYHcdfSpEqEregNVGQlfoZwvJ3x7RSh5Ke7LS25L17hGo5L5j4FnC6DzGObTF421l
- 2aaGeE1BUx3IoZA0lJ/Zs1a/0LplMycuereRdMrJT8wDkszkFdHf3xzzgJ7Vkcih1qsQ01Z
- xzimeTNr1buGHWqvWyWCQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1XHGzZrp/z0=;9MBh75K3zSza1kS/i/94r6U0+oT
- g4Tb7dknFZIJm57UZnFjWdeGTGh8olQP3TWGzzE9h+XG32keaBnHUldM85zLHhMy4casp2hf5
- 57o0bcJY5cr/a38fROLrmBIhVl8wur6L4eidqvcMXDVUsBJYzrLBeLJBXhL8WSjQavhWmFudU
- hnDTo8IvJ6XPuVA2NcjjhDeSJs48rCk0yby/BX/SOJVLzaVdWHwk8bXwPF8+0p3rZsVQYH0UI
- mbwLbsGauWW37x0wQiEJNsDLkAK6OLsVMmFVp+8ArnpaHaIKD83p0zNerIV7AWzal3WQ+gkYZ
- fLkHUpEWOL3/7k6Ao3Lj/P8MOPPxVniRoEVfq8/J+7FoKxIgQug5MRSSJ52QCY2i2fiSDrRbx
- kteD+m2E4WE0Os3pkSAkQWyAnTaXgu120Q/6+1Fh+FWxeWtMadA4sNNxkdEqWT+0bsuSqXAAw
- 3lyGaf6APc1FWP87CEQModDO+2baHbFBV5vsPbAaEkvSzFArnDlDzyrrEgc/7ZvE+5tzVd83N
- n4w0joMXoyTzcHnobNNCtAHoRl+efSRSuWLgLuWoop2vO78BOVC6zjJEJG1KC2hG1xQKWux6W
- s+Qi+QnKHXpBUyeiaCD42180PdvJfQFWm0oAroSJNuNfhZiGxaM6vcvAqUJbvSABmW1selyRi
- cPYi+r9+G3k43v0sgsV7+MuWjlqP5weBdzvugzi6QfMoPdp7zKahG+ZrNb6e/eL6hVIqKmSps
- z7zCTgphGmE9SxtyeGzTBKImjjVvFhiirqvDUhOi0xqzp28A0KS5Iakod39o1x/2QaXLEaCDU
- LME1MKV2eP3OaanDEADu8klrpp89faUQkyMZTQfUBsnwReuz5VjzlmNosdRggydrp4adoekcl
- kGf1bc6s9mNqwNwRKasAEgwZapgmYDBClAJ8AtnfHn0UrKXHvZrQ22f/8mzkTm8hHJvSREC+x
- +ojKmjx2AmzsFDICDCS4eFHS8/DU3DSBYP2hp5tL6cqUx83oIaEV4OGstS+zLDoILVtztgs0Z
- qWMXz5XcJJbLB3aeZoonplHwnosuKU6NbGj8foJMyH+v7KGRudtCk5uSAb6gkBiQGKQUpBLG4
- d0dkNV7TBQ1UuPbfEGvq+sLem6zrPNqAq3MmXuFg3SLRyIT9KuDF0mljZ9WZyMkQUjtp6Esl8
- ypFZjs/duU0KDc9XjMTQNNEbo4oXFCJAohlFd1nOCsnPTOKwjmsCrw95yw+mUL4/7r8HsXYGz
- WoG8b8KzNJV6I2YarIaYeY9zjPhbc5w9FnzgyzrW+wy1ya8evIxT0/NW0oGclpPckD53DmKj3
- Wif8Q4MCim0HFN5K5NKqMw6vvmxK4sZMYvV1uAW53PituegTlTle6Yd80WgTRNxR93YD05Zhy
- Jeb/7zJstSVISMW/AHZIMfzjIPmOnD9MfhA5rKhxfO+5wVn2y6qu82x9HH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213162145.986887092@goodmis.org>
 
-Both machines support the necessary WMI methods, so enable fan control
-for them.
+On Thu, Feb 13, 2025 at 11:20:51AM -0500, Steven Rostedt wrote:
 
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/acer-wmi.c | 2 ++
- 1 file changed, 2 insertions(+)
+SNIP
 
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
-mi.c
-index e24f5a323f95..05cbe8f96f21 100644
-=2D-- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -466,6 +466,7 @@ static struct quirk_entry quirk_acer_predator_ph16_72 =
-=3D {
- 	.cpu_fans =3D 1,
- 	.gpu_fans =3D 1,
- 	.predator_v4 =3D 1,
-+	.pwm =3D 1,
- };
+> +static int cmp_funcs(const void *A, const void *B)
+> +{
+> +	const struct func_info *a = A;
+> +	const struct func_info *b = B;
+> +
+> +	if (a->addr < b->addr)
+> +		return -1;
+> +	return a->addr > b->addr;
+> +}
+> +
+> +static int parse_symbols(const char *fname)
+> +{
+> +	FILE *fp;
+> +	char addr_str[20]; /* Only need 17, but round up to next int size */
+> +	char size_str[20];
+> +	char type;
+> +
+> +	fp = fopen(fname, "r");
+> +	if (!fp) {
+> +		perror(fname);
+> +		return -1;
+> +	}
+> +
+> +	while (fscanf(fp, "%16s %16s %c %*s\n", addr_str, size_str, &type) == 3) {
+> +		uint64_t addr;
+> +		uint64_t size;
+> +
+> +		/* Only care about functions */
+> +		if (type != 't' && type != 'T')
+> +			continue;
 
- static struct quirk_entry quirk_acer_predator_pt14_51 =3D {
-@@ -473,6 +474,7 @@ static struct quirk_entry quirk_acer_predator_pt14_51 =
-=3D {
- 	.cpu_fans =3D 1,
- 	.gpu_fans =3D 1,
- 	.predator_v4 =3D 1,
-+	.pwm =3D 1,
- };
+hi,
+I think we need the 'W' check in here [1]
 
- static struct quirk_entry quirk_acer_predator_v4 =3D {
-=2D-
-2.39.5
+jirka
 
+
+[1] https://lore.kernel.org/bpf/20250103071409.47db1479@batman.local.home/
 
