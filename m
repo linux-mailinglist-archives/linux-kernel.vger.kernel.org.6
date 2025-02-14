@@ -1,225 +1,176 @@
-Return-Path: <linux-kernel+bounces-514784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD94A35B8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:27:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA28A35B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:28:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DC816F5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D633A9715
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3850925A657;
-	Fri, 14 Feb 2025 10:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O9gwJVr+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FA625A635;
+	Fri, 14 Feb 2025 10:28:30 +0000 (UTC)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CF92566D9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0DA2566D9;
+	Fri, 14 Feb 2025 10:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739528848; cv=none; b=K55ryPcNVDhEVlnGoTEx5C2OZ1BiQwQgUO7Yx4UH+ZIlN5IhtSZ2ausXxQQrcOJ4f9DsohG4EjwEnrGZ2y9gvM48ZvDwTcHNOhQrvh1gm+R0w0BXfFrdcoZHmwkBw5bNNGOdlhQUYGYNEdkFMQSPtOHZRXWAfPJMzkngExGQhys=
+	t=1739528909; cv=none; b=mj6mTPPMApo8pLe1pqx3U+58+BtMLbOpVEOcCbSNpUDoqL1DxJLLIGCn5HL/wFtdnrdWFONWSRcrhiw4H0+O+wHQruKfGl6JOwMasaRw2X0WMMu8XhseNdeAaHqkDggTUVKfrbsa1fMHyMj0ShlIwPj29/6B4VNWaaMQOg8WtTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739528848; c=relaxed/simple;
-	bh=78xrz/HVPw8CC87OYPuhUyUhsOxpY1yFErv89zo64dg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diUeA9OiAw9xDxJGJAEFZpegZBJdEw9OfTERNmklpn85roLycDiTsJsl+HTyf8/QeYkI7PuEFh9ENp7f2OP0Xhyif53dMgnpNh0n9ZqcKNa6BOwuGyD/KSsSsmFro4mU8RafJvxlJWCz+UiD+2JdJ0cWJQZujM5bANh/B5dOTNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O9gwJVr+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739528845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hZWMT8WxbxzIhhzmDc7Gm/l6y+y9ahJ/5zA846b5VzU=;
-	b=O9gwJVr+csSVQ8gANJbF2G0Ee2b1uwy4ir22KOymBBPc93qgxm0JcsYc/IqrU0AM2Q/K5A
-	jhSAtGJbHtnPc6Ih1eWmwApJb7B09UviPJhul1TXYdRo1n1hcyJi3wIg2eT96w49NRLd+j
-	jLoFO5IVqi50dw+h0SEu0sveDArf7qM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-uBHMv6btNBu6m9c4N3vrQQ-1; Fri, 14 Feb 2025 05:27:22 -0500
-X-MC-Unique: uBHMv6btNBu6m9c4N3vrQQ-1
-X-Mimecast-MFC-AGG-ID: uBHMv6btNBu6m9c4N3vrQQ_1739528842
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-439640a1a8dso8158155e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:27:22 -0800 (PST)
+	s=arc-20240116; t=1739528909; c=relaxed/simple;
+	bh=HkXvzUaZbtDUm8GieM/LwNsjaKwR4/lhnzAFeAhmDrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fmdiS7keOswVj4AfZw3c2KvgSKWGBQO637g6s2uuI3+7jVe3WMIVAxIVzTG/VVwI3kKQq/ev9CSn/G6F3NwXYPFdThiqw5qGslwHmFuixZkK06cDmFzj7cMbj3WgXr51/WkEUMmagCTiv8L65SQlSBMycEqg1k3Cc8W23raFnOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-860f0e91121so1845440241.0;
+        Fri, 14 Feb 2025 02:28:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739528841; x=1740133641;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hZWMT8WxbxzIhhzmDc7Gm/l6y+y9ahJ/5zA846b5VzU=;
-        b=McBFemoS5qqatVGxYjPmz0/J/Jy7Q53xZP8fz18O2KjL6mbL0t0JBhj7dbHt055C93
-         vHVYsv1E9nc+5ncf3UkOtqK034RtcgvAdjA0JpSJtNZcfLLwYHp6WJfvHFXa9DzDZNX2
-         7fMsP8/5Ci6gE2kizEFrouxa98IpcH2Ys3zBMXRa5NvjbyFQ0AKRFB0Zuz9SDN8MobF4
-         SmSjocmRn5WEWeE06xsLmyigdzoAVmuIA365WMJHa/5032fENDMqUpqVbZLsHzJrF6QJ
-         d/nFWKldXUDbcoq77z/OfUtIfaFPD0ea/QR9RzPyzOYkOKwjsnpt542Y9PJqJVOsWBlE
-         x/gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMrym1M9Cb3Am/o4qDHkxLPf4Q3LqSN7tODTv9/jaXORCLX/DR2xZUqPCY5UT1KsGg/QcWJ6kqZIOUWmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBFJIzt9vSldWG7N10LZ/BnVNt2aS1seAse6fPBCdYFD+Kedgi
-	ieowRH5p7gFR9IAzzoi4Qm5bCceGZRUHAG7xAN1eM9X64ovH+PmkYHp9dulHHS/keqxi4Lff/R1
-	DrVCETSepQrnrT1pVHRDQfV8LUZoeYnUdsi822otfxPU1B8xa+XCbK+wI/SOh2g==
-X-Gm-Gg: ASbGncu1iENg+cygPwriajoHTGsz0tFRjLbi12T5BSAVO/RBQxAT3vnezUVjKX8XNVW
-	rok4zSiUf9q8UKTuELpTekV5Qaj8T1gzJmxnCH3wHa3hVjl5/hYHQaXvEpt9Jrel7fxUBFu+Hnn
-	7AxYd2qk4+bBh6iYHnaYZevKS4VDv+oyhiquQ2q3fMcXXszEtWqspssvLU55y1BRTBlkuiGSZEn
-	DqE1tv+9zIXpSwnKlyGIYtqyC2G6IiU8p80lHzh5huSG151Jg5oFaznor1chdpChoZ4o+//4iu9
-	ovwuJ/BIwMA5armWgBT3rcRy5iJQBKAxc+EVgm4Q2LcVTRLSZpn0bHOgQJMn4Jvdin9J4W6x0Am
-	viV4rQiJWomt7vXFMZsqG7fcFWMbpCQ==
-X-Received: by 2002:a05:600c:3d86:b0:439:61cd:4fc3 with SMTP id 5b1f17b1804b1-43961cd52a3mr60414785e9.1.1739528840712;
-        Fri, 14 Feb 2025 02:27:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGE2/P4K8BMb25jacqE9tesNpiJRwAuk8pmttt4ogltkz1XhcRLH1qgjw26RrtASRE1eojWxA==
-X-Received: by 2002:a05:600c:3d86:b0:439:61cd:4fc3 with SMTP id 5b1f17b1804b1-43961cd52a3mr60413595e9.1.1739528838802;
-        Fri, 14 Feb 2025 02:27:18 -0800 (PST)
-Received: from ?IPV6:2003:cb:c709:a00:7d7d:3665:5fe4:7127? (p200300cbc7090a007d7d36655fe47127.dip0.t-ipconnect.de. [2003:cb:c709:a00:7d7d:3665:5fe4:7127])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439618a9970sm40364945e9.33.2025.02.14.02.27.16
+        d=1e100.net; s=20230601; t=1739528905; x=1740133705;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DD+ssK7Im57vlq5FNxfqHbbrTwFIXn9O88i3TIuD0PI=;
+        b=JbVhTfhGIYpojq17+W3u20mUpdAIWWa1tvL4aQBZvD5MOixxF0gd76szsgG+4XFFxq
+         KJUViOlXbQEjcxpG0ejfDb+tQW6MFc4a8bS5wttuEa2YQNfkPrELPMAYpmghgbUO/bj5
+         jz7dBuvEoD7oL1uJk9aj7iVIOndUfIbgB5UQXN83rBaN0lAU7PQ8TEwUjITv9TA4+gLO
+         oniK6iGtyjEsitwFVJArLKTJQutFImCpIRISIV2llKaZYlyeYkqxfFqLRiIXwmN1se1/
+         4L99p+Im9KuLXbnnjm4Owv65kXA5apMtE3kXQDHnxjrlRQu5fumDCzYRef32AjM7XrRQ
+         BOCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiUJoL4Te2VEpWU/yQa7sVUMW2hHtCmLMsB1ToztS+oaoJ92njwbVKJk3wa5Z4u+yiVVxAl8vFPIVxJA==@vger.kernel.org, AJvYcCUmtUW8i/iSLUVtPFWatyZ0ObM1dl9jrrsaKbOXwwxOdsowyRk061J2ew/s665cR6jFbcizxl/uVTeH57eyhibRSmc=@vger.kernel.org, AJvYcCVIdu2RAPbLpLdTDnaSJGokcrkyS20fbX1oSeD0yxPSIAx9tV04LXkZXdkp6XBj4GIg4rpOMGNZmRY=@vger.kernel.org, AJvYcCVJRSGV00Zv+SHULWlOSMW3zXPH7WHewzk0HL8mYg9671/QDjUrKVI4+Ntqz4FuD1W4jMjl8IfOgZvMDG8=@vger.kernel.org, AJvYcCWrnCmcSAl9CLRHHVDX3fDXsw80SSwG28aXYrVsA0CpNktNGVypWaFzVJMon+ufQDmSKxBS+JdeIuAz5mkv@vger.kernel.org, AJvYcCX6l/8UDRHSDx53Ctx/ixmxGgz/BaPJG2EmLM6bwUTip4PJIXv+6HoczPGOSOJqOAG6LGKoo8baZPb8EBrA@vger.kernel.org, AJvYcCXCj2vR9py3dXnUBl04GVleSZLzKmRENp8KLA0GNe76CsuUp2e5YMvk/bHFK5nT1nkYzPy8G6ca/JQ6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9yXDe2TKk0lQAX4OTIuw9bmRgkZTuLrN+4yXr/x5e2W9aAegn
+	S1qh7i9dIWkITfkNLavNK1YuKaA8+3w1BbPAzfvAgJmP0arYYXMtKZ3lODBf3AE=
+X-Gm-Gg: ASbGncvg8pD+bUzAkA0HzoNw9JD8pTlc6echtP509S0Y1e699xTFPYMcOqDGeB+NYM9
+	hx4DV4zbpWmEwQNv2fwixwkswJiRa/8KU9QYA0SiFwWgyrpMwoEJXFWhvfrFXVC4r8KYOpgI3mN
+	wz0I2AZqSizGNn8fLzFkQKErsXUWGnHA0q9Q2qHPYhGESPDz1j2Zk0qrXrtZiyBDVC65+XJ4lvu
+	oVnZmNMNbG1sk67TxgnT5MOny5/nXP2aNXXtcA8C9UPM3Rz+49xRFfIXXf4TDlqUA8QuvFpoWri
+	w7oneVIHYAS/iMMY5J8FwSCQ1g10NW7uB/lV4oJWiJ5Nl7ITA2QikQ==
+X-Google-Smtp-Source: AGHT+IEKiaeKBRzxQM/1KzXGMyx9lWg1nfN6iTMlWnWde3zYMMm0H/7R4uLfb2ckogPdFqw+4MzbMA==
+X-Received: by 2002:a05:6102:2749:b0:4bc:1600:7c43 with SMTP id ada2fe7eead31-4bc16007c6emr1580769137.11.1739528905455;
+        Fri, 14 Feb 2025 02:28:25 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e8548ae3sm536863241.2.2025.02.14.02.28.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 02:27:17 -0800 (PST)
-Message-ID: <ad8ae139-546d-4ade-abb9-455b339a8a92@redhat.com>
-Date: Fri, 14 Feb 2025 11:27:15 +0100
+        Fri, 14 Feb 2025 02:28:23 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4bbb56bbbd4so1807993137.1;
+        Fri, 14 Feb 2025 02:28:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUc0a1xwQlaItPr0wtGa1oeiIwsW9tLZxbCg9TCVDEzNu+tcmwcm3P3oSQL+8pCDUeuKpcsJXWpc2vfdA==@vger.kernel.org, AJvYcCVT0vFtgOAjXIh/vHIRUzTJjRfPpJW2rmAuhWico4cTIvb9kEVchR5BEXctXcMRJzLk5xljXQ/cEO0J+gt7YnuePvw=@vger.kernel.org, AJvYcCVm6dS2hGkD8R7mdOq3zjxhAvBBN8H02AMCYWNDf8porsnq8pXkEOynDIX1PHB1iyqCODPwJE8AJVeEivRv@vger.kernel.org, AJvYcCVz9wDj1/rGI1N2FrU7m5AwWJjcqWx+0k7eWeVgALrDdAuXtjLn0ZIDBsXhnVtT7uyGxxP7CZdyG8M=@vger.kernel.org, AJvYcCWI5mKmLluJ4VLIneptFo+ykZtQEi0N3ppigqCNpNCjpcF4znltj5hzBy2o9UFi4+PNInP83hvodxovWf92@vger.kernel.org, AJvYcCWQaYPQ0bl9aPNyVn3be+sK10ytEBG1GesH/1+sLsXvx8xk6rcgzhrFJ0O97QmTF258zsm2lsioFQ6V@vger.kernel.org, AJvYcCWZ95hd1DxtIm1cWw+V33v3fhOFYpAOvSR8lUrrKUjVK9NmFMyscF7JRWTRwJCOd4ncjS+04+Yrvrwk0RI=@vger.kernel.org
+X-Received: by 2002:a05:6102:50a4:b0:4bb:ceeb:eaca with SMTP id
+ ada2fe7eead31-4bc04dc0ad2mr4618891137.1.1739528903305; Fri, 14 Feb 2025
+ 02:28:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] KVM: s390: pv: fix race when making a page secure
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, frankja@linux.ibm.com, borntraeger@de.ibm.com,
- nrb@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
- schlameuss@linux.ibm.com, hca@linux.ibm.com
-References: <20250213200755.196832-1-imbrenda@linux.ibm.com>
- <20250213200755.196832-3-imbrenda@linux.ibm.com>
- <6c741da9-a793-4a59-920f-8df77807bc4d@redhat.com>
- <20250214111729.000d364e@p-imbrenda>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250214111729.000d364e@p-imbrenda>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1738329458.git.geert+renesas@glider.be> <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+ <20250131190335.4c18fb3c@pumpkin>
+In-Reply-To: <20250131190335.4c18fb3c@pumpkin>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Feb 2025 11:28:11 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVP+GBFMfd-C_7oiXHKSbycPv6adxJdM-Kt03+m9UqDiw@mail.gmail.com>
+X-Gm-Features: AWEUYZm97sUT3mKi6JQWzWdUxKryfF3L2VZZmMQJHiBs0ICC7K3YkCuZ7Ruhdt0
+Message-ID: <CAMuHMdVP+GBFMfd-C_7oiXHKSbycPv6adxJdM-Kt03+m9UqDiw@mail.gmail.com>
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S . Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	qat-linux@intel.com, linux-gpio@vger.kernel.org, 
+	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 14.02.25 11:17, Claudio Imbrenda wrote:
-> On Thu, 13 Feb 2025 21:16:03 +0100
-> David Hildenbrand <david@redhat.com> wrote:
-> 
->> On 13.02.25 21:07, Claudio Imbrenda wrote:
->>> Holding the pte lock for the page that is being converted to secure is
->>> needed to avoid races. A previous commit removed the locking, which
->>> caused issues. Fix by locking the pte again.
->>>
->>> Fixes: 5cbe24350b7d ("KVM: s390: move pv gmap functions into kvm")
->>
->> If you found this because of my report about the changed locking,
->> consider adding a Suggested-by / Reported-y.
-> 
-> yes, sorry; I sent the patch in haste and forgot. Which one would you
-> prefer (or both?)
-> 
+Hi David,
 
-Maybe Reported-by.
+On Fri, 31 Jan 2025 at 20:03, David Laight <david.laight.linux@gmail.com> wrote:
+> On Fri, 31 Jan 2025 14:46:51 +0100
+> Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > constants.  However, it is very common to prepare or extract bitfield
+> > elements where the bitfield mask is not a compile-time constant.
+> >
+> > To avoid this limitation, the AT91 clock driver and several other
+> > drivers already have their own non-const field_{prep,get}() macros.
+> > Make them available for general use by consolidating them in
+> > <linux/bitfield.h>, and improve them slightly:
+> >   1. Avoid evaluating macro parameters more than once,
+> >   2. Replace "ffs() - 1" by "__ffs()",
+> >   3. Support 64-bit use on 32-bit architectures.
+> ...
+> > diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> > index 63928f1732230700..c62324a9fcc81241 100644
+> > --- a/include/linux/bitfield.h
+> > +++ b/include/linux/bitfield.h
+> > @@ -203,4 +203,38 @@ __MAKE_OP(64)
+> >  #undef __MAKE_OP
+> >  #undef ____MAKE_OP
+> >
+> > +/**
+> > + * field_prep() - prepare a bitfield element
+> > + * @_mask: shifted mask defining the field's length and position
+> > + * @_val:  value to put in the field
+> > + *
+> > + * field_prep() masks and shifts up the value.  The result should be
+> > + * combined with other fields of the bitfield using logical OR.
+> > + * Unlike FIELD_PREP(), @_mask is not limited to a compile-time constant.
+> > + */
+> > +#define field_prep(_mask, _val)                                              \
+>
+> You don't need an _ prefix on the 'parameters' - it doesn't gain anything.
 
-> [...]
-> 
->>> @@ -127,8 +128,11 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
->>>    
->>>    	page = gfn_to_page(kvm, gpa_to_gfn(gaddr));
->>>    	mmap_read_lock(gmap->mm);
->>> -	if (page)
->>> -		rc = __gmap_make_secure(gmap, page, uvcb);
->>> +	vmaddr = gfn_to_hva(gmap->private, gpa_to_gfn(gaddr));
->>> +	if (kvm_is_error_hva(vmaddr))
->>> +		rc = -ENXIO;
->>> +	if (!rc && page)
->>> +		rc = __gmap_make_secure(gmap, page, vmaddr, uvcb);
->>>    	kvm_release_page_clean(page);
->>>    	mmap_read_unlock(gmap->mm);
->>>      
->>
->> You effectively make the code more complicated and inefficient than
->> before. Now you effectively walk the page table twice in the common
->> small-folio case ...
-> 
-> I think in every case, but see below
-> 
->>
->> Can we just go back to the old handling that we had before here?
->>
-> 
-> I'd rather not, this is needed to prepare for the next series (for
-> 6.15) in a couple of weeks, where gmap gets completely removed from
-> s390/mm, and gmap dat tables will not share ptes with userspace anymore
-> (i.e. we will use mmu_notifiers, like all other archs)
+I just followed the style of all other macros in this file.
+I can add a new patch converting the existing macros, though...
 
-I think for the conversion we would still:
+>
+> > +     ({                                                              \
+> > +             typeof(_mask) __mask = (_mask);                         \
+>
+> Use: __auto_type __mask = (_mask);
 
-GFN -> HVA
+Likewise ;-)
 
-Walk to the folio mapped at HVA, lock the PTE and perform the conversion.
+> > +             unsigned int __shift = sizeof(_mask) <= 4 ?             \
+> > +                                    __ffs(__mask) : __ffs64(__mask); \
+> > +             (((typeof(_mask))(_val) << __shift) & (__mask));        \
+>
+> There are a lot of () in that line, perhaps:
+>
+>                 __auto_type(__mask) = (_mask);
+>                 typeof (__mask) __val = (_val);
+>                 unsigned int __shift = ...;
+>
+>                 (__val << __shift) & __mask;
+>
+> Note the typeof (__mask) - avoids line-length 'bloat' when the arguments are non-trivial.
 
-So even with memory notifiers, that should be fine, no?
+OK, thanks!
 
-So not necessarily "the old handling that we had before" but rather "the 
-old way of looking up what's mapped and performing the conversion under 
-the PTL".
+Gr{oetje,eeting}s,
 
-For me to fix the refcount freezing properly on top of your work, we'll 
-need the PTL (esp. to exclude concurrent GUP-slow) etc.
+                        Geert
 
--- 
-Cheers,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-David / dhildenb
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
