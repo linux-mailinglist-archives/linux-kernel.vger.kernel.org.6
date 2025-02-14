@@ -1,235 +1,146 @@
-Return-Path: <linux-kernel+bounces-515366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4C5A363CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9902A363D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182323B233A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B88E23B23AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E5F267AFA;
-	Fri, 14 Feb 2025 17:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A234126773F;
+	Fri, 14 Feb 2025 17:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLIZq1cE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYrBvQDW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C88264A9D;
-	Fri, 14 Feb 2025 17:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BA42676E5;
+	Fri, 14 Feb 2025 17:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739552466; cv=none; b=iO2bwHafBG3qr8vgAkXFcgE/navRTvsAKm6CvLSWI9gEOyNN27VoTdGzvVwFiqwGB5Z1fG6ZxEzzOpZuqOOdSbK9p8n0L5D9/s6mSNIKsbeqMxylfCIX1fkMrws6dYXX3UCb4Ow8koY3Wzrt7kImFZGs/foPFwv0BaLPj6GB5KE=
+	t=1739552478; cv=none; b=WNj3znwo/sRJhcIgtyqCvdGQIUMox267//BvBW7H0MsaeAqKRnrRFEsje4vDlM7zAhw3FG9whSyXdXFDFdixHoAfJzfpU4EviRF5B875aSEx2HSviYLfdvixEgOHbW8QG9eQMhvcUIgYbOYIxSSsCH7+gn7VzdYoEqwLeumFd3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739552466; c=relaxed/simple;
-	bh=KieRTUcnMSc5WPsYxL5r2U6ULuh+BG887FXcKaW9vRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEcelGBHkMObpcj7ztJvA9DeHXfyoAepbH4FA1j6H5Q6LD9pWpZhr29iLy6ctYDlBMOmGgFJu2eTgIbNP4JLJmDlAXI+8vPg+9dIfjumpF+VqE0Xei4vTfOWYlSmP2bGiesdaDvmr/aRqJFKLt3lNvSMo03R57RirINjjEkX2ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLIZq1cE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D099C4CED1;
-	Fri, 14 Feb 2025 17:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739552465;
-	bh=KieRTUcnMSc5WPsYxL5r2U6ULuh+BG887FXcKaW9vRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KLIZq1cEt6U8tRefMY+0psNcrbzgIJnk5h7tNh0e0/upu/T97sRhKjRjePL/YNXyd
-	 9xmzwfFw2qnaA2USdGfA8IxfYvIa4sti7cjp2ffHtTgqy6MBl2JT05efegJbscwd8Y
-	 dMhRu5hbhlJnQGBZvfTfTNgflyTgT0B6xEVjqFT+Ds3esMjbSSXfu0w5y4jM+/VIm0
-	 AoS4MJK/zANf9LXjfHlhiTFeNmgFJD1ImM/Dbm4bq8EHmzs4k9stmg4ymjF40YBoH/
-	 n74ls55wL9q2U6sYam+u83SDTWeSUfu0jJHwR2LXsIGU5T6JP42ZBtdHzM38E/iL1F
-	 ZwZw1gYSNpPAw==
-Date: Fri, 14 Feb 2025 22:30:57 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bo Sun <Bo.Sun.CN@windriver.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Kexin.Hao@windriver.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH] PCI: controller: Restore PCI_REASSIGN_ALL_BUS when
- PCI_PROBE_ONLY is enabled
-Message-ID: <20250214170057.o3ffoiuxn4hxqqqe@thinkpad>
-References: <20250117082428.129353-1-Bo.Sun.CN@windriver.com>
- <20250210103707.c5ubeaowk7xwt6p5@thinkpad>
- <df5d3c54-d436-43bb-8b40-665c020d6bb5@windriver.com>
+	s=arc-20240116; t=1739552478; c=relaxed/simple;
+	bh=8msMDKhq8tjBEoCwkw9xd2vU5VG31x8YNvm+bAjiz7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q4urrV/chBRRLdfwMyDwE67QIDXHjxmjnqhXNgJ6tStb+qR8/k3/cOKq+x5E6UuNcfNfQJ+PBzJARYlNqFhdAyR8nr5SX/F8mZuwMz/3D4aK7xE6P+1iRGfjAWdbYWRe88E9j5C6Hcek+gqiv1myO2iJQCjW9bw6IVSFiiMOws0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYrBvQDW; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739552477; x=1771088477;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8msMDKhq8tjBEoCwkw9xd2vU5VG31x8YNvm+bAjiz7U=;
+  b=KYrBvQDWGh4jwTjf42E5OhQyCyBiqRe7hPvDd5mEj0p+uDXeiI3rVvkw
+   hLSgOz28kwkZhyjt4I4+zqMAmbmXqdSL7vL9YQwpx0XhW+4qDLfkC9FS8
+   jePeb6N/zG6fNsmiWYvOnL3FncknfBinAw1ztq4DJiIT1rfAEHL0PxOw5
+   lf0XNTpBJ6IFARmVPuXqmtH/Cm5MonVAmpPern2pL1GR9lqZbILngSDDG
+   /dQQhS//ux7W8BkJislwf+FYwBoETk7ZjB2B5OJEcRpLKKDGXn8FoPoIz
+   3rICrBx63/29TGbCMRE0i3UkA3xPKVTcnSYHsfq2JXsQIZAJ8CzptQXAl
+   Q==;
+X-CSE-ConnectionGUID: 7Ht153g/TEivaQyz8negXw==
+X-CSE-MsgGUID: ntofDSiWSI+rMSJl+f2wDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="62776187"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="62776187"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 09:01:16 -0800
+X-CSE-ConnectionGUID: VCtXwB5lRoODUJDUfaq5kQ==
+X-CSE-MsgGUID: hNe5GBT7SCWjLHLm7u9iOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="136735658"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.34]) ([10.125.109.34])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 09:01:14 -0800
+Message-ID: <5fa82b64-ac38-4d4d-9ff9-a2083a3d92a4@intel.com>
+Date: Fri, 14 Feb 2025 10:01:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df5d3c54-d436-43bb-8b40-665c020d6bb5@windriver.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/5] dmaengine: idxd: fix memory leak in error handling
+ path of idxd_alloc
+To: Shuai Xue <xueshuai@linux.alibaba.com>, vkoul@kernel.org,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250110082237.21135-1-xueshuai@linux.alibaba.com>
+ <20250110082237.21135-5-xueshuai@linux.alibaba.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250110082237.21135-5-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 03:07:56PM +0800, Bo Sun wrote:
-> On 2/10/25 18:37, Manivannan Sadhasivam wrote:
-> > CAUTION: This email comes from a non Wind River email account!
-> > Do not click links or open attachments unless you recognize the sender and know the content is safe.
-> > 
-> > On Fri, Jan 17, 2025 at 04:24:14PM +0800, Bo Sun wrote:
-> > > On our Marvell OCTEON CN96XX board, we observed the following panic on
-> > > the latest kernel:
-> > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000080
-> > > Mem abort info:
-> > >    ESR = 0x0000000096000005
-> > >    EC = 0x25: DABT (current EL), IL = 32 bits
-> > >    SET = 0, FnV = 0
-> > >    EA = 0, S1PTW = 0
-> > >    FSC = 0x05: level 1 translation fault
-> > > Data abort info:
-> > >    ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-> > >    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > >    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > > [0000000000000080] user address but active_mm is swapper
-> > > Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-> > > Modules linked in:
-> > > CPU: 9 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-rc7-00149-g9bffa1ad25b8 #1
-> > > Hardware name: Marvell OcteonTX CN96XX board (DT)
-> > > pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > pc : of_pci_add_properties+0x278/0x4c8
-> > > lr : of_pci_add_properties+0x258/0x4c8
-> > > sp : ffff8000822ef9b0
-> > > x29: ffff8000822ef9b0 x28: ffff000106dd8000 x27: ffff800081bc3b30
-> > > x26: ffff800081540118 x25: ffff8000813d2be0 x24: 0000000000000000
-> > > x23: ffff00010528a800 x22: ffff000107c50000 x21: ffff0001039c2630
-> > > x20: ffff0001039c2630 x19: 0000000000000000 x18: ffffffffffffffff
-> > > x17: 00000000a49c1b85 x16: 0000000084c07b58 x15: ffff000103a10f98
-> > > x14: ffffffffffffffff x13: ffff000103a10f96 x12: 0000000000000003
-> > > x11: 0101010101010101 x10: 000000000000002c x9 : ffff800080ca7acc
-> > > x8 : ffff0001038fd900 x7 : 0000000000000000 x6 : 0000000000696370
-> > > x5 : 0000000000000000 x4 : 0000000000000002 x3 : ffff8000822efa40
-> > > x2 : ffff800081341000 x1 : ffff000107c50000 x0 : 0000000000000000
-> > > Call trace:
-> > >   of_pci_add_properties+0x278/0x4c8 (P)
-> > >   of_pci_make_dev_node+0xe0/0x158
-> > >   pci_bus_add_device+0x158/0x210
-> > >   pci_bus_add_devices+0x40/0x98
-> > >   pci_host_probe+0x94/0x118
-> > >   pci_host_common_probe+0x120/0x1a0
-> > >   platform_probe+0x70/0xf0
-> > >   really_probe+0xb4/0x2a8
-> > >   __driver_probe_device+0x80/0x140
-> > >   driver_probe_device+0x48/0x170
-> > >   __driver_attach+0x9c/0x1b0
-> > >   bus_for_each_dev+0x7c/0xe8
-> > >   driver_attach+0x2c/0x40
-> > >   bus_add_driver+0xec/0x218
-> > >   driver_register+0x68/0x138
-> > >   __platform_driver_register+0x2c/0x40
-> > >   gen_pci_driver_init+0x24/0x38
-> > >   do_one_initcall+0x4c/0x278
-> > >   kernel_init_freeable+0x1f4/0x3d0
-> > >   kernel_init+0x28/0x1f0
-> > >   ret_from_fork+0x10/0x20
-> > > Code: aa1603e1 f0005522 d2800044 91000042 (f94040a0)
-> > > 
-> > > This regression was introduced by commit 7246a4520b4b ("PCI: Use
-> > > preserve_config in place of pci_flags"). On our board, the 002:00:07.0
-> > > bridge is misconfigured by the bootloader. Both its secondary and
-> > > subordinate bus numbers are initialized to 0, while its fixed secondary
-> > > bus number is set to 8.
-> > 
-> > What do you mean by 'fixed secondary bus number'?
-> > 
+
+
+On 1/10/25 1:22 AM, Shuai Xue wrote:
+> Memory allocated for idxd is not freed if an error occurs during
+> idxd_alloc(). To fix it, free the allocated memory in the reverse order
+> of allocation before exiting the function in case of an error.
 > 
-> The 'fixed secondary bus number' refers to the value returned by the
-> function pci_ea_fixed_busnrs(), which reads the fixed Secondary and
-> Subordinate bus numbers from the EA (Extended Attributes) capability, if
-> present.
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
 
-Thanks! It'd be good to mention the EA capability.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-> In the code at drivers/pci/probe.c, line 1439, we have the
-> following:
+> ---
+>  drivers/dma/idxd/init.c | 24 +++++++++++++++---------
+>  1 file changed, 15 insertions(+), 9 deletions(-)
 > 
-> 		/* Read bus numbers from EA Capability (if present) */
-> 		fixed_buses = pci_ea_fixed_busnrs(dev, &fixed_sec, &fixed_sub);
-> 		if (fixed_buses)
-> 			next_busnr = fixed_sec;
-> 		else
-> 			next_busnr = max + 1;
-> 
-> > > However, bus number 8 is also assigned to another
-> > > bridge (0002:00:0f.0). Although this is a bootloader issue, before the
-> > > change in commit 7246a4520b4b, the PCI_REASSIGN_ALL_BUS flag was
-> > > set by default when PCI_PROBE_ONLY was enabled, ensuing that all the
-> > > bus number for these bridges were reassigned, avoiding any conflicts.
-> > > 
-> > 
-> > Isn't the opposite? PCI_REASSIGN_ALL_BUS was only added if the PCI_PROBE_ONLY
-> > flag was not set:
-> > 
-> >          /* Do not reassign resources if probe only */
-> >          if (!pci_has_flag(PCI_PROBE_ONLY))
-> >                  pci_add_flags(PCI_REASSIGN_ALL_BUS);
-> > 
-> 
-> Yes, you are correct. It’s a typo; it should be "when PCI_PROBE_ONLY was not
-> enabled." I will fix this in v2.
-> 
-> > 
-> > > After the change introduced in commit 7246a4520b4b, the bus numbers
-> > > assigned by the bootloader are reused by all other bridges, except
-> > > the misconfigured 002:00:07.0 bridge. The kernel attempt to reconfigure
-> > > 002:00:07.0 by reusing the fixed secondary bus number 8 assigned by
-> > > bootloader. However, since a pci_bus has already been allocated for
-> > > bus 8 due to the probe of 0002:00:0f.0, no new pci_bus allocated for
-> > > 002:00:07.0.
-> > 
-> > How come 0002:00:0f.0 is enumerated before 0002:00:07.0 in a depth first manner?
-> > 
-> 
-> The device 0002:00:07.0 is actually enumerated before 0002:00:0f.0, but it
-> appears misconfigured. The kernel attempts to reconfigure it during
-> initialization, which is where the issue arises.
-> 
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 04a7d7706e53..f0e3244d630d 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -565,28 +565,34 @@ static struct idxd_device *idxd_alloc(struct pci_dev *pdev, struct idxd_driver_d
+>  	idxd_dev_set_type(&idxd->idxd_dev, idxd->data->type);
+>  	idxd->id = ida_alloc(&idxd_ida, GFP_KERNEL);
+>  	if (idxd->id < 0)
+> -		return NULL;
+> +		goto err_ida;
+>  
+>  	idxd->opcap_bmap = bitmap_zalloc_node(IDXD_MAX_OPCAP_BITS, GFP_KERNEL, dev_to_node(dev));
+> -	if (!idxd->opcap_bmap) {
+> -		ida_free(&idxd_ida, idxd->id);
+> -		return NULL;
+> -	}
+> +	if (!idxd->opcap_bmap)
+> +		goto err_opcap;
+>  
+>  	device_initialize(conf_dev);
+>  	conf_dev->parent = dev;
+>  	conf_dev->bus = &dsa_bus_type;
+>  	conf_dev->type = idxd->data->dev_type;
+>  	rc = dev_set_name(conf_dev, "%s%d", idxd->data->name_prefix, idxd->id);
+> -	if (rc < 0) {
+> -		put_device(conf_dev);
+> -		return NULL;
+> -	}
+> +	if (rc < 0)
+> +		goto err_name;
+>  
+>  	spin_lock_init(&idxd->dev_lock);
+>  	spin_lock_init(&idxd->cmd_lock);
+>  
+>  	return idxd;
+> +
+> +err_name:
+> +	put_device(conf_dev);
+> +	bitmap_free(idxd->opcap_bmap);
+> +err_opcap:
+> +	ida_free(&idxd_ida, idxd->id);
+> +err_ida:
+> +	kfree(idxd);
+> +
+> +	return NULL;
+>  }
+>  
+>  static int idxd_enable_system_pasid(struct idxd_device *idxd)
 
-Ok, thanks for the clarification. I think the bug is in this part of the code:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/probe.c#n1451
-
-It just reuses the fixed bus number even if the bus already exists, which is
-wrong. I think this should be fixed by evaluating the bus number read from EA
-capability as below:
-
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b6536ed599c3..097e2a01faae 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1438,10 +1438,21 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
- 
-                /* Read bus numbers from EA Capability (if present) */
-                fixed_buses = pci_ea_fixed_busnrs(dev, &fixed_sec, &fixed_sub);
--               if (fixed_buses)
--                       next_busnr = fixed_sec;
--               else
-+               if (fixed_buses) {
-+                       /*
-+                        * If the fixed bus number is already taken, use the
-+                        * next available bus number. This can happen if the
-+                        * bootloader has assigned a wrong bus number in EA
-+                        * capability of the bridge.
-+                        */
-+                       child = pci_find_bus(pci_domain_nr(bus), fixed_sec);
-+                       if (child)
-+                               next_busnr = max + 1;
-+                       else
-+                               next_busnr = fixed_sec;
-+               } else {
-                        next_busnr = max + 1;
-+               }
- 
-                /*
-                 * Prevent assigning a bus number that already exists.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
