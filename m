@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-515521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7DFA365DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:45:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3391DA365DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDA188F4A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA11816E0F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD2193435;
-	Fri, 14 Feb 2025 18:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEAF193079;
+	Fri, 14 Feb 2025 18:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exnUPGgX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="if2GuvBo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC10915FA7B;
-	Fri, 14 Feb 2025 18:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7020118CC15;
+	Fri, 14 Feb 2025 18:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739558723; cv=none; b=m1TN6xWEcSi46ZGYhU6AAiDeaNSxX2KMoKT7R0gSkR8Ps6rQsjhoGMS78aF+mCf3VrgFZvuSphh2ha8s6jSsfUmzOmjfHlE1g0aIJSxHi702ENyCxWXNUzFKY4+83xzA7Yv/TGNWaXz1rJULmwMnu9I0CVrb043EoeRUYVYo6+k=
+	t=1739558741; cv=none; b=kjQL3F28WddwyR1rXsa0vZ/hPVdMn7qufqmN/8Riv4+bzeMCLL0CBvcW3Vga18IW0THYcHDCGbI22RCXO6W+fzy6+4oKD+npHT7/X7l4+n92r9Ov64W+0GTx5ZW7ft+bLDYGsKn9yysM/qg1DSYwu1ZjBIXxl/eruOdx3YX0BTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739558723; c=relaxed/simple;
-	bh=hhnbXVudW3X9Ob2dmDCWIf7SoirkZhCcBkp92o1UP/A=;
+	s=arc-20240116; t=1739558741; c=relaxed/simple;
+	bh=N6BYoVzWmfitLDdv/9MkK+uxLUWYXiRZDwnKdTX7GwU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H64E04lUDF2ES/HVKQFvVSEuOq2ncOMw5oiZxokNjcfK2C2yD8b0L31JU7KSKi28y8eqJEtIopqWoOOZvPi2BCnlMnYbf5J2/tWp6oYB4i+m9yG5I++gZ7h1SKUE1z+tEitMAW11tVBd2kspe+baxWoXRGrOS6O/v9udYp14UWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exnUPGgX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CACCEC4CED1;
-	Fri, 14 Feb 2025 18:45:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dtsv+vzkylGrbQ+GWMWboS1am27RbZwx9gzQnR+8a8gqwH95c3yQM2MnqqVdp6EzkOqPpGJe1j750dU0SIqHUFQ0Gf0EcgbaPLv1BS8Z99FFWfVXZqr1OkpaGcty4vxtdlz9DhNFKYp8ip71qthdWpL1oNVWKAT12hnqQ9TfbJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=if2GuvBo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E461EC4CED1;
+	Fri, 14 Feb 2025 18:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739558723;
-	bh=hhnbXVudW3X9Ob2dmDCWIf7SoirkZhCcBkp92o1UP/A=;
+	s=k20201202; t=1739558740;
+	bh=N6BYoVzWmfitLDdv/9MkK+uxLUWYXiRZDwnKdTX7GwU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=exnUPGgXUpVDJXfejHV+qS8UhaO6MyTm9FhHIGy7axieRMhiCYpxEeV95XUqEQV/z
-	 dWba2REJty7aNMPZvd9Qp0s+t19qx39nouxaC7aOyQDi4gQdsE76u1ASz5BBjPuo7O
-	 d3XH7wnod77QHb+bL+nWASGq0iMT8Knn3iNc6FhfdD6ovJB/lIBbH13LgkHLcxVcA2
-	 SXkKx+ag/Lzr2L14KoHqK0SZhS9nFlpdA5PSXmR+XmBBk65mNp3Vdw+4keQWEwoCIm
-	 H64XCqnLZsYDQzUr7PH73nT8o2NSP5ql6wYrx6gf1Pguyni+nrMRlVp00fnzPZ/1NT
-	 1b0lxMUIoA9fw==
-Date: Fri, 14 Feb 2025 10:45:21 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: arm64: Fix compilation error
-Message-ID: <Z6-PQVOVLrZqey-u@google.com>
-References: <20250214111025.14478-1-leo.yan@arm.com>
- <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
+	b=if2GuvBoku00rK9l2JHbWkuloit1To2vi72c+9WHFbIV1RWBY4lhJM4W5nwCpvJ7Z
+	 yzR45jzbJINrLmiQ79+C6BnRrZ097Bn1tJChat7QtEsZfYju7q5RDHITLikzRv32dl
+	 52MexRmGKPRtyVXvLN5l92pakfgBkPFbxOayKBgrOcn5TxWidmHSDsLwdUVvbwO067
+	 5S47S5vrcQrwYM+0lxwgJvHezKoQR6zSiROJlbqxYxn1hENldXueU461J6aXUgFxth
+	 Ox7bKD9J3DwmGJPC8axgnC5JrwnvEIlxBQLriUjhMe9eUtaawNlfLlObvJ1UMMvF3F
+	 SKQUNToypbgLg==
+Date: Fri, 14 Feb 2025 10:45:39 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Elizabeth Figura <zfigura@codeweavers.com>
+Cc: Mike Lothian <mike@fireburn.co.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org, Arnd Bergmann <arnd@arndb.de>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	wine-devel@winehq.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Arkadiusz Hiler <ahiler@codeweavers.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH] ntsync: Set the permissions to be 0666
+Message-ID: <20250214184539.GC21799@frogsfrogsfrogs>
+References: <20250214122759.2629-2-mike@fireburn.co.uk>
+ <2025021456-easiness-facebook-636e@gregkh>
+ <1911589.tdWV9SEqCh@camazotz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
+In-Reply-To: <1911589.tdWV9SEqCh@camazotz>
 
-On Fri, Feb 14, 2025 at 11:21:52AM +0000, James Clark wrote:
+On Fri, Feb 14, 2025 at 12:13:03PM -0600, Elizabeth Figura wrote:
+> On Friday, 14 February 2025 07:06:20 CST Greg Kroah-Hartman wrote:
+> > On Fri, Feb 14, 2025 at 12:28:00PM +0000, Mike Lothian wrote:
+> > > This allows ntsync to be usuable by non-root processes out of the box
+> > 
+> > Are you sure you need/want that?  If so, why?  How did existing testing
+> > not ever catch this?
 > 
+> Hi, sorry, this is of course my fault.
 > 
-> On 14/02/2025 11:10 am, Leo Yan wrote:
-> > Since the commit dc6d2bc2d893 ("perf sample: Make user_regs and
-> > intr_regs optional"), the building for Arm64 reports error:
-> > 
-> > arch/arm64/util/unwind-libdw.c: In function ‘libdw__arch_set_initial_registers’:
-> > arch/arm64/util/unwind-libdw.c:11:32: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
-> >     11 |  struct regs_dump *user_regs = &ui->sample->user_regs;
-> >        |                                ^
-> > cc1: all warnings being treated as errors
-> > make[6]: *** [/home/niayan01/linux/tools/build/Makefile.build:85: arch/arm64/util/unwind-libdw.o] Error 1
-> > make[5]: *** [/home/niayan01/linux/tools/build/Makefile.build:138: util] Error 2
-> > arch/arm64/tests/dwarf-unwind.c: In function ‘test__arch_unwind_sample’:
-> > arch/arm64/tests/dwarf-unwind.c:48:27: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
-> >     48 |  struct regs_dump *regs = &sample->user_regs;
-> >        |                           ^
-> > 
-> > To fix the issue, use the helper perf_sample__user_regs() to retrieve
-> > the user_regs.
-> > 
-> > Fixes: dc6d2bc2d893 ("perf sample: Make user_regs and intr_regs optional")
-> > Signed-off-by: Leo Yan <leo.yan@arm.com>
+> We do need /dev/ntsync to be openable from user space for it to be
+> useful. I'm not sure what the most "correct" permissions are to have
+> in this case (when we don't specifically need read or write), but I
+> don't think I see a reason not to just set to 666 or 444.
+> 
+> I originally assumed that the right way to do this was not to set the
+> mode on the kernel file but rather through udev; I believe I was using
+> the code for /dev/loop-control or /dev/fuse as an example, which both
+> do that. So I (and others who tested) had just manually set up udev
+> rules for this, with the eventual intent of adding a default rule to
+> systemd like the others. I only recently realized that doing something
+> like this patch is possible and precedented.
+> 
+> I don't know what the best way to address this is, but this is
+> certainly the simplest.
 
-Thanks for the fix, I'll handle other archs too
-Namhyung
+Paranoid defaults in the kernel, and then a udev rule to relax the mode
+at runtime.  You could also have logind scripts to add add per-user
+allow acls to the device file at user session set up time... or however
+it is that /dev/sr0 has me on the allow list.  I'm not sure how that
+happens exactly, but it works smoothly.
 
+I get far less complaining about relaxing posture than tightening it
+(==breaking things) after the fact.
 
-> > ---
-> >   tools/perf/arch/arm64/tests/dwarf-unwind.c | 2 +-
-> >   tools/perf/arch/arm64/util/unwind-libdw.c  | 2 +-
-> >   2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> > index b2603d0d3737..440d00f0de14 100644
-> > --- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> > +++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> > @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
-> >   int test__arch_unwind_sample(struct perf_sample *sample,
-> >   		struct thread *thread)
-> >   {
-> > -	struct regs_dump *regs = &sample->user_regs;
-> > +	struct regs_dump *regs = perf_sample__user_regs(sample);
-> >   	u64 *buf;
-> >   	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
-> > diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
-> > index e056d50ab42e..b89b0a7e5ad9 100644
-> > --- a/tools/perf/arch/arm64/util/unwind-libdw.c
-> > +++ b/tools/perf/arch/arm64/util/unwind-libdw.c
-> > @@ -8,7 +8,7 @@
-> >   bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
-> >   {
-> >   	struct unwind_info *ui = arg;
-> > -	struct regs_dump *user_regs = &ui->sample->user_regs;
-> > +	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
-> >   	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
-> >   #define REG(r) ({						\
-> 
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> 
+--D
 
