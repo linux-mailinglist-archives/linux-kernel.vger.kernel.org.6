@@ -1,74 +1,70 @@
-Return-Path: <linux-kernel+bounces-514278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8748A35500
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:47:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63A3A354FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A80A16E32A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211D918915C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5226613DDAA;
-	Fri, 14 Feb 2025 02:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19C314A4E9;
+	Fri, 14 Feb 2025 02:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C1S5aCJg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="crG3z6Nx"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D47370825
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E248635A;
+	Fri, 14 Feb 2025 02:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739501236; cv=none; b=dqaS9kS5RjnhgnTLka2+Uv/Lw6QZTNbJVhSmVaR7QsIP5u2EHaCMZ58kZJx9s8t2jH6jfJKvINIJWee8YgR/mnljp6igKYC0i9ZdGqllO8Y4xPuEY7XDnCasLkuAQLwioRDP2kYMbSvSoaaWOYg4pRQoEkJK0nwjGnzk4qF/Dgc=
+	t=1739501099; cv=none; b=AUHZ2c/W66T9EsS1VhqvBmU+sdAURpMeD8U4rWteYYNwN0a5eVzvIZXteKc8Yx8YvgbXFe9i0xk9wuymyv2KBBGy78xOndIfiZFETUFinUQWK8Tsw7Hu6/kOXoNg/4qReylSMokAws2VbGGbMRtTXhAazVqgMlwnm20VaTutnAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739501236; c=relaxed/simple;
-	bh=OBDOMbCu/54QoG/82en1R6lfwoODk1RsBgQAU745tNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VS8J+4RktG0NVdwb8kxq24kCCobMGhJ5U+fugA/eFHnE47k2fo3gee0AJBc++5S9lwHsejxogqgb91f1vkCAjczTjAM2QmziKt0lWHdDkntmVUX8mCCaNpjmVlYig9Q3hZiDK1y0AZWvfswgn++dztDM8OPhxwVFLyDf4XickmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C1S5aCJg; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739501235; x=1771037235;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=OBDOMbCu/54QoG/82en1R6lfwoODk1RsBgQAU745tNg=;
-  b=C1S5aCJgTem/QSKdIQIHH/Uf7zuHpKQeXTcUOAI3ZycDofblH/TRHI4+
-   7cJBrUNj3PwDA0EKJtYrug4MGF2ESnuHms+4A+JT6rzW1EKneLApIn3/v
-   TocKDKk4mORMy3WQCmk05NAX8F/mGQ/0ckZsPYbLxDE7THk6Ap6p9wtoc
-   Hlt6T9KhDXKm064WgkRxL5SwhYjWiMTX7Loz1Fy0pm5JPp1mO0lQR4+CV
-   7KUnhCwzqFg20AhtEDY8rBFTTtpBFeeB2fJ8GUe4piex8Sbl9rQveIDEK
-   MCgGyZUL+sQl1UMowfXZbdtOcTVlx6GD/CE2EnQI3wcvGiMBvbbQ3oMc5
-   Q==;
-X-CSE-ConnectionGUID: IMnDEBTDTKq9AbJED7XEmg==
-X-CSE-MsgGUID: VsvPVnExQTKZSIOJaEaEVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40386787"
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="40386787"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 18:47:15 -0800
-X-CSE-ConnectionGUID: rIF8BeCIQQKZqDbCSuTZdg==
-X-CSE-MsgGUID: HOpTxSljQwCD9pY4XIjBNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="113320191"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Feb 2025 18:45:03 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tilhN-0018zJ-0C;
-	Fri, 14 Feb 2025 02:45:01 +0000
-Date: Fri, 14 Feb 2025 10:44:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Chinner <dchinner@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: fs/xfs/xfs_linux.h:280 kmem_to_page() warn: unsigned '_x' is never
- less than zero.
-Message-ID: <202502141023.Rdalsdag-lkp@intel.com>
+	s=arc-20240116; t=1739501099; c=relaxed/simple;
+	bh=WGPoqVRqUNUupOPvcUF75S6imIM0F94i8SNoD5PoDN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLOicXx/kXG+VH6kdbetg/gv9f6iMsXC+9TRky2w9v1dHd1NfOg6xVtlJPE/NNwSD7tBEhgqNavW7BWoghdLRsJfMFwxX3FT0Vz6mTGd6tgU5vqJWaLYvR7eGFeZBfo69F1iZhnrG37DBBNOiT+999v+jZJrfC4t6FNKiUGk3BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=crG3z6Nx; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=65T4rBQvy6mFilnie1q3glh+nsrM26bK761iT5MKkEQ=; b=crG3z6NxOhqIo4edos2ddK19x9
+	hWQSi3nAdhK010ZkcRwyeT/b7++m63S5YNZcODozEpBJOgP/hasAC3UwlWnFjWlOcuxZl6tHYs4l6
+	6CdnKwqrBKWVhX/71+itsWvFCZPIi5xG1gs60s6n4iM2+RSM+EG2zasTj5Py8FPoAqUifwAFUeSF7
+	jz3SIn2+ft0+9dsPngX+XYAY40kD7KeiEKr2GMLKn4zN7UML+XlDViVY9nEWPOxDqUIKfr4y2IiG8
+	uHyVA8/XvOed0PTCNxcEp+sHeenwZAK2TFyGrWhXuNWJe+/SMmo5c/8xDxp+RWJ+TWkWRU6yqFsJt
+	i0IQW4xQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tilUE-000DGZ-2e;
+	Fri, 14 Feb 2025 10:44:48 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 14 Feb 2025 10:44:47 +0800
+Date: Fri, 14 Feb 2025 10:44:47 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-crypto@vger.kernel.org,
+	dm-devel@lists.linux.dev, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer
+ hashing
+Message-ID: <Z66uH_aeKc7ubONg@gondor.apana.org.au>
+References: <20250212154718.44255-1-ebiggers@kernel.org>
+ <Z61yZjslWKmDGE_t@gondor.apana.org.au>
+ <20250213063304.GA11664@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,45 +73,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250213063304.GA11664@sol.localdomain>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   68763b29e0a6441f57f9ee652bbf8e7bc59183e5
-commit: afdc115559c57a48ad697219cec1d16962ad9e30 xfs: move kmem_to_page()
-date:   1 year ago
-config: riscv-randconfig-r073-20250213 (https://download.01.org/0day-ci/archive/20250214/202502141023.Rdalsdag-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 14.2.0
+On Wed, Feb 12, 2025 at 10:33:04PM -0800, Eric Biggers wrote:
+> 
+> I've already covered this extensively, but here we go again.  First there are
+> more users of shash than ahash in the kernel, since shash is much easier to use
+> and also a bit faster.  There is nothing storage specific about it.  You've
+> claimed that shash is deprecated, but that reflects a misunderstanding of what
+> users actually want and need.  Users want simple, fast, easy-to-use APIs.  Not
+> APIs that are optimized for an obsolete form of hardware offload and have
+> CPU-based crypto support bolted on as an afterthought.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502141023.Rdalsdag-lkp@intel.com/
+The ahash interface was not designed for hardware offload, it's
+exactly the same as the skcipher interface which caters for all
+users.  The shash interface was a mistake, one which I've only
+come to realise after adding the corresponding lskcipher interface.
 
-New smatch warnings:
-fs/xfs/xfs_linux.h:280 kmem_to_page() warn: unsigned '_x' is never less than zero.
-fs/xfs/xfs_linux.h:280 kmem_to_page() warn: unsigned '_x' is never less than zero.
-fs/xfs/xfs_linux.h:280 kmem_to_page() warn: unsigned '_x' is never less than zero.
 
-Old smatch warnings:
-fs/xfs/xfs_buf.c:724 xfs_buf_get_map() error: we previously assumed 'bp' could be null (see line 707)
-arch/riscv/include/asm/atomic.h:204 arch_atomic_fetch_add_unless() warn: inconsistent indenting
-arch/riscv/include/asm/atomic.h:204 arch_atomic_fetch_add_unless() warn: inconsistent indenting
+> Second, these days TLS and IPsec usually use AES-GCM, which is inherently
+> parallelizable so does not benefit from multibuffer crypto.  This is a major
+> difference between the AEADs and message digest algorithms in common use.  And
+> it happens that I recently did a lot of work to optimize AES-GCM on x86_64; see
+> my commits in v6.11 that made AES-GCM 2-3x as fast on VAES-capable CPUs.
 
-vim +/_x +280 fs/xfs/xfs_linux.h
+Bravo to your efforts on improving GCM.  But that does not mean that
+GCM is not amenable to parallel processing.  While CTR itself is
+obviously already parallel, the GHASH algorithm can indeed benefit
+from parallel processing like any other hashing algorithm.
 
-   271	
-   272	/*
-   273	 * Helper for IO routines to grab backing pages from allocated kernel memory.
-   274	 */
-   275	static inline struct page *
-   276	kmem_to_page(void *addr)
-   277	{
-   278		if (is_vmalloc_addr(addr))
-   279			return vmalloc_to_page(addr);
- > 280		return virt_to_page(addr);
-   281	}
-   282	
-
+Cheers,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
