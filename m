@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-514545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E30AA35852
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:00:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07A1A35853
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9675188BDB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE0C16CEA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A119221570;
-	Fri, 14 Feb 2025 08:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ss3JsjB+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A4C221710;
+	Fri, 14 Feb 2025 08:00:57 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1F321CC4D;
-	Fri, 14 Feb 2025 08:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C99921CC4D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520041; cv=none; b=qViv8cbbaCRlQi5ZDlIdmmnmlP4vip1VmzHmVYjZtCwcY+hr66mJCaXO0rjMuof5ELglONN7zVf6qEQMQS48/QatZVE8YmEU/TjSIUa+oYqOKHyjSs/PY9M73q/ixMLLvXzLoB4DW0gbDfFIbha+ZpGQtmxJrIJjr9aYo03lSOc=
+	t=1739520056; cv=none; b=Y5pyuhuSxB4tyQpr8AjN9nKw2CJkqQD7zZb1fSHhyoJbJJHZiKfL21b8sqrmp1cMCrSQjS95511VJzX/1BJPjw9kg21kts9eazrenC53165xLPm8ylMX2wEOca7cxgtVbYNKdNs08qosJ6iRokf8cm4TCyLbU74wxzvq5wjXDVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520041; c=relaxed/simple;
-	bh=v8hYqpTwAwdY3wJCEKVEjENut2Exj9ilsZyzIlA7VIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WL9nKPzWtmFxvAT0WlVUvYDyaDkpOmvO90mHHiG/SNCnsJdnQtq4HGze4Zc/ScFRUCOjCep1L4AUNypHGAtoVcuUigjmT9thSribrCmv1JI1rrjBRoRYtvm39c0nmg2z+0x2F00ULmeJF9F+PslApfMjq6KHR7m/lQc47fQMZdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ss3JsjB+; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739520040; x=1771056040;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v8hYqpTwAwdY3wJCEKVEjENut2Exj9ilsZyzIlA7VIc=;
-  b=Ss3JsjB++WvgReWc86xLGCUYXAmFR4ipiALbjNq57hdlck9iqsU2/Xzs
-   kDDjB3TVZgOCzj1wGf/xuMsslseMAl8FVP3tNbzSgAx7rGy8t5SGIPNWq
-   Rql87wLDOfYcNdkNSN3eSHAkAyh6ClHyAprxJgohYc0je+gdj8/FTS8vk
-   Atev5Qio96me2JhA9CQ6sVlCkDVwFfXZgsn+gyCe7jf8wKfxSrtZNyegZ
-   Q1LUrQIa7zPlVgKWfW6dHQI/z9km8JZOk+gFyvoCwhrCoxtiqTXtzmdD2
-   IqZwT65u9z2y5/2XNMLDk4VdS17JY9TzFX0xnQ10+Q/FaRigtDW+rmyPi
-   A==;
-X-CSE-ConnectionGUID: D0gXEUzoQBusCVa9FPh2ug==
-X-CSE-MsgGUID: bVlkWACYSWy75zlhyB+/dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="57666760"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="57666760"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 00:00:40 -0800
-X-CSE-ConnectionGUID: sFldRYM+S2WPmtEdqfEVvQ==
-X-CSE-MsgGUID: Eh1FUK/UQRW996/whU3rZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113253143"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 14 Feb 2025 00:00:37 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiqck-0019FP-2J;
-	Fri, 14 Feb 2025 08:00:34 +0000
-Date: Fri, 14 Feb 2025 16:00:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Gabriele Monaco <gmonaco@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
-Message-ID: <202502141516.OkUInaxw-lkp@intel.com>
-References: <20250213090819.419470-4-gmonaco@redhat.com>
+	s=arc-20240116; t=1739520056; c=relaxed/simple;
+	bh=7qyE1rUAjEWTLeVysUNMu5l5eIHUWPtaoHVSPNXQJQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SpPwaNsAkEjurTQniF4AXDuEX5zKZsZtSUe14ypaIPb3AzMVc7N455TPvpKdnWg/5hDlv/0dL8m92XsHAwyyx8N4QPvZ/OToOyS8m3oS35vRQ5xOWqSgjZ4SQSHgV9U/MSJB+KoQpHk7Lq5No1km8hHzApjI8KaM4wVjXuI6tQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	(Authenticated sender: kovalevvv)
+	by air.basealt.ru (Postfix) with ESMTPSA id 241F62339B;
+	Fri, 14 Feb 2025 11:00:50 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: joseph.qi@linux.alibaba.com
+Cc: jlbec@evilplan.org,
+	kovalev@altlinux.org,
+	kurt.hackel@oracle.com,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev,
+	syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+Subject: [PATCH v2] ocfs2: validate l_tree_depth to avoid out-of-bounds access
+Date: Fri, 14 Feb 2025 11:00:38 +0300
+Message-Id: <20250214080038.735185-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
+In-Reply-To: <2d12eb70-5fbe-415b-9970-78af2ab7945c@linux.alibaba.com>
+References: <2d12eb70-5fbe-415b-9970-78af2ab7945c@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213090819.419470-4-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Gabriele,
+The l_tree_depth field is 16-bit (__le16), but the actual
+maximum depth is limited to OCFS2_MAX_PATH_DEPTH.
 
-kernel test robot noticed the following build errors:
+Add a check to prevent out-of-bounds access if l_tree_depth
+has an invalid value, which may occur when reading from a
+corrupted mounted disk [1].
 
-[auto build test ERROR on 4dc1d1bec89864d8076e5ab314f86f46442bfb02]
+Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
+Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd [1]
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+v2: Restricted depth to OCFS2_MAX_PATH_DEPTH and moved the check
+    to __ocfs2_find_path().
+---
+ fs/ocfs2/alloc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gabriele-Monaco/tracing-Fix-DECLARE_TRACE_CONDITION/20250213-171642
-base:   4dc1d1bec89864d8076e5ab314f86f46442bfb02
-patch link:    https://lore.kernel.org/r/20250213090819.419470-4-gmonaco%40redhat.com
-patch subject: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
-config: i386-buildonly-randconfig-001-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141516.OkUInaxw-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502141516.OkUInaxw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502141516.OkUInaxw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/sched/core.c: In function '__do_trace_set_current_state':
->> kernel/sched/core.c:503:9: error: implicit declaration of function '__do_trace_sched_set_state_tp'; did you mean 'trace_sched_set_state_tp'? [-Werror=implicit-function-declaration]
-     503 |         __do_trace_sched_set_state_tp(current, current->__state, state_value);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |         trace_sched_set_state_tp
-   cc1: some warnings being treated as errors
-
-
-vim +503 kernel/sched/core.c
-
-   496	
-   497	/*
-   498	 * Do not call this function directly since it won't check if the tp is enabled.
-   499	 * Call the helper macro trace_set_current_state instead.
-   500	 */
-   501	void __do_trace_set_current_state(int state_value)
-   502	{
- > 503		__do_trace_sched_set_state_tp(current, current->__state, state_value);
-   504	}
-   505	EXPORT_SYMBOL(__do_trace_set_current_state);
-   506	
-
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 4414743b638e8..cec8fc5cb8e87 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -1803,6 +1803,14 @@ static int __ocfs2_find_path(struct ocfs2_caching_info *ci,
+ 
+ 	el = root_el;
+ 	while (el->l_tree_depth) {
++		if (unlikely(le16_to_cpu(el->l_tree_depth) > OCFS2_MAX_PATH_DEPTH)) {
++			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
++				    "Owner %llu has invalid tree depth %u in extent list\n",
++				    (unsigned long long)ocfs2_metadata_cache_owner(ci),
++				    le16_to_cpu(el->l_tree_depth));
++			ret = -EROFS;
++			goto out;
++		}
+ 		if (le16_to_cpu(el->l_next_free_rec) == 0) {
+ 			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
+ 				    "Owner %llu has empty extent list at depth %u\n",
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.42.2
+
 
