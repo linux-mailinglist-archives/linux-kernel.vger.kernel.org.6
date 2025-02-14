@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-515800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146D5A36937
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FC9A3693D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:55:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF8D3170EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F810171251
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002FF1FCF6B;
-	Fri, 14 Feb 2025 23:52:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F511FDA65;
+	Fri, 14 Feb 2025 23:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GIEoyJh0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257D81922DE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547251922DE;
+	Fri, 14 Feb 2025 23:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577125; cv=none; b=Hjc1mcT8nVa1WN4J4srVipeabF4Nf59I1Z1BbfH0GFUXwCZmvrVPE7UGcKijHCZks6I8tYUhdnylYNMD+rWNxYUm/0KYj4ckbh2Xc2Ti25M1G7bCKxj3hmH/B8zcyxApyGylyuDk7WzQWpn4/v9ejIa2UXfSYSMU5zUqO63aJSA=
+	t=1739577316; cv=none; b=CfvgkPEZWkUdXBjd42vb/2eEusb83/v+B8ATvDFTC/gWRcDZi9ijC9FTu+cItCe/4ZLogLdDcc0EjmFA3r1x2rNBgJ+Z2CtHMCwa0iMWZxxQEK7hfrzNB/z5sFHnh7WRtXMNORLX95HFD7zYS+mGU0PO6nn7aUC02gQtNZFWzRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577125; c=relaxed/simple;
-	bh=JLu1A9RkvyKso9tMbsx+IzU7iWTlFCyiA9Bsmq5NPdI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=meHBJOlrvwG9azk2rbQ/KIMHs3y34aR+mIOMFDHj4gifAQ9TBqeaPOKI9fS9bHETvo3ScUcRo9tkMI105G28h6mOd9CCt7zWAe9c6kmEJhnAeaJ6cOrd4s6WBii/qNdqsSNWSwsAWOoV1ewMP1B8NexTlt/DaVRfAgr/frzQaro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8521d7980beso197778739f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:52:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739577123; x=1740181923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L64re1x2kY7RvutqZU0Eeaw1NOUYgPVF87VWkAoKdDQ=;
-        b=wrEBHDFLUzTKbIgrYZiXdckqHp4D3V0RZV0fWz36YpvfcO4MwhkFzyjhFvBLUB9Txu
-         fmv7CFXPdSTVItlpusvorFA8o2zH6Rx7ELpWOI1Obgbr4I7fPaQkFInBEqkHdH6aOQrw
-         sJrY2apJVqqX4fUBrvFaF5PSy7XM6bn/+UCcL2KVqyQhsdhGIaGOuZNFUF0JQqya3Uft
-         yth2e+c+g3XYvOG9+vAuCDXGVPqKOtnSeZLF3SQu6Vw6C7ve2T3IqVeKDvYmdXV2PtCO
-         l9NV9UkcQOrgW44ehRVjbW4/Pj5O1CltKrYT0leMF8t1XEXgWyKnhO6XHFHAaaKilYAl
-         di8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnMwk5tpRRfJ/WlVqsEyyv0kzEWb55mhj7m3LrNUuxyieGY8WLrY8a1IgvSPr82/71N29Hwkm8G5mCgKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZz2P3ZUcAOhY7bKPADbKGX7nKq3kMdJGz6DpWuldQE0Dyv4hQ
-	N+iojBIK+ZxSeaPVf5OjgSt1j61BCxOkc42YKJtGhfQTMLWXfNB0TFK50B7Xm9A1R5G2/q7DF4X
-	Th6Z04Wd9Zux/h0Gp1IRYY7tSRHohJ2QS+HUGqTHvboHW43SldgWoJ4o=
-X-Google-Smtp-Source: AGHT+IF6OTqz+/Nvf0OF8MFeHgLmkk4RBwwvgEqksvFyD14xy021dnBPZnxbn2wSl8yJYxxmsLBHeLzj9DYPGbK0SiORUOtygX2R
+	s=arc-20240116; t=1739577316; c=relaxed/simple;
+	bh=LOrgP2GBZzTB/pBJ6maZqV8jSpcnBwpbXGa9l3n7VD0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=kXN2+rwJVvn7wJ0l6P9RnRXpER/rRX+nhqVjHoNyGYYDsDZ68qEsk2Z74VTu8zm4N9mzUvWPal0/YzUCcAHHDJ16HfSrhAVpqOG7cIhF88P/6h0LLJRMlQAMWUK2I4PLAUY2e9jv1DfkngFl14h9Ze8WBY0bmyAmZYHiG6q+kJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GIEoyJh0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA60C4CED1;
+	Fri, 14 Feb 2025 23:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739577315;
+	bh=LOrgP2GBZzTB/pBJ6maZqV8jSpcnBwpbXGa9l3n7VD0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GIEoyJh02x/WA7joBFGX34vUq9LZ+XhWRQrIwhNHtvyS7JCheHlvR5f6S+2k7fiPL
+	 1vBX7XJPvbP8gWlNvsRvOlfK2ejPeflBcsSgkhlI4X/7GJCf9R25IAnsQpnh3KcjfC
+	 g1rg6I6uktN/Dk/7mt3DEBy4HwzaKgOESXgEl4EY=
+Date: Fri, 14 Feb 2025 15:55:15 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Wengang Wang <wen.gang.wang@oracle.com>, "ocfs2-devel@lists.linux.dev"
+ <ocfs2-devel@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ocfs2: update seq_file index in ocfs2_dlm_seq_next
+Message-Id: <20250214155515.6283b71e47730d0e2e6c9664@linux-foundation.org>
+In-Reply-To: <6c468b6c-c449-444d-90af-fd2a6c7c1993@linux.alibaba.com>
+References: <20241108192829.58813-1-wen.gang.wang@oracle.com>
+	<614f6304-f096-41f7-b0a4-05127904e601@linux.alibaba.com>
+	<72E849B5-ECE7-4304-AF90-A60784B4EEFF@oracle.com>
+	<6c468b6c-c449-444d-90af-fd2a6c7c1993@linux.alibaba.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8b:b0:3d0:2331:f809 with SMTP id
- e9e14a558f8ab-3d280763e4dmr10332475ab.2.1739577123249; Fri, 14 Feb 2025
- 15:52:03 -0800 (PST)
-Date: Fri, 14 Feb 2025 15:52:03 -0800
-In-Reply-To: <20250214231356.2285-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67afd723.050a0220.21dd3.005b.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
-From: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Mon, 11 Nov 2024 17:35:49 +0800 Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> 
+> On 11/11/24 3:04 PM, Wengang Wang wrote:
+> > 
+> > 
+> >> On Nov 10, 2024, at 5:38 PM, Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
+> >>
+> >>
+> >>
+> >> On 11/9/24 3:28 AM, Wengang Wang wrote:
+> >>> The following INFO level message was seen:
+> >>>
+> >>> seq_file: buggy .next function ocfs2_dlm_seq_next [ocfs2] did not
+> >>> update position index
+> >>>
+> >>> Fix:
+> >>> Updata m->index to make seq_read_iter happy though the index its self makes
+> >>> no sense to ocfs2_dlm_seq_next.
+> >>>
+> >>> Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+> >>> ---
+> >>> fs/ocfs2/dlmglue.c | 1 +
+> >>> 1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+> >>> index 60df52e4c1f8..349d131369cf 100644
+> >>> --- a/fs/ocfs2/dlmglue.c
+> >>> +++ b/fs/ocfs2/dlmglue.c
+> >>> @@ -3120,6 +3120,7 @@ static void *ocfs2_dlm_seq_next(struct seq_file *m, void *v, loff_t *pos)
+> >>> }
+> >>> spin_unlock(&ocfs2_dlm_tracking_lock);
+> >>>
+> >>> + m->index++;
+> >>
+> >> We can directly use '(*pos)++' instead.
+> >>
+> > 
+> > The input/output "pos” indicates more an offset into the file. Actually the output for an item is not really 1 byte in length, so incrementing the offset by 1 sounds a bit strange to me. Instead If we increment the “index”, It would be easier to understand it as  for next item. Though updating “index” or updating “*pos” instead makes no difference to binary running, the code understanding is different.  I know other seq_operations.next functions are directly incrementing the “*pos”, I think updating “index” is better. Well, if you persist (*pos)++, I will also let it go.
+> > 
+> >From seq_read_iter(), the input pos is equivalent to '&m->index'. So the
+> above two ways seems have no functional difference.
+> IMO, we'd better hide the m->index logic into seqfile and just use pos
+> instead like other .next implementations.
 
-Reported-by: syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com
-Tested-by: syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         cabb162e Merge tag 'v6.14-rc2-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14024f18580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c09dc55ba7f798e3
-dashboard link: https://syzkaller.appspot.com/bug?extid=d9890527385ab9767e03
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11a867df980000
-
-Note: testing is done by a robot and is best-effort only.
+Did we ever fix this?
 
