@@ -1,340 +1,242 @@
-Return-Path: <linux-kernel+bounces-515282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9938FA362DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:19:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AECA362F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A32C169E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691E41895BB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E412676CF;
-	Fri, 14 Feb 2025 16:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A17267B6D;
+	Fri, 14 Feb 2025 16:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AzcL6YNx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NkvhoYzN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B27F263F3C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549941; cv=none; b=aQCs3et/MLnHHVpML6l6I4yJhgHYghh+yOxa8IHjxSWxjRCAWpiJ+g2mMOuLmnL9vPNQzKl667LBHEZb9Q0ig92qIL1z/1huagU7S2hWfkxWv4zOGKUr0qmplNHqjqjgvtHhGxkGqfwJqNDYZWLCcZkfZtYmjl7aeZtjgLljYDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549941; c=relaxed/simple;
-	bh=PJ1bRqF7Lrw4p29Kqd51IkmA8dbzaE0+GBlOo09TkHY=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CZfHsjX39102i3HXPcN9bSzYsnSqd5B7UQqdxZwMf73YB/wTgJuwxZGO6EZ2Ztwj5zm4NBYsN3F0bvXNqwu1D2Vi7rvQ/aiQnRH/EiwqBS4C98QrSwQ68y0BjIm+72ouZ4/HtI6jkRWLwWHGMpiLjK/UE3oMSaDSg6JiqDYHsos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AzcL6YNx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739549937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aG8Kjzwld+BC+gKborzD0wPyk1VseyZvEiHws+jsBUM=;
-	b=AzcL6YNxfeU1DgGzKZdBcNTQt8j+JxE+GTo+Lsr/36isFkAvgILHHJuevsXYvEQWn0jv+c
-	jddXr9bjCVE6+CQiv/z71GPFwxgCIe8nKL/kH6LjBU/uJlp6fVKUhFhMCOyzQUdFSWD5G7
-	xjNm6ypWaYNAOoQw4Gg6doKb8dLGzlA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-O8TDzKxiMlqJKQMlmlyNeQ-1; Fri, 14 Feb 2025 11:18:56 -0500
-X-MC-Unique: O8TDzKxiMlqJKQMlmlyNeQ-1
-X-Mimecast-MFC-AGG-ID: O8TDzKxiMlqJKQMlmlyNeQ_1739549936
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e65a429164so49331926d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:18:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739549936; x=1740154736;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aG8Kjzwld+BC+gKborzD0wPyk1VseyZvEiHws+jsBUM=;
-        b=UuKXqRcmy6UZ/tCxuCLE4wBUJFSjxsQXiSAWz8QAp40dtSvZ7zUBs4qxMpK39AQb/V
-         BE9MVqVk73nSetmgcv2+qLJKSwJedY+c13ya0ORR6B0YdaH/2go9QqMXvOAkC/NKNCeK
-         2uUcNSEsk48AJ9dmuvHAAthfzWIZwO2IbPxyHFjEcaNTSCRXeuf+MkGuqo59TQUomzS6
-         8ytQQlOCoo1xhHeoe3f8uAHhNT+6GOjYmtkzFnZsTGRYcKipndMV17dIja01WxToJaMZ
-         9SIs4AnuREBsWVvD72CYVCSFt7Or321asYvOruvbZ/HmKRjUpavgbi7gkpISFondL5OS
-         KTwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVx8kX+6AG36fRW9K4A+Cuxq7J9LgFiVwsvUWR0wFZzNjMi6JCWwdauVytXDjdPdXU/pWjpkKaN1jmkMiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIwVSs1eTWiweFFSOua9Z7O7VmBZ1Q3rOGH6j6oukOqoX1aTfE
-	Oj7wA3+JTj+Sd5ckPDlXW6hKYlD8I+1ntSlsTUGFgXRtA126bqpjlxfzk8fT4p2J7IOHNvw25s3
-	Pf4MgoK3RzFvJtrfNgK4rn6XGbYs2NHHxgojKpPdFkqUpHnDqaCbxbjSLIao/TQ==
-X-Gm-Gg: ASbGnctbFxX3wpBPdu9EcPavo1V/0dBv9KN4Mkl3wwuiYQv6vkwBtk0sYpbUA5h3FkW
-	j3Wj7XqJgDqg+3jHLhC6IO/+RbCVd/kyJ0clJxrA0bzMZC1rguaoULTmA7+6Rsbwem/+Qz0ycJF
-	lB3IMZV0jRzvOVF1SGyqo/vDJd6IEEE2LGJmN4mM90soaSmWW/CidZvEZxmPda5eEqwUu1045Xv
-	d6VJypzAbY/IYnh9Yl2T6eZIkJglEd9O9liYiZkGJGCx+dqA0que10oxeXP/76RPhulWZhbD9tt
-	YU5N8Y/Ij9br4N7HDztnblpR0ys/qM3AzO299YbRI7MJDKVB
-X-Received: by 2002:ad4:5be2:0:b0:6e4:41a0:3bdb with SMTP id 6a1803df08f44-6e46ed88629mr171075136d6.26.1739549935611;
-        Fri, 14 Feb 2025 08:18:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHbpxV8Tr8oN7zdl+mjmuxuFCnRhoBeIlPPcWJXgoj4K2vmSOLJNAeBaBCN1rrWyAQgZLk3og==
-X-Received: by 2002:ad4:5be2:0:b0:6e4:41a0:3bdb with SMTP id 6a1803df08f44-6e46ed88629mr171074406d6.26.1739549934937;
-        Fri, 14 Feb 2025 08:18:54 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f46a8sm22145466d6.82.2025.02.14.08.18.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 08:18:54 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <f2f006e8-3987-4aa2-b4f5-114b4e869e86@redhat.com>
-Date: Fri, 14 Feb 2025 11:18:52 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9F7267F43
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739550031; cv=fail; b=SPapYL9n6BSp16xgz6bmDIq5/K4PPeLdE4b1WJPY/EEBk5C6I6XH8gZnANo3T29C5yMqepKo9sWkKDbqhQLRWrGG+BuQ6Bimb6CwM7nx21WUoEXNbcCH+/N5YQCnGf817ussD3gV1iekiDzPDWaObwHSGXQN4lh2gvk2xqUQ5Bc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739550031; c=relaxed/simple;
+	bh=otcb2QFdDouzonegvVwTeUYyJsRpcmghRkbZ96Q8A6Q=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TQUtPcEvxhrYRy/ZWFAOaQ8dJlTCRq+E+pc2Ajo7cErnXkvpg/Oajrf8adQlagJGw4SSUxhrPPTXL47NSLSqUcPXkoWB5uzSj3Is0Q9aBPax9Vt0YSrtjbrVdBlw8YK00e7w/3xx036qzBpYqgrTQmXgv9wdTUavGZFoki2x2mg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NkvhoYzN; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739550029; x=1771086029;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=otcb2QFdDouzonegvVwTeUYyJsRpcmghRkbZ96Q8A6Q=;
+  b=NkvhoYzNel88w4n9VWhR6KlL2GEYZJVrX1jdPxQzJ/mjmxSGOPYXB7g9
+   rAM3CzmqQZBnyO1qM58tpSkeN7ayyS14miBmYOCxoCJc1pPiwa6ZDn2Dv
+   XgmuyFK6p8Mn32g7ntTWRGzUbWPia6P2Q9rlVIzf/h4EaIUWA3N70IuJf
+   s8xAeqJfJFyAYYvB4Av37dBoiX0ISP4tbC1cZA22GKWK2Bs7ltfahakiZ
+   UMtnl2ZLJumYRzETdKHJB8ksbML9QCggWKXwqw4ySJogPqXP8GHY72g6Q
+   +F6M2Op9PPQjDtPYaCsqJJGVJd1rUeuDNqNk4CNgUBykSIiwuLnNACOf4
+   g==;
+X-CSE-ConnectionGUID: 9ZIUcGoZQkGld5Vb+4KdLA==
+X-CSE-MsgGUID: tCdLil3kSl6Cy6pCv+OKsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="50933445"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="50933445"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:20:12 -0800
+X-CSE-ConnectionGUID: XtjGeHN1RtGLCIfuEZJfPA==
+X-CSE-MsgGUID: F6McQCGBRkaKyjx80toFig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="113451375"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Feb 2025 08:20:13 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 14 Feb 2025 08:20:12 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 08:20:12 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 14 Feb 2025 08:20:11 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OHkVcjMGKZjcnvbfDz33Wbe2TVtK+X5H6/DEz983jS5OsH8KN+fNRn34wK8RV2ym+7twXxYMtgy9PlQnhkus7rGJ23r6etYwqgZb8tOw05paYOpG6SlUBoHlBqisBsoz0x7Lr/waI8OrcoiqWilEDuvTSgFCjufnFfczK48In0QkR6j0Dl3Dk0mWN5EEINNnxlZkwIbIbI1kxxyNZ/MeBdG27e242Oo2xBmVip1XEb93q5D5/QbWu4JyUzQ6zg3kxk9e9UvjxBIMCwcJI7ZjCbiGX80PbEoeuPlYNhAHXJoHgKQAFlwaDAuSTC7Klxf7mceod5GBqb9mJzHReDIl4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A/IddgDvxjUxGpVPMgM2Q1TWXlpW10VPJ2XFWDtYMgc=;
+ b=C5xzsnf1dI2mbR9xSJSZ5h2WoTfFoHJ17kBx+1duUzQkS6ryblfJ44g+DBz3TMMXTt1u8XJD1bYrwKk3oOc1sxsYyuC5w/TjzT4IlUMmCVZO4otCogHAXCUH54gotWCC7cozr57JSdBwXZFYFBO0idU8q2Q0X/9srf48T5uotYvIUY5Eln7KTvD9EYm5JTFfo8B5bRTBOo/D1BSUKn5VKeSH39a+d6frvX6M3kmDUf8MBPunlC01JoDaUyODnTs4iA/ihyWpxxT8abP/6rgvC20KSsAjBjF4CGAWWCinGSddGpMiWToEWZNdsSxbX+FhuMO0LGP+LbXj12HPkL1p7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB6269.namprd11.prod.outlook.com (2603:10b6:8:97::14) by
+ DM4PR11MB8179.namprd11.prod.outlook.com (2603:10b6:8:18e::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.15; Fri, 14 Feb 2025 16:19:54 +0000
+Received: from DS7PR11MB6269.namprd11.prod.outlook.com
+ ([fe80::af1f:dcc:49bf:1a26]) by DS7PR11MB6269.namprd11.prod.outlook.com
+ ([fe80::af1f:dcc:49bf:1a26%3]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
+ 16:19:54 +0000
+Message-ID: <c2cf2184-7753-454e-ac99-8c4f3c9c3d16@intel.com>
+Date: Fri, 14 Feb 2025 10:19:49 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] tsm: Unified Measurement Register ABI for TVMs
+To: Dave Hansen <dave.hansen@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, "Kirill A. Shutemov"
+	<kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>, "Kuppuswamy
+ Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
+ <15c69d57-4ffb-4ea1-8cbc-0ba6d3d7b14f@intel.com>
+ <be7e3c9d-208a-4bda-b8cf-9119f3e0c4ce@intel.com>
+ <015cdddb-7f74-4205-af8a-b15cad7ddc22@intel.com>
+ <d8f3eb33-d902-4391-adc7-005e4895b471@intel.com>
+ <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com>
+Content-Language: en-US
+From: "Xing, Cedric" <cedric.xing@intel.com>
+In-Reply-To: <c7894df2-2b27-4f67-b428-3eca312503f9@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0134.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c6::19) To DS7PR11MB6269.namprd11.prod.outlook.com
+ (2603:10b6:8:97::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] locking/lockdep: Add kasan_check_byte() check in
- lock_acquire()
-To: Marco Elver <elver@google.com>, Waiman Long <llong@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
- kasan-dev@googlegroups.com
-References: <20250213200228.1993588-1-longman@redhat.com>
- <20250213200228.1993588-5-longman@redhat.com>
- <CANpmjNM-uN81Aje1GE9zgUW-Q=w_2gPQ28giO7N2nmbRM521kA@mail.gmail.com>
- <3d069c26-4971-415a-9751-a28d207feb43@redhat.com>
- <CANpmjNNLn9=UA+cai=rL+6zsEQyppf6-4_YL4GAFi+dLt+4oSA@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CANpmjNNLn9=UA+cai=rL+6zsEQyppf6-4_YL4GAFi+dLt+4oSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB6269:EE_|DM4PR11MB8179:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2746d10-f7d5-4969-b267-08dd4d136a21
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MHNrc05sa3hxTno4UHZrNnlkUVZZd3VuWjRIb1Q2WnBBN2tSbGU4cnF2Umxs?=
+ =?utf-8?B?bmx1MStWRTlMc25CZjZ5MHJZNjQvL3pORVBPQ3RJSTRMZWt0WWhTNjhYWWwz?=
+ =?utf-8?B?NDhaa1p1L2RydENrVW40dmIvQXlnK1ZsMit0cjZXemZkUGFDYmx5ME05VllN?=
+ =?utf-8?B?U0xzMUJ5VjZpS3ZNMHJmTys2czlTV0p3dkhGMTFqMTdtTDZSSWVnS0JIQy9T?=
+ =?utf-8?B?dEhYN0RlSVN4QmduS2VzaDk2d2plRko0dTBkdngwMWN3RDhOR3k5cDd3Rncw?=
+ =?utf-8?B?OTFNbjZwbXNNR2RENVZLdFBvMEI0eHhvekkvWS9oLzgrNnNHdDF0OWZ2blRW?=
+ =?utf-8?B?eU9jTmZyY2xzNTdVdTlXblQydzgwL0hxSzRrdFRCczlOVlQ4ZldaRzFVM09u?=
+ =?utf-8?B?VzNvQnUwcnRteEU1SGJXT1JnZ3Z6WmVLRVdvSW5hZ0VmUVM3blowNGg2RjM2?=
+ =?utf-8?B?WjF5Vk9iWVl5TW1IWmwxTHY4NmpRMEVhaXZoam5BYWR1TGgwZWVvbmFFaHBl?=
+ =?utf-8?B?V1YrNUNJOFNDK1dQL0t3TEFkclFhUUhSYkJaU0tBcFEweGNPdmxZYjNVdEZ5?=
+ =?utf-8?B?Z2NJTGlTTVlTWGdRbXZWZnAyY3F4RkM0M3QrY3NEMjFGQTJqMXA0a1ErWUNJ?=
+ =?utf-8?B?ODJVVDN0aWFtMlFkcXBMd2N2azVVZ3Bqb3NtNHhXbTh2c2dTZldpMEFGWmxH?=
+ =?utf-8?B?dDg1amcreGtWMVRRL0pDcmowQTVJOHg0c0xVaWFnd3pxOXhEdkJpNFpjWXBD?=
+ =?utf-8?B?Qkx2Ti9qVFhESlZnMmlZWUZKN3RxUmNkWFhMODdMSkhRUjg3M1YxOUlOMEJ2?=
+ =?utf-8?B?ZGtaUUN0eERoanZlRlFDTGpicDZEMzloaWp5QnZLTzI0eEpQWG9iZTFtcmNZ?=
+ =?utf-8?B?THJqTmtIOHBHemJySWpiTVJoMTBIRlpVOUFQLzU2bHh6SkcxTHU5RjVndFpU?=
+ =?utf-8?B?L0VDSkM4SzFnbnJVMWVORGtKNVJRay9iVE5oSTNFekRBQXhxcG11TXRVeW5y?=
+ =?utf-8?B?OVRVc0FjNUx1Nm51WTMzMS9XN1FkZ2p4TDI3MkRYOTJJZWh1d2x0TE1BQTU5?=
+ =?utf-8?B?Y3JYTWx2Zlh4UDBzS2M1WWdpMmVUMThzRVNxaHArRW9OZVR4Vkl6a1FTY2xp?=
+ =?utf-8?B?UWhTM2ZWWDBqcldsLy9WMkFxMCt5czZPOUtRTWhFZHJCRXB0MlM3VWtrSXF4?=
+ =?utf-8?B?S3ZibUJOaE9UbXEvT3FraEMzWS9EVTF1S0kyU1VmejRFSkcreFJycDFKYzMx?=
+ =?utf-8?B?R1FxTys1S2VTSUd1UW0xNjgvL1M5MS9wdXVkVU4rRUhtQm1wSFM2ZjRJOXlM?=
+ =?utf-8?B?MTFXTXFoWDJaR0tHNEw4bXhjMW5jSWRjU3VKM3B2QVprL0Z2dm1UVUZRZWxC?=
+ =?utf-8?B?ZDI0T3hFWm9oaHEwVERzekVmUU1ORk5uSlhoWjFQdFp1Q0xwNTAwRDRia2Fk?=
+ =?utf-8?B?RDFwakJ3VllKTEl3ZllnQ29iRHF2YmtuaTBaTi9uMjNJampvN1NuYWJ1NVN6?=
+ =?utf-8?B?Mkw5ZDBjSDVLRHFVa3RTQkQ0Ym1WU0Zud0hQYWQ4Wng3THg4WWlFUUZ6cEN0?=
+ =?utf-8?B?enhYYTg4SUdoN2F3cndFQ25ONnQyVVZiSWRnMFV2OVlzbUxkaEtHZG9TOGhj?=
+ =?utf-8?B?REwyQnFGaFdaL0xJdXhFTHBodUtHeUpXTDZ6M0Y0aDJLRnBFOU1GdGoxNlNH?=
+ =?utf-8?B?UVBuZGQ1bnhMMWVxQ1kyd2w1NHlnb1JtdGVaSlRhL3hlWmhVSnhLOW1Jek1t?=
+ =?utf-8?B?NFgxRXJ2eGNhRVFEZncyYk5mUUpESnVlK2RTcm9QQW81d0RtM0tnZEdkMFRG?=
+ =?utf-8?B?Y29JbjNFb2N1Y2NZUEVMbzdJYzVyRHVtZ2xKUnE4ak9sMWdBQnM2bThIWUx2?=
+ =?utf-8?Q?0x4q584qtrKMR?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6269.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OTlOMEFGZG52SS9HSHV6MUY2Q04xYm5vWVRqaC9BQnNSUHEyMCtZenJsQTZL?=
+ =?utf-8?B?M2ZQbU83YnNjNU0rSHpla2VDUWlwWnN2eXFzSzBIeWczK1YvMk1UemtyTDlY?=
+ =?utf-8?B?bkJsQmd6U3dPbG1MR2NZcUxyblFtZVJIbGlhdkk0SGcwNndCd1RJbE1FRFhJ?=
+ =?utf-8?B?RlB1K1JSV08rc24wZm8zdzRLZVVSM0VlSndGbGU2NUVNakdPRDZoemYxTS9l?=
+ =?utf-8?B?TElrUEZjMVBUcEJ4dWUzME9VY2h3TjMwMEZDOUJ6S1JqbjZJRURFT29TZHY1?=
+ =?utf-8?B?SGVGYTlucFNrdTI0Z3I4M0luSUFOYXBIaWtkMExzSTBkYVVEeUJFc00vK2du?=
+ =?utf-8?B?SUhYcnRaSkhycDhWNVZlSWVhalRBYVdDd1hLek5TcTNhZXYzbXc0cEdBNXJn?=
+ =?utf-8?B?cnhKQm52ODVJL3dlMHNYaG14NC9iZHlwM0dCS09kTmxTS1FvNDJiT2I5VnBv?=
+ =?utf-8?B?bWxkeVVqeVh6TXltZjZGdmlIUkJqdHJWbExRMVBEeUZvSjBTZGNaRktac3Vq?=
+ =?utf-8?B?bUszQmJ5eTBQME5qZktFM0M4ekM5R3Noc1N0U2dRQjd0NHRzRGd0RHZaditj?=
+ =?utf-8?B?ZGI4cVJxK1J4NWtGR004R3BPOVUvYkJmZkkyd1J2Z0syWWFhU1dGZ3RuUlJu?=
+ =?utf-8?B?WTZuY3J1MDZvMmQyWGhVelRubUZvRGF5NkFGSFRUa3hVaStKQlFuMG5NR0hO?=
+ =?utf-8?B?b2lDOWg3bG9wcExTRkQxaG5KNFdMZDlId3p1bURqRFpML2RzQkI3MEpTTUhr?=
+ =?utf-8?B?bDVEbHNERm1yNHgzclRqYVFubWhTZ1U3Q3BzM08rTGRqNjc5WHJmNFpIZlRp?=
+ =?utf-8?B?UzRwVjZzdklUSStHQmw1RDhVcHQrSUZtalJhWmNwakFKYzFSbjBmZUg1MEM2?=
+ =?utf-8?B?bjJnbU1Vc0pKaktWYnRLS2FFMnYzUFN3SGFmcHErL1ZiODB6YitrWmFDYWlJ?=
+ =?utf-8?B?OEJ3OWd2b2NocUI2bVQwT1Z4eUxjZnNhTUdrVnVFdFYwUkRLL2NLZVAwVlNv?=
+ =?utf-8?B?NTY1UGZkekJqZWZjQWhaV25JRk9qRUJRNUk1cTcyMXdIckp5ZkNsZk1qSDRa?=
+ =?utf-8?B?dWkzZnRjcnhPc2x3QW5Xcm5hQ2l0dUZKcW9KU3JidjhwU3RIYzhwbjNPYXl2?=
+ =?utf-8?B?elRSdjZCdjhjK0k4ODVSQ0hwRGx3SStCb09NQ1FJVUlXUW9aaVJ0a2g1QnND?=
+ =?utf-8?B?TGhEdVVjWWdWMUtWK253a09tNytUbUdhVEdvZGt6c1JXK3l2T1dyM3dtQTB1?=
+ =?utf-8?B?OHphZVF0NHU4RDg3YklubTlxbWlRTXVad21pazB0LzZCTE9yTVcyamRpdWdQ?=
+ =?utf-8?B?bHdOTTBQRlpiQk1wQjZiMUhPc25NakVRZWJvQ2REYWlUQmFFSThxWVFnR3NE?=
+ =?utf-8?B?N1lHcGw2SWdTdW1rZGUwclV5d29pR1JmL1pkdkJ6d1g5R3RRaUdnZFgyK2gx?=
+ =?utf-8?B?NkVMdDVDVzBIRGdlNGwxSnhtZEdCNk52ZDNmN3pWbmRtWFNpcnJ4RFltTWE0?=
+ =?utf-8?B?R3ZJOThmVVpHM1VZblMvWXdQa3lJYkhaYmNvaExhbkxTTHFFSU1PdlZTTUFy?=
+ =?utf-8?B?Y2p1MGtaWFZyWG5MbEhxcUxhZmMwUDhWSUMzaFhtRm9oRWw2ZEpWb2k3aWxr?=
+ =?utf-8?B?SnlUMHlrZHhPcVRkVHhPdXFaa3pjQVNPL1hZYWc3MUJ6QjhZR0pqcm9hS3lQ?=
+ =?utf-8?B?aVdVdWNBVU1DS0JRWkpMcERnSDBKUWlEV2dYK0RxTnQvL0dsODBIUVNpYS9p?=
+ =?utf-8?B?QTFJVGNGampUSGJadnFtRkQyeVE1MzdXejcyK3RVc1ljaHM3R1ptM1FLYlhz?=
+ =?utf-8?B?UzNKMXQ0dW0xZTdoNldTWmxkNXNzZVFmZHRETm9Zd1NVNm93Z2VzaUwyZWxY?=
+ =?utf-8?B?bHUySVVKUXpzRWdtdmsxbTJSbGZWOXdJZXpneGpURzhtbTRYQnprSGdiVElk?=
+ =?utf-8?B?WVBwVmpOMDZqRE52WVpmRy9KTkZRaVBNaTIvczNaZWVFZFArdlNCcWJJYzlr?=
+ =?utf-8?B?YVh0NEYvZHIwNHlXaDZJMnFYbS9lUXJJUG5RYS9zdUdYNjZUUUUyNjRVOWpn?=
+ =?utf-8?B?Tmpvd20reEk5V0hGc1BCb1JuRjRiVjBwZ1VwZkt2VTQzRGtUbkpTbGtSem5B?=
+ =?utf-8?Q?KIxTJe2Amm3DvoIht0lOs71Wm?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2746d10-f7d5-4969-b267-08dd4d136a21
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6269.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 16:19:53.8764
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BKV0XsypVT9mrnjcH8lF2ZYZO2J7p3nG//g0yQx1cD7A7n2qNCKikJrfsY7KpV2oNkOSaEm/l3OuMMlmhJFmug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8179
+X-OriginatorOrg: intel.com
 
-On 2/14/25 9:44 AM, Marco Elver wrote:
-> On Fri, 14 Feb 2025 at 15:09, Waiman Long <llong@redhat.com> wrote:
->> On 2/14/25 5:44 AM, Marco Elver wrote:
->>> On Thu, 13 Feb 2025 at 21:02, Waiman Long <longman@redhat.com> wrote:
->>>> KASAN instrumentation of lockdep has been disabled as we don't need
->>>> KASAN to check the validity of lockdep internal data structures and
->>>> incur unnecessary performance overhead. However, the lockdep_map pointer
->>>> passed in externally may not be valid (e.g. use-after-free) and we run
->>>> the risk of using garbage data resulting in false lockdep reports. Add
->>>> kasan_check_byte() call in lock_acquire() for non kernel core data
->>>> object to catch invalid lockdep_map and abort lockdep processing if
->>>> input data isn't valid.
->>>>
->>>> Suggested-by: Marco Elver <elver@google.com>
->>>> Signed-off-by: Waiman Long <longman@redhat.com>
->>> Reviewed-by: Marco Elver <elver@google.com>
+On 2/13/2025 5:19 PM, Dave Hansen wrote:
+> On 2/13/25 13:50, Xing, Cedric wrote:
+>> On 2/13/2025 10:58 AM, Dave Hansen wrote:
+> ...
+>>> Wait a sec, so there's already ABI for manipulating these? This just
+>>> adds a parallel sysfs interface to the existing ABI?
 >>>
->>> but double-check if the below can be simplified.
->>>
->>>> ---
->>>>    kernel/locking/lock_events_list.h |  1 +
->>>>    kernel/locking/lockdep.c          | 14 ++++++++++++++
->>>>    2 files changed, 15 insertions(+)
->>>>
->>>> diff --git a/kernel/locking/lock_events_list.h b/kernel/locking/lock_events_list.h
->>>> index 9ef9850aeebe..bed59b2195c7 100644
->>>> --- a/kernel/locking/lock_events_list.h
->>>> +++ b/kernel/locking/lock_events_list.h
->>>> @@ -95,3 +95,4 @@ LOCK_EVENT(rtmutex_deadlock)  /* # of rt_mutex_handle_deadlock()'s    */
->>>>    LOCK_EVENT(lockdep_acquire)
->>>>    LOCK_EVENT(lockdep_lock)
->>>>    LOCK_EVENT(lockdep_nocheck)
->>>> +LOCK_EVENT(lockdep_kasan_fail)
->>>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
->>>> index 8436f017c74d..98dd0455d4be 100644
->>>> --- a/kernel/locking/lockdep.c
->>>> +++ b/kernel/locking/lockdep.c
->>>> @@ -57,6 +57,7 @@
->>>>    #include <linux/lockdep.h>
->>>>    #include <linux/context_tracking.h>
->>>>    #include <linux/console.h>
->>>> +#include <linux/kasan.h>
->>>>
->>>>    #include <asm/sections.h>
->>>>
->>>> @@ -5830,6 +5831,19 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
->>>>           if (!debug_locks)
->>>>                   return;
->>>>
->>>> +       /*
->>>> +        * As KASAN instrumentation is disabled and lock_acquire() is usually
->>>> +        * the first lockdep call when a task tries to acquire a lock, add
->>>> +        * kasan_check_byte() here to check for use-after-free of non kernel
->>>> +        * core lockdep_map data to avoid referencing garbage data.
->>>> +        */
->>>> +       if (unlikely(IS_ENABLED(CONFIG_KASAN) &&
->>> This is not needed - kasan_check_byte() will always return true if
->>> KASAN is disabled or not compiled in.
->> I added this check because of the is_kernel_core_data() call.
->>>> +                    !is_kernel_core_data((unsigned long)lock) &&
->>> Why use !is_kernel_core_data()? Is it to improve performance?
->> Not exactly. In my testing, just using kasan_check_byte() doesn't quite
->> work out. It seems to return false positive in some cases causing
->> lockdep splat. I didn't look into exactly why this happens and I added
->> the is_kernel_core_data() call to work around that.
-> Globals should have their shadow memory unpoisoned by default, so
-> that's definitely odd.
->
-> Out of curiosity, do you have such a false positive splat? Wondering
-> which data it's accessing. Maybe that'll tell us more about what's
-> wrong.
+>> No, this is new. There's no existing ABI for accessing measurement
+>> registers from within a TVM (TEE VM). Currently, on TDX for example,
+>> reading TDX measurement registers (MRs) must be done by getting a TD
+>> quote. And there's no way to extend any RTMRs. Therefore, it would be
+>> much easier end users to debug/diagnose measurement related issues
+>> (which would almost always require reading MRs) with this patch.
+> 
+> Ok, that makes sense.
+> 
+> But if this is for debug, wouldn't these belong better in debugfs? Do we
+> really want to maintain this interface forever? There's no shame in debugfs.
+> 
+There are many other (more important/significant) uses besides debugging.
 
-The kasan_check_byte() failure happens very early in the boot cycle. 
-There is no KASAN report, but the API returns false. I inserted a 
-WARN_ON(1) to dump out the stack.
+For example, any applications that make use of runtime measurements must 
+extend RTMRs, and this interface provides that exact functionality.
 
-[    0.000046] ------------[ cut here ]------------
-[    0.000047] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:5817 
-lock_acquire.part.0+0x22c/0x280
-[    0.000057] Modules linked in:
-[    0.000062] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 
-6.12.0-el10-test+ #15
-[    0.000066] Hardware name: HPE ProLiant DL560 Gen10/ProLiant DL560 
-Gen10, BIOS U34 01/16/2025
-[    0.000068] RIP: 0010:lock_acquire.part.0+0x22c/0x280
-[    0.000073] Code: 69 d1 04 85 c0 0f 85 fc fe ff ff 65 48 8b 3d 2b d8 
-c1 75 b9 0a 00 00 00 ba 08 00 00 00 4c 89 ee e8 19 e3 ff ff e9 dd fe ff 
-ff <0f>
-0b 65 48 ff 05 ca 5f c0 75 e9 ce fe ff ff 4c 89 14 24 e8 bc f8
-[    0.000076] RSP: 0000:ffffffff8e407c98 EFLAGS: 00010046 ORIG_RAX: 
-0000000000000000
-[    0.000079] RAX: 0000000000000000 RBX: ffffffff8e54fe70 RCX: 
-0000000000000000
-[    0.000081] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 
-ffffffff8e407c40
-[    0.000083] RBP: 0000000000000000 R08: 0000000000000001 R09: 
-0000000000000000
-[    0.000084] R10: ffffffff8a43af29 R11: 00000000002087cc R12: 
-0000000000000001
-[    0.000087] R13: 0000000000000000 R14: 0000000000000000 R15: 
-0000000000000000
-[    0.000088] FS:  0000000000000000(0000) GS:ffffffff8fb88000(0000) 
-knlGS:0000000000000000
-[    0.000090] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.000093] CR2: ffff888000000413 CR3: 0000001fc96e0000 CR4: 
-00000000000000f0
-[    0.000095] Call Trace:
-[    0.000096]  <TASK>
-[    0.000101]  ? show_trace_log_lvl+0x1b0/0x2f0
-[    0.000105]  ? show_trace_log_lvl+0x1b0/0x2f0
-[    0.000119]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000124]  ? __warn.cold+0x5b/0xe5
-[    0.000133]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000138]  ? report_bug+0x1f0/0x390
-[    0.000146]  ? early_fixup_exception+0x145/0x230
-[    0.000154]  ? early_idt_handler_common+0x2f/0x3a
-[    0.000164]  ? request_resource+0x29/0x2b0
-[    0.000172]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000177]  ? lock_acquire.part.0+0x3f/0x280
-[    0.000182]  ? rcu_is_watching+0x15/0xb0
-[    0.000187]  ? __pfx___might_resched+0x10/0x10
-[    0.000192]  ? lock_acquire+0x120/0x170
-[    0.000195]  ? request_resource+0x29/0x2b0
-[    0.000201]  ? rt_write_lock+0x7d/0x110
-[    0.000208]  ? request_resource+0x29/0x2b0
-[    0.000211]  ? request_resource+0x29/0x2b0
-[    0.000217]  ? probe_roms+0x150/0x370
-[    0.000222]  ? __pfx_probe_roms+0x10/0x10
-[    0.000226]  ? __lock_release.isra.0+0x120/0x2c0
-[    0.000231]  ? setup_arch+0x92d/0x1180
-[    0.000238]  ? setup_arch+0x95c/0x1180
-[    0.000243]  ? __pfx_setup_arch+0x10/0x10
-[    0.000246]  ? _printk+0xcc/0x102
-[    0.000254]  ? __pfx__printk+0x10/0x10
-[    0.000259]  ? cgroup_init_early+0x26a/0x290
-[    0.000268]  ? cgroup_init_early+0x26a/0x290
-[    0.000271]  ? cgroup_init_early+0x1af/0x290
-[    0.000279]  ? start_kernel+0x68/0x3b0
-[    0.000285]  ? x86_64_start_reservations+0x24/0x30
-[    0.000288]  ? x86_64_start_kernel+0x9c/0xa0
-[    0.000292]  ? common_startup_64+0x13e/0x141
-[    0.000309]  </TASK>
-[    0.000311] irq event stamp: 0
-[    0.000312] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-[    0.000316] hardirqs last disabled at (0): [<0000000000000000>] 0x0
-[    0.000318] softirqs last  enabled at (0): [<0000000000000000>] 0x0
-[    0.000320] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[    0.000322] ---[ end trace 0000000000000000 ]---
-[    0.000331] ------------[ cut here ]------------
-[    0.000332] WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:5817 
-lock_acquire.part.0+0x22c/0x280
-[    0.000336] Modules linked in:
-[    0.000339] CPU: 0 UID: 0 PID: 0 Comm: swapper Tainted: G        
-W         -------  ---  6.12.0-el10-test+ #15
-[    0.000343] Tainted: [W]=WARN
-[    0.000345] Hardware name: HPE ProLiant DL560 Gen10/ProLiant DL560 
-Gen10, BIOS U34 01/16/2025
-[    0.000346] RIP: 0010:lock_acquire.part.0+0x22c/0x280
-[    0.000350] Code: 69 d1 04 85 c0 0f 85 fc fe ff ff 65 48 8b 3d 2b d8 
-c1 75 b9 0a 00 00 00 ba 08 00 00 00 4c 89 ee e8 19 e3 ff ff e9 dd fe ff 
-ff <0f>
-0b 65 48 ff 05 ca 5f c0 75 e9 ce fe ff ff 4c 89 14 24 e8 bc f8
-[    0.000352] RSP: 0000:ffffffff8e407c20 EFLAGS: 00010046 ORIG_RAX: 
-0000000000000000
-[    0.000354] RAX: 0000000000000000 RBX: ffffffff8e54fe20 RCX: 
-0000000000000000
-[    0.000356] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 
-ffffffff8e407bc8
-[    0.000357] RBP: 0000000000000000 R08: 0000000000000001 R09: 
-0000000000000000
-[    0.000359] R10: ffffffff8ccf84d2 R11: 00000000002087cc R12: 
-0000000000000001
-[    0.000360] R13: 0000000000000000 R14: 0000000000000000 R15: 
-0000000000000000
-[    0.000362] FS:  0000000000000000(0000) GS:ffffffff8fb88000(0000) 
-knlGS:0000000000000000
-[    0.000364] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.000365] CR2: ffff888000000413 CR3: 0000001fc96e0000 CR4: 
-00000000000000f0
-[    0.000367] Call Trace:
-[    0.000368]  <TASK>
-[    0.000369]  ? show_trace_log_lvl+0x1b0/0x2f0
-[    0.000373]  ? show_trace_log_lvl+0x1b0/0x2f0
-[    0.000386]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000391]  ? __warn.cold+0x5b/0xe5
-[    0.000396]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000400]  ? report_bug+0x1f0/0x390
-[    0.000407]  ? early_fixup_exception+0x145/0x230
-[    0.000412]  ? early_idt_handler_common+0x2f/0x3a
-[    0.000419]  ? rwbase_write_lock.constprop.0.isra.0+0x22/0x5f0
-[    0.000427]  ? lock_acquire.part.0+0x22c/0x280
-[    0.000434]  ? rcu_is_watching+0x15/0xb0
-[    0.000438]  ? lock_acquire+0x120/0x170
-[    0.000441]  ? rwbase_write_lock.constprop.0.isra.0+0x22/0x5f0
-[    0.000448]  ? _raw_spin_lock_irqsave+0x46/0x90
-[    0.000451]  ? rwbase_write_lock.constprop.0.isra.0+0x22/0x5f0
-[    0.000456]  ? rwbase_write_lock.constprop.0.isra.0+0x22/0x5f0
-[    0.000459]  ? lock_acquire+0x120/0x170
-[    0.000462]  ? request_resource+0x29/0x2b0
-[    0.000468]  ? rt_write_lock+0x85/0x110
-[    0.000471]  ? request_resource+0x29/0x2b0
-[    0.000475]  ? request_resource+0x29/0x2b0
-[    0.000480]  ? probe_roms+0x150/0x370
-[    0.000484]  ? __pfx_probe_roms+0x10/0x10
-[    0.000488]  ? __lock_release.isra.0+0x120/0x2c0
-[    0.000493]  ? setup_arch+0x92d/0x1180
-[    0.000500]  ? setup_arch+0x95c/0x1180
-[    0.000505]  ? __pfx_setup_arch+0x10/0x10
-[    0.000508]  ? _printk+0xcc/0x102
-[    0.000513]  ? __pfx__printk+0x10/0x10
-[    0.000517]  ? cgroup_init_early+0x26a/0x290
-[    0.000525]  ? cgroup_init_early+0x26a/0x290
-[    0.000528]  ? cgroup_init_early+0x1af/0x290
-[    0.000535]  ? start_kernel+0x68/0x3b0
-[    0.000539]  ? x86_64_start_reservations+0x24/0x30
-[    0.000543]  ? x86_64_start_kernel+0x9c/0xa0
-[    0.000547]  ? common_startup_64+0x13e/0x141
-[    0.000561]  </TASK>
-[    0.000562] irq event stamp: 0
-[    0.000563] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-[    0.000565] hardirqs last disabled at (0): [<0000000000000000>] 0x0
-[    0.000567] softirqs last  enabled at (0): [<0000000000000000>] 0x0
-[    0.000569] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[    0.000571] ---[ end trace 0000000000000000 ]---
-
-Cheers,
-Longman
+Another example, a policy may be associated with a TD (e.g., CoCo) by 
+storing its digest in MRCONFIGID, so that the policy could be verified 
+against its digest at runtime. This interface allows applications to 
+read MRCONFIGID.
 
 
