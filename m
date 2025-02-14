@@ -1,115 +1,149 @@
-Return-Path: <linux-kernel+bounces-515491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ED4A36582
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:12:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8DCA36586
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF1D1736EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B901118971BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316CC2690E9;
-	Fri, 14 Feb 2025 18:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ4ckviD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073142690C6;
+	Fri, 14 Feb 2025 18:11:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2402690ED;
-	Fri, 14 Feb 2025 18:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2DC268FD3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 18:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739556643; cv=none; b=O2TN9J5Bt3OCSBeoZebKsKQ8WIwGHuYM32Q6yRLm0heyvo4TMrk7tjqdRDtGM+YyT/yi6tpr33ErLBKswjR269WeFF0zkghsbSMN7Q/IXuGujO/yGDu3oUULxRkzKi9vxbrA4xwY6H/ZJr/VwLHuYL19R7bBBm13H6lu/PM8V5o=
+	t=1739556682; cv=none; b=S7KDQWVQr+orAzfVexyzzXUNYw+28NxUut6PPx+IcSV7iDROzSJR6Xo5ruoz6r8ir91isA/KVv9STds9BlVAq0HRJ1hY2VDDOQhvzkDEhmri5wVpo/+1JYdFOSvj593Yf2M8SBpVBRzEiaJxs9X+jryVVRVSviTufhVf1sw8pdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739556643; c=relaxed/simple;
-	bh=qsZ3M7HjZdTjo5f5WrSVbOZM9SW596Y6SP7V0X9VgQ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=utGzZqnjyW0RgRItz015M8vGLIhG5IYEHKe5WWl4ns5F5ZY8CSi+og81FzKV2k4TFbr9RaCrPcfz4cow7sWTm4ic2pnOvDjPFSun1fiEPbs5AcbrWgdo9dB8D1WF7I/V/NbKny8xx5pB+STBDnwvLstF1PQXD84yAZHrBIhWlyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ4ckviD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE448C4AF09;
-	Fri, 14 Feb 2025 18:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739556641;
-	bh=qsZ3M7HjZdTjo5f5WrSVbOZM9SW596Y6SP7V0X9VgQ8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bZ4ckviDNzJRoX58jtuwMBbs3xQ14eqGG8zrnD5z2qhjAnWh7XAbqnv24/noOLgLu
-	 olEqflJMzBqxLIEUyMVH3F4JxPU9p/38924gRExVw4lASKGNfh4Y0RKowlVmoMp+y9
-	 WrNx86OLMB/QPjzgAASBK3Cbi/Pz21kAMqpUQNneKoJPJUQ4/2UWGhc/0tYX1Ms1zp
-	 eB8cqCL00KIgU7sdFtDTngq0t2on1bw6LCWt1GzyeaCQkPVYQjfQv/nOu4ib+I40lY
-	 neKX0TUZmlPfSyUhUPHyxMw+0W8iXRWqAGjUL7JJhuY6e8NptBhrP7LztciXGJRnoD
-	 OdYj8zyXXbjPw==
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d18654e8d6so17688385ab.2;
-        Fri, 14 Feb 2025 10:10:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7T4+v5D4WCoJlBLnJ/0yPrhXNAm9893daDVUfLpRkewxsA7iZjQF6A+f3Qd3OPrqWg/Oxu8oq0nzIBGe5lw==@vger.kernel.org, AJvYcCV+HV9PdLRDRGYorpaTxTDIDaifGmvv0idAAzlN9b02u59ocGJITqvsiOe+vUPLsHAwZtKR2PJVy9TiYOA=@vger.kernel.org, AJvYcCVV7APkoCgPCFjf3E9j8hyQPiHg1j2FxVqUBkVN52/MbPTIo8Ma/LLPjis44FQZHclKAj89ABZuR/j6Yb7ZGopn0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7vZXdkUhAlFYM9GgpJwETlJFfPn+RXLAWWN92usJny2bD5ZEs
-	JOz3gY0iHr8LOJtwcdKzT7u9otR1prqaJqAHbMFA2qCu8EIHCO1DJWOIpLWahljcllGBMasRVt/
-	FkGrFNl/nBDfskSs0YLZwIOr35Dc=
-X-Google-Smtp-Source: AGHT+IG8JZIw5oJUYOuAL23YnIRiuk4cQKNQCcLNAYc2hmGsxchwTn9wwIBLREFhDO96qyScsuyGb1CQAAe2KZkUZEM=
-X-Received: by 2002:a05:6e02:3103:b0:3d0:4e0c:2c96 with SMTP id
- e9e14a558f8ab-3d280771b4cmr3760875ab.2.1739556641173; Fri, 14 Feb 2025
- 10:10:41 -0800 (PST)
+	s=arc-20240116; t=1739556682; c=relaxed/simple;
+	bh=wMTSRR3nLw+E5ph/idKPu0M3zjjn9ZloRQmQltBey8c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=P4XkVHoAz1RCPbkOXFusv0WjJD+FQcIHcAaD91jbTQcY83vQd6UDwnogmZl9yNaVnoaCtA/VD1txGf5EgaE18B2VYOP1w8cPzOCLkFzRuQwEx4mG2BI748lQXc7W4l4CY8r3hpL178Oc+MoHOlMf/lah87FdKNqO9yiRwS7C/5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d187cab068so37292895ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:11:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739556680; x=1740161480;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OUNDXA5tzQyM8ahjKOdY1vF1qJ/6CjWQSKnc3bXlmWo=;
+        b=AjK2N/TDbcfD/vWiT/iPiYwgOmK924apHB96hTAdwxByIsERTYGeeC3SDsWMhJtHcG
+         Pd1Ep5bWIoe8fDPFVzXUb9aGOrg6a7peRuuUHk9La+u4XGN925pQUeZsm93u6s/RPfH1
+         kiXZlrNf1PCC72SIGGIvZ2ZcmB8VxGHD0QJbBCA3WtwF5qwRZPdNNhSH1dIY3zer/BLu
+         NX2Ecc2vdr7738F7+6hi/TGaWOVWvdhz+fUJxk+X1mze2CbGr+LaWNVZoIwC6mv2refi
+         L9ybOPcb8uOHYllBJrfPp9jLR9Hr1133GUNu6ADEmcLe5j2G5oS0e08z3Ufz4OAKz71Q
+         e+ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUukwWpfaDQuQoAk8XmIQe3Cl8cWy7fNhqYtnq5xki8UFbW1/kZjYDacg8Q7WSv/4BF22g5NdsCTIV2v6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOVO3FoWkQBin+tXXh9WmqJTQucpFjft/sYonkWf6HfsasL+yJ
+	6oGhT7PoXxCcXgDKCI5a5Uq24cotPfMCAUGnTK1phtNXCS5woCxmpSMiIdtBODOrJa3OqE5/R0O
+	dm2iUN1kZIgd+8fPQAsCdMZeOzYgHUmlxbZtxV/oXxOHlQZt/RQd70JA=
+X-Google-Smtp-Source: AGHT+IEGXMmhpIMcPBMXR3pV3ntpTw614J0LLbrDiT1df4YTP3Ugn9wIaZyPVGAZlQMx3KRo/pf0FS0DLEP2GzYAgFuG0Wrcc/ki
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
- <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com> <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
- <mb61p1pw21f0v.fsf@kernel.org> <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
- <mb61pseoiz1cq.fsf@kernel.org> <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
- <mb61pr0411o57.fsf@kernel.org> <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
- <mb61p7c5sdhv6.fsf@kernel.org>
-In-Reply-To: <mb61p7c5sdhv6.fsf@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Fri, 14 Feb 2025 10:10:29 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6vDYjiy1_tOhy--ULC8UWtpu4E_nd8uY8qg98eLuygQw@mail.gmail.com>
-X-Gm-Features: AWEUYZlpNf1avV1LJZl1tk2itoEk1uL2WdB4o2NSm5faGZWiZiU7f7T7DB78KCg
-Message-ID: <CAPhsuW6vDYjiy1_tOhy--ULC8UWtpu4E_nd8uY8qg98eLuygQw@mail.gmail.com>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+X-Received: by 2002:a05:6e02:1689:b0:3d0:21f0:98f3 with SMTP id
+ e9e14a558f8ab-3d2809a9d26mr2839135ab.21.1739556679952; Fri, 14 Feb 2025
+ 10:11:19 -0800 (PST)
+Date: Fri, 14 Feb 2025 10:11:19 -0800
+In-Reply-To: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67af8747.050a0220.21dd3.004c.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
+From: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
+	kasong@tencent.com, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com, 
+	muchun.song@linux.dev, roman.gushchin@linux.dev, ryncsn@gmail.com, 
+	sashal@kernel.org, shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com, 
+	willy@infradead.org, yuzhao@google.com, zhengqi.arch@bytedance.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Puranjay,
+syzbot has found a reproducer for the following issue on:
 
-Thanks for running the tests.
+HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148019a4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12328bf8580000
 
-On Fri, Feb 14, 2025 at 12:56=E2=80=AFAM Puranjay Mohan <puranjay@kernel.or=
-g> wrote:
-[...]
-> >
-> > I am really curious whether you have the same problem in your
-> > setup.
->
-> Hi Song,
->
-> I did this test and found the same issue as you (gdb assembly broken),
-> but I can see this issue even without the inlining. I think GDB tried to
-> load the debuginfo and that is somehow broken therefore it fails to
-> disassemblt properly.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
 
-Yes, this matches my observations: gcc-11 generates the .ko that
-confuses gdb.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
 
-I tested with two versions of gdb (10.2 and 14.2), both have the
-problem. OTOH, lldb is able to disassemble copy_process from a
-gcc-compiled .ko file properly.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
+Modules linked in:
+CPU: 0 UID: 0 PID: 5459 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
+Code: e9 19 fe ff ff e8 72 f2 b5 ff 4c 8b 7c 24 08 45 84 f6 0f 84 40 ff ff ff e9 22 01 00 00 e8 5a f2 b5 ff eb 05 e8 53 f2 b5 ff 90 <0f> 0b 90 eb 97 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 71 fd ff ff 48
+RSP: 0018:ffffc9000d70f3a0 EFLAGS: 00010293
+RAX: ffffffff820bc50d RBX: 0000000000000000 RCX: ffff8880382d4880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff8880351ac054 R08: ffffffff820bc49f R09: 1ffffffff2079b8e
+R10: dffffc0000000000 R11: fffffbfff2079b8f R12: ffffffff820bc19e
+R13: ffff88801ee9a798 R14: 0000000000000000 R15: ffff8880351ac000
+FS:  000055557d70b500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff6826de40 CR3: 000000005680c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ list_lru_del+0x58/0x1f0 mm/list_lru.c:202
+ list_lru_del_obj+0x17b/0x250 mm/list_lru.c:223
+ d_lru_del fs/dcache.c:481 [inline]
+ to_shrink_list+0x136/0x340 fs/dcache.c:904
+ select_collect+0xce/0x1b0 fs/dcache.c:1472
+ d_walk+0x1f5/0x750 fs/dcache.c:1295
+ shrink_dcache_parent+0x144/0x3b0 fs/dcache.c:1527
+ d_invalidate+0x11c/0x2d0 fs/dcache.c:1632
+ proc_invalidate_siblings_dcache+0x3fb/0x6e0 fs/proc/inode.c:142
+ release_task+0x168e/0x1830 kernel/exit.c:279
+ wait_task_zombie kernel/exit.c:1249 [inline]
+ wait_consider_task+0x1a14/0x2e60 kernel/exit.c:1476
+ do_wait_thread kernel/exit.c:1539 [inline]
+ __do_wait+0x1b0/0x850 kernel/exit.c:1657
+ do_wait+0x1e9/0x550 kernel/exit.c:1691
+ kernel_wait4+0x2a7/0x3e0 kernel/exit.c:1850
+ __do_sys_wait4 kernel/exit.c:1878 [inline]
+ __se_sys_wait4 kernel/exit.c:1874 [inline]
+ __x64_sys_wait4+0x134/0x1e0 kernel/exit.c:1874
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f93f3983057
+Code: 89 7c 24 10 48 89 4c 24 18 e8 45 1b 03 00 4c 8b 54 24 18 8b 54 24 14 41 89 c0 48 8b 74 24 08 8b 7c 24 10 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 89 44 24 10 e8 95 1b 03 00 8b 44
+RSP: 002b:00007fff6826e9b0 EFLAGS: 00000293 ORIG_RAX: 000000000000003d
+RAX: ffffffffffffffda RBX: 0000000000000019 RCX: 00007f93f3983057
+RDX: 0000000040000001 RSI: 00007fff6826ea1c RDI: 00000000ffffffff
+RBP: 00007fff6826ea1c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000001388
+R13: 00000000000927c0 R14: 000000000002f011 R15: 00007fff6826ea70
+ </TASK>
 
-> But even with inlining, I couldn't see the warning about the refcount
-> with my setup.
 
-This also matches my observations. gcc-11 compiled livepatch
-works fine.
-
-Thanks,
-Song
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
