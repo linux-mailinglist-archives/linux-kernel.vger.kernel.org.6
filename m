@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-515273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC65A362BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:08:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E19A362C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:10:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E95167088
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D023AAA14
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD55C2676F6;
-	Fri, 14 Feb 2025 16:07:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B402673B4;
+	Fri, 14 Feb 2025 16:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt0vUjco"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98FD2673AB;
-	Fri, 14 Feb 2025 16:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEBD22F165;
+	Fri, 14 Feb 2025 16:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549269; cv=none; b=uGlGww18DhXvklDJVc+JeI3CVqLI6BnMGdmrtr2XTATRLxNpla98zgQCsEOqp83iv7ojaoxivto2aJuVmTPKEJeoCewpQ+eryAEToyKz8CahEWLd1HQ/FUYe4d3R+b7EKJcTfR0HjR+yfL5aBTooVDSkVeKA04bNZvjLBbVCYWc=
+	t=1739549265; cv=none; b=Di/gMFKcifFfAHcz9UGWK/xFMtbT8Drel1jGBMTVt1rhwHuk9pOMoV2ZBcnQzJs1weqv7uidRhnmjshEdt9dFEEgYxik17NjzAarBavZPM/230frWv+Cmc9SfGtufAWuH2xOpTDOOVoS9wMFMEqc8ZoTX1rbYLJKmiLDrTCmY/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549269; c=relaxed/simple;
-	bh=Ao7LE4+tbfQL8T8CQHg0pXYdVblJlSaOPMAuV6uc1GI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GtXK4GRqzBUv6l3QD3VXe2/K3jBO4m7XgD/G25equV3pz4EEbwclRvGPmAa00h0KvBGOqolQGwPcbjdudSTAMTXQw19QNJL61ARTr8SMoRJ0zWH0aIvCeN3fUZvOfbEAhOjRWgcm8cYTHix58lJjhf89quGF9U5KmoH9zktXuFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YvcMH13hZz6H7YC;
-	Sat, 15 Feb 2025 00:04:59 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7BA1F140A77;
-	Sat, 15 Feb 2025 00:07:27 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 17:07:26 +0100
-Date: Fri, 14 Feb 2025 16:07:25 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 07/18] cxl/region: Avoid duplicate call of
- cxl_find_decoder_early()
-Message-ID: <20250214160725.0000662f@huawei.com>
-In-Reply-To: <20250211095349.981096-8-rrichter@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-8-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739549265; c=relaxed/simple;
+	bh=kIPwPH7X7wZ8cRjLtiCbyATDZF5ahgyEmcy1BihksyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k8O0HZS/BOVpOkfTjXvl+mouun5kfpqTjBATSND5Pp1ApOyoLmh6qxtSGOw7J+/z6tOWwz0SBTitVVIyvbm9SeJJdKJHKqaOplRsSYDoAW91oEG6bu+9+zCGImI2xahlJwvT/ZQRnZaHVFKRZ897NeY/0IPGdvqPNqvO2WtWLKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt0vUjco; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739549264; x=1771085264;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kIPwPH7X7wZ8cRjLtiCbyATDZF5ahgyEmcy1BihksyY=;
+  b=Rt0vUjcotGo1pevTU5rd1U9H2JBqBgTiUvvuHbFDLCepma4GYNagazdA
+   Eo+LBtqzgWAIkxgba82J0skX68VafEhwiutmSXrJlv0CRKsTDfCOUvVQG
+   f2XRTC/hA2zbdkO7oWAgeexeoUzTO9/a2u3mUl9VGnNOVC2fbOPn1snjn
+   9LWFYue2bfXKzUxgy2czQlD0h4/xCPBISGINDSOFP8GfObk5appXDziOU
+   rl1EL//0S16D1EOXQaaIPusrbwXDghkNeZGgW2/+iONcukcHc9kQqayT9
+   x06qcW46QZpypjKTNC/ix8xdy3DvrIKMLbKJDor2VBbprn01BROIhZkXU
+   Q==;
+X-CSE-ConnectionGUID: +XiEyjH/ReirNUMi8hqceA==
+X-CSE-MsgGUID: +Cd292ZORs6z1b+XZ/D6Rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43141038"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="43141038"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:07:43 -0800
+X-CSE-ConnectionGUID: fL05wUw3TFu5bVqAt2WnrQ==
+X-CSE-MsgGUID: OFDMSXopTM2RK4LrmNzj8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="144347581"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:07:38 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiyE3-0000000BXWw-0Sh6;
+	Fri, 14 Feb 2025 18:07:35 +0200
+Date: Fri, 14 Feb 2025 18:07:34 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 04/10] gpio: regmap: Allow to provide request and free
+ callbacks
+Message-ID: <Z69qRrQ3XxgKtPUD@smile.fi.intel.com>
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 11 Feb 2025 10:53:37 +0100
-Robert Richter <rrichter@amd.com> wrote:
+On Fri, Feb 14, 2025 at 12:49:54PM +0100, Mathieu Dubois-Briand wrote:
+> Allows to populate the gpio_regmap_config structure with request() and
+> free() callbacks to set on the final gpio_chip structure.
 
-> Function cxl_find_decoder_early() is called twice, in
-> alloc_region_ref() and cxl_rr_alloc_decoder(). Move it out there and
+Yeah, I understand the intention, but I have mixed feelings about this.
+OOH it helps with the cases like yours, OTO it sounds like a hack instead
+of proper implementation of the pin muxing. Yes, I know there are some
+drivers in the kernel do similar things, but it most likely historically
+and not always having the same HW capabilities as this chip.
 
-out where?  I'd make it clear that both these calls are in
-cxl_port_attach_region()
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> instead pass the decoder as function argument to both.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
-
-I think this is fine but it's not immediately obvious so a request
-inline for some more details in this description.
-
-> ---
->  drivers/cxl/core/region.c | 31 +++++++++++++++----------------
->  1 file changed, 15 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 13e3ba984a53..b8201c2faa87 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -908,7 +908,8 @@ static bool auto_order_ok(struct cxl_port *port, struct cxl_region *cxlr_iter,
->  
->  static struct cxl_region_ref *
->  alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
-> -		 struct cxl_endpoint_decoder *cxled)
-> +		 struct cxl_endpoint_decoder *cxled,
-> +		 struct cxl_decoder *cxld)
->  {
->  	struct cxl_region_params *p = &cxlr->params;
->  	struct cxl_region_ref *cxl_rr, *iter;
-> @@ -922,9 +923,6 @@ alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
->  			continue;
->  
->  		if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags)) {
-> -			struct cxl_decoder *cxld;
-> -
-> -			cxld = cxl_find_decoder_early(port, cxled, cxlr);
-
-
-This is buried a little deep to be obviously fine to lift out.
-Seems like it should always have been done outside the xa_for_each()
-loop in here.  So I think this is fine but maybe some more in the
-patch description is needed to make that point.
-
->  			if (auto_order_ok(port, iter->region, cxld))
->  				continue;
->  		}
-> @@ -1008,17 +1006,9 @@ static int cxl_rr_ep_add(struct cxl_region_ref *cxl_rr,
->  
->  static int cxl_rr_alloc_decoder(struct cxl_port *port, struct cxl_region *cxlr,
->  				struct cxl_endpoint_decoder *cxled,
-> -				struct cxl_region_ref *cxl_rr)
-> +				struct cxl_region_ref *cxl_rr,
-> +				struct cxl_decoder *cxld)
->  {
-> -	struct cxl_decoder *cxld;
-> -
-> -	cxld = cxl_find_decoder_early(port, cxled, cxlr);
-> -	if (!cxld) {
-> -		dev_dbg(&cxlr->dev, "%s: no decoder available\n",
-> -			dev_name(&port->dev));
-> -		return -EBUSY;
-> -	}
-> -
->  	if (cxld->region) {
->  		dev_dbg(&cxlr->dev, "%s: %s already attached to %s\n",
->  			dev_name(&port->dev), dev_name(&cxld->dev),
-> @@ -1109,7 +1099,16 @@ static int cxl_port_attach_region(struct cxl_port *port,
->  			nr_targets_inc = true;
->  		}
->  	} else {
-> -		cxl_rr = alloc_region_ref(port, cxlr, cxled);
-> +		struct cxl_decoder *cxld;
-> +
-> +		cxld = cxl_find_decoder_early(port, cxled, cxlr);
-> +		if (!cxld) {
-> +			dev_dbg(&cxlr->dev, "%s: no decoder available\n",
-> +				dev_name(&port->dev));
-> +			return -EBUSY;
-> +		}
-> +
-> +		cxl_rr = alloc_region_ref(port, cxlr, cxled, cxld);
->  		if (IS_ERR(cxl_rr)) {
->  			dev_dbg(&cxlr->dev,
->  				"%s: failed to allocate region reference\n",
-> @@ -1118,7 +1117,7 @@ static int cxl_port_attach_region(struct cxl_port *port,
->  		}
->  		nr_targets_inc = true;
->  
-> -		rc = cxl_rr_alloc_decoder(port, cxlr, cxled, cxl_rr);
-> +		rc = cxl_rr_alloc_decoder(port, cxlr, cxled, cxl_rr, cxld);
->  		if (rc)
->  			goto out_erase;
->  	}
 
 
