@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-514138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28954A35304
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:36:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6F4A352CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0951890562
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:36:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 925117A21CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9D5227;
-	Fri, 14 Feb 2025 00:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDC1275404;
+	Fri, 14 Feb 2025 00:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjJElKox"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qH1XZ621"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30498C1E;
-	Fri, 14 Feb 2025 00:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D315D1;
+	Fri, 14 Feb 2025 00:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739493400; cv=none; b=sVEROslMClbcDpvZgnQBg3kXwR3LdsGGKqkoC2l1qHz+Bao+VXNRELZ4YtA/GgdCdi4CGF4dbr+JoDEdUM6uiKyeUk4/cwhN8ZfE1tHvVRe0GmFljeXqQCFCkOpTWYPy51CeuXqLmWRWWrRBnuuyoVlDQE3W9yqmCUGzm25B6tQ=
+	t=1739492856; cv=none; b=FZm5PDBE/GWgkX/7JhwdIOfmU0pbV5pXnhnp/j2LjjVJFE9p46QKRqnveLEQulh6KituZbhJEs9/MQ2wUzg93Ra5Z39s7w3zPxuQypI+akwkM+17r8CVOkdNAL8LC0o6/yeHPTOQmhN3540WOoa3Rkd/nzocTT+9ItmMbaafmT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739493400; c=relaxed/simple;
-	bh=kjlznG2D4gTQ1jGzO20AzuJ/CD7MgJE2quqCzxYI9CM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=t9MbzZ3dkdI3xPKb0kPTNiL0BaQGAwahLJLjQwLk9JpwvloAluzyt5BskA/+umhyghYYcMvUeBY9cS9CF8+6C6UVC15dHJdkyx2A1PuYRlaooelCfgkdvB4IO99qgsnXw9XsESxmTxf6/cNsI0uN6VHZinz2zYDP+2aLFIsRqt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjJElKox; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739493399; x=1771029399;
-  h=from:to:cc:subject:date:message-id;
-  bh=kjlznG2D4gTQ1jGzO20AzuJ/CD7MgJE2quqCzxYI9CM=;
-  b=MjJElKoxy2Ohr0e8QzzZkQu9j8eHM/OrDtwcRJJQq7tA5BTmRcouO6dB
-   PFt9j8rHFzT1VTs+1f7GyjtBxpDXBxNiSfXZ6b18uI7X2UxPOQPehhAhE
-   czSXggJbQ7ldq+SUdhEGG/9yYAsku2p6ZqoDT/PVmOmf+HojIgPSjPKD7
-   /i4QuYkjYRLCT8dlM6ObpE3+ESxPQ0ntGV7b2I25cgsU1jbmyJoTeyO46
-   aPSTVJdj+hHqTTWaVzKQmZHC67LApoqCBZUjLWXgK+zIoQVQuhrh0MfCX
-   SC9xPd7MtyJLOloWtiM6dGKu0lg8vVJM2WDLTGmIUtxh7qeo/VvPM2Qx4
-   A==;
-X-CSE-ConnectionGUID: zIZyohxJQGCPqm1fffErJg==
-X-CSE-MsgGUID: mK2j7NJoTCK0rZ4jmiAvSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40348450"
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="40348450"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 16:36:38 -0800
-X-CSE-ConnectionGUID: gBsajGR4ROCL9/FjiV5W4g==
-X-CSE-MsgGUID: OHUF5LraR1GvWvTdEhjlhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118513232"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 16:36:35 -0800
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Kevin Chang <kevin1.chang@intel.com>,
-	Thomas Chen <Thomas.Chen@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/{skx_common,i10nm}: Fix some missing error reports on Emerald Rapids
-Date: Fri, 14 Feb 2025 08:27:28 +0800
-Message-Id: <20250214002728.6287-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1739492856; c=relaxed/simple;
+	bh=lzasSBqCZsMzMvKJCwaSsF4RMTN7fMcWPM3EndeXCHQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=l5LBOIBFcLDJ/cueXjluBxJzgi1Y/OR9dnkoxkbD2s7iO82zY+0zsmH2VjxOV1nMQRw/tBByofgQ+PE8Cpsa09IwB4jiIOOkS/DZ+cZxSEqy/D80EHPUVvs//e+JRhqDRmRjM/Gv7um8Jlwjj40ZgEQk5DukyPHtbxNW+NMgLOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qH1XZ621; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D8AC4CED1;
+	Fri, 14 Feb 2025 00:27:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739492856;
+	bh=lzasSBqCZsMzMvKJCwaSsF4RMTN7fMcWPM3EndeXCHQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qH1XZ621nEUET6F0YY9IRFEI3iH78nnMtXZQUpQCGsVkIsc/O6Q1FTIhOnSL3PkGK
+	 Zqi/DWQamtRrio1rqxOmOkXsj3hldbZHHq7ZIukZRuxBErqp3Ffii9bSsBZ84uZwh2
+	 YJT/LLeDvDLH5aK3zsDWAf5ferPja3MY52/hyS2e5K7g/QeQU+FZCQHDly2mJ8XIff
+	 fUUfaCuPsVel45udJ0l0yC8Jfl1jNg652tBhTXNGBPdbQ7R2OKJ4Tae8q2jhkI8Oco
+	 wFdPmtTtivZ1UymPFgC/i4K1Ft/jRZO2XFSB4yrMu/DtN8D5XAgNmDEOWFXSxHOnla
+	 XNDih8tUaYMSQ==
+Date: Fri, 14 Feb 2025 09:27:32 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincent Donnefort <vdonnefort@google.com>
+Subject: Re: [PATCH] tracing: Have the error of
+ __tracing_resize_ring_buffer() passed to user
+Message-Id: <20250214092732.32e4a05358f2e9a96fecf5d7@kernel.org>
+In-Reply-To: <20250213134132.7e4505d7@gandalf.local.home>
+References: <20250213134132.7e4505d7@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When doing error injection to some memory DIMMs on certain Intel Emerald
-Rapids servers, the i10nm_edac missed error reports for some memory DIMMs.
+On Thu, 13 Feb 2025 13:41:32 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Certain BIOS configurations may hide some memory controllers, and the
-i10nm_edac doesn't enumerate these hidden memory controllers. However, the
-ADXL decodes memory errors using memory controller physical indices even
-if there are hidden memory controllers. Therefore, the memory controller
-physical indices reported by the ADXL may mismatch the logical indices
-enumerated by the i10nm_edac, resulting in missed error reports for some
-memory DIMMs.
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Currently if __tracing_resize_ring_buffer() returns an error, the
+> tracing_resize_ringbuffer() returns -ENOMEM. But it may not be a memory
+> issue that caused the function to fail. If the ring buffer is memory
+> mapped, then the resizing of the ring buffer will be disabled. But if the
+> user tries to resize the buffer, it will get an -ENOMEM returned, which is
+> confusing because there is plenty of memory. The actual error returned was
+> -EBUSY, which would make much more sense to the user.
+> 
 
-Fix this issue by creating a mapping table from memory controller physical
-indices (used by the ADXL) to logical indices (used by the i10nm_edac) and
-using it to convert the physical indices to the logical indices during the
-error handling process.
+Looks good to me.
 
-Fixes: c545f5e41225 ("EDAC/i10nm: Skip the absent memory controllers")
-Reported-by: Kevin Chang <kevin1.chang@intel.com>
-Tested-by: Kevin Chang <kevin1.chang@intel.com>
-Reported-by: Thomas Chen <Thomas.Chen@intel.com>
-Tested-by: Thomas Chen <Thomas.Chen@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/i10nm_base.c |  2 ++
- drivers/edac/skx_common.c | 33 +++++++++++++++++++++++++++++++++
- drivers/edac/skx_common.h | 11 +++++++++++
- 3 files changed, 46 insertions(+)
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index f45d849d3f15..355a977019e9 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -751,6 +751,8 @@ static int i10nm_get_ddr_munits(void)
- 				continue;
- 			} else {
- 				d->imc[lmc].mdev = mdev;
-+				if (res_cfg->type == SPR)
-+					skx_set_mc_mapping(d, i, lmc);
- 				lmc++;
- 			}
- 		}
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index f7bd930e058f..fa5b442b1844 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -121,6 +121,35 @@ void skx_adxl_put(void)
- }
- EXPORT_SYMBOL_GPL(skx_adxl_put);
- 
-+static void skx_init_mc_mapping(struct skx_dev *d)
-+{
-+	/*
-+	 * By default, the BIOS presents all memory controllers within each
-+	 * socket to the EDAC driver. The physical indices are the same as
-+	 * the logical indices of the memory controllers enumerated by the
-+	 * EDAC driver.
-+	 */
-+	for (int i = 0; i < NUM_IMC; i++)
-+		d->mc_mapping[i] = i;
-+}
-+
-+void skx_set_mc_mapping(struct skx_dev *d, u8 pmc, u8 lmc)
-+{
-+	edac_dbg(0, "Set the mapping of mc phy idx to logical idx: %02d -> %02d\n",
-+		 pmc, lmc);
-+
-+	d->mc_mapping[pmc] = lmc;
-+}
-+EXPORT_SYMBOL_GPL(skx_set_mc_mapping);
-+
-+static u8 skx_get_mc_mapping(struct skx_dev *d, u8 pmc)
-+{
-+	edac_dbg(0, "Get the mapping of mc phy idx to logical idx: %02d -> %02d\n",
-+		 pmc, d->mc_mapping[pmc]);
-+
-+	return d->mc_mapping[pmc];
-+}
-+
- static bool skx_adxl_decode(struct decoded_addr *res, enum error_source err_src)
- {
- 	struct skx_dev *d;
-@@ -188,6 +217,8 @@ static bool skx_adxl_decode(struct decoded_addr *res, enum error_source err_src)
- 		return false;
- 	}
- 
-+	res->imc = skx_get_mc_mapping(d, res->imc);
-+
- 	for (i = 0; i < adxl_component_count; i++) {
- 		if (adxl_values[i] == ~0x0ull)
- 			continue;
-@@ -326,6 +357,8 @@ int skx_get_all_bus_mappings(struct res_config *cfg, struct list_head **list)
- 			 d->bus[0], d->bus[1], d->bus[2], d->bus[3]);
- 		list_add_tail(&d->list, &dev_edac_list);
- 		prev = pdev;
-+
-+		skx_init_mc_mapping(d);
- 	}
- 
- 	if (list)
-diff --git a/drivers/edac/skx_common.h b/drivers/edac/skx_common.h
-index b0845bdd4516..ca5408803f87 100644
---- a/drivers/edac/skx_common.h
-+++ b/drivers/edac/skx_common.h
-@@ -93,6 +93,16 @@ struct skx_dev {
- 	struct pci_dev *uracu; /* for i10nm CPU */
- 	struct pci_dev *pcu_cr3; /* for HBM memory detection */
- 	u32 mcroute;
-+	/*
-+	 * Some server BIOS may hide certain memory controllers, and the
-+	 * EDAC driver skips those hidden memory controllers. However, the
-+	 * ADXL still decodes memory error address using physical memory
-+	 * controller indices. The mapping table is used to convert the
-+	 * physical indices (reported by ADXL) to the logical indices
-+	 * (used the EDAC driver) of present memory controllers during the
-+	 * error handling process.
-+	 */
-+	u8 mc_mapping[NUM_IMC];
- 	struct skx_imc {
- 		struct mem_ctl_info *mci;
- 		struct pci_dev *mdev; /* for i10nm CPU */
-@@ -242,6 +252,7 @@ void skx_adxl_put(void);
- void skx_set_decode(skx_decode_f decode, skx_show_retry_log_f show_retry_log);
- void skx_set_mem_cfg(bool mem_cfg_2lm);
- void skx_set_res_cfg(struct res_config *cfg);
-+void skx_set_mc_mapping(struct skx_dev *d, u8 pmc, u8 lmc);
- 
- int skx_get_src_id(struct skx_dev *d, int off, u8 *id);
- 
+Thanks,
+
+> Cc: stable@vger.kernel.org
+> Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/trace.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 1496a5ac33ae..25ff37aab00f 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5977,8 +5977,6 @@ static int __tracing_resize_ring_buffer(struct trace_array *tr,
+>  ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+>  				  unsigned long size, int cpu_id)
+>  {
+> -	int ret;
+> -
+>  	guard(mutex)(&trace_types_lock);
+>  
+>  	if (cpu_id != RING_BUFFER_ALL_CPUS) {
+> @@ -5987,11 +5985,7 @@ ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+>  			return -EINVAL;
+>  	}
+>  
+> -	ret = __tracing_resize_ring_buffer(tr, size, cpu_id);
+> -	if (ret < 0)
+> -		ret = -ENOMEM;
+> -
+> -	return ret;
+> +	return __tracing_resize_ring_buffer(tr, size, cpu_id);
+>  }
+>  
+>  static void update_last_data(struct trace_array *tr)
+> -- 
+> 2.47.2
+> 
+
+
 -- 
-2.17.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
