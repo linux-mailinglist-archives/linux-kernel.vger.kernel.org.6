@@ -1,200 +1,262 @@
-Return-Path: <linux-kernel+bounces-515130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA58A360A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F312EA360A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55B43B186D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16133B1C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBB2266594;
-	Fri, 14 Feb 2025 14:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAF626657C;
+	Fri, 14 Feb 2025 14:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1lYWQD1"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bLa9DvKo"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563FA264A9F;
-	Fri, 14 Feb 2025 14:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B3E264A9F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543987; cv=none; b=blA6Ba25xb8bm+Yj/Te/R/UzHzHmS0XnSziyzSQreiLCbhttvchStqqb9k3nvXIq4ehjl/UtO4lnE2ByiSjXem/7i4TMZ1xYMpK4mKFwgQx1fcpSkLY5ZzdLYtjDBYo5Vup20W2JfNbFiEttG8LM/+0WiCGwkUk8ht/6noiXiR0=
+	t=1739544003; cv=none; b=Ma6ay2Df/6TVWrzle799AXEGLnOZU+TtDRCJbvyREJ/76v7tEVTcols31KCMGYV5lolAOptVFPNzvSZ9EAzLe0SevcdcTFTT+I4O/6fe4p2LjbciVgbemWE6GuTuqiXsqqI4dGbCb+iRNpiNwcVdkelydpF7mu+y3omxF0DGMmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543987; c=relaxed/simple;
-	bh=NX77pwb06Kvs7WxpDXaPVihgFPdSFRjITEXfK2Hopjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jfks0SxrCjtVE7TLsl5QcHV5GKivNYfeTFv9X/TpqqK6Ad6+O8rG9JWMFaUl+PcofLIfNnNQl3NrzpO6S6MqJ1Ld9//Cesjk/Zw4P+yqk1WgMwCT69Y/Wwu+ju+JScZ1WZU431J+YkvFDdEa5Gf1JQ5hURRJB2vu/EYas+7YyCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1lYWQD1; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f9c6d147edso19887417b3.3;
-        Fri, 14 Feb 2025 06:39:46 -0800 (PST)
+	s=arc-20240116; t=1739544003; c=relaxed/simple;
+	bh=mSGPqJ7pPobo1joX6a4Mc1VuLcnH0TERvQkFnSYe+Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=FsjBqz/wZ9mesryAD7ZF0GgNs2Ek6wsXUWtT48iAN0ILNJ+zdCHphjExm6jVMsFh2p0SuDNL6voGeAF6sTwnVaseMp04FZrnVFMo+gAF7ZgFnUDZV1iM4kK/D+WP+UhpEAz/HLY5iVcuwiEDA1e18t7UW76x9zR5MgwC6Fp7TcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bLa9DvKo; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7231e264735so358494a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:40:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739543985; x=1740148785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI8KVq1D2a2mMAsVtcWo7XlUKAeczvE5EfV30VmWJCY=;
-        b=L1lYWQD1HeOZuTlLSjNWY981oW2qoKZCC/qOnmyqYQl4K+Pm17y6r12jG7xcaG+1VX
-         BbvZ2/rjdlC7W/83sZLAcah/+biNula3fnw1P0aMO2kjOCX03DpgNkW8AR0yPXy1xMYN
-         KjEHjRz6dncJ+zDuUFgltJCDd32dZK1qUKYRvmU0b6e0rSGRgvTWnttj8F/k1tJ8aOTI
-         P8RrFLxafZesdgaj8ZLSeooQXlxQdpIWXGRahoKmTqNdBSL6mVLiPLzJty0/vNThf/eW
-         fKZLL0Xx0JMnhGZ+Rc4lKzvhR0W3XH4x5B+1IrjfULcZLgzG6I9IVrCaVIa2fpwv/2YU
-         iCkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739543985; x=1740148785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1739544000; x=1740148800; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BI8KVq1D2a2mMAsVtcWo7XlUKAeczvE5EfV30VmWJCY=;
-        b=MmDABZ7Olj1WJ+JicG7nJFSEByTcLqV178qsLh9Ttld4XqtMqmP4KSn3PLjvY2Z13I
-         0xNYBylTIWdV75549CmuUzSqa+lvGf1B7DPojz8mQBm8Ve//1VAS9FbPS2Yqtc9BoxuN
-         yvtBLJUqy4twjToirMZHN8oJbjNxg05e0zWRvFZwj/plu0KLPFWzTvjpdptITAh6JQc1
-         Y4fifXB13bGu/u5NHN4pyL27GcTFmb5zTti15lrn9NVc4bN3lQilRxnhHC//thMstr3b
-         kRSIsKAbFhaDDX2OAWtFMWXLZo8PufbjUoq+BVUNkeuHqeSLWPRyKqTKuyIDcJgkr9vs
-         QGqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9zKa+ZZcNTFTQFhx5u3Jfju+l6atRRqftutvHlB8qAmNYB0JsSipfA4kgv70k8hcLd+lB9F16o+kHQI8q@vger.kernel.org, AJvYcCUyTgyuo9pBFAVqxFu+C/8z0NB64lfjKYlV0pSBkV91I5uHl9JA2mdHU6AdZ2Jrp8ARLzdj3DpzzhOhqoI=@vger.kernel.org, AJvYcCVQ25wsogKO1J9hdg0xlYTR4zgZf2i8XjS+tSG1BuEv+FXL0B/6v8VI0DdSGwVrgmCTfYojiGOc+dgBP82hx8z0mOQ=@vger.kernel.org, AJvYcCWXX19V/6efSVl3+hZ+agotxk81yqPslfj2j1zhnhzrmEozVuD+GOmCz2favD9OFCBcoK5fRjf3R5bw@vger.kernel.org, AJvYcCWu1Pe+Ct1o+OYuX9jx/Uhyn0LUJRbwsiZJmTwdPkW80koDpcNmPpCGajjFViqLQDCDqpKQVmuGceASpQ==@vger.kernel.org, AJvYcCXSa0su7Ym3VesrF+ipApPdz4if0gPGiHJ8VkqrHnh4Nx42YfPhL+6WwBTDotf2eaTnTJsrf/yG7nI=@vger.kernel.org, AJvYcCXUrhuCTJaATfRo6CuuoTcJzfVIRPRM20mF2xlJ3eiFpNmXV1FadFINdjdS1i3KC0eFDybUmeHWJrIzWiGp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtiU5bya+44KiEEY2z+atVGfKOCzl7i+swR4Uw5zs5BAMPzaXt
-	Va0MeGD/TjU6LB/3Q/phyP5cngHS9QC23pen1JE71V8UOBejNI9h
-X-Gm-Gg: ASbGnctbhFxQniYN7pDyKsH8fU59roj4JE1Y+xDcMXrGZPdYXR+Fj7eADxt7aoyc6O5
-	SuWjIcol5Dh59VkApoSu3opVFnO/z2DZYaDYFcixP+DPpMY47cuxL0IpraUirdFUvhtkBc+3VnZ
-	/i5qVcCqXeGNGdfMMWgTsN+2z6k+bBuMyeG9Bkq/nzSg7EOsaENNPE3gWc3xlKxMeYlAD0+x7Ne
-	Icjs+BCCn1SmxIu3NFio32ZFFHsImUWsLvUifKSlCosUoggp3SxBbcABrFOXMOjc+8vxRLITep3
-	sGSAYQEYlFczu/hfz6VRJ21PLBs2oxSz9xuU/mzdMbQ9ADtMaO8=
-X-Google-Smtp-Source: AGHT+IFSk6lpEhh1WcbK3saqrHokhIjyrUSazUu/lghjS/PE2nJjXAP82B0Z/67hwQGCLhksXNnAww==
-X-Received: by 2002:a05:690c:6206:b0:6ef:6fef:4cb6 with SMTP id 00721157ae682-6fb1edcc561mr119515777b3.0.1739543985181;
-        Fri, 14 Feb 2025 06:39:45 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb3609589asm7800987b3.56.2025.02.14.06.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 06:39:44 -0800 (PST)
-Date: Fri, 14 Feb 2025 09:39:43 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	qat-linux@intel.com, linux-gpio@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>
-Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
- field_{prep,get}() helpers
-Message-ID: <Z69Vr4ZGlrq7HxmT@thinkpad>
-References: <cover.1738329458.git.geert+renesas@glider.be>
- <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
- <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
- <Z5-xMUqrDuaE8Eo_@thinkpad>
- <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
- <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr>
- <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
- <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr>
- <Z6DzQHebEKBb12Wo@thinkpad>
- <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+        bh=e50JFqmY2OdzosOXKFQSp920S0Fnul4zaVHjHtIwYN4=;
+        b=bLa9DvKoGazWkcbKAxOTeIlpRunD5qz4QLnpeAMe6FRRubbg09eQ3yCFF5N0BmSemU
+         GRom7QjG+H4hyJjc3vT9ZuRYJ2E/NERW4DqVa24LR73+MBrItykDI2o9rM77jf+P/8yk
+         rENRcY/Y86uaRLpGpCyLzDprf7PbsdnpDb0qo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739544000; x=1740148800;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e50JFqmY2OdzosOXKFQSp920S0Fnul4zaVHjHtIwYN4=;
+        b=I/VKKSb6us5GjeH20mjtCK/zWIQf2X9Qh+8KT2HQymL5VthfOsFqWXxOuSdBoA/HcU
+         JjeKNeD5P/odDEiZT7xJOx9RJPWDcYQ0wkXCIMd+EmDdRix7Ic0GSCAwsa3omCuCHv/G
+         yJ73VJDgui5LwZ5KvBSbrxbQwKRFFfWD7DCacjIGovKYJGNbDFlSPLfEFG9/kB5IB6WO
+         JHPjsXWLYDe42M11Cb8LStdD+DeCnTiMUDc8+QEqQaBYmh9cvj9QVVOY+PGHoPtE+f95
+         f7UK38/PC74NcIwcLfOvay4M/9/7qqb/7IGTdKbxEVIo+7eV06D6okZU6ArUb52D6Wtz
+         HXqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcifsddCgn5HTQZw/9XipmEDvDHSeZAPzqtsOgFXLmaaIpfVlMeTttfsH+eqoWlrtvaDIh/562D9cAFaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4dPI5ZEXKuZ2yoRkNmjLWG1jbPQc/FDBX4mLHsS5q/jtJXpmS
+	l9ZIIrv9JKQ27bhvBieacQq7EYcZAdNozZlVk6xO+BVGiSmyP2E6LOMcK0yQPytKLeUGLfNfLzb
+	oT6zQPCVcqotaXV45BC4XLURxX/nmsm+hoQIO
+X-Gm-Gg: ASbGncu5cfPMl4pprp88a8fme5lQyUjxmoxWckkDRPQjTqTChqeHRVODrlTDQGNCyFc
+	55Fi8xI0LmWAicmWoxfZLhFQr6EXTZrWZXpQneHC5LLy5yES5VrqhYYKZ1TcWzSshqQJTHA2a8h
+	v1NUDw5nqoG1DN3O0TMIV/YOe5ieGE5w==
+X-Google-Smtp-Source: AGHT+IE5phE84a0UTMr4W87ScgbUlW/dFHXl7hg7/1Hl59bEFS9809KM+sJHjNr/1G9i++0cxtWwsdHrnjZkeJlT4Tg=
+X-Received: by 2002:a05:6808:30aa:b0:3eb:5372:980a with SMTP id
+ 5614622812f47-3f3e1a3dae1mr621837b6e.9.1739544000360; Fri, 14 Feb 2025
+ 06:40:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+References: <20250212032155.1276806-1-jeffxu@google.com> <20250212032155.1276806-2-jeffxu@google.com>
+ <qrxmfa6jvaojedmo6fle2e6vd5k4hzihcuxdc6zk43dclf6nsd@dvuzolusdtz4>
+ <CABi2SkUWGXtWAir5j1TO1c7FwOhbNmSwEzwTrxRgzfBydus=2A@mail.gmail.com>
+ <66q7feybn3q2vuam72uwmai322jdx3jtv2m5xmh75l6w6etqiv@knpsyh3o627k>
+ <202502131142.F5EE115C3A@keescook> <t5hsasch3aybjujmjzs3shpiorcgzp5pjc4fmz77u574voi3hr@qomzrd2llv2q>
+ <CABi2SkX3o-PdeuzownVkFT-oo8tjtaaS9ebOALu+r6O1S6W3sg@mail.gmail.com>
+ <tfoitovawb6zwr7nvwfo2mnbahgtnoo6umvecj5mgtie4b5vuf@sloraia3ppfy> <ex3y7knp5kmubeauwktvv4fdjqya7ndatzm7ht4gf773c72hc3@y4ow7k54fttj>
+In-Reply-To: <ex3y7knp5kmubeauwktvv4fdjqya7ndatzm7ht4gf773c72hc3@y4ow7k54fttj>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 14 Feb 2025 06:39:48 -0800
+X-Gm-Features: AWEUYZnFrrkgQutGRNCikvC0GjZmPuFErPnb4MZpk1qZi3Du18JPUWGyIDShPQQ
+Message-ID: <CABi2SkW_CqwNXFu9BUDfTX07aq5T8OAZern9hL=WumEWqK=ZFA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 1/7] mseal, system mappings: kernel config and
+ header change
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
+	Kees Cook <kees@kernel.org>, akpm@linux-foundation.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 12:03:16PM +0100, Geert Uytterhoeven wrote:
-> Hu Yury,
-> 
-> On Mon, 3 Feb 2025 at 17:48, Yury Norov <yury.norov@gmail.com> wrote:
-> > On Tue, Feb 04, 2025 at 12:41:55AM +0900, Vincent Mailhol wrote:
-> > > On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
-> > > > On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
-> > > >> On 03/02/2025 at 16:44, Johannes Berg wrote:
-> > > >>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
-> > > >>>>> Instead of creating another variant for
-> > > >>>>> non-constant bitfields, wouldn't it be better to make the existing macro
-> > > >>>>> accept both?
-> > > >>>>
-> > > >>>> Yes, it would definitely be better IMO.
-> > > >>>
-> > > >>> On the flip side, there have been discussions in the past (though I
-> > > >>> think not all, if any, on the list(s)) about the argument order. Since
-> > > >>> the value is typically not a constant, requiring the mask to be a
-> > > >>> constant has ensured that the argument order isn't as easily mixed up as
-> > > >>> otherwise.
-> > > >>
-> > > >> If this is a concern, then it can be checked with:
-> > > >>
-> > > >>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
-> > > >>                    __builtin_constant_p(_val),
-> > > >>                    _pfx "mask is not constant");
-> > > >>
-> > > >> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
-> > > >> any other combination.
+On Thu, Feb 13, 2025 at 5:10=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Liam R. Howlett <Liam.Howlett@oracle.com> [250213 19:14]:
+> > * Jeff Xu <jeffxu@chromium.org> [250213 17:00]:
+> > > On Thu, Feb 13, 2025 at 12:54=E2=80=AFPM Liam R. Howlett
+> > > <Liam.Howlett@oracle.com> wrote:
+> > >
+> > > > > > >
+> > > > > > > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't =
+part of
+> > > > > > > the build. This is intentional. Any 32-bit code trying to use=
+ the
+> > > > > > > sealing function or the VM_SEALED flag will immediately fail
+> > > > > > > compilation. This makes it easier to identify incorrect usage=
+.
+> > > > > >
+> > > > > > So you are against using the #define because the VM_SYSTEM_SEAL=
+ will be
+> > > > > > defined, even though it will be VM_NONE?  This is no worse than=
+ a
+> > > > > > function that returns 0, and it aligns better with what we have=
+ today in
+> > > > > > that it can be put in the list of other flags.
+> > > > >
+> > > > > When I was reading through all of this and considering the histor=
+y of
+> > > > > its development goals, it strikes me that a function is easier fo=
+r the
+> > > > > future if/when this can be made a boot-time setting.
+> > > > >
 > > > >
-> > > > Even that case looks valid to me. Actually there is already such a user
-> > > > in drivers/iio/temperature/mlx90614.c:
+> > > > Reworking this change to function as a boot-time parameter, or what=
+ever,
+> > > > would not be a significant amount of work, if/when the time comes.
+> > > > Since we don't know what the future holds, it it unnecessary to eng=
+ineer
+> > > > in a potential change for a future version when the change is easy
+> > > > enough to make later and keep the code cleaner now.
 > > > >
-> > > >     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
-> > > >
-> > > > So if you want enhanced safety, having both the safer/const upper-case
-> > > > variants and the less-safe/non-const lower-case variants makes sense.
+> > > Sure, I will put the function in mm.h for this patch. We can find a
+> > > proper place when it is time to implement the boot-time parameter
+> > > change.
+> > >
+> > > The call stack for sealing system mapping is something like below:
+> > >
+> > > install_special_mapping (mm/mmap.c)
+> > > map_vdso (arch/x86/entry/vdso/vma.c)
+> > > load_elf_binary (fs/binfmt_elf.c)
+> > > load_misc_binary (fs/binfmt_misc.c)
+> > > bprm_execve (fs/exec.c)
+> > > do_execveat_common
+> > > __x64_sys_execve
+> > > do_syscall_64
+> > >
+> > > IMO, there's a clear divide between the API implementer and the API u=
+ser.
+> > > mm and mm.h are the providers, offering the core mm functionality
+> > > through APIs/data structures like install_special_mapping().
+> > >
+> > > The exe layer (bprm_execve, map_vdso, etc)  is the consumer of the
+> > > install_special_mapping.
+> > > The logic related to checking if sealing system mapping is enabled
+> > > belongs to the exe layer.
 > >
-> > I agree with that. I just don't want the same shift-and operation to be
-> > opencoded again and again.
+> > Since this is an all or nothing enabling, there is no reason to have
+> > each caller check the same thing and do the same action. You should put
+> > the logic into the provider - they all end up doing the same thing.
 > >
-> > What I actually meant is that I'm OK with whatever number of field_prep()
-> > macro flavors, if we make sure that they don't duplicate each other. So
-> > for me, something like this would be the best solution:
+> > Also, this is a compile time option so it doesn't even need to be
+> > checked on execution - just apply it in the first place, at the source.
+> > Your static inline function was already doing this...?
 > >
-> >  #define field_prep(mask, val) \
-> >        (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))
-> >
-> >  #define FIELD_PREP(mask, val)                                         \
-> >          (                                                             \
-> >                  FIELD_PREP_INPUT_CHECK(_mask, _val,);                 \
-> >                  field_prep(mask, val);                                \
-> >          )
-> >
-> > #define FIELD_PREP_CONST(_mask, _val)                                  \
-> >         (                                                              \
-> >                 FIELD_PREP_CONST_INPUT_CHECK(mask, val);
-> >                 FIELD_PREP(mask, val); // or field_prep()
-> >         )
-> >
-> > We have a similar macro GENMASK() in linux/bits.h. It is implemented
-> > like this:
-> >
-> >  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
-> >  #define GENMASK(h, l) \
-> >          (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
-> >
-> > And it works just well. Can we end up with a similar approach here?
-> 
-> Note that there already exists a FIELD_PREP_CONST() macro, which is
-> intended for struct member initialization.
+> > I'm confused as to what you are arguing here because it goes against
+> > what you had and what I suggested.  The alternative you are suggesting
+> > is more code, more instructions, and the best outcome is the same
+> > result.
+>
+> I think I understand what you are saying now: the interface to
+> install_special_mapping() needs to take the vma flag, as it does today.
+> What I don't understand is that what you proposed and what I proposed
+> both do that.
+>
+> What I'm saying is that, since system mappings are enabled, we can
+> already know implicitly by having VM_SYSTEM_SEAL either VM_NONE or
+> VM_SEAL.
+>
+> Turning this:
+>
+> @@ -264,11 +266,12 @@ static int map_vdso(const struct vdso_image *image,=
+ unsigned long addr)
+>         /*
+>          * MAYWRITE to allow gdb to COW and set breakpoints
+>          */
+> +       vm_flags =3D VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC;
+> +       vm_flags |=3D mseal_system_mappings();
+>         vma =3D _install_special_mapping(mm,
+>                                        text_start,
+>                                        image->size,
+> -                                      VM_READ|VM_EXEC|
+> -                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+> +                                      vm_flags,
+>                                        &vdso_mapping);
+>
+> to this:
+>
+>         /*
+>          * MAYWRITE to allow gdb to COW and set breakpoints
+>          */
+>         vma =3D _install_special_mapping(mm,
+>                                        text_start,
+>                                        image->size,
+>                                        VM_READ|VM_EXEC|
+> -                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+> +                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|
+> +                                      VM_SYSTEM_SEAL,
+>                                        &vdso_mapping);
+>
+> No unsigned long vm_flags needed.  It's easier to read and I don't think
+> it's any more hidden than the vm_flags |=3D function call option.
+>
+The arch code needs a mseal_system_mappings() function. Otherwise,
+I'll have to change this line (in arch) again when I implement the kernel
+command line or pre-process opt-in/opt-out, which requires a function
+call. This isn't overthinking; based on our discussion so far, there
+are clear needs for a subsequent patch series. This patch is just the
+first step.
 
-Hi Geert,
+For software layering, I'd like to see a clear separation between
+layers. mm implements _install_special_mapping, which accepts any
+combination of vm_flags as input.  Then I'd like the caller (in arch
+code) to have all the necessary code to compose the vm_flags in one
+place. This helps readability. In the past, we discussed merging the
+vdso/vvar code across all architectures. When that happens, the new
+code in arch will likely have its own .c and .h files, but it will still si=
+t
+above mm.  That means mm won't need to change, and the
+_install_special_mapping API from mm will remain unchanged.
 
-That was my suggestion. Now that we're going to have many flavors
-of the same macro, can we subordinate them to each other? 
+The mseal_system_mappings() function can already return VM_SEALED,
+and future patches will add more logic into mseal_system_mappings(), e.g.
+check for kernel cmdline or opt-in/opt-out. we don't need a separate
+VM_SYSTEM_SEAL, which is a *** redirect macro ***, I prefer to keep
+all the important code logic relevant to configuration of enabling system
+mapping sealing in one place, for easy reading.
+
+mseal_system_mappings() can be placed in mm.h in this patch, as you
+suggested. But in the near future, it will be moved out of mm.h and find
+a right header. The functionality belongs to exe namespace, because of
+the reasons I put in the commit message and discussions.
+
+Thanks
+-Jeff
+
+-Jeff
 
