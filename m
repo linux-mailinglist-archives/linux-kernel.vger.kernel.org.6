@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-515693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116B1A367C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:49:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D659A367C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6807B3B206D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A6C1719C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74471D7E47;
-	Fri, 14 Feb 2025 21:49:24 +0000 (UTC)
-Received: from rdmp.org (unknown [195.15.247.228])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68FC1DB15F;
+	Fri, 14 Feb 2025 21:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3CIDGuR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109DD6AAD;
-	Fri, 14 Feb 2025 21:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.15.247.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3280B1C861A;
+	Fri, 14 Feb 2025 21:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739569764; cv=none; b=beb6XjA+KxbzD6U1OdK8LUssDYkPFXDMcT8tiJ/9p31z6E6S36/nflYqZr8i+CIcLf4hBsY1pGJDP+fy7PENqe2wlkmOm1J5LBBU6EsUtUVwRB7W211Zu36AvNyXKynMtgUyXVWFnajFO5kxc1VV3LxO4zUa05ZFkk9CrPfNK54=
+	t=1739569804; cv=none; b=si1HMCOdrokETn1ea4ZhNzxaXRgb9/vPyLIkUf+oo66sdfoPVUv/Yjc8kVMQtuNMjAPEN+43D895hfqMqpE8lOyNn1aNamH7XTUtEtnhfccG+QEVQLhw1c3WsJRvKVYtIte6miswaURpxVqvEvNerfuoPevJWj1b/EWEuAiLSlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739569764; c=relaxed/simple;
-	bh=QHGUexdWXPXSWTRIMc28+OFVuolzP0IFbBjSewYI37A=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=FD0hjKB/rZzpvc65l0rVp8NW/2ewP+0u7uwMNZNwgBhlOICLKv753kxZc6xhUVQ63dSBZ3Yjl6ub+58Xezu7wHTHO7GVsN6S/+7YB4cgfJUwJ8wr4Z4HStkBpNOPdT0FUs1vfQSr7fAe5mhYZ2J9mHzmviRNch2Bz4ICRDlqt9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rdmp.org; spf=pass smtp.mailfrom=rdmp.org; arc=none smtp.client-ip=195.15.247.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rdmp.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rdmp.org
-Received: from [127.0.0.1] (helo=[IPv6:::1])
-	by rdmp.org with esmtp (Exim 4.96.1)
-	(envelope-from <no-reply@rdmp.org>)
-	id 1tj3Yn-0000eq-0W;
-	Fri, 14 Feb 2025 21:49:21 +0000
-Message-ID: <d246034e111fa28a091dabb9ff34a8b322e03119.camel@rdmp.org>
-Subject: How should userland app be notified when kernel comes out of
- suspend or hibernation?
-From: Dale Mellor <no-reply@rdmp.org>
-Reply-To: mcron-lsfnyl@rdmp.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-Date: Fri, 14 Feb 2025 21:49:16 +0000
-Organization: DM Bespoke Computer Solutions Ltd
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-IV0km+MFPRDdnVzqMfVl"
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1739569804; c=relaxed/simple;
+	bh=GF6ka8bzFf9JhuTzUDSKq1VvXlcAT+2w2rdKwoJOJ+0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bcjd+zDIc+uRLSKK2IVJj8fjRPV52F/mOyZjtRqZJq4tYpWFpXH0aUP66RdE4P5v/w3ETR6nVAMyl9cL1s2RXPAwXL1JfZs2cWnTibvt9cGgYF3Y7iVRziaVdfAudGy2gc1w1HTX6zqrZHmM1K1kvx8BgeYToXw/pxucRbPQHkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3CIDGuR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96836C4CED1;
+	Fri, 14 Feb 2025 21:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739569803;
+	bh=GF6ka8bzFf9JhuTzUDSKq1VvXlcAT+2w2rdKwoJOJ+0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=p3CIDGuRbagkLjpIjLRo6JD6AUNVDSPNRLInL+WexMu3ow+g+jfMR6GsqWKC6exFm
+	 Ff7BEB1JNjG3pnuyTTzMwsW6w0OgdbwLj58nSbJCbmF2WT1laN416ovNuINCkDFvYv
+	 Eb2GB1HUpqCZAM2m+VPAJse/LRSUbN70u3FiJENtNHHIkeB4DotHWCHoMCiPxk8vfg
+	 l3yhJQ1JgM2A5jcdjK6laoYxpPIzUtULQxDwzsns7oyl9vOBcPdK8zn8I5pOogzkzb
+	 HTGElNtqDQAH7XdvfzgvFVmsSRdJDwVWepJxFQqb4gywkMDiJsJ5oFnJRLUETcsQ+G
+	 QBA60e++DG/gQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343D2380CEE8;
+	Fri, 14 Feb 2025 21:50:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: wwan: mhi_wwan_mbim: Silence sequence number
+ glitch errors
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173956983281.2115208.743152782934206798.git-patchwork-notify@kernel.org>
+Date: Fri, 14 Feb 2025 21:50:32 +0000
+References: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
+In-Reply-To: <20250212-mhi-wwan-mbim-sequence-glitch-v1-1-503735977cbd@linaro.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+ johannes@sipsolutions.net, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, johan@kernel.org,
+ abel.vesa@linaro.org, manivannan.sadhasivam@linaro.org
+
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 12 Feb 2025 12:15:35 +0100 you wrote:
+> When using the Qualcomm X55 modem on the ThinkPad X13s, the kernel log is
+> constantly being filled with errors related to a "sequence number glitch",
+> e.g.:
+> 
+> 	[ 1903.284538] sequence number glitch prev=16 curr=0
+> 	[ 1913.812205] sequence number glitch prev=50 curr=0
+> 	[ 1923.698219] sequence number glitch prev=142 curr=0
+> 	[ 2029.248276] sequence number glitch prev=1555 curr=0
+> 	[ 2046.333059] sequence number glitch prev=70 curr=0
+> 	[ 2076.520067] sequence number glitch prev=272 curr=0
+> 	[ 2158.704202] sequence number glitch prev=2655 curr=0
+> 	[ 2218.530776] sequence number glitch prev=2349 curr=0
+> 	[ 2225.579092] sequence number glitch prev=6 curr=0
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: wwan: mhi_wwan_mbim: Silence sequence number glitch errors
+    https://git.kernel.org/netdev/net/c/0d1fac6d26af
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---=-IV0km+MFPRDdnVzqMfVl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-I am the originator of the GNU mcron app, which waits (using select)
-for set amounts of time before executing some function on behalf of the
-user.  But when the system comes out of sleep the timings are all wrong
-and need to be re-evaluated.  But how does my application know when
-this needs to happen?
-
-I'm currently trying to use the ACPI netlink interface, which
-conveniently gives me a socket I can add to the select call and wakes
-me up when some power-changing event occurs.  However, there is not an
-event specifically for notifying the coming out of sleep, and different
-systems will have different hardware which reacts in this situation
-(the netlink interface has a soft specification and requires
-introspection to understand the data it delivers).
-
-What is the 'official' way to do this?
-
-
---=-IV0km+MFPRDdnVzqMfVl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABEKAB0WIQTiPCHthk/086cRTN/KRx/VAWGKSQUCZ6+6XAAKCRDKRx/VAWGK
-SXS6AJwNAmeL61cJ3jjNyLldGOzqZVpuVwCgglSPhK8sz5k5wASu7A29CcjHZFw=
-=Iqs4
------END PGP SIGNATURE-----
-
---=-IV0km+MFPRDdnVzqMfVl--
 
