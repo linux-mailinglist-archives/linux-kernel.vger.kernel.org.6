@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-514582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF3EA358D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EC2A358D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CA23A732F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA53A6E2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA7223304;
-	Fri, 14 Feb 2025 08:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69694227BAD;
+	Fri, 14 Feb 2025 08:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pERS73CN"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9pPn/G6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A112222D1;
-	Fri, 14 Feb 2025 08:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA53227B96;
+	Fri, 14 Feb 2025 08:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739521649; cv=none; b=N7mJ/1+PfkyVZKkzTu7VlH6Ju5Zv6o/Lr9HRtoTwWaG1V04c2TYmUpzrjizNE7hsoE9cHiIBpDH5/+ZT277czcNREiBaZNfdNxAY0tAD4r1JsgG0A7VDxj7BlDI9YNiQ8XlAkCPvPYCOj7urbqkOrxNnw/Bm4SVfJLslmw1QmCo=
+	t=1739521653; cv=none; b=fQM6M6xT77J2iN5iIJJhikpnB8F6CLmzvE2RitWXKzhRMHQsHWsCLZ/CmCjNctFeQ3XMSJScOzCkzzhtH0mBKfuTJxeTeFUHtjPPkHqfcR1ysCkZ5w+O2/Du2U8LayrJejLTDT/h/Hoah1H0+/sYfPBIVww465B+6Bm0pgzGj8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739521649; c=relaxed/simple;
-	bh=a8bg8TYNJ0zD/riSdpk/IyGPixwchzk6VHth/WlqQ1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kAGN3nZ8uaRrmbcYa/oYZiGyTM5q7QMw6TTwyR1Cos/LjUrbnhbJL1UPoKKMvJWoYSSmgiX2ebll6+J5FOFEeoRKeld2GYk2nfWDIYnz3ouSzHD4PwMOmmfR1iKZV/BwxrAIdyT6bI+YwCCWwcibGWS28qB+4kvIyv+gxWopjwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pERS73CN; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DED244331;
-	Fri, 14 Feb 2025 08:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739521644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MNvBJa4Q9PSMsPDhj3s1+Vt+BAwOGndJFZntHwfg/ow=;
-	b=pERS73CNJU60vhPF1OVm1TWS8RcM43zlfRPZ1EppD0bEghrGemomkYR8FoCeoLwPRfiLrq
-	SkF5/1g9soVLzzc03QJyHQGZFS2h9GfXkUcTignasl++h1B1XQtzihzXoZwIpaEbXH/SyN
-	Ch+Ga5kkfrrlZIwOuybPkZc5d2/+dgxwObuSRubmqduiiN/z0wjrFnp3qimQn1t2lBDC+n
-	MHUraA0WmTgpfxjazyRDjhs/C2JCg2rmWqlT6TqpUJ+sOIDXqHX0oGMopYifbs+hJUHfNA
-	7d5d1mmgpiSbCTT19SsqnwQHtz1FZH5AdYScflZ1uuqQ1gpJuqU30VA8rCCVHw==
-Date: Fri, 14 Feb 2025 09:27:21 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: xiaopeitux@foxmail.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Pei Xiao <xiaopei01@kylinos.cn>, kernel test
- robot <lkp@intel.com>
-Subject: Re: [PATCH] net: freescale: ucc_geth: make ugeth_mac_ops be static
-Message-ID: <20250214092721.6fadd49f@fedora.home>
-In-Reply-To: <tencent_832FF5138D392257AC081FEE322A03C84907@qq.com>
-References: <tencent_832FF5138D392257AC081FEE322A03C84907@qq.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739521653; c=relaxed/simple;
+	bh=umGs2f8JsxE41Yq3/TX60DBVwiLiOcTZOkxMPH65zVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4N9EWNy/3oC/VT/vL77SmnVutqHFQAtbdczgErWDy2CE8yQYM3zL9/ohmZGdnYqhDo/0crRVESHtewqVcamf9R8hV1jKmKbFjgPa5mHMsakBTLl83mwsZdVEtmjemP35wfbGq/iNMCr+Y79Yi9raji1noiC2o1jzHI+9yQmtiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9pPn/G6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9C2C4CEDF;
+	Fri, 14 Feb 2025 08:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739521653;
+	bh=umGs2f8JsxE41Yq3/TX60DBVwiLiOcTZOkxMPH65zVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r9pPn/G6xAXrX7koevvifKhjd8InbQfDSr4R4fneKtezV5CGNSKnrio1ZhBmBl0rm
+	 7TSZzklUVz/5t95PoK64ywDLnVLCaaJzEGW3PkLtXfILnBs3k7Pl+sY6h4wlluc2ai
+	 tL7OEWByg4+W/k1THY54Yo6sS8ODkCcmZ8hhl/PYmhggJo93c9B2oEZ3p1Md5+TGkr
+	 oJ8Q/Lclwp0rABoNHUcxxj0Jo0x6Z3ODMYSE8wvblVpR5jLykG7L+BRaKeW5OJEP89
+	 vzNK25RWx+z6c4X5AfQrIIlpXGpQCygZMIlzr1F3dKmOe1enDzve0sx59xyNec+QtK
+	 C15godChkxIkg==
+Date: Fri, 14 Feb 2025 09:27:29 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan.Wanner@microchip.com
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, claudiu.beznea@tuxon.dev, sre@kernel.org, 
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, p.zabel@pengutronix.de, 
+	linux@armlinux.org.uk, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] dt-bindings: reset: atmel,at91sam9260-reset:
+ add microchip,sama7d65-rstc
+Message-ID: <20250214-flashy-myna-of-opportunity-dce05a@krzk-bin>
+References: <cover.1739221064.git.Ryan.Wanner@microchip.com>
+ <b78ea6d7b306bca7012cff604b67b65b89b41093.1739221064.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleduiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugfelledvtdffvdekudeijeduueevvdevffehudehvdeuudetheekheeigfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgihirghophgvihhtuhigsehfohigmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtt
- hhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b78ea6d7b306bca7012cff604b67b65b89b41093.1739221064.git.Ryan.Wanner@microchip.com>
 
-Hi,
-
-On Fri, 14 Feb 2025 14:11:07 +0800
-xiaopeitux@foxmail.com wrote:
-
-> From: Pei Xiao <xiaopei01@kylinos.cn>
+On Mon, Feb 10, 2025 at 02:13:05PM -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> sparse warning:
->     sparse: symbol 'ugeth_mac_ops' was not declared. Should it be
-> static.
+> Add SAMA7D65 RSTC compatible to DT bindings documentation. The
+> sama7d65-rstc is compatible with the sama7g5-rstc.
 > 
-> Add static to fix sparse warnings.
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  .../devicetree/bindings/reset/atmel,at91sam9260-reset.yaml   | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502141128.9HfxcdIE-lkp@intel.com/
-> Fixes: 53036aa8d031 ("net: freescale: ucc_geth: phylink conversion")
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> diff --git a/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml b/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
+> index 98465d26949ee..a1c21c3880f9d 100644
+> --- a/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
+> +++ b/Documentation/devicetree/bindings/reset/atmel,at91sam9260-reset.yaml
+> @@ -23,6 +23,11 @@ properties:
+>                - atmel,sama5d3-rstc
+>                - microchip,sam9x60-rstc
+>                - microchip,sama7g5-rstc
+> +
+> +      - items:
+> +          - const: microchip,sama7d65-rstc
+> +          - const: microchip,sama7g5-rstc
+> +
 
-Thanks for fixing this,
+No need for blank lines around. It's making it unnecessary long.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Maxime
+Best regards,
+Krzysztof
+
 
