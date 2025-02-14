@@ -1,158 +1,195 @@
-Return-Path: <linux-kernel+bounces-514907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D488A35D27
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:56:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38A7A35D39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEBF97A18C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB85171F35
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C7263C6B;
-	Fri, 14 Feb 2025 11:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7A3263C6B;
+	Fri, 14 Feb 2025 11:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lr6T6Ymv"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VuvKN/86"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE1A275412
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B58221541;
+	Fri, 14 Feb 2025 11:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739534205; cv=none; b=e7p4l/ge+eN5Q2vqWYFGOJNovAKn1XDHL81jf4i/uRKfWkyt0hk/hj5SD1InwHQu4wNTUIN1Q1fSo2Dg+YVTjsUb6qoJjOrsCp/ReJMpB1Ghs71hcB2pwNyHidEXezXhQqHhZYLjiSBPzrEcIXb29ELZ4wtnpK4rRiEanMHq5C4=
+	t=1739534216; cv=none; b=TqoCEOADpMxJTDfr2P79OsJUBUNGvpoJrtRnUAgDHSQcDvJJke66RSEP3XOoU13fikQfSoi0JfInG1nTQ3C2QKTCIW0/E6vpHMs7XOqx/p0QGTrZP4BUs+AcMoTNUj3UN3rJyGi76yaWJaUnIdssrymbvIQTDVefzajmumt+axw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739534205; c=relaxed/simple;
-	bh=L9c0JFwKJ9yBA/bjUoNYqEyW/Hf5BnPlVV9B509rjMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=JetmFO7SrYHC8HK5teVnlzU2/W4ZfpT1NddEh8C+dntBG9Nlo23JUD1QnkZH3uJtYNMZHPV9HhuDyryvnkskJgiXoPzArsjuCbDHXmMpPgU56BAEiD1vTsPcYzHAmn5GLbKSFj0Oc5sgPB663qvKf/SlEpQY9/NdEE1tyH3f44U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lr6T6Ymv; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43962f7b0e4so11211905e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739534202; x=1740139002; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rMR3vBvnlqm3PumoLJkgqkpo27BYfX73XjJodLfEdDU=;
-        b=lr6T6Ymvvs0NN4MQ+uTCllni4Jeiq/HySPebjIdwf7zm11vj2a4AkzQEFMS7dLtokG
-         PEQ922cQBAgZbttxrFZxEFFSb5kYe7JkWftw62e95DSAcHGSKphTuyGJUAG5r5c+j0ro
-         Gw+1s6S8GlBd/ZIrV8rrlwVjuCUeFC6/bBWL7+3jJWJP6lcTZuTg32QeGQJpdMvKgLeB
-         1TrqV+Lu6Oj+RFMcfX+/GESnX+vDxtbsGIhAv2cCSVZH73V2lxq0DKxQMA1IQpEYTUz9
-         rAK753sp8dB9Bz4CIOe5f9Td/rIowPkoR5RJI95XxSySrVK413CwBlTDr6J9WHxPpQus
-         nI0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739534202; x=1740139002;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rMR3vBvnlqm3PumoLJkgqkpo27BYfX73XjJodLfEdDU=;
-        b=tMD57zMegd22SFoOJwpxLV4TbkzXTzL7f2rg4E+6gUD+YzphAL1l2QEscYc7UZoOpS
-         iNsn5oyZPemokSSXI9sjks4WoEj++xQ7PsXjLnEQWtgFRGxPcU+D60USPiLA4mdUPpVI
-         Vud2N+WPYgWzpjbTKcQT9QPb0ABuuuStwv0mkLj9FaahbNuoXWWK9dCvsVkoWFyVS4Tx
-         89Kpj+L15QDDpDcJGd1B7pvA+HunpZARSgvhzp/0tRfDypUPpzlTzt1Drxk8nhXoODgV
-         BdWPkgqxrJJ5lNbmTdw48IOOTBF4pCrtY4Cz/4uVs1BWtDKK8Qx1DnW4SlzmmgoAGeIi
-         hWVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUr4lYgHEk2HCd2uBj/fU4dqr2IWZZ/Sq9mLzjUl8X69yAf2+69MRPFGN8vXIdH1jVvFBtBZQ6odJdtel4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOtsV81GvtN+GadyT7Awn6B1+uRmxiFuL2A2TF0IthVKTLtfFC
-	XAO8N2djWN4rRyTAR4fEHCfFlqCDXCfCIq2cTtKFWkJBlZDIQQVNgXF5JN0joex6SQ4cm/bDCQO
-	taFGhE8vYFQjiyKz7dgbDGjoDq9iFCyHybWNF
-X-Gm-Gg: ASbGncuyRhwzDFdTNP7V8UxIVCDPNai8yIMw/Y6bhh1hc1ukqecmmbpQ4Zmd7fFjv29
-	/25QrTf89JBTGM3Uy8/OpEGY9sqBt16nNumUNqksN519PIYmti5GS4UvQphZunyNVQZLAfYipFX
-	zdse6qfVZVdlwyQ43Bi1if6Ftfd80=
-X-Google-Smtp-Source: AGHT+IEZ22UUGVhiiq7xVdL7CJD3HC6qEtfMJUPWWKc2YPQxG9qXcYyvAelDw5b/vP4y3rllPzdwoOMfF19GqBCkam8=
-X-Received: by 2002:adf:e9cc:0:b0:385:f7ef:a57f with SMTP id
- ffacd0b85a97d-38f244edb57mr6988765f8f.27.1739534202310; Fri, 14 Feb 2025
- 03:56:42 -0800 (PST)
+	s=arc-20240116; t=1739534216; c=relaxed/simple;
+	bh=FC6cHtpFmo9WG6l7crjEmz9kgRp7okbpmsc+ca1qwDk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VdxiYM0Mijr/7TBZvac++mDWgUCR3DZr5bCVNF+mTknwAYfUM6HMHIGI+d2+jx6kJNqRBRDDUM0/XVERmEJuVLLRis55bTCTTH0fsc6JV4GHY2WY29axWDSOwH0AMyJ59cc+Wsagq8AwyhYKMCRvnMlhQdId7gWz5tE8He4lzao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VuvKN/86; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739534214; x=1771070214;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=FC6cHtpFmo9WG6l7crjEmz9kgRp7okbpmsc+ca1qwDk=;
+  b=VuvKN/86+pxkADxibMbI+CRL+z+i04T/EGxx3Gc1/zCr+rvKZaKgIhY2
+   jdFPzQ7V8yfe00xnqENJeW1y1B0ambb0SrKqm9/EFB4+mos0jT2Wm85sI
+   UUJ7T5dK+eqXHgBwpqmHcbK0tKAKEHTgluDG3UYcyPiwXQ0MLP9bIu+Cp
+   MjcX1GzoL/OHfncaCBLD3sTTKRYSMPpKb2L6pld62Eq2LQbNgKHCmXMDs
+   KKHu1X2TLAUzq0HEdrwsirfuTP78Y1fhhV5q53dSjNTBu3YTRalYF7EG/
+   78BSRQqFyZ01OtxHpq5I4lDWX1BcDB44QGW49zDFRUZQwyYbSNsiOLl+j
+   w==;
+X-CSE-ConnectionGUID: 5cHRazCfRrCgrJWuN9GeRw==
+X-CSE-MsgGUID: CuH5xwwRTm+lL+MYEkl5Sg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="62744499"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="62744499"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:56:54 -0800
+X-CSE-ConnectionGUID: Xqp4iC4HQ2KoSQIoW7voTA==
+X-CSE-MsgGUID: XvTbuJ/HQlaTsnjUCVRnbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150615629"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:56:51 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Feb 2025 13:56:47 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    Karolina Stolarek <karolina.stolarek@oracle.com>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, linuxppc-dev@lists.ozlabs.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] PCI: Descope pci_printk() to aer_printk()
+In-Reply-To: <20250213221043.GA136196@bhelgaas>
+Message-ID: <91014487-c584-af8c-9810-48291a16b643@linux.intel.com>
+References: <20250213221043.GA136196@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-vma-v14-0-b29c47ab21f5@google.com> <8130a6d5-a7e5-402b-b05c-2d0703ac1ed2@lucifer.local>
- <CANiq72nBx3cRTUC9HWVR8K64Jbq3GCVMss5wuABzra3OLhRUQw@mail.gmail.com>
- <c8e78762-1429-4ab6-9398-ce52370eec08@lucifer.local> <CANiq72mKyvoyk_tgbMKUdzs-sJOoyEH7f1M9ipiET+XYgwCqRw@mail.gmail.com>
- <2d132129-fdf7-404d-b1f1-8ee87b838dcf@lucifer.local> <b6b5tnaw6vnuib7nzcm7ajszxiptqz3i2hex5yengzbsirztks@l3coijkqwtpb>
-In-Reply-To: <b6b5tnaw6vnuib7nzcm7ajszxiptqz3i2hex5yengzbsirztks@l3coijkqwtpb>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 14 Feb 2025 12:56:29 +0100
-X-Gm-Features: AWEUYZmWqwY5t_8PDQeT_6I9FVQA4YJBfP9c7yKAgf-iSodbVpOlpCnJ67_smRA
-Message-ID: <CAH5fLgjMC2Q1tjuVtbhMvU-pmEsn1Ai4=AAB3Tm8HTWi7PFHfg@mail.gmail.com>
-Subject: Re: [PATCH v14 0/8] Rust support for mm_struct, vm_area_struct, and mmap
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Balbir Singh <balbirs@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; BOUNDARY="8323328-1614684521-1739533222=:944"
+Content-ID: <2580e7ea-ab5e-88a3-f089-e7774e6b27da@linux.intel.com>
 
-On Thu, Feb 13, 2025 at 8:46=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250213 07:16]:
-> > On Thu, Feb 13, 2025 at 01:03:04PM +0100, Miguel Ojeda wrote:
-> > > On Thu, Feb 13, 2025 at 12:50=E2=80=AFPM Lorenzo Stoakes
-> > > <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > Right, I don't mean the rust subsystem, I mean designated rust
-> > > > maintainers. The point being that this won't add workload to Andrew=
-, nor
-> > > > require him nor other mm C people to understand rust.
-> > >
-> > > Sounds good, and apologies for being pedantic, but given the recent
-> > > discussions, I thought I should clarify just in case others read it
-> > > differently.
-> > >
-> > > In the same vein, one more quick thing (that you probably didn't mean
-> > > in this way, but still, I think it is better I add the note, sorry): =
-I
-> > > don't think it is true that it will not add workload to Andrew or MM
-> > > in general. It always adds some workload, even if the maintainers
-> > > don't handle the patches at all, since they may still need to perform
-> > > a small change in something Rust related due to another change they
-> > > need to do, or perhaps at least contact the Rust sub-maintainer to do
-> > > it for them, etc.
-> > >
-> > >     https://rust-for-linux.com/rust-kernel-policy#didnt-you-promise-r=
-ust-wouldnt-be-extra-work-for-maintainers
-> > >
-> > > Cheers,
-> > > Miguel
-> >
-> > Ack, for the record I'm happy to help with any work that might come up.
->
-> Ack, here too.
->
-> Without the drama, I'm not sure how we'd feel so alive :P
->
-> Can I be added to whatever list so I can be Cc'ed on the changes on your
-> side?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I'm happy to format the entries whichever way you all prefer, but for
-example it could be a new MAINTAINERS entry below MEMORY MAPPING along
-these lines:
+--8323328-1614684521-1739533222=:944
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <0337222c-5138-e394-0891-fe22bb2b35e1@linux.intel.com>
 
-MEMORY MANAGEMENT/MAPPING [RUST]
-M: Alice Ryhl <aliceryhl@google.com>
-R: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-R: Liam R. Howlett <Liam.Howlett@oracle.com>
-L: linux-mm@kvack.org
-L: rust-for-linux@vger.kernel.org
-S: Maintained
-F: rust/helpers/mm.c
-F: rust/kernel/mm.rs
-F: rust/kernel/mm/
+On Thu, 13 Feb 2025, Bjorn Helgaas wrote:
 
-Alice
+> On Mon, Dec 16, 2024 at 06:10:12PM +0200, Ilpo J=E4rvinen wrote:
+> > include/linux/pci.h provides low-level pci_printk() interface that is
+> > only used by AER because it needs to print the same message with
+> > different levels depending on the error severity. No other PCI code
+> > uses that functionality and calls pci_<level>() logging functions
+> > directly with the appropriate level.
+> >=20
+> > Descope pci_printk() into AER as aer_printk().
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> I applied this patch by itself on pci/aer for v6.15.
+>=20
+> We also have some work-in-progress on rate limiting errors, which
+> might conflict, but this is simple and shouldn't be hard to reconcile.
+>=20
+> > ---
+> >  drivers/pci/pcie/aer.c | 10 +++++++---
+> >  include/linux/pci.h    |  3 ---
+> >  2 files changed, 7 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> > index 80c5ba8d8296..bfc6b94dad4d 100644
+> > --- a/drivers/pci/pcie/aer.c
+> > +++ b/drivers/pci/pcie/aer.c
+> > @@ -17,6 +17,7 @@
+> > =20
+> >  #include <linux/bitops.h>
+> >  #include <linux/cper.h>
+> > +#include <linux/dev_printk.h>
+> >  #include <linux/pci.h>
+> >  #include <linux/pci-acpi.h>
+> >  #include <linux/sched.h>
+> > @@ -35,6 +36,9 @@
+> >  #include "../pci.h"
+> >  #include "portdrv.h"
+> > =20
+> > +#define aer_printk(level, pdev, fmt, arg...) \
+> > +=09dev_printk(level, &(pdev)->dev, fmt, ##arg)
+> > +
+> >  #define AER_ERROR_SOURCES_MAX=09=09128
+> > =20
+> >  #define AER_MAX_TYPEOF_COR_ERRS=09=0916=09/* as per PCI_ERR_COR_STATUS=
+ */
+> > @@ -692,7 +696,7 @@ static void __aer_print_error(struct pci_dev *dev,
+> >  =09=09if (!errmsg)
+> >  =09=09=09errmsg =3D "Unknown Error Bit";
+> > =20
+> > -=09=09pci_printk(level, dev, "   [%2d] %-22s%s\n", i, errmsg,
+> > +=09=09aer_printk(level, dev, "   [%2d] %-22s%s\n", i, errmsg,
+> >  =09=09=09=09info->first_error =3D=3D i ? " (First)" : "");
+> >  =09}
+> >  =09pci_dev_aer_stats_incr(dev, info);
+> > @@ -715,11 +719,11 @@ void aer_print_error(struct pci_dev *dev, struct =
+aer_err_info *info)
+> > =20
+> >  =09level =3D (info->severity =3D=3D AER_CORRECTABLE) ? KERN_WARNING : =
+KERN_ERR;
+> > =20
+> > -=09pci_printk(level, dev, "PCIe Bus Error: severity=3D%s, type=3D%s, (=
+%s)\n",
+> > +=09aer_printk(level, dev, "PCIe Bus Error: severity=3D%s, type=3D%s, (=
+%s)\n",
+> >  =09=09   aer_error_severity_string[info->severity],
+> >  =09=09   aer_error_layer[layer], aer_agent_string[agent]);
+> > =20
+> > -=09pci_printk(level, dev, "  device [%04x:%04x] error status/mask=3D%0=
+8x/%08x\n",
+> > +=09aer_printk(level, dev, "  device [%04x:%04x] error status/mask=3D%0=
+8x/%08x\n",
+> >  =09=09   dev->vendor, dev->device, info->status, info->mask);
+> > =20
+> >  =09__aer_print_error(dev, info);
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index db9b47ce3eef..02d23e795915 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -2685,9 +2685,6 @@ void pci_uevent_ers(struct pci_dev *pdev, enum  p=
+ci_ers_result err_type);
+> > =20
+> >  #include <linux/dma-mapping.h>
+> > =20
+> > -#define pci_printk(level, pdev, fmt, arg...) \
+> > -=09dev_printk(level, &(pdev)->dev, fmt, ##arg)
+
+Both shpchp and aer do use pci_printk() before this series (it seems LKP=20
+has also catched it already).
+
+If you split this series into different branches, this removal of=20
+pci_printk() has to be postponed until the next kernel release (fine for=20
+me if that's what you want to do, just remove this part from this patch=20
+and perhaps adjust the commit message to say it's to prepare for removal=20
+of the pci_printk()).
+
+> >  #define pci_emerg(pdev, fmt, arg...)=09dev_emerg(&(pdev)->dev, fmt, ##=
+arg)
+> >  #define pci_alert(pdev, fmt, arg...)=09dev_alert(&(pdev)->dev, fmt, ##=
+arg)
+> >  #define pci_crit(pdev, fmt, arg...)=09dev_crit(&(pdev)->dev, fmt, ##ar=
+g)
+
+--=20
+ i.
+--8323328-1614684521-1739533222=:944--
 
