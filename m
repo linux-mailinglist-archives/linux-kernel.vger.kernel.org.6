@@ -1,138 +1,150 @@
-Return-Path: <linux-kernel+bounces-515110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F37A36057
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9DFA3606D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D0617065F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FC616FF0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277265BAF0;
-	Fri, 14 Feb 2025 14:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA922661AC;
+	Fri, 14 Feb 2025 14:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLhsbqXO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED59264A82
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I5cXHKML"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4D35BAF0;
+	Fri, 14 Feb 2025 14:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543148; cv=none; b=OfD6yTZSvI9sSoL6EBMMSxelaJQvwlRp4YjAbPKZhMbVnPQIGD/i9QSo9SRPcjJt/qfYN4QQcxJqzKhlEq7b1jnJtDxCNUDGm9/CVuCVGcF7+VE6Fayn8fAxET9f43l33bA7g5+CaD2rtqOE7Vz/L/XLd5NdEec9m/fmmkSxXN8=
+	t=1739543342; cv=none; b=Tn5lNFrrMgXCgZfO2acD6Oab64HDee4i5prhMVARyWQF7PItRLJN4LCwiTb8MOUSHtv9HLr95OxLFPI5Jmx6slDbj8LpoZ55Bf3i6IHGQ0rROmOHRr+qUvE2nG2nBoKI4RclOIoS4x97ayHl2zel0RYoQYjbZFDrXawBsG8+cFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543148; c=relaxed/simple;
-	bh=6xxF8rN9zTbbJvAKtEFfPHJFOxmzYocfsTr66zyc7NE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Uk4i4uh8+0Z3Pi6WPyyEJM1RdrwqiSlW4rhP0MGoBpD8AaK6dFFiIo9oK36PavCDjs/eGP6/K0/AWijgJWPTPIvrXzqjYTetzg//0GW8oRGSSfN7wsmegwjH7+lHqBMytV2WcvenMbixagOrQPeOv/MlxdPD1AcSDHPER/8pOfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pLhsbqXO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5452c29bacfso577752e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:25:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739543145; x=1740147945; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dl5R/TPlYSsamCEAGU/chHrDqvXleYXJuMFs3tfWros=;
-        b=pLhsbqXOkUiLgZmQNrlhIL+npPiAG4DD02qteoxNI2Enz7ISAco6BnlZslGFA9Np0e
-         VqOp6TdxRnaj+xhhiFgEv46/UYJDnuVr7gjQF3ha0RgG65GPyAd0oYY7NUMjjS8SA5hT
-         208D+z/F4iwMkS66Eppjbgi4w+gVhi5vCL2Yw8OK8pH1V4ZueCFc/InVYk71SfBmJ1Mb
-         2TPHCFVdfjMINcrF/eMWKqPX0VqI6X3XU0TtzpK+iqB442IPHjtKrYa6LqolYqJzHyp/
-         WLvidx14zh1B96zm5wnpsMcmZ/0Er+5+WcHZp3M20gcIRFqEMUv8seo9GmRLqpF4S1uM
-         jyoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739543145; x=1740147945;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dl5R/TPlYSsamCEAGU/chHrDqvXleYXJuMFs3tfWros=;
-        b=a5Z+1Wapb4El6bV3lQRPh0I/qgqJHbf5o7g6vgLnqkoUD5dHohc3dFBa7SlhEzfHjU
-         5hdeyK3g1B4jT2dRXGbtenpoA+tsi1AZs72uGc0tVWGtucs3fR957Zzm9c6oQOPV14SD
-         h5HiE0yKiKkZsbgO04T25eQp9xITIY/T3a5IlOHgDYUN4Ar4JD2gQM0GKgYl2ldEqC67
-         NGIF5gDqhKk8bp6Ai7kbivvmbGhFiCnXgoscDRsGiMV41R6ico3I9ce9oyrXQtKLKSLW
-         0qVu+6caHR+6v4aP6efJlv5hS+uzmQwHndLXhQLOF1b0gH8DIufSrpvvKJ51QJ1hfiwq
-         cfLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNncWdyVN/1Mfqsi4S6FhTTI04nIo7QDcTc2kvF2lBGPX3VQ4/RCue8HKzDYXWIVZ8Xoih6UHDNgKDA2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwK7k/weYcY5Pjo6Xym27tc+idh2pzfOXAjzC9qhXmA931K/4D
-	7nQw5JDcSILmB01ZIMKG2MI5OTj9FgvFidAvyHY+Y8R3BwPFiHnqMYIvlpxKpxU=
-X-Gm-Gg: ASbGncvY7kMXZX/L4rNgKQg9qFTzHz3fnRRBOPNw4PYRNJ2jUPH77opZdWSR8mn/NHQ
-	JOjIfsQvXUb+ee6IYwYjiNXTh8L+K+2+xqrv80YvkD9KSt/SFoj3lmmDVk+PZ72CRxAgKWTmWLu
-	pQlmXU93Lm/6I9is2DY63pup2ghVMtq0i81Q/pfUZtl/75VpElKT1F4lrIqKzxEfaNDnUCvKiry
-	1P5MYmw97fXDyKNvFeX/VryLPvrv1eALpKSf85thfBz/8ttEHqTPLBo9w4vIScmNOX8jfgqFuco
-	l/NIdEhoTNSuxJVZXfoMkig=
-X-Google-Smtp-Source: AGHT+IG3qQ7eIYwNQ5AV7acWuEKmZCbpl/3HmRIO72Nu4b3+s5EH8gvvqKp/+KRrPfoqr1QpJz7Ybw==
-X-Received: by 2002:a05:6512:31d3:b0:545:1ce0:6409 with SMTP id 2adb3069b0e04-54525c863e1mr1333734e87.17.1739543144772;
-        Fri, 14 Feb 2025 06:25:44 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f11ed9asm537281e87.228.2025.02.14.06.25.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 06:25:44 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 14 Feb 2025 16:25:39 +0200
-Subject: [PATCH] arm64: defconfig: Enable Qualcomm QCM2290 GPU clock
- controller
+	s=arc-20240116; t=1739543342; c=relaxed/simple;
+	bh=MrEM/iHmIbineORQLS8NmrG1GLmj/4CMf3zVWTU8Asc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tteqJhbrumLX5Tfsn05gPWrpG7kVgl2et+PJ6hHrZYCGUW7E+HEXQ69LJPqW/BTVJUOmh35apklKiLhmAI6pkJ9Y1EeiNsZ+5X8QpYto5auCpjI+YLGPuDFsUl6OvK88RHfDf40HmGenHRxk6IOsJ5MKox6fNfGI/Vz9RIZhbsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I5cXHKML; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=ZWPwF0vF6Snifzn+9M+0+9hnpb87+w9sonDEwMS6fNg=;
+	b=I5cXHKML20836aQvCf1KDjmXYIdHk3/mIIaFz5L+MRZQoCqaRkjY1U0uOFX3iL
+	lylQ1vxeyXuByRDPhy0e6qK8N6nrOGxPKBvAEHIFf1vNCDqXxLlhQ9T/CMVgTsWG
+	zso7uH9njwPCaVXDvh5GGSQZmTyIwied5dLyzbetZO+mo=
+Received: from [192.168.243.52] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3Pw_8Uq9n_qCGMA--.61782S2;
+	Fri, 14 Feb 2025 22:28:13 +0800 (CST)
+Message-ID: <332ec463-ebd9-477c-8b10-157887343225@163.com>
+Date: Fri, 14 Feb 2025 22:28:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3] PCI: cadence: Fix sending message with data or without data
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, bwawrzyn@cisco.com, cassel@kernel.org,
+ wojciech.jasko-EXT@continental-corporation.com, a-verma1@ti.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rockswang7@gmail.com
+References: <20250207103923.32190-1-18255117159@163.com>
+ <20250214073030.4vckeq2hf6wbb4ez@thinkpad>
+ <7eb9fedc-67c9-4886-9470-d747273f136c@163.com>
+ <20250214132115.fpiqq65tqtowl2wa@thinkpad>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250214132115.fpiqq65tqtowl2wa@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-rb1-enable-gpucc-v1-1-346b5b579fca@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGJSr2cC/x3MSwqAMAwA0atI1gaa4ge8irhI26gBqdKiCOLdL
- S7fYuaBLEklw1A9kOTSrHssoLoCv3JcBDUUgzW2NZYaTI5QIrtNcDlO77FnMUxu7gIxlOxIMuv
- 9L8fpfT9gW9QVYgAAAA==
-X-Change-ID: 20250214-rb1-enable-gpucc-7ae0a1bf6d1a
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1033;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=6xxF8rN9zTbbJvAKtEFfPHJFOxmzYocfsTr66zyc7NE=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnr1JmrZctNMY2SC0FwBsqAPL/Wa4leScAw+aOH
- c/U0nJ3IVWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ69SZgAKCRCLPIo+Aiko
- 1ev8B/96pSdQHwskzz8nqCgS4dPCDq5EuP9h3QpyDtwik9pLtkKqs2W224QjBPgecx/ZB3L17xo
- M+dTkK35qmTS66cimuorUsXjJJbyHvrPjl3ck7FGaQy4fx6uCTQz3z8YZ/PEFWJ+R0+cLZojGCv
- sanq5j0Z1XDajo/l3FUNzBNFVNCyL5ysqXLLuImchG1y1BBriELDs+gapjymBGApxH93rMfqYPe
- pwchqjMJticrGkG22vs5rcSezkRYs8+LKBOdI2xyHYMVatP0ycjZTXuRCrxveIcNWXx5ReQfPS5
- XeC2eM0q2VTPMaf1Tm3yqQ3nOWki1OedRrL7PYrX/glNddbp
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-CM-TRANSID:_____wD3Pw_8Uq9n_qCGMA--.61782S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZryUWFWxCr4kAr1kKFW3Wrg_yoW5tFy7pF
+	W8GFyFyF1xXrW3ua1vvw4kGF13tan3tay7Wr4qk34xuFnF9FyUGFy7KFy5WrW5GrWvqr17
+	ZwnFqF9rGFsIya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBVbkUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxfzo2evIoSj1wACsQ
 
-Enable GPU clock controller for the Qualcomm QCM2290 SoC. This chip is
-used e.g. on the Qualcomm Robotics RB1 platform. The clock controller is
-required for the GPU and GPU IOMMU to work on that device.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da44155999b59aff95966f4cdc9107f2af46a..7e475f38f3e1146dc0f742d13ffbc2d0648e2de5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1320,6 +1320,7 @@ CONFIG_CLK_X1E80100_DISPCC=m
- CONFIG_CLK_X1E80100_GCC=y
- CONFIG_CLK_X1E80100_GPUCC=m
- CONFIG_CLK_X1E80100_TCSRCC=y
-+CONFIG_CLK_QCM2290_GPUCC=m
- CONFIG_QCOM_A53PLL=y
- CONFIG_QCOM_CLK_APCS_MSM8916=y
- CONFIG_QCOM_CLK_APCC_MSM8996=y
+On 2025/2/14 21:21, Manivannan Sadhasivam wrote:
+> On Fri, Feb 14, 2025 at 04:23:33PM +0800, Hans Zhang wrote:
+>>
+>>
+>> On 2025/2/14 15:30, Manivannan Sadhasivam wrote:
+>>> On Fri, Feb 07, 2025 at 06:39:23PM +0800, Hans Zhang wrote:
+>>>> View from cdns document cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf.
+>>>> In section 9.1.7.1 AXI Subordinate to PCIe Address Translation
+>>>> Registers below:
+>>>>
+>>>> axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
+>>>>
+>>>> Signed-off-by: hans.zhang <18255117159@163.com>
+>>>> ---
+>>>> Changes since v1-v2:
+>>>> - Change email number and Signed-off-by
+>>>> ---
+>>>>    drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 +--
+>>>>    drivers/pci/controller/cadence/pcie-cadence.h    | 2 +-
+>>>>    2 files changed, 2 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+>>>> index e0cc4560dfde..0bf4cde34f51 100644
+>>>> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
+>>>> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+>>>> @@ -352,8 +352,7 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
+>>>>    	spin_unlock_irqrestore(&ep->lock, flags);
+>>>>    	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
+>>>> -		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code) |
+>>>> -		 CDNS_PCIE_MSG_NO_DATA;
+>>>> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
+>>>>    	writel(0, ep->irq_cpu_addr + offset);
+>>>>    }
+>>>> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+>>>> index f5eeff834ec1..39ee9945c903 100644
+>>>> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+>>>> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+>>>> @@ -246,7 +246,7 @@ struct cdns_pcie_rp_ib_bar {
+>>>>    #define CDNS_PCIE_NORMAL_MSG_CODE_MASK		GENMASK(15, 8)
+>>>>    #define CDNS_PCIE_NORMAL_MSG_CODE(code) \
+>>>>    	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
+>>>> -#define CDNS_PCIE_MSG_NO_DATA			BIT(16)
+>>>> +#define CDNS_PCIE_MSG_DATA			BIT(16)
+>>>
+>>> Oops! So how did you spot the issue? Did INTx triggering ever worked? RC should
+>>> have reported it as malformed TLP isn't it?
+>>>
+>> In our first generation SOC, sending messages did not work, and the length
+>> of messages was all 1. Cadence fixed this problem in the second generation
+>> SOC. And I have verified in the EMU environment that it is OK to send
+>> various messages, including INTx.
+>>
+>> And that's what Cadence's release documentation says:
+>> axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
+> 
+> I'm confused now. So the change in axi_s_awaddr bit applies to second generation
+> SoCs only? What about the first ones?
+> 
+> Are you saying that the first generation SoCs can never send any message TLPs at
+> all? This sounds horrible.
 
----
-base-commit: ed58d103e6da15a442ff87567898768dc3a66987
-change-id: 20250214-rb1-enable-gpucc-7ae0a1bf6d1a
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Sorry Mani, I shouldn't have spread this SOC bug. This is a bug in RTL 
+design, the WSTRB signal of AXI bus is not connected correctly, so the 
+first generation SOC cannot send message, because we mainly use RC mode, 
+and we cannot send PME_Turn_OFF, that is, our SOC does not support L2. I 
+have no choice about this, I entered the company relatively late, and 
+our SOC has already TO.
+
+
+This patch is to solve the Cadence common code bug, and does not conform 
+to Cadence documentation.
+
+Best regards
+Hans
+
 
 
