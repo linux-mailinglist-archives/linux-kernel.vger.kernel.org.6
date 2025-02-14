@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-515605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76165A3669A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:58:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387B6A3669D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D134E3AA790
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:58:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471AB7A511A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742CD1D86F6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FBD1D89FA;
 	Fri, 14 Feb 2025 19:58:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146D61C84D3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D921C84DE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739563106; cv=none; b=GJRJBfu9gdpgEQtcqQ+KCFR6x/tedYBlgj+ikZkByBemlZ1UK4L0//qMt+zM9kl1zyWzjLURTKZ5WVVKOcJn/T13FsvC1shsYpgke7QzlibmLbGAWZJbTh+coJ3/sgehoosyjALAcRlotn/C7amaja5ZHoEvN3sAPgUdZ7IZVzs=
+	t=1739563107; cv=none; b=GoNTijAWCvbuX+pO/3Lzn+ShDBVIUfuHcwWhvpWJKle0HKbu+VRzlAar3rMsLqdjAi8D74uHOy8KEjrRbeSfjNAgmU4YxQbIykvW7dSaoDBxzoKu0c1GDUAD/bXaYck6o0ITd9XcF0or+kFM9wy7XLEirquxBd/tUUSczT9NLwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739563106; c=relaxed/simple;
-	bh=u62DfdFPqMOlpW/t8+oq41SSN+rRR0Fo+yB1gLtmVTg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cQ+tipux8T5QgOdeGuxFp9wLDUgwi9w/31OOxD8CfZ/AG+z13wn50/4AlyuHkM8AwLVIYywBfRy2S4OQk1o3W1WzsVHaJ5U69I4xZ4sjqlOQw6U6g5rNcpTivnAuUpjuKe+Dt2QDrBq0WIiMJdJZvROgCrExhgVcPUAXYadbARE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+	s=arc-20240116; t=1739563107; c=relaxed/simple;
+	bh=An93+tleFgQMT+Nla8JNOYOWFmX9GqrpN51TLo+yq9A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DWjO9mmvSTBMY/RT0OF7yVukPalWXbD0B2O7nWPYIKohEdTEuSqQ968/CspDpehBJsS7MEiwq9KwKfG1yKwejtWM6m8tkHN7Ohe4yFw+JnN0H4j2eZsEynZHm5TQJ3wA4/dABbDe/DxKy3CttimUFXDa19Tg4WPcPh0izFQ84/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d19ef3c791so6199895ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:58:24 -0800 (PST)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d197e97959so23849345ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:58:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1739563104; x=1740167904;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KqRQoSZnv/gGJuddlBS17e372/f1y6XChurYxkkRb/0=;
-        b=U+z2Z1i+VBTKsF3T3/7yESQryE22XVvCt24I6z1RBbY8gXah1v1GzVmalRsf45blfA
-         b/D856WwVZorpl8Nbc1FaWl1ytfTmuysZoGUCttv02c5WVwMQaIEfETqGNKWP0ra/P5e
-         MjHxJyVNLKd6l/U0fWSwZWEnp4haR2djvk+lvw4m3+1qBFGLACZ/5GN0QeIYYFAtOfXQ
-         Q4tovrfCDCW5JecqadgChsTclPbmjx+yO5k47ytjqRz3EwD75DsChEoRhpKdguKuJ4Gp
-         lM0vyy9D0HWL4Y7121s901ku4e7IZnfAvZL7H4FfJKEpbJVgq1LxfgHH0D1Vcf8ZQzmJ
-         3yXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs0n7TB6ssA0lmjPIiHkQu9kOqm/JwlgaRf20YPxRJZ9DAL5CABrc6/wqkHG7c5CG0j6FemPnLnq7inDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjqOH9+EAzbRkaJZuC4PwIrDm8b8lKzYO75yqeiol12FuM6eF4
-	iuzsjv3R3DlzgE4xXopJjnKlG26nPaY+WH+nNkNIBNDnIu4Wj6kcSP0FTEXr/UNV416ZvF1yyBC
-	BCEOBm1jGYINH8mTJHm5uHeomL/3vOzl662Bt6NeTp1a4o4YJuvB8W0I=
-X-Google-Smtp-Source: AGHT+IGP+y+URfIXFQWIDNemuujA9KX5PGz9DGIndOumem3fjQhb9WPsHzLG5fjIrgCwKsG4MPSkfQ2o9/KYy4ogK+G27ypi6WxE
+        bh=gnX8N2DEEYYmILHFY2tHj2QH8gdUdw/2zdatoc/JaG8=;
+        b=juYMNMyUJNqlyVSaYo7I+Er7DAnpV9sB8Ty3j97gsIpFqDlG8AaB9CeYkDzOj3Ds85
+         h+gDzm27Rgqeu9Sn1Tws32N6SIr8SOg/DIfDr1CZ2aPDC4bUJdPCCcUm5BeORsgSK/yA
+         e5hZSTixuuAELoM7p+HycHsHsIaG0iSzcWuYZZhspSZ+qcR2cWe/KwBKagYbGhb2Ytjj
+         R468ZEr1QsrWw0UtmBSJN7/KAVPf68qb6RdZt8aF1NeWH6eMPLf5NdZtDFMuKcBxj61n
+         zESCHx/gXMQjxikLZS5VNEK2tSClbJdalQeomvWjqbTujCIOp2C4rMrKPea51cPsRpVL
+         BSRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBnqx2Y1XACcKngV+ETqIBNQLg36TNKzhX2Jpf8EB7l7G0n23rd0F5oXdHPQp1jbNe5aoXoyJ/lLsQRNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2FHW/nbnZyPHGMC07Buo2bd9Ez/agCIsH2MPAy2wQazyiS+1X
+	Yo3EG94HliubP6Qy2OnxC5UDCqvRdaLNdvOVcpw2hxCaw+gSGDDRYO3H20LMPvnLH5MRD2ahbgQ
+	56YNmkK/os4yPbJBPu8Zqv/0fXPAhWAKnJ4Fu8vJ0ZIVM4ccFvyqRQMc=
+X-Google-Smtp-Source: AGHT+IFDoFH0lR33XpdUFRtuUBmJT/pGH49QkI9Rr8mJg0K4ANZWwdrVJ/pA3YINgwrIdf8UFM3h6Rbkz70rZ+ddvnvwgIYe8J7U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8b:b0:3d1:5f67:f0e6 with SMTP id
- e9e14a558f8ab-3d281e01fb8mr4135775ab.1.1739563104232; Fri, 14 Feb 2025
+X-Received: by 2002:a05:6e02:12c2:b0:3d1:99b1:153c with SMTP id
+ e9e14a558f8ab-3d2807b0f46mr5893205ab.7.1739563104470; Fri, 14 Feb 2025
  11:58:24 -0800 (PST)
 Date: Fri, 14 Feb 2025 11:58:24 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67afa060.050a0220.21dd3.0051.GAE@google.com>
-Subject: [syzbot] [block?] BUG: corrupted list in loop_process_work
-From: syzbot <syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, zhaoyang.huang@unisoc.com
+Message-ID: <67afa060.050a0220.21dd3.0052.GAE@google.com>
+Subject: [syzbot] [scsi?] UBSAN: shift-out-of-bounds in sg_build_indirect
+From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
+To: James.Bottomley@HansenPartnership.com, dgilbert@interlog.com, 
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	martin.petersen@oracle.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    c674aa7c289e Add linux-next specific files for 20250212
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=125063f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0fd539126ae5541
-dashboard link: https://syzkaller.appspot.com/bug?extid=c104904eeb2c0edbdb06
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158a3bdf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e18aa4580000
+HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15908bf8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=40c8b8384bc47ab0
+dashboard link: https://syzkaller.appspot.com/bug?extid=270f1c719ee7baab9941
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149a87df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167a8f18580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cc5b357d26d3/disk-c674aa7c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/11dcf272a27b/vmlinux-c674aa7c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4e487b1c1c6e/bzImage-c674aa7c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4ea41e9eae4d/mount_0.gz
-
-The issue was bisected to:
-
-commit 3bee991f2b68175c828dc3f9c26367fe1827319a
-Author: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-Date:   Fri Feb 7 09:19:42 2025 +0000
-
-    loop: release the lo_work_lock before queue_work
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=161029b0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=151029b0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=111029b0580000
+disk image: https://storage.googleapis.com/syzbot-assets/da4c858d8649/disk-128c8f96.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4bd8410dd596/vmlinux-128c8f96.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/038939e96f8b/bzImage-128c8f96.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com
-Fixes: 3bee991f2b68 ("loop: release the lo_work_lock before queue_work")
+Reported-by: syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com
 
-list_add double add: new=ffff88807fe21c70, prev=ffff88807fe21c70, next=ffff888024c29160.
 ------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:37!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.14.0-rc2-next-20250212-syzkaller #0
+UBSAN: shift-out-of-bounds in drivers/scsi/sg.c:1897:13
+shift exponent 64 is too large for 32-bit type 'int'
+CPU: 1 UID: 0 PID: 5832 Comm: syz-executor361 Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Workqueue: loop0 loop_workfn
-RIP: 0010:__list_add_valid_or_report+0xa4/0x130 lib/list_debug.c:35
-Code: f7 74 11 b0 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 48 c7 c7 40 e5 60 8c 4c 89 fe 4c 89 e2 4c 89 f1 e8 fd 88 35 fc 90 <0f> 0b 48 c7 c7 40 e3 60 8c e8 ee 88 35 fc 90 0f 0b 48 c7 c7 e0 e3
-RSP: 0018:ffffc90000117628 EFLAGS: 00010046
-RAX: 0000000000000058 RBX: 1ffff1100ffc438e RCX: 89e05f8d6ffcb000
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: 1ffff1100498522d R08: ffffffff819f562c R09: 1ffff92000022e60
-R10: dffffc0000000000 R11: fffff52000022e61 R12: ffff88807fe21c70
-R13: dffffc0000000000 R14: ffff888024c29160 R15: ffff88807fe21c70
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff4b64ffe00 CR3: 000000007cfa4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add_tail include/linux/list.h:183 [inline]
- loop_process_work+0x1f96/0x21c0 drivers/block/loop.c:1977
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
- worker_thread+0x870/0xd30 kernel/workqueue.c:3398
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x24f/0x3f0 lib/ubsan.c:468
+ sg_build_indirect.cold+0x1b/0x20 drivers/scsi/sg.c:1897
+ sg_build_reserve+0xc4/0x180 drivers/scsi/sg.c:2007
+ sg_add_sfp drivers/scsi/sg.c:2189 [inline]
+ sg_open+0xc37/0x1910 drivers/scsi/sg.c:348
+ chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0x735/0x1c40 fs/open.c:956
+ vfs_open+0x82/0x3f0 fs/open.c:1086
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x1e88/0x2d80 fs/namei.c:3989
+ do_filp_open+0x20c/0x470 fs/namei.c:4016
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1dc41ca3e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeaa93f3d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007ffeaa93f5a8 RCX: 00007f1dc41ca3e9
+RDX: 000000000008a002 RSI: 00004000000000c0 RDI: ffffffffffffff9c
+RBP: 00007f1dc423d610 R08: 00007ffeaa93f5a8 R09: 00007ffeaa93f5a8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffeaa93f598 R14: 0000000000000001 R15: 0000000000000001
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid_or_report+0xa4/0x130 lib/list_debug.c:35
-Code: f7 74 11 b0 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 48 c7 c7 40 e5 60 8c 4c 89 fe 4c 89 e2 4c 89 f1 e8 fd 88 35 fc 90 <0f> 0b 48 c7 c7 40 e3 60 8c e8 ee 88 35 fc 90 0f 0b 48 c7 c7 e0 e3
-RSP: 0018:ffffc90000117628 EFLAGS: 00010046
-RAX: 0000000000000058 RBX: 1ffff1100ffc438e RCX: 89e05f8d6ffcb000
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: 1ffff1100498522d R08: ffffffff819f562c R09: 1ffff92000022e60
-R10: dffffc0000000000 R11: fffff52000022e61 R12: ffff88807fe21c70
-R13: dffffc0000000000 R14: ffff888024c29160 R15: ffff88807fe21c70
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff4b64ffe00 CR3: 000000007cfa4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+---[ end trace ]---
 
 
 ---
@@ -156,7 +134,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
