@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-514288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC17A35521
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:01:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5280A35522
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D187A29B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58FC718914BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD2D18EA2;
-	Fri, 14 Feb 2025 03:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5ho3Lu6"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9B15199F;
+	Fri, 14 Feb 2025 03:01:40 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF952753FD
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EF3126C1E;
+	Fri, 14 Feb 2025 03:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739502075; cv=none; b=nZNT3AIREPLc8Gj73gb32c1S8wdjJc4GkdniwmNLUo2zU7hsb81bHgBJ9CQp8QTVXt5iFi9qQ93Fcf6xL7SpdEjb0vsFmhlCJDbeuDOfcjeq5+P/WSl3ayjZEbPxOZ1Mzn1nWlIZUbluU9no2yWClQXu+cvIQ8535HexmLArdiE=
+	t=1739502100; cv=none; b=LIjPupKDWg9PEJ86hM98lLt5ebykHHBiDp0hyUEmwJWnXWMrIBiSkuHDJGoZVvGEaX630mSIC7uFjkq4ayNimEf/JKGrBF26zj85yD7eRu2DqCBhq4X7KmkQuEa7QPX8CRwCYi1uauHR7iB42NUhTdDM+BJj6B5E5me3oJfMeEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739502075; c=relaxed/simple;
-	bh=KJvJysIsmaf/18xTfixy0CXTPEbocyW1TH3mI92lQS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSJ5hThOcjsaT0EFuq5q/ga0e98mPRQPSQKMf+noiVdZSaRQUyjUEgIL5r+ZeCF1hK5kfmR2vejBSkkMzlb/ry3krPYVDWxaHX3s4qy9Fn1dr3pY/En6MHDC21g7o54+OKpXyD/P05yw4RaQyMH8LqYfU2eiQEy0+jvletYqtms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5ho3Lu6; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54505a75445so1816707e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:01:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739502071; x=1740106871; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CphyPEj/nIGWcbqF531VSGV3qr1xTmbTkezkMFIl3Eo=;
-        b=L5ho3Lu6mXUbTmwggrCtI9W4Px6+JTFFHDPejrJQJvLNHlounyTUVCqYXxzkZY1Ui6
-         XfUabC10xhvnwZhXVdNmsjPoylNUYpIJOaqfjZtCAO8sPcfyXl0c49InSk4Dnt0go4XU
-         2sMXWorlgcGdERb3lJDkCOFJrZLYGnZH8VwXnixoemyDj7VW7XAkLTdGLtTC0hs0gj6s
-         /4lu8khF4QJF3+75oDkLKDz/VFxZ7twb/CO4nTYzWXwucQzkMg+MrmnDDqMZUUJ44iPR
-         YDtgS3q3fK2HN44mQpmQsRDEVNl2EGiF1UPASwBFPtr/hlBsqgj2GGOS2cDcQmP85P9R
-         wXxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739502071; x=1740106871;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CphyPEj/nIGWcbqF531VSGV3qr1xTmbTkezkMFIl3Eo=;
-        b=h21dS4aan2aHwY2KK/M5h7ZEH65kbO3gvoDx0rF86a8oeR/D3nhkDD3BpwobyJcE3P
-         Mop9aQmEUATYKaFeq6e2A/lgZgIxkceKSu7QESzCqtiq+9hHkWtKgvjepdgIhLcCGWBJ
-         C45LctWc2JIr5RbBvc3vNafY2hR28lOTs9ngxeno7JlKc13UbUKLJLjESSpDDa51ZxVO
-         n63f4cAWdmRGddzhAYlkjkwi/mN9XeqDZJgOA9mrPLamQCAfg10PdODIlg1VLHHrdeVu
-         eNj24Yi2W+CKx9tYJwg1t9+YB7pzfCQQHeu+Ms0mK3pGGXb3ryEihjp5sExtVWDT2Jrz
-         7a7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUv3hhoCYqrK8QJWT+6WMtu7z1ECD728217HPcuhVZEyFZnyfJuaNx/FLf4Cgj3msOHTpA58j/BqudcLs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKL7VdvvGSiM14LJ17ZAsM/ZCyjn+g/mdtd/TJaiN+YEn3/R1+
-	KxEaekvX+X4dM8ZVfJf1YEJDnGre6q15ftboTVAS6ORkb56eUdZaPcRkA7QTLJoJtkpPYilrfwr
-	vALIiuA==
-X-Gm-Gg: ASbGncuasjfeF5MjOUqv/ppz7dZIab/u0tufl/G8dEfW+/HoOPLeXPuPEa3fMXjBK8L
-	yGwVyPzN4fQMt+vb/ewtauqi8QyFY8ZbeY1ZpZ3R4iWhj2OjJrzsIp+PQRV3QcLZZVVr7UFtqBy
-	wCoi4d5Nl2mTZ2ICu7amdIrvB1UcsnXQpsxG43LMmZycTwclQDOOruE3jtc/DOkDGKTWWf7vlvc
-	qgAT97MQTEgAJcih/M/kbKFKHteA4YqcNnEGmAJ4BRdw6aNc4lHbZtjl4bOA9PN9R7WKxgGVrC2
-	J6+wpc0Xr4KSoh2EqchoXuf6Ipqfjoh1ivkXClxxmwGaGNdsuSottMTh38Jg8A0vKJcyaTk=
-X-Google-Smtp-Source: AGHT+IGas8108vTEmDl4sEKFFTKnVpl5R5NBfMLQH3mhDRcxgPA6rZImG+SqWw4u3LxjJ3511SnHWw==
-X-Received: by 2002:a05:6512:31d3:b0:545:271d:f85 with SMTP id 2adb3069b0e04-545271d119fmr268944e87.29.1739502070997;
-        Thu, 13 Feb 2025 19:01:10 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105c9dsm361169e87.121.2025.02.13.19.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 19:01:09 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:01:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: aruhier@mailbox.org
-Cc: Sebastian Reichel <sre@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] power: supply: qcom_battmgr: abs() on POWER_NOW
- property
-Message-ID: <p5tszocxa7mcazgxsnt3gnv547m523gde2hj2yekiuoimm6rsy@pzofvxngb4ul>
-References: <20250213-patch-qcomm-bat-uint-power-v1-1-16e7e2a77a02@mailbox.org>
- <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
- <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
+	s=arc-20240116; t=1739502100; c=relaxed/simple;
+	bh=15IRzAhxRAQrT8Dl0CxkcNAaO8CmkIYwIa3eHZ10E7w=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MPsXf7rQk3aGRUJCDY0R+adIj39C0fhvLRNzn+IaQMw84Xc/lRf2+I5JpOtgXlCYI60QwO7Km2fxUrdFHH3ifHPJpEhKpSxyEaJrOKdeRq6JlRnRVqlx1WiB6d6SZCH4O/YlXVy376LOA/GOAYD+uq1BU2WRPYeTbn+M4Gthbxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YvGz00K9Wz4f3jqr;
+	Fri, 14 Feb 2025 11:01:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 292C01A14C4;
+	Fri, 14 Feb 2025 11:01:32 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP3 (Coremail) with SMTP id _Ch0CgB3ysQKsq5nzY3yDg--.17850S3;
+	Fri, 14 Feb 2025 11:01:31 +0800 (CST)
+Subject: Re: [PATCH v3 md-6.15 11/11] md/md-bitmap: introducet
+ CONFIG_MD_BITMAP
+To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com
+Cc: linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250123020730.2003602-1-yukuai1@huaweicloud.com>
+ <20250123020730.2003602-12-yukuai1@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <4e113774-e74f-874f-0e80-256c7bf1b508@huaweicloud.com>
+Date: Fri, 14 Feb 2025 11:01:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
+In-Reply-To: <20250123020730.2003602-12-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgB3ysQKsq5nzY3yDg--.17850S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFy7tFWkJF4DJr1xGFWruFg_yoW8uw43pF
+	4UG34fCrW5XF4jga1UJFWUCFySkwn2grZrArWrGwnakF9rX3sxXa1kWFWjvwn5GrWfJFsx
+	Zr4rKr4Duw4DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Feb 14, 2025 at 02:36:17AM +0100, aruhier@mailbox.org wrote:
-> On Fri, Feb 14, 2025 at 12:24:18AM +0200, Dmitry Baryshkov wrote:
-> > On Thu, Feb 13, 2025 at 05:51:38PM +0100, Anthony Ruhier via B4 Relay wrote:
-> > > From: Anthony Ruhier <aruhier@mailbox.org>
-> > >
-> > > The value for the POWER_NOW property is by default negative when the
-> > > battery is discharging, positive when charging.
-> > >
-> > > However on x1e laptops it breaks several userland tools that give a
-> > > prediction of the battery run time (such as the acpi command, powertop
-> > > or the waybar battery module), as these tools do not expect a negative
-> > > value for /sys/class/power_supply/qcom-battmgr-bat/power_now. They
-> > > estimate the battery run time by dividing the value of energy_full by
-> > > power_now. The battery percentage is calculated by dividing energy_full
-> > > by energy_now, therefore it is not impacted.
-> > >
-> > > While having a negative number during discharge makes sense, it is not
-> > > standard with how other battery drivers expose it. Instead, it seems
-> > > standard to have a positive value for power_now, and rely on the status
-> > > file instead to know if the battery is charging or discharging. It is
-> > > what other x86 laptops do.
-> >
-> > Documentation/ABI does not define ABI for the power_now. However for
-> > current_now it clearly defines that it can be positive or negative.
-> >
-> > >
-> > > Without the patch:
-> > >     $ acpi
-> > >     Battery 0: Discharging, 98%, discharging at zero rate - will never fully discharge.
-> > >
-> > > With the patch:
-> > >     $ acpi
-> > >     Battery 0: Discharging, 97%, 10:18:27 remaining
-> > >
-> > > ---
-> > > Signed-off-by: Anthony Ruhier <aruhier@mailbox.org>
-> > > ---
-> > >  drivers/power/supply/qcom_battmgr.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > --
-> > With best wishes
-> > Dmitry
-> 
-> I see. But as it breaks existing tools when power_now is negative, should we
-> change the behavior of these tools or adapt the driver?
-> 
-> As it does not seem common that power_now and current_now are negative in
-> other drivers, tools using these values rely on the status anyway. I'm
-> wondering if it provides anything to keep this behavior.
+Hi,
 
-I think it is a problem of the 'acpi' tool. At least 'upower -d' uses
-fabs internally since the initial commit in 2008.
+ÔÚ 2025/01/23 10:07, Yu Kuai Ð´µÀ:
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 264756a54f59..9451cc5cc574 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -83,6 +83,9 @@ static const char *action_name[NR_SYNC_ACTIONS] = {
+>   static LIST_HEAD(pers_list);
+>   static DEFINE_SPINLOCK(pers_lock);
+>   
+> +static LIST_HEAD(bitmap_list);
+> +static DEFINE_SPINLOCK(bitmap_lock);
+> +
+>   static const struct kobj_type md_ktype;
+>   
+>   const struct md_cluster_operations *md_cluster_ops;
+> @@ -100,7 +103,6 @@ static struct workqueue_struct *md_wq;
+>    * workqueue whith reconfig_mutex grabbed.
+>    */
+>   static struct workqueue_struct *md_misc_wq;
+> -struct workqueue_struct *md_bitmap_wq;
+>   
+>   static int remove_and_add_spares(struct mddev *mddev,
+>   				 struct md_rdev *this);
+> @@ -650,15 +652,73 @@ static void active_io_release(struct percpu_ref *ref)
+>   
+>   static void no_op(struct percpu_ref *r) {}
+>   
+> +void register_md_bitmap(struct bitmap_operations *op)
+> +{
+> +	pr_info("md: bitmap version %d registered\n", op->version);
+> +
+> +	spin_lock(&bitmap_lock);
+> +	list_add_tail(&op->list, &bitmap_list);
+> +	spin_unlock(&bitmap_lock);
+> +}
+> +
+> +void unregister_md_bitmap(struct bitmap_operations *op)
+> +{
+> +	pr_info("md: bitmap version %d unregistered\n", op->version);
+> +
+> +	spin_lock(&bitmap_lock);
+> +	list_del_init(&op->list);
+> +	spin_unlock(&bitmap_lock);
+> +}
+> +
+> +static struct bitmap_operations *find_bitmap(int version)
+> +{
+> +	struct bitmap_operations *op = NULL;
+> +	struct bitmap_operations *tmp;
+> +
+> +	spin_lock(&bitmap_lock);
+> +	list_for_each_entry(tmp, &bitmap_list, list) {
+> +		if (tmp->version == version) {
+> +			op = tmp;
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&bitmap_lock);
+> +
+> +	return op;
+> +}
 
--- 
-With best wishes
-Dmitry
+Noted that, we already have pers_lock and pers_list for personalities,
+md_cluster_ops and md_cluster_mod for md-cluster. Now, add bitmap_lock
+and bitmap_list is a bit ugly.
+
+I decided to refactor this a bit, by adding a new struct
+md_submodule_head and unify all sub modules registeration,
+unregisteration and lookup. Will send a set soon :)
+
+Thanks,
+Kuai
+
 
