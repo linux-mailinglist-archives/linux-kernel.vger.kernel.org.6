@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-514564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A49A35894
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:13:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84542A35896
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499A5188ECB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA0F1890924
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E83221DA4;
-	Fri, 14 Feb 2025 08:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDFD221DA0;
+	Fri, 14 Feb 2025 08:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbhEhqDY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C0221550;
-	Fri, 14 Feb 2025 08:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="q/+O1SlJ"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87161221550;
+	Fri, 14 Feb 2025 08:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520784; cv=none; b=qw47UhzpdHjnWXIY26kGa29kl544YjOVIuqCSOd7im0N9LfNzdxzS5DwmXOgFiOumb5ol4DI4mVKkA+UGrgx/DolHoIHvRv/fEa8mMVUNJ92Rrb3CYvkozO38tFTvZ5K7uGBMmSuh1QPVv3Da489Ojv6HmW7lU5Uph1bebmrGv4=
+	t=1739520832; cv=none; b=YF+04m1MKzi+yYzXGGYV4DfRdquRIjvMnroAXl9pGpA+ur8lV0T6H9fx5AmaTjyzusPHe8XVHGA0aG4Vid6wPDggp0pB8EN52tiwLlklWKZ3nW0nsa+PhLmaf7k5h9P6CVQlsM+xJ0vfvQFOXVsCO/tOhmnUkJYoC/ruDRka4uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520784; c=relaxed/simple;
-	bh=Ja8vLEEdp2iURJ4Q1c/Tui7Jki+HDJyr8wVl3EMQiII=;
+	s=arc-20240116; t=1739520832; c=relaxed/simple;
+	bh=LJiZ59p6Axmgy3TaUBc91/SHBQguF8RKPES2VLQ4O2w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUA1h/ARsngUIQDFPwb4lbd91oJK9+SE3VpBz6pvx47HO64uihTb+3seafMITwC2NOAE3xTgA+UO4m3jHTvn0m8NSBFCDGfI2CKm4+p6LQifFJpbO0zLoaPPHYYSf2t1uFG37fUT9dhmeK4vbSPxvEL3zKuovpFoYpkY6/4Nn9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SbhEhqDY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B698C4CED1;
-	Fri, 14 Feb 2025 08:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739520784;
-	bh=Ja8vLEEdp2iURJ4Q1c/Tui7Jki+HDJyr8wVl3EMQiII=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUvwYAijIcaaPzrmuSzafqWtTLY0c5GGcucu3nlCj6CrZfSHkMhdAiIP0pTxCizPmGsjxKWZ6QPQ8JaHH9CDRx1pT/7bEplMPAB8ZIEe4HFJ3OeTZupXATTi6oU9OAQMb87vMzWgKu8mH1pdUWHCUA4hR0iBZTz8nYz5FW17EZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=q/+O1SlJ; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 823AE426C2;
+	Fri, 14 Feb 2025 09:13:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1739520823;
+	bh=LJiZ59p6Axmgy3TaUBc91/SHBQguF8RKPES2VLQ4O2w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SbhEhqDYJmwhyU/9lkdItHHzpBhtgcENB5PpXiR5cWIeGnjdaLCKtfziXDuKR7Kqa
-	 yc1pSq9d8Lyy3nrf8CBmTTTHLI7ldhwZ3RTjco9iCeQthXAVclAHogT7TXyGp69yCQ
-	 HI2x4XHcKuzAt418PltMChS16Qu0NnZ2asG8vYwxY5SEsqEk0sN45ggWONGrWenKE8
-	 1xm46qZJtfLuoJ2drrPDbxrv1yRnRzpPp6t+/5CSsNQEVg7/lEIWNxsU9h488ywcBr
-	 rEB+Ety64oxCxi2JBDLTTt4I/xlbLgdFLOY9vu8kJX4XRbz0L7usQrAYlrts/GC9pp
-	 lwXTlOEnQKvZQ==
-Date: Fri, 14 Feb 2025 09:13:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 4/8] perf: arm_pmuv3: Add support for ARM Rainier PMU
-Message-ID: <20250214-vivacious-savvy-bee-fcdbd9@krzk-bin>
-References: <20250213180309.485528-1-vincenzo.frascino@arm.com>
- <20250213180309.485528-5-vincenzo.frascino@arm.com>
+	b=q/+O1SlJslEG0kGMD8QjcSficyTidI5durjKb299TXe6ygT9u2ygYose5M8dFZmZ0
+	 iOeKhZ0m+um1cWM5mMBZSvM/yyW0VqMxaBWZ7v1VSrXFZezreXECj5Y4Wi9gghkKG+
+	 l3x3Fa2OGSa9Dz+FgWFftVQt/wreyVZm5AmUIDKFsRp2zRSz/opRL1oto1aWG74KhC
+	 6QjnpQ1qF+MbSG97eKUfHhF7pvvGAyPE+s0SZAyRlKyTGwjIWvtb7F4fR2xID3YD1a
+	 Up50QUFTDQJLATbQmmkM6xWHiigzvlOYd52uTrsXWFa6Ni5iUJm7Sr8WKCl+/JFMwe
+	 UZX1A/vnBvJqg==
+Date: Fri, 14 Feb 2025 09:13:42 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vasant Hegde <vasant.hegde@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the iommu tree
+Message-ID: <Z677NjlRfHdOmdiy@8bytes.org>
+References: <20250212081251.0a1eda6d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213180309.485528-5-vincenzo.frascino@arm.com>
+In-Reply-To: <20250212081251.0a1eda6d@canb.auug.org.au>
 
-On Thu, Feb 13, 2025 at 06:03:05PM +0000, Vincenzo Frascino wrote:
-> Add support for the ARM Rainier CPU core PMU.
+Thanks Stephen. This is fixed now.
+
+On Wed, Feb 12, 2025 at 08:12:51AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Note: Coherently, add dt bindings for the same PMU.
+> In commit
 > 
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  Documentation/devicetree/bindings/arm/pmu.yaml | 1 +
+>   a1bb25cad5ab ("iommu/amd: Expicitly enable CNTRL.EPHEn bit in resume path")
+> 
+> Fixes tag
+> 
+>   Fixes: c4cb2311110 ("iommu/amd: Add support for enable/disable IOPF")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     This can be fixed for the future by setting core.abbrev to 12 (or
+>     more) or (for git v2.11 or later) just making sure it is not set
+>     (or set to "auto").
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Bindings are separate patches.
-
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also 'scripts/checkpatch.pl --strict' and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
-
-Best regards,
-Krzysztof
 
 
