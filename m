@@ -1,152 +1,161 @@
-Return-Path: <linux-kernel+bounces-515322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A824DA36332
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:35:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387BDA36339
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A903B182B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5364171C2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD5A2676E8;
-	Fri, 14 Feb 2025 16:33:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221F426772E;
+	Fri, 14 Feb 2025 16:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JfCors0/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A4D7E0ED;
-	Fri, 14 Feb 2025 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162E27E0ED;
+	Fri, 14 Feb 2025 16:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550833; cv=none; b=DeXnacj6yP6I8zcNxToay+jPbW356uUghilJME8R8bkLp3jWKZo+gE3eG5eYqhx9VtVda6utX/baIzgIig02IGncqyWOIG5tPaxB+jKn2V4Wm5A3Q9hzbwfiSKt6tX9GGJ1eET4rEkJhxCWVQ0Nk4m2lUdVZcde0nkKPWY9PdVY=
+	t=1739550840; cv=none; b=VQi8XWqKth8f99qdfDH/2BevNPqQZYfclAGnJigzYcFR2cWkAwgnF2h7d1ceCKnbq2HBvNG2/sQMCTiH+5dTlCgcoQylmX0NQImZkP4AlMJguHUVSa6xiBuuQr1gVj/HTYvbQqsTIF5InF0vNj9Mh6KP4V2zIN9YqnPLUveFA90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550833; c=relaxed/simple;
-	bh=gFDaOmwQbOF+QYMqI3l9zMjrHfJ7vsGvcdEoLzNNtHE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=baxzOQLTRBeWuRJWgGCrbD6RvbXAO/aASenUyuMKBSQIKuP31pF9tjq4XHcDBMFoyxuPNax4KptpNeyC/gZ2WSQcqv769vdizRHj+R9iGksQVIuqsViBBrPbWvBS+cG4h56VXQMm0r6RNKVjRkO9olC9TG1u7X9oewFifby7RyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvcwx6P7Vz6L531;
-	Sat, 15 Feb 2025 00:30:41 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CC39C140B39;
-	Sat, 15 Feb 2025 00:33:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 17:33:48 +0100
-Date: Fri, 14 Feb 2025 16:33:46 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 14/18] cxl/region: Unfold cxl_find_root_decoder()
- into cxl_endpoint_decoder_initialize()
-Message-ID: <20250214163346.00007ade@huawei.com>
-In-Reply-To: <20250211095349.981096-15-rrichter@amd.com>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-15-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739550840; c=relaxed/simple;
+	bh=vrqTB4+ICaBW4Z+0D/sKuGHjCSB6CunXPwqXMI/Y1DY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c3WRtr9dFFeGJrfnyg2XA2HEE8uSxSHarkP8sns5WbZFz7arwVuHi0+sbaXfz5tkoESFUiXEgllZQAFCUkR9cUzXHD1XLeK4uNX6Xm6nN9/LyS5zlydt+Jk9hElUnqwHs2HNC0siXF01nmSq5zZ8Ns+V75ENI+RBzMTfkjUcBg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JfCors0/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739550839; x=1771086839;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vrqTB4+ICaBW4Z+0D/sKuGHjCSB6CunXPwqXMI/Y1DY=;
+  b=JfCors0/XGb5Ha3Q9aGILslyhZwQAPQb2sVkBEn1KCnqFIX+Ij4tPKK2
+   LnKKK1cI+3SZcqCgXDabjdnwkaiylFOfvsmE8JpnZgMoKnm+tJbqNO5S7
+   SnUIYcSXilnQiX9TB7RD5NnAWhtghzEbxnQEfH17XFlsAeWLG/aFuL5b0
+   9vxUzm8HIKpGBpLalxX1+wolCzH9Or/sgVpkewrOi6zfQsEoGnrJEzWTu
+   Fl/Fc/pUfXTuA9UWQ0YGMVhTNhSsgyfNBpb5nztTVP4gHCbAw7j/rWCM/
+   Uko3mH2AuyTnLYXkMdJL6XxGBpmI7zn92/gK54cf0pNHVHos0ZCQ8g2ZS
+   w==;
+X-CSE-ConnectionGUID: Zwuksd3KRXCImcg2gk8MUA==
+X-CSE-MsgGUID: GnzpRRJ+T5iqKlADmPUzhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57711767"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="57711767"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:33:59 -0800
+X-CSE-ConnectionGUID: gtwMTw4LQd20LAb0Z5FL9Q==
+X-CSE-MsgGUID: UFH8Q20xT0yLo6bvq4Br+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="114011033"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.34]) ([10.125.109.34])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:33:58 -0800
+Message-ID: <6c8ac7d8-aca7-4d1c-8c0d-0016cd3114fe@intel.com>
+Date: Fri, 14 Feb 2025 09:33:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/5] dmaengine: idxd: fix memory leak in error handling
+ path of idxd_setup_wqs
+To: Shuai Xue <xueshuai@linux.alibaba.com>, vkoul@kernel.org,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250110082237.21135-1-xueshuai@linux.alibaba.com>
+ <20250110082237.21135-2-xueshuai@linux.alibaba.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250110082237.21135-2-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 11 Feb 2025 10:53:44 +0100
-Robert Richter <rrichter@amd.com> wrote:
 
-> To determine other endpoint parameters such as interleaving parameters
-> during endpoint initialization, the iterator function in
-> cxl_find_root_decoder() can be used. Unfold this function into
-> cxl_endpoint_decoder_initialize() and make the iterator available
-> there.
-I'm not following this description at all. Perhaps this needs
-to wait until you have code that is reusing this to find those
-interleave parameters and similar.
 
-For now it just looks like a sensible bit of cleanup where there
-was just a single caller of cxl_find_root_decoder()
-
+On 1/10/25 1:22 AM, Shuai Xue wrote:
+> Memory allocated for wqs is not freed if an error occurs during
+> idxd_setup_wqs(). To fix it, free the allocated memory in the reverse
+> order of allocation before exiting the function in case of an error.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
 > ---
->  drivers/cxl/core/region.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
+>  drivers/dma/idxd/init.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 72e991e7d9ab..ebcfbfe9eafc 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3220,8 +3220,7 @@ cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
->  	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
->  }
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 234c1c658ec7..6772d9251cd7 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -167,8 +167,8 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
 >  
-> -static struct cxl_root_decoder *
-> -cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
-> +static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
->  {
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_port *iter = cxled_to_port(cxled);
-> @@ -3232,7 +3231,7 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  		iter = to_cxl_port(iter->dev.parent);
->  
->  	if (!iter)
-> -		return NULL;
-> +		return -ENXIO;
->  
->  	root = cxl_port_find_switch_decoder(iter, hpa);
->  	if (!root) {
-> @@ -3240,12 +3239,12 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  			"%s:%s no CXL window for range %#llx:%#llx\n",
->  			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
->  			cxld->hpa_range.start, cxld->hpa_range.end);
-> -		return NULL;
-> +		return -ENXIO;
+>  	idxd->wq_enable_map = bitmap_zalloc_node(idxd->max_wqs, GFP_KERNEL, dev_to_node(dev));
+>  	if (!idxd->wq_enable_map) {
+> -		kfree(idxd->wqs);
+> -		return -ENOMEM;
+> +		rc = -ENOMEM;
+> +		goto err_bitmap;
 >  	}
 >  
-> +	cxled->cxlrd = to_cxl_root_decoder(&root->dev);
+>  	for (i = 0; i < idxd->max_wqs; i++) {
+> @@ -189,6 +189,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  		rc = dev_set_name(conf_dev, "wq%d.%d", idxd->id, wq->id);
+>  		if (rc < 0) {
+>  			put_device(conf_dev);
+> +			kfree(wq);
+>  			goto err;
+>  		}
 >  
-> -
-> -	return to_cxl_root_decoder(&root->dev);
-> +	return 0;
+> @@ -202,6 +203,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  		wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
+>  		if (!wq->wqcfg) {
+>  			put_device(conf_dev);
+> +			kfree(wq);
+>  			rc = -ENOMEM;
+>  			goto err;
+>  		}
+> @@ -209,7 +211,9 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  		if (idxd->hw.wq_cap.op_config) {
+>  			wq->opcap_bmap = bitmap_zalloc(IDXD_MAX_OPCAP_BITS, GFP_KERNEL);
+>  			if (!wq->opcap_bmap) {
+> +				kfree(wq->wqcfg);
+>  				put_device(conf_dev);
+> +				kfree(wq);
+>  				rc = -ENOMEM;
+>  				goto err;
+>  			}
+> @@ -223,11 +227,21 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  	return 0;
+>  
+>   err:
+> -	while (--i >= 0) {
+> +	while (i-- > 0) {
+>  		wq = idxd->wqs[i];
+> +		if (idxd->hw.wq_cap.op_config)
+> +			bitmap_free(wq->opcap_bmap);
+> +		kfree(wq->wqcfg);
+>  		conf_dev = wq_confdev(wq);
+>  		put_device(conf_dev);
+> +		kfree(wq);
+> +
+>  	}
+> +	bitmap_free(idxd->wq_enable_map);
+> +
+> +err_bitmap:
+> +	kfree(idxd->wqs);
+> +
+>  	return rc;
 >  }
 >  
->  static int match_region_by_range(struct device *dev, const void *data)
-> @@ -3370,19 +3369,6 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  	return ERR_PTR(rc);
->  }
->  
-> -static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
-> -{
-> -	struct cxl_root_decoder *cxlrd;
-> -
-> -	cxlrd = cxl_find_root_decoder(cxled);
-> -	if (!cxlrd)
-> -		return -ENXIO;
-> -
-> -	cxled->cxlrd = cxlrd;
-> -
-> -	return 0;
-> -}
-> -
->  static int cxl_endpoint_decoder_add(struct cxl_endpoint_decoder *cxled)
->  {
->  	struct range *hpa = &cxled->cxld.hpa_range;
 
 
