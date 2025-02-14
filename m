@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-514580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C8AA358CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:24:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF3EA358D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B200716A660
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CA23A732F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ECD223304;
-	Fri, 14 Feb 2025 08:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA7223304;
+	Fri, 14 Feb 2025 08:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5CJGSy4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pERS73CN"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81931215F50;
-	Fri, 14 Feb 2025 08:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A112222D1;
+	Fri, 14 Feb 2025 08:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739521483; cv=none; b=c7Ig2QOvrd0PQMeUM+SZB3Cv2oAGbfHJlD+dh9bugMJpzWkYdISqFugKWpIK8uHJQfqbQCHNm0ADvvZHwck/35yu8cxoTfS+usuH8eCchL2lIyQHLa4zTWxbmY8iIw7Ky2mrXL9dGfL2Jt2M7nIN4taHIcnn1FWS5HyeP7BcvZ8=
+	t=1739521649; cv=none; b=N7mJ/1+PfkyVZKkzTu7VlH6Ju5Zv6o/Lr9HRtoTwWaG1V04c2TYmUpzrjizNE7hsoE9cHiIBpDH5/+ZT277czcNREiBaZNfdNxAY0tAD4r1JsgG0A7VDxj7BlDI9YNiQ8XlAkCPvPYCOj7urbqkOrxNnw/Bm4SVfJLslmw1QmCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739521483; c=relaxed/simple;
-	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e3G9LDWdaBDMF2S9fcZb0ZCnHFGO5E0sGGVUl4fOqwm1xUgtqZTU/vm3LzRlV7CkoLbCVYeOtruW6+Lq1pa/GhM90j1+cZZBbdTeDE1Wjj2DFLYqYqiBDdXXF8g+2vLBY/ykrYhUi6paB2jwT5SqTOFO2Q4Kl8H4lpDG+Qt+nBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5CJGSy4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685E2C4CED1;
-	Fri, 14 Feb 2025 08:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739521483;
-	bh=KtWOTT1e+g7TTppBX/eZh3sRe5PM+CeT6bO9PnLwM+s=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=t5CJGSy4HiRPiH8vNQtZuSZwsO964YIu1gx4R/CvgT+ucz/2XnZkgAUWL/KuZKwUe
-	 8V7XAMucl7JBu+KlZAe2wQVd6hMf2iA3u2A+WYIwWif4dXszmnVfttr9ftSDbdybJd
-	 dH2fpluPZiMsgR+ny3Ljgiu7A3hOvtTAMyPDTHe1nAXQbl9vAmhxP8OADXCI0V8mcj
-	 9L6NvTND1nw+0gCeYiMtlsk+uJ3MNHGwwitY85rP6Zh9TI/1kcIZcj+xANj1NIRQWE
-	 FNA7V1mlHM8GxvuTizSj1kYAw1s2tcGS8JVxZnx349spZuabGP861OzkKFHzaUooK5
-	 E8WGoBY8ZQc5w==
-Message-ID: <835a1381-1dd2-4928-b929-efc0078e30f3@kernel.org>
-Date: Fri, 14 Feb 2025 09:24:38 +0100
+	s=arc-20240116; t=1739521649; c=relaxed/simple;
+	bh=a8bg8TYNJ0zD/riSdpk/IyGPixwchzk6VHth/WlqQ1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kAGN3nZ8uaRrmbcYa/oYZiGyTM5q7QMw6TTwyR1Cos/LjUrbnhbJL1UPoKKMvJWoYSSmgiX2ebll6+J5FOFEeoRKeld2GYk2nfWDIYnz3ouSzHD4PwMOmmfR1iKZV/BwxrAIdyT6bI+YwCCWwcibGWS28qB+4kvIyv+gxWopjwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pERS73CN; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DED244331;
+	Fri, 14 Feb 2025 08:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739521644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MNvBJa4Q9PSMsPDhj3s1+Vt+BAwOGndJFZntHwfg/ow=;
+	b=pERS73CNJU60vhPF1OVm1TWS8RcM43zlfRPZ1EppD0bEghrGemomkYR8FoCeoLwPRfiLrq
+	SkF5/1g9soVLzzc03QJyHQGZFS2h9GfXkUcTignasl++h1B1XQtzihzXoZwIpaEbXH/SyN
+	Ch+Ga5kkfrrlZIwOuybPkZc5d2/+dgxwObuSRubmqduiiN/z0wjrFnp3qimQn1t2lBDC+n
+	MHUraA0WmTgpfxjazyRDjhs/C2JCg2rmWqlT6TqpUJ+sOIDXqHX0oGMopYifbs+hJUHfNA
+	7d5d1mmgpiSbCTT19SsqnwQHtz1FZH5AdYScflZ1uuqQ1gpJuqU30VA8rCCVHw==
+Date: Fri, 14 Feb 2025 09:27:21 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: xiaopeitux@foxmail.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Pei Xiao <xiaopei01@kylinos.cn>, kernel test
+ robot <lkp@intel.com>
+Subject: Re: [PATCH] net: freescale: ucc_geth: make ugeth_mac_ops be static
+Message-ID: <20250214092721.6fadd49f@fedora.home>
+In-Reply-To: <tencent_832FF5138D392257AC081FEE322A03C84907@qq.com>
+References: <tencent_832FF5138D392257AC081FEE322A03C84907@qq.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: exynos-sysreg: add
- compatibles peric0/1 sysreg for Exynos990
-To: Denzeel Oliva <wachiturroxd150@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250212155943.269-1-wachiturroxd150@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250212155943.269-1-wachiturroxd150@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleduiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugfelledvtdffvdekudeijeduueevvdevffehudehvdeuudetheekheeigfetheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgihirghophgvihhtuhigsehfohigmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtt
+ hhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 12/02/2025 16:59, Denzeel Oliva wrote:
-> Downstream from the Exynos990 kernel source it has more sysreg in
-> flexpmu, but for now only those two will be added.
+Hi,
+
+On Fri, 14 Feb 2025 14:11:07 +0800
+xiaopeitux@foxmail.com wrote:
+
+> From: Pei Xiao <xiaopei01@kylinos.cn>
 > 
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml           | 4 ++++
->  1 file changed, 4 insertions(+)
+> sparse warning:
+>     sparse: symbol 'ugeth_mac_ops' was not declared. Should it be
+> static.
+> 
+> Add static to fix sparse warnings.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202502141128.9HfxcdIE-lkp@intel.com/
+> Fixes: 53036aa8d031 ("net: freescale: ucc_geth: phylink conversion")
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 
-Why is this a v1 while v1 was here:
-https://lore.kernel.org/all/20250205222223.613-7-wachiturroxd150@gmail.com/
+Thanks for fixing this,
 
-and both patches differ?
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Where is the changelog?
-
-Best regards,
-Krzysztof
+Maxime
 
