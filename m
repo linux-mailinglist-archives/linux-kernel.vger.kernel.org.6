@@ -1,290 +1,169 @@
-Return-Path: <linux-kernel+bounces-515288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818CAA362F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:21:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A127BA362E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B82218950DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D230316A55E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA582676CE;
-	Fri, 14 Feb 2025 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30FF2676EF;
+	Fri, 14 Feb 2025 16:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqK3BHfX"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iz/S5g44"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA63267AE8;
-	Fri, 14 Feb 2025 16:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA9F20B7ED
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550023; cv=none; b=ADr9DUv3eek/HKmOck/TG/J4FDuyKoKU0a2fscNn7zYXCXDl4+S25FR/24fNwj6Kh05jroecwSzhzeUK/0YbdAskEVHn2E9/mhCuYSwKV47s3nvW0+xwlckduKyA0xe6zarKPtgRKxFecYPxiyCf5xqVJg8BtnVk8RyfAEDhey8=
+	t=1739550007; cv=none; b=Tul4nlH9IBmdFbv9Hd4WxNwyThfBWWoTU9Ah52U2/FbuRzC4N2ddQIIY3i9LlI52OLNz/ZiOPYepC5qQFITgBnkHjSbTH+xrF/I4EN6iNXXI2y3Z8fuheHwva28zNrEy47FbDukikWiyg1v2U1LWKXsTSCqEaM4knwbgmMdB/j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550023; c=relaxed/simple;
-	bh=hFIdtrrfEFBYDz5o5JUKbXTS33/240JJ6HCd+hbDb8o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=isnh6ZSb/1Oan8bwwcX8qyIWWinlz/RmtJfN4F3ZmZiWesKaBn9UKo/E7cvhIBZVk+s9lIv5GRqEgDY32OhhSrlY+IZoHLj2X0J+809nwuaMRCNeYFVHOBlAnLssY7GviuSioMG2eiEe2BgxyNJ1x/iLaJIpNqr3rxYtZKCv70s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqK3BHfX; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-471b36d6766so19958461cf.2;
-        Fri, 14 Feb 2025 08:20:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739550020; x=1740154820; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HY5XrygemAI7GO6XQVsrwKH+b6zMhA6wwjDH5Lplluc=;
-        b=LqK3BHfX349qlDAA/vmlEfBghB744Cjfiqd5YbweeFfmRYN9LuzCn3DpYWzsVRwuGm
-         DOZasQYSGkpyr8o0eZD/SqkpoFdgCV094ihdvsjO0VoKTQAZzpftcYYUC6VhH+EGe/CB
-         2XgqWwOeiBMItCBHQt1BHyI+fQJTpK5jnBpKY53yGJXUf3KaWo4GqfQF+VZPJYKv2s+T
-         SuRTqgw0a/q7DmkKeN5XPlFiunA6qEIXsmSZIXoLWRWT101UjI7b66TqkVwqKV92hbkL
-         ZTjvAxvUSIwQQ0IpYDNQA1DvJbFmRDsu5F0GilfYg+4mQoGBvLKm6c8DazxcpfnDI1cw
-         zZRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739550020; x=1740154820;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HY5XrygemAI7GO6XQVsrwKH+b6zMhA6wwjDH5Lplluc=;
-        b=Pfmp+Cg2hLi3QoKg08PwxOQQIjNPohuQTWB0pPJE67R9WYwea0zvEe5eLRtKxYXYb7
-         SsJ6OPhNEdePtJOAyrkAzmS6POv552Yk+u0qaspFimyGQqe3aIbCo1T+suZZxgzASUlK
-         nyYaO9SSCEYj9iahybFFogtBrZb7nVzvj2VZJIPyWAzZkFDJyVVpak0ImEdHRQhHKKUO
-         j9x1PFn4Z7BBycBHENSZzax0J8xo/yUVMezeRKBnB2wRhaFH5vLOnzKTnaCKwblCkuV9
-         cX7tUa5l7FFvUxqGpTo/POBvl2qnkbziPnSKU2V4XeqttzY96FDANjjbbtQGQm/fX6KK
-         EYAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFPBvLOxuCwkVKV2uK+NxxwDNhtKZMVqa6Xm6eTjTgEq/ENpO5rDnskqP+3MdBXHTFkJSBSuYx8VsqkCo=@vger.kernel.org, AJvYcCUwSSpXG6csK13i0yc7BsGxbdp0t90B/wlJV0BjZQKD7bJ7yiOkh7Sr4uYI8qyHimXd8eW1uZdfYiVb0eBlQ2my@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywea9O9tyUoUZVkSPwyRM3bgn41ui7Vq+h3uoTmG6+402HT+ES3
-	ICEqIDs+JE0XiQEpot35/au5YRwuBhAQR7Nj4ci0tSGc0NHSi3Ae
-X-Gm-Gg: ASbGncv6bNcV3XvIZP9oi/S5QbiUuxNYgp9fB2PIFf/aBzlRVDG9vQbLbdR5aye0dHB
-	HVGhjY/Up6J3cCqA61Q/OilE5CtyFSpnuC3GNR9hb8U4Q1TKiIAXfcn6Dd+yfdPi45MuUCPoG/H
-	zs6Um0NGcYkny3mkXyXyRMo587xe67kUDbwacfZufzlCxcbq+JcsUBf3UF8FVy44j9th8+RiLQN
-	g8X22fnT2uuy31RoJsBGv9+ZRfew1/gebtMNPe1Cbg3JjH65eFMR6RQTHOIfW5N8bVreHn8G4JX
-	nyhF5qxvYRSWoLzFYP9aeBDUEKhvVyf6xVWPAw==
-X-Google-Smtp-Source: AGHT+IEEligZE+6AVvNn+kyi+tOG0B57/J0XUYVp2UKssML2RX4ygkFmKyYDx8RbUoBtxNhzoM6S6Q==
-X-Received: by 2002:a05:622a:189a:b0:467:5d0b:c750 with SMTP id d75a77b69052e-471bed70234mr118061011cf.22.1739550020087;
-        Fri, 14 Feb 2025 08:20:20 -0800 (PST)
-Received: from [192.168.1.159] ([2600:4041:5be7:7c00:d4df:402c:65f0:87da])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471c2af37c7sm19196911cf.61.2025.02.14.08.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:20:19 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Feb 2025 11:20:01 -0500
-Subject: [PATCH v8 4/4] scanf: break kunit into test cases
+	s=arc-20240116; t=1739550007; c=relaxed/simple;
+	bh=/CxnacnZ64DLjO3K7djuU0Qm7UPulYo/6rqJ4nbs2O4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U0mXvyGcw8td4XmVZN1Qh/gvXRM9970QCUd26aEZ4FduQdHLrkJcEtJ4sBKtKbhqWwiswMgI7oaPa6ZiDaxAP54Ipfn7d95iBIUjVw1BmzQoD5Xh69CVHwdHzLUPrn6PPwVzQhLJEgmo3uUo36v1ZhsLuMk4RR/i5HnmYCbz8y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iz/S5g44; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739550005; x=1771086005;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/CxnacnZ64DLjO3K7djuU0Qm7UPulYo/6rqJ4nbs2O4=;
+  b=Iz/S5g44K7yCE/pkSzd61P56pdciXl8uF1rL7nbvvTzcei35s2GpIopM
+   H4UXMA71C0WTQhW7nNwDGkcVgP35FtymXL9ui5yy+r2S/n1PZSZAhf6wu
+   7YNFefSXjP1wuqvvLI450xgouzVkjDQJEjcJwmgn8dV7El42NDT06NHCB
+   cLaR1dMdOhIVXYrxz9QPUEoCdjcWzK/+/6ppSMa6EcuNyFAl8KGRt8TkE
+   PyiHdezIhYtNwDqKQJL3uxW8XvdJp509RXwLS8qTcYWF3OQxC/jpeoNFT
+   98dC/nVbvrKr43MaSUX/87ZfltCvGiFQcpPsrs8BNsxYyyapwuH95i8iN
+   g==;
+X-CSE-ConnectionGUID: oTiSkl17Sw+ZQBHR/kWeNA==
+X-CSE-MsgGUID: FPeYEauFQR24ZrLpllPhSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43142302"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="43142302"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:20:04 -0800
+X-CSE-ConnectionGUID: 4HBR2OMeQY2V4z452kg0iA==
+X-CSE-MsgGUID: S3b5qtvvTuuEzX23BzZ32Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="118426787"
+Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.21]) ([10.125.109.21])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:20:05 -0800
+Message-ID: <4599571f-804b-40d8-b5c8-e19478a3ad18@intel.com>
+Date: Fri, 14 Feb 2025 08:20:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] Accept unaccepted kexec segments' destination
+ addresses
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, akpm@linux-foundation.org,
+ kexec@lists.infradead.org, Yan Zhao <yan.y.zhao@intel.com>,
+ linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, x86@kernel.org,
+ rick.p.edgecombe@intel.com, security@kernel.org
+References: <20241213094930.748-1-yan.y.zhao@intel.com>
+ <xgycziy2o56hnom3oau7sbqed3meoni3razc6njj7ujatldnmm@s7odbl4splbn>
+ <Z4T1G4dwzo7qdwSP@MiWiFi-R3L-srv>
+ <87zfjuoj3i.fsf@email.froward.int.ebiederm.org>
+ <f38f1b56-a5df-4644-be59-56c70499ed92@intel.com>
+ <fslhdizolr4twqm4ixevzj6ai5l5qg6mxky25jasn3yctsnvt4@hpwphlmfs5cp>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <fslhdizolr4twqm4ixevzj6ai5l5qg6mxky25jasn3yctsnvt4@hpwphlmfs5cp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
-References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
-In-Reply-To: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
-To: David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
 
-Use `suite_init` and move some tests into `scanf_test_cases`. This
-gives us nicer output in the event of a failure.
+On 2/14/25 05:46, Kirill A. Shutemov wrote:
+>> It sounds like you're advocating for the "slow guest boot" option.
+>> Kirill, can you remind us how fast a guest boots to the shell for
+>> modestly-sized (say 256GB) memory with "accept_memory=eager" versus
+>> "accept_memory=lazy"? IIRC, it was a pretty remarkable difference.
+> I only have 128GB machine readily available and posted some number on
+> other thread[1]:
+> 
+>   On single vCPU it takes about a minute to accept 90GiB of memory.
+> 
+>   It improves a bit with number of vCPUs. It is 40 seconds with 4 vCPU, but
+>   it doesn't scale past that in my setup.
+> 
+> I've mentioned it before in other thread:
+> 
+> [1] https://lore.kernel.org/all/ihzvi5pwn5hrn4ky2ehjqztjxoixaiaby4igmeihqfehy2vrii@tsg6j5qvmyrm
 
-Reviewed-by: David Gow <davidgow@google.com>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- lib/tests/scanf_kunit.c | 95 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 51 insertions(+), 44 deletions(-)
+Oh, wow, from that other thread, you've been trying to get this crash
+fix accepted since November?
 
-diff --git a/lib/tests/scanf_kunit.c b/lib/tests/scanf_kunit.c
-index 3bbad9ebe437..fa215a7db366 100644
---- a/lib/tests/scanf_kunit.c
-+++ b/lib/tests/scanf_kunit.c
-@@ -4,14 +4,10 @@
-  */
- 
- #include <kunit/test.h>
--#include <linux/bitops.h>
--#include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/overflow.h>
--#include <linux/printk.h>
- #include <linux/prandom.h>
- #include <linux/slab.h>
--#include <linux/string.h>
-+#include <linux/sprintf.h>
- 
- #define BUF_SIZE 1024
- 
-@@ -50,10 +46,9 @@ do {										\
- 	for (; n_args > 0; n_args--, expect++) {				\
- 		typeof(*expect) got = *va_arg(ap, typeof(expect));		\
- 		if (got != *expect) {						\
--			KUNIT_FAIL(test,					\
--				   "%s:%d: vsscanf(\"%s\", \"%s\", ...) expected " arg_fmt " got " arg_fmt, \
--				   file, line, str, fmt, *expect, got);		\
--			return;							\
-+			KUNIT_FAIL_AND_ABORT(test,				\
-+					     "%s:%d: vsscanf(\"%s\", \"%s\", ...) expected " arg_fmt " got " arg_fmt, \
-+					     file, line, str, fmt, *expect, got); \
- 		}								\
- 	}									\
- } while (0)
-@@ -435,8 +430,11 @@ static void numbers_list_hh(struct kunit *test, const char *delim)
- 	numbers_list_8(signed char,	   "0x%hhx", delim, "hhi", check_char);
- }
- 
--static void numbers_list(struct kunit *test, const char *delim)
-+static void numbers_list(struct kunit *test)
- {
-+	const char * const *param = test->param_value;
-+	const char *delim = *param;
-+
- 	numbers_list_ll(test, delim);
- 	numbers_list_l(test, delim);
- 	numbers_list_d(test, delim);
-@@ -507,8 +505,11 @@ static void numbers_list_field_width_hh(struct kunit *test, const char *delim)
-  * List of numbers separated by delim. Each field width specifier is the
-  * maximum possible digits for the given type and base.
-  */
--static void numbers_list_field_width_typemax(struct kunit *test, const char *delim)
-+static void numbers_list_field_width_typemax(struct kunit *test)
- {
-+	const char * const *param = test->param_value;
-+	const char *delim = *param;
-+
- 	numbers_list_field_width_ll(test, delim);
- 	numbers_list_field_width_l(test, delim);
- 	numbers_list_field_width_d(test, delim);
-@@ -570,8 +571,11 @@ static void numbers_list_field_width_val_hh(struct kunit *test, const char *deli
-  * List of numbers separated by delim. Each field width specifier is the
-  * exact length of the corresponding value digits in the string being scanned.
-  */
--static void numbers_list_field_width_val_width(struct kunit *test, const char *delim)
-+static void numbers_list_field_width_val_width(struct kunit *test)
- {
-+	const char * const *param = test->param_value;
-+	const char *delim = *param;
-+
- 	numbers_list_field_width_val_ll(test, delim);
- 	numbers_list_field_width_val_l(test, delim);
- 	numbers_list_field_width_val_d(test, delim);
-@@ -587,7 +591,12 @@ static void numbers_list_field_width_val_width(struct kunit *test, const char *d
-  */
- static void numbers_slice(struct kunit *test)
- {
--	numbers_list_field_width_val_width(test, "");
-+	const char *delim = "";
-+
-+	KUNIT_ASSERT_PTR_EQ(test, test->param_value, NULL);
-+	test->param_value = &delim;
-+
-+	numbers_list_field_width_val_width(test);
- }
- 
- #define test_number_prefix(T, str, scan_fmt, expect0, expect1, n_args, fn)	\
-@@ -738,62 +747,60 @@ static const char * const number_delimiters[] = {
- 	" ", ":", ",", "-", "/",
- };
- 
--static void test_numbers(struct kunit *test)
-+static void number_delimiter_param_desc(const char * const *param,
-+					   char *desc)
- {
--	int i;
-+	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "\"%s\"", *param);
-+}
- 
--	/* String containing only one number. */
--	numbers_simple(test);
-+KUNIT_ARRAY_PARAM(number_delimiters, number_delimiters, number_delimiter_param_desc);
- 
-+static struct kunit_case scanf_test_cases[] = {
-+	KUNIT_CASE(numbers_simple),
- 	/* String with multiple numbers separated by delimiter. */
--	for (i = 0; i < ARRAY_SIZE(number_delimiters); i++) {
--		numbers_list(test, number_delimiters[i]);
--
--		/* Field width may be longer than actual field digits. */
--		numbers_list_field_width_typemax(test, number_delimiters[i]);
--
--		/* Each field width exactly length of actual field digits. */
--		numbers_list_field_width_val_width(test, number_delimiters[i]);
--	}
--
-+	KUNIT_CASE_PARAM(numbers_list, number_delimiters_gen_params),
-+	/* Field width may be longer than actual field digits. */
-+	KUNIT_CASE_PARAM(numbers_list_field_width_typemax, number_delimiters_gen_params),
-+	/* Each field width exactly length of actual field digits. */
-+	KUNIT_CASE_PARAM(numbers_list_field_width_val_width, number_delimiters_gen_params),
- 	/* Slice continuous sequence of digits using field widths. */
--	numbers_slice(test);
-+	KUNIT_CASE(numbers_slice),
-+	KUNIT_CASE(numbers_prefix_overflow),
- 
--	numbers_prefix_overflow(test);
--}
-+	KUNIT_CASE(test_simple_strtoull),
-+	KUNIT_CASE(test_simple_strtoll),
-+	KUNIT_CASE(test_simple_strtoul),
-+	KUNIT_CASE(test_simple_strtol),
-+	{}
-+};
- 
--static void scanf_test(struct kunit *test)
-+static int scanf_suite_init(struct kunit_suite *suite)
- {
- 	test_buffer = kmalloc(BUF_SIZE, GFP_KERNEL);
- 	if (!test_buffer)
--		return;
-+		return -ENOMEM;
- 
- 	fmt_buffer = kmalloc(BUF_SIZE, GFP_KERNEL);
- 	if (!fmt_buffer) {
- 		kfree(test_buffer);
--		return;
-+		return -ENOMEM;
- 	}
- 
- 	prandom_seed_state(&rnd_state, 3141592653589793238ULL);
- 
--	test_numbers(test);
--
--	test_simple_strtoull(test);
--	test_simple_strtoll(test);
--	test_simple_strtoul(test);
--	test_simple_strtol(test);
-+	return 0;
-+}
- 
-+static void scanf_suite_exit(struct kunit_suite *suite)
-+{
- 	kfree(fmt_buffer);
- 	kfree(test_buffer);
- }
- 
--static struct kunit_case scanf_test_cases[] = {
--	KUNIT_CASE(scanf_test),
--	{}
--};
--
- static struct kunit_suite scanf_test_suite = {
- 	.name = "scanf",
-+	.suite_init = scanf_suite_init,
-+	.suite_exit = scanf_suite_exit,
- 	.test_cases = scanf_test_cases,
- };
- 
+From the looks of it, Eric stopped responding to that thread. I _think_
+you gave a reasonable explanation of why memory acceptance is slow. He
+then popped back up last month raising security concerns. But I don't
+see anyone that shares those concerns.
 
--- 
-2.48.1
+The unaccepted memory stuff is also _already_ touching the page
+allocator. If it's a dumb idea, then we should be gleefully ripping it
+out of the page allocator, not rejecting a 2-line kexec patch.
 
+Baoquan has also said this looks good to him.
+
+I'm happy to give Eric another week to respond in case he's on vacation
+or something, but I'm honestly not seeing a good reason to hold this bug
+fix up.
+
+Andrew, is this the kind of thing you can stick into mm and hold on to
+for a bit while we give Eric time to respond?
 
