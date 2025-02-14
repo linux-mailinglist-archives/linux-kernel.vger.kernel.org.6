@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-515313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406F8A3631A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:31:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A55A36325
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 583C916DEC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216EF3B41DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1218426770A;
-	Fri, 14 Feb 2025 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="e0BRCP96"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB55267B63;
+	Fri, 14 Feb 2025 16:29:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847122676E8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DF02676E8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550529; cv=none; b=qIsfHOxKuKg84y35mPxDeif2wmcA/KFt4ZdhaHfZa16hXyGPWvTHSzgOGg+0K+YTIoJuiVDc/6t9gn9ldQskZZtxeWHV9BVIRaNTjjo6qx5U5jjd42SVRTe/d0vVFfsPruajyVIDqOH4TxpjzgM3JflkJHSSRhyteclh3hc5FmE=
+	t=1739550553; cv=none; b=Sx4vfo6NM89H9p5ik0no+Z7cSF6A6cQLaFwGfYUL+LP99uVzSO2sFkB1edDvt8pqoMOwaFbsE71ST14xExB7Jg49GCZoAuyrWoHpZ44rHLcdLOBopY5uzFUsJGgHqvwmgsnSVx6ZkOs+b76a4kimYiVYokE3Pmp2jvvTfHrE9XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550529; c=relaxed/simple;
-	bh=DXjwD7WWdujRsuMk0j2J0BLpn80ErS0u0byo9o10LUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jd6bwgVbSxgpsoQB5gfqPv20jQPeydDFHCVKUzffTVppl1++kezkbjmo7s+jzLGnPNIvZrFml9ZtBfE2bh+yhNbrqHB6t6jSSOC89YN2wH66h1oEna1Mh2A2kqjCssy3HdkEKvpiNlawXzyoQ7cnUlL+KtTEJd01giP/s/9rhtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=e0BRCP96; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=DXjw
-	D7WWdujRsuMk0j2J0BLpn80ErS0u0byo9o10LUM=; b=e0BRCP96OQHzBqC6UyIe
-	SJX6ndqb5eabZiTCsmNSeBohn9lDpfh7PitVC9YtyRkYvCt5i5wXRrlCi58YGtGj
-	V20pUnlJooJyOKGZ2zz9qrb75encXOe+15hhnsZVywbwzfIXxk8u+dOfL4LEx/in
-	ROPUzFCM1EM7Byrh7LuD+XwiW+aOABjNEAMf8LCXBtRgYGKfXY/asnFcKN8N9TzY
-	hwPpCjhxLXQ6OwtiEeZo2cgGsJppHeOSfnJHoXehcyqcReK396ZzaJz8X24E+e+1
-	qeICPjdDvTc/QH+SGD44UvAFtzwmjspjycI8bKsnPvdf5nSjLK4UAtRBVZKUm+JA
-	gg==
-Received: (qmail 2456670 invoked from network); 14 Feb 2025 17:28:37 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Feb 2025 17:28:37 +0100
-X-UD-Smtp-Session: l3s3148p1@lYugqhwuXsVehh9k
-Date: Fri, 14 Feb 2025 17:28:36 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.14-rc3
-Message-ID: <Z69vNKVosjAHovGB@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-References: <barspgw6bqm2q4uj6gbrze7ky7nsbgnorzhkdqk5s3jdaahdhb@nnyziqfcnz55>
+	s=arc-20240116; t=1739550553; c=relaxed/simple;
+	bh=USDDppoY45ze1zboaiXFyIhKCyt4uYM6VaQYbFL31to=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BLbaWX0i8eEQKNu028Fhle4TqQ5IlsVuoWySsQw0tgvWGiJSItOptVOeELOyGv16lc+T7Zaqq6tY3XKkdBQj6R79PrUSNga6dj21W6NxXCw2l/4obZoih/We9AOs7s3gjYOfnBjw4sCPcKnXNdI8Z4cKsmVrxamr+JPxXi2RVe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tiyYk-0006jh-A8; Fri, 14 Feb 2025 17:28:58 +0100
+Message-ID: <d0dd61ea558ef8b18978301ef710925b83ef4037.camel@pengutronix.de>
+Subject: Re: [PATCH 0/2] arm64: dts: imx8m: Add pinctrl config definitions
+From: Lucas Stach <l.stach@pengutronix.de>
+To: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Date: Fri, 14 Feb 2025 17:28:57 +0100
+In-Reply-To: <20250214-pinctrl_defines-v1-0-fbc86a42ef3c@gocontroll.com>
+References: <20250214-pinctrl_defines-v1-0-fbc86a42ef3c@gocontroll.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ym6xFr7taPFRWYcm"
-Content-Disposition: inline
-In-Reply-To: <barspgw6bqm2q4uj6gbrze7ky7nsbgnorzhkdqk5s3jdaahdhb@nnyziqfcnz55>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi Maud,
 
---Ym6xFr7taPFRWYcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Am Freitag, dem 14.02.2025 um 16:57 +0100 schrieb Maud Spierings via B4
+Relay:
+> Up untill now the extra function mux (pull resistor, etc) has been
+> defined as a raw hex value, this is difficult to interpret. Add
+> definitions for these parts of the pinctrl registers to allow for more
+> readable pinctrl definitions in devictree files.
+>=20
+I certainly prefer the short form with the hex value, I find that quite
+a bit more readable than very verbose swathes of defines ORed together.
+But each to their own.
 
-Hi Andi,
+> At this point the patch is not complete, some pinctrl definitions set
+> bit 30 (0x40000000) but according to the reference manual this is a
+> reserved field, I currently have no way to identify what the meaning of
+> this bit is, I hope someone in this CC may be able to provide an answer
+> to this. It will then be fixed in the v2 of this patch.
 
-> Finally, I'm back with my first pull request after my injury. I
-> really missed it! :-)
+This is not a mystery bit, it's used by the pinctrl driver to force
+enable the input path of the pad (SION). This is defined in the generic
+i.MX pinctrl binding, see
+Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
 
-Good to have you back!
+Regards,
+Lucas
 
-> First of all, thanks a lot for covering for me and taking care of
-> my work during this time. I really appreciate it.
+>=20
+> It should also be done for the mn/mq but I currently do not have the
+> reference manuals for these to verify these fields, though I can only
+> assume that they would be the same.
+>=20
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+> Maud Spierings (2):
+>       arm64: dts: imx8mm: Add pinctrl config definitions
+>       arm64: dts: imx8mp: Add pinctrl config definitions
+>=20
+>  arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h | 27 ++++++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 27 ++++++++++++++++++++=
+++++++
+>  2 files changed, 54 insertions(+)
+> ---
+> base-commit: 0ae0fa3bf0b44c8611d114a9f69985bf451010c3
+> change-id: 20250214-pinctrl_defines-237e7db61c6a
+>=20
+> Best regards,
 
-You are very welcome, of course!
-
-> With that said, I wish you a great weekend!
-
-Thank you. Pulled. Enjoy your weekend, too!
-
-
---Ym6xFr7taPFRWYcm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmevbzAACgkQFA3kzBSg
-KbZEKA//b0yaVbNHo+Jz5/Sp5WGmw/rojlSxp9a+uv570JjJc5pZ3NLqYU9N12hu
-ps43QBQn2+FDQCRjLo9ejvI4xKtfx1SlmmEztcjtQEgM5+/p2zxuo5ZEUjG/11Q2
-3FjtzqQ1StSA/7HHYb4s25UPKjoQNgRDvp/a0Z1JPbaEhjtMmbyOe7z64PPEDMWi
-ZwiHuWxffvVah+I/Lhj3hOPvI1E+NbXyGYl/ml5J/Y7QAl8CkA/+dFFyWx5rJ73S
-PQwP/Rwgx4vh1E5Km+Le1eD0JvW9P5WbY/9TQPFq7mO/qVrmeuvxtTcWjRgsD9KK
-GocUh1Qs9mEJ2Op10a3+26V53KlUpRpj7Q8rs5/QTg6VxEqEBMid1jsOsATA20ED
-PJrhNmhuAM4iSzU7Vuk1dHFim9DaWrsWpuHUVvTHOFrn+QtqddiI+MqpOtUs5TXU
-ouzZhBlinqd2X0dQDVcxNp646sSjVlIHPXASEA2rvuvlY/gkQmWHp6SSklO8iS0M
-KdXAZ8SrZfmmQ3cbam0py/BU4CK5OFfB7WhONwkyRuIwZno6uvWopExKkjVQWy/3
-c+kx6jd5VsD2W/ECPRrJvJ7vCo1RNjQSFkgaLt2EKkPbTZpysQ7Wv2IfoqjcD6mc
-ebpOtE24opSTYqmn1LUVx1oQ80MGcFQa/Y2zuWCMdiKs0Pvr4eg=
-=/guN
------END PGP SIGNATURE-----
-
---Ym6xFr7taPFRWYcm--
 
