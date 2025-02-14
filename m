@@ -1,162 +1,245 @@
-Return-Path: <linux-kernel+bounces-514519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1ABA35807
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:40:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B71A35809
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F1C3AB94C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657A816D109
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7878021517C;
-	Fri, 14 Feb 2025 07:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8EE215766;
+	Fri, 14 Feb 2025 07:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWJLrTfd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sicEhh96";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWJLrTfd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sicEhh96"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pCSPyBJD"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365D3215058;
-	Fri, 14 Feb 2025 07:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0F42153E1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739518848; cv=none; b=SGacS6DfHsLvwBxReayJKouTn+F9QGH2Ws5MmD7DIhNYvu/ra9corgE+DX1ZVOI4nGXLy5jiIFzBVq63ibhIGxBBJwixz5TTVgKbW5oYXVCivVD+VIhHjGGBdDPp//6q8mJl0XBW1UKWB6pCrAXjPZV8teoiaB7qe3VeHLjelQk=
+	t=1739518866; cv=none; b=M2ubdm9+El+oP3FaAo5PH668pzGAEjndxPrVFt/wsO27y5Zw8Dp+BoPp/nz7rQYnbb4D3Zvour4NQKQdDqGmOyvKe8fOGlkpcpC2rx+gpeScC1my8ypGDKrtr+PeuxjRbC/FRIWFM8H/lRkqu0jRwUYppZ1gyOhkKjgWwv+tjeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739518848; c=relaxed/simple;
-	bh=Fscm2DnKxcZ7JkSZocJpCyabSuzUogGQBUqYh36yXUk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S2d7HNMTKn4VGv5TB+5cqruoQ+E4IpOOuLQqxFAoDpvx0F3hwq8mloDCmpCOhI6cTab7A+RQ8vqyVXl79Mfb3uA5hztL6vzQbaUhc/F/ieAai0av+QYy2ODZOfZtRi6P6mlNZHSjyZeDD+srsiNMDRLY8LW3hiJ2h4X+FkBIPAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWJLrTfd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sicEhh96; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWJLrTfd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sicEhh96; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3A8811F78F;
-	Fri, 14 Feb 2025 07:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739518845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=88Y1nS1A2QfT5gFlu1HZuxZ/b065jAtb+T0yyIARB2w=;
-	b=zWJLrTfd+vzuPXLGY9aWH8DZBJv1NmZ+Ik9Y44ogzsqG3JNw7nkVwOodYt7o4AL8JpsIOx
-	SzBYZgaB+ktBne7GFmS7dMQYw78R2r99ZIT4r9OOWha2vxuC/jeDmQOur0pRqUSekHCVuj
-	i7NWSqqXu3Oxb7VO1nmgFqfmjES2EHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739518845;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=88Y1nS1A2QfT5gFlu1HZuxZ/b065jAtb+T0yyIARB2w=;
-	b=sicEhh96KfU2TvYGFoDX9Fyqq6X3R+usoecj/dtpK8kuMbixkG+hj8mjpr+aE5H2pM07WH
-	UIoXfptXnE9G9kCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739518845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=88Y1nS1A2QfT5gFlu1HZuxZ/b065jAtb+T0yyIARB2w=;
-	b=zWJLrTfd+vzuPXLGY9aWH8DZBJv1NmZ+Ik9Y44ogzsqG3JNw7nkVwOodYt7o4AL8JpsIOx
-	SzBYZgaB+ktBne7GFmS7dMQYw78R2r99ZIT4r9OOWha2vxuC/jeDmQOur0pRqUSekHCVuj
-	i7NWSqqXu3Oxb7VO1nmgFqfmjES2EHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739518845;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=88Y1nS1A2QfT5gFlu1HZuxZ/b065jAtb+T0yyIARB2w=;
-	b=sicEhh96KfU2TvYGFoDX9Fyqq6X3R+usoecj/dtpK8kuMbixkG+hj8mjpr+aE5H2pM07WH
-	UIoXfptXnE9G9kCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 09EA313285;
-	Fri, 14 Feb 2025 07:40:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TgCfOnvzrmdCFgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 14 Feb 2025 07:40:43 +0000
-Date: Fri, 14 Feb 2025 08:40:43 +0100
-Message-ID: <87h64x2cuc.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: <tiwai@suse.de>,
-	<robh+dt@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<shenghao-ding@ti.com>,
-	<navada@ti.com>,
-	<13916275206@139.com>,
-	<v-hampiholi@ti.com>,
-	<v-po@ti.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<yung-chuan.liao@linux.intel.com>,
-	<broonie@kernel.org>,
-	<antheas.dk@gmail.com>,
-	<stuart.a.hayhurst@gmail.com>,
-	<dan.carpenter@linaro.org>
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix index issue in tas2781 hda SPI driver
-In-Reply-To: <20250214013021.6072-1-baojun.xu@ti.com>
-References: <20250214013021.6072-1-baojun.xu@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1739518866; c=relaxed/simple;
+	bh=12kOPRWel7xFCzSXfD1ckAW3cz4eQ6lXHcEjTTfHP5s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZybOAKHxCKmWpcLNFAFC3P4gUbWvb0Pz30YenZqyMOcbYuAlRNfTo55TUFf80RgE6f5K420qF257j1zT13kxiIz5hg8NBPKHrQcI2D6MDYckP+wnjI3TXmk0Mzaanxxyl7kqDv2F9EZO+szf/zJkRlGe1MHwyeFCpSLMj1rX+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pCSPyBJD; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f022fc6a3so38000285ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739518864; x=1740123664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ros5ecWILQk9ViSMi46tyrMnoasJTGynME1EO90va/I=;
+        b=pCSPyBJDNza5YN0gsduFf8YznwKZ+9fmLxYpU+YGZDyZS86XgPJzd/h78X5XK48QAf
+         h+YEQ4p2OWwZkMPp+Sfvpe94zh6fTYfvyViAx7uFPEg5nI0Kyx/s5qX7BZLE2qmtku9x
+         kmnAzs1d11NsIB/g/gGEqL5YmZ4kB81DOcGbZOly7i3CiOC2PMbIIUomnXcuKqwic0zB
+         Lti2hrOJFiDjmy+GuzXnSRMmTZ8AvRXNPptzByXMegOaT3Cwz5B8HdcTRFnfzfAAXUml
+         4XDXrgbKoeHQUfddC22h/J31a/grrzn8pNgk1VcFvWG3iBEiCJowoPANA8y0YHXsNZV2
+         n00Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739518864; x=1740123664;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ros5ecWILQk9ViSMi46tyrMnoasJTGynME1EO90va/I=;
+        b=F5TyDl2aYIKueZmuJ+UyamYjAhyy04Z5UVevRhkEeuzM088KmVYyAQtNEEx11kvgN6
+         LrWRFEK2ct0JgaN8YQctRfBcQxStFnqpSo5lrPPsEuFqpeNKIH7mtZXy8oYgeXRqZtZe
+         NpkLWyYEfWXhx679GFY8m+1xkoCC2svOFkcloifqVENUUZxJsS383DNtaP4iCCVVRddR
+         8ux6WeNDbD3ZpQDGi7nr48vHergylvGK7Z0sJ6BSgNP6mDnopDSCTO/c65gtQvaKxoes
+         li456F+LjjKK0xeEKwK1s3NELoo3fSJDh9G0GPhkERv1ZAsynVVxTtch6B764A+w1Xby
+         Wqgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1TBYNgTDH7OdaJkPYdSDTluk4jzjJ1rXzf689MtydXxMQXeWW1t8llpG3fm7cvM5WFb0C4TrBlEWQSV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54yo05pkjjBtYfupZKg8kMmIbeIHAlnbecq51VfPqP7jO6aUH
+	jkoudedcp935ctwyPBrECUOGGf92KpSPyotbAPcZ1evLmumk44VkxyLtmMLPFSUJw0N8WloIuYB
+	vADlU2ZzcKA==
+X-Google-Smtp-Source: AGHT+IFc9mssigZBBdQeLa48hAtAvejO3PdAygZr+C8/qwDEPSonq7V87yX/QBsUdgxAuKB6Xx/+ib3gt23dEg==
+X-Received: from plbjk16.prod.google.com ([2002:a17:903:3310:b0:21f:4e6:1edd])
+ (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:dacc:b0:21f:6546:9adc with SMTP id d9443c01a7336-220d3517e17mr85460525ad.13.1739518864278;
+ Thu, 13 Feb 2025 23:41:04 -0800 (PST)
+Date: Fri, 14 Feb 2025 15:40:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -1.80
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dt];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,kernel.org,linux.intel.com,gmail.com,perex.cz,ti.com,139.com,vger.kernel.org,intel.com,linaro.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250214074051.1619256-1-davidgow@google.com>
+Subject: [PATCH v6 0/3] rust: kunit: Support KUnit tests with a user-space
+ like syntax
+From: David Gow <davidgow@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, 
+	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Rae Moar <rmoar@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Matt Gilbride <mattgilbride@google.com>, Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Feb 2025 02:30:21 +0100,
-Baojun Xu wrote:
-> 
-> Correct wrong mask for device index.
-> 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+Hi all,
 
-Applied now with Fixes tag to commit bb5f86ea50ff ("ALSA: hda/tas2781:
-Add tas2781 hda SPI driver").
+After much delay, v6 of the KUnit/Rust integration patchset is here.
+This change incorporates most of Miguels suggestions from v5 (save for
+some of the copyright headers I wasn't comfortable unilaterally
+changing). This means the documentation is much improved, and it should
+work more cleanly on Rust 1.83 and 1.84, no longer requiring
+static_mut_refs or const_mut_refs. (I'm not 100% sure I understand all
+of the details of this, but I'm comfortable enough with how it's ended
+up.)
 
-Please put the proper Fix tag at the next time.
+This has been rebased against 6.14-rc1/rust-next, and should be able to
+comfortably go in via either the KUnit or Rust trees. My suspicion is
+that there's more likely to be conflicts with the Rust work (due to the
+changes in rust/macros/lib.rs) than with KUnit, where there are no
+current patches which would break the API, so maybe it makes the most
+sense for it to go in via Rust for 6.15.
+
+This series was originally written by Jos=C3=A9 Exp=C3=B3sito, and has been
+modified and updated by Matt Gilbride, Miguel Ojeda, and myself. The
+original version can be found here:
+https://github.com/Rust-for-Linux/linux/pull/950
+
+Add support for writing KUnit tests in Rust. While Rust doctests are
+already converted to KUnit tests and run, they're really better suited
+for examples, rather than as first-class unit tests.
+
+This series implements a series of direct Rust bindings for KUnit tests,
+as well as a new macro which allows KUnit tests to be written using a
+close variant of normal Rust unit test syntax. The only change required
+is replacing '#[cfg(test)]' with '#[kunit_tests(kunit_test_suite_name)]'
+
+An example test would look like:
+	#[kunit_tests(rust_kernel_hid_driver)]
+	mod tests {
+	    use super::*;
+	    use crate::{c_str, driver, hid, prelude::*};
+	    use core::ptr;
+
+	    struct SimpleTestDriver;
+	    impl Driver for SimpleTestDriver {
+	        type Data =3D ();
+	    }
+
+	    #[test]
+	    fn rust_test_hid_driver_adapter() {
+	        let mut hid =3D bindings::hid_driver::default();
+	        let name =3D c_str!("SimpleTestDriver");
+	        static MODULE: ThisModule =3D unsafe { ThisModule::from_ptr(ptr::n=
+ull_mut()) };
+
+        	let res =3D unsafe {
+	            <hid::Adapter<SimpleTestDriver> as driver::DriverOps>::registe=
+r(&mut hid, name, &MODULE)
+	        };
+	        assert_eq!(res, Err(ENODEV)); // The mock returns -19
+	    }
+	}
 
 
-thanks,
+Please give this a go, and make sure I haven't broken it! There's almost
+certainly a lot of improvements which can be made -- and there's a fair
+case to be made for replacing some of this with generated C code which
+can use the C macros -- but this is hopefully an adequate implementation
+for now, and the interface can (with luck) remain the same even if the
+implementation changes.
 
-Takashi
+A few small notable missing features:
+- Attributes (like the speed of a test) are hardcoded to the default
+  value.
+- Similarly, the module name attribute is hardcoded to NULL. In C, we
+  use the KBUILD_MODNAME macro, but I couldn't find a way to use this
+  from Rust which wasn't more ugly than just disabling it.
+- Assertions are not automatically rewritten to use KUnit assertions.
+
+---
+
+Changes since v5:
+https://lore.kernel.org/all/20241213081035.2069066-1-davidgow@google.com/
+- Rebased against 6.14-rc1
+- Fixed a bunch of warnings / clippy lints introduced in Rust 1.83 and
+  1.84.
+- No longer needs static_mut_refs / const_mut_refs, and is much cleaned
+  up as a result. (Thanks, Miguel)
+- Major documentation and example fixes. (Thanks, Miguel)
+
+Changes since v4:
+https://lore.kernel.org/linux-kselftest/20241101064505.3820737-1-davidgow@g=
+oogle.com/
+- Rebased against 6.13-rc1
+- Allowed an unused_unsafe warning after the behaviour of addr_of_mut!()
+  changed in Rust 1.82. (Thanks Boqun, Miguel)
+- "Expect" that the sample assert_eq!(1+1, 2) produces a clippy warning
+  due to a redundant assertion. (Thanks Boqun, Miguel)
+- Fix some missing safety comments, and remove some unneeded 'unsafe'
+  blocks. (Thanks Boqun)
+- Fix a couple of minor rustfmt issues which were triggering checkpatch
+  warnings.
+
+Changes since v3:
+https://lore.kernel.org/linux-kselftest/20241030045719.3085147-2-davidgow@g=
+oogle.com/T/
+- The kunit_unsafe_test_suite!() macro now panic!s if the suite name is
+  too long, triggering a compile error. (Thanks, Alice!)
+- The #[kunit_tests()] macro now preserves span information, so
+  errors can be better reported. (Thanks, Boqun!)
+- The example tests have been updated to no longer use assert_eq!() with
+  a constant bool argument (which triggered a clippy warning now we
+  have the span info).
+
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20241029092422.2884505-1-davidgow@g=
+oogle.com/T/
+- Include missing rust/macros/kunit.rs file from v2. (Thanks Boqun!)
+- The kunit_unsafe_test_suite!() macro will truncate the name of the
+  suite if it is too long. (Thanks Alice!)
+- The proc macro now emits an error if the suite name is too long.
+- We no longer needlessly use UnsafeCell<> in
+  kunit_unsafe_test_suite!(). (Thanks Alice!)
+
+Changes since v1:
+https://lore.kernel.org/lkml/20230720-rustbind-v1-0-c80db349e3b5@google.com=
+/T/
+- Rebase on top of the latest rust-next (commit 718c4069896c)
+- Make kunit_case a const fn, rather than a macro (Thanks Boqun)
+- As a result, the null terminator is now created with
+  kernel::kunit::kunit_case_null()
+- Use the C kunit_get_current_test() function to implement
+  in_kunit_test(), rather than re-implementing it (less efficiently)
+  ourselves.
+
+Changes since the GitHub PR:
+- Rebased on top of kselftest/kunit
+- Add const_mut_refs feature
+  This may conflict with https://lore.kernel.org/lkml/20230503090708.252431=
+0-6-nmi@metaspace.dk/
+- Add rust/macros/kunit.rs to the KUnit MAINTAINERS entry
+
+---
+
+Jos=C3=A9 Exp=C3=B3sito (3):
+  rust: kunit: add KUnit case and suite macros
+  rust: macros: add macro to easily run KUnit tests
+  rust: kunit: allow to know if we are in a test
+
+ MAINTAINERS          |   1 +
+ rust/kernel/kunit.rs | 199 +++++++++++++++++++++++++++++++++++++++++++
+ rust/macros/kunit.rs | 161 ++++++++++++++++++++++++++++++++++
+ rust/macros/lib.rs   |  29 +++++++
+ 4 files changed, 390 insertions(+)
+ create mode 100644 rust/macros/kunit.rs
+
+--=20
+2.48.1.601.g30ceb7b040-goog
+
 
