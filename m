@@ -1,119 +1,165 @@
-Return-Path: <linux-kernel+bounces-514176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B785A3539D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:19:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C24A3539E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:20:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 531A23ABF82
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A936116D003
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472697081C;
-	Fri, 14 Feb 2025 01:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AF15BAF0;
+	Fri, 14 Feb 2025 01:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiSQLD90"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbdOsdoK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9802E1E502;
-	Fri, 14 Feb 2025 01:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082B61E502;
+	Fri, 14 Feb 2025 01:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739495990; cv=none; b=iZ80SGXW7/XLzglsN2pntSyLt79VVYbQR/ZGccf5ENrcdg/Gx48IkeRSelZA7tAQ0npR7gZ/I9A+UliauutuJW988aIMoiYBJkHDTAgFtXmE5VpuvM51qBSrjIGW/dmA6HgmjPyLEP+/DdLCcUNwFlzp+zcxckgxx+8YyDY4ScQ=
+	t=1739496042; cv=none; b=NQV3eo20G4QcYcv1/3SMmDHgZkB76LTgEsZZHuHUtqZfro0lE3O4gR4b73iWsiSTW2NvV4ZCSfiBQEHE8Ss7J7xdHR9EaSHMyZre2mTixR6pnvCylIPbi6rZ7KEL3tzWqhLjWgtYpXFHw3xt/CmmX9BrqDZd2xSuo1X5wDWnTC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739495990; c=relaxed/simple;
-	bh=sfaPPZ9gP5kgndwhB/ECTbbp0IEu/QeHTgJVNdmuwy0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=HrvzebVQyobWBI9CpPxD6XJA7tTQEpgXwa7j7uf5n56YVZKusq8lromVXrMztNbVGvezmYKdFKb730SMeQviLc/tnVhpIFQ7wrQBtMghW1393kYyKxMegfyQoxMGu+/jELVB3GYTIMaJNHxNFH+esjmcoAH1PleeyN1wS65Q39Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiSQLD90; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC4EC4CED1;
-	Fri, 14 Feb 2025 01:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739495990;
-	bh=sfaPPZ9gP5kgndwhB/ECTbbp0IEu/QeHTgJVNdmuwy0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=XiSQLD906pcu2WDC2EPROMCXXWeS6auijB21WC1/0APPV98P5nxNnepP2GpHUYEqM
-	 nLtVUv3yqX9KjfSqpqyPfGJcmj4/pvaUMw4yj6uO4rS7pdtXBc2Uau8q14OTtrshAa
-	 12MV0IwP/2ZdGYhbdIpHSiIIeQuv24gd2B8FKNklG97FBHf84pIvHRBhvFN6BLH6Ap
-	 fsdeaHGb7rDR1qhVMoOwHbqH7IAZ84OtOlqUKaDlC8hDCJuV/64GnZvKhrGtFyPCUO
-	 p88qN0HJ69LTcXjyAw9xvVP6lbdTLQGR5ZsHlo1N8bcuoKiuNkBrEBlZsl0x6SFD0E
-	 UxlOKeUATTtHQ==
-Date: Thu, 13 Feb 2025 19:19:48 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739496042; c=relaxed/simple;
+	bh=i+KxcQUtTSoRPj7eik45+TNJr+WDnEYIYJQJCziSKng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ULrvkZtdTT+sJ9pA+xHTe8EU0av3140s4oCm3++IsOvUym+RIugpbh9uasvTB5t5c93sx7sv6scH7JsGtLC/BQcw5TczEltjbYmjWagmJ8r7LR92WTyuWCmL7Er6IvNex9RabCqLkaKC+9SjsbW2TN0Y3MeD25skfsTBQQOl+Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbdOsdoK; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739496041; x=1771032041;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=i+KxcQUtTSoRPj7eik45+TNJr+WDnEYIYJQJCziSKng=;
+  b=UbdOsdoK58v4zb/RWfjHE4ywLZF6eqVVvild0M5JMOPntivbvpcx54HE
+   l48LgP9nxVuxuiHnQ4rOg+XYDTL6AVbQ7rjgaW0T50RDTrEd5q7sSJPru
+   EYdILX3OUCGxq+misqOZmPnOfySkfPjrJ5P6detpA5+zJLCI+j60ALWFM
+   gE5zN84NyBdcSiSqDkk7c+c6XsuFVLXv7qCrxne9MInSybK3HWo0PvkXo
+   WwlJ5CkTxsjUqjTUUgaVnzk4/zlvPvvOiiFXphnIHFJcp4t3RkvhPNxet
+   hyB0LMk0xIFg4TbqqzcjsiMQAL8asPt/fqn5z9j5hBZTxSLPAhi1G4tXH
+   g==;
+X-CSE-ConnectionGUID: Fyt6LyWVQb2nNYgB2RV0zw==
+X-CSE-MsgGUID: XlNiPqWPT3+Nsh5MxU+Hqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40263472"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="40263472"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 17:20:40 -0800
+X-CSE-ConnectionGUID: YPutUsYAQ1eT0l1Nd6JPOg==
+X-CSE-MsgGUID: 7/i8F6UuS0ymYMAg5TEjAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118523543"
+Received: from unknown (HELO [10.238.9.235]) ([10.238.9.235])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 17:20:37 -0800
+Message-ID: <d67ccc93-9341-4551-9926-4b67f9c4ad09@linux.intel.com>
+Date: Fri, 14 Feb 2025 09:20:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- Chen-Yu Tsai <wens@csie.org>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Samuel Holland <samuel@sholland.org>
-To: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20250214003734.14944-7-andre.przywara@arm.com>
-References: <20250214003734.14944-1-andre.przywara@arm.com>
- <20250214003734.14944-7-andre.przywara@arm.com>
-Message-Id: <173949598874.895319.6861900349653451498.robh@kernel.org>
-Subject: Re: [PATCH v2 6/8] dt-bindings: pinctrl: add compatible for
- Allwinner A523/T527
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] KVM: TDX: Handle TDX PV MMIO hypercall
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Gao, Chao" <chao.gao@intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+ <kai.huang@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
+ "Lindgren, Tony" <tony.lindgren@intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>
+References: <20250211025442.3071607-1-binbin.wu@linux.intel.com>
+ <20250211025442.3071607-9-binbin.wu@linux.intel.com>
+ <Z6wHZdQ3YtVhmrZs@intel.com>
+ <fd496d85-b24f-4c6f-a6c9-3c0bd6784a1d@linux.intel.com>
+ <da350e731810aa6726ff7f5dfc489e1969a85afb.camel@intel.com>
+ <aa6a2af0-fa4b-42a7-98d6-d295efbb2732@linux.intel.com>
+ <d79ebae6825071201f38bbae4af4df05d84c7ab5.camel@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <d79ebae6825071201f38bbae4af4df05d84c7ab5.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Fri, 14 Feb 2025 00:37:32 +0000, Andre Przywara wrote:
-> The A523 contains a pin controller similar to previous SoCs, although
-> using 10 GPIO banks (PortB-PortK), all of them being IRQ capable.
-> With this SoC we introduce a new style of binding, where the pinmux values
-> for each pin group are stored in the new "allwinner,pinmux" property in
-> the DT node, instead of requiring every driver to store a mapping between
-> the function names and the required pinmux.
-> 
-> Add a new binding file, since all the different variants of the old
-> binding are making the file a bit unwieldy to handle already, and the new
-> property would make the situation worse.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../allwinner,sun55i-a523-pinctrl.yaml        | 177 ++++++++++++++++++
->  1 file changed, 177 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On 2/14/2025 9:01 AM, Edgecombe, Rick P wrote:
+> On Fri, 2025-02-14 at 08:47 +0800, Binbin Wu wrote:
+>> On 2/14/2025 5:41 AM, Edgecombe, Rick P wrote:
+>>> On Wed, 2025-02-12 at 10:39 +0800, Binbin Wu wrote:
+>>>>> IIRC, a TD-exit may occur due to an EPT MISCONFIG. Do you need to
+>>>>> distinguish
+>>>>> between a genuine EPT MISCONFIG and a morphed one, and handle them
+>>>>> differently?
+>>>> It will be handled separately, which will be in the last section of the KVM
+>>>> basic support.  But the v2 of "the rest" section is on hold because there is
+>>>> a discussion related to MTRR MSR handling:
+>>>> https://lore.kernel.org/all/20250201005048.657470-1-seanjc@google.com/
+>>>> Want to send the v2 of "the rest" section after the MTRR discussion is
+>>>> finalized.
+>>> I think we can just put back the original MTRR code (post KVM MTRR removal
+>>> version) for the next posting of the rest. The reason being Sean was pointing
+>>> that it is more architecturally correct given that the CPUID bit is exposed. So
+>>> we will need that regardless of the guest solution.
+>> The original MTRR code before removing is:
+>> https://lore.kernel.org/kvm/81119d66392bc9446340a16f8a532c7e1b2665a2.1708933498.git.isaku.yamahata@intel.com/
+>>
+>> It enforces WB as default memtype and disables fixed/variable range MTRRs.
+>> That means this solution doesn't allow guest to use MTRRs as a communication
+>> channel if the guest firmware wants to program some ranges to UC for legacy
+>> devices.
+> I'm talking about the internal version that existed after KVM removed MTRRs for
+> normal VMs. We are not talking about adding back KVM MTRRs.
+Sorry, I misunderstood it.
 
-yamllint warnings/errors:
+>
+>>
+>> How about to allow TDX guests to access MTRR MSRs as what KVM does for
+>> normal VMs?
+>>
+>> Guest kernels may use MTRRs as a crutch to get the desired memtype for devices.
+>> E.g., in most KVM-based setups, legacy devices such as the HPET and TPM are
+>> enumerated via ACPI.  And in Linux kernel, for unknown reasons, ACPI auto-maps
+>> such devices as WB, whereas the dedicated device drivers map memory as WC or
+>> UC.  The ACPI mappings rely on firmware to configure PCI hole (and other device
+>> memory) to be UC in the MTRRs to end up UC-, which is compatible with the
+>> drivers' requested WC/UC-.
+>>
+>> So KVM needs to allow guests to program the desired value in MTRRs in case
+>> guests want to use MTRRs as a communication channel between guest firmware
+>> and the kernel.
+>>
+>> Allow TDX guests to access MTRR MSRs as what KVM does for normal VMs, i.e.,
+>> KVM emulates accesses to MTRR MSRs, but doesn't virtualize guest MTRR memory
+>> types.  One open is whether enforce the value of default MTRR memtype as WB.
+> This is basically what we had previously (internally), right?
+Yes. Then we are aligned. :)
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.example.dts:24:18: fatal error: dt-bindings/clock/sun55i-a523-r-ccu.h: No such file or directory
-   24 |         #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+>
+>> However, TDX disallows toggling CR0.CD.  If a TDX guest wants to use MTRRs
+>> as the communication channel, it should skip toggling CR0.CD when it
+>> programs MTRRs both in guest firmware and guest kernel.  For a guest, there
+>> is no reason to disable caches because it's in a virtual environment.  It
+>> makes sense for guest firmware/kernel to skip toggling CR0.CD when it
+>> detects it's running as a TDX guest.
+> I don't see why we have to tie exposing MTRR to a particular solution for the
+> guest and bios. Let's focus on the work we know we need regardless for KVM.
 
-doc reference errors (make refcheckdocs):
+Guest could choose to use MTRRs or other SW protocal to communicate the memtype
+for devices. I just wanted to point it out that if guest chooses to use MTRRs
+as the communicate channel, it will face the #VE issue caused by toggleing
+CR0.CD.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250214003734.14944-7-andre.przywara@arm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
