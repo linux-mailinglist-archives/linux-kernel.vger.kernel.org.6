@@ -1,221 +1,156 @@
-Return-Path: <linux-kernel+bounces-514531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D85BA35829
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:47:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CA2A3582A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095451891E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:47:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FFD3AAE67
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A84721B1A8;
-	Fri, 14 Feb 2025 07:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8284021B8E0;
+	Fri, 14 Feb 2025 07:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N07Gl9ao"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qI7QAWdG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GsacvUad";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HuZIErAO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JAMJAT5C"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653BF21B181;
-	Fri, 14 Feb 2025 07:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051D5189915;
+	Fri, 14 Feb 2025 07:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739519252; cv=none; b=A/SdFbHP1oSmQuCZIJHj/bC4bxpqBNOwYOEqZKxtQ2Chn6iQaiWyVRevFe8HMLkqGMPmUKEoft9r3RfOJMO0V6AiUb1CSVhXLgXD1H1gRFccGOAyhoUbHUPKr2KJhIbTCnxQ9ztfV2awNIW0OG1LCu1TyqNuShm/62/C/EKtv5c=
+	t=1739519271; cv=none; b=TERcd+FCUrcLHYJK6bbOiKzE4yH2egmFSRYxoxHdTAeWdnuFHMK3FaU4Z0vDkadmSunEWiJ26/qIUseC9dw5cPSWlY6XXR1b0TccYgPQmlxkJHztNJ/HQzZMCkgf4OYlsGPCkBNP8n20Es/21/vu7VkuCIAoh+k7tz8n92OPIL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739519252; c=relaxed/simple;
-	bh=EYmxegMfAeOmf9WfPU0zoAyXDFaCcyLf0boT+xp9GzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DuVTtaPFBNH2z0zbJOzCD2HMCjoWgvHP8My4nrOXEWzjsGSGLXf+L8dg01Qs7pnCQxadr705o2bzlI8ns6rHkLKbp129H8Z/E7RQA2kz+4mSKpp43/wLRc/PF8DLWhyla6pTrs28kHi/nXWJJ7FZ1u1/6OyjLmD/woGC4duARco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N07Gl9ao; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25D4C4CED1;
-	Fri, 14 Feb 2025 07:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739519251;
-	bh=EYmxegMfAeOmf9WfPU0zoAyXDFaCcyLf0boT+xp9GzI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N07Gl9aocIzC5I04HiGdP03Mws1B5tWvZQNa4Hft8/45j5cB4ALd3qcnGufrUYktk
-	 artWM/ChcL+6uQrP21lToDMsM7U1LBJdCHQDBr9IuyXbqbPSdYChWrUSgUymQrFRJj
-	 mhC2CMfArzPXVjYnx5OiOwK4erS6A1QqkT721cz/08yJPSkfk5T1BDKnwzUwRc0AKg
-	 91vpDWQYaxb27HZ7N0Aruobkc1i34nyEeLXFqbdq7m0mozQEscMPbWTAoEU5rSzc7/
-	 qOfnKb4GiHGzzOWzBIaXRtHfJldYj6ZKq7m0utxtmr2F69AvYxXKjV9rEspNzXtPTQ
-	 th/UIPJNgrw8A==
-Message-ID: <826ded05-6ea8-420c-8bd9-97dcf9b18ccc@kernel.org>
-Date: Fri, 14 Feb 2025 08:47:23 +0100
+	s=arc-20240116; t=1739519271; c=relaxed/simple;
+	bh=9Fx1ADP2d6/0Az/8gbXuqq/P/ru93pf9PBS1UT9ATrE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K+6KyYcnsNCedlZsxLH5A8Ar72gwwJJRk+tEXQjLvwEeF206lPoO9s7OCVVFsHmz+NMu36lhUVMPdR9cSAe18ci7QifZk5gdl7vTn73bqv78oqFNqNV9uhCWSg8CN0B3CO7/hDCmlqkghhVvqVOfaek1qWVnfChMrQU9ZaAlix0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qI7QAWdG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GsacvUad; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HuZIErAO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JAMJAT5C; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CCF5C21D63;
+	Fri, 14 Feb 2025 07:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739519268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
+	b=qI7QAWdGkEzSdkGWKnCRrBsCP15AI+a8MQG9MtkE/BB+jrENAAQwpTe+E2Xm+2NHXJ5Nc6
+	+DB89DIAKBPLAYeQDYAtNg2JrEglc/ox0W04DgWs+QUj11uA/K7jrGAMymQwvHC6HLMq7M
+	kcU0aEIr8TuzhoIiXEnLod4iZZFXvJY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739519268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
+	b=GsacvUad/BiRMJcOJ91IiZZJzQ7nlkp7iqAg8SBNBRX9DoKrGpaN5RYMsZkz2bSzeCOzrg
+	5KhUQiB8j4vTDACA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HuZIErAO;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JAMJAT5C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739519267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
+	b=HuZIErAOtkLwIx+u/+YLGmdowSprAxYlqy1qJ0h1SjRvnEibH0NtMj4YhXBXscbBoHLBrC
+	UNhiGu1lUDZ0iVPYeAJgD68zeuhbXLQtbGJiqLgrRcwFogKpzfzagfieMkZrAyRyro9e5B
+	NNg+8CoQ9BLsWNmc+JbQGxa5UOsdXr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739519267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
+	b=JAMJAT5CF/DosKKP5vjP62YuxO3HM0pEteMsnt8lVNIfTKerBbzecL9HLC+nrSZOhjcWs5
+	PdJ5/IctVT7fRBAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 370CA13285;
+	Fri, 14 Feb 2025 07:47:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4iuXCSP1rmd9GAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 14 Feb 2025 07:47:47 +0000
+Date: Fri, 14 Feb 2025 08:47:42 +0100
+Message-ID: <87frkh2cip.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	cezary.rojewski@intel.com,
+	Julia.Lawall@inria.fr,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: hda: Add error check for snd_ctl_rename_id() in snd_hda_create_dig_out_ctls()
+In-Reply-To: <20250213074543.1620-1-vulab@iscas.ac.cn>
+References: <20250213074543.1620-1-vulab@iscas.ac.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] dt-bindings: bluetooth: describe wilc 3000
- bluetooth chip
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Kalle Valo <kvalo@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Marek Vasut <marex@denx.de>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-bluetooth@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250212-wilc3000_bt-v1-0-9609b784874e@bootlin.com>
- <20250212-wilc3000_bt-v1-1-9609b784874e@bootlin.com>
- <20250213-chamois-of-unexpected-glory-dd3eab@krzk-bin>
- <99247019-bb41-4fd9-bc0c-d31e5688533b@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <99247019-bb41-4fd9-bc0c-d31e5688533b@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: CCF5C21D63
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 13/02/2025 16:25, Alexis Lothoré wrote:
-> Hi Krzysztof,
+On Thu, 13 Feb 2025 08:45:43 +0100,
+Wentao Liang wrote:
 > 
-> On 2/13/25 10:25, Krzysztof Kozlowski wrote:
->>> +  wlan:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description:
->>> +      Phandle to the wlan part of the combo chip
->>
->> No resources here and judging by the driver everything is part of wifi.
->> Either you wrote it to match driver or indeed hardware is like that. In
->> the first case, why this cannot be part of WiFi with phandle to serial
->> bus? In the second case, this needs to be proper hardware description
+> Check the return value of snd_ctl_rename_id() in
+> snd_hda_create_dig_out_ctls(). Ensure that failures
+> are properly handled.
 > 
-> First, I'd like to reclarify what the chip exactly is, to make sure that we are
-> talking about the same thing. The wilc3000 ([1]) is a single physical device
-> packaging two different discrete modules inside (one for 802.11, one for
-> bluetooth). The WLAN part has its own binding integrated in upstream kernel
-> ([2]) and is based on a similar chip in the same family (wilc1000, which only
-> have 802.11, and so only SPI/SDIO, no UART).
-> 
-> Now that it is said, no, I did not write this binding only aiming to match the
-> new driver. I tried to base this description on how similar WLAN/BT combo chips
-> are usually described (based on those which have existing bindings), and they
-> seem to describe distinctly the two internal parts of those chips as well. For
+> Fixes: 5c219a340850 ("ALSA: hda: Fix kctl->id initialization")
+> Cc: stable@vger.kernel.org # 6.4+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+
+The error would never happen because this is a rename, and the only
+error condition of snd_ctl_rename_id() is the lack of the control id.
+But it's better to have a return check in the caller side, so I took
+now.  Thanks.
 
 
-Yes, because BT part is isolated enough that you datasheet tells which
-resources belong to it and DT describes these resources.
-
-You do not have any resources here.
-
-> those who use HCI commands over uart for the bluetooth part, they expose a
-> dedicated child node of a serial controller (distinct from the wlan part,
-> described as another node on PCI/SDIO/SPI/etc). The hardware architecture for
-> wilc3000 is similar to those, so since the serial bus is the primary interface
-> to operate the bluetooth part inside the chip, doesn't it makes sense to have it
-> under a serial controller node (and then to refer to wlan for the additional
-> operations needed on sdio/spi), than the other way around ?
-
-
-There is little benefit in describing one device in two places. This
-even lead to probe ordering issues and power sequencing problems, for
-example being explicitly addressed by recent power sequencing work from
-Bartosz by creating *third* node...
-
-You have no resources here, so I cannot even imagine inventing something
-in that third (PMU) node.
-
-But anyway in case of WCN devices, the reason of power sequencing
-patches, BT and WiFi are separate, can be enabled separately, can be
-even shipped one without another (I think).
-
-Not your case. Your BT needs WiFi to load firmware.
-
-> 
-> About the lack of other resources in the new node: there are indeed additional
-> resources that affect bluetooth, but I am not sure how it should be handled:
-
-You sent us then incomplete hardware description. So you got review like
-this.
-
-> there are for example a reset input and a chip enable input exposed by this
-> chip, which in fact do not only affect the WLAN part but the two parts inside
-> the chip. But those are currently described and handled by the WLAN part. I
-
-So everything is already defined in WiFi part and this node is not
-really necessary.
-
-> guess that an improvement regarding this point could then be to move those out
-> of the wlan binding, and find a way to describe it as shared resources between
-> those two parts of the chip, but how should it be handled ? Is it ok to remove
-> those from an existing binding (and if so, where to put those ? It is not
-> bluetooth specific neither) ? Is the issue rather about current WILC3000 binding
-> kind of mixing overall chip description and internal wlan part description ?
-
-
-Datasheet shows this as one device, not two, not three.
-
-Reset and chip enable, based on datasheet, are not specific to BT. They
-reset/enable entire chip, I assume, so it is even better proof that your
-HW description is not correct.
-
-How this device is supposed to work if you do not enable WiFi - do not
-deassert reset from Wifi driver? BT will stay in reset. Really, and
-that's correct hardware representation?
-
-This is exactly the power sequencing problem one more time and you keep
-asking exactly the same questions and repeating exactly the same
-mistakes. This is incomplete and, IMO, incorrect hardware description.
-
-Read all previous discussions, read/listen/watch the talks about power
-sequencing (there were two on LPCs - one with Abel to describe the
-problem, year later to solve it).
-
-
-Best regards,
-Krzysztof
+Takashi
 
