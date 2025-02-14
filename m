@@ -1,149 +1,263 @@
-Return-Path: <linux-kernel+bounces-514632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA55A35982
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:57:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0FA35988
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8E916F658
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514063A7282
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CE122AE55;
-	Fri, 14 Feb 2025 08:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAD422A4C1;
+	Fri, 14 Feb 2025 08:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gSd9bn8b"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a22o+UKD"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48916228CB3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646A189915;
+	Fri, 14 Feb 2025 08:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523418; cv=none; b=OhTNLEWGZZeGUtstn58NLPhBA+JD2YgEe3vBji70KM/w/b7OS40r/SDDtrF6tRRlQBppIo4LW6b1TNuO69hE6pFJLVx2V1EOubhPyFHe9HvW8c7kxVcES1+Nj3F2qSe+TJ/cwPPx+AmS/XitSuDCfDGM8c5vMFZzB4oITYnV1LM=
+	t=1739523499; cv=none; b=a/9M1HbFwqo1hSjkDUVbzYrtDWGJUBJlDXNgLnlOCeDVP+i+p/EDC2lCpmHZQ9BYMh36x6D+KRe8mv5HSqfVLoSgHdRET1GSLify+ZgpcnROzrofYWSqJHw0BmTq9NzonTVKcij6WdBO/KnxR790awjviQQOvYI0/6pNtp4Db/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523418; c=relaxed/simple;
-	bh=N2oMEh6KNf6wBuiHWeggrzEjBJybpqlqwqAt7hY3EyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F77RyZ9JBYKsMbW1V2j8U7HEsYPQl3RTZ4I44gdQkYhJ0xOCnX0rqbQs0kUkvhW7Ft+BPH+N40D7CyOuIMxUt7SRfxKpqETrd2ZluGZko0SkjmgkLT+mKtgmaYQ6pTkLIOhlQbP+mEw5dfBPmbWQotKhSocOBxYdrt6E5JP5zrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gSd9bn8b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8Pw08028583
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:56:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Zt82XTOmepbxt73N1eo4Gcxa2vbkGwf5dADu4EFFH+w=; b=gSd9bn8b7SfqRDSj
-	62HWhD+6Z68T4K2/jUZoXM89ENZRZ1XYc51Gpgx721HbkQTibqoqYNNoPogrgsPd
-	nCK0TL1AWA6hxa+3t5mtEj9VrsQ7QJfM70yrphUjDuBFB64TGmxEMGiT1dxTWVvQ
-	irXeSyLR9UgVs6qASOxy7LAk8p/0Yl/6ccIC/s60c2xvK6VLhgISvnyfnPvQ8aFb
-	/KdiDBntaVXBkDtyS+yso/HFi6tH69NkMHPR8AWGSmpSLi6UImVgAc7PKARznjUp
-	b8GjSef86WNpPDG0AcpcR5ZbBblhDe5Bgme+3mHf9idWcsEibSTWjESao+UnmZD4
-	nrE5ig==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sebnb5bg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:56:56 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fa514fa6c7so4488161a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:56:56 -0800 (PST)
+	s=arc-20240116; t=1739523499; c=relaxed/simple;
+	bh=VOld3dnw+T4weevCXt6kCyRx+szkiYiuTkVNcPfwJV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B+TTkf+CuH/eIGWg+PP9uzKARiRK91ZW8KRXi9ZXApvOuxQFSOydgQaOaxWERr3WZnp6hBONS0aVTHWd8L8gDEIJ2ysn0sNlmtqy+IG/gZ6xgMDWjRT61g7YbJU97D+qTOjQd58BkCYz1qJ4B4j6i961leWo0AyrkXRka21S/TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a22o+UKD; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2b8e2606a58so970530fac.0;
+        Fri, 14 Feb 2025 00:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739523496; x=1740128296; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtD1EK2iHm2J01pml3P/unMeIKoZgkx4ph4Uy7XYIUg=;
+        b=a22o+UKD4q1eyEITdr/4HuR8rf4ldFl7Y347FY0agkM8jB0AaRudFutWSLGFlRmpBT
+         zUAnc3mqzhlBe9FzMv0oKsrOwrt+Dk6e8FrQTQQa6uP06h/J+Ujlbclczq+IKMvsgmlp
+         a2hwcpb1DNFe5Iv8coa6BUtC9ZPrF58qvSXjcWEaWx8XMf6fdjBDfe0Q+wbZSIDsH+iu
+         pEzr4vIGGIpnRebWpBIRclwZ+csJw63nUQhD7Hwdbv7mhv1n5Ef0L6M/VCqmoz2rVoLj
+         IAY/pRfwLWvQUCD8YgCkpG3bUALHeSBWL4l7qUnjjOEgjrVDF/B+Z3+GJacYkX+iub3q
+         q2uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739523415; x=1740128215;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zt82XTOmepbxt73N1eo4Gcxa2vbkGwf5dADu4EFFH+w=;
-        b=nKXx7TYXVCKqBH+6SWsudirT8Bx14vzhfbfYSTkOirZSjVtPPTLC9XCEpY7jdO52V1
-         dtM3fsZwGhNXyyoUxTwWK3AR0FgaADvCfSGWmENa+OIbR+5P/EEyZSTvwo7Zu93qhic7
-         fJXStc7sgGTLljZnUxErYOo9Bhx4mPZtR3YBDowJuXR6DWvoiPCB2BuRKjO/SGvMcba7
-         THC5QUwnGgR37YxH5eurNwivBG+egFnHfBoi3aPXbFn0NGIDC+NAiTywxoK1vKUZUWu0
-         8CMWKPyk+hmjvEoSwPulxmX93kXOIKrwzuRF6xyRawYDuUZlSy+e3cBCpOlrIY/sTT0R
-         DeMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVS4rPcCrET10IuVPrh6WsTIJ6TlDxmlnIcOXbKYh5U6qDfyyJKnc6xSZz7M4Le8q4yqekLy7y43nc941o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwesUWnWJuv18CNpHYhVlXAFrqTbT5yYNPogwSLchivIxNkg52X
-	TRaw3DuIP9RZWbUO8ydkH92ueOReW+Dd5Q9hxITn2eVNiWv2p2BdTgfVxr+jwddV3jy/DDoyHKR
-	EMwiQrtOnBKcBvF9KbttVMGG0zX4Q0H3w43+Sab1EE3Vlj6zOC0aViyiR2TY4BSs=
-X-Gm-Gg: ASbGncvoO7Yh5fHHGCU9VMPzqPT4kMPacCTrbME3XnF+bMT8+DeHTUjULlEsWf82gcc
-	idEscBNE3PKYtEOc4LGdFUriGv/Bv0nSbywd5Lz62r9CrqMBEAYx2SXvJFzF9LHr5yFOEepGJd+
-	IKgfO39ErBJNLzkOK8TC/CrXbjzDwcNkZr34gA5JTNjdHfDS+Vfl4Sd5o7a5WNx9q7TvY7hr7ib
-	aWRn8ZmMzfsNl8e6ClxDjP5yQ6ZDCI/vFu34P6L0FHiD51C5Za3dI3XbZGb7zd4q9ofLvceInFB
-	IcBNFyALmcI5EKecn90RspRtdXjyhA==
-X-Received: by 2002:a05:6a00:3989:b0:729:a31:892d with SMTP id d2e1a72fcca58-7322c591baemr20039229b3a.8.1739523415566;
-        Fri, 14 Feb 2025 00:56:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG0xCy3CGTXSILQ1bj4llABzfBeQ7obxgJnQtk/CYwRAuzAyy2KgJQVQxxN2Sx9fbn0eu/yyw==
-X-Received: by 2002:a05:6a00:3989:b0:729:a31:892d with SMTP id d2e1a72fcca58-7322c591baemr20039209b3a.8.1739523415219;
-        Fri, 14 Feb 2025 00:56:55 -0800 (PST)
-Received: from [10.218.35.239] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e438sm2728749b3a.94.2025.02.14.00.56.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 00:56:54 -0800 (PST)
-Message-ID: <b7903b50-4213-41d5-a7d3-5dded5f38994@oss.qualcomm.com>
-Date: Fri, 14 Feb 2025 14:26:51 +0530
+        d=1e100.net; s=20230601; t=1739523496; x=1740128296;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QtD1EK2iHm2J01pml3P/unMeIKoZgkx4ph4Uy7XYIUg=;
+        b=Yf4h+6al50+GsbFX2NrEDCHjcf0ohtG5+ssyEJMnHqCLR/w9P0Rrzp1Rg4vxOXpB+Z
+         iKoGKNadpWTR8IpjYEOMJVE0XemzEfy0MURQEco5UeX9a1bOjq2LDIA5xxNzY7kLkQhx
+         Ai8YfYk14cwoZ7YjDWIMZwOpGIgEZBFD9UksYEtihvYJiW+07YEf1EnFzc9972RfiRhN
+         hbcho9USpD0kfeYjQFGwquejHPEtyNPDYXOXBrMl0JQXt8nQJ8/W+jvzoQybJ/fX6g0O
+         JKj5fznWQ9nLGqvFblhXH4y789cyIsfk7IJyQpzPGDav3aoZVkj6fkth5x4aimdxGsh9
+         /QVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZFBvKo7PW42oV/w1f2fPIJ3y2aRzyl+gUQBK3AKGtRmJrtRhnP/SIX8lESyKC5b3cIp6kYOpsEL9HEg==@vger.kernel.org, AJvYcCWORFNlrj6qZxnAA93FUjrg7HZfHYv6A+Fu636CrACrvSLBaa1WPC5G/tWkzqgPkeMUfXPLTjBwcyHnmEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz67uahdr+StJOO+HwVZ5au9Xk3NzV75Zmz//Dg6U9kfuvy789W
+	s+y3a+8SbLHKXPhINY9E3qO3jFbNpGih/eaSaQ57tOfZsoA0RvPtoR6yEyg9cBMpHMHVccKikNJ
+	jCnOhkRpEcHNBA8KOeYRgIZEu38Q=
+X-Gm-Gg: ASbGncte+LVgEOOxJcd6luF9Z1tUooUC6x5a+sI3N4FwtUTlBsWUU5pr0CH1XtbaJn/
+	iTc4T3zXc0/WVJuFVgrKeW1G4HQvxG6R6BMN6Mv6TZng5dfN1PU5ZyyEqDCnJ3fHBGd7BWMcVIN
+	t9fzFgx09mfN3cbHMuJLYLXodccqGr
+X-Google-Smtp-Source: AGHT+IFLewb412noj4uqcVc4O05Mx0s640QthBlKi29bsLaw4fZCgCoki/X1a7yUuRxKarNYApMZBkUEJ48ks/HSldc=
+X-Received: by 2002:a05:6870:ec94:b0:29e:29ac:5ade with SMTP id
+ 586e51a60fabf-2b8daf9798fmr6678884fac.35.1739523496658; Fri, 14 Feb 2025
+ 00:58:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] usb: gadget: Set self-powered based on MaxPower and
- bmAttributes
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250204105908.2255686-1-prashanth.k@oss.qualcomm.com>
- <2025021435-campfire-vending-ae46@gregkh>
-Content-Language: en-US
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-In-Reply-To: <2025021435-campfire-vending-ae46@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: CkWuKr_55-H_zowSfCT5uxJ0zbBUTeu4
-X-Proofpoint-ORIG-GUID: CkWuKr_55-H_zowSfCT5uxJ0zbBUTeu4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_03,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=250 phishscore=0
- suspectscore=0 malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140063
+References: <20250127061529.2437012-1-zhangchunyan@iscas.ac.cn>
+ <c0a2fbeb-9a0d-4b69-bc6b-e1652e13debf@molgen.mpg.de> <Z5gJ35pXI2W41QDk@ghost>
+ <CAAfSe-utAb53278x9X4tKn6jWzdehsPKDRa_CoQy61ND=cXbxQ@mail.gmail.com> <Z65l51hrDmKQP6dM@ghost>
+In-Reply-To: <Z65l51hrDmKQP6dM@ghost>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 14 Feb 2025 16:57:40 +0800
+X-Gm-Features: AWEUYZk6Nb2w_oOkYEtmCWxquIeInQemENiiDTKj3yi3kUf3z09tHcasYvPqllI
+Message-ID: <CAAfSe-tcNHYY+Jw5CZNOxXgLcK8gvBq7rgOY5KZfM_+9PbTfHw@mail.gmail.com>
+Subject: Re: [PATCH V2] raid6: Add RISC-V SIMD syndrome and recovery calculations
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Chunyan Zhang <zhangchunyan@iscas.ac.cn>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+	linux-riscv@lists.infradead.org, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 14 Feb 2025 at 05:36, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>
+> On Tue, Feb 11, 2025 at 05:59:26PM +0800, Chunyan Zhang wrote:
+> > On Tue, 28 Jan 2025 at 06:34, Charlie Jenkins <charlie@rivosinc.com> wrote:
+> > >
+> > > On Mon, Jan 27, 2025 at 09:39:11AM +0100, Paul Menzel wrote:
+> > > > Dear Chunyan,
+> > > >
+> > > >
+> > > > Thank you for the patch.
+> > > >
+> > > >
+> > > > Am 27.01.25 um 07:15 schrieb Chunyan Zhang:
+> > > > > The assembly is originally based on the ARM NEON and int.uc, but uses
+> > > > > RISC-V vector instructions to implement the RAID6 syndrome and
+> > > > > recovery calculations.
+> > > > >
+> > > > > Results on QEMU running with the option "-icount shift=0":
+> > > > >
+> > > > >    raid6: rvvx1    gen()  1008 MB/s
+> > > > >    raid6: rvvx2    gen()  1395 MB/s
+> > > > >    raid6: rvvx4    gen()  1584 MB/s
+> > > > >    raid6: rvvx8    gen()  1694 MB/s
+> > > > >    raid6: int64x8  gen()   113 MB/s
+> > > > >    raid6: int64x4  gen()   116 MB/s
+> > > > >    raid6: int64x2  gen()   272 MB/s
+> > > > >    raid6: int64x1  gen()   229 MB/s
+> > > > >    raid6: using algorithm rvvx8 gen() 1694 MB/s
+> > > > >    raid6: .... xor() 1000 MB/s, rmw enabled
+> > > > >    raid6: using rvv recovery algorithm
+> > > >
+> > > > How did you start QEMU and on what host did you run it? Does it change
+> > > > between runs? (For me these benchmark values were very unreliable in the
+> > > > past on x86 hardware.)
+> > >
+> > > I reported dramatic gains on vector as well in this response [1]. Note
+> > > that these gains are only present when using the QEMU option "-icount
+> > > shift=0" vector becomes dramatically more performant. Without this
+> > > option we do not see a performance gain on QEMU. However riscv vector is
+> > > known to not be less optimized on QEMU so having vector be less
+> > > performant on some QEMU configurations is not necessarily representative
+> > > of hardware implementations.
+> > >
+> > >
+> > > My full qemu command is (running on x86 host):
+> > >
+> > > qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1\
+> > >     -kernel arch/riscv/boot/Image \
+> > >     -append "root=/dev/vda rw earlycon console=ttyS0" \
+> > >     -drive file=rootfs.ext2,format=raw,id=hd0,if=none \
+> > >     -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
+> > >     -device virtio-blk-device,drive=hd0
+> > >
+> > > This is with version 9.2.0.
+> > >
+> > >
+> > > I am also facing this issue when executing this:
+> > >
+> > > raid6: rvvx1    gen()   717 MB/s
+> > > raid6: rvvx2    gen()   734 MB/s
+> > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+> > >
+> > > Only rvvx4 is failing. I applied this patch to 6.13.
+> >
+> > I used your command to run but no issue on my side (x86 host, qemu
+> > version is 9.2.0, kernel 6.13 too):
+> >
+> > qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1 -icount shift=0 \
+> >         -kernel arch/riscv/boot/Image   \
+> >         -append "rootwait root=/dev/vda ro"     \
+> >         -drive file=rootfs.ext4,format=raw,id=hd0 \
+> >         -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
+> >         -device virtio-blk-device,drive=hd0
+>
+> I am able to reproduce it with this defconfig:
+>
+> CONFIG_SYSVIPC=y
+> CONFIG_NO_HZ_IDLE=y
+> CONFIG_HIGH_RES_TIMERS=y
+> CONFIG_BPF_SYSCALL=y
+> CONFIG_IKCONFIG=y
+> CONFIG_IKCONFIG_PROC=y
+> CONFIG_NAMESPACES=y
+> CONFIG_USER_NS=y
+> CONFIG_CHECKPOINT_RESTORE=y
+> CONFIG_BLK_DEV_INITRD=y
+> CONFIG_EXPERT=y
+> # CONFIG_SYSFS_SYSCALL is not set
+> CONFIG_PROFILING=y
+> CONFIG_SMP=y
+> CONFIG_CPU_FREQ=y
+> CONFIG_CPU_FREQ_STAT=y
+> CONFIG_CPU_FREQ_GOV_USERSPACE=y
+> CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+> CONFIG_CPUFREQ_DT=y
+> CONFIG_JUMP_LABEL=y
+> CONFIG_DEVTMPFS=y
+> CONFIG_DEVTMPFS_MOUNT=y
+> CONFIG_MTD=y
+> CONFIG_MTD_BLOCK=y
+> CONFIG_MTD_CFI=y
+> CONFIG_MTD_CFI_ADV_OPTIONS=y
+> CONFIG_BLK_DEV_LOOP=y
+> CONFIG_VIRTIO_BLK=y
+> CONFIG_MD=y
+> CONFIG_BLK_DEV_MD=y
+> CONFIG_MD_RAID456=y
+> CONFIG_INPUT_MOUSEDEV=y
+> CONFIG_SERIAL_8250=y
+> CONFIG_SERIAL_8250_CONSOLE=y
+> CONFIG_SERIAL_8250_DW=y
+> CONFIG_SERIAL_OF_PLATFORM=y
+> CONFIG_SERIAL_SIFIVE=y
+> CONFIG_SERIAL_SIFIVE_CONSOLE=y
+> CONFIG_VIRTIO_CONSOLE=y
+> CONFIG_HW_RANDOM_VIRTIO=y
+> CONFIG_PINCTRL=y
+> CONFIG_GPIOLIB=y
+> CONFIG_GPIO_DWAPB=y
+> CONFIG_GPIO_SIFIVE=y
+> CONFIG_SOUND=y
+> CONFIG_RTC_CLASS=y
+> CONFIG_RTC_DRV_GOLDFISH=y
+> CONFIG_DMADEVICES=y
+> CONFIG_DW_AXI_DMAC=y
+> CONFIG_VIRTIO_BALLOON=y
+> CONFIG_VIRTIO_INPUT=y
+> CONFIG_VIRTIO_MMIO=y
+> CONFIG_GOLDFISH=y
+> CONFIG_MAILBOX=y
+> CONFIG_RPMSG_CTRL=y
+> CONFIG_RPMSG_VIRTIO=y
+> CONFIG_PM_DEVFREQ=y
+> CONFIG_IIO=y
+> CONFIG_LIBNVDIMM=y
+> CONFIG_EXT4_FS=y
+> CONFIG_EXT4_FS_POSIX_ACL=y
+> CONFIG_EXT4_FS_SECURITY=y
+> CONFIG_AUTOFS_FS=y
+> CONFIG_ISO9660_FS=y
+> CONFIG_JOLIET=y
+> CONFIG_ZISOFS=y
+> CONFIG_MSDOS_FS=y
+> CONFIG_VFAT_FS=y
+> CONFIG_PRINTK_TIME=y
+> CONFIG_SCHED_STACK_END_CHECK=y
+> # CONFIG_RCU_TRACE is not set
+> # CONFIG_FTRACE is not set
+> # CONFIG_RUNTIME_TESTING_MENU is not set
+>
+> I took the riscv/defconfig and added MD_RAID456 and it's dependencies.
+> So that the message wasn't too long I started removing some unnecessary
+> configs. Try this out and let me know if you encounter the issue.
 
+I took the riscv/defconfig and set MD_RAID456=y, but didn't see this issue.
+Since RAID6_PQ is selected by MD_RAID456, so RAID6_PQ=y, I got the
+raid6 test result during kernel init.
 
-On 14-02-25 01:32 pm, Greg Kroah-Hartman wrote:
-> On Tue, Feb 04, 2025 at 04:29:08PM +0530, Prashanth K wrote:
->> Currently the USB gadget will be set as bus-powered based solely
->> on whether its bMaxPower is greater than 100mA, but this may miss
->> devices that may legitimately draw less than 100mA but still want
->> to report as bus-powered. Similarly during suspend & resume, USB
->> gadget is incorrectly marked as bus/self powered without checking
->> the bmAttributes field. Fix these by configuring the USB gadget
->> as self or bus powered based on bmAttributes, and explicitly set
->> it as bus-powered if it draws more than 100mA.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
->> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
->> ---
->>  drivers/usb/gadget/composite.c | 16 +++++++++++-----
->>  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> What type of "comments" are you wanting here?
-> 
-> For obvious reasons, I can't apply patches tagged "RFC" but I don't see
-> what you are wanting us to do here.
-> 
-> confused,
-> 
-> greg k-h
-Sent an RFC since I got some comments last time while changing few
-things on this path, was expecting the same thing this time, Will send a v2.
+[    0.317147] raid6: rvvx1    gen()    45 MB/s
+[    0.390800] raid6: rvvx2    gen()    45 MB/s
+[    0.459435] raid6: rvvx4    gen()    45 MB/s
+[    0.527651] raid6: rvvx8    gen()    44 MB/s
+[    0.596123] raid6: int64x8  gen()  1232 MB/s
+[    0.664686] raid6: int64x4  gen()  2728 MB/s
+[    0.733291] raid6: int64x2  gen()  3405 MB/s
+[    0.801836] raid6: int64x1  gen()  2730 MB/s
+[    0.801895] raid6: using algorithm int64x2 gen() 3405 MB/s
+[    0.870379] raid6: .... xor() 493 MB/s, rmw enabled
 
 Thanks,
-Prashanth K
+Chunyan
 
