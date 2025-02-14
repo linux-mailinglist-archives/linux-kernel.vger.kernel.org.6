@@ -1,297 +1,172 @@
-Return-Path: <linux-kernel+bounces-514441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F82A35716
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CCBA35717
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180E73ACE67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9EE3A5428
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346EC1FFC7C;
-	Fri, 14 Feb 2025 06:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbLt3n8L"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7803620103A;
+	Fri, 14 Feb 2025 06:30:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A270022071;
-	Fri, 14 Feb 2025 06:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E09200BB3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514579; cv=none; b=YGLdPhQ9RnojD3dJb5lCCGWKY57/VrBAG2yLNXIrsPw6mmJfuIVuoYD9Oyt0Ugd0jDJdHXVbMm79X1K7ma2gGAEsk5ytNTfx4NlDfhU52fCrtKlE0Xfd28EyUogoQbDK+cx7QOmuGe178bT98X84C45CekO0nX8hWO1vYmJWJGo=
+	t=1739514617; cv=none; b=FOyAJGEeoIn19UP1eJLHNf+c+jSPZf7Tx2OBtye7M7XwlbaN07sXvrdnCAiFPAWiR8E2rP2RK3Wmtn6tw8FEO1/XCvAbbZ/LB7qTHTZIwdTf4BbpCn7uQPxHa+8+jMH464W7O1MQwINdUwQdckRawcasa6MMbOvOCeEoofFGtaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514579; c=relaxed/simple;
-	bh=UsEB+A/XPaEDIkHx8pGbAsIhq7XByBu36IKvE9bh6Jg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhEPX2Ga2m17NTls98MRiKBKGIlHto9WU9u8QnGvIYkP36wkch0A19xSxh0i/SJjUy24ngRthgod+3qT8eksk6yWGJxEzzE39LvGeO9RHiP9aO0NKGs1j0jTmKpZa2HjzUZJnTYG/IAcn7JXELa51WkAySZhmzTYMqKP/RwiCW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbLt3n8L; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4395817a7f2so10961405e9.1;
-        Thu, 13 Feb 2025 22:29:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739514576; x=1740119376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q0DNrIkpi+rgWunP8esx8b13URNUv1qzTHQGLBvyHZQ=;
-        b=cbLt3n8LXAuQmxb0dfusApdrR+FZt1tFpuAGD9114XlSylgVjdqCc7v8QRSLJFrfqm
-         XK45aezwr9N8LmHX6fcKYObWy89N/etNeXimItZFi0X0rvN481ez3B8eaMfKGrymZ4Z3
-         tbi1b0oxvHcMTWnU5tGS00kQkpQl9hxNiLHWpuaR+Zki/KORsezze8fX1YXon+Q1pd3R
-         OqoUC9xF0E6JaZTkEsmBjAFfMdrSY8qWET2YE/1sH+rg3DKvQb1T90kUaHhKCyl01LX6
-         2ctj8JUqcBFikzDcbRvEOF01W+N+SToGP3ed1aAlgDXCOpg3uXCzBG5+91yQrLwFDdnY
-         S08w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739514576; x=1740119376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q0DNrIkpi+rgWunP8esx8b13URNUv1qzTHQGLBvyHZQ=;
-        b=c6zivmkr5k4CcD+hGZH8zmxPC//yKii4Dzp7ywZPCOQid/FcEwgP6IhQnqhf3Lw6f/
-         fZSG5yDqn/pDhOsojoYj+NutcfWSrY+9UdBpT2E20AghgS4Zi42s+OIR++OBIGZEMn/a
-         w8zd0nM5IrHRjYZ9b2r3uvW8jcG3ljV6Pi3HdQHt7QGlEux0/3PArbKcxKwrey/wAbV8
-         zoIr8zYOPYtzwOeADrEuvxOVDY80jvLKpw4Q74s73qYXLqYaduKa8k0Rb6XeKz8rJoB2
-         NM7fu32ONeSK234l8OV3fY+T131sZICvotV1IrnBmf831ZNHT3Aef8LupFZ6AA+uhp/n
-         JUJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF/FUDV/FoiRZO6KeRzJ5L+f4m3PRE6kiAyLAsxpZel3WsGH+Orl7i3kfmwq1hufnMPKUJ7+MzfNYptNdW@vger.kernel.org, AJvYcCUVj0Ft0Lb16PBX5MEq0L+kyPgtmyiThW10A2s/FLsJuMnEw/xJiZB7ZfZLqWK9TvViwJkO3vv0tLlW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/LARIyxEy2+W8LAQIpUKAUHNstkns5T5L91GKoMIBIRsiykyq
-	TB5h9FokE4c7b96BbIihfIJ9E19OqvnLCxhgiEc2uQCs3bpBqcJ7LoEbnvOHIdpeiODonuXYcjd
-	0cHB4d4WZZKtNz9mwfj4WmCGLLP0=
-X-Gm-Gg: ASbGncuO5T3X53vjijtjqtuSHnV+/AP1ARvhlXUSWElMxHzbHYevXpK2tnGuFSbhHpc
-	uAWQtScSsNmHgCScpt3zS7as709zgoW6RcM7zTp1khmOYHfmUnd1Oly/d4F7zspLVngKH4Cnh6Q
-	==
-X-Google-Smtp-Source: AGHT+IGY5xLuVN8j9KsxRf6bcc1+me7BVeaaH17aSLDBupkE+g+TY2Q6JdeoAWh5pe090nZSLG814Kwqa2FtZu049v4=
-X-Received: by 2002:a05:600c:870a:b0:439:42c6:f11f with SMTP id
- 5b1f17b1804b1-43960169268mr80052915e9.4.1739514575486; Thu, 13 Feb 2025
- 22:29:35 -0800 (PST)
+	s=arc-20240116; t=1739514617; c=relaxed/simple;
+	bh=ONnE7smu8/9nIlmyt9HAOZbYmNQ170FAywkKcOU+mRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNYkk1wCpeg+r1p+q7TPMnSuc3NbOEjlJPtzu2OK7QdFbWcsLq+PhfuUs5KGdk7ySlPt4rCVprIcNMa5M7lKD092x+rVjs4ndPAiCCv4w40NN9LGBGZ/byQu/0G4lj2PXd8SiEfKbVSGqEwE537M2R0maP6sbji3olYtFJBJg8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tipDB-0006zp-I1; Fri, 14 Feb 2025 07:30:05 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tipDB-000s8w-0M;
+	Fri, 14 Feb 2025 07:30:05 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tipDB-00EbY2-01;
+	Fri, 14 Feb 2025 07:30:05 +0100
+Date: Fri, 14 Feb 2025 07:30:04 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, marex@denx.de,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3] soc: imx8m: Unregister cpufreq and soc dev in cleanup
+ path
+Message-ID: <20250214063004.jvz5vukaxszcucd7@pengutronix.de>
+References: <20241219145029.1776006-1-peng.fan@oss.nxp.com>
+ <20250214034923.GA20275@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213135605.157650-1-clamor95@gmail.com> <20250213135605.157650-2-clamor95@gmail.com>
- <20250213-pumice-overcrowd-6c22b0d5d66c@spud>
-In-Reply-To: <20250213-pumice-overcrowd-6c22b0d5d66c@spud>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 14 Feb 2025 08:29:22 +0200
-X-Gm-Features: AWEUYZn67J7NbLVEkrwrIx99cgEMyRnxO5YdBiYvqEdfxjG1cBd7qt5e9I3cnEU
-Message-ID: <CAPVz0n1CpoAFvwwvoTOFQu4mgg57jCwS5W4GXCiUZ3eLEAdwZA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: display: bridge: Document Solomon SSD2825
-To: Conor Dooley <conor@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214034923.GA20275@localhost.localdomain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:34 Cono=
-r Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thu, Feb 13, 2025 at 03:56:04PM +0200, Svyatoslav Ryhel wrote:
-> > Add bindings for Solomon SSD2825 MIPI master bridge chip that connects =
-an
-> > application processor with traditional parallel LCD interface and an LC=
-D
-> > driver with MIPI slave interface. The SSD2825 supports both parallel RG=
-B
-> > interface and serial SPI interface.
+Hi Peng,
+
+On 25-02-14, Peng Fan wrote:
+> Hi Shawn,
+> 
+> On Thu, Dec 19, 2024 at 10:50:29PM +0800, Peng Fan (OSS) wrote:
+> >From: Peng Fan <peng.fan@nxp.com>
 > >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../display/bridge/solomon,ssd2825.yaml       | 140 ++++++++++++++++++
-> >  1 file changed, 140 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/so=
-lomon,ssd2825.yaml
+> >Unregister the cpufreq device and soc device when resource unwinding,
+> >otherwise there will be warning when do removing test:
+> >sysfs: cannot create duplicate filename '/devices/platform/imx-cpufreq-dt'
+> >CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-rc1-next-20241204
+> >Hardware name: NXP i.MX8MPlus EVK board (DT)
 > >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/solomon,s=
-sd2825.yaml b/Documentation/devicetree/bindings/display/bridge/solomon,ssd2=
-825.yaml
-> > new file mode 100644
-> > index 000000000000..cd7ff971495c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/bridge/solomon,ssd2825.=
-yaml
-> > @@ -0,0 +1,140 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/bridge/solomon,ssd2825.yaml=
-#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Solomon SSD2825 RGB to MIPI-DSI bridge
-> > +
-> > +maintainers:
-> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: solomon,ssd2825
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  reset-gpios: true
-> > +
-> > +  dvdd-supply:
-> > +    description: Regulator for 1.2V digital power supply.
-> > +
-> > +  avdd-supply:
-> > +    description: Regulator for 1.2V analog power supply.
-> > +
-> > +  vddio-supply:
-> > +    description: Regulator for 1.8V IO power supply.
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 1000000
-> > +
-> > +  spi-cpha: true
-> > +  spi-cpol: true
->
-> Should these be required? Supplies should really be required too, since
-> the device probably cannot function without them?
->
-
-No, since spi-* define mode in which device works. If both are present
-it is mode 3, if none it is mode 0.
-
-About supplies, device cannot work without power supply obviously, but
-often exact supplies are not known and I would like to not enforce
-someone to add random regulators just because they are mandatory.
-
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    const: tx_clk
->
-> Drop the _clk, since this cannot be anything else! clock-names isn't
-> really useful when you have just one, so I'd be inclined to say remove
-> it entirely...
->
-
-TX_CLK is the name which datasheet refers to hence I have included
-clock name solely to have clear link between datasheet clock
-references and clock used here.
-
-> > +  solomon,hs-zero-delay-ns:
-> > +    description:
-> > +      HS zero delay period
-> > +    default: 133
-> > +
-> > +  solomon,hs-prep-delay-ns:
-> > +    description:
-> > +      HS prep delay period
-> > +    default: 40
->
-> Do these two have limits? Use maximum/minimum to set them if so.
-> Cheers,
-> Conor.
->
-
-Datasheet does not specify limits actually, only defaults. I will try
-to calculate boundaries.
-
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        unevaluatedProperties: false
-> > +        description:
-> > +          Video port for RGB input
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
-> > +            unevaluatedProperties: false
-> > +
-> > +            properties:
-> > +              bus-width:
-> > +                enum: [ 16, 18, 24 ]
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          Video port for DSI output (panel or connector)
-> > +
-> > +    required:
-> > +      - port@0
-> > +      - port@1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - ports
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +    spi {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        dsi@2 {
-> > +            compatible =3D "solomon,ssd2825";
-> > +            reg =3D <2>;
-> > +
-> > +            spi-max-frequency =3D <1000000>;
-> > +
-> > +            spi-cpha;
-> > +            spi-cpol;
-> > +
-> > +            reset-gpios =3D <&gpio 114 GPIO_ACTIVE_LOW>;
-> > +
-> > +            dvdd-supply =3D <&vdd_1v2>;
-> > +            avdd-supply =3D <&vdd_1v2>;
-> > +            vddio-supply =3D <&vdd_1v8_io>;
-> > +
-> > +            solomon,hs-zero-delay-ns =3D <300>;
-> > +            solomon,hs-prep-delay-ns =3D <65>;
-> > +
-> > +            clocks =3D <&ssd2825_tx_clk>;
-> > +            clock-names =3D "tx_clk";
-> > +
-> > +            ports {
-> > +                #address-cells =3D <1>;
-> > +                #size-cells =3D <0>;
-> > +
-> > +                port@0 {
-> > +                    reg =3D <0>;
-> > +
-> > +                    bridge_input: endpoint {
-> > +                        remote-endpoint =3D <&dpi_output>;
-> > +                        bus-width =3D <24>;
-> > +                    };
-> > +                };
-> > +
-> > +                port@1 {
-> > +                    reg =3D <1>;
-> > +
-> > +                    bridge_output: endpoint {
-> > +                        remote-endpoint =3D <&panel_input>;
-> > +                    };
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > --
-> > 2.43.0
+> >Fixes: 9cc832d37799 ("soc: imx8m: Probe the SoC driver as platform driver")
+> >Cc: Marco Felsch <m.felsch@pengutronix.de>
+> >Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> >---
+> 
+> Any comments?
+> 
+> Thanks,
+> Peng
+> 
 > >
+> >V3:
+> > Per Marco, drop remove function, use devm_add_action and update the patch
+> > title accordingly.
+> >
+> >V2:
+> > Add err check when create the cpufreq platform device
+> > https://lore.kernel.org/all/20241217015826.1374497-1-peng.fan@oss.nxp.com/
+
+This is got lost. Albeit platform_device_unregister() can handle
+IS_ERROR() cases I don't like the fact that we do not return the error
+if there is any during probe. Please see below.
+
+> >
+> > drivers/soc/imx/soc-imx8m.c | 23 +++++++++++++++++++++--
+> > 1 file changed, 21 insertions(+), 2 deletions(-)
+> >
+> >diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
+> >index 8ac7658e3d52..585631b7ae44 100644
+> >--- a/drivers/soc/imx/soc-imx8m.c
+> >+++ b/drivers/soc/imx/soc-imx8m.c
+> >@@ -192,9 +192,20 @@ static __maybe_unused const struct of_device_id imx8_soc_match[] = {
+> > 	devm_kasprintf((dev), GFP_KERNEL, "%d.%d", ((soc_rev) >> 4) & 0xf, (soc_rev) & 0xf) : \
+> > 	"unknown"
+> > 
+> >+static void imx8m_unregister_soc(void *data)
+> >+{
+> >+	soc_device_unregister(data);
+> >+}
+> >+
+> >+static void imx8m_unregister_cpufreq(void *data)
+> >+{
+> >+	platform_device_unregister(data);
+> >+}
+> >+
+> > static int imx8m_soc_probe(struct platform_device *pdev)
+> > {
+> > 	struct soc_device_attribute *soc_dev_attr;
+> >+	struct platform_device *cpufreq_dev;
+> > 	const struct imx8_soc_data *data;
+> > 	struct device *dev = &pdev->dev;
+> > 	const struct of_device_id *id;
+> >@@ -239,11 +250,19 @@ static int imx8m_soc_probe(struct platform_device *pdev)
+> > 	if (IS_ERR(soc_dev))
+> > 		return PTR_ERR(soc_dev);
+> > 
+> >+	ret = devm_add_action(dev, imx8m_unregister_soc, soc_dev);
+> >+	if (ret)
+> >+		return ret;
+> >+
+> > 	pr_info("SoC: %s revision %s\n", soc_dev_attr->soc_id,
+> > 		soc_dev_attr->revision);
+> > 
+> >-	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
+> >-		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
+> >+	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT)) {
+> >+		cpufreq_dev = platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
+		if (IS_ERROR(cpufreq_dev))
+			return dev_err_probe(dev, "Failed to imx-cpufreq-dev device\n",
+					     PTR_ERR(cpufreq_dev));
+
+Regards,
+  Marco
+
+> >+		ret = devm_add_action(dev, imx8m_unregister_cpufreq, cpufreq_dev);
+> >+		if (ret)
+> >+			return ret;
+> >+	}
+> > 
+> > 	return 0;
+> > }
+> >-- 
+> >2.37.1
+> >
+> >
+> 
 
