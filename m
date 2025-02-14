@@ -1,239 +1,226 @@
-Return-Path: <linux-kernel+bounces-515610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83047A366A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:06:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2801EA366AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FE43B1DA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6818188DA1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCDD192D6B;
-	Fri, 14 Feb 2025 20:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2791946DA;
+	Fri, 14 Feb 2025 20:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j01qO56w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="h2oPIxc5"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4D1519AB;
-	Fri, 14 Feb 2025 20:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058141519AB;
+	Fri, 14 Feb 2025 20:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739563558; cv=none; b=eh1tvB/2GtVTx+Peo2qppmzTVAtssn48XjaXKaxNbpPCyZX/POV6/buyQjREr7uWpjSjmTDsvNrOAxnxiYNCgiM6c/kNUzb2kZuEVfdyfDPSDDes5AS+mj7Q+Yv7ma747VX8JlEaCbiGKIW/jDm5rcVP+Dyy/+gerxy3EZPIivs=
+	t=1739563665; cv=none; b=jNRLghbNO9BeqATvN91gJV7nEgks5A9QeFKTr+JlIP0NxBCTPkRaXT+e7vZHxX741kKHQXnqfvUxZa/VPdYB9BaR2Dq1z5bnTduSSHzySsa0pGNR8pi31Z3ko/LhL4BLU5mkrZ/1QAlp47ubZaUE4/xqy3nWfYnw0nD0q4GUU1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739563558; c=relaxed/simple;
-	bh=PChn1wIDIGZdyjDjMni+OfJNftup79fqOnyNzjhYVas=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UrDLOXyhtsEG/RLFelMufvt9OF3a5/90+igxmNN0m+X8CezE76/TpnUaRSsTMRqJDxtpXj4meqhzT2WctobXh0Ig/OaU7irrNSMSQItelqChmSimoHdUrJhgnRDKN9nasjZXU5/9x4sngqfDXOKAmrb8/YVsrloRvdvbMYUzfR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j01qO56w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBB4C4CED1;
-	Fri, 14 Feb 2025 20:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739563558;
-	bh=PChn1wIDIGZdyjDjMni+OfJNftup79fqOnyNzjhYVas=;
-	h=Date:From:To:Cc:Subject:From;
-	b=j01qO56w3RHuJaZzRszhgVLi0gzlA2d+ObTCAUVN0f5Q7lyweLXuhI5co9Ellulx0
-	 ZLsUr5RGyTu+j/w9DXRFL50ff87e1FCpRm4tAA+0zV8ZPKG3/+NnRr63bI6rflqQWz
-	 EefL24eyIpsVbQjZX8HnUMFbTZHPCbiZrMErWaCvNPbADAoydyTZaMW5y7OWWsbsE2
-	 3Tw34XfikH4krFhFMJ36LO2aNUVYVnB/10MIBu9HFRfBgr/n3ZMVzU7Blwk9er0kPM
-	 oe7j4HSBEOGw1GpnxqE59o/NFNV+y7739M7KdwAFMvaHRKri+rw70tkqioTCibdFDD
-	 bUKoMHSVKOh3g==
-Date: Fri, 14 Feb 2025 21:06:30 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
-Subject: man-pages-6.11 released
-Message-ID: <frz5e2i7dv3kpl3mqxnkrrl5v54bjvw77fev6szkrggtx2ztxh@oyfvhx7zfm4u>
+	s=arc-20240116; t=1739563665; c=relaxed/simple;
+	bh=B2d+rOOv+/s7m+3dS9euJbi0GQRu6QtarU8RuNPfrsE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ex1vwJeito1vnvw8Oi1cmSeJEEdoqDMMTqIYAwBgp1uc6UyvIUvqIK9A1MQ7WfRJVSs3j78BuMrJXMPI30SFQzkli3DbtHxusQxkl1Rm0pnovXt9pl74rARacw1bZkjc/0rt8Ejx/X60RiBDWyg1Xp6OMOz2OOXxfJGIwB6X/vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=h2oPIxc5; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3gA+i0CmP9DnNBxjfP0Se+gQOkkXX1tuBuCnmXo7jZk=; b=h2oPIxc5LSQ9HrqIpwYraIWK2d
+	OVZnGGtUhj1zTYD3LrBiEDjWwkR36EKaperNnbYz9XKgtflB4ct53f7MvAUPjNtySI0+yXdYXgcbY
+	g+16clC//0zdgygviKbeJkmU0asTKPLnMGeCNhAP5MKNFGHgJXuqBziRG9q3u+/pHVO+59fNPbZ4n
+	eraqJTdMJyI62Zb6EE28ucaE/YHoxiUHijc5KzLiDu2mVn8MjlZCBeQxda/5fqqNO44ps1ppPPDBd
+	OTnibedW2U6c6ESyD5jKyBA2I+RuplsWZU26A/ORoPDNb/w1oyRZkZZRlVe9iewvru+SRalFMYpRh
+	o1Fw296Q==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tj1y0-00026P-Tb; Fri, 14 Feb 2025 21:07:16 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
+ Tim Lunn <tim@feathertop.org>, FUKAUMI Naoki <naoki@radxa.com>,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Stephen Chen <stephen@radxa.com>, Elon Zhang <zhangzj@rock-chips.com>,
+ Alexey Charkov <alchark@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+Subject:
+ Re: [PATCH v3 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device tree
+Date: Fri, 14 Feb 2025 21:07:15 +0100
+Message-ID: <2629121.1xdlsreqCQ@diego>
+In-Reply-To: <20250214152119.405803-3-detlev.casanova@collabora.com>
+References:
+ <20250214152119.405803-1-detlev.casanova@collabora.com>
+ <20250214152119.405803-3-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zczpraieiqiv4bnu"
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+
+Hi Detlev,
+
+all the style nitpick I'd changed myself, but the cpu-supplies did throw me
+off, see below.
 
 
---zczpraieiqiv4bnu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
-Subject: man-pages-6.11 released
-MIME-Version: 1.0
+Am Freitag, 14. Februar 2025, 16:19:34 MEZ schrieb Detlev Casanova:
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> new file mode 100644
+> index 0000000000000..822abb82fae40
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+> @@ -0,0 +1,650 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2024 Radxa Computer (Shenzhen) Co., Ltd.
+> + *
 
-Gidday!
+empty comment line can probably go away
 
-I'm proud to announce:
+> +	vcc_12v0_dcin: regulator-vcc-12v0-dcin {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_12v0_dcin";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +	};
+> +
+> +	vcc_5v0_sys: regulator-vcc-5v0-sys {
 
-	man-pages-6.11 - manual pages for GNU/Linux
+alphabetical sorting, by node-name please, so
+regulator-vcc-3v3* comes before regulator-vcc-5v0* etc
 
-!! THERE ARE BREAKING CHANGES !!  Packagers, please have a look at the
-list of breaking changes.  You can find them below, or in the
-<./Changes> file in the git repository.
+Goes for all regulator-* nodes of course.
 
-Tarball download:
-<https://www.kernel.org/pub/linux/docs/man-pages/>
-Git repository:
-<https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
-Online PDF book:
-<https://www.kernel.org/pub/linux/docs/man-pages/book/>
+> +	vcc_3v3_pcie: regulator-vcc-3v3-pcie {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_3v3_pcie";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		enable-active-high;
+> +		gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
+> +		startup-delay-us = <5000>;
+> +		vin-supply = <&vcc_5v0_sys>;
+> +	};
+> +
+> +	vcc_5v0_host: regulator-vcc-5v0-host {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc5v0_host";
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		enable-active-high;
+> +		gpio = <&gpio0 RK_PD3 GPIO_ACTIVE_HIGH>;
+> +		vin-supply = <&vcc_5v0_device>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&usb_host_pwren>;
 
-Thanks to all the contributors to this release (in BCC)!
-And thanks to our sponsors!
+both of the above, alphabetical sorting of properties please
 
-	-  Adfinis		<https://adfinis.com/>
-	-  Google		<https://opensource.google/>
-	-  Hudson River Trading	<https://www.hudsonrivertrading.com/>
-	-  Meta			<https://www.meta.com/>
-	-  Red Hat		<https://www.redhat.com/>
+> +	};
+> +};
+> +
+> +&cpu_l0 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +};
 
+What happened to the supplies of the other cores?
+cpu_l1 - cpu_l3 probably need the same reference as above.
 
-Have a lovely day!
-Alex
-
-
-You are receiving this message either because:
-
-        a)  (BCC) You contributed to this release.
-
-        b)  You are subscribed to <linux-man@vger.kernel.org>,
-            <linux-kernel@vger.kernel.org>, or
-            <libc-alpha@sourceware.org>.
-
-        c)  (BCC) I have information (possibly inaccurate) that you are
-            the maintainer of a translation of the manual pages, or are
-            the maintainer of the manual pages set in a particular
-            distribution, or have expressed interest in helping with
-            man-pages maintenance, or have otherwise expressed interest
-            in being notified about man-pages releases.
-            If you don't want to receive such messages from me, or you
-            know of some other translator or maintainer who may want to
-            receive such notifications, send me a message.
-
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Changes in man=
--pages-6.11 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Released: 2025-02-14, Aldaya
-
-
-New and rewritten pages
------------------------
-
-man7/
-	pathname.7
+Who is powering the cpu_b* cores?
 
 
-Newly documented interfaces in existing pages
----------------------------------------------
+> +&i2c1 {
+> +	status = "okay";
+> +
+> +	pmic@23 {
+> +		compatible = "rockchip,rk806";
+> +		reg = <0x23>;
+> +
+> +		interrupt-parent = <&gpio0>;
+> +		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_pins
+> +			     &rk806_dvs1_null
+> +			     &rk806_dvs2_null
+> +			     &rk806_dvs3_null>;
+> +
+> +		system-power-controller;
+> +
+> +		vcc1-supply = <&vcc_5v0_sys>;
+> +		vcc2-supply = <&vcc_5v0_sys>;
+> +		vcc3-supply = <&vcc_5v0_sys>;
+> +		vcc4-supply = <&vcc_5v0_sys>;
+> +		vcc5-supply = <&vcc_5v0_sys>;
+> +		vcc6-supply = <&vcc_5v0_sys>;
+> +		vcc7-supply = <&vcc_5v0_sys>;
+> +		vcc8-supply = <&vcc_5v0_sys>;
+> +		vcc9-supply = <&vcc_5v0_sys>;
+> +		vcc10-supply = <&vcc_5v0_sys>;
+> +		vcc11-supply = <&vcc_2v0_pldo_s3>;
+> +		vcc12-supply = <&vcc_5v0_sys>;
+> +		vcc13-supply = <&vcc_1v1_nldo_s3>;
+> +		vcc14-supply = <&vcc_1v1_nldo_s3>;
+> +		vcca-supply = <&vcc_5v0_sys>;
+> +
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+
+alphabetical sorting ... gpio* farther up please.
 
 
-New and changed links
----------------------
+> +&uart0 {
+> +	pinctrl-0 = <&uart0m0_xfer>;
+> +	status = "okay";
+> +};
+> +
+> +&combphy1_psu {
+> +	status = "okay";
+> +};
+
+phandles also sorted alphabetical please
+
+> +
+> +&u2phy0 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_drd1_dwc3 {
+> +	dr_mode = "host";
+> +	status = "okay";
+> +};
+
+Thanks a lot
+Heiko
 
 
-Removed pages
--------------
 
-
-Removed links
--------------
-
-
-Global changes
---------------
-
--  Build system:
-   -  [Breaking change!]
-      Require the user to pass '-R' to make(1).  This is necessary to be
-      able to do the following change.  When GNU make(1) releases a new
-      version, it will not be necessary to pass -R, but in current
-      versions of make(1) it is necessary.
-
-   -  [Breaking change!]
-      Use '?=3D' assignments instead of ':=3D', to support setting make(1)
-      variables in the environment.  Now one can do this:
-
-	$ export prefix=3D/usr
-	$ make -R
-	$ sudo make install -R
-
-      (The -R is only necessary in GNU make(1) versions prior to the
-       yet-unreleased 4.5.)
-
-   -  Escape '#' in regexes, to support old versions of GNU make(1).
-      This fixes a regression in man-pages-6.10, which caused issues in
-      users with an old-enough version of GNU make(1), such as the one
-      present in Debian old-old-stable.
-
-   -  Fix duplicate overview-panel entries in the PDF book.
-
--  CONTRIBUTING.d/:
-   -  Add C coding style guide.
-
--  RELEASE:
-   -  Document the production of the book.
-
--  man/:
-   -  Refresh bpf-helpers(7) from Linux v6.13.
-
-
-Changes to individual files
----------------------------
-
-The manual pages and other files in the repository have been improved
-beyond what this changelog covers.  To learn more about changes applied
-to individual pages, or the authors of changes, use git(1).
-
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Linux Software=
- Map =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-
-Begin4
-Title:          Linux man-pages
-Version:        6.11
-Entered-date:   2025-02-14
-Description:    Manual pages for GNU/Linux.  This package contains
-                manual pages for sections 2, 3, 4, 5, and 7, and
-                subsections of those.  Only a few pages are provided in
-                sections 1, 6, and 8, and none in 9.
-Keywords:       man pages
-Maintained-by:  Alejandro Colomar <alx@kernel.org>
-Primary-site:   http://www.kernel.org/pub/linux/docs/man-pages
-                2.7M  man-pages-6.11.tar.gz
-Copying-policy: several; the pages are all freely distributable as long as
-                nroff source is provided
-End
-
---=20
-<https://www.alejandro-colomar.es/>
-
---zczpraieiqiv4bnu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmevokUACgkQ64mZXMKQ
-wqk3PBAAobRTZziLZVkyk5wA8EfkNXfkU5kJFhulorGJWg7UehG6NlqgRoqE9m4c
-WTy7e8pEswRX9mH8+Y/EUnO7cndM9p+b2ze6XQa64v4Ngsgr2ORpWJhA22xn3Ta3
-o+LDRvp8p00s60N5XtnS4XIEtct2AcB3fMlIUe7Eb9DXy6nvV+zFQ4QFaqDI2KvJ
-sPU+2rQtDkT2Qg6f3q6T/sDPcJQON1w1uekF+t19hDbS1cmFpIuZ7Y5PTNTASXQ4
-MHRrLwvE+K017FOGWMfDOfIPDZEsxy6XkDtykI1EsUjkkkRUUdlxmnKf8k9iSsUq
-hlmvs6m2ktUUpOgNpANpXbLvtuACuATaro3ayV52hHSrGbUd9sgb6tnYeKGQEiCm
-WvO6UZXyjfz9O5GH1BU7rTR1QcxITDZGg5W7UkQwsaW1fK9aVGhgjAyk7Ya/Ff6Q
-ziY602u6o6ZgslRGv5Pf0BSFJOU/uEpC4Y2/GpbcO92hUnW4dk/wgaJKWDPcWGwG
-j0oT+DMOsLKbkpvr8rrjYmScQCHjHp8tHfZwEBuaJblzUZ4iR1LqeWcwY/iGCKHp
-PQ2uHbvUwP9eqqmF7tKLZq/Gmqr2PjgdeASTzmfvSNM/12Vta3mVUnILQLHGN0BP
-rpyOnkOV3dQmIOAX4iSQKPsE6Zpuizmz80513YxD3jxUodki204=
-=XZbt
------END PGP SIGNATURE-----
-
---zczpraieiqiv4bnu--
 
