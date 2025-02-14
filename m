@@ -1,137 +1,163 @@
-Return-Path: <linux-kernel+bounces-515204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1C8A361AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:27:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4642BA361AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8CB188CA12
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E696F188C4F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14B4266B64;
-	Fri, 14 Feb 2025 15:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yQmypplA"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B2266B64;
+	Fri, 14 Feb 2025 15:28:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EB2661A9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB62747F;
+	Fri, 14 Feb 2025 15:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546862; cv=none; b=k9xM1ADW7cPUxpv17AkOETH3GfSHySd4wmoTYIvCtk9WXPp0XfcV/umRm/3XxY671ToCZKrygZId0LAkW856oGsm5lmTbBkCV1PeeRjo0kOde3eTT04Jklo1Qv7TJgrrZfJK9oIaYbS0U9T2asKQ+4erdWka3ZH7xyN/y+j1xlA=
+	t=1739546889; cv=none; b=N4o/H2CZnHSf24bwYk7ydhOJdG/MPPoS9foIxpiy+q9TgaMZaoJCA7UaQbseVfhY9jdw1PLG7H2E+utgjV5M/DfjVdRlNuG7napiarnZIriqWvjL5aDKxMW2R5fzeglKwKgQhzY1uRjOs8DaosQ0280aK22M5KBHPbIJixtDXqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546862; c=relaxed/simple;
-	bh=XV8AT4C5Gp3NId7z/OQmyfyGNoiIpsTboDGzh/JM5Rg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eXowJ8XJT/Rflc78jBIqmPM0K/KjYBlOoSiyLL2EGMxar5oRiFzE50mBw3mgG7yy+NaJiIXEqrcyQz0qWSmgtZb2UtOOkcgvex6Fy5jYjqcFxE/z9VsrcwLHnfLzWvHTxZFTkIAsrQXZznL6pPPYD+5Kd5BVtImhB/yD8h2KR30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yQmypplA; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2420186276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:27:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739546859; x=1740151659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6wygEz6vt3imSF3NwvzsbaEgG5kEjxbe8ddM+Vd/l/w=;
-        b=yQmypplAo+bysWaEaKZ3ULDutOw5rDZQx76SFfcPaxlN1GqcxvawtHCw+z5khRyH4E
-         6JOQLVhbIZ84vug8gYJLFtVG2Nif3vc61k7W+1bdZwx4IyQvRnLoo+U3ZNm2ZOm8UPmt
-         KV4y+vjOyxa2bCyJaKhiNPMxZTRIXhKk9ltgHzK3RIS1y8hR3kYJT8PsQNjHpkZZlQuk
-         4hlW0QmB92m2JoDJ6pqm7/CGmfxmqkkbkoOlmzprHgQCe6IFshmHK6jGT9CfSTjjweab
-         7ibkuy7PbGG68IreLZZwPDahVtfJvwucA3pa4NigZrFCLXNITu/tRGGNr4U9sWxtYYwl
-         ekLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739546859; x=1740151659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6wygEz6vt3imSF3NwvzsbaEgG5kEjxbe8ddM+Vd/l/w=;
-        b=KYkrVVsfE78Tr3y7jTfEfwdmnqcrmys4tg0GfepXVRq/a0UP4gQ/zhOrWOEJf7wti9
-         4aJr5+c74QSjRRzuNkoYu0bq5l4UVcWPPNyn+ltSNnWlte9Krx62IMepMSMTNP27o+dW
-         OmRzk+mwc/ouACj1DSteCDFq0deEY2S8yhjKe0QruF4h1ARrs47/YwcLPQc0ht9TrZVX
-         sAGwSCpzVDb+I8sQF6NrWhuMmG+D0S2DMEeC00Ki2K8vVAT5eIN0eCrY7K0hkEvziX8R
-         LMlet9Ug76d3K0826uCUiMT2fyR4s2AkZ2fKvEUyWGzHudAdj6ZxEpGmpNzZy1DYO/p4
-         28iA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIQTW3oTmFjuTeMNnuB12pNXcGZxEYWR6cETri/k8T1nNvQX2mU3aIJYgSbS0lTBdwoEsus6u4Ztx9pBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSVCJ6+O3Rn1A41lFYhEWzXYccFU2ltj+jSRVzfDzo+Tvuh5wM
-	94Pa+XMqSsoKuFPQ3n+eI5e0a5v1sxxyfs8eRfR2ODnpuPffprNUSB9IDnSe3Q8yoA6ua4eAdtC
-	ymikJjwhbDI/Pm6K8gAPGbvbNfsuxqrsoVVeGIg==
-X-Gm-Gg: ASbGncvU7ba5hvxSReWCM8wfrMMNq7CZCePatC5IRNHhD1luJWxa/ajsZQJbJNt9mgC
-	P9qEuFQWwY703C/R4M00U40XMYFPjb68FIwBe0cWuLDk3/65h+1K4ihw+lmSlOHuwmF5FOpmiYX
-	jrNa9aMMGu8hXs6AIAg4D6sl6mU8pPVyw=
-X-Google-Smtp-Source: AGHT+IG4t59iStpuyGq1+m+dvxq6YGK16dQkcUOiGs7tsyDTNdFxcN+r/HnSGFs01wlQ6aVqrC6vhWCS/t0g0Qj+n0o=
-X-Received: by 2002:a05:6902:f06:b0:e5b:21fe:d9bd with SMTP id
- 3f1490d57ef6-e5da81026d3mr6137510276.10.1739546859693; Fri, 14 Feb 2025
- 07:27:39 -0800 (PST)
+	s=arc-20240116; t=1739546889; c=relaxed/simple;
+	bh=rUBy4sFinlmT22XbeZj6w1L2v3nzFb8M6M4CUpGIY+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oFRNOfp966E//cFHZI+/6l/Xjf92L4MP3NXrgpwD69vNYZ6F/pm2zg/tduYEmc3zSlhD8ygBjL/OQzIQU+z1Cz+dOs9lPCCV63MjKaEo1RqqhwZVyCd3wuV+fyrKrLfP6ye55XQHGy+744YbM7erQJhpWHUw5rAo4ipLNbb3aIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B88C4CED1;
+	Fri, 14 Feb 2025 15:28:08 +0000 (UTC)
+Date: Fri, 14 Feb 2025 10:28:20 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
+Subject: [PATCH] ring-buffer: Validate the persistent meta data subbuf array
+Message-ID: <20250214102820.7509ddea@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-spi-s3c64xx-fifo-depth-v1-1-e1b1915e3ee7@linaro.org>
-In-Reply-To: <20250214-spi-s3c64xx-fifo-depth-v1-1-e1b1915e3ee7@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 14 Feb 2025 09:27:29 -0600
-X-Gm-Features: AWEUYZkkGWUD60LMpHEHi4hDR2nuH8MPeQ82wDcgpZ-r7ywAfZ4HSSClhEmifNo
-Message-ID: <CAPLW+4n3bQOGDewkh1Yfftticp5n3sOnvmVxgNz=rnmWVf6vmg@mail.gmail.com>
-Subject: Re: [PATCH] spi: s3c64xx: extend description of compatible's fifo_depth
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Denzeel Oliva <wachiturroxd150@gmail.com>, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 1:32=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
-> The FIFO depth specified with the compatibles's data is used where all
-> the instances of the IP define the same FIFO depth. It naturally has
-> higher precedence than the FIFO depth specified via DT. Specifying FIFO
-> depth in DT becomes superfluous in this case. Extend comment about
-> compatible's FIFO depth.
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+The meta data for a mapped ring buffer contains an array of indexes of all
+the subbuffers. The first entry is the reader page, and the rest of the
+entries lay out the order of the subbuffers in how the ring buffer link
+list is to be created.
 
->  drivers/spi/spi-s3c64xx.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 389275dbc003..9c47f5741c5f 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -139,7 +139,9 @@ struct s3c64xx_spi_dma_data {
->   * struct s3c64xx_spi_port_config - SPI Controller hardware info
->   * @fifo_lvl_mask: [DEPRECATED] use @{rx, tx}_fifomask instead.
->   * @rx_lvl_offset: [DEPRECATED] use @{rx,tx}_fifomask instead.
-> - * @fifo_depth: depth of the FIFO.
-> + * @fifo_depth: depth of the FIFOs. Used by compatibles where all the in=
-stances
-> + *              of the IP define the same FIFO depth. It has higher prec=
-edence
-> + *              than the FIFO depth specified via DT.
->   * @rx_fifomask: SPI_STATUS.RX_FIFO_LVL mask. Shifted mask defining the =
-field's
->   *               length and position.
->   * @tx_fifomask: SPI_STATUS.TX_FIFO_LVL mask. Shifted mask defining the =
-field's
->
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250214-spi-s3c64xx-fifo-depth-6787f108be83
->
-> Best regards,
-> --
-> Tudor Ambarus <tudor.ambarus@linaro.org>
->
+The validator currently makes sure that all the entries are within the
+range of 0 and nr_subbufs. But it does not check if there are any
+duplicates.
+
+While working on the ring buffer, I corrupted this array, where I added
+duplicates. The validator did not catch it and created the ring buffer
+link list on top of it. Luckily, the corruption was only that the reader
+page was also in the writer path and only presented corrupted data but did
+not crash the kernel. But if there were duplicates in the writer side,
+then it could corrupt the ring buffer link list and cause a crash.
+
+Create a bitmask array with the size of the number of subbuffers. Then
+clear it. When walking through the subbuf array checking to see if the
+entries are within the range, test if its bit is already set in the
+subbuf_mask. If it is, then there is duplicates and fail the validation.
+If not, set the corresponding bit and continue.
+
+Cc: stable@vger.kernel.org
+Fixes: c76883f18e59b ("ring-buffer: Add test if range of boot buffer is valid")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+
+[ Note, I used this patch to fix the corrupted mapped ring buffer. ]
+
+ kernel/trace/ring_buffer.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 07b421115692..0419d41a2060 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1672,7 +1672,8 @@ static void *rb_range_buffer(struct ring_buffer_per_cpu *cpu_buffer, int idx)
+  * must be the same.
+  */
+ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+-			  struct trace_buffer *buffer, int nr_pages)
++			  struct trace_buffer *buffer, int nr_pages,
++			  unsigned long *subbuf_mask)
+ {
+ 	int subbuf_size = PAGE_SIZE;
+ 	struct buffer_data_page *subbuf;
+@@ -1680,6 +1681,9 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 	unsigned long buffers_end;
+ 	int i;
+ 
++	if (!subbuf_mask)
++		return false;
++
+ 	/* Check the meta magic and meta struct size */
+ 	if (meta->magic != RING_BUFFER_META_MAGIC ||
+ 	    meta->struct_size != sizeof(*meta)) {
+@@ -1712,6 +1716,8 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 
+ 	subbuf = rb_subbufs_from_meta(meta);
+ 
++	bitmap_clear(subbuf_mask, 0, meta->nr_subbufs);
++
+ 	/* Is the meta buffers and the subbufs themselves have correct data? */
+ 	for (i = 0; i < meta->nr_subbufs; i++) {
+ 		if (meta->buffers[i] < 0 ||
+@@ -1725,6 +1731,12 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 			return false;
+ 		}
+ 
++		if (test_bit(meta->buffers[i], subbuf_mask)) {
++			pr_info("Ring buffer boot meta [%d] array has duplicates\n", cpu);
++			return false;
++		}
++
++		set_bit(meta->buffers[i], subbuf_mask);
+ 		subbuf = (void *)subbuf + subbuf_size;
+ 	}
+ 
+@@ -1889,17 +1901,22 @@ static void rb_meta_init_text_addr(struct ring_buffer_meta *meta)
+ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ {
+ 	struct ring_buffer_meta *meta;
++	unsigned long *subbuf_mask;
+ 	unsigned long delta;
+ 	void *subbuf;
+ 	int cpu;
+ 	int i;
+ 
++	/* Create a mask to test the subbuf array */
++	subbuf_mask = bitmap_alloc(nr_pages + 1, GFP_KERNEL);
++	/* If subbuf_mask fails to allocate, then rb_meta_valid() will return false */
++
+ 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
+ 		void *next_meta;
+ 
+ 		meta = rb_range_meta(buffer, nr_pages, cpu);
+ 
+-		if (rb_meta_valid(meta, cpu, buffer, nr_pages)) {
++		if (rb_meta_valid(meta, cpu, buffer, nr_pages, subbuf_mask)) {
+ 			/* Make the mappings match the current address */
+ 			subbuf = rb_subbufs_from_meta(meta);
+ 			delta = (unsigned long)subbuf - meta->first_buffer;
+@@ -1943,6 +1960,7 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ 			subbuf += meta->subbuf_size;
+ 		}
+ 	}
++	bitmap_free(subbuf_mask);
+ }
+ 
+ static void *rbm_start(struct seq_file *m, loff_t *pos)
+-- 
+2.47.2
+
 
