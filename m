@@ -1,184 +1,111 @@
-Return-Path: <linux-kernel+bounces-515168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9300A3612C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5519BA36133
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:15:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF97A5659
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:13:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50B227A5A71
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AA2266B72;
-	Fri, 14 Feb 2025 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC49266EE3;
+	Fri, 14 Feb 2025 15:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GL3W9qVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JJHA0bKo"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07120263F5F;
-	Fri, 14 Feb 2025 15:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DAF4D8C8;
+	Fri, 14 Feb 2025 15:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546037; cv=none; b=aojUqtNH6GeuFXskecCG863+xrnWzKccL/j/SbZh/jp71C4bOQoUystPwhiNll3KFK9qagC71GhozGvSsIPYEJ5fwTx9Qsc1A9OCOV+J5H/TRi3dGgwM8Rzbw58kKD3OTJ7JrXAR5X7yqkEUev71KTcmd/7DOnxHkROjP711QdE=
+	t=1739546112; cv=none; b=Qpv430EByG9SDltxEKkhURiBls+7GD7E016kUDlpVMa43noU895cPHXwZBsXwjsj70cpvAZCfo2CPNFLD487yl6xZ+J1bX+pRPgnA6z6R13oqKJnug8/hvSkTk71h5FuXzDXNp0ndJe4YPMFhtlUbnXQqtgCdxS1kWzE/Mbos9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546037; c=relaxed/simple;
-	bh=RFJpcfzla1/p+yWYqC1cUGJBffni0p3EoU1xXc12NtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBFZPjMbdd7EvU2AkLIg49GZ8Zhh3oUgAiE1PVjkQhKJJRlF480U4hrAjPFklGbKH135FWh068ZtwSRsVj5y3Mh/+7/j3dqwdxdMk2Hs4Tb3cUu5tdxZakj9ikCENH8HGiB12hwMtRWpGzzSQwI6RQpnPythkZZe6oQot+5TqSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GL3W9qVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9340C4CEDD;
-	Fri, 14 Feb 2025 15:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739546036;
-	bh=RFJpcfzla1/p+yWYqC1cUGJBffni0p3EoU1xXc12NtE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GL3W9qVJRdnVkROe2Jpk/w2dfKv9mGFjcE9L8pLVH4N1RfKzcJq/fZ8TX7dwk8O19
-	 /EbfgQHy0Axj6AsvQMM7ZqU0fEV4I7Br04DgFFZQspQ39PekulZTDBPoWaj7V+ZE3e
-	 N4ij2TZ87MzllNIOaUHXMIL4s7cmyWQgr7HIVuMKzvczBtUVMj7LgXwaTk1XCaLjp/
-	 t2GSIVrLipjlT7J+Bm59c5g5dilhwdFS3PEYKIL0N3koWLQwkt6XQShXXKisu2zyvQ
-	 ofphn9ih4xkL5zWvi8CpF9LBaH5dTcAR0896zurKsC3KgZ3neiBM70w0hf+QAD5UXV
-	 0BAweflLkRZ6w==
-Date: Fri, 14 Feb 2025 15:13:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/27] KVM: arm64: Implement support for SME in
- non-protected guests
-Message-ID: <Z69dsGn1JVWPCqAi@finisterre.sirena.org.uk>
-References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
- <86pljkswuk.wl-maz@kernel.org>
+	s=arc-20240116; t=1739546112; c=relaxed/simple;
+	bh=1cUFcziT3zrnD+e35Cx7WF4WHOMgoKt3qtHlcGUUGnQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ssHh46KLy8GXYV80mxkA27BIcP0jiz36pgd0Ae450kz/7Db31DQ1ErOQaaPVfv/Lkc4ip9FDB9K1OXP5d+dARm5S7hZuKibOBisLXB51uieOvvBTdj4zA5y4yn2LJ72qsKEWfKWsVdMnGnXhV+Obsao8b94XAhgLSxeOD6Wf9Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JJHA0bKo; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739546101;
+	bh=1cUFcziT3zrnD+e35Cx7WF4WHOMgoKt3qtHlcGUUGnQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=JJHA0bKog9zGlUr7gL/WMoMeolufzIwP8ZGvn3AUoqgFT8um3Kdoa9j8QFsDRjMv+
+	 OZOdXFEVUXsb1m9dadA+4DPzH9VsDVweFx3105N9PZLNL2VXChq+5UW0KrF2hpGQYD
+	 Beql8elsN8f72k8rCxqPg9EMfJd/tc0o6MakV94fFXXw+3GS+bpwb/stOvUOoxE/Ky
+	 VuMJIj+Amfbog5LIixjVRWOBV8FVn8so4LHO9pavtbDpACjFqxX4KHuqjxXOFdniGD
+	 Dxne1f81sthen5pOSWhKOoBpahrI7K5u+xOd63jc7A9DTwCs5c1ZnMIlpVjE5ZNgKg
+	 T7guYNRz4tWFw==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1003])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B46C317E0ECF;
+	Fri, 14 Feb 2025 16:14:57 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH 0/3] Allow retrieving accessory detection reference on
+ MT8188
+Date: Fri, 14 Feb 2025 12:14:28 -0300
+Message-Id: <20250214-mt8188-accdet-v1-0-6bbd5483855b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i3oZTUREBVwjVqsD"
-Content-Disposition: inline
-In-Reply-To: <86pljkswuk.wl-maz@kernel.org>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANRdr2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0MT3dwSC0MLC93E5OSU1BJdk5TUxKQkC1NTY5MUJaCegqLUtMwKsHn
+ RsbW1ANH1iY9fAAAA
+X-Change-ID: 20250214-mt8188-accdet-4deabb85534d
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Trevor Wu <trevor.wu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Zoran Zhan <zoran.zhan@mediatek.com>
+X-Mailer: b4 0.14.2
 
+This series enables the MT8188-MT6359 sound driver to retrieve the
+MT6359 ACCDET sound component from a mediatek,accdet DT property, which
+allows detecting jack insertion/removal.
 
---i3oZTUREBVwjVqsD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patch 1 describes the new property in the binding. Patch 2 implements
+the sound component retrieval in the common MTK soundcard driver. Patch
+3 updates the MT8188-MT6359 sound driver to register the audio jack and
+initialize the ACCDET driver for detection, if the property is present.
 
-On Fri, Feb 14, 2025 at 09:24:03AM +0000, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Tested on the Genio 700 EVK board.
 
-> Just to be clear: I do not intend to review a series that doesn't
-> cover the full gamut of KVM from day 1. Protected mode is an absolute
-> requirement. It is the largest KVM deployment, and Android phones the
-> only commonly available platform with SME. If CCA gets merged prior to
-> SME support, supporting it will also be a requirement.
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Nícolas F. R. A. Prado (3):
+      ASoC: dt-bindings: mediatek,mt8188-mt6359: Add mediatek,accdet
+      ASoC: mediatek: common: Handle mediatek,accdet property
+      ASoC: mediatek: mt8188-mt6359: Add headset jack detect support
 
-OK, no problem.  This is a new requirement and I'd been trying to
-balance the concerns people have with the size of serieses like this
-with the need to get everything in, my plan had been to follow up as
-soon as possible with pKVM.
+ .../bindings/sound/mediatek,mt8188-mt6359.yaml     |  6 +++
+ sound/soc/mediatek/common/mtk-soc-card.h           |  1 +
+ sound/soc/mediatek/common/mtk-soundcard-driver.c   | 15 +++++++-
+ sound/soc/mediatek/mt8188/mt8188-mt6359.c          | 43 ++++++++++++++++++++++
+ 4 files changed, 64 insertions(+), 1 deletion(-)
+---
+base-commit: 7a6b5c348058d075ce0b20710f027a055d33a71d
+change-id: 20250214-mt8188-accdet-4deabb85534d
 
-> > Access to the floating point registers follows the architecture:
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-> >  - When both SVE and SME are present:
-> >    - If PSTATE.SM =3D=3D 0 the vector length used for the Z and P regis=
-ters
-> >      is the SVE vector length.
-> >    - If PSTATE.SM =3D=3D 1 the vector length used for the Z and P regis=
-ters
-> >      is the SME vector length.
-> >  - If only SME is present:
-> >    - If PSTATE.SM =3D=3D 0 the Z and P registers are inaccessible and t=
-he
-> >      floating point state accessed via the encodings for the V register=
-s.=20
-> >    - If PSTATE.SM =3D=3D 1 the vector length used for the Z and P regis=
-ters
-> >  - The SME specific ZA and ZT0 registers are only accessible if SVCR.ZA=
- is 1.
-
-> > The VMM must understand this, in particular when loading state SVCR
-> > should be configured before other state.
-
-> Why SVCR? This isn't a register, just an architected accessor to
-> PSTATE.{ZA,SM}. Userspace already has direct access to PSTATE, so I
-> don't understand this requirement.
-
-Could you be more explicit as to what you mean by direct access to
-PSTATE here?  The direct access to these PSTATE fields is in the form of
-SVCR register accesses, or writes via SMSTART or SMSTOP instructions
-when executing code - is there another access mechanism I'm not aware of
-here?  They don't appear in SPSR.  Or is this a terminology issue with
-referring to SVCR as the mechanism for configuring PSTATE.{SM,ZA}
-without explicitly calling out that that's what's happening?
-
-> Isn't it that there is simply a dependency between restoring PSTATE
-> and any of the vector stuff? Also, how do you preserve the current ABI
-> that do not have this requirement?
-
-Yes, that's the dependency - I'm spelling out explicitly what changes in
-the register view when PSTATE.{SM,ZA} are restored.  This ABI is what
-you appeared to be asking for the last time we discussed this.
-Previously I had also proposed either:
-
- - Exposing the streaming mode view of the register state as separate
-   registers, selecting between the standard and streaming views for
-   load/save based on the mode when the guest runs and clearing the
-   inactive registers on userspace access.
-
- - Always presenting userspace with the largest available vector length,
-   zero padding when userspace reads and discarding unused high bits
-   when loading into the registers for the guest.  This ends up
-   requiring rewriting between VLs, or to/from FPSIMD format, around
-   periods of userspace access since when normally executing and context
-   switching the guest we want to store the data in the native format
-   for the current PSTATE.SM for performance.
-
-both of which largely avoid the ordering requirements but add complexity
-to the implementation, and memory overhead in the first case.  I'd
-originally implemented the second case, that seems the best of the
-available options to me.  You weren't happy with these options and said
-that we should not translate register formats and always use the current
-mode for the vCPU, but given that changing PSTATE.SM changes the
-register sizes that ends up creating an ordering requirement.  You
-seemed to agree that it was reasonable to have an ordering requirement
-with PSTATE.SM so long as it only came when SME had been explicitly
-enabled.
-
-Would you prefer:
-
- - Changing the register view based on the current value of PSTATE.SM.
- - Exposing streaming mode Z and P as separate registers.
- - Exposing the existing Z and P registers with the maximum S?E VL.
-
-or some other option?
-
---i3oZTUREBVwjVqsD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmevXa0ACgkQJNaLcl1U
-h9AvMAf/UX+5QSO5KD39QjMVwAjrzs5PpGSz3thq4Ajk3AvOq6MoZLM+cigoPhqX
-VlsiJ5F1ztiGHX5M2YNaZHgpA3xg5Q+deKieaEkqUPok0M6qFUG1k18RMiKLE672
-FXoKOBodF5HMK+avPXZVprpADSTCJXcWvKNYh8/eiDe3l/hkH6+GtTTtjsRmmW2w
-Rm7PdYpNDVKxs1oVgMWd4lG7OD55/NtKfBqDaKwLia1iFVtr7RAJIw+EUiWnj8tK
-R9UND4PmPkPqsi+7Z3ixTXmwc2v2k4SDeXn2rfwCf5p1FQgwj63LAKmX75LHvdFU
-rXcZgH/UQ7bWTd6ZTfug17WaPkswBw==
-=zfPV
------END PGP SIGNATURE-----
-
---i3oZTUREBVwjVqsD--
 
