@@ -1,271 +1,221 @@
-Return-Path: <linux-kernel+bounces-514463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B513AA3575B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:44:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB456A3575C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84557188FD83
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67BF3166C7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539BB204085;
-	Fri, 14 Feb 2025 06:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1BC202F93;
+	Fri, 14 Feb 2025 06:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MOPji41f"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93A41FFC47;
-	Fri, 14 Feb 2025 06:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g7n+O2rX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCABF1FFC47
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739515444; cv=none; b=PMa8SJU8QA6NNRYED5717QsIOnNGKiGFptuNRHaukWTmD/NP3oM5mvO4hOcdh+TWjE4c5dY7A7HYFURZUTKmu+F791HC4b4ErBeidrH8SyocV6mrEce5sk7GZPpnL4S/6H755o6g3SxNCylVJ/aG5gzn325+nztGAZqo10F2GIM=
+	t=1739515464; cv=none; b=siUXQJyZI7w4lv3EOgblUCe3B2lQq31NhO3Qz62+h9eR2dhcF91ZSIwMObLYGpYV3Ll96LKUHyxqBQRoucyLOicLMH4gG0CMS/dvIWZEczwmvrGE3VAyFTh3q3XuImm3q2w9BJckwKmBR0qmD1UDrR4exMKGHCAgw65WgMah0TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739515444; c=relaxed/simple;
-	bh=0cjSIPXFWqVN+M0LfJRbfI3PrOSgHIWdBdEKzP3i4hw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QOoUJWqDclrQMToJcY7CXqcHircU9phyU/Pj1zUEQ/RhVGj4bb4Z6+iFuPWx++hydGAwRn3TmfEC46Z5gG9SMsp5nlecGnjZykE6RDUtzJQiUX1sYTzrOBcvoxIsj8IvjtyviQAJxqJJwA8MelmekT/uQhZPIO52Gt+gZyrbn98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MOPji41f; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from namjain-Virtual-Machine.mshome.net (unknown [167.220.238.203])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 829FA203F3CB;
-	Thu, 13 Feb 2025 22:43:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 829FA203F3CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739515442;
-	bh=hd7FmfHbp/1gCUQKWw0IWSh8XDTrp007vlfiuUk9J2Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MOPji41fcVdAAYSzNXNkYiF4SBpJmmBNFNedKxICOSYQ4qgrl/Cunv8+haos3aI3V
-	 tq0OG8vkQ2m5K/6N27N4XSXXBiB2aYyXMIHSdP7ShEqWio8bhWc3kRBYPUZllIc9tR
-	 mOnNYSoj6PMdzPseOxYCvNQB2nj3MLl89AlrzXA0=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Hemminger <stephen@networkplumber.org>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Naman Jain <namjain@linux.microsoft.com>
-Subject: [RFC PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
-Date: Fri, 14 Feb 2025 12:13:51 +0530
-Message-Id: <20250214064351.8994-1-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739515464; c=relaxed/simple;
+	bh=XihkKkwRTgcC1tBSr2qqSHWBzOdbjJF6xX07acAUnTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uJU7P1Ol0if1htlZu/Jo5Vv2vqO2GkVPG4yS+4L6F7PSuQQPgOoBdCUl5TwOURRAXdUQk20lI1h8CE4uuXYtmsUsJOTkmvB5phvDvdAsBebWwBQIjdsZZbwkUhSE7msijUkpCNLsfKKi5gZv7trs6r7b6ENanqMl7dHXnMfP6Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g7n+O2rX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739515461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XihkKkwRTgcC1tBSr2qqSHWBzOdbjJF6xX07acAUnTs=;
+	b=g7n+O2rXEkdEkN9jpaIhqlRaa4cpgrpQscI+hYlEAYByK9f8alvJB1koIF6WITK8AsyYCj
+	SsyKJ6xwHcYHFfU3yn2kSpY5OnxF21JvympkvoHz5S4x8SfsN6NPg8xr8UduUzaGSOZz/H
+	3xgTtRkmmPg65xNkGoZw6p8TbeKHdQo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-248-qysHMD8tOXSdei4YvB4i_w-1; Fri, 14 Feb 2025 01:44:18 -0500
+X-MC-Unique: qysHMD8tOXSdei4YvB4i_w-1
+X-Mimecast-MFC-AGG-ID: qysHMD8tOXSdei4YvB4i_w_1739515457
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4395b5d6f8fso9085835e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:44:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739515457; x=1740120257;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XihkKkwRTgcC1tBSr2qqSHWBzOdbjJF6xX07acAUnTs=;
+        b=eHVrnha1mlprcI4C264tIGhEVleu/sMIpewvBeknt+bSVzBR3UhXVfcuueAmXAEKS+
+         S0Ae9+iF87tq5/zEsEyYlptoQONsZ3c8EbDo+GZ916wMy/9GTd5ragQVsjnmGz34jdlv
+         JLqCR1aOavWPZO40nk+KCNwu7f1JaU4mt2Hfi0UbvYDcSwTkpRF4H3/TiMTA1Mkj4xw1
+         00ApWoBIc3O06OvWIDEViTJqp1edW7Ae4aqev/tE+2il+wWDvEkX9r7EGZTKJt4kqD6M
+         zdf1/Azc4YcSn43FFTjHZPAxEh7vy1/CnkScSd193JINmmT35qZ3Ih6XtXLKeayx3bDz
+         qY0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXNSLoXdF0KdDG/hvvuOC5zOivkierlTPUbyu7msgucZh39SIXPAp0cVoE45F0J1eEIOPmPyACRKwgQASA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKCm/dIBdOgz39YNe+ZANdC6PYHv5zYypqjACG+9gN/ikgH2aA
+	hERCUTaOfV+D9JtvzjHWRB4X3AAc5jE8HGOamSpEOVqfvJYa2wdcjDxtHPPwcRil1Q9VZQWdzcy
+	y1cu78X3IxwtufM3xwfDREzKT4dTwbVq72MgAomExcekz4YYMWlAagp0BQFx42Q==
+X-Gm-Gg: ASbGncuHLWp8QegmbDBa7ZfNIbdJ6/q2q0JFXAtte06tXA/krxUNY2SBTW/2Hw43UYe
+	ZCoc2LYtOMi0gnRryi7F/7dTVk1H3uhGY9IleXZMbTURi5NeWbH6Mka8qLl+VY/YYwjc/p209Zi
+	uj2OKfFbFtzvt5dwhtqxUkJc+NwRNNRNbTtNSSt89LaiQLEsaTr5h7PFgmFQWwlR9M29g6QuUPG
+	700FeJC9xG1H3A4z380FZZiV+Uwv0BOCJ1PT6HggyhmvSCl6AYuM0F/1lkJRUFnQS8I6qWaEqWi
+	tyuLSdeutZ6MVnIUsJKRwq4IY6jj3A0=
+X-Received: by 2002:a05:600c:5491:b0:439:4036:e925 with SMTP id 5b1f17b1804b1-43960179ba8mr97826495e9.11.1739515456625;
+        Thu, 13 Feb 2025 22:44:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE+4qyDYkNuw8fexMMX5Tv8MINKZo1rNtIj/rzbP3sO9nv/Yi7cp+xrxqZ2bhBRgtfshVQgtA==
+X-Received: by 2002:a05:600c:5491:b0:439:4036:e925 with SMTP id 5b1f17b1804b1-43960179ba8mr97826195e9.11.1739515456190;
+        Thu, 13 Feb 2025 22:44:16 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43960e937c7sm23906515e9.3.2025.02.13.22.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 22:44:15 -0800 (PST)
+Message-ID: <ed5ff8e242c7abb760f408b4fea9701d9b39d08d.camel@redhat.com>
+Subject: Re: [PATCH v6 2/3] sched: Move task_mm_cid_work to mm delayed work
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, aubrey.li@linux.intel.com, yu.c.chen@intel.com,
+ Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar	 <mingo@kernel.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Shuah Khan	 <shuah@kernel.org>
+Date: Fri, 14 Feb 2025 07:44:13 +0100
+In-Reply-To: <0888d6a3-8dea-455b-893f-d8d929e827e2@efficios.com>
+References: <202502131405.1ba0803f-lkp@intel.com>
+	 <17bda9071b6962414f61668698fa840501819172.camel@redhat.com>
+	 <0888d6a3-8dea-455b-893f-d8d929e827e2@efficios.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-On regular bootup, devices get registered to vmbus first, so when
-uio_hv_generic driver for a particular device type is probed,
-the device is already initialized and added, so sysfs creation in
-uio_hv_generic probe works fine. However, when device is removed
-and brought back, the channel rescinds and again gets registered
-to vmbus. However this time, the uio_hv_generic driver is already
-registered to probe for that device and in this case sysfs creation
-is tried before the device gets initialized completely. Fix this by
-deferring sysfs creation till device gets initialized completely.
 
-Problem path:
-vmbus_device_register
-    device_register
-        uio_hv_generic probe
-		    sysfs_create_bin_file (fails here)
-	kset_create_and_add (dependency)
-	vmbus_add_channel_kobj (dependency)
 
-Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
-Cc: stable@kernel.org
-Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
+On Thu, 2025-02-13 at 12:31 -0500, Mathieu Desnoyers wrote:
+> On 2025-02-13 08:25, Gabriele Monaco wrote:
+> > On Thu, 2025-02-13 at 14:52 +0800, kernel test robot wrote:
+> > > kernel test robot noticed
+> > > "WARNING:at_kernel/workqueue.c:#__queue_delayed_work" on:
+> > >=20
+> > > [=C2=A0=C2=A0=C2=A0 2.640924][=C2=A0=C2=A0=C2=A0 T0] ------------[ cu=
+t here ]------------
+> > > [ 2.641646][ T0] WARNING: CPU: 0 PID: 0 at
+> > > kernel/workqueue.c:2495
+> > > __queue_delayed_work (kernel/workqueue.c:2495 (discriminator 9))
+> > > [=C2=A0=C2=A0=C2=A0 2.642874][=C2=A0=C2=A0=C2=A0 T0] Modules linked i=
+n:
+> > > [=C2=A0=C2=A0=C2=A0 2.643381][=C2=A0=C2=A0=C2=A0 T0] CPU: 0 UID: 0 PI=
+D: 0 Comm: swapper Not
+> > > tainted
+> > > 6.14.0-rc2-00002-g287adf9e9c1f #1
+> > > [=C2=A0=C2=A0=C2=A0 2.644582][=C2=A0=C2=A0=C2=A0 T0] Hardware name: Q=
+EMU Standard PC (i440FX +
+> > > PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> > > [ 2.645943][ T0] RIP: 0010:__queue_delayed_work
+> > > (kernel/workqueue.c:2495 (discriminator 9))
+> >=20
+> > There seem to be major problems with this configuration, I'm trying
+> > to
+> > understand what's wrong but, for the time being, this patchset is
+> > not
+> > ready for inclusion.
+>=20
+> I'm staring at this now, and I'm thinking we could do a simpler
+> change
+> that would solve your RT issues without having to introduce a
+> dependency
+> on workqueue.c.
+>=20
+> So if the culprit is that task_mm_cid_work() runs for too long on
+> large
+> many-cpus systems, why not break it up into smaller iterations ?
+>=20
+> So rather than iterating on "for_each_possible_cpu", we could simply
+> break this down into iteration on at most N cpus, so:
+>=20
+> tick #1: iteration on CPUs 0 ..=C2=A0=C2=A0 N - 1
+> tick #2: iteration on CPUs N .. 2*N - 1
+> ...
+> circling back to 0 when it reaches the number of possible cpus.
+>=20
+> This N value could be configurable, e.g. CONFIG_RSEQ_CID_SCAN_BATCH,
+> with a sane default. An RT system could decide to make that value
+> lower.
+>=20
+> Then all we need to do is remember which was that last observed cpu
+> number in the mm struct, so the next tick picks up from there.
+>=20
+> The main downside of this approach compared to scheduling delayed
+> work in a workqueue is that it depends on having the mm be current
+> when
+> the scheduler tick happens. But perhaps this is something we could
+> fix
+> in a different way that does not add a dependency on workqueue. I'm
+> not
+> sure how though.
+>=20
+> Thoughts ?
 
-DPDK use-case depend on this sysfs node so to maintain backward compatibility and not break
-DPDK, we could not remove sysfs logic from uio_hv_generic probe.
-https://github.com/DPDK/dpdk/blob/main/drivers/bus/vmbus/linux/vmbus_uio.c#L360
+Mmh, that's indeed neat, what is not so good about this type of task
+work is that it's a pure latency, it will happen before scheduling the
+task and can't be interrupted.
+The only acceptable latency is a bounded one and your idea is going in
+that direction.
 
-Tried reordering functions in vmbus_device_register and also finding alternate functions
-for device initialization, but could not find any other viable solution.
-Explored the use of ATTRIBUTE_GROUPS and DEVICE_ATTR_RW but with that, I could create sysfs
-node for a particular device but not for the channel for that device, as we need to.
+As you mentioned, this will make the compaction of mm_cid even more
+rare and will likely have the test in 3/3 fail even more often, I'm not
+sure if this is necessarily a bad thing though, since mm_cid compaction
+is mainly aesthetic, so we could just increase the duration of the test
+or even add a busy loop inside to make the task more likely to run this
+compaction.
 
-From previous discussions, I could see sysfs creation in driver probe is not encouraged,
-and we are now adding more complexity to it, so I am not sure if this is the best way to
-solve the problem. Hence sharing this as RFC to gather some review comments.
+I gave a thought about this whole thing, don't take this too seriously,
+but what I see essentially flawed in this approach is:
+1. task_works are set on tick
+2. task_works are run returning to userspace
 
-Error logs:
+1. is the issue with frequency and 2. can be mitigated by your idea,
+but not essentially solved. What if we (also) did:
+1+. set this task_work while switching in
+2+. run this task_work while switching out to sleep (i.e. no
+preemption)
 
-[   35.574120] ------------[ cut here ]------------
-[   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
-[   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
-[   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
-[   35.574197] Call Trace:
-[   35.574199]  <TASK>
-[   35.574200]  ? show_regs+0x69/0x80
-[   35.574217]  ? __warn+0x8d/0x130
-[   35.574220]  ? sysfs_create_bin_file+0x81/0x90
-[   35.574222]  ? report_bug+0x182/0x190
-[   35.574225]  ? handle_bug+0x5b/0x90
-[   35.574244]  ? exc_invalid_op+0x19/0x70
-[   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
-[   35.574252]  ? sysfs_create_bin_file+0x81/0x90
-[   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
-[   35.574271]  vmbus_probe+0x3b/0x90
-[   35.574275]  really_probe+0xf4/0x3b0
-[   35.574279]  __driver_probe_device+0x8a/0x170
-[   35.574282]  driver_probe_device+0x23/0xc0
-[   35.574285]  __device_attach_driver+0xb5/0x140
-[   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
-[   35.574291]  bus_for_each_drv+0x86/0xe0
-[   35.574294]  __device_attach+0xc1/0x200
-[   35.574297]  device_initial_probe+0x13/0x20
-[   35.574315]  bus_probe_device+0x99/0xa0
-[   35.574318]  device_add+0x647/0x870
-[   35.574320]  ? hrtimer_init+0x28/0x70
-[   35.574323]  device_register+0x1b/0x30
-[   35.574326]  vmbus_device_register+0x83/0x130
-[   35.574328]  vmbus_add_channel_work+0x135/0x1a0
-[   35.574331]  process_one_work+0x177/0x340
-[   35.574348]  worker_thread+0x2b2/0x3c0
-[   35.574350]  kthread+0xe3/0x1f0
-[   35.574353]  ? __pfx_worker_thread+0x10/0x10
-[   35.574356]  ? __pfx_kthread+0x10/0x10
-[   35.574358]  ret_from_fork+0x39/0x60
-[   35.574362]  ? __pfx_kthread+0x10/0x10
-[   35.574364]  ret_from_fork_asm+0x1a/0x30
-[   35.574368]  </TASK>
-[   35.574385] ---[ end trace 0000000000000000 ]---
-[   35.574388] uio_hv_generic eb765408-105f-49b6-b4aa-c123b64d17d4: sysfs create ring bin file failed; -22
+1+. would make sure all threads have this task_work scheduled at a
+certain point (perhaps a bit too much, but we have a periodicity check
+in place). 2+. can effectively run the task in a moment when it is not
+problematic for the real time response: on a preemptible kernel, as
+soon as a task with higher priority is ready to run, it will preempt
+the currently running one, the fact current is going to sleep willingly
+implies there's no higher priority task ready, so likely no task really
+caring about RT response is going to run after.
+Not all tasks are ever going to sleep, so we must keep the original
+TWA_RESUME in the task_work, especially for those long-running or low-
+priority, both unlikely to be RT tasks.
 
-Thanks.
----
- drivers/hv/vmbus_drv.c       |  7 +++++++
- drivers/uio/uio_hv_generic.c | 33 ++++++++++++++++++++++++++++-----
- include/linux/hyperv.h       |  4 ++++
- 3 files changed, 39 insertions(+), 5 deletions(-)
+I'm going to try a patch with this CONFIG_RSEQ_CID_SCAN_BATCH and
+tuning the test to pass. In the future we can see if those ideas make
+sense and perhaps bring them in.
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 0f6cd44fff29..16f7d7f2d7fd 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -835,6 +835,7 @@ static int vmbus_probe(struct device *child_device)
- 	struct hv_device *dev = device_to_hv_device(child_device);
- 	const struct hv_vmbus_device_id *dev_id;
- 
-+	dev->device_registered = false;
- 	dev_id = hv_vmbus_get_id(drv, dev);
- 	if (drv->probe) {
- 		ret = drv->probe(dev, dev_id);
-@@ -1927,6 +1928,7 @@ int vmbus_device_register(struct hv_device *child_device_obj)
- 	child_device_obj->device.dma_mask = &child_device_obj->dma_mask;
- 	dma_set_mask(&child_device_obj->device, DMA_BIT_MASK(64));
- 
-+	init_waitqueue_head(&child_device_obj->wait_event);
- 	/*
- 	 * Register with the LDM. This will kick off the driver/device
- 	 * binding...which will eventually call vmbus_match() and vmbus_probe()
-@@ -1951,6 +1953,11 @@ int vmbus_device_register(struct hv_device *child_device_obj)
- 		pr_err("Unable to register primary channeln");
- 		goto err_kset_unregister;
- 	}
-+
-+	/* channel kobj allocated, now inform anyone waiting for it */
-+	child_device_obj->device_registered = true;
-+	wake_up_interruptible(&child_device_obj->wait_event);
-+
- 	hv_debug_add_dev_dir(child_device_obj);
- 
- 	return 0;
-diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-index 1b19b5647495..99d6ecaa8f86 100644
---- a/drivers/uio/uio_hv_generic.c
-+++ b/drivers/uio/uio_hv_generic.c
-@@ -63,6 +63,8 @@ struct hv_uio_private_data {
- 	void	*send_buf;
- 	struct vmbus_gpadl send_gpadl;
- 	char	send_name[32];
-+
-+	struct work_struct sysfs_work;
- };
- 
- /*
-@@ -243,6 +245,29 @@ hv_uio_release(struct uio_info *info, struct inode *inode)
- 	return ret;
- }
- 
-+static void hv_uio_sysfs_work(struct work_struct *work)
-+{
-+	struct hv_uio_private_data *pdata =
-+		container_of(work, struct hv_uio_private_data, sysfs_work);
-+	struct vmbus_channel *channel = pdata->device->channel;
-+	int ret;
-+
-+	ret = pdata->device->channels_kset ||
-+		wait_event_interruptible_timeout(pdata->device->wait_event,
-+						 pdata->device->device_registered,
-+						 msecs_to_jiffies(5));
-+	if (!ret) {
-+		dev_warn(&pdata->device->device,
-+			 "kset taking too long to initialize; %d\n", ret);
-+		return;
-+	}
-+
-+	ret = sysfs_create_bin_file(&channel->kobj, &ring_buffer_bin_attr);
-+	if (ret)
-+		dev_notice(&pdata->device->device,
-+			   "sysfs create ring bin file failed; %d\n", ret);
-+}
-+
- static int
- hv_uio_probe(struct hv_device *dev,
- 	     const struct hv_vmbus_device_id *dev_id)
-@@ -349,11 +374,8 @@ hv_uio_probe(struct hv_device *dev,
- 		dev_err(&dev->device, "hv_uio register failed\n");
- 		goto fail_close;
- 	}
--
--	ret = sysfs_create_bin_file(&channel->kobj, &ring_buffer_bin_attr);
--	if (ret)
--		dev_notice(&dev->device,
--			   "sysfs create ring bin file failed; %d\n", ret);
-+	INIT_WORK(&pdata->sysfs_work, hv_uio_sysfs_work);
-+	schedule_work(&pdata->sysfs_work);
- 
- 	hv_set_drvdata(dev, pdata);
- 
-@@ -376,6 +398,7 @@ hv_uio_remove(struct hv_device *dev)
- 		return;
- 
- 	sysfs_remove_bin_file(&dev->channel->kobj, &ring_buffer_bin_attr);
-+	cancel_work_sync(&pdata->sysfs_work);
- 	uio_unregister_device(&pdata->info);
- 	hv_uio_cleanup(dev, pdata);
- 
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 4179add2864b..6180231aff8d 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1302,6 +1302,10 @@ struct hv_device {
- 	u16 vendor_id;
- 	u16 device_id;
- 
-+	/* check for device registration completion */
-+	bool			device_registered;
-+	wait_queue_head_t	wait_event;
-+
- 	struct device device;
- 	/*
- 	 * Driver name to force a match.  Do not set directly, because core
-
-base-commit: 00f3246adeeacbda0bd0b303604e46eb59c32e6e
--- 
-2.34.1
+Thanks,
+Gabriele
 
 
