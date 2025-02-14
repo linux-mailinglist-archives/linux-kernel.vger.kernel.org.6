@@ -1,238 +1,184 @@
-Return-Path: <linux-kernel+bounces-515167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9057A3611E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:12:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9300A3612C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2FB4188EEF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:12:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF97A5659
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B021D26659E;
-	Fri, 14 Feb 2025 15:11:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AA2266B72;
+	Fri, 14 Feb 2025 15:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GL3W9qVJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9BE3595C;
-	Fri, 14 Feb 2025 15:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07120263F5F;
+	Fri, 14 Feb 2025 15:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739545917; cv=none; b=BeYwVwl9l8hex8m9umqXk7zAa0QsMxs941boHPY8Q+HGo+HKHCzlzoh3jAJamytWgXIAei1qlS6zuB4+K1259RMjN89x6DSJo3JbxJwsJRsV/kTNaWMBucMAWYDkUnyO5xghUS+wfGGuVOx7UOJILxZaeym0KlanWEePBLFVSMY=
+	t=1739546037; cv=none; b=aojUqtNH6GeuFXskecCG863+xrnWzKccL/j/SbZh/jp71C4bOQoUystPwhiNll3KFK9qagC71GhozGvSsIPYEJ5fwTx9Qsc1A9OCOV+J5H/TRi3dGgwM8Rzbw58kKD3OTJ7JrXAR5X7yqkEUev71KTcmd/7DOnxHkROjP711QdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739545917; c=relaxed/simple;
-	bh=9iiDSRSxBmUzKWUuI10Xjb8WAH71L18L9CmmiYg+ego=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tqCzBEve/KKUfgiDqnMUB7c8PvXdA3dHhnMDE/0dVPOh74C+tkXwyQXaoeYKwy0ZAErwdg+RgVeRkzkExsvKfCtdaJV8x6v3CaF2GXWCHMLJjw91ruDEb9ZiGCNsLNDAycEeLV744hZy5JtTOAtgEAvf5oHDsHpWdGQndivjIUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvb8P3gfRz6HJgG;
-	Fri, 14 Feb 2025 23:10:29 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21B431404F5;
-	Fri, 14 Feb 2025 23:11:51 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 16:11:50 +0100
-Date: Fri, 14 Feb 2025 15:11:48 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <nifan.cxl@gmail.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<lukas@wunner.de>, <ming.li@zohomail.com>,
-	<PradeepVineshReddy.Kodamati@amd.com>
-Subject: Re: [PATCH v7 06/17] PCI/AER: Add CXL PCIe Port uncorrectable error
- recovery in AER service driver
-Message-ID: <20250214151148.000033f4@huawei.com>
-In-Reply-To: <20250211192444.2292833-7-terry.bowman@amd.com>
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
-	<20250211192444.2292833-7-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739546037; c=relaxed/simple;
+	bh=RFJpcfzla1/p+yWYqC1cUGJBffni0p3EoU1xXc12NtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBFZPjMbdd7EvU2AkLIg49GZ8Zhh3oUgAiE1PVjkQhKJJRlF480U4hrAjPFklGbKH135FWh068ZtwSRsVj5y3Mh/+7/j3dqwdxdMk2Hs4Tb3cUu5tdxZakj9ikCENH8HGiB12hwMtRWpGzzSQwI6RQpnPythkZZe6oQot+5TqSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GL3W9qVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9340C4CEDD;
+	Fri, 14 Feb 2025 15:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739546036;
+	bh=RFJpcfzla1/p+yWYqC1cUGJBffni0p3EoU1xXc12NtE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GL3W9qVJRdnVkROe2Jpk/w2dfKv9mGFjcE9L8pLVH4N1RfKzcJq/fZ8TX7dwk8O19
+	 /EbfgQHy0Axj6AsvQMM7ZqU0fEV4I7Br04DgFFZQspQ39PekulZTDBPoWaj7V+ZE3e
+	 N4ij2TZ87MzllNIOaUHXMIL4s7cmyWQgr7HIVuMKzvczBtUVMj7LgXwaTk1XCaLjp/
+	 t2GSIVrLipjlT7J+Bm59c5g5dilhwdFS3PEYKIL0N3koWLQwkt6XQShXXKisu2zyvQ
+	 ofphn9ih4xkL5zWvi8CpF9LBaH5dTcAR0896zurKsC3KgZ3neiBM70w0hf+QAD5UXV
+	 0BAweflLkRZ6w==
+Date: Fri, 14 Feb 2025 15:13:52 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 00/27] KVM: arm64: Implement support for SME in
+ non-protected guests
+Message-ID: <Z69dsGn1JVWPCqAi@finisterre.sirena.org.uk>
+References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
+ <86pljkswuk.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Tue, 11 Feb 2025 13:24:33 -0600
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> Existing recovery procedure for PCIe uncorrectable errors (UCE) does not
-> apply to CXL devices. Recovery can not be used for CXL devices because of
-> potential corruption on what can be system memory. Also, current PCIe UCE
-> recovery, in the case of a Root Port (RP) or Downstream Switch Port (DSP),
-> does not begin at the RP/DSP but begins at the first downstream device.
-> This will miss handling CXL Protocol Errors in a CXL RP or DSP. A separate
-> CXL recovery is needed because of the different handling requirements
-> 
-> Add a new function, cxl_do_recovery() using the following.
-> 
-> Add cxl_walk_bridge() to iterate the detected error's sub-topology.
-> cxl_walk_bridge() is similar to pci_walk_bridge() but the CXL flavor
-> will begin iteration at the RP or DSP rather than beginning at the
-Hi Terry,
-
-Trivial nitpick but you wrap point is shrinking wrt to the previous paragraph.
-Just looks odd rather than actually mattering :)
-
-> first downstream device.
-> 
-> pci_walk_bridge() is candidate to possibly reuse cxl_walk_bridge() but
-> needs further investigation. This will be left for future improvement
-> to make the CXL and PCI handling paths more common.
-> 
-> Add cxl_report_error_detected() as an analog to report_error_detected().
-> It will call pci_driver::cxl_err_handlers for each iterated downstream
-> device. The pci_driver::cxl_err_handler's UCE handler returns a boolean
-> indicating if there was a UCE error detected during handling.
-> 
-> cxl_do_recovery() uses the status from cxl_report_error_detected() to
-> determine how to proceed. Non-fatal CXL UCE errors will be treated as
-> fatal. If a UCE was present during handling then cxl_do_recovery()
-> will kernel panic.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-One trivial suggestion inline.  Probably something for another day!
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
->  drivers/pci/pci.h      |  3 +++
->  drivers/pci/pcie/aer.c |  4 +++
->  drivers/pci/pcie/err.c | 58 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/pci.h    |  3 +++
->  4 files changed, 68 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..deb193b387af 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -722,6 +722,9 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->  		pci_channel_state_t state,
->  		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev));
->  
-> +/* CXL error reporting and handling */
-> +void cxl_do_recovery(struct pci_dev *dev);
-> +
->  bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
->  int pcie_retrain_link(struct pci_dev *pdev, bool use_lt);
->  
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 34ec0958afff..ee38db08d005 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1012,6 +1012,8 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
->  			err_handler->error_detected(dev, pci_channel_io_normal);
->  		else if (info->severity == AER_FATAL)
->  			err_handler->error_detected(dev, pci_channel_io_frozen);
-> +
-> +		cxl_do_recovery(dev);
->  	}
->  out:
->  	device_unlock(&dev->dev);
-> @@ -1041,6 +1043,8 @@ static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  			pdrv->cxl_err_handler->cor_error_detected(dev);
->  
->  		pcie_clear_device_status(dev);
-> +	} else {
-> +		cxl_do_recovery(dev);
->  	}
->  }
->  
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index 31090770fffc..05f2d1ef4c36 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -24,6 +24,9 @@
->  static pci_ers_result_t merge_result(enum pci_ers_result orig,
->  				  enum pci_ers_result new)
->  {
-> +	if (new == PCI_ERS_RESULT_PANIC)
-> +		return PCI_ERS_RESULT_PANIC;
-> +
->  	if (new == PCI_ERS_RESULT_NO_AER_DRIVER)
->  		return PCI_ERS_RESULT_NO_AER_DRIVER;
->  
-> @@ -276,3 +279,58 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->  
->  	return status;
->  }
-> +
-> +static void cxl_walk_bridge(struct pci_dev *bridge,
-> +			    int (*cb)(struct pci_dev *, void *),
-> +			    void *userdata)
-> +{
-> +	if (cb(bridge, userdata))
-> +		return;
-> +
-> +	if (bridge->subordinate)
-> +		pci_walk_bus(bridge->subordinate, cb, userdata);
-> +}
-> +
-> +static int cxl_report_error_detected(struct pci_dev *dev, void *data)
-> +{
-> +	const struct cxl_error_handlers *cxl_err_handler;
-> +	pci_ers_result_t vote, *result = data;
-> +	struct pci_driver *pdrv;
-> +
-> +	device_lock(&dev->dev);
-Could use
-	guard(device)(&dev->dev);
-
-> +	pdrv = dev->driver;
-> +	if (!pdrv || !pdrv->cxl_err_handler ||
-> +	    !pdrv->cxl_err_handler->error_detected)
-> +		goto out;
-
-allowing you to return here.
-
-Same approach would simplify the rch code as well.
-> +
-> +	cxl_err_handler = pdrv->cxl_err_handler;
-> +	vote = cxl_err_handler->error_detected(dev);
-> +	*result = merge_result(*result, vote);
-> +out:
-> +	device_unlock(&dev->dev);
-> +	return 0;
-> +}
-> +
-> +void cxl_do_recovery(struct pci_dev *dev)
-> +{
-> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
-> +
-> +	cxl_walk_bridge(dev, cxl_report_error_detected, &status);
-> +	if (status == PCI_ERS_RESULT_PANIC)
-> +		panic("CXL cachemem error.");
-> +
-> +	/*
-> +	 * If we have native control of AER, clear error status in the device
-> +	 * that detected the error.  If the platform retained control of AER,
-> +	 * it is responsible for clearing this status.  In that case, the
-> +	 * signaling device may not even be visible to the OS.
-> +	 */
-> +	if (host->native_aer || pcie_ports_native) {
-> +		pcie_clear_device_status(dev);
-> +		pci_aer_clear_nonfatal_status(dev);
-> +		pci_aer_clear_fatal_status(dev);
-> +	}
-> +
-> +	pci_info(dev, "CXL uncorrectable error.\n");
-> +}
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i3oZTUREBVwjVqsD"
+Content-Disposition: inline
+In-Reply-To: <86pljkswuk.wl-maz@kernel.org>
+X-Cookie: Editing is a rewording activity.
 
 
+--i3oZTUREBVwjVqsD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 14, 2025 at 09:24:03AM +0000, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
+
+> Just to be clear: I do not intend to review a series that doesn't
+> cover the full gamut of KVM from day 1. Protected mode is an absolute
+> requirement. It is the largest KVM deployment, and Android phones the
+> only commonly available platform with SME. If CCA gets merged prior to
+> SME support, supporting it will also be a requirement.
+
+OK, no problem.  This is a new requirement and I'd been trying to
+balance the concerns people have with the size of serieses like this
+with the need to get everything in, my plan had been to follow up as
+soon as possible with pKVM.
+
+> > Access to the floating point registers follows the architecture:
+
+> >  - When both SVE and SME are present:
+> >    - If PSTATE.SM =3D=3D 0 the vector length used for the Z and P regis=
+ters
+> >      is the SVE vector length.
+> >    - If PSTATE.SM =3D=3D 1 the vector length used for the Z and P regis=
+ters
+> >      is the SME vector length.
+> >  - If only SME is present:
+> >    - If PSTATE.SM =3D=3D 0 the Z and P registers are inaccessible and t=
+he
+> >      floating point state accessed via the encodings for the V register=
+s.=20
+> >    - If PSTATE.SM =3D=3D 1 the vector length used for the Z and P regis=
+ters
+> >  - The SME specific ZA and ZT0 registers are only accessible if SVCR.ZA=
+ is 1.
+
+> > The VMM must understand this, in particular when loading state SVCR
+> > should be configured before other state.
+
+> Why SVCR? This isn't a register, just an architected accessor to
+> PSTATE.{ZA,SM}. Userspace already has direct access to PSTATE, so I
+> don't understand this requirement.
+
+Could you be more explicit as to what you mean by direct access to
+PSTATE here?  The direct access to these PSTATE fields is in the form of
+SVCR register accesses, or writes via SMSTART or SMSTOP instructions
+when executing code - is there another access mechanism I'm not aware of
+here?  They don't appear in SPSR.  Or is this a terminology issue with
+referring to SVCR as the mechanism for configuring PSTATE.{SM,ZA}
+without explicitly calling out that that's what's happening?
+
+> Isn't it that there is simply a dependency between restoring PSTATE
+> and any of the vector stuff? Also, how do you preserve the current ABI
+> that do not have this requirement?
+
+Yes, that's the dependency - I'm spelling out explicitly what changes in
+the register view when PSTATE.{SM,ZA} are restored.  This ABI is what
+you appeared to be asking for the last time we discussed this.
+Previously I had also proposed either:
+
+ - Exposing the streaming mode view of the register state as separate
+   registers, selecting between the standard and streaming views for
+   load/save based on the mode when the guest runs and clearing the
+   inactive registers on userspace access.
+
+ - Always presenting userspace with the largest available vector length,
+   zero padding when userspace reads and discarding unused high bits
+   when loading into the registers for the guest.  This ends up
+   requiring rewriting between VLs, or to/from FPSIMD format, around
+   periods of userspace access since when normally executing and context
+   switching the guest we want to store the data in the native format
+   for the current PSTATE.SM for performance.
+
+both of which largely avoid the ordering requirements but add complexity
+to the implementation, and memory overhead in the first case.  I'd
+originally implemented the second case, that seems the best of the
+available options to me.  You weren't happy with these options and said
+that we should not translate register formats and always use the current
+mode for the vCPU, but given that changing PSTATE.SM changes the
+register sizes that ends up creating an ordering requirement.  You
+seemed to agree that it was reasonable to have an ordering requirement
+with PSTATE.SM so long as it only came when SME had been explicitly
+enabled.
+
+Would you prefer:
+
+ - Changing the register view based on the current value of PSTATE.SM.
+ - Exposing streaming mode Z and P as separate registers.
+ - Exposing the existing Z and P registers with the maximum S?E VL.
+
+or some other option?
+
+--i3oZTUREBVwjVqsD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmevXa0ACgkQJNaLcl1U
+h9AvMAf/UX+5QSO5KD39QjMVwAjrzs5PpGSz3thq4Ajk3AvOq6MoZLM+cigoPhqX
+VlsiJ5F1ztiGHX5M2YNaZHgpA3xg5Q+deKieaEkqUPok0M6qFUG1k18RMiKLE672
+FXoKOBodF5HMK+avPXZVprpADSTCJXcWvKNYh8/eiDe3l/hkH6+GtTTtjsRmmW2w
+Rm7PdYpNDVKxs1oVgMWd4lG7OD55/NtKfBqDaKwLia1iFVtr7RAJIw+EUiWnj8tK
+R9UND4PmPkPqsi+7Z3ixTXmwc2v2k4SDeXn2rfwCf5p1FQgwj63LAKmX75LHvdFU
+rXcZgH/UQ7bWTd6ZTfug17WaPkswBw==
+=zfPV
+-----END PGP SIGNATURE-----
+
+--i3oZTUREBVwjVqsD--
 
