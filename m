@@ -1,76 +1,53 @@
-Return-Path: <linux-kernel+bounces-515090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A9BA35FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:03:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A22DA35FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40EA188EC01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB9CC7A5205
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC63265CA3;
-	Fri, 14 Feb 2025 14:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58DD264A91;
+	Fri, 14 Feb 2025 14:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ffutnsRo"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQ96pBjj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFCB7081C;
-	Fri, 14 Feb 2025 14:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFF243AB7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739541788; cv=none; b=KgGtfIvjxbMY+wDKDRIGL5i+rTEJlBCOJKViCGu9J+UENMFdw6FkZhDXMol9Ayr6kDkZbojZvfAnG6y2TU1A3de8iErP+B1ndw7igps6vo7rxgIn3EHiqtjFaIKtIw7zQwqqlU5WlfkebRrWoNwaX7vJF+Nt6TX/pkBzEkvXyK8=
+	t=1739541878; cv=none; b=pVx/z6TyNkJg1aN1SVgxyV/v8bgaDHK3O2FqLvcUIMpFcjJsdvelpRR9KrPzjukxt6X5OpjoKloXp20Csji9UBIegrvRyLFjd+1l57u+1Hy5YDhRN2wJydHcGL39By6YUEbSUJ7ddae1lPUBarJlEtDw9nZz0Q2s3KMHrOzfGZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739541788; c=relaxed/simple;
-	bh=HPjrAGuqBs30Xqla0S08E7D+Vsk8nak+FoJqatHVKqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GEbxC9LFJZAeVC2jywQgScFjENM+hOLdOT7QtFvgA6UapXlLwv8TvxYwVew1rSx1P9AF9MwxveQDWAVP0RCO3ym4PzT0J7s0iK8tb4z3F+ycq0p+IYI6Ckizug9Nlrz+87v1I5GHa1vwq5Fez6GISeCQ/O2ALfiPmMQzUS7VcXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ffutnsRo; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YPfqLp9fbZ/8JOO2RhhN9couacnmyf0ld4MXnUIvALM=; b=ffutnsRoSZY8FyHYndFd/8kLiJ
-	I4KHxo35/Ek9TxhoUWtM8unvMnPGhWSEmkPTEcDT3jYClEQEnUPZhUgdZ2ziMHH55Gx8f8Cqx5dY+
-	TMUNkVQeXvIecwSFy4vJcLw7LskEMPFSJgDfs890xo04TQ/QG3ANEnPgdKm5ofEn2wRI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tiwHO-00E5L7-4X; Fri, 14 Feb 2025 15:02:54 +0100
-Date: Fri, 14 Feb 2025 15:02:54 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jie Luo <quic_luoj@quicinc.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Suruchi Agarwal <quic_suruchia@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
-	john@phrozen.org
-Subject: Re: [PATCH net-next v3 13/14] net: ethernet: qualcomm: Add PPE
- debugfs support for PPE counters
-Message-ID: <72171304-9a98-4734-85a3-d1302d053602@lunn.ch>
-References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
- <20250209-qcom_ipq_ppe-v3-13-453ea18d3271@quicinc.com>
- <5a53333b-e94c-4fb7-b23d-e1d38d2dad8e@lunn.ch>
- <a455a2f6-ca0b-43e0-b18c-53f73344981f@quicinc.com>
+	s=arc-20240116; t=1739541878; c=relaxed/simple;
+	bh=OAmsH9wXdR9cCoL774VIgncB0RHMbJP2b2IZgPv+F+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fRBwIYgxwakw8JKm4dOrHCmH/CRbt+pzdWODU9aTrnkg1UV3FEYcLOrMQiHgHLwMlN7TuKknQJxfvspXlKCfm3jPFptv7RiMdp8ykPOxiO7msLQ8aNKTYIuSNCbQENglWtkoWnMKdtGkIaSIN7stUyMtfXqsxF1rup84I+SlGGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQ96pBjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F99FC4CED1;
+	Fri, 14 Feb 2025 14:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739541877;
+	bh=OAmsH9wXdR9cCoL774VIgncB0RHMbJP2b2IZgPv+F+8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XQ96pBjjiIqxEgGDR75mtdrCy825EmAZajcvIuVyGCxcOQ4CtV3fGH7AvL6lHKtW8
+	 lI10/7WXLRU6o4BBgdyaLBn1JIYwUC4JzBxyuI+3yUh5bXFpZbqaRP+TgPdsrgcA8K
+	 7qV2TyImit40bF28WASYR3iR6381EokbZ2Z/Dt3rJxyTuK0RMpeZU4bk2w+2huVtV9
+	 g9/gbGnjvYbE78600SQe6GaPrwboXfAxN7NvRQO+cGZYneAu0ts4gVBCoV0pgPOpUg
+	 LE035uZnG0P+6+zdG28YdKaU9j2dQ+awZw0BLV1pETpJtUGld2TR0t6bMP05TDJNwa
+	 K35braZjZaphg==
+Date: Fri, 14 Feb 2025 14:04:32 +0000
+From: Will Deacon <will@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	ojeda@kernel.org
+Subject: [GIT PULL] arm64 fixes for -rc3
+Message-ID: <20250214140431.GA13374@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,41 +56,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a455a2f6-ca0b-43e0-b18c-53f73344981f@quicinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-> > > +/* The number of packets dropped because of no buffer available, no PPE
-> > > + * buffer assigned to these packets.
-> > > + */
-> > > +static void ppe_port_rx_drop_counter_get(struct ppe_device *ppe_dev,
-> > > +					 struct seq_file *seq)
-> > > +{
-> > > +	u32 reg, drop_cnt = 0;
-> > > +	int ret, i, tag = 0;
-> > > +
-> > > +	PRINT_COUNTER_PREFIX("PRX_DROP_CNT", "SILENT_DROP:");
-> > > +	for (i = 0; i < PPE_DROP_CNT_TBL_ENTRIES; i++) {
-> > > +		reg = PPE_DROP_CNT_TBL_ADDR + i * PPE_DROP_CNT_TBL_INC;
-> > > +		ret = ppe_pkt_cnt_get(ppe_dev, reg, PPE_PKT_CNT_SIZE_1WORD,
-> > > +				      &drop_cnt, NULL);
-> > > +		if (ret) {
-> > > +			seq_printf(seq, "ERROR %d\n", ret);
-> > > +			return;
-> > > +		}
-> > 
-> > This is an error getting the value from the hardware? You should not
-> > put that into the debugfs itself, you want the read() call to return
-> > it.
-> > 
-> 
-> Yes, this error code is returned by regmap read functions in
-> ppe_pkt_cnt_get() when the hardware counter read fails. I will
-> remove it from debugfs file and instead log the error to the
-> console (dev_info).
+Hi Linus,
 
-and return it to user space via the read() call. These functions
-normally return the number of bytes put into the buffer. But you can
-also return a negative error code which gets passed back to user space
-instead.
+Please pull this batch of arm64 fixes for -rc3. I've provided the usual
+summary in the tag but there's nothing particularly major here.
 
-	Andrew
+Cheers,
+
+Will
+
+--->8
+
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to 446a8351f160d65a1c5df7097f31c74102ed2bb1:
+
+  arm64: rust: clean Rust 1.85.0 warning using softfloat target (2025-02-13 11:45:49 +0000)
+
+----------------------------------------------------------------
+arm64 fixes for -rc3
+
+* Fix kexec and hibernation when using 5-level page-table configuration
+
+* Remove references to non-existent SF8MM4 and SF8MM8 ID register
+  fields, hooking up hwcaps for the FPRCVT, F8MM4 and F8MM8 fields
+  instead
+
+* Drop unused .ARM.attributes ELF sections
+
+* Fix array indexing when probing CPU cache topology from firmware
+
+* Fix potential use-after-free in AMU initialisation code
+
+* Work around broken GTDT entries by tolerating excessively large timer
+  arrays
+
+* Force use of Rust's "softfloat" target to avoid a threatening warning
+  about the NEON target feature
+
+* Typo fix in GCS documentation and removal of duplicate Kconfig select
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      arm64: Fix 5-level paging support in kexec/hibernate trampoline
+
+Beata Michalska (1):
+      arm64: amu: Delay allocating cpumask for AMU FIE support
+
+Lukas Bulwahn (1):
+      arm64: Kconfig: Remove selecting replaced HAVE_FUNCTION_GRAPH_RETVAL
+
+Mark Brown (3):
+      arm64/gcs: Fix documentation for HWCAP
+      arm64/hwcap: Remove stray references to SF8MMx
+      arm64: Add missing registrations of hwcaps
+
+Miguel Ojeda (1):
+      arm64: rust: clean Rust 1.85.0 warning using softfloat target
+
+Nathan Chancellor (1):
+      arm64: Handle .ARM.attributes section in linker scripts
+
+Oliver Upton (1):
+      ACPI: GTDT: Relax sanity checking on Platform Timers array count
+
+Radu Rendec (1):
+      arm64: cacheinfo: Avoid out-of-bounds write to cacheinfo array
+
+ Documentation/arch/arm64/gcs.rst  |  2 +-
+ arch/arm64/Kconfig                |  1 -
+ arch/arm64/Makefile               |  4 ++++
+ arch/arm64/kernel/cacheinfo.c     | 12 +++++++-----
+ arch/arm64/kernel/cpufeature.c    |  5 +++--
+ arch/arm64/kernel/topology.c      | 22 ++++++++++------------
+ arch/arm64/kernel/vdso/vdso.lds.S |  1 +
+ arch/arm64/kernel/vmlinux.lds.S   |  1 +
+ arch/arm64/mm/trans_pgd.c         |  7 +++++++
+ drivers/acpi/arm64/gtdt.c         | 12 ++++++++----
+ 10 files changed, 42 insertions(+), 25 deletions(-)
 
