@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-514203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23B0A353F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:59:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C847A353F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CBF188FEE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:59:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA39E7A474B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA14886348;
-	Fri, 14 Feb 2025 01:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8A486346;
+	Fri, 14 Feb 2025 01:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIrX+yVY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RI08z9GW"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C641E502;
-	Fri, 14 Feb 2025 01:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F2B1E502;
+	Fri, 14 Feb 2025 01:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739498339; cv=none; b=ADE6urtNouMfyMKDfaO9F/gf/pNbHyYfwiOy1sa7YFotCFWoHwR53eC6gk0VyWHAAXuyvhXFItG8dgiiIc5hSrVy1a3sAe0Tp7TxZKZagykhZ+hxS2N9iYldaYSUVUyRyIXzK/W9ZOtyiF+fxETMKK0LSJkJ64XYgDN+JTuisIg=
+	t=1739498391; cv=none; b=FORo8CBu0MSv+3IpwB3uI+g2iF1A8zdtUugVxyO3AzB9wQas4eqXFdJ79+LAjnzjeFs5rZG6gO/anYYTldK4Z2ePY7GTpN6IoubtlQkA6dwlGxdU1J6ShtlcsdCZeMPLlgbDOV6/CZevyIqIt2WRmf5FKZefrTuIxGA2z4RFtWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739498339; c=relaxed/simple;
-	bh=AtX4TcfqYpcyFBoqwkZl/9Tr2hyNSYfyQ73TsT0oaxY=;
+	s=arc-20240116; t=1739498391; c=relaxed/simple;
+	bh=xUf+AKuj701KwoLYDFxX/BpBCJ4X4GHeaSOxbCMiNQQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJLxJH05+g+fXBCl+Mcme2vfo7xRbTbHjI8Qwce/jtmT/q0KVrW/jx29wQRScoF6HbBPPHye8gnrwduKCIOj/2V3Fa9AnFoKwLtkuSsbcafNPCGLSzSaPvdR2eNDMaBq2OYdQe2bzKqOC0HcyvUSkcgRVj6QjuJiOccNzgFG9S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIrX+yVY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BE8C4AF09;
-	Fri, 14 Feb 2025 01:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739498338;
-	bh=AtX4TcfqYpcyFBoqwkZl/9Tr2hyNSYfyQ73TsT0oaxY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jIrX+yVYWf1RwTCwUJj45RkaeiCeljgDw36fV1NgqYFjAkzl4tA844QxIw5V5h/8v
-	 2vMo389vb32CV0lTnK0lke6FeQOMPajW64imBOxkDerHs+CcZi+/TmETRwZhfut9yX
-	 GQEbgyQLD2hwF3WQmwJWpfE0I+EO0SOkySN2hIMRL9M5ytO2P5BVxxIHhXECx8zPTl
-	 L0O1ys9thxERhTMz0P1BVXn/aiyl2f2JO9389OYuLZNgsPcrLczEFu7MMJopqnFasm
-	 HKY8MVmp6bvwuJu4g9BfGmbZMM3eh7jQwg6B2PHm6RCxQBvlby5KOw5COjmqJ7vhEp
-	 ByCaRaveCOMhg==
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8551c57cb8aso27379539f.3;
-        Thu, 13 Feb 2025 17:58:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV76IAtzyPhTxaTGC8nHYJGgH3asPU4uTSwmFriJIHzzehUqMeejSak/zsPih5aLUkf9Hi4+rePyDbtjmFVcg==@vger.kernel.org, AJvYcCWdRUIjkdazyixJQyOfq8LfT/HCDClv3CMnJfWpFnlK+3Bl8+qHnepZFuCI9bpecXMPZ9pc4bAjZZs1/3avpEZBHw==@vger.kernel.org, AJvYcCXcVJLiUfwE8CE1+tDiU1F32pIPDlXO84CogcU7TFQu/K7gbgiHal1hOerH2bpCHnr+xaQxDZS5MeCcqCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy56uhdRT/ZbjlUZW4uY5nvbWADontoHqm9nrbriEL/LTt7SVrq
-	3Esw7GdrBZUiecmScGQxQT4IVR+wq2nk0zT5zNat9Pd9lxlAGTRb44lShkShZbn4Y6kmfOUA9AR
-	nj3RGJD47O+Gi6kPesehaAJ+8bbg=
-X-Google-Smtp-Source: AGHT+IEqPgzO3lIvmSnLrOqQOZvaJ4xeAqJ3kVghhzVWZb4fCDChRFA3LLGruPGAyM1QQHijD9esbVZGX8Xo8nR1bnE=
-X-Received: by 2002:a05:6e02:184b:b0:3cf:cd3c:bdfd with SMTP id
- e9e14a558f8ab-3d18c23caa4mr42155035ab.12.1739498337729; Thu, 13 Feb 2025
- 17:58:57 -0800 (PST)
+	 To:Cc:Content-Type; b=uF/5wWi5Ckk62SpWXh7yGFb8XhXKoEPfb89yfhLnFEz5pEDsBKOslFH8RYxrOtN9i6rsyghAuk76OBOgOAPMkwEUrqPZvIZYa1j2jt7K5dfdSImCUth0IVF13UmCLSM5ICZQeMnlrv/hfgnPf3ZmR6uxdyiUy/2xcdQq/rIXs/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RI08z9GW; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso261927166b.1;
+        Thu, 13 Feb 2025 17:59:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739498388; x=1740103188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUf+AKuj701KwoLYDFxX/BpBCJ4X4GHeaSOxbCMiNQQ=;
+        b=RI08z9GWYNP5ANkB7B2UrE76iw4jxndLs5dkbgGRLxbZOdf6wOydMcwFetPB6cm8kn
+         6vRquE6cgN87BBzBtR/kvKxTu+cfGkhYWv6gea3Y+uIatnq0CFTlW0ocYn0xxKv29w7V
+         kf7E26kJXzErcXUTwlgs5kSl9xzsxrL1QfVBj9FdF7Mu+PAf3MppHOPWS7LNlkWc446R
+         tPxF0unz10UH32khDjE+AFRu8iBCBj5Pedkatys1ps3zNbqEguUhbVeRInEXrWCbirYz
+         vFdgQDabaP0HGIIoM9xTMTXc0KWLhNVxIQQWHInr6goIBwDVaSTdqvOkrPtuCOMVyYuu
+         Fhgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739498388; x=1740103188;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xUf+AKuj701KwoLYDFxX/BpBCJ4X4GHeaSOxbCMiNQQ=;
+        b=Ea9ii4MzGYPkbz1p+JVFvWJ+63qfkIFINVYMIIcsVJrjUjfmATQaZqhI6034y40SkT
+         b1vpQgSa5FQFs0ogJeED5Ku9RbtK8Hyf9I7iY4lZ16aO/Elw4YR2rbsyW8J1iVQlYYc3
+         5gFaPVy/O+Ci2T0PXFT/U8HcurGtzfh2RgBEFafCBLLPgV41y5UM0rXzIAxxEEk+qQsV
+         gFENm/j737jWdIY52krzbRipbABZczuayArNfO7fyXcWUYC6jDcmqUbuSRdm0ExrNaoq
+         laexPSlgG7Mw5oE44UGp35N2AgWK4HRwHvHcO3RehQPQxY3kRJEihbdW62fNOJ6A1cZ/
+         RIEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpREULAlpA5DusieTFx4afs9iharLCLCgykVZYoIm0fB2LYrq2kp/ZYc4Ncf13wcDDbxIe06ro56RF2CAZ@vger.kernel.org, AJvYcCXm9D7qKU1PZD939bS0XOFWSIJYwJaFlEAUOFwx7rd24b1MtwgHA4jymy9dioPP/pIHtc/CVrh0GrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpHR4n8mOXA9EVGX47qmkDCpmj1bB4arSaACmvEWmA8RayLCpL
+	Mado5CxvLW8OuV0GwWeL8hLxndMzeYfqc6tcXK+yfsd+L5iBaKip3CufBq1LBW6SqqcNxfytjsX
+	B4z0dfI6uwPwQnYAtDSIRijTAzx8IWpbWWePWSw==
+X-Gm-Gg: ASbGnctftGTu/f0rBzn1L+C5tUFiVB0i/ZZiwDVIilnnd+yRRjaOdZ3BKFUF1dv7BTO
+	vRybpGQ2/QukSLOOobG7BM3Dzz74Etd7/8Fh4yAsT+zbI6dKs/SwwqQsuEAVsCEnSrDV/IQUU
+X-Google-Smtp-Source: AGHT+IHazsHzK2ZgK3iMJlmUZlf8BtYEIImbdyuSjLbiRqylJLATjCuxm2dkSUns2aKpanz3Royfq5eZ7/vj1basQCY=
+X-Received: by 2002:a17:907:dab:b0:aa6:8cbc:8d15 with SMTP id
+ a640c23a62f3a-ab7f338ef2fmr1002716066b.14.1739498388038; Thu, 13 Feb 2025
+ 17:59:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
- <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com> <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
- <mb61p1pw21f0v.fsf@kernel.org> <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
- <mb61pseoiz1cq.fsf@kernel.org> <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
- <mb61pr0411o57.fsf@kernel.org>
-In-Reply-To: <mb61pr0411o57.fsf@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Thu, 13 Feb 2025 17:58:46 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
-X-Gm-Features: AWEUYZkpF5BMZbHzv8MzSiy1Gtx3WEyGX_vqexyd5VIB8KHI8VbVKVkNRfn3dfk
-Message-ID: <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+References: <20250213054222.21776-1-alexs@kernel.org> <20250213054222.21776-2-alexs@kernel.org>
+ <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev>
+In-Reply-To: <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev>
+From: Alex Shi <seakeel@gmail.com>
+Date: Fri, 14 Feb 2025 09:59:11 +0800
+X-Gm-Features: AWEUYZlTQ-Wgf7d0bXGplnw6p8jSNFO0YPpYXQnmHbA3MmOppaTU62KO4Lj_81Q
+Message-ID: <CAJy-Amn7ohs2PxzygRmi3F=fNnuMrz9cEpsj5EFwgcq+O9ymcg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
+To: Yanteng Si <si.yanteng@linux.dev>
+Cc: alexs@kernel.org, Yanteng Si <siyanteng@loongson.cn>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-On Thu, Feb 13, 2025 at 2:22=E2=80=AFPM Puranjay Mohan <puranjay@kernel.org=
-> wrote:
->
-> Song Liu <song@kernel.org> writes:
->
-> > On Thu, Feb 13, 2025 at 12:38=E2=80=AFAM Puranjay Mohan <puranjay@kerne=
-l.org> wrote:
-> > [...]
-> >>
-> >> P.S. - The livepatch doesn't have copy_process() but only copy_signal(=
-),
-> >> yours had copy_process() somehow.
-> >
-> > In my build, copy_signal is inlined to copy_process, unless I add noinl=
-ine.
-> > If I do add noinline, the issue will not reproduce.
-> >
-> > I tried more combinations. The issue doesn't reproduce if I either
-> > 1) add noinline to copy_signal, so we are not patching the whole
-> >    copy_process function;
-> > or
-> > 2) Switch compiler from gcc 14.2.1 to gcc 11.5.0.
-> >
-> > So it appears something in gcc 14.2.1 is causing live patch to fail
-> > for copy_process().
->
-> So, can you test your RFC set (without SFRAME) with gcc 14.2.1, so we
-> can be sure that it is not a sframe problem?
->
-> And about having the .sframe section in the livepatch module, I realised
-> that this set doesn't include support for reading/using sframe data from
-> any module(livepatches included), so the patch I added for generating
-> .sframe in kpatch is irrelevant because it is a no-op with the current se=
-tup.
-
-Puranjay,
-
-Could you please try the following?
-
-1. Use gcc 11.4.1;
-2. Add __always_inline to copy_signal();
-3. Build kernel, and livepatch with the same test (we need to
-    add __always_inline to the .patch file).
-4. Run gdb livepatch-xxx.ko
-5. In gdb do disassemble copy_process.
-
-In my tests, both gcc-14.2.1 and gcc-11.5.0 generated a .ko file
-that looks weird in gdb-disassemble. Specifically, readels shows
-copy_process is about 5.5kB, but gdb-disassemble only shows
-140 bytes or so for copy_process. clang doesn't seem to have
-this problem.
-
-I am really curious whether you have the same problem in your
-setup.
-
-Thanks,
-Song
+WWFudGVuZyBTaSA8c2kueWFudGVuZ0BsaW51eC5kZXY+IOS6jjIwMjXlubQy5pyIMTPml6Xlkajl
+m5sgMTg6MTnlhpnpgZPvvJoNCj4NCj4NCj4g5ZyoIDIvMTMvMjUgMTo0MiBQTSwgYWxleHNAa2Vy
+bmVsLm9yZyDlhpnpgZM6DQo+ID4gRnJvbTogQWxleCBTaGkgPGFsZXhzQGtlcm5lbC5vcmc+DQo+
+ID4NCj4gPiBBIGdvb2QgY2hlY2tlZCBzdW1taXQgY291bGQgc2F2ZSBtdWNoIHRpbWUgZm9yIGxp
+bnV4LWRvYyBtYWludGFpbmVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQWxleCBTaGkgPGFs
+ZXhzQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IFlhbnRlbmcgU2kgPHNpeWFudGVuZ0Bsb29uZ3Nvbi5j
+bj4NCj4gPiBDYzogSm9uYXRoYW4gQ29yYmV0IDxjb3JiZXRAbHduLm5ldD4NCj4gPiBDYzogbGlu
+dXgtZG9jQHZnZXIua2VybmVsLm9yZw0KPiA+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnDQo+DQo+IFJldmlld2VkLWJ5OiBZYW50ZW5nIFNpIDxzaS55YW50ZW5nQGxpbnV4LmRldj4N
+Cj4NCj4NCj4NCj4gPiAtLS0NCj4gPiAgIERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NO
+L2luZGV4LnJzdCB8IDggKysrKysrKy0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlv
+bnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
+L3RyYW5zbGF0aW9ucy96aF9DTi9pbmRleC5yc3QgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
+cy96aF9DTi9pbmRleC5yc3QNCj4gPiBpbmRleCA3NTc0ZTE2NzMxODAuLmNjNTEyY2E1NDE3MiAx
+MDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9pbmRleC5y
+c3QNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9pbmRleC5yc3QN
+Cj4gPiBAQCAtMjYsNyArMjYsMTMgQEANCj4gPiAgIOmhuuS+v+ivtOS4i++8jOS4reaWh+aWh+ah
+o+S5n+mcgOimgemBteWuiOWGheaguOe8lueggemjjuagvO+8jOmjjuagvOS4reS4reaWh+WSjOiL
+seaWh+eahOS4u+imgeS4jeWQjOWwseaYr+S4reaWhw0KPiA+ICAg55qE5a2X56ym5qCH54K55Y2g
+55So5Lik5Liq6Iux5paH5a2X56ym5a695bqm77yM5omA5Lul77yM5b2T6Iux5paH6KaB5rGC5LiN
+6KaB6LaF6L+H5q+P6KGMMTAw5Liq5a2X56ym5pe277yMDQo+ID4gICDkuK3mloflsLHkuI3opoHo
+toXov4c1MOS4quWtl+espuOAguWPpuWklu+8jOS5n+imgeazqOaEjyctJ++8jCc9J+etieespuWP
+t+S4juebuOWFs+agh+mimOeahOWvuem9kOOAguWcqOWwhg0KPiA+IC3ooaXkuIHmj5DkuqTliLDn
+pL7ljLrkuYvliY3vvIzkuIDlrpropoHov5vooYzlv4XopoHnmoQgYGBjaGVja3BhdGNoLnBsYGAg
+5qOA5p+l5ZKM57yW6K+R5rWL6K+V44CCDQo+ID4gK+ihpeS4geaPkOS6pOWIsOekvuWMuuS5i+WJ
+je+8jOS4gOWumuimgei/m+ihjOW/heimgeeahCBgYGNoZWNrcGF0Y2gucGxgYCDmo4Dmn6Xlkozn
+vJbor5HmtYvor5XvvIznoa7kv50NCj4gPiAr5ZyoIGBgbWFrZSBodG1sZG9jcy9wZGZkb2NzYGAg
+5Lit5LiN5aKe5Yqg5paw55qE5ZGK6K2m77yM5pyA5ZCO77yM5a6J6KOF5qOA5p+l5L2g55Sf5oiQ
+55qEDQo+ID4gK2h0bWwvcGRmIOaWh+S7tu+8jOehruiupOWug+S7rOeci+i1t+adpeaYr+ato+W4
+uOeahOOAgg0KPiA+ICsNCj4gPiAr5o+Q5Lqk5LmL5YmN6K+356Gu6K6k5L2g55qE6KGl5LiB5Y+v
+5Lul5q2j5bi45o+Q5Lqk5Yiw5Lit5paH5paH5qGj57u05oqk5bqTOg0KPiA+ICtodHRwczovL2dp
+dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9hbGV4cy9saW51eC5naXQvDQo+
+DQo+ID4gK+WmguaenOS9oOeahOihpeS4geS+nei1luS6juWFtuS7luS6uueahOihpeS4gSwg5Y+v
+5Lul5LiO5YW25LuW5Lq65ZWG6YeP5ZCO55Sx5p+Q5LiA5Liq5Lq65ZCI5bm25o+Q5Lqk44CCDQo+
+DQo+IEkgdGhpbmsgdGhpcyByZXF1aXJlcyBhIGRldGFpbGVkIHR1dG9yaWFsLiBPdGhlcndpc2Us
+IGl0DQoNCkkgZG9uJ3Qga25vdyBpZiBpdCBjb3VzZXMgY29uZnVzaW9uLiBNYXliZSBsZXQncyB0
+aGlzIHN1Z2dlc3Rpb24gaGVyZQ0KYW5kIHRvIHNlZSB0aGUgcmVzcG9uc2UgZnJvbSBjb21tdW5p
+dHk/DQoNCj4NCj4gd2lsbCBpbmNyZWFzZSB0aGUgZGlmZmljdWx0eSBmb3IgYmVnaW5uZXJzIHRv
+IGdldCBzdGFydGVkLg0KPg0KPiBIb3cgYWJvdXQgcmVtb3ZpbmcgaXQgZm9yIG5vdz8gSSBoYXZl
+IGEgcGxhbiB0byB3cml0ZQ0KPg0KPiBhIHRyYW5zbGF0aW9uIGd1aWRlYm9vay4gV2hhdCdzIHlv
+dXIgb3Bpbmlvbj8NCg0KSSdtIGdsYWQgdG8gaGVhciB0aGF0IHlvdSB3aWxsIGhhdmUgYSB0cmFu
+c2xhdGlvbiBndWlkZS4gOikNCkhvcGUgdG8gc2VlIGl0IHNvb24hDQoNClRoYW5rcyENCg==
 
