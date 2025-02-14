@@ -1,181 +1,242 @@
-Return-Path: <linux-kernel+bounces-515115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D25EA36078
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:32:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E61A3608F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC5A717139C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B162A3AC418
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F112266F1C;
-	Fri, 14 Feb 2025 14:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0D7E792;
+	Fri, 14 Feb 2025 14:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euNWxxqG"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxBvVZBn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D307266F00;
-	Fri, 14 Feb 2025 14:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5C286346;
+	Fri, 14 Feb 2025 14:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543440; cv=none; b=u5gByGjqd1mOqGPiTYue8zCIaOCW1hz5v3WFqhdonqZ65/b5psPSHg2MIugcU9zxatHohw4c7YK8ZM865GTsAcOXL4a5xUjiXhLm6SesDNAUE0tAnxJ88CA7gW2Kmc1bpfq1xmA4P73QGgUvyyrMBg4WXqShFUEZtKwZwjSqJmM=
+	t=1739543673; cv=none; b=CI2hbgH+NpESqwXNziS7BqLaorVePmqN+XlUbMhzbykVwfBqqAlj6YdENnjOs9zH28WXAgwLcyzfPnpIYwOJyYzbTuBLKzjDgX2EvFBBqkpnJJyrA3oQYJ/tJBukWYDM43WwiYM7w+T6aTrfUV9TD8OVqcpdVunTD2iie0Hyy+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543440; c=relaxed/simple;
-	bh=rpQDxvBO4+LJ/S2C8631GhfnfcGziYlMc+zJ5RaS7OE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rMbcJ11sDkdVXP2h7lW/Scz1yvhQax6FVt9FQJz7qOpNkWTmum+IEAUi+Zjx98thaYOXCFnbH225MXQ+kokaptA6hRSN2Shur82KWKxdag7LZ6poSEZHXZ/3ge+xKNBxEH0jBwDOF6qhOqY+pRPwMVThgZ6fjOSjA9FlMJ9hJag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=euNWxxqG; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220ecbdb4c2so24588285ad.3;
-        Fri, 14 Feb 2025 06:30:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739543438; x=1740148238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EOxiLS6FGGI7eMtjPO59prgGVeqct+2lfOrO1dnNxCg=;
-        b=euNWxxqGhYIE4IXyJ1eEVikst/SVpRhVm1wBcXEOgbUgvsL51+ExteOiODXt5uAFff
-         zT3Rbs7BR3R+Kn0N+xhtSWAxasHdWn/Mo4WXIO6QGhQ+W2DudISuj9EmLBhjGDGurogL
-         pmwY/wrZ4H9QbMkImvYS68ELQHRNvpdELg00gbell0SY4TJnK1/6IVGBXfDH0FfoaRmD
-         L4xhBgJs1HrQ90kpz4r5jcePTu5UkpWv/vCOtApnH42rB32DV+9Y02k5sCWMRfH8Q55F
-         FJwCAvIJ0vCmv9wPw49kctdo7zJn4im4LMBJzRkrVg2JjshN/tks1LZ8bz00nFEIQ3a+
-         bdiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739543438; x=1740148238;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EOxiLS6FGGI7eMtjPO59prgGVeqct+2lfOrO1dnNxCg=;
-        b=Az0vZqBBscqyO8qBaHXA/Y2CVN0YUpxgQZaLhzET3Qyy4G1DDdZ+YeKlDofYSxLHPp
-         xkFE4PhhWR+/+lyRZaSvOYWXFaTJvZuNVOLzuY9jvBsuPeqNYnA44q3igAtm2seTfkJR
-         u21JRJh6ewbMN3H3s1ly9mc0H7Ffdrxzdas4WiQIk8vZQ6DFLc4IlaCs6SCzhNllmd1b
-         6dwSkIwo0g93CqlISVWHpWXYit9XsNyWRaGb71kDzDeQtMHuNYHDv+b0uVItx0izobC/
-         78YqKrunuborlygutNwUzF0Capex/Kfm4k3X3QjyC746UqVgyUhsMHGzYBejojCIAc04
-         ix6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXOTlqMS4ttPFstm4fHyHtR9ernAyUmzeYVE5YzQtYZdAEijUApcza00UJqtXytEAIDj8A4g0Fn6Q56I/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTcVTiq900ASBdKDmsx0GgJFIWchAWakIB4pM5JBjPtLkd09io
-	lmhWBK6J6PxGED7QV4j4qymbuLjlwPMBa4J/MJ8GJzmNobaecoyI
-X-Gm-Gg: ASbGncvVWsyDw+F5G6EILH8RlNJvBzVYWHIVjRxpU2MjCJECggTlkoGXunMAmE0wYrm
-	hA+fMcF4/EYt0/lw+lHqUlJMvq6lmUzki6Rya3POP3jRLQDLtw63mcHseVeJC1NAzz3YIwfC1J+
-	1dXnebOH5ksl1nbKCQyQG4rpwj7l2wT2JjoIYpbrPbyR3f/xYr+tMJF1aYlN7WRFtLW/f+KdNM1
-	/T3F1TYPsUYHGwxU6FYXfgFHI/UZm1NdlOPzWAfnPAze9lmH53yiUYamq9Zxg3ydnb97k7I6vvQ
-	7QvbeJNkVFk=
-X-Google-Smtp-Source: AGHT+IFEb4cfYzbxoT6hGqENuJ5gN6TztL9sB8JHaVrDMoXFT5NWEV1KKx8OMBfHTgxEaTNCr2gOhQ==
-X-Received: by 2002:a17:902:e84c:b0:215:6f9b:e447 with SMTP id d9443c01a7336-220bbb50b9dmr163742415ad.30.1739543437612;
-        Fri, 14 Feb 2025 06:30:37 -0800 (PST)
-Received: from [0.0.0.0] ([5.34.218.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536375fsm29527175ad.53.2025.02.14.06.30.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 06:30:37 -0800 (PST)
-Message-ID: <282976f0-772a-44cc-9d3d-b07f42a4b2cc@gmail.com>
-Date: Fri, 14 Feb 2025 22:30:26 +0800
+	s=arc-20240116; t=1739543673; c=relaxed/simple;
+	bh=NJmvbcsU8q1XtWcH0UtkjJEOCrGZ447zohbd+uik+ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+wibtCKXHChMrP+33nQeec0OGHiUFrMMymwwyVOFiSmtNv7rXUPhQ1u7RgBsrFFrZpKfW3oZJ31UTG1fuMjNNS/kH2CIHUiSB9yy9ViO4egJ0kP4V6uTEPBR7SbQjvkm5tfY9c2lOZDU7e6LF1jg2UaKS4VatKdE7SMo2eW/ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxBvVZBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC23CC4CED1;
+	Fri, 14 Feb 2025 14:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739543673;
+	bh=NJmvbcsU8q1XtWcH0UtkjJEOCrGZ447zohbd+uik+ZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JxBvVZBnuqJJjO/lVCfT6QnlvHi/3+ZJAjjOL819o/ZGUebO3iUVM3nd/3OHvDzVm
+	 UGgu1fPs+9NwxzPOrPW2BEcgb2raErujOmFbl2sEjbSwiaMhY+xPh2T/vRUBjF/hDV
+	 7mcnZuzCCQ8VPaMSE//8wLQwKjGxAX7kSFS6yRcdVjv/hYMzcziIh+cK6ltMNOxdGt
+	 9/5PI0rhRwfBKbUf3/jWcUI6b9zUcwGAgw/Aek9fMo1IeBAH15ekhBb7RYBjIdv53w
+	 XrzT4IrnJTiiBflyZl/G6dDlIaAvSb5YD3jzSlov+m8GlViwxzDAD57Tt5lmPYAN67
+	 /lAFq75RyuzDg==
+Date: Fri, 14 Feb 2025 15:34:28 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] drm/nouveau: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <Z69UdL9zaCINQSFC@cassiopeiae>
+References: <Z6xjZhHxRp4Bu_SX@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] libbpf: Wrap libbpf API direct err with libbpf_err
-To: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250214141717.26847-1-chen.dylane@gmail.com>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <20250214141717.26847-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6xjZhHxRp4Bu_SX@kspp>
 
-在 2025/2/14 22:17, Tao Chen 写道:
-> Just wrap the direct err with libbpf_err, keep consistency
-> with other APIs.
+On Wed, Feb 12, 2025 at 07:31:26PM +1030, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> So, in order to avoid ending up with flexible-array members in the
+> middle of other structs, we use the `struct_group_tagged()` helper
+> to separate the flexible arrays from the rest of the members in the
+> flexible structures. We then use the newly created tagged `struct
+> nvif_ioctl_v0_hdr` and `struct nvif_ioctl_mthd_v0_hdr` to replace the
+> type of the objects causing trouble in multiple structures.
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structures, they are always included within the newly created
+> tagged structs. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
+> 
+> So, with these changes, fix the following warnings:
+> drivers/gpu/drm/nouveau/nvif/object.c:60:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nvif/object.c:233:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nvif/object.c:214:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nvif/object.c:152:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nvif/object.c:138:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nvif/object.c:104:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nouveau_svm.c:83:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nouveau_svm.c:82:30: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+@Faith, Karol: Can I get an ACK from mesa for this one?
+
 > ---
->   tools/lib/bpf/libbpf.c | 22 +++++++++++-----------
->   1 file changed, 11 insertions(+), 11 deletions(-)
+>  drivers/gpu/drm/nouveau/include/nvif/ioctl.h | 32 +++++++++++++-------
+>  drivers/gpu/drm/nouveau/nouveau_svm.c        |  4 +--
+>  drivers/gpu/drm/nouveau/nvif/object.c        | 12 ++++----
+>  3 files changed, 29 insertions(+), 19 deletions(-)
 > 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 194809da5172..6f2f3072f5a2 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -9145,12 +9145,12 @@ int bpf_object__gen_loader(struct bpf_object *obj, struct gen_loader_opts *opts)
->   	struct bpf_gen *gen;
->   
->   	if (!opts)
-> -		return -EFAULT;
-> +		return libbpf_err(-EFAULT);
->   	if (!OPTS_VALID(opts, gen_loader_opts))
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   	gen = calloc(sizeof(*gen), 1);
->   	if (!gen)
-> -		return -ENOMEM;
-> +		return libbpf_err(-ENOMEM);
->   	gen->opts = opts;
->   	gen->swapped_endian = !is_native_endianness(obj);
->   	obj->gen_loader = gen;
-> @@ -9262,13 +9262,13 @@ int bpf_program__set_insns(struct bpf_program *prog,
->   	struct bpf_insn *insns;
->   
->   	if (prog->obj->loaded)
-> -		return -EBUSY;
-> +		return libbpf_err(-EBUSY);
->   
->   	insns = libbpf_reallocarray(prog->insns, new_insn_cnt, sizeof(*insns));
->   	/* NULL is a valid return from reallocarray if the new count is zero */
->   	if (!insns && new_insn_cnt) {
->   		pr_warn("prog '%s': failed to realloc prog code\n", prog->name);
-> -		return -ENOMEM;
-> +		return libbpf_err(-ENOMEM);
->   	}
->   	memcpy(insns, new_insns, new_insn_cnt * sizeof(*insns));
->   
-> @@ -9379,11 +9379,11 @@ const char *bpf_program__log_buf(const struct bpf_program *prog, size_t *log_siz
->   int bpf_program__set_log_buf(struct bpf_program *prog, char *log_buf, size_t log_size)
->   {
->   	if (log_size && !log_buf)
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   	if (prog->log_size > UINT_MAX)
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   	if (prog->obj->loaded)
-> -		return -EBUSY;
-> +		return libbpf_err(-EBUSY);
->   
->   	prog->log_buf = log_buf;
->   	prog->log_size = log_size;
-> @@ -13070,17 +13070,17 @@ int bpf_link__update_map(struct bpf_link *link, const struct bpf_map *map)
->   	int err;
->   
->   	if (!bpf_map__is_struct_ops(map))
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   
->   	if (map->fd < 0) {
->   		pr_warn("map '%s': can't use BPF map without FD (was it created?)\n", map->name);
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   	}
->   
->   	st_ops_link = container_of(link, struct bpf_link_struct_ops, link);
->   	/* Ensure the type of a link is correct */
->   	if (st_ops_link->map_fd < 0)
-> -		return -EINVAL;
-> +		return libbpf_err(-EINVAL);
->   
->   	err = bpf_map_update_elem(map->fd, &zero, map->st_ops->kern_vdata, 0);
->   	/* It can be EBUSY if the map has been used to create or
-
-Forgive my carelessness. This patch was developed based on bpf-next. You 
-can ignore it. I've resent it.
-
--- 
-Best Regards
-Dylane Chen
+> diff --git a/drivers/gpu/drm/nouveau/include/nvif/ioctl.h b/drivers/gpu/drm/nouveau/include/nvif/ioctl.h
+> index e825c8a1d9ca..00015412cb3e 100644
+> --- a/drivers/gpu/drm/nouveau/include/nvif/ioctl.h
+> +++ b/drivers/gpu/drm/nouveau/include/nvif/ioctl.h
+> @@ -3,25 +3,30 @@
+>  #define __NVIF_IOCTL_H__
+>  
+>  struct nvif_ioctl_v0 {
+> -	__u8  version;
+> +	/* New members MUST be added within the struct_group() macro below. */
+> +	struct_group_tagged(nvif_ioctl_v0_hdr, __hdr,
+> +		__u8  version;
+>  #define NVIF_IOCTL_V0_SCLASS                                               0x01
+>  #define NVIF_IOCTL_V0_NEW                                                  0x02
+>  #define NVIF_IOCTL_V0_DEL                                                  0x03
+>  #define NVIF_IOCTL_V0_MTHD                                                 0x04
+>  #define NVIF_IOCTL_V0_MAP                                                  0x07
+>  #define NVIF_IOCTL_V0_UNMAP                                                0x08
+> -	__u8  type;
+> -	__u8  pad02[4];
+> +		__u8  type;
+> +		__u8  pad02[4];
+>  #define NVIF_IOCTL_V0_OWNER_NVIF                                           0x00
+>  #define NVIF_IOCTL_V0_OWNER_ANY                                            0xff
+> -	__u8  owner;
+> +		__u8  owner;
+>  #define NVIF_IOCTL_V0_ROUTE_NVIF                                           0x00
+>  #define NVIF_IOCTL_V0_ROUTE_HIDDEN                                         0xff
+> -	__u8  route;
+> -	__u64 token;
+> -	__u64 object;
+> +		__u8  route;
+> +		__u64 token;
+> +		__u64 object;
+> +	);
+>  	__u8  data[];		/* ioctl data (below) */
+>  };
+> +static_assert(offsetof(struct nvif_ioctl_v0, data) == sizeof(struct nvif_ioctl_v0_hdr),
+> +	      "struct member likely outside of struct_group()");
+>  
+>  struct nvif_ioctl_sclass_v0 {
+>  	/* nvif_ioctl ... */
+> @@ -51,12 +56,17 @@ struct nvif_ioctl_del {
+>  };
+>  
+>  struct nvif_ioctl_mthd_v0 {
+> -	/* nvif_ioctl ... */
+> -	__u8  version;
+> -	__u8  method;
+> -	__u8  pad02[6];
+> +	/* New members MUST be added within the struct_group() macro below. */
+> +	struct_group_tagged(nvif_ioctl_mthd_v0_hdr, __hdr,
+> +		/* nvif_ioctl ... */
+> +		__u8  version;
+> +		__u8  method;
+> +		__u8  pad02[6];
+> +	);
+>  	__u8  data[];		/* method data (class.h) */
+>  };
+> +static_assert(offsetof(struct nvif_ioctl_mthd_v0, data) == sizeof(struct nvif_ioctl_mthd_v0_hdr),
+> +	      "struct member likely outside of struct_group()");
+>  
+>  struct nvif_ioctl_map_v0 {
+>  	/* nvif_ioctl ... */
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> index b4da82ddbb6b..fc64c3d3169e 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> @@ -79,8 +79,8 @@ struct nouveau_svm {
+>  #define SVM_ERR(s,f,a...) NV_WARN((s)->drm, "svm: "f"\n", ##a)
+>  
+>  struct nouveau_pfnmap_args {
+> -	struct nvif_ioctl_v0 i;
+> -	struct nvif_ioctl_mthd_v0 m;
+> +	struct nvif_ioctl_v0_hdr i;
+> +	struct nvif_ioctl_mthd_v0_hdr m;
+>  	struct nvif_vmm_pfnmap_v0 p;
+>  };
+>  
+> diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
+> index 0b87278ac0f8..70af63d70976 100644
+> --- a/drivers/gpu/drm/nouveau/nvif/object.c
+> +++ b/drivers/gpu/drm/nouveau/nvif/object.c
+> @@ -57,7 +57,7 @@ int
+>  nvif_object_sclass_get(struct nvif_object *object, struct nvif_sclass **psclass)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_sclass_v0 sclass;
+>  	} *args = NULL;
+>  	int ret, cnt = 0, i;
+> @@ -101,7 +101,7 @@ int
+>  nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_mthd_v0 mthd;
+>  	} *args;
+>  	u32 args_size;
+> @@ -135,7 +135,7 @@ void
+>  nvif_object_unmap_handle(struct nvif_object *object)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_unmap unmap;
+>  	} args = {
+>  		.ioctl.type = NVIF_IOCTL_V0_UNMAP,
+> @@ -149,7 +149,7 @@ nvif_object_map_handle(struct nvif_object *object, void *argv, u32 argc,
+>  		       u64 *handle, u64 *length)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_map_v0 map;
+>  	} *args;
+>  	u32 argn = sizeof(*args) + argc;
+> @@ -211,7 +211,7 @@ void
+>  nvif_object_dtor(struct nvif_object *object)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_del del;
+>  	} args = {
+>  		.ioctl.type = NVIF_IOCTL_V0_DEL,
+> @@ -230,7 +230,7 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
+>  		 s32 oclass, void *data, u32 size, struct nvif_object *object)
+>  {
+>  	struct {
+> -		struct nvif_ioctl_v0 ioctl;
+> +		struct nvif_ioctl_v0_hdr ioctl;
+>  		struct nvif_ioctl_new_v0 new;
+>  	} *args;
+>  	int ret = 0;
+> -- 
+> 2.43.0
+> 
 
