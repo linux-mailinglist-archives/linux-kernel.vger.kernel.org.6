@@ -1,107 +1,80 @@
-Return-Path: <linux-kernel+bounces-514105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7614AA35276
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:10:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA365A35279
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF116D238
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF11B3ABB93
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6543F1853;
-	Fri, 14 Feb 2025 00:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1611FDA;
+	Fri, 14 Feb 2025 00:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHmIX2ub"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LLfcA2mG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC96180B;
-	Fri, 14 Feb 2025 00:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B70173;
+	Fri, 14 Feb 2025 00:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739491835; cv=none; b=hT+12uoH1OoJG3LzjLNCB8Wpf6VgcdedPq0wlf+Ddt6ZzfZiCfx6Pd2/GqrUUqXeK9SQxNoRUXp1YQfzy0i/zflXKMZbiHkqSYmDf7HNYkKe8kZ6rI59K+rux4JsdP7G710B0vnnp1N01pJiXMwNkx/8xbKjqSaZz6MugMsjFlA=
+	t=1739491903; cv=none; b=gWQlzrktQKJ/8RlixTBemBXAyafJiYG+LbwKCd8CvoqAtWuMZmBhtHzbc+36wBqAwVjx06vNOqPSHJAOu3DFnz7JGgop9a0cRAEHwZjOAzBsTRp5GkdIgY4dI6CEnLHvlNThDVY6zHkW1wh11VO6RoUiEAdDVsLXVm0iShfO944=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739491835; c=relaxed/simple;
-	bh=3xrjQC4vivjWCLqH94r/JVqPR6YJTXdfJtrCe9XTMKc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Pp4oVBzxocushWYQYQKmR8b/e3gmXP3X36NI6sYX1mSNWdN4QJwlHl/RItovtdac6tN4tyJBg7XW4+chzRwN18FzPJtDDKg9+IhKzgr1IwDKqnN+g6j/dglrVS/bv+rQIVy14eXZi6bR9ZCXHTNDjio+H76MDHlrKiRtboVssHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHmIX2ub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29614C4CED1;
-	Fri, 14 Feb 2025 00:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739491835;
-	bh=3xrjQC4vivjWCLqH94r/JVqPR6YJTXdfJtrCe9XTMKc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MHmIX2ubYN87rsggIK/s1pbWVFEFf8quxjxjOKNvTaPI5kbf3vJa7fxkaKHRu6hKD
-	 I8GFGiUfCHyZYRQFcZZnmEiLrqJYVULAMhKtdA6zomIN2slXWb7Ry9aTnL5y9Ero91
-	 GM2uKmTu4+5HizDjFbHSym9iWfSNoNbJCcySGOG2UbJkxiP0nZtUSpgj+DuWxEex8o
-	 Mgf1tKr380BNF/zGaWw2A8CKQ1rEW9Y17aAkzeyNqND1Afu/vYE++vfUg+YVgtzm+o
-	 bGJZJxX/I3uy/BOzyg5oXN/0w+ItMp90MxSjFBmoMvDYj7XYJ31WGuT7cwra94wnZQ
-	 c99tAXQrrnWSw==
-Date: Fri, 14 Feb 2025 09:10:31 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH] ring-buffer: Unlock resize on mmap error
-Message-Id: <20250214091031.fc31a81a5e86148655998e4a@kernel.org>
-In-Reply-To: <20250213131957.530ec3c5@gandalf.local.home>
-References: <20250213131957.530ec3c5@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739491903; c=relaxed/simple;
+	bh=kFxL9+jcg0pyXdkmB5v5jKk4ItAik5h+mETF+2ErMYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kT850uFumW5wEnOTt9DZHSgRyKZytXWK2tKRYFKT/cSOgjeND4ni5mfwjC0AjrlRhm/1lV6KYNgO5Rt++qzCRcs755eGkEYkop5DdX53HO/mBFzeN5E0CoH3Pp15j5mJheFtTu7cGaLRKFDZWku3y7g51kv+ObW6GVnPc7uqbYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LLfcA2mG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PTH5ubBaFvtiOuCzoEHsnbFqUHpQlK62t51BmbJr9DA=; b=LLfcA2mGWS0v3jbNQghx4fyU9d
+	pV/tBQz/TBVmwzS/2Sa/YLtrAPEBLXhB8cDtEqs1ZbsS6eaLdMRn0S/thXSBxwC5a+jy3/nQt3RF4
+	YB7e356r9ydi2QZ/DLHLOyAtifoOu5spI33rkGRI9rTy7bVHXLfvJozkDSJ+bL28DJUk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tijIP-00Dthp-81; Fri, 14 Feb 2025 01:11:05 +0100
+Date: Fri, 14 Feb 2025 01:11:05 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+	fancer.lancer@gmail.com, krzk@kernel.org, Joao.Pinto@synopsys.com,
+	treding@nvidia.com, ajayg@nvidia.com, Jisheng.Zhang@synaptics.com,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: stmmac: refactor clock management in
+ EQoS driver
+Message-ID: <00be469f-1363-4305-a631-0281c42c282c@lunn.ch>
+References: <CGME20250213041925epcas5p4d37d50047359b923efd9fdcaf4b2f6d2@epcas5p4.samsung.com>
+ <20250213041559.106111-1-swathi.ks@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213041559.106111-1-swathi.ks@samsung.com>
 
-On Thu, 13 Feb 2025 13:19:57 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Thu, Feb 13, 2025 at 09:45:59AM +0530, Swathi K S wrote:
+> Refactor clock management in EQoS driver for code reuse and to avoid
+> redundancy. This way, only minimal changes are required when a new platform
+> is added.
 > 
-> Memory mapping the tracing ring buffer will disable resizing the buffer.
-> But if there's an error in the memory mapping like an invalid parameter,
-> the function exits out without re-enabling the resizing of the ring
-> buffer, preventing the ring buffer from being resized after that.
-> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
 
-Looks good to me.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reveiewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> Cc: stable@vger.kernel.org
-> Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/ring_buffer.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index b8e0ae15ca5b..07b421115692 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -7126,6 +7126,7 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->  		kfree(cpu_buffer->subbuf_ids);
->  		cpu_buffer->subbuf_ids = NULL;
->  		rb_free_meta_page(cpu_buffer);
-> +		atomic_dec(&cpu_buffer->resize_disabled);
->  	}
->  
->  unlock:
-> -- 
-> 2.47.2
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    Andrew
 
