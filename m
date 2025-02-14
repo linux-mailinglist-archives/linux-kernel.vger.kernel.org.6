@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-515545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00B3A36612
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62391A36614
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62CE6171DB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:27:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672D9171E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6119924D;
-	Fri, 14 Feb 2025 19:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19B91A7045;
+	Fri, 14 Feb 2025 19:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Mt2nO6ae"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6+CeSNs"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70AD15FA7B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0707A15FA7B;
+	Fri, 14 Feb 2025 19:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739561228; cv=none; b=UM7JR4350FM+3uv3rdVtzCDVcJ4BlVIzDVUsAvn/i7D61vniP+LNMTru0NH/CS7OBLcHFCCbAdKnbt8PbHzQFS0pjFFMjI5zuP980LOtu0MZGbPsSLZ7fKC6MqZBlqcuP0Bi45FQaqYcE0UHE7DGBgkctV1qlnF3fb5w7OsX9vI=
+	t=1739561239; cv=none; b=ZTJsEYZ0Df8JSW+W723R9y8+z34Y7S686rfGA2bNkuAdf13U+bfHpikYmST3giubmIVGHnpK5trCB56jiXT7k5BrrwxNaRaoUANMFFWWxz14z3l/pyaTzu+YZ0nb3dVg8EbOhz3Rg4AruNf8S5c5sHi+OxMxmEBuzym9aCj+BaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739561228; c=relaxed/simple;
-	bh=55jqhg240yOgqtQp2hkMhDJI7bwzW3oaSKWgrwuFEsM=;
+	s=arc-20240116; t=1739561239; c=relaxed/simple;
+	bh=p7/0d+l5V8RV4soqX93cKS2oL1LZexvsGXDUFmWrnyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZaDMrOD20v3DDMxfkbXp7ynVUvVq5Ou/PcEi45Y/o0FltW2dpJo9gi9uMWUIaxjg8lU8vBGVAGFHdLdv55naM+bpT3dkLk3HIJxT9/oMiKzYpMhxcbkjhyUV5RN2c+zGPCEuMQaIevZHD4Mmq+3Fq6L/mlHEPPhLK7cbFz+QDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Mt2nO6ae; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c0848d475cso118508885a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:27:06 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMGFmUe+IBki9TXv8c54VTDiBCSyB3880PaYAd6fyb1MrbRQXfAffgwpizvUuo0BvfCEbS6lEDsIUhZC/grVIz+VEKJp59Mx+pKNpgtbVlLmAxy9ycqluXqOpWxpuUKr1OsN8z1gpDxvJhsAioDV8ufwFKM2W0r0HReWCngvM+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6+CeSNs; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220c665ef4cso36803965ad.3;
+        Fri, 14 Feb 2025 11:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1739561226; x=1740166026; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739561237; x=1740166037; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q54C682wupKw2fn+9hJZ17sdX89XEBbDkpwzhueywsk=;
-        b=Mt2nO6aeycPPfnCy1bujlM1UYhiHUIljw6VZR48g1zYy7uo5waceIvFPpk457M4jeQ
-         FOLSEXC7Hzeh6OwOdFmQzrYp4eLRyNG03hDEOcKA6hb5r84Y4RemgNUr/Rw/1I69DkGi
-         bZl3hdwcRsRh1TXisDohs3AKG3ClrGD0URCCyifSMD3lkvIE+E1BOQiqLHfjQxv96qJ9
-         xKfCmih7c0TR+QhlljWIycxTyDfuXUg7kU1dfzeCrFJinSf1nB7baunhUFi/VANVk+yW
-         2ZEmZSxVfELs3RRUPokNWrEZNfrWhY9sG/EPQEGHP+WylhLWxZq9ffmzkRYPZN411bZY
-         BThg==
+        bh=dUg0mQM2CMJkUN+o1N0q16vh0nwicfYFgXBMHojigYk=;
+        b=a6+CeSNsDMqsxHm+J/zrQ5T9DaOjri1VM0cbVIFPpLkzpCTg4cItunAtFeOdK5UkIV
+         QAZ0ZRFyD2U3uZy/7nhcu9Y0C8VTYi9uAqIFOVs0F0z9shD4nCR+TFVmyae4ddRtc/KJ
+         GgaYMTij+C7dvGypBc+mXDwwrEVDbiWv1ZZeja+Y4IyZwyrtT4+xrSVK+wJMVE+ICt4q
+         Vl0L7l3KJv7/Jg1BCQgp/xQ0+vQNFCwXknhR7P2RvAuYLDmAOCawhvjui7lJbfBtq747
+         HFMoFSJVKum4efcxKolbqW9aqanjky5r+LcVuBg2JaggQLXSXDzQ9Rtx2d68FhfnurzO
+         tszg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739561226; x=1740166026;
+        d=1e100.net; s=20230601; t=1739561237; x=1740166037;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q54C682wupKw2fn+9hJZ17sdX89XEBbDkpwzhueywsk=;
-        b=Mu+akIziLgUXXyIco5akAipvT8Tx8WbQmGXnsiASw5zjfx2J9mj1e8Nt/DLhXDwpIn
-         vwp+PVQRPbP+wjfEaWjIF6RTzMlS7sfuOCd+i8enDtUsw69nIhpfqBn5sy/hZfHWOKKN
-         96rrLXaMoHu4qXi72Z4YgRyEeaH0uDao4AF/n1LreuuxXZyLrtHba5D5CnZuJjFQ1CkT
-         UuQGc77vjRj3lbfFCHWWuuFUos768xzSCs00Dfg/pMhcxTUKmvvn293ERB0TX3tlEzux
-         QWPnzNPFC3rv7noDRI78od/heQ3XrE1hgN9wCbmI+UJqgARIZXKUIgDIxoo4BT8VcMsx
-         ZULA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC/oPnJdouMaxinhOfJ4pWRNsB8H9OAZJzfzWAK0gbHkGyko/1DcDoZES2Ab0LG4JSmmk0x3F50tAzOzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTLezrhTESWqolbcsf3V6azZJ92xEwaausgpKC6E/zp8a/K/8O
-	I2z3zqmZFU5OiSdlvSRuwVMfUF/AZ29sVvT/ItH0XNfH96Qh9zICQ05lBGbGa9Y=
-X-Gm-Gg: ASbGncsBb7PqdnfL0pCiVG0D4H4S5Ak+h9pNf5o3JdhTcNzdG+OFB7Ub3mzV0RVgAaw
-	CjGzap3DdqPdRRplg4pUDOVkxORvU4O0GHegBNiITEBWjDAXz4QAWIw7E5H0pQ6JZ4pwHqd9Xqf
-	kQRTT0Yc2L9iEJeSdDw4gb4jIxo0r8wCpcxeAYvjsB/lLu4uUbb6KOSAPnkYADIOXIpn9ePjnjs
-	/qqU1AFVm74PIIrKj8T7h7+7mD61SWVugvflDff4Juba7GKe/kPnohX2ZGLJ8UhO9ZuQWthI1M/
-	pkaHxcQYQSXcaCcajxLJdkvkY/KrKAVGFPfe58HhvHCD4R7idf/M0HVCqMiaP/Kv
-X-Google-Smtp-Source: AGHT+IGP6EIu6D5/X4T1lXUP3TqCWP6QCFadGFyDUhKfkvIRhoG4FICvPgxc52H21XaC8VTPwxK1CA==
-X-Received: by 2002:a05:620a:2691:b0:7bc:df55:2cd0 with SMTP id af79cd13be357-7c08aa9f850mr103218785a.48.1739561225699;
-        Fri, 14 Feb 2025 11:27:05 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c07c86155dsm235281185a.87.2025.02.14.11.27.05
+        bh=dUg0mQM2CMJkUN+o1N0q16vh0nwicfYFgXBMHojigYk=;
+        b=vQEBi0hCvkPJbXUN/XWx2ERhpxLcgwLszXxfC0yajrY7CdhuCRdKp/KyCmJt5bLfzK
+         44Zsyw8NL5sdwFNVldPLTaDmgGth9kSuuR7NIk4/kpB99GFQN3pP6fSoM9NX3lh9CfP6
+         f+Az+5v4vThBT99Yy0/lfSZBNRE6DhZ+EROfbvghoACJ6oC7MySy2hjwSEFNFV/RpRSQ
+         8hvTIJZ6UgpkdKd2M+LgJmonYZ6+YEw63IlGHf0csUU21aO66ZECzs9B8lU+tS4oAGh6
+         nw60PYH+GafTZMtnNCvLmsWzXn5GjbeFxIczziqQCLonWUwSPZpy4HhTn9+t2q7/wbQK
+         7VFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdf3n5lXZeESdwnUVE+kfexVMp0Chf+5gNP7rn62DFGtn9gk48kpPQDObZGGrR/xQC4GffearmxpFs+GBO@vger.kernel.org, AJvYcCXuRYZknaNapTIRJ7xmus2MKVnMbPPFT0XcI9kNfFKQMyfknTXTc7rWEz3x4Lmb0nITrk0nJBRN6mwu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Xm8lYvvGJ19wSVkgZPl/R7LbrvnijsfL95qlFyukoq4EQWE7
+	ck4sBI6r+uHi4W77wwAkiZiI6vh7Gw4bOxdTtVkZOSjw5/Y7Qmz1
+X-Gm-Gg: ASbGncs4usBNghSHki1r2M1B9v+OW3vUxSRpL8LuUNcj4q+1UDJ3SRgvUHl70/A542M
+	n3GgDUhQ8pc4eucmmjAufmqlv25WArEzFWmd8Ck5+jsaPmk6j3bPfaOoTXpl3OkHAr1yWNgqJbG
+	aYiajoUMvRSOuES4LjL5AtDhyHTxxkAXu52aoCVc1KKSdbmiE5r2NV3cNQGCnJhIvZYCp1T74ZH
+	pqk429QQTYR+t5E0pC14YScuX7p/BgtCdRa+ELsqp8/YT4c+fOl54X7NUSKTYy6g/zSpq+4VwHD
+	srLnryDutw3B/D8bdw==
+X-Google-Smtp-Source: AGHT+IEQITKHY+JxPZPA738G0pbyxeKKG4JPoDIzakhJ+ccjkfc3pa3bwtzbTg5WhkTnpdCrLOJ0IA==
+X-Received: by 2002:a17:902:ef49:b0:215:a028:4ed with SMTP id d9443c01a7336-22104025674mr6669385ad.20.1739561237166;
+        Fri, 14 Feb 2025 11:27:17 -0800 (PST)
+Received: from gmail.com ([103.210.134.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55960ecsm32264835ad.253.2025.02.14.11.27.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 11:27:05 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tj1L6-0000000GmO1-2uwa;
-	Fri, 14 Feb 2025 15:27:04 -0400
-Date: Fri, 14 Feb 2025 15:27:04 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com,
-	mitchell.augustin@canonical.com, clg@redhat.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Subject: Re: [PATCH 5/5] vfio/type1: Use mapping page mask for pfnmaps
-Message-ID: <20250214192704.GD3696814@ziepe.ca>
-References: <20250205231728.2527186-1-alex.williamson@redhat.com>
- <20250205231728.2527186-6-alex.williamson@redhat.com>
+        Fri, 14 Feb 2025 11:27:16 -0800 (PST)
+Date: Sat, 15 Feb 2025 00:57:10 +0530
+From: Brahmajit <brahmajit.xyz@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, rafael.j.wysocki@intel.com, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ACPI: Fix building with GCC 15
+Message-ID: <b225jidr34zzrrih4iwh6jhwxiy6fcqyrzkgakgs37odba7jhx@j5wgn2rt53ky>
+References: <20250121214219.1455896-1-brahmajit.xyz@gmail.com>
+ <CAMj1kXGvgad183WbUHPGduXHEahfoWasued-LdJ+Tkhc=z-9GA@mail.gmail.com>
+ <20250213200605.6e62302a@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250205231728.2527186-6-alex.williamson@redhat.com>
+In-Reply-To: <20250213200605.6e62302a@pumpkin>
 
-On Wed, Feb 05, 2025 at 04:17:21PM -0700, Alex Williamson wrote:
-> @@ -590,15 +592,23 @@ static int vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
->  	vma = vma_lookup(mm, vaddr);
->  
->  	if (vma && vma->vm_flags & VM_PFNMAP) {
-> -		ret = follow_fault_pfn(vma, mm, vaddr, pfn, prot & IOMMU_WRITE);
-> +		unsigned long pgmask;
-> +
-> +		ret = follow_fault_pfn(vma, mm, vaddr, pfn, &pgmask,
-> +				       prot & IOMMU_WRITE);
->  		if (ret == -EAGAIN)
->  			goto retry;
->  
->  		if (!ret) {
-> -			if (is_invalid_reserved_pfn(*pfn))
-> -				ret = 1;
-> -			else
-> +			if (is_invalid_reserved_pfn(*pfn)) {
-> +				unsigned long epfn;
-> +
-> +				epfn = (((*pfn << PAGE_SHIFT) + ~pgmask + 1)
-> +					& pgmask) >> PAGE_SHIFT;
+GCC bug
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178,
+and patch
+https://gcc.gnu.org/pipermail/gcc-patches/2024-December/671714.html
 
-That seems a bit indirect
-
- epfn = ((*pfn) | (~pgmask >> PAGE_SHIFT)) + 1;
-
-?
-
-> +				ret = min_t(int, npages, epfn - *pfn);
-
-It is nitty but the int's here should be long, and npages should be
-unsigned long..
-
-Jason
+-- 
+Regards,
+listout
 
