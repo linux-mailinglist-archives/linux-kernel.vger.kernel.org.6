@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-514878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA89EA35CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:50:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A81FA35CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25FA16CE1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C76DE16D2EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEE5264A60;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D35264A63;
 	Fri, 14 Feb 2025 11:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+jxO+lR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0UK8xbe"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8121A2627E5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA858263F46
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739533664; cv=none; b=HDTPTIzYL6Vx1NulDK2mhYfPd/A7MfBQ7xRZzIxeuis8ITACPk+g7BdN0809MqltN7hR+t3AbqLCJij+V6Fni6dOdbxtV4ArVSJ7dfouHU4dtEcSMjFJR9A/2sC1ogKIi8Sr0Vt5g0UptmM8DZ2ZkoZYEYNuRSweuspeITd/Yic=
+	t=1739533665; cv=none; b=Y/xFnKP6FLv/fa4TeuEiP35sIuX2BJTnrlSEMde01S1zUtrCskufQRlApL2QE/sXa/PF0sPussrIwNHE2ej2Cdyh1JshTVt9dYTIzGy6p6JdUK/4vpr+0V1ZHhuShHZXkxTZJydp9XngGpIV6xI24OA5BN6dRalyH12n7u2OTmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739533664; c=relaxed/simple;
-	bh=ZywxOrYgvHFFiQ/8GDS8TfmtpXo4vJhcFhYY/yQLh4o=;
+	s=arc-20240116; t=1739533665; c=relaxed/simple;
+	bh=V6W9bEnZKDxzkckFLC5A1x2JWYHjHbuBEOadpITQ0jM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AxSsG4X/zJ0NlCMlnH0DgChji+qyuaRihTG1h28Yuj2sK9fYdLAN7QgjFiVqmKNqGwL3ah26DCC/11qwT8Cr5yhXGSZ/sJrRtAoFMMDxbyEHDiE1p7J3arAp5YvbCKhmJiBuTIhHagjHnzgFOvdFtircFKEwPDv+tHRHrLScDtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+jxO+lR; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=InRIiJisw7gm/qa0AW/B5ZjRHPeMiFHJJKsT/VUXY80oj+VUgmlJYZXF92Yj3c3QL+NwBWodJgh1epjMg8v7ihWzWx1dmM8ypx6kIS9QjiYK8pD9X6dSii6hB+sull3l2mQ/GKDC6258voa5ZjHl7++dJVuMSakrfNTWymw0dgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0UK8xbe; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4395f81db4dso11939275e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:47:41 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso12047945e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:47:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739533660; x=1740138460; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739533661; x=1740138461; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UXyrKlOrfR3q5Ztt5mPFoThAT1sW/ZsLF0+k90uvq1I=;
-        b=C+jxO+lRuc28/CoD4l6AWxnwe5E9qE061EiePmq1/vG8T9d7iRq+xaKKcZzWTsnJws
-         JgDuqpVnuaSBFFOFxE763uXI1IuUnEqZ8ENluzXucI72fUqjUjG+5D7191m+YMNxe/rm
-         3vFEB5gQa8epiI0OMOUezA16edq2qHNFA5yVWToIe0IMwKw3udvvJ0bFwLlTUfFqlbZE
-         yvYF8VMaSgf6jRg2JwbbmhtK1yicGuDoiWsAtIeLcUvcZ10PcgW8zZjVLJU1bv/B7HNH
-         9DQJfLkZe7xyCYr/qvSdD7VU/5cmDxclgwQXk0+JzrfxbgMEKk9Hyd9FoYPrO6VoMA/h
-         4H2w==
+        bh=1d8ytn1sN3HFgOXuhxGigoThdZCA5Wo4+9KBTULduPI=;
+        b=b0UK8xbePN86yulHG0WnpNy8ACThWa/+DUDJ2mm9d894kW6R4wXw+rytkcOI6OXEex
+         gvqtbYZwcfH+2s23GvUIAY3eB9MR7E7LMoejBKw2QW/6+DN/PbcBJCuRebCbrhlT4Gll
+         llek0aE662vGUuQ0SUKAHJsNMn1pVllk0vijm2/+bNGq8ufJtLDWmwk4NvLsyKxYk+eP
+         dvFqfQ2cYfN2CkNyv1Pqfh+ZA9T/d0Ey+Gy1R2jFv548EWmFIhCWxZE9dX8f7bPEZDJ5
+         DNM5P26bktcvL+LxcPL+X7puuOcZKE3Nd2DmMIJFInKyvPihpba6FBblkhtNRLqk/Y8N
+         5f9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739533660; x=1740138460;
+        d=1e100.net; s=20230601; t=1739533661; x=1740138461;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UXyrKlOrfR3q5Ztt5mPFoThAT1sW/ZsLF0+k90uvq1I=;
-        b=u02p99c+cqeC2k5lXu1pwfW7EV+ZwJONzd4imbc0yF12XsCrVXTyKQC6DbF81OEc3s
-         R7GCSCgtcor4gcNBTEGoDkNr0/kN7/LORNzSGK62/25ksDFYdTOP9kcEMzWeL5DsodMj
-         85HxkaPizZ5YkjGnoh5nl99xUoDk6JmnCADOXnjk3Kdi0iS/YZTJ/bwvtORez5CIRfRN
-         QfGDBxGy3Y+Ch7vGUM58yXT3dToUyhHJ9D0ovsPNBGwOiUKk9gAJuggf0OCOjAc1KtxP
-         5/0HTfMZbAYEjsVUbDWlE1IbAQZynRdS7y54BaR/86WUxjGZ6xqsFapqbEpnvVI2lpgq
-         OZog==
-X-Forwarded-Encrypted: i=1; AJvYcCUTxNs+Qeyw7vur5GEKUWgPex/6UEmVmnKus57UrQuEKq6WVyCjDwqXFqGlsX+syFbLKJQrbvegLvEvQi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/BpoTtZbdL+ZHi9j8VbFdMtWzpkt/f5Oawmq4cCXuzjDZQcFx
-	CUdoBNAvgGBJEgfBSs/kE63PFI9hCNFjzuFU8tgGFG1DVgG85yt+q+xBTw==
-X-Gm-Gg: ASbGncuzhaLhVBv6SLJRRRPUef1DcrYYNm/3v7/TgqROpfvGF+AszFRqljMIA9bk/Fm
-	MAaHCkcwbfOxuAtf/XJ7Zc7PUDrDXEvDaZaqvaPIGLah+sK6XzGxWokDALebBTwtG/zrdtKA5SI
-	1OqqWyCxflLCeIVp4/BoKghKgcZzxX47Pa3KMwMW3L26x3cunSevnvxpNAu079COo56DWIsl3my
-	p1bIhJ4TyvzEnsvH7vqZJdW3+dMTo/XTi4uhAXiD5HOI7II/oCQAtZeZJYXRs8tpKR0oRZfBCb1
-	Z9wBMDj1yE8M+w9LbINlu+wSs9OM7yPgFqxA3E+GWqRsOjsrCfk=
-X-Google-Smtp-Source: AGHT+IHWR2BBjTJ2Y2EAhBzpRZh9XEXRCPHOfzYuef9eGKtrToLwMZcWdJBDL3bC9QEUvtNPd7mOQw==
-X-Received: by 2002:a05:600c:1d20:b0:438:e521:1a4d with SMTP id 5b1f17b1804b1-43960e81a94mr72325745e9.5.1739533659455;
-        Fri, 14 Feb 2025 03:47:39 -0800 (PST)
+        bh=1d8ytn1sN3HFgOXuhxGigoThdZCA5Wo4+9KBTULduPI=;
+        b=dVgLu36ezNaM35iP5NvAV10sDXo2oynhEPbBy9mhDgW4D1v345e8LzZRy2qLo+giQS
+         Ze0U9lAvKxxUAed+jh6kuUFf2D44JiYK0VIgMvu950/vYwqWf4FtvzNxLigljTx6CD+3
+         xZS/8DyZEFP+KQVpGibbXWyS7ezqokDVo6GqX6nWrpHvKmt3AMLiun1vbVSOXiAymlVm
+         jY5kPkLC63eV6nc4pKTZF5uHwMh1y71XpXxXI+FoiysKuEfckwaKEqwoxXeQqITR1aXo
+         5DzGeNTxlOMQhNJtvidx5kpUlEbTrVSQnaouksY/r8ybcF7NMqF+pRFleVu2B4XeWHw1
+         PcCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU11y88dz4Kmzjt/4/zUDEyE5tB1ZAnJdRGCRL+Fn5lv2zKQzrs0fXyFlcgskpDhW64ZcpwntbUn0q/EBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm2/NT1NWA3hHvKPiHv0HCQdztWb/8gLQrt0T7dPpdFCrSQ2fk
+	kkAIZNhs0oknzc8hq9bbJt8Gcm6trJGzaXNmggZfuGrYTpBZMKEANafxtw==
+X-Gm-Gg: ASbGnctxJM+52QmNFgb/Z8zdbFOvwRuB4hkSWqprn3/a6QhnYGWSY1SHi66yMzOeBHS
+	91viKfPy2hFtZLgDW5gO0gnTnFNQFYtOdNBsw/xgAM4OKiGzVwKrZdkAl6a8f31I6HnRDg359Ff
+	jvN7Qr/6MochVfvc5G7vstH8qwtR6O3nj/+RWQY8Z4Qp3DUC8rVh0eiOUR3vqjOJgkLLwItrr7v
+	zuIpKJPbGLwPrczkEPBkX1D6gCwoR9L+vTzFqfq8hDa0t8F4UjCk1Hyc4QMybbtukxvoSmZF0mf
+	/lmvvKJ5xhzB2HY2Z5bYTp0suSBJpwC/6rWrRorUxcKtK8uuzQQ=
+X-Google-Smtp-Source: AGHT+IF8FNELQILeKnXkaoYyKgX5j1AV5slhoBBsRzfDYVxVDrcKb8VfMpgJzmJF+NGBZiVwPpv2iQ==
+X-Received: by 2002:a05:600c:4587:b0:434:ffb2:f9cf with SMTP id 5b1f17b1804b1-43960ecb02cmr77864185e9.14.1739533660649;
+        Fri, 14 Feb 2025 03:47:40 -0800 (PST)
 Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fccfesm41945245e9.11.2025.02.14.03.47.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fccfesm41945245e9.11.2025.02.14.03.47.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 03:47:38 -0800 (PST)
+        Fri, 14 Feb 2025 03:47:39 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 05/17] staging: gpib: common core console messaging cleanup
-Date: Fri, 14 Feb 2025 12:46:56 +0100
-Message-ID: <20250214114708.28947-6-dpenkler@gmail.com>
+Subject: [PATCH 06/17] staging: gpib: fluke console messaging cleanup
+Date: Fri, 14 Feb 2025 12:46:57 +0100
+Message-ID: <20250214114708.28947-7-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250214114708.28947-1-dpenkler@gmail.com>
 References: <20250214114708.28947-1-dpenkler@gmail.com>
@@ -91,739 +91,386 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Enable module name to be printed in pr_xxx and dev_xxx
+Use DRV_NAME defined as KBUILD_MODNAME instead of hard coded
+string "fluke_gpib" in platform_driver struct.
 
-Change pr_err to dev_err wherever possible.
+Remove commented printk's.
 
-Remove dev_dbg messages on entry to some functions.
+Change pr_err to dev_err wherever possible
 
-Remove error messages where userland can figure out
-what went wrong through errno.
+Remove "fluke_gpib:" prefix in messages since this is
+printed with the module name.
 
-Remove __func__ and pid parameters in dev_dbg messages as
-these can be enabled by dynamic debug.
-
-Remove minor and "gpib" from dev_err and dev_dbg messages
-since this information is printed by the dev name.
+Correct dev_err message erroneously containing cb7210 identifier.
 
 Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- drivers/staging/gpib/common/gpib_os.c | 127 ++++++++++----------------
- drivers/staging/gpib/common/iblib.c   | 109 ++++++++--------------
- 2 files changed, 85 insertions(+), 151 deletions(-)
+ drivers/staging/gpib/eastwood/fluke_gpib.c | 90 +++++++---------------
+ 1 file changed, 27 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index 4901e660242e..301c8a1a62c2 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -5,6 +5,9 @@
-  ***************************************************************************
-  */
+diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
+index d5b1a03abf11..012ce9cb8999 100644
+--- a/drivers/staging/gpib/eastwood/fluke_gpib.c
++++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
+@@ -7,6 +7,10 @@
+  *   copyright: (C) 2006, 2010, 2015 Fluke Corporation
+  ***************************************************************************/
  
 +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +#define dev_fmt pr_fmt
++#define DRV_NAME KBUILD_MODNAME
 +
- #include "ibsys.h"
- #include <linux/module.h>
- #include <linux/wait.h>
-@@ -90,7 +93,7 @@ void os_start_timer(gpib_board_t *board, unsigned int usec_timeout)
- /* Starts the timeout task  */
- {
- 	if (timer_pending(&board->timer)) {
--		pr_err("gpib: bug! timer already running?\n");
-+		dev_err(board->gpib_dev, "bug! timer already running?\n");
- 		return;
+ #include "fluke_gpib.h"
+ 
+ #include "gpibP.h"
+@@ -263,9 +267,9 @@ static int wait_for_read(gpib_board_t *board)
+ 	if (wait_event_interruptible(board->wait,
+ 				     lacs_or_read_ready(board) ||
+ 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+-				     test_bit(TIMO_NUM, &board->status))) {
++				     test_bit(TIMO_NUM, &board->status)))
+ 		retval = -ERESTARTSYS;
+-	}
++
+ 	if (test_bit(TIMO_NUM, &board->status))
+ 		retval = -ETIMEDOUT;
+ 	if (test_and_clear_bit(DEV_CLEAR_BN, &nec_priv->state))
+@@ -316,20 +320,17 @@ static int wait_for_data_out_ready(gpib_board_t *board)
+ 	struct fluke_priv *e_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv = &e_priv->nec7210_priv;
+ 	int retval = 0;
+-//	printk("%s: enter\n", __FUNCTION__);
+ 
+ 	if (wait_event_interruptible(board->wait,
+ 				     (test_bit(TACS_NUM, &board->status) &&
+ 				      source_handshake_is_sgns(e_priv)) ||
+ 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+-				     test_bit(TIMO_NUM, &board->status))) {
++				     test_bit(TIMO_NUM, &board->status)))
+ 		retval = -ERESTARTSYS;
+-	}
+ 	if (test_bit(TIMO_NUM, &board->status))
+ 		retval = -ETIMEDOUT;
+ 	if (test_and_clear_bit(DEV_CLEAR_BN, &nec_priv->state))
+ 		retval = -EINTR;
+-//	printk("%s: exit, retval=%i\n", __FUNCTION__, retval);
+ 	return retval;
+ }
+ 
+@@ -338,7 +339,6 @@ static int wait_for_sids_or_sgns(gpib_board_t *board)
+ 	struct fluke_priv *e_priv = board->private_data;
+ 	struct nec7210_priv *nec_priv = &e_priv->nec7210_priv;
+ 	int retval = 0;
+-//	printk("%s: enter\n", __FUNCTION__);
+ 
+ 	if (wait_event_interruptible(board->wait,
+ 				     source_handshake_is_sids_or_sgns(e_priv) ||
+@@ -350,7 +350,6 @@ static int wait_for_sids_or_sgns(gpib_board_t *board)
+ 		retval = -ETIMEDOUT;
+ 	if (test_and_clear_bit(DEV_CLEAR_BN, &nec_priv->state))
+ 		retval = -EINTR;
+-//	printk("%s: exit, retval=%i\n", __FUNCTION__, retval);
+ 	return retval;
+ }
+ 
+@@ -362,7 +361,6 @@ static void fluke_dma_callback(void *arg)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&board->spinlock, flags);
+-//	printk("%s: enter\n", __FUNCTION__);
+ 
+ 	nec7210_set_reg_bits(nec_priv, IMR1, HR_DOIE | HR_DIIE, HR_DOIE | HR_DIIE);
+ 	wake_up_interruptible(&board->wait);
+@@ -370,7 +368,7 @@ static void fluke_dma_callback(void *arg)
+ 	fluke_gpib_internal_interrupt(board);
+ 	clear_bit(DMA_WRITE_IN_PROGRESS_BN, &nec_priv->state);
+ 	clear_bit(DMA_READ_IN_PROGRESS_BN, &nec_priv->state);
+-//	printk("%s: exit\n", __FUNCTION__);
++
+ 	spin_unlock_irqrestore(&board->spinlock, flags);
+ }
+ 
+@@ -385,7 +383,7 @@ static int fluke_dma_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 	struct dma_async_tx_descriptor *tx_desc;
+ 
+ 	*bytes_written = 0;
+-//	printk("%s: enter\n", __FUNCTION__);
++
+ 	if (WARN_ON_ONCE(length > e_priv->dma_buffer_size))
+ 		return -EFAULT;
+ 	dmaengine_terminate_all(e_priv->dma_channel);
+@@ -403,7 +401,7 @@ static int fluke_dma_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 	tx_desc = dmaengine_prep_slave_single(e_priv->dma_channel, address, length, DMA_MEM_TO_DEV,
+ 					      DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!tx_desc) {
+-		pr_err("fluke_gpib: failed to allocate dma transmit descriptor\n");
++		dev_err(board->gpib_dev, "failed to allocate dma transmit descriptor\n");
+ 		retval = -ENOMEM;
+ 		goto cleanup;
  	}
- 	clear_bit(TIMO_NUM, &board->status);
-@@ -140,7 +143,7 @@ static void pseudo_irq_handler(struct timer_list *t)
- int gpib_request_pseudo_irq(gpib_board_t *board, irqreturn_t (*handler)(int, void *))
- {
- 	if (timer_pending(&board->pseudo_irq.timer) || board->pseudo_irq.handler) {
--		pr_err("gpib: only one pseudo interrupt per board allowed\n");
-+		dev_err(board->gpib_dev, "only one pseudo interrupt per board allowed\n");
- 		return -1;
+@@ -419,10 +417,8 @@ static int fluke_dma_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 	clear_bit(WRITE_READY_BN, &nec_priv->state);
+ 	set_bit(DMA_WRITE_IN_PROGRESS_BN, &nec_priv->state);
+ 
+-	//	printk("%s: in spin lock\n", __FUNCTION__);
+ 	spin_unlock_irqrestore(&board->spinlock, flags);
+ 
+-//	printk("%s: waiting for write.\n", __FUNCTION__);
+ 	// suspend until message is sent
+ 	if (wait_event_interruptible(board->wait,
+ 				     ((readl(e_priv->write_transfer_counter) &
+@@ -430,7 +426,6 @@ static int fluke_dma_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 				     test_bit(BUS_ERROR_BN, &nec_priv->state) ||
+ 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+ 				     test_bit(TIMO_NUM, &board->status))) {
+-		dev_dbg(board->gpib_dev, "gpib write interrupted!\n");
+ 		retval = -ERESTARTSYS;
+ 	}
+ 	if (test_bit(TIMO_NUM, &board->status))
+@@ -459,7 +454,6 @@ static int fluke_dma_write(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 
+ cleanup:
+ 	dma_unmap_single(board->dev, address, length, DMA_TO_DEVICE);
+-//	printk("%s: exit, retval=%d\n", __FUNCTION__, retval);
+ 	return retval;
+ }
+ 
+@@ -474,7 +468,7 @@ static int fluke_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length
+ 	size_t dma_remainder = remainder;
+ 
+ 	if (!e_priv->dma_channel) {
+-		pr_err("fluke_gpib: No dma channel available, cannot do accel write.");
++		dev_err(board->gpib_dev, "No dma channel available, cannot do accel write.");
+ 		return -ENXIO;
  	}
  
-@@ -260,8 +263,6 @@ int get_serial_poll_byte(gpib_board_t *board, unsigned int pad, int sad, unsigne
- {
- 	gpib_status_queue_t *device;
+@@ -486,7 +480,6 @@ static int fluke_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length
  
--	dev_dbg(board->gpib_dev, "%s:()\n", __func__);
--
- 	device = get_gpib_status_queue(board, pad, sad);
- 	if (num_status_bytes(device))
- 		return pop_status_byte(board, device, poll_byte);
-@@ -273,7 +274,6 @@ int autopoll_all_devices(gpib_board_t *board)
- {
- 	int retval;
+ 	if (send_eoi)
+ 		--dma_remainder;
+-//	printk("%s: entering while loop\n", __FUNCTION__);
  
--	dev_dbg(board->gpib_dev, "entering %s()\n", __func__);
- 	if (mutex_lock_interruptible(&board->user_mutex))
- 		return -ERESTARTSYS;
- 	if (mutex_lock_interruptible(&board->big_gpib_mutex)) {
-@@ -290,7 +290,7 @@ int autopoll_all_devices(gpib_board_t *board)
- 		return retval;
+ 	while (dma_remainder > 0) {
+ 		size_t num_bytes;
+@@ -512,7 +505,7 @@ static int fluke_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length
+ 	//handle sending of last byte with eoi
+ 	if (send_eoi) {
+ 		size_t num_bytes;
+-		//		printk("%s: handling last byte\n", __FUNCTION__);
++
+ 		if (WARN_ON_ONCE(remainder != 1))
+ 			return -EFAULT;
+ 
+@@ -533,7 +526,6 @@ static int fluke_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length
+ 			return retval;
+ 		remainder -= num_bytes;
  	}
+-//	printk("%s: bytes send=%i\n", __FUNCTION__, (int)(length - remainder));
+ 	return 0;
+ }
  
--	dev_dbg(board->gpib_dev, "%s complete\n", __func__);
-+	dev_dbg(board->gpib_dev, "complete\n");
- 	/* need to wake wait queue in case someone is
- 	 * waiting on RQS
- 	 */
-@@ -308,8 +308,6 @@ static int setup_serial_poll(gpib_board_t *board, unsigned int usec_timeout)
- 	size_t bytes_written;
- 	int ret;
+@@ -544,7 +536,7 @@ static int fluke_get_dma_residue(struct dma_chan *chan, dma_cookie_t cookie)
  
--	dev_dbg(board->gpib_dev, "entering %s()\n", __func__);
--
- 	os_start_timer(board, usec_timeout);
- 	ret = ibcac(board, 1, 1);
- 	if (ret < 0) {
-@@ -326,7 +324,7 @@ static int setup_serial_poll(gpib_board_t *board, unsigned int usec_timeout)
- 
- 	ret = board->interface->command(board, cmd_string, i, &bytes_written);
- 	if (ret < 0 || bytes_written < i) {
--		pr_err("gpib: failed to setup serial poll\n");
-+		dev_dbg(board->gpib_dev, "failed to setup serial poll\n");
- 		os_remove_timer(board);
- 		return -EIO;
+ 	result = dmaengine_pause(chan);
+ 	if (result < 0) {
+-		pr_err("fluke_gpib: dma pause failed?\n");
++		pr_err("dma pause failed?\n");
+ 		return result;
  	}
-@@ -344,7 +342,7 @@ static int read_serial_poll_byte(gpib_board_t *board, unsigned int pad,
+ 	dmaengine_tx_status(chan, cookie, &state);
+@@ -567,10 +559,6 @@ static int fluke_dma_read(gpib_board_t *board, uint8_t *buffer,
  	int i;
- 	size_t nbytes;
+ 	static const int timeout = 10;
  
--	dev_dbg(board->gpib_dev, "entering %s(), pad=%i sad=%i\n", __func__, pad, sad);
-+	dev_dbg(board->gpib_dev, "entering  pad=%i sad=%i\n", pad, sad);
- 
- 	os_start_timer(board, usec_timeout);
- 	ret = ibcac(board, 1, 1);
-@@ -361,7 +359,7 @@ static int read_serial_poll_byte(gpib_board_t *board, unsigned int pad,
- 
- 	ret = board->interface->command(board, cmd_string, i, &nbytes);
- 	if (ret < 0 || nbytes < i) {
--		pr_err("gpib: failed to setup serial poll\n");
-+		dev_err(board->gpib_dev, "failed to setup serial poll\n");
- 		os_remove_timer(board);
+-	//	printk("%s: enter, bus_address=0x%x, length=%i\n", __FUNCTION__,
+-	//	       (unsigned)bus_address,
+-	//	       (int)length);
+-
+ 	*bytes_read = 0;
+ 	*end = 0;
+ 	if (length == 0)
+@@ -589,7 +577,7 @@ static int fluke_dma_read(gpib_board_t *board, uint8_t *buffer,
+ 					      bus_address, length, DMA_DEV_TO_MEM,
+ 					      DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!tx_desc) {
+-		pr_err("fluke_gpib: failed to allocate dma transmit descriptor\n");
++		dev_err(board->gpib_dev, "failed to allocate dma transmit descriptor\n");
+ 		dma_unmap_single(NULL, bus_address, length, DMA_FROM_DEVICE);
  		return -EIO;
  	}
-@@ -371,7 +369,7 @@ static int read_serial_poll_byte(gpib_board_t *board, unsigned int pad,
- 	// read poll result
- 	ret = board->interface->read(board, result, 1, &end_flag, &nbytes);
- 	if (ret < 0 || nbytes < 1) {
--		pr_err("gpib: serial poll failed\n");
-+		dev_err(board->gpib_dev, "serial poll failed\n");
- 		os_remove_timer(board);
- 		return -EIO;
+@@ -608,14 +596,12 @@ static int fluke_dma_read(gpib_board_t *board, uint8_t *buffer,
+ 	clear_bit(READ_READY_BN, &nec_priv->state);
+ 
+ 	spin_unlock_irqrestore(&board->spinlock, flags);
+-//	printk("waiting for data transfer.\n");
+ 	// wait for data to transfer
+ 	if (wait_event_interruptible(board->wait,
+ 				     test_bit(DMA_READ_IN_PROGRESS_BN, &nec_priv->state) == 0 ||
+ 				     test_bit(RECEIVED_END_BN, &nec_priv->state) ||
+ 				     test_bit(DEV_CLEAR_BN, &nec_priv->state) ||
+ 				     test_bit(TIMO_NUM, &board->status))) {
+-		pr_warn("fluke: dma read wait interrupted\n");
+ 		retval = -ERESTARTSYS;
  	}
-@@ -386,8 +384,6 @@ static int cleanup_serial_poll(gpib_board_t *board, unsigned int usec_timeout)
- 	int ret;
- 	size_t bytes_written;
+ 	if (test_bit(TIMO_NUM, &board->status))
+@@ -682,10 +668,6 @@ static int fluke_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 	int retval = 0;
+ 	size_t dma_nbytes;
  
--	dev_dbg(board->gpib_dev, "entering %s()\n", __func__);
--
- 	os_start_timer(board, usec_timeout);
- 	ret = ibcac(board, 1, 1);
- 	if (ret < 0) {
-@@ -399,7 +395,7 @@ static int cleanup_serial_poll(gpib_board_t *board, unsigned int usec_timeout)
- 	cmd_string[1] = UNT;
- 	ret = board->interface->command(board, cmd_string, 2, &bytes_written);
- 	if (ret < 0 || bytes_written < 2) {
--		pr_err("gpib: failed to disable serial poll\n");
-+		dev_err(board->gpib_dev, "failed to disable serial poll\n");
- 		os_remove_timer(board);
- 		return -EIO;
- 	}
-@@ -435,8 +431,6 @@ int serial_poll_all(gpib_board_t *board, unsigned int usec_timeout)
- 	u8 result;
- 	unsigned int num_bytes = 0;
+-/*	printk("%s: enter, buffer=0x%p, length=%i\n", __FUNCTION__,
+- *		   buffer, (int)length);
+- *	printk("\t dma_buffer=0x%p\n", e_priv->dma_buffer);
+- */
+ 	*end = 0;
+ 	*bytes_read = 0;
  
--	dev_dbg(board->gpib_dev, "entering %s()\n", __func__);
--
- 	head = &board->device_list;
- 	if (head->next == head)
- 		return 0;
-@@ -482,12 +476,12 @@ int dvrsp(gpib_board_t *board, unsigned int pad, int sad,
- 	int retval;
+@@ -699,7 +681,6 @@ static int fluke_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length,
  
- 	if ((status & CIC) == 0) {
--		pr_err("gpib: not CIC during serial poll\n");
-+		dev_err(board->gpib_dev, "not CIC during serial poll\n");
- 		return -1;
- 	}
+ 	nec7210_release_rfd_holdoff(board, nec_priv);
  
- 	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS || sad < -1) {
--		pr_err("gpib: bad address for serial poll");
-+		dev_err(board->gpib_dev, "bad address for serial poll");
- 		return -1;
- 	}
- 
-@@ -544,20 +538,16 @@ int ibopen(struct inode *inode, struct file *filep)
- 	priv = filep->private_data;
- 	init_gpib_file_private((gpib_file_private_t *)filep->private_data);
- 
--	dev_dbg(board->gpib_dev, "pid %i, gpib: opening minor %d\n", current->pid, minor);
--
- 	if (board->use_count == 0) {
- 		int retval;
- 
- 		retval = request_module("gpib%i", minor);
--		if (retval) {
--			dev_dbg(board->gpib_dev, "pid %i, gpib: request module returned %i\n",
--				current->pid, retval);
+-//	printk("%s: entering while loop\n", __FUNCTION__);
+ 	while (remain > 0) {
+ 		transfer_size = (e_priv->dma_buffer_size < remain) ?
+ 			e_priv->dma_buffer_size : remain;
+@@ -709,14 +690,12 @@ static int fluke_accel_read(gpib_board_t *board, uint8_t *buffer, size_t length,
+ 		*bytes_read += dma_nbytes;
+ 		if (*end)
+ 			break;
+-		if (retval < 0)	{
+-//			printk("%s: early exit, retval=%i\n", __FUNCTION__, (int)retval);
++		if (retval < 0)
+ 			return retval;
 -		}
-+		if (retval)
-+			dev_dbg(board->gpib_dev, "request module returned %i\n", retval);
+ 		if (need_resched())
+ 			schedule();
  	}
- 	if (board->interface) {
- 		if (!try_module_get(board->provider_module)) {
--			pr_err("gpib: try_module_get() failed\n");
-+			dev_err(board->gpib_dev, "try_module_get() failed\n");
- 			return -EIO;
- 		}
- 		board->use_count++;
-@@ -580,21 +570,19 @@ int ibclose(struct inode *inode, struct file *filep)
- 
- 	board = &board_array[minor];
- 
--	dev_dbg(board->gpib_dev, "pid %i, closing minor %d\n", current->pid, minor);
--
- 	if (priv) {
- 		desc = handle_to_descriptor(priv, 0);
- 		if (desc) {
- 			if (desc->autopoll_enabled) {
--				dev_dbg(board->gpib_dev, "pid %i, decrementing autospollers\n",
--					current->pid);
-+				dev_dbg(board->gpib_dev, "decrementing autospollers\n");
- 				if (board->autospollers > 0)
- 					board->autospollers--;
- 				else
--					pr_err("gpib: Attempt to decrement zero autospollers\n");
-+					dev_err(board->gpib_dev,
-+						"Attempt to decrement zero autospollers\n");
- 			}
- 		} else {
--			pr_err("gpib: Unexpected null gpib_descriptor\n");
-+			dev_err(board->gpib_dev, "Unexpected null gpib_descriptor\n");
- 		}
- 
- 		cleanup_open_devices(priv, board);
-@@ -630,8 +618,8 @@ long ibioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	if (mutex_lock_interruptible(&board->big_gpib_mutex))
- 		return -ERESTARTSYS;
- 
--	dev_dbg(board->gpib_dev, "pid %i, ioctl %d, interface=%s, use=%d, onl=%d\n",
--		current->pid, cmd & 0xff,
-+	dev_dbg(board->gpib_dev, "ioctl %d, interface=%s, use=%d, onl=%d\n",
-+		cmd & 0xff,
- 		board->interface ? board->interface->name : "",
- 		board->use_count,
- 		board->online);
-@@ -647,13 +635,13 @@ long ibioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
- 	if (!board->interface) {
--		pr_err("gpib: no gpib board configured on /dev/gpib%i\n", minor);
-+		dev_err(board->gpib_dev, "no gpib board configured\n");
- 		retval = -ENODEV;
- 		goto done;
- 	}
- 	if (file_priv->got_module == 0)	{
- 		if (!try_module_get(board->provider_module)) {
--			pr_err("gpib: try_module_get() failed\n");
-+			dev_err(board->gpib_dev, "try_module_get() failed\n");
- 			retval = -EIO;
- 			goto done;
- 		}
-@@ -699,8 +687,6 @@ long ibioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	}
- 
- 	if (!board->online) {
--		pr_err("gpib: ioctl %i invalid for offline board\n",
--		       cmd & 0xff);
- 		retval = -EINVAL;
- 		goto done;
- 	}
-@@ -737,8 +723,6 @@ long ibioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	spin_lock(&board->locking_pid_spinlock);
- 	if (current->pid != board->locking_pid)	{
- 		spin_unlock(&board->locking_pid_spinlock);
--		pr_err("gpib: need to hold board lock to perform ioctl %i\n",
--		       cmd & 0xff);
- 		retval = -EPERM;
- 		goto done;
- 	}
-@@ -830,10 +814,8 @@ static int board_type_ioctl(gpib_file_private_t *file_priv, gpib_board_t *board,
- 
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
--	if (board->online) {
--		pr_err("gpib: can't change board type while board is online.\n");
-+	if (board->online)
- 		return -EBUSY;
--	}
- 
- 	retval = copy_from_user(&cmd, (void __user *)arg, sizeof(board_type_ioctl_t));
- 	if (retval)
-@@ -1140,8 +1122,8 @@ static int increment_open_device_count(gpib_board_t *board, struct list_head *he
- 	for (list_ptr = head->next; list_ptr != head; list_ptr = list_ptr->next) {
- 		device = list_entry(list_ptr, gpib_status_queue_t, list);
- 		if (gpib_address_equal(device->pad, device->sad, pad, sad)) {
--			dev_dbg(board->gpib_dev, "pid %i, incrementing open count for pad %i, sad %i\n",
--				current->pid, device->pad, device->sad);
-+			dev_dbg(board->gpib_dev, "incrementing open count for pad %i, sad %i\n",
-+				device->pad, device->sad);
- 			device->reference_count++;
- 			return 0;
- 		}
-@@ -1158,8 +1140,7 @@ static int increment_open_device_count(gpib_board_t *board, struct list_head *he
- 
- 	list_add(&device->list, head);
- 
--	dev_dbg(board->gpib_dev, "pid %i, opened pad %i, sad %i\n",
--		current->pid, device->pad, device->sad);
-+	dev_dbg(board->gpib_dev, "opened pad %i, sad %i\n", device->pad, device->sad);
- 
- 	return 0;
- }
-@@ -1173,23 +1154,23 @@ static int subtract_open_device_count(gpib_board_t *board, struct list_head *hea
- 	for (list_ptr = head->next; list_ptr != head; list_ptr = list_ptr->next) {
- 		device = list_entry(list_ptr, gpib_status_queue_t, list);
- 		if (gpib_address_equal(device->pad, device->sad, pad, sad)) {
--			dev_dbg(board->gpib_dev, "pid %i, decrementing open count for pad %i, sad %i\n",
--				current->pid, device->pad, device->sad);
-+			dev_dbg(board->gpib_dev, "decrementing open count for pad %i, sad %i\n",
-+				device->pad, device->sad);
- 			if (count > device->reference_count) {
--				pr_err("gpib: bug! in %s()\n", __func__);
-+				dev_err(board->gpib_dev, "bug! in %s()\n", __func__);
- 				return -EINVAL;
- 			}
- 			device->reference_count -= count;
- 			if (device->reference_count == 0) {
--				dev_dbg(board->gpib_dev, "pid %i, closing pad %i, sad %i\n",
--					current->pid, device->pad, device->sad);
-+				dev_dbg(board->gpib_dev, "closing pad %i, sad %i\n",
-+					device->pad, device->sad);
- 				list_del(list_ptr);
- 				kfree(device);
- 			}
- 			return 0;
- 		}
- 	}
--	pr_err("gpib: bug! tried to close address that was never opened!\n");
-+	dev_err(board->gpib_dev, "bug! tried to close address that was never opened!\n");
- 	return -EINVAL;
+-//	printk("%s: exit, retval=%i\n", __FUNCTION__, (int)retval);
++
+ 	return retval;
  }
  
-@@ -1306,8 +1287,6 @@ static int serial_poll_ioctl(gpib_board_t *board, unsigned long arg)
- 	serial_poll_ioctl_t serial_cmd;
- 	int retval;
+@@ -830,13 +809,6 @@ irqreturn_t fluke_gpib_internal_interrupt(gpib_board_t *board)
  
--	dev_dbg(board->gpib_dev, "pid %i, entering %s()\n", current->pid, __func__);
--
- 	retval = copy_from_user(&serial_cmd, (void __user *)arg, sizeof(serial_cmd));
- 	if (retval)
- 		return -EFAULT;
-@@ -1639,11 +1618,12 @@ static int autospoll_ioctl(gpib_board_t *board, gpib_file_private_t *file_priv,
- 				board->autospollers--;
- 				retval = 0;
- 			} else {
--				pr_err("gpib: tried to set number of autospollers negative\n");
-+				dev_err(board->gpib_dev,
-+					"tried to set number of autospollers negative\n");
- 				retval = -EINVAL;
- 			}
- 		} else {
--			pr_err("gpib: autopoll disable requested before enable\n");
-+			dev_err(board->gpib_dev, "autopoll disable requested before enable\n");
- 			retval = -EINVAL;
- 		}
+ 	if (nec7210_interrupt_have_status(board, nec_priv, status1, status2) == IRQ_HANDLED)
+ 		retval = IRQ_HANDLED;
+-/*
+- *	if((status1 & nec_priv->reg_bits[IMR1]) ||
+- *		(status2 & (nec_priv->reg_bits[IMR2] & IMR2_ENABLE_INTR_MASK)))
+- *	{
+- *		printk("fluke: status1 0x%x, status2 0x%x\n", status1, status2);
+- *	}
+- */
+ 
+ 	if (read_byte(nec_priv, ADR0) & DATA_IN_STATUS)	{
+ 		if (test_bit(RFD_HOLDOFF_BN, &nec_priv->state))
+@@ -954,7 +926,7 @@ static int fluke_init(struct fluke_priv *e_priv, gpib_board_t *board, int handsh
+ 
+ 	/* poll so we can detect ATN changes */
+ 	if (gpib_request_pseudo_irq(board, fluke_gpib_interrupt)) {
+-		pr_err("fluke_gpib: failed to allocate pseudo_irq\n");
++		dev_err(board->gpib_dev, "failed to allocate pseudo_irq\n");
+ 		return -EINVAL;
  	}
-@@ -1661,10 +1641,8 @@ static int mutex_ioctl(gpib_board_t *board, gpib_file_private_t *file_priv,
  
- 	if (lock_mutex)	{
- 		retval = mutex_lock_interruptible(&board->user_mutex);
--		if (retval) {
--			pr_warn("gpib: ioctl interrupted while waiting on lock\n");
-+		if (retval)
- 			return -ERESTARTSYS;
--		}
+@@ -984,7 +956,7 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
+ 	dma_cap_mask_t dma_cap;
  
- 		spin_lock(&board->locking_pid_spinlock);
- 		board->locking_pid = current->pid;
-@@ -1672,13 +1650,12 @@ static int mutex_ioctl(gpib_board_t *board, gpib_file_private_t *file_priv,
- 
- 		atomic_set(&file_priv->holding_mutex, 1);
- 
--		dev_dbg(board->gpib_dev, "pid %i, locked board %d mutex\n",
--			current->pid, board->minor);
-+		dev_dbg(board->gpib_dev, "locked board mutex\n");
- 	} else {
- 		spin_lock(&board->locking_pid_spinlock);
- 		if (current->pid != board->locking_pid) {
--			pr_err("gpib: bug! pid %i tried to release mutex held by pid %i\n",
--			       current->pid, board->locking_pid);
-+			dev_err(board->gpib_dev, "bug! pid %i tried to release mutex held by pid %i\n",
-+				current->pid, board->locking_pid);
- 			spin_unlock(&board->locking_pid_spinlock);
- 			return -EPERM;
- 		}
-@@ -1688,8 +1665,7 @@ static int mutex_ioctl(gpib_board_t *board, gpib_file_private_t *file_priv,
- 		atomic_set(&file_priv->holding_mutex, 0);
- 
- 		mutex_unlock(&board->user_mutex);
--		dev_dbg(board->gpib_dev, "pid %i, unlocked board %i mutex\n",
--			current->pid, board->minor);
-+		dev_dbg(board->gpib_dev, "unlocked board mutex\n");
+ 	if (!fluke_gpib_pdev) {
+-		pr_err("No gpib platform device was found, attach failed.\n");
++		dev_err(board->gpib_dev, "No fluke device was found, attach failed.\n");
+ 		return -ENODEV;
  	}
- 	return 0;
- }
-@@ -1704,7 +1680,7 @@ static int timeout_ioctl(gpib_board_t *board, unsigned long arg)
- 		return -EFAULT;
  
- 	board->usec_timeout = timeout;
--	dev_dbg(board->gpib_dev, "pid %i, timeout set to %i usec\n", current->pid, timeout);
-+	dev_dbg(board->gpib_dev, "timeout set to %i usec\n", timeout);
+@@ -999,7 +971,7 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
  
- 	return 0;
- }
-@@ -1744,10 +1720,8 @@ static int set_local_ppoll_mode_ioctl(gpib_board_t *board, unsigned long arg)
- 	if (retval)
- 		return -EFAULT;
+ 	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+-		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for cb7210 gpib\n");
++		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource\n");
+ 		return -ENODEV;
+ 	}
  
--	if (!board->interface->local_parallel_poll_mode)	{
--		pr_warn("gpib: local/remote parallel poll mode not supported by driver.");
--		return -EIO;
--	}
-+	if (!board->interface->local_parallel_poll_mode)
-+		return -ENOENT;
- 	board->local_ppoll_mode = cmd != 0;
- 	board->interface->local_parallel_poll_mode(board, board->local_ppoll_mode);
+@@ -1012,10 +984,7 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
+ 	e_priv->gpib_iomem_res = res;
  
-@@ -1887,7 +1861,7 @@ static int push_gpib_event_nolock(gpib_board_t *board, short event_type)
- 	event = kmalloc(sizeof(gpib_event_t), GFP_ATOMIC);
- 	if (!event) {
- 		queue->dropped_event = 1;
--		pr_err("gpib: failed to allocate memory for event\n");
-+		dev_err(board->gpib_dev, "failed to allocate memory for event\n");
+ 	nec_priv->mmiobase = ioremap(e_priv->gpib_iomem_res->start,
+-				   resource_size(e_priv->gpib_iomem_res));
+-	pr_info("gpib: mmiobase %llx remapped to %p, length=%d\n",
+-		(u64)e_priv->gpib_iomem_res->start,
+-		nec_priv->mmiobase, (int)resource_size(e_priv->gpib_iomem_res));
++				     resource_size(e_priv->gpib_iomem_res));
+ 	if (!nec_priv->mmiobase) {
+ 		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
+ 		return -ENOMEM;
+@@ -1050,19 +1019,14 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
+ 
+ 	e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
+ 						 resource_size(e_priv->write_transfer_counter_res));
+-	pr_info("gpib: write transfer counter %lx remapped to %p, length=%d\n",
+-		(unsigned long)e_priv->write_transfer_counter_res->start,
+-		e_priv->write_transfer_counter,
+-		(int)resource_size(e_priv->write_transfer_counter_res));
+ 	if (!e_priv->write_transfer_counter) {
+ 		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
  		return -ENOMEM;
  	}
  
-@@ -2007,10 +1981,8 @@ static int t1_delay_ioctl(gpib_board_t *board, unsigned long arg)
- 	unsigned int delay;
- 	int retval;
- 
--	if (!board->interface->t1_delay)	{
--		pr_warn("gpib: t1 delay not implemented in driver!\n");
--		return -EIO;
--	}
-+	if (!board->interface->t1_delay)
-+		return -ENOENT;
- 
- 	retval = copy_from_user(&cmd, (void __user *)arg, sizeof(cmd));
- 	if (retval)
-@@ -2087,7 +2059,6 @@ void gpib_unregister_driver(gpib_interface_t *interface)
- 			kfree(entry);
- 		}
+ 	irq = platform_get_irq(fluke_gpib_pdev, 0);
+-	pr_info("gpib: irq %d\n", irq);
+ 	if (irq < 0) {
+-		dev_err(&fluke_gpib_pdev->dev, "fluke_gpib: request for IRQ failed\n");
++		dev_err(&fluke_gpib_pdev->dev, "failed to obtain IRQ\n");
+ 		return -EBUSY;
  	}
--	pr_info("gpib: unregistered %s interface\n", interface->name);
- }
- EXPORT_SYMBOL(gpib_unregister_driver);
- 
-@@ -2184,7 +2155,7 @@ static int __init gpib_common_init_module(void)
- {
- 	int i;
- 
--	pr_info("Linux-GPIB core driver\n");
-+	pr_info("GPIB core driver\n");
- 	init_board_array(board_array, GPIB_MAX_NUM_BOARDS);
- 	if (register_chrdev(GPIB_CODE, "gpib", &ib_fops)) {
- 		pr_err("gpib: can't get major %d\n", GPIB_CODE);
-diff --git a/drivers/staging/gpib/common/iblib.c b/drivers/staging/gpib/common/iblib.c
-index 5f6fa135f505..fd2874c2fff4 100644
---- a/drivers/staging/gpib/common/iblib.c
-+++ b/drivers/staging/gpib/common/iblib.c
-@@ -4,6 +4,8 @@
-  *    copyright            : (C) 2001, 2002 by Frank Mori Hess
-  ***************************************************************************/
- 
-+#define dev_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include "ibsys.h"
- #include <linux/delay.h>
- #include <linux/kthread.h>
-@@ -24,10 +26,8 @@ int ibcac(gpib_board_t *board, int sync, int fallback_to_async)
- 	int status = ibstatus(board);
- 	int retval;
- 
--	if ((status & CIC) == 0) {
--		pr_err("gpib: not CIC during %s()\n", __func__);
--		return -1;
--	}
-+	if ((status & CIC) == 0)
-+		return -EINVAL;
- 
- 	if (status & ATN)
- 		return 0;
-@@ -76,13 +76,6 @@ static int check_for_command_acceptors(gpib_board_t *board)
- 	if (lines < 0)
- 		return lines;
- 
--	if (lines & ValidATN) {
--		if ((lines & BusATN) == 0) {
--			pr_err("gpib: ATN not asserted in %s()?", __func__);
--			return 0;
--		}
--	}
--
- 	if ((lines & ValidNRFD) && (lines & ValidNDAC))	{
- 		if ((lines & BusNRFD) == 0 && (lines & BusNDAC) == 0)
- 			return -ENOTCONN;
-@@ -112,10 +105,8 @@ int ibcmd(gpib_board_t *board, uint8_t *buf, size_t length, size_t *bytes_writte
- 
- 	status = ibstatus(board);
- 
--	if ((status & CIC) == 0) {
--		pr_err("gpib: cannot send command when not controller-in-charge\n");
--		return -EIO;
--	}
-+	if ((status & CIC) == 0)
-+		return -EINVAL;
- 
- 	os_start_timer(board, board->usec_timeout);
- 
-@@ -145,14 +136,10 @@ int ibgts(gpib_board_t *board)
- 	int status = ibstatus(board);
- 	int retval;
- 
--	if ((status & CIC) == 0) {
--		pr_err("gpib: not CIC during %s()\n", __func__);
--		return -1;
--	}
-+	if ((status & CIC) == 0)
-+		return -EINVAL;
- 
- 	retval = board->interface->go_to_standby(board);    /* go to standby */
--	if (retval < 0)
--		pr_err("gpib: error while going to standby\n");
- 
- 	board->interface->update_status(board, 0);
- 
-@@ -200,16 +187,15 @@ static int autospoll_thread(void *board_void)
- 			retval = autopoll_all_devices(board);
- 			module_put(board->provider_module);
- 		} else {
--			pr_err("gpib%i: %s: try_module_get() failed!\n", board->minor, __func__);
-+			dev_err(board->gpib_dev, "try_module_get() failed!\n");
- 		}
- 		if (retval <= 0) {
--			pr_err("gpib%i: %s: stuck SRQ\n", board->minor, __func__);
-+			dev_err(board->gpib_dev, "stuck SRQ\n");
- 
- 			atomic_set(&board->stuck_srq, 1);	// XXX could be better
- 			set_bit(SRQI_NUM, &board->status);
- 		}
+ 	retval = request_irq(irq, fluke_gpib_interrupt, isr_flags, fluke_gpib_pdev->name, board);
+@@ -1078,7 +1042,7 @@ static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *con
+ 	dma_cap_set(DMA_SLAVE, dma_cap);
+ 	e_priv->dma_channel = dma_request_channel(dma_cap, gpib_dma_channel_filter, NULL);
+ 	if (!e_priv->dma_channel) {
+-		pr_err("fluke_gpib: failed to allocate a dma channel.\n");
++		dev_err(board->gpib_dev, "failed to allocate a dma channel.\n");
+ 		// we don't error out here because unaccel interface will still
+ 		// work without dma
  	}
--	pr_info("gpib%i: exiting autospoll thread\n", board->minor);
- 	return retval;
- }
+@@ -1142,7 +1106,7 @@ MODULE_DEVICE_TABLE(of, fluke_gpib_of_match);
  
-@@ -230,7 +216,6 @@ int ibonline(gpib_board_t *board)
- 	retval = board->interface->attach(board, &board->config);
- 	if (retval < 0) {
- 		board->interface->detach(board);
--		pr_err("gpib: interface attach failed\n");
- 		return retval;
- 	}
- 	/* nios2nommu on 2.6.11 uclinux kernel has weird problems
-@@ -241,13 +226,13 @@ int ibonline(gpib_board_t *board)
- 					    "gpib%d_autospoll_kthread", board->minor);
- 	retval = IS_ERR(board->autospoll_task);
- 	if (retval) {
--		pr_err("gpib: failed to create autospoll thread\n");
-+		dev_err(board->gpib_dev, "failed to create autospoll thread\n");
- 		board->interface->detach(board);
- 		return retval;
- 	}
- #endif
- 	board->online = 1;
--	dev_dbg(board->gpib_dev, "gpib: board online\n");
-+	dev_dbg(board->gpib_dev, "board online\n");
+ static struct platform_driver fluke_gpib_platform_driver = {
+ 	.driver = {
+-		.name = "fluke_gpib",
++		.name = DRV_NAME,
+ 		.of_match_table = fluke_gpib_of_match,
+ 	},
+ 	.probe = &fluke_gpib_probe
+@@ -1154,25 +1118,25 @@ static int __init fluke_init_module(void)
  
- 	return 0;
- }
-@@ -265,14 +250,14 @@ int iboffline(gpib_board_t *board)
- 	if (board->autospoll_task && !IS_ERR(board->autospoll_task)) {
- 		retval = kthread_stop(board->autospoll_task);
- 		if (retval)
--			pr_err("gpib: kthread_stop returned %i\n", retval);
-+			dev_err(board->gpib_dev, "kthread_stop returned %i\n", retval);
- 		board->autospoll_task = NULL;
+ 	result = platform_driver_register(&fluke_gpib_platform_driver);
+ 	if (result) {
+-		pr_err("fluke_gpib: platform_driver_register failed: error = %d\n", result);
++		pr_err("platform_driver_register failed: error = %d\n", result);
+ 		return result;
  	}
  
- 	board->interface->detach(board);
- 	gpib_deallocate_board(board);
- 	board->online = 0;
--	dev_dbg(board->gpib_dev, "gpib: board offline\n");
-+	dev_dbg(board->gpib_dev, "board offline\n");
+ 	result = gpib_register_driver(&fluke_unaccel_interface, THIS_MODULE);
+ 	if (result) {
+-		pr_err("fluke_gpib: gpib_register_driver failed: error = %d\n", result);
++		pr_err("gpib_register_driver failed: error = %d\n", result);
+ 		goto err_unaccel;
+ 	}
  
- 	return 0;
- }
-@@ -320,10 +305,8 @@ int ibrd(gpib_board_t *board, uint8_t *buf, size_t length, int *end_flag, size_t
+ 	result = gpib_register_driver(&fluke_hybrid_interface, THIS_MODULE);
+ 	if (result) {
+-		pr_err("fluke_gpib: gpib_register_driver failed: error = %d\n", result);
++		pr_err("gpib_register_driver failed: error = %d\n", result);
+ 		goto err_hybrid;
+ 	}
  
- 	*nbytes = 0;
- 	*end_flag = 0;
--	if (length == 0) {
--		pr_warn("gpib: %s() called with zero length?\n",  __func__);
-+	if (length == 0)
- 		return 0;
--	}
+ 	result = gpib_register_driver(&fluke_interface, THIS_MODULE);
+ 	if (result) {
+-		pr_err("fluke_gpib: gpib_register_driver failed: error = %d\n", result);
++		pr_err("gpib_register_driver failed: error = %d\n", result);
+ 		goto err_interface;
+ 	}
  
- 	if (board->master) {
- 		retval = ibgts(board);
-@@ -338,10 +321,9 @@ int ibrd(gpib_board_t *board, uint8_t *buf, size_t length, int *end_flag, size_t
- 
- 	do {
- 		ret = board->interface->read(board, buf, length - *nbytes, end_flag, &bytes_read);
--		if (ret < 0) {
--			pr_err("gpib read error\n");
-+		if (ret < 0)
- 			goto ibrd_out;
--		}
-+
- 		buf += bytes_read;
- 		*nbytes += bytes_read;
- 		if (need_resched())
-@@ -370,10 +352,8 @@ int ibrpp(gpib_board_t *board, uint8_t *result)
- 	if (retval)
- 		return -1;
- 
--	if (board->interface->parallel_poll(board, result)) {
--		pr_err("gpib: parallel poll failed\n");
--		retval = -1;
--	}
-+	retval =  board->interface->parallel_poll(board, result);
-+
- 	os_remove_timer(board);
- 	return retval;
- }
-@@ -392,10 +372,8 @@ int ibrsv2(gpib_board_t *board, uint8_t status_byte, int new_reason_for_service)
- 	int board_status = ibstatus(board);
- 	const unsigned int MSS = status_byte & request_service_bit;
- 
--	if ((board_status & CIC)) {
--		pr_err("gpib: interface requested service while CIC\n");
-+	if ((board_status & CIC))
- 		return -EINVAL;
--	}
- 
- 	if (MSS == 0 && new_reason_for_service)
- 		return -EINVAL;
-@@ -424,19 +402,15 @@ int ibrsv2(gpib_board_t *board, uint8_t status_byte, int new_reason_for_service)
-  */
- int ibsic(gpib_board_t *board, unsigned int usec_duration)
- {
--	if (board->master == 0)	{
--		pr_err("gpib: tried to assert IFC when not system controller\n");
--		return -1;
--	}
-+	if (board->master == 0)
-+		return -EINVAL;
- 
- 	if (usec_duration < 100)
- 		usec_duration = 100;
--	if (usec_duration > 1000) {
-+	if (usec_duration > 1000)
- 		usec_duration = 1000;
--		pr_warn("gpib: warning, shortening long udelay\n");
--	}
- 
--	dev_dbg(board->gpib_dev, "sending interface clear\n");
-+	dev_dbg(board->gpib_dev, "sending interface clear, delay = %ius\n", usec_duration);
- 	board->interface->interface_clear(board, 1);
- 	udelay(usec_duration);
- 	board->interface->interface_clear(board, 0);
-@@ -444,14 +418,12 @@ int ibsic(gpib_board_t *board, unsigned int usec_duration)
- 	return 0;
- }
- 
-+	/* FIXME make int */
- void ibrsc(gpib_board_t *board, int request_control)
- {
- 	board->master = request_control != 0;
--	if (!board->interface->request_system_control)	{
--		pr_err("gpib: bug! driver does not implement request_system_control()\n");
--		return;
--	}
--	board->interface->request_system_control(board, request_control);
-+	if (board->interface->request_system_control)
-+		board->interface->request_system_control(board, request_control);
- }
- 
- /*
-@@ -460,10 +432,8 @@ void ibrsc(gpib_board_t *board, int request_control)
-  */
- int ibsre(gpib_board_t *board, int enable)
- {
--	if (board->master == 0)	{
--		pr_err("gpib: tried to set REN when not system controller\n");
--		return -1;
--	}
-+	if (board->master == 0)
-+		return -EINVAL;
- 
- 	board->interface->remote_enable(board, enable);	/* set or clear REN */
- 	if (!enable)
-@@ -479,10 +449,9 @@ int ibsre(gpib_board_t *board, int enable)
-  */
- int ibpad(gpib_board_t *board, unsigned int addr)
- {
--	if (addr > MAX_GPIB_PRIMARY_ADDRESS) {
--		pr_err("gpib: invalid primary address %u\n", addr);
--		return -1;
--	}
-+	if (addr > MAX_GPIB_PRIMARY_ADDRESS)
-+		return -EINVAL;
-+
- 	board->pad = addr;
- 	if (board->online)
- 		board->interface->primary_address(board, board->pad);
-@@ -498,10 +467,8 @@ int ibpad(gpib_board_t *board, unsigned int addr)
-  */
- int ibsad(gpib_board_t *board, int addr)
- {
--	if (addr > MAX_GPIB_SECONDARY_ADDRESS) {
--		pr_err("gpib: invalid secondary address %i\n", addr);
--		return -1;
--	}
-+	if (addr > MAX_GPIB_SECONDARY_ADDRESS)
-+		return -EINVAL;
- 	board->sad = addr;
- 	if (board->online) {
- 		if (board->sad >= 0)
-@@ -523,10 +490,8 @@ int ibeos(gpib_board_t *board, int eos, int eosflags)
- {
- 	int retval;
- 
--	if (eosflags & ~EOS_MASK) {
--		pr_err("bad EOS modes\n");
-+	if (eosflags & ~EOS_MASK)
- 		return -EINVAL;
--	}
- 	if (eosflags & REOS) {
- 		retval = board->interface->enable_eos(board, eos, eosflags & BIN);
- 	} else {
-@@ -717,10 +682,8 @@ int ibwrt(gpib_board_t *board, uint8_t *buf, size_t cnt, int send_eoi, size_t *b
- 	int ret = 0;
- 	int retval;
- 
--	if (cnt == 0) {
--		pr_warn("gpib: %s() called with zero length?\n", __func__);
-+	if (cnt == 0)
- 		return 0;
--	}
- 
- 	if (board->master) {
- 		retval = ibgts(board);
 -- 
 2.48.1
 
