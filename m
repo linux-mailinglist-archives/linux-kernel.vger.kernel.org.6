@@ -1,259 +1,417 @@
-Return-Path: <linux-kernel+bounces-514763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E6BA35B3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:09:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FCFA35B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346D6189365A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABACB3A8DCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1545025A2C2;
-	Fri, 14 Feb 2025 10:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F0825743C;
+	Fri, 14 Feb 2025 10:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="OMN/si9G"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011029.outbound.protection.outlook.com [52.103.68.29])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="SRlqXOxR"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2112.outbound.protection.outlook.com [40.107.117.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0BA2580EC;
-	Fri, 14 Feb 2025 10:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B396F2236F8;
+	Fri, 14 Feb 2025 10:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527716; cv=fail; b=X3uHkr3Mdtzsg6tRPqKraFjinA49lGewYdamvvHowNS3Jdw8ZfhO08+ujMTdArJ7YFGDywctlkrpFULGBTH/DoCcxX+qthABXfUkq0d2gExKTJY0ZpbvyuTCnO+waj7oK0JinDsKFGZNbIpGe2+MZ7bxFFz2/aEc40PoRq7D/Mg=
+	t=1739527911; cv=fail; b=p5TJnn6qx8T9oIGGv9r95VlEYQuMLdt5TQ7lVGB5DYrPN0EL+OBAa3AuzW5nRcLyDDlrZAOwEaWtpbUBiJyUSO2yFbYMfH6Y6BBie5Y6izxFo/hKvJZsMz+iyvWkf4BYm8aLHdSEiQVd1EhvDLczZVIuUigS0zST0YTPilGol3k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527716; c=relaxed/simple;
-	bh=ofGPAB7IIijTJPJxDujjEVYNtjkO8Zs/Oq5+1TgQb8M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nfEJQvNb02GCu8hzN46TfzP+6lunKykPqixOXv/bVDM62lJ0NVV0n0LUmzvXJIs3RT6JW3rrJQkoZchzVX0GLdNVJhgpnALksaHhxHiI9leOsh+EJczV9Bq4CgWfINVn8UITXvP3I8vscLPkxCdOm5U44ioNFuEAR+RlpoAHvPI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=OMN/si9G; arc=fail smtp.client-ip=52.103.68.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1739527911; c=relaxed/simple;
+	bh=KJ3z5GrG0QGuIXsAA2/Pog+GZWsLYIc1oEsjNiUsv1M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z5tePjcy6s+ynPNQraGZNJy6921/v9w5QhbTQULq7LjLRjwjOy9wvKCyC9A8q//CMZRUSW6byNvdUQHWVNozOsC2pShGNNn7edwefT5u4MA3Pruasu5HhBPSUFebRG3dVT26JJPaMlWZ/Tq7XnkYMtBstg1cRvvX8CXdvOwdgtQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=SRlqXOxR; arc=fail smtp.client-ip=40.107.117.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UfqrGNaLraDx97ep6Z+BKXV3+0hztxwrM8tXDriLu4hSNygkMES10Cg3rwEcRT9HA5IKC8YMfCtc9dFDcBa3qPDElXkMjQPtcOaitxxBB/HVkqcMdiVlbJqumizeJJtfXT/rSBJOxiE10FHLy6aCb2X/Ieb/K4vmpaKOO8LMhHjSzrQ1P81snveiGSSZ0SD3ya60rXU7E8solEtxvYX+F/o1wxzbbWQ3oPwEjk3xRNeIAWJ0GF1E0YeEm1rc95aUU2DpmKmIRWeeAYGxMWur4AD5MBtgfZ4fD7o2qisA2Bf/O3kj2dPH1tkIyidBDdMKTvPUdp4cxCXjy6VyjYMhSA==
+ b=Z+JHPdp1b9vdDOAa01eVlULqtlqzjMrIqli8LqAH+BNTP/KHXTt7KHY4xd+E+D3bAHDUBF24dV9RF7/2LVh+CYyX3BiziH5vyiX11ft1mgpFxYaIkEhiATsEQ83AsbJ3A6eBbEtns3a8Li89L55CZU1we0AK3K8NQNHBIza4RbB26YptqwIyT0uGqacPlZ7GHti8ZPafHPEZW8Y+oYM7mB2kjURP6DI0JuLaKOEEEETE/9KF89o94RCc04NPxQg8y556rtcnATyMD0dDdDuJii+cSeh1Cw0uOQq95ddiF3IzJkfKkkLWtxkwFc31vvzKHv1KkIJnUUIQfL4NBX9Bsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xiIWcqTaT41gSdJ7meArh5mGZu5+NUROWJRm1ZONzUc=;
- b=QyqgEJnLdwlcbx+aZOc9W1nco/tHjrpmKsqP/CYm0Myl0e1VHowyCJEfAYwI4bPB//GKJVirz7GZATb4W98zGgiXV6J+shdJ0zFStp6x6bHrFwCiTlSqq0F0FJHo20Q9PIGMLwThPprx+ThvM7yX/unSKxJeRtjIHVtLU2oVh0RpH3CxClyD52MZqe6iuJnIDFB3Dzmao4ZKxrrHJoumDO28m9uZxe/IeRqoiDpEx40Hi0JbD1+E8JMXE8zjrspq886oX4wJugzQzwrEVnkGL/nka6U1s/knuEu7MEDl+PfSkn/A7VaYWICCqIYFnPmQ5eYlYoVZkfdEf22uh3wdwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=bJoivgf1f3ykNPxk64TVF6MHJr2GCR1zIWIY0Cm9oKw=;
+ b=e57QZ+ouXnk+KwJBVU/WdtuGH5zEPO45hNUdbUBtDKg+NtWQzdmbfoHa9pAUMb2z2yqnhrnCJ2iQidxoEuL6tmbfvNEmRsuonG9PMom7ymBirr7fBU+2CKGLSg5P8SfhVVg5osLxFEM9XgvkUBcCaZQmHL9N9N/0wGamu9laLcpVPMOzIi+zN8z274j2P1wVs4w46MpQNZt3ApNJflpnFWMX1UBYhDG+e3QRuJdEnHyHuxPVw5gDIPdo2CClO2srOIvHjjQ4dvcO9L6fZlVBbw+hZ8UaFg9P5nENNpULf96Nhp5A+MoRDodKPVB92xvQ1YY7MBloIHnIfFIu0yNshw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xiIWcqTaT41gSdJ7meArh5mGZu5+NUROWJRm1ZONzUc=;
- b=OMN/si9GGpUrtOtLRwr5yxyGymVhZifdkwlHcx+50AXOD7Lsa8U4kfYZI0X5XuBNJ4fjolfxL4lone8lKYYTcdyyRaOSbC2R4MTHdOj0yjq9dFzBak97ts8gukGA9W86lybACYWB9D+lHDp9BuKhDgEUvrGsyrIin7AyVN7bI5Q51Zz4LiB8U2DQadZtIAnvkq3t2kEnRvhdeSFuTudiwOGTUGUpgqSyxK+EA1KQ/QBLweXvIcFVoolLyh0RrkRwcvlSAS+770OUiDS/cpPQsn1HJ0N9mqZWLV+pJszhwg6c/Kh5va1KFIDiBUbAZ1mqegFng9Kbep/cJJ3N6Hb2kg==
-Received: from PN3PR01MB9615.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:107::8)
- by PN2PR01MB9082.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:159::5) with
+ bh=bJoivgf1f3ykNPxk64TVF6MHJr2GCR1zIWIY0Cm9oKw=;
+ b=SRlqXOxRv8CLHKstRdv0u1gb1HyqRDblRVFrKpSBwtNajJVIQs2GlN3kAL+TJT93r7LXOTAS4lea2gRHt++Xf8guvfPxh8EHV6lfGwaotw2aqi/zJb4ABdYvHTrtSedXXjfZolsutwa0J12Ypf87CS36Pw3mF8hO6Qy2640fB8Aciyc28pQpysYrplsgRJTUFYOruugoMfF9T2SrqfaDTioz/CPWrsY+udIKP/Ss9ADN+Slc5yjYxUDkmgtqnrzDYVHL0IJtGhGRvB2PcCZBmLHkMzUts2xMOXNFqxv2Eqwv90EiyK5NrKqihAXcaxHRHZIm8hGq7ic/UXEUAP5Opw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
+ by KL1PR03MB7174.apcprd03.prod.outlook.com (2603:1096:820:c9::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Fri, 14 Feb
- 2025 10:08:28 +0000
-Received: from PN3PR01MB9615.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8bdf:4c57:be81:7866]) by PN3PR01MB9615.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8bdf:4c57:be81:7866%3]) with mapi id 15.20.8445.016; Fri, 14 Feb 2025
- 10:08:28 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	"jkosina@suse.cz" <jkosina@suse.cz>, Benjamin Tissoires
-	<benjamin.tissoires@redhat.com>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Alex Henrie <alexhenrie24@gmail.com>, "jose.exposito89@gmail.com"
-	<jose.exposito89@gmail.com>, "bruners@gmail.com" <bruners@gmail.com>,
-	"seobrien@chromium.org" <seobrien@chromium.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>
-Subject: [PATCH v2 4/4] HID: apple: use switch case to assign devices to their
- respective fn mapping
-Thread-Topic: [PATCH v2 4/4] HID: apple: use switch case to assign devices to
- their respective fn mapping
-Thread-Index: AQHbfshkmgz2/YnzI0WPBj39Y8IbiA==
-Date: Fri, 14 Feb 2025 10:08:28 +0000
-Message-ID: <7747D0EE-DA32-4B6A-AB63-DB30C5E856BE@live.com>
-References: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
-In-Reply-To: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9615:EE_|PN2PR01MB9082:EE_
-x-ms-office365-filtering-correlation-id: a3f4acf7-f79a-49d5-d4c7-08dd4cdf8725
-x-microsoft-antispam:
- BCL:0;ARA:14566002|7092599003|15080799006|19110799003|461199028|8062599003|8060799006|3412199025|440099028|19061999003|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QWC3QER91p2neh3QG78zJWrGr69xT+rvA0Uz6QkQJH0v84mbOdB95NdPR3Hn?=
- =?us-ascii?Q?wb+3ggVC6gNeH9f7K2yNcRf/cKgU/ZlyBnPIOICoGrjPcf9X/ebaeSFlrhCN?=
- =?us-ascii?Q?oX8L9M877uNimTzmOnTDoXcyW93OWoMcPRr3XJPTxMfmQMfj6af7QYNFfAuO?=
- =?us-ascii?Q?mNlb8Dh5tlmI8bfivOB4xUk8p0BszAPcngo39bGS/e753Y2Gw1p+2UXVFp4i?=
- =?us-ascii?Q?7o1f+ddlJDhctfFVQmfhV0/RGbwOMa3FDJroSgnkRvbcTf/8zOWvHQ2vZaKB?=
- =?us-ascii?Q?ZsMJtzbiLdOwnju/8igJWN9oJEoWc8TZkROGHbmCT4kOA5AoK8HctzOw8Ivz?=
- =?us-ascii?Q?N5FeF1B0mt0N1buiyVS+qDnjT71q79e7MWWREtMHuJM1UqfLbRGcKurnJfnq?=
- =?us-ascii?Q?QxNoVSY/47orj0gJhenQkdmMBkjWJV3OKu5QYQSVng9OE1lVqkMdJ2r1dftT?=
- =?us-ascii?Q?oGODWUuH9x2ih0gx6EgykERB3hlahYPTaGz0zWUl39I/1VUSXYvruxPTKMXy?=
- =?us-ascii?Q?ZcbCjuoSVcNS3l5WSFcnUFl0yYy7lLABtXDYwEz69GHKN1/jT/ybLGfVhJFz?=
- =?us-ascii?Q?oysMGVERVi8xMm/w6mTxPoVjvr+SCT9yL5tUR3UZuZpZvTnb5YYLNzBhQmpK?=
- =?us-ascii?Q?V3yRICmrQFN5+Mt+S4lseXKhr6DVyh4sU1sBKTrN+RVy+/zn1Sv2XJR1p3gd?=
- =?us-ascii?Q?7Zb8gmGfRt1wKPcavx1o0sAvIp8C38L8HScbdWoSUvXBb83TALVBgIDRJTTr?=
- =?us-ascii?Q?XyjnbibWiUkw92zIQKU6m7VJ9oElJlxwWm8JqjW31YzOuHlOjfot6VH1zmlN?=
- =?us-ascii?Q?39O6uTGrwv8sgTb2Ur0mAS1y5cnXgE6zNaaPxV6itBUQv6vsw9vVIwoowiV2?=
- =?us-ascii?Q?B2DZ4hSUhMvu9Lc9b/H6Fe3buLhkkSnWZkK2DBP44LxjQn3ItWh6W/TvtTdn?=
- =?us-ascii?Q?AgGfms/vU24QUS7WLh5+sh2T8UkEudIJbI07gwfUCcExfHtbZW116qHlMPxj?=
- =?us-ascii?Q?+Pz8kC8m2gVYDmyN/zYYLWpyIrZb/mDIzhTkgPgC/EUJUQ1m4A3uzK1466i+?=
- =?us-ascii?Q?NC5KWEjipL9hxxBJE7Q9H1etLYAdXBPzxLrbWrDw8uvZxOoAe20=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1s6ViQHwA+FLRpPm1nerAcxcq++QhjNQG+zoCUh+hNUJFKR3W+WxDpsRh1kb?=
- =?us-ascii?Q?hn08RLTa9/klC420jj5vFW/Wxee76qnDjhwAnTNdPrRMC+SoWFkEcIbhr2Zp?=
- =?us-ascii?Q?PDrVet6dvr4p6E1zhMSpu114mP46UmEKF9s5DLBO7bgpSxHUPPmPboFWW0zL?=
- =?us-ascii?Q?eF+Dst3d53ddv0fvEiu+VLDwL0WzZ9dk6E89MbkZFZxM+j+WWKXL8O3lQCd3?=
- =?us-ascii?Q?bjvOf6YACBijWge5v5X1Q4vkWXKHbuBkXQUJt2i/y9qyzygFy8XrUr4dBtcX?=
- =?us-ascii?Q?phY9Uz1q0OCGjmjBM62vEe6Q4bjXjP6Fk4aUJN03u+z4fOU5tZISQ7OhCUij?=
- =?us-ascii?Q?hUBnqc3J88rcaOmqWup/+wh6/iHvxBsS6f25LgMw/C8gH90GA6vy5pVt7n1Q?=
- =?us-ascii?Q?tlwZTJgY1xC6zp/Q4XvHntuR33TVYPssfklWCNKPytPpyNWN9M3xY0qtutHt?=
- =?us-ascii?Q?wF8F3kecGCx8EOR9Y0uLyUOqzajHAIKZgYxm08BY+8G5K5M+tILjVh7o7yh9?=
- =?us-ascii?Q?hi9ij3KiP12f5Ck0Hz2xAVC/OZiSAJaWK9JrDEpO30D5BhBps67CxMSU8Gm0?=
- =?us-ascii?Q?ALjiYm3jLJfKuER6hqw6SXHrBktCMWrZ53o8KzzIo/5aajKocVzPNXU6xKAL?=
- =?us-ascii?Q?kWzNtFQhZSJW39zMfrW4oWmvW3FAx0ke9YwP89x2KQkgQ0CZmiPteMl3696M?=
- =?us-ascii?Q?x2vMoSIOijavdtP2OREmGAMeW6tZ2VgMYqxBUhMrcU7UIztUSEqn8k1vg7yu?=
- =?us-ascii?Q?nI16dHR2299fMPWWg7NpPv6S8K/3Rv1A1qezDrlbyGbSzbl/6CZHIZ5JHdqC?=
- =?us-ascii?Q?giv132gEBQ6i0KJsbtjc+p1shJ1lxY/Gy0fx6RLoljmiKfDVn3Lpv4EsPMpf?=
- =?us-ascii?Q?7YosEll7ciVHlYr6F5PmZm65inzNQgSHcOWgXdzFzTYagHQZ5X8dX/+LPyoV?=
- =?us-ascii?Q?7oXIs+GjjVAa7S8FvAIr2y/US4hQNPi7ApGQC7fXP3aNnMr1GaJXoz6BO5bQ?=
- =?us-ascii?Q?ZsA0w6f+V5YyjNvi3WFQxf553cjtDIDZhBDOog9OiN2Su9yAvGxxOcXWXdRI?=
- =?us-ascii?Q?bfwBTcFImIM+80jT9epl3hIRuL8KH/gCa3I1NBic3SMQRAmiUL6qMd+R718q?=
- =?us-ascii?Q?e/II6V9Y2jNFsI3Syz4s3/hbnQGx60O8EDEtCvCE2wBA9jNrM/xKJHnph2pi?=
- =?us-ascii?Q?l8kRy+5Tq3cA/QH7vELkLa2KHGBlQFvz+vC5eQm2A/tAlw623sKmM/fW8zjx?=
- =?us-ascii?Q?VocSNfQsSM18g+nnFiD+CVzLhuhMBO/nckjhMYZR02YzC7W9IAu4gPztBl5v?=
- =?us-ascii?Q?BIjk1R44fvppfvMiWnUmaa90?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <560F1231F7FCE3468F39B607ED597D4C@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
+ 2025 10:11:45 +0000
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d%3]) with mapi id 15.20.8445.015; Fri, 14 Feb 2025
+ 10:11:43 +0000
+Message-ID: <d0ddf1fe-6e6d-4e18-93d3-c432630b9dbe@amlogic.com>
+Date: Fri, 14 Feb 2025 18:11:37 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] ASoC: meson: s4:support audio tocodec
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
+ <20250214-audio_drvier-v2-4-37881fa37c9e@amlogic.com>
+ <1j34ggzwel.fsf@starbuckisacylon.baylibre.com>
+From: Jiebing Chen <jiebing.chen@amlogic.com>
+In-Reply-To: <1j34ggzwel.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: KL1PR01CA0032.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:1::20) To PUZPR03MB7135.apcprd03.prod.outlook.com
+ (2603:1096:301:113::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|KL1PR03MB7174:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d12ca97-8dd2-49c7-8977-08dd4cdffb60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTJJbDh6S1ZMazVXR3RTbkxCNW51U2xPMXFBR0dad3hsWmp4Y3RoY0QyRzhJ?=
+ =?utf-8?B?Vk1YT3JMbG1UOGIvRTErN2NrZGpxajNnc2JmZ3FrUXdnYXBxSU5MRjAyKzZL?=
+ =?utf-8?B?NXlWekwrRFVrREl6Z3VCVm5TenJqUUszekMzNVNlbll3ZnVhQUZocmRCdCti?=
+ =?utf-8?B?bmVNR3RWZGMwZW04TUtlWVdOWWhEUGdUY1FRNGJiK1lzeUYva0hLNkQ2M3Rs?=
+ =?utf-8?B?NE0xSVBJMmp5bGxZRkkxeEtkMGpyQ3diMEFvTmorZUJaaFI4TUNZN3RodUIr?=
+ =?utf-8?B?WHdPNHFacHhuNkVuTzdCZWQ0akVxWWt6aFZaUlpDZzdKb2hDR1J2NWd4UEJI?=
+ =?utf-8?B?Qk4yTDQ0WWtFSlQ2YmR3WndGSjh3M3VuUGdaUGt6ei85a0V6dDE1V1o1Wnlz?=
+ =?utf-8?B?ZEhLcHNyOTJYZmdmbVhRNy8rNHBETnpuSWtBWXBhVENHRXlwUFJKOHRxOGNq?=
+ =?utf-8?B?OWFsaTF3ZWpsays5L295MzM0ZS9peUlxa2c1VU9LMGNQcEw0d2pBZFpqQnJR?=
+ =?utf-8?B?em10eFZBWmJuTFJoY3BmWCtUWDJkZDdSSE90QjlMUElTRGxXWTdNcmJpTUc5?=
+ =?utf-8?B?VGpPOXhWQUdGQTRUbkxtdm5UNHZlSmliSUpnZWxsT1VxdEhTYnBUUG93Qk8r?=
+ =?utf-8?B?b0RuQkppL3pxZ1RjQmZUOEZOb2dibVAyOGNneEh3S29NSXdjZmpQMi9TaVRX?=
+ =?utf-8?B?cTM1d0FLTzhnbTNGUXA1Q2w5S1RJSU9WcWEvRHViRy96TndycWZWZ2JteXlC?=
+ =?utf-8?B?MGpIOUNrUDZreUVaK2RtSGhkWTdCd0p1VGhxMXA5WTNBMkZMQ0R1WWxFeE5k?=
+ =?utf-8?B?UE5IWTFHcFdQSWNLWjVLcitVQStHQzVxQnNnSmxHZTY0NnFaZEpMZ3NmRkFH?=
+ =?utf-8?B?RnFlVnNPMStNK3R6QUpKWHJpU1pUVmhqWTNEdGNWT0xkRWNLamxIa05kWTNY?=
+ =?utf-8?B?UU5SWllBNGJRbXhPbXkzaW1qREZUTmJkWE95eS9DUHRHeEVkWjY0Ymd5M1o4?=
+ =?utf-8?B?eXlqMEJHdEladnhyU1grN0NaM2RhMlVtVXVhV2tuUzNuSk9yU2YrZVcvR3Jv?=
+ =?utf-8?B?RXRFRFMwb2dTc3M0WE0wMDhPSC9PWFcxS0NqT0ZoSkpBcHdwZFVlekN2QWo4?=
+ =?utf-8?B?aklhOVlkTmJWbTM1djBRWUozYWhHVUNpc2FXU2VXMmI0RE5xYnYzdVprQWNQ?=
+ =?utf-8?B?eTFrM1pqU2hxUG51TFpmR01maHc4d1pGLy9NS0RaZkJZZjVvc1dIQytFY1dr?=
+ =?utf-8?B?NGw3SWNOWUY0MjIzMnBpZHRWN2pveXl2WHU5UkRjWUF6a2tnTUpFa0FxaERx?=
+ =?utf-8?B?aXRoODBMZ0RFbGlydk5RWE56NHhTYlNjVXFyVzJNMkdxOE55OE1Ua2ozRmFK?=
+ =?utf-8?B?MHRYemVncUxaSndYekREZnVJb3o2VXBtVWtjMHAyc3p2RmhMK0VXVnk2MEJQ?=
+ =?utf-8?B?TFNrWW5FYmZWQzB2aDVpbHBVTXM3Q2xwSlprNCs1TEdDVEkrVE9HTEhKK0JF?=
+ =?utf-8?B?Z2hXdnhGU1cvVEljbFA2UDdQU3ZyM0NnWEdDSitSSXJYZzhlOHp6ZXN5RnMx?=
+ =?utf-8?B?alpqR3B3QTlYdUhTWG5DQjd6N3d3UEJTdGNMMDI5cEJGWHJMNlFyRDNZWlBK?=
+ =?utf-8?B?a3RmTVJiQ2FtRTBJZ1hkZVNHRjBRSCtLSDVZdklUQStTZHY2MjgzUGhsN29u?=
+ =?utf-8?B?T2pva0toVnRkemdYR21ENTRaMm56a3RiWVA2MnQyYjdsL1lET2N4RXVTUzAv?=
+ =?utf-8?B?NGNqakQ3VUxXQWF2SzNWdE5IdFhHU01PS3NldWZYdlM1R3pOaVBYYkh4ZGli?=
+ =?utf-8?B?RzlwQ1JMdlZReUcvck80NmRoN2lVNnJhZ3BzZkkycW15WXdKcUZTa0QwMmUy?=
+ =?utf-8?Q?eMge9/RR9A6Sv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YkJaTitMTGFBb1BjeEoyWUxxSHNPZXZEQzEvT3AvVk9hekdyd0tBcHBKb1pZ?=
+ =?utf-8?B?c1FDT0hQamxpZ1ZBZG82U0ZTaTVpMU50eHNVdDRwTGg5QXZqVDVlRm1KSy9m?=
+ =?utf-8?B?VmVNNkJ3cldtRTB4SlNKYTNqdm94SmFsVWt6R0s5ZTNFTzVsVHIrUmVQdnlW?=
+ =?utf-8?B?bUJYZnZxL2FnQStXa0pIZjlPbVJTeHFDanM3eHM1cWFSaFA3SHp3a0x6T2dZ?=
+ =?utf-8?B?dnN1OGY3aVZhaUREOEl5R1JrZldicHVpTmtWMmlYd3JVaFN6UlpBUWRtYzBR?=
+ =?utf-8?B?WHVFWmlHN0t4aHF0LzVmZFd6TXRVcjlyVXNCdDVTNDd5K1RPK243MFdkT0NI?=
+ =?utf-8?B?bWxWU3F4NGYzK3NLWXV4WUZrU3lsSDl1blJuVUROcFU2NmVUNW5LTHh1WUVG?=
+ =?utf-8?B?VjFQRFNsdGFjVndnZ0w5TTQ2Z0xSeEMwNTk4QXU1YkhqT2UxRkh2SXZubFYv?=
+ =?utf-8?B?NDNudjRObmkxWmorNjZYempnR3NBS09uSDZmQVkyYStvUlV2TW5KNEQvZmxh?=
+ =?utf-8?B?dnpNVHloWHRqZ05KTVV1SGRtZWN4K2lIeXd1VU1Eb0Q2VEk0YkpTdnBWY01u?=
+ =?utf-8?B?Tjh2K1FHd3ZTK00rcXZ1ak96ZUpNcHBVVmJRU3RuVXF5a3VCWktuYTVhcHE2?=
+ =?utf-8?B?YVQ0VmlHTUVYeDFBeHYxbnJjNzErVVdubksxR2ZOdXNRRzhKT3FYTWRUQmdw?=
+ =?utf-8?B?MlUyUi85YlNFKzlDU1k1MVBxd0dudHBqVTdmUURkc1dKaGxlZHVTWk9yK3pp?=
+ =?utf-8?B?M3ljRW9HM3czMVFxcjFwMnlUOU84eGxNbFBvWXFxTWdsend1VEZOK0xEbFBM?=
+ =?utf-8?B?aml0aXQrVU9IRTl0QzN4VE9yYU5hSitjNjBIRVFYeWx6L0JsbmhWZmhsY25x?=
+ =?utf-8?B?TjNtYzAxVUJUVjFqbnhDM3dXWHZncjFqM1kyWW1jQ2ZmOUFhdDZOSW9hMHdX?=
+ =?utf-8?B?OXNaZzdtVms1UjFRUnQrOUVYQUlZWGl0b3dRZlBtTWE3MDFhNXhkeG4ra1ZX?=
+ =?utf-8?B?ZEVWdU9NTE53bThpeE8vZlZPbEVtM0tsWno4bzhDRHJSa04rVEIrM1dZZW9R?=
+ =?utf-8?B?dDBMVmVxbUd3ejlFUWFvS0thNWw2QzRCejFEaEFnSzFzSkJsQ3F3dkFycm5w?=
+ =?utf-8?B?TGxuNUlHNGNIS0svRXJCM3BZVktGSEZ5NDNQdzQwdUxJS0JoRlRmRDJIbGFU?=
+ =?utf-8?B?MUZNQjYzNWNrMnk2VFg5d1o1SFFGeFMxa3JvUTViVVBrbVhFVXpJazNvUDJS?=
+ =?utf-8?B?cCt0bTdycjhSM052cDlwTWVFYUxhQ0lIN3BxMDVTQ0EyZDhTN2ZNUkVySEg0?=
+ =?utf-8?B?VTB6eVZreDFUcklwY2J3SVMwNnRQV1lOQWtOWTBSZmlkSmt6b2xkZm9ZY2dz?=
+ =?utf-8?B?MHprQVRFT09NMXNrNUNBVFVjdkoySTRwTm0xWjJJNnVDa1pObHgwMnBpNGpC?=
+ =?utf-8?B?MmFOb2tFOWFsNFhaamJLWVcvWThWS2czQ2pHMGdzckZ5dXVPcnNZaUZqblpY?=
+ =?utf-8?B?ekxQeUMzSW1mNHVLZ3VmZ1hKSzFLaXQzSVRLYXYrem1pQ1lkL3lFTTdCVUow?=
+ =?utf-8?B?cWVIdEVmM21VUmRlYnF5d3dqTXRpWmttWU1UYTZ2L3diL3pka0JGWmVqMWVT?=
+ =?utf-8?B?V1VSK0xYM1EwT0lraTgyWDFxMjFYMEdwMVd3M3QvOGFuTGFLV01nSHJKY1BS?=
+ =?utf-8?B?R3dscXVGaytTNTAxTWFINjA1U09KNHBGWGdCaS9VYjd4U3VwUGVhc1NIdExy?=
+ =?utf-8?B?aXI2MWF4S3hiR0Q5K09DTHFpbHMweGZtTHQrb1JxVEkwNmpmR1VFY3JadzVs?=
+ =?utf-8?B?d29LQzVlL0ROU1hmL0tBVkhWYlJLYXFxVnpLMWUrSnJqUFJGckVkRmdnOUph?=
+ =?utf-8?B?ZElZMHpySzN4aUdLYjd0NWh5LzlsRTdUTzhVYzdTRVZZejVLN0dwRkpJSGZx?=
+ =?utf-8?B?ZktFS0RYVGI0WThncW5mcW95VlplNy9uSnROdkJzL3ZCdGJzaUQ0VXN3N2pj?=
+ =?utf-8?B?Z2o4UTVxaDVzSXFKY1RCSzRkTzh2aGhBVVVBL0s0NE04c0RrNWNHL2RiNVZj?=
+ =?utf-8?B?SDBsL0o5SS9LWkpwcERFempSWnlDZ0wzWUJUNHN0Z2ltWkZGdmVWd0V4N2NM?=
+ =?utf-8?B?NzVSczF4NG9BeXp6YkdzL0hZQ1RQelZwTmJXRHh4cjVyQzJnWDlhd1NHTzBJ?=
+ =?utf-8?B?a1E9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d12ca97-8dd2-49c7-8977-08dd4cdffb60
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9615.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3f4acf7-f79a-49d5-d4c7-08dd4cdf8725
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2025 10:08:28.5242
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 10:11:43.7165
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB9082
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QONq6gQC5tGi9230iOM2g8KKeWhLQveObhxi5v38kNZ01D7gYRBx+cp1/xWJXpgsua+2fTXrCIYsaLWBXI1p0LzHnNiIhjN9Cv7Ho4zDtb8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7174
 
-From: Aditya Garg <gargaditya08@live.com>
 
-There has been a continuous increase in the number of devices requiring
-hid-apple driver during the last few years. Moreover, unlike previous
-releases, the PIDs of the newer devices released cannot be combined in a
-specific range, thus filling up the if else if statements with individual
-device IDs. For such large table, its now more suitable to use switch case
-instead of if else if for improved readability.
+在 2025/2/14 17:51, Jerome Brunet 写道:
+> [ EXTERNAL EMAIL ]
+>
+> On Fri 14 Feb 2025 at 10:13, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
+>
+>> From: jiebing chen <jiebing.chen@amlogic.com>
+>>
+>> Add the audio tocodec for s4, add the 8 lane support,
+>> add the mclk and sclk enable event when start data enable auto switch
+> Again, incomplete description and mixing things together.
+>
+>> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+>> ---
+>>   sound/soc/meson/axg-card.c      |  3 +-
+>>   sound/soc/meson/g12a-toacodec.c | 64 +++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 66 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
+>> index a2dfccb7990f3a53f508fc6724b21de53b4494d8..5cef069c3370257d4aaf24d7270482651babcfe1 100644
+>> --- a/sound/soc/meson/axg-card.c
+>> +++ b/sound/soc/meson/axg-card.c
+>> @@ -303,7 +303,8 @@ static int axg_card_cpu_is_tdm_iface(struct device_node *np)
+>>   static int axg_card_cpu_is_codec(struct device_node *np)
+>>   {
+>>        return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx") ||
+>> -             of_device_is_compatible(np, DT_PREFIX "g12a-toacodec");
+>> +             of_device_is_compatible(np, DT_PREFIX "g12a-toacodec") ||
+>> +             of_device_is_compatible(np, DT_PREFIX "s4-toacodec");
+> There is no need to extend that indefinitely, use fall-back
+>
+>>   }
+>>
+>>   static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
+>> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
+>> index 531bb8707a3ec4c47814d6a0676d5c62c705da75..a93a91136e8ea00e856c3981b9c1e7e08d927a3b 100644
+>> --- a/sound/soc/meson/g12a-toacodec.c
+>> +++ b/sound/soc/meson/g12a-toacodec.c
+>> @@ -41,6 +41,9 @@
+>>   #define  CTRL0_BCLK_SEL_LSB          4
+>>   #define  CTRL0_MCLK_SEL                      GENMASK(2, 0)
+>>
+>> +#define CTRL0_BCLK_ENABLE_SHIFT              30
+>> +#define CTRL0_MCLK_ENABLE_SHIFT              29
+>> +
+>>   #define TOACODEC_OUT_CHMAX           2
+>>
+>>   struct g12a_toacodec {
+>> @@ -107,6 +110,33 @@ static int g12a_toacodec_mux_put_enum(struct snd_kcontrol *kcontrol,
+>>        return 1;
+>>   }
+>>
+>> +static int tocodec_clk_enable(struct snd_soc_dapm_widget *w,
+>> +                           struct snd_kcontrol *control,
+>> +                           int event)
+>> +{
+>> +     int ret = 0;
+>> +     unsigned int mask = 0, val = 0;
+>> +     struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+>> +
+> Over complicated for no reason
+>
+>> +     switch (event) {
+>> +     case SND_SOC_DAPM_PRE_PMU:
+>> +             mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
+>> +             val = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
+>> +             ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
+> All this could be done in one line and be actually readable if you
+> properly used the BIT() macro.
+>
+>> +             break;
+>> +     case SND_SOC_DAPM_PRE_PMD:
+>> +             mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
+>> +             val = 0 << CTRL0_MCLK_ENABLE_SHIFT | 0 << CTRL0_BCLK_ENABLE_SHIFT;
+>> +             ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
+>> +             break;
+>> +     default:
+>> +             dev_err(component->dev, "Unexpected event %d\n", event);
+>> +             return -EINVAL;
+>> +     }
+> ... and nothing explains what is being done and why ...
+>
+>> +
+>> +     return ret;
+>> +}
+>> +
+>>   static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
+>>                            CTRL0_DAT_SEL_LSB,
+>>                            g12a_toacodec_mux_texts);
+>> @@ -143,6 +173,14 @@ static const struct snd_soc_dapm_widget sm1_toacodec_widgets[] = {
+>>                            &g12a_toacodec_out_enable),
+>>   };
+>>
+>> +static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
+>> +     SND_SOC_DAPM_MUX("SRC", SND_SOC_NOPM, 0, 0,
+>> +                      &sm1_toacodec_mux),
+>> +     SND_SOC_DAPM_SWITCH_E("OUT EN", SND_SOC_NOPM, 0, 0,
+>> +                           &g12a_toacodec_out_enable, tocodec_clk_enable,
+>> +                           (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD)),
+> Drops the .autodisable without a even comment
+>
+> AFAICT, could be done like the other SoC with SOC_SINGLE_AUTODISABLE()
+> with properly chosen values.
+>
+>> +};
+>> +
+>>   static int g12a_toacodec_input_hw_params(struct snd_pcm_substream *substream,
+>>                                         struct snd_pcm_hw_params *params,
+>>                                         struct snd_soc_dai *dai)
+>> @@ -236,6 +274,10 @@ static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
+>>        SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
+>>   };
+>>
+>> +static const struct snd_kcontrol_new s4_toacodec_controls[] = {
+>> +     SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 7, 0),
+>> +};
+>> +
+> No. there is no reason to add that for s4 and not for sm1 which has 8
+> line HW support too. That clearly shows up with #define used.
+>
+> If you must do that, please do it correctly without leaving the other
+> platforms behind.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-apple.c | 75 +++++++++++++++++++++++------------------
- 1 file changed, 43 insertions(+), 32 deletions(-)
+Hi，jerome
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index c672ffc97..4e8b01793 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -410,42 +410,53 @@ static int hidinput_apple_event(struct hid_device *hi=
-d, struct input_dev *input,
- 		asc->fn_on =3D !!value;
-=20
- 	if (real_fnmode) {
--		if (hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_ANSI ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_ISO ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_JIS ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_ANSI ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_ISO ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_JIS ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ANSI ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO ||
--		    hid->product =3D=3D USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS)
-+		switch (hid->product) {
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_ANSI:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_ISO:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_JIS:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_ANSI:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_ISO:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2009_JIS:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ANSI:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO:
-+		case USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS:
- 			table =3D magic_keyboard_alu_and_2015_fn_keys;
--		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2015 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2015)
--			table =3D magic_keyboard_alu_and_2015_fn_keys, dont_translate_flagged_k=
-ey =3D true;
--		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_202=
-1 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021)
-+			break;
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2015:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2015:
-+			table =3D magic_keyboard_alu_and_2015_fn_keys;
-+			dont_translate_flagged_key =3D true;
-+			break;
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021:
- 			table =3D magic_keyboard_2021_and_2024_fn_keys;
--		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J132 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J680 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J213)
-+			break;
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J132:
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J213:
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J680:
- 			table =3D macbookpro_fn_keys;
--		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J214K ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J223 ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J152F)
--			table =3D macbookpro_fn_keys, dont_translate_flagged_key =3D true;
--		else if (hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J140K ||
--			 hid->product =3D=3D USB_DEVICE_ID_APPLE_WELLSPRINGT2_J230K)
--			table =3D apple_fn_keys;
--		else if (hid->product >=3D USB_DEVICE_ID_APPLE_WELLSPRING4_ANSI &&
--				hid->product <=3D USB_DEVICE_ID_APPLE_WELLSPRING4A_JIS)
--			table =3D macbookair_fn_keys;
--		else if (hid->product < 0x21d || hid->product >=3D 0x300)
--			table =3D powerbook_fn_keys;
--		else
-+			break;
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J152F:
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J214K:
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J223:
-+			table =3D macbookpro_fn_keys;
-+			dont_translate_flagged_key =3D true;
-+			break;
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J140K:
-+		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J230K:
- 			table =3D apple_fn_keys;
-+			break;
-+		default:
-+			if (hid->product >=3D USB_DEVICE_ID_APPLE_WELLSPRING4_ANSI &&
-+			    hid->product <=3D USB_DEVICE_ID_APPLE_WELLSPRING4A_JIS)
-+				table =3D macbookair_fn_keys;
-+			else if (hid->product < 0x21d || hid->product >=3D 0x300)
-+				table =3D powerbook_fn_keys;
-+			else
-+				table =3D apple_fn_keys;
-+		}
-=20
- 		trans =3D apple_find_translation(table, code);
-=20
---=20
-2.43.0
+for sm1 tocdec reg, tocodec only support 4 lane
 
+bit [19:16]
+
+0: tdmout_a_dat[0];
+1: tdmout_a_dat[1];
+2: tdmout_a_dat[2];
+3: tdmout_a_dat[3];
+4: tdmout_b_dat[0];
+5: tdmout_b_dat[1];
+6: tdmout_b_dat[2];
+7: tdmout_b_dat[3];
+8: tdmout_c_dat[0];
+9: tdmout_c_dat[1];
+10: tdmout_c_dat[2];
+11: tdmout_c_dat[3];
+
+
+for s4 tocodec reg, tocodec support 8 lane
+
+bit[20:16]
+
+0: tdmout_a_dat[0];
+1: tdmout_a_dat[1];
+2: tdmout_a_dat[2];
+3: tdmout_a_dat[3];
+4: tdmout_a_dat[4];
+5: tdmout_a_dat[5];
+6: tdmout_a_dat[6];
+7: tdmout_a_dat[7];
+8: tdmout_b_dat[0];
+9: tdmout_b_dat[1];
+10: tdmout_b_dat[2];
+11: tdmout_b_dat[3];
+12: tdmout_b_dat[4];
+13: tdmout_b_dat[5];
+14: tdmout_b_dat[6];
+15: tdmout_b_dat[7];
+16: tdmout_c_dat[0];
+17: tdmout_c_dat[1];
+18: tdmout_c_dat[2];
+19: tdmout_c_dat[3];
+20: tdmout_c_dat[4];
+21: tdmout_c_dat[5];
+22: tdmout_c_dat[6];
+23: tdmout_c_dat[7];
+
+reg offset ,and mask is differnet
+
+in addition to this
+
+add bit[29] : enable tocodec mclk , bit[30]: enable tocodec bclk
+
+we want to auto enable bit[30] and enable bit [29] when bit[31] enable
+
+if not add the autodisable event, we can enable it on startup api, 
+disable on shutdow api ?
+
+
+>
+>>   static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
+>>        .probe                  = g12a_toacodec_component_probe,
+>>        .controls               = g12a_toacodec_controls,
+>> @@ -258,6 +300,17 @@ static const struct snd_soc_component_driver sm1_toacodec_component_drv = {
+>>        .endianness             = 1,
+>>   };
+>>
+>> +static const struct snd_soc_component_driver s4_toacodec_component_drv = {
+>> +     .probe                  = sm1_toacodec_component_probe,
+>> +     .controls               = s4_toacodec_controls,
+>> +     .num_controls           = ARRAY_SIZE(s4_toacodec_controls),
+>> +     .dapm_widgets           = s4_toacodec_widgets,
+>> +     .num_dapm_widgets       = ARRAY_SIZE(s4_toacodec_widgets),
+>> +     .dapm_routes            = g12a_toacodec_routes,
+>> +     .num_dapm_routes        = ARRAY_SIZE(g12a_toacodec_routes),
+>> +     .endianness             = 1,
+>> +};
+>> +
+>>   static const struct regmap_config g12a_toacodec_regmap_cfg = {
+>>        .reg_bits       = 32,
+>>        .val_bits       = 32,
+>> @@ -278,6 +331,13 @@ static const struct g12a_toacodec_match_data sm1_toacodec_match_data = {
+>>        .field_bclk_sel = REG_FIELD(TOACODEC_CTRL0, 4, 6),
+>>   };
+>>
+>> +static const struct g12a_toacodec_match_data s4_toacodec_match_data = {
+>> +     .component_drv  = &s4_toacodec_component_drv,
+>> +     .field_dat_sel  = REG_FIELD(TOACODEC_CTRL0, 19, 20),
+>> +     .field_lrclk_sel = REG_FIELD(TOACODEC_CTRL0, 12, 14),
+>> +     .field_bclk_sel = REG_FIELD(TOACODEC_CTRL0, 4, 6),
+>> +};
+>> +
+>>   static const struct of_device_id g12a_toacodec_of_match[] = {
+>>        {
+>>                .compatible = "amlogic,g12a-toacodec",
+>> @@ -287,6 +347,10 @@ static const struct of_device_id g12a_toacodec_of_match[] = {
+>>                .compatible = "amlogic,sm1-toacodec",
+>>                .data = &sm1_toacodec_match_data,
+>>        },
+>> +     {
+>> +             .compatible = "amlogic,s4-toacodec",
+>> +             .data = &s4_toacodec_match_data,
+>> +     },
+>>        {}
+>>   };
+>>   MODULE_DEVICE_TABLE(of, g12a_toacodec_of_match);
+> --
+> Jerome
 
