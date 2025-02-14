@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-515429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C26A364B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E58A364BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:38:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 932FE3B1B5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3603AA95A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0DA268687;
-	Fri, 14 Feb 2025 17:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E63268687;
+	Fri, 14 Feb 2025 17:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="xnODtEQP"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjSPnsSb"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFA32686A1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989CD264A80;
+	Fri, 14 Feb 2025 17:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739554629; cv=none; b=rrbjeKff2pU0fAb9BzZIuHis8E1r07turqOc+yYdJuoo277E/2qaOJ0aS8ktSL3ZGsT6QdL7bOLbNGJxESn3Sk2JRJISHSIcFj9xT0QYVdZw38dDp1eBaWpRsxpPnIrKpp2iYHeUkSss8nD9hEqVGgztdFZ6dGLXfNjqWlvB1GI=
+	t=1739554704; cv=none; b=G9jWtBN6s5SpFGvcZ0onrWoIIuPTmr7Z9BDfzI79+RcmQz+zCOiP9yvQmZEPknzU1auppik5GFpWvUA+8z1yhUofmO+ORtcMPmfeH0mzWBaGMV0GwWvW9nC6eE2CoB/DEX3r/Zm93aITp6cPVj8BdmEXnFg3zb1BeYdTbUFqQM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739554629; c=relaxed/simple;
-	bh=OFAPAVOqVuoi9a1p+QX8ZWSN2oGBayyv39emGYuW7Sk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=STRv2vj6TIqYTuf+GbXiakKl5V1D/0Io7VFneC7it2z4vKnsBvwVCTa5lBzHXIRKf4F5XuPm0rPXMrKfpvSTRxddM3ExY59wbJRqyXr2WtOAQBR8EUWUUW7t9fKsEJ4cSKaNfLqPG5iw4qtwvmIg8elQSskBtqBdbOi2JFt39c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=xnODtEQP; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=xnODtEQPIh/VEXOsU16HCVaa9NNEu1CsH4Jd3yTVsHaqS+hIB2UOU8xwUUTTaRLh18Hy/WeY+RyuGFSnI0RHV5GUPnFGL6daf6b4sWhF0jj0CEj6D8uEIJr+wllqG48MVilsxa/glMI9jLVKSCh3Cz7+bnCQSB3SAua59e61b2E0qAeo75pRO6d1Qq8rnD22VE0wkbYf/BGZxTCKlmLyV2TbP/YIyYFbPrBVAm+bgVgH8n8kn9ZcshBQ8hFBwrWYZgGYQJcjypjV4O458HIEko73UUmWc6OeyEZtYGmQYrejnfmdotHdwowqfS1gdElBuMVqsp+d+1McLRLIXBu8Jg==; s=purelymail3; d=purelymail.com; v=1; bh=OFAPAVOqVuoi9a1p+QX8ZWSN2oGBayyv39emGYuW7Sk=; h=Feedback-ID:Received:From:Date:Subject:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 893203092;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Fri, 14 Feb 2025 17:36:56 +0000 (UTC)
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Date: Fri, 14 Feb 2025 18:36:49 +0100
-Subject: [PATCH] dt-bindings: usb: samsung,exynos-dwc3 Add exynos990
- compatible
+	s=arc-20240116; t=1739554704; c=relaxed/simple;
+	bh=QPs3gUpFK4FWDMUzE0c96/LCetQlahqqneggbHHyl9g=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rOEEuneHT6QXBAdhFU0meUiuq4TSIaT7wZb1YgM5KhF5jM6jH6IcupOJYG8AxzIN+wWsmgfvqeig4KfskbhV+t3Je/Nv1q+TL4HW0ldrpIafYkI/WZkLCdwoUnrX6cNjtaAr4dLk+pPLpAq1PZEfbEWOs4Kuhj7blch4isWfexo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjSPnsSb; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5451d1d56a7so2447098e87.0;
+        Fri, 14 Feb 2025 09:38:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739554701; x=1740159501; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KBFUDI3xlZQ8GKkkFKuNnNL4ifTKfoCt6m1CciLzViQ=;
+        b=AjSPnsSbQYmSmQd/a3VvcovQuPi+nX+FavmCyda1450T+IzD8jiqHgDALP5E2XCtbX
+         GkorGXA7EXfwy1xgYZ2ZX9I7uPDem+ct5pwD9Vn95y6jkCq0nLxgCKn7zm+IqWcATLrm
+         cqAyXAxzCNq9QysoSy4ojKCgQL9x/PMRW8K9tMyvkOvxNL7PrzJUgPZYfy1p6SruCbWz
+         dImH0x6bEhAWgJZwigRj6Ox19g4P+90S5g9DfeZAmKeTAge4mpIf1nGkeLwwazLKExi0
+         ZEZP2CpCZYxj5edotwJHkPkJdaXzBFV0JEV9JkFhETTqfjrMnACXu7dwTPCs2TYAbb5n
+         xW/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739554701; x=1740159501;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBFUDI3xlZQ8GKkkFKuNnNL4ifTKfoCt6m1CciLzViQ=;
+        b=Bhe2mRnu+e2wpmQKRfBJUntEyNR77uiA7OLwa5ZqjCcfScIeVshYkFpOZzgqi0FBer
+         JeEWnTtroHeK69/gCNJN7OLMDvs/TEPv/6iS/HNmjPbU0InxvJNvhmitvBfyLHNtrP2S
+         F9TD0TZfe7vaFHvun+fPcea3kFbJuMZGR3JoC5Evd0V3foWJN6ecUd+9YfElWh8lOA/Y
+         dJDChPnDaOcsWwQ0DlBW1df12DpH2MziyOgkzzDosFyPbHBugC+IYzJuVIzIayjYhRRO
+         bJ7yVCO1sVNeuhzM9RH7Aarsdh04PJR7ajAnL7+KXW0Us81N9glVVrVAweTndHyofwFA
+         oKwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6yQTyMwXzFn07xE2a8sInwaL8OF3Idsp1uIukjdncYkI29OZo3rZh+IJ6S1eIZ/HSEGzzpvG/h6dz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE60k+CJEpyzx4RAMBcUDd23b5dyFf9D8EZQRVinSjpCP0fQOA
+	WxDOjx71yQjkkpe30q8LDjIZYvE2V0KZX8WXPyizfrUYEW/BeY8O6i/vp3DythiwZECbsMlXDdc
+	ytCyFBJAnTc+emmcON358eycuZsEeImTB
+X-Gm-Gg: ASbGncubNdIzpKgkvvZb3TiZ25tNPQ4RzWB5+ro9FcNod7kcXoes/Nuij17dVooxVhU
+	j7y0N/T1BXH2GTSiiga0XMv99TQLlOCUtY7kfT527VOxAGRyaX/pHEiBszhzaIM7ofqPogwOtG3
+	04b1QgZifiSTIuUFCKn2XZ+xFqoiXO+2k=
+X-Google-Smtp-Source: AGHT+IErlXdNZY2UjkX6nT6T6lZiBSIaI+Czn+PLcvm4idY5EOhV0hA1ZMzQ5mK/HWJ2JnnbqHBYVdc9kUS5DHUWOm4=
+X-Received: by 2002:a05:6512:128a:b0:545:1182:183f with SMTP id
+ 2adb3069b0e04-5451dfc1418mr2790297e87.4.1739554700364; Fri, 14 Feb 2025
+ 09:38:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-exynos990-bindings-usb3-v1-1-3e5d2721c98c@mentallysanemainliners.org>
-X-B4-Tracking: v=1; b=H4sIADB/r2cC/x3MPQ6DMAxA4asgz7WUH1pIr4IYSONQLwbFAoEQd
- 2/U8Rveu0CpMCm8mwsK7ay8SIV9NPD5TjITcqoGZ9zTONsiHacsGoLByJJYZsVNo8dX7k3ubGi
- t76DWa6HMx/88jPf9A7LqK+RpAAAA
-X-Change-ID: 20250214-exynos990-bindings-usb3-6f80f7194137
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739554614; l=1615;
- i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=OFAPAVOqVuoi9a1p+QX8ZWSN2oGBayyv39emGYuW7Sk=;
- b=uTaLuSG+epbVxDmg8aBZu28KGGGb2BkzA1eUtYOg78i++a0yLgSiKU1KhRpWn5Xx7FQI4+tZY
- D9YY22xxBWcBIOPqsdbbsJRS79i5ifu17aOBbWCNqJbd7wfh3IhOykU
-X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
- pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 14 Feb 2025 11:38:07 -0600
+X-Gm-Features: AWEUYZlBIgfs3V_pXoQk38EcHNutmpOio2VgrE0znV5zSWDZirfTgy_EY3pt4to
+Message-ID: <CAH2r5mvzsA_nUYZHs4mSwU0GOOBGjKEchyjBLrCaSRf7pPyMvw@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fix
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Add a compatible for the exynos990-dwusb3 node. It's compatible with the
-exynos850 variant when using the highspeed mode.
+Please pull the following changes since commit
+a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
-The Exynos990 SoC embeds a DWC3 USB3 DRD controller.
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
-The controller's design is compatible with the Exynos850 design
-for high-speed mode.
+are available in the Git repository at:
 
-This patchset adds in the new exynos990-dwusb3 compatible.
----
- Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc2-smb3-client-fixes
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 2b3430cebe99106f3b6201ab31d4d9e3fcc55627..136b14eecfe951dbc20377bffba1039fb1429f16 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -17,6 +17,7 @@ properties:
-       - samsung,exynos5433-dwusb3
-       - samsung,exynos7-dwusb3
-       - samsung,exynos850-dwusb3
-+      - samsung,exynos990-dwusb3
- 
-   '#address-cells':
-     const: 1
-@@ -124,7 +125,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: samsung,exynos850-dwusb3
-+            enum:
-+              - samsung,exynos850-dwusb3
-+              - samsung,exynos990-dwusb3
-     then:
-       properties:
-         clocks:
+for you to fetch changes up to f1bf10d7e909fe898a112f5cae1e97ce34d6484d:
 
----
-base-commit: 5cbcf2652f4cd84eac21f5e88fe2a0baecc601fb
-change-id: 20250214-exynos990-bindings-usb3-6f80f7194137
+  cifs: pick channels for individual subrequests (2025-02-11 18:51:07 -0600)
 
-Best regards,
+----------------------------------------------------------------
+SMB3 client multichannel fix
+- fix channel allocation, especially when using larger rasize
+----------------------------------------------------------------
+Shyam Prasad N (1):
+      cifs: pick channels for individual subrequests
+
+ fs/smb/client/cifsglob.h | 1 -
+ fs/smb/client/file.c     | 7 ++++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+
 -- 
-Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Thanks,
 
+Steve
 
