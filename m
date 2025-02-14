@@ -1,186 +1,133 @@
-Return-Path: <linux-kernel+bounces-514822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAADA35C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:09:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28919A35C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C325188F884
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C203D188FECE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9CF25E44D;
-	Fri, 14 Feb 2025 11:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB4625E44F;
+	Fri, 14 Feb 2025 11:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AlbSIDu1"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bruugF+G"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C068186E40
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DDE186E40;
+	Fri, 14 Feb 2025 11:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531362; cv=none; b=LDf94aVKCsj5mtIiqXMjkJrskYuvLO7EffM8htoRjlEddL8po58ccU513s2bL9WxvSw/v0JVCChTviE1lL6anDVGgUwdjCYYeohx6hYMOs7BOkVysdTDv9UwtVt0OTPd9E/AW7gO+Rq3bez5JaiwisshCxjBTgolqSQAURnW2i8=
+	t=1739531383; cv=none; b=Au/zew28pQaDT/lIQZ+rJOzT32opS+BwUqTntjbwHipm5B36Eki3pyGHH5Pxtel7wEIyD2/zt4t93j7a9mttGyMhI2SSbRXnWyniy8x4U7bU0teZO9rYJC/pwyOGDKcFEoJ2DRCOU19jllUu++gFyADZnt/HCvChzUvFx81yb0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531362; c=relaxed/simple;
-	bh=kbVminQweP0edHX60DRMOZAmpRtqyibJvpWKml9aMvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWnKnWcIfp7VH2pzkMphvwhmwDLcDNqWZosVfDNz8NlyKc4ANjIArtB1SnOrkLPUzo7/INAF5CEfvpTT/SYPwBedgtGl/OE+qetSemWdhAoO6p6LnQxKB6ZqUbAJZkwALBDRO/++wxh+CLHxe2uWRx4yHb7sAXcOjzzHi/CS/pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AlbSIDu1; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f31f7732dso22973f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:09:19 -0800 (PST)
+	s=arc-20240116; t=1739531383; c=relaxed/simple;
+	bh=aigpur5if5MSlLy9b9P0vOHm3NgsJ9o8CLycgKukS10=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fF/wnRAhYVc7I4Ws7H0miKnLHpuWjjtWFaL6WUQDHIRQV0dJ2GrKEOHX6nUTHePoMi3SmLA/1zzdTH2KXhGLt2CxWBmuCfcuPNkmQn/AefSgGj75dLLVQwGWeUltjWZK16Jybt263xGlrNEE1ZGikMEPvzLer+jM7ebanK9A3eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bruugF+G; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7fa1bc957so355351566b.2;
+        Fri, 14 Feb 2025 03:09:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739531358; x=1740136158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V7+4mem2ft+RVvvLEGTsxFIwY8eDWNZdbE4U/VEn5OU=;
-        b=AlbSIDu165La21uG3l8xxHp4sIcrOvyT/PpKJPpjoPVm4PRnFFXveBPXKEtBY0bcID
-         wInc7wKjISPR86md30Hv2YiK7vazo/8JtCzcmU8WjnMJwPw7LhBF7/q9zA459eLHTRvf
-         BPhaeCciifwpI4EffHABAeRMOQqKD2yK/3w1XKWWLXokPIJVXC+tP0AQAL23a4mHlEG/
-         NtWjq+fz9qspZmoNMFeWk94fMp4AY/qJeueqlITHIyiS7gyF0IKkX90eBNbczFPdQe1q
-         oxfgglXoHzqJR+SL50spwK/MB+9oD8gX65P96lvfuyEgc7pgnJD1a9SQ8OQBGM0zpeXI
-         Dd+Q==
+        d=gmail.com; s=20230601; t=1739531380; x=1740136180; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aigpur5if5MSlLy9b9P0vOHm3NgsJ9o8CLycgKukS10=;
+        b=bruugF+GCbhCVYWdfqjzRMp3V2M7kOa8+VZJRX+T+//TO6/SaRXDzKarG1eH9mTkFd
+         FiOrvRMLvhDDHFKhUOtmIt7MvVgEA2LOK+hFX3B/fPJljdxWLWKnuPqbkzvYDzfw5Gcf
+         YfrSS1aNWhZ6arORMlk6PoITbdgR2cd97lt5Ozxby2p5DK2LRQTb6O+dNhozeXipfj71
+         LucZTco7useBEbveXC80dN0hrViPXkwCd23mG8YVL3rrS27tCZEi+7d/izJ5L9NKPmZS
+         uw2NE0qrCILbTuwyIx52I1JyrNcPuhlfJdyPAiaKxa1X0yCzZtUiy+MtpoBM1HKM1TW+
+         amHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531358; x=1740136158;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7+4mem2ft+RVvvLEGTsxFIwY8eDWNZdbE4U/VEn5OU=;
-        b=JWaOEtTBoBPkB5SPW1b3Awq2ppRmo0jfzFRA+vuHJdr+mDRp6A+D/RjuEzGhARwBM5
-         G2iJK+/E3W0+imeOK1Sf2RyNCCtU2CYP3lzumb8hQr0OImir0eY3bKjK5O5ehZKG3Ko+
-         PFNSwxW/Bu7ooywQAD2v9KRyoj4kFGKWEIBlTlO9pkUxB/gvmAFH+Q5nwTAy1EKwSCYY
-         RT556BDKI1oJ+OpeVTXJfEQX7VpZiwQb4VKE831Dgd1+jrWC2xUsx/L5IFX5jDq/EfDP
-         Vac4ItVe9GR9DC254NER3kRtU2OEn38oceWCCnqW5WUJd1LnA5rKZP/ZAwvYH+X2nt/B
-         JtLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUx+UHL0mfb0da00rTMJ2CK+85f4/Tc4qMHwZGa7UA781hErDYDVJoaOc5CxQqt3sjikn1uYwK4dw+xZ5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/mX+1+9mHoh3GToZ7+Boqz1BCjDq049z1eVpOLeOxlAnyJeRD
-	4iZfx0Kced3o9pCNCc6Nm/AMD9K96AWIjtcSSZ2e+5RG3Tv148O5syEMJE7hpJA=
-X-Gm-Gg: ASbGncsrViQn1PQiCKvKMLwdn0QEYYLPZdxXIM5NHrXYul2L1Lh4WOQstlt4KcSSbeo
-	EB8KqiteDj6E1JeB2I9iZnpxDHFN4KbQpq3lZcynW6pWVAx2mTLJowkFqqA8RfivFjBnsLDzi5i
-	zwxpI6rMH6uN3a6myUEXC47xONvLbntZLbA/euYsyqdI0H+MwVni8g3r017k01WIsd5XNBQ23fy
-	WfshUDslTScVvxMbKtjvHYTxh3widRHbqACcSW1rOX6ds4imEdDQGsYtbQbpHBZ7wtC0EgZQpYE
-	7mXPifcCIP0hAC/3iQU8FlGyAw==
-X-Google-Smtp-Source: AGHT+IHSYzmRWK6x5dqInVV0CJ5pE2+xfHMxdXlGP6JgPhn1Wonrdhujy16nNDJTyIehflsH4kOBJw==
-X-Received: by 2002:a05:6000:71c:b0:38f:2b64:5327 with SMTP id ffacd0b85a97d-38f2b6457ccmr2854936f8f.24.1739531358487;
-        Fri, 14 Feb 2025 03:09:18 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25913eb6sm4373298f8f.51.2025.02.14.03.09.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:09:18 -0800 (PST)
-Message-ID: <b61af324-7488-4a4f-9f9e-2ecb004fc4c7@linaro.org>
-Date: Fri, 14 Feb 2025 11:09:16 +0000
+        d=1e100.net; s=20230601; t=1739531380; x=1740136180;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aigpur5if5MSlLy9b9P0vOHm3NgsJ9o8CLycgKukS10=;
+        b=oOsLA3MgA9SvngjIgEwU98JXgwyZw7VhPrTSp1D2+wjAOlX0UX8UCsTJnGgbowXpFT
+         buQmTi+CYDkGkvVyyApmGK091lSaZaWJ+NXgHpaozJ8Gmt6cZEoS4ujUyAGhk+OLht41
+         JY+5v1hClYA3ocw4ZWV4yxPt5AkUg2ehEl+OBQzWo0YsTBlRa2HX4D5KLBOo6G+tW6PI
+         vTT9+YOz/zrrCZfVFsxiyWmU4TLHahstDVVLplyOBN0J8LH4KwQFZGzbrvJ2AJsviD+t
+         Y3fTmj5MriR3uNghwoHr6PM/qi3dInuZeb3m7BYCTnBzYM3U6wXir4yepOQOIKYx7xVk
+         yTxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWHnyWISwNe5UtGSR1mCcdTaQNUN2ZRDoICXYsO7DyNHWh6XPJw8MuDPJwYbDG5aro+uYkJNzRhw7fiZrb@vger.kernel.org, AJvYcCVeiK5+lagghVZdkH3o3fvcCwYppjTypgTQT+yref8NXT9Ci9eiUH5bWsqkAIAmFJVIYKMeQTRaIhtE@vger.kernel.org, AJvYcCWLHEQUwmInaCw6bsSJMgp2Or/8Fay4n9jwULpN5vHJKPqXuDIpychwA56dRlrN2ko0lmv0GcUtkhS1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOwJstWlgzpHohjHaNprxWtf67zzNWjL7OWUWTo0g6UQIsH130
+	0OSNA0J3p4B1xlp2BAeu4sBKU8qZYwcObRzlVm1yV0rCIM2m82gY
+X-Gm-Gg: ASbGnctjYL1YmrX1Dto65luXqQp53GoEIde6zxqSH5hqzaK2oCSfTyJ8/9SyZ+QUkiV
+	d8a1PGVBl4Hwoh6On0BZitbQdDsEwNE7Rnn2ZF+5YB2XlNI8gfHwcRIKcwxWo9AupW6YQ0CmXv9
+	vogJrdNQCHvW0MykFHdtrWH8yT3LT4rhg+W38wH+MIhRC/ET9liNurrl0kBM5/Kc+KidI0qnh8d
+	fvXWLP3/JP5XTIkirrDnYRu993xWTtzMev7+umdN753eEg+RxL0PfI4lOzhZCHB7SEerrT/yE58
+	mC0bVrqivB27zGyLNNc9drwG97zhBuio
+X-Google-Smtp-Source: AGHT+IEX8u4B+i9w7ZDW/hBhkVNRcW+7tzz1yY2Ss5mruSCSTtkcNIfQ5b1LN+2uvhhVxWkQSF0igw==
+X-Received: by 2002:a17:907:3e9c:b0:ab6:da18:9a3 with SMTP id a640c23a62f3a-aba5017e3bcmr646004066b.46.1739531380181;
+        Fri, 14 Feb 2025 03:09:40 -0800 (PST)
+Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece270a7fsm2746739a12.58.2025.02.14.03.09.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 03:09:39 -0800 (PST)
+Message-ID: <964a016b944b459a9a914abac539350769323259.camel@gmail.com>
+Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
+ Sophgo CV1800 series SoC
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Inochi Amaoto <inochiama@gmail.com>, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org
+Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	unicorn_wang@outlook.com, inochiama@outlook.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, dlan@gentoo.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski
+	 <krzysztof.kozlowski@linaro.org>
+Date: Fri, 14 Feb 2025 12:09:37 +0100
+In-Reply-To: <t6z6rikut2him5m57b6xubbguw3llczp4i6d5frcpuhlqihf2d@booethzadxsq>
+References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+	 <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+	 <t6z6rikut2him5m57b6xubbguw3llczp4i6d5frcpuhlqihf2d@booethzadxsq>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/7] Coresight: Introduce a new struct coresight_path
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20250207064213.2314482-1-quic_jiegan@quicinc.com>
- <20250207064213.2314482-5-quic_jiegan@quicinc.com>
- <a633f52c-81e8-4c0d-aca7-cc18360866eb@linaro.org>
- <4b521b49-7104-4f25-82cb-4f9be7b235f4@quicinc.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <4b521b49-7104-4f25-82cb-4f9be7b235f4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+Hi Inochi,
 
+On Fri, 2025-02-14 at 17:40 +0800, Inochi Amaoto wrote:
+> > +examples:
+> > +=C2=A0 - |
+> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +=C2=A0=C2=A0=C2=A0 rtc@5025000 {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "sophgo,cv18=
+00-rtc";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x5025000 0x2000>;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupts =3D <17 IRQ_TYPE=
+_LEVEL_HIGH>;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&osc>;
+> > +=C2=A0=C2=A0=C2=A0 };
+> > --=20
+>=20
+> Just for curiosity, Do you leave a way to implement the
+> 8051 subsys, since its registers are in rtc. (You can
+> check the chapter "8051 subsystem" of the SG2002, which
+> can be found at https://github.com/sophgo/sophgo-doc).
 
-On 14/02/2025 1:34 am, Jie Gan wrote:
-> 
-> 
-> On 2/14/2025 12:00 AM, James Clark wrote:
->>
->>
->> On 07/02/2025 6:42 am, Jie Gan wrote:
->>> Add 'struct coresight_path' to store the data that is needed by
->>> coresight_enable_path/coresight_disable_path. The structure will be
->>> transmitted to any required devices to enable related funcationalities.
->>>
->>> The trace_id will be allocated after the path is built. Consequently,
->>> The ETM3x and ETM4x devices will directly read the trace_id from path
->>> which result in etm_read_alloc_trace_id and etm4_read_alloc_trace_id
->>> being deleted.
->>>
->>> Co-developed-by: James Clark <james.clark@linaro.org>
->>> Signed-off-by: James Clark <james.clark@linaro.org>
->>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>> ---
->>>   drivers/hwtracing/coresight/coresight-core.c  | 106 +++++++++++++-----
->>>   drivers/hwtracing/coresight/coresight-dummy.c |   5 +-
->>>   .../hwtracing/coresight/coresight-etm-perf.c  |  30 +++--
->>>   .../hwtracing/coresight/coresight-etm-perf.h  |   2 +-
->>>   drivers/hwtracing/coresight/coresight-etm.h   |   1 -
->>>   .../coresight/coresight-etm3x-core.c          |  54 ++-------
->>>   .../coresight/coresight-etm4x-core.c          |  54 ++-------
->>>   drivers/hwtracing/coresight/coresight-etm4x.h |   1 -
->>>   drivers/hwtracing/coresight/coresight-priv.h  |  12 +-
->>>   drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
->>>   drivers/hwtracing/coresight/coresight-sysfs.c |  17 ++-
->>>   drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
->>>   include/linux/coresight.h                     |  12 +-
->>>   13 files changed, 143 insertions(+), 157 deletions(-)
->>>
->> [...]
->>> @@ -352,7 +352,7 @@ static void *etm_setup_aux(struct perf_event 
->>> *event, void **pages,
->>>        * CPUs, we can handle it and fail the session.
->>>        */
->>>       for_each_cpu(cpu, mask) {
->>> -        struct list_head *path;
->>> +        struct coresight_path *path;
->>>           struct coresight_device *csdev;
->>>           csdev = per_cpu(csdev_src, cpu);
->>> @@ -405,15 +405,15 @@ static void *etm_setup_aux(struct perf_event 
->>> *event, void **pages,
->>>               cpumask_clear_cpu(cpu, mask);
->>>               continue;
->>>           }
->>> -
->>>           /* ensure we can allocate a trace ID for this CPU */
->>> -        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
->>> >perf_sink_id_map);
->>> -        if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->>> +        trace_id = coresight_path_assign_trace_id(path, CS_MODE_PERF);
->>> +
->>> +        /* Can be 0 and valid, ETE doesn't need an ID */
->>> +        if (trace_id < 0) {
->>
->> Not sure why I wrote it like this, but I think we should leave it as 
->> it was with !IS_VALID_CS_TRACE_ID(). Even with ETE it calls the trace 
->> ID allocator, so nothing has changed here.
->>
-> Sure, Will restore. For ETE or ETM, we dont need traverse the path, just 
-> directly allocate the trace id based on cpu id.
-> 
-> Jie
-> 
-> 
+well, I suppose, you know the answer, according to how this has been modell=
+ed
+within this series, all the functionality could only be added on top of RTC
+driver. Do you think it's time to re-design it as compatible =3D "syscon", =
+"simple-mfd"
+with children nodes for RTC and reboot?
 
-Sorry I meant to only keep the !IS_VALID_CS_TRACE_ID() bit. We still 
-need to call the new coresight_path_assign_trace_id() otherwise it 
-doesn't get assigned to the path. I saw that got removed in v11.
-
+--=20
+Alexander Sverdlin.
 
 
