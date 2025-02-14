@@ -1,79 +1,107 @@
-Return-Path: <linux-kernel+bounces-514850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3420A35C74
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:25:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1496A35C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B997A5AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E53170936
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C3E263C60;
-	Fri, 14 Feb 2025 11:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA09263F2A;
+	Fri, 14 Feb 2025 11:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCgGNzKf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0xmDFx0"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088BB227BAD;
-	Fri, 14 Feb 2025 11:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C7263C88;
+	Fri, 14 Feb 2025 11:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532165; cv=none; b=cWNQbFg+WCqQ8ZCLjzn9dCzu3p4C9MAdBCDqXdTp0Ucq5S0zD+o+e8+mZIeExf6O95LBDYblYqdpseJ/SXqwzwwqqHtqeRATgQIX3v/kgjpiV++UT07NzHFbupiQg/JmqZfGVBGEBWgQIoZzpwfguj3Eq9ygJFsD0HN87RILmw0=
+	t=1739532190; cv=none; b=lAQX/b/azS4ZLF7wVTU36KOmWN88/HKAQ0WaTFzQruJ4xrwH8gWdGY7ENlsS/TjYUv27q1ORq9/KpCcIg5xNnTySSKgJqOj/r6d2Am9XKotVv4DXcOI1bqG83ZNDB+ZHY3O2dUK4/wMn6CxdnWiF3Ug4LOTxGFz54Lhs4/Wmeic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532165; c=relaxed/simple;
-	bh=9+0ZoEndEpBrKl5s2nEdbdRyI7h4b6Ex8uOQ1/FEz7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEHtiqsQcMc7yQQJg9uwBBN8qJW3fpz0+trOd9K5dD911Tnwe0VxR0CLUx9OxXr50w7fUphQc1wCaTHH6hseVMbrzYPRRsW/pKG68U68n09Rg9zyqSe1ZkGeboeqwjPpIflgLQMs/+smJLhhm4YkBrH0KXmo9LBxMfKnEAjJVyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCgGNzKf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00F2C4CED1;
-	Fri, 14 Feb 2025 11:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739532164;
-	bh=9+0ZoEndEpBrKl5s2nEdbdRyI7h4b6Ex8uOQ1/FEz7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCgGNzKfaYo3RkW7ZGTGlQUou0TLmA2RhcWMqzxjRRvssD1c8ImVD3Xh+AUeVXL23
-	 mG8hPg+HvvRWYhkBYeYy/HVPHAPw/zMnOD4+j3yFSCjrkgyt010lXDE+qd+ML0UTGh
-	 ImIQJgdVyMlufEv/qiJ+u9kqMkEMRv4VW8OLJgHMIpCiLNuton1h/8J3uRtt0138iY
-	 UO5W0oVsrpDfs7UJ9y6ZcFn25zvluOiAm4TOgp0Ox7Qvm0nV9mufKxfG48MnrLPwtP
-	 U+ZtW7DnbKNyVYC+EaaJAjMJTjxYB3BkmfQw/6X1rRXXBsNTAV77EFZyg0yulOleKg
-	 6bdIfBDy9pZDA==
-Date: Fri, 14 Feb 2025 16:52:40 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
+	s=arc-20240116; t=1739532190; c=relaxed/simple;
+	bh=ncfBDs1BfbjE8HEdMRv396XMxgyF7oxwkpOZ9BEV/sg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IW/1lBm0j729e81RJu7pKhhAxLtuY1CBYL2KlcQtMTmoYMOFQ0/wul/an2gGez1TyDZAIKjFxgcc0mSmkZ4Ztk8Sek6YebyZqoUp492FwWwPhZffYsqKivykwbflAXpm6AuOIWgCzWCAsDljLL4nHvwpbwAyLegAssPcszq0bi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0xmDFx0; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dcdb56c9d3so2940545a12.0;
+        Fri, 14 Feb 2025 03:23:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739532187; x=1740136987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ncfBDs1BfbjE8HEdMRv396XMxgyF7oxwkpOZ9BEV/sg=;
+        b=U0xmDFx0RLQQxTionAvwtW7vGlhQv9ke+eSu98/SNSvTw9fi0fdp+jKbuUvAPD8tQL
+         zWHQ4JDge4S3aoXLUS9laWQyvGS61lpJXOzchJWbMpH63JgdDkUjSO09wsIdY4KPosZR
+         TmD1qfrCopnQm3YTlxBqfddD3TqPONzI+qmSfo6STWiPBCFKY7LRk7kuVh3eFybW1l7i
+         eICPkcggKjuiavykvsMf+GaV0n8ruKPqcSxYX9tIER7pN6ZdUdmPBq1yFMz2IMfGfOs4
+         d9qq2dUvfbStTUkrnof/Icpmb6xyKqWDGNNjfhL9IquLjdENhGw038ccnwFtUi+XneYC
+         dK+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739532187; x=1740136987;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ncfBDs1BfbjE8HEdMRv396XMxgyF7oxwkpOZ9BEV/sg=;
+        b=mUh0PnTM+Q/ON2VgrtGryz29Wu0ZcMH8mVDTG4PClj6uWIgit7vNzf9fcO7bwxBG/a
+         Ban3vYHjS/kW1gOsYsNnij242/P2LPzfULMNU+wqICdZmlalGXztY2twBf7FxcoExrOH
+         bBTQ65cE6A8tmjSGAbM1TLMwIRMaYC+LOrs973JlP5oM4v3iBsUd3iEz6ts70ECAg5xT
+         yjARUaha1BkZk7UzNq3u1IdoozunEWgzpi+SYA9U5eDRLRLqcMNg5aMpA4dfEhHDe/qB
+         Nl9o1e1gFJJQJgQu8N+qI4d/KBAX0fpISMnFMU0k545LqpsXqE9MaQUw+U6eslwNowNf
+         Dl5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXiYzhOROso9DEN8H/IL7Rs3XEeH/PywNbH5nXBlCtBqF5eKkBgZbeFHRKS8yCzxiJz2mzBNRb+4BjoLfQ=@vger.kernel.org, AJvYcCXk2UJcw5jLJbH3TldB7DILcYIXGvoS3+mjSF7UcFBjiWBgw5TNUwvc0DpfplHSkBY6EdCKMVe7UxWaW/SQdD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymwBvrsfZTXBwXoPl27AGS1Xw81zBeo+LRnOZazHRXC2RTChGL
+	Vc5rEtYCNLnq4gGLHzlL7TT9kBFLP9k0p8DoB8ryzGc7m6UzLsIh
+X-Gm-Gg: ASbGncv4dnFEuBB9OnhPvGX5cjnrMdU/XDdqdSRu5ZDI5TYgt5+16O2vWR/ik83ZSgX
+	VMvpbsUhil9lsa7NOTZA//kg6dK9jocEh5hUvuPOblYYg92x5FgIxiXYzwjm0JJmYPsDKrUXUcP
+	RSeZ/k43v9cMBwSeiEl52MVB3dZ1+R8vzD/SE2osJUqvuBQElFLe+3yjpqYyfHk31BGP0QMcutd
+	4jf/jti5XmmyJxkiUwGqbCr367q5jN2o2icB7hcoGAgKTB4D96+GqXqed9rq7Vdk1GI5gZyCw/Q
+	srv7xKfPpaz554c37ZN65CMsP3t1w9V958WL2o8wVatn5ShjT2KI
+X-Google-Smtp-Source: AGHT+IEruA9as/oJ+0B7yZpR+Du0MWt57ncaMUqTh8cPjv7Ydql7nmgBG5oMdHqeXfUBIja3MTJxOg==
+X-Received: by 2002:a05:6402:458c:b0:5e0:2d53:b2a with SMTP id 4fb4d7f45d1cf-5e02d530e00mr597835a12.3.1739532187306;
+        Fri, 14 Feb 2025 03:23:07 -0800 (PST)
+Received: from Junction.dargent.eu (242.76.29.93.rev.sfr.net. [93.29.76.242])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532594a0sm329434266b.68.2025.02.14.03.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 03:23:07 -0800 (PST)
+From: Regis Dargent <regis.dargent@gmail.com>
+To: 
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-watchdog@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] dmaengine: idxd: Remove unnecessary
- IOMMU_DEV_FEAT_IOPF
-Message-ID: <Z68ngMQ7iJJhOZtG@vaman>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <20250214061104.1959525-10-baolu.lu@linux.intel.com>
+Subject: [PATCH v2]: watchdog: sunxi: Allow watchdog to remain enabled after probe
+Date: Fri, 14 Feb 2025 12:22:53 +0100
+Message-Id: <20250214112255.97099-1-regis.dargent@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAGb2v67tmzGfcFPchjzfSima-sT_u7viYd1UDGB9r6ZeJEgdyg@mail.gmail.com>
+References: <CAGb2v67tmzGfcFPchjzfSima-sT_u7viYd1UDGB9r6ZeJEgdyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214061104.1959525-10-baolu.lu@linux.intel.com>
-
-On 14-02-25, 14:11, Lu Baolu wrote:
-> The IOMMU_DEV_FEAT_IOPF implementation in the iommu driver is just a no-op.
-> It will also be removed from the iommu driver in the subsequent patch.
-> Remove it to avoid dead code.
-
-Acked-by: Vinod Koul <vkoul@kernel.org>
+Content-Transfer-Encoding: 8bit
 
 
--- 
-~Vinod
+I (tried) to fix commit format (still learning, please comment is something
+is missing).
+
+I made the suggested code fixes and added a sunxi_wdt_read_timeout function;
+it was a bit more touchy, as the HW timeout could be set to less than a second
+(really?), so I had to manage max_hw_heartbeat_ms too.
+
 
