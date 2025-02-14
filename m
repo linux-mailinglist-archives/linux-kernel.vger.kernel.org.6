@@ -1,227 +1,114 @@
-Return-Path: <linux-kernel+bounces-515267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751C3A362B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:07:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B766A362A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABF53AE498
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BB427A513F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A44526738D;
-	Fri, 14 Feb 2025 16:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ECF2676D9;
+	Fri, 14 Feb 2025 16:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R5F0m4TH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="di0s5rsT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E970831
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D70E22F165;
+	Fri, 14 Feb 2025 16:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549103; cv=none; b=Eo0LLzzW/fbhqWV9fQWdV3j6liBoaSQxz/KHA1reCYKYhlPvRpQ6PD5Fw23X0xfoYONHOq+CcKBWe9pcR39hj6tuSvouWoEKYDotWNnAO9mvMhP0MckLW5SlOS5np1zcG0PvX2gQOTC0xhNs5wyzgHUC9VGxIMKog35FQGLK0WI=
+	t=1739549104; cv=none; b=TBJaRGGI0eOARRTarocx/1R6PavHAWYVRG06Xu0y1O/6IEAXhIQRWsASrJJQ3kBDKkgl/mYmEU5XNt6EfCwtccKztZTza9KONbJ9eOWI4UjB9Pm+W077wDLXH2uN0pdu02bgBB/QUBi1WdFR7da6woNMLGinD1NoBVBV82Oke9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549103; c=relaxed/simple;
-	bh=tPGnKsTSsJ9kM1YYt80WEh9vN2E3msPM20nio3hN6pg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r+zsEFRzR62o8AJ495ivQI2EE8WaMpbJm3ZWEWoVYnke1P3kVUKxwT/fSrD9h9uwNwSmr6BUnJ791FmgyDGv6yyTuutSdY2fvyUA3AloYxOg5mJBQR9jFm5uTXpw6ZefAZiZ0/nYyF0l54wWtYmD8o4qJROlkYOfuf7y/x3GrPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R5F0m4TH; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+	s=arc-20240116; t=1739549104; c=relaxed/simple;
+	bh=gr+oFhNZmIjaeOQHXEddIaHj9o3Ld8UUt/GpyThOrsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjNZQd3vShARmIEGMYZMFrxAbKIlJ5dUftpOKbFf3SYM30OjF0GmcjIlGsIgBpIHSEaG1cUIQsJ4mdNfv+eIoOxVmk5k3isA33BnUuOH6DoPkv85m1IdGL+eseeqY3C7N2dcXuE4c1t4YALeDEHqhQh8rB6ZsuLNdL/0Rs7jdP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=di0s5rsT; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739549102; x=1771085102;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=tPGnKsTSsJ9kM1YYt80WEh9vN2E3msPM20nio3hN6pg=;
-  b=R5F0m4TH1rWGxw2riVqBU5Ig4izd6n3yX1+MAI6s/0WckhfLeIqyuBXR
-   N2utMQ8OGATAd0MM/y6m6oeENT5eHFRO5n92963K6b8G+91Kv0IQdgPHm
-   moTVnLXuhSDqpA/gooB6mSfXnryQV6GnNfZEYi1nWyFgJzY47DFefkGmi
-   cZ6SoB+Oc9IW4JgaG14g9G4YFVnaQV6tOoejamfJRJYlIY5VvlfvpBznQ
-   GDr9fkJUEDxHjMXc6ubAX46CRAUPzq+zg/U2ITvGoNntmaZHVb4U/3TlE
-   gJFLXJ7ETyoERyGcWwpVgw8CAQbTAqmMO9a5f1LpCBU2xisie+xwclIpH
-   A==;
-X-CSE-ConnectionGUID: lJNTzQUJQcCsSnrT2k2w1A==
-X-CSE-MsgGUID: d5+UmnR5THG4alZtDqHP0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40337207"
+  t=1739549103; x=1771085103;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gr+oFhNZmIjaeOQHXEddIaHj9o3Ld8UUt/GpyThOrsg=;
+  b=di0s5rsT1RqrqburwP7mMYAvJLDBmU6cCagg5tuPZUr/SduKoucJ6QKl
+   umhsarHre91GExldW3mwJ8xQES1EsbYQP5x3bbxA3sMNB1u/q/nqSptJn
+   mbNjf0YOIuTcm1kO/Xfnf6smoEhlwm/sntDS0lUnh4YmPMjbqOCVFuqkf
+   JMtIb7UeEt4Lfx9QBLkox0d5gXlDmIyEeJnlBhqjBj6QaFbBGg7Qh4958
+   AD0k8K0XCVgOiF27Xp/DjU30z3d2uTNlsdhZeTP0s2E+QDigyqwrdvLBF
+   TBsD1EtF9FhZ6MmehKOoqnejq5+toNRfqOmfurQ66OBhokldQpCOxACYO
+   w==;
+X-CSE-ConnectionGUID: aMh4YZITRk27nm/ufItmmg==
+X-CSE-MsgGUID: DA2uUI1lT0eNqsdJxSrDvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43140741"
 X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40337207"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:05:01 -0800
-X-CSE-ConnectionGUID: BgH7hRJcSu6uLekeFBYs8w==
-X-CSE-MsgGUID: TDrZw5o1Q/qmDokW3HNLVw==
+   d="scan'208";a="43140741"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:05:03 -0800
+X-CSE-ConnectionGUID: vl3+/74xSCCbS1PUPCn3VQ==
+X-CSE-MsgGUID: pzc6VEhtSK6qJZqBNHH8AA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118113217"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.110])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:04:57 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Egor Vorontsov <sdoregor@sdore.me>, linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Egor Vorontsov
- <sdoregor@sdore.me>, Maximilian =?utf-8?Q?Bo=C3=9Fe?= <max@bosse.io>
-Subject: Re: [PATCH v3 1/2] drm/edid: Implement DisplayID Type IX & X timing
- blocks parsing
-In-Reply-To: <20250214110643.506740-1-sdoregor@sdore.me>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250214110643.506740-1-sdoregor@sdore.me>
-Date: Fri, 14 Feb 2025 18:04:50 +0200
-Message-ID: <87y0y8v7fh.fsf@intel.com>
+   d="scan'208";a="150655444"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:04:57 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiyBS-0000000BXUB-0oan;
+	Fri, 14 Feb 2025 18:04:54 +0200
+Date: Fri, 14 Feb 2025 18:04:53 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/10] gpio: regmap: Allow to retrieve ngpio
+Message-ID: <Z69ppU4LGvej0w-V@smile.fi.intel.com>
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-5-8a35c6dbb966@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-mdb-max7360-support-v4-5-8a35c6dbb966@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 14 Feb 2025, Egor Vorontsov <sdoregor@sdore.me> wrote:
-> Some newer high refresh rate consumer monitors (including those by Samsun=
-g)
-> make use of DisplayID 2.1 timing blocks in their EDID data, notably for
-> their highest refresh rate modes. Such modes won't be available as of now.
->
-> Implement partial support for such blocks in order to enable native
-> support of HRR modes of most such monitors for users without having to re=
-ly
-> on EDID patching/override (or need thereof).
->
-> Closes: https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/55
-> Suggested-by: Maximilian Bo=C3=9Fe <max@bosse.io>
-> Signed-off-by: Egor Vorontsov <sdoregor@sdore.me>
+On Fri, Feb 14, 2025 at 12:49:55PM +0100, Mathieu Dubois-Briand wrote:
+> Drivers can leave the ngpio field of the gpio_regmap_config structure
+> uninitialized, letting gpio_regmap_register() retrieve its value from
+> the "ngpios" device property. Yet, the driver might still need to know
+> the ngpio value later: allow to extract this value from the gpio_regmap
+> structure.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+I don't think it will be needed after looking at the user. Since we have
+somewhat around ten of them already and no-one wanted it makes me feel
+that this is a hack which can be avoided.
 
-> ---
->  drivers/gpu/drm/drm_displayid_internal.h | 13 +++++
->  drivers/gpu/drm/drm_edid.c               | 63 ++++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/d=
-rm_displayid_internal.h
-> index aee1b86a73c1..84831ecfdb6e 100644
-> --- a/drivers/gpu/drm/drm_displayid_internal.h
-> +++ b/drivers/gpu/drm/drm_displayid_internal.h
-> @@ -66,6 +66,7 @@ struct drm_edid;
->  #define DATA_BLOCK_2_STEREO_DISPLAY_INTERFACE	0x27
->  #define DATA_BLOCK_2_TILED_DISPLAY_TOPOLOGY	0x28
->  #define DATA_BLOCK_2_CONTAINER_ID		0x29
-> +#define DATA_BLOCK_2_TYPE_10_FORMULA_TIMING	0x2a
->  #define DATA_BLOCK_2_VENDOR_SPECIFIC		0x7e
->  #define DATA_BLOCK_2_CTA_DISPLAY_ID		0x81
->=20=20
-> @@ -129,6 +130,18 @@ struct displayid_detailed_timing_block {
->  	struct displayid_detailed_timings_1 timings[];
->  };
->=20=20
-> +struct displayid_formula_timings_9 {
-> +	u8 flags;
-> +	__le16 hactive;
-> +	__le16 vactive;
-> +	u8 vrefresh;
-> +} __packed;
-> +
-> +struct displayid_formula_timing_block {
-> +	struct displayid_block base;
-> +	struct displayid_formula_timings_9 timings[];
-> +} __packed;
-> +
->  #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
->  #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
->=20=20
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 13bc4c290b17..03edf0e1598e 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -6833,6 +6833,66 @@ static int add_displayid_detailed_1_modes(struct d=
-rm_connector *connector,
->  	return num_modes;
->  }
->=20=20
-> +static struct drm_display_mode *drm_mode_displayid_formula(struct drm_de=
-vice *dev,
-> +							   const struct displayid_formula_timings_9 *timings,
-> +							   bool type_10)
-> +{
-> +	struct drm_display_mode *mode;
-> +	u16 hactive =3D le16_to_cpu(timings->hactive) + 1;
-> +	u16 vactive =3D le16_to_cpu(timings->vactive) + 1;
-> +	u8 timing_formula =3D timings->flags & 0x7;
-> +
-> +	/* TODO: support RB-v2 & RB-v3 */
-> +	if (timing_formula > 1)
-> +		return NULL;
-> +
-> +	/* TODO: support video-optimized refresh rate */
-> +	if (timings->flags & (1 << 4))
-> +		drm_dbg_kms(dev, "Fractional vrefresh is not implemented, proceeding w=
-ith non-video-optimized refresh rate");
-> +
-> +	mode =3D drm_cvt_mode(dev, hactive, vactive, timings->vrefresh + 1, tim=
-ing_formula =3D=3D 1, false, false);
-> +	if (!mode)
-> +		return NULL;
-> +
-> +	/* TODO: interpret S3D flags */
-> +
-> +	mode->type =3D DRM_MODE_TYPE_DRIVER;
-> +	drm_mode_set_name(mode);
-> +
-> +	return mode;
-> +}
-> +
-> +static int add_displayid_formula_modes(struct drm_connector *connector,
-> +				       const struct displayid_block *block)
-> +{
-> +	const struct displayid_formula_timing_block *formula_block =3D (struct =
-displayid_formula_timing_block *)block;
-> +	int num_timings;
-> +	struct drm_display_mode *newmode;
-> +	int num_modes =3D 0;
-> +	bool type_10 =3D block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
-> +	int timing_size =3D 6 + ((formula_block->base.rev & 0x70) >> 4);
-> +
-> +	/* extended blocks are not supported yet */
-> +	if (timing_size !=3D 6)
-> +		return 0;
-> +
-> +	if (block->num_bytes % timing_size)
-> +		return 0;
-> +
-> +	num_timings =3D block->num_bytes / timing_size;
-> +	for (int i =3D 0; i < num_timings; i++) {
-> +		const struct displayid_formula_timings_9 *timings =3D &formula_block->=
-timings[i];
-> +
-> +		newmode =3D drm_mode_displayid_formula(connector->dev, timings, type_1=
-0);
-> +		if (!newmode)
-> +			continue;
-> +
-> +		drm_mode_probed_add(connector, newmode);
-> +		num_modes++;
-> +	}
-> +	return num_modes;
-> +}
-> +
->  static int add_displayid_detailed_modes(struct drm_connector *connector,
->  					const struct drm_edid *drm_edid)
->  {
-> @@ -6845,6 +6905,9 @@ static int add_displayid_detailed_modes(struct drm_=
-connector *connector,
->  		if (block->tag =3D=3D DATA_BLOCK_TYPE_1_DETAILED_TIMING ||
->  		    block->tag =3D=3D DATA_BLOCK_2_TYPE_7_DETAILED_TIMING)
->  			num_modes +=3D add_displayid_detailed_1_modes(connector, block);
-> +		else if (block->tag =3D=3D DATA_BLOCK_2_TYPE_9_FORMULA_TIMING ||
-> +			 block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING)
-> +			num_modes +=3D add_displayid_formula_modes(connector, block);
->  	}
->  	displayid_iter_end(&iter);
+-- 
+With Best Regards,
+Andy Shevchenko
 
---=20
-Jani Nikula, Intel
+
 
