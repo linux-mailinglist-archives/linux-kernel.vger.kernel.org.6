@@ -1,204 +1,205 @@
-Return-Path: <linux-kernel+bounces-514557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE84A35874
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:06:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9544EA35885
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:08:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B18C188F10F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C61692AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AFD221DA0;
-	Fri, 14 Feb 2025 08:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5B5221D8E;
+	Fri, 14 Feb 2025 08:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="THxQzU9i";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vEKJI7qq"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hwEoIHJJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AE27E0ED;
-	Fri, 14 Feb 2025 08:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE04B22155B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520377; cv=none; b=MTBfCbyAuMCS6kDmeXGZI5x985Tc9Q6mcB5HxRaiyrCpHio2Z1mOx877T0/iOVmkw57lWzjXMv76WBB7oSwEqyws4D2fXX0OpK0hnawnz7WYCYiGex1gztQ3BsviE0vgyZV62I2aKY06zp+Fs3c8FFLn8NEHGdCuBAo8QazJz3s=
+	t=1739520506; cv=none; b=F4RMotyBoQ2O/rA7vE84yiv7ptDoVoN3tjE/3JLXKGLR+zXubh7VJJSFvCWKGVeIVeZnkZMD9tdwDs7e/1t6TynURCCTGxi9AZX1qpYRYFFQHuku8mu/r7WZTwTnjYpjOmuJluZpmZJ1JmDJcE5cEyWAhwm4T1yN0pvfkOx/81I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520377; c=relaxed/simple;
-	bh=Mbqi3mJFEoiY4aywHqfpuLMNgY72aqCdmb/d2xpFlDI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=q6q+Oc+rdhZc5i/vakSVaT0b3S8uGsusKJnSa1AHLQS/Aqsr5NKPR7yXx1lKclSuPpz3ODmCm0ft74KPzzUSTDqAPWEHDCrj3x14heIIs9Yr3w7XtCWkRwOwq28qsQYKet2BGMl2JY7brUMFCYe+KGEDGjY6VMJpkhmLEN2S3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=THxQzU9i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vEKJI7qq; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 20CBE2540178;
-	Fri, 14 Feb 2025 03:06:13 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Fri, 14 Feb 2025 03:06:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1739520372;
-	 x=1739606772; bh=H6Gp9DB5WCSEcuQCJqQrEsWpuCn5jqk72qwNA/OoRvo=; b=
-	THxQzU9iQfDw3CE2kEloob98WRdDJsA4gxfya+6oLzgcMF2JDy87H5cRz9zjwARo
-	WY5qC2W+FBP4JVx8rV0XhIDqg6oFweRIiWgPsyPbEQbEByuXyalL8kLP5TBb6/ud
-	NrBct4aYr2L1sIIHUdSkYYO1tvEnitpqKvjiHEzKYaqK0F8iupKn2EiV7RPCvxZM
-	bsX8gU5MdR+jfgYN2ILFS/W2LFqVM+OBIKojS62zv/4RBuDHcm1QB9NDPWvt7mu/
-	j+4kuJP/CPDx3ndOvEJKB/K/7i9WvyFnEQYjkXBBUCF6uJLT4zbJPJR+2hY2PE0a
-	2oYi+vsDQFwAbKUSUL05Eg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739520372; x=
-	1739606772; bh=H6Gp9DB5WCSEcuQCJqQrEsWpuCn5jqk72qwNA/OoRvo=; b=v
-	EKJI7qqv8tayGGKpzZBvYNDtRiipJJkcNGcKSP+EhQ8wsdY6ty7uUU6Qt1i1bETK
-	BcI8jB7a8WASkkqZ6jNqNelEzr41mhxXqpFa8z8yctr7LSEq93T8SuMve8vwZ+Ac
-	IDBGUOA2d66MqAAcZugQZGWvl+XhW3spqQUwReM8hqwJ+6Vm4v4Zaet/EAiz9Yiv
-	cytTwPN5JubeangvEE7VADU/MGof0L1H2U9GOXytP2/rqaxDOzvjvyLAyWgvZJ1d
-	wVnCAH4q3vPy3wFsshMhUCAjItMy2sU60bXTbH4W35t/EQDGQA5HxuAnx/ns+ZxD
-	pVfjGssMtwk9K0WoHhNpw==
-X-ME-Sender: <xms:c_muZwX48Lh_xZs2IU6bDL1rdB8LT6oqGgZpRonlo5sen0HwCImyrg>
-    <xme:c_muZ0k0AICaX-vC6XxNAIoV9pAWxQHAk2o5A5KRC8GL6hhilhZHSDgbk4Wv1nc_h
-    WwZzXS2D0O38pPVky0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
-    thhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheptghonhhorh
-    doughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlphhivghrrghlihhsiheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifvghirdhl
-    ihhusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:c_muZ0YxvCcRRznY5PEZ-WHP6YYtLBt-g5JzyS9xw7eTUTGJhFFLZA>
-    <xmx:c_muZ_VK0WT4H887Nvd27xHDQFNSj_V4PN6uNmtAA-vcr1KKc8zk5Q>
-    <xmx:c_muZ6nMlMLgiBiw9alU1wkGeocCf93h0y1G4R7Re8HKnpAIzgPaxQ>
-    <xmx:c_muZ0eW7UPUpepsHE6P-gBngPmgv84dTpielAQWIbSQ-6F_CWdLRg>
-    <xmx:dPmuZ6uhMhdzt-6CWdxmXjq8IYXRxbmmHE-3PCv20PutEwrLhkeSiX2S>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C5C902220072; Fri, 14 Feb 2025 03:06:11 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1739520506; c=relaxed/simple;
+	bh=BH+R3DeaVEFkeBBM6A+bBYTJgrlpDE3DtYh3x94HZks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TkaKKu4zRwFGhO4+vEoIWxIQBUubreKdJoerQ3MpGap3FXOG4Lzr7LEBQveljwd2Q2ByJ+2oFPcPmPTovNmQDo76OkcsLdaRQ9wi3nffrSGneIZ/+KU1irBflDTq6JW8q9/c8MwlDWvYWT7G6Jcm6kBMkvlbczTnNeKTcFhrSkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hwEoIHJJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739520503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ALk/+QsFRqtPl0vuqEBrVk2BlK5oNcB8f3FY4atPu5g=;
+	b=hwEoIHJJlq/5e2luGZH+QgXdTJaaXP8jEcXd8Abvm6kTGzHZfbNHqGHG0CJPxwEtn+/pHM
+	v0GDq5Qwe4QoxtVVy8sCq51K/Uq8qBmnzzi2egCz4Zf71RRB2JS+Cm5g4isx4zxxWDhkdc
+	CM0EkSwmfHS7QsxesF53VsTs7BRJrLU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-597-4JK_CAMNMv2q_RvJyVJCPg-1; Fri, 14 Feb 2025 03:08:22 -0500
+X-MC-Unique: 4JK_CAMNMv2q_RvJyVJCPg-1
+X-Mimecast-MFC-AGG-ID: 4JK_CAMNMv2q_RvJyVJCPg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38dcc9653caso918154f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:08:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739520501; x=1740125301;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ALk/+QsFRqtPl0vuqEBrVk2BlK5oNcB8f3FY4atPu5g=;
+        b=NaYUiFM7dsjQlE7JAq7w+8/o8vWYkxMghPK6VPtZS/XVu2E+bDIRDJMNhCB5oxDnTH
+         p3AEOoLGtcKF3BUDhwCgGuUAW5TgpD2VR5GGJQGx/Wl1cH0ni2OajaqUibwgi/YSjh1H
+         vg/vhtTg38yI5lnx6DuxY658a4QeDjeRqMRtHbWk1DjO6dXcT7YOyFfHLbHMICy9BAKL
+         5jbL6Ti1xIe6oKBDwSWywJsySy4g5IpO7O6qVhlXVXK97qSgRKT13QcVU0gIBymJ5j0e
+         UuScsdjbkde4HnDI+h7lk2DJ8GKg5I5a+qsd971bh1CwTeQ5SpUyKB5Bjs5PLvOixIlA
+         SzuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcq5v9ddy9kV/tkWQMSFitqlyISrkig7IG0oFlj0S+onxOV7FsoQb8+1EANe4TUXEg0uez8AjEzY+DwQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGTVu3cYgO06w5llYQXOZkwkdfaXg2lC3AbvJjtUAbeJdssQE/
+	KDLMfpg4hVxNCxorzn5K2vjpU/4s2iZMMTuOXj7q1X0iH/FCBTwnic0OvZvUTPICFLiv4bv68YD
+	IN8jnHgXXh1jWnvmIa0Tg1NGi/EEf1iD+hBuWAXDF5FxqydrUzPKbRWZnQU04kg==
+X-Gm-Gg: ASbGncvi+xL8z2GUPtSM1E6V9mnNiy/hJdCkBT3H8H3JkOQ2aV+ZkptnMW6aTd4B8IB
+	5xZT95uNiK2dMB0A45IgqRwQbkckP+hAfxBJRg5kur4Dx2q9p+xKrOymJTqgayxGUFiruNqb9aW
+	5F61Tqn9l3qytInVPyHqtYUXS4XT2xSIWepn8H8rtgvnQ9G1+1/Z/BmOf+2rnVdnk0uf6GBVP+8
+	2bn4MShkv1SAj3uckQTNsvnn6QRI+RnE7cEJtLdvztY6vEjXLbjSZKGPsdSxYkguUB2kfJBSP3O
+	wFU2HqTp/fSVSc+Vwi9vX/m7v7+h0LKd72VggXyED+dH6guDEuCe9ovutz2hnKfvCfXAXiuAQLp
+	8ZO3STuLfJoWb54+qU9jXG5i8vgjyrQ==
+X-Received: by 2002:a5d:64e4:0:b0:38d:e584:e944 with SMTP id ffacd0b85a97d-38f244e7b39mr7640409f8f.25.1739520501131;
+        Fri, 14 Feb 2025 00:08:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF88OUJBIRdGRmRlZpdC9r3dGoNyEx2raYg4TWW28uJG4QVHn2dmMATX6H9nKtGJhgZv1oquw==
+X-Received: by 2002:a5d:64e4:0:b0:38d:e584:e944 with SMTP id ffacd0b85a97d-38f244e7b39mr7640377f8f.25.1739520500760;
+        Fri, 14 Feb 2025 00:08:20 -0800 (PST)
+Received: from ?IPV6:2003:cb:c709:a00:7d7d:3665:5fe4:7127? (p200300cbc7090a007d7d36655fe47127.dip0.t-ipconnect.de. [2003:cb:c709:a00:7d7d:3665:5fe4:7127])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259fe1efsm3976063f8f.97.2025.02.14.00.08.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 00:08:19 -0800 (PST)
+Message-ID: <37363b17-88b0-4ccc-a115-8c9f1d83a1b5@redhat.com>
+Date: Fri, 14 Feb 2025 09:08:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 14 Feb 2025 09:05:50 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Roman Kisel" <romank@linux.microsoft.com>, bhelgaas@google.com,
- "Borislav Petkov" <bp@alien8.de>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Dexuan Cui" <decui@microsoft.com>,
- "Haiyang Zhang" <haiyangz@microsoft.com>,
- "H. Peter Anvin" <hpa@zytor.com>, krzk+dt@kernel.org,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Rob Herring" <robh@kernel.org>,
- ssengar@linux.microsoft.com, "Thomas Gleixner" <tglx@linutronix.de>,
- "Wei Liu" <wei.liu@kernel.org>, "Will Deacon" <will@kernel.org>,
- devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-Message-Id: <97887849-faa8-429b-862b-daf6faf89481@app.fastmail.com>
-In-Reply-To: <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
-References: <20250212014321.1108840-1-romank@linux.microsoft.com>
- <20250212014321.1108840-2-romank@linux.microsoft.com>
- <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
- <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
-Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect hypervisor
- presence
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: wait for hugepage folios to be freed
+To: yangge1116@126.com, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
+ osalvador@suse.de, liuzixing@hygon.cn
+References: <1739514729-21265-1-git-send-email-yangge1116@126.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1739514729-21265-1-git-send-email-yangge1116@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025, at 00:23, Roman Kisel wrote:
-> On 2/11/2025 10:54 PM, Arnd Bergmann wrote:
+On 14.02.25 07:32, yangge1116@126.com wrote:
+> From: Ge Yang <yangge1116@126.com>
+> 
+> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer freeing
+> of HugeTLB pages"), which supports deferring the freeing of HugeTLB pages,
+> the allocation of contiguous memory through cma_alloc() may fail
+> probabilistically.
+> 
+> In the CMA allocation process, if it is found that the CMA area is occupied
+> by in-use hugepage folios, these in-use hugepage folios need to be migrated
+> to another location. When there are no available hugepage folios in the
+> free HugeTLB pool during the migration of in-use HugeTLB pages, new folios
+> are allocated from the buddy system. A temporary state is set on the newly
+> allocated folio. Upon completion of the hugepage folio migration, the
+> temporary state is transferred from the new folios to the old folios.
+> Normally, when the old folios with the temporary state are freed, it is
+> directly released back to the buddy system. However, due to the deferred
+> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately leading
+> to the failure of cma_alloc().
+> 
+> Here is a simplified call trace illustrating the process:
+> cma_alloc()
+>      ->__alloc_contig_migrate_range() // Migrate in-use hugepage
+>          ->unmap_and_move_huge_page()
+>              ->folio_putback_hugetlb() // Free old folios
+>      ->test_pages_isolated()
+>          ->__test_page_isolated_in_pageblock()
+>               ->PageBuddy(page) // Check if the page is in buddy
+> 
+> To resolve this issue, we have implemented a function named
+> wait_for_hugepage_folios_freed(). This function ensures that the hugepage
+> folios are properly released back to the buddy system after their migration
+> is completed. By invoking wait_for_hugepage_folios_freed() following the
+> migration process, we guarantee that when test_pages_isolated() is
+> executed, it will successfully pass.
 
-> index a74600d9f2d7..86f75f44895f 100644
-> --- a/drivers/firmware/smccc/smccc.c
-> +++ b/drivers/firmware/smccc/smccc.c
-> @@ -67,6 +67,30 @@ s32 arm_smccc_get_soc_id_revision(void)
->   }
->   EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
->
-> +bool arm_smccc_hyp_present(const uuid_t *hyp_uuid)
+Okay, so after every successful migration -> put of src, we wait for the 
+src to actually get freed.
 
-The interface looks good to me.
+When migrating multiple hugetlb folios, we'd wait once per folio.
 
-> +{
-> +	struct arm_smccc_res res = {};
-> +	struct {
-> +		u32 dwords[4]
-> +	} __packed res_uuid;
+It reminds me a bit about pcp caches, where folios are !buddy until the 
+pcp was drained.
 
-The structure definition here looks odd because of the
-unexplained __packed attribute and the nonstandard byteorder.
+I wonder if that waiting should instead be done exactly once after 
+migrating multiple folios? For example, at the beginning of 
+test_pages_isolated(), to "flush" that state from any previous migration?
 
-The normal uuid_t is defined as an array of 16 bytes,
-so if you try to represent it in 32-bit words you need to
-decide between __le32 and __be32 representation.
+Thanks for all your effort around making CMA allocations / migration 
+more reliable.
 
-> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
-> +		return false;
-> +	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
-> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
-> +		return false;
-> +
-> +	res_uuid.dwords[0] = res.a0;
-> +	res_uuid.dwords[1] = res.a1;
-> +	res_uuid.dwords[2] = res.a2;
-> +	res_uuid.dwords[3] = res.a3;
-> +
-> +	return uuid_equal((uuid_t *)&res_uuid, hyp_uuid);
+-- 
+Cheers,
 
-The SMCCC standard defines the four words to be little-endian,
-so in order to compare them against a uuid byte array, you'd
-need to declare the array as __le32 and swap the result
-members with cpu_to_le32().
+David / dhildenb
 
-Alternatively you could pass the four u32 values into the
-function in place of the uuid.
-
-Since the callers have the same endianess confusion, your
-implementation ends up working correctly even on big-endian,
-but I find it harder to follow when you call uuid_equal() on
-something that is not the actual uuid_t value.
-
-> +
-> +#define ARM_SMCCC_HYP_PRESENT(HYP) 								\
-> +	({															\
-> +		const u32 uuid_as_dwords[4] = {							\
-> +			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_0,			\
-> +			ARM_SMCCC_VENDOR_HYP_UID_ ## HYP ## _REG_1,			\
-
-I don't think using a macro is helpful here, it just makes
-it impossible to grep for ARM_SMCCC_VENDOR_HYP_UID_* values when
-reading the source.
-
-I would suggest moving the UUID values into a variable next
-to the caller like
-
-#define ARM_SMCCC_VENDOR_HYP_UID_KVM \
-    UUID_INIT(0x28b46fb6, 0x2ec5, 0x11e9, 0xa9, 0xca, 0x4b, 0x56, 0x4d, 0x00, 0x3a, 0x74)
-
-and then just pass that into arm_smccc_hyp_present(). (please
-double-check the endianess of the definition here, I probably
-got it wrong myself).
-
-     Arnd
 
