@@ -1,262 +1,387 @@
-Return-Path: <linux-kernel+bounces-515131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F312EA360A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E26A360AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16133B1C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664683A463A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAF626657C;
-	Fri, 14 Feb 2025 14:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF27266590;
+	Fri, 14 Feb 2025 14:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bLa9DvKo"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWrttBuP"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B3E264A9F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B206E2661B9;
+	Fri, 14 Feb 2025 14:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544003; cv=none; b=Ma6ay2Df/6TVWrzle799AXEGLnOZU+TtDRCJbvyREJ/76v7tEVTcols31KCMGYV5lolAOptVFPNzvSZ9EAzLe0SevcdcTFTT+I4O/6fe4p2LjbciVgbemWE6GuTuqiXsqqI4dGbCb+iRNpiNwcVdkelydpF7mu+y3omxF0DGMmM=
+	t=1739544094; cv=none; b=AmmeQPwngaENtWQzSpL1MP/YyiJiPwbDSlOZbk21ygrvfPZzoH64KzTItkb1yPAUmm5Dgi/Rt7GZC6dnyVbvIN48RL9Tu+yUtp5I8Vm8flYdiEGfByv0B+DhYFaKlGUkXZQeWm/g6T2rgQf3dcR5RKw6E5ytvqyEEoYn5v5141U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544003; c=relaxed/simple;
-	bh=mSGPqJ7pPobo1joX6a4Mc1VuLcnH0TERvQkFnSYe+Os=;
+	s=arc-20240116; t=1739544094; c=relaxed/simple;
+	bh=pyw+BJyPn139JLUocYBhLcBKS55uFur4xdWb9MEQN8s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=FsjBqz/wZ9mesryAD7ZF0GgNs2Ek6wsXUWtT48iAN0ILNJ+zdCHphjExm6jVMsFh2p0SuDNL6voGeAF6sTwnVaseMp04FZrnVFMo+gAF7ZgFnUDZV1iM4kK/D+WP+UhpEAz/HLY5iVcuwiEDA1e18t7UW76x9zR5MgwC6Fp7TcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bLa9DvKo; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7231e264735so358494a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:40:01 -0800 (PST)
+	 To:Cc:Content-Type; b=m1xh7pJOhcJ7tYXDTZ1X1KzYJVKRVlh6pIj6NkZeZ6eIoxws1zQBxhkVMExePkCqXj6ltaiU6jFGijfvAQGANklxtxWv1OAJbPkl03MxagvjsY0D1U5KrOGBVw+X1zkg/3WA7iahLPUu/bJX2WT4kV7rS5cxuPfbr5Y7IQMzhjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWrttBuP; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307c13298eeso20828961fa.0;
+        Fri, 14 Feb 2025 06:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739544000; x=1740148800; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1739544091; x=1740148891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e50JFqmY2OdzosOXKFQSp920S0Fnul4zaVHjHtIwYN4=;
-        b=bLa9DvKoGazWkcbKAxOTeIlpRunD5qz4QLnpeAMe6FRRubbg09eQ3yCFF5N0BmSemU
-         GRom7QjG+H4hyJjc3vT9ZuRYJ2E/NERW4DqVa24LR73+MBrItykDI2o9rM77jf+P/8yk
-         rENRcY/Y86uaRLpGpCyLzDprf7PbsdnpDb0qo=
+        bh=Oe9/eEqMmqvNor8cwQSKhskL7gHhmbo4tvwhBhdYuso=;
+        b=FWrttBuPyP8msFQhheXvnBAwwI43oAWBaT5ssgPiAw+Ktwaxl+eu4o2weg8AGPg4Dt
+         T0Io64eChE8Ds4ZAwA58g5fKk1Ax+7CoFeG2ZUTFNpvsWCOdPfRbMSx8HOwb0UfYWo8G
+         kHP6XPvnftZlKpHOFrqrNovFlcZY22wfhNye4nv3l3WUYT9iV93rvhe83HzeHq06hB01
+         hCUlIqY5hHmELjgZGyXSqC27ziutv8hELUWfLHvGE+KsonngT9aOD5C5LuiftvgB4jtt
+         IkT7hmqntyt5vZyF1lBvu9pd4QvhM+SBlTTgPdsu4sfVge458+F4hHQ+cRyWULlF9q2O
+         WENg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739544000; x=1740148800;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1739544091; x=1740148891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e50JFqmY2OdzosOXKFQSp920S0Fnul4zaVHjHtIwYN4=;
-        b=I/VKKSb6us5GjeH20mjtCK/zWIQf2X9Qh+8KT2HQymL5VthfOsFqWXxOuSdBoA/HcU
-         JjeKNeD5P/odDEiZT7xJOx9RJPWDcYQ0wkXCIMd+EmDdRix7Ic0GSCAwsa3omCuCHv/G
-         yJ73VJDgui5LwZ5KvBSbrxbQwKRFFfWD7DCacjIGovKYJGNbDFlSPLfEFG9/kB5IB6WO
-         JHPjsXWLYDe42M11Cb8LStdD+DeCnTiMUDc8+QEqQaBYmh9cvj9QVVOY+PGHoPtE+f95
-         f7UK38/PC74NcIwcLfOvay4M/9/7qqb/7IGTdKbxEVIo+7eV06D6okZU6ArUb52D6Wtz
-         HXqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcifsddCgn5HTQZw/9XipmEDvDHSeZAPzqtsOgFXLmaaIpfVlMeTttfsH+eqoWlrtvaDIh/562D9cAFaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4dPI5ZEXKuZ2yoRkNmjLWG1jbPQc/FDBX4mLHsS5q/jtJXpmS
-	l9ZIIrv9JKQ27bhvBieacQq7EYcZAdNozZlVk6xO+BVGiSmyP2E6LOMcK0yQPytKLeUGLfNfLzb
-	oT6zQPCVcqotaXV45BC4XLURxX/nmsm+hoQIO
-X-Gm-Gg: ASbGncu5cfPMl4pprp88a8fme5lQyUjxmoxWckkDRPQjTqTChqeHRVODrlTDQGNCyFc
-	55Fi8xI0LmWAicmWoxfZLhFQr6EXTZrWZXpQneHC5LLy5yES5VrqhYYKZ1TcWzSshqQJTHA2a8h
-	v1NUDw5nqoG1DN3O0TMIV/YOe5ieGE5w==
-X-Google-Smtp-Source: AGHT+IE5phE84a0UTMr4W87ScgbUlW/dFHXl7hg7/1Hl59bEFS9809KM+sJHjNr/1G9i++0cxtWwsdHrnjZkeJlT4Tg=
-X-Received: by 2002:a05:6808:30aa:b0:3eb:5372:980a with SMTP id
- 5614622812f47-3f3e1a3dae1mr621837b6e.9.1739544000360; Fri, 14 Feb 2025
- 06:40:00 -0800 (PST)
+        bh=Oe9/eEqMmqvNor8cwQSKhskL7gHhmbo4tvwhBhdYuso=;
+        b=QnPRuDzuK43espfOswxL0lU40gwyUaKykSfCnQDYTmLcGZ2qGZaFrK/seAVMOdprTx
+         fHBs8UqgBPOK6kejphRjMDpdMgxN5J4vPBxTnMOGWpReLIf2KgSExqwdyzAz2jcIktQL
+         0QBflD3ugvNbUIbuqcIGkITOLVe4eOczHAIlof4T2xHZlT0a+dubuaKLchNxJwHz+i8J
+         3hs1/qyt3kqAJK2dKKulbtGPi1SHy6/nmEEAe32/Jwl60mg3/pr6Y9gWTMYhQ7WCoI6E
+         awrQnQEPFHpRs2DMOB1CgCUZhAZb4ow/+Y9+O4lGtK5GvpTkmSZTQhNd5D6vVrDmzYVa
+         3gpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOZC3KIkIxVq+QUxRYPYwxbG8oEvJIPpjIDO05VUiAoaAAIPtgZir9plKrp6aN3KL4sYoASqCOgtAsYJWS3u0Q@vger.kernel.org, AJvYcCVmLv6BC0PEXANJ0fc4LPqNXQRIvehwK41I2FVYkW4ajz+yRkJn0alC3NQuGIOqyD6uxyI31lkxq3QXzrQ=@vger.kernel.org, AJvYcCXiTij1ywVEeplfEOj83LipcrTVXCzGctEiC35f3WERk+gJjwHOp+vJOEjNfWZLLyFEDMcWYiwOA883yRvPPo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrTLjKL+IRCLgeKF9GgufEmGIBCA7Wzkb64ve4rqd2taCyFDdM
+	wgVr4HRiwRrb5wo82e3bLIWgsQDu0yd4x4CLBDelaSco3GKOkWquRMWor1kO3XRhsAbYIoid0T2
+	l7IyMoxNOCaEUY/8OpmJnTtEFwV8=
+X-Gm-Gg: ASbGnctbPKIS3wVaAAOjtSA9ulT8XeVljRKGou/sTPSIGFLQ88CUIKBbQS/AyyRsAf6
+	we6aygm7QtNtFmu0vQwH1cX8an79KcbubEGrnjCjni+NYVT9+Xa+MsihEmT2A1KWI07dLjoNJlE
+	hyZxDXztyiqTk2ZCri4vSdn4WluBgCzec=
+X-Google-Smtp-Source: AGHT+IEHP1/ou32oGaJo+ui+Aoc0iAWhMsZ+zjW+y2I1QHaXj2d7iOxXdc2cExE7NP4Px14pEOsLVfeB6zsuqBbtkuw=
+X-Received: by 2002:a2e:9648:0:b0:308:eb31:df9c with SMTP id
+ 38308e7fff4ca-3090f11c8e5mr21047021fa.1.1739544090444; Fri, 14 Feb 2025
+ 06:41:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212032155.1276806-1-jeffxu@google.com> <20250212032155.1276806-2-jeffxu@google.com>
- <qrxmfa6jvaojedmo6fle2e6vd5k4hzihcuxdc6zk43dclf6nsd@dvuzolusdtz4>
- <CABi2SkUWGXtWAir5j1TO1c7FwOhbNmSwEzwTrxRgzfBydus=2A@mail.gmail.com>
- <66q7feybn3q2vuam72uwmai322jdx3jtv2m5xmh75l6w6etqiv@knpsyh3o627k>
- <202502131142.F5EE115C3A@keescook> <t5hsasch3aybjujmjzs3shpiorcgzp5pjc4fmz77u574voi3hr@qomzrd2llv2q>
- <CABi2SkX3o-PdeuzownVkFT-oo8tjtaaS9ebOALu+r6O1S6W3sg@mail.gmail.com>
- <tfoitovawb6zwr7nvwfo2mnbahgtnoo6umvecj5mgtie4b5vuf@sloraia3ppfy> <ex3y7knp5kmubeauwktvv4fdjqya7ndatzm7ht4gf773c72hc3@y4ow7k54fttj>
-In-Reply-To: <ex3y7knp5kmubeauwktvv4fdjqya7ndatzm7ht4gf773c72hc3@y4ow7k54fttj>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 14 Feb 2025 06:39:48 -0800
-X-Gm-Features: AWEUYZnFrrkgQutGRNCikvC0GjZmPuFErPnb4MZpk1qZi3Du18JPUWGyIDShPQQ
-Message-ID: <CABi2SkW_CqwNXFu9BUDfTX07aq5T8OAZern9hL=WumEWqK=ZFA@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 1/7] mseal, system mappings: kernel config and
- header change
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Kees Cook <kees@kernel.org>, akpm@linux-foundation.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
+References: <20250214074051.1619256-1-davidgow@google.com> <20250214074051.1619256-2-davidgow@google.com>
+In-Reply-To: <20250214074051.1619256-2-davidgow@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 14 Feb 2025 09:40:54 -0500
+X-Gm-Features: AWEUYZn94LVObzk-67NyV5Edu12iMHyaHU-UZd5O3IiVN77rUgILpWhQIsbqA9g
+Message-ID: <CAJ-ks9kw7FTJ7EcHy8B+-1XFK8J4a-DuHLJhP1f3hPy10nOJZA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] rust: kunit: add KUnit case and suite macros
+To: David Gow <davidgow@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 5:10=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Liam R. Howlett <Liam.Howlett@oracle.com> [250213 19:14]:
-> > * Jeff Xu <jeffxu@chromium.org> [250213 17:00]:
-> > > On Thu, Feb 13, 2025 at 12:54=E2=80=AFPM Liam R. Howlett
-> > > <Liam.Howlett@oracle.com> wrote:
-> > >
-> > > > > > >
-> > > > > > > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't =
-part of
-> > > > > > > the build. This is intentional. Any 32-bit code trying to use=
- the
-> > > > > > > sealing function or the VM_SEALED flag will immediately fail
-> > > > > > > compilation. This makes it easier to identify incorrect usage=
-.
-> > > > > >
-> > > > > > So you are against using the #define because the VM_SYSTEM_SEAL=
- will be
-> > > > > > defined, even though it will be VM_NONE?  This is no worse than=
- a
-> > > > > > function that returns 0, and it aligns better with what we have=
- today in
-> > > > > > that it can be put in the list of other flags.
-> > > > >
-> > > > > When I was reading through all of this and considering the histor=
-y of
-> > > > > its development goals, it strikes me that a function is easier fo=
-r the
-> > > > > future if/when this can be made a boot-time setting.
-> > > > >
-> > > >
-> > > > Reworking this change to function as a boot-time parameter, or what=
-ever,
-> > > > would not be a significant amount of work, if/when the time comes.
-> > > > Since we don't know what the future holds, it it unnecessary to eng=
-ineer
-> > > > in a potential change for a future version when the change is easy
-> > > > enough to make later and keep the code cleaner now.
-> > > >
-> > > Sure, I will put the function in mm.h for this patch. We can find a
-> > > proper place when it is time to implement the boot-time parameter
-> > > change.
-> > >
-> > > The call stack for sealing system mapping is something like below:
-> > >
-> > > install_special_mapping (mm/mmap.c)
-> > > map_vdso (arch/x86/entry/vdso/vma.c)
-> > > load_elf_binary (fs/binfmt_elf.c)
-> > > load_misc_binary (fs/binfmt_misc.c)
-> > > bprm_execve (fs/exec.c)
-> > > do_execveat_common
-> > > __x64_sys_execve
-> > > do_syscall_64
-> > >
-> > > IMO, there's a clear divide between the API implementer and the API u=
-ser.
-> > > mm and mm.h are the providers, offering the core mm functionality
-> > > through APIs/data structures like install_special_mapping().
-> > >
-> > > The exe layer (bprm_execve, map_vdso, etc)  is the consumer of the
-> > > install_special_mapping.
-> > > The logic related to checking if sealing system mapping is enabled
-> > > belongs to the exe layer.
-> >
-> > Since this is an all or nothing enabling, there is no reason to have
-> > each caller check the same thing and do the same action. You should put
-> > the logic into the provider - they all end up doing the same thing.
-> >
-> > Also, this is a compile time option so it doesn't even need to be
-> > checked on execution - just apply it in the first place, at the source.
-> > Your static inline function was already doing this...?
-> >
-> > I'm confused as to what you are arguing here because it goes against
-> > what you had and what I suggested.  The alternative you are suggesting
-> > is more code, more instructions, and the best outcome is the same
-> > result.
->
-> I think I understand what you are saying now: the interface to
-> install_special_mapping() needs to take the vma flag, as it does today.
-> What I don't understand is that what you proposed and what I proposed
-> both do that.
->
-> What I'm saying is that, since system mappings are enabled, we can
-> already know implicitly by having VM_SYSTEM_SEAL either VM_NONE or
-> VM_SEAL.
->
-> Turning this:
->
-> @@ -264,11 +266,12 @@ static int map_vdso(const struct vdso_image *image,=
- unsigned long addr)
->         /*
->          * MAYWRITE to allow gdb to COW and set breakpoints
->          */
-> +       vm_flags =3D VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC;
-> +       vm_flags |=3D mseal_system_mappings();
->         vma =3D _install_special_mapping(mm,
->                                        text_start,
->                                        image->size,
-> -                                      VM_READ|VM_EXEC|
-> -                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-> +                                      vm_flags,
->                                        &vdso_mapping);
->
-> to this:
->
->         /*
->          * MAYWRITE to allow gdb to COW and set breakpoints
->          */
->         vma =3D _install_special_mapping(mm,
->                                        text_start,
->                                        image->size,
->                                        VM_READ|VM_EXEC|
-> -                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-> +                                      VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|
-> +                                      VM_SYSTEM_SEAL,
->                                        &vdso_mapping);
->
-> No unsigned long vm_flags needed.  It's easier to read and I don't think
-> it's any more hidden than the vm_flags |=3D function call option.
->
-The arch code needs a mseal_system_mappings() function. Otherwise,
-I'll have to change this line (in arch) again when I implement the kernel
-command line or pre-process opt-in/opt-out, which requires a function
-call. This isn't overthinking; based on our discussion so far, there
-are clear needs for a subsequent patch series. This patch is just the
-first step.
+Very excited to see this progress.
 
-For software layering, I'd like to see a clear separation between
-layers. mm implements _install_special_mapping, which accepts any
-combination of vm_flags as input.  Then I'd like the caller (in arch
-code) to have all the necessary code to compose the vm_flags in one
-place. This helps readability. In the past, we discussed merging the
-vdso/vvar code across all architectures. When that happens, the new
-code in arch will likely have its own .c and .h files, but it will still si=
-t
-above mm.  That means mm won't need to change, and the
-_install_special_mapping API from mm will remain unchanged.
+On Fri, Feb 14, 2025 at 2:41=E2=80=AFAM David Gow <davidgow@google.com> wro=
+te:
+>
+> From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+>
+> Add a couple of Rust const functions and macros to allow to develop
+> KUnit tests without relying on generated C code:
+>
+>  - The `kunit_unsafe_test_suite!` Rust macro is similar to the
+>    `kunit_test_suite` C macro. It requires a NULL-terminated array of
+>    test cases (see below).
+>  - The `kunit_case` Rust function is similar to the `KUNIT_CASE` C macro.
+>    It generates as case from the name and function.
+>  - The `kunit_case_null` Rust function generates a NULL test case, which
+>    is to be used as delimiter in `kunit_test_suite!`.
+>
+> While these functions and macros can be used on their own, a future
+> patch will introduce another macro to create KUnit tests using a
+> user-space like syntax.
+>
+> Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> Co-developed-by: Matt Gilbride <mattgilbride@google.com>
+> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Co-developed-by: David Gow <davidgow@google.com>
+> Signed-off-by: David Gow <davidgow@google.com>
+> ---
+>
+> Changes since v5:
+> https://lore.kernel.org/all/20241213081035.2069066-2-davidgow@google.com/
+> - Rebased against 6.14-rc1
+> - Several documentation touch-ups, including noting that the example
+>   test function need not be unsafe. (Thanks, Miguel)
+> - Remove the need for static_mut_refs, by using core::addr_of_mut!()
+>   combined with a cast. (Thanks, Miguel)
+>   - While this should also avoid the need for const_mut_refs, it seems
+>     to have been enabled for other users anyway.
+> - Use ::kernel::ffi::c_char for C strings, rather than i8 directly.
+>   (Thanks, Miguel)
+>
+> Changes since v4:
+> https://lore.kernel.org/linux-kselftest/20241101064505.3820737-2-davidgow=
+@google.com/
+> - Rebased against 6.13-rc1
+> - Allowed an unused_unsafe warning after the behaviour of addr_of_mut!()
+>   changed in Rust 1.82. (Thanks Boqun, Miguel)
+> - Fix a couple of minor rustfmt issues which were triggering checkpatch
+>   warnings.
+>
+> Changes since v3:
+> https://lore.kernel.org/linux-kselftest/20241030045719.3085147-4-davidgow=
+@google.com/
+> - The kunit_unsafe_test_suite!() macro now panic!s if the suite name is
+>   too long, triggering a compile error. (Thanks, Alice!)
+>
+> Changes since v2:
+> https://lore.kernel.org/linux-kselftest/20241029092422.2884505-2-davidgow=
+@google.com/
+> - The kunit_unsafe_test_suite!() macro will truncate the name of the
+>   suite if it is too long. (Thanks Alice!)
+> - We no longer needlessly use UnsafeCell<> in
+>   kunit_unsafe_test_suite!(). (Thanks Alice!)
+>
+> Changes since v1:
+> https://lore.kernel.org/lkml/20230720-rustbind-v1-1-c80db349e3b5@google.c=
+om/
+> - Rebase on top of rust-next
+> - As a result, KUnit attributes are new set. These are hardcoded to the
+>   defaults of "normal" speed and no module name.
+> - Split the kunit_case!() macro into two const functions, kunit_case()
+>   and kunit_case_null() (for the NULL terminator).
+>
+> ---
+>  rust/kernel/kunit.rs | 121 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>
+> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> index 824da0e9738a..d34a92075174 100644
+> --- a/rust/kernel/kunit.rs
+> +++ b/rust/kernel/kunit.rs
+> @@ -161,3 +161,124 @@ macro_rules! kunit_assert_eq {
+>          $crate::kunit_assert!($name, $file, $diff, $left =3D=3D $right);
+>      }};
+>  }
+> +
+> +/// Represents an individual test case.
+> +///
+> +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated list =
+of valid test cases.
+> +/// Use `kunit_case_null` to generate such a delimiter.
 
-The mseal_system_mappings() function can already return VM_SEALED,
-and future patches will add more logic into mseal_system_mappings(), e.g.
-check for kernel cmdline or opt-in/opt-out. we don't need a separate
-VM_SYSTEM_SEAL, which is a *** redirect macro ***, I prefer to keep
-all the important code logic relevant to configuration of enabling system
-mapping sealing in one place, for easy reading.
+Can both of these be linkified? [`kunit_unsafe_test_suite!`] and
+[`kunit_case_null`]. There are more instances below.
 
-mseal_system_mappings() can be placed in mm.h in this patch, as you
-suggested. But in the near future, it will be moved out of mm.h and find
-a right header. The functionality belongs to exe namespace, because of
-the reasons I put in the commit message and discussions.
+> +#[doc(hidden)]
+> +pub const fn kunit_case(
+> +    name: &'static kernel::str::CStr,
+> +    run_case: unsafe extern "C" fn(*mut kernel::bindings::kunit),
+> +) -> kernel::bindings::kunit_case {
+> +    kernel::bindings::kunit_case {
+> +        run_case: Some(run_case),
+> +        name: name.as_char_ptr(),
+> +        attr: kernel::bindings::kunit_attributes {
+> +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
+> +        },
+> +        generate_params: None,
+> +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+> +        module_name: core::ptr::null_mut(),
+> +        log: core::ptr::null_mut(),
 
-Thanks
--Jeff
+These members, after `name`, can be spelled `..kunit_case_null()` to
+avoid some repetition.
 
--Jeff
+> +    }
+> +}
+> +
+> +/// Represents the NULL test case delimiter.
+> +///
+> +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated list =
+of test cases. This
+> +/// function returns such a delimiter.
+> +#[doc(hidden)]
+> +pub const fn kunit_case_null() -> kernel::bindings::kunit_case {
+> +    kernel::bindings::kunit_case {
+> +        run_case: None,
+> +        name: core::ptr::null_mut(),
+> +        generate_params: None,
+> +        attr: kernel::bindings::kunit_attributes {
+> +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
+> +        },
+> +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+> +        module_name: core::ptr::null_mut(),
+> +        log: core::ptr::null_mut(),
+> +    }
+> +}
+> +
+> +/// Registers a KUnit test suite.
+> +///
+> +/// # Safety
+> +///
+> +/// `test_cases` must be a NULL terminated array of valid test cases.
+> +///
+> +/// # Examples
+> +///
+> +/// ```ignore
+> +/// extern "C" fn test_fn(_test: *mut kernel::bindings::kunit) {
+> +///     let actual =3D 1 + 1;
+> +///     let expected =3D 2;
+> +///     assert_eq!(actual, expected);
+> +/// }
+> +///
+> +/// static mut KUNIT_TEST_CASES: [kernel::bindings::kunit_case; 2] =3D [
+> +///     kernel::kunit::kunit_case(kernel::c_str!("name"), test_fn),
+> +///     kernel::kunit::kunit_case_null(),
+> +/// ];
+> +/// kernel::kunit_unsafe_test_suite!(suite_name, KUNIT_TEST_CASES);
+> +/// ```
+> +#[doc(hidden)]
+> +#[macro_export]
+> +macro_rules! kunit_unsafe_test_suite {
+> +    ($name:ident, $test_cases:ident) =3D> {
+> +        const _: () =3D {
+> +            const KUNIT_TEST_SUITE_NAME: [::kernel::ffi::c_char; 256] =
+=3D {
+> +                let name_u8 =3D ::core::stringify!($name).as_bytes();
+
+This can be a little simpler:
+
+let name =3D $crate::c_str!(::core::stringify!($name)).as_bytes_with_nul();
+
+> +                let mut ret =3D [0; 256];
+> +
+> +                if name_u8.len() > 255 {
+> +                    panic!(concat!(
+> +                        "The test suite name `",
+> +                        ::core::stringify!($name),
+> +                        "` exceeds the maximum length of 255 bytes."
+> +                    ));
+> +                }
+> +
+> +                let mut i =3D 0;
+> +                while i < name_u8.len() {
+> +                    ret[i] =3D name_u8[i] as ::kernel::ffi::c_char;
+> +                    i +=3D 1;
+> +                }
+
+I'd suggest `ret[..name.len()].copy_from_slice(name)` but
+`copy_from_slice` isn't `const`. This can stay the same with the
+now-unnecessary cast removed, or it can be the body of
+`copy_from_slice`:
+
+                // SAFETY: `name` is valid for `name.len()` elements
+by definition, and `ret` was
+                // checked to be at least as large as `name`. The
+buffers are statically know to not
+                // overlap.
+                unsafe {
+                    ::core::ptr::copy_nonoverlapping(name.as_ptr(),
+ret.as_mut_ptr(), name.len());
+
+                }
+
+> +
+> +                ret
+> +            };
+> +
+> +            #[allow(unused_unsafe)]
+> +            static mut KUNIT_TEST_SUITE: ::kernel::bindings::kunit_suite=
+ =3D
+> +                ::kernel::bindings::kunit_suite {
+> +                    name: KUNIT_TEST_SUITE_NAME,
+> +                    // SAFETY: User is expected to pass a correct `test_=
+cases`, given the safety
+> +                    // precondition; hence this macro named `unsafe`.
+> +                    test_cases: unsafe {
+> +                        ::core::ptr::addr_of_mut!($test_cases)
+> +                            .cast::<::kernel::bindings::kunit_case>()
+> +                    },
+
+This safety comment seems to be referring to the safety of
+`addr_of_mut!` but this was just a compiler limitation until Rust
+1.82, right? Same thing below on `KUNIT_TEST_SUITE_ENTRY`.
+
+Can we also narrow the `#[allow]`? This seems to work:
+
+                    #[allow(unused_unsafe)]
+                    // SAFETY: ...
+                    test_cases: unsafe {
+                        ::core::ptr::addr_of_mut!($test_cases)
+                            .cast::<::kernel::bindings::kunit_case>()
+                    },
+
+> +                    suite_init: None,
+> +                    suite_exit: None,
+> +                    init: None,
+> +                    exit: None,
+> +                    attr: ::kernel::bindings::kunit_attributes {
+> +                        speed: ::kernel::bindings::kunit_speed_KUNIT_SPE=
+ED_NORMAL,
+> +                    },
+> +                    status_comment: [0; 256usize],
+
+I don't think you need the usize hint here, there's always a usize in
+the length position.
+
+> +                    debugfs: ::core::ptr::null_mut(),
+> +                    log: ::core::ptr::null_mut(),
+> +                    suite_init_err: 0,
+> +                    is_init: false,
+> +                };
+> +
+> +            #[used]
+> +            #[link_section =3D ".kunit_test_suites"]
+
+This attribute causes the same problem I describe in
+https://lore.kernel.org/all/20250210-macros-section-v2-1-3bb9ff44b969@gmail=
+.com/.
+That's because the KUnit tests are generated both on target and on
+host (even though they won't run on host). I don't think you need to
+deal with that here, just pointing it out. I think we'll need a cfg to
+indicate we're building for host to avoid emitting these attributes
+that only make sense in the kernel.
+
+> +            static mut KUNIT_TEST_SUITE_ENTRY: *const ::kernel::bindings=
+::kunit_suite =3D
+> +                // SAFETY: `KUNIT_TEST_SUITE` is static.
+> +                unsafe { ::core::ptr::addr_of_mut!(KUNIT_TEST_SUITE) };
+
+This is missing the `#[allow(unused_unsafe)]` (it appears in the next
+patch). This means this commit will not compile on bisection.
+
+> +        };
+> +    };
+> +}
+> --
+> 2.48.1.601.g30ceb7b040-goog
+>
+>
+
+Global note: it seems more customary to use crate:: and $crate::
+instead of kernel:: and ::kernel in functions and macros,
+respectively.
+
+Cheers.
+
+
+
+
+Tamir
 
