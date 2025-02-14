@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-515591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816A4A36686
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:54:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FBCA36688
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3061883D8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594FF169E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F531C84D1;
-	Fri, 14 Feb 2025 19:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="mYrDNnCb"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E041C84B3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177DC1946DA;
+	Fri, 14 Feb 2025 19:54:46 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86311C84B7;
+	Fri, 14 Feb 2025 19:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562861; cv=none; b=EBWBnCNlWD86Kx/5u8/gf1Pomdq1kBEXK8CZw0otoUGgAgMhhOabbday1NfLAmS/PvbthWXkJOj61TCa/nAj85dNvr8E0sZkXDRcltu1oFk8aIY1IpWJ/q6FY4LZQGtTiK3IZS4clG7FKMSGuXntBrM8WO558ABvCQRTA+EXKDU=
+	t=1739562885; cv=none; b=eE1T7a/mjMypTzX7AZ/wcNFLxcFPgc1zMmgEqD18BKjDezIUMaugwCoayV3gRBWDCvrfrgMsOSsBsjl89ItlvgK6oCwa1pYQnVmSvtAt3tsKYQiLfXVOjt9FAAs646Ci8XlDMDJayCLGg6PNV5IBS+oMlkNX2qZush09FiWU9T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562861; c=relaxed/simple;
-	bh=F9JPbRGgy2KRFJMR0L9LpCN/bMbxo32cp8WwnNHfDxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n04u3UlrVhbgrvVexHP8FRtGOkbiK0EXmTt9R/anqmLOdYEn/A24FaBwTW41kCc2m6fTVtZVv2lR/qGpFUS3NfVQKh+KwFRlrUl8JqRlV7lC1zWaPqVo5dk1vsHvI2lxAiKBY6BY1jQHsGCfvZKXI9gMxDN6j5RwqFhO8wMfm6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=mYrDNnCb; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab7b80326cdso463682866b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.net; s=google; t=1739562858; x=1740167658; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NIYB11+GgLlT+s3GNd9t99ckB9tkO/E+VJIoU1xvL3g=;
-        b=mYrDNnCbC4//N0/F9aV/N2tpkii/u9FETfVPXuuMkyoHt8hHOfpEfLu0pfqjMs0YD+
-         rEuyALEfkm0CrO6pwQ4Ncn05pImmFtu8omkF2D5/uazd3oki/0vKwQhe1fbQR32ayXHv
-         f4Ib8OXj57NZgFvb8jp7197JxHlW/Wa0JUQYexnXvKAhf2VxENjwBsglvK4r78PoNlPM
-         5aC3xy1wMF2NsEAub+4fYuwOgPbrgxzAgM5+7veWhTxLjujQ02RacvqflTE+aamv1kjN
-         sqG9W6wV5C9FxpVfyjlMyZSN8qQGRJB2RuM8sPVyfxNlKZGqGMpUYQ+jcLFaU6xNy86L
-         EvfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739562858; x=1740167658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NIYB11+GgLlT+s3GNd9t99ckB9tkO/E+VJIoU1xvL3g=;
-        b=KsHpyVyyvS1aG2xeKaNb1VLRVN1/Q8M2u7AHWBcAld2TmX77H7Ik2NLHrkhtjupxlN
-         Uf25EHdlxUCSnxdMhd1opg0xzcmyrnZZ6OJ/osCZRtnEY21Vzk0rjlZXV4Si8kr/5VNy
-         WGMd9dPaNOOCm8mv0zL3aiF0/YxCFnu1e8KxV66SF4US++HabAp4bJDMh2xFWjWOQ2H+
-         v3fymX2Y/Km+g6YVul74/fiJviRn/zzUk4phhP60VxsAJLNmPMgRk1byCHR69Sw8CjkN
-         rWjDc/4SDa+OsRLP/sQB4tEQQUyvXThkbzWf3I8jMuXMxeVtQMzRqD+TGS4G4EicgRuv
-         sneQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRRmn2tPQ35YfxPpDuwPQ1RheWwqxaQ3QljBTBvczJyAP7lCofQkUXc4FK0rb4vtvoVtHlPqz7MITREZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRK51yuCmWwLyrcG0dYg7FSWDlTZgx2TE6krHN5FTRb5jOcwEK
-	WsU4tcPGHctFOwjDq4KEQndLSaSZ/FhhX7U70ofCJCmPUCnntHdVZzziwpuA2of7zcjjyo1Lstf
-	rfE5ESq6dbYIaF4zjBMV92gwA21HsJBq0uHh8fg==
-X-Gm-Gg: ASbGnctzPxaOzclc7fEAooazy3FsxQ8M7BX3g+4bQVqlEbq43g4Vp9cYjauSg4gjEKs
-	da3PpVQZwHJFtmBjolTKbabbmJXm1NMU6JwuxJV83J76kodrKJoIyrbgIrmAV2aM1o/Pe6ns=
-X-Google-Smtp-Source: AGHT+IGQyheLGif/JTgffbl1Tim8k/BNZyiHL4jFBQkQNGvERc0kVB0mvtU+IAjUoObD3Z+Y+98YsIXAOuyjFKM8m44=
-X-Received: by 2002:a17:907:c1f:b0:ab7:d87:50f2 with SMTP id
- a640c23a62f3a-abb70d9f296mr32132166b.44.1739562858174; Fri, 14 Feb 2025
- 11:54:18 -0800 (PST)
+	s=arc-20240116; t=1739562885; c=relaxed/simple;
+	bh=I7GtKu8xGhniZm9RkZA41tbT5M4GN+3wrQPkrwjVDPI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RLeaQUyZU/9nKhPOv+UzULCaCkbUHYdYnjcsBn+jRAyHNp4B+74yAHPqU3JbO3vwQsSdw4McNSg1koRjbSBncbGawuvQozTZGDUm4q2LrF1pSMw/CFwr3Z0Zwz3UfDV4ntJjxsXy7R86AagGF30X2SVHmh0lUiR9wvjlic7UzgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 6236792009D; Fri, 14 Feb 2025 20:54:35 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 5F97B92009C;
+	Fri, 14 Feb 2025 19:54:35 +0000 (GMT)
+Date: Fri, 14 Feb 2025 19:54:35 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: WangYuli <wangyuli@uniontech.com>
+cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com, 
+    linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+    masahiroy@kernel.org, niecheng1@uniontech.com, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, zhanjun@uniontech.com
+Subject: Re: [PATCH v2 1/2] MIPS: dec: Only check -msym32 when need
+ compiler
+In-Reply-To: <11D1B8A01F6006BF+20250214095523.175229-1-wangyuli@uniontech.com>
+Message-ID: <alpine.DEB.2.21.2502141914410.65342@angie.orcam.me.uk>
+References: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com> <11D1B8A01F6006BF+20250214095523.175229-1-wangyuli@uniontech.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214133842.964440150@linuxfoundation.org>
-In-Reply-To: <20250214133842.964440150@linuxfoundation.org>
-From: Slade Watkins <srw@sladewatkins.net>
-Date: Fri, 14 Feb 2025 14:54:07 -0500
-X-Gm-Features: AWEUYZlX87hyFmnKvOA0Y1WpH0vZar3xq21qN9aghuiiKzi-M2gyZl0dPxatvaw
-Message-ID: <CA+pv=HO4D0-d+ir1Vb9xjUcsYd1Lz8j9OAzev+CWWak6dD56+A@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Feb 14, 2025 at 8:58=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.3 release.
-> There are 443 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 16 Feb 2025 13:37:13 +0000.
-> Anything received after that time might be too late.
+On Fri, 14 Feb 2025, WangYuli wrote:
 
-Hi Greg,
-No regressions or any sort of issues to speak of. Builds fine on my
-x86_64 test machine.
+> During make modules_install, the need-compiler variable becomes null,
+> so Makefile.compiler isn't included.
+> 
+> This results in call cc-option-yn returning nothing.
+> 
+> To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+> without -msym32" error, just wrap it into `ifdef need-compiler'.
 
-Tested-by: Slade Watkins <srw@sladewatkins.net>
+ I think this needs to say explicitly that `make modules_install' is one 
+of the targets that does not require or use the compiler and consequently 
+does not require compilation flag variables such as `cflags-y' either.  
+Therefore this target sets `need-compiler' to nil so as to disable all the 
+unnecessary compiler logic and we can also use it here for this purpose, 
+avoiding triggering logic that does rely on the compiler which is only 
+needed at the compilation stage.
 
-All the best,
-Slade
+ Otherwise the unfamiliar reader will still have to guess why it is safe 
+to exclude this part as it's not mentioned explicitly.
+
+ See the second paragraph of the change description of commit 4fe4a6374c4d 
+("MIPS: Only fiddle with CHECKFLAGS if `need-compiler'") for justification 
+I gave for the use of `need-compiler' there.
+
+> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+> index be8cb44a89fd..4d8339d2f20f 100644
+> --- a/arch/mips/Makefile
+> +++ b/arch/mips/Makefile
+> @@ -304,8 +304,12 @@ ifdef CONFIG_64BIT
+>    ifeq ($(KBUILD_SYM32), y)
+>      cflags-$(KBUILD_SYM32) += -msym32 -DKBUILD_64BIT_SYM32
+>    else
+> -    ifeq ($(CONFIG_CPU_DADDI_WORKAROUNDS), y)
+> -      $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
+> +# Do not fiddle with the compilation flags when no compiler is
+> +# going to be used. To get rid of spurious errors.
+> +    ifdef need-compiler
+> +      ifeq ($(CONFIG_CPU_DADDI_WORKAROUNDS), y)
+> +        $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
+> +      endif
+>      endif
+>    endif
+>  endif
+
+ The comment is not correctly aligned with code here, but as I say I don't 
+think it's really needed in the first place and then the `ifdef' ought to 
+wrap the whole conditional for clarity, because none of this stuff is used 
+(and then the call to `cc-option-yn' as you say will always yield nothing, 
+because the variable will not have been defined).
+
+  Maciej
 
