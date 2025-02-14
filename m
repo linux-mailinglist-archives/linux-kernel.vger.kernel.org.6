@@ -1,65 +1,89 @@
-Return-Path: <linux-kernel+bounces-514702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25725A35A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:37:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D3EA35A83
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F83D3A9B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E26F16B134
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C8223A9AA;
-	Fri, 14 Feb 2025 09:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608E224292B;
+	Fri, 14 Feb 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qjh/QZgM"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERMmtfFm"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51A120B1EA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3677F23A9AA;
+	Fri, 14 Feb 2025 09:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739525830; cv=none; b=Nrcv9IrcvY7kk1TQogWYoH+8r5yn7uKElxOeDo6PeP6wbRwBSiIcpte0t2GwhLHsqi0IlzAaZ/ZnGBTMfs8C3IRv2eW9s+ZIL2hwHfekL18HsaSaaT5LDe/Sj2NL+rbE3FZwUX7eCUJyjaEfSK7jYTr0jjqg3k1fqIFqP9LTmgY=
+	t=1739526022; cv=none; b=nQ9u06oyiDNbQYzjDnX3zTl5hwm9IuOeWEqV5u62vt1EyGvRixSwOCvN2fe3b9shLZFjudHcM6xOUqwCPw5i4z8O6ovzjCiiEU1NEacOPj0a5c9XWhjobvjiz92UqlsGcQiub58enSNf1AA/2aUBc9ALpWS8MxZLfX6C73sI2vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739525830; c=relaxed/simple;
-	bh=C36Hk0vdfiBT1Qwd0ce4cmV/SSAbVEs3+H/35Y0ePHA=;
+	s=arc-20240116; t=1739526022; c=relaxed/simple;
+	bh=p5vYy2mrK/o/VT5mJ7ApSVSVL8TdJfYkFtZORYT3q94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfy59C/9aqSao3quDAmhnPaC/x2oI8OsdVvdrIrvFUI6xorjmkux4h9rmeVFMROQ9w+ES/0sW3gHa2Yul2yNAZJq8OI1JWCJMGPLtXQCnZvy5pKNds3Jb+k8V8Cwbs/gSY93GH9HYks4hfCRPTPD7fzGQ8ycUZF93WD4a3a618U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qjh/QZgM; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C36Hk0vdfiBT1Qwd0ce4cmV/SSAbVEs3+H/35Y0ePHA=; b=qjh/QZgMzIyqybLyhapCS12NsX
-	qEuSJB7iTB9Gnm/pr314F6+PTG3NZJaA927qipz/viewSEMxr36vMxAz0Cx1woX5HyjFv+maFXkrO
-	MvEyBoy7y1JL2AT9oYphLwPxSJVr7l4RzwxaWE9ev1WdcuwJYtcuYGq2nN6aeJYgPrX4kJsDOzNFX
-	aSUoZ4lJuzMFZnGIJXGJe7yqDV5S7BTHYeUoo9wd/ulSBW5gB9mAW1yH01OnA2XIuye9B7IeBky48
-	ykyDm7SnnE+UXGSEQD+oXCgPIXc07qj2WVa32B5W1GV7g15ZobD+ix13ZOxZyk+ua/qDEM0+MygLP
-	rsWgeJlg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tis7s-00000001DQR-2WIC;
-	Fri, 14 Feb 2025 09:36:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2FA3B3002F0; Fri, 14 Feb 2025 10:36:48 +0100 (CET)
-Date: Fri, 14 Feb 2025 10:36:48 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: Brendan Jackman <jackmanb@google.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
-	mhklinux@outlook.com, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v11 00/12] AMD broadcast TLB invalidation
-Message-ID: <20250214093648.GC21726@noisy.programming.kicks-ass.net>
-References: <20250213161423.449435-1-riel@surriel.com>
- <CA+i-1C3DRvustO9eH4PFyASD_SRoR4iv22BMfvu9BSKDK_SFLw@mail.gmail.com>
- <5d6130a40f173e341306faca897a0e42f8cd5a20.camel@surriel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTRKCxhVjTZJT4T+xTD3JjQZqqevebNJBV68pzXgXz6cySJC9620VaqRjkgYBX4Vmv0wrM4HQ7qq7jy7E0QeuVcszGLtFEbYOnBsxQYHlyHe9ytLZq24LmhfvdTNTinYZEFzz3utzIUVMJflRGb4cUTqo6qAmGmOXbKd+15/wDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERMmtfFm; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be3f230436so161680785a.3;
+        Fri, 14 Feb 2025 01:40:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739526020; x=1740130820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ltnVdbgyWl/+t2lriesNcGGsbLyc+7ozvoFh97YkJ0=;
+        b=ERMmtfFmbYZOmz4dmZfCebcSzFz0E/Bt+ZNTY9w1clPPKRtgIS9kzfS7m6h/779Tay
+         7vYx0rIBnhxwWwTnq5QIUCc8s2Cj/WPC+XN3zAQUSJE/Q6M2djQnBLTe9n85kfiEoyIL
+         5QeT0VFMF/aVgkOg0Y+GmwjQLW7nh+WSIkMZHDl9iZHXJkUZR25CCON7bcz8aieJR7xT
+         txcOcn5D7/TfAwCLedr5baRD4UX2iW+z/r48yohNsDEUtpUtfsqBP3uwDMFeFOCahNLE
+         i5Zj1ZftR805BR0EWp10zabXB15sGO2Q48QhDEoHRY36EpHLGk0uQBEo4o1UHf/ZyxGe
+         X6NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739526020; x=1740130820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ltnVdbgyWl/+t2lriesNcGGsbLyc+7ozvoFh97YkJ0=;
+        b=Qr/YRWVrJAlbBfyEJxQ/uNJvfJhY9XqR1d9+BhYM1nWlg+PA7eDMFk0CFKJ4JuWlzt
+         j+UYgD2IgVJ5ACWUq2ge/LdDpw6b49ueqqjrhvLnwynGiH6W6u1zeAvuyYaZlPzR7ZdJ
+         icTI/HKtup6Sp3bOMZEzgiZm15iPNHr3dB7+5tVqlhEwUG5iEkGpTs9rGq7t+VtwSDr5
+         rG38mEbIQLBh2Q7y0F6DQ9GXm+EaTSZ1io4s86EjliCyQyQ3PMSR6vmhKe0Q5EHIgt5e
+         lH7kKIxptLYb2ApatsRVzvANQBD4OVR0O/R9cMhbG8TRXiFBtA0f6+D9R5K6eq079n47
+         lmsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVQwiAZrF9CLjvj5Z4HaGtMSlniV/I9wCbE0eAUUqLkM6gJZ/CilruCcq4iFmXqrsTNM4Rt9TvNLZlIUTH@vger.kernel.org, AJvYcCX3uVnuYGF4ymXyiziPKNDWRVfmesG5QeeEG9FTnPF7W7E8zdvIdkEs1W+IhxWAIcKPPo/H/tDK3A4C@vger.kernel.org, AJvYcCXhNLzmRwONjIvcTWFhLimiJg8StWWrclU6Rk4WOCVdsX6BtLhWooTMnnnOdvLdEim0sHlazY8H57a+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNh4D+wT+g4i5qTQ+ZJ5OUa1i9avIVfd6jYAzRFnsHBpdOnZWg
+	YbQflNoSQc5L7DTLHBdPMFygKcxgp0kv7XRqtMZGGuWbIUo3oVml
+X-Gm-Gg: ASbGncuYNNWNsCy3QhZSMRQ6CeWe0kpI9uB8zNosR0kVSmliYD5JmVOl6h5LIsPxkvx
+	iaSvsEJICkAyRlIrzh+of/Yu/zfqpH4BGuLCfOE8NZCakU4owNIVgQ4tOrS/oZaVPk/15fU0Vyc
+	DXE8wA0O9RL0qj7DMQphIFUy9WM04eGKg87KoiNBcR3jfam3tLug2hBFB3uuHURlNjQaXfENrzw
+	J41uVhd+r4spNia1NymCLMtBrHAKhw6meAe+1Za9V6omMj5p3Ckryt+uNDyX/FaHtc=
+X-Google-Smtp-Source: AGHT+IEAaWOHdRIBYEDb2EPJpgpRyzUZ58tWTfkhcKSw9SF80+/uXHiUKELTnqkLF3A1dKQoSa4BIg==
+X-Received: by 2002:a05:620a:2d86:b0:7c0:7207:600c with SMTP id af79cd13be357-7c072076382mr937351085a.41.1739526019938;
+        Fri, 14 Feb 2025 01:40:19 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c07c861552sm187614185a.79.2025.02.14.01.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 01:40:19 -0800 (PST)
+Date: Fri, 14 Feb 2025 17:40:09 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org
+Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, alexandre.belloni@bootlin.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, unicorn_wang@outlook.com, 
+	inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, dlan@gentoo.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
+ Sophgo CV1800 series SoC
+Message-ID: <t6z6rikut2him5m57b6xubbguw3llczp4i6d5frcpuhlqihf2d@booethzadxsq>
+References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+ <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,16 +92,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d6130a40f173e341306faca897a0e42f8cd5a20.camel@surriel.com>
+In-Reply-To: <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
 
-On Thu, Feb 13, 2025 at 03:02:40PM -0500, Rik van Riel wrote:
+On Thu, Feb 13, 2025 at 10:56:45PM +0100, Alexander Sverdlin wrote:
+> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> 
+> Add RTC devicetree binding for Sophgo CV1800 SoC.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> ---
+>  .../bindings/rtc/sophgo,cv1800-rtc.yaml       | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> new file mode 100644
+> index 000000000000..b36b51a69166
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Real Time Clock of the Sophgo CV1800 SoC
+> +
+> +description:
+> +  Real Time Clock (RTC) is an independently powered module
+> +  within the chip, which includes a 32KHz oscillator and a
+> +  Power On Reset/POR submodule. It can be used for time display
+> +  and timed alarm generation. In addition, the hardware state
+> +  machine provides triggering and timing control for chip
+> +  power on, off, and reset.
+> +
+> +maintainers:
+> +  - Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> +
+> +allOf:
+> +  - $ref: rtc.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,cv1800-rtc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
 
-> Peter, do you prefer a v12, or should
-> additional small fixes and improvements
-> just be sent in follow-up patches at
-> this point?
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    rtc@5025000 {
+> +        compatible = "sophgo,cv1800-rtc";
+> +        reg = <0x5025000 0x2000>;
+> +        interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&osc>;
+> +    };
+> -- 
 
-I think I'm mostly okay at this point, but DaveH was wanting to have a
-look at this thing. Dave did you get around to reading one of these
-recent versions, wdyt?
+Just for curiosity, Do you leave a way to implement the
+8051 subsys, since its registers are in rtc. (You can
+check the chapter "8051 subsystem" of the SG2002, which
+can be found at https://github.com/sophgo/sophgo-doc).
+
+Regards,
+Inochi
 
