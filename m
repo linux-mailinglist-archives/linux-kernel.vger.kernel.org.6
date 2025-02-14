@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-514548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11705A35858
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD0CA35862
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A799316D847
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD0C3AE988
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E4221D86;
-	Fri, 14 Feb 2025 08:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DB3227B9A;
+	Fri, 14 Feb 2025 08:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hZydQFgf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiBctNvG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9201632C8;
-	Fri, 14 Feb 2025 08:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E576221DAD;
+	Fri, 14 Feb 2025 08:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520131; cv=none; b=gB9xE9jqraNPTOkD6fN5ZSw0zG6B+QiArzNvFj7Mi2KlTgAzDNvk1CjvpnGj8Us1LkCv6DRLQbSLNG/yytaozcISgpeqLaQsnEjk0l0Y54sPPfTwhjhEOQY3j5918vBpYBpDBW0jkf6Y0t/SMuHrJxXE7iRgGMpf6VQ+COQeO/g=
+	t=1739520146; cv=none; b=FRyYBCtxpeJqePpxOAcfiWWfyJuMe3Od+JR5lwOD1W4Mw8wbw8NE80a7V51zmiwTctnVdXz/R+CNvIGKhjcuLOkjYSuVdDehHVLiWyh8nlwQObHs2ouf3u+gZrTqkJWWCMsFVXt8UjozDvBYF7sKjvhYUf5MJLc27cdkdGVq6Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520131; c=relaxed/simple;
-	bh=HSs1YT5/LDHxXgevBneWiW5cpGpDt3fTsX02DsEboJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYC33UNhH+wwXm9ELgBlxbz4OCzH3NN2vFCZZ3m8lciEqgag3M7cNxLp6SfUH9ERyWWTqIy0es5E8DZeBrJ1Xt8OCZmuaI9ETL8PAyLJgIbrz0M12t191eO9ob7OJh03qOy//ts5kD4wR9QYajfqqiLBuDGC0YbpJfCBoPPzlO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hZydQFgf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2377AC4CED1;
-	Fri, 14 Feb 2025 08:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739520130;
-	bh=HSs1YT5/LDHxXgevBneWiW5cpGpDt3fTsX02DsEboJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hZydQFgfgpfXG6XUIuyGoSSBgsUhwK0ceWlRw2BsE3A4R+ef9tAC5ZoH0A/S+8zdI
-	 MG12pjeAdWxgWu5fIPg3P7t9YdR2rhIMUACML0AtLrwJPpv0UKHs8XjqOtUOhDQRj7
-	 KWFnwKGc7FUVx/Ya7XS1V8Fvv+e5e0VMHk1/gLNE=
-Date: Fri, 14 Feb 2025 09:02:07 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Peter Korsgaard <peter@korsgaard.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH RFC] usb: gadget: Set self-powered based on MaxPower and
- bmAttributes
-Message-ID: <2025021435-campfire-vending-ae46@gregkh>
-References: <20250204105908.2255686-1-prashanth.k@oss.qualcomm.com>
+	s=arc-20240116; t=1739520146; c=relaxed/simple;
+	bh=NXofEpxj/9BReHNdZrAdtQGdBJV0QeI1ab2HRy+vlKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jnn+x/1icgNabkylFbnoAhBUbPxdoFZE2Bz8l3ehN/ENI/uBD471JT9rlrTFXjOkGfvgMXxOov4dvsHZLw+mt0L9s7+NGOi67B2kZdN/tCUrmsqqsgy0gYu7IAPSophXJAi7GUf5+3zbvyrSVRQvuc7lepAS7SwuvuGi3wmxcGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiBctNvG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53DC5C4CEE7;
+	Fri, 14 Feb 2025 08:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739520145;
+	bh=NXofEpxj/9BReHNdZrAdtQGdBJV0QeI1ab2HRy+vlKU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UiBctNvGxngfvE2JzjUfP55+4m+b6irjSMk9DhD2WjG7rAXwoFQMh6nswQtYzXo23
+	 DfEyYPVcEGzrZS7Nopp2Jt2V+DK4FvzGM1Fx+VXcanHXwJEy+zUkgEiaOU25g6Umbk
+	 BHW8HgAyY//SLDqtR5gs4AWGqCz6ftuayhlF9yC/qQuuA253jlyGRG74U6j+pns9s+
+	 c7MgpvEJCDZxllssoKn0pU7WXoJ68RF6SvNjaYC4UZnrPJVSjJ7EJvZ4Bku/+L2iCz
+	 uHPaho3QABExPKGI4iHyparvucgjzM4dEnvrShhCJJocntj9r6reJSeoni3UV6e6Ea
+	 z4LGlX1mrNzQQ==
+Date: Fri, 14 Feb 2025 09:02:21 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, linux-kernel@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>, linux-arch@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH RFCv2 0/5]Implement kernel-doc in Python
+Message-ID: <20250214090221.2cba05c7@foz.lan>
+In-Reply-To: <6958d7a5-2403-423d-a0a3-0c43931a7d30@infradead.org>
+References: <cover.1739447912.git.mchehab+huawei@kernel.org>
+	<6958d7a5-2403-423d-a0a3-0c43931a7d30@infradead.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250204105908.2255686-1-prashanth.k@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 04, 2025 at 04:29:08PM +0530, Prashanth K wrote:
-> Currently the USB gadget will be set as bus-powered based solely
-> on whether its bMaxPower is greater than 100mA, but this may miss
-> devices that may legitimately draw less than 100mA but still want
-> to report as bus-powered. Similarly during suspend & resume, USB
-> gadget is incorrectly marked as bus/self powered without checking
-> the bmAttributes field. Fix these by configuring the USB gadget
-> as self or bus powered based on bmAttributes, and explicitly set
-> it as bus-powered if it draws more than 100mA.
+Em Thu, 13 Feb 2025 19:15:28 -0800
+Randy Dunlap <rdunlap@infradead.org> escreveu:
+
+> Hi Mauro,
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver of self-powered")
-> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
-> ---
->  drivers/usb/gadget/composite.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> On 2/13/25 4:06 AM, Mauro Carvalho Chehab wrote:
+> > Hi Jon,
+> > 
+> > That's the second version of the Python kernel-doc tool.
+> > 
+> > As the previous version, I tried to stay as close as possible of the original
+> > Perl implementation, as it helps to double check if each function was 
+> > properly translated to Python.  This have been helpful debugging troubles
+> > that happened during the conversion.  
+> 
+> Since this new version is supposed to be bug-for-bug compatible,
 
-What type of "comments" are you wanting here?
+Yes, that's the goal: I'm checking all discrepancies by hand to ensure that
+the output net result will be identical at the final version - maybe
+except for blank lines/whitespace (and eventually empty Return sections
+that the current script produces). Getting blank lines and whitespaces identical
+have been hard.
 
-For obvious reasons, I can't apply patches tagged "RFC" but I don't see
-what you are wanting us to do here.
+So, yeah, if something is not handled well by the Perl version, the
+Python version shall produce an identical result. I'm refraining to
+try fixing any already existing issues there.
 
-confused,
+> I will wait
+> until later to test the current known bugs that I know about in (Perl) kernel-doc.
+> 
+> For a preview of most of them, you can read:
+> https://lore.kernel.org/linux-doc/3a6a7dd0-72f1-44c6-b0bc-b1ce76fca76a@infradead.org/
+> 
+> and its follow-up email (today).
+> 
+> There are quite a few problems with parsing function parameters that use
+> typedefs.
 
-greg k-h
+Thanks for that!
+
+Let's address when we finish the transition.
+
+Thanks,
+Mauro
 
