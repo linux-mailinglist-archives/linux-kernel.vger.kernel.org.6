@@ -1,144 +1,211 @@
-Return-Path: <linux-kernel+bounces-514510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B40A357E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:30:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67D0A357EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F7416C177
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C09F1891B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52A318A6CE;
-	Fri, 14 Feb 2025 07:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B5C20C039;
+	Fri, 14 Feb 2025 07:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o2USEROi"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjOlCJp4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CE215573F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5B315573F;
+	Fri, 14 Feb 2025 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739518239; cv=none; b=gjVR66L8lb2yEaohKjyXnQN8nVpwN8VpyDky90H9d8VFFNmw8O9grlcmWZCLMcSNLi/Yraysdf53So6CXxGNKq104gM4+7OikwmeO+r7rwH3/fMLdymph8DuyKV5j36CqgILq+4p54j8DZFXWZFWZqOm6rkRC2AAB+xCW8Q3hUA=
+	t=1739518311; cv=none; b=PF58HZDVEh7JPCyCE2Mfs3GoFdj/aQdmjCf1sGWs+SZRv77gIrm1WwksxxnlvfiD9Pa0GJA1GwtHuuz+lXAM5ORObvXfTX/qSV6e23rY8lWudfYUH/ARSh8gmcD0+mMAUn/h5pW0QQIYINnNkfPYJ8Ye6iewUGTcFWi35mJLBTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739518239; c=relaxed/simple;
-	bh=28rW3L+4nMWFL+nhXSzHh6pgOySV65uLWE7NC0neh+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7CJDRC/BH8X2FgNLZmghlvXEluubWwwNaoxUPU9nYMIT7p4AxEG+jnTY08O+3StKjijusknAIGPszJ9NWSDr084pyk1SvcA7tv21/Dw+uWkPnmyqEbMBJ6ixSbc2TSomRbTkMUt9MLS6mFiZd34zuiEJ5ekyA3sLJQlFxo9ig8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o2USEROi; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f5660c2fdso34931645ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:30:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739518237; x=1740123037; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ws4LKbTJycmWRh3Ik4Ggj9kxLRFUQc51QCqp+xMN91E=;
-        b=o2USEROiSFsMWKvAq9/RdDSAK4f94iZSNoF0qjH9antxgF+fwhRDpH7OxLUl8nVyRG
-         LjmQaV1glqmyU1XIMQvEY3F7Nbpt+r8gnkvUG8XOAnxgyK5gZbju0sc3ZA+adqLs0oud
-         T+BgWkoZpTMAspWSghQrV2+wOL6cptoPeMTjSLqtKdWZPLOfudLToqpGUDhp1EDvZY84
-         DFHmh/JLS7iuy6mQ96FF7u1fyJecDS5hTq2KS08L+Y7b7fszbKd/otySLnBlJ68vPIEo
-         WoUWJxW9gYJturSFg76HJtTxv5Fv4DOEc7AoA0n4+agDmjcm+JVRj/rDvZ31Nf//7i8V
-         xsPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739518237; x=1740123037;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ws4LKbTJycmWRh3Ik4Ggj9kxLRFUQc51QCqp+xMN91E=;
-        b=KIUQ+3nQIrBKygxX2tZx+EZ/Vn7B3sly2aKgNEzJ/9476QAJ+EiyfG3BPJz03JqGQc
-         a/cfgiMYwIHN0IDdce1ySNFneQgXv8Am/pW/4HBI2BzmAcL66DdLrK3X0aChT7Zod3jN
-         C4DTfT38l6wT2gpw3ygbaCzTq/7Uvug33wmgCpMy/DUbk5r043xJ555N+feH7DdMbTjV
-         TWQ1yN/Pf4pWkadFcUMQ5/afLHMMDu+ZJ263xZ7U78g2GRWukyEleuX61+PSPao9chnp
-         2NRWwLu8U9sFsdGNOXH+9CNnJZAhVEw18BDl/WW/A7TGgjIPePT1Sz31qweFJ5DxrteH
-         RYqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXll25oB+lDirhRxvFTizDaIpdWNCypmCeSHZqdJamVX81efKBM5ZVkT+kGA9b4UFJAcnXDDXSRt6txpYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU3VK0CpYJ2EFSEzGWrWP6QAHkSqVpFgAfPOA9WMolFDgHnO51
-	4+8+eUB0AOaETPfrTLNoo6w1rieZuKfPbs2N6zEb663a85mwy9uQS6kiOkCDvw==
-X-Gm-Gg: ASbGnctLPuvNqJkjOu5bUYYwBgJRbV9u+7lHTa+fKF9Uhsr8twNZK1/Hk+EgQWxj1HX
-	Kq0iVMVNjN2iu2zZsC1Sg8zc53v+V134wSEVUEL8GK9/wDUH9gtcK2lmmVCAIKX5BuPy8LHt4kP
-	BiYGcxr1KRK7GRnrYg3DdQ07PX0gWiwfFPVOY5BPwrqVo+FjlZYH77UWz1mv5Q4dyJJz2xoqUFl
-	jx+aL/y8oIGSW2yyG8BmKHnC43d7rQvoYYO4UU2KzPUrw4FDYsa0kREMMbvlrZPxmqfjoe6BgUO
-	+LsNGg9W5LgxdL0XfcrTrPg02wnyaCE=
-X-Google-Smtp-Source: AGHT+IF0u2uYmR+S94peEcofW8EmAj70ydB2+yw1LVmSVhy63KgDEAG/iBAcVgqhQzg4Mo/5g9Mo9Q==
-X-Received: by 2002:a17:902:cf4c:b0:21f:6fb9:9299 with SMTP id d9443c01a7336-220d20e901amr96943215ad.27.1739518236765;
-        Thu, 13 Feb 2025 23:30:36 -0800 (PST)
-Received: from thinkpad ([2409:40f4:304f:ad8a:8cb7:72db:3a5e:1287])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220e21d2453sm18272205ad.184.2025.02.13.23.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 23:30:36 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:00:30 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, bwawrzyn@cisco.com, cassel@kernel.org,
-	wojciech.jasko-EXT@continental-corporation.com, a-verma1@ti.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rockswang7@gmail.com
-Subject: Re: [v3] PCI: cadence: Fix sending message with data or without data
-Message-ID: <20250214073030.4vckeq2hf6wbb4ez@thinkpad>
-References: <20250207103923.32190-1-18255117159@163.com>
+	s=arc-20240116; t=1739518311; c=relaxed/simple;
+	bh=EsbfD+8oMBZkVT1buE8QyRwtFHnJ7VZicSc4qxAQLDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VGFPkqxNY6rhZQh2z1mvoNGDRRRE7SZpbeT/PgtbTJFDkPiJYRi4a3gV31w4THdioUCMXWykOPU2VNhMsaGvYRRHkx5PLrqfO2nzz/VwKO9y1rwG3bMRAxjag5Z2WAbJMs6lxA6UK5VKaPyU/4nUiHMoGz2G0vl9IgKh9boVl6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjOlCJp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D125C4CED1;
+	Fri, 14 Feb 2025 07:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739518311;
+	bh=EsbfD+8oMBZkVT1buE8QyRwtFHnJ7VZicSc4qxAQLDQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YjOlCJp45+yDX9k1uwXIa1NHpftUNJtyfYG0hmKABYAbro0g5pIf5VsHJGD2XKbNH
+	 Zh2TdyV+4jUhT0YHXMPDGRLs21J4cSbafY9uSKecbSq865Kea/aK+cg5E27coCG8pV
+	 CugXfYtw7xLQn8waXZoIA7tRs0yPxoQXyQ1f2N+gF3bEP3n0w3ojxk04uMx/UBoChm
+	 TDqHUnyg1C6oxt6BzfZ9sz6eOlRmVB+gEKTecAS1mo9CY7ZYP86OrCRMQyu29Ybarl
+	 HVI43Pntwv+/XrDliP3PgcmDpy6rfI6N+7CN9WC5Rf7JAoV5xU3RnO9Jp6vweyFznd
+	 MYPv8XNJ+OJwQ==
+Message-ID: <7d50f55d-d0cd-4741-ab55-2f54dc45d6ab@kernel.org>
+Date: Fri, 14 Feb 2025 08:31:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207103923.32190-1-18255117159@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250213044624.37334-1-swathi.ks@samsung.com>
+ <CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
+ <20250213044624.37334-2-swathi.ks@samsung.com>
+ <20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
+ <009a01db7e07$132feb60$398fc220$@samsung.com>
+ <27b0f5c5-ae51-4192-8847-20e471c55be7@kernel.org>
+ <00ad01db7e9c$76c288a0$644799e0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <00ad01db7e9c$76c288a0$644799e0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 07, 2025 at 06:39:23PM +0800, Hans Zhang wrote:
-> View from cdns document cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf.
-> In section 9.1.7.1 AXI Subordinate to PCIe Address Translation
-> Registers below:
+On 14/02/2025 05:53, Swathi K S wrote:
 > 
-> axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
 > 
-> Signed-off-by: hans.zhang <18255117159@163.com>
-> ---
-> Changes since v1-v2:
-> - Change email number and Signed-off-by
-> ---
->  drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 +--
->  drivers/pci/controller/cadence/pcie-cadence.h    | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 13 February 2025 17:31
+>> To: Swathi K S <swathi.ks@samsung.com>
+>> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
+>> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+>> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
+>> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
+>> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+>> bindings
+>>
+>> On 13/02/2025 12:04, Swathi K S wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> Sent: 13 February 2025 13:24
+>>>> To: Swathi K S <swathi.ks@samsung.com>
+>>>> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch;
+>> davem@davemloft.net;
+>>>> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+>>>> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
+>>>> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
+>>>> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+>>>> devicetree@vger.kernel.org; linux-stm32@st-md-
+>> mailman.stormreply.com;
+>>>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>>>> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device
+>>>> tree bindings
+>>>>
+>>>> On Thu, Feb 13, 2025 at 10:16:23AM +0530, Swathi K S wrote:
+>>>>> +  clock-names:
+>>>>> +    minItems: 5
+>>>>> +    maxItems: 10
+>>>>> +    contains:
+>>>>> +      enum:
+>>>>> +        - ptp_ref
+>>>>> +        - master_bus
+>>>>> +        - slave_bus
+>>>>> +        - tx
+>>>>> +        - rx
+>>>>> +        - master2_bus
+>>>>> +        - slave2_bus
+>>>>> +        - eqos_rxclk_mux
+>>>>> +        - eqos_phyrxclk
+>>>>> +        - dout_peric_rgmii_clk
+>>>>
+>>>> This does not match the previous entry. It should be strictly ordered
+>>>> with
+>>>> minItems: 5.
+>>>
+>>> Hi Krzysztof,
+>>> Thanks for reviewing.
+>>> In FSD SoC, we have 2 instances of ethernet in two blocks.
+>>> One instance needs 5 clocks and the other needs 10 clocks.
+>>
+>> I understand and I do not think this is contradictory to what I asked.
+>> If it is, then why/how?
+>>
+>>>
+>>> I tried to understand this by looking at some other dt-binding files
+>>> as given below, but looks like they follow similar approach
+>>> Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+>>> Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+>>>
+>>> Could you please guide me on how to implement this?
+>>> Also, please help me understand what is meant by 'strictly ordered'
+>>
+>> Every other 99% of bindings. Just like your clocks property.
 > 
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> index e0cc4560dfde..0bf4cde34f51 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> @@ -352,8 +352,7 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
->  	spin_unlock_irqrestore(&ep->lock, flags);
->  
->  	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
-> -		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code) |
-> -		 CDNS_PCIE_MSG_NO_DATA;
-> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
->  	writel(0, ep->irq_cpu_addr + offset);
->  }
->  
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-> index f5eeff834ec1..39ee9945c903 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.h
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
-> @@ -246,7 +246,7 @@ struct cdns_pcie_rp_ib_bar {
->  #define CDNS_PCIE_NORMAL_MSG_CODE_MASK		GENMASK(15, 8)
->  #define CDNS_PCIE_NORMAL_MSG_CODE(code) \
->  	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
-> -#define CDNS_PCIE_MSG_NO_DATA			BIT(16)
-> +#define CDNS_PCIE_MSG_DATA			BIT(16)
+> Hi Krzysztof,
+> Thanks for your feedback.
+> I want to make sure I fully understand your comment. 
+> I can see we have added clocks and clock names in the same order.
 
-Oops! So how did you spot the issue? Did INTx triggering ever worked? RC should
-have reported it as malformed TLP isn't it?
+No, you did not. You can see syntax is very different - one uses items,
+other uses contains-enum. And now test it, change the order in DTS and
+see if you see any warning.
 
-- Mani
+> Could you please help in detail what specifically needs to be modified regarding the ordering and minItems/maxItems usage?
+You did not try hard enough.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Open other bindings and look how they list clocks. For example any
+Samsung clock controller bindings. Or any qcom bindings.
+
+Best regards,
+Krzysztof
 
