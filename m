@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-515613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CF8A366AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:10:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15B5A366BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960FD7A41FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63393AB4C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34ABC1C84B3;
-	Fri, 14 Feb 2025 20:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC81F1C863D;
+	Fri, 14 Feb 2025 20:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZUTNJpsH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rXv0vaa5"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD6D1519AB;
-	Fri, 14 Feb 2025 20:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B291C84D3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739563830; cv=none; b=XlXDkyAStXGq2S7CGm57t8o5biWtK/HZIz3VHxOnZY4vZFPZ7U5ExeO/uOwfL9YHRqydijK7tCmIc+E2c4tZXa+2qGPYywRsTKanMdIo3rviM7yC8NZ185Sl3REYKGNw+h9FtLAouqHuv+QaG6NeaxAR9QMvjhlUvLvt82a3Afo=
+	t=1739564039; cv=none; b=G1GxvLH2ukQra6k4al8eFQ7vYeP1OIJf0ZFKGjWXbaZJOjWhyxgM8S99EIR69xn6L1hVockQo4/M30tC7Hxb5taqGN0VETNWseBof5JjSmZvVzVxXYIxcr3otI9vFPKJNCKRW5NIDi8h54lbfShR2PvZjb8i9VBzPZzNyWgh89w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739563830; c=relaxed/simple;
-	bh=9bkdPbfYP8qkO/O8V7qdFgXNOyCEhYUIkoDTs1E8mjs=;
+	s=arc-20240116; t=1739564039; c=relaxed/simple;
+	bh=11yDghk3Q1KQR9dyQo5cKk3cFl9oA0lfPn4n6ZcqiOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj6/pQMExMAiLczVlbVwXXdpTiGklBO0fECaRxc6IAN7KUJY4garoB3eFXhSDV1AZ2e6EE0Hk9IS9by0lC2DvXrfXn0VFmznKhREXTBSbq6LKo6OV3opsAAQ6ANPCh+iLy8DYlbrE+C63TN2QqP4u13AjWiHbxORadAjmp9tf98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZUTNJpsH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6CF5340E0176;
-	Fri, 14 Feb 2025 20:10:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id v7e3ERKG7aYb; Fri, 14 Feb 2025 20:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739563822; bh=Jvpzn5pW1ksEmaE2Dx5X88B2qb28vkHA3CBjRxRYaK4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZUTNJpsHT6BVJ6vbMrlVAg5emvws4fwnXF2wKHuxi7xRKfSJ52SMxZ9g736416VOW
-	 M1vyUATAkTlMOCNXucq1iLi0Mlv8/CVkunuklGmX1A2Rg9rsDYWA69egeji2SP8ceF
-	 qnBOwBMeV52DMY1lFAWhOVW0+Eq3GJs4g/8qvj5MFdCU1c5gNYDBI/U/fbSqcUPnRH
-	 bXb9iiXVofynVAr3Y1q5ggjEBlFFYJn0eXbpRVu1Brk3WXiOC16KvhEZK+b+9eZ8dv
-	 bFH1td7cdyOT0ZWmhjKGdLMTPcC1/lsjrD91NtkWcCQaYU/u8KQMhrxuLfligqrgXy
-	 nS+7wh694h+ejB+mbbD1ibMjxjmIkPBIfTM8WsmTt7zmyoxoHUi/wvzOQPJVK/WEGt
-	 7BdDT89Go4N1AcXr2HWde3YU2lU2umSkh/VbAGPh3MQxsN6zfESpjN3y6WKa0qw8LP
-	 t4tPbGL3dhzBsC2B2QzRGNeDbG62t9B9YBV15nhUT9G+hflTAcG5Rt8qwHeL8IJHdv
-	 gkWI6dINWdi0jSI8YrwJgjvH6C4wn78Tsfpy9RXnZzq7GO1PPj2VSEMtABog5fbB5G
-	 Dkgw5OhyuOC2K4E78a9FgsRIL4Pjr1btG3qVerCuoUnMUkCFXWazJ1ETd6FFHa+PZo
-	 O6FCaFUYjJeHZxZ1kyArl+k8=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79CAD40E00C9;
-	Fri, 14 Feb 2025 20:10:11 +0000 (UTC)
-Date: Fri, 14 Feb 2025 21:10:05 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Patrick Bellasi <derkling@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: Re: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
-References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
- <20250213175057.3108031-1-derkling@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KEpr4AOWwEg7hWv+FcemO39c41cCnqrGINhXXMDs0cHODr/3kKh/p7q25C+wg8+a63XCgbpLLuskO+18p8uXPQcGZ4ATkTnaUmkZt+5ADHeIeW+kLEQeowqBxXkLX3+LbDBx98yIoUhXoliZCHsFWkd8g1/LmvzPZdjjkpJQeyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rXv0vaa5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fVBh7aaxMWrgdPSRhNEUp6jby7sv5vPC7kuSsBAFoKo=; b=rXv0vaa54mCblIpaapXigfgfw0
+	41pAAYZSHcUBiYziL6XmjiawVrMCkvCDnhF3+uHPURZKvrqyDxeP439DBjJl3Ky4C92EQIEVGLAVU
+	VQZcI0k6puXOTRH9Fzsk2crQ8SYp6BmBeB55MgQpCtUS5u8NTALpN0z+pCXddgI8/lKuKVYVxIjby
+	2ew+8Bo7j7lj6jjn+fTLGKwti7RKK9L0Kod5D1ltwDamFQEfxqDyuikQcPRof4SCqnKgpZvlebwNe
+	m5j5AFRmPWW058UoPMNhXFFGIgH1Di26Qy3IwqlxeYTfV94ZmWCiNHEweF9WhuHZ5c0Wo+hjCpHTZ
+	JjtxbjtA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tj24F-0000000Bzz5-0gH6;
+	Fri, 14 Feb 2025 20:13:43 +0000
+Date: Fri, 14 Feb 2025 20:13:43 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] mm, swap: simplify folio swap allocation
+Message-ID: <Z6-j924RCEBuDFHO@casper.infradead.org>
+References: <20250214175709.76029-1-ryncsn@gmail.com>
+ <20250214175709.76029-8-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213175057.3108031-1-derkling@google.com>
+In-Reply-To: <20250214175709.76029-8-ryncsn@gmail.com>
 
-On Thu, Feb 13, 2025 at 05:50:57PM +0000, Patrick Bellasi wrote:
-> The "should be set identically across all processors in the system" makes me
-> wondering if using the "KVM's user_return approach" proposed here is robust
-> enough. Could this not lead to the bit being possibly set only on some CPU
-> but not others?
+On Sat, Feb 15, 2025 at 01:57:09AM +0800, Kairui Song wrote:
+> @@ -1648,20 +1639,20 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+>  	if (list_empty(&info->swaplist))
+>  		list_add(&info->swaplist, &shmem_swaplist);
+>  
+> -	if (add_to_swap_cache(folio, swap,
+> -			__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
+> -			NULL) == 0) {
+> +	if (folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN)) {
 
-That's fine, we should update that paper.
+add_to_swap_cache() returns 0 on success or -errno.
 
-> If BpSpecReduce does not prevent training, but only the training from being
-> used, should not we keep it consistently set after a guest has run, or until an
-> IBPB is executed?
+folio_alloc_swap returns true on success.
 
-After talking with folks internally, you're probably right. We should slap an
-IBPB before clearing. Which means, I cannot use the MSR return slots anymore.
-I will have to resurrect some of the other solutions we had lined up...
+That would seem to indicate you should change the polarity of this test?
 
-Stay tuned.
+Or should folio_alloc_swap() return an errno?  Is there value in
+distinguishing why we couldn't alloc swap (ENOMEM vs ENOSPC, perhaps?)
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
