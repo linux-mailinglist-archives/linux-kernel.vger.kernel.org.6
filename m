@@ -1,144 +1,358 @@
-Return-Path: <linux-kernel+bounces-515341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A308FA36379
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:47:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94658A3637A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891B916DBAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E646416F9F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0731A267AF7;
-	Fri, 14 Feb 2025 16:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA5226738A;
+	Fri, 14 Feb 2025 16:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAQePg0K"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ZBJ4GsS/"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5971519BF;
-	Fri, 14 Feb 2025 16:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875261519BF;
+	Fri, 14 Feb 2025 16:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739551581; cv=none; b=uVc3s7BBkLX6D65sXFUwUZlx3uXNKwjdYKXMQU7dT8D1NKvCYA3vFulIULH3pNDM920RE5HJxxJvDYoLTyz0NuOxJxvRnO/BDrhKymoh3i4OncK6bbmRwZuMNbJyAAyNwxCvrjrtbwf8DZPqbVQcIoPWUG1IW9txv1PD3xvYgJU=
+	t=1739551624; cv=none; b=sZRD9gYbDwYJ2EEaoVIrKuHkbECF5MsMl/dFwxBJ83tFvuYmBOt0N/qGdtrb7x/lL57encqWRnTcnSEKgnsrmRIRVP+1jDNjKvkMMDc24HuztOW+Ol78RcmEvFx79YvUoGdxJrEequbZiNxf69F8L3O20MmmdhMlK08TcXik2d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739551581; c=relaxed/simple;
-	bh=zG4mJe4owvwGLwC906K8suHMoRJnspdnmPqfvRkK3NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E2fLxbS2SVq9gN4TfngIvDohd4zSYDbE3mO6216v69p6DKZDNwjfMANEs2oE/TuJT7PNncCkKRhwrcErbUrrcSkly15dHqMRm6LFerjTpHXvnpHKq4BC8RJWeh+V4pf4oHGgUYrgUo6h4TuJk5sZGzcvVm6EkuGDg0Z45nqERuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAQePg0K; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f2cb1ba55so773553f8f.3;
-        Fri, 14 Feb 2025 08:46:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739551578; x=1740156378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gEUK7M60lRQardXDr3rcqI3xJ8vpCF/l2APWaA9DFUQ=;
-        b=fAQePg0KX/ovVhCMZ0a0eWgYfWs09N7n+zg5KUef6HHZyHU8w04QcvECStOaCR2fzz
-         Es1d15DrFhH3leuNL6UgqVCS7KM4z9HhHOXeI0Q8CAUwxWYMv3Ft65K1T8dFqwUcJdwq
-         DLvV3yQrlE3EUy6xjXz97sWNjcRqPAqYe0rwkHCDSYp+o8q2rXU3fjPNHPdyrVZmygdp
-         O/6/e9IXBMKHVhat9MEvYqWp3z9WXlAiQVPGs5XokGF03VVav3LZWhJihP5fGt3CRUpc
-         iTEXDr9wIorIOYtT51yyOPWqhVrY6pweF1xk5MER35qwSzTHD0pTo5k9PH1fxJ/UVSFV
-         X8SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739551578; x=1740156378;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gEUK7M60lRQardXDr3rcqI3xJ8vpCF/l2APWaA9DFUQ=;
-        b=k8jzEi6F56iJh0VK7/bS+3NajblSXXUBZwqpvwSzPuOuNBb67lVV3fpkLRTkeSjPb9
-         SF52znbSRbyiUduT/yIHNxAm4wzBmPDZsEf4SLM/e2feyiTNfXig8G0PGkwZ2BO47jlr
-         jqEDJrcy6//hwdIJ7fDYfx14ynzhFuazqatxQO0dJpW0Y8YPiFO8fCG3ke6vSv/dko9J
-         OpFVlLUdcPtbmMynqkgTjJ8NScXFd5ukj5NyMArfYjhH2Hy9U7oNz4olPAA7Pio8OeIy
-         B7e6nkySDaS8db+yPLxHAenQihBc6l+FdsEhxAcYHhplK5pzvZwQ+rZxC9o6hIIrhYDT
-         9o7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Zdf4fBVlHK4MWugJ3uWNrK/6LYsdisHmoQd/eQbGkX45DmvSmTAKKSYns2ZJCmYah2WA+9gD4rrs@vger.kernel.org, AJvYcCUCipk2X2XIUx4bwULHfKHsyg7BZ7jE2dopU0Mx76UNvPinPWVWokDfpkH3J5Ru5+YN45G3kDcj3GarSOk=@vger.kernel.org, AJvYcCW94QmidKbb4EAIYCxoJ6WFdFfphEZUWq1Pb48fxT2WnYYDdaAG8zCC/e5f8OwZDu46t1k8YUXycNHtugxc@vger.kernel.org, AJvYcCWUnYeT4YAMPkZk9iXPjUdD3dzYhibvKlEMhiCJvASijQpTqnm5CqnfW88vt0RpmhEOG5EfVYHiDxB8xQ==@vger.kernel.org, AJvYcCXcyrRMBaNkIj4TtTGTLNJHOU+JOldthbJCzqOmOCLvDhtrfFiV81q00Vu2/8lUscItKyn3/OqMfIxqarZC@vger.kernel.org, AJvYcCXp0hc5zxzMMiqpke7GnkmBF6fQkaGeNz77VgBNllSU5tOLcFJfg5ZVJLHzpIT2jR2AO6M4DaJAQ50=@vger.kernel.org, AJvYcCXxkXzKOxN7C5ZAjCGD+BEgf2MNITMB19al2ORgPOmX2voSMRPUTo1IahPD/kkOPzFCGsZ5HaGBR1DY5kHwKzlyFn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZnjVNulkh2ccbDW1uzVPKGXZs9P508aO2X9SsbSOkHaJweMFy
-	qnuMcwHBOkFw34QmLWcUlJeNCY5SEVk5ZBdIno1bJNDzNYQU4Ds6
-X-Gm-Gg: ASbGncsH1SidTUEuD7ilwDGry6lKGCScU4XnhALYjwa1FsbszV4KCFH1vrewtWNxp7A
-	0WdAsy9jz2Ts4xV5kkMgurcG+J27hJIev/HtNaqdELz49XkKKctQegj7p4x90PYO4lyZLEZycdM
-	rTCxvSEzj1iDUDxRk8HvPw5CelTViuqSqq9uXP8SJ7PDAv+liyDFydAaRvTelK6ZryBZ90zScUy
-	m2H8pLodAUFH/l7uNdztbI1C4ZgDvKXQAOMmU416y6yTdcwapRnEFdhqNQI/F8tuzPMV5EcUiaf
-	k3v8fbD1R7+Y3uEZlKpKECCCpanVwyk8Rb8AsBJw3yprdlZqFRItMQ==
-X-Google-Smtp-Source: AGHT+IG9iRvkwD2Pnjr513qQIYSAcwjpWUdTSopHyr3FX8/GpCTlATk6Kd4aSQlT7eXs7Bpa1c1skw==
-X-Received: by 2002:a05:6000:1f81:b0:38f:2173:b7b7 with SMTP id ffacd0b85a97d-38f2173b9aemr11306900f8f.18.1739551577421;
-        Fri, 14 Feb 2025 08:46:17 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8217sm5125878f8f.90.2025.02.14.08.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:46:17 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:46:14 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang
- <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Yury Norov
- <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Johannes
- Berg <johannes@sipsolutions.net>, Alex Elder <elder@ieee.org>, Vincent
- Mailhol <mailhol.vincent@wanadoo.fr>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, qat-linux@intel.com,
- linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH treewide v3 2/4] bitfield: Add non-constant
- field_{prep,get}() helpers
-Message-ID: <20250214164614.29bbc620@pumpkin>
-In-Reply-To: <20250214073402.0129e259@kernel.org>
-References: <cover.1739540679.git.geert+renesas@glider.be>
-	<2d30e5ffe70ce35f952b7d497d2959391fbf0580.1739540679.git.geert+renesas@glider.be>
-	<20250214073402.0129e259@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739551624; c=relaxed/simple;
+	bh=dcO+LnspWooawou45LkIT56ZhReuEcnq4wVqbmqn5wQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hlIBMuOYOGsqTnJEkMKwFzitw16Y73r/3m0vuF3JiI0AX31oB8coxtI7JjX6Pg5Y2vcWqWxCi1++3rFosca/nxNX+5G9HK5kRzWdV3OZhFLS2stNmNuJ3cIh7jd8VNkmW0kf0OEp0MGNmHiH5h0ocEoltV18vWgSpgwz4SAvLFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ZBJ4GsS/; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1739551612; x=1740156412; i=w_armin@gmx.de;
+	bh=Tt9qSh1lGkulOcz4hTZCSW+O6b6j4iGiEVVg8EycV88=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZBJ4GsS/UyApJuRHajM8TBzWUMtIv055WJvZhRVGyroDBc0B/392kclsxFBMJsFs
+	 yR9ZUKn6lEHZVVvhxvjd1ohFnu5K0ztx9bhXr4/F0tqig91AW6A2Oy+dNZK0xKfV8
+	 +qQBb+NOK1JXY/zJ7iDOjA/g76jZjwgMlafnavei1c1/0ozTHSMlytGEwx8VTlnZN
+	 fT17g2Xx0SQOSBtrEwWq4FONIddgKhstAeCv2Q2Tuhd1wd7l0lg/aQfaMRnjYl/tS
+	 SYCgi0w3T4nwW1G5Sx4IDG5yWSi3Uz2K6k+J/1fv1hncjHpFiZs0nVXJHHkQavR84
+	 MIOv2fvuim+NOSD4EA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mo6v3-1t2Rw839uV-00m4pS; Fri, 14
+ Feb 2025 17:46:51 +0100
+Message-ID: <0053b236-79cc-496d-936b-5f8b12b39f10@gmx.de>
+Date: Fri, 14 Feb 2025 17:46:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ACPI: fan: Add fan speed reporting for fans with only
+ _FST
+To: Joshua Grisham <josh@joshuagrisham.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250125100711.70977-1-josh@joshuagrisham.com>
+ <77eb01a6-2905-4776-96ce-eb936c04956b@gmx.de>
+ <CAMF+KeZrdkfwoab4zvBYJMuYaScCDFPbvijo9o6d-9CS96238g@mail.gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <CAMF+KeZrdkfwoab4zvBYJMuYaScCDFPbvijo9o6d-9CS96238g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:n/PP5S+ZdZUq6qrfxCmzEc48W8gfIR2O0+QP+nmEzrYShzMm3Io
+ MmTexC3gg8GEgv0nCS40f9/h7uokKMN1SLohxyS4gM7vauTUwKylXmTPmPrCT37NDtIgBn8
+ w7+otjxuRI8zEPKPOTmg1B94X+pPSJNeaKJL+FNuzhjLmZcVaogqshpe+Sp59JP50MWkwhg
+ f0bu7RRaW7v3p9SK5nKwQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FOIFagoj01M=;O11iVxGwMqdFV0ANPEhI/nmevBF
+ +cp5KanMT9Thk7W9j/5SSNvHF41pOsohxl4Uwd6npZZ/810bnDEu57jV3x5uyusAL1GQuA7m2
+ nP4KzVzHQn9Z7bCHNCW1m9lhRDZttAzt+OmK2LXpfo1+DKPGv6xlsyzX3Fv9znkNRJyctyC3U
+ 1ypsQafivTYvSLx4xHmADL1Zayqhs4RIK0xFY1X2oLhRgtgj2jAVhgZo2zRJ65295n4/GB3Nf
+ jwDFlCd2bCkyo+t6PtrFgYyfRUmnOM3wZmZQzwwMHSNDghnoS20iaDJaMv1UL1odlXxxMjJe5
+ CLgomKoOtETcy9m+CBU7SMnFHe+kXXb9oxjBVoOxRHnxx4L9q4xVfp8zmi1EWkh6jNLp7Lilt
+ d9PrjehbiagO4Dk46xVZnV2n7PQy67OUK967zwZpCOVogesijbVscIT4k7E+NgwtBqP3FRiYK
+ fudyK77NbO9BB4XSkHN5qcb56JzTPISlGHuULi0xggbweSdkNUiQrZr1P2eSpj7jnxqFQPwTK
+ 6sWCjX2x1qJuju6lpoROSAU0u7dTGVdZAVL3s/m31CCkM7tDFJy+qdf0yvhsJHoOaFDN8pfu6
+ 4Sit5vVFdVk+gY4/rfDsu7zOHBPyutJTENj/+9mjEZxRn3vMnPJd+baVrg+ThxUMmNAOrA5fQ
+ vTKm4HB7bh5r1QPwsjzkZFhjVjf+qb1kRHN07vedP9+5cXYb8s72zeJN6018ZdaYMkPQvCjdJ
+ 54G/Bh/uI7G4t9ccEhho0i3YC56he3mI+yoInZz9lTjtHRuCrVS9QJxdbAcxiD/w/xTqgGKjh
+ xpNQ9q38qkHyQPI2xpIqWvfdN/+zjtSA9A5iSq5/EWL9qnoC7wrUwnw3ADwpQwqEaxZ6pUAhb
+ 7Eor+PHxbKtvA3+aglGQ9+unrc8Sl47UacNmGner0FUnoElaREtEScsr/eeLN2aDuPaVZGVP+
+ cRmd+UuUXGjCyIjW96uV3YYY10VxQ4C45MHdqtxm75cAKZsm03uFeS1qZArU6VInKUHki8MZB
+ RihXmoHrmBCXKxycYSHiKHTmVlexis1sAvKTUdM3TJP68Zs24ztJHgUgOacfhh0jMJpaT+ohn
+ wB8VKteoOq8t7EKZTXvi0NTghg3HqpjRgAgv5SHQXmsxFd76to4NvhJhyP+oJe5qTGse7BMZF
+ 3vYSB71o+61/LqkgUUnXkyqYIWn2cpdyTRlmdek7oxmP+F6y7ec0MHU/cAkT2zuoKjphpZ4ZK
+ 1Jy6arblZztzvpwGv2cy3wFr25rXqnxBikTPwqo+I5+P3rklH8b/Vm0XpLzRC2Um0sqcEzA0y
+ K9Fv1AgM9o64EdxVCQ9lKCacPmH7uGSq5rEQHq+9BHs1D8ldXGD1kFpxOj60kOTzHExR0gzN8
+ EplvhR9dE0Eg2egm9DbDVNCr8SPO3nnKfbzSD2UMoQt5PPg0AxafH4g+p17ddbijCstyjHiUb
+ ygfod8DxQaH/vSntrxY/GbhQ42yk=
 
-On Fri, 14 Feb 2025 07:34:02 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+Am 06.02.25 um 08:37 schrieb Joshua Grisham:
 
-> On Fri, 14 Feb 2025 14:55:51 +0100 Geert Uytterhoeven wrote:
-> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> > constants.  However, it is very common to prepare or extract bitfield
-> > elements where the bitfield mask is not a compile-time constant.
-> > 
-> > To avoid this limitation, the AT91 clock driver and several other
-> > drivers already have their own non-const field_{prep,get}() macros.
-> > Make them available for general use by consolidating them in
-> > <linux/bitfield.h>, and improve them slightly:
-> >   1. Avoid evaluating macro parameters more than once,
-> >   2. Replace "ffs() - 1" by "__ffs()",
-> >   3. Support 64-bit use on 32-bit architectures.
-> > 
-> > This is deliberately not merged into the existing FIELD_{GET,PREP}()
-> > macros, as people expressed the desire to keep stricter variants for
-> > increased safety, or for performance critical paths.  
-> 
-> I really really think that people should just use the static inline
-> helpers if the field is not constant. And we should do something like
-> below so that people can actually find them.
+> Den tors 6 feb. 2025 kl 06:05 skrev Armin Wolf <W_Armin@gmx.de>:
+>> Am 25.01.25 um 11:07 schrieb Joshua Grisham:
+>>
+>>> Add support for ACPI fans with _FST to report their speed even if they do
+>>> not support fan control.
+>>>
+>>> As suggested by Armin Wolf [1] and per the Windows Thermal Management
+>>> Design Guide [2], Samsung Galaxy Book series devices (and possibly many
+>>> more devices where the Windows guide was strictly followed) only implement
+>>> the _FST method and do not support ACPI-based fan control.
+>>>
+>>> Currently, these fans are not supported by the kernel driver but this patch
+>>> will make some very small adjustments to allow them to be supported.
+>>>
+>>> This patch is tested and working for me on a Samsung Galaxy Book2 Pro whose
+>>> DSDT (and several other Samsung Galaxy Book series notebooks which
+>>> currently have the same issue) can be found at [3].
+>> Any updates on this patch? For me it seems ready for mainline.
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+> Hi Armin, thanks for checking in on this!
+>
+> For me I have no further updates that I planned or intended to send.
+> If it looks good to Rafael or anyone else who wants or needs to review
+> then I would be glad to see it applied.
+>
+> If needed then I can re-send with Armin's Reviewed-by tag inline in
+> the commit message but otherwise everything is as I would have wished
+> it to be, for what that is worth :)
+>
+> Thanks again!
+>
+> Best regards,
+> Joshua
 
-Especially since you really don't want to be calling ffs() on variables.
+I was hoping to get Rafaels attention so that he can give your patch a closer look.
 
-Much better to have saved the low bit and field width/mask.
+Thanks,
+Armin Wolf
 
-	David
+>>> [1]: https://lore.kernel.org/platform-driver-x86/53c5075b-1967-45d0-937f-463912dd966d@gmx.de
+>>> [2]: https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/design-guide
+>>> [3]: https://github.com/joshuagrisham/samsung-galaxybook-extras/tree/8e3087a06b8bdcdfdd081367af4b744a56cc4ee9/dsdt
+>>>
+>>> Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
+>>> ---
+>>>
+>>> v1->v2:
+>>> - Still allow acpi4_only_fst fans to update power state on
+>>>     suspend/resume
+>>> - Fix if / else if logic error
+>>> - Also hide hwmon_power_input for acpi4_only_fst fans
+>>>
+>>> v2->v3:
+>>> - Still allow acpi4_only_fst fans to set initial power state on probe
+>>> ---
+>>>    drivers/acpi/fan.h       |  1 +
+>>>    drivers/acpi/fan_attr.c  | 37 ++++++++++++++++++++++---------------
+>>>    drivers/acpi/fan_core.c  | 22 +++++++++++++++++-----
+>>>    drivers/acpi/fan_hwmon.c | 12 ++++++++++++
+>>>    4 files changed, 52 insertions(+), 20 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
+>>> index 488b51e2c..d0aad88a7 100644
+>>> --- a/drivers/acpi/fan.h
+>>> +++ b/drivers/acpi/fan.h
+>>> @@ -49,6 +49,7 @@ struct acpi_fan_fst {
+>>>
+>>>    struct acpi_fan {
+>>>        bool acpi4;
+>>> +     bool acpi4_only_fst;
+>>>        struct acpi_fan_fif fif;
+>>>        struct acpi_fan_fps *fps;
+>>>        int fps_count;
+>>> diff --git a/drivers/acpi/fan_attr.c b/drivers/acpi/fan_attr.c
+>>> index f4f6e2381..d83f88429 100644
+>>> --- a/drivers/acpi/fan_attr.c
+>>> +++ b/drivers/acpi/fan_attr.c
+>>> @@ -75,15 +75,6 @@ int acpi_fan_create_attributes(struct acpi_device *device)
+>>>        struct acpi_fan *fan = acpi_driver_data(device);
+>>>        int i, status;
+>>>
+>>> -     sysfs_attr_init(&fan->fine_grain_control.attr);
+>>> -     fan->fine_grain_control.show = show_fine_grain_control;
+>>> -     fan->fine_grain_control.store = NULL;
+>>> -     fan->fine_grain_control.attr.name = "fine_grain_control";
+>>> -     fan->fine_grain_control.attr.mode = 0444;
+>>> -     status = sysfs_create_file(&device->dev.kobj, &fan->fine_grain_control.attr);
+>>> -     if (status)
+>>> -             return status;
+>>> -
+>>>        /* _FST is present if we are here */
+>>>        sysfs_attr_init(&fan->fst_speed.attr);
+>>>        fan->fst_speed.show = show_fan_speed;
+>>> @@ -92,7 +83,19 @@ int acpi_fan_create_attributes(struct acpi_device *device)
+>>>        fan->fst_speed.attr.mode = 0444;
+>>>        status = sysfs_create_file(&device->dev.kobj, &fan->fst_speed.attr);
+>>>        if (status)
+>>> -             goto rem_fine_grain_attr;
+>>> +             return status;
+>>> +
+>>> +     if (fan->acpi4_only_fst)
+>>> +             return 0;
+>>> +
+>>> +     sysfs_attr_init(&fan->fine_grain_control.attr);
+>>> +     fan->fine_grain_control.show = show_fine_grain_control;
+>>> +     fan->fine_grain_control.store = NULL;
+>>> +     fan->fine_grain_control.attr.name = "fine_grain_control";
+>>> +     fan->fine_grain_control.attr.mode = 0444;
+>>> +     status = sysfs_create_file(&device->dev.kobj, &fan->fine_grain_control.attr);
+>>> +     if (status)
+>>> +             goto rem_fst_attr;
+>>>
+>>>        for (i = 0; i < fan->fps_count; ++i) {
+>>>                struct acpi_fan_fps *fps = &fan->fps[i];
+>>> @@ -109,18 +112,18 @@ int acpi_fan_create_attributes(struct acpi_device *device)
+>>>
+>>>                        for (j = 0; j < i; ++j)
+>>>                                sysfs_remove_file(&device->dev.kobj, &fan->fps[j].dev_attr.attr);
+>>> -                     goto rem_fst_attr;
+>>> +                     goto rem_fine_grain_attr;
+>>>                }
+>>>        }
+>>>
+>>>        return 0;
+>>>
+>>> -rem_fst_attr:
+>>> -     sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+>>> -
+>>>    rem_fine_grain_attr:
+>>>        sysfs_remove_file(&device->dev.kobj, &fan->fine_grain_control.attr);
+>>>
+>>> +rem_fst_attr:
+>>> +     sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+>>> +
+>>>        return status;
+>>>    }
+>>>
+>>> @@ -129,9 +132,13 @@ void acpi_fan_delete_attributes(struct acpi_device *device)
+>>>        struct acpi_fan *fan = acpi_driver_data(device);
+>>>        int i;
+>>>
+>>> +     sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+>>> +
+>>> +     if (fan->acpi4_only_fst)
+>>> +             return;
+>>> +
+>>>        for (i = 0; i < fan->fps_count; ++i)
+>>>                sysfs_remove_file(&device->dev.kobj, &fan->fps[i].dev_attr.attr);
+>>>
+>>> -     sysfs_remove_file(&device->dev.kobj, &fan->fst_speed.attr);
+>>>        sysfs_remove_file(&device->dev.kobj, &fan->fine_grain_control.attr);
+>>>    }
+>>> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
+>>> index 10016f52f..66aa1be64 100644
+>>> --- a/drivers/acpi/fan_core.c
+>>> +++ b/drivers/acpi/fan_core.c
+>>> @@ -211,6 +211,11 @@ static bool acpi_fan_is_acpi4(struct acpi_device *device)
+>>>               acpi_has_method(device->handle, "_FST");
+>>>    }
+>>>
+>>> +static bool acpi_fan_has_fst(struct acpi_device *device)
+>>> +{
+>>> +     return acpi_has_method(device->handle, "_FST");
+>>> +}
+>>> +
+>>>    static int acpi_fan_get_fif(struct acpi_device *device)
+>>>    {
+>>>        struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+>>> @@ -327,7 +332,12 @@ static int acpi_fan_probe(struct platform_device *pdev)
+>>>        device->driver_data = fan;
+>>>        platform_set_drvdata(pdev, fan);
+>>>
+>>> -     if (acpi_fan_is_acpi4(device)) {
+>>> +     if (acpi_fan_is_acpi4(device))
+>>> +             fan->acpi4 = true;
+>>> +     else if (acpi_fan_has_fst(device))
+>>> +             fan->acpi4_only_fst = true;
+>>> +
+>>> +     if (fan->acpi4) {
+>>>                result = acpi_fan_get_fif(device);
+>>>                if (result)
+>>>                        return result;
+>>> @@ -335,7 +345,9 @@ static int acpi_fan_probe(struct platform_device *pdev)
+>>>                result = acpi_fan_get_fps(device);
+>>>                if (result)
+>>>                        return result;
+>>> +     }
+>>>
+>>> +     if (fan->acpi4 || fan->acpi4_only_fst) {
+>>>                result = devm_acpi_fan_create_hwmon(device);
+>>>                if (result)
+>>>                        return result;
+>>> @@ -343,9 +355,9 @@ static int acpi_fan_probe(struct platform_device *pdev)
+>>>                result = acpi_fan_create_attributes(device);
+>>>                if (result)
+>>>                        return result;
+>>> +     }
+>>>
+>>> -             fan->acpi4 = true;
+>>> -     } else {
+>>> +     if (!fan->acpi4) {
+>>>                result = acpi_device_update_power(device, NULL);
+>>>                if (result) {
+>>>                        dev_err(&device->dev, "Failed to set initial power state\n");
+>>> @@ -391,7 +403,7 @@ static int acpi_fan_probe(struct platform_device *pdev)
+>>>    err_unregister:
+>>>        thermal_cooling_device_unregister(cdev);
+>>>    err_end:
+>>> -     if (fan->acpi4)
+>>> +     if (fan->acpi4 || fan->acpi4_only_fst)
+>>>                acpi_fan_delete_attributes(device);
+>>>
+>>>        return result;
+>>> @@ -401,7 +413,7 @@ static void acpi_fan_remove(struct platform_device *pdev)
+>>>    {
+>>>        struct acpi_fan *fan = platform_get_drvdata(pdev);
+>>>
+>>> -     if (fan->acpi4) {
+>>> +     if (fan->acpi4 || fan->acpi4_only_fst) {
+>>>                struct acpi_device *device = ACPI_COMPANION(&pdev->dev);
+>>>
+>>>                acpi_fan_delete_attributes(device);
+>>> diff --git a/drivers/acpi/fan_hwmon.c b/drivers/acpi/fan_hwmon.c
+>>> index bd0d31a39..d0668ecc2 100644
+>>> --- a/drivers/acpi/fan_hwmon.c
+>>> +++ b/drivers/acpi/fan_hwmon.c
+>>> @@ -43,6 +43,12 @@ static umode_t acpi_fan_hwmon_is_visible(const void *drvdata, enum hwmon_sensor_
+>>>                case hwmon_fan_input:
+>>>                        return 0444;
+>>>                case hwmon_fan_target:
+>>> +                     /*
+>>> +                      * Fans with only _FST do not support fan control.
+>>> +                      */
+>>> +                     if (fan->acpi4_only_fst)
+>>> +                             return 0;
+>>> +
+>>>                        /*
+>>>                         * When in fine grain control mode, not every fan control value
+>>>                         * has an associated fan performance state.
+>>> @@ -57,6 +63,12 @@ static umode_t acpi_fan_hwmon_is_visible(const void *drvdata, enum hwmon_sensor_
+>>>        case hwmon_power:
+>>>                switch (attr) {
+>>>                case hwmon_power_input:
+>>> +                     /*
+>>> +                      * Fans with only _FST do not support fan control.
+>>> +                      */
+>>> +                     if (fan->acpi4_only_fst)
+>>> +                             return 0;
+>>> +
+>>>                        /*
+>>>                         * When in fine grain control mode, not every fan control value
+>>>                         * has an associated fan performance state.
 
