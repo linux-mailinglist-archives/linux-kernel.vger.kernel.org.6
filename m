@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-514635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F493A3599A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D36A359A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32FF116F02A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE37716B47D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB722C336;
-	Fri, 14 Feb 2025 09:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF37722C33A;
+	Fri, 14 Feb 2025 09:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/xkqLGe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJst4X3S"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580822135B3;
-	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFB4229B11
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523716; cv=none; b=MuMAiSMoMPephlDzqPSzOTOOMaQcZ00j2AAGyf+rrIXC3DQF/ZjEJQlTmciQKGzL/bwNnFTshB/6grisi6P04LVcAlXppJGLELceBb0uMOYmmIbECutWfzjkb7SAT80b3866pcV+5S/KGHiOwIxPav30fjybhL2mXa1ZtHCC0G8=
+	t=1739523805; cv=none; b=A/MKZBYyydkLg8fMUykPfrgzK0MBm9rlkKOdZRCPLkxxKecHaOc6UyLmgcVhwmjuGYeSp2NSAHPrSRwfrd0VVHGDYfZYqtFTsmqG0/3bJMBIcZroAutpZpK5u6GvSGhnLK93INcnwFctVvVcdVsQylFnCQyA9JzEU8YCf6Rtw3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523716; c=relaxed/simple;
-	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K01/Ofgvx2ybxU1x5oIl9aYqt0cYlsyrtu24ZnM9mCulkuBv66QKIAt2TFq2vYpY9GxiR6h1HnxXsee0qi7PvG5tZy4+QPwyosjuy5/tdM5yG0On1SrdBRKm1ZUEDNNnm76Xoy332vMNwmEkEBpZMltW06wIgy22b7a5MinpN2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/xkqLGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF991C4CED1;
-	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739523715;
-	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/xkqLGeQGghNFr1UXpBpJRHIIje3QwfnTJTBpNw6Ra8d8dAPE4Q8WlcdkpFjPULY
-	 6fiY8XSsnWRQaOGEO9Fn/LUFdm59gBRy63nOZ5JDwuJnWFx3Ti15VEZ73bQYHe58bH
-	 QpMMrmThdQ6un8gTOHIRlQgHM4Tp1JLabTifPT0RztTYAZvD898m+TTR6uD7gI+W61
-	 5wsuCC4Np6I3McOTrzAoeuniD1join6UrtkvFbwqHjWZdhDVpSzQWh2L4fG+BkLdR0
-	 9VQl41n/7fSxn64C/prTvjPHDS44kCN0kUlgVRrQH+GOESdGXYoyXK+x/mJMj7H24B
-	 1JsU87DUZ+oUA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tiraG-000000006Eq-0Iki;
-	Fri, 14 Feb 2025 10:02:04 +0100
-Date: Fri, 14 Feb 2025 10:02:04 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add support to reconfigure PLL
-Message-ID: <Z68GjM-X7Qkpyv7B@hovoldconsulting.com>
-References: <20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com>
- <Z6HnOUfsSaKYyYfh@hovoldconsulting.com>
- <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
+	s=arc-20240116; t=1739523805; c=relaxed/simple;
+	bh=iTJc0cMLK8/kUGnVlLkEpjMd1IDc2KhUACzQgpu9b34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J3sf5DsjAKBPuJwbyN3/LMs4dzdHYgicE80KnIukGtpvO43xcBgOlD9XBCikBRViGQGbijnmR5dfZSi0tWtyFp8r+2QVHW/jVyWGBybsSWJj5QjcpZB34un+3xxGWZ/9FQeB48+PiGkWCLY/Gsvo5h0GG3kLewx5w9gn8RJEgwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NJst4X3S; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30737db1ab1so18648271fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:03:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739523800; x=1740128600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iTJc0cMLK8/kUGnVlLkEpjMd1IDc2KhUACzQgpu9b34=;
+        b=NJst4X3ShKfYilNvdBaAeZUSsNND0v2If27aHRsb398vytgj3Mv6zvMZv/ElAHtpAd
+         gEi16QAbNvI3UrPJTZxa/3Nf26mrJhW7hS5aDIZxPB6dH3tJwSl3LaZGQlIFv6sX5YN/
+         uTEJlU6hbBbDAfkK01+kD57zdhE3+3h3ipqeEh85BMtvW53mFuZGjhNEn8Rp77g94DQt
+         N7IDS8voyAohHxca/hnh3RypNejTYYyyFGd76f82LbuPfZV0Rp1VSi845s9GCykNLV90
+         5bZNXCQt3QkKGIiVSjsqT4q+NC9GwlR2CTT+Osqb+8YLtL1gnS+q3zde+7v66GAOm1wS
+         NUAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739523800; x=1740128600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iTJc0cMLK8/kUGnVlLkEpjMd1IDc2KhUACzQgpu9b34=;
+        b=f/9y4cNcrLrGj8YgzPUfU6IlxbEo9tT/gVAJeT5jm+UZ1F8V9XTCa4Olk1EoCSbq48
+         Z32rdiV6eZ9sZ7VRp6X64ycLwV6wu2pb0NOE9aVwVCtK4Eh0Sh1ha2FwhL69WORllBnq
+         Ofs+uSSEkMtqsQeGdIbBdO5FDjMDDEN9lgCmNJ49RORLAiVS/7pOFprehlG0IKP2sAI6
+         xnFcXToi5chmK2SRvjv3Y9tap+oNWdrUNf/2o5ij01SLXzA6sP91PbIauQcpmoO5ZmmB
+         6mP6cpg39Q73+/QIjESRnTD/ljRjB87/OwXiwMkN68HlJubGcgNME8YNQHtAliPMGb++
+         LGRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXh9Qf8JI4EmV4jf8rZ1lb9cE7QIZBXj3rPSwAYZwWtC0kn8+KoCRezSGnQtY6cYLRaorq6wT9o+bdEMAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTJpGfQ8g+TenFreczZJQHwXlxQlvwkWQyGbLcl9qGm90aEgwv
+	XGcmEiwLuw2fEk0BZKM8lncsF6wD4bgxzlyPqiL2sdE4k/IctHWh0i2W8dJDv4xBa1qcFnwrW1E
+	66dDT5d4L2s2SQ2abG8sfjh2973xi7NAILW0hjg==
+X-Gm-Gg: ASbGncvw8n1FHf6GzmsZ7dvJYLEpZL56i/4PLwEw9yvhlpdMOLHwaC04tOZS3Vcbf+6
+	2M5GgKT6/DyK7MxREtOEeNONULqkY6/ONVrf8srQpsQ5YQUNYrE7fJRUi5Odr5clyOk2+qEE+
+X-Google-Smtp-Source: AGHT+IF3HDdrnSW3BLW3bq9cqh3LStu3LTvk4uCfYArhbMCiGtiuvWWNtxSZE4wwSFlSY9sTduBuIBS2XR5LiRCWzdc=
+X-Received: by 2002:a05:651c:221d:b0:300:3a15:8f1f with SMTP id
+ 38308e7fff4ca-30903927410mr38426071fa.32.1739523799914; Fri, 14 Feb 2025
+ 01:03:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
+References: <20250207-bcm21664-pinctrl-v1-0-e7cfac9b2d3b@gmail.com> <20250207-bcm21664-pinctrl-v1-2-e7cfac9b2d3b@gmail.com>
+In-Reply-To: <20250207-bcm21664-pinctrl-v1-2-e7cfac9b2d3b@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Feb 2025 10:03:08 +0100
+X-Gm-Features: AWEUYZn7NND4I1Mgn5Kpd46GvIrBPpNFG6Ldn40L_YZFFLWpE1zhxOGmLe4jdWE
+Message-ID: <CACRpkdbwVdEa_xgR=wRfkPN2_tpYGnbdpQkTtvgDMRSKPT-GEQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] pinctrl: bcm281xx: Fix incorrect regmap max_registers value
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Christian Daudt <bcm@fixthebug.org>, 
+	Sherman Yin <syin@broadcom.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Stanislav Jakubek <stano.jakubek@gmail.com>, ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 04, 2025 at 11:13:08PM +0530, Taniya Das wrote:
-> On 2/4/2025 3:38 PM, Johan Hovold wrote:
-> > On Mon, Jan 13, 2025 at 10:57:03PM +0530, Taniya Das wrote:
-> >> During boot-up, there is a possibility that the PLL configuration might
-> >> be missed even after invoking pll_configure() from the clock controller
-> >> probe. This is often due to the PLL being connected to rail or rails
-> >> that are in an OFF state and current clock controller also cannot vote
-> >> on multiple rails. As a result, the PLL may be enabled with suboptimal
-> >> settings, leading to functional issues.
-> >>
-> >> The PLL configuration, now part of clk_alpha_pll, can be reused to
-> >> reconfigure the PLL to a known good state before scaling for frequency.
-> >> The 'clk_alpha_pll_reconfigure()' can be updated to support more PLLs
-> >> in future.
-> > 
-> > This sounds like a hack. You already describe the underlying problem (and
-> > indirectly its solution) in the first paragraph above, namely that the
-> > video clock controller has not enabled the power domain needed to
-> > configure the PLL.
-> 
-> This is not a hack, but another alternative way to ensure the PLL is 
-> configured to the right configuration before being used.
+On Fri, Feb 7, 2025 at 9:02=E2=80=AFPM Artur Weber <aweber.kernel@gmail.com=
+> wrote:
 
-I say it's a hack since it sounds like since you're relying on some
-other entity to have enabled resources that this clock controller
-depends on.
+> The max_registers value does not take into consideration the stride;
+> currently, it's set to the number of the last pin, but this does not
+> accurately represent the final register.
+>
+> Fix this by multiplying the current value by 4.
+>
+> Fixes: 54b1aa5a5b16 ("ARM: pinctrl: Add Broadcom Capri pinctrl driver")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 
-> > I believe support for clock controllers that need to enable multiple
-> > power domains is on its way into 6.15:
-> > 
-> > 	https://lore.kernel.org/lkml/20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org/
-> > 
-> > Perhaps that's what you need to fix this properly.
-> 
-> Yes, this is just to add a dependency on clock controller to put the 
-> rail vote, but this series does not fully solve the clock controller's 
-> PLL requirement problems.
+This looks like it could be causing regressions so I pulled this patch out
+and applied it for fixes.
 
-Why not? What else is needed beyond enabling the video (?) power domain
-before configuring the PLL?
-
-Johan
+Yours,
+Linus Walleij
 
