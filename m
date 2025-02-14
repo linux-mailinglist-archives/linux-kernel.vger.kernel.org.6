@@ -1,116 +1,160 @@
-Return-Path: <linux-kernel+bounces-514993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABABCA35E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:09:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62FEA35E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D1D16DE47
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:03:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A225189A146
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C859C265CBF;
-	Fri, 14 Feb 2025 13:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DD5264A7B;
+	Fri, 14 Feb 2025 13:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eI1xvKAL"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Uai4bzoc"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A1E2641C5;
-	Fri, 14 Feb 2025 13:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B982641C5;
+	Fri, 14 Feb 2025 13:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538153; cv=none; b=akbAptXKrR4nycLaVn+sSVnLZFT6DScrWdoxxZWT1BfwNvrrWQml5klzkaj+7iHfx7EL2flc8knDkfUEgR37PHme4TSHlT8oVyJNTZgWAOWL0YL7+2z0nOA1yLTBsfcuMochfIkgDzQ8J7aOVFlBXjQBGYNZ06A3HVPZa6ezoUg=
+	t=1739538131; cv=none; b=dEJ/M651NpJZGrsNYkJcMhn/KkDPsb+Q79WuCRgVD7NrXNDlLJ6bAQDJAe0hQAPA1hR9CKYNatyjk8++Uf1LD0vIXd4zcTEkXtO4hic6Keni6XWRp9j7HKG6hh+cEPcckM1pxANZIGK3WjogD2Kuuc+rfo8y1V9qclqLp3ZqNHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538153; c=relaxed/simple;
-	bh=bvDayo4W7Ir1V06YiXtUNvxaBB7oTUm5Mt6/eLf+GYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uq6cuA7VHNQuxx+Zz0IPgADOqSkebZrVB+koO4nPltdshMqqkm5vl3vXk7nNTBbqO0kA4IALQKUVLMevz8Sr/Qh9On1JJuQGCY1CwAtA+s3X5HHI41GamlhZBlx1DMx01KjVBm1VINWEG9vrlo01LsuE20MaZIdQKDY/q8X04mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eI1xvKAL; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38dd14c99c3so983877f8f.3;
-        Fri, 14 Feb 2025 05:02:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739538150; x=1740142950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyKRIHbKEkE1QGgK/gObgAcYMvHFgxUHygHIci6W7t4=;
-        b=eI1xvKAL/GWtpIhrDGw6su0VbD/SHtWkVd6wq+xrJjEZjsa8DZpNeDYfhLqI7E75eS
-         +CDh2DD+GdkjxicnKAZgGeevCHOIljohAtNq60oTiVz43/QshlhJGQfKflWUsHcNntmD
-         dplyLkKPeiG3liKXMLYXTHswyYmQmJYBxYzBeOMQuqS8WiuRgox6AX+JgnwICeE1THe0
-         7ema3QwHi7TQ2FJZ2tP4YdS4HtD+WsFKSceJgis1ypEE/3aTnVlSxQU22mhkPdwbaRo5
-         E531f+a1sdAOTvdw4/GIUeY48rD43N1dzDrjYAhvC6vtCOgzIzmowjJS4GmlgBJwiHXV
-         mpog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739538150; x=1740142950;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VyKRIHbKEkE1QGgK/gObgAcYMvHFgxUHygHIci6W7t4=;
-        b=Nq0AD9ERUodwhSrefxI9/aYCBqJK+jGhDFnHrtAGdIXdR6MM3D8Vk1YSqhiGdXyHoP
-         AMaVAunSt1UwQf7x6yIiJTUtCMdKt1UEqT2re0KE95yLIRINmswfysrbVkfrN6L8CcDJ
-         k4ZHEsNseEDtXpPkP1XOkU06GJI2uZevzfYXFeepWbHDV5OGis04B7Uv85ci5hV4ezla
-         ysLJlTglHzifqXTdgrou0LTrv/YaSUqYktc9eptVLtY4wJMk6oC2og2ZZdYwwbSWQ8hc
-         x3xX0TvXbsHHqLDzdYmYP0FCUVRTcIHVY/LUsx+Z/NpM8eIzA9bda/4qOr9m7BfKEYbo
-         RfbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLQ0iIsSLsklu7ihtJXDkrrWUy/tJ6QX5aOOUUkQX9N0H0MJ4VTcTkysHJ9/LxFUqdmBH49g13Fb3+lO+F1t/d@vger.kernel.org, AJvYcCVWNDZ081YCd4OP3rVvq2LwEigsC1/OXiDnjN2tFtGVCjQjK/QAFmCzwu6ltJaENiHtCM4=@vger.kernel.org, AJvYcCWAdW65HOVhklNF2j4HlanWPYMNeg9E0/u2htRwruD2qz85VTA9MFzF7WSGezkuHm0E58qNov9dJXX/6AMO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmHMinsupI/qfiMPmReZsTmDHpD+8A8mvU+ili4ug2xRxmGely
-	oT2shHYyUjqIB8ahC16CMd9pA9NkyrBxK2HHODMmwpyhgEL+yV7n
-X-Gm-Gg: ASbGncvK+/zI62r4PxL8oh78+18GLq8jc9mg0Dxn22X5pQh5Wt7pUvPbQ/jhN1U0lJ5
-	xW6SquiVBoQ5EVPMikvuT1wa0S6wzIevgItaEqYPvK4Yfhr8yLjGrY2Cg7jqS0irFBflLYwlAz3
-	H0tfG7t4/CsMQZOdBlD9v7Z2gzEPuoGuGmb1JQJjYD2NBdgEXK/9NEgMafHZ9iO3n4QxQPHao/s
-	ICS8iggXyVwsv4SuYS0yUYi6kPmvMqUdQ1m7soEi0d2FYfZ448hez3N+GM8YfWyW2cyJVIKw9Pm
-	iAuBQ2hob6CGT70G
-X-Google-Smtp-Source: AGHT+IHouc+Aki+tl4UdBdywYmjxaxz/I3TwzUU+dPQ1APxG+jIS4U0D3BOFN/hb0yYCUgHMpoANuA==
-X-Received: by 2002:a05:6000:1863:b0:38b:d9a3:6cff with SMTP id ffacd0b85a97d-38dea26e512mr14714634f8f.16.1739538149352;
-        Fri, 14 Feb 2025 05:02:29 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4396b0aa4e9sm6809285e9.16.2025.02.14.05.02.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 05:02:29 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "Unabled" -> "Unable"
-Date: Fri, 14 Feb 2025 13:02:01 +0000
-Message-ID: <20250214130201.15903-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739538131; c=relaxed/simple;
+	bh=jPFC/CXt6GIqWxOtYvQTRbjZqJ4fVPkJLkMYclM4tvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QY0ueHfjPH1yE54pCeG1X9j+jMTc8CTWGEmd4XPSvsO+1swmev/GlJ4wlM+onGvW5RV9bcInd2D0EpdVK6gWlA8xjZTyYDoLzFZcDOH9JhdS8yNe1zJV/B2ochQ+UGRblPvNEQryOVslng+CvrH2YDSDBRxHBMGh/tYboUC96bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Uai4bzoc; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8wSvMtFQcZjUPSELJlJNQC55nbU8FtST3XYdWaOnecE=; b=Uai4bzocQFjVhRo9PWFm4ANw2H
+	wGYoNM5vTn8Sb6CH7IzbU5JlEny7tT3EiysiP5o0QllVIR5T8bCzBfXfaEFHb5VUTuloiVdpJUlm9
+	fVn6eu0QYRkclihh10qoQd6gOnGWJ5ev6pYDbmBlBjGhcXWWf+gz0P0NkJJcxMBgiDwJO8mAax4FX
+	1yFZceCLc1TCmRLjeyXwmnrLrF2PX8pw6gk80dhlzISi/vA2xLRFO58HGJsT7nJmYYakjTy0hWP6X
+	JyPD84eUQVLFWShuBWIdwK2qoD3SaNK2OXvftoz3dBMdKo58MRlnoxcEAps4cHShIV9+u20Dsjkav
+	ZPdn9NJw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tivKY-0000000BKap-07pa;
+	Fri, 14 Feb 2025 13:02:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9BD79300599; Fri, 14 Feb 2025 14:02:05 +0100 (CET)
+Date: Fri, 14 Feb 2025 14:02:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"Hansen, Dave" <dave.hansen@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/cpu: Add two Intel CPU model numbers
+Message-ID: <20250214130205.GK14028@noisy.programming.kicks-ass.net>
+References: <20240923173750.16874-1-tony.luck@intel.com>
+ <c8545ed5-b822-43a0-a347-d077bccf9d6f@citrix.com>
+ <SJ1PR11MB6083F36D7C68AE8DF5AAA39DFCFC2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083F36D7C68AE8DF5AAA39DFCFC2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-There is a spelling mistake in a TEST_FAIL message. Fix it.
+On Wed, Feb 12, 2025 at 04:09:11PM +0000, Luck, Tony wrote:
+> >> +/* Family 19 */ +#define INTEL_PANTHERCOVE_X IFM(19, 0x01) /* Diamond
+> >> Rapids */
+> >
+> > Is it intentional that this is not INTEL_DIAMONDRAPIDS_X like
+> > Sapphire/Emerald/Granite ?
+> 
+> Andrew,
+> 
+> PeterZ wants to name based on core, not SoC (at least for mono-core CPUs ... this
+> doesn't work for hybrid).  Argue with him.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Argh :-)
+
+So yeah, its a trainwreck.
+
+We used to use uarch, and that worked until skylake.
+
+I'm not sure what exactly we continued as, but Kaby Lake was a Skylake
+uarch.
+
+The Atoms are uarch and still are, they weren't messed up.
+
+But if you want to do DMR as PANTERCOVE then SPR should've been
+GOLDENCOVE and we didn't do that either.
+
+
+Also, since DMR is the direct continuation of GRANITERAPIDS, it should
+also come below it.
+
+Therefore, I'll concur with Andy that this is all highly irregular and
+would propose we do the below.
+
+Isn't the only reason we're doing a new Family because we can out of
+module number space? It's not magically different from Fam6.
+
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 8359113e3e58..bf431dd4e271 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -115,6 +115,8 @@
+ #define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD)
+ #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
+ 
++#define INTEL_DIAMONDRAPIDS_X		IFM(19, 0x01) /* Panther Cove */
++
+ /* "Hybrid" Processors (P-Core/E-Core) */
+ 
+ #define INTEL_LAKEFIELD			IFM(6, 0x8A) /* Sunny Cove / Tremont */
+@@ -179,9 +181,6 @@
+ /* Family 5 */
+ #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
+ 
+-/* Family 19 */
+-#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
+-
+ /* CPU core types */
+ enum intel_cpu_type {
+ 	INTEL_CPU_TYPE_ATOM = 0x20,
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
+index dbcd3087aaa4..d4f1e222cdfc 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
+@@ -810,7 +810,7 @@ static const struct x86_cpu_id isst_cpu_ids[] = {
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	SST_HPM_SUPPORTED),
+ 	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
+ 	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
+-	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	SST_HPM_SUPPORTED),
++	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	SST_HPM_SUPPORTED),
+ 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	0),
+ 	X86_MATCH_VFM(INTEL_SKYLAKE_X,		SST_MBOX_SUPPORTED),
+ 	{}
+diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platform/x86/intel/tpmi_power_domains.c
+index 2f01cd22a6ee..0b3092c264f3 100644
+--- a/drivers/platform/x86/intel/tpmi_power_domains.c
++++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+@@ -83,7 +83,7 @@ static const struct x86_cpu_id tpmi_cpu_ids[] = {
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	NULL),
+ 	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	NULL),
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D,	NULL),
+-	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	NULL),
++	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	NULL),
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(x86cpu, tpmi_cpu_ids);
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index b1c3c7260902..279ad8946040 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -2283,7 +2283,7 @@ void kvm_get_stat(struct kvm_binary_stats *stats, const char *name,
- 		return;
- 	}
- 
--	TEST_FAIL("Unabled to find stat '%s'", name);
-+	TEST_FAIL("Unable to find stat '%s'", name);
- }
- 
- __weak void kvm_arch_vm_post_create(struct kvm_vm *vm)
--- 
-2.47.2
 
 
