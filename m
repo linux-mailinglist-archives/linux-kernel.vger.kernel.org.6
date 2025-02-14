@@ -1,211 +1,139 @@
-Return-Path: <linux-kernel+bounces-514511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67D0A357EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:32:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92620A357EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C09F1891B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:32:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF07F16B3FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B5C20C039;
-	Fri, 14 Feb 2025 07:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB26F20C02A;
+	Fri, 14 Feb 2025 07:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjOlCJp4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YHZ4IOu1"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5B315573F;
-	Fri, 14 Feb 2025 07:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6AC18A6CE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739518311; cv=none; b=PF58HZDVEh7JPCyCE2Mfs3GoFdj/aQdmjCf1sGWs+SZRv77gIrm1WwksxxnlvfiD9Pa0GJA1GwtHuuz+lXAM5ORObvXfTX/qSV6e23rY8lWudfYUH/ARSh8gmcD0+mMAUn/h5pW0QQIYINnNkfPYJ8Ye6iewUGTcFWi35mJLBTA=
+	t=1739518381; cv=none; b=F0URqHkKaHMzXi5A+UHulZkxrfmqTUIdeEpDzRCg8rLcNQiRxlWWUncwFLpD6uCF1S7Dt3DMmc4yGM/TAww66MPCRLXLrubR2nfNvtaFXj7kRmBJnxO1//THUUt7B6lCT9Pcs+0CmWtWCNCejoeSY+M2t+LNF16jxx+S6hMtAq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739518311; c=relaxed/simple;
-	bh=EsbfD+8oMBZkVT1buE8QyRwtFHnJ7VZicSc4qxAQLDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGFPkqxNY6rhZQh2z1mvoNGDRRRE7SZpbeT/PgtbTJFDkPiJYRi4a3gV31w4THdioUCMXWykOPU2VNhMsaGvYRRHkx5PLrqfO2nzz/VwKO9y1rwG3bMRAxjag5Z2WAbJMs6lxA6UK5VKaPyU/4nUiHMoGz2G0vl9IgKh9boVl6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjOlCJp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D125C4CED1;
-	Fri, 14 Feb 2025 07:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739518311;
-	bh=EsbfD+8oMBZkVT1buE8QyRwtFHnJ7VZicSc4qxAQLDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YjOlCJp45+yDX9k1uwXIa1NHpftUNJtyfYG0hmKABYAbro0g5pIf5VsHJGD2XKbNH
-	 Zh2TdyV+4jUhT0YHXMPDGRLs21J4cSbafY9uSKecbSq865Kea/aK+cg5E27coCG8pV
-	 CugXfYtw7xLQn8waXZoIA7tRs0yPxoQXyQ1f2N+gF3bEP3n0w3ojxk04uMx/UBoChm
-	 TDqHUnyg1C6oxt6BzfZ9sz6eOlRmVB+gEKTecAS1mo9CY7ZYP86OrCRMQyu29Ybarl
-	 HVI43Pntwv+/XrDliP3PgcmDpy6rfI6N+7CN9WC5Rf7JAoV5xU3RnO9Jp6vweyFznd
-	 MYPv8XNJ+OJwQ==
-Message-ID: <7d50f55d-d0cd-4741-ab55-2f54dc45d6ab@kernel.org>
-Date: Fri, 14 Feb 2025 08:31:42 +0100
+	s=arc-20240116; t=1739518381; c=relaxed/simple;
+	bh=qroXXeauOVL+Iovn6a2A4yrahP1v9fykcfW2iddMnS4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bZAMGKC6fnx1kRdiPPrtamaQtV023OcWFw42oa1f92Pf+gDSrV8DLDZ66CXI06+Mr8mrRo4Vn2Ur9Byr6KZByCMIZ4JBsZoxGTK83+nGeelPnNPAzJfuJJXyGMgy8M//3CcDaWPF0hFeMTDpiDA+HQ/I6aodT/jaXZq5oCE1LDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YHZ4IOu1; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-438a39e659cso12090545e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739518378; x=1740123178; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=shBU7AF8cc3Gg0wYtL5qbOpWyX+VBS6JrNAtiNUzXh4=;
+        b=YHZ4IOu1XRgQ4UbWIpLBcs5tLQ6S8O5Jae2W75YjqI/t9P2PcfurXhs4GCD5TPCNed
+         S0MX/SqaTYZ4JIEBvC+Z8VOlrZPKA8UorEAhpfGAYLotg63zB/ThPnBAynCkLGs/WvJH
+         g1G3fAO+MPb80tXRDwNfULztgYXengQHi5KdMtMLAbteqri9hx621GXJsa5SO1cfpGmC
+         xVX1ChvY0Qkp00vRYqaaStpvZXoe6huXX8zZImOnUb1reLGNcd1gpZXJUU9sT0xPpvMK
+         AJDEx6lcMeJk7Bbw44oU86RSxVQ2vkToQABRUu3kuzjsomrdunSz50qMVNY/hPQ0FbsM
+         8/7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739518378; x=1740123178;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=shBU7AF8cc3Gg0wYtL5qbOpWyX+VBS6JrNAtiNUzXh4=;
+        b=BQOQbyqnIhQxRhIQlPN7wouHvi8gTBdNPsG04SRrOMjI1SQzFOzFvx5WHkSj7PAW1b
+         Qq92wbCM17esK3Q04G7gLR5EZh2ixN/EY8W+mA2987MqLXQL+f9O2h5CC4O6PRxJjAuh
+         B3+MnoevhBtnetD+zeOdr7igIgYO3DTTER34tDU/hwYg43UBDDTHO5rw6oSoCpWP3iDH
+         FEfG63s2XGIL2x1MMSHQ7yba5zj2wcP4ibNzZMpkL9t1eJF84sZxcOqRVS62RpN03kEf
+         WLezllDCHxUC0WksK5CtGysrb2GKO8cty1eBSCJl2lJZGCJzIAcPJgVn5fSXCCv5BqvO
+         LVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPngX2mgvIfdvDxoS+Eu6nkIIQn41YegPf48J7V4u1jhnPL26leYYhIvRrZQu4F6my2a5F9crw1x3/8rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF0/SgTLbgnBk5XCt5xovNyBo8VlwCFAg1XwUBVAv7ZmuE9Kub
+	COSq/QXb58iJMWCCDP68SLZBGZFP/RusBF+Gg5xT3pXy3GC0lEsR+si5Umx15Os=
+X-Gm-Gg: ASbGncvFc1JIj4OYFmyteMa9gqQxPzYFB//VFJxcd2jkYaytpWViLDex5gizpnKtltS
+	0rxRkwzNrPk3aVP1noOS7oz7Spz3ttsqHmYfz11E0PwyVDgSl/ZxOonDbC0LNR6628OWLBBtR/l
+	TYesz3WKd2sNO8p7v5qwSDQgJtfo6l+XUR4xpf5RmMyL/KVUTF7d81qLjsl4GyVKmr1nhC77BaO
+	X3IDp/UOBQBOBA8lZUKGURsnbVbVd9z3fQ+fy7EVDCyvCld2wWCVfuXzbWjDxkgU8yT4ccTXhPR
+	alVDOJNXtOpQlhdxptZOROi8DTBswZTJkWaH1NrjSCW9P84TQyRPpBArdK2LFvwkqQ/Oolc=
+X-Google-Smtp-Source: AGHT+IFuIc7UiGCJhgZrFsDUkrGq451Woe/uSGjG7ifl7lmj2MKi1SN0qMavFWZVChA7j+uVL+MrSQ==
+X-Received: by 2002:a05:600c:a00e:b0:439:688c:c5d7 with SMTP id 5b1f17b1804b1-439688ccb9cmr14257345e9.14.1739518377759;
+        Thu, 13 Feb 2025 23:32:57 -0800 (PST)
+Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617da779sm37914255e9.7.2025.02.13.23.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 23:32:57 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Fri, 14 Feb 2025 07:32:51 +0000
+Subject: [PATCH] spi: s3c64xx: extend description of compatible's
+ fifo_depth
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
- bindings
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250213044624.37334-1-swathi.ks@samsung.com>
- <CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
- <20250213044624.37334-2-swathi.ks@samsung.com>
- <20250213-adorable-arboreal-degu-6bdcb8@krzk-bin>
- <009a01db7e07$132feb60$398fc220$@samsung.com>
- <27b0f5c5-ae51-4192-8847-20e471c55be7@kernel.org>
- <00ad01db7e9c$76c288a0$644799e0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <00ad01db7e9c$76c288a0$644799e0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250214-spi-s3c64xx-fifo-depth-v1-1-e1b1915e3ee7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKLxrmcC/x3MQQqAIBBA0avErBtQK5OuEi0qx5pNiRMhRHdPW
+ r7F/w8IJSaBoXog0c3C51Gg6wrWfT42QvbFYJTplNEtSmSUZrVtzhg4nOgpXjva3vVBK7eQa6D
+ EMVHg/I/H6X0/Nv6BHGgAAAA=
+To: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, linux-spi@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739518376; l=1528;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=qroXXeauOVL+Iovn6a2A4yrahP1v9fykcfW2iddMnS4=;
+ b=pC0wnwQmYJD4VRMIu0mEU35gRvOsR5+nV7P0t6kj2Mi0FELhmNG6Z28A98l1CakNjcGIhYM9U
+ cVx5nVDITq7CFuVM5o68gNDX3iuVdvCxa9gdRYs8H2LLzjPOiRybBHF
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On 14/02/2025 05:53, Swathi K S wrote:
-> 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 13 February 2025 17:31
->> To: Swathi K S <swathi.ks@samsung.com>
->> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
->> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
->> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
->> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
->> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
->> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
->> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
->> bindings
->>
->> On 13/02/2025 12:04, Swathi K S wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Krzysztof Kozlowski <krzk@kernel.org>
->>>> Sent: 13 February 2025 13:24
->>>> To: Swathi K S <swathi.ks@samsung.com>
->>>> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch;
->> davem@davemloft.net;
->>>> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
->>>> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
->>>> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
->>>> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
->>>> devicetree@vger.kernel.org; linux-stm32@st-md-
->> mailman.stormreply.com;
->>>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
->>>> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device
->>>> tree bindings
->>>>
->>>> On Thu, Feb 13, 2025 at 10:16:23AM +0530, Swathi K S wrote:
->>>>> +  clock-names:
->>>>> +    minItems: 5
->>>>> +    maxItems: 10
->>>>> +    contains:
->>>>> +      enum:
->>>>> +        - ptp_ref
->>>>> +        - master_bus
->>>>> +        - slave_bus
->>>>> +        - tx
->>>>> +        - rx
->>>>> +        - master2_bus
->>>>> +        - slave2_bus
->>>>> +        - eqos_rxclk_mux
->>>>> +        - eqos_phyrxclk
->>>>> +        - dout_peric_rgmii_clk
->>>>
->>>> This does not match the previous entry. It should be strictly ordered
->>>> with
->>>> minItems: 5.
->>>
->>> Hi Krzysztof,
->>> Thanks for reviewing.
->>> In FSD SoC, we have 2 instances of ethernet in two blocks.
->>> One instance needs 5 clocks and the other needs 10 clocks.
->>
->> I understand and I do not think this is contradictory to what I asked.
->> If it is, then why/how?
->>
->>>
->>> I tried to understand this by looking at some other dt-binding files
->>> as given below, but looks like they follow similar approach
->>> Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->>> Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
->>>
->>> Could you please guide me on how to implement this?
->>> Also, please help me understand what is meant by 'strictly ordered'
->>
->> Every other 99% of bindings. Just like your clocks property.
-> 
-> Hi Krzysztof,
-> Thanks for your feedback.
-> I want to make sure I fully understand your comment. 
-> I can see we have added clocks and clock names in the same order.
+The FIFO depth specified with the compatibles's data is used where all
+the instances of the IP define the same FIFO depth. It naturally has
+higher precedence than the FIFO depth specified via DT. Specifying FIFO
+depth in DT becomes superfluous in this case. Extend comment about
+compatible's FIFO depth.
 
-No, you did not. You can see syntax is very different - one uses items,
-other uses contains-enum. And now test it, change the order in DTS and
-see if you see any warning.
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Could you please help in detail what specifically needs to be modified regarding the ordering and minItems/maxItems usage?
-You did not try hard enough.
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 389275dbc003..9c47f5741c5f 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -139,7 +139,9 @@ struct s3c64xx_spi_dma_data {
+  * struct s3c64xx_spi_port_config - SPI Controller hardware info
+  * @fifo_lvl_mask: [DEPRECATED] use @{rx, tx}_fifomask instead.
+  * @rx_lvl_offset: [DEPRECATED] use @{rx,tx}_fifomask instead.
+- * @fifo_depth: depth of the FIFO.
++ * @fifo_depth: depth of the FIFOs. Used by compatibles where all the instances
++ *              of the IP define the same FIFO depth. It has higher precedence
++ *              than the FIFO depth specified via DT.
+  * @rx_fifomask: SPI_STATUS.RX_FIFO_LVL mask. Shifted mask defining the field's
+  *               length and position.
+  * @tx_fifomask: SPI_STATUS.TX_FIFO_LVL mask. Shifted mask defining the field's
 
-Open other bindings and look how they list clocks. For example any
-Samsung clock controller bindings. Or any qcom bindings.
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250214-spi-s3c64xx-fifo-depth-6787f108be83
 
 Best regards,
-Krzysztof
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
 
