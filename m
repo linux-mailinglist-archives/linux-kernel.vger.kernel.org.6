@@ -1,118 +1,255 @@
-Return-Path: <linux-kernel+bounces-514736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C42A35AEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:57:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4456FA35AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5B83A282C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AA13B03DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BAA25A2AD;
-	Fri, 14 Feb 2025 09:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E55261364;
+	Fri, 14 Feb 2025 09:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y/8soyW5"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jIM+lhnL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A43257420
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47825E44D;
+	Fri, 14 Feb 2025 09:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526985; cv=none; b=iBFQLBncVemmh2RsHfQGPfp8IGLZD0vp4M9hNgMLxh/cVns3zv/53l1W4fxhBlaZfOnAJs1tZu8JTBQGgXSNzrhAaDKVRGhagoCe0mRpQ47be76T+RsEmTqi7xUBmgBzIcXPOV1OC+wamsDUP+jnRcDujliUk7e4i3Qm5fbAcRI=
+	t=1739527003; cv=none; b=XQBbEmTqIajO4wEBTEIC4VKnmYAXKnbFRervZeX91zvwovjqWoPgwzlyIjaWsGGU+zy0XQu4A+FkT0SOCZC1PUg+MUXqtYNeXUcBiDv4lrTIYDjeacQFPvUmK/wN8SWF2sfJ7uIsxHpJ1MAaqYouChrFZ7Dcfz60OpLSzZF8sds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526985; c=relaxed/simple;
-	bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0TpEzVjEFXhyD21CN0z9elePztMtU7HFJCZX1cK/njE93dKdVz73KoYqDKsxgezYaVFFnfz+goaIJldhdGaOqU2NR5rPFhhHR7MreqBoKHkzzRIxItJeR+PgHfaiz/IZ60JLKM6xTmrFTAY/AGZr3A5kTHUggyFduaT7uFHyts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y/8soyW5; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-545284eac3bso461602e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:56:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739526981; x=1740131781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
-        b=y/8soyW5CwNUoYqNTFX6lyGU8Qk9Avts8muHSffQeW/9/dTMOKJKVOg7Qok88c2s1V
-         5nw4+Yi/2I18rJ727ag4Cpn1hS+I4uomvGEziAnRkXTRLM+TwzH1xW8X/zNtUQj8n7u5
-         5Tz6GLZ0MnZlJJzbTRuEkPYhz048KOmgTgh9QngV9W/q9Mb+/x8+/o1OwBAAmT5QWO6L
-         njNdK+QjD0AnWIttmNTk+qYIn7Qr1H+5nK/B0DZdHW4CQMA8yeGHO4eMyFAikSFo4TN7
-         bCdquKPd4jaOl6bjjCWt7qpw53/ipnoEJ/6xD33MAGBCd/Jfi2fmt8gbX6kdrWz2lT9h
-         YBWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739526981; x=1740131781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
-        b=Z1nDe+AwVXXKV7GTWKCXNXb5U8alTvLjQXSFV6T4IT/0hZBqrZVUM2IqgUlKUVTPAR
-         2zhyl3PSYwOv8ANtMZfTf1apw1gDh9rz221UIU+jgw2bL7qu0pXBgifcJoZv6V0hs5q1
-         bPtIwPUNlcK2skB2T8NFJfF4ZVJl9okjv4lNgzdJc+qM6o4R+I8P9KRebZrTXLf/hw1r
-         7wRQ2LO/dq5mWNnfq2DvOEmZtKJ/hKFdVD4sv6aNJAe5pv7y7pBJgvDG6oxfaARzlMMH
-         FEuSQ8tR4rtfhP516/aK1Iwx4TMIUoDdyoBfXZDXxceWjoKgf+KC0Pv4ZrItdR9onEe5
-         9EGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiRaFS/HWi6ViQOucIz9tt6cThJsRuflsoeph+eEwxkt1E9hmtVC9aG12Mrn9rd9LKXhIjUZzyMlokS2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0qGfkIwqINxw2RIbVa5NL5rlVhlHSNTCOxNjIEDV7uf7hxG1J
-	UBOUOOCKAy7xFqbbAyAvr39klS9hlUP9DZRQJTgRRfBSUp7lQvwbBw52pNFvS0FmzQ0lw7fFjrW
-	ad39QQofIzf7zUeVD449KuFq1F7d8eK0jkhwa5Q==
-X-Gm-Gg: ASbGncuByi8ESxYemzvaAosAB4gr2nKor2rKMZufet6H0DVRmiRAqo4/iHLsOzNNQ6s
-	m9CglWbiYGZ+n0mJeIu7suxyMe2aMR7V3ksXU7m6rfd/1ZjW8fOjQ0BU4pX1boPBy0v+BBwB2
-X-Google-Smtp-Source: AGHT+IGBcbrZEU3WtspasRr8y5DGBmF7RSzDcVPvB+A0GtrhyVirdFfGoibdROQWEv1N6aRSxdNWZYR6heUIRHTOP7E=
-X-Received: by 2002:a05:6512:138f:b0:544:ead:e1d6 with SMTP id
- 2adb3069b0e04-54518178efbmr3191247e87.38.1739526981311; Fri, 14 Feb 2025
- 01:56:21 -0800 (PST)
+	s=arc-20240116; t=1739527003; c=relaxed/simple;
+	bh=KASLTUJAxkjCTJqirQvBCxVX+BLGaMhtV9SR/9tjhB4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wa3u6/2cTEOmQcbaNcaHEWXmLXyoLb2SFaRTaxAbS93Vuo3Cwq5Wm3RXNxOPdhjk2avfEk5HD3PMpxcUqnKmzXFn/Kk3eQvgEXqr7uxEQDiE1dgvFq519tCcQbD+u2OswC0ma6oNZ/Q8WKKKxxRGYYXnDw37b6QDoJz33c0cxeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jIM+lhnL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8NPpV021173;
+	Fri, 14 Feb 2025 09:56:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VUNsG6GmrtG49Qtky0lMGx6KGDhizVAs3aPqTzuONio=; b=jIM+lhnLeXNgT75K
+	lwjBLYqRGORPEJXcbsOzW7rstvUeTOg+sGsx3jJIojjKrWVvawyfZe22ASq7tfnq
+	XzUzt1dnZKFYvnkTSLXY1uh/FBt8TXll6FIH52bbEM02iBl0NtDPOiciEZYn1gRh
+	zGRlzLhCtGajujWfPikF5gM5RlA9WiHaDm1lCvzrtIgHn+2jNNzazKjZwHUBuEH6
+	wQUumBYXR6ILcXt2AFXMTOjIgIYI0Pj9DOXwwIgqAC3BC4FXyEaTypweWuf/cXSW
+	nwEuqFIW8Epe2Xe0CEZmb3S30RMAf0q0uXQee44vA4zg79KnR4N+VCUg7585LkM/
+	HWxpKg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sdyxub9w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 09:56:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51E9uakt000700
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 09:56:36 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 14 Feb 2025 01:56:33 -0800
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_svankada@quicinc.com>
+Subject: [PATCH v1 3/5] media: qcom: camss: Add CSID support for QCS8300
+Date: Fri, 14 Feb 2025 15:26:09 +0530
+Message-ID: <20250214095611.2498950-4-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
+References: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-gpio-set-retval-v1-0-52d3d613d7d3@linaro.org>
-In-Reply-To: <20250211-gpio-set-retval-v1-0-52d3d613d7d3@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 10:56:09 +0100
-X-Gm-Features: AWEUYZmo1A8kyC_1nRo1MhdajxMnD6e7V4G-rNnAAebgBMCC6AkDlJN1o-MAiIs
-Message-ID: <CACRpkdYL4odi-00YDi-cFuVgw8uBncA+ZxGYnRRhuYR7eZuBWw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] gpiolib: indicate errors in value setters
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Walle <mwalle@kernel.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Keerthy <j-keerthy@ti.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VKfa27-iN99fG_z5t-87JQvuS5zF9agZ
+X-Proofpoint-GUID: VKfa27-iN99fG_z5t-87JQvuS5zF9agZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_04,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ clxscore=1015 lowpriorityscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502140071
 
-On Tue, Feb 11, 2025 at 1:10=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Add CSID support for QCS8300 soc.
 
-> The value setter callbacks (both for single and multiple lines) return
-> void even though we have many types of controllers that can fail to set
-> a line's value: i2c, SPI, USB, etc.
+Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+---
+ drivers/media/platform/qcom/camss/camss.c | 136 ++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
-Yeah this is a remnant from the design that was done of gpiolib,
-at the time (by David Brownell) assumed to be simple MMIO register
-writes, so not much could go wrong there.
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 108470a2e70f..cf5f7d886c24 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -2229,6 +2229,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
+ 	}
+ };
+ 
++static const struct resources_wrapper csid_wrapper_res_qcs8300 = {
++	.reg = "csid_wrapper",
++};
++
+ static const struct resources_wrapper csid_wrapper_res_sa8775p = {
+ 	.reg = "csid_wrapper",
+ };
+@@ -2495,6 +2499,138 @@ static const struct camss_subdev_resources csiphy_res_8300[] = {
+ 	},
+ };
+ 
++static const struct camss_subdev_resources csid_res_8300[] = {
++	/* CSID0 */
++	{
++		.regulators = {},
++		.clock = { "csid", "csiphy_rx"},
++		.clock_rate = {
++			{ 400000000, 400000000},
++			{ 400000000, 400000000}
++		},
++		.reg = { "csid0", "csid_top" },
++		.interrupt = { "csid0" },
++		.csid = {
++			.is_lite = false,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID1 */
++	{
++		.regulators = {},
++		.clock = { "csid", "csiphy_rx"},
++		.clock_rate = {
++			{ 400000000, 400000000},
++			{ 400000000, 400000000}
++		},
++		.reg = { "csid1", "csid_top" },
++		.interrupt = { "csid1" },
++		.csid = {
++			.is_lite = false,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID2 (lite) */
++	{
++		.regulators = {},
++		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
++			   "vfe_lite_csid", "vfe_lite_cphy_rx",
++			   "vfe_lite"},
++		.clock_rate = {
++			{ 0, 0, 400000000, 400000000, 0},
++			{ 0, 0, 400000000, 480000000, 0}
++		},
++		.reg = { "csid_lite0" },
++		.interrupt = { "csid-lite0" },
++		.csid = {
++			.is_lite = true,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID3 (lite) */
++	{
++		.regulators = {},
++		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
++			   "vfe_lite_csid", "vfe_lite_cphy_rx",
++			   "vfe_lite"},
++		.clock_rate = {
++			{ 0, 0, 400000000, 400000000, 0},
++			{ 0, 0, 400000000, 480000000, 0}
++		},
++		.reg = { "csid_lite1" },
++		.interrupt = { "csid-lite1" },
++		.csid = {
++			.is_lite = true,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID4 (lite) */
++	{
++		.regulators = {},
++		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
++			   "vfe_lite_csid", "vfe_lite_cphy_rx",
++			   "vfe_lite"},
++		.clock_rate = {
++			{ 0, 0, 400000000, 400000000, 0},
++			{ 0, 0, 400000000, 480000000, 0}
++		},
++		.reg = { "csid_lite2" },
++		.interrupt = { "csid-lite2" },
++		.csid = {
++			.is_lite = true,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID5 (lite) */
++	{
++		.regulators = {},
++		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
++			   "vfe_lite_csid", "vfe_lite_cphy_rx",
++			   "vfe_lite"},
++		.clock_rate = {
++			{ 0, 0, 400000000, 400000000, 0},
++			{ 0, 0, 400000000, 480000000, 0}
++		},
++		.reg = { "csid_lite3" },
++		.interrupt = { "csid-lite3" },
++		.csid = {
++			.is_lite = true,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++	/* CSID6 (lite) */
++	{
++		.regulators = {},
++		.clock = { "cpas_ife_lite", "vfe_lite_ahb",
++			   "vfe_lite_csid", "vfe_lite_cphy_rx",
++			   "vfe_lite"},
++		.clock_rate = {
++			{ 0, 0, 400000000, 400000000, 0},
++			{ 0, 0, 400000000, 480000000, 0}
++		},
++		.reg = { "csid_lite4" },
++		.interrupt = { "csid-lite4" },
++		.csid = {
++			.is_lite = true,
++			.hw_ops = &csid_ops_690,
++			.parent_dev_ops = &vfe_parent_dev_ops,
++			.formats = &csid_formats_gen2
++		}
++	},
++};
++
+ static const struct camss_subdev_resources csiphy_res_8775p[] = {
+ 	/* CSIPHY0 */
+ 	{
+-- 
+2.25.1
 
-> This series proposes to start the process of converting the setters to
-> returning int thus making it possible to propagate any errors to the
-> user.
-
-My worry is that this project will be another one that stalls at
-85% completion (like with the eternal descriptor rewrite project)
-but I guess the upside outweighs the downside, and I also trust
-your proven grittiness so:
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-for the series +/- minor nitpicks I may send that I am sure
-you would address anyway.
-
-Yours,
-Linus Walleij
 
