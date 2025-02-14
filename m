@@ -1,194 +1,261 @@
-Return-Path: <linux-kernel+bounces-514472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41E3A35775
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:55:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82809A35778
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059453AA54C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0381D188FAE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D0B20370C;
-	Fri, 14 Feb 2025 06:55:22 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C52204C0B;
+	Fri, 14 Feb 2025 06:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nVl/hWn4"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A34E1DE8B6
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C441519A9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739516121; cv=none; b=FOKSD4eBtVUEMZHcziQ74J64WYQJ34HeD0Fisqv743mNeRgiJ3AfCWJ6ZKLXjpGV8rOWobtvusrre91tHXOdDtRdsIII0VfWpjM43w70O5S4XAkQy9t+3im0HmLhj9U//wg+Gz+jUvmwkzzn240nJ+CzXE2HEFzU5D+YFvHkUTw=
+	t=1739516258; cv=none; b=ZwXJ0wOwBprdkS3hOmoIeCDNko7hAK27isYm/GK9IO/Rc9oni9vRKtc5SjNa7OsyHTZZwPm5ZMROJyP5WzGKw74k06xbBYaEhMCk2BwkjHWlFPbZ+4ZCRxO7cWHmiZS4oUMEiC6Yi1juntcyYIq8ehm8jQyxhtRhOZ3bYGgJnKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739516121; c=relaxed/simple;
-	bh=a73UfzxNIq/V2/0VlnPixRfE7CtnBAjp4UW9qxdoE5w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rYN2QdrWuZoMmvDNLQb4H4G8ZFcMQ5QKn+nzNlKiPc7QPz/DvLUiHdKSraSjZyqEXnXucs8cYaqL31g3dhgVBExdMFqkJpaLWr410NzCz92shPMIjZoCeYOP3dIKkoMJq778fiso8DK7wWBfVVVRZxj8CkeAxb+cmFlfmDPJGDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d145b7ba54so11229475ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:55:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739516119; x=1740120919;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uvhSJKlXu2vdv5jVgpbCFsB6zIQDcJPgAt6yW1vxj1E=;
-        b=OrTDoXt3hoqUvRafv0uQRepKz9BOo0XXHBz5u/MH3nwIKaUbL9Iahvn05KlE1aB69F
-         eEuobuUb7Y7VDya1AhMDSouM5Bda4pJFxEKek03J0H0/t08Lj45KpfrrssJfx3chbO2k
-         io3fhhW9VYlyDZ9NHHG/KpppVX/z/i8kKJYEVpfrS79u79+yA6+3rO+1yK+km4dGFmIr
-         +0LB/pZOonfYY9Ob86kWv/8rredBBm5D/kJuEN0gaMKzZhktnpI2Khg1KeCxh7UniVm5
-         slwIQB7/c7HLkK87P9aBOhALS6T4guYOtrh3jKBcq+QZ03Q1dzaIKQlNErWBVodPRBWq
-         dq9w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+vjsafwIt1fJ9YpU48cG7vYaCjD4Mcy6GGDoZAf9FvklcILNAAW7WNVWP+VTgsAmmFGEfyY5qH9fPlhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIE+fPsMI0opRQcyfKfNDZXuDERMZcUv2STlvwFWeqtPM5cUmm
-	rwi7utvkHwTKFk31goJRqggA4NrNWQS3OeBnlB++1eX3tbJKgyqzH3eawJAsKeNUpC4W/62+UtO
-	3pMtiC/JVRPzUtAvnRFurr5aqPr7T0y2TXV2/zQ3ubP0dC8fef9Q6lYM=
-X-Google-Smtp-Source: AGHT+IGh3j1qyeR4o8P2RJa9XV053OJv8zmkAXSP2xAWhm1Z5foIkp1IIK3xIlB9NxRvTWnlCDzJ4j3Qebi/68HD+orFqlAB1icj
+	s=arc-20240116; t=1739516258; c=relaxed/simple;
+	bh=F3DeRREWaDKewB9nP6A8KX/RxyNmGIRa52bFNX6oUM4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=J9M203drO2ek4djKhOKT+G/b9MtAlVvIrnatgguKH0yIfMpf5tRtuOHZZB8HUpic6MoCE4kN6JIbyirJ29/RZOGQ68DQJuCGCgiCjA+PtbmRcc/Zk/kG6gKyI7D5QkOgjbaRF2tkigKYSrjYZBzszgIeQ4iTCUHu63ds/r8xmow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nVl/hWn4; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51E6ungf3794133
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 13 Feb 2025 22:56:49 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51E6ungf3794133
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025011701; t=1739516210;
+	bh=s7ndVm0IktdKspCCJUNaWZgehFbMV7UkVQkSy1sKkKU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=nVl/hWn4OmdEBtANqtqhy4Gsrt//3VoU8I6OIFl/ci+iqLUKUtvLkSbp6El0jOckQ
+	 yHLI8Bf3dJ4ZQ7tkbmt9NYc2fuOLfmA4G+arfhufe0BcNvt9t8y3AsIOOF4hUbOroV
+	 sloseJVBaGjNnsDcw9IDRZlDwZq+1J73rqPFZeeZhw8mmPHzuW7NykZmkNaBL5tVYc
+	 84SlzOG9Icg6+T9of0pQcvyxlYh1wParj6d/pVoUYr5jUf2Ht32Bzn5tcn83mGOrWf
+	 xbQn+zX3zgo5V1mjDLvImBnYzdoNN02WfIC9o7JqXNeGoCqprzjzzNdTJST3lyt526
+	 7Q8BU7yCBxImQ==
+Message-ID: <36970ddb-c0d8-43e4-a94e-0d9ea3d55ced@zytor.com>
+Date: Thu, 13 Feb 2025 22:56:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c7:b0:3d0:4eaa:e480 with SMTP id
- e9e14a558f8ab-3d18c2151e9mr45166905ab.3.1739516119060; Thu, 13 Feb 2025
- 22:55:19 -0800 (PST)
-Date: Thu, 13 Feb 2025 22:55:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67aee8d7.050a0220.21dd3.0031.GAE@google.com>
-Subject: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in mi_init
-From: syzbot <syzbot+8282d8328968be03242e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] x86/ia32: Leave NULL selector values 0~3 as is
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        andrew.cooper3@citrix.com, brgerst@gmail.com, ebiederm@xmission.com
+References: <20241126184529.1607334-1-xin@zytor.com>
+ <fa3d0093-818d-4592-8415-3c2e287cc3e6@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <fa3d0093-818d-4592-8415-3c2e287cc3e6@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 12/12/2024 10:44 AM, Xin Li wrote:
+> On 11/26/2024 10:45 AM, Xin Li (Intel) wrote:
+>> The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
+>> and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
+>> GDT, selector values 0~3 all point to the NULL descriptor, thus values
+>> 0, 1, 2 and 3 are all valid NULL selector values.
+>>
+>> When a NULL selector value is to be loaded into a segment register,
+>> reload_segments() sets its RPL bits.  Later IRET zeros ES, FS, GS, and
+>> DS segment registers if any of them is found to have any nonzero NULL
+>> selector value.  The two operations offset each other to actually effect
+>> a nop.
+>>
+>> Besides, zeroing of RPL in NULL selector values is an information leak
+>> in pre-FRED systems as userspace can spot any interrupt/exception by
+>> loading a nonzero NULL selector, and waiting for it to become zero.
+>> But there is nothing software can do to prevent it before FRED.
+>>
+>> ERETU, the only legit instruction to return to userspace from kernel
+>> under FRED, by design does NOT zero any segment register to avoid this
+>> problem behavior.
+>>
+>> As such, leave NULL selector values 0~3 as is.
+> 
+> Hi Andrew,
+> 
+> Do you have any more comments?
 
-syzbot found the following issue on:
+Hi Andrew,
 
-HEAD commit:    ab68d7eb7b1a Merge tag 'loongarch-fixes-6.14-1' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15c281b8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
-dashboard link: https://syzkaller.appspot.com/bug?extid=8282d8328968be03242e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Are you okay to give a review-by to this patch?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks!
+     Xin
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ab68d7eb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c21c98f96a97/vmlinux-ab68d7eb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d84966ad5d14/bzImage-ab68d7eb.xz
+>>
+>> Do the same on 32-bit kernel as well.
+>>
+>> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+>> ---
+>>
+>> Changes since v3:
+>> * Rename usrseg() to fixup_rpl() to match its intent (Andrew Cooper).
+>> * A few comment improvements (Andrew Cooper).
+>>
+>> Changes since v2:
+>> * No, don't zero non-zero NULL selector values, essentially revert
+>>    to v1 (Andrew Cooper).
+>>
+>> Changes since v1:
+>> * Normalize non-zero NULL selector values to 0 (Eric W. Biederman).
+>> * Apply the same normalization logic in a 32bit kernel (Eric W.
+>>    Biederman).
+>> ---
+>>   arch/x86/kernel/signal_32.c | 62 +++++++++++++++++++++++++------------
+>>   1 file changed, 43 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+>> index ef654530bf5a..1e275268d256 100644
+>> --- a/arch/x86/kernel/signal_32.c
+>> +++ b/arch/x86/kernel/signal_32.c
+>> @@ -33,25 +33,55 @@
+>>   #include <asm/smap.h>
+>>   #include <asm/gsseg.h>
+>> +/*
+>> + * The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
+>> + * and 1 of a segment selector, i.e., the RPL bits, are NOT used to 
+>> index
+>> + * GDT, selector values 0~3 all point to the NULL descriptor, thus 
+>> values
+>> + * 0, 1, 2 and 3 are all valid NULL selector values.
+>> + *
+>> + * However IRET zeros ES, FS, GS, and DS segment registers if any of 
+>> them
+>> + * is found to have any nonzero NULL selector value, which can be 
+>> used by
+>> + * userspace in pre-FRED systems to spot any interrupt/exception by 
+>> loading
+>> + * a nonzero NULL selector and waiting for it to become zero.  Before 
+>> FRED
+>> + * there is nothing software can do to prevent such an information leak.
+>> + *
+>> + * ERETU, the only legit instruction to return to userspace from kernel
+>> + * under FRED, by design does NOT zero any segment register to avoid 
+>> this
+>> + * problem behavior.
+>> + *
+>> + * As such, leave NULL selector values 0~3 as is.
+>> + */
+>> +static inline u16 fixup_rpl(u16 sel)
+>> +{
+>> +    return sel <= 3 ? sel : sel | 3;
+>> +}
+>> +
+>>   #ifdef CONFIG_IA32_EMULATION
+>>   #include <asm/unistd_32_ia32.h>
+>>   static inline void reload_segments(struct sigcontext_32 *sc)
+>>   {
+>> -    unsigned int cur;
+>> +    u16 cur;
+>> +    /*
+>> +     * Reload fs and gs if they have changed in the signal
+>> +     * handler.  This does not handle long fs/gs base changes in
+>> +     * the handler, but does not clobber them at least in the
+>> +     * normal case.
+>> +     */
+>>       savesegment(gs, cur);
+>> -    if ((sc->gs | 0x03) != cur)
+>> -        load_gs_index(sc->gs | 0x03);
+>> +    if (fixup_rpl(sc->gs) != cur)
+>> +        load_gs_index(fixup_rpl(sc->gs));
+>>       savesegment(fs, cur);
+>> -    if ((sc->fs | 0x03) != cur)
+>> -        loadsegment(fs, sc->fs | 0x03);
+>> +    if (fixup_rpl(sc->fs) != cur)
+>> +        loadsegment(fs, fixup_rpl(sc->fs));
+>> +
+>>       savesegment(ds, cur);
+>> -    if ((sc->ds | 0x03) != cur)
+>> -        loadsegment(ds, sc->ds | 0x03);
+>> +    if (fixup_rpl(sc->ds) != cur)
+>> +        loadsegment(ds, fixup_rpl(sc->ds));
+>>       savesegment(es, cur);
+>> -    if ((sc->es | 0x03) != cur)
+>> -        loadsegment(es, sc->es | 0x03);
+>> +    if (fixup_rpl(sc->es) != cur)
+>> +        loadsegment(es, fixup_rpl(sc->es));
+>>   }
+>>   #define sigset32_t            compat_sigset_t
+>> @@ -105,18 +135,12 @@ static bool ia32_restore_sigcontext(struct 
+>> pt_regs *regs,
+>>       regs->orig_ax = -1;
+>>   #ifdef CONFIG_IA32_EMULATION
+>> -    /*
+>> -     * Reload fs and gs if they have changed in the signal
+>> -     * handler.  This does not handle long fs/gs base changes in
+>> -     * the handler, but does not clobber them at least in the
+>> -     * normal case.
+>> -     */
+>>       reload_segments(&sc);
+>>   #else
+>> -    loadsegment(gs, sc.gs);
+>> -    regs->fs = sc.fs;
+>> -    regs->es = sc.es;
+>> -    regs->ds = sc.ds;
+>> +    loadsegment(gs, fixup_rpl(sc.gs));
+>> +    regs->fs = fixup_rpl(sc.fs);
+>> +    regs->es = fixup_rpl(sc.es);
+>> +    regs->ds = fixup_rpl(sc.ds);
+>>   #endif
+>>       return fpu__restore_sig(compat_ptr(sc.fpstate), 1);
+>>
+>> base-commit: 6ff908de1eafb53f31db75d929b7566a87847d2d
+> 
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8282d8328968be03242e@syzkaller.appspotmail.com
-
-UDPLite6: UDP-Lite is deprecated and scheduled to be removed in 2025, please contact the netdev mailing list
-loop0: detected capacity change from 0 to 4096
-ntfs3(loop0): Different NTFS sector size (1024) and media sector size (512).
-BUG: unable to handle page fault for address: ffffed110a52075b
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 5ffcd067 P4D 5ffcd067 PUD 0 
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted 6.14.0-rc2-syzkaller-00056-gab68d7eb7b1a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:mi_init+0x86/0xe0 fs/ntfs3/record.c:105
-Code: 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 75 5d 41 8b 3e be 40 0c 00 00 e8 18 91 00 ff 48 89 c5 48 83 c3 20 48 89 d8 48 c1 e8 03 <42> 80 3c 20 00 74 08 48 89 df e8 9b ed 0b ff 48 89 2b 31 c9 48 85
-RSP: 0018:ffffc9000d2f7690 EFLAGS: 00010a06
-RAX: 1ffff1100a52075c RBX: ffff888052903ae0 RCX: 0000000000000800
-RDX: 0000000000000400 RSI: ffffffff8c608ca0 RDI: ffffffff8c608c60
-RBP: ffff8880367f4000 R08: 0000000000000c40 R09: 00000000ffffffff
-R10: dffffc0000000000 R11: fffffbfff285f729 R12: dffffc00ffffffff
-R13: ffff888035c16000 R14: ffff888035c16030 R15: 000000000000000a
-FS:  00007fec9fdc16c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffed110a52075b CR3: 00000000432c4000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ntfs_read_mft fs/ntfs3/inode.c:54 [inline]
- ntfs_iget5+0x372/0x3800 fs/ntfs3/inode.c:540
- ntfs_fill_super+0x3e8e/0x4730 fs/ntfs3/super.c:1477
- get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fec9ef8e58a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fec9fdc0e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fec9fdc0ef0 RCX: 00007fec9ef8e58a
-RDX: 000040000001f800 RSI: 000040000001f840 RDI: 00007fec9fdc0eb0
-RBP: 000040000001f800 R08: 00007fec9fdc0ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000040000001f840
-R13: 00007fec9fdc0eb0 R14: 000000000001f813 R15: 0000400000000040
- </TASK>
-Modules linked in:
-CR2: ffffed110a52075b
----[ end trace 0000000000000000 ]---
-RIP: 0010:mi_init+0x86/0xe0 fs/ntfs3/record.c:105
-Code: 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 75 5d 41 8b 3e be 40 0c 00 00 e8 18 91 00 ff 48 89 c5 48 83 c3 20 48 89 d8 48 c1 e8 03 <42> 80 3c 20 00 74 08 48 89 df e8 9b ed 0b ff 48 89 2b 31 c9 48 85
-RSP: 0018:ffffc9000d2f7690 EFLAGS: 00010a06
-RAX: 1ffff1100a52075c RBX: ffff888052903ae0 RCX: 0000000000000800
-RDX: 0000000000000400 RSI: ffffffff8c608ca0 RDI: ffffffff8c608c60
-RBP: ffff8880367f4000 R08: 0000000000000c40 R09: 00000000ffffffff
-R10: dffffc0000000000 R11: fffffbfff285f729 R12: dffffc00ffffffff
-R13: ffff888035c16000 R14: ffff888035c16030 R15: 000000000000000a
-FS:  00007fec9fdc16c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffed110a52075b CR3: 00000000432c4000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 f0                	mov    %esi,%eax
-   2:	48 c1 e8 03          	shr    $0x3,%rax
-   6:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
-   b:	84 c0                	test   %al,%al
-   d:	75 5d                	jne    0x6c
-   f:	41 8b 3e             	mov    (%r14),%edi
-  12:	be 40 0c 00 00       	mov    $0xc40,%esi
-  17:	e8 18 91 00 ff       	call   0xff009134
-  1c:	48 89 c5             	mov    %rax,%rbp
-  1f:	48 83 c3 20          	add    $0x20,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 9b ed 0b ff       	call   0xff0bedd4
-  39:	48 89 2b             	mov    %rbp,(%rbx)
-  3c:	31 c9                	xor    %ecx,%ecx
-  3e:	48                   	rex.W
-  3f:	85                   	.byte 0x85
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
