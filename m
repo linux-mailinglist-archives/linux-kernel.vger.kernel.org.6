@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-515540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4A1A36607
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:14:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1A5A36609
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC813AF471
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD76171B54
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6CD19CD1D;
-	Fri, 14 Feb 2025 19:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8538A198A38;
+	Fri, 14 Feb 2025 19:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="W2ebnsqm"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IR3zAzpY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD3F1946B1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0782AF16;
+	Fri, 14 Feb 2025 19:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739560471; cv=none; b=blBzJtbUx/zNb7yJ60RVyJK+Gre0dor9aMOmzYxSktM4PG6fNclEvsUeSkt21483jknXLfGinJKhiRa7O7az38rp+vYrHDwfD5zeeJmRAJSOKa3Z7RYN/YBqu6h5TMlbCXmhzLcbs8YA50iFmn3rtBuujb5+n/ly9BHW0kQApD0=
+	t=1739560602; cv=none; b=kInLZpOykLpkVkdm5zSfv72yS0udqyP8g+aPbF9+oD8FXosCi11Lfm99BMd43m1HumGloybd/OM767ZSb0Ydz0sDHMpZTO1/sO5INZR8xvHtw0PIIFq3/DgWv+DAyocrIYBHtqbYN1xHjDJchAlsT0R9kVkvDNt190QAWIwpyPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739560471; c=relaxed/simple;
-	bh=ZhBFDuzc3VrwD7Mk5zFi1pXxOZ5GejvRS2vKAIH6C0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvuS2HjT6eiTOFB1gban3ywwV5tOE7t7fVbNaxuomd9ZPriBbkj7ghsTflCTbwb91iFj4r1dNcDj7DueX+SYHlcfh21G3q/DIS9qKK21RGvMO5qgbaFu6tKLnhAEqJyDRtteV5In02Mdna4xEOYm1wJ04rqdrAzWTadnnaPO2nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=W2ebnsqm; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e41e17645dso23312156d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:14:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1739560468; x=1740165268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVF6evkbcSp3Y/Zct50ezsTDsgO/Q3tcJ2yCY7GXSSI=;
-        b=W2ebnsqmPTuL7FCodz85Nlolm+I99qNJvED5t6YizbGhXTEipsIsiKHsVDJ9Bqjh6C
-         dCTsoDw8l5ous6dgFdw3s4/USVnG8ehZn+CuEVkE7pgML8oMLNq5TM4ytOizv8VaZ4nZ
-         RaMY6sNri3JUttlU4n6FGmP8k3isI8jDc62t/Yr85sdVmINTo2bTfLf+C2IAczM7sil7
-         i+f3znisqPXDM0LZ5gkhQPd1aI2zdd6W6qIDhwkN5wKNCD3CIMPnQP5gL8G1+otE7IaV
-         55pbCBsbt9YMn2Iherc4q7kFDkV2idbnKv4LxaYnqT8Jmdty/12VV7Xy+osSick41lQN
-         K2BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739560468; x=1740165268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gVF6evkbcSp3Y/Zct50ezsTDsgO/Q3tcJ2yCY7GXSSI=;
-        b=n4PSliRWZqoXTlL08BZEGXWJX33Sym2CkZeV7DfSddA1pDq5xiQreWCNs3zpOkWK1p
-         QOydtIPGxrw50rR5WiP1M7Ijq9DOxvMjmuwympTYiudU3Ph05Ku/u4fy+yzkZHaN+4wf
-         hAqhpwwI3+704FlvPhIFazgdi7OgwrvMhp51ejffzj830f9asnP/XSsQThUg/ZrjZMq4
-         vfBU0BMyLTwL24RrgEZ+PrmZ+t7LCzpwRKa1Fg3nCz7Ldjk5zf2viZ8liGLpZdVlY4JT
-         b8b8CjSS6Vx4NmVHwwRsupQDUb+ttILpU2OW4ukuZW+I5m1pZoyC257zfs6WPmh/e3oI
-         M7WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvVIe/Ohht58BUG5H5cWhkg6huHD6xGNBuyN5RXq/fPBAo2D8rzH+0aNJnVeq/dvaEA39fZpYssCkCq3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCLCMwUsKdWDVUKfP0cHLLzLoFD6mhJQwxw/CVAsdOioo/L2fP
-	wfLaotKn4tHFNzZl25xiuaUvcUlHsYMwkqHWwz2v0/HUHtqkc3Frn4pYyKZlA/k=
-X-Gm-Gg: ASbGncvTvOFOM9FYYTgUqX9mbZGFy/uMVVSL/sxe6DVTXud4aJzuP95HdeiS9p6dURy
-	hDhTMFfcBxYuI4BeAjpZzwR8GjmAy0K7LcDhCkBjW5E4TV1uFxhtQXD3GchcGoFKQ9W+SM61JmA
-	y7rFZCyZi/OmUu46PbF4u4/g4oaEGmo/rt7LVxiDYHEECzydn31dA4oWnQF6MpbOvSzlQAz5Eol
-	tgHdpO9/YR68ApiP1q9tZOVlHYA1I5zqee7hUnMn2aVH9zMZhloo/ZEXdVEhCFSEd/8Bg0gmUwO
-	/1EOKIZCR9bs4VaeKKs6fO9hDtznatrT5k+wbi3KBCRkqV52uLnk3TTX7sLdP1Dm
-X-Google-Smtp-Source: AGHT+IEpOYBQ8VIbK3Cs4VxKDEg6MhH4pTWCL5ZsktZ4iQ8Aw5votEpuA4RfcaOd/RCz1qokqGTfoA==
-X-Received: by 2002:ad4:5fcd:0:b0:6e6:6b99:cd1e with SMTP id 6a1803df08f44-6e66ccda2d0mr5638616d6.26.1739560468280;
-        Fri, 14 Feb 2025 11:14:28 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c07c5f370esm235072985a.13.2025.02.14.11.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 11:14:27 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tj18t-0000000GmIy-0YOE;
-	Fri, 14 Feb 2025 15:14:27 -0400
-Date: Fri, 14 Feb 2025 15:14:27 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com,
-	mitchell.augustin@canonical.com, clg@redhat.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Subject: Re: [PATCH 4/5] mm: Provide page mask in struct follow_pfnmap_args
-Message-ID: <20250214191427.GC3696814@ziepe.ca>
-References: <20250205231728.2527186-1-alex.williamson@redhat.com>
- <20250205231728.2527186-5-alex.williamson@redhat.com>
+	s=arc-20240116; t=1739560602; c=relaxed/simple;
+	bh=rZZGuv2YyY62edJHzlcL7AnSAquJF3lbFxEnmjAzltA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QLy8HM3HQwE8+pJI4QTNoTnHas05/l2YTwcvuAU/qktg1BZI3zTByGpXrnrEEHSV4Md61uCXJX7H743YzZfwhLdAMMRWV9snjGl3WeV9mKb7yx4CpJYpu3KP92swlipO+JeNTn39CPXfm/S0kyZLnKWB43bfdRniHj7XIPXzuzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IR3zAzpY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4B9C4CED1;
+	Fri, 14 Feb 2025 19:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739560602;
+	bh=rZZGuv2YyY62edJHzlcL7AnSAquJF3lbFxEnmjAzltA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IR3zAzpY+E2Nq8gE/TT8d0C5krZAjfex9+I4nyoOzFILb+znz+OAj3dlJin+Cng88
+	 BpogjPVaOW3XHipYafq08rvySUHcXj0hsJ9wnq4Rt4BwV3zlBCfZu1Wu+Z7/+t9BKg
+	 Wp/AAl0KlSIFSjM9ijeyskUiYvcjuWZ+cQDGLjiGGYXtEwY8AfE19gQHpo2rzNpIVr
+	 AKNyIeov76AU8PNwzU8RWTaRjG8SWTZzZSHpg5vt6DHhqdRPrKKBa5so4SqUOEVXJv
+	 3s4qdFAB7nOiWNE1FJVeZToB6J2UhJ67BMM5dEfgpXon+6jrULv15IDvqXyDUi8B5U
+	 HE5G12nOnc4OA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v2] perf tools: Fix compile error on sample->user_regs
+Date: Fri, 14 Feb 2025 11:16:41 -0800
+Message-ID: <20250214191641.756664-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250205231728.2527186-5-alex.williamson@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 05, 2025 at 04:17:20PM -0700, Alex Williamson wrote:
-> follow_pfnmap_start() walks the page table for a given address and
-> fills out the struct follow_pfnmap_args in pfnmap_args_setup().
-> The page mask of the page table level is already provided to this
-> latter function for calculating the pfn.  This page mask can also be
-> useful for the caller to determine the extent of the contiguous
-> mapping.
-> 
-> For example, vfio-pci now supports huge_fault for pfnmaps and is able
-> to insert pud and pmd mappings.  When we DMA map these pfnmaps, ex.
-> PCI MMIO BARs, we iterate follow_pfnmap_start() to get each pfn to test
-> for a contiguous pfn range.  Providing the mapping page mask allows us
-> to skip the extent of the mapping level.  Assuming a 1GB pud level and
-> 4KB page size, iterations are reduced by a factor of 256K.  In wall
-> clock time, mapping a 32GB PCI BAR is reduced from ~1s to <1ms.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
->  include/linux/mm.h | 2 ++
->  mm/memory.c        | 1 +
->  2 files changed, 3 insertions(+)
+It's recently changed to allocate dynamically but misses to update some
+arch-dependent codes to use perf_sample__user_regs().
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Fixes: dc6d2bc2d893a878 ("perf sample: Make user_regs and intr_regs optional")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2) fix arm (32-bit) as well
 
-Jason
+ tools/perf/arch/arm/tests/dwarf-unwind.c      | 2 +-
+ tools/perf/arch/arm/util/unwind-libdw.c       | 2 +-
+ tools/perf/arch/csky/util/unwind-libdw.c      | 2 +-
+ tools/perf/arch/loongarch/util/unwind-libdw.c | 2 +-
+ tools/perf/arch/powerpc/tests/dwarf-unwind.c  | 2 +-
+ tools/perf/arch/powerpc/util/unwind-libdw.c   | 2 +-
+ tools/perf/arch/riscv/util/unwind-libdw.c     | 2 +-
+ tools/perf/arch/s390/util/unwind-libdw.c      | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
+index 9bc304cb7762b5d1..f421910e07097152 100644
+--- a/tools/perf/arch/arm/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
+@@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+ int test__arch_unwind_sample(struct perf_sample *sample,
+ 			     struct thread *thread)
+ {
+-	struct regs_dump *regs = &sample->user_regs;
++	struct regs_dump *regs = perf_sample__user_regs(sample);
+ 	u64 *buf;
+ 
+ 	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
+diff --git a/tools/perf/arch/arm/util/unwind-libdw.c b/tools/perf/arch/arm/util/unwind-libdw.c
+index 4e02cef461e3af34..fbb643f224ec4b27 100644
+--- a/tools/perf/arch/arm/util/unwind-libdw.c
++++ b/tools/perf/arch/arm/util/unwind-libdw.c
+@@ -8,7 +8,7 @@
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[PERF_REG_ARM_MAX];
+ 
+ #define REG(r) ({						\
+diff --git a/tools/perf/arch/csky/util/unwind-libdw.c b/tools/perf/arch/csky/util/unwind-libdw.c
+index 79df4374ab18dc36..b20b1569783d7e98 100644
+--- a/tools/perf/arch/csky/util/unwind-libdw.c
++++ b/tools/perf/arch/csky/util/unwind-libdw.c
+@@ -10,7 +10,7 @@
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[PERF_REG_CSKY_MAX];
+ 
+ #define REG(r) ({						\
+diff --git a/tools/perf/arch/loongarch/util/unwind-libdw.c b/tools/perf/arch/loongarch/util/unwind-libdw.c
+index 7b3b9a4b21f8f482..60b1144bedd5f325 100644
+--- a/tools/perf/arch/loongarch/util/unwind-libdw.c
++++ b/tools/perf/arch/loongarch/util/unwind-libdw.c
+@@ -10,7 +10,7 @@
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[PERF_REG_LOONGARCH_MAX];
+ 
+ #define REG(r) ({							\
+diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+index 5ecf82893b84d5c0..66af884baa660389 100644
+--- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
++++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+@@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+ int test__arch_unwind_sample(struct perf_sample *sample,
+ 			     struct thread *thread)
+ {
+-	struct regs_dump *regs = &sample->user_regs;
++	struct regs_dump *regs = perf_sample__user_regs(sample);
+ 	u64 *buf;
+ 
+ 	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
+diff --git a/tools/perf/arch/powerpc/util/unwind-libdw.c b/tools/perf/arch/powerpc/util/unwind-libdw.c
+index e9a5a8bb67d9186e..82d0c28ae3459ecd 100644
+--- a/tools/perf/arch/powerpc/util/unwind-libdw.c
++++ b/tools/perf/arch/powerpc/util/unwind-libdw.c
+@@ -16,7 +16,7 @@ static const int special_regs[3][2] = {
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[32], dwarf_nip;
+ 	size_t i;
+ 
+diff --git a/tools/perf/arch/riscv/util/unwind-libdw.c b/tools/perf/arch/riscv/util/unwind-libdw.c
+index 5c98010d8b59777f..dc1476e16321736d 100644
+--- a/tools/perf/arch/riscv/util/unwind-libdw.c
++++ b/tools/perf/arch/riscv/util/unwind-libdw.c
+@@ -10,7 +10,7 @@
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[32];
+ 
+ #define REG(r) ({						\
+diff --git a/tools/perf/arch/s390/util/unwind-libdw.c b/tools/perf/arch/s390/util/unwind-libdw.c
+index f50fb6dbb35c5dc6..c27c7a0d1076c890 100644
+--- a/tools/perf/arch/s390/util/unwind-libdw.c
++++ b/tools/perf/arch/s390/util/unwind-libdw.c
+@@ -11,7 +11,7 @@
+ bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+ {
+ 	struct unwind_info *ui = arg;
+-	struct regs_dump *user_regs = &ui->sample->user_regs;
++	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+ 	Dwarf_Word dwarf_regs[ARRAY_SIZE(s390_dwarf_regs)];
+ 
+ #define REG(r) ({						\
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
