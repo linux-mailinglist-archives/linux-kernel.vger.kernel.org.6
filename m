@@ -1,209 +1,239 @@
-Return-Path: <linux-kernel+bounces-515612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D659A366AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:08:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83047A366A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9EB1890E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FE43B1DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F81019259E;
-	Fri, 14 Feb 2025 20:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCDD192D6B;
+	Fri, 14 Feb 2025 20:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VuNhWa0j"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazolkn19013078.outbound.protection.outlook.com [52.103.51.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j01qO56w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFFC191F7A;
-	Fri, 14 Feb 2025 20:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.51.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739563688; cv=fail; b=WFB5md9QrDTiVoyhmQ6t1kerqxOQgXwxtM1iFqdVo2D7U9nzT2JIhahCyqOZbTWayEU3qnzyAYTqQIN9d2rxwwb2XmiSJGw9LToyJoVJGV9BmHomvYLro1WDXZKBPK+dz28hKVkj1Pwzu5e9e9A/YvvP2aRQW4nGT021IsH+tyY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739563688; c=relaxed/simple;
-	bh=CEzfBBJjfOdj9dDFbZtK1sQabZ12kC9BTApRqdKX89E=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RdS38GY/EpnGzo95hxQSGZJ3lalwrDdvNja0ks1pJ3sk/E7qjUqPxlR7Y4BYn9fMnWoHgA74Q0T35961yzE5QdBz/ELXrdFhZe4m/3KlytB/oedFe1rk9ikZsYLkdMm7coyUbsTVaWb5IW7hLdhaJDbHkxDGm0MS92XR4FHxcpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VuNhWa0j; arc=fail smtp.client-ip=52.103.51.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WxhzWT+04bGqmo6RSTjpJsWWTGQaO27Ke+Nj3UhH99uSKwFx3a3uKB0NYLJ5ZMcNJJlQaTulsfn/Pk09H9vhuhFGWfJPpmgblpp1UR/zLmXPdxpZO0Az0j2nTQhNMJ90HICTl5YslTeAarctZR8tbLdeFo3Vcw2FS2/OZNJ+b6cKNaeZcckg1zVFTnmaaTx+kVdMQJX07keacEgDzR5O0VSWoGuHI2bq9fd/bioObEMc5H+0UOecceUjSrSKyqkGq1LEZxlrhKfuqFRmz9GqSA2IQaEp5J5Ncn4bzMjPeZbkqFwE5BxRI62/AHRAGLDIPO0mkCESM4XYvKh+71eTig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ygKTXfvhpPEZsYnFFgPGOwVJ67ZlDYSvKUXNid3XyoI=;
- b=HAOeVtLBdJdf1Sz6U+OLzegZ6XyzlP6W+8TDZsHyS72BcBUo/wn0DU+y9HbgtxhPemc5BlrbwEjk3SZO360AzF3oW1/bfkcp5106UzcWKyAL3zB8W8jHp6Cg4JFnaYM7WYT4FUEeScW3sPKdliIWiRmf4smsnB1ff8pIbGw5V40M3G0ZNR8B2fttEvQu48wi91w2XJ2Q0eyXdQRIQLQTk1jwg7Hf5sYwv0Szpq+3OeLVFqqMvWIYouXx1UAlxNkmcsdHZQJTx+wQLyIRxEl2x4BLz9xCbtAYdS+S1wsXt+OqrctR6ePkzx3v9Lt/BNpCeqr0UvOtazQhF0b0iHGUqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ygKTXfvhpPEZsYnFFgPGOwVJ67ZlDYSvKUXNid3XyoI=;
- b=VuNhWa0jirYOWM/dDQLk79EymdtpZroQHFF4qL3sqXmlgmup0Ktddu5xQG+8sI79+OWmi64UQPpSPx3DG3JFTFLLutx1V3mwbtVFXgo9AE1yJvxfSpXOuDAaIRImds1RvX52j+zlzFkZcjDqMoDkGuRl5R568c2bMhXXMASuz0j1oiBLO7RQy3qOmcJgAa52GCM1AbWvHAnsrOfJkoBR85lDQnZbsPYmxYknj4FiNDytYHr+whTZ5tAurxzWVFQmB1WO00ddwwzRcumTGKquZibtSmN8asnaPj5o7zDoomHFjwPJZgs+XFxckS3rVISaZx0sj92z3imvjrYcVWVQzg==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by AS2PR03MB9931.eurprd03.prod.outlook.com (2603:10a6:20b:643::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
- 2025 20:08:03 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%4]) with mapi id 15.20.8445.016; Fri, 14 Feb 2025
- 20:08:03 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH bpf-next v2 0/5] bpf, sched_ext: Make kfunc filters support struct_ops context to reduce runtime overhead
-Date: Fri, 14 Feb 2025 20:03:50 +0000
-Message-ID:
- <AM6PR03MB5080855B90C3FE9B6C4243B099FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P123CA0028.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::16)
- To AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <20250214200350.190185-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4D1519AB;
+	Fri, 14 Feb 2025 20:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739563558; cv=none; b=eh1tvB/2GtVTx+Peo2qppmzTVAtssn48XjaXKaxNbpPCyZX/POV6/buyQjREr7uWpjSjmTDsvNrOAxnxiYNCgiM6c/kNUzb2kZuEVfdyfDPSDDes5AS+mj7Q+Yv7ma747VX8JlEaCbiGKIW/jDm5rcVP+Dyy/+gerxy3EZPIivs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739563558; c=relaxed/simple;
+	bh=PChn1wIDIGZdyjDjMni+OfJNftup79fqOnyNzjhYVas=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UrDLOXyhtsEG/RLFelMufvt9OF3a5/90+igxmNN0m+X8CezE76/TpnUaRSsTMRqJDxtpXj4meqhzT2WctobXh0Ig/OaU7irrNSMSQItelqChmSimoHdUrJhgnRDKN9nasjZXU5/9x4sngqfDXOKAmrb8/YVsrloRvdvbMYUzfR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j01qO56w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBB4C4CED1;
+	Fri, 14 Feb 2025 20:05:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739563558;
+	bh=PChn1wIDIGZdyjDjMni+OfJNftup79fqOnyNzjhYVas=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j01qO56w3RHuJaZzRszhgVLi0gzlA2d+ObTCAUVN0f5Q7lyweLXuhI5co9Ellulx0
+	 ZLsUr5RGyTu+j/w9DXRFL50ff87e1FCpRm4tAA+0zV8ZPKG3/+NnRr63bI6rflqQWz
+	 EefL24eyIpsVbQjZX8HnUMFbTZHPCbiZrMErWaCvNPbADAoydyTZaMW5y7OWWsbsE2
+	 3Tw34XfikH4krFhFMJ36LO2aNUVYVnB/10MIBu9HFRfBgr/n3ZMVzU7Blwk9er0kPM
+	 oe7j4HSBEOGw1GpnxqE59o/NFNV+y7739M7KdwAFMvaHRKri+rw70tkqioTCibdFDD
+	 bUKoMHSVKOh3g==
+Date: Fri, 14 Feb 2025 21:06:30 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
+Subject: man-pages-6.11 released
+Message-ID: <frz5e2i7dv3kpl3mqxnkrrl5v54bjvw77fev6szkrggtx2ztxh@oyfvhx7zfm4u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AS2PR03MB9931:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4466af2-4293-42f9-16a5-08dd4d3349c5
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5062599005|8060799006|19110799003|5072599009|15080799006|461199028|3412199025|4302099013|440099028|10035399004|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ywhd93bAP286qdDbWb6E3B8h7Npmp2gjypjB1AoEIjwQGApJGqs8FUNI3DxK?=
- =?us-ascii?Q?ufsAsT6jeGO9S045nbpFsbX1Pj+eHkibSUGeOOUYP34mxpoPDPGVKp77cJWn?=
- =?us-ascii?Q?+ovUFSaLfPdfdloPDYc+7xt/KOxe2ajPEgSAca+Kd/vjnNkuyJmZTEws3Roj?=
- =?us-ascii?Q?BUPC5HB3EAbBLdHJXTbS+yuxePsikMPKYe0vkhqwSfFr/mE1VkaX7ujAgtKh?=
- =?us-ascii?Q?sHFFDJRESQRNNp8Ucqp9pyXKl+UaOAgjjEENP7I+c1V9Ms0gTDDgQaWuAjxb?=
- =?us-ascii?Q?LzszWJhr7tfZmadeYLHy/byHlTtGTvFy+ZM7wfmwpgq7ixCmEt7ioFlkuif6?=
- =?us-ascii?Q?lok3g6yQccUcC9qz5SFl9EyXGSNgcH2dosL7Euges73izGOVn8m9WCgIS49W?=
- =?us-ascii?Q?xUXLoBNc4qq+YHwv08/WzmclPYthCylt40PmQDtcWU9xQlkpaVPmK62Cyg5f?=
- =?us-ascii?Q?dMiAVY/IhA0Wz3FKvUP7rhDBeWOfVCsmgbS7OhhMlG8hEWtHDa2brASnvv4r?=
- =?us-ascii?Q?hPaRK2HVa/w8mvWx/tZZG1Z9zccV+9kx+0vk38CmL8EZMdtlFjNWrp6OJYdb?=
- =?us-ascii?Q?Uz6T/NygYH4KUhUcCGjtSQs9bV6rVdh1y0SO1eYT18MmYE9RE4ubsYZx+3Et?=
- =?us-ascii?Q?rJwNPUEqHd3mOuwo/HMqBC+x34DP65A7WMKenTfu5syzoadzE5EZX61fiFkE?=
- =?us-ascii?Q?NF4UpwTluulGW+wxjRACqsFK1dlTodXPNgalakDtGLmAgVEm1RdjpHu+3Q/E?=
- =?us-ascii?Q?sRVQ7JINgnAM1/irfV9Gw+G9b1y//Uyv7ZMx21RG7jXQT4cEV9MGGuCM0PqT?=
- =?us-ascii?Q?irDiUEl2Y3h8vtlbF0RpJtYjazQgRej1M7PUeSjmRugZ9r237A+QDaIWIyOS?=
- =?us-ascii?Q?y81L9Zgtu3zXv1BqgK7tuw9xg+ad340mRfLMtiRLZXYq5Wjik8UJFFGzNQ57?=
- =?us-ascii?Q?RDXah/4GgicvqkBvG/IJW5yBMTJwP5WiGs1xJt2slBG1b9NzJdVTGx3QOWsq?=
- =?us-ascii?Q?hRuaVqiGiQyPyY98soKlhnjQkwP+/Hg8kP23IP1D2h50qyWH2pHe07nC5TDi?=
- =?us-ascii?Q?Qv+Xd9FQa7ocl1FeuaizHy5hXOz7MPEgK0Ea4y8v0oi/RD2eoiyIdwya5FYJ?=
- =?us-ascii?Q?7A9bT3Kl+gpaugWPDBHRtWtk2PVdOxhK30F+c7sDzi1ky0FPhi1gtd5gkBrz?=
- =?us-ascii?Q?xbq+tC2bnVREpdiQ?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?V0hPtVPHxvjJCi6iWaRjjNVCjP1Op+hz+XCeXosf6ilnXq1r8ser6HG9leM0?=
- =?us-ascii?Q?kRfpdmczK0CKqfEYrSFNa2dGkcg4Zs8xaEHZwHi/KPP2YhQ0OmYfOMnCvuBX?=
- =?us-ascii?Q?6jO0rqpqIRyOuy4TZ2hVG5X/NfzNTxXYBFTZwIsXLLXdFgo04OZ2oF9CzEBF?=
- =?us-ascii?Q?b2eq0kj8r03AXdMMoS2gcl9zA6j7GxxaB8/Vd8i1SpjHAtdf1XeXVll9izYy?=
- =?us-ascii?Q?gO9jz+EOFA2aWT/Kspue6g4lz+uy74+lSkSo2r5KAIRIhjowBsOJWHsaKeG+?=
- =?us-ascii?Q?Fg5BvxWubtBp3ztFhQP18SI5B99sgVTbLSAWv19YZvipElSv8xhnm8dTVtIm?=
- =?us-ascii?Q?1T9htLwvo4SClT1/aVy4i48/b3VPGjZJW3op8kjO8T77IPgpMDJj44YrVlcq?=
- =?us-ascii?Q?fF0c1rot9qpkeQxcTakOxB0zmgkpmd9vAR5BK16wwNRpfROWw4NFYCJ27Rh2?=
- =?us-ascii?Q?xdc5Ftz6O0nUZYkSCMhUZkg1Le/zQCZ0GxG8CG7NgPr0vEdlQmQUMQIgjbEn?=
- =?us-ascii?Q?ulB9WLWDGD6IxbAftvdzqMJtbYAB+nRQvHBwT2G6718yJwIJeFo8YIJeho55?=
- =?us-ascii?Q?vGbO0tCea3u4AW5WqxS0wBww098YWip74P/PRDeJ+4G77BiSbANhLMIK+qsk?=
- =?us-ascii?Q?v8auixp7XCIbpfRqMn24OnMPhyHTP2sYd+Bp8d6aAbQ1nN32PLZzAfRinN95?=
- =?us-ascii?Q?9P/P9jbnytOs/XSfZuxhUhyexdUEnON4Z/8P1Q28NppORHHdDvUikzsyhonp?=
- =?us-ascii?Q?Xq3bSHm7+UUIK7sUSf0Gy3nGFeQl5T6Uby6mZXx3J3GII52/kh73e3YmhOLw?=
- =?us-ascii?Q?2GUcMeZ8rKBxL/XOuBej4rZAks9xro6ZeOU6hqvUTsd22IPWR8oWDpo2o1l2?=
- =?us-ascii?Q?RdGfkOzQombl9aIwfL6j+QoXqGzSZPy07wWOOmOVItbUc4HDanZmOsoiWy9h?=
- =?us-ascii?Q?tXQB5rGl6oY0XC04LLd/F5ZJAckJvxFLwP1LwI8M/3ekb/ygBVKvHrFoczNw?=
- =?us-ascii?Q?YlMXMGOjAoubHilX9cyFZUg0VW3/VnMxnMzRz+ZqGHDEUPuiw5/d58K7pzqO?=
- =?us-ascii?Q?eqW1STFnK7o+0Q8mVS5OmfXizzyd1FnlYEnHB5JCbQvmUPNB9O/seJSTb21H?=
- =?us-ascii?Q?QZBoVfcn7iCU1FQFM+X0FX9k9NwowsXqZxEivnRasHuI+nIPJ1TNwI4Eenep?=
- =?us-ascii?Q?QqX4RTCeZbLLxAOU5KEyQL8wpdkgY0mpdNOPalIaN4Va6UpbiCxJLbn6jUML?=
- =?us-ascii?Q?RfFRKkaUcXnX2AyKouTp?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4466af2-4293-42f9-16a5-08dd4d3349c5
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 20:08:03.6683
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9931
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zczpraieiqiv4bnu"
+Content-Disposition: inline
 
-This patch series makes kfunc filters support the use of struct_ops
-context information to reduce SCX runtime overhead.
 
-After improving kfunc filters, SCX no longer needs the mask-based
-runtime kfuncs call restriction, so this patch removes the mask-based
-runtime restriction and updates the corresponding test case.
+--zczpraieiqiv4bnu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
+Subject: man-pages-6.11 released
+MIME-Version: 1.0
 
-I added *st_ops as part of the context information to avoid kfuncs being
-incorrectly blocked when used in non-SCX scenarios where the member
-offsets would have a different meaning (not sure if this is necessary).
+Gidday!
 
-This patch series version uses a completely new design in filtering.
+I'm proud to announce:
 
-Use scx_ops_context_flags to declare context-sensitive SCX kfuncs that
-can be used by each SCX operation, no longer need to compare moff
-in filters.
+	man-pages-6.11 - manual pages for GNU/Linux
 
-Use scx_kfunc_ids_ops_context to implement unified filtering context-
-sensitive SCX kfuncs, using different kfunc id sets for grouping
-purposes and filtering purposes, no longer need to add multiple filters.
+!! THERE ARE BREAKING CHANGES !!  Packagers, please have a look at the
+list of breaking changes.  You can find them below, or in the
+<./Changes> file in the git repository.
 
-This is still an RFC patch series.
+Tarball download:
+<https://www.kernel.org/pub/linux/docs/man-pages/>
+Git repository:
+<https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
+Online PDF book:
+<https://www.kernel.org/pub/linux/docs/man-pages/book/>
 
-If I got something wrong please let me know.
+Thanks to all the contributors to this release (in BCC)!
+And thanks to our sponsors!
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
-v1 -> v2:
-* Use completely new design in filtering
+	-  Adfinis		<https://adfinis.com/>
+	-  Google		<https://opensource.google/>
+	-  Hudson River Trading	<https://www.hudsonrivertrading.com/>
+	-  Meta			<https://www.meta.com/>
+	-  Red Hat		<https://www.redhat.com/>
 
-* v1 link: https://lore.kernel.org/bpf/AM6PR03MB5080261D024B49D26F3FFF0099F72@AM6PR03MB5080.eurprd03.prod.outlook.com/T/#t
 
-Juntong Deng (5):
-  bpf: Add struct_ops context information to struct bpf_prog_aux
-  sched_ext: Declare context-sensitive kfunc groups that can be used by
-    different SCX operations
-  sched_ext: Add scx_kfunc_ids_ops_context for unified filtering of
-    context-sensitive SCX kfuncs
-  sched_ext: Removed mask-based runtime restrictions on calling kfuncs
-    in different contexts
-  selftests/sched_ext: Update enq_select_cpu_fails to adapt to
-    struct_ops context filter
+Have a lovely day!
+Alex
 
- include/linux/bpf.h                           |   2 +
- include/linux/sched/ext.h                     |  24 --
- kernel/bpf/verifier.c                         |   8 +-
- kernel/sched/ext.c                            | 395 ++++++++----------
- .../sched_ext/enq_select_cpu_fails.c          |  35 +-
- 5 files changed, 190 insertions(+), 274 deletions(-)
 
--- 
-2.39.5
+You are receiving this message either because:
 
+        a)  (BCC) You contributed to this release.
+
+        b)  You are subscribed to <linux-man@vger.kernel.org>,
+            <linux-kernel@vger.kernel.org>, or
+            <libc-alpha@sourceware.org>.
+
+        c)  (BCC) I have information (possibly inaccurate) that you are
+            the maintainer of a translation of the manual pages, or are
+            the maintainer of the manual pages set in a particular
+            distribution, or have expressed interest in helping with
+            man-pages maintenance, or have otherwise expressed interest
+            in being notified about man-pages releases.
+            If you don't want to receive such messages from me, or you
+            know of some other translator or maintainer who may want to
+            receive such notifications, send me a message.
+
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Changes in man=
+-pages-6.11 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Released: 2025-02-14, Aldaya
+
+
+New and rewritten pages
+-----------------------
+
+man7/
+	pathname.7
+
+
+Newly documented interfaces in existing pages
+---------------------------------------------
+
+
+New and changed links
+---------------------
+
+
+Removed pages
+-------------
+
+
+Removed links
+-------------
+
+
+Global changes
+--------------
+
+-  Build system:
+   -  [Breaking change!]
+      Require the user to pass '-R' to make(1).  This is necessary to be
+      able to do the following change.  When GNU make(1) releases a new
+      version, it will not be necessary to pass -R, but in current
+      versions of make(1) it is necessary.
+
+   -  [Breaking change!]
+      Use '?=3D' assignments instead of ':=3D', to support setting make(1)
+      variables in the environment.  Now one can do this:
+
+	$ export prefix=3D/usr
+	$ make -R
+	$ sudo make install -R
+
+      (The -R is only necessary in GNU make(1) versions prior to the
+       yet-unreleased 4.5.)
+
+   -  Escape '#' in regexes, to support old versions of GNU make(1).
+      This fixes a regression in man-pages-6.10, which caused issues in
+      users with an old-enough version of GNU make(1), such as the one
+      present in Debian old-old-stable.
+
+   -  Fix duplicate overview-panel entries in the PDF book.
+
+-  CONTRIBUTING.d/:
+   -  Add C coding style guide.
+
+-  RELEASE:
+   -  Document the production of the book.
+
+-  man/:
+   -  Refresh bpf-helpers(7) from Linux v6.13.
+
+
+Changes to individual files
+---------------------------
+
+The manual pages and other files in the repository have been improved
+beyond what this changelog covers.  To learn more about changes applied
+to individual pages, or the authors of changes, use git(1).
+
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Linux Software=
+ Map =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+
+Begin4
+Title:          Linux man-pages
+Version:        6.11
+Entered-date:   2025-02-14
+Description:    Manual pages for GNU/Linux.  This package contains
+                manual pages for sections 2, 3, 4, 5, and 7, and
+                subsections of those.  Only a few pages are provided in
+                sections 1, 6, and 8, and none in 9.
+Keywords:       man pages
+Maintained-by:  Alejandro Colomar <alx@kernel.org>
+Primary-site:   http://www.kernel.org/pub/linux/docs/man-pages
+                2.7M  man-pages-6.11.tar.gz
+Copying-policy: several; the pages are all freely distributable as long as
+                nroff source is provided
+End
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--zczpraieiqiv4bnu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmevokUACgkQ64mZXMKQ
+wqk3PBAAobRTZziLZVkyk5wA8EfkNXfkU5kJFhulorGJWg7UehG6NlqgRoqE9m4c
+WTy7e8pEswRX9mH8+Y/EUnO7cndM9p+b2ze6XQa64v4Ngsgr2ORpWJhA22xn3Ta3
+o+LDRvp8p00s60N5XtnS4XIEtct2AcB3fMlIUe7Eb9DXy6nvV+zFQ4QFaqDI2KvJ
+sPU+2rQtDkT2Qg6f3q6T/sDPcJQON1w1uekF+t19hDbS1cmFpIuZ7Y5PTNTASXQ4
+MHRrLwvE+K017FOGWMfDOfIPDZEsxy6XkDtykI1EsUjkkkRUUdlxmnKf8k9iSsUq
+hlmvs6m2ktUUpOgNpANpXbLvtuACuATaro3ayV52hHSrGbUd9sgb6tnYeKGQEiCm
+WvO6UZXyjfz9O5GH1BU7rTR1QcxITDZGg5W7UkQwsaW1fK9aVGhgjAyk7Ya/Ff6Q
+ziY602u6o6ZgslRGv5Pf0BSFJOU/uEpC4Y2/GpbcO92hUnW4dk/wgaJKWDPcWGwG
+j0oT+DMOsLKbkpvr8rrjYmScQCHjHp8tHfZwEBuaJblzUZ4iR1LqeWcwY/iGCKHp
+PQ2uHbvUwP9eqqmF7tKLZq/Gmqr2PjgdeASTzmfvSNM/12Vta3mVUnILQLHGN0BP
+rpyOnkOV3dQmIOAX4iSQKPsE6Zpuizmz80513YxD3jxUodki204=
+=XZbt
+-----END PGP SIGNATURE-----
+
+--zczpraieiqiv4bnu--
 
