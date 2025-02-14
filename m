@@ -1,150 +1,79 @@
-Return-Path: <linux-kernel+bounces-514603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C0AA3592D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:44:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8992FA3593A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C093116CB19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE8D3AE280
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE2227BA1;
-	Fri, 14 Feb 2025 08:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401A3227EB7;
+	Fri, 14 Feb 2025 08:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iF611NiJ"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSTVaqbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D64275401;
-	Fri, 14 Feb 2025 08:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91730227BA6;
+	Fri, 14 Feb 2025 08:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739522647; cv=none; b=LBeXgKwX2rsYcBVHERADPAIqjaw0dksmS7W6+BDMw5U4SQpfQV8L8lOFrW8ll15L8n2iTN4Rb/64ARPM2rnmosPfUXPypwJgjMeWK2NUKjXy2jCTeTBIgtmf4Q5EvFiCadYv33POM6fR7cpI+MuYqCW2RPL/hGdjBfPuPOW7j2w=
+	t=1739522659; cv=none; b=JY2a264IQ7heaWdD2mJNZPTd1A//7EmcBSn8K98kf8fUt2ldd/zArRjnWMdq4dXth7IV2HuJPuQkh335o8k0eMp9R95RAb4ZQsWKclyhmDjX1/Ok5j7XC/OIeRulx03AM/eFrq2Bd0cJlVe2rUdip3n4HXCQrTWLjeM8DSaiffA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739522647; c=relaxed/simple;
-	bh=ykvEShYNLVtLUN8WbhFUSrKQ/Ai8VO/e+8edobeJJcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ft7RghC0312RqKoyAIl/+wW739/sPa/NOoKZtOBZMb8VPxWSjPg8TtTcE2d5usniaN6CgRxNdZ2u4WwcMgAjc/tYQRa7jxZ2MK7meDBEWAvBmvnJg2nKCf31LLPCocgN6attTEsmwfPAwoW9X31y9WUeruQUj0vLqv9rCO4hWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iF611NiJ; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D198441E5;
-	Fri, 14 Feb 2025 08:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739522643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WSaeyfo8DQwqJGKUIUvYkkgVgRZAUJU2hAJTGaurvSE=;
-	b=iF611NiJf5UmWwAeRJ9fSRHPIr3slCUYg5J6GAy0IdyLMF/8cuZA6Vlvrdk9KqZZpGEpG8
-	kLtnvTavAgWOoMu/olJ9i0hTVWQZKGjyvLFuGt9ENeeuW2gHQeRM3dozeIy233+ZMMhS5l
-	4cDs+4mGEpzgEf4vKDvoq+1MDohQXLjW1DGeXMvZ8xsXfUVsOcYUKMMVf6067nFcAb05mB
-	cfewLHnFQN1PM5oKIbQVBVnPsEDPGm/PFVLg9W1dFGD/POGdAICBc/mMRZ+80qIVM1vKux
-	lBikh5Q99/eDpUU7L0gR4sCdqdJ80nrXpDpQzlbTGaohs3kqxrCBjUkk1PI9qQ==
-Message-ID: <1274bae7-e473-4711-9235-de0aeeadb02f@bootlin.com>
-Date: Fri, 14 Feb 2025 09:44:01 +0100
+	s=arc-20240116; t=1739522659; c=relaxed/simple;
+	bh=7gfINN8kDkIR+LxuMwzS9gewbf4Nld53s1tPLRkZoJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JY71syzfubPkIRo+dKNXK5XlIKXAEYCM+yQtiYUQB4AJLXO8fGhXM1MuWWU4754PsQZBsaqfsDNH+kYPL+A+7ebMcEYS74E378JnHTmGbxOpyiPQbCKXWsh6tdnIQ347ImwO9KpuV1O8mAl9nxipKp2iB5b+JGJFmdlZ0Vo94lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSTVaqbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8275DC4CEDF;
+	Fri, 14 Feb 2025 08:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739522658;
+	bh=7gfINN8kDkIR+LxuMwzS9gewbf4Nld53s1tPLRkZoJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NSTVaqbc5lt2H1/bowO2xwmlWhFxCfE45GZ6Y8bacWj54C9g82zAePQnR6IkOrav6
+	 tC0MmY10hqfbRVXlkuXnQfNMFN+zU3QxNdbWgGdjTxgAY7XqP/OQYB4xhDxiG/1xAL
+	 PZNHL6JK67YELMSepVp4N95IXTAXNBihwgzNw6erBvgwIRzRkE5FgYnMQazs9TDM3S
+	 TwJ2eHryA790+QNub9x/1JXT6fngKtvxxC7ScHSldsQQfz1rrlcdxIxxvlbLY05MuF
+	 UT55S8XpstGt8q7t3/D0rcFwC1zzUU3c4pkjlRrkNEiVQJxXnvvMM7OhdCKkFkWr9n
+	 2e3qTY9aL98oA==
+Date: Fri, 14 Feb 2025 09:44:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: crypto: qcom-qce: Document the X1E80100
+ crypto engine
+Message-ID: <20250214-nocturnal-rough-finch-8002a0@krzk-bin>
+References: <20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] serial: mctrl_gpio: add parameter to skip sync
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com, linux-doc@vger.kernel.org
-References: <20250214-atomic_sleep_mctrl_serial_gpio-v2-1-1e60c732fd90@bootlin.com>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20250214-atomic_sleep_mctrl_serial_gpio-v2-1-1e60c732fd90@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegledvtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdetteektdehudelheehkeeggfejgfelveevgeevtdejudfgveetgefhtdduuedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddungdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugdrghgvnhhouhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghro
- hgthhhiphdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrsehtuhigohhnrdguvghvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvg
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250213-dt-bindings-qcom-qce-x1e80100-v1-1-d17ef73a1c12@linaro.org>
 
-On 2/14/25 09:38, Alexis Lothoré wrote:
-> The following splat has been observed on a SAMA5D27 platform using
-> atmel_serial:
+On Thu, Feb 13, 2025 at 02:37:05PM +0200, Abel Vesa wrote:
+> Document the crypto engine on the X1E80100 Platform.
 > 
-> BUG: sleeping function called from invalid context at kernel/irq/manage.c:738
-> in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 27, name: kworker/u5:0
-> preempt_count: 1, expected: 0
-> INFO: lockdep is turned off.
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<00000000>] 0x0
-> hardirqs last disabled at (0): [<c01588f0>] copy_process+0x1c4c/0x7bec
-> softirqs last  enabled at (0): [<c0158944>] copy_process+0x1ca0/0x7bec
-> softirqs last disabled at (0): [<00000000>] 0x0
-> CPU: 0 UID: 0 PID: 27 Comm: kworker/u5:0 Not tainted 6.13.0-rc7+ #74
-> Hardware name: Atmel SAMA5
-> Workqueue: hci0 hci_power_on [bluetooth]
-> Call trace:
->   unwind_backtrace from show_stack+0x18/0x1c
->   show_stack from dump_stack_lvl+0x44/0x70
->   dump_stack_lvl from __might_resched+0x38c/0x598
->   __might_resched from disable_irq+0x1c/0x48
->   disable_irq from mctrl_gpio_disable_ms+0x74/0xc0
->   mctrl_gpio_disable_ms from atmel_disable_ms.part.0+0x80/0x1f4
->   atmel_disable_ms.part.0 from atmel_set_termios+0x764/0x11e8
->   atmel_set_termios from uart_change_line_settings+0x15c/0x994
->   uart_change_line_settings from uart_set_termios+0x2b0/0x668
->   uart_set_termios from tty_set_termios+0x600/0x8ec
->   tty_set_termios from ttyport_set_flow_control+0x188/0x1e0
->   ttyport_set_flow_control from wilc_setup+0xd0/0x524 [hci_wilc]
->   wilc_setup [hci_wilc] from hci_dev_open_sync+0x330/0x203c [bluetooth]
->   hci_dev_open_sync [bluetooth] from hci_dev_do_open+0x40/0xb0 [bluetooth]
->   hci_dev_do_open [bluetooth] from hci_power_on+0x12c/0x664 [bluetooth]
->   hci_power_on [bluetooth] from process_one_work+0x998/0x1a38
->   process_one_work from worker_thread+0x6e0/0xfb4
->   worker_thread from kthread+0x3d4/0x484
->   kthread from ret_from_fork+0x14/0x28
-> 
-> This warning is emitted when trying to toggle, at the highest level,
-> some flow control (with serdev_device_set_flow_control) in a device
-> driver. At the lowest level, the atmel_serial driver is using
-> serial_mctrl_gpio lib to enable/disable the corresponding IRQs
-> accordingly.  The warning emitted by CONFIG_DEBUG_ATOMIC_SLEEP is due to
-> disable_irq (called in mctrl_gpio_disable_ms) being possibly called in
-> some atomic context (some tty drivers perform modem lines configuration
-> in regions protected by port lock).
-> 
-> Split mctrl_gpio_disable_ms into two differents APIs, a non-blocking one
-> and a blocking one. Replace mctrl_gpio_disable_ms calls with the
-> relevant version depending on whether the call is protected by some port
-> lock.
-> 
-> Suggested-by: Jiri Slaby <jirislaby@kernel.org>
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-So despite changing the commit description, I forgot to update the actual commit
-message, which is eventually not adding a flag anymore but new APIs. v3 will
-follow, sorry for the noise.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Alexis
+Best regards,
+Krzysztof
 
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
