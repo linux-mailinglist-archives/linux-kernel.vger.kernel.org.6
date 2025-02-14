@@ -1,184 +1,109 @@
-Return-Path: <linux-kernel+bounces-514976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D88DA35E41
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:04:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E295A35E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79490189497A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476341896624
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAAB263C79;
-	Fri, 14 Feb 2025 12:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C46265CA2;
+	Fri, 14 Feb 2025 12:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PVgUCeCE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MGob5DAY"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D891263C77;
-	Fri, 14 Feb 2025 12:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92830265619
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739537880; cv=none; b=J5fwKjaeHV3Qnzz1X4UvboVjhW2bdTAdH/83E9VTOOm9S9C8BS8nPvpm1vKx2bvZeFjvmJnafFkSv9aIFEZ3hNQNR/4rKMfELubC6pmaD9jDWz8AohnuDiWu2ETUHUhmisUBKtPj8IvdJAQkdHI1l1ydNJ4Yy26YofaAeijuPIs=
+	t=1739537884; cv=none; b=fCa9BVfSo4odSXxl9YIIjiZDNKd0C08iF4MWxu69UT6YVxWzq0umS+mfXuboeYHJ6B/wwVvGCjUsSzYt5pDUojGg9YirVdBZ1xliutP5oDzVxkiTLLl0HD8C2EmtkhIwwNQZ/IuNnxugDuqcNtszDnKe7Y90BnzLo8xtB9p8LEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739537880; c=relaxed/simple;
-	bh=alONTJ5izPBs5NVNtGqcxXXw/F3dPnAoYUIDkZtfNoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BqztOKEDT5pqFX+41gKyLw8QifQRplG0M+WdCj38dD5HeUnwaUpJwnnEYmsHZfkdJ4O1spJNgVzJrUewzv1tyyKnTMTNf9maNXXM4qfwdh839w13YE9JKOrpgJAH+hoM2lEUiJjawp40eMu3HWRDbnf+1X71ITgl9Lf6asPLy9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PVgUCeCE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E7i2wV015968;
-	Fri, 14 Feb 2025 12:57:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Eeic6vXkmMzY8YnqF8B8+d/0s0ePlY9ZRC/bULfVz9M=; b=PVgUCeCE9F2rRhXX
-	GzjSWiCH6P5O+kLbZtt+AEZ00puhiZnlYoo/pAAzuLWkhBph/rjI4DZd31iJmfi+
-	w8+AAy73Zwm+JekXLLMZIvS6Ece5ErQBvOEiS3OtI8glWeY7G+9ldBueMK0Cgu8u
-	TbUH8HTI5gRptoBqobtu0Tl0aCekLv5NbM6DNccHsjO2N53bm4O7uEDQYBkZj1jR
-	rtsOVsh7C9fJ6ZGGqC559iqh2qMu4nciP3boqhzPVDa7Olvt5Nm6hIeQ9cN8WusZ
-	uS6VK7KmdOLPDBV/uMM9CUtT6PG2PoEptRYrFYV8arfJO4DbPSyQ5594X99aCh4C
-	wkBp+g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sde8btc2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 12:57:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51ECvPfS025861
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 12:57:25 GMT
-Received: from [10.219.56.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Feb
- 2025 04:57:18 -0800
-Message-ID: <2a090f80-e145-410d-8d02-efdaf324c8c9@quicinc.com>
-Date: Fri, 14 Feb 2025 18:27:14 +0530
+	s=arc-20240116; t=1739537884; c=relaxed/simple;
+	bh=0FzmlmjHgsSOEqIGlKVGxNm+yZCYAekcmp2IYH33eq8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TOziL7toIKSTJeUgalV2FArHwwazZnYC1md+sU6fA/cT97GdMM+zbITKzsxITVD1FeGBmik6I20X4nCk3Sk5vV5jCt9QZGfsI3N9Bid8BH16tyvqFncQyfK2ffchBATOSjdAZZCS+tVQOHO3MUff13ewzcCvFnM4Lt476YvIn9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MGob5DAY; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E066944202;
+	Fri, 14 Feb 2025 12:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739537875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ze9+bc3E0f1wMT/AFQmpj05iI6Vym9TYkA30cm3okpc=;
+	b=MGob5DAYjn9kmQfSTza6aFopPVe1JLQduVKyj95rg5VxF2ULFGvfOmAuoBDNPgg/Q96KBX
+	bosCbojwpnCDMQ8xbHmsza5ybVSPCxtJdsVcHt+ZzlGgLGKucT1TX/SrzYEg6sEDx9fJO6
+	TRCG3e2CFWz25Az9C8nPPoZZcxMrPtec75YI22Ozd7Clhlrk/BPF/EFEsIryf7zoEKOu6p
+	gGv0yokHGDDZIrqsZf5e1HXQxmrqBmlHUN3feaHrwPmyOLfsh3qyg4IlEJsPl1eBJBDn9E
+	AESmuf7KgHBIzOELnwiYgqHOyvjkgCOUbuI/lcrQkLi+Mp2BqQq0kI9fyDCyzQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v7 0/5] drm: small cleanups and improvements
+Date: Fri, 14 Feb 2025 13:57:39 +0100
+Message-Id: <20250214-drm-assorted-cleanups-v7-0-88ca5827d7af@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iommu: Handle race with default domain setup
-To: Robin Murphy <robin.murphy@arm.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sudeep Holla
-	<sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
-	<lenb@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>, Stuart
- Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Nipun
- Gupta <nipun.gupta@amd.com>,
-        Nikhil Agarwal <nikhil.agarwal@amd.com>,
-        Joerg
- Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-        Bjorn Helgaas
-	<bhelgaas@google.com>
-CC: <linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <cover.1739486121.git.robin.murphy@arm.com>
- <87bd187fa98a025c9665747fbfe757a8bf249c18.1739486121.git.robin.murphy@arm.com>
-Content-Language: en-US
-From: Charan Teja Kalla <quic_charante@quicinc.com>
-In-Reply-To: <87bd187fa98a025c9665747fbfe757a8bf249c18.1739486121.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8MPMEM59TFtEpOVHpTq1BK9dVBJIHPE2
-X-Proofpoint-ORIG-GUID: 8MPMEM59TFtEpOVHpTq1BK9dVBJIHPE2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- clxscore=1011 mlxscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140095
+X-B4-Tracking: v=1; b=H4sIAMM9r2cC/x3MQQqDQAxA0atI1gZ0sFa8irhIJ6kN6CiJSkG8e
+ 4cu3+L/C1xMxaEvLjA51XVNGc+ygPihNAkqZ0OowqMKdYNsC5L7arswxlkoHZsjc8ud1K+GOoL
+ cbiZv/f6/w3jfPxP60gZnAAAA
+X-Change-ID: 20250214-drm-assorted-cleanups-dd6d8e1b4a8a
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleejudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfeiteekkefgtdduveeuffeuffevkeehieduhfefvdfhueekuefhhfdttddvkeefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughri
+ hdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Thanks a lot for posting these patches, Robin.
+This series collects some minor improvements and fixes previously part of
+[0], hence the "v7" version number.
 
-On 2/14/2025 5:18 AM, Robin Murphy wrote:
->  drivers/iommu/iommu.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 870c3cdbd0f6..2486f6d6ef68 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -3097,6 +3097,11 @@ int iommu_device_use_default_domain(struct device *dev)
->  		return 0;
->  
->  	mutex_lock(&group->mutex);
-> +	/* We may race against bus_iommu_probe() finalising groups here */
-> +	if (!group->default_domain) {
-> +		ret = -EPROBE_DEFER;
-> +		goto unlock_out;
-> +	}
+All of these patches already have some Review/Ack tags.
 
-We just hit the issue again even after picking up this patch, though
-very hard to reproduce, on 6.6 LTS.
+[0] https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
 
-After code inspection, it seems the issue is that - default domain is
-setup in the bus_iommu_probe() before hitting of this replay.
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (5):
+      drm/debugfs: fix printk format for bridge index
+      drm: of: drm_of_find_panel_or_bridge: move misplaced comment
+      drm/bridge: panel: use drm_bridge_is_panel() instead of open code
+      drm/bridge: panel: drm_panel_bridge_remove: warn when called on non-panel bridge
+      drm/bridge: panel: forbid initializing a panel with unknown connector type
 
-A:async client probe in platform_dma_configure(), B:bus_iommu_probe() :-
+ drivers/gpu/drm/bridge/panel.c | 4 +++-
+ drivers/gpu/drm/drm_debugfs.c  | 2 +-
+ drivers/gpu/drm/drm_of.c       | 2 +-
+ drivers/gpu/drm/drm_panel.c    | 5 ++++-
+ 4 files changed, 9 insertions(+), 4 deletions(-)
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250214-drm-assorted-cleanups-dd6d8e1b4a8a
 
-1) A: sets up iommu_fwspec under iommu_probe_device_lock.
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-2) B: Sets the dev->iommu_group under iommu_probe_device_lock. Domain
-setup is deferred.
-
-3) A: Returns with out allocating the default domain, as
-dev->iommu_group is set, whose checks are also made under the same
-'iommu_probe_device_lock'. __This miss setting of the valid dev->dma_ops__.
-
-4) B: Sets up the group->default_domain under group->mutex.
-
-5) A: iommu_device_use_default_domain(): Relies on this
-group->default_domain, under the same mutex, to decide if need to go for
-replay, which is skipped. This is skipping the setting up of valid
-dma_ops and that's an issue.
-
-But I don't think that the same issue exists on 6.13 because of your
-patch, b67483b3c44e ("iommu/dma: Centralise iommu_setup_dma_ops()").
-bus_iommu_probe():
-     list_for_each_entry_safe(group, next, &group_list, entry) {
-		mutex_lock(&group->mutex);
-		for_each_group_device(group, gdev)
-			iommu_setup_dma_ops(gdev->dev);
-		mutex_unlock(&group->mutex);
-     }
-
-This makes the step4 above force to use the valid dma_iommu api, thus I
-see no issue when there is no probe deferral.
-
-So, I think we are good with this patch on 6.13.
-
-Now coming back to 6.6 LTS, any ideas you have here, please?
-
->  	if (group->owner_cnt) {
->  		if (group->domain != group->default_domain || group->owner ||
->  		    !xa_empty(&group->pasid_array)) {
-
-
-Thanks,
-Charan
 
