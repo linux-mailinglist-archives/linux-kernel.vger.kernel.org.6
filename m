@@ -1,124 +1,158 @@
-Return-Path: <linux-kernel+bounces-514906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9A3A35D33
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:58:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D488A35D27
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCDC188E594
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEBF97A18C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657C825A64B;
-	Fri, 14 Feb 2025 11:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C7263C6B;
+	Fri, 14 Feb 2025 11:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kWmxyq49"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lr6T6Ymv"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC73221541;
-	Fri, 14 Feb 2025 11:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE1A275412
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739534075; cv=none; b=jDcL5QVBE33c9zp3xW8nIqLCXliI6uDmsmNUYAmul6ZLGTOn+LS222iHOqFiHye+sB/rxlitql6fzIlN5O8swv3i/UYKfz5QvXsIQKun4f+CDwEJvI41MC882KWKAOwliw0VJ8HhyNLpN4O0C6FqXs8wBjWuGgAnQjeos8YG5w4=
+	t=1739534205; cv=none; b=e7p4l/ge+eN5Q2vqWYFGOJNovAKn1XDHL81jf4i/uRKfWkyt0hk/hj5SD1InwHQu4wNTUIN1Q1fSo2Dg+YVTjsUb6qoJjOrsCp/ReJMpB1Ghs71hcB2pwNyHidEXezXhQqHhZYLjiSBPzrEcIXb29ELZ4wtnpK4rRiEanMHq5C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739534075; c=relaxed/simple;
-	bh=HI8EwoC0v/mnJcoRwvIyzMEB3LbRz6V2OsbB0TGXVsk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=sCnJmOKTOi6uKNptMTR4DkBFQDgiumNkV4tE5LQ+VbVWnC0CwaYOE7XLjYNx0ajy1c8qabliFHZKhJQ8Z5zDyPlRrLsY0k+8ymZBR2W1preOLc9z7T0v406fzZ6ZOA97mTUWQElhzUKEBj9F24aVlQljgSL7d2VFPtx5zgEb6tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kWmxyq49; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8CE7D43297;
-	Fri, 14 Feb 2025 11:54:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739534070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvZmD9qQBpCHdGYAx46m4LzLnVpR1HzltuJ00ZwvJPs=;
-	b=kWmxyq49z3w8rvPqklSR4cZKhIzTAZrdVYqsPH/3vxHdX1CDu1xRFLUXxoVZBbXMr3R6Kc
-	L8SMWnLd0QK/xls1QVTNObfCDNHXo0dM6x925LGxhmIkUMak57Z7E9iMK7Smy/hUbEOow2
-	9iZ6/51rYMOGUFy+fy2USGSVuKYI41BWuzABzpazWfwhWBIod9Pw1cUtbVuEYW1w8If3i1
-	f7yEczLbvYGdztdETdwf4vKQvL7gl3Sg1Sa83cWWSRTiCaflLE4jNe7VX6JfckqXgqcFhj
-	et2jjbDPEwfs6OMvJlHAZ68ICr0q3Ocgd9GpnWuetsTMZciR/cga4CmI0+B24g==
+	s=arc-20240116; t=1739534205; c=relaxed/simple;
+	bh=L9c0JFwKJ9yBA/bjUoNYqEyW/Hf5BnPlVV9B509rjMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=JetmFO7SrYHC8HK5teVnlzU2/W4ZfpT1NddEh8C+dntBG9Nlo23JUD1QnkZH3uJtYNMZHPV9HhuDyryvnkskJgiXoPzArsjuCbDHXmMpPgU56BAEiD1vTsPcYzHAmn5GLbKSFj0Oc5sgPB663qvKf/SlEpQY9/NdEE1tyH3f44U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lr6T6Ymv; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43962f7b0e4so11211905e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:56:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739534202; x=1740139002; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rMR3vBvnlqm3PumoLJkgqkpo27BYfX73XjJodLfEdDU=;
+        b=lr6T6Ymvvs0NN4MQ+uTCllni4Jeiq/HySPebjIdwf7zm11vj2a4AkzQEFMS7dLtokG
+         PEQ922cQBAgZbttxrFZxEFFSb5kYe7JkWftw62e95DSAcHGSKphTuyGJUAG5r5c+j0ro
+         Gw+1s6S8GlBd/ZIrV8rrlwVjuCUeFC6/bBWL7+3jJWJP6lcTZuTg32QeGQJpdMvKgLeB
+         1TrqV+Lu6Oj+RFMcfX+/GESnX+vDxtbsGIhAv2cCSVZH73V2lxq0DKxQMA1IQpEYTUz9
+         rAK753sp8dB9Bz4CIOe5f9Td/rIowPkoR5RJI95XxSySrVK413CwBlTDr6J9WHxPpQus
+         nI0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739534202; x=1740139002;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rMR3vBvnlqm3PumoLJkgqkpo27BYfX73XjJodLfEdDU=;
+        b=tMD57zMegd22SFoOJwpxLV4TbkzXTzL7f2rg4E+6gUD+YzphAL1l2QEscYc7UZoOpS
+         iNsn5oyZPemokSSXI9sjks4WoEj++xQ7PsXjLnEQWtgFRGxPcU+D60USPiLA4mdUPpVI
+         Vud2N+WPYgWzpjbTKcQT9QPb0ABuuuStwv0mkLj9FaahbNuoXWWK9dCvsVkoWFyVS4Tx
+         89Kpj+L15QDDpDcJGd1B7pvA+HunpZARSgvhzp/0tRfDypUPpzlTzt1Drxk8nhXoODgV
+         BdWPkgqxrJJ5lNbmTdw48IOOTBF4pCrtY4Cz/4uVs1BWtDKK8Qx1DnW4SlzmmgoAGeIi
+         hWVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUr4lYgHEk2HCd2uBj/fU4dqr2IWZZ/Sq9mLzjUl8X69yAf2+69MRPFGN8vXIdH1jVvFBtBZQ6odJdtel4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOtsV81GvtN+GadyT7Awn6B1+uRmxiFuL2A2TF0IthVKTLtfFC
+	XAO8N2djWN4rRyTAR4fEHCfFlqCDXCfCIq2cTtKFWkJBlZDIQQVNgXF5JN0joex6SQ4cm/bDCQO
+	taFGhE8vYFQjiyKz7dgbDGjoDq9iFCyHybWNF
+X-Gm-Gg: ASbGncuyRhwzDFdTNP7V8UxIVCDPNai8yIMw/Y6bhh1hc1ukqecmmbpQ4Zmd7fFjv29
+	/25QrTf89JBTGM3Uy8/OpEGY9sqBt16nNumUNqksN519PIYmti5GS4UvQphZunyNVQZLAfYipFX
+	zdse6qfVZVdlwyQ43Bi1if6Ftfd80=
+X-Google-Smtp-Source: AGHT+IEZ22UUGVhiiq7xVdL7CJD3HC6qEtfMJUPWWKc2YPQxG9qXcYyvAelDw5b/vP4y3rllPzdwoOMfF19GqBCkam8=
+X-Received: by 2002:adf:e9cc:0:b0:385:f7ef:a57f with SMTP id
+ ffacd0b85a97d-38f244edb57mr6988765f8f.27.1739534202310; Fri, 14 Feb 2025
+ 03:56:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250213-vma-v14-0-b29c47ab21f5@google.com> <8130a6d5-a7e5-402b-b05c-2d0703ac1ed2@lucifer.local>
+ <CANiq72nBx3cRTUC9HWVR8K64Jbq3GCVMss5wuABzra3OLhRUQw@mail.gmail.com>
+ <c8e78762-1429-4ab6-9398-ce52370eec08@lucifer.local> <CANiq72mKyvoyk_tgbMKUdzs-sJOoyEH7f1M9ipiET+XYgwCqRw@mail.gmail.com>
+ <2d132129-fdf7-404d-b1f1-8ee87b838dcf@lucifer.local> <b6b5tnaw6vnuib7nzcm7ajszxiptqz3i2hex5yengzbsirztks@l3coijkqwtpb>
+In-Reply-To: <b6b5tnaw6vnuib7nzcm7ajszxiptqz3i2hex5yengzbsirztks@l3coijkqwtpb>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 14 Feb 2025 12:56:29 +0100
+X-Gm-Features: AWEUYZmWqwY5t_8PDQeT_6I9FVQA4YJBfP9c7yKAgf-iSodbVpOlpCnJ67_smRA
+Message-ID: <CAH5fLgjMC2Q1tjuVtbhMvU-pmEsn1Ai4=AAB3Tm8HTWi7PFHfg@mail.gmail.com>
+Subject: Re: [PATCH v14 0/8] Rust support for mm_struct, vm_area_struct, and mmap
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Balbir Singh <balbirs@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 14 Feb 2025 12:54:29 +0100
-Message-Id: <D7S5D37XT80H.2WLFX1D18TZ6P@bootlin.com>
-Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Lee Jones"
- <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
- <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
-In-Reply-To: <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeehhffhlefhkeejueegtdduleeuteffjeffhfekieevvdevlefgteefleevtedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhrt
- ghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Fri Feb 14, 2025 at 12:49 PM CET, Mathieu Dubois-Briand wrote:
-> Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
+On Thu, Feb 13, 2025 at 8:46=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
 >
-> Two sets of GPIOs are provided by the device:
-> - Up to 8 GPIOs, shared with the PWM and rotary encoder functionalities.
->   These GPIOs also provide interrupts on input changes.
-> - Up to 6 GPOs, on unused keypad columns pins.
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250213 07:16]:
+> > On Thu, Feb 13, 2025 at 01:03:04PM +0100, Miguel Ojeda wrote:
+> > > On Thu, Feb 13, 2025 at 12:50=E2=80=AFPM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > >
+> > > > Right, I don't mean the rust subsystem, I mean designated rust
+> > > > maintainers. The point being that this won't add workload to Andrew=
+, nor
+> > > > require him nor other mm C people to understand rust.
+> > >
+> > > Sounds good, and apologies for being pedantic, but given the recent
+> > > discussions, I thought I should clarify just in case others read it
+> > > differently.
+> > >
+> > > In the same vein, one more quick thing (that you probably didn't mean
+> > > in this way, but still, I think it is better I add the note, sorry): =
+I
+> > > don't think it is true that it will not add workload to Andrew or MM
+> > > in general. It always adds some workload, even if the maintainers
+> > > don't handle the patches at all, since they may still need to perform
+> > > a small change in something Rust related due to another change they
+> > > need to do, or perhaps at least contact the Rust sub-maintainer to do
+> > > it for them, etc.
+> > >
+> > >     https://rust-for-linux.com/rust-kernel-policy#didnt-you-promise-r=
+ust-wouldnt-be-extra-work-for-maintainers
+> > >
+> > > Cheers,
+> > > Miguel
+> >
+> > Ack, for the record I'm happy to help with any work that might come up.
 >
-> Co-developed-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
-...
-> +static int max7360_gpio_probe(struct platform_device *pdev)
-...
-> +	} else {
-> +		u32 ngpios;
-> +
-> +		ret =3D device_property_read_u32(dev, "ngpios", &ngpios);
-> +		if (ret < 0) {
-> +			dev_err(dev, "Missing ngpios OF property\n");
-> +			return ret;
-> +		}
-> +
-> +		gpio_config.reg_set_base =3D GPIO_REGMAP_ADDR(MAX7360_REG_PORTS);
-> +		gpio_config.reg_mask_xlate =3D max7360_gpo_reg_mask_xlate;
-> +		gpio_config.ngpio =3D ngpios;
+> Ack, here too.
+>
+> Without the drama, I'm not sure how we'd feel so alive :P
+>
+> Can I be added to whatever list so I can be Cc'ed on the changes on your
+> side?
 
-The device_property_read_u32() and setting of gpio_config.ngpio here
-will be removed, once the "gpio: regmap: Make use of 'ngpios' property"
-series gets merged.
+I'm happy to format the entries whichever way you all prefer, but for
+example it could be a new MAINTAINERS entry below MEMORY MAPPING along
+these lines:
 
-https://lore.kernel.org/linux-gpio/20250213195621.3133406-1-andriy.shevchen=
-ko@linux.intel.com/
+MEMORY MANAGEMENT/MAPPING [RUST]
+M: Alice Ryhl <aliceryhl@google.com>
+R: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+R: Liam R. Howlett <Liam.Howlett@oracle.com>
+L: linux-mm@kvack.org
+L: rust-for-linux@vger.kernel.org
+S: Maintained
+F: rust/helpers/mm.c
+F: rust/kernel/mm.rs
+F: rust/kernel/mm/
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Alice
 
