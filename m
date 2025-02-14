@@ -1,138 +1,170 @@
-Return-Path: <linux-kernel+bounces-515271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD370A362B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:06:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC65A362BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8011892A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E95167088
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38882673AE;
-	Fri, 14 Feb 2025 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ic7Fe/Ku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD55C2676F6;
+	Fri, 14 Feb 2025 16:07:49 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5723822F165;
-	Fri, 14 Feb 2025 16:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98FD2673AB;
+	Fri, 14 Feb 2025 16:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549201; cv=none; b=q/At4+WMwdzWeHHb3EhuRc4zm7e4a1KD7XKpLkOMoHpweDCYZ9HI2xz958Ef/RmbFEpNIjb7pf+fEPUB25kNN2f3xi3VA89lf3kDStmWzc+DhCQ870JvOMuOAclJ2e3fGJt8V885Oucbtx1KvmM4YyFOePAg694C83atblansSk=
+	t=1739549269; cv=none; b=uGlGww18DhXvklDJVc+JeI3CVqLI6BnMGdmrtr2XTATRLxNpla98zgQCsEOqp83iv7ojaoxivto2aJuVmTPKEJeoCewpQ+eryAEToyKz8CahEWLd1HQ/FUYe4d3R+b7EKJcTfR0HjR+yfL5aBTooVDSkVeKA04bNZvjLBbVCYWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549201; c=relaxed/simple;
-	bh=V6vmFc+uBjzAPQIGxrV3kgp6ssq5TYM+J9C8A/QYXPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0Bsfe9eBZiIuZjah4roSGB58PsEgA0m8vOMUv6071AGHzZcWd/+5swXD1fcljp81NeVwPcGhsbcHUM/2tNV5UhIlxHmXR7VeDW6BZJ6JmsL2ZBtJpCMeB4J11pS7j2FWtydqNLRPOD6R68vxbOJAf13K2rTbgCSqLJEGcb+puU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ic7Fe/Ku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908B4C4CEDF;
-	Fri, 14 Feb 2025 16:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739549200;
-	bh=V6vmFc+uBjzAPQIGxrV3kgp6ssq5TYM+J9C8A/QYXPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ic7Fe/Ku/JBVhKJKs6/1fZOSQm9kVvwaUSySsGMlBdF1Qpo8/e5v7Jsp4SyBVXMDa
-	 pToOQQed7NkWmKOk9Uw4nGaqBqi7rr+HlAvzdV2+g5cmFI+CWm4a7fKG43u0WcWFBA
-	 ts6qs7YBkjI+j81xU5/plnCeSJJMKU/BUwvENiC4HG0SSCOr89B2DC+yQV5mfR2UBA
-	 JUDjt029VSiYvF6YeCItc941TUDFB/ldQ8KAkzXAQCyT4jiRIHMfqeheHL11p50Igx
-	 RrgC7pHb01/YTOoFO3IgV5qMeVvs4OcWSRMbgcRN52NfEbsXw2SKwZqQa46e1PYzUT
-	 HhJj7pODAPtlQ==
-Date: Fri, 14 Feb 2025 21:36:30 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
-	cassel@kernel.org, wojciech.jasko-EXT@continental-corporation.com,
-	a-verma1@ti.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rockswang7@gmail.com
-Subject: Re: [v3] PCI: cadence: Fix sending message with data or without data
-Message-ID: <20250214160630.i3vbyl3e3a73onfa@thinkpad>
-References: <20250207103923.32190-1-18255117159@163.com>
+	s=arc-20240116; t=1739549269; c=relaxed/simple;
+	bh=Ao7LE4+tbfQL8T8CQHg0pXYdVblJlSaOPMAuV6uc1GI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GtXK4GRqzBUv6l3QD3VXe2/K3jBO4m7XgD/G25equV3pz4EEbwclRvGPmAa00h0KvBGOqolQGwPcbjdudSTAMTXQw19QNJL61ARTr8SMoRJ0zWH0aIvCeN3fUZvOfbEAhOjRWgcm8cYTHix58lJjhf89quGF9U5KmoH9zktXuFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YvcMH13hZz6H7YC;
+	Sat, 15 Feb 2025 00:04:59 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7BA1F140A77;
+	Sat, 15 Feb 2025 00:07:27 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 17:07:26 +0100
+Date: Fri, 14 Feb 2025 16:07:25 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v3 07/18] cxl/region: Avoid duplicate call of
+ cxl_find_decoder_early()
+Message-ID: <20250214160725.0000662f@huawei.com>
+In-Reply-To: <20250211095349.981096-8-rrichter@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+	<20250211095349.981096-8-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207103923.32190-1-18255117159@163.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Feb 07, 2025 at 06:39:23PM +0800, Hans Zhang wrote:
+On Tue, 11 Feb 2025 10:53:37 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-Subject should be changed as:
+> Function cxl_find_decoder_early() is called twice, in
+> alloc_region_ref() and cxl_rr_alloc_decoder(). Move it out there and
 
-PCI: cadence-ep: Fix the driver to send MSG TLP for INTx without data payload
+out where?  I'd make it clear that both these calls are in
+cxl_port_attach_region()
 
-> View from cdns document cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf.
-> In section 9.1.7.1 AXI Subordinate to PCIe Address Translation
-> Registers below:
+> instead pass the decoder as function argument to both.
 > 
-> axi_s_awaddr bits 16 is 1 for MSG with data and 0 for MSG without data.
-> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Tested-by: Gregory Price <gourry@gourry.net>
 
-How about,
-
-Cadence reference manual cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf, section
-9.1.7.1 'AXI Subordinate to PCIe Address Translation' mentions that
-axi_s_awaddr bits 16 when set, corresponds to MSG with data and when not
-set, MSG without data.
-
-But the driver is doing the opposite and due to this, INTx is never
-received on the host. So fix the driver to reflect the documentation and
-also make INTx work.
-
-> Signed-off-by: hans.zhang <18255117159@163.com>
-
-Please add the Fixes tag also.
-
-- Mani
+I think this is fine but it's not immediately obvious so a request
+inline for some more details in this description.
 
 > ---
-> Changes since v1-v2:
-> - Change email number and Signed-off-by
-> ---
->  drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 +--
->  drivers/pci/controller/cadence/pcie-cadence.h    | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
+>  drivers/cxl/core/region.c | 31 +++++++++++++++----------------
+>  1 file changed, 15 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> index e0cc4560dfde..0bf4cde34f51 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> @@ -352,8 +352,7 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
->  	spin_unlock_irqrestore(&ep->lock, flags);
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 13e3ba984a53..b8201c2faa87 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -908,7 +908,8 @@ static bool auto_order_ok(struct cxl_port *port, struct cxl_region *cxlr_iter,
 >  
->  	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
-> -		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code) |
-> -		 CDNS_PCIE_MSG_NO_DATA;
-> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
->  	writel(0, ep->irq_cpu_addr + offset);
->  }
+>  static struct cxl_region_ref *
+>  alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
+> -		 struct cxl_endpoint_decoder *cxled)
+> +		 struct cxl_endpoint_decoder *cxled,
+> +		 struct cxl_decoder *cxld)
+>  {
+>  	struct cxl_region_params *p = &cxlr->params;
+>  	struct cxl_region_ref *cxl_rr, *iter;
+> @@ -922,9 +923,6 @@ alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
+>  			continue;
 >  
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-> index f5eeff834ec1..39ee9945c903 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.h
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
-> @@ -246,7 +246,7 @@ struct cdns_pcie_rp_ib_bar {
->  #define CDNS_PCIE_NORMAL_MSG_CODE_MASK		GENMASK(15, 8)
->  #define CDNS_PCIE_NORMAL_MSG_CODE(code) \
->  	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
-> -#define CDNS_PCIE_MSG_NO_DATA			BIT(16)
-> +#define CDNS_PCIE_MSG_DATA			BIT(16)
->  
->  struct cdns_pcie;
->  
-> 
-> base-commit: bb066fe812d6fb3a9d01c073d9f1e2fd5a63403b
-> -- 
-> 2.47.1
-> 
+>  		if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags)) {
+> -			struct cxl_decoder *cxld;
+> -
+> -			cxld = cxl_find_decoder_early(port, cxled, cxlr);
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+This is buried a little deep to be obviously fine to lift out.
+Seems like it should always have been done outside the xa_for_each()
+loop in here.  So I think this is fine but maybe some more in the
+patch description is needed to make that point.
+
+>  			if (auto_order_ok(port, iter->region, cxld))
+>  				continue;
+>  		}
+> @@ -1008,17 +1006,9 @@ static int cxl_rr_ep_add(struct cxl_region_ref *cxl_rr,
+>  
+>  static int cxl_rr_alloc_decoder(struct cxl_port *port, struct cxl_region *cxlr,
+>  				struct cxl_endpoint_decoder *cxled,
+> -				struct cxl_region_ref *cxl_rr)
+> +				struct cxl_region_ref *cxl_rr,
+> +				struct cxl_decoder *cxld)
+>  {
+> -	struct cxl_decoder *cxld;
+> -
+> -	cxld = cxl_find_decoder_early(port, cxled, cxlr);
+> -	if (!cxld) {
+> -		dev_dbg(&cxlr->dev, "%s: no decoder available\n",
+> -			dev_name(&port->dev));
+> -		return -EBUSY;
+> -	}
+> -
+>  	if (cxld->region) {
+>  		dev_dbg(&cxlr->dev, "%s: %s already attached to %s\n",
+>  			dev_name(&port->dev), dev_name(&cxld->dev),
+> @@ -1109,7 +1099,16 @@ static int cxl_port_attach_region(struct cxl_port *port,
+>  			nr_targets_inc = true;
+>  		}
+>  	} else {
+> -		cxl_rr = alloc_region_ref(port, cxlr, cxled);
+> +		struct cxl_decoder *cxld;
+> +
+> +		cxld = cxl_find_decoder_early(port, cxled, cxlr);
+> +		if (!cxld) {
+> +			dev_dbg(&cxlr->dev, "%s: no decoder available\n",
+> +				dev_name(&port->dev));
+> +			return -EBUSY;
+> +		}
+> +
+> +		cxl_rr = alloc_region_ref(port, cxlr, cxled, cxld);
+>  		if (IS_ERR(cxl_rr)) {
+>  			dev_dbg(&cxlr->dev,
+>  				"%s: failed to allocate region reference\n",
+> @@ -1118,7 +1117,7 @@ static int cxl_port_attach_region(struct cxl_port *port,
+>  		}
+>  		nr_targets_inc = true;
+>  
+> -		rc = cxl_rr_alloc_decoder(port, cxlr, cxled, cxl_rr);
+> +		rc = cxl_rr_alloc_decoder(port, cxlr, cxled, cxl_rr, cxld);
+>  		if (rc)
+>  			goto out_erase;
+>  	}
+
 
