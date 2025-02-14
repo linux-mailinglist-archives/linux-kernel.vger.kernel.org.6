@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-514286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CD2A35519
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:57:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC17A35521
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A771891488
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:57:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D187A29B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086F314F104;
-	Fri, 14 Feb 2025 02:57:33 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD2D18EA2;
+	Fri, 14 Feb 2025 03:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5ho3Lu6"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1D086333
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF952753FD
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739501852; cv=none; b=ncnMSu3BRQH/s+T4hdXYiTgNPLMxWELcMtLujysDDCwuN8dwX4zKP//HwR+dQrXtbM4zqvNGhaORHC04dTVmXoYSPpK94bmQRCctkxTK0GPyT+55dK6SLTFOY4zJqc1MqcG56xBj8AanqJ80JP+ZbUUl/i/nhWwa0jHO+jgV4Yo=
+	t=1739502075; cv=none; b=nZNT3AIREPLc8Gj73gb32c1S8wdjJc4GkdniwmNLUo2zU7hsb81bHgBJ9CQp8QTVXt5iFi9qQ93Fcf6xL7SpdEjb0vsFmhlCJDbeuDOfcjeq5+P/WSl3ayjZEbPxOZ1Mzn1nWlIZUbluU9no2yWClQXu+cvIQ8535HexmLArdiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739501852; c=relaxed/simple;
-	bh=rhHX4w2bIdIvNHq7mUIhz5glXrbsuF6i3nNgvvduuWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BKcdRbyaxOiaLJiZBY2CHAgQbI47qrxUkaqoilxbmto/GzO7/PmjdrNXRwKMjoB21p+QNwO2W0KKtgpQ/Iv8esfvPUIXQbrFL33eUW0QAqL7bxQHygtidcIdjaHw0JLa0wtYnyHaJc1RNV5gef9erKRS5DlqpL6SeQ4YPhSenE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YvGpC5pGcz2FdSY;
-	Fri, 14 Feb 2025 10:53:39 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id CA35F180044;
-	Fri, 14 Feb 2025 10:57:27 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 14 Feb 2025 10:57:25 +0800
-Message-ID: <ed9cfe20-98a6-64de-66cf-43b536035ae3@huawei.com>
-Date: Fri, 14 Feb 2025 10:57:24 +0800
+	s=arc-20240116; t=1739502075; c=relaxed/simple;
+	bh=KJvJysIsmaf/18xTfixy0CXTPEbocyW1TH3mI92lQS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSJ5hThOcjsaT0EFuq5q/ga0e98mPRQPSQKMf+noiVdZSaRQUyjUEgIL5r+ZeCF1hK5kfmR2vejBSkkMzlb/ry3krPYVDWxaHX3s4qy9Fn1dr3pY/En6MHDC21g7o54+OKpXyD/P05yw4RaQyMH8LqYfU2eiQEy0+jvletYqtms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5ho3Lu6; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54505a75445so1816707e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 19:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739502071; x=1740106871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CphyPEj/nIGWcbqF531VSGV3qr1xTmbTkezkMFIl3Eo=;
+        b=L5ho3Lu6mXUbTmwggrCtI9W4Px6+JTFFHDPejrJQJvLNHlounyTUVCqYXxzkZY1Ui6
+         XfUabC10xhvnwZhXVdNmsjPoylNUYpIJOaqfjZtCAO8sPcfyXl0c49InSk4Dnt0go4XU
+         2sMXWorlgcGdERb3lJDkCOFJrZLYGnZH8VwXnixoemyDj7VW7XAkLTdGLtTC0hs0gj6s
+         /4lu8khF4QJF3+75oDkLKDz/VFxZ7twb/CO4nTYzWXwucQzkMg+MrmnDDqMZUUJ44iPR
+         YDtgS3q3fK2HN44mQpmQsRDEVNl2EGiF1UPASwBFPtr/hlBsqgj2GGOS2cDcQmP85P9R
+         wXxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739502071; x=1740106871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CphyPEj/nIGWcbqF531VSGV3qr1xTmbTkezkMFIl3Eo=;
+        b=h21dS4aan2aHwY2KK/M5h7ZEH65kbO3gvoDx0rF86a8oeR/D3nhkDD3BpwobyJcE3P
+         Mop9aQmEUATYKaFeq6e2A/lgZgIxkceKSu7QESzCqtiq+9hHkWtKgvjepdgIhLcCGWBJ
+         C45LctWc2JIr5RbBvc3vNafY2hR28lOTs9ngxeno7JlKc13UbUKLJLjESSpDDa51ZxVO
+         n63f4cAWdmRGddzhAYlkjkwi/mN9XeqDZJgOA9mrPLamQCAfg10PdODIlg1VLHHrdeVu
+         eNj24Yi2W+CKx9tYJwg1t9+YB7pzfCQQHeu+Ms0mK3pGGXb3ryEihjp5sExtVWDT2Jrz
+         7a7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUv3hhoCYqrK8QJWT+6WMtu7z1ECD728217HPcuhVZEyFZnyfJuaNx/FLf4Cgj3msOHTpA58j/BqudcLs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKL7VdvvGSiM14LJ17ZAsM/ZCyjn+g/mdtd/TJaiN+YEn3/R1+
+	KxEaekvX+X4dM8ZVfJf1YEJDnGre6q15ftboTVAS6ORkb56eUdZaPcRkA7QTLJoJtkpPYilrfwr
+	vALIiuA==
+X-Gm-Gg: ASbGncuasjfeF5MjOUqv/ppz7dZIab/u0tufl/G8dEfW+/HoOPLeXPuPEa3fMXjBK8L
+	yGwVyPzN4fQMt+vb/ewtauqi8QyFY8ZbeY1ZpZ3R4iWhj2OjJrzsIp+PQRV3QcLZZVVr7UFtqBy
+	wCoi4d5Nl2mTZ2ICu7amdIrvB1UcsnXQpsxG43LMmZycTwclQDOOruE3jtc/DOkDGKTWWf7vlvc
+	qgAT97MQTEgAJcih/M/kbKFKHteA4YqcNnEGmAJ4BRdw6aNc4lHbZtjl4bOA9PN9R7WKxgGVrC2
+	J6+wpc0Xr4KSoh2EqchoXuf6Ipqfjoh1ivkXClxxmwGaGNdsuSottMTh38Jg8A0vKJcyaTk=
+X-Google-Smtp-Source: AGHT+IGas8108vTEmDl4sEKFFTKnVpl5R5NBfMLQH3mhDRcxgPA6rZImG+SqWw4u3LxjJ3511SnHWw==
+X-Received: by 2002:a05:6512:31d3:b0:545:271d:f85 with SMTP id 2adb3069b0e04-545271d119fmr268944e87.29.1739502070997;
+        Thu, 13 Feb 2025 19:01:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105c9dsm361169e87.121.2025.02.13.19.01.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 19:01:09 -0800 (PST)
+Date: Fri, 14 Feb 2025 05:01:08 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: aruhier@mailbox.org
+Cc: Sebastian Reichel <sre@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] power: supply: qcom_battmgr: abs() on POWER_NOW
+ property
+Message-ID: <p5tszocxa7mcazgxsnt3gnv547m523gde2hj2yekiuoimm6rsy@pzofvxngb4ul>
+References: <20250213-patch-qcomm-bat-uint-power-v1-1-16e7e2a77a02@mailbox.org>
+ <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
+ <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v13 5/5] arm64: introduce copy_mc_to_kernel()
- implementation
-To: Catalin Marinas <catalin.marinas@arm.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Mauro Carvalho Chehab
-	<mchehab+huawei@kernel.org>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
-	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
- Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
-	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
- Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<kasan-dev@googlegroups.com>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-References: <20241209024257.3618492-1-tongtiangen@huawei.com>
- <20241209024257.3618492-6-tongtiangen@huawei.com> <Z6zX3Ro60sMH7C13@arm.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <Z6zX3Ro60sMH7C13@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
 
-
-
-在 2025/2/13 1:18, Catalin Marinas 写道:
-> On Mon, Dec 09, 2024 at 10:42:57AM +0800, Tong Tiangen wrote:
->> The copy_mc_to_kernel() helper is memory copy implementation that handles
->> source exceptions. It can be used in memory copy scenarios that tolerate
->> hardware memory errors(e.g: pmem_read/dax_copy_to_iter).
->>
->> Currently, only x86 and ppc support this helper, Add this for ARM64 as
->> well, if ARCH_HAS_COPY_MC is defined, by implementing copy_mc_to_kernel()
->> and memcpy_mc() functions.
->>
->> Because there is no caller-saved GPR is available for saving "bytes not
->> copied" in memcpy(), the memcpy_mc() is referenced to the implementation
->> of copy_from_user(). In addition, the fixup of MOPS insn is not considered
->> at present.
+On Fri, Feb 14, 2025 at 02:36:17AM +0100, aruhier@mailbox.org wrote:
+> On Fri, Feb 14, 2025 at 12:24:18AM +0200, Dmitry Baryshkov wrote:
+> > On Thu, Feb 13, 2025 at 05:51:38PM +0100, Anthony Ruhier via B4 Relay wrote:
+> > > From: Anthony Ruhier <aruhier@mailbox.org>
+> > >
+> > > The value for the POWER_NOW property is by default negative when the
+> > > battery is discharging, positive when charging.
+> > >
+> > > However on x1e laptops it breaks several userland tools that give a
+> > > prediction of the battery run time (such as the acpi command, powertop
+> > > or the waybar battery module), as these tools do not expect a negative
+> > > value for /sys/class/power_supply/qcom-battmgr-bat/power_now. They
+> > > estimate the battery run time by dividing the value of energy_full by
+> > > power_now. The battery percentage is calculated by dividing energy_full
+> > > by energy_now, therefore it is not impacted.
+> > >
+> > > While having a negative number during discharge makes sense, it is not
+> > > standard with how other battery drivers expose it. Instead, it seems
+> > > standard to have a positive value for power_now, and rely on the status
+> > > file instead to know if the battery is charging or discharging. It is
+> > > what other x86 laptops do.
+> >
+> > Documentation/ABI does not define ABI for the power_now. However for
+> > current_now it clearly defines that it can be positive or negative.
+> >
+> > >
+> > > Without the patch:
+> > >     $ acpi
+> > >     Battery 0: Discharging, 98%, discharging at zero rate - will never fully discharge.
+> > >
+> > > With the patch:
+> > >     $ acpi
+> > >     Battery 0: Discharging, 97%, 10:18:27 remaining
+> > >
+> > > ---
+> > > Signed-off-by: Anthony Ruhier <aruhier@mailbox.org>
+> > > ---
+> > >  drivers/power/supply/qcom_battmgr.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > --
+> > With best wishes
+> > Dmitry
 > 
-> Same question as on the previous patch, can we not avoid the memcpy()
-> duplication if the only difference is entries in the exception table?
-> IIUC in patch 2 fixup_exception() even ignores the new type. The error
-> must come on the do_sea() path.
-
-As I said in commit message, it is not normalized with the memcpy()
-because of the lack of GPR. If there is no GPR shortage problem, we can
-extract the common code of memcpy_mc() and memcpy()，The unextracted
-code is using different exception table entries.
-
-Thanks,
-Tong.
-
+> I see. But as it breaks existing tools when power_now is negative, should we
+> change the behavior of these tools or adapt the driver?
 > 
+> As it does not seem common that power_now and current_now are negative in
+> other drivers, tools using these values rely on the status anyway. I'm
+> wondering if it provides anything to keep this behavior.
+
+I think it is a problem of the 'acpi' tool. At least 'upower -d' uses
+fabs internally since the initial commit in 2008.
+
+-- 
+With best wishes
+Dmitry
 
