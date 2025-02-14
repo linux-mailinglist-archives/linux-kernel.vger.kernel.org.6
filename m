@@ -1,418 +1,187 @@
-Return-Path: <linux-kernel+bounces-515776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1609A368CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:00:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBC5A368E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02FB172BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8012189512D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D0B1FCCE8;
-	Fri, 14 Feb 2025 22:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6F01FC0F7;
+	Fri, 14 Feb 2025 23:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="feVOdXBI"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2095.outbound.protection.outlook.com [40.107.223.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="GOuUc9rR"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEE11FC7E8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 22:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739573993; cv=fail; b=e0BjJ/3Umw0jQVXPI8kSZx+zQS/MCbo2g9vCwTtwO8iqMe2kPF9VRcTp0MyNQe+55rwYbFsAinWanCA/vH5yHUd01snNI1XqYKZU7T0HCDUnguBFpgM83emrJprUgXuEmq1RuCI/RsAkYWTck/DbAzLDBy8oVrqItMZoVZJAXvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739573993; c=relaxed/simple;
-	bh=ly+1qvDer1iHKOR1nrYr239udETT4IRJ2EkWJMyy2y4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=d76+RKm4oo0yXJsvqkQQAheh4ZOP9j6W8f4Tk2P8wSvjB2dkvYQV77QpqtSg8DAiF2HO0lhBwtDxn42X/Rzbasa71zhzRxup+jHee4OW4VDZLafcbcuTxjtbvUzn8pA3Z5P325/hLu8wcTD0xq+QWH18pyXw3DhbUqWzHN8ZsUg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=feVOdXBI; arc=fail smtp.client-ip=40.107.223.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yarfUVLJKNPVIP6EVicl+jnwwmSH4OqB2Q9LWhk744/OUM3WrQ+KNN8/D2T9z4Z/kzXBG2u407rUB8Koke81e2B4jzJNQCsScJPq8J5U3YBAdvYr9CFsJtbyklXvbK1qLa3HfcWIAHi0IObpIXVagB7uJfKyAVt9G6hTjHD3rHkZa6KWPvEzSe8JU0NlVkxCifvJByTL9iTWysF+nPrrDVgK7ZyUK9+hMrN83KHzXnb677wAFWY+tJHh7Wde5+zERtsdCAkWgKOrBpSJfxqXr6OIq4Wmqi+qZV7GPLjX+Giinha7TR44NUk9LERzyDQWMvea/IqlJ46LNUGv3F0ijw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jnYRGbfXnOzfjZuP3bqY/+902uncxE/OoBVDXfvZnWI=;
- b=U4ZgfdzXrfIppN3yOitMZfNPooPiI3/JJ0QBVL1HMcETnQ5ZNoq9eaxTnG+Z7puId3f2cA88ZI5BFjyCE3gyWDCRxxHuibQUsi9l3BWSnVuudKGXZgSUSr1YUK2JjLSqXUdsW5HdLxzRtjU2rUlvHO/22dqeOffjzKvuqWH7E9N/3M+YHXrEDb5bazjVcqsV0y6mxO1t6W2cYSw0VZMOXXwMJ8ZYSg2ym0QBnFQnDsvwmkYTnzpGcBoG13tL5O/wE/4Kmu7DgXREyNIrd5vNsALWH+Lv/fvBOQR0p/fuKaI1IaklDZS/BTbcI/JGS5eIulIhEAq0QR+Sa+DHdNhVmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95EF1A83F2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739574415; cv=none; b=GO1uAFmJwSgq/ipVYTTSx7gjOvBofJcqtD7IFL9d4CO5Sx94xCsw3FBacSEsGWtzXCWgSrXU6/Kn5wdvtY+93qFDlOnoos9/ZM041ynTHrXSXCMZ3g6oprjmgE15+vGXv5e3cGM0xnJiET4ZtDnjoMtq7a+nQJ2NP4UUhS+TCKU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739574415; c=relaxed/simple;
+	bh=KyQL3L0qpc6BP+Wc2cClrEFXi5QBtwDn66b2cUtQHGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fLf+4JAeq9jreWM0bx5XLZO1HJAjs4N98dZBK2aRxTDKHTSjXdFVaew8eZJvksc29Dote5i+tCSldOgoWBYSpJV1LxvrmfE1S32vLGzEXkPyZaOQU6RnXzpp9ytNx5zq9Yuq6q7j0qrpek2YKvj4l/AjcsQkkZ7XIaaSmC9l7Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=GOuUc9rR; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38dd93a4e8eso2271583f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jnYRGbfXnOzfjZuP3bqY/+902uncxE/OoBVDXfvZnWI=;
- b=feVOdXBIp2H4nfCpT+eZQvcBVYFiAXRwk9qdcF2Tlx4N1Z+LLJXcssmCRLDH6QSLUuL1bQJuvnBwp8FXnyLW2llGaafHxU3A06eIcwb6q63MwF/NuV2FcgVIF9i6wKs4dG1PDpmAIu2GuRmBQtP1x+K5exsfjb9qJQZfxjyavcA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SA3PR01MB8501.prod.exchangelabs.com (2603:10b6:806:39e::18) by
- PH0PR01MB7523.prod.exchangelabs.com (2603:10b6:510:f6::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.5; Fri, 14 Feb 2025 22:59:49 +0000
-Received: from SA3PR01MB8501.prod.exchangelabs.com
- ([fe80::f7ae:9cc3:b435:c49d]) by SA3PR01MB8501.prod.exchangelabs.com
- ([fe80::f7ae:9cc3:b435:c49d%3]) with mapi id 15.20.8466.004; Fri, 14 Feb 2025
- 22:59:48 +0000
-Message-ID: <d2192fec-4edf-4943-8045-517d8bae390f@os.amperecomputing.com>
-Date: Fri, 14 Feb 2025 17:59:44 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] firmware: smccc: Support optional Arm SMC SOC_ID name
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20241114030452.10149-1-paul@os.amperecomputing.com>
- <20241218001338.6247-1-paul@os.amperecomputing.com> <Z6ntbLvjjtcW92_Z@bogus>
-Content-Language: en-US
-From: Paul Benoit <paul@os.amperecomputing.com>
-In-Reply-To: <Z6ntbLvjjtcW92_Z@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0059.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::34) To SA3PR01MB8501.prod.exchangelabs.com
- (2603:10b6:806:39e::18)
+        d=citrix.com; s=google; t=1739574412; x=1740179212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PB+r6JvVzie2JvMnY5R6Nkb8yUTw2Iu5MRXRiO5OIrs=;
+        b=GOuUc9rRT02Q4U23i5kui/A2Bmjf6IcdJ+UIJc98pgRgVeEGOQuoURAvkxdF9Yx6rD
+         mwUaZOwVs0G1SeoV+7u9i7i3ymmr670xx/ilYbq/2h28jcsknLpm07iy605tk3I9VO1p
+         4n0ilTUgiP+38IcixEmuuHlhW+bcnCD0+MEZ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739574412; x=1740179212;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PB+r6JvVzie2JvMnY5R6Nkb8yUTw2Iu5MRXRiO5OIrs=;
+        b=CKsCN9NN4jKV7Em4XjqmtOB7oMnX2ppQP/KraX7KJAkV0CsFS4kVG9lNUrT7/DOSPP
+         keM1nwYtZPlTqDeu2m4J8P+kRGfzTYYMumt+4YMC3OlpCtdE1NW/XAVF900ToCxh20Y7
+         y+RaXxEFN+vMDO22rCE+8E5/wQ4kEYfaLgFk0VXid/DAa/cIqdmvk7tEgbsZm9ApEVc9
+         SJ4ws3a0aLYHh77QmRshjaA8Wusn/geSKF8k64xbegYyAfjYaUoP2RkSC9EGBnbBwMth
+         Gb8UHUekRr8b61EaC3ShRMktlKzgRdt9JIpFdhv1rDmKzXxTnfRiQ3pHon6Pwr5UppCE
+         AY+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXzPr+FTITJuoFj4o5diuUiD+G94QzfxGdyYtUmILrzTUF/736E5ut3oUG/LSq04MVbeBRh3QxP6tiQiig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyviopxR74fs4QgIyFjY7ywT0Fs5H6Ke3V6PYpLP0z6+JMr8Xk
+	hGzV6fFRbI4vUcP/7pdpy6/Co5o9iP5B/cKvsVpjILZcnPaNudXl9TV7X6BrwFk=
+X-Gm-Gg: ASbGncvDQLzOaVYCmzKKuZyXj3N4OzrUGiuuWD9bgdRNyEPu3x94F43qd/LWAGTTk9Z
+	i72dYa6FzUeJk2h5njX5pYa3kt/DJKeTBkSRbA4eomAUUBxziTdUABMPe2bCDJpsPThojln6sK+
+	1X17VP1LAK5/pml7tJZFRttWO3tblCqFu2ua9XIeN5CjfbOin1L4R5FJZ9ovXLHtF7jpSMwOnuB
+	8TJkQLDdXQlQByNjWuofF/C4lbwjGu+jORXeDBHl+eJgaoikGIE7GXC6LTtE/omsdfvn+Yt16jx
+	qsYi/YdBP6JA8w19EGqKS3KnKRdE7MAx2AjaA8y66bcF5D+oymJkXrs=
+X-Google-Smtp-Source: AGHT+IFLQd2UoaUoR8vSrVkmfa1fsW1c99PulW/ZI1I/6rPcmxTRozmB9oTxgdVe8prRiiraCjwMUg==
+X-Received: by 2002:adf:fa08:0:b0:38f:2a99:b377 with SMTP id ffacd0b85a97d-38f33f57459mr1030799f8f.53.1739574412141;
+        Fri, 14 Feb 2025 15:06:52 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5923sm5795765f8f.74.2025.02.14.15.06.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 15:06:51 -0800 (PST)
+Message-ID: <c2af5771-1c16-4ac8-bc09-c33d07956358@citrix.com>
+Date: Fri, 14 Feb 2025 23:06:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR01MB8501:EE_|PH0PR01MB7523:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd788608-8842-4c61-6adb-08dd4d4b484b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VVF0NXE3d0NXRGJwckswNGEyTDJJbitEblRvMlVnUG8wUWQ0czEwYVJNM2d3?=
- =?utf-8?B?NXZnbVRYNWJpTUhwcktJc0dQYjJpbENUcWFOQlpDeXVwd216TkU2cnRaWkxQ?=
- =?utf-8?B?VVZ0NlBxdVZ6djIxMm92MHlRT2s2MmpQak5ILzFNbWNHR3h3WVE2S0RVWUhw?=
- =?utf-8?B?djFhUGlHanRPVWtUMGJMckNzUUJoQ2Y2amNuS0tYTllrRk95WUpqakVxWkxX?=
- =?utf-8?B?Zi8zQlhmZTRYalVNdkcvWFJRbzd5VHRFeHZpSllkdVV5dW9uVllKNXNsbDd5?=
- =?utf-8?B?cFNuQis2UGFQZHZmVklsU2xoc0RQblJNZFM4dGFMaXVPUHk4Ri8yNkFWTFBs?=
- =?utf-8?B?eHZFNXp3Um53TTZ2U0c0ajMvUE45eFE4SC9TVnA5VCt3K25Oa0tHT0hIRi85?=
- =?utf-8?B?NDM4cDBYT29xd2FMaXlsS0NZcnM0bHNCNU0wMEx1M1paU08zMWJmbnpWeEN2?=
- =?utf-8?B?MnFaNEFOTTI0aGl4ZjM5bzRKRnNmbzBDNFFJaVdLemhNSWNZUlhabUw2Qng1?=
- =?utf-8?B?YURUR05kUzZNcXhOZXJldEt0WnR5N2h0S2dlN1ovT2lzMWYyY0J0a0J0MkpX?=
- =?utf-8?B?c0IwZERrQTk2a0NDTkdwRFM3WEtSUHdnKzlnQis1cTU1U0pTOHMwT0FjZUM5?=
- =?utf-8?B?Q0xIaUt3dFJNcWd0MXNjSGlzbkhHeWcvdmI3Q2hOSmg3WGZ5T3Ivam9JWlQ4?=
- =?utf-8?B?YUw3MWRLVlhNbGJPNHZmQVBnTEZiQXBHOFp5V2lOQ01oREVrSkxCcnJCenI2?=
- =?utf-8?B?ei9GY1VSM1ZyMlhqcUpQVlJEOU1TdGMxbWlRdXBBeEltNi9hWk1ydkVCSjhU?=
- =?utf-8?B?YmVzaS9JS1ZySjMwNHZVMzd6MmlOWXZBZzhJc2hLYm9lTEhoNVoweEFyWjZk?=
- =?utf-8?B?UElVSGcvMDBOVTdqWDFMUHJiSytTdWFMVHlxdEw3VG5JTllyV05VNnRwOEpH?=
- =?utf-8?B?V2dXQ3JEUVp0bG1hWjNIQStkRTEwbGQrZ1d1MHBrTUNjUWJUMUpTSDZJd2Zq?=
- =?utf-8?B?OE1vY0gyZlMwQnlpUTFueUp6TzAzSWJFTTZxSHpEZWYwZXE0VitZR1ZpNFli?=
- =?utf-8?B?K3k3VGduaWxWNlU0RklmZmhKWTlkVmczQUtCbDlFc1c1eXFjbXlCME1LaVF5?=
- =?utf-8?B?U1hFM2FSZlVBdjlYYmtLbTZOY21FSi9lOTY1a1oyMXBibDFYcUQ5NDd5TEdv?=
- =?utf-8?B?Mkx6TEovZWIzcjhVeEVnMmhWcFlLVnI1ZGk1NVpGUUZYSmhDNTRiaEtSYmFo?=
- =?utf-8?B?WkkzcnNDS0twTWlIdnYvaWZzNVJSK0RNcmxaZyt5OEpoVHRZRFNtRVBjV3Rq?=
- =?utf-8?B?cVB6Nmh3RjJmNGM4MVF0ZmhmWENjaFg2STBHZGtnRE1MVDNkTmtQWkRtclJx?=
- =?utf-8?B?ellSaGJwUGhXYmJURWt5RjhVRzEvSjhXaEp1N2VMYUZYQTArSUtOTlNyQ0Rp?=
- =?utf-8?B?dkhZTFRqUEcwSS8xWXAyR3VKcDRaMlhpSzd5d0ZNS3Q0Mk1FTU5rMnVpWElX?=
- =?utf-8?B?MlR2SDBWaENZWGh2dWYzQ0ovMmhvNm1rQkp3ajJKdlVxS3pWenRXTmRJZE43?=
- =?utf-8?B?YzdGM3RhelpMTWRiR1VhdUVPUFBXWXk4cEN0SUNIMHZxMG1uUzJWQjZjZDdV?=
- =?utf-8?B?NHR2b1FveTE5YUc5dFZEOE9kOHJGK2YrTEtjcXhYMXFMV09OYWFLSUJjYzE5?=
- =?utf-8?B?Uk5XL2NERndlNklsMytqdU9uVWp1MVhxbERteURDMjZObUwxc1NQeDdMK002?=
- =?utf-8?B?YnhIWDVpWUUrbXZrSTJ2SlpWQ2dUTXJpQ1U0V09lbjN5elBhTEtSRXZFdG5V?=
- =?utf-8?B?VVZXWmF1MGxYWW9kdTJRNkRUbUtxNE4zdTY2NkUzMUpPSWtyOWg4NEwxdFM4?=
- =?utf-8?B?K011SURmenNrd2NZY2lmTCtJeXV3c1FuU3hmWXVSMCtlYnQ5VDJRbXM1c2t0?=
- =?utf-8?Q?Hky6TlzvlrcQALRZKr3Dv2FDwt8hsvgH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR01MB8501.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGcvUGNFNEN6YjZiVWdudHBYcEZLbm9oTk1lYzRmdURVY1RWUzFhVDBhNnZ4?=
- =?utf-8?B?S0tRV2k2ZmJLWGoycUxVSUE4VStsQjNORVprcmp2OUdwYk52bmpXanlPODBk?=
- =?utf-8?B?cC9QQzd4WFFSOGhGc0Y0RXdhQURyTDQ1TkJXQ3V6SityckF6bjU4VzlpSG9v?=
- =?utf-8?B?N3grMmtSUktIRi9HYTVjcHNuVG41S0JSV1lOOE43R2hDRWRGRW9yTWUrR1R2?=
- =?utf-8?B?a2lpTEZjMVVCM2JTeEdFVEw4S3VCdVFGQjNVcW01dlBEYnlJUHprMFhYQnk5?=
- =?utf-8?B?WlBFTDJCK2ZyTHJuMS9PWUt1NmJDSEozVGU5YVJPYjl4Rkk5VkRHdVYzdmJh?=
- =?utf-8?B?Z25aNnFCdm5PTnNpSzh2WHZDRDM0Q2l6cGJrdWtrWEpTWmM5QktJaWZmeEdo?=
- =?utf-8?B?R25GSlZyaWVYblZOU2hUeTVhMkdsYUN3dk0ySFJiN1FtM3I2YXFBQklYYTV5?=
- =?utf-8?B?ZzN3RWt4bDhDTmJidWkzZWpTbGVGRnVLQURwQWx5MFh2dy9zNjArQ0RMWkNZ?=
- =?utf-8?B?bWM0eVlCL3JWNTFXOHVsSnR1Ky9MMFhqVjR5NXBwVGJHYW5XWHF1ZTdhMmNW?=
- =?utf-8?B?NkJibDh2a2pXMjJuNTdhMUpxQlVmQnZQWGtrMUNWd3RnQjlhOTFWOVVCTWwy?=
- =?utf-8?B?azRIMVVlMlBvcmlrTzdJMEkyNFlwakRHS3NLTGFwbmhlbENtVVNSQVdUSlMw?=
- =?utf-8?B?VWh3N0gydXgzb1VtQzJhN21FQnp5dElMZHA0Z09IMnBVWHNxVi82UnpqOEVo?=
- =?utf-8?B?cVFpNjBlZVZ6MVd3VW9tR0hHVnY2cy9IZUYrOHcvTG9ScG0zODR5MmtOMDd1?=
- =?utf-8?B?Tkh5bkM2My9aTjh2cnZZTVYyOFRHdnJvNnI4ZGJ5OXNDWUJXa0NoNiswMWpN?=
- =?utf-8?B?N3d5N2llbG1nR0czaW5yajJUWEhSV1IyRklDSkRVc0l6NUp5a3lYZG9GQVVi?=
- =?utf-8?B?eEZHWkZ0dnRlV1BLQXdyYnkxSnI1a3NaYThMenBwWGd6Vkp4V2d5WGNnQ2Zp?=
- =?utf-8?B?anJCQ0ljSU0xeDlBRVBnYjhoOFVxMU1TVDlMTnc0N0dQdTNBM1FHbU9NL1BR?=
- =?utf-8?B?SE8zNmlQWFBna0dDZmZTM0NyOEpUMVp6Slhud3Z1Y3lLc2lQclJzTk0ycWFX?=
- =?utf-8?B?b3hNZEVhT0ZTVFlGeVBvclV1UGZoM1krZ3RJNU1ZRm1ybTlFYUhSRU1KS1Vn?=
- =?utf-8?B?RTdnVHlad0VGL1YzTUlHK2ZoUVB5YVZlMUsyMXplY2tkanFkMGpMMDR2SXkv?=
- =?utf-8?B?VHd0WjZydENvK3N4cFFVSTd2cWo2NVVUdGZidFFVeHBoVVUxV3JYVjVSeXhY?=
- =?utf-8?B?ajk3cG16WFRNK0xlNXVjYW42QjNZcmcweDk2bmVOZ1pRcXNUZEVKS2xObEor?=
- =?utf-8?B?cGlkZ3NFcDRqN1oyamg5VldieWxOV3dDYjNjU0JNNitaZUFzandERVFqMXZM?=
- =?utf-8?B?NnRNVFBXa29aaitRZER2aFUxYnJ4V2lnV1lZOEp1Z1pzVmpXOUZMNlN6bkNO?=
- =?utf-8?B?TERRQXRSdGIva2U4TGd0aHpQMjZNSWVDd2NsaDAreGN2UUtYaVBDbzZUMDg4?=
- =?utf-8?B?TWxQZUlIMWNJTERONk5sU1Q1d1pRUTBVSzdjcm1HaUk2OXdiMEpmazlkejVn?=
- =?utf-8?B?aGN1UU81clZOVGZHUlNmRFhHVFdlMGc4MSt4MlBKRHdveXNNY1pMTGVZc1hm?=
- =?utf-8?B?NURHbVVvZldIVk5vckh1Q3ZsaXpvL3BlMWQxdUcxdUpNZzVTYXhMUlpNVERv?=
- =?utf-8?B?cmpUUFduNzg3MXZkclF2Qm9IYXEwT2U4N09OdHFaS3IzalFWbFJ6eHFOcHIr?=
- =?utf-8?B?VElSSDVucndUa3RlNUl3dDRJenVvOTdXYjAvbldBWmdYTUZiUE9iMkpDQWs5?=
- =?utf-8?B?RkpVWHhka1h3NG4rQSsyOWs0OEw0a1ArTVVBZW1CMk9oYWx5azA0ZWtPTlFl?=
- =?utf-8?B?d3V6T1A5Q1pFRGhDd1BwRzlBUllqRmlPZEdsVXMvMzlEQ05SaFFsdTVXNkM4?=
- =?utf-8?B?YmVNUll5UDVnVXptTVU0a1d4WEdET0wrTG9vQ2VHYVJvQVdOZ3krY1RWLzRl?=
- =?utf-8?B?NnpET3IwWU02Q2hPdHNKTXdvSXlUUW1qNGpWT0l3ckZoNXMyYWRDV05TWmFw?=
- =?utf-8?B?czZRTGtsaXNqc2M3MnM4Q1hGbWhnU01pYWZUMFptRHlybnFiV1hIZ0NDNThJ?=
- =?utf-8?Q?WN2WahseXOyeMg+pKaANZ8s=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd788608-8842-4c61-6adb-08dd4d4b484b
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR01MB8501.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 22:59:48.9206
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6zhrDI5VQ6wY0lBgZ/TYCzdyRCSV2XueMPLyJNjo/+aMb2n22kB0Dq0lCIhgfL21awyDEbZS6rVcCMSr7gVoXDBT0hcEsuwhkzoNRAo+5lw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7523
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+To: Jennifer Miller <jmill@asu.edu>, Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-hardening@vger.kernel.org,
+ kees@kernel.org, joao@overdrivepizza.com, samitolvanen@google.com,
+ kernel list <linux-kernel@vger.kernel.org>
+References: <Z60NwR4w/28Z7XUa@ubun>
+ <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <Z62N6cGmaN+OZfoY@ubun>
+ <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+ <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com> <Z65/Fpd9cnUk8TjE@ubun>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <Z65/Fpd9cnUk8TjE@ubun>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sudeep,
-
-Thank you for your feedback.
-
-I hope to submit the suggested changes as v4 of the patch early next week.
-
-On 2/10/2025 7:13 AM, Sudeep Holla wrote:
-> Mostly minor coding style comments from me, otherwise LGTM.
-> 
-> On Tue, Dec 17, 2024 at 04:13:38PM -0800, Paul Benoit wrote:
-> 
-> Split the commit into multiple paragraphs, it looks too crowded 😄 >
->> Issue Number 1.6 of the Arm SMC Calling Convention introduces an
->> optional SOC_ID name string.
-> 
->> If available, point the 'machine' field of
-> 
->        ^^^^ I prefer implemented instead of available.
-
-I changed the wording to use "implemented" rather than "available".
-
-> 
->> the SoC Device Attributes at this string so that it will appear under
->> /sys/bus/soc/devices/soc0/machine.
-> 
-> Break into new paragraph here.
-
-I made the split, and adjusted the line lengths/breaks so as to not 
-exceed 75 columns/characters.
-
-> 
->> On Arm SMC compliant SoCs, this will
->> allow things like 'lscpu' to eventually get a SoC provider model name
->> from there rather than each tool/utility needing to get a possibly
->> inconsistent, obsolete, or incorrect model/machine name from its own
->> hardcoded model/machine name table.
+On 13/02/2025 11:24 pm, Jennifer Miller wrote:
+> On Thu, Feb 13, 2025 at 09:24:18PM +0000, Andrew Cooper wrote:
+>>>> ; swap stacks as normal
+>>>>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
+>>>>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+>> ... these are memory accesses using the user %gs.  As you note a few
+>> lines lower, %gs isn't safe at this point.
 >>
->> Signed-off-by: Paul Benoit <paul@os.amperecomputing.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Cc: Sudeep Holla <sudeep.holla@arm.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> ---
+>> A cunning attacker can make gs:[rip+0x7f02c56d] be a read-only mapping,
+>> at point we'll have loaded an attacker controlled %rsp, then take #PF
+>> trying to spill %rsp into pcpu_hot, and now we're running the pagefault
+>> handler on an attacker controlled stack and gsbase.
 >>
->> v2->v3: Add conditionalization to exclude SOC_ID Name from 32-bit builds.
->> v1->v2: Address code review identified issues.
->>
->>   drivers/firmware/smccc/soc_id.c | 79 +++++++++++++++++++++++++++++++++
->>   include/linux/arm-smccc.h       | 37 +++++++++++++++
->>   2 files changed, 116 insertions(+)
->>
->> diff --git a/drivers/firmware/smccc/soc_id.c b/drivers/firmware/smccc/soc_id.c
->> index 1990263fbba0..3b50ff5d2cbd 100644
->> --- a/drivers/firmware/smccc/soc_id.c
->> +++ b/drivers/firmware/smccc/soc_id.c
->> @@ -32,6 +32,12 @@
->>   static struct soc_device *soc_dev;
->>   static struct soc_device_attribute *soc_dev_attr;
->>   
->> +static char __init *smccc_soc_name_init(void);
->> +
-> 
-> Not really needed if you move you code before smccc_soc_init()
-> 
+> I don't follow, the spill of %rsp into pcpu_hot occurs first, before we
+> would move to the attacker controlled stack. This is Intel asm syntax,
+> sorry if that was unclear.
 
-It has been eliminated.
+No, sorry.  It's clearly written; I simply wasn't paying enough attention.
 
->> +#ifdef CONFIG_ARM64
->> +static char __ro_after_init smccc_soc_id_name[136] = "";
-> 
-> Move all in one block under #ifdef, details below.
-> 
+> Still, I hadn't considered misusing readonly/unmapped pages on the GPR
+> register spill that follows. Could we enforce that the stack pointer we get
+> be page aligned to prevent this vector? So that if one were to attempt to
+> point the stack to readonly or unmapped memory they should be guaranteed to
+> double fault?
 
-I have made that change.
+Hmm.
 
->> +#endif
->> +
->>   static int __init smccc_soc_init(void)
->>   {
->>   	int soc_id_rev, soc_id_version;
->> @@ -72,6 +78,7 @@ static int __init smccc_soc_init(void)
->>   	soc_dev_attr->soc_id = soc_id_str;
->>   	soc_dev_attr->revision = soc_id_rev_str;
->>   	soc_dev_attr->family = soc_id_jep106_id_str;
->> +	soc_dev_attr->machine = smccc_soc_name_init();
->>   
->>   	soc_dev = soc_device_register(soc_dev_attr);
->>   	if (IS_ERR(soc_dev)) {
->> @@ -93,3 +100,75 @@ static void __exit smccc_soc_exit(void)
->>   	kfree(soc_dev_attr);
->>   }
->>   module_exit(smccc_soc_exit);
-> 
-> Generally it good to have module_{init,exit} at the end of the file.
-> Move you additions above these.
-> 
+Espfix64 does involve #DF recovering from a write to a read-only stack. 
+(This broken corner of x86 is also fixed in FRED.   We fixed a *lot* of
+thing.)
 
-Agreed.  I have made that change as part of your suggestion to "Move all 
-in one block under #ifdef".
+As long the #DF handler can be updated to safely distinguish espfix64
+from this entrypoint attack, this seems like it might mitigate the
+read-only case.
+> I think we can do the overwrite at any point before actually calling into 
+> the individual syscall handlers, really anywhere before potentially 
+> hijacked indirect control flow can occur and then restore it just after 
+> those return e.g., for the 64-bit path I am currently overwriting it at the
+> start of do_syscall_64 and then restoring it just before 
+> syscall_exit_to_user_mode. I'm not sure if there is any reason to do it
+> sooner while we'd still be register constrained.
 
->> +
->> +
->> +#ifdef CONFIG_ARM64
->> +static inline void str_fragment_from_reg(char *dst, unsigned long reg)
->> +{
->> +	dst[0] = (reg >> 0)  & 0xff;
->> +	dst[1] = (reg >> 8)  & 0xff;
->> +	dst[2] = (reg >> 16) & 0xff;
->> +	dst[3] = (reg >> 24) & 0xff;
->> +	dst[4] = (reg >> 32) & 0xff;
->> +	dst[5] = (reg >> 40) & 0xff;
->> +	dst[6] = (reg >> 48) & 0xff;
->> +	dst[7] = (reg >> 56) & 0xff;
->> +}
->> +#endif
->> +
->> +static char __init *smccc_soc_name_init(void)
->> +{
->> +#ifdef CONFIG_ARM64
->> +	struct arm_smccc_1_2_regs args;
->> +	struct arm_smccc_1_2_regs res;
->> +	size_t len;
->> +
->> +	/*
->> +	 * Issue Number 1.6 of the Arm SMC Calling Convention
->> +	 * specification introduces an optional "name" string
->> +	 * to the ARM_SMCCC_ARCH_SOC_ID function.  Fetch it if
->> +	 * available.
->> +	 */
->> +	args.a0 = ARM_SMCCC_ARCH_SOC_ID;
->> +	args.a1 = 2;    /* SOC_ID name */
->> +	arm_smccc_1_2_invoke(&args, &res);
->> +	if ((u32)res.a0 == 0) {
->> +		const unsigned int regsize = sizeof(res.a1);
->> +
->> +		/*
->> +		 * Copy res.a1..res.a17 to the smccc_soc_id_name string
->> +		 * 8 bytes at a time.  As per Issue 1.6 of the Arm SMC
->> +		 * Calling Convention, the string will be NUL terminated
->> +		 * and padded, from the end of the string to the end of the
->> +		 * 136 byte buffer, with NULs.
->> +		 */
->> +		str_fragment_from_reg(smccc_soc_id_name + 0*regsize, res.a1);
->> +		str_fragment_from_reg(smccc_soc_id_name + 1*regsize, res.a2);
->> +		str_fragment_from_reg(smccc_soc_id_name + 2*regsize, res.a3);
->> +		str_fragment_from_reg(smccc_soc_id_name + 3*regsize, res.a4);
->> +		str_fragment_from_reg(smccc_soc_id_name + 4*regsize, res.a5);
->> +		str_fragment_from_reg(smccc_soc_id_name + 5*regsize, res.a6);
->> +		str_fragment_from_reg(smccc_soc_id_name + 6*regsize, res.a7);
->> +		str_fragment_from_reg(smccc_soc_id_name + 7*regsize, res.a8);
->> +		str_fragment_from_reg(smccc_soc_id_name + 8*regsize, res.a9);
->> +		str_fragment_from_reg(smccc_soc_id_name + 9*regsize, res.a10);
->> +		str_fragment_from_reg(smccc_soc_id_name + 10*regsize, res.a11);
->> +		str_fragment_from_reg(smccc_soc_id_name + 11*regsize, res.a12);
->> +		str_fragment_from_reg(smccc_soc_id_name + 12*regsize, res.a13);
->> +		str_fragment_from_reg(smccc_soc_id_name + 13*regsize, res.a14);
->> +		str_fragment_from_reg(smccc_soc_id_name + 14*regsize, res.a15);
->> +		str_fragment_from_reg(smccc_soc_id_name + 15*regsize, res.a16);
->> +		str_fragment_from_reg(smccc_soc_id_name + 16*regsize, res.a17);
->> +
->> +		len = strnlen(smccc_soc_id_name, sizeof(smccc_soc_id_name));
->> +		if (len) {
->> +			if (len == sizeof(smccc_soc_id_name))
->> +				pr_warn(FW_BUG "Ignoring improperly formatted Name\n");
->> +			else
->> +				return smccc_soc_id_name;
->> +		}
->> +	}
->> +#endif
->> +
->> +	return NULL;
->> +}
-> 
-> Can we improve readability with
-> 
-> #ifdef CONFIG_ARM64
-> 
-> static char __ro_after_init smccc_soc_id_name[136] = "";
-> 
-> <both str_fragment_from_reg and smccc_soc_name_init here>
-> 
-> #else
-> static char __init *smccc_soc_name_init(void)
-> {
-> 	return NULL;
-> }
-> 
-> #endif
-> 
+I don't follow.  If any "bad" execution is found in an entrypoint, Linux
+needs to panic().  Detecting the malice involves clobbering an in-use
+stack, and there's no ability to safely recover.
 
-I have made the change suggested above.
-
->> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
->> index 67f6fdf2e7cd..9d444e5862fe 100644
->> --- a/include/linux/arm-smccc.h
->> +++ b/include/linux/arm-smccc.h
->> @@ -607,6 +607,12 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
->>   			___res->a0 = SMCCC_RET_NOT_SUPPORTED;		\
->>   	} while (0)
->>   
->> +#define __fail_smccc_1_2(___res)					\
->> +	do {								\
->> +		if (___res)						\
->> +			___res->a0 = SMCCC_RET_NOT_SUPPORTED;		\
->> +	} while (0)
->> +
->>   /*
->>    * arm_smccc_1_1_invoke() - make an SMCCC v1.1 compliant call
->>    *
->> @@ -639,5 +645,36 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
->>   		method;							\
->>   	})
->>   
->> +/*
->> + * arm_smccc_1_2_invoke() - make an SMCCC v1.2 compliant call
->> + *
->> + * @args: SMC args are in the a0..a17 fields of the arm_smcc_1_2_regs structure
->> + * @res: result values from registers 0 to 17
->> + *
->> + * This macro will make either an HVC call or an SMC call depending on the
->> + * current SMCCC conduit. If no valid conduit is available then -1
->> + * (SMCCC_RET_NOT_SUPPORTED) is returned in @res.a0 (if supplied).
->> + *
->> + * The return value also provides the conduit that was used.
->> + */
->> +#define arm_smccc_1_2_invoke(args, res) ({				\
->> +		struct arm_smccc_1_2_regs *__args = args;		\
-> 
-> I think we can move this macro and the above under CONFIG_ARM64 as
-> arm_smccc_1_2_regs is defined only for ARM64 for now. Otherwise one
-> could use this macro and get undefined compiler errors for the structure.
->
-
-I added another #ifdef CONFIG_ARM64 around arm_smccc_1_2_invoke.  It 
-seemed cleaner to keep arm_smccc_1_2_invoke located right after 
-arm_smccc_1_1_invoke rather than to move it amongst the other 
-CONFIG_ARM64 conditionalization for struct definitions, prototypes, etc. 
-  Though, I'm open to moving it if you think that is better than having 
-it immediately follow arm_smccc_1_1_invoke.
-
-
+~Andrew
 
