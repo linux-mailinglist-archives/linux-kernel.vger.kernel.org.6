@@ -1,113 +1,193 @@
-Return-Path: <linux-kernel+bounces-515032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650D6A35EE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:25:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAFDA35F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5491894364
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E3216F16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35773264A7B;
-	Fri, 14 Feb 2025 13:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B0126562C;
+	Fri, 14 Feb 2025 13:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Ytw8eBJa"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V4gbX4vD"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE664263C9F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC6F264FA8;
+	Fri, 14 Feb 2025 13:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739539216; cv=none; b=cOIepR/yMk1MVeHAu1dAps2WH77q2p8uR7P1Y7KGI9pOEuXcj/p1kczuaXxgWeDdba75bclN9H1QpVViuMJeFABw7+HnRA+kvW/dhnfRQtJ36StFkSZ9bjdDIM6mqstRCmOxe98uwISIuf7f3TfqF9ZYyJHTASyOz0uTIfgKvto=
+	t=1739539245; cv=none; b=jjH5YiEtWs+dYHUODLUyT+40qYANbFThVdBg+FRRQfYD61OeNgwLY7nLAPkIWoeEhCTL1i1W645GKM6Q/iv5xei6K11QefeR8TetzRDCzBn/th509DeZuroMoQ+4J0ecFAUqbbOQzbdREz0raoBpF3l6iT+3NLVgaQaofoO0Ml8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739539216; c=relaxed/simple;
-	bh=LJDfth7mwVclpXHFDxPtqz2sjNg3HySlIQhTKo6hMgI=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=GQc7D731T7tcadBwIlYZsHvY4V25BwVSkuxrOYdhDoM+9bo3yqQK1cfnPTsdf94/GxytdE7WKDL7fDRwBj5KRNYwsUevh7D/4dXgNTT/gST5lJoDyDgYUCkd2LnYJrHShC+Rgct7x2PwdBYlz19Jj28xnvbAPicK3caJPd0A+oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Ytw8eBJa; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2f441791e40so2985136a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:20:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1739539214; x=1740144014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6r8x3zxj8rfgJpz/X4WBbZ2ZvxPjPV23GP7TSjrfJWc=;
-        b=Ytw8eBJaENW6FyauHVDqaV63jq9DBVDga4bJfhF8hk0B3vqQt1o9VZMcbV1m3u4Da7
-         KMOF/+k7UUBWeWqEu0yMFNjaJgeX9EHmF68TPqjPwmr97Prl+xmvHYRogGHfadoBsGN5
-         7KQKqELt3z0X7+nVNfm95YFStiaVi4368qUTF0N4GdlRs/Kua3KDabrYSrFnBes7DGK9
-         CZ62Frck3tJsMVuY6jvesP2pvqpQ68I617S60xoLPU16sVPvnzrAv8vrrcQp82RImAOY
-         7w8IXCEd7YVJUTc948ngtJ5C59PPUKcJsl7UZ3w1X+aPzexleUFjhIIJo4E9T6nmyO8v
-         t4Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739539214; x=1740144014;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6r8x3zxj8rfgJpz/X4WBbZ2ZvxPjPV23GP7TSjrfJWc=;
-        b=LXCz9/cge2S7f+G90gUkm6N9ecpidXbrf5HgPxUlpgF+OQAKZYv3eJr2L2iuN7XjSx
-         YE71p6AvnwN0koYz0E68WGejriAe83XkgIh4eV8ZGdtMiAe78H69bAOMU55IzVNNvR60
-         wwhD3UxvWNSEePQnAR5VZ3fv/YWtIm8SnzERknlv8vnbuFLRc56IybfPk93xpKxxCaq+
-         iYifCYQfsoGzuT3arTmKo0XqPoViiQ3TcS41IyDjKZmytqRe/pwsyiBT+DkBZiUDm7i2
-         dQ2+Xj4nYujAEo/AQTxF5H6MLSmZUXCiD6HsRwK8REzwOpAXpeRQ1i0DCQs41wRWjeWB
-         hYTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfdwSgXe1m8JzC4TfUOhW5siSURwWyNS6EkclBeJ1dW+Hxpy/ejhCXbaISAFySbGhmYhkBhFYxozKprno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZxurmhoLHLf2bZmEu5LQKUYF1tq9jmazS4EvSASJHAth5QW3p
-	DuUB2NuDq5QucIYF3LmZr4ryx0YYO/s7qE8xiv6UZCOhUWaySkBZwQri//RQ24rg3tLITnJOFPg
-	H
-X-Gm-Gg: ASbGncvLOXA5hRSFK0n3/iKvPhQ2AcAixyFNxYVkdBvN1hk3pWUZ7ENa+OcYJVzfjKP
-	mfTqANNdnr9vxGlbQYZ/v83TFf5qO0fAm7qWRQcOGWYNtSq1AnmD1AltdpZS013XPqlk75Q7eEF
-	r6ZcQ0ZbGO81a4BlOHz6pkHYHuDZO/OWKlo9QA2hopbP7SNXspLDqHnVMk4mDL4CeyPT0RqqIAL
-	qy2lUTkHpN3T+H8FM8DM5pKpvPc0N9iuUkxXDJvihI8bpzyyV2raJxpB8gSUwAz1JmtFgc73gTB
-	ZrVcBB1M/A92
-X-Google-Smtp-Source: AGHT+IFAu9PBC3XJNgx4mWEdV9pMcuKKbaayr4w8bIyWW5djqyfxrKy7LSzRf+42OO9NVLq/OxD9yA==
-X-Received: by 2002:a17:90a:d88c:b0:2ee:a6f0:f54 with SMTP id 98e67ed59e1d1-2fbf5bf82e9mr17025020a91.13.1739539213982;
-        Fri, 14 Feb 2025 05:20:13 -0800 (PST)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ad726bsm2958481a91.28.2025.02.14.05.20.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 05:20:13 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:20:13 -0800 (PST)
-X-Google-Original-Date: Fri, 14 Feb 2025 05:20:11 PST (-0800)
-Subject:     Re: linux-next: duplicate patch in the jc_docs tree
-In-Reply-To: <20250214161032.1ef4902e@canb.auug.org.au>
-CC: corbet@lwn.net, Paul Walmsley <paul.walmsley@sifive.com>,
-  linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Message-ID: <mhng-60a3c06c-7d2b-4fee-9012-6ed036e756ba@palmer-ri-x1c9>
+	s=arc-20240116; t=1739539245; c=relaxed/simple;
+	bh=e4a+q+RAMhA8fYnShfynVbYqZqP4/1an4yJ9FOUP/jk=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:Mime-Version:
+	 References:In-Reply-To; b=d6+1bI4EfQ+PK/Bk++Al/63wfOcAFXXt4C8sgwTQ0u/s1kfn+3SpnKrUb/4DJjKQNQ82DExMIKl8eAwobYcr/zUNIsiYTBTXwCRxs26iMrSt2XuCfzoKJjhIgvsu/x7r7gf1+au0OURYBwSqk4XJ5uuYSwchqMF/qZ5I1GpkTGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V4gbX4vD; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BF63644428;
+	Fri, 14 Feb 2025 13:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739539241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rOCi9rhcANoHWr2ZMX7vTB+ne39Ad/Gv+eLqaTBAmak=;
+	b=V4gbX4vD59+0iFSy3lk0mjAWfXowsqy/5PmB67YkkNUjabN9S0wutbebsfbMQtCwGDjivi
+	mY6JHqKCtfV5EcewFobpb2PZzrG484q3aA5oHQyZNQF0NB/s5+fELSSkW3/MBxKe2R0d0W
+	BJHca2LVlOsILgju/B+aGG9j3OWGRUr7sPOzKY7pTW3mzdh42gsj7OORL+pqCj3/yZAWqX
+	dpgNTj+Ju0cRCuGi9e/NMIvLqMDP+spMOagq2vmmR+ytr7xFo0yXBW/yxWMXZHrvPKNpxm
+	BH/qkSpbsEWfuPZfLq6sHd1USFPT3Wr0Sv9vMNKSM6y1LIYahm7tKoa/8D3fLg==
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Feb 2025 14:20:39 +0100
+Message-Id: <D7S772FNL7ZM.JNEXBJY6PJ44@bootlin.com>
+Cc: "Magnus Damm" <magnus.damm@gmail.com>, "Rob Herring"
+ <robh+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Herve Codina" <herve.codina@bootlin.com>,
+ "Milan Stevanovic" <milan.stevanovic@se.com>, "Jimmy Lalande"
+ <jimmy.lalande@se.com>, "Pascal Eberhard" <pascal.eberhard@se.com>,
+ <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Gareth Williams"
+ <gareth.williams.jx@renesas.com>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
+ board device-tree
+From: "Thomas Bonnefille" <thomas.bonnefille@bootlin.com>
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>, "Geert Uytterhoeven"
+ <geert@linux-m68k.org>, "Romain Gantois" <romain.gantois@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20230209133507.150571-1-clement.leger@bootlin.com>
+ <20230209133507.150571-3-clement.leger@bootlin.com>
+ <CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
+ <20230215092933.2f71ece0@fixe.home> <20230215115441.361aed53@fixe.home>
+ <CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
+ <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+ <87mshsvqjk.fsf@bootlin.com>
+In-Reply-To: <87mshsvqjk.fsf@bootlin.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurheptgffkfevuffhvfgggffofhgjsehtqhertdertdejnecuhfhrohhmpedfvfhhohhmrghsuceuohhnnhgvfhhilhhlvgdfuceothhhohhmrghsrdgsohhnnhgvfhhilhhlvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeelfeefhfdtveehjedthefhtefggfdtheduieekiefhjeevheffhfelteefuddtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepthhhohhmrghsrdgsohhnnhgvfhhilhhlvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgm
+ hgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkihdoughtsehlihhnrghrohdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Thu, 13 Feb 2025 21:10:32 PST (-0800), Stephen Rothwell wrote:
-> Hi all,
->
-> The following commit is also in the risc-v-fixes tree as a different
-> commit (but the same patch):
->
->   b48e0f696b71 ("Documentation: riscv: Remove KPROBES_ON_FTRACE")
->
-> This is commit
->
->   ccc71244f95c ("Documentation: riscv: Remove KPROBES_ON_FTRACE")
->
-> in the risc-v-fixes tree.
+Hello Geert,
 
-Sorry about that, I dropped it from the RISC-V tree.
+I've started working on this issue, however I have one problem :
 
->
-> -- 
-> Cheers,
-> Stephen Rothwell
+>> Hi Cl=C3=A9ment,
+>>
+>> On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
+>>> <clement.leger@bootlin.com> wrote:
+>>> > Le Wed, 15 Feb 2023 09:29:33 +0100,
+>>> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
+>>> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
+>>> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
+>>> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clement.l=
+eger@bootlin.com> wrote:
+>>> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N1S.=
+ Since this
+>>> > > > > configuration targets only the RZ/N1D, it is named r9a06g032-rz=
+n1d400-eb.
+>>> > > > > It adds support for the 2 additional switch ports (port C and D=
+) that are
+>>> > > > > available on that board.
+>>> > > > >
+>>> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.c=
+om>
+>>> > > >
+>>> > > > Thanks for your patch!
+>>> > > >
+>>> > > > > --- /dev/null
+>>> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+>>>
+>>> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>,=
+ <&pins_eth4>,
+>>> > > > > +                   <&pins_mdio1>;
+>>> > > > > +
+>>> > > > > +       mdio {
+>>> > > > > +               /* CN15 and CN16 switches must be configured in=
+ MDIO2 mode */
+>>> > > > > +               switch0phy1: ethernet-phy@1 {
+>>> > > > > +                       reg =3D <1>;
+>>> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>;
+>>> > > >
+>>> > > > marvell,reg-init is not documented in any DT bindings document?
+>>> > >
+>>> > > Indeed, this is not somethiong that should be made available here. =
+It's
+>>> > > only inverting the LED polarity but supported by some internal patc=
+h.
+>>> > > I'll remove that.
+>>>
+>>> > I actually was confused by a property I added in another device-tree =
+but
+>>> > marvell,reg-init exists, is handled by the marvell phy driver and use=
+d
+>>> > in a few device-trees. Strangely, it is not documented anywhere. So I
+>>> > can either remove that (and the LED won't work properly) or let it li=
+ve
+>>> > depending on what you prefer.
+>>>
+>>> In that case, please keep it.
+>>> But the property really should be documented, one day...
+
+As Cl=C3=A9ment mentioned, this property is used to set up the LEDs for
+Marvell PHY. However, Marvell's PHYs have no dedicated bindings; only
+their associated switches do. PHY's usually don't have their own yaml,
+so there is no easy place where to add this property. We could however
+describe them in the numerous switch bindings that embed a Marvell PHY,
+which are: Qualcomm ETHQOS, Cadence MACB/GEM, Gianfar, Freescale FEC,
+Renesas switches and of course Marvell switches.
+
+I already thought of doing it in the binding of the renesas switch, like
+this :
+
+Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml:
+```
+
+\[...\]
+
+mdio:
+$ref: /schemas/net/mdio.yaml#
+patternProperties:
+'@\[0-9a-f\]+$':
+properties:
+marvel,reg-init:
+- description: Lorem Ipsum
+
+unevaluatedProperties: false
+
+\[...\]
+
+```
+but it would document it only for this particular switch.=20
+It is also possible to do it in the main mdio.yaml on the model of this:
+https://elixir.bootlin.com/linux/v6.13.1/source/Documentation/devicetree/bi=
+ndings/spi/spi-peripheral-props.yaml#L121
+
+What's your opinion on this ?
+
+Moreover, everywhere this property is used in the kernel, it is to set
+up the LEDs. Nowadays, the Marvell PHY driver should be able to handle
+LEDs without this property. Therefore, this property should be
+deprecated in this case.
+
+Regards,
+Thomas
 
