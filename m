@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-515215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860A7A361CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:34:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73A1A361D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D560C3AA01E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47101189526D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB04266EFD;
-	Fri, 14 Feb 2025 15:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="j3/Ml5YN"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74321266F03;
+	Fri, 14 Feb 2025 15:34:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B56266EED;
-	Fri, 14 Feb 2025 15:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8916B266B7D;
+	Fri, 14 Feb 2025 15:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547271; cv=none; b=HyqUOoPVbVaDQRS5QqXPzWnWLfmGNnubEcdSaLQEYMPmmnJW6SQM9ahB2obag+ceqQZ5Aap64qiF4qnn0FnY75uOiV7dcy363MOlhdTlTSN4o2Ji33ExjJPk8Qfndwzx9DoshghaRVo5Bwl3LFo+p/f4EeHqhp8zkMb/MKO4RFc=
+	t=1739547280; cv=none; b=YKOkq9jmBlANb0t+6Qg+v61tJjiUrXirAd30C8poAPWn9IexH3HMW59TBGZfLX6vr0I0x7ys9CcyocdIWY0dBohJqxoteyDAHaGtpp4zgbgHU1Aqvi/wmcgnmJg8qq9amdNvC2G8X6+2nMgjjmeLthkCp4CQsvdgCHxotFcb/xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547271; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=A6nq7k6sKU7n4EebHTczh9bPNrIWMXJaJXTvSlOx1kkY+ahNwf0094PW5Ba9K0tKQmC6INV9SwOHciklOpyK3B1UtVlRuDzajIFcBPFKQfNyUsPy/zMB9iCsAYHlWL7J94q7u/WMEdy8l0B+IT8+Yk2qKMsMp4ZWSFipRW/3uns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=j3/Ml5YN; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739547266; x=1740152066; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=j3/Ml5YNMjBE1ZYSgk9h8TA+g1PGUnUnwPcyd8vofNSk+gvuX+hBGNT36gr+EHOh
-	 7cp6p/vlUUF3D0w2Fwon8iF4r5NWjg1s8JQF3lSU3QCv0cqeq8a0uRn4vlzZ5hMDa
-	 qWsO577eLRxV0CB+9UIw/ufx9/ZwrAfww1fjZOq8uwfNyq6Wk9KkjUDuvBSGQetNo
-	 A7iNFWjNR7YYB5ObP9Vy11aO3FwCBKiD+vE6lidkb6wC5AGsUzObihI4lVG61+Edr
-	 qcc5Ff28pISSLU2mhKdZqrGv3GFOuLSbOam3nWQrZ1124yI3/DMVQ8r5jixScE+PJ
-	 Ozxs2NgbrOt2V8HqHg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.122]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MAfYm-1tXwAE2URs-006lmQ; Fri, 14
- Feb 2025 16:34:26 +0100
-Message-ID: <f48a704a-8cb3-452d-95fb-fda16a484e83@gmx.de>
-Date: Fri, 14 Feb 2025 16:34:25 +0100
+	s=arc-20240116; t=1739547280; c=relaxed/simple;
+	bh=GsFGi6rSs0icSle4cE22kTLVvnu4fk3vRmVo4qXm/E8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Byl4uqjA5y4kqdeLEFrWRKV+y8MeAeJzbVfDB/+tERtoUrt90WedItLm5RRyz0iL9NWo13FEMsgByWH8OL+Vz6u8ZD91NO1ZKnqmLNtCu1rzgr7E94n8S8XMxe6ZCm2ZWTePnhSDEjVoIxXrsefYQ5nNPIgLkWFqc9H7S5VPTDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvbcc0vkDz6L58H;
+	Fri, 14 Feb 2025 23:31:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id EDAE2140B38;
+	Fri, 14 Feb 2025 23:34:34 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 16:34:34 +0100
+Date: Fri, 14 Feb 2025 15:34:32 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: Terry Bowman <terry.bowman@amd.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<nifan.cxl@gmail.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<lukas@wunner.de>, <ming.li@zohomail.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>
+Subject: Re: [PATCH v7 13/17] cxl/pci: Add trace logging for CXL PCIe Port
+ RAS errors
+Message-ID: <20250214153432.00005bbb@huawei.com>
+In-Reply-To: <67aea897cfe55_2d1e294ca@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+	<20250211192444.2292833-14-terry.bowman@amd.com>
+	<67aea897cfe55_2d1e294ca@dwillia2-xfh.jf.intel.com.notmuch>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc2 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:zLdJm+nrSOgp8ni7IZYRm/YQ0D/imNaN3c5frWqS5o+eA+M58AZ
- onEMaD1qcD1E7WKwRObOmyWxNVgIFMEKsOr/JocIkS373sc84aVUOJg+dDfRumcJBED1ZMO
- bf7ke0Smd39mYI44L6AGOMsCtb7LoWwky7fobyORz/kSTUlfK8QZH5hKIcQc0P8vyULQNcX
- 852/p/602HfOmVNaAdBaA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7ttD5aQwKMU=;jbYOPEkEe1U9BiW1E2o3oL3DZnT
- uPbwyUmOLSPlHHotk5M9kA7633GvI55mswDB8SwajVbNEtn3kOE1XMiUp5hkSpS63An9wX1SY
- I9pLzegM2sxl+712SlmcY8ivJN6QwS4tb9+8RMsxEITp2GaYcMRRMcqtlYnqMwB2oRIhqv6Ap
- Hrlv0GT2Vtt+9t2tGnwbLUKWeSm3ozhdsUPJAX6FkijSNtkifiWEIc7wZ/UI+NLaZBSvIdZwP
- yQPkBZq07lEEGttlcWyrTT6XjiNrf0Gn/ZpuxgoR2x1MhhEyeBkaktAqugaDSCa1BSf0+ypAl
- PzO9SAMl1nTe5s+bGAG443b+XwBQsug9Z+0anv9BGvhct9yVQecJX5rBVKOGBqvRvDMpfiN9n
- e+BHWRbMc9m90VMotpcbLmJSNm+S6Kj/qeESmhCDEY9B5fIfEudFCJr+hYGGLjAp5UUGsqr4A
- WCW6OOXwWtLMIo7VbB4z4hhv62am/CgZBNC7tnlfun8Kd9767hxjF78Sjd4pEIr6qSjnSKAXP
- g+0BGJAy1wqFzCfmkDflPMAN+fYO8Kf0yWHw+3fEESVDrAtTeXe5qi3J6dElQFyo5B862Sc8J
- URFbVIF5XxS1Fa6oXhnjQoazq2YdMnzra5cpRoedsrrEuYWmdG7IHqg5biBKmY/oD4fXSDJUs
- WCCWD7cAtPOJF3y3YUSARl8kvHsakG65H4KbRK84hyhPBi5yimER0agIb2V757z8PMImGqx1G
- 2xMKLbpipcnMUUONnTr/UYxbU7S7CMTsfkLTF6mGd/2ioFwibCCiOqfAeOGy9YgdFrNAmjCps
- STHpUZw8X8WzgWOVaiiR+NOK2KoeeBj8A8NY/UcKmSr4c6aJ/YrpRdhTqvvahRc7EppMaa1i0
- 3Dxq9FbbeFnAjHuzCYJw9cn4Mho9fGiB1bOd8Uvp1eyRzjKOfRE+Xv0pcG/+TQtOokCQx0iUx
- 09Tdi8/KDlOoctxb5xOJG6gwZR6P889Ma1vvPQzVy0t4Is7SmlVcA2NDkTRZFn8/SvkSMUNBe
- erJH1P6tjVC64VV3VpjrXlETNmUDEl9+3RgwnGf1pzfcg3xXriUpjUbOZIm1/rQDNIYWTnN/L
- zmGFiUfy3iJFnxMqUUEizpQdYFyVX/ZEGutiJ8/XhkJ1G/ZwYBbtUEGWSTTRsLIzfNHmVqmVm
- dvrwwmE7p24o9tWshZZIKoEPsICvjIofVG9peUH2d8rfAIkDyFj+9Y93DnsG1ZXTXACoOdb9M
- bm+PxcrxPvRMlhzOlZYB6ri8oWFALCgMr/q8WVtO6aWNKBDA+kOV07BwCxM3EoGyxLvhNdPpJ
- lySQeaPbCbwcsnAjCj0azR5mvhecddko24EjtAOjD3sx0IBgQoYv8OZFZH5vlbznPTLZeizTA
- bg3m7DEBJzYBIJkuUgB+H7LYOeIQlFTnduGY0lyRhDIXeR4Ji4Y3y5PvZU
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Greg
+On Thu, 13 Feb 2025 18:21:11 -0800
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+> Terry Bowman wrote:
+> > The CXL drivers use kernel trace functions for logging Endpoint and
+> > Restricted CXL host (RCH) Downstream Port RAS errors. Similar functionality
+> > is required for CXL Root Ports, CXL Downstream Switch Ports, and CXL
+> > Upstream Switch Ports.
+> > 
+> > Introduce trace logging functions for both RAS correctable and
+> > uncorrectable errors specific to CXL PCIe Ports. Additionally, update
+> > the CXL Port Protocol Error handlers to invoke these new trace functions.
+> > 
+> > Examples of the output from these changes is below.
+> > 
+> > Correctable error:
+> > cxl_port_aer_correctable_error: device=port1 parent=root0 status='Received Error From Physical Layer'
+> > 
+> > Uncorrectable error:
+> > cxl_port_aer_uncorrectable_error: device=port1 parent=root0 status: 'Memory Byte Enable Parity Error' first_error: 'Memory Byte Enable Parity Erro'  
+> 
+> Oh, so this solves the problem I was worried about earlier where it
+> looked like protocol errors only got notified if the event was a memdev.
+> I still think it would be worthwhile to make this one unified
+> trace-event rather than multiple.
 
-Thanks
+I'd go with a 'maybe'.  Absolutely would have made sense if this
+had been the intent from the start.  Now we are going to end
+up with at least some tracepoint fields that are mutually exclusive.
+E.g. Switch ports aren't going to want to set memdev.
+Might be easier to just keep them separate.  However this will get
+messier anyway when type 2 devices come along.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Jonathan
+
+> 
+
 
