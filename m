@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-515393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2C0A36443
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:19:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC88A36463
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54A0D1892A45
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DB61709FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1A0267B77;
-	Fri, 14 Feb 2025 17:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D807A269AFC;
+	Fri, 14 Feb 2025 17:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekw46s9r"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amg8E2wk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3984189F56;
-	Fri, 14 Feb 2025 17:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AF2269AF6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553539; cv=none; b=sgUBXmDjIFBHtXoHTYy/VMPNQR8JENYqzyLQZX2rwcQhvy6SO+xRAw11ZqaAIPD2ylahUakGt3HZEFdHOKaKhEHzKDHLkF1voErGOKnMoeES1DfQ3OjgEKRR0R8nP7/eqeQMwXMDcegwNTuV9/HoYmT59Xdc6oUyAyBRViz1Fy0=
+	t=1739553606; cv=none; b=cBTbxMybkcbt6G/5Wat+fPh5hmClCDIvbZcLhz68w/XmgaWsPZU7mAZUc5Y7k19xmwBgoWfF4NWMAgrSGD6oRaL67qsqoyxNchltIhF+MEdp3M9bIdg8d8wnR6HGl3fRVx+AuzW9vnZuzFujwf7y6zHHrGgzV0+dElsVjGZnrug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553539; c=relaxed/simple;
-	bh=5w9szdovW8cw1e9MFI/dUwdT88FpwDXhmAb9Exjhm/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FgtRUp+rkVjbusUP38j/b6yAzSQYYhXjkBxBRezUQ9+KjeZIDjjRN38zzuZa0pQLMw2GTBb89qJS87EcVLjrGGXYirj2WUyOWo9PBO9GiWFNoUZqjqawcr1YGNrqee/leNuLKuQidqZHQnmJj/ltdJ0jqWd2XY4ADgPoZo6i8qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekw46s9r; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394829ef0fso21551675e9.0;
-        Fri, 14 Feb 2025 09:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739553536; x=1740158336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qftA7qwwF/BZn/LdSqftv264JIM5F1LnaZcnD09P8xM=;
-        b=ekw46s9r5dTgrhbYP/E231Z3Yu3J3U6lqNhYH0cy3RyuQge1ByPPn5VtqARezvGDMz
-         +O2KPQ8b3ENcxUx8Gnd2U3w2Ccxwslv4f4PlrnYeYxVTOH/+BqtKkOv8OtC5hVEyzlAs
-         V+OvYqTV2H8GoOgM7qiik7mAB+ga6e8F2flDz3szV/qtVahU0wIAB8JbhMP/LPzRI2bl
-         0R9JU2tgwSk68CWN6oVuK3rPbREwk4RaAJoQV4WPbNkrUO/CiBVDnc4RQK/C/v9w31F+
-         pICdMhQwjIrnnkIW4h1UTnyOgjfbpeLAQLDFVeKvr0AwSLVxeiwGMzIUqc47/blKT/sk
-         vC2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739553536; x=1740158336;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qftA7qwwF/BZn/LdSqftv264JIM5F1LnaZcnD09P8xM=;
-        b=exmim29tb7Ccwp5NArMjEAH7z2M/f4UmJg6lIXYKVEeM9nqN7cjFnDQ9B1GCAF+T3U
-         jXgXVLVfQPK5eBQkvvK4Msum6tSjVsHhTWx5cwEez5npC9FDRZV6OCye5iEj/otY6uFD
-         g36PGxrVQ7FKTbvKYdJ81o3PrISSf/az7/MndkqAips/yEAGjh+vuPDj0hRFkcfoxwy5
-         gBWyIUwA0llht9AnMFX5squD/Kj2g9Ut8Qa73pdreWizgq+z8ALG/BL/ACKlhaoAl961
-         lrAK6X1xsgKI0ZXerewFYAwikzk85l8BOmU8dF+ki0qRG3t227IL8znWvOM4IYHPukgn
-         d3qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcCjbttc/MT861fNfjaopJ0VPf4W00VZkIrtJixPhELPKEhVXTXH6MIZ7SAVXYqPgjug4xPj1Ea/ieG/MZIXsXQQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxin9DRYTYFl8SjkcwSE7NKFdbzm3VT1lcq3YBgXAUINmruxdYE
-	08E8vRXVAxoeYPDThlZTTv8pp0FwgPhenCXT7+OBvEUFvsr4QVpuHkoBbQ==
-X-Gm-Gg: ASbGncuE8g782uCGTOPYcXUmLYTzvJftxuutAejUigBOFS0oS1daSrLjH5uUb/ti/qT
-	ZEPWXvll0ZSKufkgqXccQg6MlsIudbOa6TJy1MhLRuXmgaklJMTNbjN+CMFAvqCRZ7aVXJ/6ZN1
-	LSkDwhH7M7fl9B330VKeJKPZ48VJoyhv+dxP16TqygTxg50TgsVe2QTS16gw7Iy0yrx9qYE5/2d
-	Q8QOROtVst6vnjuVbEz+4HF4uSYBkZWK/3/bF2HBvLpq2fLY1ONAyw/CXAPkAsezMpHBN/ly5o3
-	WBYLvdnqIBq5s/iVSHtq6iFVTPBCcaSImVn7XQlfBwjUZe0pIzDqlw==
-X-Google-Smtp-Source: AGHT+IEp/tZRt2esZ1kk2Dq8pQD5WsnQsKzzbXY2N+EmI+m6c/RyUNFNBV5zCEQOY16uueZq3sg5Bw==
-X-Received: by 2002:a5d:5889:0:b0:385:faf5:ebb8 with SMTP id ffacd0b85a97d-38f24f2ba56mr9980582f8f.7.1739553535998;
-        Fri, 14 Feb 2025 09:18:55 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd2csm5263225f8f.30.2025.02.14.09.18.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 09:18:55 -0800 (PST)
-Date: Fri, 14 Feb 2025 17:18:54 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH v2] tracing: Do not allow mmap() of persistent ring
- buffer
-Message-ID: <20250214171854.50adf509@pumpkin>
-In-Reply-To: <20250214115547.0d7287d3@gandalf.local.home>
-References: <20250214115547.0d7287d3@gandalf.local.home>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739553606; c=relaxed/simple;
+	bh=ImR/H03Fz4Z1T2OIgnxXyz5cLfo4flLh8ujWylDSZOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=O41U78yA72Ep1CWCKFbuVj/MPVSaA5IeIzIWHb+mTP8gPe1+AJw98z4mLM6Knriy7byn/WlAptx7H36gsG+wU6jAdfQdN2qtasoVEPqMP1MdwAaIBR1nr9fYQqvDbC1MTcDO3yoriMDnLD9N+RPoX8b4yIForCqzcl4/eIIlzUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amg8E2wk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B756C4CED1;
+	Fri, 14 Feb 2025 17:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739553605;
+	bh=ImR/H03Fz4Z1T2OIgnxXyz5cLfo4flLh8ujWylDSZOI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Amg8E2wkP2edVPx90dl1V4QZWeCCFvQAnVtFuo5FdCOEeLORk9Sb92pwX/C0wqik+
+	 epcIvD8Xb1cBdG6ZyGesb3tXveqGFWjCZc6zggt8QLa/E4IiqLn5c/+QpI1MKr6mW4
+	 UfQziHO8zAiZuB9QiXjVFlb1P25DnYkaqOTycTzE9a2n+WqK1ouRIPtm/IXYsaUz6j
+	 PM0Yyjl5hXpQE6MV6bUEguAx3GbgbiDXdtQtnadDJtSNXYwGWMY+2ThVvgNY0ObboC
+	 mUjyXJg0bGstlcqz93a5xHioEwjt4V4Q9bROOqEq/Lo+MPD/ST/MBnJo3SMwEQP63N
+	 gOPapvo3J6erA==
+Date: Fri, 14 Feb 2025 11:20:02 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Roger Pau Monne <roger.pau@citrix.com>
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Subject: Re: [PATCH v2 1/3] xen/pci: do not register devices with segments >=
+ 0x10000
+Message-ID: <20250214172002.GA157276@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250114103315.51328-2-roger.pau@citrix.com>
 
-On Fri, 14 Feb 2025 11:55:47 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+It looks like the convention for this file is to capitalize the
+subject, e.g.,
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-....
-> The reason was that the code that maps the ring buffer pages to user space
-> has:
+  xen/pci: Do not register ...
+
+On Tue, Jan 14, 2025 at 11:33:11AM +0100, Roger Pau Monne wrote:
+> The current hypercall interface for doing PCI device operations always uses
+> a segment field that has a 16 bit width.  However on Linux there are buses
+> like VMD that hook up devices into the PCI hierarchy at segment >= 0x10000,
+> after the maximum possible segment enumerated in ACPI.
 > 
-> 	page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-...
-> But virt_to_page() does not work with vmap()'d memory which is what the
-> persistent ring buffer has. It is rather trivial to allow this, but for
-> now just disable mmap() of instances that have their ring buffer from the
-> reserve_mem option.
+> Attempting to register or manage those devices with Xen would result in
+> errors at best, or overlaps with existing devices living on the truncated
+> equivalent segment values.  Note also that the VMD segment numbers are
+> arbitrarily assigned by the OS, and hence there would need to be some
+> negotiation between Xen and the OS to agree on how to enumerate VMD
+> segments and devices behind them.
+> 
+> Skip notifying Xen about those devices.  Given how VMD bridges can
+> multiplex interrupts on behalf of devices behind them there's no need for
+> Xen to be aware of such devices for them to be usable by Linux.
+> 
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> ---
+> Changes since v1:
+>  - Adjust commit message width to 75 columns.
+>  - Expand commit message.
+> ---
+>  drivers/xen/pci.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
+> index 416f231809cb..08e82fd1263e 100644
+> --- a/drivers/xen/pci.c
+> +++ b/drivers/xen/pci.c
+> @@ -43,6 +43,13 @@ static int xen_add_device(struct device *dev)
+>  		pci_mcfg_reserved = true;
+>  	}
+>  #endif
+> +
 
-I've recently fallen foul of the same issue elsewhere [1].
-Perhaps there ought to be a variant of virt_to_page() that returns an
-error for addresses outside the kernel map.
-Or even a fast version that doesn't check for places where the cost
-of the additional conditional would matter.
+I think a brief comment here would be helpful so people don't have to
+dig out the commit log to understand why this is invalid for Xen.
 
-Even a kernel panic for an unchecked NULL pointer would be easier
-to diagnose than the current situation.
-
-[1] In my case it was dma_alloc_coherent() using vmalloc() when an iommu
-is enabled and then the wrong things happening when I try to mmap()
-the buffer into userspace (offset in both the dma buffer and the user file).
-I do need to check that the iommu is honouring the buffer alignment.
-
-	David
+> +	if (pci_domain_nr(pci_dev->bus) >> 16) {
+> +		dev_info(dev,
+> +			 "not registering with Xen: invalid PCI segment\n");
+> +		return 0;
+> +	}
+> +
+>  	if (pci_seg_supported) {
+>  		DEFINE_RAW_FLEX(struct physdev_pci_device_add, add, optarr, 1);
+>  
+> @@ -149,6 +156,12 @@ static int xen_remove_device(struct device *dev)
+>  	int r;
+>  	struct pci_dev *pci_dev = to_pci_dev(dev);
+>  
+> +	if (pci_domain_nr(pci_dev->bus) >> 16) {
+> +		dev_info(dev,
+> +			 "not unregistering with Xen: invalid PCI segment\n");
+> +		return 0;
+> +	}
+> +
+>  	if (pci_seg_supported) {
+>  		struct physdev_pci_device device = {
+>  			.seg = pci_domain_nr(pci_dev->bus),
+> @@ -182,6 +195,12 @@ int xen_reset_device(const struct pci_dev *dev)
+>  		.flags = PCI_DEVICE_RESET_FLR,
+>  	};
+>  
+> +	if (pci_domain_nr(dev->bus) >> 16) {
+> +		dev_info(&dev->dev,
+> +			 "unable to notify Xen of device reset: invalid PCI segment\n");
+> +		return 0;
+> +	}
+> +
+>  	return HYPERVISOR_physdev_op(PHYSDEVOP_pci_device_reset, &device);
+>  }
+>  EXPORT_SYMBOL_GPL(xen_reset_device);
+> -- 
+> 2.46.0
+> 
 
