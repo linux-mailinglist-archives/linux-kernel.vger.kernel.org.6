@@ -1,107 +1,95 @@
-Return-Path: <linux-kernel+bounces-515787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3C6A36912
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:24:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91745A36914
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC4216AAC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C517D188DB33
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169281FCFD4;
-	Fri, 14 Feb 2025 23:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C631FCFDB;
+	Fri, 14 Feb 2025 23:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Etk1v6vO"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="alx/7Ojb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6311FC7CD;
-	Fri, 14 Feb 2025 23:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101911FC7CD;
+	Fri, 14 Feb 2025 23:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739575425; cv=none; b=orV5Plcaoj2jTYnx20ae1YrGrmGJJnO4Ko7e/n5x64O/9+qrNeeA2CaRyDtHlPWOmhLtcxYV2chtrtV92H+Xu25LqrnlbQye18T/0Koru92wKkPoT28Sfq2Gy9zsgDbusFI49BprzhYHpDzFefVTLekX8uwlPbvj+QDXfqmr9Cc=
+	t=1739575440; cv=none; b=iloKkSAyZJNDE3y2/PlBsLAk/xRgR6moiubqSH1tqGeA6UbK0uh8dYQhkE795EOqX+F4B/V47lDKLSB7xDa4qy/dte8vKRduq6cqWmsSC4t9wSIAaGbLsyYpc0zhUyG/5+HHsIc5bKXWmbmpWeLM8u8pP/C1TvGsv2PSmUUqF9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739575425; c=relaxed/simple;
-	bh=Yhq/C5gSgJ6cl34cEwCBrIztG271Bks4WJzIFA5Zmhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvwSgXLE0C6Z9mdEBkvLzJR+YH4F8saGAJd+CxOCDmhut9Ea7jehma98wylke9l6+VgGNov3HgS8gWYzMJ7JRns81UG0gCEOH8Iy35mLtM/O5CnjbqzMdUDPEIhLS5DD9bgs6j1uy+m4GOrAJmnQRzX14ciXXR2ExC1x5oC5AWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Etk1v6vO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59BDDC4CED1;
-	Fri, 14 Feb 2025 23:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739575424;
-	bh=Yhq/C5gSgJ6cl34cEwCBrIztG271Bks4WJzIFA5Zmhc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Etk1v6vOaAAIg0XO1g/wK0jfLEDXElXxYj3ZBqwfuPAz+9rwu0xxKsmGQ9K8mAoy5
-	 PLyLEnl/GMAPJrcLzop5aBOWv0OHv5OCVh0Vyv/pxVCJI3gANGzSBV6MsQL5b8XLVP
-	 A4sYC4V/LEa30v66Qv3lG0Kr3eLRPqpGrjo4GZVY/sezZJYD17cE5nzRUZP/nHMgWC
-	 Zc/q2h7f55E9XsASOacUgTBF4zQE/p66H4WwvckNTrL1WUNb8/Cepgg3i5eKEzKtJ1
-	 C5m1lbBEzNhDBmIv97u9MNL+oc7fQ26OMxAfPo3rf9YXPwGuyX6IhrpS90JkLIiOLE
-	 wYDr5RBTBH0aQ==
-Date: Fri, 14 Feb 2025 15:23:42 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Weinan Liu <wnliu@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-Message-ID: <20250214232342.5m3hveygqb2qafpp@jpoimboe>
-References: <20250212234946.yuskayyu4gx3ul7m@jpoimboe>
- <CAPhsuW5TeMXi_Mn8+jR9Qoa=rAWasMo7M3Hs=im6NT6=+CrxqA@mail.gmail.com>
- <20250213024507.mvjkalvyqsxihp54@jpoimboe>
- <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
- <mb61py0yaz3qq.fsf@kernel.org>
- <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
- <20250214080848.5xpi2y2omk4vxyoj@jpoimboe>
- <CAPhsuW6dxPtgqZaHrZEVhQXwm2+sETreZnGybZXVKYKfG9H6tg@mail.gmail.com>
- <20250214193400.j4hp45jlufihv5eh@jpoimboe>
- <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
+	s=arc-20240116; t=1739575440; c=relaxed/simple;
+	bh=uquje65lfVNhxDBtd/M1YwLF3IonJ/j52ndMQeyZb24=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=E4jcxJuFfxVxVsshFC/DWLT/dDL/Y8Z6tNtDvQ1IjzjdkuYcb563i7a8uEol+UhD7EMK5Q/qYg10cQZmD1ovftUvr5f3qA8+VLN7lAUEHU8aMU09BSK4gpbjL90W8E+G46KhpLZZ2C+PZabLxriAAFAE3n8TjytZj3KAeGPkzHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=alx/7Ojb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC326C4CED1;
+	Fri, 14 Feb 2025 23:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739575439;
+	bh=uquje65lfVNhxDBtd/M1YwLF3IonJ/j52ndMQeyZb24=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=alx/7OjbaNmGlUA264DyNZMiRHm93hlXuKIe+/0b1bVi8Js149kmksxNbqN99ZB/9
+	 gD1QVZpCJe4OtCFPl/xaHeKjAT5mgx5oPJbD/NWhF62euR7Nn3O/mP3lIgY9JS4MHN
+	 3/uK9IevgprsBy/CJ6/gDa2CjmhTelEVM7cAU4N0=
+Date: Fri, 14 Feb 2025 15:23:58 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
+Cc: chengming.zhou@linux.dev, hannes@cmpxchg.org, kasong@tencent.com,
+ kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+ muchun.song@linux.dev, roman.gushchin@linux.dev, ryncsn@gmail.com,
+ sashal@kernel.org, shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com,
+ willy@infradead.org, yuzhao@google.com, zhengqi.arch@bytedance.com
+Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
+Message-Id: <20250214152358.7ba29d10229e2155c0899774@linux-foundation.org>
+In-Reply-To: <67af8747.050a0220.21dd3.004c.GAE@google.com>
+References: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
+	<67af8747.050a0220.21dd3.004c.GAE@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 02:04:17PM -0800, Song Liu wrote:
-> Hi Josh,
-> 
-> On Fri, Feb 14, 2025 at 11:34 AM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > On Fri, Feb 14, 2025 at 09:51:41AM -0800, Song Liu wrote:
-> > > > Ignorant arm64 question: is the module's text further away from slab
-> > > > memory than vmlinux text, thus requiring a different instruction (or
-> > > > GOT/TOC) to access memory further away in the address space?
-> > >
-> > > It appears to me the module text is very close to vmlinux text:
-> > >
-> > > vmlinux: ffff8000800b4b68 T copy_process
-> > > module: ffff80007b0f06d0 t copy_process [livepatch_always_inline_special_static]
-> >
-> > Hm... the only other thing I can think of is that the klp relas might be
-> > wrong somewhere.  If you share patched.o and .ko files from the same
-> > build I could take a look.
-> 
-> A tarball with these files is available here:
-> 
-> https://drive.google.com/file/d/1ONB1tC9oK-Z5ShmSXneqWLTjJgC5Xq-C/view?usp=drive_link
+On Fri, 14 Feb 2025 10:11:19 -0800 syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com> wrote:
 
-Poking around the arm64 module code, arch/arm64/kernel/module-plts.c
-is looking at all the relocations in order to set up the PLT.  That also
-needs to be done for klp relas, or are your patches already doing that?
+> syzbot has found a reproducer for the following issue on:
 
--- 
-Josh
+Thanks.  I doubt if bcachefs is implicated in this?
+
+> HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=148019a4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12328bf8580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
+
+	VM_WARN_ON(!css_is_dying(&memcg->css));
+
+>
+> ...
+>
 
