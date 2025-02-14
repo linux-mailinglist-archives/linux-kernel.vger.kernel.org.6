@@ -1,218 +1,203 @@
-Return-Path: <linux-kernel+bounces-514942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2496AA35DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:41:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549A2A35DCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:42:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65C6188F278
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC27188F3D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A20D263F48;
-	Fri, 14 Feb 2025 12:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FC0263F5A;
+	Fri, 14 Feb 2025 12:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMf5VmCu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K/LZvksN"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE56263F25
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC15A261567
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739536874; cv=none; b=IxQMGO4UG5nih/r/Fq9RdEHSGhqlqDqfQozZx/0R+/QRznd6dZ2ZHreCfi6xCZ0NAbE5EEqt3LAxiYsEoaOKXzxzopgKyRebvfX/ovhigYc+TlBQ1vc0Q6yauREqN2kZE1TlF4hZXa3SPB2BhAJ1zeIhJFrfKbAfJYOWzxG3kq4=
+	t=1739536929; cv=none; b=McXn62HjwwBO5J7rGtVatr/ZmGyG9WkM3Gg8Tux+tOMJfk76gGofNyB01ZFV/E9IqGCmlATw0kBwK8a8F8liiLGhgEivW5tgEcZaiKy2fI8hIjP2YzUmCanUSiw+a74jJLyXDV+m4LnG5NO9imzFAjY4ieloTDkfQeZt3DWtiKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739536874; c=relaxed/simple;
-	bh=/FH2XrQU17rF5Rr1trJmxLbpNy/83iwilk892uZsryo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=pPGWqioHz5ZOwCToF+4CF74D/GBSFHw27daPiF3SeyW/2+SsYn4MpVuSViS8QtVMjOEBBtPIoGg5LjGHQFB5Sjqdl6ehlbY8AD7wd+bfY34vTbKCN89RFGEpLruxHiLrDeg7S63BM8Umj2U0ww9KUNsavfuEih6pmbrEBkxuJaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMf5VmCu; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739536873; x=1771072873;
-  h=date:from:to:cc:subject:message-id;
-  bh=/FH2XrQU17rF5Rr1trJmxLbpNy/83iwilk892uZsryo=;
-  b=mMf5VmCu0m/Z/FzHs4yF0BnDrvaLG7JSeLQjejTGGUJDmd/aDXbuujPQ
-   ELamKtr4zy+n676tPTpfhPRgbpOMb35c4VHak65agaa1A4nsUi+kjGJeX
-   NXZnGItpCs0kwYOUntRNc/xNZzl/hzET1Bk2LncvVglUvasV+dzxmWryZ
-   DTIAYG2Uxba2vfKyZAf0pSpi1Y0ezkBLOdRM4wp8DOZbsEoNt+xGdxVY1
-   dDz5OBf0ZwleUmDnAt0f3UN8tFypr/f3/LJtjFTRJFPnYFbARorwIYrCf
-   WXQWPdKUdCysmpSvcKHO7JFYUXCUB4VvjHIPrCPUSFFtdVbALA25dtzS8
-   g==;
-X-CSE-ConnectionGUID: jMS6Hz5NRIuH3MU+cu6FtQ==
-X-CSE-MsgGUID: Z8sIHsoKRdWFmnngJ/rjPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40155650"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="40155650"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 04:41:12 -0800
-X-CSE-ConnectionGUID: 5T8m9fPRTYCCrOpviaCX0A==
-X-CSE-MsgGUID: /sGWQQqkSOWvmaKAoeyeKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118071854"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 14 Feb 2025 04:41:11 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiv0H-0019Xv-18;
-	Fri, 14 Feb 2025 12:41:09 +0000
-Date: Fri, 14 Feb 2025 20:40:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/urgent] BUILD SUCCESS
- 4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b
-Message-ID: <202502142031.uoywDsIQ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739536929; c=relaxed/simple;
+	bh=Lgm54ypC3Xw13cFe84CkEda526EsxKI+I0wTtJzS2kM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=A8lWUkwxCBm8r22Z8HCo8vFgzYCjFflT/GHOkyo0bLdtUPvKddLNdyxQKUnYpGIU0txVED7qI8lLBii3333JxKp7qK4CdZtXca5iQzx/RoyQJug6ocD1QwEnKBkNWYarLyYazPpgtdp900S7W2VjgymDIyEYrBpPkh/23vrBRxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K/LZvksN; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <062b78a3-7e83-4202-a753-4e7bd43e8bc2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739536924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TmoaaQDA6QHoK5d//GwIdE1FQgIBFCuZsGqbpAtEteg=;
+	b=K/LZvksNFFiUrhXDWrfGZ6wnfWWXw1lTTN6Ee4nsCPd47TEooPFEB3jleQYXkJe3DkUEH+
+	hIJBUBj1e2ldbdCtsVKKPiX6JM4590naTHtJOwl/SBtSczRghhj7ZnuZNQQFmoM6aQK5Uk
+	XY2kEp7H56jZXDsvyiBJNp6y3CZylY4=
+Date: Fri, 14 Feb 2025 18:11:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Subject: Re: [PATCH v5 2/3] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>
+References: <20250209160925.380348-1-aradhya.bhatia@linux.dev>
+ <20250209160925.380348-3-aradhya.bhatia@linux.dev>
+ <16db8f3d-04a2-408a-964f-4cf9478229b4@ideasonboard.com>
+ <8c6e790e-f1b6-46ab-9acf-bdea8076405b@linux.dev>
+ <cd62bf21-adad-4422-8fac-ebd20e8b39a5@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <cd62bf21-adad-4422-8fac-ebd20e8b39a5@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
-branch HEAD: 4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b  genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
+Hi Tomi,
 
-elapsed time: 1446m
 
-configs tested: 126
-configs skipped: 1
+On 13/02/25 18:50, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 13/02/2025 14:33, Aradhya Bhatia wrote:
+> 
+>>>> +  ti,companion-oldi:
+>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>> +    description:
+>>>> +      phandle to companion OLDI transmitter. This property is
+>>>> mandatory for the
+>>>> +      primarty OLDI TX if the OLDI TXes are expected to work either
+>>>> in dual-lvds
+>>>> +      mode or in clone mode. This property should point to the
+>>>> secondary OLDI
+>>>> +      TX.
+>>>> +
+>>>> +  ti,secondary-oldi:
+>>>> +    type: boolean
+>>>> +    description:
+>>>> +      Boolean property to mark the OLDI transmitter as the secondary
+>>>> one, when the
+>>>> +      OLDI hardware is expected to run as a companion HW, in cases of
+>>>> dual-lvds
+>>>> +      mode or clone mode. The primary OLDI hardware is responsible
+>>>> for all the
+>>>> +      hardware configuration.
+>>>
+>>> I think these work, but I'm wondering if we would ever need to check
+>>> something from the main oldi from the secondary oldi. In that case
+>>> "crossed phandles" would be better, i.e. something like:
+>>>
+>>> (in the first oldi:)
+>>> ti,slave-oldi = <phandle-to-second-oldi>
+>>>
+>>> (in the second oldi:)
+>>> ti,master-oldi = <phandle-to-first-oldi>
+>>
+>> When I had first designed the code and the devicetree for OLDI, it was
+>> done so with the belief that we wouldn't reqiure a bridge instance for
+>> the secondary OLDI, at all.
+>>
+>> While that idea holds true for dual-lvds configuration, it doesn't so
+>> for the clone mode configuration. For clone mode, as you pointed out, we
+>> will require a 2nd bridge instance to configure any of the bridges and
+>> panels that come after the 2nd OLDI.
+>>
+>>
+>>>
+>>> Then again, if we ever need that, even with these bindings the driver
+>>> could find the first oldi, but needs to go via the dss's node.
+>>
+>> While it is possible to do it this way, it might not be the cleanest
+>> one. And _if_ there is a ever a DSS in future with more than 2 OLDI
+>> TXes, say 4, then the decipher logic may get too complicated.
+>>
+>> While I cannot think of any case where the secondary OLDI bridge DT
+>> might need to access the primary OLDI bridge at the moment, I wonder if
+>> we should play it safer and have this option anyway.
+>>
+>> Maybe something like this?
+>>
+>> (primary OLDI)
+>> ti,primary-oldi;
+>> ti,companion-oldi = <phandle-to-secondary-oldi>;
+>>
+>> (secondary OLDI)
+>> ti,secondary-oldi;
+>> ti,companion-oldi = <phandle-to-primary-oldi>;
+> 
+> How is this different than my proposal, except a bit more verbose?
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+That's all the difference there is. Just an alternative to what you
+suggested.
 
-tested configs:
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250213    gcc-13.2.0
-arc                   randconfig-002-20250213    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250213    clang-17
-arm                   randconfig-002-20250213    clang-15
-arm                   randconfig-003-20250213    clang-21
-arm                   randconfig-004-20250213    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                 randconfig-001-20250213    clang-19
-arm64                 randconfig-002-20250213    gcc-14.2.0
-arm64                 randconfig-003-20250213    gcc-14.2.0
-arm64                 randconfig-004-20250213    clang-21
-csky                  randconfig-001-20250213    gcc-14.2.0
-csky                  randconfig-002-20250213    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250213    clang-21
-hexagon               randconfig-002-20250213    clang-18
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250213    gcc-12
-i386        buildonly-randconfig-002-20250213    clang-19
-i386        buildonly-randconfig-003-20250213    clang-19
-i386        buildonly-randconfig-004-20250213    clang-19
-i386        buildonly-randconfig-005-20250213    clang-19
-i386        buildonly-randconfig-006-20250213    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch             randconfig-001-20250213    gcc-14.2.0
-loongarch             randconfig-002-20250213    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250213    gcc-14.2.0
-nios2                 randconfig-002-20250213    gcc-14.2.0
-openrisc                          allnoconfig    clang-21
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-21
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250213    gcc-14.2.0
-parisc                randconfig-002-20250213    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-21
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250213    clang-17
-powerpc               randconfig-002-20250213    gcc-14.2.0
-powerpc               randconfig-003-20250213    gcc-14.2.0
-powerpc64             randconfig-001-20250213    clang-19
-powerpc64             randconfig-002-20250213    clang-21
-powerpc64             randconfig-003-20250213    gcc-14.2.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250213    clang-19
-riscv                 randconfig-002-20250213    clang-17
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250213    gcc-14.2.0
-s390                  randconfig-002-20250213    clang-21
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250213    gcc-14.2.0
-sh                    randconfig-002-20250213    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250213    gcc-14.2.0
-sparc                 randconfig-002-20250213    gcc-14.2.0
-sparc64               randconfig-001-20250213    gcc-14.2.0
-sparc64               randconfig-002-20250213    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250213    clang-19
-um                    randconfig-002-20250213    clang-21
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250213    gcc-11
-x86_64      buildonly-randconfig-001-20250214    gcc-12
-x86_64      buildonly-randconfig-002-20250213    gcc-12
-x86_64      buildonly-randconfig-002-20250214    gcc-12
-x86_64      buildonly-randconfig-003-20250213    clang-19
-x86_64      buildonly-randconfig-003-20250214    gcc-12
-x86_64      buildonly-randconfig-004-20250213    gcc-12
-x86_64      buildonly-randconfig-004-20250214    gcc-12
-x86_64      buildonly-randconfig-005-20250213    gcc-12
-x86_64      buildonly-randconfig-005-20250214    gcc-12
-x86_64      buildonly-randconfig-006-20250213    gcc-12
-x86_64      buildonly-randconfig-006-20250214    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-19
-x86_64                randconfig-001-20250214    clang-19
-x86_64                randconfig-002-20250214    clang-19
-x86_64                randconfig-003-20250214    clang-19
-x86_64                randconfig-004-20250214    clang-19
-x86_64                randconfig-005-20250214    clang-19
-x86_64                randconfig-006-20250214    clang-19
-x86_64                randconfig-007-20250214    clang-19
-x86_64                randconfig-008-20250214    clang-19
-x86_64                randconfig-071-20250214    gcc-12
-x86_64                randconfig-072-20250214    gcc-12
-x86_64                randconfig-073-20250214    gcc-12
-x86_64                randconfig-074-20250214    gcc-12
-x86_64                randconfig-075-20250214    gcc-12
-x86_64                randconfig-076-20250214    gcc-12
-x86_64                randconfig-077-20250214    gcc-12
-x86_64                randconfig-078-20250214    gcc-12
-x86_64                               rhel-9.4    clang-19
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250213    gcc-14.2.0
-xtensa                randconfig-002-20250213    gcc-14.2.0
+> 
+> If you're thinking about a 4-OLDI hardware, how would this work there?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I didn't mean that my alternative would be more helpful. I meant that
+passing phandles would be a simpler way for 4-OLDI hardware in general.
+
+We'd have to sift through a max of 4 OLDI nodes to find the right
+primary OLDI for a given secondary OLDI - if we try to find it via the
+dss and oldi-transmitter parent DT nodes. Passing phandles directly
+would save on all that logic.
+
+
+> (but I want to say that even if it's good to plan for the future, we
+> shouldn't plan too much based on imaginary hardware =).
+> 
+
+That's, of course, true too! =)
+It's been tricky enough dealing with the hardware combinations as they
+are today!
+
+I will add one more reason though, which made me get along with the idea
+of passing phandles. And then I will defer to you to make the call,
+since I don't have the strongest of feelings either way.
+
+
+Passing phandles would allow for _that_ condition to get dropped; making
+the bindings slightly more flexible to accommodate for any future
+surprises (especially around the clone mode lvds configuration).
+
+(That condition being where the bindings either allow a companion-oldi
+phandle OR allow the secondary-oldi boolean (but not both)).
+
+I could drop that condition without any other changes too, making the
+companion-oldi property optional for secondary-oldi - but this feels
+incomplete.
+
+Hence, the addition of the primary-oldi boolean. The companion-oldi
+phandle property will be conditionally required when any one of the
+boolean properties is present.
+
+
+-- 
+Regards
+Aradhya
+
 
