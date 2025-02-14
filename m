@@ -1,136 +1,81 @@
-Return-Path: <linux-kernel+bounces-515783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBA3A36902
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:19:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9032A36904
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88B057A4FE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7514216C428
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374FD1FCF41;
-	Fri, 14 Feb 2025 23:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C6B1FCD16;
+	Fri, 14 Feb 2025 23:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="mASSejbB"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AvS1Vi5L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111F91FC7CD
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3C71FC7CD
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739575186; cv=none; b=WtJ9fF1pSEEU8ClfH1ubCQdY5lQw5iHMFu+/6cRMEHJD3woll2zi2JX3gosy4YcyLVfuLSzNyv9IEWpNj8DEvpZlj+9+Nx0aUlSk/JDyPPgTqwzN8KlQFhq4hHDNxCuYpbR3v+Nz9fV0blNJKlZSD+LrNi9fFK0wxKyEJVXey/U=
+	t=1739575289; cv=none; b=kg8ch15nWZL/lB7d9MkCp3y6D5xyg00fjgMbiGCgPW5j0HAgj9L6SqzI7gmjGwAwnEogjAbkyMQRasxLVlqOaJNXvch2BX6oH/wCo/a7SV8as/0zFND89DcrIHKSaFhoCq1dYmnTlc2XUbN0pJ80xjT+bQOVjcAF1WE9EHju3Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739575186; c=relaxed/simple;
-	bh=IVCW8vVwUdVf2Ohvyaabldfb9qJTAjpef7lVg2IxJj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XaVCHxcadvQiEVFwTw91t2N5ZG5xCsnkuYQaNDbk5Rdo4BYeFx0LYATJts2dfHToruz+S94Jg2uo5BQXAbQUZa2Cre6P5fLjvtZgAJ7J08DWlzq4+3o6OOHCZEbDsGSS6RMmnSfQintILOjrxtjp/5472B0KQCkUOfw7XgZzjHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=mASSejbB; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f441791e40so3813428a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:19:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1739575184; x=1740179984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M1kptu5/J+vpdEp6ep3Tn6E02zBSHfeej1qMSG9kR5Y=;
-        b=mASSejbBqka2CMPACMh5Jijdrd0+x9m+VwFin12UjxJbeemt8yTj26NmWJONoGAoCg
-         RqCWmPqFqVdwJO4tNX5P/zlR6swXWTFkEypWm6D2aczv2WZtiMrJZMsIweLSb3S5AnCr
-         AukdAQ3lnoAE6hONNK/M6Dj53POg9c0v82x1ezd9wB8Ry1a3VLSF8LwAjJepyeGbN+p4
-         D5+1egzW3lAWPHHuqdDl6PWnx5FESNucEgVcBiVxLWeqpcyDs3np2pmWHj/XrbF94Ul9
-         JCw+YdfuPLq5E6SEA6KrbUjtIrNwN5q6gMQjbt9p5QCenquNR2xjmgqgeOX/CUjMoRiw
-         ydSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739575184; x=1740179984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M1kptu5/J+vpdEp6ep3Tn6E02zBSHfeej1qMSG9kR5Y=;
-        b=VBIYi4DSA96svIdrO7HOiLKXYJLljU2vBbRyEnisMguLbVcdB1WXx6rSs1wPa3IIrH
-         qSCLPDtBoW+Mty8erfzBGxHVod+QF64EjMgQB1WdEy9mgVkCj5P1sf0okTllpQl1qVZv
-         QBwSCZFXI8uQ14hdfxt0OHKgNw1bEPu7rW75DkudpM9/t7jjnES88dLKvQZ1qow14oo7
-         cTRJr7WzXuYt0qs8sdtnLzBIZ1nXci24BUva6slnpwRwh2vLoojplo+cLa/2ZYRfw8MP
-         E2LuEntA2Ve7h4FzfomSA+Gx2PUDNsu4Jk1LNL+LcRg5ED1I6RmcJvkUJOOpf4IT79Bh
-         Nv9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfqhCqF8e53h3qd0Ob/smVxRtgfa7LWlhBXMZf1miHEbW/B06jXUg6jZ+BoQ8Ml3npzOOGDAq8HhRTSDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvjdcwQR4IE9LAFbp9ktVxXM+iyCvDLxVXwxcC5cH9LH+zcI1Q
-	Ms+gFyuVl8MKUU3FwfB4n06UziXx7diKVvWDNXPIDULjdTLVLfszNLi1w2chPQjMVPG+xX2MNXz
-	LgOZOdSqCAII4oX9R+sauOA985TB8CUMDamLA3w==
-X-Gm-Gg: ASbGncv55QFosalbETu31BKSmuccsIj0XD4L19rZtaikrS+kNKDefbdY7R0eALU+aGE
-	uKy4v3skECBl+s0TRxjBNo4vXyhHS0OHTzYyYgC4BrI85n4DJHOWkqP09Kx0cnUPwafBcP3g=
-X-Google-Smtp-Source: AGHT+IEMDk4JmHkWwYaC0JdU3mrceeG+mLsI96RmyYTF792fB06bA49XHLnAxr/Cg0xW5tlJasKPprqGg2xWInDdScY=
-X-Received: by 2002:a17:90b:4fcf:b0:2ee:a4f2:b311 with SMTP id
- 98e67ed59e1d1-2fc40f1040dmr1245930a91.8.1739575184167; Fri, 14 Feb 2025
- 15:19:44 -0800 (PST)
+	s=arc-20240116; t=1739575289; c=relaxed/simple;
+	bh=Sn49x4GVqGn4nDq2MMDv+oDV7GGxMn241Y5xqPcIKbg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ObL/b0h1mo9GC2HGTCWff62bly3O4k2ixj415XYo6p/Vw4jvIr+yYSJRTmK+GkplWV1cNuEs/Wc/FFQK7zI3XM0gYsRjRb3+54/VUaVbgUOiE/Lja1mbr9iOO4AfDTfkKz6/GAjQ2hUYrgvHTybOx+VBZ65y3hVrozc3j50bHXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AvS1Vi5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1739C4CED1;
+	Fri, 14 Feb 2025 23:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739575288;
+	bh=Sn49x4GVqGn4nDq2MMDv+oDV7GGxMn241Y5xqPcIKbg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AvS1Vi5L986Qd8t9fyyJXInX+Iy3wFqW1PnE1/eUUUuvXn7z33WlNdHl25NG37/wj
+	 IACJm1Vnh6WCdRIDh60d02XxDoTlkDG1hSXzVIPiePpceOBtznFO8NmB7XCrT5gT8z
+	 MBC3NWC4Em3Hg5g2ZrgwbZUKAU1BTpPYsA524VIc=
+Date: Fri, 14 Feb 2025 15:21:28 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: Liam.Howlett@Oracle.com, brauner@kernel.org, lorenzo.stoakes@oracle.com,
+ willy@infradead.org, davidlohr.bueso@hp.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipc: fix to protect IPCS lookups using RCU instead of
+ semaphore
+Message-Id: <20250214152128.61a1054b90d1a53eff9cf16b@linux-foundation.org>
+In-Reply-To: <20250214180157.10288-1-aha310510@gmail.com>
+References: <20250214180157.10288-1-aha310510@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250214133842.964440150@linuxfoundation.org>
-In-Reply-To: <20250214133842.964440150@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Sat, 15 Feb 2025 08:19:33 +0900
-X-Gm-Features: AWEUYZmSJWzwPPeIoaUIOQDKvcgfilAIixByMHWDgVxEElGNhm8DLhW2jW1DgKE
-Message-ID: <CAKL4bV6p=1wrzk_HoLMTog7a8SyDaZz5UtkNRgV+j-OtkTjq2w@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Greg
+On Sat, 15 Feb 2025 03:01:57 +0900 Jeongjun Park <aha310510@gmail.com> wrote:
 
-On Fri, Feb 14, 2025 at 10:59=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.3 release.
-> There are 443 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 16 Feb 2025 13:37:13 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.3-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+> In shm_destroy_orphaned(), we are not performing updates to the IPCS and are
+> only calling idr_for_each(), which can be protected by the RCU read-critical
+> section.
+> 
+> And if idr_for_each() is not protected by the RCU read-critical section,
+> then when radix_tree_node_free() is called to free the struct radix_tree_node
+> through call_rcu(), the node will be freed immediately, and when reading the
+> next node in radix_tree_for_each_slot(), the memory that has already been
+> freed may be read. 
 
-6.13.3-rc2 tested.
+A use-after-free?
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Is there any report of this occurring, or was this change a result of
+code inspection?  If the former, please share details (Link:,
+Reported-by:, Closes:, etc).
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+> Therefore, I think it is appropriate to use RCU instead of semaphore to
+> protect it.
 
-[    0.000000] Linux version 6.13.3-rc2rv-gac5999a6c007
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
-Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Sat Feb 15 07:57:54 JST 2025
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
