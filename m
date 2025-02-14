@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-515054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC4DA35F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:29:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B915CA35F34
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E83377A1830
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24EC18896B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17661264A62;
-	Fri, 14 Feb 2025 13:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5940B264A86;
+	Fri, 14 Feb 2025 13:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjeTYpa1"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eFA2LcJH"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531782AF16
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC14E264A78
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739539756; cv=none; b=ex+yAJCFkY6OAEBwgstDYsq8IyM52kgWeP29zAXRzpnAi+TFR0Cyo2wROgEeagXtNd/SqyDU+G8b18AeNFcUHTEEi4ztPZXWXmnUPuFdk2Lb3IMZn3Nm8amoeGNeNstBQybW0NSjrVpSVo/BFVrsvDU6ynHFmaemtCnW/b8P75Q=
+	t=1739539759; cv=none; b=A7fJumlj6efDydoafjfgiBRVMdmRefSI15CE7XWOQnlMAiD3iEdq9nWjFn4URzexGkzyeB43uWrKYYa0/ItDzhB6NJ3oW2vh2PowrpaHSpbx6PLEoYPFv5BSsp07fcl2h8WSV5jjabUdzUNitH5oPYNLNF+t9Z7kPulW6pUQI80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739539756; c=relaxed/simple;
-	bh=f5QImxHyukLj6RECAm1dEo3TCWzIupOla0PIgml801I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mADbMp6dBc0B5Q4kS7feh19t/ZFZga/gY+dyFmzON0xYvah3WmpWTNMGeNhjfrOCD2Ft5BiRsOED5F68xqpl8SasXMczWAQ+Kryp1waRGhbIWjJUb/QBO16EmC7+E05c/mK4rY//jTAtkdHpCajLE1uwKVgBZCaW4D9m4OyRC5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjeTYpa1; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f1e8efef5so1098240f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:29:13 -0800 (PST)
+	s=arc-20240116; t=1739539759; c=relaxed/simple;
+	bh=7kpQeUICXaXCdMZIy1NV1EzlOwfA/TJScayT6niK0wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ/ZsbvoId8MQVRsch095mDM0qYmbNHE/Y1G4IL37UuItwps/LhXxBfxVGYm1WQHJA7IXsODqAwi3Zrw0Ovs87WktgFGedct6DMqymnDZNyWQOJJYDw8HOkNjukvHU+dz9oh5e//mjjowIJxQRSKFkvwKlGDNGCJI5TfwmALwcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eFA2LcJH; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30920855d5bso6270351fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739539752; x=1740144552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWvbnHy+eruaNnpFjCJCWrVsj6FgpclpeKV+qjRmKSY=;
-        b=NjeTYpa1v3Wifqk+cUBmMCMirvbbeT1lS5JwcGp+EJ/HYORzoIUACLdPJZKWOcbCWd
-         LpchwIxo3CKZlNS1Eu2CzdLr7shsiObdxj8OPxrFbADhWGl8H1bkKNeLMafr9OM4k1cA
-         kc7kLrsQXT1g+1Df/gG0qrWSJvWt5/VmGK1NZlfVegaKZjYNpUYuiqm3S9cXiHCqRcJA
-         xxTWoEZPr/FCeoibpn1rll43AhK5k6CAKD3NA6sYJRY9lQPoWF0Cyl6QPkDXmPUgjFBv
-         D1TtRACJXQi+1/SNhAZQU00IBulr+6ccOZkpGIakl3y3rKdzNrtDZ+5op8MEOYTk0Bi8
-         X7CQ==
+        d=linaro.org; s=google; t=1739539756; x=1740144556; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GckW9SgjVb4uOUm4nzkhOEDjrIncX3PrBzD3QPYjQIA=;
+        b=eFA2LcJH0mdfBFwYA6kIK4rJruS1SzRTTC285vBQCSCD0OaDRMo3YklaKilm58ZI1N
+         8g4FhvRHZywqh34+nSEmkQ5kzoxwWuQf7MSY52Gov0I9hmgK3sWxoZTDTNuiYmJHeKQ/
+         49ToJtB8vnZuCyoQsGUIJJJilN0nWBbDEi6BtryE3BSUuhO8mwFRdWxEcGBOxvLkYnsX
+         Zx0N96avwOaCxyCrJtZZncxkcEe+OX3SUpvX33yfyuX6kKGHy4m14Kej8tnMFFWLnp4y
+         F/RbvPl0wH7neYwEhvWGEpAVr8iEYqZbrlugYYA5Gxef76SrI/tKZmcks1K1wcGVzDjQ
+         fsNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739539752; x=1740144552;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IWvbnHy+eruaNnpFjCJCWrVsj6FgpclpeKV+qjRmKSY=;
-        b=R0TVX/brmK72airdlgv2WN/UkQPSy/CKixPqKkyaSJDPmc4JpXPdvprTfS1nV9GuBf
-         Y3gde3ux1nkQ+P/TQAmmZ0rK2wn5JAlti738/stm6vVVbvK03nroWBbdqPL9Qpt/nIom
-         rFgguxUKIqjl8B6GKkaFa1TXnZttXjmcLok/x0vuBBpiMPoBjJSHoEf5nFEm6ddCRMah
-         ws2wxee5GM4bLbMJubcvqCYYpcTX3HwQoZYYe+aYetnaYbuM0x/Zk7oQ/ROeSdxVmm9X
-         iJhZi+izIilIWYgfHspv5Sb7NQB2hAs0wxqk6C2nZwtmvVvVfpzo8pxwGlPzJMAFQXdb
-         GWJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwOmZhyrS+1VK+c0icesEzuLUuBpHtqQYOC17X8J5gjJJGHQRwR56jrraxaIoKNEeTpHZqHC4GesQXAhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4u+4Hm51Ybru0yY5Eq3N7f5IRk6apcQxwALogaDOx7M9B7bUG
-	rUFDPeBmLrDxjfinArT7VyDOHAgEzuUnR9HbaQV/rwDNN5brhUY8
-X-Gm-Gg: ASbGnctW1RdPGxVZiNb4ulOSfZ7ZurR9q2uB0YrJUh/vaFhEp1HcgzB3GJpxIF0epw2
-	WF3jsEGKt9kCQjgnAgC0brWNqA8qMP4tC4WrlP1CdtAwE2/aEL58qW4GtC2sGDtziXY79Xa2ijT
-	DmGi50ZCtDEHaquPWA4ipHGFQsn1zqhXF0pb/l0ToOX47FScDZkQMOt+9iG8Q68ixZOiAVG/1t2
-	MKiSCKpn/GFHVu+zADg+J8KauLs5ov8LcBhZAnWnZKhI2aXBrIpvl2CSnMs8pPAGCSv9iFr2lTf
-	vPJCodpJj5dNLGcScg9r5Qt8RIYyngO3W2Z4QOMOylCKI61l9UjVmA==
-X-Google-Smtp-Source: AGHT+IE/R0eXpSQdfNv8gz8NRaW1uh9+V+AeTS/4r/DrR2DWuIssTfwwnBlOlf91MqFEjlffVrFhSw==
-X-Received: by 2002:a5d:6382:0:b0:38d:d18e:8811 with SMTP id ffacd0b85a97d-38f244e960amr7186462f8f.25.1739539751489;
-        Fri, 14 Feb 2025 05:29:11 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396180f199sm44329255e9.15.2025.02.14.05.29.10
+        d=1e100.net; s=20230601; t=1739539756; x=1740144556;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GckW9SgjVb4uOUm4nzkhOEDjrIncX3PrBzD3QPYjQIA=;
+        b=B/yDQUHCH43TLTCRZ4dRP+11r/zEx0vih4M/08e95X8UEmfJ83ekA8HqYej0XGF8l9
+         dOXPIBtZzHKJ2lc6oWSBwtbXMbM4kCdzkM5HMGMifIoH6UddRpJQv290rokdlu+hoNsy
+         h2zelQlt8lG/BttWAuVZNq2ta3/2Nur/Ndq71vpg/okDpdkBwVPfzBuNEPWGgRqsHReJ
+         JBpIRzatZuctrNrHjkmaOkUQ4bsaCjOJg2q/6nv5BO+/MxqRBqzFJ9PzCVkNzEA3RAAM
+         1okkCEoP7lcNL32Wcv9dvhRhZtTGMTZ0SYZWZMRY5WYEthPy93oa5pBc6l4Y0EgSNs4i
+         ppwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdR6QgfTddrcG/xfLWyNbmlG/Rg+HbqYP17JdwwHmTfwjUGR12jEoczyfQcFHZrlppebbq8SZ4nUBhMnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVtzxHSx9JQp8zJlceBNyuatabQGot9gmY8ZEviaARyTDbgWh+
+	jdA/aFrNNC7C+xfCCynTvdAWnX85sHBPatcz0v15h+0XhF8CKktH3vA5cPCBI3g=
+X-Gm-Gg: ASbGncvzNOIeKe50blOWOGkRIbgRKzUreBRqmR/hPnW0gnEn2v/PGrN/fLgu6GyPI7r
+	ZfvG6Mqjk/sswW3SCDiefAfb9OkWfUk0s0MJtZDEG5M7tMxVNNL/AQiXEIeFqn0WzaUO6i70f1u
+	ehCsOhjy4YcRjJx3z3ZYpLYDtX3lrqXp++/N1+X5p8YGRxO/2zQOfr0MTzWwIfnDS11+NhJiNvy
+	oMRy0IcjtR9BRo50o2Vk6rMh86oyL1Vj1bViu3pCrocuVyobkw9jRVS85CidQgE2lEZPGgWJhq0
+	/sYV4C/ld2/9tSFKUji/oB/CO2F3mRMDg4HEjtIsOlMehY15BKn2UnUhnWUMpu81ieOBHTo=
+X-Google-Smtp-Source: AGHT+IFKrTe1qOLXvbGIJXg+EWgQKwS3o7giu2lqYZTaorNRk1NGxn7QVCdOwKf+9Z3tm3rgrJjXzw==
+X-Received: by 2002:a2e:91d2:0:b0:308:e9d4:7ccf with SMTP id 38308e7fff4ca-3090f11c8cfmr22400311fa.4.1739539755893;
+        Fri, 14 Feb 2025 05:29:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309221d7074sm1604541fa.102.2025.02.14.05.29.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 05:29:11 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:29:10 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Noralf =?UTF-8?B?VHI=?=
- =?UTF-8?B?w7hubmVz?= <noralf@tronnes.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] drm/repaper: fix integer overflows in repeat functions
-Message-ID: <20250214132910.2611f9cd@pumpkin>
-In-Reply-To: <ejsf4dwcyg7j4wdpdtbs56lbwokzlq65fxn2gxio4l5xg6di2r@pmnpafv3nwxz>
-References: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
-	<ejsf4dwcyg7j4wdpdtbs56lbwokzlq65fxn2gxio4l5xg6di2r@pmnpafv3nwxz>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Fri, 14 Feb 2025 05:29:14 -0800 (PST)
+Date: Fri, 14 Feb 2025 15:29:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 32/37] drm/bridge: Make encoder pointer deprecated
+Message-ID: <yy37e4kne7i2hl7coix6v7vajb5bm4zohod4fdzayvxr52l57u@cxturs2uxgcm>
+References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
+ <20250213-bridge-connector-v3-32-e71598f49c8f@kernel.org>
+ <nfb4fb6lzjw4j5brsh242htgw3au2moklqjalfa3zzxjsi2qn5@l3censelmgbz>
+ <20250214-arrogant-strong-hoatzin-efdcd8@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-arrogant-strong-hoatzin-efdcd8@houat>
 
-On Thu, 13 Feb 2025 20:54:59 -0500
-Alex Lanzano <lanzano.alex@gmail.com> wrote:
-
-> On Thu, Jan 16, 2025 at 05:48:01AM -0800, Nikita Zhandarovich wrote:
-> > There are conditions, albeit somewhat unlikely, under which right hand
-> > expressions, calculating the end of time period in functions like
-> > repaper_frame_fixed_repeat(), may overflow.
+On Fri, Feb 14, 2025 at 02:07:18PM +0100, Maxime Ripard wrote:
+> On Thu, Feb 13, 2025 at 06:35:15PM +0200, Dmitry Baryshkov wrote:
+> > On Thu, Feb 13, 2025 at 03:43:51PM +0100, Maxime Ripard wrote:
+> > > Other entities (drm_connector.crtc, drm_encoder.crtc, etc.) have
+> > > pointer to other currently bound entities. They are all considered
+> > > relevant only for non-atomic drivers, and generally perceived as
+> > > deprecated in favour of the equivalent pointers in the atomic states.
 > > 
-> > For instance, if 'factor10x' in repaper_get_temperature() is high
-> > enough (170), as is 'epd->stage_time' in repaper_probe(), then the
-> > resulting value of 'end' will not fit in unsigned int expression.
-> > 
-> > Mitigate this by casting 'epd->factored_stage_time' to wider type before
-> > any multiplication is done.
-> > 
-> > Found by Linux Verification Center (linuxtesting.org) with static
-> > analysis tool SVACE.
-> > 
-> > Fixes: 3589211e9b03 ("drm/tinydrm: Add RePaper e-ink driver")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> > ---
-> >  drivers/gpu/drm/tiny/repaper.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-> > index 77944eb17b3c..d76c0e8e05f5 100644
-> > --- a/drivers/gpu/drm/tiny/repaper.c
-> > +++ b/drivers/gpu/drm/tiny/repaper.c
-> > @@ -456,7 +456,7 @@ static void repaper_frame_fixed_repeat(struct repaper_epd *epd, u8 fixed_value,
-> >  				       enum repaper_stage stage)
-> >  {
-> >  	u64 start = local_clock();
-> > -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> > +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
-> >  
-> >  	do {
-> >  		repaper_frame_fixed(epd, fixed_value, stage);
-> > @@ -467,7 +467,7 @@ static void repaper_frame_data_repeat(struct repaper_epd *epd, const u8 *image,
-> >  				      const u8 *mask, enum repaper_stage stage)
-> >  {
-> >  	u64 start = local_clock();
-> > -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> > +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
-> >  
-> >  	do {
-> >  		repaper_frame_data(epd, image, mask, stage);  
+> > I think there is a significant difference between mentioned fields and
+> > drm_bridge.encoder: the former fields are variable and can change. The
+> > latter one is static and set at the bridge attachment time. Nevertheless
+> > I think it is a good idea to deprecate it.
 > 
-> It might be best to change the underlying type in the struct instead of
-> type casting
+> I'm sorry, it's not clear to me here what you want here either. Do you
+> want me to change anything to that patch?
 
-That'll just make people think there is a different overflow.
-It'd also force the compiler to use a wider multiply.
+Well... I was thinking if we should expand the commit message. Most
+likely it's fine though. In the end, I've r-b'ed the patch.
 
-A more subtle approach is to change the type of the first 1000 to 1000ull.
-
-Personally I like to see the units on variables containing times (x_s, _ms, _ns)
-since it makes off-by-1000 errors less likely and you can more easily tell
-whether overflow if likely.
-
-	David 
-
-> 
-> Best regards,
-> Alex
-> 
-
+-- 
+With best wishes
+Dmitry
 
