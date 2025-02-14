@@ -1,83 +1,107 @@
-Return-Path: <linux-kernel+bounces-514426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E275A356E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:16:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004B4A356E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911B0189256B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FFC189320F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305F61FC0E7;
-	Fri, 14 Feb 2025 06:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E64B1FC108;
+	Fri, 14 Feb 2025 06:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="COBuBEDf"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Na+XqpLG"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B5F1DDA18;
-	Fri, 14 Feb 2025 06:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BB41DDC18
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513639; cv=none; b=f6sY1J+kbWpLWkJXFn7SFQT0ylwkTOv/Zp8HM0cL5PQ0zP8vxMW+p+VP1xDWH+QKQZOimU8/ZAcIJNbYpHJ5z08bTtwqU7C5GhiC6zJfSJjvi6lGchaVV5aov519PHr2YrMwnBP7vYmVWOgk19YfJrAFjLCVXiC1Lbty2CF5W1o=
+	t=1739513658; cv=none; b=DcGgK63ScSt4rX4lCi5wRylNr7orPJZqOMKUm86sGaj1ikQyGLYI6ZwTV1QbX1jYTbuOtuyc4SMHKBiYC61fUBrjG9mOE2n9VAebOEdU1o+FiTwDwTUqOUcM8kz2Mkhg2kUauhzJlPNcvMZ1T2pmp07dNT5FKky/zAbzvnNL9wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513639; c=relaxed/simple;
-	bh=jCtbVE5bBQgbr1KkBuaBLNbMVBT/IkDigEj9mDeifos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTUPe5E/vRKVBWMJ1EgHvtyB6LO8tPOcgulCUp8Wy+ZYiYN4tlL7WpUTSWatoOXaQg9t9CTIL6RuUUas1XZokZaGnDmpjuyrvk/bZvM8Zf09Ngdh9HUuLglaDpcA/cG3Z6X9tC+9nJnTJFbjYKp22/ehAup4IWCux6VeQdkLLXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=COBuBEDf; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XnVwZa3XU2LGnJmQRApZCaWlTj8lhBvtrT87rLs4oUM=; b=COBuBEDf3DJvH9dJcMo9hUYczg
-	kDHiwfClBFshyaOxc9hX8kgz9ysvpvnJXFxB/jv+PQDaPwW0t+meqXEYGS+kTJFPIqMw24D5PIMnf
-	i+1iUpOw/dUo8qx/4m0YwcaXWgrEqS3tyWJxpK8Kui+gcn6nFWtWbGOT+2Zxrmf45HdNQZukn1BaO
-	c5qPGRPyqrICaDS5WTqlzHLDuZHIOhfSUIff3rtF6Klii/NotXfzZakmy+U/n0yVJxh4frQeYE94Q
-	e0NowXHxui0W8L4OufoFOdRbWG3go8Ry46sHqxKwAsxSwn3nSTd3oGftcuRBgPT0Sq8GDRVd/2aFF
-	0unJKJkQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tioxX-0000000DQVr-2IMS;
-	Fri, 14 Feb 2025 06:13:55 +0000
-Date: Fri, 14 Feb 2025 06:13:55 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3} Change ->mkdir() and vfs_mkdir() to return a dentry
-Message-ID: <20250214061355.GC1977892@ZenIV>
-References: <20250214052204.3105610-1-neilb@suse.de>
- <20250214060039.GB1977892@ZenIV>
+	s=arc-20240116; t=1739513658; c=relaxed/simple;
+	bh=E+zHukzTxoUAqQh1pniz8wv7WSmBiWd4YYjBi2Wtb9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y61RoRGKBDcZaZYirqYh2FoL7sZncvvFgFUGRC2Zwl5p7CbbzNzZzqJeFbvIyJ3i999EzpfYagY5mmAKbB69fKeOhB+gA8F93VXZbEcvR4XxAU37qEIuEzrcr40BDqJrLdD5jyV6I4zp/qNW8MuEHz6XZoaiTjMUL6mOuHlw9QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Na+XqpLG; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab7f860a9c6so320170266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:14:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739513655; x=1740118455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E+zHukzTxoUAqQh1pniz8wv7WSmBiWd4YYjBi2Wtb9c=;
+        b=Na+XqpLGWcI+DhFBWBNj8ihX3QXlbhQ7PWgqxkpSpXNDqQ7cyzcARnDBQ6OeTzqT8q
+         Qo6IAHxgXcX4muL+yCs3x9kmHzqf+PFkIoLYesZOJrZQfYPCSMBlzHDLzFTL2ujvkWxB
+         aMGsBAlWvxUr3PSoQDxXgGrgZCYSPVLWLFM1WTptbZNj2Mu1ELYD8+ZVzoAsrArbHmJe
+         LPLD6Cwyre0y5aTZfmQZOrnC6Xtl575jZgAXw1u2imNWFV/CBOXFnDBP/zSkGFquCI1P
+         jFh0Qw2QPFAEsBd/CWxFKITxtGy4Ga8K7/4EuTjdn0WD3mVOXNvmiSVNhOQDoZVgCu62
+         fDUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739513655; x=1740118455;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E+zHukzTxoUAqQh1pniz8wv7WSmBiWd4YYjBi2Wtb9c=;
+        b=UiSfX83Etk+MSdqfLev3Nmjg38HRlKaOuehGWWv7rQrCK1uMVv7c/EtzB4kOaCGSRm
+         ouOxtC7R2a/jn0Q+xKYzrt53IscOzojnkm/k7kY1z6mxt1uKi6LuMzKNXXvlcSwsjRL7
+         dwZuqtWkgfyx7s7OohbjmMdCbTmrmXq708o2jONp1C+X6FMUKaAZAt+43/m1/puDgjtx
+         fjJWYg3D4Ox9wEn+rvI7vlXe1V9z0ord7BCkkElyKcGBc1qPxtlbvC4kqViYorbAvqXC
+         sH5oyCmBWMNymdtoL4RpyKLhpO6rCOK/AkBx83vaOVmvewWEW3BXmHe2t6Hm1B5sSneX
+         /s3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXXgxOllaVCZLJocMqIJWY1B33P45wPj7iywuqEedphPnBmQQBaIDbLw1cPX19LSXom7GFkT/EKUE4cr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAJcbVwgVzuBtEasfoEFVRAhKewK09pVQ3y/vDlqz2iC0IhSpL
+	oFUJn0rkTGqzA460oOiC7Fop7V+cIuJNJ80XHZ2hGtNKlxxlQRooxblftPJKubA=
+X-Gm-Gg: ASbGncvPbgXw0vaKh1yj8nZ9ufhWrQidskKs4CBvrLqHZiRnrvAaDVRpzqNvfuOl4fV
+	YHIrytVPpq7UHyeCNwsttQoikRj0d1GIEIZ8I63ezSHnbUln/1+Rika6w6mG8dcO9d2/1K8/1SC
+	kqZ4A1V6UUvVfPM9ljU/9XRCdoSE19aGDnHr3g6m+PhRyxuHdiAEAmvD+3TWlAQlKsShrtOkNgk
+	y0Pyz0gAJPrufylizo6jELG447sDX8XVz8PIbl73uTRW0TTyC95k340fpcxarvGeg/KXfDHpBEd
+	OKf7RpAFNZEqcfMe21eXtHFa
+X-Google-Smtp-Source: AGHT+IEmV/spFwDvPJBmBni+qOvQYaJLBVXLCJxYkFEXGyz6aAo+8zl5YqR1HK+HjXkmRorI/a/vqw==
+X-Received: by 2002:a17:907:724c:b0:ab7:d10b:e1de with SMTP id a640c23a62f3a-ab7f339c868mr973175866b.13.1739513655453;
+        Thu, 13 Feb 2025 22:14:15 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.124])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532580c5sm276049766b.56.2025.02.13.22.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 22:14:14 -0800 (PST)
+Message-ID: <f4967c68-d79d-4ba5-ad0c-5526e7e1ccec@linaro.org>
+Date: Fri, 14 Feb 2025 06:14:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214060039.GB1977892@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] spi: s3c64xx: add support for
+ samsung,exynos990-spi
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: alim.akhtar@samsung.com, andi.shyti@kernel.org, andre.draszik@linaro.org,
+ broonie@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-spi@vger.kernel.org, peter.griffin@linaro.org, robh@kernel.org
+References: <20250212191241.280-1-wachiturroxd150@gmail.com>
+ <bad7b5b6-c61b-4e93-9415-6476976c8e81@linaro.org>
+ <Z65MYSNuDdCFNlv6@droid-r8s>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <Z65MYSNuDdCFNlv6@droid-r8s>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 06:00:39AM +0000, Al Viro wrote:
 
-> 3) I'm pretty sure that NFS is *not* the only filesystem that returns
-> unhashed negative in some success cases; will need to go over the instances
-> to verify that, though.
 
-Definitely so: in cifs_mkdir() we have
-        if ((server->ops->posix_mkdir) && (tcon->posix_extensions)) {
-                rc = server->ops->posix_mkdir(xid, inode, mode, tcon, full_path,
-                                              cifs_sb);
-                d_drop(direntry); /* for time being always refresh inode info */
-                goto mkdir_out;
-        }
-There might be other cases.  hostfs is definitely like that, I'm pretty
-sure that kernfs is as well...
+On 2/13/25 7:47 PM, Denzeel Oliva wrote:
+> Yes, Exynos990 has SPI nodes with 256-byte FIFOs, and you can see this in
+> the downstream kernel. Here are some relevant references:
+
+thanks for the references!
 
