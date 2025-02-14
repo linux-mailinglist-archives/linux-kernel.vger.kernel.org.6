@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-515261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448ADA36284
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:01:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55E7A36294
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679E2188047D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:00:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F2F166270
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385052673AE;
-	Fri, 14 Feb 2025 15:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C82673AB;
+	Fri, 14 Feb 2025 16:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a7WITPGB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaMKWUHG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A227245002;
-	Fri, 14 Feb 2025 15:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0EC266EE0;
+	Fri, 14 Feb 2025 16:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548790; cv=none; b=a9t8W7D3lBn+fr4+YieVpwTr9K4rS4MXkOHgvn7/6Q+j00BgSBk//XEfVtK5rjZoKq3jKECJ49g5RolkBk5UeO2g1/AIpLxSnB+g7fyFuFua+ohs3JUjS0vdYxe3AD9CqWad0Tl7apW9oFpfVLxGSd/2BIpDFg4M7dEZs3Ff7h0=
+	t=1739548955; cv=none; b=FWeyveDAJlU1OKj7LUyCj7RSS4ind8DuMxc+2K9rZ4TdQERJBIcfb2yeC37I5OmkTCvEGFpEamDU8BdyNDCAbu08sKcNV5OouNyXYVhUCLPdAPjqPr2z8HL95KLM+G9UEsw9zSn4i3f3hvCAsGCyKsw/PaeNtj34GOcbKu2oz9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548790; c=relaxed/simple;
-	bh=rYjbSCDp4YfP2IYLu0YJT234xz5JIba6elGHU319qY8=;
+	s=arc-20240116; t=1739548955; c=relaxed/simple;
+	bh=BP0F6Q1wNrUjUl3+JXUo0rphKo1JR7S7n/NVPl/WTLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdaTaMdnDfmHS1w+tfgbNAGVuIVj1Jj01eCsS7rqE6dgeifQ61UNsC169xGcuT0PHPpndtsh9ds2VQFMX0CALE4CNYju9dUc5agFLmj7JwlVRkWOF0sAmxNH7iJaoM7/HivgjScnDyzAcgHAH0QMHJVEpDwhhR3Ko4OAZhOyQMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a7WITPGB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=P83qv+xa0B3cTI6tUowqmEoHphMrAEAWAc9Gcn8OZvFju3eP6hYiqLuvKGFOZWThDPsK5INACdUDY8lM5edENUl71y7gdxA1R7m5c92Zi+GGpd3iFjY45m61LgK+ILiwFNkiYJokPzxXoGPSo1RFBTV5b8Vmk1Dqg+z3T8HhLqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaMKWUHG; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739548789; x=1771084789;
+  t=1739548954; x=1771084954;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=rYjbSCDp4YfP2IYLu0YJT234xz5JIba6elGHU319qY8=;
-  b=a7WITPGBeJS4DbfCpaFYiGErfhteEv7fTywQLihwG9NSbOsUc/Wztr/2
-   S6t+d6Xm4cvB3LkAvIFIPb2Dm8ltc2fIJXpcUbHLaAovolrJfnsYV2wqL
-   bcPEf/iLPkqp7y1HWK/TVeI1wIPGiDluUVa2Yzfe6K0LdT6+LyFznVDmk
-   QgDV4vVoTgcYTz1/I9bfbjcUpAY5l3TdWYsY/q51p8GSyrrcO6H9hgHOa
-   taK4BnxV7tgpVnAo9xz0Ondq2Ic2OVmF0MQ+aqpHck4VE5mAnH04aJqn3
-   nKXfyZVd7OQ/VTrLXex1u/W42CG1Dfzct5adF1DGQ/ENqxNBMfU9q5Vih
-   Q==;
-X-CSE-ConnectionGUID: lMAxPSBHQ6aa1kstOnN/gQ==
-X-CSE-MsgGUID: WLR0pQaxT6qcdX/hQo4uCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43139953"
+  bh=BP0F6Q1wNrUjUl3+JXUo0rphKo1JR7S7n/NVPl/WTLQ=;
+  b=YaMKWUHGGAhkb1IVrQBCbav7/076W16jA3FMFD2jJ+TW1oArBA9WFBuX
+   ETpuRJkUna/RbM/Gy3r+dwHlm8B6ldNAA3m1avSTDyHniUrumDkWBe4c5
+   SuQu8UCZu4/+An94yRtDddmnAZwzbxdOFqf8v911qX5phVW+vxyxbnVxS
+   L16kWao0w9eEZeaI8lhNamG0BYVhLCBpVROYVY5HTqDdOisHWzaQNeZ1l
+   EzR4uvoh0i6rk6+xHolvUunqisYiMStBZjM9Dq8D5MY+G67JOSoLuTLSP
+   h00GPSBT9l4SG6XFhpTa/BNY+hOQH4xJTF7xcgt18nLnatur/mWZ/MMtz
+   w==;
+X-CSE-ConnectionGUID: nvNWeIfgTVm7chGPby15hw==
+X-CSE-MsgGUID: 49bTjfIlRL++AwzlBo//RQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="27902468"
 X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="43139953"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:59:48 -0800
-X-CSE-ConnectionGUID: m5hwZGR3TryWlvX97j+8PQ==
-X-CSE-MsgGUID: 1yNmNXg1QBWHBkRB3rqZzA==
+   d="scan'208";a="27902468"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:01:30 -0800
+X-CSE-ConnectionGUID: +xTXFr+5SXO11Fa5Mdq1nw==
+X-CSE-MsgGUID: uC30yGarSOyVHPzD+Hscrw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="144345048"
+   d="scan'208";a="114132370"
 Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:59:43 -0800
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:01:14 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiy6O-0000000BXPT-0ATR;
-	Fri, 14 Feb 2025 17:59:40 +0200
-Date: Fri, 14 Feb 2025 17:59:39 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z69oa8_LKFxUacbj@smile.fi.intel.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiy7q-0000000BXQx-1JPb;
+	Fri, 14 Feb 2025 18:01:10 +0200
+Date: Fri, 14 Feb 2025 18:01:10 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Arpitha Raghunandan <98.arpi@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 0/2] printf: convert self-test to KUnit
+Message-ID: <Z69oxhkUzTfJ6YKi@smile.fi.intel.com>
+References: <20250210-printf-kunit-convert-v3-0-ee6ac5500f5e@gmail.com>
+ <Z69isDf_6Vy8gGcS@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,258 +94,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
+In-Reply-To: <Z69isDf_6Vy8gGcS@pathway.suse.cz>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Feb 14, 2025 at 12:49:57PM +0100, Mathieu Dubois-Briand wrote:
-> Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
+On Fri, Feb 14, 2025 at 04:35:12PM +0100, Petr Mladek wrote:
+> On Mon 2025-02-10 13:23:21, Tamir Duberstein wrote:
+> > This is one of just 3 remaining "Test Module" kselftests (the others
+> > being bitmap and scanf), the rest having been converted to KUnit.
+> > 
+> > I tested this using:
+> > 
+> > $ tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=1 printf
+> > 
+> > I have also sent out a series converting scanf[0].
+> > 
+> > Link: https://lore.kernel.org/all/20250204-scanf-kunit-convert-v3-0-386d7c3ee714@gmail.com/T/#u [0]
+> > 
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> 
+> I have just quickly tested this before leaving for a week.
+> And I am fine with the result.
 
-...
-
-> +static int max7360_gpo_reg_mask_xlate(struct gpio_regmap *gpio,
-> +				      unsigned int base, unsigned int offset,
-> +				      unsigned int *reg, unsigned int *mask)
-> +{
-> +	u16 ngpios = gpio_regmap_get_ngpio(gpio);
-> +
-> +	*reg = base;
-> +	*mask = BIT(MAX7360_MAX_KEY_COLS - (ngpios - offset));
-> +
-> +	return 0;
-
-Does this GPIO controller only capable of servicing keypads?
-I think no, hence I'm not sure why this split is needed to be
-here and not in the input driver.
-
-Or you mean that there output only GPIO lines in HW after all?
-Is there a link to the datasheet?
-
-> +}
-> +
-> +static int max7360_gpio_request(struct gpio_chip *gc, unsigned int pin)
-> +{
-> +	/*
-> +	 * GPIOs on PORT pins are shared with the PWM and rotary encoder
-> +	 * drivers: they have to be requested from the MFD driver.
-> +	 */
-
-So, this sounds to me like a pin control approach is needed here.
-This looks like an attempt to hack it in an "easy" way.
-
-> +	return max7360_port_pin_request(gc->parent->parent, pin, true);
-> +}
-> +
-> +static void max7360_gpio_free(struct gpio_chip *gc, unsigned int pin)
-> +{
-> +	max7360_port_pin_request(gc->parent->parent, pin, false);
-> +}
-> +
-> +static int max7360_set_gpos_count(struct device *dev, struct regmap *regmap)
-> +{
-> +	/*
-> +	 * MAX7360 COL0 to COL7 pins can be used either as keypad columns,
-> +	 * general purpose output or a mix of both.
-> +	 */
-> +	unsigned int val;
-> +	u32 columns;
-> +	u32 ngpios;
-> +	int ret;
-> +
-> +	ret = device_property_read_u32(dev, "ngpios", &ngpios);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Missing ngpios OF property\n");
-
-Clean messages from OF, "device property" is established term.
-
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Get the number of pins requested by the keypad and ensure our own pin
-> +	 * count is compatible with it.
-> +	 */
-> +	ret = device_property_read_u32(dev->parent, "keypad,num-columns", &columns);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to read columns count\n");
-> +		return ret;
-> +	}
-> +
-> +	if (ngpios > MAX7360_MAX_GPO ||
-> +	    (ngpios + columns > MAX7360_MAX_KEY_COLS)) {
-> +		dev_err(dev, "Incompatible gpos and columns count (%u, %u)\n",
-> +			ngpios, columns);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * MAX7360_REG_DEBOUNCE contains configuration both for keypad debounce
-> +	 * timings and gpos/keypad columns repartition. Only the later is
-> +	 * modified here.
-> +	 */
-> +	val = FIELD_PREP(MAX7360_PORTS, ngpios);
-> +	ret = regmap_write_bits(regmap, MAX7360_REG_DEBOUNCE, MAX7360_PORTS, val);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to write max7360 columns/gpos configuration");
-> +		return ret;
-> +	}
-
-Shouldn't this be configured via ->set_config() callback?
-
-> +	return 0;
-> +}
-
-...
-
-> +static int max7360_handle_mask_sync(const int index,
-> +				    const unsigned int mask_buf_def,
-> +				    const unsigned int mask_buf,
-> +				    void *const irq_drv_data)
-> +{
-> +	struct regmap *regmap = irq_drv_data;
-> +	unsigned int val;
-> +
-> +	for (unsigned int i = 0; i < MAX7360_MAX_GPIO; ++i) {
-> +		val = (mask_buf & 1 << i) ? MAX7360_PORT_CFG_INTERRUPT_MASK : 0;
-
-(mask_buf & BIT(i)) ?
-
-> +		regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
-> +				  MAX7360_PORT_CFG_INTERRUPT_MASK, val);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int max7360_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap_irq_chip *irq_chip;
-> +	struct regmap_irq_chip_data *irq_chip_data;
-> +	struct gpio_regmap_config gpio_config = { };
-> +	struct device *dev = &pdev->dev;
-> +	unsigned long gpio_function;
-> +	struct regmap *regmap;
-> +	unsigned int outconf;
-> +	unsigned long flags;
-> +	int irq;
-> +	int ret;
-> +
-> +	regmap = dev_get_regmap(dev->parent, NULL);
-> +	if (!regmap)
-> +		return dev_err_probe(dev, -ENODEV, "could not get parent regmap\n");
-> +
-> +	gpio_function = (uintptr_t)device_get_match_data(dev);
-> +
-> +	if (gpio_function == MAX7360_GPIO_PORT &&
-> +	    (device_property_read_bool(dev, "interrupt-controller"))) {
-> +		/*
-> +		 * Port GPIOs with interrupt-controller property: add IRQ
-> +		 * controller.
-> +		 */
-> +		irq = fwnode_irq_get_byname(dev->parent->fwnode, "inti");
-
-Use dev_fwnode() to get fwnode from struct device pointer.
-
-> +		if (irq < 0)
-> +			return dev_err_probe(dev, irq, "Failed to get IRQ\n");
-> +
-> +		irq_chip = devm_kzalloc(dev, sizeof(*irq_chip), GFP_KERNEL);
-> +		if (!irq_chip)
-> +			return -ENOMEM;
-> +
-> +		irq_chip->name = dev_name(dev);
-> +		irq_chip->status_base = MAX7360_REG_GPIOIN;
-> +		irq_chip->num_regs = 1;
-> +		irq_chip->num_irqs = MAX7360_MAX_GPIO;
-> +		irq_chip->irqs = max7360_regmap_irqs;
-> +		irq_chip->handle_mask_sync = max7360_handle_mask_sync;
-> +		irq_chip->status_is_level = true;
-> +		irq_chip->irq_drv_data = regmap;
-> +
-> +		for (unsigned int i = 0; i < MAX7360_MAX_GPIO; i++) {
-> +			regmap_write_bits(regmap, MAX7360_REG_PWMCFG(i),
-> +					  MAX7360_PORT_CFG_INTERRUPT_EDGES,
-> +					  MAX7360_PORT_CFG_INTERRUPT_EDGES);
-> +		}
-> +
-> +		flags = IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED;
-> +		ret = devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev), regmap, irq, flags, 0,
-> +						      irq_chip, &irq_chip_data);
-
-Right.
-
-What I mean in previous discussion is to update gpio-regmap to call this from inside.
-You need to add irq_chip pointer and irq_chip_data pointer to the regmap configuration
-and if they are set (or the first one, I dunno if this is supported by IRQ chip core)
-call this function and assign domain. This should be called after GPIO chip is
-added, but before IRQ domain attachment.
-
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "IRQ registration failed\n");
-> +
-> +		gpio_config.irq_domain = regmap_irq_get_domain(irq_chip_data);
-> +	}
-> +
-> +	if (gpio_function == MAX7360_GPIO_PORT) {
-> +		/*
-> +		 * Port GPIOs: set output mode configuration (constant-current or not).
-> +		 * This property is optional.
-> +		 */
-> +		outconf = 0;
-> +		ret = device_property_read_u32(dev, "maxim,constant-current-disable", &outconf);
-> +		if (ret && (ret != -EINVAL))
-> +			return dev_err_probe(dev, -ENODEV,
-
-Why shadowing the real error code?
-
-> +					     "Failed to read maxim,constant-current-disable OF property\n");
-
-It may be not only OF :-)
-
-> +
-> +		regmap_write(regmap, MAX7360_REG_GPIOOUTM, outconf);
-> +	}
-> +
-> +	/* Add gpio device. */
-> +	gpio_config.parent = dev;
-> +	gpio_config.regmap = regmap;
-
-> +	if (gpio_function == MAX7360_GPIO_PORT) {
-> +		gpio_config.ngpio = MAX7360_MAX_GPIO;
-
-Why this case can't be managed also via ngpios property? Maybe at the end of
-the day you rather need to have another property to tell where the split is?
-
-This will help a lot and removes unneeded sharing of ngpios here and there.
-
-What I read from this code is like you are trying to put _two_in_one_ semantics
-on the shoulders of "ngpios".
-
-> +		gpio_config.reg_dat_base = GPIO_REGMAP_ADDR(MAX7360_REG_GPIOIN);
-> +		gpio_config.reg_set_base = GPIO_REGMAP_ADDR(MAX7360_REG_PWMBASE);
-> +		gpio_config.reg_dir_out_base = GPIO_REGMAP_ADDR(MAX7360_REG_GPIOCTRL);
-> +		gpio_config.ngpio_per_reg = MAX7360_MAX_GPIO;
-> +		gpio_config.request = max7360_gpio_request;
-> +		gpio_config.free = max7360_gpio_free;
-> +	} else {
-> +		u32 ngpios;
-> +
-> +		ret = device_property_read_u32(dev, "ngpios", &ngpios);
-> +		if (ret < 0) {
-> +			dev_err(dev, "Missing ngpios OF property\n");
-> +			return ret;
-> +		}
-> +
-> +		gpio_config.reg_set_base = GPIO_REGMAP_ADDR(MAX7360_REG_PORTS);
-> +		gpio_config.reg_mask_xlate = max7360_gpo_reg_mask_xlate;
-> +		gpio_config.ngpio = ngpios;
-> +
-> +		ret = max7360_set_gpos_count(dev, regmap);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to set GPOS pin count\n");
-> +	}
-> +
-> +	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
-> +}
+Seems reasonable to me. But I want a consensus with Rasmus.
 
 -- 
 With Best Regards,
