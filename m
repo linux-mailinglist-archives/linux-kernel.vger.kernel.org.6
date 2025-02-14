@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-515008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7623A35E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:15:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D50EA35E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C1A16CFD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3343A9F3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41C2641CB;
-	Fri, 14 Feb 2025 13:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3819826462F;
+	Fri, 14 Feb 2025 13:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVLzYB0Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GMat5fW/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542677102;
-	Fri, 14 Feb 2025 13:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A977102;
+	Fri, 14 Feb 2025 13:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538597; cv=none; b=m3Cdc4zeVx+u70uusoFAuVGvXIm6OfxkXdQepOXwn9QOISABRop3VTVh3uDJofVb/+3YK3oSUjPvCuOTFOPLLr+2oail+8NmNR722cTK9GcGq2bdsjZZjW0DouJptT5r2mUgj+M0zia/khwYf51l15f5fjq/QJ9Zf9mOuafiFd4=
+	t=1739538633; cv=none; b=qjdFBt00U0Iz+hG+tRHxKJX9/FU7pKB3R6mZiCPE7rNWJro3h/GoDNX7h4pFm+LHKrxPnccUYbo5LuVtkCtLc9AHP4uzGoN9AZ8CBFN3sbzEEXN3xV3Buk04SALS9VuKNsj+4FsLWesTa/OymT1tYZ8fGl/aHfQtVUPKUA7CK6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538597; c=relaxed/simple;
-	bh=Vrd2PQQb0NRk/ZiGaKxhtfp+UzgmaQxFr0hfRHPz/jA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fRB3xmd9kpYtnOzM5GqLCKxorlYKXPbLcxMLyclzVmNrnWQ0DHiwyB3eo9DNuNLtyR1oGlgPNjJSaeb7dd8Y5Xvi03ziIHUVmKummn6qMDgV1qocCVhxS3UQDf1vymQuZFzuMGOcYe2vzpCQN3IeL6tyWb7weLnUc7WSdariIfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVLzYB0Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09DAC4CED1;
-	Fri, 14 Feb 2025 13:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739538596;
-	bh=Vrd2PQQb0NRk/ZiGaKxhtfp+UzgmaQxFr0hfRHPz/jA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JVLzYB0YjKDsqbGXroz9+cez2JO7fR0RS7SHsaH5eDJmOdVWNfnCKMDRCBar09B5u
-	 Yh8mTg8p+foaEAJ0FXtSZS89AGf9nhfuc3XfU+PgiNeOkDNZlmWU2s98a3VYU2x2r2
-	 7g8es20LHJwJN/hsCYwYOcGlrWSusrghBjplTpPX3uXkDZp1zfnjoA5ASMTfgjfTbG
-	 fchGumDOFK9rj94cLOOvuvOxppNeqC5Vjwi1sAYAAptVvg7bs76EO7PiNLgT3NZa/8
-	 FI0KIZcHtjGusptXMZ8OViUe/JkAKIFhMydhW6UwaYjJO0d+oU8baonVXx9c5wsW1k
-	 eWJqOrX5yOsbg==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
+	s=arc-20240116; t=1739538633; c=relaxed/simple;
+	bh=QlPRonjpsELaN3mstlXIcrb2TexcIyZ9zBtEQDdwNBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAZvLwpniMXr2LTWgqoGcuBsazK4g8P5U/SWcO6GsacCvEb1UdmwofHnUo8ZE97f8OQZBpA1d9WbBZJZ7I/tfS5fTlQGNb4LGJXL4U2PWknKm8fbuuVqmsb/7KOVrxHgjxRzVMZKEBLkXHSWaFvpb2Ot4VJXgV1AULwXV7NdKHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GMat5fW/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=WVC5KPxHIUTpQJAWz4Yd0Tr3K7nMkABHyOzsn0Ycnho=; b=GMat5fW/wTe2S9Xc13bsmUgHVp
+	BSKW20FGbgUDU2G628ymjJcueeL0WXBX702Wr9IeQ67colXklE/H+g5+B3a8DtXQ8qLrhA1kKa8+I
+	l4YYAWTKEKK3W9u0MPt6QyRtnhoSlP2hh5zW85j+tOTIHUJWo29swQCGqLzhfRxLwLi0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tivSH-00E4Ry-UD; Fri, 14 Feb 2025 14:10:05 +0100
+Date: Fri, 14 Feb 2025 14:10:05 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+	rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v7 07/45] arm64: RME: Define the user ABI
-In-Reply-To: <20250213161426.102987-8-steven.price@arm.com>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-8-steven.price@arm.com>
-Date: Fri, 14 Feb 2025 18:39:45 +0530
-Message-ID: <yq5aldu8wu3q.fsf@kernel.org>
+	'Pankaj Dubey' <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <ffb13051-ab93-4729-8b98-20e278552673@lunn.ch>
+References: <20250213044624.37334-1-swathi.ks@samsung.com>
+ <CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
+ <20250213044624.37334-2-swathi.ks@samsung.com>
+ <85e0dec0-5b40-427a-9417-cae0ed2aa484@lunn.ch>
+ <00b001db7e9f$ca7cfbd0$5f76f370$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00b001db7e9f$ca7cfbd0$5f76f370$@samsung.com>
 
-Steven Price <steven.price@arm.com> writes:
+On Fri, Feb 14, 2025 at 10:47:39AM +0530, Swathi K S wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: 14 February 2025 05:50
+> > To: Swathi K S <swathi.ks@samsung.com>
+> > Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
+> > edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> > robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
+> > mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
+> > rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+> > bindings
+> > 
+> > > +  phy-mode:
+> > > +    enum:
+> > > +      - rgmii-id
+> > 
+> > phy-mode is normally a board property, in the .dts file, since the board
+> might
+> > decide to have extra long clock lines and so want 'rgmii'.
+> > 
+> > The only reason i can think of putting rgmii-id here is if the MAC only
+> > supports 'rgmii-id', it is impossible to make it not add delays.
+> > If that is true, a comment would be good.
+> 
+> 
+> Hi Andrew,
+> Thanks for reviewing.
+> I think we already discussed this part some time back here [1]
+> [1] :
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230814112539.7
+> 0453-2-sriranjani.p@samsung.com/#25879995
+> Please do let me know if there is any other concern on this.
 
-....
+We partially discussed this in this thread.
 
-> +/* Available with KVM_CAP_ARM_RME, only for VMs with KVM_VM_TYPE_ARM_REALM  */
-> +struct kvm_arm_rmm_psci_complete {
-> +	__u64 target_mpidr;
-> +	__u32 psci_status;
-> +	__u32 padding[3];
-> +};
-> +
-> +/* FIXME: Update nr (0xd2) when merging */
-> +#define KVM_ARM_VCPU_RMM_PSCI_COMPLETE	_IOW(KVMIO, 0xd2, struct kvm_arm_rmm_psci_complete)
-> +
+As i said, what value you need here depends on the board design. The
+PCB could provide the 2ns delay, in which case, 'rgmii' would be the
+correct value to have in the board .dts file. Hence the binding should
+not restrict the value of phy-mode to just rgmii-id. All 4 rmgii
+values should be accepted.
 
-This needs an update?
+The only reason you would force only rgmii-id is if the MAC/PHY pair
+cannot do anything else. If that really is true, i would expect a
+comment in the binding, and the MAC driver to return -EINVAL for
+anything but rgmii-id.
 
--aneesh
+	Andrew
 
