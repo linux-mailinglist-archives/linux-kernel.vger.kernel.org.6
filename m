@@ -1,216 +1,246 @@
-Return-Path: <linux-kernel+bounces-515584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E6EA3667C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:50:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF6DA3667D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F01171DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8863F3B2CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E281C84D7;
-	Fri, 14 Feb 2025 19:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13721C84C6;
+	Fri, 14 Feb 2025 19:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y7sMfrs/"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dLdjlEyy"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDF1ADC7C;
-	Fri, 14 Feb 2025 19:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562647; cv=fail; b=jDULnT2ZdYbD/b3v+zBHAU03XKXpQHUlChBB4Mc5vW81KbROvYMntUyIs17z95uttaPIT8dblcYeo+NXePa9u3dmdPx/U8mWDMPPxzGjjo1ylLcVZD0S2XbOD3mCMdC8ZVC8pR95sOsaAEn28vGl8xl+s9taPR5etV6Afxn+QiM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562647; c=relaxed/simple;
-	bh=WRksux7AKvVUFEJJNdri86vMVm1a2vOQ5p0UX6NZgd8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EC3o0GeSWth/91K+wKxbxHmhRjGsgFHIbqHOjgmmKDAnhkdK/qxeRj3pmPWLjRLQ1q4Dlwk9IceSCzJEoWFhWYsNx9+LJdPui9597DbOHV2a+svVaL/ETwXjISz9XKdirCBoP9Ndx2oO9Y/WuAOqS28+qBVlqcpc2+rvlloEaVA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y7sMfrs/; arc=fail smtp.client-ip=40.107.223.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PJjSnqWSVRLJAwa985Ipr9nWVmXzyMOSTXESuT2uataD1JrtOhxDl9YdeqRqS6yxjNMDLGNg6TebBxcYIWXJpj5BhoUb+UxYgQJcYdfOKiuy82kfBjdNZvLYQ3EZE7+NF8AxToe4e/FrA2OpLp4rc4eBUFupwENcJfirtv+xsvMNnP36cb4/3tQkVtpjqz8Q/WfuIFSsysim+mSPCuSgakwv/Oa7P5Hlm0GOwMU17HT7noDSew9FccjeymbUZAHb7glFOrpR89NYGqSQy2M0t2oXfORXXW6KASu+2c2g6XDrWSkHm0VbJ4o1WpD8hGeMGhfpbgQ8q8ifeN4JWv1kWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P0kCMvGVgvG1SlkvhOyu7XAkblNFR3IzDq03lmuLGuY=;
- b=xUgZCNokYNdVuqga6tghAPpGYGYHDOwEuPClm4MtwCpcGUrqsPIiC09YrNyYyOhETMzEyWAXWHXhCuoS8BHYke+7evcvMa1Ln3h4KEXDnKgcmF/ylOlGtn9+KOlIrMCKZe3Mb8IUnZih2zkog78UrHLZEy89+dgtkVYOpCONVRtOfBdW8atz0QYn83+17dvdrfsEgheh+1BkzUcPyjLxJAEpbKJOdvrZTiTQSaTxQ6Ad9FcNCuQMAyydHxB7CPbfdG614alrUm0yo6z8KhiJqgqf058Y0GRYR2pcDpi1O4pVD7hMDgO8Hw8RqK4nQNXOYgvdKbW301evJ5i+btdoog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P0kCMvGVgvG1SlkvhOyu7XAkblNFR3IzDq03lmuLGuY=;
- b=Y7sMfrs/Exxxp9+wz453T52IUTkxXiP6IUQfU64+dfd/EAoRqsVfc7J4GtKqOnpR91Vk5ocEh5VwMa2ZO3WXP5qB3iyBrn8FinhpUyvDZLIVOLCzAVM5PKRvCjWQ0TeFBFXWGYl20d3sYHMDJaN9HBnesIUQXZDZDwPEpSNskyQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- SN7PR12MB7786.namprd12.prod.outlook.com (2603:10b6:806:349::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.19; Fri, 14 Feb
- 2025 19:50:43 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8422.010; Fri, 14 Feb 2025
- 19:50:43 +0000
-Message-ID: <a928791b-6fb9-4a03-88fa-87e70b609c9f@amd.com>
-Date: Fri, 14 Feb 2025 13:50:40 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/17] cxl/pci: Map CXL PCIe Upstream Switch Port RAS
- registers
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
- <20250211192444.2292833-9-terry.bowman@amd.com>
- <20250214151531.000007d1@huawei.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <20250214151531.000007d1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0094.namprd13.prod.outlook.com
- (2603:10b6:806:24::9) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5E51C84B7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739562657; cv=none; b=ismm94x8aTFDID2aYXPk3mnYN8ZDvELz3mLUtC4jcp9ZaUuXDwFTTYtp8MT0wj23aCvxqunQBW+UKGvbc7/YIGDRW9Tnp2+YR6MGZmXgokzSwLLkfB0llW1jJRggKBhWhzrniXpi9yGnhHPUSpaSxg7bQGe1YHbHLWjvw0pHyCM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739562657; c=relaxed/simple;
+	bh=DwUTVYnjC40TrkHdh/Mi0mheTlk/nJ8tixLZFXZJOv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h+U3QY8Vl8mRKRv4RW23dvF1rckkYayxVmkQr5qFnRfgAZLnm3dG/nDAb7m7weTFfPbdlWMcOYxFeBgFbEXSzNou2FyeWydCNQ3xW8vUA/Vn20tcnHooL3MKUiIC++3n8gNEYD985Ld2Z4DAUpTNap3Z8+k4YTaRJ7GmxVhBbeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dLdjlEyy; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d147331fb5so24055ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:50:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739562654; x=1740167454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yMGxgVjqnFXecO8jpntKOUuSRl25sDscdmjbdyKJKwI=;
+        b=dLdjlEyyWcozLOAd78m5Y61YdqSF1pvf0ywteyakgOTlgH5ijApT/nCIHo75rSamhj
+         nR2zpfLdQqxPL3wEwFESq139/cmN74OgsavAZUvIMdtLl9Y4XoQBLaaK7/f+MjUHAZfQ
+         qT07JMUG5YTlCGhaCRm+RHP2IM3vnU6MC8egKeJdPa5LdSjJ8LOemkct+WRxm9fTln4b
+         7cfhBcvTyuGHZaBfTzQf6Z90Pqx3YAbG4AUoO+EchQ6o4C6YwiY6IrD0AlQqQbZps9Dv
+         hu4QzrCZopE2q9OHVW8uuTMlA07L5vr9xtkbSIOczqf/yQC+2hIxAwuibVmSNJZv7jED
+         +sVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739562654; x=1740167454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMGxgVjqnFXecO8jpntKOUuSRl25sDscdmjbdyKJKwI=;
+        b=tsQnnA+FbVjWcMHy3wlhjSKnf7MhXMbLlyY3h6drid/tCLENIvJug/uvsC89i09iM9
+         LwLHqYxaBSyuNVe3oYv+Ns84oSSQC9HUwj5lIrqOC+4AQ3cObHjvLqYSUFndOCFCkKY0
+         cvvTp9UllL4VoLWiDuSoNXlYEP9VIPGTIaknJ4wjftcGz3rxiGpm137eOwWvIFlakfOD
+         Lt/R6N76UaW2MyAG4P8d9/tPOaNuSk8U4O5Gyywx4PRt4XL7NBFXe7f38rnnSQGya7Uh
+         ph2AGckSyparN11wxhF48jSOFRwAvLPotovwoXA+nCPHos42lYR33yFvXMplY+kiLdTy
+         TDng==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ4+AmCZ00H6lKwTIcLdQpeddvjHLz+yBVY4ARvVofEHN5XRHDM3dATiIFn3Hdw9Y3pVUGK7bz27oErVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Aw1miirFMvGfKiR5FKSCLrYwTEIedH5NoeGf8T4XA30c62mD
+	7RuSR3vy+5P+mBE9FpRZdQbKpgASB/wGcwxVPa/ZKlbmU9aXlUqDgcnP9xNiT03CMtksNe6t6Zc
+	uNuUqhnw07kEubBx0EAdVusb1iBMzdIl811ue
+X-Gm-Gg: ASbGncshkgZJ6AqMiUrCPvq74wQ/z9KUjBs2MtXrXOKAGOftO9LHDCKutgMflqGnZoC
+	fHCPFKSu2gf7TfPqrosRwxCeIHYtt64skUwsAWlxhYssb1M8VxRWDZOvFKtj86kMLcWlT1vfXrA
+	==
+X-Google-Smtp-Source: AGHT+IGVwXuZ0BprBpcC1fxl06B1UuMEnsbrR+Md4UA5nLoDgtlNhsFIMoLeIwc16v+dQcXnDPBOaNZh1RAivzk5BHw=
+X-Received: by 2002:a92:cd87:0:b0:3d1:8a3d:ea90 with SMTP id
+ e9e14a558f8ab-3d2826ec471mr264115ab.19.1739562654297; Fri, 14 Feb 2025
+ 11:50:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SN7PR12MB7786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e140420-e12a-4862-2062-08dd4d30ddbf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T003UWRDYjlvMVJHMFJMeXB2SGNma3ZhdElnUkpRM20vMnl4TyswSFYvRmdk?=
- =?utf-8?B?R21oeVJoSTNHa2hKS3RVclhkTXg4MlVoQzZOWWZsdVNhT2VFR2J3VlhIUVpu?=
- =?utf-8?B?Z3RhWkNaOW9LNUM1NlVwNzZVbG5MSDlCWG9DUDE4MGx0eStJUmdhWnVUTFIz?=
- =?utf-8?B?Qm1ndktEbnkyWVNaelpwS3RyVWFGVnczMitNTFprQXI0NEdsbXlwbnNkTkZB?=
- =?utf-8?B?YUlsVi9nL2FBU05hZVMzQnlGS0VHODZaV3NEYVQ1RTZvV2prcEMwMS9RRmpk?=
- =?utf-8?B?eEVUT09ZRjQ0M244ZE9DdHBnUStyZHJhNUJLdGtOQ1dLZ1NsU0t4SmR1RURQ?=
- =?utf-8?B?NmNRRUp2QjlkYnJXVG03cHFvbThGZURiSU9mbHVLNTBEQ3BYbXZ3QWNibDFI?=
- =?utf-8?B?NWFPSjQvVUkxbWpqWWRaRjlXVkZyUjQyaUdHR0FmOTV2bEc5eTRlY013Qmxs?=
- =?utf-8?B?QjFFVi9pWTdmTG5FN0hBMU1FL01mbXFPUGZpRzFkWmExSzFUbzM2Z0FJa2R4?=
- =?utf-8?B?ZHNkaEtEdWtKUGFKbU41WDQ1WkgxWWNucWVrbEEydW96Z2xhRzJzc2M1bFFM?=
- =?utf-8?B?dVBUZDVlemtVb3VRZkRqS09NTmZKWVF3VWRsQ09DMmliam91TmZhRXpLYzE2?=
- =?utf-8?B?ZFU4OFc1NGVMVWE0UlZsWmZaMU9BbHNzY0gvdng2QUtUYTRxRVp5dG1QV0Jk?=
- =?utf-8?B?N1MrQWVpWHBJSWk1SXg1QkhGSjZWZksrdmVTWHZ1N1NqL1VuUU9Zbjk2VE9U?=
- =?utf-8?B?RkU2cElFRTJMNFVwQU1IeW53YW1ka3VmOVo0RG5OSlY2bWFiOCsvQUVkaXA0?=
- =?utf-8?B?TzUvWXFlMmtTRUhxTGVTSkhQVFFMRGFiWkwxZk9oZUJxR1dwUmYzanM1ZzR6?=
- =?utf-8?B?VUlGTUdWeGpQM1hlS1JrN2c1ckNvTTlDeUdLaGo2b3IxZFBldFJINDZBODFm?=
- =?utf-8?B?VVNrdnFiSUg2Myt1dGl5b2YrVHhzK1VXZnMvL01iS1ZQa3ZtWVFzV1R5TWVE?=
- =?utf-8?B?V2JkTnprcDNjRzM4NlN1N0U0Q25haWhRaWx6clZlVFNUeXRYNC9TK3NyS1Nw?=
- =?utf-8?B?UjZZTVp1U0djVmV2eU80YnJaWDQvRkJHaHd0SXFrRmFaK3p0ZkVHYkU3RE43?=
- =?utf-8?B?Qkd4KzhWd3Bkb1I0bVlsNElmd281NEFoeSszMGo3Z1h4YkJLWHBLY29mOTBE?=
- =?utf-8?B?cFhKSGE1T0lmU296ZXBselJDR2NWd1VVaHI3ZkpEaWFSbEdpaENUazZjdWJR?=
- =?utf-8?B?cU5XajVTenF1SzMwWGZzZTF3TzdCblZQOXErV0pTc1dySkdsdWhWNUJwVjlQ?=
- =?utf-8?B?UkowaUJGb3gzdGVCLzZSN2diWDFtK3RvK0tCODlhdjRUUmduOWYxRm5vVkZH?=
- =?utf-8?B?ODM1VnU1UEYxZ3I2ejRmdlpjdnp2TEtWaU1vUmkrTWZ0cXpRN3lGY0QyMTNv?=
- =?utf-8?B?YW04cDlXNHZUUGNKTWZISUwySUpNZ0tOME5Nc0huODhxME95WEx0SmQ3NXc0?=
- =?utf-8?B?WG1MWVFWR01PVGRxbVluWm81bnFud1dGYmhoUnJCT1ZnY3Z4TGkxdkdhRnE0?=
- =?utf-8?B?S3FIMzlFZ3VNaFFaRnVFTXF0Y1ZpZkx0UzdtT3gwZ014ODhmUDZBVXJtczdu?=
- =?utf-8?B?eXhGNWVRL3R1ZFczUGlRNXAweFJoTnhoOUltcTUyaEFXVjNtRGpGU0pyTHNo?=
- =?utf-8?B?bUdPa1IxbU9NZVA3TFBBaVFRbGI2OG5pUnVtZDhtMWJkaG56ei9BcnhuZW5V?=
- =?utf-8?B?UFJsTVNmTm1ERUFXWGhLSEx0WktTNW9JaDhuS1J4ZndidCs1NXppMDNtOXJw?=
- =?utf-8?B?eWF0WkdxWEwrMTYrTnpsRFJKMkw4b2p1MmY1MjVlbzBYNExsWmxINXQwY0NX?=
- =?utf-8?Q?6cMpPVYGbi3NO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3greFZkZVR5S3NFY0lGTkVZdW1ncU5LOGdHMlhNQnRWb3UrWWY2WlY1Ylh2?=
- =?utf-8?B?WmpZcWplQkZaUis4MXNVWlR6NCtzVHZvc2ZaNmttczlFMHNzQ0MzcFIvaytn?=
- =?utf-8?B?ODFUL2s1NkpZQ2J6Y3p6RUQ5TGFPd3hZTjkwN01mRjl0RWxpb3IwclBiRWpw?=
- =?utf-8?B?cTNoa3UyYjZQTkFqMHdCSlZxcGpRMXZLNkFEQzdXQWdRNzVJT3BML3dhRUtN?=
- =?utf-8?B?ZmgySUtySWdXR2prNG44aVh2M3pLVHVsSmJXWjlIM2RwU2I5OWZuVUhGVG9O?=
- =?utf-8?B?TTJVaW1GVmR6L0tRTkY0SUc2Z1RHSmUzZWxIV1paTmNGMUFIT1JyTU8vOGp6?=
- =?utf-8?B?RFhmWXF3Ry9FY0dWZ2lCbXVsMlRnWWRtekRjSEVHcUMwR1lNRVozSVNXeCs5?=
- =?utf-8?B?Z3RKblJjY0JRQ3FKeFhYL2p3SjJicmszOVB0NUN4T0N4QW9udkdTK3VhQUJO?=
- =?utf-8?B?NkYzSTBwNGtlMDFGempKdjdBQjNEQU1iL25ZL2E2WVVieXVsMEF0M3Vuajhj?=
- =?utf-8?B?Y2tPcHVzRUptWnRBUFdwdWFRVHludnhFbGRsb04xN0dXeXg2NlgweDNHcDJ1?=
- =?utf-8?B?dzAwSzFtakt0UzdrMjZHNHRyZWtocUlXWnZwUEN0c3JRajdhTW1ydm00dmc1?=
- =?utf-8?B?VlYzOTNtM1ZBck0xbEI1NUdWQXgrRXJzdUdERnhkZWNuSCtOOUlXeVZZa0k4?=
- =?utf-8?B?MzBCSkQ4MW9KOUp0Z0kxZlJJaXNDQmMrYm9DTGxtMVhuSHNsM1hpL0VZSHpZ?=
- =?utf-8?B?U1Mxdms3aFdWOExlWTFrUFhOMHJtK0ZsQ0RPTkYwOWZzTkpIVDdMVUFvb2pS?=
- =?utf-8?B?WGdBb3RtNlJwclBkUnh3d0lLeDQyL2Z2NEdNWTJTVGk1S0NyVWJvdEJKRUNH?=
- =?utf-8?B?SmFwSU1DdTloVUVpT1BLalh5b2V6cE8vRjdTWHhEOGtqTTdCTVU2WTByUzFt?=
- =?utf-8?B?UHVBQldYSWFrUFdobkFVZm1VczlhbEJCWFVKb0N0eFc0UGNxalc4ZW15amx4?=
- =?utf-8?B?SDVZTFl2VlpDRXNWTHdJRlpGYkFTSnlvVkxCcFRRQVJac09ibWRZOWNGN3dQ?=
- =?utf-8?B?ZjRVbmlyNGRaajVFK2c4NDJMbEFyTGkvdGFFU0dPQ2hZWk9teU1XUnVWak5R?=
- =?utf-8?B?TXJKOFczbGljMm5CM0pNNTBmV3E5VWF5RW9sYUMwQUw4b2R4czZXKzNlR2Fy?=
- =?utf-8?B?bkZsc1p5ZWxIS3JMazRiQWlZbG5va0VGRTRjMGp1aVppM2xET1RtYXNpeU50?=
- =?utf-8?B?K0FYTXJVNW02ZWxidVZZandEeEg1TXg4YXF0R2hYeEhRclI2R0tVYWNvYjhs?=
- =?utf-8?B?ZCtQWVBPamNjUWJTOEZVL1RZTUtZTW5kODRSNTRvbEI0WHZGMnlQT0VNWUxP?=
- =?utf-8?B?RmVLb3dXTkdVb3MySkNtcTVDMlV3Sm1hN01GcUxBMURtMmVHdERONmhXSUVy?=
- =?utf-8?B?aUN1QS9VMVNQMWhVRUZUaFVienpOY0JqNm1FR0tCNTVaR0RRR2FCQnBhRDJz?=
- =?utf-8?B?UHc0eE44T3lSQ0YrOU9mRlRBZ0JvRE1haXRJc2xoZ1phdVhwYjBnbzAwSnh0?=
- =?utf-8?B?ZmZ3TjAxTzlBTW1VNG92TUxKTDFDd28rWVIxTzFLcGlVRXJ0QitTNzRPM1FI?=
- =?utf-8?B?YTY3WlhnejZ4WXQzR1cwSG9GYVhGeHltanp5WUxYdlZoRzZ0eEZKcStRVmpW?=
- =?utf-8?B?dWhnVUs2ekVqaUNEYVdOOWVLQjM3MnBOOTA0K2FjbWZBY2t4d3VhakVCcWNk?=
- =?utf-8?B?L2pCckw0Q0VRVDZxTk5IZHdBUHVoK29hT0lBV0h4Vk83MXRYaHVHVlBzRU1O?=
- =?utf-8?B?aGJJbXBkVFgrRGV0cER5bWNoKzVXazQxK29ORWVPSy9YTTNEWFZacHU2SkpY?=
- =?utf-8?B?UDNiYm52QWtCaGFlNmQ3RnlNUzNveWNIcnVpaEFnYUZESXZiWFNKWm85WUVp?=
- =?utf-8?B?UERrdHZzaWhKNTZFdlpJSGYvUUNrWjZXS254VVQxWjlHaUtjS2tqSVAwWTRm?=
- =?utf-8?B?K2U0WFFFOVk4MFNZak5BUFYyYi9TaU9HNzl5WUdVcWIySmY5TFczWWhFL0px?=
- =?utf-8?B?N0g4MmtWMXErNm53Y1lwQUhVUkJ6SnFseUhpTjBTU3hSV2xmK1U4SGFRTnRG?=
- =?utf-8?Q?fK54Sgl7ORZRfCnXYSS5HuOOO?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e140420-e12a-4862-2062-08dd4d30ddbf
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 19:50:43.2158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ju7ly1VMPPrUo/aXuc2KEhqoqHwGG8ruoh02mbXSx0gwLT0LXjlSGpHXQklwjQ7hR0VxWrR5HCjLxwF7PlXawQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7786
+References: <20250214191641.756664-1-namhyung@kernel.org>
+In-Reply-To: <20250214191641.756664-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 14 Feb 2025 11:50:42 -0800
+X-Gm-Features: AWEUYZn46iatFnw4K7GkgJuonnk6iTL5o9ilSnWJZg5y1qa5zgD09rSp5sMfLIM
+Message-ID: <CAP-5=fXnx_kzUjVwA7cm-JwpqRDevaj59UdTbKnLOjbNx_OUNQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf tools: Fix compile error on sample->user_regs
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2/14/2025 9:15 AM, Jonathan Cameron wrote:
-> On Tue, 11 Feb 2025 13:24:35 -0600
-> Terry Bowman <terry.bowman@amd.com> wrote:
+On Fri, Feb 14, 2025 at 11:16=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
->> Add logic to map CXL PCIe Upstream Switch Port (USP) RAS registers.
->>
->> Introduce 'struct cxl_regs' member into 'struct cxl_port' to cache a
->> pointer to the CXL Upstream Port's mapped RAS registers.
->>
->> Also, introduce cxl_uport_init_ras_reporting() to perform the USP RAS
->> register mapping. This is similar to the existing
->> cxl_dport_init_ras_reporting() but for USP devices.
->>
->> The USP may have multiple downstream endpoints. Before mapping RAS
->> registers check if the registers are already mapped.
->>
->> Introduce a mutex for synchronizing accesses to the cached RAS
->> mapping.
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Reviewed-by: Gregory Price <gourry@gourry.net>
->>  /**
->>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
->>   * @dport: the cxl_dport that needs to be initialized
->> @@ -801,7 +819,6 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
->>  				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
->>  		dev_err(dport_dev, "Failed to map RAS capability\n");
->>  	mutex_unlock(&ras_init_mutex);
->> -
-> Grumpy hat (it is Friday afternoon).  Shouldn't be in this patch!
-Thanks. This is removed from this patch in next revision.
+> It's recently changed to allocate dynamically but misses to update some
+> arch-dependent codes to use perf_sample__user_regs().
+>
+> Fixes: dc6d2bc2d893a878 ("perf sample: Make user_regs and intr_regs optio=
+nal")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-Terry
+Thanks for this! My tag in case it is useful:
+Reviewed-by: Ian Rogers <irogers@google.com>
 
+Would be nice to have asan testing to make sure there are arch
+dependent memory leaks, less arch code would be nice.
+
+Thanks,
+Ian
+
+> ---
+> v2) fix arm (32-bit) as well
+>
+>  tools/perf/arch/arm/tests/dwarf-unwind.c      | 2 +-
+>  tools/perf/arch/arm/util/unwind-libdw.c       | 2 +-
+>  tools/perf/arch/csky/util/unwind-libdw.c      | 2 +-
+>  tools/perf/arch/loongarch/util/unwind-libdw.c | 2 +-
+>  tools/perf/arch/powerpc/tests/dwarf-unwind.c  | 2 +-
+>  tools/perf/arch/powerpc/util/unwind-libdw.c   | 2 +-
+>  tools/perf/arch/riscv/util/unwind-libdw.c     | 2 +-
+>  tools/perf/arch/s390/util/unwind-libdw.c      | 2 +-
+>  8 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/a=
+rm/tests/dwarf-unwind.c
+> index 9bc304cb7762b5d1..f421910e07097152 100644
+> --- a/tools/perf/arch/arm/tests/dwarf-unwind.c
+> +++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
+> @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+>  int test__arch_unwind_sample(struct perf_sample *sample,
+>                              struct thread *thread)
+>  {
+> -       struct regs_dump *regs =3D &sample->user_regs;
+> +       struct regs_dump *regs =3D perf_sample__user_regs(sample);
+>         u64 *buf;
+>
+>         buf =3D calloc(1, sizeof(u64) * PERF_REGS_MAX);
+> diff --git a/tools/perf/arch/arm/util/unwind-libdw.c b/tools/perf/arch/ar=
+m/util/unwind-libdw.c
+> index 4e02cef461e3af34..fbb643f224ec4b27 100644
+> --- a/tools/perf/arch/arm/util/unwind-libdw.c
+> +++ b/tools/perf/arch/arm/util/unwind-libdw.c
+> @@ -8,7 +8,7 @@
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[PERF_REG_ARM_MAX];
+>
+>  #define REG(r) ({                                              \
+> diff --git a/tools/perf/arch/csky/util/unwind-libdw.c b/tools/perf/arch/c=
+sky/util/unwind-libdw.c
+> index 79df4374ab18dc36..b20b1569783d7e98 100644
+> --- a/tools/perf/arch/csky/util/unwind-libdw.c
+> +++ b/tools/perf/arch/csky/util/unwind-libdw.c
+> @@ -10,7 +10,7 @@
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[PERF_REG_CSKY_MAX];
+>
+>  #define REG(r) ({                                              \
+> diff --git a/tools/perf/arch/loongarch/util/unwind-libdw.c b/tools/perf/a=
+rch/loongarch/util/unwind-libdw.c
+> index 7b3b9a4b21f8f482..60b1144bedd5f325 100644
+> --- a/tools/perf/arch/loongarch/util/unwind-libdw.c
+> +++ b/tools/perf/arch/loongarch/util/unwind-libdw.c
+> @@ -10,7 +10,7 @@
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[PERF_REG_LOONGARCH_MAX];
+>
+>  #define REG(r) ({                                                      \
+> diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/ar=
+ch/powerpc/tests/dwarf-unwind.c
+> index 5ecf82893b84d5c0..66af884baa660389 100644
+> --- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+> +++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+> @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+>  int test__arch_unwind_sample(struct perf_sample *sample,
+>                              struct thread *thread)
+>  {
+> -       struct regs_dump *regs =3D &sample->user_regs;
+> +       struct regs_dump *regs =3D perf_sample__user_regs(sample);
+>         u64 *buf;
+>
+>         buf =3D calloc(1, sizeof(u64) * PERF_REGS_MAX);
+> diff --git a/tools/perf/arch/powerpc/util/unwind-libdw.c b/tools/perf/arc=
+h/powerpc/util/unwind-libdw.c
+> index e9a5a8bb67d9186e..82d0c28ae3459ecd 100644
+> --- a/tools/perf/arch/powerpc/util/unwind-libdw.c
+> +++ b/tools/perf/arch/powerpc/util/unwind-libdw.c
+> @@ -16,7 +16,7 @@ static const int special_regs[3][2] =3D {
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[32], dwarf_nip;
+>         size_t i;
+>
+> diff --git a/tools/perf/arch/riscv/util/unwind-libdw.c b/tools/perf/arch/=
+riscv/util/unwind-libdw.c
+> index 5c98010d8b59777f..dc1476e16321736d 100644
+> --- a/tools/perf/arch/riscv/util/unwind-libdw.c
+> +++ b/tools/perf/arch/riscv/util/unwind-libdw.c
+> @@ -10,7 +10,7 @@
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[32];
+>
+>  #define REG(r) ({                                              \
+> diff --git a/tools/perf/arch/s390/util/unwind-libdw.c b/tools/perf/arch/s=
+390/util/unwind-libdw.c
+> index f50fb6dbb35c5dc6..c27c7a0d1076c890 100644
+> --- a/tools/perf/arch/s390/util/unwind-libdw.c
+> +++ b/tools/perf/arch/s390/util/unwind-libdw.c
+> @@ -11,7 +11,7 @@
+>  bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>  {
+>         struct unwind_info *ui =3D arg;
+> -       struct regs_dump *user_regs =3D &ui->sample->user_regs;
+> +       struct regs_dump *user_regs =3D perf_sample__user_regs(ui->sample=
+);
+>         Dwarf_Word dwarf_regs[ARRAY_SIZE(s390_dwarf_regs)];
+>
+>  #define REG(r) ({                                              \
+> --
+> 2.48.1.601.g30ceb7b040-goog
+>
 
