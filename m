@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-514662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3516A359F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:14:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA02CA359E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58523AFDBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B440E18920CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A05245B05;
-	Fri, 14 Feb 2025 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B8122DFBD;
+	Fri, 14 Feb 2025 09:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bkw6o3jj"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjial0J4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA2622D79E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0B9245AFC;
+	Fri, 14 Feb 2025 09:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524235; cv=none; b=QtCl0sdqgNS9sH/UvQ/uhLgW4ElLFSVGvPYDoyt4sDc9Hqe8XIOLshqt2iLzeM9fhtpVYVrOYgKIFWRnIwJy+wxvYUyGQQ4hXHZlr58Hpl1pt8ICTpTT/6TMh3jicWFBUT6/T/AWOACz0J0Jyr+3wHvvs3wcc8lT4c7HnbMRMno=
+	t=1739524249; cv=none; b=rRttSgldQrgEwR6NFlYSPy/6NLYn67ohmeBniFfB1T3fw4RRK4Vl87bo23o9oWHUB8ik67LDhebNUnsURYw6/5NWdJ9Pi8krhw9bh64uTsviozJSpY7gAOwfcyLO7HOHW+zvp+KkVn4NXLiXLJlBeoxoyd2DawVKBzyalqe4/SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524235; c=relaxed/simple;
-	bh=l7XQn06UKH6z6aX2lgLTdUGl1oX7PeNZbACW+APz/8E=;
+	s=arc-20240116; t=1739524249; c=relaxed/simple;
+	bh=i2DkwNe+hd5bSVB4MM+FQdVbcjl7cWhkxdqwDUKiAcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i65RFHO+6eYca41bNxzO9HPcQzVd56Rrjy2ZV5rXoS4OjzGyWQ/SxJpHzxgFavLjmPHpBbHJZjXrJ49O/CD3GQeEG942Cl/YCm+xsrnz/UMtykWhJQMW45uIDdbg1liSU9VfgUhVHjxnTfzyW0ZIX89EKKX5hsmg20i2FAczFQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bkw6o3jj; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=p8cH
-	yiLvglep8gCoV5lWx+z+f4lN7jvFWIlgVLg9rw0=; b=bkw6o3jjrCJKBZ/7dOUz
-	oHo0fwuC4AhdPv0Ht4HN4FVHrEqHvOZxqA+lPjQP8b/rQgae+8rnChX6DqIq52dk
-	aFTZAuC3iWyvuWGEhMrOUslfafOReFOD+2dVdgi+Uld1u9sJrS5bO43kgshGED2d
-	LXQ38OHUFd9Sr6IvwGSS35ar44cjgXnYGhmYsvMw5vFuq/CzVlUPfEUwgAnhVJO0
-	XAIdldZ0eP8IsvpVcLu8LSM/QlglOBRTg+6pNMZ+lpoEaz6hQ3guS8EjWAxoRKCG
-	iaxujdzpPZ3yfaoSAeHJosEuBEkXlzq6hNUpYsB4FjXk0yslLBY+T3GcoOvbjIqs
-	+w==
-Received: (qmail 2318358 invoked from network); 14 Feb 2025 10:10:27 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Feb 2025 10:10:27 +0100
-X-UD-Smtp-Session: l3s3148p1@epilixYuKtxehh9k
-Date: Fri, 14 Feb 2025 10:10:27 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 0/2] i2c: octeon: Add block-mode r/w
-Message-ID: <Z68Ig1ckLoULA08E@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
- <seom4yspcjnmdxxwn6wuyiqdy2ywpna6nw4rn36tsqinlncbca@jdehzfnznlsg>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgJQEks3pmrhbEc5f+kvHvvWmC3vf/T6uoYH6qE8Fo/IecTLVcTuEqNK67LjphAMtmq8vMJfd+0GVa1Z8KMJ2YLLc6iYxDwtuN18jByb0tAS3gpqLFgS6D0R28D6QcUSC5MfjcmGtjUOLncSrIAQsGPtNvnmNJNGUixb6AlGogU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjial0J4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29EF6C4CED1;
+	Fri, 14 Feb 2025 09:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739524248;
+	bh=i2DkwNe+hd5bSVB4MM+FQdVbcjl7cWhkxdqwDUKiAcM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=bjial0J4w0bzmX9kyvBVYwgAzQO658jxw9OEGaz3IO6lXixoPP2mlcu/HJxoEWvgG
+	 fMdXe1tADgNlAa76xF372GgzuPMB1VXYImvECKK5Xz12tU/pKbma5ECvWTAO02V5N7
+	 aYcu0BdyE6FHLEyw1QGXIlP4c9SXQqFHpNQfhUxttld4lYFrIdalnK7ybKiB+iaFkp
+	 gDC39BNvWq6bYd5hRugnmhEbHWbd+qWffHxMY7VFsgiha9K+ISJ3vJVNlDgfH+STco
+	 ClxPRu4QcTwA+63nksto3YbAX9cblHrK8mMHYS3PqAXueuAtTpIGnBNszOqkkDlkkF
+	 CcyhfPIP4vePQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id EC12CCE0426; Fri, 14 Feb 2025 01:10:43 -0800 (PST)
+Date: Fri, 14 Feb 2025 01:10:43 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rcu/exp: Protect against early QS report
+Message-ID: <abaf4f7f-42b3-43ff-888c-369501b0b4c6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-2-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iIHNQfzo6ZOCO/mt"
-Content-Disposition: inline
-In-Reply-To: <seom4yspcjnmdxxwn6wuyiqdy2ywpna6nw4rn36tsqinlncbca@jdehzfnznlsg>
-
-
---iIHNQfzo6ZOCO/mt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250213232559.34163-2-frederic@kernel.org>
 
-On Thu, Feb 13, 2025 at 11:19:19PM +0100, Andi Shyti wrote:
-> Hi Aryan,
->=20
-> > Aryan Srivastava (2):
-> >   i2c: octeon: refactor common i2c operations
-> >   i2c: octeon: Add block-mode i2c operations
->=20
-> merged to i2c/i2c-host.
+On Fri, Feb 14, 2025 at 12:25:57AM +0100, Frederic Weisbecker wrote:
+> When a grace period is started, the ->expmask of each node is set up
+> from sync_exp_reset_tree(). Then later on each leaf node also initialize
+> its ->exp_tasks pointer.
+> 
+> This means that the initialization of the quiescent state of a node and
+> the initialization of its blocking tasks happen with an unlocked node
+> gap in-between.
+> 
+> It happens to be fine because nothing is expected to report an exp
+> quiescent state within this gap, since no IPI have been issued yet and
+> every rdp's ->cpu_no_qs.b.exp should be false.
+> 
+> However if it were to happen by accident, the quiescent state could be
+> reported and propagated while ignoring tasks that blocked _before_ the
+> start of the grace period.
+> 
+> Prevent such trouble to happen in the future and initialize both the
+> quiescent states mask to report and the blocked tasks head from the same
+> node locked block.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Andy had comments to v10.
+Thank you for looking into this!
 
+One question:  What happens if a CPU has tasks pending during the
+call to sync_exp_reset_tree(), but all of these tasks complete
+their RCU read-side critical sections before execution reaches
+__sync_rcu_exp_select_node_cpus()?
 
---iIHNQfzo6ZOCO/mt
-Content-Type: application/pgp-signature; name="signature.asc"
+(My guess is that all is well, but even if so, it would be good to record
+why in the commit log.)
 
------BEGIN PGP SIGNATURE-----
+						Thanx, Paul
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmevCH8ACgkQFA3kzBSg
-KbZzeg/9FBEtVPGBjuPUF0uWmm3p2BCJl8snOIYSARxXsSOoLdi1L0iANLPXid7M
-v7dGKeD4J4s15ESU1H9eaDkY6LRQklUHTQ3F+tFYBSiaax9umKx80veZQQfYdZjJ
-TCo01F2aqpgUEqrmCSDlzyBmVG1qPPkT8J/ehHVYC3vdxefgmb+Bc4fdnPD+RGjW
-JALR410nPxyFHfZfrd+Y+iH9/FGLPY54lG+CjA729xnH7PgnwvEcHXf3WjW9tm2B
-i0o9/7i+m8BgIJItypTqftphlkn0fsR4j2o0cOLHZKD6lp1BcRqhFSwsWkjh1IXi
-hactywwCmQVlAQ+eN0Lb7C1sRkfY+jhh0Db4r7CHTNGy7VYNr3/hOLCnmy5fH0yA
-JM/4NVvGtnc+G296C48Lv+JrDhNX4/l+vmfLpTPVrbjc54Tdryb/u7Pf1wnR6Fie
-UchgJ1amCcoQu+6m8w5pk3038m4pkEwXHEcJ1EQRNZj0XB/Uz9FedgD03Tk8FnsV
-RCd/4rwkZZ5sEthhdZ65Q9AYL5YAAeH/WfHSLokJMXcUk91WS2ZQlL4dzDP/HBxI
-q1MS/mFrCaVAnvcA9LGN2NwxW6U2yk3khQsglpXUwonh0xSuunAzxl5wBkmjO0vG
-TXjvTWxx5qGPPnicscCX3nq1CBeCcmaWckrOvywM/DSH7iU3xig=
-=8hZV
------END PGP SIGNATURE-----
-
---iIHNQfzo6ZOCO/mt--
+> ---
+>  kernel/rcu/tree_exp.h | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index 8d4895c854c5..caff16e441d1 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -141,6 +141,13 @@ static void __maybe_unused sync_exp_reset_tree(void)
+>  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+>  		WARN_ON_ONCE(rnp->expmask);
+>  		WRITE_ONCE(rnp->expmask, rnp->expmaskinit);
+> +		/*
+> +		 * Need to wait for any blocked tasks as well.	Note that
+> +		 * additional blocking tasks will also block the expedited GP
+> +		 * until such time as the ->expmask bits are cleared.
+> +		 */
+> +		if (rcu_is_leaf_node(rnp) && rcu_preempt_has_tasks(rnp))
+> +			WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+>  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  	}
+>  }
+> @@ -393,13 +400,6 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
+>  	}
+>  	mask_ofl_ipi = rnp->expmask & ~mask_ofl_test;
+>  
+> -	/*
+> -	 * Need to wait for any blocked tasks as well.	Note that
+> -	 * additional blocking tasks will also block the expedited GP
+> -	 * until such time as the ->expmask bits are cleared.
+> -	 */
+> -	if (rcu_preempt_has_tasks(rnp))
+> -		WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
+>  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  
+>  	/* IPI the remaining CPUs for expedited quiescent state. */
+> -- 
+> 2.46.0
+> 
 
