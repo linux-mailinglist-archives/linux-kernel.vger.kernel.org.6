@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-515563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2E2A36647
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:40:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35ABBA36659
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748D3189491A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D940316135E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD21F1ACEA7;
-	Fri, 14 Feb 2025 19:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6414D1D86E4;
+	Fri, 14 Feb 2025 19:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DqzfktW1"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If1z8UYM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFE519885F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DE91C84B3;
+	Fri, 14 Feb 2025 19:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562036; cv=none; b=Zh8ZR8TCHwfsWUVE9JhSkjJJ2DagOAiwpsXxGxX/GXhNTC/sp0cSK/hpLM66uO5wW8zO8+F1PvvvaLCyLG23enchtisW/3mlUX16ld/PXBFxp2v4kG3zVaTEkJEwbmnCJIvIuaFZR7yUskDdTnsbPuA9qdKmSLTtebSepMkiq8M=
+	t=1739562164; cv=none; b=Z2t+PMMjExWMKlJVi32qMrNwvZ712gVafgS77ahtksRg00IaVsVoin6h/dcvn6Lzagliehg+Ed+TBhZZp8cTWqYoRrfU0O5DGLlcfqWiPuRvauBlNvbBR6Nwrongar48ddfBAS2X9xwhzDXwJJJTQdI0IKTJ0Vl9RILX5LDy/Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562036; c=relaxed/simple;
-	bh=CLNyWRLRR0TxhfQiuWIX8skkWZhoFf9zdlE08L2nypo=;
+	s=arc-20240116; t=1739562164; c=relaxed/simple;
+	bh=j8RbUnTVR+Rmdyxe3mjujeaLymNY6BVjB/yjOURYHBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpZhPyU0WRkfiSSeW5TnHJ3Ke/xSsIyeXripCVwGCX3CPlHuaSyMZt+FBG3rg0sLK7pVKUlm05N6cTOPK4E6F2H/1obHgMDr5nrxHv/gdYwaq20zbV/jBSOEzg9dXB4pMBE15uyQUsVg2LCUS0W8ozwzymP3QNuCmm8b9zZAGpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DqzfktW1; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eqiE9L7mCaip0lLhGTwvwdcmTFtEKa29N3mX3PLMV+c=; b=DqzfktW1MqBRQ28nEtrzP5lMHk
-	P4TJIxLOiuSNWGSmyFsJr7oJIMHCtUHHtm49no8wgpKxIbXTtqYpLjcXJQMhu7vKnqXyeRZv3VA4/
-	o/QLMAjWxrhLLs7RTtOWbVhBxY7V8oR9QGQqLkNizBO9t0l44ZW5L9FgObrp83aIg3e+m6LQ6HVi/
-	1bRPEFr49h9uZ/uFu4hJ3dJrdoZh4lBU+ftGY5/89QjHPndV/saRAimh5BVo84KOwVDiE1SWqcGRR
-	Nqt1Fa0xi7k8uA/Um+yJiWZEG6waOK6WrulmU4/7EmBT6bq4ZuSx7nG2I1aZORtO8WLKte7lc1/0j
-	Zypcd8Xw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tj1Xq-0000000Bxl1-3LJf;
-	Fri, 14 Feb 2025 19:40:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D70763002F0; Fri, 14 Feb 2025 20:40:13 +0100 (CET)
-Date: Fri, 14 Feb 2025 20:40:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
-Message-ID: <20250214194013.GA2198@noisy.programming.kicks-ass.net>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-7-riel@surriel.com>
- <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tD+hhCrn2rwzzvf3zFmw8T65NFXLvn76XcJdc2mUm7GmuqO+s5GpJTxeGjySFUZICszrMo2YuXkX4amB5FNGzP6R3h1OA1duDvc7kWw16YvqxuJB/WJpMNFIvNvH0llEqev5ZZQ9elC3k1Vfd5ToZncANpLBPKHCsrkZBTAR9jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If1z8UYM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5BDC4CED1;
+	Fri, 14 Feb 2025 19:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739562163;
+	bh=j8RbUnTVR+Rmdyxe3mjujeaLymNY6BVjB/yjOURYHBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=If1z8UYMrV18l2O39VsnXxyaZX8j5zqCs7PfU7UiHofpUd0X0H+YHHVk1t/Zw+b4/
+	 eL+iiJzA1kIcgYiZQWhrjTrE8gm4hDWOkx1Xkziz4YBmkbRF6uSvpyObFlqsZ9+c4D
+	 4HfNbweBxiFFpugcKa++4K7rPMll4aqQB6BNnQlWlFXjYpQ+e3Q4lXOCtvCgFex/gj
+	 12AQ1FPMo7xdby/Gdbc00tsCjGcqjWxkbGzIUR67jveSRPnpVEzoE6ohrSxUjPxx8d
+	 SIlFCyr5xnX9Sx5EMfpt/w7xgyik+6soixxL8IXY16+k++w4OZI4PIGG1egPo/0zym
+	 5vltoOGyMwrhA==
+Date: Fri, 14 Feb 2025 11:42:41 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Indu Bhagat <indu.bhagat@oracle.com>, Song Liu <song@kernel.org>,
+	Weinan Liu <wnliu@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
+	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
+	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+Message-ID: <20250214194241.3aymq2kr6gky5zfv@jpoimboe>
+References: <20250212234946.yuskayyu4gx3ul7m@jpoimboe>
+ <CAPhsuW5TeMXi_Mn8+jR9Qoa=rAWasMo7M3Hs=im6NT6=+CrxqA@mail.gmail.com>
+ <20250213024507.mvjkalvyqsxihp54@jpoimboe>
+ <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
+ <3069bb9c-6245-4754-a187-ac8253103d32@oracle.com>
+ <mb61pa5apc610.fsf@kernel.org>
+ <f8d93a1b-3ad0-4e19-846f-c08d9cb19f48@oracle.com>
+ <d91eba9a-dbd1-488f-8e1b-bc5121c30cd1@oracle.com>
+ <mb61p1pw0qrpi.fsf@kernel.org>
+ <20250214193819.22yet42umilpugv5@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
+In-Reply-To: <20250214193819.22yet42umilpugv5@jpoimboe>
 
-On Fri, Feb 14, 2025 at 10:35:40AM -0800, Dave Hansen wrote:
-> On 2/13/25 08:13, Rik van Riel wrote:
-> > -	if (info->end == TLB_FLUSH_ALL)
-> > +	if (broadcast_kernel_range_flush(info))
-> > +		; /* Fall through. */
-> > +	else if (info->end == TLB_FLUSH_ALL)
-> >  		on_each_cpu(do_flush_tlb_all, NULL, 1);
-> >  	else
-> >  		on_each_cpu(do_kernel_range_flush, info, 1);
+On Fri, Feb 14, 2025 at 11:38:22AM -0800, Josh Poimboeuf wrote:
+> On Fri, Feb 14, 2025 at 06:58:01PM +0000, Puranjay Mohan wrote:
+> > and the linker script has this line:
+> > 
+> > .sframe : AT(ADDR(.sframe) - 0) { __start_sframe_header = .; KEEP(*(.sframe)) __stop_sframe_header = .; }
+> > 
+> > So, do can you suggest the best way to fix these warnings?
 > 
-> We've got to find a better name for broadcast_kernel_range_flush().
-> Because IPIs are broadcast too. The naming makes it confusing. Why would
-> be broadcast, and then start trying IPIs that are also broadcast?
+> Just add *(.init.sframe) like so:
+> 
+> .sframe : AT(ADDR(.sframe) - 0) { __start_sframe_header = .; KEEP(*(.sframe) *(.init.sframe)) __stop_sframe_header = .; }
 
-IIRC the more general name is indeed broadcast tlbi; as in other
-architectures use this naming to mean this very thing too.
+Actually each probably needs its own KEEP:
 
-But yes, I see the confusion, but I don't think changing the naming
-really helps a lot here :-/
+...  KEEP(*(.sframe)) KEEP(*(.init.sframe)) ...
+
+or so.
+
+-- 
+Josh
 
