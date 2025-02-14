@@ -1,157 +1,173 @@
-Return-Path: <linux-kernel+bounces-514849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E9AA35C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:24:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF653A35C6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399BF7A5DEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9534F16EBBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8792C2627E3;
-	Fri, 14 Feb 2025 11:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D263263C8D;
+	Fri, 14 Feb 2025 11:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGWHLdGq"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WX9oLO9B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UdjLwZQ6"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB23825C6F2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573D5263C88
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532118; cv=none; b=HyV2DOT5VjJorLNbFeYhzr7+dOOVaAPU57XiEdbYRjxqqN39bmO2NLGjIIv31x7kf/LwswCB3sDW061vvvhTtcQo+aREgdz9Y47Gy6SuGcYDkGXazUOhgAATkjqINlmzyi9bh8+WnLs0N+Xeq0d3rmJXNTAF8ecHsaexPtBBk64=
+	t=1739532178; cv=none; b=rcdNDCLeWqqPUl24MFfVYnNP960NyqTEIB8smoNb7fWE2CKl53ykItytJ1QXMYzCCRpaUNWZ4Xb/MRRIhZPdn2EoqDNoxANUNMKfd1T9+GGT5q3s37TtEmTHiZYmWf/xVScwEz+VERYrq7BeHflDkdiJ0RGcSkf7lG7NUXy0+To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532118; c=relaxed/simple;
-	bh=ezzyWJr26ZdaaidfyJ5r1M6cNnQSyRgTMfJMLrA1HvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=EATB6tmt873LGbMFKpZ46VL7TpNpB5UyNWnxRyhvdYY8fVwU3hU1QaIc/NLrLoXq93ONSbrWndCTctxvVhZ7xbblg8BYjmAqEPIf5kM/YRFJurZfNQUxIj43YPsyy1zqvwrDlyTv9TyZtx3EVV+g3+3Bk6rRkzMLnBbNCaTGcRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGWHLdGq; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so1099286f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:21:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739532114; x=1740136914; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VMB8ghyMQuT+XC9tlI2ESvX9kB+AAQwpREhffrh4yvA=;
-        b=bGWHLdGqbhnbIT2GtsHn+UUJmkTt+eip/Hq8hLWL43ne5CkCgHbhnRgHi3ngpEhGk9
-         93xkhjX+d1lTq2zMnOB+k2qCgXT5KYEDQPRQYWeP6tcws04QjS6PS38zyZ0AgSHDI1D2
-         BMir4LFD8lD7CvjSvdHdeR/bvqlZoXVdoZmwaQt2oUC6W9nnBytogfzEBh2mxsmO2Xrg
-         V1iqHNmdweloZ+EjIPO1gaBLgZpaPE404s/+tnIF+CsPY5OEh4e3RclIuTwaGjTqBjq/
-         N7L+z8/izpVZCLWH+5yndp/7wiqK1GxojjeHEmibeRcnTXmA0+Iem+en+AK2eP45Pp0/
-         z3Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739532114; x=1740136914;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMB8ghyMQuT+XC9tlI2ESvX9kB+AAQwpREhffrh4yvA=;
-        b=d585qA9muRBD6xlUM9jjqdvLmeS0cwhffLKVgHxlPGPMrnEXbGgCtp1fY/5Ek0/yQ0
-         5wjAjdrPxRMcBS9FYFL6COC1//6ilwMbPT9Gyso5S1gHQ69Y8ifD67IAG3srqngHblq7
-         wVjsX4t+abXWLoxZj3Ed1eLuJrHuOuGkRZQlXMG3uJ/5St1IhyDljOjdwARdhBYMjYzv
-         JAnHsom8FbCcUHbNIF0LbIILztMIyxc8XdnkfUxd4v9ebICfsL3mhLilTWUIC6bDkBJx
-         fxd6+yALTDILsZ6JJctM5EFqAMsTHfHcTUVScVYjitRnNv2TUSkUjyOIiwB+q0maxu8N
-         a9tA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfblIwp1Z15CgP4d6B2CquL6wozFyOnxTiFD9/YniUDiza3ZEjXzIYJ0e6R7xhxZVBqBaQQFHGRdMXpQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIfeqImy++LnIi2miAuuWKVv5IexTgKJMdx3lVVK9NPBDyxSTZ
-	VPq1HOcwjgr/OBSWKMWGofuqFcugIq8j6JA0PXRE9oJSLRX5jTR8Q/20Obe7Zi0=
-X-Gm-Gg: ASbGncuSq4SQ6tzjcq2CD3glnJ5W0FBfdzkjutGTeNqSw9ZCJRfigBdJLcow3rAd5Ez
-	ZKpJGiEScf09OFMqN74J5trIMAA8PBmUwM6BxH/FoFoM+OBiyQmff2xPdhTHgTNytdsyBtasi5X
-	tdjj9/jtN/zFHrcLdj+gKoBfCm75IBGA/9zJTHwqAg/U15/x08cGLcOrA3tBeOozU1txkB2nL3E
-	IB53SJvE9PRi7IF1OGOmbHHMdX9dxGtq8rdZJRyact4R15/IVOCRiaMR6Uy4unIuUfCjnriEzaE
-	ZAD1jOHx2NmdOUqqogNouJ1LcA==
-X-Google-Smtp-Source: AGHT+IHC1K05OWMY1r66dsv/3HqdN4RQ44rdAWDIfnre4gXGKY06JyEB7tot1W+W3P3i5F/tU2MN3Q==
-X-Received: by 2002:a5d:6dac:0:b0:38d:c433:a97 with SMTP id ffacd0b85a97d-38dea2ece71mr12206225f8f.47.1739532113922;
-        Fri, 14 Feb 2025 03:21:53 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439618ab352sm41836795e9.40.2025.02.14.03.21.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:21:53 -0800 (PST)
-Message-ID: <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
-Date: Fri, 14 Feb 2025 11:21:52 +0000
+	s=arc-20240116; t=1739532178; c=relaxed/simple;
+	bh=OsjCXXBxfPDSc8sdW5re9j2JZVVhVPF2q8SKbktNvH4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IGjiIxAPMXn6XOaiXyJZQt3EXA1L4+bI60+5PK89wU6VPOTuoiB5HEcpZe5bLK5fCRixU7d0VVXl4gqTBBrzHK3DRBy8BihWqyMV+aLXlpUxI/413TRtnhfKGHQZ63XmFKzRlxYYYvN/kYSJs6C6vMUU+nKkW4eWS+sRkb+c7ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WX9oLO9B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UdjLwZQ6; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 3903D11400CA;
+	Fri, 14 Feb 2025 06:22:54 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Fri, 14 Feb 2025 06:22:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739532174;
+	 x=1739618574; bh=m8U691ACWe3t+/nGQjZe7Q9pb8ejSpFRnvHei6aA9lY=; b=
+	WX9oLO9BItsoCWpFjU5ka7WeQxKfRNU2NsbyiJkJ/t27zIxl3Xf6TCdawtxzMfs7
+	bDBgkoOdTFyLtPcujFwMMbnyrzSW5bj9qlHBv00tgidSEICTv4xq1zDzbayH4OHg
+	EPC3lN4BwEKTdVTdB0/Ptw863YfTwWC2erWR0v6dJ2hABKFvYgYY9CwyWWXDsdAc
+	v3nYsqf1157tnx/PGrUBWoVO2ENTh4FxasyM5FJcx45vWLhzAmp6fQOLFpPpT3Rt
+	M3jn+QN/MfxyCboAfvCvPK2Cv/1rb6zbvOz+P2PvcVexIY5mKjyNgnOuO+QeX7Hn
+	46hr1lgF36iUl6+Aj6y49w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739532174; x=
+	1739618574; bh=m8U691ACWe3t+/nGQjZe7Q9pb8ejSpFRnvHei6aA9lY=; b=U
+	djLwZQ6ShCtiJAawB7AzPGa+JAra/rOVmVF1ug0j4JK9MGZOIPlT0DCtKW3JbrX+
+	8loYUWkhMMmOOANozBadKwINAoWcdilpZ/26ispBuNh47V70n4RmPeydgMyq1VG5
+	gftaZwp73s/ZoVXRal0dH8/hSwvnqVJ6wSpA4l0ITf2pBQACRyhWlaQbGBnXAN3z
+	J1wOQ3bRjtXKh05j9FMr/mEbU7WDP2w7yIG52QdGAEYimuUvFg9yGCyprrYpVofv
+	/V0KokcxY1Nn2XMxvXjVY3TOiHSyJXbATgAmieiMLpfC9CNuDy4JrO/RzpQu0+K6
+	6JeopPh1/3LN3k3yOyAgA==
+X-ME-Sender: <xms:jSevZ9wWSEalcILpi6zuxb5AR7jP04Es-44OzJDMAA2amXSpJkQS3w>
+    <xme:jSevZ9R_AdQDxaEQrMCyuL_AoebJCLir6VVk7dkiIn-XdC0T3G02PyMTEYYgXSuVP
+    jfYmabYwJl8AvWL95o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeiifhhighhurhgrsegtohguvgifvg
+    grvhgvrhhsrdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphht
+    thhopehphhhilhhiphdrlhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepohgvqdhksg
+    huihhlugdqrghllheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:jSevZ3U9TEQisKj2XMLJWwzUCoCFM3Rzlef_feZ-NE0CvjTFTMocFw>
+    <xmx:jSevZ_i0bPbUkxLm27Q8EKgPzBTRlY25u0VgtPr6kFflHB7At45BJw>
+    <xmx:jSevZ_Chw7fL5vqspY-EohXVhSOpPK2_eKwL5iYC9aVzMomEfZAclg>
+    <xmx:jSevZ4Iv8OubEi5AIYMvJnWkinIi-DC8RqaLNvTzcrw5ZcNlsM8FQw>
+    <xmx:jievZ69CIeaLTARA2VOWhf3ZHut1nnthAY9870HNbQtS4FKjdw_PgGyc>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B198A2220072; Fri, 14 Feb 2025 06:22:53 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: arm64: Fix compilation error
-To: Leo Yan <leo.yan@arm.com>
-References: <20250214111025.14478-1-leo.yan@arm.com>
-Content-Language: en-US
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+Date: Fri, 14 Feb 2025 12:22:33 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Philip Li" <philip.li@intel.com>,
+ "Elizabeth Figura" <zfigura@codeweavers.com>
+Cc: "kernel test robot" <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
  linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250214111025.14478-1-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-Id: <9791da8a-fb5f-46d0-a86f-66738293d155@app.fastmail.com>
+In-Reply-To: <Z68CX3HMEUW00WYi@rli9-mobl>
+References: <202502072019.LYoCR9bF-lkp@intel.com>
+ <2421077.NG923GbCHz@camazotz> <Z68CX3HMEUW00WYi@rli9-mobl>
+Subject: Re: include/linux/thread_info.h:259:25: error: call to '__bad_copy_to'
+ declared with attribute error: copy destination size is too small
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
 
-On 14/02/2025 11:10 am, Leo Yan wrote:
-> Since the commit dc6d2bc2d893 ("perf sample: Make user_regs and
-> intr_regs optional"), the building for Arm64 reports error:
-> 
-> arch/arm64/util/unwind-libdw.c: In function ‘libdw__arch_set_initial_registers’:
-> arch/arm64/util/unwind-libdw.c:11:32: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
->     11 |  struct regs_dump *user_regs = &ui->sample->user_regs;
->        |                                ^
-> cc1: all warnings being treated as errors
-> make[6]: *** [/home/niayan01/linux/tools/build/Makefile.build:85: arch/arm64/util/unwind-libdw.o] Error 1
-> make[5]: *** [/home/niayan01/linux/tools/build/Makefile.build:138: util] Error 2
-> arch/arm64/tests/dwarf-unwind.c: In function ‘test__arch_unwind_sample’:
-> arch/arm64/tests/dwarf-unwind.c:48:27: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
->     48 |  struct regs_dump *regs = &sample->user_regs;
->        |                           ^
-> 
-> To fix the issue, use the helper perf_sample__user_regs() to retrieve
-> the user_regs.
-> 
-> Fixes: dc6d2bc2d893 ("perf sample: Make user_regs and intr_regs optional")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   tools/perf/arch/arm64/tests/dwarf-unwind.c | 2 +-
->   tools/perf/arch/arm64/util/unwind-libdw.c  | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> index b2603d0d3737..440d00f0de14 100644
-> --- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> +++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-> @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
->   int test__arch_unwind_sample(struct perf_sample *sample,
->   		struct thread *thread)
->   {
-> -	struct regs_dump *regs = &sample->user_regs;
-> +	struct regs_dump *regs = perf_sample__user_regs(sample);
->   	u64 *buf;
->   
->   	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
-> diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
-> index e056d50ab42e..b89b0a7e5ad9 100644
-> --- a/tools/perf/arch/arm64/util/unwind-libdw.c
-> +++ b/tools/perf/arch/arm64/util/unwind-libdw.c
-> @@ -8,7 +8,7 @@
->   bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
->   {
->   	struct unwind_info *ui = arg;
-> -	struct regs_dump *user_regs = &ui->sample->user_regs;
-> +	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
->   	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
->   
->   #define REG(r) ({						\
+On Fri, Feb 14, 2025, at 09:44, Philip Li wrote:
+> On Mon, Feb 10, 2025 at 02:39:46PM -0600, Elizabeth Figura wrote:
+>> On Friday, 7 February 2025 06:11:47 CST kernel test robot wrote:
+>> >    In file included from include/linux/spinlock.h:60,
+>> >                     from include/linux/wait.h:9,
+>> >                     from include/linux/wait_bit.h:8,
+>> >                     from include/linux/fs.h:6,
+>> >                     from drivers/misc/ntsync.c:11:
+>> >    In function 'check_copy_size',
+>> >        inlined from 'copy_from_user' at include/linux/uaccess.h:207:7,
+>> >        inlined from 'setup_wait' at drivers/misc/ntsync.c:888:6:
+>> > >> include/linux/thread_info.h:259:25: error: call to '__bad_copy_to' declared with attribute error: copy destination size is too small
+>> >      259 |                         __bad_copy_to();
+>> >          |                         ^~~~~~~~~~~~~~~
+>> 
+>> This was caught before and mentioned in [1]. The suggestion there of changing "args->count" to "count" doesn't help.
+>> 
+>> Somehow gcc 12 thinks that the array_size(count, sizeof(*fds)) parameter is constant, although it's finnicky and depends on exactly where __builtin_constant_p() is evaluated.
+>> 
+>> The bug goes away with gcc 13. Is this worth trying to work around? I don't have any ideas for how to do so.
+>
+> Thanks for the info, at bot side, we will ignore this error to
+> avoid further reporting on old gcc.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+gcc-12 isn't really "old", we support gcc-5 through gcc-14 at the moment.
 
+Maybe the change below would address it? (Not sure I handled the
+"+1" right here, but something like that should make it obvious
+to the compiler what the check is).
+
+      Arnd
+
+diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
+index 055395cde42b..ae13aae9194b 100644
+--- a/drivers/misc/ntsync.c
++++ b/drivers/misc/ntsync.c
+@@ -873,6 +873,7 @@ static int setup_wait(struct ntsync_device *dev,
+ {
+ 	int fds[NTSYNC_MAX_WAIT_COUNT + 1];
+ 	const __u32 count = args->count;
++	size_t size = count * sizeof(fds[0]);
+ 	struct ntsync_q *q;
+ 	__u32 total_count;
+ 	__u32 i, j;
+@@ -880,15 +881,14 @@ static int setup_wait(struct ntsync_device *dev,
+ 	if (args->pad || (args->flags & ~NTSYNC_WAIT_REALTIME))
+ 		return -EINVAL;
+ 
+-	if (args->count > NTSYNC_MAX_WAIT_COUNT)
++	if (size >= sizeof(fds))
+ 		return -EINVAL;
+ 
+ 	total_count = count;
+ 	if (args->alert)
+ 		total_count++;
+ 
+-	if (copy_from_user(fds, u64_to_user_ptr(args->objs),
+-			   array_size(count, sizeof(*fds))))
++	if (copy_from_user(fds, u64_to_user_ptr(args->objs), size))
+ 		return -EFAULT;
+ 	if (args->alert)
+ 		fds[count] = args->alert;
 
