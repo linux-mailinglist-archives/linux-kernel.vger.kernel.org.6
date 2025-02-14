@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-514752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C16A35B16
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:04:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FB1A35B17
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23703AAB1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FCA16F1D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9749253B4B;
-	Fri, 14 Feb 2025 10:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUqVeDlm"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193EA2566C9;
+	Fri, 14 Feb 2025 10:04:41 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8B12236F8;
-	Fri, 14 Feb 2025 10:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB13202C43
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527473; cv=none; b=K2kdiqTaAslXq0OOYf3SaUJ+JscV1MT2M//SycMVP9L9IyKfRFjmZ7Q6OgRUT2Q2MoAOYu6h6Zvt5iHXU7akkIbdOuAIDZk3Wlr+w94aG2mgH4GEF6CvMx0vVRUwKF4SXTZfsNkwbuFM9+8eL9kfc83YXkL1THUES1S/kdg0oIc=
+	t=1739527480; cv=none; b=XlrZfM+UepwWIR8Y01xT859o6MtILWQ3aCaKFEKUxX/YhkeDKiFFIunzW6ga5CrE9kVjkU7Em4S7fGbRB3XaCv1fQQsml3yGFGOCMKexMelhsRnXtX1yZQBWZl7Ktqg7VJK8kGGqTRsUj3O6byU3QFL0AKgIKNJ2uV587S/SKdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527473; c=relaxed/simple;
-	bh=O5+hvzeUVTaanAFr7pzPUiUCZtR0kLvDBOjS27pRU9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEqMFXcpI+Xux7f4OPf3Lw0q+FSS8izF26+pQBRsMmxjAl1Ktal6PKLStI1p6ZA43H0a1JM1Mv/XZCLul9p4PLU22agE5qfnu59c1RooAW/3iIL9Z80j3pva9NdOZBdQZkWWo2MNMXq/ociCw4460gjklganHtEeWZfZGXplcrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUqVeDlm; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4bbf5c10865so560469137.3;
-        Fri, 14 Feb 2025 02:04:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739527470; x=1740132270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vctiJ5pJJIOhGH+h0e2tZwQ96eqyBSN4JZq19MvB2XA=;
-        b=PUqVeDlmpenP3WHtXwhJRdY6zw+7tLXHzvhAU5EkxLpn+bXLnrTY7K/BpxAUfx0phK
-         sbXFa0dsTWLeXvBlcGtdtTIzE1gejSOYy8wgcrdWTSRSiQ0Rafegnlcd9oeMVWXk8SAP
-         nmJBd52NFSbZaWAgwe5pJYrlLiL6qrdZcsehZ7scfaI9c6Cs9eONTHTM9Vv5SN7wjBjd
-         NSdwQZbCLzg7xE8zf6e190MMfaQkZucw5oTfhrpJPu7JJlHQ93ebAEgNp6n2kqivU50v
-         tQphbefGMfw7E7Nq5Usnym+CFav7y777MmvLKwC/wWvaLbGJvTUUq9H1mG1VOGBBOSDz
-         GETw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739527470; x=1740132270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vctiJ5pJJIOhGH+h0e2tZwQ96eqyBSN4JZq19MvB2XA=;
-        b=J91jp5aIg5fo6Yh8XK0GAkk4rJLwxaUSdCsVveJm+HmFpbKWYWp3uCi+lw1lRBHqoO
-         kUZ6sAkiTUFwEMj3qDrYCG8lSchkB3FyHX+/MBs4xWbFmy3ZJoEc148+mVdCLPZepCvW
-         o0JJxzYw5XJ28sg489siXIE07aYLPcczg2p4AlWtRYafc96ZSDEtKpyUMwRRQsKt6pm/
-         xiCN8DS6OkeIvcmUrjA1ssUFkhFWJIe4AtD6qbKcNB6gKaPtCAKnnkNc9Ym9SBoctqhY
-         T79SnnOdRHuXZq8mdgALPYMarjgEvNLgLrHLl/Q6uS2AP8fGJpOa7jOi+Ycf1Ury+s8C
-         Mbrw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3D3yJPfu+pT+Jtxn3NA1WUu4zb2ZP3oPrEq5dRpzVVH3KNDff8xMsISw/UXllFi4pIolsoXGj37zrgrYb@vger.kernel.org, AJvYcCXR5SMV3l3PeZigBPiceqKFeqD3fqybLZ1Sg5YcHT6WvVj/0zIS6mJbO6LpfJdEbM6iDf8QrbdB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmbAieXzRXsiR/lEaqMrsvzzuwOhvo8STW/4foV3W7HmtKNvp6
-	0BAJf6MtCvJI24wRuXEzY2iklgfWDN2phQ4J2h+oVSZIvp/ExcFnHAJyx1u0I5yOh10GQ3kUQ5w
-	qbQCyP+z6a7pN+VUnSP7wsm8w3/4=
-X-Gm-Gg: ASbGnctNYPj3XPs63DtmG5zm1lC+rAwtJ7RqkTDr1RlRfx3u6RXeI2Lt5BSygbyORG0
-	1ExmzdK4kO0qouhQ/sDAL9pOxpgfnTfpUumRfmF8pajZ0FtKvbHrYqS75mWsQzp8uUT/AVsHW4g
-	==
-X-Google-Smtp-Source: AGHT+IF7vSJeurvUbicM8qXUojUD37VLd4CrYZ3E32Pklvi89crD5IDYQiF2aB1zmhIk5MUk1UwFw0l6Y6dGjDfiwtY=
-X-Received: by 2002:a05:6102:2d03:b0:4af:be6e:f0aa with SMTP id
- ada2fe7eead31-4bc0382036cmr5869332137.25.1739527470467; Fri, 14 Feb 2025
- 02:04:30 -0800 (PST)
+	s=arc-20240116; t=1739527480; c=relaxed/simple;
+	bh=sYCsC4QVsS62ZZoGPyT+of3+OgswiwVgXuNWBsHjT44=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IA2pZvT10HSAjWmSzG262q5IqSzxc0078RB85inOgaTn4UAQdJzFvKixaQutjBAwYSc176A5QugGc28wRl0IPlM6jt1L/plSMy2aHoK8es2wVnqLM0BkA/tmvUvfK2uY2JWd+uW//En1DNXNg88kPHtchxZOi4BisHvCekGVBxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4YvSKw6nGqzYl1j9;
+	Fri, 14 Feb 2025 18:03:16 +0800 (CST)
+Received: from a006.hihonor.com (10.68.23.242) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 14 Feb
+ 2025 18:04:20 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a006.hihonor.com
+ (10.68.23.242) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 14 Feb
+ 2025 18:04:20 +0800
+Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
+ a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
+ 15.02.1544.011; Fri, 14 Feb 2025 18:04:20 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+CC: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Barry
+ Song <21cnbao@gmail.com>, yipengxiang <yipengxiang@honor.com>, "Hugh Dickins"
+	<hughd@google.com>, Chris Li <chrisl@kernel.org>
+Subject: =?utf-8?B?5Zue5aSNOiDlm57lpI06IFtQQVRDSF0gbW06IEZpeCBwb3NzaWJsZSBOVUxM?=
+ =?utf-8?B?IHBvaW50ZXIgZGVyZWZlcmVuY2UgaW4gX19zd2FwX2R1cGxpY2F0ZQ==?=
+Thread-Topic: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2ludGVy?=
+ =?utf-8?B?IGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
+Thread-Index: Adt8+0GogoLTL6hgQfOcUIXDGgpBSQAbnlYAACsSnkAABbtDgAAmkrFA
+Date: Fri, 14 Feb 2025 10:04:20 +0000
+Message-ID: <f023968c870e42f3b32e5038d393163f@honor.com>
+References: <44655569e3a1419f800952004f07e714@honor.com>
+ <20250212161820.4fda79a3333d2345b60cef72@linux-foundation.org>
+ <da7e1ee115454cf8898b4bbe228a5a9c@honor.com> <Z66B0T125JhdWo1n@google.com>
+In-Reply-To: <Z66B0T125JhdWo1n@google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3a5337f9-9f86-4723-837e-de86504c2094.jinguojie.jgj@alibaba-inc.com>
- <CA+B+MYQD2K0Vz_jHD_YNnnTcH08_+N=_xRBb7qfvgyxx-wPbiw@mail.gmail.com> <pl23stfp4qgojauntrgbfutmrstky3azcoiweddseii52vgns4@6446nbhq2zl6>
-In-Reply-To: <pl23stfp4qgojauntrgbfutmrstky3azcoiweddseii52vgns4@6446nbhq2zl6>
-From: Jin Guojie <guojie.jin@gmail.com>
-Date: Fri, 14 Feb 2025 18:04:18 +0800
-X-Gm-Features: AWEUYZmwMiEXWXSo10bYEaqj5lstQHVTw3HsKqWlOAZClry7ZPsEIwM-0BlsbJM
-Message-ID: <CA+B+MYQuz9ue1ZogpEGb8J+F8UA5P0dD-R1cRUp-4EgDBnPS+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] cgroup/cpuset: call fmeter_init() when
- cpuset.memory_pressure disabled
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 15, 2025 at 7:01=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> On Wed, Jan 15, 2025 at 01:05:21PM +0800, Jin Guojie <guojie.jin@gmail.co=
-m> wrote:
-> > V2:
-> > * call fmeter_init() when writing 0 to the memory_pressure_enabled
->
-> Thanks for taking into account the feedback.
->
-> I'm still curious -- is this:
->         a) a new LTP test,
->         b) a new failure,
->         c) an old failure, new look
-> or anything else?
-
-For the three situations a, b, and c you mentioned, none of them is true.
-In fact, this "case cpuset_memory_pressure" has been in LTP for a long time=
-,
-and the same error will occur when running in multiple kernel versions.
-
-The method to reproduce the error is provided in the description of patch v=
-1.
-
-https://lore.kernel.org/cgroups/CA+B+MYRNsdKcYxC8kbyzVrdH9fT8c2if5UxGguKep3=
-6ZHe6HMQ@mail.gmail.com/T/#u
-
-The fmeter_getrate() function in the kernel has not been modified for
-a long time,
-so currently LTP "case cpuset_memory_pressure" still produces the same erro=
-r.
-
->
-> Michal
+PiA+ID4NCj4gPiA+ID4gc3dwX3N3YXBfaW5mbygpIG1heSByZXR1cm4gbnVsbDsgaXQgaXMgbmVj
+ZXNzYXJ5IHRvIGNoZWNrIHRoZQ0KPiA+ID4gPiByZXR1cm4gdmFsdWUgdG8gYXZvaWQgTlVMTCBw
+b2ludGVyIGRlcmVmZXJlbmNlLiBUaGUgY29kZSBmb3Igb3RoZXINCj4gPiA+ID4gY2FsbHMgdG8N
+Cj4gPiA+ID4gc3dwX3N3YXBfaW5mbygpIGluY2x1ZGVzIGNoZWNrcywgYW5kIF9fc3dhcF9kdXBs
+aWNhdGUoKSBzaG91bGQNCj4gPiA+ID4gYWxzbyBpbmNsdWRlIGNoZWNrcy4NCj4gPiA+DQo+ID4g
+PiBBY3R1YWxseSB2ZXJ5IGZldyBvZiB0aGUgc3dwX3N3YXBfaW5mbygpIGNhbGxlcnMgY2hlY2sg
+Zm9yIGEgTlVMTCByZXR1cm4uDQo+ID4gVGhlIHN3YXBmaWxlLmMgZmlsZSBjb250YWlucyB0aHJl
+ZSBpbnN0YW5jZXMgd2hlcmUgdGhlIHJldHVybiB2YWx1ZSBvZg0KPiA+IHN3cF9zd2FwX2luZm8o
+KSBpcyBjaGVja2VkIGZvciBhIE5VTEwgcmV0dXJuLiBJbiBvdGhlciBmaWxlcyB0aGF0IGNhbGwN
+Cj4gPiBzd3Bfc3dhcF9pbmZvKCksIEkgaGF2ZSBjb25maXJtZWQgdGhhdCB0aGVyZSBhcmUgbm8g
+c3VjaCBjaGVja3MuDQo+ID4gVGhlIGRlc2NyaXB0aW9uIGluIHRoZSBwYXRjaCBpcyBpbmFjY3Vy
+YXRlLCBhbmQgSSBoYXZlIG1hZGUNCj4gPiBtb2RpZmljYXRpb25zIGluIHBhdGNoIHYyLg0KPiA+
+ID4NCj4gPiA+ID4gVGhlIHJlYXNvbiB3aHkgc3dwX3N3YXBfaW5mbygpIHJldHVybnMgTlVMTCBp
+cyB1bmNsZWFyOyBpdCBtYXkgYmUNCj4gPiA+ID4gZHVlIHRvIENQVSBjYWNoZSBpc3N1ZXMgb3Ig
+RERSIGJpdCBmbGlwcy4NCj4gPiA+DQo+ID4gPiBRdWl0ZSBwb3NzaWJseSBpdCdzIGEga2VybmVs
+IGJ1Zy4NCj4gPiA+DQo+ID4gPiA+IFRoZSBwcm9iYWJpbGl0eSBvZiB0aGlzIGlzc3VlIGlzIHZl
+cnkgc21hbGwsIGFuZCB0aGUgc3RhY2sgaW5mbyB3ZQ0KPiA+ID4gPiBlbmNvdW50ZXJlZCBpcyBh
+cyBmb2xsb3dz77yaDQo+ID4gPiA+IFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRl
+ciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsDQo+ID4gPiA+IGFkZHJlc3MNCj4gPiA+ID4gMDAwMDAw
+MDAwMDAwMDA1OA0KPiA+ID4gPg0KPiA+ID4gPiAuLi4NCj4gPiA+ID4NCj4gPiA+ID4gLS0tIGEv
+bW0vc3dhcGZpbGUuYw0KPiA+ID4gPiArKysgYi9tbS9zd2FwZmlsZS5jDQo+ID4gPiA+IEBAIC0z
+NTIxLDYgKzM1MjEsOCBAQCBzdGF0aWMgaW50IF9fc3dhcF9kdXBsaWNhdGUoc3dwX2VudHJ5X3QN
+Cj4gPiA+ID4gZW50cnksDQo+ID4gPiB1bnNpZ25lZCBjaGFyIHVzYWdlLCBpbnQgbnIpDQo+ID4g
+PiA+ICAJaW50IGVyciwgaTsNCj4gPiA+ID4NCj4gPiA+ID4gIAlzaSA9IHN3cF9zd2FwX2luZm8o
+ZW50cnkpOw0KPiA+ID4gPiArCWlmICh1bmxpa2VseSghc2kpKQ0KPiA+ID4gPiArCQlyZXR1cm4g
+LUVJTlZBTDsNCj4gPiA+ID4NCj4gPiA+ID4gIAlvZmZzZXQgPSBzd3Bfb2Zmc2V0KGVudHJ5KTsN
+Cj4gPiA+ID4gIAlWTV9XQVJOX09OKG5yID4gU1dBUEZJTEVfQ0xVU1RFUiAtIG9mZnNldCAlDQo+
+IFNXQVBGSUxFX0NMVVNURVIpOw0KPiA+ID4NCj4gPiA+IE9LLCBJIGd1ZXNzIGF2b2lkaW5nIHRo
+ZSBjcmFzaCBpcyBnb29kLiAgQnV0IHBsZWFzZSBsZXQncyBpbmNsdWRlIGENCj4gPiA+IFdBUk4g
+c28gdGhhdCB3ZSBjYW4gcGVyaGFwcyBmaXggdGhlIGJ1ZywgaWYgb25lIGlzIHRoZXJlLg0KPiA+
+IEdvb2QuIEknbGwgY2hhbmdlIGl0IGFzIG1lbnRpb25lZCBhbmQgc2VuZCBhIG5ldyBwYXRjaC4N
+Cj4gPiAJc2kgPSBzd3Bfc3dhcF9pbmZvKGVudHJ5KTsNCj4gPiArCWlmICh1bmxpa2VseSghc2kp
+KSB7DQo+ID4gKwkJV0FSTigxLCBLRVJOX0VSUiAiJXM6ICVzJTA4bHhcbiIsIF9fZnVuY19fLCBC
+YWRfZmlsZSwgZW50cnkudmFsKTsNCj4gDQo+IFdBUk4oKSBhbHJlYWR5IGNvbnRhaW5zIHVubGlr
+ZWx5KCkuIEFsc28sIG5vIG5lZWQgdG8gcHJpbnQgdGhlIGZ1bmN0aW9uIG5hbWUgaXQncw0KPiBh
+bHJlYWR5IGluIHRoZSBzdGFjayB0cmFjZS4NCj4gDQo+IFdlIHNob3VsZCBwcm9iYWJseSBqdXN0
+IGRvIGlmIChXQVJOX09OX09OQ0UoIXNpKSkuDQo+IA0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0K
+PiA+ICsJfQ0KWWVzLCB0aGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbi4gVGhpcyBtb2RpZmlj
+YXRpb24gbWFrZXMgdGhlIGNvZGUgc2ltcGxlci4NCglzaSA9IHN3cF9zd2FwX2luZm8oZW50cnkp
+Ow0KKwlpZiAoV0FSTl9PTl9PTkNFKCFzaSkpDQorCQlyZXR1cm4gLUVJTlZBTDsNCg0KPiA+DQo+
+ID4NCg==
 
