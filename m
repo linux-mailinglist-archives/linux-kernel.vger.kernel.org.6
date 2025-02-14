@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-514735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4E9A35AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:56:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E764A35AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599941892CCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C90A3AA7E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BF8253F0A;
-	Fri, 14 Feb 2025 09:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770D32505C2;
+	Fri, 14 Feb 2025 09:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="HDPpDJFs"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mS9HDCLQ"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9C32586D2;
-	Fri, 14 Feb 2025 09:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDAA24503E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526977; cv=none; b=bQ6TlRidZpoIUT0TCXQ2yjSP4wAAK+RhawqhgmjaIk1RRNwGSEEMq3MJGzn88nxn6JRl8iGjJV5IYDfs/yG7BxqSCfyJQLePH8WaCtacb1FxklZLsyK9LX0QIppSYqNkf9o877WnfCkL2bGowCWyG6BHQi3XVHKuCG9zHxjnKvs=
+	t=1739526968; cv=none; b=D8z6+fMmesVw77rvjPQkJBUmHMYaRRMwz3ugdFifEPrP9RcniyQTJv62SOKQfMxD7i1AfAR4qMj/jJwlyshDL5nxoJsgiAjJWJ1CLrqFYMTuf6N7Be/7ratNyH68FpOP11pRlfopw4Ri4chLwavkuGp5X72YYWywsDLWs91guUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526977; c=relaxed/simple;
-	bh=/PufZwqWVimIvDJ4/wjK3f7QfsYqtKpkCV8G3C59qHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YaOuJU6fP/pPByXe1u1/Kw/YP1J0uogacactsX0d1TjT4n0XV+vdUdphE/aOUqANk/LxEzK9565Zv/pyzjSep4hquDVW1KI6mGFWpHu4mnnkpQcuLBIrRvrmOi1K8iNlLm76rnNEpMD9qNG5g6AA849VMmcmWT2kUWRzhwinXdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=HDPpDJFs; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739526943;
-	bh=rWxgDkWT3SNrx50PWh9YGg/Cq7PqeLp2YzPZdThzNAI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=HDPpDJFsIuJ6i74NBFqsX+OPmvGjl2rlnP2DNROpvINXUcAQJZ2CKh9DXF2uKlvja
-	 TJUKwrTRPVIjvM1cnvYILuTDHVbCMgLlygpeLsemBiuMGxH+HQYLAOw7R3qW6FfBW3
-	 zvjZigk/KjNA/S6gxQrbUlthunRyYkjUBpnJ+Rrg=
-X-QQ-mid: bizesmtpip2t1739526933t1d2myj
-X-QQ-Originating-IP: kHvtQo+ABm9+6mqznQlCq5NZW+eJquBxVSU3r1vqfB4=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Feb 2025 17:55:30 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2994338102361065913
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: chenlinxuan@uniontech.com,
-	guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	masahiroy@kernel.org,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com
-Subject: [PATCH v2 2/2] MIPS: Eliminate Redundant KBUILD_SYM32 Checks
-Date: Fri, 14 Feb 2025 17:55:23 +0800
-Message-ID: <36DD6436DDFA21E6+20250214095523.175229-2-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com>
-References: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1739526968; c=relaxed/simple;
+	bh=+OJpQFCSwnAr0QKsPFczUVV45E7Dcuz3Varw1DyGdvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P46Y7gv4dZPzQ0swYIOl3KLvCTND5FIWoa6m1KPyhWj+BMFDpGCTxKLe4CzpDNcgJ6HPSwJjQCeH6Df8qAc2jVy4EnLwGKw9h3CyKBRexcWJeolAtQAh24LVNY4JtoVnENi9GrV2sRZ1GuCfhPu07Vn/fAc4jycRw8DX7ah3iaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mS9HDCLQ; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739526955; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=sgtvYQK6mN5g++B1Dhn58lzoSeVR6IVgGu3OC+TT2Ds=;
+	b=mS9HDCLQWouCaCGz+MeN8NZu92/GQz/FfRKgHMGPwA3fRKfZYmuzAS+RgCKKtnzHaVuE3x5gCEJNHyJKMWcnGNYe6mVrU8AqS96oeNzuszx6LrS7XDBQUkNkh17e1xbVOqb8MWPyafTkcaWszNn/taxw9teH4JqxX2VlpvCUk5M=
+Received: from 30.221.128.236(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WPQVN0m_1739526954 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Feb 2025 17:55:55 +0800
+Message-ID: <f3ac22d4-10ea-4800-993f-f59952847edf@linux.alibaba.com>
+Date: Fri, 14 Feb 2025 17:55:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MWxexosv2xAzR66ufJOV9v17pHqcG5/T5P+R7jXzDzXNC7Qq3uJqnk/4
-	k95A5Wmx+h1Xo6Y3Npwkw6ubj4b/Y681oHT8vtxSC6sJ7aBaVsJhDiJIT6ehr1g3dUYfP0F
-	Tj+IWtSLuxnfh773OqiU+6RhpxFZPQ7IS7BspMrfPslWxDtMO3Ps1DPUnFw6dhYp7ylPxYn
-	2NjREB/qWMIg+kg1dkqWyBhC3uK6Lbn7hFH3rZ0RhU9yrlDj9FA/swRlGVgSZf294Ufxqw9
-	924oFF/bedq4yJZtmhlQYBjEqqIMDchnUbI/8pRuTnUZO1WN2IohDAKzv3eMqmuchr8tilz
-	u29cMEY6C8zh6JS927wZRN3/B3ibJg9f1/ph0Jgvb8Pilzy75PXKMw6yflJwYrmK5/MgwSg
-	Iffv/NDTjsQRMk4uWekOWWc5UVFSGR4IaZTbXuXGAnnnixjX3wcZsK4tddF3entGmQ8Zfe3
-	AdOZg3+ni88aIt+Pk0ISQXlcsqdZC2glIYNe51h6xow0uCf2fRPz5cFbG9abXqkpZTfRlLT
-	YchJGy/Os/4FyPtcmj3GoTlErECmCigihEVLLFjDPHXez3GXTogvOhkclIsymHzCJ4CThi0
-	NcfYSlLLZByqI1/4ScZx6a47msLSEbfIjZbjSmnIZUx1TguVYE2bSETmBGTeJ8+dvbFQcqQ
-	LJKBMcrUfcT7Pm0R4bupQa/uS+w/mNbDRof4wt0nQTqAY30QgBUInyj08nMCQE3/dM+q0VD
-	u/XfgszC9QQrfPZFoZ7sY1Q8Kr9swh6wahQaM7ZzA5xAh5dqbDj/oG1NX9umoQDZYvhkg8H
-	zn971JHuvV/eIO6lc88sNwtDCRwOH+P8fasjcpGwjrQuIpkafoOZqf2SX5shKuPzjQTVh6B
-	HciK+I4c0HtTmlxt4tC0D6JxZTQYWul1iVKk0WGfXNTHiHNw15mmhhU5a7E4vdN8BupAXrl
-	/8dTpVZUaUNXX2VZi7wKSCFPccPBiYqX056BiO6hr0DhVLar6u+8Ob3tGhF7ibQFqrkIoiv
-	IRcDsgNlKD58wDkZ3AHvgbb3WCFFGb8aODz3X+0an9mVt6+SUgeSwE0/eNHSy35RnKNFiZS
-	+lFRrqSc7DoWSDntukHHvx7TvV1CGVA6A==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ocfs2: validate l_tree_depth to avoid out-of-bounds
+ access
+To: Vasiliy Kovalev <kovalev@altlinux.org>, akpm <akpm@linux-foundation.org>
+Cc: jlbec@evilplan.org, kurt.hackel@oracle.com, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+ syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+References: <bb8e95f6-ee91-47b9-82a0-86d576f67e39@linux.alibaba.com>
+ <20250214084908.736528-1-kovalev@altlinux.org>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20250214084908.736528-1-kovalev@altlinux.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Given that KBUILD_SYM32=y is a prerequisite for this statement to be
-executed, it's logically redundant to verify KBUILD_SYM32 is y again.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index 4d8339d2f20f..005174ae3892 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -302,7 +302,7 @@ ifdef CONFIG_64BIT
-   endif
- 
-   ifeq ($(KBUILD_SYM32), y)
--    cflags-$(KBUILD_SYM32) += -msym32 -DKBUILD_64BIT_SYM32
-+    cflags-y += -msym32 -DKBUILD_64BIT_SYM32
-   else
- # Do not fiddle with the compilation flags when no compiler is
- # going to be used. To get rid of spurious errors.
--- 
-2.47.2
+On 2025/2/14 16:49, Vasiliy Kovalev wrote:
+> The l_tree_depth field is 16-bit (__le16), but the actual
+> maximum depth is limited to OCFS2_MAX_PATH_DEPTH.
+> 
+> Add a check to prevent out-of-bounds access if l_tree_depth
+> has an invalid value, which may occur when reading from a
+> corrupted mounted disk [1].
+> 
+> Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
+> Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd [1]
+> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+
+Looks fine.
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+
+> ---
+> v3: Change the condition "> OCFS2_MAX_PATH_DEPTH" to ">= OCFS2_MAX_PATH_DEPTH"
+> v2: Restricted depth to OCFS2_MAX_PATH_DEPTH and moved the check
+>     to __ocfs2_find_path().
+> ---
+>  fs/ocfs2/alloc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+> index 4414743b638e8..cec8fc5cb8e87 100644
+> --- a/fs/ocfs2/alloc.c
+> +++ b/fs/ocfs2/alloc.c
+> @@ -1803,6 +1803,14 @@ static int __ocfs2_find_path(struct ocfs2_caching_info *ci,
+>  
+>  	el = root_el;
+>  	while (el->l_tree_depth) {
+> +		if (unlikely(le16_to_cpu(el->l_tree_depth) >= OCFS2_MAX_PATH_DEPTH)) {
+> +			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
+> +				    "Owner %llu has invalid tree depth %u in extent list\n",
+> +				    (unsigned long long)ocfs2_metadata_cache_owner(ci),
+> +				    le16_to_cpu(el->l_tree_depth));
+> +			ret = -EROFS;
+> +			goto out;
+> +		}
+>  		if (le16_to_cpu(el->l_next_free_rec) == 0) {
+>  			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
+>  				    "Owner %llu has empty extent list at depth %u\n",
 
 
