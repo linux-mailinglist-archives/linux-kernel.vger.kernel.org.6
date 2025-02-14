@@ -1,90 +1,101 @@
-Return-Path: <linux-kernel+bounces-515504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A46EA365AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:24:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8EBA365B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D9118948AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829C2170A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340FE2690EE;
-	Fri, 14 Feb 2025 18:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CFE2690EF;
+	Fri, 14 Feb 2025 18:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ke+Lu86I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JQ8ZA9a5"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A13A14D28C;
-	Fri, 14 Feb 2025 18:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA2114D28C;
+	Fri, 14 Feb 2025 18:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739557484; cv=none; b=O6ctj9dZ6SvtHfPs83bnYT5DOwZXQvfl4SrlVkb7AP9ziLtqq55yd29dbml6ZHKNgZJ00966bRbZtv49ZvirHAk2O5dioe0zt+IsN8IoWIWkYhB/OmOaWgcoTFwxpmMHacOcT/Fsx3M8+i5i8XHGxzWFNLG3RbOz077nTdkrbSc=
+	t=1739557533; cv=none; b=eu2IZX2Yg0iSSrbbbgWkMVcDMeh33X7S/TZXHX8UNryJ+WIX4iyiPlv1diUOHNcE/PkIphfGecwW5j0KvK7IzrT3CM+vZ/Cx5JJtVGMwgq1jInzL+ZRPcdYH5JrgurJjtQj833AXvwVLkcHqgcA5TQov8jRkKsu3x/EX10fKrAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739557484; c=relaxed/simple;
-	bh=qcahaJjxOPF2+xYUsg3HR7q67xvZO5cp5xgsBNVsZHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NuN+YdXCqfzvala/TxA20YT57OJwtB83PNSD6gVlHWE2/NiCK6tFzRBeKALz02zeT6eFwh8yyzrvW54btXF4+q+SxQHVz1Kwn/lIm+GfN41+l/NWcJqp65rhWU0veiMh8AqORpAxUbXD9yp90HvW/L1S6BZZMvMMxGPBUqJtnwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ke+Lu86I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859E2C4CED1;
-	Fri, 14 Feb 2025 18:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739557481;
-	bh=qcahaJjxOPF2+xYUsg3HR7q67xvZO5cp5xgsBNVsZHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ke+Lu86Il0gbEC9tvWXHdbBP12IpV/yk43MGmN22VmqWWg7AjL/L3fiXu7UldG2S2
-	 7OOwCshZ10vkxyVym1yTfLX3/6RfULL2PR78xdqFADvHg6utE68b6hr6SRLfrkzi0o
-	 tHtoY6Ur0EiBk62ptu5WrOO9irskzDoIJdeGKbCywGOhp/C4eJ1ZE8JZX4MCne3aA6
-	 TbVz8lpq//Q5XQ9DVJAHogt6OmzRsxohuie/uv0/deRI+WjJmtw2El6b7vWPxW7PdB
-	 SOX7GLgM+sNTeH793CsYEDo3WX8A6o3xt7TNFuYI53lNT6cBf80hKHBVhC6Lz3J9aG
-	 KCf5Kd4maN3yw==
-Date: Fri, 14 Feb 2025 10:24:39 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Song Liu <song@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
-	Weinan Liu <wnliu@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-Message-ID: <20250214182439.gpavslsvgw4xy7sf@jpoimboe>
-References: <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
- <00fa304d-84bf-4fca-9b9a-f3b56cd97424@oracle.com>
- <CAPhsuW4ct6W_4B0LFEjLePH1pAeNm4h8ePuQ3HcSoknXhQWN0w@mail.gmail.com>
- <mb61p1pw21f0v.fsf@kernel.org>
- <CAPhsuW5VCmuPLd8wwzBp_Divnu=uaZQcrRLsjsEOJ9GmA0TR5A@mail.gmail.com>
- <mb61pseoiz1cq.fsf@kernel.org>
- <CAPhsuW7bo4efVYb8uPkQ1v9TE95_CQ6+G3q4kVyt-8g-3JD6Cw@mail.gmail.com>
- <mb61pr0411o57.fsf@kernel.org>
- <CAPhsuW7fBkZaKQzLvBqsrxTvpJsfJfUBfco4i=-=C_on+GdpKg@mail.gmail.com>
- <mb61p7c5sdhv6.fsf@kernel.org>
+	s=arc-20240116; t=1739557533; c=relaxed/simple;
+	bh=QCJvZJqtYJ9nxXKjkgJa5DxPKftJDg4tRC75vU1cmqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AygGSh8fZ91S7U1bVHrhwv1XhQLd2B2Q5ZV16nw8dIWGDYDz3X+t30tsS6eMrAsM6j4CdyGFjjQj3U9jxq+GDucEzcIroBrUUWd5OQ0+whIbl79yHFh75j2IEvQPX3uQsgym5NXp5JnA3BhmijDpkAWsbSSm7lgHfqSXhYnUt7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JQ8ZA9a5; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 560A544414;
+	Fri, 14 Feb 2025 18:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739557529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2RTZUt1Fez8fLySGHYZ7rwtZmq2cugowgiBqVWj1IQ=;
+	b=JQ8ZA9a5xrDAF1OoPMDX5TlshSu53HN8BI5VjSKV9m/MdIFHVnv6de0aQWIP7jZhuiT8QF
+	rERbiTEolhMmL7UcwPgUtzhc7kygYoC1zGSxyamhoDrXrSIKV0g1Ym0CgnDb2iwJTUeFx4
+	G8t02xxj0SK+nqWRNxlJzQzLm3QWreuuyEVa8kPYdQ5Pf7eqR96Xi01kooIJTU3Bzmthyq
+	BdTTYSMO/n9jcDnalMzwk1CNsSVRLaEmeaO+xjQjztzHxaW/IfQ04eRqRaoEdQTNfndkSB
+	71bnPbXCKY1rKoVedZUk5XZL7gqO3QQAwIyyiEZiTHZzG7s6fiyJSr0chkkvSw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	niravkumar.l.rabara@intel.com
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	nirav.rabara@altera.com,
+	devicetree@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] add clock-names property to nand node
+Date: Fri, 14 Feb 2025 19:25:21 +0100
+Message-ID: <173955748391.979249.16358494428797372077.b4-ty@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250212112535.2674256-1-niravkumar.l.rabara@intel.com>
+References: <20250212112535.2674256-1-niravkumar.l.rabara@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <mb61p7c5sdhv6.fsf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehtdefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfeeugfdvffefhfduhfetfffgieeiudeugeffvdehvddvledujeejvedvgfdtvefgnecukfhppeelvddrudekgedrleekrdduieejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledvrddukeegrdelkedrudeijedphhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihhrrghvkhhumhgrr
+ hdrlhdrrhgrsggrrhgrsehinhhtvghlrdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnihhrrghvrdhrrggsrghrrgesrghlthgvrhgrrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Fri, Feb 14, 2025 at 08:56:45AM +0000, Puranjay Mohan wrote:
-> I did this test and found the same issue as you (gdb assembly broken),
-> but I can see this issue even without the inlining. I think GDB tried to
-> load the debuginfo and that is somehow broken therefore it fails to
-> disassemblt properly.
+On Wed, 12 Feb 2025 19:25:33 +0800, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> 
+> 1) Document the required clock-names property because the driver
+>    requests the clock by name and not the index.
+> 2) Add required clock-names property to the nand node in device tree.
+> 
+> Changes in v3:
+>   * Include missing Fixes tag.
+> 
+> [...]
 
-I had the same theory about the debuginfo, but I stripped debug sections
-from that file and gdb still got confused.
+The following patch has been applied to mtd/fixes:
 
-Still, the symbol table looked normal, so the gdb issue might be
-completely separate from the kernel runtime issues.
+[1/2] dt-bindings: mtd: cadence: document required clock-names
+      commit: 211b841f34cce652258ddec7fa4750a748b28471
 
--- 
-Josh
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
+
+Kind regards,
+Miquèl
 
