@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-515619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15B5A366BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E307A366B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63393AB4C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:14:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253003AA9FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC81F1C863D;
-	Fri, 14 Feb 2025 20:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777C41C84D6;
+	Fri, 14 Feb 2025 20:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rXv0vaa5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B291C84D3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oTvGVUHD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABD719259E;
+	Fri, 14 Feb 2025 20:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739564039; cv=none; b=G1GxvLH2ukQra6k4al8eFQ7vYeP1OIJf0ZFKGjWXbaZJOjWhyxgM8S99EIR69xn6L1hVockQo4/M30tC7Hxb5taqGN0VETNWseBof5JjSmZvVzVxXYIxcr3otI9vFPKJNCKRW5NIDi8h54lbfShR2PvZjb8i9VBzPZzNyWgh89w=
+	t=1739564036; cv=none; b=qTlBfjO5TaNoMl7rpoBDKmzEur8FrAoG5WL3DY18j+YzJZoTGL1p0zc9vFGnagD7nAzXGFpJEHfUthxIXVEp8kwryLyIB+583V1yvDb63k9/UBaohKzKi84P3NhCXuAOASvkqsrAR3PgOwbrVAs460pe9EnwIByF2UVKEiZMA3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739564039; c=relaxed/simple;
-	bh=11yDghk3Q1KQR9dyQo5cKk3cFl9oA0lfPn4n6ZcqiOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KEpr4AOWwEg7hWv+FcemO39c41cCnqrGINhXXMDs0cHODr/3kKh/p7q25C+wg8+a63XCgbpLLuskO+18p8uXPQcGZ4ATkTnaUmkZt+5ADHeIeW+kLEQeowqBxXkLX3+LbDBx98yIoUhXoliZCHsFWkd8g1/LmvzPZdjjkpJQeyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rXv0vaa5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fVBh7aaxMWrgdPSRhNEUp6jby7sv5vPC7kuSsBAFoKo=; b=rXv0vaa54mCblIpaapXigfgfw0
-	41pAAYZSHcUBiYziL6XmjiawVrMCkvCDnhF3+uHPURZKvrqyDxeP439DBjJl3Ky4C92EQIEVGLAVU
-	VQZcI0k6puXOTRH9Fzsk2crQ8SYp6BmBeB55MgQpCtUS5u8NTALpN0z+pCXddgI8/lKuKVYVxIjby
-	2ew+8Bo7j7lj6jjn+fTLGKwti7RKK9L0Kod5D1ltwDamFQEfxqDyuikQcPRof4SCqnKgpZvlebwNe
-	m5j5AFRmPWW058UoPMNhXFFGIgH1Di26Qy3IwqlxeYTfV94ZmWCiNHEweF9WhuHZ5c0Wo+hjCpHTZ
-	JjtxbjtA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tj24F-0000000Bzz5-0gH6;
-	Fri, 14 Feb 2025 20:13:43 +0000
-Date: Fri, 14 Feb 2025 20:13:43 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] mm, swap: simplify folio swap allocation
-Message-ID: <Z6-j924RCEBuDFHO@casper.infradead.org>
-References: <20250214175709.76029-1-ryncsn@gmail.com>
- <20250214175709.76029-8-ryncsn@gmail.com>
+	s=arc-20240116; t=1739564036; c=relaxed/simple;
+	bh=zYFjsSotXE6vZheU7rAWUZZUF0Srbvf5lz8jgDP4fJ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Knw8u8H7FjBW6cPg/Qshj8pNoIt7rAaiqTVx0cU+8iP8BfPivRmPQ+ODdnwL96RBHjIVoUH+kQ7NvuTWxHKBWp96MG32cGKe1O8TA4tYYowmWbaNvmCr8yXnx5lGwNxz3OqDTCH3tTyVi7SeUGpSIf4rvFVb4MxkvLlBxT4+8jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oTvGVUHD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 0A173203F3FD; Fri, 14 Feb 2025 12:13:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A173203F3FD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739564029;
+	bh=xJZlUceidVSAwmHXnWZ5CvBGMLEhcbu4V3OND3upxOY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oTvGVUHDyTkY6gElxdAN4TKdMsrfsxdJtk7i/iF0mqle+hhVOUX3p8FvAr8s7ffM1
+	 lkEpGzUNS7090wnFR6+JZVMHzD1yEqKSn2OzHe+sTZlbMPzx3qxgArkq6b8/3Q81uf
+	 hXNghAtIXPapKpPoKmQvNwncdiWGgOCxPVbkMVdQ=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.12 000/583] 6.12.14-rc2 review
+Date: Fri, 14 Feb 2025 12:13:49 -0800
+Message-Id: <1739564029-4365-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20250214133845.788244691@linuxfoundation.org>
+References: <20250214133845.788244691@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214175709.76029-8-ryncsn@gmail.com>
 
-On Sat, Feb 15, 2025 at 01:57:09AM +0800, Kairui Song wrote:
-> @@ -1648,20 +1639,20 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
->  	if (list_empty(&info->swaplist))
->  		list_add(&info->swaplist, &shmem_swaplist);
->  
-> -	if (add_to_swap_cache(folio, swap,
-> -			__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
-> -			NULL) == 0) {
-> +	if (folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN)) {
+The kernel, bpf tool, perf tool, and kselftest builds fine for v6.12.14-rc2 on x86 and arm64 Azure VM.
 
-add_to_swap_cache() returns 0 on success or -errno.
+Kernel binary size for x86 build:
+text      data      bss      dec       hex      filename
+27753245  17708814  6397952  51860011  317522b  vmlinux
 
-folio_alloc_swap returns true on success.
+Kernel binary size for arm64 build:
+text      data      bss     dec       hex      filename
+36370691  14991881  1052816  52415388  31fcb9c  vmlinux
 
-That would seem to indicate you should change the polarity of this test?
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-Or should folio_alloc_swap() return an errno?  Is there value in
-distinguishing why we couldn't alloc swap (ENOMEM vs ENOSPC, perhaps?)
 
+
+Thanks,
+Hardik
 
