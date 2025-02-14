@@ -1,182 +1,225 @@
-Return-Path: <linux-kernel+bounces-515537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C12A365FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:03:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C45A36605
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351C81894F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3321897EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6ED197A68;
-	Fri, 14 Feb 2025 19:03:22 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896061A7AFD;
+	Fri, 14 Feb 2025 19:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g+Evped6"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2059.outbound.protection.outlook.com [40.107.101.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5063418B460
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739559801; cv=none; b=VNy5aKuc4N3SbKGgQFeAccSHEp8L9H/Ub7lOhEErfPDvwV5V4PXgOP3QAceA6vpJNRhjoOcM2rLeQl/whrNIyla1xvS+/eixfO8enkWsBrBIC+FWCnV0oQS8i1DrPSx4xwDBRAtTQ4IUMLbNu+gYymhKyt1l7SyDy/cH2T6HadI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739559801; c=relaxed/simple;
-	bh=LzPHQhDzpvp48VwnmU/0YO7/c2pZASju1ajipcpGA/E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LOoFZNcnvpMX1Q1DUOUhBJllPj8vuYWNZTqRyxBRthw+C7BgZh9o5KtwCrz8vm2q1AV7CkBsOPUx7kMusGJK/Gprf7Lxxj8HINmUxwXqYtt2bNx4Qdh3WrEWEBvIp2R27QaLxaVVw5cNPvfOp2Rh6oWYKoPcorjueSCdmtjh2aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce7b6225aeso46774415ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:03:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739559799; x=1740164599;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ozsTo1EMbkvLjAprOo6XEaeUGMGcNs59zEx3LNPFyeI=;
-        b=sOnI/By3ZrWoZIL4n4s8SqTQJjZvLWBMgcB6tPofjXJVwP+b2XuIeEfWjtn41T4fT/
-         RuvZoEiA2FSU7ehwTJmnEUJjgBbmg8b8d3drFOv6bro5Ux2gIKPNj1RcilVsuTuLk9rQ
-         WeZRvIixEfFQGVAaHSzCvPtYOWhqg7TIkgIT6e/s/X3EILCR4dZz4RzAR47u/1ItbKO1
-         LpAjfhUca2dTtK+CPt6EfB9PBB/+K5XQx941eKPe/bBy01UVTUQsVA4V+/gtPn5JgZtb
-         vyCugji8/e4IjNPtjGDz1YwRQVCP072zNVQcunp388ErB9PJGLWBQ9ij5K6PPynlPcKg
-         FcBA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4KaqtMfHfkXMBzRKe0Qt9Xbw3g7Fd6B/YUUq2PZnh+eiqyFs1KnocJCDpvNsxmkN8R3PuA923cfXpTys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzktHPGiJzJJvlJWF4X80utHYKt0bS5uqCkDQ8s7naikxw3BYho
-	7kCnf8sjNPcFpju13z5y9Mb2aOWcNWhuediKaL5wfIwT9opDjvOoixq6vq3CruH+1BRxnoV4RkX
-	eBY9JmCk29nmy3FtBl6xXS4aZildT7MRLlyhlGtq8Ee03kp6/aaN22rk=
-X-Google-Smtp-Source: AGHT+IEFzCBbA/CTRaoj68hjY8/AOfMM8idDhjdvbl1mZo6uamjfvugUlqnTB0xzPuuwxqJa0NuNyBXklCGOHb/J6biX4rnmlJTW
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029118B460;
+	Fri, 14 Feb 2025 19:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739560269; cv=fail; b=NpVJamTXnCUZp2uNwrg6XT90X0HAfn1Y61iJJOtKKpT4Ntw2T0QQUorVsJBGE6jmk6iAuXQHwvhtnN+XVPVIqLPYPJSn1wr9IkvoxCsHGltWmTX1jK3FXz2ZWY/C/Mp3idN9TI24t3nNIt0cg/eIj91F1ZVac/a+Lxs1kzV4B4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739560269; c=relaxed/simple;
+	bh=rWQX6rqusoHori8jY2IokugvgUwtH3edzlfu0mJEILo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cCjZFva2ncsGIt8UsXuPs8uuameZwdhJ6lmUDZWA6xNKGBbfU/DMBdIoc542Lj0hs0OXc1agD53NONBAMMQD76qlrzlgwb4J2usflV5cWrDJXDfeScw9uxfPSNEQ2R9/mF/lb4a6SxBkgs5EFNp1UfpO85D5bl0fQnoPX6cEek0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g+Evped6; arc=fail smtp.client-ip=40.107.101.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hq5nl0Yar1AGVZShkjex3bGkfrPwsB3g9IFzly47rtnXIzUmD6FhQD7QuD0fNGIIxCcbsKR4j8DCCSybeXe16txcjrun5yvzNqLJkLHO//gLqslnPA9TtvhNAREiCv7qMmyRlPfFt0qeojZD7Hp6zF42K/azfae7A867htDypogcDOpdY2nypyRF4uIonkVUPBDFYhFaBlaFpacKgzTKPPPkgzYSzi+USHfgvtMmIga2AvrOX0XDyhtIWhMHcUyNrZyN6Zt+oWM/DdauNqVE1El4//isAUN5eQuhAisQ7+bN6VqTRzC3rKipCZMJIKFJ5wJN27ao4AtaJTKb0c3hBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MeD0sNUjjdVwbIbX69RRtJmOU4ygML6QkvG+yPTNcco=;
+ b=nvgojIrYij5T/oYMoOxyzG/5ieKeMtPc1xRER5twGEFMf+fLKfZum8ZTb0Uv+ijG2e7tJcY0roTTOzoAeti7WcsaT2mSx5tkYCbvQtC887p7e+/X0q9AKHOqX3CDlfr8lIW4rCwHXo+LHkQKhhAEV+cLNKUsYy87vpS32en24IxGevuKSRvId0nJAR+41S2xJ7yuhiyQR2ilhUJIvdMCoODEkLcb0JnxYPb3/8UU/mhmNlw8D+LbMK+jtGzWaHRYrF3kD0xwz8Gai0kh7pgdOJV/qK9sadKacA4wjosXzKPncsQdLt1Lf2Sqe6ky9ZMEg4pAkToI0yLGh+jqKCYAzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MeD0sNUjjdVwbIbX69RRtJmOU4ygML6QkvG+yPTNcco=;
+ b=g+Evped6CehQEycFWxMFXEtHZbvcQxUpVD85nLrZDMQo1NgVtVuvt0Kg4JtZQrhyqY37Vc3qRjBjBiAXdQmKooQ6rpFITi18l9bJqwlLf0LoXctz/PShN6gCpeteYZhOIc5DwlPjJ563vp8aaR5QeSJX0eWMHIFJWtneXWzN6YTKeOOkASfWkmfLx3dttlUrWJj0LpQ7XIJq/oW92fJzCSPOefTAh1DuP+tqY2nhaeZ5Fm745UwchKDcGHulTIbwsb1ugWt9V3MYost/RmsC+eaYY0+i3P+UBzfqc7taILrGFTmcQMP5/Ft9z0K+UQTbo1zifzc52nJngChB4FKwmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MW5PR12MB5652.namprd12.prod.outlook.com (2603:10b6:303:1a0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Fri, 14 Feb
+ 2025 19:11:05 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
+ 19:11:04 +0000
+Date: Fri, 14 Feb 2025 15:11:03 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
+Message-ID: <20250214191103.GH3886819@nvidia.com>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
+ <Z6qTelPSqpFk439l@thinkpad>
+ <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
+ <Z6t51xodSV21ER4M@thinkpad>
+ <CANiq72=3MR9F9ur-aQYP4P81RBreAr=UiGg5iaSuFjjd5Q4Y7Q@mail.gmail.com>
+ <Z66oWuLwY4X9Ou9D@thinkpad>
+ <CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
+X-ClientProxiedBy: BLAPR03CA0066.namprd03.prod.outlook.com
+ (2603:10b6:208:329::11) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148d:b0:3d1:a75e:65f6 with SMTP id
- e9e14a558f8ab-3d280949290mr4406545ab.18.1739559799439; Fri, 14 Feb 2025
- 11:03:19 -0800 (PST)
-Date: Fri, 14 Feb 2025 11:03:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67af9377.050a0220.21dd3.004e.GAE@google.com>
-Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in
- bch2_btree_cache_scan (3)
-From: syzbot <syzbot+fadf17c17d4661618afc@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW5PR12MB5652:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81e5ab88-5ee8-4f17-8f90-08dd4d2b5416
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DcEb/M55KL2EL6r4NX/jLTaq92PxPT0b/owzE6FSPINPQE/znXSws7JA+f65?=
+ =?us-ascii?Q?g+eSQKmSTXNFCZp8i0158bRBEzKgbQdw4uRhQCGWieBFeoSVYXsFG968AeAs?=
+ =?us-ascii?Q?0MdvU22f4aGJ2P5uj+lxxeiu6N8jNh84R8M4Y8FVuqIT6NxNBv6EFnvY0Llb?=
+ =?us-ascii?Q?Ap/QChFdPx1d16vdX3YKQBJl7ZKgIZLNiPjA34jFv4j50uZYhZu357Uheob8?=
+ =?us-ascii?Q?EYDwsr8CBxVLXdy9/w3iE6kdN3OqSEl6B5a2goT5/EcC4j31pCe8PMOZ7ZVL?=
+ =?us-ascii?Q?L+e46ZqcT3bAWWvkTQu4TpazHPOuoBQjyWfKe8AmKkUah/15XzfHHNeU7VPj?=
+ =?us-ascii?Q?HOwJ+kQGf1Q2GI6P74a/Zti8IUgxNlf3UhXxt0AmGjOB3XWa1BN99XGSanO2?=
+ =?us-ascii?Q?J0ogMngnk92+DfyYMfbLIzpQPwbSvJIQaVPMLT8joTnE6ZT590rNykJbU7V3?=
+ =?us-ascii?Q?tyKJ3eeSfqfiDprQddg0wVdAXJF2+btNt6PcZnRJSayEOC5ajAgjiERcv32W?=
+ =?us-ascii?Q?VoqlQUvTLhdX0TQIVY5oYnOC1Wye8caozrRxsXzc+oisOKDXxlUlIYEPNSZK?=
+ =?us-ascii?Q?H4Np1cBsVtGB8DhFgVI2uts7Z8UAmXxhnSFSb4C5/8LkbB6kFKZ0ontF9P8r?=
+ =?us-ascii?Q?ceO9eNB+jzdpgcyICK2m3OZUBYqEwOQduLRg5TgR96VZglB83Iilikc8cHJ6?=
+ =?us-ascii?Q?GbYKDXmYuaROfUuTGr7OwLQHP2HoCOmOvuSQIoy2s8/a+W5/QpkzwaMgE/5S?=
+ =?us-ascii?Q?KeZdPiruu13ILMrzWELeELoj9bVqOSvZLMS1ZTWK7ftrxAt5XwRJVRhXfjdV?=
+ =?us-ascii?Q?D53YUYsrOVicd/RzwapurIYmhCYLFLLr+jMqW6AibIra26t02PB1AogmdzLO?=
+ =?us-ascii?Q?sGOEd8nHGP6DCn1WD9HaDLXjWisa1oAsMpsAEGFU+5OGOjJxTvKjR4lzWOKr?=
+ =?us-ascii?Q?iMnOKNGcnZ6+mGkn09c47V69AMo1zy3JAivjVSmsTsKO1PhYIRK5zuQgvTCV?=
+ =?us-ascii?Q?y1eAkZ1e+NHZ3FRQXZ/XcGVWVrxw/rD2e4uaugphVlEw92bdckiJxbMcidzz?=
+ =?us-ascii?Q?JYPv7ErcyStpQaX1ROcSzqb9dBn9fptwwJdigxM4d8Vq8RghHfRvlTvjiHN3?=
+ =?us-ascii?Q?ka4JHyNmyiiZdsV5ZQV4P+OnkMagSs5czbcF173v3EbNhfOFcxaYemseq1l9?=
+ =?us-ascii?Q?YuV9CSZBb0eKHu9lNqz6IS0cBgST05KRhH31pjwsuusr453i5kB1HWBb8yDX?=
+ =?us-ascii?Q?xJdcOO25eTVcj7yVYbxryFaywQMlMfPeroK8RS+hAJlHJcrWlNIskWUYUTxS?=
+ =?us-ascii?Q?wihLDD3iXb3jAkvY+dVt1i2a4DwVrY4qdDpr3vjNwdiy4SfZCFLcRr+MMhrh?=
+ =?us-ascii?Q?dWRMuBgdZ7jj4FVQFY9ESRe/7Tj7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FCetjOBmDZWI4mtHH+fPmRS0rrvAwLqKafi8A982N+ErOvAFh6pkSgvr/MZt?=
+ =?us-ascii?Q?NR9QIWSsW+hEr51i9DleoniUNfzbCWrKKhL9gEwD1kCL8WnunorSw1as4TxE?=
+ =?us-ascii?Q?PnIJjiHWvoGhG0oWDjrxQgV5vWb6duEBCh9khtUc//MGwkkZxj7t8lL5xuVK?=
+ =?us-ascii?Q?WMk5DcMc+DFH2YvsdYR5lMFY6JgWk0SgTs9xymLVxNKl+Q+YW+Ksxnbi/o5/?=
+ =?us-ascii?Q?rMAiLVP8fnPD4H+7SOYTzx5TkorjNBu9zExa1iGiqsWSghlGZ/DFw70jI+N4?=
+ =?us-ascii?Q?oLPVgn/TcUO6yDEJTpIpSM2xXbyPgz+RPEK4OXRRvCp1VdHR9qylexIGfgYT?=
+ =?us-ascii?Q?y7TDmUy10TnxOIFOPX34aDhSnAM3j3OZLk4hZmVHJykbwYhx4+PlS5MY0/R9?=
+ =?us-ascii?Q?meITF7m5XMPNQ07v5iAbotDeCnbNmRR7GHQwS6lwrWyal5y6yhhPrv/FosJ6?=
+ =?us-ascii?Q?GGUNtzz8G11DeCv1wKSNOyu3dCdmHUkchM4iBSbv+klZVhoSKZcjJQ917AET?=
+ =?us-ascii?Q?kLCBov1iCVNFDedCKwEcygYd09Cbq3bM803lDIHSf09X05+mp+vSiRbmfk2/?=
+ =?us-ascii?Q?LrdizMWV2RSZkqu7D0NV5by1wzWbMqcRBNfiR9spQXPUZPTODFa5NDn1ZJt3?=
+ =?us-ascii?Q?gnAnfVZCMnIR0oLh6WOZqLiXSJPbG+N1nTIgdDQn67HeJVQV8eknJ7JC1wSz?=
+ =?us-ascii?Q?G8yryWW7iP/szBLl/aguFfBlb3SxumfsMEdLHX7hZEEABnmr36i65ujwV/cN?=
+ =?us-ascii?Q?G6sKOvY5jWqbrZ/UfrTT4B3+fd/w0Gau+Mwzup1t7deAA1F3LwTJnhaOxZUk?=
+ =?us-ascii?Q?naCtHznJ3tg9nzs5hkV+J8/LtaAF1CP7xtf4k5wzQQA3fRoOfM7+LjKy+lfk?=
+ =?us-ascii?Q?+/thEk6gFS1veSsJOtaocW4DY+XWJn1BIbbPoZAgZg8socXY1wzZ2vn8yh0z?=
+ =?us-ascii?Q?sSHplmwhv1hVffIQGGWqXHv/n9JpW8PX4tD72tpR/iU0jZy+tzUZV9XT640L?=
+ =?us-ascii?Q?8vRvgQmbh10ndVrC/LdfsEGClQT7O+MPhgkGSm97yV9/19XXMhs0isnxgrhb?=
+ =?us-ascii?Q?ZxOuqGASxATfZaHSa10pO0fGioLZNWXBJkJv4092nyhNzgYCGB4h6FLHgYAD?=
+ =?us-ascii?Q?LZIzRjc+gxiTg0zLa3uRA3+GMePbIx5YzcwCq6PIpmfN8LZ8Ien2WZLGTQRm?=
+ =?us-ascii?Q?GwJtSF5H6H88CbdkbEHe+a56yQHRBkjCI1La/INZKZMQtpNcxXfDasNcQcqZ?=
+ =?us-ascii?Q?2LrhRpRvD5EYV0JxnGNLU1+mzFr3IHPLtughjjVMjPx0wf9kCKQ2CdQ8DNfK?=
+ =?us-ascii?Q?GqeOr8DFzlkc1LW800HT7I+QGZVKuTUY5jErkJ4VEQtxXfk26Dfw4fcYvftI?=
+ =?us-ascii?Q?PaYgGolj4Z61yowH6J3IulnCP8ZSn9j176gjuiXPjmAgK0b4W627+vox+mGu?=
+ =?us-ascii?Q?doy5aB1uHHrcboolSjUS6miAnGyfVJim0WkkUmzpMJGuuAQlA5WbHxewMdYP?=
+ =?us-ascii?Q?H3rl4rtWctlT+0bT9bR6cViEcU/+m6fe7TBrRtu8aW9V2TfnGFONrU0/TCA0?=
+ =?us-ascii?Q?n7yeGeEBC/fJlvtaN2o=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81e5ab88-5ee8-4f17-8f90-08dd4d2b5416
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 19:11:04.8583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2oWpYMGwHmrLTRqgz+gQZ8qTTsz0oBvUZxuxsThk0qbzXWXwKNVdYQKM/+SvAbEN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5652
 
-Hello,
+On Fri, Feb 14, 2025 at 06:56:43PM +0100, Miguel Ojeda wrote:
 
-syzbot found the following issue on:
+> > I mean that Andrew's branch got broken because of it.
 
-HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12038f18580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
-dashboard link: https://syzkaller.appspot.com/bug?extid=fadf17c17d4661618afc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> We also never promised we would fix every single Rust issue spotted
+> across the entire kernel. We try to do our best to help, though.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Sure, but it was said, by many people, many times, that "Rust is
+allowed to break".
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
+This is not just my incorrect impression. For instance read Philipp's
+note to Christoph:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fadf17c17d4661618afc@syzkaller.appspotmail.com
+https://lore.kernel.org/all/293df3d54bad446e8fd527f204c6dc301354e340.camel@mailbox.org/
 
-BUG: unable to handle page fault for address: ffffe8fffebdf038
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 1b03f067 P4D 1b03f067 PUD 1ed1a067 PMD 1ac49067 PTE 0
-Oops: Oops: 0002 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 80 Comm: kswapd1 Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_btree_cache_scan+0xb57/0xec0 fs/bcachefs/btree_cache.c:563
-Code: 24 38 0f 85 12 02 00 00 44 21 2a 48 81 c3 48 b6 04 00 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 bc 08 e2 fd 48 8b 03 <65> 48 ff 40 38 41 80 3c 2e 00 74 08 4c 89 ff e8 a5 08 e2 fd 49 8b
-RSP: 0018:ffffc9000125f2c0 EFLAGS: 00010246
-RAX: 0000607fdefdf000 RBX: ffff88805804b648 RCX: ffffffff8c0998c7
-RDX: ffff8880334a802c RSI: 0000000000000008 RDI: ffffc9000125f240
-RBP: dffffc0000000000 R08: ffffc9000125f247 R09: 1ffff9200024be48
-R10: dffffc0000000000 R11: fffff5200024be49 R12: 0000000000000003
-R13: 00000000fffbffff R14: 1ffff9200024beb5 R15: ffffc9000125f5a8
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffe8fffebdf038 CR3: 000000000e938000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_shrink_slab+0x72d/0x1160 mm/shrinker.c:437
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
- shrink_one+0x43b/0x850 mm/vmscan.c:4868
- shrink_many mm/vmscan.c:4929 [inline]
- lru_gen_shrink_node mm/vmscan.c:5007 [inline]
- shrink_node+0x379b/0x3e20 mm/vmscan.c:5978
- kswapd_shrink_node mm/vmscan.c:6807 [inline]
- balance_pgdat mm/vmscan.c:6999 [inline]
- kswapd+0x20f3/0x3b10 mm/vmscan.c:7264
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
-CR2: ffffe8fffebdf038
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_btree_cache_scan+0xb57/0xec0 fs/bcachefs/btree_cache.c:563
-Code: 24 38 0f 85 12 02 00 00 44 21 2a 48 81 c3 48 b6 04 00 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 bc 08 e2 fd 48 8b 03 <65> 48 ff 40 38 41 80 3c 2e 00 74 08 4c 89 ff e8 a5 08 e2 fd 49 8b
-RSP: 0018:ffffc9000125f2c0 EFLAGS: 00010246
-RAX: 0000607fdefdf000 RBX: ffff88805804b648 RCX: ffffffff8c0998c7
-RDX: ffff8880334a802c RSI: 0000000000000008 RDI: ffffc9000125f240
-RBP: dffffc0000000000 R08: ffffc9000125f247 R09: 1ffff9200024be48
-R10: dffffc0000000000 R11: fffff5200024be49 R12: 0000000000000003
-R13: 00000000fffbffff R14: 1ffff9200024beb5 R15: ffffc9000125f5a8
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffe8fffebdf038 CR3: 000000000e938000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	24 38                	and    $0x38,%al
-   2:	0f 85 12 02 00 00    	jne    0x21a
-   8:	44 21 2a             	and    %r13d,(%rdx)
-   b:	48 81 c3 48 b6 04 00 	add    $0x4b648,%rbx
-  12:	48 89 d8             	mov    %rbx,%rax
-  15:	48 c1 e8 03          	shr    $0x3,%rax
-  19:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
-  1d:	74 08                	je     0x27
-  1f:	48 89 df             	mov    %rbx,%rdi
-  22:	e8 bc 08 e2 fd       	call   0xfde208e3
-  27:	48 8b 03             	mov    (%rbx),%rax
-* 2a:	65 48 ff 40 38       	incq   %gs:0x38(%rax) <-- trapping instruction
-  2f:	41 80 3c 2e 00       	cmpb   $0x0,(%r14,%rbp,1)
-  34:	74 08                	je     0x3e
-  36:	4c 89 ff             	mov    %r15,%rdi
-  39:	e8 a5 08 e2 fd       	call   0xfde208e3
-  3e:	49                   	rex.WB
-  3f:	8b                   	.byte 0x8b
+ > reassure you that the burden of keeping Rust abstractions working with
+ > any changes on the C side rests entirely on the Rust side's shoulders?
+ > (because that's what the statements made by the latter seem to mean to
+ > me)
 
+And Greg's version:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+https://lore.kernel.org/all/2025013030-gummy-cosmic-7927@gregkh/
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ > So the claim remains the same here.  It's just like staging, api changes
+ > to subsystems are allowed to break staging, and rust code, and
+ > maintainers do NOT have to fix them up there, that's up to the staging
+ > and rust maintainers/developers to do so.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I've heard the same statements at conferences and in other coverages
+like LWN. Frankly, I never much believed in this story as workable,
+but it was advanced by many people to smooth the adoption of Rust
+bindings.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>    https://rust-for-linux.com/rust-kernel-policy#didnt-you-promise-rust-wouldnt-be-extra-work-for-maintainers
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+I do not agree with "Didn't you promise Rust wouldn't be extra work
+for maintainers?" in your document. Clearly there is a widespread
+belief this kind of promise was made, even if it was never made by
+you. "Rust is allowed to break" is understood to be the same as saying
+it won't cause extra work.
 
-If you want to undo deduplication, reply with:
-#syz undup
+However, I am glad we are seeing a more realistic understanding of
+what Rust requires of the community over the long term.
+
+Jason
 
