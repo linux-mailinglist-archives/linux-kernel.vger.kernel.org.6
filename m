@@ -1,202 +1,144 @@
-Return-Path: <linux-kernel+bounces-514409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E565A356BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:10:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2153CA356C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD571890BAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:09:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D83A616B544
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EA51DD88B;
-	Fri, 14 Feb 2025 06:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8B31DD88F;
+	Fri, 14 Feb 2025 06:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkRaTZ3w"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IfBALzGf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC6C1DC9BB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503D41DD0E7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513385; cv=none; b=c/KbDVSEv2bDdEgkYml6a6xMFEO4pxFgkIeNPXFt9P2A16ysG/B629oDsVjv76QbZyDTbjlVa/Ue4g+AvCTimOa2QlRZSI7yVLFnx65W+SpOVBvZ1ZBobd1ptV/aZB5xt8yYfbbSGk4BG1Q4MuwQyNh3ay9PPFxiP6olCCXAcR0=
+	t=1739513462; cv=none; b=dfQr2YrTjMV3UJ+mbn4uSguHz+3y7SW7cbGD9ndpk2ADLtPy+hRlvROhK3tuPaQ4YD9vcAUbQFn+mWKffiRnYftuIYrtJhFBOce1KMzT8VZMy2OL9NMY1F9TVpJDsdPPerlNmebdwQqwpC0Ec3Q8FuNlhHsMxgF53YFZpDBSRL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513385; c=relaxed/simple;
-	bh=gslqCHxXuliK3k42oXZWCxQ/0azTZyYkThTDVb/Huws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xbim6k22YQGVEP7Iy7eE3gnJINiq0tybCzgtOQN4c2nlWUACl7VFg1EhS/T5xoVUOmc/T4kUUElpEUtgssNSsRwT+FWW3O5R9j+htRXLL7SNShR2OfoDZT/0xVCdcqI28ki77SL9yPLbLMzzPWJFgCnVNb0YPCg8f9cG0V3Wdjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fkRaTZ3w; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc3027c7aeso355371a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:09:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739513382; x=1740118182; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Qvr3z8yXwbqcPQYudFZGi2O6Yo/lZbNexZYPGGJGKds=;
-        b=fkRaTZ3w9zDI9tzKrpxo1hsDDxwiw7FHKHfX3XCeT6gi97VuF7yunzRjt76xiip445
-         uBDXWt44VnJH9lHKm+boridLB7EmfKsQTEijoeQC4mRtjjkS3T1C220nGj4rrQKW2tXA
-         OhQTKkAoxFfuaFE9He4LsIgmGLAjBlm6BzAD3uw0VtUVqjb3TXvyIQYOnz3iDXAqeWZW
-         et8wsE95g+tf5tW13JLa2NVjOiHa6gXWXO0aobCKpV+o7SDMV20dBcZtO/OMOIGMVE5O
-         c1I4SE1Ejvt+Q8+BHpwdiSHsov4/AXbdGUa4GmGC7wDQQwxbyhxhPXlvZBiDVFOw9BnL
-         GUkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739513382; x=1740118182;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qvr3z8yXwbqcPQYudFZGi2O6Yo/lZbNexZYPGGJGKds=;
-        b=O9GNfhFmLDicpSPTjBNbfgCWc5C5Oi1wKP4AZVdrO/X8/jQYMjyJPCwjhLz0cfUZAw
-         XhvrDvFiTSVpOwBCq5nrvvm+orGz/kLXD4YnfrVrrrCfVBtCEr2XCQQ8SJ55G+tYs5cU
-         KRgv/VVzM87AeCPnmHBzoQ0HxyXfAw8q1G4mjJeuvbtkGfOGHFb5uq3RizsuZ3LjeA5x
-         ooAz/2rFKGxMtpDfit42P5xdBzDvH+37t48YpAipZpxUsjUw8JJqhehQbFDtuxLCS6v5
-         SHLKyBbiU690RmjZMKqeVi3weMkJSAWPQdAkEEdOoYrH2CwOSIWBzbwnVvuaegWsUg2d
-         Tevg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZzfrCY4D51C1nBInKhW7rjhGmAcY+8+/gkLRWpdPl47KWEykbCk4L677SUIUBGTABSz6S83z2Lx9qWcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3BVkZcH4AU6SfcfBnQ4y7So6WTA+WiDxATBixescS49N1A4Tn
-	0F2Bw0hJ1rnsd2DC9suLxZYymV5StCNROh/HsfFIMVp8g3ypKklkVn3WzOan+FelLKH4ovsbK5M
-	=
-X-Gm-Gg: ASbGncvHCpk4BjieDReLSkR5t+57CCleihSv/tZe65q7sfO6FNOELOnF6M5zaRhr1Yw
-	sMvC7egu54jgLpRrf1+oRoSV6ogBWHVnUsCG5cYB6u6QSNzahYWvi0VqeBLm9UGHQA9YYb5kphe
-	QJaR0CSHEi8ObhRwavsX/t66Pu9256lZkvqnFU4G+sGL7k1tqLKrNZZV+7w2WUTanQ137LJ5fve
-	rE/hRIyMxNoWH5DwTYwl6UPlSwyIIWvxm8d7Q7o5WZtEZoqoLeA9yRTDfjgjZDbBA/bT62UoNBk
-	23BrDcIV3afKhUQSt/D8s3iiGJgT5dQ=
-X-Google-Smtp-Source: AGHT+IGJ3PDtM/43vWXCC0cF5aeFBeRUcz79hhv9m7sp4Xsbx/Vh9naI+GxiQ5/c5A05umj2CLzzHA==
-X-Received: by 2002:a17:90b:2743:b0:2fa:17dd:6afa with SMTP id 98e67ed59e1d1-2fbf5c0f614mr17644772a91.17.1739513382401;
-        Thu, 13 Feb 2025 22:09:42 -0800 (PST)
-Received: from thinkpad ([2409:40f4:304f:ad8a:8cb7:72db:3a5e:1287])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ad7c62sm2228797a91.29.2025.02.13.22.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 22:09:41 -0800 (PST)
-Date: Fri, 14 Feb 2025 11:39:35 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Kevin Xie <kevin.xie@starfivetech.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	"open list:PCIE DRIVER FOR STARFIVE JH71x0" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] PCI: starfive: Fix kmemleak in StarFive PCIe driver's
- IRQ handling
-Message-ID: <20250214060935.cgnc436upawnfzn6@thinkpad>
-References: <20250208140110.2389-1-linux.amoon@gmail.com>
- <20250210174400.b63bhmtkuqhktb57@thinkpad>
- <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com>
+	s=arc-20240116; t=1739513462; c=relaxed/simple;
+	bh=ro5xkK8yo/KndYQDY5G/N/Su5NsLJ2Xcrw1UPYjyoa4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NELtD8LBcEUXQXic8rK7kimI09IBTGMkd8soK+u2yTdPKXtmhv3kcejSEHDOMX3JunRu3Yli3zXGNe6dYxrhYvoFo1YWlqWwpipSTHIF9XxqKbqyF1EnlrKJfVuE4pRwyk69dfhddAXnilxTT1LeFbWnb3hiT2cCrQUoWzOg1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IfBALzGf; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739513460; x=1771049460;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ro5xkK8yo/KndYQDY5G/N/Su5NsLJ2Xcrw1UPYjyoa4=;
+  b=IfBALzGfz90RuGmneQv+C0p99IoMkTLDsUz+M1gyHTHDtIUZAaa6d/bm
+   qslmwDV54oKviBwfnIl4Bm+WzfsRbroyGTRhd0eRB+PFILpv3Bd3rM3gA
+   aYvzZLkMOA8yP3DhHFFvtmU1h0aNEIGSQkN5cIyZA2IyUNszLSKFzcgF3
+   1qeADSEwON4vKhjasB+yZ0vJFZzHygFh0MNXOtcxw7DKZqdGn6s2tS2d8
+   o01usatNv7A9SQ8hPwOify4WfJ25PKJbZKBbH25Ux9z/Gm/E8fE8fXbjF
+   WrV1K+QFUa/1rFm1Wfpa0S/mrtz9R5m7k0aGDdchqP5qwCHAMTFDbjJU5
+   Q==;
+X-CSE-ConnectionGUID: Cznwh/Q/Sui9pmq9cW9Qpw==
+X-CSE-MsgGUID: vqnNUTvtSyiHxm1zZ9pWhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40124447"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="40124447"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 22:11:00 -0800
+X-CSE-ConnectionGUID: wVpSM2PQQvCo3DVnaeEv7Q==
+X-CSE-MsgGUID: 5ZcLeNMmSKCVjI3nhGwtNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="114268011"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by orviesa008.jf.intel.com with ESMTP; 13 Feb 2025 22:10:56 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+Date: Fri, 14 Feb 2025 14:10:52 +0800
+Message-ID: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com>
 
-On Tue, Feb 11, 2025 at 01:09:04AM +0530, Anand Moon wrote:
-> Hi Manivannan
-> 
-> On Mon, 10 Feb 2025 at 23:14, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Sat, Feb 08, 2025 at 07:31:08PM +0530, Anand Moon wrote:
-> > > kmemleak reported following debug log
-> > >
-> > > $ sudo cat /sys/kernel/debug/kmemleak
-> > > unreferenced object 0xffffffd6c47c2600 (size 128):
-> > >   comm "kworker/u16:2", pid 38, jiffies 4294942263
-> > >   hex dump (first 32 bytes):
-> > >     cc 7c 5a 8d ff ff ff ff 40 b0 47 c8 d6 ff ff ff  .|Z.....@.G.....
-> > >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > >   backtrace (crc 4f07ff07):
-> > >     __create_object+0x2a/0xfc
-> > >     kmemleak_alloc+0x38/0x98
-> > >     __kmalloc_cache_noprof+0x296/0x444
-> > >     request_threaded_irq+0x168/0x284
-> > >     devm_request_threaded_irq+0xa8/0x13c
-> > >     plda_init_interrupts+0x46e/0x858
-> > >     plda_pcie_host_init+0x356/0x468
-> > >     starfive_pcie_probe+0x2f6/0x398
-> > >     platform_probe+0x106/0x150
-> > >     really_probe+0x30e/0x746
-> > >     __driver_probe_device+0x11c/0x2c2
-> > >     driver_probe_device+0x5e/0x316
-> > >     __device_attach_driver+0x296/0x3a4
-> > >     bus_for_each_drv+0x1d0/0x260
-> > >     __device_attach+0x1fa/0x2d6
-> > >     device_initial_probe+0x14/0x28
-> > > unreferenced object 0xffffffd6c47c2900 (size 128):
-> > >   comm "kworker/u16:2", pid 38, jiffies 4294942281
-> > >
-> > > This patch addresses a kmemleak reported during StarFive PCIe driver
-> > > initialization. The leak was observed with kmemleak reporting
-> > > unreferenced objects related to IRQ handling. The backtrace pointed
-> > > to the `request_threaded_irq` and related functions within the
-> > > `plda_init_interrupts` path, indicating that some allocated memory
-> > > related to IRQs was not being properly freed.
-> > >
-> > > The issue was that while the driver requested IRQs, it wasn't
-> > > correctly handling the lifecycle of the associated resources.
-> >
-> > What resources?
-> >
-> The Microchip PCIe host driver [1] handles  PCI, SEC, DEBUG, and LOCAL
-> hardware events
-> through a dedicated framework [2]. This framework allows the core driver [3]
-> to monitor and wait for these specific events.
-> 
+The new method for driver fault reporting support relies on the domain
+to specify a iopf_handler. The driver should detect this and setup the
+HW when fault capable domains are attached.
 
-Microchip driver also has its own 'event_ops' and 'event_irq_chip', so defining
-'request_event_irq()' callback makes sense to me.
+Move SMMUv3 to use this method and have VT-D validate support during
+attach so that all three fault capable drivers have a no-op FEAT_SVA and
+_IOPF. Then remove them.
 
-> [1]: https://github.com/torvalds/linux/blob/master/drivers/pci/controller/plda/pcie-microchip-host.c#L90-L292
-> [2]: https://github.com/torvalds/linux/blob/master/drivers/pci/controller/plda/pcie-microchip-host.c#L374-L499
-> [3]: https://github.com/torvalds/linux/blob/master/drivers/pci/controller/plda/pcie-plda-host.c#L448-L466
-> 
-> StarFive PCIe driver currently lacks the necessary `request_event_irq`
-> implementation
-> to integrate with this event-handling mechanism, which prevents the core driver
-> from properly responding to these events on StarFive platforms.
-> 
-> static const struct plda_event mc_event = {
-> .  request_event_irq = mc_request_event_irq,
->   .intx_event        = EVENT_LOCAL_PM_MSI_INT_INTX,
->   .msi_event         = EVENT_LOCAL_PM_MSI_INT_MSI,
-> };
-> 
-> This patch implements dummy `request_event_irq` for the StarFive PCIe driver,
-> Since the core [3] driver is monitoring for these events
-> 
+This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+further clean up.
 
-This still doesn't make sense to me. Under what condition you observed the
-kmemleak? Since it points to devm_request_irq(), I can understand that the
-memory allocated for the IRQ is not freed. But when does it happen?
+The whole series is also available at github:
+https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v1
 
-> > > This patch introduces an event IRQ handler and the necessary
-> > > infrastructure to manage these IRQs, preventing the memory leak.
-> > >
-> >
-> > These handles appear pointless to me. What purpose are they serving?
-> >
-> Yes, you are correct, the core event monitoring framework [3] triggered a
-> kernel memory leak. This patch adds a dummy IRQ callback as a
-> placeholder for proper event handling, which can be implemented in a
-> future patch.
-> 
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-The dummy request_event_irq() callback is not supposed to be needed in the first
-place. So clearly, this patch is not fixing the actual memory leak but trying to
-cover it up.
+Jason Gunthorpe (3):
+  iommu/arm-smmu-v3: Put iopf enablement in the domain attach path
+  iommu/vt-d: Check if SVA is supported when attaching the SVA domain
+  iommu: Remove IOMMU_DEV_FEAT_SVA
 
-- Mani
+Lu Baolu (9):
+  iommu/vt-d: Move scalable mode ATS enablement to probe path
+  iommu/vt-d: Move PRI enablement in probe path
+  iommu/vt-d: Cleanup intel_context_flush_present()
+  iommu/vt-d: Put iopf enablement in domain attach path
+  iommufd/selftest: Put iopf enablement in domain attach path
+  dmaengine: idxd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  uacce: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  iommufd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+  iommu: Remove iommu_dev_enable/disable_feature()
+
+ drivers/accel/amdxdna/aie2_pci.c              |  13 +-
+ drivers/dma/idxd/init.c                       |  43 +--
+ drivers/iommu/amd/iommu.c                     |  34 --
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  86 +----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 130 ++++----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  34 +-
+ drivers/iommu/intel/iommu.c                   | 301 ++++++------------
+ drivers/iommu/intel/iommu.h                   |  50 ++-
+ drivers/iommu/intel/nested.c                  |  16 +-
+ drivers/iommu/intel/pasid.c                   |  41 +--
+ drivers/iommu/intel/prq.c                     |   2 +-
+ drivers/iommu/intel/svm.c                     |  52 ++-
+ drivers/iommu/iommu-sva.c                     |   3 -
+ drivers/iommu/iommu.c                         |  32 --
+ drivers/iommu/iommufd/device.c                |   1 -
+ drivers/iommu/iommufd/fault.c                 | 111 ++-----
+ drivers/iommu/iommufd/iommufd_private.h       |   3 -
+ drivers/iommu/iommufd/selftest.c              |  52 ++-
+ drivers/misc/uacce/uacce.c                    |  40 ---
+ include/linux/iommu.h                         |  35 --
+ 20 files changed, 380 insertions(+), 699 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
