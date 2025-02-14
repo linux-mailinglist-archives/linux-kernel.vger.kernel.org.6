@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-515597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241CEA3668F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:55:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314D4A36691
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFE5169A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:55:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CB73188E4C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE371C84DE;
-	Fri, 14 Feb 2025 19:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5BA1C84C0;
+	Fri, 14 Feb 2025 19:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEWdw2kz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKeutZql"
 Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D6C1946DA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF851C84C6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562934; cv=none; b=uW60V1146jGAGya+I77hL9cSr0ek9e63zwHmutveqfshFKuHrPizu0Amaq+hgDHcWtd++I/An1BciQ3Z+8SxUoP2pWyromPgK2nf1/6w/zkiB7JW6cXlTurhvHJrNkbWlHklPGMiXqrfSuDXAXZ0l5HKU2H2uWBYlfSSa1i6prM=
+	t=1739562960; cv=none; b=BJcxj5TwIpTGYhGeTHhQ0b+arvGVQMAX4CB8x75/Swx2OOuilqhG8G58pqTMdBSku5m2efwEMus8ZEyoeKdIHmjaHNJ7OcgpdaZBQVtkrzg487GdpktEKRdVddwM9hc7uP3DKPHRDgo1ou8ztYG0WVDZV1BBXlUOA3+H1KIgN74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562934; c=relaxed/simple;
-	bh=GlLftjDRagTS13s5Ysn5RJqGQA/ImDdXkaSwQnm1HmM=;
+	s=arc-20240116; t=1739562960; c=relaxed/simple;
+	bh=K7bYDqnR9vXpWMpWttOaWLLbXoQP6llK5irYRI+EMaQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dcjLm6N7ZffniqqYhs2cm2PKbCNL4JfeUeAl3scph3Fzf2DUjQUgtrNRoSu/l6KIVli1GMnAwFjFZCXWE4s+erGq11b/Dcppevdy8UVukO2IHNdQlXP5rEty0JI4A0lg1/WFAzLrXKNtpyMSZ8yjY09/BkIX168pYV3yrslhuC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEWdw2kz; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version:Content-Type; b=la696MX9kq39yD4Cbr9fgFnhqr/wFKxoJ2XPW9HvvkJ/23g/5npHnXUFK9ZrfdKeFXMBnM9eKOdUCEbtdQUNEXUOw+dGfGl9/QONqJzsnCxsfwnghbFb7Vvq3bQFfF87tvjEc6eKXFhlqtfQ6HJqMT6lgilZmbQUoVrBF7KlbrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKeutZql; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so538258a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:55:31 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc3035e947so209592a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:55:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739562930; x=1740167730; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739562958; x=1740167758; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D1ls72V8E9puB3eNgIJ94RbIr4YeTpcns67AF/rE8Ko=;
-        b=VEWdw2kzux86nJ/qoTMDgNOy3aDSFmW9YAHZQxWIWerZhxZUFuqgAT21uwcaz8t+Gi
-         OQYN/RxNn0iET6DZ8E9BwkSSsB6pwhWzLNBK6AXTAvoz9dkOftKDh7XCcDwMd6Xl/Dht
-         8FOBjEkdPvqUiITNVPpa8f6MeTlyGrz3hVSSWVHgfbrx+Pndj83XxIXs4FoVB3A6cjgz
-         WXXqgpX2u4TK8ssfLuTHBX4v/5Trzl5PX8lKbpPLzQAj+hkIRLgHneWhRRUkRd8sBKI/
-         45jrE/BllRTTQPHHP612SnhGEN8F2OQb0f2Lqz1y4xPl71TXpxJ82TMD7JRHHX1bFFEm
-         0PDQ==
+        bh=e8eFD8Y0Jdwt006d6ZGfmM2mEuwTtejAwkszA51XpJo=;
+        b=VKeutZqlgF8bdPMCsMgxNQb2yJZKURSYR+DWuYC4c2LBFePNRcHlkSTVSdyR0aSPrs
+         zUE5Qn/Ud4IsnGCTtZEuzfXO0C6VytYHS4ETW2AgY9HcVQgv/vj+V8CWqsNiJ9KQ0Jwh
+         Nnyni0zu4TF0nu5gKzrzAYPoIIyCZnvzi6WOIBGjoR7GrfGA3E8PvXMgpDcyjVXogaEb
+         yJPEnHEJqq0TO2ErTePOHXBtZggqfMqENk04sDJoH7L1uvOmYPm/jveuQLmDyW8DKb4O
+         K9L2ZggzA8LCJg8kQuPSp3INMVcBeodRkBwX0Kx06kh5DjpogTi+yARH7TeJAsW8RdlD
+         /e2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739562930; x=1740167730;
+        d=1e100.net; s=20230601; t=1739562958; x=1740167758;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D1ls72V8E9puB3eNgIJ94RbIr4YeTpcns67AF/rE8Ko=;
-        b=ngHvsxhrsi8t6c3i8pcTrOiWT3pNOq4/lrIUYMr0MpMViVGOyD6hxLC5PUOga2pxoU
-         JAUcOSGLQCoOZ+Qjvfqv6r2teNe2VV8ETy+qlXZCY6wC2dO7oazOCFX/ps6WACyetvsk
-         1km2PCJMlngrCQ3Tw0llMDtgc+Qxl1jmQB2C1eZn50JEUtU3Ff6WXfElt6og3JE7goar
-         Y6B1WBZaGWeF7hGSvK9TJ32P7hkoxUnKpdUj8nmUvV6MgUWvBatw8VhWqVIZQseiqEUV
-         BpTdDhiZdlmMGlB88eaPVm7qrl7kPRjr2haeMY+5fXfuqOkdpVcCbXZwYk6yoTsRZRh2
-         uvTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfI4eS2vNhCufkDYGAtweudm9iRHFFTMfsOzAj0Uwm5oaz91AnkhyKWx4lQW9P+BU9v94C1y9H2WR+cDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSPHFkPoYoizSce5sASV3S1sY8Kbew7xGm1txUoku2ATRKnYFP
-	7lc6TNP6jbTPKUIZfpCpJElfmwjhYuZOFQxZGEjt0VHbbiIjr/GD
-X-Gm-Gg: ASbGncvK53Dlg+bSVpOvC843dIFGMKaj/US2jxeiDUpGhMKNj1ZOvERklObqSmD2eNi
-	X9sw+PcQELosyU4kOLOiLZr0pj1pXXnWqBfaGS61uWsHS1rnupbfxSHlmi0QhdkR/j6kEdith/y
-	qHzmGH56fkaiuSXaGJ2R4YAJmWNF+QBO34fFnlfIeeK/2rycGCbIlkMRgXCLUqY8lLk60Pw2xQa
-	5wQ3g1gD73B+LrgNkTJRR45tVS9bTwj7R8gJHE+YZnO4hihSSN+G+IhLt+DzNOmpEokBFBORCrp
-	Tv/Xq90RzCXeve1+BkTLItYLAkNPFNY=
-X-Google-Smtp-Source: AGHT+IFjYT/m1MRnPua56A4ceDqKHqnT27HdXDvwyL2LyaK5ILMPgH1OeLlvurwBgPORnzf4Xg755w==
-X-Received: by 2002:aa7:8893:0:b0:730:f1b7:9ba9 with SMTP id d2e1a72fcca58-7326197e823mr404985b3a.7.1739562930518;
-        Fri, 14 Feb 2025 11:55:30 -0800 (PST)
+        bh=e8eFD8Y0Jdwt006d6ZGfmM2mEuwTtejAwkszA51XpJo=;
+        b=nudMPLCYGiNxhuXYrXB63/qEbmI1XjadV+mwY2508/+cXFOR0Low52gwUFFkR1yOOs
+         3l4/yoUmuQf2EZSg02TtsKhvb5P6KVrN7J2fOnU5Pp/PPrZYwAzfJpqtGIr2HOTMSLU8
+         CCeELGv3Nx5c12ymtg1xWJsy5nq24GQVfpFAxcjtGubjXyUniKO5KxiJE7lbYGy4jbrX
+         Wsv3I5M/LnoNDi0l5IBcOp6TEQ56Vn8YwFD8wbZqnrqFa8cejRj9YvJOojtYS6cD0h+X
+         5e2KFxtfBSaELryDWaJfjrzme/Eu+H8+eTJWEyHSRQnOkLe99DRZOA+Eb+aoTCemVie7
+         0MdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmVi2xn59BPq/x4N3m82lyQJtLNrVeMn92oXvUe0ANKiyjvuzPfLOHGTmllVKyG3vSmfBEuVM6dnVzATE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/mtGPvkkH8b5DUunuFNZDyi06/jvlMeXjd8/1SGwucTrp6EfL
+	n6RDDqe2P0OEEMwML4S0VI27oHK7WzFvH9DKQvcEc0T/aFIrLz0m
+X-Gm-Gg: ASbGncs6hy54zyfiNM9GEXphZ4AprC80MRP5ZgaTAb3VTEyy3cYC4pa1KUZGaW25DBC
+	BnzpmFymVgt0GHTiBRhK1xQnVYN4/IF/IIYI25MRByVDLw34k2eB5SUcWQG6AXWu4lRDJ4thVrf
+	QamM8wyCrEDLM59qnyO0MfPoId65+yypudQsMx6Nd3W/Mh/xQsqcMBcwXj2qP+KwMTyInwMVTNK
+	hTMLccJbqrgULov+k2VO+WE503rd8PtpfdEKP0SkyqGtPeyq5CI8M1sir2WHI/OXK7jzP6SFPNg
+	7iTWYEH2TnNf75CvhNjpQD1BBTxpacY=
+X-Google-Smtp-Source: AGHT+IEDvxqpJwfdkwb18JB4Bmp8msqxbfmJy94sOkKiuSkAxnIjXU1DN01E3qa2U1W6sH9l5reYuQ==
+X-Received: by 2002:a05:6a00:3e24:b0:730:83c1:1f79 with SMTP id d2e1a72fcca58-732618d733bmr422885b3a.3.1739562958288;
+        Fri, 14 Feb 2025 11:55:58 -0800 (PST)
 Received: from localhost.lp.veng.com.ar ([200.10.125.114])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73249fe96b4sm2670530b3a.75.2025.02.14.11.55.27
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73249fe96b4sm2670530b3a.75.2025.02.14.11.55.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 11:55:29 -0800 (PST)
+        Fri, 14 Feb 2025 11:55:57 -0800 (PST)
 From: Gaston Gonzalez <gascoar@gmail.com>
 To: linux-staging@lists.linux.dev
 Cc: dpenkler@gmail.com,
@@ -86,9 +86,9 @@ Cc: dpenkler@gmail.com,
 	skhan@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	gascoar@gmail.com
-Subject: [PATCH v2 1/5] staging: gpib: cb7210: remove unused variable
-Date: Fri, 14 Feb 2025 16:54:40 -0300
-Message-ID: <20250214195456.104075-3-gascoar@gmail.com>
+Subject: [PATCH v2 2/5] staging: gpib: eastwood: remove unused variable
+Date: Fri, 14 Feb 2025 16:54:42 -0300
+Message-ID: <20250214195456.104075-5-gascoar@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250214195456.104075-1-gascoar@gmail.com>
 References: <20250214195456.104075-1-gascoar@gmail.com>
@@ -101,7 +101,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Remove unused variable 'nec_priv' in function 'cb7210_line_status'.
+Remove unused variable 'nec_priv' in function 'fluke_line_status'.
 
 This removes the following warning found compiling with W=1:
 
@@ -111,23 +111,23 @@ Signed-off-by: Gaston Gonzalez <gascoar@gmail.com>
 ---
 v2: no changes in this patch.
 
- drivers/staging/gpib/cb7210/cb7210.c | 2 --
+ drivers/staging/gpib/eastwood/fluke_gpib.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
-index 381c508f62eb..5c2b2c382df3 100644
---- a/drivers/staging/gpib/cb7210/cb7210.c
-+++ b/drivers/staging/gpib/cb7210/cb7210.c
-@@ -383,10 +383,8 @@ static int cb7210_line_status(const gpib_board_t *board)
+diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
+index d5b1a03abf11..65bb79a8fd3c 100644
+--- a/drivers/staging/gpib/eastwood/fluke_gpib.c
++++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
+@@ -194,10 +194,8 @@ static int fluke_line_status(const gpib_board_t *board)
  	int status = ValidALL;
  	int bsr_bits;
- 	struct cb7210_priv *cb_priv;
+ 	struct fluke_priv *e_priv;
 -	struct nec7210_priv *nec_priv;
  
- 	cb_priv = board->private_data;
--	nec_priv = &cb_priv->nec7210_priv;
+ 	e_priv = board->private_data;
+-	nec_priv = &e_priv->nec7210_priv;
  
- 	bsr_bits = cb7210_paged_read_byte(cb_priv, BUS_STATUS, BUS_STATUS_PAGE);
+ 	bsr_bits = fluke_paged_read_byte(e_priv, BUS_STATUS, BUS_STATUS_PAGE);
  
 -- 
 2.48.1
