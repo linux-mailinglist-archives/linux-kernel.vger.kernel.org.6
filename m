@@ -1,189 +1,207 @@
-Return-Path: <linux-kernel+bounces-514183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A139A353B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:28:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BF7A353AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DCC0188FE39
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CAA0188FE6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B926F7081C;
-	Fri, 14 Feb 2025 01:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C04C70831;
+	Fri, 14 Feb 2025 01:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFIYFQyl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLsqYtMC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715B03BBC9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0F47081C;
+	Fri, 14 Feb 2025 01:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739496483; cv=none; b=g2XMmfwiDmITxmSw2tUosU+u802/pYAwdmnoukrceI1pAXfO1FuTDZGKIka9Y+NKKrZWtg3Pptk48LbUIPVmI67dY9Ou7Inim2oqUndQeJJixpZpMSpLWYv7bC7H34Bj0NMFlTi7tZWh/X/FhB6WBb5RJYlajPJ2f2ZQb8CGEd8=
+	t=1739496442; cv=none; b=Re66qGMFQUYWNtGggblLfQ3Oic8OKfivog47oQOI8K0kWAjacfhx9pDZNxYIeSB4i36+BUwIH0Mt+hMzJFr6mVc71Yuk9HHGCyKJy8427s5rSj4KQPWyKebzaZ3Gx32xOtWX6K6yYVk9et7RIEopGpEYoCsTGPuEKXInFu4W9Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739496483; c=relaxed/simple;
-	bh=cYLZCWklGExqnb4XYd4m4Dohj9r1gsVO6r752NlH7A0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qxVWVhTvMbXavWelEWns641dAYnNzBxuC/BlYeRu6QAEZzo2xcqHR5Qc6PojvKBUkS/2IcNLMgSXX5KYE2Of7m/juaAhRPCoaYPscI3EAnKaO0/aHbTMGfzxU3lIKDb/p3mN6uzmChi/Qbhr1q/9hie7rL740wXh+SYp/OZPPeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFIYFQyl; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739496477; x=1771032477;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=cYLZCWklGExqnb4XYd4m4Dohj9r1gsVO6r752NlH7A0=;
-  b=TFIYFQylWcRLwL3YSlOjZgXMSKB+4uABiMIkjBgQgB7J4bfwq8zoWdLm
-   6HiXNOQpWDKuzIm4OG99wqzH19cV5vow9hmbRicx2uH1jeEV4ByowCtqH
-   tlui6dSQjWKLL1cViKZqeo8Om+PCZqxOqVZnfvcBi9rT4+oxWS1sZg0MU
-   p57hQNGN1PRsufi/BJojkas69wGe+0meWi/UEzLacdHBv/WcBtsAcT0+G
-   W+GtZFnB7+2pPUWIm726uNMkCmVN1PjZ3lbs5RkJqSEE4KHETEI43gvxD
-   I4hY39w309WEI7ymZHF+iVogzPR7ae+Nw6PrOlV3u/dO0cSh2Oesq6+mm
-   A==;
-X-CSE-ConnectionGUID: 9xfWEmHiRqCESx0IT+4Oew==
-X-CSE-MsgGUID: 9Xi+9aDqSXmOGXmJ2dHHDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39936820"
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="39936820"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 17:27:56 -0800
-X-CSE-ConnectionGUID: sD5kU1gXQVKXEDd/aSteAw==
-X-CSE-MsgGUID: rq/tCPqSR8qLNv9L6x6/zg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117447076"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Feb 2025 17:27:55 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tikUj-0018ut-0U;
-	Fri, 14 Feb 2025 01:27:53 +0000
-Date: Fri, 14 Feb 2025 09:27:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: arch/arm/mach-omap2/sdrc.c:129: warning: Function parameter or
- struct member 'sdrc_cs0' not described in 'omap2_sdrc_init'
-Message-ID: <202502140909.al1w1xsR-lkp@intel.com>
+	s=arc-20240116; t=1739496442; c=relaxed/simple;
+	bh=Tw2ys3ocF6gdBGnWzCtn8X1+JhzVVjWEPt15oDLoFP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tj4xKk+4SatWJy9BFfUTautGLnyHfLTe1oZ/Cc5kU6bckEqx5KdsCD+nhD7F0jOT42ITtoO5j9tPg3dnOhoJlR4G0cwl5U3ach3IBCuID0Q2cmGKIKBzyiFHbXNYnEQcecQqGGHKT/kDI6QI31yC5c8U9mubPfzvyK22UBHBuT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLsqYtMC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5EAC4CED1;
+	Fri, 14 Feb 2025 01:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739496442;
+	bh=Tw2ys3ocF6gdBGnWzCtn8X1+JhzVVjWEPt15oDLoFP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLsqYtMCOieuWF8B+QYNWaHVU3taYQhMjlw0lytp54H0k6xcYIP53+mQPq1rm2J+O
+	 eT8iDoLi6LYKxcbtakEcwDk1SGJ4/E9750y/I7ygt3SuYbj9sxkHkjmWpJwVUzg9b8
+	 hTOKDCbzR5mO4fxQGk7ikJfxLEuInq2dXwDWvaG0F4imjecd39YlEOcnZ6bGltY+zq
+	 gA2wCpFLP8AA5vklKx32ocCJrM8zyMbvEMbmmE//acTZBLuwDUFoTZymcNPc+i6SOq
+	 5nDuV2MrIqI84BDhG5tRT/AKO4QiJ+ZT1KAXizeEd/xv3smcPjJkGXxEIMZsMSaQxC
+	 xL6Zp8kH16/IA==
+Date: Thu, 13 Feb 2025 17:27:19 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, Robin.Murphy@arm.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf stat: Fix non-uniquified hybrid legacy events
+Message-ID: <Z66b9-I_MkmX7pg5@google.com>
+References: <20250212122413.1184503-1-james.clark@linaro.org>
+ <CAP-5=fWywDB40-RgV8LaPqsoffOLdDcYkUB_LHoPvV=R8yas4w@mail.gmail.com>
+ <CAP-5=fV0rWEL-ewGpoDwaJ3rvbTPXSx0YTuF5p9=6+h5oUhsfg@mail.gmail.com>
+ <c672c3a3-64e3-495a-ae61-ae098d30c6b9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c672c3a3-64e3-495a-ae61-ae098d30c6b9@linaro.org>
 
-Hi Arnd,
+Hello,
 
-FYI, the error/warning still remains.
+On Thu, Feb 13, 2025 at 12:15:30PM +0000, James Clark wrote:
+> 
+> 
+> On 12/02/2025 9:38 pm, Ian Rogers wrote:
+> > On Wed, Feb 12, 2025 at 9:48 AM Ian Rogers <irogers@google.com> wrote:
+> > > 
+> > > On Wed, Feb 12, 2025 at 4:24 AM James Clark <james.clark@linaro.org> wrote:
+> > > > 
+> > > > Legacy hybrid events have attr.type == PERF_TYPE_HARDWARE, so they look
+> > > > like plain legacy events if we only look at attr.type. But legacy events
+> > > > should still be uniquified if they were opened on a non-legacy PMU.
+> > > > Previously we looked at the PMU type to determine legacy vs hybrid
+> > > > events here so revert this particular check to how it was before the
+> > > > linked fixes commit.
+> > > > 
+> > > > counter->pmu doesn't need to be null checked twice, in fact it is
+> > > > required for any kind of uniquification so make that a separate check.
+> > > > 
+> > > > This restores PMU names on hybrid systems and also changes "perf stat
+> > > > metrics (shadow stat) test" from a FAIL back to a SKIP (on hybrid). The
+> > > > test was gated on "cycles" appearing alone which doesn't happen on
+> > > > here.
+> > > > 
+> > > > Before:
+> > > > 
+> > > >    $ perf stat -- true
+> > > >    ...
+> > > >       <not counted>      instructions:u                           (0.00%)
+> > > >             162,536      instructions:u            # 0.58  insn per cycle
+> > > >    ...
+> > > > 
+> > > > After:
+> > > > 
+> > > >   $ perf stat -- true
+> > > >   ...
+> > > >       <not counted>      cpu_atom/instructions/u                  (0.00%)
+> > > >             162,541      cpu_core/instructions/u   # 0.62  insn per cycle
+> > > >   ...
+> > > > 
+> > > > Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
+> > > > Signed-off-by: James Clark <james.clark@linaro.org>
+> > > > ---
+> > > >   tools/perf/util/stat-display.c | 9 +++++++--
+> > > >   1 file changed, 7 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> > > > index e65c7e9f15d1..eae34ba95f59 100644
+> > > > --- a/tools/perf/util/stat-display.c
+> > > > +++ b/tools/perf/util/stat-display.c
+> > > > @@ -1688,12 +1688,17 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
+> > > >                  return;
+> > > >          }
+> > > > 
+> > > > -       if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
+> > > > +       if (!counter->pmu) {
+> > > 
+> > > Thanks James, I wish I had a hybrid laptop so I didn't keep breaking
+> > > things like this. I'm uncomfortable using an evsel having/not-having a
+> > > PMU as an indication of whether uniquification is necessary. It is
+> > > kind of a side-effect of parsing whether the PMU variable is non-NULL,
+> > > it'd kind of be nice to stop things using `evsel->pmu` directly and
+> > > switch them to `evsel__find_pmu(evsel)`, in the future maybe legacy
+> > > events will get the core PMU, a tracepoint PMU, etc. so we'd never
+> > > expect this variable to be NULL.
+> 
+> As it stands evsel__uniquify_counter() unconditionally dereferences
+> evsel->pmu which is why I thought it made sense to check that first. But if
+> that might change then fair enough.
+> 
+> > > 
+> > > Your commit message gives me enough to think about what the issue is,
+> > > so let me give it some thought.
+> > 
+> > I wonder we should just hoist the hybrid test earlier:
+> > ```
+> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> > index e65c7e9f15d1..e852ac0d9847 100644
+> > --- a/tools/perf/util/stat-display.c
+> > +++ b/tools/perf/util/stat-display.c
+> > @@ -1688,6 +1688,12 @@ static void evsel__set_needs_uniquify(struct
+> > evsel *counter, const struct per
+> > f_s
+> >                 return;
+> >         }
+> > 
+> > +       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
+> > +               /* Unique hybrid counters necessary. */
+> > +               counter->needs_uniquify = true;
+> > +               return;
+> > +       }
+> > +
+> >         if  (counter->core.attr.type < PERF_TYPE_MAX &&
+> > counter->core.attr.type != PERF_TYPE_RAW) {
+> >                 /* Legacy event, don't uniquify. */
+> >                 return;
+> > @@ -1705,12 +1711,6 @@ static void evsel__set_needs_uniquify(struct
+> > evsel *counter, const struct per
+> > f_s
+> >                 return;
+> >         }
+> > 
+> > -       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
+> > -               /* Unique hybrid counters necessary. */
+> > -               counter->needs_uniquify = true;
+> > -               return;
+> > -       }
+> > -
+> >         /*
+> >          * Do other non-merged events in the evlist have the same name? If so
+> >          * uniquify is necessary.
+> > 
+> > ```
+> > 
+> > The hybrid test is unfortunately expensive at it needs to search for
+> > > 1 core PMU, which means loading all sysfs PMUs. I think we're already
+> > paying the cost though.
+> > 
+> > Could you check this works James?
+> > 
+> > Thanks,
+> > Ian
+> > 
+> 
+> Yep that works too.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   68763b29e0a6441f57f9ee652bbf8e7bc59183e5
-commit: 09f6b27d5ddd9ad0ec096d1b0f8decdacc70f0f8 ARM: dove: multiplatform support
-date:   2 years, 10 months ago
-config: arm-randconfig-r016-20221216 (https://download.01.org/0day-ci/archive/20250214/202502140909.al1w1xsR-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140909.al1w1xsR-lkp@intel.com/reproduce)
+James, can I take it as your Tested-by?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502140909.al1w1xsR-lkp@intel.com/
+Ian, can you please send a formal patch with that?
 
-All warnings (new ones prefixed by >>):
+Thanks,
+Namhyung
 
->> arch/arm/mach-omap2/sdrc.c:129: warning: Function parameter or struct member 'sdrc_cs0' not described in 'omap2_sdrc_init'
->> arch/arm/mach-omap2/sdrc.c:129: warning: Function parameter or struct member 'sdrc_cs1' not described in 'omap2_sdrc_init'
---
->> arch/arm/mach-omap2/omap2-restart.c:32: warning: Function parameter or struct member 'mode' not described in 'omap2xxx_restart'
->> arch/arm/mach-omap2/omap2-restart.c:32: warning: Function parameter or struct member 'cmd' not described in 'omap2xxx_restart'
---
->> arch/arm/mach-omap2/omap-secure.c:61: warning: Function parameter or struct member 'arg1' not described in 'omap_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:61: warning: Function parameter or struct member 'arg2' not described in 'omap_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:61: warning: Function parameter or struct member 'arg3' not described in 'omap_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:61: warning: Function parameter or struct member 'arg4' not described in 'omap_secure_dispatcher'
-   arch/arm/mach-omap2/omap-secure.c:61: warning: expecting prototype for omap_sec_dispatcher(). Prototype was for omap_secure_dispatcher() instead
->> arch/arm/mach-omap2/omap-secure.c:162: warning: Function parameter or struct member 'arg1' not described in 'rx51_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:162: warning: Function parameter or struct member 'arg2' not described in 'rx51_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:162: warning: Function parameter or struct member 'arg3' not described in 'rx51_secure_dispatcher'
->> arch/arm/mach-omap2/omap-secure.c:162: warning: Function parameter or struct member 'arg4' not described in 'rx51_secure_dispatcher'
-   arch/arm/mach-omap2/omap-secure.c:196: warning: Function parameter or struct member 'clear_bits' not described in 'rx51_secure_update_aux_cr'
-   arch/arm/mach-omap2/omap-secure.c:196: warning: Excess function parameter 'clr_bits' description in 'rx51_secure_update_aux_cr'
->> arch/arm/mach-omap2/omap-secure.c:214: warning: Function parameter or struct member 'ptr' not described in 'rx51_secure_rng_call'
->> arch/arm/mach-omap2/omap-secure.c:214: warning: Function parameter or struct member 'count' not described in 'rx51_secure_rng_call'
->> arch/arm/mach-omap2/omap-secure.c:214: warning: Function parameter or struct member 'flag' not described in 'rx51_secure_rng_call'
---
->> arch/arm/mach-omap2/prm33xx.c:95: warning: Function parameter or struct member 'rstctrl_offs' not described in 'am33xx_prm_assert_hardreset'
->> arch/arm/mach-omap2/prm33xx.c:95: warning: Excess function parameter 'rstctrl_reg' description in 'am33xx_prm_assert_hardreset'
->> arch/arm/mach-omap2/prm33xx.c:125: warning: Function parameter or struct member 'rstctrl_offs' not described in 'am33xx_prm_deassert_hardreset'
->> arch/arm/mach-omap2/prm33xx.c:125: warning: Function parameter or struct member 'rstst_offs' not described in 'am33xx_prm_deassert_hardreset'
->> arch/arm/mach-omap2/prm33xx.c:125: warning: Excess function parameter 'rstctrl_reg' description in 'am33xx_prm_deassert_hardreset'
->> arch/arm/mach-omap2/prm33xx.c:125: warning: Excess function parameter 'rstst_reg' description in 'am33xx_prm_deassert_hardreset'
---
->> arch/arm/mach-omap2/prminst44xx.c:101: warning: Function parameter or struct member 'part' not described in 'omap4_prminst_is_hardreset_asserted'
->> arch/arm/mach-omap2/prminst44xx.c:101: warning: Function parameter or struct member 'inst' not described in 'omap4_prminst_is_hardreset_asserted'
->> arch/arm/mach-omap2/prminst44xx.c:101: warning: Function parameter or struct member 'rstctrl_offs' not described in 'omap4_prminst_is_hardreset_asserted'
->> arch/arm/mach-omap2/prminst44xx.c:101: warning: Excess function parameter 'rstctrl_reg' description in 'omap4_prminst_is_hardreset_asserted'
->> arch/arm/mach-omap2/prminst44xx.c:125: warning: Function parameter or struct member 'part' not described in 'omap4_prminst_assert_hardreset'
->> arch/arm/mach-omap2/prminst44xx.c:125: warning: Function parameter or struct member 'inst' not described in 'omap4_prminst_assert_hardreset'
->> arch/arm/mach-omap2/prminst44xx.c:125: warning: Function parameter or struct member 'rstctrl_offs' not described in 'omap4_prminst_assert_hardreset'
->> arch/arm/mach-omap2/prminst44xx.c:125: warning: Excess function parameter 'rstctrl_reg' description in 'omap4_prminst_assert_hardreset'
---
->> arch/arm/mach-omap2/vc.c:404: warning: Excess function parameter 'off_mode' description in 'omap3_set_i2c_timings'
---
->> arch/arm/mach-omap2/voltage.c:332: warning: Function parameter or struct member 'voltdms' not described in 'voltdm_init'
->> arch/arm/mach-omap2/voltage.c:332: warning: Excess function parameter 'voltdm_list' description in 'voltdm_init'
---
->> arch/arm/mach-omap2/clockdomain.c:546: warning: Function parameter or struct member 'user' not described in 'clkdm_for_each'
-   arch/arm/mach-omap2/clockdomain.c:1003: warning: expecting prototype for clkdm_deny_idle(). Prototype was for clkdm_deny_idle_nolock() instead
-   arch/arm/mach-omap2/clockdomain.c:1165: warning: Function parameter or struct member 'unused' not described in 'clkdm_clk_enable'
-   arch/arm/mach-omap2/clockdomain.c:1165: warning: Excess function parameter 'clk' description in 'clkdm_clk_enable'
->> arch/arm/mach-omap2/clockdomain.c:1303: warning: Function parameter or struct member 'clkdm' not described in '_clkdm_save_context'
->> arch/arm/mach-omap2/clockdomain.c:1303: warning: Function parameter or struct member 'unused' not described in '_clkdm_save_context'
->> arch/arm/mach-omap2/clockdomain.c:1316: warning: Function parameter or struct member 'clkdm' not described in '_clkdm_restore_context'
->> arch/arm/mach-omap2/clockdomain.c:1316: warning: Function parameter or struct member 'unused' not described in '_clkdm_restore_context'
---
->> arch/arm/mach-omap2/powerdomain.c:439: warning: Function parameter or struct member 'user' not described in 'pwrdm_for_each'
->> arch/arm/mach-omap2/powerdomain.c:1234: warning: Function parameter or struct member 'pwrdm' not described in 'pwrdm_save_context'
->> arch/arm/mach-omap2/powerdomain.c:1234: warning: Function parameter or struct member 'unused' not described in 'pwrdm_save_context'
->> arch/arm/mach-omap2/powerdomain.c:1247: warning: Function parameter or struct member 'pwrdm' not described in 'pwrdm_restore_context'
->> arch/arm/mach-omap2/powerdomain.c:1247: warning: Function parameter or struct member 'unused' not described in 'pwrdm_restore_context'
-   arch/arm/mach-omap2/powerdomain.c:1247: warning: expecting prototype for pwrdm_save_context(). Prototype was for pwrdm_restore_context() instead
---
->> arch/arm/mach-omap2/clkt2xxx_dpllcore.c:190: warning: Function parameter or struct member 'hw' not described in 'omap2xxx_clkt_dpllcore_init'
->> arch/arm/mach-omap2/clkt2xxx_dpllcore.c:190: warning: Excess function parameter 'clk' description in 'omap2xxx_clkt_dpllcore_init'
---
->> arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c:60: warning: Function parameter or struct member 'parent_rate' not described in 'omap2_table_mpu_recalc'
-   arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c:171: warning: expecting prototype for omap2xxx_clkt_vps_check_bootloader_rate(). Prototype was for omap2xxx_clkt_vps_check_bootloader_rates() instead
-..
-
-
-vim +129 arch/arm/mach-omap2/sdrc.c
-
-f2ab99778a1a04 Paul Walmsley 2009-01-28  117  
-98cfe5abf24c6d Paul Walmsley 2009-05-12  118  /**
-98cfe5abf24c6d Paul Walmsley 2009-05-12  119   * omap2_sdrc_init - initialize SMS, SDRC devices on boot
-58cda884ecc87d Jean Pihet    2009-07-24  120   * @sdrc_cs[01]: pointers to a null-terminated list of struct omap_sdrc_params
-58cda884ecc87d Jean Pihet    2009-07-24  121   *  Support for 2 chip selects timings
-98cfe5abf24c6d Paul Walmsley 2009-05-12  122   *
-98cfe5abf24c6d Paul Walmsley 2009-05-12  123   * Turn on smart idle modes for SDRAM scheduler and controller.
-98cfe5abf24c6d Paul Walmsley 2009-05-12  124   * Program a known-good configuration for the SDRC to deal with buggy
-98cfe5abf24c6d Paul Walmsley 2009-05-12  125   * bootloaders.
-98cfe5abf24c6d Paul Walmsley 2009-05-12  126   */
-58cda884ecc87d Jean Pihet    2009-07-24  127  void __init omap2_sdrc_init(struct omap_sdrc_params *sdrc_cs0,
-58cda884ecc87d Jean Pihet    2009-07-24  128  			    struct omap_sdrc_params *sdrc_cs1)
-f2ab99778a1a04 Paul Walmsley 2009-01-28 @129  {
-
-:::::: The code at line 129 was first introduced by commit
-:::::: f2ab99778a1a04ddbae38f4de4ef40f2edb92080 [ARM] OMAP2 SDRC: separate common OMAP2/3 code from OMAP2xxx code
-
-:::::: TO: Paul Walmsley <paul@pwsan.com>
-:::::: CC: Russell King <rmk+kernel@arm.linux.org.uk>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
