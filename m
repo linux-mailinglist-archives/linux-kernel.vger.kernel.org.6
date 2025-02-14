@@ -1,124 +1,298 @@
-Return-Path: <linux-kernel+bounces-515713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16C1A36806
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0C6A36809
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444C87A54FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C803B21DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C134A1FBEB0;
-	Fri, 14 Feb 2025 22:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BE91FC0E5;
+	Fri, 14 Feb 2025 22:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLHVRHFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="doVrmrD1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2109E1DC9AC;
-	Fri, 14 Feb 2025 22:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EC61DE4EC;
+	Fri, 14 Feb 2025 22:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739570670; cv=none; b=gBIJa3JjnPHJIF0R39y73eKMi7n+KcEfvCakearngX/7v7VXpydUqGw1e9Y87XFdAMkcPxNwMl7eVj9bWmDsXaNJVzMrCVIyR2zOH7GMXvbp7ksAgFpoQRinsxVq43E/KwaA10khGuAwve2YU09ts90hkI6fP74nx1VjBMdY+Bw=
+	t=1739570699; cv=none; b=gvNUBiSJ9E8cYGFXZxKE1uK3BZpxlYSzInww90zjCiIs1mLjxM5zuSkUU0o4N0ggZ45Ip2a1Ga+md6Ns12JE/P/HdBnCRkwpgdym1rnZBcFESYqZ7RQhPpagvWxCrrfvKhvSJQHoKpO57ES53Sr0OtqgUVamdmYSdL9+BfDkxQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739570670; c=relaxed/simple;
-	bh=8tx0cT67YSI1VPWBaLCgbv3IPwa8Ok1vayoF+KkWQtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=au4zdT8luEhz9JjQIgZzHRxkYpJgUPrMCniqmEhU6mtc2SPn9RHKGcQZ+IGrsgHeEwlGAnMs4ERXEzszHjlR3mX1QsHlj9NF0ZTzbsnkcPhajlEo1gNDUk+PM4plk5V7zJWA53noO0fKz2MMfUFeY6WsTgKnJbefPp388A6/1BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLHVRHFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB24C4CEE7;
-	Fri, 14 Feb 2025 22:04:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739570669;
-	bh=8tx0cT67YSI1VPWBaLCgbv3IPwa8Ok1vayoF+KkWQtI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uLHVRHFS26xxsnGrAv0qqSL+eQvw3BD89SEWx3gGRYKyABEdZwtczWKALmyPcnktM
-	 YVZAh6qTRU/1M6JnTGy3tq2Ijwg7k9bUumfrrTVQ8GUj0VBgGLKk6EU8jOC9dmajce
-	 dVxMac/mKAfvX+RI450cNQu1kZBEpyhjDbJQd+aZH9D3vf/zMbx2gtpyhIXe6daWtB
-	 uJj99Ee2rmka68jrI92rBe4vGBAnPjz2FL2cicKUCUJxdPelNWjH6KLC1qekJKlGeo
-	 PuK/ld8z4MlK3ooaNQO0R2GHj8Ar0kMyEzOVJHY0Y2vkQRY/G6z+eAaP2S9evcjfsE
-	 ckmJF1LYrNEpg==
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d18f97e98aso16423495ab.3;
-        Fri, 14 Feb 2025 14:04:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZMwyeWAVCbNABsvRp0cia+TZgXv9qI5SyADYa9Zw30qXBlM1Pru4Poe8QHpKI3rjQgyrLS2/qe1BnXyaXSw==@vger.kernel.org, AJvYcCWuG1C9JgrtOjjk4lT6TaEJ1CL81v8cLWfknS5Zqwu/NcYKY5ESrscYgyvSHid/EiXOhXAOEgkzKF0lZlA=@vger.kernel.org, AJvYcCXHkI8dK3riQqXC6g1Wtyufn3qCPX9KE6yp1/4dUD6jKXoVcng8mxFi4moqKq3mQIWUNVJsopULvxEO27UXg1ZR5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrsa1ZFipMPjIVsrgkaQhKc9nGswyrn6drTKoMjSvYxLk6xOWQ
-	onpZRWkrDg253IwAI0fGC90r0qKgFhX+gHN79/rK7IaxUhkZsy4T0qvmtnhOtC/IouKzlM/kEKq
-	CljmqvgkchQ7tpOKokf8oYPDH14E=
-X-Google-Smtp-Source: AGHT+IGm2i4EXICEpW9bgwkPPolWAFKP9xL/quKy8NddqTVnLPh4rbcjf52ksHT5lD1Rnl/XKRrm4e1eyWcKs15JiNU=
-X-Received: by 2002:a92:c24d:0:b0:3cf:bb6e:3065 with SMTP id
- e9e14a558f8ab-3d279694a2emr9486645ab.0.1739570668959; Fri, 14 Feb 2025
- 14:04:28 -0800 (PST)
+	s=arc-20240116; t=1739570699; c=relaxed/simple;
+	bh=J/rKKMwC/kabnHJWcaexBk0k40NtKiKRhIuwg5IC68s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SYRGwHR4FJXVNP6AQGhu7OHc5IG1Ac5Fo5+bSYQFjuBllq/IUJjVobR8Ns4+9JhOS2jcVusAQqcvdF8UsOx8NMQk9+emFKum/P7oY/BQCCsgSZgbmGBaPAW2+T3HD7YZN3aXlNRgoNfMKZtNrq/+oE9CyDWwvQy41qc1+ENKg9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=doVrmrD1; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739570697; x=1771106697;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J/rKKMwC/kabnHJWcaexBk0k40NtKiKRhIuwg5IC68s=;
+  b=doVrmrD1L7qlDqB8ral41x27MjdECNtnSk5CDWbNLdRCm60noMTMsX1E
+   KCgZZH2PxbKKjiR5y7Yb65OsN/6/xsKzSK76NTy3pMCy/hKtwm2/cM6WP
+   6ExcFjro3S8jIl4OTYQct5NCn6lcz+b6rg/kpqMDTmDHt1JvdyjnAZyNY
+   8BQKFsU0qpTT2YaPZP7rn9PFinKgOeG0SaCLkL/hlG/bedY9aRnx5hKCb
+   aP2JTQNchMG9Q9fWxK4akHDF/3mX7bNugJqVgZHchfJRdaQViPzfcGNPP
+   4RxUVMuDmr1Fa2WxrPm5cbqgOEI0yLpkzI0Pi5RIYnQzdW74576rhnDr0
+   w==;
+X-CSE-ConnectionGUID: EMvzS9WxRY+dZbPSL8hUyA==
+X-CSE-MsgGUID: uq1XfQnZTgum/SiIm6F2qA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40204478"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="40204478"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 14:04:56 -0800
+X-CSE-ConnectionGUID: NcaBv5u4SNO3YHCvlMIpzA==
+X-CSE-MsgGUID: Til1bxf1QISv08HjLJWKAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="136794936"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.34]) ([10.125.109.34])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 14:04:56 -0800
+Message-ID: <a66056cf-570c-4875-b5cf-c51e2bc488d9@intel.com>
+Date: Fri, 14 Feb 2025 15:04:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127213310.2496133-1-wnliu@google.com> <CAPhsuW6S1JPn0Dp+bhJiSVs9iUv7v7HThBSE85iaDAvw=_2TUw@mail.gmail.com>
- <20250212234946.yuskayyu4gx3ul7m@jpoimboe> <CAPhsuW5TeMXi_Mn8+jR9Qoa=rAWasMo7M3Hs=im6NT6=+CrxqA@mail.gmail.com>
- <20250213024507.mvjkalvyqsxihp54@jpoimboe> <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
- <mb61py0yaz3qq.fsf@kernel.org> <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
- <20250214080848.5xpi2y2omk4vxyoj@jpoimboe> <CAPhsuW6dxPtgqZaHrZEVhQXwm2+sETreZnGybZXVKYKfG9H6tg@mail.gmail.com>
- <20250214193400.j4hp45jlufihv5eh@jpoimboe>
-In-Reply-To: <20250214193400.j4hp45jlufihv5eh@jpoimboe>
-From: Song Liu <song@kernel.org>
-Date: Fri, 14 Feb 2025 14:04:17 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
-X-Gm-Features: AWEUYZmS9RgABXm_Z225NGGKzm18Fgmh_MxPC45lJBV_7EfAVM8AuVs83nd2IRc
-Message-ID: <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Weinan Liu <wnliu@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] UAPI: ndctl / acpi: intel: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z66T8tSKjVutr6of@kspp>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <Z66T8tSKjVutr6of@kspp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Josh,
 
-On Fri, Feb 14, 2025 at 11:34=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.or=
-g> wrote:
->
-> On Fri, Feb 14, 2025 at 09:51:41AM -0800, Song Liu wrote:
-> > > Ignorant arm64 question: is the module's text further away from slab
-> > > memory than vmlinux text, thus requiring a different instruction (or
-> > > GOT/TOC) to access memory further away in the address space?
-> >
-> > It appears to me the module text is very close to vmlinux text:
-> >
-> > vmlinux: ffff8000800b4b68 T copy_process
-> > module: ffff80007b0f06d0 t copy_process [livepatch_always_inline_specia=
-l_static]
->
-> Hm... the only other thing I can think of is that the klp relas might be
-> wrong somewhere.  If you share patched.o and .ko files from the same
-> build I could take a look.
 
-A tarball with these files is available here:
+On 2/13/25 5:53 PM, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with flexible-array members in the
+> middle of other structs, we use the `__struct_group()` helper to
+> separate the flexible array from the rest of the members in the
+> flexible structure. We then use the newly created tagged `struct
+> nd_cmd_pkg_hdr` to replace the type of the objects causing trouble:
+> `pkg` in multiple structs.
+> 
+> Below is the before-and-after changes of the memory layout in `struct
+> nd_cmd_pkg`. This to illustrate that the use of `__struct_group()`
+> doesn't alter the layout, ensuring that user space remains unaffected.
+> 
+> Before changes:
+> struct nd_cmd_pkg {
+> 	__u64                      nd_family;            /*     0     8 */
+> 	__u64                      nd_command;           /*     8     8 */
+> 	__u32                      nd_size_in;           /*    16     4 */
+> 	__u32                      nd_size_out;          /*    20     4 */
+> 	__u32                      nd_reserved2[9];      /*    24    36 */
+> 	__u32                      nd_fw_size;           /*    60     4 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	unsigned char              nd_payload[];         /*    64     0 */
+> 
+> 	/* size: 64, cachelines: 1, members: 7 */
+> };
+> 
+> After changes:
+> struct nd_cmd_pkg {
+> 	union {
+> 		struct {
+> 			__u64      nd_family;            /*     0     8 */
+> 			__u64      nd_command;           /*     8     8 */
+> 			__u32      nd_size_in;           /*    16     4 */
+> 			__u32      nd_size_out;          /*    20     4 */
+> 			__u32      nd_reserved2[9];      /*    24    36 */
+> 			__u32      nd_fw_size;           /*    60     4 */
+> 		};                                       /*     0    64 */
+> 		struct nd_cmd_pkg_hdr __hdr;             /*     0    64 */
+> 	};                                               /*     0    64 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	unsigned char              nd_payload[];         /*    64     0 */
+> 
+> 	/* size: 64, cachelines: 1, members: 2 */
+> };
+> 
+> It's also worth mentioning that all members of the struct can still be
+> accessed directly, for example instance->nd_family, instance->nd_command,
+> and so on.
+> 
+> So, with these changes, fix 12 of the following warnings:
+> 
+> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-https://drive.google.com/file/d/1ONB1tC9oK-Z5ShmSXneqWLTjJgC5Xq-C/view?usp=
-=3Ddrive_link
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+> Changes in v2:
+>  - Show changes in UAPI first. (Alison)
+>  - Update changelog text --add more information about _struct_group()
+>    changes. (Alison)
+> 
+> v1:
+>  - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
+> 
+>  include/uapi/linux/ndctl.h | 15 +++++++++------
+>  drivers/acpi/nfit/intel.c  | 24 ++++++++++++------------
+>  2 files changed, 21 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
+> index 73516e263627..34c11644d5d7 100644
+> --- a/include/uapi/linux/ndctl.h
+> +++ b/include/uapi/linux/ndctl.h
+> @@ -227,12 +227,15 @@ enum ars_masks {
+>   */
+>  
+>  struct nd_cmd_pkg {
+> -	__u64   nd_family;		/* family of commands */
+> -	__u64   nd_command;
+> -	__u32   nd_size_in;		/* INPUT: size of input args */
+> -	__u32   nd_size_out;		/* INPUT: size of payload */
+> -	__u32   nd_reserved2[9];	/* reserved must be zero */
+> -	__u32   nd_fw_size;		/* OUTPUT: size fw wants to return */
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(nd_cmd_pkg_hdr, __hdr, /* no attrs */,
+> +		__u64   nd_family;		/* family of commands */
+> +		__u64   nd_command;
+> +		__u32   nd_size_in;		/* INPUT: size of input args */
+> +		__u32   nd_size_out;		/* INPUT: size of payload */
+> +		__u32   nd_reserved2[9];	/* reserved must be zero */
+> +		__u32   nd_fw_size;		/* OUTPUT: size fw wants to return */
+> +	);
+>  	unsigned char nd_payload[];	/* Contents of call      */
+>  };
+>  
+> diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
+> index 3902759abcba..fe561ce0ddec 100644
+> --- a/drivers/acpi/nfit/intel.c
+> +++ b/drivers/acpi/nfit/intel.c
+> @@ -56,7 +56,7 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	unsigned long security_flags = 0;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_get_security_state cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -121,7 +121,7 @@ static int intel_security_freeze(struct nvdimm *nvdimm)
+>  {
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_freeze_lock cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -154,7 +154,7 @@ static int intel_security_change_key(struct nvdimm *nvdimm,
+>  		NVDIMM_INTEL_SET_MASTER_PASSPHRASE :
+>  		NVDIMM_INTEL_SET_PASSPHRASE;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_set_passphrase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -196,7 +196,7 @@ static int __maybe_unused intel_security_unlock(struct nvdimm *nvdimm,
+>  {
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_unlock_unit cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -235,7 +235,7 @@ static int intel_security_disable(struct nvdimm *nvdimm,
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_disable_passphrase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -278,7 +278,7 @@ static int __maybe_unused intel_security_erase(struct nvdimm *nvdimm,
+>  	unsigned int cmd = ptype == NVDIMM_MASTER ?
+>  		NVDIMM_INTEL_MASTER_SECURE_ERASE : NVDIMM_INTEL_SECURE_ERASE;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_secure_erase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -319,7 +319,7 @@ static int __maybe_unused intel_security_query_overwrite(struct nvdimm *nvdimm)
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_query_overwrite cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -355,7 +355,7 @@ static int __maybe_unused intel_security_overwrite(struct nvdimm *nvdimm,
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_overwrite cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -408,7 +408,7 @@ static int intel_bus_fwa_businfo(struct nvdimm_bus_descriptor *nd_desc,
+>  		struct nd_intel_bus_fw_activate_businfo *info)
+>  {
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_bus_fw_activate_businfo cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -519,7 +519,7 @@ static int intel_bus_fwa_activate(struct nvdimm_bus_descriptor *nd_desc)
+>  {
+>  	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_bus_fw_activate cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -583,7 +583,7 @@ static int intel_fwa_dimminfo(struct nvdimm *nvdimm,
+>  		struct nd_intel_fw_activate_dimminfo *info)
+>  {
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_fw_activate_dimminfo cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -689,7 +689,7 @@ static int intel_fwa_arm(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arm)
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct acpi_nfit_desc *acpi_desc = nfit_mem->acpi_desc;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_fw_activate_arm cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
 
-> BTW, I realized the wrong function size shown in the WARNING stack trace
-> is probably just due to a kallsyms quirk.  It calculates a symbol's size
-> by subtracting its start address from the next symbol's start address.
-> It doesn't actually use the ELF symbol size.  So the next symbol after
-> copy_process() in the loaded module's address space might just be far
-> away.
-
-Yeah, I also think kallsyms logic was the issue here. So it is not the same
-as the gdb-disassembly issue.
-
-> That kallsyms issue has caused other headaches.  It really needs to be
-> fixed to use the actual ELF symbol size.
-
-Maybe we should have a "module_text_end" symbol?
-
-Thanks,
-Song
 
