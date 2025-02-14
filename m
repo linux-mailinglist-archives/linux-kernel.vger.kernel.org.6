@@ -1,173 +1,173 @@
-Return-Path: <linux-kernel+bounces-515206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FC6A361B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:28:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2264BA361B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9836E3AA96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11005170B4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F596266EE0;
-	Fri, 14 Feb 2025 15:28:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DC126656A;
+	Fri, 14 Feb 2025 15:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZ1ffB0Y"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEE1747F;
-	Fri, 14 Feb 2025 15:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F444266EE3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546928; cv=none; b=gAHrKOEkzUt98i1fBLkiQo8vZRXWUxIy5MSFJBKEeL2v8r2fNdwlETYSbsg8METfdB54u+RmWCTXCCpnU4lo4uA0skKAPCVaup+zLGSkykJ2JqdbR92dKHy/8FuQdere6V2+B7xjL44zyyS6tzsNFuf+2I7oNftSeq35DLD5vtk=
+	t=1739546934; cv=none; b=W43/XDYSyytwjcd0fuOzoaPjhQY7k3TSX+1tetPXgwm10dXEzlTYZiFBF/JzlIQdMBHpoWsj90U3fLhRHi/BhfC0GNsjUfKvgoJS2JWUSV4FoLVND4ZWpc6eKk7VQOQnNstfnMsCKIizAgI6F9yeATVMuzpNDr0/AHky9P5OSKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546928; c=relaxed/simple;
-	bh=QGoEqJ4Pyx+hYl5icZkKTw5uyF1Gu5Jen5eezGi8pdI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h+u2Lismt7cA53NnCWHC2VdfothX7jBrJT8IoVtSnPaQm5dDVRhe1Xv3/deIBKvyT0pSsZK5PXlxuaXovSj2NsmApe1MuRpe6VmwhzV+v4NTaoD6Eg4hoPlbos5chr7Cw1q0+rTZwc4tlkRD12omy8NmuqlZ75Bz1W6LLawL5DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YvbWs0N9Lz6HJfF;
-	Fri, 14 Feb 2025 23:27:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD021140B38;
-	Fri, 14 Feb 2025 23:28:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 16:28:41 +0100
-Date: Fri, 14 Feb 2025 15:28:40 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-CC: Dan Williams <dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<nifan.cxl@gmail.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<lukas@wunner.de>, <ming.li@zohomail.com>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <shiju.jose@huawei.com>
-Subject: Re: [PATCH v7 10/17] cxl/pci: Add log message and add type check in
- existing RAS handlers
-Message-ID: <20250214152840.00002172@huawei.com>
-In-Reply-To: <d56fcbea-8405-4f61-9c32-63db88f1483c@amd.com>
-References: <20250211192444.2292833-1-terry.bowman@amd.com>
-	<20250211192444.2292833-11-terry.bowman@amd.com>
-	<67ad27da2f65c_2d2c294b9@dwillia2-xfh.jf.intel.com.notmuch>
-	<d56fcbea-8405-4f61-9c32-63db88f1483c@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739546934; c=relaxed/simple;
+	bh=QXTnDml+D0tEZiHck5M2HJ/XArC33mjEgCu7FEjG69k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dkR0afjxMAbj1bc3K1QUDs7oQDH7H8dOK0yHlnh/3t42+Qesxbehrl4LVR0n3VjBLZdOShDttwtHx92LWY1UDAhhxXcK/BI7AhSQle+4DavsHgamGZlJv+jElUKKC2PU9+ZWsh97sdpmNohxgDXpY9BXAOROszj+W4ZGGBVqLXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AZ1ffB0Y; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dbf65c0c4fso291569a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:28:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739546930; x=1740151730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SDaqFrihY/YY0hY/ejLI9ceCHU+V0z7gPmJlGkArmHI=;
+        b=AZ1ffB0YFEq2LIEO/Dcq9LN4cvcEg+lOtpek8xojKo9VQ+fuBYfCVWjfW/sCZdsDKy
+         1z4Gd8LzlKZCUMu4Jn3r0uokQt/W92J0tx4xRoZeaihFhnPx0LnVlWbw0wEV0H+NS7Y5
+         uwPYU/VDfvjQ8S0WgI7giB+yrpmoH2gxlUiTkTVCwYnc6gDxZ0mlaZsVsGK3PUgxLPYd
+         moQHOIB9QijdnxXIX5YZYjbgg/yAVUYxq9399OWE6vYGdPMGV8+y09rBb/1fzaKeZAjV
+         rwfYYqvnahAqgzFBKoD1/64FYTE2hDywAP/hQxZAYN506HxnwVE432LoMuRA19s3GE8I
+         q7nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739546930; x=1740151730;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SDaqFrihY/YY0hY/ejLI9ceCHU+V0z7gPmJlGkArmHI=;
+        b=dxyhHiOHVMLuPwET5zwMKI/dJ+DdBzCqVnphIlxtY5pa1cGsWHeC6GMpKFlej2z/y4
+         zxjWGjh246YWILeJwivfr+cCIoGsTNemDCbt9qJPFI2yMvzEGr+VRC/tJZ+/JWoh7X+8
+         cJYcvE/DjOLij0j8pyhM5jJlkkKZM68HuJNnRlbnE/VspS/sHutljkxhSEVhGOTa/qjB
+         ZdGtstaoQU+NrmRjiqjgziQx8OTfdc6EXryx4jGcH7maFlhUsyfqxN46770lLppM4KmD
+         SGogNEFyDQA29wAf1oom3SX8CXBjJWlcCr0I2wnFuP/myeGJgTi+P23rLYeGIt+CeKG0
+         EkXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQcIKZrl3oPiDniqibdwrXLK3227V3+6lRbRwI/o5RQPZf2ERzwX/DbyWP/e3xLvpzzAgkVBdnFcQLZy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsTp9zb3tp5CkliY+pU8VramzNZHkcuKECBmK0lamf5ticf2e2
+	052rHgnXEfb9oMFnIfY+fDFbqSJtvEpT8EKzUZY4hWUH2z/R2d+6e8PwnMKRpQ8=
+X-Gm-Gg: ASbGncuDomujKxuVgoectYYQLT95b3ALlHcAE22EIiTUZUx969Cg+4WdMnM+Vf5UeDx
+	A+3oDI2RRd2Hth2A/fTPAehF4iRhHmvQRTrlYIJAMWLw2aSQ82R2/r+M+Zg64nX3k529XB9n+o8
+	4zWzLtNvRfX7VcAs2haVXhab8rjUmCJeuxegNUmb4oNp3e4JaOHfm/C0pkgFqDeCst57ul27nD4
+	qPttRfx2ivoIT+8lDog6+7XHMjfcnXPqqJma/2JIRSrylQLq6rLONGkVj3CapBF9RF0NDb9dIv5
+	oJtr/wOBtIasgwcpNvpF9T9kHASs7811+bc=
+X-Google-Smtp-Source: AGHT+IF6s2hfTK6gX3MOXr8bxckqyTK/sPsYP6XqyMCkO+ihlJ6qCIG5WJ8o/7aZBjAT7YrLV64fgg==
+X-Received: by 2002:a17:907:a08a:b0:ab6:d660:c84a with SMTP id a640c23a62f3a-aba6938466bmr139881766b.4.1739546930429;
+        Fri, 14 Feb 2025 07:28:50 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bf307sm363366066b.176.2025.02.14.07.28.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 07:28:49 -0800 (PST)
+Message-ID: <a0391156-8d37-4595-a490-2b828170ab65@linaro.org>
+Date: Fri, 14 Feb 2025 16:28:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] drm/msm/dsi: Drop redundant NULL-ifying of clocks
+ on error paths
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250214-drm-msm-cleanups-v2-0-1bec50f37dc1@linaro.org>
+ <20250214-drm-msm-cleanups-v2-1-1bec50f37dc1@linaro.org>
+ <aarbydttw4zexzkorcr4yb4swscw3crn65u6eactutpfgpnt4y@fg4zyd45xwln>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <aarbydttw4zexzkorcr4yb4swscw3crn65u6eactutpfgpnt4y@fg4zyd45xwln>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Feb 2025 18:08:13 -0600
-"Bowman, Terry" <terry.bowman@amd.com> wrote:
+On 14/02/2025 16:22, Dmitry Baryshkov wrote:
+> On Fri, Feb 14, 2025 at 02:17:44PM +0100, Krzysztof Kozlowski wrote:
+>> dsi_clk_init(), which gets the clocks, is called only through platform
+>> driver probe and its failure is a failure of the probe.  Therefore
+>> NULL-ifying specific clocks is pointless and redundant - the PTR_ERR
+>> value stored there won't be used/dereferenced afterwards.  What's more,
+>> variant-specific clock init calls like dsi_clk_init_6g_v2() are not
+>> doing this cleanup.  Dropping redundant code allows later to make this a
+>> bit simpler.
+>>
+>> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  drivers/gpu/drm/msm/dsi/dsi_host.c | 3 ---
+>>  1 file changed, 3 deletions(-)
+>>
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
-> On 2/12/2025 4:59 PM, Dan Williams wrote:
-> > Terry Bowman wrote: =20
-> >> The CXL RAS handlers do not currently log if the RAS registers are
-> >> unmapped. This is needed in order to help debug CXL error handling. Up=
-date
-> >> the CXL driver to log a warning message if the RAS register block is
-> >> unmapped.
-> >>
-> >> Also, add type check before processing EP or RCH DP.
-> >>
-> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> >> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> >> Reviewed-by: Gregory Price <gourry@gourry.net>
-> >> ---
-> >>  drivers/cxl/core/pci.c | 20 ++++++++++++++------
-> >>  1 file changed, 14 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> >> index 69bb030aa8e1..af809e7cbe3b 100644
-> >> --- a/drivers/cxl/core/pci.c
-> >> +++ b/drivers/cxl/core/pci.c
-> >> @@ -658,15 +658,19 @@ static void __cxl_handle_cor_ras(struct device *=
-dev,
-> >>  	void __iomem *addr;
-> >>  	u32 status;
-> >> =20
-> >> -	if (!ras_base)
-> >> +	if (!ras_base) {
-> >> +		dev_warn_once(dev, "CXL RAS register block is not mapped");
-> >>  		return;
-> >> +	}
-> >> =20
-> >>  	addr =3D ras_base + CXL_RAS_CORRECTABLE_STATUS_OFFSET;
-> >>  	status =3D readl(addr);
-> >> -	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
-> >> -		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
-> >> +	if (!(status & CXL_RAS_CORRECTABLE_STATUS_MASK))
-> >> +		return;
-> >> +	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
-> >> +
-> >> +	if (is_cxl_memdev(dev))
-> >>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status); =20
-> > I think trace_cxl_aer_correctable_error() should always fire and this
-> > should somehow be unified with the CPER record trace-event for protocol
-> > errors.
-> >
-> > The only usage of @memdev in this trace is retrieving the device serial
-> > number. If the device is not a memdev then print zero for the serial
-> > number, or something like that.
-> >
-> > In the end RAS daemon should only need to enable one trace event to get
-> > protocol errors and header logs from ports or endpoints, either
-> > natively, or via CPER.
-> > =20
-> That would be: we use 'struct *device' instead of 'struct *cxl_memdev'
-> and pass serial# in as a parameter (0 in non-EP cases)?
 
-For a USP may well have a serial number cap. Might be worth getting it?
+Thanks for reviews. Both you and Abhinav reviewed, so I assume this will
+be applied by Rob?
 
-slightly nasty thing here will be change of memdev=3D%s to devname=3D%s or
-similar.  Meh. It's a TP_printk() I'm not sure anyone will care.
-Need to be careful with the tracepoint itself though and the rasdaemon
-etc handling.
-https://github.com/mchehab/rasdaemon/blob/master/ras-cxl-handler.c#L351
-We may have to just add another field.
 
->=20
-> >> -	}
-> >>  }
-> >> =20
-> >>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
-> >> @@ -702,8 +706,10 @@ static bool __cxl_handle_ras(struct device *dev, =
-void __iomem *ras_base)
-> >>  	u32 status;
-> >>  	u32 fe;
-> >> =20
-> >> -	if (!ras_base)
-> >> +	if (!ras_base) {
-> >> +		dev_warn_once(dev, "CXL RAS register block is not mapped"); =20
-> > Is this a "never can happen" print? It seems like an oversight in an
-> > upper layer to get this far down error reporting without the registers
-> > mapped.
-> >
-> > Like maybe this is a bug in a driver that should crash, or the driver
-> > should not be registering broken error handlers? =20
-> Correct. The error handler assignment and enablement is gated by RAS mapp=
-ing
-> in cxl_uport_init_ras_reporting() and cxl_dport_init_ras_reporting().
->=20
-> Terry
-> =A0=A0=A0=A0=A0=A0=A0
->=20
->=20
->=20
->=20
-
+Best regards,
+Krzysztof
 
