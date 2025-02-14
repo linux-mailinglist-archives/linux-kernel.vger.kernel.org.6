@@ -1,163 +1,173 @@
-Return-Path: <linux-kernel+bounces-515205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4642BA361AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:28:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FC6A361B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E696F188C4F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9836E3AA96F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B2266B64;
-	Fri, 14 Feb 2025 15:28:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F596266EE0;
+	Fri, 14 Feb 2025 15:28:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB62747F;
-	Fri, 14 Feb 2025 15:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEE1747F;
+	Fri, 14 Feb 2025 15:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546889; cv=none; b=N4o/H2CZnHSf24bwYk7ydhOJdG/MPPoS9foIxpiy+q9TgaMZaoJCA7UaQbseVfhY9jdw1PLG7H2E+utgjV5M/DfjVdRlNuG7napiarnZIriqWvjL5aDKxMW2R5fzeglKwKgQhzY1uRjOs8DaosQ0280aK22M5KBHPbIJixtDXqI=
+	t=1739546928; cv=none; b=gAHrKOEkzUt98i1fBLkiQo8vZRXWUxIy5MSFJBKEeL2v8r2fNdwlETYSbsg8METfdB54u+RmWCTXCCpnU4lo4uA0skKAPCVaup+zLGSkykJ2JqdbR92dKHy/8FuQdere6V2+B7xjL44zyyS6tzsNFuf+2I7oNftSeq35DLD5vtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546889; c=relaxed/simple;
-	bh=rUBy4sFinlmT22XbeZj6w1L2v3nzFb8M6M4CUpGIY+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oFRNOfp966E//cFHZI+/6l/Xjf92L4MP3NXrgpwD69vNYZ6F/pm2zg/tduYEmc3zSlhD8ygBjL/OQzIQU+z1Cz+dOs9lPCCV63MjKaEo1RqqhwZVyCd3wuV+fyrKrLfP6ye55XQHGy+744YbM7erQJhpWHUw5rAo4ipLNbb3aIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B88C4CED1;
-	Fri, 14 Feb 2025 15:28:08 +0000 (UTC)
-Date: Fri, 14 Feb 2025 10:28:20 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [PATCH] ring-buffer: Validate the persistent meta data subbuf array
-Message-ID: <20250214102820.7509ddea@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739546928; c=relaxed/simple;
+	bh=QGoEqJ4Pyx+hYl5icZkKTw5uyF1Gu5Jen5eezGi8pdI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h+u2Lismt7cA53NnCWHC2VdfothX7jBrJT8IoVtSnPaQm5dDVRhe1Xv3/deIBKvyT0pSsZK5PXlxuaXovSj2NsmApe1MuRpe6VmwhzV+v4NTaoD6Eg4hoPlbos5chr7Cw1q0+rTZwc4tlkRD12omy8NmuqlZ75Bz1W6LLawL5DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YvbWs0N9Lz6HJfF;
+	Fri, 14 Feb 2025 23:27:21 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD021140B38;
+	Fri, 14 Feb 2025 23:28:42 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 16:28:41 +0100
+Date: Fri, 14 Feb 2025 15:28:40 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+CC: Dan Williams <dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<nifan.cxl@gmail.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<lukas@wunner.de>, <ming.li@zohomail.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <shiju.jose@huawei.com>
+Subject: Re: [PATCH v7 10/17] cxl/pci: Add log message and add type check in
+ existing RAS handlers
+Message-ID: <20250214152840.00002172@huawei.com>
+In-Reply-To: <d56fcbea-8405-4f61-9c32-63db88f1483c@amd.com>
+References: <20250211192444.2292833-1-terry.bowman@amd.com>
+	<20250211192444.2292833-11-terry.bowman@amd.com>
+	<67ad27da2f65c_2d2c294b9@dwillia2-xfh.jf.intel.com.notmuch>
+	<d56fcbea-8405-4f61-9c32-63db88f1483c@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, 12 Feb 2025 18:08:13 -0600
+"Bowman, Terry" <terry.bowman@amd.com> wrote:
 
-The meta data for a mapped ring buffer contains an array of indexes of all
-the subbuffers. The first entry is the reader page, and the rest of the
-entries lay out the order of the subbuffers in how the ring buffer link
-list is to be created.
+> On 2/12/2025 4:59 PM, Dan Williams wrote:
+> > Terry Bowman wrote: =20
+> >> The CXL RAS handlers do not currently log if the RAS registers are
+> >> unmapped. This is needed in order to help debug CXL error handling. Up=
+date
+> >> the CXL driver to log a warning message if the RAS register block is
+> >> unmapped.
+> >>
+> >> Also, add type check before processing EP or RCH DP.
+> >>
+> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> >> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> >> Reviewed-by: Gregory Price <gourry@gourry.net>
+> >> ---
+> >>  drivers/cxl/core/pci.c | 20 ++++++++++++++------
+> >>  1 file changed, 14 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> >> index 69bb030aa8e1..af809e7cbe3b 100644
+> >> --- a/drivers/cxl/core/pci.c
+> >> +++ b/drivers/cxl/core/pci.c
+> >> @@ -658,15 +658,19 @@ static void __cxl_handle_cor_ras(struct device *=
+dev,
+> >>  	void __iomem *addr;
+> >>  	u32 status;
+> >> =20
+> >> -	if (!ras_base)
+> >> +	if (!ras_base) {
+> >> +		dev_warn_once(dev, "CXL RAS register block is not mapped");
+> >>  		return;
+> >> +	}
+> >> =20
+> >>  	addr =3D ras_base + CXL_RAS_CORRECTABLE_STATUS_OFFSET;
+> >>  	status =3D readl(addr);
+> >> -	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
+> >> -		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> >> +	if (!(status & CXL_RAS_CORRECTABLE_STATUS_MASK))
+> >> +		return;
+> >> +	writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> >> +
+> >> +	if (is_cxl_memdev(dev))
+> >>  		trace_cxl_aer_correctable_error(to_cxl_memdev(dev), status); =20
+> > I think trace_cxl_aer_correctable_error() should always fire and this
+> > should somehow be unified with the CPER record trace-event for protocol
+> > errors.
+> >
+> > The only usage of @memdev in this trace is retrieving the device serial
+> > number. If the device is not a memdev then print zero for the serial
+> > number, or something like that.
+> >
+> > In the end RAS daemon should only need to enable one trace event to get
+> > protocol errors and header logs from ports or endpoints, either
+> > natively, or via CPER.
+> > =20
+> That would be: we use 'struct *device' instead of 'struct *cxl_memdev'
+> and pass serial# in as a parameter (0 in non-EP cases)?
 
-The validator currently makes sure that all the entries are within the
-range of 0 and nr_subbufs. But it does not check if there are any
-duplicates.
+For a USP may well have a serial number cap. Might be worth getting it?
 
-While working on the ring buffer, I corrupted this array, where I added
-duplicates. The validator did not catch it and created the ring buffer
-link list on top of it. Luckily, the corruption was only that the reader
-page was also in the writer path and only presented corrupted data but did
-not crash the kernel. But if there were duplicates in the writer side,
-then it could corrupt the ring buffer link list and cause a crash.
+slightly nasty thing here will be change of memdev=3D%s to devname=3D%s or
+similar.  Meh. It's a TP_printk() I'm not sure anyone will care.
+Need to be careful with the tracepoint itself though and the rasdaemon
+etc handling.
+https://github.com/mchehab/rasdaemon/blob/master/ras-cxl-handler.c#L351
+We may have to just add another field.
 
-Create a bitmask array with the size of the number of subbuffers. Then
-clear it. When walking through the subbuf array checking to see if the
-entries are within the range, test if its bit is already set in the
-subbuf_mask. If it is, then there is duplicates and fail the validation.
-If not, set the corresponding bit and continue.
-
-Cc: stable@vger.kernel.org
-Fixes: c76883f18e59b ("ring-buffer: Add test if range of boot buffer is valid")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-
-[ Note, I used this patch to fix the corrupted mapped ring buffer. ]
-
- kernel/trace/ring_buffer.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 07b421115692..0419d41a2060 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1672,7 +1672,8 @@ static void *rb_range_buffer(struct ring_buffer_per_cpu *cpu_buffer, int idx)
-  * must be the same.
-  */
- static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
--			  struct trace_buffer *buffer, int nr_pages)
-+			  struct trace_buffer *buffer, int nr_pages,
-+			  unsigned long *subbuf_mask)
- {
- 	int subbuf_size = PAGE_SIZE;
- 	struct buffer_data_page *subbuf;
-@@ -1680,6 +1681,9 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 	unsigned long buffers_end;
- 	int i;
- 
-+	if (!subbuf_mask)
-+		return false;
-+
- 	/* Check the meta magic and meta struct size */
- 	if (meta->magic != RING_BUFFER_META_MAGIC ||
- 	    meta->struct_size != sizeof(*meta)) {
-@@ -1712,6 +1716,8 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 
- 	subbuf = rb_subbufs_from_meta(meta);
- 
-+	bitmap_clear(subbuf_mask, 0, meta->nr_subbufs);
-+
- 	/* Is the meta buffers and the subbufs themselves have correct data? */
- 	for (i = 0; i < meta->nr_subbufs; i++) {
- 		if (meta->buffers[i] < 0 ||
-@@ -1725,6 +1731,12 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 			return false;
- 		}
- 
-+		if (test_bit(meta->buffers[i], subbuf_mask)) {
-+			pr_info("Ring buffer boot meta [%d] array has duplicates\n", cpu);
-+			return false;
-+		}
-+
-+		set_bit(meta->buffers[i], subbuf_mask);
- 		subbuf = (void *)subbuf + subbuf_size;
- 	}
- 
-@@ -1889,17 +1901,22 @@ static void rb_meta_init_text_addr(struct ring_buffer_meta *meta)
- static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
- {
- 	struct ring_buffer_meta *meta;
-+	unsigned long *subbuf_mask;
- 	unsigned long delta;
- 	void *subbuf;
- 	int cpu;
- 	int i;
- 
-+	/* Create a mask to test the subbuf array */
-+	subbuf_mask = bitmap_alloc(nr_pages + 1, GFP_KERNEL);
-+	/* If subbuf_mask fails to allocate, then rb_meta_valid() will return false */
-+
- 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
- 		void *next_meta;
- 
- 		meta = rb_range_meta(buffer, nr_pages, cpu);
- 
--		if (rb_meta_valid(meta, cpu, buffer, nr_pages)) {
-+		if (rb_meta_valid(meta, cpu, buffer, nr_pages, subbuf_mask)) {
- 			/* Make the mappings match the current address */
- 			subbuf = rb_subbufs_from_meta(meta);
- 			delta = (unsigned long)subbuf - meta->first_buffer;
-@@ -1943,6 +1960,7 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
- 			subbuf += meta->subbuf_size;
- 		}
- 	}
-+	bitmap_free(subbuf_mask);
- }
- 
- static void *rbm_start(struct seq_file *m, loff_t *pos)
--- 
-2.47.2
+>=20
+> >> -	}
+> >>  }
+> >> =20
+> >>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
+> >> @@ -702,8 +706,10 @@ static bool __cxl_handle_ras(struct device *dev, =
+void __iomem *ras_base)
+> >>  	u32 status;
+> >>  	u32 fe;
+> >> =20
+> >> -	if (!ras_base)
+> >> +	if (!ras_base) {
+> >> +		dev_warn_once(dev, "CXL RAS register block is not mapped"); =20
+> > Is this a "never can happen" print? It seems like an oversight in an
+> > upper layer to get this far down error reporting without the registers
+> > mapped.
+> >
+> > Like maybe this is a bug in a driver that should crash, or the driver
+> > should not be registering broken error handlers? =20
+> Correct. The error handler assignment and enablement is gated by RAS mapp=
+ing
+> in cxl_uport_init_ras_reporting() and cxl_dport_init_ras_reporting().
+>=20
+> Terry
+> =A0=A0=A0=A0=A0=A0=A0
+>=20
+>=20
+>=20
+>=20
 
 
