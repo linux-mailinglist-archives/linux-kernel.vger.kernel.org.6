@@ -1,86 +1,58 @@
-Return-Path: <linux-kernel+bounces-515010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723B4A35E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:17:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF8CA35E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:12:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B84F171C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:11:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5CD7A3E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98A9263C88;
-	Fri, 14 Feb 2025 13:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB1B264A80;
+	Fri, 14 Feb 2025 13:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nPQlIjKa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="eINETwg9"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1185B263C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D0E77102;
+	Fri, 14 Feb 2025 13:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538666; cv=none; b=qMYhF82oHbUTrjNcjCnARZsSmqYPOJSqo72yVYJGzLjQH9WWWntLU3LULBR4BhTFl9b0OA5wk8ebuMbRFqywUUQe4JA7I/On6Rvw5zcB5npJsWKSx4cY/8/IRLUb4Tth0g4cqqjSnZIlilmPxRrJJmrFjr8Mjriso5gTRFwQ1WY=
+	t=1739538751; cv=none; b=g+/O6/B7g9pdHznvRW6mXc62nosxfXV8MWWdeIDgpe/gOtHHqErV6mkbGbsAlBU6CH2WqnSPgkoF7jt5xe2Ahf8tx+n9QlTtQiYE1PZPiPThbmimh/Lsx0FCADxCPa0yA5VAQ3R0pAffTVvYPcCLcfytv8NW03CqEBtFF5fUz0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538666; c=relaxed/simple;
-	bh=6qmhCZ/VNbfXLMvjVMotO5S9MhLkOwAbj5PUvPSdtkQ=;
+	s=arc-20240116; t=1739538751; c=relaxed/simple;
+	bh=XIXVUyGiBY4A+dcS7TuTQ6R3Me5Pk5BILkImVMByb9g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rzoXqzGiGoVdU6M2dR2y33xgDuY0yrEHoVackZExZ5meiyLNgaL77nLbxlkf4W91BS1OPCX0+wW7Axw0yKvmn13O7lgRVMkii7wYclFlT4tthR4W5LnTSPKHxFnFVtq6o54ThJvDiqK3cgOh5kz1wmS32vr+pe0MTkf2KnTBnl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nPQlIjKa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8Lqq4016651
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:11:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fTW/+eSXYK27SAIhtTq5ZN9ZI4lOMHVi64iiQFK1Qbo=; b=nPQlIjKaTrY/dTcy
-	pxyj8+wG9yovtgNaXTA3gf1gCSlfA4RPjaMf4NNsWNdLFZa1KLRZuvMueopIk/aE
-	LfO5NNoatF3tkqZq5IC1ny8axu+jW7Xv+09J23MqRvP7nDQK9BzxXGA5GUQK5Rkx
-	WMDIJhzO9xItTp+D9qABBPKuvavlwUH4ELighfUmzLsNphcXZHR/CWcpBwqIidxV
-	ub3I1aM+ce9HvBP0LkalZXIYZwsW6b1MJrssGhVo5tmdpKFWiUOQnWAqugtvdxms
-	9BviAUmUs9u8oaWexzcZxmaO8hUrZhJiM5vQvclYxH53Yl1hjWSb96B32esM3u7s
-	y80cKA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sde8bukw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:11:01 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e65d6882a6so4071446d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:11:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739538661; x=1740143461;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTW/+eSXYK27SAIhtTq5ZN9ZI4lOMHVi64iiQFK1Qbo=;
-        b=PjouLc7iBOGjC+4OmDy+sAx1dCEhQICBKPgnqDz54d18W6/vrmiemj+ctjYwTb7yvR
-         ICRDl3iYOxA3uw23dzhDcuIz7Jhi/H6qFAN7IS++1Aeicq/nJAK5IyMp1bLxRrk4Cl1s
-         28IK4OYREXQxm7sdxflittxl8Sfu53flOWMyJLNAqgiz0sK5P7eJDBaFm4Zb6xIlDpMV
-         y1OMF6cjA6tVDdKIjCwfz5CIU8U1m3BE1jwoST+wFXmQzNZAtHKhS6B0eE6Z8voIUM6F
-         9SqZsZYJkxgQlPK16x9JcKk8QcFOKUSArStyVXgXmvTLANZpQcWz4Pid2KgntGfy8gIQ
-         kZSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyUzeYsB4TTFDt5QPnxbLFPi5VGArcl4y6uBHVtmj2yTKJz62LOiM1Zj1vm8m43tBNMpSSFMab6k/zglo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHPuAvPLwRNTWA7U85/gW/hl/DrqV5bQNbVf/O85+dUfIFd69+
-	1Z9xFm9wn12jZaTDHKxbqEAE74KfuirNey2nkde/OMrHz3Vg6T1+/Rdmf/UXdW2JHAggmHAtTMS
-	xeurSsgcQcBObFmVFGM5F6ykxpuz+BJ7sFue/rYoaJBEjhBnddhhTBf1qwAHBTyo=
-X-Gm-Gg: ASbGnctPcbszEGIq97FblPNo1ff+nfn54xf/FapetcW2u7jKMtXlGu5twbcjrDrJ8EN
-	wcYSvKgIVUdD6XYm3J0wG6FP7TTr73QCkwH6LFm38WQWjzdI1P3c2ehHkIcN/jUpg+jFxdLLagp
-	ZbW1jCSGTsXxEaTnNeRYK+G0CGik5wzKdgrpPAhcAygQt/2bXHul4frmnbrKb/121nreLKHrXbF
-	4IGMpF7VD+qKWiZ4cV64mGC0eNtC3rbDPrXZ9yTu8xDlbZ//4JSPFefFGBBTAGryErEugoW7VtZ
-	tQp4ZG9Yg2L9rfvFY44GlT3RkIjWjrVeaXe0qmVzr7x+/DB40WzdVqL+JfM=
-X-Received: by 2002:a05:6214:301e:b0:6e6:5bd5:f3b5 with SMTP id 6a1803df08f44-6e66520e0d3mr14986946d6.8.1739538660995;
-        Fri, 14 Feb 2025 05:11:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEij9NAIiSKVCTx7RPlhN8aNMMVTWNYr9ptSc3QOaFHm7mvQ0JMabORxG1HdQlMS7ugfZxdPQ==
-X-Received: by 2002:a05:6214:301e:b0:6e6:5bd5:f3b5 with SMTP id 6a1803df08f44-6e66520e0d3mr14986596d6.8.1739538660507;
-        Fri, 14 Feb 2025 05:11:00 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532832d1sm336935366b.81.2025.02.14.05.10.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 05:10:59 -0800 (PST)
-Message-ID: <659ba3dd-0991-4660-9dd6-feda682f15e1@oss.qualcomm.com>
-Date: Fri, 14 Feb 2025 14:10:56 +0100
+	 In-Reply-To:Content-Type; b=tNi3CjrBtNI6qMTzYCyJjw5164iw/f9zp3StcIJI/DFTeCsZZUpWvAxFhjIUSB3qAT4JVz3pAe5tSpj/4IPIu9IpSK2M53ltBS/F3BmtfK0FV08yT+3q/HD7F553Cy1CvSK6pq6YyaTj8IkgZxOGGE+tUnLexCS9O8O8f5kkXAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=eINETwg9; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1tivUB-005Y7W-Qq; Fri, 14 Feb 2025 14:12:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=7RKjrxSTjs2wxXMFts5+FNyeheo3/5tiUUsZ7FW5jK4=; b=eINETwg92U0S+n8qS4eibxE9fW
+	Im2OTWqbq4lh7uZDHwqsnwK9VuGyA2ilWH2udCSKWsVlGsoJegkEkntsXU7BSiPJG/S11LEO7oDM1
+	FN8gAlmTQPQedoMtztuuaZJEthsiTJ3hNAtleq+iS6bNt5LBI6lbkmUEMhGLgm0ZlDZHtt4omC63G
+	LM7uwgGl/Rebj7z2bY74+rDOcZEygNfQGt0Jf9V1WxyKr8bsa7mcZABikeWHawL4yLV5dhH7CjKSC
+	jUatECLWksTRgE9kDGo3Dwz6aNK7sdIRoBBr/TIVSiXLF/O7VF3TYAnpAr5Wd4a33pKl6qCLbLLwO
+	rS3N5T5Q==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1tivU0-0008VT-FI; Fri, 14 Feb 2025 14:11:52 +0100
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1tivTy-00DGzu-KW; Fri, 14 Feb 2025 14:11:50 +0100
+Message-ID: <251be392-7cd5-4c69-bc02-12c794ea18a1@rbox.co>
+Date: Fri, 14 Feb 2025 14:11:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,87 +60,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] arm64: dts: qcom: x1e80100: Add PCIe lane
- equalization preset properties
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi
- <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
-References: <20250210-preset_v6-v6-0-cbd837d0028d@oss.qualcomm.com>
- <20250210-preset_v6-v6-1-cbd837d0028d@oss.qualcomm.com>
- <20250214084427.5ciy5ks6oypr3dvg@thinkpad>
- <be824a70-380e-84d0-8ada-f849b9453ac0@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <be824a70-380e-84d0-8ada-f849b9453ac0@quicinc.com>
+Subject: Re: [PATCH net 1/4] sockmap, vsock: For connectible sockets allow
+ only connected
+To: John Fastabend <john.fastabend@gmail.com>,
+ Jakub Sitnicki <jakub@cloudflare.com>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Stefano Garzarella <sgarzare@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Bobby Eshleman <bobby.eshleman@bytedance.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
+ <20250213-vsock-listen-sockmap-nullptr-v1-1-994b7cd2f16b@rbox.co>
+From: Michal Luczaj <mhal@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <20250213-vsock-listen-sockmap-nullptr-v1-1-994b7cd2f16b@rbox.co>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: vyLg8Oh1_HJwWSNC1D3wIDp5TP5kcfjW
-X-Proofpoint-ORIG-GUID: vyLg8Oh1_HJwWSNC1D3wIDp5TP5kcfjW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140097
+Content-Transfer-Encoding: 7bit
 
-On 14.02.2025 9:48 AM, Krishna Chaitanya Chundru wrote:
+> ...
+> Another design detail is that listening vsocks are not supposed to have any
+> transport assigned at all. Which implies they are not supported by the
+> sockmap. But this is complicated by the fact that a socket, before
+> switching to TCP_LISTEN, may have had some transport assigned during a
+> failed connect() attempt. Hence, we may end up with a listening vsock in a
+> sockmap, which blows up quickly:
 > 
-> 
-> On 2/14/2025 2:14 PM, Manivannan Sadhasivam wrote:
->> On Mon, Feb 10, 2025 at 01:00:00PM +0530, Krishna Chaitanya Chundru wrote:
->>> Add PCIe lane equalization preset properties for 8 GT/s and 16 GT/s data
->>> rates used in lane equalization procedure.
->>>
->>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->>> ---
->>> This patch depends on the this dt binding pull request which got recently
->>> merged: https://github.com/devicetree-org/dt-schema/pull/146
->>> ---
->>> ---
->>>   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 13 +++++++++++++
->>>   1 file changed, 13 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> index 4936fa5b98ff..1b815d4eed5c 100644
->>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> @@ -3209,6 +3209,11 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->>>               phys = <&pcie3_phy>;
->>>               phy-names = "pciephy";
->>>   +            eq-presets-8gts = /bits/ 16 <0x5555 0x5555 0x5555 0x5555>,
->>> +                      /bits/ 16 <0x5555 0x5555 0x5555 0x5555>;
->>
->> Why 2 16bit arrays?
->>
-> Just to keep line length below 100, if I use single line it is crossing
-> 100 lines.
+> KASAN: null-ptr-deref in range [0x0000000000000120-0x0000000000000127]
+> CPU: 7 UID: 0 PID: 56 Comm: kworker/7:0 Not tainted 6.14.0-rc1+
+> Workqueue: vsock-loopback vsock_loopback_work
+> RIP: 0010:vsock_read_skb+0x4b/0x90
+> Call Trace:
+>  sk_psock_verdict_data_ready+0xa4/0x2e0
+>  virtio_transport_recv_pkt+0x1ca8/0x2acc
+>  vsock_loopback_work+0x27d/0x3f0
+>  process_one_work+0x846/0x1420
+>  worker_thread+0x5b3/0xf80
+>  kthread+0x35a/0x700
+>  ret_from_fork+0x2d/0x70
+>  ret_from_fork_asm+0x1a/0x30
 
-Oh I didn't notice this.. Ideally we would have <A0>, <A1>, ..., <An>;
+Perhaps I should have expanded more on the null-ptr-deref itself.
 
-But it seems like /bits/ applies individually to each entry? That's a bit
-weird, but I'll add it to my list of things I don't like about dtc..
+The idea is: force a vsock into assigning a transport and add it to the
+sockmap (with a verdict program), but keep it unconnected. Then, drop
+the transport and set the vsock to TCP_LISTEN. The moment a new
+connection is established:
 
-Let's do:
-eq-presets-8gts = /bits/ 16 <0x5555 0x5555 0x5555 0x5555
-			     0x5555 0x5555 0x5555 0x5555>;
+virtio_transport_recv_pkt()
+  virtio_transport_recv_listen()
+    sk->sk_data_ready(sk)            i.e. sk_psock_verdict_data_ready()
+      ops->read_skb()                i.e. vsock_read_skb()
+        vsk->transport->read_skb()   vsk->transport is NULL, boom
 
-for now
+Here's a stand-alone repro:
 
+/*
+ * # modprobe -a vsock_loopback vhost_vsock
+ * # gcc test.c && ./a.out
+ */
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <sys/syscall.h>
+#include <linux/bpf.h>
+#include <linux/vm_sockets.h>
 
-Konrad
+static void die(const char *msg)
+{
+	perror(msg);
+	exit(-1);
+}
+
+static int sockmap_create(void)
+{
+	union bpf_attr attr = {
+		.map_type = BPF_MAP_TYPE_SOCKMAP,
+		.key_size = sizeof(int),
+		.value_size = sizeof(int),
+		.max_entries = 1
+	};
+	int map;
+
+	map = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
+	if (map < 0)
+		die("map_create");
+
+	return map;
+}
+
+static void map_update_elem(int fd, int key, int value)
+{
+	union bpf_attr attr = {
+		.map_fd = fd,
+		.key = (uint64_t)&key,
+		.value = (uint64_t)&value,
+		.flags = BPF_ANY
+	};
+
+	if (syscall(SYS_bpf, BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr)))
+		die("map_update_elem");
+}
+
+static int prog_load(void)
+{
+	/* mov %r0, 1; exit */
+	struct bpf_insn insns[] = {
+		{ .code = BPF_ALU64 | BPF_MOV | BPF_K, .dst_reg = 0, .imm = 1 },
+		{ .code = BPF_JMP | BPF_EXIT }
+	};
+	union bpf_attr attr = {
+		.prog_type = BPF_PROG_TYPE_SK_SKB,
+		.insn_cnt = sizeof(insns)/sizeof(insns[0]),
+		.insns = (long)insns,
+		.license = (long)"",
+	};
+	
+	int prog = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
+	if (prog < 0)
+		die("prog_load");
+
+	return prog;
+}
+
+static void link_create(int prog_fd, int target_fd)
+{
+	union bpf_attr attr = {
+		.link_create = {
+			.prog_fd = prog_fd,
+			.target_fd = target_fd,
+			.attach_type = BPF_SK_SKB_VERDICT
+		}
+	};
+
+	if (syscall(SYS_bpf, BPF_LINK_CREATE, &attr, sizeof(attr)) < 0)
+		die("link_create");
+}
+
+int main(void)
+{
+	struct sockaddr_vm addr = {
+		.svm_family = AF_VSOCK,
+		.svm_cid = VMADDR_CID_LOCAL,
+		.svm_port = VMADDR_PORT_ANY
+	};
+	socklen_t alen = sizeof(addr);
+	int s, map, prog, c;
+
+	s = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
+	if (s < 0)
+		die("socket");
+
+	if (bind(s, (struct sockaddr *)&addr, alen))
+		die("bind");
+
+	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ECONNRESET)
+		die("connect #1");
+
+	map = sockmap_create();
+	prog = prog_load();
+	link_create(prog, map);
+	map_update_elem(map, 0, s);
+
+	addr.svm_cid = 0x42424242; /* non-existing */
+	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ESOCKTNOSUPPORT)
+		die("connect #2");
+
+	if (listen(s, 1))
+		die("listen");
+
+	if (getsockname(s, (struct sockaddr *)&addr, &alen))
+		die("getsockname");
+
+	c = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
+	if (c < 0)
+		die("socket c");
+
+	if (connect(c, (struct sockaddr *)&addr, alen))
+		die("connect #3");
+
+	return 0;
+}
+
 
