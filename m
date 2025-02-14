@@ -1,189 +1,131 @@
-Return-Path: <linux-kernel+bounces-514447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A8A35724
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:33:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A05A35720
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:32:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9B23AD5A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043F218921A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2221487DC;
-	Fri, 14 Feb 2025 06:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C9200BA8;
+	Fri, 14 Feb 2025 06:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZYZTJieX"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A60B153803;
-	Fri, 14 Feb 2025 06:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sramY19A"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88571487DC
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514776; cv=none; b=qncZYZGaf2Bk3ty0HEDmy9+eG3VqIxL8L2LzxLiCEkAI1ks0ixK0RM2gQXfPW95muTqt1l1pkptPJ2xY1VgY8GTwn7QZCHVfLEO/8CMhq0Id//EzijRct4ZbJAgNfKtgfK82jmCtSpJkQxHdruTtzB3kP23Tf1zIZjSEYF1PAP0=
+	t=1739514773; cv=none; b=XL/y1c27OWpRYXOY6e+wmDm/yTChV+5/R7mv9IyyRq7ugZq3PRTmoD3mw9/np1lsQ78m9nMTKYbYYyGDrO3mXODoqcf1V7BhCOHfXRMKWUpSzceskgUCmtb7lvjui8EF/GkSXDElVhNvNqg9VaRgflvY9OK64Oj8VZ0ZGowPXLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514776; c=relaxed/simple;
-	bh=hyvDeMOuihb0txnXJaqThDD8Not1D1+IXKBX+xiJxo0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=oPwyBm7PnfgTkwDuI/fQ78MApw9dfhpyfrn+fXeVLXXaZlVRCZh/09hX/GywWDa2YtCkbUGPS6RSUh88/Xdec2aOePGf28Ix1ts4gI6WFw9qfJzlBTavVrmC+dAbi44vE2U2GPv1nim3jcjE5xDra+cwR+N0M7myYOvdApMJZGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZYZTJieX; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=t5/NFgvwirXTPslamx
-	of568wydxGxcgJ439GsLJwwTY=; b=ZYZTJieXJhxWhh8S3SfQ0Mnp4T0+i4C7zb
-	qSh25YigieruRXhhNC/0NPCKX9PNOgvUb0SeWLxQ3l9a51QRN/m47QSGR0P2MkiI
-	fANlyCh5VHq9HFsjJupK9wgVlmFiQ+CDxq86s+XUaFvJmkJ2K28zJmHqrRWlhbjY
-	y0Vxt6AlE=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PykvCgDnr2Jr465nOc+UAw--.56792S2;
-	Fri, 14 Feb 2025 14:32:12 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	21cnbao@gmail.com,
-	david@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	muchun.song@linux.dev,
-	osalvador@suse.de,
-	liuzixing@hygon.cn,
-	Ge Yang <yangge1116@126.com>
-Subject: [PATCH] mm/hugetlb: wait for hugepage folios to be freed
-Date: Fri, 14 Feb 2025 14:32:09 +0800
-Message-Id: <1739514729-21265-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:PykvCgDnr2Jr465nOc+UAw--.56792S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXryrCFy8Xr45tw4UKr1UAwb_yoWrKFWrpF
-	yUKwnrGrWDJrZakr17Xws5Zr1ay395ZFW2kFWIqw43Z3ZxJw1DKFy2vw1qq3y5ArZ7CFWx
-	ZrWjv3yDuF1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoGQDUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifhnzG2eu3KhoTQAAsX
+	s=arc-20240116; t=1739514773; c=relaxed/simple;
+	bh=MOsG8NVKcVO9UMUYZXQ/FmjYYe0V2HYYkcRn4te3esY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=droNl3083SzbSwJkW2batmUNqXETYgjRgQUfb43H5T1Ax53YI8sXTDbhioAajRcOgwEmxtJswUMVsuAfWFZfp0wr/VKBZrPZWWNfUA8WuE4lGEfmVcC8c4kh2f4zlGpMYfa8X6s2ZL4iLcpFmuNBayeWMgKCS877EzN3sw6h1RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sramY19A; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E217tZ013379;
+	Fri, 14 Feb 2025 06:32:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jN4FaQ
+	FIv+GkbRwAOYMg9naHXIwVApjxx0TVLhKgmUM=; b=sramY19AimOPPPGrbVgwjY
+	b0S+Ll/CUN8nrwKAdMEd28ssBqpswYTitlRJvm58REd1QFbVqjHvq12otrnW8M1M
+	TFc6IzmpgNP8lyYT8n6BWR8kRmp7/MqhtHxcs8JH5bV5MhNPo2esPEj3pu5p0JNz
+	H1LJlCvvBY0muFi789DfhEvLez2xPIJNLgtpzITrGQ9K/Ocx6KPAt25iqvqeNuZe
+	xLZ7oEx+TZGfOVU35fhNGAfS58Xp9370Q4G+yyudvCYnM7FZarsF5A8KOxuG+FTb
+	rA4HCffPMDX+cpVjmA7Q9FnvXMgvcFfxdBaqaoB2WXz+MlswaYjTf73uXJ3UL7hw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44svp08xbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 06:32:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E2jV9X016692;
+	Fri, 14 Feb 2025 06:32:45 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kj6mf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 06:32:45 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E6WhvH41812402
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 06:32:43 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB0E72004D;
+	Fri, 14 Feb 2025 06:32:43 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 77EFE20040;
+	Fri, 14 Feb 2025 06:32:42 +0000 (GMT)
+Received: from [9.43.1.221] (unknown [9.43.1.221])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 06:32:42 +0000 (GMT)
+Message-ID: <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
+Date: Fri, 14 Feb 2025 12:02:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
+To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
+References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8-I0An12dgEe2IHZiXdS89BwQYzIzGcq
+X-Proofpoint-GUID: 8-I0An12dgEe2IHZiXdS89BwQYzIzGcq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_02,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
+ adultscore=0 mlxlogscore=854 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502140047
 
-From: Ge Yang <yangge1116@126.com>
 
-Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer freeing
-of HugeTLB pages"), which supports deferring the freeing of HugeTLB pages,
-the allocation of contiguous memory through cma_alloc() may fail
-probabilistically.
 
-In the CMA allocation process, if it is found that the CMA area is occupied
-by in-use hugepage folios, these in-use hugepage folios need to be migrated
-to another location. When there are no available hugepage folios in the
-free HugeTLB pool during the migration of in-use HugeTLB pages, new folios
-are allocated from the buddy system. A temporary state is set on the newly
-allocated folio. Upon completion of the hugepage folio migration, the
-temporary state is transferred from the new folios to the old folios.
-Normally, when the old folios with the temporary state are freed, it is
-directly released back to the buddy system. However, due to the deferred
-freeing of HugeTLB pages, the PageBuddy() check fails, ultimately leading
-to the failure of cma_alloc().
+On 13/02/25 8:34 pm, Venkat Rao Bagalkote wrote:
+> Greetings!!!
+> 
+>  From kernel next-20250210, I am observing syscall kexec_file_load not 
+> available, there by kdump service is failing to start.
+> 
+> 
+> Logs:
+> 
+> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
+> Warning: append= option is not passed. Using the first kernel root 
+> partition
+> Modified cmdline: elfcorehdr=311424K root=UUID=b5b1f89c- 
+> d479-48b3-90e2-744a2fd05667
+> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
+> syscall kexec_file_load not available.
+> [root@ltc-zzci-1 ~]# kexec -v
+> kexec-tools 2.0.27
+> [root@ltc-zzci-1 ~]# uname -r
+> 6.14.0-rc2-next-20250212
+> 
 
-Here is a simplified call trace illustrating the process:
-cma_alloc()
-    ->__alloc_contig_migrate_range() // Migrate in-use hugepage
-        ->unmap_and_move_huge_page()
-            ->folio_putback_hugetlb() // Free old folios
-    ->test_pages_isolated()
-        ->__test_page_isolated_in_pageblock()
-             ->PageBuddy(page) // Check if the page is in buddy
+Is the kernel built with CONFIG_KEXEC_FILE ?
 
-To resolve this issue, we have implemented a function named
-wait_for_hugepage_folios_freed(). This function ensures that the hugepage
-folios are properly released back to the buddy system after their migration
-is completed. By invoking wait_for_hugepage_folios_freed() following the
-migration process, we guarantee that when test_pages_isolated() is
-executed, it will successfully pass.
-
-Fixes: b65d4adbc0f0 ("mm: hugetlb: defer freeing of HugeTLB pages")
-Signed-off-by: Ge Yang <yangge1116@126.com>
----
- include/linux/hugetlb.h |  5 +++++
- mm/hugetlb.c            |  7 +++++++
- mm/migrate.c            | 16 ++++++++++++++--
- 3 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 6c6546b..c39e0d5 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, struct huge_bootmem_page *m);
- 
- int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list);
- int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn);
-+void wait_for_hugepage_folios_freed(struct hstate *h);
- struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 				unsigned long addr, bool cow_from_owner);
- struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int preferred_nid,
-@@ -1092,6 +1093,10 @@ static inline int replace_free_hugepage_folios(unsigned long start_pfn,
- 	return 0;
- }
- 
-+static inline void wait_for_hugepage_folios_freed(struct hstate *h)
-+{
-+}
-+
- static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 					   unsigned long addr,
- 					   bool cow_from_owner)
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 30bc34d..64cae39 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2955,6 +2955,13 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
- 	return ret;
- }
- 
-+void wait_for_hugepage_folios_freed(struct hstate *h)
-+{
-+	WARN_ON(!h);
-+
-+	flush_free_hpage_work(h);
-+}
-+
- typedef enum {
- 	/*
- 	 * For either 0/1: we checked the per-vma resv map, and one resv
-diff --git a/mm/migrate.c b/mm/migrate.c
-index fb19a18..5dd1851 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1448,6 +1448,7 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
- 	int page_was_mapped = 0;
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
-+	unsigned long size;
- 
- 	if (folio_ref_count(src) == 1) {
- 		/* page was freed from under us. So we are done. */
-@@ -1533,9 +1534,20 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
- out_unlock:
- 	folio_unlock(src);
- out:
--	if (rc == MIGRATEPAGE_SUCCESS)
-+	if (rc == MIGRATEPAGE_SUCCESS) {
-+		size = folio_size(src);
- 		folio_putback_hugetlb(src);
--	else if (rc != -EAGAIN)
-+
-+		/*
-+		 * Due to the deferred freeing of HugeTLB folios, the hugepage 'src' may
-+		 * not immediately release to the buddy system. This can lead to failure
-+		 * in allocating memory through the cma_alloc() function. To ensure that
-+		 * the hugepage folios are properly released back to the buddy system,
-+		 * we invoke the wait_for_hugepage_folios_freed() function to wait for
-+		 * the release to complete.
-+		 */
-+		wait_for_hugepage_folios_freed(size_to_hstate(size));
-+	} else if (rc != -EAGAIN)
- 		list_move_tail(&src->lru, ret);
- 
- 	/*
--- 
-2.7.4
+- Hari
 
 
