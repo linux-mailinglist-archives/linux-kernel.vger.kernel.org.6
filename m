@@ -1,214 +1,149 @@
-Return-Path: <linux-kernel+bounces-515469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87497A3652E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:04:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A86A3652F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A989B188C1FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230BE172934
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA05268C54;
-	Fri, 14 Feb 2025 18:04:32 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA02268C51;
+	Fri, 14 Feb 2025 18:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSGDeBXd"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBD118A95E;
-	Fri, 14 Feb 2025 18:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DDD1EA91;
+	Fri, 14 Feb 2025 18:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739556272; cv=none; b=fHkt4WPGza7fTvP2qtiX6Zq8NyFtkatwYswIPXhZU2ePKiYUNP9CsVhVdqXGgBxYOTHW8pRL8BicJUOZOdD+9RPkNEaVcaZsiV8jj3890OsKiZi76vovWZIs81qUosCb1C0Nqwr3sGvbtqyNJH7ZgWO9LVMnwjxrV7Ny7Xtz/bs=
+	t=1739556300; cv=none; b=EEIOjrViORvyJ6VHUHsybzVDFHlLEpOfMneNvccGtK3Y4r3RtfI6VsEqgrolIhuZ5jNSw33b9kcDLLt9zCBj3qizXSu2K3rv39ptOBAM3yRCGf31qaWyX+FbU9aOXs7t5McoIXvm6nJjxm9RXvlhZE8Ntp5DJZk6gIwcdE1tkio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739556272; c=relaxed/simple;
-	bh=i8eBRsGFqX7u/OaXDisHtA5IiCuO9McveZ0pd21c1r4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FXu7MpDIV5eNp8+1NPU9FzoybLm/qtPAbsDDilzWhpttFFOS8LgoLTuAdRPWeaRsuO+Zcg1xWlybhIGKfvyHj2CtyT8OQQXb/ZrdtwzH9Ln4yrYrMpX0G65AeVGEp7F/Mca4wVKM81HxFxDvhm9rKv13hAwyckR2S+HCd7UB/Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B081DC4CED1;
-	Fri, 14 Feb 2025 18:04:30 +0000 (UTC)
-Date: Fri, 14 Feb 2025 13:04:42 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [PATCH] ring-buffer: Allow persistent ring buffers to be mmapped
-Message-ID: <20250214130442.3f4fee5d@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739556300; c=relaxed/simple;
+	bh=xXr1JK1gjavjAE/vEHKIs9kqfKKNroxNQsopDcHfiKs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=FDIW0hfOmFBTJlDaoi/EEvgIWEoEr/kC3lbu9M7qVq2J9E8Bm1nqx6wkMWiWQERMRHuSajAw0iQFgW2KxLdieRCQ1Cn4QqKcOv4uY0UIBVp8ijOfDoZ37Kq3VPhelYkoT0iGimCJb4fNktqqXGUeNtkVNC+EbyTI3UQN6Qe81gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSGDeBXd; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21f6fb68502so5906965ad.3;
+        Fri, 14 Feb 2025 10:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739556298; x=1740161098; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bNlGKiDQgk/4V9I6WFUe1ZggS7rx0zWohj8BV7AO3Do=;
+        b=BSGDeBXdVMaI5KgG6lHkCF8/imx3EMoC99PK6BWF8m5YRf8RWIvdhi56+zVplU9t1A
+         lA4zE8qpaTfncmviNdFgCIXmWZIDcFbsxrFSDTQFVQCKhcn9a73ehp3g4BKmfFjpp3H9
+         km/WhqMBMhdsScWxZJmEuaM6b8XL9XPBKC/yShA0qmlSFbnPqV345C6Ve5lp1Kw8rZVB
+         f1txQwF+b1yQ7tXIqXvnGzRsuIJKHDYKxL0kxQ88vGfEDZ0LsQSPVb4MhoKirjtn153g
+         LPHTangyHg1OQOPhtHnZ5youW9/b0/tRWw6rD3+iU/YN9DSRXPd0iOHPxFnHeWv9gpPq
+         5izQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739556298; x=1740161098;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bNlGKiDQgk/4V9I6WFUe1ZggS7rx0zWohj8BV7AO3Do=;
+        b=b68kHwaLgxcg0KurTTiVmzK5kNGgqTPRMnqtkbUPCV8Drm3mlooZrBjh65w+w551MA
+         b+age//uGk7VEmDn5Z9wry5ZYMhZJoIAXyOAJLePkN5KqbmsscYZ2aQzlevqWmwesb5O
+         0zmH4NRDtoEmD8CckE7l8yRsOm93TwfHdeGm9DQkzXen6NGYFEdZNqUhbW2EQyE40Djm
+         v6JJJAc6zulsL9UHuhfKQNjW5cRR6KadSZ8kmKgnmCCuvOK5fenuIHKZm37k/62QZcgz
+         BDGIbR8q8pY7K+JL967sKGn/qCioV2azzwF5V+unFI0TPoXuV+5QkKkHc9gOFDOz78UP
+         iR1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW/LVWuVZUjR5OXKwLAJuW/2GfzGltCfl5Z2fu9BL09Hr/RW+bQmdUl4FjOkej0dOvB7RVPoXgm0I6XMRchVrc=@vger.kernel.org, AJvYcCXQP9gQlDzM9LAT9imszcKbFHK9SPQXwmtyNj1mG91nqxAuQOLmlQmvqid5f2wjkaMg2hBujuiMCP2pQV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLhP4pBvwtqrOEApDULHSg7vTzYkuZav3+157boUNyj9y+obUx
+	E4B49a0alUNqbNyciUrXVvnPuGnKKk/FqnoZ872uig3fTEELy9wEBNAhq9ecMAWm+dIZA/GUYm8
+	DQfDlTQtuBpeDDAoFqYbT5WWGDow=
+X-Gm-Gg: ASbGnct+LWZsdu3JuhoIJ/g14pP/QbxK14azJgmxLsVPm8uQjnyvghUmaQic9X2kQJR
+	TvLT3DhOfkuLuGLi82RLa5UiC91JNpf7gXj0yfHYhm4UByIGrffJ3KKoOpRKQG8ixtGOTjDo4
+X-Google-Smtp-Source: AGHT+IGBXkuYnKPoUWEFkmV4TUXnY1Ty6w+tV3iFACV30rX/LII7P1gEfZMjxeabEwWQK0GecQj/2tN+0lbZxNLA7k8=
+X-Received: by 2002:a17:903:2312:b0:21f:b7f5:ee58 with SMTP id
+ d9443c01a7336-22103f1a081mr1114655ad.4.1739556298116; Fri, 14 Feb 2025
+ 10:04:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250213-vma-v14-0-b29c47ab21f5@google.com> <8130a6d5-a7e5-402b-b05c-2d0703ac1ed2@lucifer.local>
+ <CANiq72nBx3cRTUC9HWVR8K64Jbq3GCVMss5wuABzra3OLhRUQw@mail.gmail.com>
+ <c8e78762-1429-4ab6-9398-ce52370eec08@lucifer.local> <CANiq72mKyvoyk_tgbMKUdzs-sJOoyEH7f1M9ipiET+XYgwCqRw@mail.gmail.com>
+ <2d132129-fdf7-404d-b1f1-8ee87b838dcf@lucifer.local> <b6b5tnaw6vnuib7nzcm7ajszxiptqz3i2hex5yengzbsirztks@l3coijkqwtpb>
+ <CAH5fLgjMC2Q1tjuVtbhMvU-pmEsn1Ai4=AAB3Tm8HTWi7PFHfg@mail.gmail.com>
+ <30ffd737-d0aa-44aa-a647-686e536ac548@lucifer.local> <2iypqaa3orklplwec4k5n4nuuov3gajtkiv2nt2ce2s2b4e7gd@7y6cmwrwr5te>
+In-Reply-To: <2iypqaa3orklplwec4k5n4nuuov3gajtkiv2nt2ce2s2b4e7gd@7y6cmwrwr5te>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 14 Feb 2025 19:04:46 +0100
+X-Gm-Features: AWEUYZlksNjUlfuWQ3E5FqVG20TGeackl_sUVz7lkxRiPl7yZlnjyQZLRmVc3RY
+Message-ID: <CANiq72nBDEOSuSNTGKGA5xQrs3ZFH87ii0OAdhJq3rqtOv=dfQ@mail.gmail.com>
+Subject: Re: [PATCH v14 0/8] Rust support for mm_struct, vm_area_struct, and mmap
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Balbir Singh <balbirs@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Fri, Feb 14, 2025 at 5:10=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> This will become more important once we have more than just wrappers,
+> but I think we should talk about what this will need to look like before
+> it actually happens.  ie: unstable rust branch tracking unstable c
+> branch with build emails, etc?  Early days yet, though.
 
-The persistent ring buffer uses vmap()'d memory to map the reserved memory
-from boot. But the user space mmap() to the ring buffer requires
-virt_to_page() to return a valid page. But that only works for core kernel
-addresses and not for vmap() addresses.
+Like an equivalent to the `mm-unstable` one? Would patches only be
+promoted if they pass the Rust build etc.?
 
-If virt_addr_valid() fails on the page to be mapped, use vmalloc_to_page()
-instead.
+(Sorry, I don't mind to interfere -- just trying to understand how it
+would work, since I may be able to use as an example later on for
+other subsystems etc.)
 
-Also, the persistent memory uses the page->id for its own purpose where as
-the user mmap buffer currently uses that for the subbuf array mapped to
-user space. If the buffer is a persistent buffer, use the page index into
-that buffer as the identifier instead of the page->id.
+> I am unclear how the branching/merging happens.  When do we need to
+> start (at lest) building the rust side?  We've been doing a lot of work
+> in the modularization/interface level to try and integrate more isolated
+> testing, as well as the locking changes.
+>
+> Do you have build bots that will tell us when things are broken?
 
-That is, the page->id for a persistent buffer, represents the order of the
-buffer is in the link list. ->id == 0 means it is the reader page.
-When a reader page is swapped, the new reader page's ->id gets zero, and
-the old reader page gets the ->id of the page that it swapped with.
+If you mean on the Rust side, I just wrote some context on another thread:
 
-The user space mapping has the ->id is the index of where it was mapped in
-user space and does not change while it is mapped.
+    https://lore.kernel.org/rust-for-linux/CANiq72=3DYy8e=3DpGA+bUHPZhn+D66=
+TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com/
 
-Since the persistent buffer is fixed in its location, the index of where
-a page is in the memory range can be used as the "id" to put in the meta
-page array, and it can be mapped in the same order to user space as it is
-in the persistent memory.
+The important bit is:
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 49 ++++++++++++++++++++++++++++++++------
- kernel/trace/trace.c       |  4 ----
- 2 files changed, 42 insertions(+), 11 deletions(-)
+    I regularly test different combinations (branches, configs, compiler
+    versions, and so on) to catch mainly toolchain issues and so on, and
+    keep things as clean as I can. Others use regularly the Rust support
+    for their different use cases, thus more testing happens on different
+    environments. In other words, things generally work just fine.
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index bb6089c2951e..87caf9d48edb 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -5950,12 +5950,18 @@ static void rb_clear_buffer_page(struct buffer_page *page)
- static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- {
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-+	struct page *page;
- 
- 	if (!meta)
- 		return;
- 
- 	meta->reader.read = cpu_buffer->reader_page->read;
--	meta->reader.id = cpu_buffer->reader_page->id;
-+	/* For boot buffers, the id is the index */
-+	if (cpu_buffer->ring_meta)
-+		meta->reader.id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-+						     cpu_buffer->reader_page->page);
-+	else
-+		meta->reader.id = cpu_buffer->reader_page->id;
- 	meta->reader.lost_events = cpu_buffer->lost_events;
- 
- 	meta->entries = local_read(&cpu_buffer->entries);
-@@ -5963,7 +5969,12 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	meta->read = cpu_buffer->read;
- 
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-+	if (virt_addr_valid(cpu_buffer->meta_page))
-+		page = virt_to_page(cpu_buffer->meta_page);
-+	else
-+		page = vmalloc_to_page(cpu_buffer->meta_page);
-+
-+	flush_dcache_folio(page_folio(page));
- }
- 
- static void
-@@ -6883,23 +6894,38 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
- 	unsigned int nr_subbufs = cpu_buffer->nr_pages + 1;
- 	struct buffer_page *first_subbuf, *subbuf;
-+	int cnt = 0;
- 	int id = 0;
- 
--	subbuf_ids[id] = (unsigned long)cpu_buffer->reader_page->page;
--	cpu_buffer->reader_page->id = id++;
-+	if (cpu_buffer->ring_meta)
-+		id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-+					cpu_buffer->reader_page->page);
-+	else
-+		cpu_buffer->reader_page->id = id;
-+
-+	subbuf_ids[id++] = (unsigned long)cpu_buffer->reader_page->page;
-+	cnt++;
- 
- 	first_subbuf = subbuf = rb_set_head_page(cpu_buffer);
- 	do {
-+		if (cpu_buffer->ring_meta)
-+			id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-+						subbuf->page);
-+		else
-+			subbuf->id = id;
-+
- 		if (WARN_ON(id >= nr_subbufs))
- 			break;
- 
- 		subbuf_ids[id] = (unsigned long)subbuf->page;
--		subbuf->id = id;
- 
- 		rb_inc_page(&subbuf);
- 		id++;
-+		cnt++;
- 	} while (subbuf != first_subbuf);
- 
-+	WARN_ON(cnt != nr_subbufs);
-+
- 	/* install subbuf ID to kern VA translation */
- 	cpu_buffer->subbuf_ids = subbuf_ids;
- 
-@@ -7064,7 +7090,10 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 			goto out;
- 		}
- 
--		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-+		if (virt_addr_valid(cpu_buffer->subbuf_ids[s]))
-+			page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-+		else
-+			page = vmalloc_to_page((void *)cpu_buffer->subbuf_ids[s]);
- 
- 		for (; off < (1 << (subbuf_order)); off++, page++) {
- 			if (p >= nr_pages)
-@@ -7210,6 +7239,7 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 	unsigned long missed_events;
- 	unsigned long reader_size;
- 	unsigned long flags;
-+	struct page *page;
- 
- 	cpu_buffer = rb_get_mapped_buffer(buffer, cpu);
- 	if (IS_ERR(cpu_buffer))
-@@ -7278,7 +7308,12 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 
- out:
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-+	if (virt_addr_valid(cpu_buffer->meta_page))
-+		page = virt_to_page(cpu_buffer->meta_page);
-+	else
-+		page = vmalloc_to_page(cpu_buffer->meta_page);
-+
-+	flush_dcache_folio(page_folio(page));
- 
- 	rb_update_meta_page(cpu_buffer);
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0e6d517e74e0..25ff37aab00f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8279,10 +8279,6 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct trace_iterator *iter = &info->iter;
- 	int ret = 0;
- 
--	/* Currently the boot mapped buffer is not supported for mmap */
--	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
--		return -ENODEV;
--
- 	ret = get_snapshot_map(iter->tr);
- 	if (ret)
- 		return ret;
--- 
-2.47.2
+    However, our testing is not meant to catch every issue everywhere.
+    Like for anything else in the kernel, whoever maintains a branch with
+    a particular Rust feature needs to set up proper testing for that
+    particular feature and relevant configs.
 
+I hope that clarifies.
+
+Moreover, there are some bots available that support Rust, e.g.
+Intel's 0-day bot. I am happy to put you in contact with them to see
+what they can do for your branches.
+
+Cheers,
+Miguel
 
