@@ -1,122 +1,140 @@
-Return-Path: <linux-kernel+bounces-514155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA10A35334
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:48:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E69A35338
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A936F7A18EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:47:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFEC3AA696
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BBB2CCC5;
-	Fri, 14 Feb 2025 00:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DE310A3E;
+	Fri, 14 Feb 2025 00:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="BAa5G0IU"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Zowa30gA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382851FC3;
-	Fri, 14 Feb 2025 00:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047DEBE4E;
+	Fri, 14 Feb 2025 00:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739494076; cv=none; b=QCLfoieJz1o2fZkRKZoCIYchKXTI7K2ZBUouDx5WE/6Hmo96d+7tqhZstNqD+p0pPz6QgFN1JmplSQXCarnQdL5D0KCzZNlvqP22zXiEt0zUjjhZdxra8+ZF08pl6LtFQVhN+5mgXIaXHUNBSGYFtcMFTDhPRuJO52yi12HxmyY=
+	t=1739494126; cv=none; b=PhtT+cswj8p7KQdEWajqR4fTIAljSPfYpdYlAmPK/+cMB0eeGt9Yto4gtQ4dwwKVDMIWeheIvMxcuGsCXIzXlPN/6PUMb5/l1emqR/WrUYbnbdtfxyyFeLBkjlRrdkXIvkgOxLVEnaV0+u7Rqj+k0aKqxHu4I2cB9Z18S5ez/hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739494076; c=relaxed/simple;
-	bh=t8P3tZaQxu3mQlHu1ICaIX21HqUXbzlMLNshFSmQ/Ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7vl/agGL71rC09tWWk5apsT1+NDCgxcjQbcXHY6bacOjZ6ECAXi+UQNTjnt6YkzVG54CCeAlZgkiJxc8fYgkQoghxN2TVsWaoNzGQvKf0DdDv7z/agU54S9/ittrXEsE9TnrvGflbk+GRRvD2T0+jCQCws4d9BYCGe76ymT2lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=BAa5G0IU; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so1020389f8f.0;
-        Thu, 13 Feb 2025 16:47:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1739494073; x=1740098873; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=terIPvdWa1fSylHgnwuIdhWYMuV0yExm2ENY3Z+tYgI=;
-        b=BAa5G0IU5objHvyS0n1uLMSFoiOjKB0RZIyh9GoJO9INRIGgXzOGo74TMMPgep3/GU
-         YhpIMLH6KmC1+33j39sT/REZTLf9Kw12ZekVhm9iJIjJAtYlOgxgXEVSxYRdr9l9IlUK
-         NRQyTMUeVmo7ZXHoe8nwkmKaWcCmhYAtkUOzJABzYTEZSoqwpgMLBrtv7g9gJz9y6rYY
-         PdpohVPS0mGvOG71TlFsOEy2Xy2EmQTwfqxllab6BfxWYQfG2TuMdQ81WxeGB7+kxXr6
-         7v8+uTGpPfaIhuZtuOTH5OWOhPJAEgCBsOxCUTG1F5SnzmYmMl9koV3T6HeR9mVC00n/
-         C3EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739494073; x=1740098873;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=terIPvdWa1fSylHgnwuIdhWYMuV0yExm2ENY3Z+tYgI=;
-        b=TJcLA9KQuYnT7qscqKNK9OVz/Ek3vRXDrkZ48JAOheerqIrLiB/5iC6wtyLDma0TKD
-         /BYSzZ1pMW4YhNwKmLLl7ucX5hxMx3F2w252oWS279jsL4cVhnOoqTVNQp6S3Atw2iSs
-         FWTDfIkXvE6GRDG/KL5yJhmlJvRd07pZPAISH6eClXdLbKL0ovR9TjO2NvasjniDjCAe
-         olvzR9vGzcdT37Yzih5MZLBXV8IRNg8h42ZomsEA7wcvDolHT0g3G4eEQ0AYiIOsxtQw
-         1UB3EKWBKF2aJL2pOFFgGfcYM+/Bl5DNFtzp0RkFuSIJRzpmRYEFq34AjavFFthcAKgq
-         11Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUprdNjoB0hj5dq/AA4ibGGUfavLfqXSemQsgoMsbq1HYU0meVZ1IuC06+O+1rSEWogJllH7Qj1@vger.kernel.org, AJvYcCWNFPzaTLrsmIIMzWrOfqo/gEwNI8KhoCg2Qx/tS1Y3LWanWN5P8VzJ5Qiq5RzryLrfhDYF5gMgqpgqWak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgeE4jRoVpXk/GmFuiMzSGm+/4yywuGlnRUSB/DXfya2CFU2qb
-	2Nvss04r5npZt2Z7dcXmVr+tPlJb1iQV+yK2McpCb/WdiSZnJ8Y=
-X-Gm-Gg: ASbGncuGayl9TMUzLFYXtuqL9JK1uQQ9W/OCxwaP+qZh1f9yDI5mNsRkZtzBBaRQ70k
-	H7aO2D31rLXQPJyrp+7PzZbAGttK84C1MlMOe/Kl8cR7Lk02+0z5QdIXodaGuhe3lN3EAobohe7
-	vbjUmeqAmwHWo13miQ9JaoIGne7Y1VQYxqdusIi6m0RXdLBXEuyqy/OpKb46b6v78kRvLXaY5kd
-	MMrFYJNGTnySb9KBQQ3y0R3EOdT6GfQEjglJL4Lt+OPB4QJTTiGLl2w8vjPVJdG04cTF1sxYeFI
-	RimZ6SzpNF/yOjttJ557Hq+XAFqW5hGK+0CM5riFl6gXhx2qD5dQWUwhtNA8QuRzvtmi
-X-Google-Smtp-Source: AGHT+IEv3hJWqhg4cLIRV0joUfQfZVf2QbqCq9tySua4HLVAtEybpZVVKs0jk8uNSOvxRlm1HNaTzg==
-X-Received: by 2002:a05:6000:1a8e:b0:38f:2a84:7542 with SMTP id ffacd0b85a97d-38f2a847693mr2946055f8f.28.1739494073222;
-        Thu, 13 Feb 2025 16:47:53 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4779.dip0.t-ipconnect.de. [91.43.71.121])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25913eb6sm3226913f8f.51.2025.02.13.16.47.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 16:47:51 -0800 (PST)
-Message-ID: <7ce031ee-c9e0-4e52-8151-265dd3ef1637@googlemail.com>
-Date: Fri, 14 Feb 2025 01:47:49 +0100
+	s=arc-20240116; t=1739494126; c=relaxed/simple;
+	bh=1b6oyV/lNrhpBqmCDwXCZ4UdmZ6g6j7KKXWMttWKEJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mNTdTPa1fvAO/ztogaK6Udo87XtiCxLZAOl2wn3h0IjcOg1WBoy6g0yZwkFWTOlaI+QRokEcGb/0du1+C1C6+7C0mJzjRBWmYuAPqjcx2ZcvPJJ/8kw+d5aCKeKk0KlWHw/UjGGfd73b+SxZQxYM84TN90S70PQJpdEQd/FkA4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Zowa30gA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AAB8D6B5;
+	Fri, 14 Feb 2025 01:47:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739494044;
+	bh=1b6oyV/lNrhpBqmCDwXCZ4UdmZ6g6j7KKXWMttWKEJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zowa30gAITBauLzwsEzDShfWfTdRi0ML5SwXaJc45zcaHI4Sw7O/BVG/1moVli8e3
+	 ROgKVXYJzyQWo4W9W9SCbsjimGi28tWQhUxCNRkqSL4NaM7OL1nJVl0+9gHktwi+l9
+	 jMfhC0CBAUciXFKBki8XUK+tFscdsJq7Bg+jzV0U=
+Date: Fri, 14 Feb 2025 02:48:31 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/8] media: rzg2l-cru: csi2: Use devm_pm_runtime_enable()
+Message-ID: <20250214004831.GE8393@pendragon.ideasonboard.com>
+References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250210114540.524790-7-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/273] 6.6.78-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250213142407.354217048@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250213142407.354217048@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210114540.524790-7-tommaso.merciai.xr@bp.renesas.com>
 
-Am 13.02.2025 um 15:26 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.78 release.
-> There are 273 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Tommaso,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Thank you for the patch.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+On Mon, Feb 10, 2025 at 12:45:38PM +0100, Tommaso Merciai wrote:
+> Use newly added devm_pm_runtime_enable() into rzg2l_csi2_probe() and
+> drop error path accordingly. Drop also unnecessary pm_runtime_disable()
+> from rzg2l_csi2_remove().
+> 
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Beste Grüße,
-Peter Schneider
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> index 948f1917b830..4ccf7c5ea58b 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> @@ -805,11 +805,13 @@ static int rzg2l_csi2_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	pm_runtime_enable(dev);
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = rzg2l_validate_csi2_lanes(csi2);
+>  	if (ret)
+> -		goto error_pm;
+> +		return ret;
+>  
+>  	csi2->subdev.dev = dev;
+>  	v4l2_subdev_init(&csi2->subdev, &rzg2l_csi2_subdev_ops);
+> @@ -834,7 +836,7 @@ static int rzg2l_csi2_probe(struct platform_device *pdev)
+>  	ret = media_entity_pads_init(&csi2->subdev.entity, ARRAY_SIZE(csi2->pads),
+>  				     csi2->pads);
+>  	if (ret)
+> -		goto error_pm;
+> +		return ret;
+>  
+>  	ret = v4l2_subdev_init_finalize(&csi2->subdev);
+>  	if (ret < 0)
+> @@ -852,8 +854,6 @@ static int rzg2l_csi2_probe(struct platform_device *pdev)
+>  	v4l2_async_nf_unregister(&csi2->notifier);
+>  	v4l2_async_nf_cleanup(&csi2->notifier);
+>  	media_entity_cleanup(&csi2->subdev.entity);
+> -error_pm:
+> -	pm_runtime_disable(dev);
+>  
+>  	return ret;
+>  }
+> @@ -867,7 +867,6 @@ static void rzg2l_csi2_remove(struct platform_device *pdev)
+>  	v4l2_async_unregister_subdev(&csi2->subdev);
+>  	v4l2_subdev_cleanup(&csi2->subdev);
+>  	media_entity_cleanup(&csi2->subdev.entity);
+> -	pm_runtime_disable(&pdev->dev);
+>  }
+>  
+>  static int rzg2l_csi2_pm_runtime_suspend(struct device *dev)
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Regards,
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Laurent Pinchart
 
