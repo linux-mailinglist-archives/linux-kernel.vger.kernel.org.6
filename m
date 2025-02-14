@@ -1,119 +1,213 @@
-Return-Path: <linux-kernel+bounces-515755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82D8A36897
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:43:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D5CA3688B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F761897C1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11EE216FB31
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372F1FCCE7;
-	Fri, 14 Feb 2025 22:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84C11FDA97;
+	Fri, 14 Feb 2025 22:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tCTVgANf"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="qllAR9dY"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBD41FC7ED
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 22:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE401FCCE6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 22:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739572832; cv=none; b=dvNAoyXzrxoNbN8k2mqMNC2NIBz6wyV+ZMB2+3Lfi9mJ3DvatixGZN0GMTpmo0fXQuW8ES3Ub4xq4iTBQizWKC+wN1uwhuI+HpuTFQZROHz+5mSq8XIN+yq5JO2Rrf86sJAGWlwH2WDPbyEU5ZrTFqKwMC703q+HJDI7akClgKs=
+	t=1739572834; cv=none; b=Wgg0/KgjOl6ZZxeqOy+oVloOB0AfM3xEJkvfvXZN/E5E3Avfut5IapDF3KV2JXdjHccRwaNnYs4BZIuadTCiKJCWUpvY98VJCzcGlmcyV96A7THSOKQoSA5r97Sw++Cu3NZw9oHZZgywpjzqDQm6xOKDlvMStO5Y3YMMnhNEVk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739572832; c=relaxed/simple;
-	bh=ZGObRox+8WuLTA6QeatV3WsGq0mEh5JfGFT8vjpr7rU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DywPj5QV1+v1RSnDlUdrj2dJMynl5dOALQ35E3G5aRADIoIQdFaedH2hCxx8mnyBc15WgqgeYyOBC5LxN7Vih+9pRjzI9fUchxI+hQLSgAy26TDOw/meEogOxMEOnk31/EAgtQR/ujwhaNP7XQaalt3tb/80PKxZYTygGv2ElNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tCTVgANf; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8556adad825so157492439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:40:29 -0800 (PST)
+	s=arc-20240116; t=1739572834; c=relaxed/simple;
+	bh=FkhQen3jMCWKwg3SUUeVcC847PjdOBFyLDHwxk87puw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=guox1ogR/h7as/lh2Vv0J9N9n1e2dgcOpTw0N2y/Og0woQqq4Dw2VJUfPoP0k0rSoDsGAkg3bVeLgusR7yffntzHIWlO9TNMILb/VmfvMYwHYqnFNGLNUHolKG0vkrU0rdHFYHwyBXED0r92SRyqrTchkbFTGCJw4UKAAe443o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=qllAR9dY; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso15936785e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:40:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739572829; x=1740177629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fa9W4XHgghBrAnH97Pbhz4mqOnDw6PjIeBtYFOVDltw=;
-        b=tCTVgANfRISSBx9vJ38yf/qwrTr4/l/spAq2gzkpW1DKnBTXrT5WpnAQ7ofZO08Zo2
-         F6FjriyAuDfKpoXM2HDtXqXI2f9awtmyAwb4zm5mCuS/7cP6/vSeKfEbwP5g2JEUtoc2
-         K7mNU5GQc8b+lPTg5yi7LRf06CVbJJ5g5Ofs9S4MiTS7xrkq71qh41pr/zL/DAfn9bcP
-         njadFNXzZ3yj3rjoWzQ5VBjMLMgMbktGERGrolXrtxLwHgUzrDTnBl3f5SMBjKrvKRjA
-         RUaJylwEbUXm0aGsdf12orSQLcVHmn/hSFdk0/Pm1oG2yHAWqjWTtB9vJJAzScN7hSar
-         OCqw==
+        d=citrix.com; s=google; t=1739572831; x=1740177631; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=d2Es7W7rIA+SDUtfarzDyFqNiRUQrkoPh/TZ5m+aaOw=;
+        b=qllAR9dYU8hMk6l/ezrKB87OeELFeIVFPtt23l48p5S8XQtlH9vySkvJYu69VVO9Ib
+         5fsOjh4JOI3OgdtpHdpe8lnLwMNhIOpZC6C59uBi6FOJZ0ziZP7KJTcnJn3V0/bKr/J/
+         xOfLxoh2zHMiUqA8ujquQQRslDjohT9+y85kU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739572829; x=1740177629;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fa9W4XHgghBrAnH97Pbhz4mqOnDw6PjIeBtYFOVDltw=;
-        b=cisJGvp+9ZeGBbpQi0sdAj3Q3Aj16SNbq4XGZJJdWAOPWD8kz2LKz7RjP1m69fIk+z
-         EpekJY+qSaKA1OWFAExe8JjUq9I/bpqxAFEEZfRhyU/SYEpGaT/4f538EgB0Pbcr15ce
-         0wdljh6S2LK3UyL0iy7oGPDE5UpwQ922wDjW0ZFxQYxGscSJ7CtdDxA8i5wd2bawr4QG
-         pkGyBqMxKsqj3Xt9mcjZtVBeyXXgDeqooiMZmz659g2dapzY3wW8dTCEggG7Qm2ON09/
-         D7unlD68qUUAWbTYlixQSBr7kX58rZdvj6qVIrNnwRjXIUZZJjHvOFDxb3zbPuThPzbg
-         bULw==
-X-Forwarded-Encrypted: i=1; AJvYcCX54r5Tjmli1Q2xWyRzI+xJDWjzCK/quvXdzs5vi+nqLgtpPgzyhk7hXkWa5E9I9EJiASnuf/dWGHtRvis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw3F9a03UlDj8BwpOVWdmvDHZ/ZkmisyP0NyAcf3UdnN0m/IP2
-	BAyuVrmB3NkRKrQK6LPk3+Q6ZdkQE3NDiWldtc8mfVWzGSr2njYRrrRIiSE9QwU=
-X-Gm-Gg: ASbGnctEqEUG/GbdGKQDZj3RDITERTkxWAJg2Lwk9Lf7lpaErNj/9LtPBi7gicsj/a7
-	38vCP4osjf+GGqoloe3tQZLhNZpyN4MtIQ4xnrqhCPEPRjUlgNJNzZBqlNe3KUL0EkJCQfK47UV
-	F6ywFK7nINx1DzpxJPT99qWLFvs+XvzMf9VqIpqi0oGmwQ3JQCi2gILUP/1jnUrMqXxOXQFCu62
-	YOipllI28XCnykfvdo1QoFEzmGk1YnLwOjn1ipGSWZJCMlTqZUgKbp/jUxmD4lun1pQhsSSKglj
-	STUASEI=
-X-Google-Smtp-Source: AGHT+IHo/sDO3CzWbsrCfscoivDifZjkD5COpzMt+rasMWA5MnAVrwjSI6GkP5oWPdKyiGiLtlm3/g==
-X-Received: by 2002:a05:6602:6d03:b0:855:7832:61fb with SMTP id ca18e2360f4ac-8557a0dbeb2mr134971339f.3.1739572829287;
-        Fri, 14 Feb 2025 14:40:29 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed282affeesm1020648173.91.2025.02.14.14.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 14:40:28 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Jann Horn <jannh@google.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20250214-partition-mac-v1-1-c1c626dffbd5@google.com>
-References: <20250214-partition-mac-v1-1-c1c626dffbd5@google.com>
-Subject: Re: [PATCH] partitions: mac: fix handling of bogus partition table
-Message-Id: <173957282830.385288.5820409491649052216.b4-ty@kernel.dk>
-Date: Fri, 14 Feb 2025 15:40:28 -0700
+        d=1e100.net; s=20230601; t=1739572831; x=1740177631;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d2Es7W7rIA+SDUtfarzDyFqNiRUQrkoPh/TZ5m+aaOw=;
+        b=RoV59euEBrwHEHOCML1rcbJRXKyZIJ1UeNodAc8q8nfy7dqDcEXqjkABZoYNRAAu8t
+         fAjpNfiVzoy7G5ykTkyRnhJhMieqsr8XiUBQcD1H+FAYOKm2ib8hQaLqrWbeUbbPSWIQ
+         isC5M86F3GUDUZ4NqTrf0dggoulLP6O9lr6BfrWCw7AgqrWvzs/D3VT9XihEqNOL/fqM
+         seJ89jQZLDu8dJGD7eJMg8sJKYYGlhdDK51qrxdjdtsuSu8fR15HsLnfCW/mEloBq3o5
+         9ibp1vt+Ccs3RKMfIvoSiDT4BHQPJDP0UycnSvvyLSaqTJKXq5E8uV1tKpbxprmZ9Xq8
+         VN1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXpMM0TUeoHtpKDCiaRCU4/7k0BQaq16ec71R1eGw4kSzWw6mmdv66j6PDGMOt+8gWZjfW1jMXr5HYcIBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjWhcDsCrvHAK+BnXbAxpTTPmkoF3EJ37FPdusphNCKUHqhsrk
+	FKTDjXaGoYnI0lwCgc/viUlLIsCada7s6IcymBF8OJhFodmrqs9yWEeUDz/OtGw=
+X-Gm-Gg: ASbGnct+UYMlLErGFg1kTT6OVNDUJnRJSlMU2PCtvwnIJrj8+UunJXFEiGC7EKsRven
+	QE+plkj5WltASQTZujLk3jAwBZ+wjztPQ5VeF3K8pDleVGfSY1BzFOy2UDYbfReqrFOhqf19TnY
+	FhDLAi8CS6xr35bjmwKkvfgy1+iiCIyrk4eUnaCS1wYD3llLMjmMJI7P31uYg2YQIUd3DsBBziw
+	hMSp/KGDKYbdYPMtu04F6cs62B5fB7XYUkYX/ds1jRh2Z2HW/ThPluDANLtQu8yS/ztNu7A4uY+
+	FNccW4LezbKvlfry9i4kUsBUazhjkyM23F0YGGP32ClPTQsqgvpOkI4=
+X-Google-Smtp-Source: AGHT+IE71hgfi9vKmHrPeDtRHLEyfmLXJ+z/aDf94JYukLeP3uNQb4g+Gi67XQkP3nROa1beIZLSUA==
+X-Received: by 2002:a05:600c:214:b0:438:a313:cda9 with SMTP id 5b1f17b1804b1-43960c068d9mr111724805e9.10.1739572831004;
+        Fri, 14 Feb 2025 14:40:31 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43961811315sm54926895e9.20.2025.02.14.14.40.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 14:40:30 -0800 (PST)
+Message-ID: <7ae6ee84-b5ae-479b-b963-9e9aefcd3bfa@citrix.com>
+Date: Fri, 14 Feb 2025 22:40:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/kcfi: Require FRED for FineIBT
+To: Kees Cook <kees@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jennifer Miller <jmill@asu.edu>,
+ Sami Tolvanen <samitolvanen@google.com>, Jann Horn <jannh@google.com>,
+ Nathan Chancellor <nathan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Alexei Starovoitov <ast@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250214192210.work.253-kees@kernel.org>
+ <5d26bcdf-0e72-45b6-98c5-f90481650f09@citrix.com>
+ <202502141345.C78A253D@keescook>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <202502141345.C78A253D@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 14/02/2025 9:54 pm, Kees Cook wrote:
+> On Fri, Feb 14, 2025 at 07:39:20PM +0000, Andrew Cooper wrote:
+>> On 14/02/2025 7:22 pm, Kees Cook wrote:
+>>> diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
+>>> index ef5e0a698253..dfa2ba4cceca 100644
+>>> --- a/arch/x86/include/asm/cfi.h
+>>> +++ b/arch/x86/include/asm/cfi.h
+>>> @@ -93,7 +93,7 @@
+>>>   *
+>>>   */
+>>>  enum cfi_mode {
+>>> -	CFI_AUTO,	/* FineIBT if hardware has IBT, otherwise kCFI */
+>>> +	CFI_AUTO,	/* FineIBT if hardware has IBT, FRED, and XOM */
+>> You discuss XOM in the commit message, but there's no check ...
+>>
+>>>  	CFI_OFF,	/* Taditional / IBT depending on .config */
+>>>  	CFI_KCFI,	/* Optionally CALL_PADDING, IBT, RETPOLINE */
+>>>  	CFI_FINEIBT,	/* see arch/x86/kernel/alternative.c */
+>>> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+>>> index 97422292b609..acc12a6efc18 100644
+>>> --- a/arch/x86/kernel/alternative.c
+>>> +++ b/arch/x86/kernel/alternative.c
+>>> @@ -1323,7 +1323,9 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
+>>>  
+>>>  	if (cfi_mode == CFI_AUTO) {
+>>>  		cfi_mode = CFI_KCFI;
+>>> -		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT))
+>>> +		/* FineIBT requires IBT and will only be safe with FRED */
+>>> +		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT) &&
+>>> +		    cpu_feature_enabled(X86_FEATURE_FRED))
+>> ... here.
+>>
+>> Is this meant to be "/* TODO: wire up XOM */" or is that accounted for
+>> somewhere else?
+> Yeah, I wasn't sure how to best capture that in here. XOM doesn't exist
+> yet for x86... I could add a TODO like that?
 
-On Fri, 14 Feb 2025 02:39:50 +0100, Jann Horn wrote:
-> Fix several issues in partition probing:
-> 
->  - The bailout for a bad partoffset must use put_dev_sector(), since the
->    preceding read_part_sector() succeeded.
->  - If the partition table claims a silly sector size like 0xfff bytes
->    (which results in partition table entries straddling sector boundaries),
->    bail out instead of accessing out-of-bounds memory.
->  - We must not assume that the partition table contains proper NUL
->    termination - use strnlen() and strncmp() instead of strlen() and
->    strcmp().
-> 
-> [...]
+I get the feeling that the PKS series would have an easier time starting
+with XOM (even if it hard-codes pkey1=xom and avoids the allocator in
+the short term, seeing as Linux does have a good grasp of where it's
+executable pages are, and how they're accessed) rather than trying to do
+general page hiding.  The capability is in 3 generations of Intel CPU now.
 
-Applied, thanks!
+>
+>> Also, while I hate to come back and contradict myself from earlier...
+>>
+>> Architecturally, FineIBT without FRED seems to be no improvement over
+>> simple IBT.  (I'd love to find some way of hardening the entrypoints,
+>> but I can't see a robust way of doing so.)
+> If you're just looking at IBT, yes. But kCFI (with or without IBT,
+> but without FineIBT) will do hash checking at the call site, which
+> should make it impossible to reach the entrypoints from an indirect call
+> in the first place, as they have no hash preceding them.
+>
+>> However, micro-architecturally, FineIBT is still far better than simple
+>> IBT for speculation issue, seeing as Intel keep on staunchly refusing to
+>> turn off the indirect predictors by default like AMD do.
+>>
+>> A security conscious user ought to be using FineIBT for this, given a
+>> choice, even if it's not perfect in other regards.
+> A security conscious user should use kCFI without FineIBT. :) But I
+> think we might be thinking about different elements of security. I am
+> focusing on control flow, and I think you're considering speculation?
 
-[1/1] partitions: mac: fix handling of bogus partition table
-      commit: 80e648042e512d5a767da251d44132553fe04ae0
+True.  The security realist knows they're dammed either way, and gets a
+stiff drink instead.
 
-Best regards,
--- 
-Jens Axboe
-
-
-
+~Andrew
 
