@@ -1,178 +1,134 @@
-Return-Path: <linux-kernel+bounces-515221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045B8A361FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:41:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB0BA36200
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DE31895D81
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF0018962FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DA126739E;
-	Fri, 14 Feb 2025 15:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BB5267382;
+	Fri, 14 Feb 2025 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMPULBJm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jd7MNJnF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18565267386;
-	Fri, 14 Feb 2025 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84305266EED;
+	Fri, 14 Feb 2025 15:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547621; cv=none; b=Uo0zJGUD/X9DZexRbP3FSMU6ZzCn/LlfhZHDE+bI2Du+rmUAU4Z5MJ5GiVNiXk6fGFKDUIsChagm635QBMWO2ee82yVttBcZjQSrACrbAd51DJut58FiBFeHH4TlCxSNZOWc20zmb6hCmnp1yv97C9opzOLLLdf4VNzvYdPEV58=
+	t=1739547638; cv=none; b=ujVvEKw/VpLJn+cEDxPk+dvun71hO34TLn9nbM1lsXVFADTxy8KoWzsnjC2njsaVFTqmff8WI0/l7bEa3QplXbJTfBURcvrb+oaUDO1vLni1JZoNmmFqlFQf46E+T6hroVIhxHV2AVQ3VtseuH76tQJ9W9YDzE99oEtek7T5Hd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547621; c=relaxed/simple;
-	bh=ZmFVd3RnYnzDSs3ms2xTw+3eLFGGQODuc+T/0hggx64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDH6nf7i+yUqaQHnD1HYyUkjgf+PcWFuz2lzd5vp4UIqkqxmXzYr7+ZpR1avaJl527b1mF4XpVdNEVSZ6PqVc+QMPxnZdkzWWfTqbWcS5CI5WJcqiucCsB9Hci6ueqDQGYFOGYRzTHXOFg+QzUebadJXWSQiw6h4bb78xUubyE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMPULBJm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E6CC4CED1;
-	Fri, 14 Feb 2025 15:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739547620;
-	bh=ZmFVd3RnYnzDSs3ms2xTw+3eLFGGQODuc+T/0hggx64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sMPULBJmv/NQyU/5KlaRx0K/kG0HVVayBeZQuQWyti5oqhFuqUh596B1ELKhrGzKE
-	 StUPzbeGTkdMWiaTFdKhDUW1t8BVE4V3amffOR3LNTyHEXfg65gXaVWgfNAAjEEAP4
-	 TfYFk/NEzYm+BsQcieQUMJ3qceWR8YX9QoeecEBt6YL0sk2waCQNj/qRzizxnB6wyo
-	 CDisN6Fv5jhVyEKcAfBszQ1uJWGAarqFF3uC262Jk6K3SHO1pU7VNGysI1St8xURP3
-	 5NCNaIJC0A04EfSBOwZZcfjNFEv7zvqIG1NOJMSyEPgw57nv+8ylQnky5zRd5deWEU
-	 01/QZ/DnADX2g==
-Date: Fri, 14 Feb 2025 21:10:07 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH] PCI: endpoint: Remove API devm_pci_epc_destroy()
-Message-ID: <20250214154007.tg3bzi5berkk45wk@thinkpad>
-References: <20250210-remove_api-v1-1-8ae6b36e3a5c@quicinc.com>
+	s=arc-20240116; t=1739547638; c=relaxed/simple;
+	bh=BfxWDMZ+3PQFNY45rR2UOSnyG3iY7QO0DumD2ESx0vE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rGmhJl0JiJLkMExwIRKRQfvgaVPLjNenBRuv6NTFOx5e1U1ywWj8Psj5tuSi5i2i3Il7ejRc/gKdXiN/8xIP838CXLaOZyWVVlu452G6pfVCS2vDmJbLZY9WbdZ2+9cX0i+lEkd1D3xTKtqxyXl9RWIsPeUDB9aruZ3XBe0LoJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jd7MNJnF; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739547637; x=1771083637;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BfxWDMZ+3PQFNY45rR2UOSnyG3iY7QO0DumD2ESx0vE=;
+  b=Jd7MNJnFIu4Twj5GoURGoaIAGQV9/dV1xxdvOIA46wyGp9OCUEJk7H4A
+   9HLKXVLUszyXAldhIDvejBVZQbUvjQTibggr55Q1UvUQbHGzEO2Xfz+wB
+   JlyBGNJH8fgARW4RvA0Tryj3f5wyqh3Pq8yAa1akosqm/LoZuW6Q6WgiF
+   UHGvYY/JWiBXz9Kg8F7+5ieZEfL6Q0t1ZFqFdDtSjb++UoJrqOAkk5BJe
+   qvvLI++rUMAsddlcUb/fi6oE4LX05X2GoexoAZkCaKRKOiZGZroKRa+dw
+   Hzmi33GvZDIcvrFJDSHWdcxXWInTVfNCKrCefz4+y3Z6/cinOYGUw77rY
+   Q==;
+X-CSE-ConnectionGUID: +dCFaLe3Tf6e6WsHT0vJ1w==
+X-CSE-MsgGUID: JXL00FyURgOoS5LjHBxeTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="51276028"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="51276028"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:40:36 -0800
+X-CSE-ConnectionGUID: AdGNWwt4QKaZoTw5eXDE2Q==
+X-CSE-MsgGUID: d2rd0yN0SYOvS6yLqGjOaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118689016"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 14 Feb 2025 07:40:34 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 94812123; Fri, 14 Feb 2025 17:40:33 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pwm: pca9685: Drop ACPI_PTR() and of_match_ptr()
+Date: Fri, 14 Feb 2025 17:40:31 +0200
+Message-ID: <20250214154031.3395014-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250210-remove_api-v1-1-8ae6b36e3a5c@quicinc.com>
 
-On Mon, Feb 10, 2025 at 08:39:53PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Static devm_pci_epc_match() is only invoked by API devm_usb_put_phy(), and
+Drop rather useless use of ACPI_PTR() and of_match_ptr().
+It also removes the necessity to be dependent acpi.h inclusion.
 
-devm_usb_put_phy()? Did you mean to say 'devm_pci_epc_destroy()'?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pwm/pwm-pca9685.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-> the API has not had callers since 2017-04-10 when it was introduced.
-> 
-> Remove both the API and the static function.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-
-With above fixup,
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  Documentation/PCI/endpoint/pci-endpoint.rst |  7 +++----
->  drivers/pci/endpoint/pci-epc-core.c         | 25 -------------------------
->  include/linux/pci-epc.h                     |  1 -
->  3 files changed, 3 insertions(+), 30 deletions(-)
-> 
-> diff --git a/Documentation/PCI/endpoint/pci-endpoint.rst b/Documentation/PCI/endpoint/pci-endpoint.rst
-> index 35f82f2d45f5ef155b657e337e1eef51b85e68ac..599763aa01ca9d017b59c2c669be92a850e171c4 100644
-> --- a/Documentation/PCI/endpoint/pci-endpoint.rst
-> +++ b/Documentation/PCI/endpoint/pci-endpoint.rst
-> @@ -57,11 +57,10 @@ by the PCI controller driver.
->     The PCI controller driver can then create a new EPC device by invoking
->     devm_pci_epc_create()/pci_epc_create().
->  
-> -* devm_pci_epc_destroy()/pci_epc_destroy()
-> +* pci_epc_destroy()
->  
-> -   The PCI controller driver can destroy the EPC device created by either
-> -   devm_pci_epc_create() or pci_epc_create() using devm_pci_epc_destroy() or
-> -   pci_epc_destroy().
-> +   The PCI controller driver can destroy the EPC device created by
-> +   pci_epc_create() using pci_epc_destroy().
->  
->  * pci_epc_linkup()
->  
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index 9e9ca5f8e8f860a57d49ce62597b0f71ef6009ba..cf2e19b80551a2e02136a4411fc61b13e1556d7a 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -25,13 +25,6 @@ static void devm_pci_epc_release(struct device *dev, void *res)
->  	pci_epc_destroy(epc);
->  }
->  
-> -static int devm_pci_epc_match(struct device *dev, void *res, void *match_data)
-> -{
-> -	struct pci_epc **epc = res;
-> -
-> -	return *epc == match_data;
-> -}
-> -
->  /**
->   * pci_epc_put() - release the PCI endpoint controller
->   * @epc: epc returned by pci_epc_get()
-> @@ -931,24 +924,6 @@ void pci_epc_destroy(struct pci_epc *epc)
->  }
->  EXPORT_SYMBOL_GPL(pci_epc_destroy);
->  
-> -/**
-> - * devm_pci_epc_destroy() - destroy the EPC device
-> - * @dev: device that wants to destroy the EPC
-> - * @epc: the EPC device that has to be destroyed
-> - *
-> - * Invoke to destroy the devres associated with this
-> - * pci_epc and destroy the EPC device.
-> - */
-> -void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc)
-> -{
-> -	int r;
-> -
-> -	r = devres_release(dev, devm_pci_epc_release, devm_pci_epc_match,
-> -			   epc);
-> -	dev_WARN_ONCE(dev, r, "couldn't find PCI EPC resource\n");
-> -}
-> -EXPORT_SYMBOL_GPL(devm_pci_epc_destroy);
-> -
->  static void pci_epc_release(struct device *dev)
->  {
->  	kfree(to_pci_epc(dev));
-> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-> index e818e3fdcded95ca053db074eb75484a2876ea6b..82a26945d038d3e45e2bbbfe3c60b7ef647f247a 100644
-> --- a/include/linux/pci-epc.h
-> +++ b/include/linux/pci-epc.h
-> @@ -257,7 +257,6 @@ __devm_pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
->  struct pci_epc *
->  __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
->  		 struct module *owner);
-> -void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc);
->  void pci_epc_destroy(struct pci_epc *epc);
->  int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf,
->  		    enum pci_epc_interface_type type);
-> 
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250210-remove_api-9cf1ea95901e
-> 
-> Best regards,
-> -- 
-> Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index 1298b29183e5..5162f3991644 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -8,7 +8,6 @@
+  * based on the pwm-twl-led.c driver
+  */
+ 
+-#include <linux/acpi.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+@@ -639,21 +638,17 @@ static const struct i2c_device_id pca9685_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, pca9685_id);
+ 
+-#ifdef CONFIG_ACPI
+ static const struct acpi_device_id pca9685_acpi_ids[] = {
+ 	{ "INT3492", 0 },
+ 	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(acpi, pca9685_acpi_ids);
+-#endif
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id pca9685_dt_ids[] = {
+ 	{ .compatible = "nxp,pca9685-pwm", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pca9685_dt_ids);
+-#endif
+ 
+ static const struct dev_pm_ops pca9685_pwm_pm = {
+ 	SET_RUNTIME_PM_OPS(pca9685_pwm_runtime_suspend,
+@@ -663,8 +658,8 @@ static const struct dev_pm_ops pca9685_pwm_pm = {
+ static struct i2c_driver pca9685_i2c_driver = {
+ 	.driver = {
+ 		.name = "pca9685-pwm",
+-		.acpi_match_table = ACPI_PTR(pca9685_acpi_ids),
+-		.of_match_table = of_match_ptr(pca9685_dt_ids),
++		.acpi_match_table = pca9685_acpi_ids,
++		.of_match_table = pca9685_dt_ids,
+ 		.pm = &pca9685_pwm_pm,
+ 	},
+ 	.probe = pca9685_pwm_probe,
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.1.3035.g276e886db78b
+
 
