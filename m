@@ -1,116 +1,171 @@
-Return-Path: <linux-kernel+bounces-514678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79206A35A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:22:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EF0A35A35
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C32C166C28
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670523AC9E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA5123A996;
-	Fri, 14 Feb 2025 09:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC4022D7AC;
+	Fri, 14 Feb 2025 09:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sxLoVUKX"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nOeSA79P"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC88139D1B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583D323F422;
+	Fri, 14 Feb 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524967; cv=none; b=AhQfRcBYAMT9GArazBoQK91pg966gSRkpdgEnko/UbSxsFocl/SemTZXMXVSiDRwJg1oUzeU46GMvAuOCaDkBxikrMnuxwodZkn5vWiBaf7RFKtYLz2IeB3wHMLIcgTONL+VTuPZOfWmDR48TabrvPmf3h4zNTafXBOKcyUAN6g=
+	t=1739525068; cv=none; b=rqPSRM1acZ2bHlS0gqrNiUmOW7ZuKO67kccwI4/MDBo5H6Mi3G3lQy7KKACMyMTMXl4MBarqLxiLSFki3zS+ecUjuAt6ulXl571BihvE+/KgLscYF/EWJKIpGVxrE4rbnWgjnjKoX9iIeOthhYIru7SUlbm2hJ1KTovd9tpn9HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524967; c=relaxed/simple;
-	bh=oxMUts7eWUQNpSiCjwqXyusGkP80n8S1cBGWOAZkDbI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fxcOawziJ/m75j+B62j6fWQWX+QaqHJ0FOtOS5h0bMTBmefbCAIWFIGIUhRSCXYXbLDNxLUIK+KY03x5D0ujYT5FqzrsL6bBezjH+gK2TpMCIP75D8XGfN0E+WeDWlLYC2WyNY29spxtLvbddk4OttZFPPH+e4k3nAuZXRHJtFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sxLoVUKX; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5452ca02bdbso183090e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:22:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739524964; x=1740129764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oxMUts7eWUQNpSiCjwqXyusGkP80n8S1cBGWOAZkDbI=;
-        b=sxLoVUKXY3c9adxLBukNyoU8KOeprTw/VgAZfAUNhRUEovcbN6eRmMWti80c++buGs
-         8rJEgUTWjQ0qY7N+qW2ddYzlThcXQ17FCv58hHDtgtjiP7iM/ASj1Y8L8KnHr2x0Sk++
-         yx/EvvweXcgD+SP+daaEUIXAvGoymPrcgszaF+qcoaqEspVLtNsrDIEVUe+8f22mqM7Y
-         HzP8AInZXEcunT+OX9UTtn40R1jgmlz+RhyXvyT14nGpttrw5ILZ/DieEXYHmbL1ra96
-         R0IpGhJMsKgik8AES1m31K8ylU5CNce9Z+Atmc2pZbsfZwDAC9s5xDU2IKtcIJwQGdTX
-         iz8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739524964; x=1740129764;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oxMUts7eWUQNpSiCjwqXyusGkP80n8S1cBGWOAZkDbI=;
-        b=LdikesJuFkpJpUhv1lZLeu0nzkUHLCln3tOmw2j+KDYRHr4eZDlb/ZspVSDn1lwu36
-         PkVwVhc6jGnzhCVSXAzgbPNZoD9lKyFoK2cOvf7La2A9XOFSDoOdRY+5TcmhhEovVKn1
-         VmCWYHRkHKzefBszLvT67XeGbYtFBlHrvAWDkj36XHkolx9BvI/EAnQwdUkCSJal21Md
-         EySlJSB6/bYzGdK5PiWynVnDZ1WlR/ffM1MGZ1436ZAimgjwUVihRc+0V56Y0Ua3QWSm
-         R8QdJzrmu3bmNHIH9Ftz/qlRl0kkJkQHru+4+HPeRu7RM60u5lp68iA6jBtXMY+F+Zir
-         mpfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKcKAUmkoL7w8I+KfRh0H9FDSlAoq18uNaolBaqX6cfNoA5jMeskf37kn62UcOfiiU/+MyOOFFwApWa/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPey65tqtsJBHfW609NFnHMk69YiseoVxEhKBI9yO2QGo20NaS
-	8DFwnkTKPTtHkcQA7VfC/Qs5rqL4MBg0EIFIXIoIUgRFG4DpyfoHpI0t7PLPrBpDCHIO6TJPkGQ
-	4jDw+z1Hm6aheqEFcM1CJPCB2ypHAigiNhgmbZQ==
-X-Gm-Gg: ASbGncsQVEIN24DSJv2zEAhfh4FERDsFdBHH9wjl24WniNKvRUjZAfbrXGedEy+9SgX
-	UfeMmhdvsJQqlIhlE9rUBB71reJZhpGNH7HQFf58zHLssdSq+PGLFeGBqzOvfRXeDg8tNF0nX
-X-Google-Smtp-Source: AGHT+IGhgPoczR2D2T/lX4ZwT5MXW34OlqN0/zugo7LmPWwgdRCMXTLpmWVB2HL50zhjB2U06JaZCumERKR34vwpUjQ=
-X-Received: by 2002:a05:6512:a90:b0:545:d72:95e5 with SMTP id
- 2adb3069b0e04-5451dd8c4aemr2339063e87.7.1739524963708; Fri, 14 Feb 2025
- 01:22:43 -0800 (PST)
+	s=arc-20240116; t=1739525068; c=relaxed/simple;
+	bh=X/sa3uIY8vGLToJUOET8MPdnJJI3A248eVnXpWF62yo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fGgJNFNLBFPFffSVdgpbBbpiDSZXQj4YAbLorjdU3qK+Cnz30LF6tF4nONFI5vZxIG6q7vrF4wGZQjUUBlC2uJAdk8fU3uIzEpz2O3NFNn0WD8+nJOr6H8kLWJEOJbhMddRxlXVE52qjiA28mlOiRGPfXWS6l7L6qmDblV3krAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nOeSA79P; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=e87K5BME7QYyxriMEQKz8vW/Cg+m3JIePxp/P/BX5Nk=; b=nOeSA79PVD64loBRv+KHuRaE7f
+	haPG28cMGQU/jxO8oBRjV+BOKLcZstJeK782tbNpjmkpit9RE6ZltRHCa365vqh57N5KOeYb3QoVC
+	PnRKhtt06J7H8Qrd8Q4WVmj2QBM/SKp6peQ4nLMmzBNAmfdcZoYlqf18pnrkLS91tsOHHcr6lm84j
+	+f4Hl3hKEp2FjE+WfGLFSlIZXTtMqc2gKpy49bpW8S3UHx1VbcFYsU1Qx9eQJZt/iMlxIBtMUs8Q/
+	fcjbvKR3YwEx49snD1rUxylwiD5xWsVmGEHDsSMUG/PukufXU0arBaAEoEm3IUuiaZVU/RtPz5oPR
+	cmyfoRdg==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tirvV-00H6fn-Pn; Fri, 14 Feb 2025 10:24:08 +0100
+Message-ID: <4fd39e4b-f2dc-4b7d-a3be-ec3eae8d592a@igalia.com>
+Date: Fri, 14 Feb 2025 18:23:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com> <20250210-gpio-set-array-helper-v3-1-d6a673674da8@baylibre.com>
-In-Reply-To: <20250210-gpio-set-array-helper-v3-1-d6a673674da8@baylibre.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 10:22:32 +0100
-X-Gm-Features: AWEUYZlSujurAxnS1uFvnjJLAGMoYJmFWbRh7MCeJl2DAGBRy4U6U-3ZBycEwbU
-Message-ID: <CACRpkdY2PtRhmTKJUFmkTViQOLfMBbqR1bD94SzasoGAoHUQcQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] gpiolib: add gpiod_multi_set_value_cansleep()
-To: David Lechner <dlechner@baylibre.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
+ when unit_alloc() fails
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250212084851.150169-1-changwoo@igalia.com>
+ <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 11:37=E2=80=AFPM David Lechner <dlechner@baylibre.c=
-om> wrote:
+Hello Alexei,
 
-> Add a new gpiod_multi_set_value_cansleep() helper function with fewer
-> parameters than gpiod_set_array_value_cansleep().
->
-> Calling gpiod_set_array_value_cansleep() can get quite verbose. In many
-> cases, the first arguments all come from the same struct gpio_descs, so
-> having a separate function where we can just pass that cuts down on the
-> boilerplate.
->
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Thank you for the comments! I reordered your comments for ease of 
+explanation.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 25. 2. 14. 02:45, Alexei Starovoitov wrote:
+> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min <changwoo@igalia.com> wrote:
 
-Yours,
-Linus Walleij
+> The commit log is too terse to understand what exactly is going on.
+> Pls share the call stack. What is the allocation size?
+> How many do you do in a sequence?
+
+The symptom is that an scx scheduler (scx_lavd) fails to load on
+an ARM64 platform on its first try. The second try succeeds. In
+the failure case, the kernel spits the following messages:
+
+[   27.431380] sched_ext: BPF scheduler "lavd" disabled (runtime error)
+[   27.431396] sched_ext: lavd: ops.init() failed (-12)
+[   27.431401]    scx_ops_enable.isra.0+0x838/0xe48
+[   27.431413]    bpf_scx_reg+0x18/0x30
+[   27.431418]    bpf_struct_ops_link_create+0x144/0x1a0
+[   27.431427]    __sys_bpf+0x1560/0x1f98
+[   27.431433]    __arm64_sys_bpf+0x2c/0x80
+[   27.431439]    do_el0_svc+0x74/0x120
+[   27.431446]    el0_svc+0x80/0xb0
+[   27.431454]    el0t_64_sync_handler+0x120/0x138
+[   27.431460]    el0t_64_sync+0x174/0x178
+
+The ops.init() failed because the 5th bpf_cpumask_create() calls
+failed during the initialization of the BPF scheduler. The exact
+point where bpf_cpumask_create() failed is here [1]. That scx
+scheduler allocates 5 CPU masks to aid its scheduling decision.
+
+Also, it seems that there is no graceful way to handle the
+allocation failure since it happens during the initialization of
+the scx scheduler.
+
+In my digging of the code, bpf_cpumask_create() relies on
+bpf_mem_cache_alloc(), and bpf_mem_alloc_init() prefills only
+4 entries per CPU (prefill_mem_cache), so the 5th allocation of
+the cpumask failed.
+
+Increasing the prefill entries would be a solution, but that
+would cause unnecessary memory overhead in other cases, so
+I avoided that approach.
+
+> But we may do something.
+> Draining free_by_rcu_ttrace and waiting_for_gp_ttrace can be done,
+> but will it address your case?
+
+Unfortunately, harvesting free_by_rcu_ttrace and
+waiting_for_gp_ttrace does not help (I tested it). In my case,
+the memory allocation fails when loading an scx scheduler, so
+free_by_rcu_ttrace and waiting_for_gp_ttrace are empty, and there
+is nothing to harvest.
+
+
+> Why irq-s are disabled? Isn't this for scx ?
+
+In this particular scenario, the IRQ is not disabled. I just
+meant such allocation failure can happen easily with excessive
+allocation when IRQ is disabled.
+
+>> (e.g., bpf_cpumask_create), allocate the additional free entry in an atomic
+>> manner (atomic = true in alloc_bulk).
+> 
+> ...
+>> +       if (unlikely(!llnode && !retry)) {
+>> +               int cpu = smp_processor_id();
+>> +               alloc_bulk(c, 1, cpu_to_node(cpu), true);
+> 
+> This is broken.
+> Passing atomic doesn't help.
+> unit_alloc() can be called from any context
+> including NMI/IRQ/kprobe deeply nested in slab internals.
+> kmalloc() is not safe from there.
+> The whole point of bpf_mem_alloc() is to be safe from
+> unknown context. If we could do kmalloc(GFP_NOWAIT)
+> everywhere bpf_mem_alloc() would be needed.
+
+I didn't think about the NMI case, where GFP_NOWAIT and GFP_ATOMIC are 
+not safe.
+
+Hmm.. maybe, we can extend 'bpf_mem_alloc_init()' or 'struct
+bpf_mem_alloc' to specify the (initial) prefill count. This way
+we can set a bit larger prefill count (say 8) for bpf cpumask.
+What do you think?
+
+[1] 
+https://github.com/sched-ext/scx/blob/f17985cac0a60ba0136bbafa3f546db2b966cec0/scheds/rust/scx_lavd/src/bpf/main.bpf.c#L1970
+
+Regards,
+Changwoo Min
 
