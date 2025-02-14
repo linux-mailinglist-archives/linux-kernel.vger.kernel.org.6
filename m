@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-514690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70281A35A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:27:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9712A35A5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA4616C13C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7CD3ADE8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07112256C67;
-	Fri, 14 Feb 2025 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CAC242919;
+	Fri, 14 Feb 2025 09:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="AmukW2CB"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pdaduCTi"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF002505C2;
-	Fri, 14 Feb 2025 09:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC0230D0A;
+	Fri, 14 Feb 2025 09:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739525211; cv=none; b=QeOqKD3anB9ppGapCDFJULDlY4deLUYsQ/scMn6V2PpuzbtQF5AeezUkYJUcJNG5Ifv3ppkZIzPxHpHs/eKYTYOSK8jMXxMZrAMVmKwRrwDSsyPAY6A52OQDezs5fGJ6wcSZMTk0WtOzOjzZt5f4a9P22NI9CtEiKunzPAgCl6c=
+	t=1739525369; cv=none; b=RSUH8pH7oihU91NtwNnozOj5w9e+5r6Q9S7b25xhJupi9GsUnhnxCeeKaOxzpVXo1ZVTjsbY1n5OoD6e+PIplWUkFAaWqFH3VS6JHFPBcLV7bIDzz1U5Kol6yN5bCP/Xk85bnBO0XuKmEJPg/r+4rstAIxxwZIAzrlfc9ZPqbmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739525211; c=relaxed/simple;
-	bh=mZEb4O/8MxgRPHsOLUCLNOkrcRFguNnDZADJYJu30Gs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HcK5nF0ZPM5trE/62sgLRb/ebg8dprwuqFqqjZCDQ2beBLR0nR9yxKCsShV8GH0+d27EVWtgJ5ED24nh5VNoU2h5tQAQjQXVx2eFHcZ1IRix4RIkpkmeguLrpc4RpjAErBwYrv3fDK9zuPgSuEJJJfuKcrH4MoX5PJ0f1wHRhW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=AmukW2CB; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8BA3320065;
-	Fri, 14 Feb 2025 10:26:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1739525200;
-	bh=G+g0OfrAh01X9LwRyhzYOGvgNaAers3h/+McghiIB40=; h=From:To:Subject;
-	b=AmukW2CBRrfj8omVeMRErQo3AsjpN00p0iN162Kslp9UgCnOyfrZToWCNE4Q7CS/q
-	 kCqd32ORmH8GRQIl3JZL2tJglARTb6ZFQlfdVIIyLIphSBchRg73JhWO7hNoovOzQO
-	 5YvOk0dlOeqj3iieFS5HPycsJsq0bLg7MgmGn9EimnaRQ2JUYHFHlYOi2uQ5OTjP0Y
-	 4r1AfwBzfRxhwHArtp7rYgibENZ3OlO2IQMlQLwjh7KvOGGWo7dL1VUIAQUUIqNCcG
-	 veBVzRxfM0iM/HPHsBsbSG69atBVe3vGOeprVMdPsuSP/XyzkV7jepGkYaOTYvJapN
-	 UDgOCe51FjM0w==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.li@nxp.com>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] arm64: dts: freescale: imx8mm-verdin: Remove LVDS panel and backlight
-Date: Fri, 14 Feb 2025 10:26:34 +0100
-Message-Id: <20250214092634.12414-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1739525369; c=relaxed/simple;
+	bh=Unj9+KUmPhmjiIcXv9PQ38TPGgztU1T0Q8tpkwODRf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qANlYOZmzAec+TBKuWnmJyVKO2U7Rv15bEI03SrAdFdeUkZIFlSOkZtG+02PLfjGAWEW1lfpvYRBP1B/gPb4BVzapUtq8hQiu+yGGYuwXkWsCn8xY4COLh5Z3+wXNdZm4B/i258HrHxIBof8GmWHJtKR3obcJqrLpX5zKSqWbsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pdaduCTi; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739525363; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=b6mdXYOfZ9pTQzmmFy++yT48ZTyBGn00CrwkhOAHtZ4=;
+	b=pdaduCTio49Caiuk75ArWg9RcMmH7nrE1dk1qdwuQDqeEd1/NOT2ST1kjUoOsxYA+tI4L/r6m2DO/fCUEhZFN4BJbuXJkYag+cxPXKxLlPTJeuEglbBvoeQagceR3wX27Te880oj+keTnoIpIEwJFnPYiTYTn5wu8PcQTjyCDAc=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPQRTw-_1739525360 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Feb 2025 17:29:21 +0800
+Message-ID: <dceb65c1-9d8a-4675-9354-574deaf141be@linux.alibaba.com>
+Date: Fri, 14 Feb 2025 17:29:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] x86/mce: dump error msg from severities
+To: "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+References: <20250211060200.33845-1-xueshuai@linux.alibaba.com>
+ <20250211060200.33845-3-xueshuai@linux.alibaba.com>
+ <SJ1PR11MB6083F8EDC173234D31D6708DFCFD2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <SJ1PR11MB6083F8EDC173234D31D6708DFCFD2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Remove LVDS panel and backlight nodes from the Verdin iMX8M Mini SoM
-dtsi file, those two hardware components are not part of the SoM,
-therefore they should not be present in this file.
 
-This is solving a dtb checker warning about panel-lvds compatible.
+在 2025/2/12 00:44, Luck, Tony 写道:
+>> The message in severities is useful for identifying the type of MCE that
+>> has occurred; dump it if it is valid.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   arch/x86/kernel/cpu/mce/core.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+>> index 2919a077cd66..c1319db45b0a 100644
+>> --- a/arch/x86/kernel/cpu/mce/core.c
+>> +++ b/arch/x86/kernel/cpu/mce/core.c
+>> @@ -1456,6 +1456,8 @@ static void queue_task_work(struct mce_hw_err *err, char *msg, void (*func)(stru
+>>        if (count > 1)
+>>                return;
+>>
+>> +     if (msg)
+>> +             pr_err("%s\n", msg);
+>>        task_work_add(current, &current->mce_kill_me, TWA_RESUME);
+>>   }
+> 
+> This is called from the #MC handler. Is that a safe context to print a console
+> message? It wasn't in the past, but maybe changes to how console messages
+> are handled have changed this.
+> 
+> -Tony
 
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- .../boot/dts/freescale/imx8mm-verdin.dtsi     | 21 -------------------
- 1 file changed, 21 deletions(-)
+#MC is a kind of NMI context, as far as I know, since
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-index c528594ac442..7251ad3a0017 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-@@ -18,20 +18,6 @@ aliases {
- 		rtc1 = &snvs_rtc;
- 	};
- 
--	backlight: backlight {
--		compatible = "pwm-backlight";
--		brightness-levels = <0 45 63 88 119 158 203 255>;
--		default-brightness-level = <4>;
--		/* Verdin I2S_2_D_OUT (DSI_1_BKL_EN/DSI_1_BKL_EN_LVDS, SODIMM 46) */
--		enable-gpios = <&gpio3 24 GPIO_ACTIVE_HIGH>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_i2s_2_d_out_dsi_1_bkl_en>;
--		power-supply = <&reg_3p3v>;
--		/* Verdin PWM_3_DSI/PWM_3_DSI_LVDS (SODIMM 19) */
--		pwms = <&pwm1 0 6666667 PWM_POLARITY_INVERTED>;
--		status = "disabled";
--	};
--
- 	/* Fixed clock dedicated to SPI CAN controller */
- 	clk40m: oscillator {
- 		compatible = "fixed-clock";
-@@ -66,13 +52,6 @@ hdmi_connector: hdmi-connector {
- 		status = "disabled";
- 	};
- 
--	panel_lvds: panel-lvds {
--		compatible = "panel-lvds";
--		backlight = <&backlight>;
--		data-mapping = "vesa-24";
--		status = "disabled";
--	};
--
- 	/* Carrier Board Supplies */
- 	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
--- 
-2.39.5
+commit 42a0bb3f71383b457a7db362f1c69e7afb96732b
+printk/nmi: generic solution for safe printk in NMI
 
+print a console message is safe.
+
+Please correct me if I missed anything.
+
+Thanks.
+Shuai
 
