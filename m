@@ -1,70 +1,61 @@
-Return-Path: <linux-kernel+bounces-514742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D1CA35AF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:57:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2717EA35B00
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7F916F6E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:57:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA2C7A4EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1687F261372;
-	Fri, 14 Feb 2025 09:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7C25A627;
+	Fri, 14 Feb 2025 09:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cG1dOifW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="o6xcTAiq"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F0E25A35E;
-	Fri, 14 Feb 2025 09:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43C824BBF6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527007; cv=none; b=h0vNAnpOVvuy7HD7pEixT4YTv5UJ4nW1Jivz9T3isCredy55lHth7ETvMAXjtXUay65vWlXQynWElmv5l/ippcu0D/FtbRUcorfWSkrHvrafaft6uwV17hNSNWRfCQ+cwk1jUnOJsJZWgnu0sEI5955bk24vnt+TeJzIRKo1zjI=
+	t=1739527086; cv=none; b=uHgpToRxdD9h5dLnlIDeXg9RNkUVjy9L/wnGlWPkCRq3E4ql/GFiUW6ZUk8SrdiGwzFvapwvDq5+6rZk77XblZciTkxEIHPpoA+K9Pt4w7TkeBDppG4zxaK6ZlMUkdN7UOV9jb0tYXL6MspIQFlL4jN2ZvAFGuX68h3AuW11RBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527007; c=relaxed/simple;
-	bh=2LO0cXJZgVMVTgsRdZr9kQEfeyBkSEdO1XQGhXms6V8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJbhV3lv+6DFzPjeYxibYWSerje4s5YzFYN1RgPahpOhATMaVBx/2z8DmM/smoyFBl6J0l+IsYEAqTXKFNex8xlVjHTOrgeFkUvpQqTojCsxJH93yMUhqV9ZsK0OSvgONRnxLnMVhkO5+wcfPgG5RVMSW9KeLRkpdjkKWasWZkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cG1dOifW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8R23d027806;
-	Fri, 14 Feb 2025 09:56:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rbWj2224SpWSWtxrztfF1M/84AOkSFaVl56P/yckdPo=; b=cG1dOifWdaRdjfjl
-	ErgX9yD5Krbnr3fu2QCh0doKCb4lEyQRHxXJPnW51HYCzN45bOmDMDiWXa6epccY
-	7NLk10nHDYZj9nEXtw3uMSjHi4dnFf7FqQXjwkp3bEXy2NhUoWNMMumi6wLYAR7H
-	RHyzEgu8x1nsvDc83GNEzzcVBT3e4idhM5ceKwXcjhO9Cnfyq2ugu8yM47LnNgZ2
-	bBJaAXK2WGJw/CylOt5OdIdj9uEleQzaq1BRLdCnVZ0g/kkOJTA0Iv8vcqN4OwDA
-	rlv082t9tfIVYflX65qhXBFGoSq8bSzxHwsqQCeTNi8W34Jn5RkASqeCDool3URC
-	YEGT7A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sebnbau5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 09:56:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51E9ufwc000791
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 09:56:41 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 14 Feb 2025 01:56:39 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_svankada@quicinc.com>
-Subject: [PATCH v1 5/5] media: qcom: camss: Enumerate resources for QCS8300
-Date: Fri, 14 Feb 2025 15:26:11 +0530
-Message-ID: <20250214095611.2498950-6-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
-References: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1739527086; c=relaxed/simple;
+	bh=47WKjJcwQWvsK1nkHibsYhis9CdASrT+Q8dQk4j5ZuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RldKQ2iqTmqP7/IyHuc3lVK9qhaaDVX9XvnedMaHHQAySeDWw31htoIrmHd+p6nv0SRL2uPJV7r5qRU+HumZyw3rEP7JltkTliYozFmA5sS8IiTrbGIuihDHVs2UyykEMKSBHvAuHrzEhASSS0mL0/+Y+a8SEc2jvVyGXR8hDbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=o6xcTAiq; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YsVVftDpo1mgprsCaOUgA8Avd4mgoql5Qv3tMRR7rsM=; b=o6xcTAiqHiV2pPP/dgrmWTXin5
+	emYU8O2LedoV9llc3HVQt3seMZ34n9KdYN2ld1wRi2OQqUzx4+YbJhZ6qxVn2x+Vj5jorEqSaUbvq
+	yGw0phEnSveIAJrltzRj6u4EoGi1F6SlHzfNk2FoJ7B3SrDQ7de+qoaxV4PrnRF1ox4RrbgiLsDyv
+	2yPs/Vrd+k2PUynumDJjrhSZbZXeXb/NNVnV9brPHePnueAJtgGDX70I6CRY/1yTSHVt+FSzLGPzm
+	CZ3iZdydMSDC/LuwyzVMH1PtgkX43+2/tXFZX1o8S/3t9l0mkYciOWrRc8a9lioUWyWdpPjVkDKT5
+	lrVIfQfw==;
+Received: from [58.29.143.236] (helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tisS8-00HNmX-9y; Fri, 14 Feb 2025 10:57:50 +0100
+From: Changwoo Min <changwoo@igalia.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	arighi@nvidia.com
+Cc: kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>
+Subject: [PATCH v2] sched_ext: Provides a sysfs 'events' to expose core event counters
+Date: Fri, 14 Feb 2025 18:57:36 +0900
+Message-ID: <20250214095736.76693-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,49 +63,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OaMLSnJ5kDKdAXi-W_K49TtrHVZGwIzs
-X-Proofpoint-ORIG-GUID: OaMLSnJ5kDKdAXi-W_K49TtrHVZGwIzs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=999 phishscore=0
- suspectscore=0 malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140071
 
-Enumerate csiphy, csid and vfe resources for qcs8300.
+Add a sysfs entry at /sys/kernel/sched_ext/root/events to expose core
+event counters through the files system interface. Each line of the file
+shows the event name and its counter value.
 
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+In addition, the format of scx_dump_event() is adjusted as the event name
+gets longer.
+
+Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- drivers/media/platform/qcom/camss/camss.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 2ac3d8814b35..cef1b0854eaa 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -4211,7 +4211,14 @@ static const struct camss_resources msm8996_resources = {
- static const struct camss_resources qcs8300_resources = {
- 	.version = CAMSS_8300,
- 	.pd_name = "top",
-+	.csiphy_res = csiphy_res_8300,
-+	.csid_res = csid_res_8300,
-+	.csid_wrapper_res = &csid_wrapper_res_qcs8300,
-+	.vfe_res = vfe_res_8300,
- 	.icc_res = icc_res_qcs8300,
-+	.csiphy_num = ARRAY_SIZE(csiphy_res_8300),
-+	.csid_num = ARRAY_SIZE(csid_res_8300),
-+	.vfe_num = ARRAY_SIZE(vfe_res_8300),
- 	.icc_path_num = ARRAY_SIZE(icc_res_qcs8300),
- 	.link_entities = camss_link_entities
+ChangeLog v1 -> v2:
+  - Change the format of the output to the simpler form, "%s %llu\n".
+
+  - Move the 'events' under the root/ subdir following the lifecycle of
+    an scx scheduler.
+
+ kernel/sched/ext.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 0c5120c6381c..4f88b782886e 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1576,7 +1576,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
+  * @kind: a kind of event to dump
+  */
+ #define scx_dump_event(s, events, kind) do {					\
+-	dump_line(&(s), "%30s: %16llu", #kind, (events)->kind);			\
++	dump_line(&(s), "%40s: %16llu", #kind, (events)->kind);			\
+ } while (0)
+ 
+ 
+@@ -4383,8 +4383,33 @@ static ssize_t scx_attr_ops_show(struct kobject *kobj,
+ }
+ SCX_ATTR(ops);
+ 
++#define scx_attr_event_show(buf, at, events, kind) ({				\
++	sysfs_emit_at(buf, at, "%s %llu\n", #kind, (events)->kind);		\
++})
++
++static ssize_t scx_attr_events_show(struct kobject *kobj,
++				    struct kobj_attribute *ka, char *buf)
++{
++	struct scx_event_stats events;
++	int at = 0;
++
++	scx_bpf_events(&events, sizeof(events));
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_SELECT_CPU_FALLBACK);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_DISPATCH_KEEP_LAST);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SKIP_EXITING);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_ENQ_SLICE_DFL);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_DURATION);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_DISPATCH);
++	at += scx_attr_event_show(buf, at, &events, SCX_EV_BYPASS_ACTIVATE);
++	return at;
++}
++SCX_ATTR(events);
++
+ static struct attribute *scx_sched_attrs[] = {
+ 	&scx_attr_ops.attr,
++	&scx_attr_events.attr,
+ 	NULL,
  };
+ ATTRIBUTE_GROUPS(scx_sched);
 -- 
-2.25.1
+2.48.1
 
 
