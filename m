@@ -1,162 +1,175 @@
-Return-Path: <linux-kernel+bounces-515104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9181CA36028
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:19:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE39A36027
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F1D3A5596
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB551891DD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A31265CB9;
-	Fri, 14 Feb 2025 14:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A172661AC;
+	Fri, 14 Feb 2025 14:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNyWlDT5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCT1c45N"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C04C263F2E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B7B245002;
+	Fri, 14 Feb 2025 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739542666; cv=none; b=PsjWWX5ghsMa4mTABnQ2b52mpHbCq5ohAGjSOXCBfX+XLqrNUqw3vV6W24AdwE/OkAdYDln5g1O+PZ3Us+01SKa456FhbSI/kL2slTyl0iMny20907Z7lJQXKGZzFOMLRKoMAQPBPLDzp239VBL8bHEYU+4U3BeLRU0cwVUa55o=
+	t=1739542750; cv=none; b=ZHAZ90NbqNYs1okcbVxv1yessnP9ES6KL/vx7fXRPvkHx0oHSTHYuaSmd2vOHzJzG8jjhjfYLHHGQNfNyZmq4ROG2jj7WLSGeWIC0Qvml5miyqwyXh1mlUjJKvJga22nKjlYZ6jquil7UwNqYsWzw/3gSgk15qpJQfV7PIdqp4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739542666; c=relaxed/simple;
-	bh=JCXEm2l4gcHbLu3QN62NhahhVyn6aU38KSlNB4wAFpg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VpW807a5yVX1z2/Cl1z8J+GjGfITimckX+bgUPH3VgRCfAXlgboLWo9KyV06KwqykoBBMqfKR5NewaBTk9bwUk3ADAT703sepnQB+6pa51mLHA9KybbICMEAI3gWtq9ih+M48l2kpMo51G4U66eZFS9pUvEA1pF3HLBAVmPd6VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNyWlDT5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739542663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wrUYRhRxFfGgRZ/7tX5o3nBHGzEAvDzAfxtEVpTmJWU=;
-	b=VNyWlDT5psBnHGgXPmpUUgvwSVu2teVc7s96c3o8stnWX50ES9hbpFY9BsqEaa5qedkBHp
-	SgGzrDuUj8CQu6LYt46QQgZHM+QtxV6Clw3Pizb4/4/DYJVcYN84TmYVHcJjz+iZHwfwRY
-	QVL1uaFjD5YmoHCQWxkfKVHRibeDmUA=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-385-CA0vwpSyPUChO_jo9F-kNg-1; Fri, 14 Feb 2025 09:17:41 -0500
-X-MC-Unique: CA0vwpSyPUChO_jo9F-kNg-1
-X-Mimecast-MFC-AGG-ID: CA0vwpSyPUChO_jo9F-kNg_1739542661
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c07249127bso369758885a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:17:41 -0800 (PST)
+	s=arc-20240116; t=1739542750; c=relaxed/simple;
+	bh=lhrd0AQI9s3FEnz8yxPBJXpKc3rwdBVNzPcFb5HJIkc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=AE/6TPrS/TdlrYyZeqxRp4xRc6qwcgSv72exz5bUw7utAHkHBD97NbPEroVI/lhNyDR+aMA/+jOy+sgW0MUTavQHiGFv5i1NaRejypy7lRE26hQ4UBZgktOwhwpzkSMi9x28WnAkMJTkSFG0b/RfiWR8vMkMBp5AC1Ov1esu0ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCT1c45N; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso3827665a91.3;
+        Fri, 14 Feb 2025 06:19:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739542748; x=1740147548; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tBaplg3g3rUu8/rRc+aYsCsq7KMcM5ySIdriDejyTSg=;
+        b=RCT1c45Nk2EQ0tBof09B/n9cxpnBKH5p4No2aSJcnmqsM9ypoRGc5sr3quG7kXdR4W
+         3mXktRKi6RoS/EiPymDKT6Izo0AzpeSzhhAW2pv6DTJqfTmdo+Upab9rhgJv1V6+JOJN
+         zO7A3aTokdSXj+WFvggSQfcdbW9jgv1PAfUeMc44cUtWxN2Tv3JfTPjobkeaTbXDHzqB
+         XCPxZ8lLOS2vYpzNz4SxwkaacypbsxeanrjjeVQEwvVq3iIztQQtY3oof7p4yVsoY7lA
+         XW4cT+Csa/Z3FgOD/XBA7+6FQHBAVNP4aA515G0m4VqD4jiXbwXjlEacnvy06OYnz9E3
+         0+lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739542661; x=1740147461;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wrUYRhRxFfGgRZ/7tX5o3nBHGzEAvDzAfxtEVpTmJWU=;
-        b=aYxgfSiPBMzsVGX26IWrI+vs3j6QMRU1qyKdNKhRWinAGDkHXoFhBCPpDfc1+wdCOI
-         3RfNSMkBfXfRwHZPDcR6bhrz+ulTD/JUMhoszzLu2m3OCR4KDW1EXJYjMP8alEcdqQCs
-         nuFv38Nc4tbCaf2ILIYfT/BkdKWjeExw4R0tlMniREYaM1ORdO6SWiUwlG71wiS9F+N1
-         x/wOywyy+K6zk9H7GznAk2KeLISygwru7n43hSpTrVCkisN1vshBXbVUL7Rd2L8R0JVu
-         58TlMulZCXCeHY14rbuW1qGTwxxT01zX07lSnY+8ijV7dUwLUMhVDDSKnp1q88lsQNbn
-         sfXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv2o0Xi4eoFRdzsXMXpvxpZOoDKl7TiJsPgJEBYAIJCNPZFxfx39Z37q37Tmg7Sxpn/F6WQH5VBvYNOB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTLCaA8bam37J3YfNh/9cqV+mqfQHCXhAl7ak+luyn7sg0Egmy
-	eVOKXbcox7bEUGkzC6nT+StJ+hOTgl5ekm6hAbOLsEu0hriWAK5sY3FQ0luZoiS+SD5Bum9TgvK
-	PP6ck6/dMIvPEiYHxzYD8wB1dTFjGu/DAAwAmqsol2BOhDU934yiXzDsRPT89Nw==
-X-Gm-Gg: ASbGncsq+oegb/erc3C2pBZU4VdeklhOAdyV5PwMrvRVA+cgtrUysDgAjp+0p+TJaRg
-	UMKfP+MkLvl8rn6HgzwaU6P//9gAPAKCaSZ+IahN7uKBfqI3fH9YB/uTc79UvnU6glVK9sRqE/H
-	SpqqNJbUkVpF84CSsqr/pDSut1T21bB45Xn5EqqVNp4DVosO4TC2azYCKjfW3fH3NAfsYNETYc8
-	JzA5Dy4qs28ivWOvtBWgvrCc4Lii+rmMnkZrPnQBm410c2A+liZ2UPuWQJF/tejZ/yZ4W+R5P34
-	b51Haaxtjl97Sc6Toqv2ubdomRT2Ec6mtilPyEgGvN/MX71l
-X-Received: by 2002:a05:620a:4442:b0:7c0:6419:8bd3 with SMTP id af79cd13be357-7c06fc69c98mr1707212785a.22.1739542661454;
-        Fri, 14 Feb 2025 06:17:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFY9maWHpPjpw8PFEyE47thojPlwSxDO4sGn3xrsMNWv1QHYKuDV7jBpb7t4bXZobeHknOclQ==
-X-Received: by 2002:a05:620a:4442:b0:7c0:6419:8bd3 with SMTP id af79cd13be357-7c06fc69c98mr1707209485a.22.1739542661143;
-        Fri, 14 Feb 2025 06:17:41 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d779201sm21536016d6.2.2025.02.14.06.17.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 06:17:39 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <812ea88a-b79e-49e0-ab3b-83cd40b2851e@redhat.com>
-Date: Fri, 14 Feb 2025 09:17:35 -0500
+        d=1e100.net; s=20230601; t=1739542748; x=1740147548;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tBaplg3g3rUu8/rRc+aYsCsq7KMcM5ySIdriDejyTSg=;
+        b=c+KqIvrs9mDlpm3Jm+7+OehhcIfBUI7abi7zv1dD0QYrp3olc9T+tyFqQ5+r42dmkL
+         GZecXEPmzXledCVFVVcLpjZahck4e0Sw7QfykQ0H+S1hhQzZG8Azu+BDyQRJ1L6Nif/3
+         RIo3B+xjFMmQS/J/fkTnZeoD5Uvf85z5H6lgcZMYAO5kINFA1uf2gjzB1WzXDb4BDlYb
+         JOFk7bobxgRzdXmBB7M2tegyCcFl41h6h0HWUIekQnt15x0mTMTyo2jxSJGto+/sQtpB
+         uEr9x2A16pqs0dpFA6TO2kFicOdtC3Tu8rcmODKzTMewd1QMtjWOqqFbnS8s3Tvks3ST
+         vQHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEUuV7LFfU7I8dl60mUHjzGSfXfECPd99ZmYi/Yc2ZrJJsuLNN0k3ppAGZZYTUuz3ud4BWW3+kqxzJ/Ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmsALvWlmsfOFZA54OBGaOZD1gqRiI6BlslbbbnXxWyw0B5WGH
+	zA0WlpyiwwvKMQNumsQ/zzRKB19/Q8vB49SiNufb+g85DKtkrsTC
+X-Gm-Gg: ASbGncsFycA2MWvly5QxJKEBEsjaq7kL8MybOLzjmOrxwle2IeV+ZFZuPtOF3poZAZw
+	tXxTUAbL+dmfoA6AypyDl+SvJmnUw6xbe5qmohJOmYqqNdAfYLgm/65YB1BNPW4xbbXGT7TwPtm
+	du2XLC8YHg8UnkTfI29RgXwYp/RqahTdB+9bETxk0vR0UiIvB69o5TBKZs7bax2XUZboKlgo+Tu
+	8FMw37ZgOTrJ8JwaxWhXWUvYQbvW9ljpwWYPfABHad3K6VvFIQ8UCbAZAFz2vN9wHnCDHFVbdo9
+	0UEtXYc8vL2jW2ea
+X-Google-Smtp-Source: AGHT+IG7++srGQQOn/pNXRoiLH3TUX/WBOvYJneTflwiDnq4YhgWbBUWU/eCjlk2DRGvxSCVPRZOTA==
+X-Received: by 2002:a17:90b:2549:b0:2ee:d193:f3d5 with SMTP id 98e67ed59e1d1-2fbf5bc1e3dmr17699942a91.7.1739542748368;
+        Fri, 14 Feb 2025 06:19:08 -0800 (PST)
+Received: from localhost ([111.229.209.227])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b619sm5223205a91.32.2025.02.14.06.19.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Feb 2025 06:19:08 -0800 (PST)
+From: Tao Chen <chen.dylane@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	qmo@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chen.dylane@gmail.com
+Subject: [PATCH bpf-next] libbpf: Wrap libbpf API direct err with libbpf_err
+Date: Fri, 14 Feb 2025 22:19:03 +0800
+Message-Id: <20250214141903.27711-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [cgroups?] possible deadlock in __run_timer_base (2)
-To: Peter Zijlstra <peterz@infradead.org>, Waiman Long <llong@redhat.com>
-Cc: syzbot <syzbot+ed801a886dfdbfe7136d@syzkaller.appspotmail.com>,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- mkoutny@suse.com, syzkaller-bugs@googlegroups.com, tj@kernel.org
-References: <67a9136a.050a0220.110943.001e.GAE@google.com>
- <2aaa1663-fa9c-43ce-9421-60019899bac1@redhat.com>
- <20250214101959.GH21726@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-In-Reply-To: <20250214101959.GH21726@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+Just wrap the direct err with libbpf_err, keep consistency
+with other APIs.
 
-On 2/14/25 5:19 AM, Peter Zijlstra wrote:
-> On Tue, Feb 11, 2025 at 09:14:12PM -0500, Waiman Long wrote:
->> On 2/9/25 3:43 PM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    92514ef226f5 Merge tag 'for-6.14-rc1-tag' of git://git.ker..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=179453df980000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=ed801a886dfdbfe7136d
->>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->>>
->>> Unfortunately, I don't have any reproducer for this issue yet.
->>>
->>> Downloadable assets:
->>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-92514ef2.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/c4d8b91f8769/vmlinux-92514ef2.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/c24ec4365966/bzImage-92514ef2.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+ed801a886dfdbfe7136d@syzkaller.appspotmail.com
->> This problem should be fixed by the following upstream patch once it is
->> merged into mainline.
->>
->> https://lore.kernel.org/lkml/20250127013127.3913153-1-longman@redhat.com/
->>
-> AFAICT all these lockdep reports are because of an earlier warning. Fix
-> warning, report goes away. Notably:
->
->>>          _printk+0xd5/0x120 kernel/printk/printk.c:2457
->>>          __report_bug lib/bug.c:195 [inline]
->>>          report_bug+0x346/0x500 lib/bug.c:219
->>>          handle_bug+0x60/0x90 arch/x86/kernel/traps.c:285
->>>          exc_invalid_op+0x1a/0x50 arch/x86/kernel/traps.c:309
->>>          asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
->>>          expire_timers kernel/time/timer.c:1827 [inline]
-> IOW I think we're focusing on the wrong thing here.
->
->> Peter, are you planning to merge this patch? This is another instance where
->> the old way of calling wake_up_process() inside the lock critical region can
->> lead to deadlock.
-> I still don't love the Changelog, but yeah, I suppose I can pick it up.
-> But I see Boqun took it and I'll get it eventually.
->
-> No real hurry there I suppose.
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ tools/lib/bpf/libbpf.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-I know my changelog is sometimes too verbose and may contain 
-non-important information. I will try to improve that in the future.
-
-Cheers,
-Longman
-
->
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 194809da5172..6f2f3072f5a2 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -9145,12 +9145,12 @@ int bpf_object__gen_loader(struct bpf_object *obj, struct gen_loader_opts *opts)
+ 	struct bpf_gen *gen;
+ 
+ 	if (!opts)
+-		return -EFAULT;
++		return libbpf_err(-EFAULT);
+ 	if (!OPTS_VALID(opts, gen_loader_opts))
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 	gen = calloc(sizeof(*gen), 1);
+ 	if (!gen)
+-		return -ENOMEM;
++		return libbpf_err(-ENOMEM);
+ 	gen->opts = opts;
+ 	gen->swapped_endian = !is_native_endianness(obj);
+ 	obj->gen_loader = gen;
+@@ -9262,13 +9262,13 @@ int bpf_program__set_insns(struct bpf_program *prog,
+ 	struct bpf_insn *insns;
+ 
+ 	if (prog->obj->loaded)
+-		return -EBUSY;
++		return libbpf_err(-EBUSY);
+ 
+ 	insns = libbpf_reallocarray(prog->insns, new_insn_cnt, sizeof(*insns));
+ 	/* NULL is a valid return from reallocarray if the new count is zero */
+ 	if (!insns && new_insn_cnt) {
+ 		pr_warn("prog '%s': failed to realloc prog code\n", prog->name);
+-		return -ENOMEM;
++		return libbpf_err(-ENOMEM);
+ 	}
+ 	memcpy(insns, new_insns, new_insn_cnt * sizeof(*insns));
+ 
+@@ -9379,11 +9379,11 @@ const char *bpf_program__log_buf(const struct bpf_program *prog, size_t *log_siz
+ int bpf_program__set_log_buf(struct bpf_program *prog, char *log_buf, size_t log_size)
+ {
+ 	if (log_size && !log_buf)
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 	if (prog->log_size > UINT_MAX)
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 	if (prog->obj->loaded)
+-		return -EBUSY;
++		return libbpf_err(-EBUSY);
+ 
+ 	prog->log_buf = log_buf;
+ 	prog->log_size = log_size;
+@@ -13070,17 +13070,17 @@ int bpf_link__update_map(struct bpf_link *link, const struct bpf_map *map)
+ 	int err;
+ 
+ 	if (!bpf_map__is_struct_ops(map))
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 
+ 	if (map->fd < 0) {
+ 		pr_warn("map '%s': can't use BPF map without FD (was it created?)\n", map->name);
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 	}
+ 
+ 	st_ops_link = container_of(link, struct bpf_link_struct_ops, link);
+ 	/* Ensure the type of a link is correct */
+ 	if (st_ops_link->map_fd < 0)
+-		return -EINVAL;
++		return libbpf_err(-EINVAL);
+ 
+ 	err = bpf_map_update_elem(map->fd, &zero, map->st_ops->kern_vdata, 0);
+ 	/* It can be EBUSY if the map has been used to create or
+-- 
+2.43.0
 
 
