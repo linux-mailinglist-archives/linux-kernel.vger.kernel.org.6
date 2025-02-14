@@ -1,232 +1,152 @@
-Return-Path: <linux-kernel+bounces-515321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BA3A36337
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:35:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A824DA36332
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:35:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136671716C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A903B182B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A57E0ED;
-	Fri, 14 Feb 2025 16:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tT6SgSHn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD5A2676E8;
+	Fri, 14 Feb 2025 16:33:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE4026738A;
-	Fri, 14 Feb 2025 16:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A4D7E0ED;
+	Fri, 14 Feb 2025 16:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550819; cv=none; b=DVJZgrjnsk3AU8tWSYOyEkbZuw2JrECY7NcLQQMqx0DzNJeD8gg9IxGP8BbNcd+7j//bMpWpWUsdgIn0XTWksHZ1pMLpt5chF8KB77LJEd2YFAVC9TCspxSTylr0BTmtKeKhtXw/cB6h3857ib3h+nvWzEgIDFbFmNdK/SwPAVQ=
+	t=1739550833; cv=none; b=DeXnacj6yP6I8zcNxToay+jPbW356uUghilJME8R8bkLp3jWKZo+gE3eG5eYqhx9VtVda6utX/baIzgIig02IGncqyWOIG5tPaxB+jKn2V4Wm5A3Q9hzbwfiSKt6tX9GGJ1eET4rEkJhxCWVQ0Nk4m2lUdVZcde0nkKPWY9PdVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550819; c=relaxed/simple;
-	bh=CqVOqHb3hkAOpfkdQ0WY8NjkmJA6LRQqJbjC+25kotw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDisVMnqvZFUny+5jJcu15084ANjZ3NlWDPaf0LUH0ZizvZY1qxbe5Q8sC8QuUhLK5tpbXD+Y7QMESQnFgLZ85zkvz2GKihJooVFBTMyxfgBk52rSl8z9O6kOiB3xPEdd6Et4Yz+3ZtQEc4cUalXcgCe62kFFWFgnYhQ2fDKWHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tT6SgSHn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437E2C4CED1;
-	Fri, 14 Feb 2025 16:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739550818;
-	bh=CqVOqHb3hkAOpfkdQ0WY8NjkmJA6LRQqJbjC+25kotw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tT6SgSHnecSbLt2hHIvRD2w8P7Qen0E4uemod9P4Uzf/Rf5MujWLyRERt+PlyeEkj
-	 NFpQcVDgRI6COuLtv5omgBbkMykWng24oFznZCXdmpZhbuPh+fcv6yxx0/C/tXRtSA
-	 LgXjhckBG761hA8IWNDwD4WIQgMYa1b67sdvhg5E=
-Date: Fri, 14 Feb 2025 17:33:35 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <2025021437-washout-stonewall-d13e@gregkh>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
+	s=arc-20240116; t=1739550833; c=relaxed/simple;
+	bh=gFDaOmwQbOF+QYMqI3l9zMjrHfJ7vsGvcdEoLzNNtHE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=baxzOQLTRBeWuRJWgGCrbD6RvbXAO/aASenUyuMKBSQIKuP31pF9tjq4XHcDBMFoyxuPNax4KptpNeyC/gZ2WSQcqv769vdizRHj+R9iGksQVIuqsViBBrPbWvBS+cG4h56VXQMm0r6RNKVjRkO9olC9TG1u7X9oewFifby7RyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvcwx6P7Vz6L531;
+	Sat, 15 Feb 2025 00:30:41 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC39C140B39;
+	Sat, 15 Feb 2025 00:33:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 17:33:48 +0100
+Date: Fri, 14 Feb 2025 16:33:46 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v3 14/18] cxl/region: Unfold cxl_find_root_decoder()
+ into cxl_endpoint_decoder_initialize()
+Message-ID: <20250214163346.00007ade@huawei.com>
+In-Reply-To: <20250211095349.981096-15-rrichter@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+	<20250211095349.981096-15-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Feb 11, 2025 at 06:27:58PM +0100, Jerome Brunet wrote:
-> Add helper functions to create a device on the auxiliary bus.
+On Tue, 11 Feb 2025 10:53:44 +0100
+Robert Richter <rrichter@amd.com> wrote:
+
+> To determine other endpoint parameters such as interleaving parameters
+> during endpoint initialization, the iterator function in
+> cxl_find_root_decoder() can be used. Unfold this function into
+> cxl_endpoint_decoder_initialize() and make the iterator available
+> there.
+I'm not following this description at all. Perhaps this needs
+to wait until you have code that is reusing this to find those
+interleave parameters and similar.
+
+For now it just looks like a sensible bit of cleanup where there
+was just a single caller of cxl_find_root_decoder()
+
 > 
-> This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> the same code repeated in the different drivers.
-> 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Tested-by: Gregory Price <gourry@gourry.net>
 > ---
->  drivers/base/auxiliary.c      | 88 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/auxiliary_bus.h | 10 +++++
->  2 files changed, 98 insertions(+)
-
-I like the idea, see much the same of what I recently did for the "faux"
-bus here:
-	https://lore.kernel.org/all/2025021023-sandstorm-precise-9f5d@gregkh/
-
-Some review comments:
-
-> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..0f697c9c243dc9a50498a52362806db594345faf 100644
-> --- a/drivers/base/auxiliary.c
-> +++ b/drivers/base/auxiliary.c
-> @@ -385,6 +385,94 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+>  drivers/cxl/core/region.c | 24 +++++-------------------
+>  1 file changed, 5 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 72e991e7d9ab..ebcfbfe9eafc 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3220,8 +3220,7 @@ cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
+>  	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
 >  }
->  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
 >  
-> +static void auxiliary_device_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-> +
-> +	kfree(auxdev);
-> +}
-> +
-> +static struct auxiliary_device *auxiliary_device_create(struct device *dev,
-> +							const char *modname,
-> +							const char *devname,
-> +							void *platform_data,
+> -static struct cxl_root_decoder *
+> -cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+> +static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+>  	struct cxl_port *iter = cxled_to_port(cxled);
+> @@ -3232,7 +3231,7 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+>  		iter = to_cxl_port(iter->dev.parent);
+>  
+>  	if (!iter)
+> -		return NULL;
+> +		return -ENXIO;
+>  
+>  	root = cxl_port_find_switch_decoder(iter, hpa);
+>  	if (!root) {
+> @@ -3240,12 +3239,12 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
+>  			"%s:%s no CXL window for range %#llx:%#llx\n",
+>  			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
+>  			cxld->hpa_range.start, cxld->hpa_range.end);
+> -		return NULL;
+> +		return -ENXIO;
+>  	}
+>  
+> +	cxled->cxlrd = to_cxl_root_decoder(&root->dev);
+>  
+> -
+> -	return to_cxl_root_decoder(&root->dev);
+> +	return 0;
+>  }
+>  
+>  static int match_region_by_range(struct device *dev, const void *data)
+> @@ -3370,19 +3369,6 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  	return ERR_PTR(rc);
+>  }
+>  
+> -static int cxl_endpoint_decoder_initialize(struct cxl_endpoint_decoder *cxled)
+> -{
+> -	struct cxl_root_decoder *cxlrd;
+> -
+> -	cxlrd = cxl_find_root_decoder(cxled);
+> -	if (!cxlrd)
+> -		return -ENXIO;
+> -
+> -	cxled->cxlrd = cxlrd;
+> -
+> -	return 0;
+> -}
+> -
+>  static int cxl_endpoint_decoder_add(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct range *hpa = &cxled->cxld.hpa_range;
 
-Can you have the caller set the platform_data if they need/want it after
-the device is created?  Or do you need that in the probe callback?
-
-And can't this be a global function too for those that don't want to
-deal with devm stuff?
-
-> +							int id)
-> +{
-> +	struct auxiliary_device *auxdev;
-> +	int ret;
-> +
-> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> +	if (!auxdev)
-> +		return ERR_PTR(-ENOMEM);
-
-Ick, who cares what the error value really is?  Why not just do NULL or
-a valid pointer?  That makes the caller much simpler to handle, right?
-
-> +
-> +	auxdev->id = id;
-> +	auxdev->name = devname;
-> +	auxdev->dev.parent = dev;
-> +	auxdev->dev.platform_data = platform_data;
-> +	auxdev->dev.release = auxiliary_device_release;
-> +	device_set_of_node_from_dev(&auxdev->dev, dev);
-> +
-> +	ret = auxiliary_device_init(auxdev);
-
-Only way this will fail is if you forgot to set parent or a valid name.
-So why not check for devname being non-NULL above this?
-
-> +	if (ret) {
-> +		kfree(auxdev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	ret = __auxiliary_device_add(auxdev, modname);
-> +	if (ret) {
-> +		/*
-> +		 * NOTE: It may look odd but auxdev should not be freed
-> +		 * here. auxiliary_device_uninit() calls device_put()
-> +		 * which call the device release function, freeing auxdev.
-> +		 */
-> +		auxiliary_device_uninit(auxdev);
-
-Yes it is odd, are you SURE you should be calling device_del() on the
-device if this fails?  auxiliary_device_uninit(), makes sense so why not
-just call that here?
-
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return auxdev;
-> +}
-> +
-> +static void auxiliary_device_destroy(void *_auxdev)
-> +{
-> +	struct auxiliary_device *auxdev = _auxdev;
-> +
-> +	auxiliary_device_delete(auxdev);
-> +	auxiliary_device_uninit(auxdev);
-> +}
-> +
-> +/**
-> + * __devm_auxiliary_device_create - create a device on the auxiliary bus
-> + * @dev: parent device
-> + * @modname: module name used to create the auxiliary driver name.
-> + * @devname: auxiliary bus device name
-> + * @platform_data: auxiliary bus device platform data
-> + * @id: auxiliary bus device id
-> + *
-> + * Device managed helper to create an auxiliary bus device.
-> + * The device create matches driver 'modname.devname' on the auxiliary bus.
-> + */
-> +struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
-> +							const char *modname,
-> +							const char *devname,
-> +							void *platform_data,
-> +							int id)
-> +{
-> +	struct auxiliary_device *auxdev;
-> +	int ret;
-> +
-> +	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
-> +	if (IS_ERR(auxdev))
-> +		return auxdev;
-> +
-> +	ret = devm_add_action_or_reset(dev, auxiliary_device_destroy,
-> +				       auxdev);
-
-Oh this is going to be messy, but I trust that callers know what they
-are doing here.  Good luck!  :)
-
-thanks,
-
-greg k-h
 
