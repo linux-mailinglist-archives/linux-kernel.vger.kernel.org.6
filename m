@@ -1,137 +1,96 @@
-Return-Path: <linux-kernel+bounces-515020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F09A35EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EBAA35ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194B216CF40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB31E16E13F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5171264A79;
-	Fri, 14 Feb 2025 13:16:30 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC827264A6F;
+	Fri, 14 Feb 2025 13:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YesuA9zq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F42E22D786;
-	Fri, 14 Feb 2025 13:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A201F2641C6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538990; cv=none; b=uSmVrkaUVMQaSWmwYWKMzBwbHxKfob59egWdRpNaa8rhOy9EA+g4AOy7BCqOVJbLaVKevqomYrRMNIHog4zwo3gB/gUP171qk40hgyjFD3LUCCxMF73CegkfuKhQlTHsfo+JGjW2FwmNWp/IihBMgAjUXLb45QyGtnWxbbXQDvc=
+	t=1739539016; cv=none; b=l0oVa+9B7KUQ4T1xyds2pOl4Wn/VxO83ML4Yk72XbULu2256l7VohSgL3/g6KLqZQlkqPdyIV1UYq/tuDVT1IePDCtEJwI3F0EOjuhQG2L+t0EVKb05rUDAaMf4jDC8CHXpG6LNUdfmNjaYrumW7dRNF+JYZJ16Rg4MNTpufhvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538990; c=relaxed/simple;
-	bh=1hS5Vle+g/q9XvEnA2MvPqrBd/gpu16zPsjPc98juo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehJSJ3UdxBDJAo8bFS0W7zPzqAjoh1CsGqYPdr93hNSTqDSxTg1gCvIstClfrIEcbO31WVS8qx4u0WG8y7w+Ehg/9jnBHeh0BjBcQGC2pHrtmQ5wf1C3bdPE5Xz1zSCVQDt5b6bR/ll0mGV9v2NgKFWYc3cRy5v5uPnwHoUoCro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-520847ad493so641866e0c.1;
-        Fri, 14 Feb 2025 05:16:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739538987; x=1740143787;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K0BS+w+btNVzSfe+gnqs3oIU7cm6xzL/ZJ4nnMO7/6Q=;
-        b=l1hJf9VBMf2d9I91/M+e2BHbD0Z+IrGeo3zy1d9DPVq6BIIqDlb46jTTRBMYtgXQBv
-         IZWScsUZ7IFHBYFOSbOYBL/EOTGrtDuKsjCVdXkWdYchwkz2f2Wsys/B6SydfkWcg8cX
-         kNtqRgRXn//o50LTgdGb8v4psAVFJICUgZ4T13NsiU/7iig3/ZfZqOoXN4YYgFQg73JG
-         4OLQ/g9PJuUHAKd1wMdeBpU0OZ0w1N1hfImf1X1AgTxHHR6j1w0ZH7wmm7z55/UoRPms
-         pan4lB0eoqYhTmK+tYyDuqGyBQU5/TMRDly1Q5h5ywMufQKza7FhP8yM2SlRAKztsCfI
-         qhRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVBk4hC6ZzpCC1JAUg2fmIYmN1ZJ84gHva/+QBSwxDjqq/SWNAht3JO43VwJhP4UwnUH0nfTYQeAWvKbI=@vger.kernel.org, AJvYcCWilvAli0hr7bvPXdbniCmMH+MCWueU8Po7GY/Lv5CX3ATguRh7iv8uKfsqBMgHPvmh4pnyY4xCX98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDCl4hY5X6u1yWOYyxsZi2Uyrne2DAbuL2WVmF42vAryUYrA1E
-	MqEoIpJ5hhzP8ET1bOTLqrJn/BFCtys/QpydU8bLOhE81LGPJg7YD7DK0xQygxA=
-X-Gm-Gg: ASbGncsT1jew4WuSqYpB6mN2fA/z45bD/L4rWauxZItjliwgiY3rOQYjK5gxgDPh3kN
-	eYltuOSdTlbp9htC7i4uZTbkACUkWYdVSugcENBTFM4wukvC/xBD7pXNVVplMkFyRcSRIMphfkt
-	KO2hmDSTr3BU9Qv+FLi71LtHb35BKym/TJhqnvWI9CwUF6+Rex4vMhZdRpiK162U+hJGydmND1r
-	rY2SzARF4T7kJzaHgL/0W3QHQRJe4Pz7MC/nRtYaiIIDqihWcetgrgt05vHzEIOl5eY5IAUxSYB
-	YlZ+pb6UFJfy6gcKkhlC92QoviSFwYSWKy3DeCaULTNYb7Uksvdyhg==
-X-Google-Smtp-Source: AGHT+IHGnw44gehwqh+RkmcYENFLiq+rSRSd2rAQxkwhb2ItUZ+th07v2CP2/RH8c/vEJQZwjj6COA==
-X-Received: by 2002:a05:6122:2510:b0:51f:3eee:89e7 with SMTP id 71dfb90a1353d-52067cd6b2amr9368556e0c.11.1739538986742;
-        Fri, 14 Feb 2025 05:16:26 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5207ab4f633sm615456e0c.35.2025.02.14.05.16.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 05:16:26 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4bbe31ef430so1342232137.3;
-        Fri, 14 Feb 2025 05:16:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwuLsQd/IxvMMH6Y+nBpmbg4e1AznQAM+EV8cEfMRrDFBqNDcUlrDraqpvyPAh2xcvG4R19LNtwqU=@vger.kernel.org, AJvYcCWnDtVP4qDBuGP6cz/k0EfO6o+7P9XXsBehgH78s69G+VnoJtqZk2QQ05a5OekU9FqCwgFiQEja50DbGq0=@vger.kernel.org
-X-Received: by 2002:a05:6102:5108:b0:4bb:edc9:f95c with SMTP id
- ada2fe7eead31-4bbf210aa1emr9510669137.15.1739538986275; Fri, 14 Feb 2025
- 05:16:26 -0800 (PST)
+	s=arc-20240116; t=1739539016; c=relaxed/simple;
+	bh=4z1f4w3fc/rS+rR37tw4jvKtssLmhg7xJF+noxM8VNw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=OwXrVc6UX+J0uxeYeTlfZJgTpySEKPjwfbVaT5+DEXRKNungfKBHVJnbffqoaGZExlh85wDyPmwrPO6aWCqBpZOGSmEcnmtenKZ81F3gSImQbjvdAVsKWroTVKm0jU1HQt2mhFTAJok/47WRw3Cy7ldKvKgsntbxaPFfiAzjkbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YesuA9zq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739539013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M24UA7C5snSotQt93BcJrFNpx6zFhQ3V7OApt+YZfGE=;
+	b=YesuA9zqWIOrUpnT+fnvSIXfsKmyTdq2bg1YnncB5eo/CqMU95TPrKrCJOTlgNUbJ/c89S
+	PRn+vmhJ5ntozIV00yhaMIxE3qvmGgz4nBdgzLVP/yHsF3WjJDzZFHcU81V8vutEOV3aqR
+	Yt391rcYE64LGfNlmBLpnsSTZRLv7fc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-685--G0UtyqJM92QBVRVbsr8hA-1; Fri,
+ 14 Feb 2025 08:16:51 -0500
+X-MC-Unique: -G0UtyqJM92QBVRVbsr8hA-1
+X-Mimecast-MFC-AGG-ID: -G0UtyqJM92QBVRVbsr8hA_1739539011
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6BE71800875;
+	Fri, 14 Feb 2025 13:16:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 95DCF1941298;
+	Fri, 14 Feb 2025 13:16:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250214131225.492756-1-max.kellermann@ionos.com>
+References: <20250214131225.492756-1-max.kellermann@ionos.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, netfs@lists.linux.dev,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v6.13 v2] fs/netfs/read_collect: fix crash due to uninitialized `prev` variable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214102130.3000-1-johan+linaro@kernel.org>
- <CAPDyKFr98DraLvOC83rRFa=uKj_hmwS7Lj0L3JqrbqcFuhdWGA@mail.gmail.com> <Z688uKdqVDaQhm5V@hovoldconsulting.com>
-In-Reply-To: <Z688uKdqVDaQhm5V@hovoldconsulting.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Feb 2025 14:16:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXD1yF65ezOmLz2ShP=gnYNNkUfTLfY8RA0m=C+WwtaVw@mail.gmail.com>
-X-Gm-Features: AWEUYZlSIlRmseK5vNNQ4sx2pg6SL5RqLE-jro8jxejgHcUj6Mk9u1FfpeC4bLY
-Message-ID: <CAMuHMdXD1yF65ezOmLz2ShP=gnYNNkUfTLfY8RA0m=C+WwtaVw@mail.gmail.com>
-Subject: Re: [PATCH] bus: simple-pm-bus: fix forced runtime PM use
-To: Johan Hovold <johan@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Liu Ying <victor.liu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3979098.1739539008.1@warthog.procyon.org.uk>
+Date: Fri, 14 Feb 2025 13:16:48 +0000
+Message-ID: <3979099.1739539008@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Johan,
+Max Kellermann <max.kellermann@ionos.com> wrote:
 
-On Fri, 14 Feb 2025 at 13:53, Johan Hovold <johan@kernel.org> wrote:
-> On Fri, Feb 14, 2025 at 01:36:48PM +0100, Ulf Hansson wrote:
-> > On Fri, 14 Feb 2025 at 11:21, Johan Hovold <johan+linaro@kernel.org> wrote:
-> > >
-> > > The simple-pm-bus driver only enables runtime PM for some buses
-> > > ('simple-pm-bus') yet has started calling pm_runtime_force_suspend() and
-> > > pm_runtime_force_resume() during system suspend unconditionally.
-> > >
-> > > This currently works, but that is not obvious and depends on
-> > > implementation details which may change at some point.
-> > >
-> > > Add dedicated system sleep ops and only call pm_runtime_force_suspend()
-> > > and pm_runtime_force_resume() for buses that use runtime PM to avoid any
-> > > future surprises.
+> When checking whether the edges of adjacent subrequests touch, the
+> `prev` variable is deferenced, but it might not have been initialized.
+> This causes crashes like this one:
+> 
+>  BUG: unable to handle page fault for address: 0000000181343843
+> ...
+> 
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-Thanks for your patch!
+Signed-off-by: David Howells <dhowells@redhat.com>
 
-> > > Fixes: c45839309c3d ("drivers: bus: simple-pm-bus: Use clocks")
-> >
-> > This doesn't look like it is needed to me. It isn't broken, right?
->
-> I didn't add a CC stable tag since this currently works, but I still
-> consider it a bug to call these helpers unconditionally when not using
-> runtime PM.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> [ And during rc1 these callbacks were suddenly called and triggered a
-> NULL-pointer dereference as you know. [1] ]
->
-> Johan
->
-> [1] https://lore.kernel.org/lkml/Z6YcjFBWAVVVANf2@hovoldconsulting.com/
-
-Thanks, that was the context I needed to raise review priority ;)
-
-Perhaps Reported-by: and Closes:?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
