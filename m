@@ -1,186 +1,117 @@
-Return-Path: <linux-kernel+bounces-514825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE1AA35C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:10:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FE5A35C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA19016F1D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D2116EDCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E6F262179;
-	Fri, 14 Feb 2025 11:10:38 +0000 (UTC)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377AB25D540;
+	Fri, 14 Feb 2025 11:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="AiN7Vw+K"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932D25D539;
-	Fri, 14 Feb 2025 11:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8422F25A358;
+	Fri, 14 Feb 2025 11:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531438; cv=none; b=ftg4dXxg4D/TXtXtr3QT213O5Azw3ZtE+ciPKa2/v2QzcUcuIaAYxEM1L/lReYLm4GSe8oaNSwvgszIP8WFumruBktHlAOtxpaF0Q4SCq6hya8MjvaQjj0YbeinPKPqldQUVI1ndfKLrVXfHuZTu0h1vIh+O1mDaUqrK7sXv7J8=
+	t=1739531119; cv=none; b=qKZgCimHoec9Kyt153NBA2uRRmz+vsReqtKe2Uc6PMo5d3sKU9yY3WKe0N//Iwe6fQ4vb1kKKNawuGgg5lL5h/ais857b3PaMUp5gcZgRaNPYBv5vdtBEv1R6axW+uAi3tyIzOS2KGbvAQ8gjInMEc89Z2u2o70MOza4IJfeW04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531438; c=relaxed/simple;
-	bh=hdsgSjQQ8qgcIp8XrQEUL7+bx/XSkrcszbmnaoinpo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OTACUON0S9b2/1hwURkwaq/Y/en56w2Ix+F3c0NaMa/4c3DKSJiGjD0nvrXNORXouKNJxvj8+FNhLxKhJe3KnT0qfoI+zpaxzPxaVyb/DW+2Z2H2hGVSuM85uvNqkgcsrrKyHsTXX7w3LoaOb70+WPSY1yaHQ/R+v4VwD7cXHpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3f3b93e4e32so1796708b6e.0;
-        Fri, 14 Feb 2025 03:10:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531435; x=1740136235;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r+/2I2hmbkU9zkmHuYX1t9oqaBOTTvF7uTNap3Wsbsk=;
-        b=n+gFbF+9HQy32m63+iRfU7baomTogRZt8Q0x+8p1o1I9VNtjyMgiSGmrWFtaOCJWOx
-         dbXd7ASszWZp7+nJFerhuQlESYXG1au5TAw8zwj0rnqkNbDHNjTW/zvBrVJgbh8jK5v+
-         hTPxf4M+elrzhwfKUADHYwCg6zdPhc1FPuR9yoxDOSbNdZ/ZrYnkxfln5pEr0258OWP+
-         ObRSjx7bTgA+uxEdA7EmOtmi6IUqhJkfbZSlWuVesMmpuqqmcxUBhvphOIzgD9SmpOr+
-         Lwc1LYPyG4BnC15MkYla0AxiBBxq/3hmajbV0X6Xa6xu4p0DsZk7RSp79XKK2vc4ai+R
-         R4wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDVCUK6c/F3iml1NpIaVqopvbCyJAh8oxLb9I3BOXnjFJic1zL0taRowjbrVA1MN9gPwp4Ow3VqssDNqY=@vger.kernel.org, AJvYcCUbTOYIh1mG8TPX0Bi4c5rn5098w8UcKyqORjVAaFM6JCLn+hHFFsIHaVUAey5iUsTrMdJHJD1VP5m2@vger.kernel.org, AJvYcCUiHv7z7osjvN7WSDwCff0AV7rGVxgWHrJvyZ9rTEQKdFwO6pTmPaQfAIoLZDiUUPvNRm7eYV0CP3U=@vger.kernel.org, AJvYcCVKS/5ZYXsPcouogUjX1/7d56V4NXP/ZjViLwkHqpkfOss36i9fu9SRTbrEmpmaWJPmKDlOCowPguWnDfof@vger.kernel.org, AJvYcCVguviZY4vRnP70NorWp75Xw2fv1Z+mhtQ7r/c2apzkZCIQeecTjcRkaiJlyVgLCQFH0O4os6pGlYjO7xOcHtk83Y8=@vger.kernel.org, AJvYcCW5cx1lF5pOHqZKo0CKzLdtS/2tTkQ6kcS3kq/p/UyobKPe/lUIHCDmYAQxQPsWHXXO8AV9FC2r+Q853Q==@vger.kernel.org, AJvYcCWnpjvqjCh5ARprm5JFHRwhBOZw3EWQkHBoFYxXJRJFUA8O2rUsa4QoCi2nZTZVKsp5NHQFDhR8yHSAhCCq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6f0rdew3/WcRh9++9RoN6tQciQDyRPIlq7sLsYoQfh066Cs8g
-	Mc0oOV5ObrC61jrHfYNxtQuyyPVwW88b2iJhchQVVmOUJIQawZk50r4Pyts8Tp0=
-X-Gm-Gg: ASbGncvRkLVEyhKe5BvrB7ocx1yBnp4UQJczt0gdj48+Ag/O7lqsGg/ePTEm1kgz3c0
-	p3RJHBPUXeN8tSav7dtbLxFOJWGeOr0WVXhfOP6ITcqod3O6QC3CtR557+tbHvpKoFjUcSzMaXZ
-	AeqtIXfz7q7Y6TKq0TFL9I8quBxoQkeLzI04g/Ec8PUB70GM0TrYmX44/DgwLPu6R3RHTTPxHCf
-	djR4v9ZsrpWL6gwYqW4KN1lmRXKWW7zWH7pUWTxavgT8zJHZR/P0rYWqWoXGDrqA8F4gNRZqa4t
-	CB+P+cFPzq4PT0nIHeCdhOREwjqDTcQj71p5JtdawaCDM4Tk4l0PKA==
-X-Google-Smtp-Source: AGHT+IEmOpncqw55JDATPBMdgoevFZbTsL+l4QREB3q5EOlWtwZuqK0wyAgTzC8TAmqM9FoNpjSQ/g==
-X-Received: by 2002:a05:6808:2508:b0:3f3:b97d:769e with SMTP id 5614622812f47-3f3d90dc9b8mr4185959b6e.7.1739531435211;
-        Fri, 14 Feb 2025 03:10:35 -0800 (PST)
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com. [209.85.160.51])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3daa1a4b8sm1191927b6e.49.2025.02.14.03.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bc607b3190so788701fac.1;
-        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUy1lu/GJ6ERAmnfIqzVmu3C/Md9NgZanbZ9AlBkuxSikVLdWVTmv16zY9OytdJ9x+1bOD1xBdZoVtQDc2H@vger.kernel.org, AJvYcCVgqycNxfL55R6c69VsRIV//3UbVnRy1LsM6IXcdNZYTodYYbT5innUZI6qyiaXzFTDRrBAWAEYH0aK@vger.kernel.org, AJvYcCVpGAmsVWktjDWORoOa8SWbZwR93fR8IPXy2OueOJIEQibrvap3HctBV43GhtrSUSFdRoQjJT5SbI6afK3k8MmVtH0=@vger.kernel.org, AJvYcCWWolf/nrJ/6oXgSTgl4K14aY2GU29mdny1O3QmYSTUlOy83g0aI8cAUH46uNcAE8RT4WEzhyw79zid0g==@vger.kernel.org, AJvYcCWpxs59d1sDbltZAD01S8wzlCfefYW8qP+/tZshXhdVgrZs0TFBeWYfiGZaBJEEMeoH8TTdo0ifxNACHlY5@vger.kernel.org, AJvYcCXjdZfphJOJxdL4qtr/C2vSJUbLZss3zvveDNYzH/+JwLUMPqZ4sgGhNUqedcDrwir7VegLfNqsyVQ=@vger.kernel.org, AJvYcCXnbvOjDVxkbOaz9rzFBCQak2a0XzV/FMhTNT9F6vcz8d4anXpU42wkjTw7eso94fv0n53k7Wnu03YBCgE=@vger.kernel.org
-X-Received: by 2002:a05:6102:829:b0:4bb:c670:7ef4 with SMTP id
- ada2fe7eead31-4bc04dbedfdmr3900426137.3.1739531008576; Fri, 14 Feb 2025
- 03:03:28 -0800 (PST)
+	s=arc-20240116; t=1739531119; c=relaxed/simple;
+	bh=bfFvQR7b9Eo1y4+Wi3gy1LHrsKMeE2pW8w9ssUoqus8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gp3E6+yNDae5ymjUkGJoyY5r38jZ72+yDSMRQBOCL5mOQY10v/OBn3W6wAdEY2RojWZv+yNT5epYhufhTyknSDAn9qHCO88m/7tCSEtS7cvYlOWTa2FiDv4NRmmxH7M87NU8tJLQoCueXVdXUlmkdHDhHk7loCj8q0MOLoDPQRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=AiN7Vw+K; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739531084;
+	bh=7q1XuqsIgd5QB4KaATSp9610UQQvNvpW6b5+d5deU7E=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=AiN7Vw+KxZ5aUjBoXSZMFl9QWHstKV9TFxgiOwy9b5vbRTN4jNuscbId7iOPpg9Ac
+	 OrdVbzJSrl684eTiarRHTgRsqbMnXkM8kq6fiG1CQnRFp2aD+8xop0VaTpa60fWdKI
+	 JIOY/4ShM1C5oypiKTkwJFQE8/tUBssYQ2mMaVK8=
+X-QQ-mid: bizesmtp78t1739531067temjoge9
+X-QQ-Originating-IP: yGJJ4u6eJcgJ0RBUkY++t7Lt6A4QNPsaP+onWTsvJZs=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 14 Feb 2025 19:04:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14881646394383815706
+From: Wentao Guan <guanwentao@uniontech.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: dmitry.torokhov@gmail.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH] HID: i2c-hid: improve i2c_hid_get_report error message
+Date: Fri, 14 Feb 2025 19:04:18 +0800
+Message-Id: <20250214110418.16000-1-guanwentao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738329458.git.geert+renesas@glider.be> <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
- <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr> <Z5-xMUqrDuaE8Eo_@thinkpad>
- <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
- <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr> <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
- <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr> <Z6DzQHebEKBb12Wo@thinkpad>
-In-Reply-To: <Z6DzQHebEKBb12Wo@thinkpad>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Feb 2025 12:03:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
-X-Gm-Features: AWEUYZnx82TO-9m0J2Kj8kCR7cxX7DuFclptN97k0_3_zHZhXPo2iBI5bXbywtI
-Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
-Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
- field_{prep,get}() helpers
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Johannes Berg <johannes@sipsolutions.net>, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	qat-linux@intel.com, linux-gpio@vger.kernel.org, 
-	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S . Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Alex Elder <elder@ieee.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: MELI+WA1+YWQcZWBz7pJwqyge3tHMHZH919bCPhc+/ABH75xkJ1p99uA
+	OaX/lZ9XFbdVOix34z/HyzokFjMfvqXKTQN/p4DTVY7c5bpTJnNoUICzUe9JTCfPlN+6r2h
+	EQWhXkybYVmd/dhMLEsS9DuZO55ZVXt+ZAhZXUwkJYuhDVvajTIaY21jyIYT9XrOONv+Kg9
+	f582nAjqAAN9vZ5B8e8nn032iqrloWilEF2wItxnjQNFW1arQEMT+aRXepCKKOCS92nYUkp
+	kU6J/g4LcLp700tpZfA/q3gS7Pxe7GudZZiisZ1aDSYe/XB3GXIqNSzIMb7WtKRzzeciPyg
+	rPpZkHcGZQMryCgnaWu0S8tN68syAMzfyKW6Q6RDfw745t0vlJZbOvMXyM/zO/LO8EuzVW9
+	zF3ZHnAsmuINKvEbanrAPctpJJc/CFMK7KEKanL2zmUR1M5rRaWW/fObqWMJM5YQDK27xt4
+	+G5pniZE8+xdtSUyYLbgRmISvYkFb8O64U4No+NAFu4N/ypWW12n+KEwndjwZlEO068Bw3g
+	S+VH7rM4wajeiVrmYZB6wgoXxndHmX+RBI6fbLPUyrVzVUpgwP0SEw6RImLixfb488ytrY2
+	tgFWIEjBORLD30GITBh8LSh2R+HEL9S/z0JPERQb8LL6fIHwjZjaG4djCVSNluwBBrtkBsg
+	09LHydf8K9IEcyQR7YLLvl0bdlbK4Y+z2twK86ZIY3iYHgEhHsHmGmZ5LB8ErI0f3oo6vBX
+	v864q4EsWtD4LbRJ5mpQExPGFWTt845lkly0II8MJWXMWJWHt9IztgroO4oys6qRLDwEorI
+	cZxba6upKXw6mJRJJudi88aqfBDES3dLmBwVMRBLWPUVx8WSpX21JvJvwfhM64obJTP/mnF
+	g4V1h3bsboyweP/hNfBQ1zKlQKMgd/cZpS7/LitGDCTCkAzFJrbMehSfRieq1cWoRF4ZpBY
+	QV/Mip5XYZs91mEH5Bg2K3DVrFPVt+8bS5JvLO11Wzp2OX499PIr8ZHds
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hu Yury,
+We have two places to print "failed to set a report to ...",
+use "get a report from" instead of "set a report to", it makes
+people who knows less about the module to know where the error
+happened.
 
-On Mon, 3 Feb 2025 at 17:48, Yury Norov <yury.norov@gmail.com> wrote:
-> On Tue, Feb 04, 2025 at 12:41:55AM +0900, Vincent Mailhol wrote:
-> > On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
-> > > On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
-> > >> On 03/02/2025 at 16:44, Johannes Berg wrote:
-> > >>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
-> > >>>>> Instead of creating another variant for
-> > >>>>> non-constant bitfields, wouldn't it be better to make the existing macro
-> > >>>>> accept both?
-> > >>>>
-> > >>>> Yes, it would definitely be better IMO.
-> > >>>
-> > >>> On the flip side, there have been discussions in the past (though I
-> > >>> think not all, if any, on the list(s)) about the argument order. Since
-> > >>> the value is typically not a constant, requiring the mask to be a
-> > >>> constant has ensured that the argument order isn't as easily mixed up as
-> > >>> otherwise.
-> > >>
-> > >> If this is a concern, then it can be checked with:
-> > >>
-> > >>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
-> > >>                    __builtin_constant_p(_val),
-> > >>                    _pfx "mask is not constant");
-> > >>
-> > >> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
-> > >> any other combination.
-> > >
-> > > Even that case looks valid to me. Actually there is already such a user
-> > > in drivers/iio/temperature/mlx90614.c:
-> > >
-> > >     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
-> > >
-> > > So if you want enhanced safety, having both the safer/const upper-case
-> > > variants and the less-safe/non-const lower-case variants makes sense.
->
-> I agree with that. I just don't want the same shift-and operation to be
-> opencoded again and again.
->
-> What I actually meant is that I'm OK with whatever number of field_prep()
-> macro flavors, if we make sure that they don't duplicate each other. So
-> for me, something like this would be the best solution:
->
->  #define field_prep(mask, val) \
->        (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))
->
->  #define FIELD_PREP(mask, val)                                         \
->          (                                                             \
->                  FIELD_PREP_INPUT_CHECK(_mask, _val,);                 \
->                  field_prep(mask, val);                                \
->          )
->
-> #define FIELD_PREP_CONST(_mask, _val)                                  \
->         (                                                              \
->                 FIELD_PREP_CONST_INPUT_CHECK(mask, val);
->                 FIELD_PREP(mask, val); // or field_prep()
->         )
->
-> We have a similar macro GENMASK() in linux/bits.h. It is implemented
-> like this:
->
->  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
->  #define GENMASK(h, l) \
->          (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->
-> And it works just well. Can we end up with a similar approach here?
+Before:
+i2c_hid_acpi i2c-FTSC1000:00: failed to set a report to device: -11
 
-Note that there already exists a FIELD_PREP_CONST() macro, which is
-intended for struct member initialization.
+After:
+i2c_hid_acpi i2c-FTSC1000:00: failed to get a report from device: -11
 
-Gr{oetje,eeting}s,
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+---
+ drivers/hid/i2c-hid/i2c-hid-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 75544448c2393..d3912e3f2f13a 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -290,7 +290,7 @@ static int i2c_hid_get_report(struct i2c_hid *ihid,
+ 			     ihid->rawbuf, recv_len + sizeof(__le16));
+ 	if (error) {
+ 		dev_err(&ihid->client->dev,
+-			"failed to set a report to device: %d\n", error);
++			"failed to get a report from device: %d\n", error);
+ 		return error;
+ 	}
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.20.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
