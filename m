@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-514848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269CDA35C73
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:24:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E9AA35C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F0E3B0144
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:22:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399BF7A5DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77907265CA6;
-	Fri, 14 Feb 2025 11:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8792C2627E3;
+	Fri, 14 Feb 2025 11:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VEAcjJIv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGWHLdGq"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D237E265CA2;
-	Fri, 14 Feb 2025 11:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB23825C6F2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532021; cv=none; b=qws/j16hbt9wqgsR7l60WSV58CcYc+5KOv9P5n1v+AbXB5Q/Rhi19QPU8Scs0FG3yVOicne2eWZ4YRj91/v0J8veTSkbQDke73X4nEHrJEbnuCbxFTzTokHu0XdlfZ/IcuMKXwG0C8AKz4FeyagsYnnR2CiMfO5PEkMe/6DAOps=
+	t=1739532118; cv=none; b=HyV2DOT5VjJorLNbFeYhzr7+dOOVaAPU57XiEdbYRjxqqN39bmO2NLGjIIv31x7kf/LwswCB3sDW061vvvhTtcQo+aREgdz9Y47Gy6SuGcYDkGXazUOhgAATkjqINlmzyi9bh8+WnLs0N+Xeq0d3rmJXNTAF8ecHsaexPtBBk64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532021; c=relaxed/simple;
-	bh=bsMoByqwV8q04F4BIn7mVkZvxnRBIcre3Xld+Gy6r0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEK82r6dKWhuiGx/4t72kf/Aeu+bWpnXHjXyq/OE2zs8fvQzFaizVSXYjtIsC/o8ql31VbzKar3d4NMFAxwS9u99PM2nqRvsE/WBbShBN5nys1+5FVn1eVQlYCHROvJNhmGnLKeI0a/ikFbfiERfPGOgLD/WjJM3PVhN0iYUGKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VEAcjJIv; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739532020; x=1771068020;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bsMoByqwV8q04F4BIn7mVkZvxnRBIcre3Xld+Gy6r0M=;
-  b=VEAcjJIvFJxUj3JHJa8hqqc3ETNBTRupaiK4U0zddaSVQ8F9OPBOCeST
-   xp01eH9jJ73k88Z+8zXxdF2acGkXFV9X5DnemhmY7VIVbUYEPYY90to/a
-   5d2gYHkU0koLcsoaSbGqujD7Kd23tfpZX9/iOD/lg9mPs2axMT3iHgZGW
-   HRHkvajlEFIdBIjcf5EFVOE2CQtxKG12b7icK/r5918KlDLZodLnVygpk
-   EEbTym7h+cpBVfRlTzzf1S2YbyDSWmKrn+3iXzRmMSQ+qX46FY32khrA4
-   dl3vwgxY9Z9/ucb/SEibZjVbUi0dVfd109rPBosJQrFFP+M6+Vg4Y9W77
-   g==;
-X-CSE-ConnectionGUID: 85NzbTwqS7iEze/KET4VoA==
-X-CSE-MsgGUID: tvG75o/TQySTBn5W3WglBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50921227"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="50921227"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:20:19 -0800
-X-CSE-ConnectionGUID: y7/+bKRnQVCJqHfK1+vedw==
-X-CSE-MsgGUID: e3HzIYJQSCC/jYLkKMQc/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="113624859"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.89.75]) ([10.247.89.75])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:20:11 -0800
-Message-ID: <afa50e3a-914b-46b6-8401-0589b6099f68@linux.intel.com>
-Date: Fri, 14 Feb 2025 19:20:08 +0800
+	s=arc-20240116; t=1739532118; c=relaxed/simple;
+	bh=ezzyWJr26ZdaaidfyJ5r1M6cNnQSyRgTMfJMLrA1HvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=EATB6tmt873LGbMFKpZ46VL7TpNpB5UyNWnxRyhvdYY8fVwU3hU1QaIc/NLrLoXq93ONSbrWndCTctxvVhZ7xbblg8BYjmAqEPIf5kM/YRFJurZfNQUxIj43YPsyy1zqvwrDlyTv9TyZtx3EVV+g3+3Bk6rRkzMLnBbNCaTGcRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGWHLdGq; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so1099286f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:21:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739532114; x=1740136914; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VMB8ghyMQuT+XC9tlI2ESvX9kB+AAQwpREhffrh4yvA=;
+        b=bGWHLdGqbhnbIT2GtsHn+UUJmkTt+eip/Hq8hLWL43ne5CkCgHbhnRgHi3ngpEhGk9
+         93xkhjX+d1lTq2zMnOB+k2qCgXT5KYEDQPRQYWeP6tcws04QjS6PS38zyZ0AgSHDI1D2
+         BMir4LFD8lD7CvjSvdHdeR/bvqlZoXVdoZmwaQt2oUC6W9nnBytogfzEBh2mxsmO2Xrg
+         V1iqHNmdweloZ+EjIPO1gaBLgZpaPE404s/+tnIF+CsPY5OEh4e3RclIuTwaGjTqBjq/
+         N7L+z8/izpVZCLWH+5yndp/7wiqK1GxojjeHEmibeRcnTXmA0+Iem+en+AK2eP45Pp0/
+         z3Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739532114; x=1740136914;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMB8ghyMQuT+XC9tlI2ESvX9kB+AAQwpREhffrh4yvA=;
+        b=d585qA9muRBD6xlUM9jjqdvLmeS0cwhffLKVgHxlPGPMrnEXbGgCtp1fY/5Ek0/yQ0
+         5wjAjdrPxRMcBS9FYFL6COC1//6ilwMbPT9Gyso5S1gHQ69Y8ifD67IAG3srqngHblq7
+         wVjsX4t+abXWLoxZj3Ed1eLuJrHuOuGkRZQlXMG3uJ/5St1IhyDljOjdwARdhBYMjYzv
+         JAnHsom8FbCcUHbNIF0LbIILztMIyxc8XdnkfUxd4v9ebICfsL3mhLilTWUIC6bDkBJx
+         fxd6+yALTDILsZ6JJctM5EFqAMsTHfHcTUVScVYjitRnNv2TUSkUjyOIiwB+q0maxu8N
+         a9tA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfblIwp1Z15CgP4d6B2CquL6wozFyOnxTiFD9/YniUDiza3ZEjXzIYJ0e6R7xhxZVBqBaQQFHGRdMXpQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIfeqImy++LnIi2miAuuWKVv5IexTgKJMdx3lVVK9NPBDyxSTZ
+	VPq1HOcwjgr/OBSWKMWGofuqFcugIq8j6JA0PXRE9oJSLRX5jTR8Q/20Obe7Zi0=
+X-Gm-Gg: ASbGncuSq4SQ6tzjcq2CD3glnJ5W0FBfdzkjutGTeNqSw9ZCJRfigBdJLcow3rAd5Ez
+	ZKpJGiEScf09OFMqN74J5trIMAA8PBmUwM6BxH/FoFoM+OBiyQmff2xPdhTHgTNytdsyBtasi5X
+	tdjj9/jtN/zFHrcLdj+gKoBfCm75IBGA/9zJTHwqAg/U15/x08cGLcOrA3tBeOozU1txkB2nL3E
+	IB53SJvE9PRi7IF1OGOmbHHMdX9dxGtq8rdZJRyact4R15/IVOCRiaMR6Uy4unIuUfCjnriEzaE
+	ZAD1jOHx2NmdOUqqogNouJ1LcA==
+X-Google-Smtp-Source: AGHT+IHC1K05OWMY1r66dsv/3HqdN4RQ44rdAWDIfnre4gXGKY06JyEB7tot1W+W3P3i5F/tU2MN3Q==
+X-Received: by 2002:a5d:6dac:0:b0:38d:c433:a97 with SMTP id ffacd0b85a97d-38dea2ece71mr12206225f8f.47.1739532113922;
+        Fri, 14 Feb 2025 03:21:53 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.90.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439618ab352sm41836795e9.40.2025.02.14.03.21.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 03:21:53 -0800 (PST)
+Message-ID: <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
+Date: Fri, 14 Feb 2025 11:21:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,114 +80,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
- feature in IGC
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Kurt Kanzenbach <kurt@linutronix.de>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-References: <87cyfmnjdh.fsf@kurt.kurt.home>
- <5902cc28-a649-4ae9-a5ba-83aa265abaf8@linux.intel.com>
- <20250213130003.nxt2ev47a6ppqzrq@skbuf>
- <1c981aa1-e796-4c53-9853-3eae517f2f6d@linux.intel.com>
- <877c5undbg.fsf@kurt.kurt.home> <20250213184613.cqc2zhj2wkaf5hn7@skbuf>
- <87v7td3bi1.fsf@kurt.kurt.home>
- <b7740709-6b4a-4f44-b4d7-e265bb823aca@linux.intel.com>
- <874j0wrjk2.fsf@kurt.kurt.home>
- <641ab972-e110-4af2-ad9b-6688cee56562@linux.intel.com>
- <20250214102206.25dqgut5tbak2rkz@skbuf>
+Subject: Re: [PATCH] perf: arm64: Fix compilation error
+To: Leo Yan <leo.yan@arm.com>
+References: <20250214111025.14478-1-leo.yan@arm.com>
 Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20250214102206.25dqgut5tbak2rkz@skbuf>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250214111025.14478-1-leo.yan@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 14/2/2025 6:22 pm, Vladimir Oltean wrote:
-> Faizal,
+On 14/02/2025 11:10 am, Leo Yan wrote:
+> Since the commit dc6d2bc2d893 ("perf sample: Make user_regs and
+> intr_regs optional"), the building for Arm64 reports error:
 > 
-> On Fri, Feb 14, 2025 at 05:43:19PM +0800, Abdul Rahim, Faizal wrote:
->>>> Hi Kurt & Vladimir,
->>>>
->>>> After reading Vladimir's reply on tc, hw queue, and socket priority mapping
->>>> for both taprio and mqprio, I agree they should follow the same priority
->>>> scheme for consistency—both in code and command usage (i.e., taprio,
->>>> mqprio, and fpe in both configurations). Since igc_tsn_tx_arb() ensures a
->>>> standard mapping of tc, socket priority, and hardware queue priority, I'll
->>>> enable taprio to use igc_tsn_tx_arb() in a separate patch submission.
->>>
->>> There's one point to consider here: igc_tsn_tx_arb() changes the mapping
->>> between priorities and Tx queues. I have no idea how many people rely on
->>> the fact that queue 0 has always the highest priority. For example, it
->>> will change the Tx behavior for schedules which open multiple traffic
->>> classes at the same time. Users may notice.
->>
->> Yeah, I was considering the impact on existing users too. I hadn’t given it
->> much thought initially and figured they’d just need to adapt to the changes,
->> but now that I think about it, properly communicating this would be tough.
->> taprio on igc (i225, i226) has been around for a while, so a lot of users
->> would be affected.
->>
->>> OTOH changing mqprio to the broken_mqprio model is easy, because AFAIK
->>> there's only one customer using this.
->>>
->>
->> Hmmmm, now I’m leaning toward keeping taprio as is (hw queue 0 highest
->> priority) and having mqprio follow the default priority scheme (aka
->> broken_mqprio). Even though it’s not the norm, the impact doesn’t seem worth
->> the gain. Open to hearing others' thoughts.
+> arch/arm64/util/unwind-libdw.c: In function ‘libdw__arch_set_initial_registers’:
+> arch/arm64/util/unwind-libdw.c:11:32: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
+>     11 |  struct regs_dump *user_regs = &ui->sample->user_regs;
+>        |                                ^
+> cc1: all warnings being treated as errors
+> make[6]: *** [/home/niayan01/linux/tools/build/Makefile.build:85: arch/arm64/util/unwind-libdw.o] Error 1
+> make[5]: *** [/home/niayan01/linux/tools/build/Makefile.build:138: util] Error 2
+> arch/arm64/tests/dwarf-unwind.c: In function ‘test__arch_unwind_sample’:
+> arch/arm64/tests/dwarf-unwind.c:48:27: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
+>     48 |  struct regs_dump *regs = &sample->user_regs;
+>        |                           ^
 > 
-> Kurt is right, you need to think about your users, but it isn't only that.
-> Intel puts out a lot of user-facing TSN technical documentation for Linux,
-> and currently, they have a hard time adapting it to other vendors, because
-> of Intel specific peculiarities such as this one. I would argue that for
-> being one of the most visible vendors from the Linux TSN space, you also
-> have a duty to the rest of the community of not pushing users away from
-> established conventions.
+> To fix the issue, use the helper perf_sample__user_regs() to retrieve
+> the user_regs.
 > 
-> It's unfair that a past design mistake would stifle further evolution of
-> the driver in the correct direction, so I don't think we should let that
-> happen. I was thinking the igc driver should have a driver-specific
-> opt-in flag which users explicitly have to set in order to get the
-> conventional TX scheduling behavior in taprio (the one from mqprio).
-> Public Intel documentation would be updated to present the differences
-> between the old and the new mode, and to recommend opting into the new
-> mode. By default, the current behavior is maintained, thus not breaking
-> any user.  Something like an ethtool priv flag seems adequate for this.
+> Fixes: dc6d2bc2d893 ("perf sample: Make user_regs and intr_regs optional")
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   tools/perf/arch/arm64/tests/dwarf-unwind.c | 2 +-
+>   tools/perf/arch/arm64/util/unwind-libdw.c  | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> Understandably, many network maintainers will initially dislike this,
-> but you will have to be persistent and explain the ways in which having
-> this priv flag is better than not having it. Normally they will respect
-> those reasons more than they dislike driver-specific priv flags, which,
-> let's be honest, are way too often abused for adding custom behavior.
-> Here the situation is different, the custom behavior already exists, it
-> just doesn't have a name and there's no way of turning it off.
+> diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> index b2603d0d3737..440d00f0de14 100644
+> --- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> +++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+>   int test__arch_unwind_sample(struct perf_sample *sample,
+>   		struct thread *thread)
+>   {
+> -	struct regs_dump *regs = &sample->user_regs;
+> +	struct regs_dump *regs = perf_sample__user_regs(sample);
+>   	u64 *buf;
+>   
+>   	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
+> diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
+> index e056d50ab42e..b89b0a7e5ad9 100644
+> --- a/tools/perf/arch/arm64/util/unwind-libdw.c
+> +++ b/tools/perf/arch/arm64/util/unwind-libdw.c
+> @@ -8,7 +8,7 @@
+>   bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+>   {
+>   	struct unwind_info *ui = arg;
+> -	struct regs_dump *user_regs = &ui->sample->user_regs;
+> +	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+>   	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
+>   
+>   #define REG(r) ({						\
 
-Okay. I can look into this in a separate patch submission, but just an 
-FYI—this adds another dependency to the second part of the igc fpe 
-submission (preemptible tc on taprio + mqprio). This new patch 
-(driver-specific priv flag to control 2 different priority scheme) would 
-need to be accepted first before the second part of igc fpe can be submitted.
+Reviewed-by: James Clark <james.clark@linaro.org>
+
 
