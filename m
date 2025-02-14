@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-514457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E38A3573C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:39:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1087A3573F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91F71891F96
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:39:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB913AC151
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76241E1C2B;
-	Fri, 14 Feb 2025 06:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YpQ3el9J"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008820371F;
+	Fri, 14 Feb 2025 06:39:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D11714D0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079F71E1C2B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739515150; cv=none; b=jGKEDesPMGJ5KYHwP386q7AwfepUoYoBPvhOwBYMx8aE0rdg6Py0qQmFoX/ffEAVVvwciwDNDLJpK580DqmlAaYOrdftPaxnGpaF4cyYgfa93RXhimJP7FotcQEG2wqmlFaMAYhh4jGS63FNVF9834kVMJSSnr3LBpPHXzIHgG8=
+	t=1739515167; cv=none; b=cx5xWOzTPcUImnlakpzTyDZvYT6nuAURgtiY95g3swdOw7CQsb60rCNt3E9FcWwk4gCiFqJFSCfJJwv7BCJR3S6q1JjPpy7Nz7Hh2mLrOKugDSeJklGsQn1xFHc63mmiCYZ/x6LQdP2hzxunIuit0WCZyKty1TRPaMC0fgg13ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739515150; c=relaxed/simple;
-	bh=wM4tKt7wnAjL5plOI4BRiyB+09XoZe0tKNq0DJSi+xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UErYUsN5vojO/CBs0McrIgUg7bocwlADDczzoy3DFV4m25JJpbBNpWy966mVBtAYzvve7jEP+M6a9RSqlazsIDjlmLepFVBZmM6AntsJXoIPOXkI+SPKPGBGL3U4o1DHS/9RU1srYNwhuZNUrv9AQ1ndHPqGfE/Q4K7+nPXNIHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YpQ3el9J; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso254655166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:39:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739515147; x=1740119947; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n0sU8UuAz6zX29kmBzzz54CB+mIZrBU5m5rlPw1QPe4=;
-        b=YpQ3el9JyDtytDF1ggQ59bMI/wJQEtgyGxBm3ugSRebGJwOkMKScLcV/ZPTLNdfGKZ
-         X4HhcHT3UXlhmo6XJUAiAz5tu5Jvnc754r781IrG7fQEHRkNJ+pf833Awa7TCZetbO1n
-         WnWKWI6Q/OMDO+toSnncco1gCpHsfSwbAtCZra3BGDF/yS9c1gCPxmdON0fQ7aBIXjFZ
-         eS6u4h8pTNHBp4qKoNWRrEsClILIytW9miaBkEyyhaRdcxBYZVl/RFSf06Ras5CYs8QR
-         b4I1rOP7WvCA8uoI3dqm1j6LZUMI7mG86gwsoukeXcrqQcRTeL18ijBiwO6057QgcH85
-         TzTA==
+	s=arc-20240116; t=1739515167; c=relaxed/simple;
+	bh=RPRcBdYTiyPNkll2YVDappoe1ToG6ZsC+q9BYPD/0KM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K/XZVznJXhY7NhXc8oRaU2OycYVqTCE/Dy3M1VNblk0nvRTFVAUlEmNSCG6WAgdbu0XhRPhvaMuPmS4v8w27F3Fl+ri45MZ89jH1RVpzxBDufkbNYKUrYNjKjR2EPqMkROfMaYZr31dn3Eqkd52PoF+UDnBmv7Aki9H19hrKJh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d158477b5fso10722275ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:39:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739515147; x=1740119947;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n0sU8UuAz6zX29kmBzzz54CB+mIZrBU5m5rlPw1QPe4=;
-        b=iG7bl6zFUsTb6M3cv1CepFPA+muSQRRF9eCPSKJ5n7Ujqe0UG7yaiUKqdxzbeDcOkL
-         7rW8jnvw5Y4ND79dvstYe8QWg7atttKJNR1caWeft5IQ4lwX0ThQ6Mhqn3PWbIF2RaMg
-         uroNcNCZ4wtNQQzAYFE84K71iyXaetrH/2EwoweNR0wq6wcbj4MtLdvR5Fisjz6gxzAa
-         SS8pmvE19/t5U50jeRrWKVDMTIpO7Do4Af8C8/oE5QhdLIgLNqc3oKabRVo9DImOhS12
-         +K0fUmjaCllZJEGUftDZ0DCThk5E/D5fJDJOt2knC1SmKh1vQcTfMJ9gLq6Aa9qDv6gy
-         pieg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6F2o5ROlZ3qQxHgVBOzjVZx8T0x1tGR2rnaW/Kcry4cyPypvAJBmus2j49SRSa0HXQKIfVq6vbRux1oU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyooojUb17GCGUX71fxODjvqtOIrelyhBDocAqlpDA4yzbYZTwY
-	LM7YwX+xh2hSgvz9YsEVeWwH/vIl4IAMJpEmnU+mcttLqqCCSkVSXVHgNmxHxuQ=
-X-Gm-Gg: ASbGncuG5l3Ffxa86NogrdfzxNsDbax0kq3NcQQ1yFF3XBHuiomJuQXNuJvegncJv+4
-	pHJGsDHuYTpZuL9FhragqQ22cxASXFXT4x1jzTZC9AXgSOJ+kIu4PkXBni4vyBILXM2diMNOEv9
-	7jYDe9PYW3OjZYQg1A+M4k9w7B9DYv47DnJzIxJNRcwYjzmyUobrDqBWsPoxhhOpIAwwo26JUk6
-	DDRt4xIS7LyBPnScMD65qBdK1mLY5FzFX+hkkm+zGJyCkGTnqQHC1hCODWdRni3YOKtWjdX/qGj
-	Apl2Li5NxNxMdYW44NwKZ+vD
-X-Google-Smtp-Source: AGHT+IF1d6cYVnJi5xW59uL3+6NvNiwx8uIujRV1yuXHWDc54Fra2mr4R1Bhi8JKR7ZMNqzyULR9og==
-X-Received: by 2002:a17:907:d26:b0:ab7:da56:af95 with SMTP id a640c23a62f3a-ab7f336e7b4mr907392566b.2.1739515146641;
-        Thu, 13 Feb 2025 22:39:06 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.124])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53231f36sm276066166b.33.2025.02.13.22.39.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 22:39:06 -0800 (PST)
-Message-ID: <cf0a5ab5-265f-4429-8c11-8b669f00bc70@linaro.org>
-Date: Fri, 14 Feb 2025 06:39:04 +0000
+        d=1e100.net; s=20230601; t=1739515165; x=1740119965;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eHhZV9Csomr8XUspDhbBmbn5Y6J59ZTrAZNyV8CqFaE=;
+        b=aVzNzj6Y8WeOWrDIwQVlK04zjG+DHTGTqPBAJ68Cn0u0xJdbMF9TXuIRBz8hyVOjcp
+         afrEd94lYuSD00kCwbPxT66Hsv/Ht7rQfXTBO1JtuQtLfqxn3U27bkPbQZHR6nfW1b+f
+         rx3aB+lQqaX2Y9ELH5wlgrib9Sbqzk9N/2i5HklrHAKlCk9pHU2DTPLcqUwblbzd1U6P
+         cp2icRdlNUrpmRH9LZGvSNHhqzbEW9Fk38TlUa1WRT9qBDs1sVxY8niDdKO8MljnNY4U
+         PiO6OqKvQ6SQgWeJeGyUuYFA5imh9zrh3IwjcLJ4IbfPjQ7WA8g2t9PUU6X8d68Dtgnd
+         Vv2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7KeMukNeUO2IgHShnHUNiJVuStXAQ4ZbYcg/mD9Gluc2RZ8Lmf6i1Gq7HyocR1/KOQTDGkO8rVL3CZJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAMFRc6RwfZaLylOf1REZr5FeZNuIa4JbHiIMWLrc+37XAydmC
+	64c3Nip7yVjtXzUR6gSGc+nHc2QiB8VJ/3zI86RvhuAfdtSisbGNt7RUOv+73nAKzAngyPyK0vz
+	gqdvtTMWJ/MkUoK2KJdvI0GlF+eNRAe7jqR28GQdNvmNX0xZFU3RhaL0=
+X-Google-Smtp-Source: AGHT+IF/Hv/mD9dUCycNVAxCnDojNZtBwU1TsxPI3uWgYvdBobM+POkLBFJq1PuAq/ogiC5/7/BSp0H9LhxEj11P/yyJn+ZlrKo4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] spi: s3c64xx: add support exynos990-spi to new
- port config data
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- Denzeel Oliva <wachiturroxd150@gmail.com>
-Cc: andi.shyti@kernel.org, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250213204044.660-1-wachiturroxd150@gmail.com>
- <20250213204044.660-3-wachiturroxd150@gmail.com>
- <CAPLW+4nJVf0raJ-O3u6uUteBi--N5xGwvzXp7cHqbkdMJ8gCSQ@mail.gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CAPLW+4nJVf0raJ-O3u6uUteBi--N5xGwvzXp7cHqbkdMJ8gCSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2168:b0:3d0:255e:fdc with SMTP id
+ e9e14a558f8ab-3d17bfde1f2mr94773195ab.15.1739515165127; Thu, 13 Feb 2025
+ 22:39:25 -0800 (PST)
+Date: Thu, 13 Feb 2025 22:39:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67aee51d.050a0220.21dd3.002f.GAE@google.com>
+Subject: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
+From: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Sam,
+Hello,
 
-On 2/14/25 12:08 AM, Sam Protsenko wrote:
-> On Thu, Feb 13, 2025 at 2:41 PM Denzeel Oliva <wachiturroxd150@gmail.com> wrote:
->>
->> Exynos990 uses the same version of USI SPI (v2.1) as the GS101.
->> Removed fifo_lvl_mask and rx_lvl_offset, and changed to the new data
->> configuration port.
->>
->> The difference from other new port configuration data is that fifo_depth
->> is only specified in fifo-depth in DT.
->>
-> 
-> In the code below I can see this bit:
-> 
->     /* If not specified in DT, defaults to 64 */
->     .fifo_depth     = 64,
-> 
-> Is that intentional or is it some leftover that was meant to be
-> removed before the submission? From s3c64xx_spi_probe() it looks like
-> the "fifo-depth" DT property is ignored if .fifo_depth is set in the
-> port_config:
+syzbot found the following issue on:
 
-fifo-depth in port config is intended for IPs where all their instances
-use the same FIFO depth. fifo-depth from DT is ignored because the
-compatible knows better than what developers may in DT in this case, it
-is intentional.
+HEAD commit:    69b54314c975 Merge tag 'kbuild-fixes-v6.14' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=106d6bdf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a7ddf49cf33ba213
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9890527385ab9767e03
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13aafdf8580000
 
-> 
->     if (sdd->port_conf->fifo_depth)
->         sdd->fifo_depth = sdd->port_conf->fifo_depth;
->     else if (of_property_read_u32(pdev->dev.of_node, "fifo-depth",
-> &sdd->fifo_depth))
->         sdd->fifo_depth = FIFO_DEPTH(sdd);
-> 
-> Btw, wouldn't it be reasonable to flip this probe() code the other way
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-69b54314.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d0a58d1d655/vmlinux-69b54314.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b99949b40299/bzImage-69b54314.xz
 
-No, please. IPs that have instances with different FIFO depths shall
-rely only on DT to specify their FIFO depths.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com
 
-Cheers,
-ta
+netfs: Couldn't get user pages (rc=-14)
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 3 PID: 6306 at lib/refcount.c:28 refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
+Modules linked in:
+CPU: 3 UID: 0 PID: 6306 Comm: syz.2.100 Not tainted 6.14.0-rc1-syzkaller-00276-g69b54314c975 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
+Code: ff 89 de e8 78 71 f5 fc 84 db 0f 85 66 ff ff ff e8 cb 76 f5 fc c6 05 e5 68 86 0b 01 90 48 c7 c7 00 fb d2 8b e8 97 b2 b5 fc 90 <0f> 0b 90 90 e9 43 ff ff ff e8 a8 76 f5 fc 0f b6 1d c0 68 86 0b 31
+RSP: 0018:ffffc900030d7750 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a1159
+RDX: ffff88805135c880 RSI: ffffffff817a1166 RDI: 0000000000000001
+RBP: ffff88802d916fa0 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000005
+R13: 000000000000006f R14: 0000000000000001 R15: ffff88802d916fa0
+FS:  00007fee79bce6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fee79bad000 CR3: 00000000233ec000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __refcount_sub_and_test include/linux/refcount.h:275 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+ netfs_put_subrequest+0x2c1/0x4d0 fs/netfs/objects.c:230
+ netfs_collect_read_results fs/netfs/read_collect.c:300 [inline]
+ netfs_read_collection+0x25af/0x3cb0 fs/netfs/read_collect.c:417
+ netfs_wait_for_pause+0x31c/0x3e0 fs/netfs/read_collect.c:689
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:106 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:144 [inline]
+ netfs_unbuffered_read_iter_locked+0xb50/0x1610 fs/netfs/direct_read.c:229
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:264
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ aio_read+0x313/0x4e0 fs/aio.c:1602
+ __io_submit_one fs/aio.c:2003 [inline]
+ io_submit_one+0x1580/0x1da0 fs/aio.c:2052
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit fs/aio.c:2081 [inline]
+ __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fee78d8cde9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fee79bce038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 00007fee78fa5fa0 RCX: 00007fee78d8cde9
+RDX: 00004000000002c0 RSI: 0000000000000001 RDI: 00007fee79bad000
+RBP: 00007fee78e0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fee78fa5fa0 R15: 00007ffe1e525b98
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
