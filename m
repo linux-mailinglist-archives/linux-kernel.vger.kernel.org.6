@@ -1,245 +1,105 @@
-Return-Path: <linux-kernel+bounces-515409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A1DA3647C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:24:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C8CA3648E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE483B3A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A673AA49F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC402686BA;
-	Fri, 14 Feb 2025 17:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8578F268C69;
+	Fri, 14 Feb 2025 17:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="l+VNROrw"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="kYADpheO"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFFC26868B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702B126869A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553641; cv=none; b=ru/Ly13XwZgFaio8n68UGpNjkl6sqgVL9UZt8ucGnx4mtV0lQZWLinoJfhcVBSGrKaekAYTFIoee2jOaaT4GGV3jjpqMXHIz+THkBepx1AEthPIb1UGKa1KR8zutNW0+Aa85yeQa9nHLj1X7FzxSdYHnGxOBUUqDmiD3OqK8cyU=
+	t=1739553992; cv=none; b=n3tEQe3yqqkEr7z+SIj9k09+W2CsQrEPP8589dSdXZALHFJvQI1YpqPVoR9efFgLfToy4XcwS3ELg8GVcBRYFOmfPVvdoTk7Url011JdDQAaeSpUzpkYYLsPeXpeFZCh9rKRrdTo9I+8cszz6XewUoulVVNWOTkIeQ3fN+e57M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553641; c=relaxed/simple;
-	bh=VWbqp6K4LKAeLxmPZl8xyZnpdMT4p8X4Ma3HukStCmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4sRjFlohSbV4+Ub+EQhzBHOBk606GrU80gawGlLHxbzx15jCj6xF07fd0aviaRfVroWeUokQeIvFB8zqJciXe/q9IafKe9GtLFofLZK8LNVrJwaCuvsLRhN+1RzHF7SQ6os3xDOBapfhz7+WNvxzEjz6F803EZZ3yS1pYmnb8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=l+VNROrw; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46fa734a0b8so20611661cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:20:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1739553637; x=1740158437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+WVkzj3W35ksC2Q0LSJkzIeq5cPfQkeGpHe47IdtgQ4=;
-        b=l+VNROrwHry5H2AfX3QFTQpsS65yxwexmNgr4HczZUmSsAg+U5hfttc0WI+FNuVIVV
-         cNABtr/oLX3ld3+sVbBEh1ZKbBlxCB0kPXOGhNugKHYVAhtUftGoEcnjRn8k6KDl0zRw
-         ar3TfjI1IYrxt6J8AUcRnDRrPMaeCTBpBDdZb31PNmmcgmyl/me9aw27JcNGNiZUOyiB
-         Smz4GoocuBHozVCXsLHGltoSQmt9fn+KGUZFCwQRMOKyooj7vX7PZabjQriP3L/8197h
-         cKoIpDMV+vNeuYyXbiF1ZFLO+FntEIpPDiYS+5uG9Juw/6egTZSfD1HixEHV4MXqz5RB
-         a1vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739553637; x=1740158437;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+WVkzj3W35ksC2Q0LSJkzIeq5cPfQkeGpHe47IdtgQ4=;
-        b=QabkvY/IxMLgf7oaVyQlnHR2X9bTtbObh2mjcib3GMWF/VxPLvr9vdNj6Ow5/34Whf
-         ha/Z86KJ/c4OjesQ0M6O/M0po5iW4uVOpyrpJWIU9PlrjPe7JRwTNqGCPbt1n9SHTkXt
-         LOidZAHJ0SZDI7PNjDMF9WLiBH6sqBL2VZi/h+xHT8p8BT7MFRZJqOkX/XZbqPYNq6k8
-         aq+AgcXTZz+MJCKu2iyAVijGy9gj7VUdAgmK4WHa0maN07iZrX5sP0MudISXzhBELSRL
-         ZmPhTJbQQovCk4AuDFiEGmmYvKtEiAS8Xl2btj6Bz7Lxy1wfx/vndlJotVTpA1Q1CPfw
-         2ZAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDQKzP/pZu/QD/EwX9JQYGG61DOE77GE24j+BBNrycgNAR0PMM4osgakA3jCFqEXMfhtHB/71jWtSsCtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFsdBQwW2P93HbMOwFOTGFkxu+JsCKJJRqXaCIt+1SVhU1ZQ6x
-	YrAhkbAFdsjX0OuJELDdORAEQn0ztZMlUoOmuvL1lnJhm3odFnnKlgtrNVT2pqElsIpmsJhAWRs
-	s
-X-Gm-Gg: ASbGncvxcOk5773aZ/qNx9g1qn3B6317mWAE6xrjuWMoC9Cj95YCCQXBcYZKT9FI31N
-	UA/rLPQiO52Pw9Lf2zYvwoMErnjfhTnjKzv4nF8Mxm9jyoYEa1EvIr4fdVp5wIzIJu/3+ebAMbk
-	XOq+vnfiFtlx2KGNBqAWnZWfxNpNVH3SNsgsInMZLZCtodUZvr1oNlbHiE4sgzQjQJ1lJwvBkV3
-	2rUJ77dr1avpZ7cb358XU5utnzE8Ms+KeXiZwmJtgYjZtfZdP3MfQOzaxedzXRenH4hUDH4j3+e
-	MHZbWbFakMOCSw==
-X-Google-Smtp-Source: AGHT+IEfP2No6YtmM8ekpuXeOM+ZQKYz8NNrVM/VTB4q0JY4WMrcdrPqF3XRNKQUatLdTYn9ckBCbA==
-X-Received: by 2002:a05:6214:27e2:b0:6d8:916b:1caa with SMTP id 6a1803df08f44-6e66cce6e34mr273476d6.27.1739553636676;
-        Fri, 14 Feb 2025 09:20:36 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d78492bsm22992346d6.31.2025.02.14.09.20.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 09:20:36 -0800 (PST)
-Date: Fri, 14 Feb 2025 12:20:32 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] mm/page_isolation: remove migratetype from
- move_freepages_block_isolate()
-Message-ID: <20250214172032.GA241035@cmpxchg.org>
-References: <20250214154215.717537-1-ziy@nvidia.com>
- <20250214154215.717537-3-ziy@nvidia.com>
+	s=arc-20240116; t=1739553992; c=relaxed/simple;
+	bh=5X9po93482aFLpIrgTxkENTzyprq/G/AXnwXeW493MQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NBdqO9v+dby6/ghxb964T/IcpGPhADzJwK2FrHE/2J3wL6bKJQ/BLGAq7X3c3Lq5SHTbuJGzfVCsEl1rnNDH9hSvp9OpdZdEmgasGKGIKQbT/dsw/bUQeBWr9LlU03uYwpcA72R0GTXg8jkr3TQd6rEsiC52ulKZ9ypkk3PzXyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=kYADpheO; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=kYADpheOkBDJni8Szoosijy04sibwNBeGQWE6vO7rL/BnzUnasL9y0+BSK+2Y2bequjxW0dY8mrDVQ6GGQMXedpnchHOawMFYUx2lOqg1TPy+P2CJ53/obEdHc3UciJz1CUsJFfDY1q20HbP1JWlk1y03SyDOGxYWe71GCWnQ9w/W7E+H3xRdJ2j6cyzxuvSWAKAp+GibSYVni4g4sgyDKVi4PCIq3xxgCgYaAETr5zGsXJJFOJv/8WXJOANaYSU9Oh/vN7zZocWMpN/2vZPc8jA8824iS82U6OxT14t1V6REiPY0s2VTXTXxFCEsdU3YQCsSO3yXbBatu74Dei+QQ==; s=purelymail3; d=purelymail.com; v=1; bh=5X9po93482aFLpIrgTxkENTzyprq/G/AXnwXeW493MQ=; h=Feedback-ID:Received:From:Subject:Date:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1457029256;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Fri, 14 Feb 2025 17:25:49 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH 0/2] USB PHY support for Exynos990 SoCs
+Date: Fri, 14 Feb 2025 18:21:06 +0100
+Message-Id: <20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214154215.717537-3-ziy@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIJ7r2cC/x3MPQ6AIAxA4auYzpIU1AGvYhxEqnYBQ+NfiHeXO
+ H7DexmEEpNAX2VIdLJwDAW6rmDeprCSYl8MBk2HRreK7idEsRaVvw5xqnEasbPGOq+hVHuihe/
+ /OIzv+wHja1l7YQAAAA==
+X-Change-ID: 20250214-exynos990-dwusb-3b1005929bd1
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739553946; l=1223;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=5X9po93482aFLpIrgTxkENTzyprq/G/AXnwXeW493MQ=;
+ b=6ZfuY4P71D86TEPrjhPZjctQE9+ZypUwPq2J3pR9ULWDbxiK2N+X4bZ+QTsdcnN8fRhpMtiuS
+ VNy1XxJ654VCw2hwiOUwmEWUJMEVf8Mv/oFb8QAjlzIa7YoHhWgLZ//
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-On Fri, Feb 14, 2025 at 10:42:13AM -0500, Zi Yan wrote:
-> Since migratetype is no longer overwritten during pageblock isolation,
-> moving pageblocks to and from MIGRATE_ISOLATE do not need migratetype.
-> 
-> Rename move_freepages_block_isolate() to share common code and add
-> pageblock_isolate_and_move_free_pages() and
-> pageblock_unisolate_and_move_free_pages() to be explicit about the page
-> isolation operations.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->  include/linux/page-isolation.h |  4 +--
->  mm/page_alloc.c                | 48 +++++++++++++++++++++++++++-------
->  mm/page_isolation.c            | 21 +++++++--------
->  3 files changed, 51 insertions(+), 22 deletions(-)
-> 
-> diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-> index 51797dc39cbc..28c56f423e34 100644
-> --- a/include/linux/page-isolation.h
-> +++ b/include/linux/page-isolation.h
-> @@ -27,8 +27,8 @@ static inline bool is_migrate_isolate(int migratetype)
->  
->  void set_pageblock_migratetype(struct page *page, int migratetype);
->  
-> -bool move_freepages_block_isolate(struct zone *zone, struct page *page,
-> -				  int migratetype);
-> +bool pageblock_isolate_and_move_free_pages(struct zone *zone, struct page *page);
-> +bool pageblock_unisolate_and_move_free_pages(struct zone *zone, struct page *page);
->  
->  int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
->  			     int migratetype, int flags);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index f17f4acc38c6..9bba5b1c4f1d 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1848,10 +1848,10 @@ static unsigned long find_large_buddy(unsigned long start_pfn)
->  }
->  
->  /**
-> - * move_freepages_block_isolate - move free pages in block for page isolation
-> + * __move_freepages_for_page_isolation - move free pages in block for page isolation
->   * @zone: the zone
->   * @page: the pageblock page
-> - * @migratetype: migratetype to set on the pageblock
-> + * @isolate_pageblock to isolate the given pageblock or unisolate it
->   *
->   * This is similar to move_freepages_block(), but handles the special
->   * case encountered in page isolation, where the block of interest
-> @@ -1866,10 +1866,15 @@ static unsigned long find_large_buddy(unsigned long start_pfn)
->   *
->   * Returns %true if pages could be moved, %false otherwise.
->   */
-> -bool move_freepages_block_isolate(struct zone *zone, struct page *page,
-> -				  int migratetype)
-> +static bool __move_freepages_for_page_isolation(struct zone *zone,
-> +		struct page *page, bool isolate_pageblock)
+Hi all!
 
-I'm biased, but I think the old name is fine.
+This patchset adds support for the USB 2.0 PHY of the Exynos990 SoC.
+This SoC has a combo PHY that supports highspeed, superspeed USB and
+DisplayPort, however due to my inability to test the superspeed part of
+the combo phy (device always enumerated as high-speed, even on the
+vendor kernels/bootloaders) only the highspeed part is brought up.
 
-bool isolate?
+These changes have been tested and confirmed working (with the USB_ETH
+gadget and telnet/ssh in a ramdisk) on a device from the hubble family
+(x1s) and also a device from the canvas family (c1s).
 
->  {
->  	unsigned long start_pfn, pfn;
-> +	int from_mt;
-> +	int to_mt;
-> +
-> +	if (isolate_pageblock == get_pageblock_isolate(page))
-> +		return false;
->  
->  	if (!prep_move_freepages_block(zone, page, &start_pfn, NULL, NULL))
->  		return false;
-> @@ -1886,7 +1891,10 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
->  
->  		del_page_from_free_list(buddy, zone, order,
->  					get_pfnblock_migratetype(buddy, pfn));
-> -		set_pageblock_migratetype(page, migratetype);
-> +		if (isolate_pageblock)
-> +			set_pageblock_isolate(page);
-> +		else
-> +			clear_pageblock_isolate(page);
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+Igor Belwon (2):
+      dt-bindings: phy: samsung,usb3-drd-phy: Add exynos990 compatible
+      phy: exynos5-usbdrd: Add support for the Exynos990 usbdrd phy
 
-Since this pattern repeats, maybe create a toggle function that does this?
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |  2 ++
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 32 ++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  3 ++
+ 3 files changed, 37 insertions(+)
+---
+base-commit: 5cbcf2652f4cd84eac21f5e88fe2a0baecc601fb
+change-id: 20250214-exynos990-dwusb-3b1005929bd1
 
-		set_pfnblock_flags_mask(page, (isolate << PB_migrate_isolate),
-					page_to_pfn(page),
-					(1 << PB_migrate_isolate));
+Best regards,
+-- 
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
 
->  		split_large_buddy(zone, buddy, pfn, order, FPI_NONE);
->  		return true;
->  	}
-> @@ -1897,16 +1905,38 @@ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
->  
->  		del_page_from_free_list(page, zone, order,
->  					get_pfnblock_migratetype(page, pfn));
-> -		set_pageblock_migratetype(page, migratetype);
-> +		if (isolate_pageblock)
-> +			set_pageblock_isolate(page);
-> +		else
-> +			clear_pageblock_isolate(page);
->  		split_large_buddy(zone, page, pfn, order, FPI_NONE);
->  		return true;
->  	}
->  move:
-> -	__move_freepages_block(zone, start_pfn,
-> -			       get_pfnblock_migratetype(page, start_pfn),
-> -			       migratetype);
-> +	if (isolate_pageblock) {
-> +		from_mt = __get_pfnblock_flags_mask(page, page_to_pfn(page),
-> +				MIGRATETYPE_MASK);
-> +		to_mt = MIGRATE_ISOLATE;
-> +	} else {
-> +		from_mt = MIGRATE_ISOLATE;
-> +		to_mt = __get_pfnblock_flags_mask(page, page_to_pfn(page),
-> +				MIGRATETYPE_MASK);
-> +	}
-> +
-> +	__move_freepages_block(zone, start_pfn, from_mt, to_mt);
->  	return true;
-
-Keeping both MIGRATE_ISOLATE and PB_migrate_isolate encoding the same
-state is fragile. At least in the pfnblock bitmask, there should only
-be one bit encoding this.
-
-Obviously, there are many places in the allocator that care about
-freelist destination: they want MIGRATE_ISOLATE if the bit is set, and
-the "actual" type otherwise.
-
-I think what should work is decoupling enum migratetype from the
-pageblock bits, and then have a parsing layer on top like this:
-
-enum migratetype {
-	MIGRATE_UNMOVABLE,
-	...
-	MIGRATE_TYPE_BITS,
-	MIGRATE_ISOLATE = MIGRATE_TYPE_BITS,
-	MIGRATE_TYPES
-};
-
-#define PB_migratetype_bits MIGRATE_TYPE_BITS
-
-static enum migratetype get_pageblock_migratetype()
-{
-	flags = get_pfnblock_flags_mask(..., MIGRATETYPE_MASK | (1 << PB_migrate_isolate));
-	if (flags & (1 << PB_migrate_isolate))
-		return MIGRATE_ISOLATE;
-	return flags;
-}
 
