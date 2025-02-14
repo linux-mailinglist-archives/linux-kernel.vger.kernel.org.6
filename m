@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-514661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FDCA359E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:12:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3516A359F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53ADB1891A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58523AFDBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513B245029;
-	Fri, 14 Feb 2025 09:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A05245B05;
+	Fri, 14 Feb 2025 09:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KEVQshiQ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bkw6o3jj"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845BB23A997
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA2622D79E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524209; cv=none; b=PuOuhQkQXSO9KZ7H1bUc4qRE57eO9Fk8s6dYuw/fM2D1VR9O7JVDvHCfIfDIQAmMGMDxZSopmnMSjagInNcWI364LAvkORnIQjG/8y5W10/E0AQ/u6rH2Pki4DCr1Z+vSoth7DbcxWVgzaDkUD9g/Ws7P+PsVzgPDjOHJY4mUyA=
+	t=1739524235; cv=none; b=QtCl0sdqgNS9sH/UvQ/uhLgW4ElLFSVGvPYDoyt4sDc9Hqe8XIOLshqt2iLzeM9fhtpVYVrOYgKIFWRnIwJy+wxvYUyGQQ4hXHZlr58Hpl1pt8ICTpTT/6TMh3jicWFBUT6/T/AWOACz0J0Jyr+3wHvvs3wcc8lT4c7HnbMRMno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524209; c=relaxed/simple;
-	bh=DER3TMntGQq5jg7E86/NDM7bx6lqw/lzX8FEgotNMUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NqKsIJ3Hr8iTUnI2KK9RJ87+ogW+ulFDgqypLQjSvDxVKrhiuOtb6KmsVVUd8Zvfk30+7PMyXbnjxyKX15AkPuqoq1IDH+7RdNKcIxdztO3lF/PkEhxXwG3xSqEnqs8hVXocDYd6JFEE2+cHylKqh7/bNRwHc/LkaqVezEkIqR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KEVQshiQ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54529e15643so328987e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739524206; x=1740129006; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DER3TMntGQq5jg7E86/NDM7bx6lqw/lzX8FEgotNMUY=;
-        b=KEVQshiQVvW/yhbbEuawfh5arnnzKMijXiqe7mZ1k+ZNvXcfC0IxX2pESBhVrK97ue
-         /fAr/yPiI88bgYbLm73BDR5OloDF6j/oYSVth3HMejKsl4KkpUulQ0+hVi4iYBqUEp/0
-         UT0feugGfAy/3CQPC9nPgqP01dwccfgjAzU5896WNfNf7EWHMDb2bRilp3anPuvI5crT
-         Jv9pTQMZT+q3rxzTlvpSP9T9lD4Y2io/Cecxb3qr8JducIpFzSAbh+lmUhaVXzgYZJM7
-         d0mHDP85aFpytG12T5wp0W/6RL/aHvN0AXn3XfycDkhOKKKR039gCGxb8kZPcW4RYjdQ
-         wDGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739524206; x=1740129006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DER3TMntGQq5jg7E86/NDM7bx6lqw/lzX8FEgotNMUY=;
-        b=fv3RNb49ckRc1pah+KUYDQimzzutd5dK3ikE0zstV7zJHwzhF8hKKdMuiCrXANqkh5
-         4KXm9WQjindlVExDXgJxg8DvwYikFzN8llCGFlDGPZ73xWunYgq4dxJodxJSpyMs6yNk
-         +CIodYnhwQFLeEx82RClq7EMxHCIaCQKCBP+xsWODD6y4xU2n4TK216OZoNj4lz2wpPR
-         wweF4VvIgmBmOuK2j01X0B1mcU03c4dy/b094kTc9/3+5zxJb1uOuVoz9zVluo19ji6i
-         QnD1YTnj3MqkEgTqFgMXrEdfbDfAqfnBWXgIx8hTIupP7v1AhyRSJ1WZq3GAvuqO+4u6
-         NTkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqLyqLQoECqK0LJpQxgEw+I48Qxvz+zQe5GCaK9FDv3NSzG34SY+0oT+HBDbnyFQJpFG5xhCWjwqBN3Es=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0PkON9OCVpANqdGoPsGlP5c0+a85y5Fi3siV7IPEOXpLyghsa
-	BCiG3hLhRYFb54EhEKcHlQIBmGDdc4KygEAoPpAtMj2ZAh/JHEmMil2zjjVwXaeSLbi+oQx3lY/
-	AoXEWbSC5B0Bg5wWW95Glr8J9qscCPyPC3biISQ==
-X-Gm-Gg: ASbGnctIvTdZ5B704o3D4LnrzKQ0IfEOJrbifxiXqgWainwtRZ8erUzB3LxNnx5FMcn
-	DZm4UKqpg9Teeiv5kZDKrvpoNOxOKq4GqNmdRZgqui6s+QS1HJmLDYSjrMn6is+Otk6z36p8m
-X-Google-Smtp-Source: AGHT+IEAkug4IoXZCrjNUEs/f2U7SdEyFMpm+LMsw0oq/cisRKgOMzIhJOtnVLJvvA6rdUxdvsRrfELmDBHc4ke/nAQ=
-X-Received: by 2002:a05:6512:1598:b0:545:2474:2c9b with SMTP id
- 2adb3069b0e04-54524742e1dmr1124028e87.22.1739524205568; Fri, 14 Feb 2025
- 01:10:05 -0800 (PST)
+	s=arc-20240116; t=1739524235; c=relaxed/simple;
+	bh=l7XQn06UKH6z6aX2lgLTdUGl1oX7PeNZbACW+APz/8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i65RFHO+6eYca41bNxzO9HPcQzVd56Rrjy2ZV5rXoS4OjzGyWQ/SxJpHzxgFavLjmPHpBbHJZjXrJ49O/CD3GQeEG942Cl/YCm+xsrnz/UMtykWhJQMW45uIDdbg1liSU9VfgUhVHjxnTfzyW0ZIX89EKKX5hsmg20i2FAczFQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bkw6o3jj; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=p8cH
+	yiLvglep8gCoV5lWx+z+f4lN7jvFWIlgVLg9rw0=; b=bkw6o3jjrCJKBZ/7dOUz
+	oHo0fwuC4AhdPv0Ht4HN4FVHrEqHvOZxqA+lPjQP8b/rQgae+8rnChX6DqIq52dk
+	aFTZAuC3iWyvuWGEhMrOUslfafOReFOD+2dVdgi+Uld1u9sJrS5bO43kgshGED2d
+	LXQ38OHUFd9Sr6IvwGSS35ar44cjgXnYGhmYsvMw5vFuq/CzVlUPfEUwgAnhVJO0
+	XAIdldZ0eP8IsvpVcLu8LSM/QlglOBRTg+6pNMZ+lpoEaz6hQ3guS8EjWAxoRKCG
+	iaxujdzpPZ3yfaoSAeHJosEuBEkXlzq6hNUpYsB4FjXk0yslLBY+T3GcoOvbjIqs
+	+w==
+Received: (qmail 2318358 invoked from network); 14 Feb 2025 10:10:27 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Feb 2025 10:10:27 +0100
+X-UD-Smtp-Session: l3s3148p1@epilixYuKtxehh9k
+Date: Fri, 14 Feb 2025 10:10:27 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/2] i2c: octeon: Add block-mode r/w
+Message-ID: <Z68Ig1ckLoULA08E@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
+ <seom4yspcjnmdxxwn6wuyiqdy2ywpna6nw4rn36tsqinlncbca@jdehzfnznlsg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122120504.1279790-1-mastichi@gmail.com> <CACRpkdbtjS54+g-K1azE2hHeTsiyzA_gFa2NBX6QZZ3D_H5Ryg@mail.gmail.com>
- <CALieaedTCPNkMBZaaFWME9LHDE5OypcaOw0uDBK5fFFcNSO=wQ@mail.gmail.com>
-In-Reply-To: <CALieaedTCPNkMBZaaFWME9LHDE5OypcaOw0uDBK5fFFcNSO=wQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 10:09:53 +0100
-X-Gm-Features: AWEUYZl9vF-zSUt9bEaQ3FecnTlzAqqBsm5OSza7G4Mrs2iP2A6zz2vX5Rkx2to
-Message-ID: <CACRpkdbpWgZHUn4SouR3yL_xjhjnyC0ogb8bErDuECakyhPW_Q@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mcp23s08: Get rid of spurious level interrupts
-To: Dmitry Mastykin <mastichi@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"e.shatokhin@yadro.com" <e.shatokhin@yadro.com>, 
-	"arturas.moskvinas@gmail.com" <arturas.moskvinas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iIHNQfzo6ZOCO/mt"
+Content-Disposition: inline
+In-Reply-To: <seom4yspcjnmdxxwn6wuyiqdy2ywpna6nw4rn36tsqinlncbca@jdehzfnznlsg>
+
+
+--iIHNQfzo6ZOCO/mt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 7, 2025 at 9:36=E2=80=AFPM Dmitry Mastykin <mastichi@gmail.com>=
- wrote:
+On Thu, Feb 13, 2025 at 11:19:19PM +0100, Andi Shyti wrote:
+> Hi Aryan,
+>=20
+> > Aryan Srivastava (2):
+> >   i2c: octeon: refactor common i2c operations
+> >   i2c: octeon: Add block-mode i2c operations
+>=20
+> merged to i2c/i2c-host.
 
-> I made more tests and think that this patch shouldn't be applied.
-> It removes duplicated interrupts, but sometimes they increase the perform=
-ance:
-> a new interrupt may come during handling a spurious one, and spurious one=
- will
-> become valid (it's kind of a polling). I see the number of my touchscreen
-> interrupts reduced from 200 to 130 per second with this patch. It may be =
-a bigger
-> problem for users, than duplicated interrupts. Sorry.
+Andy had comments to v10.
 
-Don't be sorry about that, we code and learn by our mistakes.
 
-So is this patch causing any regression for users? Like touch
-events being slow to react? Also the expander could be used
-for other things than touchscreens. If it's not causing any regression
-for users it seems like a reasonable patch.
+--iIHNQfzo6ZOCO/mt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yours,
-Linus Walleij
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmevCH8ACgkQFA3kzBSg
+KbZzeg/9FBEtVPGBjuPUF0uWmm3p2BCJl8snOIYSARxXsSOoLdi1L0iANLPXid7M
+v7dGKeD4J4s15ESU1H9eaDkY6LRQklUHTQ3F+tFYBSiaax9umKx80veZQQfYdZjJ
+TCo01F2aqpgUEqrmCSDlzyBmVG1qPPkT8J/ehHVYC3vdxefgmb+Bc4fdnPD+RGjW
+JALR410nPxyFHfZfrd+Y+iH9/FGLPY54lG+CjA729xnH7PgnwvEcHXf3WjW9tm2B
+i0o9/7i+m8BgIJItypTqftphlkn0fsR4j2o0cOLHZKD6lp1BcRqhFSwsWkjh1IXi
+hactywwCmQVlAQ+eN0Lb7C1sRkfY+jhh0Db4r7CHTNGy7VYNr3/hOLCnmy5fH0yA
+JM/4NVvGtnc+G296C48Lv+JrDhNX4/l+vmfLpTPVrbjc54Tdryb/u7Pf1wnR6Fie
+UchgJ1amCcoQu+6m8w5pk3038m4pkEwXHEcJ1EQRNZj0XB/Uz9FedgD03Tk8FnsV
+RCd/4rwkZZ5sEthhdZ65Q9AYL5YAAeH/WfHSLokJMXcUk91WS2ZQlL4dzDP/HBxI
+q1MS/mFrCaVAnvcA9LGN2NwxW6U2yk3khQsglpXUwonh0xSuunAzxl5wBkmjO0vG
+TXjvTWxx5qGPPnicscCX3nq1CBeCcmaWckrOvywM/DSH7iU3xig=
+=8hZV
+-----END PGP SIGNATURE-----
+
+--iIHNQfzo6ZOCO/mt--
 
