@@ -1,263 +1,241 @@
-Return-Path: <linux-kernel+bounces-514633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0FA35988
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:58:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21C5A3598B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514063A7282
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A762916E80E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAD422A4C1;
-	Fri, 14 Feb 2025 08:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5200322A4CA;
+	Fri, 14 Feb 2025 08:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a22o+UKD"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OIacxsyd"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646A189915;
-	Fri, 14 Feb 2025 08:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F6B21A438
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523499; cv=none; b=a/9M1HbFwqo1hSjkDUVbzYrtDWGJUBJlDXNgLnlOCeDVP+i+p/EDC2lCpmHZQ9BYMh36x6D+KRe8mv5HSqfVLoSgHdRET1GSLify+ZgpcnROzrofYWSqJHw0BmTq9NzonTVKcij6WdBO/KnxR790awjviQQOvYI0/6pNtp4Db/M=
+	t=1739523581; cv=none; b=PUoVL0n67QNze5gCKRPvQSuYKpnxLobQu0794YZbPRgcTZEQCyY6SRNcbfJ9+9zLaZJVfdtmMMNHc05jcQhW+ZJs22rIqIOeUSrMN8tK7z84UcoF2zEApERsxrHW4LxqPiQ/uJdJD1YLbFPkAMq+hjU33q6ueUtiuEq3WdthsCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523499; c=relaxed/simple;
-	bh=VOld3dnw+T4weevCXt6kCyRx+szkiYiuTkVNcPfwJV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B+TTkf+CuH/eIGWg+PP9uzKARiRK91ZW8KRXi9ZXApvOuxQFSOydgQaOaxWERr3WZnp6hBONS0aVTHWd8L8gDEIJ2ysn0sNlmtqy+IG/gZ6xgMDWjRT61g7YbJU97D+qTOjQd58BkCYz1qJ4B4j6i961leWo0AyrkXRka21S/TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a22o+UKD; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2b8e2606a58so970530fac.0;
-        Fri, 14 Feb 2025 00:58:17 -0800 (PST)
+	s=arc-20240116; t=1739523581; c=relaxed/simple;
+	bh=lIqag3A/X2pmc4BRaks73YT6X86Cppexn1l2jgDjt0Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VgZSJWAduwkkqjdXzfrSLKg7CMUyhqumXx7pg1B2XaAuzy8Jm/5KHs6HtCpIAMIiDk+zLFZWcEKCbNK1d6jJJw3Ozwqmnstz13Oxe2x0taT5EM48HVKEJwEsvMp3+kFlydHtU1G4BMCgpjxyjQq35/RpH9LxEM6uSZAcJgCN2t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OIacxsyd; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38dd006a4e1so1319228f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739523496; x=1740128296; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QtD1EK2iHm2J01pml3P/unMeIKoZgkx4ph4Uy7XYIUg=;
-        b=a22o+UKD4q1eyEITdr/4HuR8rf4ldFl7Y347FY0agkM8jB0AaRudFutWSLGFlRmpBT
-         zUAnc3mqzhlBe9FzMv0oKsrOwrt+Dk6e8FrQTQQa6uP06h/J+Ujlbclczq+IKMvsgmlp
-         a2hwcpb1DNFe5Iv8coa6BUtC9ZPrF58qvSXjcWEaWx8XMf6fdjBDfe0Q+wbZSIDsH+iu
-         pEzr4vIGGIpnRebWpBIRclwZ+csJw63nUQhD7Hwdbv7mhv1n5Ef0L6M/VCqmoz2rVoLj
-         IAY/pRfwLWvQUCD8YgCkpG3bUALHeSBWL4l7qUnjjOEgjrVDF/B+Z3+GJacYkX+iub3q
-         q2uA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739523577; x=1740128377; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zoda2EDe08w9D7LB4RKFhW/A5U1oY6oOY5HMe4wfwNc=;
+        b=OIacxsyd5OVWk5oYDGblY5KZhNDbhpdl5XK+UAPOdf5iDTNuWzhh9bYwPNI0mOsSYc
+         uSFR4eOXST3uhvFqwK6SqVDze41XqmYxs/dJMbxQ5tBLOIqkmmSROiX/wLynu2X+N04t
+         xmmTnKI8IMczZrHLjvRI6SqzBLeLwT/lOTp8zVE8grvrB+v42YTgodrNo8RT5UZIPhd8
+         XGHfN9a7hhAVTZqrNUpBUxKyZkhbXIkRRq01qK3V6ZbOMQdG4LIpOgV4zesXH/G8yMS4
+         ABZ3edysKAmALcsAJwlOg+G1UI3ZnTxg5euvhEjoc0vcwy9UXfBZ1k3V2y3sjrTbBKMC
+         1QxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739523496; x=1740128296;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QtD1EK2iHm2J01pml3P/unMeIKoZgkx4ph4Uy7XYIUg=;
-        b=Yf4h+6al50+GsbFX2NrEDCHjcf0ohtG5+ssyEJMnHqCLR/w9P0Rrzp1Rg4vxOXpB+Z
-         iKoGKNadpWTR8IpjYEOMJVE0XemzEfy0MURQEco5UeX9a1bOjq2LDIA5xxNzY7kLkQhx
-         Ai8YfYk14cwoZ7YjDWIMZwOpGIgEZBFD9UksYEtihvYJiW+07YEf1EnFzc9972RfiRhN
-         hbcho9USpD0kfeYjQFGwquejHPEtyNPDYXOXBrMl0JQXt8nQJ8/W+jvzoQybJ/fX6g0O
-         JKj5fznWQ9nLGqvFblhXH4y789cyIsfk7IJyQpzPGDav3aoZVkj6fkth5x4aimdxGsh9
-         /QVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZFBvKo7PW42oV/w1f2fPIJ3y2aRzyl+gUQBK3AKGtRmJrtRhnP/SIX8lESyKC5b3cIp6kYOpsEL9HEg==@vger.kernel.org, AJvYcCWORFNlrj6qZxnAA93FUjrg7HZfHYv6A+Fu636CrACrvSLBaa1WPC5G/tWkzqgPkeMUfXPLTjBwcyHnmEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz67uahdr+StJOO+HwVZ5au9Xk3NzV75Zmz//Dg6U9kfuvy789W
-	s+y3a+8SbLHKXPhINY9E3qO3jFbNpGih/eaSaQ57tOfZsoA0RvPtoR6yEyg9cBMpHMHVccKikNJ
-	jCnOhkRpEcHNBA8KOeYRgIZEu38Q=
-X-Gm-Gg: ASbGncte+LVgEOOxJcd6luF9Z1tUooUC6x5a+sI3N4FwtUTlBsWUU5pr0CH1XtbaJn/
-	iTc4T3zXc0/WVJuFVgrKeW1G4HQvxG6R6BMN6Mv6TZng5dfN1PU5ZyyEqDCnJ3fHBGd7BWMcVIN
-	t9fzFgx09mfN3cbHMuJLYLXodccqGr
-X-Google-Smtp-Source: AGHT+IFLewb412noj4uqcVc4O05Mx0s640QthBlKi29bsLaw4fZCgCoki/X1a7yUuRxKarNYApMZBkUEJ48ks/HSldc=
-X-Received: by 2002:a05:6870:ec94:b0:29e:29ac:5ade with SMTP id
- 586e51a60fabf-2b8daf9798fmr6678884fac.35.1739523496658; Fri, 14 Feb 2025
- 00:58:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739523577; x=1740128377;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zoda2EDe08w9D7LB4RKFhW/A5U1oY6oOY5HMe4wfwNc=;
+        b=kINbBFUd3NKlsapJDYRZ3oK7lrAQmVEcKK27JS8IL3yMhRujQilTjUzrAJ9Gn81WMz
+         ZH2YZ+swyq71RqOeBjk+tgilVOPiYk9JYi+/q2N15HkmQABS2Txr9TJ9ZyaMTHNadaFX
+         OdMjS4umUgNetMnYKO4eLmofcUSnS2qf53euLe1NAm2JoCy44ov+XE+yyjlQzxPPGjMc
+         LuDdyfTz1vh1PdA6MRV1092VRgTtmWEmnqpQ14vL6wcepzNe2c3tSH+yxdwJGybOLJ3i
+         L/Bgs8zojHvF9o+dxcfw4Fu8dPKc50zpb3QQ+INaQHZ7bI8og2p59PdyFPBD+Nf9ZAKb
+         3GUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcT9QQl8FI/TcNIxISaKK97NdcyIbskjuhHl3kj4IOl1z3ZgHV3rxzytyNLKzIkMSIwQulUoBF3amJus4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5xRM+rFH8+hfoAmZ0CkTH1kemgSVCMqmDbmv4hL21otVb2rJV
+	3NP5KYJovfBzPSG9yoJmHsVOCrV+Fw3cjG58vB3Eju6DL/sXAbQcIse6/kLvih8=
+X-Gm-Gg: ASbGnctOalIHziV3tEPu+G9UG9e3K+sl5RnE7ATKYNSQISePQE9gv8P//XuGsjwSL1c
+	3wTYGbd7Sga5l9CSDL4iyPfTAplJhHJ3C03Mt7fqcy8yhqV03HSWHLO34EPlB957dfBXQh6f3Ks
+	RjU0ql0Y8luzif3MSkerxXNUsNW72cWymx8qmci6xcv9wwDAYlwlglA/i4iuztXXAot0OsI94zX
+	yuC71aIaeqkd7yEmow7CcylF8rnH4LfgPt3Vc8JSKr74mmD3zRGgT36GzOUUXSwNLP/hFAjGBV+
+	mWFxdXoN+aKIlyA=
+X-Google-Smtp-Source: AGHT+IHr8NGbRnNCNsasOEgGwEH9hogJeR/Q2q11CcGnTNY+PAq+96jRXtyg1EfxGENX3t8ZZduxZg==
+X-Received: by 2002:a5d:5250:0:b0:38f:3141:8912 with SMTP id ffacd0b85a97d-38f31418a8cmr220671f8f.24.1739523576712;
+        Fri, 14 Feb 2025 00:59:36 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:baa6:bc65:b9db:3759])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f258ccda0sm4052204f8f.27.2025.02.14.00.59.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 00:59:36 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Dave Ertman
+ <david.m.ertman@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  "Rafael J.
+ Wysocki" <rafael@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Arnd
+ Bergmann <arnd@arndb.de>,  Danilo Krummrich <dakr@kernel.org>,  Conor
+ Dooley <conor.dooley@microchip.com>,  Daire McNamara
+ <daire.mcnamara@microchip.com>,  Philipp Zabel <p.zabel@pengutronix.de>,
+  Douglas Anderson <dianders@chromium.org>,  Andrzej Hajda
+ <andrzej.hajda@intel.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  Robert Foss <rfoss@kernel.org>,  Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>,  Jonas Karlman <jonas@kwiboo.se>,
+  Jernej Skrabec <jernej.skrabec@gmail.com>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Hans de Goede
+ <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+  Bryan O'Donoghue <bryan.odonoghue@linaro.org>,  Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>,  Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+  Michael Turquette <mturquette@baylibre.com>,  Abel Vesa
+ <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Shawn Guo
+ <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
+  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
+  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation
+ helper
+In-Reply-To: <20250213-crown-clustered-81c6434c892b@spud> (Conor Dooley's
+	message of "Thu, 13 Feb 2025 17:59:07 +0000")
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+	<20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
+	<20250213-crown-clustered-81c6434c892b@spud>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Fri, 14 Feb 2025 09:59:35 +0100
+Message-ID: <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127061529.2437012-1-zhangchunyan@iscas.ac.cn>
- <c0a2fbeb-9a0d-4b69-bc6b-e1652e13debf@molgen.mpg.de> <Z5gJ35pXI2W41QDk@ghost>
- <CAAfSe-utAb53278x9X4tKn6jWzdehsPKDRa_CoQy61ND=cXbxQ@mail.gmail.com> <Z65l51hrDmKQP6dM@ghost>
-In-Reply-To: <Z65l51hrDmKQP6dM@ghost>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 14 Feb 2025 16:57:40 +0800
-X-Gm-Features: AWEUYZk6Nb2w_oOkYEtmCWxquIeInQemENiiDTKj3yi3kUf3z09tHcasYvPqllI
-Message-ID: <CAAfSe-tcNHYY+Jw5CZNOxXgLcK8gvBq7rgOY5KZfM_+9PbTfHw@mail.gmail.com>
-Subject: Re: [PATCH V2] raid6: Add RISC-V SIMD syndrome and recovery calculations
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Chunyan Zhang <zhangchunyan@iscas.ac.cn>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
-	linux-riscv@lists.infradead.org, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Fri, 14 Feb 2025 at 05:36, Charlie Jenkins <charlie@rivosinc.com> wrote:
->
-> On Tue, Feb 11, 2025 at 05:59:26PM +0800, Chunyan Zhang wrote:
-> > On Tue, 28 Jan 2025 at 06:34, Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > >
-> > > On Mon, Jan 27, 2025 at 09:39:11AM +0100, Paul Menzel wrote:
-> > > > Dear Chunyan,
-> > > >
-> > > >
-> > > > Thank you for the patch.
-> > > >
-> > > >
-> > > > Am 27.01.25 um 07:15 schrieb Chunyan Zhang:
-> > > > > The assembly is originally based on the ARM NEON and int.uc, but uses
-> > > > > RISC-V vector instructions to implement the RAID6 syndrome and
-> > > > > recovery calculations.
-> > > > >
-> > > > > Results on QEMU running with the option "-icount shift=0":
-> > > > >
-> > > > >    raid6: rvvx1    gen()  1008 MB/s
-> > > > >    raid6: rvvx2    gen()  1395 MB/s
-> > > > >    raid6: rvvx4    gen()  1584 MB/s
-> > > > >    raid6: rvvx8    gen()  1694 MB/s
-> > > > >    raid6: int64x8  gen()   113 MB/s
-> > > > >    raid6: int64x4  gen()   116 MB/s
-> > > > >    raid6: int64x2  gen()   272 MB/s
-> > > > >    raid6: int64x1  gen()   229 MB/s
-> > > > >    raid6: using algorithm rvvx8 gen() 1694 MB/s
-> > > > >    raid6: .... xor() 1000 MB/s, rmw enabled
-> > > > >    raid6: using rvv recovery algorithm
-> > > >
-> > > > How did you start QEMU and on what host did you run it? Does it change
-> > > > between runs? (For me these benchmark values were very unreliable in the
-> > > > past on x86 hardware.)
-> > >
-> > > I reported dramatic gains on vector as well in this response [1]. Note
-> > > that these gains are only present when using the QEMU option "-icount
-> > > shift=0" vector becomes dramatically more performant. Without this
-> > > option we do not see a performance gain on QEMU. However riscv vector is
-> > > known to not be less optimized on QEMU so having vector be less
-> > > performant on some QEMU configurations is not necessarily representative
-> > > of hardware implementations.
-> > >
-> > >
-> > > My full qemu command is (running on x86 host):
-> > >
-> > > qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1\
-> > >     -kernel arch/riscv/boot/Image \
-> > >     -append "root=/dev/vda rw earlycon console=ttyS0" \
-> > >     -drive file=rootfs.ext2,format=raw,id=hd0,if=none \
-> > >     -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
-> > >     -device virtio-blk-device,drive=hd0
-> > >
-> > > This is with version 9.2.0.
-> > >
-> > >
-> > > I am also facing this issue when executing this:
-> > >
-> > > raid6: rvvx1    gen()   717 MB/s
-> > > raid6: rvvx2    gen()   734 MB/s
-> > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
-> > >
-> > > Only rvvx4 is failing. I applied this patch to 6.13.
-> >
-> > I used your command to run but no issue on my side (x86 host, qemu
-> > version is 9.2.0, kernel 6.13 too):
-> >
-> > qemu-system-riscv64 -nographic -m 1G -machine virt -smp 1 -icount shift=0 \
-> >         -kernel arch/riscv/boot/Image   \
-> >         -append "rootwait root=/dev/vda ro"     \
-> >         -drive file=rootfs.ext4,format=raw,id=hd0 \
-> >         -bios default -cpu rv64,v=true,vlen=256,vext_spec=v1.0 \
-> >         -device virtio-blk-device,drive=hd0
->
-> I am able to reproduce it with this defconfig:
->
-> CONFIG_SYSVIPC=y
-> CONFIG_NO_HZ_IDLE=y
-> CONFIG_HIGH_RES_TIMERS=y
-> CONFIG_BPF_SYSCALL=y
-> CONFIG_IKCONFIG=y
-> CONFIG_IKCONFIG_PROC=y
-> CONFIG_NAMESPACES=y
-> CONFIG_USER_NS=y
-> CONFIG_CHECKPOINT_RESTORE=y
-> CONFIG_BLK_DEV_INITRD=y
-> CONFIG_EXPERT=y
-> # CONFIG_SYSFS_SYSCALL is not set
-> CONFIG_PROFILING=y
-> CONFIG_SMP=y
-> CONFIG_CPU_FREQ=y
-> CONFIG_CPU_FREQ_STAT=y
-> CONFIG_CPU_FREQ_GOV_USERSPACE=y
-> CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-> CONFIG_CPUFREQ_DT=y
-> CONFIG_JUMP_LABEL=y
-> CONFIG_DEVTMPFS=y
-> CONFIG_DEVTMPFS_MOUNT=y
-> CONFIG_MTD=y
-> CONFIG_MTD_BLOCK=y
-> CONFIG_MTD_CFI=y
-> CONFIG_MTD_CFI_ADV_OPTIONS=y
-> CONFIG_BLK_DEV_LOOP=y
-> CONFIG_VIRTIO_BLK=y
-> CONFIG_MD=y
-> CONFIG_BLK_DEV_MD=y
-> CONFIG_MD_RAID456=y
-> CONFIG_INPUT_MOUSEDEV=y
-> CONFIG_SERIAL_8250=y
-> CONFIG_SERIAL_8250_CONSOLE=y
-> CONFIG_SERIAL_8250_DW=y
-> CONFIG_SERIAL_OF_PLATFORM=y
-> CONFIG_SERIAL_SIFIVE=y
-> CONFIG_SERIAL_SIFIVE_CONSOLE=y
-> CONFIG_VIRTIO_CONSOLE=y
-> CONFIG_HW_RANDOM_VIRTIO=y
-> CONFIG_PINCTRL=y
-> CONFIG_GPIOLIB=y
-> CONFIG_GPIO_DWAPB=y
-> CONFIG_GPIO_SIFIVE=y
-> CONFIG_SOUND=y
-> CONFIG_RTC_CLASS=y
-> CONFIG_RTC_DRV_GOLDFISH=y
-> CONFIG_DMADEVICES=y
-> CONFIG_DW_AXI_DMAC=y
-> CONFIG_VIRTIO_BALLOON=y
-> CONFIG_VIRTIO_INPUT=y
-> CONFIG_VIRTIO_MMIO=y
-> CONFIG_GOLDFISH=y
-> CONFIG_MAILBOX=y
-> CONFIG_RPMSG_CTRL=y
-> CONFIG_RPMSG_VIRTIO=y
-> CONFIG_PM_DEVFREQ=y
-> CONFIG_IIO=y
-> CONFIG_LIBNVDIMM=y
-> CONFIG_EXT4_FS=y
-> CONFIG_EXT4_FS_POSIX_ACL=y
-> CONFIG_EXT4_FS_SECURITY=y
-> CONFIG_AUTOFS_FS=y
-> CONFIG_ISO9660_FS=y
-> CONFIG_JOLIET=y
-> CONFIG_ZISOFS=y
-> CONFIG_MSDOS_FS=y
-> CONFIG_VFAT_FS=y
-> CONFIG_PRINTK_TIME=y
-> CONFIG_SCHED_STACK_END_CHECK=y
-> # CONFIG_RCU_TRACE is not set
-> # CONFIG_FTRACE is not set
-> # CONFIG_RUNTIME_TESTING_MENU is not set
->
-> I took the riscv/defconfig and added MD_RAID456 and it's dependencies.
-> So that the message wasn't too long I started removing some unnecessary
-> configs. Try this out and let me know if you encounter the issue.
+On Thu 13 Feb 2025 at 17:59, Conor Dooley <conor@kernel.org> wrote:
 
-I took the riscv/defconfig and set MD_RAID456=y, but didn't see this issue.
-Since RAID6_PQ is selected by MD_RAID456, so RAID6_PQ=y, I got the
-raid6 test result during kernel init.
+> On Tue, Feb 11, 2025 at 06:27:59PM +0100, Jerome Brunet wrote:
+>> The auxiliary device creation of this driver is simple enough to
+>> use the available auxiliary device creation helper.
+>> 
+>> Use it and remove some boilerplate code.
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/reset/reset-mpfs.c | 52 +++-------------------------------------------
+>>  1 file changed, 3 insertions(+), 49 deletions(-)
+>> 
+>> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+>> index 574e59db83a4fcf30b60cb5f638607a2ec7b0580..bbea64862181877eb7ae51fdaa9e50ffac17c908 100644
+>> --- a/drivers/reset/reset-mpfs.c
+>> +++ b/drivers/reset/reset-mpfs.c
+>> @@ -155,62 +155,16 @@ static int mpfs_reset_probe(struct auxiliary_device *adev,
+>>  	return devm_reset_controller_register(dev, rcdev);
+>>  }
+>>  
+>> -static void mpfs_reset_unregister_adev(void *_adev)
+>> -{
+>> -	struct auxiliary_device *adev = _adev;
+>> -
+>> -	auxiliary_device_delete(adev);
+>> -	auxiliary_device_uninit(adev);
+>> -}
+>> -
+>> -static void mpfs_reset_adev_release(struct device *dev)
+>> -{
+>> -	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> -
+>> -	kfree(adev);
+>> -}
+>> -
+>> -static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk_dev)
+>> -{
+>> -	struct auxiliary_device *adev;
+>> -	int ret;
+>> -
+>> -	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>> -	if (!adev)
+>> -		return ERR_PTR(-ENOMEM);
+>> -
+>> -	adev->name = "reset-mpfs";
+>> -	adev->dev.parent = clk_dev;
+>> -	adev->dev.release = mpfs_reset_adev_release;
+>> -	adev->id = 666u;
+>> -
+>> -	ret = auxiliary_device_init(adev);
+>> -	if (ret) {
+>> -		kfree(adev);
+>> -		return ERR_PTR(ret);
+>> -	}
+>> -
+>> -	return adev;
+>> -}
+>> -
+>>  int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base)
+>>  {
+>>  	struct auxiliary_device *adev;
+>> -	int ret;
+>>  
+>> -	adev = mpfs_reset_adev_alloc(clk_dev);
+>> +	adev = devm_auxiliary_device_create(clk_dev, "reset-mpfs",
+>> +					    (__force void *)base, 666u);
+>
+> Moving the boilerplate into a helper makes sense:
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> One think that's always felt a bit meh to me is this id number stuff,
+> I just threw in 666 for meme value.
 
-[    0.317147] raid6: rvvx1    gen()    45 MB/s
-[    0.390800] raid6: rvvx2    gen()    45 MB/s
-[    0.459435] raid6: rvvx4    gen()    45 MB/s
-[    0.527651] raid6: rvvx8    gen()    44 MB/s
-[    0.596123] raid6: int64x8  gen()  1232 MB/s
-[    0.664686] raid6: int64x4  gen()  2728 MB/s
-[    0.733291] raid6: int64x2  gen()  3405 MB/s
-[    0.801836] raid6: int64x1  gen()  2730 MB/s
-[    0.801895] raid6: using algorithm int64x2 gen() 3405 MB/s
-[    0.870379] raid6: .... xor() 493 MB/s, rmw enabled
+:)
 
-Thanks,
-Chunyan
+> The whole thing seems super
+> arbitrary, do any of the users of this helper actually put meaningful
+> values into the id parameter?
+
+In example changes I've sent, no.
+
+In other simple usages (those using container_of()) of the auxiliary
+bus, I think there are a few that uses 0 and 1 for 2 instances.
+
+I guess your question is "do we really need this parameter here ?"
+
+We could remove it and still address 90% of the original target.
+
+Keeping it leaves the door open in case the figure above does not hold
+and it is pretty cheap to do. It could also enable drivers requiring an
+IDA to use the helper, possibly.
+
+>
+>>  	if (IS_ERR(adev))
+>>  		return PTR_ERR(adev);
+>>  
+>> -	ret = auxiliary_device_add(adev);
+>> -	if (ret) {
+>> -		auxiliary_device_uninit(adev);
+>> -		return ret;
+>> -	}
+>> -
+>> -	adev->dev.platform_data = (__force void *)base;
+>> -
+>> -	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, adev);
+>> +	return 0;
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, "MCHP_CLK_MPFS");
+>>  
+>> 
+>> -- 
+>> 2.45.2
+>> 
+
+-- 
+Jerome
 
