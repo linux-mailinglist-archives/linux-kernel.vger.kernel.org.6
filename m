@@ -1,204 +1,103 @@
-Return-Path: <linux-kernel+bounces-514791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57F9A35BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:43:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655B4A35BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3465D7A34B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662DD1887F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE24225A62E;
-	Fri, 14 Feb 2025 10:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA6425A2D3;
+	Fri, 14 Feb 2025 10:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Azw2+unw"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yg68Gh7v"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DF4204F6E;
-	Fri, 14 Feb 2025 10:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9A212D67
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739529784; cv=none; b=kXrPfAfFauVLaaB7rAEDtIFmEdDWdTzocw4RwTWw0TeP48rEAbyDN11UsdhCyqhvq9D4Vh5DZh1gRCfmCINnn/WDxq643RdhNh0LbXuzCmlD7AXSHHzgt6puyJR/Qq8VeHU0lsKh5aedzkDJ6TscdYcbtbW9FjC5YdYc5FNt6bA=
+	t=1739529824; cv=none; b=RYvLztfLJRchUUcgPEaRVEU/1pCEq5+0uoKy1c/sBWUNL2hTJZ/U+P8Z0ljYskjoOr2mCS7AcegOQ+DOgXnOnYYXVxCgArlbM6IaQUEQ19aYbHqlPuNbWcnLyMexW0LMqOaK0pLuB5wj/TI4z2s7qzRSCkK2ZR73dStxI05iBZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739529784; c=relaxed/simple;
-	bh=8CpuiP9EBQQ9L4hI9DboeB9GoBT6BwMTwHBnbXh4lVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YOLkd+jfK8CqniEopHY00GPoFLJFDeMTNFoWKg1raBK+doe7zJK2q4wySkGwHNMWz+8iMNdNLVzpB/D+QtwL5xPGvNTeytqmzrtgYq20yR1BCYbzOAfPNPi2kx+jzya/gPEGfkSe/pWqzAF0c9rWdf0qzTZ5PZouPAlSwYHnWrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Azw2+unw; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7BB4443345;
-	Fri, 14 Feb 2025 10:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739529779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5v7dMykohPWvYReY6PT9eMfYXTFzMIXPQR50pzZiNhA=;
-	b=Azw2+unwqmYrX6Fe4aiTuDCnijRpXZC2gemIE33lO3W2x9OCmnqOEyn3U+VUtwmhgc1cj3
-	cLY2Cak6FdMwbc64Xq42rOvw3TX3Ef0Gi2Ynz15ZDaVTIiFy1sM1nbgUwuKfhsYfSUnohR
-	EZ8RA+F+9RqhkJIdRgGrVLolsSxeqtnk1n0/3RrMq8EJb5udYubIsT0MqlocXZkO23zeJf
-	lVB0Imds2cmzYZGUNitfYfonfCbIWj8GJIGOfDYY8osv18tlVOPWRjHgu5kJFaAZcX3ngK
-	MSDMVcsY30YA9zg85azXweEyqlJJvgUUPL/60EHyw7PEDQWXOtJozXJAnpVMlw==
-Date: Fri, 14 Feb 2025 11:42:54 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Simon
- Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next] Documentation: net: phy: Elaborate on RGMII
- delay handling
-Message-ID: <20250214114254.0b57693b@fedora.home>
-In-Reply-To: <Z68WDG_OzTDOBGY-@shell.armlinux.org.uk>
-References: <20250214094414.1418174-1-maxime.chevallier@bootlin.com>
-	<Z68WDG_OzTDOBGY-@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739529824; c=relaxed/simple;
+	bh=258ESUmkji2A70iQi0WVuGZY6DzAzC9+BBeqUcHI3MU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pq48a8UT6+ohR08fA/EYrWdPv8IVkYBgBhu5JhBG5qJ8RqVPVoy2fUQjoHH2VUkEVWg0lrxouesJuefJH5LCzq/CUmCc9751aYgRMcg7Ar7yqdlB44nS8/rWETnt3sq5sDtzxiGe6176BYuICd3lGh2BQzzySIaawVuCbAHtSQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yg68Gh7v; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-308dc0878dfso19926991fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:43:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739529821; x=1740134621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=258ESUmkji2A70iQi0WVuGZY6DzAzC9+BBeqUcHI3MU=;
+        b=Yg68Gh7vH67KKH73fZDYm7O4pMoRUqhXWo7yWx8VJqAkXgLAu+wNXOxqTeV6cuoPGu
+         DiYjj1e5FqP5sPZU6GibHiY7r01GRsNprprcw+JA9SONoCGIE57WXrm6xzI7LL6Q02D6
+         x9/jVvGFgsSU21K7EZgV3BaaKzObeVc1e7XwP6CAYv6Uj3htJmYGDQYi2RcovrD2a/yu
+         yZ/xy3IdPmaUVIrGlvtM3iHYtAnV36hda1spXVpQcHd9FfXdd1bBWOJPLKxLoeLA9HrF
+         s3Lc9UGHljiigxciCF8oj5lAH15q9+jLp8IITd9rrF2/kuP8htqBrNi+XAAm4kNHlKvU
+         gTvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739529821; x=1740134621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=258ESUmkji2A70iQi0WVuGZY6DzAzC9+BBeqUcHI3MU=;
+        b=w4hu6l8AVo9tmOT4oTOXc1hGZQXu2K2pfUWRFFjSs5bNxaWR8eW2VmWjHTn4YofQIv
+         utrsc2RDYSc9uYIT6yCJyFPO57Y+nW+RgesvbZQim9WjuqA3W83S4mnZdS2VgGaDnTHx
+         myd/xKHA6JJA6hZMX5U1RFL4pw2o+R8jyNMxO95jLB0hSVAHAaj+81/2oe5ojZVzwue2
+         soyw/futmqfEDJVUeM/oBO7RFL24XzcgOj6MHiKpi1GbFDipE9u8FpwA10T6DB+Zch6Z
+         /skGrYIh5ngMCBai/1abpXpE2/OyGmZHYvpjg2sGGoHL8jHQvu/mfCPg5SvQXBGgoehw
+         duTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpuCSKd4p111BsPS/qSwGRRPATUToAH4MqeDLOME+BwdVVEAK/hKTV1EHFAfIe/DtMhsowh+RCPVGnYV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXp1cmbOt7ammrzIZsWrLn3M/f8rLEC9TP27I4pBlwWoqtVOLj
+	OdpdxSiuRMGlqT0whBm6I4OQVkzu4ZWaAPDGZnR9lqS5mbIrzltKHPeXOtZXtpEIxNg98BVN2Mc
+	9lpyUbThYUuzDrgeVXa+x527StvL6TTlEmIB8jA==
+X-Gm-Gg: ASbGncvFqmWAIgdhibZALv2KsUdy2QriFUuPHxvrQ/EVBMQI1CvYqumw+xsFhOZ8NdJ
+	tRHf6gOrP61tLyV4vVwuXaPzqzaIJrenRPoJSCk6Vni6AuQ7+aBnax1GqWRJQDgnHrzYQeizB
+X-Google-Smtp-Source: AGHT+IHIrJlrERpgwzo5wAuMDjjakD4AlBHd/8GGQfZyq2/tG9XCbPSB3xq9CnfI5XcNnXqNyGNdI7PPACfZeC6FfKw=
+X-Received: by 2002:a2e:be06:0:b0:308:fedf:8c12 with SMTP id
+ 38308e7fff4ca-30903630e55mr39608221fa.5.1739529820875; Fri, 14 Feb 2025
+ 02:43:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleeggecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdro
- hhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250213182527.3092371-1-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Feb 2025 11:43:30 +0100
+X-Gm-Features: AWEUYZn045uEEhfW31xBwMEeZrHA-IrXYXkIgwYU0XEIBbh_Wqus8rfEf1lz-KQ
+Message-ID: <CACRpkdZj2TtWh2CFb4f4DewO90C70e_3YdKr_DZYuQ6J4+z0Lg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpiolib: Make code more robust by using for_each_if()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Alexandru Ardelean <aardelean@baylibre.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+On Thu, Feb 13, 2025 at 7:25=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-On Fri, 14 Feb 2025 10:08:12 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> Instead of opencoding with long lines, use for_each_if() macro
+> which makes intention clearer and less error prone.
 
-> On Fri, Feb 14, 2025 at 10:44:13AM +0100, Maxime Chevallier wrote:
-> > @@ -73,8 +73,16 @@ The Reduced Gigabit Medium Independent Interface (RGMII) is a 12-pin
-> >  electrical signal interface using a synchronous 125Mhz clock signal and several
-> >  data lines. Due to this design decision, a 1.5ns to 2ns delay must be added
-> >  between the clock line (RXC or TXC) and the data lines to let the PHY (clock
-> > -sink) have a large enough setup and hold time to sample the data lines correctly. The
-> > -PHY library offers different types of PHY_INTERFACE_MODE_RGMII* values to let
-> > +sink) have a large enough setup and hold time to sample the data lines correctly.
-> > +
-> > +The device tree property phy-mode describes the hardware. When used  
-> 
-> Please don't make this document device-tree centric - it isn't
-> currently, and in fact phylink can be used with other implementations
-> even statically defined. Nothing about the phy mode is device-tree
-> centric.
+Excellent patch series.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Would "firmware" be more appropriate, or do you want to simply drop the
-whole thing ?
-
-> 
-> > +with RGMII, its value indicates if the hardware, i.e. the PCB,
-> > +provides the 2ns delay required for RGMII. A phy-mode of 'rgmii'
-> > +indicates the PCB is adding the 2ns delay. For other values, the
-> > +MAC/PHY pair must insert the needed 2ns delay, with the strong
-> > +preference the PHY adds the delay.  
-> 
-> This gets confusing. The documentation already lists each RGMII mode
-> describing each in detail in terms of the PHY. I'm not sure we need to
-> turn it on its head and start talking about "it's the PCB property".
-
-What I'm trying to convey here is that this description in terms of
-PHY-side perspective leads people (me included, but not only) to
-wrongly assume that if the phy-mode passed by the firmware is "rgmii",
-then MAC inserts the delays, and if it's "rgmii-[tx|rx]id", then the
-PHY inserts them.
-
-Which, as you state later, is wrong as "rgmii" means "No need for delay
-insertion in either MAC of PHY" and the other modes means "MAC or PHY
-needs to insert the 2ns delay".
-
-> > +
-> > +The PHY library offers different types of PHY_INTERFACE_MODE_RGMII* values to let
-> >  the PHY driver and optionally the MAC driver, implement the required delay. The
-> >  values of phy_interface_t must be understood from the perspective of the PHY
-> >  device itself, leading to the following:
-> > @@ -106,14 +114,22 @@ Whenever possible, use the PHY side RGMII delay for these reasons:
-> >    configure correctly a specified delay enables more designs with similar delay
-> >    requirements to be operated correctly
-> >  
-> > -For cases where the PHY is not capable of providing this delay, but the
-> > -Ethernet MAC driver is capable of doing so, the correct phy_interface_t value
-> > -should be PHY_INTERFACE_MODE_RGMII, and the Ethernet MAC driver should be
-> > -configured correctly in order to provide the required transmit and/or receive
-> > -side delay from the perspective of the PHY device. Conversely, if the Ethernet
-> > -MAC driver looks at the phy_interface_t value, for any other mode but
-> > -PHY_INTERFACE_MODE_RGMII, it should make sure that the MAC-level delays are
-> > -disabled.
-> > +The MAC driver may fine tune the delays. This can be configured
-> > +based on firmware "rx-internal-delay-ps" and "tx-internal-delay-ps"
-> > +properties. These values are expected to be small, not the full 2ns
-> > +delay.
-> > +
-> > +A MAC driver inserting these fine tuning delays should always do so
-> > +when these properties are present and non-zero, regardless of the
-> > +RGMII mode specified.
-> > +
-> > +For cases where the PHY is not capable of providing the 2ns delay,
-> > +the MAC must provide it,  
-> 
-> No, this is inaccurate. One may have a PHY that is not capable of
-> providing the delay, but the PCB does. 
-
-Sure thing, I can add a mention of the fact that this whole logic of
-'who gets to insert the delay' only applies when the firmware phy-mode
-isn't rgmii.
-
-> It also brings up the question "how does the MAC know that the PHY
-> isn't capable of providing the delay" and "how does the MAC know that
-> the PCB is not providing the delay". This is a can of worms...
-
-Agreed, but indeed that's a whole can of worms with so much users than
-It's hard to introduce some proper support for that without breaking
-existing setups.
-
-> > if the phy-mode indicates the PCB is not
-> > +providing the delays. The MAC driver must adjust the
-> > +PHY_INTERFACE_MODE_RGMII_* mode it passes to the connected PHY
-> > +device (through :c:func:`phy_connect <phy_connect>` for example) to
-> > +account for MAC-side delay insertion, so that the PHY device
-> > +does not add additional delays.  
-> 
-> The intention of the paragraph you're trying to clarify (but I'm not
-> sure it is any clearer) is:
-> 
-> - If the MAC driver is providing the delays, it should pass
->   PHY_INTERFACE_MODE_RGMII to phylib. It should interpret the
->   individual RGMII modes for its own delay setting.
-> 
-> - If the MAC driver is not providing the delays, it should pass
->   the appropriate PHY_INTERFACE_MODE_RGMII* to phylib so the PHY
->   can add the appropriate delays (which will depend on the PCB and
->   other design parameters.) The MAC driver must *not* interpret the
->   individual RGMII modes for its own delay setting.
-
-That's indeed what I'm trying to say :)
- 
-> In both cases, the MAC can fine-tune the delays using whatever mechanism
-> it sees fit.
->
-> Whether the PHY is capable of providing the delay or not is up to the
-> board designer and up to the author providing the RGMII configuration
-> (e.g. board firmware (DT / ACPI) to sort out.) There is no mechanism
-> in the kernel that the MAC can discover whether the PHY its going to
-> connect to supports any particular RGMII delay setting.
-
-Just to clarify, do you see that patch as useful ? seems to me like the
-original version is clear enough to you
-
-Thanks for reviewing,
-
-Maxime
+Yours,
+Linus Walleij
 
