@@ -1,189 +1,205 @@
-Return-Path: <linux-kernel+bounces-515627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC95A366D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:23:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D14AA366D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C13737A24F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B52171A20
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9876E1C84B3;
-	Fri, 14 Feb 2025 20:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C041C8611;
+	Fri, 14 Feb 2025 20:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PSVQIQ73"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H51KPdFl"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500091917F1;
-	Fri, 14 Feb 2025 20:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739564594; cv=fail; b=MHP57W5bsHs6SLG+/WbgD1RhuAlXGUGjiZM4ekUWJjt4lwLUCewfhZhjGSDwHmMtrACgogQACJLGLBIPtblIJtOqp6rfdr2IG1pFXdpn0X3wJ71XC/26MBQWRAqaLAmEM5lKH1oeitJdtp3SbbWmCWGAoDOgBn3iJufoLCpLfv8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739564594; c=relaxed/simple;
-	bh=Gk3N05iu2w8dssK8fX54bLY6EgDJGD7JhsMQUKhxsAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=urgXrqXLuMTug9ZbvLQVq1proVhcVlhyi3UMlJRhwAgLnAii34/EOEXPGt87nhysbhU6TnCHYvNBKMmb+27tmJLjYWRcUl7LYB8zYu5ZxPos1SgbAHLOXRmYKIzWGFWxuej/9/FaQUBghogzQUC3v2o9dKs1M+HD8IFvg+dfWss=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PSVQIQ73; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bvLwtwnfY/lAkJ3NIBa6CsFWq88frXdj2LNjh1FwWEwWwh6ZMFDYHZ7b4RCcHs+s8qu3JGzNSdxgvrMmke/+UOn1IVqiSLh7odq6uJXz+7VfAvf2l9K6U0GWL/c3WtSsP0eBSITgMWl5lEE7sSuyqaaKvO1u47woenzXJSsE62Oz9fm11LxPx/Dg7YYpF33vo1C4NxzzPAih6uT+AZs5fVibL4luk071IaPBvOwqWGACSOkpS/uBaoMA5b58vc2WbdkBBC8GQ9ZI5lTLiJQ00eK6mp2NrazA8wIyMJ71x5wWXSC1np8luFPhJ0Hk4vz9S+RuDRnEo7kH1rp+ZpdYOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=izbFWxu4Vr+f/WPuyleqNpbsTmr32AdyChgMGGJ8muc=;
- b=J3eWJi1/BG4qbZI/8+8i/VZZBFvua1DNElq0LljlKmhOtqMYqruJ9ApO5Of9ZgKlj3Ae7LGvhqakqzsZ0q1Vc0l0H06y0wIqwwcyerKv1qgbzQpd56v9IsFWCStcHT9FiUXhf9zkvcgYD4NDpQJAzTEZG5xCS05RmWVn0uIITg3qzI2mzf9wMPuAB4JxXoIbL9ewxFyP/JZ+0kvRWBxtH14cNF4xJ53OO3bdg4RLTfX16zsOkHV9TU5uwty6UiDOJD2HJy6ZTovjcNzZNr7A63D9CIJgequciID8EX5YVCaIQgsYLKynB55QHhHK78CFwAUitFNqiHz0z9J3WubA/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=izbFWxu4Vr+f/WPuyleqNpbsTmr32AdyChgMGGJ8muc=;
- b=PSVQIQ73Oe+nXFoBwZ4/rPQn26iwXvGH9LURfV+ntCO7+Gx6LlqxN8h+1s2Tc1NagSwzoDXGJS1Qd/CIBy2gIx5NtOgDFL3pUuVmNMMOw1cJmwII6YGPQWtdGu9ZaipPa5BCwSV+Me+MGZ7sqr13xoO5Io5301pwqzDC5hzPFeCTT+Qk5T46OHgkeCQRsGEpyQxrLKSCoeB7hF2S03C8duhCCSelFZXTJxe1goZ9cqCYv9gh10A5NrLFg5bdnBJg+QCP6Ic8qW0zrWZNYHxSqHd8LnR17/NcOK8BxnVaJqy7Uuparm22jv9Tf6aeFaV9zW52igIKXMB/eQczF/PGSQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SN7PR12MB7419.namprd12.prod.outlook.com (2603:10b6:806:2a6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Fri, 14 Feb
- 2025 20:23:10 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
- 20:23:10 +0000
-Date: Fri, 14 Feb 2025 16:23:08 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
-	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
-	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v6 03/14] iommufd: Abstract an iommufd_eventq from
- iommufd_fault
-Message-ID: <20250214202308.GJ3886819@nvidia.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <8427398787e81b81d0dc6df5661032b2301c06f1.1737754129.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8427398787e81b81d0dc6df5661032b2301c06f1.1737754129.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: MN2PR15CA0062.namprd15.prod.outlook.com
- (2603:10b6:208:237::31) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C570019066D;
+	Fri, 14 Feb 2025 20:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739564687; cv=none; b=Pm1Q3tSpDm2g8rWkc2MB2ZkjapoAG4h6lz8Q+r34brmY8KEvhWxAocFZn3tpm3kUa1YHInjLwL13D4UdFMvkJxu+v68xPoe7lC0tgtJ2fzt7gnVR8NFpA9LnPXZ6MluZkjluIlI6Fo7zeTI5PFz+iCPxfPga6DZugSTuSZnqOdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739564687; c=relaxed/simple;
+	bh=bCH5bqvcaIOMu8AtEhHMduHrLldLHxk+IB++yM9jvTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwscspPDNWgTwQVA16SivDCsqGR9qZIxAZJ3gYjO4f6GCerYtZN5hDq+kygahXzlrxuTvRlXbT2i4QshSmT+RjPh98hTFHoV4jWMoQMlvc1cwY5YP8L9QDLq43qQyRd/ygWl/9zJBP/+lGvOINg5ziEI5aX1gKaVVf6qftRReQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H51KPdFl; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so536716a91.1;
+        Fri, 14 Feb 2025 12:24:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739564685; x=1740169485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3p4NWmc8ditZ/XLLp37+2EiA/PYp9yKBL0C/xM4/3Fg=;
+        b=H51KPdFl8DhqtvkPdj1BL3FTCEzZVuPjP3aE/WwYgHPxH6fcBDAL5iDxhdpOqFLsH7
+         tNLLJt+El/nQEat9R7Y0pf1yywdKZWsVnApT5WEMIZ9RmDEJ9Gp43D6afEUWOYqJ/o7j
+         kmGhOxIx/4EowxJo81/YAEgTxSpSsNVPL2s0O7wadQe3mT1rMFdShFnkXdT+sTZmYSCW
+         zJxhd9MpDeCt7C0wmhmwj5BwLQxeDGAnp1XtG21xz6FgE8AUeYMrc4LguymJeJ2UcnvI
+         x+mdsi+LOO0BUi56AdajYXEQon+P4akFuSXCMWSKxfmdEuz8qekUBe/rzgV6Xg1c6dc4
+         bO4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739564685; x=1740169485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3p4NWmc8ditZ/XLLp37+2EiA/PYp9yKBL0C/xM4/3Fg=;
+        b=dTtCuDPsmGoHv0IYbwAreh6sbicdE1+LjctGtFNp/xVmWgPnhauIfbLcKOl+UI5imu
+         Yzsu4doDGP2r6Nn4EcUY325sUpBMY0mHzbLl5cFppr9Xes5PUs4BpLD/oSPnPsEn/cWm
+         T+CiSyAcxQfpvgeYpzLSr9/s6I5mRjgrmnFEV6uxjf3Fxb4d8I7PMfJA4qUKA5u1kcPX
+         c3EsrvPDcQTEdpG/jeRuCqAsvxl+ibR7Jr87WPc45ODUeC2CPKuTNfqjcrZvH9BOIa+q
+         gkjW9UyBRJ3d/8ANEJt40T8CFEjDTkm7Tcym6ZV8wIv8PJPigtcbxgkkojx0VJQMiN6n
+         Gxhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrO56pz8qj6ku5eJPvMaVOsQR7gSe64uGjVsOXAXQCT5nyzX1Z5yMoYiwYAuwUFSUw0/QsxUL829c=@vger.kernel.org, AJvYcCX/e2bHVkqQzWWOT1rhaOelXI7wCgz31iHIyyFRmGEjiRRK+4C6l7D+x2qAJncTtO3GR/c4RTcPLgusREQIrjc=@vger.kernel.org, AJvYcCXXbGj2M9zaD1bSaDU+GtggbwBlkSfjFzdUYXOgX5KBAKgUNDh9Rocu8U/CNtTRthNIpGopUY7F8FK7Dio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0zGZtoov6ij0dTz+2Yhq0s9FaO7l43e8ldq4JAWyD3kXolZlL
+	oze5PanFrOVSrRzb/lt0v9pYMDpWCJyjopNt1Gg9+QYHmXmlmi6X39mLeBeYhl/ufMCGphgZDye
+	2lDnRGF08Gxa/FVYdSSOmKpgT228=
+X-Gm-Gg: ASbGncvpKdLmO2cBr7evPR3ir6wcChHlA45kn3SVKtcGv3fFF+3QXz9wrHb/KjtPrC7
+	IUkB4dZ5A0SSYuhPcnfvyz53Tehr8sTMOLGjW9hrPepaH3305aLdZfadYnHz3AH5yDJJ8163h
+X-Google-Smtp-Source: AGHT+IF24MagOcPGW+aiXWTvUfci3RUEVLMRU+XbtgYBAc9bJXXtAADDZlKmnfOAhWjgutKv8hu1TOI1+305rKUa+Gk=
+X-Received: by 2002:a17:90b:384a:b0:2ee:cbc9:d50b with SMTP id
+ 98e67ed59e1d1-2fc4103d1ebmr245319a91.4.1739564684871; Fri, 14 Feb 2025
+ 12:24:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB7419:EE_
-X-MS-Office365-Filtering-Correlation-Id: 549d6dea-e307-4f02-c954-08dd4d356621
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xf6C2/1Tjr5bSU74B/pZfVAnJ91LSaQSOFTyeQWGvXJtzPvhuGtCaGU7uUE9?=
- =?us-ascii?Q?Vray7+I84JYVbVyp8aw5pVNMc9Fejh+pMFCbIN3hQwZxHLjMtVNWyJSdooVJ?=
- =?us-ascii?Q?iiopABcIb7AgmJjxXabunzR/hmUCUkbp23Lr3kUsMEZyl3A86gMRCWblWlM+?=
- =?us-ascii?Q?UGvuBhINaWHzVy8jWOqImAD4LwWjUkiRXXqRsdYL2v6l47qSWKVxqPc3nWOY?=
- =?us-ascii?Q?j8YVVTgtmN1xmot2IC92cT2//ZwbL44f2U5jc9LzfCDbpxDTxUXhagzjZgV6?=
- =?us-ascii?Q?xzYkqpNVfFUxcjS/Bkqrq4nc7RRub7ZQMv8wbd/IQJRgSUKnxFJx4xdCzp/3?=
- =?us-ascii?Q?OvGyM9i9/LEGykk1pep8HNm7bDvPz+AEPtgXL5G+wfBxfo2x1LhEune1oeFl?=
- =?us-ascii?Q?+L/E69pQJN7RxtCHaEN4crWy2txi8cBtg7kW65mNtESVjerzYbE1UG+pDB8X?=
- =?us-ascii?Q?HfNjeDjNNu/IIR3ytHMw+/2bC5xoj2C0Ezi20tDAY7V+Ua2gCiFcTFVNz+Er?=
- =?us-ascii?Q?wtu3DpT3tdhqz0Pf+L/f4df5NgjZEF4HddyIuWbsixBS0cVf6S39TRw68q7C?=
- =?us-ascii?Q?NVsBZ9xe5xVoHsNOYHlFqafZkie7EQBSwJ7YnTu3uKw/VhsTLU4djcZX7agq?=
- =?us-ascii?Q?6vdbAM/KJxB4ll3ToSsEx6oBO4irfh3Jy9YiIHe/nKOjINti8ax0xnEO1zq+?=
- =?us-ascii?Q?uYzpzAgzyXI1seb0vLKUpLFcCpr2QIusQ9myvCNVcoZdiucZUnznVx7YOl/8?=
- =?us-ascii?Q?y1MAea6CM4hGyjJTOrUo6aWSDJPgfnZp/6VK14E8009ZoJAXoehKbKMb71HD?=
- =?us-ascii?Q?q3xUbFHYRhX0qYZZ9ttuIEIVtUt9qoEXt1m9Sdq3FV/maxRLh+BpLryYFr9Z?=
- =?us-ascii?Q?Sn+NNAjBxHq2FH0VnB9ktJH6JS6eVwHh0SfjZMwI7hpihVQQ5ugNopXs+V25?=
- =?us-ascii?Q?GjJFyNgSoIBsYx0LNr1nSYL3xezNm2aGUgVNJ8Ney1cYSzjCAF0dJ44OUKYj?=
- =?us-ascii?Q?/iOczurXIfQj7TaFyRAeuNppjckVbn6IyZr3nhYedHrIwB66RTM3LJ/wTNXa?=
- =?us-ascii?Q?+RAQF92oekNHxYv+UsSWIytHb0XT3SDfQENvwdZjzhWwMJE8hdPTdGuRKOOB?=
- =?us-ascii?Q?NbGIpjMpfvhFfsc77KivTnwqtQLWa8zPDaQomipX60E7DzbI45ZYsoE79U3V?=
- =?us-ascii?Q?r1qcKmkrBeZvD0kfAgbN0Zo5NijXorQREz3khjgk+YURTP+ph5ZqZNuPORpi?=
- =?us-ascii?Q?Gd7ZJPXLuYtd/uUS5McHDAbfUvmtxRVCp3IPGfaZoLLvI542Q0pBLYmXrsGK?=
- =?us-ascii?Q?1djX7rTU35skWynkPsTT1prIkOSKbhtYTswqpbxVRY5w12sa4EP2swxMN5FA?=
- =?us-ascii?Q?3l16ma4/IDKe/UsyNVeGEaYEsIEC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3a2tftmEEhvMDKCR/f5INm7Dfjxnl0XBdhkJKdVvYR+6kxyQRal2uCUIamKU?=
- =?us-ascii?Q?OIXNqQU/Lx3jmgFvAzwNe4lhhnQn8J3wKnS3gfAZMB/gBYdEnZMkfUUkKN/F?=
- =?us-ascii?Q?j9ehZwuGzte/39hm+h2Xu4CiHxP7rxIT1GHF/uJjstWBi1HOTOwzfI/Gipto?=
- =?us-ascii?Q?scBEp8XjfgmZRjqWC9ZdjDII5eJgdArIxTKREPaNKsQigeja8bJNGwl6Z4hJ?=
- =?us-ascii?Q?i7gSTY79YH5jwCpHIquEamBYMXpYIZKpWx5VL8B/wmfo5gx4x2VuKdIAn6QV?=
- =?us-ascii?Q?10Wq8p9eiBL/L0UIqyrrEefIUCVt/O/FNTSjN5Ji+S85lEHLcXxAJXXx+HRg?=
- =?us-ascii?Q?8j1v9JNlzILIy92G8kB+aOdlwk8bSk5q+ySAEmPXXNuo5GyS5WNjAHZ+IHRD?=
- =?us-ascii?Q?JQj9gFXu0/cS0Ml4nSDoZx+4s9u+x1AU2rRP600tPOmFL+MrngKFdLMkGDks?=
- =?us-ascii?Q?abVaBuAmCkZVrCNcerDGG3G53t4Q4ST2vznyIDwrgE7/pci0VoUjKhittCC2?=
- =?us-ascii?Q?hBsWOjsQsJTtj2jHAf2e1dHRT47kT2H/ppD0QRn8HiWrICb/d8KsqEREtUXR?=
- =?us-ascii?Q?gwaXvNiBbMnj5qBZ6AMfIyV+c7uIVQoo9OiLs7n6xzdzlhwn3wny2MRb51dZ?=
- =?us-ascii?Q?gX6qUx+xzC+zqdJhOD93EGlkrQXuaUKa9PZmWe1OxMxZoBrnkyOzPIk+M5xU?=
- =?us-ascii?Q?zvhSkwrI8vtub6pIJeGj6pYdZZPcWLmtdxGDET7Hyj3DFyRDWvLv4rCcRjpN?=
- =?us-ascii?Q?U8yuIIXn8kR8gn4QkYikqSE3EyPO0uRsNagaj/wXAZyOw/r2Sq2TLKaZZFKV?=
- =?us-ascii?Q?p7D4YmmtDwmoh60nxWWBqFqPzD7cO/7k1sSJ1uFuPROdCCET6K+uNMudHGNI?=
- =?us-ascii?Q?LhjRLdcxnWGorStVISrDQJnPJP4LxUB4wL11AXZ3MgYs7U3ltYypptKNeuZR?=
- =?us-ascii?Q?C5O+w/k8FLG3lPRcx/Cw9BwdyUNmb1e7JusnEjjonvpK7hyt1XZKiz4sDWCc?=
- =?us-ascii?Q?F09/zIYTlRZgrTGi2ajT9uMZN0LofXYDnyu9WK0jC7y65ZcwfSD3KNDRx3CY?=
- =?us-ascii?Q?8dwpCuMzjvYtJo+hmEq4ifVTvcwrNPpB9nvSl0ywmnMMD0UlghGd6Q8azVVs?=
- =?us-ascii?Q?FMiz/SVuBYZX81PDd5yGsdHFgrU31Zcd5gaYC7aX3ivfDG3Qls+HT0nq0+A8?=
- =?us-ascii?Q?BmVBdfsG5Ducbv+BBV3PsHvsiEAmyC/0P/W3Wp6kPe9m79gaRN+WUFetY+VD?=
- =?us-ascii?Q?fq/6dzTaJQPdtlfXC5Cj/asK72Kq3fNRYpNdY9fmA+4VK2/e/C/5Tkih0587?=
- =?us-ascii?Q?wbegweIDgjEAZryB81zfz/i+lB+9Q7ICiwKx0UvYPcLOGqgLoWfj8k5sxbtA?=
- =?us-ascii?Q?OGK+ZURj5hFHK6HYGfT/DgyJZGwuAmK7f6iAUCPxGct+wem/O/HZKOzx5DNV?=
- =?us-ascii?Q?yPJ4mZwTUmmORWdIjPEhs6NDZblyk4Amt4qincQBUQE++w8yVI5kF92m0sDW?=
- =?us-ascii?Q?5vfOdCGkmqF1/pNS7cgEcCg4HJxYMnbTu5q9HsA7iS4ejaRRDF+ahOWGgN2s?=
- =?us-ascii?Q?AESCW8i/Bc8dH24zdSg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 549d6dea-e307-4f02-c954-08dd4d356621
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 20:23:10.0796
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GO0rsCbMs3O+XAbM0FiVpqH8z/csalQvUSI7aFN/rQ06i0VecNIzRJQ5C3fAZ1QL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7419
+References: <cover.1738832118.git.viresh.kumar@linaro.org> <db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
+ <Z6qTelPSqpFk439l@thinkpad> <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
+ <Z6t51xodSV21ER4M@thinkpad> <CANiq72=3MR9F9ur-aQYP4P81RBreAr=UiGg5iaSuFjjd5Q4Y7Q@mail.gmail.com>
+ <Z66oWuLwY4X9Ou9D@thinkpad> <CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
+ <20250214191103.GH3886819@nvidia.com>
+In-Reply-To: <20250214191103.GH3886819@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 14 Feb 2025 21:24:31 +0100
+X-Gm-Features: AWEUYZlQfDk3KdlkX87QSgmQBgzvj_9kUJuWl1DKFReZ4mhVoDc0DlTBJSkE9N8
+Message-ID: <CANiq72=tDhUEjdBmVTPv4cFeD8iiKwJAQD3Cb1=Y4KnE-vh2OQ@mail.gmail.com>
+Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, 
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, 
+	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	linux-kernel@vger.kernel.org, Uros Bizjak <ubizjak@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 24, 2025 at 04:30:32PM -0800, Nicolin Chen wrote:
-> The fault object was designed exclusively for hwpt's IO page faults (PRI).
-> But its queue implementation can be reused for other purposes too, such as
-> hardware IRQ and event injections to user space.
-> 
-> Meanwhile, a fault object holds a list of faults. So it's more accurate to
-> call it a "fault queue". Combining the reusing idea above, abstract a new
-> iommufd_eventq as a common structure embedded into struct iommufd_fault,
-> similar to hwpt_paging holding a common hwpt.
-> 
-> Add a common iommufd_eventq_ops and iommufd_eventq_init to prepare for an
-> IOMMUFD_OBJ_VEVENTQ (vIOMMU Event Queue).
-> 
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/iommufd_private.h |  28 ++++--
->  drivers/iommu/iommufd/fault.c           | 111 +++++++++++++-----------
->  drivers/iommu/iommufd/hw_pagetable.c    |   6 +-
->  3 files changed, 82 insertions(+), 63 deletions(-)
+On Fri, Feb 14, 2025 at 8:11=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> Sure, but it was said, by many people, many times, that "Rust is
+> allowed to break".
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+A lot of people have said many things (especially in online fora), and
+many of those things are contradictory, but that does not really mean
+anything.
 
-Jason
+> This is not just my incorrect impression. For instance read Philipp's
+> note to Christoph:
+>
+> https://lore.kernel.org/all/293df3d54bad446e8fd527f204c6dc301354e340.came=
+l@mailbox.org/
+
+Philipp probably sent that message with his best intentions, but he is
+not part of the Rust subsystem nor speaks on our behalf.
+
+He may have been speaking for other groups, or maybe just his own
+opinion -- I do not know.
+
+Moreover, sometimes suggestions like his may be referring to
+particular subsystems (like the one that was discussed in that
+thread), e.g. like block decided to take an approach where Rust is
+allowed to break, rather than speaking globally.
+
+Finally, ambiguous terms are used in many cases to refer to different
+parties: "Rust community", "Rust people", "Rust team", "Rust
+maintainers"... I have started to ask people to avoid doing that (at
+least in the LKML), please, and be concrete if possible.
+
+> And Greg's version:
+>
+> https://lore.kernel.org/all/2025013030-gummy-cosmic-7927@gregkh/
+
+I cannot speak for Greg, sorry.
+
+I can read his message in the following ways:
+
+  - I can read it as a general ability of subsystems to potentially
+agree to treat Rust code as something like staging, like block's plan.
+
+  - I can read it within the context of those patches, where, as far
+as I know, Danilo et al. stepped up to maintain it, like Andreas did
+for block.
+
+  - I can read it as the fact that the Rust subsystem will help,
+best-effort, to bootstrap Rust and help with integration where
+possible.
+
+We need maintainers' help and expertise from other subsystems to
+succeed. And we do not want to force other subsystems into dealing
+with Rust. That is why the deal was that we would contact and wait for
+other subsystems to handle Rust and so on. It is also why I asked, in
+the very meeting where it was decided to merge Rust, that in exchange,
+we would eventually need some flexibility by maintainers that may not
+want Rust in their subsystem but that nevertheless may be the owners
+of core APIs that other users of Rust in the kernel need. I did so
+because I knew the day would come we would be in the situation we are
+in that email thread.
+
+> I've heard the same statements at conferences and in other coverages
+> like LWN. Frankly, I never much believed in this story as workable,
+> but it was advanced by many people to smooth the adoption of Rust
+> bindings.
+
+Again, people may make statements, but they may be local to their
+subsystem, or just their opinion, or it may be a misunderstanding, and
+so on and so forth.
+
+It is very hard to keep hundreds of maintainers on the same page.
+
+> I do not agree with "Didn't you promise Rust wouldn't be extra work
+> for maintainers?" in your document. Clearly there is a widespread
+> belief this kind of promise was made, even if it was never made by
+> you. "Rust is allowed to break" is understood to be the same as saying
+> it won't cause extra work.
+
+Sorry, but I have to strongly push back against this paragraph.
+
+Are you really saying that, because people out there may think
+something, we cannot claim anymore that we did not promise something?
+
+Furthermore, I don't agree with your assessment in your last sentence
+at all. Even if it was decided to allow Rust to break globally and at
+all times, it does not mean Rust is not extra work. It is, because
+collaboration would be still needed with different subsystems and so
+on. The plan has always been to not have Rust be something hidden in a
+corner. For instance, see from 2020:
+
+    https://lore.kernel.org/all/CAHk-=3DwipXqemHbVnK1kQsFzGOOZ8FUXn3PKrZb5W=
+C=3DKkgAjRRw@mail.gmail.com/
+
+> However, I am glad we are seeing a more realistic understanding of
+> what Rust requires of the community over the long term.
+
+That is good, but to be clear, from my point of view, the approach
+mentioned in the document I wrote is what we have always said.
+
+Cheers,
+Miguel
 
