@@ -1,223 +1,299 @@
-Return-Path: <linux-kernel+bounces-514223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F67A35440
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:06:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E161BA353F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C1677A1A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9349716BE09
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4D11DC9AB;
-	Fri, 14 Feb 2025 02:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813F48634A;
+	Fri, 14 Feb 2025 01:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiPMHHkl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hyQzOKky"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE3A1519B1;
-	Fri, 14 Feb 2025 02:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C69D347CC;
+	Fri, 14 Feb 2025 01:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739498525; cv=none; b=ZghO3GETih1SpCh8I0o8gkKIERt7TLW+nKmQhrp3TH8ERfEmGcnZUt01W8LEVKEAr62FCOTIgNKEkkqnTZCNtMv9nkPLTrBPIYubBsWahaKUFzyowt7EOMiDiHU59KT6VsVaZQLotaf2jLCqNqrAsARVo5f6ptfr5aJjGOhxTqw=
+	t=1739498285; cv=none; b=kLC93qzUsS2InbrY/pAiSt9XS02x5tqsvKFFE91RdEog66TgJiD8F7JZLCAqLigyTmQayDj+lICa2tYYaPOJogZfXlwXxewDiV4LrPNwwwFRfvJTG5Qq9cbpNRK6Ih+nKqOomCLb45obbOiAp5nUKlj2Dy42RuWRBNZKUzGWmZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739498525; c=relaxed/simple;
-	bh=6ZKeFmUwpIKsEmKKV2CccS5FiLEKpUEnHjqvTyJuW8I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F1dpkgYo5vg/Z7B/M5lNEFlGcDxl0GdEJABgdSjclRG2PUlSU2/zPAAySlWDg+9OEaCgm4YKlx6mGIQwYi06SeJF0fyKRV4vo9T7d+zq5HtSNJaA5xvSblZSdrS87WpYJyiEYszcxImBo72LPuCtciUvxR23MIgSPkWraxK49hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiPMHHkl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 131ABC4CEEB;
-	Fri, 14 Feb 2025 02:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739498524;
-	bh=6ZKeFmUwpIKsEmKKV2CccS5FiLEKpUEnHjqvTyJuW8I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OiPMHHkl1djeZ2lB8dMWaekSizYcbPZLeW5EMFvwXWfJxlVr9Ozru6+nq2Vt956Dd
-	 eZAOBTEEzW5IlTH03xQjanj/hRWglpLoT5ibBAEkfYvQECt7mt5o/5rJzl24JBfjz6
-	 LTuxf6R9llGGhYjv/pmMjhZABXqtDZvz6rwdRGQnSXkp+8eLae/tj4ztdPL95S4jOF
-	 5HvR0NxLmqhOmwa2+tJ5fB5ordXobTHaxdqzwMHFYyBNUE2fMynmKUBeKImP1utZ3b
-	 heUbWGv5x5gm8V/7NRr5xsJ6LkOWzhXNMcvmj6JhbjISVm3i2LE3lV0TDAwzCVefte
-	 RJvsEqNAHETnw==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 14 Feb 2025 01:58:00 +0000
-Subject: [PATCH v4 17/27] KVM: arm64: Support SME identification registers
- for guests
+	s=arc-20240116; t=1739498285; c=relaxed/simple;
+	bh=xqQr2Py0Wo1dWSI6BF6vAyEUGFaoFkBBl6dgrTsRVoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwQYICOc5vQZJC9YbyCtJeJG3AQL90+LxEqYxzpKbM3puzE6pjHHRGg2iwYRPh8PwjbXsPNB7W7/J/M/gr6AslQ75JelU4ILaAHJ18VMz27H9OlH08G+I06SSu6UULoERCVZxph6md5GkVqIwJFdHVzONHyUwEcVpQtHTHULFTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hyQzOKky; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739498284; x=1771034284;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xqQr2Py0Wo1dWSI6BF6vAyEUGFaoFkBBl6dgrTsRVoQ=;
+  b=hyQzOKkykIxMYco/pWXGTK6Hn7urrUEQwW8mHnY0TGy8+RnmsWt9Paol
+   Yo/JZAjCMMnFKdoC2ZEMFHhc1+i5PD7BzHd7xjplFHQ9F6bLvoSM0ITKI
+   rJxVjjzGdoIreEZpiAcZEZ+3II+rlPUmNqEZANTTc1OILue85gAT9DicD
+   ZYDovb/2LhYGFfFln/DDlXZt3HtSua7VmfXrFsIVMif8mBiK04EHg4Yo3
+   Rx3WLl/QIww/TuWx8I3a2cUUaWvGjo/iBCyeWSV2a9ht3r8FN3LCfpNwX
+   cYHVEAvQ0SgeUf9xpCqKreRMzqangOGKwubsOyHPXWgN8+tPyh6R3yTOZ
+   Q==;
+X-CSE-ConnectionGUID: Ct09tW+RQkqSmzTzEGeYLA==
+X-CSE-MsgGUID: AtGUpl7KQMOdV0R+0kLxzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50878312"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="50878312"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 17:58:03 -0800
+X-CSE-ConnectionGUID: pWp7sM5+TUm0Wd6kPwb4xQ==
+X-CSE-MsgGUID: yTNWeSQwQhimGDFDFr6f9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="113842073"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.202])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 17:58:03 -0800
+Date: Thu, 13 Feb 2025 17:58:00 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	SupportedACPI status: linux-hardening@vger.kernel.org;
+Subject: Re: [PATCH v2][next] UAPI: ndctl / acpi: intel: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <Z66jKIvuTXmNC3Q7@aschofie-mobl2.lan>
+References: <Z66T8tSKjVutr6of@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-kvm-arm64-sme-v4-17-d64a681adcc2@kernel.org>
-References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
-In-Reply-To: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>, 
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>, 
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5505; i=broonie@kernel.org;
- h=from:subject:message-id; bh=6ZKeFmUwpIKsEmKKV2CccS5FiLEKpUEnHjqvTyJuW8I=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnrqPN/4geYRKPPjBRvDXStddXp7T70d00Uznyao8d
- rOjSP3yJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ66jzQAKCRAk1otyXVSH0EzoB/
- 9/03HAOXhIxlxxSR+RKChEm5O/Z3N4fyOwjIKdkaCQn7Dzkg6V/2YspMfs/9IbbqAecMoM/9iEvRSN
- 6U0yD5lZ/m6NenVl7xzYp/kRXl2LlEFrfuv8ijKIjqmX4ImidimNNSfRrE0bL6fYi7pxz7ILfJS1k5
- 0S0nGl1EXojymVEjL7pEesXPDahAu0wVCaHqxf4x5SRXwqulPyfWVb4xHYDoTdN2/Xd0UU+CabDWsV
- 7H/4tWHAKsDLS3gWz3s6e96TQ7n82t5M4uDDrdEsW99RPuQbN1a9TPYpwO6Mz5GeFTjKQeHlrIaKu/
- v1DLIaSlaYDoRJ73v+bzA7czGM9udK
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z66T8tSKjVutr6of@kspp>
 
-The primary register for identifying SME is ID_AA64PFR1_EL1.SME.  This
-is hidden from guests unless SME is enabled by the VMM.
-When it is visible it is writable and can be used to control the
-availability of SME2.
+On Fri, Feb 14, 2025 at 11:23:06AM +1030, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with flexible-array members in the
+> middle of other structs, we use the `__struct_group()` helper to
+> separate the flexible array from the rest of the members in the
+> flexible structure. We then use the newly created tagged `struct
+> nd_cmd_pkg_hdr` to replace the type of the objects causing trouble:
+> `pkg` in multiple structs.
+> 
+> Below is the before-and-after changes of the memory layout in `struct
+> nd_cmd_pkg`. This to illustrate that the use of `__struct_group()`
+> doesn't alter the layout, ensuring that user space remains unaffected.
+> 
+> Before changes:
+> struct nd_cmd_pkg {
+> 	__u64                      nd_family;            /*     0     8 */
+> 	__u64                      nd_command;           /*     8     8 */
+> 	__u32                      nd_size_in;           /*    16     4 */
+> 	__u32                      nd_size_out;          /*    20     4 */
+> 	__u32                      nd_reserved2[9];      /*    24    36 */
+> 	__u32                      nd_fw_size;           /*    60     4 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	unsigned char              nd_payload[];         /*    64     0 */
+> 
+> 	/* size: 64, cachelines: 1, members: 7 */
+> };
+> 
+> After changes:
+> struct nd_cmd_pkg {
+> 	union {
+> 		struct {
+> 			__u64      nd_family;            /*     0     8 */
+> 			__u64      nd_command;           /*     8     8 */
+> 			__u32      nd_size_in;           /*    16     4 */
+> 			__u32      nd_size_out;          /*    20     4 */
+> 			__u32      nd_reserved2[9];      /*    24    36 */
+> 			__u32      nd_fw_size;           /*    60     4 */
+> 		};                                       /*     0    64 */
+> 		struct nd_cmd_pkg_hdr __hdr;             /*     0    64 */
+> 	};                                               /*     0    64 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	unsigned char              nd_payload[];         /*    64     0 */
+> 
+> 	/* size: 64, cachelines: 1, members: 2 */
+> };
+> 
+> It's also worth mentioning that all members of the struct can still be
+> accessed directly, for example instance->nd_family, instance->nd_command,
+> and so on.
+> 
+> So, with these changes, fix 12 of the following warnings:
+> 
+> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-There is also a new register ID_AA64SMFR0_EL1 which we make writable,
-forcing it to all bits 0 if SME is disabled.  This includes the field
-SMEver giving the SME version, userspace is responsible for ensuring
-the value is consistent with ID_AA64PFR1_EL1.SME.  It also includes
-FA64, a separately enableable extension which provides the full FPSIMD
-and SVE instruction set including FFR in streaming mode.  Userspace can
-control the availability of FA64 by writing to this field.  The other
-features enumerated there only add new instructions, there are no
-architectural controls for these.
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-There is a further identification register SMIDR_EL1 which provides a
-basic description of the SME microarchitecture, in a manner similar to
-MIDR_EL1 for the PE.  It also describes support for priority management
-and a basic affinity description for shared SME units, plus some RES0
-space.  We do not support priority management and affinity is not
-meaningful for guests so we mask out everything except for the
-microarchitecture description.
 
-As for MIDR_EL1 and REVIDR_EL1 we expose the implementer and revision
-information to guests with the raw value from the CPU we are running on,
-this may present issues for asymmetric systems or for migration as it
-does for the existing registers.
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_host.h |  1 +
- arch/arm64/kvm/sys_regs.c         | 46 +++++++++++++++++++++++++++++++++++----
- 2 files changed, 43 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index c770ed6138164fcd3e11b8517ef4120b4f4486b9..14615216845668bf1a614e9fbdb6112190fec054 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -473,6 +473,7 @@ enum vcpu_sysreg {
- 	/* FP/SIMD/SVE */
- 	SVCR,
- 	FPMR,
-+	SMIDR_EL1,	/* Streaming Mode Identification Register */
- 
- 	/* 32bit specific registers. */
- 	DACR32_EL2,	/* Domain Access Control Register */
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index eece67141480b8d4bbd2bac0f02f9208c7f86f8b..b515dfa1f27d0c744de996f6dcdff272aa184385 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -767,6 +767,38 @@ static u64 reset_mpidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
- 	return mpidr;
- }
- 
-+static u64 reset_smidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
-+{
-+	u64 smidr = 0;
-+
-+	if (!system_supports_sme())
-+		return smidr;
-+
-+	smidr = read_sysreg_s(SYS_SMIDR_EL1);
-+
-+	/*
-+	 * Mask out everything except for the implementer and revison,
-+	 * in particular priority management is not implemented.
-+	 */
-+	smidr &= SMIDR_EL1_IMPLEMENTER_MASK | SMIDR_EL1_REVISION_MASK;
-+
-+	vcpu_write_sys_reg(vcpu, smidr, SMIDR_EL1);
-+
-+	return smidr;
-+}
-+
-+static bool access_smidr(struct kvm_vcpu *vcpu,
-+			 struct sys_reg_params *p,
-+			 const struct sys_reg_desc *r)
-+{
-+	if (p->is_write)
-+		return write_to_read_only(vcpu, p, r);
-+
-+	p->regval = vcpu_read_sys_reg(vcpu, r->reg);
-+
-+	return true;
-+}
-+
- static unsigned int pmu_visibility(const struct kvm_vcpu *vcpu,
- 				   const struct sys_reg_desc *r)
- {
-@@ -1593,7 +1625,9 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
- 		if (!kvm_has_mte(vcpu->kvm))
- 			val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MTE);
- 
--		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
-+		if (!vcpu_has_sme(vcpu))
-+			val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
-+
- 		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_RNDR_trap);
- 		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_NMI);
- 		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MTE_frac);
-@@ -1697,6 +1731,10 @@ static unsigned int id_visibility(const struct kvm_vcpu *vcpu,
- 		if (!vcpu_has_sve(vcpu))
- 			return REG_RAZ;
- 		break;
-+	case SYS_ID_AA64SMFR0_EL1:
-+		if (!vcpu_has_sme(vcpu))
-+			return REG_RAZ;
-+		break;
- 	}
- 
- 	return 0;
-@@ -2637,7 +2675,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 				       ID_AA64PFR1_EL1_MTE_frac |
- 				       ID_AA64PFR1_EL1_NMI |
- 				       ID_AA64PFR1_EL1_RNDR_trap |
--				       ID_AA64PFR1_EL1_SME |
- 				       ID_AA64PFR1_EL1_RES0 |
- 				       ID_AA64PFR1_EL1_MPAM_frac |
- 				       ID_AA64PFR1_EL1_RAS_frac |
-@@ -2645,7 +2682,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	ID_WRITABLE(ID_AA64PFR2_EL1, ID_AA64PFR2_EL1_FPMR),
- 	ID_UNALLOCATED(4,3),
- 	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
--	ID_HIDDEN(ID_AA64SMFR0_EL1),
-+	ID_WRITABLE(ID_AA64SMFR0_EL1, ~ID_AA64SMFR0_EL1_RES0),
- 	ID_UNALLOCATED(4,6),
- 	ID_WRITABLE(ID_AA64FPFR0_EL1, ~ID_AA64FPFR0_EL1_RES0),
- 
-@@ -2845,7 +2882,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	{ SYS_DESC(SYS_CLIDR_EL1), access_clidr, reset_clidr, CLIDR_EL1,
- 	  .set_user = set_clidr, .val = ~CLIDR_EL1_RES0 },
- 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
--	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
-+	{ SYS_DESC(SYS_SMIDR_EL1), .access = access_smidr, .reset = reset_smidr,
-+	  .reg = SMIDR_EL1, .visibility = sme_visibility },
- 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
- 	ID_FILTERED(CTR_EL0, ctr_el0,
- 		    CTR_EL0_DIC_MASK |
-
--- 
-2.39.5
-
+> ---
+> Changes in v2:
+>  - Show changes in UAPI first. (Alison)
+>  - Update changelog text --add more information about _struct_group()
+>    changes. (Alison)
+> 
+> v1:
+>  - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
+> 
+>  include/uapi/linux/ndctl.h | 15 +++++++++------
+>  drivers/acpi/nfit/intel.c  | 24 ++++++++++++------------
+>  2 files changed, 21 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
+> index 73516e263627..34c11644d5d7 100644
+> --- a/include/uapi/linux/ndctl.h
+> +++ b/include/uapi/linux/ndctl.h
+> @@ -227,12 +227,15 @@ enum ars_masks {
+>   */
+>  
+>  struct nd_cmd_pkg {
+> -	__u64   nd_family;		/* family of commands */
+> -	__u64   nd_command;
+> -	__u32   nd_size_in;		/* INPUT: size of input args */
+> -	__u32   nd_size_out;		/* INPUT: size of payload */
+> -	__u32   nd_reserved2[9];	/* reserved must be zero */
+> -	__u32   nd_fw_size;		/* OUTPUT: size fw wants to return */
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(nd_cmd_pkg_hdr, __hdr, /* no attrs */,
+> +		__u64   nd_family;		/* family of commands */
+> +		__u64   nd_command;
+> +		__u32   nd_size_in;		/* INPUT: size of input args */
+> +		__u32   nd_size_out;		/* INPUT: size of payload */
+> +		__u32   nd_reserved2[9];	/* reserved must be zero */
+> +		__u32   nd_fw_size;		/* OUTPUT: size fw wants to return */
+> +	);
+>  	unsigned char nd_payload[];	/* Contents of call      */
+>  };
+>  
+> diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
+> index 3902759abcba..fe561ce0ddec 100644
+> --- a/drivers/acpi/nfit/intel.c
+> +++ b/drivers/acpi/nfit/intel.c
+> @@ -56,7 +56,7 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	unsigned long security_flags = 0;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_get_security_state cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -121,7 +121,7 @@ static int intel_security_freeze(struct nvdimm *nvdimm)
+>  {
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_freeze_lock cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -154,7 +154,7 @@ static int intel_security_change_key(struct nvdimm *nvdimm,
+>  		NVDIMM_INTEL_SET_MASTER_PASSPHRASE :
+>  		NVDIMM_INTEL_SET_PASSPHRASE;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_set_passphrase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -196,7 +196,7 @@ static int __maybe_unused intel_security_unlock(struct nvdimm *nvdimm,
+>  {
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_unlock_unit cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -235,7 +235,7 @@ static int intel_security_disable(struct nvdimm *nvdimm,
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_disable_passphrase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -278,7 +278,7 @@ static int __maybe_unused intel_security_erase(struct nvdimm *nvdimm,
+>  	unsigned int cmd = ptype == NVDIMM_MASTER ?
+>  		NVDIMM_INTEL_MASTER_SECURE_ERASE : NVDIMM_INTEL_SECURE_ERASE;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_secure_erase cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -319,7 +319,7 @@ static int __maybe_unused intel_security_query_overwrite(struct nvdimm *nvdimm)
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_query_overwrite cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -355,7 +355,7 @@ static int __maybe_unused intel_security_overwrite(struct nvdimm *nvdimm,
+>  	int rc;
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_overwrite cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -408,7 +408,7 @@ static int intel_bus_fwa_businfo(struct nvdimm_bus_descriptor *nd_desc,
+>  		struct nd_intel_bus_fw_activate_businfo *info)
+>  {
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_bus_fw_activate_businfo cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -519,7 +519,7 @@ static int intel_bus_fwa_activate(struct nvdimm_bus_descriptor *nd_desc)
+>  {
+>  	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_bus_fw_activate cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -583,7 +583,7 @@ static int intel_fwa_dimminfo(struct nvdimm *nvdimm,
+>  		struct nd_intel_fw_activate_dimminfo *info)
+>  {
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_fw_activate_dimminfo cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> @@ -689,7 +689,7 @@ static int intel_fwa_arm(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arm)
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	struct acpi_nfit_desc *acpi_desc = nfit_mem->acpi_desc;
+>  	struct {
+> -		struct nd_cmd_pkg pkg;
+> +		struct nd_cmd_pkg_hdr pkg;
+>  		struct nd_intel_fw_activate_arm cmd;
+>  	} nd_cmd = {
+>  		.pkg = {
+> -- 
+> 2.43.0
+> 
 
