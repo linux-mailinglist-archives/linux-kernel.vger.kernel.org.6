@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-514443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23516A35718
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:30:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64ADFA3571A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC68E18920B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762533AD34F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B2200BA8;
-	Fri, 14 Feb 2025 06:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D191200BA8;
+	Fri, 14 Feb 2025 06:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQburBFk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X8YU8RP5"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D117E;
-	Fri, 14 Feb 2025 06:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E3917E;
+	Fri, 14 Feb 2025 06:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514638; cv=none; b=QdDNMiR2KXp3mPhbJEY/H4rokDx2EgOu4eQFa/4o4+gLEph4/hkkdcU6As4pDi31pmwcj1E2EO9eeK3w8nL31XcPOpdc/bgxp5HCU7MPL7C/HclM7kQ9vt6dTqYFP9LATu9yzVCE405jdl1O+czHpufvNKGg0T13gJJXkNVDZhA=
+	t=1739514675; cv=none; b=WY4WHQBwXHAprzlpZGehqE7vnnk/EYk4vboCpygb2W6RCFW1jzBhr7VGJ7iknoHUGKF/UABlhdNeItmmgVTDyNfcWMa317WH95I9C4yti8/2d+wRRV1V7+KexfeF6hPzIGc4Ay5o84DjCru+gX+X7wP6gwlCSmRiUTw3JSoT5ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514638; c=relaxed/simple;
-	bh=sc9N/uNaRNgOeJWUsanP4id4E/Fnl5devE1ySb7Fy94=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qiZ+HKyHNo+ua+wxNJYTHQYeYlQCDFRD5rPVuPbv+DZ2q6bMiDIlunmjhad6a1Me5aMVCN8NBFDyCBU+pTDIBSCyLkwNy0T3KjvthqnI1sVv9ps+MOrYohK4Qh29Ml1ZziIkJV1W0i6HNd9aEmG4ftvRc1cdfZCGPwY+270QhoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQburBFk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D05BC4CED1;
-	Fri, 14 Feb 2025 06:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739514637;
-	bh=sc9N/uNaRNgOeJWUsanP4id4E/Fnl5devE1ySb7Fy94=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dQburBFkFGaghvvgWMBt5at99Dy86yJe20KM+alTJlaayPItw6j6f+VQpiUa07wvy
-	 GIpVCigG9iF4VO1nXP3OBRDd1FVCKmu82en1brOdeKF8Zmdc6rL53vvPhYK+GguHoH
-	 NYHqHD1eSUweGLuCvoPcTaNdViziAB1duGW+sCKaltC/RXhlpYFFJ6cB8bH03rLrJw
-	 IsvbduPfBslf9X3VJhvO1frO57gi2iT9jdnKGSyLhO5dRKOom7r5PrVzGXEscgNpu7
-	 sRd3o8DFjX0uOzP4h8atC0loEF9k92ZiTXcniRvnkE3d3Bj8BrgSqyGaDye53uFG4M
-	 UXnqejim3XIeg==
-Date: Fri, 14 Feb 2025 07:30:27 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/kernel-doc: remove an obscure logic from
- kernel-doc
-Message-ID: <20250214073027.28aedc63@foz.lan>
-In-Reply-To: <45cec6dc-2071-4d5a-a0bd-8ad895b19000@infradead.org>
-References: <fd3b28dec36ba1668325d6770d4c4754414337fc.1739340170.git.mchehab+huawei@kernel.org>
-	<87wmdt6bv5.fsf@trenco.lwn.net>
-	<20250214032457.6444ee93@foz.lan>
-	<45cec6dc-2071-4d5a-a0bd-8ad895b19000@infradead.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1739514675; c=relaxed/simple;
+	bh=A1FbOq1iows2Sv/bNsx+GZoO3j1Yqqb3gf7/FDhFvPg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cw9snFdpD80dIOmou0618CJ6JsvVpynECeIFO9ujB+CtHqvcwAi6mUgvZFRgSdYHY8cBFOYP6F1p8j8K5UUHPpcd38z6O2gOZGTxAB23edYg9tCJ4/8bi9lSqMs++rbqezN5hA2xF9bDoaxBmv7Pz/RejfOW6l0DwtTIjR9Z+Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X8YU8RP5; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6V0kt899872
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 00:31:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739514660;
+	bh=6Jta8SCvtFAKEEUc/90d7iKXUlrgbGqW9xLB321U+JU=;
+	h=From:To:CC:Subject:Date;
+	b=X8YU8RP5LuZm/PU/X+upariCwGLkPzb7L2QxScspfwpAGYtNchPKq2QFn4vS5wZyP
+	 LypUpoDqaKBgeCSTpS83Cn5gMMmU/72C0cYFGNoq+/5azEq/X/JAIJzlvVc2AYlh43
+	 KrHFX5oHrRpqfuZl7MaHe8nh4yoBYwbIcRq3ePEA=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6V0mG019376
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Feb 2025 00:31:00 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Feb 2025 00:30:59 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Feb 2025 00:31:00 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51E6UtCc108646;
+	Fri, 14 Feb 2025 00:30:56 -0600
+From: Baojun Xu <baojun.xu@ti.com>
+To: <jwboyer@kernel.org>
+CC: <shenghao-ding@ti.com>, <linux-firmware@kernel.org>, <13916275206@139.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Baojun Xu <baojun.xu@ti.com>
+Subject: [PATCH v1] ASoC: tas2781: Change regbin firmwares for single device
+Date: Fri, 14 Feb 2025 14:30:30 +0800
+Message-ID: <20250214063030.6396-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Em Thu, 13 Feb 2025 18:38:47 -0800
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+Change regbin firmware for single device.
 
-> Hi--
-> 
-> On 2/13/25 6:24 PM, Mauro Carvalho Chehab wrote:
-> > Em Thu, 13 Feb 2025 09:35:58 -0700
-> > Jonathan Corbet <corbet@lwn.net> escreveu:
-> >   
-> >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> >>  
-> >>> Kernel-doc has an obscure logic that uses an external file
-> >>> to map files via a .tmp_filelist.txt file stored at the current
-> >>> directory. The rationale for such code predates git time,
-> >>> as it was added on Kernel v2.4.5.5, with the following description:
-> >>>
-> >>> 	# 26/05/2001 -         Support for separate source and object trees.
-> >>> 	#              Return error code.
-> >>> 	#              Keith Owens <kaos@ocs.com.au>
-> >>>
-> >>> from commit 396a6123577d ("v2.4.5.4 -> v2.4.5.5") at the historic
-> >>> tree:
-> >>> 	https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
-> >>>
-> >>> Support for separate source and object trees is now done on a different
-> >>> way via make O=<object>.
-> >>>
-> >>> There's no logic to create such file, so it sounds to me that this is
-> >>> just dead code.
-> >>>
-> >>> So, drop it.
-> >>>
-> >>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> >>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> >>> ---
-> >>>  scripts/kernel-doc | 19 +------------------
-> >>>  1 file changed, 1 insertion(+), 18 deletions(-)    
-> >>
-> >> Weird ... I went and looked, and can't find anything that ever created
-> >> that tmp_filelist.txt file; I wonder if this code ever did anything?  
-> > 
-> > I wonder the same ;-) Anyway, better to remove this now, as, if people
-> > complain, it would be easier to revert than after switching to the
-> > Python version.
-> >   
-> >> Don't put that functionality into the Python version :)  
-> > 
-> > Yeah, I started implementing it, but it sounded a waste of time, so
-> > I dropped it from the RFC versions. It sounded too complex for people
-> > to maintain a separate tmp file when make O=dir would do it on a much
-> > better and automated way.
-> > 
-> > -
-> > 
-> > With regards to the Python transition, since our Makefile allows
-> > switching to a different script since ever[1], I'm playing with 
-> > the idea of sending a patch series with:
-> > 
-> > Patch 1: 
-> >   - drops Sphinx version check from both kerneldoc 
-> >     (-sphinx-version parameter) and the corresponding Sphinx extension;
-> >   
-> 
-> It's currently scripts/kernel-doc. Are you planning to change it to
-> scripts/kerneldoc and break other scripts and makefiles?
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ ti/tas2781/TXNW2781RCA0.bin | Bin 868 -> 812 bytes
+ ti/tas2781/TXNW2781RCA1.bin | Bin 868 -> 812 bytes
+ 2 files changed, 0 insertions(+), 0 deletions(-)
 
-No, the idea is to keep it as kernel-doc.
+diff --git a/ti/tas2781/TXNW2781RCA0.bin b/ti/tas2781/TXNW2781RCA0.bin
+index 9718640b529e324bc5975d7d66bcfbdef8d4ad6e..49d64fb0912acc339f2b573997898c31a89e28c5 100644
+GIT binary patch
+literal 812
+zcmZQzVAiQr6Ubs<U}Obi#`JXugcv~#1~^~_vT}g<3=m&{i;f_Mfq|~4QLwI|SyE<+
+zZfbHyeo<;#YEf!la;k1|PJW325kbMkzyc0Y4xm~_Fl1n2U|?o+1M-o@qznwfb|oj~
+zWF{3QmSpDV5n(#25|CXtfI=Byvl$uK7#R4DFfi~tFfi}}9U;KNz#!(tz$ktK=mZu9
+z7O?Xf!E6o*h)Ez9a>y`1#55Ry8X;^h4~RTSA6EoK9HbVPUyQ(hNvbSJEG~xVB$WjD
+W#So|ol>Rt?HnC&(3zGsp`~v_rY$nG5
 
-I always confuse the names as we have both, depending on where you
-look at:
-	
-	- scripts/kernel-doc
-	- Documentation/sphinx/kerneldoc.py
+literal 868
+zcmZQzU`{#U%krFofsqx68Pj~{%w_~J7~p^z$m#*&J3xE`E;@o3Da8f4hGt2bCA!5q
+z`6UMA_?(H6g>eB;qXrN&GcW=nL(EJD76y9;1}-Te4;c2mKrt}~1_nN$5`G|NVqj!u
+z1aUZk7^DLz&&1?u6byAsYH~(?QEFOhQEFatDk&}lxn&8^%nBgp0-6epU%n$iI~~y6
+z!~$`X0FVZ{i&6Xp&`B%|EMWgLg4rArKqG(v<Tef&kds*$I5Zd>Kw=;^mj{RiWk*27
+zA^yPXx1`E~#NuLz7BWeot&EjGy(K`*33eAKDKmrp2@FTLKW{QHBnSY#uLlozeEuWB
+JUkq5{3;=u;DgFQe
 
-The Python version was written to support all command-line parameters
-as the original one - although I introduced both a single line and a
-two dash alternative.
+diff --git a/ti/tas2781/TXNW2781RCA1.bin b/ti/tas2781/TXNW2781RCA1.bin
+index f92631f8477b78cd8714e9941fa57d8346323df8..49d64fb0912acc339f2b573997898c31a89e28c5 100644
+GIT binary patch
+literal 812
+zcmZQzVAiQr6Ubs<U}Obi#`JXugcv~#1~^~_vT}g<3=m&{i;f_Mfq|~4QLwI|SyE<+
+zZfbHyeo<;#YEf!la;k1|PJW325kbMkzyc0Y4xm~_Fl1n2U|?o+1M-o@qznwfb|oj~
+zWF{3QmSpDV5n(#25|CXtfI=Byvl$uK7#R4DFfi~tFfi}}9U;KNz#!(tz$ktK=mZu9
+z7O?Xf!E6o*h)Ez9a>y`1#55Ry8X;^h4~RTSA6EoK9HbVPUyQ(hNvbSJEG~xVB$WjD
+W#So|ol>Rt?HnC&(3zGsp`~v_rY$nG5
 
-It also expects the file name(s) to be after the parameters, just like
-kernel-doc.
+literal 868
+zcmZQzU`}~`QE(3f10yRCGp6~@`OgSqFu(ybkaY)$dw}=`Tyz96JdJ{N4b74=OLS9{
+zGxCd4(^894^O93_i*xcz42TN{CI%M9B|xPWK+MI!$N&sez9S3_{0<BZF*6xh80>+<
+zT0n6Y1_oYW&<g-*F$V@l@e>R{oeV5sTNuG?4he{jj6l^KG7Jzg4F;e=5H^<wL>{D%
+zD*_@8QVUebz|6=8l;i+nkO)YODW$jo>NgU61F-={g8T+@pau{#L(B#H2`C2k6EIzY
+z`~>t51IT)QAja;Nq{@QC;$omQ`2ge=Pym$xF(<?=z@*F!4s)Qtk;0rIK>+AJE4bV6
+Mg*7NFImi!V0F@^x`v3p{
 
-I just changed the logger formatter to be similar to what we have
-on kernel-doc:
+-- 
+2.34.1
 
-	Warning: <msg>
-
-So, I expect that such change will cause minimal impact on existing
-scripts.
-
-Thanks,
-Mauro
 
