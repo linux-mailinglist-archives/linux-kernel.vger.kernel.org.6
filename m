@@ -1,147 +1,127 @@
-Return-Path: <linux-kernel+bounces-515356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F2BA363B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:55:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D12AA363BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C116FE3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF16170355
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917C5267AE5;
-	Fri, 14 Feb 2025 16:55:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35142262816;
-	Fri, 14 Feb 2025 16:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C267267700;
+	Fri, 14 Feb 2025 16:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BhocEcok"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00AE267AE8;
+	Fri, 14 Feb 2025 16:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739552136; cv=none; b=iWznGrKPfGvjqVfQRnaaOljxbSxV/W8ogO0keXHbGCtdGP0b2abx6O4PIuUmQPvq4q2hv9A2pEaOKsKRjn7+TzVeZt1szapHZfG587UKcGbTqrOvLNQMw+XO9Q6guwcjc2tSqRqgdt/NmI02b4C8mTeQ6jLTGha+afQImlFbbYA=
+	t=1739552290; cv=none; b=pVWwAcY5UAzUenAP9gFvGAIGzPQu1D6r9XV+3nQD9C/QJo490JuWx/ghs94evZJ/lNuNeCuC7/86q6K8zlp+dtgU6ITWXD7Mk1UpuSX2O6aqAZ1c4pO3Wh+2XRK2+l99s++yv2CZuCNygUiQjDqffXJwH/NdByXSbdLf65uhX6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739552136; c=relaxed/simple;
-	bh=DeAXx7l6NVma/qUtvAqdvHMhzhSVW3z97O92ipQSRNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JjuHfQs4vQwjc7x1qE1k+tjpmzVffYyHdkW61acTBrrfZMxiFl2l5+LNylU1ucMjunun97QtXmhE4TmgTT65bG6RtIwV8EI3TAoJPc1Ak6EuU92ojVzH6bSEQ6Eab5YcT08WnBj5WjOJpXy17STKJgMPQBE0ai4d7FcBIFaD5vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0970FC4CED1;
-	Fri, 14 Feb 2025 16:55:34 +0000 (UTC)
-Date: Fri, 14 Feb 2025 11:55:47 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [PATCH v2] tracing: Do not allow mmap() of persistent ring buffer
-Message-ID: <20250214115547.0d7287d3@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739552290; c=relaxed/simple;
+	bh=pSe80PMMGCIlXIiJ/T3xmK0UbzGta0NRATEdIDVst1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RRaLVjSD72v4zxvfUhcHteVH3NQdgnL0ELbNbKh7+DWF1QCICfkek5YgSTR1mUdG9oeM0sjalWkgL8AOnh24HaIh6VazpoWzqJESAIkTFZXnB2DxuZwze6CWcBMGu7xYImedQe3rgg1hRMFWXtGXP105tMYb8Old92MemqaXyKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BhocEcok; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Y2T2I
+	Ora8hm8MNeTBECuFgUROwdd06PyTIT6wKcB394=; b=BhocEcokkrJDY0VRb0EpI
+	q7hkk/oxXfmf0QpVtJqBD7+snSi/wuFFP5G9/MeTbkbywNw75MSf35W3NaeQ8biX
+	oMnFDm2QklBtrMSc17vh4Qaey03rS0/noMLE3J9gEVgDmcrIUHqY10liz6RDzm5f
+	E8+XBcCtKdp9QdK+tiCVU8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDn7731da9n74fnMA--.13986S2;
+	Sat, 15 Feb 2025 00:57:26 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org
+Cc: kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	bwawrzyn@cisco.com,
+	cassel@kernel.org,
+	wojciech.jasko-EXT@continental-corporation.com,
+	a-verma1@ti.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rockswang7@gmail.com,
+	Hans Zhang <18255117159@163.com>
+Subject: [v4] PCI: cadence-ep: Fix the driver to send MSG TLP for INTx without data payload
+Date: Sat, 15 Feb 2025 00:57:24 +0800
+Message-Id: <20250214165724.184599-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn7731da9n74fnMA--.13986S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uF47ZF13Kr13Ww1xJF1fJFb_yoW8tw48pF
+	WUGrySkF1xXrWa9an5Za1UCF13tanxtas7Gw4v9w1fZF13u34UGry3KFyrXFWUGrWvgr17
+	Aw1DtF9rGFsxA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEGNtDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWw7zo2evaI68SwAAsc
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Cadence reference manual cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf, section
+9.1.7.1 'AXI Subordinate to PCIe Address Translation' mentions that
+axi_s_awaddr bits 16 when set, corresponds to MSG with data and when not
+set, MSG without data.
 
-When trying to mmap a trace instance buffer that is attached to
-reserve_mem, it would crash:
+But the driver is doing the opposite and due to this, INTx is never
+received on the host. So fix the driver to reflect the documentation and
+also make INTx work.
 
- BUG: unable to handle page fault for address: ffffe97bd00025c8
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 2862f3067 P4D 2862f3067 PUD 0
- Oops: Oops: 0000 [#1] PREEMPT_RT SMP PTI
- CPU: 4 UID: 0 PID: 981 Comm: mmap-rb Not tainted 6.14.0-rc2-test-00003-g7f1a5e3fbf9e-dirty #233
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
- RIP: 0010:validate_page_before_insert+0x5/0xb0
- Code: e2 01 89 d0 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 <48> 8b 46 08 a8 01 75 67 66 90 48 89 f0 8b 50 34 85 d2 74 76 48 89
- RSP: 0018:ffffb148c2f3f968 EFLAGS: 00010246
- RAX: ffff9fa5d3322000 RBX: ffff9fa5ccff9c08 RCX: 00000000b879ed29
- RDX: ffffe97bd00025c0 RSI: ffffe97bd00025c0 RDI: ffff9fa5ccff9c08
- RBP: ffffb148c2f3f9f0 R08: 0000000000000004 R09: 0000000000000004
- R10: 0000000000000000 R11: 0000000000000200 R12: 0000000000000000
- R13: 00007f16a18d5000 R14: ffff9fa5c48db6a8 R15: 0000000000000000
- FS:  00007f16a1b54740(0000) GS:ffff9fa73df00000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: ffffe97bd00025c8 CR3: 00000001048c6006 CR4: 0000000000172ef0
- Call Trace:
-  <TASK>
-  ? __die_body.cold+0x19/0x1f
-  ? __die+0x2e/0x40
-  ? page_fault_oops+0x157/0x2b0
-  ? search_module_extables+0x53/0x80
-  ? validate_page_before_insert+0x5/0xb0
-  ? kernelmode_fixup_or_oops.isra.0+0x5f/0x70
-  ? __bad_area_nosemaphore+0x16e/0x1b0
-  ? bad_area_nosemaphore+0x16/0x20
-  ? do_kern_addr_fault+0x77/0x90
-  ? exc_page_fault+0x22b/0x230
-  ? asm_exc_page_fault+0x2b/0x30
-  ? validate_page_before_insert+0x5/0xb0
-  ? vm_insert_pages+0x151/0x400
-  __rb_map_vma+0x21f/0x3f0
-  ring_buffer_map+0x21b/0x2f0
-  tracing_buffers_mmap+0x70/0xd0
-  __mmap_region+0x6f0/0xbd0
-  mmap_region+0x7f/0x130
-  do_mmap+0x475/0x610
-  vm_mmap_pgoff+0xf2/0x1d0
-  ksys_mmap_pgoff+0x166/0x200
-  __x64_sys_mmap+0x37/0x50
-  x64_sys_call+0x1670/0x1d70
-  do_syscall_64+0xbb/0x1d0
-  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The reason was that the code that maps the ring buffer pages to user space
-has:
-
-	page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-
-And uses that in:
-
-	vm_insert_pages(vma, vma->vm_start, pages, &nr_pages);
-
-But virt_to_page() does not work with vmap()'d memory which is what the
-persistent ring buffer has. It is rather trivial to allow this, but for
-now just disable mmap() of instances that have their ring buffer from the
-reserve_mem option.
-
-If an mmap() is performed on a persistent buffer it will return -ENODEV
-just like it would if the .mmap field wasn't defined in the
-file_operations structure.
-
-Cc: stable@vger.kernel.org
-Fixes: e645535a954ad ("tracing: Add option to use memmapped memory for trace boot instance")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Fixes: 37dddf14f1ae ("PCI: cadence: Add EndPoint Controller driver for Cadence PCIe controller")
+Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
-Changes since v1: https://lore.kernel.org/20250213180737.061871ae@gandalf.local.home
+Changes since v3:
+https://lore.kernel.org/linux-pci/20250207103923.32190-1-18255117159@163.com/
 
-- Return -ENODEV instead of -EINVAL as that is what is returned when the .mmap
-  field is missing from the file_operations structure.
+- Add Fixes: tag.
+- The patch subject and commit message were modified.
 
- kernel/trace/trace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes since v1-v2:
+- Change email number and Signed-off-by
+---
+ drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 +--
+ drivers/pci/controller/cadence/pcie-cadence.h    | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 25ff37aab00f..0e6d517e74e0 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8279,6 +8279,10 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct trace_iterator *iter = &info->iter;
- 	int ret = 0;
+diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+index e0cc4560dfde..0bf4cde34f51 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+@@ -352,8 +352,7 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
+ 	spin_unlock_irqrestore(&ep->lock, flags);
  
-+	/* Currently the boot mapped buffer is not supported for mmap */
-+	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
-+		return -ENODEV;
-+
- 	ret = get_snapshot_map(iter->tr);
- 	if (ret)
- 		return ret;
+ 	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
+-		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code) |
+-		 CDNS_PCIE_MSG_NO_DATA;
++		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
+ 	writel(0, ep->irq_cpu_addr + offset);
+ }
+ 
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+index f5eeff834ec1..39ee9945c903 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.h
++++ b/drivers/pci/controller/cadence/pcie-cadence.h
+@@ -246,7 +246,7 @@ struct cdns_pcie_rp_ib_bar {
+ #define CDNS_PCIE_NORMAL_MSG_CODE_MASK		GENMASK(15, 8)
+ #define CDNS_PCIE_NORMAL_MSG_CODE(code) \
+ 	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
+-#define CDNS_PCIE_MSG_NO_DATA			BIT(16)
++#define CDNS_PCIE_MSG_DATA			BIT(16)
+ 
+ struct cdns_pcie;
+ 
+
 -- 
-2.47.2
+2.25.1
 
 
