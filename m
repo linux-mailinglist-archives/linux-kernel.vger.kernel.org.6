@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-514446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A05A35720
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:32:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EBAA35727
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043F218921A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AB73AD567
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C9200BA8;
-	Fri, 14 Feb 2025 06:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57F920371F;
+	Fri, 14 Feb 2025 06:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sramY19A"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TiUxrkqm"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88571487DC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D890201027;
+	Fri, 14 Feb 2025 06:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514773; cv=none; b=XL/y1c27OWpRYXOY6e+wmDm/yTChV+5/R7mv9IyyRq7ugZq3PRTmoD3mw9/np1lsQ78m9nMTKYbYYyGDrO3mXODoqcf1V7BhCOHfXRMKWUpSzceskgUCmtb7lvjui8EF/GkSXDElVhNvNqg9VaRgflvY9OK64Oj8VZ0ZGowPXLs=
+	t=1739514790; cv=none; b=Sl3QJ9xGHTy6Cqd9ixSKUq0Khu1+Y6Kxv2ahJ0VK8g2lQ93O88MDjbRa3PKjRpN6JDJJJw9nTB8sOvqdCCPNgGAl7n2/0OIkso1FFODfkH/NVNShEvyda8MQMGlmZsteCSD5LcxNd5EQcJ9TZSCdpMLi9SCtkydJK+ECFuEpnZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514773; c=relaxed/simple;
-	bh=MOsG8NVKcVO9UMUYZXQ/FmjYYe0V2HYYkcRn4te3esY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=droNl3083SzbSwJkW2batmUNqXETYgjRgQUfb43H5T1Ax53YI8sXTDbhioAajRcOgwEmxtJswUMVsuAfWFZfp0wr/VKBZrPZWWNfUA8WuE4lGEfmVcC8c4kh2f4zlGpMYfa8X6s2ZL4iLcpFmuNBayeWMgKCS877EzN3sw6h1RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sramY19A; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E217tZ013379;
-	Fri, 14 Feb 2025 06:32:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jN4FaQ
-	FIv+GkbRwAOYMg9naHXIwVApjxx0TVLhKgmUM=; b=sramY19AimOPPPGrbVgwjY
-	b0S+Ll/CUN8nrwKAdMEd28ssBqpswYTitlRJvm58REd1QFbVqjHvq12otrnW8M1M
-	TFc6IzmpgNP8lyYT8n6BWR8kRmp7/MqhtHxcs8JH5bV5MhNPo2esPEj3pu5p0JNz
-	H1LJlCvvBY0muFi789DfhEvLez2xPIJNLgtpzITrGQ9K/Ocx6KPAt25iqvqeNuZe
-	xLZ7oEx+TZGfOVU35fhNGAfS58Xp9370Q4G+yyudvCYnM7FZarsF5A8KOxuG+FTb
-	rA4HCffPMDX+cpVjmA7Q9FnvXMgvcFfxdBaqaoB2WXz+MlswaYjTf73uXJ3UL7hw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44svp08xbh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 06:32:46 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E2jV9X016692;
-	Fri, 14 Feb 2025 06:32:45 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kj6mf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 06:32:45 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E6WhvH41812402
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 06:32:43 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB0E72004D;
-	Fri, 14 Feb 2025 06:32:43 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 77EFE20040;
-	Fri, 14 Feb 2025 06:32:42 +0000 (GMT)
-Received: from [9.43.1.221] (unknown [9.43.1.221])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Feb 2025 06:32:42 +0000 (GMT)
-Message-ID: <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
-Date: Fri, 14 Feb 2025 12:02:41 +0530
+	s=arc-20240116; t=1739514790; c=relaxed/simple;
+	bh=hVCD2rakAAB+o2t0oLvJfPKeC7Lmf1tkRkZ3Y9RnOn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkXcrW05uTSYAVJ68P0c1iNe4/05oluOofODoFMFZTSfYKnaCW5FcwjQlBA4C6uX0h3U31iWQZEmHKX4Wr5uhXkKfyzx3ZNCyI2ka5ehvYslcMD1kRDGOnoahqT3EtOEPtMmwWf9CmB2XRKzmVfMTRk73/Sjc5iTLmjN3W8lWeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TiUxrkqm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kLNIJIGtAonH6TQ7Xn1xNKUdo34Iyv7JaZahEgvr29E=; b=TiUxrkqmOqjnPch01VAvC6YpVN
+	wtHhKJ7km4Ah8MRFIKcLqCm36sTuJNx0DHMKQ94Bt9IMNZGvec7GAJ1Rw5b9UJcGZDdgDoMk1dV3Z
+	LqshzPzd6OX4o+J6yhQKu6kENAnz2XvwP9ZAVV82Y1SPOzg7VhqYIkHyClkdYgx2II4/4Fr89+NX2
+	pC50LkPLnKuRoMVSSi4F/f7CgnLhwqZp19D2bgkSL9WqyvDjal5k+5/pblPrD0Sbr2Z1J1fjOmqoh
+	5IoCgr4/C420V7mC+/K6UJBA+HYtDpsmggz/YzIzRFCwEyw1gM7gMglshR5eDSeWMNJfu/BY7gH/t
+	7CciF5/Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tipG6-0000000DRTU-1edj;
+	Fri, 14 Feb 2025 06:33:06 +0000
+Date: Fri, 14 Feb 2025 06:33:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3} Change ->mkdir() and vfs_mkdir() to return a dentry
+Message-ID: <20250214063306.GD1977892@ZenIV>
+References: <20250214052204.3105610-1-neilb@suse.de>
+ <20250214060039.GB1977892@ZenIV>
+ <20250214061355.GC1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
-References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Hari Bathini <hbathini@linux.ibm.com>
-In-Reply-To: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 8-I0An12dgEe2IHZiXdS89BwQYzIzGcq
-X-Proofpoint-GUID: 8-I0An12dgEe2IHZiXdS89BwQYzIzGcq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_02,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
- adultscore=0 mlxlogscore=854 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140047
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214061355.GC1977892@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-
-On 13/02/25 8:34 pm, Venkat Rao Bagalkote wrote:
-> Greetings!!!
+On Fri, Feb 14, 2025 at 06:13:55AM +0000, Al Viro wrote:
+> On Fri, Feb 14, 2025 at 06:00:39AM +0000, Al Viro wrote:
 > 
->  From kernel next-20250210, I am observing syscall kexec_file_load not 
-> available, there by kdump service is failing to start.
+> > 3) I'm pretty sure that NFS is *not* the only filesystem that returns
+> > unhashed negative in some success cases; will need to go over the instances
+> > to verify that, though.
 > 
-> 
-> Logs:
-> 
-> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
-> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
-> Warning: append= option is not passed. Using the first kernel root 
-> partition
-> Modified cmdline: elfcorehdr=311424K root=UUID=b5b1f89c- 
-> d479-48b3-90e2-744a2fd05667
-> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
-> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
-> syscall kexec_file_load not available.
-> [root@ltc-zzci-1 ~]# kexec -v
-> kexec-tools 2.0.27
-> [root@ltc-zzci-1 ~]# uname -r
-> 6.14.0-rc2-next-20250212
-> 
+> Definitely so: in cifs_mkdir() we have
+>         if ((server->ops->posix_mkdir) && (tcon->posix_extensions)) {
+>                 rc = server->ops->posix_mkdir(xid, inode, mode, tcon, full_path,
+>                                               cifs_sb);
+>                 d_drop(direntry); /* for time being always refresh inode info */
+>                 goto mkdir_out;
+>         }
+> There might be other cases.  hostfs is definitely like that, I'm pretty
+> sure that kernfs is as well...
 
-Is the kernel built with CONFIG_KEXEC_FILE ?
+kernfs is actually playing fast and loose with the calling conventions there;
+it does not bother with unhashing and relies upon its ->d_revalidate()
+noticing and unhashing the sucker.
 
-- Hari
+Another variant that would work (and follow the calling conventions)
+is to have ->lookup() that leaves negatives unhashed and ->mkdir()
+not bothering to hash or instantiate.
 
+It really needs a review instance by instance.
+
+And yes, it does look like ->lookup()-like calling conventions end up better,
+especially if we make an instance return d_splice_alias() result...
 
