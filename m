@@ -1,58 +1,68 @@
-Return-Path: <linux-kernel+bounces-515413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DD3A3647F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 027DEA36480
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668741882295
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081471889C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBF5268693;
-	Fri, 14 Feb 2025 17:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+kvZXJU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFEF268686;
+	Fri, 14 Feb 2025 17:24:33 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58982267AE8;
-	Fri, 14 Feb 2025 17:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA28C267F6F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553808; cv=none; b=lp5ZDio7+7jrYZEt5oi/3AdtYhUSVHc/Pxsn+acrB/CNOT3KrrsUIbYKgKwr1RvcAAwQ95UKXt2Csh0c27rjYBIz9ONKr/AMf4GVqZV6WCh4f8a9bTMLTuTfZ2+Twz9Cwe18uXkp73PWjYA6Dip6JmxdFmwS7zvEDDc/SG3ELKo=
+	t=1739553872; cv=none; b=WVa/TPni1W1IBOoc4N9+sTPR53ggWmyQxJ1emBjgDfW8kKXvrB6eblXvAGY1wkZTlCP+dzKgiEvGvWX2fqkamdocFSPkor/vmn4kL3qbzestMyTTyYTb+osnVypqxioFOJCBLE64x/KQAGEh9TpD3+RvPK+BicCtJ8lreKT3R/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553808; c=relaxed/simple;
-	bh=qDkUNhX/Rn7fSQraeHpJ9SA2nMmPahHqFq1sQwcBXTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=E5CftY6K8WWV5oKvympy+Xzz2H/dsPh8qxXyrfrBOm5LPTOElH3SdFiixB5bX+nki/rnAvuTqPiveO5xR7EWFdPyuA6zbdawGV9ijGndsEkEYyB8/LNGI5sY0xwrv9c5UJNmvXTqD5JiHrXTsYESAncK4rYT73als19igOxI6cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+kvZXJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB6FC4CED1;
-	Fri, 14 Feb 2025 17:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739553807;
-	bh=qDkUNhX/Rn7fSQraeHpJ9SA2nMmPahHqFq1sQwcBXTk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=f+kvZXJU39TAI1G6q3q4TIghG3mediJi+TNmQ+V6MPa0XU7A19FUva1045Sx2gJdu
-	 3ysOMAKfY0kg98jzVMKdXjSPLOYTxMc+HdzgrnMpgD7Gq+N0oyMKxuG9wNEE4csgrm
-	 vnwNIXdEwJdz1wv76Fa7ZCHFJwfBOE6pwEHAvk/beGLCE929yRoQEU5cmyvdZT0i1a
-	 c54/+5LiyBHiy3GJe8j87PmUWian2LgV+cTxS0xE7KEb1tQt3EYO4Qxh01MaGrVHlt
-	 lA5MoE6g55YnHcDpSyPCGbhnujzC8duljAgTtrIGskZZ0gh5eatg9eWYzPF8qjenBT
-	 WCM0xw9WDHn0w==
-Date: Fri, 14 Feb 2025 11:23:24 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Roger Pau Monne <roger.pau@citrix.com>
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-pci@vger.kernel.org,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 2/3] vmd: disable MSI remapping bypass under Xen
-Message-ID: <20250214172324.GA157438@bhelgaas>
+	s=arc-20240116; t=1739553872; c=relaxed/simple;
+	bh=Q0OEuFeXMxIl/M4HKuCdw4CJ8+gHFxwOPjKc2UbWKEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVb8Vxlpkv98H2udWwIteD7WDPeQk0NOUbVRiZobiLNapj8qpWxDoGugLO8lEfplgU5wx135YNkbU9jNk8hwgAUAInUK5UY2JLSyKeShu9A75PS44xpb9Nxeypo8LBtKyJvp7QG1RBzDz5RiGqllhdvtzTbtuLcIdYJixy/GiHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF84C4CED1;
+	Fri, 14 Feb 2025 17:24:27 +0000 (UTC)
+Date: Fri, 14 Feb 2025 17:24:24 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Tong Tiangen <tongtiangen@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Morse <james.morse@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, wangkefeng.wang@huawei.com,
+	Guohanjun <guohanjun@huawei.com>
+Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
+Message-ID: <Z698SFVqHjpGeGC0@arm.com>
+References: <20241209024257.3618492-1-tongtiangen@huawei.com>
+ <20241209024257.3618492-5-tongtiangen@huawei.com>
+ <Z6zWSXzKctkpyH7-@arm.com>
+ <69955002-c3b1-459d-9b42-8d07475c3fd3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,83 +72,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250114103315.51328-3-roger.pau@citrix.com>
+In-Reply-To: <69955002-c3b1-459d-9b42-8d07475c3fd3@huawei.com>
 
-The subject line convention for this file is:
-
-  PCI: vmd: Disable MSI remapping ...
-
-On Tue, Jan 14, 2025 at 11:33:12AM +0100, Roger Pau Monne wrote:
-> MSI remapping bypass (directly configuring MSI entries for devices on the
-> VMD bus) won't work under Xen, as Xen is not aware of devices in such bus,
-> and hence cannot configure the entries using the pIRQ interface in the PV
-> case, and in the PVH case traps won't be setup for MSI entries for such
-> devices.
+On Fri, Feb 14, 2025 at 10:49:01AM +0800, Tong Tiangen wrote:
+> 在 2025/2/13 1:11, Catalin Marinas 写道:
+> > On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
+> > > Currently, many scenarios that can tolerate memory errors when copying page
+> > > have been supported in the kernel[1~5], all of which are implemented by
+> > > copy_mc_[user]_highpage(). arm64 should also support this mechanism.
+> > > 
+> > > Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
+> > > architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
+> > > __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
+> > > 
+> > > Add new helper copy_mc_page() which provide a page copy implementation with
+> > > hardware memory error safe. The code logic of copy_mc_page() is the same as
+> > > copy_page(), the main difference is that the ldp insn of copy_mc_page()
+> > > contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
+> > > main logic is extracted to copy_page_template.S. In addition, the fixup of
+> > > MOPS insn is not considered at present.
+> > 
+> > Could we not add the exception table entry permanently but ignore the
+> > exception table entry if it's not on the do_sea() path? That would save
+> > some code duplication.
 > 
-> Until Xen is aware of devices in the VMD bus prevent the
-> VMD_FEAT_CAN_BYPASS_MSI_REMAP capability from being used when running as
-> any kind of Xen guest.
-> 
-> The MSI remapping bypass is an optional feature of VMD bridges, and hence
-> when running under Xen it will be masked and devices will be forced to
-> redirect its interrupts from the VMD bridge.  That mode of operation must
-> always be supported by VMD bridges and works when Xen is not aware of
-> devices behind the VMD bridge.
-> 
-> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-> ---
-> Changes since v1:
->  - Add xen header.
->  - Expand comment.
-> ---
->  drivers/pci/controller/vmd.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 264a180403a0..33c9514bd926 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -17,6 +17,8 @@
->  #include <linux/rculist.h>
->  #include <linux/rcupdate.h>
->  
-> +#include <xen/xen.h>
-> +
->  #include <asm/irqdomain.h>
->  
->  #define VMD_CFGBAR	0
-> @@ -965,6 +967,23 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  	struct vmd_dev *vmd;
->  	int err;
->  
-> +	if (xen_domain())
-> +		/*
-> +		 * Xen doesn't have knowledge about devices in the VMD bus
-> +		 * because the config space of devices behind the VMD bridge is
-> +		 * not known to Xen, and hence Xen cannot discover or configure
-> +		 * them in any way.
-> +		 *
-> +		 * Bypass of MSI remapping won't work in that case as direct
-> +		 * write by Linux to the MSI entries won't result in functional
-> +		 * interrupts, as it's Xen the entity that manages the host
+> I'm sorry, I didn't catch your point, that the do_sea() and non do_sea()
+> paths use different exception tables?
 
-"... as Xen is the entity that ..." ?
+No, they would have the same exception table, only that we'd interpret
+it differently depending on whether it's a SEA error or not. Or rather
+ignore the exception table altogether for non-SEA errors.
 
-> +		 * interrupt controller and must configure interrupts.
-> +		 * However multiplexing of interrupts by the VMD bridge will
-> +		 * work under Xen, so force the usage of that mode which must
-> +		 * always be supported by VMD bridges.
-> +		 */
-> +		features &= ~VMD_FEAT_CAN_BYPASS_MSI_REMAP;
+> My understanding is that the
+> exception table entry problem is fine. After all, the search is
+> performed only after a fault trigger. Code duplication can be solved by
+> extracting repeated logic to a public file.
 
-Since the comment is so long, I would add braces even though it's only
-a single statement.  Or maybe moving the comment above the "if" would
-make more sense.
+If the new exception table entries are only taken into account for SEA
+errors, why do we need a duplicate copy_mc_page() function generated?
+Isn't the copy_page() and copy_mc_page() code identical (except for the
+additional labels to jump to for the exception)?
 
->  	if (resource_size(&dev->resource[VMD_CFGBAR]) < (1 << 20))
->  		return -ENOMEM;
->  
-> -- 
-> 2.46.0
-> 
+-- 
+Catalin
 
