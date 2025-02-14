@@ -1,212 +1,125 @@
-Return-Path: <linux-kernel+bounces-514186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0856CA353BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:35:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E3BA353C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D62D7A46FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6EA168C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EAD8634A;
-	Fri, 14 Feb 2025 01:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F75D78F41;
+	Fri, 14 Feb 2025 01:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqGyRiip"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ccLFeh7L"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4166586324
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA654173;
+	Fri, 14 Feb 2025 01:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739496912; cv=none; b=VDbpzNTzoVgwBhOYH21FFKraOOeCNqTUqyUPaXB7++hqq8i9OTLapm6wjPYQITXH9BkoHgoc2Y5p2LlMAC8NTNaawfDL/x8YNz8BFpUK/qv9KfjD6drNO49f5Cx49oAzxEt1hswu7i5IXkeFec67/ExzFKcLoCA7DYUom1WHK9w=
+	t=1739496991; cv=none; b=QINGLLDmPJh0B96oW+mC86sje7/2RXltKnI34IF4+CwVRlF92xnnfxB/4qobApaIA/Bb3GqGJijqiaQJFd6bjfY/BGDVDMNbusFPt5NYv3j6voB2bW1tEceFymSr7bdvvvFRNb7F0PVjhD5D0TPEz3f1u3HlBiuK7X8XpvghpLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739496912; c=relaxed/simple;
-	bh=CADuvBrVBIT5LuqPjR3kLYoWYDmCrsfTi2YERJfMO3s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZN0os3UzY1trW8QdXsIZSGmndGhxQOOeVyyExF6Hw8jbjUue0sqqr2OBsqaUBjSig4Otlwrkslvkiy+NUC9ga+kzhcM6ctgEukIfcoGfQzqjMUJEjKoy22F7jPUPD35TtHdXJkVuFk6a+RyeoQobnnGks/Gw7ZKX0HW5/O83brY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqGyRiip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA1E5C4CED1;
-	Fri, 14 Feb 2025 01:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739496911;
-	bh=CADuvBrVBIT5LuqPjR3kLYoWYDmCrsfTi2YERJfMO3s=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=IqGyRiipNhvUJ0BRBKvBKxg6WD1mZbcYHtLqxPY05xhjvW4GZ/scX6Xxo0o9CH6Bh
-	 jL+IzjcPraL0WIV+pz3tV4mxujZUuwPXCczRlj5DoYY9JSON2f5j8bfVgSL8YdCq2r
-	 17qQ3b0lgQxjd/p1lUoxp/JwmuqxO2BmBvSzSKTvUwIWGqnF6pWzLxKGrU9Uqn6KnN
-	 cU5+AX6eiApAy4kBIEcV99mToB0jd0n9n0g5+NycaB9YLSygRw9muYNAWgeVLUdF/V
-	 VLmBDgqbZpKcRI765fc6VVbIE5dx8E4JnkUL7d2nO4LBI+SZi+AdSnuuBwaDgjnP12
-	 8LnQnPcIJ5zww==
-Message-ID: <bdda86bd-3977-4c77-b8d5-b37feda9e98a@kernel.org>
-Date: Fri, 14 Feb 2025 09:35:08 +0800
+	s=arc-20240116; t=1739496991; c=relaxed/simple;
+	bh=o4bCKfWHjGwTBjdm2IcIyjlNuZqJCh4Fg1xp5lK96No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aDfxCKsRHjf+UAGYvvXpMSKrOXBpd8JdGhIMonDfMMOM8IfywaDcQqJueKRqihkpfPwcUzpWxYkkiNONJV8hRIZAvUvKMd/ev+aQdaaeVgXevuSmk+CWEmmKvIOwH6KcH2jO2xGF4a6OTDYOOTqZuNNbBKguGuXfHpUScJxCnno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ccLFeh7L; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4YvF502m61z9tH1;
+	Fri, 14 Feb 2025 02:36:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1739496980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldK3UvbGMu2MUQaQQRCOl6NMvB8rJRV43cYaNNdAQbo=;
+	b=ccLFeh7LUto3VY2gB0P6DD0ojsKHHMtF3lCvAS7iPn/7gOQ3OKBcU3nQIWdV2/Gey0YciN
+	pJxaQIuIqMBiYvOMHaDwswDxXTwKOnNiuJU/QBgZIcIywBZRaajkOuWNjzsvTf8r4qy1HJ
+	/9hWQRs2FlkyCoFSCi3mhEyiBN6yS1q2eIfCVCDnINyNpT0rw4KWRMUTZzSTO531C/Uuwd
+	86Abk+BYemZKSYTHG+yYpt2gdEW4P6EoVmfdpslOjvuj8UuEYcDDP23HGK9w2XQSYxc8Qo
+	oLovtPtbC311k2BHk0a4x9iwkK7jxEEaupq8q11YSUNMVeHOKSrO/llR6F7fJQ==
+Date: Fri, 14 Feb 2025 02:36:17 +0100
+From: aruhier@mailbox.org
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] power: supply: qcom_battmgr: abs() on POWER_NOW
+ property
+Message-ID: <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
+References: <20250213-patch-qcomm-bat-uint-power-v1-1-16e7e2a77a02@mailbox.org>
+ <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org,
- syzbot+b6b347b7a4ea1b2e29b6@syzkaller.appspotmail.com
-Subject: Re: [PATCH] f2fs: fix to avoid accessing uninitialized curseg
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250212075242.988652-1-chao@kernel.org>
- <Z64zcac0_dw1_rML@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Z64zcac0_dw1_rML@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
+X-MBO-RS-ID: 692bc13f94b72a787be
+X-MBO-RS-META: gujha31ai1kqxnn8gwzehyctez8tfapr
 
-On 2/14/25 02:01, Jaegeuk Kim wrote:
-> On 02/12, Chao Yu wrote:
->> syzbot reports a f2fs bug as below:
->>
->> F2FS-fs (loop3): Stopped filesystem due to reason: 7
->> kworker/u8:7: attempt to access beyond end of device
->> BUG: unable to handle page fault for address: ffffed1604ea3dfa
->> RIP: 0010:get_ckpt_valid_blocks fs/f2fs/segment.h:361 [inline]
->> RIP: 0010:has_curseg_enough_space fs/f2fs/segment.h:570 [inline]
->> RIP: 0010:__get_secs_required fs/f2fs/segment.h:620 [inline]
->> RIP: 0010:has_not_enough_free_secs fs/f2fs/segment.h:633 [inline]
->> RIP: 0010:has_enough_free_secs+0x575/0x1660 fs/f2fs/segment.h:649
->>  <TASK>
->>  f2fs_is_checkpoint_ready fs/f2fs/segment.h:671 [inline]
->>  f2fs_write_inode+0x425/0x540 fs/f2fs/inode.c:791
->>  write_inode fs/fs-writeback.c:1525 [inline]
->>  __writeback_single_inode+0x708/0x10d0 fs/fs-writeback.c:1745
->>  writeback_sb_inodes+0x820/0x1360 fs/fs-writeback.c:1976
->>  wb_writeback+0x413/0xb80 fs/fs-writeback.c:2156
->>  wb_do_writeback fs/fs-writeback.c:2303 [inline]
->>  wb_workfn+0x410/0x1080 fs/fs-writeback.c:2343
->>  process_one_work kernel/workqueue.c:3236 [inline]
->>  process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
->>  worker_thread+0x870/0xd30 kernel/workqueue.c:3398
->>  kthread+0x7a9/0x920 kernel/kthread.c:464
->>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
->>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->>
->> Commit 8b10d3653735 ("f2fs: introduce FAULT_NO_SEGMENT") allows to trigger
->> no free segment fault in allocator, then it will update curseg->segno to
->> NULL_SEGNO, though, CP_ERROR_FLAG has been set, f2fs_write_inode() missed
->> to check the flag, and access invalid curseg->segno directly in below call
->> path, then resulting in panic:
->>
->> - f2fs_write_inode
->>  - f2fs_is_checkpoint_ready
->>   - has_enough_free_secs
->>    - has_not_enough_free_secs
->>     - __get_secs_required
->>      - has_curseg_enough_space
->>       - get_ckpt_valid_blocks
->>       : access invalid curseg->segno
->>
->> To avoid this issue, let's:
->> - check CP_ERROR_FLAG flag in prior to f2fs_is_checkpoint_ready() in
->> f2fs_write_inode().
->> - in has_curseg_enough_space(), a) verify status of curseg before accessing
->> its field, and b) grab curseg_mutex lock to avoid race condition.
->>
->> Fixes: 8b10d3653735 ("f2fs: introduce FAULT_NO_SEGMENT")
->> Reported-by: syzbot+b6b347b7a4ea1b2e29b6@syzkaller.appspotmail.com
->> Closes: https://lore.kernel.org/all/67973c2b.050a0220.11b1bb.0089.GAE@google.com
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>  fs/f2fs/inode.c   |  7 +++++++
->>  fs/f2fs/segment.h | 27 ++++++++++++++++++++++-----
->>  2 files changed, 29 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index 02f1b69d03d8..5c1b515eab36 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -799,6 +799,13 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
->>  		!is_inode_flag_set(inode, FI_DIRTY_INODE))
->>  		return 0;
->>  
->> +	/*
->> +	 * no need to update inode page, ultimately f2fs_evict_inode() will
->> +	 * clear dirty status of inode.
->> +	 */
->> +	if (f2fs_cp_error(sbi))
->> +		return -EIO;
->> +
->>  	if (!f2fs_is_checkpoint_ready(sbi)) {
->>  		f2fs_mark_inode_dirty_sync(inode, true);
->>  		return -ENOSPC;
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index 943be4f1d6d2..e9fcf2b85b76 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -559,15 +559,23 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
->>  			unsigned int node_blocks, unsigned int data_blocks,
->>  			unsigned int dent_blocks)
->>  {
->> -
->> +	struct curseg_info *curseg;
->>  	unsigned int segno, left_blocks, blocks;
->>  	int i;
->>  
->>  	/* check current data/node sections in the worst case. */
->>  	for (i = CURSEG_HOT_DATA; i < NR_PERSISTENT_LOG; i++) {
->> -		segno = CURSEG_I(sbi, i)->segno;
->> -		left_blocks = CAP_BLKS_PER_SEC(sbi) -
->> +		curseg = CURSEG_I(sbi, i);
->> +
->> +		mutex_lock(&curseg->curseg_mutex);
->> +		if (!curseg->inited || curseg->segno == NULL_SEGNO) {
->> +			left_blocks = 0;
->> +		} else {
->> +			segno = curseg->segno;
->> +			left_blocks = CAP_BLKS_PER_SEC(sbi) -
->>  				get_ckpt_valid_blocks(sbi, segno, true);
->> +		}
->> +		mutex_unlock(&curseg->curseg_mutex);
-> 
-> This looks a bit worrisome, as it'll block user-facing allocation. Can we
-> have another way to prevent the issue?
+On Fri, Feb 14, 2025 at 12:24:18AM +0200, Dmitry Baryshkov wrote:
+> On Thu, Feb 13, 2025 at 05:51:38PM +0100, Anthony Ruhier via B4 Relay wrote:
+> > From: Anthony Ruhier <aruhier@mailbox.org>
+> >
+> > The value for the POWER_NOW property is by default negative when the
+> > battery is discharging, positive when charging.
+> >
+> > However on x1e laptops it breaks several userland tools that give a
+> > prediction of the battery run time (such as the acpi command, powertop
+> > or the waybar battery module), as these tools do not expect a negative
+> > value for /sys/class/power_supply/qcom-battmgr-bat/power_now. They
+> > estimate the battery run time by dividing the value of energy_full by
+> > power_now. The battery percentage is calculated by dividing energy_full
+> > by energy_now, therefore it is not impacted.
+> >
+> > While having a negative number during discharge makes sense, it is not
+> > standard with how other battery drivers expose it. Instead, it seems
+> > standard to have a positive value for power_now, and rely on the status
+> > file instead to know if the battery is charging or discharging. It is
+> > what other x86 laptops do.
+>
+> Documentation/ABI does not define ABI for the power_now. However for
+> current_now it clearly defines that it can be positive or negative.
+>
+> >
+> > Without the patch:
+> >     $ acpi
+> >     Battery 0: Discharging, 98%, discharging at zero rate - will never fully discharge.
+> >
+> > With the patch:
+> >     $ acpi
+> >     Battery 0: Discharging, 97%, 10:18:27 remaining
+> >
+> > ---
+> > Signed-off-by: Anthony Ruhier <aruhier@mailbox.org>
+> > ---
+> >  drivers/power/supply/qcom_battmgr.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --
+> With best wishes
+> Dmitry
 
-How about this? It'll be fine to use a temp valid segno in
-get_ckpt_valid_blocks(), it can get rid of curseg_mutex use.
+I see. But as it breaks existing tools when power_now is negative, should we
+change the behavior of these tools or adapt the driver?
 
-segno = CURSEG_I(sbi, i)->segno;
-if (!curseg->inited || segno == NULL_SEGNO) {
-	left_blocks = 0;
-} else {
-	...
+As it does not seem common that power_now and current_now are negative in
+other drivers, tools using these values rely on the status anyway. I'm
+wondering if it provides anything to keep this behavior.
 
-Thanks,
-
-> 
->>  
->>  		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
->>  		if (blocks > left_blocks)
->> @@ -575,9 +583,18 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
->>  	}
->>  
->>  	/* check current data section for dentry blocks. */
->> -	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
->> -	left_blocks = CAP_BLKS_PER_SEC(sbi) -
->> +	curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
->> +
->> +	mutex_lock(&curseg->curseg_mutex);
->> +	if (!curseg->inited || curseg->segno == NULL_SEGNO) {
->> +		left_blocks = 0;
->> +	} else {
->> +		segno = curseg->segno;
->> +		left_blocks = CAP_BLKS_PER_SEC(sbi) -
->>  			get_ckpt_valid_blocks(sbi, segno, true);
->> +	}
->> +	mutex_unlock(&curseg->curseg_mutex);
->> +
->>  	if (dent_blocks > left_blocks)
->>  		return false;
->>  	return true;
->> -- 
->> 2.48.1.502.g6dc24dfdaf-goog
-
+--
+Regards,
+Anthony Ruhier
 
