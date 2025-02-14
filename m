@@ -1,398 +1,225 @@
-Return-Path: <linux-kernel+bounces-514783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0C0A35B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD94A35B8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFA316F108
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DC816F5AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C52325A35C;
-	Fri, 14 Feb 2025 10:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3850925A657;
+	Fri, 14 Feb 2025 10:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="MrrZacbl"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2106.outbound.protection.outlook.com [40.107.215.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O9gwJVr+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12722566D9;
-	Fri, 14 Feb 2025 10:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739528839; cv=fail; b=kccfQKtjNtEO0pY9rMN7KmixOFXcISTyQhgmfo8sjOnMna39Ils4cwjxLOqMwoM5O8o8hYIu0kxAxsVsC5P1xwnxhfbop64G2aY2AHSvkiCi5LlAn+0Gb7muLB0EfuusFCec+DuPSUf8QynjeZSvS233gS9l9O5L6q7ZXglwMgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739528839; c=relaxed/simple;
-	bh=GVcz/x15n2+sczpv3u3/X11pLkwV43U1osFvOwCDvMA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sA7f+cgTK9x/PUUCaJzWbZ/mPamdwZ+s4ZtALwUFR9Wod7SiD55v+/ot6XKz3ZQjHEKJgdv0Mw4MVTE8xN9RSPa+AHNJwzLsCwRKOtSd5JIwRBueaATGZNKIbywA+B63ei3M67uz/ADMWawXBjsSR6viseOrugk1DYpXNN8gc1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=MrrZacbl; arc=fail smtp.client-ip=40.107.215.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DuUFKmn93kASwQm2atbglX5dN/Kne1P8JMxxCCei54jCnwxMO13Yrzhf1c/6+4dBdk9D0E7nuD83GSBcZPsm7xTjarWXuJ5QHPOnN+eNN7UowaxcUyO1Kb7kd4jg58YyeNXkHhXjdWJT94Nv8IPMlhKiliDnxzEmXx94efklk8ndG83VrrrOc1au5+3nxMuwD02h0kjV3464XEkcOtK0zqrm27gcLgCP2fc9jmoC/JKAk4vt06IJpgzylRhkBVHjrA84HS3+XE8/U78wlFV3UvxSf4GH+3Zj75dULyjIBEH1bjZNSNkQzBehNb/6Pi46BYgJ8IlBWrea5+m7Wizs9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fcIrworRT4ULiPU5ixvfyl9uXYXA0GA59np7yrimZdY=;
- b=IolW7Olxx1y7Fy/PC+rAp0NkWxBzhTFv5q6Ec/NDl6XPR42xUG34MELpdqmTzUcf5t4IyWXDKcF2CqfI3/ujbxz3n2chpk/x0hY2Iw1g0mWIEMX2fAxwAaHtsDrAqNkQYd/KfuQChTtp1bxhJJT+bQLxz9BGxEjK37OpHEWtd/H4pKKBklJMtxf1+A0EGvH1qg+GOHk3nNWj37Yc5te5CW3CxBkJcn6Hm9GTP51TnZ4mfweJ4upqoXkf0o5rCPCNkJh3/GL7LOTcA850eDvlYrucMNleKepF0FU5j4L/QCWdNmchPtW+Vf+CPuwhuMqf6Lw/RrPoPVe0+sRyYBW21w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fcIrworRT4ULiPU5ixvfyl9uXYXA0GA59np7yrimZdY=;
- b=MrrZacblEmf3JDGNHI5Yxd+Iu1is9oTSsZHpyUapVR6thHAb7Lezz8pRDlshXY7JZHNd16TcOZVa4cTM93PmvMaogIeCqTkXlR3InAiAz+WwFdL08r7BGfz/tIniSsgnl+sawRRGHKQYJUlcuDpMUDmnM0z8j0Dq6VNoHdYWTNYY4Wu3XZ7skR+WsuRejAfSuJOBxWAJvmbSqRGDrOOAANnrFCxUzOpz3RmEFEAWM6xX6G6nB99sd57dhWJTXxtO1fIpjsSbE/2c9LMGKwDiIitaDKRTYRfPvm8fg7cwgBoe0wCjJwnYFAzITrKBiQUynws8CJQL4o7cRX1HczFVwg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
- by KL1PR03MB7150.apcprd03.prod.outlook.com (2603:1096:820:cb::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Fri, 14 Feb
- 2025 10:27:12 +0000
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d%3]) with mapi id 15.20.8445.015; Fri, 14 Feb 2025
- 10:27:12 +0000
-Message-ID: <53276a7d-20c8-43ab-bc44-84dbc50ebca2@amlogic.com>
-Date: Fri, 14 Feb 2025 18:27:06 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] ASoC: meson: s4:support audio tocodec
-To: Jerome Brunet <jbrunet@baylibre.com>,
- jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
-References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
- <20250214-audio_drvier-v2-4-37881fa37c9e@amlogic.com>
- <1j34ggzwel.fsf@starbuckisacylon.baylibre.com>
-From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <1j34ggzwel.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::9)
- To PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CF92566D9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739528848; cv=none; b=K55ryPcNVDhEVlnGoTEx5C2OZ1BiQwQgUO7Yx4UH+ZIlN5IhtSZ2ausXxQQrcOJ4f9DsohG4EjwEnrGZ2y9gvM48ZvDwTcHNOhQrvh1gm+R0w0BXfFrdcoZHmwkBw5bNNGOdlhQUYGYNEdkFMQSPtOHZRXWAfPJMzkngExGQhys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739528848; c=relaxed/simple;
+	bh=78xrz/HVPw8CC87OYPuhUyUhsOxpY1yFErv89zo64dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=diUeA9OiAw9xDxJGJAEFZpegZBJdEw9OfTERNmklpn85roLycDiTsJsl+HTyf8/QeYkI7PuEFh9ENp7f2OP0Xhyif53dMgnpNh0n9ZqcKNa6BOwuGyD/KSsSsmFro4mU8RafJvxlJWCz+UiD+2JdJ0cWJQZujM5bANh/B5dOTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O9gwJVr+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739528845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hZWMT8WxbxzIhhzmDc7Gm/l6y+y9ahJ/5zA846b5VzU=;
+	b=O9gwJVr+csSVQ8gANJbF2G0Ee2b1uwy4ir22KOymBBPc93qgxm0JcsYc/IqrU0AM2Q/K5A
+	jhSAtGJbHtnPc6Ih1eWmwApJb7B09UviPJhul1TXYdRo1n1hcyJi3wIg2eT96w49NRLd+j
+	jLoFO5IVqi50dw+h0SEu0sveDArf7qM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-uBHMv6btNBu6m9c4N3vrQQ-1; Fri, 14 Feb 2025 05:27:22 -0500
+X-MC-Unique: uBHMv6btNBu6m9c4N3vrQQ-1
+X-Mimecast-MFC-AGG-ID: uBHMv6btNBu6m9c4N3vrQQ_1739528842
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-439640a1a8dso8158155e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:27:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739528841; x=1740133641;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hZWMT8WxbxzIhhzmDc7Gm/l6y+y9ahJ/5zA846b5VzU=;
+        b=McBFemoS5qqatVGxYjPmz0/J/Jy7Q53xZP8fz18O2KjL6mbL0t0JBhj7dbHt055C93
+         vHVYsv1E9nc+5ncf3UkOtqK034RtcgvAdjA0JpSJtNZcfLLwYHp6WJfvHFXa9DzDZNX2
+         7fMsP8/5Ci6gE2kizEFrouxa98IpcH2Ys3zBMXRa5NvjbyFQ0AKRFB0Zuz9SDN8MobF4
+         SmSjocmRn5WEWeE06xsLmyigdzoAVmuIA365WMJHa/5032fENDMqUpqVbZLsHzJrF6QJ
+         d/nFWKldXUDbcoq77z/OfUtIfaFPD0ea/QR9RzPyzOYkOKwjsnpt542Y9PJqJVOsWBlE
+         x/gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMrym1M9Cb3Am/o4qDHkxLPf4Q3LqSN7tODTv9/jaXORCLX/DR2xZUqPCY5UT1KsGg/QcWJ6kqZIOUWmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFJIzt9vSldWG7N10LZ/BnVNt2aS1seAse6fPBCdYFD+Kedgi
+	ieowRH5p7gFR9IAzzoi4Qm5bCceGZRUHAG7xAN1eM9X64ovH+PmkYHp9dulHHS/keqxi4Lff/R1
+	DrVCETSepQrnrT1pVHRDQfV8LUZoeYnUdsi822otfxPU1B8xa+XCbK+wI/SOh2g==
+X-Gm-Gg: ASbGncu1iENg+cygPwriajoHTGsz0tFRjLbi12T5BSAVO/RBQxAT3vnezUVjKX8XNVW
+	rok4zSiUf9q8UKTuELpTekV5Qaj8T1gzJmxnCH3wHa3hVjl5/hYHQaXvEpt9Jrel7fxUBFu+Hnn
+	7AxYd2qk4+bBh6iYHnaYZevKS4VDv+oyhiquQ2q3fMcXXszEtWqspssvLU55y1BRTBlkuiGSZEn
+	DqE1tv+9zIXpSwnKlyGIYtqyC2G6IiU8p80lHzh5huSG151Jg5oFaznor1chdpChoZ4o+//4iu9
+	ovwuJ/BIwMA5armWgBT3rcRy5iJQBKAxc+EVgm4Q2LcVTRLSZpn0bHOgQJMn4Jvdin9J4W6x0Am
+	viV4rQiJWomt7vXFMZsqG7fcFWMbpCQ==
+X-Received: by 2002:a05:600c:3d86:b0:439:61cd:4fc3 with SMTP id 5b1f17b1804b1-43961cd52a3mr60414785e9.1.1739528840712;
+        Fri, 14 Feb 2025 02:27:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGE2/P4K8BMb25jacqE9tesNpiJRwAuk8pmttt4ogltkz1XhcRLH1qgjw26RrtASRE1eojWxA==
+X-Received: by 2002:a05:600c:3d86:b0:439:61cd:4fc3 with SMTP id 5b1f17b1804b1-43961cd52a3mr60413595e9.1.1739528838802;
+        Fri, 14 Feb 2025 02:27:18 -0800 (PST)
+Received: from ?IPV6:2003:cb:c709:a00:7d7d:3665:5fe4:7127? (p200300cbc7090a007d7d36655fe47127.dip0.t-ipconnect.de. [2003:cb:c709:a00:7d7d:3665:5fe4:7127])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439618a9970sm40364945e9.33.2025.02.14.02.27.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 02:27:17 -0800 (PST)
+Message-ID: <ad8ae139-546d-4ade-abb9-455b339a8a92@redhat.com>
+Date: Fri, 14 Feb 2025 11:27:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|KL1PR03MB7150:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89c3412a-b28e-4466-6835-08dd4ce224af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eXVoZ2lzYmJWakFUUXl3bnU2RWR5WWl0cUVxYWpUUFNXTTR3VEZCOG9kRHZW?=
- =?utf-8?B?UWpaTnF0RWpvbFlVNms5UGhjU0FHU0twZEFocElTRU9wa2JVSUtKUEV2dC9B?=
- =?utf-8?B?MVFpYzJVMjFvUVYrYzN2c0YyLzZCcWdxS2Z0ZVhqQmhVbTc0MUlJRGdsZm5K?=
- =?utf-8?B?WkhMUkNmejM2c0Fpa3FTd0l0ZHo5NTF0dEpzdjFKTGtDVUFoR0pXNjR0bjZ6?=
- =?utf-8?B?TWNEZ3lvS3hkaDkzQ1NDcDQ4aEpRZU5WdEpwdW42TWJKT2ZyYTZLdDFPUCsx?=
- =?utf-8?B?alJkZHpQTUllK3FwL29NelNEN0dKdkQ5S1VTdXk5SXEzZXhZdTJIV2JuanFi?=
- =?utf-8?B?NnRKWXRKVFJzSzBuWUJiQzFKZWlFRFdOMWRmL2MxaDhSU0xJNGk1MzJCcmpk?=
- =?utf-8?B?OVYzSzY5bkhJUWpxMHFaOXR4ZjhZNmpZNEczV3RXTnp2OFR1TDlENmdNRDEx?=
- =?utf-8?B?L1JvZ0p6TU5mNHB5N2FvUG9hMk5ieXUxQkM5a0hmUEpvaDlib0ZTZnFwQWZS?=
- =?utf-8?B?Y2JjMTBzVWRHSUVpS2tvUXJ1ZTh4S0NuK0pNeXFmcjRzbHhnSTFzMjN6allM?=
- =?utf-8?B?SzYzT25wY2toVjJEUHFCSDNSb1lDNFdKd2Vuc0c4dW5EU1RCbmVjcTVBMDZq?=
- =?utf-8?B?c1Z6Q0ZqaHM2ZHJCMWVJcVZ6S0Z1bUVCa1ZTaTBaMmxSbjVZeW1OcWsxNkJJ?=
- =?utf-8?B?WE9PM2lyV0F5Z2dRRWhTVFAwRWxoVWZGVnk3SUJhWFZ1eHhnRlZzaEYxNGNH?=
- =?utf-8?B?eEhPN0ZjdXpVZ000alZBTExmNTN1RFBuSHJibjFyK3ZkcEUvUkdKUHVPOVBv?=
- =?utf-8?B?emUvZG02RGtEVFFieFRabTVYeUo1VUx1T1doczJQSXU2YUpJdkx0VGJYM1Bu?=
- =?utf-8?B?U09DSnFkd0xMTGpTS1pKMWxKTngyamxNSW13bzRZQlNHVjV3MC9IWmR1dXJ5?=
- =?utf-8?B?eE0wQ253TG95a0trTUQ4NlBGeFh5SFhoSUdYM1R5RnhqUWNUZERIb3lKbG5H?=
- =?utf-8?B?N3JnS1puV3p5U3k0N0lkTlUxVHJNWGJ0dFdjMDgwMnphRnFuOVR6K0xqN3BQ?=
- =?utf-8?B?RHdTRmpSa0RJRjhMV045OTh3WG5VSEFpSnJybCtCVDJBMFZXNUk0RmtpQkJq?=
- =?utf-8?B?UmdUV3lCWUw0bkVSS1pxMk0yRURWVS9OUlhBbkV1YUhYMXhFNndyQi9Sbmxh?=
- =?utf-8?B?UWEzRnlkc28zbFRTVEVKTnNzdGRLM2JlSi9xcVRxU3oxNjRhMDRIMXp6c2ZB?=
- =?utf-8?B?QWM3aWpFMjcrTmhLZ2lReG9JQTBvcHlPdFhVNFJpZUU1QkkwNkdVMkRYc2NP?=
- =?utf-8?B?c1AxTmd4VXRjbjhnNDV2NUVxZTJMKzNoMFozVXB5RWxjamxGMXRBWUFjTG4w?=
- =?utf-8?B?dCttT1UzaHQrSTNNRGF6TlNZRkJScmRzWktBWGpwOGEzVnBwUDh0SjhJcFI0?=
- =?utf-8?B?VmtLL01HYUkwb1pCR0hsc2ZQdExOR2pKelFIekI3VEVnQnlOa2s1WmJBejZI?=
- =?utf-8?B?SmxFdHFJZlpCaFBQQlU1eWVZdEJGaGZJWC9lK2kxM0lyWVhUZ1lDdHVDU245?=
- =?utf-8?B?Z0Y4SVhLRW15RjFIY3hMdjFJNWdENWJlUzRuaWtMR08wSGpFSlhJNk1sdGN3?=
- =?utf-8?B?WmVReldLWFd3ZnpxYy82Kzl6d050SjVNb080Um51NEpCdXBISlYyWnFYZXlU?=
- =?utf-8?B?dVNBcDNPVVZHaWMrSzNNaHo1OHBtKzJQcGtCbVhJOHM3MzMydS9RSGZJL0NT?=
- =?utf-8?B?ZmV2TE1jNGR1bnZ1ZmQvY0ZwUmhIYjFOenUwL3VqVkhLUEtNcE81b3JyRUpJ?=
- =?utf-8?B?ZFU1eTB2YTVOY1F5YVlTSi9PeE1UekovVzBJQVZrK0lTMy9Yb1Z5a0V4VSt4?=
- =?utf-8?Q?5TlDZ/NLwDZ13?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aWlmZHU1VUlkcUVvUkNVZnFxN01QTDEvdFRkMThjV1ZRUEJwS0ZzNEZsblFs?=
- =?utf-8?B?ZjVYQ2Vpc1FPazdrdndtdG9pMFdVMEFpaU1oMEVBU0JaMW1lZC85a1pXQUdI?=
- =?utf-8?B?SzczUmE5Q0NPS0NDOGJvL0ozeUJ4UWkrZGdzTVdNd0Joc0JFaDhpRWFWZ3Z5?=
- =?utf-8?B?M1h3MEdPZ0pkSGhFd204cGNmWlVqeElMdmhKdm1MNDIzSGtXVlhENloxaE1m?=
- =?utf-8?B?YmxvVmE5ekxoc1NMbmlxUC9lRzZpTVpmaUtPVnJ0QTNZcW0ya09taUlNV09k?=
- =?utf-8?B?WC9PcU1ZeVhsZTdLMmt0MVNpTk1UOWZWQTFqb3FWUFhjREpDcEhQOGtkVUFp?=
- =?utf-8?B?ZGQ3VGs3MHlaNUR1aEt2VkdyUGdldWdMOGUxdW10MEgvbXBVNk5CODdTZFBn?=
- =?utf-8?B?QytFUHhPRllEd2N0WFpSMk1YTE8wZWhaSUZhRzJmR3IrRWlJcGxhU2E2RzFV?=
- =?utf-8?B?dytkSzV0NmdzTDdWck9iWlozSXZlY3pOdENsSWpkV2pVV3d2NFpRNXR5YStJ?=
- =?utf-8?B?V3p3SWhyRTc0Q2ZBaXlhNHVuQnZBVFVXbU8vellQSU5YcUJwTHdiMFRyMFVG?=
- =?utf-8?B?N2U2WXZjcy9zMmR3Ym9JczNJNmhBZmp3NUlONEVmNXlkYjkvWlhUREhObnA5?=
- =?utf-8?B?UDlzVlpkdHZCUDhEcW1uTFNpREZzUGQvQWthRURFMTZCaVBjV2dYQ29KRUxX?=
- =?utf-8?B?WWx5TnNWUGlrS29DcnJoNm1NaXo4STdaNkFiZmtwb3JpWjJJRkJ5elVNSW40?=
- =?utf-8?B?NGdkYm43ZkErajArRXA1Mm5qdlJwNURzWjdocnhNU3JML1N3RFJVcG5xa1lG?=
- =?utf-8?B?L2dGVVE3TklNdzRSdXlCbFd4bkVyTUpNQm41UGtQZWtLMVpSSmxlK2Frakxn?=
- =?utf-8?B?Q1l0QStIcmpPTkRMYy9Bb1JDNy9rOHVIM0lKV3kzRkpyRE00cDF6K1MzZWxs?=
- =?utf-8?B?RXpxcjQ4Vk9Panc4NUU2ZnE5WTVDQlVYeW5rWnZiMHllL05BYU5MQnhNL3JP?=
- =?utf-8?B?eHF2Zm5FNU90cFpYRWs4NkZLR0hzemtGRkx4a01UNGJ0TG1DbFJWTWZmT0Vx?=
- =?utf-8?B?NVZrdlFpWmlOMjR3ZGpldVk0LzFKdE9hUWN3YVNaM3Ywd2dSTitCSlo4ZTM2?=
- =?utf-8?B?ZmFaV1B4dGxxTTlGZ0NvVXdZRUJYRFJ6UjlSOWl5ZEY5OGtMeENOdkdXYnJw?=
- =?utf-8?B?c0VLTExvWWR4THVBaEJNQ1dFSGdmSDJIUWVoVHYzWnMxT2dUcFFEN2NIUTJ5?=
- =?utf-8?B?UGRmeHphWTN4MWpscUNxdVh6NlhhampjMUZTRHVJOHVVZ1ltb1ZBVUY1UVNF?=
- =?utf-8?B?TTM1L1cxd21tRlFFTkFYeTZxV2FMZVEyVmNwUmptUHlUQzVUTmhHU2VTQ1VG?=
- =?utf-8?B?S1ZhYlNuMlZ3c01vdWtXZk9VY0w3VmVXK2J5RDJSSkxiSTBNanA0UXhZY1g4?=
- =?utf-8?B?bTdYYko3VWFjUHg5RzUwaWsvRG9qMitMYmorSEozbjhBTUNKaWxBNDk2WTZ4?=
- =?utf-8?B?OG9mZFd0M0I5RUVsa1pyM3lMeWl2a1A5VWNVblg5cmJETnM4Y1hFSE9rUmp5?=
- =?utf-8?B?dW1OZTJ4aW9uRXMyM29aTHphN3BRTXRMWVhFTTlXYXMwRXpLakwrN0RpSUV6?=
- =?utf-8?B?NkZDYWd2ZDd0Smt4aWlxc3Btd1RRZnJMbGEzZ3RuQjUza2EwUGVwZjZBMTlH?=
- =?utf-8?B?M1d2WXBvakkrVFRkVEMzWkR1NWxhaWp2SXRUbVZDWE1kaVI4UDc1TzM0Vmdj?=
- =?utf-8?B?T0lLRDFmQmhRSmM3dlZpcExIb2tCTzc1TldFTVdnOFgvZjFZYndweGFqY1BW?=
- =?utf-8?B?bHhDcmpsUEJ1Z1h1NXBGckVaeE0ydjRLUC90eUVNeEd1YlE2WWxSREtiQkpl?=
- =?utf-8?B?SG15bU12VnFiQkJuMWdIYU1VRjFRaTFSOHhiTGVMUHhwL3hHV1YzT01INWdx?=
- =?utf-8?B?RytmdlJKRjZ4R3FydGxpeElHZDFIVVVBRnRiS3Q5TWk2Z1BLK2dOd29Gc0dY?=
- =?utf-8?B?UHc2bjRMY2JZQjJrbWtYOUZJMzhvL2sxMCtJYmFkeDluQ0xPMkE5NzF6ODF6?=
- =?utf-8?B?Y0JlVjBEMm9xalg2ODRIRkVxeFNqTWkxT29NRWJXbUlqVmgyRUg0NHJlUHc2?=
- =?utf-8?B?Qk5BOWVDM0VVb1lMQ1B0U1dhbTlSNmNsUVk2WFBJYnUzd2F6N1l2anJsOWFt?=
- =?utf-8?B?NHc9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89c3412a-b28e-4466-6835-08dd4ce224af
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 10:27:12.0291
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Xzc5tuYlDN8ZRBIvNeCIIH3K/MW+DE/0llg1mU0/9DKwx6/y5afYNZabr+v4xUT0SCgNzBx8yl0MhbcOhRfGRgz1IXNdMl7Fxt9BvCpkHQs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7150
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] KVM: s390: pv: fix race when making a page secure
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, frankja@linux.ibm.com, borntraeger@de.ibm.com,
+ nrb@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
+ schlameuss@linux.ibm.com, hca@linux.ibm.com
+References: <20250213200755.196832-1-imbrenda@linux.ibm.com>
+ <20250213200755.196832-3-imbrenda@linux.ibm.com>
+ <6c741da9-a793-4a59-920f-8df77807bc4d@redhat.com>
+ <20250214111729.000d364e@p-imbrenda>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250214111729.000d364e@p-imbrenda>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-在 2025/2/14 17:51, Jerome Brunet 写道:
-> [ EXTERNAL EMAIL ]
->
-> On Fri 14 Feb 2025 at 10:13, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
->
->> From: jiebing chen <jiebing.chen@amlogic.com>
+On 14.02.25 11:17, Claudio Imbrenda wrote:
+> On Thu, 13 Feb 2025 21:16:03 +0100
+> David Hildenbrand <david@redhat.com> wrote:
+> 
+>> On 13.02.25 21:07, Claudio Imbrenda wrote:
+>>> Holding the pte lock for the page that is being converted to secure is
+>>> needed to avoid races. A previous commit removed the locking, which
+>>> caused issues. Fix by locking the pte again.
+>>>
+>>> Fixes: 5cbe24350b7d ("KVM: s390: move pv gmap functions into kvm")
 >>
->> Add the audio tocodec for s4, add the 8 lane support,
->> add the mclk and sclk enable event when start data enable auto switch
-> Again, incomplete description and mixing things together.
->
->> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
->> ---
->>   sound/soc/meson/axg-card.c      |  3 +-
->>   sound/soc/meson/g12a-toacodec.c | 64 +++++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 66 insertions(+), 1 deletion(-)
+>> If you found this because of my report about the changed locking,
+>> consider adding a Suggested-by / Reported-y.
+> 
+> yes, sorry; I sent the patch in haste and forgot. Which one would you
+> prefer (or both?)
+> 
+
+Maybe Reported-by.
+
+> [...]
+> 
+>>> @@ -127,8 +128,11 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+>>>    
+>>>    	page = gfn_to_page(kvm, gpa_to_gfn(gaddr));
+>>>    	mmap_read_lock(gmap->mm);
+>>> -	if (page)
+>>> -		rc = __gmap_make_secure(gmap, page, uvcb);
+>>> +	vmaddr = gfn_to_hva(gmap->private, gpa_to_gfn(gaddr));
+>>> +	if (kvm_is_error_hva(vmaddr))
+>>> +		rc = -ENXIO;
+>>> +	if (!rc && page)
+>>> +		rc = __gmap_make_secure(gmap, page, vmaddr, uvcb);
+>>>    	kvm_release_page_clean(page);
+>>>    	mmap_read_unlock(gmap->mm);
+>>>      
 >>
->> diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
->> index a2dfccb7990f3a53f508fc6724b21de53b4494d8..5cef069c3370257d4aaf24d7270482651babcfe1 100644
->> --- a/sound/soc/meson/axg-card.c
->> +++ b/sound/soc/meson/axg-card.c
->> @@ -303,7 +303,8 @@ static int axg_card_cpu_is_tdm_iface(struct device_node *np)
->>   static int axg_card_cpu_is_codec(struct device_node *np)
->>   {
->>        return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx") ||
->> -             of_device_is_compatible(np, DT_PREFIX "g12a-toacodec");
->> +             of_device_is_compatible(np, DT_PREFIX "g12a-toacodec") ||
->> +             of_device_is_compatible(np, DT_PREFIX "s4-toacodec");
-> There is no need to extend that indefinitely, use fall-back
->
->>   }
+>> You effectively make the code more complicated and inefficient than
+>> before. Now you effectively walk the page table twice in the common
+>> small-folio case ...
+> 
+> I think in every case, but see below
+> 
 >>
->>   static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
->> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
->> index 531bb8707a3ec4c47814d6a0676d5c62c705da75..a93a91136e8ea00e856c3981b9c1e7e08d927a3b 100644
->> --- a/sound/soc/meson/g12a-toacodec.c
->> +++ b/sound/soc/meson/g12a-toacodec.c
->> @@ -41,6 +41,9 @@
->>   #define  CTRL0_BCLK_SEL_LSB          4
->>   #define  CTRL0_MCLK_SEL                      GENMASK(2, 0)
+>> Can we just go back to the old handling that we had before here?
 >>
->> +#define CTRL0_BCLK_ENABLE_SHIFT              30
->> +#define CTRL0_MCLK_ENABLE_SHIFT              29
->> +
->>   #define TOACODEC_OUT_CHMAX           2
->>
->>   struct g12a_toacodec {
->> @@ -107,6 +110,33 @@ static int g12a_toacodec_mux_put_enum(struct snd_kcontrol *kcontrol,
->>        return 1;
->>   }
->>
->> +static int tocodec_clk_enable(struct snd_soc_dapm_widget *w,
->> +                           struct snd_kcontrol *control,
->> +                           int event)
->> +{
->> +     int ret = 0;
->> +     unsigned int mask = 0, val = 0;
->> +     struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
->> +
-> Over complicated for no reason
->
->> +     switch (event) {
->> +     case SND_SOC_DAPM_PRE_PMU:
->> +             mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
->> +             val = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
->> +             ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
-> All this could be done in one line and be actually readable if you
-> properly used the BIT() macro.
->
->> +             break;
->> +     case SND_SOC_DAPM_PRE_PMD:
->> +             mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
->> +             val = 0 << CTRL0_MCLK_ENABLE_SHIFT | 0 << CTRL0_BCLK_ENABLE_SHIFT;
->> +             ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
->> +             break;
->> +     default:
->> +             dev_err(component->dev, "Unexpected event %d\n", event);
->> +             return -EINVAL;
->> +     }
-> ... and nothing explains what is being done and why ...
->
->> +
->> +     return ret;
->> +}
->> +
->>   static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
->>                            CTRL0_DAT_SEL_LSB,
->>                            g12a_toacodec_mux_texts);
->> @@ -143,6 +173,14 @@ static const struct snd_soc_dapm_widget sm1_toacodec_widgets[] = {
->>                            &g12a_toacodec_out_enable),
->>   };
->>
->> +static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
->> +     SND_SOC_DAPM_MUX("SRC", SND_SOC_NOPM, 0, 0,
->> +                      &sm1_toacodec_mux),
->> +     SND_SOC_DAPM_SWITCH_E("OUT EN", SND_SOC_NOPM, 0, 0,
->> +                           &g12a_toacodec_out_enable, tocodec_clk_enable,
->> +                           (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD)),
-> Drops the .autodisable without a even comment
->
-> AFAICT, could be done like the other SoC with SOC_SINGLE_AUTODISABLE()
-> with properly chosen values.
+> 
+> I'd rather not, this is needed to prepare for the next series (for
+> 6.15) in a couple of weeks, where gmap gets completely removed from
+> s390/mm, and gmap dat tables will not share ptes with userspace anymore
+> (i.e. we will use mmu_notifiers, like all other archs)
 
-you mean we can add the New switch for auto enable tocodec mclk bit[29]
+I think for the conversion we would still:
 
-and tocodec bclk bit[30]
+GFN -> HVA
 
-static const struct snd_kcontrol_new s4_toacodec_mclk_enable =
-     SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
-                     CTRL0_ENABLE_BCLK_SHIFT, 1, 0);
+Walk to the folio mapped at HVA, lock the PTE and perform the conversion.
 
-static const struct snd_kcontrol_new s4_toacodec_bclk_enable =
-     SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
-                     CTRL0_ENABLE_MCLK_SHIFT, 1, 0);
+So even with memory notifiers, that should be fine, no?
 
-add the route path
+So not necessarily "the old handling that we had before" but rather "the 
+old way of looking up what's mapped and performing the conversion under 
+the PTL".
 
+For me to fix the refcount freezing properly on top of your work, we'll 
+need the PTL (esp. to exclude concurrent GUP-slow) etc.
 
-static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
-     SND_SOC_DAPM_MUX("SRC", SND_SOC_NOPM, 0, 0,
-              &sm1_toacodec_mux),
-     SND_SOC_DAPM_SWITCH("OUT EN", SND_SOC_NOPM, 0, 0,
-                 &g12a_toacodec_out_enable),
+-- 
+Cheers,
 
-     SND_SOC_DAPM_SWITCH("MCLK OUT EN", SND_SOC_NOPM, 0, 0,
-                 &s4_toacodec_mclk_enable),
+David / dhildenb
 
-     SND_SOC_DAPM_SWITCH("BCLK OUT EN", SND_SOC_NOPM, 0, 0,
-                 &s4_toacodec_mclk_enable),
-
-};
-
-static const struct snd_soc_dapm_route s4_toacodec_routes[] = {
-     { "SRC", "I2S A", "IN A Playback" },
-     { "SRC", "I2S B", "IN B Playback" },
-     { "SRC", "I2S C", "IN C Playback" },
-     { "OUT EN", "Switch", "SRC" },
-
-     {"MCLK OUT EN", "Switch","OUT EN"},
-
-     {"BCLK OUT EN", "Switch","MCLK OUT EN"},
-
-     { "OUT Capture", NULL, "BCLK OUT EN" },
-};
-
-add it replace auto switch event, like it ?
-
->> +};
->> +
->>   static int g12a_toacodec_input_hw_params(struct snd_pcm_substream *substream,
->>                                         struct snd_pcm_hw_params *params,
->>                                         struct snd_soc_dai *dai)
->> @@ -236,6 +274,10 @@ static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
->>        SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
->>   };
->>
->> +static const struct snd_kcontrol_new s4_toacodec_controls[] = {
->> +     SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 7, 0),
->> +};
->> +
-> No. there is no reason to add that for s4 and not for sm1 which has 8
-> line HW support too. That clearly shows up with #define used.
->
-> If you must do that, please do it correctly without leaving the other
-> platforms behind.
->
->>   static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
->>        .probe                  = g12a_toacodec_component_probe,
->>        .controls               = g12a_toacodec_controls,
->> @@ -258,6 +300,17 @@ static const struct snd_soc_component_driver sm1_toacodec_component_drv = {
->>        .endianness             = 1,
->>   };
->>
->> +static const struct snd_soc_component_driver s4_toacodec_component_drv = {
->> +     .probe                  = sm1_toacodec_component_probe,
->> +     .controls               = s4_toacodec_controls,
->> +     .num_controls           = ARRAY_SIZE(s4_toacodec_controls),
->> +     .dapm_widgets           = s4_toacodec_widgets,
->> +     .num_dapm_widgets       = ARRAY_SIZE(s4_toacodec_widgets),
->> +     .dapm_routes            = g12a_toacodec_routes,
->> +     .num_dapm_routes        = ARRAY_SIZE(g12a_toacodec_routes),
->> +     .endianness             = 1,
->> +};
->> +
->>   static const struct regmap_config g12a_toacodec_regmap_cfg = {
->>        .reg_bits       = 32,
->>        .val_bits       = 32,
->> @@ -278,6 +331,13 @@ static const struct g12a_toacodec_match_data sm1_toacodec_match_data = {
->>        .field_bclk_sel = REG_FIELD(TOACODEC_CTRL0, 4, 6),
->>   };
->>
->> +static const struct g12a_toacodec_match_data s4_toacodec_match_data = {
->> +     .component_drv  = &s4_toacodec_component_drv,
->> +     .field_dat_sel  = REG_FIELD(TOACODEC_CTRL0, 19, 20),
->> +     .field_lrclk_sel = REG_FIELD(TOACODEC_CTRL0, 12, 14),
->> +     .field_bclk_sel = REG_FIELD(TOACODEC_CTRL0, 4, 6),
->> +};
->> +
->>   static const struct of_device_id g12a_toacodec_of_match[] = {
->>        {
->>                .compatible = "amlogic,g12a-toacodec",
->> @@ -287,6 +347,10 @@ static const struct of_device_id g12a_toacodec_of_match[] = {
->>                .compatible = "amlogic,sm1-toacodec",
->>                .data = &sm1_toacodec_match_data,
->>        },
->> +     {
->> +             .compatible = "amlogic,s4-toacodec",
->> +             .data = &s4_toacodec_match_data,
->> +     },
->>        {}
->>   };
->>   MODULE_DEVICE_TABLE(of, g12a_toacodec_of_match);
-> --
-> Jerome
 
