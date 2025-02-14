@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-514525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FF4A35814
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:42:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1BD9A35818
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:44:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0A1892227
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3EF3A9C2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91762153E1;
-	Fri, 14 Feb 2025 07:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9640215766;
+	Fri, 14 Feb 2025 07:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xWPgsr/3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Ecd7kKub"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4E620C034;
-	Fri, 14 Feb 2025 07:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D12218FDDB;
+	Fri, 14 Feb 2025 07:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739518922; cv=none; b=h/v3COqi7puoOgiu05GiE5tnIenaU34ZIDRJWES10oQOc2NNdd0m9gbVORgGrQHNBXyFZR4IRfYZIdL0W45suRGwjeZdR18aVu+W+EX5ZPg277OBHlkyZQqdTtWGz2DQKE8aRaKaaYt1LS6o2cCHHq8s2j7VKxUKZWpyIkHVbKo=
+	t=1739519041; cv=none; b=LhVCmqBwtb9XY/aSJWkUiFXTC0AQerVoHsDwactsp67ra6joUBROpK4C2IYgyNONUvat7J9SdPDuPC4KCtMxkUgoUEjZGuok3WFfEy8wUst7SkQ8l+r/Ad6LX2+Lpazh1j8WDntuzeoUsUyp/Kn1nSO/JKXaRYBXfaOH+bVmkYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739518922; c=relaxed/simple;
-	bh=EDD9q/k0LYjcR7mWTHUsBXJQI1egklmZfCrvsVVR6wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffLff/+K0O6Z0wR12Ogc6/gW2EBmDpJekgHkDKXluI3jBVQAb9Nz1zX9KpIfP8noamLZyRykjjQQWfxKgFhfq0kFs7I6ELL067wZ3Q3gvBve6JSpJ1XgAt+0JSmKaxo8dG9aui/sLDU2zr5ZCUqh8W2c3z8s1LjafOmd6zlkBeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xWPgsr/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBCEC4CED1;
-	Fri, 14 Feb 2025 07:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739518921;
-	bh=EDD9q/k0LYjcR7mWTHUsBXJQI1egklmZfCrvsVVR6wU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xWPgsr/3DGM34UvBmBtrGM/iTJ9rTlJxO/3yjH5IOnLTBJKIStDpcHvsoNMfHCjZn
-	 G5xzvDVYwN7RQezCc+HU/6A1qyYZThbJiVQUqa9HY/x7zBY67QjFYjRzprZ2c8X3pp
-	 rC8kXKRDwQRFFONN45gGLQ8BvPWfZig48aMJEQPc=
-Date: Fri, 14 Feb 2025 08:41:57 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [RFC PATCH] uio_hv_generic: Fix sysfs creation path for ring
- buffer
-Message-ID: <2025021418-cork-rinse-698a@gregkh>
-References: <20250214064351.8994-1-namjain@linux.microsoft.com>
- <2025021455-tricky-rebalance-4acc@gregkh>
- <bb1c122e-e1bb-43fb-a71d-dde8f7aa352b@linux.microsoft.com>
+	s=arc-20240116; t=1739519041; c=relaxed/simple;
+	bh=b8HNaR6eRB7BIUa8iKDnODGnEiZ06Ts4TRfNu+PZhRM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kDYXBwsOMDBSaYe56034Kv6RZjUcRSvjyO45arxqupLoq92zmLfAx1SX4C6Gor2dD1qYTcfB1XUVJSFXIxEi9d4LrXHMicsK6EqkeTUT3Ou5lduo/MJnTg8Z6SPG3mlo5WfIw7FzZ79iG4yof0ayBGIDoU/POQYrbHJknT0vL18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Ecd7kKub; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 70dd3e2ceaa711efbd192953cf12861f-20250214
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=qnkcrqEZZ2EzdS7FFRlXKuqzpa+542JwGGqoElF5Pm8=;
+	b=Ecd7kKubJaXmx2p9h6OGB3azuIGoDI4uAv7AIFmRWwW3Fjf2mxwUxxkcXGhfG5kptGaXq5sZDSHQKZKT01ulk8xPjQ5Qe3XJytxwD8SMaFfrWagG07tMIgkE5obAUP7fUEWwCKBAh1CQiHq0YgS34tJQLqqLr0cLCZdGxT2/iEg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:2634a7a6-041d-40f2-ba67-69a22f54d2cb,IP:0,U
+	RL:0,TC:0,Content:21,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:21
+X-CID-META: VersionHash:60aa074,CLOUDID:91ce56fc-7800-43c5-b97b-ddbe32561a5b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 70dd3e2ceaa711efbd192953cf12861f-20250214
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <chun-jen.tseng@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1257582152; Fri, 14 Feb 2025 15:43:54 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 14 Feb 2025 15:43:53 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 14 Feb 2025 15:43:53 +0800
+From: Mark Tseng <chun-jen.tseng@mediatek.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<chun-jen.tseng@mediatek.com>
+Subject: [PATCH v3 0/3] fixed mediatek-cpufreq has multi policy concurrency issue
+Date: Fri, 14 Feb 2025 15:43:31 +0800
+Message-ID: <20250214074353.1169864-1-chun-jen.tseng@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb1c122e-e1bb-43fb-a71d-dde8f7aa352b@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Feb 14, 2025 at 12:35:44PM +0530, Naman Jain wrote:
-> 
-> 
-> On 2/14/2025 12:21 PM, Greg Kroah-Hartman wrote:
-> > On Fri, Feb 14, 2025 at 12:13:51PM +0530, Naman Jain wrote:
-> > > On regular bootup, devices get registered to vmbus first, so when
-> > > uio_hv_generic driver for a particular device type is probed,
-> > > the device is already initialized and added, so sysfs creation in
-> > > uio_hv_generic probe works fine. However, when device is removed
-> > > and brought back, the channel rescinds and again gets registered
-> > > to vmbus. However this time, the uio_hv_generic driver is already
-> > > registered to probe for that device and in this case sysfs creation
-> > > is tried before the device gets initialized completely. Fix this by
-> > > deferring sysfs creation till device gets initialized completely.
-> > > 
-> > > Problem path:
-> > > vmbus_device_register
-> > >      device_register
-> > >          uio_hv_generic probe
-> > > 		    sysfs_create_bin_file (fails here)
-> > 
-> > Ick, that's the issue, you shouldn't be manually creating sysfs files.
-> > Have the driver core do it for you at the proper time, which should make
-> > your logic much simpler, right?
-> > 
-> > Set the default attribute groups instead of manually creating this and
-> > see if that works out better.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Thanks for reviewing Greg. I tried this approach and here are my
-> observations:
-> 
-> What I could create with ATTRIBUTE_GROUPS:
-> /sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/ring
-> 
-> The one we have right now:
-> /sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/channels/6/ring
+For multi cluster SoC, the cpufreq->target_index() is re-enter function
+for each policy to change CPU frequency. In the cirtical session must
+use glocal mutex lock to avoid get wrong OPP.
 
-What is "channels" and "6" here?  Are they real devices or just a
-directory name or something else?
+Changes since v2:
+	  - seperate more patch for detail change.
+	  - remove CCI transition_delay patch
 
-> I could not find a way to tweak attributes to create the "ring" under above
-> path. I could see the variations of sys_create_* which provides a
-> way to pass kobj and do that, but that is something we are already
-> using.
+Mark Tseng (3):
+  cpufreq: mediatek: using global lock avoid race condition
+  cpufreq: mediatek: Add CPUFREQ_ASYNC_NOTIFICATION flag
+  cpufreq: mediatek: data safety protect
 
-No driver should EVER be pointing to a raw kobject, that's a huge hint
-that something is really wrong.  Also, if a raw kobject is in a device
-path in the middle like this, it will not be seen properly from
-userspace library tools :(
+ drivers/cpufreq/mediatek-cpufreq.c | 63 ++++++++++++++++++++++--------
+ 1 file changed, 46 insertions(+), 17 deletions(-)
 
-So again, what is creating the "channels" and "6" subdirectories?  All
-of that shoudl be under full control by the uio device, right?
+-- 
+2.45.2
 
-thanks,
-
-greg k-h
 
