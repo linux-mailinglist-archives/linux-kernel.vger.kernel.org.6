@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-515148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE6A360D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:55:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D346AA360D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F40B1894D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBBAF3AB4A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7D1265CA9;
-	Fri, 14 Feb 2025 14:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0CF266B66;
+	Fri, 14 Feb 2025 14:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EsdHNJMw"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P00/juKX"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B0126618A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4F2265CA9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544935; cv=none; b=Kk+MUFxU712JUoj+l7sO1rQ5aOXVlziQs8Ip5e18QXJF6+99PjYgbV88bHUbBDYN1o8LOcaOtF28sEIg9vVb/T4Omne+YkUpsaA877lDJHMZQL562CrQc5lAEquWgwex6V2qvsu/uhp968ACDhEYoLzQw7W2VoxTa0SMkVZKcbI=
+	t=1739545036; cv=none; b=hroo3JWeduvHs3GuQmTg+ZhcXUigpeDufcPiNZUaMWl6jbkrljSXnD1T6ot5AAt/oxXmCB/eRazcGfvsfJRS5CNOexjOk5o1FbhksFyRNftMThaeqzIwBwcn5WYo4E74ny0pN7OE5sJ7YkPRhfMx/7NlYS0TSMYzdrl3iD4Q4RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544935; c=relaxed/simple;
-	bh=8kx1VFlmess5dQ9i4I0rwmdWx3wzpYasG80iI3G6lA4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YJ5x+TuQVfjgSTccXAW4P0Crzzn4AW2BMfv6SUyyExpo/RPuFDSd4/G0M48egTLuYVofLWLJx+ECi8ovtqsZqx81JZd29A81lmwFRVRvirlBBSmsj+GrYJWu+0UptmCdgMcUndMpK+RJmBcWT6pOm12fHUnip+lUwzCz2x7X0tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EsdHNJMw; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so6779762a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:55:33 -0800 (PST)
+	s=arc-20240116; t=1739545036; c=relaxed/simple;
+	bh=z2Q0IRBbFBY5UO2dBzF27h1+kSCMj9v5w1Ed/8luhF0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h+LnN+v9TPREvCnVTg+4u53k215AgAPzC0tgaf23IuikZtOFBrAAO94dc4xRWJsQWc/W0IkMd3nV+ITMuMURG+FiBr0bKaKyeYIab6SIo36wOMxPcxtrERltHxrLfAcqyeqqxEimhvj35K0kRtofsz1rRuIEDDnyNDG+yxPLFk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P00/juKX; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307c13298eeso21021441fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:57:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739544933; x=1740149733; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GpPnGA1SUNxnjKJ64nLgHnJi9RIPsBncDUL4C0Ugxio=;
-        b=EsdHNJMwohFn7n4wZtHvrTzW889rFnoJIR3Co2XKmx7sTC06UrfGdPbeVdwe1ZFD9d
-         Uo5f0zs1eMY6hCk7F7BXcCAPZBUnNR8gW06Kej3/+OAhb1guQjoZMJVYPShFoPUQFku8
-         j/LX+I+ThZy3nod1TYSIEjBgMvAj6jCY5am2S/ycO+PRUsLxvadeRW0nv/Zl0u0pShoM
-         u4p9pHu1qRQyM5o5yIHM8bUf7n9UEWhOWd/x3mynwVKtvHhzSrs9qiP4f2ycGTAm6hhU
-         0OtMXf0pN2rxuN4BYlGJSaYWv3bVjhKy4h63AbGOqAN9chcn4ywGpux7c/PXx0ATybr/
-         xv0g==
+        d=linaro.org; s=google; t=1739545032; x=1740149832; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQae58/7ZgRGmpkImz3Fvmxvfg6932EKFfHBFpHyTDE=;
+        b=P00/juKXd8ZkVsoozXGeBlnuUTlSzhS114FHHQMLRTYltvnUTz5K0rM3GJoe1OSquj
+         1zhj1kEgwnoEmqhE9IV8yVCFTf/i/uNL3wgP9LsFzAvVDN2OXBbUUby8vcvkUYmfsVMK
+         SOKMnPCvqPd0PNgz+NW+VTQr0RzwgMlX6DpBFc1/KKoLY8yfZKICioNCV7OZfCuqLKzk
+         hVcqPuGF8QBw/I3aSX1VNS+XHYEVY46k60arf4NkQp7fFm2Svq5Sn0JbGquAKdIvG4fY
+         SElPYHkCQae2MoodE7KkjsrN/kEM1hXfyOonAgf7xtyIouh4C//vXrQTE6X97A9mA36f
+         Vypg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739544933; x=1740149733;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GpPnGA1SUNxnjKJ64nLgHnJi9RIPsBncDUL4C0Ugxio=;
-        b=wDZ8KViQYqP+YuK50k5GLawBsyd991bsG78MeAWGWAaUTbgQaPo0+G3t8Hu83ys6ny
-         UFc9SdsYgRvMmMYdn2EXKUuv5wE9Copy2nx2v/hlp/La0kpfg35tpbE1PjwMSaZgFS+V
-         l9nfA+S2vqwI/zX7obiSm8x+REXoWxTZLmHlK/gtwHcyRT34xVbV33SjiR1x2lo1KBcr
-         kS/p3KMQx3ZAQ2CXwQ1Oh9MVfeM1+PgSc6i9mweA7cj8/wuheADPTsyjE0PGBAMAzEbe
-         8PfOPKUQeUCS2t+GBhQnN9SpYd0NfvSxPkIaZQtJEhRJJvHJ2DQIgKIyEERXzYxATKCt
-         0BqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwTV11G/cZuOX/b/4l6/JHq6GyCRw8qUF0ZTAP6HlCzjQ886Z7LeaJVyIdrBHfZwD6smDjEifO3qh63gY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH+nmNkXqhAG2CxSMN4YEKguyXnXso3cIPwbxW0mjFTl3jzW5H
-	AHWKmjTlm/k132BQA+txrv8iQ8JyL2ehiTXPmwV47yaeRqfuMyJc3k12vPlru3XGQXzHlFViLKK
-	/VQ==
-X-Google-Smtp-Source: AGHT+IHzORkSPizk80suRnQui11xIJEqPNA8t4h1ARtS6BoAsXHU0L9W7rjYxrJZycPngxHN3EC7bRyg5KA=
-X-Received: from pjbta5.prod.google.com ([2002:a17:90b:4ec5:b0:2fa:284f:adb2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5307:b0:2fa:229f:d03a
- with SMTP id 98e67ed59e1d1-2fc0f09ebfdmr10097168a91.26.1739544933494; Fri, 14
- Feb 2025 06:55:33 -0800 (PST)
-Date: Fri, 14 Feb 2025 06:55:32 -0800
-In-Reply-To: <20250214181401.4e7dd91d@canb.auug.org.au>
+        d=1e100.net; s=20230601; t=1739545032; x=1740149832;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DQae58/7ZgRGmpkImz3Fvmxvfg6932EKFfHBFpHyTDE=;
+        b=DQVj4EqOn4DSL8R7ECLrofRAgN+28qchPofpzTcy5UHu/kFFnzQzbuRnbHFl0Re2vW
+         WOPHvE5kD08c9jXvXQ64JXxUZJY2Ss2LV/lRsKuHHguDpDCxF9UjpBuUNpGUGwtmB49q
+         VZR+od7eQv9XwDzVrYuEe/61SnIiaCgQrNJuzU5PJZKE5EOtCsROtKP80K7+785BFGGi
+         dRZe5c9xQ3QbeJV9ybFP57WZPjQqY3iiLsXWG4MAhwgAmipiPM3CJjnYhNPDQCaAzhzw
+         qYRQYfx0tYfABeKzkM0PyTfDAsJUKdfTbutKt/K58+13PMUHYTBYPwMmSc7r1pCM+dB8
+         kamQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5+XWXpkHClL5i4WiqIsryHvOEYCZh16FKqP7Q8BB4B1hqNB9nTlBvpSEfTTi1Efe6gIchqCWxIag6Nl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtnayMgPkpgAT7KmmI9EZL8ryIG25Jd5k5HL0LOiUWp1M8WAKs
+	WXpiLs8u4qlV4n0pcycb/0CwdmlVCyZ0zNcgsfdn+AZHJZnqqHJPJBeJ4tzk66aYs8ntE+WagNQ
+	tMhY=
+X-Gm-Gg: ASbGnctOMsRkNEZV50tKwfAFEoE2YBCmhW/j/Gg9Z6wpuHb8aR+i7muxVemincIDmW0
+	MxSxeraQteHbbqnU7RIxPzPCxbJ2HKn8JLMaN4sjAnLXx2yiocmSI/HdmdUEOkmAC6SAYsj9Hdr
+	z5iWz4esgXItbRkzvZv92U4Lxq0d5FXjFkJ3nsmmKul9H+FxxisOqoTgxgimR296GaKMMNzIRYm
+	NQVkzdiZaoPVsz4coHMg6zTIQK+7oNiHlO+26/0wpnXXJlsaaNWogwyisJK99XYGHqQ5+xijx7n
+	BeeCw3q9bk1qaYD05SfrzoU=
+X-Google-Smtp-Source: AGHT+IEGXwyfxyoObKs7o/lt7dV9tEhqiBuBL0KpjS6e5z7omskUER6BZ1nOd81V/L7kuC4TLU7acA==
+X-Received: by 2002:a2e:a907:0:b0:308:e54d:61aa with SMTP id 38308e7fff4ca-3090f353cd9mr34630161fa.2.1739545032292;
+        Fri, 14 Feb 2025 06:57:12 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30921447bdcsm2129911fa.35.2025.02.14.06.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 06:57:11 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 14 Feb 2025 16:57:11 +0200
+Subject: [PATCH] arm64: defconfig: enable DRM_DISPLAY_CONNECTOR as a module
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250214181401.4e7dd91d@canb.auug.org.au>
-Message-ID: <Z69ZZI0Cxljc4qi4@google.com>
-Subject: Re: linux-next: build warning after merge of the kvm-x86 tree
-From: Sean Christopherson <seanjc@google.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Houghton <jthoughton@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250214-arm64-display-connector-v1-1-306bca76316e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAMZZr2cC/x3MSwqFMAxA0a1Ixi9gix/qVuQNSowa0FZSEUXcu
+ 8XhGdx7Q2IVTtAVNygfkiSGDPMrgGYfJkYZssGWti6tqdDr2lQ4SNoWfyHFEJj2qEiGTN240bX
+ OQa435VHO79z/n+cFzY/Bc2kAAAA=
+X-Change-ID: 20250214-arm64-display-connector-c1c1569f9799
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1134;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=z2Q0IRBbFBY5UO2dBzF27h1+kSCMj9v5w1Ed/8luhF0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnr1nHdqBlbiOcs9Fq6bYoQ+iyjmFYH6QKSuxfO
+ /WMhlNqTjWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ69ZxwAKCRCLPIo+Aiko
+ 1dUzB/91jaiBLtA2Q8zCpQ3QjdZ+QQiJ+ot6o6nCYuWdrktym6dcD4EKzYZwUmJ3Vh2WGNTsGMV
+ h6BwL6PgWizo3efy5boVtu7ecr80HjH/1Ug+saZSI/7ZkA3hzOUEooQUsUtg7sdhN18RXhzykXh
+ c6rgBzQhOnB4cq3zCf7rxGkwZCDwEn/6C2hI/luw86qLkxCNCrzcxGqO5R8oQV89DnUglP8akpK
+ BSxLXt7esBRbJAR2NhjPmslaZK9COmB7nGaw/L2Z/5XD8U8NKU6uQtX4+hLHIGWvloM/9TdDO8/
+ 3GuXHoOg15yu3UUAupDJYCQxzSPgQoadi6B/nWgl+EGv7EQ3
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Fri, Feb 14, 2025, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the kvm-x86 tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> virt/kvm/Kconfig:103:warning: config symbol defined without type
-> 
-> Introduced by commit
-> 
->   5eec660014bf ("KVM: Allow lockless walk of SPTEs when handing aging mmu_notifier event")
+The display connector family of bridges is used on a plenty of ARM64
+platforms (including, but not being limited to several Qualcomm Robotics
+and Dragonboard platforms). It doesn't make sense for the DRM drivers to
+select the driver, so select it via the defconfig.
 
-Gah, obvious once you see it.   KVM_MMU_NOTIFIER_AGING_LOCKLESS steals the "bool"
-from KVM_ELIDE_TLB_FLUSH_IF_YOUNG.  I'll fixup and force push.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks Stephen!
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index cb7da44155999b59aff95966f4cdc9107f2af46a..dfcc754962f7a40377d1f8e0f16983af5ace28f4 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -911,6 +911,7 @@ CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20=m
+ CONFIG_DRM_PANEL_SITRONIX_ST7703=m
+ CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
+ CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
++CONFIG_DRM_DISPLAY_CONNECTOR=m
+ CONFIG_DRM_FSL_LDB=m
+ CONFIG_DRM_ITE_IT6263=m
+ CONFIG_DRM_LONTIUM_LT8912B=m
 
-diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-index 54e959e7d68f..9356f4e4e255 100644
---- a/virt/kvm/Kconfig
-+++ b/virt/kvm/Kconfig
-@@ -102,6 +102,8 @@ config KVM_GENERIC_MMU_NOTIFIER
- 
- config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
-        depends on KVM_GENERIC_MMU_NOTIFIER
-+
-+config KVM_MMU_NOTIFIER_AGING_LOCKLESS
-        bool
- 
- config KVM_GENERIC_MEMORY_ATTRIBUTES
+---
+base-commit: ed58d103e6da15a442ff87567898768dc3a66987
+change-id: 20250214-arm64-display-connector-c1c1569f9799
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
