@@ -1,162 +1,244 @@
-Return-Path: <linux-kernel+bounces-514866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609B7A35CBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:39:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B65A35CC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C58160ACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7573A9EC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5C5263C67;
-	Fri, 14 Feb 2025 11:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TQP2Ujme"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB20263C69;
+	Fri, 14 Feb 2025 11:42:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AAE2627ED
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2104625E44A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739533175; cv=none; b=PpbU7Gx4rumcK1EYQ77nxwMoFJypWXNoPRTHIq45y5tdBCpi2FC9RISaWn03sBjW/aN/syrpEh1iF0XlmGGTppsYN5x7LYpVFK99wC44EeUNEjPj+3lMF13CIMS0vxnYicvqC87waEcaemTFKMIPjX8BNQP/frNUJb5FBgve0Fk=
+	t=1739533324; cv=none; b=huj6qqh+zakA2/EZpt6Rb9KYvRE2hY//B/oPcU1+IQc3BiOOd/hKilLGiXDkRXjOf8ETznggvD2YgtbETAo5DNR5U01DWnFbspWm09+raWxZ+0mvT1cUU09c0vk+Qx2ciThUDpFF7iNDEwxTNk/WlCFB3Mo7UggMq4Cga1NdkRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739533175; c=relaxed/simple;
-	bh=cMdC2u0sYCDpH+7JIa951sOELZ0qrwszLq6UjErMXTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAjfnEsbmZwgMlridhxGluYRlV8xGfhfV6xsdlhCd6ZieKltk7fTBpqpo0z8IOJo8zil7GWtodF5r2H3H9xCrcDKgFg2Olj5/BGquVV2MXuzzKZRKB18KnrJ/a/v5yFEHgexgQihTesYwYxbKi6jMDUYzzW5tUGBKolXwjmBAg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TQP2Ujme; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4396590c614so1709075e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:39:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739533172; x=1740137972; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QKPjWMWOypyOUk7EnTRWQCS2Ziv/LCwKjGqYZlUhh+U=;
-        b=TQP2UjmegXdQ2V5hylHw9XTuFlOLWn7cfE3QRl5JH2s0bgtmRfOUnB3oswoFa9gJ5Q
-         kEy/+vZf9Yp8klrVOewCek0r1OIGIdgul+2gm6JyKPsnkbis0UXGTOXNDpojQFmx3lyZ
-         5VSghbKycDOukVwt5JsizymDoCDnEVqhdogeUA134evC3dRqSSOSPTeVrtV5kn3Bmy9+
-         RRee5kfyvNqD+DE27pPCd6X3Tsq3vCwORbpkl3Wk0u1xt2cmvRciyF2lgF/ZVEKi3FVp
-         A2bTK0KQXKDjEHzIO9iyzEpJDJPWjMbxrZiEp8aH2Uy7RXvC05mR5Uuvx5hPelb1G4uI
-         8sgA==
+	s=arc-20240116; t=1739533324; c=relaxed/simple;
+	bh=MYQw7EsZRLya6JkNnwgGEHattSFP7c0q6VjDpHpclew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vAXnpUoUKPNiJwoyLnF3+CzwtQJ5kPx1KPENJ2rCrUsgYl4/sO46rGdEVzJqXmI7HoZY1IXMR9+cd+nhtcvwvDoxKxCJG5Rsd0Dogc5OVvgqlFogFePDDrEVTRr8O/pRseAElgDldI5JFnQf4CkseoA8WtNjytfCdvxOhtv9t3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d14950ac9fso32223025ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:42:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739533172; x=1740137972;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QKPjWMWOypyOUk7EnTRWQCS2Ziv/LCwKjGqYZlUhh+U=;
-        b=hltQqW1PODas0GXfkqRDuyFUICPw+UQJcWVIwwh58da3+5zZoSvcGuiYQQutx8ushA
-         VzqUieZUBYjobstvBmAFhSQivltpxC2trNerf27K+4JbmrBSoo/p9K80lzeVbKzz7O/R
-         I5tGpyS2QYb8aOiPRxtL2HfC8aAVy0GUBwJCJlhsqI71Za+9ef4qzw4BU9B1eENUz/C7
-         Bo1pJ1wgs7Pp/xLTf1QN2F73BeRTO0xGuC/jftjWUtKYmFbvKQ1RYF0KbWUoyCRIEa8N
-         T9VdG3xmp/sLfCXzVohsN+WO3X/7MuQBjzLIs8GrmObj6ZT1jgGRgm9qcL94KFjhoQep
-         L+sA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1g79NR6sHrlxktUHRq2upCjqnqPwyruew5rhNSWDJEqS6+jA8F8hm+uMAAegcKU141l39I5LapdnDopI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAJTrOgKLM0GQBBqDeiZ64yXjmXTViRkZXWCGZGITB8qf6sa3S
-	juLSUgx/UOhGTULNLuE5Lz/cv/6eTZ718EfY1YTrW0CXDqeow6FiJbw4O6zLsdw=
-X-Gm-Gg: ASbGncsVsBYCeD4BU9vhrRNG/GmV+XAj4sq+nhI18kWgqNWIUAdg+K4naI6zVkPdd3S
-	Qs1ZYle2QC/JsTK/a8pzFz3HTpCktfd9uYA6xX47xnqJlNKNUw7nA5mbfBwnNnS5rblYbvAn2IO
-	fPR9KzH/mASzXOvkdPb72eatM8ySH9Qqm8l7VjQLWRNY98/yAvB9Mmh6+DUZOgPk3u/JOVe/Pgv
-	ROxXESaHwmmn8vR/C4YrxuWeQ6pKCUpkCS0EcvzFo8It9efPUVVrcg7pB0Myw1HNffeBBkYeO25
-	Qs5qAHVPwchgY/llQd8/kCX9ShhwQXkXGQc=
-X-Google-Smtp-Source: AGHT+IGEmXDUEMfbZCKGcEHBw6n4npRZYFXR54+yFK5o7XH3akuhLP6A28R5QUPFgaGjYpdOnpjD7g==
-X-Received: by 2002:a05:600c:3ba7:b0:439:4756:ad31 with SMTP id 5b1f17b1804b1-4396711c797mr13207145e9.8.1739533172390;
-        Fri, 14 Feb 2025 03:39:32 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06da56sm73529435e9.23.2025.02.14.03.39.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:39:31 -0800 (PST)
-Message-ID: <c5288872-31ef-427f-8438-06e1f0da1e71@linaro.org>
-Date: Fri, 14 Feb 2025 12:39:30 +0100
+        d=1e100.net; s=20230601; t=1739533322; x=1740138122;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=70L3Ew3hoezs7957juiJAvFUyzvdTWM+tIN1r5kTrLo=;
+        b=tXBpZ8/dXUNyT3cczRywmzSMRnhmdZBOFo26jQNRA1Jv5zjNEndCAMkPQGitDKtmpv
+         WIrMbzdNtSqw+oSDi5uOCjyM3QHoWp4Tr5EzdNI86B0eriNsekwPv4msVN+qQkKiL5Si
+         CBk2udcpAXlhYm1YjNCRWvJAsEiGf0qMlLVWnVAn7V0t6zRz3BTiroo5DOSCt3JNtDeh
+         wrM0nDJnjJwohJ4gTZzNftr90kxli/zZoDaYPavseDcPUGs5OKLFztXuhNKjS0jsnaKV
+         xILUyg39u0ZBkVnavOhRxrtVE70cDVC9XVn7fZq3/lsFFYCWp7AMo55J497+ub0bMDFp
+         aySg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6N3o4tPX8dm98h1gTqKCYTnshn5hX56nmCb1kSdOsH0N+ORV27vCIGGPSRVR0U/19/Dd74X8RhsIby5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMs82OIvVsIHxhAkS56oG61r5N4a5rdVy7FAvhGUBsoN1JRJ6+
+	sdru3gZ5Gzx5836dtLhEyO80l3BLfjP78SHWv+xbroEQr8zyzu+R2d5uMFkkONi1ih+HWxKOn5v
+	cOXMneY5CxSg0Li/psRqha0AbvzhM/rr9k8nKMtiyDVYelfkTdcGQyss=
+X-Google-Smtp-Source: AGHT+IFxdZovbKmLf2fDHZzG73dk1DlsuJKjSxZvNbWu/5Xq/ftpoiKT7bTjJ0zwgJXil/gzle2PjT87fKJn45oVJIk7PNr296lm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] drm/msm/dsi: Minor cleanups
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250106-drm-msm-cleanups-v1-0-271ff1c00795@linaro.org>
- <ad2bc7a7-2e28-4599-bb94-fd66fd2ba88e@linaro.org>
- <r5mq66osrzle4xbduvaqhv4ypqc5dfkjrhvqwchjmni2q32sbd@gh77gkgj3imp>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <r5mq66osrzle4xbduvaqhv4ypqc5dfkjrhvqwchjmni2q32sbd@gh77gkgj3imp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3689:b0:3d0:11ff:a782 with SMTP id
+ e9e14a558f8ab-3d18c231101mr59262605ab.9.1739533322237; Fri, 14 Feb 2025
+ 03:42:02 -0800 (PST)
+Date: Fri, 14 Feb 2025 03:42:02 -0800
+In-Reply-To: <20250214111926.2252-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67af2c0a.050a0220.21dd3.0043.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
+From: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/02/2025 12:30, Dmitry Baryshkov wrote:
-> On Fri, Feb 14, 2025 at 11:52:14AM +0100, Krzysztof Kozlowski wrote:
->> On 06/01/2025 09:49, Krzysztof Kozlowski wrote:
->>> Few minor improvements/cleanups why browsing the code.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> 5 weeks on the list. Any more comments from DRM side? Can it be merged?
-> 
-> Are you going to repost for the patch #2 commit message update?
+Hello,
 
-I did not plan, but I can send v2 with that update.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Write in io_submit_one
 
-Best regards,
-Krzysztof
+netfs: Couldn't get user pages (rc=-14)
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_sub_and_test include/linux/refcount.h:264 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+BUG: KASAN: slab-use-after-free in refcount_dec_and_test include/linux/refcount.h:325 [inline]
+BUG: KASAN: slab-use-after-free in iocb_put fs/aio.c:1208 [inline]
+BUG: KASAN: slab-use-after-free in io_submit_one+0x4e5/0x1da0 fs/aio.c:2055
+Write of size 4 at addr ffff88802e13ae88 by task syz.1.40/6596
+
+CPU: 3 UID: 0 PID: 6596 Comm: syz.1.40 Not tainted 6.14.0-rc2-syzkaller-g128c8f96eb86-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:489
+ kasan_report+0xd9/0x110 mm/kasan/report.c:602
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+ __refcount_sub_and_test include/linux/refcount.h:264 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+ refcount_dec_and_test include/linux/refcount.h:325 [inline]
+ iocb_put fs/aio.c:1208 [inline]
+ io_submit_one+0x4e5/0x1da0 fs/aio.c:2055
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit fs/aio.c:2081 [inline]
+ __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8f53d8cde9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8f54b7f038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 00007f8f53fa5fa0 RCX: 00007f8f53d8cde9
+RDX: 00004000000002c0 RSI: 0000000000000001 RDI: 00007f8f54b5e000
+RBP: 00007f8f53e0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8f53fa5fa0 R15: 00007ffeeb0594c8
+ </TASK>
+
+Allocated by task 6596:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_noprof+0x226/0x3d0 mm/slub.c:4171
+ aio_get_req fs/aio.c:1058 [inline]
+ io_submit_one+0x123/0x1da0 fs/aio.c:2048
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit fs/aio.c:2081 [inline]
+ __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6596:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2353 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kmem_cache_free+0x2e2/0x4d0 mm/slub.c:4711
+ iocb_destroy fs/aio.c:1110 [inline]
+ iocb_put fs/aio.c:1210 [inline]
+ iocb_put fs/aio.c:1206 [inline]
+ aio_complete_rw+0x3ec/0x7b0 fs/aio.c:1507
+ netfs_rreq_assess_dio fs/netfs/read_collect.c:379 [inline]
+ netfs_read_collection+0x30fa/0x3cf0 fs/netfs/read_collect.c:442
+ netfs_wait_for_pause+0x31c/0x3e0 fs/netfs/read_collect.c:693
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:106 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:144 [inline]
+ netfs_unbuffered_read_iter_locked+0xb50/0x1610 fs/netfs/direct_read.c:229
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:264
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ aio_read+0x313/0x4e0 fs/aio.c:1602
+ __io_submit_one fs/aio.c:2003 [inline]
+ io_submit_one+0x1580/0x1da0 fs/aio.c:2052
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit fs/aio.c:2081 [inline]
+ __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802e13adc0
+ which belongs to the cache aio_kiocb of size 216
+The buggy address is located 200 bytes inside of
+ freed 216-byte region [ffff88802e13adc0, ffff88802e13ae98)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88802e13af00 pfn:0x2e13a
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888020025cc0 dead000000000122 0000000000000000
+raw: ffff88802e13af00 0000000080190010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff888020025cc0 dead000000000122 0000000000000000
+head: ffff88802e13af00 0000000080190010 00000000f5000000 0000000000000000
+head: 00fff00000000001 ffffea0000b84e81 ffffffffffffffff 0000000000000000
+head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 6485, tgid 6484 (syz.1.20), ts 73097474485, free_ts 73096375881
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x1fc/0x540 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab mm/slub.c:2587 [inline]
+ new_slab+0x23d/0x330 mm/slub.c:2640
+ ___slab_alloc+0xc5d/0x1720 mm/slub.c:3826
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ kmem_cache_alloc_noprof+0xfa/0x3d0 mm/slub.c:4171
+ aio_get_req fs/aio.c:1058 [inline]
+ io_submit_one+0x123/0x1da0 fs/aio.c:2048
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit fs/aio.c:2081 [inline]
+ __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 34 tgid 34 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
+ rcu_do_batch kernel/rcu/tree.c:2546 [inline]
+ rcu_core+0x79d/0x14d0 kernel/rcu/tree.c:2802
+ handle_softirqs+0x213/0x8f0 kernel/softirq.c:561
+ run_ksoftirqd kernel/softirq.c:950 [inline]
+ run_ksoftirqd+0x3a/0x60 kernel/softirq.c:942
+ smpboot_thread_fn+0x661/0xa30 kernel/smpboot.c:164
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff88802e13ad80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ ffff88802e13ae00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88802e13ae80: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+                      ^
+ ffff88802e13af00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802e13af80: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+==================================================================
+
+
+Tested on:
+
+commit:         128c8f96 Merge tag 'drm-fixes-2025-02-14' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c659b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c09dc55ba7f798e3
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9890527385ab9767e03
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=102087df980000
+
 
