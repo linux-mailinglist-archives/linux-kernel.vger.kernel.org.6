@@ -1,161 +1,107 @@
-Return-Path: <linux-kernel+bounces-515531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F716A365F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5762FA365F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359E016EC77
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D16D16F16A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7E1957FC;
-	Fri, 14 Feb 2025 18:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0C2194137;
+	Fri, 14 Feb 2025 18:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUjpuxeO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="ORnvTjp+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7096134AB;
-	Fri, 14 Feb 2025 18:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739559295; cv=none; b=GRWUANZ6BzGPjSjLKgEElwkXfW2xlXk3EG1IXwXbEWubG8B/tWQksBjkSLy8V/XZpW0zDX7lKSuUj+iNVA01OKCKxH7pooMQw01xaAQFgbDmd7IkOKhhuoEApFJG67Y+D/hVSpuDj50dMolT7tz3ZHJCu5ha3jmeqg2YTfMb5do=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739559295; c=relaxed/simple;
-	bh=ia/ucavXjq6WnO3QZMyQf6RkJzq6OShVb4GpeeFZXo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qD7kNOhdAaxSD1HoN3ffkSeNyg/QJMJXrGNKi7A8epftOapATrwqmsetx3DUM0+K4KWPgJfCnCEpKlBMWnBNQQ5/+M8O2AkbrgU3hixWr2GyAmc8bvx+tWhsEW8yDVUWWWViy8UA36X8cvWAiQDpG0+QyIynIjRrJPrfD5PVwo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUjpuxeO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF4DC4CED1;
-	Fri, 14 Feb 2025 18:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739559295;
-	bh=ia/ucavXjq6WnO3QZMyQf6RkJzq6OShVb4GpeeFZXo0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DUjpuxeOE2Es4StoHMlBPFQ3vBpaGtKI/AgNu3KjEqH08MkaR++I6oMZ2RGUGYcP/
-	 hM9GoCN5SIqgP2n+S8uQ3JiWxTuL/i5Wx9O45WPo7KgzO0H2uOBkgHFaYXqS9X9+9P
-	 7F8XKzFGlUUA580ycbm/Y5dVoY9dokaTYu6bBFS4G2rfWG+HvGgiyz9o7sswOT40xq
-	 EoeaTVE0Q8T5BSf/V5DO+wDIFHt6eNTaZ3zJvTxOxcxHEX9tinT3zim/Fi/WJAEi5V
-	 O30s1o99N5UVt/pocMypsR0Rbqx1zjHOW7bQk1hdkjqgK0GxwINoY1rAwdpfDRO/0A
-	 vYs5FgftM/glQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] perf tools: Fix compile error on sample->user_regs
-Date: Fri, 14 Feb 2025 10:54:54 -0800
-Message-ID: <20250214185454.753122-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBE2134AB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 18:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739559358; cv=pass; b=ZLK+gYRGZexcItTveFGMbTGrjcrs7y7X8ADMteREAGSPbRoNcjy6D0GnvEXij9hDwAGdw9LMVyjfWs4s1AQW1fLUxcScCsAWSOjSS38caHS/HYcQTXyCZCdtKj0/QZJZCPVSSGbuRdZex5ds83zuVoWHE2JrRBP+SLmpSHpMMGE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739559358; c=relaxed/simple;
+	bh=k0DxnmifeXyVE1+vUH6QoJhM0epTblkp//xVs2rniS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U41keU3kJp6IEj9aYqnxXTpTP49m9jpnotIEpGGxV1K2BXmv+jlJb1QWrRESSdUYOJQv3VV6I6w2ky5Y554mwEFHqbTJVEXZdL7Pym3Gjc13n64hs6vnnlLCulM6ky/Wa2jeiFz7OzLkZ1quzRc+dGPFiMJm+RD9dBIqjlu0014=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=ORnvTjp+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739559322; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Q7TQkltvlvtc3BlPowcFBXdvBn5F8IhZF06+b40ZYagQgecPUwLryWPVQ0LSuE/iLApTtl/m9pLX9pp46ItcdZ3+N3ALdkKq8h4Pir/GME46RysYn8Ch1Ex3NaKT9l0TxQRVYffIAm6eOJX5OM+bTgIhVrLgyYNDYxWFMUkp2Ho=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739559322; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5PPELiY6ciT1+8p7A5RDR516Gz4+788KY4S3xS43Ruc=; 
+	b=bQ0RFEhKYDLewQqNE41D6/ShRG9EkjOSIL9E8epsSx68oHw2QFBAeLCS7OOeH9zQcbA22mpSh/r7dVjWDtl2qBxQ2YAGqBclouRCnMuIVNbtydX60VB+NxYkyTQXmEIcoGC6O9yN04eeYpkr1pc0FHlWXXzzGVPRuuYKHuZdYcY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739559322;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=5PPELiY6ciT1+8p7A5RDR516Gz4+788KY4S3xS43Ruc=;
+	b=ORnvTjp+4qG2puKce7R9BGUPS6ycT2RlZx/n0ekRkcvmUtGaTLzcypaiqHHoyA53
+	zeDCRivHaM3y/DmGmIyzZPgQrC75NAwjL75J0MQvowsitmut1FPE0AjeNgfbV5Iq+EG
+	xVt95RvbLF1pFGnZoPekbLuVGe9O3nFdSUDwcgH8=
+Received: by mx.zohomail.com with SMTPS id 1739559319060353.5195199172622;
+	Fri, 14 Feb 2025 10:55:19 -0800 (PST)
+Message-ID: <04bb775b-9071-4bef-afaf-a0157bbce2fe@collabora.com>
+Date: Fri, 14 Feb 2025 21:55:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/virtio: Extend blob UAPI with deferred-mapping
+ hinting
+To: Rob Clark <robdclark@gmail.com>
+Cc: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Asahi Lina <lina@asahilina.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel@collabora.com
+References: <20250126204239.474847-1-dmitry.osipenko@collabora.com>
+ <CAF6AEGsHY+kh-k+=FqNzf=d=60JqkfFC=+U039XYK-7dTkXZmA@mail.gmail.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAF6AEGsHY+kh-k+=FqNzf=d=60JqkfFC=+U039XYK-7dTkXZmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-It's recently changed to allocate dynamically but misses to update some
-arch-dependent codes to use perf_sample__user_regs().
+On 2/14/25 20:45, Rob Clark wrote:
+> On Sun, Jan 26, 2025 at 12:43 PM Dmitry Osipenko
+> <dmitry.osipenko@collabora.com> wrote:
+>>
+>> If userspace never maps GEM object, then BO wastes hostmem space
+>> because VirtIO-GPU driver maps VRAM BO at the BO's creating time.
+>>
+>> Make mappings on-demand by adding new RESOURCE_CREATE_BLOB IOCTL/UAPI
+>> hinting flag telling that host mapping should be deferred until first
+>> mapping is made when the flag is set by userspace.
+>>
+>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> 
+> I suppose we could have just added a new blob_flag, but then userspace
+> would need to probe the kernel to see whether the new flag was
+> supported.  (Which isn't a big deal, that sort of thing is done in
+> many places.)  But extending the struct does make it more transparent
+> to userspace.  Either way,
+> 
+> Reviewed-by: Rob Clark <robdclark@gmail.com
 
-Fixes: dc6d2bc2d893a878 ("perf sample: Make user_regs and intr_regs optional")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/arch/csky/util/unwind-libdw.c      | 2 +-
- tools/perf/arch/loongarch/util/unwind-libdw.c | 2 +-
- tools/perf/arch/powerpc/tests/dwarf-unwind.c  | 2 +-
- tools/perf/arch/powerpc/util/unwind-libdw.c   | 2 +-
- tools/perf/arch/riscv/util/unwind-libdw.c     | 2 +-
- tools/perf/arch/s390/util/unwind-libdw.c      | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+Thanks for the review!
 
-diff --git a/tools/perf/arch/csky/util/unwind-libdw.c b/tools/perf/arch/csky/util/unwind-libdw.c
-index 79df4374ab18dc36..b20b1569783d7e98 100644
---- a/tools/perf/arch/csky/util/unwind-libdw.c
-+++ b/tools/perf/arch/csky/util/unwind-libdw.c
-@@ -10,7 +10,7 @@
- bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
- {
- 	struct unwind_info *ui = arg;
--	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
- 	Dwarf_Word dwarf_regs[PERF_REG_CSKY_MAX];
- 
- #define REG(r) ({						\
-diff --git a/tools/perf/arch/loongarch/util/unwind-libdw.c b/tools/perf/arch/loongarch/util/unwind-libdw.c
-index 7b3b9a4b21f8f482..60b1144bedd5f325 100644
---- a/tools/perf/arch/loongarch/util/unwind-libdw.c
-+++ b/tools/perf/arch/loongarch/util/unwind-libdw.c
-@@ -10,7 +10,7 @@
- bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
- {
- 	struct unwind_info *ui = arg;
--	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
- 	Dwarf_Word dwarf_regs[PERF_REG_LOONGARCH_MAX];
- 
- #define REG(r) ({							\
-diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-index 5ecf82893b84d5c0..66af884baa660389 100644
---- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-@@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
- int test__arch_unwind_sample(struct perf_sample *sample,
- 			     struct thread *thread)
- {
--	struct regs_dump *regs = &sample->user_regs;
-+	struct regs_dump *regs = perf_sample__user_regs(sample);
- 	u64 *buf;
- 
- 	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
-diff --git a/tools/perf/arch/powerpc/util/unwind-libdw.c b/tools/perf/arch/powerpc/util/unwind-libdw.c
-index e9a5a8bb67d9186e..82d0c28ae3459ecd 100644
---- a/tools/perf/arch/powerpc/util/unwind-libdw.c
-+++ b/tools/perf/arch/powerpc/util/unwind-libdw.c
-@@ -16,7 +16,7 @@ static const int special_regs[3][2] = {
- bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
- {
- 	struct unwind_info *ui = arg;
--	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
- 	Dwarf_Word dwarf_regs[32], dwarf_nip;
- 	size_t i;
- 
-diff --git a/tools/perf/arch/riscv/util/unwind-libdw.c b/tools/perf/arch/riscv/util/unwind-libdw.c
-index 5c98010d8b59777f..dc1476e16321736d 100644
---- a/tools/perf/arch/riscv/util/unwind-libdw.c
-+++ b/tools/perf/arch/riscv/util/unwind-libdw.c
-@@ -10,7 +10,7 @@
- bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
- {
- 	struct unwind_info *ui = arg;
--	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
- 	Dwarf_Word dwarf_regs[32];
- 
- #define REG(r) ({						\
-diff --git a/tools/perf/arch/s390/util/unwind-libdw.c b/tools/perf/arch/s390/util/unwind-libdw.c
-index f50fb6dbb35c5dc6..c27c7a0d1076c890 100644
---- a/tools/perf/arch/s390/util/unwind-libdw.c
-+++ b/tools/perf/arch/s390/util/unwind-libdw.c
-@@ -11,7 +11,7 @@
- bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
- {
- 	struct unwind_info *ui = arg;
--	struct regs_dump *user_regs = &ui->sample->user_regs;
-+	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
- 	Dwarf_Word dwarf_regs[ARRAY_SIZE(s390_dwarf_regs)];
- 
- #define REG(r) ({						\
 -- 
-2.48.1.601.g30ceb7b040-goog
-
+Best regards,
+Dmitry
 
