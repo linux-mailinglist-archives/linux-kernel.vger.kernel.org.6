@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-515508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4AEA365B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:28:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A1EA365BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291353A739C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A89170A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2C5269804;
-	Fri, 14 Feb 2025 18:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909B42690FE;
+	Fri, 14 Feb 2025 18:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rhosxkk1"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="KxzOWGoV"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EFE14D28C;
-	Fri, 14 Feb 2025 18:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89904268C45;
+	Fri, 14 Feb 2025 18:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739557681; cv=none; b=N74c3ZxHeO330agY5peeuVvbGhw/ZKfAPgwo+PUWPkcfkjgfJogfjt5c1qe7IM+McB4K4spSMmI7CQbH6UESql3Xb8vTWTdalRSpo2LtxoVcqknos3X+P75hCkGBA/nCEeYstxk+dTZGNvpdkV/z1XE61P0P/kv0qxP3GMdd77Y=
+	t=1739557694; cv=none; b=YJpH5uSgC3Exn2jMh53foLm7wP6qscAh4CQtumTEvhiP+DxGNF2Fanx3N+y9ZdXvvtKrL6g/snKHsnndxSSBwR4Ee+zvvGjBYKRpogK0ZFAuj0xdX+uYNYHQRz5ET+/PKXif6yfIZn6tGzbyAc1isS6pjqhnyv1dSvJoMD0AFPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739557681; c=relaxed/simple;
-	bh=zUy8H2TXFgYBHz9VYypM+bAWJmRV/WrtybTJ+h3s1f4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EoG7xYZn3zQc9oVZKRwD7QMUGFQQnGidrhkmNhuiIx6jO6GZRtGwa1TIiUr2Mc5xhOiND1U/ViWn1KcB165hkOGVkkdyFJJQPQFd1BQQRCqV+97tTVr9d6O/sUpt9lzW91hCdFALKod3kHWP/azmLdSTJwvSweRliHZpej4TDIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rhosxkk1; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 723364442A;
-	Fri, 14 Feb 2025 18:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739557677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zUy8H2TXFgYBHz9VYypM+bAWJmRV/WrtybTJ+h3s1f4=;
-	b=Rhosxkk1SMWTYOQ+STvzgixJugox5srvE3afnwNLcfA7raIwFpwbBz00K0LU+BDT2uNAEt
-	fATwbXx6zTUNhKBB1vCIVkUV3QQgrrT1mZWl8VqHVyIKmCmG6IyEVAXcyPasW9NqBbC5nt
-	aU5xzAsp8LUg0fSQESnrhJOWxdA2+RNtBr+8mNC2qmhl3fu/+4kCCVu3EIswba5pRpHoEC
-	EhnWNC6BrFyBwBDY8Za7bGFuWiCqTHqBQJyD5FOlDXAqMruJlIRc/Mg66wKOao9YH9DkAj
-	6j3Essbbc/FF7Tn8vBjN+BiM3YNChEV5WlQckgv7HQ6JUhCpKZF+s01x5dlR3w==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Santhosh Kumar K <s-k6@ti.com>
-Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <quic_sridsn@quicinc.com>,
-  <quic_mdalam@quicinc.com>,  <linux-mtd@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  <p-mantena@ti.com>,
-  <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: spinand: winbond: Fix oob_layout for W25N01JW
-In-Reply-To: <20250213060018.2664518-1-s-k6@ti.com> (Santhosh Kumar K.'s
-	message of "Thu, 13 Feb 2025 11:30:18 +0530")
-References: <20250213060018.2664518-1-s-k6@ti.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 14 Feb 2025 19:27:56 +0100
-Message-ID: <875xlcnzyr.fsf@bootlin.com>
+	s=arc-20240116; t=1739557694; c=relaxed/simple;
+	bh=tsQoV1mQsqNq6InM3wdlxDCaycM+dXDK7QEIVPJAyVo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SzyW5xKwzi1RatinaBWswRAStnJs9LGwOyTddFm1FAOjeHAWknMzbKWpmFNDrE55WtEXDihxtUYVKbQ8iRR4NOkgMjjMz1pH/CGM4T1kPyNQCTlpeJUZotfeAAXdHNMAUFT4LdBBtcJtMbusS0xzlyWztHrhRxqlpAiavIAawww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=KxzOWGoV; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1739557691;
+	bh=tsQoV1mQsqNq6InM3wdlxDCaycM+dXDK7QEIVPJAyVo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=KxzOWGoVA3Lr0vtA4YT+TzVPhfYb9BsfsHOyVp+5PPESOR3vMPic7JfF32YCtAJUx
+	 nTjuVhfNs/Gh2B5SWRc+NGWWlsv58yJx7PNsPKzOQN2YTI9lglVzQ1d6cWmONjCmHQ
+	 tQXqy3+Xc+RjB2zzg8hn/5bmUPApiYFbkkhLxSzY=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id B29CE40A17; Fri, 14 Feb 2025 10:28:11 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id B1984400C6;
+	Fri, 14 Feb 2025 10:28:11 -0800 (PST)
+Date: Fri, 14 Feb 2025 10:28:11 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Suren Baghdasaryan <surenb@google.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    David Rientjes <rientjes@google.com>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+    maple-tree@lists.infradead.org, 
+    Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+    Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
+In-Reply-To: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+Message-ID: <d731cf1b-a594-983e-90e1-9380410e38fc@gentwo.org>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehtdefjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegvdduleeihfettdfgieevtdffjeeggfefveetudeludekieffhfeiffduvdehffenucffohhmrghinhepfihinhgsohhnugdrtghomhenucfkphepledvrddukeegrdelkedrudeijeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedrleekrdduieejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepshdqkheisehtihdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepqhhuihgtpghsrhhiughsnhesqhhuihgtihhntgdrtghomhdprhgtphhtthhopehquhhitggpmhgurghlrghmsehquhhitghinhgtrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdri
- hhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpqdhmrghnthgvnhgrsehtihdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
 
-Hello Santhosh,
+On Fri, 14 Feb 2025, Vlastimil Babka wrote:
 
-On 13/02/2025 at 11:30:18 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
+> - Cheaper fast paths. For allocations, instead of local double cmpxchg,
+>   after Patch 5 it's preempt_disable() and no atomic operations. Same for
+>   freeing, which is normally a local double cmpxchg only for a short
+>   term allocations (so the same slab is still active on the same cpu when
+>   freeing the object) and a more costly locked double cmpxchg otherwise.
+>   The downside is the lack of NUMA locality guarantees for the allocated
+>   objects.
 
-> Fix the W25N01JW's oob_layout according to the datasheet. [1]
->
-> [1] https://www.winbond.com/hq/product/code-storage-flash-memory/qspinand=
--flash/?__locale=3Den&partNo=3DW25N01JW
->
-> Fixes: 6a804fb72de5 ("mtd: spinand: winbond: add support for serial NAND =
-flash")
-> Cc: Sridharan S N <quic_sridsn@quicinc.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
+The local double cmpxchg is not an atomic instruction. For that it would
+need a lock prefix.
 
-I am sorry this patch does not apply, are you sure you rebased on next?
+The local cmpxchg is atomic vs an interrupt because the interrupt can only
+occur between instructions. That is true for any processor instruction.
 
-Can you please fix and resend ?
+We use the fact that the cmpxchg does a RMV in one unbreakable
+instruction to ensure that interrupts cannot do evil things to the fast path.
 
-Thanks,
-Miqu=C3=A8l
 
