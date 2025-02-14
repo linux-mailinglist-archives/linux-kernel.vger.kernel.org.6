@@ -1,160 +1,184 @@
-Return-Path: <linux-kernel+bounces-515543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23526A3660E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:22:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A704BA36611
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD41171DDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3D1171220
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107EF19924D;
-	Fri, 14 Feb 2025 19:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190D11A7045;
+	Fri, 14 Feb 2025 19:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCJHxda2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTDRXme/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683C12AF16;
-	Fri, 14 Feb 2025 19:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA02715FA7B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739560946; cv=none; b=eQ43qSvkP0wHQ6JE9FHju1G/dHq7Fer+NqrgC74ktLjBZUMwLwd33sQHxqlwo6wg12L1Y8WVM3aNSoD5FdBw1LiL/sS01y5xIpv91/HOU2/2rwjd1IJuuhkfmQE1dmV07ewfAAseTq8n9ywP5609DXwsrmh9GWxRZkiTONkkuLI=
+	t=1739561088; cv=none; b=RT3HD5AD5rc2olInr+KGpwkwg2tXWf2c1yYmiEtisP/9CZ5YSOxy2M6a0g/Nbx1AfSLETEIfVAWY0PrzWlJkOBcay+a4lzRx+SMCC54M5VPicHBoNSbnfhYudA5HrzgQlsmTRa7E1lMLUG4rSjHNux2RKR+K6MPCH/X9PDi1rik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739560946; c=relaxed/simple;
-	bh=cIlnWIeklYExmWQ9uJGg+d9BS8uNzeL7FRL/jhePM1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GekBydewwG5qttawIUJf9UM9BUgV3BpLdADr8C0Dxfi6zYEzO94xh1/lykHBvTrJvDLqC4t4zFOkKFSAH7+68bvRlehJLs2YYEAwqXTjy5W/eGqe6e9XCMsEEFLJtqoSdDdbS87UCLmRXU2mo6VOdI0GKP2prYtf5UiE7CsnClo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCJHxda2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25462C4CED1;
-	Fri, 14 Feb 2025 19:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739560946;
-	bh=cIlnWIeklYExmWQ9uJGg+d9BS8uNzeL7FRL/jhePM1A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GCJHxda2cLx9E8KruDRAgDid7tBsFCFo1v4uwGGE+BQya1Kie8RHjF8cHi+Hs3wcM
-	 w0gRKgUwUocX4p/9YG8lMindbQHXlrt2M9dgWkuSD/LBvbeLxkjFzXs0qqrbJsovkC
-	 4XjXON8CM+KtI/AnfNNSiPX/esPfTEHsMSNI+lTq2bZtxig1zWW8fzlkcNj7we0BUC
-	 sfNKCO8Rm/DeSKnzc3W7Brn1jieeWIHNfOoqv+Nnh9Rxw17pmhJMId2fTy1qr51HHj
-	 sTTOuH7KJ6HQ28ADgUrIGce0JUqB17nM8IVGqCufZafla0COwLeskwT/kflpUGZnXS
-	 DmDJv4QnMR69A==
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Jennifer Miller <jmill@asu.edu>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Jann Horn <jannh@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Rik van Riel <riel@surriel.com>,
+	s=arc-20240116; t=1739561088; c=relaxed/simple;
+	bh=d7eLa+l0BgxHNOGpkfo2U7Ib7OXM+0lkMqMNR9qYx4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L6Awyz4FRmCB60jFLzcADcRG6dGMqIwuBB0jQMlhrho5m6G5hJgRp06X3UNyMf2qR80FUVvogjzhh0tPQMUEj5UoCikWiPWRwsUyqxNGE0igQuaSEZLynVBobNL0u/6osX83pTNbOw+6NSSjniUZ2TX5JAOiRB7V4/P7aCyrytU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTDRXme/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739561085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uU18PgJHAWxgzCn1GD8uryQE/mKTabOBU2mLmRwwGxI=;
+	b=RTDRXme/4Ck8Pu33B3KhyWdGgMGk9I0efkGPUwN/CVFFULma2xAxYfv0d9NjJ0QjNXg59g
+	IGgeBGVAkleqHYjhq4mveJwcalSL3mq9kHwwJvhPA5OVayVY7RLmtnUUgyzclLUeh6oksD
+	1peLQ/xuB1Z9eobD6Hb0hy/13EdD624=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-dfWXpf46OYOZdi8cUPKRNw-1; Fri,
+ 14 Feb 2025 14:24:41 -0500
+X-MC-Unique: dfWXpf46OYOZdi8cUPKRNw-1
+X-Mimecast-MFC-AGG-ID: dfWXpf46OYOZdi8cUPKRNw_1739561080
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F129A19039C5;
+	Fri, 14 Feb 2025 19:24:39 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.30])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB8FB1800365;
+	Fri, 14 Feb 2025 19:24:37 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Don Brace <don.brace@microchip.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: storagedev@microchip.com,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] x86/kcfi: Require FRED for FineIBT
-Date: Fri, 14 Feb 2025 11:22:21 -0800
-Message-Id: <20250214192210.work.253-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] scsi: smartpqi: Add lun_reset_key to initialize ctrl_info->lun_reset_mutex
+Date: Fri, 14 Feb 2025 14:23:24 -0500
+Message-ID: <20250214192324.2471148-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3289; i=kees@kernel.org; h=from:subject:message-id; bh=cIlnWIeklYExmWQ9uJGg+d9BS8uNzeL7FRL/jhePM1A=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnrp79JVhbVXKZ1YaejybItzMfZXm1eJ3YvMC8jR6PlA LvBX/kvHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABN5aMbI0Dv936u9X6b78R1P F8u0+ubVtcrsWbN7U5vczwKlnp1a1xn+x3qsC3orGXtwW5pTkHZtuSa/PJ/F+k9Krre8Fr2//WM /NwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-With what appears to be an unavoidable pivot gadget always present in
-the kernel (the entry code), FineIBT's lack of caller-side CFI hash
-validation leaves it critically flawed[1]. Require FRED for FineIBT[2]
-(and probably should also require eXecute-Only memory too), and default
-to kCFI when CFI is built in.
+A lockdep recursive locking splat happens when shutting down a debug kernel
+on some systems.
 
-Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/ [1]
-Link: https://lore.kernel.org/linux-hardening/c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com/ [2]
-Signed-off-by: Kees Cook <kees@kernel.org>
+ ============================================
+ WARNING: possible recursive locking detected
+ --------------------------------------------
+ reboot/15103 is trying to acquire lock:
+ ffff8881435af8c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
+
+ but task is already holding lock:
+ ffff8888929278c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
+
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
+
+         CPU0
+         ----
+    lock(&ctrl_info->lun_reset_mutex);
+    lock(&ctrl_info->lun_reset_mutex);
+
+   *** DEADLOCK ***
+
+   May be due to missing lock nesting notation
+
+  4 locks held by reboot/15103:
+   #0: ffffffff8db76f40 (system_transition_mutex){+.+.}-{3:3}, at: __do_sys_reboot+0x12b/0x2f0
+   #1: ffff8888929278c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
+   #2: ffff88810a8921a8 (&dev->mutex){....}-{3:3}, at: device_shutdown+0x1de/0x540
+   #3: ffff88810a9141a8 (&dev->mutex){....}-{3:3}, at: device_shutdown+0x1ec/0x540
+  Call Trace:
+
+   dump_stack_lvl+0x6f/0xb0
+   print_deadlock_bug.cold+0xbd/0xca
+   validate_chain+0x37b/0x570
+   __lock_acquire+0x55b/0xac0
+   lock_acquire.part.0+0xf5/0x2b0
+   mutex_lock_nested+0x4b/0x190
+   pqi_shutdown+0x112/0x4b0 [smartpqi]
+   pci_device_shutdown+0x76/0x110
+   device_shutdown+0x2ea/0x540
+   kernel_restart+0x64/0xa0
+   __do_sys_reboot+0x1d8/0x2f0
+   do_syscall_64+0x92/0x180
+
+The fact that there are two dev->mutex'es acquired in device_shutdown()
+means both a parent and a child devices are being worked on and
+likely that the lun_reset_mutex'es of these two devices are being
+acquired here too. However, the way lun_reset_mutex is initialized in
+pqi_alloc_ctrl_info() will casue all the lun_reset_mutex'es to be treated
+as in the same class leading to this false positive warning. Fix that
+by initializing each instance of lun_reset_mutex with its own unique
+key so that they will be treated as different by lockdep.
+
+Also call mutex_destroy() and lockdep_unregister_key() in
+pqi_free_ctrl_info() before ctrl_info is freed.
+
+With this patch applied, the lockdep splat no longer happens.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jennifer Miller <jmill@asu.edu>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
----
- arch/x86/Kconfig              | 9 +++++----
- arch/x86/include/asm/cfi.h    | 2 +-
- arch/x86/kernel/alternative.c | 4 +++-
- 3 files changed, 9 insertions(+), 6 deletions(-)
+ drivers/scsi/smartpqi/smartpqi.h      | 1 +
+ drivers/scsi/smartpqi/smartpqi_init.c | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c94dae634176..47aec3a497f6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2432,12 +2432,13 @@ config STRICT_SIGALTSTACK_SIZE
+diff --git a/drivers/scsi/smartpqi/smartpqi.h b/drivers/scsi/smartpqi/smartpqi.h
+index fae6db20a6e9..fb75de53d401 100644
+--- a/drivers/scsi/smartpqi/smartpqi.h
++++ b/drivers/scsi/smartpqi/smartpqi.h
+@@ -1359,6 +1359,7 @@ struct pqi_ctrl_info {
  
- config CFI_AUTO_DEFAULT
- 	bool "Attempt to use FineIBT by default at boot time"
--	depends on FINEIBT
-+	depends on FINEIBT && X86_FRED
- 	default y
- 	help
--	  Attempt to use FineIBT by default at boot time. If enabled,
--	  this is the same as booting with "cfi=auto". If disabled,
--	  this is the same as booting with "cfi=kcfi".
-+	  Attempt to use FineIBT by default at boot time if supported
-+	  and sensible for the hardware. If enabled, this is the same
-+	  as booting with "cfi=auto". If disabled, this is the same as
-+	  booting with "cfi=kcfi".
+ 	struct mutex	scan_mutex;
+ 	struct mutex	lun_reset_mutex;
++	struct lock_class_key lun_reset_key;
+ 	bool		controller_online;
+ 	bool		block_requests;
+ 	bool		scan_blocked;
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index 0da7be40c925..5c54dee67e54 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -8789,9 +8789,11 @@ static struct pqi_ctrl_info *pqi_alloc_ctrl_info(int numa_node)
+ 		return NULL;
  
- source "kernel/livepatch/Kconfig"
+ 	mutex_init(&ctrl_info->scan_mutex);
+-	mutex_init(&ctrl_info->lun_reset_mutex);
+ 	mutex_init(&ctrl_info->ofa_mutex);
  
-diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
-index ef5e0a698253..dfa2ba4cceca 100644
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -93,7 +93,7 @@
-  *
-  */
- enum cfi_mode {
--	CFI_AUTO,	/* FineIBT if hardware has IBT, otherwise kCFI */
-+	CFI_AUTO,	/* FineIBT if hardware has IBT, FRED, and XOM */
- 	CFI_OFF,	/* Taditional / IBT depending on .config */
- 	CFI_KCFI,	/* Optionally CALL_PADDING, IBT, RETPOLINE */
- 	CFI_FINEIBT,	/* see arch/x86/kernel/alternative.c */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 97422292b609..acc12a6efc18 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1323,7 +1323,9 @@ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
++	lockdep_register_key(&ctrl_info->lun_reset_key);
++	mutex_init_with_key(&ctrl_info->lun_reset_mutex, &ctrl_info->lun_reset_key);
++
+ 	INIT_LIST_HEAD(&ctrl_info->scsi_device_list);
+ 	spin_lock_init(&ctrl_info->scsi_device_list_lock);
  
- 	if (cfi_mode == CFI_AUTO) {
- 		cfi_mode = CFI_KCFI;
--		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT))
-+		/* FineIBT requires IBT and will only be safe with FRED */
-+		if (HAS_KERNEL_IBT && cpu_feature_enabled(X86_FEATURE_IBT) &&
-+		    cpu_feature_enabled(X86_FEATURE_FRED))
- 			cfi_mode = CFI_FINEIBT;
- 	}
+@@ -8830,6 +8832,10 @@ static struct pqi_ctrl_info *pqi_alloc_ctrl_info(int numa_node)
+ 
+ static inline void pqi_free_ctrl_info(struct pqi_ctrl_info *ctrl_info)
+ {
++	mutex_destroy(&ctrl_info->scan_mutex);
++	mutex_destroy(&ctrl_info->ofa_mutex);
++	mutex_destroy(&ctrl_info->lun_reset_mutex);
++	lockdep_unregister_key(&ctrl_info->lun_reset_key);
+ 	kfree(ctrl_info);
+ }
  
 -- 
-2.34.1
+2.48.1
 
 
