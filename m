@@ -1,232 +1,184 @@
-Return-Path: <linux-kernel+bounces-515006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38ACA35E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5434AA35E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF543B082C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0003B1021
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122892641F6;
-	Fri, 14 Feb 2025 13:09:00 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B56263C79;
+	Fri, 14 Feb 2025 13:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hmiSxcjN"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149F623A992;
-	Fri, 14 Feb 2025 13:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538539; cv=none; b=oziEBgBV1cGyxHZRky4cfj31Yxce7mP6+TK7mMlmGfkarw8t+HppZtKcgVirw2hTXhgi1vDzZC/p9AzTUi7u1f/mPSf5sWzPE/2CY2QBFo/nIEXWRKJ78lpqCRS/vbBRxopCIy2bAcj9LeO+qRf9gbKFFbX40Ac2ra/uKCLmuQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538539; c=relaxed/simple;
-	bh=DdXgOfaajmPxNUJs0g3YB5p0a0TafhxkMlOBYUWYlL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTxumxmXc91KjsmkNWJjko28ERRMT/UjFweWCCRudnzCJ7Wx8H0eJ49GR3WWlceOJQZFB8A3EdO04qIgIxWnNnryAwkiZXafGG0rwYoK5LSnDHPBudp72tHFzWtrcSRqxqMzJh3ybVEWCYx/55gMWqtKrhhZkPrC4c65dRY5Um0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.172.76.141])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E83C23433F1;
-	Fri, 14 Feb 2025 13:08:56 +0000 (UTC)
-Date: Fri, 14 Feb 2025 13:08:49 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: gpio: spacemit: add support for K1
- SoC
-Message-ID: <20250214130849-GYA21864@gentoo>
-References: <Z5FPJLzAEVXGWJnE@chonkvm.lixom.net>
- <20250123113042-GYA38135@gentoo>
- <Z5LOdh-4UxRtteOy@chonkvm.lixom.net>
- <20250127181726.GA538260-robh@kernel.org>
- <20250128031712-GYB47737@gentoo>
- <CACRpkdYbSOHD9UH5=+qjztxS3Cq_rxaoOT9tFtD8ZWm9zQGnPw@mail.gmail.com>
- <CACRpkdZa887vx4Lmxk1U_8w5n7AxMnyzGexeYzhsxNGT-DTYcQ@mail.gmail.com>
- <20250206133156-GYA5687@gentoo>
- <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
- <20250214115410-GYA21743@gentoo>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B1F245B12;
+	Fri, 14 Feb 2025 13:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739538557; cv=fail; b=Fqk9wUmilVO2UY7sWeYNQNSuPA1ZjlM/Jr+MKIW6on5KR+54pNaga19NuWteLj+NyNdBCmAnez7wujrPFIweWli+7SX4tozydh1Lp26NTj/YHbQQV5d/IIdy3o2qESeierTtBPdjLZTrtMO6mexn2z5NgmGbwU810QLX4fqDwII=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739538557; c=relaxed/simple;
+	bh=fybFoxEZiZGBRnM+XQKndClrQj5A9+d5XzPVVIS9rI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Psex1xCLWeoF/YcSrgP0MBqLErnFYpM98iYt7qNcl1vVCkwJkXiYLzUbG2Ty6K3RUjVLBO2WNa1DH5FEdUO3rUEMEy/mTcdiG8kKv4NpR5X+EVyvlhxycwmoSNY1xL4N+DITae/oLgzoS2FlDjmAy/crlmjYknb02vgscbkcvYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hmiSxcjN; arc=fail smtp.client-ip=40.107.223.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=shnr7B5CS4aWvVhOfYS+Z9H1ptBl1ZZxN9ElLDFFkWyneDC8e292JP2anlOXh73Nu8ueZZpYKWoXoDZFsBAJu1cjLRkvg1ulTUtCf4ChMXuXaYQ6MvsYt3p8S6f6ntcbUJL8AryVE3pW2CVDxzXVH0ZFl/+6uDxOBVXY4o2K0eS/QKRF4FzydvrndbyzE36fa0SBPLbbkAIWdXhzg1nsbx3SvFLO7wK/bMQV/4SiT1lWEutVdJHqc69dByW/CAl6KNUixTEKaHeYmzmPIqX5Al9vXaYCgTpc1dPv0agmI8dMHTH4B56HJz9oBQdX8bfRPcuUVHx0YOH26CseLrGBqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mcBYSXTTPrA3wOBe6ePGsArn59GoVFuD1wccW7SvTSg=;
+ b=H01AzDqUNU47cSBAVRhu2sTjSzqhk5kmZxRKiyz+EbKcq+ou54315HJiIOYI7/pG1+UUarON+9JI/2H1KwQ3XkIMQ0szotQh+NoLMt3lN/Gt8gYBajf+bkmDO73n9W7bWRgmQCixiqRl8oPxhXmhwElQ8H2nCLiy6crDyNnnzIyfhQDZ34U+C9kfPS9k6sB6SDgEuDWseUrUmnbjK+32CWbsH+kPfb9i2HQR+9cAHswaWqeQHYwrQyvi8Thw++04qW8ksU3/MGonvZAzEyjCaRMrRgHxPspuGGQfEduQiNqQh+/LnRy1WDyQzZZezerAqUSVEf7x520vIG3bMKNCaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mcBYSXTTPrA3wOBe6ePGsArn59GoVFuD1wccW7SvTSg=;
+ b=hmiSxcjN8D4XWoeQut66EsRLNvYiz2LDMWj6JXiM16LhU5LTqFeIlGlP3xyJl+5cmEq72/V3ZTUSsLhYBS7qY+cb7ZSpItdZwnUK0c7jU9MyEI5CyVt23hJABgEdCI4fREieba5EYGzx0BH30YokfZ9fDVUOHnDw/fFMPYuwNpQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by CH3PR12MB9393.namprd12.prod.outlook.com (2603:10b6:610:1c5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
+ 2025 13:09:12 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%6]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
+ 13:09:12 +0000
+Date: Fri, 14 Feb 2025 14:09:05 +0100
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>
+Subject: Re: [PATCH v1 24/29] cxl/region: Use endpoint's SPA range to check a
+ region
+Message-ID: <Z69AcT2NXH77K8h2@rric.localdomain>
+References: <20250107141015.3367194-1-rrichter@amd.com>
+ <20250107141015.3367194-25-rrichter@amd.com>
+ <Z4VPfGtDiP5sYiIM@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z4VPfGtDiP5sYiIM@aschofie-mobl2.lan>
+X-ClientProxiedBy: FR0P281CA0153.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b3::12) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250214115410-GYA21743@gentoo>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|CH3PR12MB9393:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f18934a-94d8-4d0d-ce3a-08dd4cf8c697
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F8o2tAeS7SfEZcDjyrrXPyKZdFTV3pUKt0lP4CdjrpkX+1uBrQWJo6OFqTdq?=
+ =?us-ascii?Q?+qFtuwuYmrlRhzGxfJZeeSSJtiwNgmR6BK+8OxPV9GeUwUOTQEV88qgVxehS?=
+ =?us-ascii?Q?JDKgMsi9noPLXVQ7rv5t5yVt/7feAdKZ9KvpaFobp13kNTSos3ILW0KLrUxH?=
+ =?us-ascii?Q?6wKcTbD7LtnxJYNg/NILQYtQ1OcO7CHovJbJKYjee0qXHDLXduWcS5NxiSZ4?=
+ =?us-ascii?Q?T2w+7A7LbvQozfCzMNSn5g66lHoTdZJuBuOkBLL025jIrcHRl1ayVPsWcEMz?=
+ =?us-ascii?Q?fpI32XBjpQ6FbFSP4CBVzE5gJg9eP1Noaw0jB2H+fAKDbnCP/U1wcTC3Tjj+?=
+ =?us-ascii?Q?4sxt2ODXFpxFtTpymCV2TTFBOAabgiyOs5nd185CVMbhPuW9R0D/asHKn0Kv?=
+ =?us-ascii?Q?LTo4p+2ub0HinrhTKvBcWRZzWlt9pJy0oKauN3Y2DOWg7E4wJIsqC5iArfEn?=
+ =?us-ascii?Q?TFTuo8qc8v2q7ccwMnMGP5xd+SJ8sOzDXviw5FQgdt335gCDOTSBdMic0PPC?=
+ =?us-ascii?Q?zbK8STqkcDq0+XuBnvsXvFK15fc3sXcLf4aCYtfP2etQwoUfwdUAhIVrLVWS?=
+ =?us-ascii?Q?x5DFqiFLJ2LOZkiXcqkJIAq5jKtiDo6K7GxuB8bWxH0Li34rpSFT9PENjeXT?=
+ =?us-ascii?Q?qlAkD4cgTO2Sqa1Z8xO9AaO98f4AsLK5eETG0mEd3DbqV7hbJpp2buUSb27G?=
+ =?us-ascii?Q?ohhnEQ52ZKaFLEuHhOlEDa0O5DyIzVOJ5xbg+sD0bgb8uZQubm/hPqMGWFiV?=
+ =?us-ascii?Q?3KzdYg85+QOv1llvrpvymA2y71ZS+eXEKkoNlTGlrt8CNh5H41jYtJaoGA63?=
+ =?us-ascii?Q?R9K5wgRMn/sIJgWnH5PukGlYvkJI6K1eWrWDjnKgnF3mSN7o47pTLTyHHPSP?=
+ =?us-ascii?Q?cVaF5wjz4vWyiTnUF+e9/tP8X90TjNnDT6NIZ942wrmSXMetdvb/0RU/u76B?=
+ =?us-ascii?Q?YxaMCXyidtMhqin8Q2rAif8hAUsIGPchO1+tXFY/nWYf2BjNhjZZfomEUVvf?=
+ =?us-ascii?Q?9Yu+ZOlU+Gt6fVYpxxHvh/Y4pISMI+/3//4Rc15+7kTnMvoPBk8yE94u5+5w?=
+ =?us-ascii?Q?/6XO4A+ZLmMsZvTtLw2BmhTOVenbQXgb6V3PfJ19IaGQlH3JDDGNQNHw1CXx?=
+ =?us-ascii?Q?swYH63+6pfwQqD0fOuBLquwE86z0BOK2aIlpp+mpFPlWnhi5zrM+Y8qzWaln?=
+ =?us-ascii?Q?/KXd5D+cFepHVs8c8teZaEI0RGDxztVfK2r6uEMbxWAu5/7JemcYdls1OHrB?=
+ =?us-ascii?Q?gkXWbH2PDqemc83JERoGUjnAwS5rhqrRsDfYrHseKCC6bOsQxTPF72++ch4y?=
+ =?us-ascii?Q?430/0hv2LedT4KBYKH/yL5OIGz6lX4RljO5kcXMPSntx2oUH/GD0SXVcQQsf?=
+ =?us-ascii?Q?jbtquB3A4TaS9ii9g9Prxli2m8PV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ohjqnF+/kMBr9hNxim0IYQ5PMIeAwzjhX4AvtwzzzTFgF8cPok09OSRy9oPR?=
+ =?us-ascii?Q?cecT8SpfvFMOcxhl7RRPtzyuAd5gMal7XK408B4g0obs9mgsrAZ2Zzjypy3u?=
+ =?us-ascii?Q?Ec+rkCILydrQCzHfIbDMCT28p0V+RxC/fZOI9CIrX8A0i4eYU+CZeN4+SLO+?=
+ =?us-ascii?Q?VeCBQ5O/D9PpHC7lA7ky12OcgXhoYpU6XsjgRvIQiH8ig77SJFJvpMMIZc1E?=
+ =?us-ascii?Q?iXP3zaOYLc7XIWOSWFq6WWAG34lSEV8aG+YKkXJqEMta9yvhIQ6jUSTG/JF3?=
+ =?us-ascii?Q?XZmsCxNBacQuHYg6j1RruewYqEjNT3wMT4uuKSGNKq6H5zYtmdhO8FDKUs0s?=
+ =?us-ascii?Q?V5oF/PGUYXWYXQfnpwLEfTd9ev0V8JlMpbQ6xl+WzEctcIo+NDsnDM6pnGr6?=
+ =?us-ascii?Q?TuVh/0TJkQUSzgWTqMhsIojWqRWMbzdBNAWunnZhB1/5I8p4DPCD71TePZPC?=
+ =?us-ascii?Q?jrl+XAOC2ThDiaq5uIuqCn02umM27Z1yxhI0cAQ09z2Q7Wjzi8OacwkiUiXC?=
+ =?us-ascii?Q?VkaIHKHW6wjAnAvmxSaKMyetXLx/GjJ/FKh2NV3UxmPc8MouKoUH4kd6jPzR?=
+ =?us-ascii?Q?83nM1CAclphHphy9n0xOYQiHMU7cRduzmvjye9v5sDC6usiuC9onkwMDf73E?=
+ =?us-ascii?Q?fzwHLNlhjBS9/Jmr+yhfe3RBugLF5kFkAX9qZz27RTN1E+elvu1QOSOk1mkt?=
+ =?us-ascii?Q?72+bTkc9GFTYXfHOxtbD0DkPdad74RI2WiipcCqopexI5wYatJ/BoBJitBok?=
+ =?us-ascii?Q?fz1nrTnc0b87aalp3TyYglWdw4ywPRgq5Cah7rAwKpJ3lnGYKjU5MtDD4gsm?=
+ =?us-ascii?Q?qECfbE5JXZrDdhG+K8YH4gngx7J3hSdqIa4aWR0VoHtH8Ri0nhg9blZ5+gFK?=
+ =?us-ascii?Q?1Nyi/FuLcmrcAF/coexd8cpwSUkVSoqCCudIejjKqz25vPY7TpN86s1krzPq?=
+ =?us-ascii?Q?d0I5LwujpaT0CHCFuWv4nMHhzIdPYVPAbx2Zvx6HKaacH4Dqgl3B2dQGsRzv?=
+ =?us-ascii?Q?4/58oRN5APV6RrMOox37Ns9UoscK/I+lcb57UIlSjoVsHWzuuiwKJIAwNHTU?=
+ =?us-ascii?Q?oaUS6zDP62xF+h9VVjwBUm7/J4JF9HEi1ccttI8aXVfAmw9ZEtu2x4p8TVF7?=
+ =?us-ascii?Q?OGjyhdSOXCmam5ppox05I6cF1WnMHa+BnYcv98K52IlmgwMicq12Bc6y5XOL?=
+ =?us-ascii?Q?WGMOo8oPqrtodIpQ687dz1S7WAcdNW21qqOll8CeyhOz0fHCpdC5cm47zQGM?=
+ =?us-ascii?Q?OzHJ3l+TqKRNch/yqG1b3DA3CIL0yXeb8GwiSKXrkHDseGp6s2kXDRqOedkC?=
+ =?us-ascii?Q?q+oFoWza/yMDBznIujerovSwSnM6+b2+ZP9cOn+/1c3/6C2Gw+jccn6MgplA?=
+ =?us-ascii?Q?Tl8lr7A/LT0koTLZuNIgNUnrTsLmquCdOPyomlP0Dcpk5hm79ucGBcI1eoEY?=
+ =?us-ascii?Q?IfgZIcrM5NVrEtFjNO7dCJNvX1d84sswpGJx2zbMN0PWj44GdyljYTZowiG8?=
+ =?us-ascii?Q?29B3WXngERdmUPaljy5+cFfiyP13qx/mToorBC4x2pkoVKvXsQlJHF2Q2T88?=
+ =?us-ascii?Q?8w1p/oYxxTv7G2eWkW+EnLcHKUusQp13JqUPmvuv?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f18934a-94d8-4d0d-ce3a-08dd4cf8c697
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 13:09:12.5730
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5M/W4OiLNx4OrNC57hQWYerM0FmUiHtamkb2eJfxtDS+QhOr6H3g6HLSU4UHUzPprAKXXwbbmOe7faTG9fqgsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9393
 
-Hi Linus:
+On 13.01.25 09:38:04, Alison Schofield wrote:
+> On Tue, Jan 07, 2025 at 03:10:10PM +0100, Robert Richter wrote:
 
-On 11:54 Fri 14 Feb     , Yixun Lan wrote:
-> Hi Linus:
+> > @@ -2051,13 +2055,12 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+> >  		return -ENXIO;
+> >  	}
+> >  
+> > -	if (resource_size(cxled->dpa_res) * p->interleave_ways !=
+> > -	    resource_size(p->res)) {
+> > +	if (range_len(&cxled->spa_range) != resource_size(p->res)) {
+> >  		dev_dbg(&cxlr->dev,
+> > -			"%s:%s: decoder-size-%#llx * ways-%d != region-size-%#llx\n",
+> > +			"%s:%s: SPA size mismatch: %#llx-%#llx:%#llx-%#llx\n",
 > 
-> On 14:07 Thu 13 Feb     , Linus Walleij wrote:
-> > On Thu, Feb 6, 2025 at 2:32 PM Yixun Lan <dlan@gentoo.org> wrote:
-> > 
-> > > > > foo-gpios <&gpio 2 7 GPIO_ACTIVE_LOW>;
-> > >
-> > > if we model the dts as above, then "&gpio" will register itself as one sole "struct gpio_chip",
-> > >  which mean one gpio chip combine three banks..
-> > 
-> > Not really: the fact that there is just one gpio node in the device
-> > tree does not
-> > mean that it needs to correspond to one single gpio_chip instance inside the
-> > Linux kernel.
-> > 
-> > It's just what the current existing bindings and the code in the GPIO subsystem
-> > assumes. It does not have to assume that: we can change it.
-> > 
-> > I'm sorry if this is not entirely intuitive :(
-> > 
-> > One node can very well spawn three gpio_chip instances, but it requires
-> > some core changes. But I think it's the most elegant.
-> > 
-> > > if taking "one gpio chip support multi banks" direction, then it will be reverted back as patch V1,
-> > > then, even the three gpio-cells model is unnecessary needed, as we can map gpio number
-> > >  to the <bank, offset> array in the underlying gpio driver
-> > >
-> > > the v4 patch is very similar to drivers/gpio/gpio-dwapb.c
-> > >
-> > > If had to choose the direction between v1 and v4, I personally would favor the latter,
-> > >  as from hw perspective, each gpio bank is quite indepedent - has its own io/irq registers,
-> > >  merely has interleaved io memory space, one shared IRQ line.. also the patch v4 leverage
-> > >  lots underlying generic gpio APIs, result in much simplified/clean code base..
-> > 
-> > So what I would suggest is a combination of the two.
-> > 
-> > One gpio node in the device tree, like the DT maintainers want it.
-> > 
-> > Three struct gpio_chip instances inside the driver, all three spawn from
-> > that single gpio device, and from that single platform_device.
-> > 
-> > What we are suggesting is a three-cell phandle in the device tree:
-> > 
-> > foo-gpios = <&gpio 0 7 GPIO_ACTIVE_HIGH>;
-> > bar-gpios = <&gpio 2 31 GPIO_ACTIVE_HIGH>;
-> > 
-> > Notice the new first cell which is 0 or 2.
-> > 
-> > The first one is what was previously called gpio 7.
-> > The second one is what was 2*32+31 = gpio 95.
-> > 
-> > So internally in the driver it is easy to use the first cell (0 or 2) to map to
-> > the right struct gpio_chip if you have it in your driver something like this:
-> > 
-> > struct spacemit_gpio {
-> >     struct gpio_chip gcs[3];
-> > ...
-> > };
-> > 
-> > struct spacemit_gpio *sg;
-> > struct gpio_chip *gc;
-> > int ret;
-> > 
-> > for (i = 0; i++; i < 3) {
-> >      ret = devm_gpiochip_add_data(dev, &sg->gcs[i], sg);
-> >      if (ret)
-> >         return ret;
-> >      gc = sg->gcs[i];
-> >      .... do stuff with this instance ....
-> > }
-> > 
-> > Callbacks etc should work as before.
-> > 
-> > Then these phandles needs to be properly translated, which is done with the
-> > struct gpio_chip .of_xlate() callback. (If you look inside gpiolib-of.c
-> > you will see that chip->of_xlate() is called to map the phandle cells
-> > to a certain GPIO line).
-> > 
-> > In most cases, drivers do not assign the chip->of_xlate callback
-> > (one exception is gpio-pxa.c) and then it is default-assigned to
-> > of_gpio_simple_xlate() which you can find in gpiolib-of.c as well.
-> > 
-> > You need to copy this callback to your driver and augment it
-> > properly.
-> > 
-> > The xlate callback is used to locate the struct gpio_chip and
-> > struct gpio_device as well, by just calling the xlate callback, so if
-> > you code up the right xlate callback, everything should just
-> > work by itself.
-> > 
-> > this is a guess on what it would look like (just dry coding,
-> > but hopefully the idea works!):
-> > 
-> > static int spacemit_gpio_xlate(struct gpio_chip *gc,
-> >                                 const struct of_phandle_args *gpiospec,
-> >                                 u32 *flags)
-> > {
-> >         struct spacemit_gpio *sg = gpiochip_get_data(gc);
-> >         int i;
-> > 
-> >         if (gc->of_gpio_n_cells != 3)
-> >                 return -EINVAL;
-> > 
-> >         if (gpiospec->args_count < gc->of_gpio_n_cells)
-> >                 return -EINVAL;
-> > 
-> >         /* We support maximum 3 gpio_chip instances */
-> >         i = gpiospec->args[0];
-> >         if (i >= 3)
-> >                 return -EINVAL;
-> > 
-> >         /* OK is this the right gpio_chip out of the three ? */
-> >         if (gc != sg->gcs[i])
-> >                 return -EINVAL;
-> > 
-> >         /* Are we in range for this GPIO chip */
-> >         if (gpiospec->args[1] >= gc->ngpio)
-> >                 return -EINVAL;
-> > 
-> >         if (flags)
-> >                 *flags = gpiospec->args[2];
-> > 
-> >         /* Return the hw index */
-> >         return gpiospec->args[1];
-> > }
-> > 
-> thanks for this very detail prototype! it works mostly, with one problem:
-> 
-> how to map gpio correctly to the pin from pinctrl subsystem?
-> 
-> for example, I specify gpio-ranges in dts, then 
->                 gpio0: gpio@d4019000 {
->                         compatible = "spacemit,k1-gpio";
->                         reg = <0x0 0xd4019000 0x0 0x100>;
-> 			...
->                         gpio-ranges = <&pinctrl 0 0 96>;
->                 };
-> 
-> 		foo-gpios = <&gpio0 2 28 GPIO_ACTIVE_LOW>;
-> 
-> It should get GPIO_92 ( 92 = 2 * 32 + 28), but turns out GPIO_28
-> 
-> Probably there is something I missed...
-to make the gpio part work, we need additional custom gpio-ranges parser,
-which should similar to of_gpiochip_add_pin_range() in gpiolib-of.c
-(at least gpio core need to adjust to call custom this function)
+> The cxled->spa_range is only set in the auto region path, yet this
+> path is taken by both auto and user created regions. User created regions
+> die here.
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+The original check at this point should still work and .spa_range will
+not be needed then. Fixed in next version.
+
+-Robert
 
