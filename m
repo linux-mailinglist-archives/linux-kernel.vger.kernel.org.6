@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-514568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71080A3589D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:16:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A24AA358A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A02216DB8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E571890BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589B4221D90;
-	Fri, 14 Feb 2025 08:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDE92222A9;
+	Fri, 14 Feb 2025 08:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jgl41hSb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQdThSWL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D42080CE;
-	Fri, 14 Feb 2025 08:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D4D1632C8;
+	Fri, 14 Feb 2025 08:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520951; cv=none; b=UWEMg7bIQI3wbXw6PESl3h1VTBk5vpzx3b+J1ixW8Kkv5ndMwmtcoHKCAQ/PiVLMFA/BaoAWS/bQwlY9zadxu3U+PPIpMiHnJDOEnw3jf6DsHYFOE9xinxiCjteXu3u2Qpty+Xf2KRcRxYhemFn+uqdI0Rw4RgMvXhLnVdN/JJY=
+	t=1739521018; cv=none; b=JjaTZJ7wdK3wi3/j9U9vnZ34Xj1FzLLsmMqAmZli4jqTeA4/1OAiaPpzWlZ++9ifyeyVwcwgecsIsNP4fygT2Fqy7BgXTX67y/nQRMrvL6MOCVS4tAuX1ca/NnK6dwgqb+xDod8sskYaexdhaamaTPrsM2JMRZ7Igg4Ir+c50Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520951; c=relaxed/simple;
-	bh=UnABjtE3CSMdX2YgAQYGBOrN7rt2X9ajJE0yjI2rMWY=;
+	s=arc-20240116; t=1739521018; c=relaxed/simple;
+	bh=C9PejOUD39fGJmShIEpkP1R0NrPHjbzcGvp53tfao3A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qfJR/8KaH5Rirz3Aql6gQfztxmOP02w4ikM5HXnS5oObjmIgsOroKCTHFQjs8/TLb8+g0l+Is+YW2Bi+l26BnjZ87iEUO36VF2iUBKQjCnU/ngjPFgDLMkIGCDGPKfeaVtSl9CX1HVbw9sXfQXTIUU3dA4x+p/uh3A+lyePxqlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jgl41hSb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97063C4CEDD;
-	Fri, 14 Feb 2025 08:15:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2HKqCZUEhbGHcSraELTdB51p3t1giu4ugbCGf1ibaq/f1kdo/lDg7vSnTqwwqpOc9ymYsZmvoCOS8bej7eunowHCcZpe+NSlh2wSIRL2thopW1QWpKWNxZpqttOGYi6xHz+LD+6hu7jMto3bYvAJBoAXyl/O3dqNl+J/79v+4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQdThSWL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2D3C4CED1;
+	Fri, 14 Feb 2025 08:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739520951;
-	bh=UnABjtE3CSMdX2YgAQYGBOrN7rt2X9ajJE0yjI2rMWY=;
+	s=k20201202; t=1739521017;
+	bh=C9PejOUD39fGJmShIEpkP1R0NrPHjbzcGvp53tfao3A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jgl41hSbmW3bX2nyjNTDUHE2Nuy+gEvjgCqli7YGQatzYm+N5wNBoFRgm5mnDSvwX
-	 kftq3IjU876TBa+KrXlhd1taNKyfezBL03lAW6fZutrZRiqZsqVDGbK+bIUHCtp0v4
-	 hWop/HepDQMtAM5C6Q2RKucWXXl/Sy2IJVIQ0xwMgP6TWM6gEjXMauvRDsmsPBEY7o
-	 jgEEUjT5LTiPc3Gu9o/Bn4FJUUKn6eGaN7FdTxIksr4dSLOeFwxNMboFHMN76b3rdd
-	 wpM4hkhUtnPRVMcas1QcaFaxaPPYkayg+SO/XRnQT3Skb28r8YUwIJRYQnsBBbk+7B
-	 s94x8gjHpkNJA==
-Date: Fri, 14 Feb 2025 09:15:47 +0100
+	b=nQdThSWLJu3SARHeoXBYF9uFjHeBCiMXiG7Mkil4l2gy094jGGg/5Ht0ijBt5wWDB
+	 rfqImKEjWZ2KXjsPBhr7VR5dlPmwH9N83wqigJwAN5qttr47lFrPo48vnC8yjC6Rsl
+	 cbBvrlwHD9YBKQawp9pVkQtP2QAiN+M8yAWA0fTdd36X+lH4yWd2pBRvCGw+zeijQ2
+	 fSKq+0emyGXsmjFN0c9L2zGU/TWted7aEvTU7SA/CYwvWlIc7nnNQqGO7wv2iqoFMV
+	 MHsryN3NfTuHFwL1Orrkvwmg7x43qZkpGo4qP4wEeqZGITteeM59kU5YmTFWJYQAas
+	 7NhUuf2+743cw==
+Date: Fri, 14 Feb 2025 09:16:55 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, festevam@gmail.com, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, m.felsch@pengutronix.de, 
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH next v3 1/3] dt-bindings: usb: microchip,usb2514: add
- support for vdda
-Message-ID: <20250214-literate-bullmastiff-of-advance-d8ecd5@krzk-bin>
-References: <20250213094338.1611389-1-catalin.popescu@leica-geosystems.com>
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: andi.shyti@kernel.org, broonie@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
+	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] spi: dt-bindings: samsung: add
+ samsung,exynos990-spi compatible
+Message-ID: <20250214-adventurous-earwig-of-perspective-b5cd91@krzk-bin>
+References: <20250214043343.263-1-wachiturroxd150@gmail.com>
+ <20250214043343.263-2-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,25 +60,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250213094338.1611389-1-catalin.popescu@leica-geosystems.com>
+In-Reply-To: <20250214043343.263-2-wachiturroxd150@gmail.com>
 
-On Thu, Feb 13, 2025 at 10:43:36AM +0100, Catalin Popescu wrote:
-> Microchip hub USB2514 has one 3V3 digital power supply and one 3V3
-> analog power supply. Add support for analog power supply vdda.
+On Fri, Feb 14, 2025 at 04:33:41AM +0000, Denzeel Oliva wrote:
+> Add "samsung,exynos990-spi" dedicated compatible for the SPI controller
+> on Exynos990 SoC. This ensures proper representation of the hardware
+> in the device tree.
 > 
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 > ---
-> v3:
-> - replace "if then else" by "if not then"
+>  Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> v2:
-> - merge "if" with "allOf" and move the whole after patternProperties
->   section
-> ---
->  .../bindings/usb/microchip,usb2514.yaml       | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
 Best regards,
 Krzysztof
