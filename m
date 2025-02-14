@@ -1,55 +1,90 @@
-Return-Path: <linux-kernel+bounces-515336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99679A36357
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:44:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95293A3637E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0AF3ADD53
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:43:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADB2170C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5423526770F;
-	Fri, 14 Feb 2025 16:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF848267AFD;
+	Fri, 14 Feb 2025 16:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuHQjnss"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pNEiFYbR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE238635A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29177267703;
+	Fri, 14 Feb 2025 16:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739551435; cv=none; b=VhpkC23tN1QBaYHE3Z5NsPxywITOh91Uie7pVP1KAtmszjNCCX8vRfhF1AOwg0GzBO5FZjqmhwcb9HagdnLRSaCF+nAlxnybDVbX7L26lkUy7St+TmnQoIEvWIqEgUbB9PeSe/x+Jjg//IgWh+INBA2l1xXifZ/PGDSlNKh5QMo=
+	t=1739551627; cv=none; b=QFSeNVRKED95jjiaep/v7IGPEnwElJG2LS0tdcbktla+EfDgz3UApGcAP0DyoieF5bUMiOC/n9aN5eDJwYNL7gBvEI0rA2+1RUSBww/CzT0HXpBqI1dr3OVGBQICMzEB4yRfpiwPMXet5DVcqFksygxH/3DpXJ14zOmCI3IMJEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739551435; c=relaxed/simple;
-	bh=esYoUBbmHnuppLQ8e5DQfVQUVFoE7zAAEwjgZADndxI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p7rB71oPsJs1Y4B37/U2KuuUrqCvnKyEnHDHEt42LdDapG9mChQHGRWzO/Nl8vuMbtga2kgOJ981s2vDCmxUZwLRU4tm6PSd01S1GnEZggpCV8g4ToCA7bSdXfxJibNHpYsGMbfdJz1BvOLgu4vo7TFJrCsvYG+CmXlgyDd37sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuHQjnss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60CFC4CED1;
-	Fri, 14 Feb 2025 16:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739551435;
-	bh=esYoUBbmHnuppLQ8e5DQfVQUVFoE7zAAEwjgZADndxI=;
+	s=arc-20240116; t=1739551627; c=relaxed/simple;
+	bh=e93WMTX324UPBYpzF8zp+DIsYjQOE6P2V+HVCGC9Dvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VE0qZA7f4/h0HJO2IUS/XGukyfkqkbzrFbcKB99HGz/ks6ZIvBk0oA5u+qWWgD1mUTQOO8tnOaFCwdtcxzj28O8EpyQBOPtSpk696UE6Vw5MOJ0buRwyLd/MNOBmx7qMpPuQUc7pnYDKSWlSiwB8SdwbymIpfeQITxLwqr8mUjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pNEiFYbR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739551623;
+	bh=e93WMTX324UPBYpzF8zp+DIsYjQOE6P2V+HVCGC9Dvk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=nuHQjnssdw3xfKuKFcIAxLfIs5GD2OTSPr5Zvq/1YmQ/BH2lyuSLdrKEcXCNobGgq
-	 ThMi28QMuZlnAhO8OWm9Vr0WnSEpItlvIKgOQ20WHIbfNNOdyRhj76X/TCsy9fXQ9I
-	 DGQjLhF6JtCnxERtHzhzbRglSUZPswP7OBOQiIXyOn34l59ALQ8vn4pZO3V5BNUAF1
-	 oLb2iYCzdHK3bAmx5q8ujVP0z/vz5Un7JR5cOKepCYM7xRc9P0c34KjLEX3k93xm35
-	 tjISFZlUuhLdc5wBx/aKP1I1aiSoff3wid+fjgw0SQY9A3/yYQYmUPfnZmxjssEhqZ
-	 94CzI5RBoXGUQ==
-From: Will Deacon <will@kernel.org>
+	b=pNEiFYbR4xbtlhNmC3ZBXWgXW4ymzif8S2mhPyUzPkZGMGLqqP0wkp7wa2ZdisR3X
+	 T+PAVkg9aBZOZOJzZEdNCBgP2YpWB9gpgalb5DfMFzSCco1GDgLO3vlCbyvf8t+uXD
+	 TOMpZlbTmEMGAmHpmPuJQ24QgluhyLtEC6ISv8YCSNzv7N6CE5fQwwop337htcUnrk
+	 piAFL37JB2tkvqWmIHiMVZcBnwqByf0niUJ55c/6crcqBbi4d6Bma0+NP+oyrPbVXf
+	 hYBd8jBXTpPHc80UMPeeu4NP/ViYix9VcNGpR8KZYZCFlYQtUoOjewbHR3NVHhX2Z1
+	 YKtaFJu4jSeuQ==
+Received: from earth.mtl.collabora.ca (mtl.collabora.ca [66.171.169.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 901DD17E0FDF;
+	Fri, 14 Feb 2025 17:46:59 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
 To: linux-kernel@vger.kernel.org
-Cc: Will Deacon <will@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] workqueue: Log additional details when rejecting work
-Date: Fri, 14 Feb 2025 16:43:49 +0000
-Message-Id: <20250214164349.13694-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Dragan Simic <dsimic@manjaro.org>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Algea Cao <algea.cao@rock-chips.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Sugar Zhang <sugar.zhang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	kernel@collabora.com
+Subject: [PATCH RESEND v6 0/3] Add HDMI audio on the rk3588 SoC
+Date: Fri, 14 Feb 2025 11:43:59 -0500
+Message-ID: <20250214164528.534278-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,65 +93,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzbot regularly runs into the following warning on arm64:
+To support HDMI audio on the rk3588 based devices, the generic HDMI
+Codec framework is used in the dw-hdmi-qp DRM bridge driver.
 
-  | WARNING: CPU: 1 PID: 6023 at kernel/workqueue.c:2257 current_wq_worker kernel/workqueue_internal.h:69 [inline]
-  | WARNING: CPU: 1 PID: 6023 at kernel/workqueue.c:2257 is_chained_work kernel/workqueue.c:2199 [inline]
-  | WARNING: CPU: 1 PID: 6023 at kernel/workqueue.c:2257 __queue_work+0xe50/0x1308 kernel/workqueue.c:2256
-  | Modules linked in:
-  | CPU: 1 UID: 0 PID: 6023 Comm: klogd Not tainted 6.13.0-rc2-syzkaller-g2e7aff49b5da #0
-  | Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-  | pstate: 404000c5 (nZcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  | pc : __queue_work+0xe50/0x1308 kernel/workqueue_internal.h:69
-  | lr : current_wq_worker kernel/workqueue_internal.h:69 [inline]
-  | lr : is_chained_work kernel/workqueue.c:2199 [inline]
-  | lr : __queue_work+0xe50/0x1308 kernel/workqueue.c:2256
+The implementation is mainly based on the downstream driver, ported to the
+generic HDMI Codec framework [1] recently merged in the master branch.
+The parameters computation has been kept as is and the data stored in the
+dw_hdmi_qp struct as been cleaned up.
 
-  [...]
+The table for the N values has been edited to reflect N recommended values
+as well as CTS recommended values.
 
-  |    __queue_work+0xe50/0x1308 kernel/workqueue.c:2256 (L)
-  |  delayed_work_timer_fn+0x74/0x90 kernel/workqueue.c:2485
-  |  call_timer_fn+0x1b4/0x8b8 kernel/time/timer.c:1793
-  |  expire_timers kernel/time/timer.c:1839 [inline]
-  |  __run_timers kernel/time/timer.c:2418 [inline]
-  |  __run_timer_base+0x59c/0x7b4 kernel/time/timer.c:2430
-  |  run_timer_base kernel/time/timer.c:2439 [inline]
-  |  run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2449
+The downstream kernel also implements a machine driver for HDMI audio but
+it is doing exactly what the simple-audio-card driver does, so use that
+instead in the RK3588 SoC device tree.
 
-The warning is probably because we are trying to queue work into a
-destroyed workqueue, but the softirq context makes it hard to pinpoint
-the problematic caller.
+Based on Linus' master branch.
 
-Extend the warning diagnostics to print both the function we are trying
-to queue as well as the name of the workqueue.
+RESEND because of a network connectivity loss at the wrong time.
 
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Link: https://syzkaller.appspot.com/bug?extid=e13e654d315d4da1277c
-Signed-off-by: Will Deacon <will@kernel.org>
----
- kernel/workqueue.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[1]: https://lore.kernel.org/all/20241224-drm-bridge-hdmi-connector-v10-0-dc89577cd438@linaro.org/
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 3c2c45313c88..1fad298ed85f 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -2254,8 +2254,10 @@ static void __queue_work(int cpu, struct workqueue_struct *wq,
- 	 * queues a new work item to a wq after destroy_workqueue(wq).
- 	 */
- 	if (unlikely(wq->flags & (__WQ_DESTROYING | __WQ_DRAINING) &&
--		     WARN_ON_ONCE(!is_chained_work(wq))))
-+		     WARN_ONCE(!is_chained_work(wq), "workqueue: cannot queue %ps on wq %s\n",
-+			       work->func, wq->name))) {
- 		return;
-+	}
- 	rcu_read_lock();
- retry:
- 	/* pwq which will be used unless @work is executing elsewhere */
+Changes since v5:
+ - Simplify audio math computation for N
+ - Move hdmi0-sound node up with other address-less nodes
+
+Changes since v4:
+ - Moved hdmi0_audio node the rk3588-base.dtsi
+ - Enable hdmi0_audio in rk3588-rock-5b.dts
+
+Changes since v3:
+ - Renamed function to start with dw_hdmi_qp
+
+Changes since v2:
+ - Also clear the audio infoframe
+ - Write AUDI_CONTENTS0 to its default value in case it gets overwritten.
+ - Store tmds_char_rate in the dw_hdmi_qp struct in atomic_enable
+ - Clear tmds_char_rate in atomic_disable and only write registers when
+   tmds_char_rate is not 0.
+ - Do not use connector_state duplicates
+
+Changes since v1:
+ - Remove useless audio_mutex (was used downstream for multiple drivers access
+   to audio functions)
+ - Let hdmi_codec build and setup audio infoframes
+ - Only access audio registers when connector is connected
+ - Rebased on master branch
+
+Detlev Casanova (2):
+  arm64: dts: rockchip: Add HDMI0 audio output for rk3588 SoC
+  arm64: dts: rockchip: Enable HDMI0 audio output for Rock 5B
+
+Sugar Zhang (1):
+  drm/bridge: synopsys: Add audio support for dw-hdmi-qp
+
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  17 +
+ .../boot/dts/rockchip/rk3588-rock-5b.dts      |   8 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c  | 489 ++++++++++++++++++
+ 3 files changed, 514 insertions(+)
+
 -- 
-2.48.1.601.g30ceb7b040-goog
+2.48.1
 
 
