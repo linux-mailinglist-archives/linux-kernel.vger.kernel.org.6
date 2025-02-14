@@ -1,107 +1,141 @@
-Return-Path: <linux-kernel+bounces-514677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4603CA35A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:21:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C289A35A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE56E1890F49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B4F1619A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F0C22F388;
-	Fri, 14 Feb 2025 09:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83379230D0A;
+	Fri, 14 Feb 2025 09:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p1FEnFa0"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRdz7QxL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C4522D799
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265251E502
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524875; cv=none; b=pULp2pidsqMvLZ78lSCMLcOn1BGQvCwGWLtKxB6Zrva9sBu5oAl7OQSVqvJscaVGDR95oO1/o6zPV0gP4oF8gDoO5/YHR4nIOMcAWMtcA1GQ85CTt5FeAF4G5ld9DQa07R+JIcYfW3whXtlXGsypk8g0v43X3ZckOhpGvbScw8E=
+	t=1739525189; cv=none; b=DsBPhuKJ10Pn8C11qmTtrm6Gr7e9ynbqh4lQfVGc3kRYYGbH6VEI749pXu7u91iaHfGhF+LQMt7DQqgyx8ZPCenfVHFgMC27TGQDmH0EVrohrWOmzHvHPA28RPZd2TR6jvXv2A4L11ktW1wYL4fc7Ex/IXRJ4Jo/2+KyRdS0cm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524875; c=relaxed/simple;
-	bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Um9sBw0ii3GXMGSOW6TKwnSuq4f85bk3vyHTyxSfVN9Ib7mvZEitW+94aEdXmDoaHO72UwbSejtW2TOQEmBV5ZvnvwYbm1HuuKCZ8X9CmDdhECJ8ego4pl0XPtsrK7f0npYm0b4KakK/AAfx69mW7RuyOV8KG/QYJKGk8qVGr5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p1FEnFa0; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5452e6f2999so10256e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:21:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739524871; x=1740129671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
-        b=p1FEnFa09lSugOKK9Nd0m6W6AHH3ieDTsFDkP1QwHrAY+sW6fc3okIq4krLCLAsWE1
-         jsth5OoOunMQ3K1Wl47X8fA4dXSQPHT0zFWbf4wYRkVXXAKknN2fsqid6JF0AYdYEenX
-         5ft8Oi+9u/MD0xi8zbIhkKQdUl/J3WoE7W4O4ZRCsBokAYgsXt6TSVJb0Q3/4lpuxe8a
-         hY+LuL9xrQqdF0zu1faslNIAG+Px9D7Ym/EdjEV2T8P/ht1WMtVoG6YA4rgHDU3oP/lP
-         fRhfK3POOUF2rkn0TRiTozy6rfv6GSidaFq4KP5Y7ieGDN37xkr3HWGnZCBaH+09S3wK
-         47kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739524871; x=1740129671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nAgI/y8eJ1E8nc79XXLDgqcje8Y04QIWciPNIuCcLr8=;
-        b=UQLSqRJ2uo0+fOI2+xxHH6l19zWtyB5L5elnq8aQj8E1fcioRx5y1atvGELfTKOchu
-         2v1VJROXgVRNxksPHjlj7P6SNaFgg6RGYACI3bxB8E+o7hOaKuPK1O5Mos8kwHh3m9yB
-         8bYd2zZRuhBxmqt1AmTjSJt4bzGflcdJLcRcy00WZEep8hFBe/a16AikbnObz++8tL9r
-         1bCGPFEk3lh7QquK5+qXPEbtzDDJkYrGVnkfcQMAQU4OMgP2BgW20AoIOy6dvlyJWfqg
-         CjwotD5lNey0dbv7ghHQrwM+NoatY0pd2ZRtOq9V01WLRU6QZUxHE+Kg8zBxTZjlLEqz
-         3o8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHBRTt6zh//FNsgm4JW2/S0Yis4vQaet/JxC8STTDB3nDjZa/1T4Ik+/ppG5EZP2V8HawhDxcmQj5b/BQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYILMP1tXvsZ4N1VCL77PbpAJ2g/tFn4CmOFDPYQ947weyRl5v
-	CzgJnZK/pbGnyoVUn66YrcCBVTB5DTpc1XMvzArf0BFZXbe7k1mEy/fHkPSrg1M481aQk6T5Bee
-	OC61MJshMg9vntJaRV+0Wg7UY7RnlRr5HklDddA==
-X-Gm-Gg: ASbGncvl/309q6h+x8m7tUDYHj1iJ7dpIuhOdFll//l/8xt0jqq6oZGHH+Qg9H3y/WD
-	tbIuKdkofgSbGrBrz+2crgrEjJKz3WOwrmUC7qyGqWfaWjR8JNye7G7Wbbd5lfcCHMGHq8sW8
-X-Google-Smtp-Source: AGHT+IE90b6o1JJv5clQNldUi4eegVlq4Ca3JgGfeUcZ+3CP/urShfREcnZbwFVUloZzXxIeSNiZtb/EuXTKGiYXpXY=
-X-Received: by 2002:a05:6512:110d:b0:545:191:81db with SMTP id
- 2adb3069b0e04-5451ddda5d7mr2106191e87.50.1739524871552; Fri, 14 Feb 2025
- 01:21:11 -0800 (PST)
+	s=arc-20240116; t=1739525189; c=relaxed/simple;
+	bh=NTbfLSbBNeVHoaCZY2uOEXo18C7ThdaTh+mx+6qswl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qjkq9MSdlDI5z9iXrfOlNhyQIMKP7/rFa6TcRtb/NEK7aMtDhEuhfa0yr0NjvMk4TPXhz//ZwaauSemxcDOPOOccK8SzSQM7SRmP6IYCOp73YBc0FAYNS0mc6VWMKdpJK7qVzjcTH1bpPuIEoGMxeRWytLJ082igy1Iz7iwbLt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRdz7QxL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739525185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Pd/apw7DLPkCed29VSFAes8cNUKnB71Y++gHqvfuS5E=;
+	b=KRdz7QxLvHrVUxnpxngB3Cx14gKekKZzXa+rIwqEaiNv8RP0elLo2BFetjCli7VjcO3Uw3
+	+OLaO/2sD030A3asZTI/2mSdA7sEsBYggWJ7AzuYM8lnVnBTFxhck3o1BsRHfEdRJABmNw
+	AMUoz8SHIj213IdzFi9qifZnBmXA8Kg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-216-WPcxdUA-MvS80DxSBOB9Qg-1; Fri,
+ 14 Feb 2025 04:26:24 -0500
+X-MC-Unique: WPcxdUA-MvS80DxSBOB9Qg-1
+X-Mimecast-MFC-AGG-ID: WPcxdUA-MvS80DxSBOB9Qg_1739525182
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E55A1903085;
+	Fri, 14 Feb 2025 09:26:22 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.45.225.79])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1EF3E180034D;
+	Fri, 14 Feb 2025 09:26:17 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v5 0/8] drm/i915: Add drm_panic support
+Date: Fri, 14 Feb 2025 10:21:35 +0100
+Message-ID: <20250214092608.2555218-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
-In-Reply-To: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 10:21:00 +0100
-X-Gm-Features: AWEUYZkpajzFykICl53b_t6wma0KSzpRBNdWfZ389OoEnBSGFtcIchXCSCVghNU
-Message-ID: <CACRpkdYYj6MO-xAQAJ7dnD22YRbfBZFm18Zg1T9P0sd=5kd8-w@mail.gmail.com>
-Subject: Re: [PATCH 0/8] gpiolib: sanitize return values of callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Feb 10, 2025 at 11:52=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+This is a draft of drm_panic support for i915.
 
-> We've had instances of drivers returning invalid values from gpio_chip
-> calbacks. In several cases these return values would be propagated to
-> user-space and confuse programs that only expect 0 or negative errnos
-> from ioctl()s. Let's sanitize the return values of callbacks and make
-> sure we don't allow anyone see invalid ones.
->
-> The first patch checks the return values of get_direction() in kernel
-> where needed and is a backportable fix.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+I've tested it on the 4 intel laptops I have at my disposal.
+ * Haswell with 128MB of eDRAM.
+ * Comet Lake.
+ * Alder Lake (with DPT, and Y-tiling).
+ * Lunar Lake (with DPT, and 4-tiling, and using the Xe driver.
 
-This seems reasonable.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I tested panic in both fbdev console and gnome desktop.
 
-Yours,
-Linus Walleij
+Best regards,
+
+v2:
+ * Add the proper abstractions to build also for Xe.
+ * Fix dim checkpatch issues.
+
+v3:
+ * Add support for Y-tiled framebuffer when DPT is enabled.
+
+v4:
+ * Add support for Xe driver, which shares most of the code.
+ * Add support for 4-tiled framebuffer found in newest GPU.
+
+v5:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private.
+ * Use iosys_map for intel_bo_panic_map().
+
+Jocelyn Falempe (8):
+  drm/i915/fbdev: Add intel_fbdev_get_map()
+  drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+  drm/i915/display: Add a disable_tiling() for skl planes
+  drm/i915/gem: Add i915_gem_object_panic_map()
+  drm/i915/display: Add drm_panic support
+  drm/i915/display: Flush the front buffer in panic handler
+  drm/i915/display: Add drm_panic support for Y-tiling with DPT
+  drm/i915/display: Add drm_panic support for 4-tiling with DPT
+
+ drivers/gpu/drm/i915/display/i9xx_plane.c     |  23 +++
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 169 +++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_bo.c       |   5 +
+ drivers/gpu/drm/i915/display/intel_bo.h       |   1 +
+ .../drm/i915/display/intel_display_types.h    |   2 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.c   |   5 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.h   |   2 +
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |   5 +
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |   6 +-
+ .../drm/i915/display/skl_universal_plane.c    |  27 +++
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |   2 +
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c     |  29 +++
+ drivers/gpu/drm/i915/i915_vma.h               |   5 +
+ drivers/gpu/drm/xe/display/intel_bo.c         |  10 ++
+ drivers/gpu/drm/xe/display/xe_fb_pin.c        |   5 +
+ 15 files changed, 294 insertions(+), 2 deletions(-)
+
+
+base-commit: ac6674bc94e91c25f5919efc91721264c00ab300
+-- 
+2.47.1
+
 
