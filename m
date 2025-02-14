@@ -1,204 +1,196 @@
-Return-Path: <linux-kernel+bounces-515650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9EFA3674A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:12:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598BFA36751
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A96A16866B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:12:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926ED7A4663
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBC81D95A3;
-	Fri, 14 Feb 2025 21:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959451DB127;
+	Fri, 14 Feb 2025 21:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RXJDJTpA"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2065.outbound.protection.outlook.com [40.107.212.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rP+Va2NP"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93041C862E;
-	Fri, 14 Feb 2025 21:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739567505; cv=fail; b=ShVZWKFirhiV6eXe/Tof5Bp7QP18eFYpeinORnCL62sCq4AE6lgOcsbaQjWKyn3pPO7JKp8I2qEi6wpPaUEzP+UMjUxQybtBfHsrEq9siiCP3gNTVuHhemBy0/Rs3M76Lw0YJfapAxI/uPWuna62x8bWMA8byJkNhGL/TuRsPdk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739567505; c=relaxed/simple;
-	bh=M+3VvoegNSUbuOWpuGrcvxA6rL005C3O8hIQ1elpHv0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=s7awqabvf9UHDJ1WWawMeZ4MmSuDGf7er62I/3FRtauUAPJjh1nM8tLDno1143JZ0CMfWgFGJQMvN5FVfgxcvKTey6ekKdUMThqax/lMuf9dOab9sEESlNno81geeEMGprdtBW6KlPwUXIE0SDnwmspa9TZdyroeWJvsQQ0bF2k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RXJDJTpA; arc=fail smtp.client-ip=40.107.212.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HOfyn15Jm35V58WxS/86bAJCZk6dcHSeUlAhJ/1Uhmhb83Ve3U2Ek7UJaYEuOCZhY5ht1HrtMellTp0CS1XQC3UzDoGBEu07Th/ayirpKmcOgUdFlY2MBf7TZSP9C1keMht+pLMWX7+eKMzXrTuq0R7OAszHSTGQi0Qkg7p0I12VUgnt3mT8zZWlB1YHB99HwR762K1zDSjBBQe1wdzR4xMSaeDfPSPzXkknd9YzaAfzTUpw+JyITCWaZ/CioWJiUTt9pM/Y1skYSMw6IHzjtRWN3o6oE53eZTnViYW+xE6vakhcFp0M9ofMYGcd8rkNGUAn0d+Eoa9vSuh3alN5hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wMdTukBSTopygK46EB3NDr7KkhULSeC0cFDJc4IkNck=;
- b=BqpLgswO8E1zsYz+52z+UkVmayDM0qZYJ9hBZDbQWh5JxFz2zML05/hHuUx92liAC6HIzyqOZvXRItMYPfZJvS2H5c0Aa2lpBmBSF9UuNWvZb1kMLLifI8h5SZxXRbethNOOEddV2VHB387vBG3vf0Q/A6cUYpHyGywX1yTtZmqTJMMhwD9OuGC9aLv0t7Q3OuL5LlD810SAC1pDaJ4jFg1q6BiYyyTTMS5ZUunYpmViyOc0P8bgnrSLLmJ3htehq/mwwqoVP/ZhLgz2lsHsCFmUO8ItaDD2GKkX6/IDVZeOGcv8n7ej4clCuZc0DAJLy8cYCrsg5Divx+iV7uMEPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wMdTukBSTopygK46EB3NDr7KkhULSeC0cFDJc4IkNck=;
- b=RXJDJTpAMtwJmfIYArONnoN/umUgywtSTExXT5EhJXy613z1jeJmq07T2DKrfFXossZIqtcHqpZDPv7BPVflGNbq0AAIa/M7V5dm5ejpx/3oHn/8prm1XrKaSpggc26a1z9A0E1YBJ61CkbzqtmP+zbKu5+y7Pld0NmOK1xWa+rpuvuH04JEEZW5in6rZlNHftF7chSeIzm/OzGi7mQ5XjFWGVanH36dzIGkmaYwU2PE7YfKdkkLp/N0VaAxBg595m+MMGn/ccQzYJ/vo72iImtPeirqIwv58pIHs4Wp/2LodDClERTYi7vFvkrOxeKjSrm2f2+gDp7oKmAAEgqZfw==
-Received: from BN9PR03CA0032.namprd03.prod.outlook.com (2603:10b6:408:fb::7)
- by PH0PR12MB8128.namprd12.prod.outlook.com (2603:10b6:510:294::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
- 2025 21:11:38 +0000
-Received: from BL02EPF0002992E.namprd02.prod.outlook.com
- (2603:10b6:408:fb:cafe::65) by BN9PR03CA0032.outlook.office365.com
- (2603:10b6:408:fb::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Fri,
- 14 Feb 2025 21:11:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Fri, 14 Feb 2025 21:11:38 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Feb
- 2025 13:11:16 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 14 Feb
- 2025 13:11:15 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 14 Feb 2025 13:11:15 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc2 review
-In-Reply-To: <20250214133842.964440150@linuxfoundation.org>
-References: <20250214133842.964440150@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317FF1D7E47
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739567590; cv=none; b=e+H8kNNfIR7fcOphLIM2OUgZdArJbSWOC50EKjZ8uW59yZUGeztVWvjjIjRFilJB2M5+XPn4eLutWmgEygay8YU6wip/P/iAozQoAuWoYKvlv+T3T/+/PtYUcpC6hf5aBoOyCOirMLgAVLdumQ0Gbv84n48rM2Z6RJmjfB+Z5Vg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739567590; c=relaxed/simple;
+	bh=2Z3xVZRnKUmb7k5N5LtoLiUMk2beZViDqsmP1ErC0Oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iSt0i1MaNJ7w+zrXs9MjPjoOUvVfRR3dhGlYFstxZ4OvOYLnUTjPY0vbUySNW/mKoU98kHFPXZiSxWw780yhVryRJlNMxxIi3RLx+3zMFmTc9oulrmBgNNhJnoM2U2YMSp0gtPpHAFC2hi8ptWm/O5pZqR1JqbzDbl+FIkntZDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rP+Va2NP; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c92c857aso40977185ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:13:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1739567588; x=1740172388; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRL86cHxOa4V0i3hiENgMth/UD7EVCBFhQCErmHAqNQ=;
+        b=rP+Va2NPA7e/sxMQovH/2vbT1BgOxov12Acb8B3PXv3sXPAGenlgCqMSt+Tqu7+22+
+         A5cq7Hkxh4vTMk/GRVhcPy/c5Ne8zscHalhGvch4Zm2Ccqgti30qkxxuGAnzWZZy8vBI
+         MmSdUdc2SfLi9mXl0g0uu8bDz5Ko9LtCIixSc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739567588; x=1740172388;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KRL86cHxOa4V0i3hiENgMth/UD7EVCBFhQCErmHAqNQ=;
+        b=qNmEsuPgNCz48Ae4KBj9tD0lY1hRSVEi3lhXp2sjNGknYki/B+MSH6ei66KieLu1Vy
+         4LqxPyoQHqMuVbfPoAnFrM1lhg5RNdGiKUzgGlXUek8QoZJ58RHMf1QvjF0XqirZ0fw1
+         1OSrCab5fhUBla50Idkb90dscDhQHi15J1dEUOH/is/Kb6h5cZUGmEqV6GpB1dszDyAj
+         N+4H5b4Xk8L0Fzs3nCqGORtmu08oUR1lkIrDQa7bYtro4zylZ6ayej+6DiE3rbeW/T0D
+         u+7dOwAVFd3qZ3RdAv6bQFn3I9RaMcqlEFhXiibvF4d5orzBxBlftJWK4T4ZSISyTTMx
+         P9bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWYpsoIu3AmUYVwx5RiY4XoItrTGdMTzYEdR8mkwsrh6bJa0rz5ARfv1e+BSc6F/1T16vaAdYKbmtmog4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3Q3MRu5oOt7jZnvzbXVa/40M350LYCh/brDMl8ZwcKi6cTi8G
+	zU4rQaxkTjRl6pRT4PuZPNjbOvBQ3T/KyRbT9ywIpPuRMJJ/U79FgtnHADL96es=
+X-Gm-Gg: ASbGnctsSela8tf5IAvXTHSiaVFNgL3CNkPoiHsL2BzwJBvoEIBP3Mm+5vwKLMZBtsi
+	W0f7drAFHQfRQGlM0LiiQOxBCp+HLa50lScMj297wg+NtipKKyHZgYLzv0rUj6pjEh5/OU+bwSW
+	slWspk9v2RZeZscqq039xvpWw0B5Gb3DAKjjXIqBsd8v6dKzZKNMUWpYbR+p/q5klKw+SPz5MjB
+	t073HCQRUEHBITGfFab7z5toohAyMc+5ljaJtSBMfbVPEhbnEVT3mCeBiBx8MSDmsQvPyngFFcv
+	CG4jg5CBfZVsvhnoiPaerOM=
+X-Google-Smtp-Source: AGHT+IG8mV9rv5yhc1iWlaV5S3t2ZOUGumy70/f6XFQ7FMoAQmt6hhsZbeWPJOdhiWP1nE1SaK4rgw==
+X-Received: by 2002:a17:902:ea11:b0:215:758c:52e8 with SMTP id d9443c01a7336-221045bc6demr11028735ad.12.1739567588330;
+        Fri, 14 Feb 2025 13:13:08 -0800 (PST)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55908a7sm33285265ad.240.2025.02.14.13.13.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 13:13:07 -0800 (PST)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: stfomichev@gmail.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_)),
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Wei <dw@davidwei.uk>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Mina Almasry <almasrymina@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: [PATCH net-next v8 0/3] netdev-genl: Add an xsk attribute to queues
+Date: Fri, 14 Feb 2025 21:12:28 +0000
+Message-ID: <20250214211255.14194-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <26019cb1-7c61-4e66-a4df-823d00999604@rnnvmail203.nvidia.com>
-Date: Fri, 14 Feb 2025 13:11:15 -0800
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|PH0PR12MB8128:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36cbd1d3-7994-48a8-7993-08dd4d3c2bc2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?anRTMXk4WHlHSDI4R1I5N2xQMkp6STRzY2FhU0xIeEFBSko0UVMrZ3RNWUNm?=
- =?utf-8?B?Vk9ZLzBZeXAxL2tFbTVvNDdNV2gyY0VJbzFxcDVHaXl2c3dhb0JoYXBuMGFm?=
- =?utf-8?B?WldINnNPMzlTakExd2JWZEJtS3YrWDl5WGxseHNpenEwc0ZqNjJIeXM1aklI?=
- =?utf-8?B?cGEzQU9JbVZINjlvTnZRRHZSdDBlaFhidjlCYzk3Tmpvd2U0T0tmL1RhL3Zm?=
- =?utf-8?B?bllCc01LZ1dJNTRab05TTU9hN3dJOHNiV0tlVkpZbFR1aVY4b25tRFNnT29F?=
- =?utf-8?B?UitsaEJuV3NaVGtnMUpQekVHMWZlc0F6QStuZHFqeWJyME9IR1MxbDUyeGta?=
- =?utf-8?B?WnV0bEtoOTh6clFweTd1RlNVRWpKYzNGZ1Zib2s0NkJ4QzJOZ2R0YlUyZ3lu?=
- =?utf-8?B?NkJEb2tNRWEvbS8zbVU1SUJIYVY0alRvUWEzWkJ2dWdnWldGVHo3YXkzaW5V?=
- =?utf-8?B?bWorbGQ1aTFub3FPencwNm5OTXVGWldYdTNkOUFSN3U1OVQ2d1BIdmFaelll?=
- =?utf-8?B?dEFxa2RkSExxbURKNUxUYjlRbEpNTjI5VkpPekg3T1pzQ05wS0lrdXAreWYy?=
- =?utf-8?B?RjFOcVNncWNoZDNkRldyZWR4c3hCeDk4VXN5YTl3NkNBampodkNFbnIxbzg0?=
- =?utf-8?B?am9HUHhqc3drSUFQYlJmQUlWcHIrVk01QVdKa1dTdk8yNmQyM0tJTi9PT3hS?=
- =?utf-8?B?NjdBTzFxTHdoaHh5WG1tU1VrSlplZE9rbVFUWVIvQXRuOEJ5a3hWL3B5OWc2?=
- =?utf-8?B?SmRRQ0Nzbzh3SmVmcmJSRU1hc3F6VFpZRVE2bTZqZm5XRmxqdnI3MlE5a01L?=
- =?utf-8?B?WnVEeFhUYWhKMlpPMGoyMXkxNjZ6VDVDSERHSkpnU2VHSEpia2lxNEoxY24x?=
- =?utf-8?B?MjlzaGhyYkhKNDR1dVZNYmdlS3pZTk5BcFlxcmM5OFo4SWczRE5SSWRXMCt1?=
- =?utf-8?B?dU9TQ0FnZnRNYzc5RU41OVNRQ3ZnMFV0R2ZLMUJMV0hwdG5JRllBbHpCVVUw?=
- =?utf-8?B?V2R4R1I0SUJmNzVkaUExZUtDTXYwaGtVbnBObkdNcE9aOFcvLzhTdnE1czRj?=
- =?utf-8?B?eDZSSXd6VktIUTBGS3RKUHhFT2h6c1U3K2RiRHpraDNwUFdYRXFkNEJUdVJP?=
- =?utf-8?B?bkg0WHNXQUlNMG1XTHB6eGE4QVR2bkxKN08rVS9mTUo0UWlQMlE0bDFiNmEv?=
- =?utf-8?B?VWNZa09mNkg3NkpuemlVUnB6Tk8zTHpaMmlKaklpMUtPbTIrYzJZREVNWDJj?=
- =?utf-8?B?VlZXTVczQ09nb1VSZTJ1TnVoRC93T1pWVzdWVzhDQjNIcG4wWWgzQVNVTkF1?=
- =?utf-8?B?Y0kxZzA5UEF2bFdPNEIwUUZNU2VFRGpGNHlNM1B4UGRpeW8yUnljbVpoQUQ1?=
- =?utf-8?B?dkxsaEZxREJEcUR4T2F3aWlWQjE3amlmMlpnei9kWnY0SHBzd3pBQ3JwV2Vk?=
- =?utf-8?B?VDd4SGtXdDloUytUcU1QbVZLZXpEdHVLbldzWllNWjJBSG1vZ1hoQU5tSlFJ?=
- =?utf-8?B?cmw0Tmx1QlV0T3V1NHhhbHByRGlrczRHVG5lNkJCUGsrOHFjWU5uR3lIam5l?=
- =?utf-8?B?c1JydUc2NWs1eEMvblVneURnRGlldE5NWXNiS3d2SEU3VklIcklGQmRiSFNU?=
- =?utf-8?B?aTZiNXBsSjRQa2RpZm1RL0JmZjM1ZVRkMUdzYVAvLzV3VzgzdmFqNUx0RXJX?=
- =?utf-8?B?WTY3cFlOSTUrNktaMjZQL2xTcjZwRU1jYW02QkxNWTYyZWhKNE9Cc1ZjeUpP?=
- =?utf-8?B?a05iUGhpckVCaUpZZDZyc1FRbkU1dG1PajJsM21QRTZycUJPSERvNzVLM0VQ?=
- =?utf-8?B?NmdWcTJpOVJMMTNwZDJEMlVPL0o4NGpCcXRDSStmSUo4bUx5N1VsWk1mOUlS?=
- =?utf-8?B?NGQvQXMwbVozZ1hlK1BaUVVtWVN5eis5SVF6aEhENWoyc0RIYUhEaCtJU3Va?=
- =?utf-8?B?RUZwRmQ5bndmTG1yNGpsQ3FObC82eUxWRmtJcDUzdEY4dWcrU3puTWVObnN4?=
- =?utf-8?Q?H8Fo1sFsOxRYVwa+WRKYWPNh1rsbC4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 21:11:38.1989
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36cbd1d3-7994-48a8-7993-08dd4d3c2bc2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0002992E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8128
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 14:58:52 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.3 release.
-> There are 443 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 16 Feb 2025 13:37:13 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.3-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Greetings:
 
-Failures detected for Tegra ...
+Welcome to v8. Minor change, see changelog below. Re-tested on my mlx5
+system both with and without CONFIG_XDP_SOCKETS enabled and both with
+and without NETIF set.
 
-Test results for stable-v6.13:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	107 pass, 9 fail
+This is an attempt to followup on something Jakub asked me about [1],
+adding an xsk attribute to queues and more clearly documenting which
+queues are linked to NAPIs...
 
-Linux version:	6.13.3-rc2-gac5999a6c007
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+After the RFC [2], Jakub suggested creating an empty nest for queues
+which have a pool, so I've adjusted this version to work that way.
 
-Test failures:	tegra124-jetson-tk1: cpu-hotplug
-                tegra124-jetson-tk1: pm-system-suspend.sh
-                tegra186-p2771-0000: cpu-hotplug
-                tegra20-ventana: cpu-hotplug
-                tegra210-p2371-2180: cpu-hotplug
-                tegra210-p3450-0000: cpu-hotplug
+The nest can be extended in the future to express attributes about XSK
+as needed. Queues which are not used for AF_XDP do not have the xsk
+attribute present.
+
+I've run the included test on:
+  - my mlx5 machine (via NETIF=)
+  - without setting NETIF
+
+And the test seems to pass in both cases.
+
+Thanks,
+Joe
+
+[1]: https://lore.kernel.org/netdev/20250113143109.60afa59a@kernel.org/
+[2]: https://lore.kernel.org/netdev/20250129172431.65773-1-jdamato@fastly.com/
+
+v8:
+  - Update the Makefile in patch 3 to use TEST_GEN_FILES instead of
+    TEST_GET_PROGS.
+  - Fix a codespell complaint in xdp_helper.c.
+
+v7: https://lore.kernel.org/netdev/20250213192336.42156-1-jdamato@fastly.com/
+  - Added CONFIG_XDP_SOCKETS to selftests/driver/net/config as suggested
+    by Stanislav.
+  - Updated xdp_helper.c to return -1 for AF_XDP non-existence, but 1
+    for other failures.
+  - Updated queues.py to mark test as skipped if AF_XDP does not exist.
+
+v6: https://lore.kernel.org/bpf/20250210193903.16235-1-jdamato@fastly.com/
+  - Added ifdefs for CONFIG_XDP_SOCKETS in patch 2 as Stanislav
+    suggested.
+
+v5: https://lore.kernel.org/bpf/20250208041248.111118-1-jdamato@fastly.com/
+  - Removed unused ret variable from patch 2 as Simon suggested.
+
+v4: https://lore.kernel.org/lkml/20250207030916.32751-1-jdamato@fastly.com/
+  - Add patch 1, as suggested by Jakub, which adds an empty nest helper.
+  - Use the helper in patch 2, which makes the code cleaner and prevents
+    a possible bug.
+
+v3: https://lore.kernel.org/netdev/20250204191108.161046-1-jdamato@fastly.com/
+  - Change comment format in patch 2 to avoid kdoc warnings. No other
+    changes.
+
+v2: https://lore.kernel.org/all/20250203185828.19334-1-jdamato@fastly.com/
+  - Switched from RFC to actual submission now that net-next is open
+  - Adjusted patch 1 to include an empty nest as suggested by Jakub
+  - Adjusted patch 2 to update the test based on changes to patch 1, and
+    to incorporate some Python feedback from Jakub :)
+
+rfc: https://lore.kernel.org/netdev/20250129172431.65773-1-jdamato@fastly.com/
+
+Joe Damato (3):
+  netlink: Add nla_put_empty_nest helper
+  netdev-genl: Add an XSK attribute to queues
+  selftests: drv-net: Test queue xsk attribute
+
+ Documentation/netlink/specs/netdev.yaml       | 13 ++-
+ include/net/netlink.h                         | 15 +++
+ include/uapi/linux/netdev.h                   |  6 ++
+ net/core/netdev-genl.c                        | 12 +++
+ tools/include/uapi/linux/netdev.h             |  6 ++
+ .../testing/selftests/drivers/net/.gitignore  |  2 +
+ tools/testing/selftests/drivers/net/Makefile  |  3 +
+ tools/testing/selftests/drivers/net/config    |  1 +
+ tools/testing/selftests/drivers/net/queues.py | 42 +++++++-
+ .../selftests/drivers/net/xdp_helper.c        | 98 +++++++++++++++++++
+ 10 files changed, 194 insertions(+), 4 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/.gitignore
+ create mode 100644 tools/testing/selftests/drivers/net/xdp_helper.c
 
 
-Jon
+base-commit: 7a7e0197133d18cfd9931e7d3a842d0f5730223f
+-- 
+2.43.0
+
 
