@@ -1,175 +1,150 @@
-Return-Path: <linux-kernel+bounces-515243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A45A36243
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9658EA3623C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59C0F1895FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0835171428
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C64267388;
-	Fri, 14 Feb 2025 15:50:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931482676C8;
+	Fri, 14 Feb 2025 15:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dav+8sus"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095B825A2C2;
-	Fri, 14 Feb 2025 15:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058A13234;
+	Fri, 14 Feb 2025 15:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548203; cv=none; b=ktZRA4t7wU9YEaWUIVN+LpDapG1lR0SO/09rVMu9d7CAplozA2xuw33oRqfATZmQfJfASPb9N34JKAiTNBGRWQ4MyQTe6OuLfd3009LYVtqRT/pkdJCDImGFEDFXHWCc+XoCMbdMo4t2lLfjt2yryei6V/uHL+2GFRll1hrnopQ=
+	t=1739548204; cv=none; b=kAIYbN/WHpDzWfATju8VgVPpIsdjYOocXyot8ohkBEg19oNUBnIpa8HJnbdyHUmdudfM3x7+SN/2AFJCnjDBzgbAHsWvQU4Auqzk+/ae2PEJQPvp5xfn8VHeep0fm27pR6oQbpzbU7F0jZITAdrbpYjcQnNSMImSc42Y8O5gAlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548203; c=relaxed/simple;
-	bh=bVS0iV2eZqMxVSCplFTRbZw0fu/mH0w4L9OzNH7NcV8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KInLycG1cE1iUGz+twVi6PfBxRsYFt13u2jdEakFT9HikGBXhgImABi28oTEO3/4SRA0JSG757N2EgGBZU/L4Bccq5HeGvayAY90QdnbmW5+Iqy5tbReL2G2CXWQ4o0J/XX/YGveYjozVe0vbM+COEkvnLhqShbaPxBRbkFZtuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvbz50ZJ1z6H7Rh;
-	Fri, 14 Feb 2025 23:47:29 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7AFD2140390;
-	Fri, 14 Feb 2025 23:49:57 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
- 2025 16:49:56 +0100
-Date: Fri, 14 Feb 2025 15:49:55 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>
-Subject: Re: [PATCH v3 03/18] cxl/pci: cxl_hdm_decode_init: Move comment
-Message-ID: <20250214154955.00006b0c@huawei.com>
-In-Reply-To: <Z60-UF3VGPsyqHjX@rric.localdomain>
-References: <20250211095349.981096-1-rrichter@amd.com>
-	<20250211095349.981096-4-rrichter@amd.com>
-	<20250212180910.00005839@huawei.com>
-	<Z60-UF3VGPsyqHjX@rric.localdomain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1739548204; c=relaxed/simple;
+	bh=TG0xmfKkdGCLTdkpVoqtkePlbBY6zdq8gtzJjlZj16E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=rd9t5Cf3tNS60/VOSq+cvrcfRLPYSj3nPBsTrNZJYB2H85QPxXmUS2VHIAwBX1aChkjcl7ccJgHtM3c+YW1L8GbcRHzbSWFy1RSQx5GEnBSjhNF4Fook1c7p05M4fex+y5mPvFENUTuYOFgDlxEvY3GeYRXFmlVPRMZJP6I+Aq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dav+8sus; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CEABD44305;
+	Fri, 14 Feb 2025 15:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739548199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=69qA403PSDbxwZhDUp8oR/q0a9JjXlx2hGab0Dld0Z8=;
+	b=Dav+8susmRMhLBPQAqVqjwAoocdEZoWUXe+To5AeWBg+gwwGdYRhrseBwpmlk20vfaY9sc
+	t8hG01G4ynHzDSR25lZyHxbhfPZ1GvUG7HKijkD7lAM2k84ON2/oxE3NEDWPc89fUGBOyK
+	uM2W9sPHU0WTdipxhr/1V5pxdk4gLGOjrw8BdhNdAUw1vBkNqKvtVbOCIVE/qqjzPiV8zL
+	lbb8e1px1ZpnyoUsNdnZf5Nynzy8aRXIlvWo+sCtmH3p+uUsWP40qHfWfrGKV0h5f668Gb
+	3ACFErufX8KA7DDmn22NG7JwWzsx2cdhGMzItc0ceyIvOm5LGgEZninGVqv5qQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Feb 2025 16:49:57 +0100
+Message-Id: <D7SADDQZUERA.PT8QLVZ9ZN1N@bootlin.com>
+Subject: Re: [PATCH v4 06/10] regmap: irq: Add support for chips without
+ separate IRQ status
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
+ <Z69eue2dV37vw61v@smile.fi.intel.com>
+In-Reply-To: <Z69eue2dV37vw61v@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehtddthecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Thu, 13 Feb 2025 01:35:29 +0100
-Robert Richter <rrichter@amd.com> wrote:
+On Fri Feb 14, 2025 at 4:18 PM CET, Andy Shevchenko wrote:
+> On Fri, Feb 14, 2025 at 12:49:56PM +0100, Mathieu Dubois-Briand wrote:
+> > Some GPIO chips allow to rise an IRQ on GPIO level changes but do not
+> > provide an IRQ status for each separate line: only the current gpio
+> > level can be retrieved.
+> >=20
+> > Add support for these chips, emulating IRQ status by comparing GPIO
+> > levels with the levels during the previous interrupt.
+>
+> Thanks, this will help to convert more drivers to regmap
+> (e.g., gpio-pca953x that seems use similar approach).
+>
+> ...
+>
+> > +static irqreturn_t regmap_irq_thread(int irq, void *d)
+> > +{
+> > +	struct regmap_irq_chip_data *data =3D d;
+> > +	const struct regmap_irq_chip *chip =3D data->chip;
+> > +	struct regmap *map =3D data->map;
+> > +	int ret, i;
+>
+> 	unsigned int i;
+> ?
 
-> On 12.02.25 18:09:10, Jonathan Cameron wrote:
-> > On Tue, 11 Feb 2025 10:53:33 +0100
-> > Robert Richter <rrichter@amd.com> wrote:
-> >   
-> > > The comment applies to the check, move it there.  
-> > 
-> > I think I disagree. It was in the right place as far as I can tell.
-> > It is an odd place for comment, but it's kind of describing
-> > why it is not an error to get down there.  
-> 
-> Ah, that was not obvious to the reader. :-)
-> 
-> >   
-> > > 
-> > > Signed-off-by: Robert Richter <rrichter@amd.com>
-> > > Reviewed-by: Gregory Price <gourry@gourry.net>
-> > > Tested-by: Gregory Price <gourry@gourry.net>
-> > > ---
-> > >  drivers/cxl/core/pci.c | 18 +++++++++---------
-> > >  1 file changed, 9 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> > > index f8e22bc278c3..c49efc419285 100644
-> > > --- a/drivers/cxl/core/pci.c
-> > > +++ b/drivers/cxl/core/pci.c
-> > > @@ -419,6 +419,15 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
-> > >  	if (!hdm)
-> > >  		return -ENODEV;
-> > >  
-> > > +	/*
-> > > +	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
-> > > +	 * [High,Low] when HDM operation is enabled the range register values
-> > > +	 * are ignored by the device, but the spec also recommends matching the
-> > > +	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
-> > > +	 * are expected even though Linux does not require or maintain that
-> > > +	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
-> > > +	 * Decoder Capability Enable.  
-> > 
-> > This check is about mem_enabled. Would be fine to add another comment here to
-> > say.  
-> 
-> The next patch extends the comment for more clarification (I hope so).
+I agree, but signed int index variables are used in all functions of
+this file. What would be the best approach here? Only fix it on code
+parts I modified? On the whole file?
 
-Not to me.  It says 'else' when referring to what happens in the if.
+>
+> > +	bool handled =3D false;
+> > +	u32 reg;
+> > +
+> > +	if (chip->handle_pre_irq)
+> > +		chip->handle_pre_irq(chip->irq_drv_data);
+> > +
+> > +	if (chip->runtime_pm) {
+> > +		ret =3D pm_runtime_get_sync(map->dev);
+> > +		if (ret < 0) {
+>
+> > +			dev_err(map->dev, "IRQ thread failed to resume: %d\n",
+> > +				ret);
+>
+> Can be one line.
+>
 
-> 
-> > 
-> > 	/*
-> > 	 * If mem_enabled is not set prior configuration is irrelevant and we
-> > 	 * can do what we like so enable HDM decoders and ignore DVSEC registers.
-> > 	 */  
-> > > +	 */
-> > >  	if (!info->mem_enabled) {
-> > >  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
-> > >  		if (rc)
-> > > @@ -454,15 +463,6 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
-> > >  		return -ENXIO;
-> > >  	}
-> > >  
-> > > -	/*
-> > > -	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
-> > > -	 * [High,Low] when HDM operation is enabled the range register values
-> > > -	 * are ignored by the device, but the spec also recommends matching the
-> > > -	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
-> > > -	 * are expected even though Linux does not require or maintain that
-> > > -	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
-> > > -	 * Decoder Capability Enable.
-> > > -	 */  
-> > 
-> > This is the path the comment is talking about because only if we get to this
-> > return path are we 'skipping' the HDM decoder capability and not returning
-> > an error.  The path representing an HDM decoder equipped device that
-> > was configured by a BIOS that decided to use the DVSEC registers.
-> > 
-> > I'm not sure why we care about how the hdm decoders are programmed inthis
-> > case though.
-> > 
-> > I'm confused :(  
-> 
-> There is an HDM, but it is disabled (CXL_HDM_DECODER_ENABLE is
-> cleared). If the DVSEC range regs do not have valid values
-> (!info->mem_enabled, firmware indicates it is not used), just go and
-> enable the HDM.
-> 
-> We try to use the hdm decoders here to be able to use them for a
-> non-auto setup. Else, decoder emulation is used
-> (should_emulate_decoders()) and decoders are locked
-> (CXL_DECODER_F_LOCK will be set).
-> 
-> Maybe take a look at the whole change with added comments including
-> patch 4/18?
-> 
-> I hope to not add confusion here. :-)
-> 
-> -Robert
-> 
-> >   
-> > >  	return 0;
-> > >  }
-> > >  EXPORT_SYMBOL_NS_GPL(cxl_hdm_decode_init, "CXL");  
-> >   
+Yes. Kind of the same question here: should I fix only the code close to
+the parts I modified or the whole file?
+
+> ...
+>
+> > +		for (i =3D 0; i < d->chip->num_regs; i++)
+> > +			d->prev_status_buf[i] =3D d->status_buf[i];
+>
+> Hmm... Wouldn't memcpy() suffice?
+> But okay, this seems to be not a hot path and the intention is clear.
+
+Yes... I don't know why I didn't use memcpy. I will fix it.
+
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
