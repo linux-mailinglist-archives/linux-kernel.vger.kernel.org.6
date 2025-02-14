@@ -1,140 +1,288 @@
-Return-Path: <linux-kernel+bounces-515667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D09A36775
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:25:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D667A3677D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02D316CCA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:25:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16D53AE8EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BC81DC19D;
-	Fri, 14 Feb 2025 21:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055D31D89F0;
+	Fri, 14 Feb 2025 21:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCJ0qwxn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="rC59TEBN"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB84158870;
-	Fri, 14 Feb 2025 21:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200E9158870
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739568295; cv=none; b=iw+6sMmu6FtpeeAsX4lbUX23kaoBbiFDYeM5IGcLLaaFVOwSX2tZNvsDLYKJRt2SN9gI50XnQD5mGgGXW9vRqhuLl2+0DApcC0rA5/cXIrAkczs5xVbAdAnMekfZrpd7vOSHddGaV669klyalKORHnVmrDGzvV6ES5d2upspBog=
+	t=1739568416; cv=none; b=iCUq6ed0DT2nUSqblQ5/T/lLzAHPMubR432M9bxCtz6JvNAHLP8AOr6y6HeXWJuKXMKK1ltpScz0VrgYExa3GL+64IBsd8i+yPLur7veesbjFnWOAjvo/na+Zl8SLWzEnyqY1dDCapXr5+CzdTXvsO6Y7paT6CLf8iDc0+aEFrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739568295; c=relaxed/simple;
-	bh=EzLv1PXDSqrSgIGdd+Ne0LCQSPCxPjBW79dJ8940ZBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V2zloZDnPYboBChOVXfyuOkgsWwg3sP5eWT/uforRAT1duiYIpuYFY5jmJGql6eObRkDS7O04MiLWYAj/PgqDfTdAji/3PdWO3bXA/nO8hMYASCTBvYGilsK3ajKIuskbp4EFGZMffjCFKwH2OFemFy1Mt6AXxGCzyOMTXzz+cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCJ0qwxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00968C4CEDF;
-	Fri, 14 Feb 2025 21:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739568295;
-	bh=EzLv1PXDSqrSgIGdd+Ne0LCQSPCxPjBW79dJ8940ZBw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jCJ0qwxnVhC21iVM09GsHY5We2ktTclhzhJn1KwiCozsvnFJdQP7T5WqCiJiRTcgD
-	 OcId0pVJK7KKzE74qyaJstEGpRviSQo8M81d1P4OG4/UoaY+VtuOur7HR9y719/qiN
-	 FvqKd75OtP3cP5A6pM+BOAxTVGhWui22JQkI47zyA33irOya85l/s1c3WdUcdULz8b
-	 byLHh3xIAwNouT3QHkWuOX6Wh5+aWcYV8fIL8/cGeRxNb1c+cleWmgAcy8fTt5mxV/
-	 eOPySx8spEj2lZwZse+HeyIjcMdas3cjI1IOJ0tW0FiAy5yDW1KsppNmnsB/Oqab5w
-	 ZV6d6Ni9fIMww==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7271239d89fso48664a34.0;
-        Fri, 14 Feb 2025 13:24:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWBZqVmM1ZPQTuXy9gfBA6aLEvy6r+O7iyaTN7czLCzqIpqe7dWgxmVcAwqyUr5LUI9HfxjIoxWM8ct7U=@vger.kernel.org, AJvYcCVV1jA+goLkaTDpMTU9b1AK6yos5Uki9zA/3INVR0qhyGn97KZhGpXXW9TRHqx8dIqb+c5p3B8ehSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE1IROEXjCmawOUDCrJCF1mBWXW0eLkobSB9rVTSsyKRXib7DB
-	kB5jhV0c33kzjhQqL7zma+iVBWtRZBa23WH2XDrveEq9M+BmaVH0RysepfcgmYvjKsID3QpmJC8
-	Rw6TY07u/Vk7TMXYN9IOHAI6s4fo=
-X-Google-Smtp-Source: AGHT+IGH7ThwbfO5wqEDV+pwCch4O/d4lXFcYV2d7xcYrEEB2ig4ZwKzHwpL04riTFSwMJej92QX2x/ZkQUc7MPioxM=
-X-Received: by 2002:a05:6870:82a1:b0:2b8:2f9c:d513 with SMTP id
- 586e51a60fabf-2bc99b57b8bmr398470fac.19.1739568294249; Fri, 14 Feb 2025
- 13:24:54 -0800 (PST)
+	s=arc-20240116; t=1739568416; c=relaxed/simple;
+	bh=Rk7nIVt1MTtXn0NS72fTOn9EXPvn5d2wl/NC81j0Mms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuJt1WB1GZHkkXM+sdUrBk6t3rpwqnUx3Nm7b5cnDvrQ+iweh9BbrRSPNDHlrpQpAT0cTlH2D2qWxe5mo3NdAhYRoTdDKmgE20NrWuPYvQ89++5S7ciQXPtD/LZ3GPvj36M0ESlpifUfPss3zBR+ofpy8oGx4G4/4N2f61VKnl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=rC59TEBN; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471cdc14e99so14005621cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1739568412; x=1740173212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cg1ey3aipCNJUc79bD6lrhDndah42SIkSCRK4mNzles=;
+        b=rC59TEBNIV2NcZ7dHQUMZNJeYZ5KyEHemM1vJNlgiTm5cYOA5Oa3NQBfCZ2LZWQt1e
+         Taghw5yX5XaEGEVh7byet3qE8liEmkSCvh6cDe//Om4wa7jU6g/Ok6BxAtzzSm6q+3nH
+         5hK3AiRt0+Y9WQKUcfyUxNSlfmaavbdJOLpl2hqcLHAYkbtNGYAm48j+9+/tbzoJIz8+
+         JA1+DYy6K9XwCpwj4gcm+sDrcwuq+5OtUjZx7YitHuvCEiwJ8LyI49WEkftHN71OrXol
+         qLEUw6yAz1wOlUZdOGO27qPeQB9mPVDhMu0we1bAEv//hQnOJl9Q0cIC+75VBdYE6Jo1
+         6AZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739568412; x=1740173212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cg1ey3aipCNJUc79bD6lrhDndah42SIkSCRK4mNzles=;
+        b=FUmyHvmrzoJsWjg1CvVwXrmGL9UTl5qWMNcjUNHMgafQNtzJwK6CZdetoRWLZ1wKyq
+         qR3UoKDSBsFkeLzN93Vy7dyT582zUvNrJngKitFyDjCY05Etp8jBxEmzyQjbJKW9dmsh
+         vExEFUvgwWIvYCggNBuQNBp0t/GjcmeNMFUR15m2yB3Mnzj7RLiJDh63OK/xKrEKK6cz
+         RdaWsH1sGW3aW5m3LSGi80sPzQMMlxDUcSHgRreHhMDJWyinvIzfU9VD2GB2j01uuNY9
+         Jo/PCHXCXm0E4YzaZHz72NaXCulV5B75j+/aCK3zXXEY1wagR8L+c+D18c315S1V9dZ9
+         eMIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/HwjI1f9oOE59oeF0U9MyDGgBWvJAr5ZbM9Yq0YTzIaiUyANBSE3u4k3bmf0hUeYpXdTBT8ysyU24g+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaSnJ9W8fE0vi10B1UyKlEfrvSD4NJPrQqc9yf6HAiUVyyqCRK
+	IyaPbpmSBB/+HtbvR3DbjfG3Lt7Kg+NPXiT+KY3LRXYILUsMTzR/VSDAEM+/cD4=
+X-Gm-Gg: ASbGncvANnyz+uV2ednFDzByZFmg44QfhDZRnQIz23e1oH1C1SM/RHtiNACG7SQG7H1
+	ipkCjftlVnjWMnuPXB4kGuV+X18rhBICLdLmi/ZU7JB/b/BJYHA4lgj1+TCGp/MxhIKA3n1LzVZ
+	ZqSag1e9OccOyabBMBt09LbiiEOELjNtS1I6FG+o/JH5Ebo3ip/axwWp4BFg/yBUyAgjYm2XjIX
+	xzXfg1/1Rvt0TYz9KCjC7SPMNfcE2SsV+iobrbAOAqkSR4XxTNaTHwJAkF2vzeRbzUW4HBbHAzd
+	UihdvSxDISFk5w==
+X-Google-Smtp-Source: AGHT+IGKobUtXHluY1sE6yvKOwaoaHY7us7ziVqjKoQwwTgWBzyrPdqWETaIUMUOpE8su1LCqMuAhA==
+X-Received: by 2002:a05:622a:1801:b0:471:887e:fe4 with SMTP id d75a77b69052e-471dc14081amr12129771cf.5.1739568411804;
+        Fri, 14 Feb 2025 13:26:51 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471c2a12436sm21514891cf.23.2025.02.14.13.26.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 13:26:51 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:26:47 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: Re: [PATCH] mm/page_alloc: Clarify some migratetype fallback code
+Message-ID: <20250214212647.GB233399@cmpxchg.org>
+References: <20250214-clarify-steal-v1-1-79dc5adf1b79@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214102130.3000-1-johan+linaro@kernel.org>
-In-Reply-To: <20250214102130.3000-1-johan+linaro@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 14 Feb 2025 22:24:42 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gKOFgLEUhyFBO82o+2e8n84pwoa99BrgGLy5fYxGaJRg@mail.gmail.com>
-X-Gm-Features: AWEUYZmslmIYyELyGXTmYS0eCvCxMB2HqErQkRxh5kE0kADjlSsc8Ha_KhVEMIk
-Message-ID: <CAJZ5v0gKOFgLEUhyFBO82o+2e8n84pwoa99BrgGLy5fYxGaJRg@mail.gmail.com>
-Subject: Re: [PATCH] bus: simple-pm-bus: fix forced runtime PM use
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Liu Ying <victor.liu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-clarify-steal-v1-1-79dc5adf1b79@google.com>
 
-On Fri, Feb 14, 2025 at 11:21=E2=80=AFAM Johan Hovold <johan+linaro@kernel.=
-org> wrote:
->
-> The simple-pm-bus driver only enables runtime PM for some buses
-> ('simple-pm-bus') yet has started calling pm_runtime_force_suspend() and
-> pm_runtime_force_resume() during system suspend unconditionally.
->
-> This currently works, but that is not obvious and depends on
-> implementation details which may change at some point.
->
-> Add dedicated system sleep ops and only call pm_runtime_force_suspend()
-> and pm_runtime_force_resume() for buses that use runtime PM to avoid any
-> future surprises.
->
-> Fixes: c45839309c3d ("drivers: bus: simple-pm-bus: Use clocks")
-> Cc: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Fri, Feb 14, 2025 at 06:14:01PM +0000, Brendan Jackman wrote:
+> This code is rather confusing because:
+> 
+>  1. "Steal" is sometimes used to refer to the general concept of
+>     allocating from a from a block of a fallback migratetype
+>     (steal_suitable_fallback()) but sometimes it refers specifically to
+>     converting a whole block's migratetype (can_steal_fallback()).
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+Yes, that's ambiguous.
 
+>  2. can_steal_fallback() sounds as though it's answering the question "am
+>     I functionally permitted to allocate from that other type" but in
+>     fact it is encoding a heuristic preference.
+
+Here I don't see that nuance tbh.
+
+>  3. The same piece of data has different names in different places:
+>     can_steal vs whole_block. This reinforces point 2 because it looks
+>     like the different names reflect a shift in intent from "am I
+>     allowed to steal" to "do I want to steal", but no such shift exists.
+> 
+> Fix 1. by avoiding the term "steal" in ambiguous contexts. This fixes
+> 3. automatically since the natural name for can_steal is whole_block.
+
+I'm not a fan of whole_block because it loses the action verb. It
+makes sense in the context of steal_suitable_fallback(), but becomes
+ominous in find_suitable_fallback().
+
+Maybe @block_claimable would be better?
+
+> Fix 2. by using "should" instead of "can", and also rename its
+> parameters and add some commentary to make it more explicit what they
+> mean.
+> 
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
 > ---
->  drivers/bus/simple-pm-bus.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
+>  mm/compaction.c |  4 ++--
+>  mm/internal.h   |  2 +-
+>  mm/page_alloc.c | 42 ++++++++++++++++++++++--------------------
+>  3 files changed, 25 insertions(+), 23 deletions(-)
+> 
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index 12ed8425fa175c5dec50bac3dddb13499abaaa11..8dccb2e388f128dd134ec6f24c924c118c9c93bb 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -2332,7 +2332,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+>  	ret = COMPACT_NO_SUITABLE_PAGE;
+>  	for (order = cc->order; order < NR_PAGE_ORDERS; order++) {
+>  		struct free_area *area = &cc->zone->free_area[order];
+> -		bool can_steal;
+> +		bool whole_block;
 >
-> diff --git a/drivers/bus/simple-pm-bus.c b/drivers/bus/simple-pm-bus.c
-> index 5dea31769f9a..d8e029e7e53f 100644
-> --- a/drivers/bus/simple-pm-bus.c
-> +++ b/drivers/bus/simple-pm-bus.c
-> @@ -109,9 +109,29 @@ static int simple_pm_bus_runtime_resume(struct devic=
-e *dev)
->         return 0;
->  }
->
-> +static int simple_pm_bus_suspend(struct device *dev)
-> +{
-> +       struct simple_pm_bus *bus =3D dev_get_drvdata(dev);
-> +
-> +       if (!bus)
-> +               return 0;
-> +
-> +       return pm_runtime_force_suspend(dev);
-> +}
-> +
-> +static int simple_pm_bus_resume(struct device *dev)
-> +{
-> +       struct simple_pm_bus *bus =3D dev_get_drvdata(dev);
-> +
-> +       if (!bus)
-> +               return 0;
-> +
-> +       return pm_runtime_force_resume(dev);
-> +}
-> +
->  static const struct dev_pm_ops simple_pm_bus_pm_ops =3D {
->         RUNTIME_PM_OPS(simple_pm_bus_runtime_suspend, simple_pm_bus_runti=
-me_resume, NULL)
-> -       NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_fo=
-rce_resume)
-> +       NOIRQ_SYSTEM_SLEEP_PM_OPS(simple_pm_bus_suspend, simple_pm_bus_re=
-sume)
->  };
->
->  #define ONLY_BUS       ((void *) 1) /* Match if the device is only a bus=
-. */
-> --
+>  		/* Job done if page is free of the right migratetype */
+>  		if (!free_area_empty(area, migratetype))
+> @@ -2349,7 +2349,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+>  		 * other migratetype buddy lists.
+>  		 */
+>  		if (find_suitable_fallback(area, order, migratetype,
+> -						true, &can_steal) != -1)
+> +						true, &whole_block) != -1)
+
+This one e.g. would look clearer with &block_claimable.
+
+Not that it's actually used...
+
+> @@ -1948,7 +1948,7 @@ steal_suitable_fallback(struct zone *zone, struct page *page,
+>  	if (boost_watermark(zone) && (alloc_flags & ALLOC_KSWAPD))
+>  		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
+>  
+> -	/* We are not allowed to try stealing from the whole block */
+> +	/* No point in stealing from the whole block */
+
+The original comment actually makes more sense to me. Why is there no
+point? It could well find enough free+alike pages to steal the
+block... It's just not allowed to.
+
+I will say, the current code is pretty hard to reason about:
+
+On one hand we check the block size statically in can_steal_fallback;
+on the other hand, we do that majority scan for compatible pages in
+steal_suitable_fallback(). The effective outcomes are hard to discern,
+and I'm honestly not convinced they're all intentional.
+
+For example, if we're allowed to steal the block because of this in
+can_steal_fallback():
+
+	order >= pageblock_order/2
+
+surely, we'll always satisfy this in steal_suitable_fallback()
+
+	free_pages + alike_pages >= (1 << (pageblock_order-1)
+
+on free_pages alone.
+
+And if the order is less than half a block, we're only allowed an
+attempt at stealing it if this is true in can_steal_fallback():
+
+	start_type == MIGRATE_RECLAIMABLE ||
+	start_type == MIGRATE_UNMOVABLE
+
+So why is the majority scan in steal_suitable_fallback() checking:
+
+	if (start_type == MIGRATE_MOVABLE)
+		alike_pages = movable_pages
+
+Here is how I read the effective rules:
+
+- We always steal the block if at least half of it is free.
+
+- If less than half is free, but more than half is compatible (free +
+  alike), we currently do movable -> non-movable conversions.
+
+  We don't do non-movable -> movable (won't get to the majority scan).
+  This seems reasonable to me, as there seems to be little value in
+  making a new pre-polluted movable block.
+
+- However, we do non-movable -> movable conversion if more than half
+  is free. This is seemingly in conflict with the previous point.
+
+Then there is compaction, which currently uses only the
+find_suitable_fallback() subset of the rules. Namely, for kernel
+allocations, compaction stops as soon as there is an adequately sized
+fallback. Even if the allocator won't convert the block due to the
+majority scan. For movable requests, we'll stop if there is half a
+block to fall back to. I suppose that's reasonable - the old
+utilization vs. fragmentation debate aside...
+
+Did I miss one?
+
+We should be able to encode all this more concisely.
+
+> @@ -1995,12 +1995,14 @@ steal_suitable_fallback(struct zone *zone, struct page *page,
+>  
+>  /*
+>   * Check whether there is a suitable fallback freepage with requested order.
+> - * If only_stealable is true, this function returns fallback_mt only if
+> - * we can steal other freepages all together. This would help to reduce
+> + * Sets *whole_block to instruct the caller whether it should convert a whole
+> + * pageblock to the returned migratetype.
+> + * If need_whole_block is true, this function returns fallback_mt only if
+> + * we would do this whole-block stealing. This would help to reduce
+>   * fragmentation due to mixed migratetype pages in one pageblock.
+>   */
+>  int find_suitable_fallback(struct free_area *area, unsigned int order,
+> -			int migratetype, bool only_stealable, bool *can_steal)
+> +			int migratetype, bool need_whole_block, bool *whole_block)
+>  {
+>  	int i;
+>  	int fallback_mt;
+> @@ -2008,19 +2010,19 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
+>  	if (area->nr_free == 0)
+>  		return -1;
+>  
+> -	*can_steal = false;
+> +	*whole_block = false;
+>  	for (i = 0; i < MIGRATE_PCPTYPES - 1 ; i++) {
+>  		fallback_mt = fallbacks[migratetype][i];
+>  		if (free_area_empty(area, fallback_mt))
+>  			continue;
+>  
+> -		if (can_steal_fallback(order, migratetype))
+> -			*can_steal = true;
+> +		if (should_steal_whole_block(order, migratetype))
+> +			*whole_block = true;
+>  
+> -		if (!only_stealable)
+> +		if (!need_whole_block)
+>  			return fallback_mt;
+>  
+> -		if (*can_steal)
+> +		if (*whole_block)
+>  			return fallback_mt;
+>  	}
+
+This loop is quite awkward, but I think it actually gets more awkward
+with the new names.
+
+Consider this instead:
+
+		*block_claimable = can_claim_block(order, migratetype);
+		if (*block_claimable || !need_whole_block)
+			return fallback_mt;
+
+Or better yet, inline that function completely. There are no other
+callers, and consolidating the rules into fewer places would IMO go a
+long way of making it easier to follow:
+
+		if (order >= pageblock_order/2 ||
+		    start_mt == MIGRATE_RECLAIMABLE ||
+		    start_mt == MIGRATE_UNMOVABLE)
+			*block_claimable = true;
+
+		if (*block_claimable || !need_whole_block)
+			return fallback_mt;
 
