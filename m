@@ -1,199 +1,119 @@
-Return-Path: <linux-kernel+bounces-515135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874ADA360AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F1CA360B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9DB188CA75
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:42:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D36AC7A1B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2891F26658B;
-	Fri, 14 Feb 2025 14:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A0D266579;
+	Fri, 14 Feb 2025 14:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+no3KEA"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fs60fQ7B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cuuM4Baw"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521CD266572
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A15266572;
+	Fri, 14 Feb 2025 14:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544153; cv=none; b=osdw5N3SVLzCEP2cMAXCSJQZrVTFX0y8OC9xyau5NYcILLIFCgB9jAXCeSbr+DWEjcSiFjtsuzAAyvvqDYs32dHK7b9ZicWA8aSQPUTWeS3BHr/TB4l19qfk2lbEdDDPikkHkARCmwkyZ0EU6YoQeO0nXCEjbrNVFyY51g5wjPI=
+	t=1739544202; cv=none; b=jDi/0v7aRHPcqBEdYlxyuEXWGBW9q1wAvOxs72sOCMcjJFNWhsIvZezHcrJXp8behM3YsqShIdN0g7g5bCKb+F+0fyForgQdMes741bEPFd8K/j8BcVoHmhb6ifwgqiuEbfQC41JjCsCLw4B8uGfen8axeHTbu2z+VO1WO2u0JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544153; c=relaxed/simple;
-	bh=/hFRqo78Ekm9g5FTrhvJLClp80bSRuKsAEF9GDz0Hts=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cfQGsQ7gf/GLR5ovFWu2V9XZrI7JxmZdZmQj6KsR/Ff+2cpPQjOqI/L7ZvVlfLSLMF02OUzzSnviv14i6HhmaU6ILIrTZxMYWHFwECJT0DNly0rLcuBm+STqP8dC2o4qgh5Zlb6RS1Z10dQ52VSTHtw5K7WQYO8VP11dhtKqyvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C+no3KEA; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5de594e2555so3386688a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739544149; x=1740148949; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5A8Gla8Q///5jr1e+UVgogTbKkTus0cG6K56L7NjpIo=;
-        b=C+no3KEA9bPYfxOreQf5ybJ3uJ7f9PclOAuEFQs2abfFOIB2Wu4QkAZ6HGij1jmK84
-         6uUK17vIhYQ1D0whxaXV8OUK+522eXLJqymOsQW10WDGlb4NP7jEgguAISKHFJorRVz6
-         /umvGA3vIYagf/4Bqo23pIOGOJTumQSDIlvVE26fBnTttRKYfhnewS2WRtshsiALCXsA
-         kC1Z7NnJrsM15LVzGPP8K8iLXtbDbVsAgatWmFJe6BD8h5lBw5W65m3FxFfA6OS+XVUI
-         3vmajwb/0VU4F4mAsaqiQ2XYnm97tJtH1nD3MCydp9Kw7iDaSid9ZGEURoslqIhjPNMk
-         h7NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739544149; x=1740148949;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5A8Gla8Q///5jr1e+UVgogTbKkTus0cG6K56L7NjpIo=;
-        b=o32fafwOuf6X+RhLTjicfpOFDCiwzIuAYtxhaAJR0oHxABO+mmM3BRdr6myHcZ9SKV
-         CwdgUkpNRI20d6bAsH2mApzfn6M3KFiNq0HqNh+dTvUge0MYcEfV5zMNjzPYa72Kbrl6
-         Dp600GwpLKvNHh+3giWKqcO8zVECHWdyy8iRxMbe6GjxVbcjhuPxmpPGZGNFU2xNgkG1
-         DSX6PBKewkM3Eqyu6bAVl0H+zfTnuKUrXxO9PjNyQc4dfvEXoR0uQvZGPfqZgm92vJUf
-         z4HCILESAUrLxnDXHCjjVmk2adU98HzgZQ8UIb5KL9tbzy38h6MHy6nu0XMLs0ZDgIGD
-         0/lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGmmNNxsNAYIrW4kto1em0nXO7fex+Y+0muKRixgBOEokUTFtFYV9f4c3Lakck8RmFF4jN6icrqPVGZE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykKVFq5d9eS/fsj/lLWJdFO4HzvJ8yEtG9K2rkrT6Mv7UXHW8i
-	MGD1MTY4XCqzpPMQGioDlTcgkwcAn5JZvDZ+CPo21XZz4ax/dnrmvQfPpK6SJAI=
-X-Gm-Gg: ASbGncvSx8u7wpSV0EzDtF1HC5v32TsjlDlpYwv9JGT2dNb/JVg5kIs7RSfi4JOIbFx
-	yhbA47wmZNNq9IEmbGLbsGU/8U6ppGXO1mxp/pRobrNMOMt8Ad1wrIc7jtywSxD9KehTraaRZY2
-	lzQQ4MltyN3kYU6XGXMnP4uftgI155UKp40b6s84ln6R6+HJm3npLa6bKFkkxoXC4VHZPFp5rOi
-	mWuqfoD/p6J8UP+rtnej3VM1LGDT7lfQtDgnQuEi0iBy0VlAcPhhlduJdhw6NiWe2eAEkmBqdqD
-	uXZZ90qVD25Co9EcuRoG
-X-Google-Smtp-Source: AGHT+IHTsnNF3Z8oPb7KOJ0Szwe2eAivT4doFj5mcvOerXR4qOqV2S8aY3wuae3qVBS6+tsVgOsgtg==
-X-Received: by 2002:a17:906:7807:b0:ab7:6369:83fc with SMTP id a640c23a62f3a-ab7f34af3d5mr1042895666b.38.1739544149543;
-        Fri, 14 Feb 2025 06:42:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba533bdd39sm349560366b.167.2025.02.14.06.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 06:42:29 -0800 (PST)
-Date: Fri, 14 Feb 2025 17:42:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Karan Tilak Kumar <kartilak@cisco.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Sesidhar Baddela <sebaddel@cisco.com>,
-	Gian Carlo Boffa <gcboffa@cisco.com>,
-	Arulprabhu Ponnusamy <arulponn@cisco.com>,
-	Arun Easi <aeasi@cisco.com>
-Subject: drivers/scsi/fnic/fdls_disc.c:263
- fdls_schedule_oxid_free_retry_work() warn: inconsistent indenting
-Message-ID: <f1c717cf-63eb-402a-82cc-91c445055b97@stanley.mountain>
+	s=arc-20240116; t=1739544202; c=relaxed/simple;
+	bh=8o0zBy52eBAQwYjBYC+nU/MUicg8J3e3oWJmjLQxMZU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=WD2iuQDzORZyIZiWISFk3QM/rpJBc4RJJBpp9Q+K17yxb3YP8Tzh9pnYOG+5zvMDtl2b1/SsoUIpq2RYB4MN4VcwEyCB7frETu9FCphreeMcqrSgJGD7hkPFv0uW/sEKnHa5ndm5p95HWyaSiL54GHBuZFatGNdg/CPweydZ7e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fs60fQ7B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cuuM4Baw; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 67B6D1380894;
+	Fri, 14 Feb 2025 09:43:17 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Fri, 14 Feb 2025 09:43:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739544197;
+	 x=1739630597; bh=/SbMJsZTVEbKRuVrUDYyc5PB99lv959TP0uVc5Xd2A8=; b=
+	fs60fQ7BtStTUuwD8Q8P+uojYJ9MTo2VLZrNnTANUDP9iK3Se8p27diSIjh3sXyU
+	uwbZNUVjqs99k0schJIwsyoYU4Mcnxr6LPZ0omnJJXPthtmrKP0SNdgkd/ricOnf
+	BNdN6i/qMPcIXDkmI1mKuWlukFjMNlsmfARyXod7pAcluMUT97gJXtO/lKWV5Buj
+	25oYwqqjrjWadiMQLkfkAZADuvjOH4uDccjeCYBUov7fvM7UBkE0nwppPywsdBzx
+	g7moeNP0APLqgZhD7i1xLY6CAeXRMmgtEcIb/SECkYsKM3mfQ7iQMz5fqNGyAn2l
+	0Wh6IXTmoOZ8YMNpX4qtDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739544197; x=
+	1739630597; bh=/SbMJsZTVEbKRuVrUDYyc5PB99lv959TP0uVc5Xd2A8=; b=c
+	uuM4BawgJTWa5LmvMeClLgw7jOrfiHdwckzVV+t43Im4l34SxLhId9hgEj8Btqux
+	eXqUSQxBvr5r3TG8suRPv/T/RO2H09EDTk9tuZAifcWkGeBwaQ/KiQqKE20eVE+x
+	IneZJ3go+Nd3qBNF9Qkp/b03OHm2bGvNTyuVy6ptON3JNTHlv+J9tbKh/6CHnkvZ
+	qs6FYcvUG7aaj5b0M+ffoK6aFfoHDDQti8Ab4L2xp9fHgK/vcFC1AFfyAYF6xhnL
+	4+TFaPc4khMdDQcgqUU9rii40v0GU+73LGErb9CN7Q85hx7+20Qbw6nNtLV+rd4o
+	k4vxkSXcMCJx5EqnpEgEA==
+X-ME-Sender: <xms:hFavZ0DuHdk3xOAWhFZEdYESurpx1uHeUvh3RyltzVZhz_Qy1vfCtA>
+    <xme:hFavZ2gNwsAqf2F3WSSW-h5qqB6K4K3xo7TDuNJsFMSIB5uRqDWGbMUweQfCMan49
+    OKeHkNdtsQzXlt5FSU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleelvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
+    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtghpthhtoheplhhi
+    nhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:hFavZ3l96-0p0JHEEXGAmVruAvob4iabU8xg4PZ9HsV--2xGhK5B2g>
+    <xmx:hFavZ6yObr5oqRwXPuyTKzmJRjCsI4UqGi8yAzcEbJza91NLIuuG3Q>
+    <xmx:hFavZ5QLFVS_rA3WkNmkCjlItZAH1Kl58HpcwjX3IkVJdeuTQ37azQ>
+    <xmx:hFavZ1aCszo7vYHc70g1zV239uwSrnkQOCN_SYP8wPNWMSz82y1gzQ>
+    <xmx:hVavZ7ecLTXSFUDpGYlLgAAFj_R81csrc_xcheXbwboeyCkObn6ja11K>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BFC6B2220072; Fri, 14 Feb 2025 09:43:16 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Fri, 14 Feb 2025 15:42:56 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ ARM <linux-arm-kernel@lists.infradead.org>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Message-Id: <8f70d200-f55b-4ded-97a3-9586615bcaa9@app.fastmail.com>
+In-Reply-To: <20250212093147.02ddbf2e@canb.auug.org.au>
+References: <20250212093147.02ddbf2e@canb.auug.org.au>
+Subject: Re: linux-next: failure fetching the arm-soc-fixes tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   128c8f96eb8638c060cd3532dc394d046ce64fe1
-commit: a63e78eb2b0f654b138abfc323f6bd7573e26145 scsi: fnic: Add support for fabric based solicited requests and responses
-config: i386-randconfig-141-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141403.1PcpwyJp-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+On Tue, Feb 11, 2025, at 23:31, Stephen Rothwell wrote:
+> Hi all,
+>
+> Fetching the arm-soc-fixes tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#arm/fixes)
+> fails like this:
+>
+> fatal: couldn't find remote ref refs/heads/arm/fixes
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202502141403.1PcpwyJp-lkp@intel.com/
+Thanks for the report, should work again now.
 
-smatch warnings:
-drivers/scsi/fnic/fdls_disc.c:263 fdls_schedule_oxid_free_retry_work() warn: inconsistent indenting
-drivers/scsi/fnic/fdls_disc.c:989 fdls_send_fabric_logo() warn: inconsistent indenting
-drivers/scsi/fnic/fdls_disc.c:1953 fnic_fdls_validate_and_get_frame_type() warn: inconsistent indenting
-
-vim +/cur_jiffies +166 drivers/scsi/fnic/fdls_disc.c
-
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  244  void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  245  {
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  246  	struct fnic_oxid_pool_s *oxid_pool = container_of(work,
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  247  		struct fnic_oxid_pool_s, schedule_oxid_free_retry.work);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  248  	struct fnic_iport_s *iport = container_of(oxid_pool,
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  249  		struct fnic_iport_s, oxid_pool);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  250  	struct fnic *fnic = iport->fnic;
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  251  	struct reclaim_entry_s *reclaim_entry;
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  252  	unsigned long delay_j = msecs_to_jiffies(OXID_RECLAIM_TOV(iport));
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  253  	int idx;
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  254  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  255  	spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
-
-Passing fnic->lock_flags is wrong.  spin_lock_irqsave() is not nestable
-in the sense that the "flags" variable can't hold two values at once:
-
-	orig_irq = save_original irq states and disable()
-	orig_irq = save_original irq states and disable()
-	restore(orig_irq)
-	restore(orig_irq)
-
-The second restore(orig_irq) is not going to restore the original states
-it's going to leave them as disabled.
-
-If fnic->lock_flags is holding anything useful when this is called, then it
-is a bug or if anything uses it before we exit that will break us.  Just
-declare "unsigned long flags;" locally.
-
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  256  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  257  	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  258  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  259  		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  260  			"Schedule oxid free. oxid idx: %d\n", idx);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  261  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  262  		spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11 @263  	reclaim_entry = (struct reclaim_entry_s *)
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  264  	kzalloc(sizeof(struct reclaim_entry_s), GFP_KERNEL);
-
-
-The indenting is off.  The normal way to write this is:
-
-		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
-
-Remove the cast and change the sizeof().
-
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  265  		spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  266  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  267  		if (!reclaim_entry) {
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  268  			FNIC_FCS_DBG(KERN_WARNING, fnic->lport->host, fnic->fnic_num,
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  269  				"Failed to allocate memory for reclaim struct for oxid idx: 0x%x\n",
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  270  				idx);
-
-Remove this DBG.  The truth is that for as long as anyone can remember
-the kmalloc() allocator won't fail for tiny allocations.  We're more
-likely to formalize this rule than we are to change it at this point.
-Still, we check for errors until that day arrives.
-
-But allocations are not supposed to print an error message on error.
-It's just messy and it doesn't add any information that isn't already
-in the stack traces that kmalloc() prints.
-
-I guess we can't call schedule_delayed_work() without holding the
-spin_lock?  It's a strange thing.
-
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  271  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  272  			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  273  				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  274  			spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  275  			return;
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  276  		}
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  277  
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  278  		if (test_and_clear_bit(idx, oxid_pool->pending_schedule_free)) {
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  279  			reclaim_entry->oxid_idx = idx;
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  280  			reclaim_entry->expires = round_jiffies(jiffies + delay_j);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  281  			list_add_tail(&reclaim_entry->links, &oxid_pool->oxid_reclaim_list);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  282  			schedule_delayed_work(&oxid_pool->oxid_reclaim_work, delay_j);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  283  		} else {
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  284  			/* unlikely scenario, free the allocated memory and continue */
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  285  			kfree(reclaim_entry);
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  286  		}
-a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  287  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+     Arnd
 
