@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel+bounces-514636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EE2A3599B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:02:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F493A3599A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16A416F305
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32FF116F02A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C122B8D5;
-	Fri, 14 Feb 2025 09:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB722C336;
+	Fri, 14 Feb 2025 09:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYvSLL/k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/xkqLGe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC6227BA3;
-	Fri, 14 Feb 2025 09:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580822135B3;
+	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523721; cv=none; b=AL/BDALQAHsu7r1H3Fgt2Dx/VUfW7VS3psAlUxWJiT+2bfwA7WjA8KgKaG8vaGhD1WmHJZ+b91bVBa/KqAZhuP+lA4UyO6jiZmRRAhP7mVOkf6BmBwMYgElbUnIxgKgiW5iQ2DbBBA7+RVYpsOyACdNJ+kvb07Gv5pxqY7sBbAQ=
+	t=1739523716; cv=none; b=MuMAiSMoMPephlDzqPSzOTOOMaQcZ00j2AAGyf+rrIXC3DQF/ZjEJQlTmciQKGzL/bwNnFTshB/6grisi6P04LVcAlXppJGLELceBb0uMOYmmIbECutWfzjkb7SAT80b3866pcV+5S/KGHiOwIxPav30fjybhL2mXa1ZtHCC0G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523721; c=relaxed/simple;
-	bh=Msx+YmHuz2vc+eqfMfJj/R+QbkCQEJDAFr68K21fjTI=;
+	s=arc-20240116; t=1739523716; c=relaxed/simple;
+	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4Og19DRMcqtgyyTDbH48odjs2+8AByMQ3ZH837iQiqR/mk2A02KPE+4byqBeZ055q1cn6qx/070seH/XnlafGciXNLcOLQvZxe5BjyMOI7CP+WMMXi2+jjoROFFy/QalWwq+YQAXoDAzuLqYtuBqZuZIeGNqvysUZ4Jn01wtJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYvSLL/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2A0C4CED1;
-	Fri, 14 Feb 2025 09:02:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K01/Ofgvx2ybxU1x5oIl9aYqt0cYlsyrtu24ZnM9mCulkuBv66QKIAt2TFq2vYpY9GxiR6h1HnxXsee0qi7PvG5tZy4+QPwyosjuy5/tdM5yG0On1SrdBRKm1ZUEDNNnm76Xoy332vMNwmEkEBpZMltW06wIgy22b7a5MinpN2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/xkqLGe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF991C4CED1;
+	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739523721;
-	bh=Msx+YmHuz2vc+eqfMfJj/R+QbkCQEJDAFr68K21fjTI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=iYvSLL/kS+3m7qVerqmAHaPWSmarIMp+MmTwlMLFRbadw3WT991907W5QdKFpX32N
-	 lTMahCBbWU3BYz4XvrvwL/2oc14fdkADjJvfJ+FbYEU12F+HpnKTbRVL0gMmrpu/8p
-	 KrEsFXm2GO2ouIk0/sEXib7u3AS6RbLEEAYERb40JZvZxiObOPq1JXrAdRZ7fxHf7v
-	 ZYU9NeFUB5pljRafyLK1hr39R4f8H6ZAlKZGzLCwxKLb0vZRF5IenjMsL50AsOOTCG
-	 KXDO8IeJQEw/qVfEBT5UJZDLbVppd1diaw3O3sgh+Ywo2bHzk6KEh7lzQep0PmGnd5
-	 7QO/uhBe6HojQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id AB242CE0426; Fri, 14 Feb 2025 01:01:56 -0800 (PST)
-Date: Fri, 14 Feb 2025 01:01:56 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
- report
-Message-ID: <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250213232559.34163-1-frederic@kernel.org>
- <20250213232559.34163-4-frederic@kernel.org>
+	s=k20201202; t=1739523715;
+	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R/xkqLGeQGghNFr1UXpBpJRHIIje3QwfnTJTBpNw6Ra8d8dAPE4Q8WlcdkpFjPULY
+	 6fiY8XSsnWRQaOGEO9Fn/LUFdm59gBRy63nOZ5JDwuJnWFx3Ti15VEZ73bQYHe58bH
+	 QpMMrmThdQ6un8gTOHIRlQgHM4Tp1JLabTifPT0RztTYAZvD898m+TTR6uD7gI+W61
+	 5wsuCC4Np6I3McOTrzAoeuniD1join6UrtkvFbwqHjWZdhDVpSzQWh2L4fG+BkLdR0
+	 9VQl41n/7fSxn64C/prTvjPHDS44kCN0kUlgVRrQH+GOESdGXYoyXK+x/mJMj7H24B
+	 1JsU87DUZ+oUA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tiraG-000000006Eq-0Iki;
+	Fri, 14 Feb 2025 10:02:04 +0100
+Date: Fri, 14 Feb 2025 10:02:04 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add support to reconfigure PLL
+Message-ID: <Z68GjM-X7Qkpyv7B@hovoldconsulting.com>
+References: <20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com>
+ <Z6HnOUfsSaKYyYfh@hovoldconsulting.com>
+ <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,148 +68,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213232559.34163-4-frederic@kernel.org>
+In-Reply-To: <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
 
-On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
-> A CPU coming online checks for an ongoing grace period and reports
-> a quiescent state accordingly if needed. This special treatment that
-> shortcuts the expedited IPI finds its origin as an optimization purpose
-> on the following commit:
+On Tue, Feb 04, 2025 at 11:13:08PM +0530, Taniya Das wrote:
+> On 2/4/2025 3:38 PM, Johan Hovold wrote:
+> > On Mon, Jan 13, 2025 at 10:57:03PM +0530, Taniya Das wrote:
+> >> During boot-up, there is a possibility that the PLL configuration might
+> >> be missed even after invoking pll_configure() from the clock controller
+> >> probe. This is often due to the PLL being connected to rail or rails
+> >> that are in an OFF state and current clock controller also cannot vote
+> >> on multiple rails. As a result, the PLL may be enabled with suboptimal
+> >> settings, leading to functional issues.
+> >>
+> >> The PLL configuration, now part of clk_alpha_pll, can be reused to
+> >> reconfigure the PLL to a known good state before scaling for frequency.
+> >> The 'clk_alpha_pll_reconfigure()' can be updated to support more PLLs
+> >> in future.
+> > 
+> > This sounds like a hack. You already describe the underlying problem (and
+> > indirectly its solution) in the first paragraph above, namely that the
+> > video clock controller has not enabled the power domain needed to
+> > configure the PLL.
 > 
-> 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
-> 
-> The point is to avoid an IPI while waiting for a CPU to become online
-> or failing to become offline.
-> 
-> However this is pointless and even error prone for several reasons:
-> 
-> * If the CPU has been seen offline in the first round scanning offline
->   and idle CPUs, no IPI is even tried and the quiescent state is
->   reported on behalf of the CPU.
-> 
-> * This means that if the IPI fails, the CPU just became offline. So
->   it's unlikely to become online right away, unless the cpu hotplug
->   operation failed and rolled back, which is a rare event that can
->   wait a jiffy for a new IPI to be issued.
-> 
-> * But then the "optimization" applying on failing CPU hotplug down only
->   applies to !PREEMPT_RCU.
-> 
-> * This force reports a quiescent state even if ->cpu_no_qs.b.exp is not
->   set. As a result it can race with remote QS reports on the same rdp.
->   Fortunately it happens to be OK but an accident is waiting to happen.
-> 
-> For all those reasons, remove this optimization that doesn't look worthy
-> to keep around.
+> This is not a hack, but another alternative way to ensure the PLL is 
+> configured to the right configuration before being used.
 
-Thank you for digging into this!
+I say it's a hack since it sounds like since you're relying on some
+other entity to have enabled resources that this clock controller
+depends on.
 
-When I ran tests that removed the call to sync_sched_exp_online_cleanup()
-a few months ago, I got grace-period hangs [1].  Has something changed
-to make this safe?
-
-							Thanx, Paul
-
-[1] https://docs.google.com/document/d/1-JQ4QYF1qid0TWSLa76O1kusdhER2wgm0dYdwFRUzU8/edit?usp=sharing
-
-> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/rcu/tree.c     |  2 --
->  kernel/rcu/tree_exp.h | 45 ++-----------------------------------------
->  2 files changed, 2 insertions(+), 45 deletions(-)
+> > I believe support for clock controllers that need to enable multiple
+> > power domains is on its way into 6.15:
+> > 
+> > 	https://lore.kernel.org/lkml/20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org/
+> > 
+> > Perhaps that's what you need to fix this properly.
 > 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 8625f616c65a..86935fe00397 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -151,7 +151,6 @@ static void rcu_report_qs_rnp(unsigned long mask, struct rcu_node *rnp,
->  			      unsigned long gps, unsigned long flags);
->  static void invoke_rcu_core(void);
->  static void rcu_report_exp_rdp(struct rcu_data *rdp);
-> -static void sync_sched_exp_online_cleanup(int cpu);
->  static void check_cb_ovld_locked(struct rcu_data *rdp, struct rcu_node *rnp);
->  static bool rcu_rdp_is_offloaded(struct rcu_data *rdp);
->  static bool rcu_rdp_cpu_online(struct rcu_data *rdp);
-> @@ -4259,7 +4258,6 @@ int rcutree_online_cpu(unsigned int cpu)
->  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
->  		return 0; /* Too early in boot for scheduler work. */
-> -	sync_sched_exp_online_cleanup(cpu);
->  
->  	// Stop-machine done, so allow nohz_full to disable tick.
->  	tick_dep_clear(TICK_DEP_BIT_RCU);
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index caff16e441d1..a3f962eb7057 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -751,12 +751,8 @@ static void rcu_exp_handler(void *unused)
->  	struct task_struct *t = current;
->  
->  	/*
-> -	 * First, is there no need for a quiescent state from this CPU,
-> -	 * or is this CPU already looking for a quiescent state for the
-> -	 * current grace period?  If either is the case, just leave.
-> -	 * However, this should not happen due to the preemptible
-> -	 * sync_sched_exp_online_cleanup() implementation being a no-op,
-> -	 * so warn if this does happen.
-> +	 * WARN if the CPU is unexpectedly already looking for a
-> +	 * QS or has already reported one.
->  	 */
->  	ASSERT_EXCLUSIVE_WRITER_SCOPED(rdp->cpu_no_qs.b.exp);
->  	if (WARN_ON_ONCE(!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
-> @@ -803,11 +799,6 @@ static void rcu_exp_handler(void *unused)
->  	WARN_ON_ONCE(1);
->  }
->  
-> -/* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
-> -static void sync_sched_exp_online_cleanup(int cpu)
-> -{
-> -}
-> -
->  /*
->   * Scan the current list of tasks blocked within RCU read-side critical
->   * sections, printing out the tid of each that is blocking the current
-> @@ -885,38 +876,6 @@ static void rcu_exp_handler(void *unused)
->  	rcu_exp_need_qs();
->  }
->  
-> -/* Send IPI for expedited cleanup if needed at end of CPU-hotplug operation. */
-> -static void sync_sched_exp_online_cleanup(int cpu)
-> -{
-> -	unsigned long flags;
-> -	int my_cpu;
-> -	struct rcu_data *rdp;
-> -	int ret;
-> -	struct rcu_node *rnp;
-> -
-> -	rdp = per_cpu_ptr(&rcu_data, cpu);
-> -	rnp = rdp->mynode;
-> -	my_cpu = get_cpu();
-> -	/* Quiescent state either not needed or already requested, leave. */
-> -	if (!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
-> -	    READ_ONCE(rdp->cpu_no_qs.b.exp)) {
-> -		put_cpu();
-> -		return;
-> -	}
-> -	/* Quiescent state needed on current CPU, so set it up locally. */
-> -	if (my_cpu == cpu) {
-> -		local_irq_save(flags);
-> -		rcu_exp_need_qs();
-> -		local_irq_restore(flags);
-> -		put_cpu();
-> -		return;
-> -	}
-> -	/* Quiescent state needed on some other CPU, send IPI. */
-> -	ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
-> -	put_cpu();
-> -	WARN_ON_ONCE(ret);
-> -}
-> -
->  /*
->   * Because preemptible RCU does not exist, we never have to check for
->   * tasks blocked within RCU read-side critical sections that are
-> -- 
-> 2.46.0
-> 
+> Yes, this is just to add a dependency on clock controller to put the 
+> rail vote, but this series does not fully solve the clock controller's 
+> PLL requirement problems.
+
+Why not? What else is needed beyond enabling the video (?) power domain
+before configuring the PLL?
+
+Johan
 
