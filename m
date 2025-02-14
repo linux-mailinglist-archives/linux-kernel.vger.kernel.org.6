@@ -1,146 +1,211 @@
-Return-Path: <linux-kernel+bounces-514311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43576A35568
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:44:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F27A35569
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041BD16DA86
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FCF16DDE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 03:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D311519BC;
-	Fri, 14 Feb 2025 03:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8C81537C8;
+	Fri, 14 Feb 2025 03:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XBY/bmj+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeRrqAfp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E2F4A08
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C0241C85
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739504671; cv=none; b=MIrcURV6zodJ+NECJy3dhGRqJ03Za5WWIooegYIzHuVOBiR3zIDTHZsm1Q4pE795taBvG/qv7buVelCMdHENRkjdKLUgunsuTpCUrIs2gRdK1iOYyndMnT11qRJFErkX1bLsN+Z1anDGdwZWnkVXA0B+Xn/7wZ+zA9fCE3tMKnI=
+	t=1739505014; cv=none; b=EmSmHcLYPQ1Fh80unfv0IMfbQtwZnwOQx3hxOHeTemLVQ5SgRQl4Ue3/XsC650mwBVamzOTmj3rbfIp9Hi3rLm/mEKjT2SBRqG8mG97rYEnx1mj/UcvcJ5Z3F4QM8KGIeWvAoE8E7MDAo8lnTSDVJoVUa7rXar8Pc3xLmNdWoPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739504671; c=relaxed/simple;
-	bh=pxuSNvdelWv1Vx3AHDtLoWPomWguWARJhl1CdCtZ39A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O3Wn/eAxa6T331ffqt8SiexaLpQwqPjS0IOE9pdH6FMSWQtYPryDaWLx3mVo2HW5ifzZ2RYAvlD3utftn0+gGZvAPSH6Vi8+loBAUrqfCp8vHdln7cJBQ5xOuwajtjTnKX77nw/tXxJbVO+tigZ98Kyv7C+teqn/jYOhVJ5ByWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XBY/bmj+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E219TM016465;
-	Fri, 14 Feb 2025 03:44:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9MQAbG
-	XpXA68E2ZJDNg599icK9mYCuj8iCWgPBB4/lU=; b=XBY/bmj+9Q2+lbMovhuXg5
-	x4C+XB32kIvK6ZlGs/QaeECwPwVjg3qL14Gohl6abvrYSKKCj2xAne21XDv7TYwU
-	P0oVYKo01XB1xu6v2moYeh91TALS47ZqiUbCQPfwhW6JDtdtRUWnefgZ7oc8qdb7
-	OVKawYuU1aVYIWrVmjwe1FRE/SXpbQE5CnZCi+H7Si/o3fi3dhyddJwkgsZ66rdw
-	GyxAs4JSmsKnjvGvNg+Q3nrYNfG4dGPtjho0uLZnlNBUfTdL7fdUkwMoSeY8qI6s
-	+QvOKGCT8hzZT1FiQU3iRYhLsp5dRW5bOkW5uFCR6RkjThmF1A9/zeY8/w0u+qqA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44skjuu23n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 03:44:23 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E32LQj001051;
-	Fri, 14 Feb 2025 03:44:23 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pjknhphk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 03:44:23 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E3iL7c38469952
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 03:44:21 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 335AA20043;
-	Fri, 14 Feb 2025 03:44:21 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1A4F020040;
-	Fri, 14 Feb 2025 03:44:20 +0000 (GMT)
-Received: from [9.43.98.203] (unknown [9.43.98.203])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Feb 2025 03:44:19 +0000 (GMT)
-Message-ID: <bdc8c274-960e-4f66-9790-736e9bd0eb76@linux.ibm.com>
-Date: Fri, 14 Feb 2025 09:14:19 +0530
+	s=arc-20240116; t=1739505014; c=relaxed/simple;
+	bh=dFCnL6m0BQ9tuaNAYDzO7/lRXpyIcUiYlzZQFiMI8aU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HyXXA64Sa2ObSMX4BricEPvdAkZsF7+5rNvZbPENskyAeCkQR5TMW7kkklPgou8zJ0eZrouUyzQQdSQ4QO3oApLhNXsYQbvVx6VOacaWagz5fwufFrJ30Gt2K78c4osp/X2LXp3a2lfQSx6OYZmM5djTEoxg5j0bKzcqLVJCb/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeRrqAfp; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739505012; x=1771041012;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dFCnL6m0BQ9tuaNAYDzO7/lRXpyIcUiYlzZQFiMI8aU=;
+  b=LeRrqAfpzaB8wEd8stAZ6DG2TUo939LBQtWvP+oCRu5b+wAY2NoXkJCT
+   ENw6S5GLjN6YIfB4RaT288ax8Bu+jE6s+oy6PmzS66lEJ35qTcvNfaDyI
+   pD9aeq2m93iOWAP21y0u6foVteh/pzagyIWUdeALviIgyNORtGGVlxvEt
+   Lq+NFnpzVQHB0Pg++/aCHToG3T6Ra2Zey8zl3ee9x6UwiS1BokgsEdsU9
+   wnJkm7BzQHCB8NrLYuyzaoO8cBV9CIQkOFQyqzqviMiN09PSK4ls/FEAA
+   hB6OxqAV8lbrPukjv1Qblljhmu1H58n2hVXBF9E7IFPdl/vuOYS/zPQmS
+   g==;
+X-CSE-ConnectionGUID: NREyRB4GRqaFJ5nR8sg3tw==
+X-CSE-MsgGUID: DgzZtnU+Q+iNCRoxb778aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40356768"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40356768"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 19:50:11 -0800
+X-CSE-ConnectionGUID: Xe90Jx/+TRa3xJBAAWo+mw==
+X-CSE-MsgGUID: mOa+msBNQh+MBSBKVPbvwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="113865563"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Feb 2025 19:50:09 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1timiN-00192H-1M;
+	Fri, 14 Feb 2025 03:50:07 +0000
+Date: Fri, 14 Feb 2025 11:49:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/net/ethernet/freescale/ucc_geth.c:3411:24: sparse: sparse:
+ symbol 'ugeth_mac_ops' was not declared. Should it be static?
+Message-ID: <202502141128.9HfxcdIE-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PYIGCqekOGocHD3qbqDxany28q78N8Kh
-X-Proofpoint-ORIG-GUID: PYIGCqekOGocHD3qbqDxany28q78N8Kh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_01,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502140024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello Venkat,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   68763b29e0a6441f57f9ee652bbf8e7bc59183e5
+commit: 53036aa8d03178a8d056a24a52a301ad290877d4 net: freescale: ucc_geth: phylink conversion
+date:   2 months ago
+config: powerpc-randconfig-r111-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141128.9HfxcdIE-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250214/202502141128.9HfxcdIE-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502141128.9HfxcdIE-lkp@intel.com/
 
-On 13/02/25 20:34, Venkat Rao Bagalkote wrote:
-> Greetings!!!
->
-> From kernel next-20250210, I am observing syscall kexec_file_load not 
-> available, there by kdump service is failing to start.
->
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/ethernet/freescale/ucc_geth.c:1737:50: sparse:     got unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1762:33: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1762:33: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1762:33: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1774:42: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *objp @@     got unsigned char [noderef] [usertype] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1774:42: sparse:     expected void const *objp
+   drivers/net/ethernet/freescale/ucc_geth.c:1774:42: sparse:     got unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1863:17: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1865:17: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:1910:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1910:29: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1910:29: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:1913:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_ucce @@
+   drivers/net/ethernet/freescale/ucc_geth.c:1913:29: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:1913:29: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_ucce
+   drivers/net/ethernet/freescale/ucc_geth.c:2057:40: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned char [noderef] [usertype] __iomem * @@     got void *_res @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2057:40: sparse:     expected unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2057:40: sparse:     got void *_res
+   drivers/net/ethernet/freescale/ucc_geth.c:2065:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void * @@     got unsigned char [noderef] [usertype] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2065:47: sparse:     expected void *
+   drivers/net/ethernet/freescale/ucc_geth.c:2065:47: sparse:     got unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2085:37: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2085:37: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:2085:37: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2118:40: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned char [noderef] [usertype] __iomem * @@     got void *_res @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2118:40: sparse:     expected unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2118:40: sparse:     got void *_res
+   drivers/net/ethernet/freescale/ucc_geth.c:2145:37: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2145:37: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:2145:37: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2207:32: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [noderef] [usertype] __iomem *upsmr_register @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2207:32: sparse:     expected unsigned int [noderef] [usertype] __iomem *upsmr_register
+   drivers/net/ethernet/freescale/ucc_geth.c:2207:32: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2213:57: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected unsigned int [noderef] [usertype] __iomem *upsmr_register @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2213:57: sparse:     expected unsigned int [noderef] [usertype] __iomem *upsmr_register
+   drivers/net/ethernet/freescale/ucc_geth.c:2213:57: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2225:35: sparse: sparse: incorrect type in argument 6 (different base types) @@     expected unsigned int [noderef] [usertype] __iomem *upsmr_register @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2225:35: sparse:     expected unsigned int [noderef] [usertype] __iomem *upsmr_register
+   drivers/net/ethernet/freescale/ucc_geth.c:2225:35: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2273:37: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned int [noderef] [usertype] __iomem *upsmr_register @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2273:37: sparse:     expected unsigned int [noderef] [usertype] __iomem *upsmr_register
+   drivers/net/ethernet/freescale/ucc_geth.c:2273:37: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2351:64: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *address @@     got unsigned char [noderef] [usertype] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2351:64: sparse:     expected void const volatile *address
+   drivers/net/ethernet/freescale/ucc_geth.c:2351:64: sparse:     got unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2354:45: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *address @@     got unsigned char [noderef] [usertype] __iomem *[assigned] endOfRing @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2354:45: sparse:     expected void const volatile *address
+   drivers/net/ethernet/freescale/ucc_geth.c:2354:45: sparse:     got unsigned char [noderef] [usertype] __iomem *[assigned] endOfRing
+   drivers/net/ethernet/freescale/ucc_geth.c:2574:64: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *address @@     got unsigned char [noderef] [usertype] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2574:64: sparse:     expected void const volatile *address
+   drivers/net/ethernet/freescale/ucc_geth.c:2574:64: sparse:     got unsigned char [noderef] [usertype] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2841:21: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2841:21: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:2841:21: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:2880:22: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short volatile [noderef] [usertype] __iomem *addr @@     got restricted __be16 [noderef] [usertype] __iomem *p_utodr @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2880:22: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:2880:22: sparse:     got restricted __be16 [noderef] [usertype] __iomem *p_utodr
+   drivers/net/ethernet/freescale/ucc_geth.c:2907:46: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] __iomem * @@
+   drivers/net/ethernet/freescale/ucc_geth.c:2907:46: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:2907:46: sparse:     got restricted __be32 [noderef] __iomem *
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3035:17: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3056:34: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_ucce @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3056:34: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3056:34: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_ucce
+   drivers/net/ethernet/freescale/ucc_geth.c:3057:34: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3057:34: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3057:34: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3059:22: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_ucce @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3059:22: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3059:22: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_ucce
+   drivers/net/ethernet/freescale/ucc_geth.c:3065:38: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3065:38: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3065:38: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3299:17: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got restricted __be32 [noderef] [usertype] __iomem *p_uccm @@
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   drivers/net/ethernet/freescale/ucc_geth.c:3325:25: sparse:     got restricted __be32 [noderef] [usertype] __iomem *p_uccm
+>> drivers/net/ethernet/freescale/ucc_geth.c:3411:24: sparse: sparse: symbol 'ugeth_mac_ops' was not declared. Should it be static?
+   drivers/net/ethernet/freescale/ucc_geth.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/slab.h):
+   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
 
-powerpc do have support for kexec_file_load system. Seems like there is 
-an issue.
+vim +/ugeth_mac_ops +3411 drivers/net/ethernet/freescale/ucc_geth.c
 
-Thanks for reporting the issue.
+  3410	
+> 3411	struct phylink_mac_ops ugeth_mac_ops = {
+  3412		.mac_link_up = ugeth_mac_link_up,
+  3413		.mac_link_down = ugeth_mac_link_down,
+  3414		.mac_config = ugeth_mac_config,
+  3415	};
+  3416	
 
-I will debug and find what went wrong with next-20250210 or the kexec 
-you used to load the kdump kernel.
-
-Thanks,
-Sourabh Jain
-
->
-> Logs:
->
-> [root@ltc-zzci-1 ~]# kexec -p 
-> --initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
-> /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
-> Warning: append= option is not passed. Using the first kernel root 
-> partition
-> Modified cmdline: elfcorehdr=311424K 
-> root=UUID=b5b1f89c-d479-48b3-90e2-744a2fd05667
-> [root@ltc-zzci-1 ~]# kexec -p 
-> --initrd=/boot/initramfs-6.14.0-rc2-next-20250212kdump.img 
-> /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
-> syscall kexec_file_load not available.
-> [root@ltc-zzci-1 ~]# kexec -v
-> kexec-tools 2.0.27
-> [root@ltc-zzci-1 ~]# uname -r
-> 6.14.0-rc2-next-20250212
->
->
-> Regards,
->
-> Venkat.
->
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
