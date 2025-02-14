@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-515520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B456A365D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:42:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7DFA365DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E9218943AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDA188F4A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9375A191F75;
-	Fri, 14 Feb 2025 18:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD2193435;
+	Fri, 14 Feb 2025 18:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jalWnTfS"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exnUPGgX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C8E23A9;
-	Fri, 14 Feb 2025 18:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC10915FA7B;
+	Fri, 14 Feb 2025 18:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739558570; cv=none; b=r5OoAnPuYlMPtNDf3r/GEtnmHkTBgcMX4ijT/AxLj2ILCLZlPd+rQaXT4Guzn9w2m0T3nqTwXefeSGkR3cWr2b10oXjN5DxEqbNWgDX5DHnVFtTYM4D2D6z48A0yTDRIloFEuwtEHdepkCI4JhO1i7fNlMvI3P3Hbi5eOx5oI4s=
+	t=1739558723; cv=none; b=m1TN6xWEcSi46ZGYhU6AAiDeaNSxX2KMoKT7R0gSkR8Ps6rQsjhoGMS78aF+mCf3VrgFZvuSphh2ha8s6jSsfUmzOmjfHlE1g0aIJSxHi702ENyCxWXNUzFKY4+83xzA7Yv/TGNWaXz1rJULmwMnu9I0CVrb043EoeRUYVYo6+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739558570; c=relaxed/simple;
-	bh=+Ppp9czNRk7XvC+wiqLcRD0Mif/eCE22uoNFcb/qHMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCjoIo7hoprRkh++wVaSAlaRdu9JI3MJ93MDY/3IjUV75giVeD+4IuXQn3f+ArVm2JzSNhG2VMgZKsrFBZjB0s0m8R2wlPnrFG1bmNOOHCyFIxvyHYVCMfRYKAOTfHqqcYuR0FP04qQEMqkuQxikilbAam/u8oGKkJ8h1JpDGd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jalWnTfS; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30920855d5bso9617051fa.0;
-        Fri, 14 Feb 2025 10:42:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739558566; x=1740163366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Ppp9czNRk7XvC+wiqLcRD0Mif/eCE22uoNFcb/qHMA=;
-        b=jalWnTfSwBKi3O+5O6wXgZXfyz7W9qPVYbLreVOQl0+Y3Rq7nIl9EmsGzZYcP9j0Wo
-         zI2AYMJhcNQfVERd2QCsPCP+BRnV50NMNTu8fvzmEfU2HNTZkFJR0SlpV1VRw1KTfF2p
-         TlP7UK+yVNi47StEYvB2rHe+/OFI4TzLxWJPWVGhT/FF8gayMu1UyAds/BBbXUyT+o9H
-         s+ItMyJ9KsGdDCvEvJ9v0nXzSN25vfX5RcPH99j84ZZihKunv/1Xuda0gTQcnLNuxGA5
-         CZmJTGvYkp6lFH69JNfn124IBTwNv5GqT7nvw0R08TGvHs1/CGvUmxuP8tk7I4Nayfqb
-         86aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739558566; x=1740163366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Ppp9czNRk7XvC+wiqLcRD0Mif/eCE22uoNFcb/qHMA=;
-        b=qKw2lv00FEOmv+q6mx+tlLWHYyihaPkZBwp/KadUj7qtBqeGIfoDvd3+kbC/FvN0aK
-         Pcw6BLyaTJJSVDtyoejBnR48wodXVI1ZknwzHXICbm1MzzJJUx54DaudzZl7AwYLkBhl
-         G61nv3vz4LGQB8PQct9u0mZe1qA+b+jHSEAyc0HPy4SRryWzaqokY+MB+aw4qJU6WK3Z
-         50xyqZCDgb5uD7VrIFEnf96kcVvd7I63eU8bgfCdV7YTDyfMeB8T/WMQ9Famy+hfXJGk
-         2qwvXFkIIiea1GrNARY3xKz7SPcmMpKftuhJF/TQv3L2f1UUH4YUT8ec6Gve368/6fvv
-         0qhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOGvLceceuJ79TJ6zMoxCdeC9Rv3c5X30m1CkY4JQkj4WikndCoKrB55hNeSD7yyPx9J8e+Z+fsHfy8ymdyXc=@vger.kernel.org, AJvYcCWUAsw/pTCY7V84/6coFkIPXCXPxH5zZo5yFq6D2Qtvdofstbf1/Jdtut5jKFiOnpPgdcz3ItbBgu8SZhs=@vger.kernel.org, AJvYcCWtTfb1O3NvmX5d4tK8lBCDdx+LPfsMgpEO04xn2bRyCYj7wbjb8R0QL+i8YQHwtWHh+gu1KVkPUjMD5WVPCwem@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX/4vhd3K+CHdJOS66oLc70Ywjq4TgwmYtOMQB7xRyubaU4HHj
-	KPK98dgb77uLKBbDzSHJFjCxlKoUU+QrPNDr/m6V5zBicqgdWiourjGqb7hEnqeILNgeMjJJqa3
-	1L1Lj45e/RWKPfNCsv5f2pmEjqs4=
-X-Gm-Gg: ASbGncu0LYKyBiDyW6wnpk+e2q9f3+z7w6tmQYB+ANeu0xbePqD0EROwrusZIkHV/Hp
-	QtXZ29FUoSLVVufdSjsjXe4Gk1i0ILB3EhN7jSmWCPYqpuXv0W5NCpkCQZsv7yQJCH2J6ALeI4y
-	cj/AydCPgEB1Jhgk8tuU4ICIEskqF5Tg==
-X-Google-Smtp-Source: AGHT+IG/DbkJpzmDRij1aXUq/DJiFEA2hRU2uT3oNHgjRUzszo/1DJpq//Zt50xWwJybnu7eIUZU+nk71iKW4DA3luo=
-X-Received: by 2002:a05:651c:1074:b0:309:20ad:c514 with SMTP id
- 38308e7fff4ca-30920adc703mr10285831fa.0.1739558566104; Fri, 14 Feb 2025
- 10:42:46 -0800 (PST)
+	s=arc-20240116; t=1739558723; c=relaxed/simple;
+	bh=hhnbXVudW3X9Ob2dmDCWIf7SoirkZhCcBkp92o1UP/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H64E04lUDF2ES/HVKQFvVSEuOq2ncOMw5oiZxokNjcfK2C2yD8b0L31JU7KSKi28y8eqJEtIopqWoOOZvPi2BCnlMnYbf5J2/tWp6oYB4i+m9yG5I++gZ7h1SKUE1z+tEitMAW11tVBd2kspe+baxWoXRGrOS6O/v9udYp14UWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exnUPGgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CACCEC4CED1;
+	Fri, 14 Feb 2025 18:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739558723;
+	bh=hhnbXVudW3X9Ob2dmDCWIf7SoirkZhCcBkp92o1UP/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=exnUPGgXUpVDJXfejHV+qS8UhaO6MyTm9FhHIGy7axieRMhiCYpxEeV95XUqEQV/z
+	 dWba2REJty7aNMPZvd9Qp0s+t19qx39nouxaC7aOyQDi4gQdsE76u1ASz5BBjPuo7O
+	 d3XH7wnod77QHb+bL+nWASGq0iMT8Knn3iNc6FhfdD6ovJB/lIBbH13LgkHLcxVcA2
+	 SXkKx+ag/Lzr2L14KoHqK0SZhS9nFlpdA5PSXmR+XmBBk65mNp3Vdw+4keQWEwoCIm
+	 H64XCqnLZsYDQzUr7PH73nT8o2NSP5ql6wYrx6gf1Pguyni+nrMRlVp00fnzPZ/1NT
+	 1b0lxMUIoA9fw==
+Date: Fri, 14 Feb 2025 10:45:21 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm64: Fix compilation error
+Message-ID: <Z6-PQVOVLrZqey-u@google.com>
+References: <20250214111025.14478-1-leo.yan@arm.com>
+ <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214074051.1619256-1-davidgow@google.com> <20250214074051.1619256-3-davidgow@google.com>
- <CAJ-ks9nAT5ETe3qM-DcY-YqES-pTK0RdMAY_fn1jT0_Dv1HkTQ@mail.gmail.com> <CANiq72nvYSo0KHDpOYTNNv5o2VH9KPocJ-q=cQZ7_mkYAqBjjQ@mail.gmail.com>
-In-Reply-To: <CANiq72nvYSo0KHDpOYTNNv5o2VH9KPocJ-q=cQZ7_mkYAqBjjQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Feb 2025 13:42:09 -0500
-X-Gm-Features: AWEUYZkhwa962pazWk7qxNv87ch69sDiIBbCfxRGZpCgIvrUIQ3D7TWlWPhxHVA
-Message-ID: <CAJ-ks9mz=MaR2wSC5VSeBbyAraC_LedPoxf4A9bEnD5O_ASPYA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] rust: macros: add macro to easily run KUnit tests
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: David Gow <davidgow@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	=?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa347f0f-ebd3-4744-9053-14dab87d06b8@linaro.org>
 
-On Fri, Feb 14, 2025 at 1:38=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Feb 14, 2025 at 3:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > This is a really helpful comment. It got me wondering: can we have
-> > host-side unit tests for our proc macros? Code is better than
-> > comments, of course.
->
-> That makes sense (in fact, e.g. Benno wanted them for pinned-init),
-> but I will defer that until we have the new build system to avoid
-> adding more things to our plate.
->
-> > This makes sense. I wonder if we should think about being able to
-> > declare a test that runs both on host and in KUnit.
->
-> Yeah, when we originally discussed `#[test]`s (years ago), we wanted
-> to have "attributes" or "tags" like `#[test(host, kernel)]`.
->
-> But, again, something for later -- I would rather we finally land `#[test=
-]`s.
->
-> Cheers,
-> Miguel
+On Fri, Feb 14, 2025 at 11:21:52AM +0000, James Clark wrote:
+> 
+> 
+> On 14/02/2025 11:10 am, Leo Yan wrote:
+> > Since the commit dc6d2bc2d893 ("perf sample: Make user_regs and
+> > intr_regs optional"), the building for Arm64 reports error:
+> > 
+> > arch/arm64/util/unwind-libdw.c: In function ‘libdw__arch_set_initial_registers’:
+> > arch/arm64/util/unwind-libdw.c:11:32: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
+> >     11 |  struct regs_dump *user_regs = &ui->sample->user_regs;
+> >        |                                ^
+> > cc1: all warnings being treated as errors
+> > make[6]: *** [/home/niayan01/linux/tools/build/Makefile.build:85: arch/arm64/util/unwind-libdw.o] Error 1
+> > make[5]: *** [/home/niayan01/linux/tools/build/Makefile.build:138: util] Error 2
+> > arch/arm64/tests/dwarf-unwind.c: In function ‘test__arch_unwind_sample’:
+> > arch/arm64/tests/dwarf-unwind.c:48:27: error: initialization of ‘struct regs_dump *’ from incompatible pointer type ‘struct regs_dump **’ [-Werror=incompatible-pointer-types]
+> >     48 |  struct regs_dump *regs = &sample->user_regs;
+> >        |                           ^
+> > 
+> > To fix the issue, use the helper perf_sample__user_regs() to retrieve
+> > the user_regs.
+> > 
+> > Fixes: dc6d2bc2d893 ("perf sample: Make user_regs and intr_regs optional")
+> > Signed-off-by: Leo Yan <leo.yan@arm.com>
 
-Works for me. Could you link to issues tracking these, if they exist?
+Thanks for the fix, I'll handle other archs too
+Namhyung
 
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+
+> > ---
+> >   tools/perf/arch/arm64/tests/dwarf-unwind.c | 2 +-
+> >   tools/perf/arch/arm64/util/unwind-libdw.c  | 2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> > index b2603d0d3737..440d00f0de14 100644
+> > --- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> > +++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+> > @@ -45,7 +45,7 @@ static int sample_ustack(struct perf_sample *sample,
+> >   int test__arch_unwind_sample(struct perf_sample *sample,
+> >   		struct thread *thread)
+> >   {
+> > -	struct regs_dump *regs = &sample->user_regs;
+> > +	struct regs_dump *regs = perf_sample__user_regs(sample);
+> >   	u64 *buf;
+> >   	buf = calloc(1, sizeof(u64) * PERF_REGS_MAX);
+> > diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
+> > index e056d50ab42e..b89b0a7e5ad9 100644
+> > --- a/tools/perf/arch/arm64/util/unwind-libdw.c
+> > +++ b/tools/perf/arch/arm64/util/unwind-libdw.c
+> > @@ -8,7 +8,7 @@
+> >   bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
+> >   {
+> >   	struct unwind_info *ui = arg;
+> > -	struct regs_dump *user_regs = &ui->sample->user_regs;
+> > +	struct regs_dump *user_regs = perf_sample__user_regs(ui->sample);
+> >   	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
+> >   #define REG(r) ({						\
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> 
 
