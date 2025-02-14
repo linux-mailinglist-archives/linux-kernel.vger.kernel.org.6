@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-514674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9109CA35A09
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:18:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2967A35A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09848188235F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5196A162F72
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0282B22D7AC;
-	Fri, 14 Feb 2025 09:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168A2309B1;
+	Fri, 14 Feb 2025 09:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NNYnwg3A"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wLaIcU64"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127C1151983;
-	Fri, 14 Feb 2025 09:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3B3151983;
+	Fri, 14 Feb 2025 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524714; cv=none; b=h0yyFSCKP57R1UAL02G0R/0spwQd+cO0sb4hq5pe2BvD5F8T9pXGffr4dxr1IciZNyxcZ2Z5GWCVUX8kcJDthovlUQnEizfQG4Cu4CXX7tYOWnIyGTWmzvVPqRGGboPSwaw0ZRmqbqbyeTlrSzcWaHRO3itS7QJaT6adu+Qqju0=
+	t=1739524797; cv=none; b=lTLEh0G5Sr0nhqDrhdUz4OTCBLvbIBNcGtfuLTmKSvE7wOEdrhD3MwTZEpu3+tfbC/Ypy2ZZHfcI1qr3t21fX8H81dfS3fDAo52maG0FZwJqsBmXC53zc41P866xPhMasXgO8SIchy9saxDbb4GmBddHbyym9gaBDoFdxmhE3Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524714; c=relaxed/simple;
-	bh=PGVkUHMQd/qCG2EC0ToGD9dA8CGNgIUICxwqCAmKGCw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=nWc+vmxgXzOQxhIfg6xzMRZhTZe86H1Qzh5/OBUJxPP/Byh+Hk9RG14XnkKprU3++c9/I3Hw+qrnat8vGjebosvGmFb9QA5U4gH8kehFAvvY3J0ewm1mMsa/01QsgV3T1yhv9I2HorlIxnDr55yZqTiM4wBES4Kw5JW7DHRHnIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NNYnwg3A; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BDAF1433E8;
-	Fri, 14 Feb 2025 09:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739524710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b9W3vUY6yO+IHRec/sO/TdVHACFpEGB5P3jObXpFbkY=;
-	b=NNYnwg3Aa9b+bb7qfajpbVYMkaQ0jTIHHg/mQUdU0uDtbapf5yDwfqgI/xjR1W/kOJMxSQ
-	nGyaHPG93iefQcYULoaCAJ++52vA3E/UcPmipALPOpr4DjdvaraXWwcfUEMh+7IbuOPmd2
-	x5YDlKZXj7wjATiTdaq/jU6QFy5CsE/AfUG3vGqtnCIwvplp8T2nHK7cqg4V3qeiotUvrR
-	0gxEs5VfVPw+hAEhxhFmjRH1tiZfeyomakGnvaZemxzQw2Y3MJW2zgYdiwtBOK3aqH1OHr
-	VkojJt50ivlm/VRPfWtRSLpRe5bLxulzrsK/49Bf9tClXMiyqbPSd374FZc9Ew==
+	s=arc-20240116; t=1739524797; c=relaxed/simple;
+	bh=s+iEc6DLOSUz5BLsMGI/9e2xgGB1qfrDPRfDFIUI0Lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W78ruTgPXC3q5KgONYM6duI+AFYX4pX5ohp6an/tjoeD3odjyjiwi0xm8/M4tVqTGc6GwRkhCd0wpN3wVqchEsWHtLHxk5W+cHFGUrnJAUPz3DlShQsM6/jlrj2sPeSTVnL0vBgmnLAu9RdLM05T87HGqIvgUMJcluGi32Z28J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wLaIcU64; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ef75NRy6e5D2kiAitttN6Y3m+w92DY/+/SD9KngtQFI=; b=wLaIcU64Ocq93q8mFp/gxBJpNg
+	lPBJ2dsmNZs67hlBC5O7E0/g+CI3bm/iOo+ze2kfkKsHYhjnYRXFdMe9g8vEWo2H8G9n0yGxmgtJD
+	SeZJyrZvxFd8t4O+qxQDQ658g8AJsjZCGIt3SjTIyiW0D1MmlVmEk5OUqOjIv0v2pdjZgNFGWOmPx
+	jnDyYtiPDGuLb+GHDiZfpPbqyQMElowB+fGua7cer6CxVHsfjS+oW8OhvK8e3JmUV1bCFwgldT/Wy
+	/pQ5UqoviHhtzhlH3VaE5pn+yoPFuasBIeEZQv8RYAqdCzn+8+wKMKjDq5/3/Ni5hQbjkLX3Bs55m
+	LgsdoDjA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tirrR-0000000ApKS-1Gnv;
+	Fri, 14 Feb 2025 09:19:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E89CA3002F0; Fri, 14 Feb 2025 10:19:47 +0100 (CET)
+Date: Fri, 14 Feb 2025 10:19:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	"Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH] module: don't annotate ROX memory as kmemleak_not_leak()
+Message-ID: <20250214091947.GA21726@noisy.programming.kicks-ass.net>
+References: <20250214084531.3299390-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 14 Feb 2025 10:18:29 +0100
-Message-Id: <D7S21NAXRW2A.2LB56QSTDCV6Z@bootlin.com>
-Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
-Cc: "Michael Walle" <mwalle@kernel.org>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
- <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegledvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsggrrhhtohhsi
- idrghholhgrshiivgifshhkiheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhifrghllhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214084531.3299390-1-rppt@kernel.org>
 
-On Thu Feb 13, 2025 at 8:48 PM CET, Andy Shevchenko wrote:
-> It appears that regmap GPIO doesn't take into account 'ngpios' property
-> and requires hard coded values or duplication of the parsing the same
-> outside of GPIO library. This miniseries addresses that.
->
-> For the record, I have checked all bgpio_init() users and haven't seen
-> the suspicious code that this series might break, e.g., an equivalent of
-> something like this:
->
-> static int foo_probe(struct device *dev)
-> {
-> 	struct gpio_chip *gc =3D devm_kzalloc(...);
-> 	struct fwnode_handle *fwnode =3D ...; // NOT dev_fwnode(dev)!
->
-> 	...
-> 	gc->parent =3D dev;
-> 	gc->fwnode =3D fwnode;
->
-> 	ret =3D bgpio_init(gc, dev, ...);
-> 	...
-> }
->
-> Reported-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
->
-> Andy Shevchenko (5):
->   gpiolib: Extract gpiochip_choose_fwnode() for wider use
->   gpiolib: Use fwnode instead of device in gpiochip_get_ngpios()
->   gpio: regmap: Group optional assignments together for better
->     understanding
->   gpio: regmap: Move optional assignments down in the code
->   gpio: regmap: Allow ngpio to be read from the property
->
->  drivers/gpio/gpio-regmap.c  | 41 +++++++++++++++++++++----------------
->  drivers/gpio/gpiolib.c      | 27 ++++++++++++++++--------
->  include/linux/gpio/regmap.h |  4 ++--
->  3 files changed, 43 insertions(+), 29 deletions(-)
+On Fri, Feb 14, 2025 at 10:45:31AM +0200, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> The ROX memory allocations are part of a larger vmalloc allocation and
+> annotating them with kmemleak_not_leak() confuses kmemleak.
+> 
+> Skip kmemleak_not_leak() annotations for the ROX areas.
+> 
+> Fixes: c287c0723329 ("module: switch to execmem API for remapping as RW and restoring ROX")
+> Fixes: 64f6a4e10c05 ("x86: re-enable EXECMEM_ROX support")
+> Reported-by: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+> 
+> Peter, can you take it via tip tree?
+> Or you prefer for Luis to pick this up?
 
-Hi Andy,
+Less of a head-ache overall if these things stay together I recon.
+So I'll stick it in tip/x86/mm along with the rest of those patches.
 
-Thanks, I confirm I tested this series and it does fix my case: I can
-leave the ngpio field uninitialized and its value will be correctly
-retrieved from the "ngpios" property.
-
-Also the whole series looks good to me.
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Thanks!
 
