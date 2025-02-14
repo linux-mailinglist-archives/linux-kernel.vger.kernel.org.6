@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-514972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6772A35E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:02:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541FFA35E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB4188E09A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77723B1F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678202676CE;
-	Fri, 14 Feb 2025 12:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9992676FB;
+	Fri, 14 Feb 2025 12:56:35 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C71C2673AE;
-	Fri, 14 Feb 2025 12:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51062676D6;
+	Fri, 14 Feb 2025 12:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739537793; cv=none; b=p8LqkwASbS1dhLITR9ZpmRPSnRDRltUfMtD1Q5xpuBuFjk2s/4kp5XzFfeA3LWihjSBOU7zZwlVqtVVBp4+m81TO8yqc23aJPYGACp6rJ593Zp4G62Tykr5JcABjyMaEX7n8GnymXqEpu8vLPiSQckNwtxm0Rt0cnQN4DC7IA/U=
+	t=1739537795; cv=none; b=CyVa1hL4DOWvcikVwvHpthMJHlDC865iKb3/fIxrhh4lu30YGdEuN9g/KQa/zhDTFWPiKLmxvgJXEoF2iq80TiSe1n9NcR9MNm9wwFE1CLMrg9zz9raw09PpEh19JMLFH1QBTdDQsLKnUjfMtCWOx/+8G9TxXaoBxtWPCkmfUnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739537793; c=relaxed/simple;
-	bh=2ZLw7Rxrg+DR9b8XBB3ik+tlKOybB/y8pFYELaWM6M4=;
+	s=arc-20240116; t=1739537795; c=relaxed/simple;
+	bh=Znw6pT3qIoUit0MCst0Ti6m02XbGNqaaFgoroG6YUWA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EA+jEaX+/1mroPkDtBxgsc2m0uOaHk2kXmT8SQrD1nbRkJMwwjPj0QV86FemyffAqLQOBj09OrVxjKy3IG9ubblZ/FAORAeYNRJQ4TN6vcBCyMSrv2ANvgiPJ8d0xob09gUjtLVB1SIoadEaby0euhGhn4R/uHpujEmkx4RxMHU=
+	 MIME-Version; b=HmTpYQElG1pElNVcne/zAqU0MSKyhqWunh1JHrH/B3b1bBJwQsf9pj/ENO4Enz61KjhGtoUKlB9/UGgiH+mn2Fidqz9hIXCD7dHzQwnlXqJ8e4CRTMR0NnhzyNTcTDrdjnuTtE9/fKC0non9QuuaRkeimCGwIxa/Q5+bwx7Iex8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C39A1596;
-	Fri, 14 Feb 2025 04:56:51 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76C13113E;
+	Fri, 14 Feb 2025 04:56:53 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30A623F58B;
-	Fri, 14 Feb 2025 04:56:29 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 495F73F58B;
+	Fri, 14 Feb 2025 04:56:31 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -47,9 +47,9 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/15] clk: sunxi-ng: a523: add reset lines
-Date: Fri, 14 Feb 2025 12:53:57 +0000
-Message-ID: <20250214125359.5204-14-andre.przywara@arm.com>
+Subject: [PATCH v2 14/15] dt-bindings: clk: sunxi-ng: add compatible for the A523 PRCM-CCU
+Date: Fri, 14 Feb 2025 12:53:58 +0000
+Message-ID: <20250214125359.5204-15-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.3
 In-Reply-To: <20250214125359.5204-1-andre.przywara@arm.com>
 References: <20250214125359.5204-1-andre.przywara@arm.com>
@@ -61,122 +61,227 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allwinner SoCs do not contain a separate reset controller, instead the
-reset lines for the various devices are integrated into the "BGR" (Bus
-Gate / Reset) registers, for each device group: one for all UARTs, one
-for all SPI interfaces, and so on.
-The Allwinner CCU driver also doubles as a reset provider, and since the
-reset lines are indeed just single bits in those BGR register, we can
-represent them easily in an array of structs, just containing the
-register offset and the bit number.
+The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
+the PRCM R_CCU.
 
-Add the location of the reset bits for all devices in the A523/T527
-SoCs, using the existing sunxi CCU infrastructure.
+Add the new compatible string, along with the required input clock
+lists. There is now an extra input clock (PLL_AUDIO), so add this to the
+list of allowed clocks and required it for the A523 PRCM CCU.
+Also add the DT binding headers, listing all the clocks with their ID
+numbers.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 83 ++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ .../clock/allwinner,sun4i-a10-ccu.yaml        | 76 ++++++++++++-------
+ include/dt-bindings/clock/sun55i-a523-r-ccu.h | 37 +++++++++
+ include/dt-bindings/reset/sun55i-a523-r-ccu.h | 25 ++++++
+ 3 files changed, 110 insertions(+), 28 deletions(-)
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-index fbed9b2b3b2f9..d57565f07a112 100644
---- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-@@ -1475,11 +1475,94 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
- 	},
- };
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+index 451a18de1b6c1..791dc333be74d 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
+@@ -46,6 +46,7 @@ properties:
+       - allwinner,sun50i-h616-ccu
+       - allwinner,sun50i-h616-r-ccu
+       - allwinner,sun55i-a523-ccu
++      - allwinner,sun55i-a523-r-ccu
+       - allwinner,suniv-f1c100s-ccu
+       - nextthing,gr8-ccu
  
-+static struct ccu_reset_map sun55i_a523_ccu_resets[] = {
-+	[RST_MBUS]		= { 0x540, BIT(30) },
-+	[RST_BUS_NSI]		= { 0x54c, BIT(16) },
-+	[RST_BUS_DE]		= { 0x60c, BIT(16) },
-+	[RST_BUS_DI]		= { 0x62c, BIT(16) },
-+	[RST_BUS_G2D]		= { 0x63c, BIT(16) },
-+	[RST_BUS_SYS]		= { 0x64c, BIT(16) },
-+	[RST_BUS_GPU]		= { 0x67c, BIT(16) },
-+	[RST_BUS_CE]		= { 0x68c, BIT(16) },
-+	[RST_BUS_SYS_CE]	= { 0x68c, BIT(17) },
-+	[RST_BUS_VE]		= { 0x69c, BIT(16) },
-+	[RST_BUS_DMA]		= { 0x70c, BIT(16) },
-+	[RST_BUS_MSGBOX]	= { 0x71c, BIT(16) },
-+	[RST_BUS_SPINLOCK]	= { 0x72c, BIT(16) },
-+	[RST_BUS_CPUXTIMER]	= { 0x74c, BIT(16) },
-+	[RST_BUS_DBG]		= { 0x78c, BIT(16) },
-+	[RST_BUS_PWM0]		= { 0x7ac, BIT(16) },
-+	[RST_BUS_PWM1]		= { 0x7ac, BIT(17) },
-+	[RST_BUS_DRAM]		= { 0x80c, BIT(16) },
-+	[RST_BUS_NAND]		= { 0x82c, BIT(16) },
-+	[RST_BUS_MMC0]		= { 0x84c, BIT(16) },
-+	[RST_BUS_MMC1]		= { 0x84c, BIT(17) },
-+	[RST_BUS_MMC2]		= { 0x84c, BIT(18) },
-+	[RST_BUS_SYSDAP]	= { 0x88c, BIT(16) },
-+	[RST_BUS_UART0]		= { 0x90c, BIT(16) },
-+	[RST_BUS_UART1]		= { 0x90c, BIT(17) },
-+	[RST_BUS_UART2]		= { 0x90c, BIT(18) },
-+	[RST_BUS_UART3]		= { 0x90c, BIT(19) },
-+	[RST_BUS_UART4]		= { 0x90c, BIT(20) },
-+	[RST_BUS_UART5]		= { 0x90c, BIT(21) },
-+	[RST_BUS_UART6]		= { 0x90c, BIT(22) },
-+	[RST_BUS_UART7]		= { 0x90c, BIT(23) },
-+	[RST_BUS_I2C0]		= { 0x91c, BIT(16) },
-+	[RST_BUS_I2C1]		= { 0x91c, BIT(17) },
-+	[RST_BUS_I2C2]		= { 0x91c, BIT(18) },
-+	[RST_BUS_I2C3]		= { 0x91c, BIT(19) },
-+	[RST_BUS_I2C4]		= { 0x91c, BIT(20) },
-+	[RST_BUS_I2C5]		= { 0x91c, BIT(21) },
-+	[RST_BUS_CAN]		= { 0x92c, BIT(16) },
-+	[RST_BUS_SPI0]		= { 0x96c, BIT(16) },
-+	[RST_BUS_SPI1]		= { 0x96c, BIT(17) },
-+	[RST_BUS_SPI2]		= { 0x96c, BIT(18) },
-+	[RST_BUS_SPIFC]		= { 0x96c, BIT(19) },
-+	[RST_BUS_EMAC0]		= { 0x97c, BIT(16) },
-+	[RST_BUS_EMAC1]		= { 0x98c, BIT(16) | BIT(17) },	/* GMAC1-AXI */
-+	[RST_BUS_IR_RX]		= { 0x99c, BIT(16) },
-+	[RST_BUS_IR_TX]		= { 0x9cc, BIT(16) },
-+	[RST_BUS_GPADC0]	= { 0x9ec, BIT(16) },
-+	[RST_BUS_GPADC1]	= { 0x9ec, BIT(17) },
-+	[RST_BUS_THS]		= { 0x9fc, BIT(16) },
-+	[RST_USB_PHY0]		= { 0xa70, BIT(30) },
-+	[RST_USB_PHY1]		= { 0xa74, BIT(30) },
-+	[RST_BUS_OHCI0]		= { 0xa8c, BIT(16) },
-+	[RST_BUS_OHCI1]		= { 0xa8c, BIT(17) },
-+	[RST_BUS_EHCI0]		= { 0xa8c, BIT(20) },
-+	[RST_BUS_EHCI1]		= { 0xa8c, BIT(21) },
-+	[RST_BUS_OTG]		= { 0xa8c, BIT(24) },
-+	[RST_BUS_3]		= { 0xa8c, BIT(25) },	/* BSP + register */
-+	[RST_BUS_LRADC]		= { 0xa9c, BIT(16) },
-+	[RST_BUS_PCIE_USB3]	= { 0xaac, BIT(16) },
-+	[RST_BUS_DPSS_TOP]	= { 0xabc, BIT(16) },
-+	[RST_BUS_HDMI_MAIN]	= { 0xb1c, BIT(16) },
-+	[RST_BUS_HDMI_SUB]	= { 0xb1c, BIT(17) },
-+	[RST_BUS_MIPI_DSI0]	= { 0xb4c, BIT(16) },
-+	[RST_BUS_MIPI_DSI1]	= { 0xb4c, BIT(17) },
-+	[RST_BUS_TCON_LCD0]	= { 0xb7c, BIT(16) },
-+	[RST_BUS_TCON_LCD1]	= { 0xb7c, BIT(17) },
-+	[RST_BUS_TCON_LCD2]	= { 0xb7c, BIT(18) },
-+	[RST_BUS_TCON_TV0]	= { 0xb9c, BIT(16) },
-+	[RST_BUS_TCON_TV1]	= { 0xb9c, BIT(17) },
-+	[RST_BUS_LVDS0]		= { 0xbac, BIT(16) },
-+	[RST_BUS_LVDS1]		= { 0xbac, BIT(17) },
-+	[RST_BUS_EDP]		= { 0xbbc, BIT(16) },
-+	[RST_BUS_VIDEO_OUT0]	= { 0xbcc, BIT(16) },
-+	[RST_BUS_VIDEO_OUT1]	= { 0xbcc, BIT(17) },
-+	[RST_BUS_LEDC]		= { 0xbfc, BIT(16) },
-+	[RST_BUS_CSI]		= { 0xc1c, BIT(16) },
-+	[RST_BUS_ISP]		= { 0xc2c, BIT(16) },	/* BSP + register */
-+};
+@@ -59,6 +60,7 @@ properties:
+       - description: Low Frequency Oscillator (usually at 32kHz)
+       - description: Internal Oscillator
+       - description: Peripherals PLL
++      - description: Audio PLL
+ 
+   clock-names:
+     minItems: 2
+@@ -67,6 +69,7 @@ properties:
+       - const: losc
+       - const: iosc
+       - const: pll-periph
++      - const: pll-audio
+ 
+ required:
+   - "#clock-cells"
+@@ -80,54 +83,71 @@ if:
+   properties:
+     compatible:
+       enum:
+-        - allwinner,sun8i-a83t-r-ccu
+-        - allwinner,sun8i-h3-r-ccu
+-        - allwinner,sun20i-d1-r-ccu
+-        - allwinner,sun50i-a64-r-ccu
+-        - allwinner,sun50i-a100-r-ccu
+-        - allwinner,sun50i-h6-r-ccu
+-        - allwinner,sun50i-h616-r-ccu
++        - allwinner,sun55i-a523-r-ccu
+ 
+ then:
+   properties:
+     clocks:
+-      minItems: 4
+-      maxItems: 4
++      minItems: 5
++      maxItems: 5
+ 
+     clock-names:
+-      minItems: 4
+-      maxItems: 4
++      minItems: 5
++      maxItems: 5
+ 
+ else:
+   if:
+     properties:
+       compatible:
+         enum:
+-          - allwinner,sun20i-d1-ccu
+-          - allwinner,sun50i-a100-ccu
+-          - allwinner,sun50i-h6-ccu
+-          - allwinner,sun50i-h616-ccu
+-          - allwinner,sun55i-a523-ccu
++          - allwinner,sun8i-a83t-r-ccu
++          - allwinner,sun8i-h3-r-ccu
++          - allwinner,sun20i-d1-r-ccu
++          - allwinner,sun50i-a64-r-ccu
++          - allwinner,sun50i-a100-r-ccu
++          - allwinner,sun50i-h6-r-ccu
++          - allwinner,sun50i-h616-r-ccu
+ 
+   then:
+     properties:
+       clocks:
+-        minItems: 3
+-        maxItems: 3
++        minItems: 4
++        maxItems: 4
+ 
+       clock-names:
+-        minItems: 3
+-        maxItems: 3
++        minItems: 4
++        maxItems: 4
+ 
+   else:
+-    properties:
+-      clocks:
+-        minItems: 2
+-        maxItems: 2
+-
+-      clock-names:
+-        minItems: 2
+-        maxItems: 2
++    if:
++      properties:
++        compatible:
++          enum:
++            - allwinner,sun20i-d1-ccu
++            - allwinner,sun50i-a100-ccu
++            - allwinner,sun50i-h6-ccu
++            - allwinner,sun50i-h616-ccu
++            - allwinner,sun55i-a523-ccu
 +
- static const struct sunxi_ccu_desc sun55i_a523_ccu_desc = {
- 	.ccu_clks	= sun55i_a523_ccu_clks,
- 	.num_ccu_clks	= ARRAY_SIZE(sun55i_a523_ccu_clks),
- 
- 	.hw_clks	= &sun55i_a523_hw_clks,
++    then:
++      properties:
++        clocks:
++          minItems: 3
++          maxItems: 3
 +
-+	.resets		= sun55i_a523_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sun55i_a523_ccu_resets),
- };
++        clock-names:
++          minItems: 3
++          maxItems: 3
++
++    else:
++      properties:
++        clocks:
++          minItems: 2
++          maxItems: 2
++
++        clock-names:
++          minItems: 2
++          maxItems: 2
  
- static const u32 pll_regs[] = {
+ additionalProperties: false
+ 
+diff --git a/include/dt-bindings/clock/sun55i-a523-r-ccu.h b/include/dt-bindings/clock/sun55i-a523-r-ccu.h
+new file mode 100644
+index 0000000000000..365647499b9ab
+--- /dev/null
++++ b/include/dt-bindings/clock/sun55i-a523-r-ccu.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (C) 2024 Arm Ltd.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_
++#define _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_
++
++#define CLK_R_AHB		0
++#define CLK_R_APB0		1
++#define CLK_R_APB1		2
++#define CLK_R_TIMER0		3
++#define CLK_R_TIMER1		4
++#define CLK_R_TIMER2		5
++#define CLK_BUS_R_TIMER		6
++#define CLK_BUS_R_TWD		7
++#define CLK_R_PWMCTRL		8
++#define CLK_BUS_R_PWMCTRL	9
++#define CLK_R_SPI		10
++#define CLK_BUS_R_SPI		11
++#define CLK_BUS_R_SPINLOCK	12
++#define CLK_BUS_R_MSGBOX	13
++#define CLK_BUS_R_UART0		14
++#define CLK_BUS_R_UART1		15
++#define CLK_BUS_R_I2C0		16
++#define CLK_BUS_R_I2C1		17
++#define CLK_BUS_R_I2C2		18
++#define CLK_BUS_R_PPU0		19
++#define CLK_BUS_R_PPU1		20
++#define CLK_BUS_R_CPU_BIST	21
++#define CLK_R_IR_RX		22
++#define CLK_BUS_R_IR_RX		23
++#define CLK_BUS_R_DMA		24
++#define CLK_BUS_R_RTC		25
++#define CLK_BUS_R_CPUCFG	26
++
++#endif /* _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_ */
+diff --git a/include/dt-bindings/reset/sun55i-a523-r-ccu.h b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+new file mode 100644
+index 0000000000000..dd6fbb372e190
+--- /dev/null
++++ b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (C) 2024 Arm Ltd.
++ */
++
++#ifndef _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_
++#define _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_
++
++#define RST_BUS_R_TIMER		0
++#define RST_BUS_R_TWD		1
++#define RST_BUS_R_PWMCTRL	2
++#define RST_BUS_R_SPI		3
++#define RST_BUS_R_SPINLOCK	4
++#define RST_BUS_R_MSGBOX	5
++#define RST_BUS_R_UART0		6
++#define RST_BUS_R_UART1		7
++#define RST_BUS_R_I2C0		8
++#define RST_BUS_R_I2C1		9
++#define RST_BUS_R_I2C2		10
++#define RST_BUS_R_PPU1		11
++#define RST_BUS_R_IR_RX		12
++#define RST_BUS_R_RTC		13
++#define RST_BUS_R_CPUCFG	14
++
++#endif /* _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_ */
 -- 
 2.46.3
 
