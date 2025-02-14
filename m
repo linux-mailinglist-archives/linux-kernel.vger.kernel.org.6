@@ -1,166 +1,112 @@
-Return-Path: <linux-kernel+bounces-514915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BB3A35D4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:07:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A93A35D4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E99D164D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:07:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9E57A242E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8782E263C67;
-	Fri, 14 Feb 2025 12:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABBB263C69;
+	Fri, 14 Feb 2025 12:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaN/ixHY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6CB221541;
-	Fri, 14 Feb 2025 12:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509AC2139A8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739534823; cv=none; b=FHxMxpIV7zRqRzDmKdVAKzooNSN1pcKx5VAPYsFfwGTVFXCEXL01QE4S7ZFTALgMlnDomm25+4DMawQtNqd+z58LRW8+rbPCM2ySUPF/p+anXVHKWDZ4BHGWgYOy2mx+73y8pLLPkTGGDi+oW+zlZVX8B1xAigHAeNmqnF0niP0=
+	t=1739534996; cv=none; b=pQfkyoY1mHOlfc0DSEs9ASKePggWXaNJmfn6o13M3w6FKfaPfIEMx0pb1TdAMtpjlCwW3mjSYjQDPWne4S+mnF4RDF37noQC7YlTK32mZ6BwEhHDPObEwALntqXjVDtYWA2XlOBdhONjD2ytcgcGXyln/nRjqfYe095F79yTi9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739534823; c=relaxed/simple;
-	bh=uBUJSEL5HuOe9zrSMv4zj/jgUFFhuIj6M7Q1fYfmraM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cdYKNMRIJ7rKe8pbow3NgT6gBDQbfC525oJon5gAxxazPuA3LKN8SkSdb22ykDdoDVv8LUt5WnVkzVhvXWu7FSmkj26405R+HMDykGLuINZcRo7SsLmOOrb8J4E8GCTWPFDMXT33AUCqxiQV3cMka1DSOK4GVwooRREqqJ3Ufto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B9DC4CED1;
-	Fri, 14 Feb 2025 12:07:01 +0000 (UTC)
-Date: Fri, 14 Feb 2025 07:07:12 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH] tracing: Do not allow mmap() of persistent ring buffer
-Message-ID: <20250214070712.01997ea1@gandalf.local.home>
-In-Reply-To: <20250214161332.8797b20f09e068c33f872698@kernel.org>
-References: <20250213180737.061871ae@gandalf.local.home>
-	<20250214110722.7eaf35b42c4858e6b74500f7@kernel.org>
-	<20250213212147.6511b235@gandalf.local.home>
-	<20250214161332.8797b20f09e068c33f872698@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739534996; c=relaxed/simple;
+	bh=aMZ0cmH8caWaku0ONbONWBbEbf8eUQ81CViz/ZDY0Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GyX9UwrFQQ3Saw6lyZ7wRburG42Ax2Z4XFglQ0cQe78+7u5QIko9ojL8m43ct+4CE0i2j48ZJOtFV5koMoCj6Hd/jxDPq272dwphJh8ZhFi7T/+VvP5KADGb5mkxDMkcyUxKfPY+MDWqkQ+QSdk5HNmvgVeee2K+4/Sj1aKG2T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaN/ixHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EEDC4CED1;
+	Fri, 14 Feb 2025 12:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739534995;
+	bh=aMZ0cmH8caWaku0ONbONWBbEbf8eUQ81CViz/ZDY0Ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kaN/ixHYZVsyIh53ymK5s3pCRmBqz31qY2izgd8EvdNcoO0lNCyxV5O9t922mcH6A
+	 VQhA5lPJuajiEsBcVSZjGdPeT1XDaW5KkF4rD0HyuPzoC9yVM7HuZByJO1bjVg6QAN
+	 W7ONolEqPuyonTXbNBJYImXvPPWvsldL2GBI0DTQXU8jYBZ26B/6CpclU+E1X5iOVT
+	 KedRs79+TMfk1CB34POekCy6vqNhHGP95dw1cdygpe+f6Dx/cXco7rCXla4DTH3X3X
+	 am6o0pElXYsqn9P1awqfvXqHEEAV2qV3Iph7MWGgB/mq+zyEz7mtkWqXkF07ogP11J
+	 J+IEgrLHtQL6g==
+Date: Fri, 14 Feb 2025 12:09:50 +0000
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	David Airlie <airlied@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Clean up FW version information display
+Message-ID: <20250214120949.GA12809@willie-the-truck>
+References: <20250213161248.1642392-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213161248.1642392-1-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, 14 Feb 2025 16:13:32 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> On Thu, 13 Feb 2025 21:21:47 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Feb 13, 2025 at 04:12:48PM +0000, Steven Price wrote:
+> Assigning a string to an array which is too small to include the NUL
+> byte at the end causes a warning on some compilers. But this function
+> also has some other oddities like the 'header' array which is only ever
+> used within sizeof().
 > 
-> > On Fri, 14 Feb 2025 11:07:22 +0900
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> >   
-> > > This may be good for fixing crash short term but may not allow us to read the
-> > > subbufs which is read right before crash. Can we also add an option to reset
-> > > the read pointer in the previous boot for the persistent ring buffer?  
-> > 
-> > I'm not sure what you mean here.
-> > 
-> > Note, this is just for mmapping the buffers. Currently we never tried it as
-> > if we did, it would have crashed. But this does not affect normal reads.  
+> Tidy up the function by removing the 'header' array, allow the NUL byte
+> to be present in git_sha_header, and calculate the length directly from
+> git_sha_header.
 > 
-> But reading buffer via mmap() is already supported. Can we read all pages,
-> which had been read by trace_pipe_raw in previous boot, again on this boot?
-
-It's not supported. If you try it, it will crash. This prevents reading via
-mmap() on a boot buffer. I don't know what you are asking. Once this patch
-is applied, mmap() will always fail on the boot buffer before or after you
-start it.
-
+> Reported-by: Will Deacon <will@kernel.org>
+> Fixes: 9d443deb0441 ("drm/panthor: Display FW version information")
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Note that there should be no functional change from this patch.
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> Anyway, I made another patch to fix it to allow mmap() on persistent ring
-> buffer here. I thought I can get the phys_addr from struct vm_area, but
-> it could not for vmap()'d area. So this stores the phys_addr in trace_buffer.
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index 4a9c4afa9ad7..645fc6d2e63b 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -636,8 +636,8 @@ static int panthor_fw_read_build_info(struct panthor_device *ptdev,
+>  				      u32 ehdr)
+>  {
+>  	struct panthor_fw_build_info_hdr hdr;
+> -	char header[9];
+> -	const char git_sha_header[sizeof(header)] = "git_sha: ";
+> +	const char git_sha_header[] = "git_sha: ";
+> +	const int header_len = sizeof(git_sha_header) - 1;
 
-Which is way too complex and intrusive. If you want to allow mapping, all
-it needs is this:
+nit: strlen()?
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 07b421115692..9339adc88ad5 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -5927,12 +5941,18 @@ static void rb_clear_buffer_page(struct buffer_page *page)
- static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- {
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-+	struct page *page;
- 
- 	if (!meta)
- 		return;
- 
- 	meta->reader.read = cpu_buffer->reader_page->read;
--	meta->reader.id = cpu_buffer->reader_page->id;
-+	/* For boot buffers, the id is the index */
-+	if (cpu_buffer->ring_meta)
-+		meta->reader.id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-+						     cpu_buffer->reader_page->page);
-+	else
-+		meta->reader.id = cpu_buffer->reader_page->id;
- 	meta->reader.lost_events = cpu_buffer->lost_events;
- 
- 	meta->entries = local_read(&cpu_buffer->entries);
-@@ -5940,7 +5960,12 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	meta->read = cpu_buffer->read;
- 
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-+	if (virt_addr_valid(cpu_buffer->meta_page))
-+		page = virt_to_page(cpu_buffer->meta_page);
-+	else
-+		page = vmalloc_to_page(cpu_buffer->meta_page);
-+
-+	flush_dcache_folio(page_folio(page));
- }
- 
- static void
-@@ -7041,7 +7066,10 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 			goto out;
- 		}
- 
--		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-+		if (virt_addr_valid(cpu_buffer->subbuf_ids[s]))
-+			page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-+		else
-+			page = vmalloc_to_page((void *)cpu_buffer->subbuf_ids[s]);
- 
- 		for (; off < (1 << (subbuf_order)); off++, page++) {
- 			if (p >= nr_pages)
-@@ -7187,6 +7215,7 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 	unsigned long missed_events;
- 	unsigned long reader_size;
- 	unsigned long flags;
-+	struct page *page;
- 
- 	cpu_buffer = rb_get_mapped_buffer(buffer, cpu);
- 	if (IS_ERR(cpu_buffer))
-@@ -7255,7 +7291,12 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 
- out:
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-+	if (virt_addr_valid(cpu_buffer->meta_page))
-+		page = virt_to_page(cpu_buffer->meta_page);
-+	else
-+		page = vmalloc_to_page(cpu_buffer->meta_page);
-+
-+	flush_dcache_folio(page_folio(page));
- 
- 	rb_update_meta_page(cpu_buffer);
- 
-But this still doesn't work, as the index is still off (I'm still fixing it).
+In any case, this fixes the arm64 CI [1], so:
 
-The persistent ring buffer uses the page->id for one thing but the user
-space mmap() uses it for something else.
+Acked-by: Will Deacon <will@kernel.org>
 
--- Steve
+It would be great to land this as a fix to save us having to carry it
+on our CI branch.
+
+Cheers,
+
+Will
+
+[1] https://lore.kernel.org/r/20250213154237.GA11897@willie-the-truck
 
