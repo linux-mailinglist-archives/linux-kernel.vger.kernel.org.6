@@ -1,132 +1,228 @@
-Return-Path: <linux-kernel+bounces-514683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC3BA35A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:25:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCB2A35A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565171891A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57EF16BACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F22D23A9AA;
-	Fri, 14 Feb 2025 09:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914DE24292B;
+	Fri, 14 Feb 2025 09:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jg1jwCFm"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nt+Lj0eR"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F018C21CA1A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B073B139D1B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739525097; cv=none; b=c/7psP1hySrKW8W9RNEU35DLnFXtTpkrbJnhVTR1zH34Akz/MRvrYtZ02CMd+LHPVXCsVo2ha9BpVONocq3DD1byfAnA574GzKytk0ig4ZgxklvUqBJGngzgtueLWvfLwnDHZLPLmtjlgcIfXVu7fM53jrUUvcvcC7OKQEgMp/w=
+	t=1739525190; cv=none; b=ewqRVf/v1xw+7r+XxXjvNYMOPWsiBXEDKPZlC949COX8nuoIviA26emoKoOE5L7p+M1buVYLAC5vN1+KaFOhssJefFo+cr/n73ZEuyyLHTeGlUqJrCwoaf1OIx7NltqUm3tggEEobFekspW4PIx2nqpA5PChWCycBx1vZ7P180A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739525097; c=relaxed/simple;
-	bh=d1wlMH588Z6yDEP1MFtLtFRjpV2D0arHjgG/BXApk7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CeIxluoGp5WXFyrpoUV/lTbpnvyymDuuU7je7RQWU1p2uwLa1Uz4ygeT/I2+PVTS7/wBYEoY59vh8m/+XTF4J2IUEUKVLZUcRCrn8n3DVY/OBiGMMax5+1IG/MgfsPS3HEZIW0PMJasDMbs/76gaSCtlBQ4fyYvyMT0hsZy/ORY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jg1jwCFm; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3061513d353so19686571fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:24:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739525094; x=1740129894; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+8xrkm9mttHMT5UbPbCNDDmwidLeRPd7KRTfBhHPCas=;
-        b=Jg1jwCFmrYBkxLqgHGpdsY2ZOQY6/glX1HneQCh7RHgYMiSOJIKnnYiEA2V/olKljC
-         XlTYK33UTu4zFlB5c0GT9J1DgpTyUMcrIYV5t3XQ6bqnGrFT3EWbdyMf2mVxVuK/p0Tk
-         NgPOd3XQjAnuvsrS7sOmRZeGn+tAyuDr1VvMx8qEyi9PpPRdYzRoADdkpmWY4WTP9XWc
-         mWvHCnNsoK7z95WWrCYmHMtyT+75CiMfuhBoAOWo/gqYLCidfqQ23eZl0FJXLYSu0sxB
-         i1N0QpXEZC2c1OgLC06QYWQexmzXD5oQDDIilfb3ll0DdnX3bPbBYYUWRe2HAJ7TReuP
-         OnlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739525094; x=1740129894;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+8xrkm9mttHMT5UbPbCNDDmwidLeRPd7KRTfBhHPCas=;
-        b=Q/rs4BAudP6EJPENAhBTCW2whobLmNdvaNg3n4kKZ0lraqA2+ddlSsCSlpp+3Slrlu
-         awe6zdu2EdtsP+Bi+E0alOlFFrh0ewTemq9fZ7pd1PiHeie7YngRsssY6Gg4IuXwURU0
-         lc6XTjkI41/8j0BcYFgGOXsqUBxWeffExvVUFFaugEYF1WX11XBvz+UhANkMCTcB3kXy
-         z5Qwh+Mst7K4H50UuEDJPZiTjV8axUIALphUdZgAcqFMV1imucmmDMt2lqWWladtufXO
-         NjRSvhgiC6/CJEsyAW7Zfs0mHna73rELDiURrHb6qDHC/zjlocVW271fo+Lc4kuXu59E
-         9cYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnXy8f/GbBzqEF7U9UFOk+9ysYEfTddFNQ7A5UclSdqzymB17pnRjGQMxWTb6KzFHpPuICnNMjN0KR3Tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwofW7+6Il1eM5MOmBdrAP6ysvUFOP34Uyw4urrIVZGeET8HPq+
-	u+ROK18gQ5XC4RIKXLLEYQvzY6sAlij9iEKrKVzArhmCM/OuN2IFF6Brkumro03+qOmQjCmoEmM
-	5jgrZWaUwEKpnYMSajnSefAnagLS0+0wNkHVH+g==
-X-Gm-Gg: ASbGncvPaYIxFnaIvz/GcTLCEFQfeJiEXhN+kFsz1B59Y3zz9JFxJE9zyq9qD2Q4BKN
-	BKUSaUTbuQIn3OmqTNW4bjMaFeaorBfGVzcYCnhgD04BsLESaEX+spImecPa2jDd1hIbCqRc=
-X-Google-Smtp-Source: AGHT+IFWV1F2V+9LL8q2W9e+NB5QweZAcTYLtOomoEx+6dpIzsXrtn4v0Oy/tpP4l9Wn5FZ6Y5Eo1ipBdEkZ0Chsm7I=
-X-Received: by 2002:a05:6512:e97:b0:545:2b24:c711 with SMTP id
- 2adb3069b0e04-5452b24c92cmr353044e87.21.1739525093936; Fri, 14 Feb 2025
- 01:24:53 -0800 (PST)
+	s=arc-20240116; t=1739525190; c=relaxed/simple;
+	bh=t/7bK4IivyX8NjW9vzwnhy+F5l6QrXRG+wv+wq0KWkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lv4xFL84yru0qSlIShU5ky2rU/tBW3K6tVUshnJgKKLzlb8A3/4M92Di3PCU/xq7AMWviL2VTvlO8lcuPRI4lFSqnIvgR/AjYxpqusammszkfnFknxkOhx+Y0vFZ7UmsBhscBw/XpZccpWm+NTndQ0+XJyFrtfVbn4ooNkpCWWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nt+Lj0eR; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XDBRO4C2r1jKbVjno0RQlxrE1N66bGEWyj0pTIdUTh0=; b=nt+Lj0eREkyl4nkoJ71gNpo6fJ
+	gDjx7gIu89UOnMk2C3pcqJ2T4LOKA21xD7heuzXv6qoHoRkZnrqxAypGXkqNqthvrl1iaGeqWBvq1
+	SOibnLuARKYpxoc2kKBG3UOdUW2ew80msCL0ET8pmXlUk37FMa127u2zMjOzv9+qRF4VSAXmNlZwU
+	LzHUrwLIkkiKLNTljeibkU7iy6ZAsUWDdZS6qDfh2Jer930E41/geaQ7AjU5oUG1MpwcXvqVIN7r4
+	kdrBvuGjpzQRG+XEiu5vNz4SpatGUw7x2yGoMcWRf+rMaKDVd9Xh313bzKO23TZX/dQnUN+jRgYdy
+	qm4A/1qA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tirxk-00000001DKO-3X4E;
+	Fri, 14 Feb 2025 09:26:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E941E3002F0; Fri, 14 Feb 2025 10:26:19 +0100 (CET)
+Date: Fri, 14 Feb 2025 10:26:19 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, nathan@kernel.org, ojeda@kernel.org,
+	kees@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org
+Subject: Re: [PATCH 00/11] x86/ibt: FineIBT-BHI
+Message-ID: <20250214092619.GB21726@noisy.programming.kicks-ass.net>
+References: <20250207121529.222723073@infradead.org>
+ <CABCJKudA8aUf=SDsVOOsWX_Cq6LAcioOjgtpv+uq+WGwJbxFPA@mail.gmail.com>
+ <20250213104802.GE28068@noisy.programming.kicks-ass.net>
+ <20250213114547.GB30841@noisy.programming.kicks-ass.net>
+ <20250213191202.GA3105334@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com> <CABQgh9FMy7oVt9+enSpJxXvkux+czMFqbsPZVgmBV+rFWWvhGA@mail.gmail.com>
-In-Reply-To: <CABQgh9FMy7oVt9+enSpJxXvkux+czMFqbsPZVgmBV+rFWWvhGA@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Fri, 14 Feb 2025 17:24:42 +0800
-X-Gm-Features: AWEUYZm4VYXZs9D9gG1u5f1QdB-hm7ET9-KXeIGkEb4d3KyyjUcKgmCuOU2-Pdc
-Message-ID: <CABQgh9HTCN8mgZhUc1+oNGPK4Pcw-iuQAyiVqTYnegCq4gDfpQ@mail.gmail.com>
-Subject: Re: [PATCH 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
-	Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, 
-	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213191202.GA3105334@google.com>
 
-On Fri, 14 Feb 2025 at 16:43, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> Hi, Baolu
->
-> On Fri, 14 Feb 2025 at 14:11, Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> >
-> > The new method for driver fault reporting support relies on the domain
-> > to specify a iopf_handler. The driver should detect this and setup the
-> > HW when fault capable domains are attached.
-> >
-> > Move SMMUv3 to use this method and have VT-D validate support during
-> > attach so that all three fault capable drivers have a no-op FEAT_SVA and
-> > _IOPF. Then remove them.
-> >
-> > This was initiated by Jason. I'm following up to remove FEAT_IOPF and
-> > further clean up.
-> >
-> > The whole series is also available at github:
-> > https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v1
->
-> I quickly test this branch
->
-> 1. host test is OK
->
-> 2. qemu boot one device, test ok,
-> though reports this when guest bootup.
-> vfio-pci xxx: resetting
-> vfio-pci xxx: reset done
->
-> 3. qemu boot multi device,  test fails, host kernel reports [Hardware Error]
-> qemu can boot no problem
-> Test fails.
->
-> Will do more checks without these patches.
+On Thu, Feb 13, 2025 at 07:12:02PM +0000, Sami Tolvanen wrote:
 
-Test on 6.14-rc2 without this patch set
+> > +	__get_kernel_nofault(&hash, *(u32 *)(addr + fineibt_preamble_hash), u32, Efault);
+> 
+> You have an extra * here, should be just (u32 *).
 
-1. qemu boot multi device,  test OK
+Doh :-), I started by doing a plain deref and then figured I should be
+careful and wrap it in the nofault thing.
 
-2. log "vfio-pci xxx: resetting/reset done" also exists.
 
-Thanks
+> Otherwise, LGTM.
+> 
+> One minor issue is that since the trap is in the preamble, we don't
+> get caller information in the warning message:
+> 
+> [   19.080184] CFI failure at __cfi_lkdtm_increment_int+0xd/0x10
+> (target: lkdtm_increment_int+0x0/0x20; expected type: 0x7e0c52a5)
+> 
+> But this is followed by a call trace, so it's not really necessary
+> either. With the __get_kernel_nofault argument fixed:
+> 
+> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+
+Thanks.
+
+I did some more clean-ups. I'll stick it on top of those patches slated
+for x86/core.
+
+---
+Subject: x86/ibt: Handle FineIBT in handle_cfi_failure()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu, 13 Feb 2025 12:45:47 +0100
+
+Sami reminded me that FineIBT failure does not hook into the regular
+CFI failure case, and as such CFI_PERMISSIVE does not work.
+
+Reported-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ arch/x86/include/asm/cfi.h    |   11 +++++++++++
+ arch/x86/kernel/alternative.c |   30 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cfi.c         |   22 ++++++++++++++++++----
+ 3 files changed, 59 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/include/asm/cfi.h
++++ b/arch/x86/include/asm/cfi.h
+@@ -126,6 +126,17 @@ static inline int cfi_get_offset(void)
+ 
+ extern u32 cfi_get_func_hash(void *func);
+ 
++#ifdef CONFIG_FINEIBT
++extern bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type);
++#else
++static inline bool
++decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
++{
++	return false;
++}
++
++#endif
++
+ #else
+ static inline enum bug_trap_type handle_cfi_failure(struct pt_regs *regs)
+ {
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1065,6 +1065,7 @@ asm(	".pushsection .rodata			\n"
+ 	"	endbr64				\n"
+ 	"	subl	$0x12345678, %r10d	\n"
+ 	"	je	fineibt_preamble_end	\n"
++	"fineibt_preamble_ud2:			\n"
+ 	"	ud2				\n"
+ 	"	nop				\n"
+ 	"fineibt_preamble_end:			\n"
+@@ -1072,9 +1073,11 @@ asm(	".pushsection .rodata			\n"
+ );
+ 
+ extern u8 fineibt_preamble_start[];
++extern u8 fineibt_preamble_ud2[];
+ extern u8 fineibt_preamble_end[];
+ 
+ #define fineibt_preamble_size (fineibt_preamble_end - fineibt_preamble_start)
++#define fineibt_preamble_ud2  (fineibt_preamble_ud2 - fineibt_preamble_start)
+ #define fineibt_preamble_hash 7
+ 
+ asm(	".pushsection .rodata			\n"
+@@ -1410,6 +1413,33 @@ static void poison_cfi(void *addr)
+ 	}
+ }
+ 
++/*
++ * regs->ip points to a UD2 instruction, return true and fill out target and
++ * type when this UD2 is from a FineIBT preamble.
++ *
++ * We check the preamble by checking for the ENDBR instruction relative to the
++ * UD2 instruction.
++ */
++bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
++{
++	unsigned long addr = regs->ip - fineibt_preamble_ud2;
++	u32 endbr, hash;
++
++	__get_kernel_nofault(&endbr, addr, u32, Efault);
++	if (endbr != gen_endbr())
++		return false;
++
++	*target = addr + fineibt_preamble_size;
++
++	__get_kernel_nofault(&hash, addr + fineibt_preamble_hash, u32, Efault);
++	*type = (u32)regs->r10 + hash;
++
++	return true;
++
++Efault:
++	return false;
++}
++
+ #else
+ 
+ static void __apply_fineibt(s32 *start_retpoline, s32 *end_retpoline,
+--- a/arch/x86/kernel/cfi.c
++++ b/arch/x86/kernel/cfi.c
+@@ -70,11 +70,25 @@ enum bug_trap_type handle_cfi_failure(st
+ 	unsigned long target;
+ 	u32 type;
+ 
+-	if (!is_cfi_trap(regs->ip))
+-		return BUG_TRAP_TYPE_NONE;
++	switch (cfi_mode) {
++	case CFI_KCFI:
++		if (!is_cfi_trap(regs->ip))
++			return BUG_TRAP_TYPE_NONE;
++
++		if (!decode_cfi_insn(regs, &target, &type))
++			return report_cfi_failure_noaddr(regs, regs->ip);
++
++		break;
+ 
+-	if (!decode_cfi_insn(regs, &target, &type))
+-		return report_cfi_failure_noaddr(regs, regs->ip);
++	case CFI_FINEIBT:
++		if (!decode_fineibt_insn(regs, &target, &type))
++			return BUG_TRAP_TYPE_NONE;
++
++		break;
++
++	default:
++		return BUG_TRAP_TYPE_NONE;
++	}
+ 
+ 	return report_cfi_failure(regs, regs->ip, &target, type);
+ }
 
