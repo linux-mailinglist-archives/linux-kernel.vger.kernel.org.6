@@ -1,117 +1,86 @@
-Return-Path: <linux-kernel+bounces-514821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FE5A35C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:05:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BD3A35C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D2116EDCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20FD43A5EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377AB25D540;
-	Fri, 14 Feb 2025 11:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="AiN7Vw+K"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8422F25A358;
-	Fri, 14 Feb 2025 11:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BB225D527;
+	Fri, 14 Feb 2025 11:05:13 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBAC186E40
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531119; cv=none; b=qKZgCimHoec9Kyt153NBA2uRRmz+vsReqtKe2Uc6PMo5d3sKU9yY3WKe0N//Iwe6fQ4vb1kKKNawuGgg5lL5h/ais857b3PaMUp5gcZgRaNPYBv5vdtBEv1R6axW+uAi3tyIzOS2KGbvAQ8gjInMEc89Z2u2o70MOza4IJfeW04=
+	t=1739531112; cv=none; b=f1/YGwz5Ao03sc4JunzvFfgaUAIvlvnaVVFMDqrK5NufMSTQJwEnAin27hpeNoONtIJ7jQPdOy5u0ha8r+rkAdrHc6LRwYyhrLFNp5PmNZa3oAATz57Zm5eQDsHapQeICUBEywg/EIN6PcMgFZSKFqcM5wmdUYdXn05uMTmbA7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531119; c=relaxed/simple;
-	bh=bfFvQR7b9Eo1y4+Wi3gy1LHrsKMeE2pW8w9ssUoqus8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gp3E6+yNDae5ymjUkGJoyY5r38jZ72+yDSMRQBOCL5mOQY10v/OBn3W6wAdEY2RojWZv+yNT5epYhufhTyknSDAn9qHCO88m/7tCSEtS7cvYlOWTa2FiDv4NRmmxH7M87NU8tJLQoCueXVdXUlmkdHDhHk7loCj8q0MOLoDPQRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=AiN7Vw+K; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739531084;
-	bh=7q1XuqsIgd5QB4KaATSp9610UQQvNvpW6b5+d5deU7E=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=AiN7Vw+KxZ5aUjBoXSZMFl9QWHstKV9TFxgiOwy9b5vbRTN4jNuscbId7iOPpg9Ac
-	 OrdVbzJSrl684eTiarRHTgRsqbMnXkM8kq6fiG1CQnRFp2aD+8xop0VaTpa60fWdKI
-	 JIOY/4ShM1C5oypiKTkwJFQE8/tUBssYQ2mMaVK8=
-X-QQ-mid: bizesmtp78t1739531067temjoge9
-X-QQ-Originating-IP: yGJJ4u6eJcgJ0RBUkY++t7Lt6A4QNPsaP+onWTsvJZs=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Feb 2025 19:04:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14881646394383815706
-From: Wentao Guan <guanwentao@uniontech.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] HID: i2c-hid: improve i2c_hid_get_report error message
-Date: Fri, 14 Feb 2025 19:04:18 +0800
-Message-Id: <20250214110418.16000-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1739531112; c=relaxed/simple;
+	bh=EOZeC2qW3tBDxODk6SdrQdSgbgk94gMrwuSWMSP+hQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBUpD5a665jgkZERBzFWj5xHRTBhP0v5yOb9IMZH0yeWXtWGU4yqqGuZtyfnrHQA6EljRBmxTC2ihfVPt2XgnauGf786bOKlilSTgKn+ZLzZ9VhJ9689CqVD99VrCGfywXlF9DHIlx/MLkIh0KLUBAmeE50/kbkVzm3JlZvrUPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 25BD972C8CC;
+	Fri, 14 Feb 2025 14:05:09 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 15DEF7CCB3A; Fri, 14 Feb 2025 13:05:09 +0200 (IST)
+Date: Fri, 14 Feb 2025 13:05:08 +0200
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>, Oleg Nesterov <oleg@redhat.com>,
+	Eugene Syromyatnikov <evgsyr@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
+	Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/31] ARM: Switch to generic entry
+Message-ID: <20250214110508.GA19194@strace.io>
+References: <20250212-arm-generic-entry-v4-0-a457ff0a61d6@linaro.org>
+ <20250214010325.GA12626@strace.io>
+ <CACRpkdZJYFUhmPg3EWJeU42fzJMzWm7Sgn3XfELB2-PSCf6Ssw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: MELI+WA1+YWQcZWBz7pJwqyge3tHMHZH919bCPhc+/ABH75xkJ1p99uA
-	OaX/lZ9XFbdVOix34z/HyzokFjMfvqXKTQN/p4DTVY7c5bpTJnNoUICzUe9JTCfPlN+6r2h
-	EQWhXkybYVmd/dhMLEsS9DuZO55ZVXt+ZAhZXUwkJYuhDVvajTIaY21jyIYT9XrOONv+Kg9
-	f582nAjqAAN9vZ5B8e8nn032iqrloWilEF2wItxnjQNFW1arQEMT+aRXepCKKOCS92nYUkp
-	kU6J/g4LcLp700tpZfA/q3gS7Pxe7GudZZiisZ1aDSYe/XB3GXIqNSzIMb7WtKRzzeciPyg
-	rPpZkHcGZQMryCgnaWu0S8tN68syAMzfyKW6Q6RDfw745t0vlJZbOvMXyM/zO/LO8EuzVW9
-	zF3ZHnAsmuINKvEbanrAPctpJJc/CFMK7KEKanL2zmUR1M5rRaWW/fObqWMJM5YQDK27xt4
-	+G5pniZE8+xdtSUyYLbgRmISvYkFb8O64U4No+NAFu4N/ypWW12n+KEwndjwZlEO068Bw3g
-	S+VH7rM4wajeiVrmYZB6wgoXxndHmX+RBI6fbLPUyrVzVUpgwP0SEw6RImLixfb488ytrY2
-	tgFWIEjBORLD30GITBh8LSh2R+HEL9S/z0JPERQb8LL6fIHwjZjaG4djCVSNluwBBrtkBsg
-	09LHydf8K9IEcyQR7YLLvl0bdlbK4Y+z2twK86ZIY3iYHgEhHsHmGmZ5LB8ErI0f3oo6vBX
-	v864q4EsWtD4LbRJ5mpQExPGFWTt845lkly0II8MJWXMWJWHt9IztgroO4oys6qRLDwEorI
-	cZxba6upKXw6mJRJJudi88aqfBDES3dLmBwVMRBLWPUVx8WSpX21JvJvwfhM64obJTP/mnF
-	g4V1h3bsboyweP/hNfBQ1zKlQKMgd/cZpS7/LitGDCTCkAzFJrbMehSfRieq1cWoRF4ZpBY
-	QV/Mip5XYZs91mEH5Bg2K3DVrFPVt+8bS5JvLO11Wzp2OX499PIr8ZHds
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <CACRpkdZJYFUhmPg3EWJeU42fzJMzWm7Sgn3XfELB2-PSCf6Ssw@mail.gmail.com>
 
-We have two places to print "failed to set a report to ...",
-use "get a report from" instead of "set a report to", it makes
-people who knows less about the module to know where the error
-happened.
+On Fri, Feb 14, 2025 at 11:47:30AM +0100, Linus Walleij wrote:
+> On Fri, Feb 14, 2025 at 2:03 AM Dmitry V. Levin <ldv@strace.io> wrote:
+> > On Wed, Feb 12, 2025 at 12:22:54PM +0100, Linus Walleij wrote:
+> > [...]
+> > > - Tested some ptrace/strace obviously, such as issuing
+> > >   several instances of "ptrace find /" and let this scroll
+> > >   by in the terminal over some 10 minutes or so.
+> >
+> > Could you also run the strace test suite, please?  Given that it used to
+> > catch quite a few regressions in the past, it could be useful in this case
+> > as well.
+> 
+> Sure, where can I find this test suite?
 
-Before:
-i2c_hid_acpi i2c-FTSC1000:00: failed to set a report to device: -11
+It's a part of strace, you can find it e.g. at
+https://github.com/strace/strace
 
-After:
-i2c_hid_acpi i2c-FTSC1000:00: failed to get a report from device: -11
+To build and run it one can roughly do
+./bootstrap && ./configure && make -j`nproc` && make -j`nproc check
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
----
- drivers/hid/i2c-hid/i2c-hid-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 75544448c2393..d3912e3f2f13a 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -290,7 +290,7 @@ static int i2c_hid_get_report(struct i2c_hid *ihid,
- 			     ihid->rawbuf, recv_len + sizeof(__le16));
- 	if (error) {
- 		dev_err(&ihid->client->dev,
--			"failed to set a report to device: %d\n", error);
-+			"failed to get a report from device: %d\n", error);
- 		return error;
- 	}
- 
 -- 
-2.20.1
-
+ldv
 
