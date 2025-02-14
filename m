@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-514614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E19A35950
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BF1A35951
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6413A4ED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B33AC098
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CDC227BA6;
-	Fri, 14 Feb 2025 08:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcKuSoQN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D075227BA3;
+	Fri, 14 Feb 2025 08:49:19 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F671189B9D;
-	Fri, 14 Feb 2025 08:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEAC207E13
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739522941; cv=none; b=PgUDEcuSDal5XlNCcXn2whkaghZC5dmgZlekwevm/cbvNEGC4NvZQH8X55tOc2l4H+hO5iLhpwpj99K0gGFqoAjRiyh6w69GYbyP0Sje0xAhmhZBVLoSO29yZHy1f2FKyQXrUOtTGkOahpsOp+mA8IKTdrhB2j+HEYBNnRKT7aA=
+	t=1739522959; cv=none; b=o+pDAfn0EJwx91fVvYgQwnmNkSap51DJaFoxUE7eTtoIE5HdqSFifukOaAUXCgqz4qS8eSOdQTbYZRuTF56KzMcpKuDGF0/Nf+ROM8Xu9JHb2Jl3a9TU1d0vtPi5Q+HJablAeGlL6X9B6hY+ITkk9u25//7PcpJSe4L+02OBsaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739522941; c=relaxed/simple;
-	bh=WmV04MPnFaon6zaZ8p5gO3YrG+dbYIloJXb1/ltHrvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGM8jJ7Un3Q+t2H39e75S4KLXhkp1gFqZ2mLRplV6WOEJSSb6Ip1Ux40TqwM2JHwHUe7K/Zt+1ing4tV8QNr0griy8NZiKOK9cXKL7Mjoun0JuWoSKM3MDKLFH9JBnWAoJ+6hGj6xCfiGh+K+RuLaZPzuR3mT23tyIDaIAyro6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcKuSoQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9C2C4CEDF;
-	Fri, 14 Feb 2025 08:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739522940;
-	bh=WmV04MPnFaon6zaZ8p5gO3YrG+dbYIloJXb1/ltHrvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PcKuSoQNuodvlie1cZdUqIFzaaz4Q+bElNQWC7V87q21/j9UNBbO7qdf36O2kDMGi
-	 VlNzxWxCoConcVaj3v5pdyvA5QyV/g0a9qz6NiqJ1+xj9Afzv7rFWoGkxHDt7Z0TGm
-	 gv+bfLlN32A6o/i724hWn1qWHp8OkA4eJfpkwQJF3qQ9p3MGdfZKYvKVfZgNjrQfE2
-	 +q82AMksdN4ALr/a8EJk8i/JNXWKkDAW6W+0weh4ajDYQnQCH2jMJOX0MK++9ib6ne
-	 IILl4Zaac8D8Pw/fqPN6KWGNSOQozr4v1lsqCvhu1uKH31z28IzDMdP/ALfFE/JTzR
-	 wmAEGxSg2pK5Q==
-Date: Fri, 14 Feb 2025 09:48:57 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Wilson Ding <dingwei@marvell.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, andrew@lunn.ch, gregory.clement@bootlin.com, 
-	sebastian.hesselbarth@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, salee@marvell.com, gakula@marvell.com
-Subject: Re: [PATCH 4/4] [PATCH 4/4] arm64: dts: marvell: cp11x: Add reset
- controller node
-Message-ID: <20250214-famous-rainbow-pig-d4bd3b@krzk-bin>
-References: <20250214065833.530276-1-dingwei@marvell.com>
- <20250214065833.530276-6-dingwei@marvell.com>
+	s=arc-20240116; t=1739522959; c=relaxed/simple;
+	bh=gfPYUhwKYv1yN+ZIi7Gwz/R6bJJpxCjLJcrBc2tzsb8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MHUm6XCZ1LJYHBT/iEtzBY3Leq7lEAJMQdop1RiaiklkWl7e8qMgx9Tqs8akeiw38oR/YZNvxkFQy/5NYCmlwbLF5YDmaStVV1MnkiB6QOpdjCHHBg/4oSDmw20RxU3iyduIZuNVQ1j3iyU5PgNYbLMGurqAn1AYGpIBK+Z2UaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	(Authenticated sender: kovalevvv)
+	by air.basealt.ru (Postfix) with ESMTPSA id 85BD4233B5;
+	Fri, 14 Feb 2025 11:49:13 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: joseph.qi@linux.alibaba.com
+Cc: jlbec@evilplan.org,
+	kovalev@altlinux.org,
+	kurt.hackel@oracle.com,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev,
+	syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+Subject: [PATCH v3] ocfs2: validate l_tree_depth to avoid out-of-bounds access
+Date: Fri, 14 Feb 2025 11:49:08 +0300
+Message-Id: <20250214084908.736528-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
+In-Reply-To: <bb8e95f6-ee91-47b9-82a0-86d576f67e39@linux.alibaba.com>
+References: <bb8e95f6-ee91-47b9-82a0-86d576f67e39@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250214065833.530276-6-dingwei@marvell.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 10:58:33PM -0800, Wilson Ding wrote:
-> The unit soft-reset configuration register is part of the system
-> controller register.
-> 
-> Signed-off-by: Wilson Ding <dingwei@marvell.com>
-> ---
->  arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> index 161beec0b6b0..b82003df15e0 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> @@ -273,6 +273,12 @@ CP11X_LABEL(gpio2): gpio@140 {
->  					 <&CP11X_LABEL(clk) 1 17>;
->  				status = "disabled";
->  			};
-> +
-> +			CP11X_LABEL(soft_reset): soft-reset@268 {
+The l_tree_depth field is 16-bit (__le16), but the actual
+maximum depth is limited to OCFS2_MAX_PATH_DEPTH.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Add a check to prevent out-of-bounds access if l_tree_depth
+has an invalid value, which may occur when reading from a
+corrupted mounted disk [1].
 
-Usually: reset-controller
+Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
+Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd [1]
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+v3: Change the condition "> OCFS2_MAX_PATH_DEPTH" to ">= OCFS2_MAX_PATH_DEPTH"
+v2: Restricted depth to OCFS2_MAX_PATH_DEPTH and moved the check
+    to __ocfs2_find_path().
+---
+ fs/ocfs2/alloc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 4414743b638e8..cec8fc5cb8e87 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -1803,6 +1803,14 @@ static int __ocfs2_find_path(struct ocfs2_caching_info *ci,
+ 
+ 	el = root_el;
+ 	while (el->l_tree_depth) {
++		if (unlikely(le16_to_cpu(el->l_tree_depth) >= OCFS2_MAX_PATH_DEPTH)) {
++			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
++				    "Owner %llu has invalid tree depth %u in extent list\n",
++				    (unsigned long long)ocfs2_metadata_cache_owner(ci),
++				    le16_to_cpu(el->l_tree_depth));
++			ret = -EROFS;
++			goto out;
++		}
+ 		if (le16_to_cpu(el->l_next_free_rec) == 0) {
+ 			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
+ 				    "Owner %llu has empty extent list at depth %u\n",
+-- 
+2.42.2
 
 
