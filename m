@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-514916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A93A35D4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E99A1A35D51
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9E57A242E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:09:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 889D77A1657
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABBB263C69;
-	Fri, 14 Feb 2025 12:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59F2263C81;
+	Fri, 14 Feb 2025 12:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaN/ixHY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fU4BxNWA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509AC2139A8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1842139A8;
+	Fri, 14 Feb 2025 12:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739534996; cv=none; b=pQfkyoY1mHOlfc0DSEs9ASKePggWXaNJmfn6o13M3w6FKfaPfIEMx0pb1TdAMtpjlCwW3mjSYjQDPWne4S+mnF4RDF37noQC7YlTK32mZ6BwEhHDPObEwALntqXjVDtYWA2XlOBdhONjD2ytcgcGXyln/nRjqfYe095F79yTi9w=
+	t=1739535055; cv=none; b=mhslpJmL8pDLPvtPGyP5lmnQ2U7xw8F8N7NZUUDM2TJ2B6EIEzVUTTB44BIJTlvKT9LU2bDIvscrBblJcn1Whw2N/z9q0G72zydKbpsmS8D7EXN1jc6unjPdTt8VfZUholv5uj1Ry1yazb2eWYXAb2ZzkmlQPyk/eTWVlLnOt0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739534996; c=relaxed/simple;
-	bh=aMZ0cmH8caWaku0ONbONWBbEbf8eUQ81CViz/ZDY0Ko=;
+	s=arc-20240116; t=1739535055; c=relaxed/simple;
+	bh=Vkm/fIjGV1Zi4OLao+eFLnkFlhtDFUA1jZRivO8SgH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyX9UwrFQQ3Saw6lyZ7wRburG42Ax2Z4XFglQ0cQe78+7u5QIko9ojL8m43ct+4CE0i2j48ZJOtFV5koMoCj6Hd/jxDPq272dwphJh8ZhFi7T/+VvP5KADGb5mkxDMkcyUxKfPY+MDWqkQ+QSdk5HNmvgVeee2K+4/Sj1aKG2T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaN/ixHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EEDC4CED1;
-	Fri, 14 Feb 2025 12:09:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o9X1v711YEytNs2hx+EaU/6L5AMRUVceD45WZyhZN62609o5yWIE+gM8K8sqcFPEy8DK3TWDOOts19CxYxJNlUCnm2DYnCFns+kn9xaerALUohtvEX3jocrnpC0ENm6Z2qJdLPKHLwxDzQeBAz/1yBWPkzoyktTJaUYRFXIvojw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fU4BxNWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A05C4CED1;
+	Fri, 14 Feb 2025 12:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739534995;
-	bh=aMZ0cmH8caWaku0ONbONWBbEbf8eUQ81CViz/ZDY0Ko=;
+	s=k20201202; t=1739535054;
+	bh=Vkm/fIjGV1Zi4OLao+eFLnkFlhtDFUA1jZRivO8SgH4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kaN/ixHYZVsyIh53ymK5s3pCRmBqz31qY2izgd8EvdNcoO0lNCyxV5O9t922mcH6A
-	 VQhA5lPJuajiEsBcVSZjGdPeT1XDaW5KkF4rD0HyuPzoC9yVM7HuZByJO1bjVg6QAN
-	 W7ONolEqPuyonTXbNBJYImXvPPWvsldL2GBI0DTQXU8jYBZ26B/6CpclU+E1X5iOVT
-	 KedRs79+TMfk1CB34POekCy6vqNhHGP95dw1cdygpe+f6Dx/cXco7rCXla4DTH3X3X
-	 am6o0pElXYsqn9P1awqfvXqHEEAV2qV3Iph7MWGgB/mq+zyEz7mtkWqXkF07ogP11J
-	 J+IEgrLHtQL6g==
-Date: Fri, 14 Feb 2025 12:09:50 +0000
-From: Will Deacon <will@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	David Airlie <airlied@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: Clean up FW version information display
-Message-ID: <20250214120949.GA12809@willie-the-truck>
-References: <20250213161248.1642392-1-steven.price@arm.com>
+	b=fU4BxNWAQ6LOCjJ3kxNM5vG47SfVZsUn20Mg2wLTX/ctNqprza2c5NyVHswaCZVWS
+	 M9go970yksmR0P5uiPGOjnmhQ5b+h2Ax7I3MLQ2q1Dmr7DzBeO7cscLjrAexH/Z6eh
+	 JpjBei5bdQmhhNyZzByHI+C6Qmuh1+6RWSfaqCtirTNmwvKY7TXm5QWIKxTXduUqRS
+	 H+dkenyK9R4QHkKfNnhWpRtgVVqeKpOdTEdoLy+5+nT4KVNRpUAZFKdaY7OSgMh3yy
+	 gPyoSkdB05f1to3IY6XgbGAKHED+Ym73d9IAtz6d9cvKM/oMF1qPeIVIvDlmsd/bVi
+	 zw+KhhaPyUODQ==
+Date: Fri, 14 Feb 2025 13:10:52 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
+ report
+Message-ID: <Z68yzBURiIr_7Lmy@pavilion.home>
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-4-frederic@kernel.org>
+ <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250213161248.1642392-1-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
 
-On Thu, Feb 13, 2025 at 04:12:48PM +0000, Steven Price wrote:
-> Assigning a string to an array which is too small to include the NUL
-> byte at the end causes a warning on some compilers. But this function
-> also has some other oddities like the 'header' array which is only ever
-> used within sizeof().
+Le Fri, Feb 14, 2025 at 01:01:56AM -0800, Paul E. McKenney a écrit :
+> On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
+> > A CPU coming online checks for an ongoing grace period and reports
+> > a quiescent state accordingly if needed. This special treatment that
+> > shortcuts the expedited IPI finds its origin as an optimization purpose
+> > on the following commit:
+> > 
+> > 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
+> > 
+> > The point is to avoid an IPI while waiting for a CPU to become online
+> > or failing to become offline.
+> > 
+> > However this is pointless and even error prone for several reasons:
+> > 
+> > * If the CPU has been seen offline in the first round scanning offline
+> >   and idle CPUs, no IPI is even tried and the quiescent state is
+> >   reported on behalf of the CPU.
+> > 
+> > * This means that if the IPI fails, the CPU just became offline. So
+> >   it's unlikely to become online right away, unless the cpu hotplug
+> >   operation failed and rolled back, which is a rare event that can
+> >   wait a jiffy for a new IPI to be issued.
+> > 
+> > * But then the "optimization" applying on failing CPU hotplug down only
+> >   applies to !PREEMPT_RCU.
+> > 
+> > * This force reports a quiescent state even if ->cpu_no_qs.b.exp is not
+> >   set. As a result it can race with remote QS reports on the same rdp.
+> >   Fortunately it happens to be OK but an accident is waiting to happen.
+> > 
+> > For all those reasons, remove this optimization that doesn't look worthy
+> > to keep around.
 > 
-> Tidy up the function by removing the 'header' array, allow the NUL byte
-> to be present in git_sha_header, and calculate the length directly from
-> git_sha_header.
+> Thank you for digging into this!
 > 
-> Reported-by: Will Deacon <will@kernel.org>
-> Fixes: 9d443deb0441 ("drm/panthor: Display FW version information")
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Note that there should be no functional change from this patch.
-> ---
->  drivers/gpu/drm/panthor/panthor_fw.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index 4a9c4afa9ad7..645fc6d2e63b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -636,8 +636,8 @@ static int panthor_fw_read_build_info(struct panthor_device *ptdev,
->  				      u32 ehdr)
->  {
->  	struct panthor_fw_build_info_hdr hdr;
-> -	char header[9];
-> -	const char git_sha_header[sizeof(header)] = "git_sha: ";
-> +	const char git_sha_header[] = "git_sha: ";
-> +	const int header_len = sizeof(git_sha_header) - 1;
+> When I ran tests that removed the call to sync_sched_exp_online_cleanup()
+> a few months ago, I got grace-period hangs [1].  Has something changed
+> to make this safe?
 
-nit: strlen()?
+Hmm, but was it before or after "rcu: Fix get_state_synchronize_rcu_full()
+GP-start detection" ?
 
-In any case, this fixes the arm64 CI [1], so:
+And if after do we know why?
 
-Acked-by: Will Deacon <will@kernel.org>
-
-It would be great to land this as a fix to save us having to carry it
-on our CI branch.
-
-Cheers,
-
-Will
-
-[1] https://lore.kernel.org/r/20250213154237.GA11897@willie-the-truck
+Thanks.
 
