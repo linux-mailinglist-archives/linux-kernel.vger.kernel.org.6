@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-514360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E67FA355ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C8AA355EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974223ADC19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA143ADC76
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EDA19007F;
-	Fri, 14 Feb 2025 04:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F41E1917D6;
+	Fri, 14 Feb 2025 04:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iapLYMpT"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UdYFM98s"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D55B18FDA5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6D418FC9F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739508821; cv=none; b=sftnM6kpi9uy3rx+pRp/mDV3PuR1+nb9RN1YZ5QfJMjOzqSXOEYrKq1w03kJAnRjB5rW3XVepmCsplV4JgSdrhn2dg07LABJ0/aGo0/mqu0JnaLh8qJwFxmHri1En55BQICCHx25Z2YODTSSwPDxFDA5J2Tz1mpp6Un9jF4npec=
+	t=1739508827; cv=none; b=QyjbxsiJRD/37SUXBvoNMEXiU0ynWJnjzjyuPyBY8frC/kX0vCPMty4rF5nbD76ll4fBXRIW7sW2TQvSTxI+VUkOgBKY1fWBEx0sk0vcujtLowgOZyfaWbYfbNFniGUnXrkQAXWZhevvWiJ/pDyAxs6cd5a876HpyzCtgjE0iPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739508821; c=relaxed/simple;
-	bh=COsjrWCrhKbYAUy1yAf/i0nha4gWII3XHI6ohEWeZ4s=;
+	s=arc-20240116; t=1739508827; c=relaxed/simple;
+	bh=3bl4FZa1Jj9/SryddhJVpujsF+YKBcOIbQtdPgtbXnI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P/MyV527DacUNYLABQyPTZPDv+kplZ/9ORsKr9g7lha8pQkUUwsL41rdtZPpsGVXD9SnezEchgWl+8xFRABB9iyRJ/OFkKveXkMPDZQJUxVTbCt8/nttyvErlHD51j2Vks9WzrqkPFs81vuJXU8LCflh5tVl1yQnL9lRasXGDTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iapLYMpT; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=TX2t7of7DsEcT/1E/imAWGJCVS+q/T4FbViIDOJHR6WR4Whnte1UbbR2nvcLo3WcEgIGvqyKoXPj99qZplnrG0TSxDzOjkChwQgzREy9LqhkEFFLuQlbpqvTsBVq96ZQ8q4X0GGgM1/M/NJCl0hZWPAnkXb6VJgWZ4vDspyc2wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UdYFM98s; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21f2339dcfdso25110725ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:53:39 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c8cf98bbso32562385ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:53:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739508819; x=1740113619; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1739508825; x=1740113625; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g8MSYx1r6vOiRHwxjnCDNpKvIAk9Qp1UAjAoAUDj4z4=;
-        b=iapLYMpTrM2FlHXqcT8qiHAFx20mP/GrXKuXcadlP31bx9hXGCZpWhrd1AabJsqlcR
-         K8UA6zterGxnW3/pIL8vOWcLpgzWeV6nwz4kwdLavVx8KIUS5ZSUApqQi0YXzn49v5LH
-         8WxZdxL94YtKXDwC/0Z69PlFATmif6fD2ls9c=
+        bh=cvgHEnC+lRfOrRLv2RIVOYlOBk4EIx2tIzOwTFt2Qag=;
+        b=UdYFM98se8kl4KobKhRtHWD97BzEtVkFXufCI80+8os4v3p4trqh7cETGGCIy5uC5F
+         XvagkRB51cr47Rg1R6rZoePCDAkHP+KSadNDafZJ1sI09JHYCPalQmNIod3ja7t1k9Z3
+         ROXAKIw37K84VDOuPuGhMdODafpvr/pGvB3Ew=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739508819; x=1740113619;
+        d=1e100.net; s=20230601; t=1739508825; x=1740113625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g8MSYx1r6vOiRHwxjnCDNpKvIAk9Qp1UAjAoAUDj4z4=;
-        b=Lp77TOlFargiWXXQCbDknlNpSPqSXy1oUJAyYc7lpVFCDlHTr5O3vQTYcj+VU4KpPq
-         LYKE7e7Ro4fPFaFzBMDrteWB9gAxWKiZnMOs8JgNGiDCnW+IWISHFtotfeSYq08QtW1l
-         Gx1nH0Bcb3vnO8xwUba+cEOZArK+4IPjTBcOkWiSrbThMo+sOgJbRp66DB/PCFe3sQR3
-         vEqPd3b+JNPGvGvG3tfG54Vu2a3arqpjC8WwI3HhAvCj2hvDHZXUOJpqWysTzVXZLXK7
-         VfdB5A6ut/YPcQ+0JsVfkRdGuHoArKGfi2iHVCTDhXq+hpOFkube+8PqUm5/4GtLMHGI
-         Ue9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX12JwOudXQPKfVCS9MfAuyqhnlKK50yydg9MgteW3ZMV6IFvA5LCcCgzHoVD/07XUTti3/Vvi0N6MuBbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb0pf/jYDmRYeszsbcuWcxJftPeYcIhMagSuyamcnxh3id7OCZ
-	Ddg2BQLLeH3F5roe5AMpwT9xPyhP7lhYCglHFHb4A3uckgSkPRFZhsynf0Ztmw==
-X-Gm-Gg: ASbGncuVVHDHwN7NP4KsBPJ48/TGoH7xFiQy5Fs2L/2JKEp8kl+7kt5tckPs3HGtCkL
-	eCWS1Db1GClpX0UYDVhKTpOB7+1aZ8lF2VFKqLpc2skMcA8d2IqABiQWNReFXe3MQC0Aow8O+bj
-	qNQSWEZH0H7qsExPJ/ZxX8SdvXGAITVOHWmU1eWh7qzeRNtAVRM4+jnIIJWAAYU+Http9rq7T/F
-	xZg7kF27ZkOlx4KwIGIghdYodOOmOLuB1GPe+86OL/dmsauXQdXHyIZn2D44p4NRW5cUgLShMQt
-	23ZruWe8Om2q6JVp5w==
-X-Google-Smtp-Source: AGHT+IFj0J84blWWRorX7QC5QTsPm4yxqb/UskRAxNtWaOKmY3i/R9l8RGftlk8+B1lrXJZdO59P7Q==
-X-Received: by 2002:a17:903:18a:b0:220:e98e:4f1b with SMTP id d9443c01a7336-220e98e52b9mr44389295ad.0.1739508818756;
-        Thu, 13 Feb 2025 20:53:38 -0800 (PST)
+        bh=cvgHEnC+lRfOrRLv2RIVOYlOBk4EIx2tIzOwTFt2Qag=;
+        b=o1Vk4xZc2v0790I7EcsWxHs6DrIsfcbslzD0GXusgbsRuN45MFISDfoeHgfRjX9PWw
+         5N8c6fTZnH40NgbiGpL7DLLJGE0vql44JfjsI+TZmdSLeG7potOdynmTC/7176xMVZFn
+         INmDdFf/Wox1jzolbPTqu3zrbYJQDpL1GFi33WNRzSmJPvxFbB+LnQ82Y31gJ6GcIX41
+         Rl2/uG+Hon8PwKU7Ve0jYkovtoF/eCCE3j2mwhXnaxrMwl/ddjllnYrD4KhwyonCBoPg
+         gf5E/vrlKlWLptkfCCMew9fih62DcDsVoVMp/jCaMbt2RZdkwAWI2vMsBTaASNtVgIl/
+         j4tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8OwVWNfcHdbEHs8riGwCGudpW0aqxyBxP8AylUZf0piTrwZ5h3w4pz0q818zrwEClpikHONQzJYNJJ4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZdGXW2IRnApcnD9EmtUTeJAkDuJ2qBrNkH/L+A/TCI0KNRazm
+	BR+R03hHkCwpDcFTJ766cs2eg/ypRg83WFyX+hQGSX7afcky9oBYBifg/nuDeA==
+X-Gm-Gg: ASbGncsv7d/5QPXShj7d+okr7wwki6Hr8HuFPNwzQVZceSZGjAPR1WNV2KdmO3iwZLO
+	l77p3rBOdbBMM2vH1g7/rcIWMIqYhlLAaSX0qn53QhWq5VZt+Xque1W9Ks+fd5ml7YKt9Bjh5BV
+	v7SlLPk6ztoL9gzVsbAFLAfNnF4p9YmlD8mEyNg6J26Nq1MFuHjg0D+IyUNrfvffb+zgbRAWL7c
+	pvSlNIdsjruN0SLv2WOxT7yz8mUFF8ANUpNv3fTbgkNy0Ka557bJYIfLLgqtZqv0xkQYE84pWH9
+	TbzIHii3RrmJvqIn7g==
+X-Google-Smtp-Source: AGHT+IFtBGqgz6iEWt7LMNhyXXy7Ao2/LISUPvugqZVTStAhfwtsv9UYgCngz+ynDyppB1uJogIN/g==
+X-Received: by 2002:a05:6a21:6d85:b0:1ee:85b2:ef73 with SMTP id adf61e73a8af0-1ee85b2efcemr458480637.34.1739508825453;
+        Thu, 13 Feb 2025 20:53:45 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:942d:9291:22aa:8126])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d53492d0sm20895595ad.35.2025.02.13.20.53.36
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-adb5a92c6d8sm2017586a12.65.2025.02.13.20.53.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 20:53:38 -0800 (PST)
+        Thu, 13 Feb 2025 20:53:45 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -77,9 +77,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v6 13/17] zram: switch to new zsmalloc object mapping API
-Date: Fri, 14 Feb 2025 13:50:25 +0900
-Message-ID: <20250214045208.1388854-14-senozhatsky@chromium.org>
+Subject: [PATCH v6 14/17] zram: permit reclaim in zstd custom allocator
+Date: Fri, 14 Feb 2025 13:50:26 +0900
+Message-ID: <20250214045208.1388854-15-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 In-Reply-To: <20250214045208.1388854-1-senozhatsky@chromium.org>
 References: <20250214045208.1388854-1-senozhatsky@chromium.org>
@@ -91,156 +91,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use new read/write zsmalloc object API.  For cases when RO mapped
-object spans two physical pages (requires temp buffer) compression
-streams now carry around one extra physical page.
+When configured with pre-trained compression/decompression
+dictionary support, zstd requires custom memory allocator,
+which it calls internally from compression()/decompression()
+routines.  That means allocation from atomic context (either
+under entry spin-lock, or per-CPU local-lock or both).  Now,
+with non-atomic zram read()/write(), those limitations are
+relaxed and we can allow direct and indirect reclaim.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zcomp.c    |  4 +++-
- drivers/block/zram/zcomp.h    |  2 ++
- drivers/block/zram/zram_drv.c | 28 ++++++++++------------------
- 3 files changed, 15 insertions(+), 19 deletions(-)
+ drivers/block/zram/backend_zstd.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-index cfdde2e0748a..a1d627054bb1 100644
---- a/drivers/block/zram/zcomp.c
-+++ b/drivers/block/zram/zcomp.c
-@@ -45,6 +45,7 @@ static const struct zcomp_ops *backends[] = {
- static void zcomp_strm_free(struct zcomp *comp, struct zcomp_strm *zstrm)
+diff --git a/drivers/block/zram/backend_zstd.c b/drivers/block/zram/backend_zstd.c
+index 1184c0036f44..53431251ea62 100644
+--- a/drivers/block/zram/backend_zstd.c
++++ b/drivers/block/zram/backend_zstd.c
+@@ -24,19 +24,14 @@ struct zstd_params {
+ /*
+  * For C/D dictionaries we need to provide zstd with zstd_custom_mem,
+  * which zstd uses internally to allocate/free memory when needed.
+- *
+- * This means that allocator.customAlloc() can be called from zcomp_compress()
+- * under local-lock (per-CPU compression stream), in which case we must use
+- * GFP_ATOMIC.
+- *
+- * Another complication here is that we can be configured as a swap device.
+  */
+ static void *zstd_custom_alloc(void *opaque, size_t size)
  {
- 	comp->ops->destroy_ctx(&zstrm->ctx);
-+	vfree(zstrm->local_copy);
- 	vfree(zstrm->buffer);
- 	zstrm->buffer = NULL;
+-	if (!preemptible())
++	/* Technically this should not happen */
++	if (WARN_ON_ONCE(!preemptible()))
+ 		return kvzalloc(size, GFP_ATOMIC);
+ 
+-	return kvzalloc(size, __GFP_KSWAPD_RECLAIM | __GFP_NOWARN);
++	return kvzalloc(size, GFP_NOIO | __GFP_NOWARN);
  }
-@@ -57,12 +58,13 @@ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
- 	if (ret)
- 		return ret;
  
-+	zstrm->local_copy = vzalloc(PAGE_SIZE);
- 	/*
- 	 * allocate 2 pages. 1 for compressed data, plus 1 extra for the
- 	 * case when compressed size is larger than the original one
- 	 */
- 	zstrm->buffer = vzalloc(2 * PAGE_SIZE);
--	if (!zstrm->buffer) {
-+	if (!zstrm->buffer || !zstrm->local_copy) {
- 		zcomp_strm_free(comp, zstrm);
- 		return -ENOMEM;
- 	}
-diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
-index 23b8236b9090..25339ed1e07e 100644
---- a/drivers/block/zram/zcomp.h
-+++ b/drivers/block/zram/zcomp.h
-@@ -34,6 +34,8 @@ struct zcomp_strm {
- 	struct mutex lock;
- 	/* compression buffer */
- 	void *buffer;
-+	/* local copy of handle memory */
-+	void *local_copy;
- 	struct zcomp_ctx ctx;
- };
- 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 2e46ea542ecd..87ce304a60aa 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1603,11 +1603,11 @@ static int read_incompressible_page(struct zram *zram, struct page *page,
- 	void *src, *dst;
- 
- 	handle = zram_get_handle(zram, index);
--	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
-+	src = zs_obj_read_begin(zram->mem_pool, handle, NULL);
- 	dst = kmap_local_page(page);
- 	copy_page(dst, src);
- 	kunmap_local(dst);
--	zs_unmap_object(zram->mem_pool, handle);
-+	zs_obj_read_end(zram->mem_pool, handle, src);
- 
- 	return 0;
- }
-@@ -1625,11 +1625,11 @@ static int read_compressed_page(struct zram *zram, struct page *page, u32 index)
- 	prio = zram_get_priority(zram, index);
- 
- 	zstrm = zcomp_stream_get(zram->comps[prio]);
--	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
-+	src = zs_obj_read_begin(zram->mem_pool, handle, zstrm->local_copy);
- 	dst = kmap_local_page(page);
- 	ret = zcomp_decompress(zram->comps[prio], zstrm, src, size, dst);
- 	kunmap_local(dst);
--	zs_unmap_object(zram->mem_pool, handle);
-+	zs_obj_read_end(zram->mem_pool, handle, src);
- 	zcomp_stream_put(zstrm);
- 
- 	return ret;
-@@ -1725,7 +1725,7 @@ static int write_incompressible_page(struct zram *zram, struct page *page,
- 				     u32 index)
- {
- 	unsigned long handle;
--	void *src, *dst;
-+	void *src;
- 
- 	/*
- 	 * This function is called from preemptible context so we don't need
-@@ -1742,11 +1742,9 @@ static int write_incompressible_page(struct zram *zram, struct page *page,
- 		return -ENOMEM;
- 	}
- 
--	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
- 	src = kmap_local_page(page);
--	memcpy(dst, src, PAGE_SIZE);
-+	zs_obj_write(zram->mem_pool, handle, src, PAGE_SIZE);
- 	kunmap_local(src);
--	zs_unmap_object(zram->mem_pool, handle);
- 
- 	zram_slot_lock(zram, index);
- 	zram_set_flag(zram, index, ZRAM_HUGE);
-@@ -1767,7 +1765,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
- 	int ret = 0;
- 	unsigned long handle;
- 	unsigned int comp_len;
--	void *dst, *mem;
-+	void *mem;
- 	struct zcomp_strm *zstrm;
- 	unsigned long element;
- 	bool same_filled;
-@@ -1813,11 +1811,8 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
- 		return -ENOMEM;
- 	}
- 
--	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
--
--	memcpy(dst, zstrm->buffer, comp_len);
-+	zs_obj_write(zram->mem_pool, handle, zstrm->buffer, comp_len);
- 	zcomp_stream_put(zstrm);
--	zs_unmap_object(zram->mem_pool, handle);
- 
- 	zram_slot_lock(zram, index);
- 	zram_set_handle(zram, index, handle);
-@@ -1929,7 +1924,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 	unsigned int comp_len_new;
- 	unsigned int class_index_old;
- 	unsigned int class_index_new;
--	void *src, *dst;
-+	void *src;
- 	int ret = 0;
- 
- 	handle_old = zram_get_handle(zram, index);
-@@ -2039,12 +2034,9 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
- 		return PTR_ERR((void *)handle_new);
- 	}
- 
--	dst = zs_map_object(zram->mem_pool, handle_new, ZS_MM_WO);
--	memcpy(dst, zstrm->buffer, comp_len_new);
-+	zs_obj_write(zram->mem_pool, handle_new, zstrm->buffer, comp_len_new);
- 	zcomp_stream_put(zstrm);
- 
--	zs_unmap_object(zram->mem_pool, handle_new);
--
- 	zram_free_page(zram, index);
- 	zram_set_handle(zram, index, handle_new);
- 	zram_set_obj_size(zram, index, comp_len_new);
+ static void zstd_custom_free(void *opaque, void *address)
 -- 
 2.48.1.601.g30ceb7b040-goog
 
