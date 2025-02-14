@@ -1,120 +1,351 @@
-Return-Path: <linux-kernel+bounces-515185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51CBA36172
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:21:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B1EA36181
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F319118965FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14211895EF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2E7266EE4;
-	Fri, 14 Feb 2025 15:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A53C266EE0;
+	Fri, 14 Feb 2025 15:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cLNOzJl2"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wiDAEXVT"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97380266EE5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B5C537FF;
+	Fri, 14 Feb 2025 15:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546318; cv=none; b=qWfhB9JMQoJd0KEXjPWgGCaTK4+MTMZPAdNWNhRWCeatfvuzBfD2BYjz2/8ts46m0qWq0Z6l3q9fLXfqa+ZZGblVopDUuwvogLFezOz4uDRCREugWSDnsG5qnarbrOBmj4dSrwvtT+fi/pUBbhTfwdwdsaBOgQA7UvNhd483MeU=
+	t=1739546460; cv=none; b=dZeha9xMMr+hCI7JYRPMCiLfYOfqy6t03W11AfSczgunx+sYLfmLHZjVOiIWYdABnNzXa8c2piENG+GlcafQl2Y4ZOXKuMNJo9Jy8vsg0VT4ytqyYtwJLXeynqbbd4BktJa8iqMlL0AwYvk+Wu7xd5gd04yD+jgfipnUbYae5j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546318; c=relaxed/simple;
-	bh=khiM/ryaaEil6pLN+/17eJzNX76ge6PFhXLfoJXCGLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BpmM20ntOw+zNmDgxpj6+fbsUm5EZXAr2IZKGPLhJV5dYz2lnoLpPFlUE7wcxxyQC44taDshr+TM1wTEWq2z1vK/TeO564Zh/dKSyq+PhcrAQ4GDijDU/z1gJBgjuzQV5C9Y9RjlO8+VU3wODi4T7Vd/8MMWKlPd7LJYKPf8mM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cLNOzJl2; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-308ec50eb3dso22457181fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:18:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739546315; x=1740151115; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OcMZLvgo2+3kThO/hfiHuPvII26oDwywV7kGrf9ppp8=;
-        b=cLNOzJl2A1/vuizglh4nHJ6+tGN7YWDR+B9XPK9Zzr9AEnkTK5rHMFPcWm9oLniytX
-         fTIhJY2ZWnLasJApXyNfLx9DolTHxRSwxS2pZ42/wI39SgbJEq8p49WCnoUkHxaVySLQ
-         2jBzk/2CVOaZOXqbYaZJUzhz/drGb44iOjvcY9+sxPWZm5+Zwns8M84+0cnxCJyqjmhj
-         zxpZZ3mbDSaYck/zgbdaVbGtwADZK8Cg3Tl54MM3vAtYuVHV6YsWlQUt414t8m0n8wjt
-         DmZPwuufiwQAI8OobOD2bm+V4fvqcGNVVrlSC7xWEhOlrsOqTpHMMZorceqKLjHlFfeN
-         sk/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739546315; x=1740151115;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OcMZLvgo2+3kThO/hfiHuPvII26oDwywV7kGrf9ppp8=;
-        b=WvuDmZr1mxf9eSi53E66z3gmvC5b4YI4uA29tqnM9xRH/dqz07iqioli+TIf7q82Sl
-         9AMGYHc57TrDl8wqVCnXxmRExVEz1ZLZJQmuN4IAOnGQZgZzJpZ13t57r/8pqToPrwY8
-         8gIAiy39gGcrjL6T4/DW6oOfsJqx6Tq4YVN84+jR48pcZIYQTZtMpyfa2axdJ2aajk3+
-         I1gSSh/tYx+I4rMJohYjKCyhAbCyb24vauv1awU0vRpVaeRcnDzp9zqyBRtvXP8iMl7o
-         co3BoTriUCzJ+tfg71oc0AEIJl3hg3GRWiANifaGvsC2I7vZUF5DmnpC/ZCNAjw0i5t2
-         2M0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVG6iwrW1HHHLjzUdmZjiP12lmha/7brRcCnJw38lDTumoi2l0sqNc5ou4hjPo+iIC7+MnBHx6DGpRNQkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Bh7s1nkVtwxQ3roO1bJksH5MbT6kfyTrdZBDtJrVZUkzpRRl
-	GIwp9Ew7MtvTAN4oS9xExyoUiq1Gjmhwwh3KRBJ7jq19UlvwxoAnAm52DyNaNM4=
-X-Gm-Gg: ASbGnctXo5Y6ukBFfGGIdJ/+klbKCsz+xuDdCsrfcCONOQQ2DRk/UPVs/b8WJRgYo5h
-	wrwn3siYSXMCGEuMx5lnTBZ5uocMxdMLasIIyYjVUfnwz8HFyMzLa0OIXZwuoeKdv2BGH222wnb
-	Cf5QpaT1eNU9lLUQzeSWwBYYMpu/Z36S6Vp8N3LQB5PZeASsXnqNzIdVTpKyDsGut4ghNDER+re
-	xqeQvWhRzBVoRX6Dun+5fJw51wjGW2LJnhLIONhU3mb+WTUDbAnJ7uz5YieJyvQqtmws5IeRMg4
-	Yn/Lq62XaLWksgMh4VpqtDpVFdO9DJVZxqpnwMb2em9CWs9OSTFKngcwd5sz8XSnaozhvT0=
-X-Google-Smtp-Source: AGHT+IEezzYlzsneQzuZxQe4Yo+jf7QLilk9BuU0obW1zoL2W/XDA76D0mSIeKsRAt8vyBqyYw8shw==
-X-Received: by 2002:a05:651c:b29:b0:306:10d6:28b0 with SMTP id 38308e7fff4ca-30903630202mr37322251fa.1.1739546314624;
-        Fri, 14 Feb 2025 07:18:34 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309100c528asm5887331fa.22.2025.02.14.07.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 07:18:34 -0800 (PST)
-Date: Fri, 14 Feb 2025 17:18:31 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Marek <jonathan@marek.ca>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH v3 2/4] drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG1 against
- clock driver
-Message-ID: <g6ddzfh6vsd7zgyopzassfp5ehife2t5mlq5jbjdcas3ewed2t@th37tsj7mmsw>
-References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
- <20250214-drm-msm-phy-pll-cfg-reg-v3-2-0943b850722c@linaro.org>
+	s=arc-20240116; t=1739546460; c=relaxed/simple;
+	bh=QB/zWRI4bEQVwfPTQoHn/BynRUEbzU2hRIo7s6wrREs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YJg1+nl4AvHQIIs/P5EIBOo9vH3RvN47cWBVo1TCix8Jtr7wh1XC+sdSSOOOGT1qd0gLqHO6QsKDdytkIzSOV9i2iwKMwTCGYQuvrq3mH0U6Tynj4v8Ir/TExzr0oojw0LJn/MUq83idlI40Tpk8YlpdQ0lSjL2UB4xTc0QAtI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wiDAEXVT; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51ECjkJC012402;
+	Fri, 14 Feb 2025 16:20:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	XIGWT/hG4tpt7K0ywnil/ic7qyIjws86Nr7lEaaCFVs=; b=wiDAEXVTGHJtLkQr
+	/TkMG3g8S+w7ayPRJsIpOHOijNJn8pAUEfAWlRbA4kvjev2Sn0QQ/UHbMTJ+fs0f
+	VTAlenMa76krHFtcykdMbiFpKX/JPf9wxx4VZXsoy6kRXTXFjj599xsTYd0XWb02
+	sLDjqZFkNE+weUcY8z5p71g8CGTD56ugaW/mF4DLCaeE6pH9+XRKs3ADj6V3lO/q
+	1zfhNtcX6Bbcr++WJ4fcR2EAFtv1PtbXa5XKqA38+4KFtaMWTwxx6vJI+YaGMNp9
+	x+B9zOy/c1nIRRP/c6G7qlbyt07yrWYJOpldbf5Js3zHvp92ZyI+YS6DUWh+RUZq
+	PO/WxA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44rrfum80j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 16:20:39 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 03B9F40047;
+	Fri, 14 Feb 2025 16:19:29 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 351DA2DC032;
+	Fri, 14 Feb 2025 16:18:33 +0100 (CET)
+Received: from [10.48.87.120] (10.48.87.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Feb
+ 2025 16:18:32 +0100
+Message-ID: <e76829e9-26ee-44cc-8378-6e83f62eccd5@foss.st.com>
+Date: Fri, 14 Feb 2025 16:18:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-drm-msm-phy-pll-cfg-reg-v3-2-0943b850722c@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] arm64: dts: st: introduce stm32mp21 SoCs family
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20250210-b4-stm32mp2_new_dts-v1-0-e8ef1e666c5e@foss.st.com>
+ <20250210-b4-stm32mp2_new_dts-v1-8-e8ef1e666c5e@foss.st.com>
+ <20250213-accurate-acoustic-mushroom-a0dfbd@krzk-bin>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250213-accurate-acoustic-mushroom-a0dfbd@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_06,2025-02-13_01,2024-11-22_01
 
-On Fri, Feb 14, 2025 at 04:08:42PM +0100, Krzysztof Kozlowski wrote:
-> PHY_CMN_CLK_CFG1 register is updated by the PHY driver and by a mux
-> clock from Common Clock Framework:
-> devm_clk_hw_register_mux_parent_hws().  There could be a path leading to
-> concurrent and conflicting updates between PHY driver and clock
-> framework, e.g. changing the mux and enabling PLL clocks.
+On 2/13/25 10:02, Krzysztof Kozlowski wrote:
+> On Mon, Feb 10, 2025 at 04:21:02PM +0100, Amelie Delaunay wrote:
+>> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>>
+>> STM32MP21 family is composed of 3 SoCs defined as following:
+>>
+>> -STM32MP211: common part composed of 1*Cortex-A35, common peripherals
+>> like SDMMC, UART, SPI, I2C, parallel display, 1*ETH ...
+>>
+>> -STM32MP213: STM32MP211 + a second ETH, CAN-FD.
+>>
+>> -STM32MP215: STM32MP213 + Display and CSI2.
+>>
+>> A second diversity layer exists for security features/ A35 frequency:
+>> -STM32MP21xY, "Y" gives information:
+>>   -Y = A means A35@1.2GHz + no cryp IP and no secure boot.
+>>   -Y = C means A35@1.2GHz + cryp IP and secure boot.
+>>   -Y = D means A35@1.5GHz + no cryp IP and no secure boot.
+>>   -Y = F means A35@1.5GHz + cryp IP and secure boot.
+>>
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>> ---
+>>   arch/arm64/boot/dts/st/stm32mp211.dtsi  | 130 ++++++++++++++++++++++++++++++++
+>>   arch/arm64/boot/dts/st/stm32mp213.dtsi  |   9 +++
+>>   arch/arm64/boot/dts/st/stm32mp215.dtsi  |   9 +++
+>>   arch/arm64/boot/dts/st/stm32mp21xc.dtsi |   8 ++
+>>   arch/arm64/boot/dts/st/stm32mp21xf.dtsi |   8 ++
+>>   5 files changed, 164 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/st/stm32mp211.dtsi b/arch/arm64/boot/dts/st/stm32mp211.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..d384359e0ea16e2593795ff48d4a699324c8ca75
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/st/stm32mp211.dtsi
+>> @@ -0,0 +1,130 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +/ {
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +
+>> +	cpus {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		cpu0: cpu@0 {
+>> +			compatible = "arm,cortex-a35";
+>> +			device_type = "cpu";
+>> +			reg = <0>;
+>> +			enable-method = "psci";
+>> +		};
+>> +	};
+>> +
+>> +	arm-pmu {
+>> +		compatible = "arm,cortex-a35-pmu";
+>> +		interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>;
+>> +		interrupt-affinity = <&cpu0>;
+>> +		interrupt-parent = <&intc>;
+>> +	};
+>> +
+>> +	arm_wdt: watchdog {
+>> +		compatible = "arm,smc-wdt";
+>> +		arm,smc-id = <0xbc000000>;
+>> +		status = "disabled";
+>> +	};
+>> +
+>> +	clocks {
+>> +		ck_flexgen_08: ck-flexgen-08 {
+>> +			#clock-cells = <0>;
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <64000000>;
+>> +		};
+>> +
+>> +		ck_flexgen_51: ck-flexgen-51 {
+>> +			#clock-cells = <0>;
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <200000000>;
+>> +		};
+>> +	};
+>> +
+>> +	firmware {
+>> +		optee {
+>> +			compatible = "linaro,optee-tz";
+>> +			method = "smc";
+>> +		};
+>> +
+>> +		scmi: scmi {
+>> +			compatible = "linaro,scmi-optee";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			linaro,optee-channel-id = <0>;
+>> +
+>> +			scmi_clk: protocol@14 {
+>> +				reg = <0x14>;
+>> +				#clock-cells = <1>;
+>> +			};
+>> +
+>> +			scmi_reset: protocol@16 {
+>> +				reg = <0x16>;
+>> +				#reset-cells = <1>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	intc: interrupt-controller@4ac00000 {
 > 
-> Add dedicated spinlock to be sure all PHY_CMN_CLK_CFG1 updates are
-> synchronized.
+> MMIO nodes belong to the soc.
 > 
-> While shuffling the code, define and use PHY_CMN_CLK_CFG1 bitfields to
-> make the code more readable and obvious.
-> 
-> Fixes: 1ef7c99d145c ("drm/msm/dsi: add support for 7nm DSI PHY/PLL")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Indeed.
 
--- 
-With best wishes
-Dmitry
+>> +		compatible = "arm,cortex-a7-gic";
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-controller;
+>> +		reg = <0x0 0x4ac10000 0x0 0x1000>,
+>> +		      <0x0 0x4ac20000 0x0 0x2000>,
+>> +		      <0x0 0x4ac40000 0x0 0x2000>,
+>> +		      <0x0 0x4ac60000 0x0 0x2000>;
+>> +	};
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci-1.0";
+>> +		method = "smc";
+>> +	};
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupt-parent = <&intc>;
+>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+>> +		arm,no-tick-in-suspend;
+>> +	};
+>> +
+>> +	soc@0 {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <2>;
+>> +		interrupt-parent = <&intc>;
+>> +		ranges = <0x0 0x0 0x0 0x0 0x80000000>;
+> 
+> ranges is the second property. See DTS coding style.
+> 
+
+Ok.
+
+>> +		dma-ranges = <0x0 0x0 0x80000000 0x1 0x0>;
+>> +
+>> +		rifsc: bus@42080000 {
+>> +			compatible = "simple-bus";
+>> +			reg = <0x42080000 0x0 0x1000>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <2>;
+>> +			ranges;
+> 
+> and here is third.
+> 
+>> +			dma-ranges;
+>> +
+>> +			usart2: serial@400e0000 {
+> 
+> Although addresses seem wrong. How bus could start at 0x4208 but device
+> at 0x400e?
+> 
+>> +				compatible = "st,stm32h7-uart";
+>> +				reg = <0x400e0000 0x0 0x400>;
+>> +				interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
+>> +				clocks = <&ck_flexgen_08>;
+>> +				status = "disabled";
+>> +			};
+>> +		};
+>> +
+>> +		syscfg: syscon@44230000 {
+>> +			compatible = "st,stm32mp25-syscfg", "syscon";
+> 
+> Which soc is this? DTSI says stm32mp211, commit STM32MP21, but
+> compatible xxx25?
+> 
+
+Looks like a new compatible is needed, and I guess it is also true for 
+stm32mp231.
+
+>> +			reg = <0x44230000 0x0 0x10000>;
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/st/stm32mp213.dtsi b/arch/arm64/boot/dts/st/stm32mp213.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..22cdedd9abbf4efac2334d497618daa6cc76727b
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/st/stm32mp213.dtsi
+>> @@ -0,0 +1,9 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2024 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+>> +#include "stm32mp211.dtsi"
+>> +
+>> +/ {
+>> +};
+>> diff --git a/arch/arm64/boot/dts/st/stm32mp215.dtsi b/arch/arm64/boot/dts/st/stm32mp215.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..d2c63e92b3cc15ec64898374fd2e745a9c71eb6d
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/st/stm32mp215.dtsi
+>> @@ -0,0 +1,9 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2024 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+>> +#include "stm32mp213.dtsi"
+>> +
+>> +/ {
+>> +};
+> 
+> What is the point of this file exactly?
+> 
+
+Skeleton file for upcoming second ethernet and can-fd peripherals, not 
+available on stm32mp211.
+
+>> diff --git a/arch/arm64/boot/dts/st/stm32mp21xc.dtsi b/arch/arm64/boot/dts/st/stm32mp21xc.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..39507a7564c8488647a3276eb227eb5f446359e6
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/st/stm32mp21xc.dtsi
+>> @@ -0,0 +1,8 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2024 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+>> +
+>> +/ {
+>> +};
+> 
+> And this and others.
+> 
+
+Skeleton file for upcoming cryptographic support, not available on 
+stm32mp21xa and stm32mp21xd.
+As said previously, same split is used on other STM32 MPUs.
+
+Regards,
+Amelie
 
