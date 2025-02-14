@@ -1,183 +1,195 @@
-Return-Path: <linux-kernel+bounces-514345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C33A355DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C82A355E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215271891012
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1DF1891C66
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F51172BB9;
-	Fri, 14 Feb 2025 04:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CF515748F;
+	Fri, 14 Feb 2025 04:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JorwI9bI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fciD6mi7"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6972142AAF;
-	Fri, 14 Feb 2025 04:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE9022092
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739508619; cv=none; b=gMmbRtVXkfuS41WCQpjm8ZXUBaLMZxiOaUICtHW5+IlHiubpOORZaW3z+i5nxlcv+7u1S/skgp1yat91Ge17tx/FuJ7QqvkOMC/dSztTaxRA7h3WqyjDMT0vV+gnCL7ytfC7gK9wMoIgA2zrGOMqOHVwNCSWKitC4w3dyix1GC0=
+	t=1739508742; cv=none; b=EQ3tpFU+3eyVer2oepmP1JDdmzWHSKoO26XA72yDzEOVuSKOnUBs8inw1V29OuBhwlwbqBTNvMfdhn29pf1sshnzBoCcoAV/Ht1zvIWLlAVIHJs4gWmTJE3U2EZi0yq0rasruR0cphORS6R9UDvuscwV36qQREOoDKkn1PATCx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739508619; c=relaxed/simple;
-	bh=gPVj4mO6xQJrCt3sZYWJNbH9C8SimtbKXR7wY1fjf90=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SfltRmKOiw5sz1HQg9km8aSfBgAe1dSK7bCqmvFVg+2PxTYBA+eJNZF0pUSrQmArkxneJ7jZpcSdZhU3z18eEevM2GUWkgujQcs2Yx5fCqpsx7j1lTyS1KxtoI1+j3KXEZa4H4inpHSpDWCGwdKWvbZ2TltB+b+OboBZt5KuLyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JorwI9bI; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739508618; x=1771044618;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=gPVj4mO6xQJrCt3sZYWJNbH9C8SimtbKXR7wY1fjf90=;
-  b=JorwI9bIUscB+rO2CNT6mhd6Aej2x39pdqMJ4kV/Svc0iULJQFsnsrRa
-   Mj51M5DpENNxBU3lHUXBBEOTQDiaBBY0GnS1wl2kvrx9akq1jeyV0UlM8
-   o+VRAtN/moCQTNt+Bi/pvCoN3JTKnPyYrBqiSQrkJgpfmbPb6OEPk6PB4
-   kF7g8s057LUA3Kw+vXNJP1mys2Y+DJXn4FjVndzs5wMKYerNqTKN6IMkI
-   5QbzxYSHBbpQMIntK2H3rL+SKs91L7JQ1xLbanLAgeXDCGvqchEKPGQ6x
-   B2ED/Ii7sTOcmx6yRdck7j6ukRXknGaXIVtDTEoQT4bMMwwPc+FUZK+Yo
-   w==;
-X-CSE-ConnectionGUID: u7AS2e6uShGQvvfrlgPHgA==
-X-CSE-MsgGUID: 65PyX/SOR6CSShPK05QAYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40361826"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="40361826"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 20:50:15 -0800
-X-CSE-ConnectionGUID: 2b+fgtn9Q7+FDC4KwavSPQ==
-X-CSE-MsgGUID: wezvzmt3Tm6HcUS0QIfqlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="113096903"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.123.6]) ([10.247.123.6])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 20:50:07 -0800
-Message-ID: <e5c5d7ed-9f47-4af1-aee4-4632099bd546@linux.intel.com>
-Date: Fri, 14 Feb 2025 12:50:04 +0800
+	s=arc-20240116; t=1739508742; c=relaxed/simple;
+	bh=VwvxoxTI6wmcF9isXOzn4ZGDGDn8TsLvkhr0jiI/TJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tpR2WEsp+2aDFfe2zJs14iQE7qJg18jKFMTDPPYh4lTQfTANRaNdb51FpkzECtLdAUBLHx1u2miqioMbOH2roJekIwZn2DxSvDcH9xl/fpWOq5E+cFHBDEgy1bVXGLpFmnx+8KdnhcrADyvm8Q11OeQtMRrYu8A/2yT/7Aa6pSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fciD6mi7; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21f2339dcfdso25100445ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:52:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739508740; x=1740113540; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmOJP3Z7wquDbzKxXwoXG/JeDZB5cqsEGjVZKnE331U=;
+        b=fciD6mi7G6vWgFNokzDKVRRrLMaipK1iZjML7CjXhAAwA+hHANUnc82xEh8qam5JeR
+         f3NcYmVpNAgr+Qcxb36Izh6b/JPkBjkJmDFyD2R66gGNS+SY7USrWwAHFYeZZscLmlhH
+         ohcbfKZmgZ/NztD7hw7xIuMzBIfL29jJxYTlE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739508740; x=1740113540;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gmOJP3Z7wquDbzKxXwoXG/JeDZB5cqsEGjVZKnE331U=;
+        b=pDV8i5jZeEUnVNiASY3N37+te7iUTnRanb46EHjR+zit+mw1I1Dlnk4dnWfsY/TgXc
+         YUbCenUacicLvvjHV4J91FmKW9cDz+WPeofdqXLPcEvvpw8YiVfpT/S1K84locWtG1cL
+         uXymnPNRBAWyS0BwSkflx8npDoX82AuNqJTwStKb4XU6UsLc+0CoWB4urETaFvGGyVd0
+         j4s7UOYJlYFdEShpkK76yeOGsrdYV8fdUI36svW8GvUxLnunsFlJ6Std5mub6lrz9IJk
+         6x4h8Y9dJU1aOfb9aH1Ovlxijelb1qZFiCfFPVuWlynZqTjcZPeuAGy/ImglEgem0V+g
+         /R1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXAO06ARvo0xQRtH8FWlDOWDW/fJmM/BIgeDl2oa8/572+2XYsXmZBSdmaAkwlJj8hwnsoNQygRTsmZvz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYAo/oUr0rKah9B6XPN9QH/pLkOclSZzr2qfwqXmkjF+mPeqjQ
+	UjuEd2Ug94zasHd7h80YcfUe21psVFfNgfrjKlLz1/Ul+wXW6ufgxOeiyvGP4A==
+X-Gm-Gg: ASbGnctTHSxL0/w167KtqvWwqqyS73EVvOVHIn8h/qNmAIP0mDiyONyoW/buLdLEEA7
+	1Q9IfRxuUZHES4s6PnLp3/+6+XAiUEONvZ56h3TS/Dy+8Z+AkW0zUahVZblHqOJagOhw5boZeNy
+	MhrTyX5vdkeGOemBkSrYcta/ikjCSPzWJug/yfakzU9jvRyRoqEd3he7olA+sY6LmzWc0oVEcUZ
+	zKmRkKGpkp5gNDC22jIyQWK1TKVoJ3JFxalHxLkxvXWpMFBROnB0P33ZMWvL6jvRCmcr2Oz7T3n
+	98K32zTRgXkRdccZuw==
+X-Google-Smtp-Source: AGHT+IFTeCBcOuIPmVP7cIqQibR68G7t2XsSlQ82GITWrysZsnQxcJE2dRGlmLlPNz7jtHCdZI2SEQ==
+X-Received: by 2002:a17:903:98f:b0:21a:7e04:7021 with SMTP id d9443c01a7336-220d3763091mr84781225ad.24.1739508740037;
+        Thu, 13 Feb 2025 20:52:20 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:942d:9291:22aa:8126])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5364669sm20890135ad.86.2025.02.13.20.52.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 20:52:19 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Hillf Danton <hdanton@sina.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH v6 00/17] zsmalloc/zram: there be preemption
+Date: Fri, 14 Feb 2025 13:50:12 +0900
+Message-ID: <20250214045208.1388854-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
- feature in IGC
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-To: Kurt Kanzenbach <kurt@linutronix.de>,
- Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
- <20250212220121.ici3qll66pfoov62@skbuf>
- <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
- <87cyfmnjdh.fsf@kurt.kurt.home>
- <5902cc28-a649-4ae9-a5ba-83aa265abaf8@linux.intel.com>
- <20250213130003.nxt2ev47a6ppqzrq@skbuf>
- <1c981aa1-e796-4c53-9853-3eae517f2f6d@linux.intel.com>
- <877c5undbg.fsf@kurt.kurt.home> <20250213184613.cqc2zhj2wkaf5hn7@skbuf>
- <87v7td3bi1.fsf@kurt.kurt.home>
- <b7740709-6b4a-4f44-b4d7-e265bb823aca@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <b7740709-6b4a-4f44-b4d7-e265bb823aca@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Currently zram runs compression and decompression in non-preemptible
+sections, e.g.
 
+    zcomp_stream_get()     // grabs CPU local lock
+    zcomp_compress()
 
-On 14/2/2025 12:20 pm, Abdul Rahim, Faizal wrote:
-> 
-> 
-> On 14/2/2025 3:12 am, Kurt Kanzenbach wrote:
->> On Thu Feb 13 2025, Vladimir Oltean wrote:
->>> So, confusingly to me, it seems like one operating mode is fundamentally
->>> different from the other, and something will have to change if both will
->>> be made to behave the same. What will change? You say mqprio will behave
->>> like taprio, but I think if anything, mqprio is the one which does the
->>> right thing, in igc_tsn_tx_arb(), and taprio seems to use the default Tx
->>> arbitration scheme?
->>
->> Correct. taprio is using the default scheme. mqprio configures it to
->> what ever the user provided (in igc_tsn_tx_arb()).
->>
->>> I don't think I'm on the same page as you guys, because to me, it is
->>> just odd that the P traffic classes would be the first ones with
->>> mqprio, but the last ones with taprio.
->>
->> I think we are on the same page here. At the end both have to behave the
->> same. Either by using igc_tsn_tx_arb() for taprio too or only using the
->> default scheme for both (and thereby keeping broken_mqprio). Whatever
->> Faizal implements I'll match the behavior with mqprio.
->>
-> 
-> Hi Kurt & Vladimir,
-> 
-> After reading Vladimir's reply on tc, hw queue, and socket priority mapping 
-> for both taprio and mqprio, I agree they should follow the same priority 
-> scheme for consistency—both in code and command usage (i.e., taprio, 
-> mqprio, and fpe in both configurations). Since igc_tsn_tx_arb() ensures a 
-> standard mapping of tc, socket priority, and hardware queue priority, I'll 
-> enable taprio to use igc_tsn_tx_arb() in a separate patch submission.
-> 
-> I'll split the changes based on Vladimir's suggestion.
-> 
-> First part - ethtool-mm related:
-> igc: Add support to get frame preemption statistics via ethtool
-> igc: Add support to get MAC Merge data via ethtool
-> igc: Add support to set tx-min-frag-size
-> igc: Add support for frame preemption verification
-> igc: Set the RX packet buffer size for TSN mode
-> igc: Optimize TX packet buffer utilization
-> igc: Rename xdp_get_tx_ring() for non-XDP usage
-> net: ethtool: mm: Extract stmmac verification logic into a common library
-> 
-> Second part:
-> igc: Add support for preemptible traffic class in taprio and mqprio
-> igc: Use igc_tsn_tx_arb() for taprio queue priority scheme
-> igc: Kurt's patch on mqprio to use normal TSN Tx mode
-> 
-> Kurt can keep igc_tsn_tx_arb() for his mqprio patch, so preemptible tc 
-> should work the same for both taprio and mqprio.
-> 
-> I'm suggesting to include Kurt's patch in the second part since there's 
-> some dependency and potential code conflict, even though it mixes different 
-> functional changes in the same series.
+or
 
-I forgot that the second part patch:
-igc: Add support for preemptible traffic class in taprio and mqprio
+    zram_slot_lock()       // grabs entry spin-lock
+    zcomp_stream_get()     // grabs CPU local lock
+    zs_map_object()        // grabs rwlock and CPU local lock
+    zcomp_decompress()
 
-depends on the first part ethtool-mm, which would delay Kurt's patch.
+Potentially a little troublesome for a number of reasons.
 
-So Kurt, if you'd prefer to submit yours first, that's okay too.
+For instance, this makes it impossible to use async compression
+algorithms or/and H/W compression algorithms, which can wait for OP
+completion or resource availability.  This also restricts what
+compression algorithms can do internally, for example, zstd can
+allocate internal state memory for C/D dictionaries:
 
+do_fsync()
+ do_writepages()
+  zram_bio_write()
+   zram_write_page()                          // become non-preemptible
+    zcomp_compress()
+     zstd_compress()
+      ZSTD_compress_usingCDict()
+       ZSTD_compressBegin_usingCDict_internal()
+        ZSTD_resetCCtx_usingCDict()
+         ZSTD_resetCCtx_internal()
+          zstd_custom_alloc()                 // memory allocation
 
+Not to mention that the system can be configured to maximize
+compression ratio at a cost of CPU/HW time (e.g. lz4hc or deflate
+with very high compression level) so zram can stay in non-preemptible
+section (even under spin-lock or/and rwlock) for an extended period
+of time.  Aside from compression algorithms, this also restricts what
+zram can do.  One particular example is zram_write_page() zsmalloc
+handle allocation, which has an optimistic allocation (disallowing
+direct reclaim) and a pessimistic fallback path, which then forces
+zram to compress the page one more time.
+
+This series changes zram to not directly impose atomicity restrictions
+on compression algorithms (and on itself), which makes zram write()
+fully preemptible; zram read(), sadly, is not always preemptible yet.
+There are still indirect atomicity restrictions imposed by zsmalloc().
+One notable example is object mapping API, which returns with:
+a) local CPU lock held
+b) zspage rwlock held
+
+First, zsmalloc's zspage lock is converted from rwlock to a special
+type of RW-lookalike look with some extra guarantees/features.  Second,
+a new handle mapping is introduced which doesn't use per-CPU buffers
+(and hence no local CPU lock), does fewer memcpy() calls, but requires
+users to provide a pointer to temp buffer for object copy-in (when
+needed).  Third, zram is converted to the new zsmalloc mapping API
+and thus zram read() becomes preemptible.
+
+v5 - > v6
+- new zspage lock implementation, based on a spin-lock (Hillf)
+- added CONFIG_LOCK_STAT support to zram entry lock and zspage lock
+- tweaked lockdep names of zram entry lock and zspage lock
+- factored out lockdep-enabled zram entry lock and zspage lock functions
+  into separate helpers to avoid numerous #ifdef-s in the code (Andrew)
+- updated zspage lock rules (Yosry)
+- moved comp stream mutex initialisation out of cpu-up handler to
+  close cpu-dead/stream-get/cpu-up race window (Yosry)
+- dropped patches that factored out zspool and size-class locking
+  (Yosry)
+- rewrote commit messages for some patches (Yosry)
+
+Sergey Senozhatsky (17):
+  zram: sleepable entry locking
+  zram: permit preemption with active compression stream
+  zram: remove unused crypto include
+  zram: remove max_comp_streams device attr
+  zram: remove two-staged handle allocation
+  zram: remove writestall zram_stats member
+  zram: limit max recompress prio to num_active_comps
+  zram: filter out recomp targets based on priority
+  zram: rework recompression loop
+  zsmalloc: rename pool lock
+  zsmalloc: make zspage lock preemptible
+  zsmalloc: introduce new object mapping API
+  zram: switch to new zsmalloc object mapping API
+  zram: permit reclaim in zstd custom allocator
+  zram: do not leak page on recompress_store error path
+  zram: do not leak page on writeback_store error path
+  zram: add might_sleep to zcomp API
+
+ Documentation/ABI/testing/sysfs-block-zram  |   8 -
+ Documentation/admin-guide/blockdev/zram.rst |  36 +-
+ drivers/block/zram/backend_zstd.c           |  11 +-
+ drivers/block/zram/zcomp.c                  |  48 ++-
+ drivers/block/zram/zcomp.h                  |   8 +-
+ drivers/block/zram/zram_drv.c               | 326 ++++++++-------
+ drivers/block/zram/zram_drv.h               |  22 +-
+ include/linux/zsmalloc.h                    |   8 +
+ mm/zsmalloc.c                               | 413 ++++++++++++++++----
+ 9 files changed, 592 insertions(+), 288 deletions(-)
+
+--
+2.48.1.601.g30ceb7b040-goog
 
 
