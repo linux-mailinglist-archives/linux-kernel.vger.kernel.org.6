@@ -1,151 +1,186 @@
-Return-Path: <linux-kernel+bounces-514861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1359A35CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:36:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAADA35C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85B8C16A828
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C325188F884
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653DD2627ED;
-	Fri, 14 Feb 2025 11:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9CF25E44D;
+	Fri, 14 Feb 2025 11:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sdore.me header.i=@sdore.me header.b="L7ew2HQO"
-Received: from sdore.me (unknown [95.165.1.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AlbSIDu1"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9537C221541
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.165.1.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C068186E40
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532990; cv=none; b=N+MP9wBTWKZ0RWNRSr8T6EqSBByZrQ5t32hqVU5vNNMN2E5vFjzEa6MW3WKYMsF85RQLAmfvQkRkquzRiUsW5tJuZYOqNOJbErDGWA755gb1HxF5OgPUQV33aKeRYSY1vojBYGOVvNY8x0u3A3AaJh1UjyXhN2XxK/Rt0Y52Aps=
+	t=1739531362; cv=none; b=LDf94aVKCsj5mtIiqXMjkJrskYuvLO7EffM8htoRjlEddL8po58ccU513s2bL9WxvSw/v0JVCChTviE1lL6anDVGgUwdjCYYeohx6hYMOs7BOkVysdTDv9UwtVt0OTPd9E/AW7gO+Rq3bez5JaiwisshCxjBTgolqSQAURnW2i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532990; c=relaxed/simple;
-	bh=2RRFJdZSLxB0chJqJ8QRDckIZFkpyeAvXlKfsB6hWVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sZCYWccufMG33Qh+WOvKNWSIIO0B/y7y9yRCmz9U74mvMze5UDj0G+CoLsAzVfZE/npz9aji2ZyY7YQGF0pBUHuDm6oJxgTgY0XHZfJd3zoHjInzvym1OOBBFX0JaMt7cf7yeILK2gohoS9C/DSnK3BUJc4TNAmnmUlh+RcVUMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me; spf=pass smtp.mailfrom=sdore.me; dkim=pass (1024-bit key) header.d=sdore.me header.i=@sdore.me header.b=L7ew2HQO; arc=none smtp.client-ip=95.165.1.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdore.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdore.me
-Received: by sdore.me (Postfix, from userid 1000)
-	id E192BEEA01BF7; Fri, 14 Feb 2025 14:36:26 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sdore.me; s=SERV;
-	t=1739532986; bh=2RRFJdZSLxB0chJqJ8QRDckIZFkpyeAvXlKfsB6hWVk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=L7ew2HQOQPkneLx8nfuW2OKCPwzxH5o12m79PompgYwmaym1g3bNCwhJNq/EHMKg1
-	 opqUC8/94hU0Ck8dOgwVLCWPfJkVDGqbw1soNyF4CoTq7MmPbg7cZT+ld0BBQvuLu9
-	 mzhTVTzkM1UP4SADBZzllCEoECnjxSgyR7wYWgSg=
-From: Egor Vorontsov <sdoregor@sdore.me>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Egor Vorontsov <sdoregor@sdore.me>
-Subject: [PATCH v3 2/2] drm/edid: Refactor DisplayID timing block structs
-Date: Fri, 14 Feb 2025 14:06:42 +0300
-Message-ID: <20250214110643.506740-2-sdoregor@sdore.me>
-X-Mailer: git-send-email 2.48.0
-In-Reply-To: <20250214110643.506740-1-sdoregor@sdore.me>
-References: <20250214110643.506740-1-sdoregor@sdore.me>
+	s=arc-20240116; t=1739531362; c=relaxed/simple;
+	bh=kbVminQweP0edHX60DRMOZAmpRtqyibJvpWKml9aMvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TWnKnWcIfp7VH2pzkMphvwhmwDLcDNqWZosVfDNz8NlyKc4ANjIArtB1SnOrkLPUzo7/INAF5CEfvpTT/SYPwBedgtGl/OE+qetSemWdhAoO6p6LnQxKB6ZqUbAJZkwALBDRO/++wxh+CLHxe2uWRx4yHb7sAXcOjzzHi/CS/pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AlbSIDu1; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f31f7732dso22973f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739531358; x=1740136158; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V7+4mem2ft+RVvvLEGTsxFIwY8eDWNZdbE4U/VEn5OU=;
+        b=AlbSIDu165La21uG3l8xxHp4sIcrOvyT/PpKJPpjoPVm4PRnFFXveBPXKEtBY0bcID
+         wInc7wKjISPR86md30Hv2YiK7vazo/8JtCzcmU8WjnMJwPw7LhBF7/q9zA459eLHTRvf
+         BPhaeCciifwpI4EffHABAeRMOQqKD2yK/3w1XKWWLXokPIJVXC+tP0AQAL23a4mHlEG/
+         NtWjq+fz9qspZmoNMFeWk94fMp4AY/qJeueqlITHIyiS7gyF0IKkX90eBNbczFPdQe1q
+         oxfgglXoHzqJR+SL50spwK/MB+9oD8gX65P96lvfuyEgc7pgnJD1a9SQ8OQBGM0zpeXI
+         Dd+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739531358; x=1740136158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7+4mem2ft+RVvvLEGTsxFIwY8eDWNZdbE4U/VEn5OU=;
+        b=JWaOEtTBoBPkB5SPW1b3Awq2ppRmo0jfzFRA+vuHJdr+mDRp6A+D/RjuEzGhARwBM5
+         G2iJK+/E3W0+imeOK1Sf2RyNCCtU2CYP3lzumb8hQr0OImir0eY3bKjK5O5ehZKG3Ko+
+         PFNSwxW/Bu7ooywQAD2v9KRyoj4kFGKWEIBlTlO9pkUxB/gvmAFH+Q5nwTAy1EKwSCYY
+         RT556BDKI1oJ+OpeVTXJfEQX7VpZiwQb4VKE831Dgd1+jrWC2xUsx/L5IFX5jDq/EfDP
+         Vac4ItVe9GR9DC254NER3kRtU2OEn38oceWCCnqW5WUJd1LnA5rKZP/ZAwvYH+X2nt/B
+         JtLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx+UHL0mfb0da00rTMJ2CK+85f4/Tc4qMHwZGa7UA781hErDYDVJoaOc5CxQqt3sjikn1uYwK4dw+xZ5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/mX+1+9mHoh3GToZ7+Boqz1BCjDq049z1eVpOLeOxlAnyJeRD
+	4iZfx0Kced3o9pCNCc6Nm/AMD9K96AWIjtcSSZ2e+5RG3Tv148O5syEMJE7hpJA=
+X-Gm-Gg: ASbGncsrViQn1PQiCKvKMLwdn0QEYYLPZdxXIM5NHrXYul2L1Lh4WOQstlt4KcSSbeo
+	EB8KqiteDj6E1JeB2I9iZnpxDHFN4KbQpq3lZcynW6pWVAx2mTLJowkFqqA8RfivFjBnsLDzi5i
+	zwxpI6rMH6uN3a6myUEXC47xONvLbntZLbA/euYsyqdI0H+MwVni8g3r017k01WIsd5XNBQ23fy
+	WfshUDslTScVvxMbKtjvHYTxh3widRHbqACcSW1rOX6ds4imEdDQGsYtbQbpHBZ7wtC0EgZQpYE
+	7mXPifcCIP0hAC/3iQU8FlGyAw==
+X-Google-Smtp-Source: AGHT+IHSYzmRWK6x5dqInVV0CJ5pE2+xfHMxdXlGP6JgPhn1Wonrdhujy16nNDJTyIehflsH4kOBJw==
+X-Received: by 2002:a05:6000:71c:b0:38f:2b64:5327 with SMTP id ffacd0b85a97d-38f2b6457ccmr2854936f8f.24.1739531358487;
+        Fri, 14 Feb 2025 03:09:18 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.90.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25913eb6sm4373298f8f.51.2025.02.14.03.09.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 03:09:18 -0800 (PST)
+Message-ID: <b61af324-7488-4a4f-9f9e-2ecb004fc4c7@linaro.org>
+Date: Fri, 14 Feb 2025 11:09:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/7] Coresight: Introduce a new struct coresight_path
+To: Jie Gan <quic_jiegan@quicinc.com>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+References: <20250207064213.2314482-1-quic_jiegan@quicinc.com>
+ <20250207064213.2314482-5-quic_jiegan@quicinc.com>
+ <a633f52c-81e8-4c0d-aca7-cc18360866eb@linaro.org>
+ <4b521b49-7104-4f25-82cb-4f9be7b235f4@quicinc.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <4b521b49-7104-4f25-82cb-4f9be7b235f4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Using le16 instead of u8[2].
 
-Suggested-by: Jani Nikula <jani.nikula@linux.intel.com>
-Signed-off-by: Egor Vorontsov <sdoregor@sdore.me>
----
- drivers/gpu/drm/drm_displayid_internal.h | 18 +++++++--------
- drivers/gpu/drm/drm_edid.c               | 28 ++++++++++++------------
- 2 files changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm_displayid_internal.h
-index 84831ecfdb6e..957dd0619f5c 100644
---- a/drivers/gpu/drm/drm_displayid_internal.h
-+++ b/drivers/gpu/drm/drm_displayid_internal.h
-@@ -115,20 +115,20 @@ struct displayid_tiled_block {
- struct displayid_detailed_timings_1 {
- 	u8 pixel_clock[3];
- 	u8 flags;
--	u8 hactive[2];
--	u8 hblank[2];
--	u8 hsync[2];
--	u8 hsw[2];
--	u8 vactive[2];
--	u8 vblank[2];
--	u8 vsync[2];
--	u8 vsw[2];
-+	__le16 hactive;
-+	__le16 hblank;
-+	__le16 hsync;
-+	__le16 hsw;
-+	__le16 vactive;
-+	__le16 vblank;
-+	__le16 vsync;
-+	__le16 vsw;
- } __packed;
- 
- struct displayid_detailed_timing_block {
- 	struct displayid_block base;
- 	struct displayid_detailed_timings_1 timings[];
--};
-+} __packed;
- 
- struct displayid_formula_timings_9 {
- 	u8 flags;
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 03edf0e1598e..32807cefc819 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -6760,23 +6760,23 @@ static void update_display_info(struct drm_connector *connector,
- }
- 
- static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *dev,
--							    struct displayid_detailed_timings_1 *timings,
-+							    const struct displayid_detailed_timings_1 *timings,
- 							    bool type_7)
- {
- 	struct drm_display_mode *mode;
--	unsigned pixel_clock = (timings->pixel_clock[0] |
--				(timings->pixel_clock[1] << 8) |
--				(timings->pixel_clock[2] << 16)) + 1;
--	unsigned hactive = (timings->hactive[0] | timings->hactive[1] << 8) + 1;
--	unsigned hblank = (timings->hblank[0] | timings->hblank[1] << 8) + 1;
--	unsigned hsync = (timings->hsync[0] | (timings->hsync[1] & 0x7f) << 8) + 1;
--	unsigned hsync_width = (timings->hsw[0] | timings->hsw[1] << 8) + 1;
--	unsigned vactive = (timings->vactive[0] | timings->vactive[1] << 8) + 1;
--	unsigned vblank = (timings->vblank[0] | timings->vblank[1] << 8) + 1;
--	unsigned vsync = (timings->vsync[0] | (timings->vsync[1] & 0x7f) << 8) + 1;
--	unsigned vsync_width = (timings->vsw[0] | timings->vsw[1] << 8) + 1;
--	bool hsync_positive = (timings->hsync[1] >> 7) & 0x1;
--	bool vsync_positive = (timings->vsync[1] >> 7) & 0x1;
-+	unsigned int pixel_clock = (timings->pixel_clock[0] |
-+				    (timings->pixel_clock[1] << 8) |
-+				    (timings->pixel_clock[2] << 16)) + 1;
-+	unsigned int hactive = le16_to_cpu(timings->hactive) + 1;
-+	unsigned int hblank = le16_to_cpu(timings->hblank) + 1;
-+	unsigned int hsync = (le16_to_cpu(timings->hsync) & 0x7fff) + 1;
-+	unsigned int hsync_width = le16_to_cpu(timings->hsw) + 1;
-+	unsigned int vactive = le16_to_cpu(timings->vactive) + 1;
-+	unsigned int vblank = le16_to_cpu(timings->vblank) + 1;
-+	unsigned int vsync = (le16_to_cpu(timings->vsync) & 0x7fff) + 1;
-+	unsigned int vsync_width = le16_to_cpu(timings->vsw) + 1;
-+	bool hsync_positive = le16_to_cpu(timings->hsync) & (1 << 15);
-+	bool vsync_positive = le16_to_cpu(timings->vsync) & (1 << 15);
- 
- 	mode = drm_mode_create(dev);
- 	if (!mode)
--- 
-2.48.0
+On 14/02/2025 1:34 am, Jie Gan wrote:
+> 
+> 
+> On 2/14/2025 12:00 AM, James Clark wrote:
+>>
+>>
+>> On 07/02/2025 6:42 am, Jie Gan wrote:
+>>> Add 'struct coresight_path' to store the data that is needed by
+>>> coresight_enable_path/coresight_disable_path. The structure will be
+>>> transmitted to any required devices to enable related funcationalities.
+>>>
+>>> The trace_id will be allocated after the path is built. Consequently,
+>>> The ETM3x and ETM4x devices will directly read the trace_id from path
+>>> which result in etm_read_alloc_trace_id and etm4_read_alloc_trace_id
+>>> being deleted.
+>>>
+>>> Co-developed-by: James Clark <james.clark@linaro.org>
+>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>>> ---
+>>>   drivers/hwtracing/coresight/coresight-core.c  | 106 +++++++++++++-----
+>>>   drivers/hwtracing/coresight/coresight-dummy.c |   5 +-
+>>>   .../hwtracing/coresight/coresight-etm-perf.c  |  30 +++--
+>>>   .../hwtracing/coresight/coresight-etm-perf.h  |   2 +-
+>>>   drivers/hwtracing/coresight/coresight-etm.h   |   1 -
+>>>   .../coresight/coresight-etm3x-core.c          |  54 ++-------
+>>>   .../coresight/coresight-etm4x-core.c          |  54 ++-------
+>>>   drivers/hwtracing/coresight/coresight-etm4x.h |   1 -
+>>>   drivers/hwtracing/coresight/coresight-priv.h  |  12 +-
+>>>   drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
+>>>   drivers/hwtracing/coresight/coresight-sysfs.c |  17 ++-
+>>>   drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
+>>>   include/linux/coresight.h                     |  12 +-
+>>>   13 files changed, 143 insertions(+), 157 deletions(-)
+>>>
+>> [...]
+>>> @@ -352,7 +352,7 @@ static void *etm_setup_aux(struct perf_event 
+>>> *event, void **pages,
+>>>        * CPUs, we can handle it and fail the session.
+>>>        */
+>>>       for_each_cpu(cpu, mask) {
+>>> -        struct list_head *path;
+>>> +        struct coresight_path *path;
+>>>           struct coresight_device *csdev;
+>>>           csdev = per_cpu(csdev_src, cpu);
+>>> @@ -405,15 +405,15 @@ static void *etm_setup_aux(struct perf_event 
+>>> *event, void **pages,
+>>>               cpumask_clear_cpu(cpu, mask);
+>>>               continue;
+>>>           }
+>>> -
+>>>           /* ensure we can allocate a trace ID for this CPU */
+>>> -        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
+>>> >perf_sink_id_map);
+>>> -        if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>> +        trace_id = coresight_path_assign_trace_id(path, CS_MODE_PERF);
+>>> +
+>>> +        /* Can be 0 and valid, ETE doesn't need an ID */
+>>> +        if (trace_id < 0) {
+>>
+>> Not sure why I wrote it like this, but I think we should leave it as 
+>> it was with !IS_VALID_CS_TRACE_ID(). Even with ETE it calls the trace 
+>> ID allocator, so nothing has changed here.
+>>
+> Sure, Will restore. For ETE or ETM, we dont need traverse the path, just 
+> directly allocate the trace id based on cpu id.
+> 
+> Jie
+> 
+> 
+
+Sorry I meant to only keep the !IS_VALID_CS_TRACE_ID() bit. We still 
+need to call the new coresight_path_assign_trace_id() otherwise it 
+doesn't get assigned to the path. I saw that got removed in v11.
+
 
 
