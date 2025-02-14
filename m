@@ -1,87 +1,59 @@
-Return-Path: <linux-kernel+bounces-514869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E336A35CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:42:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC29A35CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03D8160E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C270188E560
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08775263C6F;
-	Fri, 14 Feb 2025 11:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B396263C6D;
+	Fri, 14 Feb 2025 11:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qKqaE3Bk"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pf3hgB0D"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2F426388A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3B02222AC
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739533362; cv=none; b=eHhnjhbIFgo59Z3dC3I8z3TjeSubEukC7Mvc0ajGKnY6ZQw3VBaWYzgNjyNnnCIUCjru9nuE4bpVpqihLoXdZOxlLUBAWeE+WGy8qxVEMOrMwLyJPDLLaeWGbHxsYFXfF1pSUFXI3yxS6rPRnjIEnslJvrhjSWs0rcOrrjPFLvk=
+	t=1739533460; cv=none; b=GdhJWzuDhmgKcXZdPQ5hIQpDhXXCq6xiwrhHRxx6x/4IFD1ULlhLmjlOPvY/gz1Dow5JmroSqJg5kAubusnuLcvGK5BIgzJDHjW8JGX4fVBhAoTuUf2pb31cDW0Z9WsxZp6NoF8XGSGqe/xcPiHBLWeAaWSP+1+belbrJYoc2wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739533362; c=relaxed/simple;
-	bh=F/zv8ld6hxQ5meu1qeOYsIEsIIqaCJ+HJ4Gs6tRkKhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqiJpEBMKz8ThX8vRATcs7JOh/hd70r5uyPHm79BVay6mv5fsk79HAI5qv+5DiXxP4X9cWYoPZAEFRtyT34DKp+BMHYsmSi2XHSwkcOBK+7APkF5HdlXHi2RoJpRuK52aPG4BqxEU6byQi9N4KiW3RGPh8SlqJzJ3oxqgi3I7Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qKqaE3Bk; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4395f645200so1902145e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:42:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739533359; x=1740138159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=je3Y6JE9/0vgfYFp2HTKthP0SuJ3Chwygb5NcOwDms4=;
-        b=qKqaE3BkM7marsQxQBxUFZ70JdlGGi7tbaQAEmJl7O548QQIT3N4gPIR0hxlJ40YxB
-         s5RJ2pp8s7bnj/C/jQ4mZNqb0paxXAEowkpj0I1gWcnQhroMjQeZ+n4D5e4petutcHeh
-         5B1Wbfgu99MCJDxkEbgkKF/sRtqzybdurlr+/PqX51SRA917HPSlSG/VJSzPSqkgf4oO
-         MCOpyM0sfV9hBJjgppV+/uWg5n5moIuY6w51AC5klNsUWpK1a03AzgJEKnXvzG2fD8nj
-         3LZT1+QO3D9IMt87yD9kXJOh1zWpu2Et893hkxMfT8qd5rFmzbyONgyPbzOlekmEqzgY
-         8MDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739533359; x=1740138159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=je3Y6JE9/0vgfYFp2HTKthP0SuJ3Chwygb5NcOwDms4=;
-        b=ik9ormnje6hMlosArH+VMZwe2wPaOxxrs6QBTbm98N8HzFC/yumSD8R58g/0ShSqu4
-         pkBVHf0cR5MqLGW1Q0ooac+pWxPir1m8OGCq+F4VG9v3eTZDa6FW4Il/uRjzSiy0jsbc
-         wXYAGExX0QmcX6nyPDG+KAZQOy5RnYT4iBNhmIMZkzJ+WO+byWLj7F2llAOuWNh5MY8b
-         sInODYyojyd6AUrDUzfDkQwL8aVZ0143IW/6zFR43/LeB2Tl+NV3ONIBZ6laieWiI+yy
-         7I0f5SZWR9tjrjoWk4+2NjjIi+RaQPTcqMH39pNVZ6eCUm5bXoUff8Ffxeler+fH0VGg
-         vdtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLeUB3fn+SQVwUSrUQu7aeDcS0k6G7bcrSH3sDocY1isYAyzNnIBT4XaYmj4Xx56ccP7RiPdiTXpIK5PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxynCdw/7MNdy4kGe47vv4WcxaPxTPSIi5DFzXud21wEt5VPBIb
-	tQ+HIerQqrg4abPKuxikbPOgKCnmg6Q+o93ylRzXyUrVvCVjlsZPyZ7/8Do3bys=
-X-Gm-Gg: ASbGnctfYOjkXzxerjJvt+HfIHItWWY+0JvDyza8YB9kpgXBw1kfV+xVypSvFy4Vjs5
-	sx+6C2UC5V4EkYCW3ALjMC2BPtgWN3L7hPbPwMdzL7jhiRjaIVe8q9+L1VLqFh0FSG8CN3L92YX
-	QM9+7S7DNngLRq5nvLYxCtCAkDZO48mSf0zI5WdpDqZ2TNtEadO5gU+kvzuB7ioRLeC1Xn6/xBd
-	/4auAAuTyGSeDc9AUva0e3N0CqJrT8n8S3uq4ZhkoDd9Y0nbURXy1se2hciUbZSnUGykf+1IoDU
-	24ixMrHqYGNqRtpczIaInxom7PQPmg==
-X-Google-Smtp-Source: AGHT+IHD2zuPWbS12hO8QjYVrO+0ZsWls0jxCUOQqd45DbLIATzXSslULpB7tkVtgTvMILaRHe52cQ==
-X-Received: by 2002:a05:600c:1986:b0:439:614a:8bee with SMTP id 5b1f17b1804b1-43967111951mr14380305e9.5.1739533358965;
-        Fri, 14 Feb 2025 03:42:38 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8dd6sm4455148f8f.62.2025.02.14.03.42.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 03:42:38 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1739533460; c=relaxed/simple;
+	bh=rwhe49/5jB2QdiusmRIz9cSf22eUSJf+KuUjfLK0eQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTe+sDv0wIKkIEoEttvQ6evX6LV2D4uTd/WBOwDjhPB8pP4ov2Ja+w6AVkJwo4gg5W9AiNTB+k58W1pNizlYdCpFQOoco+gBexX9f8sm7Fs0hpaM2PRuJNSB3t+ome32UrlDdz+Sos6AHZHdY0EhgGVXaMY5OFYYwGWcOZMlSe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pf3hgB0D; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739533452;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=89gFJdlR9qUDNbjkUW82cBr8nzW66/88qgzIThpdpAo=;
+	b=pf3hgB0DH54F1MAtwetbpQhnD8ASG/CUsIHMzSv3DqCZTpyk6o6e8nIcFe5fAsmHEMZf7x
+	QSEXFXilQLJ4mSm7dsciz0AK6PuC0V41qB4cutKiZ4eEqdRuHFk4pvwM/GtTnN8Y4gADxi
+	r0u7RX9ixZEMkSv+VAi1iFEnw/4TKEw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Don Brace <don.brace@microchip.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	storagedev@microchip.com,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: usb: usb-device: Replace free-form 'reg' with constraints
-Date: Fri, 14 Feb 2025 12:42:35 +0100
-Message-ID: <20250214114235.49476-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH v3] scsi: hpsa: Remove deprecated and unnecessary strncpy()
+Date: Fri, 14 Feb 2025 12:43:02 +0100
+Message-ID: <20250214114302.86001-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,33 +61,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Replace free-form text of 'reg' property with proper constraints so
-incorrect values can be actually reported.
+While replacing strncpy() with strscpy(), Bart Van Assche pointed out
+that the code occurs inside sysfs write callbacks, which already uses
+NUL-terminated strings. This allows the string to be passed directly to
+sscanf() without requiring a temporary copy.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Remove the deprecated and unnecessary strncpy() and the corresponding
+local variables, and pass the buffer buf directly to sscanf().
+
+Replace sscanf() with kstrtoint() to silence checkpatch warnings.
+
+Compile-tested only.
+
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>
+Cc: David Laight <david.laight.linux@gmail.com>
+Suggested-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- Documentation/devicetree/bindings/usb/usb-device.yaml | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Changes in v2:
+- Adjust len to copy the same number of bytes as with strncpy()
+- Link to v1: https://lore.kernel.org/r/20250212222214.86110-2-thorsten.blum@linux.dev/
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-device.yaml b/Documentation/devicetree/bindings/usb/usb-device.yaml
-index da890ee60ce6..c67695681033 100644
---- a/Documentation/devicetree/bindings/usb/usb-device.yaml
-+++ b/Documentation/devicetree/bindings/usb/usb-device.yaml
-@@ -39,8 +39,10 @@ properties:
+Changes in v3:
+- Remove strncpy() and tmpbuf et al and use buf directly as suggested by
+  Bart Van Assche and Kees Cook
+- Replace sscanf() with kstrtoint() as suggested by David Laight
+- Link to v2: https://lore.kernel.org/linux-kernel/20250213195332.1464-3-thorsten.blum@linux.dev/
+---
+ drivers/scsi/hpsa.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 84d8de07b7ae..bb65954b1b1e 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -453,17 +453,13 @@ static ssize_t host_store_hp_ssd_smart_path_status(struct device *dev,
+ 					 struct device_attribute *attr,
+ 					 const char *buf, size_t count)
+ {
+-	int status, len;
++	int status;
+ 	struct ctlr_info *h;
+ 	struct Scsi_Host *shost = class_to_shost(dev);
+-	char tmpbuf[10];
  
-   reg:
-     description: the number of the USB hub port or the USB host-controller
--      port to which this device is attached. The range is 1-255.
--    maxItems: 1
-+      port to which this device is attached.
-+    items:
-+      - minimum: 1
-+        maximum: 255
+ 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+ 		return -EACCES;
+-	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+-	strncpy(tmpbuf, buf, len);
+-	tmpbuf[len] = '\0';
+-	if (sscanf(tmpbuf, "%d", &status) != 1)
++	if (kstrtoint(buf, 10, &status))
+ 		return -EINVAL;
+ 	h = shost_to_hba(shost);
+ 	h->acciopath_status = !!status;
+@@ -477,17 +473,13 @@ static ssize_t host_store_raid_offload_debug(struct device *dev,
+ 					 struct device_attribute *attr,
+ 					 const char *buf, size_t count)
+ {
+-	int debug_level, len;
++	int debug_level;
+ 	struct ctlr_info *h;
+ 	struct Scsi_Host *shost = class_to_shost(dev);
+-	char tmpbuf[10];
  
-   "#address-cells":
-     description: should be 1 for hub nodes with device nodes,
+ 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
+ 		return -EACCES;
+-	len = count > sizeof(tmpbuf) - 1 ? sizeof(tmpbuf) - 1 : count;
+-	strncpy(tmpbuf, buf, len);
+-	tmpbuf[len] = '\0';
+-	if (sscanf(tmpbuf, "%d", &debug_level) != 1)
++	if (kstrtoint(buf, 10, &debug_level))
+ 		return -EINVAL;
+ 	if (debug_level < 0)
+ 		debug_level = 0;
 -- 
-2.43.0
+2.48.1
 
 
