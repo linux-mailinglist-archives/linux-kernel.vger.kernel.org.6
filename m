@@ -1,98 +1,96 @@
-Return-Path: <linux-kernel+bounces-514951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098C9A35DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:55:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF424A35DEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C866A1633F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E407188E060
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75874262814;
-	Fri, 14 Feb 2025 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0576B26137C;
+	Fri, 14 Feb 2025 12:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpuYzaRQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="APdeHuzq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF4920C00B;
-	Fri, 14 Feb 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1DA230985
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739537583; cv=none; b=V/7aYeamrIwsbVarmhGyFGY+0OksLxTLD/JgvAaFppmPCnUv56DkoX9f+m47AdyiJ4nt00DvZ3c6fuIWsVTNbhYxvwOiNzB0DkCmzFx/xV4HbMSdmJlDQgnNIX0FRyTaOV3vB4O45BPxghDNJbLpNw45baWfzfVa1LWdbTo9/BE=
+	t=1739537628; cv=none; b=F1K29lfZsYS98/uuVT9PirEaB6TdnsC6QdZwMf3MjsZCEwN6KjDF6TZt2OFt2sSjPsk4U+ZtQlWDIzPUjHEGLITI9RS3+QhN2Dyg1Nubpoax4Qo/8oBQNha+mRnwpP2f6t2uDRjEtyrfVJ8EFX0zhs2oKvl8/Z+HtXRFulV7MqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739537583; c=relaxed/simple;
-	bh=9ejsueg7AZeHeRrozATskzwELiZK9By16Q2aGUm6HLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQW8RwPDeheCgfQdg9kKptTzJnrEVxai7PXUd2l36MSd0uIjE3nCPmGzdMNJ3GTVnPdgqP9RA9rrS1Ha5j89pjzxdbbohwvlZzJ+80ay23quUuo2Kr0MQR3ziixw3JycZVMqbvKCIrSlG1whnHXgAgx0M51w/F+wmxMaMVTYeQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpuYzaRQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3911FC4CED1;
-	Fri, 14 Feb 2025 12:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739537583;
-	bh=9ejsueg7AZeHeRrozATskzwELiZK9By16Q2aGUm6HLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IpuYzaRQGKxX8p3ZBYd6f/v0skISdTN9CYpROzXUd2S/H6kPzb4aeMYNFTLX7VBs1
-	 XTDmqPcd8XinL+OWrmcELEfLFd2ZpCVA/q0Nsi68l8bgXmKyS2TnkoZcVS+R5sqV3s
-	 LoIYEUoT9fjpCzKHzdHwMV/S3v/IH5ybE0/DBldLwmb7Ycqm1+YOPM55Fd5Dv2h3Hq
-	 qCr63M0ieVn95aa3cEyJlh3cehb7XUGv0Hqzm0r+IDlQQIIQV7qjuAAz6vtegJZ0qA
-	 FYZuHLVz9SfxnE5+XOH96nqGunaIJ5c2OXk7YbCdnVA3Bqjg2QRFC2mDmyQC+D628j
-	 YFG7232qNgIow==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tivBw-000000000p3-193H;
-	Fri, 14 Feb 2025 13:53:13 +0100
-Date: Fri, 14 Feb 2025 13:53:12 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Liu Ying <victor.liu@nxp.com>
-Subject: Re: [PATCH] bus: simple-pm-bus: fix forced runtime PM use
-Message-ID: <Z688uKdqVDaQhm5V@hovoldconsulting.com>
-References: <20250214102130.3000-1-johan+linaro@kernel.org>
- <CAPDyKFr98DraLvOC83rRFa=uKj_hmwS7Lj0L3JqrbqcFuhdWGA@mail.gmail.com>
+	s=arc-20240116; t=1739537628; c=relaxed/simple;
+	bh=4z1f4w3fc/rS+rR37tw4jvKtssLmhg7xJF+noxM8VNw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=KuRi2VWHDZnXn61IkiA3qr2yXKZuyEFHecHu0c1D0sQh3x+8oM5QN3pEb2jI6ErHHXYTNF0TQCxG74glZGK4W9DpRweHrBdqpY/CWtlNxWPrfG6etU0PkCxs1Q/iNrPFmDUnY91ty/9RCGha8uSze5Mn+MsEHk5k4E1vaLNGYNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=APdeHuzq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739537625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M24UA7C5snSotQt93BcJrFNpx6zFhQ3V7OApt+YZfGE=;
+	b=APdeHuzqWiAPyeVwhM6SihAGjMPF2PL8UxAhIioyWOUiylcCAp0b3thMS8B7VlnKGeED0F
+	3kw2BBiaeFqFhPhV04uycJ2G1crQEfisDKYBlPz3au0E691O+W5yZyMZ+AWJMTJluEMNJE
+	y74ihJZLVGUZNoqOWqieaMaqVEJfe8c=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-rFv_Yn9pNEeo8NemprD6KA-1; Fri,
+ 14 Feb 2025 07:53:42 -0500
+X-MC-Unique: rFv_Yn9pNEeo8NemprD6KA-1
+X-Mimecast-MFC-AGG-ID: rFv_Yn9pNEeo8NemprD6KA_1739537621
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF2281800879;
+	Fri, 14 Feb 2025 12:53:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 668DC300018D;
+	Fri, 14 Feb 2025 12:53:40 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250211093432.3524035-1-max.kellermann@ionos.com>
+References: <20250211093432.3524035-1-max.kellermann@ionos.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, netfs@lists.linux.dev,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v6.13] fs/netfs/read_collect: fix crash due to uninitialized `prev` variable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr98DraLvOC83rRFa=uKj_hmwS7Lj0L3JqrbqcFuhdWGA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3978181.1739537619.1@warthog.procyon.org.uk>
+Date: Fri, 14 Feb 2025 12:53:39 +0000
+Message-ID: <3978182.1739537619@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Feb 14, 2025 at 01:36:48PM +0100, Ulf Hansson wrote:
-> On Fri, 14 Feb 2025 at 11:21, Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > The simple-pm-bus driver only enables runtime PM for some buses
-> > ('simple-pm-bus') yet has started calling pm_runtime_force_suspend() and
-> > pm_runtime_force_resume() during system suspend unconditionally.
-> >
-> > This currently works, but that is not obvious and depends on
-> > implementation details which may change at some point.
-> >
-> > Add dedicated system sleep ops and only call pm_runtime_force_suspend()
-> > and pm_runtime_force_resume() for buses that use runtime PM to avoid any
-> > future surprises.
-> >
-> > Fixes: c45839309c3d ("drivers: bus: simple-pm-bus: Use clocks")
+Max Kellermann <max.kellermann@ionos.com> wrote:
+
+> When checking whether the edges of adjacent subrequests touch, the
+> `prev` variable is deferenced, but it might not have been initialized.
+> This causes crashes like this one:
 > 
-> This doesn't look like it is needed to me. It isn't broken, right?
+>  BUG: unable to handle page fault for address: 0000000181343843
+> ...
+> 
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-I didn't add a CC stable tag since this currently works, but I still
-consider it a bug to call these helpers unconditionally when not using
-runtime PM.
+Signed-off-by: David Howells <dhowells@redhat.com>
 
-[ And during rc1 these callbacks were suddenly called and triggered a
-NULL-pointer dereference as you know. [1] ]
-
-Johan
-
-[1] https://lore.kernel.org/lkml/Z6YcjFBWAVVVANf2@hovoldconsulting.com/
 
