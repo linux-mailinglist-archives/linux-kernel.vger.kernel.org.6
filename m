@@ -1,94 +1,92 @@
-Return-Path: <linux-kernel+bounces-515264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687B2A36298
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:03:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276E7A362B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:06:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F6916ED80
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005AB3A75C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD44267396;
-	Fri, 14 Feb 2025 16:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6B914EC77;
+	Fri, 14 Feb 2025 16:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rcyOfamJ"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eYi7ThzX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30956266EE0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7F264F9F;
+	Fri, 14 Feb 2025 16:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548964; cv=none; b=Z/0eIC7u4YosAo4XtMVOtn2p75+4H8oJ+Nr25i9qNeFA97/fBFx5JE66kxana9aemvv93B9Usqgg5BcX8pnfpS48Dug6xjFPlw8fFI2PBfBMnWC4aO9VOc7nlULFoLN4Nz+sQPw6ExdrX6/N7y4Zgtz48y7c2t0HgE3hkg/MXsg=
+	t=1739548978; cv=none; b=OxyHYE8V2dS1Wuz/M60CznHfv20tcj6GSLtPln/NhM3ck/2sS4e0jXcgu9XuBlB3PBXiQFu8iMsM6AhglojaHqULFIWn3IlhpBZO8/4R/0B556vJ5vm7A0ANTcXp90zAfHv3mM4cekyj5PSICtuWX1wzMpx15W+dgh5N5s+gAoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548964; c=relaxed/simple;
-	bh=7McRpc8Sf91JR5HwdKzNfIMCUoHTJyI13yOxt2JXQwA=;
+	s=arc-20240116; t=1739548978; c=relaxed/simple;
+	bh=MAjpCZOZoyGfd6fah3oQUUOvsbLcuxHpsSWESwVYX38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrhx8X6O5nfNstLJM61nVNiqvNuQ8k+32vNOLjAUjCsLhxpLHO+HgC8gGQA/DozgkuPyHfEhM/0K1HarHouXWtZRJfeF4CglUtIELZfEHctF0xNnL8UpC2xfIFY5oVpMCakkeC3Wqrx/q1vQUAVLIxwlCPZuv39KO25b8w40Gpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rcyOfamJ; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-307325f2436so18408171fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739548960; x=1740153760; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ni8M+7fnHjZEMfJNA97DV1PZ1vn01NK3p1wwHVgLyMQ=;
-        b=rcyOfamJpXrPwb2DhmgIPU6E0QXk9K5tj8sYoDBGSwfwLPw6FNzu9LSDUg803NpLwF
-         C831p9E4cgH9MrRBfSadqbZpvo0YcXUa9u6NJZR7zRot0TaisDFsig1v4+nERYdw2i9M
-         VDy3XMxAX+flwy4qXwqcUctD5bUmotaCnV7PjDMFNKKXDVxTWkwrJ8IBRSsuqchRkB3n
-         f0n6kNg2ldVuGB26Bxsr3oBm+rtBouoBCaRb6qTfQEBzO00RDuxTT6uWG0RQc0muYIog
-         SJSoNCDI+4VK0ZiKK+4DL2UpM8BcrL6vxVVuWk5l/GRG0rgQKP4ZAadduB3VmqqiaPZQ
-         1h/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739548960; x=1740153760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ni8M+7fnHjZEMfJNA97DV1PZ1vn01NK3p1wwHVgLyMQ=;
-        b=HIvtBvg/eePQ9iZ8Z8l7RznAlr5lQjQr0TuRgImoJUuXRJO0FzksYyQcd6HzFUF+xd
-         MHD3zR6Dl2+54y7T47mIS6iAIwOFtb6a4HQ6atVg0TcwYKGy9prpQdQdJgLjzmTMoZAl
-         nMCpjRD8/BmdtUUY4+haYxrpq2cXSShG1Z3KScCG579K5d49O3dAj+sZKAOg9QwM4yFd
-         hz8xpK744ufZRSM6+QFZu7Hn9H2l2n+c1/OTzzvA935I8syeubtH/W9qB+A9S3wv3e7S
-         O1RHWJwOeJgLpwCn32shFQrG99g6T/hzgyA2l4BKyhbcoga92w7q94RnnE8CxMV4zTJ/
-         BM5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWDGGle2xPgnOkLy26S5H7FqzvHO+QUsvAJ5LyZoki31mSl1h1SGhPxmG2pTHlYOsm/uiilAfRn3HIA+Vo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEsVlZCaZitO/yxifg6d98571V43VQcuy8qlIeMSxzuOoCyRUd
-	VcC+q9gUuSsHzp5YNIoDVOufzA5/PLwnLyNrFVnJQrIkXdzjAGZwH9KV9wnWKKk=
-X-Gm-Gg: ASbGncuAh+WzbwnaQi4vLZMa0nhwfO7EyjFi1ZR7XMKssKKGLZt4W9qBf2/pMEcm33J
-	1QSQp7gYsBTI0QuR7YiHOsbh/dKvTn1M7OrjR6ljtJUE4VQaxxT8apbm0DGsHTvq1R2EZ9ZU0zg
-	CNg6IOvRse8aJVb1YqT1c2e1M6JYoZ/qGbpGk2tJH8WKGgo+p24ld8/IyclFTNuRhvYf28Ah0fe
-	WmjhTL/0Sjr+N2WUHkNpwaU0nXefFyu+wEJ5SP+5zsT4Ngdda4AXwluKqG++USPH00+M4oB+tLR
-	cRN+cPS40pYUCk0zj6avoYd+RvD/DEQXvgx6Te6Q0fQEnmIWTr7S+R1GmtSLWmh/zLSxu2Q=
-X-Google-Smtp-Source: AGHT+IGn28EmgkCJxbojbPnsNpKARzTvTVEWepxmZw6Bez7lrsTqmABZYK92VlugVR6Dz8Cxy1cCRw==
-X-Received: by 2002:a2e:bc18:0:b0:308:f4cc:951b with SMTP id 38308e7fff4ca-3090373a8f8mr40478541fa.23.1739548958674;
-        Fri, 14 Feb 2025 08:02:38 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309100eabcbsm6136591fa.24.2025.02.14.08.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:02:37 -0800 (PST)
-Date: Fri, 14 Feb 2025 18:02:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sui Jingfeng <sui.jingfeng@linux.dev>, Aleksandr Mishin <amishin@t-argos.ru>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Tomi Valkeinen <tomi.valkeinen@ti.com>, 
-	Jyri Sarha <jsarha@ti.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, 
-	Swapnil Jakhade <sjakhade@cadence.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Fedor Pchelkin <pchelkin@ispras.ru>, Alexey Khoroshilov <khoroshilov@ispras.ru>, 
-	Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v3] gpu: cdns-mhdp8546: fix call balance of mhdp->clk
- handling routines
-Message-ID: <kwrxxcjgjqvkwapfb7hrytf32ike3wqptjkr7mm3m4rz56xifi@ahbrdjt4cytk>
-References: <20250214154632.1907425-1-mordan@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEi6hxDcDV0T8anDNFRqa4d7qa3AFfSz6bbRchTqD6apnjMwuBdhnuxz2BMrbQkmgGrXcvZ6wNRNYr02CL0kg1+YdRaZlkkN/3HI5qnsZBHM11fgpo55ynejDb6jSpvjDkSB+DRysaVl3zidCvXMjfjrtiQa1ONWrEeFwSy4n7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eYi7ThzX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739548976; x=1771084976;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MAjpCZOZoyGfd6fah3oQUUOvsbLcuxHpsSWESwVYX38=;
+  b=eYi7ThzXNvIiz7agQuNgTwmuNdl8YjN0h934I8I12XZWwGYGswwUGN06
+   01FtvTUGdjul7ZVh8rc7ZcTEWbuJkBRhKM2j3/jjskAKQpwX7fjil8PKh
+   sulmZMAyedvrAiQNxeWFhVb2EXpoQOC80j7lce9+2je3tkzlvOs4P3EWJ
+   uRsdp2rdiKnUDCNWyxmlk5hORykvVFPOAzmkmuhTF2gkXbxpaah+i2e9Q
+   1kql2Rc1li/5cJMWhz+JkBAHuWnHoYR64lZjwxIOqLJ0kZYu+jKK/KSgd
+   BFKBCM6Dc8BcfLw7pSY6pVptWWgZq+MYz69gaL0/0Kp8uJh3ZuM+ufXYU
+   A==;
+X-CSE-ConnectionGUID: t6yUfC0WQ/yjGXAd0R3OLA==
+X-CSE-MsgGUID: /kGJqZqPQXmNdcOYWzuEPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="65658042"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="65658042"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:02:55 -0800
+X-CSE-ConnectionGUID: 1tvWR5XLTECSx6EZF0ypJA==
+X-CSE-MsgGUID: 9fGnYwAnSjysFeiFWxbcvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="113349387"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:02:50 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tiy9P-0000000BXSZ-3hUD;
+	Fri, 14 Feb 2025 18:02:47 +0200
+Date: Fri, 14 Feb 2025 18:02:47 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 06/10] regmap: irq: Add support for chips without
+ separate IRQ status
+Message-ID: <Z69pJ3BWp_cGV1yq@smile.fi.intel.com>
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
+ <Z69eue2dV37vw61v@smile.fi.intel.com>
+ <D7SADDQZUERA.PT8QLVZ9ZN1N@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,37 +95,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214154632.1907425-1-mordan@ispras.ru>
+In-Reply-To: <D7SADDQZUERA.PT8QLVZ9ZN1N@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Feb 14, 2025 at 06:46:32PM +0300, Vitalii Mordan wrote:
-> If the clock mhdp->clk was not enabled in cdns_mhdp_probe(), it should not
-> be disabled in any path.
-> 
-> The return value of clk_prepare_enable() is not checked. If mhdp->clk was
-> not enabled, it may be disabled in the error path of cdns_mhdp_probe()
-> (e.g., if cdns_mhdp_load_firmware() fails) or in cdns_mhdp_remove() after
-> a successful cdns_mhdp_probe() call.
-> 
-> Use the devm_clk_get_enabled() helper function to ensure proper call
-> balance for mhdp->clk.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
-> 
-> Fixes: fb43aa0acdfd ("drm: bridge: Add support for Cadence MHDP8546 DPI/DP bridge")
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
-> ---
-> v2: Use devm_clk_get_enabled() helper function, as per Dmitry Baryshkov's
-> request.
-> v3: Describe the paths that lead to unbalanced clock handling routines,
-> as requested by Dmitry Baryshkov
-> 
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
+On Fri, Feb 14, 2025 at 04:49:57PM +0100, Mathieu Dubois-Briand wrote:
+> On Fri Feb 14, 2025 at 4:18 PM CET, Andy Shevchenko wrote:
+> > On Fri, Feb 14, 2025 at 12:49:56PM +0100, Mathieu Dubois-Briand wrote:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+...
+
+> > > +static irqreturn_t regmap_irq_thread(int irq, void *d)
+> > > +{
+> > > +	struct regmap_irq_chip_data *data = d;
+> > > +	const struct regmap_irq_chip *chip = data->chip;
+> > > +	struct regmap *map = data->map;
+> > > +	int ret, i;
+> >
+> > 	unsigned int i;
+> > ?
+> 
+> I agree, but signed int index variables are used in all functions of
+> this file. What would be the best approach here? Only fix it on code
+> parts I modified? On the whole file?
+
+I would change in the code you touched,
+
+> > > +	bool handled = false;
+> > > +	u32 reg;
+> > > +
+> > > +	if (chip->handle_pre_irq)
+> > > +		chip->handle_pre_irq(chip->irq_drv_data);
+> > > +
+> > > +	if (chip->runtime_pm) {
+> > > +		ret = pm_runtime_get_sync(map->dev);
+> > > +		if (ret < 0) {
+> >
+> > > +			dev_err(map->dev, "IRQ thread failed to resume: %d\n",
+> > > +				ret);
+> >
+> > Can be one line.
+> 
+> Yes. Kind of the same question here: should I fix only the code close to
+> the parts I modified or the whole file?
+
+Same, it falls under the "common sense" category.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
