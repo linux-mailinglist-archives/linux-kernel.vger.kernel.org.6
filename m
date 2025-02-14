@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-514638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76325A359A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E21A359A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD2933AD67E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09B03AD78A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EDB22D4C1;
-	Fri, 14 Feb 2025 09:06:08 +0000 (UTC)
-Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9D122A4C3;
+	Fri, 14 Feb 2025 09:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PysVsZ7q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F7F215182;
-	Fri, 14 Feb 2025 09:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A49211497
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523967; cv=none; b=IKztmO6QDwxkGZeO+PKPUnNZwarw78zUlZTsgk00XfX/q7/PTEoF+Bj301UVMC/BC15WLXplZMKDL4TI4rNiYx9mwBYfXh/qIWT1Kj7a5FfM3vwkfayWxdfpknCS7jYw+WCdRXJQ1nDbhXJbAl+mFmXWn8Hw192hOxSBnVTGq0U=
+	t=1739524023; cv=none; b=DQHchBVFqhDlw8dxC9up4dBCNYcmrpieXvNu0Dg8vVVzfzuPtXcKWOcWbkecVhmrYc/A+aHWkT7t8fTR9a2nlfYg5GHYmivB2vL603xYY4j79RhA0CpP/BnWnqBMRIg3lVuBZXIWPuN4u49EP11OIO6LyM6VDbDaFnJkCI+p9CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523967; c=relaxed/simple;
-	bh=8IP/Y7JOxbzUNbzXb/jNEk0rXPjp3Hj74KI9OIC0hm0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lrwqqv5er+oHCT6AxgH7t5qFgApW6A8FH9CLxY8jlUnj07JgJHemtAAaEWv9K92PrC14mYa3MtuP+RZEGdawmGVnH3vKnQ6ab1ZYdQGCjOmosOFqaOeiIAXgiUSTfA9sZIDt7iGrQv906HVbpWMFwK5MVvHVWnlJEXJZ4wxoRtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
-Received: from tux.applied-asynchrony.com (p5ddd71dc.dip0.t-ipconnect.de [93.221.113.220])
-	by mail.itouring.de (Postfix) with ESMTPSA id 2A49D12566F;
-	Fri, 14 Feb 2025 10:06:03 +0100 (CET)
-Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
-	by tux.applied-asynchrony.com (Postfix) with ESMTP id EE20E60189381;
-	Fri, 14 Feb 2025 10:06:02 +0100 (CET)
-Subject: Re: [PATCH 6.13 000/443] 6.13.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-References: <20250213142440.609878115@linuxfoundation.org>
- <e7096ec2-68db-fc3e-9c48-f20d3e80df72@applied-asynchrony.com>
- <2025021459-guise-graph-edb3@gregkh>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <5b51c818-86c0-bc91-cb96-90cd63ca394f@applied-asynchrony.com>
-Date: Fri, 14 Feb 2025 10:06:02 +0100
+	s=arc-20240116; t=1739524023; c=relaxed/simple;
+	bh=E2vDahFc9gmEXv67G1ApHZCwpC4OoKZqSbjlqr99C18=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rwe/hA4SiXWttX/mdLoINBVEc3LmKx+I+OKjFwubhss4He4kWhcDEY/iOk3UBkSO5/B/j7dGKMnFV1MVz5A9fLFy1GO2E7219APlElnPMTjcgDxzvRHCWfesSVoJNijeakjoAh/li/UURT4K5VcRdklFI5Lx8xuuvTQiWQZyCOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PysVsZ7q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83BCDC4CED1;
+	Fri, 14 Feb 2025 09:06:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739524022;
+	bh=E2vDahFc9gmEXv67G1ApHZCwpC4OoKZqSbjlqr99C18=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PysVsZ7qY61sOWX13NixqHz5dkiOWNFOBvRtbkv6CUF2PQ38kwBpb7NjCkUOs/qGJ
+	 yhGuEOd2407ICA7WdLK3FZvz5HkfSwNXaKU4B8NoqHa0Om3G0wa/DfdsO1GFv8um9f
+	 mpR4dFrhF9AXIiq1bYWg/MIUv2ZyPT5B7BQgsmletFCrEi3RLzCrQxCnfgT5GSLUTj
+	 pOARaCTHIPEMzYcLeHNW9JiIuHoSZMpp8gwryUU5TLTt80Rad75rq9uCdQZVNsWfBw
+	 6gsBgR8eC8LWwQd+CpzNVTHdnkV9O6KtvV49U9X7NT+EfX//kb1d6EpbzbK8BNP0dC
+	 /mwY5E7wuvwtw==
+From: Mike Rapoport <rppt@kernel.org>
+To: x86@kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Ning Sun <ning.sun@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	tboot-devel@lists.sourceforge.net
+Subject: [RESEND PATCH v2 0/4] x86/boot: a few cleanups
+Date: Fri, 14 Feb 2025 11:06:47 +0200
+Message-ID: <20250214090651.3331663-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2025021459-guise-graph-edb3@gregkh>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 
-On 2025-02-14 09:42, Greg Kroah-Hartman wrote:
-> On Fri, Feb 14, 2025 at 09:32:06AM +0100, Holger Hoffstätte wrote:
->> On 2025-02-13 15:22, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 6.13.3 release.
->>> There are 443 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>
->> Builds & runs fine BUT fails to suspend to RAM 99.99% of the time (basically
->> one success but never again). Display powers down but fans stay on.
->>
->> Tested on multiple systems, all x64. I first suspected amdgpu because why not :)
->> but it also fails on a system without amdgpu, so that's not it.
->>
->> Reverting to 6.13.2 immediately fixes everything.
->>
->> Common symptom on all machines seems to be
->>
->> [  +0.000134] Disabling non-boot CPUs ...
->> [  +0.000072] Error taking CPU15 down: -16
->> [  +0.000002] Non-boot CPUs are not disabled
->>
->> "Error taking down CPUX" is always the highest number of CPU, i.e.
->> 15 on my 16-core Zen2 laptop, 3 on my 4-core Sandybridge etc.
->>
->> I started to revert suspects but no luck so far:
->> - acpi parsing order
->> - amdgpu backlight quirks
->> - timers/hrtimers
->>
->> Suggestions for other suspects are welcome.
-> 
-> Can you run 'git bisect' to try to find the offending change?
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-Can do later today but this is going to take a while - slow HW. :(
+Hi,
 
--h
+These patches cleanup x86::setup_arch() and e820.c.
+No functional changes intended.
+
+This is a resend of v2 rebased on v6.14-rc2
+
+v2: update comments as suggested by Ingo
+v1: https://lore.kernel.org/all/20241203112525.591496-1-rppt@kernel.org
+
+Mike Rapoport (Microsoft) (4):
+  x86/boot: move setting of memblock parameters to e820__memblock_setup()
+  x86/boot: split kernel resources setup into a helper function
+  x86/boot: split parsing of boot_params into a helper function
+  x86/e820: drop E820_TYPE_RESERVED_KERN and related code
+
+ arch/x86/include/asm/e820/api.h   |   1 -
+ arch/x86/include/asm/e820/types.h |   9 --
+ arch/x86/kernel/e820.c            |  95 ++++++++-------------
+ arch/x86/kernel/setup.c           | 134 ++++++++++++++----------------
+ arch/x86/kernel/tboot.c           |   3 +-
+ arch/x86/mm/init_64.c             |   8 --
+ 6 files changed, 97 insertions(+), 153 deletions(-)
+
+
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+-- 
+2.47.2
+
 
