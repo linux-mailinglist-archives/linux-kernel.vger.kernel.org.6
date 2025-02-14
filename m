@@ -1,268 +1,166 @@
-Return-Path: <linux-kernel+bounces-515640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F20BA3672F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:01:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F9EA36722
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E223AEB82
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1564818931B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B05C1C8634;
-	Fri, 14 Feb 2025 21:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6341C8619;
+	Fri, 14 Feb 2025 20:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="V4+/2yiH"
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t9VbUE6K"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A3417E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739566856; cv=pass; b=orbF4hvpD/g/iLV+XhuD7qHvo4obnv4Wech5Z3sN40c3rcEh9tl0h9jeqFkGW4yRS645E4etl6dl2CNuGYAtZ2oYKCY84CbEnbQuYTIV5h6QtKJzEY0HKtDXfl0J6nxor5WUBsyIxNuEIkdvCxvb1P4LTiTnKniDisCTxGgNGD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739566856; c=relaxed/simple;
-	bh=FcubtviZyPUfQnY1TcwemZ3llLYuBDJKs5GipT1s6+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RRo2tSoHWBihgUtWhnP1XO+D68LZSaZES4m82PNFY2jO0LWpK/W1/6bQMmwBbTg8gVNxs+zBIE1igj9gUJsUBEFKFrd89iQwQnoZ9w7Wbj9pa2vUuuFP5ssCXNYRTRsp4w1yQy4huixA36SxgTOpGDhOZHTKUA+cY2G7xES00AY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=V4+/2yiH; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739566824; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WsX1oLnhjvUPVAMV6CPsMZWwHXSzCRoPUlcCbFkX1iVgiZFKaiYoGjNyqWGpS1XFF1pJCHRHPhNtI5Q2ZvQhua9YHfbbXKtsOIslON4VlGv63FKEn7ziLw5yF+nXEVeSfZq/KBU+vyUAHQP+hZtiCbxqeK8R80NZD6siO0NwH8k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739566824; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JWDjD2ykSNfdny1OGAbJaEOdyCiHP6cpZeQw+/uPvDY=; 
-	b=d7LxqseOVrrK5RJLWM4p15VVnw4/v+rW1z7ZoleA6q/pueCQ0SAlJMjRv8sbJapO9JslNl+U5owmn9a+llQGR7sHnm94mT2+sJOj2lXM5BgrEnp8zb2U67hMwL9m6X3keVLJAbj6ku1C1UWga63MJO0JU5Bp39/pRkOu8OflK/s=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739566824;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=JWDjD2ykSNfdny1OGAbJaEOdyCiHP6cpZeQw+/uPvDY=;
-	b=V4+/2yiHXhSbtD3VXmryGatcLN4KjCtkZ0yOlgVp/g1Gpx+NvsCvGU/Ot5R0/qWE
-	sBRYvlX7oiO5n90EAF10aOWwcT4eYoMMt8c2BzHWIHYNb+eX9vDS8DoNwHo9l34yb0W
-	ZTQvq1eJJRPrNh9LrbtGw89LQe2YTiy7bmYB05vw=
-Received: by mx.zohomail.com with SMTPS id 1739566822837654.3062409366959;
-	Fri, 14 Feb 2025 13:00:22 -0800 (PST)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Mihail Atanassov <mihail.atanassov@arm.com>
-Cc: kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] drm/panthor: Avoid sleep locking in the internal BO size path
-Date: Fri, 14 Feb 2025 20:55:21 +0000
-Message-ID: <20250214210009.1994543-2-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250214210009.1994543-1-adrian.larumbe@collabora.com>
-References: <20250214210009.1994543-1-adrian.larumbe@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FE718BBBB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739566640; cv=none; b=gVVgL0rZxgpLYyB4HZUGohSYoQwtSGsDgfED8YsNNoW0V95d0Nd2qDG3Iu3qhgxTwwqOk/HGTqKrgYcRvjyfSevdi/zZrHmKIXRy8T30LSRW+de+v4SrUCZ2XIx4Fy0KxJ51G3Rvod+2MaEB38mxhV2GojNIg4wcIknuLlgZQno=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739566640; c=relaxed/simple;
+	bh=NZQ4YveTbEm5wnCOkEunC53wniq9dQGlfGqQPmsi+KY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnH2rPItstCTKas5rbQE6wSlywJ3WeP0Cqj3mooZFA1y3JxAMpLkatuehA4toe+a6Xpr9qRkfmhljGfs9zSUnabIovMJyU2uNdlnLEw8NWFiu+2XyS5xmHrfmqLM8Tcq+NiXsO8srd0NDW4N8+UQZGFhQ4eRyVkZvPP5C86mIeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t9VbUE6K; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 14 Feb 2025 15:57:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739566632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6JB9eDuhdq6JTzW9JcjdbIAC+75hSX6JOkeQY8YYkQ=;
+	b=t9VbUE6KlXY787XxJuoxq77SzC+STuTM2U02ZxlqeXE/t0jQMZwgBxF7Tcn6tQx7ZXM1Qz
+	F94/l9MVPUYMTbpYLjgZ0/HZ7UITkJen7dOuBaOMuRtGNW2lWDQl4f34uSAkYcnTggdq4f
+	XWvzbqua/LXH+YoJZNQNepWCzPxtklw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: syzbot <syzbot+2110ef46097c323451eb@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, hughd@google.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] [bcachefs?] KASAN: slab-out-of-bounds Read in
+ folio_try_get
+Message-ID: <twd5ppfxqyjwy3mkhfd4o646ilquoobzgwnqppjzum7dipk32j@g6cyzamxifbp>
+References: <67afa09f.050a0220.21dd3.0053.GAE@google.com>
+ <Z6-o5A4Y-rf7Hq8j@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6-o5A4Y-rf7Hq8j@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-Commit 434e5ca5b5d7 ("drm/panthor: Expose size of driver internal BO's over
-fdinfo") locks the VMS xarray, to avoid UAF errors when the same VM is
-being concurrently destroyed by another thread. However, that puts the
-current thread in atomic context, which means taking the VMS' heap locks
-will trigger a warning as the thread is no longer allowed to sleep.
+On Fri, Feb 14, 2025 at 08:34:44PM +0000, Matthew Wilcox wrote:
+> On Fri, Feb 14, 2025 at 11:59:27AM -0800, syzbot wrote:
+> > BUG: KASAN: slab-out-of-bounds in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> > BUG: KASAN: slab-out-of-bounds in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> > BUG: KASAN: slab-out-of-bounds in page_ref_count include/linux/page_ref.h:67 [inline]
+> > BUG: KASAN: slab-out-of-bounds in page_ref_add_unless include/linux/page_ref.h:237 [inline]
+> > BUG: KASAN: slab-out-of-bounds in folio_ref_add_unless include/linux/page_ref.h:248 [inline]
+> > BUG: KASAN: slab-out-of-bounds in folio_try_get+0xde/0x350 include/linux/page_ref.h:264
+> > Read of size 4 at addr ffff88804f904b34 by task syz-executor127/5388
+> > 
+> > CPU: 0 UID: 0 PID: 5388 Comm: syz-executor127 Not tainted 6.14.0-rc2-syzkaller-00056-gab68d7eb7b1a #0
+> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> > Call Trace:
+> >  <TASK>
+> >  __dump_stack lib/dump_stack.c:94 [inline]
+> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> >  print_address_description mm/kasan/report.c:378 [inline]
+> >  print_report+0x169/0x550 mm/kasan/report.c:489
+> >  kasan_report+0x143/0x180 mm/kasan/report.c:602
+> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> >  instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> >  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> >  page_ref_count include/linux/page_ref.h:67 [inline]
+> >  page_ref_add_unless include/linux/page_ref.h:237 [inline]
+> >  folio_ref_add_unless include/linux/page_ref.h:248 [inline]
+> >  folio_try_get+0xde/0x350 include/linux/page_ref.h:264
+> >  filemap_get_entry+0x240/0x3b0 mm/filemap.c:1870
+> >  shmem_get_folio_gfp+0x285/0x1840 mm/shmem.c:2446
+> >  shmem_get_folio mm/shmem.c:2628 [inline]
+> >  shmem_write_begin+0x165/0x350 mm/shmem.c:3278
+> >  generic_perform_write+0x346/0x990 mm/filemap.c:4189
+> >  shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3454
+> >  new_sync_write fs/read_write.c:586 [inline]
+> >  vfs_write+0xacf/0xd10 fs/read_write.c:679
+> >  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7fb60d00ef1f
+> > Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 19 81 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 6c 81 02 00 48
+> > RSP: 002b:00007fb60c7b9fb0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+> > RAX: ffffffffffffffda RBX: 00007fb60c7b9ff0 RCX: 00007fb60d00ef1f
+> > RDX: 0000000001000000 RSI: 00007fb604200000 RDI: 0000000000000003
+> > RBP: 00007fb60d0976e0 R08: 0000000000000000 R09: 000000000000590c
+> > R10: 0000000000000002 R11: 0000000000000293 R12: 00007fb60d0976ec
+> > R13: 00007fb60c7ba030 R14: 0000000000000003 R15: 00007ffe9f1d73d8
+> >  </TASK>
+> > 
+> > The buggy address belongs to the object at ffff88804f904b00
+> >  which belongs to the cache radix_tree_node of size 576
+> > The buggy address is located 52 bytes inside of
+> >  allocated 576-byte region [ffff88804f904b00, ffff88804f904d40)
+> 
+> Wait, what?  We're calling folio_try_get() on a pointer which isn't a
+> pointer to a folio, but a pointer to somewhere in a radix_tree_node?
+> 
+> This fits a pattern we're seeing a lot of recently.
+> Bugs:
+> 
+> https://syzkaller.appspot.com/bug?extid=b581c7106aa616bb522c
+> https://syzkaller.appspot.com/bug?extid=8ae0902c29b15a27a4ee
+> https://syzkaller.appspot.com/bug?extid=07392c132f11b1758ac3
+> https://syzkaller.appspot.com/bug?extid=fe375f77ba1a6ab944b6
+> https://syzkaller.appspot.com/bug?extid=a0ae55e3dde11d2d790c
+> 
+> They all fit the form of syzbot mounts a (potentially fuzzed?) bcachefs
+> file system and later we have a corruption in the radix tree.
+> 
+> I have two suspicions (feel free to assign your own probabilities to which
+> is correct).  The first is that a bunch of tweaky little cleanups went
+> into the xarray code in the last merge window.  I really wish we could
+> stop doing that kind of bullshit.  Can we just agree that the xarray
+> code is good enough and not keep pissing with it?  Obviously if there's
+> a bug, then we should fix it (and that should come with test cases!),
+> but otherwise just leave it alone.  Please.  It would make finding this
+> kind of problem much easier.
 
-Because in this case replacing the heap mutex with a spinlock isn't
-feasible, the fdinfo handler no longer traverses the list of heaps for
-every single VM associated with an open DRM file. Instead, when a new heap
-chunk is allocated, its size is accumulated into a VM-wide tally, which
-also makes the atomic context code path somewhat faster.
+Oof. Sounds like an insufficient test suite if that stuff is making it
+in? You should be able to just tell people "no more xarray patches until
+the testing is improved".
 
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-Fixes: 3e2c8c718567 ("drm/panthor: Expose size of driver internal BO's over fdinfo")
----
- drivers/gpu/drm/panthor/panthor_heap.c | 38 ++++++++------------------
- drivers/gpu/drm/panthor/panthor_heap.h |  2 --
- drivers/gpu/drm/panthor/panthor_mmu.c  | 23 +++++++++++-----
- drivers/gpu/drm/panthor/panthor_mmu.h  |  1 +
- 4 files changed, 28 insertions(+), 36 deletions(-)
+> The second is that bcachefs has a random memory stomper.  That would
+> suck.  Kent, you said you had some automated tooling to feed syzbot
+> reproducers into?
 
-diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
-index db0285ce5812..e5e5953e4f87 100644
---- a/drivers/gpu/drm/panthor/panthor_heap.c
-+++ b/drivers/gpu/drm/panthor/panthor_heap.c
-@@ -127,6 +127,8 @@ static void panthor_free_heap_chunk(struct panthor_vm *vm,
- 	heap->chunk_count--;
- 	mutex_unlock(&heap->lock);
- 
-+	panthor_vm_heaps_size_accumulate(vm, -heap->chunk_size);
-+
- 	panthor_kernel_bo_destroy(chunk->bo);
- 	kfree(chunk);
- }
-@@ -180,6 +182,8 @@ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
- 	heap->chunk_count++;
- 	mutex_unlock(&heap->lock);
- 
-+	panthor_vm_heaps_size_accumulate(vm, heap->chunk_size);
-+
- 	return 0;
- 
- err_destroy_bo:
-@@ -389,6 +393,7 @@ int panthor_heap_return_chunk(struct panthor_heap_pool *pool,
- 			removed = chunk;
- 			list_del(&chunk->node);
- 			heap->chunk_count--;
-+			panthor_vm_heaps_size_accumulate(chunk->bo->vm, -heap->chunk_size);
- 			break;
- 		}
- 	}
-@@ -560,6 +565,8 @@ panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm)
- 	if (ret)
- 		goto err_destroy_pool;
- 
-+	panthor_vm_heaps_size_accumulate(vm, pool->gpu_contexts->obj->size);
-+
- 	return pool;
- 
- err_destroy_pool:
-@@ -594,8 +601,11 @@ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool)
- 	xa_for_each(&pool->xa, i, heap)
- 		drm_WARN_ON(&pool->ptdev->base, panthor_heap_destroy_locked(pool, i));
- 
--	if (!IS_ERR_OR_NULL(pool->gpu_contexts))
-+	if (!IS_ERR_OR_NULL(pool->gpu_contexts)) {
-+		panthor_vm_heaps_size_accumulate(pool->gpu_contexts->vm,
-+					    -pool->gpu_contexts->obj->size);
- 		panthor_kernel_bo_destroy(pool->gpu_contexts);
-+	}
- 
- 	/* Reflects the fact the pool has been destroyed. */
- 	pool->vm = NULL;
-@@ -603,29 +613,3 @@ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool)
- 
- 	panthor_heap_pool_put(pool);
- }
--
--/**
-- * panthor_heap_pool_size() - Calculate size of all chunks across all heaps in a pool
-- * @pool: Pool whose total chunk size to calculate.
-- *
-- * This function adds the size of all heap chunks across all heaps in the
-- * argument pool. It also adds the size of the gpu contexts kernel bo.
-- * It is meant to be used by fdinfo for displaying the size of internal
-- * driver BO's that aren't exposed to userspace through a GEM handle.
-- *
-- */
--size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
--{
--	struct panthor_heap *heap;
--	unsigned long i;
--	size_t size = 0;
--
--	down_read(&pool->lock);
--	xa_for_each(&pool->xa, i, heap)
--		size += heap->chunk_size * heap->chunk_count;
--	up_read(&pool->lock);
--
--	size += pool->gpu_contexts->obj->size;
--
--	return size;
--}
-diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm/panthor/panthor_heap.h
-index e3358d4e8edb..25a5f2bba445 100644
---- a/drivers/gpu/drm/panthor/panthor_heap.h
-+++ b/drivers/gpu/drm/panthor/panthor_heap.h
-@@ -27,8 +27,6 @@ struct panthor_heap_pool *
- panthor_heap_pool_get(struct panthor_heap_pool *pool);
- void panthor_heap_pool_put(struct panthor_heap_pool *pool);
- 
--size_t panthor_heap_pool_size(struct panthor_heap_pool *pool);
--
- int panthor_heap_grow(struct panthor_heap_pool *pool,
- 		      u64 heap_gpu_va,
- 		      u32 renderpasses_in_flight,
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 8c6fc587ddc3..9e48b34fcf80 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -347,6 +347,14 @@ struct panthor_vm {
- 		struct mutex lock;
- 	} heaps;
- 
-+	/**
-+	 * @fdinfo: VM-wide fdinfo fields.
-+	 */
-+	struct {
-+		/** @fdinfo.heaps_size: Size of all chunks across all heaps in the pool. */
-+		atomic_t heaps_size;
-+	} fdinfo;
-+
- 	/** @node: Used to insert the VM in the panthor_mmu::vm::list. */
- 	struct list_head node;
- 
-@@ -1541,6 +1549,8 @@ static void panthor_vm_destroy(struct panthor_vm *vm)
- 	vm->heaps.pool = NULL;
- 	mutex_unlock(&vm->heaps.lock);
- 
-+	atomic_set(&vm->fdinfo.heaps_size, 0);
-+
- 	drm_WARN_ON(&vm->ptdev->base,
- 		    panthor_vm_unmap_range(vm, vm->base.mm_start, vm->base.mm_range));
- 	panthor_vm_put(vm);
-@@ -1963,13 +1973,7 @@ void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memory_stats
- 
- 	xa_lock(&pfile->vms->xa);
- 	xa_for_each(&pfile->vms->xa, i, vm) {
--		size_t size = 0;
--
--		mutex_lock(&vm->heaps.lock);
--		if (vm->heaps.pool)
--			size = panthor_heap_pool_size(vm->heaps.pool);
--		mutex_unlock(&vm->heaps.lock);
--
-+		size_t size = atomic_read(&vm->fdinfo.heaps_size);
- 		stats->resident += size;
- 		if (vm->as.id >= 0)
- 			stats->active += size;
-@@ -1977,6 +1981,11 @@ void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memory_stats
- 	xa_unlock(&pfile->vms->xa);
- }
- 
-+void panthor_vm_heaps_size_accumulate(struct panthor_vm *vm, ssize_t acc)
-+{
-+	atomic_add(acc, &vm->fdinfo.heaps_size);
-+}
-+
- static u64 mair_to_memattr(u64 mair, bool coherent)
- {
- 	u64 memattr = 0;
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
-index fc274637114e..29030384eafe 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.h
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.h
-@@ -39,6 +39,7 @@ struct panthor_heap_pool *
- panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
- 
- void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memory_stats *stats);
-+void panthor_vm_heaps_size_accumulate(struct panthor_vm *vm, ssize_t acc);
- 
- struct panthor_vm *panthor_vm_get(struct panthor_vm *vm);
- void panthor_vm_put(struct panthor_vm *vm);
--- 
-2.47.1
+Yeah, although on 6.14-rc1 the builds are failing with the kconfig that
+syzbot built with, and bisect landed on a kbuild merge commit. Fun. It's
+going to take some time digging through cpp -E output to figure out
+what's going on.
 
+btk -IP ~/ktest/tests/syzbot-repro.ktest <syz bug id>
+
+(I really want the syzbot reproducers to run with a slimmed down ktest
+generated .config, but syzbot reproducers have all sorts of random
+dependencies so that's been a process).
+
+I don't have any reason to suspect bcachefs has a memory stomper that
+could cause this, but given the amount of syzbot bugs I still have to
+get through I can't rule it out, and unfortunately it's looking like
+it'll be a few weeks minimum before I can really start getting to the
+syzbot bugs.
 
