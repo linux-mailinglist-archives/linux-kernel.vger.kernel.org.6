@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-514502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75B9A357CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:21:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A34CA357CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89083AC117
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD9B1635A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942AF185B48;
-	Fri, 14 Feb 2025 07:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2A5207E01;
+	Fri, 14 Feb 2025 07:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXvphQHo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J7/WWZex"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9D120C039
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517E613A3EC
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739517679; cv=none; b=IDDlPGfy/QqZ01JEvPgnBdl9V0QzOvj+OeKIbsyVuc4tnsJfzbTQdnKNInegeXdD92U/tMSWXuZNgCcwyYOYWwTVJYX0B0Mwa8QMmY0H1LIecabk/d6QfAstgc2s57+4ffa6w9if8QOc0tHL1JarNotRmD+sVSDrJqVr5sC27vA=
+	t=1739517674; cv=none; b=D+x84QwJ/ttAqZAI/hdyfkEOD20Lcwj9HbNyQVUerenffInL41YUeT/8ExOkuR+lTLuDMxdLtRjtrKACx5JKNLHZ3IhRT9Hae+37NguKiIWpRlFQ3eZvL0K960+VYAChCnS2aCs4S06B2tVRZQuwFmZHNkmmOGlOZFXGLvo+XHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739517679; c=relaxed/simple;
-	bh=d6YvzmhZdp1UQthxLehfAcJuwXIc0kTIS+/CMh1p+gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNH0P4oREVdd6xJ6d3nF5bqyYd7Fd0DYp5Lnwl0c9cl7WZzwWO674MS1HJ7ikx8EgSfRCTW9wZj0i0+/5jB2+CF8MlDwDP3upkKnD3hejc8GB4tqRFNj5VJoK3pgtLXhnXyb+JrpR6KL7ckJtLLH/+D6KCY3FbFqoibC8bTk+L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXvphQHo; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739517678; x=1771053678;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=d6YvzmhZdp1UQthxLehfAcJuwXIc0kTIS+/CMh1p+gk=;
-  b=UXvphQHoNbXyYylhFgS+lDpHNdtpHP6jV0SMCqkzaleBn+x2dlgEAlVf
-   uoLP152+Mv+sgHSW3Fkfe9k69IzO7suIiTXcBybXRQkdeyOVipnVpMniJ
-   hM+QAGdk7VXa5Pr8iCNVdIcsiYvZcgYWwx36mOtKcXctOyhyKTO/5q0f2
-   /evEQSsZDT+Gklzy1uaFA6791jhoFdvEh4vBWLmWEplOcWVC14FjovAWQ
-   r2sApi0ORPX/4xBr6w6Pi69zmdxjEQAmjTnyg6cItXP6hGILbIifDxmfP
-   QAfCx7nPLlu8VsrdebQMlFjZGnLLNBlhVOMc97i5CsSt0/4mv+OGMN+TI
-   A==;
-X-CSE-ConnectionGUID: XImNFy08R7yfcugOvmJeAQ==
-X-CSE-MsgGUID: EFgpYhp1SlCbRX4V7JP1WQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40291857"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="40291857"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 23:21:17 -0800
-X-CSE-ConnectionGUID: KcWW0NhNREyHk/GliVO58A==
-X-CSE-MsgGUID: URM/KXm9TXCrxuvwjCKWrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="113575960"
-Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.240.136]) ([10.124.240.136])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 23:21:15 -0800
-Message-ID: <90a09ffa-e316-41f0-916b-25635b1d4bc6@linux.intel.com>
-Date: Fri, 14 Feb 2025 15:21:02 +0800
+	s=arc-20240116; t=1739517674; c=relaxed/simple;
+	bh=uh4roUMWMYdqNC0OrZ1qQP4x59xO9f04AC8O9CaKaA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pZgC0ykOE9oWfocWEtf2a82grSAtW5AM2GB3eqHaMsFAmyxXzt91xOh8RR9bfnA8HgpkQy2XAnTObw+TVFgZcdO1vP7Lk2zrIi74urjxYtAKbRpI+QxWIUgfBe0yZna/Im/eedFaXMrvPWI8N3lDA74N9HlVWV2paZVifChwZdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J7/WWZex; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E21e6o014567;
+	Fri, 14 Feb 2025 07:21:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YnncP6
+	16e8oEecv/+iRtRli894a3zkA8st46Zh9tfGA=; b=J7/WWZexS3aRqFtkQvFILk
+	4q8uQeyDtXly3Jbv8udssCg3+w4sKqTpKsAfuemD14ajGnAKSs7G4eGU3XLxW/Hq
+	yXcR4vGF1zOEyULlZbhdEKZudltfwxzkz+fv7aNOP9893ErEj6Ra522c8XFhEj/e
+	1VjvBBykNkArhhgGbnxAaNHptrUq4myfgwDfSHmoIteXeimRQUx2sqXYByQaf0hZ
+	A5cTgaqeyOVRCY/gE+8EM78qld8o3aOL+fPFrwdg4OVT8+dCJmdv3hRTndvMTTRl
+	W9dL3PSRccFDL0XoiOnK8mqXYBi783/Czr07Ic4UblqMMFs6ougnZwWaXaIMEYHg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44svp096eh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 07:21:07 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E6dl5N028204;
+	Fri, 14 Feb 2025 07:21:06 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyytkmx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 07:21:06 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E7L4hV39715244
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 07:21:04 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ACEF52004E;
+	Fri, 14 Feb 2025 07:21:04 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B1EE20040;
+	Fri, 14 Feb 2025 07:21:03 +0000 (GMT)
+Received: from [9.43.98.203] (unknown [9.43.98.203])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 07:21:02 +0000 (GMT)
+Message-ID: <08077c71-41e0-4bb9-ba20-a856ea8ac4bb@linux.ibm.com>
+Date: Fri, 14 Feb 2025 12:51:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,206 +76,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-To: Eric Auger <eauger@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Zhenzhong Duan <zhenzhong.duan@intel.com>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
- <cc7312ca-2745-48a5-a5ac-9ee1d1c4bee0@redhat.com>
- <20250203094700-mutt-send-email-mst@kernel.org>
- <7cee3c9e-515e-41de-a15c-04c7591e83eb@redhat.com>
- <6bce0f4c-636f-456b-ab21-4a25d3dc8803@redhat.com>
+Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
+To: Hari Bathini <hbathini@linux.ibm.com>,
+        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+ <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
+ <da9b637a-962a-4a9f-a4bf-b79e6119b29c@linux.ibm.com>
+ <a4bbf5a8-2d16-413e-b69c-5b72388989b2@linux.ibm.com>
 Content-Language: en-US
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-In-Reply-To: <6bce0f4c-636f-456b-ab21-4a25d3dc8803@redhat.com>
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <a4bbf5a8-2d16-413e-b69c-5b72388989b2@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XtGnGGddHBgZaQ4hrSAbTBq407s1Ik-c
+X-Proofpoint-GUID: XtGnGGddHBgZaQ4hrSAbTBq407s1Ik-c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_02,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502140051
 
 
 
-On 2025/2/6 16:59, Eric Auger wrote:
-> Hi,
-> 
-> On 2/4/25 12:46 PM, Eric Auger wrote:
->> Hi,
+
+On 14/02/25 12:38, Hari Bathini wrote:
+>
+>
+> On 14/02/25 12:15 pm, Sourabh Jain wrote:
+>> Hello Hari,
 >>
->> On 2/3/25 3:48 PM, Michael S. Tsirkin wrote:
->>> On Fri, Jan 31, 2025 at 10:53:15AM +0100, Eric Auger wrote:
->>>> Hi Kirill, Michael
->>>>
->>>> On 8/8/24 9:51 AM, Kirill A. Shutemov wrote:
->>>>> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
->>>>> accesses during the hang.
->>>>>
->>>>> 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
->>>>> 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
->>>>> 	...
->>>>>
->>>>> It was traced down to virtio-console. Kexec works fine if virtio-console
->>>>> is not in use.
->>>>>
->>>>> Looks like virtio-console continues to write to the MMIO even after
->>>>> underlying virtio-pci device is removed.
->>>>>
->>>>> The problem can be mitigated by removing all virtio devices on virtio
->>>>> bus shutdown.
->>>>>
->>>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
->>>>
->>>> Gentle ping on that patch that seems to have fallen though the cracks.
->>>>
->>>> I think this fix is really needed. I have another test case with a
->>>> rebooting guest exposed with virtio-net (backed by vhost-net) and
->>>> viommu. Since there is currently no shutdown for the virtio-net, on
->>>> reboot, the IOMMU is disabled through the native_machine_shutdown()/
->>>> x86_platform.iommu_shutdown() while the virtio-net is still alive.
->>>>
->>>> Normally device_shutdown() should call virtio-net shutdown before the
->>>> IOMMU tear down and we wouldn't see any spurious transactions after
->>>> iommu shutdown.
->>>>
->>>> With that fix, the above test case is fixed and I do not see spurious
->>>> vhost IOTLB miss spurious requests.
->>>>
->>>> For more details, see qemu thread ([PATCH] hw/virtio/vhost: Disable
->>>> IOTLB callbacks when IOMMU gets disabled,
->>>> https://lore.kernel.org/all/20250120173339.865681-1-eric.auger@redhat.com/)
->>>>
->>>>
->>>> Reviewed-by: Eric Auger <eric.auger@redhat.com>
->>>> Tested-by: Eric Auger <eric.auger@redhat.com>
->>>>
->>>> Thanks
->>>>
->>>> Eric
->>>>
->>>>> ---
->>>>>   drivers/virtio/virtio.c | 10 ++++++++++
->>>>>   1 file changed, 10 insertions(+)
->>>>>
->>>>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->>>>> index a9b93e99c23a..6c2f908eb22c 100644
->>>>> --- a/drivers/virtio/virtio.c
->>>>> +++ b/drivers/virtio/virtio.c
->>>>> @@ -356,6 +356,15 @@ static void virtio_dev_remove(struct device *_d)
->>>>>   	of_node_put(dev->dev.of_node);
->>>>>   }
->>>>>   
->>>>> +static void virtio_dev_shutdown(struct device *_d)
->>>>> +{
->>>>> +	struct virtio_device *dev = dev_to_virtio(_d);
->>>>> +	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
->>>>> +
->>>>> +	if (drv && drv->remove)
->>>>> +		drv->remove(dev);
+>>
+>> On 14/02/25 12:02, Hari Bathini wrote:
 >>>
 >>>
->>> I am concerned that full remove is a heavyweight operation.
->>> Do not want to slow down reboots even more.
->>> How about just doing a reset, instead?
->>
->> I tested with
->>
->> static void virtio_dev_shutdown(struct device *_d)
->> {
->>          struct virtio_device *dev = dev_to_virtio(_d);
->>
->>          virtio_reset_device(dev);
->> }
->>
->>
->> and it fixes my issue.
->>
->> Kirill, would that fix you issue too?
-
-Hi,
-
-sorry for my late response, I synced with Kirill offline and did a retest.
-
-The issue is still reproduced on my side, kexec will be stuck in case of 
-"console=hvc0" append in kernel cmdline and even with such patch applied.
-
-my kernel code base is 6.14.0-rc2.
-
-let me know if any more experiments needed.
-
----
-  drivers/virtio/virtio.c | 8 ++++++++
-  1 file changed, 8 insertions(+)
-
-diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-index ba37665188b5..f9f885d04763 100644
---- a/drivers/virtio/virtio.c
-+++ b/drivers/virtio/virtio.c
-@@ -395,6 +395,13 @@ static const struct cpumask 
-*virtio_irq_get_affinity(struct device *_d,
-         return dev->config->get_vq_affinity(dev, irq_vec);
-  }
-
-+static void virtio_dev_shutdown(struct device *_d)
-+{
-+        struct virtio_device *dev = dev_to_virtio(_d);
-+
-+        virtio_reset_device(dev);
-+}
-+
-  static const struct bus_type virtio_bus = {
-         .name  = "virtio",
-         .match = virtio_dev_match,
-@@ -403,6 +410,7 @@ static const struct bus_type virtio_bus = {
-         .probe = virtio_dev_probe,
-         .remove = virtio_dev_remove,
-         .irq_get_affinity = virtio_irq_get_affinity,
-+       .shutdown = virtio_dev_shutdown,
-  };
-
-  int __register_virtio_driver(struct virtio_driver *driver, struct 
-module *owner)
---
-2.43.0
-
-
-> gentle ping.
-> 
-> this also fixes another issue with qemu vSMMU + virtio-scsi-pci. With
-> the above addition I get rid of spurious warning in qemu on guest reboot.
-> 
-> qemu-system-aarch64: virtio: zero sized buffers are not allowed
-> qemu-system-aarch64: vhost vring error in virtqueue 0: Invalid argument (22)
-> 
-> Would you mind if I respin?
-> 
-> Thanks
-> 
-> Eric
-> 
-> 
-> 
-> 
->>
->> Thanks
->>
->> Eric
+>>> On 13/02/25 8:34 pm, Venkat Rao Bagalkote wrote:
+>>>> Greetings!!!
+>>>>
+>>>>  From kernel next-20250210, I am observing syscall kexec_file_load 
+>>>> not available, there by kdump service is failing to start.
+>>>>
+>>>>
+>>>> Logs:
+>>>>
+>>>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>>>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
+>>>> Warning: append= option is not passed. Using the first kernel root 
+>>>> partition
+>>>> Modified cmdline: elfcorehdr=311424K root=UUID=b5b1f89c- 
+>>>> d479-48b3-90e2-744a2fd05667
+>>>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>>>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
+>>>> syscall kexec_file_load not available.
+>>>> [root@ltc-zzci-1 ~]# kexec -v
+>>>> kexec-tools 2.0.27
+>>>> [root@ltc-zzci-1 ~]# uname -r
+>>>> 6.14.0-rc2-next-20250212
+>>>>
 >>>
->>>>> +}
->>>>> +
->>>>>   static const struct bus_type virtio_bus = {
->>>>>   	.name  = "virtio",
->>>>>   	.match = virtio_dev_match,
->>>>> @@ -363,6 +372,7 @@ static const struct bus_type virtio_bus = {
->>>>>   	.uevent = virtio_uevent,
->>>>>   	.probe = virtio_dev_probe,
->>>>>   	.remove = virtio_dev_remove,
->>>>> +	.shutdown = virtio_dev_shutdown,
->>>>>   };
->>>>>   
->>>>>   int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
->>>
+>>> Is the kernel built with CONFIG_KEXEC_FILE ?
 >>
-> 
+>> I am able to reproduce it with CONFIG_KEXEC_FILE enabled.
+>>
+>> Seems like there is something went wrong in next-20250210 and 
+>> next-20250212.
+>>
+>> kexec -p --initrd=/boot/initramfs-6.14.0-rc2-next-20250210kdump.img / 
+>> boot/vmlinuz-6.14.0-rc2-next-20250210 -d -s
+>>
+>> Try gzip decompression.
+>> Try LZMA decompression.
+>> [ 3375.712319] kexec_file: kernel: 00000000e539303c kernel_size: 
+>> 0x2cdacf0
+>> [ 3375.717022] ima: kexec measurement buffer for the loaded kernel at 
+>> 0x0.
+>> [ 3375.717076] kexec_elf: Loaded the kernel at 0x0
+>> [ 3375.717094] kexec_elf: Loaded purgatory at 0x0
+>> [ 3375.717104] Loaded the backup region at 0x0
+>> [ 3375.717130] crash_core: Crash PT_LOAD ELF header. 
+>> phdr=000000004720e656 vaddr=0xc000000000000000, paddr=0x0, sz=0x10000 
+>> e_phnum=18 p_offset=0x0
+>> [ 3375.717156] crash_core: Crash PT_LOAD ELF header. 
+>> phdr=0000000005eb3f14 vaddr=0xc000000000010000, paddr=0x10000, 
+>> sz=0xfff0000 e_phnum=19 p_offset=0x10000
+>> [ 3375.717174] crash_core: Crash PT_LOAD ELF header. 
+>> phdr=000000000ec70071 vaddr=0xc00000001ec20000, paddr=0x1ec20000, 
+>> sz=0x13e0000 e_phnum=20 p_offset=0x1ec20000
+>> [ 3375.717192] crash_core: Crash PT_LOAD ELF header. 
+>> phdr=00000000b66c9c25 vaddr=0xc000000050000000, paddr=0x50000000, 
+>> sz=0x3b0000000 e_phnum=21 p_offset=0x50000000
+>> [ 3375.717215] Loaded elf core header at 0x0, bufsz=0x1000 memsz=0x80000
+>> [ 3375.717229] kexec_elf: Loaded initrd at 0x0
+>> [ 3375.718043] Memory node path: /memory@0
+>> [ 3375.722854] kexec_elf: Loaded device tree at 0x0
+>> syscall kexec_file_load not available.
+>>
+>> Kernel is reporting that all kexec segments are getting loaded at 0x0.
+>>
+>> Running kexec with strace shows that kexec_file_load system return -1 
+>> EINVAL.
+>>
+>> kexec_file_load(3, 4, 1, "\0", KEXEC_FILE_ON_CRASH) = -1 EINVAL 
+>> (Invalid argument)
+>>
+>> Based on the logs printed on the console and kexec_file_load return 
+>> value. I am suspecting
+>> kexec_file_load returned early form sanity_check_segment_list() 
+>> because the segment is 0x0.
+>>
+>> I am investigating further to find how segment.mem for all segment is 
+>> 0x0.
+>>
+>
+> Interesting. Thanks for the update, Sourabh.
+> I believe the error "syscall kexec_file_load not available." is
+> inappropriate and misleading. That should be fixed too.
 
+Agree. It is happening because kexec is handling ENOSYS, EINVAL, 
+ENOEXEC, and ENOTSUP
+as a single case and printing "syscall kexec_file_load not available".
+
+I will send a fix for kexec tool to avoid this confusing error message.
+
+Thanks,
+Sourabh Jain
 
