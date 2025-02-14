@@ -1,84 +1,130 @@
-Return-Path: <linux-kernel+bounces-515794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CCCA36928
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:42:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE39A36929
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DFC18917C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4263AA2A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D181FDE01;
-	Fri, 14 Feb 2025 23:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20911FDA6B;
+	Fri, 14 Feb 2025 23:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CH/ddxgW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixAsLzqG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64B31DC19F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 23:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D61C84D9;
+	Fri, 14 Feb 2025 23:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739576518; cv=none; b=j3pBssjNsAXK/SpjYKZ9qE2cX5Ul3f3aJCO7zka5FkOX32rp/NXJgbu/w4sIcjBPzL6dyjWgXWpwo1a3OQO9ch3bs64gEFtchVUWXmBDALLL8CVil6bzVuRWuZcwV0GTZ/ptdg5qBuubOZKM03UoO1zVb4LlcK9arwwGQZUKTqM=
+	t=1739576504; cv=none; b=roeOj/BEVrW3CnZb/ofexOat5N2pTZ6kv8QllvAhcQ+JV1rgwrt6EtfAaJV/u9RTTUYadtYuXe0BeM6HegecE8AZnGUepjvZe9GBNN8rRJDkYS2ivCs5NrHUW3xM4SzIYQMrhXH31rMJ9jaMIC9g1zGV9k5arq6iTkgKgSxaRmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739576518; c=relaxed/simple;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XsDO7vy07gLC9f3zoRhFRhyVyDuWUjoMmvj2opdOBV0rpAevqeCL+llv8Xe6T9qbDGLisNbotcFMZgMpPLopeDbB+Yn0fTA/vAvLcDWo6V/CQDq66hAXW2KY8s9FAKJZmehuxjhyfgkoSmB2Y7DiYNkChdzP28PSHhEEczd7Rt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CH/ddxgW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739576515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	b=CH/ddxgWfs5yY+CelhGY6YsXpxyi2rOZYLSqF6SKn2USvOdzMjifPvzkLViHUxoJlcE4AC
-	7WgZmpJ2v0XdTOGGKxvzvQGlwWqdVPaPTO8wHaiXB1hU1kAE5B6vIjjx/lFYFfLgtgl3qs
-	8Y1TKo3zI4wt9LQ8g+wNguGdksoBY3A=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-9P3SI80JMEmV33ESfQD9wA-1; Fri,
- 14 Feb 2025 18:41:50 -0500
-X-MC-Unique: 9P3SI80JMEmV33ESfQD9wA-1
-X-Mimecast-MFC-AGG-ID: 9P3SI80JMEmV33ESfQD9wA_1739576509
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF60118EB2C3;
-	Fri, 14 Feb 2025 23:41:48 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05E051800365;
-	Fri, 14 Feb 2025 23:41:47 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Stultz <jstultz@google.com>,
-	Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH] KVM: x86: Load DR6 with guest value only before entering .vcpu_run() loop
-Date: Fri, 14 Feb 2025 18:40:58 -0500
-Message-ID: <20250214234058.2074135-1-pbonzini@redhat.com>
-In-Reply-To: <20250125011833.3644371-1-seanjc@google.com>
-References: 
+	s=arc-20240116; t=1739576504; c=relaxed/simple;
+	bh=HIs6xCw66JolvHO2xTHyUUIT/URbvBtY9CkGEyZn7gg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ogqe5LtB2gvn2zDk3nD7jSvFcHSvkTJUdUdJYLGq+i3XuGXGhoVRFus4J6g7u5AoX31wvi8N2StvKyqGUetITaiM/f9eonkwqXQPeuuQ8qqXK5FeIbRsgeYvv7kcf6ujXQv7aOS1nMCFDpS+SEFzf833NnM8ArxcpAEO/6jJk4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixAsLzqG; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739576503; x=1771112503;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=HIs6xCw66JolvHO2xTHyUUIT/URbvBtY9CkGEyZn7gg=;
+  b=ixAsLzqG0xVHkJgEmwu0GvvniwMQzyDvp7yiYH7/XNW647QN9CgePgvb
+   nJp48zrwtmoIkorTrhvhrOPprrisv9SYT/xJpQrqGKWTBKZIWuGDuntiD
+   aHBKgWr5YRkwLt21CC5K6wiuOpSiJrL6WeqzNfkJBvnTMyNZSrEBcIS9l
+   E8qNcsBlBlvsNZeD/NooUuXCm72IDCDM6crfv2n+69nWEbBoufD8ay+2s
+   4/LSG6kohF3IYm+qzf8XWD9mKHEtRQztDr6RqkHIvrZ2ca7riTlY2m8t2
+   KD+q4bFHOcSC6tauzZPbhlMaxsjewiugsfwXApks3iRhXpfpT8E9Mgv89
+   g==;
+X-CSE-ConnectionGUID: kAvLfyg0RcKAHgTTxz13nA==
+X-CSE-MsgGUID: R7Zemf/hSpO6Zkfv17g8Tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40260625"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="40260625"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 15:41:41 -0800
+X-CSE-ConnectionGUID: J9aQUVGeQ/qx80umdoV4iQ==
+X-CSE-MsgGUID: HNFHww64R3OnIEpPPbrxGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113451466"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.234])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 15:41:41 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Shuai Xue <xueshuai@linux.alibaba.com>, fenghua.yu@intel.com,
+ dave.jiang@intel.com, vkoul@kernel.org
+Cc: xueshuai@linux.alibaba.com, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] dmaengine: idxd: fix memory leak in error
+ handling path of idxd_pci_probe
+In-Reply-To: <20250110082237.21135-6-xueshuai@linux.alibaba.com>
+References: <20250110082237.21135-1-xueshuai@linux.alibaba.com>
+ <20250110082237.21135-6-xueshuai@linux.alibaba.com>
+Date: Fri, 14 Feb 2025 15:41:39 -0800
+Message-ID: <87jz9s5c24.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain
 
-Queued, thanks.
+Shuai Xue <xueshuai@linux.alibaba.com> writes:
 
-Paolo
+> Memory allocated for idxd is not freed if an error occurs during
+> idxd_pci_probe(). To fix it, free the allocated memory in the reverse
+> order of allocation before exiting the function in case of an error.
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
+>  drivers/dma/idxd/init.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index f0e3244d630d..9b44f5d38d3a 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -548,6 +548,14 @@ static void idxd_read_caps(struct idxd_device *idxd)
+>  		idxd->hw.iaa_cap.bits = ioread64(idxd->reg_base + IDXD_IAACAP_OFFSET);
+>  }
+>  
+> +static void idxd_free(struct idxd_device *idxd)
+> +{
+> +	put_device(idxd_confdev(idxd));
+> +	bitmap_free(idxd->opcap_bmap);
+> +	ida_free(&idxd_ida, idxd->id);
+> +	kfree(idxd);
+> +}
+> +
 
+I was expecting this function to be called from idxd_remove() as well.
+Perhaps on a separate patch?
 
+>  static struct idxd_device *idxd_alloc(struct pci_dev *pdev, struct idxd_driver_data *data)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -820,7 +828,7 @@ static int idxd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   err:
+>  	pci_iounmap(pdev, idxd->reg_base);
+>   err_iomap:
+> -	put_device(idxd_confdev(idxd));
+> +	idxd_free(idxd);
+>   err_idxd_alloc:
+>  	pci_disable_device(pdev);
+>  	return rc;
+> -- 
+> 2.39.3
+>
+
+Cheers,
+-- 
+Vinicius
 
