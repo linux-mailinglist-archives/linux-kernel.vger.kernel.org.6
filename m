@@ -1,96 +1,140 @@
-Return-Path: <linux-kernel+bounces-515764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B229AA368A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:46:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2FCA368AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B851888803
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1267116FAFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD51FCF60;
-	Fri, 14 Feb 2025 22:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E612B1FCD0C;
+	Fri, 14 Feb 2025 22:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="z0yihNX5"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ty/nb6T+"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB0519CD1D;
-	Fri, 14 Feb 2025 22:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D4A1519B5;
+	Fri, 14 Feb 2025 22:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739573133; cv=none; b=WVBfXX9dhuG3/ghzPOXGLFKS/L44rTNGiufgDS4544OnJOdNmsxdWeH6SeJcS1qkFQ8m3+kUDDw5LF80jTvgpC6BtuYGsCMdtY4U2E+QAOqDJjASlapXB3AnHVkWC7w+DjQ++2p88r8tszNWIOuOSp6AMk/taW3GMF4Rc9CHD60=
+	t=1739573210; cv=none; b=WsoyIFFADfKmRbuaIibssYWiBGfy0ms+AyrHnW9Hnn5Apia/xY7P8AoGz2cKZ3Pr12Eusz0/fz8w11htl8Kl9PEGW5SN+LBR8qITE7gJpo7I9Dg8JUqsY6n9SjElYTw7O0SldYbgDuBVvC9pDGHckTE1Gb3Dpo8qB6b7mys7Fs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739573133; c=relaxed/simple;
-	bh=W/22sjmQtfW+T3HAcTny5XzHcRdyfDXjRP+3YymyzAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DeXTmU5JcAKyhx3qO24U3iN1bZA8heDK+qMb1FpZN3IubJppq1T+pRMSvK4E9FLQM9oPUStyj3/fLPwtAltVMpvxnSJXHy5BcEHkxoK6GszrF/xSpFVgeEyKNihJa6bxH08CXdgrXlffd7p7G0NdwDfNQjnQK0C7o7A1SNG5868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=z0yihNX5; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EiUZWzQCMS5pWAnVUksUZCQH8mtcpOOBDIuqxWtAVy4=; b=z0yihNX5H/PiP34II2rBN1l5Fb
-	imItSSpqqg7SQsP0Rn0wEYMsniGGRARDXao/1Vxg6O3u837AbJxKFSJqNn2SAkzEOJURBzimts6VL
-	0nvynPs+LZBM9+XzDxIOXN+JvkckXgY1PeIscObhwFGWGXWxXdBU7Ph/wCZrI/pN3xb5qP1ytK1nB
-	Ko3Vqc/uFEtsCq0oH5NxZvw33MQxwOPZM5NUnmlrsRlyfDZQk/25XjGtmHAKO51g/zfthV0MGBMi/
-	fBW71GPQ3Y8vydgUm3ruGFcS23LIjKhtI6N2qAWDC5ARkdCrdbVgwt9G4i3zOv9DBtAgWEoWbW85w
-	fIRR1XnQ==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tj4R6-0003TH-4h; Fri, 14 Feb 2025 23:45:28 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jonas@kwiboo.se
-Subject: Re: [PATCH v2 0/2] Rockchip - add Firefly ROC-RK3576-PC board
-Date: Fri, 14 Feb 2025 23:45:16 +0100
-Message-ID: <173957310724.1747676.2795519057451074241.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250210205126.1173631-1-heiko@sntech.de>
-References: <20250210205126.1173631-1-heiko@sntech.de>
+	s=arc-20240116; t=1739573210; c=relaxed/simple;
+	bh=vjcT0Vyex3C2dC9HqHDwhlorjag/egfPVMpz7+hJdc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAu04NK75DbIWfqt28pEPZP7Dhz1GVO6/BMiGTHiH7AMMyIlPVn7njv96raKAhnGMV3y5wlfCXPEXfvyN+Vbc9F5U6UzTqlee0Rwc0nAVmr5+OrLJvkr+JFjtRS4zV3efSQh9Q8Mpt/LhKn1HS78y4wEdVqE6jTb/db3Kastbiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ty/nb6T+; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6dcdf23b4edso22759146d6.0;
+        Fri, 14 Feb 2025 14:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739573208; x=1740178008; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QzS8d5DDLmgZezqT2Ij0pTgVW3KTLdNDnJ7HtnIABGs=;
+        b=Ty/nb6T+RKfp37W5YIGwEosREjp+C9ERCEF7njjffyV5iJAAO5yaRXI7+Ebd/V9ImT
+         +PxE4mAQV5ho8KokYjStonxbaxV9F6iY3DfdcAUMvL81OuGKFVk+OkWI0GEvxUfa1P6l
+         3o87NvTvGyE14535OP1UfRkQ/U8z38LIKqmTuuvz2wJQl+hRHCeWil/NQ+tySyoxZcyQ
+         lcM8eeGXhcE+Au+XxB5a72IZOGk1eRhLBL3yOvp1gY5vQNrgiPAavcfgIslOEnof3p6y
+         vDVKszwMxF7TT2e8TPgJpQ3gJSY+oSXd6mpztRydumZpgAlGhgESYL8NgWvsfPY7xuGl
+         Uu7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739573208; x=1740178008;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzS8d5DDLmgZezqT2Ij0pTgVW3KTLdNDnJ7HtnIABGs=;
+        b=CSfPZ28tGnme87j3nH9DUNa2+w6l6g537g8fqdlxEugp0wy4cfyXjEutS/h1hDjS+3
+         s588SwsUQoYtr7GngMMCWn8U+PuiPCFuaQhulB24HqDx6qgfy3t26UFNA/qszYzGUKDd
+         veuRb5wFCZZ7VgGDM6hiGf1Aa8F2CzX4EvgC/EB3niJdmYKf5bvKMnSdQGByuzgIZaZH
+         dCgs7cIhuaeOPtb/YUv8w0+Sahu2oCGzsO1/UtXYlPzCKNj94w9wIpKb7Ra4EoPBTf2J
+         LZyvLQbBD517afMJfU7yDLQWz5Cdm55SDzCIr7JeREPiu5GA2qRRgkl2N0BrKH9fL6J+
+         PAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlAjdwmITLYB6E8/lZ1fsTIrkZvO/5G3aWAOb9Ly4u5gtyAoiYhI7jMjKvXkV400Ya9y24DxvPTg0tjKka@vger.kernel.org, AJvYcCUzb73dd7ttDuKKStjAmzl8rsbLQZzO1Zb5Ck+Zp6GO3w9z0jDCOKYIZQTs2xN97deyU8gV4eRXbWkU@vger.kernel.org, AJvYcCWz43Up6zk0QS8lkKK0BOYQatEXQX+RWguMweO5OkgidDT9CNFJ4hG1e39q+jP862dfQoqSSIFCMUbw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQduBxqIMQysDFCwgQzsQQ2qyY0RafetTtLkmwI2Q73aPM33GO
+	o0Esp4hggqaiBhgKdCAnzIx+xqBF7Ixrz1vnXCRJa13Tnw8HHwET
+X-Gm-Gg: ASbGncufpZ7oBh6nGLzVHWLOjyGtX0Yjho36aGLoKyCX03phd7eI/8TO9Yz9MPouwVH
+	5kVMt5PrUIaOcOdL/SBgl1HDS8hc3UhVZ8PudMi74OmCQGc7mrg0G3DEsCpdHgIAj0KzHxM+6HY
+	XCYl0UxBEOdBqluPpA/9NBY/OxOSY++HE+6JBxoIrREufLwGDybed186JrFFybnPZ/C0E3evJ+I
+	apleR6uQDsHHp9gUJFin2etxdElFItzJOJEmDnxq70bMnGl8NtTb7f2PTXGmYR7oHs=
+X-Google-Smtp-Source: AGHT+IHrfxO8rmBQBLUcjsYSsdpJHDyVL3wH/IflhNcUGb5EOUcTe+mYC/NamiViqeorO+aQjcRI5A==
+X-Received: by 2002:a05:6214:300e:b0:6e6:6bd8:3a82 with SMTP id 6a1803df08f44-6e66cd10d91mr13805796d6.42.1739573207607;
+        Fri, 14 Feb 2025 14:46:47 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d785c1fsm25862706d6.35.2025.02.14.14.46.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 14:46:46 -0800 (PST)
+Date: Sat, 15 Feb 2025 06:46:38 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-rtc@vger.kernel.org
+Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	unicorn_wang@outlook.com, inochiama@outlook.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, dlan@gentoo.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
+ Sophgo CV1800 series SoC
+Message-ID: <s3fsc6cp2a7qx5qgo6akneh7l3a5aknzmtzpsq7lvdaleqaupa@6sqgfn4q7olq>
+References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+ <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+ <t6z6rikut2him5m57b6xubbguw3llczp4i6d5frcpuhlqihf2d@booethzadxsq>
+ <964a016b944b459a9a914abac539350769323259.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <964a016b944b459a9a914abac539350769323259.camel@gmail.com>
 
-
-On Mon, 10 Feb 2025 21:51:24 +0100, Heiko Stuebner wrote:
-> This adds a second board based around the rk3576 SoC.
+On Fri, Feb 14, 2025 at 12:09:37PM +0100, Alexander Sverdlin wrote:
+> Hi Inochi,
 > 
-> changes in v2:
-> - add Rob's Ack on the binding
-> - move ethernet-phy-reset control into the phy-node (Jonas)
-> - some sorting cleanups
+> On Fri, 2025-02-14 at 17:40 +0800, Inochi Amaoto wrote:
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    rtc@5025000 {
+> > > +        compatible = "sophgo,cv1800-rtc";
+> > > +        reg = <0x5025000 0x2000>;
+> > > +        interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
+> > > +        clocks = <&osc>;
+> > > +    };
+> > > -- 
+> > 
+> > Just for curiosity, Do you leave a way to implement the
+> > 8051 subsys, since its registers are in rtc. (You can
+> > check the chapter "8051 subsystem" of the SG2002, which
+> > can be found at https://github.com/sophgo/sophgo-doc).
 > 
-> [...]
+> well, I suppose, you know the answer, according to how this has been modelled
+> within this series, all the functionality could only be added on top of RTC
+> driver. 
 
-Applied, thanks!
+I don't think it is a good idea to add everything in the RTC driver.
+I prefer to separate them to sub devices if possible, so we can
+make full use of all the framework provided.
 
-[1/2] dt-bindings: arm: rockchip: Add Firefly ROC-RK3576-PC binding
-      commit: 2be4a4171401761cb5fb02225d8b18351f6807c0
-[2/2] arm64: dts: rockchip: Add devicetree for the ROC-RK3576-PC
-      commit: 887ff17cdd8f088a52e2b61e71f2b6c9b9678de6
+> Do you think it's time to re-design it as compatible = "syscon", "simple-mfd"
+> with children nodes for RTC and reboot?
+> 
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Yes, but you should submit the 8051 and reboot device early, and
+change your binding with the right compatible. It is not allowd to
+change compatible after the binding is determined.
+
+Regards,
+Inochi
 
