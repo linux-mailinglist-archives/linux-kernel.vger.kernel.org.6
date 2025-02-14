@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-515128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA1AA36099
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:38:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E090AA3609A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB441891847
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DABAA1707D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E53266569;
-	Fri, 14 Feb 2025 14:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A87A266592;
+	Fri, 14 Feb 2025 14:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CN3KP+5P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Qnv1zqqw"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB9815199A;
-	Fri, 14 Feb 2025 14:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8725A2661B9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543857; cv=none; b=EM0LlMO4NSq/YmxwTzTUjJU8S13H2m/1Pr8W6ulBM2kYwkSzrWN51/HDd2jKko23gRHRqjIcze3sp5s1yGdP3uznembrsp4rvzypf+LRtSPqnrJqNh0rspJIbFRVRlPa9me9lIOTeqI4wUIYVHyGpqO472dPbLEqz7qsjDN6S1A=
+	t=1739543884; cv=none; b=c/uT8oqrTCgj138o+D08Afx9tbyv3vHkATRw8qwUMW/CpD6mAdrNx7cgv+cE3uYH64Fo848E0WlHFx0grK+jBXwr1MDScOfNNQq+nkbrN3K3u0eus7MSnxHPtTGEB1JjE9dczrszpBjD6/+Y4JKN9ZNs+k7Lovfofu4SVmKob54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543857; c=relaxed/simple;
-	bh=iP9rILo1pieoX7MujpuvZrfyhcl6FWNIG3xPCJe47D8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=V8tnI2nkWkK2HzYiWurSPnAv8FUdILhYk+2uD61bhqJjh/hFXpRQ9PWBCAsBww334k2BcbQR9KZlJ8dAdVRjZ044UiUxjDVU25tWykaVaaYFDMMtEUcnMXHs/Pvo2EpD9CjiUFQDJikfNs/xm/R9gKQkFqsC4wIw+om2bXoRmPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CN3KP+5P; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739543856; x=1771079856;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iP9rILo1pieoX7MujpuvZrfyhcl6FWNIG3xPCJe47D8=;
-  b=CN3KP+5PtSMcPVFEYrFDskyCN3a3SSo+XiyMg0pCnTcbI5InuePlamSa
-   OG2Fqc6KM0U5xKslJPTkorDffw3df7/h7Ew8/Z4ON/ZziaacxY+mMZaL5
-   Mxt/1p8TWk7n/hGsV7bVHY53z9M+shU8RCMJCYp6ICzl1ceooHWB1Qwv8
-   TBuHerSIV0unLVehmFozs8MuhtFX5zwnN6ZIP8KjOxYQo9zdCnsaWunME
-   Kz35sUKIcx0JHYg5QrVfMkWloTvInag+4DQf2Wy3kmZ33XyNFFSN4+g51
-   GJmii3SB/fbBzIj8A2uItm2+ZbtZBCp1+18Y/LpaN2RuOsH+1yB5r7ihi
-   w==;
-X-CSE-ConnectionGUID: GOfeAuWIRBifHbwW0tKI4g==
-X-CSE-MsgGUID: +tRJ9aauRfKzXpuzk+DTGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40157595"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40157595"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 06:37:36 -0800
-X-CSE-ConnectionGUID: qH+p86lhRk6Y+78IEsYq6g==
-X-CSE-MsgGUID: uOBG/QX5SeO3uRT0KYLYGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="136699809"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 06:37:33 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Feb 2025 16:37:30 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    Karolina Stolarek <karolina.stolarek@oracle.com>, 
-    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>
-Subject: Re: [PATCH 3/4] PCI: shpchp: Cleanup logging and debug wrappers
-In-Reply-To: <20250213220453.GA135512@bhelgaas>
-Message-ID: <582c718e-568d-7f70-aef7-b0206600d3a3@linux.intel.com>
-References: <20250213220453.GA135512@bhelgaas>
+	s=arc-20240116; t=1739543884; c=relaxed/simple;
+	bh=VWb5MkKgJlcOONgIwkXIHXhOHFOwyrjuHcEUQBNf7xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XuQdpTis2Lq92bTMmYFlcQWN7meyuHFBYUTyPw45R2TRCpO/VWF8JvUxDiAUZa5OVfaipYsl9nigl6qEC9IQ8wZijvho9AgUg5qMfXw2Mf2vhZerPIYmiytMr2dcoEv+U+HAQRjvCl6kzYn4mD8s2HFlshuXSgdTTw9Iy/kih8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Qnv1zqqw; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5452c1daabeso482874e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:38:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739543880; x=1740148680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s/nWo8rBImm3/oJoY9sZaYO485tQZOmVynsCXssfwwk=;
+        b=Qnv1zqqwxfpLkHSKnNaLKIKFbyg75JB75IxlrE/h7+F420HlaTZ+0ioMQqu2R3G8A9
+         5BJeHLjkdJ4Scs8zR7CGNgrn1Hq2yd/8rzx8/FHm8o2m0+iSIHobu5RXwXHJOEN9Vyp0
+         SG9Xb44XbjaJ+UPIykTyGaUtMahI5L88E5Klr1vxbfJsvmfp2jLQMzD5iRWAMaCyiKXE
+         6FSSEAfZew371SuTnJ+cCy75G2ljIMVUnu4y/5SjXLvz07kBlQFjaxGmZSDawf+GVHDY
+         R0MKJDjjVisJNvlmVmHX4BYB3sTGMCbeqY5bS6GMgHTk46GF1+7BSId+Gd+MVbhRZ3yZ
+         KeUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739543880; x=1740148680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s/nWo8rBImm3/oJoY9sZaYO485tQZOmVynsCXssfwwk=;
+        b=hpGJRuV4UjWa9+ggpWawgX4vUXEGWXNEzX6VPbGyciPQ+yIJXulYRbXeKomDxQU4wH
+         LP5oD6E4vAuFgKgF1luUyMHVaS0I2W/efvBH+jvBvDlQgh5KjEHSLfuKnBylaBNuBSnD
+         Dykf36r5r4ljIPz07KoK4g2tOnEBgrJxzqdGf1ZbDMWMkfkE4oS3sWalRU7iPI5jYm4l
+         oR+84UhpyBaUzIvnwQ6jyWQKDfRtaHtwYbpZka/6hOGZefQqR6GEbV8VDeqdyujNdLfG
+         tMXG442Um4jhs0le/H5pTy987FO1q4tmwebpZ9au3Hm7uOJT6uRzKFMEe/GgZD/hrRAN
+         /19A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9GbwP7KEHevWn2xGZltOxTy8GylV8L0uYoTPfWIjD/ltH7/kEkEfshQWjYXGzGzxvqXQATO9yHy+PqbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyimnrSwhpjoVy6O2JvLcyHJU7inTUkqeL5Fygd3FALCaeduX+t
+	1CugaKn5rQOxm24qxD+C1KSiGYUJTCtMOOGFd1lya8O8q15rlVB6q/lWV6imKkeU1czna/cRXsy
+	vo6dg0piQiE9Hmm4i9/6ysCOv2ad0vdC2GOrE3Q==
+X-Gm-Gg: ASbGncsH+GDqm1Yf2bBDnj3f8h1QrzbLv0jcpd7RMm0A0ICgENSURaARJK5y+k7t8qw
+	nxmtyxe1hGHpA8K4Or3cBQp4arQDLOP6qtPr4dq+io43bgZ5lDvTe4gGkDovJ27DM5Wn0yUcVXf
+	5sEx/+cfAAREyNMmISlunK53o1Dmo=
+X-Google-Smtp-Source: AGHT+IFI84zGNU/5Prn01Vy8fWHPKleDbw82zc5GSdSgL+oYsNCtPFeqOqBeE0yzBu7Mgzm4cA6Jih86DZ3F3f8DtA8=
+X-Received: by 2002:a05:6512:ac7:b0:545:1049:eb44 with SMTP id
+ 2adb3069b0e04-545184a2edcmr3543131e87.36.1739543880482; Fri, 14 Feb 2025
+ 06:38:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-872026427-1739543850=:944"
+References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+ <173952845012.57797.11986673064009251713.b4-ty@linaro.org> <CAHp75VcjAFEdaDQAMXVMO96uxwz5byWZvybhq2fdL9ur4WP3rg@mail.gmail.com>
+In-Reply-To: <CAHp75VcjAFEdaDQAMXVMO96uxwz5byWZvybhq2fdL9ur4WP3rg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 14 Feb 2025 15:37:48 +0100
+X-Gm-Features: AWEUYZmZOOzJ-2PYVb-j2HjRho5iTG1Da6ZcvH4AymKKHcJZkPFSmjChMriWUzs
+Message-ID: <CAMRc=MefPRs-REL=OpuUFJe=MVbmeqqodp+wCxLCE8CQqdL4gQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, David Lechner <dlechner@baylibre.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Feb 14, 2025 at 3:35=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Feb 14, 2025 at 12:21=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+> > On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
+> > > This series was inspired by some minor annoyance I have experienced a
+> > > few times in recent reviews.
+>
+> ...
+>
+> > [07/15] iio: adc: ad7606: use gpiod_multi_set_value_cansleep
+> >         commit: 8203bc81f025a3fb084357a3d8a6eb3053bc613a
+> > [08/15] iio: amplifiers: hmc425a: use gpiod_multi_set_value_cansleep
+> >         commit: e18d359b0a132eb6619836d1bf701f5b3b53299b
+> > [09/15] iio: resolver: ad2s1210: use gpiod_multi_set_value_cansleep
+> >         commit: 7920df29f0dd3aae3acd8a7115d5a25414eed68f
+> > [10/15] iio: resolver: ad2s1210: use bitmap_write
+> >         commit: a67e45055ea90048372066811da7c7fe2d91f9aa
+>
+> FWIW, Jonathan usually takes care of patch queue on weekends.
+> But whatever, it's not my business after all :-)
+>
 
---8323328-872026427-1739543850=:944
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Too many conflicting suggestions. I just picked up all Acked patches. =C2=
+=AF\_(=E3=83=84)_/=C2=AF
 
-On Thu, 13 Feb 2025, Bjorn Helgaas wrote:
-
-> On Mon, Dec 16, 2024 at 06:10:11PM +0200, Ilpo J=C3=A4rvinen wrote:
-> > The shpchp hotplug driver defines logging wrappers ctrl_*() and another
-> > set of wrappers with generic names which are just duplicates of
-> > existing generic printk() wrappers. Only the former are useful to
-> > preserve as they handle the controller dereferencing (the latter are
-> > also unused).
-> >=20
-> > The "shpchp_debug" module parameter is used to enable debug logging.
-> > The generic ability to turn on/off debug prints dynamically covers this
-> > usecase already so there is no need to module specific debug handling.
-> > The ctrl_dbg() wrapper also uses a low-level pci_printk() despite
-> > always using KERN_DEBUG level.
->=20
-> I think it's great to get rid of the module param.  Can you include
-> a hint about how users of shpchp_debug should now enable debug prints?
->=20
-> The one I have in my notes is to set CONFIG_DYNAMIC_DEBUG=3Dy and boot
-> with 'dyndbg=3D"file drivers/pci/* +p"'.
-
-Sure, I'll add the info and split the change as you suggested below.
-
-> > Convert ctrl_dbg() to use the pci_dbg() and remove "shpchp_debug" check
-> > from it.
-> >=20
-> > Removing the non-ctrl variants of logging wrappers and "shpchp_debug"
-> > module parameter as they are no longer used.
->=20
-> > -#define dbg(format, arg...)=09=09=09=09=09=09\
-> > -do {=09=09=09=09=09=09=09=09=09\
-> > -=09if (shpchp_debug)=09=09=09=09=09=09\
-> > -=09=09printk(KERN_DEBUG "%s: " format, MY_NAME, ## arg);=09\
-> > -} while (0)
-> > -#define err(format, arg...)=09=09=09=09=09=09\
-> > -=09printk(KERN_ERR "%s: " format, MY_NAME, ## arg)
-> > -#define info(format, arg...)=09=09=09=09=09=09\
-> > -=09printk(KERN_INFO "%s: " format, MY_NAME, ## arg)
-> > -#define warn(format, arg...)=09=09=09=09=09=09\
-> > -=09printk(KERN_WARNING "%s: " format, MY_NAME, ## arg)
->=20
-> The above are unused, aren't they?  Can we make a separate patch to
-> remove these, for ease of describing and reviewing?
-
---=20
- i.
-
---8323328-872026427-1739543850=:944--
+Bart
 
