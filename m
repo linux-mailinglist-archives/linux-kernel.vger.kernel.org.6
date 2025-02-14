@@ -1,205 +1,166 @@
-Return-Path: <linux-kernel+bounces-515211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D574A361C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:31:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EC8A361C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59B416BE08
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6156918924FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D7D1A9B23;
-	Fri, 14 Feb 2025 15:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8826659B;
+	Fri, 14 Feb 2025 15:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FOPWJHR7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAOM1XOk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216926659B;
-	Fri, 14 Feb 2025 15:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A321F92A;
+	Fri, 14 Feb 2025 15:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547098; cv=none; b=gcUW7jKu2o+Tzy+c+vsZdAHLS9HgQWi5BR81DnAKJn/XKppXnvtG5B1yZDBkpIJmaV1aCcq9K0PjiOk/8UwhtTFOvwMbygEnv5D/zFc00jEJ7DE5J6kMmj+p9FVVZst5sBCA0AjrXbrECLCvwlkYn3JPrmOXIoJtr8DGoEUGvRs=
+	t=1739547120; cv=none; b=ufLja5FSXOPsPhA1pEvaTMUnl0Qi6DIHazee8AO9GfxSVSVRr7SJNvNfOATqtOoRuPibI1f91pX5XHEvtQEzPOoYqiejeU5H+HjlVQ9/WdWHdT5ZZv5kgKJIdvbMeKwiUGrjDPQy4zXx/SQfYITv7i9pUE5bvXqwXOEZEMAEWq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547098; c=relaxed/simple;
-	bh=7P5KfUUs2ZOeZWd7glFomIFleZsfHmdy42H1Kar+cJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdBkjrU6W/4QRzVFXZ8uDmEIKo/nhv4d4L+uDuzjTdKZ9yq22DuQC5lWM8zae8NRx71+8aKgET5qyDUQ8TGdgyLZF9Eq/dJsmDPRpE9qGtz3i02WYZ+nlcVGXhjWKXN+oddzw0Y+AilS1YliLghqPpsvZwzZtv498IiAFHFXVS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FOPWJHR7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739547096; x=1771083096;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7P5KfUUs2ZOeZWd7glFomIFleZsfHmdy42H1Kar+cJk=;
-  b=FOPWJHR7N4bvNJb28j4xSoATD1UCNAU024LGUoV1a4BPkBnb3K1HXUkE
-   FLnBkjUnHIj9tc3LElXDvgZmoHdYAYWrpU4F0ghDt8LAOq+1iFtD3MWxA
-   K3AHuwdbTN6M52gFVVJ2AuOsF+uu4gWSdrCYT0oWEx3OZicho3kjuQTwM
-   h66TZyJXEme757VlV/E2aHn/16ZG21/wDtHehxJowNFMS54KWdhTPSdRc
-   i8alEA7WweCqCac2BFwQNkPEoL90C+mLrZAvGfk3GM7fzTDIXB+pdUYWr
-   813jT4g0NIjhkJ/n4jYhOzch8og59mP1BkKvry2/a9GaLNlibA3W0n06n
-   g==;
-X-CSE-ConnectionGUID: KDLJygDZR62DrQEE7IuGmw==
-X-CSE-MsgGUID: zr5A9SSKQwCiFf+4J2uPOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="50512364"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="50512364"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:31:36 -0800
-X-CSE-ConnectionGUID: CR1ia8JuS++UWH5gInrNzg==
-X-CSE-MsgGUID: VFwFGR/cS1q9lN4KptVY/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118416806"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 14 Feb 2025 07:31:32 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tixf8-0019m7-19;
-	Fri, 14 Feb 2025 15:31:30 +0000
-Date: Fri, 14 Feb 2025 23:31:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-	amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	rui.zhang@intel.com, lukasz.luba@arm.com,
-	david.collins@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] thermal: qcom-spmi-temp-alarm: add support for LITE
- PMIC peripherals
-Message-ID: <202502142339.NmW9FTBM-lkp@intel.com>
-References: <20250213210403.3396392-5-anjelique.melendez@oss.qualcomm.com>
+	s=arc-20240116; t=1739547120; c=relaxed/simple;
+	bh=KCDFKHc9ZM5Ox9QzR1rz3yyEmfiZGegSVP6n+hKiNTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EcCZRLVWiRu9BrDmCdjLysHhsKHzPdEYsIhqtyulNKcQ2qvfDy7/iz4E/QQIMvtSw8WMvxGQD1tWLYOR0SmVJNW4ksKUL2wBANaFJ4CcEEFlR/PKLLGdsncLBr3g1y2/3rbMMltuOCrX/UGPRF3u1r/j+NPHAZyg3CE3Us5e/oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAOM1XOk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13E4C4CED1;
+	Fri, 14 Feb 2025 15:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739547119;
+	bh=KCDFKHc9ZM5Ox9QzR1rz3yyEmfiZGegSVP6n+hKiNTw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mAOM1XOkaSwGMmCZJF0siuvK027HA4akMrVHBw/HNJ1G/YlovIjCYRalILudDt17Q
+	 OkfJUPQrzyisirDB+2R8GCuC4ELSipKb9i0yIMXHQbzzeOtJhrGOCOtaLBCfWCH4jf
+	 Tos5hlYEyQNysU2O+Bsai9OyYGn8KXyJrzufSnHhZM40WhVpr2HEHIURouXK/WW6Bo
+	 QmkjDDwn3ZYRIoceel598tbcLov6pHWXSZ6vWosyXvE8tQTJh0oWLkjDuMKlwkdCiV
+	 IOQCRYZsGTOXsD4SxUy9dxWeE6EZ4hXHis8ha95tpYe6ckNgFchy11yRpykSFDjr41
+	 2UIYtRRdvp59g==
+Message-ID: <6dac6db1-60ef-4a14-8998-7da44c26690f@kernel.org>
+Date: Fri, 14 Feb 2025 16:31:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213210403.3396392-5-anjelique.melendez@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/3] net: phy: mediatek: add driver for built-in
+ 2.5G ethernet PHY on MT7988
+To: =?UTF-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
+ <SkyLake.Huang@mediatek.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
+ "dqfext@gmail.com" <dqfext@gmail.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "pabeni@redhat.com" <pabeni@redhat.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "daniel@makrotopia.org" <daniel@makrotopia.org>,
+ "horms@kernel.org" <horms@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Cc: =?UTF-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>
+References: <20250116012159.3816135-1-SkyLake.Huang@mediatek.com>
+ <20250116012159.3816135-4-SkyLake.Huang@mediatek.com>
+ <df2a463c-102c-4eb1-905d-96dbd926db7e@kernel.org>
+ <e58dabed4915e5c2dcece5f047e045ca08f836b6.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <e58dabed4915e5c2dcece5f047e045ca08f836b6.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Anjelique,
+On 14/02/2025 14:23, SkyLake Huang (黃啟澤) wrote:
+> On Thu, 2025-01-16 at 13:45 +0100, Krzysztof Kozlowski wrote:
+>>
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> On 16/01/2025 02:21, Sky Huang wrote:
+>>> +
+>>> +static int mt798x_2p5ge_phy_load_fw(struct phy_device *phydev)
+>>> +{
+>>> +     struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
+>>> +     void __iomem *mcu_csr_base, *pmb_addr;
+>>> +     struct device *dev = &phydev->mdio.dev;
+>>> +     const struct firmware *fw;
+>>> +     struct device_node *np;
+>>> +     int ret, i;
+>>> +     u32 reg;
+>>> +
+>>> +     if (priv->fw_loaded)
+>>> +             return 0;
+>>> +
+>>> +     np = of_find_compatible_node(NULL, NULL, "mediatek,2p5gphy-
+>>> fw");
+>>
+>> There is no such compatible. You cannot just add undocumented
+>> bindings.
+>>
+>> Also, devices should not just look for some random compatibles.
+>> Express
+>> proper relationships with phandles or node hierarchy.
+>>
+> Hi Krzysztof,
+>   OK. I'll add dt-bindings' document in next version.
 
-kernel test robot noticed the following build errors:
+Carefully read the comment instead. Anyway, if you come with response to
+the comment after one month (nice disproportion between received review
+and responding to feedback), my entire context is gone.
 
-[auto build test ERROR on rafael-pm/thermal]
-[also build test ERROR on linus/master v6.14-rc2 next-20250214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Anjelique-Melendez/thermal-qcom-spmi-temp-alarm-enable-stage-2-shutdown-when-required/20250214-050700
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal
-patch link:    https://lore.kernel.org/r/20250213210403.3396392-5-anjelique.melendez%40oss.qualcomm.com
-patch subject: [PATCH 4/4] thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
-config: i386-buildonly-randconfig-003-20250214 (https://download.01.org/0day-ci/archive/20250214/202502142339.NmW9FTBM-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502142339.NmW9FTBM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502142339.NmW9FTBM-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/thermal/qcom/qcom-spmi-temp-alarm.c:196:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     196 |         return FIELD_GET(STATUS_GEN1_STAGE_MASK, reg);
-         |                ^
-   drivers/thermal/qcom/qcom-spmi-temp-alarm.c:217:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     217 |         ret = FIELD_GET(STATUS_GEN2_STATE_MASK, reg);
-         |               ^
->> drivers/thermal/qcom/qcom-spmi-temp-alarm.c:477:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     477 |         reg |= FIELD_PREP(LITE_TEMP_CFG_THRESHOLD_MASK, thresh);
-         |                ^
-   drivers/thermal/qcom/qcom-spmi-temp-alarm.c:634:11: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     634 |         thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
-         |                  ^
-   4 errors generated.
-
-
-vim +/FIELD_PREP +477 drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-
-   418	
-   419	static int qpnp_tm_lite_set_temp_thresh(struct qpnp_tm_chip *chip, int trip, int temp)
-   420	{
-   421		int ret, temp_cfg, i;
-   422		const long *temp_map;
-   423		u16 addr;
-   424		u8 reg, thresh;
-   425	
-   426		if (trip < 0 || trip >= STAGE_COUNT) {
-   427			dev_err(chip->dev, "invalid TEMP_LITE trip = %d\n", trip);
-   428			return -EINVAL;
-   429		}
-   430	
-   431		switch (trip) {
-   432		case 0:
-   433			temp_map = temp_lite_warning_map;
-   434			addr = QPNP_TM_REG_LITE_TEMP_CFG1;
-   435			break;
-   436		case 1:
-   437			/*
-   438			 * The second trip point is purely in software to facilitate
-   439			 * a controlled shutdown after the warning threshold is crossed
-   440			 * but before the automatic hardware shutdown threshold is
-   441			 * crossed.
-   442			 */
-   443			return 0;
-   444		case 2:
-   445			temp_map = temp_lite_shutdown_map;
-   446			addr = QPNP_TM_REG_LITE_TEMP_CFG2;
-   447			break;
-   448		default:
-   449			return 0;
-   450		}
-   451	
-   452		if (temp < temp_map[THRESH_MIN] || temp > temp_map[THRESH_MAX]) {
-   453			dev_err(chip->dev, "invalid TEMP_LITE temp = %d\n", temp);
-   454			return -EINVAL;
-   455		}
-   456	
-   457		thresh = 0;
-   458		temp_cfg = temp_map[thresh];
-   459		for (i = THRESH_MAX; i >= THRESH_MIN; i--) {
-   460			if (temp >= temp_map[i]) {
-   461				thresh = i;
-   462				temp_cfg = temp_map[i];
-   463				break;
-   464			}
-   465		}
-   466	
-   467		if (temp_cfg == chip->temp_thresh_map[trip])
-   468			return 0;
-   469	
-   470		ret = qpnp_tm_read(chip, addr, &reg);
-   471		if (ret < 0) {
-   472			dev_err(chip->dev, "LITE_TEMP_CFG read failed, ret=%d\n", ret);
-   473			return ret;
-   474		}
-   475	
-   476		reg &= ~LITE_TEMP_CFG_THRESHOLD_MASK;
- > 477		reg |= FIELD_PREP(LITE_TEMP_CFG_THRESHOLD_MASK, thresh);
-   478	
-   479		ret = qpnp_tm_write(chip, addr, reg);
-   480		if (ret < 0) {
-   481			dev_err(chip->dev, "LITE_TEMP_CFG write failed, ret=%d\n", ret);
-   482			return ret;
-   483		}
-   484	
-   485		chip->temp_thresh_map[trip] = temp_cfg;
-   486	
-   487		return 0;
-   488	}
-   489	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
