@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-514874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E26A35CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:47:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74252A35CD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84172188E4F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863333AF70A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE09C263F20;
-	Fri, 14 Feb 2025 11:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27AF263F38;
+	Fri, 14 Feb 2025 11:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqumuPNc"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCethhNZ"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A05025A623
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E315221541
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739533657; cv=none; b=IdSw9g9lM++JPDuSu42Q9GekpmMdJUXpJoZ+jOyItSU8vdPPRVe0sl/vrYsEjAfHLPTYSMa3xLy2Z/sILlOCQLky2ppk00wCP490hruJetWKHTuY0opqB6z4SE3kFBzSJ2XxIpjfhC5G9OdVQOtib4h2qSmjmG6uOxewPdpBy9s=
+	t=1739533660; cv=none; b=HSW3SdgTA/xBXgcZKqCg7p0PWJo1klljEq6bt9Sg6qFfwNR15i6zL85zWiht1lBDhhhGD4SOhwhPSzNCaDadQ8rkD7fJkeutQe8g3u5j3Ql4EwfF+ewwjgmJMxbdJMpOKn8D0AyT2grA4Zi0X8A8wyPZ9Vo/23GuXQk2K4SHrn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739533657; c=relaxed/simple;
-	bh=N/ZFeWdku78CWtKPgOIYb8+yg57duuPjSE+bpdnW1C8=;
+	s=arc-20240116; t=1739533660; c=relaxed/simple;
+	bh=IxVDIkctP1LUMSVUoc9gQ/ewcLPPyAT3NhvZ6AqIyHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IIQ+AwRGaznawXXWCo3JE+oru4bIQzeAjHnAK30eDa0AIpaIZ2X4m0kRYtBTGOgjZ/KIzDsOWojw6hAZkXwfMBXkKOghFVNwtWiufVF72nG5Sbvd+sF9VnevpSl2pKd2b1IjDEe7DrKrrySmDWgwsk+CYlv3qMbpH1BGq0rhWL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqumuPNc; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=txIkIYaVinF5vdoToKsEmJZvsDck5X/mLY6QxHh3j1smpDg8DYG6MRio1usFI2S374cN7WUAxDmwZh9KQQ+eAS5IFyJoO12S5xulFSUcGXjCD92VyxJuJK+TMgG2QQE/+Gqjjn7eAWsIAlmYsqWWbPeAP1lLE2Roa4eHpx4Dhyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCethhNZ; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43937cf2131so13332485e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:47:35 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so1303484f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:47:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739533654; x=1740138454; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739533655; x=1740138455; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+mJPDiBCYTfw1Nxw+ZwfMQF/cs7coOz1izSBM1/bSuM=;
-        b=VqumuPNcMWDn9g+ddegDwQY6+Jufo/Adow6sepSWI+kCkWtgxJ8DBbYAFdBgydmBgn
-         g26SNJImRiKaRSYwo2MOjXFkkXM/sl2x8FVP7ipNjdp2wvDIGqzZwKfUVOZdfYrTQ0qI
-         uymqsKDi5u3hWG1l+EbZ0hqm4Qj2gkH4Qn0WYcCip3vQKqywC0gW/l8EV8+jKu8ZlFzy
-         TpABYujsA1R2Roz0d0ubK5t3sgR0loVfAGo0vDwQXTi10qrR0zT03PoPyJCJ1EqNauvn
-         1ghk2ouKyECK48FTkJ8JoX9No2wDd3pgbH5x6TxobOZTsyP6fWklGyLBWxq3GAOtkM8r
-         4sXg==
+        bh=9+PfXfsN0oUC9XPd2q+9CqEOtHstDCBn84q4ujRv4eQ=;
+        b=GCethhNZDzt2fXEDrQRgDI1owekzqD864dZU8ZM+DPJT7D8iqGzxateKE7zQewGlix
+         XRuYNdFsbWZ1spY0iRydvNZXb6SOkM18T/3KQS2jFLzXnYJoYZK2RFn9X1O6Uvi+Gbdt
+         Oc9jMIjDVLc/9PrNZf1c40p2GVszpD+5fn5mCX68DE5NUTY/qe8S/fpnE12cpIMz1uU9
+         vcaSjXQH3JVzmdA6cGpzLo7zsboftsPKNfcqzr6KIwzIpEwtJzxYTY8Yx3rIjvw68mYI
+         8lbNo1SO/sxcgWkZQ5YLgEZxHxeJypqFr1f9iQcZJqUpCgxCKSif7OOqdxySIM82fTl8
+         dfcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739533654; x=1740138454;
+        d=1e100.net; s=20230601; t=1739533655; x=1740138455;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+mJPDiBCYTfw1Nxw+ZwfMQF/cs7coOz1izSBM1/bSuM=;
-        b=gthPrM/h/zFT5zR2m/ZrBDgmPAjj6vxL8OecSnxZcVdW5Tff5P7E4DynIRjuucYQB9
-         0SAHeO8t9YPbLPn0bcOw1qXaJwqlicNZ0XfG7Oc+r4T82/LKraFiMENygdVN31A1OUo1
-         cQCJX5w9EEiWY4DNzJENE0mJqBg7qnJMIgoi0SA65p4dabgijWXY4H0wKJrSe2sZn5T0
-         HGIqPMWqfCx/aAGlPPFeKrP4MKZD8LK2FJk9DjFz2VKRJMpjfy2WJ6doo4xpzL3Rk0y/
-         tqxVZIVM4jq0PoLX4VA6dVZ+WpWY45tq+YNvMhe2yRbxRswt/0Woc1Mnq8cfRi5ZYyX1
-         d+RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsB9wjtJnf8PZrhH/X+5c/UWfDUH8AnRO364uqKz9990VSCx/WJxYBBOzcjol/VZ5FycuCoTH43vFM5rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUy84zVWlhcMTxovjVGZXAesYEbNpACqWKZUonNKljRj6HfIUs
-	wELq1WsX6J1Cs8h5tC15kMbOdQ7HbLoQwSJIABu5CHCh74Mbx0fG
-X-Gm-Gg: ASbGnctGoxOMfyQ+caC+/eruGo5NVNoHakAmwwxBE5HZKFH4Fsdit+G2Iaa/VK/p8iY
-	Y+p9U6CO+lUVLf+82uKthTqA+PqghFOYrf0tMxGQe08Kml2ClpSpivDstK+puQVtCkVJbGaj67S
-	aG34fHG7pwvex8owO5RUWVPmr/8pB0VysSkrN7CSndpIaOLDjU13CCdwS+kNONyI2bcfh4Jcw1i
-	/1DXLKRdWxA+oKMT7pyWWKB7StdRJWecpTFPUWa65/1ztdk6T37Ud3IXM0I05cGbeF6Xsza1XHL
-	E6lUtwTzZtVf2dbpSL4Ev9RRix9IbmNWUD8avHW0Vxax/RoqTu4=
-X-Google-Smtp-Source: AGHT+IFk0SrgrmYCZzT6YR28RWd1wrtGIfzMFpBXUt7XzMxRZ05+DRTzZZsq9UFAn3i8S1GBWsXh9Q==
-X-Received: by 2002:a05:600c:511c:b0:439:441a:3d7e with SMTP id 5b1f17b1804b1-43959a859cdmr111910115e9.20.1739533653330;
-        Fri, 14 Feb 2025 03:47:33 -0800 (PST)
+        bh=9+PfXfsN0oUC9XPd2q+9CqEOtHstDCBn84q4ujRv4eQ=;
+        b=fC+LMTMvjyc/XUcyexbHHb8Bj+xk0pbvZ0JNl4BnfBmDDPzX7REnkW7tSXK3VIdUxD
+         fY4mKROvSs2N95NZSFa73ranPmX5WgOzzZdSolCwUCNM1vQCFBiiR++pkhP88pSBdTJ2
+         ajqq5LR2pzyU9054H+VhvjHv4H2TFWaVd3yzrWFE7ZeYRfF1n9RLwWi0X/AgAKqOTGhc
+         F4eMAV9iR7DtFn+z+nIHBoc0nX9jvIn4ozR0hWmnzBeKlKG0I0VELY6WfOLAD6UJ/aEV
+         sgh6MVS/kwzuM8vNxpTb5VWZ4Z9krBBNPk+r5r1B4rtmCwvPqrXN7eMzZLYfX3cpGgAw
+         MSEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNGlI6H/ggNiUHIpUryywNplHaI6MVCqw6fQr+qL2T9GhakL1Bq+z6i+Pvz3Sdm+6PJOcDXgzq8WYWPss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdzJ1xtoNtg6nK2M0ELw8ctVU9gzP28G+UsmEHd+6Q+bGFKaJo
+	pcogTSE6XqNTaLxdGy5l81ze0Q1mUdH5fl2eODXN2XhC4PE1wKx1sVzDqsTR
+X-Gm-Gg: ASbGnct2aOTx10MtjXIbtiQBjBQNR51aAQyBeIbnduR8zRDcMtx67ri64HBpeg9Mn9I
+	2PG01PRZPQDYao10b4eKTIwBuQmlKBC6ff4282zxWXfKQdi3FymbaEOyBnWXpZKilTxVlpwrQb9
+	SFG+KY9bsU4kADJMfae/SqRYJJwa6AHimh3YrohznFOCyWW0/xwNRCq8Qlu1jS8CzsHAw7PcWS6
+	d/D5D40d3/o+dSrxlftGVuZIgGry36ZVgr4KUjnZjxfroMx6SAPdUqrBKeAcH5bSkQib83V9JQI
+	UNTnO9/gLnvn3LGMAPv8KgmLQj5fM6PqerLnFQCXpJ0dpPmHl0I=
+X-Google-Smtp-Source: AGHT+IGGhlAqZSXicyA/P0eISacPel4A1xiGkKuGp01T18eRpqdUUUNLOk5XeXNSsRonjT1jUamuXw==
+X-Received: by 2002:a05:6000:178b:b0:38d:c55e:ebcf with SMTP id ffacd0b85a97d-38f2451a511mr8136567f8f.52.1739533654770;
+        Fri, 14 Feb 2025 03:47:34 -0800 (PST)
 Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fccfesm41945245e9.11.2025.02.14.03.47.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fccfesm41945245e9.11.2025.02.14.03.47.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 03:47:32 -0800 (PST)
+        Fri, 14 Feb 2025 03:47:33 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 01/17] staging: gpib: agilent pci console messaging cleanup
-Date: Fri, 14 Feb 2025 12:46:52 +0100
-Message-ID: <20250214114708.28947-2-dpenkler@gmail.com>
+Subject: [PATCH 02/17] staging: gpib: agilent usb console messaging cleanup
+Date: Fri, 14 Feb 2025 12:46:53 +0100
+Message-ID: <20250214114708.28947-3-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250214114708.28947-1-dpenkler@gmail.com>
 References: <20250214114708.28947-1-dpenkler@gmail.com>
@@ -90,398 +90,858 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove dev_err messages on interrupted or timed-out
-reads and writes.  User land code can figure out what
-went wrong with the errno return.
+Enable module name to be printed in pr_xxx and dev_xxx
+Use DRV_NAME defined as KBUILD_MODNAME instead of hard coded
+string in usb_driver struct.
 
-Return -ENODEV instead of -1 on attach failure when
-no board is found.
+Remove __func__ parameter in dev_dbg messages as this can be
+enabled with dynamic debug.
 
-Delete commented out console messages.
+Remove __func__ parameter in dev_err messages as they are not
+needed. The module name is sufficient.
 
-Use module name in pr_xxx and dev_xxx messages.
-Remove const char * definition of driver_name and
-extern definition in .h file.
-Use DRV_NAME defined as KBUILD_MODNAME instead.
-Remove driver_name parameter and agilent_82350b string prefix
-in dev_xxx messages.
-Use DRV_NAME instead of driver_name in pci_request_regions.
-Use DRV_NAME instead of hard coded string in the pci_driver struct.
+Change pr_info to dev_dbg where needed and remove the rest
+where possible.
 
-Change select dev_info's to dev_dbg.
+Remove test and error messages for buffer over run in write and
+read_registers as these are just trying to catch bugs in the driver.
 
-Change pr_err to dev_err where possible.
+Remove agilent_82357a string prefix in error messages.
+
+Return -EIO for too many reads in read_registers instead of
+continuing after printing an error message.
+
+Change pr_warn to dev_warn.
+
+Remove warning on calls for unsupported functionality.
+
+Remove test and message for buffer overflow in agilent_82357_init
+and agilent_82357a_go_idle which are just checking for a driver bug.
+Use actual indeces in the array instead of i and then incrementing
+i so that the code is clear and there is no need to check for
+overflow or print a message.
 
 Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- .../gpib/agilent_82350b/agilent_82350b.c      | 118 ++++++------------
- .../gpib/agilent_82350b/agilent_82350b.h      |   3 -
- 2 files changed, 40 insertions(+), 81 deletions(-)
+ .../gpib/agilent_82357a/agilent_82357a.c      | 359 +++++++-----------
+ 1 file changed, 143 insertions(+), 216 deletions(-)
 
-diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-index 5c62ec24fced..f83e1f321561 100644
---- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-+++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-@@ -4,6 +4,10 @@
-  *   copyright            : (C) 2002, 2004 by Frank Mori Hess              *
-  ***************************************************************************/
+diff --git a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
+index 69f0e490d401..7ebebe00dc48 100644
+--- a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
++++ b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
+@@ -7,6 +7,10 @@
+ 
+ #define _GNU_SOURCE
  
 +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +#define dev_fmt pr_fmt
 +#define DRV_NAME KBUILD_MODNAME
 +
- #include "agilent_82350b.h"
- #include <linux/delay.h>
- #include <linux/ioport.h>
-@@ -54,9 +58,6 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+@@ -79,14 +83,12 @@ static int agilent_82357a_send_bulk_msg(struct agilent_82357a_priv *a_priv, void
  
- 		retval = tms9914_read(board, tms_priv, buffer, 1, end, &num_bytes);
- 		*bytes_read += num_bytes;
--		if (retval < 0)
--			dev_err(board->gpib_dev, "%s: tms9914_read failed retval=%i\n",
--				driver_name, retval);
- 		if (retval < 0 || *end)
- 			return retval;
- 		++buffer;
-@@ -89,7 +90,6 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
- 						  test_bit(DEV_CLEAR_BN, &tms_priv->state) ||
- 						  test_bit(TIMO_NUM, &board->status));
- 		if (retval) {
--			dev_dbg(board->gpib_dev, "%s: read wait interrupted\n", driver_name);
- 			retval = -ERESTARTSYS;
- 			break;
- 		}
-@@ -103,13 +103,10 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
- 			*end = 1;
- 		}
- 		if (test_bit(TIMO_NUM, &board->status)) {
--			dev_err(board->gpib_dev, "%s: read timed out\n", driver_name);
- 			retval = -ETIMEDOUT;
- 			break;
- 		}
- 		if (test_bit(DEV_CLEAR_BN, &tms_priv->state)) {
--			dev_err(board->gpib_dev, "%s: device clear interrupted read\n",
--				driver_name);
- 			retval = -EINTR;
- 			break;
- 		}
-@@ -139,18 +136,12 @@ static int translate_wait_return_value(gpib_board_t *board, int retval)
- 	struct agilent_82350b_priv *a_priv = board->private_data;
- 	struct tms9914_priv *tms_priv = &a_priv->tms9914_priv;
+ 	retval = usb_submit_urb(a_priv->bulk_urb, GFP_KERNEL);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: failed to submit bulk out urb, retval=%i\n",
+-			__func__, retval);
++		dev_err(&usb_dev->dev, "failed to submit bulk out urb, retval=%i\n", retval);
+ 		mutex_unlock(&a_priv->bulk_alloc_lock);
+ 		goto cleanup;
+ 	}
+ 	mutex_unlock(&a_priv->bulk_alloc_lock);
+ 	if (down_interruptible(&context->complete)) {
+-		dev_err(&usb_dev->dev, "%s: interrupted\n", __func__);
+ 		retval = -ERESTARTSYS;
+ 		goto cleanup;
+ 	}
+@@ -149,14 +151,12 @@ static int agilent_82357a_receive_bulk_msg(struct agilent_82357a_priv *a_priv, v
  
--	if (retval) {
--		dev_err(board->gpib_dev, "%s: write wait interrupted\n", driver_name);
-+	if (retval)
- 		return -ERESTARTSYS;
--	}
--	if (test_bit(TIMO_NUM, &board->status)) {
--		dev_err(board->gpib_dev, "%s: write timed out\n", driver_name);
-+	if (test_bit(TIMO_NUM, &board->status))
- 		return -ETIMEDOUT;
--	}
--	if (test_bit(DEV_CLEAR_BN, &tms_priv->state)) {
--		dev_err(board->gpib_dev, "%s: device clear interrupted write\n", driver_name);
-+	if (test_bit(DEV_CLEAR_BN, &tms_priv->state))
- 		return -EINTR;
--	}
- 	return 0;
+ 	retval = usb_submit_urb(a_priv->bulk_urb, GFP_KERNEL);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: failed to submit bulk out urb, retval=%i\n",
+-			__func__, retval);
++		dev_err(&usb_dev->dev, "failed to submit bulk in urb, retval=%i\n", retval);
+ 		mutex_unlock(&a_priv->bulk_alloc_lock);
+ 		goto cleanup;
+ 	}
+ 	mutex_unlock(&a_priv->bulk_alloc_lock);
+ 	if (down_interruptible(&context->complete)) {
+-		dev_err(&usb_dev->dev, "%s: interrupted\n", __func__);
+ 		retval = -ERESTARTSYS;
+ 		goto cleanup;
+ 	}
+@@ -205,7 +205,6 @@ static int agilent_82357a_receive_control_msg(struct agilent_82357a_priv *a_priv
+ 
+ static void agilent_82357a_dump_raw_block(const u8 *raw_data, int length)
+ {
+-	pr_info("hex block dump\n");
+ 	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 8, 1, raw_data, length, true);
  }
  
-@@ -176,10 +167,8 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
+@@ -225,7 +224,7 @@ static int agilent_82357a_write_registers(struct agilent_82357a_priv *a_priv,
+ 	static const int max_writes = 31;
  
- 	event_status = read_and_clear_event_status(board);
- 
--	//pr_info("ag_ac_wr: event status 0x%x tms state 0x%lx\n", event_status, tms_priv->state);
--
- #ifdef EXPERIMENTAL
--	pr_info("ag_ac_wr: wait for previous BO to complete if any\n");
-+	// wait for previous BO to complete if any
- 	retval = wait_event_interruptible(board->wait,
- 					  test_bit(DEV_CLEAR_BN, &tms_priv->state) ||
- 					  test_bit(WRITE_READY_BN, &tms_priv->state) ||
-@@ -190,14 +179,11 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		return retval;
- #endif
- 
--	//pr_info("ag_ac_wr: sending first byte\n");
- 	retval = agilent_82350b_write(board, buffer, 1, 0, &num_bytes);
- 	*bytes_written += num_bytes;
- 	if (retval < 0)
- 		return retval;
- 
--	//pr_info("ag_ac_wr: %ld bytes eoi %d tms state 0x%lx\n",length, send_eoi, tms_priv->state);
--
- 	write_byte(tms_priv, tms_priv->imr0_bits & ~HR_BOIE, IMR0);
- 	for (i = 1; i < fifotransferlength;) {
- 		clear_bit(WRITE_READY_BN, &tms_priv->state);
-@@ -210,13 +196,8 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		}
- 		writeb(ENABLE_TI_TO_SRAM, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 
--		//pr_info("ag_ac_wr: send block: %d bytes tms 0x%lx\n", block_size,
--		// tms_priv->state);
--
--		if (agilent_82350b_fifo_is_halted(a_priv)) {
-+		if (agilent_82350b_fifo_is_halted(a_priv))
- 			writeb(RESTART_STREAM_BIT, a_priv->gpib_base + STREAM_STATUS_REG);
--			//	pr_info("ag_ac_wr: needed restart\n");
--		}
- 
- 		retval = wait_event_interruptible(board->wait,
- 						  ((event_status =
-@@ -226,7 +207,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 						  test_bit(TIMO_NUM, &board->status));
- 		writeb(0, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 		num_bytes = block_size - read_transfer_counter(a_priv);
--		//pr_info("ag_ac_wr: sent  %ld bytes tms 0x%lx\n", num_bytes, tms_priv->state);
- 
- 		*bytes_written += num_bytes;
- 		retval = translate_wait_return_value(board, retval);
-@@ -238,9 +218,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		return retval;
- 
- 	if (send_eoi) {
--		//pr_info("ag_ac_wr: sending last byte with eoi byte no:   %d\n",
--		// fifotransferlength+1);
--
- 		retval = agilent_82350b_write(board, buffer + fifotransferlength, 1, send_eoi,
- 					      &num_bytes);
- 		*bytes_written += num_bytes;
-@@ -284,7 +261,6 @@ static irqreturn_t agilent_82350b_interrupt(int irq, void *arg)
- 		tms9914_interrupt_have_status(board, &a_priv->tms9914_priv, tms9914_status1,
- 					      tms9914_status2);
- 	}
--//pr_info("event_status=0x%x s1 %x s2 %x\n", event_status,tms9914_status1,tms9914_status2);
- //write-clear status bits
- 	if (event_status & (BUFFER_END_STATUS_BIT | TERM_COUNT_STATUS_BIT)) {
- 		writeb(event_status & (BUFFER_END_STATUS_BIT | TERM_COUNT_STATUS_BIT),
-@@ -298,8 +274,6 @@ static irqreturn_t agilent_82350b_interrupt(int irq, void *arg)
- 
- static void agilent_82350b_detach(gpib_board_t *board);
- 
--const char *driver_name = "agilent_82350b";
--
- static int read_transfer_counter(struct agilent_82350b_priv *a_priv)
- {
- 	int lo, mid, value;
-@@ -536,11 +510,10 @@ static int init_82350a_hardware(gpib_board_t *board, const gpib_board_config_t *
- 		return 0;
- 	// need to programme borg
- 	if (!config->init_data || config->init_data_length != firmware_length) {
--		dev_err(board->gpib_dev, "%s: the 82350A board requires firmware after powering on.\n",
--			driver_name);
-+		dev_err(board->gpib_dev, "the 82350A board requires firmware after powering on.\n");
+ 	if (num_writes > max_writes) {
+-		dev_err(&usb_dev->dev, "%s: bug! num_writes=%i too large\n", __func__, num_writes);
++		dev_err(&usb_dev->dev, "bug! num_writes=%i too large\n", num_writes);
  		return -EIO;
  	}
--	dev_info(board->gpib_dev, "%s: Loading firmware...\n", driver_name);
-+	dev_dbg(board->gpib_dev, "Loading firmware...\n");
+ 	out_data_length = num_writes * bytes_per_write + header_length;
+@@ -239,8 +238,7 @@ static int agilent_82357a_write_registers(struct agilent_82357a_priv *a_priv,
+ 		out_data[i++] = writes[j].address;
+ 		out_data[i++] = writes[j].value;
+ 	}
+-	if (i > out_data_length)
+-		dev_err(&usb_dev->dev, "%s: bug! buffer overrun\n", __func__);
++
+ 	retval = mutex_lock_interruptible(&a_priv->bulk_transfer_lock);
+ 	if (retval) {
+ 		kfree(out_data);
+@@ -249,8 +247,8 @@ static int agilent_82357a_write_registers(struct agilent_82357a_priv *a_priv,
+ 	retval = agilent_82357a_send_bulk_msg(a_priv, out_data, i, &bytes_written, 1000);
+ 	kfree(out_data);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
+-			__func__, retval, bytes_written, i);
++		dev_err(&usb_dev->dev, "send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
++			retval, bytes_written, i);
+ 		mutex_unlock(&a_priv->bulk_transfer_lock);
+ 		return retval;
+ 	}
+@@ -265,20 +263,19 @@ static int agilent_82357a_write_registers(struct agilent_82357a_priv *a_priv,
+ 	mutex_unlock(&a_priv->bulk_transfer_lock);
  
- 	// tickle the borg
- 	writel(plx_cntrl_static_bits | PLX9050_USER3_DATA_BIT,
-@@ -559,7 +532,7 @@ static int init_82350a_hardware(gpib_board_t *board, const gpib_board_config_t *
- 			usleep_range(10, 20);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_receive_bulk_msg returned %i, bytes_read=%i\n",
+-			__func__, retval, bytes_read);
++		dev_err(&usb_dev->dev, "receive_bulk_msg returned %i, bytes_read=%i\n",
++			retval, bytes_read);
+ 		agilent_82357a_dump_raw_block(in_data, bytes_read);
+ 		kfree(in_data);
+ 		return -EIO;
+ 	}
+ 	if (in_data[0] != (0xff & ~DATA_PIPE_CMD_WR_REGS)) {
+-		dev_err(&usb_dev->dev, "%s: error, bulk command=0x%x != ~DATA_PIPE_CMD_WR_REGS\n",
+-			__func__, in_data[0]);
++		dev_err(&usb_dev->dev, "bulk command=0x%x != ~DATA_PIPE_CMD_WR_REGS\n", in_data[0]);
+ 		return -EIO;
+ 	}
+ 	if (in_data[1])	{
+-		dev_err(&usb_dev->dev, "%s: nonzero error code 0x%x in DATA_PIPE_CMD_WR_REGS response\n",
+-			__func__, in_data[1]);
++		dev_err(&usb_dev->dev, "nonzero error code 0x%x in DATA_PIPE_CMD_WR_REGS response\n",
++			in_data[1]);
+ 		return -EIO;
+ 	}
+ 	kfree(in_data);
+@@ -299,9 +296,10 @@ static int agilent_82357a_read_registers(struct agilent_82357a_priv *a_priv,
+ 	static const int header_length = 2;
+ 	static const int max_reads = 62;
+ 
+-	if (num_reads > max_reads)
+-		dev_err(&usb_dev->dev, "%s: bug! num_reads=%i too large\n", __func__, num_reads);
+-
++	if (num_reads > max_reads) {
++		dev_err(&usb_dev->dev, "bug! num_reads=%i too large\n", num_reads);
++		return -EIO;
++	}
+ 	out_data_length = num_reads + header_length;
+ 	out_data = kmalloc(out_data_length, GFP_KERNEL);
+ 	if (!out_data)
+@@ -311,8 +309,7 @@ static int agilent_82357a_read_registers(struct agilent_82357a_priv *a_priv,
+ 	out_data[i++] = num_reads;
+ 	for (j = 0; j < num_reads; j++)
+ 		out_data[i++] = reads[j].address;
+-	if (i > out_data_length)
+-		dev_err(&usb_dev->dev, "%s: bug! buffer overrun\n", __func__);
++
+ 	if (blocking) {
+ 		retval = mutex_lock_interruptible(&a_priv->bulk_transfer_lock);
+ 		if (retval) {
+@@ -329,8 +326,8 @@ static int agilent_82357a_read_registers(struct agilent_82357a_priv *a_priv,
+ 	retval = agilent_82357a_send_bulk_msg(a_priv, out_data, i, &bytes_written, 1000);
+ 	kfree(out_data);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
+-			__func__, retval, bytes_written, i);
++		dev_err(&usb_dev->dev, "send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
++			retval, bytes_written, i);
+ 		mutex_unlock(&a_priv->bulk_transfer_lock);
+ 		return retval;
+ 	}
+@@ -345,21 +342,20 @@ static int agilent_82357a_read_registers(struct agilent_82357a_priv *a_priv,
+ 	mutex_unlock(&a_priv->bulk_transfer_lock);
+ 
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_receive_bulk_msg returned %i, bytes_read=%i\n",
+-			__func__, retval, bytes_read);
++		dev_err(&usb_dev->dev, "receive_bulk_msg returned %i, bytes_read=%i\n",
++			retval, bytes_read);
+ 		agilent_82357a_dump_raw_block(in_data, bytes_read);
+ 		kfree(in_data);
+ 		return -EIO;
+ 	}
+ 	i = 0;
+ 	if (in_data[i++] != (0xff & ~DATA_PIPE_CMD_RD_REGS)) {
+-		dev_err(&usb_dev->dev, "%s: error, bulk command=0x%x != ~DATA_PIPE_CMD_RD_REGS\n",
+-			__func__, in_data[0]);
++		dev_err(&usb_dev->dev, "bulk command=0x%x != ~DATA_PIPE_CMD_RD_REGS\n",	in_data[0]);
+ 		return -EIO;
+ 	}
+ 	if (in_data[i++]) {
+-		dev_err(&usb_dev->dev, "%s: nonzero error code 0x%x in DATA_PIPE_CMD_RD_REGS response\n",
+-			__func__, in_data[1]);
++		dev_err(&usb_dev->dev, "nonzero error code 0x%x in DATA_PIPE_CMD_RD_REGS response\n",
++			in_data[1]);
+ 		return -EIO;
+ 	}
+ 	for (j = 0; j < num_reads; j++)
+@@ -390,14 +386,13 @@ static int agilent_82357a_abort(struct agilent_82357a_priv *a_priv, int flush)
+ 								    wIndex, status_data,
+ 								    status_data_len, 100);
+ 	if (receive_control_retval < 0)	{
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_receive_control_msg() returned %i\n",
+-			__func__, receive_control_retval);
++		dev_err(&usb_dev->dev, "82357a_receive_control_msg() returned %i\n",
++			receive_control_retval);
+ 		retval = -EIO;
+ 		goto cleanup;
+ 	}
+ 	if (status_data[0] != (~XFER_ABORT & 0xff)) {
+-		dev_err(&usb_dev->dev, "%s: error, major code=0x%x != ~XFER_ABORT\n",
+-			__func__, status_data[0]);
++		dev_err(&usb_dev->dev, "major code=0x%x != ~XFER_ABORT\n", status_data[0]);
+ 		retval = -EIO;
+ 		goto cleanup;
+ 	}
+@@ -413,8 +408,7 @@ static int agilent_82357a_abort(struct agilent_82357a_priv *a_priv, int flush)
+ 		fallthrough;
+ 	case UGP_ERR_FLUSHING_ALREADY:
+ 	default:
+-		dev_err(&usb_dev->dev, "%s: abort returned error code=0x%x\n",
+-			__func__, status_data[1]);
++		dev_err(&usb_dev->dev, "abort returned error code=0x%x\n", status_data[1]);
+ 		retval = -EIO;
+ 		break;
+ 	}
+@@ -469,8 +463,8 @@ static int agilent_82357a_read(gpib_board_t *board, uint8_t *buffer, size_t leng
+ 	retval = agilent_82357a_send_bulk_msg(a_priv, out_data, i, &bytes_written, msec_timeout);
+ 	kfree(out_data);
+ 	if (retval || bytes_written != i) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
+-			__func__, retval, bytes_written, i);
++		dev_err(&usb_dev->dev, "send_bulk_msg returned %i, bytes_written=%i, i=%i\n",
++			retval, bytes_written, i);
+ 		mutex_unlock(&a_priv->bulk_transfer_lock);
+ 		if (retval < 0)
+ 			return retval;
+@@ -501,19 +495,19 @@ static int agilent_82357a_read(gpib_board_t *board, uint8_t *buffer, size_t leng
+ 								     &extra_bytes_read, 100);
+ 		bytes_read += extra_bytes_read;
+ 		if (extra_bytes_retval)	{
+-			dev_err(&usb_dev->dev, "%s: extra_bytes_retval=%i, bytes_read=%i\n",
+-				__func__, extra_bytes_retval, bytes_read);
++			dev_err(&usb_dev->dev, "extra_bytes_retval=%i, bytes_read=%i\n",
++				extra_bytes_retval, bytes_read);
+ 			agilent_82357a_abort(a_priv, 0);
  		}
- 		if (j == timeout) {
--			dev_err(board->gpib_dev, "%s: timed out loading firmware.\n", driver_name);
-+			dev_err(board->gpib_dev, "timed out loading firmware.\n");
+ 	} else if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_receive_bulk_msg returned %i, bytes_read=%i\n",
+-			__func__, retval, bytes_read);
++		dev_err(&usb_dev->dev, "receive_bulk_msg returned %i, bytes_read=%i\n",
++			retval, bytes_read);
+ 		agilent_82357a_abort(a_priv, 0);
+ 	}
+ 	mutex_unlock(&a_priv->bulk_transfer_lock);
+ 	if (bytes_read > length + 1) {
+ 		bytes_read = length + 1;
+-		pr_warn("%s: bytes_read > length? truncating", __func__);
++		dev_warn(&usb_dev->dev, "bytes_read > length? truncating");
+ 	}
+ 
+ 	if (bytes_read >= 1) {
+@@ -584,8 +578,8 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
+ 	kfree(out_data);
+ 	if (retval || raw_bytes_written != i) {
+ 		agilent_82357a_abort(a_priv, 0);
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_send_bulk_msg returned %i, raw_bytes_written=%i, i=%i\n",
+-			__func__, retval, raw_bytes_written, i);
++		dev_err(&usb_dev->dev, "send_bulk_msg returned %i, raw_bytes_written=%i, i=%i\n",
++			retval, raw_bytes_written, i);
+ 		mutex_unlock(&a_priv->bulk_transfer_lock);
+ 		if (retval < 0)
+ 			return retval;
+@@ -597,7 +591,7 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
+ 						   &a_priv->interrupt_flags) ||
+ 					  test_bit(TIMO_NUM, &board->status));
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: wait write complete interrupted\n", __func__);
++		dev_dbg(&usb_dev->dev, "wait write complete interrupted\n");
+ 		agilent_82357a_abort(a_priv, 0);
+ 		mutex_unlock(&a_priv->bulk_transfer_lock);
+ 		return -ERESTARTSYS;
+@@ -614,8 +608,7 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
+ 		read_reg.address = BSR;
+ 		retval = agilent_82357a_read_registers(a_priv, &read_reg, 1, 1);
+ 		if (retval) {
+-			dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-				__func__);
++			dev_err(&usb_dev->dev, "read_registers() returned error\n");
  			return -ETIMEDOUT;
  		}
- 		writeb(firmware_data[i], a_priv->gpib_base + CONFIG_DATA_REG);
-@@ -570,11 +543,10 @@ static int init_82350a_hardware(gpib_board_t *board, const gpib_board_config_t *
- 		usleep_range(10, 20);
- 	}
- 	if (j == timeout) {
--		dev_err(board->gpib_dev, "%s: timed out waiting for firmware load to complete.\n",
--			driver_name);
-+		dev_err(board->gpib_dev, "timed out waiting for firmware load to complete.\n");
- 		return -ETIMEDOUT;
- 	}
--	dev_info(board->gpib_dev, "%s: ...done.\n", driver_name);
-+	dev_dbg(board->gpib_dev, " ...done.\n");
- 	return 0;
- }
  
-@@ -596,15 +568,14 @@ static int test_sram(gpib_board_t *board)
- 		unsigned int read_value = readb(a_priv->sram_base + i);
- 
- 		if ((i & byte_mask) != read_value) {
--			dev_err(board->gpib_dev, "%s: SRAM test failed at %d wanted %d got %d\n",
--				driver_name, i, (i & byte_mask), read_value);
-+			dev_err(board->gpib_dev, "SRAM test failed at %d wanted %d got %d\n",
-+				i, (i & byte_mask), read_value);
- 			return -EIO;
- 		}
- 		if (need_resched())
- 			schedule();
- 	}
--	dev_info(board->gpib_dev, "%s: SRAM test passed 0x%x bytes checked\n",
--		 driver_name, sram_length);
-+	dev_dbg(board->gpib_dev, "SRAM test passed 0x%x bytes checked\n", sram_length);
- 	return 0;
- }
- 
-@@ -632,14 +603,14 @@ static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_c
- 						 PCI_DEVICE_ID_82350B, NULL);
- 	if (a_priv->pci_device) {
- 		a_priv->model = MODEL_82350B;
--		dev_info(board->gpib_dev, "%s: Agilent 82350B board found\n", driver_name);
-+		dev_dbg(board->gpib_dev, "Agilent 82350B board found\n");
- 
- 	} else	{
- 		a_priv->pci_device = gpib_pci_get_device(config, PCI_VENDOR_ID_AGILENT,
- 							 PCI_DEVICE_ID_82351A, NULL);
- 		if (a_priv->pci_device)	{
- 			a_priv->model = MODEL_82351A;
--			dev_info(board->gpib_dev, "%s: Agilent 82351B board found\n", driver_name);
-+			dev_dbg(board->gpib_dev, "Agilent 82351B board found\n");
- 
- 		} else {
- 			a_priv->pci_device = gpib_pci_get_subsys(config, PCI_VENDOR_ID_PLX,
-@@ -649,46 +620,40 @@ static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_c
- 								 a_priv->pci_device);
- 			if (a_priv->pci_device) {
- 				a_priv->model = MODEL_82350A;
--				dev_info(board->gpib_dev, "%s: HP/Agilent 82350A board found\n",
--					 driver_name);
-+				dev_dbg(board->gpib_dev, "HP/Agilent 82350A board found\n");
- 			} else {
--				dev_err(board->gpib_dev, "%s: no 82350/82351 board found\n",
--					driver_name);
-+				dev_err(board->gpib_dev, "no 82350/82351 board found\n");
- 				return -ENODEV;
+@@ -632,8 +625,7 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
+ 			read_reg.address = ADSR;
+ 			retval = agilent_82357a_read_registers(a_priv, &read_reg, 1, 1);
+ 			if (retval) {
+-				dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-					__func__);
++				dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 				return -ETIMEDOUT;
  			}
+ 			adsr = read_reg.value;
+@@ -659,8 +651,7 @@ static ssize_t agilent_82357a_generic_write(gpib_board_t *board, uint8_t *buffer
+ 						    100);
+ 	mutex_unlock(&a_priv->bulk_transfer_lock);
+ 	if (retval < 0)	{
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_receive_control_msg() returned %i\n",
+-			__func__, retval);
++		dev_err(&usb_dev->dev, "receive_control_msg() returned %i\n", retval);
+ 		kfree(status_data);
+ 		return -EIO;
+ 	}
+@@ -699,8 +690,7 @@ int agilent_82357a_take_control_internal(gpib_board_t *board, int synchronous)
+ 		write.value = AUX_TCA;
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 
+ 	return retval;
+ }
+@@ -741,8 +731,7 @@ static int agilent_82357a_go_to_standby(gpib_board_t *board)
+ 	write.value = AUX_GTS;
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 	return 0;
+ }
+ 
+@@ -771,8 +760,7 @@ static void agilent_82357a_request_system_control(gpib_board_t *board, int reque
+ 	++i;
+ 	retval = agilent_82357a_write_registers(a_priv, writes, i);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 	return;// retval;
+ }
+ 
+@@ -791,8 +779,7 @@ static void agilent_82357a_interface_clear(gpib_board_t *board, int assert)
+ 	}
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ }
+ 
+ static void agilent_82357a_remote_enable(gpib_board_t *board, int enable)
+@@ -808,8 +795,7 @@ static void agilent_82357a_remote_enable(gpib_board_t *board, int enable)
+ 		write.value |= AUX_CS;
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 	a_priv->ren_state = enable;
+ 	return;// 0;
+ }
+@@ -818,10 +804,9 @@ static int agilent_82357a_enable_eos(gpib_board_t *board, uint8_t eos_byte, int
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 
+-	if (compare_8_bits == 0) {
+-		pr_warn("%s: hardware only supports 8-bit EOS compare", __func__);
++	if (compare_8_bits == 0)
+ 		return -EOPNOTSUPP;
+-	}
++
+ 	a_priv->eos_char = eos_byte;
+ 	a_priv->eos_mode = REOS | BIN;
+ 	return 0;
+@@ -850,8 +835,7 @@ static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned i
+ 	retval = agilent_82357a_read_registers(a_priv, &address_status, 1, 0);
+ 	if (retval) {
+ 		if (retval != -EAGAIN)
+-			dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-				__func__);
++			dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 		return board->status;
+ 	}
+ 	// check for remote/local
+@@ -883,8 +867,7 @@ static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned i
+ 	retval = agilent_82357a_read_registers(a_priv, &bus_status, 1, 0);
+ 	if (retval) {
+ 		if (retval != -EAGAIN)
+-			dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-				__func__);
++			dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 		return board->status;
+ 	}
+ 	if (bus_status.value & BSR_SRQ_BIT)
+@@ -907,8 +890,7 @@ static int agilent_82357a_primary_address(gpib_board_t *board, unsigned int addr
+ 	write.value = address & ADDRESS_MASK;
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return retval;
+ 	}
+ 	return retval;
+@@ -917,8 +899,8 @@ static int agilent_82357a_primary_address(gpib_board_t *board, unsigned int addr
+ static int agilent_82357a_secondary_address(gpib_board_t *board, unsigned int address, int enable)
+ {
+ 	if (enable)
+-		pr_warn("%s: warning: assigning a secondary address not supported\n", __func__);
+-	return	-EOPNOTSUPP;
++		return	-EOPNOTSUPP;
++	return 0;
+ }
+ 
+ static int agilent_82357a_parallel_poll(gpib_board_t *board, uint8_t *result)
+@@ -936,16 +918,14 @@ static int agilent_82357a_parallel_poll(gpib_board_t *board, uint8_t *result)
+ 	writes[1].value = a_priv->hw_control_bits & ~NOT_PARALLEL_POLL;
+ 	retval = agilent_82357a_write_registers(a_priv, writes, 2);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return retval;
+ 	}
+ 	udelay(2);	//silly, since usb write will take way longer
+ 	read.address = CPTR;
+ 	retval = agilent_82357a_read_registers(a_priv, &read, 1, 1);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 		return retval;
+ 	}
+ 	*result = read.value;
+@@ -956,8 +936,7 @@ static int agilent_82357a_parallel_poll(gpib_board_t *board, uint8_t *result)
+ 	writes[1].value = AUX_RPP;
+ 	retval = agilent_82357a_write_registers(a_priv, writes, 2);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return retval;
+ 	}
+ 	return 0;
+@@ -1005,8 +984,7 @@ static int agilent_82357a_line_status(const gpib_board_t *board)
+ 	retval = agilent_82357a_read_registers(a_priv, &bus_status, 1, 0);
+ 	if (retval) {
+ 		if (retval != -EAGAIN)
+-			dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-				__func__);
++			dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 		return retval;
+ 	}
+ 	if (bus_status.value & BSR_REN_BIT)
+@@ -1055,8 +1033,7 @@ static unsigned int agilent_82357a_t1_delay(gpib_board_t *board, unsigned int na
+ 	write.value = nanosec_to_fast_talker_bits(&nanosec);
+ 	retval = agilent_82357a_write_registers(a_priv, &write, 1);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 	return nanosec;
+ }
+ 
+@@ -1081,7 +1058,7 @@ static void agilent_82357a_interrupt_complete(struct urb *urb)
+ 	default: /* other error, resubmit */
+ 		retval = usb_submit_urb(a_priv->interrupt_urb, GFP_ATOMIC);
+ 		if (retval)
+-			dev_err(&usb_dev->dev, "%s: failed to resubmit interrupt urb\n", __func__);
++			dev_err(&usb_dev->dev, "failed to resubmit interrupt urb\n");
+ 		return;
+ 	}
+ 
+@@ -1097,7 +1074,7 @@ static void agilent_82357a_interrupt_complete(struct urb *urb)
+ 
+ 	retval = usb_submit_urb(a_priv->interrupt_urb, GFP_ATOMIC);
+ 	if (retval)
+-		dev_err(&usb_dev->dev, "%s: failed to resubmit interrupt urb\n", __func__);
++		dev_err(&usb_dev->dev, "failed to resubmit interrupt urb\n");
+ }
+ 
+ static int agilent_82357a_setup_urbs(gpib_board_t *board)
+@@ -1133,8 +1110,7 @@ static int agilent_82357a_setup_urbs(gpib_board_t *board)
+ 	if (retval) {
+ 		usb_free_urb(a_priv->interrupt_urb);
+ 		a_priv->interrupt_urb = NULL;
+-		dev_err(&usb_dev->dev, "%s: failed to submit first interrupt urb, retval=%i\n",
+-			__func__, retval);
++		dev_err(&usb_dev->dev, "failed to submit first interrupt urb, retval=%i\n", retval);
+ 		goto setup_exit;
+ 	}
+ 	mutex_unlock(&a_priv->interrupt_alloc_lock);
+@@ -1184,108 +1160,78 @@ static void agilent_82357a_free_private(gpib_board_t *board)
+ {
+ 	kfree(board->private_data);
+ 	board->private_data = NULL;
+-
+ }
+ 
++#define INIT_NUM_REG_WRITES 18
+ static int agilent_82357a_init(gpib_board_t *board)
+ {
+ 	struct agilent_82357a_priv *a_priv = board->private_data;
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+ 	struct agilent_82357a_register_pairlet hw_control;
+-	struct agilent_82357a_register_pairlet writes[0x20];
++	struct agilent_82357a_register_pairlet writes[INIT_NUM_REG_WRITES];
+ 	int retval;
+-	int i;
+ 	unsigned int nanosec;
+ 
+-	i = 0;
+-	writes[i].address = LED_CONTROL;
+-	writes[i].value = FAIL_LED_ON;
+-	++i;
+-	writes[i].address = RESET_TO_POWERUP;
+-	writes[i].value = RESET_SPACEBALL;
+-	++i;
+-	retval = agilent_82357a_write_registers(a_priv, writes, i);
++	writes[0].address = LED_CONTROL;
++	writes[0].value = FAIL_LED_ON;
++	writes[1].address = RESET_TO_POWERUP;
++	writes[1].value = RESET_SPACEBALL;
++	retval = agilent_82357a_write_registers(a_priv, writes, 2);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return -EIO;
+ 	}
+ 	set_current_state(TASK_INTERRUPTIBLE);
+ 	if (schedule_timeout(usec_to_jiffies(2000)))
+ 		return -ERESTARTSYS;
+-	i = 0;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_NBAF;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_HLDE;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_TON;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_LON;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_RSV2;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_INVAL;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_RPP;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_STDL;
+-	++i;
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_VSTDL;
+-	++i;
+-	writes[i].address = FAST_TALKER_T1;
++	writes[0].address = AUXCR;
++	writes[0].value = AUX_NBAF;
++	writes[1].address = AUXCR;
++	writes[1].value = AUX_HLDE;
++	writes[2].address = AUXCR;
++	writes[2].value = AUX_TON;
++	writes[3].address = AUXCR;
++	writes[3].value = AUX_LON;
++	writes[4].address = AUXCR;
++	writes[4].value = AUX_RSV2;
++	writes[5].address = AUXCR;
++	writes[5].value = AUX_INVAL;
++	writes[6].address = AUXCR;
++	writes[6].value = AUX_RPP;
++	writes[7].address = AUXCR;
++	writes[7].value = AUX_STDL;
++	writes[8].address = AUXCR;
++	writes[8].value = AUX_VSTDL;
++	writes[9].address = FAST_TALKER_T1;
+ 	nanosec = board->t1_nano_sec;
+-	writes[i].value = nanosec_to_fast_talker_bits(&nanosec);
++	writes[9].value = nanosec_to_fast_talker_bits(&nanosec);
+ 	board->t1_nano_sec = nanosec;
+-	++i;
+-	writes[i].address = ADR;
+-	writes[i].value = board->pad & ADDRESS_MASK;
+-	++i;
+-	writes[i].address = PPR;
+-	writes[i].value = 0;
+-	++i;
+-	writes[i].address = SPMR;
+-	writes[i].value = 0;
+-	++i;
+-	writes[i].address = PROTOCOL_CONTROL;
+-	writes[i].value = WRITE_COMPLETE_INTERRUPT_EN;
+-	++i;
+-	writes[i].address = IMR0;
+-	writes[i].value = HR_BOIE | HR_BIIE;
+-	++i;
+-	writes[i].address = IMR1;
+-	writes[i].value = HR_SRQIE;
+-	++i;
++	writes[10].address = ADR;
++	writes[10].value = board->pad & ADDRESS_MASK;
++	writes[11].address = PPR;
++	writes[11].value = 0;
++	writes[12].address = SPMR;
++	writes[12].value = 0;
++	writes[13].address = PROTOCOL_CONTROL;
++	writes[13].value = WRITE_COMPLETE_INTERRUPT_EN;
++	writes[14].address = IMR0;
++	writes[14].value = HR_BOIE | HR_BIIE;
++	writes[15].address = IMR1;
++	writes[15].value = HR_SRQIE;
+ 	// turn off reset state
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_CHIP_RESET;
+-	++i;
+-	writes[i].address = LED_CONTROL;
+-	writes[i].value = FIRMWARE_LED_CONTROL;
+-	++i;
+-	if (i > ARRAY_SIZE(writes)) {
+-		dev_err(&usb_dev->dev, "%s: bug! writes[] overflow\n", __func__);
+-		return -EFAULT;
+-	}
+-	retval = agilent_82357a_write_registers(a_priv, writes, i);
++	writes[16].address = AUXCR;
++	writes[16].value = AUX_CHIP_RESET;
++	writes[17].address = LED_CONTROL;
++	writes[17].value = FIRMWARE_LED_CONTROL;
++	retval = agilent_82357a_write_registers(a_priv, writes, INIT_NUM_REG_WRITES);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return -EIO;
+ 	}
+ 	hw_control.address = HW_CONTROL;
+ 	retval = agilent_82357a_read_registers(a_priv, &hw_control, 1, 1);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_read_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "read_registers() returned error\n");
+ 		return -EIO;
+ 	}
+ 	a_priv->hw_control_bits = (hw_control.value & ~0x7) | NOT_TI_RESET | NOT_PARALLEL_POLL;
+@@ -1336,7 +1282,7 @@ static int agilent_82357a_attach(gpib_board_t *board, const gpib_board_config_t
+ 	}
+ 	if (i == MAX_NUM_82357A_INTERFACES) {
+ 		dev_err(board->gpib_dev,
+-			"No Agilent 82357 gpib adapters found, have you loaded its firmware?\n");
++			"No supported adapters found, have you loaded its firmware?\n");
+ 		retval = -ENODEV;
+ 		goto attach_fail;
+ 	}
+@@ -1372,8 +1318,7 @@ static int agilent_82357a_attach(gpib_board_t *board, const gpib_board_config_t
+ 		goto attach_fail;
+ 	}
+ 
+-	dev_info(&usb_dev->dev,
+-		 "bus %d dev num %d attached to gpib minor %d, agilent usb interface %i\n",
++	dev_info(&usb_dev->dev, "bus %d dev num %d attached to gpib%d, interface %i\n",
+ 		 usb_dev->bus->busnum, usb_dev->devnum, board->minor, i);
+ 	mutex_unlock(&agilent_82357a_hotplug_lock);
+ 	return retval;
+@@ -1390,37 +1335,24 @@ static int agilent_82357a_go_idle(gpib_board_t *board)
+ 	struct usb_device *usb_dev = interface_to_usbdev(a_priv->bus_interface);
+ 	struct agilent_82357a_register_pairlet writes[0x20];
+ 	int retval;
+-	int i;
+ 
+-	i = 0;
+ 	// turn on tms9914 reset state
+-	writes[i].address = AUXCR;
+-	writes[i].value = AUX_CS | AUX_CHIP_RESET;
+-	++i;
++	writes[0].address = AUXCR;
++	writes[0].value = AUX_CS | AUX_CHIP_RESET;
+ 	a_priv->hw_control_bits &= ~NOT_TI_RESET;
+-	writes[i].address = HW_CONTROL;
+-	writes[i].value = a_priv->hw_control_bits;
+-	++i;
+-	writes[i].address = PROTOCOL_CONTROL;
+-	writes[i].value = 0;
+-	++i;
+-	writes[i].address = IMR0;
+-	writes[i].value = 0;
+-	++i;
+-	writes[i].address = IMR1;
+-	writes[i].value = 0;
+-	++i;
+-	writes[i].address = LED_CONTROL;
+-	writes[i].value = 0;
+-	++i;
+-	if (i > ARRAY_SIZE(writes)) {
+-		dev_err(&usb_dev->dev, "%s: bug! writes[] overflow\n", __func__);
+-		return -EFAULT;
+-	}
+-	retval = agilent_82357a_write_registers(a_priv, writes, i);
++	writes[1].address = HW_CONTROL;
++	writes[1].value = a_priv->hw_control_bits;
++	writes[2].address = PROTOCOL_CONTROL;
++	writes[2].value = 0;
++	writes[3].address = IMR0;
++	writes[3].value = 0;
++	writes[4].address = IMR1;
++	writes[4].value = 0;
++	writes[5].address = LED_CONTROL;
++	writes[5].value = 0;
++	retval = agilent_82357a_write_registers(a_priv, writes, 6);
+ 	if (retval) {
+-		dev_err(&usb_dev->dev, "%s: agilent_82357a_write_registers() returned error\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "write_registers() returned error\n");
+ 		return -EIO;
+ 	}
+ 	return 0;
+@@ -1445,7 +1377,6 @@ static void agilent_82357a_detach(gpib_board_t *board)
+ 		agilent_82357a_release_urbs(a_priv);
+ 		agilent_82357a_free_private(board);
+ 	}
+-	dev_info(board->gpib_dev, "%s: detached\n", __func__);
+ 	mutex_unlock(&agilent_82357a_hotplug_lock);
+ }
+ 
+@@ -1510,8 +1441,7 @@ static int agilent_82357a_driver_probe(struct usb_interface *interface,
+ 	if (i == MAX_NUM_82357A_INTERFACES) {
+ 		usb_put_dev(usb_dev);
+ 		mutex_unlock(&agilent_82357a_hotplug_lock);
+-		dev_err(&usb_dev->dev, "%s: out of space in agilent_82357a_driver_interfaces[]\n",
+-			__func__);
++		dev_err(&usb_dev->dev, "out of space in agilent_82357a_driver_interfaces[]\n");
+ 		return -1;
+ 	}
+ 	path = kmalloc(path_length, GFP_KERNEL);
+@@ -1552,13 +1482,12 @@ static void agilent_82357a_driver_disconnect(struct usb_interface *interface)
+ 					mutex_unlock(&a_priv->control_alloc_lock);
+ 				}
+ 			}
+-			dev_dbg(&usb_dev->dev, "nulled agilent_82357a_driver_interfaces[%i]\n", i);
+ 			agilent_82357a_driver_interfaces[i] = NULL;
+ 			break;
  		}
  	}
- 	if (pci_enable_device(a_priv->pci_device)) {
--		dev_err(board->gpib_dev, "%s: error enabling pci device\n", driver_name);
-+		dev_err(board->gpib_dev, "error enabling pci device\n");
- 		return -EIO;
- 	}
--	if (pci_request_regions(a_priv->pci_device, driver_name))
--		return -EIO;
-+	if (pci_request_regions(a_priv->pci_device, DRV_NAME))
-+		return -ENOMEM;
- 	switch (a_priv->model) {
- 	case MODEL_82350A:
- 		a_priv->plx_base = ioremap(pci_resource_start(a_priv->pci_device, PLX_MEM_REGION),
- 					   pci_resource_len(a_priv->pci_device, PLX_MEM_REGION));
--		dev_dbg(board->gpib_dev, "%s: plx base address remapped to 0x%p\n",
--			driver_name, a_priv->plx_base);
-+		dev_dbg(board->gpib_dev, "plx base address remapped to 0x%p\n", a_priv->plx_base);
- 		a_priv->gpib_base = ioremap(pci_resource_start(a_priv->pci_device,
- 							       GPIB_82350A_REGION),
- 					    pci_resource_len(a_priv->pci_device,
- 							     GPIB_82350A_REGION));
--		dev_dbg(board->gpib_dev, "%s: gpib base address remapped to 0x%p\n",
--			driver_name, a_priv->gpib_base);
-+		dev_dbg(board->gpib_dev, "chip base address remapped to 0x%p\n", a_priv->gpib_base);
- 		tms_priv->mmiobase = a_priv->gpib_base + TMS9914_BASE_REG;
- 		a_priv->sram_base = ioremap(pci_resource_start(a_priv->pci_device,
- 							       SRAM_82350A_REGION),
- 					    pci_resource_len(a_priv->pci_device,
- 							     SRAM_82350A_REGION));
--		dev_dbg(board->gpib_dev, "%s: sram base address remapped to 0x%p\n",
--			driver_name, a_priv->sram_base);
-+		dev_dbg(board->gpib_dev, "sram base address remapped to 0x%p\n", a_priv->sram_base);
- 		a_priv->borg_base = ioremap(pci_resource_start(a_priv->pci_device,
- 							       BORG_82350A_REGION),
- 					    pci_resource_len(a_priv->pci_device,
- 							     BORG_82350A_REGION));
--		dev_dbg(board->gpib_dev, "%s: borg base address remapped to 0x%p\n",
--			driver_name, a_priv->borg_base);
-+		dev_dbg(board->gpib_dev, "borg base address remapped to 0x%p\n", a_priv->borg_base);
+ 	if (i == MAX_NUM_82357A_INTERFACES)
+-		dev_err(&usb_dev->dev, "unable to find interface in agilent_82357a_driver_interfaces[]? bug?\n");
++		dev_err(&usb_dev->dev, "unable to find interface - bug?\n");
+ 	usb_put_dev(usb_dev);
  
- 		retval = init_82350a_hardware(board, config);
- 		if (retval < 0)
-@@ -698,21 +663,18 @@ static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_c
- 	case MODEL_82351A:
- 		a_priv->gpib_base = ioremap(pci_resource_start(a_priv->pci_device, GPIB_REGION),
- 					    pci_resource_len(a_priv->pci_device, GPIB_REGION));
--		dev_dbg(board->gpib_dev, "%s: gpib base address remapped to 0x%p\n",
--			driver_name, a_priv->gpib_base);
-+		dev_dbg(board->gpib_dev, "chip base address remapped to 0x%p\n", a_priv->gpib_base);
- 		tms_priv->mmiobase = a_priv->gpib_base + TMS9914_BASE_REG;
- 		a_priv->sram_base = ioremap(pci_resource_start(a_priv->pci_device, SRAM_REGION),
- 					    pci_resource_len(a_priv->pci_device, SRAM_REGION));
--		dev_dbg(board->gpib_dev, "%s: sram base address remapped to 0x%p\n",
--			driver_name, a_priv->sram_base);
-+		dev_dbg(board->gpib_dev, "sram base address remapped to 0x%p\n", a_priv->sram_base);
- 		a_priv->misc_base = ioremap(pci_resource_start(a_priv->pci_device, MISC_REGION),
- 					    pci_resource_len(a_priv->pci_device, MISC_REGION));
--		dev_dbg(board->gpib_dev, "%s: misc base address remapped to 0x%p\n",
--			driver_name, a_priv->misc_base);
-+		dev_dbg(board->gpib_dev, "misc base address remapped to 0x%p\n", a_priv->misc_base);
- 		break;
- 	default:
--		pr_err("%s: invalid board\n", driver_name);
--		return -1;
-+		dev_err(board->gpib_dev, "invalid board\n");
-+		return -ENODEV;
+ 	mutex_unlock(&agilent_82357a_hotplug_lock);
+@@ -1583,18 +1512,18 @@ static int agilent_82357a_driver_suspend(struct usb_interface *interface, pm_mes
+ 					agilent_82357a_abort(a_priv, 0);
+ 					retval = agilent_82357a_go_idle(board);
+ 					if (retval) {
+-						dev_err(&usb_dev->dev, "%s: failed to go idle, retval=%i\n",
+-							__func__, retval);
++						dev_err(&usb_dev->dev, "failed to go idle, retval=%i\n",
++							retval);
+ 						mutex_unlock(&agilent_82357a_hotplug_lock);
+ 						return retval;
+ 					}
+ 					mutex_lock(&a_priv->interrupt_alloc_lock);
+ 					agilent_82357a_cleanup_urbs(a_priv);
+ 					mutex_unlock(&a_priv->interrupt_alloc_lock);
+-					dev_info(&usb_dev->dev,
+-						 "bus %d dev num %d  gpib minor %d, agilent usb interface %i suspended\n",
+-						 usb_dev->bus->busnum, usb_dev->devnum,
+-						 board->minor, i);
++					dev_dbg(&usb_dev->dev,
++						"bus %d dev num %d gpib %d, interface %i suspended\n",
++						usb_dev->bus->busnum, usb_dev->devnum,
++						board->minor, i);
+ 				}
+ 			}
+ 			break;
+@@ -1631,8 +1560,8 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ 			mutex_lock(&a_priv->interrupt_alloc_lock);
+ 			retval = usb_submit_urb(a_priv->interrupt_urb, GFP_KERNEL);
+ 			if (retval) {
+-				dev_err(&usb_dev->dev, "%s: failed to resubmit interrupt urb, retval=%i\n",
+-					__func__, retval);
++				dev_err(&usb_dev->dev, "failed to resubmit interrupt urb in resume, retval=%i\n",
++					retval);
+ 				mutex_unlock(&a_priv->interrupt_alloc_lock);
+ 				mutex_unlock(&agilent_82357a_hotplug_lock);
+ 				return retval;
+@@ -1655,9 +1584,9 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ 		// assert/unassert REN
+ 		agilent_82357a_remote_enable(board, a_priv->ren_state);
+ 
+-		dev_info(&usb_dev->dev,
+-			 "bus %d dev num %d  gpib minor %d, agilent usb interface %i resumed\n",
+-			 usb_dev->bus->busnum, usb_dev->devnum, board->minor, i);
++		dev_dbg(&usb_dev->dev,
++			"bus %d dev num %d gpib%d, interface %i resumed\n",
++			usb_dev->bus->busnum, usb_dev->devnum, board->minor, i);
  	}
  
- 	retval = test_sram(board);
-@@ -720,12 +682,12 @@ static int agilent_82350b_generic_attach(gpib_board_t *board, const gpib_board_c
- 		return retval;
+ resume_exit:
+@@ -1667,7 +1596,7 @@ static int agilent_82357a_driver_resume(struct usb_interface *interface)
+ }
  
- 	if (request_irq(a_priv->pci_device->irq, agilent_82350b_interrupt,
--			IRQF_SHARED, driver_name, board)) {
--		pr_err("%s: can't request IRQ %d\n", driver_name, a_priv->pci_device->irq);
-+			IRQF_SHARED, DRV_NAME, board)) {
-+		dev_err(board->gpib_dev, "failed to obtain irq %d\n", a_priv->pci_device->irq);
- 		return -EIO;
- 	}
- 	a_priv->irq = a_priv->pci_device->irq;
--	dev_dbg(board->gpib_dev, "%s: IRQ %d\n", driver_name, a_priv->irq);
-+	dev_dbg(board->gpib_dev, " IRQ %d\n", a_priv->irq);
- 
- 	writeb(0, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 	a_priv->card_mode_bits = ENABLE_PCI_IRQ_BIT;
-@@ -873,7 +835,7 @@ static const struct pci_device_id agilent_82350b_pci_table[] = {
- MODULE_DEVICE_TABLE(pci, agilent_82350b_pci_table);
- 
- static struct pci_driver agilent_82350b_pci_driver = {
--	.name = "agilent_82350b",
+ static struct usb_driver agilent_82357a_bus_driver = {
+-	.name = "agilent_82357a_gpib",
 +	.name = DRV_NAME,
- 	.id_table = agilent_82350b_pci_table,
- 	.probe = &agilent_82350b_pci_probe
- };
-@@ -884,19 +846,19 @@ static int __init agilent_82350b_init_module(void)
+ 	.probe = agilent_82357a_driver_probe,
+ 	.disconnect = agilent_82357a_driver_disconnect,
+ 	.suspend = agilent_82357a_driver_suspend,
+@@ -1680,19 +1609,18 @@ static int __init agilent_82357a_init_module(void)
+ 	int i;
+ 	int ret;
  
- 	result = pci_register_driver(&agilent_82350b_pci_driver);
- 	if (result) {
--		pr_err("agilent_82350b: pci_register_driver failed: error = %d\n", result);
-+		pr_err("pci_register_driver failed: error = %d\n", result);
- 		return result;
+-	pr_info("agilent_82357a_gpib driver loading");
+ 	for (i = 0; i < MAX_NUM_82357A_INTERFACES; ++i)
+ 		agilent_82357a_driver_interfaces[i] = NULL;
+ 
+ 	ret = usb_register(&agilent_82357a_bus_driver);
+ 	if (ret) {
+-		pr_err("agilent_82357a: usb_register failed: error = %d\n", ret);
++		pr_err("usb_register failed: error = %d\n", ret);
+ 		return ret;
  	}
  
- 	result = gpib_register_driver(&agilent_82350b_unaccel_interface, THIS_MODULE);
- 	if (result) {
--		pr_err("agilent_82350b: gpib_register_driver failed: error = %d\n", result);
-+		pr_err("gpib_register_driver failed: error = %d\n", result);
- 		goto err_unaccel;
+ 	ret = gpib_register_driver(&agilent_82357a_gpib_interface, THIS_MODULE);
+ 	if (ret) {
+-		pr_err("agilent_82357a: gpib_register_driver failed: error = %d\n", ret);
++		pr_err("gpib_register_driver failed: error = %d\n", ret);
+ 		usb_deregister(&agilent_82357a_bus_driver);
+ 		return ret;
  	}
+@@ -1702,7 +1630,6 @@ static int __init agilent_82357a_init_module(void)
  
- 	result = gpib_register_driver(&agilent_82350b_interface, THIS_MODULE);
- 	if (result) {
--		pr_err("agilent_82350b: gpib_register_driver failed: error = %d\n", result);
-+		pr_err("gpib_register_driver failed: error = %d\n", result);
- 		goto err_interface;
- 	}
- 
-diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.h b/drivers/staging/gpib/agilent_82350b/agilent_82350b.h
-index 8b96ad12647e..1573230c619d 100644
---- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.h
-+++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.h
-@@ -57,9 +57,6 @@ struct agilent_82350b_priv {
- 	bool using_fifos;
- };
- 
--// driver name
--extern const char *driver_name;
--
- //registers
- enum agilent_82350b_gpib_registers
- 
+ static void __exit agilent_82357a_exit_module(void)
+ {
+-	pr_info("agilent_82357a_gpib driver unloading");
+ 	gpib_unregister_driver(&agilent_82357a_gpib_interface);
+ 	usb_deregister(&agilent_82357a_bus_driver);
+ }
 -- 
 2.48.1
 
