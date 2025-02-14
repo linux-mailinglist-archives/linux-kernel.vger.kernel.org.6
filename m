@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-515513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7C7A365C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:33:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9CDA365C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561CA1893F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:33:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4687A56FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F4318D649;
-	Fri, 14 Feb 2025 18:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044AB190063;
+	Fri, 14 Feb 2025 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/Dge0QB"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q3R82vOF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AA82753FB;
-	Fri, 14 Feb 2025 18:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE44D1714CF;
+	Fri, 14 Feb 2025 18:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739557983; cv=none; b=jlPYrjAHT5IxDHPCLHy0T9yA3uyAIxjZZognqFuKEmTUfPTNYm0DBqhkeNYsjFFZ2WlmgHDOrwIodj4tWQZZ7tI5mlu3qSIrt60c4hqSfxr4PPw3u0xw2U6GTMxdFH6I3MoKEy2b/2OfHgp3P5WGf9TZXSATvLlSEisdKyo3bHo=
+	t=1739558012; cv=none; b=tYhPaliG/rHvc9luFOhl5f//+YfRFimXYQtqUZjALhp5WfOILMD7qIheFGmouoNbG5KmHqoA4/c4JwpMsGfxzPGZcRut0bzFJ0/XTdrOPA/qP+3dU3wYfrZJVNt3r+1c9avLqsFlkl8S0REYQZJudlYJsR4VlnUC2MZ/vzVgq9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739557983; c=relaxed/simple;
-	bh=pnFOH8zhYm3oS0wgYnqRw3S7bqSx5fgMtfVpnVGf+QM=;
+	s=arc-20240116; t=1739558012; c=relaxed/simple;
+	bh=BelLHttR+MY42mTHdESvUE3T0wJCB1QK0Urq5KpEmRE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OLtgCOcPhcx7wlu7hfptVX/XvHAfbrhcjyXPE27zlmiOuqm54+Sxxs/3H2kXcaG2aEzX2AhtRtunRQpZrXQ55/hquhlGzkToStOhCW6PxNsPkCvTjyhhGi2fONutdcQFHzaZy/MDz+F8xHWE5Nxt+t821KLRTEyMwIFWGLQi6Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/Dge0QB; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5de6e26d4e4so4488628a12.1;
-        Fri, 14 Feb 2025 10:33:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739557980; x=1740162780; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tbdDOQ0AnP4Rf55zqYAzOFqcv0dQXTgldFGn2OhR1Xk=;
-        b=j/Dge0QB82hca/rtRFqWjIimYamcmIxbmUt8x5oSbMbFZpuwaaama8NRCgzBLuWVJM
-         bs+Y2f4Hl8IQY0E7R2+lpWo2/ehPFoZLU91CDqI0JF3IloOIafguF7i/GXDG9PW/ttIm
-         +Z1C3jwCkUB38Amgvwlg2PsA/ZoJmrK5HjC/YSBuPG9voKPeMLI32Rf1NdkaEqabqJBL
-         Rsu8vxwJrcSlz2NOTXA9uRH1bPFZoiPIqGPN3H+A9amrU0naaVxm4NiyYzF2eKqqiBH1
-         3R5uJb0zQtd9to63N4wOoLrINPdsNwyG7A6TCnhoqOk1+KaCxa8e48C/uuYDAwPxY1oT
-         Ejhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739557980; x=1740162780;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbdDOQ0AnP4Rf55zqYAzOFqcv0dQXTgldFGn2OhR1Xk=;
-        b=PMaW+FFf25klGR0bJM9vwVT3kFB6bsclF0PtChoYMFirJna69FDgfHaaRpT4w3+MQJ
-         DRX97GSrWdVHC+SaOxqNN6emn5oOB6fJS5GNeITpvfFAYncLxWfu31jsSTfq5zPluZBl
-         LIyNOVkcaNyLVOVfRq4tmCvRFluyw4d7Hxnqsm4IhFPmX3LPMFIRrxHU8nbX455qeRuG
-         MJqM1XLZZqWPN5dolxtMwOFnT7ZBp885v2fTbJXPrfBKEPjjrZVHLgoevDwLVmL4+yxY
-         kOBVxL8Pgg+tvsJs9+zfogTvZfIqxCLPqtEu0YOlpTKNn8x8Lb7JS489Y3yV1gRK8/YD
-         GAkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWEJel9nTWj05nv5AjuBiCLZehH9WRYrCYpA2m/jhwWNKaaQcVOhLSAnMqr/T1pLYiqveZ7AfP0gJq@vger.kernel.org, AJvYcCX639OKzj5IYA0aMUw5JJRJEpeMCYQkTALUSDbFp0cXxMw1PqE8vZKeYXVf+BhsPSAF5bzYLhSWHW5wUUhR@vger.kernel.org, AJvYcCXErrZZTk9/riqS5Dt2/0EP+xJwyIe1ASkQNLAVDdjd0LfnTriJhpIsgtq5f/g2fGtBjSskZy4cAks1dw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhduO8znAO+eOkx4tPDyQZ++9UBx0/IeGjzDGepFChZosQia72
-	j6UqY24BZ48sL9H5rfTpCxj/vq+Nq/Z0wewcJmuntMmkLawBzRNI
-X-Gm-Gg: ASbGnctf3ewv9aW2mT19I2JUYSS8NY/GtK06/P6e1zI4WLC4/dQsgCasFTjOr4fNeKf
-	F605VC/OEDJn5kQ2onwYuuKsq2rbNuh0SvTrDVfa75fMJ3Pdj1S8NBF5SjVznLgtwNy8fj5YnQN
-	fBmcBYD4KJZOblmiJVWf9GKksTj5mR66Gk0r1BbUs8DaGcfs1RltWTeciAK4dUnYZ4F6581o0l7
-	n6Wd+FBeESd5kZH9D65nEsYHbhTlH0bj6a+mg71juNEtNltsW+qQ++FAZxd4wz9A9h6wSInWPiQ
-	YvnF6YM7xlFyanH5Si1yhmxHbxFIePw2AxACentw0+Dv2vW/EJlrKUopOBrQ8IjLqg==
-X-Google-Smtp-Source: AGHT+IGAmqQcNVs3j79OGPjj0iiEgipG+7uUlLGnwdrB/uxsXc/DrOZaoQIra7ijKjdssLi9bJXvJQ==
-X-Received: by 2002:a17:907:2da0:b0:ab2:ea29:b6 with SMTP id a640c23a62f3a-abb70d67772mr18427366b.35.1739557980167;
-        Fri, 14 Feb 2025 10:33:00 -0800 (PST)
-Received: from [192.168.50.244] (83.8.115.239.ipv4.supernova.orange.pl. [83.8.115.239])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece2880fasm3248852a12.78.2025.02.14.10.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 10:32:59 -0800 (PST)
-Message-ID: <7a055e68-e72a-407b-bcf0-5f2ac43929f7@gmail.com>
-Date: Fri, 14 Feb 2025 19:32:56 +0100
+	 In-Reply-To:Content-Type; b=g3PwGQzCRopi02MPTKMbOv6Ny6ZU7iB/Sm5RmG29gKLKhHSmoh98aiuvTemUWZ0RFTJH6DUx71XZ0i1CZWbpV0iFqfH389fMxHs/0kRf6YI39Izo7uWgJtrBjsxANPtGG32/xitpm9MsDlQdmOxU9+Uz079oBBBdMLYfHfdxsaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q3R82vOF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51EGnqdA026795;
+	Fri, 14 Feb 2025 18:33:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=U3R/pi
+	OSbP1l5fV7ZSgwxUiRjkRkc+vgLLkomdqLscU=; b=Q3R82vOFrKsvxAfQfxLfjp
+	stn409N2/rO3awlSvLkr7jSEV51lA7ZyewM7jBYa0Juq4MWJAQYKsPWzBjLOnZXN
+	XjG7OLBX0+hGAfVQpx/HhRJ5rcCnsIBjr07G/m4uD8SutlWd0I2QWbiq5dPs0zme
+	VA2i85jVeZ1UJ9Ck5/FWole36ttu0ncN3Munz/2RjXnfe/ZcuQfDVQ0NDwfoY694
+	c5pkAv8PPsesL9x7Z+v3m5lLyUPY9CoJqZqs14bpA13m9jUE+4h5hHMQjwfGKUxs
+	3rEUvUhMydo2VWJTHSgZ/e2UkAW1lZ8KbwtrozDG+t7r23Wo+qLFDlH7Rh4tCjLw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44t1hpu36e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 18:33:25 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51EICLBF028268;
+	Fri, 14 Feb 2025 18:33:25 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyyw54c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 18:33:25 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51EIXLA524642078
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 18:33:21 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A974458059;
+	Fri, 14 Feb 2025 18:33:21 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 430F858055;
+	Fri, 14 Feb 2025 18:33:21 +0000 (GMT)
+Received: from [9.61.91.157] (unknown [9.61.91.157])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 18:33:21 +0000 (GMT)
+Message-ID: <ea7a6153-ea25-4ee7-975f-36a87d5f8e97@linux.ibm.com>
+Date: Fri, 14 Feb 2025 12:33:20 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,52 +76,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] pinctrl: bcm281xx: Fix incorrect regmap max_registers
- value
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Christian Daudt
- <bcm@fixthebug.org>, Sherman Yin <syin@broadcom.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Stanislav Jakubek <stano.jakubek@gmail.com>,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250207-bcm21664-pinctrl-v1-0-e7cfac9b2d3b@gmail.com>
- <20250207-bcm21664-pinctrl-v1-2-e7cfac9b2d3b@gmail.com>
- <CACRpkdbwVdEa_xgR=wRfkPN2_tpYGnbdpQkTtvgDMRSKPT-GEQ@mail.gmail.com>
-From: Artur Weber <aweber.kernel@gmail.com>
+Subject: Re: [PATCH 1/3] hexdump: Implement macro for converting large buffers
+To: Dave Marquardt <davemarq@linux.ibm.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, haren@linux.ibm.com,
+        ricklind@us.ibm.com, nick.child@ibm.com, jacob.e.keller@intel.com,
+        horms@kernel.org
+References: <20250214162436.241359-1-nnac123@linux.ibm.com>
+ <20250214162436.241359-2-nnac123@linux.ibm.com>
+ <87tt8wflt5.fsf@linux.ibm.com>
 Content-Language: en-US
-In-Reply-To: <CACRpkdbwVdEa_xgR=wRfkPN2_tpYGnbdpQkTtvgDMRSKPT-GEQ@mail.gmail.com>
+From: Nick Child <nnac123@linux.ibm.com>
+In-Reply-To: <87tt8wflt5.fsf@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JtPPvCbjNXXh_vwaHEdy3mf2fZgwwOKj
+X-Proofpoint-GUID: JtPPvCbjNXXh_vwaHEdy3mf2fZgwwOKj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_08,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
+ mlxlogscore=728 mlxscore=0 suspectscore=0 clxscore=1015 malwarescore=0
+ bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502140127
 
-On 14.02.2025 10:03, Linus Walleij wrote:
-> On Fri, Feb 7, 2025 at 9:02 PM Artur Weber <aweber.kernel@gmail.com> wrote:
-> 
->> The max_registers value does not take into consideration the stride;
->> currently, it's set to the number of the last pin, but this does not
->> accurately represent the final register.
->>
->> Fix this by multiplying the current value by 4.
->>
->> Fixes: 54b1aa5a5b16 ("ARM: pinctrl: Add Broadcom Capri pinctrl driver")
->> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> 
-> This looks like it could be causing regressions so I pulled this patch out
-> and applied it for fixes.
+Hi Dave,
 
-Thanks. I assume this means this patch can be dropped from the next version
-of this patchset now? If so, which branch contains the patch so that I can
-rebase the next version of this patchset on it? I've checked the "fixes",
-"devel" and "for-next" branches of linux-pinctrl.git[1] but did not see it
-in any of them.
+Thanks for reviewing,
 
-Best regards
-Artur
+On 2/14/25 12:00 PM, Dave Marquardt wrote:
+> Nick Child <nnac123@linux.ibm.com> writes:
+>
+>> +	     (i) += (rowsize) == 16 || (rowsize) == 32 ? (rowsize) : 16	\
+> Nit: If you left out the (rowsize) == 16 check here you'd still add 16
+> to (i).
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=fixes
+I was trying to have this translate into "if invalid rowsize was used 
+then default to 16" since
+
+hex_dump_to_buffer has a very similar conditional. But I agree, 
+logically it looks strange.
+
+If I send a v3 (I also foolishly forgot the v2 tag in this patch), I 
+will change this like to
+
++	     (i) += (rowsize) == 32 ? 32 : 16	\
+
 
