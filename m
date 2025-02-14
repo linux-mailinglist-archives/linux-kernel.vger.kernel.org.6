@@ -1,166 +1,203 @@
-Return-Path: <linux-kernel+bounces-515636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F9EA36722
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:57:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAABA36727
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1564818931B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D7A1893291
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6341C8619;
-	Fri, 14 Feb 2025 20:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1111D7E4A;
+	Fri, 14 Feb 2025 20:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t9VbUE6K"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="INKco4EG"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FE718BBBB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7757D1C862E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739566640; cv=none; b=gVVgL0rZxgpLYyB4HZUGohSYoQwtSGsDgfED8YsNNoW0V95d0Nd2qDG3Iu3qhgxTwwqOk/HGTqKrgYcRvjyfSevdi/zZrHmKIXRy8T30LSRW+de+v4SrUCZ2XIx4Fy0KxJ51G3Rvod+2MaEB38mxhV2GojNIg4wcIknuLlgZQno=
+	t=1739566702; cv=none; b=Y22sR7CqRaMTnBWV2ttab1lqBsZ8c4QHk84AhOeZmz6gwuh2HqmQ4KqJ8qT8UDm8nPy7aMO2N1awfyKwfTfdeLQ7QfTpD+aek9k3wEj4aN5Ek8azdcm4ZiJ3wpvkiUjnnpWbPD0uTsa6QYtyrEZipcws94C0XbrQ7FoohHG7Yoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739566640; c=relaxed/simple;
-	bh=NZQ4YveTbEm5wnCOkEunC53wniq9dQGlfGqQPmsi+KY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnH2rPItstCTKas5rbQE6wSlywJ3WeP0Cqj3mooZFA1y3JxAMpLkatuehA4toe+a6Xpr9qRkfmhljGfs9zSUnabIovMJyU2uNdlnLEw8NWFiu+2XyS5xmHrfmqLM8Tcq+NiXsO8srd0NDW4N8+UQZGFhQ4eRyVkZvPP5C86mIeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t9VbUE6K; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Feb 2025 15:57:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739566632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6JB9eDuhdq6JTzW9JcjdbIAC+75hSX6JOkeQY8YYkQ=;
-	b=t9VbUE6KlXY787XxJuoxq77SzC+STuTM2U02ZxlqeXE/t0jQMZwgBxF7Tcn6tQx7ZXM1Qz
-	F94/l9MVPUYMTbpYLjgZ0/HZ7UITkJen7dOuBaOMuRtGNW2lWDQl4f34uSAkYcnTggdq4f
-	XWvzbqua/LXH+YoJZNQNepWCzPxtklw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: syzbot <syzbot+2110ef46097c323451eb@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, hughd@google.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] [bcachefs?] KASAN: slab-out-of-bounds Read in
- folio_try_get
-Message-ID: <twd5ppfxqyjwy3mkhfd4o646ilquoobzgwnqppjzum7dipk32j@g6cyzamxifbp>
-References: <67afa09f.050a0220.21dd3.0053.GAE@google.com>
- <Z6-o5A4Y-rf7Hq8j@casper.infradead.org>
+	s=arc-20240116; t=1739566702; c=relaxed/simple;
+	bh=vaKwmHnAyriqw0O10M/Qwf2Y5vvws0cQSQXtACGqsfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=soSA9+JJvBU5KwlxkavmlsW8DjIo9swQZh3ie8gekB8HI4DF3MCMhWsoz8v0KfA9wS34WzU651wRZ7pKd1LfasSa6/20hhPUnRNeP9sMrLKFA1ZbZvlyXjG+csAt24bCcLdrs2P5z6iLSC0oVSAC+ivJydA5AyXfhM2nl85p3+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=INKco4EG; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21f8c280472so7485ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:58:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739566699; x=1740171499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2YgySpnqFZLhvEyVlrQicLthetC3cVznXnvyAWuRKPc=;
+        b=INKco4EGdnDB/fWUSfqA+LvgLTV4CSurw2RLCOUsI079ybiABggsMV8XKJdbeLtPM/
+         ltbgjWU9Lf6Y+qGpq0tNjvpZSrBe0cY+jyBAs3CvWsLKs5ZILfnWw4yAWKRM4tSEQWmp
+         2Qg23Wi+ZclT5NNc4Umd3oBKk2PJfVrgowt29059iQs+vcNL/XxHQEdpuZFBnBQhMyC4
+         vNYDRmDGDc3/YhsSXZCY+aHw53mxssNWApbWySGnAEq4H4lneuq5dOj4MTTJQPXNzVL9
+         QR5uHKF6zdNs6JwvC9B9gpc0ED6lemp9Zv4amatqgNX+gLjYvX90f9qgpiJ8MnHh3mPW
+         B7VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739566699; x=1740171499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2YgySpnqFZLhvEyVlrQicLthetC3cVznXnvyAWuRKPc=;
+        b=axE19Z/1+UcEo7h79yqg0bhbCJIGsR2TOn/P1EMhsXx82lCnDXWyluvk+iKac/kgK7
+         TJGYVk4oXucxBdXsa/k79O3gRKRnFWQszMQEV49rNxRpZKQjJ7dvfdrvcwxKHQH5hVAK
+         SlySeHtpXFZYA44f/Mh6L014qtGYAZ5UOSjTmaImaYxz2IqYZ/Cwbc5LayVRnECjsfTQ
+         Epo06Bsh4G/EEgUsVqsUUEATsp5j/+/xBoY/l3a7XxOaFR/80Hnsh7Btg6YGLIqGg46C
+         xnvF5eHjEwtAxJ3MWyEW9lFJJ13Ql8wqC4pZPkwPaIQ/suLnqEAxvOstqQXIFXNaqdSK
+         yXyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYpxlPWunJUj9YTyLDt0heQkAakmQ7ZJ1zJRDv3Y3360wGTvGKPpmzA31gp6qE+grb7YhSoAoX77LIjkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWhTmdLDsgkfUFgF5yx+cpRgwKBHzBpisYZjJ3FT/Ofno2gB/I
+	CXbqFyzJi2zFPksv3pcSeuQHyPcb//r5E9sQXZ9qJTsWobF1wYWSuGIuSnjPRZVSoHh/jJZ8//N
+	3K2Q50NDtK1snBmqc9zGtVoOKVmWDEWdEPsFM
+X-Gm-Gg: ASbGncv6huPmWjf3Iy3pHLocnfy7yNulnDJDkeARf9x2TkM/lrZvNUJWAlnp/ABHRNb
+	2Vf9BI6iHDFI5B+nYDNoNaedz3U+zf85TrGEbXYA8uaYvMjn8A7g5Hx3E8uqkDjOoTbmHL3L3a4
+	K7PIy3xnF1AUr30iSL8FGIxSBUMow=
+X-Google-Smtp-Source: AGHT+IHMo7WsTDcyDI2IJxk30OmWpNkq4lqd/LDPkpSnJQoBmryh3jggnLVgBNK9KRLZbjUR8YF1jff3s8KWZZmox3M=
+X-Received: by 2002:a17:902:d50d:b0:220:c905:689f with SMTP id
+ d9443c01a7336-22104ec0a38mr369985ad.25.1739566699325; Fri, 14 Feb 2025
+ 12:58:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6-o5A4Y-rf7Hq8j@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20250212092552.1779679-1-linyunsheng@huawei.com> <20250212092552.1779679-3-linyunsheng@huawei.com>
+In-Reply-To: <20250212092552.1779679-3-linyunsheng@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 14 Feb 2025 12:58:05 -0800
+X-Gm-Features: AWEUYZkrCnzHRX-UM7YzAnXpZTXuHcolUoh7nm-MSMVw8gpzJwYFTphmx0X5nYE
+Message-ID: <CAHS8izPZe0UHn8P38EvzX0ei_jGJnsXg99B5ra9Ldu09aWBU-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 2/4] page_pool: fix IOMMU crash when driver
+ has already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	zhangkun09@huawei.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, 
+	IOMMU <iommu@lists.linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 08:34:44PM +0000, Matthew Wilcox wrote:
-> On Fri, Feb 14, 2025 at 11:59:27AM -0800, syzbot wrote:
-> > BUG: KASAN: slab-out-of-bounds in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> > BUG: KASAN: slab-out-of-bounds in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> > BUG: KASAN: slab-out-of-bounds in page_ref_count include/linux/page_ref.h:67 [inline]
-> > BUG: KASAN: slab-out-of-bounds in page_ref_add_unless include/linux/page_ref.h:237 [inline]
-> > BUG: KASAN: slab-out-of-bounds in folio_ref_add_unless include/linux/page_ref.h:248 [inline]
-> > BUG: KASAN: slab-out-of-bounds in folio_try_get+0xde/0x350 include/linux/page_ref.h:264
-> > Read of size 4 at addr ffff88804f904b34 by task syz-executor127/5388
-> > 
-> > CPU: 0 UID: 0 PID: 5388 Comm: syz-executor127 Not tainted 6.14.0-rc2-syzkaller-00056-gab68d7eb7b1a #0
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:94 [inline]
-> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> >  print_address_description mm/kasan/report.c:378 [inline]
-> >  print_report+0x169/0x550 mm/kasan/report.c:489
-> >  kasan_report+0x143/0x180 mm/kasan/report.c:602
-> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> >  instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> >  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> >  page_ref_count include/linux/page_ref.h:67 [inline]
-> >  page_ref_add_unless include/linux/page_ref.h:237 [inline]
-> >  folio_ref_add_unless include/linux/page_ref.h:248 [inline]
-> >  folio_try_get+0xde/0x350 include/linux/page_ref.h:264
-> >  filemap_get_entry+0x240/0x3b0 mm/filemap.c:1870
-> >  shmem_get_folio_gfp+0x285/0x1840 mm/shmem.c:2446
-> >  shmem_get_folio mm/shmem.c:2628 [inline]
-> >  shmem_write_begin+0x165/0x350 mm/shmem.c:3278
-> >  generic_perform_write+0x346/0x990 mm/filemap.c:4189
-> >  shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3454
-> >  new_sync_write fs/read_write.c:586 [inline]
-> >  vfs_write+0xacf/0xd10 fs/read_write.c:679
-> >  ksys_write+0x18f/0x2b0 fs/read_write.c:731
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7fb60d00ef1f
-> > Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 19 81 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 6c 81 02 00 48
-> > RSP: 002b:00007fb60c7b9fb0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-> > RAX: ffffffffffffffda RBX: 00007fb60c7b9ff0 RCX: 00007fb60d00ef1f
-> > RDX: 0000000001000000 RSI: 00007fb604200000 RDI: 0000000000000003
-> > RBP: 00007fb60d0976e0 R08: 0000000000000000 R09: 000000000000590c
-> > R10: 0000000000000002 R11: 0000000000000293 R12: 00007fb60d0976ec
-> > R13: 00007fb60c7ba030 R14: 0000000000000003 R15: 00007ffe9f1d73d8
-> >  </TASK>
-> > 
-> > The buggy address belongs to the object at ffff88804f904b00
-> >  which belongs to the cache radix_tree_node of size 576
-> > The buggy address is located 52 bytes inside of
-> >  allocated 576-byte region [ffff88804f904b00, ffff88804f904d40)
-> 
-> Wait, what?  We're calling folio_try_get() on a pointer which isn't a
-> pointer to a folio, but a pointer to somewhere in a radix_tree_node?
-> 
-> This fits a pattern we're seeing a lot of recently.
-> Bugs:
-> 
-> https://syzkaller.appspot.com/bug?extid=b581c7106aa616bb522c
-> https://syzkaller.appspot.com/bug?extid=8ae0902c29b15a27a4ee
-> https://syzkaller.appspot.com/bug?extid=07392c132f11b1758ac3
-> https://syzkaller.appspot.com/bug?extid=fe375f77ba1a6ab944b6
-> https://syzkaller.appspot.com/bug?extid=a0ae55e3dde11d2d790c
-> 
-> They all fit the form of syzbot mounts a (potentially fuzzed?) bcachefs
-> file system and later we have a corruption in the radix tree.
-> 
-> I have two suspicions (feel free to assign your own probabilities to which
-> is correct).  The first is that a bunch of tweaky little cleanups went
-> into the xarray code in the last merge window.  I really wish we could
-> stop doing that kind of bullshit.  Can we just agree that the xarray
-> code is good enough and not keep pissing with it?  Obviously if there's
-> a bug, then we should fix it (and that should come with test cases!),
-> but otherwise just leave it alone.  Please.  It would make finding this
-> kind of problem much easier.
+On Wed, Feb 12, 2025 at 1:34=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Networking driver with page_pool support may hand over page
+> still with dma mapping to network stack and try to reuse that
+> page after network stack is done with it and passes it back
+> to page_pool to avoid the penalty of dma mapping/unmapping.
+> With all the caching in the network stack, some pages may be
+> held in the network stack without returning to the page_pool
+> soon enough, and with VF disable causing the driver unbound,
+> the page_pool does not stop the driver from doing it's
+> unbounding work, instead page_pool uses workqueue to check
+> if there is some pages coming back from the network stack
+> periodically, if there is any, it will do the dma unmmapping
+> related cleanup work.
+>
+> As mentioned in [1], attempting DMA unmaps after the driver
+> has already unbound may leak resources or at worst corrupt
+> memory. Fundamentally, the page pool code cannot allow DMA
+> mappings to outlive the driver they belong to.
+>
+> Currently it seems there are at least two cases that the page
+> is not released fast enough causing dma unmmapping done after
+> driver has already unbound:
+> 1. ipv4 packet defragmentation timeout: this seems to cause
+>    delay up to 30 secs.
+> 2. skb_defer_free_flush(): this may cause infinite delay if
+>    there is no triggering for net_rx_action().
+>
+> In order not to call DMA APIs to do DMA unmmapping after driver
+> has already unbound and stall the unloading of the networking
+> driver, use some pre-allocated item blocks to record inflight
+> pages including the ones which are handed over to network stack,
+> so the page_pool can do the DMA unmmapping for those pages when
+> page_pool_destroy() is called. As the pre-allocated item blocks
+> need to be large enough to avoid performance degradation, add a
+> 'item_fast_empty' stat to indicate the unavailability of the
+> pre-allocated item blocks.
+>
+> By using the 'struct page_pool_item' referenced by page->pp_item,
+> page_pool is not only able to keep track of the inflight page to
+> do dma unmmaping if some pages are still handled in networking
+> stack when page_pool_destroy() is called, and networking stack is
+> also able to find the page_pool owning the page when returning
+> pages back into page_pool:
+> 1. When a page is added to the page_pool, an item is deleted from
+>    pool->hold_items and set the 'pp_netmem' pointing to that page
+>    and set item->state and item->pp_netmem accordingly in order to
+>    keep track of that page, refill from pool->release_items when
+>    pool->hold_items is empty or use the item from pool->slow_items
+>    when fast items run out.
+> 2. When a page is released from the page_pool, it is able to tell
+>    which page_pool this page belongs to by masking off the lower
+>    bits of the pointer to page_pool_item *item, as the 'struct
+>    page_pool_item_block' is stored in the top of a struct page. And
+>    after clearing the pp_item->state', the item for the released page
+>    is added back to pool->release_items so that it can be reused for
+>    new pages or just free it when it is from the pool->slow_items.
+> 3. When page_pool_destroy() is called, item->state is used to tell if
+>    a specific item is being used/dma mapped or not by scanning all the
+>    item blocks in pool->item_blocks, then item->netmem can be used to
+>    do the dma unmmaping if the corresponding inflight page is dma
+>    mapped.
+>
+> The overhead of tracking of inflight pages is about 10ns~20ns,
+> which causes about 10% performance degradation for the test case
+> of time_bench_page_pool03_slow() in [2].
+>
+> Note, the devmem patchset seems to make the bug harder to fix,
+> and may make backporting harder too. As there is no actual user
+> for the devmem and the fixing for devmem is unclear for now,
+> this patch does not consider fixing the case for devmem yet.
+>
+> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kern=
+el.org/T/
+> 2. https://github.com/netoptimizer/prototype-kernel
+> CC: Robin Murphy <robin.murphy@arm.com>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: IOMMU <iommu@lists.linux.dev>
+> Fixes: f71fec47c2df ("page_pool: make sure struct device is stable")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Tested-by: Yonglong Liu <liuyonglong@huawei.com>
+[...]
+> +
+> +/* The size of item_block is always PAGE_SIZE, so that the address of it=
+em_block
+> + * for a specific item can be calculated using 'item & PAGE_MASK'
+> + */
+> +struct page_pool_item_block {
+> +       struct page_pool *pp;
+> +       struct list_head list;
+> +       struct page_pool_item items[];
+> +};
+> +
 
-Oof. Sounds like an insufficient test suite if that stuff is making it
-in? You should be able to just tell people "no more xarray patches until
-the testing is improved".
+I think this feedback was mentioned in earlier iterations of the series:
 
-> The second is that bcachefs has a random memory stomper.  That would
-> suck.  Kent, you said you had some automated tooling to feed syzbot
-> reproducers into?
+Can we not hold a struct list_head in the page_pool that keeps track
+of inflight netmems that we need to dma-unmap on page_pool_destroy?
+Why do we have to modify the pp entry in the struct page and struct
+net_iov?
 
-Yeah, although on 6.14-rc1 the builds are failing with the kconfig that
-syzbot built with, and bisect landed on a kbuild merge commit. Fun. It's
-going to take some time digging through cpp -E output to figure out
-what's going on.
+The decision to modify pp entry in struct page and struct net_iov is
+making this patchset bigger and harder to review IMO.
 
-btk -IP ~/ktest/tests/syzbot-repro.ktest <syz bug id>
-
-(I really want the syzbot reproducers to run with a slimmed down ktest
-generated .config, but syzbot reproducers have all sorts of random
-dependencies so that's been a process).
-
-I don't have any reason to suspect bcachefs has a memory stomper that
-could cause this, but given the amount of syzbot bugs I still have to
-get through I can't rule it out, and unfortunately it's looking like
-it'll be a few weeks minimum before I can really start getting to the
-syzbot bugs.
+--=20
+Thanks,
+Mina
 
