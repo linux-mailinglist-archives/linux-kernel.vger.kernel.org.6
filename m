@@ -1,86 +1,184 @@
-Return-Path: <linux-kernel+bounces-514975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B731A35E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:59:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D88DA35E41
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E1F7A4A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79490189497A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C78264A9C;
-	Fri, 14 Feb 2025 12:57:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAAB263C79;
+	Fri, 14 Feb 2025 12:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PVgUCeCE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4531264A77
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D891263C77;
+	Fri, 14 Feb 2025 12:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739537825; cv=none; b=JIAKf9tWUrHjS60RqNepkzHK3biykmdceckmV0W8ESuLonrTkwQ8Wqct59cwq8Tt3MbblkTavtb7O0+zNT/nZcgI/sCNn8Uh1L/dfyUKaNw0V36iDyXyhAWBZqNbftnxdHa3S6XK1tQ8KS3d6///KrfudD3YPeSX/tiT1ZL4Zls=
+	t=1739537880; cv=none; b=J5fwKjaeHV3Qnzz1X4UvboVjhW2bdTAdH/83E9VTOOm9S9C8BS8nPvpm1vKx2bvZeFjvmJnafFkSv9aIFEZ3hNQNR/4rKMfELubC6pmaD9jDWz8AohnuDiWu2ETUHUhmisUBKtPj8IvdJAQkdHI1l1ydNJ4Yy26YofaAeijuPIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739537825; c=relaxed/simple;
-	bh=CPHz60C8a9qX+uuRp4hw8/y8Hnmg/AmljFxibWwl6V8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qGcLGyXE90f8LNl5+5WUndHkIf7jK/JRF4Mj3oSS1Xu/e1FRhttXeuvJDXOnCCWk4WZvGeW1Z9VDgW+WH9nFNxJuH87VwE0tImze6hP3aRiw+yme7iqT8Vcz8d7V3TMYO8GUd0KTf1xuzMww9SON7guafm8AOmSrtEhUtNderqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso10448055ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:57:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739537823; x=1740142623;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUSbSpAevPGuG9ngWYHmIDCS8bg/Oq62kesJYc0GYvM=;
-        b=dVZQPzwDDIjvkCgjDXTpaGqkRdZYWitg44Fo45pYkvJS16xTxIPBjL9AxvJOskcyl5
-         aE4CC2tqG2N7e0bVw9exjpzbAx0JwgxljxdVRLs0lPP/CBvMUtZofMtGinMCEkBDZV9m
-         MLZs5npppXrI1pAIOBDGNhMgT3L2qnIznQOJXLENgnHg9rdHVFo6tKVppM40iqZ1YpCg
-         353iXmSYQ2fKzBRY8WVPmnfgO/u1ULB26YcZcaNOMgievsbFWs+yI9G/O6KOB/Bh6FFR
-         lnWswNRtfmHrh2s5DMiiqT2hKRQvGVy8Ad44mLF9MmvM9y5Q7thMw5cqHKIF0tlLmJKT
-         FR0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWeWpL4EjNK1T9yBx9So3VlMDyM6rAdKimpVsFsxsZkEB6nZTqxbWOP/QTsRg7gNZVnjkamSCswRO+fobw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxwwCHJrMLt6MLYOykvWgNPwK0TLUjI2erAgL0i3f7XDHwXfpV
-	RPYL7qPNtFx0w0gsWuGzdF7dE9MmstVJ8dHRrX/mMYW03lEcjjTBTZaTmbegRj0QwNGoppzb43f
-	ms1wqAtT6SjBRLF2AUyJVT3VRQ7BQQaidfk7Ki/iFH13M3TGrlqkzeW4=
-X-Google-Smtp-Source: AGHT+IFOGuuSJVDA7wf1R71MrDyXbNgSvN3M4+j0TrePDx428e2i50E4lXDKL7085AwkL/xKY1pxOWS5QtRgh5pJrxVZ8RYhB5HQ
+	s=arc-20240116; t=1739537880; c=relaxed/simple;
+	bh=alONTJ5izPBs5NVNtGqcxXXw/F3dPnAoYUIDkZtfNoY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BqztOKEDT5pqFX+41gKyLw8QifQRplG0M+WdCj38dD5HeUnwaUpJwnnEYmsHZfkdJ4O1spJNgVzJrUewzv1tyyKnTMTNf9maNXXM4qfwdh839w13YE9JKOrpgJAH+hoM2lEUiJjawp40eMu3HWRDbnf+1X71ITgl9Lf6asPLy9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PVgUCeCE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E7i2wV015968;
+	Fri, 14 Feb 2025 12:57:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Eeic6vXkmMzY8YnqF8B8+d/0s0ePlY9ZRC/bULfVz9M=; b=PVgUCeCE9F2rRhXX
+	GzjSWiCH6P5O+kLbZtt+AEZ00puhiZnlYoo/pAAzuLWkhBph/rjI4DZd31iJmfi+
+	w8+AAy73Zwm+JekXLLMZIvS6Ece5ErQBvOEiS3OtI8glWeY7G+9ldBueMK0Cgu8u
+	TbUH8HTI5gRptoBqobtu0Tl0aCekLv5NbM6DNccHsjO2N53bm4O7uEDQYBkZj1jR
+	rtsOVsh7C9fJ6ZGGqC559iqh2qMu4nciP3boqhzPVDa7Olvt5Nm6hIeQ9cN8WusZ
+	uS6VK7KmdOLPDBV/uMM9CUtT6PG2PoEptRYrFYV8arfJO4DbPSyQ5594X99aCh4C
+	wkBp+g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sde8btc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 12:57:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51ECvPfS025861
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 12:57:25 GMT
+Received: from [10.219.56.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Feb
+ 2025 04:57:18 -0800
+Message-ID: <2a090f80-e145-410d-8d02-efdaf324c8c9@quicinc.com>
+Date: Fri, 14 Feb 2025 18:27:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190b:b0:3a7:6566:1e8f with SMTP id
- e9e14a558f8ab-3d18c2efbf3mr42123885ab.16.1739537822634; Fri, 14 Feb 2025
- 04:57:02 -0800 (PST)
-Date: Fri, 14 Feb 2025 04:57:02 -0800
-In-Reply-To: <tencent_C7123BDDD75DA11956CFE20D8225938DEB07@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67af3d9e.050a0220.21dd3.0046.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Write in io_submit_one
-From: syzbot <syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iommu: Handle race with default domain setup
+To: Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Sudeep Holla
+	<sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, Stuart
+ Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Nipun
+ Gupta <nipun.gupta@amd.com>,
+        Nikhil Agarwal <nikhil.agarwal@amd.com>,
+        Joerg
+ Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+        Bjorn Helgaas
+	<bhelgaas@google.com>
+CC: <linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>
+References: <cover.1739486121.git.robin.murphy@arm.com>
+ <87bd187fa98a025c9665747fbfe757a8bf249c18.1739486121.git.robin.murphy@arm.com>
+Content-Language: en-US
+From: Charan Teja Kalla <quic_charante@quicinc.com>
+In-Reply-To: <87bd187fa98a025c9665747fbfe757a8bf249c18.1739486121.git.robin.murphy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8MPMEM59TFtEpOVHpTq1BK9dVBJIHPE2
+X-Proofpoint-ORIG-GUID: 8MPMEM59TFtEpOVHpTq1BK9dVBJIHPE2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
+ clxscore=1011 mlxscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502140095
 
-Hello,
+Thanks a lot for posting these patches, Robin.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On 2/14/2025 5:18 AM, Robin Murphy wrote:
+>  drivers/iommu/iommu.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 870c3cdbd0f6..2486f6d6ef68 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -3097,6 +3097,11 @@ int iommu_device_use_default_domain(struct device *dev)
+>  		return 0;
+>  
+>  	mutex_lock(&group->mutex);
+> +	/* We may race against bus_iommu_probe() finalising groups here */
+> +	if (!group->default_domain) {
+> +		ret = -EPROBE_DEFER;
+> +		goto unlock_out;
+> +	}
 
-fs/netfs/read_collect.c:376:66: error: 'struct kiocb' has no member named 'ki_refcnt'
-fs/netfs/read_collect.c:376:33: error: too few arguments to function 'refcount_add_not_zero'
+We just hit the issue again even after picking up this patch, though
+very hard to reproduce, on 6.6 LTS.
+
+After code inspection, it seems the issue is that - default domain is
+setup in the bus_iommu_probe() before hitting of this replay.
+
+A:async client probe in platform_dma_configure(), B:bus_iommu_probe() :-
+
+1) A: sets up iommu_fwspec under iommu_probe_device_lock.
+
+2) B: Sets the dev->iommu_group under iommu_probe_device_lock. Domain
+setup is deferred.
+
+3) A: Returns with out allocating the default domain, as
+dev->iommu_group is set, whose checks are also made under the same
+'iommu_probe_device_lock'. __This miss setting of the valid dev->dma_ops__.
+
+4) B: Sets up the group->default_domain under group->mutex.
+
+5) A: iommu_device_use_default_domain(): Relies on this
+group->default_domain, under the same mutex, to decide if need to go for
+replay, which is skipped. This is skipping the setting up of valid
+dma_ops and that's an issue.
+
+But I don't think that the same issue exists on 6.13 because of your
+patch, b67483b3c44e ("iommu/dma: Centralise iommu_setup_dma_ops()").
+bus_iommu_probe():
+     list_for_each_entry_safe(group, next, &group_list, entry) {
+		mutex_lock(&group->mutex);
+		for_each_group_device(group, gdev)
+			iommu_setup_dma_ops(gdev->dev);
+		mutex_unlock(&group->mutex);
+     }
+
+This makes the step4 above force to use the valid dma_iommu api, thus I
+see no issue when there is no probe deferral.
+
+So, I think we are good with this patch on 6.13.
+
+Now coming back to 6.6 LTS, any ideas you have here, please?
+
+>  	if (group->owner_cnt) {
+>  		if (group->domain != group->default_domain || group->owner ||
+>  		    !xa_empty(&group->pasid_array)) {
 
 
-Tested on:
-
-commit:         128c8f96 Merge tag 'drm-fixes-2025-02-14' of https://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a7ddf49cf33ba213
-dashboard link: https://syzkaller.appspot.com/bug?extid=e1dc29a4daf3f8051130
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16c14ce4580000
-
+Thanks,
+Charan
 
