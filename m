@@ -1,99 +1,121 @@
-Return-Path: <linux-kernel+bounces-514170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55996A35389
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:11:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40ABAA3538D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B2A7A11C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:10:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACF03AC1BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B563F3BBC9;
-	Fri, 14 Feb 2025 01:11:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED2D6FC5;
-	Fri, 14 Feb 2025 01:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4D542052;
+	Fri, 14 Feb 2025 01:12:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E072746B;
+	Fri, 14 Feb 2025 01:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739495480; cv=none; b=kGjt/OqdRIGCCjUJIcujEeXNbG6X/gFSoRMes2Z4N1V3yEFNtA5lqYQTS9x4daA8m9/EEn1gxwM5gKz1oC/r2GIxikTlYCu6k3wxalrHQ7y7/+vrEFNhuAngcrt5LYtTqaJnCbmLK3nlYJ+iytmCS2icU3P62dsge8dgNvVEKj4=
+	t=1739495527; cv=none; b=GzaOIZsL7HeiaROogdYwJ8LRnJxRSd4rClKQmuWzieeo6LqHUC6RfDOYP9/4EtebfZSZQmuXgZPbXer9wJH+zpjknQiz2artZkWqH/V1qPoKdGLhuWDqNOBu2aWaX9idZ8UpW2tQD0w57oqByUTufrF/1/9NxVuehE+k8Ztj90U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739495480; c=relaxed/simple;
-	bh=dQ9EK9Q40/4cOouphI7Ae5mjhYHi4Am1J6dDDAV3wQ8=;
+	s=arc-20240116; t=1739495527; c=relaxed/simple;
+	bh=EzldPKqL3LAA14BzaUNue2LoVJXYI+QCGXKPYLf8IpE=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=miJ29EhmDLHSiA5YJmRvWD71dfLuqr5LbiBIJDbtVONTHPMIOSSIVaby81fBjmwaLVeDjTKuRYVjn5Cfut2k2jNSHlipGA6kigu1L89bvhMWL37xdPs4Z/gO7wPAoDHP+uSTWzo5wkqnuW84oxd33EmUDDUXIXVYrTDXuQ49GhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YvDWc4cp3z4f3kFT;
-	Fri, 14 Feb 2025 09:10:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0E58E1A06DE;
-	Fri, 14 Feb 2025 09:11:14 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHq18xmK5nkmwgDw--.22863S3;
-	Fri, 14 Feb 2025 09:11:13 +0800 (CST)
-Subject: Re: [PATCH] md: ensure resync is prioritized over recovery
-To: linan666@huaweicloud.com, song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, zhangxiaoxu5@huawei.com, wanghai38@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250213131530.3698600-1-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <0c3dc2bb-c879-b58c-c7a3-b71618e7718d@huaweicloud.com>
-Date: Fri, 14 Feb 2025 09:11:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	 In-Reply-To:Content-Type; b=RX2DhGSm96zrdfxF8P/iodvGM/owGmRZq0GIl5+AYraYsNyfb1MMp1xue0ynPzaSEyaZ82mRDuXhiGpZBCcnBVR9LqH62oM+bQpZS3Sytl0VlnMfl93GtTd36cWAlrLlUaxbgMVHA2MU/Xy5aei4+0sEGW6Y3t/H846N2jUWSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8DxvnNbmK5nn+N0AA--.39658S3;
+	Fri, 14 Feb 2025 09:11:55 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMBxGcRPmK5ndCgRAA--.1798S2;
+	Fri, 14 Feb 2025 09:11:46 +0800 (CST)
+Subject: Re: [PATCH v2 3/3] tpm: Add a driver for Loongson TPM device
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ peterhuewe@gmx.de, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ Yinggang Gu <guyinggang@loongson.cn>
+References: <20250212033113.15137-1-zhaoqunqin@loongson.cn>
+ <20250212033113.15137-4-zhaoqunqin@loongson.cn> <Z60SfDaWnbgddUnA@kernel.org>
+ <c825cd7b-a255-d296-baa0-c1a746cb1bce@loongson.cn>
+ <Z65tuC722nnuhWEO@kernel.org>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <0c7982a4-a8bd-77fd-86b3-ed2d2451ed0a@loongson.cn>
+Date: Fri, 14 Feb 2025 09:12:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250213131530.3698600-1-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+In-Reply-To: <Z65tuC722nnuhWEO@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHq18xmK5nkmwgDw--.22863S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vI
-	Y487MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IUbPEf5UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Language: en-US
+X-CM-TRANSID:qMiowMBxGcRPmK5ndCgRAA--.1798S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KF4kuFWfKrWkGw18tFyrAFc_yoW8GrW5pr
+	1kAFn5Cry7Gr47K3sIq3y5CrnYq3s2qF9rur9rtw1qqr90ya43Jr1UtF1UCrs8Xr1rGrW0
+	qrZayr43Ka1Yv3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
 
 
-�� 2025/02/13 21:15, linan666@huaweicloud.com д��:
-> From: Li Nan <linan122@huawei.com>
-> 
-> If a new disk is added during resync, the resync process is interrupted,
-> and recovery is triggered, causing the previous resync to be lost. In
-> reality, disk addition should not terminate resync, fix it.
-> 
-> Steps to reproduce the issue:
->    mdadm -CR /dev/md0 -l1 -n3 -x1 /dev/sd[abcd]
->    mdadm --fail /dev/md0 /dev/sdc
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> [...]
+在 2025/2/14 上午6:10, Jarkko Sakkinen 写道:
+>>>> for it.
+>>>>
+>>>> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+>>>> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+>>>> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+>>>> ---
+>>>>    MAINTAINERS                 |   1 +
+>>>>    drivers/char/tpm/Kconfig    |   9 ++++
+>>>>    drivers/char/tpm/Makefile   |   1 +
+>>>>    drivers/char/tpm/tpm_lsse.c | 104 ++++++++++++++++++++++++++++++++++++
+>>>>    4 files changed, 115 insertions(+)
+>>>>    create mode 100644 drivers/char/tpm/tpm_lsse.c
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 6493d58436..6aad0f08ad 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -13484,6 +13484,7 @@ LOONGSON CRYPTO DRIVER
+>>>>    M:	Qunqin Zhao <zhaoqunqin@loongson.com>
+>>>>    L:	linux-crypto@vger.kernel.org
+>>>>    S:	Maintained
+>>>> +F:	drivers/char/tpm/tpm_lsse.c
+>>>>    F:	drivers/crypto/loongson/
+>>>>    LOONGSON-2 APB DMA DRIVER
+>>> Probably MAINTAINERS update should be a separate patch.
+>> Some  MAINTAINERS updates are not  separated form the driver patch.  Like
+>> the submit of "drivers/mfd/max7714*".
+>>
+>> So it seems whether the updates to MAINTAINERS  are separated or not is OK.
+> I'd prefer them separated from code changes. They are separate tasks
+> per se.
 
-Applied to md-6.14, thanks!
+OK, thanks.
 
-Kuai
+BR, Qunqin.
+
+>
+> BR, Jarkko
 
 
