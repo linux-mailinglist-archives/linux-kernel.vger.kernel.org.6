@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-514448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00EBAA35727
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:33:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFACA3572A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AB73AD567
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9308216E82C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57F920371F;
-	Fri, 14 Feb 2025 06:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8801202F83;
+	Fri, 14 Feb 2025 06:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TiUxrkqm"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDgazr/x"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D890201027;
-	Fri, 14 Feb 2025 06:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB9E1FFC72;
+	Fri, 14 Feb 2025 06:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514790; cv=none; b=Sl3QJ9xGHTy6Cqd9ixSKUq0Khu1+Y6Kxv2ahJ0VK8g2lQ93O88MDjbRa3PKjRpN6JDJJJw9nTB8sOvqdCCPNgGAl7n2/0OIkso1FFODfkH/NVNShEvyda8MQMGlmZsteCSD5LcxNd5EQcJ9TZSCdpMLi9SCtkydJK+ECFuEpnZ8=
+	t=1739514835; cv=none; b=HPfwDFxeCnKJgW0rILfMNkxT3mjjcnP6gk1VoOg3/aow3sEJB42kERDQTvjYNiTdXdzeLQGH+vK2afu/qXm6nKXhHadqq44MPhI8re474NR8gt4zbJ3S67iVDmKbS4LVumvrDu5JRasC7o32z8ZAvQWKYihb8DSj7IcTIBOjLZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514790; c=relaxed/simple;
-	bh=hVCD2rakAAB+o2t0oLvJfPKeC7Lmf1tkRkZ3Y9RnOn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkXcrW05uTSYAVJ68P0c1iNe4/05oluOofODoFMFZTSfYKnaCW5FcwjQlBA4C6uX0h3U31iWQZEmHKX4Wr5uhXkKfyzx3ZNCyI2ka5ehvYslcMD1kRDGOnoahqT3EtOEPtMmwWf9CmB2XRKzmVfMTRk73/Sjc5iTLmjN3W8lWeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TiUxrkqm; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kLNIJIGtAonH6TQ7Xn1xNKUdo34Iyv7JaZahEgvr29E=; b=TiUxrkqmOqjnPch01VAvC6YpVN
-	wtHhKJ7km4Ah8MRFIKcLqCm36sTuJNx0DHMKQ94Bt9IMNZGvec7GAJ1Rw5b9UJcGZDdgDoMk1dV3Z
-	LqshzPzd6OX4o+J6yhQKu6kENAnz2XvwP9ZAVV82Y1SPOzg7VhqYIkHyClkdYgx2II4/4Fr89+NX2
-	pC50LkPLnKuRoMVSSi4F/f7CgnLhwqZp19D2bgkSL9WqyvDjal5k+5/pblPrD0Sbr2Z1J1fjOmqoh
-	5IoCgr4/C420V7mC+/K6UJBA+HYtDpsmggz/YzIzRFCwEyw1gM7gMglshR5eDSeWMNJfu/BY7gH/t
-	7CciF5/Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tipG6-0000000DRTU-1edj;
-	Fri, 14 Feb 2025 06:33:06 +0000
-Date: Fri, 14 Feb 2025 06:33:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3} Change ->mkdir() and vfs_mkdir() to return a dentry
-Message-ID: <20250214063306.GD1977892@ZenIV>
-References: <20250214052204.3105610-1-neilb@suse.de>
- <20250214060039.GB1977892@ZenIV>
- <20250214061355.GC1977892@ZenIV>
+	s=arc-20240116; t=1739514835; c=relaxed/simple;
+	bh=3YylV6a5qke/A59cwLco3GMGBxueUouJ9ac0mNKgY7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CohSr68cZd3KIRFhHeHILrJ9jXF4rC6W3yxZbujK7gjh7kd0+xMPVJi7MkmmIbN32v9DB4D6/mSdgMAoyjGRX8/9wE8uJ+M7D1w5fwQZtAkL3guvsb/2Eo8Kl/wr5/Jeda0wgIZGE/nUHww2yVsUdskqK7dj1PWcnZrP7/B9Kds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDgazr/x; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0848d475cso34069685a.2;
+        Thu, 13 Feb 2025 22:33:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739514832; x=1740119632; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YylV6a5qke/A59cwLco3GMGBxueUouJ9ac0mNKgY7k=;
+        b=dDgazr/xH3SB6czOXpyVffW3oURGABWAU4ls+D29ISnweizCJx1/CoAi6x3sylxckq
+         yTobocN3wcf+rTQ61UQViKPOMyuuoe+SXNfRbwQP/SuKNxMJcNjaitgC/qvezTRxxJqK
+         Vs0QM11qlbcFQ+3aBNHU4G/pB9EH2OW6pUSVbTZoTNQfONCIHkMICXC/gQkX9zzBO+IM
+         lxyu8SCBff0hwAiL6OpX5Oho3Pz+3uTx3BwgJ4YFUSD8h6iSWL+CoTSROBffCSp/AdaQ
+         Ae589gdlN+l2ZnIqgkNnTetwAqnWZmflMo2Sg0JVoU40qd10AqNQApE8AJjk86YeOGV2
+         2n0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739514832; x=1740119632;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3YylV6a5qke/A59cwLco3GMGBxueUouJ9ac0mNKgY7k=;
+        b=J/tPSf2SqpQn+RlGkv2VnS8hc/Jx7GZMbp8nsrpXLn2zfDFAG8kmVB/GWTCf6VxpQf
+         6WTHolNeEAMhgSRaB0XSBywvbfeTTOIOopkvQo0/XavjyB+ocVr+FSziZQ4sHztZngoN
+         CBzOT2HWjtsqPNFAJRBvaOigU/a2sHL9nbJSWFdir/UTTfrCHevPnFyXQnFG2VYfztdJ
+         Cd2DGxrrLwhXs8CgY6SBJgnlcRG8YwtFB3xgody0nuj1NMu50Eu/YmKpq1zTbF2Kg1in
+         YFTjcYzLKGw7Swp1miuaZsgrnDZi+RUdWiVjURNZHLtDJswCS3H4QjqwPg5Z2SfcriHy
+         K8QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/iTkYHzG2Tee3WMOhSBn89jzalKnzY2DlYTtkpl3yUQFDqaf6WtjPHc084Mezufv+eJWLMFiKmbmWlK/81w==@vger.kernel.org, AJvYcCUg8tL4zsRUA7OSkggQj1zjGKiC+0KCjFNXknxr4Hgi8iSGqg0GFPYjr9KOFYRU6qGC3ej8J0iM15TOYXZB@vger.kernel.org, AJvYcCXPmChGiUIVWNXdSHnsXQH3AkVmdW+gcd098vgEKmrZKpyG56enTBGKTMIOWaWOU6coXta2mhXlNtL+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB4Q8jSkwUXPj4e0ee0Mxcgl3BZ+hfP2STQwl5DmjYSQkCT3fj
+	WqCyj60zuo4a9leNSxjs2CUhk6PFeBSVhadOIwi1rlbV7wS0i2F49ync2N9XxHnevGVQVuFokfE
+	lWlLFaQMzBUHwiNskbTMm/z/YSVs=
+X-Gm-Gg: ASbGncvuO4889HOaTSRBfXS3LEhzrIfzRRUU+bMjIm5uERZTFXaDxlqxNvIA8ymPjD+
+	9GczTj1WgDAqRbSy0hpFtw7uoJ5uCI7zd5KKR4+Q55bBgb9SoneII4BP7vAL3dLlPx3ShkWBckX
+	pTTAu6Cr4c0ghjTt24DM0wXx9YsSuK0A==
+X-Google-Smtp-Source: AGHT+IGyVXZtFFDe8q4nyybwQyqyryUw5IPXa64vnFzvytCZMtXTGbRuiT7JwooJr/+vv7fe33kyUdisx2JLKGcnroc=
+X-Received: by 2002:a05:620a:4154:b0:7c0:6c5b:d6f8 with SMTP id
+ af79cd13be357-7c07a14ecd7mr863405585a.30.1739514832447; Thu, 13 Feb 2025
+ 22:33:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214061355.GC1977892@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250209-expressatt-bam-v2-1-e6c01c5d8292@gmail.com>
+ <e0ef29dd-afe4-4ad7-95db-d21326744c92@oss.qualcomm.com> <CABhZbsXo69FL-xUfg3a20RybO_uRmsOKyMJ2w3qnpk+8pYyUqw@mail.gmail.com>
+ <e2b31450-c428-43c3-b25c-3ec130171011@oss.qualcomm.com> <CABhZbsVUY5n3bL-vbzO-xdDH6amC7FYmZHuRTh3Cb3OiQSa-3Q@mail.gmail.com>
+ <v5eipkz7daurxueft66f5kxzm7fnjamtzivzoldztxjy2f7vbv@2ju4jvcrpefc>
+In-Reply-To: <v5eipkz7daurxueft66f5kxzm7fnjamtzivzoldztxjy2f7vbv@2ju4jvcrpefc>
+From: Rudraksha Gupta <guptarud@gmail.com>
+Date: Thu, 13 Feb 2025 22:33:15 -0800
+X-Gm-Features: AWEUYZmtpnj-SIsHTZyHh0UJeT3TrUN--0DgW9XOgFOXYfPWLU8iJ946RgxJ85o
+Message-ID: <CABhZbsUo309c5OePr25tD+W_vp3HcAXMt2fc=yjij9wHx0wQnw@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: qcom: msm8960: Add BAM
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sam Day <me@samcday.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 14, 2025 at 06:13:55AM +0000, Al Viro wrote:
-> On Fri, Feb 14, 2025 at 06:00:39AM +0000, Al Viro wrote:
-> 
-> > 3) I'm pretty sure that NFS is *not* the only filesystem that returns
-> > unhashed negative in some success cases; will need to go over the instances
-> > to verify that, though.
-> 
-> Definitely so: in cifs_mkdir() we have
->         if ((server->ops->posix_mkdir) && (tcon->posix_extensions)) {
->                 rc = server->ops->posix_mkdir(xid, inode, mode, tcon, full_path,
->                                               cifs_sb);
->                 d_drop(direntry); /* for time being always refresh inode info */
->                 goto mkdir_out;
->         }
-> There might be other cases.  hostfs is definitely like that, I'm pretty
-> sure that kernfs is as well...
+> Konrad asked you to increase the size of the BAM devices. You've
+> increased it for both BAM and SDCC controllers. Please revert the size
+> of the arm,pl18x devices (sdcc1, sdcc3) to 0x2000.
 
-kernfs is actually playing fast and loose with the calling conventions there;
-it does not bother with unhashing and relies upon its ->d_revalidate()
-noticing and unhashing the sucker.
+Oh, I see now, thanks! Seems like I took Konrad's words literally. Sent in v3 :)
 
-Another variant that would work (and follow the calling conventions)
-is to have ->lookup() that leaves negatives unhashed and ->mkdir()
-not bothering to hash or instantiate.
-
-It really needs a review instance by instance.
-
-And yes, it does look like ->lookup()-like calling conventions end up better,
-especially if we make an instance return d_splice_alias() result...
+>
+> >
+> > >
+> > > Konrad
+>
+> --
+> With best wishes
+> Dmitry
 
