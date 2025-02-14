@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-514437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF248A35703
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:24:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AE5A35707
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41193A6D83
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405A216E2B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DC920012A;
-	Fri, 14 Feb 2025 06:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53AA1FFC42;
+	Fri, 14 Feb 2025 06:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D3aQKjVG"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="NAc2NFl9"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249911FFC50
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4314188CD8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514244; cv=none; b=NnMA05Ki2ozz1JBUp+8sLUnXEvjGB6e0b8KcevzIJLt/70tW5CSni8o3cC6iMqCTD8juCgsMrcQ/O0z7fbURps1WQn1tTicyjCfXJujKlONnBE1l1SAsStv2Q5OLiRZvzI+cKn8AtO44w1lcIRckKpHK589ikPvOfy4ChMqPt1E=
+	t=1739514340; cv=none; b=mI0wH8OFoICyif/Kb2c6/oQgXl81CV0ag6Tw5lc/FTdX3E8E+XyHVZNqOF4UUJl6k6umK6dv+9vY2EzqZTfZzYvbAwApTOK8yecHbpKclCkfub8naYHzrsHXdAaltEgnbrraObChHFCcSQEG6Vf2gubB8wHZMHGVyTP2f/3MSdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514244; c=relaxed/simple;
-	bh=wi38qL4hRFPiH6TC9t4UGHznNQ9DN1QZEgbMufLoo5U=;
+	s=arc-20240116; t=1739514340; c=relaxed/simple;
+	bh=+NE6MU5T3q/y4ouBVcZwZAIkaVZ6laDjR94bKZxqX6c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o07E7GO7k96fvs34eTJ71rpp1K3A96VjGUCh6pHSHpTjEulKdvBjJuK7DLyLRlR/ShXNgbVnjwDs7tU2kzjVHYuCCAIyWdHSwmDHC6fl2puceNoq5jI32mqHf3jN73GKaU8WoiyxL9LnOiDUbXnXYWpoN4ETx01AFaE5liQ4j6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D3aQKjVG; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <62294c30-ca75-4075-8d4b-3801194bd92c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739514230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jLNWS0Gi46HHTQY+75W8wmzAhQ0Osq+x3p1UxBkY/XE=;
-	b=D3aQKjVGAW8ksyeaLYg4dEx8r23eSbcckLQdzaUA1uR/SpFOcOWk3grlR0rhtUFXeOy+/w
-	uAIfiZbT3ygvkXSVzgjcist2mxUf6At+L9V12RCK71ns31wW2P2p1+tewxHERRymynR/qO
-	ouJpgg/4s/tByrv7vqK7lvyEzrlG/xU=
-Date: Thu, 13 Feb 2025 22:23:39 -0800
+	 In-Reply-To:Content-Type; b=gUGqZv5ezBa5jSK72wkRzM8h6QMQmTDKRHUDdOwhiLJrlF2jd7qdqeOFLhMKB85B2UL/kexdBEDiSVSVtSsJ8SbmIN5dUHxr5jWxbFSoGofaOX8gjwsTk15Aa0x+v8KuLvMku/q0PSCaJoLfFxHVyHTsHsnRj0D5wgp+qJwoMTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=NAc2NFl9; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
+	by cmsmtp with ESMTPS
+	id iZl5tkHWhMETlip8rtXk1G; Fri, 14 Feb 2025 06:25:37 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id ip8qt9BTfqwd6ip8qthgdf; Fri, 14 Feb 2025 06:25:37 +0000
+X-Authority-Analysis: v=2.4 cv=dOygmvZb c=1 sm=1 tr=0 ts=67aee1e1
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=4041MwwcWqwrnTXoSgMA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kBZdlEL6DkXfhqaE1RgKQhsevj+7d3qHVeAgZe3tFfk=; b=NAc2NFl95mbZKaEw4CN2Jx9R36
+	Yt6WctUWyd+lFvYBLYOsSHaQJHl0VyaVi80P0STTAjnssPh4OgkSsUSqMFtCyzmT6+cc1AbUeESSA
+	Z6HNRykiEZmQ8PRqsflTfg1IDs4S3hXV3sNkaQSlDaRiNbk1NLWSDuV+6obHp/9PrfhllzMCCMO+b
+	VJx3o7PLT5++qGxAmLpRGMB3twJPuyAWcnMzuNCV3PlMpZA2HEr8P6OVmcARsEkKAK3d/J34Ua4DQ
+	87e1ekXWRKNPS96G9lO54Nb8r9Elwi3qhDYKsFgagy2+GyfVeorVCl75FVBd9TgsazQAyAg0ZPYMR
+	mcWPpI1A==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59466 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tip8o-003lKb-1k;
+	Thu, 13 Feb 2025 23:25:34 -0700
+Message-ID: <d5a6675a-f257-4f73-8000-226bea580880@w6rz.net>
+Date: Thu, 13 Feb 2025 22:25:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/2] bpf-next: Introduced to support the ULP to get or
- set sockets
-To: zhangmingyi <zhangmingyi5@huawei.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, Xin Liu <liuxin350@huawei.com>, netdev@vger.kernel.org,
- bpf@vger.kernel.org, mptcp@lists.linux.dev, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, song@kernel.org, yhs@fb.com,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
- yanan@huawei.com, wuchangye@huawei.com, xiesongyang@huawei.com,
- liwei883@huawei.com, tianmuyang@huawei.com
-References: <202502140959.f66e2ba6-lkp@intel.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/273] 6.6.78-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250213142407.354217048@linuxfoundation.org>
 Content-Language: en-US
-In-Reply-To: <202502140959.f66e2ba6-lkp@intel.com>
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250213142407.354217048@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tip8o-003lKb-1k
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:59466
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 54
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOPI1R1fpC7+GPTspsbvyaQQSYAcY231G5CektqQsDmeUnSHbNLqkW3QmcarmFFEPW7QcJhduK7yVpiDPUUFbkD0GusXNgnbKOwcSi2QEv+BUga3yiO3
+ de+pFx+7dc5sWJ47rEWgZmqmYeiok/92xs1LDbMDFrxM/confDhQZpEjGQjAfigVqWcXq/8ohV7Saq1IeL1n/lkC0lZyE/yCQFc=
 
-On 2/13/25 6:13 PM, kernel test robot wrote:
-> [   71.182999][ T3759] =============================
-> [   71.183907][ T3759] [ BUG: Invalid wait context ]
-> [   71.184819][ T3759] 6.14.0-rc1-00030-g8f510de3f26b #1 Tainted: G        W       T
-> [   71.186327][ T3759] -----------------------------
-> [   71.187265][ T3759] trinity-c4/3759 is trying to lock:
-> [ 71.188287][ T3759] c37b35e0 (tcpv4_prot_mutex){....}-{4:4}, at: tls_init (net/tls/tls_main.c:934 net/tls/tls_main.c:993)
-> [   71.189847][ T3759] other info that might help us debug this:
-> [   71.191018][ T3759] context-{5:5}
-> [   71.191678][ T3759] 2 locks held by trinity-c4/3759:
-> [ 71.192635][ T3759] #0: ecffcd80 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock (include/net/sock.h:1625)
-> [ 71.194220][ T3759] #1: c3500498 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-> [   71.196078][ T3759] stack backtrace:
-> [   71.196797][ T3759] CPU: 0 UID: 65534 PID: 3759 Comm: trinity-c4 Tainted: G        W       T  6.14.0-rc1-00030-g8f510de3f26b #1 8ad64aae41fa4cb8babad52c8f50e0a7d5e34569
-> [   71.196807][ T3759] Tainted: [W]=WARN, [T]=RANDSTRUCT
-> [   71.196809][ T3759] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [   71.196812][ T3759] Call Trace:
-> [ 71.196818][ T3759] dump_stack_lvl (lib/dump_stack.c:123)
-> [ 71.196825][ T3759] dump_stack (lib/dump_stack.c:130)
-> [ 71.196830][ T3759] __lock_acquire (kernel/locking/lockdep.c:4830 kernel/locking/lockdep.c:4900 kernel/locking/lockdep.c:5178)
-> [ 71.196840][ T3759] lock_acquire (kernel/locking/lockdep.c:469 kernel/locking/lockdep.c:5853)
-> [ 71.196846][ T3759] ? tls_init (net/tls/tls_main.c:934 net/tls/tls_main.c:993)
-> [ 71.196856][ T3759] ? __schedule (kernel/sched/core.c:5380)
-> [ 71.196866][ T3759] __mutex_lock (kernel/locking/mutex.c:587 kernel/locking/mutex.c:730)
-> [ 71.196872][ T3759] ? tls_init (net/tls/tls_main.c:934 net/tls/tls_main.c:993)
-> [ 71.196878][ T3759] ? rcu_read_unlock (include/linux/rcupdate.h:335)
-> [ 71.196885][ T3759] ? mark_held_locks (kernel/locking/lockdep.c:4323)
-> [ 71.196889][ T3759] ? lock_sock_nested (net/core/sock.c:3653)
-> [ 71.196898][ T3759] mutex_lock_nested (kernel/locking/mutex.c:783)
+On 2/13/25 06:26, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.78 release.
+> There are 273 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 15 Feb 2025 14:23:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.78-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This is probably because __tcp_set_ulp is now under the rcu_read_lock() in patch 1.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Even fixing patch 1 will not be enough. The bpf cgrp prog (e.g. sockops) cannot 
-sleep now, so it still cannot call bpf_setsockopt(TCP_ULP, "tls") which will 
-take a mutex. This is a blocker :(
+Tested-by: Ron Economos <re@w6rz.net>
 
-> [ 71.196904][ T3759] ? tls_init (net/tls/tls_main.c:934 net/tls/tls_main.c:993)
-> [ 71.196909][ T3759] tls_init (net/tls/tls_main.c:934 net/tls/tls_main.c:993)
-> [ 71.196916][ T3759] tcp_set_ulp (net/ipv4/tcp_ulp.c:140 net/ipv4/tcp_ulp.c:166)
-> [ 71.196923][ T3759] do_tcp_setsockopt (net/ipv4/tcp.c:3747)
-> [ 71.196934][ T3759] tcp_setsockopt (net/ipv4/tcp.c:4032)
-> [ 71.196939][ T3759] ? sock_common_recvmsg (net/core/sock.c:3833)
-> [ 71.196946][ T3759] sock_common_setsockopt (net/core/sock.c:3838)
-> [ 71.196952][ T3759] do_sock_setsockopt (net/socket.c:2298)
-> [ 71.196961][ T3759] __sys_setsockopt (net/socket.c:2323)
-> [ 71.196967][ T3759] __ia32_sys_setsockopt (net/socket.c:2326)
-> [ 71.196972][ T3759] ia32_sys_call (kbuild/obj/consumer/i386-randconfig-054-20250212/./arch/x86/include/generated/asm/syscalls_32.h:367)
-> [ 71.196979][ T3759] do_int80_syscall_32 (arch/x86/entry/common.c:165 arch/x86/entry/common.c:339)
-> [ 71.196985][ T3759] entry_INT80_32 (arch/x86/entry/entry_32.S:942)
 
