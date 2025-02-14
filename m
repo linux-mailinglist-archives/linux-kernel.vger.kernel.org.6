@@ -1,160 +1,89 @@
-Return-Path: <linux-kernel+bounces-514151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899F4A3532B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:45:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED92A3532D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2754916DB38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E30816E77F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0254717588;
-	Fri, 14 Feb 2025 00:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81A0275416;
+	Fri, 14 Feb 2025 00:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RohPuuXf"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD1A27540A;
-	Fri, 14 Feb 2025 00:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Umd+owOp"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE51627540A;
+	Fri, 14 Feb 2025 00:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739493915; cv=none; b=J4nAYNyU5NVE50qqyErtXoZDLTx+2HjqnYvoNPK1CAFz9AK8XSDbzaGFkba69S6Kil16ycXkxZ1Wk8wfQuVIHsvytRpX/tyaY8Xnhde3ggF7cUyRwugfy57NzmIiANTQuSp9cZZjpD7M7CUxc9F1m+JJkK1iVzw3i1G2J0ySpq4=
+	t=1739494025; cv=none; b=jTgNJr9Cf2gwuiMYPIexDkHPHVOXF0I8ZWqEVRdc2YWb0KbqBs0bh7Gxe+OPjO8kTsD2JONZNodA+YBp3Cu5sB0mwontosErKPc+ypDfwOIMiZP1jUFooccLdt6UGgwgJjv94kcodNvY2FZj3tzIwRysO8OjybfsFLT9n9zb/7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739493915; c=relaxed/simple;
-	bh=oyjevGJ8IHhrCs9/8i/VZcSgCIOLD3gMW4ZvgQR+Rdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUjreOr7TrIBCjfDu+46ujlxLWWjov6zJCjF/+nMc7Pg/8lKIvz069NfMg6n5au2peE2eGklNzbW4xsvLYcwhoPolAmTND3XSrsArawAOJNMf9HIaRgfgyvmSjPJ3ZxX/SCy+x4i2T3QsexFRa/kMoepfim8wfIuHEiDGasPko8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RohPuuXf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 186DF6B5;
-	Fri, 14 Feb 2025 01:43:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739493833;
-	bh=oyjevGJ8IHhrCs9/8i/VZcSgCIOLD3gMW4ZvgQR+Rdc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RohPuuXfeG2HxdHXs7zrM4XWUBksaywkLxtYC5ZADHEBE35VpBIW7ibSdNXlKQc+l
-	 8uPNca8CJaGpvciTcQuICw+dfm9fBBjKj4MrrKdvWyJtvDA7SffsDJ5GqZv61V9q2Z
-	 S6utJ32m4Glwb50IbdJd8nG/yGBK8K0ZXZDA2HPE=
-Date: Fri, 14 Feb 2025 02:45:00 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] media: dt-bindings: renesas,rzg2l-cru: Document
- Renesas RZ/G3E SoC
-Message-ID: <20250214004500.GC8393@pendragon.ideasonboard.com>
-References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
- <20250210114540.524790-5-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1739494025; c=relaxed/simple;
+	bh=hYHYbkXhfFLurg6wMe5QMSPV4YrbP9bIjAJSuhRQr2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=j5UkQf/gO6Q2gm0Sty3GI0I8LhhjCrDPAVpDgQXDQcVQtYKHXr/AwCP3Ya77G0Zb7huc58lMum2HdWc4SrtwOdQZW/eOrwnWAhnHpoAt7+4nox0hLZGuUWxI5Bqvc6N3s6sgNsXh6ToanaLCgEV9MPQJiFa+JHRW3kO5O2N0atk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Umd+owOp; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 6EDE9203F3CB; Thu, 13 Feb 2025 16:47:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6EDE9203F3CB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739494023;
+	bh=C1Mty8SCWDlDykTdJTRdhpAR2xCJk5RPaFs6HDdY3MU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Umd+owOproz3UzWfoWcvoWj6Yyin8zaltBwHINV7nGa0oNV+RDFFrMAv7GjyQS27L
+	 IHp+bvWMfIz7r2igNbVK0xS8Ly7PAKtL6PRUdKnqYD44Qc248DvVPTSGR/TEHyajZA
+	 xQMYZquLTsbbZiKhDOw7CeJ3fnGcMGf5pSNvvqaM=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.6] 6.6.78-rc1 review
+Date: Thu, 13 Feb 2025 16:47:03 -0800
+Message-Id: <1739494023-22521-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20250213142407.354217048@linuxfoundation.org>
+References: <20250213142407.354217048@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210114540.524790-5-tommaso.merciai.xr@bp.renesas.com>
 
-Hi Tommaso,
+The kernel, bpf tool, perf tool, and kselftest builds fine for v6.6.78-rc1 on x86 and arm64 Azure VM.
 
-Thank you for the patch.
+Kernel binary size for x86 build:
+text      data      bss      dec       hex      filename
+27313546  16699406  4653056  48666008  2e69598  vmlinux
 
-On Mon, Feb 10, 2025 at 12:45:36PM +0100, Tommaso Merciai wrote:
-> The CRU block found on the Renesas RZ/G3E ("R9A09G047") SoC has five
-> interrups:
-> 
->  - image_conv:    image_conv irq
->  - axi_mst_err:   AXI master error level irq
->  - vd_addr_wend:  Video data AXI master addr 0 write end irq
->  - sd_addr_wend:  Statistics data AXI master addr 0 write end irq
->  - vsd_addr_wend: Video statistics data AXI master addr 0 write end irq
-> 
-> This IP has only one input port 'port@1' similar to the RZ/G2UL CRU.
-> 
-> Document the CRU block found on the Renesas RZ/G3E ("R9A09G047") SoC.
-> 
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  .../bindings/media/renesas,rzg2l-cru.yaml     | 33 ++++++++++++-------
->  1 file changed, 22 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
-> index bc1245127025..7e4a7ed56378 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
-> @@ -17,24 +17,34 @@ description:
->  
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - renesas,r9a07g043-cru       # RZ/G2UL
-> -          - renesas,r9a07g044-cru       # RZ/G2{L,LC}
-> -          - renesas,r9a07g054-cru       # RZ/V2L
-> -      - const: renesas,rzg2l-cru
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g043-cru       # RZ/G2UL
-> +              - renesas,r9a07g044-cru       # RZ/G2{L,LC}
-> +              - renesas,r9a07g054-cru       # RZ/V2L
-> +          - const: renesas,rzg2l-cru
-> +
-> +      - const: renesas,r9a09g047-cru        # RZ/G3E
->  
->    reg:
->      maxItems: 1
->  
->    interrupts:
-> -    maxItems: 3
-> +    maxItems: 5
->  
->    interrupt-names:
-> -    items:
-> -      - const: image_conv
-> -      - const: image_conv_err
-> -      - const: axi_mst_err
-> +    oneOf:
-> +      - items:
-> +          - const: image_conv
-> +          - const: image_conv_err
-> +          - const: axi_mst_err
-> +      - items:
-> +          - const: image_conv
-> +          - const: axi_mst_err
-> +          - const: vd_addr_wend
-> +          - const: sd_addr_wend
-> +          - const: vsd_addr_wend
+Kernel binary size for arm64 build:
+text      data      bss     dec       hex      filename
+34690958  13850078  970368  49511404  2f37bec  vmlinux
 
-This should move to a conditional block.
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
->  
->    clocks:
->      items:
-> @@ -120,6 +130,7 @@ allOf:
->            contains:
->              enum:
->                - renesas,r9a07g043-cru
-> +              - renesas,r9a09g047-cru
->      then:
->        properties:
->          ports:
 
--- 
-Regards,
 
-Laurent Pinchart
+
+Thanks,
+Hardik
 
