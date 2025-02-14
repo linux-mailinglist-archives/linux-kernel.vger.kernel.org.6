@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-515598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B11A36690
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:56:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22AFA36695
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74B73B23D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:55:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A15188C6AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AAA1C8638;
-	Fri, 14 Feb 2025 19:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF481C84D3;
+	Fri, 14 Feb 2025 19:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iutVvo0X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWohGhZ4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3091C8622
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD301C84AF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562938; cv=none; b=mYQlhtQbxNAibadH0WB8k15FDdRWXTVrzZ+mk2NG1J0EcVkXUedned8FE6USGGmfDrsT0kwQGgMlcGQHcuh1bf1cgaCux9JFAbAynT0Oeq4kRysRpaMG7cO1A3/Iyw5lYMXRskwO6lC0BgYW99Oe+aOac7XyvDMNEg9DIwiQJxA=
+	t=1739563069; cv=none; b=ZJP/AQCjpP0rvOw2YWhtzdBOx0x9NjX/VWFzbMUn2JEeL4nHYoTfzacDtXaTZeowACVQ12GqIhItbxRUUuZvTdcjW4CZuzmVX/H3PL7oCV79p4ztWD9UXDM5UmagejDJKcC7GUlDWEW4Vr61yZz+oFpy+SllPfVrLjPgSLEa5Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562938; c=relaxed/simple;
-	bh=OYYhEDQ1tch4O5reJkYOXYrvSejqt7GywKWwMTBWQOA=;
+	s=arc-20240116; t=1739563069; c=relaxed/simple;
+	bh=VHeX8E2rD8a+rLGByF8sKGKr8LeOrdhe7F8Vby0blBA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bqmNwd+qNWjglp7naRnCz7tMljrFV/a2I5CKFgc3AjFyk9wY+4MRmXbjF0Ns37iYFCjkAneXOvcqqj7X1V+EkJD+yO44aL+ffmymkyI5NgJIYA2Q0KXQ+3QBf7tSTBCZTmGDYTaOBMu9oD/rFjpcxZ5uJZQVKtRWt0q+CohLdfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iutVvo0X; arc=none smtp.client-ip=198.175.65.21
+	 In-Reply-To:Content-Type; b=QkRERGtBitl82RYlr678L73qgAqqINvNnI6kXrgGEdFMQdeTsvum6n5Acob8ZHZkl07/zIjcbt60AgU6YhjRzsjlRQP7ZPwVA0p323cEbTRjeyC+k4LB0Jw4YnxEYlxJNCONt+aEH6N104V8YTPzhY5/z+PbZRPsu/v2u0vXdrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWohGhZ4; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739562937; x=1771098937;
+  t=1739563068; x=1771099068;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=OYYhEDQ1tch4O5reJkYOXYrvSejqt7GywKWwMTBWQOA=;
-  b=iutVvo0XB+01uTwwzkEBb1cjXF5Ar0+MX5ZGijStWMR3rN7nLG69gUke
-   Cdf5FVjOPweaILJzDKPdEqtxduXuId1Uzxwm18fsvpGaPSQckeBLMbWhi
-   6W9ZF7LhKJ6icMOiCWPUn0P5GJt0bzJzOBdpXjnWGIZNKVGKevATmR5FK
-   O79sZm3YILnN/qsAP1Q2dVVjtmY0LbcAc7pOVdDSxFhq6coZ8VBnPMgzS
-   k5KbgYTB+SVT9BjeJvoDEcYSalUMOzNDY0BZfupeD8LGRyZcIAzaxIdi7
-   D8l894Zd5G2xfnvb4+sZ8YYaUWZBdOw/NAqNjsCeETUUAAiky98vMtasO
-   g==;
-X-CSE-ConnectionGUID: JyxQ8ZpwTe+CDc8zNAtj6g==
-X-CSE-MsgGUID: dsgCJrAeTWSki8x3KOXm4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40247133"
+  bh=VHeX8E2rD8a+rLGByF8sKGKr8LeOrdhe7F8Vby0blBA=;
+  b=nWohGhZ4hF8pQLcK8cTiwQoD59mNt5KawCGsN7QKJ4BqkO+F3IY81LpY
+   +ZcklHiTvjUvfP5GiAWRoCTR5yzRhf7LpXi6XdwnuNwJ2k+PUikfew6XB
+   swC1lygTI7ZUxM8T8UvglWNCm1NOt7V3qo9EzJpNUjVzpUtpTdXX6DMo1
+   EmgVf5VCq5IDEkIxnIpT1sj2erCtdTfA2a09ssJLTPvxtNqLo/U84ZxDe
+   0qmnY8sOjvj9932iGkVq5AMkkriZD2kV1zxqPsOWMcqLMmoK3Pr2Xtlcr
+   KSRm8w/uZGLCRhzFV1ynJfjF6u2GrHhmT5NUA6zFbSXeKPkJ5FkkVDpmD
+   w==;
+X-CSE-ConnectionGUID: FtyN1Q9WSuaOSDqBCkwyuQ==
+X-CSE-MsgGUID: Hg4v5aCxRluMhWCtFtpUdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57730777"
 X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40247133"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:55:36 -0800
-X-CSE-ConnectionGUID: QEDwI6BIQDioSNA4kmn/pQ==
-X-CSE-MsgGUID: Me5V3t4gT4yvmI0AE7PoUQ==
+   d="scan'208";a="57730777"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:57:47 -0800
+X-CSE-ConnectionGUID: nXEU6dxwQte7N5t79NmDQg==
+X-CSE-MsgGUID: 5pa3RgP/SAGfmjHcRMASNA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="118649613"
+   d="scan'208";a="113520739"
 Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.21]) ([10.125.109.21])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:55:34 -0800
-Message-ID: <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
-Date: Fri, 14 Feb 2025 11:55:38 -0800
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:57:46 -0800
+Message-ID: <25b9d3f5-bfe8-48a9-b11b-819d19cfae1e@intel.com>
+Date: Fri, 14 Feb 2025 11:57:50 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,18 +66,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
- zhengqi.arch@bytedance.com, nadav.amit@gmail.com, thomas.lendacky@amd.com,
- kernel-team@meta.com, linux-mm@kvack.org, akpm@linux-foundation.org,
- jackmanb@google.com, jannh@google.com, mhklinux@outlook.com,
- andrew.cooper3@citrix.com, Manali Shukla <Manali.Shukla@amd.com>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-7-riel@surriel.com>
- <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
- <20250214194013.GA2198@noisy.programming.kicks-ass.net>
+Subject: Re: [RFC 1/1] x86/vmemmap: Add missing update of PML4 table / PML5
+ table entry
+To: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, linux-kernel@vger.kernel.org
+Cc: osalvador@suse.de, 42.hyeyoo@gmail.com, byungchul@sk.com,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ akpm@linux-foundation.org, max.byungchul.park@sk.com,
+ max.byungchul.park@gmail.com
+References: <20250214195151.168306-1-gwan-gyeong.mun@intel.com>
+ <20250214195151.168306-2-gwan-gyeong.mun@intel.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -123,46 +120,23 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250214194013.GA2198@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250214195151.168306-2-gwan-gyeong.mun@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/14/25 11:40, Peter Zijlstra wrote:
-> On Fri, Feb 14, 2025 at 10:35:40AM -0800, Dave Hansen wrote:
->> On 2/13/25 08:13, Rik van Riel wrote:
->>> -	if (info->end == TLB_FLUSH_ALL)
->>> +	if (broadcast_kernel_range_flush(info))
->>> +		; /* Fall through. */
->>> +	else if (info->end == TLB_FLUSH_ALL)
->>>  		on_each_cpu(do_flush_tlb_all, NULL, 1);
->>>  	else
->>>  		on_each_cpu(do_kernel_range_flush, info, 1);
->> We've got to find a better name for broadcast_kernel_range_flush().
->> Because IPIs are broadcast too. The naming makes it confusing. Why would
->> be broadcast, and then start trying IPIs that are also broadcast?
-> IIRC the more general name is indeed broadcast tlbi; as in other
-> architectures use this naming to mean this very thing too.
-> 
-> But yes, I see the confusion, but I don't think changing the naming
-> really helps a lot here :-/
+On 2/14/25 11:51, Gwan-gyeong Mun wrote:
+> when performing vmemmap populate, if the entry of the PML4 table/PML5 table
+> pointing to the target virtual address has never been updated, a page fault
+> occurs when the memset(start) called from the vmemmap_use_new_sub_pmd()
+> execution flow.
 
-Fair enough. If we don't have a better name, we can at least do:
+"Page fault" meaning oops? Or something that we manage to handle and
+return from without oopsing?
 
-	if (new_bad_name()) {
-		new_thing();
-	} else {
-		old_thing();
-	}
+> This fixes the problem of using the virtual address without updating the
+> entry in the PML4 table or PML5 table. But this is a temporary solution to
+> prevent page fault problems, and it requires improvement of the routine
+> that updates the missing entry in the PML4 table or PML5 table.
 
-My real heartburn is with:
-
-	if (new_bad_name()) {
-		new_thing();
-	} else if (need_thing_1()) {
-		old_thing1();
-	} else {
-		old_thing2();
-	}
-
-Where new and old are logically squished together.
+Can we please skip past the band-aid and go to the real fix?
 
