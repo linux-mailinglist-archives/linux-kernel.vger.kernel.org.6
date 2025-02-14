@@ -1,128 +1,109 @@
-Return-Path: <linux-kernel+bounces-515582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FB0A36678
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:50:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DD4A3667A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B01516C0A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA981897235
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0631ADC7C;
-	Fri, 14 Feb 2025 19:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A091C84AE;
+	Fri, 14 Feb 2025 19:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Zcqd7Muw"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RRmXApM1"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071741C84A4;
-	Fri, 14 Feb 2025 19:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9F1C84AF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739562602; cv=none; b=gMAAspiiUy+8Di7nKkgdiYqPF9E3K5MaFdSqM4m6Ssq2FHtZINQl30905DMtC2dawQ3gwv21Z0mMaJfqEOMBX1EkLUC0FJk3pO3rMcalZ8dib/1JOq4Ma+4Ha5aPLgw2u1lRguUp27L7D0Q4ZY38t/zXjh4blyyQQTPd5AR218c=
+	t=1739562621; cv=none; b=BQvRJk2xUyjUJ/KdNOu/PTl/Jof6yfUy7vPIuaYlBPFvD1+vU8ERNIpH77ZOEmfG3NcCjgDksZd1mXNjeeNQXdiWESZp5ZVWQ5FBM5eCQ4EY4FjIS96eCDOYRENKbctxsrbpoJ8PYClu99sQ1+MwEBZ0j7i6hTiejtVhOAiGff8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739562602; c=relaxed/simple;
-	bh=hArpn+cw0WzxHVCJBoy/mNR4x4o/Qt+KgqxSu6/0MYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps6I+/XX2sIM4c41W46FIsL9ndMpcUjLt4xnH5pDRSXNQMhcAf/E+fyMhQhMLT09qJYVsd97Dlb2hEpOlkl/G1E+tQx1U9NO+mlM+7uf1AgJFY1qvXfrvhaMCcMlkXvUqICVDaFqGyj9TLga89nonAw5QWK04xEQYke5QU2ncEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Zcqd7Muw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=9Lwc6ovB+AAsRpWlUng0A8U3oiN7oiWCRl5T7bGuQNY=; b=Zcqd7MuwSp32VjaIeQh5yxL/U6
-	icJVq5xrEpspT/pKRtBxR7iEunSEhjiVPPCrSRqP10coccrZkG5YUNLZmffQUiZerd62tVgb3HLd2
-	znI7Mzv5bo8NbC2ixCTPRCHTPSIxIK/qj0liS+a+JNXUMioYlPFlpUy/M6odXJ3kAQEu64fX1f5Zd
-	GS2kofNlks6aKd+u5V97NzagKHrx+L7QSFNQZknXhh5XlHN1XPfQu/dabOW61EwnIiLCVvJ8/pNN5
-	u2lhMrSUoiJwwDKXBqkbYIUTZzE7XUajvFlJn2A4WyYCFLOESb5GpPpLsZDFsPbdiRaD6pipLDOJk
-	JM61i51g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tj1h3-0000000E68X-33mp;
-	Fri, 14 Feb 2025 19:49:45 +0000
-Date: Fri, 14 Feb 2025 19:49:45 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Neal Gompa <neal@gompa.dev>
-Cc: Mark Brown <broonie@kernel.org>, Hector Martin <marcan@marcan.st>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Dave Airlie <airlied@gmail.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, phasta@kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	daniel.almeida@collabora.com, aliceryhl@google.com,
-	robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	David Airlie <airlied@redhat.com>,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
-	DRI Development <dri-devel@lists.freedesktop.org>
-Subject: Re: On community influencing (was Re: [PATCH v8 2/2] rust: add dma
- coherent allocator abstraction.)
-Message-ID: <20250214194945.GE1977892@ZenIV>
-References: <2025013148-reversal-pessimism-1515@gregkh>
- <1bbdf8b7-a70b-4994-865e-7fcb8d53ebef@marcan.st>
- <20250207-prehistoric-married-dormouse-3e1aa7@lemur>
- <7742420.9J7NaK4W3v@skuld-framework>
- <d6cae188-28e5-409f-86ed-7ddf374fd354@sirena.org.uk>
- <CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com>
+	s=arc-20240116; t=1739562621; c=relaxed/simple;
+	bh=kS+/RPbJQYyV4loDfeQBtye1zVtLY7WDjjNFf5eieKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J9T6URYbQM5uaPKbVCUAH76oHNkbTkzcpuN2TPei2ZBhQfyvXHN8WHllyJP1LfBwSa/DOZrVkeDs9IDm9GbIxl8D1xgyJyLJK8L4kZVX33zQrpZVYgmua6X6pejhGn1ry6mevDclczjmU8RdfiugNDUenbWHjbeWsTXEgTQHVGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RRmXApM1; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so24770631fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739562617; x=1740167417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kS+/RPbJQYyV4loDfeQBtye1zVtLY7WDjjNFf5eieKY=;
+        b=RRmXApM1VzEUhNlmKR/wQ4LIJnjDwFW3NbAetG/SMMao+AmamzaFFMPySC5ButQMuj
+         VjlsgD2iB1nO3Aev0mn6oWjnRIyDgjn7Bk2D4lNR6RJwH5UOj0YCGdMFFC7Ei5xeyRP1
+         hSqB9LRxO7PMdkN0zeXHm17ShTzNF9x9F/soU43OSyzLEyUiNQiwcWyI/BjQU9r41saL
+         h6/yCgvZebO5VPWapZgBlTjR6QSWba79Z5/jmTCrNXxaWeyoDl4qa6Sb8i7cEgjicGHp
+         a1qY6a+1nENXjSW90tZVBC0LjIA5NHAeOeZRoUYGJulgDls+pnyzmgLIB6/+X5YxPkcW
+         nzEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739562617; x=1740167417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kS+/RPbJQYyV4loDfeQBtye1zVtLY7WDjjNFf5eieKY=;
+        b=EnQ/8JLVGZO3wbBWYcJMO0/SaJXb8SGv+PgylI1D8uC9dq9Epwu9/5q3mAK1ZfSvbG
+         DgSYAPcNgmTboLHj0uW3fVn/G+nwHM9Cud/D54L4Oyc1z1SLrkzndPEmB+aa55f7VuZU
+         mXLty3gP5qBfp1SRneXSKCDbY8A52Jghcp9QEMFENbWaItzOeNmBcbeIKMlJvxsxlSE5
+         0dv67KoylFSxcnZWfSoeRu+JvoLLBU9QPyS0BJPMtnd6iQ0yz1HEpJGROZH519GbLt3v
+         g7LM3QivQBryYtUAtaeX4LejyO5hlGF1a0x95EjWLOiHVyMu3vsDI+mVZ4sz6OXAGYfi
+         m0ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV/x+1EGYecFH2j69FpqxDyVw6lVQ+x5Yz9O+BtLrkie0h3AZF+uyX8+1LZbyUHtbJxHrjTxcu3O283DcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfQx4Jo0h0XPS0m4xKkhmhhXwj+H98VDU1nfxT+iPVyon2mwpE
+	tI+YBg6dWTDe6sXuvTeai7ig0FvniK9eYIQGZE1tBfOM4A+Hz7SPFjI/O4Qd3fFwTkGgbgSicVl
+	LUapxiF9GwrSWLpW9DSxR7yVW6Rz3K9csFg7Fsg==
+X-Gm-Gg: ASbGncvmJb/Qzv3UOWNFmuym4bT09Bf+9cFrtCTAEsrGWs9LH3l7epfyzTPF/mNQ+5L
+	vo0UAcbmclUTK0zfG8jiX7424PcJ24XI/T51VfX0KC5+qosx1f4mkH1UV8E0yF3oMGY/5kt3WeE
+	KKTTSYbSd8pm7odqscbqYoCjMdGEo=
+X-Google-Smtp-Source: AGHT+IGlWjB9v2asjVJFwzrcdKSekLt81bHRgl+1Bt0xg1xeMTTWOeCFD471Hob7Y+mGo6EDLzkfEPEyFyoJEPANwtY=
+X-Received: by 2002:a2e:9119:0:b0:308:eb05:9d3e with SMTP id
+ 38308e7fff4ca-30927ad5405mr2911351fa.23.1739562617279; Fri, 14 Feb 2025
+ 11:50:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250214152642.90363-1-brgl@bgdev.pl>
+In-Reply-To: <20250214152642.90363-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 14 Feb 2025 20:50:06 +0100
+X-Gm-Features: AWEUYZkw917luEw1Ce7PiWplpAK5z0ndMU9Sa_ZKL-PQQDyBap1Mce-PhsTSfqo
+Message-ID: <CAMRc=MfGDmn-VODwBhqsSTs62+6DqujGdAQPmir+WBjnV7eaFw@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio fixes for v6.14-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 02:10:57AM -0500, Neal Gompa wrote:
-> On Mon, Feb 10, 2025 at 12:28 PM Mark Brown <broonie@kernel.org> wrote:
-> >
-> > On Sun, Feb 09, 2025 at 03:25:26AM -0500, Neal Gompa wrote:
-> > > On Friday, February 7, 2025 1:16:11 PM Eastern Standard Time Konstantin
-> > > Ryabitsev wrote:
-> >
-> > > > It is my goal to be able to give subsystems a way to use forges without it
-> > > > impacting how they interact with upstream or handle tree-wide changes. That
-> > > > is, once I'm done moving things from one Benevolent Company to another.
-> >
-> > > Honestly, this is probably not possible. If a subsystem moves to a forge
-> > > workflow, it pretty much means tree-wide changes need to work partially that
-> > > way too.
-> >
-> > We do actually have some people using forges already, for example the
-> > SOF people do a bunch of their review on github and then turn that into
-> > patch serieses which they send via the normal email route when they're
-> > happy with them.  I think tree wide stuff flows in via back merges or
-> > rebases, one of the benefits of delegation is that it's not my problem.
-> > This all works perfectly well from my side, as far as I know it's fine
-> > for the SOF people too.  It certainly doesn't seem insurmountable.
-> 
-> It might be working as long as a subsystem continues to allow
-> receiving patches via email. As soon as a subsystem decides to stop
-> doing that (which is absolutely their right given the model of
-> subsystem maintenance that the Linux project has), I think this will
-> break down very quickly.
-> 
-> I wonder which team will be the first one to do it. It's not a
-> question of if, but when.
+On Fri, Feb 14, 2025 at 4:26=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Linus,
+>
+> Please pull the following set of GPIO fixes for the next RC. Details are
+> in the signed tag. We have fixes to drivers, a new ACPI quirk and two
+> fixes to GPIO core.
+>
+> Bartosz
 
-Then it will be a matter of patches affecting their subtree getting merged
-through the mainline.  All there is to it...
+Linus,
+
+Please don't pull this. I just received a late sparse warning about a
+commit in this PR. I will drop it and redo the pull-request tomorrow.
+
+Bartosz
 
