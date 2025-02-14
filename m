@@ -1,121 +1,174 @@
-Return-Path: <linux-kernel+bounces-514172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ABAA3538D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:12:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D39CA3538E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACF03AC1BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F368F3ABF90
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4D542052;
-	Fri, 14 Feb 2025 01:12:07 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E072746B;
-	Fri, 14 Feb 2025 01:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3E93BBC9;
+	Fri, 14 Feb 2025 01:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QF+90VtC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2444A33;
+	Fri, 14 Feb 2025 01:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739495527; cv=none; b=GzaOIZsL7HeiaROogdYwJ8LRnJxRSd4rClKQmuWzieeo6LqHUC6RfDOYP9/4EtebfZSZQmuXgZPbXer9wJH+zpjknQiz2artZkWqH/V1qPoKdGLhuWDqNOBu2aWaX9idZ8UpW2tQD0w57oqByUTufrF/1/9NxVuehE+k8Ztj90U=
+	t=1739495567; cv=none; b=s6i1tyQLZYEZvV4HvdTuvucOdl91yczPINRAwY2ONFd8/ADmJ3hFMrZHmM/iATtDxYXhmT5legMlToNHC7gHdVIqpmHx9L0S5PUXybbGcw/O7+bO96sMA1zofjUDV4Cd/afEvsMhSbkaWunraVp5wLj3UySN1BzLkUcjaEngtpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739495527; c=relaxed/simple;
-	bh=EzldPKqL3LAA14BzaUNue2LoVJXYI+QCGXKPYLf8IpE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=RX2DhGSm96zrdfxF8P/iodvGM/owGmRZq0GIl5+AYraYsNyfb1MMp1xue0ynPzaSEyaZ82mRDuXhiGpZBCcnBVR9LqH62oM+bQpZS3Sytl0VlnMfl93GtTd36cWAlrLlUaxbgMVHA2MU/Xy5aei4+0sEGW6Y3t/H846N2jUWSkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8DxvnNbmK5nn+N0AA--.39658S3;
-	Fri, 14 Feb 2025 09:11:55 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowMBxGcRPmK5ndCgRAA--.1798S2;
-	Fri, 14 Feb 2025 09:11:46 +0800 (CST)
-Subject: Re: [PATCH v2 3/3] tpm: Add a driver for Loongson TPM device
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- peterhuewe@gmx.de, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
- Yinggang Gu <guyinggang@loongson.cn>
-References: <20250212033113.15137-1-zhaoqunqin@loongson.cn>
- <20250212033113.15137-4-zhaoqunqin@loongson.cn> <Z60SfDaWnbgddUnA@kernel.org>
- <c825cd7b-a255-d296-baa0-c1a746cb1bce@loongson.cn>
- <Z65tuC722nnuhWEO@kernel.org>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <0c7982a4-a8bd-77fd-86b3-ed2d2451ed0a@loongson.cn>
-Date: Fri, 14 Feb 2025 09:12:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1739495567; c=relaxed/simple;
+	bh=Uf7KzL9WUh6ptAfCWAiZd4xZ1TBn2O4qJ3v/t3unK2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEq73uI+nkFKVSovQXUOxEK1/UVqI4q2Sp3PBO2u6zgvMlP57G/TuVACZc8zcolo6LdObx2+ZmBLSF94P7pH9gqS6cD3yF3UEf60sqaREoa9/59OwbF6iobVTjAEhNhy0PBWDhVLnVI31OksNkLgApLxWBJHinh+s2FEmx/w76w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QF+90VtC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEEAC4CED1;
+	Fri, 14 Feb 2025 01:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739495567;
+	bh=Uf7KzL9WUh6ptAfCWAiZd4xZ1TBn2O4qJ3v/t3unK2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QF+90VtCu0Qy9Qs11LfnFFmM+c4AZXwaPi+22mYhA5cpsTMFj5jtbda7Oyvm4hg1w
+	 4gzE3zvARRvK6BWpsxVdy9d4ibrbM0h2UYeUi9LZyK6p10uhjqvaT0PuDz0C4snJfY
+	 Yeiy0QyMed5OTa1oogyOr3vr/nwrCroNp0jhnfTMGPINL1TvKXt0VL72U0jT32QkUA
+	 FNsUgdbJsT95jecGOYRkHm1M17aR86xiVctJZk6aNgdJsdHQSw5i0nEehwCYRd0Ko5
+	 MOtoSGT99m/dTlVghcDfFF6F7torCq1ALgTySN52JkHyeYeJgwyo1dOasPEBJDPO79
+	 Jdjp12k8LOcBQ==
+Date: Thu, 13 Feb 2025 17:12:44 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] perf vendor events arm64: Add A720/A520
+ events/metrics
+Message-ID: <Z66YjGvjD_yzEHUg@google.com>
+References: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z65tuC722nnuhWEO@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMBxGcRPmK5ndCgRAA--.1798S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KF4kuFWfKrWkGw18tFyrAFc_yoW8GrW5pr
-	1kAFn5Cry7Gr47K3sIq3y5CrnYq3s2qF9rur9rtw1qqr90ya43Jr1UtF1UCrs8Xr1rGrW0
-	qrZayr43Ka1Yv3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
 
+Hello,
 
-在 2025/2/14 上午6:10, Jarkko Sakkinen 写道:
->>>> for it.
->>>>
->>>> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
->>>> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
->>>> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
->>>> ---
->>>>    MAINTAINERS                 |   1 +
->>>>    drivers/char/tpm/Kconfig    |   9 ++++
->>>>    drivers/char/tpm/Makefile   |   1 +
->>>>    drivers/char/tpm/tpm_lsse.c | 104 ++++++++++++++++++++++++++++++++++++
->>>>    4 files changed, 115 insertions(+)
->>>>    create mode 100644 drivers/char/tpm/tpm_lsse.c
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 6493d58436..6aad0f08ad 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -13484,6 +13484,7 @@ LOONGSON CRYPTO DRIVER
->>>>    M:	Qunqin Zhao <zhaoqunqin@loongson.com>
->>>>    L:	linux-crypto@vger.kernel.org
->>>>    S:	Maintained
->>>> +F:	drivers/char/tpm/tpm_lsse.c
->>>>    F:	drivers/crypto/loongson/
->>>>    LOONGSON-2 APB DMA DRIVER
->>> Probably MAINTAINERS update should be a separate patch.
->> Some  MAINTAINERS updates are not  separated form the driver patch.  Like
->> the submit of "drivers/mfd/max7714*".
->>
->> So it seems whether the updates to MAINTAINERS  are separated or not is OK.
-> I'd prefer them separated from code changes. They are separate tasks
-> per se.
+On Thu, Feb 13, 2025 at 11:11:01PM +0800, Yangyu Chen wrote:
+> This patchset adds the perf JSON files for the Cortex-A720 and Cortex-A520
+> processors. Some events have been tested on Raxda Orion 6 with Cix P1 SoC
+> (8xA720 + 4xA520) running mainline Kernel with ACPI mode.
 
-OK, thanks.
+I'm curious how the name of PMUs look like.  It is cortex_a720 (or a520)?
+I remember there's a logic to check the length of hex digits at the end.
 
-BR, Qunqin.
+Ian, are you ok with this?
 
->
-> BR, Jarkko
+Thanks,
+Namhyung
 
+> 
+> Yangyu Chen (2):
+>   perf vendor events arm64: Add Cortex-A720 events/metrics
+>   perf vendor events arm64: Add Cortex-A520 events/metrics
+> 
+>  .../arch/arm64/arm/cortex-a520/bus.json       |  26 ++
+>  .../arch/arm64/arm/cortex-a520/exception.json |  18 +
+>  .../arm64/arm/cortex-a520/fp_operation.json   |  14 +
+>  .../arch/arm64/arm/cortex-a520/general.json   |   6 +
+>  .../arch/arm64/arm/cortex-a520/l1d_cache.json |  50 ++
+>  .../arch/arm64/arm/cortex-a520/l1i_cache.json |  14 +
+>  .../arch/arm64/arm/cortex-a520/l2_cache.json  |  46 ++
+>  .../arch/arm64/arm/cortex-a520/l3_cache.json  |  21 +
+>  .../arch/arm64/arm/cortex-a520/ll_cache.json  |  10 +
+>  .../arch/arm64/arm/cortex-a520/memory.json    |  58 +++
+>  .../arch/arm64/arm/cortex-a520/metrics.json   | 373 +++++++++++++++
+>  .../arch/arm64/arm/cortex-a520/pmu.json       |   8 +
+>  .../arch/arm64/arm/cortex-a520/retired.json   |  90 ++++
+>  .../arm64/arm/cortex-a520/spec_operation.json |  70 +++
+>  .../arch/arm64/arm/cortex-a520/stall.json     |  82 ++++
+>  .../arch/arm64/arm/cortex-a520/sve.json       |  22 +
+>  .../arch/arm64/arm/cortex-a520/tlb.json       |  78 ++++
+>  .../arch/arm64/arm/cortex-a520/trace.json     |  32 ++
+>  .../arch/arm64/arm/cortex-a720/bus.json       |  18 +
+>  .../arch/arm64/arm/cortex-a720/exception.json |  62 +++
+>  .../arm64/arm/cortex-a720/fp_operation.json   |  22 +
+>  .../arch/arm64/arm/cortex-a720/general.json   |  10 +
+>  .../arch/arm64/arm/cortex-a720/l1d_cache.json |  50 ++
+>  .../arch/arm64/arm/cortex-a720/l1i_cache.json |  14 +
+>  .../arch/arm64/arm/cortex-a720/l2_cache.json  |  62 +++
+>  .../arch/arm64/arm/cortex-a720/l3_cache.json  |  22 +
+>  .../arch/arm64/arm/cortex-a720/ll_cache.json  |  10 +
+>  .../arch/arm64/arm/cortex-a720/memory.json    |  54 +++
+>  .../arch/arm64/arm/cortex-a720/metrics.json   | 436 ++++++++++++++++++
+>  .../arch/arm64/arm/cortex-a720/pmu.json       |   8 +
+>  .../arch/arm64/arm/cortex-a720/retired.json   |  90 ++++
+>  .../arch/arm64/arm/cortex-a720/spe.json       |  42 ++
+>  .../arm64/arm/cortex-a720/spec_operation.json |  90 ++++
+>  .../arch/arm64/arm/cortex-a720/stall.json     |  82 ++++
+>  .../arch/arm64/arm/cortex-a720/sve.json       |  50 ++
+>  .../arch/arm64/arm/cortex-a720/tlb.json       |  74 +++
+>  .../arch/arm64/arm/cortex-a720/trace.json     |  32 ++
+>  .../arch/arm64/common-and-microarch.json      |  15 +
+>  tools/perf/pmu-events/arch/arm64/mapfile.csv  |   2 +
+>  39 files changed, 2263 insertions(+)
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/bus.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/exception.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/fp_operation.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/general.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/l1d_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/l1i_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/l2_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/l3_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/ll_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/metrics.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/pmu.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/retired.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/spec_operation.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/stall.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/sve.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/tlb.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a520/trace.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/bus.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/exception.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/fp_operation.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/general.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/l1d_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/l1i_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/l2_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/l3_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/ll_cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/metrics.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/pmu.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/retired.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/spe.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/spec_operation.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/stall.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/sve.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/tlb.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a720/trace.json
+> 
+> -- 
+> 2.47.2
+> 
 
