@@ -1,82 +1,123 @@
-Return-Path: <linux-kernel+bounces-515245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B622A36248
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:52:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9E3A36249
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2294018969F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5221E1891D64
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0425A2C2;
-	Fri, 14 Feb 2025 15:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZpTxk50c"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59F8267389;
+	Fri, 14 Feb 2025 15:51:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D0B3234;
-	Fri, 14 Feb 2025 15:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0DC3234;
+	Fri, 14 Feb 2025 15:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548226; cv=none; b=JIXAWlLRC0vzpWttDZdu59DT1kx0qF5u2f7OWSP66I9tia5mlCsyzbHMOfxUrl5UyOMzSxfZVKUlkwlcgHtCD1KoAJnB4tIHJU+AGCAO9ExH1M0TOZcJjVugIytBK6LTdvhth02+BlweM6jmHiqCy1qLe+RK6NM5t6Cn4xuj6q8=
+	t=1739548286; cv=none; b=BL7IL42d2ItGECqooXtkn9nEiPXvecUbM42IA1YU+3cfKpw4d1yxbY7Zrmg6U1jnfHAuKTVfqqP82OGDK9U4ElbZHopbcpgDDQclyjg2UcomqgzCD3k4ljQs/tjlAnk964SxW6hPX5tsMbjmWGchDh6ptJgoB/nNSDY6GZSav2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548226; c=relaxed/simple;
-	bh=d87Fp29SX/9mo7DW1IDuBePsRsIHajFmkTP3ciRcnsA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J0qak+cTiDOAsw1zS+wjTTgn6w7GwP+t2oZZxnhrW9rH/9jim7HalQaI4V/xdpfkK2mIK9PBP4EpM4lxkUJ+X2A/5GkN26Q1Sbopt3iYgTyfNVYHbOWj9YacDscDX5JzUfWS0pa/PvQz1AKfHua+c15ws2YB3+6k3gbgBLNrskA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZpTxk50c; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9872544097
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739548223; bh=Rw3XqFfqBcidsh18SER/4ZRj7Gv4YvSYLr57gTq6oik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZpTxk50cEKfJWBv9K+aTcDfEdBdTtNlzzZTbK/RT9JyHxd6praoiNMrG9odf0zo8u
-	 dkirFXeW/msx2iEFn6xbttdWZPRFw7rQ7gzOIKg0S9UdhJ5/6TbZRUm5RXYKL6maDq
-	 zCoWTKob5yXS2jYHsjVLZ5m0abmBQY9OTBiSZbb4yaUk8PiMMnS9FLd4HSgfP8ia6Q
-	 zDDmAt/dMv+RDnN1a5FPdLZ/pBzgO2WR00z+IB1JgSB3/Rt+WPNgW22mnMSrbT+U1X
-	 FVgbMhUbzLRxGMuBRtFf63elTN2bIPQH6VTdFS+k4lgTU4ah3c3CxUMprl1809HQg3
-	 P3wVSgfKvdccw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 9872544097;
-	Fri, 14 Feb 2025 15:50:23 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dongliang Mu <mudongliangabcd@gmail.com>, Alex Shi <seakeel@gmail.com>
-Cc: Yanteng Si <si.yanteng@linux.dev>, alexs@kernel.org, Yanteng Si
- <siyanteng@loongson.cn>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
-In-Reply-To: <CAD-N9QXRjr3yVtyucRbRJqXcJy0JwR=UhcNoHPbs3MQ2JcGKdg@mail.gmail.com>
-References: <20250213054222.21776-1-alexs@kernel.org>
- <20250213054222.21776-2-alexs@kernel.org>
- <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev>
- <CAD-N9QXhmNBUFPfo11-h0H0Du_JFNX_Qxcs8aoesW8=ABgneaw@mail.gmail.com>
- <CAJy-AmmZAuZWUS5TTuSGg5y33Q7Q52CGQ7en5vg_eB2W2y_s9Q@mail.gmail.com>
- <CAD-N9QXRjr3yVtyucRbRJqXcJy0JwR=UhcNoHPbs3MQ2JcGKdg@mail.gmail.com>
-Date: Fri, 14 Feb 2025 08:50:22 -0700
-Message-ID: <87bjv4zfsx.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1739548286; c=relaxed/simple;
+	bh=vjnuBrumtfsgor7A614WXlzdEEf3Hl7TFnCVC3KT2wE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PRJw0Mh/gq2y++5Ik3N1WheCKhgC/3jkX6j6n9gXyxOANbV7uqH0R0jlxb6KJ1SgKx4n8GfU9WoWCpOQOQScjbzefcVl9ca2t+COaDBLS8dDCt7dIZXmHwwSbXv8ZeL/p/nAEBtoXGbOeBB1tst4daCtmR/UGgFBubh3R82BnQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvc201Rc8z6HJgB;
+	Fri, 14 Feb 2025 23:50:00 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E0C4F1401F1;
+	Fri, 14 Feb 2025 23:51:21 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 16:51:21 +0100
+Date: Fri, 14 Feb 2025 15:51:20 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v3 04/18] cxl/pci: Add comments to cxl_hdm_decode_init()
+Message-ID: <20250214155120.00004461@huawei.com>
+In-Reply-To: <20250211095349.981096-5-rrichter@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+	<20250211095349.981096-5-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Dongliang Mu <mudongliangabcd@gmail.com> writes:
+On Tue, 11 Feb 2025 10:53:34 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-> It takes quite a bit of time to finish running `make htmldocs`. Grab a
-> coffee and relax while you wait!
+> There are various configuration cases of HDM decoder registers causing
+> different code paths. Add comments to cxl_hdm_decode_init() to better
+> explain them.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Tested-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/cxl/core/pci.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index c49efc419285..6333a01e4f19 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -416,9 +416,17 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  	if (global_ctrl & CXL_HDM_DECODER_ENABLE || (!hdm && info->mem_enabled))
+>  		return devm_cxl_enable_mem(&port->dev, cxlds);
+>  
+> +	/*
+> +	 * If the HDM Decoder Capability does not exist and DVSEC was
+> +	 * not setup, the DVSEC based emulation cannot be used.
+> +	 */
+>  	if (!hdm)
+>  		return -ENODEV;
+>  
+> +	/*
+> +	 * The HDM Decoder Capability exists but is globally disabled.
+> +	 */
+> +
+>  	/*
+>  	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
+>  	 * [High,Low] when HDM operation is enabled the range register values
+> @@ -426,7 +434,8 @@ int cxl_hdm_decode_init(struct cxl_dev_state *cxlds, struct cxl_hdm *cxlhdm,
+>  	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
+>  	 * are expected even though Linux does not require or maintain that
+>  	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
+> -	 * Decoder Capability Enable.
+> +	 * Decoder Capability Enable. Else, use the HDM Decoder Capability and
+> +	 * enable it.
 
-If you have not updated to latest Sphinx (8.1.3, say), you should do so.
-The Sphinx developers fixed a big performance problem, and it's much
-faster.  Not as much relaxation possible as once was...:)
+As per previous.  Having an 'else' comment that refers to what happens if the
+following if is true, just adds to confusion :(
 
-jon
+So if you are going to move the comment it needs a more substantial rewrite
+to reflect that we care 'here' about that last bit only.
+
+>  	 */
+>  	if (!info->mem_enabled) {
+>  		rc = devm_cxl_enable_hdm(&port->dev, cxlhdm);
+
 
