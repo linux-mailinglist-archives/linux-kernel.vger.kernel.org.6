@@ -1,128 +1,170 @@
-Return-Path: <linux-kernel+bounces-515087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A58A35FB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:59:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C294A35FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089217A59F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D543AB67B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35E6265CB8;
-	Fri, 14 Feb 2025 13:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA700265604;
+	Fri, 14 Feb 2025 14:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z5ozKLeg"
-Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Pf8MBZ+Y"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D30F265CBB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB861426C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739541559; cv=none; b=TMganlbNVCvQaEZukVzvXD3O/isniPPlmZQyQHboF/T1EFC2m3p4kgioiqTzDZ/pVotsdMwIwyQx8/c52lNFJ2YdYpGEiSKJ7rD5DZMfRbAKZjoD55vyiaznWTcJyHRzmwGs3QPFBpn7D1uWLEsGPuBfz7g8Pot2d3y4I0kGvXQ=
+	t=1739541637; cv=none; b=aWXWhXFSVMLAy2AOg/mvThWTgR/E01wJ2WaxKyxNc/IvDk+hu5+kJYsibvU4AnMZMT3vmB/VQ4apntaK9fJ/l1v3UCoWa5/BFZ3l09ERKJ0adjfWMOR4twmiOXM5h+IsVB0gwZsf6cowrIUZQASb4e1auFGhW5PIkQCTgExPiSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739541559; c=relaxed/simple;
-	bh=g+Ef+bvJCXnr2fnE6ROAKPn2T26076corKifdGv/dhE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DkXxWbiJML0i7P5hG7fxMUPPVIzGyPwUAbJmVqMkiySaG+FeT5B0FApVXC4GXtSVw4T966BRz+UXc+Bu8956Anc9fk9uHAp9b2WhRJjxoXuDT2u72cg1OAoBlYNLSfwCse7bUn8l3DQvL+BWhJBgIFIxPkh0DEgvh5e6n2kTOIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z5ozKLeg; arc=none smtp.client-ip=209.85.222.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
-Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7c0784e91e4so208773485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:59:17 -0800 (PST)
+	s=arc-20240116; t=1739541637; c=relaxed/simple;
+	bh=aT52DCyCkE/FOAU5A4XxNdM0hSVkOX9rETPz1btkjJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mQ6xBGBlFUX0bdD30zcnYbURgkEdDWunS9xX9/Oz9nsg7SzEYN/MhpJOSpiuw1CkgjC6BJbKIqnFpG8e1RRws2LNRkFNpGD8eqQtwd4XbVFewCggfUjUm6wrSKicWtFJ2suSs7ZPhPduUtqUwSyEODscacjjUFBt+CQR/L5I5eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Pf8MBZ+Y; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so15290975e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:00:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739541556; x=1740146356; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AyOaPuXyGpDU+d1RnpKJaFpTE21ht1sJRDkQSr5LTU=;
-        b=Z5ozKLegQd8wqTH9xOpJhcnQl1Wnsnd96fQo3K2JM61Y9K06dczL6+50kautk+cG2i
-         z6s+KXWoZhpO6+0ZccpJBo1M56Ng9wlKgCJY8XFjnl+UZFN+pAHVZcDNgO/EODKSflIb
-         YLeF7Px8dF9jWUzTRkW97UM2YkTGajarcDYCoRvnx6IguYBdcSjUE3ANJWugJTzGYVGw
-         NelQccYN7SBAvZRCuaWE3U/BSaUbGrXGH446bP9JYbEy2fxAVMUnxgfRjnrnSG6C4jdH
-         QyNLheY+A1ECAy6dA4k6bj6zqYYD9CKji6zzT6BKGqKUr/mXi2hYQszphWZcMooP58Lw
-         Zvww==
+        d=openvpn.net; s=google; t=1739541633; x=1740146433; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QIKJXROgZdnHdVfnlvw9H3L9hbWVM4xWzC/FdoHev/E=;
+        b=Pf8MBZ+YG5nO7DTT6JrytEgcQIOq+1Q6yPXgN/2LM2H/E/yBZSZuAiQLWlvYFmOTWT
+         YsNgGcus6q56K/LrzogRdBbuUR1/IHGVuH7NBAtNVXyoTs6k6nGsjLlA9+JLQJ/AkSEG
+         gVaTQqhcaxIeZGrr9ICJZnMVeSeDo0/JYTV90WUE9bpxo76QeznUovViDPreIUpmOmVW
+         NOD77Q2d7lGG5BmAJZSdL3QPO8u4SCPOAurpjcKo5EeLO2v2+ixdt2iuDWWNlePYN84C
+         6ghjGxINUH/4MLCRlGCP6FhfpvsI1cFtIXZ5407Qn6L/SXSP0fV0w5u+RkA5a0RjYhO9
+         RMvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739541556; x=1740146356;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AyOaPuXyGpDU+d1RnpKJaFpTE21ht1sJRDkQSr5LTU=;
-        b=xNxupqHq5t6TbhVTinLNbuvlo5W3ynms2Ki1e0fDdkRxk9lvx5vbKZR2HKKGeRhDpc
-         UzM0Evsurh11YPuTD/mS3rV67jBoryJfC3iJ4hWJNjJch9V4lBLN28WDyn8nRYqrZndT
-         LHfg+HLNoBJFw1gJMj89hZzwp2ah1E+/AoSXeINhjNBAeq3ZYFxPFIC07fjHpZ1UI0QH
-         qMMhn6at0tn/fbzFhdq+HsEVsKGTkRS4hOUfCGzNchXTEiQotEyCUIJIKRF5VV4lwxe5
-         uUTckCXG2L0kSg3qBik1AwdtsgagSX+UxzyFpBa5DWmugBuxRHmxj0A/f+zTTGKLA+ax
-         VgKA==
-X-Gm-Message-State: AOJu0YxY/1O88rECuyLOdLD5DtET/+k8LpQIsosRsaNm1kJgUU0x1aII
-	YEUCWdnGpbqfwxhtGyBzPo88Kt0sumYZs2rsWt/+pmKeT0IxY3uwqkzL7VRz+ZZw5BkZUy0lOb+
-	vYRD+UTStlg==
-X-Google-Smtp-Source: AGHT+IFk1SYInwiB6mhJ0ITE2lup7Kgau5WwsvYxr3MNuBisVxDBaec6CE0IuS4GB3hIjUkZ5gG36fKqG+BZYg==
-X-Received: from qkd3.prod.google.com ([2002:a05:620a:a003:b0:7c0:6ed4:fcee])
- (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:1993:b0:7c0:8950:e3ed with SMTP id af79cd13be357-7c08950e4ffmr65514385a.54.1739541556299;
- Fri, 14 Feb 2025 05:59:16 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:59:11 +0000
-In-Reply-To: <20250214135911.2037402-1-edumazet@google.com>
+        d=1e100.net; s=20230601; t=1739541633; x=1740146433;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QIKJXROgZdnHdVfnlvw9H3L9hbWVM4xWzC/FdoHev/E=;
+        b=igPTK6grktjVBQs6jDAyxLZ/NgvTPvOYRVIta4Fo01FKPymRDe3r6MgLU0XWpG1kZW
+         yl7agmcztKNURurL7qpMXDixWCF5wUySe6gtCIlNd1SUKo0+1wfH7L8WkGrO4eeK8te2
+         ynrrui8AhECFwyEyJaoFcDMEj0KP2bRlkx1mC1s2z3vFIPMH1C8cbbc/9gD46lJ5lycS
+         QhdZrWWW1Qv9hvq+q1UIZumIVHUj3QW9MNGjX5ijwoWCm64Xzhm5m/hUSmXuhdh1WX1L
+         eQx+ab0HcWLeH67sAMLvd4zPzg2sRyqzqp29kkVfhHhKQ/HwcZj0+iILQEDi/zcJMohW
+         dyGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAmwmn6i6M79CaqBBpE+jNp3PgumwlENnP5Ys2fjm98x/4msA3NtNHtxfm95Bnc3CLf/Oiahbu2Su//mY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWaCcqbkNINInKrc+HEFffGGloifQgzolRB+cx5d4fmKiOUgkw
+	p3MVH7JbhnkWGUjN2B/OnDO7MsUhe9e6bjKuC2eDSYdVI2CZ7dWNilQVUvMcQm4=
+X-Gm-Gg: ASbGncsayVGWr6+vC/kO7++RXsoTk2d7o8DdIJL7IXB8CpEWSywH4wp+rcNa7i2cOtd
+	YgMrzpqke6pvV6mdW+b/7QP2/tm4Oo2rRG3of4Dj9JbOIBmoq3JhAFDUJ4PcgSHKRengbaQUp2A
+	wsufjfAT6jRRSJUaD9vdPeAHralF3SlgQ5gTt93sXSzQ9BMhPE5Fi1eF/udjQBD9VbA7jNtUEAq
+	VJdrFA/36MjlOtLkyv791Niekx/DpgMNAPlIEPwS14g7zhYLrcvO6XWhhfuR7PStDKkw9JFQQbM
+	PuKzT6mX8tbebk3pofFYHoEeWKwyrKV+Ovv/2J4zG4X2MEnVvX5faw==
+X-Google-Smtp-Source: AGHT+IEPmiJ1bSo/864Z7aQ6et3I2XrazbxrUsk5ja1G6ShAPdhRXrrX/2IxOM6UBpVAET50cPOD0g==
+X-Received: by 2002:adf:e74c:0:b0:38f:31fe:6d08 with SMTP id ffacd0b85a97d-38f31fe7410mr849213f8f.46.1739541632914;
+        Fri, 14 Feb 2025 06:00:32 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:cd14:b9de:fda8:dc6d? ([2001:67c:2fbc:1:cd14:b9de:fda8:dc6d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm4635615f8f.43.2025.02.14.06.00.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 06:00:32 -0800 (PST)
+Message-ID: <ccd4c233-e065-456d-8275-ffcca402583d@openvpn.net>
+Date: Fri, 14 Feb 2025 15:00:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250214135911.2037402-1-edumazet@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250214135911.2037402-3-edumazet@google.com>
-Subject: [PATCH 2/2] posix-timers: Use RCU in posix_timer_add()
-From: Eric Dumazet <edumazet@google.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Benjamin Segall <bsegall@google.com>, 
-	Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v19 00/26] Introducing OpenVPN Data Channel
+ Offload
+From: Antonio Quartulli <antonio@openvpn.net>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+ steffen.klassert@secunet.com, antony.antony@secunet.com,
+ willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Shuah Khan <skhan@linuxfoundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20250211-b4-ovpn-v19-0-86d5daf2a47a@openvpn.net>
+ <Z60wIRjw5Id1VTal@hog> <090524ac-724d-4915-8699-fe2ae736ab8c@openvpn.net>
+ <Z64Tw02PO433bob8@hog> <0c0de58a-4dac-4b3b-9fc5-2a58a145d5ab@openvpn.net>
+ <507c0388-8ce4-47fa-90b3-b46ae170045a@openvpn.net>
+Content-Language: en-US
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <507c0388-8ce4-47fa-90b3-b46ae170045a@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If many posix timers are hashed in posix_timers_hashtable,
-hash_lock can be held for long durations.
+On 14/02/2025 14:54, Antonio Quartulli wrote:
+> For example in wireguard/device.c the socket is released in 
+> pernet_operations.pre_exit().
+> 
+> But pre_exit() is invoked in cleanup_net(), which is invoked ONLY if the 
+> net refcount has reached 0...but how can it be zero before the sockets 
+> have been released?
+> 
+> I must be missing something, because this seems to be a reference loop.
 
-This can be really bad in some cases as Thomas
-explained in https://lore.kernel.org/all/87ednpyyeo.ffs@tglx/
+FTR, the answer is that sockets created in-kernel (like for wireguard) 
+have sk->sk_ref_cnt set to 0, which implies that no reference to the 
+netns is taken.
 
-We can perform all searches under RCU, then acquire
-the lock only when there is a good chance to need it,
-and after cpu caches were populated.
+So ovpn has this issue because our sockets are coming from userspace.
 
-I also added a cond_resched() in the possible long loop.
+Regards,
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
----
- kernel/time/posix-timers.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 204a351a2fd3..dd2f9016d3dc 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -112,7 +112,19 @@ static int posix_timer_add(struct k_itimer *timer)
- 
- 		head = &posix_timers_hashtable[hash(sig, id)];
- 
-+		rcu_read_lock();
-+		if (__posix_timers_find(head, sig, id)) {
-+			rcu_read_unlock();
-+			cond_resched();
-+			continue;
-+		}
-+		rcu_read_unlock();
- 		spin_lock(&hash_lock);
-+		/*
-+		 * We must perform the lookup under hash_lock protection
-+		 * because another thread could have used the same id.
-+		 * This is very unlikely, but possible.
-+		 */
- 		if (!__posix_timers_find(head, sig, id)) {
- 			hlist_add_head_rcu(&timer->t_hash, head);
- 			spin_unlock(&hash_lock);
 -- 
-2.48.1.601.g30ceb7b040-goog
+Antonio Quartulli
+OpenVPN Inc.
 
 
