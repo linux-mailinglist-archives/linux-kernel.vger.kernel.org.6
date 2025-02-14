@@ -1,179 +1,171 @@
-Return-Path: <linux-kernel+bounces-514704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D3EA35A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:40:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5444EA35A8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E26F16B134
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E601891E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608E224292B;
-	Fri, 14 Feb 2025 09:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A341245AFC;
+	Fri, 14 Feb 2025 09:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERMmtfFm"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ViFKXovg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3677F23A9AA;
-	Fri, 14 Feb 2025 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0868149C7D;
+	Fri, 14 Feb 2025 09:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526022; cv=none; b=nQ9u06oyiDNbQYzjDnX3zTl5hwm9IuOeWEqV5u62vt1EyGvRixSwOCvN2fe3b9shLZFjudHcM6xOUqwCPw5i4z8O6ovzjCiiEU1NEacOPj0a5c9XWhjobvjiz92UqlsGcQiub58enSNf1AA/2aUBc9ALpWS8MxZLfX6C73sI2vc=
+	t=1739526214; cv=none; b=X3eZruUpOMiAiaU2lLbdS9XvSVwpfBK6m7udDQBETqFjSlCjaFQIyXnIiS3fSRkXAYvL9ZwZ3TtBmIF+pYUJQhimVRCk6AmwSiz9eKmyEFdM6zIcZIOaf3ZJcIn7ao+Zmo+QiwYwW6DR3TIVIh3x6xoJnFIS2PVAJg8c4x6VQU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526022; c=relaxed/simple;
-	bh=p5vYy2mrK/o/VT5mJ7ApSVSVL8TdJfYkFtZORYT3q94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTRKCxhVjTZJT4T+xTD3JjQZqqevebNJBV68pzXgXz6cySJC9620VaqRjkgYBX4Vmv0wrM4HQ7qq7jy7E0QeuVcszGLtFEbYOnBsxQYHlyHe9ytLZq24LmhfvdTNTinYZEFzz3utzIUVMJflRGb4cUTqo6qAmGmOXbKd+15/wDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERMmtfFm; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be3f230436so161680785a.3;
-        Fri, 14 Feb 2025 01:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739526020; x=1740130820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ltnVdbgyWl/+t2lriesNcGGsbLyc+7ozvoFh97YkJ0=;
-        b=ERMmtfFmbYZOmz4dmZfCebcSzFz0E/Bt+ZNTY9w1clPPKRtgIS9kzfS7m6h/779Tay
-         7vYx0rIBnhxwWwTnq5QIUCc8s2Cj/WPC+XN3zAQUSJE/Q6M2djQnBLTe9n85kfiEoyIL
-         5QeT0VFMF/aVgkOg0Y+GmwjQLW7nh+WSIkMZHDl9iZHXJkUZR25CCON7bcz8aieJR7xT
-         txcOcn5D7/TfAwCLedr5baRD4UX2iW+z/r48yohNsDEUtpUtfsqBP3uwDMFeFOCahNLE
-         i5Zj1ZftR805BR0EWp10zabXB15sGO2Q48QhDEoHRY36EpHLGk0uQBEo4o1UHf/ZyxGe
-         X6NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739526020; x=1740130820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ltnVdbgyWl/+t2lriesNcGGsbLyc+7ozvoFh97YkJ0=;
-        b=Qr/YRWVrJAlbBfyEJxQ/uNJvfJhY9XqR1d9+BhYM1nWlg+PA7eDMFk0CFKJ4JuWlzt
-         j+UYgD2IgVJ5ACWUq2ge/LdDpw6b49ueqqjrhvLnwynGiH6W6u1zeAvuyYaZlPzR7ZdJ
-         icTI/HKtup6Sp3bOMZEzgiZm15iPNHr3dB7+5tVqlhEwUG5iEkGpTs9rGq7t+VtwSDr5
-         rG38mEbIQLBh2Q7y0F6DQ9GXm+EaTSZ1io4s86EjliCyQyQ3PMSR6vmhKe0Q5EHIgt5e
-         lH7kKIxptLYb2ApatsRVzvANQBD4OVR0O/R9cMhbG8TRXiFBtA0f6+D9R5K6eq079n47
-         lmsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVQwiAZrF9CLjvj5Z4HaGtMSlniV/I9wCbE0eAUUqLkM6gJZ/CilruCcq4iFmXqrsTNM4Rt9TvNLZlIUTH@vger.kernel.org, AJvYcCX3uVnuYGF4ymXyiziPKNDWRVfmesG5QeeEG9FTnPF7W7E8zdvIdkEs1W+IhxWAIcKPPo/H/tDK3A4C@vger.kernel.org, AJvYcCXhNLzmRwONjIvcTWFhLimiJg8StWWrclU6Rk4WOCVdsX6BtLhWooTMnnnOdvLdEim0sHlazY8H57a+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNh4D+wT+g4i5qTQ+ZJ5OUa1i9avIVfd6jYAzRFnsHBpdOnZWg
-	YbQflNoSQc5L7DTLHBdPMFygKcxgp0kv7XRqtMZGGuWbIUo3oVml
-X-Gm-Gg: ASbGncuYNNWNsCy3QhZSMRQ6CeWe0kpI9uB8zNosR0kVSmliYD5JmVOl6h5LIsPxkvx
-	iaSvsEJICkAyRlIrzh+of/Yu/zfqpH4BGuLCfOE8NZCakU4owNIVgQ4tOrS/oZaVPk/15fU0Vyc
-	DXE8wA0O9RL0qj7DMQphIFUy9WM04eGKg87KoiNBcR3jfam3tLug2hBFB3uuHURlNjQaXfENrzw
-	J41uVhd+r4spNia1NymCLMtBrHAKhw6meAe+1Za9V6omMj5p3Ckryt+uNDyX/FaHtc=
-X-Google-Smtp-Source: AGHT+IEAaWOHdRIBYEDb2EPJpgpRyzUZ58tWTfkhcKSw9SF80+/uXHiUKELTnqkLF3A1dKQoSa4BIg==
-X-Received: by 2002:a05:620a:2d86:b0:7c0:7207:600c with SMTP id af79cd13be357-7c072076382mr937351085a.41.1739526019938;
-        Fri, 14 Feb 2025 01:40:19 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c07c861552sm187614185a.79.2025.02.14.01.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 01:40:19 -0800 (PST)
-Date: Fri, 14 Feb 2025 17:40:09 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, alexandre.belloni@bootlin.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, unicorn_wang@outlook.com, 
-	inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, dlan@gentoo.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
- Sophgo CV1800 series SoC
-Message-ID: <t6z6rikut2him5m57b6xubbguw3llczp4i6d5frcpuhlqihf2d@booethzadxsq>
-References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
- <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+	s=arc-20240116; t=1739526214; c=relaxed/simple;
+	bh=zLq34zyZ+vn2x8EHLG71uh1H2EfQ4PWpqK69Hy66e7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IKFGWwGtU1z85/o7wpfkp/hn/QqPFHsO8bAv1RYWBtvnJfKSqtfBjeQYQHefToCxdB+Db31x9QeSmkKmMyQdLbWrSO0JSi8rhV9gWQVz/X4RwgQmo94dORIS6SgzBKdl8jIgRT1R+cBDviUeBHlxWzr14wFxzSnQnoYgqEj/42A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ViFKXovg; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739526212; x=1771062212;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zLq34zyZ+vn2x8EHLG71uh1H2EfQ4PWpqK69Hy66e7w=;
+  b=ViFKXovgOXOFScFg8+GYrAxPhRy9KrENocku7RpenrL9BzfXvYfaAZRg
+   jQBm7hnEPZCmZFwxjmlZhA1z7C884dKiyWJRzLl8bO3TkrMIBK4CjR3kQ
+   iqurHJTYsCdnfougLXc2YPBCsTovqq8GIgRYMPsOzAkv0cquC2S4DIMU+
+   oOMT3Z1Oe+9e+snzMOfYflKKKQ5C+P8mZeM5socKzbvrqA9r2vppzVmzq
+   WVFF52dfBY+NX/AymnmuoDXRS5tYSoHjzijwYsnEPB/LzYD6/3AYtu8Ig
+   DU1IYpzd/u+Tz0eUOkYtwsCAcpc0pPEI4dRofM6FLOeWYPi9UrF1cONln
+   g==;
+X-CSE-ConnectionGUID: Kq6TxkY1RuiUtW2hdM1HLw==
+X-CSE-MsgGUID: 37DqnfFoQ02HpGKQAJ6h4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="44197299"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="44197299"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 01:43:30 -0800
+X-CSE-ConnectionGUID: ZO0UWXkJQOin2e28wbPaEw==
+X-CSE-MsgGUID: Hg2vL6gvSzaFtD29bl+/3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118036852"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.89.75]) ([10.247.89.75])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 01:43:22 -0800
+Message-ID: <641ab972-e110-4af2-ad9b-6688cee56562@linux.intel.com>
+Date: Fri, 14 Feb 2025 17:43:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v4 0/9] igc: Add support for Frame Preemption
+ feature in IGC
+To: Kurt Kanzenbach <kurt@linutronix.de>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250210070207.2615418-1-faizal.abdul.rahim@linux.intel.com>
+ <20250212220121.ici3qll66pfoov62@skbuf>
+ <b19357dc-590d-458c-9646-ee5993916044@linux.intel.com>
+ <87cyfmnjdh.fsf@kurt.kurt.home>
+ <5902cc28-a649-4ae9-a5ba-83aa265abaf8@linux.intel.com>
+ <20250213130003.nxt2ev47a6ppqzrq@skbuf>
+ <1c981aa1-e796-4c53-9853-3eae517f2f6d@linux.intel.com>
+ <877c5undbg.fsf@kurt.kurt.home> <20250213184613.cqc2zhj2wkaf5hn7@skbuf>
+ <87v7td3bi1.fsf@kurt.kurt.home>
+ <b7740709-6b4a-4f44-b4d7-e265bb823aca@linux.intel.com>
+ <874j0wrjk2.fsf@kurt.kurt.home>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <874j0wrjk2.fsf@kurt.kurt.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 10:56:45PM +0100, Alexander Sverdlin wrote:
-> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+
+
+On 14/2/2025 4:56 pm, Kurt Kanzenbach wrote:
+> On Fri Feb 14 2025, Abdul Rahim, Faizal wrote:
+>> On 14/2/2025 3:12 am, Kurt Kanzenbach wrote:
+>>> On Thu Feb 13 2025, Vladimir Oltean wrote:
+>>>> So, confusingly to me, it seems like one operating mode is fundamentally
+>>>> different from the other, and something will have to change if both will
+>>>> be made to behave the same. What will change? You say mqprio will behave
+>>>> like taprio, but I think if anything, mqprio is the one which does the
+>>>> right thing, in igc_tsn_tx_arb(), and taprio seems to use the default Tx
+>>>> arbitration scheme?
+>>>
+>>> Correct. taprio is using the default scheme. mqprio configures it to
+>>> what ever the user provided (in igc_tsn_tx_arb()).
+>>>
+>>>> I don't think I'm on the same page as you guys, because to me, it is
+>>>> just odd that the P traffic classes would be the first ones with
+>>>> mqprio, but the last ones with taprio.
+>>>
+>>> I think we are on the same page here. At the end both have to behave the
+>>> same. Either by using igc_tsn_tx_arb() for taprio too or only using the
+>>> default scheme for both (and thereby keeping broken_mqprio). Whatever
+>>> Faizal implements I'll match the behavior with mqprio.
+>>>
+>>
+>> Hi Kurt & Vladimir,
+>>
+>> After reading Vladimir's reply on tc, hw queue, and socket priority mapping
+>> for both taprio and mqprio, I agree they should follow the same priority
+>> scheme for consistency—both in code and command usage (i.e., taprio,
+>> mqprio, and fpe in both configurations). Since igc_tsn_tx_arb() ensures a
+>> standard mapping of tc, socket priority, and hardware queue priority, I'll
+>> enable taprio to use igc_tsn_tx_arb() in a separate patch submission.
 > 
-> Add RTC devicetree binding for Sophgo CV1800 SoC.
+> There's one point to consider here: igc_tsn_tx_arb() changes the mapping
+> between priorities and Tx queues. I have no idea how many people rely on
+> the fact that queue 0 has always the highest priority. For example, it
+> will change the Tx behavior for schedules which open multiple traffic
+> classes at the same time. Users may notice.
+
+Yeah, I was considering the impact on existing users too. I hadn’t given it 
+much thought initially and figured they’d just need to adapt to the 
+changes, but now that I think about it, properly communicating this would 
+be tough. taprio on igc (i225, i226) has been around for a while, so a lot 
+of users would be affected.
+
+> OTOH changing mqprio to the broken_mqprio model is easy, because AFAIK
+> there's only one customer using this.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
->  .../bindings/rtc/sophgo,cv1800-rtc.yaml       | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
-> new file mode 100644
-> index 000000000000..b36b51a69166
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
-> @@ -0,0 +1,53 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Real Time Clock of the Sophgo CV1800 SoC
-> +
-> +description:
-> +  Real Time Clock (RTC) is an independently powered module
-> +  within the chip, which includes a 32KHz oscillator and a
-> +  Power On Reset/POR submodule. It can be used for time display
-> +  and timed alarm generation. In addition, the hardware state
-> +  machine provides triggering and timing control for chip
-> +  power on, off, and reset.
-> +
-> +maintainers:
-> +  - Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,cv1800-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
 
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc@5025000 {
-> +        compatible = "sophgo,cv1800-rtc";
-> +        reg = <0x5025000 0x2000>;
-> +        interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&osc>;
-> +    };
-> -- 
+Hmmmm, now I’m leaning toward keeping taprio as is (hw queue 0 highest 
+priority) and having mqprio follow the default priority scheme (aka 
+broken_mqprio). Even though it’s not the norm, the impact doesn’t seem 
+worth the gain. Open to hearing others' thoughts.
 
-Just for curiosity, Do you leave a way to implement the
-8051 subsys, since its registers are in rtc. (You can
-check the chapter "8051 subsystem" of the SG2002, which
-can be found at https://github.com/sophgo/sophgo-doc).
-
-Regards,
-Inochi
 
