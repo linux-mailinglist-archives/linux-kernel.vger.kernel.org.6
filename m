@@ -1,142 +1,218 @@
-Return-Path: <linux-kernel+bounces-515603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22AFA36695
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:57:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FEBA3669C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:58:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A15188C6AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:58:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 852F67A5007
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF481C84D3;
-	Fri, 14 Feb 2025 19:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWohGhZ4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC901C84D6;
+	Fri, 14 Feb 2025 19:58:27 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD301C84AF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70031C84C5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739563069; cv=none; b=ZJP/AQCjpP0rvOw2YWhtzdBOx0x9NjX/VWFzbMUn2JEeL4nHYoTfzacDtXaTZeowACVQ12GqIhItbxRUUuZvTdcjW4CZuzmVX/H3PL7oCV79p4ztWD9UXDM5UmagejDJKcC7GUlDWEW4Vr61yZz+oFpy+SllPfVrLjPgSLEa5Bo=
+	t=1739563106; cv=none; b=VBTDhfqaB4hRgtd4fdREitlCvOrOnzdxWvv9FVMryQ4OLbyvb3lItbBMfhPx5sTTDO/tPzmdVF0v8lWqx39PTp8u8iIOfb9Y+FeZ9qRkN/AAbUtIhLAO7K4DLyUjjqZiaXw8SHzZweag2gpaUje0zDGWqrHG+mny/OQHNhkReXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739563069; c=relaxed/simple;
-	bh=VHeX8E2rD8a+rLGByF8sKGKr8LeOrdhe7F8Vby0blBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkRERGtBitl82RYlr678L73qgAqqINvNnI6kXrgGEdFMQdeTsvum6n5Acob8ZHZkl07/zIjcbt60AgU6YhjRzsjlRQP7ZPwVA0p323cEbTRjeyC+k4LB0Jw4YnxEYlxJNCONt+aEH6N104V8YTPzhY5/z+PbZRPsu/v2u0vXdrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWohGhZ4; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739563068; x=1771099068;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VHeX8E2rD8a+rLGByF8sKGKr8LeOrdhe7F8Vby0blBA=;
-  b=nWohGhZ4hF8pQLcK8cTiwQoD59mNt5KawCGsN7QKJ4BqkO+F3IY81LpY
-   +ZcklHiTvjUvfP5GiAWRoCTR5yzRhf7LpXi6XdwnuNwJ2k+PUikfew6XB
-   swC1lygTI7ZUxM8T8UvglWNCm1NOt7V3qo9EzJpNUjVzpUtpTdXX6DMo1
-   EmgVf5VCq5IDEkIxnIpT1sj2erCtdTfA2a09ssJLTPvxtNqLo/U84ZxDe
-   0qmnY8sOjvj9932iGkVq5AMkkriZD2kV1zxqPsOWMcqLMmoK3Pr2Xtlcr
-   KSRm8w/uZGLCRhzFV1ynJfjF6u2GrHhmT5NUA6zFbSXeKPkJ5FkkVDpmD
-   w==;
-X-CSE-ConnectionGUID: FtyN1Q9WSuaOSDqBCkwyuQ==
-X-CSE-MsgGUID: Hg4v5aCxRluMhWCtFtpUdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57730777"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="57730777"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:57:47 -0800
-X-CSE-ConnectionGUID: nXEU6dxwQte7N5t79NmDQg==
-X-CSE-MsgGUID: 5pa3RgP/SAGfmjHcRMASNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="113520739"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.21]) ([10.125.109.21])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 11:57:46 -0800
-Message-ID: <25b9d3f5-bfe8-48a9-b11b-819d19cfae1e@intel.com>
-Date: Fri, 14 Feb 2025 11:57:50 -0800
+	s=arc-20240116; t=1739563106; c=relaxed/simple;
+	bh=/gvLMjNcFaFz6dSz0rcCsU90lvPIvHm6x7oqcQQ33LE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rnMWNQ7Lg30ZSJ99jTuqa25zuk0+d+ZQPrmwwnKK0f1MUi361XlC+RMJQbOidNqAHvKUKVtX9Cz13bb3S/ko7ymJt3vYpORr6XSbtE7NOhsL7n+JpiAgoELHzIlzHuyheop74dmqRafwYlBEQkU0yOvWeoTpogGFFch8MtMxNh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-855635c9cfaso397375739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:58:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739563104; x=1740167904;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MDKODr4MuLZ3lyXb732mvfwv2AIo0qNyeX+9y10itI0=;
+        b=BIpziWaHz625L/9OTxtR61h+P9TkzJhCAIIeg4AzMy3EzPFJtWnAtDZcnu/RQdj13i
+         fMSjUdghyKH88IUP1FZy7v8Nl/5x5vgMDMwWMd8CubKlsnKhIOeWfsMdxpRwOSodhN6o
+         OCfGR2cVrsfdSac2IrvHJf7eiKl6NXS0eZ6qcYP5modlOX5NTuL9BkFZZtFrwvC1l6KN
+         TnPzeEN9kARk4cyyH8omkSkXHgpmYqzDdI5CgkxQvrcNV4K95bcIx7BtQCHoBnfYERv+
+         yZMHs6GUEAYQvuxu952bh4AiXnzQKcNG5bdK6cXZtSFBz/79KKz2eK1ghBf4dFrevl9P
+         JR6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXhgW9tXM0e6Vzur+RanM59BiMGOxIvaZ/liqZru0GqFvVKbFyhsTESXUb9qoTZAx36vACvf/Ap0bGuAOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz38lrUWSIDnS9Bn2DEoOwN6ahfv8xM2qE7LbFkPxFVIyO9ra46
+	BVYRGuFYQ7ITj5cAp6XfeqOb6wmXlQb7Xb69KzpCR+31j4/myxKEGAIUyZ7yFs71T32QQbOE4Sg
+	6zeCZOViEmcIA212zAyjNgyPgbHPSUxSFvBAQ+hD0g4Sh3glEYhrnWB0=
+X-Google-Smtp-Source: AGHT+IHPEHBkcThOnyMELL0sTNAQVybE1JUAN60KrS4NfXcaUpqP+6td3DDS5uFItpcG8I/oH6uW5Ggq//Z8vhI6nZlfZpZpk5BR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/1] x86/vmemmap: Add missing update of PML4 table / PML5
- table entry
-To: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, linux-kernel@vger.kernel.org
-Cc: osalvador@suse.de, 42.hyeyoo@gmail.com, byungchul@sk.com,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- akpm@linux-foundation.org, max.byungchul.park@sk.com,
- max.byungchul.park@gmail.com
-References: <20250214195151.168306-1-gwan-gyeong.mun@intel.com>
- <20250214195151.168306-2-gwan-gyeong.mun@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250214195151.168306-2-gwan-gyeong.mun@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c8c:b0:3d0:21aa:a756 with SMTP id
+ e9e14a558f8ab-3d2807aba07mr6590265ab.5.1739563103999; Fri, 14 Feb 2025
+ 11:58:23 -0800 (PST)
+Date: Fri, 14 Feb 2025 11:58:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67afa05f.050a0220.21dd3.0050.GAE@google.com>
+Subject: [syzbot] [udf?] BUG: unable to handle kernel paging request in lookup_one_qstr_excl
+From: syzbot <syzbot+2d18bb4b8a11cab7ab13@syzkaller.appspotmail.com>
+To: anna@kernel.org, brauner@kernel.org, jack@suse.com, jack@suse.cz, 
+	linkinjeon@kernel.org, linux-cifs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, neilb@suse.de, senozhatsky@chromium.org, 
+	sfrench@samba.org, syzkaller-bugs@googlegroups.com, tom@talpey.com, 
+	trondmy@kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/14/25 11:51, Gwan-gyeong Mun wrote:
-> when performing vmemmap populate, if the entry of the PML4 table/PML5 table
-> pointing to the target virtual address has never been updated, a page fault
-> occurs when the memset(start) called from the vmemmap_use_new_sub_pmd()
-> execution flow.
+Hello,
 
-"Page fault" meaning oops? Or something that we manage to handle and
-return from without oopsing?
+syzbot found the following issue on:
 
-> This fixes the problem of using the virtual address without updating the
-> entry in the PML4 table or PML5 table. But this is a temporary solution to
-> prevent page fault problems, and it requires improvement of the routine
-> that updates the missing entry in the PML4 table or PML5 table.
+HEAD commit:    7b7a883c7f4d Add linux-next specific files for 20250213
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=116913f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5fce2f4fd0c881e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=2d18bb4b8a11cab7ab13
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f8fbdf980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156913f8580000
 
-Can we please skip past the band-aid and go to the real fix?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f96ca702937a/disk-7b7a883c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/901577be06a5/vmlinux-7b7a883c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/61175f206a2f/bzImage-7b7a883c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/31908970193f/mount_0.gz
+
+The issue was bisected to:
+
+commit 22d9d5e93d0eaf7e8662602713b24e9b6171759f
+Author: NeilBrown <neilb@suse.de>
+Date:   Fri Feb 7 03:36:48 2025 +0000
+
+    VFS: add common error checks to lookup_one_qstr_excl()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114ba1a4580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=134ba1a4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=154ba1a4580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2d18bb4b8a11cab7ab13@syzkaller.appspotmail.com
+Fixes: 22d9d5e93d0e ("VFS: add common error checks to lookup_one_qstr_excl()")
+
+UDF-fs: error (device loop0): udf_read_tagged: tag checksum failed, block 99: 0x27 != 0x4d
+UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2022/11/22 14:59 (1000)
+UDF-fs: error (device loop0): udf_verify_fi: directory (ino 1376) has entry where CRC length (63772) does not match entry length (28)
+BUG: unable to handle page fault for address: ffffffffffffff8b
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD e93c067 P4D e93c067 PUD e93e067 PMD 0 
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5835 Comm: syz-executor196 Not tainted 6.14.0-rc2-next-20250213-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+RIP: 0010:__d_entry_type include/linux/dcache.h:416 [inline]
+RIP: 0010:d_is_miss include/linux/dcache.h:421 [inline]
+RIP: 0010:d_is_negative include/linux/dcache.h:467 [inline]
+RIP: 0010:lookup_one_qstr_excl+0x162/0x370 fs/namei.c:1696
+Code: d3 66 90 48 85 c0 0f 85 58 01 00 00 e8 17 dd 84 ff 4c 89 f0 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 57 01 00 00 bb 00 00 38 00 <41> 23 1e 44 89 fd 81 e5 00 00 02 00 89 de 09 ee 31 ff e8 27 e1 84
+RSP: 0018:ffffc90003f2fcb8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000380000 RCX: ffff888034c01e00
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000001
+RBP: ffff888074918164 R08: ffff88807ab8fe1b R09: 1ffff1100f571fc3
+R10: dffffc0000000000 R11: ffffed100f571fc4 R12: ffff88807ab8fd60
+R13: dffffc0000000000 R14: ffffffffffffff8b R15: 0000000000060000
+FS:  0000555565c15380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffff8b CR3: 00000000776ac000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ filename_create+0x282/0x480 fs/namei.c:4091
+ do_mkdirat+0xbd/0x3a0 fs/namei.c:4322
+ __do_sys_mkdir fs/namei.c:4350 [inline]
+ __se_sys_mkdir fs/namei.c:4348 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4348
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd68a577a57
+Code: ff ff 77 07 31 c0 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc24c81108 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd68a577a57
+RDX: 0000000000000000 RSI: 00000000000001ff RDI: 0000400000000080
+RBP: 0000400000000080 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc24c811a0 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+CR2: ffffffffffffff8b
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__d_entry_type include/linux/dcache.h:416 [inline]
+RIP: 0010:d_is_miss include/linux/dcache.h:421 [inline]
+RIP: 0010:d_is_negative include/linux/dcache.h:467 [inline]
+RIP: 0010:lookup_one_qstr_excl+0x162/0x370 fs/namei.c:1696
+Code: d3 66 90 48 85 c0 0f 85 58 01 00 00 e8 17 dd 84 ff 4c 89 f0 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 57 01 00 00 bb 00 00 38 00 <41> 23 1e 44 89 fd 81 e5 00 00 02 00 89 de 09 ee 31 ff e8 27 e1 84
+RSP: 0018:ffffc90003f2fcb8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000380000 RCX: ffff888034c01e00
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000001
+RBP: ffff888074918164 R08: ffff88807ab8fe1b R09: 1ffff1100f571fc3
+R10: dffffc0000000000 R11: ffffed100f571fc4 R12: ffff88807ab8fd60
+R13: dffffc0000000000 R14: ffffffffffffff8b R15: 0000000000060000
+FS:  0000555565c15380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffff8b CR3: 00000000776ac000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	d3 66 90             	shll   %cl,-0x70(%rsi)
+   3:	48 85 c0             	test   %rax,%rax
+   6:	0f 85 58 01 00 00    	jne    0x164
+   c:	e8 17 dd 84 ff       	call   0xff84dd28
+  11:	4c 89 f0             	mov    %r14,%rax
+  14:	48 c1 e8 03          	shr    $0x3,%rax
+  18:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax
+  1d:	84 c0                	test   %al,%al
+  1f:	0f 85 57 01 00 00    	jne    0x17c
+  25:	bb 00 00 38 00       	mov    $0x380000,%ebx
+* 2a:	41 23 1e             	and    (%r14),%ebx <-- trapping instruction
+  2d:	44 89 fd             	mov    %r15d,%ebp
+  30:	81 e5 00 00 02 00    	and    $0x20000,%ebp
+  36:	89 de                	mov    %ebx,%esi
+  38:	09 ee                	or     %ebp,%esi
+  3a:	31 ff                	xor    %edi,%edi
+  3c:	e8                   	.byte 0xe8
+  3d:	27                   	(bad)
+  3e:	e1 84                	loope  0xffffffc4
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
