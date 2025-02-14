@@ -1,126 +1,259 @@
-Return-Path: <linux-kernel+bounces-515050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE3AA35F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:31:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F74A35F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8453A690C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABE1170D63
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01302263F2E;
-	Fri, 14 Feb 2025 13:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE467264FA8;
+	Fri, 14 Feb 2025 13:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="st9u7nEo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ta8snyTf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YbWgqvHF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1F6263F29;
-	Fri, 14 Feb 2025 13:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739539633; cv=none; b=qhlCWiv8il26mVv04shed6GzJ/W/i5xYYG7GPL5AVpZyYGDeEcoBHSVGL85JD+B7a5WjvmHQbXolN6Dwugt4K0m4v+/VCKqeA2hNupI5UVqZcKfkfE/0fTvP7K38QuSv9ZHqDiUjBWTBo1CTe8tIgSXto7QPJeiHqz0vx2dcSy4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739539633; c=relaxed/simple;
-	bh=buO8lnZB5RS19yZ3QiNDAI3WoWc4MzzsGjX7y7m4+sA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AR2gRaz6Cr03IVzP7RjqL+Mv7fl/On46rm+B0t2Bd5ouAg0PZfI2Hc6Pfk1yifmlcIONHX62fekk7aoQqvH5JZxsd7nlmRywkHPzdXsO53GV3bYwOa8DpBTDVs1v9RflgeeXFw3OevhF1qi740vU/1IzknCAXADuinI5sqXmae8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=st9u7nEo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ta8snyTf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739539628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yv777d7cAi3pxmwo5xy/LqTWbb3/Dx76bz53TWLPkS4=;
-	b=st9u7nEojJzs+c8TtLH/WmuLSQzQ/FNo8A3hk2AXUBk1JfTEZw9+Uy4qg6WWUqCvLdWzF1
-	5qQWsTR/CjZgtOpJxy6RWV95K4lXvX2++jcqC7sd75Pamm3qY1Jhom0mVZOQDd8NHoF9zH
-	uSL6zbXILeWGCK6FEOnUwNqm7lPPSU6z5e4mv7TrVlqV6hsjGrvtFqehfyQCdRLTCuzbOr
-	hGJuPyyKjvl1T8AjhVyLxb2q1KPCGyTtlYuZGma+ALa5wfz7rB2Fqol8aftL8Eb+OzwpdS
-	jTiltO4CsWs+rzTrFsPm4vfmsnxqRn5Hd1bVdE1qegKZwaMkNxwe0b/U5eu98Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739539628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yv777d7cAi3pxmwo5xy/LqTWbb3/Dx76bz53TWLPkS4=;
-	b=ta8snyTf/hTfMo7mYLMF3tbyjajsmBpoBH9X35bQRcnaU8LbcC3ePmi5Ha1RQX4Apl5l72
-	jRGmzVsaobDq5mDg==
-Date: Fri, 14 Feb 2025 14:27:05 +0100
-Subject: [PATCH] kunit: qemu_configs: sparc: use Zilog console
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464C2264A9F;
+	Fri, 14 Feb 2025 13:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739539650; cv=fail; b=m9M6MFq0sR31nx0R01J9M0j4D04STcuT6io7j9hzHJix6QWa12obruGrk45afAZOiQNpdzfP3Y03O1djqBGILdmrrO5TsaJks7TXPMGTvyEQyWM0W1Sx0Hp0yiZpGRVdxqaTc2j+coRjJDXPzuPELZDEKXvdyrTjBw8a0escmZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739539650; c=relaxed/simple;
+	bh=VFsTr0IasthV3iycv9SPPlIkZO3q5+c3tSg+hKlxhss=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BLUgfMN1vsUBFTkSI6YvFumBzPXA2gnKEwyO/BFy2svs/nm0oRl0DbGiy1dCQ/0rrdqr8ESfNiODQ8W2I6HCwGMs+KBiLrgbJz/I3cs7tf5pBNNbc1Corfx1HBB9zn4hVNScXZwiTfzWuEtp9vZ7bgBWmMtLOyzGGivInTc4iTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YbWgqvHF; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739539648; x=1771075648;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VFsTr0IasthV3iycv9SPPlIkZO3q5+c3tSg+hKlxhss=;
+  b=YbWgqvHF/kNE4px3U67J5ENdfWvDpXB9tacGj0HqeRx5wIoj8wICPiHa
+   maq8GlcOm60Jb1Me54hkGLnOKixIkoU/ceMwRpK5TROenZsmiVMIIJYMl
+   IqXn/CZFf55Tg1iwA6seutRX5GeLq6qRlNR1fSfDk5bpj88TpLnqWFdjk
+   V18ukI7g8YvYaAqFn5WjS+44wPJnelz3ZkxoBbqIjiONmg4J5FnCtI19B
+   NckJlBIRDEyVNSnZp2kdvoHG/bz2+hrU45xzx08aomJJuKSn5hQtUDEXr
+   26JlhBz4lGBosc4J6yfTTsDS7qEK+TImAZd6cRFh7+OxcjZHhKdfn5eNq
+   Q==;
+X-CSE-ConnectionGUID: IzXmL4sNRIS1uaI2TbuQ7g==
+X-CSE-MsgGUID: mJYOIkInS0WNh3WdHWlTDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57694189"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="57694189"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 05:27:27 -0800
+X-CSE-ConnectionGUID: 5n7eCOM1Sl2n6+pbpn80Vg==
+X-CSE-MsgGUID: XL/7dnkLSyS5VEOS5bwArQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="113430897"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 05:27:27 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Fri, 14 Feb 2025 05:27:26 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Fri, 14 Feb 2025 05:27:26 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.42) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 14 Feb 2025 05:27:25 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gRswcRU7VyHFU26rj1yYfApr0pqFvluUeSYHkVfl1ADXpzS1gu2HIz2MFYWF8rgnnFZ4eiftwjlFthvHKy53ZY99J6ZQJb5sLvZg+2CrH1H3vcb59YohP6q6Vp1hOQEU+oEoWORhHHer88IUpcTdPArt+QWFSNJrQH7Nbu5K5M/rp0MCj2K2yiACjn8UfJQbqDKZlfbIMUFSFP7ec/VpUs14l3eS/i0/eSyxMP98t8a6Rwjff2sKZ1TxPWwjMn6LfOxgyAwnr2dyTdrlNiGAUqAN6OwlQhkqFCN4a5z3qaDcehticU8F7UdEOpFqEZoWaAOqfa+kZ61i3wFZ2TS8qA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uXjsbAwwehwbfK+wNmm8mMXoLJouiwkfgYUptQx1y7U=;
+ b=UfLiXD08+Irb/rr464TztrQydrmSCoZ80lLU7p6DjBlwHaEyJQN7Kv+NkHkJ5u2Z9Uqq4DqgUidW+ZYBLLgFPo92a8gQ1S8NWe9gntoSNtolquBqUUbReVJxi7WR4xKKqdZj6Uxy6sLqc/b97/vnGdCv30Xxolv+O+LuOIqT/CqUXLiltVdlYezSsxlk2EKPbB71sTIAE4+9RR8TotaNWcsqWwuQqdFovvtRtzM/+ivllcBcfvrCJsTwi12U+6CZJKmZU1HOGiG1+zq8djHnbhGzi2Wg+qOq0X1LTkYi3iFPsOoJJMc3qXVc8yX1gzSwOnsdC3OyV1/xxHkH5ytHiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6682.namprd11.prod.outlook.com (2603:10b6:510:1c5::7)
+ by CO1PR11MB5028.namprd11.prod.outlook.com (2603:10b6:303:9a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Fri, 14 Feb
+ 2025 13:27:22 +0000
+Received: from PH8PR11MB6682.namprd11.prod.outlook.com
+ ([fe80::cfa7:43ed:66:fd51]) by PH8PR11MB6682.namprd11.prod.outlook.com
+ ([fe80::cfa7:43ed:66:fd51%4]) with mapi id 15.20.8422.015; Fri, 14 Feb 2025
+ 13:27:22 +0000
+Message-ID: <d556d7be-e3c5-45c7-930b-386576f0e2d1@intel.com>
+Date: Fri, 14 Feb 2025 14:27:16 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: Remove redundant variable declaration in
+ __dev_change_flags()
+To: Breno Leitao <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Nicolas Dichtel
+	<nicolas.dichtel@6wind.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250214-old_flags-v1-1-29096b9399a9@debian.org>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <20250214-old_flags-v1-1-29096b9399a9@debian.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR10CA0112.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:28::41) To PH8PR11MB6682.namprd11.prod.outlook.com
+ (2603:10b6:510:1c5::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250214-kunit-qemu-sparc-console-v1-1-ba1dfdf8f0b1@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAKhEr2cC/x3MQQ6CMBBG4auQWTNJGVGIVyEuSPnVidpCRwxJw
- 91tWH6L9zIZksLoWmVK+KlpDAVNXZF/juEB1qmYxMnZSdPyaw365QWflW0ek2cfg8U3uDvBQ3q
- Z+ktHJZ8T7rod6+G273/Orfw7agAAAA==
-X-Change-ID: 20250214-kunit-qemu-sparc-console-73ece282d867
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739539626; l=1720;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=buO8lnZB5RS19yZ3QiNDAI3WoWc4MzzsGjX7y7m4+sA=;
- b=5ODErY8doHI/e8J6vud19fO6KexdNetfa/1SpPYrbfEC0Uzl7E739hZnvghY8rYKftpewi0bh
- 4fGI4uwu+tJBkMl2Y6Kqz7rlaX70zXv/l4vhdUxLoJMDkg0oZ7tscLr
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6682:EE_|CO1PR11MB5028:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5eb32d1-b9bf-4de6-d837-08dd4cfb4ffe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?R2cxMm9GOWVEN0RWZEpJSlpGTmpoVDU1MlJLY3FDQ2ZpelJHajViT2hzZlNT?=
+ =?utf-8?B?OStVc1ozNGJPOVR1ak1IVFBFejUwUzFtNmhxazFRS1d2NktWY1ZlSzQ5S2VJ?=
+ =?utf-8?B?ZkxOSFFtbldEU3lCM1NxeFc5elF6Q1JKS0NuWFlST1B3Y1N0bXZxN0F5ZkRy?=
+ =?utf-8?B?YUVYK3VRNVZab2RCN0lrSXRKZ2xyUEoxc0gxbFV4OGxRVWFDOUNwajI3VjZF?=
+ =?utf-8?B?K2I1WGVGcFpNOHkxekRrbDI4UzlFZFZEREdDZHN1SEtBTWpja1p0S3MxdCtY?=
+ =?utf-8?B?VSt6Z2ZISXk0cUNrc1FySXhFRExjaCtENEJmZHlTQWp1QWk3OUIzdy9SNDRr?=
+ =?utf-8?B?aDlseXhZMjJxWmhBOUp6SW12bjM4WVQxdm1IUVB1bFRVTDhpblNKbmVXVFVu?=
+ =?utf-8?B?NENhOGdmcGdhM1E4WEdtY1F5eTJYVHpSVlk0azgxKzNZdFdENWkwUTczSk9j?=
+ =?utf-8?B?OFhUQjFWdW03Rk90Q3R3OEk1amI0aC9Qdm96VG5KV1R3UUFsa29ZUEZzbDZQ?=
+ =?utf-8?B?U2ViMWJXR1NWVFRaeU12c3V3blpwRWNaK2luTlE5THo4RHlneThwM3NHQ09D?=
+ =?utf-8?B?bDQra25BK1dHSzRJcldoelQ4N1VSazg2L2creGMrTUNObGFyV1RQZUxkb2tj?=
+ =?utf-8?B?Rmx4Nzc5TkYyNmtnMjFqV1hFVUNqVTlKV2IweE8vT0owekJQRnVuTUFKM1p4?=
+ =?utf-8?B?UmxRU29SdFgreHVwVDMwRyswYUhPYTVEelBSWkZtTjFhbXFvWGw2cFNTYy9T?=
+ =?utf-8?B?STltaWRXQ3l3QWtleFJnRUUydFVsckR3aUl4ditld0ZuakxWMnRIekYvRXdp?=
+ =?utf-8?B?Wmoxb0xsYmRmZ2M5a05QU2RweEFHRmpMV1lwTmZYZDZaMTEvak04RlphaDBw?=
+ =?utf-8?B?a3YvVjAvRUd1Rk85RHRsakJyQ25hTEhqRi9ybmtuenN2VFVuRGNzMEw1aUMv?=
+ =?utf-8?B?SXlLdFg1YkNmQjJBWWQ1aUlUNVhjNDY2YllpSXFQbko4Vk1zTFlJMElLdW02?=
+ =?utf-8?B?b2tsUmxuVzNCMGRMOWNSaSt4V2pCTndBTjRpdWZleVR0U2NZYklSSUlEdHZs?=
+ =?utf-8?B?eEwxcVduSmNiMld1QyttTkFCZ2Z2QkhCWFljaHErcklLd2pHYnAyc1B1c0R6?=
+ =?utf-8?B?V1R2aGRzYmEzYWUxU1cyQTROL0pMNnpIZlpLd014QWNnRlF5MThmcDM3TXdX?=
+ =?utf-8?B?Y1U2RHBIL0d4STBPWFpCMUJRaldSSGswNHordUc3Z202NVF0OTlpRmthc3Iy?=
+ =?utf-8?B?TVVFR1hQbW5iR2UxVGVlSnVJdmdjVy9pUjc4QThheldmYjlxdHk3R216QTZ4?=
+ =?utf-8?B?U1ZZN2FRQXFQQWd2bG1lV1pOY2dHR25ZeitKVEhEQVFzYVJSWDNlUEl4a09H?=
+ =?utf-8?B?VlFlVktsZy95aDYxRDllYzVhS2NXWEordERPZENZQlVpck5GWmdYdGlmVjhi?=
+ =?utf-8?B?dmxsVE5FUHNrOHI4SVlkZ2RPKzVnL0ZIeExDa1BxR3VmdFhqN2R0MWEwM2tC?=
+ =?utf-8?B?TG1ia2x5dmxkb2dQSjlJWERqNEVBVjN6WXRhZ2VsUWZLTXNoLzI0UE1tL2pw?=
+ =?utf-8?B?T3Rpd0ZqZEdseHpYZkxkbFpuVFI2RFJ6d2RnMGdOU0loNkhYWlc3TENnbG5D?=
+ =?utf-8?B?Q0dic0ZiaUo5dTlKZHUzNUZKL1hxZ25saWJVcmtzd08rWldIb3lzckFzMlZn?=
+ =?utf-8?B?UGx0Ukk3UGtDYzk0WDZvNFBKMXV4RkFlZURDcUNDdzlQdFZQeEkxc0lXY1hx?=
+ =?utf-8?B?ZkFwZ2MrVjlKNzAvSFE5QUVYR3M4SzlUNDJjSUs2OVNkOER0SlVWY3RDRUJj?=
+ =?utf-8?B?Qk9UL0NGQkRTQ1JySXo3ZVJvRGtuRUx4OEM1TEVWbXF5d3d0QjQ3UUxWd3BY?=
+ =?utf-8?Q?TIHvpiGYDpZ4i?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6682.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T1hqUi9zNmI4TTlRUnd0a3FHQjViNzU0QUo5V25KM3Q2NjRXcmxYU041Uis1?=
+ =?utf-8?B?RDhEdzJ5NVZUZHBZNnJUd2tjNHk5c3g4OHBHS0wxY3oxelZZZVZmN1JsVjdZ?=
+ =?utf-8?B?TXFrUW0xMjN1TVNHS2FMbHFiaWkxYWNubjRSakNwYytWNVUxZlZTV1VBMlFi?=
+ =?utf-8?B?bWc1VlF4cnArRjFZNitRZEhqWE9UTXdNMWJqWmNiaGl0R3BaQ2pHUDJZcDgv?=
+ =?utf-8?B?UmZ4TVRWZ080T0lrOFRJd0g0RnVKVEUwMkdIQmZBNHJwZ1FHZnBxR2FNSUtN?=
+ =?utf-8?B?ZGdLbEZyVWxPbGtmK0RjcWdHclJxUW8xcVBVLzJpdGVNTlhqckt0bmRTMHBE?=
+ =?utf-8?B?d0lvVzI3UGR3SjV3cVBnZ29jRUZ1eXhlUVhuMWJ5aHM0dTJaTmk0TXBWcUNP?=
+ =?utf-8?B?Nk1hTUdkSHJBSldoTHo4RndvU3c1Sy9LaU1Tb1p4KzJETE44RWJ0dTZXcGdt?=
+ =?utf-8?B?NHg2aTh0MVFEdmxRTXRDeWRSY3ZqR01Xb3p5MFREazM3aUlWY2tNSmlyV1ll?=
+ =?utf-8?B?a2FlaUJOZ3JtVkJZdzJPeW1KcmtQSkNwSkgySUdMYm5DYk8yWWZhd0ZYKzVp?=
+ =?utf-8?B?elBGZS8wRVhvY1RaWW9JZE1Gc1A2akhvZWZhcmxjZFE4dWNxMXYzOHFiSWlX?=
+ =?utf-8?B?bG82eUJPazZVeWRBYzRlMU1YNXdBemp2MzJNN1J3YzRkT2tnQlpBRW5OQm8r?=
+ =?utf-8?B?cEZySVA2VHJScU94dWFPYTQxNDRGZEdtRDlxM1o4OHF3bGljL3kwa3pWcmJq?=
+ =?utf-8?B?Z21waDY2dHR2U1lDajdiNnJQMmZHQUVTUThUZFNXR0dZVWhRU0swY0RCQk1i?=
+ =?utf-8?B?eXpmSEVWN2FJYXJnTzdNTGEwQ2p6U2dQZ05uaW5yYUVuWDVNLzl1WER3T28y?=
+ =?utf-8?B?ZXd2Y3JURU1LRk9KclprOGF6SEFDZEZ0ZkRnUkIxbnlNMGx2eFA0ZThndUlG?=
+ =?utf-8?B?cWJNb3JkZWd2eFZoa21Oc05sUllTUjl3T0VIYVRiTFlMMWRYSHJqcHlpSnpi?=
+ =?utf-8?B?UkcvTU44S01sNGhlY1djcG1PSjBJWGVRemZOQkpyV2hxQzhQR0lacFlwQzYr?=
+ =?utf-8?B?eHF3WGpwSWx5TzRCN1NHbHh0SE1WY0RTaWx0aDRiWnZrUFhZVDVxNVBIOUl2?=
+ =?utf-8?B?WDJYSEw5d2RacW4rckJKSG82WjFaN0dMT1kwN3VZK294aFRtZWJ6NCtBSlZi?=
+ =?utf-8?B?OHJnVGJpU2NhcWpteGFyL25oMUJ6bnJ2RWhOV1lpTks2WllZdnVrajFlOXFE?=
+ =?utf-8?B?OGh6MldTU0xqZzVjbm40ZGNXb2s1Tm0zNWplb3gyQUNSY1pXaW9KNHpiaVdB?=
+ =?utf-8?B?dlRmcGkzZTRIVFlsUkVQNU84R2xEYUkzVHVnb1Q1MzNmVWhiSTJ1VmZjbVhN?=
+ =?utf-8?B?cG5uTVVaU0pFQUFCbkFQR1JuRm9CMWNmdWJZNmdlRUdDdDlLV0l5YlBZNDU5?=
+ =?utf-8?B?ZFMrdFRuYXhYelI3Q0dvaFBzMC90SWZIRmQyOFpVTXZwdEpyekNXT2hwall6?=
+ =?utf-8?B?Wmszbm5HYWt2TUp2ai9BNTBPZzVSZGpQOEc0VG5jV2c4SEdaR2JsV3pTNmFB?=
+ =?utf-8?B?cUt3c2tvWHFVelJrMC9nSkVmTWFPcFVxOGptK3U3NCtZQ2N5ZFA1ZXRIODFr?=
+ =?utf-8?B?YUMyZmI5WlZBVHBwVklENzR0S0NmSTh6Vzh0UVBvbThYZjJYZzg0VmlkS2JG?=
+ =?utf-8?B?NlRualUvRXA2VXoyeHRoaXJOUWplbjZMVTNWRHBQQXpndENvRFFvNk9hQS9K?=
+ =?utf-8?B?TUh2eEdUbVl4ckN5ZjBwS2s0ZUdQYUlWbkpEMDcwOFBpTWxqVDFHYW5tSEpC?=
+ =?utf-8?B?S1BaSldUaVBLcVAyUm5YTkVKUDNaVHk4b1lGU2RybDlSUFQ5ZXJpaTJiWjhp?=
+ =?utf-8?B?Y3o2clZ4Mm9KREV1Z25LaFlrNXJyWUJPeTRQMWpiUWFWYy83enBrdmlwa1I0?=
+ =?utf-8?B?WmNXd0JyelMxWW9DZEZaY09DSkNpbmlSNzQ2dmN0OVFqWEJMMjZsNFhxZzFX?=
+ =?utf-8?B?Q0dlMitIMEp4VlRSdzVtYWo0NC9HUG5ldnN2QUdTRWZKMG85eEpIbER0Nk94?=
+ =?utf-8?B?Z2VCQzZ2QkVHaVRVTmtUdWduVlpDanJWaVAvVlhNV3ErTkQxWnRpS0Z4WDFr?=
+ =?utf-8?B?cG1WNEF0TkhSSkMzNmZKODJRcS9JYnAvRDMxRXFtSUtJOVZRYUdZYnpwNTBn?=
+ =?utf-8?B?T0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5eb32d1-b9bf-4de6-d837-08dd4cfb4ffe
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6682.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 13:27:22.1906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m0yxACEnWWSmYeS/HleemNGKjvSLDuno0VnfO3RAKcq5emcBYeewFcWd3b/3aWxUwC3KGe510sWnAIidS35QwqnS1Z0wV1jRxPwvA9vm0d0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5028
+X-OriginatorOrg: intel.com
 
-The driver for the 8250 console is not used, as no port is found.
-Instead the prom0 bootconsole is used the whole time.
-The prom driver translates '\n' to '\r\n' before handing of the message
-off to the firmware. The firmware performs the same translation again.
-In the final output produced by QEMU each line ends with '\r\r\n'.
-This breaks the kunit parser, which can only handle '\r\n' and '\n'.
 
-Use the Zilog console instead. It works correctly, is the one documented
-by the QEMU manual and also saves a bit of codesize:
-Before=4051011, After=4023326, chg -0.68%
 
-Observed on QEMU 9.2.0.
+On 2/14/2025 1:47 PM, Breno Leitao wrote:
+> The old_flags variable is declared twice in __dev_change_flags(),
+> causing a shadow variable warning. This patch fixes the issue by
+> removing the redundant declaration, reusing the existing old_flags
+> variable instead.
+> 
+> 	net/core/dev.c:9225:16: warning: declaration shadows a local variable [-Wshadow]
+> 	9225 |                 unsigned int old_flags = dev->flags;
+> 	|                              ^
+> 	net/core/dev.c:9185:15: note: previous declaration is here
+> 	9185 |         unsigned int old_flags = dev->flags;
+> 	|                      ^
+> 	1 warning generated.
+> 
+> This change has no functional impact on the code, as the inner variable
+> does not affect the outer one. The fix simply eliminates the unnecessary
+> declaration and resolves the warning.
+> 
+> Fixes: 991fb3f74c142e ("dev: always advertise rx_flags changes via netlink")
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>   net/core/dev.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index d5ab9a4b318ea4926c200ef20dae01eaafa18c6b..cd2474a138201e6ee86acf39ca425d57d8d2e9b4 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -9182,7 +9182,7 @@ int __dev_change_flags(struct net_device *dev, unsigned int flags,
+>   
+>   	if ((flags ^ dev->gflags) & IFF_PROMISC) {
+>   		int inc = (flags & IFF_PROMISC) ? 1 : -1;
+> -		unsigned int old_flags = dev->flags;
+> +		old_flags = dev->flags;
+>   
+>   		dev->gflags ^= IFF_PROMISC;
+>   
+> 
+> ---
+> base-commit: 7a7e0197133d18cfd9931e7d3a842d0f5730223f
+> change-id: 20250214-old_flags-528fe052471c
+> 
+> Best regards,
 
-Fixes: 87c9c1631788 ("kunit: tool: add support for QEMU")
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/kunit/qemu_configs/sparc.py | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Good change but it has to be tagged to net and not net-next. Please
+resend but add also my RB tag, thanks.
 
-diff --git a/tools/testing/kunit/qemu_configs/sparc.py b/tools/testing/kunit/qemu_configs/sparc.py
-index e975c4331a7c2a74f8ade61c3f31ff0d37314545..256d9573b44646533d1a6f768976628adc87921e 100644
---- a/tools/testing/kunit/qemu_configs/sparc.py
-+++ b/tools/testing/kunit/qemu_configs/sparc.py
-@@ -2,8 +2,9 @@ from ..qemu_config import QemuArchParams
- 
- QEMU_ARCH = QemuArchParams(linux_arch='sparc',
- 			   kconfig='''
--CONFIG_SERIAL_8250=y
--CONFIG_SERIAL_8250_CONSOLE=y''',
-+CONFIG_SERIAL_SUNZILOG=y
-+CONFIG_SERIAL_SUNZILOG_CONSOLE=y
-+''',
- 			   qemu_arch='sparc',
- 			   kernel_path='arch/sparc/boot/zImage',
- 			   kernel_command_line='console=ttyS0 mem=256M',
-
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250214-kunit-qemu-sparc-console-73ece282d867
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 
 
