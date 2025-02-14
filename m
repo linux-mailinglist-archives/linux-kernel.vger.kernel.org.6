@@ -1,287 +1,265 @@
-Return-Path: <linux-kernel+bounces-515495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C99A3658D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:15:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC5BA36592
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7A0188B4A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8911893F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3112690C0;
-	Fri, 14 Feb 2025 18:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8438B2690FD;
+	Fri, 14 Feb 2025 18:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N3AdBg9k"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sdhGv/t7"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51547268C69
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 18:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739556855; cv=none; b=f0bBGQw2ZO0G2omKzz5yuZxRpvnlczN9HL/7foO6q8rwiAoFkH3xzFreyJrDErUeqUrgZ1IuqCe+kvvh6lvOmpBH8p9s3aRUSZkpeQgevJOpjGrnxLoMI5QWBhUD28M/x+asUgUaQB5Qp+KcUm2Ih6nOU7qxwUABzhd23Ukajj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739556855; c=relaxed/simple;
-	bh=wRhbDbrh395UUGXZpTO3l7QDv1uyYWYlG58Otf/Tu2w=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ncTXxW+yvLC4wdQ3wrlGZjjcFPOdozUpk0RSVPsJKqFoa2bMn3gnzajVLx9nspTq1NezhUBmm099TEclu0sqQxPGWGWqnBnQOmaMUimuCJXs9C5Xh0dKAhjd9o9t/lx2jK3nlRgQh/9OM0oAi0kg8PrbnW8OesDd9dnFb3q1jjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N3AdBg9k; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-439622e9113so16136675e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739556851; x=1740161651; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kM2Ovaxxrgq7wE5ezhQqwh/r8fPzqX2R4YTVCdFxQPY=;
-        b=N3AdBg9kSqHeN+QN9h9WFuUYeedF8QaxtgObZSS4wris+O/OLxk6GgLXVEbBqaRnFx
-         bkKT6nS4RR6Ix49EJNtADbq55psfaHhp0c9kYYJld0At4OUc/n1i5fc4DQcWg0CQ+pW9
-         IKMaTHVqYBmWGmu7IsdYvO1mtpsPMNimxRC6DB/fbJ6IcYlUc4GX3YfaLa9OwcPb1cFl
-         fhfCaT95vew4VLDuk9cwT1JlCfoCGsLUittPa3OQJSIPBu3E+wQcZfxnhQyXFnQB2qF3
-         B+G10Mop342fbjrDyQkcDm6elpZYmrAL4O1x4ddufCE9FQmo/wWCCt7+YUToJQmxtT7N
-         LSFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739556851; x=1740161651;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kM2Ovaxxrgq7wE5ezhQqwh/r8fPzqX2R4YTVCdFxQPY=;
-        b=LGHF+ldc92GbIEdZP1oT/Pi0LpYcjTHw+1oBI2hS3NJrXGUTEeGHTdxFoTjrr1Xdrj
-         Cu223tw3wwzIt8F3MqHjyJE3P+XAuArPBPLGsmZv0fb1qflmj/NlwGn4jACcoXVgEnNg
-         aH7yy602SytE4lNY2eBrlpEATXYI710p9setv4NLxxI37obPI3x/rJl7/An7hGDas6Lo
-         P2MHmzO+XyQQ0O+eu5CxpozNaoQSinvR8f/TKlBOaMEIWN16dbyrp4YbSfdiFpNNwd7a
-         yaSlDP8zO1yfkY5gFpnCvHSC6RespGib9gFzK9F4+3sUPiKKzsMufyHDkirCOSir28Hc
-         3cfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj0kUHpjCkBl3SRnCrKYZaaHrYxYjYGxFhVly2hZ/HTbwly5SOSZK9MXoyG7Ycy9mQHlVZsr/gfUdMxt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrxddCJKrSL0wqwTcKv3B36pchzvdm78UOPHwsKrbDJgTusJzf
-	pV7jxMGvN9hTTdH/D1n4xST99dYa8zVW1BwuAUXH8GMO5cCbr719OKQa7DfKECQ0QZvcOD4M/tq
-	luEpfsCQNig==
-X-Google-Smtp-Source: AGHT+IG48U3jLPPy8jsbIodS96OA4IQYGYtRES+t7y5quifE8e/WTqGxWQRdp+LiC0BV3+kDmbunyWp60rKipA==
-X-Received: from wmgg17.prod.google.com ([2002:a05:600d:11:b0:439:5fab:db0f])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3546:b0:439:419d:ae01 with SMTP id 5b1f17b1804b1-4396e6eda19mr3229325e9.10.1739556851656;
- Fri, 14 Feb 2025 10:14:11 -0800 (PST)
-Date: Fri, 14 Feb 2025 18:14:01 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F029F268C69;
+	Fri, 14 Feb 2025 18:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739556865; cv=fail; b=QUdgwFyUZW9yESvP0gxRd4hXuEBWJjRvXHDmEaE353nMLQC1fC+B2vIs5nvKL3zNUmbfVPV9HZW3vfrx2stndBC9ig/pNVjpdk06TH9twj19YvjTI9FXusecj/DF4l+QBTDvBE5fqj2gb9l/dbySvl4127DmJbhm3TpDgPyNAPs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739556865; c=relaxed/simple;
+	bh=Stm8KoDp9N4keSS96mrxoJEQptZHffMzeIMDIOhDBAc=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MI27tKMmex6c8EV5Qg4OeQvc4tv0BueQEQYyCraEDGP/SwikNZ0I04kXVhFHFb1ja9t2+58jV7xEMIqraFymFx0uQxhZonGp55ocnCXlF9ZT6yhca9LsxQBnNynFT9ts2tR3kyFT3/LEMzh3cMfaoCNAR9gtPn7dAdOux3LmU/w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sdhGv/t7; arc=fail smtp.client-ip=40.107.92.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SzhH/hrK7yDvWFN/cTpTbZBp5UV36Sa3n4ht6fOxGr4AMIl/FKlgvRMTM800HJTtzRhtVKtudf7wrTtd80iJr+4wWqnm8WdD0/FarMlEii2QJcJQCE9/bi72BHh6t0T1x6BtFtNGCr2ED/FOpFiP5SuARv9UjUBSyw9kr4++JSb3ZE8LIAGk5+Ei0ZZdlm34FU7hTAeZq59eN1y66aByP9R/sshkmgmWW2pFqreNBTsOYX6ETCmcRPNlKJZkq94stFndEjMocopdGBOV6sjFR5pS3jTdDlfrQC2HSHCPOxuiiKev938iIuzH+8MlDgr6AbR1Uj7nzD9sHcqDeTHeHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DBuXNLYS12lfAS6YZu8EPKIr13iWXkxNTk6eG58nJi8=;
+ b=VApoNBD/lYUh42VRtU79w4Hq9aNazJPLbVeOT86uSp0ULJAVTozsnHTfk3wq0vVVKj5VBrZrp7GSDBpFdOc1VTxZ7oR3ji0CgzjT+svOE1rtCEM+0hVy+TV0SxnfQbBeayGudPK+0JCV1yKctFpBAT5xSvKoQMBhSORZTmE+borCo0/8xxNiZT4wV1A7FSHZwun2CwWYc1v7PbKh4tDZrubFMBbfVXUmBOc0rU0htdLjRcp+HeRFW9eBCbC5l1hZ07Owt66oUcORtsIfEFLjolJe6YMXmCepPeJ67UHAi4i7z5HREKLCyJyzh3cPqoulQxKne0H752zfnbFveb9klQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DBuXNLYS12lfAS6YZu8EPKIr13iWXkxNTk6eG58nJi8=;
+ b=sdhGv/t7BLq/aFR3uTC013P8IQG3mbWcV+8OCP22we6ovDMqUTcq2s/xn1iOHxUK9i7E/v6lyENzXuEvGiOHNeZZFoepIGzjahSvrzbmett8wW5+9PpOqu7XVTbDJCTsNRuDGPOrEkVeI7DEbmiSY/cdKVEF1T/HFtSQwkJK6EY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7093.namprd12.prod.outlook.com (2603:10b6:510:21d::14)
+ by MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Fri, 14 Feb
+ 2025 18:14:21 +0000
+Received: from PH0PR12MB7093.namprd12.prod.outlook.com
+ ([fe80::ebda:ae6f:3e32:2f7f]) by PH0PR12MB7093.namprd12.prod.outlook.com
+ ([fe80::ebda:ae6f:3e32:2f7f%4]) with mapi id 15.20.8445.017; Fri, 14 Feb 2025
+ 18:14:21 +0000
+Message-ID: <e3136d20-977a-4e2d-ad7b-c04be1dca1db@amd.com>
+Date: Fri, 14 Feb 2025 12:14:19 -0600
+User-Agent: Mozilla Thunderbird
+From: Pratik Rajesh Sampat <prsampat@amd.com>
+Subject: Re: [PATCH v6 9/9] KVM: selftests: Add a basic SEV-SNP smoke test
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ shuah@kernel.org, pgonda@google.com, ashish.kalra@amd.com, nikunj@amd.com,
+ pankaj.gupta@amd.com, michael.roth@amd.com, sraithal@amd.com
+References: <20250203223205.36121-1-prsampat@amd.com>
+ <20250203223205.36121-10-prsampat@amd.com> <Z6wIDsbjt2ZaiX0I@google.com>
+Content-Language: en-US
+In-Reply-To: <Z6wIDsbjt2ZaiX0I@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P220CA0016.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::21) To PH0PR12MB7093.namprd12.prod.outlook.com
+ (2603:10b6:510:21d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAOiHr2cC/x3MQQqAIBBA0avIrBNUJpCuEi3ExhoQC40oxLsnL
- d/i/wqFMlOBSVTIdHPhI3XoQYDfXdpI8toNRplRGY3SR5c5vLJc5KIMBtFahai9ht6cmQI//29 eWvsAgAjIYl8AAAA=
-X-Change-Id: 20250214-clarify-steal-f244880441c1
-X-Mailer: b4 0.15-dev
-Message-ID: <20250214-clarify-steal-v1-1-79dc5adf1b79@google.com>
-Subject: [PATCH] mm/page_alloc: Clarify some migratetype fallback code
-From: Brendan Jackman <jackmanb@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>, 
-	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7093:EE_|MN2PR12MB4192:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ed21f52-e2dd-4df4-c5ef-08dd4d236775
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VzZIYUovSmZOUmkvTzQ0YmlDU1BGK2NHcXNZWm9wT2FVTkdRcUpwdzU1SVRS?=
+ =?utf-8?B?cjhBK25ybTdlLzJWaklBWnVwRjduVUFmZ1cyNG5QemNLVEtpNnMxUHB2SDFo?=
+ =?utf-8?B?S28wZmkxT1pWc2NQaHorQSticzJFb0NxMExuaXpMRWNpQkswbmloMy9OazJV?=
+ =?utf-8?B?SnZzQ0NORTN3SjZtMlc1RlRsdk5GbzdldDFPYXErK3dhNjlZUDgxc1luYlpj?=
+ =?utf-8?B?VFU0Tk8vc2tQTE90RTFuUTNjVlpUTnJZeEtwWnlMVSthZ2dkVll6NExBcXlL?=
+ =?utf-8?B?ZDhjN01QeW53MUdjVGRvVnh6T29rTWJwZE5DTXFwNXpHS0FiUWM5czgvVmtX?=
+ =?utf-8?B?V3k2Rkc4QzBWWkF6cHFzbzN1dDZKQ0FpTm0zNDhTZ29zY1lqdEphSHluRlYv?=
+ =?utf-8?B?L2NsM1hRY0FPMGJyNFdTRW12cDNLeS9STGhIL2tqYlE1T1NlcmN4bWVRdEo5?=
+ =?utf-8?B?UG55OHZTNU1FSWNvSlY0N2M3dGZkcjlReTIyMnRNanZVOFFpWFJleTd6cWtl?=
+ =?utf-8?B?SG9XWDMraVkwZFhJcDFPSHd3UStkZDZpaGhJdHE1R0VSejNYajlqcEFqS1VJ?=
+ =?utf-8?B?WVN1SmNnYUZsZ0Z1d0lKc2VGdy9NMitobENpSmZrQnBKdDc1ajRvd3AwT3Iy?=
+ =?utf-8?B?Qjk5RWtxYjh0dXBwY1pXUnBNV29pajlsT3Z3QjVMbjUzcHN5cmdCUi9Ob3JV?=
+ =?utf-8?B?czMySG1iUGhZY1NCdXFrY3VJdVFGdWloK0wwbkFCbEkwR2lBMTF3NWVxWEo5?=
+ =?utf-8?B?Z0Y3elRoOC9LaElObDYzVSt4UlNhd1B5aXA3MTRrS1Z1RCtmaWQ3UGJ4KzlB?=
+ =?utf-8?B?UThtL3E3RUdTdjlrUHdEVFV5WmVZYS8yZU56cXEzeUw4elVnQWcyTmoxbjFX?=
+ =?utf-8?B?eW9Hcy8rRkRUUTJqMkVSVHhVUUVOVU5ZV0EwVmZwMWx1VEpVK3U2TVY4RXhK?=
+ =?utf-8?B?ZmlUUnZkbjNVY2xWRzBwRjg5ZktWejNuUUFkSnpnUkVSZ1dabG5TcU1YMExF?=
+ =?utf-8?B?aGl6dUlVU3lXTnNJZUlZK0svc0QrWEhNeWl0b0dzVEIrSC9oWHhDMWdSMWUz?=
+ =?utf-8?B?UkJkQW5aRDd1T3RFaVltSExPYVNNM0hhK2o5N1l2c3R3b2FQN2NWZUYvSzRs?=
+ =?utf-8?B?NjFYNlVWak5FTFFodTR3UG54UlFLK0pzVGZqQVdzMzM3RFQwUU9LMWVRVXVL?=
+ =?utf-8?B?WEZod1FRRUpCWWQ3T2Rnb2d6SkVjOENhMThKUWpHc3Z3eUR5OWpFbG9tM2Zn?=
+ =?utf-8?B?cVFmSVBscGJZYzd3a09SVTFCQ1JFUU9wL2xFM0ZxVGs2K1M5MXpXZmdReWlU?=
+ =?utf-8?B?U3JSRk11MWJQWkgwQTRNZ1BDSVgrM0ZtT2M5azBXMllvQUtvZm9wLysxU1FZ?=
+ =?utf-8?B?OG5ia2M5OWF1R3ltTlc0QUVSS21zdEtaTC9RQ2tPOE1mL0s5Y0p6aUZYUHk4?=
+ =?utf-8?B?L0Ixakcxc1lFYzhzMnFKN1MwRVUzUFdZTjFBb0xiYVFPb2Y5dzBDb2prcmg3?=
+ =?utf-8?B?RVNyUTVlSW90T2RaVHp4bzBYK0VZcml0YnhSTThRVXkzdFNDR09VeGxhYloz?=
+ =?utf-8?B?UmZJeHFZUmlkSE5LVVV1UG5wM0xiREJ0aSs3dDFRL0JKWlo0UW1Ec0g4b2Jr?=
+ =?utf-8?B?djBNc2l1WnpCSFJZYkZmUE41WnVDcTZRcDB0VFMxTzJrN09Mc3A4L0RrSFZP?=
+ =?utf-8?B?YzlNcDVrc3RDbktjeGtKQzRNVjdqMzUrM25qa0l1akw4aEthV1J4TWNIL3dn?=
+ =?utf-8?B?Vy9tTG1kSEtpaDFEbzJhUHRLMGd0eEpBcnNNMHY3SVN6WkpxbEgxYnE4QUdB?=
+ =?utf-8?B?RkJTV3Z1QWFmM29XbGkzbjBPalJybkxSVURDV3g2dDBWNms4dFkvRU1UbnRK?=
+ =?utf-8?Q?D1JseH5E3hsqY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7093.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WXhYV1FXSkZvWWlKQjhvcUhsSFBZMWhDYklPZHBhejgxQmNKbk4vTHd5TCtS?=
+ =?utf-8?B?YXFwQWh3cVJobEk1YVgrcHowVGluZy85eWc0OU84RXVtTXJYZG1yR2djdS9u?=
+ =?utf-8?B?UW93VUxtSFNBTm55ZmdTZ1d5ZWFKencza3lFOENYempPSEQyK1FaM1VXMDdW?=
+ =?utf-8?B?dVBqKzNCbTB5YVdpV0tINHo1SU14UlJQUHVZbWNNTXhDQVgyZEd5anFqcldO?=
+ =?utf-8?B?THJBR05NMlJPYzYzZnFzMXVwSlJPS0M5bmkySkdpdDhGRnEvaEFxOURZQmhY?=
+ =?utf-8?B?NUxHVjg3SmVMMDZXNjk1WS80eC9qa2swV2NuK2p0K0poZ09WclY0bWd5VGFV?=
+ =?utf-8?B?Q3IvcDMzUXZwb3NodDN2SGxoeldQNGEycmlEYmZNRmZHQ2JQek4xR0pzWXlo?=
+ =?utf-8?B?cDZOMGt4b1g2U2NWQ0szZmFxUjJxemdVNlBXSFRCTEtCMUZ3NDhNa2JyTjJv?=
+ =?utf-8?B?cTNMU3NtYXB2RlBqdXF0R0VOcVlIWnhYOEdiRWdLSHFqUTR4Y1paNEdqbGpI?=
+ =?utf-8?B?YlVOZWRJeDhaUFdqdjBpRGtZanRIVzFxNUhFa0tXMnRnZFpvRDF1dlI1U1A3?=
+ =?utf-8?B?SDVyVHM2cSs3bXJjdHBXTXBuMVZUeTAwTjlDcFkxbmJIcC96OWhXRittVEJD?=
+ =?utf-8?B?TWFSc29UOGFUSDJ5VTlMUnBXQnkvZjA2cDF1dHA5M1ptNVdsQ1VKTHE1QS90?=
+ =?utf-8?B?VzUyYnZCR2s4aHR1b2NSUEZESWttRjVRUjloT080ZlI1M1Z4VStxRWQ2TmlB?=
+ =?utf-8?B?amcxSmxNbWQ5MS81VmE0YTBSalhCQ1lEY213cTNvL2s3VEdLU3lkekF4bWl2?=
+ =?utf-8?B?TUJHaExvRjV3N0lBZmlLMlZYb252eU9XMFpENGNEdU5yYnRHcUs3UkdVQkZx?=
+ =?utf-8?B?eTJuUkZxRXZhUGdDa000Tkg5V2JJQkJYbFJPOTdhYkNyeWtnb1ptWnlKQTVF?=
+ =?utf-8?B?SXVrOWViM3plM0psUzh0SGs2VDRMQ3NmMzA2cjhpclBPT1l6aDhhdlBRaTlD?=
+ =?utf-8?B?TG5Ob0ttZFRWZ21kSWcwUWdJdHd3YXhNalViemxJUEJBbnpwNGh2VENhN3pD?=
+ =?utf-8?B?d3lkMSsxelptaU9FK1oxLzUxNVY2aEN0NzN4Y1cva2F2WXRoelRyb1pvOURB?=
+ =?utf-8?B?QWpiakFRM29GQlhTaXQzS1dDOURhZCt0VjRrNzlYV0w0Z2pkZnJTaGxZaG9N?=
+ =?utf-8?B?MGM4MzlKRFk4OGt4NEk2Z0x1c1M5VlBtUjJnUTJZQy81QXppQXhPVlVNczEw?=
+ =?utf-8?B?N2EzNVNHSWNmTkpnNXpKMk5NR3habUR6aXRXUDkzUHFHYXBHandkVlhSWkFV?=
+ =?utf-8?B?eGVORjRjdVFqTHR1NVBvbGNYUC9ublNKUTVKdEcvWjlBMzZtTzdwakNLUytr?=
+ =?utf-8?B?Y2M5QS9pbkk0Vm43Um9sWVhaUXZWZjhkTUY1cFZoMGdoSEFLdzVUK2lUL2JW?=
+ =?utf-8?B?Qi9mb0pSNTFKcFRYVVZDMFZzL3ZUczBkM3RnZ2hXRGpyUlp5d0tXUkpScTlx?=
+ =?utf-8?B?R1BSTUdiMHJmdmk5eW5QTmw3cTJxM0krZzNKWHFaZDhDc2xLR0wxQXVleSt1?=
+ =?utf-8?B?RmZrcUMyM1R4bXZIOS9MODZ2WHBpWFZNY2JQYVFIRE1rYkZ5WWRVMjhSSEk0?=
+ =?utf-8?B?ZVFJSXlDQkJaZHQ1Z3ZESEVNRk1wbC8yU3Vpb1hrWUl5NGdGTTNla0Ridk9C?=
+ =?utf-8?B?eVFEQ1o3dnVSMERYYUdCd3JCbmd2VG5UR0p4QjQrMkNOVUlUamc4S2YxWmhJ?=
+ =?utf-8?B?ekxOejh4NzduMEVUUS92SkU5TTBDL3RxaisvZ3l1UGNxM3J4UkpycVRQME81?=
+ =?utf-8?B?cTFzdS96TVFCeldiYUhENXpyUmRaMGFZTUpVUnBuMXRMdDV4OW9wcVVDU0R6?=
+ =?utf-8?B?b2RORGhoZ1FRcDJaTzZqcStzd1JiaytPUTFnTzc5Y3RBK3RzMjA2UDJRM0Ny?=
+ =?utf-8?B?Y0pUa1ptL0xCdExRcnNaRVZQdUNpRGJ1Z1hjMDRrLzRXQmRKaU9WWlNMVk8v?=
+ =?utf-8?B?c00yQkxXY0NaMVJVN3puNGUxekVjUHNNT0pHdUhEbTZ5bWlUak1qRFAxS0ov?=
+ =?utf-8?B?RSswNzBob05lMll1UkRQZW15bHN2TzZRWW1LYjJ4cTlOYytNSTJEOEcyamNs?=
+ =?utf-8?Q?ZTCkfU8z6S3sS6ADtpVgtjhY9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ed21f52-e2dd-4df4-c5ef-08dd4d236775
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7093.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 18:14:21.3444
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GRG2aXjPBRFe/PYrIOho/FyGzMEENF6zkfjuDlMdPCddffHdcAo0p4kyAqjosByn1mjL/oy2GKMzNxh15ZzQ0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4192
 
-This code is rather confusing because:
 
- 1. "Steal" is sometimes used to refer to the general concept of
-    allocating from a from a block of a fallback migratetype
-    (steal_suitable_fallback()) but sometimes it refers specifically to
-    converting a whole block's migratetype (can_steal_fallback()).
 
- 2. can_steal_fallback() sounds as though it's answering the question "am
-    I functionally permitted to allocate from that other type" but in
-    fact it is encoding a heuristic preference.
+On 2/11/25 8:31 PM, Sean Christopherson wrote:
+> On Mon, Feb 03, 2025, Pratik R. Sampat wrote:
+>> @@ -217,5 +244,20 @@ int main(int argc, char *argv[])
+>>  		}
+>>  	}
+>>  
+>> +	if (kvm_cpu_has(X86_FEATURE_SEV_SNP)) {
+>> +		uint64_t snp_policy = snp_default_policy();
+>> +
+>> +		test_snp(snp_policy);
+>> +		/* Test minimum firmware level */
+>> +		test_snp(snp_policy | SNP_FW_VER_MAJOR(SNP_MIN_API_MAJOR) |
+>> +			SNP_FW_VER_MINOR(SNP_MIN_API_MINOR));
+> 
+> Ah, this is where the firmware policy stuff is used.  Refresh me, can userspace
+> request _any_ major/minor as the min, and expect failure if the version isn't
+> supported?  If so, the test should iterate over the major/minor combinations that
+> are guaranteed to fail.  And if userspace can query the supported minor/major,
+> the test should iterate over all the happy versions too. 
+> 
 
- 3. The same piece of data has different names in different places:
-    can_steal vs whole_block. This reinforces point 2 because it looks
-    like the different names reflect a shift in intent from "am I
-    allowed to steal" to "do I want to steal", but no such shift exists.
+Yes, any policy greater than the min policy (defined in sev-dev.c)
+should be supported. The sad path tests were intended to be added in the
+upcoming negative test patch series so that we could have the proper
+infrastructure to handle and report failures.
 
-Fix 1. by avoiding the term "steal" in ambiguous contexts. This fixes
-3. automatically since the natural name for can_steal is whole_block.
+> Unless there's nothing interesting to test, I would move the major/minor stuff to
+> a separate patch.
 
-Fix 2. by using "should" instead of "can", and also rename its
-parameters and add some commentary to make it more explicit what they
-mean.
+Would you rather prefer I do the happy tests here (something like -
+min_policy and min_policy + 1?) and defer the failure tests for the
+next patchset? Or, I can remove policy testing from here entirely and
+introduce it only when the sad path testing infrastructure is ready, so
+that we can test this completely at once?
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- mm/compaction.c |  4 ++--
- mm/internal.h   |  2 +-
- mm/page_alloc.c | 42 ++++++++++++++++++++++--------------------
- 3 files changed, 25 insertions(+), 23 deletions(-)
+> 
+>> +
+>> +		test_snp_shutdown(snp_policy);
+>> +
+>> +		if (kvm_has_cap(KVM_CAP_XCRS) &&
+>> +		    (xgetbv(0) & kvm_cpu_supported_xcr0() & xf_mask) == xf_mask)
+>> +			test_sync_vmsa_snp(snp_policy);
+> 
+> This is all copy+paste from SEV-ES tests, minus SEV_POLICY_NO_DBG.  There's gotta
+> be a way to dedup this code.
+> 
+> Something like this?
+> 
+> static void needs_a_better_name(uint32_t type, uint64_t policy)
+> {
+> 	const u64 xf_mask = XFEATURE_MASK_X87_AVX;
+> 
+> 	test_sev(guest_sev_code, policy | SEV_POLICY_NO_DBG);
+> 	test_sev(guest_sev_code, policy);
+> 
+> 	if (type == KVM_X86_SEV_VM)
+> 		return;
+> 
+> 	test_sev_shutdown(policy);
+> 
+> 	if (kvm_has_cap(KVM_CAP_XCRS) &&
+> 	    (xgetbv(0) & kvm_cpu_supported_xcr0() & xf_mask) == xf_mask) {
+> 		test_sync_vmsa(policy);
+> 		test_sync_vmsa(policy | SEV_POLICY_NO_DBG);
+> 	}
+> }
+> 
+> int main(int argc, char *argv[])
+> {
+> 	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_SEV));
+> 
+> 	needs_a_better_name(KVM_X86_SEV_VM, 0);
+> 
+> 	if (kvm_cpu_has(X86_FEATURE_SEV_ES))
+> 		needs_a_better_name(KVM_X86_SEV_ES_VM, 0);
+> 
+> 	if (kvm_cpu_has(X86_FEATURE_SEV_SNP))
+> 		needs_a_better_name(KVM_X86_SEV_SNP_VM, 0);
+> 
+> 	return 0;
+> }
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 12ed8425fa175c5dec50bac3dddb13499abaaa11..8dccb2e388f128dd134ec6f24c924c118c9c93bb 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2332,7 +2332,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
- 	ret = COMPACT_NO_SUITABLE_PAGE;
- 	for (order = cc->order; order < NR_PAGE_ORDERS; order++) {
- 		struct free_area *area = &cc->zone->free_area[order];
--		bool can_steal;
-+		bool whole_block;
- 
- 		/* Job done if page is free of the right migratetype */
- 		if (!free_area_empty(area, migratetype))
-@@ -2349,7 +2349,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
- 		 * other migratetype buddy lists.
- 		 */
- 		if (find_suitable_fallback(area, order, migratetype,
--						true, &can_steal) != -1)
-+						true, &whole_block) != -1)
- 			/*
- 			 * Movable pages are OK in any pageblock. If we are
- 			 * stealing for a non-movable allocation, make sure
-diff --git a/mm/internal.h b/mm/internal.h
-index 109ef30fee11f8b399f6bac42eab078cd51e01a5..c22d2826fd8d8681c89bb783ed269cc9346b5d92 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -847,7 +847,7 @@ void init_cma_reserved_pageblock(struct page *page);
- #endif /* CONFIG_COMPACTION || CONFIG_CMA */
- 
- int find_suitable_fallback(struct free_area *area, unsigned int order,
--			int migratetype, bool only_stealable, bool *can_steal);
-+			int migratetype, bool need_whole_block, bool *whole_block);
- 
- static inline bool free_area_empty(struct free_area *area, int migratetype)
- {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 579789600a3c7bfb7b0d847d51af702a9d4b139a..75900f9b538eb0a241401af888643df850840436 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1832,12 +1832,12 @@ static void change_pageblock_range(struct page *pageblock_page,
-  *
-  * If we are stealing a relatively large buddy page, it is likely there will
-  * be more free pages in the pageblock, so try to steal them all. For
-- * reclaimable and unmovable allocations, we steal regardless of page size,
-- * as fragmentation caused by those allocations polluting movable pageblocks
-- * is worse than movable allocations stealing from unmovable and reclaimable
-- * pageblocks.
-+ * reclaimable and unmovable allocations, we steal the whole block regardless of
-+ * page size, as fragmentation caused by those allocations polluting movable
-+ * pageblocks is worse than movable allocations stealing from unmovable and
-+ * reclaimable pageblocks.
-  */
--static bool can_steal_fallback(unsigned int order, int start_mt)
-+static bool should_steal_whole_block(unsigned int order, int start_mt)
- {
- 	/*
- 	 * Leaving this order check is intended, although there is
-@@ -1855,7 +1855,7 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
- 	 * reclaimable pages that are closest to the request size.  After a
- 	 * while, memory compaction may occur to form large contiguous pages,
- 	 * and the next movable allocation may not need to steal.  Unmovable and
--	 * reclaimable allocations need to actually steal pages.
-+	 * reclaimable allocations need to actually steal the whole block.
- 	 */
- 	if (order >= pageblock_order / 2 ||
- 		start_mt == MIGRATE_RECLAIMABLE ||
-@@ -1948,7 +1948,7 @@ steal_suitable_fallback(struct zone *zone, struct page *page,
- 	if (boost_watermark(zone) && (alloc_flags & ALLOC_KSWAPD))
- 		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
- 
--	/* We are not allowed to try stealing from the whole block */
-+	/* No point in stealing from the whole block */
- 	if (!whole_block)
- 		goto single_page;
- 
-@@ -1995,12 +1995,14 @@ steal_suitable_fallback(struct zone *zone, struct page *page,
- 
- /*
-  * Check whether there is a suitable fallback freepage with requested order.
-- * If only_stealable is true, this function returns fallback_mt only if
-- * we can steal other freepages all together. This would help to reduce
-+ * Sets *whole_block to instruct the caller whether it should convert a whole
-+ * pageblock to the returned migratetype.
-+ * If need_whole_block is true, this function returns fallback_mt only if
-+ * we would do this whole-block stealing. This would help to reduce
-  * fragmentation due to mixed migratetype pages in one pageblock.
-  */
- int find_suitable_fallback(struct free_area *area, unsigned int order,
--			int migratetype, bool only_stealable, bool *can_steal)
-+			int migratetype, bool need_whole_block, bool *whole_block)
- {
- 	int i;
- 	int fallback_mt;
-@@ -2008,19 +2010,19 @@ int find_suitable_fallback(struct free_area *area, unsigned int order,
- 	if (area->nr_free == 0)
- 		return -1;
- 
--	*can_steal = false;
-+	*whole_block = false;
- 	for (i = 0; i < MIGRATE_PCPTYPES - 1 ; i++) {
- 		fallback_mt = fallbacks[migratetype][i];
- 		if (free_area_empty(area, fallback_mt))
- 			continue;
- 
--		if (can_steal_fallback(order, migratetype))
--			*can_steal = true;
-+		if (should_steal_whole_block(order, migratetype))
-+			*whole_block = true;
- 
--		if (!only_stealable)
-+		if (!need_whole_block)
- 			return fallback_mt;
- 
--		if (*can_steal)
-+		if (*whole_block)
- 			return fallback_mt;
- 	}
- 
-@@ -2190,7 +2192,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 	int min_order = order;
- 	struct page *page;
- 	int fallback_mt;
--	bool can_steal;
-+	bool whole_block;
- 
- 	/*
- 	 * Do not steal pages from freelists belonging to other pageblocks
-@@ -2209,7 +2211,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 				--current_order) {
- 		area = &(zone->free_area[current_order]);
- 		fallback_mt = find_suitable_fallback(area, current_order,
--				start_migratetype, false, &can_steal);
-+				start_migratetype, false, &whole_block);
- 		if (fallback_mt == -1)
- 			continue;
- 
-@@ -2221,7 +2223,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 		 * allocation falls back into a different pageblock than this
- 		 * one, it won't cause permanent fragmentation.
- 		 */
--		if (!can_steal && start_migratetype == MIGRATE_MOVABLE
-+		if (!whole_block && start_migratetype == MIGRATE_MOVABLE
- 					&& current_order > order)
- 			goto find_smallest;
- 
-@@ -2234,7 +2236,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
- 		area = &(zone->free_area[current_order]);
- 		fallback_mt = find_suitable_fallback(area, current_order,
--				start_migratetype, false, &can_steal);
-+				start_migratetype, false, &whole_block);
- 		if (fallback_mt != -1)
- 			break;
- 	}
-@@ -2250,7 +2252,7 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 
- 	/* take off list, maybe claim block, expand remainder */
- 	page = steal_suitable_fallback(zone, page, current_order, order,
--				       start_migratetype, alloc_flags, can_steal);
-+				       start_migratetype, alloc_flags, whole_block);
- 
- 	trace_mm_page_alloc_extfrag(page, order, current_order,
- 		start_migratetype, fallback_mt);
+Sure, I can definitely clean this up so that we have less duplication of
+code all around for this test.
 
----
-base-commit: 128c8f96eb8638c060cd3532dc394d046ce64fe1
-change-id: 20250214-clarify-steal-f244880441c1
-
-Best regards,
--- 
-Brendan Jackman <jackmanb@google.com>
-
+Thanks again!
+Pratik
 
