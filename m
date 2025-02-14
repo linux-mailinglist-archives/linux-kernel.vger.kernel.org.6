@@ -1,110 +1,210 @@
-Return-Path: <linux-kernel+bounces-515527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9402DA365E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:48:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51ADCA365E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:49:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A37D7A5347
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3991189553E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25041957FC;
-	Fri, 14 Feb 2025 18:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF91B193074;
+	Fri, 14 Feb 2025 18:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YasJWioE"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0HKoZQC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82E4134AB;
-	Fri, 14 Feb 2025 18:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAAD134AB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 18:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739558885; cv=none; b=FYG3hbrEWHsP7p8Em8sP+erzZebqwdGzHAQOlGCV6BITl0zRPlyIXjgBSvzlPSyLoUtaKFGOScCxvZSEm/idTzqwNIrFVLYI9O1QDpbf3bC4lBm2NFuE4jwC6u7fkB/IVfXMCR8hbic8XKJ5TyKqaWqFSEVlqNYPPJSDBB0SyPc=
+	t=1739558988; cv=none; b=JLu1/ASm2jERXf8qBGHlI1C5qmZ+3kC8ntXwfaGxn1rz95mBcvGC8jFCAwrjSZNIvKIu3ioTnTTs37QjiTOEsRf7ZVvmNJA83U5KNKpOWTkXwCKvCESJFGBuC+gd5lStReKd+3VCLV/FZzns4KiAnSWC/T1NJgkEYiu2Guoiec4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739558885; c=relaxed/simple;
-	bh=mbPXCYa0Euo1MoCU+SWGOw4OmTSsV7u/JIvOIPr+CKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cPvYpEOkkHJMdEovZ01EZVoMK8gpzCFNieUvuKnNXNcOUWo9mCx5xS3PQ5hbB9liKgCkwaOsVgv91ig1Hrc85+LO0BZW02cGYZ85S4sbq8RkAydicSye5hy92vi64xxeRS/9q+neV31Xah8coRJwkhbVIuZkIQD4ySyeHs8Fa04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YasJWioE; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so526211a91.0;
-        Fri, 14 Feb 2025 10:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739558883; x=1740163683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mbPXCYa0Euo1MoCU+SWGOw4OmTSsV7u/JIvOIPr+CKU=;
-        b=YasJWioElOE6Id9eXQUBxCUE5x8dcJ+EQMejVcyyNaQII29zfa70Pdj0me5pRPvWkr
-         +vrnQXgNUcj3bsWZkTGtcwV/pgIOLcq/cw/OYvxVm9KiLP9j8kEpJEOnTLj9JXvG+VAG
-         bmlntoyIB59SALEdHjN/KHNAWeIA5Dyu4CIAMGeTloL4iSqz9T8vVroaNxcPK+3nMZGB
-         tSkYy5sTWekABYQUFwF4Q2Y0szBPGkwHJi28bHs/VmVs4ABLd2eVs5juOK8VWsQNCHBz
-         3T4vrFunAlw79UZXgh8z8roT+w2fcfA7tefRSXNDmw4D05V51fHWQON2b+R4ENF3u2F3
-         Jm3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739558883; x=1740163683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mbPXCYa0Euo1MoCU+SWGOw4OmTSsV7u/JIvOIPr+CKU=;
-        b=PDTsGS6FXe4PPZPPfGtAlnToQVapDqn9M+F0Uu4MUpWPaGvM+gK1XWAq5eJUryaD42
-         yiRUB+fn0uNw2+vRx2f+xIho+Vzth1YX1NfLEocpvoMFjlg1Dj0+Vs8d89TsBI1Fr/mM
-         oQJbF2+wVBK4IvoUJiYc07AgZ7oigDzR4ixrJ/Ohkg9qibn4wAC7Ks2cvXBvURIvSo0v
-         xvS8vHcyKDiMhsimZ3sycIEr65gRrfg4rNblCiUXekWqhuta85Yto7CI2TObAGWHTolW
-         XooG1YUR5QMVRpHk/9JrWg3QbHgy3LnI3RLBJ9VBQHnt1FBenj4tptCxPJVbrh+SmIgu
-         GvZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzY6YlNCZpwq3xlLUKqEDIAG5FNtfp8UzwwllVhcmUnMaFbrl3NkZqnkZjo0TRdwFY9SG46/qiLds=@vger.kernel.org, AJvYcCWYgVKO4i3kixEKmWi75Ml26QrDuZn9KueaMZeZibjg9pQZcynlvBsql4v2xWmUbBHFcinDMn9bFe2vVmvZ@vger.kernel.org, AJvYcCWgdlqBf6JJ+bK7WjfyYEa43ycAwQ74w0nWO+DgVuJ5FVgw/HjksH3a010WdQvw6LvKY1bceUSzejeJBnWNlzA=@vger.kernel.org, AJvYcCXcLjeHPPmLPmTwN+wZ7dgtjgnkNRlBcFnZ6UAEJEBUmETVS28P9koBlC4HFiaXK+GzepeWDQz9l7npHoJL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd8JeePVQts9dH6aBdZeUWhkJfqRvu6t9/lvJaa9NpUjKn4Qa1
-	VAghqatIDfTKfeyR/Mp0RGYRVM5rSZp2FimVi/R+BuABt3DHfJtDl6+dpapFnRXzDC+sarV+R1L
-	n3Xq5qOjcYRuN8FwrgU72TTWUHjw=
-X-Gm-Gg: ASbGncs/eS3HdL9aqf4LHqcgd+AweX/KmwFIKFxyQDuQaYa8DYi8+fiFUxan7P/VPFJ
-	kEH7A+B0+JY38f/Y8suLaGznAqQikWLo6oKjXrJXa3kv8E6ILM5PvlCG/PNGPCwYbuMjmYO9W
-X-Google-Smtp-Source: AGHT+IGUeE04nboJL79uQEQi255Sh6F2ujsdzLVst5SO8l5tm1Su0Y1pKusKL+gCNnpOW2NARcGAkDEUDmt8oqZunC8=
-X-Received: by 2002:a17:90b:2250:b0:2fc:1370:9c2f with SMTP id
- 98e67ed59e1d1-2fc4103cd0dmr79419a91.4.1739558883232; Fri, 14 Feb 2025
- 10:48:03 -0800 (PST)
+	s=arc-20240116; t=1739558988; c=relaxed/simple;
+	bh=RO7lWffb5udWAoeJjtojwuIq2kWE79q14hclcnwcyiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Tfr98XM+0HFtGjQv0nrilhzXn85BCDWE/pb5WOvJTGmiul2uQKs2tF/cPwoCmtZ4DoM37TdwMLZHlqDc4SnMu4sSRTqee+S7z1k9GoG0/njkZGrMBCKNE9x1C4y/aUm+o7jDme4Gva5OEWVIbDT+52wJzdgAn3KgBJaIwxm0jSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0HKoZQC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B64C4CED1;
+	Fri, 14 Feb 2025 18:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739558987;
+	bh=RO7lWffb5udWAoeJjtojwuIq2kWE79q14hclcnwcyiA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=P0HKoZQCIpcUwntz0DsgS97mAyMuD4FjttLah1Rw3UTtidrRgbwa/D/5geV+j3nhx
+	 Owbqa8yO0TiNGm12QkKoMsUVtHYU2prgUn88tVZer23Rj+uuDHxr2ni7PPmAIFGU1l
+	 17r+sPieOAKQ3OGgM+fTPmFm31Z7PiVDjvVQMzEJUf/4SIgrH7Xof2intcA/P0X0z0
+	 OQPSBRRP0iuKFraiATHpaa/bfcGpEVBW0NNibqjV55RyAc6rAUvxjNxAs2RKYlbFFH
+	 7CwDMK/lBCTbfqLLZxVUTG2Z7eHZxlcf/e0R3Mu3ZPMO+S+NOc5haMz2pO2JDvd7Rh
+	 8Ua+UoMWWsTUA==
+Date: Fri, 14 Feb 2025 08:49:46 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.15] tools/sched_ext: Sync with scx repo
+Message-ID: <Z6-QSpiAYi-OISua@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210164245.282886-1-ojeda@kernel.org> <CAK7LNAQBFX5q6yyKBJoxMoD5d9SwdKm0c23J4+LpjwA1eh=bZw@mail.gmail.com>
-In-Reply-To: <CAK7LNAQBFX5q6yyKBJoxMoD5d9SwdKm0c23J4+LpjwA1eh=bZw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 14 Feb 2025 19:47:51 +0100
-X-Gm-Features: AWEUYZkFZsSwR_pcKDqppTTtKFiRY98pi3gXltfVmX7IBbEAqUtXPZHv7bRa5Ec
-Message-ID: <CANiq72n=95jgJs17NFAkit5uzxqtO9xij9Um3ybd_RiMCpFrDQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rust: add rustc-min-version support function
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
-	moderated for non-subscribers <linux-arm-kernel@lists.infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Feb 14, 2025 at 2:39=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> Do you want me to pick it up to kbuild tree,
-> or will you take it with my Ack?
->
-> If you go with the latter,
-> Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+From f2c880fc8133e4607f9e0e22d08e5e2098c3604a Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Fri, 14 Feb 2025 08:46:20 -1000
 
-Thanks a lot Masahiro -- happy to take it on my side if that means
-less work for you.
+Synchronize with https://github.com/sched-ext/scx at d384453984a0 ("kernel:
+Sync at ad3b301aa05a ("sched_ext: Provides a sysfs 'events' to expose core
+event counters")").
 
-Cheers,
-Miguel
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Applied to sched_ext/for-6.15.
+
+Thanks.
+
+ tools/sched_ext/include/scx/common.bpf.h | 29 +++++++++++++++++++++---
+ tools/sched_ext/scx_central.bpf.c        |  2 --
+ tools/sched_ext/scx_central.c            | 15 +++++++++---
+ 3 files changed, 38 insertions(+), 8 deletions(-)
+
+diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+index f1caf9fc8f8c..77bbe0199a32 100644
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -7,6 +7,13 @@
+ #ifndef __SCX_COMMON_BPF_H
+ #define __SCX_COMMON_BPF_H
+ 
++/*
++ * The generated kfunc prototypes in vmlinux.h are missing address space
++ * attributes which cause build failures. For now, suppress the generated
++ * prototypes. See https://github.com/sched-ext/scx/issues/1111.
++ */
++#define BPF_NO_KFUNC_PROTOTYPES
++
+ #ifdef LSP
+ #define __bpf__
+ #include "../vmlinux.h"
+@@ -78,10 +85,7 @@ s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+ struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
+ u64 scx_bpf_now(void) __ksym __weak;
+-
+ void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
+-#define scx_read_event(e, name)							\
+-	(bpf_core_field_exists((e)->name) ? (e)->name : 0)
+ 
+ /*
+  * Use the following as @it__iter when calling scx_bpf_dsq_move[_vtime]() from
+@@ -89,6 +93,9 @@ void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __
+  */
+ #define BPF_FOR_EACH_ITER	(&___it)
+ 
++#define scx_read_event(e, name)							\
++	(bpf_core_field_exists((e)->name) ? (e)->name : 0)
++
+ static inline __attribute__((format(printf, 1, 2)))
+ void ___scx_bpf_bstr_format_checker(const char *fmt, ...) {}
+ 
+@@ -581,6 +588,22 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+ 	__u.__val;					\
+ })
+ 
++#define READ_ONCE_ARENA(type, x)				\
++({								\
++	union { type __val; char __c[1]; } __u =		\
++		{ .__c = { 0 } };				\
++	__read_once_size((void *)&(x), __u.__c, sizeof(x));	\
++	__u.__val;						\
++})
++
++#define WRITE_ONCE_ARENA(type, x, val)				\
++({								\
++	union { type __val; char __c[1]; } __u =		\
++		{ .__val = (val) }; 				\
++	__write_once_size((void *)&(x), __u.__c, sizeof(x));	\
++	__u.__val;						\
++})
++
+ /*
+  * log2_u32 - Compute the base 2 logarithm of a 32-bit exponential value.
+  * @v: The value for which we're computing the base 2 logarithm.
+diff --git a/tools/sched_ext/scx_central.bpf.c b/tools/sched_ext/scx_central.bpf.c
+index 5c165af1fa27..50bc1737c167 100644
+--- a/tools/sched_ext/scx_central.bpf.c
++++ b/tools/sched_ext/scx_central.bpf.c
+@@ -256,7 +256,6 @@ static int central_timerfn(void *map, int *key, struct bpf_timer *timer)
+ 	u64 now = scx_bpf_now();
+ 	u64 nr_to_kick = nr_queued;
+ 	s32 i, curr_cpu;
+-	struct scx_event_stats events;
+ 
+ 	curr_cpu = bpf_get_smp_processor_id();
+ 	if (timer_pinned && (curr_cpu != central_cpu)) {
+@@ -292,7 +291,6 @@ static int central_timerfn(void *map, int *key, struct bpf_timer *timer)
+ 
+ 	bpf_timer_start(timer, TIMER_INTERVAL_NS, BPF_F_TIMER_CPU_PIN);
+ 	__sync_fetch_and_add(&nr_timers, 1);
+-
+ 	return 0;
+ }
+ 
+diff --git a/tools/sched_ext/scx_central.c b/tools/sched_ext/scx_central.c
+index 1e9f74525d8f..6ba6e610eeaa 100644
+--- a/tools/sched_ext/scx_central.c
++++ b/tools/sched_ext/scx_central.c
+@@ -10,6 +10,7 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ #include <signal.h>
++#include <assert.h>
+ #include <libgen.h>
+ #include <bpf/bpf.h>
+ #include <scx/common.h>
+@@ -60,14 +61,22 @@ int main(int argc, char **argv)
+ 	skel->rodata->nr_cpu_ids = libbpf_num_possible_cpus();
+ 	skel->rodata->slice_ns = __COMPAT_ENUM_OR_ZERO("scx_public_consts", "SCX_SLICE_DFL");
+ 
++	assert(skel->rodata->nr_cpu_ids <= INT32_MAX);
++
+ 	while ((opt = getopt(argc, argv, "s:c:pvh")) != -1) {
+ 		switch (opt) {
+ 		case 's':
+ 			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
+ 			break;
+-		case 'c':
+-			skel->rodata->central_cpu = strtoul(optarg, NULL, 0);
++		case 'c': {
++			u32 central_cpu = strtoul(optarg, NULL, 0);
++			if (central_cpu >= skel->rodata->nr_cpu_ids) {
++				fprintf(stderr, "invalid central CPU id value, %u given (%u max)\n", central_cpu, skel->rodata->nr_cpu_ids);
++				return -1;
++			}
++			skel->rodata->central_cpu = (s32)central_cpu;
+ 			break;
++		}
+ 		case 'v':
+ 			verbose = true;
+ 			break;
+@@ -96,7 +105,7 @@ int main(int argc, char **argv)
+ 	 */
+ 	cpuset = CPU_ALLOC(skel->rodata->nr_cpu_ids);
+ 	SCX_BUG_ON(!cpuset, "Failed to allocate cpuset");
+-	CPU_ZERO(cpuset);
++	CPU_ZERO_S(CPU_ALLOC_SIZE(skel->rodata->nr_cpu_ids), cpuset);
+ 	CPU_SET(skel->rodata->central_cpu, cpuset);
+ 	SCX_BUG_ON(sched_setaffinity(0, sizeof(*cpuset), cpuset),
+ 		   "Failed to affinitize to central CPU %d (max %d)",
+-- 
+2.48.1
+
+
 
