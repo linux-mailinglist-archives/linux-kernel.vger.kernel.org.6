@@ -1,420 +1,210 @@
-Return-Path: <linux-kernel+bounces-514149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8426A35325
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:42:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28954A35304
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D6818914B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0951890562
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 00:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E830F1EB3E;
-	Fri, 14 Feb 2025 00:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9D5227;
+	Fri, 14 Feb 2025 00:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="lweEzeTt"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03olkn2069.outbound.protection.outlook.com [40.92.59.69])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjJElKox"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B971863E;
-	Fri, 14 Feb 2025 00:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.59.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739493625; cv=fail; b=YoohuAwCCap/9ncYFW9M1OC4hgeyayWisybsWqskQRk7FCJyGkOb4+6LwfAd6rAs4gkI9brrmMOsbkFHoUjHFEQw1uLfxLBQRxk+9G+jtSfPX65aiKCh78g8YXiAVeUpjx9EJUeuyemxn6uf/qTDbvDmj5U8TI39Mog4e6OnNNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739493625; c=relaxed/simple;
-	bh=RHyu8iP9eN84DuDluqXLOKucNdaptC5YwmTdZnn7RWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hec5PcK+7EESQI2tpDGV3bT3GGg4Zn0DsBxl8T9JVBTWMTFVMu59O8X767IUpsPpgAPgnyOszKwSids1GGtxXSjvet3G5xNgbd1BbWMsgBaZc/pI6aHlma3RCJoAuAJyG2ZVw0oQz/rCG5cVGzz57Kqei/YxmdT3E93QWL2t9vI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=lweEzeTt; arc=fail smtp.client-ip=40.92.59.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ol9wg5ddCn0YyuImE441AVA8yWyxUqcaZK4YpHT/44tLDMve6zU5dJAVzBTtGtZcfSDmRfdZZIrvTaRJgujVdP4UTcyCWg6pKuAw+g63DAp4xuEUwhDD0oHvuZDXheBD4Vpe0nU1JIbhpPS9PvfQrk6ICLLJszUzJkVtcnlirUyGzYrpZP/B3/ODo6q7Fo0cMVKXEP8Pb4P2xJhkXYY/qKNc3qKonsTQrXhUhca/heZS3x0BfbaUlxaVsz+pb2eQyuimjKbdkeXpWtSzNy2c2pvR2vypsz9vpEX4DaZCJlWU/tzkDt3jI3SWFsFc0nV8vh+635MEocT7nTkz8Wn0dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iSaGOC+54QbVHkXb7qIbugj3rZQ0zRzi4tXZEVfEh28=;
- b=hPjxLpJCeuiCCEx1aiEYUm9sSltipysyMnHFJUg8HcyYu/fkKFwgcvckbupgN3NWmwgpQ0oAWgKvBDP99aA+z7oivCRDnaL0XTZ8gkJ8p2N+hLsDWvFECjJjRU9UF5rHf1yGci/6Py3FkoFtzhukD6Ju0jvSsc07QL/vgjp9YXbk1qW+K9rnF+WAxW6IpjX6Ksa3tYP2kXjUIIbDAqNI/PQ7HxvY9E18KGXWmd+Xz7YXmS2tLu9ntzFnMZxpbkzYTyneHxscWqJiFzEJfLV1oKiuk4jW/oT1d+rfkzJRMrXBspSQsiNS/xA0/aHLmCHI+4+RTukPv9P4YQWfQnGd4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iSaGOC+54QbVHkXb7qIbugj3rZQ0zRzi4tXZEVfEh28=;
- b=lweEzeTtkVKNxub6QNh0oQPwLiBR8YU8YgPT8BG6gzejgOwXm1ldkFLTZlGQT9REWGHg8m8ubuDsJxdmhC5mf/QEddy8aq+4O8/PYJE1AQThMzSm6BYf3dkLGkQqP7vjMYTtxWD9cwEdX0rafV3OIUO1CyqL8vacATlA3kwFpHImIJpLkBUU9T22Pf1h9kTRbTwQdI2WcMof2xbfRAfU+1igloPokdGQB3HzNv4e8JvOKtULk3tTiVGkfWssj3afl/oULbUiD33CQOmdWdw6LhpnaTrNp/fq2WrwyeyNaMc5wq7ey3gxw2o3DtEsuOqnOlIEskZNa6zCRN1EXQS8Bg==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by AS8PR03MB9817.eurprd03.prod.outlook.com (2603:10a6:20b:61b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.15; Fri, 14 Feb
- 2025 00:40:20 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%4]) with mapi id 15.20.8422.015; Fri, 14 Feb 2025
- 00:40:20 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com
-Cc: bpf@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30498C1E;
+	Fri, 14 Feb 2025 00:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739493400; cv=none; b=sVEROslMClbcDpvZgnQBg3kXwR3LdsGGKqkoC2l1qHz+Bao+VXNRELZ4YtA/GgdCdi4CGF4dbr+JoDEdUM6uiKyeUk4/cwhN8ZfE1tHvVRe0GmFljeXqQCFCkOpTWYPy51CeuXqLmWRWWrRBnuuyoVlDQE3W9yqmCUGzm25B6tQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739493400; c=relaxed/simple;
+	bh=kjlznG2D4gTQ1jGzO20AzuJ/CD7MgJE2quqCzxYI9CM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=t9MbzZ3dkdI3xPKb0kPTNiL0BaQGAwahLJLjQwLk9JpwvloAluzyt5BskA/+umhyghYYcMvUeBY9cS9CF8+6C6UVC15dHJdkyx2A1PuYRlaooelCfgkdvB4IO99qgsnXw9XsESxmTxf6/cNsI0uN6VHZinz2zYDP+2aLFIsRqt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjJElKox; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739493399; x=1771029399;
+  h=from:to:cc:subject:date:message-id;
+  bh=kjlznG2D4gTQ1jGzO20AzuJ/CD7MgJE2quqCzxYI9CM=;
+  b=MjJElKoxy2Ohr0e8QzzZkQu9j8eHM/OrDtwcRJJQq7tA5BTmRcouO6dB
+   PFt9j8rHFzT1VTs+1f7GyjtBxpDXBxNiSfXZ6b18uI7X2UxPOQPehhAhE
+   czSXggJbQ7ldq+SUdhEGG/9yYAsku2p6ZqoDT/PVmOmf+HojIgPSjPKD7
+   /i4QuYkjYRLCT8dlM6ObpE3+ESxPQ0ntGV7b2I25cgsU1jbmyJoTeyO46
+   aPSTVJdj+hHqTTWaVzKQmZHC67LApoqCBZUjLWXgK+zIoQVQuhrh0MfCX
+   SC9xPd7MtyJLOloWtiM6dGKu0lg8vVJM2WDLTGmIUtxh7qeo/VvPM2Qx4
+   A==;
+X-CSE-ConnectionGUID: zIZyohxJQGCPqm1fffErJg==
+X-CSE-MsgGUID: mK2j7NJoTCK0rZ4jmiAvSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40348450"
+X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
+   d="scan'208";a="40348450"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 16:36:38 -0800
+X-CSE-ConnectionGUID: gBsajGR4ROCL9/FjiV5W4g==
+X-CSE-MsgGUID: OHUF5LraR1GvWvTdEhjlhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118513232"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 16:36:35 -0800
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Kevin Chang <kevin1.chang@intel.com>,
+	Thomas Chen <Thomas.Chen@intel.com>,
+	linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH bpf-next 6/6] selftests/bpf: Add test cases for demonstrating runtime acquire/release reference tracking
-Date: Fri, 14 Feb 2025 00:26:57 +0000
-Message-ID:
- <AM6PR03MB508078EF9EDA7CAC87E8AC3299FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0229.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a6::18) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <20250214002657.68279-6-juntong.deng@outlook.com>
+Subject: [PATCH 1/1] EDAC/{skx_common,i10nm}: Fix some missing error reports on Emerald Rapids
+Date: Fri, 14 Feb 2025 08:27:28 +0800
+Message-Id: <20250214002728.6287-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AS8PR03MB9817:EE_
-X-MS-Office365-Filtering-Correlation-Id: 641a2aac-a60e-416d-a884-08dd4c9028ff
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|461199028|15080799006|19110799003|5072599009|13041999003|3412199025|41001999003|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ssfBHgdWatZ1TkWX9W1Ka6YVd02626Jnvw1eK+h0B2mZWpwoYoBEbZ+6ma7N?=
- =?us-ascii?Q?VCc43qpB8bcSpNWcMoNF/IYiDm1C85KT4g4HZmNHooUyoAa82SfRAz2hn+/7?=
- =?us-ascii?Q?ME0dHoQ7ckwdJws1Z0YLXdHGOENxJG9A0COCQwim2lNKQxqEFDkX9yG4U+mN?=
- =?us-ascii?Q?8EaFh1KC2SIJXJgzmIzCiccfqkKOiRPJKGS2HRmkovPurZ7Tfqt0ZT5MmSLJ?=
- =?us-ascii?Q?aRiWoJdvD7Jve1euTBQ3qDH++JfilaTAXfndIkS/43ZOSvQ3h1zsmH/uAfhK?=
- =?us-ascii?Q?+J12HXyhE5cqOme5aJPOhmIJpQmThKd0rDCji/UA7Z3vx7FkgFN+NxKfF3Mn?=
- =?us-ascii?Q?+62EnDw7fJvcsuuRuPUq9Ix0+E/ILXpBJ4cAbGCPRkkW/Wr0l0tipxsDl0Zt?=
- =?us-ascii?Q?4UIeaCXO3WVo92wDgSO5CzBlqbd+juV8D1BR/rqWIhJIRN13b5drjE3GoGll?=
- =?us-ascii?Q?dt1VJ9HnFECxymInv/IrQ56iUWNJ6lJnqdb97atqUZ3LTP8SdOepSsTB3On/?=
- =?us-ascii?Q?Qn9mtzzO3Kr3cES6cr7qG5+80+hyXi34jAtd62X3wYIVEImRb79d5O4Yq23I?=
- =?us-ascii?Q?NC8cILMQYd9XNW6WE9EQiLLzXvHTna1ArAoV437WpbnPKRBFUIONWejQYlZA?=
- =?us-ascii?Q?nuWGHi9fg2kDqVYSC6PIJ5gnpCSpjbnPSu1oWJOvBk8TTnoyxYJNNY/K3dgB?=
- =?us-ascii?Q?frFv6usdrYVorUPhN77YogZ82JHdeOJ5nG7KmEujNJ6R/0vBIFAmiuEHlYkV?=
- =?us-ascii?Q?S26hQqYpbyMD8foRapvXuErLZSvBRx4jnKhRtAs7RiGU0PLVq67bdsHVGMsJ?=
- =?us-ascii?Q?GXz5l3WgaZgKuZJxWojdRe3U4IJYFMmuBgk9iFRAGvYWDzwWXrrtKtUXePKB?=
- =?us-ascii?Q?6zV6SLrpQEpDtA6+rWPjthlAT9yXitUW1rpy/Ixy9VNFmzfWYFgImydV8Vq8?=
- =?us-ascii?Q?uoSu6FETNfbBnoWMybK2s3/MFn9t8JPPNEFiue8eOpK53IsAP7nUsdvxOPlG?=
- =?us-ascii?Q?pRx4dg34yqQPda5oXHmSSpXJzfolJPPUGgTiX3BIykqWRlCZz66a1uhgxgT4?=
- =?us-ascii?Q?kgEf8UtxeAsqzmEVp68Y7ymlwS28YTH7CCW6T29JqyHb8z2ET1E=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?f/0p4tQ9c7OBq/BSjUUsyqXW+Kqo7s0rvuQRur/FLn5/m7iuzHhlP/h+sz8o?=
- =?us-ascii?Q?zWcKK1BBMbgLwmiZCY/upESIQ2NW4/aLMQFzboVhAcypH7A+b9Ee9jMzmPZJ?=
- =?us-ascii?Q?7OU89fmyuBE9Ih/8ctaPq3gyOscZ9GiJkj6iFS33xv3Q5V5WpvR09NvqMTlZ?=
- =?us-ascii?Q?CvxqvL5zj5pvs3rtBp9BQuEfoJYIa4aLACdpJ/4bPBn+xT6EpLLbj8dFCGkz?=
- =?us-ascii?Q?VuDGFt4iWNDZwVHYlTFHWn3Ta+P6185w2T4UA8GO0h858A5P/8nXC3LJPUoI?=
- =?us-ascii?Q?aSTXS2bz5sZRhgncIj7edbEIIzTFFBpBoje2WjjHkrOre/W3aLB+N8l1/8w+?=
- =?us-ascii?Q?QfauO0oVzNUq/vli977YB3XAaMC9DObgv4gjSQpRgFsTk0JGqkNkIlITUbla?=
- =?us-ascii?Q?5uYSHg0r91mwiMZPxlSwTK+hpZ66sR8L6qnnlFE9fl/LszqV/c2qRBoxTyRT?=
- =?us-ascii?Q?yw852RjwUVpOfxqbhhieUSaA1/47vtAG5gVELXF0cRR05sOrf3NQpYD8DOEo?=
- =?us-ascii?Q?ma3bxCRaLzjTdBhYagpFbG73MAAsBeADNg2v7uxXB/3UuvS2WM73pPuKqXdH?=
- =?us-ascii?Q?1IBOHFpAI93D9dwRcriKy5X2nJLxlsPG76bGTrC/7aK/avYgObmdqgZgDzDz?=
- =?us-ascii?Q?wF+nN5cJorvrnYqIs4nNIB1Rk757SzsXVUIatCL5DfLMBd//pwmDN+V0yZXd?=
- =?us-ascii?Q?UKEPltDfTGv1K4UYBiJH3j2vLgb1LXNr+3nFLUPDF0wwPEF8vxWIFd3FjNRE?=
- =?us-ascii?Q?Ui9+Lmrlv+fPrsq+px1ABwoRVNXrXMGPpAgF9j2qFlgcAR/ylPcWGBr2RyMo?=
- =?us-ascii?Q?L/JQdu2YMXQ2sGYB4/t6uyOaL4suCzS5b349MeVUIUW7RaitTUTiOB9H+e4g?=
- =?us-ascii?Q?+kSPS6aYPFw2Uf0THup19UBxLl7beOLfeyFFPAE56ZzaQSUWMBNRBXGMnjHg?=
- =?us-ascii?Q?3ophIiu5ZuMJ19NMQ+WtizRU9rNTlxbS19Vv4z3Fb4U4pXFtn5e0YE8217CG?=
- =?us-ascii?Q?fjUSeRlaT5DP5kmFdfly4wPKj2ivDvG9tN7077wgiP92KzEOENvrumbR768g?=
- =?us-ascii?Q?QIeb/UNS3BUe029a22ikjausTQjPrl91bjDNltH474bYQn/5k38l9SpkPD0P?=
- =?us-ascii?Q?BaNC4tHjoPypYsS3HmPE7p2i/bChZE0+H5xXL8/5F2MvnwAq/dQJzwvke/Ym?=
- =?us-ascii?Q?eu4YM3Ov2afLAJvL34z+ERI+7XT9Y9+b7W1SgK7SEhkATopQMd1EPWm2puQk?=
- =?us-ascii?Q?aXMgTYVpBWkiy2/XAC8H?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 641a2aac-a60e-416d-a884-08dd4c9028ff
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 00:40:20.5633
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB9817
 
-This patch adds test cases for demonstrating runtime acquire/release
-reference tracking.
+When doing error injection to some memory DIMMs on certain Intel Emerald
+Rapids servers, the i10nm_edac missed error reports for some memory DIMMs.
 
-Test cases include simple, branch, and loop.
+Certain BIOS configurations may hide some memory controllers, and the
+i10nm_edac doesn't enumerate these hidden memory controllers. However, the
+ADXL decodes memory errors using memory controller physical indices even
+if there are hidden memory controllers. Therefore, the memory controller
+physical indices reported by the ADXL may mismatch the logical indices
+enumerated by the i10nm_edac, resulting in missed error reports for some
+memory DIMMs.
 
-Simple test case has no branches or loops.
+Fix this issue by creating a mapping table from memory controller physical
+indices (used by the ADXL) to logical indices (used by the i10nm_edac) and
+using it to convert the physical indices to the logical indices during the
+error handling process.
 
-Branch test case contains if statements.
-
-Loop test case contains the bpf_iter_num iterator.
-
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+Fixes: c545f5e41225 ("EDAC/i10nm: Skip the absent memory controllers")
+Reported-by: Kevin Chang <kevin1.chang@intel.com>
+Tested-by: Kevin Chang <kevin1.chang@intel.com>
+Reported-by: Thomas Chen <Thomas.Chen@intel.com>
+Tested-by: Thomas Chen <Thomas.Chen@intel.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 ---
- tools/testing/selftests/runtime/Makefile     | 20 ++++++++++
- tools/testing/selftests/runtime/branch.bpf.c | 42 ++++++++++++++++++++
- tools/testing/selftests/runtime/branch.c     | 19 +++++++++
- tools/testing/selftests/runtime/loop.bpf.c   | 37 +++++++++++++++++
- tools/testing/selftests/runtime/loop.c       | 19 +++++++++
- tools/testing/selftests/runtime/simple.bpf.c | 35 ++++++++++++++++
- tools/testing/selftests/runtime/simple.c     | 19 +++++++++
- 7 files changed, 191 insertions(+)
- create mode 100644 tools/testing/selftests/runtime/Makefile
- create mode 100644 tools/testing/selftests/runtime/branch.bpf.c
- create mode 100644 tools/testing/selftests/runtime/branch.c
- create mode 100644 tools/testing/selftests/runtime/loop.bpf.c
- create mode 100644 tools/testing/selftests/runtime/loop.c
- create mode 100644 tools/testing/selftests/runtime/simple.bpf.c
- create mode 100644 tools/testing/selftests/runtime/simple.c
+ drivers/edac/i10nm_base.c |  2 ++
+ drivers/edac/skx_common.c | 33 +++++++++++++++++++++++++++++++++
+ drivers/edac/skx_common.h | 11 +++++++++++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/tools/testing/selftests/runtime/Makefile b/tools/testing/selftests/runtime/Makefile
-new file mode 100644
-index 000000000000..d03133786a26
---- /dev/null
-+++ b/tools/testing/selftests/runtime/Makefile
-@@ -0,0 +1,20 @@
-+targets = simple branch loop
-+
-+all: $(targets)
-+
-+vmlinux.h:
-+	bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
-+
-+%.bpf.o: %.bpf.c vmlinux.h
-+	clang -O2 -g -target bpf -c $*.bpf.c -o $*.bpf.o
-+
-+%.skel.h: %.bpf.o
-+	bpftool gen skeleton $*.bpf.o > $*.skel.h
-+
-+$(targets): %: %.c %.skel.h
-+	clang $< -lelf -lbpf -o $@
-+
-+clean:
-+	rm -f *.o *.skel.h vmlinux.h $(targets)
-+
-+.SECONDARY:
-diff --git a/tools/testing/selftests/runtime/branch.bpf.c b/tools/testing/selftests/runtime/branch.bpf.c
-new file mode 100644
-index 000000000000..87697151299c
---- /dev/null
-+++ b/tools/testing/selftests/runtime/branch.bpf.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+char LICENSE[] SEC("license") = "GPL";
-+
-+void bpf_task_release(struct task_struct *p) __ksym;
-+struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
-+
-+int test = 5;
-+
-+SEC("syscall")
-+int test_branch(void *arg)
+diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
+index f45d849d3f15..355a977019e9 100644
+--- a/drivers/edac/i10nm_base.c
++++ b/drivers/edac/i10nm_base.c
+@@ -751,6 +751,8 @@ static int i10nm_get_ddr_munits(void)
+ 				continue;
+ 			} else {
+ 				d->imc[lmc].mdev = mdev;
++				if (res_cfg->type == SPR)
++					skx_set_mc_mapping(d, i, lmc);
+ 				lmc++;
+ 			}
+ 		}
+diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
+index f7bd930e058f..fa5b442b1844 100644
+--- a/drivers/edac/skx_common.c
++++ b/drivers/edac/skx_common.c
+@@ -121,6 +121,35 @@ void skx_adxl_put(void)
+ }
+ EXPORT_SYMBOL_GPL(skx_adxl_put);
+ 
++static void skx_init_mc_mapping(struct skx_dev *d)
 +{
-+	struct task_struct *task1;
-+
-+	task1 = bpf_task_from_pid(1);
-+
-+	if (test > 2) {
-+		struct task_struct *task2;
-+
-+		task2 = bpf_task_from_pid(2);
-+		if (task2)
-+			bpf_task_release(task2);
-+	}
-+
-+	if (test < 2) {
-+		struct task_struct *task3;
-+
-+		task3 = bpf_task_from_pid(3);
-+		if (task3)
-+			bpf_task_release(task3);
-+	}
-+
-+	if (task1)
-+		bpf_task_release(task1);
-+
-+	return 0;
++	/*
++	 * By default, the BIOS presents all memory controllers within each
++	 * socket to the EDAC driver. The physical indices are the same as
++	 * the logical indices of the memory controllers enumerated by the
++	 * EDAC driver.
++	 */
++	for (int i = 0; i < NUM_IMC; i++)
++		d->mc_mapping[i] = i;
 +}
-diff --git a/tools/testing/selftests/runtime/branch.c b/tools/testing/selftests/runtime/branch.c
-new file mode 100644
-index 000000000000..3592e14f1f75
---- /dev/null
-+++ b/tools/testing/selftests/runtime/branch.c
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0
 +
-+#include <stdio.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/bpf.h>
-+#include "branch.skel.h"
-+
-+int main(int argc, char **argv)
++void skx_set_mc_mapping(struct skx_dev *d, u8 pmc, u8 lmc)
 +{
-+	struct branch_bpf *skel;
-+	int err, prog_fd;
++	edac_dbg(0, "Set the mapping of mc phy idx to logical idx: %02d -> %02d\n",
++		 pmc, lmc);
 +
-+	skel = branch_bpf__open_and_load();
-+	prog_fd = bpf_program__fd(skel->progs.test_branch);
-+	err = bpf_prog_test_run_opts(prog_fd, NULL);
-+
-+	branch_bpf__destroy(skel);
-+	return err;
++	d->mc_mapping[pmc] = lmc;
 +}
-diff --git a/tools/testing/selftests/runtime/loop.bpf.c b/tools/testing/selftests/runtime/loop.bpf.c
-new file mode 100644
-index 000000000000..2b49ec9e1058
---- /dev/null
-+++ b/tools/testing/selftests/runtime/loop.bpf.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
++EXPORT_SYMBOL_GPL(skx_set_mc_mapping);
 +
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+char LICENSE[] SEC("license") = "GPL";
-+
-+void bpf_task_release(struct task_struct *p) __ksym;
-+struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
-+
-+SEC("syscall")
-+int test_loop(void *arg)
++static u8 skx_get_mc_mapping(struct skx_dev *d, u8 pmc)
 +{
-+	struct task_struct *task_loop;
-+	struct task_struct *task1;
-+	int *v;
++	edac_dbg(0, "Get the mapping of mc phy idx to logical idx: %02d -> %02d\n",
++		 pmc, d->mc_mapping[pmc]);
 +
-+	task1 = bpf_task_from_pid(1);
-+
-+	struct bpf_iter_num it;
-+
-+	bpf_iter_num_new(&it, 1, 3);
-+	while ((v = bpf_iter_num_next(&it))) {
-+		task_loop = bpf_task_from_pid(*v);
-+		if (task_loop)
-+			bpf_task_release(task_loop);
-+	}
-+
-+	bpf_iter_num_destroy(&it);
-+
-+	if (task1)
-+		bpf_task_release(task1);
-+
-+	return 0;
++	return d->mc_mapping[pmc];
 +}
-diff --git a/tools/testing/selftests/runtime/loop.c b/tools/testing/selftests/runtime/loop.c
-new file mode 100644
-index 000000000000..bde83e5595e4
---- /dev/null
-+++ b/tools/testing/selftests/runtime/loop.c
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0
 +
-+#include <stdio.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/bpf.h>
-+#include "loop.skel.h"
+ static bool skx_adxl_decode(struct decoded_addr *res, enum error_source err_src)
+ {
+ 	struct skx_dev *d;
+@@ -188,6 +217,8 @@ static bool skx_adxl_decode(struct decoded_addr *res, enum error_source err_src)
+ 		return false;
+ 	}
+ 
++	res->imc = skx_get_mc_mapping(d, res->imc);
 +
-+int main(int argc, char **argv)
-+{
-+	struct loop_bpf *skel;
-+	int err, prog_fd;
+ 	for (i = 0; i < adxl_component_count; i++) {
+ 		if (adxl_values[i] == ~0x0ull)
+ 			continue;
+@@ -326,6 +357,8 @@ int skx_get_all_bus_mappings(struct res_config *cfg, struct list_head **list)
+ 			 d->bus[0], d->bus[1], d->bus[2], d->bus[3]);
+ 		list_add_tail(&d->list, &dev_edac_list);
+ 		prev = pdev;
 +
-+	skel = loop_bpf__open_and_load();
-+	prog_fd = bpf_program__fd(skel->progs.test_loop);
-+	err = bpf_prog_test_run_opts(prog_fd, NULL);
-+
-+	loop_bpf__destroy(skel);
-+	return err;
-+}
-diff --git a/tools/testing/selftests/runtime/simple.bpf.c b/tools/testing/selftests/runtime/simple.bpf.c
-new file mode 100644
-index 000000000000..ad7989ebb7d4
---- /dev/null
-+++ b/tools/testing/selftests/runtime/simple.bpf.c
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+char LICENSE[] SEC("license") = "GPL";
-+
-+void bpf_task_release(struct task_struct *p) __ksym;
-+struct task_struct *bpf_task_from_pid(s32 pid) __ksym;
-+
-+struct bpf_cpumask *bpf_cpumask_create(void) __ksym;
-+void bpf_cpumask_release(struct bpf_cpumask *cpumask) __ksym;
-+
-+SEC("syscall")
-+int test_simple(void *arg)
-+{
-+	struct task_struct *task;
-+	struct bpf_cpumask *cpumask;
-+
-+	task = bpf_task_from_pid(1);
-+	if (!task)
-+		return 0;
-+
-+	cpumask = bpf_cpumask_create();
-+	if (!cpumask)
-+		goto error_cpumask;
-+
-+	bpf_cpumask_release(cpumask);
-+error_cpumask:
-+	bpf_task_release(task);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/runtime/simple.c b/tools/testing/selftests/runtime/simple.c
-new file mode 100644
-index 000000000000..e65959aac89b
---- /dev/null
-+++ b/tools/testing/selftests/runtime/simple.c
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/bpf.h>
-+#include "simple.skel.h"
-+
-+int main(int argc, char **argv)
-+{
-+	struct simple_bpf *skel;
-+	int err, prog_fd;
-+
-+	skel = simple_bpf__open_and_load();
-+	prog_fd = bpf_program__fd(skel->progs.test_simple);
-+	err = bpf_prog_test_run_opts(prog_fd, NULL);
-+
-+	simple_bpf__destroy(skel);
-+	return err;
-+}
++		skx_init_mc_mapping(d);
+ 	}
+ 
+ 	if (list)
+diff --git a/drivers/edac/skx_common.h b/drivers/edac/skx_common.h
+index b0845bdd4516..ca5408803f87 100644
+--- a/drivers/edac/skx_common.h
++++ b/drivers/edac/skx_common.h
+@@ -93,6 +93,16 @@ struct skx_dev {
+ 	struct pci_dev *uracu; /* for i10nm CPU */
+ 	struct pci_dev *pcu_cr3; /* for HBM memory detection */
+ 	u32 mcroute;
++	/*
++	 * Some server BIOS may hide certain memory controllers, and the
++	 * EDAC driver skips those hidden memory controllers. However, the
++	 * ADXL still decodes memory error address using physical memory
++	 * controller indices. The mapping table is used to convert the
++	 * physical indices (reported by ADXL) to the logical indices
++	 * (used the EDAC driver) of present memory controllers during the
++	 * error handling process.
++	 */
++	u8 mc_mapping[NUM_IMC];
+ 	struct skx_imc {
+ 		struct mem_ctl_info *mci;
+ 		struct pci_dev *mdev; /* for i10nm CPU */
+@@ -242,6 +252,7 @@ void skx_adxl_put(void);
+ void skx_set_decode(skx_decode_f decode, skx_show_retry_log_f show_retry_log);
+ void skx_set_mem_cfg(bool mem_cfg_2lm);
+ void skx_set_res_cfg(struct res_config *cfg);
++void skx_set_mc_mapping(struct skx_dev *d, u8 pmc, u8 lmc);
+ 
+ int skx_get_src_id(struct skx_dev *d, int off, u8 *id);
+ 
 -- 
-2.39.5
+2.17.1
 
 
