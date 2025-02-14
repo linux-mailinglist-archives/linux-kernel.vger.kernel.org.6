@@ -1,82 +1,75 @@
-Return-Path: <linux-kernel+bounces-514424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D04A356DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:15:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0516DA356EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CB13AE489
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79181892F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD991FC0E7;
-	Fri, 14 Feb 2025 06:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1521FFC5D;
+	Fri, 14 Feb 2025 06:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WXIetwel"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="w/KpCZy0"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D38C1FC0E0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4941149C64;
+	Fri, 14 Feb 2025 06:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739513503; cv=none; b=gG3+LPgmwcl3Ifl49hA9A3ZMBSRf5VMvpz2QFYW27TEZYW+GDroSJzmZJ2GgDj6++SptZaMw5xE5/srbec0B2ElCzHNdSE78Fkr8/Xot0BBD8jtu94tIjAX5p1kIGpNsIETjgNdzA1A/tyssFrsypTMKnuZcW7vY4YZLJKHZmSs=
+	t=1739513779; cv=none; b=WEhcmGfhUfCFOk6Q3pJXngKHpa02Ix48TyHTIyKeS5GR2jaPKJGWcq61vH8Q2Zdiu3luWeopPDINhQPhUOjvuxBqpsQqJBWpTXpKMjlMOayjHdTk5KQIK8ecAbGP7YV8x8/p32aKnbhe/6KRH8HlOUtd18xvDCfWKWRL2RpLpxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739513503; c=relaxed/simple;
-	bh=z5CHmSpsIFmOesfR9bqyE2APGqdUsxwoh53fDjhiLjs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I1y6+P+kTQ6MFaGOOnXfnPRhhl5ZJB4efe8Rkno63iQfgz2H6GQHIhkxbM18kPQYS2ZoNVtjEp5ZoHfiqDdrBINnn3zG0RhxAjtjj9VXiZYo7gONT0xjDv8rYUo72rUy9rwhjtOFeAe8vX88/EKaZ1jWtdCMkpGx/DSUyA7ljjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WXIetwel; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739513501; x=1771049501;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=z5CHmSpsIFmOesfR9bqyE2APGqdUsxwoh53fDjhiLjs=;
-  b=WXIetwelyrFk9lFIr4UwJrHlKyWX2bAVRT+KnNAqQ/52NSHbqOg0uvLq
-   j1mwCZvtj5xgxcmAAFORXQp+oajgsYUAf8zHLAYUtEuIdPorLVNN5drpJ
-   AIPMMiNa1v+pLujathUnaX/AGmkIlXhBOX9q9jF/O7gMqnizKtHRE3oFL
-   ZmuT5377HqlE3qjs3J4isbER4mO3+TXJEVl6UdYlaax33SrPDJHbvg2Gk
-   ljEJa50zSS1JlHuF7SLG6wBrOAmPO0+n7aUEYRKvELFurg4yhj0/mwKDF
-   YW9ULkQK1vD7gVKzHLcWEeyMZQfyIPHHOHWSPpXoUBGz1rBVZgSrrZS0o
-   A==;
-X-CSE-ConnectionGUID: nVUtAoulSv2HIy3N20/F6Q==
-X-CSE-MsgGUID: SzyB39OaRk2ixDR+K5tRpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40124622"
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="40124622"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 22:11:41 -0800
-X-CSE-ConnectionGUID: p1fHdXFMQdGfjFTo4KvYzQ==
-X-CSE-MsgGUID: 4acGqe8YQPKMgQcIdt32IA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114268187"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa008.jf.intel.com with ESMTP; 13 Feb 2025 22:11:38 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 12/12] iommu: Remove iommu_dev_enable/disable_feature()
-Date: Fri, 14 Feb 2025 14:11:04 +0800
-Message-ID: <20250214061104.1959525-13-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1739513779; c=relaxed/simple;
+	bh=x2Z55WN/bolhypsMCgfZrcr9/UcmIPhudFFRNZuvWEg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=nkgBYhkDNRgOmMw/EoXqtZ82UEkuLER7obcBG11htgiaznNEyXI/7ctqIBHdkgdhskLrI7qIqKDm19ykrzFsKbQ/s4Kkfjw4qC3gh7IpfHgYXI9f2knnFzEfv63epcr6MDc22F3fIn1pHuxMRBC2S9O1MhrCB5ZlPL69g+vpIqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=w/KpCZy0; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1739513470;
+	bh=I9tMxA0b35Ehfj2sW9QpEMSfeMBVVc4pqXPgNUSyFJI=;
+	h=From:To:Cc:Subject:Date;
+	b=w/KpCZy0aWUOFHdBAkYlMqQCljvDhY7b92Qz+comKXMpNf/G89XWHheUEXMH5t+0X
+	 x06sv6SAJ4dadI56gqfYVW6x9+fEq6sZRfQQlhh/ACOEwJIFVz8urL5sXRx/KxgLBw
+	 RI/5uQRBS7+NhkvcaeRIJjB3bn5/Khn/nL7cS/38=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 2C88A6BB; Fri, 14 Feb 2025 14:11:08 +0800
+X-QQ-mid: xmsmtpt1739513468tg3oqmv9r
+Message-ID: <tencent_832FF5138D392257AC081FEE322A03C84907@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeiehVxo+faJzMBrZMJ7TGsCOUlN4TBw/pxiWd3JxEndMuo3xdDyMB
+	 hw5nZTeA8kHAXi7hoIcWIWLCkCMSXVA1V0O/T5Y3RuToIEUY0hTdcgQb08vo3LhJXKsfC/JAvHfI
+	 dFlAWCttNdr0V4trtFUMRcXnyH964UhkOzb51/bZfoor6r0FE2f9UE5YpxX23Di25YQaAxO92CP8
+	 Iooke+oYAazomDNH/ofk9CYXzM7PWpS3LueiFgK2e4sYNBJwAD1p0ggeJ0w7cBQI5nTRJ3/FDl+p
+	 qXpgEjcHKK2keiab4mSAS8b42zMoQoPLh5J7lpAOR19p0C6Y571Ut1RFfO8Omf9nvA+1xTe6f50z
+	 aPB1LPh2k8dFdMKfrKyseGDSs9y8rruJGtcYvHKLtjdmFtirUK5ERtB3UlnFYv2JnXesFYeBqcg6
+	 BxOtiLc1Dx5wUCEWorxZxyLEzC/LBHrjr8RzA7jcElNt1TwfAcb6Ot7QEVnb38LH6O/xuJT2fNG9
+	 629mM3h7fo7+BL5hS164+RWu94Qk3xXaNtzcRQAuc9f0BCg6HlS8QrIjTUDG234gtklE/UKr/WhP
+	 te6CenuNctvR3b+WXNAmV3Tj6s1Xd63QDpNhtNd0uFf0we42I9EabA9cvuHqWxGLjmUiDinwhStd
+	 QCLf5Kk/h+n+p5AhXFoQ0xui7AhcQwkap7EAJIR6ml9cu/gelcHTcS9st2JiNamIIwMhx7GOm7Nd
+	 vPv/Gd5+/xMlLsx+zX75NAXtr/M9vb6eulH7KVYwuscVqFFqpnATGfv0X6ewFENr35Sk4CmAalXH
+	 tdvlO66UxWeQbpTOqoG5v5la1zDSixvPfW101WnC8fQgKxSgha6LOEj6Eda7axYH+zT9+V+hmbvm
+	 zDVyI7Q5g6Cd0LKk3uL36EOhC+x59LzSAecuUmSLPTAFF0p1ZEwsFo7ZHJSFBDjBMKLF2Ef1NaE3
+	 AfAvZ+qmc=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: xiaopeitux@foxmail.com
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	netdev@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] net: freescale: ucc_geth: make ugeth_mac_ops be static
+Date: Fri, 14 Feb 2025 14:11:07 +0800
+X-OQ-MSGID: <e940237592fae0d6e8e32d6b61b4ff18724dc918.1739513279.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,268 +78,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No external drivers use these interfaces anymore. Furthermore, no existing
-iommu drivers implement anything in the callbacks. Remove them to avoid
-dead code.
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+sparse warning:
+    sparse: symbol 'ugeth_mac_ops' was not declared. Should it be
+static.
+
+Add static to fix sparse warnings.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202502141128.9HfxcdIE-lkp@intel.com/
+Fixes: 53036aa8d031 ("net: freescale: ucc_geth: phylink conversion")
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 ---
- drivers/iommu/amd/iommu.c                   | 32 -------------------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 34 ---------------------
- drivers/iommu/intel/iommu.c                 | 25 ---------------
- drivers/iommu/iommu.c                       | 32 -------------------
- include/linux/iommu.h                       | 28 -----------------
- 5 files changed, 151 deletions(-)
+ drivers/net/ethernet/freescale/ucc_geth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index e3653bdfcd7d..8d74afa552fb 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2983,36 +2983,6 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
- 	.read_and_clear_dirty = amd_iommu_read_and_clear_dirty,
- };
- 
--static int amd_iommu_dev_enable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
--static int amd_iommu_dev_disable_feature(struct device *dev,
--					 enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
- 	.blocked_domain = &blocked_domain,
-@@ -3026,8 +2996,6 @@ const struct iommu_ops amd_iommu_ops = {
- 	.get_resv_regions = amd_iommu_get_resv_regions,
- 	.is_attach_deferred = amd_iommu_is_attach_deferred,
- 	.def_domain_type = amd_iommu_def_domain_type,
--	.dev_enable_feat = amd_iommu_dev_enable_feature,
--	.dev_disable_feat = amd_iommu_dev_disable_feature,
- 	.page_response = amd_iommu_page_response,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= amd_iommu_attach_device,
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index ee945a9db641..28e67a9e3861 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3617,38 +3617,6 @@ static void arm_smmu_get_resv_regions(struct device *dev,
- 	iommu_dma_get_resv_regions(dev, head);
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index f47f8177a93b..c24b2f75435f 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -3408,7 +3408,7 @@ static int ucc_geth_parse_clock(struct device_node *np, const char *which,
+ 	return 0;
  }
  
--static int arm_smmu_dev_enable_feature(struct device *dev,
--				       enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -ENODEV;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
--static int arm_smmu_dev_disable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -EINVAL;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
- /*
-  * HiSilicon PCIe tune and trace device can be used to trace TLP headers on the
-  * PCIe link and save the data to memory by DMA. The hardware is restricted to
-@@ -3681,8 +3649,6 @@ static struct iommu_ops arm_smmu_ops = {
- 	.device_group		= arm_smmu_device_group,
- 	.of_xlate		= arm_smmu_of_xlate,
- 	.get_resv_regions	= arm_smmu_get_resv_regions,
--	.dev_enable_feat	= arm_smmu_dev_enable_feature,
--	.dev_disable_feat	= arm_smmu_dev_disable_feature,
- 	.page_response		= arm_smmu_page_response,
- 	.def_domain_type	= arm_smmu_def_domain_type,
- 	.viommu_alloc		= arm_vsmmu_alloc,
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 20d07f5fea85..aad11e76ac40 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3920,29 +3920,6 @@ void intel_iommu_disable_iopf(struct device *dev)
- 	iopf_queue_remove_device(iommu->iopf_queue, dev);
- }
- 
--static int
--intel_iommu_dev_enable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -ENODEV;
--	}
--}
--
--static int
--intel_iommu_dev_disable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--
--	default:
--		return -ENODEV;
--	}
--}
--
- static bool intel_iommu_is_attach_deferred(struct device *dev)
- {
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
-@@ -4387,8 +4364,6 @@ const struct iommu_ops intel_iommu_ops = {
- 	.release_device		= intel_iommu_release_device,
- 	.get_resv_regions	= intel_iommu_get_resv_regions,
- 	.device_group		= intel_iommu_device_group,
--	.dev_enable_feat	= intel_iommu_dev_enable_feat,
--	.dev_disable_feat	= intel_iommu_dev_disable_feat,
- 	.is_attach_deferred	= intel_iommu_is_attach_deferred,
- 	.def_domain_type	= device_def_domain_type,
- 	.pgsize_bitmap		= SZ_4K,
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 870c3cdbd0f6..c86ab80dce4d 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2877,38 +2877,6 @@ int iommu_fwspec_add_ids(struct device *dev, const u32 *ids, int num_ids)
- }
- EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
- 
--/*
-- * Per device IOMMU features.
-- */
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_enable_feat)
--			return ops->dev_enable_feat(dev, feat);
--	}
--
--	return -ENODEV;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_enable_feature);
--
--/*
-- * The device drivers should do the necessary cleanups before calling this.
-- */
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_disable_feat)
--			return ops->dev_disable_feat(dev, feat);
--	}
--
--	return -EBUSY;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
--
- /**
-  * iommu_setup_default_domain - Set the default_domain for the group
-  * @group: Group to change
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 1d0dde49168d..127f99acab5f 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -301,16 +301,6 @@ struct iommu_iort_rmr_data {
- 	u32 num_sids;
- };
- 
--/**
-- * enum iommu_dev_features - Per device IOMMU features
-- * @IOMMU_DEV_FEAT_IOPF: I/O Page Faults such as PRI or Stall.
-- *
-- * Device drivers enable a feature using iommu_dev_enable_feature().
-- */
--enum iommu_dev_features {
--	IOMMU_DEV_FEAT_IOPF,
--};
--
- #define IOMMU_NO_PASID	(0U) /* Reserved for DMA w/o PASID */
- #define IOMMU_FIRST_GLOBAL_PASID	(1U) /*starting range for allocation */
- #define IOMMU_PASID_INVALID	(-1U)
-@@ -630,9 +620,6 @@ struct iommu_ops {
- 	bool (*is_attach_deferred)(struct device *dev);
- 
- 	/* Per device IOMMU features */
--	int (*dev_enable_feat)(struct device *dev, enum iommu_dev_features f);
--	int (*dev_disable_feat)(struct device *dev, enum iommu_dev_features f);
--
- 	void (*page_response)(struct device *dev, struct iopf_fault *evt,
- 			      struct iommu_page_response *msg);
- 
-@@ -1102,9 +1089,6 @@ void dev_iommu_priv_set(struct device *dev, void *priv);
- extern struct mutex iommu_probe_device_lock;
- int iommu_probe_device(struct device *dev);
- 
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
--
- int iommu_device_use_default_domain(struct device *dev);
- void iommu_device_unuse_default_domain(struct device *dev);
- 
-@@ -1393,18 +1377,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
- 	return -ENODEV;
- }
- 
--static inline int
--iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
--static inline int
--iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
- static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
- {
- 	return NULL;
+-struct phylink_mac_ops ugeth_mac_ops = {
++static struct phylink_mac_ops ugeth_mac_ops = {
+ 	.mac_link_up = ugeth_mac_link_up,
+ 	.mac_link_down = ugeth_mac_link_down,
+ 	.mac_config = ugeth_mac_config,
 -- 
-2.43.0
+2.25.1
 
 
