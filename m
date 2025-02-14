@@ -1,201 +1,229 @@
-Return-Path: <linux-kernel+bounces-515232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7985AA36212
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:45:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5F7A3620D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:44:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613DE1889D4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDEF3B29BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208652673AE;
-	Fri, 14 Feb 2025 15:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2105126738E;
+	Fri, 14 Feb 2025 15:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fJSdhLhL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nO3W9CDO"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB7266EE4
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547819; cv=none; b=J1Xtp7Oe+E1OQDM1Xy2v+Qk4zOwjmOxWMvSTMHuvqw/Fz1grgNuEaBUg1J1GrkZTt3aMmb8yw2UIdu/xA8Ae7FtOSh0++gxTdymN3CM4BkmwD4HlSDWkQlyLFRlnA1ucUGLkjtZE62GSInI+AUHnjbVR1GWsYKHyD6F+ol19zlI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547819; c=relaxed/simple;
-	bh=eyeqT9bAiWphbubS3AQn/VYc0wKOesENvM0ZbTIaFNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PhlhBEP0xlaVvDvU1zrZApWb2l4ohKlHfwqbprcV/uqmke/djYpWAjPM6c/LUfquamdP7krV3BuOXjn5hkRDydjqQ75D4zp5dacibGQa2VVpxx+ecbY6ElUbq53dNtJ4+JIXr6oBhq6RpPS1F5kPo/0/HwTvn1tezcihfVAuMYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fJSdhLhL; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739547818; x=1771083818;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=eyeqT9bAiWphbubS3AQn/VYc0wKOesENvM0ZbTIaFNI=;
-  b=fJSdhLhL16Zkq5LtIptcTdLNNDk06u5bzmYbDeFN9QKc7qjG2f4VobdN
-   JAf0RHmmRB6gUa1Ak0DOTfi7YwALHubAh1n095DjJTyA7cqQ4ML41IlnV
-   4d+zYbBiOLkD9xDGp3HbwTLdYCLHPluIdDoE+lqZDifjPdaqmqHCHxBbr
-   VYNB5z6/HcJAp3UWyVTGRGHt4TQXPwt9k8YNZe0kYLGY3arQxD1XKYAws
-   ++loGYDFTB3fG7ihQG8K5FE8UECeczTqP0LShnr1Z/0jk4z9dm6H8GR1+
-   Qf9an1YIoE361zdCcWQR+fUucPXdC5khQcIGywc1WmYV/Yz97AQKpD/Ok
-   A==;
-X-CSE-ConnectionGUID: PSLKAulmQb6faZ8xgt36ng==
-X-CSE-MsgGUID: 2OAu7DZZTemeOlSARvQyhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40225774"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40225774"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:43:37 -0800
-X-CSE-ConnectionGUID: CEVNlNB7Ts+IY+LZhFj2ug==
-X-CSE-MsgGUID: bQPqVNujRUaVieTvSIDlgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="113685192"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 14 Feb 2025 07:43:35 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tixqn-0019ng-0B;
-	Fri, 14 Feb 2025 15:43:33 +0000
-Date: Fri, 14 Feb 2025 23:42:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>,
-	Stefan Kristiansson <stefank@nvidia.com>
-Subject: drivers/soc/tegra/pmc.c:467: warning: Function parameter or struct
- member 'syscore' not described in 'tegra_pmc'
-Message-ID: <202502142305.JI9507hZ-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70554266F05
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739547787; cv=fail; b=JhzHoRAwkv8YYkCM9nmvuXsfKUOX8RS8Iygr/E1wYP7Z1Y5U9rRhpbJ2NrSpmiMYeOoxSbnq11WqXH9J+GR+0Tva2kF8vmHm0IC/vPcS8ZqtLSlDsQ3v5WN9hsVqcy21cIVPZzPy4G7awJZ3elAGsX9f98kP7HCt3rR7BfpueHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739547787; c=relaxed/simple;
+	bh=BuyVj78XzZCgw4ldIxDWukJF5PCUwUHZ/xONZn05XqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kSeUi3aXO1bozBFrZg4UNFjZpZ67Ae0xJ3b42BHXOOUShQkclzwGPL6LEfLPcfr19Q9pD465aiTebZkRzPVZWdpcB7BKn86/J4zr0MKP7AFPsAjryJ3jc8pBaEe4Ca7/TFH3HL8JO9EPt7UogdCgbAC5WJQ3IV6jn/vtBa9kBs4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nO3W9CDO; arc=fail smtp.client-ip=40.107.223.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FNbXglPzEXCtLfAbMikLTUy/2Z3aELKgeQLvhkXCx1ZFezZbXgxiR7JvibKvrgEB1oe6/I/abqBHU7j8fLmHBq/9ebm7ACoLhLig0Xznbj6/+ohrDnAeGbPdkU4xnNJBSq7vkQs4xAearezzwT0ecgN2x8TkoR/rUOf2d9tin8d+V9G7ufWIee0bgWCV6XrTX2QMgSA0iZLCuQZC1MAhvwCaWTvfyoAPGjL34Eco9hsslqqExRyIVWDxNI4xZYG/N5PX/hzX23ITrF1WAC2zwa90XSejtkR7lln46f1fA48AjZV/NsGicUSRTQQ6c/Fo+F+quwm5TkHM49FFTrQE6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FCzWo4/WUdSmFkb2SS1qUdzZbtzfzN8UrZM3dQNV+wM=;
+ b=chbkgLSfWiQYLTIZs0cUINB7m7RktPVOWCFtqw6QL9NkOYcAbz5rB/T1jiq66Q9k1G4wfl/C+sz5FrDtjt7UEaC/tnDu+LH8Uft9TK3fQ9oWi3N11RxP/dnCc1ZekCw7uAyWex1XV8lDgNEVI3np8kJRbn1H16VWxgoZRzPXIzETEfkURzfRKWgnPaVDgWBarjvZRmL9RdI2fxtGXQxa2B4sfFVOXEGCQL5xy+L2WOjOoDlh73j9k1FyoHrxVDuZTPEJGqjb06J0rQi9yA06H3ZgHeVOIumtoi4PNh0UmGvzjKqBFULPs1VTrRZue9I7XfJhIoFVMG52kJ4PvbvhtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.alibaba.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FCzWo4/WUdSmFkb2SS1qUdzZbtzfzN8UrZM3dQNV+wM=;
+ b=nO3W9CDO8jjPrQdAyUE6Z7RKzRXt6fRni3Zx667P9R/BJvQnT+03f0HF83Br8A/uOpjA7JliJasiq0jh9iOAHF8LYRmBUM8bMTqr3D3TfBmA0+asTAItkN9nB2Elt7YZvzJyq0BrvNYbvnqkvHymhnbGNs0s9U1acR8fiCIZY/o=
+Received: from DM6PR17CA0023.namprd17.prod.outlook.com (2603:10b6:5:1b3::36)
+ by SJ1PR12MB6289.namprd12.prod.outlook.com (2603:10b6:a03:458::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
+ 2025 15:43:01 +0000
+Received: from CY4PEPF0000E9D9.namprd05.prod.outlook.com
+ (2603:10b6:5:1b3:cafe::ed) by DM6PR17CA0023.outlook.office365.com
+ (2603:10b6:5:1b3::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Fri,
+ 14 Feb 2025 15:43:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D9.mail.protection.outlook.com (10.167.241.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8445.10 via Frontend Transport; Fri, 14 Feb 2025 15:43:00 +0000
+Received: from [10.143.196.137] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Feb
+ 2025 09:42:56 -0600
+Message-ID: <610e209d-5c12-44d5-898c-f18dffbc2062@amd.com>
+Date: Fri, 14 Feb 2025 21:12:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] sched/eevdf: Force propagating min_slice of cfs_rq
+ when {en,de}queue tasks
+To: Tianchen Ding <dtcccc@linux.alibaba.com>, Peter Zijlstra
+	<peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
+References: <20250211063659.7180-1-dtcccc@linux.alibaba.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250211063659.7180-1-dtcccc@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D9:EE_|SJ1PR12MB6289:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbc59327-162e-4b0c-6f50-08dd4d0e4359
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|376014|82310400026|1800799024|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZytVMUhBUHZ1UXI2d1dLVWNubjlVc0owRkxCMWxpMUx2WTd5eVMvU3RjZWRv?=
+ =?utf-8?B?U0dVKzRrU3F0Rkk5MDdjWFA2aU44SnJKVWhmQlRvRE1qMDNrekpLa1VTbzMv?=
+ =?utf-8?B?UkRyRGFPbldyV1FyOEVEV2NWbTJlTENzZDI2aEhGOWRwVkxKbWl4ZkRyUVM4?=
+ =?utf-8?B?RnVCVUVVcWNCKzUwN3kvclYvbmJXdnFza084OG10SWtjZ29oTE1TZ3EySzRJ?=
+ =?utf-8?B?N1B6S0VvSmJuT3BxeERLaE1zVm1XQ0VBWFRaanZDSUdURDhwRU1PV2k0NGVN?=
+ =?utf-8?B?UEtaZ3hXcU5ScEZuV2RVUUROQXdBa0NpQ09KVWhtem9ZbnF3Y2REUXVxSG5k?=
+ =?utf-8?B?blVwcEc4NmNpaSt0dGR3UGppZ1J3NGtLOW1RendsVUhFYTdTOGtmNnd3ajFx?=
+ =?utf-8?B?eXk5c0w2WVJ4QjF2ZzI2Mm4vQ2VJZ2s5Yk16WnNSKzR2Q3ZKZkppRHFTYTB2?=
+ =?utf-8?B?dmZPS09DMk1qaWJOYjRxeHFVbzJVYm01SVgzYy9rbUhlQzRESXRRNnF6bVFZ?=
+ =?utf-8?B?SVVRd1d2SFArbzFOaTg5VENuTkoyT3dGRFpjcXRVYUNtWDVVUU13dnFxcG5O?=
+ =?utf-8?B?UTFscWRvTFA4elh0dHN4ZHVLaGk1TXpQS2s4anpmTm9aVm4xRE9vVnAvL0pV?=
+ =?utf-8?B?QW1hR1JlTlZ5bnpwV1lKODk1WFltZ2JhQmZIRUlFbWdkTUFuL3BLZGQvNHdW?=
+ =?utf-8?B?S0lETkdleDBlcTFVK3oxTWJsOTYySU50dkZLb24rOXVEaGtVYkp1Syt5bGps?=
+ =?utf-8?B?amFtQ3g4OFBSNS9hSlgxMVlxblpLRUFOTnJ4UkI4eG9RNXQ4VTN4ZVFiY3hy?=
+ =?utf-8?B?L0ZIQUR6YkljaDZPYTdNTVJhMWlyK2xNVXVGZUZyZGlZQ05aQUp0UWNYOE1O?=
+ =?utf-8?B?QUxpQ29EQURmRnM3U28zS2sxZ2VvZkNLSy9aT2xjZU1FWTRwdlBET2gwNjJo?=
+ =?utf-8?B?TEpXWWtZWkhJb2V2V2hoOEtsdms3R1JYRlkrQzBFYzFDUW9EMW0xTk1xSjlK?=
+ =?utf-8?B?aUlZR21EK25UWDRJU05obGdEYmIxTjhXTlJlWUd1MTdJcXU3QnR0MHlzcVRw?=
+ =?utf-8?B?WVJ1dUN2VHRKdXpzWkV5aVRLU0xkSXpqRDhDRXlmNk4wSFBlSWZvVThUZzNa?=
+ =?utf-8?B?QW14SytucUZZM09ieFE3cTZicVhocHZqOUZNWnF3c3B3cFM5UUo5enRhVWJx?=
+ =?utf-8?B?NXlUeGhKWUxDcFlGQ3Z0a0xLTUx5N3E5NWVFeVRRREJ1Z2hObktTR0djZnVI?=
+ =?utf-8?B?eVlYYlJrZUdUQU0vY0hKRjJCZjk5SFhaaEN1VEx0enIvREJ3Y3BCRGxSTjBp?=
+ =?utf-8?B?Y2NneTNhYUllTUJ1UXBqeERWVTJHMnhXWW5LSUFxRGExUXU0VXhaYmRvK0U2?=
+ =?utf-8?B?OUlrRWtsOWYrTEc3T21KUGxIV3QxZC9VbGh5dzlKNGVsSEFOMDUzcFpFQlRh?=
+ =?utf-8?B?UFdNa2d1dkNMbGdvU1VlVW42RWJYYUdZdVJndmRDWlB2Q0pyNVh2WG8zWU5k?=
+ =?utf-8?B?SFJOWTNHaytVV0R5cXhYWTN6dENTdFNqdjNSRVZKblNMc0tqTlhMdVpwUE1M?=
+ =?utf-8?B?dEE1RlFMUUgyVUlxM20xNEhLaDFiRVVxa0lxVytVb2wvaVhhemdZODJnZHQ5?=
+ =?utf-8?B?UWlGWnArcC9Pb1pVSGRMeW9ndURBN1VNYStvNGpXSkJSTVYvUkRXalc1RHdi?=
+ =?utf-8?B?Y3preVFyU084QmtQWURSVU83aFp2VlNlSUUrTXh4aXdGUnZFWnY1QitMNUE3?=
+ =?utf-8?B?eEZHUS90U3MwSmNDUWFGUjNxREhkSXRISkJlT2xDL0pNSDVSbXpuRnNyeXFn?=
+ =?utf-8?B?Ym4xUHZaa09IZW1idjRMa0RRTGIwUHRQUnJVT0JiczZxME9jeFhkcXovaWdy?=
+ =?utf-8?B?YWt5cE4rMXh3d1M0clpnQjV0eDQrc25DYjZQOUViMG1QUGkwR2VIT2lEVmcy?=
+ =?utf-8?B?MWw1elFxT0FyNXdOQnQ0c251ZUs0TGd5bWR5VTQ4eVB2cFlhdDRxR2YzTHc0?=
+ =?utf-8?Q?lc93XzjGIQfBKAwLNMfuGG2pWPZpf8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(82310400026)(1800799024)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 15:43:00.9731
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbc59327-162e-4b0c-6f50-08dd4d0e4359
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6289
 
-Hi Petlozu,
+Hello Tianchen,
 
-FYI, the error/warning still remains.
+On 2/11/2025 12:06 PM, Tianchen Ding wrote:
+> When a task is enqueued and its parent cgroup se is already on_rq, this
+> parent cgroup se will not be enqueued again, and hence the root->min_slice
+> leaves unchanged. The same issue happens when a task is dequeued and its
+> parent cgroup se has other runnable entities, and the parent cgroup se
+> will not be dequeued.
+> 
+> Force propagating min_slice when se doesn't need to be enqueued or
+> dequeued. Ensure the se hierarchy always get the latest min_slice.
+> 
+> Fixes: aef6987d8954 ("sched/eevdf: Propagate min_slice up the cgroup hierarchy")
+> Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+> ---
+> v3:
+> I modified some descriptions in commit log, and rebased to the latest
+> tip branch. The old version of patch can be found in [1].
+> 
+> The original patchset wants to add a feature. As the 2nd patch may be
+> hard to be accepted, I think at least the bugfix should be applied.
+> 
+> The issue about this patch was described detailly in [2].
+> 
+> [1]https://lore.kernel.org/all/20241031094822.30531-1-dtcccc@linux.alibaba.com/
+> [2]https://lore.kernel.org/all/a903d0dc-1d88-4ae7-ac81-3eed0445654d@linux.alibaba.com/
+> ---
+>   kernel/sched/fair.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1e78caa21436..0d479b92633a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6970,6 +6970,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>   		update_cfs_group(se);
+>   
+>   		se->slice = slice;
+> +		if (se != cfs_rq->curr)
+> +			min_vruntime_cb_propagate(&se->run_node, NULL);
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   128c8f96eb8638c060cd3532dc394d046ce64fe1
-commit: 1ddb8f6d44ff482c9953a06f800453bc372cfead soc/tegra: pmc: Fix dual edge triggered wakes
-date:   2 years, 3 months ago
-config: arm-randconfig-004-20250102 (https://download.01.org/0day-ci/archive/20250214/202502142305.JI9507hZ-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502142305.JI9507hZ-lkp@intel.com/reproduce)
+Should we check if old slice matches with the new slice before
+propagation to avoid any unnecessary propagate call? Something like:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502142305.JI9507hZ-lkp@intel.com/
+		if (se->slice != slice) {
+			se->slice = slice;
+			if (se != cfs_rq->curr)
+				min_vruntime_cb_propagate(&se->run_node, NULL);
+		}
 
-All warnings (new ones prefixed by >>):
+Thoughts?
 
->> drivers/soc/tegra/pmc.c:467: warning: Function parameter or struct member 'syscore' not described in 'tegra_pmc'
+Other than that, the fix looks good. Feel free to add:
 
-
-vim +467 drivers/soc/tegra/pmc.c
-
-5f84bb1a4099e2 Sandipan Patra       2018-10-24  383  
-7232398abc6a71 Thierry Reding       2014-07-11  384  /**
-7232398abc6a71 Thierry Reding       2014-07-11  385   * struct tegra_pmc - NVIDIA Tegra PMC
-35b67291b4a85d Jon Hunter           2015-12-04  386   * @dev: pointer to PMC device structure
-7232398abc6a71 Thierry Reding       2014-07-11  387   * @base: pointer to I/O remapped register region
-bbe5af60041cae Thierry Reding       2019-01-25  388   * @wake: pointer to I/O remapped region for WAKE registers
-bbe5af60041cae Thierry Reding       2019-01-25  389   * @aotag: pointer to I/O remapped region for AOTAG registers
-bbe5af60041cae Thierry Reding       2019-01-25  390   * @scratch: pointer to I/O remapped region for scratch registers
-7232398abc6a71 Thierry Reding       2014-07-11  391   * @clk: pointer to pclk clock
-35b67291b4a85d Jon Hunter           2015-12-04  392   * @soc: pointer to SoC data structure
-e247deae1a5508 Mikko Perttunen      2019-01-25  393   * @tz_only: flag specifying if the PMC can only be accessed via TrustZone
-3195ac6d9cbeef Jon Hunter           2015-12-04  394   * @debugfs: pointer to debugfs entry
-7232398abc6a71 Thierry Reding       2014-07-11  395   * @rate: currently configured rate of pclk
-7232398abc6a71 Thierry Reding       2014-07-11  396   * @suspend_mode: lowest suspend mode available
-7232398abc6a71 Thierry Reding       2014-07-11  397   * @cpu_good_time: CPU power good time (in microseconds)
-7232398abc6a71 Thierry Reding       2014-07-11  398   * @cpu_off_time: CPU power off time (in microsecends)
-7232398abc6a71 Thierry Reding       2014-07-11  399   * @core_osc_time: core power good OSC time (in microseconds)
-7232398abc6a71 Thierry Reding       2014-07-11  400   * @core_pmu_time: core power good PMU time (in microseconds)
-7232398abc6a71 Thierry Reding       2014-07-11  401   * @core_off_time: core power off time (in microseconds)
-7232398abc6a71 Thierry Reding       2014-07-11  402   * @corereq_high: core power request is active-high
-7232398abc6a71 Thierry Reding       2014-07-11  403   * @sysclkreq_high: system clock request is active-high
-7232398abc6a71 Thierry Reding       2014-07-11  404   * @combined_req: combined power request for CPU & core
-7232398abc6a71 Thierry Reding       2014-07-11  405   * @cpu_pwr_good_en: CPU power good signal is enabled
-7232398abc6a71 Thierry Reding       2014-07-11  406   * @lp0_vec_phys: physical base address of the LP0 warm boot code
-7232398abc6a71 Thierry Reding       2014-07-11  407   * @lp0_vec_size: size of the LP0 warm boot code
-a38045121bf421 Jon Hunter           2016-03-30  408   * @powergates_available: Bitmap of available power gates
-7232398abc6a71 Thierry Reding       2014-07-11  409   * @powergates_lock: mutex for power gate register access
-bbe5af60041cae Thierry Reding       2019-01-25  410   * @pctl_dev: pin controller exposed by the PMC
-bbe5af60041cae Thierry Reding       2019-01-25  411   * @domain: IRQ domain provided by the PMC
-bbe5af60041cae Thierry Reding       2019-01-25  412   * @irq: chip implementation for the IRQ domain
-e57a243f5d896f Dmitry Osipenko      2019-09-26  413   * @clk_nb: pclk clock changes handler
-d3a20dcbca4880 Thierry Reding       2022-05-06  414   * @core_domain_state_synced: flag marking the core domain's state as synced
-d3a20dcbca4880 Thierry Reding       2022-05-06  415   * @core_domain_registered: flag marking the core domain as registered
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  416   * @wake_type_level_map: Bitmap indicating level type for non-dual edge wakes
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  417   * @wake_type_dual_edge_map: Bitmap indicating if a wake is dual-edge or not
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  418   * @wake_sw_status_map: Bitmap to hold raw status of wakes without mask
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  419   * @wake_cntrl_level_map: Bitmap to hold wake levels to be programmed in
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  420   *     cntrl register associated with each wake during system suspend.
-7232398abc6a71 Thierry Reding       2014-07-11  421   */
-7232398abc6a71 Thierry Reding       2014-07-11  422  struct tegra_pmc {
-3568df3d31d62b Mikko Perttunen      2015-01-06  423  	struct device *dev;
-7232398abc6a71 Thierry Reding       2014-07-11  424  	void __iomem *base;
-c641ec6eab8587 Thierry Reding       2017-08-30  425  	void __iomem *wake;
-c641ec6eab8587 Thierry Reding       2017-08-30  426  	void __iomem *aotag;
-5be2255676bf2b Thierry Reding       2017-08-30  427  	void __iomem *scratch;
-7232398abc6a71 Thierry Reding       2014-07-11  428  	struct clk *clk;
-3195ac6d9cbeef Jon Hunter           2015-12-04  429  	struct dentry *debugfs;
-7232398abc6a71 Thierry Reding       2014-07-11  430  
-7232398abc6a71 Thierry Reding       2014-07-11  431  	const struct tegra_pmc_soc *soc;
-e247deae1a5508 Mikko Perttunen      2019-01-25  432  	bool tz_only;
-7232398abc6a71 Thierry Reding       2014-07-11  433  
-7232398abc6a71 Thierry Reding       2014-07-11  434  	unsigned long rate;
-7232398abc6a71 Thierry Reding       2014-07-11  435  
-7232398abc6a71 Thierry Reding       2014-07-11  436  	enum tegra_suspend_mode suspend_mode;
-7232398abc6a71 Thierry Reding       2014-07-11  437  	u32 cpu_good_time;
-7232398abc6a71 Thierry Reding       2014-07-11  438  	u32 cpu_off_time;
-7232398abc6a71 Thierry Reding       2014-07-11  439  	u32 core_osc_time;
-7232398abc6a71 Thierry Reding       2014-07-11  440  	u32 core_pmu_time;
-7232398abc6a71 Thierry Reding       2014-07-11  441  	u32 core_off_time;
-7232398abc6a71 Thierry Reding       2014-07-11  442  	bool corereq_high;
-7232398abc6a71 Thierry Reding       2014-07-11  443  	bool sysclkreq_high;
-7232398abc6a71 Thierry Reding       2014-07-11  444  	bool combined_req;
-7232398abc6a71 Thierry Reding       2014-07-11  445  	bool cpu_pwr_good_en;
-7232398abc6a71 Thierry Reding       2014-07-11  446  	u32 lp0_vec_phys;
-7232398abc6a71 Thierry Reding       2014-07-11  447  	u32 lp0_vec_size;
-a38045121bf421 Jon Hunter           2016-03-30  448  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
-7232398abc6a71 Thierry Reding       2014-07-11  449  
-7232398abc6a71 Thierry Reding       2014-07-11  450  	struct mutex powergates_lock;
-4a37f11c8f57ff Aapo Vienamo         2018-08-10  451  
-4a37f11c8f57ff Aapo Vienamo         2018-08-10  452  	struct pinctrl_dev *pctl_dev;
-19906e6b166721 Thierry Reding       2018-09-17  453  
-19906e6b166721 Thierry Reding       2018-09-17  454  	struct irq_domain *domain;
-19906e6b166721 Thierry Reding       2018-09-17  455  	struct irq_chip irq;
-e57a243f5d896f Dmitry Osipenko      2019-09-26  456  
-e57a243f5d896f Dmitry Osipenko      2019-09-26  457  	struct notifier_block clk_nb;
-41bafa698ddd07 Dmitry Osipenko      2021-06-01  458  
-41bafa698ddd07 Dmitry Osipenko      2021-06-01  459  	bool core_domain_state_synced;
-41bafa698ddd07 Dmitry Osipenko      2021-06-01  460  	bool core_domain_registered;
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  461  
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  462  	unsigned long *wake_type_level_map;
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  463  	unsigned long *wake_type_dual_edge_map;
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  464  	unsigned long *wake_sw_status_map;
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  465  	unsigned long *wake_cntrl_level_map;
-1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  466  	struct syscore_ops syscore;
-7232398abc6a71 Thierry Reding       2014-07-11 @467  };
-7232398abc6a71 Thierry Reding       2014-07-11  468  
-
-:::::: The code at line 467 was first introduced by commit
-:::::: 7232398abc6a7186e315425638c367d50c674718 ARM: tegra: Convert PMC to a driver
-
-:::::: TO: Thierry Reding <treding@nvidia.com>
-:::::: CC: Thierry Reding <treding@nvidia.com>
+Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks and Regards,
+Prateek
+
+>   		slice = cfs_rq_min_slice(cfs_rq);
+>   
+>   		cfs_rq->h_nr_runnable += h_nr_runnable;
+> @@ -7099,6 +7101,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+>   		update_cfs_group(se);
+>   
+>   		se->slice = slice;
+> +		if (se != cfs_rq->curr)
+> +			min_vruntime_cb_propagate(&se->run_node, NULL);
+>   		slice = cfs_rq_min_slice(cfs_rq);
+>   
+>   		cfs_rq->h_nr_runnable -= h_nr_runnable;
+
+
 
