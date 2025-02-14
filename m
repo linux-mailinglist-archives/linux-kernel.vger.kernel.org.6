@@ -1,184 +1,225 @@
-Return-Path: <linux-kernel+bounces-515544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A704BA36611
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:24:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12244A36616
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3D1171220
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2B61895BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190D11A7045;
-	Fri, 14 Feb 2025 19:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277681AA1E0;
+	Fri, 14 Feb 2025 19:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTDRXme/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PKgiQlAc"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA02715FA7B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62C31991C1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739561088; cv=none; b=RT3HD5AD5rc2olInr+KGpwkwg2tXWf2c1yYmiEtisP/9CZ5YSOxy2M6a0g/Nbx1AfSLETEIfVAWY0PrzWlJkOBcay+a4lzRx+SMCC54M5VPicHBoNSbnfhYudA5HrzgQlsmTRa7E1lMLUG4rSjHNux2RKR+K6MPCH/X9PDi1rik=
+	t=1739561259; cv=none; b=Rtjm4CXgWSvs0JJ6JOjv9Vn/1NnQi/ZbRoQ9Sq4GV8KCbrRpKJSo0TzTUHRPOEWbrgxmy1NF6DJ9yq0VDW4AQ6RAI8y6mtWIJGQXNmHIIgKG14zHpJ4M+vqZkJTc4rZOPwW6cBszHIj7n68bsc5pWIIYg2feKhI1q548qgG8I2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739561088; c=relaxed/simple;
-	bh=d7eLa+l0BgxHNOGpkfo2U7Ib7OXM+0lkMqMNR9qYx4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L6Awyz4FRmCB60jFLzcADcRG6dGMqIwuBB0jQMlhrho5m6G5hJgRp06X3UNyMf2qR80FUVvogjzhh0tPQMUEj5UoCikWiPWRwsUyqxNGE0igQuaSEZLynVBobNL0u/6osX83pTNbOw+6NSSjniUZ2TX5JAOiRB7V4/P7aCyrytU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTDRXme/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739561085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uU18PgJHAWxgzCn1GD8uryQE/mKTabOBU2mLmRwwGxI=;
-	b=RTDRXme/4Ck8Pu33B3KhyWdGgMGk9I0efkGPUwN/CVFFULma2xAxYfv0d9NjJ0QjNXg59g
-	IGgeBGVAkleqHYjhq4mveJwcalSL3mq9kHwwJvhPA5OVayVY7RLmtnUUgyzclLUeh6oksD
-	1peLQ/xuB1Z9eobD6Hb0hy/13EdD624=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-dfWXpf46OYOZdi8cUPKRNw-1; Fri,
- 14 Feb 2025 14:24:41 -0500
-X-MC-Unique: dfWXpf46OYOZdi8cUPKRNw-1
-X-Mimecast-MFC-AGG-ID: dfWXpf46OYOZdi8cUPKRNw_1739561080
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F129A19039C5;
-	Fri, 14 Feb 2025 19:24:39 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.30])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB8FB1800365;
-	Fri, 14 Feb 2025 19:24:37 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Don Brace <don.brace@microchip.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: storagedev@microchip.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] scsi: smartpqi: Add lun_reset_key to initialize ctrl_info->lun_reset_mutex
-Date: Fri, 14 Feb 2025 14:23:24 -0500
-Message-ID: <20250214192324.2471148-1-longman@redhat.com>
+	s=arc-20240116; t=1739561259; c=relaxed/simple;
+	bh=DYa5M1lN4G8k0q9NNjk0n1aZvgrn+ZWN9RQE2qQ6GoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gx0jQy84oXDHRrF7dD3Eiq0LurNoOqWAB1vIMis2vCt4ka7tfUSj2HcOheihBrKoK3yZllUt/CpkEhzTL8uxZRV+UjI8Y9EsC+lMRDhm/kURDdUkzFV1O6XuM5+bwMBpJ7fKyGJDtsNLrAJ8WYDnRXa5YRPfrXrUOX8NXfs2odM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PKgiQlAc; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f6715734d9so22253457b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:27:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739561257; x=1740166057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oY7qB5SrrWW/s/zTs9PGLldL2hUDnZjFDu0Se/qxC+Q=;
+        b=PKgiQlAcKU7uxZyYM+K77IH8qujRhvvo3Zikrr3vIxUYcL0ya9thGCm3cgTf4jzecb
+         wdOXWmCXIyA6GiIkbCIg6g3kV4FD7QeELxDV79SO+OWwtLaVOz53mnF7VbQU8JlE9B5K
+         1qaLWAZcxFB3tHBcKtRxfCHMzESYhc6LWCWvQLfkZsA/2tU4DUyRzquVYmEKI/wwiCTW
+         Gf/PbOdpi4t0jLmVFQfowz9+6ZmRZtEDTEUhPiDwtcI66Nq/kSioBjATf76Jwky4mKSV
+         wxCOvOrQyIhvXppRd8h/Ww/njPVwEp352qrpobUJxOCW6hdIWEDwehL2GrK3pdUTbtfM
+         0wLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739561257; x=1740166057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oY7qB5SrrWW/s/zTs9PGLldL2hUDnZjFDu0Se/qxC+Q=;
+        b=Gy38ZhyWBBYPYCEeSw0H/gPGt5P0dlA/v353fT0pLoheXWic3nNwtDzT5MgQ/ttJoJ
+         atescRhsYL0sN/EYERSsqd2UP7ymw9L+1qX7N7HJdApOxsyYOnRdX7GrRyzxfHCEfkbH
+         lDQpo/GEPZc5zZjoLI0llJc738AFk3L9rLm4IG2BLMUG2nW7eBbT1/8PHiQsvGJvRWuF
+         58X0BfyvVSwyajKCVkin/qq+ltviQsmVSd9l1WNRBfaEc0PEi/9ibYbFaPIiXFF8n9M4
+         NbVTbofUi2p8+i1O3TWPGBibpotyrnTXbZNbDxRNqXloL26FW3Q4GUkCIgcD1qVePnv5
+         vamQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVjMm2CYn05jqzPO7vC1HMX2/oxSO6J9+SUBByfISCsYyqdnZCWz9dKP7YYWM0lske4X93dZzKMh+jiQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrks6mKsdd+HTTJaOP/z/0xPsnbK8w65ex8emo9VCWkAhFS0SK
+	mTYs6hJzvHT4j8PmCY1CJK2RVJuAJM3c3aa9Z/FF8C75pqWoX1Xxeaep0TdQDhI37JXKIB8ex+Q
+	bnf5Avvux7WHl0xvwq80TpZvRFNck11KCojDt
+X-Gm-Gg: ASbGncslHrYtZwXP0cl0jsP6VTvYqIX1l2XoZrbOyVjxZbG7HRmlvil8/WHK/SKgoeb
+	pYBcFVP6KiAwe9vwAV2DIeHl1Ij6ESbU8Q1bylXjzdUZtVT1EghuVUMwZQKT3lnc5eheMMBUBT+
+	hdUeQ0/LxSLYn4FsiGbFAOC277Sn8=
+X-Google-Smtp-Source: AGHT+IGg7kvdCi72ltCDUjU6eEKB8SbPlHGSKxrM9IB1TlOo5p2QgL47qVpy2+9G9Z2ahIgLLrmeJ5AYTLO7iw4Pn6c=
+X-Received: by 2002:a05:690c:6389:b0:6f9:a402:ff68 with SMTP id
+ 00721157ae682-6fb582b9c1cmr8153637b3.19.1739561256615; Fri, 14 Feb 2025
+ 11:27:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250204004038.1680123-1-jthoughton@google.com>
+ <20250204004038.1680123-3-jthoughton@google.com> <Z69gwTQjaeMLY7rM@google.com>
+In-Reply-To: <Z69gwTQjaeMLY7rM@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Fri, 14 Feb 2025 11:27:00 -0800
+X-Gm-Features: AWEUYZmBPaZiJXTB-ux6TIQQ_Cg3i4_wSJFT_Gu64wXh_xbE1h8XoOW9UYzmEoU
+Message-ID: <CADrL8HXW4drX-K-JuZ6SLsJDfU8XDyyjmDk_g00y+QFX5=qwDg@mail.gmail.com>
+Subject: Re: [PATCH v9 02/11] KVM: Add lockless memslot walk to KVM
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A lockdep recursive locking splat happens when shutting down a debug kernel
-on some systems.
+On Fri, Feb 14, 2025 at 7:27=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> It's not a lockless walk of the memslots.  The walk of memslots is alread=
+y
+> "lockless" in that the memslots are protected by SRCU, not by mmu_lock.
 
- ============================================
- WARNING: possible recursive locking detected
- --------------------------------------------
- reboot/15103 is trying to acquire lock:
- ffff8881435af8c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
+Indeed, so I guess I should have said something like "Allow memslot
+walk callbacks to be lockless"
 
- but task is already holding lock:
- ffff8888929278c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
+>
+> On Tue, Feb 04, 2025, James Houghton wrote:
+> > It is possible to correctly do aging without taking the KVM MMU lock;
+> > this option allows such architectures to do so. Architectures that
+> > select CONFIG_KVM_MMU_NOTIFIER_AGING_LOCKLESS are responsible for
+> > correctness.
+> >
+> > Suggested-by: Yu Zhao <yuzhao@google.com>
+> > Signed-off-by: James Houghton <jthoughton@google.com>
+> > Reviewed-by: David Matlack <dmatlack@google.com>
+> > ---
+> >  include/linux/kvm_host.h |  1 +
+> >  virt/kvm/Kconfig         |  2 ++
+> >  virt/kvm/kvm_main.c      | 24 +++++++++++++++++-------
+> >  3 files changed, 20 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index f34f4cfaa513..c28a6aa1f2ed 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -267,6 +267,7 @@ struct kvm_gfn_range {
+> >       union kvm_mmu_notifier_arg arg;
+> >       enum kvm_gfn_range_filter attr_filter;
+> >       bool may_block;
+> > +     bool lockless;
+> >  };
+> >  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)=
+;
+> >  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+> > diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> > index 54e959e7d68f..9356f4e4e255 100644
+> > --- a/virt/kvm/Kconfig
+> > +++ b/virt/kvm/Kconfig
+> > @@ -102,6 +102,8 @@ config KVM_GENERIC_MMU_NOTIFIER
+> >
+> >  config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
+> >         depends on KVM_GENERIC_MMU_NOTIFIER
+> > +
+> > +config KVM_MMU_NOTIFIER_AGING_LOCKLESS
+> >         bool
+>
+> As noted by Stephen[*], this steals the "bool" from KVM_ELIDE_TLB_FLUSH_I=
+F_YOUNG.
 
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
+Ah sorry!
 
-         CPU0
-         ----
-    lock(&ctrl_info->lun_reset_mutex);
-    lock(&ctrl_info->lun_reset_mutex);
+> Looking at it with fresh eyes, it also fails to take a depenency on
+> KVM_GENERIC_MMU_NOTIFIER.
 
-   *** DEADLOCK ***
+Indeed, thanks.
 
-   May be due to missing lock nesting notation
+> Lastly, the name is unnecessarily long.  The "NOTIFIER" part is superfluo=
+us and
+> can be dropped, as it's a property of the architecture's MMU, not of KVM'=
+s
+> mmu_notifier implementation. E.g. if KVM ever did aging outside of the no=
+tifier,
+> then this Kconfig would be relevant for that flow as well.  The dependenc=
+y on
+> KVM_GENERIC_MMU_NOTIFIER is what communicates that its currently used onl=
+y by
+> mmu_notifier aging.
+>
+> Actually, I take "Lastly" back.  IMO, it reads much better as LOCKLESS_AG=
+ING,
+> because LOCKLESS is an adverb that describes the AGING process.
+>
+> [*] https://lore.kernel.org/all/20250214181401.4e7dd91d@canb.auug.org.au
+>
+> TL;DR: I'm squashing this:
+>
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index f0a60e59c884..fe8ea8c097de 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -22,7 +22,7 @@ config KVM_X86
+>         select KVM_COMMON
+>         select KVM_GENERIC_MMU_NOTIFIER
+>         select KVM_ELIDE_TLB_FLUSH_IF_YOUNG
+> -       select KVM_MMU_NOTIFIER_AGING_LOCKLESS
+> +       select KVM_MMU_LOCKLESS_AGING
+>         select HAVE_KVM_IRQCHIP
+>         select HAVE_KVM_PFNCACHE
+>         select HAVE_KVM_DIRTY_RING_TSO
+> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> index 9356f4e4e255..746e1f466aa6 100644
+> --- a/virt/kvm/Kconfig
+> +++ b/virt/kvm/Kconfig
+> @@ -102,8 +102,10 @@ config KVM_GENERIC_MMU_NOTIFIER
+>
+>  config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
+>         depends on KVM_GENERIC_MMU_NOTIFIER
+> +       bool
+>
+> -config KVM_MMU_NOTIFIER_AGING_LOCKLESS
+> +config KVM_MMU_LOCKLESS_AGING
+> +       depends on KVM_GENERIC_MMU_NOTIFIER
+>         bool
+>
+>  config KVM_GENERIC_MEMORY_ATTRIBUTES
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e514e3db1b31..201c14ff476f 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -655,8 +655,7 @@ static __always_inline int kvm_age_hva_range(struct m=
+mu_notifier *mn,
+>                 .on_lock        =3D (void *)kvm_null_fn,
+>                 .flush_on_ret   =3D flush_on_ret,
+>                 .may_block      =3D false,
+> -               .lockless       =3D
+> -                       IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_AGING_LOCKLESS=
+),
+> +               .lockless       =3D IS_ENABLED(CONFIG_KVM_MMU_LOCKLESS_AG=
+ING),
+>         };
+>
+>         return kvm_handle_hva_range(kvm, &range).ret;
 
-  4 locks held by reboot/15103:
-   #0: ffffffff8db76f40 (system_transition_mutex){+.+.}-{3:3}, at: __do_sys_reboot+0x12b/0x2f0
-   #1: ffff8888929278c8 (&ctrl_info->lun_reset_mutex){+.+.}-{3:3}, at: pqi_shutdown+0x112/0x4b0 [smartpqi]
-   #2: ffff88810a8921a8 (&dev->mutex){....}-{3:3}, at: device_shutdown+0x1de/0x540
-   #3: ffff88810a9141a8 (&dev->mutex){....}-{3:3}, at: device_shutdown+0x1ec/0x540
-  Call Trace:
+LGTM, thanks! You will also need to do this same rename in patch 4[1].
 
-   dump_stack_lvl+0x6f/0xb0
-   print_deadlock_bug.cold+0xbd/0xca
-   validate_chain+0x37b/0x570
-   __lock_acquire+0x55b/0xac0
-   lock_acquire.part.0+0xf5/0x2b0
-   mutex_lock_nested+0x4b/0x190
-   pqi_shutdown+0x112/0x4b0 [smartpqi]
-   pci_device_shutdown+0x76/0x110
-   device_shutdown+0x2ea/0x540
-   kernel_restart+0x64/0xa0
-   __do_sys_reboot+0x1d8/0x2f0
-   do_syscall_64+0x92/0x180
-
-The fact that there are two dev->mutex'es acquired in device_shutdown()
-means both a parent and a child devices are being worked on and
-likely that the lun_reset_mutex'es of these two devices are being
-acquired here too. However, the way lun_reset_mutex is initialized in
-pqi_alloc_ctrl_info() will casue all the lun_reset_mutex'es to be treated
-as in the same class leading to this false positive warning. Fix that
-by initializing each instance of lun_reset_mutex with its own unique
-key so that they will be treated as different by lockdep.
-
-Also call mutex_destroy() and lockdep_unregister_key() in
-pqi_free_ctrl_info() before ctrl_info is freed.
-
-With this patch applied, the lockdep splat no longer happens.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- drivers/scsi/smartpqi/smartpqi.h      | 1 +
- drivers/scsi/smartpqi/smartpqi_init.c | 8 +++++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/smartpqi/smartpqi.h b/drivers/scsi/smartpqi/smartpqi.h
-index fae6db20a6e9..fb75de53d401 100644
---- a/drivers/scsi/smartpqi/smartpqi.h
-+++ b/drivers/scsi/smartpqi/smartpqi.h
-@@ -1359,6 +1359,7 @@ struct pqi_ctrl_info {
- 
- 	struct mutex	scan_mutex;
- 	struct mutex	lun_reset_mutex;
-+	struct lock_class_key lun_reset_key;
- 	bool		controller_online;
- 	bool		block_requests;
- 	bool		scan_blocked;
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 0da7be40c925..5c54dee67e54 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -8789,9 +8789,11 @@ static struct pqi_ctrl_info *pqi_alloc_ctrl_info(int numa_node)
- 		return NULL;
- 
- 	mutex_init(&ctrl_info->scan_mutex);
--	mutex_init(&ctrl_info->lun_reset_mutex);
- 	mutex_init(&ctrl_info->ofa_mutex);
- 
-+	lockdep_register_key(&ctrl_info->lun_reset_key);
-+	mutex_init_with_key(&ctrl_info->lun_reset_mutex, &ctrl_info->lun_reset_key);
-+
- 	INIT_LIST_HEAD(&ctrl_info->scsi_device_list);
- 	spin_lock_init(&ctrl_info->scsi_device_list_lock);
- 
-@@ -8830,6 +8832,10 @@ static struct pqi_ctrl_info *pqi_alloc_ctrl_info(int numa_node)
- 
- static inline void pqi_free_ctrl_info(struct pqi_ctrl_info *ctrl_info)
- {
-+	mutex_destroy(&ctrl_info->scan_mutex);
-+	mutex_destroy(&ctrl_info->ofa_mutex);
-+	mutex_destroy(&ctrl_info->lun_reset_mutex);
-+	lockdep_unregister_key(&ctrl_info->lun_reset_key);
- 	kfree(ctrl_info);
- }
- 
--- 
-2.48.1
-
+[1]: https://lore.kernel.org/kvm/20250204004038.1680123-5-jthoughton@google=
+.com/
 
