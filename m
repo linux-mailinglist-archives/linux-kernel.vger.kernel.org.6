@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-515073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8CA35F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:51:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B76A35F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17890188CD5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2FB1694F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACD2264A91;
-	Fri, 14 Feb 2025 13:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CB9264A90;
+	Fri, 14 Feb 2025 13:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ajopEHBO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="P2KUW794"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57015199D;
-	Fri, 14 Feb 2025 13:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED82263C82;
+	Fri, 14 Feb 2025 13:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739541085; cv=none; b=SRaKNfLQWWm5M2O1T08YbL5QkQI9VaQdviwo7MC2zNi7vGaSqRGIOtUYQONECWIGCfOmLIY88R5/KN6LIMBgOC4GfaZpeW6ZjunzWjWODzrkz+A+bMZFnE6/4l6fmFPZz1lhCHwfjZ95NZwe/JCpvj+xXSbBQgTzDM6mZ/ew5KI=
+	t=1739541237; cv=none; b=qulU88pceWhDYjHdAMITlQNd78rSdq5+E7t9YX37Z4jvOzAjlgfC4adVCAd102G1FsFrIj91v2SSJWiB8S4vn0QvFx/81MKvTE0YjR4xvVDoTq4eC8Mgp6YE+b1G2/VlxBuFNGeQ2/dV4dbh07cPVGl9zgbacFqKJ3weNC0hM1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739541085; c=relaxed/simple;
-	bh=4RYb0V938Hvh8XfpOfW2FPzt2ThKIlaPfePtmuDjHvc=;
+	s=arc-20240116; t=1739541237; c=relaxed/simple;
+	bh=8ZFVNPkYOb2CptUJ8u3SwY9+0rQ0qA9DGmFWCHEH8lU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9A+In/a43QbGaymK8cF0owrTW46FIdUTr+hQAgk7qP6p+LNhrbpY/VfOtfo79BESovK0ULAT94GzzAZFYta5TvJgnXwCvMu2kgcWkMVxXcqgGbQTTWduMjb1YYH57JxNNu1rcY8ytVDQ+0vF8FMOuMEOaVr5yxhRJXatydfKxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ajopEHBO; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739541084; x=1771077084;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4RYb0V938Hvh8XfpOfW2FPzt2ThKIlaPfePtmuDjHvc=;
-  b=ajopEHBOv8Zaajqeto9xrTkVQbhzgjZlsjVeyOpgKTEQlx0QOMXtzoSh
-   RXRbhZDNzXN+CiatTBx+aH+NYtWlnlt62ZGwU6/aQGD3eqElWEypPcMVT
-   QcmOeYmPtKpQb6KjXoFnnyom1GzwUtrv8jWvgJKYFdDqE0ZTqWsAXfmcl
-   VxBvpXplg1aD/96/sNnGCDYsZC1ySJVVorCqo2a35uEjtrBZ6n21viChS
-   +Hx74D1PQSdUx+KHslbO5O56ZHPEHiouf4AvXLeN/DzultfRAVPW20H+x
-   1hllQ31pGP4AFHRDex/mSdrUoN6yCe7Ule96mL8QAPp8hd0On77YVYdZm
-   w==;
-X-CSE-ConnectionGUID: yVCtjxg8SvGC80AV8Wz30Q==
-X-CSE-MsgGUID: vPyRbgCrSEGgKjQARKlBhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40323767"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40323767"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 05:51:23 -0800
-X-CSE-ConnectionGUID: PSBcuQ5sRpC62aaIV9z4VQ==
-X-CSE-MsgGUID: jEzRNxGUQIiWWnjKYiY9Qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="113650248"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 14 Feb 2025 05:51:19 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiw69-0019c7-0D;
-	Fri, 14 Feb 2025 13:51:17 +0000
-Date: Fri, 14 Feb 2025 21:50:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-	amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	rui.zhang@intel.com, lukasz.luba@arm.com,
-	david.collins@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] thermal: qcom-spmi-temp-alarm: Add temp alarm data
- struct based on HW subtype
-Message-ID: <202502142135.ez2QBdYV-lkp@intel.com>
-References: <20250213210403.3396392-3-anjelique.melendez@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErI9V2+f5Qk6EA/euOBnRYySio4GPrKMt/fT7bO0zPDU845HCX2LygvMDSwVP5vCMbLwkWcuKrHTvysPweYpjXu2W7vR4LI8C8cIX6Kt4kv9hxnoPyTYydtqr46g4iAO1Lxl/0ghlscAU/hZ8XRc7X1CBRLdladI2m98Yinr4i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=P2KUW794; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IP3d98N+f1HgUNJBWXpBJxp0KHTpgUbSL6byXT5O8Uc=; b=P2KUW7940YVrhuVj5OvJay7NSj
+	6odEsSIDa6+HyX+7J/+nOdQYQfaznZQdG1K3BwUZxUmB/gUtz5hreqOH3ko/Wt19IDBVM8TYrlyGq
+	gBLfjzgtqfWU/xdtW9ZLEHo4PW2llcYBA16G9V63mgH33Pc2UXaMLKD2NAXDA/VNUyso=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tiw8Y-00E5BK-Pm; Fri, 14 Feb 2025 14:53:46 +0100
+Date: Fri, 14 Feb 2025 14:53:46 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add self test supported in
+ this module
+Message-ID: <9bc6a8b9-2d78-4aef-801d-21425426d3a1@lunn.ch>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-3-shaojijie@huawei.com>
+ <6501012c-fecf-42b3-a70a-2c8a968b6fbd@lunn.ch>
+ <842c3542-95a6-4112-9c50-70226b0caadc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,65 +68,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213210403.3396392-3-anjelique.melendez@oss.qualcomm.com>
+In-Reply-To: <842c3542-95a6-4112-9c50-70226b0caadc@huawei.com>
 
-Hi Anjelique,
+On Fri, Feb 14, 2025 at 10:46:31AM +0800, Jijie Shao wrote:
+> 
+> on 2025/2/14 3:59, Andrew Lunn wrote:
+> > On Thu, Feb 13, 2025 at 11:55:24AM +0800, Jijie Shao wrote:
+> > > This patch supports many self test: Mac, SerDes and Phy.
+> > > 
+> > > To implement self test, this patch implements a simple packet sending and
+> > > receiving function in the driver. By sending a packet in a specific format,
+> > > driver considers that the test is successful if the packet is received.
+> > > Otherwise, the test fails.
+> > > 
+> > > The SerDes hardware is on the BMC side, Therefore, when the SerDes loopback
+> > > need enabled, driver notifies the BMC through an event message.
+> > > 
+> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> > Please take a look at the work Gerhard Engleder is doing, and try not
+> > to reinvent net/core/selftest.c
+> > 
+> >      Andrew
+> 
+> I actually knew about this, but after browsing the source code, I gave up using it.
+> 
+> I have an additional requirement: serdes loopback and mac loopback.
+> However, they are not supported in net/core/selftest.c.
 
-kernel test robot noticed the following build errors:
+Which is why i pointed you toward Gerhard. He found similar
+limitations in the code, wanting to add in extra tests, same as you.
+Two developers wanting to do that same things, suggests the core
+should be extended to support that, not two different copies hidden
+away in drivers.
 
-[auto build test ERROR on rafael-pm/thermal]
-[also build test ERROR on linus/master v6.14-rc2 next-20250214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Maybe my initial advice about not exporting the helpers was bad? I
+don't know. Please chat with Gerhard and come up with a design that
+makes the core usable for both your uses cases, and anybody else
+wanting to embed similar self tests in their driver.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anjelique-Melendez/thermal-qcom-spmi-temp-alarm-enable-stage-2-shutdown-when-required/20250214-050700
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal
-patch link:    https://lore.kernel.org/r/20250213210403.3396392-3-anjelique.melendez%40oss.qualcomm.com
-patch subject: [PATCH 2/4] thermal: qcom-spmi-temp-alarm: Add temp alarm data struct based on HW subtype
-config: i386-buildonly-randconfig-003-20250214 (https://download.01.org/0day-ci/archive/20250214/202502142135.ez2QBdYV-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502142135.ez2QBdYV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502142135.ez2QBdYV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/thermal/qcom/qcom-spmi-temp-alarm.c:148:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     148 |         return FIELD_GET(STATUS_GEN1_STAGE_MASK, reg);
-         |                ^
-   drivers/thermal/qcom/qcom-spmi-temp-alarm.c:169:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     169 |         ret = FIELD_GET(STATUS_GEN2_STATE_MASK, reg);
-         |               ^
-   2 errors generated.
-
-
-vim +/FIELD_GET +148 drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-
-   132	
-   133	/**
-   134	 * qpnp_tm_get_temp_stage() - return over-temperature stage
-   135	 * @chip:		Pointer to the qpnp_tm chip
-   136	 *
-   137	 * Return: stage on success, or errno on failure.
-   138	 */
-   139	static int qpnp_tm_get_temp_stage(struct qpnp_tm_chip *chip)
-   140	{
-   141		u8 reg = 0;
-   142		int ret;
-   143	
-   144		ret = qpnp_tm_read(chip, QPNP_TM_REG_STATUS, &reg);
-   145		if (ret < 0)
-   146			return ret;
-   147	
- > 148		return FIELD_GET(STATUS_GEN1_STAGE_MASK, reg);
-   149	}
-   150	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
