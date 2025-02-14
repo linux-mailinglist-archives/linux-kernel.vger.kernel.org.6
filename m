@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-514642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D65A359AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:07:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAF3A359AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E763ADDC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323C16F151
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C7822D7B7;
-	Fri, 14 Feb 2025 09:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC0F22DFB5;
+	Fri, 14 Feb 2025 09:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfM2x2LC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqeSrcI4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FD622D7B9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D922D4EF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524032; cv=none; b=fxYJWbzNn0dagTEewPDd35ABqMMEcGv2tESQ3D4WXfLMWV8tWheKk+Iss+RRtckzaKziZIngKYrl9iXteGBDyjaZ8b7pnt6iY4n/RHKMTiYwI/VWqqz1p/I113tU6ZQ0ON7mQ945I7OLIui7+ZcwREmkscGoMWO35ZL3rYwBAyE=
+	t=1739524036; cv=none; b=gPtAzAEk/VFfhUNujTq3dJ7DoW8FPuFjyd4QZnik+SH08ol0OQi03Jb4WQSgJgU7Fv9VHaH26wChiX5ZN8T11FJ3Jc5BiTJJXM32buC4iDK4YrlZ5bfNJFjn/sLfF3dowPMfmLIQu734p2tpFiCB33at9cujTFMNRBRiZoOXYvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524032; c=relaxed/simple;
-	bh=PgMTMw6Oe7ITbA6641p6eI75CKgUid8ZfAzIAJaAUb8=;
+	s=arc-20240116; t=1739524036; c=relaxed/simple;
+	bh=2JkMZLvpPxVlVD0hd7fvvaAj7UzAfO3Tyh4smrCg3hg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jO+/zZhuX6OQdcWpScdnBMlHb3Hxku9pA4eqzLrmPePOg9ITAtQbB/FUhyciqO3r81txAs/VAXfM5ec+CNeB4j+tnj0cifcCWIySM9SdjshAVqf0IQX3OBGAb1PnLeXbuJyljrYpxZRLAHNh4/Tw3NWvgYeXYnmD0vLn6R5zPW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfM2x2LC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99202C4CEDF;
-	Fri, 14 Feb 2025 09:07:09 +0000 (UTC)
+	 MIME-Version; b=uXcdCev3BHrsVN9oStjsrl2Ts/gUaYhdusTr3qA4SiLckY2MKR5xPBWo9Ltf10L6tJVkmfn0jpkVGYBE+Mrh8sH542PS5XGS7TnjfUtDFZN1sVoMCG9FA1Lu6wnSKFHkoAYrw+hPxkndKM6SRw7ekebJahvp3McY1abPMb616hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqeSrcI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B2FC4CED1;
+	Fri, 14 Feb 2025 09:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739524032;
-	bh=PgMTMw6Oe7ITbA6641p6eI75CKgUid8ZfAzIAJaAUb8=;
+	s=k20201202; t=1739524035;
+	bh=2JkMZLvpPxVlVD0hd7fvvaAj7UzAfO3Tyh4smrCg3hg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IfM2x2LCoE9YYe/wB6RKPzRQRcdlw80BkC/ZDVfBemLWNbdlPQMyp9otWou9RWXTB
-	 6/gYq7DIA1nc5zNtCskkqUn9dhP8ZixR/RpEmkzTPb1LoN2qXGRRZjmxCGjoJly4VF
-	 iEjiYCx4WDkQ+glS4Ih+aOZb+4Irdrkj5gp0x32eCznO7bERCG+Q/wqq2PKZyGYnrl
-	 v4Q8u/sSK77zWluLWcq/kgxRBf/RphS+H1JufOXx/bkq7/7non8m3KhoHyFfi44Tei
-	 ipLkUhgTPZ908tzx1RfsSS13JiCsqj7eHUhRZyhtuOCSr+PDyhl9nvhvDlTaXx5Z7q
-	 Xmckj1moRgZnQ==
+	b=lqeSrcI4U/5EAKHzXtjKNM1DDzpBBsR376g2vgHNrLp0x4EMEYI1LfV+GhKaeXRMz
+	 vRyRBYlPSHZYwK1D2rNv766aAUfbvy3DOv/bGbVhpxmZlZc81fSaIMKRQL14illqKJ
+	 e3jsG0H4M3a4x79uLzFw5fejE5lcC/MKuNfWUBHAyHGrGgHFTP0SdsNZp8XmCYkDxH
+	 4yM9UqKV5tTX702co9JaxDGHMDQR72vUKESQnWub/+ZAzq0/qiRzZbJwQeZba6wXh3
+	 7eJykoIrrmeinhhOAQGHqAE2Qkc149f3UBTj/UgDxC0L30DsdQoTdTk3maP9BN6efD
+	 mYu34R1wzntgw==
 From: Mike Rapoport <rppt@kernel.org>
 To: x86@kernel.org
 Cc: Andy Lutomirski <luto@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Andy Lutomirski <luto@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
 	tboot-devel@lists.sourceforge.net
-Subject: [RESEND PATCH v2 3/4] x86/boot: split parsing of boot_params into a helper function
-Date: Fri, 14 Feb 2025 11:06:50 +0200
-Message-ID: <20250214090651.3331663-4-rppt@kernel.org>
+Subject: [RESEND PATCH v2 4/4] x86/e820: drop E820_TYPE_RESERVED_KERN and related code
+Date: Fri, 14 Feb 2025 11:06:51 +0200
+Message-ID: <20250214090651.3331663-5-rppt@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250214090651.3331663-1-rppt@kernel.org>
 References: <20250214090651.3331663-1-rppt@kernel.org>
@@ -69,112 +69,250 @@ Content-Transfer-Encoding: 8bit
 
 From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-Makes setup_arch a bit easier to comprehend.
+E820_TYPE_RESERVED_KERN is a relict from the ancient history that was used
+to early reserve setup_data (see commit 28bb22379513 ("x86: move
+reserve_setup_data to setup.c")).
 
-No functional changes.
+Nowadays setup_data is anyway reserved in memblock and there is no point in
+carrying E820_TYPE_RESERVED_KERN that behaves exactly like E820_TYPE_RAM
+but only complicates the code.
+
+A bonus for removing E820_TYPE_RESERVED_KERN is a small but measurable
+speedup of 20 microseconds in init_mem_mappings() on a VM with 32GB or RAM.
 
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- arch/x86/kernel/setup.c | 72 +++++++++++++++++++++++------------------
- 1 file changed, 41 insertions(+), 31 deletions(-)
+ arch/x86/include/asm/e820/api.h   |  1 -
+ arch/x86/include/asm/e820/types.h |  9 -----
+ arch/x86/kernel/e820.c            | 65 ++-----------------------------
+ arch/x86/kernel/setup.c           |  1 -
+ arch/x86/kernel/tboot.c           |  3 +-
+ arch/x86/mm/init_64.c             |  8 ----
+ 6 files changed, 4 insertions(+), 83 deletions(-)
 
+diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/api.h
+index 2e74a7f0e935..c83645d5b2a8 100644
+--- a/arch/x86/include/asm/e820/api.h
++++ b/arch/x86/include/asm/e820/api.h
+@@ -29,7 +29,6 @@ extern unsigned long e820__end_of_low_ram_pfn(void);
+ extern u64  e820__memblock_alloc_reserved(u64 size, u64 align);
+ extern void e820__memblock_setup(void);
+ 
+-extern void e820__reserve_setup_data(void);
+ extern void e820__finish_early_params(void);
+ extern void e820__reserve_resources(void);
+ extern void e820__reserve_resources_late(void);
+diff --git a/arch/x86/include/asm/e820/types.h b/arch/x86/include/asm/e820/types.h
+index 314f75d886d0..80c4a7266629 100644
+--- a/arch/x86/include/asm/e820/types.h
++++ b/arch/x86/include/asm/e820/types.h
+@@ -35,15 +35,6 @@ enum e820_type {
+ 	 * marking it with the IORES_DESC_SOFT_RESERVED designation.
+ 	 */
+ 	E820_TYPE_SOFT_RESERVED	= 0xefffffff,
+-
+-	/*
+-	 * Reserved RAM used by the kernel itself if
+-	 * CONFIG_INTEL_TXT=y is enabled, memory of this type
+-	 * will be included in the S3 integrity calculation
+-	 * and so should not include any memory that the BIOS
+-	 * might alter over the S3 transition:
+-	 */
+-	E820_TYPE_RESERVED_KERN	= 128,
+ };
+ 
+ /*
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 8d8bd039d2ac..9fb67abc32cc 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -187,8 +187,7 @@ void __init e820__range_add(u64 start, u64 size, enum e820_type type)
+ static void __init e820_print_type(enum e820_type type)
+ {
+ 	switch (type) {
+-	case E820_TYPE_RAM:		/* Fall through: */
+-	case E820_TYPE_RESERVED_KERN:	pr_cont("usable");			break;
++	case E820_TYPE_RAM:		pr_cont("usable");			break;
+ 	case E820_TYPE_RESERVED:	pr_cont("reserved");			break;
+ 	case E820_TYPE_SOFT_RESERVED:	pr_cont("soft reserved");		break;
+ 	case E820_TYPE_ACPI:		pr_cont("ACPI data");			break;
+@@ -764,7 +763,7 @@ void __init e820__register_nosave_regions(unsigned long limit_pfn)
+ 
+ 		pfn = PFN_DOWN(entry->addr + entry->size);
+ 
+-		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
++		if (entry->type != E820_TYPE_RAM)
+ 			register_nosave_region(PFN_UP(entry->addr), pfn);
+ 
+ 		if (pfn >= limit_pfn)
+@@ -990,60 +989,6 @@ static int __init parse_memmap_opt(char *str)
+ }
+ early_param("memmap", parse_memmap_opt);
+ 
+-/*
+- * Reserve all entries from the bootloader's extensible data nodes list,
+- * because if present we are going to use it later on to fetch e820
+- * entries from it:
+- */
+-void __init e820__reserve_setup_data(void)
+-{
+-	struct setup_indirect *indirect;
+-	struct setup_data *data;
+-	u64 pa_data, pa_next;
+-	u32 len;
+-
+-	pa_data = boot_params.hdr.setup_data;
+-	if (!pa_data)
+-		return;
+-
+-	while (pa_data) {
+-		data = early_memremap(pa_data, sizeof(*data));
+-		if (!data) {
+-			pr_warn("e820: failed to memremap setup_data entry\n");
+-			return;
+-		}
+-
+-		len = sizeof(*data);
+-		pa_next = data->next;
+-
+-		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+-
+-		if (data->type == SETUP_INDIRECT) {
+-			len += data->len;
+-			early_memunmap(data, sizeof(*data));
+-			data = early_memremap(pa_data, len);
+-			if (!data) {
+-				pr_warn("e820: failed to memremap indirect setup_data\n");
+-				return;
+-			}
+-
+-			indirect = (struct setup_indirect *)data->data;
+-
+-			if (indirect->type != SETUP_INDIRECT)
+-				e820__range_update(indirect->addr, indirect->len,
+-						   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+-		}
+-
+-		pa_data = pa_next;
+-		early_memunmap(data, len);
+-	}
+-
+-	e820__update_table(e820_table);
+-
+-	pr_info("extended physical RAM map:\n");
+-	e820__print_table("reserve setup_data");
+-}
+-
+ /*
+  * Called after parse_early_param(), after early parameters (such as mem=)
+  * have been processed, in which case we already have an E820 table filled in
+@@ -1063,7 +1008,6 @@ void __init e820__finish_early_params(void)
+ static const char *__init e820_type_to_string(struct e820_entry *entry)
+ {
+ 	switch (entry->type) {
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		return "System RAM";
+ 	case E820_TYPE_ACPI:		return "ACPI Tables";
+ 	case E820_TYPE_NVS:		return "ACPI Non-volatile Storage";
+@@ -1079,7 +1023,6 @@ static const char *__init e820_type_to_string(struct e820_entry *entry)
+ static unsigned long __init e820_type_to_iomem_type(struct e820_entry *entry)
+ {
+ 	switch (entry->type) {
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		return IORESOURCE_SYSTEM_RAM;
+ 	case E820_TYPE_ACPI:		/* Fall-through: */
+ 	case E820_TYPE_NVS:		/* Fall-through: */
+@@ -1101,7 +1044,6 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+ 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
+ 	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+ 	case E820_TYPE_SOFT_RESERVED:	return IORES_DESC_SOFT_RESERVED;
+-	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		/* Fall-through: */
+ 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+ 	default:			return IORES_DESC_NONE;
+@@ -1124,7 +1066,6 @@ static bool __init do_mark_busy(enum e820_type type, struct resource *res)
+ 	case E820_TYPE_PRAM:
+ 	case E820_TYPE_PMEM:
+ 		return false;
+-	case E820_TYPE_RESERVED_KERN:
+ 	case E820_TYPE_RAM:
+ 	case E820_TYPE_ACPI:
+ 	case E820_TYPE_NVS:
+@@ -1353,7 +1294,7 @@ void __init e820__memblock_setup(void)
+ 		if (entry->type == E820_TYPE_SOFT_RESERVED)
+ 			memblock_reserve(entry->addr, entry->size);
+ 
+-		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
++		if (entry->type != E820_TYPE_RAM)
+ 			continue;
+ 
+ 		memblock_add(entry->addr, entry->size);
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 3d95946ab749..6fb9a851bc19 100644
+index 6fb9a851bc19..46d92d04b6da 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
-@@ -429,6 +429,46 @@ static void __init parse_setup_data(void)
+@@ -895,7 +895,6 @@ void __init setup_arch(char **cmdline_p)
+ 		setup_clear_cpu_cap(X86_FEATURE_APIC);
  	}
- }
  
-+/*
-+ * Translate the fields of 'struct boot_param' into global variables
-+ * representing these parameters.
-+ */
-+static void __init parse_boot_params(void)
-+{
-+	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
-+	screen_info = boot_params.screen_info;
-+	edid_info = boot_params.edid_info;
-+#ifdef CONFIG_X86_32
-+	apm_info.bios = boot_params.apm_bios_info;
-+	ist_info = boot_params.ist_info;
-+#endif
-+	saved_video_mode = boot_params.hdr.vid_mode;
-+	bootloader_type = boot_params.hdr.type_of_loader;
-+	if ((bootloader_type >> 4) == 0xe) {
-+		bootloader_type &= 0xf;
-+		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
-+	}
-+	bootloader_version  = bootloader_type & 0xf;
-+	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
-+
-+#ifdef CONFIG_BLK_DEV_RAM
-+	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
-+#endif
-+#ifdef CONFIG_EFI
-+	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-+		     EFI32_LOADER_SIGNATURE, 4)) {
-+		set_bit(EFI_BOOT, &efi.flags);
-+	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-+		     EFI64_LOADER_SIGNATURE, 4)) {
-+		set_bit(EFI_BOOT, &efi.flags);
-+		set_bit(EFI_64BIT, &efi.flags);
-+	}
-+#endif
-+
-+	if (!boot_params.hdr.root_flags)
-+		root_mountflags &= ~MS_RDONLY;
-+}
-+
- static void __init memblock_x86_reserve_range_setup_data(void)
- {
- 	struct setup_indirect *indirect;
-@@ -806,35 +846,7 @@ void __init setup_arch(char **cmdline_p)
+-	e820__reserve_setup_data();
+ 	e820__finish_early_params();
  
- 	setup_olpc_ofw_pgd();
+ 	if (efi_enabled(EFI_BOOT))
+diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
+index 4c1bcb6053fc..46b8f1f16676 100644
+--- a/arch/x86/kernel/tboot.c
++++ b/arch/x86/kernel/tboot.c
+@@ -200,8 +200,7 @@ static int tboot_setup_sleep(void)
+ 	tboot->num_mac_regions = 0;
  
--	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
--	screen_info = boot_params.screen_info;
--	edid_info = boot_params.edid_info;
--#ifdef CONFIG_X86_32
--	apm_info.bios = boot_params.apm_bios_info;
--	ist_info = boot_params.ist_info;
--#endif
--	saved_video_mode = boot_params.hdr.vid_mode;
--	bootloader_type = boot_params.hdr.type_of_loader;
--	if ((bootloader_type >> 4) == 0xe) {
--		bootloader_type &= 0xf;
--		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
--	}
--	bootloader_version  = bootloader_type & 0xf;
--	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
--
--#ifdef CONFIG_BLK_DEV_RAM
--	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
--#endif
--#ifdef CONFIG_EFI
--	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
--		     EFI32_LOADER_SIGNATURE, 4)) {
--		set_bit(EFI_BOOT, &efi.flags);
--	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
--		     EFI64_LOADER_SIGNATURE, 4)) {
--		set_bit(EFI_BOOT, &efi.flags);
--		set_bit(EFI_64BIT, &efi.flags);
--	}
--#endif
-+	parse_boot_params();
+ 	for (i = 0; i < e820_table->nr_entries; i++) {
+-		if ((e820_table->entries[i].type != E820_TYPE_RAM)
+-		 && (e820_table->entries[i].type != E820_TYPE_RESERVED_KERN))
++		if (e820_table->entries[i].type != E820_TYPE_RAM)
+ 			continue;
  
- 	x86_init.oem.arch_setup();
- 
-@@ -858,8 +870,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	copy_edd();
- 
--	if (!boot_params.hdr.root_flags)
--		root_mountflags &= ~MS_RDONLY;
- 	setup_initial_init_mm(_text, _etext, _edata, (void *)_brk_end);
- 
- 	/*
+ 		add_mac_region(e820_table->entries[i].addr, e820_table->entries[i].size);
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 01ea7c6df303..519aa53114fa 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -468,8 +468,6 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+-			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pte_init(pte, __pte(0), init);
+@@ -525,8 +523,6 @@ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+-			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pmd_init(pmd, __pmd(0), init);
+@@ -614,8 +610,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+-			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_pud_init(pud, __pud(0), init);
+@@ -703,8 +697,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+-			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+-					     E820_TYPE_RESERVED_KERN) &&
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_ACPI))
+ 				set_p4d_init(p4d, __p4d(0), init);
 -- 
 2.47.2
 
