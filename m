@@ -1,181 +1,100 @@
-Return-Path: <linux-kernel+bounces-515058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A44EA35F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:34:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52DFA35F59
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D37188B3E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986F23AA731
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C076B263F29;
-	Fri, 14 Feb 2025 13:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9F7264F9F;
+	Fri, 14 Feb 2025 13:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgCAfYa9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB/fRXJE"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815C264A85;
-	Fri, 14 Feb 2025 13:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0B12139A8;
+	Fri, 14 Feb 2025 13:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739539940; cv=none; b=HzA/J8NsETmbAuGgVzyANExkGp0iFfCCFJBQbDcmPBL/j4xp7l3SE4I+jf72B/QFKHM1+888mr04wOszUH0nbkZDdMw8hV7kMji7WYZNGkVF3XCvfBVoJHvVm2lOD4A7pMpEq6FCzd2Jc3HeedJk2oFsyN1VRSf+n7wRrzPPe4w=
+	t=1739539954; cv=none; b=az2eELY4hxJHYJW+Ri4/3vZWSSnSynx2TlLzWkNwgFvOFdd4WFngkvrOOu0MXVDqUunBNi8+PvN7zdR24dInnY4w5NIFshpqtzn+WMYQE9NTOFElPxo+s7hZlv5S4v/BsYHs26NfqYMxP3hqklZDy0nMZ9TSkYHXSKB+0QVWQH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739539940; c=relaxed/simple;
-	bh=zIzezJTtZX7gF+P2Mi7uN3v642Mtp3pblVa5iR9oZSY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gtw+9M+XpAWwwoIRniqTvw2G2TSldexv9++FPnaonB85Uzofi4Riyyf0rS/yIt92kgXlETVY/9IQ6GgxBmS2wOXRVw4hmhoOmdi3mjBBddx8JPwvkdRtPEH1DThaslvsmSKfZu2qeThAYUyc2nGTQ7eQodgfuiVRENuvsy9CTI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgCAfYa9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E953C4CED1;
-	Fri, 14 Feb 2025 13:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739539939;
-	bh=zIzezJTtZX7gF+P2Mi7uN3v642Mtp3pblVa5iR9oZSY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=lgCAfYa9SsAhyGVHe2CEmgmbU3qLsPxmDiuTPVvKyzAZbB+tJZebrI81Fqw5tn/vt
-	 MfVuRj6I2NTEmwGwt9/slmGeRzP8CIjFlhlKKEjZtoL0lU6B1zICFQLh3jluTOBqo/
-	 3nkXmV5cSHTDwdt2tuCQ6oc0VJ71Wkw7jmrcApr7AweFnTI+j2mG8HeoKi7bo6LHsI
-	 YbrO1IzJEI+w2ZZ6mhh5NEKbKP6EwPCmx/2myn1fP6rIjlue5ImXqhS03y7bd4rCcO
-	 VpjTlMe2LAaRA4XF+9kVNvgb5us+JB2CRqt9SIdKgIqTvn9tC9laytZjiyCs0fTZr6
-	 6B+HSNcHbpAww==
-Message-ID: <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
-Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
-From: Amit Shah <amit@kernel.org>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 14 Feb 2025 14:32:16 +0100
-In-Reply-To: <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
-References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
-	 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
-	 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739539954; c=relaxed/simple;
+	bh=V5/OO3BqjGF7YYqHo1ixFHMsG/BHYH5z79AbUXkeGc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FwPM9hwE6jblA4/CXu3rRQnJsdAUytx05izcigGzdc7MHqVB3K/AUNtTVGJrR08eymdZ///DdzCOmuthKE1g+PbGKbCKoUOQHVd7MwVN0ud+5QG9o4j2mOdlcsprYw9/oR98Gy+bYOqdPKP7n+fUl1sGTIRDsW9o8HlDuoBeG1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gB/fRXJE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso2006449f8f.0;
+        Fri, 14 Feb 2025 05:32:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739539951; x=1740144751; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5/OO3BqjGF7YYqHo1ixFHMsG/BHYH5z79AbUXkeGc0=;
+        b=gB/fRXJEjGgdMuchrApMi/MeQfqebYJKRjAfjqXaJ56gyE1UXgYbiKTFthgtVczKpO
+         iGBJ3lHE0WmweSIIql3smcs5I1SYjNLHZhtAVn+NUyx0txKxg7ixhpZejGZgaIuGlJfj
+         GXN9nfectMh9ZlmSGRZUgVcIBD9P4c5PXsclGLM2LLPaMe1KkVl1f0UTAM/fOXZ3Ejiy
+         dibr4yzCwcSR2PrpPsYQ8F2r4SM381ZBTrPPq7aXg+jLAOcteDGSJpYks8SRzSm2S9Lc
+         cvIe4ierAVA/hzf+9xkT8ITaK28ypyNAhQ7t/2jBXXQVeSrUupUcexarI8D0+MZ+G6jj
+         IhAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739539951; x=1740144751;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V5/OO3BqjGF7YYqHo1ixFHMsG/BHYH5z79AbUXkeGc0=;
+        b=YmQ6dICxbabIvHKh7gQFI26+c6NAYNSZrzCtcz3eAnAQviuudPtjFFGALsgS1NyD1V
+         HpDVBzN0xXHvAdnH0eAXSN7FExTeZhn8KAFSsc3BZwjPm6qcn5iDzFcKMVI56zG/heVN
+         jYhcbECwFC10baKbsp8prTwrSfR2qfrLY5qgjmRyzI4eQ6SzUZEFA2aDIfJzs0zvb8Yx
+         K2U1L/Dcqex/3HEIA42/rjlWGvTaHYtUvhxm2twa+kDvkPnJxXEf6/YRtSyWNqpKA0T8
+         bS010jctcw4Nngt3o0CxArR3evPKT4cKdS7gN44HX81HnEnrZjSBf0sTLCv0xchNlIrO
+         mLKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYdup2OAV4OQXxHeX8NWQum7Pnl7D5xaUpFMrv1IJdTMrBsmOdlVV3DqBn89QZ/RhanjMRVPDS@vger.kernel.org, AJvYcCXPiTio5F4Tnn0CCuihHFLlIZwlSLXZwpmn+xQgN1cBZMuL/GX0dCX3AnacHz3yiCPAQLnwpSuqIHd4qH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc0Y9Xu/WjpxRSDB5GnAeLemczp+PY155FXpxLDuHaNbZe0hVw
+	D8jKErEtqv6ULzCH5xokuBpcZXGamaFhfkGqGkgVr2ldTwQmqpHFClHdBtUR48kQfeRJcV+Exuw
+	Z+NSlrVPZMoGCsN5zgQNCUusmqcBZ5cCCXAw=
+X-Gm-Gg: ASbGncuETM2DvUxfh4CPn52JWPblx2loNhVtEHhDd+dUoETe8i0+y8GkPaiXHKlgOFm
+	QPga4YSD/YQi54PsQhbrmQx7ZdXQFokGC8FpmWpTTNLZzbxnqVF2UT0wtRrpff4G6nCmVcOvwzw
+	==
+X-Google-Smtp-Source: AGHT+IG9WP8+ZNo83h0WeFmRnnKi+HLuePMl2SVa9DOJjwkyOlXU88efT5p0gmxEYkDj3zX7PEnLqKgxLdJGs3e3KFQ=
+X-Received: by 2002:a05:6000:4024:b0:38d:afc8:954e with SMTP id
+ ffacd0b85a97d-38f24cfa3dbmr9449189f8f.11.1739539950482; Fri, 14 Feb 2025
+ 05:32:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250213133854.100866-3-stuart.a.hayhurst@gmail.com> <eae04827-0d87-48f5-929a-9f1f23359f24@kernel.org>
+In-Reply-To: <eae04827-0d87-48f5-929a-9f1f23359f24@kernel.org>
+From: Stuart <stuart.a.hayhurst@gmail.com>
+Date: Fri, 14 Feb 2025 13:32:19 +0000
+X-Gm-Features: AWEUYZleqHgvL8C3DS0N7zLUwLcLSDIaKydireboWkZiXcihIMcSrRiQcTlFnXk
+Message-ID: <CALTg27kDRv+_y9qS3eCZUaQ6f5A-P8Y2GFyL-EMHZxixW=jYaw@mail.gmail.com>
+Subject: Re: [PATCH v3] HID: corsair-void: Update power supply values with a
+ unified work handler
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2025-02-14 at 12:14 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Amit,
->=20
-> On Fri, Feb 14, 2025 at 11:58:44AM +0100, Amit Shah wrote:
-> > On Thu, 2025-02-13 at 12:55 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > virtio_console.c can make use of REMOTEPROC. Therefore it has
-> > > several
-> > > tests evaluating
-> > >=20
-> > > 	IS_ENABLED(CONFIG_REMOTEPROC)
-> > >=20
-> > > . This currently only does the right thing because
-> > > CONFIG_REMOTEPROC
-> > > cannot be modular. Otherwise the configuration
-> > >=20
-> > > 	CONFIG_REMOTEPROC=3Dm
-> > > 	CONFIG_VIRTIO_CONSOLE=3Dy
-> > >=20
-> > > would result in a build failure because then
-> > > IS_ENABLED(CONFIG_REMOTEPROC) evaluates to true but still the
-> > > built-
-> > > in
-> > > virtio_console.o must not use symbols from the remoteproc module.
-> > >=20
-> > > To prepare for making REMOTEPROC modular change the tests to use
-> > > IS_REACHABLE() instead of IS_ENABLED() which copes correctly for
-> > > the
-> > > above case as it evaluates to false then.
-> > >=20
-> > > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> > > ---
-> > > Hello,
-> > >=20
-> > > I didn't check what else needs to be done to make
-> > > CONFIG_REMOTEPROC
-> > > tristate but even if it stays a bool using IS_REACHABLE() is
-> > > still
-> > > the
-> > > better choice.
-> >=20
-> > It might lead to a false sense of "better" -- the value of
-> > IS_ENABLED
-> > is cached in a variable which is determined at compile-time.
->=20
-> Either I don't understand what you mean, or this is wrong.
->=20
-> 	$ make allmodconfig drivers/char/virtio_console.i
-> 	$ grep CONFIG_REMOTEPROC=3D .config
-> 	CONFIG_REMOTEPROC=3Dm
-> 	$ cat drivers/char/virtio_console.i
-> 	...
-> 	static bool is_rproc_serial(const struct virtio_device
-> *vdev)
-> 	{
-> 	 return 1 && vdev->id.device =3D=3D 11;
-> 	}
-> 	...
->=20
->=20
-> so is_rproc_enabled is still constant and known at compile time.
+> Now I think, what is actually expected to happen if both add_battery and
+> remove_battery is set? Do nothing as the code does?
 
-Well - so I was replying to your comment about what else is required.=20
-And if remoteproc becomes a module, this check will not happen at
-compile-time?
+It means that either the headset connected and then disconnected again, or
+it disconnected and reconnected again. Either way, the battery should be left
+in its current state.
 
-In any case, the next bit is the more important one:
+Of course it could connect, disconnect and connect again to end up in
+that state,
+but if the driver is 3 events (a physical action) behind, we're already done for
 
-> > That
-> > caching, after this change, moves to driver init-time.=C2=A0 If the
-> > rproc
-> > module is loaded after virtio-console is initialized, there's no
-> > way
-> > it's going to be used.
->=20
-> If both are modular, modprobe should make sure that rproc is ready
-> before virtio-console. If virtio-console is builtin and rproc is
-> modular, IS_REACHABLE(CONFIG_REMOTEPROC) evaluates to false and so
-> rproc
-> won't be used. (As is the case already today with
-> CONFIG_REMOTEPROC=3Dn).
->=20
-> > Only if the rproc module is loaded before
-> > virtio-console will the rproc functionality be used -- which means
-> > that
-> > nothing changed in reality..
->=20
-> With that patch indeed nothing changed yet, because CONFIG_REMOTEPROC
-> cannot be =3Dm today. Until this changes IS_REACHABLE() and
-> IS_ENABLED()
-> are equivalent.
-> =C2=A0
-> > To properly detect and use rproc if available would need the rproc
-> > initialization out of virtcons_probe() and into something that
-> > happens
-> > either via sysfs for existing ports, or when adding a new port to a
-> > device.=C2=A0 However, the current spec doesn't allow for that, so some
-> > more
-> > changes will need to be made to ensure current backwards compat,
-> > and a
-> > new specification that allows for a late init of rproc.
->=20
-> I didn't understand that and hope it's irrelevant with the things I
-> wrote above.
-
-See
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/char/virtio_console.c#n1993
-
-The device is configured at probe time on how it's going to be used -
-all that will have to be reworked for making the remoteproc driver
-tristate.
-
-So in essence, this patch isn't changing anything; but it's not helping
-the case you want to enable either.
-
-		Amit
+Stuart
 
