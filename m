@@ -1,123 +1,186 @@
-Return-Path: <linux-kernel+bounces-514788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78901A35BA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:39:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21693A35BAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B4B189236B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9846B18925A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B608624BC08;
-	Fri, 14 Feb 2025 10:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CBA2586F3;
+	Fri, 14 Feb 2025 10:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jUWNhab7"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G1KZee8F"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF59204F6E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135AF204F6E;
+	Fri, 14 Feb 2025 10:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739529551; cv=none; b=ZGBgxmGGrK3+ys5OiX12WKODyZ2pHyo6EZkTO/Dt0ouuTcnHkzyt1d346ev6MNaAorHMVLMLJxUGbp7iAQunP8L5x85gpOrVBfX/CH+vtq4zXL3sKffH7Z/ttjHBop5B8cNnHt/eQ9wXQfLlD1Qz8RC/FM3jvIorDIPZC2c/mQw=
+	t=1739529711; cv=none; b=VMFF605Vn6Nd1K5gxQSHxz57B2z4DpmWrQpJCAswuKZSX4UJkFBxtioynIkqPAFVLADRbHBwbXMvtAiSxsjx3MDbw/srUglV+/1HCzzbD+13RMGEr9lXvm4xvCjy0/OFf+p29yKMggizhjDgaaL8lm8z4MpORnG/F4OcMrrZwX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739529551; c=relaxed/simple;
-	bh=9WieDtozVEP30o1rMgmkET2eyeUrqqLkfHQ4w0SM3zE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tvy2RuZef4RXb5rtQy1INxRJa4D0JJybSx6/YcN5R4uVVusiQ3Vw7bdlWn4Akd5UczayQfv8LXALCC9mJ+mb9niAPjgVKllX71nvRXpgjVd1+p8wvGOToxOThp92uEC/srjOYmyvczzL9HweYzsY5L4EqPqpZ2neav93DHwHy10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jUWNhab7; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3076262bfc6so20182471fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 02:39:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739529546; x=1740134346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+RvZPpwQCYzg+8o1DHR3C6tWw2mYjAqdjhIanmYv+iE=;
-        b=jUWNhab7+RtuPZckjgGxMEyoAAFzLiugTgbrU3FaFrAJeWBZh7nNexwB3v51pj8mDy
-         xFOQ9eJf2kW8CvfMzfRdJpMGnz8w0GrO8i7J2YK9NlEUMd6lU/rVtlRtffJqXIDolqbV
-         SgeQrk7cwZxW0l46kt8BofS9S7W2ZV/+LWT+tz9X4R1Cx6wTDnGJ9mJ3xbit84knxDh/
-         iWYd2/5e5mWbR1wPKJ024iSxLZEDK3vY6p21nCsZNwS4CXH8jONxxdJSct72dIxo4Fzm
-         mMzvy434cFHudvkYNxCdFxkeorPXOcrWn1cU25gSHOaDCUSKYWqIQcG4hL9aZAoTJHoY
-         lOBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739529546; x=1740134346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+RvZPpwQCYzg+8o1DHR3C6tWw2mYjAqdjhIanmYv+iE=;
-        b=FdrT3gKwYnIOqv4hfBcJTMMqumap/Q7RVR7lFatXWuskZTdONVJ1M1rZjVmyS0eyF7
-         QIrkF78tE79KhXQKkxIy9YjVKE4UI3fRvr9Tr3MT+NjgPfH9qUJl5wVcds+reheaFeEj
-         IQqjR3+qJWQ01qjMmJqLlW35sdnCs53AuN0xVU3/JAblyk3zGVFw1T+FBa0mHir469Mu
-         JPyD2MNk7s9GJgvwhJg2Pj1W/eYDYrUl/pLqxqjLgp4GJ72lIuv5/8laOjBxvsV0AsA4
-         yzm1V4+5RLiDOjZYmwfnCY4z9lZZgkoQSXwKPpuK01Wd58SSGCSF3xr+/3QlqJOCqp9i
-         gHGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdBLDKPwB80gN+iDFi+dJFj/mCxHRkuGXQ/D//qEdFpn+QB2lHfkuQ80CdVU+i/CS67N6kxkOMrhHQLT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6i6XvXWjyi/KHUgdh0XWyxAcranyHSlrocG6pZ0ueT0bme9qA
-	yQceQ2cXDA2K8SdvP0mGhvy6mQrYGRabMs1P3LCSBh3GM6HP7GI+wLS2R6byHBStE1/5lnN6jg0
-	eD8f3rxnajKKWcjNhey+PHpzXTEskj0AdMoedDQ==
-X-Gm-Gg: ASbGncvspOYa6xiEeW9cgwyiTuToAlweK9BalgptHNgeuXCVqBpZwPrkAy4F6frueEK
-	o4/BeCxtaxu/FgpUD87Jc2FTm7iRTFwyRTB3JPhTTZU1VYQdWb/yQT28PluPKySB4PD13JnCP
-X-Google-Smtp-Source: AGHT+IFcOuS4cumt2YODgYWKRsMLvcBHN8sxE4vos/EFY24hOieVy9WXAkHUqW6GJ2CI2TkzytddIGBb5y9f4GGOEpk=
-X-Received: by 2002:a2e:9a0b:0:b0:307:2b3e:a4a9 with SMTP id
- 38308e7fff4ca-3090dd33349mr28348041fa.20.1739529546052; Fri, 14 Feb 2025
- 02:39:06 -0800 (PST)
+	s=arc-20240116; t=1739529711; c=relaxed/simple;
+	bh=85N7bsMhl4ABWehkT4S0a3mAdrj5ySPXPAXUQjZL3og=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KZdnSqqUwyPzsvoXcdYM2NmQvtl6IdeWW0ujroP9moZYnKLEfdk/0AU0/kyr5auIxiAWne4uSNks8bT+fPnz1Gn4yW1zmjv87WzOpm4ZRTxVeTK3EGERyhu63tJFUcLqgMp9QCcPFIz2S4y6GdUJ4q/09nHAZb0pzkQNouh2iV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G1KZee8F; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E17weD002612;
+	Fri, 14 Feb 2025 10:41:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=qMfIsw
+	6tkeGlBgLuUwVlP4AoSBWWmKomoDbzoQXfXto=; b=G1KZee8FSYe1JZyTOFntYy
+	i57nXq1/g7Jsm8GZ63Sqj9iOZ6mYuSNpuuCUjBdOD21HU1ZOecZcaZobWJDmDoxK
+	fI+OgLse7b7QNlYoGGbZpQglcj5OwIbBjIax3K7gnETui47GH1C0aEsvJzmgiQ3o
+	zUW+ZPyE996wOCPw8ra9OhDA1a3L5puuPyOtD3VTHPQCmH3G8LyQyrSKA237Uit8
+	XVt1+63sdpixK3tmj94whl4hy3rpOpT/Ils47moGmnV/wUtdGwurpy4HhEdXM7aU
+	lRnfsZjHfH9ExveerW7GDglohxj0rJL3N5CNyvmG5nmeJ2h1dyiSlWknxVexREgw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44suwa273f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 10:41:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E7Dwlw016679;
+	Fri, 14 Feb 2025 10:41:45 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kk32s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 10:41:45 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51EAfffB51839348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 10:41:41 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3BAB2004B;
+	Fri, 14 Feb 2025 10:41:41 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1DDB320043;
+	Fri, 14 Feb 2025 10:41:41 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.171.26.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Fri, 14 Feb 2025 10:41:41 +0000 (GMT)
+Date: Fri, 14 Feb 2025 11:41:39 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        borntraeger@de.ibm.com, nrb@linux.ibm.com, seiden@linux.ibm.com,
+        nsg@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com
+Subject: Re: [PATCH v1 2/2] KVM: s390: pv: fix race when making a page
+ secure
+Message-ID: <20250214114139.2121f9ea@p-imbrenda>
+In-Reply-To: <ad8ae139-546d-4ade-abb9-455b339a8a92@redhat.com>
+References: <20250213200755.196832-1-imbrenda@linux.ibm.com>
+	<20250213200755.196832-3-imbrenda@linux.ibm.com>
+	<6c741da9-a793-4a59-920f-8df77807bc4d@redhat.com>
+	<20250214111729.000d364e@p-imbrenda>
+	<ad8ae139-546d-4ade-abb9-455b339a8a92@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213180309.485528-1-vincenzo.frascino@arm.com> <20250213180309.485528-2-vincenzo.frascino@arm.com>
-In-Reply-To: <20250213180309.485528-2-vincenzo.frascino@arm.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Feb 2025 11:38:54 +0100
-X-Gm-Features: AWEUYZkcoUajk8OY7YlPuAw6yk_Mx24LP1X0bHTPQEW1VEF0lTSP39l_2JHco3U
-Message-ID: <CACRpkda-J_NHC7Te=Shk0A-35qWms3xeM2MggdGM0ze3Gt0KMw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] dt-bindings: arm: Add Morello compatibility
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bSnEv-C0I7bxFynfMFhzaerljaBY1BpN
+X-Proofpoint-ORIG-GUID: bSnEv-C0I7bxFynfMFhzaerljaBY1BpN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_04,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502140076
 
-Hi Vincenzo,
+On Fri, 14 Feb 2025 11:27:15 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
-thanks for your patch!
+> On 14.02.25 11:17, Claudio Imbrenda wrote:
+> > On Thu, 13 Feb 2025 21:16:03 +0100
+> > David Hildenbrand <david@redhat.com> wrote:
+> >   
+> >> On 13.02.25 21:07, Claudio Imbrenda wrote:  
+> >>> Holding the pte lock for the page that is being converted to secure is
+> >>> needed to avoid races. A previous commit removed the locking, which
+> >>> caused issues. Fix by locking the pte again.
+> >>>
+> >>> Fixes: 5cbe24350b7d ("KVM: s390: move pv gmap functions into kvm")  
+> >>
+> >> If you found this because of my report about the changed locking,
+> >> consider adding a Suggested-by / Reported-y.  
+> > 
+> > yes, sorry; I sent the patch in haste and forgot. Which one would you
+> > prefer (or both?)
+> >   
+> 
+> Maybe Reported-by.
+> 
+> > [...]
+> >   
+> >>> @@ -127,8 +128,11 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+> >>>    
+> >>>    	page = gfn_to_page(kvm, gpa_to_gfn(gaddr));
+> >>>    	mmap_read_lock(gmap->mm);
+> >>> -	if (page)
+> >>> -		rc = __gmap_make_secure(gmap, page, uvcb);
+> >>> +	vmaddr = gfn_to_hva(gmap->private, gpa_to_gfn(gaddr));
+> >>> +	if (kvm_is_error_hva(vmaddr))
+> >>> +		rc = -ENXIO;
+> >>> +	if (!rc && page)
+> >>> +		rc = __gmap_make_secure(gmap, page, vmaddr, uvcb);
+> >>>    	kvm_release_page_clean(page);
+> >>>    	mmap_read_unlock(gmap->mm);
+> >>>        
+> >>
+> >> You effectively make the code more complicated and inefficient than
+> >> before. Now you effectively walk the page table twice in the common
+> >> small-folio case ...  
+> > 
+> > I think in every case, but see below
+> >   
+> >>
+> >> Can we just go back to the old handling that we had before here?
+> >>  
+> > 
+> > I'd rather not, this is needed to prepare for the next series (for
+> > 6.15) in a couple of weeks, where gmap gets completely removed from
+> > s390/mm, and gmap dat tables will not share ptes with userspace anymore
+> > (i.e. we will use mmu_notifiers, like all other archs)  
+> 
+> I think for the conversion we would still:
+> 
+> GFN -> HVA
+> 
+> Walk to the folio mapped at HVA, lock the PTE and perform the conversion.
+> 
+> So even with memory notifiers, that should be fine, no?
 
-On Thu, Feb 13, 2025 at 7:03=E2=80=AFPM Vincenzo Frascino
-<vincenzo.frascino@arm.com> wrote:
+yes
 
-> Add compatibility to Arm Morello System Development Platform.
->
-> Note: Morello is at the same time the name of an Architecture [1], an SoC
-> [2] and a Board [2].
-> To distinguish in between Architecture/SoC and Board we refer to the firs=
-t
-> as arm,morello and to the second as arm,morello-sdp.
->
-> [1] https://developer.arm.com/Architectures/Morello
-> [2] https://www.morello-project.org/
->
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml | 4 ++++
+> 
+> So not necessarily "the old handling that we had before" but rather "the 
+> old way of looking up what's mapped and performing the conversion under 
+> the PTL".
 
-I was thinking, that since the .dtsi and .dts files are not reusing
-any of the Juno .dtsi (correct me if I'm wrong!) this should not
-be in vexpress-juno.yaml, instead perhaps you should create a new
-morello.yaml file?
+ahhh, yes
 
-Yours,
-Linus Walleij
+> 
+> For me to fix the refcount freezing properly on top of your work, we'll 
+> need the PTL (esp. to exclude concurrent GUP-slow) etc.
+
+let's discuss this off-list
+
 
