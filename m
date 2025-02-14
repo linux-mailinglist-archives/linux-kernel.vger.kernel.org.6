@@ -1,104 +1,299 @@
-Return-Path: <linux-kernel+bounces-514619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C408A3595D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:50:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95625A35961
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA0F3AD73F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58DAC16E754
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDB9228387;
-	Fri, 14 Feb 2025 08:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B5A227BBB;
+	Fri, 14 Feb 2025 08:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnrSKhOp"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nULD+FBX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65287227E81;
-	Fri, 14 Feb 2025 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23989275401;
+	Fri, 14 Feb 2025 08:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523036; cv=none; b=ghdE4MBrZK/ui9dQGi5p0jpGttghNGic08OwKS7biaE3NQ+ZvrpDzGChVtOvtBCv0jwkTbt8+wNGDM6ytgT6IiV62Zpl8bkjaotTbkEqdyFboq89ta13lVN5ZbqLJa6cOZw36ZOL41lVzIFn7yRX+mLwOzfoojbmgsaB0x5X2J8=
+	t=1739523145; cv=none; b=pT/q7nQ3PhyBAsULDdIY5C2+eFE6bQp2avzmofQnLYCErQcb8jrfjwWRMpPl96Q7wBHBlBmpgfnZ5T5yWAY0OCkn8cPYMXSMKjzKyVDyt022TAebb2nCvPrz8okB/6Zb0pzS1j2mvYXGpAZmq/E3RR10KqcFirI2IlOUUFmd8lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523036; c=relaxed/simple;
-	bh=FIiFh48SRloeLYrhX70YWBVGVz+5pKIaMXokOTKVowQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YKvWFJRdUfB9sREXAQr1WCdKaX/oiaIDtpkVhWwKxHTve8afqtSJ0L2d6ySzYcdEL49cUbA/zkvEOXGenVRawx6pMXRQ5uGwxkOgK2fu56LvmFwVdqe0keKOVMm6f20O4dHRgid0N6f/Jf0o/gh/ulRqJA3a8V3SlnotSf9EyWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnrSKhOp; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fa8ada664fso2888584a91.3;
-        Fri, 14 Feb 2025 00:50:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739523034; x=1740127834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIiFh48SRloeLYrhX70YWBVGVz+5pKIaMXokOTKVowQ=;
-        b=GnrSKhOpXRnW9oVGxdNH5K+4oCCfFuoa8ckZzl2dk3rtgPg6q0DDrVMc3PuHN8Ar9n
-         IVCtz6J8MY9xkm+lTD2d9HmbN3+c48Dnl2qGGvAj9wxjbFeeN2Vus8P4+YRt/bNCmMtN
-         2EiOGrxZlXYT5DHQOoA9h//FJUbdVtCe0F4+zje3KPNdnibSHg7Kic0LvjJe+yriyTsb
-         LVOMce3FRv1iL6gUf2rz1r3AdLj0tf0IltbeS+M0+tE8kXGT6Z09HyiG8naJ5zzlqKHT
-         sCFRkQy02DO6uqefyFo63eZct+kV/okWjo5hLSSxkASuhVSg5HvkOYbXlrop5/k247rE
-         B9QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739523034; x=1740127834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIiFh48SRloeLYrhX70YWBVGVz+5pKIaMXokOTKVowQ=;
-        b=AjvBR6L0Yu1wRFAAflzbwgUoMxAmCx/54HU1UmJkQOUsc+TBqjhhtWsoB5/xuKzYWC
-         He68lkUehgYli7IwC1tiJm/zq3pHY4SZRWJ3+fWQh5rKHAtR2n68LTzT60jrUtBXC4F6
-         2N8qqoJ6pbs9i7HDEe11cAZitX4468Irrhtks1QN4kYNNP+woAb81J1jdjREwovG+jH+
-         m7XdDa1r3sT6zx1Im1ygyoC6TNgvppg7V45yJ3ozKbWDetzjtg0dMlVH5Cq9xmh4iPNE
-         J4hdDGWt0n9oaqIEYb9jJyRQLD98E1svzGniBjBIQrDt2xEzO37GrBVwnsNctph0+V84
-         ejng==
-X-Forwarded-Encrypted: i=1; AJvYcCWA3IhpFPpcQhl0UgcOET9TkSG2yhxk7nMl5EtzOuHKekCD01H8gpcLZCbX3x6tjXXcQ/CBBOR0mH8=@vger.kernel.org, AJvYcCWXoWnIBqgRxgsvxTv/zCS9gcLDKwqVsrMQ/hdzVvvyNF9OpnP+TdIUgMTtDDPSNREqyJDkfCc/QS/CRdpX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrwnb6U+UMQIG+0mrcHdcbNppIdTSSaHYTxTbjF6cQBCrbxBll
-	LzVtE+DyHihPF/BIlls5H0vE4fDnZ4UvfVq1kQyBtLVBqam/tyzIZA56iskLWAW/wq8je8Z8Ud5
-	rlcQJseWU1hynE0tRcKFgjQQvBoY=
-X-Gm-Gg: ASbGncseFM0hsHmSNUDvN236q7gzybvRKvhzgWs1SJxq5cgyH68KzsgqAmjYfOQEHyS
-	HySpDkhW/xo/522WwmG8lKThw1f80fWSgAN7AkswMm3wr4S4VvG/StDCc1VzCJSJi20XbPg==
-X-Google-Smtp-Source: AGHT+IHiUFULatLaYVTG50OelwewoeambCvXM1mTQ31PiJAH6oiIxTBI5F18bPDN/bN5hq3LikyhjtSIbsUPOxZ5ITU=
-X-Received: by 2002:a17:90b:518d:b0:2f4:43ce:dcea with SMTP id
- 98e67ed59e1d1-2fbf5c580c0mr16296822a91.25.1739523034540; Fri, 14 Feb 2025
- 00:50:34 -0800 (PST)
+	s=arc-20240116; t=1739523145; c=relaxed/simple;
+	bh=GZu6aMzoNVpjWfc+Cmd+0SQtCa8Q39Ci/9y7ROkb0/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjiONtl22A8SfJVUUWQlxotGs9R598+5CVBQJc+Iu68N7CQWM7QsMdKVzo9px4NfbGREIBSOt+uUpNRjoq47OwysCdvk1BusC0eAUzn38GEY7Lyr+VrINusFRx3hWbP+HIWBUCc/l3upW0eT3rQCZBu5uksHOgvwagUAFgAGat4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nULD+FBX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D51C4CED1;
+	Fri, 14 Feb 2025 08:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739523144;
+	bh=GZu6aMzoNVpjWfc+Cmd+0SQtCa8Q39Ci/9y7ROkb0/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nULD+FBXO7Nyg0V+vAR3lGslXs5hgaONCMXA0GAfGIiJqpoFF3lcdZPJElyxQ5Ser
+	 IVvEOGnmBdednlfW/hsWWreHo4TRvyrvqd84L1b6c4EcKBdwM3JkUpjpm4VO78Ihjz
+	 uSESuyvuIDJaHG/b+DHfCEk0jm8V1Jr0yS2QAVa3JZ1rLBxk4g4CS1vpH1yRBTgz+w
+	 azyiKEiI8bjJrezXMu9+cMe69AbdJZr3BTYlKsDK6RxzHCK/eO9qoQ1rFEnmADI6En
+	 7fNGyXh/0moF5egq7bQfYdb28If5NmQV18E25+HMsA7IXzwh5uEePn9Fp/Xv7QpuQs
+	 9oYSyePi1CirA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tirR3-00000000658-2iw9;
+	Fri, 14 Feb 2025 09:52:33 +0100
+Date: Fri, 14 Feb 2025 09:52:33 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <Z68EUTlHcm6TxjlY@hovoldconsulting.com>
+References: <20250206-x1e80100-ps8830-v6-0-60b1e49cfa8d@linaro.org>
+ <20250206-x1e80100-ps8830-v6-2-60b1e49cfa8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206084817.3799312-1-peng.fan@oss.nxp.com> <20250214040457.GC20275@localhost.localdomain>
-In-Reply-To: <20250214040457.GC20275@localhost.localdomain>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 14 Feb 2025 10:52:08 +0200
-X-Gm-Features: AWEUYZmgsC6Etzl4Yr65LGIQ5Av4XAoNXRv7HFJ-K1y_EhMdzGRHl7TymfpRoOo
-Message-ID: <CAEnQRZD25RrtAzAy4B9WX3+1iUuLdt1cgZ36kCTr4poawP1htA@mail.gmail.com>
-Subject: Re: [PATCH V4 1/2] dmaengine: fsl-edma: cleanup chan after dma_async_device_unregister
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
-	"open list:FREESCALE eDMA DRIVER" <imx@lists.linux.dev>, 
-	"open list:FREESCALE eDMA DRIVER" <dmaengine@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206-x1e80100-ps8830-v6-2-60b1e49cfa8d@linaro.org>
 
-On Fri, Feb 14, 2025 at 4:58=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
->
-> Hi Vinod,
->
-> Any comments?
+On Thu, Feb 06, 2025 at 11:28:28AM +0200, Abel Vesa wrote:
+> The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
+> controlled over I2C. It usually sits between a USB/DisplayPort PHY
+> and the Type-C connector, and provides orientation and altmode handling.
 
-Hi Peng,
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Parade ps883x usb retimer driver
 
-Do not send empty pings.
+Nit: USB
 
-Just resend the patches marking them as [RESEND PATCH...
+> + *
+> + * Copyright (C) 2024 Linaro Ltd.
+> + */
 
-Daniel.
+> +static int ps883x_set(struct ps883x_retimer *retimer)
+> +{
+> +	int cfg0 = CONN_STATUS_0_CONNECTION_PRESENT;
+> +	int cfg1 = 0x00;
+> +	int cfg2 = 0x00;
+> +
+> +	if (retimer->orientation == TYPEC_ORIENTATION_NONE ||
+> +	    retimer->mode == TYPEC_STATE_SAFE) {
+> +		ps883x_configure(retimer, cfg0, cfg1, cfg2);
+> +		return 0;
+> +	}
+> +
+> +	if (retimer->mode != TYPEC_STATE_USB && retimer->svid != USB_TYPEC_DP_SID)
+> +		return -EINVAL;
+> +
+> +	if (retimer->orientation == TYPEC_ORIENTATION_REVERSE)
+> +		cfg0 |= CONN_STATUS_0_ORIENTATION_REVERSED;
+> +
+> +	switch (retimer->mode) {
+> +	case TYPEC_STATE_USB:
+> +		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> +		break;
+> +
+
+I'd drop these newlines before case statements, but your choice.
+
+> +	case TYPEC_DP_STATE_C:
+> +		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> +		       CONN_STATUS_1_DP_SINK_REQUESTED |
+> +		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
+> +		       CONN_STATUS_1_DP_HPD_LEVEL;
+> +		break;
+> +
+> +	case TYPEC_DP_STATE_D:
+> +		cfg0 |= CONN_STATUS_0_USB_3_1_CONNECTED;
+> +		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> +		       CONN_STATUS_1_DP_SINK_REQUESTED |
+> +		       CONN_STATUS_1_DP_PIN_ASSIGNMENT_C_D |
+> +		       CONN_STATUS_1_DP_HPD_LEVEL;
+> +		break;
+> +
+> +	case TYPEC_DP_STATE_E:
+> +		cfg1 = CONN_STATUS_1_DP_CONNECTED |
+> +		       CONN_STATUS_1_DP_HPD_LEVEL;
+> +		break;
+> +
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+
+> +static int ps883x_retimer_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct typec_switch_desc sw_desc = { };
+> +	struct typec_retimer_desc rtmr_desc = { };
+> +	struct ps883x_retimer *retimer;
+> +	int ret;
+> +
+> +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
+> +	if (!retimer)
+> +		return -ENOMEM;
+> +
+> +	retimer->client = client;
+> +
+> +	mutex_init(&retimer->lock);
+> +
+> +	retimer->regmap = devm_regmap_init_i2c(client, &ps883x_retimer_regmap);
+> +	if (IS_ERR(retimer->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->regmap),
+> +				     "failed to allocate register map\n");
+> +
+> +	ret = ps883x_get_vregs(retimer);
+> +	if (ret)
+> +		return ret;
+> +
+> +	retimer->xo_clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(retimer->xo_clk))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
+> +				     "failed to get xo clock\n");
+> +
+> +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
+
+What if the reset pin has not been configured by the boot firmware? Then
+this input the to device will be floating when you power it on,
+something which you'd typically try to avoid by asserting reset before
+enabling power.
+
+> +	if (IS_ERR(retimer->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
+> +				     "failed to get reset gpio\n");
+> +
+> +	retimer->typec_switch = typec_switch_get(dev);
+> +	if (IS_ERR(retimer->typec_switch))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
+> +				     "failed to acquire orientation-switch\n");
+> +
+> +	retimer->typec_mux = typec_mux_get(dev);
+> +	if (IS_ERR(retimer->typec_mux)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
+> +				    "failed to acquire mode-mux\n");
+> +		goto err_switch_put;
+> +	}
+> +
+> +	ret = drm_aux_bridge_register(dev);
+> +	if (ret)
+> +		goto err_mux_put;
+> +
+> +	ret = ps883x_enable_vregs(retimer);
+> +	if (ret)
+> +		goto err_mux_put;
+> +
+> +	ret = clk_prepare_enable(retimer->xo_clk);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable XO: %d\n", ret);
+> +		goto err_vregs_disable;
+> +	}
+> +
+> +	sw_desc.drvdata = retimer;
+> +	sw_desc.fwnode = dev_fwnode(dev);
+> +	sw_desc.set = ps883x_sw_set;
+> +
+> +	retimer->sw = typec_switch_register(dev, &sw_desc);
+> +	if (IS_ERR(retimer->sw)) {
+> +		ret = PTR_ERR(retimer->sw);
+> +		dev_err(dev, "failed to register typec switch: %d\n", ret);
+> +		goto err_clk_disable;
+> +	}
+> +
+> +	rtmr_desc.drvdata = retimer;
+> +	rtmr_desc.fwnode = dev_fwnode(dev);
+> +	rtmr_desc.set = ps883x_retimer_set;
+> +
+> +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
+> +	if (IS_ERR(retimer->retimer)) {
+> +		ret = PTR_ERR(retimer->retimer);
+> +		dev_err(dev, "failed to register typec retimer: %d\n", ret);
+> +		goto err_switch_unregister;
+> +	}
+> +
+> +	/* skip resetting if already configured */
+> +	if (regmap_test_bits(retimer->regmap, REG_USB_PORT_CONN_STATUS_0,
+> +			     CONN_STATUS_0_CONNECTION_PRESENT) == 1)
+> +		return gpiod_direction_output(retimer->reset_gpio, 0);
+
+I'm still a little concerned about this. Won't you end up with i2c
+timeout errors in the logs if the device is held in reset before probe?
+
+Have you tried unbinding the device and rebinding to test this?
+
+And what about the CONN_STATUS_0_CONNECTION_PRESENT bit; it sounds like
+it just reflects the connected status. Are you sure it will not be set
+for a device that has not yet been configured?
+
+> +
+> +	gpiod_direction_output(retimer->reset_gpio, 1);
+> +
+> +	/* VDD IO supply enable to reset release delay */
+> +	usleep_range(4000, 14000);
+> +
+> +	gpiod_set_value(retimer->reset_gpio, 0);
+> +
+> +	/* firmware initialization delay */
+> +	msleep(60);
+> +
+> +	return 0;
+> +
+> +err_switch_unregister:
+> +	typec_switch_unregister(retimer->sw);
+> +err_vregs_disable:
+> +	ps883x_disable_vregs(retimer);
+> +err_clk_disable:
+> +	clk_disable_unprepare(retimer->xo_clk);
+
+This one should go above err_vregs_disable or can end up with an
+unbalanced clock disable or regulators left on after probe failure.
+
+And you should assert reset before disabling clocks as well to avoid
+driving the pin after disabling power.
+
+> +err_mux_put:
+> +	typec_mux_put(retimer->typec_mux);
+> +err_switch_put:
+> +	typec_switch_put(retimer->typec_switch);
+> +
+> +	return ret;
+> +}
+> +
+> +static void ps883x_retimer_remove(struct i2c_client *client)
+> +{
+> +	struct ps883x_retimer *retimer = i2c_get_clientdata(client);
+> +
+> +	typec_retimer_unregister(retimer->retimer);
+> +	typec_switch_unregister(retimer->sw);
+> +
+> +	gpiod_set_value(retimer->reset_gpio, 1);
+> +
+> +	clk_disable_unprepare(retimer->xo_clk);
+> +
+> +	ps883x_disable_vregs(retimer);
+> +
+> +	typec_mux_put(retimer->typec_mux);
+> +	typec_switch_put(retimer->typec_switch);
+> +}
+
+Johan
 
