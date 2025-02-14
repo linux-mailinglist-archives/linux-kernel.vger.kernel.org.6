@@ -1,279 +1,148 @@
-Return-Path: <linux-kernel+bounces-514726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADECA35AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:52:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE633A35ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC58188CFE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF463AE68F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A127253B46;
-	Fri, 14 Feb 2025 09:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089F324CEF1;
+	Fri, 14 Feb 2025 09:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ftMQgzwW"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G9SPymFp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289AB253341
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF85245AFE;
+	Fri, 14 Feb 2025 09:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526712; cv=none; b=sHKal3fIqIjd9K83uVQjFwfxqgCKg2ez03KiJhOZA3jyhPOLAlx1UgWRV1UcTo64pqpI6fBCFxw33c3c+EEdO1trsIuuex/Y5eUVK7byCDEADL1XAaXb5XCex/VaaadqWbh+XMG6Qm/aNqXZtfo3Le80fQG16AbZ0clAmcQ3SQQ=
+	t=1739526775; cv=none; b=JzO3z33fVUGiZjhjBXShIygp2/n8n2KUqstKsY8M1iPqhqpec7bFQZ68m5IuV3Ypjc0Lq+My5WijUrV18RxyHIYiQMMNpGDhIG80BZDo4pxMf55xy14bAHKrY6PLuvLJ82s1cqnOBsmcbSTYnz4UCFEaAQabXky9WCmF9N1Ia90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526712; c=relaxed/simple;
-	bh=MiVrq3mroxMLxr9ofpPRaJBkRnaDMtDIibBciMk0+xE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VnX0nX7ZQ2p05/aiiqw5T18D2cyXVNldoCyd3j+DR+zFfQiMO7HngMZOVKdS00FWQzTvjFsz4H95lxpNkSVVU1sYqeBXIM4CBpGDNAQ8GLPN5uCZCSBLsreBZOkOfCB4l3xFMaGqKr3jnQtQaUvm2mUWxUwMRZs67Zd/O/nKax4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ftMQgzwW; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4395578be70so19146925e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:51:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739526707; x=1740131507; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9dgqwf+R3nWbafF3RGqzyDVVvVaWFczMtV2C/3/bQM=;
-        b=ftMQgzwWOsZaasJVULZtGsb0329Sfxz4vQ8YyP0TJhZiheNSCEEXcpMkQL4+zocTbL
-         O/+IAavWgGQFkT0blDaRWBf6j4Z/oCDH/3aBW4banfGFaUIIz3N9b4P9x58g/xgwEzCW
-         kuYAIxOpLN+pLMFa5BzDBVu40hs4gTkfxGQhybg5t6eD2ENsEc1Dr+5ICNQRBPtrbAy6
-         qTNFsE86MMnE75De/rl28kkRxr8emHBo8lD1yTHr3fRCVsqvF94B6aKKCzgGvyBbhEeG
-         lAhtlpW6pEa8YH6Yp09OCDARsCVfuu0XyUITj2H690/QEY7iL7X/C9g+eg7BYcjP1E6W
-         2fNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739526707; x=1740131507;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z9dgqwf+R3nWbafF3RGqzyDVVvVaWFczMtV2C/3/bQM=;
-        b=M8q1M8WbiAmTsRUdiv/HCcbAA8oGT/o90jsUZHCNf5geoO6NZOLoUuW/WVTYIemelf
-         ye9vBdpGJ9lraOpQdiwCk6dywM/rENl5q2cDbPLb0z3jnsooBKaYcpHQ5TP/RjsF3f7H
-         JP7q1ib236nSsuRnNv4ITPlJFc90KhYO9zC10BcK0dk4RZlN6rESTBVxJgWLYkSTK3HQ
-         81nuAy3mXO3IGvEMTlEtJsBcIRoYsSYwTIOEL9k14zOazdp5zsZhyaR4dx61dca3s3v9
-         wq5BQxwBjhq0BOB+pWmvz57tyMpCe9aJFBpUzfEQ/3OIch1QAYtDt8st0Bll+rygMf4m
-         XFsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZWQfA+bvXSuhLEo/1xXbe96hW2XXRWF+ElfVhrmHQXdbLSMx1VY4/b/kKFTfCM0BiQxvgHHskjzbVV2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyilBRRSnTaFBtI8srpl4A42TlnwVqRlD9ZUBU3nQaD6XYHkVoE
-	3Ae4newv6adC8ktd4WyZK2loNjNaAYNmMRA4aOcYmaDZOKTpowYzx0mbvWYY4kQ=
-X-Gm-Gg: ASbGnctQovwyFiojVolDTdt+aKaN3SqJl9OYMVOciHexNDnCulTGFJKFzBAIuW+UweR
-	rl+LruK0mEJINVrfCYn9l8Bw/fMDuwtQnAWR78+DQVdWGqn5vWmhKILUhi4ASkH5krSuoFhSX5p
-	Y3HWgexh82DIEf+2ydRAgrSlYgypaoVIYKfN1+9hZpA6R+YPL4b4CHAlTaeUgXWIgNKN+SSTF7x
-	PIvnEAAlQLjTr27/z3kUYYrYv3VqHAkOWrlxY8UmYpaul54mtAtIAVi34jPoNr7jPydmLt6bB6f
-	reZB79FN8iMRs4g=
-X-Google-Smtp-Source: AGHT+IH+sxpnkLZQx2UY8a+tMUtrwojgYLt+R+m3HuNuphzhfmWFPfEEp9s+PBMwuOVBfiUzYVVAPg==
-X-Received: by 2002:a05:600c:1c91:b0:438:c18c:5ad8 with SMTP id 5b1f17b1804b1-439581cab45mr126116575e9.31.1739526707420;
-        Fri, 14 Feb 2025 01:51:47 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:baa6:bc65:b9db:3759])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a1aa7e8sm71465665e9.26.2025.02.14.01.51.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 01:51:47 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
-  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
-  zhe.wang@amlogic.com
-Subject: Re: [PATCH v2 4/5] ASoC: meson: s4:support audio tocodec
-In-Reply-To: <20250214-audio_drvier-v2-4-37881fa37c9e@amlogic.com> (jiebing
-	chen via's message of "Fri, 14 Feb 2025 10:13:43 +0800")
-References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
-	<20250214-audio_drvier-v2-4-37881fa37c9e@amlogic.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 14 Feb 2025 10:51:46 +0100
-Message-ID: <1j34ggzwel.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1739526775; c=relaxed/simple;
+	bh=Q2GLg2Ix3oJH2aSftQVDhySr55iaLzQztNTe7NKGzs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9lexi8CasI+KUEgmMq93G/FndXx6pdstTeKRxYVBnl5zVDOKyB/oyeqtmcZDXMZd5iFhE12G5IUkv4yTag6xvaGvmbUQ0gBcq0aj1eV+6AcHLB6Y1SCiit5sLnEUwPOiTWrbW5KU+speA4HlAYhrtz60N4mvCG1VMZreVe1t4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G9SPymFp; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739526773; x=1771062773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q2GLg2Ix3oJH2aSftQVDhySr55iaLzQztNTe7NKGzs0=;
+  b=G9SPymFp8ZeTxhIveT5/1n6qSCUeX3bgaTe017QCRB2bS/JkfvIMTcux
+   pkkMAWmF2VP6woUvvPUolojv3tUL2TpKFYvFcippYgn06Z+EweYF2W+8O
+   qc091pQMDClTEIe5Xxj/8h6w7FGVY/XyAviXQr6x8LfyKAD33f3hTEXsA
+   g2PBEzhtV6hC4UV6UPIHM5D1SJD1R/3KAoMNV61hGYxlK6UMsgZqk/fLc
+   WDStaIMY/lpHidh3/K/Utgg6JjXjg9RdoDOmurKRP3fj2wzfNlUKFHm5C
+   EopEhQwus5KCCkulRZM2RQRvoqyLtLM02lzY2tBtob0GD3MpD/HfVwuWI
+   w==;
+X-CSE-ConnectionGUID: bix9pkX3QdWNH63Cx3nWeg==
+X-CSE-MsgGUID: LUg3jvVRRNuBvF8hLxG5MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="50484978"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="50484978"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 01:52:53 -0800
+X-CSE-ConnectionGUID: 0Vjz3su7Tf6WLgy7UW1g6A==
+X-CSE-MsgGUID: fb6+pPMbSDS6uIG0KS32Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="113605790"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Feb 2025 01:52:50 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tisNL-0019LX-1U;
+	Fri, 14 Feb 2025 09:52:47 +0000
+Date: Fri, 14 Feb 2025 17:52:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+Message-ID: <202502141719.Jdm44al4-lkp@intel.com>
+References: <20250213090819.419470-4-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213090819.419470-4-gmonaco@redhat.com>
 
-On Fri 14 Feb 2025 at 10:13, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
+Hi Gabriele,
 
-> From: jiebing chen <jiebing.chen@amlogic.com>
->
-> Add the audio tocodec for s4, add the 8 lane support,
-> add the mclk and sclk enable event when start data enable auto switch
+kernel test robot noticed the following build errors:
 
-Again, incomplete description and mixing things together.
+[auto build test ERROR on 4dc1d1bec89864d8076e5ab314f86f46442bfb02]
 
->
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
->  sound/soc/meson/axg-card.c      |  3 +-
->  sound/soc/meson/g12a-toacodec.c | 64 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 66 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
-> index a2dfccb7990f3a53f508fc6724b21de53b4494d8..5cef069c3370257d4aaf24d7270482651babcfe1 100644
-> --- a/sound/soc/meson/axg-card.c
-> +++ b/sound/soc/meson/axg-card.c
-> @@ -303,7 +303,8 @@ static int axg_card_cpu_is_tdm_iface(struct device_node *np)
->  static int axg_card_cpu_is_codec(struct device_node *np)
->  {
->  	return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx") ||
-> -		of_device_is_compatible(np, DT_PREFIX "g12a-toacodec");
-> +		of_device_is_compatible(np, DT_PREFIX "g12a-toacodec") ||
-> +		of_device_is_compatible(np, DT_PREFIX "s4-toacodec");
+url:    https://github.com/intel-lab-lkp/linux/commits/Gabriele-Monaco/tracing-Fix-DECLARE_TRACE_CONDITION/20250213-171642
+base:   4dc1d1bec89864d8076e5ab314f86f46442bfb02
+patch link:    https://lore.kernel.org/r/20250213090819.419470-4-gmonaco%40redhat.com
+patch subject: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+config: arm-randconfig-001-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141719.Jdm44al4-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502141719.Jdm44al4-lkp@intel.com/reproduce)
 
-There is no need to extend that indefinitely, use fall-back
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502141719.Jdm44al4-lkp@intel.com/
 
->  }
->  
->  static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
-> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
-> index 531bb8707a3ec4c47814d6a0676d5c62c705da75..a93a91136e8ea00e856c3981b9c1e7e08d927a3b 100644
-> --- a/sound/soc/meson/g12a-toacodec.c
-> +++ b/sound/soc/meson/g12a-toacodec.c
-> @@ -41,6 +41,9 @@
->  #define  CTRL0_BCLK_SEL_LSB		4
->  #define  CTRL0_MCLK_SEL			GENMASK(2, 0)
->  
-> +#define CTRL0_BCLK_ENABLE_SHIFT		30
-> +#define CTRL0_MCLK_ENABLE_SHIFT		29
-> +
->  #define TOACODEC_OUT_CHMAX		2
->  
->  struct g12a_toacodec {
-> @@ -107,6 +110,33 @@ static int g12a_toacodec_mux_put_enum(struct snd_kcontrol *kcontrol,
->  	return 1;
->  }
->  
-> +static int tocodec_clk_enable(struct snd_soc_dapm_widget *w,
-> +			      struct snd_kcontrol *control,
-> +			      int event)
-> +{
-> +	int ret = 0;
-> +	unsigned int mask = 0, val = 0;
-> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-> +
+All errors (new ones prefixed by >>):
 
-Over complicated for no reason
+>> kernel/sched/core.c:503:2: error: call to undeclared function '__do_trace_sched_set_state_tp'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           __do_trace_sched_set_state_tp(current, current->__state, state_value);
+           ^
+   kernel/sched/core.c:503:2: note: did you mean 'trace_sched_set_state_tp'?
+   include/trace/events/sched.h:835:1: note: 'trace_sched_set_state_tp' declared here
+   DECLARE_TRACE_CONDITION(sched_set_state_tp,
+   ^
+   include/linux/tracepoint.h:472:2: note: expanded from macro 'DECLARE_TRACE_CONDITION'
+           __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+           ^
+   include/linux/tracepoint.h:409:2: note: expanded from macro '__DECLARE_TRACE'
+           __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto))
+           ^
+   include/linux/tracepoint.h:385:21: note: expanded from macro '__DECLARE_TRACE_COMMON'
+           static inline void trace_##name(proto)                          \
+                              ^
+   <scratch space>:84:1: note: expanded from here
+   trace_sched_set_state_tp
+   ^
+   1 error generated.
 
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
-> +		val = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
-> +		ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
 
-All this could be done in one line and be actually readable if you
-properly used the BIT() macro.
+vim +/__do_trace_sched_set_state_tp +503 kernel/sched/core.c
 
-> +		break;
-> +	case SND_SOC_DAPM_PRE_PMD:
-> +		mask = 1 << CTRL0_MCLK_ENABLE_SHIFT | 1 << CTRL0_BCLK_ENABLE_SHIFT;
-> +		val = 0 << CTRL0_MCLK_ENABLE_SHIFT | 0 << CTRL0_BCLK_ENABLE_SHIFT;
-> +		ret = snd_soc_component_update_bits(component, TOACODEC_CTRL0, mask, val);
-> +		break;
-> +	default:
-> +		dev_err(component->dev, "Unexpected event %d\n", event);
-> +		return -EINVAL;
-> +	}
-
-... and nothing explains what is being done and why ...
-
-> +
-> +	return ret;
-> +}
-> +
->  static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
->  			    CTRL0_DAT_SEL_LSB,
->  			    g12a_toacodec_mux_texts);
-> @@ -143,6 +173,14 @@ static const struct snd_soc_dapm_widget sm1_toacodec_widgets[] = {
->  			    &g12a_toacodec_out_enable),
->  };
->  
-> +static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
-> +	SND_SOC_DAPM_MUX("SRC", SND_SOC_NOPM, 0, 0,
-> +			 &sm1_toacodec_mux),
-> +	SND_SOC_DAPM_SWITCH_E("OUT EN", SND_SOC_NOPM, 0, 0,
-> +			      &g12a_toacodec_out_enable, tocodec_clk_enable,
-> +			      (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD)),
-
-Drops the .autodisable without a even comment 
-
-AFAICT, could be done like the other SoC with SOC_SINGLE_AUTODISABLE()
-with properly chosen values.
-
-> +};
-> +
->  static int g12a_toacodec_input_hw_params(struct snd_pcm_substream *substream,
->  					 struct snd_pcm_hw_params *params,
->  					 struct snd_soc_dai *dai)
-> @@ -236,6 +274,10 @@ static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
->  	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
->  };
->
-> +static const struct snd_kcontrol_new s4_toacodec_controls[] = {
-> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 7, 0),
-> +};
-> +
-
-No. there is no reason to add that for s4 and not for sm1 which has 8
-line HW support too. That clearly shows up with #define used.
-
-If you must do that, please do it correctly without leaving the other
-platforms behind.
-
->  static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
->  	.probe			= g12a_toacodec_component_probe,
->  	.controls		= g12a_toacodec_controls,
-> @@ -258,6 +300,17 @@ static const struct snd_soc_component_driver sm1_toacodec_component_drv = {
->  	.endianness		= 1,
->  };
->  
-> +static const struct snd_soc_component_driver s4_toacodec_component_drv = {
-> +	.probe			= sm1_toacodec_component_probe,
-> +	.controls		= s4_toacodec_controls,
-> +	.num_controls		= ARRAY_SIZE(s4_toacodec_controls),
-> +	.dapm_widgets		= s4_toacodec_widgets,
-> +	.num_dapm_widgets	= ARRAY_SIZE(s4_toacodec_widgets),
-> +	.dapm_routes		= g12a_toacodec_routes,
-> +	.num_dapm_routes	= ARRAY_SIZE(g12a_toacodec_routes),
-> +	.endianness		= 1,
-> +};
-> +
->  static const struct regmap_config g12a_toacodec_regmap_cfg = {
->  	.reg_bits	= 32,
->  	.val_bits	= 32,
-> @@ -278,6 +331,13 @@ static const struct g12a_toacodec_match_data sm1_toacodec_match_data = {
->  	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
->  };
->  
-> +static const struct g12a_toacodec_match_data s4_toacodec_match_data = {
-> +	.component_drv	= &s4_toacodec_component_drv,
-> +	.field_dat_sel	= REG_FIELD(TOACODEC_CTRL0, 19, 20),
-> +	.field_lrclk_sel = REG_FIELD(TOACODEC_CTRL0, 12, 14),
-> +	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
-> +};
-> +
->  static const struct of_device_id g12a_toacodec_of_match[] = {
->  	{
->  		.compatible = "amlogic,g12a-toacodec",
-> @@ -287,6 +347,10 @@ static const struct of_device_id g12a_toacodec_of_match[] = {
->  		.compatible = "amlogic,sm1-toacodec",
->  		.data = &sm1_toacodec_match_data,
->  	},
-> +	{
-> +		.compatible = "amlogic,s4-toacodec",
-> +		.data = &s4_toacodec_match_data,
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, g12a_toacodec_of_match);
+   496	
+   497	/*
+   498	 * Do not call this function directly since it won't check if the tp is enabled.
+   499	 * Call the helper macro trace_set_current_state instead.
+   500	 */
+   501	void __do_trace_set_current_state(int state_value)
+   502	{
+ > 503		__do_trace_sched_set_state_tp(current, current->__state, state_value);
+   504	}
+   505	EXPORT_SYMBOL(__do_trace_set_current_state);
+   506	
 
 -- 
-Jerome
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
