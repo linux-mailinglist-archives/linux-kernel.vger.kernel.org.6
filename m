@@ -1,156 +1,147 @@
-Return-Path: <linux-kernel+bounces-514532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CA2A3582A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:48:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC8BA35830
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FFD3AAE67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:47:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9AE5169A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8284021B8E0;
-	Fri, 14 Feb 2025 07:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048FE2116F3;
+	Fri, 14 Feb 2025 07:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qI7QAWdG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GsacvUad";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HuZIErAO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JAMJAT5C"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJDQZWsv"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051D5189915;
-	Fri, 14 Feb 2025 07:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E431C21B8F6;
+	Fri, 14 Feb 2025 07:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739519271; cv=none; b=TERcd+FCUrcLHYJK6bbOiKzE4yH2egmFSRYxoxHdTAeWdnuFHMK3FaU4Z0vDkadmSunEWiJ26/qIUseC9dw5cPSWlY6XXR1b0TccYgPQmlxkJHztNJ/HQzZMCkgf4OYlsGPCkBNP8n20Es/21/vu7VkuCIAoh+k7tz8n92OPIL4=
+	t=1739519318; cv=none; b=nHVFapKY6DPF/to4WNxrdK5HxRAvdiPQUlX+kONOHDnW53tCM+/Wpx2ePdGEhBSaG6kPms5gw0uw8mpSnELxSReIwV0nCem1bp6Re7wn8qMdAQ/OFCgptIf/9lEd0mOzRswUBwvU6mOOyJ2+KV1SOKylJyOSBiIrXBDpNBqw5PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739519271; c=relaxed/simple;
-	bh=9Fx1ADP2d6/0Az/8gbXuqq/P/ru93pf9PBS1UT9ATrE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K+6KyYcnsNCedlZsxLH5A8Ar72gwwJJRk+tEXQjLvwEeF206lPoO9s7OCVVFsHmz+NMu36lhUVMPdR9cSAe18ci7QifZk5gdl7vTn73bqv78oqFNqNV9uhCWSg8CN0B3CO7/hDCmlqkghhVvqVOfaek1qWVnfChMrQU9ZaAlix0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qI7QAWdG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GsacvUad; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HuZIErAO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JAMJAT5C; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CCF5C21D63;
-	Fri, 14 Feb 2025 07:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739519268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
-	b=qI7QAWdGkEzSdkGWKnCRrBsCP15AI+a8MQG9MtkE/BB+jrENAAQwpTe+E2Xm+2NHXJ5Nc6
-	+DB89DIAKBPLAYeQDYAtNg2JrEglc/ox0W04DgWs+QUj11uA/K7jrGAMymQwvHC6HLMq7M
-	kcU0aEIr8TuzhoIiXEnLod4iZZFXvJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739519268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
-	b=GsacvUad/BiRMJcOJ91IiZZJzQ7nlkp7iqAg8SBNBRX9DoKrGpaN5RYMsZkz2bSzeCOzrg
-	5KhUQiB8j4vTDACA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HuZIErAO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JAMJAT5C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739519267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
-	b=HuZIErAOtkLwIx+u/+YLGmdowSprAxYlqy1qJ0h1SjRvnEibH0NtMj4YhXBXscbBoHLBrC
-	UNhiGu1lUDZ0iVPYeAJgD68zeuhbXLQtbGJiqLgrRcwFogKpzfzagfieMkZrAyRyro9e5B
-	NNg+8CoQ9BLsWNmc+JbQGxa5UOsdXr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739519267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0EGkOWHhFPkNIwh0U247/lhdtEDCXIZ/GRopnWrhFA=;
-	b=JAMJAT5CF/DosKKP5vjP62YuxO3HM0pEteMsnt8lVNIfTKerBbzecL9HLC+nrSZOhjcWs5
-	PdJ5/IctVT7fRBAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 370CA13285;
-	Fri, 14 Feb 2025 07:47:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4iuXCSP1rmd9GAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 14 Feb 2025 07:47:47 +0000
-Date: Fri, 14 Feb 2025 08:47:42 +0100
-Message-ID: <87frkh2cip.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	cezary.rojewski@intel.com,
-	Julia.Lawall@inria.fr,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda: Add error check for snd_ctl_rename_id() in snd_hda_create_dig_out_ctls()
-In-Reply-To: <20250213074543.1620-1-vulab@iscas.ac.cn>
-References: <20250213074543.1620-1-vulab@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1739519318; c=relaxed/simple;
+	bh=m1eG8KHMaFDsXpSi9FNYwgNLf+4v4sQjZ2SUbZoKMYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QOCZmKgT4ZRLfErNGPu1UQi6v+HM6AaxPH3NoV+tDIIpGPwRDb/AtYtjhGib+Fvw8fSpBcV+GI65rcIItJhQvkfJFmcpLwtx8Qkaw6FNXva8pU+o9zCtTwdSGRBeCcFj0vpKKkP+EnYVhIZMKeO9tq1dloM7dFRPZmzu+VLyqsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJDQZWsv; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85571bd0203so35864439f.3;
+        Thu, 13 Feb 2025 23:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739519316; x=1740124116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=731rFs0ET7FwAGuOR3hr8cPMl7QFrpHqNeXFCTqMoFY=;
+        b=PJDQZWsvNoY9yBvrRikwjz+68NwHrN5BFrCLt39dRzLlFp0pUTmsLaHIKZtNHmqArl
+         2jZP1DatEDXTho0mM4VdpZGanPpOnzItIt7IaBSi3laZ80RV6aN9Degq29b3FdZg4Xtu
+         Za5afNUndASwYy+dff0D/qwyXDxvlghBzGgdrXOsdgzEvw8a5Y/d5yPBLRACCJtgPdrB
+         tHC2KYivbhi2boVsq/h+T5kXtWAECkR3tMGJzCw/omTAvT2YIjc5iFEugaxaRfCCj+Cq
+         KkoEhjPYjrdq1uWx4is1uw4a1c6RPty8Pih5pVpuK8MxF48Ib7xitt9Iuv0nAy7ojBrv
+         pKog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739519316; x=1740124116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=731rFs0ET7FwAGuOR3hr8cPMl7QFrpHqNeXFCTqMoFY=;
+        b=NTkX6BgkBenVdF+jIF1tUvwqDd/7mfpQF5jGM2ekN2G2jmLTntBKYt7B0kIlsZhNwA
+         /QrH6tNZf55hqk3lvaREXF51r+TMqLL7hMuu2gCDGQTqwiP62O4sCiUAUCphE1wb8KYr
+         yTzW3iZVOnYTx0y5UwgjqDQVJXt7Kr/bxm46AnzAoYP05+OOXcqp5+RlNsjT8UZwfS6/
+         +ShGQQauL+rpuEmSZn2AFpTjI2xZTl6z357X8+DQKIG7SERPann1+fjuWJHissaGcBIY
+         XGa794r16pX6e6Cu27oYglaoOzA6kD0MdAInFnDQP/1ahusrHpYJzqdD26PapTbcvWwK
+         OxfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDDmb7XbR/w865H/bBGxVsuCA6O6hLf456J4ZUXM52P00DNgowr0B6zRviR0x/ZrHvyMRk20f5BhnrKN8=@vger.kernel.org, AJvYcCWhtrCiYy0tXHeSdDgEnaWWN3PCm6us1qfD+ZLc34hS3ruktfe1gzl3W/IFrNE0CzAu1L03USt1+1RdXFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUvj1RBmPCSLvJWTFXTOvpAUu+9oPYCypVC7OCfTlFT6Wz0oJA
+	ATRw0eiSNZMb4d3RemAeUfl5nxG1BIxLoH02GP1nce8cIubbYgZc3mSynUkWpgc8vnqsY0aqZ5V
+	rFOc78/mq1/A3kTSphXqUYLuGLXw=
+X-Gm-Gg: ASbGnctsCiwlYmECHHi42Q2EDGdweuqtBk2FTlDUsAYp4296ZIsgReRNq0XOHyGc/yV
+	ZY5US4zb+iADny30V0kohAySMie6Y0Ttfk26E1Q710qQLCH1IceY5a59QF/nQNlXkv85qDeM/
+X-Google-Smtp-Source: AGHT+IE22ipUxc6uvPnQnBkwGLFiXLKEtvMmYd7z3k09O1lrpjChkZ/Hbhfrn7x//qqetG+GUnCsfUC8k47APTHaH6M=
+X-Received: by 2002:a05:6e02:3689:b0:3d0:11ff:a782 with SMTP id
+ e9e14a558f8ab-3d18c231101mr54357335ab.9.1739519315915; Thu, 13 Feb 2025
+ 23:48:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: CCF5C21D63
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20250214071747.229719-1-chancel.liu@nxp.com>
+In-Reply-To: <20250214071747.229719-1-chancel.liu@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 14 Feb 2025 15:48:24 +0800
+X-Gm-Features: AWEUYZm_evk9kNSA0Rf-nfbp1PH6GJ4BxmVu1WRP18sINX7eFOA6CuSK3yph-h8
+Message-ID: <CAA+D8AMbW=iWZ1VCWuZvE2u4EHy9FeEMgDBxpTO9XupZeyUzCA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: fsl_sai: Rename stream name of dai driver
+To: Chancel Liu <chancel.liu@nxp.com>
+Cc: Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
+	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Feb 2025 08:45:43 +0100,
-Wentao Liang wrote:
-> 
-> Check the return value of snd_ctl_rename_id() in
-> snd_hda_create_dig_out_ctls(). Ensure that failures
-> are properly handled.
-> 
-> Fixes: 5c219a340850 ("ALSA: hda: Fix kctl->id initialization")
-> Cc: stable@vger.kernel.org # 6.4+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+On Fri, Feb 14, 2025 at 3:18=E2=80=AFPM Chancel Liu <chancel.liu@nxp.com> w=
+rote:
+>
+> If stream names of dai driver are duplicated there'll be warnings when
+> machine driver tries to add widgets on a route:
+>
+> [    8.831335] fsl-asoc-card sound-wm8960: ASoC: sink widget CPU-Playback=
+ overwritten
+> [    8.839917] fsl-asoc-card sound-wm8960: ASoC: source widget CPU-Captur=
+e overwritten
+>
+> Use different stream names to avoid such warnings.
 
-The error would never happen because this is a rename, and the only
-error condition of snd_ctl_rename_id() is the lack of the control id.
-But it's better to have a return check in the caller side, so I took
-now.  Thanks.
+Only this change should cause issue for imx-audmix driver.
 
+Best regards
+Shengjiu Wang
 
-Takashi
+>
+> Fixes: 15c958390460 ("ASoC: fsl_sai: Add separate DAI for transmitter and=
+ receiver")
+> Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
+> ---
+>  sound/soc/fsl/fsl_sai.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+> index c4eb87c5d39e..9f33dd11d47f 100644
+> --- a/sound/soc/fsl/fsl_sai.c
+> +++ b/sound/soc/fsl/fsl_sai.c
+> @@ -994,10 +994,10 @@ static struct snd_soc_dai_driver fsl_sai_dai_templa=
+te[] =3D {
+>         {
+>                 .name =3D "sai-tx",
+>                 .playback =3D {
+> -                       .stream_name =3D "CPU-Playback",
+> +                       .stream_name =3D "SAI-Playback",
+>                         .channels_min =3D 1,
+>                         .channels_max =3D 32,
+> -                               .rate_min =3D 8000,
+> +                       .rate_min =3D 8000,
+>                         .rate_max =3D 2822400,
+>                         .rates =3D SNDRV_PCM_RATE_KNOT,
+>                         .formats =3D FSL_SAI_FORMATS,
+> @@ -1007,7 +1007,7 @@ static struct snd_soc_dai_driver fsl_sai_dai_templa=
+te[] =3D {
+>         {
+>                 .name =3D "sai-rx",
+>                 .capture =3D {
+> -                       .stream_name =3D "CPU-Capture",
+> +                       .stream_name =3D "SAI-Capture",
+>                         .channels_min =3D 1,
+>                         .channels_max =3D 32,
+>                         .rate_min =3D 8000,
+> --
+> 2.47.1
+>
 
