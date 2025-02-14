@@ -1,285 +1,179 @@
-Return-Path: <linux-kernel+bounces-514746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB65A35B01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:59:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699EAA35B04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B53D188C2D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF793A23B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7292505C2;
-	Fri, 14 Feb 2025 09:59:24 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FA52236F8;
+	Fri, 14 Feb 2025 10:00:36 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DB3245AFC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232A186E40
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 10:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527163; cv=none; b=QFo3FJD5Yr7w05q9bg9n4IEgMCoyyAGgnt/IJdsjzxoO3WOAwriM5S7JP46P6frK+icp65Z+eXJqwewj54u36aDsjlKeLP2y52YplVYRVZErzFEih3iUeYjFmG5bkb5RHBNwCNU7hGXPfMzsjYJjgz+eGLLx+9FQqaXknMcsKf0=
+	t=1739527235; cv=none; b=MTBjVXDeQV8xpt5ADSz74ifuU1iJSO0/BlHEart9kgH7tOMMNzE5leVJEuMyvCIKASCvGX4fsf0Kv9/6SAVuulCxnHmN/ctnIT3Y8XoK2r8cXZiy1nOdCy3V/ervXkvvGe7KXdOAKlyEaUYAKjBphbGsvto+xItYa/vMf47XBiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527163; c=relaxed/simple;
-	bh=4MxrVFy88TBS6bpwTDVzMtKIBFHNvvMCTimPTA0x7VU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R1HiaEsn0zLYJiEfqHRcKSlmEPAugl0NJlvzF934+XYBFT2kaJmYsV+prlo2tZY0g919bwBTiKRAYwS/Knw1XAc6IfUpzWr9EgPAfesPVwdqGVNvfk7vOfnKKX3mn3qY2Dh2CQJISJ1k86SYwfo+6yP4HZK7uE7ujqMq4wfsPKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3cfba1ca53bso13510455ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:59:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739527161; x=1740131961;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pO9vi0rb1UFYB8bG53BM6YGHkQtc6g+KGVEW9G3592c=;
-        b=b83Aw0GF5XH4HwkfxANM2a8vxJKOzaCtbl2IO+bzZb3sN1rtpDa+iyvW7e3gKHfEah
-         dvIO0cSIAZIGJ8Qm6rkHoi+kPIySqc8qn841hTOAXnRd1Y+ss0qZaFHK4Fiw/Bj3+rVH
-         bFh8Oq9GY/xzvdVbsTMfj/TEfdv9Xgt7diuiT6cDX9fGfUO4IgXT82YF4P3arL4GV2Sc
-         Fh/eg1vnbPFtM9nmh8IWyPjZNBctoTtHDpHU/m54b2wYLdQm/ttj8CXWIixQzg1HaAmJ
-         OlqODREYQ9oC4fo4ucC2B8UJ61l7aXBL97S8w2g93jn+uhCQhDQTk5YQiXXHsMQ4yqQB
-         5z8g==
-X-Gm-Message-State: AOJu0YzYCy7z3FcHSBXWjua0ZfhQwKvW/roPH57KE2SBSpNt+a4yJqyk
-	/el+wbdUvXy0XpI6d5C0Ilg1+XBWjxliMwnupxxqZkrrRFv3QRY4O8nZJg/+oUN6pt40KB81mI3
-	Fwju5HTIcuzMG+WaGAcGiBk5UGx1lQUBYBwQ0pjFPS+OiFWdf+EIXYLZGaA==
-X-Google-Smtp-Source: AGHT+IG7a/ROwwn2nM3Ej2BJE4hyiZzct5fM2SJJYc9UDs2l7JbYEg5EVD3Hclo+5cQ4ycspon+fYfbby4qS72r39jTJ8bLJo8iv
+	s=arc-20240116; t=1739527235; c=relaxed/simple;
+	bh=8nLOAsh8oVYFB0nZnyyzNResdb2MquuIt0JTCxlTdmY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=D1j9KRF8AdF3/rGIpYJfdJQT6CAAuiheREJ54wI1KfgLxYPM/vOZCco+JzzY5kXk1gCF2bJ1pHOJbkVTHA0LEoOIEwnmPudN9ruR+LG/yoZ53d8fNNnQlcXZFqpg9RRlEriV0bNJPdKuYxrsZT7qiG6upaoptv0sjNIDzitN2D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4YvSF14jpczYmwxh;
+	Fri, 14 Feb 2025 17:59:01 +0800 (CST)
+Received: from a009.hihonor.com (10.68.30.244) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 14 Feb
+ 2025 18:00:05 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a009.hihonor.com
+ (10.68.30.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 14 Feb
+ 2025 18:00:05 +0800
+Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
+ a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
+ 15.02.1544.011; Fri, 14 Feb 2025 18:00:05 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Barry Song <21cnbao@gmail.com>
+CC: Nhat Pham <nphamcs@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+	yipengxiang <yipengxiang@honor.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2ludGVy?=
+ =?utf-8?B?IGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
+Thread-Topic: [PATCH] mm: Fix possible NULL pointer dereference in
+ __swap_duplicate
+Thread-Index: Adt8+0GogoLTL6hgQfOcUIXDGgpBSQAehvKAAB6JUvAADl2WAAAltvHQ
+Date: Fri, 14 Feb 2025 10:00:05 +0000
+Message-ID: <df0fd157cdba44ddb43f23cc71a75fd9@honor.com>
+References: <44655569e3a1419f800952004f07e714@honor.com>
+ <CAKEwX=NgTfnU8EzpPmC_h5mY1UePAPR6_W2rrBNGs3EZA96FsQ@mail.gmail.com>
+ <a67e670777474ae2ad1a29707f00ea3f@honor.com>
+ <CAGsJ_4zFrBNoJhedN2AiCAeHmKPk513Vfn-gmEd2wsqXTRhY4A@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zFrBNoJhedN2AiCAeHmKPk513Vfn-gmEd2wsqXTRhY4A@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218d:b0:3cf:b87b:8fde with SMTP id
- e9e14a558f8ab-3d17bfe505fmr72909545ab.17.1739527160755; Fri, 14 Feb 2025
- 01:59:20 -0800 (PST)
-Date: Fri, 14 Feb 2025 01:59:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67af13f8.050a0220.21dd3.0038.GAE@google.com>
-Subject: [syzbot] [kernel?] KASAN: slab-use-after-free Read in idr_for_each
-From: syzbot <syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    09fbf3d50205 Merge tag 'tomoyo-pr-20250211' of git://git.c..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b48718580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b4ba914aa7feffc
-dashboard link: https://syzkaller.appspot.com/bug?extid=a2b84e569d06ca3a949c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0cb4344f4ddf/disk-09fbf3d5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9feb281ff6c6/vmlinux-09fbf3d5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cfb2666179f2/bzImage-09fbf3d5.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a2b84e569d06ca3a949c@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in radix_tree_next_slot include/linux/radix-tree.h:424 [inline]
-BUG: KASAN: slab-use-after-free in idr_for_each+0x252/0x270 lib/idr.c:202
-Read of size 8 at addr ffff88805354a3f0 by task syz.0.13243/4790
-
-CPU: 0 UID: 0 PID: 4790 Comm: syz.0.13243 Tainted: G     U             6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
-Tainted: [U]=USER
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:489
- kasan_report+0xd9/0x110 mm/kasan/report.c:602
- radix_tree_next_slot include/linux/radix-tree.h:424 [inline]
- idr_for_each+0x252/0x270 lib/idr.c:202
- shm_destroy_orphaned+0x85/0x90 ipc/shm.c:435
- proc_ipc_dointvec_minmax_orphans+0xca/0xe0 ipc/ipc_sysctl.c:32
- proc_sys_call_handler+0x3c6/0x5a0 fs/proc/proc_sysctl.c:601
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcfe838cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fcfe9214038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fcfe85a5fa0 RCX: 00007fcfe838cde9
-RDX: 000000000000fdef RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007fcfe840e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fcfe85a5fa0 R15: 00007ffc477f12e8
- </TASK>
-
-Allocated by task 1798:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4115 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- kmem_cache_alloc_noprof+0x1c8/0x3b0 mm/slub.c:4171
- radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
- idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
- idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
- idr_alloc_cyclic+0x10c/0x230 lib/idr.c:125
- ipc_idr_alloc ipc/util.c:230 [inline]
- ipc_addid+0x697/0x1f50 ipc/util.c:305
- newseg+0x674/0xe60 ipc/shm.c:775
- ipcget_public ipc/util.c:415 [inline]
- ipcget+0x866/0xd80 ipc/util.c:676
- ksys_shmget ipc/shm.c:839 [inline]
- __do_sys_shmget ipc/shm.c:844 [inline]
- __se_sys_shmget ipc/shm.c:842 [inline]
- __x64_sys_shmget+0x13f/0x1b0 ipc/shm.c:842
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 16:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kmem_cache_free+0x2e2/0x4d0 mm/slub.c:4711
- rcu_do_batch kernel/rcu/tree.c:2546 [inline]
- rcu_core+0x79d/0x14d0 kernel/rcu/tree.c:2802
- handle_softirqs+0x213/0x8f0 kernel/softirq.c:561
- run_ksoftirqd kernel/softirq.c:950 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:942
- smpboot_thread_fn+0x661/0xa30 kernel/smpboot.c:164
- kthread+0x3af/0x750 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Last potentially related work creation:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xb8/0xd0 mm/kasan/generic.c:548
- __call_rcu_common.constprop.0+0x9a/0x870 kernel/rcu/tree.c:3065
- radix_tree_node_free lib/radix-tree.c:310 [inline]
- delete_node+0x1fc/0x8e0 lib/radix-tree.c:573
- __radix_tree_delete+0x193/0x3d0 lib/radix-tree.c:1379
- radix_tree_delete_item+0xeb/0x230 lib/radix-tree.c:1430
- ipc_rmid+0x10b/0x3e0 ipc/util.c:501
- shm_rmid ipc/shm.c:275 [inline]
- shm_destroy+0x2d7/0x6d0 ipc/shm.c:336
- shm_try_destroy_orphaned ipc/shm.c:426 [inline]
- shm_try_destroy_orphaned+0x1a8/0x270 ipc/shm.c:409
- idr_for_each+0x141/0x270 lib/idr.c:208
- shm_destroy_orphaned+0x85/0x90 ipc/shm.c:435
- proc_ipc_dointvec_minmax_orphans+0xca/0xe0 ipc/ipc_sysctl.c:32
- proc_sys_call_handler+0x3c6/0x5a0 fs/proc/proc_sysctl.c:601
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88805354a3c0
- which belongs to the cache radix_tree_node of size 576
-The buggy address is located 48 bytes inside of
- freed 576-byte region [ffff88805354a3c0, ffff88805354a600)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880535498c0 pfn:0x53548
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff88802f32c001
-flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000240 ffff88801b04fdc0 ffffea00008e6010 ffff88801b04ed08
-raw: ffff8880535498c0 0000000000170013 00000000f5000000 ffff88802f32c001
-head: 00fff00000000240 ffff88801b04fdc0 ffffea00008e6010 ffff88801b04ed08
-head: ffff8880535498c0 0000000000170013 00000000f5000000 ffff88802f32c001
-head: 00fff00000000002 ffffea00014d5201 ffffffffffffffff 0000000000000000
-head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Reclaimable, gfp_mask 0x52830(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_RECLAIMABLE), pid 15204, tgid 15203 (syz.4.4472), ts 346641279489, free_ts 344707683829
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
- alloc_pages_mpol+0x1fc/0x540 mm/mempolicy.c:2270
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab mm/slub.c:2587 [inline]
- new_slab+0x23d/0x330 mm/slub.c:2640
- ___slab_alloc+0xbfa/0x1600 mm/slub.c:3826
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- kmem_cache_alloc_noprof+0xeb/0x3b0 mm/slub.c:4171
- radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
- idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
- idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
- idr_alloc_cyclic+0x10c/0x230 lib/idr.c:125
- __kernfs_new_node+0x11b/0x890 fs/kernfs/dir.c:630
- kernfs_new_node+0x186/0x240 fs/kernfs/dir.c:700
- __kernfs_create_file+0x53/0x350 fs/kernfs/file.c:1034
- sysfs_add_file_mode_ns+0x1ff/0x3b0 fs/sysfs/file.c:313
-page last free pid 15144 tgid 15144 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4115 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- kmem_cache_alloc_node_noprof+0x1ca/0x3b0 mm/slub.c:4216
- alloc_task_struct_node kernel/fork.c:180 [inline]
- dup_task_struct kernel/fork.c:1119 [inline]
- copy_process+0x49c/0x6f20 kernel/fork.c:2233
- kernel_clone+0xfd/0x960 kernel/fork.c:2815
- __do_sys_clone3+0x1f9/0x270 kernel/fork.c:3119
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88805354a280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88805354a300: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
->ffff88805354a380: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
-                                                             ^
- ffff88805354a400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88805354a480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+PiA+DQo+ID4gPg0KPiA+ID4gT24gVHVlLCBGZWIgMTEsIDIwMjUgYXQgNzoxNOKAr1BNIGdhb3h1
+IDxnYW94dTJAaG9ub3IuY29tPiB3cm90ZToNCj4gPiA+ID4NCj4gPiA+ID4gc3dwX3N3YXBfaW5m
+bygpIG1heSByZXR1cm4gbnVsbDsgaXQgaXMgbmVjZXNzYXJ5IHRvIGNoZWNrIHRoZQ0KPiA+ID4g
+PiByZXR1cm4gdmFsdWUgdG8gYXZvaWQgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLiBUaGUgY29k
+ZSBmb3Igb3RoZXINCj4gPiA+ID4gY2FsbHMgdG8NCj4gPiA+ID4gc3dwX3N3YXBfaW5mbygpIGlu
+Y2x1ZGVzIGNoZWNrcywgYW5kIF9fc3dhcF9kdXBsaWNhdGUoKSBzaG91bGQNCj4gPiA+ID4gYWxz
+byBpbmNsdWRlIGNoZWNrcy4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlIHJlYXNvbiB3aHkgc3dwX3N3
+YXBfaW5mbygpIHJldHVybnMgTlVMTCBpcyB1bmNsZWFyOyBpdCBtYXkgYmUNCj4gPiA+ID4gZHVl
+IHRvIENQVSBjYWNoZSBpc3N1ZXMgb3IgRERSIGJpdCBmbGlwcy4gVGhlIHByb2JhYmlsaXR5IG9m
+IHRoaXMNCj4gPiA+ID4gaXNzdWUgaXMgdmVyeSBzbWFsbCwgYW5kIHRoZSBzdGFjayBpbmZvIHdl
+IGVuY291bnRlcmVkIGlzIGFzDQo+ID4gPiA+IGZvbGxvd3PvvJoNCj4gPiA+ID4gVW5hYmxlIHRv
+IGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0IHZpcnR1YWwNCj4gPiA+
+ID4gYWRkcmVzcw0KPiA+ID4gPiAwMDAwMDAwMDAwMDAwMDU4DQo+ID4gPiA+IFtSQi9FXXJiX3Ny
+ZWFzb25fc3RyX3NldDogc3JlYXNvbl9zdHIgc2V0IG51bGxfcG9pbnRlciBNZW0gYWJvcnQgaW5m
+bzoNCj4gPiA+ID4gICBFU1IgPSAweDAwMDAwMDAwOTYwMDAwMDUNCj4gPiA+ID4gICBFQyA9IDB4
+MjU6IERBQlQgKGN1cnJlbnQgRUwpLCBJTCA9IDMyIGJpdHMNCj4gPiA+ID4gICBTRVQgPSAwLCBG
+blYgPSAwDQo+ID4gPiA+ICAgRUEgPSAwLCBTMVBUVyA9IDANCj4gPiA+ID4gICBGU0MgPSAweDA1
+OiBsZXZlbCAxIHRyYW5zbGF0aW9uIGZhdWx0IERhdGEgYWJvcnQgaW5mbzoNCj4gPiA+ID4gICBJ
+U1YgPSAwLCBJU1MgPSAweDAwMDAwMDA1LCBJU1MyID0gMHgwMDAwMDAwMA0KPiA+ID4gPiAgIENN
+ID0gMCwgV25SID0gMCwgVG5EID0gMCwgVGFnQWNjZXNzID0gMA0KPiA+ID4gPiAgIEdDUyA9IDAs
+IE92ZXJsYXkgPSAwLCBEaXJ0eUJpdCA9IDAsIFhzID0gMCB1c2VyIHBndGFibGU6IDRrDQo+ID4g
+PiA+IHBhZ2VzLCAzOS1iaXQgVkFzLCBwZ2RwPTAwMDAwMDA4YTgwZTUwMDAgWzAwMDAwMDAwMDAw
+MDAwNThdDQo+ID4gPiA+IHBnZD0wMDAwMDAwMDAwMDAwMDAwLCBwNGQ9MDAwMDAwMDAwMDAwMDAw
+MCwNCj4gPiA+ID4gcHVkPTAwMDAwMDAwMDAwMDAwMDANCj4gPiA+ID4gSW50ZXJuYWwgZXJyb3I6
+IE9vcHM6IDAwMDAwMDAwOTYwMDAwMDUgWyMxXSBQUkVFTVBUIFNNUCBTa2lwIG1kDQo+ID4gPiA+
+IGZ0cmFjZSBidWZmZXIgZHVtcCBmb3I6IDB4MTYwOWUwIC4uLg0KPiA+ID4gPiBwYyA6IHN3YXBf
+ZHVwbGljYXRlKzB4NDQvMHgxNjQNCj4gPiA+ID4gbHIgOiBjb3B5X3BhZ2VfcmFuZ2UrMHg1MDgv
+MHgxZTc4DQo+ID4gPiA+IHNwIDogZmZmZmZmYzBmMmE2OTllMA0KPiA+ID4gPiB4Mjk6IGZmZmZm
+ZmMwZjJhNjk5ZTAgeDI4OiBmZmZmZmY4YTViMjhkMzg4IHgyNzogZmZmZmZmOGIwNjYwMzM4OA0K
+PiA+ID4gPiB4MjY6IGZmZmZmZmRmNzI5MWZlNzAgeDI1OiAwMDAwMDAwMDAwMDAwMDA2IHgyNDog
+MDAwMDAwMDAwMDEwMDA3Mw0KPiA+ID4gPiB4MjM6IDAwMDAwMDAwMDAyZDJkMmYgeDIyOiAwMDAw
+MDAwMDAwMDAwMDA4IHgyMToNCj4gMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4gPiB4MjA6IDAwMDAw
+MDAwMDAyZDJkMmYgeDE5OiAxODAwMDAwMDAwMmQyZDJmIHgxODogZmZmZmZmZGY3MjZmYWVjMA0K
+PiA+ID4gPiB4MTc6IDAwMDAwMDAwMDAwMDAwMDAgeDE2OiAwMDEwMDAwMDAwMDAwMDAxIHgxNToN
+Cj4gMDA0MDAwMDAwMDAwMDAwMQ0KPiA+ID4gPiB4MTQ6IDA0MDAwMDAwMDAwMDAwMDEgeDEzOiBm
+ZjdmZmZmZmZmZmZmYjdmIHgxMjogZmZlZmZmZmZmZmZmZmJmZg0KPiA+ID4gPiB4MTE6IGZmZmZm
+ZjhhNWM3ZTE4OTggeDEwOiAwMDAwMDAwMDAwMDAwMDE4IHg5IDogMDAwMDAwMDAwMDAwMDAwNg0K
+PiA+ID4gPiB4OCA6IDE4MDAwMDAwMDAwMDAwMDAgeDcgOiAwMDAwMDAwMDAwMDAwMDAwIHg2IDog
+ZmZmZmZmODA1N2MwMWYxMA0KPiA+ID4gPiB4NSA6IDAwMDAwMDAwMDAwMGEzMTggeDQgOiAwMDAw
+MDAwMDAwMDAwMDAwIHgzIDogMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4gPiB4MiA6IDAwMDAwMDZk
+YWYyMDAwMDAgeDEgOiAwMDAwMDAwMDAwMDAwMDAxIHgwIDogMTgwMDAwMDAwMDJkMmQyZg0KPiA+
+ID4gPiBDYWxsDQo+ID4gPiA+IHRyYWNlOg0KPiA+ID4gPiAgc3dhcF9kdXBsaWNhdGUrMHg0NC8w
+eDE2NA0KPiA+ID4gPiAgY29weV9wYWdlX3JhbmdlKzB4NTA4LzB4MWU3OA0KPiA+ID4gPiAgY29w
+eV9wcm9jZXNzKzB4MTI3OC8weDIxY2MNCj4gPiA+ID4gIGtlcm5lbF9jbG9uZSsweDkwLzB4NDM4
+DQo+ID4gPiA+ICBfX2FybTY0X3N5c19jbG9uZSsweDVjLzB4OGMNCj4gPiA+ID4gIGludm9rZV9z
+eXNjYWxsKzB4NTgvMHgxMTANCj4gPiA+ID4gIGRvX2VsMF9zdmMrMHg4Yy8weGUwDQo+ID4gPiA+
+ICBlbDBfc3ZjKzB4MzgvMHg5Yw0KPiA+ID4gPiAgZWwwdF82NF9zeW5jX2hhbmRsZXIrMHg0NC8w
+eGVjDQo+ID4gPiA+ICBlbDB0XzY0X3N5bmMrMHgxYTgvMHgxYWMNCj4gPiA+ID4gQ29kZTogOTEz
+OWMzNWEgNzEwMDZmM2YgNTQwMDA1NjggZjg3OTdiNTUgKGY5NDAyZWE4KSAtLS1bIGVuZA0KPiA+
+ID4gPiB0cmFjZQ0KPiA+ID4gPiAwMDAwMDAwMDAwMDAwMDAwIF0tLS0gS2VybmVsIHBhbmljIC0g
+bm90IHN5bmNpbmc6IE9vcHM6IEZhdGFsDQo+ID4gPiA+IGV4Y2VwdGlvbg0KPiA+ID4gPiBTTVA6
+IHN0b3BwaW5nIHNlY29uZGFyeSBDUFVzDQo+ID4gPiA+DQo+ID4gPiA+IFRoZSBwYXRjaCBzZWVt
+cyB0byBvbmx5IHByb3ZpZGUgYSB3b3JrYXJvdW5kLCBidXQgdGhlcmUgYXJlIG5vDQo+ID4gPiA+
+IG1vcmUgZWZmZWN0aXZlIHNvZnR3YXJlIHNvbHV0aW9ucyB0byBoYW5kbGUgdGhlIGJpdCBmbGlw
+cyBwcm9ibGVtLg0KPiA+ID4gPiBUaGlzIHBhdGggd2lsbCBjaGFuZ2UgdGhlIGlzc3VlIGZyb20g
+YSBzeXN0ZW0gY3Jhc2ggdG8gYSBwcm9jZXNzDQo+ID4gPiA+IGV4Y2VwdGlvbiwgdGhlcmVieSBy
+ZWR1Y2luZyB0aGUgaW1wYWN0IG9uIHRoZSBlbnRpcmUgbWFjaGluZS4NCj4gPiA+ID4NCj4gPiA+
+ID4gU2lnbmVkLW9mZi1ieTogZ2FvIHh1IDxnYW94dTJAaG9ub3IuY29tPg0KPiA+ID4NCj4gPiA+
+IFllYWggdGhpcyBzbWVsbHMgbGlrZSBhIGJ1Zy4gQSBiaXQgc3RyYW5nZSB0aG91Z2ggLSBJIGhh
+dmUgZXllYmFsbGVkDQo+ID4gPiB0aGUgY29kZSwgYW5kIHdlIChzaG91bGQgaGF2ZT8pIGxvY2tl
+ZCB0aGUgUFRFIGJlZm9yZSByZXNvbHZpbmcgaXQgaW50byB0aGUNCj4gc3dhcCBlbnRyeSBmb3Jt
+YXQuDQo+ID4gPiBXaGljaCBzaG91bGQgaGF2ZSBiZWVuIGVub3VnaCB0byBwcmV2ZW50IHRoZSBz
+d2FwIGVudHJ5IGZyb20gYmVpbmcNCj4gPiA+IHVubWFwcGVkIGFuZCBmcmVlZCB1cC4gV2hpY2gg
+c2hvdWxkIGhhdmUgYmVlbiBlbm91Z2ggdG8gcHJldmVudA0KPiBzd2Fwb2ZmLi4uPw0KPiA+ID4N
+Cj4gPiA+IChhcmUgeW91IGV2ZW4gZG9pbmcgY29uY3VycmVudCBzd2Fwb2ZmPykNCj4gPiBObywg
+dGhlIHN3YXBvZmYgb3BlcmF0aW9uIHdhcyBub3QgZXhlY3V0ZWQuDQo+ID4gPg0KPiA+ID4gQ2Fu
+IHlvdSBwcm92aWRlIG1vcmUgY29udGV4dD8gV2hhdCBrZXJuZWwgdmVyc2lvbiBpcyB0aGlzLCB3
+aGF0IGtpbmQNCj4gPiA+IG9mIHdvcmtsb2FkIGlzIHRoaXMsIGFueSByZXByb2R1Y2VyLCBldGMu
+Pw0KPiA+IGtlcm5lbCB2ZXJzaW9uIGlzIGxpbnV4IDYuNiwgIEFuZHJvaWQxNSAtIGxpbnV4Ni42
+LjMwLg0KPiA+DQo+ID4gVGhlIGlzc3VlcyBlbmNvdW50ZXJlZCBieSBtb2JpbGUgdXNlcnMgZHVy
+aW5nIHVzYWdlLg0KPiA+IFRoZSBzeXN0ZW0gbG9hZCBzaG91bGQgbm90IGJlIGhpZ2gsIGFzIHRo
+ZXJlIGlzIG5vIGluZm8gcmVsYXRlZCB0byBsb3cNCj4gPiBtZW1vcnkgZm91bmQgaW4gdGhlIGxv
+Z3MuDQo+ID4gVGhlIHByb2JhYmlsaXR5IG9mIHRoaXMgaXNzdWUgb2NjdXJyaW5nIGlzIHZlcnkg
+bG93IGFuZCBpcnJlZ3VsYXIuDQo+ID4gV2UgY2Fubm90IHJlcHJvZHVjZSB0aGUgcHJvYmxlbSBk
+dXJpbmcgc3RyZXNzIHRlc3RpbmcgaW4gdGhlIGxhYm9yYXRvcnkuDQo+ID4NCj4gPiBJIGZvdW5k
+IHNvbWVvbmUgcmVwb3J0aW5nIGEgc2ltaWxhciBpc3N1ZSBvbiB0aGUgd2ViLCBzZWU6DQo+ID4g
+aHR0cHM6Ly9sa21sLmluZGlhbmEuZWR1L2h5cGVybWFpbC9saW51eC9rZXJuZWwvMjQwNi4wLzAy
+MzgwLmh0bWwNCj4gPiBodHRwczovL2ZvcnVtLnByb3htb3guY29tL3RocmVhZHMvZ2V0X3N3YXBf
+ZGV2aWNlLWJhZC1zd2FwLWZpbGUtZW50cnkuDQo+ID4gMTU1NTgxLw0KPiA+IGh0dHBzOi8vZm9y
+dW1zLnVucmFpZC5uZXQvdG9waWMvMTQ1NDk3LXNlcnZlci1jcmFzaGVzLXdpdGgtcmVwZWF0ZWQt
+Z2UNCj4gPiB0X3N3YXBfZGV2aWNlLWJhZC1zd2FwLWZpbGUtZW50cnktM2ZmZmZmZmZmZmZmZi8N
+Cj4gDQo+IEl0IG1pZ2h0IGJlIGEgbm9uLXN3YXAgZW50cnkgbWlzdGFrZW5seSBwYXNzZWQgdG8g
+c3dhcCBmdW5jdGlvbnMuIEkgcmVtZW1iZXINCj4gZml4aW5nIGEgc2ltaWxhciBpc3N1ZSBpbiB0
+aGUgQW5kcm9pZCBDb21tb24gS2VybmVsIDYuNjoNCj4gDQo+IGh0dHBzOi8vYW5kcm9pZC5nb29n
+bGVzb3VyY2UuY29tL2tlcm5lbC9jb21tb24vKy8xMTkzNTFmZTIwYmM3M2I3MWM2DQo+IA0KPiB3
+aGVyZSBhIG1pZ3JhdGlvbiBlbnRyeSBpcyBtaXN0YWtlbmx5IHBhc3NlZCB0byBzd2FwIEFQSXMu
+DQo+IA0KPiBJbiBhbnkgY2FzZSwgd2UgbmVlZCB0byBpZGVudGlmeSBhbmQgZml4IHRoZSBhY3R1
+YWwgYnVnLg0KQXMgSSBtZW50aW9uZWQgaW4gbXkgcHJldmlvdXMgZW1haWwsIHRoZSByb290IGNh
+dXNlIG9mIHRoaXMgaXNzdWUgaXMNCnVuY2xlYXIsIGFuZCB3ZSBkbyBub3Qga25vdyB3aHkgdGhp
+cyBlbnRyeSBpcyBiZWhhdmluZyBhYm5vcm1hbGx5Lg0KVGhlIHByb2JhYmlsaXR5IG9mIHRoaXMg
+aXNzdWUgb2NjdXJyaW5nIGlzIHZlcnkgbG93LCBhbmQgaXQgY2Fubm90IGJlDQpyZXByb2R1Y2Vk
+IGxvY2FsbHkuIFdlIGFyZSBub3cgbG9va2luZyB0byB0cmFuc2Zvcm0gYSBudWxsIHBvaW50ZXIg
+Y3Jhc2gNCmlzc3VlIGludG8gYW4gaW5kaXZpZHVhbCBwcm9jZXNzIGlzc3VlLCBhaW1pbmcgdG8g
+cmVkdWNlIHRoZSBpbXBhY3Qgb2YNCnRoZSBwcm9ibGVtIG9uIGFjdHVhbCB1c2Vycy4gSSBiZWxp
+ZXZlIGV2ZXJ5b25lIHVuZGVyc3RhbmRzIHRoYXQgdGhpcw0KYXBwcm9hY2ggaXMgYWxzbyB2YWx1
+YWJsZS4NCg0KT2YgY291cnNlLCB3ZSBjYW4gYWxzbyByZWZlciB0byB0aGUgbGluayB5b3UgcHJv
+dmlkZWQgdG8gbWFrZSB0aGUgY29ycmVzcG9uZGluZyBtb2RpZmljYXRpb25zLA0KVGhpcyBtb2Rp
+ZmljYXRpb24gY2FuIGFsc28gaGVscCBhdm9pZCB0aGUgbnVsbCBwb2ludGVyIGlzc3VlLiBzdWNo
+IGFzOg0KLSAgIGlmIChzd2FwX2R1cGxpY2F0ZShlbnRyeSkgPCAwKSB7DQorICBpZiAoIW5vbl9z
+d2FwX2VudHJ5KGVudHJ5KSAmJiBzd2FwX2R1cGxpY2F0ZShlbnRyeSkgPCAwKSB7DQoJICAgc2V0
+X3B0ZV9hdChtbSwgYWRkcmVzcywgcHZtdy5wdGUsIHB0ZXZhbCk7DQoJICAgcmV0ID0gZmFsc2U7
+DQoJICAgcGFnZV92bWFfbWFwcGVkX3dhbGtfZG9uZSgmcHZtdyk7DQoJICAgYnJlYWs7DQogICB9
+DQoNCj4gDQo+ID4NCj4gPg0KPiA+DQo+IA0KPiBUaGFua3MNCj4gQmFycnkNCg==
 
