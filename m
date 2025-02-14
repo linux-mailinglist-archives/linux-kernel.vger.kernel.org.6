@@ -1,86 +1,149 @@
-Return-Path: <linux-kernel+bounces-515384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C66DA36431
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:15:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93F4A3642E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A133A8D25
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D97B188D2B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C5E267F6E;
-	Fri, 14 Feb 2025 17:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20A8267B81;
+	Fri, 14 Feb 2025 17:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NpCRNeJh"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DEF264FA7;
-	Fri, 14 Feb 2025 17:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsw7BtbD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591B12676F5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553324; cv=none; b=JO8zMpnlLuz9Zkdu7BnAWpCcTkjpRKn9Ny+2YAZq6rTDj4iXMISWHgezFBI0XNs6osNA1IxguEyX3LfuoM9hWP9a1fUudk309hIBwg4ApeE3eAkB0/PmTsBxjz60HnN2uoopvfsHvAJhsFi8hAykLYS3SYsE6NHCCG0GV1/8XM8=
+	t=1739553285; cv=none; b=L9L85Vmx9zBe3SqA/XVxlydS/SU14UnpCMstftEvrtn2Phn835TnJwkvh6pgqX1g/T01aVtrEWu0JglupC3yqYezI3Q51v6x5TnLajLbnNaq31T2VMid8bF25NWrmc8973Ao7jBXUe9IkBhqrg42FjIbP8nrNaOc3GXU1DuO+TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553324; c=relaxed/simple;
-	bh=S9WjGdtvIsKjAKlR5pneH7fuX8o345hhaDrE5r31kEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otNG+6GwZEKvN0EFP3uGBDWHrKnyfyI9dgPgUus+TvxL+olMR2l2dRTkAmlLdqqNt7igE1bwaU6Wa2jAFFrRZgEIPs6jg4HVfwwLJN2hSmkbcVNQuMAQDpA9Uond4QvSTj6XIAaV9pGBGKgRU8A6nbwOx7mVTsq/z2xUPNxJdQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NpCRNeJh; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=6xVWvRhjTlWlZPqpm5zHdVjRt4ZMc7xvv3s8Ld26ZSU=;
-	b=NpCRNeJhvJwkJiV1YwZpxHSkVeka7upYQJnPXJ56loqa0ma8rMGb0G/vQMWBx7
-	H3cbl1CdSySstuqk39bVFDlKYhbav19Xq0SMscHza+szrAnNCCko1eQRNo3iTOyM
-	QRG7GQDcdE3UHjfe90TB+YZs0ZSzq4eRXiNGYDqpz75jk=
-Received: from [192.168.71.44] (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDXUe73ea9nN+QYCg--.1355S2;
-	Sat, 15 Feb 2025 01:14:32 +0800 (CST)
-Message-ID: <283c5233-942d-45a5-9527-b9abc29eaa29@163.com>
-Date: Sat, 15 Feb 2025 01:14:31 +0800
+	s=arc-20240116; t=1739553285; c=relaxed/simple;
+	bh=VCSMWeZ5ubkR7/YoAU13MVMrPXgbHa6YakFHLZU7G/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cOqxCrpHySJxVsEm10xBZGNfZPpv13XXxpM7R+W5b0xWlT3JUUEQTbb7hMDApj+5ndYi5zsEPgiP0xoyu7vBhrovXIr2sHZJ4iL4OAr8N/2BOlZS/V7sSMvKSWkHJolzfEH/65rma30MWoF6h/9Tg3A5UDKcCtUq+OVTDEW21Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsw7BtbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5253C4CED1;
+	Fri, 14 Feb 2025 17:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739553284;
+	bh=VCSMWeZ5ubkR7/YoAU13MVMrPXgbHa6YakFHLZU7G/E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hsw7BtbDGp3WmtTyK5aQE8AUATia4HTQhPPIzqSKgBZdYp5xAVwx9CC/jf6Zpz/aS
+	 TeeImij2NQ1LTV4I5gAytpHMAi8g9GmTV8LJuRjgWPCbyPkMK5NA2z5GQUz1ChmBif
+	 D3gkB+Oum5tZpDQaSnfnaC4mllK9FKC57N4AoXS/vACvKNymeyYCj//vzC0h6Nr58H
+	 35PE8Cm55yi3omaU5TwLxrmK3S0sdRJHmQday8HbXvYI7BsMafXxvoiwJ9onKeKtkj
+	 38E+DbdP/pWtyAn+xu8ajvoloPC5CLq1rAdZDmB2Z2LKp2p1KU1Z99ggCeK77gldDa
+	 bw3spRcB6yrOQ==
+Date: Fri, 14 Feb 2025 07:14:43 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Subject: [GIT PULL] sched_ext: Fixes for v6.14-rc2
+Message-ID: <Z696A62FFj_UkApm@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: dwc: Add the debugfs property to provide the LTSSM
- status of the PCIe link
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, jingoohan1@gmail.com,
- shradha.t@samsung.com, manivannan.sadhasivam@linaro.org,
- lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
- Frank.Li@nxp.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- rockswang7@gmail.com
-References: <20250214170556.GA156582@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250214170556.GA156582@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PygvCgDXUe73ea9nN+QYCg--.1355S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcMa0UUUUU
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDwvzo2evdvUsBwAAs0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit ab18b8fff124c9b76ea12692571ca822dcd92854:
 
+  Merge tag 'auxdisplay-v6.14-1' of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay (2025-01-24 08:03:52 -0800)
 
-On 2025/2/15 01:05, Bjorn Helgaas wrote:
-> On Fri, Feb 14, 2025 at 04:34:29PM +0800, Hans Zhang wrote:
->> I will git pull the latest code and fix it.
-> 
-> The general rule is to base on -rc1 (a.k.a. the pci/main branch), or
-> on top of a topic branch if the patch depends on something already
-> queued on that branch (and mention the branch if this is the case).
+are available in the Git repository at:
 
-I haven't updated the base code for a while, which is causing conflicts, 
-and I've committed version v3.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.14-rc2-fixes
 
-Thanks Bjorn for reminding me.
+for you to fetch changes up to f5717c93a1b999970f3a64d771a1a9ee68cc37d0:
 
-Best regards
-Hans
+  sched_ext: Use SCX_CALL_OP_TASK in task_tick_scx (2025-02-13 06:57:33 -1000)
 
+----------------------------------------------------------------
+sched_ext: Fixes for v6.14-rc2
+
+- Fix lock imbalance in a corner case of dispatch_to_local_dsq().
+
+- Migration disabled tasks were confusing some BPF schedulers and its
+  handling had a bug. Fix it and simplify the default behavior by
+  dispatching them automatically.
+
+- ops.tick(), ops.disable() and ops.exit_task() were incorrectly disallowing
+  kfuncs that require the task argument to be the rq operation is currently
+  operating on and thus is rq-locked. Allow them.
+
+- Fix autogroup migration handling bug which was occasionally triggering a
+  warning in the cgroup migration path.
+
+- tools/sched_ext, selftest and other misc updates.
+
+----------------------------------------------------------------
+Andrea Righi (5):
+      sched_ext: Include task weight in the error state dump
+      selftests/sched_ext: Fix enum resolution
+      tools/sched_ext: Add helper to check task migration state
+      sched_ext: selftests/dsp_local_on: Fix selftest on UP systems
+      sched_ext: Fix lock imbalance in dispatch_to_local_dsq()
+
+Atul Kumar Pant (1):
+      sched_ext: Fixes typos in comments
+
+Changwoo Min (1):
+      sched_ext: Fix incorrect time delta calculation in time_delta()
+
+Chuyi Zhou (2):
+      sched_ext: Fix the incorrect bpf_list kfunc API in common.bpf.h.
+      sched_ext: Use SCX_CALL_OP_TASK in task_tick_scx
+
+Devaansh Kumar (1):
+      sched_ext: selftests: Fix grammar in tests description
+
+Tejun Heo (5):
+      sched_ext: selftests/dsp_local_on: Fix sporadic failures
+      sched_ext: Fix incorrect autogroup migration detection
+      sched_ext: Implement auto local dispatching of migration disabled tasks
+      sched_ext: Fix migration disabled handling in targeted dispatches
+      sched_ext: Fix incorrect assumption about migration disabled tasks in task_can_run_on_remote_rq()
+
+ kernel/sched/autogroup.c                           |   4 +-
+ kernel/sched/core.c                                |   7 +-
+ kernel/sched/ext.c                                 | 113 ++++++++++++++-------
+ kernel/sched/ext.h                                 |   4 +-
+ kernel/sched/sched.h                               |   2 +-
+ tools/sched_ext/include/scx/common.bpf.h           |  25 ++++-
+ tools/testing/selftests/sched_ext/create_dsq.c     |  10 +-
+ .../selftests/sched_ext/ddsp_bogus_dsq_fail.c      |   7 +-
+ .../selftests/sched_ext/ddsp_vtimelocal_fail.c     |   7 +-
+ .../testing/selftests/sched_ext/dsp_local_on.bpf.c |   2 +-
+ tools/testing/selftests/sched_ext/dsp_local_on.c   |   1 +
+ .../selftests/sched_ext/enq_last_no_enq_fails.c    |  10 +-
+ .../selftests/sched_ext/enq_select_cpu_fails.c     |  10 +-
+ tools/testing/selftests/sched_ext/exit.c           |   1 +
+ tools/testing/selftests/sched_ext/hotplug.c        |   6 +-
+ .../selftests/sched_ext/init_enable_count.c        |  27 ++---
+ tools/testing/selftests/sched_ext/maximal.c        |   7 +-
+ tools/testing/selftests/sched_ext/maybe_null.c     |   2 +-
+ tools/testing/selftests/sched_ext/minimal.c        |  10 +-
+ tools/testing/selftests/sched_ext/prog_run.c       |  10 +-
+ tools/testing/selftests/sched_ext/reload_loop.c    |   9 +-
+ tools/testing/selftests/sched_ext/select_cpu_dfl.c |   7 +-
+ .../sched_ext/select_cpu_dfl_nodispatch.c          |   7 +-
+ .../selftests/sched_ext/select_cpu_dispatch.c      |   7 +-
+ .../sched_ext/select_cpu_dispatch_bad_dsq.c        |   7 +-
+ .../sched_ext/select_cpu_dispatch_dbl_dsp.c        |   7 +-
+ .../testing/selftests/sched_ext/select_cpu_vtime.c |   7 +-
+ 27 files changed, 198 insertions(+), 118 deletions(-)
+
+-- 
+tejun
 
