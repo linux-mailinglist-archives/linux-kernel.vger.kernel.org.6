@@ -1,354 +1,158 @@
-Return-Path: <linux-kernel+bounces-514938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5849FA35DBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F0FA35DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14E7188E320
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02BF188E546
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28FA2627E7;
-	Fri, 14 Feb 2025 12:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C6A25A627;
+	Fri, 14 Feb 2025 12:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dw3em+ey";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="khemF73a";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wGbWqyRR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OdrODMN3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHygU2Fw"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88122153FA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201A263C73
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739536620; cv=none; b=bspdd1tv2s41mKexg6we7wmTwHi3Uc2Ge5UU19S8QqveoE6df9mIG+amRC/2S/8rDVbK6/OOA4N+SI/BhVMpvrYJoTO+VjqwHqwpFLLF/6bUL8XqnI0Z9Fkay2VE66nTwgbnIzLFCBKjtK4gyeUjxL2bPxcLQUHSZ9snL8qMrEw=
+	t=1739536647; cv=none; b=Eji9PwSalYiGdlIOSHqKi4KIZcFDI8KAYHafcQymTLLYNfxzDW6mkiTp/+rZrKHpGUJhQEAob1GM3i7Gk0lASK8cxVPwCoV9D3AXhUkGiXXPxILQhJvTmmx6hIwXhR1/HO9rluVcEHhSomlkhJFwEazufw9twsiSLc9Fgq5Q7F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739536620; c=relaxed/simple;
-	bh=JCs9QpYXCx1lPgb79p96Ne27wkLBADetGynTsaR7QVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwyJFFd5+pcd7Mj678bS8dmTLkHIpZmeSdZCQsA0BSn7NifFiiXGEA97NU72ru2AVjMkBNFc06OF5PpIUAIL2DIicnnx5UlS1GBEgrSpBVj0zs01f12vJxn/VD35JYPFI4JRtmySP4vdyELksDkFVRGrXiv3oandkoUv1LzZsws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dw3em+ey; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=khemF73a; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wGbWqyRR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OdrODMN3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E0F221F38D;
-	Fri, 14 Feb 2025 12:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739536611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
-	b=Dw3em+eyZMjE34C3aNd9GbjaHapJ7Hckgufu0uXW07WuImIusZVAnXy4tnfEIgsRH6teVU
-	/J3vEdLjoQunGLsxgDQnlb3tOTwHZ1VS1LS3Y949hkFKti6f82L6N1ke45JuW/cvq73lhv
-	rDdOZl6NUGCYQuWSAJVsNftYcEGHI2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739536611;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
-	b=khemF73a+X4/ghevtGzlW8LXvDWsj5ObLUy3BkhDqBmgX94NpVfpcBhDjtQdWVQLBVGLQL
-	xn5SgEQ9ah0iYVBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wGbWqyRR;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=OdrODMN3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739536606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
-	b=wGbWqyRRaDdigcuzzNbwu6frOsk73iaw5hDeeYjAuzbU7IoaLNSU1K7wrRCpuSoiEJrvel
-	tO2F2jCVCnoUarp2dFGaPLSgXvedr+tpGN9KVg0H6eby2ksPJSF/jTFk62620qbBEq3nkk
-	jrgm0359yfc8cquhrG4MsruYojTpGq4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739536606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
-	b=OdrODMN3CCijailHN7KWSeOmHJUDHF3kGrMmxbWr9JGps4mpYA96S1ucL8D8iosONYlyzs
-	0yfu7OlwZvHdjeDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A0B6E137DB;
-	Fri, 14 Feb 2025 12:36:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dnbYJd44r2dueQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 14 Feb 2025 12:36:46 +0000
-Message-ID: <7c378bfb-96e4-435d-8e6c-581d6851835f@suse.de>
-Date: Fri, 14 Feb 2025 13:36:46 +0100
+	s=arc-20240116; t=1739536647; c=relaxed/simple;
+	bh=JJ+O3NQc7ZRxc/eAygdOLugfRhN3r8KOEi5bbWBrjKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kjWJXm8FsF/kFIbKQBmv8PQTfyvv8HWZYIhHGHHd9WGeLi6HoaZSjXvH/CGeQmu3g4ZQ1HmNRb5asxXtYynj8zB5lT8OeM8LiEd78TodwY59/cn1Mcb1UgQe8pJdhxzM9D4l6m5N7CxSfi20rYoiLRVKYLO0j6EbMPl+/Z2Rn+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CHygU2Fw; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f972c031efso27052667b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:37:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739536645; x=1740141445; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJIeOuHK6HT3LfS+Gyhx912FloyWVeSMjTYMVQ61KWs=;
+        b=CHygU2Fw89aAA7PSbeojSR2Ch6baGXb07HTqKIVrBhnRue9KCs+2zbAnzRV15LsssT
+         sFNHo4IujZgiMvmlSavmMJZN4ftPtGY8cF3wIBIPoAHsy7z0oR6ltc7bltCDbwJYPRyQ
+         zmB8+JjWNBnuKMNKe0iW0Z9fZOmt+AF3ZJ50aqRNyjd3S8yw7mWgjGB7EcwnEG8W4W6M
+         rbWJlYPi++YvPZAn8+HBgHqQ4sKFqeJMNqTmxPsy/7tgHA4N73nRjLaJyMTkr6P3y4mj
+         qZpq3UXy7imUBL60PhdbyoMo7RlpotjmsTpJHjWdl+na6MFtJan3ulP1aAZERZAUhPOW
+         IgaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739536645; x=1740141445;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PJIeOuHK6HT3LfS+Gyhx912FloyWVeSMjTYMVQ61KWs=;
+        b=TgS3p6Jbg0Tje217xh1PAKSK1fzTPi9RvkSulzXzNeLHKjQN5g1j3ulx4kMinDCKv4
+         ARJRtXvKs01SBgCIIOrWumK7HTNYidfQZBMNbiDK1fxXdoKU8HyU70Q/SdFBykLUcKaR
+         DHw1i4e9/J8CNxZPSFxzyL35R8bZqIDgR77jv9AxPQoM39PjGRfJ8JGm9JJC0DBMo+UQ
+         OVjZM3JcPnzS69w5YGK2YTbn3w2/4xliNl0vvGoCd/rm0hsp/nwbYxrLKzp/OisJawke
+         AdSTsLml/pJfKos4MDIS8qDuZXEcUUTOAl4KZtaIyQnZ8Ep/pfyeJ4i2uMl+fRSrJ939
+         PlXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXA8B4FmtwtF/CugjwDg5n77SSiBE1Xg1gGDWTonTvHYFDn5o8MBXCFPXUpg5ajDg77sK8/mLG18U2SsWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzRXpK7M9xSKlCdxVz4HRVbU5//bFLCsnWGBj7Z1bE/fzINRCJ
+	B2MB6W0tMpz534Ujx8RdPPflUIrCTv88CqleQYKL/xF5/xS5jyM9HX67kfLnI53x0ZkxuimGct/
+	oOpa2z+GxnX5tkfaM4HCffP5H0CYnS4yERnpk9w==
+X-Gm-Gg: ASbGnctevRXUfun2h9jd3XLOo0at6A0jkwR2sEIGhvwuM3o8OE2Vp2FQaPrRsVboCcb
+	ZclvOQSdM4SsVPBILMpR1bQYKbmtKwFypCYQ9sN9q1wRbmeQg9CK3NcknPHAo5NU3BvW9zwY+6Q
+	==
+X-Google-Smtp-Source: AGHT+IFFUIbAl5XDVgSjeARoAg42VVByccGOmxG3hSULf8SrcrXGHd+9G5Ugv+8hOXmpTF7lxA8JoAU9tHSD43F9q0M=
+X-Received: by 2002:a05:6902:1b08:b0:e58:36ad:a1ba with SMTP id
+ 3f1490d57ef6-e5daac7a614mr6387024276.16.1739536644605; Fri, 14 Feb 2025
+ 04:37:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Nicolas Baranger <nicolas.baranger@3xo.fr>
-Cc: dri-devel@lists.freedesktop.org, airlied@redhat.com,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
-References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
- <194c4656963debcf074d87e89ab1a829@3xo.fr>
- <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
- <984c317de1027f5886390a65f1f66126@3xo.fr>
- <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: E0F221F38D
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RBL_NIXSPAM_FAIL(0.00)[2a07:de40:b281:104:10:150:64:97:server fail];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250214102130.3000-1-johan+linaro@kernel.org>
+In-Reply-To: <20250214102130.3000-1-johan+linaro@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 14 Feb 2025 13:36:48 +0100
+X-Gm-Features: AWEUYZm-GqVQrKsKGZVAfCbeybEf32Dak5WgakPU21UHnEHfkiCIl9P2xjgmigM
+Message-ID: <CAPDyKFr98DraLvOC83rRFa=uKj_hmwS7Lj0L3JqrbqcFuhdWGA@mail.gmail.com>
+Subject: Re: [PATCH] bus: simple-pm-bus: fix forced runtime PM use
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Liu Ying <victor.liu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jocelyn
-
-Am 14.02.25 um 10:11 schrieb Jocelyn Falempe:
-> On 13/02/2025 10:27, Nicolas Baranger wrote:
->> Dear Thomas
->>
->> Thanks for answer and help.
->>
->> Yes, due to .date total removal in linux 6.14 (https://github.com/ 
->> torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd 
->> <https:// github.com/torvalds/linux/commit/ 
->> cb2e1c2136f71618142557ceca3a8802e87a44cd>) the last DKMS sources are :
->> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
->> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
->> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
->>
->> You can also find this sources in directory drivers/gpu/drm/ast_new 
->> of the tarball 
->> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/ 
->> linux-6.14.0.1-ast1.15.1-rc2_nba0_20250212.tar.gz <https:// 
->> xba.soartist.net/ast-drm_nba_20250211/nba-kernel/linux-6.14.0.1- 
->> ast1.15.1-rc2_nba0_20250212.tar.gz>
->>
->> I'm surprised by the fact the in-kernel driver 0.1.0 is more advanced 
->> than Aspeed version 1.15.1 because on my system it has very poor 
->> rendering and is very slow, twinkle is high and had poor colors.
->> The screen flickering is high and it's like if I was using a very old 
->> cathode ray tube monitor (In fact I'm using a SAMSUNG LCD monitor 
->> which is perfectly functionnal and which display a nice and eyes 
->> confortable picture when using ast 1.15.1 driver or the video output 
->> of the Nvidia GPU ).
->>
->>
->> My testing system is a test Xeon server with an AST2400 BMC with its 
->> AST VGA card as the main video output (to be able to have a screen on 
->> the BMC KVM) +a discrete NVIDIA GPU I'm using for GPGPU and 3D 
->> rendering with Nvidia prime render offload.
->> What I constat with embed kernel driver 0.1.0 is that the Xeon 
->> processor is doing the video job for example when watching a video, 
->> and it's not the case with version 1.15.1 even when displaying on the 
->> AST VGA card a vulkan rotating cube (compute by nvidia GPU with 
->> nvidia prime but display by the AST VGA card of the AST2400).
->> Note that with in-kernel version 0.1.0 it's nearly impossible to make 
->> round the vulkan cube at more than half a round by  second where it's 
->> working (very) fine for a 32MB video memory card with version 1.15.1 
->> as you can see in the video present in the online directory
->>
->> I'm not developer or kernel developer so be sure that I wouldn't have 
->> done all this work if the in-kernel ast version 0.1.0 was usable 
->> out-of- the-box
->>
->> Sure you can give me a patch I will test on this server (building 
->> mainline+ast_new yesterday tooks 19 minutes on this server)
->>
->> PS:
->> here is a 'git diff linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast 
->> linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast_new'
->> https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ast- 
->> fullpatch.patch 
->> <https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ 
->> ast-fullpatch.patch>
->> Diff is about 250+ kb so the 2 drivers seems to have nothing to do 
->> with each others...
->>
->> Thanks again for help
->>
->> Kind regards
->> Nicolas
->>
->>
->> Le 2025-02-13 08:57, Thomas Zimmermann a écrit :
->>
->>> Hi Nicolas
->>>
->>> Am 12.02.25 um 19:58 schrieb Nicolas Baranger:
->>>> Dear maintener
->>>
->>> That's mostly me and Jocelyn.
->>>
->>>>
->>>> I did include ast-drm driver version 1.15.1 (in replacement of 
->>>> version 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I 
->>>> issue a new dkms patch
->>>>
->>>> Last DKMS patch had been sucessfully tested on mainline.
->>>> And last ast.ko version 1.15.1 included in linux tree had also been 
->>>> sucessfully tested
->>>>
->>>> Online directory is updated with :
->>>> - new DKMS patch
->>>> - new DKMS srouces
->>>> - new DKMS debian package
->>>> - new tarball of mainline included ast_new ported in kernel tree
->>>> - new kernel debian package (mainline with ast_new)
->>>>
->>>>
->>>> NB: online directory is here: https://xba.soartist.net/ast- 
->>>> drm_nba_20250211/ <https://xba.soartist.net/ast-drm_nba_20250211/>
->>>>
->>>> Please let me know what I should do to see this change in linux-next
->>>
->>> I'm having a little trouble with figuring out which of the many 
->>> driver sources is the relevant one. Am I correct to assume it's the 
->>> one at
->>>
->>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
->>> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
->>> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
->>>
->>>
->>> About that driver: Although the official driver reports an ancient 
->>> version number, it is an up-to-date driver. It is actually more 
->>> up-to- date than Aspeed's package. Both drivers share source code 
->>> and a few years ago there was an effort to bring the kernel's driver 
->>> up to the same feature set. Since then, the kernel's driver has been 
->>> updated, reworked and improved.
->>>
->>> About the performance: From what I can tell, the only significant 
->>> difference in these drivers is memory management. Your ast_new 
->>> driver uses an older algorithm that we replaced quite a few releases 
->>> ago. The old version was unreliable on systems with little video 
->>> memory, so we had to replace it.  I don't know why the new code 
->>> should be slower though.
+On Fri, 14 Feb 2025 at 11:21, Johan Hovold <johan+linaro@kernel.org> wrote:
 >
-> Regarding the performances of ast driver, I remember doing profiling 
-> some times ago, and when running glxgears (with llvmpipe), 65% of the 
-> CPU time was wasted in page fault 
-> (https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L534)
-> But as this driver is mostly used for console/basic desktop usage, I 
-> didn't investigate more.
-
-Now that's an interesting find. The GEM shmem helpers vunmap ASAP to 
-make pages swappable, I think. IIRC there was a patchset circulating 
-that implements a shrinker [1] for shmem helpers. With that in place, 
-we'd only update the page tables if necessary. If it's really that easy, 
-we should try to merge that.
-
-[1] 
-https://elixir.bootlin.com/linux/v6.13.2/source/include/linux/shrinker.h#L82
-
+> The simple-pm-bus driver only enables runtime PM for some buses
+> ('simple-pm-bus') yet has started calling pm_runtime_force_suspend() and
+> pm_runtime_force_resume() during system suspend unconditionally.
 >
-> If I remember correctly, the switch to shmem, is because some devices 
-> have only 16MB of memory, and 1920x1200x32bits takes ~9MB, so it's not 
-> possible to have double buffering in this case. (And this is required 
-> by most desktop environment).
-
-Exactly. There are ast devices with as little as 8 MiB of video memory. 
-But FullHD@32bit already requires ~8 MiB. Atomic modesetting with the 
-old memory manager requires overcommitting by a factor of 3 (to ~24 MiB) 
-to account for all corner cases. Hence we sometimes had failed display 
-updates with lower-end devices.
-
+> This currently works, but that is not obvious and depends on
+> implementation details which may change at some point.
 >
-> The switch to shmem was done with "f2fa5a99ca81c drm/ast: Convert ast 
-> to SHMEM", and introduced in v6.2. So maybe if you can try with a v6.1 
-> kernel, using the built-in ast driver and report if it has better 
-> performances.
-
-Nicolas, if you find an old kernel version that works correctly, and if 
-you know how to git-bisect the kernel, it would be helpful if you could 
-bisect to the commit that introduced the problem.
-
-Best regards
-Thomas
-
+> Add dedicated system sleep ops and only call pm_runtime_force_suspend()
+> and pm_runtime_force_resume() for buses that use runtime PM to avoid any
+> future surprises.
 >
-> Best regards,
+> Fixes: c45839309c3d ("drivers: bus: simple-pm-bus: Use clocks")
+
+This doesn't look like it is needed to me. It isn't broken, right?
+
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+
+Seems reasonable to me, but I think we need an ack from Geert here too.
+
+Anyway, feel free to add:
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/bus/simple-pm-bus.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
 >
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> diff --git a/drivers/bus/simple-pm-bus.c b/drivers/bus/simple-pm-bus.c
+> index 5dea31769f9a..d8e029e7e53f 100644
+> --- a/drivers/bus/simple-pm-bus.c
+> +++ b/drivers/bus/simple-pm-bus.c
+> @@ -109,9 +109,29 @@ static int simple_pm_bus_runtime_resume(struct device *dev)
+>         return 0;
+>  }
+>
+> +static int simple_pm_bus_suspend(struct device *dev)
+> +{
+> +       struct simple_pm_bus *bus = dev_get_drvdata(dev);
+> +
+> +       if (!bus)
+> +               return 0;
+> +
+> +       return pm_runtime_force_suspend(dev);
+> +}
+> +
+> +static int simple_pm_bus_resume(struct device *dev)
+> +{
+> +       struct simple_pm_bus *bus = dev_get_drvdata(dev);
+> +
+> +       if (!bus)
+> +               return 0;
+> +
+> +       return pm_runtime_force_resume(dev);
+> +}
+> +
+>  static const struct dev_pm_ops simple_pm_bus_pm_ops = {
+>         RUNTIME_PM_OPS(simple_pm_bus_runtime_suspend, simple_pm_bus_runtime_resume, NULL)
+> -       NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+> +       NOIRQ_SYSTEM_SLEEP_PM_OPS(simple_pm_bus_suspend, simple_pm_bus_resume)
+>  };
+>
+>  #define ONLY_BUS       ((void *) 1) /* Match if the device is only a bus. */
+> --
+> 2.45.3
+>
 
