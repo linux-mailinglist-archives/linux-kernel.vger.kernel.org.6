@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-515345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E882CA3637D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:47:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0A3A36383
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7014F7A2A7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D381518846F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F20267B9B;
-	Fri, 14 Feb 2025 16:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C71267F77;
+	Fri, 14 Feb 2025 16:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F7wEv5iI"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bnWnExxM"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8889C267727;
-	Fri, 14 Feb 2025 16:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B35267F57;
+	Fri, 14 Feb 2025 16:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739551639; cv=none; b=OUV4w+s+0UEFipLfeT7Fm9gScDp4Jgn8oufAThqgSIK+ocUpO69td9bY+sIHfVW6bI+GRklLslXFHE1zy/nmXp+Zt54qO21P/57WoMo3Z4MHWqgbtFnlDNTeNiAEyW3nvYiM/kOqvtuqvDuNhkCLCdjG3PUBia53yiZ821qVZVA=
+	t=1739551643; cv=none; b=K4VKFOp4lSbDmWxC0m052iImWYAL7Q39qjUTspqWLMMqfuCnrML9yLWlNoNe9BgvI/htGlP53aAuuvuLTq2dJZ8kFLmL3+HZ4jADom49IrqoNH2GyZSNN80DzNSTsel0oJ7vo4igaydQBRd8r071GzXX0S/D8KdmjIlP4FWsiV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739551639; c=relaxed/simple;
-	bh=SrFZdZudr7RArsBjh8BhpE0G7d7aPvrz97c6D+4TCUo=;
+	s=arc-20240116; t=1739551643; c=relaxed/simple;
+	bh=Ul8bJcoa1UeRoq+WHpkzGXrCHhO6mwX+QQKOAmstXYE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YOyYLRJbZMygZSm0ppx6MXNvneK8j/dZTViXjNwDlRdFd41Bgv2aaYIAHjlrjPpuCg1k5w8cxeE+0XiDifoa3htN/uX4vYb5Sz6ewQi+4A/xriSjmmemePtw7AxYGrGW/T4D9sJk/UjdhiniR2CU0Ai4hQLux7rDlula45D5P6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F7wEv5iI; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=JAj+Lfjz0cHY6BkpmiXyw16xKMRPoYO1WQMYay7wtLGfggzlHWUl72LKjHpVyxzlCLzEM3v5ZsTcafMSSfZCpDGjEd7XYfW0LROxImmg0/JGr29qRuQfssLuMfCHAfWLiNoN/j3MWFyvSQcJg87E9oDlsP8X2sak2LtHpAc8URk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bnWnExxM; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739551635;
-	bh=SrFZdZudr7RArsBjh8BhpE0G7d7aPvrz97c6D+4TCUo=;
+	s=mail; t=1739551639;
+	bh=Ul8bJcoa1UeRoq+WHpkzGXrCHhO6mwX+QQKOAmstXYE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F7wEv5iIWcQpuhRifPwkGwnbfl8wruNabVEmDdQCoHSuC0KvnNTVygl8AsOq87wK3
-	 8hyfaGFgzXMsvmZ577HHmNYrbijTecCApgQQOpXXQimv6jj3AoIr/96B5z96iJMKDB
-	 cDjpFuaZVOUeW04qX1kvFnRCUPLIUwHPUn81rL+BPgIiM8CHJh2aTRI0rxjD1V3iH8
-	 XndAyODRyDpOUzJV6z+xTm81SYnkI/Mt/fWcGoQrwipNdXnsVImh3iKluUIzWdZz5g
-	 zr2RjG5XhixXpMmvxf9AZfgODjfH3OG6zRBoO+H3YVz6/VoV2TXbPdSYcBhAQKoTsD
-	 mlBZs7rx9R7Nw==
+	b=bnWnExxMRlY8WBeMoWVE9HFeXHHiITdgfr4YGf5kE8U/s4Q7NUuT1tR2upLnzkpNe
+	 KYo2UHQwYKpDq1SPQy0Dx7+slz8mQhkb6BRbCPGSO6oLGIFSbU5M95Liq5WtllmSoL
+	 +kD9QZes8d4zjWGp4QrWTNOapeU1rFr5YxEhVcyiLJXNvkDkwYEYNtJjGWTlIUBYHN
+	 cfuyWStd3ujy9KLNr70yKimu4EqNgZxIXldRwlHDTuyLBFf7FjXE1041ahsjYQpS1I
+	 DEIStI+3QdqCzFURAc3U20Ix6CNXVw2zJoPCT9dqmctGoE68fKe9K+qqd5KE/jECzE
+	 Cvgk3EfgtzU2A==
 Received: from earth.mtl.collabora.ca (mtl.collabora.ca [66.171.169.34])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1D4C717E0B59;
-	Fri, 14 Feb 2025 17:47:12 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 25AE617E0FBA;
+	Fri, 14 Feb 2025 17:47:16 +0100 (CET)
 From: Detlev Casanova <detlev.casanova@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Rob Herring <robh@kernel.org>,
@@ -83,9 +83,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	dri-devel@lists.freedesktop.org,
 	kernel@collabora.com,
 	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: [PATCH RESEND v6 2/3] arm64: dts: rockchip: Add HDMI0 audio output for rk3588 SoC
-Date: Fri, 14 Feb 2025 11:44:01 -0500
-Message-ID: <20250214164528.534278-3-detlev.casanova@collabora.com>
+Subject: [PATCH RESEND v6 3/3] arm64: dts: rockchip: Enable HDMI0 audio output for Rock 5B
+Date: Fri, 14 Feb 2025 11:44:02 -0500
+Message-ID: <20250214164528.534278-4-detlev.casanova@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250214164528.534278-1-detlev.casanova@collabora.com>
 References: <20250214164528.534278-1-detlev.casanova@collabora.com>
@@ -97,56 +97,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the simple-audio-card driver with the hdmi0 QP node as CODEC and
-the i2s5 device as CPU.
+HDMI audio is available on the Rock 5B HDMI TX port.
+Enable it.
 
-The simple-audio-card,mclk-fs value is set to 128 as it is done in
-the downstream driver.
-
-The #sound-dai-cells value is set to 0 in the hdmi0 node so that it can be
-used as an audio codec node.
-
-Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger Haikou
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 8cfa30837ce72..f9f888dedd8f0 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -382,6 +382,22 @@ scmi_reset: protocol@16 {
- 		};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+index d597112f1d5b8..88ff5d9db2817 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+@@ -204,6 +204,10 @@ &gpu {
+ 	status = "okay";
+ };
+ 
++&hdmi0_sound {
++	status = "okay";
++};
++
+ &hdmi0 {
+ 	status = "okay";
+ };
+@@ -318,6 +322,10 @@ i2s0_8ch_p0_0: endpoint {
  	};
+ };
  
-+	hdmi0_sound: hdmi0-sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,mclk-fs = <128>;
-+		simple-audio-card,name = "hdmi0";
-+		status = "disabled";
++&i2s5_8ch {
++	status = "okay";
++};
 +
-+		simple-audio-card,codec {
-+			sound-dai = <&hdmi0>;
-+		};
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s5_8ch>;
-+		};
-+	};
-+
- 	pmu-a55 {
- 		compatible = "arm,cortex-a55-pmu";
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_partition0>;
-@@ -1394,6 +1410,7 @@ hdmi0: hdmi@fde80000 {
- 		reset-names = "ref", "hdp";
- 		rockchip,grf = <&sys_grf>;
- 		rockchip,vo-grf = <&vo1_grf>;
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
+ &package_thermal {
+ 	polling-delay = <1000>;
  
- 		ports {
 -- 
 2.48.1
 
