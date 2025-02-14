@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-514816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63554A35C06
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:58:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941C7A35C09
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B933AC54A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459FB188FFEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6D625A2D3;
-	Fri, 14 Feb 2025 10:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A117625A634;
+	Fri, 14 Feb 2025 10:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G5PRFuPt"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sb+eLgfY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5B32566C9;
-	Fri, 14 Feb 2025 10:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E7D253341;
+	Fri, 14 Feb 2025 10:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739530714; cv=none; b=LvtxkczCmYfK/7X6oumwgIf0yXsFrFjsuy3VG9E0GLuVJ8DE69bk9itdQeMxb8pO/akokLJ27h9RUB76FEaoVXVhaLmI8wJJIqkHBM1zzQTB3oNBlWERV8yGSNHPMMCVs6fHS3xjzOZoi0EZhqYwS7eFpzkl1+RM6vdAdGvO2/c=
+	t=1739530728; cv=none; b=flsThMJo3I1vrgV5RlFahyeUQiwxnz2Tw7KsmPL2gYMvnh0bwsyjOORSgeWtAT4Rku3+FauMywluSv9JWh3jksQnUdD/YxvxsW3wMz3d2Vwifs3CsgkQ/s52W21MLGlg/gfjkHxu7S2aMCmQJya1TWk6jwkFfTTKtIYmcvdnrv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739530714; c=relaxed/simple;
-	bh=EGhdWFhxvU3DtsYF4hIXdWEmXBhYFs5Ow5Bp/8iMIiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4x4diFmxqsXfhHH4JjkNLVhxglUayORlO2McqiQy3/9lZXDtmp8Yg5/67TYPCZVOb0Y5vf1eM29AiziSCvwTxNveNeBRDMvdKxyR6edy25+eLRCNjWP7tjyCXV3W9D/JMNRZi5Is26ycqFmHkr+s25U54hpgmlVuY340Die/F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G5PRFuPt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E5NoQr009108;
-	Fri, 14 Feb 2025 10:58:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=l6Ljw11vv0g6aPW7jT24P/lwJvcqP8
-	Sj9NRTFWAGRFg=; b=G5PRFuPtrkMf4oYHRTqokZxv2bzghKO1H0gCqDYkxz9QAO
-	FJ0KrlABcM+IhSsHfgz/trnjRkwmPQEDUY/mf9V3EE5YRa/jalt2CUK90wklOb/S
-	yMZZ9H52uIjnbOG2cLI7NZU4aScv256LYZZRwCiAnUGwFPgU1tYjae43IcrNJnIf
-	ZznWJyZhowtRe3SjNmq3F2QWN8mQpN8e1RcykLVuEH4mHfr/6TLBWZmThe8Yoefq
-	Clm1IuNjNKy9dGXRVX119JrB8YFN4kFP4kk2UMezOeqO9JaCtY4ttJ1eHPgVt7RV
-	2xwNk9fgUQT6l4gjUAgwnYNXCBzpxQ1TW9SoGo0w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44syn81d2w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 10:58:31 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51EAkCBx031764;
-	Fri, 14 Feb 2025 10:58:31 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44syn81d2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 10:58:31 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E9UMdc028721;
-	Fri, 14 Feb 2025 10:58:30 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma22rxn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 10:58:30 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51EAwQfu56033602
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 10:58:26 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C6B5E2004E;
-	Fri, 14 Feb 2025 10:58:26 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2FDE2004F;
-	Fri, 14 Feb 2025 10:58:25 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.2.165])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 14 Feb 2025 10:58:25 +0000 (GMT)
-Date: Fri, 14 Feb 2025 11:58:24 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/mm: Simplify gap clamping in mmap_base() using
- clamp()
-Message-ID: <Z68h0B6vFdfCbNpb@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20250204162508.12335-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1739530728; c=relaxed/simple;
+	bh=YGO5Pln5UyIPpL0aOKK/m3y/N5/ml4T2i3knF1u/zA4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W+y/VpV8kcIh4FvKmbSVvpX/91mLV7eMIRkOJ1Cnknu7zQq7Ja9NOLlE+JH41Bwb8sHdTHv3AJ4+M/DLh+rweRB6TeYKEVS02TBfC2Z4QuXQQgqiQfYwo1LUrh0KTw89eniG/0ZK7ZcDRt0geDalRdbKTG8Z5fghaIhi0GgHZ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sb+eLgfY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35691C4CED1;
+	Fri, 14 Feb 2025 10:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739530727;
+	bh=YGO5Pln5UyIPpL0aOKK/m3y/N5/ml4T2i3knF1u/zA4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Sb+eLgfYNSEFXnXityoe73cR+IlCkF7ZyGkOwChYv//zxPM/MZdBnRLOyrPbziJN6
+	 CkEPslDJSkosJNNqE3WIRK81jAn2I08vnEIy50y4RfJY8YtRcVody4FFFfjS31P+P+
+	 YGpAJvqLUD00XTBk+02555+ozl/9WmGaJAewu7oEXxnir76VDIfsDGVVZPZcFgZY/j
+	 J8DqtHu4j5fXJkLd4hSwOEjrgJUK023joqgZcRbbMx9LE4P5tUtE2MUZ6a4v27F7Fr
+	 uQDKv+cvnYt5lMGUC98V2NRnGpMWM4c7ajfTIlAXHZv+HZ8RTgGAvjFWCSu46NWXXJ
+	 S0I6zV86umaqw==
+Message-ID: <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
+From: Amit Shah <amit@kernel.org>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+ Arnd Bergmann
+	 <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Fri, 14 Feb 2025 11:58:44 +0100
+In-Reply-To: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250204162508.12335-1-qasdev00@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: HOdcIq1id7PMttC3DckWZT2oqeTVr7cg
-X-Proofpoint-GUID: qWbfhfH-79yeqrouzcP-2CIhSIydUMOj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 spamscore=0 bulkscore=0
- impostorscore=0 malwarescore=0 suspectscore=0 clxscore=1015
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2501170000 definitions=main-2502140076
 
-On Tue, Feb 04, 2025 at 04:25:08PM +0000, Qasim Ijaz wrote:
-> mmap_base() has logic to ensure that the variable "gap" stays within the 
-> range defined by "gap_min" and "gap_max". Replace this with the clamp() 
-> macro to shorten and simplify code.
-> 
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+On Thu, 2025-02-13 at 12:55 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> virtio_console.c can make use of REMOTEPROC. Therefore it has several
+> tests evaluating
+>=20
+> 	IS_ENABLED(CONFIG_REMOTEPROC)
+>=20
+> . This currently only does the right thing because CONFIG_REMOTEPROC
+> cannot be modular. Otherwise the configuration
+>=20
+> 	CONFIG_REMOTEPROC=3Dm
+> 	CONFIG_VIRTIO_CONSOLE=3Dy
+>=20
+> would result in a build failure because then
+> IS_ENABLED(CONFIG_REMOTEPROC) evaluates to true but still the built-
+> in
+> virtio_console.o must not use symbols from the remoteproc module.
+>=20
+> To prepare for making REMOTEPROC modular change the tests to use
+> IS_REACHABLE() instead of IS_ENABLED() which copes correctly for the
+> above case as it evaluates to false then.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 > ---
->  arch/s390/mm/mmap.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-> index 76f376876e0d..a3d3e09a2828 100644
-> --- a/arch/s390/mm/mmap.c
-> +++ b/arch/s390/mm/mmap.c
-> @@ -63,11 +63,7 @@ static inline unsigned long mmap_base(unsigned long rnd,
->  	 */
->  	gap_min = SZ_128M;
->  	gap_max = (STACK_TOP / 6) * 5;
-> -
-> -	if (gap < gap_min)
-> -		gap = gap_min;
-> -	else if (gap > gap_max)
-> -		gap = gap_max;
-> +	gap = clamp(gap, gap_min, gap_max);
->  
->  	return PAGE_ALIGN(STACK_TOP - gap - rnd);
->  }
+> Hello,
+>=20
+> I didn't check what else needs to be done to make CONFIG_REMOTEPROC
+> tristate but even if it stays a bool using IS_REACHABLE() is still
+> the
+> better choice.
 
-Whenever possible I personally prefer branches over ternary operators.
-But if one wants to clump it in one line, then gap_min and gap_max
-are also redundant.
+It might lead to a false sense of "better" -- the value of IS_ENABLED
+is cached in a variable which is determined at compile-time.  That
+caching, after this change, moves to driver init-time.  If the rproc
+module is loaded after virtio-console is initialized, there's no way
+it's going to be used.  Only if the rproc module is loaded before
+virtio-console will the rproc functionality be used -- which means that
+nothing changed in reality..
 
-Thanks!
+To properly detect and use rproc if available would need the rproc
+initialization out of virtcons_probe() and into something that happens
+either via sysfs for existing ports, or when adding a new port to a
+device.  However, the current spec doesn't allow for that, so some more
+changes will need to be made to ensure current backwards compat, and a
+new specification that allows for a late init of rproc.
+
+
+		Amit
 
