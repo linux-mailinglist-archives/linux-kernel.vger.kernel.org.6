@@ -1,113 +1,188 @@
-Return-Path: <linux-kernel+bounces-514917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99A1A35D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:11:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90D0A35D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 889D77A1657
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:10:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B0716975A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59F2263C81;
-	Fri, 14 Feb 2025 12:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10CD263C9C;
+	Fri, 14 Feb 2025 12:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fU4BxNWA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxR3U64x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1842139A8;
-	Fri, 14 Feb 2025 12:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0127A2139A8;
+	Fri, 14 Feb 2025 12:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739535055; cv=none; b=mhslpJmL8pDLPvtPGyP5lmnQ2U7xw8F8N7NZUUDM2TJ2B6EIEzVUTTB44BIJTlvKT9LU2bDIvscrBblJcn1Whw2N/z9q0G72zydKbpsmS8D7EXN1jc6unjPdTt8VfZUholv5uj1Ry1yazb2eWYXAb2ZzkmlQPyk/eTWVlLnOt0I=
+	t=1739535227; cv=none; b=GX/nMm4kdF+fQPpEgqU+y5Ql7zMe0s4oGgMF/KsP7dE5D+o8Ee32gK5iVnB8ZI0AHMxIGzDo0t4lwOp3VxsShrdyV86foexVq0//zqMplhOUBzE1BS5TbcSLqPk6DupXwl83I6ApnZRaSu7FFhNpHwFeK0EViWTMHNdRP258grA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739535055; c=relaxed/simple;
-	bh=Vkm/fIjGV1Zi4OLao+eFLnkFlhtDFUA1jZRivO8SgH4=;
+	s=arc-20240116; t=1739535227; c=relaxed/simple;
+	bh=iBts8iIQtzQel9dZiL97eiLaLFzBf2jp89FOZmsjRrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9X1v711YEytNs2hx+EaU/6L5AMRUVceD45WZyhZN62609o5yWIE+gM8K8sqcFPEy8DK3TWDOOts19CxYxJNlUCnm2DYnCFns+kn9xaerALUohtvEX3jocrnpC0ENm6Z2qJdLPKHLwxDzQeBAz/1yBWPkzoyktTJaUYRFXIvojw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fU4BxNWA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A05C4CED1;
-	Fri, 14 Feb 2025 12:10:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ATbrbBaSXbuv6IPcMPmk6Wjw7yLrqQFUuuc9bOf6rfDnuQOy1d4W0PeOFTB2wkxPe1h7soiiQDZ/6RSghRTAmSAGoYMe/JH9EgfKjfvijQGaHJC/SMLfYfW0wn7O22TM3nNIHQ66vzji+9lkj4+IzW5YjYGfHx8UVgQob0mOoNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxR3U64x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A632DC4CED1;
+	Fri, 14 Feb 2025 12:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739535054;
-	bh=Vkm/fIjGV1Zi4OLao+eFLnkFlhtDFUA1jZRivO8SgH4=;
+	s=k20201202; t=1739535226;
+	bh=iBts8iIQtzQel9dZiL97eiLaLFzBf2jp89FOZmsjRrE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fU4BxNWAQ6LOCjJ3kxNM5vG47SfVZsUn20Mg2wLTX/ctNqprza2c5NyVHswaCZVWS
-	 M9go970yksmR0P5uiPGOjnmhQ5b+h2Ax7I3MLQ2q1Dmr7DzBeO7cscLjrAexH/Z6eh
-	 JpjBei5bdQmhhNyZzByHI+C6Qmuh1+6RWSfaqCtirTNmwvKY7TXm5QWIKxTXduUqRS
-	 H+dkenyK9R4QHkKfNnhWpRtgVVqeKpOdTEdoLy+5+nT4KVNRpUAZFKdaY7OSgMh3yy
-	 gPyoSkdB05f1to3IY6XgbGAKHED+Ym73d9IAtz6d9cvKM/oMF1qPeIVIvDlmsd/bVi
-	 zw+KhhaPyUODQ==
-Date: Fri, 14 Feb 2025 13:10:52 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
- report
-Message-ID: <Z68yzBURiIr_7Lmy@pavilion.home>
-References: <20250213232559.34163-1-frederic@kernel.org>
- <20250213232559.34163-4-frederic@kernel.org>
- <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
+	b=cxR3U64x0UbHv7UIXxJIeRLfMqYvQizaIEArf05g6aIFOfETi5Tr+hBTOo3Ngj/Ix
+	 4SBmwsQBt8+uCGHIiDXfieBYV+wKiVfW45YgidsnbAH8+BIsNJcDJkf5NfLGbHASCE
+	 1vz7YWuLbzYqyYTONU9XuSQjvvYiezcMvAuAvtOxD8lxxWzEBLW/lDAPA8DGyqfDlB
+	 1SzaOkh9vIwdp+NsSmG3+kT3OHJb/0cuffvEtzsF3F1fUqHGFJm3gsH6UZvAEmFzTQ
+	 UXN21RC8JeGZR6/tAFUzJ9kirpiAExQMo0uTeM+CZ9claceVIivDg0FTH6glU8pl/j
+	 tscqRblX7As8Q==
+Date: Fri, 14 Feb 2025 17:43:42 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v6 2/2] phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+Message-ID: <Z68zdiIl75k2Vv9i@vaman>
+References: <20250213210554.1645755-1-heiko@sntech.de>
+ <20250213210554.1645755-3-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
+In-Reply-To: <20250213210554.1645755-3-heiko@sntech.de>
 
-Le Fri, Feb 14, 2025 at 01:01:56AM -0800, Paul E. McKenney a écrit :
-> On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
-> > A CPU coming online checks for an ongoing grace period and reports
-> > a quiescent state accordingly if needed. This special treatment that
-> > shortcuts the expedited IPI finds its origin as an optimization purpose
-> > on the following commit:
-> > 
-> > 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
-> > 
-> > The point is to avoid an IPI while waiting for a CPU to become online
-> > or failing to become offline.
-> > 
-> > However this is pointless and even error prone for several reasons:
-> > 
-> > * If the CPU has been seen offline in the first round scanning offline
-> >   and idle CPUs, no IPI is even tried and the quiescent state is
-> >   reported on behalf of the CPU.
-> > 
-> > * This means that if the IPI fails, the CPU just became offline. So
-> >   it's unlikely to become online right away, unless the cpu hotplug
-> >   operation failed and rolled back, which is a rare event that can
-> >   wait a jiffy for a new IPI to be issued.
-> > 
-> > * But then the "optimization" applying on failing CPU hotplug down only
-> >   applies to !PREEMPT_RCU.
-> > 
-> > * This force reports a quiescent state even if ->cpu_no_qs.b.exp is not
-> >   set. As a result it can race with remote QS reports on the same rdp.
-> >   Fortunately it happens to be OK but an accident is waiting to happen.
-> > 
-> > For all those reasons, remove this optimization that doesn't look worthy
-> > to keep around.
-> 
-> Thank you for digging into this!
-> 
-> When I ran tests that removed the call to sync_sched_exp_online_cleanup()
-> a few months ago, I got grace-period hangs [1].  Has something changed
-> to make this safe?
+On 13-02-25, 22:05, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Hmm, but was it before or after "rcu: Fix get_state_synchronize_rcu_full()
-GP-start detection" ?
+> +#define PLL_CON0		0x0100
+> +#define PLL_EN			BIT(12)
+> +#define S_MASK			GENMASK(10, 8)
+> +#define S(x)			FIELD_PREP(S_MASK, x)
+> +#define P_MASK			GENMASK(5, 0)
+> +#define P(x)			FIELD_PREP(P_MASK, x)
+> +#define PLL_CON1		0x0104
+> +#define PLL_CON2		0x0108
+> +#define M_MASK			GENMASK(9, 0)
+> +#define M(x)			FIELD_PREP(M_MASK, x)
+> +#define PLL_CON3		0x010c
 
-And if after do we know why?
+lower case, nice.
 
-Thanks.
+...
+
+> +#define COMBO_MD0_GNR_CON0	0x0400
+> +#define COMBO_MD0_GNR_CON1	0x0404
+> +#define COMBO_MD0_ANA_CON0	0x0408
+> +#define COMBO_MD0_ANA_CON1      0x040C
+
+upper one!
+
+> +#define COMBO_MD0_ANA_CON2	0x0410
+> +
+> +#define COMBO_MD0_TIME_CON0	0x0430
+> +#define COMBO_MD0_TIME_CON1	0x0434
+> +#define COMBO_MD0_TIME_CON2	0x0438
+> +#define COMBO_MD0_TIME_CON3	0x043C
+
+and few more, lets be lower case everywhere please?
+
+> +	{ 200,  7,   1,  0, 33,  9,  0, 26,  5,  0, 11},
+> +	{ 190,  7,   1,  0, 32,  9,  0, 25,  5,  0, 11},
+> +	{ 180,  6,   1,  0, 32,  8,  0, 25,  5,  0, 10},
+> +	{ 170,  6,   0,  0, 32,  8,  0, 25,  5,  0, 10},
+> +	{ 160,  5,   0,  0, 31,  8,  0, 24,  4,  0,  9},
+> +	{ 150,  5,   0,  0, 31,  8,  0, 24,  5,  0,  9},
+> +	{ 140,  5,   0,  0, 31,  8,  0, 24,  5,  0,  8},
+> +	{ 130,  4,   0,  0, 30,  6,  0, 23,  3,  0,  8},
+> +	{ 120,  4,   0,  0, 30,  6,  0, 23,  3,  0,  7},
+> +	{ 110,  3,   0,  0, 30,  6,  0, 23,  3,  0,  7},
+> +	{ 100,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
+> +	{  90,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
+> +	{  80,  2,   0,  0, 28,  5,  0, 22,  2,  0,  5},
+> +};
+
+any word on where this table came from, maybe worth documenting that
+part
+
+> +
+> +static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
+> +{
+> +	u32 bias_con2 = 0x3223;
+
+magic value?
+
+> +static void samsung_mipi_dphy_lane_disable(struct samsung_mipi_dcphy *samsung)
+> +{
+> +	regmap_update_bits(samsung->regmap, DPHY_MC_GNR_CON0, PHY_ENABLE, 0);
+> +	regmap_update_bits(samsung->regmap, COMBO_MD0_GNR_CON0, PHY_ENABLE, 0);
+> +	regmap_update_bits(samsung->regmap, COMBO_MD1_GNR_CON0, PHY_ENABLE, 0);
+> +	regmap_update_bits(samsung->regmap, COMBO_MD2_GNR_CON0, PHY_ENABLE, 0);
+> +	regmap_update_bits(samsung->regmap, DPHY_MD3_GNR_CON0, PHY_ENABLE, 0);
+
+Is writing to a register (mmio) faster than a switch case for checking
+lane count and disabling specific lanes?
+
+> +static void samsung_mipi_dcphy_pll_configure(struct samsung_mipi_dcphy *samsung)
+> +{
+> +	regmap_update_bits(samsung->regmap, PLL_CON0, S_MASK | P_MASK,
+> +			   S(samsung->pll.scaler) | P(samsung->pll.prediv));
+> +
+> +	if (samsung->pll.dsm < 0) {
+> +		u16 dsm_tmp;
+> +
+> +		/* Using opposite number subtraction to find complement */
+> +		dsm_tmp = abs(samsung->pll.dsm);
+> +		dsm_tmp = dsm_tmp - 1;
+> +		dsm_tmp ^= 0xffff;
+> +		regmap_write(samsung->regmap, PLL_CON1, dsm_tmp);
+> +	} else {
+> +		regmap_write(samsung->regmap, PLL_CON1, samsung->pll.dsm);
+> +	}
+> +
+> +	regmap_update_bits(samsung->regmap, PLL_CON2,
+> +			   M_MASK, M(samsung->pll.fbdiv));
+> +
+> +	if (samsung->pll.ssc_en) {
+> +		regmap_write(samsung->regmap, PLL_CON3,
+> +			     MRR(samsung->pll.mrr) | MFR(samsung->pll.mfr));
+> +		regmap_update_bits(samsung->regmap, PLL_CON4, SSCG_EN, SSCG_EN);
+> +	}
+> +
+> +	regmap_write(samsung->regmap, PLL_CON5, RESET_N_SEL | PLL_ENABLE_SEL);
+> +	regmap_write(samsung->regmap, PLL_CON7, PLL_LOCK_CNT(0xf000));
+> +	regmap_write(samsung->regmap, PLL_CON8, PLL_STB_CNT(0xf000));
+
+I guess you are writing to upper nibble, maybe define that, if we can
+
+> +static __maybe_unused int samsung_mipi_dcphy_runtime_resume(struct device *dev)
+> +{
+> +	struct samsung_mipi_dcphy *samsung = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(samsung->pclk);
+> +	if (ret) {
+> +		dev_err(samsung->dev, "Failed to enable pclk, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	clk_prepare_enable(samsung->ref_clk);
+> +	if (ret) {
+> +		dev_err(samsung->dev, "Failed to enable reference clock, %d\n", ret);
+
+No rollback of pclk here?
+
+-- 
+~Vinod
 
