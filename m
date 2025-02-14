@@ -1,136 +1,144 @@
-Return-Path: <linux-kernel+bounces-515257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78048A36279
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:59:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFE1A3627D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D36A37A44F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B64C7A44FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1773B267F46;
-	Fri, 14 Feb 2025 15:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myC+aGHJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78A726770A;
+	Fri, 14 Feb 2025 15:58:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531992676FB;
-	Fri, 14 Feb 2025 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DEC263F40;
+	Fri, 14 Feb 2025 15:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548664; cv=none; b=knCiuPRZLVYSWt3qMo8hyKgYjd6AdvqRBmE2Fi6J82/pgAwUi0pFq8Gd36yFKiA96bIPF9ZOG50FWfKQNJ0KKM3IOAMhCrmYEfFk2k0m5jkeBK/lMF7jWA3xERCJIb0nElju6D7qkJ1+9glXoSiPuxOY7NPx0OAV1yW4QQBykNk=
+	t=1739548695; cv=none; b=pbZ0xLlRwKost7hEE+uytsfukalndwJUNcsnZRvpLKKs9EMXJR1OWkfEVbZWgJzOn49vXx3zUIEFf8CvqTzX3rYxwHXIo5usy23Wir3KFsSaYmuoqOsGXAXVV3wBLgGWwgNk7CN1g7eKtRiliBH4WD6I6P/ekDgAjcTVnUQe/l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548664; c=relaxed/simple;
-	bh=X0Agohr9oHi/ZUCQ/VQiX7OEwANKVniqV1xfW9Qd7X4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OTSm4SkX+Tis9vMyQgReI4hjb9C5N7RHlmdkvvfEVoOFcrAmMByhc7rHSmqU5tTiPSyMGH8szoFb9ZiyXkiVyiJtOygOQCq12m+IK5m5MzB8JP1kwUcog+ge/OFpLckgyC6WsQfSWJjIlH1HexWObLA8GOZ1l5RNC8RKfburDaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myC+aGHJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 28EC5C4CEE8;
-	Fri, 14 Feb 2025 15:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739548664;
-	bh=X0Agohr9oHi/ZUCQ/VQiX7OEwANKVniqV1xfW9Qd7X4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=myC+aGHJFXJYhoW6N7qwAagawL3e9GbNV89ndpmC2wVQHyuCOTxQ9KbQPJtA1Ew8Y
-	 5plFExN7VqBOS9di6nmwjIlQ15sl7cn1EVWWaeeABbGSnWGKH91rXX8ghRbVXdG1/p
-	 ivXo8IV6OhwW8QN7XmcUjIU032V/6A2z+vQQMLQNHY8MaVUUFnr8hsr7dZaj6/9rFB
-	 sKNk30G91qY+6hCzJA7WRQY2NZUzshDCk5p/SlOHKypdYSXFftTfucAYoP0D+sJdBx
-	 NNCDVYxq9LMS+Qhc9Qhdq9akZaI1JE/0sHw+PxZdg/NztFq815UALC/EP/4TiCcQh8
-	 h4vVx/2MbkEzA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3CEC021A6;
-	Fri, 14 Feb 2025 15:57:44 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Fri, 14 Feb 2025 16:57:43 +0100
-Subject: [PATCH 2/2] arm64: dts: imx8mp: Add pinctrl config definitions
+	s=arc-20240116; t=1739548695; c=relaxed/simple;
+	bh=ITM1x9NbPIlmfCl9HfISxYBWAPCHPe8yHSWHXLcRJC0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CY5VAkmQs/eCBKY1YGSvPgt3Cn+NE8cZ2GBwlKPzCxn7snF8ZCbd6awAN3u8FOOvogNS7SmJZKGyPqG9M5hP5Sp1Kq/DkYrb7PFXY/NbScIr7wCifNwimn1ZBRL4MmVNT0E9f8KdGB18eav6viB2U+xY0a9NIgOQ9NK776nX+7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Yvc7q5Fm3z6L53m;
+	Fri, 14 Feb 2025 23:55:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9D47E140D26;
+	Fri, 14 Feb 2025 23:58:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Feb
+ 2025 16:58:10 +0100
+Date: Fri, 14 Feb 2025 15:58:08 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>
+Subject: Re: [PATCH v3 06/18] cxl/region: Rename function to
+ cxl_find_decoder_early()
+Message-ID: <20250214155808.00001e02@huawei.com>
+In-Reply-To: <20250211095349.981096-7-rrichter@amd.com>
+References: <20250211095349.981096-1-rrichter@amd.com>
+	<20250211095349.981096-7-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-pinctrl_defines-v1-2-fbc86a42ef3c@gocontroll.com>
-References: <20250214-pinctrl_defines-v1-0-fbc86a42ef3c@gocontroll.com>
-In-Reply-To: <20250214-pinctrl_defines-v1-0-fbc86a42ef3c@gocontroll.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739548663; l=1502;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=9sf7EGiqWWtALwUaK5VfgvYXRabE7bq8Almx6FlUGXc=;
- b=NfAzhM23mmmdlp9seKZ09vzSHp9Dlr7kU0pa6Xix3xCZgpVid9kH2jgqY3/UJ/cmc+42H5g5/
- 5ErsfYmMERyDOX8UgLGcekAw8ykxaF1FNltNKLVwIJPfhHaSXcqk3rU
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Maud Spierings <maudspierings@gocontroll.com>
+On Tue, 11 Feb 2025 10:53:36 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
-register is written in the dts, these values are not obvious. Add defines
-which describe the fields of this register which can be or-ed together to
-produce readable settings.
+> Current function cxl_region_find_decoder() is used to find a port's
+> decoder during region setup. The decoder is later used to attach the
+> port to a region.
+> 
+> Rename function to cxl_find_decoder_early() to emphasize its use only
+> during region setup in the early setup stage. Once a port is attached
+> to a region, the region reference can be used to lookup a region's
+> port and decoder configuration (see struct cxl_region_ref).
 
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
----
- arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 27 ++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Early doesn't seem that well defined to me. Can we indicate what the state
+is more explicitly?
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-index 0fef066471ba607be02d0ab15da5a048a8a213a7..8d4d621ad22165ca6c92499b273ec4178780c475 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-@@ -6,6 +6,33 @@
- #ifndef __DTS_IMX8MP_PINFUNC_H
- #define __DTS_IMX8MP_PINFUNC_H
- 
-+//Drive Strength
-+#define MX8MP_DSE_X1 0x0
-+#define MX8MP_DSE_X2 0x4
-+#define MX8MP_DSE_X4 0x2
-+#define MX8MP_DSE_X6 0x6
-+
-+//Slew Rate
-+#define MX8MP_FSEL_FAST 0x10
-+#define MX8MP_FSEL_SLOW 0x0
-+
-+//Open Drain
-+#define MX8MP_ODE_ENABLE 0x20
-+#define MX8MP_ODE_DISABLE 0x0
-+
-+#define MX8MP_PULL_DOWN 0x0
-+#define MX8MP_PULL_UP 0x40
-+
-+//Hysteresis
-+#define MX8MP_HYS_CMOS 0x0
-+#define MX8MP_HYS_SCHMITT 0x80
-+
-+#define MX8MP_PULL_ENABLE 0x100
-+#define MX8MP_PULL_DISABLE 0x0
-+
-+//?
-+#define MX8MP_MYSTERY_BIT 0x40000000
-+
- /*
-  * The pin function ID is a tuple of
-  * <mux_reg conf_reg input_reg mux_mode input_val>
+Or does it actually matter?  Whilst there is a better way to get
+it later, does this function then return the wrong answer?
 
--- 
-2.48.1
+Or if we have both cases of 'finding' it, can we just make this
+code do both?
 
+Jonathan
+
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Tested-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/cxl/core/region.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 54afdb0fa61c..13e3ba984a53 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -850,10 +850,17 @@ static int match_auto_decoder(struct device *dev, const void *data)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Use cxl_find_decoder_early() only during region setup in the early
+> + * setup stage. Once a port is attached to a region, the region
+> + * reference can be used to lookup a region's port and decoder
+> + * configuration (see struct cxl_region_ref).
+> +*/
+> +
+>  static struct cxl_decoder *
+> -cxl_region_find_decoder(struct cxl_port *port,
+> -			struct cxl_endpoint_decoder *cxled,
+> -			struct cxl_region *cxlr)
+> +cxl_find_decoder_early(struct cxl_port *port,
+> +		       struct cxl_endpoint_decoder *cxled,
+> +		       struct cxl_region *cxlr)
+>  {
+>  	struct device *dev;
+>  
+> @@ -917,7 +924,7 @@ alloc_region_ref(struct cxl_port *port, struct cxl_region *cxlr,
+>  		if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags)) {
+>  			struct cxl_decoder *cxld;
+>  
+> -			cxld = cxl_region_find_decoder(port, cxled, cxlr);
+> +			cxld = cxl_find_decoder_early(port, cxled, cxlr);
+>  			if (auto_order_ok(port, iter->region, cxld))
+>  				continue;
+>  		}
+> @@ -1005,7 +1012,7 @@ static int cxl_rr_alloc_decoder(struct cxl_port *port, struct cxl_region *cxlr,
+>  {
+>  	struct cxl_decoder *cxld;
+>  
+> -	cxld = cxl_region_find_decoder(port, cxled, cxlr);
+> +	cxld = cxl_find_decoder_early(port, cxled, cxlr);
+>  	if (!cxld) {
+>  		dev_dbg(&cxlr->dev, "%s: no decoder available\n",
+>  			dev_name(&port->dev));
 
 
