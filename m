@@ -1,126 +1,190 @@
-Return-Path: <linux-kernel+bounces-515643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69546A36737
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:07:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F737A3673B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:08:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED25F3B2831
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C205165BA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B091C1D89FA;
-	Fri, 14 Feb 2025 21:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581FF1940A1;
+	Fri, 14 Feb 2025 21:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ENF1ol3o"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="MMHBIqNV"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC561C8613
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 21:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B0D1C8615;
+	Fri, 14 Feb 2025 21:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739567218; cv=none; b=XAUP02QtHOVZ2Avnmhrjyieqswf4gqYsrLMjeQBRu7CBF+lEHB1qSVxQlvqMTm14AB6WVnngFKGaEJILpwmNCkIJFApyWW03ETMzi+HbwTM8aFfMIPuApmsp4XzNQCc12xK+ACkjKhd4ZDlSZT6WJIqObEwbgNa2KXaBsqUdFR8=
+	t=1739567273; cv=none; b=fIq9GjtjvPk818Y2cxy0VO8U8zm5xuiS2gVzhqHkvMK4SjcvyQ2oTfI2wpZ/S7BOtHZBR7L6dUZL3Sj0XzLEZLFkXUmot9Z0UaCGWgVHwOXdJ8jNvkZud9RHLrdBIvq18so0vk0G0S0BkCWtIq0rIH7QPiyXnNaOQNEczWIcOz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739567218; c=relaxed/simple;
-	bh=eBLGG68Or9yjsiP4CLRRkY0iPolcI0GPak3U8DpQKvs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XRNiDJyKhEhgO8UpvxyIp0z+iWoNzMjiGtqd88+8uk3pmtVsP+epMzqIL2pX+XZaEJRrFPnXMsXVmFNzGRHsh71G33Xj1+xqJ8Y2Dm1+wom6QYuac7x3euq0+70Q6M3/kdtWGg6HfSMI0LYMHEGBrkGE/fOHOmb7FggRoJqwVMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ENF1ol3o; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2210121ac27so9285085ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:06:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739567216; x=1740172016; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=492QiewuxoOpSiREuMz57X44BumOAwjBNWQNhBoGViE=;
-        b=ENF1ol3oribNwBxJB4/X330Pe8byV4ulcijx0Zyvti6xddv6OdVDJpPmwUuew79ITz
-         91DZJldWNvVBBCG+sMpWD8qc9DZJrgUmDEwWuwB1rYbmxsTRIJUTp+0IR1jhuql5RqrT
-         74h55dxmheQmGZy02eqQcgCB0759xYYanJC7bPBa226SNVVmog4fNX9TE03gWf5yARDK
-         XeV4FHcJ5nuhUut2z5x1lghMxmxGMnbpHueOBpzks1PUB9Gl0uTZai0rwJxnbtbH6OmX
-         9TH3wCOfyv7Xz75PQ5TuLGNW3qsX4Xp8Z0bJDY8yxUP1/ysUeHIp+MiFHJ9oTR3qx4lY
-         PUfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739567216; x=1740172016;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=492QiewuxoOpSiREuMz57X44BumOAwjBNWQNhBoGViE=;
-        b=wc68dBrxE7mqbQXH+NEsVoFBHrBvgl3+lKbRfz9I/84ybQyCn7kfzTDJSjafWtKc8I
-         R/eXnvg5Q5QcMxii+GWRP4tUgbHtnGtucfnDXDRltTmerxRgzkJK/MA2hv0HwVwYQt3o
-         g795tswqx/tSPU1mEA4L5dOaSZ0IjXKyrWNV6v/eBFlrVtyPMe6VmsTE618DVfEZJ23s
-         Pu6ILmdTE77MVXW3CPOATu4p/famge3T4eF9Xt9SBb3OB/eknVI3VYrh6bmPIUBEY1K0
-         fKh18jtSQ4lhMX8Kv5sC915LSJk51peUUQZ0UfSKY1B0eJBleKqYWGTc/W8+5eIJlxoI
-         SP9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoTCxBj9kSS+R5umygTL2Wqq/WMcRO2LkkkRNoFHfExzTfJrqmg6BqBYwz8QftFsi2qeUj1was3vfZbKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFeIUErJUN2yF2aEZHl4kvZ8E5wH0wXSLghKzovKcL5c1YMTKl
-	ae3LAHmiOfKexowX9IcvbkomBOjg9Mdm9hsBNT/au3V3ZFQcNXW1wnrHVcujLFAqfRHQ9XuL1xE
-	AtA==
-X-Google-Smtp-Source: AGHT+IHTxKpz9YQBehDW94ffNCBW6dSQ66S1eZW769DC4cxPKMriG0SAxEjF//npoSq9l3P1wuWzfkFJfBM=
-X-Received: from pjbnb2.prod.google.com ([2002:a17:90b:35c2:b0:2fc:c98:ea47])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2b07:b0:21c:1140:136c
- with SMTP id d9443c01a7336-22103ef2e81mr12121105ad.3.1739567216039; Fri, 14
- Feb 2025 13:06:56 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:06:54 -0800
-In-Reply-To: <20240914101728.33148-6-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1739567273; c=relaxed/simple;
+	bh=yiFJ/w+t21ZJtRX+N65ptSLB8hi9/hvCcwQLwkf3pI0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ekfm9mNHLAZHcuOmfHQiDH5k/aiQ6levz8HeV1hrKTIYPuJKA+YRsfnWDrLl1GI+vJoSwLG82DCeYw+DPWQJY9Gpm6G/xhKAInMACe1FgrKMSBr6QaX4qyMQyX8MLf3OS02rSJlm4IeR76AE3WbJ/MQlnu4/fJuAaYcur9AJ26Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=MMHBIqNV; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E7rio7015159;
+	Fri, 14 Feb 2025 15:07:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=qTuyMCHe3gaLKjJw
+	y9hTJZOKgIkyKL37R7E6Ty15deg=; b=MMHBIqNVFbSpk3w8F6N21UhLY83kgrxm
+	Q91IXkcCoDlTs9bRO2UPksYpFuZv0A6/Mh6MRol0moXEPtc22IKKUsRbmgr8l/ZV
+	wAp7+1zGedpCP2AMxQ9tgT7gMxHTRTnGH6Mae/eCaBHglt/nJxgWfeU9/sEMEJh1
+	tXV6coEFFt55r2dZ0vZ2VW/0+ofG6pgCE64gQMZloCPuP9QsO7JdkXrupygzU0t5
+	6j8Erbb+xdKwYGgGjG2BuRYVj0qbCUmf2746BlYfrcPHjpOp2HNo7+2rURA8X5Oc
+	5Eknff7m/3+09jWwHcOw1sLn5i0sm0XeblEh2bqd5WrPI6vii5VpUA==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44rpsvdecv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 15:07:41 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 14 Feb
+ 2025 21:07:38 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 21:07:38 +0000
+Received: from lonswws03.ad.cirrus.com (lonswws03.ad.cirrus.com [198.90.188.34])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 80215820248;
+	Fri, 14 Feb 2025 21:07:38 +0000 (UTC)
+From: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+To: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>,
+        Vitaly Rodionov
+	<vitalyr@opensource.cirrus.com>
+Subject: [PATCH 1/2 v2] ALSA: hda/cirrus: Correct the full scale volume set logic
+Date: Fri, 14 Feb 2025 21:07:28 +0000
+Message-ID: <20250214210736.30814-1-vitalyr@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240914101728.33148-1-dapeng1.mi@linux.intel.com> <20240914101728.33148-6-dapeng1.mi@linux.intel.com>
-Message-ID: <Z6-wbu7KFqFDLTLH@google.com>
-Subject: Re: [kvm-unit-tests patch v6 05/18] x86: pmu: Enlarge cnt[] length to
- 48 in check_counters_many()
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=O73DvA9W c=1 sm=1 tr=0 ts=67afb09d cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=qwdXLPsP7PC7M7duAzoA:9 a=YXXWInSmI4Sqt1AkVdoW:22
+X-Proofpoint-ORIG-GUID: tVYZgrvTPEJYCX5BOxkKaVD14vaXIgSK
+X-Proofpoint-GUID: tVYZgrvTPEJYCX5BOxkKaVD14vaXIgSK
+X-Proofpoint-Spam-Reason: safe
 
-On Sat, Sep 14, 2024, Dapeng Mi wrote:
-> Considering there are already 8 GP counters and 4 fixed counters on
-> latest Intel processors, like Sapphire Rapids. The original cnt[] array
-> length 10 is definitely not enough to cover all supported PMU counters on
-> these new processors even through currently KVM only supports 3 fixed
-> counters at most. This would cause out of bound memory access and may trigger
-> false alarm on PMU counter validation
-> 
-> It's probably more and more GP and fixed counters are introduced in the
-> future and then directly extends the cnt[] array length to 48 once and
-> for all. Base on the layout of IA32_PERF_GLOBAL_CTRL and
-> IA32_PERF_GLOBAL_STATUS, 48 looks enough in near feature.
-> 
-> Reviewed-by: Jim Mattson <jmattson@google.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  x86/pmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/x86/pmu.c b/x86/pmu.c
-> index a0268db8..b4de2680 100644
-> --- a/x86/pmu.c
-> +++ b/x86/pmu.c
-> @@ -255,7 +255,7 @@ static void check_fixed_counters(void)
->  
->  static void check_counters_many(void)
->  {
-> -	pmu_counter_t cnt[10];
-> +	pmu_counter_t cnt[48];
+This patch corrects the full-scale volume setting logic. On certain
+platforms, the full-scale volume bit is required. The current logic
+mistakenly sets this bit and incorrectly clears reserved bit 0, causing
+the headphone output to be muted.
 
-ARGH.  Since the *entire* purpose of increasing the size is to guard against
-buffer overflow, add an assert that the loop doesn't overflow.
+Fixies: 342b6b610ae2 (ALSA: hda/cs8409: Fix Full Scale Volume setting for all variants)
+Signed-off-by: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+---
+ sound/pci/hda/patch_cs8409-tables.c |  6 +++---
+ sound/pci/hda/patch_cs8409.c        | 20 +++++++++++---------
+ sound/pci/hda/patch_cs8409.h        |  5 +++--
+ 3 files changed, 17 insertions(+), 14 deletions(-)
 
->  	int i, n;
->  
->  	for (i = 0, n = 0; n < pmu.nr_gp_counters; i++) {
-> -- 
-> 2.40.1
-> 
+diff --git a/sound/pci/hda/patch_cs8409-tables.c b/sound/pci/hda/patch_cs8409-tables.c
+index 759f48038273..621f947e3817 100644
+--- a/sound/pci/hda/patch_cs8409-tables.c
++++ b/sound/pci/hda/patch_cs8409-tables.c
+@@ -121,7 +121,7 @@ static const struct cs8409_i2c_param cs42l42_init_reg_seq[] = {
+ 	{ CS42L42_MIXER_CHA_VOL, 0x3F },
+ 	{ CS42L42_MIXER_CHB_VOL, 0x3F },
+ 	{ CS42L42_MIXER_ADC_VOL, 0x3f },
+-	{ CS42L42_HP_CTL, 0x03 },
++	{ CS42L42_HP_CTL, 0x0D },
+ 	{ CS42L42_MIC_DET_CTL1, 0xB6 },
+ 	{ CS42L42_TIPSENSE_CTL, 0xC2 },
+ 	{ CS42L42_HS_CLAMP_DISABLE, 0x01 },
+@@ -315,7 +315,7 @@ static const struct cs8409_i2c_param dolphin_c0_init_reg_seq[] = {
+ 	{ CS42L42_ASP_TX_SZ_EN, 0x01 },
+ 	{ CS42L42_PWR_CTL1, 0x0A },
+ 	{ CS42L42_PWR_CTL2, 0x84 },
+-	{ CS42L42_HP_CTL, 0x03 },
++	{ CS42L42_HP_CTL, 0x0D },
+ 	{ CS42L42_MIXER_CHA_VOL, 0x3F },
+ 	{ CS42L42_MIXER_CHB_VOL, 0x3F },
+ 	{ CS42L42_MIXER_ADC_VOL, 0x3f },
+@@ -371,7 +371,7 @@ static const struct cs8409_i2c_param dolphin_c1_init_reg_seq[] = {
+ 	{ CS42L42_ASP_TX_SZ_EN, 0x00 },
+ 	{ CS42L42_PWR_CTL1, 0x0E },
+ 	{ CS42L42_PWR_CTL2, 0x84 },
+-	{ CS42L42_HP_CTL, 0x01 },
++	{ CS42L42_HP_CTL, 0x0D },
+ 	{ CS42L42_MIXER_CHA_VOL, 0x3F },
+ 	{ CS42L42_MIXER_CHB_VOL, 0x3F },
+ 	{ CS42L42_MIXER_ADC_VOL, 0x3f },
+diff --git a/sound/pci/hda/patch_cs8409.c b/sound/pci/hda/patch_cs8409.c
+index 614327218634..b760332a4e35 100644
+--- a/sound/pci/hda/patch_cs8409.c
++++ b/sound/pci/hda/patch_cs8409.c
+@@ -876,7 +876,7 @@ static void cs42l42_resume(struct sub_codec *cs42l42)
+ 		{ CS42L42_DET_INT_STATUS2, 0x00 },
+ 		{ CS42L42_TSRS_PLUG_STATUS, 0x00 },
+ 	};
+-	int fsv_old, fsv_new;
++	unsigned int fsv;
+ 
+ 	/* Bring CS42L42 out of Reset */
+ 	spec->gpio_data = snd_hda_codec_read(codec, CS8409_PIN_AFG, 0, AC_VERB_GET_GPIO_DATA, 0);
+@@ -893,13 +893,15 @@ static void cs42l42_resume(struct sub_codec *cs42l42)
+ 	/* Clear interrupts, by reading interrupt status registers */
+ 	cs8409_i2c_bulk_read(cs42l42, irq_regs, ARRAY_SIZE(irq_regs));
+ 
+-	fsv_old = cs8409_i2c_read(cs42l42, CS42L42_HP_CTL);
+-	if (cs42l42->full_scale_vol == CS42L42_FULL_SCALE_VOL_0DB)
+-		fsv_new = fsv_old & ~CS42L42_FULL_SCALE_VOL_MASK;
+-	else
+-		fsv_new = fsv_old & CS42L42_FULL_SCALE_VOL_MASK;
+-	if (fsv_new != fsv_old)
+-		cs8409_i2c_write(cs42l42, CS42L42_HP_CTL, fsv_new);
++	fsv = cs8409_i2c_read(cs42l42, CS42L42_HP_CTL);
++	if (cs42l42->full_scale_vol) {
++		// Set the full scale volume bit
++		fsv |= CS42L42_FULL_SCALE_VOL_MASK;
++		cs8409_i2c_write(cs42l42, CS42L42_HP_CTL, fsv);
++	}
++	// Unmute analog channels A and B
++	fsv = (fsv & ~CS42L42_ANA_MUTE_AB);
++	cs8409_i2c_write(cs42l42, CS42L42_HP_CTL, fsv);
+ 
+ 	/* we have to explicitly allow unsol event handling even during the
+ 	 * resume phase so that the jack event is processed properly
+@@ -920,7 +922,7 @@ static void cs42l42_suspend(struct sub_codec *cs42l42)
+ 		{ CS42L42_MIXER_CHA_VOL, 0x3F },
+ 		{ CS42L42_MIXER_ADC_VOL, 0x3F },
+ 		{ CS42L42_MIXER_CHB_VOL, 0x3F },
+-		{ CS42L42_HP_CTL, 0x0F },
++		{ CS42L42_HP_CTL, 0x0D },
+ 		{ CS42L42_ASP_RX_DAI0_EN, 0x00 },
+ 		{ CS42L42_ASP_CLK_CFG, 0x00 },
+ 		{ CS42L42_PWR_CTL1, 0xFE },
+diff --git a/sound/pci/hda/patch_cs8409.h b/sound/pci/hda/patch_cs8409.h
+index 5e48115caf09..14645d25e70f 100644
+--- a/sound/pci/hda/patch_cs8409.h
++++ b/sound/pci/hda/patch_cs8409.h
+@@ -230,9 +230,10 @@ enum cs8409_coefficient_index_registers {
+ #define CS42L42_PDN_TIMEOUT_US			(250000)
+ #define CS42L42_PDN_SLEEP_US			(2000)
+ #define CS42L42_INIT_TIMEOUT_MS			(45)
++#define CS42L42_ANA_MUTE_AB			(0x0C)
+ #define CS42L42_FULL_SCALE_VOL_MASK		(2)
+-#define CS42L42_FULL_SCALE_VOL_0DB		(1)
+-#define CS42L42_FULL_SCALE_VOL_MINUS6DB		(0)
++#define CS42L42_FULL_SCALE_VOL_0DB		(0)
++#define CS42L42_FULL_SCALE_VOL_MINUS6DB		(1)
+ 
+ /* Dell BULLSEYE / WARLOCK / CYBORG Specific Definitions */
+ 
+-- 
+2.43.0
+
 
