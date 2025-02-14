@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-515093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663DAA35FE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D379FA35FE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3891890798
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:07:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7801890B4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683A6265CA9;
-	Fri, 14 Feb 2025 14:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A700F265CA1;
+	Fri, 14 Feb 2025 14:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="mv9X1xeH"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UGyKqFgd"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87579265604;
-	Fri, 14 Feb 2025 14:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E08261376;
+	Fri, 14 Feb 2025 14:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739542044; cv=none; b=bLc7QmVE/C07aniHT3wqiAMjPv6zXGTPH0fYXedhBRLjoC1/ia3pfUgf6mhtLX7OzqdH+kR1fHZPEXKjMxeuy43UZs2aTD6q4lBUZV5mqhSWdoa9XgNpMkeeLnQt7Lx8E9RpPfIxRgaFxtNt5a2HB2kfgI4GslEtXpEIhytWR/k=
+	t=1739542079; cv=none; b=fKwvauErL3LA7Y9ggEED9azeeCy5dbdUHdjDG1+Zkq+Vlpu+662sKuXxOncdG/BMYWuK6c+EYnoTRunad9y5qvRWzuuONlSZCfdac5xztjtaCHknHqwUuPJHKhq7TY1iZUplecftaYPYsBnQObGAg2TGHczrVRWxoptyR8s+HO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739542044; c=relaxed/simple;
-	bh=qBGbTmxFDry4hLodx8viqkr7hSXg5gs/5jRFHGvVHRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AEZL2vVBp4YO3xCOMxfBmzCaa8mfUi8rsqUULXIOzkQGusTVAwH8uI8W6+yDhDhMkKuHJTowvPxf40K7NQd04ENeKLPB5c/EAvBj/iAbJ1UvcB0/0E5Q3viFdocchGIGpJNyQprT7RWFikp0nSNbXmLpHUbWP0TgPb53y+iQCOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=mv9X1xeH; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59260.dip0.t-ipconnect.de [217.229.146.96])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 3C4C32FC0061;
-	Fri, 14 Feb 2025 15:07:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1739542038;
+	s=arc-20240116; t=1739542079; c=relaxed/simple;
+	bh=+qlyWOt9BFdScl2fAkOoVcKrD94Xs5Sy+VSI9gOFmTM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=RwEBdY+yRZmy1hYTn+n0Zgo2avHLelbr7pZwm+uHMGicbZpn3iHfAvyevXm7HwQAKuorTIAftiAUXwaku1obWyl3pN6Xr5QNHLCwUE/9zLa3J41clPwGE0epf3jnaqZiPv7Cqh0DzXi0wQUHbXpoXiZca9tZ0e8iLAiOqLGdtVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UGyKqFgd; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BAF63441A0;
+	Fri, 14 Feb 2025 14:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739542068;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OJTWuIHY44NBI7aj5CMpyUXofz7/LAy5BKfQL5cWm+Y=;
-	b=mv9X1xeHky7cqxaCE1N2PmBEuJkUhHkK+f6xJ6yNekz3YQuzUJK2Xuf5IFo+WfRDONkvHm
-	eRkQsSNw4vZzJqSiuzTqshxaNt+DS/Yc5vRtXt6JQ+7ensivIVHXNrV2UPg2tUsV1ypDNc
-	vRTOAACbk1eOyD7dt6TjL8rB7qx6S7k=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <40020511-1bd6-476a-94a2-ac77a9972aaa@tuxedocomputers.com>
-Date: Fri, 14 Feb 2025 15:07:17 +0100
+	bh=AZNk4MMG+BjXDI3SUcRM1PO+mJxRM0nz461OGI70YGY=;
+	b=UGyKqFgdY0/qLOPkrqBcCcKctfnNti4DwOgm8Y2vxNVP9rLV1zMiNA93ESy3g/xvTdjTzK
+	ENTB87GB9wHnQf7o6YMDRAQXKOvb0B7N3U3mRIR7vNUks0Exv50v7ZaOVR+G3n31EEHD40
+	/5PNRxmOZu9UoUxC9rlFGst3xgEEhioKj19M+4yPxyWmbHwyPxwLD6cFNv/eYuFBL2iHBm
+	AFk1JjhQRg20VtNLN9tPM35HPFq/pX9E1Gq46tuznvOpOoFVmQ6XtOKRqjnsjoW5NreHrx
+	ldJS9hm7KFx+Z5x94iU0Nrc+TFQ4scgsuDnAERvq0s5I2o7cCRjoVjnu9Jo9TA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] Input: i8042: Swap old quirk combination with new
- quirk for severl devices
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250213160832.74484-1-wse@tuxedocomputers.com>
- <20250213160832.74484-3-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20250213160832.74484-3-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Feb 2025 15:07:44 +0100
+Message-Id: <D7S874FN28TV.3EJHJXB60GQ76@bootlin.com>
+Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
+Cc: "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Michael
+ Walle" <mwalle@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+ <D7S21NAXRW2A.2LB56QSTDCV6Z@bootlin.com>
+ <Z69KBATz7I80r0sl@smile.fi.intel.com>
+In-Reply-To: <Z69KBATz7I80r0sl@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegleekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemsgdukehfmeegrggvieemtgejgeegmehfjeelieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemsgdukehfmeegrggvieemtgejgeegmehfjeeliedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsggrrhhtohhsi
+ idrghholhgrshiivgifshhkiheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhifrghllhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Oops typo in the header line, should I resend it?
+On Fri Feb 14, 2025 at 2:49 PM CET, Andy Shevchenko wrote:
+> On Fri, Feb 14, 2025 at 10:18:29AM +0100, Mathieu Dubois-Briand wrote:
+> > On Thu Feb 13, 2025 at 8:48 PM CET, Andy Shevchenko wrote:
+> > > It appears that regmap GPIO doesn't take into account 'ngpios' proper=
+ty
+> > > and requires hard coded values or duplication of the parsing the same
+> > > outside of GPIO library. This miniseries addresses that.
+> > >
+> > > For the record, I have checked all bgpio_init() users and haven't see=
+n
+> > > the suspicious code that this series might break, e.g., an equivalent=
+ of
+> > > something like this:
+> > >
+> > > static int foo_probe(struct device *dev)
+> > > {
+> > > 	struct gpio_chip *gc =3D devm_kzalloc(...);
+> > > 	struct fwnode_handle *fwnode =3D ...; // NOT dev_fwnode(dev)!
+> > >
+> > > 	...
+> > > 	gc->parent =3D dev;
+> > > 	gc->fwnode =3D fwnode;
+> > >
+> > > 	ret =3D bgpio_init(gc, dev, ...);
+> > > 	...
+> > > }
+> > >
+> > > Reported-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com=
+>
+>
+> ...
+>
+> > Thanks, I confirm I tested this series and it does fix my case: I can
+> > leave the ngpio field uninitialized and its value will be correctly
+> > retrieved from the "ngpios" property.
+> >=20
+> > Also the whole series looks good to me.
+>
+> Thank you! Can you give a formal tag(s)?
 
-Am 13.02.25 um 16:47 schrieb Werner Sembach:
-> Some older Clevo barebones have problems like no or laggy keyboard after
-> resume or boot which can be fixed with the SERIO_QUIRK_FORCENORESTORE
-> quirk.
->
-> While the old quirk combination did not show negative effects on these
-> devices specifically, the new quirk works just as well and seems more
-> stable in general.
->
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
->   drivers/input/serio/i8042-acpipnpio.h | 40 ++++++++++-----------------
->   1 file changed, 14 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/input/serio/i8042-acpipnpio.h b/drivers/input/serio/i8042-acpipnpio.h
-> index a0a99f06c6685..d4ff34d36b42c 100644
-> --- a/drivers/input/serio/i8042-acpipnpio.h
-> +++ b/drivers/input/serio/i8042-acpipnpio.h
-> @@ -1080,16 +1080,14 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   			DMI_MATCH(DMI_BOARD_VENDOR, "TUXEDO"),
->   			DMI_MATCH(DMI_BOARD_NAME, "AURA1501"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_VENDOR, "TUXEDO"),
->   			DMI_MATCH(DMI_BOARD_NAME, "EDUBOOK1502"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		/* Mivvy M310 */
-> @@ -1171,8 +1169,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "LAPQC71A"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
-> @@ -1205,8 +1202,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "NH5xAx"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		/*
-> @@ -1225,8 +1221,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "NL5xRU"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	/*
->   	 * At least one modern Clevo barebone has the touchpad connected both
-> @@ -1242,17 +1237,15 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "NS50MU"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOAUX | SERIO_QUIRK_NOMUX |
-> -					SERIO_QUIRK_RESET_ALWAYS | SERIO_QUIRK_NOLOOP |
-> -					SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_NOAUX |
-> +					SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "NS50_70MU"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOAUX | SERIO_QUIRK_NOMUX |
-> -					SERIO_QUIRK_RESET_ALWAYS | SERIO_QUIRK_NOLOOP |
-> -					SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_NOAUX |
-> +					SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
-> @@ -1326,8 +1319,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_PRODUCT_NAME, "P65_67RS"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		/*
-> @@ -1345,8 +1337,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "PB50_70DFx,DDx"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
-> @@ -1370,8 +1361,7 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "PCX0DX"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	/* See comment on TUXEDO InfinityBook S17 Gen6 / Clevo NS70MU above */
->   	{
-> @@ -1384,15 +1374,13 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "X170SM"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		.matches = {
->   			DMI_MATCH(DMI_BOARD_NAME, "X170KM-G"),
->   		},
-> -		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-> -					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-> +		.driver_data = (void *)(SERIO_QUIRK_FORCENORESTORE)
->   	},
->   	{
->   		/*
+Sure!
+
+Tested-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
