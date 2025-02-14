@@ -1,257 +1,354 @@
-Return-Path: <linux-kernel+bounces-514937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D45BA35DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:36:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5849FA35DBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAC86188E8D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14E7188E320
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEDA2627E7;
-	Fri, 14 Feb 2025 12:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28FA2627E7;
+	Fri, 14 Feb 2025 12:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="D5Xod9Nn"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dw3em+ey";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="khemF73a";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wGbWqyRR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OdrODMN3"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E909261567
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88122153FA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739536554; cv=none; b=cMqN10AhPiWVUtZ6yIs/B9I6AcWQNVNPxiaDPwITYw0ZcFl0aJtAUEM2pVOdAvVOD+0jFHrY9Idoy52tVkPWJIEI5erCmLWZZgGZ81kNaZUKb9ejpX1rfx9l12wswXJ8Cwbc9uQeR/jpLZdWfMxBnZqQ3x+ZIXvGcCVBdVl4WQE=
+	t=1739536620; cv=none; b=bspdd1tv2s41mKexg6we7wmTwHi3Uc2Ge5UU19S8QqveoE6df9mIG+amRC/2S/8rDVbK6/OOA4N+SI/BhVMpvrYJoTO+VjqwHqwpFLLF/6bUL8XqnI0Z9Fkay2VE66nTwgbnIzLFCBKjtK4gyeUjxL2bPxcLQUHSZ9snL8qMrEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739536554; c=relaxed/simple;
-	bh=DhdTMX1B/VBmrfjg4gCD28dH1z0ZeJtuCVVqdYJtLzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWqZfd5OhDjYeNjY1749mjAC71j+Lz0Xve8vibamNAJZOFv5cbOWyiAro8vlItiOUwI5yY5EbPwD2Mp1/YM7nIrAdG/45mT5NN/FcVZgdiSzWz/bgSSdRk2E00EAMHhmbmaCdLh7hMpmuNW3m23uKCUU/TRfl7ObLo205xwgbWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=D5Xod9Nn; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id B7CFB240106
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:35:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739536549; bh=DhdTMX1B/VBmrfjg4gCD28dH1z0ZeJtuCVVqdYJtLzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=D5Xod9Nnl1WE6g1L7y5neIscsjHlzP9MY5Mw6Agu8uZD51CniEAu5nc1a/M7uOuay
-	 FnPzKuG+5DhX1AR2By4JLt2+6SePYX9dxTPP26BbYZz5yslylfLJ5HeYXeZKigJTD8
-	 wXckP4BTVk0rpmFwPrtSM3F5JmFkYBbJwcZ9ILZoY9XREALy+R8PMLWVfRJJIqegGR
-	 ip0tDQNNZvhC+Ac7P9yckRRncsRnZpwesWfImxAkK3WxgCwLbe+EOgHyElpxRWrYjw
-	 JI/8foXkGFM8JegiqDKfVrOw0juWrGF0P67jAcRLWyShcX0FBJqPObf2fUnzLcM0WW
-	 OMX71QAVAqbKw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4YvWjq1cxCz9rxG;
-	Fri, 14 Feb 2025 13:35:41 +0100 (CET)
-Date: Fri, 14 Feb 2025 12:35:41 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Frank Li <Frank.li@nxp.com>
-Cc: j.ne@posteo.net, devicetree@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 05/12] dt-bindings: dma: Convert fsl,elo*-dma to YAML
-Message-ID: <Z684nUnDX4Sb98rQ@probook>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-5-8137b0c42526@posteo.net>
- <Z6pV4eauZj75+911@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1739536620; c=relaxed/simple;
+	bh=JCs9QpYXCx1lPgb79p96Ne27wkLBADetGynTsaR7QVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dwyJFFd5+pcd7Mj678bS8dmTLkHIpZmeSdZCQsA0BSn7NifFiiXGEA97NU72ru2AVjMkBNFc06OF5PpIUAIL2DIicnnx5UlS1GBEgrSpBVj0zs01f12vJxn/VD35JYPFI4JRtmySP4vdyELksDkFVRGrXiv3oandkoUv1LzZsws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dw3em+ey; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=khemF73a; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wGbWqyRR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OdrODMN3; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E0F221F38D;
+	Fri, 14 Feb 2025 12:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739536611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
+	b=Dw3em+eyZMjE34C3aNd9GbjaHapJ7Hckgufu0uXW07WuImIusZVAnXy4tnfEIgsRH6teVU
+	/J3vEdLjoQunGLsxgDQnlb3tOTwHZ1VS1LS3Y949hkFKti6f82L6N1ke45JuW/cvq73lhv
+	rDdOZl6NUGCYQuWSAJVsNftYcEGHI2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739536611;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
+	b=khemF73a+X4/ghevtGzlW8LXvDWsj5ObLUy3BkhDqBmgX94NpVfpcBhDjtQdWVQLBVGLQL
+	xn5SgEQ9ah0iYVBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wGbWqyRR;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=OdrODMN3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739536606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
+	b=wGbWqyRRaDdigcuzzNbwu6frOsk73iaw5hDeeYjAuzbU7IoaLNSU1K7wrRCpuSoiEJrvel
+	tO2F2jCVCnoUarp2dFGaPLSgXvedr+tpGN9KVg0H6eby2ksPJSF/jTFk62620qbBEq3nkk
+	jrgm0359yfc8cquhrG4MsruYojTpGq4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739536606;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sfeDfJgUCtbRwSRBPdkVP3UK1Hqy/yoBumF5LWFkbPM=;
+	b=OdrODMN3CCijailHN7KWSeOmHJUDHF3kGrMmxbWr9JGps4mpYA96S1ucL8D8iosONYlyzs
+	0yfu7OlwZvHdjeDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A0B6E137DB;
+	Fri, 14 Feb 2025 12:36:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dnbYJd44r2dueQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 14 Feb 2025 12:36:46 +0000
+Message-ID: <7c378bfb-96e4-435d-8e6c-581d6851835f@suse.de>
+Date: Fri, 14 Feb 2025 13:36:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Nicolas Baranger <nicolas.baranger@3xo.fr>
+Cc: dri-devel@lists.freedesktop.org, airlied@redhat.com,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+ <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
+ <984c317de1027f5886390a65f1f66126@3xo.fr>
+ <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z6pV4eauZj75+911@lizhi-Precision-Tower-5810>
+X-Rspamd-Queue-Id: E0F221F38D
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RBL_NIXSPAM_FAIL(0.00)[2a07:de40:b281:104:10:150:64:97:server fail];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Feb 10, 2025 at 02:39:13PM -0500, Frank Li wrote:
-> On Fri, Feb 07, 2025 at 10:30:22PM +0100, J. Neuschäfer via B4 Relay wrote:
-> > From: "J. Neuschäfer" <j.ne@posteo.net>
-> >
-> > The devicetree bindings for Freescale DMA engines have so far existed as
-> > a text file. This patch converts them to YAML, and specifies all the
-> > compatible strings currently in use in arch/powerpc/boot/dts.
-> >
-> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > ---
-> >
-> > V2:
-> > - remove unnecessary multiline markers
-> > - fix additionalProperties to always be false
-> > - add description/maxItems to interrupts
-> > - add missing #address-cells/#size-cells properties
-> > - convert "Note on DMA channel compatible properties" to YAML by listing
-> >   fsl,ssi-dma-channel as a valid compatible value
-> > - fix property ordering in examples: compatible and reg come first
-> > - add missing newlines in examples
-> > - trim subject line (remove "bindings")
-> > ---
-> >  .../devicetree/bindings/dma/fsl,elo-dma.yaml       | 140 ++++++++++++++
-> >  .../devicetree/bindings/dma/fsl,elo3-dma.yaml      | 123 +++++++++++++
-> >  .../devicetree/bindings/dma/fsl,eloplus-dma.yaml   | 134 ++++++++++++++
-> >  .../devicetree/bindings/powerpc/fsl/dma.txt        | 204 ---------------------
-> >  4 files changed, 397 insertions(+), 204 deletions(-)
-[...]
-> > +  reg:
-> > +    maxItems: 1
-> > +    description:
-> > +      DMA General Status Register, i.e. DGSR which contains status for
-> > +      all the 4 DMA channels.
-> 
-> needn't maxItems
-> items:
->   - description: DMA ...
+Hi Jocelyn
 
-Good point, I'll do that.
+Am 14.02.25 um 10:11 schrieb Jocelyn Falempe:
+> On 13/02/2025 10:27, Nicolas Baranger wrote:
+>> Dear Thomas
+>>
+>> Thanks for answer and help.
+>>
+>> Yes, due to .date total removal in linux 6.14 (https://github.com/ 
+>> torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd 
+>> <https:// github.com/torvalds/linux/commit/ 
+>> cb2e1c2136f71618142557ceca3a8802e87a44cd>) the last DKMS sources are :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+>> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+>> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+>>
+>> You can also find this sources in directory drivers/gpu/drm/ast_new 
+>> of the tarball 
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/ 
+>> linux-6.14.0.1-ast1.15.1-rc2_nba0_20250212.tar.gz <https:// 
+>> xba.soartist.net/ast-drm_nba_20250211/nba-kernel/linux-6.14.0.1- 
+>> ast1.15.1-rc2_nba0_20250212.tar.gz>
+>>
+>> I'm surprised by the fact the in-kernel driver 0.1.0 is more advanced 
+>> than Aspeed version 1.15.1 because on my system it has very poor 
+>> rendering and is very slow, twinkle is high and had poor colors.
+>> The screen flickering is high and it's like if I was using a very old 
+>> cathode ray tube monitor (In fact I'm using a SAMSUNG LCD monitor 
+>> which is perfectly functionnal and which display a nice and eyes 
+>> confortable picture when using ast 1.15.1 driver or the video output 
+>> of the Nvidia GPU ).
+>>
+>>
+>> My testing system is a test Xeon server with an AST2400 BMC with its 
+>> AST VGA card as the main video output (to be able to have a screen on 
+>> the BMC KVM) +a discrete NVIDIA GPU I'm using for GPGPU and 3D 
+>> rendering with Nvidia prime render offload.
+>> What I constat with embed kernel driver 0.1.0 is that the Xeon 
+>> processor is doing the video job for example when watching a video, 
+>> and it's not the case with version 1.15.1 even when displaying on the 
+>> AST VGA card a vulkan rotating cube (compute by nvidia GPU with 
+>> nvidia prime but display by the AST VGA card of the AST2400).
+>> Note that with in-kernel version 0.1.0 it's nearly impossible to make 
+>> round the vulkan cube at more than half a round by  second where it's 
+>> working (very) fine for a 32MB video memory card with version 1.15.1 
+>> as you can see in the video present in the online directory
+>>
+>> I'm not developer or kernel developer so be sure that I wouldn't have 
+>> done all this work if the in-kernel ast version 0.1.0 was usable 
+>> out-of- the-box
+>>
+>> Sure you can give me a patch I will test on this server (building 
+>> mainline+ast_new yesterday tooks 19 minutes on this server)
+>>
+>> PS:
+>> here is a 'git diff linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast 
+>> linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast_new'
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ast- 
+>> fullpatch.patch 
+>> <https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ 
+>> ast-fullpatch.patch>
+>> Diff is about 250+ kb so the 2 drivers seems to have nothing to do 
+>> with each others...
+>>
+>> Thanks again for help
+>>
+>> Kind regards
+>> Nicolas
+>>
+>>
+>> Le 2025-02-13 08:57, Thomas Zimmermann a écrit :
+>>
+>>> Hi Nicolas
+>>>
+>>> Am 12.02.25 um 19:58 schrieb Nicolas Baranger:
+>>>> Dear maintener
+>>>
+>>> That's mostly me and Jocelyn.
+>>>
+>>>>
+>>>> I did include ast-drm driver version 1.15.1 (in replacement of 
+>>>> version 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I 
+>>>> issue a new dkms patch
+>>>>
+>>>> Last DKMS patch had been sucessfully tested on mainline.
+>>>> And last ast.ko version 1.15.1 included in linux tree had also been 
+>>>> sucessfully tested
+>>>>
+>>>> Online directory is updated with :
+>>>> - new DKMS patch
+>>>> - new DKMS srouces
+>>>> - new DKMS debian package
+>>>> - new tarball of mainline included ast_new ported in kernel tree
+>>>> - new kernel debian package (mainline with ast_new)
+>>>>
+>>>>
+>>>> NB: online directory is here: https://xba.soartist.net/ast- 
+>>>> drm_nba_20250211/ <https://xba.soartist.net/ast-drm_nba_20250211/>
+>>>>
+>>>> Please let me know what I should do to see this change in linux-next
+>>>
+>>> I'm having a little trouble with figuring out which of the many 
+>>> driver sources is the relevant one. Am I correct to assume it's the 
+>>> one at
+>>>
+>>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+>>> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+>>> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+>>>
+>>>
+>>> About that driver: Although the official driver reports an ancient 
+>>> version number, it is an up-to-date driver. It is actually more 
+>>> up-to- date than Aspeed's package. Both drivers share source code 
+>>> and a few years ago there was an effort to bring the kernel's driver 
+>>> up to the same feature set. Since then, the kernel's driver has been 
+>>> updated, reworked and improved.
+>>>
+>>> About the performance: From what I can tell, the only significant 
+>>> difference in these drivers is memory management. Your ast_new 
+>>> driver uses an older algorithm that we replaced quite a few releases 
+>>> ago. The old version was unreliable on systems with little video 
+>>> memory, so we had to replace it.  I don't know why the new code 
+>>> should be slower though.
+>
+> Regarding the performances of ast driver, I remember doing profiling 
+> some times ago, and when running glxgears (with llvmpipe), 65% of the 
+> CPU time was wasted in page fault 
+> (https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L534)
+> But as this driver is mostly used for console/basic desktop usage, I 
+> didn't investigate more.
 
-> 
-> > +
-> > +  cell-index:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: Controller index. 0 for controller @ 0x8100.
-> > +
-> > +  ranges: true
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +    description: Controller interrupt.
-> 
-> Needn't description because no any additional informaiton.
+Now that's an interesting find. The GEM shmem helpers vunmap ASAP to 
+make pages swappable, I think. IIRC there was a patchset circulating 
+that implements a shrinker [1] for shmem helpers. With that in place, 
+we'd only update the page tables if necessary. If it's really that easy, 
+we should try to merge that.
 
-True.
+[1] 
+https://elixir.bootlin.com/linux/v6.13.2/source/include/linux/shrinker.h#L82
 
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-[...]
-> > +additionalProperties: false
-> 
-> Need ref to dma-common.yaml?
+>
+> If I remember correctly, the switch to shmem, is because some devices 
+> have only 16MB of memory, and 1920x1200x32bits takes ~9MB, so it's not 
+> possible to have double buffering in this case. (And this is required 
+> by most desktop environment).
 
-Sounds good, but I'm not sure what to do about the #dma-cells property,
-which is required by dma-common.yaml.
+Exactly. There are ast devices with as little as 8 MiB of video memory. 
+But FullHD@32bit already requires ~8 MiB. Atomic modesetting with the 
+old memory manager requires overcommitting by a factor of 3 (to ~24 MiB) 
+to account for all corner cases. Hence we sometimes had failed display 
+updates with lower-end devices.
 
-There aren't many examples of DMA channels being explicitly declared in
-device trees. One example that I could find is the the xilinx_dma.txt
-binding:
+>
+> The switch to shmem was done with "f2fa5a99ca81c drm/ast: Convert ast 
+> to SHMEM", and introduced in v6.2. So maybe if you can try with a v6.1 
+> kernel, using the built-in ast driver and report if it has better 
+> performances.
 
+Nicolas, if you find an old kernel version that works correctly, and if 
+you know how to git-bisect the kernel, it would be helpful if you could 
+bisect to the commit that introduced the problem.
 
-	axi_vdma_0: axivdma@40030000 {
-		compatible = "xlnx,axi-vdma-1.00.a";
-		#dma_cells = <1>;
-		reg = < 0x40030000 0x10000 >;
-		dma-ranges = <0x00000000 0x00000000 0x40000000>;
-		xlnx,num-fstores = <0x8>;
-		xlnx,flush-fsync = <0x1>;
-		xlnx,addrwidth = <0x20>;
-		clocks = <&clk 0>, <&clk 1>, <&clk 2>, <&clk 3>, <&clk 4>;
-		clock-names = "s_axi_lite_aclk", "m_axi_mm2s_aclk", "m_axi_s2mm_aclk",
-			      "m_axis_mm2s_aclk", "s_axis_s2mm_aclk";
-		dma-channel@40030000 {
-			compatible = "xlnx,axi-vdma-mm2s-channel";
-			interrupts = < 0 54 4 >;
-			xlnx,datawidth = <0x40>;
-		};
-		dma-channel@40030030 {
-			compatible = "xlnx,axi-vdma-s2mm-channel";
-			interrupts = < 0 53 4 >;
-			xlnx,datawidth = <0x40>;
-		};
-	};
+Best regards
+Thomas
 
-	...
+>
+> Best regards,
+>
 
-	vdmatest_0: vdmatest@0 {
-		compatible ="xlnx,axi-vdma-test-1.00.a";
-		dmas = <&axi_vdma_0 0
-			&axi_vdma_0 1>;
-		dma-names = "vdma0", "vdma1";
-	};
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-It has #dma_cells (I'm sure #dma-cells was intended) on the controller.
-
-
-Another example is in arch/powerpc/boot/dts/fsl/p1022si-post.dtsi:
-
-	dma@c300 {
-		dma00: dma-channel@0 {
-			compatible = "fsl,ssi-dma-channel";
-		};
-		dma01: dma-channel@80 {
-			compatible = "fsl,ssi-dma-channel";
-		};
-	};
-
-	...
-
-	ssi@15000 {
-		compatible = "fsl,mpc8610-ssi";
-		cell-index = <0>;
-		reg = <0x15000 0x100>;
-		interrupts = <75 2 0 0>;
-		fsl,playback-dma = <&dma00>;
-		fsl,capture-dma = <&dma01>;
-		fsl,fifo-depth = <15>;
-	};
-
-
-There, the DMA channels are used directly and without additional
-information (i.e. #dma-cells = <0>, althought it isn't specified).
-
-
-> > +        dma-channel@0 {
-> > +            compatible = "fsl,mpc8349-dma-channel", "fsl,elo-dma-channel";
-> > +            reg = <0 0x80>;
-> > +            cell-index = <0>;
-> > +            interrupt-parent = <&ipic>;
-> > +            interrupts = <71 8>;
-> 
-> '8',  use predefine MACRO for irq type.
-
-Good catch, will do
-
-> 
-> Frank
-
-Thanks for your review!
-J. Neuschäfer
 
