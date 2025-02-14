@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-514731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A3DA35AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8CCA35AEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE513ADA5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851E63AAE28
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A910E2512EE;
-	Fri, 14 Feb 2025 09:55:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B8D24A049;
-	Fri, 14 Feb 2025 09:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6E8257439;
+	Fri, 14 Feb 2025 09:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="bghGKZZ4"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4124A05E;
+	Fri, 14 Feb 2025 09:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526926; cv=none; b=DCN7i+UMPt68rmwq/SVWs44jY40nLq+B/kZIcYFJQ1lNbcYbCfnhd5wBMeZYLVlURlt0yRUWaLtUCdosKyQzyDJlz9/DCiHLs+wWDY+t302SQpuckKiMavhn63eWQfyAiYOltySagRYdIGwABJxuBPgi9WGDYT40w0dh4aQiW30=
+	t=1739526971; cv=none; b=WnEZAwwxmWSYvBCc45i0711p9NQc3+LcNRcdqnjhcPZGK06BtP5mcmru0GsFQTsVVgZHNemH1yMKhzmital+BgN9F2tK19v4jqmrnjcJK9XW6kjgjgZQ7EcPp56ohyaf7SNcBWWtzSoAePVwQx0usgIcLoNWgDMgsw366AQGs1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526926; c=relaxed/simple;
-	bh=OLmOhFPQmOFsK0TNWHCEK+PAnV5VzbU646k1Y+lVG6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SY8s7yIgr3rosWdYoWLk+5aE+FjTaFpGjs0w1kqeukgKlBum3Y5S6YFb6WwRFYazwrS2gAP9Zsst1W6VUW1BEjJQ1/43RYY/BWpvIQjIWYqEWoco5kvRThs9xScVmMsQKAw/H//zqI4prwqAL8TWzFglREys/QISklJ0pFvee9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B95C113E;
-	Fri, 14 Feb 2025 01:55:38 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43AEF3F6A8;
-	Fri, 14 Feb 2025 01:55:17 -0800 (PST)
-Date: Fri, 14 Feb 2025 09:55:12 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v19 10/11] KVM: arm64: nvhe: Disable branch generation in
- nVHE guests
-Message-ID: <20250214095512.GI235556@e132581.arm.com>
-References: <20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org>
- <20250202-arm-brbe-v19-v19-10-1c1300802385@kernel.org>
- <20250213170316.GG235556@e132581.arm.com>
- <CAL_JsqLG4gu6c6=x_wG6XT0WaCC_ahH5eWHk3K9RcF0ZQrDR=A@mail.gmail.com>
+	s=arc-20240116; t=1739526971; c=relaxed/simple;
+	bh=2YNumiHDQgsLGO/eMpsKbUryYOlsd0m3vJGnb7NC2cs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iPHk7zn+fy8tyRTW6FdeL495C0zSTl4J37OoTOQ/tTMRytqtJtQvWMQpi8WWt/U0G7PYJ2hHW/w+/mnO4u/eg8TbNsEf8XlcI2NtSCA1fkgGMs3jBwFgH1Kwtv0wVFtj4xTTHoGus/17go9x3jS+3ufcsw4/DZfcylj2+kV5nbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=bghGKZZ4; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739526938;
+	bh=KyAhd+Ozz1bUuRujVsorLtQnBREnOzf43YRnKS9MjuU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=bghGKZZ4Fhqqtg5snlwWz+sN/sw4KzOe5gjYybC+FKbAMZsAbFQ9aITxUaGHWK/gP
+	 Wfuv90kp9rQtyQC28BA/sVdwyAAZzZM/T/K5cEh94MqzyStmILzdTCr6RykixNhjYc
+	 llzD+zVFTNxcuMKDQ3FrvSJwXii63VLT1fD0qJbI=
+X-QQ-mid: bizesmtpip2t1739526927t69eqqn
+X-QQ-Originating-IP: hmtdFyp/O9tWDE4cU7AaOCslFTvCdVyRTTfhnej2npI=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 14 Feb 2025 17:55:25 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11265747007053023021
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: chenlinxuan@uniontech.com,
+	guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	masahiroy@kernel.org,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com
+Subject: [PATCH v2 1/2] MIPS: dec: Only check -msym32 when need compiler
+Date: Fri, 14 Feb 2025 17:55:22 +0800
+Message-ID: <11D1B8A01F6006BF+20250214095523.175229-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com>
+References: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLG4gu6c6=x_wG6XT0WaCC_ahH5eWHk3K9RcF0ZQrDR=A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NzmZMORfs0iDt6xVM4aGnCBCPTZ0uhdlXzvCD+/g4jnDfnsdzloSjTk/
+	iQprFIdWrxf0iYvef0xBlfD+2R4NaJ89bNjX0H7JhL/SBGOnAotAueIaM+mtQuNuN2eTAuO
+	BT8r0V//xvXwQh6cVhAukvVzrjiknipTL0BRoD7bKI7hf/hXyGHzhwykb7TPnZdfE25nLj6
+	JIpy89KkySy3wmF+eU9ZTqeN7vPlHsKuLbmOjcsGOuA9x/hA8MHn2VuRYKpv+lPX7bhsYCw
+	Z7D8E19LWmIMI73I5mt5qFjVjgDWDjDv5VXed8wnE9nEIKHCDI0ku3BcH12Bg1olwPPsBvp
+	4U/smbfAJ52lpxhB0pwqES9ijSLcxqpyzmytG5wtdgJL3t00SBmXAsS3YmcuWkAItAWiSON
+	8YDhz0krfVkOj6rUsCyvPICj4jUh/RCfo6b6TsnGRPb/zmIyg6WxYNPSJ7TDzcjnkaTzpKe
+	aW/DjnSXZ9f0a/xvKNG+PPrPzrUHeBXROkDouh5x32DPLqpK8IJN8i0t0fYqKtK63dD73Tx
+	H8VyIZd+TlaxvCHyQTCtSodHbOe8iPA0Lu+PXu3RcLBfBq5mOYTWx68WflDxvUCQU5V25XQ
+	AkNPJit7C6cEsyjBXkiBKKVDUTGYwtaJANlKwEeBdyGX8pAGcddWzizRIxGotvPJKueg4tK
+	2VVc3eBPsIaxftTudrxefRuDvvscBcUY56VzkCbvE3oyHsohV0/N3iGj/+EHZBL42Z8mPzr
+	nsG0yJYmr7dNypvRSqvizbB555CXDPVjbXJPOxgmFTALXDYfXJ6VeL0ODmM/oaeZK/z5uSM
+	A1GmKxaky+slcD/TqoaM/ViQFxIxKJ8Nbi009MqxFNIHyuNpFr94efPC2pjdxPmVs43fPjV
+	a/22ZjdS8V9Ri/USks1L2Lxhrr9kaa9IAnuuWs+MGYClV2/spB33M1AM6iPOaGIpNxU89tl
+	rfiFhVhykNUsDfIKwlxAEdeQe/XqyajO+a4AF2zaQq/uqwxLL2ZoPjZMVNBc23JzVr3mhit
+	l8oEAAlcXO5RE3gHE55aKF0Ttj6l0FQ6eTOHyYVNcdSETvsCirt6Hf0AET0uzh1WCh/pq2U
+	pF9Ov6bEKPONRfSHHqdMmGoVJARjKBOUiYCfJyV9cHBzWzEx5TTyDKrxpQoT/h7UNJkJ8NG
+	HGC6GFy2kxxrfNPbdp/HHpVCSA==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Feb 13, 2025 at 05:16:45PM -0600, Rob Herring wrote:
+During make modules_install, the need-compiler variable becomes null,
+so Makefile.compiler isn't included.
 
-[...]
+This results in call cc-option-yn returning nothing.
 
-> > > +static void __debug_save_brbe(u64 *brbcr_el1)
-> > > +{
-> > > +       *brbcr_el1 = 0;
-> > > +
-> > > +       /* Check if the BRBE is enabled */
-> > > +       if (!(read_sysreg_el1(SYS_BRBCR) & (BRBCR_ELx_E0BRE | BRBCR_ELx_ExBRE)))
-> > > +               return;
-> > > +
-> > > +       /*
-> > > +        * Prohibit branch record generation while we are in guest.
-> > > +        * Since access to BRBCR_EL1 is trapped, the guest can't
-> > > +        * modify the filtering set by the host.
-> > > +        */
-> > > +       *brbcr_el1 = read_sysreg_el1(SYS_BRBCR);
-> > > +       write_sysreg_el1(0, SYS_BRBCR);
-> > > +}
-> >
-> > Should flush branch record and use isb() before exit host kernel?
-> 
-> I don't think so. The isb()'s in the other cases appear to be related
-> to ordering WRT memory buffers. BRBE is just registers. I would assume
-> that there's some barrier before we switch to the guest.
+To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+without -msym32" error, just wrap it into `ifdef need-compiler'.
 
-Given BRBCR is a system register, my understanding is the followd ISB
-can ensure the writing BRBCR has finished and take effect.  As a result,
-it is promised that the branch record has been stopped.
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk/
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2307180025120.62448@angie.orcam.me.uk/
+Fixes: 805b2e1d427a ("kbuild: include Makefile.compiler only when compiler is needed")
+Fixes: 18ca63a2e23c ("MIPS: Probe toolchain support of -msym32")
+Reported-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Closes: https://lore.kernel.org/all/alpine.DEB.2.21.2501030535080.49841@angie.orcam.me.uk/
+Co-developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/Makefile | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-However, with isb() it is not necessarily to say the branch records have
-been flushed to the buffer.  The purpose at here is just to stop record.
-The BRBE driver will take care the flush issue when it reads records.
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index be8cb44a89fd..4d8339d2f20f 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -304,8 +304,12 @@ ifdef CONFIG_64BIT
+   ifeq ($(KBUILD_SYM32), y)
+     cflags-$(KBUILD_SYM32) += -msym32 -DKBUILD_64BIT_SYM32
+   else
+-    ifeq ($(CONFIG_CPU_DADDI_WORKAROUNDS), y)
+-      $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
++# Do not fiddle with the compilation flags when no compiler is
++# going to be used. To get rid of spurious errors.
++    ifdef need-compiler
++      ifeq ($(CONFIG_CPU_DADDI_WORKAROUNDS), y)
++        $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
++      endif
+     endif
+   endif
+ endif
+-- 
+2.47.2
 
-I agreed that it is likely barriers in the followed switch flow can assure
-the writing BRBCR to take effect.  It might be good to add a comment for
-easier maintenance.
-
-> > I see inconsistence between the function above and BRBE's disable
-> > function. Here it clears E0BRE / ExBRE bits for disabling BRBE, but the
-> > BRBE driver sets the PAUSED bit in BRBFCR_EL1 for disabling BRBE.
-> 
-> Indeed. This works, but the enabled check won't work. I'm going to add
-> clearing BRBCR to brbe_disable(), and this part will stay the same.
-
-Seems to me, a right logic would be:
-
-- In BRBE driver, the brbe_disable() function should clear E0BRE and
-  ExBRE bits in BRBCR.  It can make sure the BRBE is totally disabled
-  when a perf session is terminated.
-
-- For a kvm context switching, it is good to use PAUSED bit.  If a host
-  is branch record enabled, this is a light way for temporarily pause
-  branch record for the switched VM.
-
-Thanks,
-Leo
 
