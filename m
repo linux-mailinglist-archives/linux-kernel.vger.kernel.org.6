@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-514386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75125A35640
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:32:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF526A3564B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9C63A6093
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3307D188626B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3048018A6B2;
-	Fri, 14 Feb 2025 05:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E43518A6D3;
+	Fri, 14 Feb 2025 05:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icJjvdQ9"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV1h6rkn"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1299138DD8;
-	Fri, 14 Feb 2025 05:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BE238DD8;
+	Fri, 14 Feb 2025 05:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739511115; cv=none; b=OyzR7roCNNNUEN5PDl17uVmgeqsjPu0PlYYchM0lyEJyNFqxLvlkxfIT39XP1jcSPTNUVndldexQ+8a5nOjNEot96uzt1BJiwTrMJm8yj2ts6Tprqrs5T8eO1J9OvhUe6P5z20PvOHfdcubdplg6Ey0H86DAGqVprBkPPQPZI3A=
+	t=1739511205; cv=none; b=qwB5JS8ywoJ5rDLo6oQOnxBzQjqPXihzv3E/xVren/ydjhdcpjGaKlF0OqZLZjxARzsz/6HSDZTRBpBsXayxvqy4ms5zRgur5E/FCu15cqs8sR3gdQrrgUk26Dfng0m8YVVFRIqOKC5WZ0m3RdPxZ4GfC02ouJIgC8WCr/YHRoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739511115; c=relaxed/simple;
-	bh=PWdi6RI9ZpMEHCMQdxFK9SYtxmQLCjjX0rIzfCofw7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gNEyRX92MrMrqcpwkgskd3OCrJ/OsefMt+QV1bgk/amV8xgvoC+Mme9imS7PCiezmBTr+o/fmZeGf8jtUHfnSM+H4TV5HHtBX8XL2uNTs8o+Wwtmla1pvsH3WY35/Y49SyiVjLx3DQ23KY8XvsjRG5QB4nKD7dVUvMgt41lfojM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icJjvdQ9; arc=none smtp.client-ip=209.85.217.48
+	s=arc-20240116; t=1739511205; c=relaxed/simple;
+	bh=L5pk5X30gpJ7gnywIkkEXwpQTjt3ETXHwQhi5SLhsWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u0NsNTmQEzDWxyZR2lVdZdvzzsI3nZ3acAiAdkYoV+YmCGnTVeK4pDFjxQRwZ0RenrIv5LwhNJhaaXm4tknvvL6uluifEfbVty1Js7pbDJqyuMe4xkul/sG8gS65Evb573rCRCB0X//qTw3KFnYQrLFHBUZSwtfaWES+fGU3VIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UV1h6rkn; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4bbbaef28a5so531936137.0;
-        Thu, 13 Feb 2025 21:31:53 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dcc6bfbccso909875f8f.0;
+        Thu, 13 Feb 2025 21:33:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739511113; x=1740115913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fjd7hfsfd8muVVZ7aQvyk8gZxPAzOHt7LsUJD0zUuLw=;
-        b=icJjvdQ92sSogabhlKMJ1JWRIf5b1NZrKVSTN6HdGYd+hsiyCZFhL3JpsAkv/V/WEi
-         ecWD4YQMteAZotcn4AXMy5Mj3W5oUzsrxeLp2FbKQwqAmPrPr48aLoYLLwt96P+Dtbl+
-         XZvpxefncPKBckVtla9XwlMoeZusA91HasxxNivo6gmlYzdPp4VMksoZgqcAax56FixZ
-         thZd4ezk9FzNual6dcg4dIvEsC1t3p4pm1ht0LrE6tM1cjO5Y4O1SgpqVefnZXFYKZzt
-         SfuQdQq7DRuBy0UZOFh4dQOKKxzPv7coSaTiTC3GKLVH054dSE0QSlEvS3WbMNTSgaBI
-         B3vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739511113; x=1740115913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739511202; x=1740116002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fjd7hfsfd8muVVZ7aQvyk8gZxPAzOHt7LsUJD0zUuLw=;
-        b=HaUR9u1Dhq7vYCEAUXG3vAy9XUL8M6c6zEU5ygXtX6Es4cMAzCctBT4nRRj/MOk1OQ
-         cDx/3aBfddE4AIQUX47YieBKK3MK7E0YvOuvABnMydcOvcrnS48bT2Un2+MXDVx/Vmw3
-         9xCTYhyoGylAEsGBZhdZmBL2YtAECZZvWyLYCht84OjrJVemqPeMfxyfSWQ1sukxI99K
-         ahJ9HdprLbYwKUFZDOrYrs2KuZSl+d4V/pKt84rv3CkFknO+S8CL7HlywVpS+ps3CN7W
-         ULcZGNpCEnvGuvfEr+wvWWuRU7z31YS0YZzTCBYzGQCTFL4FfSkpYEhYB3I0kHFfWU/X
-         13Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCV2kD1z7XGszoMXA5oGCePs7qgYyNHby9aA1Vtr0bM97qxXaYvb3fbclqEPJp+WsIskgE4+PxrGj+8u@vger.kernel.org, AJvYcCV4wT2a2mFPNEU/YWWGyUi/GCP4LuRNOH18nILl3J/dH2ctfbzmUtkXE3nF/DMXcX15XZhaa+PBv9sLyfyg@vger.kernel.org, AJvYcCVHvFm5siZFJVVXMauNYJF3BBANbbu+o1Q7i3tzejSEBbeGFyrH4BNQPzPVt/Kkux9wZgUsnuzgzT/8@vger.kernel.org, AJvYcCVy9xF09r5Vazg+DpUAQOOj0HbdUWh81cXX4FjMG21C6GCIB+mSz0bAtPCnBFQ5IoSE1GuprXcKRfFgH6mK4m08TMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh11iy8/oVp90Z27BOdAAVLALoQubrEtwyd9+fYReWDXkdYN91
-	15bPSJixzbrvzCZwrFmPqu3VAZwKU7IHsRf9BLaDiVlB8S8T3Qe+ayDKgXDO
-X-Gm-Gg: ASbGnctm+oS2IZxBvu7OEp361c4MqnBGxLuiZOAfz0Ieirb/u39v17XCUyDFcVuaXqF
-	N7l4rLCbo53Wf3K2cRyDBOCZOgr3+nZqDP8Jxkq/YdNDmVxDJUVEI+uik+94MfC4SLt63DEw63P
-	WVyzgbn44XDYuFdM1tw/0DnHo3y24yQhKsjIPLEvQ5Fj8wDki6ePcLFRBedrvcvRY82QMYwBIxA
-	e/eFCKAefJAmcTVeATOK+wKiXB1xc+M1ZvzzaUScB5CqL8PVjYjRsgh7hCNqeB1llBMyMSOxRA7
-	0E1sPnplsIkquV6daip8doQd/feP4hC3W7AOmOWkPyVBoJF+OM1i9oqX08A5Rg==
-X-Google-Smtp-Source: AGHT+IFgHjSNeoBNptiiEbwluBRQ3IXW3sqx+kBS5+5e/IvlWs4t7RMLzUKV4L4Hb4cfDBGmOWGE+Q==
-X-Received: by 2002:a05:6102:162b:b0:4bb:ba51:7d64 with SMTP id ada2fe7eead31-4bc037433efmr4855118137.17.1739511112688;
-        Thu, 13 Feb 2025 21:31:52 -0800 (PST)
-Received: from droid-r8s ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc07961654sm406029137.19.2025.02.13.21.31.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 21:31:52 -0800 (PST)
-Date: Fri, 14 Feb 2025 05:31:43 +0000
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-To: andi.shyti@kernel.org, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: alim.akhtar@samsung.com, andi.shyti@kernel.org, broonie@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v3 0/3] spi: s3c64xx: add support exynos990-spi to new
- port config data
-Message-ID: <Z67VP6zMwFcqFurH@droid-r8s>
-References: <20250214043343.263-1-wachiturroxd150@gmail.com>
+        bh=GZKSZtODxM+noN2/9IveqzmmDuQqERiRvMNYTlwLCo4=;
+        b=UV1h6rknrFvTR+T/QoqHxgOk6Xdmhh+kf4GLBeXAPgK9fnbk798FbjEKHHcXHjEI/L
+         KQKj3ADc+iQPHQJeB3aBgCh0inRhvTzXXHOkiMeuURy7saYwfM+wQ3mjliJAUSRGIIR+
+         MI1SO+zxSOjN7HtoZCZnZ3HM/w8EyndqmV9TqZ0ATnyyVbeA1hbMibvGIUfq3zKclqGa
+         CW/ON+4cSDlqZLxxeHoUKL202Do17UgpRdOnfJoaFmmbSEPxO/0p8GOq8vihFkwMAicw
+         rg1vCjfFNyptBukwegCQ+m6j9ZqE6V6lZb0eBeGmD8Ogs6PEvSidFyfZNbDObE6p/O/E
+         ZK5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739511202; x=1740116002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZKSZtODxM+noN2/9IveqzmmDuQqERiRvMNYTlwLCo4=;
+        b=OSZktYNAaxjNVvLo134Nc69dV3YCqrY5FOTGnHOSXyYMRMw7yYQpxuCjc9Mp8pSWYR
+         sLxUQhy7lTYWy1PBPsOmrSAaaqT5i+2oUmvPExssxIquGDG++MRclaTuzy3n5ow2OV0+
+         7sVz6ppMsyILWk3uNzV0/OmnKNP7qYGq2yrq4UB5/6t5MSoTn7AuGs9eygU/L+J4Dnb2
+         +a9e4xrlK4aagLA/sHw3sJbh4y19JL8Yz3O1nFEhec96E5jU3L8Bz81X/2QzTS5HB1jN
+         az2EfWEQBd29dM7nw6GnYzGFf3jU3eoWWcCM4AvjxEYZ1v3UhntE+60gJYApr0EJk59T
+         nHqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxL88bZ0LvRlTjeV5B1EeNZ4S677joDyw2ZnfuOSHcMOOUHxIG5ItLAtLqNRpr/dlGTaU=@vger.kernel.org, AJvYcCVB32lpA//pOYhMQEYuc23baCNdW2qcuMDuqhKe/ymgIW63onbHkb5blrhutuklGO+T3u0NAvRHn+tUdg==@vger.kernel.org, AJvYcCVxP9xD06WI5+Qpe4XcVMWZQfs3duKEXtBOkUdaFZywDeENkfxLX+WvF7f+rX4uztZTBXAMe/6a@vger.kernel.org, AJvYcCXyKmwErJ10/qwI7PKiKVgFqJqPbfVBwodGZMLAH6KNOCbIcR5XXGvLp3NsoQ80cmGKkD84m9hm+Fh4Vh/u@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIpZvw06TxPQp7MkTp/Tq1CvCRbn0s7+RFusZpxt6k8XAk8fh8
+	LJhzuln2gtY78ziJVAJ545tCxEGAP2+4QAKzXoUkf0X4B0XUDDSH1eDqqIiS63yCqFTbyl5xRfW
+	lzZUKEuWak1IC81QeHBqLmrHMqh8=
+X-Gm-Gg: ASbGncu/SnXZsSiMHBC/fLG69b9IrS6MhoKG1wBuBxoZ7Y8F69GDnod9YY6q/ffRTsX
+	xrz7Xpojg68C7Mh8ovUI3mtEr6ZwDuPpeCJYXpe3s56SU7mQLOAZ1yWKn/am50wgITZ8qlilall
+	VYTw6ic9S8GWYnuY6TJku7RfqyQlrc
+X-Google-Smtp-Source: AGHT+IEF5LAqGZmkuhURa/S2hwHJ3FXPr8eM2F/6SJFL1O8hdpGxlppS11AKZcoalYHBSjqsDU4mE66s2+Zk1tcfVGI=
+X-Received: by 2002:a5d:5226:0:b0:38d:b9c5:797f with SMTP id
+ ffacd0b85a97d-38dea26e79bmr7916643f8f.18.1739511201973; Thu, 13 Feb 2025
+ 21:33:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214043343.263-1-wachiturroxd150@gmail.com>
+References: <20250214160714.4cd44261@canb.auug.org.au>
+In-Reply-To: <20250214160714.4cd44261@canb.auug.org.au>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 13 Feb 2025 21:33:11 -0800
+X-Gm-Features: AWEUYZl4EytNCpTfs7QcXZ1uBLgvuERgrbd8OHm-WiZUZgkdL7qNGZkC194Ee4w
+Message-ID: <CAADnVQJhh+An8uorGh-WQfJybqAu84MOREXZtCxep7fZtyMd6A@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 04:33:40AM +0000, Denzeel Oliva wrote:
-> Changes in v3:
-> - Reordered fifo_depth handling in s3c64xx_spi_probe() so that the DT
->   property takes precedence over the default value in port_config.
->   This allows node-specific FIFO depths to be applied correctly while
->   preserving a fallback.
+On Thu, Feb 13, 2025 at 9:07=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>
+>   kernel/bpf/btf.c
+>
+> between commit:
+>
+>   5da7e15fb5a1 ("net: Add rx_skb of kfree_skb to raw_tp_null_args[].")
+>
+> from the bpf tree and commit:
+>
+>   c83e2d970bae ("bpf: Add tracepoints with null-able arguments")
+>
+> from the bpf-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Showing evidence:
-[    0.339111] s3c64xx-spi 10920000.spi: spi bus clock parent not specified, using clock at index 0 as parent
-[    0.339119] s3c64xx-spi 10920000.spi: number of chip select lines not specified, assuming 1 chip select line
-[    0.339467] s3c64xx-spi 10920000.spi: registered host spi0
-[    0.339589] s3c64xx-spi 10920000.spi: Samsung SoC SPI Driver loaded for Bus SPI-0 with 1 Targets attached
-[    0.339597] s3c64xx-spi 10920000.spi:        IOmem=[[mem 0x10920000-0x1092002f]]     FIFO 256bytes
--------------------------------------------------------------------------------------------------------------
-[    0.587452] s3c64xx-spi 10650000.spi: spi bus clock parent not specified, using clock at index 0 as parent
-[    0.587462] s3c64xx-spi 10650000.spi: number of chip select lines not specified, assuming 1 chip select line
-[    0.587847] s3c64xx-spi 10650000.spi: registered host spi1
-[    0.587986] s3c64xx-spi 10650000.spi: Samsung SoC SPI Driver loaded for Bus SPI-1 with 1 Targets attached
-[    0.587997] s3c64xx-spi 10650000.spi:        IOmem=[[mem 0x10650000-0x1065002f]]     FIFO 64bytes
+Thanks for headsup.
+
+Jiri,
+what should we do ?
+I feel that moving c83e2d970bae into bpf tree would be the best ?
+
+Pls warn me next time of conflicts.
 
