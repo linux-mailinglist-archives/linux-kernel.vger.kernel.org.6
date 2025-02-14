@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-514995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03A4A35E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:07:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CDEA35E5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8CBB3B2710
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93CBD3B0C8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC95264A63;
-	Fri, 14 Feb 2025 13:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833412641CE;
+	Fri, 14 Feb 2025 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i1lU0N0K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="T2b7UZJc"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC0B1EB5B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37E263C62
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 13:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739538239; cv=none; b=jzTmbFwU0Mng+j52vUQCUYOeWdQuvvMmp0U4ZIoWLoKjZDTYnIklmaKaOc7L3CM5N0hjbeAwOtj0399yjBO2xgn7Gg7vtuAedZC5kVeFbjjvX1y8sOiJ2zHX5lPY+i/ubbcrAuZeQkAAk1E/SOF5TI7SOhm7SR4AV4I8HrirmhM=
+	t=1739538277; cv=none; b=L1NClnItMh9lJofFIOsEP5/kZYvweOFwYxG3WA2bRYAgCc0lptmGjtfRqrm5qXd5StMaYkgxvYzfxV4XfuUqH+LBO1OwjRqo2srCYoQWqrt+TDqIU3FkEvAKzIaw0UxVWtBYdFAVX+7imeqSKmuSP56ywVEMKfRJTw5TJeSKfEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739538239; c=relaxed/simple;
-	bh=+dRvZAEpzggpCGdlVHWJjVQQHmFiEjX9LCOV2fbhmjE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=IT5RW+QqyM423g4sWN1RdMK21amN+rkDpdZxG6Tb1xI/11IPy6TCZ8tVYogeAe7ClkMl3S9BmZy9S81Jwlxlh/hVNlew3UeAVAGF6tC8w0CMwx/E7n6KYFe/DvGQeX+Id/N715ZxVchzXnRMEg3SEEDjwnWQCfLZxca1gBskxXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i1lU0N0K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739538236;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HkmQoBgY6ibrO0SJlNLLatAXD9nZtLfLlyNK+9OBhaI=;
-	b=i1lU0N0KwaSnRB7O6G5NmzZEgUcDUETr7P5lQtp84NBTO9YeeQgCSs4SN/qvonQosKH03z
-	OTNQ/5mAgB9Nypu6bEtR9vIkJsyq8CUb+iawB3a00corbIfJnFehLbKNgBx49S5QI3Jp49
-	X2+OTwfpw+N6kF3nFSUds/sQaAAIp3E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-Nol8qBg2MiuZsh45u0WI8Q-1; Fri,
- 14 Feb 2025 08:03:52 -0500
-X-MC-Unique: Nol8qBg2MiuZsh45u0WI8Q-1
-X-Mimecast-MFC-AGG-ID: Nol8qBg2MiuZsh45u0WI8Q_1739538231
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5FD5C18D95DE;
-	Fri, 14 Feb 2025 13:03:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 847C51800352;
-	Fri, 14 Feb 2025 13:03:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250211093432.3524035-1-max.kellermann@ionos.com>
-References: <20250211093432.3524035-1-max.kellermann@ionos.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Johannes Berg <johannes@sipsolutions.net>,
-    netfs@lists.linux.dev, linux-kernel@vger.kernel.org,
-    stable@vger.kernel.org
-Subject: Re: [PATCH v6.13] fs/netfs/read_collect: fix crash due to uninitialized `prev` variable
+	s=arc-20240116; t=1739538277; c=relaxed/simple;
+	bh=kGaoVgiLrAptOxmwP6NwhdVGvRR6+XxpWuwi1Jikbtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SMXHN9Yoh4egW8pjogxJyMmAcadUnPc/YR5I+6VQLTLDyZhPzyM49MjuoSW1dhcPVPQ5UIY05XtNSIjUXRbGvmLNftPsged8vmPICLAxaMXlCzKl3NoIf30+NvLrA2SYW+UnCiS2p523MxHcmkOxep/lSsMXxp3mCRsfemX8O04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=T2b7UZJc; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-46fa734a0b8so17976211cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:04:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1739538274; x=1740143074; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHmrVly4vSIGIYyzUZmKOCsqXSVt8EErpUP4XcPKMr0=;
+        b=T2b7UZJca3LzpCfkJPWK6V5bg+bkr/gLt14DsWvnb/zQXsYybaIz7eN/DjbqJmyBaj
+         P359geUYIxffyWtMCWN42ER2GUW8QJt8RTLiNjENCz3H8JuXUaY93ExY0/y2RJvZ423Y
+         nV2pdm/jtR25QpTj8JOOh+t0cNOIhV2x+XdRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739538274; x=1740143074;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vHmrVly4vSIGIYyzUZmKOCsqXSVt8EErpUP4XcPKMr0=;
+        b=DHhGMATIH9WAdS4TZHIb2JLDJ2Fk0Noa1fAbjOcDjYovagAheS/6zSU3CxP+ZtYDEB
+         sYoDCA3fLVKNzvRgr9HALq8XHZEumMC2fQO7iMVI2rtRb8MEoQi9t/XXQAB73JYxlg1n
+         oSJEPVIF7DPKN0KHn0YJ1JmwuRlhbCQfSsAU8uBJ7zmab3Brtv0DvzAuNTdvKxSiAjcq
+         9gpWK6pk3iNbiu//muoKkO3h2RHc9MasWm7VOL1glDyE5jpfoUnztZWoodRrkclObI9T
+         qDFvry5G1U+14TDpfvct2Vek6WJdrMGy/8hc0Ha65Dt+KoWRcsp2qqbLywE3R48m/mj7
+         wOBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNx8XKaA2yd12U+8JAfV+qDsoS7zCCp7LOyKiLP5iGQ+CNrilfPZEybjjY1guME9oTvGGn/Kcxhl6GOxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuGmPYjkZ63QScJh2GlYftFbe+cqv8SkclE8Ls8ieMpslIj9Cj
+	M36I7ibo0fYv6qni1fGcskdJ1tRJ+dpMrGITjtZsoKszP3rIe9HxLjaTVx14C0WbKjYn7L/gO20
+	ttKG/6pNN2xj9pDwd8Wj9faP4gUgSqXs8kKaF9g==
+X-Gm-Gg: ASbGncsAp+7t7gw/9ZBiIfCHTU0rVX9wE26yvDFUmmQN1X5HTUC1rsvgcD/bdEBWJrI
+	zByeHTMU0MQoehHJxwTdtbyg7aoYI2VC2VRAWXx8UIqZWnPDbnZ/5x9yB5z8F3uqKrt5sc1c=
+X-Google-Smtp-Source: AGHT+IG5kEh3YPDEBWIqGR1p6/QdcG8b7Iu1qWbMrjez2iR0FJKFb8x2TLZXC+sfw+BSDXjsMLaUEB6y1UUJwV5p8cA=
+X-Received: by 2002:ac8:5988:0:b0:471:bf91:816b with SMTP id
+ d75a77b69052e-471bf9182b2mr119967451cf.32.1739538274221; Fri, 14 Feb 2025
+ 05:04:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3978534.1739538228.1@warthog.procyon.org.uk>
-Date: Fri, 14 Feb 2025 13:03:48 +0000
-Message-ID: <3978535.1739538228@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250204-fuse-fixes-v1-1-c1e1bed8cdb7@kernel.org>
+ <CAJfpegsOOv7c3R5zQZWWvYEgZxyWGCJyf8z=A8swQQZsGyvuDQ@mail.gmail.com> <2ec361038d22e9ed5dbe8e69b08a0a31685c7274.camel@kernel.org>
+In-Reply-To: <2ec361038d22e9ed5dbe8e69b08a0a31685c7274.camel@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 14 Feb 2025 14:04:23 +0100
+X-Gm-Features: AWEUYZmahJ6iPY3B9j5L8nh0hKDFOG0aES3WJjmrI2sFzF2I1X0TUqGuRE9Y918
+Message-ID: <CAJfpegvKGa6RzxNKCDER+hXvKCJuMzeHq-xQaRNYzgQr_9yhUg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: don't set file->private_data in fuse_conn_waiting_read
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Max Kellermann <max.kellermann@ionos.com> wrote:
+On Fri, 14 Feb 2025 at 13:58, Jeff Layton <jlayton@kernel.org> wrote:
 
->  		prev = list_prev_entry(subreq, rreq_link);
-> ...
-> +		if (subreq->start == prev->start + prev->len) {
-> +			prev = list_prev_entry(subreq, rreq_link);
+> It's just an unnecessary assignment. Nothing will look at or use
+> private_data in this codepath, so there is no need to set it.
 
-Actually, that doubles the setting of prev redundantly.  It shouldn't hurt,
-but we might want to remove the inner one.
+I think the reason it was done this way is to return a sane value even
+in the case of small reads (i.e. char-by-char).  It's unlikely to
+matter in real life, but removing it is not a big enough win to be
+worth risking it.
 
-David
-
+Thanks,
+Miklos
 
