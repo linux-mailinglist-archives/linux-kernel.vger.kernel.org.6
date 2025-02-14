@@ -1,205 +1,164 @@
-Return-Path: <linux-kernel+bounces-515628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D14AA366D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:25:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161D1A366D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 21:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B52171A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9395E1895669
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 20:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C041C8611;
-	Fri, 14 Feb 2025 20:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60D91C862E;
+	Fri, 14 Feb 2025 20:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H51KPdFl"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kDA28hb0"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C570019066D;
-	Fri, 14 Feb 2025 20:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416A81917F1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739564687; cv=none; b=Pm1Q3tSpDm2g8rWkc2MB2ZkjapoAG4h6lz8Q+r34brmY8KEvhWxAocFZn3tpm3kUa1YHInjLwL13D4UdFMvkJxu+v68xPoe7lC0tgtJ2fzt7gnVR8NFpA9LnPXZ6MluZkjluIlI6Fo7zeTI5PFz+iCPxfPga6DZugSTuSZnqOdM=
+	t=1739564689; cv=none; b=by1TKkXRZaqkNGVfLc6czEMNdrFCastcnXFVEDdsbXdN5gUA1W2gHudLrL7Mx1LqD7FBMDoW6I6UC0UYD7+m1w202H0JwqlH2ORBQL9HuFpEecekRx/67v53NDNPTFHwQz0bJaARdumBgObWcy/e9uVWfLgEGszPvc0Gi4vXSXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739564687; c=relaxed/simple;
-	bh=bCH5bqvcaIOMu8AtEhHMduHrLldLHxk+IB++yM9jvTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LwscspPDNWgTwQVA16SivDCsqGR9qZIxAZJ3gYjO4f6GCerYtZN5hDq+kygahXzlrxuTvRlXbT2i4QshSmT+RjPh98hTFHoV4jWMoQMlvc1cwY5YP8L9QDLq43qQyRd/ygWl/9zJBP/+lGvOINg5ziEI5aX1gKaVVf6qftRReQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H51KPdFl; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so536716a91.1;
-        Fri, 14 Feb 2025 12:24:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739564685; x=1740169485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3p4NWmc8ditZ/XLLp37+2EiA/PYp9yKBL0C/xM4/3Fg=;
-        b=H51KPdFl8DhqtvkPdj1BL3FTCEzZVuPjP3aE/WwYgHPxH6fcBDAL5iDxhdpOqFLsH7
-         tNLLJt+El/nQEat9R7Y0pf1yywdKZWsVnApT5WEMIZ9RmDEJ9Gp43D6afEUWOYqJ/o7j
-         kmGhOxIx/4EowxJo81/YAEgTxSpSsNVPL2s0O7wadQe3mT1rMFdShFnkXdT+sTZmYSCW
-         zJxhd9MpDeCt7C0wmhmwj5BwLQxeDGAnp1XtG21xz6FgE8AUeYMrc4LguymJeJ2UcnvI
-         x+mdsi+LOO0BUi56AdajYXEQon+P4akFuSXCMWSKxfmdEuz8qekUBe/rzgV6Xg1c6dc4
-         bO4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739564685; x=1740169485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3p4NWmc8ditZ/XLLp37+2EiA/PYp9yKBL0C/xM4/3Fg=;
-        b=dTtCuDPsmGoHv0IYbwAreh6sbicdE1+LjctGtFNp/xVmWgPnhauIfbLcKOl+UI5imu
-         Yzsu4doDGP2r6Nn4EcUY325sUpBMY0mHzbLl5cFppr9Xes5PUs4BpLD/oSPnPsEn/cWm
-         T+CiSyAcxQfpvgeYpzLSr9/s6I5mRjgrmnFEV6uxjf3Fxb4d8I7PMfJA4qUKA5u1kcPX
-         c3EsrvPDcQTEdpG/jeRuCqAsvxl+ibR7Jr87WPc45ODUeC2CPKuTNfqjcrZvH9BOIa+q
-         gkjW9UyBRJ3d/8ANEJt40T8CFEjDTkm7Tcym6ZV8wIv8PJPigtcbxgkkojx0VJQMiN6n
-         Gxhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrO56pz8qj6ku5eJPvMaVOsQR7gSe64uGjVsOXAXQCT5nyzX1Z5yMoYiwYAuwUFSUw0/QsxUL829c=@vger.kernel.org, AJvYcCX/e2bHVkqQzWWOT1rhaOelXI7wCgz31iHIyyFRmGEjiRRK+4C6l7D+x2qAJncTtO3GR/c4RTcPLgusREQIrjc=@vger.kernel.org, AJvYcCXXbGj2M9zaD1bSaDU+GtggbwBlkSfjFzdUYXOgX5KBAKgUNDh9Rocu8U/CNtTRthNIpGopUY7F8FK7Dio=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0zGZtoov6ij0dTz+2Yhq0s9FaO7l43e8ldq4JAWyD3kXolZlL
-	oze5PanFrOVSrRzb/lt0v9pYMDpWCJyjopNt1Gg9+QYHmXmlmi6X39mLeBeYhl/ufMCGphgZDye
-	2lDnRGF08Gxa/FVYdSSOmKpgT228=
-X-Gm-Gg: ASbGncvpKdLmO2cBr7evPR3ir6wcChHlA45kn3SVKtcGv3fFF+3QXz9wrHb/KjtPrC7
-	IUkB4dZ5A0SSYuhPcnfvyz53Tehr8sTMOLGjW9hrPepaH3305aLdZfadYnHz3AH5yDJJ8163h
-X-Google-Smtp-Source: AGHT+IF24MagOcPGW+aiXWTvUfci3RUEVLMRU+XbtgYBAc9bJXXtAADDZlKmnfOAhWjgutKv8hu1TOI1+305rKUa+Gk=
-X-Received: by 2002:a17:90b:384a:b0:2ee:cbc9:d50b with SMTP id
- 98e67ed59e1d1-2fc4103d1ebmr245319a91.4.1739564684871; Fri, 14 Feb 2025
- 12:24:44 -0800 (PST)
+	s=arc-20240116; t=1739564689; c=relaxed/simple;
+	bh=kDCHjqf+tITo9cR0qNmxoVWjoLGUdueCDAuclCPtD0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujwWPVSYXKQGvzvtt4V3MeW7GsOcQcEUCN5HxpQK20AA0agu28dvgT4GqZya2KYdOW90FsTPdBfxoKlh91j2a//sIF5NavN9jMQrgq5zkzuGl5z384YImQAtDBPLZif8E0+G81DIweWmdBO7v98u9u4RdsqKCmmsx9Os0QgT4mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kDA28hb0; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k5mlGd161Fb2mbXOpGK8vr/0cBDbeNy3jyIyWjvgX10=; b=kDA28hb0oVD0ZQHivzbsb8Dg1G
+	OV99FtgkkVHixzD6XhpCjgG/6Glyv+w3eJBJLcUeeekF9g6+zlOV/paVomtE3eji/g1kMhNFLXdOw
+	JtoK+hOt3e3rn+n89aViKmX6SyBQeJcyHYzu9pDXwZh1pZ8th4bUwT/4Wp5iNGUr57HA8/d6IuZry
+	q7f659es1crXk4g+hTUmUWb4SMxFwd2mKPOe0kd1q2OmbtpzAes0Wlk3ct++5rrjq7QLx4ZM3YRFC
+	x3PurT6+O8O1mIPGIW6Zp7MDzqczpG2Ymb4ITNQamJsX9eCus9oQMgbJ7ihgJ1dqgJVgo7UAtKvyq
+	VsICRgDQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tj2Eq-00000001KoV-1lXa;
+	Fri, 14 Feb 2025 20:24:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C03713002F0; Fri, 14 Feb 2025 21:24:38 +0100 (CET)
+Date: Fri, 14 Feb 2025 21:24:38 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH v2 24/24] perf: Make perf_pmu_unregister() useable
+Message-ID: <20250214202438.GB2198@noisy.programming.kicks-ass.net>
+References: <20250205102120.531585416@infradead.org>
+ <20250205102450.888979808@infradead.org>
+ <1f4e4bb1-ba5e-4e5f-b6e3-e7603e3d6b0e@amd.com>
+ <20250212124945.GH19118@noisy.programming.kicks-ass.net>
+ <57fa247d-9c85-4f20-9723-d568272651f9@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738832118.git.viresh.kumar@linaro.org> <db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
- <Z6qTelPSqpFk439l@thinkpad> <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
- <Z6t51xodSV21ER4M@thinkpad> <CANiq72=3MR9F9ur-aQYP4P81RBreAr=UiGg5iaSuFjjd5Q4Y7Q@mail.gmail.com>
- <Z66oWuLwY4X9Ou9D@thinkpad> <CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
- <20250214191103.GH3886819@nvidia.com>
-In-Reply-To: <20250214191103.GH3886819@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 14 Feb 2025 21:24:31 +0100
-X-Gm-Features: AWEUYZlQfDk3KdlkX87QSgmQBgzvj_9kUJuWl1DKFReZ4mhVoDc0DlTBJSkE9N8
-Message-ID: <CANiq72=tDhUEjdBmVTPv4cFeD8iiKwJAQD3Cb1=Y4KnE-vh2OQ@mail.gmail.com>
-Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, 
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, 
-	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	linux-kernel@vger.kernel.org, Uros Bizjak <ubizjak@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57fa247d-9c85-4f20-9723-d568272651f9@amd.com>
 
-On Fri, Feb 14, 2025 at 8:11=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> Sure, but it was said, by many people, many times, that "Rust is
-> allowed to break".
+On Thu, Feb 13, 2025 at 01:22:55PM +0530, Ravi Bangoria wrote:
+> Apparently not, it ends up with:
+> 
+>   ------------[ cut here ]------------
+>   WARNING: CPU: 145 PID: 5459 at kernel/events/core.c:281 event_function+0xd2/0xf0
+>   WARNING: CPU: 145 PID: 5459 at kernel/events/core.c:286 event_function+0xd6/0xf0
 
-A lot of people have said many things (especially in online fora), and
-many of those things are contradictory, but that does not really mean
-anything.
+>    remote_function+0x4f/0x70
+>    generic_exec_single+0x7f/0x160
+>    smp_call_function_single+0x110/0x160
+>    event_function_call+0x98/0x1d0
+>    _perf_event_disable+0x41/0x70
+>    perf_event_for_each_child+0x40/0x90
+>    _perf_ioctl+0xac/0xb00
+>    perf_ioctl+0x45/0x80
 
-> This is not just my incorrect impression. For instance read Philipp's
-> note to Christoph:
->
-> https://lore.kernel.org/all/293df3d54bad446e8fd527f204c6dc301354e340.came=
-l@mailbox.org/
+Took me a long while trying to blame this on the 'event->parent =
+NULL;', but AFAICT this is a new, unrelated issue.
 
-Philipp probably sent that message with his best intentions, but he is
-not part of the Rust subsystem nor speaks on our behalf.
+What I think happens is this perf_ioctl(DISABLE) vs pmu_detach_events()
+race, where the crux is that perf_ioctl() path does not take
+event2->mutex which allows the following interleave:
 
-He may have been speaking for other groups, or maybe just his own
-opinion -- I do not know.
 
-Moreover, sometimes suggestions like his may be referring to
-particular subsystems (like the one that was discussed in that
-thread), e.g. like block decided to take an approach where Rust is
-allowed to break, rather than speaking globally.
+	   event1  <---> ctx1
+	    |  ^
+ child_list |  | parent
+	    v  |
+	   event2  <---> ctx2
 
-Finally, ambiguous terms are used in many cases to refer to different
-parties: "Rust community", "Rust people", "Rust team", "Rust
-maintainers"... I have started to ask people to avoid doing that (at
-least in the LKML), please, and be concrete if possible.
 
-> And Greg's version:
->
-> https://lore.kernel.org/all/2025013030-gummy-cosmic-7927@gregkh/
+perf_ioctl()
+  perf_event_ctx_lock(event1)
+    get_ctx(ctx1)
+    mutex_lock(ctx1->mutex)
+  _perf_ioctk()
+    perf_event_for_each_child()
+     mutex_lock(event1->child_mutex)
+     _perf_event_disable(event1)
+     _perf_event_disable(event2)
+       raw_spin_lock_irq(ctx2->lock)
+       raw_spin_unlock_irq()
+       event_function_call(event2, __perf_event_disable)
+         task_function_call()
+           <IPI __perf_event_disable>
 
-I cannot speak for Greg, sorry.
 
-I can read his message in the following ways:
+pmu_detach_events()
+  event2 = pmu_get_event() <-- inc(event2->refcount);
+  pmu_detach_event(event2)
+    perf_event_ctx_lock(event2)
+      get_ctx(ctx2)
+      mutex_lock(ctx2->lock)
+    __pmu_detach_event()
+      perf_event_exit_event()
+        mutex_lock(event1->child_mutex)
+        perf_remove_from_context(event2, EXIT|GROUP|CHILD|REVOKE)
+          lockdep_assert_held(ctx2->mutex)
+          raw_spin_lock_irq(ctx2->lock)
+          raw_spin_unlock_irq(ctx2->lock)
+          event_function_call(event2, __perf_remove_from_context)
+            task_function_call(event_function)
+	      <IPI __perf_remove_from_context>
+                remote_function()
+                  event_function()
+                    perf_ctx_lock(cpuctx, ctx2)
+                      raw_spin_lock(ctx2->lock)
+                    __perf_remove_from_context(event2)
+                    event_sched_out()
+                    perf_group_detach()
+                    perf_child_detach()
+                    list_del_event()
+                    event->state = REVOKED;
+                    cpc->task_epc = NULL; // event2 is last
+                    ctx->is_active = 0;         <--.
+                    cpuctx->task_ctx = NULL;       |
+                                                   |
+                                                   |
+           <IPI __perf_event_disable>              |
+             remote_function()                     |
+               event_function()                    |
+                 perf_ctx_lock(cpuctx, ctx2)       |
+                   raw_spin_lock(ctx2->lock)       |
+                                                   |
+                 WARN_ON_ONCE(!ctx2->is_active)   -'
+                 WARN_ON_ONCE(cpuctx->task_ctx != ctx2)
 
-  - I can read it as a general ability of subsystems to potentially
-agree to treat Rust code as something like staging, like block's plan.
 
-  - I can read it within the context of those patches, where, as far
-as I know, Danilo et al. stepped up to maintain it, like Andreas did
-for block.
-
-  - I can read it as the fact that the Rust subsystem will help,
-best-effort, to bootstrap Rust and help with integration where
-possible.
-
-We need maintainers' help and expertise from other subsystems to
-succeed. And we do not want to force other subsystems into dealing
-with Rust. That is why the deal was that we would contact and wait for
-other subsystems to handle Rust and so on. It is also why I asked, in
-the very meeting where it was decided to merge Rust, that in exchange,
-we would eventually need some flexibility by maintainers that may not
-want Rust in their subsystem but that nevertheless may be the owners
-of core APIs that other users of Rust in the kernel need. I did so
-because I knew the day would come we would be in the situation we are
-in that email thread.
-
-> I've heard the same statements at conferences and in other coverages
-> like LWN. Frankly, I never much believed in this story as workable,
-> but it was advanced by many people to smooth the adoption of Rust
-> bindings.
-
-Again, people may make statements, but they may be local to their
-subsystem, or just their opinion, or it may be a misunderstanding, and
-so on and so forth.
-
-It is very hard to keep hundreds of maintainers on the same page.
-
-> I do not agree with "Didn't you promise Rust wouldn't be extra work
-> for maintainers?" in your document. Clearly there is a widespread
-> belief this kind of promise was made, even if it was never made by
-> you. "Rust is allowed to break" is understood to be the same as saying
-> it won't cause extra work.
-
-Sorry, but I have to strongly push back against this paragraph.
-
-Are you really saying that, because people out there may think
-something, we cannot claim anymore that we did not promise something?
-
-Furthermore, I don't agree with your assessment in your last sentence
-at all. Even if it was decided to allow Rust to break globally and at
-all times, it does not mean Rust is not extra work. It is, because
-collaboration would be still needed with different subsystems and so
-on. The plan has always been to not have Rust be something hidden in a
-corner. For instance, see from 2020:
-
-    https://lore.kernel.org/all/CAHk-=3DwipXqemHbVnK1kQsFzGOOZ8FUXn3PKrZb5W=
-C=3DKkgAjRRw@mail.gmail.com/
-
-> However, I am glad we are seeing a more realistic understanding of
-> what Rust requires of the community over the long term.
-
-That is good, but to be clear, from my point of view, the approach
-mentioned in the document I wrote is what we have always said.
-
-Cheers,
-Miguel
+Still trying to work out how best to avoid this.
 
