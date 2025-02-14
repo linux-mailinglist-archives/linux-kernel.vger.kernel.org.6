@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-514500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E91EA357C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75B9A357CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E333AC2F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89083AC117
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1420B813;
-	Fri, 14 Feb 2025 07:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942AF185B48;
+	Fri, 14 Feb 2025 07:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl07UI8r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXvphQHo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA19185B48;
-	Fri, 14 Feb 2025 07:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9D120C039
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739517662; cv=none; b=uYeSZNIepnFuyvqH7Wq5+gqxRKmK8PS8U9nu0zeIapsiFcVeTThq7n3nKL6kh4GQ/c6vYGd5KNmOywzjC+zBo4lwR+LTgnDKBD1nvG5+O4JFN7fFPaMYeze4SHrhBkZM20VcwBOe6PsrwPzKnon93z88BDPO85CHExK/AWMX/vE=
+	t=1739517679; cv=none; b=IDDlPGfy/QqZ01JEvPgnBdl9V0QzOvj+OeKIbsyVuc4tnsJfzbTQdnKNInegeXdD92U/tMSWXuZNgCcwyYOYWwTVJYX0B0Mwa8QMmY0H1LIecabk/d6QfAstgc2s57+4ffa6w9if8QOc0tHL1JarNotRmD+sVSDrJqVr5sC27vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739517662; c=relaxed/simple;
-	bh=WhwhWFassfKgQBbi2dG7qdh9/+mxzvg++tUUcPh4d3Q=;
+	s=arc-20240116; t=1739517679; c=relaxed/simple;
+	bh=d6YvzmhZdp1UQthxLehfAcJuwXIc0kTIS+/CMh1p+gk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N76D4r4oi2nIlzMd2XpVzkb0VpiPk46xoP0unw1z2ndO7zknyX0e6jfJqL+PvpiBlYRGHjhvSwNLg8As4Q0xCJUNe+/nXs3fcvkDinRotrvb/qUNfx9YAmwaaCkIXWEVDgpF/tljIdGimYfZBhz+DS7bbhXlOmvVTYiuxBMCQ5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl07UI8r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E5CC4CEE8;
-	Fri, 14 Feb 2025 07:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739517662;
-	bh=WhwhWFassfKgQBbi2dG7qdh9/+mxzvg++tUUcPh4d3Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yl07UI8rhKSCGMyWR7Ep/ndO0yXTn9JuuXrkR4RkyJD0EYwyf/oBkSxFHtL38oRHk
-	 9CvJ5WJoC1wsr4vZiWjhohCQmJ2qS8gVeac/hmLjhbdHBGPGpmLUwVNrZVG9gXEiQS
-	 uLlwHtzlGMIMNVA8ApbrIxbebawMEc/DmmyBfGXADVrvYQ0beKiTtXlCK7scE857Lb
-	 WkO/2CcDUJ2xwoP2VR269Zr/3CU3xtsXreNNMYmsLAtSoGhhi2n1h2qTL6DLI+EXQ8
-	 8L7N/uM/6NlNecqJuJ2uY6rgOBP1BEIHItrMDGshXmYbUqnOeBidl29loqTleyPw3W
-	 7OBxcjmTvJ/lg==
-Message-ID: <b09aeab3-5dc0-4f0f-bf52-d61865c2bbda@kernel.org>
-Date: Fri, 14 Feb 2025 08:20:55 +0100
+	 In-Reply-To:Content-Type; b=DNH0P4oREVdd6xJ6d3nF5bqyYd7Fd0DYp5Lnwl0c9cl7WZzwWO674MS1HJ7ikx8EgSfRCTW9wZj0i0+/5jB2+CF8MlDwDP3upkKnD3hejc8GB4tqRFNj5VJoK3pgtLXhnXyb+JrpR6KL7ckJtLLH/+D6KCY3FbFqoibC8bTk+L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXvphQHo; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739517678; x=1771053678;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=d6YvzmhZdp1UQthxLehfAcJuwXIc0kTIS+/CMh1p+gk=;
+  b=UXvphQHoNbXyYylhFgS+lDpHNdtpHP6jV0SMCqkzaleBn+x2dlgEAlVf
+   uoLP152+Mv+sgHSW3Fkfe9k69IzO7suIiTXcBybXRQkdeyOVipnVpMniJ
+   hM+QAGdk7VXa5Pr8iCNVdIcsiYvZcgYWwx36mOtKcXctOyhyKTO/5q0f2
+   /evEQSsZDT+Gklzy1uaFA6791jhoFdvEh4vBWLmWEplOcWVC14FjovAWQ
+   r2sApi0ORPX/4xBr6w6Pi69zmdxjEQAmjTnyg6cItXP6hGILbIifDxmfP
+   QAfCx7nPLlu8VsrdebQMlFjZGnLLNBlhVOMc97i5CsSt0/4mv+OGMN+TI
+   A==;
+X-CSE-ConnectionGUID: XImNFy08R7yfcugOvmJeAQ==
+X-CSE-MsgGUID: EFgpYhp1SlCbRX4V7JP1WQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="40291857"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="40291857"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 23:21:17 -0800
+X-CSE-ConnectionGUID: KcWW0NhNREyHk/GliVO58A==
+X-CSE-MsgGUID: URM/KXm9TXCrxuvwjCKWrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="113575960"
+Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.240.136]) ([10.124.240.136])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 23:21:15 -0800
+Message-ID: <90a09ffa-e316-41f0-916b-25635b1d4bc6@linux.intel.com>
+Date: Fri, 14 Feb 2025 15:21:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +66,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/15] dt-bindings: mfd: syscon: add
- microchip,sama7d65-sfrbu
-To: Conor Dooley <conor@kernel.org>
-Cc: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, claudiu.beznea@tuxon.dev,
- sre@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- p.zabel@pengutronix.de, linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <cover.1739221064.git.Ryan.Wanner@microchip.com>
- <4cac19e32295c708d72b9fc6ba342b5c961fb6c3.1739221064.git.Ryan.Wanner@microchip.com>
- <20250211-therapeutic-futuristic-parakeet-204cae@krzk-bin>
- <20250213-shrouded-carnage-65e11cff5bb4@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
+To: Eric Auger <eauger@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Zhenzhong Duan <zhenzhong.duan@intel.com>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+ <cc7312ca-2745-48a5-a5ac-9ee1d1c4bee0@redhat.com>
+ <20250203094700-mutt-send-email-mst@kernel.org>
+ <7cee3c9e-515e-41de-a15c-04c7591e83eb@redhat.com>
+ <6bce0f4c-636f-456b-ab21-4a25d3dc8803@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250213-shrouded-carnage-65e11cff5bb4@spud>
-Content-Type: text/plain; charset=UTF-8
+From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+In-Reply-To: <6bce0f4c-636f-456b-ab21-4a25d3dc8803@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/02/2025 21:30, Conor Dooley wrote:
->>> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
->>> index 51d896c88dafa..727292ffe092e 100644
->>> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
->>> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
->>> @@ -91,6 +91,7 @@ select:
->>>            - microchip,mpfs-sysreg-scb
->>>            - microchip,sam9x60-sfr
->>>            - microchip,sama7d65-ddr3phy
->>> +          - microchip,sama7d65-sfrbu
->>
->> You got comment on #1 of your v1, so if you make exactly the same
->> mistake in other patches then fix it there as well.
->>
->> Apply v1 Rob's comments to all your patches.
+
+
+On 2025/2/6 16:59, Eric Auger wrote:
+> Hi,
 > 
-> Actually, this patch v1 did put it in both lists, but here it got
-> dropped from the second list:
-> https://lore.kernel.org/all/20250130233431.GB1868322-robh@kernel.org/
+> On 2/4/25 12:46 PM, Eric Auger wrote:
+>> Hi,
+>>
+>> On 2/3/25 3:48 PM, Michael S. Tsirkin wrote:
+>>> On Fri, Jan 31, 2025 at 10:53:15AM +0100, Eric Auger wrote:
+>>>> Hi Kirill, Michael
+>>>>
+>>>> On 8/8/24 9:51 AM, Kirill A. Shutemov wrote:
+>>>>> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
+>>>>> accesses during the hang.
+>>>>>
+>>>>> 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
+>>>>> 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
+>>>>> 	...
+>>>>>
+>>>>> It was traced down to virtio-console. Kexec works fine if virtio-console
+>>>>> is not in use.
+>>>>>
+>>>>> Looks like virtio-console continues to write to the MMIO even after
+>>>>> underlying virtio-pci device is removed.
+>>>>>
+>>>>> The problem can be mitigated by removing all virtio devices on virtio
+>>>>> bus shutdown.
+>>>>>
+>>>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>>>> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
+>>>>
+>>>> Gentle ping on that patch that seems to have fallen though the cracks.
+>>>>
+>>>> I think this fix is really needed. I have another test case with a
+>>>> rebooting guest exposed with virtio-net (backed by vhost-net) and
+>>>> viommu. Since there is currently no shutdown for the virtio-net, on
+>>>> reboot, the IOMMU is disabled through the native_machine_shutdown()/
+>>>> x86_platform.iommu_shutdown() while the virtio-net is still alive.
+>>>>
+>>>> Normally device_shutdown() should call virtio-net shutdown before the
+>>>> IOMMU tear down and we wouldn't see any spurious transactions after
+>>>> iommu shutdown.
+>>>>
+>>>> With that fix, the above test case is fixed and I do not see spurious
+>>>> vhost IOTLB miss spurious requests.
+>>>>
+>>>> For more details, see qemu thread ([PATCH] hw/virtio/vhost: Disable
+>>>> IOTLB callbacks when IOMMU gets disabled,
+>>>> https://lore.kernel.org/all/20250120173339.865681-1-eric.auger@redhat.com/)
+>>>>
+>>>>
+>>>> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+>>>> Tested-by: Eric Auger <eric.auger@redhat.com>
+>>>>
+>>>> Thanks
+>>>>
+>>>> Eric
+>>>>
+>>>>> ---
+>>>>>   drivers/virtio/virtio.c | 10 ++++++++++
+>>>>>   1 file changed, 10 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+>>>>> index a9b93e99c23a..6c2f908eb22c 100644
+>>>>> --- a/drivers/virtio/virtio.c
+>>>>> +++ b/drivers/virtio/virtio.c
+>>>>> @@ -356,6 +356,15 @@ static void virtio_dev_remove(struct device *_d)
+>>>>>   	of_node_put(dev->dev.of_node);
+>>>>>   }
+>>>>>   
+>>>>> +static void virtio_dev_shutdown(struct device *_d)
+>>>>> +{
+>>>>> +	struct virtio_device *dev = dev_to_virtio(_d);
+>>>>> +	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+>>>>> +
+>>>>> +	if (drv && drv->remove)
+>>>>> +		drv->remove(dev);
+>>>
+>>>
+>>> I am concerned that full remove is a heavyweight operation.
+>>> Do not want to slow down reboots even more.
+>>> How about just doing a reset, instead?
+>>
+>> I tested with
+>>
+>> static void virtio_dev_shutdown(struct device *_d)
+>> {
+>>          struct virtio_device *dev = dev_to_virtio(_d);
+>>
+>>          virtio_reset_device(dev);
+>> }
+>>
+>>
+>> and it fixes my issue.
+>>
+>> Kirill, would that fix you issue too?
+
+Hi,
+
+sorry for my late response, I synced with Kirill offline and did a retest.
+
+The issue is still reproduced on my side, kexec will be stuck in case of 
+"console=hvc0" append in kernel cmdline and even with such patch applied.
+
+my kernel code base is 6.14.0-rc2.
+
+let me know if any more experiments needed.
+
+---
+  drivers/virtio/virtio.c | 8 ++++++++
+  1 file changed, 8 insertions(+)
+
+diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+index ba37665188b5..f9f885d04763 100644
+--- a/drivers/virtio/virtio.c
++++ b/drivers/virtio/virtio.c
+@@ -395,6 +395,13 @@ static const struct cpumask 
+*virtio_irq_get_affinity(struct device *_d,
+         return dev->config->get_vq_affinity(dev, irq_vec);
+  }
+
++static void virtio_dev_shutdown(struct device *_d)
++{
++        struct virtio_device *dev = dev_to_virtio(_d);
++
++        virtio_reset_device(dev);
++}
++
+  static const struct bus_type virtio_bus = {
+         .name  = "virtio",
+         .match = virtio_dev_match,
+@@ -403,6 +410,7 @@ static const struct bus_type virtio_bus = {
+         .probe = virtio_dev_probe,
+         .remove = virtio_dev_remove,
+         .irq_get_affinity = virtio_irq_get_affinity,
++       .shutdown = virtio_dev_shutdown,
+  };
+
+  int __register_virtio_driver(struct virtio_driver *driver, struct 
+module *owner)
+--
+2.43.0
 
 
-That's even weirder...
+> gentle ping.
+> 
+> this also fixes another issue with qemu vSMMU + virtio-scsi-pci. With
+> the above addition I get rid of spurious warning in qemu on guest reboot.
+> 
+> qemu-system-aarch64: virtio: zero sized buffers are not allowed
+> qemu-system-aarch64: vhost vring error in virtqueue 0: Invalid argument (22)
+> 
+> Would you mind if I respin?
+> 
+> Thanks
+> 
+> Eric
+> 
+> 
+> 
+> 
+>>
+>> Thanks
+>>
+>> Eric
+>>>
+>>>>> +}
+>>>>> +
+>>>>>   static const struct bus_type virtio_bus = {
+>>>>>   	.name  = "virtio",
+>>>>>   	.match = virtio_dev_match,
+>>>>> @@ -363,6 +372,7 @@ static const struct bus_type virtio_bus = {
+>>>>>   	.uevent = virtio_uevent,
+>>>>>   	.probe = virtio_dev_probe,
+>>>>>   	.remove = virtio_dev_remove,
+>>>>> +	.shutdown = virtio_dev_shutdown,
+>>>>>   };
+>>>>>   
+>>>>>   int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
+>>>
+>>
+> 
 
-Best regards,
-Krzysztof
 
