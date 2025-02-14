@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-514488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F97A3579D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:07:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BAFA357A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D953AC7A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942953AC855
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FF92054F9;
-	Fri, 14 Feb 2025 07:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DE12054F9;
+	Fri, 14 Feb 2025 07:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="djXu6Uhs"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KPx4HmXx"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77E62045AC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA79156886
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739516869; cv=none; b=dMeKLz2m0whD+FLrWPWf1fSH+zdrwdcWBENEjnufK63PTeHDhRxt7SIjvSx2YNonrHnu+o6VCkt4d5gLKDbTO0074WNc41hcEGc7zskahsU7KDJZoIHbwIZx0hcUqvPXdb7X4jSXXMaOZcuMsLArm87w/G5l8cv2RPrXB/JpJbA=
+	t=1739516914; cv=none; b=BPsfAmS/7rmg9aJrgqrhXxZjfYNhkOKGGN5AYzjDJ6jFEicEK8X7MQ5Uy3gMu3P9R54e8t4E3DIOjnYXt5wvXZaqLnjXZ6i3IcL9DerAVcti2GGj/j/vEroZdSYviTCdwhuj1l1E7OmJHaIZJKy5VB4vmMwKD1HRaVlAUt/1Duo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739516869; c=relaxed/simple;
-	bh=xnv/dhD6Dg3zwN5q/aZMhKSDtKwxQekypPFpXYTWW0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTREAHwB8+tr1bRoI2H6ZnZd1blcssTatuFp6/EPsJnVwoyMUlg1Ax0KMC/mbX90w0xZNOZMC6fq7amP2pN6EBXWU2OjMoSxNpdi+8oF18kYru+VDJQBSVFJja6wSFGdsovaz8fVSgVdNDSTp9f6jqm8ikzvqwNtbpRHu6mXhio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=djXu6Uhs; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aD61O5fbnxUrRrrZkCpAN0fOF6pwVi4QWiJY1iYGdl8=; b=djXu6UhsGPZLhrVX3LfRHLYTDt
-	wNv0o7wohnuW1JWexKbKgYude7Z+c5XNgsAVqv/lVoG3B5JgXuPeRcyRRQUdKBx832iEekVwPLGri
-	3moRYmeJXQ54/iUk/JKyNBi1VT2zYD9s6HkmcBwIGhUb24jmcNVHZ0xN0oqTkpIZVw2AgD+K9V5pz
-	o2rs/ILwC/MkvPpviUDvfjd5/zZ5gqTZtCPrsRpCEHPEdM9TKLHQN+6t6VYa7937scM/46wnkzYhP
-	f1afwlN9/eYuv6AKO/LX+LO8DgNRoUx5+dTLIZAOJ6/w9EO62uw3jhmlQc8bm4PvdtoMZevrnm8z6
-	vSC/NKCQ==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tipnQ-00Fldt-Lx; Fri, 14 Feb 2025 08:07:38 +0100
-Message-ID: <357e2c84-7b60-4ad7-8511-a8415999174d@igalia.com>
-Date: Fri, 14 Feb 2025 16:07:33 +0900
+	s=arc-20240116; t=1739516914; c=relaxed/simple;
+	bh=SE6irlLwT1OixJlBxryN73wyZL7fktzCRQXJOGmVXpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=e9uXQoyuNsCoRO+zFLUWh/TnXbBQKdQHmORDHZWB+cpIDwQZPBZUA2j0BlOf8VsYdb+CkIjHbDkNLku3dCDbpwAzw08OZk8zWMJUk+derWsf2RBgc5puRuoIfIgazlgS8BWZ01bE+qpEezAkza0XEWSV/iFotuE9aIeZ0ufunfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KPx4HmXx; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E18Igx004229;
+	Fri, 14 Feb 2025 07:08:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=sJHMdf
+	V+dI8vIeJadG/y3SRzplajPm7cS6pBEV/nrPs=; b=KPx4HmXxSoWe/8hkvzfKe8
+	UL9mRFToxfrrragXzRHEvuhM6vRvAFDMvE9RlqMikBg7RotboiPLWBuyo5D/MQo0
+	ut3BUe5iaSxkmtOAMpfO/b37EowasLKBQE64ItziQcDd3xSnagUTO5IejllFaZTM
+	mTKUIJGc9+9wGszMEXcphVTCZCGZhQHHfRhoZiM7q8PtAVp/qdQfw2XWHnwKq1TJ
+	mhEEs1iuanzLVKC7gzAc8hqaikJrCT5OJvODMPv1rl+x6fj6c3I/LgnwUx0lpaqu
+	kZtRw/w+gRRFVkCddWFFFUi78aoftcggUlWlWBYwI9HmdTcyAs4zf9R3XaASo6RQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44suwa1a1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 07:08:27 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E4hooT028667;
+	Fri, 14 Feb 2025 07:08:26 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pma22050-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 07:08:26 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E78PHh56689062
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 07:08:25 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 243D320043;
+	Fri, 14 Feb 2025 07:08:25 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 19C8E20040;
+	Fri, 14 Feb 2025 07:08:24 +0000 (GMT)
+Received: from [9.43.1.221] (unknown [9.43.1.221])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 07:08:23 +0000 (GMT)
+Message-ID: <a4bbf5a8-2d16-413e-b69c-5b72388989b2@linux.ibm.com>
+Date: Fri, 14 Feb 2025 12:38:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,57 +76,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: Provides a sysfs 'events' to expose core event
- counters
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, arighi@nvidia.com, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org
-References: <20250210143643.220994-1-changwoo@igalia.com>
- <Z6o3WOGS5Pulha36@slm.duckdns.org>
- <8ce4d887-464c-4d4d-825d-0d01dcafe400@igalia.com>
- <Z64hrU6P67pUA5o9@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z64hrU6P67pUA5o9@slm.duckdns.org>
+Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
+To: Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+ <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
+ <da9b637a-962a-4a9f-a4bf-b79e6119b29c@linux.ibm.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <da9b637a-962a-4a9f-a4bf-b79e6119b29c@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lulF5F6h3KmroQ3QIKUav9ATbumfIkTH
+X-Proofpoint-ORIG-GUID: lulF5F6h3KmroQ3QIKUav9ATbumfIkTH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_02,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502140047
 
-Hello Tejun,
 
 
-Thank you for the review!
-
-On 25. 2. 14. 01:45, Tejun Heo wrote:
-> Hello, sorry about the late reply.
+On 14/02/25 12:15 pm, Sourabh Jain wrote:
+> Hello Hari,
 > 
-> On Tue, Feb 11, 2025 at 09:57:08AM +0900, Changwoo Min wrote:
->>> This probably should belong to the root/ subdir as we'd probably want to
->>> keep the event counter separate per scheduler instance in the
->>> multi-scheduler future.
->>
->> I feel this is a bit contradictory to the need to access the core
->> event counters even after an scx scheduler is unloaded. In the
->> current implementation, root/ subdir appears and disappears when
->> an scx scheduler is loaded and unloaded.
->>
->> We may change the scx_ktype to something similar to
->> scx_global_attr_group in order to keep root/ subdir. We then show
->> an empty file for root/ops when no scx scheduler is loaded while
->> keep the root/events file intact. I am not sure if this is what
->> we want.
->>
->> What do you think?
 > 
-> Hmm... I don't think we can keep the directory for counters of schedulers
-> that have been unloaded. Looks like the right thing to do is giving up on
-> the idea of being able to access the counters after the scheduler is
-> unloaded. The counters are dumped on error exits, so hopefully this isn't
-> too big a loss. What do you think?
+> On 14/02/25 12:02, Hari Bathini wrote:
+>>
+>>
+>> On 13/02/25 8:34 pm, Venkat Rao Bagalkote wrote:
+>>> Greetings!!!
+>>>
+>>>  From kernel next-20250210, I am observing syscall kexec_file_load 
+>>> not available, there by kdump service is failing to start.
+>>>
+>>>
+>>> Logs:
+>>>
+>>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
+>>> Warning: append= option is not passed. Using the first kernel root 
+>>> partition
+>>> Modified cmdline: elfcorehdr=311424K root=UUID=b5b1f89c- 
+>>> d479-48b3-90e2-744a2fd05667
+>>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
+>>> syscall kexec_file_load not available.
+>>> [root@ltc-zzci-1 ~]# kexec -v
+>>> kexec-tools 2.0.27
+>>> [root@ltc-zzci-1 ~]# uname -r
+>>> 6.14.0-rc2-next-20250212
+>>>
+>>
+>> Is the kernel built with CONFIG_KEXEC_FILE ?
+> 
+> I am able to reproduce it with CONFIG_KEXEC_FILE enabled.
+> 
+> Seems like there is something went wrong in next-20250210 and 
+> next-20250212.
+> 
+> kexec -p --initrd=/boot/initramfs-6.14.0-rc2-next-20250210kdump.img / 
+> boot/vmlinuz-6.14.0-rc2-next-20250210 -d -s
+> 
+> Try gzip decompression.
+> Try LZMA decompression.
+> [ 3375.712319] kexec_file: kernel: 00000000e539303c kernel_size: 0x2cdacf0
+> [ 3375.717022] ima: kexec measurement buffer for the loaded kernel at 0x0.
+> [ 3375.717076] kexec_elf: Loaded the kernel at 0x0
+> [ 3375.717094] kexec_elf: Loaded purgatory at 0x0
+> [ 3375.717104] Loaded the backup region at 0x0
+> [ 3375.717130] crash_core: Crash PT_LOAD ELF header. 
+> phdr=000000004720e656 vaddr=0xc000000000000000, paddr=0x0, sz=0x10000 
+> e_phnum=18 p_offset=0x0
+> [ 3375.717156] crash_core: Crash PT_LOAD ELF header. 
+> phdr=0000000005eb3f14 vaddr=0xc000000000010000, paddr=0x10000, 
+> sz=0xfff0000 e_phnum=19 p_offset=0x10000
+> [ 3375.717174] crash_core: Crash PT_LOAD ELF header. 
+> phdr=000000000ec70071 vaddr=0xc00000001ec20000, paddr=0x1ec20000, 
+> sz=0x13e0000 e_phnum=20 p_offset=0x1ec20000
+> [ 3375.717192] crash_core: Crash PT_LOAD ELF header. 
+> phdr=00000000b66c9c25 vaddr=0xc000000050000000, paddr=0x50000000, 
+> sz=0x3b0000000 e_phnum=21 p_offset=0x50000000
+> [ 3375.717215] Loaded elf core header at 0x0, bufsz=0x1000 memsz=0x80000
+> [ 3375.717229] kexec_elf: Loaded initrd at 0x0
+> [ 3375.718043] Memory node path: /memory@0
+> [ 3375.722854] kexec_elf: Loaded device tree at 0x0
+> syscall kexec_file_load not available.
+> 
+> Kernel is reporting that all kexec segments are getting loaded at 0x0.
+> 
+> Running kexec with strace shows that kexec_file_load system return -1 
+> EINVAL.
+> 
+> kexec_file_load(3, 4, 1, "\0", KEXEC_FILE_ON_CRASH) = -1 EINVAL (Invalid 
+> argument)
+> 
+> Based on the logs printed on the console and kexec_file_load return 
+> value. I am suspecting
+> kexec_file_load returned early form sanity_check_segment_list() because 
+> the segment is 0x0.
+> 
+> I am investigating further to find how segment.mem for all segment is 0x0.
+> 
 
-Yes, dumping the event counters is a part of scx_dump_state().
-I agree. That's a reasonable choice. I will move 'events' under
-the root/ subdir and send out a new version.
+Interesting. Thanks for the update, Sourabh.
+I believe the error "syscall kexec_file_load not available." is
+inappropriate and misleading. That should be fixed too.
 
-Regards,
-Changwoo Min
+- Hari
+
 
