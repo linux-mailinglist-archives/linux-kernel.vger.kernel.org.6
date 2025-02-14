@@ -1,174 +1,227 @@
-Return-Path: <linux-kernel+bounces-515266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B924A362A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:04:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751C3A362B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B63FA7A477A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABF53AE498
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3526826739E;
-	Fri, 14 Feb 2025 16:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A44526738D;
+	Fri, 14 Feb 2025 16:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnxfsNb3"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R5F0m4TH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B8B156C40;
-	Fri, 14 Feb 2025 16:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E970831
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549071; cv=none; b=pz8r0Cmpvh5GfC83OaEMWFAGGIoaUhUjy1x4YKeSs5E5pxlmmabH5Z8iKdBdnAa0akao0BYOitlN/IoCpgrVEWvcLaL0vpfeHug4ZiK6XxwlRHRFiEsePnLa+KRmHDrT1ENdXeSVs3nIw1xPzacMTlu7MnU0OgZeVUe3OefCCR4=
+	t=1739549103; cv=none; b=Eo0LLzzW/fbhqWV9fQWdV3j6liBoaSQxz/KHA1reCYKYhlPvRpQ6PD5Fw23X0xfoYONHOq+CcKBWe9pcR39hj6tuSvouWoEKYDotWNnAO9mvMhP0MckLW5SlOS5np1zcG0PvX2gQOTC0xhNs5wyzgHUC9VGxIMKog35FQGLK0WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549071; c=relaxed/simple;
-	bh=40k2bFaPMVCxdWgPTG5Q+U8Nu9Zmh+DnNr+UJ2CsL7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kq7EWSlwgXAe9mxZ2UBFLCEA0gtHiZ1l8VNDGGGS28dxm1iBVfVKyYzcJgRIjgB0+osJjJcbeSwKdCeXYhJqVYgpaecFkGul30jHn24B2tYrKIrQBT8M4rRgzg8+tKaTJuMWBLi6QypOr+3FRgosQeS7Yn1pz/QeZWUsmQzbBoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnxfsNb3; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2468673276.1;
-        Fri, 14 Feb 2025 08:04:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739549069; x=1740153869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jg65XI36kch2lKh7M7ZeZJ4/dXm/KQiHYNWC0zJbbwg=;
-        b=KnxfsNb3gLClVUg9bqPT+hLbzwqwHL/zaR2HAZujVJqPpTSGNZRJny21UsbhHtFGEM
-         wpOgrV8qsw3WTvM3yP70aEdpfAOwGS6Tdx3rrhSwrHsAlpJIuBXlhb8mQLH6FOie/DDa
-         zKi6CZtapVDNn38V3hrVlzfbuMunqE8XmTlGjP59AjazU2uK2RLlqFGr6jk1cLeRPtv9
-         Unzbl/NxIaJ8njotjDkCJ6K6WAX6vEP+Ed0a4oAFaXmKdne+ylIkLeAwjSVUbtxXVMx6
-         2HBOEDwihTsu5myM70AlzPXOZWtlT7Sqrpei/xXRfftizkhENygCKrbvHQrl7MUWiV9K
-         BFEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739549069; x=1740153869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jg65XI36kch2lKh7M7ZeZJ4/dXm/KQiHYNWC0zJbbwg=;
-        b=wZ1axPYshR3ZPxVdfI6S0s3ttjLrlGDiHaR4Z9xiayJmhIwSe/HUOBvNYYFgXZx3AC
-         Tkb0t3r2AGHtKJ1YM9csDVUq+8uFiDYDQuGRXWr64ONLPUoFh35H2uV8/iHtTNUmSotd
-         tWxFNpiCe0hDt1oZVwzE2DlsgAP06zELK7YL6qxk8/RLW0qbpmYSy0mv1YFguXN1kTMz
-         7cjf66VYqyukiTzvzyEcGFrnx9R1D3L9pkhnnhVktMj59eWDbykeVGWFv+FZZRHC4zyX
-         +YjbaS3y2l9OIkeaeXytXnuU7QckIFTQT1oUYTpP/ctTa6hExYZoT6iXUnuTBmOQuPaD
-         0y1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUKL3HuJxXOWtYXYIotXKwccvIVTNOaU3f2Ex5SqGHefnxY1Jum3+XoOUDFpmNEIEqdw7k=@vger.kernel.org, AJvYcCUljlmIhsySALP/O1IYKFDIcIlyTRGPAiyeSoi16cQXdIS0xgYpHPDJwv9v+UZIXuY7vYc3hB350M8xxgQc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOLQt6xBE9JscrzsJbURBPpMSJ8zz1D5oCUZS6+vj+bIPbtxE9
-	jmUllbhINCRu6MTurTMrJZz6XMz9pkUx204yRdp2wxemM2B+aojg
-X-Gm-Gg: ASbGncvHAd6+y9Z0uou88zt+ukUHp4nfzsgXun+UWAxlVgqm8x/NcxBFl2x0MMFoEUq
-	OvPq69XzJXXYekHgZjUm7Dgx/mlZtIabISAuWzQ0LOpQfExn0j5HpInx95F4JG40QChUJSKvz2l
-	mwQgur6sQPlTatQX3AOfHwNvC4xyxh1ZnT+6Hyp+K04ap+M/1CFya2G7ZmdXiT3H4ZBf6lO8E74
-	Ls1en3lXr0ZmZdGhU4qP/VIYtQCwwYQIgUrfQoQcwMd1X76Ih6J4pLORC/sCZfhlBQWYkRjPCFx
-	AvL0fG1T1EyMjcrDdBACRpewLzcVyn6u0XySnQwmpzmU77QtTAA=
-X-Google-Smtp-Source: AGHT+IEWTnBUObZ6GvHUjh4EkZcsg8NKWXrSgXJJN83DtepcFqo4+s4XqmFyx30JrAF6ZlzyLuDa7A==
-X-Received: by 2002:a05:6902:2304:b0:e57:d3c8:554b with SMTP id 3f1490d57ef6-e5da815c9a7mr7031668276.22.1739549068704;
-        Fri, 14 Feb 2025 08:04:28 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dade8c815sm1084946276.10.2025.02.14.08.04.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:04:28 -0800 (PST)
-Date: Fri, 14 Feb 2025 11:04:27 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] mm/numa: Introduce nearest_node_nodemask()
-Message-ID: <Z69pi2KDLB5eZ29A@thinkpad>
-References: <20250212165006.490130-1-arighi@nvidia.com>
- <20250212165006.490130-3-arighi@nvidia.com>
- <Z64WTLPaSxixbE2q@thinkpad>
- <Z64brsSMAR7cLPUU@gpd3>
- <Z64oDlh9vzvRYziL@thinkpad>
- <Z68E_ar8l7vNOxgh@gpd3>
+	s=arc-20240116; t=1739549103; c=relaxed/simple;
+	bh=tPGnKsTSsJ9kM1YYt80WEh9vN2E3msPM20nio3hN6pg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r+zsEFRzR62o8AJ495ivQI2EE8WaMpbJm3ZWEWoVYnke1P3kVUKxwT/fSrD9h9uwNwSmr6BUnJ791FmgyDGv6yyTuutSdY2fvyUA3AloYxOg5mJBQR9jFm5uTXpw6ZefAZiZ0/nYyF0l54wWtYmD8o4qJROlkYOfuf7y/x3GrPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R5F0m4TH; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739549102; x=1771085102;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=tPGnKsTSsJ9kM1YYt80WEh9vN2E3msPM20nio3hN6pg=;
+  b=R5F0m4TH1rWGxw2riVqBU5Ig4izd6n3yX1+MAI6s/0WckhfLeIqyuBXR
+   N2utMQ8OGATAd0MM/y6m6oeENT5eHFRO5n92963K6b8G+91Kv0IQdgPHm
+   moTVnLXuhSDqpA/gooB6mSfXnryQV6GnNfZEYi1nWyFgJzY47DFefkGmi
+   cZ6SoB+Oc9IW4JgaG14g9G4YFVnaQV6tOoejamfJRJYlIY5VvlfvpBznQ
+   GDr9fkJUEDxHjMXc6ubAX46CRAUPzq+zg/U2ITvGoNntmaZHVb4U/3TlE
+   gJFLXJ7ETyoERyGcWwpVgw8CAQbTAqmMO9a5f1LpCBU2xisie+xwclIpH
+   A==;
+X-CSE-ConnectionGUID: lJNTzQUJQcCsSnrT2k2w1A==
+X-CSE-MsgGUID: d5+UmnR5THG4alZtDqHP0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40337207"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="40337207"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:05:01 -0800
+X-CSE-ConnectionGUID: BgH7hRJcSu6uLekeFBYs8w==
+X-CSE-MsgGUID: TDrZw5o1Q/qmDokW3HNLVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118113217"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.110])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:04:57 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Egor Vorontsov <sdoregor@sdore.me>, linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Egor Vorontsov
+ <sdoregor@sdore.me>, Maximilian =?utf-8?Q?Bo=C3=9Fe?= <max@bosse.io>
+Subject: Re: [PATCH v3 1/2] drm/edid: Implement DisplayID Type IX & X timing
+ blocks parsing
+In-Reply-To: <20250214110643.506740-1-sdoregor@sdore.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250214110643.506740-1-sdoregor@sdore.me>
+Date: Fri, 14 Feb 2025 18:04:50 +0200
+Message-ID: <87y0y8v7fh.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z68E_ar8l7vNOxgh@gpd3>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 09:55:25AM +0100, Andrea Righi wrote:
-> Hi Yury,
-> 
-> On Thu, Feb 13, 2025 at 12:12:46PM -0500, Yury Norov wrote:
-> ...
-> > > > >  include/linux/numa.h |  7 +++++++
-> > > > >  mm/mempolicy.c       | 32 ++++++++++++++++++++++++++++++++
-> > > > >  2 files changed, 39 insertions(+)
-> > > > > 
-> > > > > diff --git a/include/linux/numa.h b/include/linux/numa.h
-> > > > > index 31d8bf8a951a7..e6baaf6051bcf 100644
-> > > > > --- a/include/linux/numa.h
-> > > > > +++ b/include/linux/numa.h
-> > > > > @@ -31,6 +31,8 @@ void __init alloc_offline_node_data(int nid);
-> > > > >  /* Generic implementation available */
-> > > > >  int numa_nearest_node(int node, unsigned int state);
-> > > > >  
-> > > > > +int nearest_node_nodemask(int node, nodemask_t *mask);
-> > > > > +
-> > > > 
-> > > > See how you use it. It looks a bit inconsistent to the other functions:
-> > > > 
-> > > >   #define for_each_node_numadist(node, unvisited)                                \
-> > > >          for (int start = (node),                                                \
-> > > >               node = nearest_node_nodemask((start), &(unvisited));               \
-> > > >               node < MAX_NUMNODES;                                               \
-> > > >               node_clear(node, (unvisited)),                                     \
-> > > >               node = nearest_node_nodemask((start), &(unvisited)))
-> > > >   
-> > > > 
-> > > > I would suggest to make it aligned with the rest of the API:
-> > > > 
-> > > >   #define node_clear(node, dst) __node_clear((node), &(dst))
-> > > >   static __always_inline void __node_clear(int node, volatile nodemask_t *dstp)
-> > > >   {
-> > > >           clear_bit(node, dstp->bits);
-> > > >   }
-> > > 
-> > > Sorry Yury, can you elaborate more on this? What do you mean with
-> > > inconsistent, is it the volatile nodemask_t *?
-> > 
-> > What I mean is:
-> >   #define nearest_node_nodemask(start, srcp)
-> >                 __nearest_node_nodemask((start), &(srcp))
-> >   int __nearest_node_nodemask(int node, nodemask_t *mask);
-> 
-> This all makes sense assuming that nearest_node_nodemask() is placed in
-> include/linux/nodemask.h and is considered as a nodemask API, but I thought
-> we determined to place it in include/linux/numa.h, since it seems more of a
-> NUMA API, similar to numa_nearest_node(), so under this assumption I was
-> planning to follow the same style of numa_nearest_node().
-> 
-> Or do you think it should go in linux/nodemask.h and follow the style of
-> the other nodemask APIs?
+On Fri, 14 Feb 2025, Egor Vorontsov <sdoregor@sdore.me> wrote:
+> Some newer high refresh rate consumer monitors (including those by Samsun=
+g)
+> make use of DisplayID 2.1 timing blocks in their EDID data, notably for
+> their highest refresh rate modes. Such modes won't be available as of now.
+>
+> Implement partial support for such blocks in order to enable native
+> support of HRR modes of most such monitors for users without having to re=
+ly
+> on EDID patching/override (or need thereof).
+>
+> Closes: https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/55
+> Suggested-by: Maximilian Bo=C3=9Fe <max@bosse.io>
+> Signed-off-by: Egor Vorontsov <sdoregor@sdore.me>
 
-Ok, I see. I have no strong opinion. I like to have the API looking
-consistent, but I also like to have all functions of the same family
-together. If we move nearest_node_nodemask to linux/nodemask.h, it
-will help with consistency, but will separate it from the sibling
-numa_nearest_node().
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-So, at your discretion. If you don't want to change anything - I'm OK
-with that.
+> ---
+>  drivers/gpu/drm/drm_displayid_internal.h | 13 +++++
+>  drivers/gpu/drm/drm_edid.c               | 63 ++++++++++++++++++++++++
+>  2 files changed, 76 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/d=
+rm_displayid_internal.h
+> index aee1b86a73c1..84831ecfdb6e 100644
+> --- a/drivers/gpu/drm/drm_displayid_internal.h
+> +++ b/drivers/gpu/drm/drm_displayid_internal.h
+> @@ -66,6 +66,7 @@ struct drm_edid;
+>  #define DATA_BLOCK_2_STEREO_DISPLAY_INTERFACE	0x27
+>  #define DATA_BLOCK_2_TILED_DISPLAY_TOPOLOGY	0x28
+>  #define DATA_BLOCK_2_CONTAINER_ID		0x29
+> +#define DATA_BLOCK_2_TYPE_10_FORMULA_TIMING	0x2a
+>  #define DATA_BLOCK_2_VENDOR_SPECIFIC		0x7e
+>  #define DATA_BLOCK_2_CTA_DISPLAY_ID		0x81
+>=20=20
+> @@ -129,6 +130,18 @@ struct displayid_detailed_timing_block {
+>  	struct displayid_detailed_timings_1 timings[];
+>  };
+>=20=20
+> +struct displayid_formula_timings_9 {
+> +	u8 flags;
+> +	__le16 hactive;
+> +	__le16 vactive;
+> +	u8 vrefresh;
+> +} __packed;
+> +
+> +struct displayid_formula_timing_block {
+> +	struct displayid_block base;
+> +	struct displayid_formula_timings_9 timings[];
+> +} __packed;
+> +
+>  #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
+>  #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
+>=20=20
+> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> index 13bc4c290b17..03edf0e1598e 100644
+> --- a/drivers/gpu/drm/drm_edid.c
+> +++ b/drivers/gpu/drm/drm_edid.c
+> @@ -6833,6 +6833,66 @@ static int add_displayid_detailed_1_modes(struct d=
+rm_connector *connector,
+>  	return num_modes;
+>  }
+>=20=20
+> +static struct drm_display_mode *drm_mode_displayid_formula(struct drm_de=
+vice *dev,
+> +							   const struct displayid_formula_timings_9 *timings,
+> +							   bool type_10)
+> +{
+> +	struct drm_display_mode *mode;
+> +	u16 hactive =3D le16_to_cpu(timings->hactive) + 1;
+> +	u16 vactive =3D le16_to_cpu(timings->vactive) + 1;
+> +	u8 timing_formula =3D timings->flags & 0x7;
+> +
+> +	/* TODO: support RB-v2 & RB-v3 */
+> +	if (timing_formula > 1)
+> +		return NULL;
+> +
+> +	/* TODO: support video-optimized refresh rate */
+> +	if (timings->flags & (1 << 4))
+> +		drm_dbg_kms(dev, "Fractional vrefresh is not implemented, proceeding w=
+ith non-video-optimized refresh rate");
+> +
+> +	mode =3D drm_cvt_mode(dev, hactive, vactive, timings->vrefresh + 1, tim=
+ing_formula =3D=3D 1, false, false);
+> +	if (!mode)
+> +		return NULL;
+> +
+> +	/* TODO: interpret S3D flags */
+> +
+> +	mode->type =3D DRM_MODE_TYPE_DRIVER;
+> +	drm_mode_set_name(mode);
+> +
+> +	return mode;
+> +}
+> +
+> +static int add_displayid_formula_modes(struct drm_connector *connector,
+> +				       const struct displayid_block *block)
+> +{
+> +	const struct displayid_formula_timing_block *formula_block =3D (struct =
+displayid_formula_timing_block *)block;
+> +	int num_timings;
+> +	struct drm_display_mode *newmode;
+> +	int num_modes =3D 0;
+> +	bool type_10 =3D block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
+> +	int timing_size =3D 6 + ((formula_block->base.rev & 0x70) >> 4);
+> +
+> +	/* extended blocks are not supported yet */
+> +	if (timing_size !=3D 6)
+> +		return 0;
+> +
+> +	if (block->num_bytes % timing_size)
+> +		return 0;
+> +
+> +	num_timings =3D block->num_bytes / timing_size;
+> +	for (int i =3D 0; i < num_timings; i++) {
+> +		const struct displayid_formula_timings_9 *timings =3D &formula_block->=
+timings[i];
+> +
+> +		newmode =3D drm_mode_displayid_formula(connector->dev, timings, type_1=
+0);
+> +		if (!newmode)
+> +			continue;
+> +
+> +		drm_mode_probed_add(connector, newmode);
+> +		num_modes++;
+> +	}
+> +	return num_modes;
+> +}
+> +
+>  static int add_displayid_detailed_modes(struct drm_connector *connector,
+>  					const struct drm_edid *drm_edid)
+>  {
+> @@ -6845,6 +6905,9 @@ static int add_displayid_detailed_modes(struct drm_=
+connector *connector,
+>  		if (block->tag =3D=3D DATA_BLOCK_TYPE_1_DETAILED_TIMING ||
+>  		    block->tag =3D=3D DATA_BLOCK_2_TYPE_7_DETAILED_TIMING)
+>  			num_modes +=3D add_displayid_detailed_1_modes(connector, block);
+> +		else if (block->tag =3D=3D DATA_BLOCK_2_TYPE_9_FORMULA_TIMING ||
+> +			 block->tag =3D=3D DATA_BLOCK_2_TYPE_10_FORMULA_TIMING)
+> +			num_modes +=3D add_displayid_formula_modes(connector, block);
+>  	}
+>  	displayid_iter_end(&iter);
 
-This is anyways the very final nits, and I feel like the series now is
-in a good shape, almost ready to be merged.
-
-Thanks,
-Yury
+--=20
+Jani Nikula, Intel
 
