@@ -1,176 +1,137 @@
-Return-Path: <linux-kernel+bounces-514434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BEAA356FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:21:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F902A356FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9C43A129A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3255316E31A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88AE1FFC72;
-	Fri, 14 Feb 2025 06:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBBA1FFC5D;
+	Fri, 14 Feb 2025 06:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1vOSeLL"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CQNrKKdK"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A5019007F;
-	Fri, 14 Feb 2025 06:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F5B19007F;
+	Fri, 14 Feb 2025 06:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739514080; cv=none; b=gFwcFMHdVGMjkky2ZiyZVJb4K5ixvlj6KdJA9iL5MiZ24XA8DnJ+J2l957b4BKphFVXJ/6hslGdT3htAM41m4mh8LJ6M8sI4v0cjHr3/bItOEnjNieQtgnZE5brh2E1xPJFP7aYBeOd+0RqOc0+LHDT1zYKSri7MC+henTyEJ34=
+	t=1739514126; cv=none; b=XSb+J/AMYe3g84O4XiUAQ560iVHVBAwzFXJnR4Cu8G1su6emryQDlOl3KOsfR7D8U0YTLEdP15zIa/9uHVHldG/V0yw64NOD/n6tXTCoox6v9wcC0DTpSkEqdcdSISH73+ju4vkPzu6ouQ2BixeIQFrVFJWEQDhoppyazmCr+ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739514080; c=relaxed/simple;
-	bh=NAU3AVm4eV/usC6vbc9yMMvy4cwmwfP9l346LdyuCYw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jEFVOM+3X+4f5oEqHDoowuO25q8HTsf2+ZFELxTfEZZ36EJBo3NxyMppkH9qMJ5AggoXAYOs6n3lL/ElyvgXxAQrkGUi/36gJEnVfnK5mkl44r939Bcg7+bAf0k98gFt2ArA7s/kqJguxWrsQ27ND5LN1xLlkq92HC+zjN6AYxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1vOSeLL; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso1741339f8f.0;
-        Thu, 13 Feb 2025 22:21:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739514074; x=1740118874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RCsOlKlhoB3KyOaKJojj7jOpAy8XUWuEdDWgdN66pjs=;
-        b=h1vOSeLLzG0Gti10pCMFoXbwdgmvo4kvoheOamW43wpJZYP1A3QjICwjsJMFJXFGHs
-         FaD3qcQzmjNItZN5f7RBLsyzAC/g9G7gKph5BJmu6KruFj5mV7oVDqD0AgLeuHWj9Tqq
-         DzDX4ZbMmya92kioFM8D/CIb5hvYe/TVQs0T4T2LB3T8nlAqJR3kPbATXWRsh1FNlkaG
-         PwjzWONMVCQdGJ8HSWDbktZqsg7te0DpDl+PgxIVvuzucn5gcbuOd4Gn8j76oVmLviHL
-         vs1Kmu2G+1Q5GulzPjPBD9ytonzxNOKo5p4XQcdu9PTq5o5C5ToRYJofpEyT3M5ZULn7
-         1s9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739514074; x=1740118874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RCsOlKlhoB3KyOaKJojj7jOpAy8XUWuEdDWgdN66pjs=;
-        b=r/dEGQ6EVvEkeA5oIB+9nFUuW1l6DITXWURmC7EA4jANsvYRIVcID8YzK/g/Zp9vpT
-         tjK0CpmospconEPuEo6pICvJVQLnx58sycj1Fflh9M++jvfHNmSmCW7JhZWtxvtpRGXL
-         II+Xj7GL1lfBIccGWFLuLZOlcAgYFkMt/tifpEqfeubThTxGuMK42rXSH2Hzkgp9HM1G
-         JSOAqxJVAhedv/+oFSypevXf66yqowq0MEsGV93Qn+xtD+M5JD8DEj7DjKJhHHD7C40W
-         OZ1cvLxmXM3ROxW1aRCEtVZVxzFja7NEjB+XGf4bc61MQI0Rf293QKMyHt0iEi6FXukw
-         OKZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDfGoBouiLM6xDfLht//yQIQkMgcrO8uk6cSghCBPkYXaWB6lfN9Sk+rpbzX5DtmcXNtASN5vfM+pG@vger.kernel.org, AJvYcCVQXuBVoE+xHRvrYMCxKiaBiB/ZRYcU/vJzm9h9zr96mFKTPQ+dYciqJfV7WilFfJbFkwWgZq5tJsibEBM=@vger.kernel.org, AJvYcCVTfC1Zvd25q5Vuz54OP7iseyYZXLzp/1WDxECbfPVrp0oT6kHox45EsscZ+z8bW42yas6k5iIMvJ5RecJ7@vger.kernel.org, AJvYcCWs2uVv3u2g/FPBukZaLFoIK+MX+7mKyhuHyWUSoppNY8DchheHJIUVjQmBIj7QRRcWT3I+uG3rmX8h@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLd+hqMtpj5wkYRVKyL2Le/TSKaHhKr6/Q7xPu7/KCaYgBAEgV
-	TbApTM0YhazM+HV11qnZIr5zzL4rvZHtUOpk9CX7P1gArnbO/cKyss9TjzRZKmxCTGl/2qX0kR9
-	hNn8hhE92t+qCOENG1jlqZ4jqYqQ=
-X-Gm-Gg: ASbGncuXCbHhUT59c7sr+V9imUOCPRVYvRXESRQL3Q26z5Zvrf9UYPRLqbRGjKb+1dH
-	MdRQ9pCnQ3+pvozLw6GCqHhHqQfd5B1pN9S/ZPr+1gH4GlSdnLUIMqnLf5dzASGnokM5pyffa8g
-	==
-X-Google-Smtp-Source: AGHT+IG8BOtiCxNf6QI0vU+mnOel6R4Bjz0DlGpwWvpzOVrQGjoe4i+7P8GUXY5Iqx8vx2Br9ut6AYt4WMmQGGBxKHs=
-X-Received: by 2002:a5d:6da9:0:b0:38d:ae1e:2f3c with SMTP id
- ffacd0b85a97d-38f24f96284mr7091087f8f.25.1739514074226; Thu, 13 Feb 2025
- 22:21:14 -0800 (PST)
+	s=arc-20240116; t=1739514126; c=relaxed/simple;
+	bh=qLpItKHu9j50rCm1popfAhEiMrTrcNNa2zmH5UiH/es=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mF3CxjMh9imF88IOoT8JXfynzCJkZxsfS8Y31matcfgvyKn9dJeqx4PTB6nOmL/MQpVB2erb35Gr+ZPMqp3XZCk8J8nZHI+zS0Fyl+Ims6wTedeDZmjfw1ag4x6YJ05jelWvD/jj0WhmrhdNtR1HC/vI+FMdkVZX1BsFb3uSiCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CQNrKKdK; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6LgKK795495
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 00:21:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739514102;
+	bh=8ohhDmYgT4iRXwmxU5hvtsiljsDCgkDmDEH4pQmV+YA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=CQNrKKdK0J55rF7Yz/91T70Rsnl1AHvipTeT3OaZ4GThpta5XOaGRTP2LFP5KPqHF
+	 /78No/Q1Q3KBj3qcKD7w/5h6c5PPCvJr8gKpKK/dsSCti1kuQsl2MlT+ziT1nxji3X
+	 1wvJMEAIvRhGfrI78g1RS2MGHFRMLlmrM+IUoyOk=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51E6Lg99012724
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Feb 2025 00:21:42 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Feb 2025 00:21:42 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Feb 2025 00:21:42 -0600
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51E6Lf8n123354;
+	Fri, 14 Feb 2025 00:21:42 -0600
+Date: Fri, 14 Feb 2025 11:51:41 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Kendall Willis <k-willis@ti.com>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <msp@baylibre.com>,
+        <khilman@baylibre.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a7-sk: Add alias for RTC
+Message-ID: <20250214062141.gdmkepuuyqb22xuh@lcpd911>
+References: <20250212210604.745175-1-k-willis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-2-clamor95@gmail.com>
- <20250212-unwritten-compile-7011777a11b3@spud> <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
- <20250213-reflex-earlobe-ebbeaece6fad@spud>
-In-Reply-To: <20250213-reflex-earlobe-ebbeaece6fad@spud>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 14 Feb 2025 08:21:03 +0200
-X-Gm-Features: AWEUYZmVS1XUCLAzw9vAyVc_HXeyFlMuZvE7KiYkZpLOEfJLCqTLk6pkIqA4BQ0
-Message-ID: <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a support
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
-	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250212210604.745175-1-k-willis@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-=D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:15 Cono=
-r Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 =
-Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
-> > > > AL3000a is an ambient light sensor quite closely related to
-> > > > exising AL3010 and can re-use exising schema for AL3010.
-> > >
-> > > Quite close you say, but the driver is entirely different it seems. H=
-ow
-> > > closely related is the hardware itself?
-> > >
-> >
-> > Well, I can simply duplicate al3010 or al3320a schema if re-using
-> > schema is not allowed. AL3000a has no available datasheet online.
-> > Downstream code for al3000a and al3010 seems to have same principles,
-> > apart from light measurements.
->
-> It's probably more of a question as to why you're duplicating the driver
-> for them, rather than telling you not to put both bindings together.
-> That said, information on what's actually different is helpful in the
-> binding, to explain why you're not using a fallback compatible etc.
->
+On Feb 12, 2025 at 15:06:04 -0600, Kendall Willis wrote:
+> From: Vibhore Vardhan <vibhore@ti.com>
+> 
+> Adds alias for SoC RTC so that it gets assigned rtc0. PMIC node is
+> assisgned rtc1 so that PMIC RTC gets probed as rtc1. This makes it
 
-Quoting writing-bindings.rst:
-DON'T refer to Linux or "device driver" in bindings. Bindings should
-be based on what the hardware has, not what an OS and driver currently
-support.
+Nit: Fix the spelling of assigned please.
 
-From all available data, hw configuration of al3000a closely matches
-al3010 and seems to be part of same sensor lineup. It is not
-prohibited to add new compatibles to existing schema. Schema does not
-take in account way of processing data generated by sensor and this is
-the main difference between al3000a and al3010
+> consistent for testing rtcwake with other AM62 devices where rtc0
+> is SoC RTC.
+> 
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> [k-willis@ti.com: Reworded commit message]
+> Signed-off-by: Kendall Willis <k-willis@ti.com>
+> ---
+> Tested with rtcwake on AM62A.
 
-> >
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++=
-++--
-> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,=
-al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
-yaml
-> > > > index a3a979553e32..6db4dfd5aa6c 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
-yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.=
-yaml
-> > > > @@ -4,14 +4,16 @@
-> > > >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml=
-#
-> > > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > >
-> > > > -title: Dyna-Image AL3010 sensor
-> > > > +title: Dyna-Image AL3000a/AL3010 sensor
-> > > >
-> > > >  maintainers:
-> > > >    - David Heidelberg <david@ixit.cz>
-> > > >
-> > > >  properties:
-> > > >    compatible:
-> > > > -    const: dynaimage,al3010
-> > > > +    enum:
-> > > > +      - dynaimage,al3010
-> > > > +      - dynaimage,al3000a
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > --
-> > > > 2.43.0
-> > > >
+Any test logs you can provide would be great!
+
+> 
+> Original patch for AM62A existed in the TI Vendor tree with Vibhore's
+> authorship:
+> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=ti-linux-6.6.y&id=f745d9063212d1088dcfb068ecb4b16648b96487
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> index a6f0d87a50d8..51ea961f166e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> @@ -22,6 +22,8 @@ aliases {
+>  		serial3 = &main_uart1;
+>  		mmc0 = &sdhci0;
+>  		mmc1 = &sdhci1;
+> +		rtc0 = &wkup_rtc0;
+> +		rtc1 = &tps659312;
+>  	};
+>  
+>  	chosen {
+> 
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+
+It's nice that you've mentioned this, but it seems to be from Feb2.
+Can you please base it on latest linux-next when you send in future?
+This will avoid any merge conflicts in advance.
+
+For this though, you may get away with it because nobody else may have
+touched this file so far...
+
+If you do send a v2, feel free to pick:
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
