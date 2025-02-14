@@ -1,207 +1,129 @@
-Return-Path: <linux-kernel+bounces-514182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BF7A353AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:27:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB2EA353B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CAA0188FE6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:27:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4BC16A7E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C04C70831;
-	Fri, 14 Feb 2025 01:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD9D537FF;
+	Fri, 14 Feb 2025 01:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLsqYtMC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="haIXbS35"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0F47081C;
-	Fri, 14 Feb 2025 01:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5399F173;
+	Fri, 14 Feb 2025 01:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739496442; cv=none; b=Re66qGMFQUYWNtGggblLfQ3Oic8OKfivog47oQOI8K0kWAjacfhx9pDZNxYIeSB4i36+BUwIH0Mt+hMzJFr6mVc71Yuk9HHGCyKJy8427s5rSj4KQPWyKebzaZ3Gx32xOtWX6K6yYVk9et7RIEopGpEYoCsTGPuEKXInFu4W9Qs=
+	t=1739496693; cv=none; b=XldM2sMOT2Zaz/SBF9tbnJWn2r/M+Exlzr7D6XvOwuuwUsv0KqFYe/12knLdGPdRR/S2fOY9ocbk8fNQO0lNIP05AoVl8r5+CGuloOG8SuP85qBkU43s8bDPM+EcYf/T8NOBKNNEVf8CHBc9jQC2GGSdr9giS2TCVClemEqnjxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739496442; c=relaxed/simple;
-	bh=Tw2ys3ocF6gdBGnWzCtn8X1+JhzVVjWEPt15oDLoFP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tj4xKk+4SatWJy9BFfUTautGLnyHfLTe1oZ/Cc5kU6bckEqx5KdsCD+nhD7F0jOT42ITtoO5j9tPg3dnOhoJlR4G0cwl5U3ach3IBCuID0Q2cmGKIKBzyiFHbXNYnEQcecQqGGHKT/kDI6QI31yC5c8U9mubPfzvyK22UBHBuT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLsqYtMC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5EAC4CED1;
-	Fri, 14 Feb 2025 01:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739496442;
-	bh=Tw2ys3ocF6gdBGnWzCtn8X1+JhzVVjWEPt15oDLoFP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QLsqYtMCOieuWF8B+QYNWaHVU3taYQhMjlw0lytp54H0k6xcYIP53+mQPq1rm2J+O
-	 eT8iDoLi6LYKxcbtakEcwDk1SGJ4/E9750y/I7ygt3SuYbj9sxkHkjmWpJwVUzg9b8
-	 hTOKDCbzR5mO4fxQGk7ikJfxLEuInq2dXwDWvaG0F4imjecd39YlEOcnZ6bGltY+zq
-	 gA2wCpFLP8AA5vklKx32ocCJrM8zyMbvEMbmmE//acTZBLuwDUFoTZymcNPc+i6SOq
-	 5nDuV2MrIqI84BDhG5tRT/AKO4QiJ+ZT1KAXizeEd/xv3smcPjJkGXxEIMZsMSaQxC
-	 xL6Zp8kH16/IA==
-Date: Thu, 13 Feb 2025 17:27:19 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>, Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org, Robin.Murphy@arm.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf stat: Fix non-uniquified hybrid legacy events
-Message-ID: <Z66b9-I_MkmX7pg5@google.com>
-References: <20250212122413.1184503-1-james.clark@linaro.org>
- <CAP-5=fWywDB40-RgV8LaPqsoffOLdDcYkUB_LHoPvV=R8yas4w@mail.gmail.com>
- <CAP-5=fV0rWEL-ewGpoDwaJ3rvbTPXSx0YTuF5p9=6+h5oUhsfg@mail.gmail.com>
- <c672c3a3-64e3-495a-ae61-ae098d30c6b9@linaro.org>
+	s=arc-20240116; t=1739496693; c=relaxed/simple;
+	bh=RFEVmCjfmdYWs0ftkl06kLHc8DHTGXiIKjat4huuF3o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TwObIIfkFguCgFKJq2ciGfUKxfhcjeLzQKh3fWuDaK0EXw5Rkr+eGTTa7YB6AV3i86dv5HkO3GuM52YNYbDdh+UVNTydvuO5jDtfqtyYs9D0hxbxyIApZYG86lQH0xGn0IvzEoUo0JhtJOrJOYULke1QifqstSmHtT2C2u0wg7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=haIXbS35; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51E1UsPo036830
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Feb 2025 19:30:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739496655;
+	bh=EE1HqY+OEVih7elLvMN2Jm/693KOJsTNtzvrXtix6yk=;
+	h=From:To:CC:Subject:Date;
+	b=haIXbS35O3T+BOcLtHlVveIcdLEJ/8BvGjIolRJBeRC/D0FOaLUkAuIi1twRildSL
+	 Y88VdpRXudd6qmLWXBmzZaQkmbF4K99oYLcEgqKJKROlJ0RDVxFEM3pc/ttup06jyw
+	 QpKUy9VkzbQf3TAseERJrHEjSNuO1/3HE5Ge7Fv4=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51E1Us3v019847
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Feb 2025 19:30:54 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Feb 2025 19:30:54 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Feb 2025 19:30:54 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51E1UkwX047835;
+	Thu, 13 Feb 2025 19:30:47 -0600
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>, <shenghao-ding@ti.com>,
+        <navada@ti.com>, <13916275206@139.com>, <v-hampiholi@ti.com>,
+        <v-po@ti.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
+        <yung-chuan.liao@linux.intel.com>, <baojun.xu@ti.com>,
+        <broonie@kernel.org>, <antheas.dk@gmail.com>,
+        <stuart.a.hayhurst@gmail.com>, <dan.carpenter@linaro.org>
+Subject: [PATCH v1] ALSA: hda/tas2781: Fix index issue in tas2781 hda SPI driver
+Date: Fri, 14 Feb 2025 09:30:21 +0800
+Message-ID: <20250214013021.6072-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c672c3a3-64e3-495a-ae61-ae098d30c6b9@linaro.org>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+Correct wrong mask for device index.
 
-On Thu, Feb 13, 2025 at 12:15:30PM +0000, James Clark wrote:
-> 
-> 
-> On 12/02/2025 9:38 pm, Ian Rogers wrote:
-> > On Wed, Feb 12, 2025 at 9:48 AM Ian Rogers <irogers@google.com> wrote:
-> > > 
-> > > On Wed, Feb 12, 2025 at 4:24 AM James Clark <james.clark@linaro.org> wrote:
-> > > > 
-> > > > Legacy hybrid events have attr.type == PERF_TYPE_HARDWARE, so they look
-> > > > like plain legacy events if we only look at attr.type. But legacy events
-> > > > should still be uniquified if they were opened on a non-legacy PMU.
-> > > > Previously we looked at the PMU type to determine legacy vs hybrid
-> > > > events here so revert this particular check to how it was before the
-> > > > linked fixes commit.
-> > > > 
-> > > > counter->pmu doesn't need to be null checked twice, in fact it is
-> > > > required for any kind of uniquification so make that a separate check.
-> > > > 
-> > > > This restores PMU names on hybrid systems and also changes "perf stat
-> > > > metrics (shadow stat) test" from a FAIL back to a SKIP (on hybrid). The
-> > > > test was gated on "cycles" appearing alone which doesn't happen on
-> > > > here.
-> > > > 
-> > > > Before:
-> > > > 
-> > > >    $ perf stat -- true
-> > > >    ...
-> > > >       <not counted>      instructions:u                           (0.00%)
-> > > >             162,536      instructions:u            # 0.58  insn per cycle
-> > > >    ...
-> > > > 
-> > > > After:
-> > > > 
-> > > >   $ perf stat -- true
-> > > >   ...
-> > > >       <not counted>      cpu_atom/instructions/u                  (0.00%)
-> > > >             162,541      cpu_core/instructions/u   # 0.62  insn per cycle
-> > > >   ...
-> > > > 
-> > > > Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
-> > > > Signed-off-by: James Clark <james.clark@linaro.org>
-> > > > ---
-> > > >   tools/perf/util/stat-display.c | 9 +++++++--
-> > > >   1 file changed, 7 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> > > > index e65c7e9f15d1..eae34ba95f59 100644
-> > > > --- a/tools/perf/util/stat-display.c
-> > > > +++ b/tools/perf/util/stat-display.c
-> > > > @@ -1688,12 +1688,17 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
-> > > >                  return;
-> > > >          }
-> > > > 
-> > > > -       if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
-> > > > +       if (!counter->pmu) {
-> > > 
-> > > Thanks James, I wish I had a hybrid laptop so I didn't keep breaking
-> > > things like this. I'm uncomfortable using an evsel having/not-having a
-> > > PMU as an indication of whether uniquification is necessary. It is
-> > > kind of a side-effect of parsing whether the PMU variable is non-NULL,
-> > > it'd kind of be nice to stop things using `evsel->pmu` directly and
-> > > switch them to `evsel__find_pmu(evsel)`, in the future maybe legacy
-> > > events will get the core PMU, a tracepoint PMU, etc. so we'd never
-> > > expect this variable to be NULL.
-> 
-> As it stands evsel__uniquify_counter() unconditionally dereferences
-> evsel->pmu which is why I thought it made sense to check that first. But if
-> that might change then fair enough.
-> 
-> > > 
-> > > Your commit message gives me enough to think about what the issue is,
-> > > so let me give it some thought.
-> > 
-> > I wonder we should just hoist the hybrid test earlier:
-> > ```
-> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> > index e65c7e9f15d1..e852ac0d9847 100644
-> > --- a/tools/perf/util/stat-display.c
-> > +++ b/tools/perf/util/stat-display.c
-> > @@ -1688,6 +1688,12 @@ static void evsel__set_needs_uniquify(struct
-> > evsel *counter, const struct per
-> > f_s
-> >                 return;
-> >         }
-> > 
-> > +       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
-> > +               /* Unique hybrid counters necessary. */
-> > +               counter->needs_uniquify = true;
-> > +               return;
-> > +       }
-> > +
-> >         if  (counter->core.attr.type < PERF_TYPE_MAX &&
-> > counter->core.attr.type != PERF_TYPE_RAW) {
-> >                 /* Legacy event, don't uniquify. */
-> >                 return;
-> > @@ -1705,12 +1711,6 @@ static void evsel__set_needs_uniquify(struct
-> > evsel *counter, const struct per
-> > f_s
-> >                 return;
-> >         }
-> > 
-> > -       if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
-> > -               /* Unique hybrid counters necessary. */
-> > -               counter->needs_uniquify = true;
-> > -               return;
-> > -       }
-> > -
-> >         /*
-> >          * Do other non-merged events in the evlist have the same name? If so
-> >          * uniquify is necessary.
-> > 
-> > ```
-> > 
-> > The hybrid test is unfortunately expensive at it needs to search for
-> > > 1 core PMU, which means loading all sysfs PMUs. I think we're already
-> > paying the cost though.
-> > 
-> > Could you check this works James?
-> > 
-> > Thanks,
-> > Ian
-> > 
-> 
-> Yep that works too.
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ sound/pci/hda/tas2781_spi_fwlib.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-James, can I take it as your Tested-by?
-
-Ian, can you please send a formal patch with that?
-
-Thanks,
-Namhyung
+diff --git a/sound/pci/hda/tas2781_spi_fwlib.c b/sound/pci/hda/tas2781_spi_fwlib.c
+index 0e2acbc3c900..131d9a77d140 100644
+--- a/sound/pci/hda/tas2781_spi_fwlib.c
++++ b/sound/pci/hda/tas2781_spi_fwlib.c
+@@ -2,7 +2,7 @@
+ //
+ // TAS2781 HDA SPI driver
+ //
+-// Copyright 2024 Texas Instruments, Inc.
++// Copyright 2024-2025 Texas Instruments, Inc.
+ //
+ // Author: Baojun Xu <baojun.xu@ti.com>
+ 
+@@ -771,19 +771,19 @@ static int tasdevice_process_block(void *context, unsigned char *data,
+ 	switch (subblk_typ) {
+ 	case TASDEVICE_CMD_SING_W:
+ 		subblk_offset = tasdevice_single_byte_wr(tas_priv,
+-			dev_idx & 0x4f, data, sublocksize);
++			dev_idx & 0x3f, data, sublocksize);
+ 		break;
+ 	case TASDEVICE_CMD_BURST:
+ 		subblk_offset = tasdevice_burst_wr(tas_priv,
+-			dev_idx & 0x4f, data, sublocksize);
++			dev_idx & 0x3f, data, sublocksize);
+ 		break;
+ 	case TASDEVICE_CMD_DELAY:
+ 		subblk_offset = tasdevice_delay(tas_priv,
+-			dev_idx & 0x4f, data, sublocksize);
++			dev_idx & 0x3f, data, sublocksize);
+ 		break;
+ 	case TASDEVICE_CMD_FIELD_W:
+ 		subblk_offset = tasdevice_field_wr(tas_priv,
+-			dev_idx & 0x4f, data, sublocksize);
++			dev_idx & 0x3f, data, sublocksize);
+ 		break;
+ 	default:
+ 		subblk_offset = 2;
+-- 
+2.34.1
 
 
