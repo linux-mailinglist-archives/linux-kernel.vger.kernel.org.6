@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-515453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06BCA36516
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:58:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C24A3651D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39307170C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C1C18918BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E59268C74;
-	Fri, 14 Feb 2025 17:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613882690D8;
+	Fri, 14 Feb 2025 17:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JeFU56tO"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJ4MrWKh"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBB22686B4
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DBB2690C7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739555904; cv=none; b=rudMwanXQCtBYvs3mBWh7BiJdr478e9XnYrA5sqaJUSMC5INM+wiCSB2K7FYZLOKw9R3D1LtI+B1imxEk/4EhwHCl96FJOHO1+0rrldcEkpLvFXyTEb6X/B0zsVtGOtYdy0r/gZbOXiR2FE2VfvE0z+nw/+FmNxpQGyM3WEo0Po=
+	t=1739555909; cv=none; b=m39+AdACfopWfIv7aik/6bRETqB351q8CsgzXSnLjAm5EL5lEiLFHa/vQNU3hOG6qPPE999pMkLNLAflZf+atveiKP/1EYglj405vG792MsjfWGDxmNW2qKxesNEEVEvv6TXnZvgXvSP/7+4cQIoXGny+ONfjyLRAds0Tdu6034=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739555904; c=relaxed/simple;
-	bh=TDh0rbvaz4H6okZVXNT99sLPWxxtzWep85uRQLz5bOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p0SUOPS0pelDpyokjBQj1Mj3SzEoKcF2awlGUYcIxGWdrFnpVN32grAFmxHDJy6opdQxOtSeymc0J/yOYnNYoRvURgQLwZ9negtsAS80Jm5m7XH0sSfdaiFWCGS9JA/noth0dGlJzXLwxlT3AZAfosL04e5PcXZpXbsOAuCBvHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JeFU56tO; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1739555909; c=relaxed/simple;
+	bh=5wWmsfWZOJQ4wTvtj1C8ZBtsAx3MzJiXlQSsmX0f7N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W44WhdAJEnklfGlOU909mIVavLYbVnjSoh8+SOZuDmCaa99P4+rnz1yn0G83pVibuAyAIk5kh/QDHwXlgQ211o+q60xc5neVQP126e6mmtKVKHCSPKcwSCqbSWrJwyw56qpZeJzJZ6JoM/yDV4U0Vn6NmmtTQz3l5OXmaE6zHkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJ4MrWKh; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220c665ef4cso35649385ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:58:22 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c665ef4cso35650335ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:58:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739555902; x=1740160702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fH8wa9mDFKKjF6AAEuB3tgHwOgdezUr8uBme/mmnzog=;
-        b=JeFU56tOdyk2/Fkh557MndMdT7SLbXUugY1fLBfYjEHG2E7bdVU360ZznaeYS8i+Lb
-         u8DSQ0ymxXJCKuKYEwbqQveIRBUkv3dudOdPIeFS2bdrh3fSFw3dLhDrimGW+EdT+X1w
-         iJiK2n79ooyR0unHVmAJmKsII7Gl/6jG7O0CiJtMDXSR2kqQ3rI8BbBl9Fs9+6lIUksG
-         eWnBBXexRZysLR6+NtC9s9nXXbi+3UWJoA5jmkckCZnKB/aL9TrEgEgp2fF5Bo4impiC
-         rKV8CRzxPYtYCA7Zlvcwf9IZPs1fjnwLPqwglkBDBktUnssrqxUSonVA0VjDNu9mXtjV
-         XVIA==
+        d=gmail.com; s=20230601; t=1739555907; x=1740160707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wbraR41/doRi2Xpub6gCucxiI0zUxRVmW0Za0OUBAfw=;
+        b=QJ4MrWKhGbw84caCli1dfix49RbwtFFTyztA1o0MODKIv3nYHHcdmYSI0UBGA9D5/2
+         MlGIFhgp0OL8R2EcolNNDxSHIqiSZKqXepuI2FZnOeppz5aKARKPatqvrMg9FMCWuUnS
+         dBAc5kU65Vj3W9v533OGF1iHQIcPt1EOQ8xSaiiqWLudb1s/GHCKDLnrmduuNUgmtLoO
+         R2g4Z/BqFIbb13Xo8stO08oSJtdtljS+NVyrcx6ASwc/tuYc3MKCHmTscFnCbFZdAktM
+         T8kxpRA4OPs8/TValZMDjdJNth2TAiC35iWfAFJSjMRedcFDSh7eJRpPCSvf1l+egZiO
+         tTOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739555902; x=1740160702;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fH8wa9mDFKKjF6AAEuB3tgHwOgdezUr8uBme/mmnzog=;
-        b=KlzrBolVyv86KGcWPQWurH3RCn3SxTxpEk79w6N1i/k2SUVPQ8SxQnXMBK/wKmyFT1
-         AxDTTqR3CSHJsAFfDmEYrxtjWDQ8oGQuHxHV8c/c2KjtVW62vJwa/FpfaToJjBGl39dL
-         DIYeal6VbR/vzUUlPi+Fr+IypNo9ayjDhyQ4TbXrtuvfxT/m34zdnPSrKl4vS3SPJnxT
-         cOg2ehoIHjrMltdjDmLTgQwcmBa3z0UtQybDSN1MFm+KedzzpxVyKXixIMkBbGdYeKch
-         AUSL9q+CTp7nUDkSpN3orcLpB5y4Ccm1Rlt2baKNZZenlkaByUqGVqvXThM79kGeuLVD
-         nnkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrCKZvtLvx7qt361jHoImtz90GUthIk1Ag9H0Nlb1fys/Qce0lkYOsxqaJgH+Q5tqT4Xngq0rphg9A5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrdfELbBNWCjy7rxZofuDuw6N01jdjZ6NAaawDdww0C4nH2s4U
-	DIZNg021BUsjJBdGXHHZHY+K8Y+3liGfhKeneY6cqXZThZC3u3Jartvtn0rTRwg=
-X-Gm-Gg: ASbGncs++azANd9oO0ybMh3daOgdyap7kgcWrD2hRan54dlxm1KedeU21Gv0XQDzki+
-	kesMC9O3iIjL+l79jOBZ/L44JevqmOkpJCooOsR2Bph145kIujpTAt7pZ2D0FvCz248CtAjeama
-	jx+u1gDgIz3KnGp3igzI4ub4Svc+9IRD07vglG5tajQizgwVGzDKo3FHpeUiFrYeDErwXyDc8Ks
-	jtMpMOHxC1ugG9d0BSeMRCaByq5CYH5XibFiKLjbJCqwP6KBEQQ8h1dypQ4blSQBxuP7yEuQ+9P
-	CqpaI3VFrQvrTuADZDrbaSuvaO1DW+Kz/owp
-X-Google-Smtp-Source: AGHT+IGc//Yf3KcYa3gkm02REt+Cv1CxSx5XjNqoq3oIpbzENLsmetvp4vbwpFAd27eNTXoz2k2JEQ==
-X-Received: by 2002:a17:902:cccc:b0:21f:5e6f:a432 with SMTP id d9443c01a7336-221040409damr3063105ad.24.1739555902166;
-        Fri, 14 Feb 2025 09:58:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739555907; x=1740160707;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wbraR41/doRi2Xpub6gCucxiI0zUxRVmW0Za0OUBAfw=;
+        b=KkHVeaxvZ/BHvbzHapXCcFbuWg/EGdycPtPitdW31Ej+FDkIaLsVA7q9hkMZW7pC09
+         Qn0PAqP9+AmPEh/X2Dvb8U6vAWMpMFar8BgHloRByKMyXvJJ5dqGi/5d5dDoKd/MWvXw
+         776OjvnVRfppd5D1z/r6B8DYLTYthTFUW2D3QzlWTCSkme1imJClE/Bb2UAg9jsf9yoR
+         guij6Ame8hwqgNVzhZAwn02bmBigafSXT0x89rkDuXQlaqhs1qc9dPG7vSfsYH0F9KIg
+         aFn6HLvEJtJRimHo3G6oP11TJUxvErkrD55tmQX5Q4Kub437N5u/URR9y+xt8RRxpSvt
+         Tjyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFrcs2LT9Zlrk1Yfd2UTGj5mEFf7Xgert1YwAVn3Rro/zoYa8fIMGP/QJRRxQ66CTwWeuackOw0aFRRrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCppHtRqd3kyzhPpc6/JV9aoS51Uvvx5mOwkIBZK5VGD+CI6kP
+	5VuYixbHGCuJqbspbpEX4ziQ1+Jgekr66CtwAn2Zx0IE8x+3ad1E
+X-Gm-Gg: ASbGncuHnrfqjGWBkut0e1GYMSsDu756IGezENI/6YLsU6nh7sDL1nMYeyWvExt1KEX
+	+BBJ6HtCl/1xRnwDJxmoGFaqnLcjZ0Y4+s+CTgkk6+ffMPU0sx3CwNbh4rRfJVOUI8/BlS4UbYu
+	3zqZSgxJQOIL5hqy9RkuRiMtgme5ZsvLRtqHlDm6W9xHVtLMO+lm8EsxR4EuJYdHJI6BwFOpx1R
+	HSKTNeH7jONH1mk/8RvazhxtINn/eqjRgV8qXllF2fuaVnYSbtQucJJnutDwT5lO3Y6I4y9gqDg
+	wMMkwjrwpiHpmokEJDCbLvqBRtkSDRU/ZDQu
+X-Google-Smtp-Source: AGHT+IEcy2yWQYwogQ6KcjhIKWsRSf0nE2f/TYKhfF4cn7HOpM1wAXZnP8din7GApc5tHvB2ixsFGg==
+X-Received: by 2002:a17:903:18a:b0:220:c8e2:5e30 with SMTP id d9443c01a7336-221040bd29dmr1683615ad.46.1739555907510;
+        Fri, 14 Feb 2025 09:58:27 -0800 (PST)
 Received: from KASONG-MC4.tencent.com ([106.37.120.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55943b5sm31216605ad.246.2025.02.14.09.58.17
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55943b5sm31216605ad.246.2025.02.14.09.58.22
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 14 Feb 2025 09:58:21 -0800 (PST)
+        Fri, 14 Feb 2025 09:58:27 -0800 (PST)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -83,10 +85,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Kalesh Singh <kaleshsingh@google.com>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH 0/7] mm, swap: remove swap slot cache
-Date: Sat, 15 Feb 2025 01:57:02 +0800
-Message-ID: <20250214175709.76029-1-ryncsn@gmail.com>
+Subject: [PATCH 1/7] mm, swap: avoid reclaiming irrelevant swap cache
+Date: Sat, 15 Feb 2025 01:57:03 +0800
+Message-ID: <20250214175709.76029-2-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250214175709.76029-1-ryncsn@gmail.com>
+References: <20250214175709.76029-1-ryncsn@gmail.com>
 Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -98,75 +102,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-Slot cache was initially introduced by commit 67afa38e012e ("mm/swap:
-add cache for swap slots allocation") to reduce the lock contention
-of si->lock.
+Swap allocator will do swap cache reclaim to recycle HAS_CACHE slots for
+allocation. It initiates the reclaim from the offset to be reclaimed and
+looks up the corresponding folio. The lookup process is lockless, so it's
+possible the folio will be removed from the swap cache and given
+a different swap entry before the reclaim locks the folio. If
+it happens, the reclaim will end up reclaiming an irrelevant folio, and
+return wrong return value.
 
-Previous series "mm, swap: rework of swap allocator locks" [1] removed
-swap slot cache for freeing path as freeing path no longer touches
-si->lock in most cased. Allocation path also have slight to none
-contention on si->lock since that series, but slot cache still helps
-to reduce other overheads, like counters and the plist.
+This shouldn't cause any problem with correctness or stability, but
+it is indeed confusing and unexpected, and will increase fragmentation,
+decrease performance.
 
-This series removes the slot cache from allocation path too, by using
-the cluster as allocation fast path and also reduce other overheads.
+Fix this by checking whether the folio is still pointing to the offset
+the allocator want to reclaim before reclaiming it.
 
-Now slot cache is completely gone, the code is much simplified without
-obvious feature or performance change, also clean up related workaround.
-Also this should avoid other potential issues, e.g. the long pinning
-of swap slots: swap slot cache pins swap slots with HAS_CACHE, causing
-reclaim or allocation fail to use these slots on scanning.
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
+ mm/swapfile.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-The only behavior change is the swap device allocation rotation
-mechanism, as explained in the patch "mm, swap: use percpu cluster
-as allocation fast path".
-
-Test results are looking good after deleting the swap slot cache:
-
-- vm-scalability with: `usemem --init-time -O -y -x -R -31 1G`,
-12G memory cgroup using simulated pmem as SWAP (32G pmem, 32 CPUs),
-16 test runs for each case, measuring the total throughput:
-
-                      Before (KB/s) (stdev)  After (KB/s) (stdev)
-Random (4K):          424907.60 (24410.78)   414745.92  (34554.78)
-Random (64K):         163308.82 (11635.72)   167314.50  (18434.99)
-Sequential (4K, !-R): 6150056.79 (103205.90) 6321469.06 (115878.16)
-
-- Build linux kernel with make -j96, using 4K folio with 1.5G memory
-cgroup limit and 64K folio with 2G memory cgroup limit, on top of tmpfs,
-12 test runs, measuring the system time:
-
-                  Before (s) (stdev)  After (s) (stdev)
-make -j96 (4K):   6445.69 (61.95)     6408.80 (69.46)
-make -j96 (64K):  6841.71 (409.04)    6437.99 (435.55)
-
-The performance is unchanged, slightly better in some cases.
-
-[1] https://lore.kernel.org/linux-mm/20250113175732.48099-1-ryncsn@gmail.com/
-
-Kairui Song (7):
-  mm, swap: avoid reclaiming irrelevant swap cache
-  mm, swap: drop the flag TTRS_DIRECT
-  mm, swap: avoid redundant swap device pinning
-  mm, swap: don't update the counter up-front
-  mm, swap: use percpu cluster as allocation fast path
-  mm, swap: remove swap slot cache
-  mm, swap: simplify folio swap allocation
-
- include/linux/swap.h       |  21 +--
- include/linux/swap_slots.h |  28 ----
- mm/Makefile                |   2 +-
- mm/shmem.c                 |  21 +--
- mm/swap.h                  |   6 -
- mm/swap_slots.c            | 295 ----------------------------------
- mm/swap_state.c            |  79 ++--------
- mm/swapfile.c              | 315 ++++++++++++++++++-------------------
- mm/vmscan.c                |  16 +-
- mm/zswap.c                 |   6 +
- 10 files changed, 196 insertions(+), 593 deletions(-)
- delete mode 100644 include/linux/swap_slots.h
- delete mode 100644 mm/swap_slots.c
-
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 34baefb000b5..c77ffee4af86 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -210,6 +210,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+ 	int ret, nr_pages;
+ 	bool need_reclaim;
+ 
++again:
+ 	folio = filemap_get_folio(address_space, swap_cache_index(entry));
+ 	if (IS_ERR(folio))
+ 		return 0;
+@@ -227,8 +228,16 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+ 	if (!folio_trylock(folio))
+ 		goto out;
+ 
+-	/* offset could point to the middle of a large folio */
++	/*
++	 * Offset could point to the middle of a large folio, or folio
++	 * may no longer point to the expected offset before it's locked.
++	 */
+ 	entry = folio->swap;
++	if (offset < swp_offset(entry) || offset >= swp_offset(entry) + nr_pages) {
++		folio_unlock(folio);
++		folio_put(folio);
++		goto again;
++	}
+ 	offset = swp_offset(entry);
+ 
+ 	need_reclaim = ((flags & TTRS_ANYWAY) ||
 -- 
 2.48.1
 
