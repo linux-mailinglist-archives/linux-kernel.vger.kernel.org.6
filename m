@@ -1,138 +1,86 @@
-Return-Path: <linux-kernel+bounces-515712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27072A36804
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:04:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF877A367FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43E517194C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD393B1036
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 22:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FEC1FC0E3;
-	Fri, 14 Feb 2025 22:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A889E1DF242;
+	Fri, 14 Feb 2025 22:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jo6ylftK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ohVwlYqw"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2041.outbound.protection.outlook.com [40.107.94.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D541DE2A5;
-	Fri, 14 Feb 2025 22:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679E81DC9AC;
+	Fri, 14 Feb 2025 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739570646; cv=fail; b=XFs6lWnrSTx6fqxwHYOqka9xNPwEEd3gnGO2EZ8vEgn2yncIPtfXSHhGLo0f5UVKoTZpLV2PpeMRSQVbWZj7LUDELNtu4BrKNOtqrTTq+Uj+FgMvS+d+z6AqCxWHv1qtr6HXlkQVONzzWWzZgxtuc2/8Dku2Fsfc2KcPXHwJ82A=
+	t=1739570627; cv=fail; b=dvljZRlTZ4qY6MPRS5QbLG0iLThCPfvf5fCKI2QoLZk9MO0Aq5OBcu/sFOKVf4HgPN+L5nhXbf8hH5hJE5tTH2ZTQIKYee4w561W9vUfU5ZH4NjiWGaytJ6+l6NPa02GNkY0gK+b23nteH+Vm0j1lyx5XlMWZgjNXZUFOGS3uwU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739570646; c=relaxed/simple;
-	bh=101i40+Y45TkaPuZgiNzbWGQOhgleWDDUcDDQcNytEg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FVhseKO0uoggeikIgsdF5ErON7/nu/OjrYacRI6GBWsK0ZFrGyUGofjgIwUK956xs/4pXMSkRklRNx+y1aLYotPnx3vK+rS5XyotHTnVzzGuGVOA7OMuYw1VrkZlz3jzscf7LylogfgX2ry5mG3IFNQ2+Cyct9PtfMscisxvhP4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jo6ylftK; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739570645; x=1771106645;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=101i40+Y45TkaPuZgiNzbWGQOhgleWDDUcDDQcNytEg=;
-  b=jo6ylftKpwqNDJKeM4zDXC4FUVz500cPueh5A6Iup1bxCFxbty5n0ur7
-   smolip6TTO1kILa/uhWjYp79chYGD0PlgVuE/a2Ms+z+V8/fyuu6POOW4
-   F8lDdpDHQ3s33hD59qg6NvjtYSVs1WHT9ebTk6XXbD/ZbiTHE8t9/Rtpk
-   mxWd5kZAC8y0Z6+SS/JpDwOe/fg+1CGWbomnlspe3izNldl1Lqkspx6Ct
-   YYs4WvHbh2by82syXazP6Hs83pqmbQDFmtChVW1k9EneLic34O8PyqyT2
-   UCPdoET+GFDk+3yUCluENSOchvzjNdqLD6SZj4SLr5TVQO3xlaL+5DQBp
-   g==;
-X-CSE-ConnectionGUID: WAK63kRzTjCl90G9vsd/1g==
-X-CSE-MsgGUID: 5vtGTm9zSPy6nYIzeROIaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="51745301"
-X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
-   d="scan'208";a="51745301"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 14:04:04 -0800
-X-CSE-ConnectionGUID: GzM7rVMISWqONTfyomGOOw==
-X-CSE-MsgGUID: AMutdJ4GQ+iIS3zuDJEnLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118198490"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 14:04:02 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 14 Feb 2025 14:04:01 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 14 Feb 2025 14:04:01 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 14 Feb 2025 14:03:59 -0800
+	s=arc-20240116; t=1739570627; c=relaxed/simple;
+	bh=iLRIUET/2WL4ObqGwYzr3JQnycgWVoFrOMc8nOSC6pY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RYo/VvK5s9KBPcymIvMfvKEUnEbgeIE4fG/RxnjTeUia8oCiPfQRqsHxR6RGEyD13NQ2NNdMSAHFkPwzWl2nGWjb80bYKM7u8SZlB1mtpeSju78cioEFDyKKri1yqUclh2R0uegWi7pitN864NF2SxFV4nL/Uj1CagBr901RKCU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ohVwlYqw; arc=fail smtp.client-ip=40.107.94.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U7EJcUhOFjuQHZCVnb/ITt1Rf9IztE2rYGkqwAVMVK3QTDkfzYZb1ur7yaVlfxnyF6KdUB3yi0LMOO/U64loiQ8nDlYmkZkLMf3JzIsK97PKIV3LZipMCVM5sLOF/dK1gAkal9zoS3Bt2UN2HgdBp3SMSJ0CLHqT7Ei3npxMVWg6DNut+OcnnkXUf5OF8MZSjjD1Uv8QRsz0VqZe+bwBbrNy6aB3oBN4x0BEZ4bWUTXeRX+Pw4BBvJ8Ozhvq/hRiYFBXq8pDzU82T+P776VEf02jpWSsCNR5fIzOfecd+S93+aRAERyDrw8Fx+SfL6x+XkLzpEV7k65BkdjcanNgHQ==
+ b=H5rjqTSTRAV+eMsZGc3Tta1EHhaBeCvwkyAUQNGvfcCMydMVtOg9H4Z6dXe9T7Nl+0A0u5JqJNRUaRconl/9d2r18oRyNH4MK7HwtmL3Eka+96mPpy+hd55jkgiRZi+/qjSWgLmAPFKikr/czvqzitjj8Z/5TrSIhRND9xKP+I2hw1CGVRJigiBXI4si9XQP3YQ6gekr5Es0hJ7kOcMJECU78BdrBZ7rvmkDeNK4ZsFiTTO1WoqXsIpqI4RYCIplGdCImvV2u/p4s4hn1HXmS89Nj4KFtdrs5aQ/FQ6J0VHdOyCNuOhpWPFToDj48PiIR+w8nuccs0JNp0d9i6o8yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qxcALKEJbyORB6OzoFXTUAjCbyu/dwAcMmOsCEitUXg=;
- b=xgrpOTs4LSaygO4p/FNCnN8fNY+P+AMNMQLekRqXKNeiR1TKDLDPTxj6OJZ/3ySpZNwlIF/j9sRseHCQt7+L27eUQT3mtDokLs68ezgIh1Jy4RQP2qfXXd0NARJB8QpdTOktIdpSMfZEgyHziFYJr49KgGQbqmtwFesAgK7dc+wbDEDIzaDj4n+hitwdU+sWTD726bvWp/8p+iZNysh8HIj+eGwiRPSqrlVEdTIzWpYrPXqdgY6NkiKfaH2sBUaL7STQPnBd9yr8lg34kxY+xB6NTFCnFL/V+vdVXMlQoB3PnCE1nfKuXua/8TTPm6X/3/GAR2XWoLyv9p7WVKh/Aw==
+ bh=vyloZyEq03GWXlHAmpAgkUCaT6n40iNlTxRINeIDsu0=;
+ b=ETrIYdH1/FgC99BuwoYFswDinxTdbc0VIBdenEd40TJ9NI/kxOfllYpYUgrSNDdLH4iG0pChXQo6DlGhZRZupF3/iuEyimQ0Q7PRN7/uoGoSS8CA6RGYMpCw+ijnuvlBZD597X9dJ56G1xfe2zMpWiVOrXsic8qYA1nc/DbSvtHq0EWHZtkHRhcl/uI0LTeY19EDaEeVw4RarYFESQJDJIWWffZvY27qKM7LfXrmvYj4CwhYfmKmJTI4j0hOc93wJJMU46+WB5zl8z5KwFtOWayE+3dhe0JSi3DghwXNMuwFoGG+AVRMQNWQM38KpjVRPn4Xg4BbiLDhq+HV04ZN8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vyloZyEq03GWXlHAmpAgkUCaT6n40iNlTxRINeIDsu0=;
+ b=ohVwlYqwsx4OmJcxAmPT5iWa00D9xRWIw4qTN1SF/oRnAe4s/CJ27Xhjl4kQhoGcLGHJ+v9pmjwn46Wjn1fcIUs6JOkG4AT50mSHIzcsdKSkLOVLmljOuqatV3EfgZI08orjibvBIHwVtF4n0OB8Kfh5bX1qbjppbtw5Eqx0FVTPQ74eLnDMZ+s1F36AMeRxMs7gD2vGVIj/4mzqXoyGJ70fQrqImCy2fiEEltpJDlsXjuME/KlH+hKJQlF66SPpxOb+gAsCSnUg7ClSNlg07oiYr3cs7ySLX8l5rvRwixR0lyevl0mc4qDkrX3Oy3OhVaXfRlZggeYKFIC1pgK6hA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by MW4PR11MB7008.namprd11.prod.outlook.com (2603:10b6:303:227::7) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ MN0PR12MB5713.namprd12.prod.outlook.com (2603:10b6:208:370::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Fri, 14 Feb
- 2025 22:03:29 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8445.013; Fri, 14 Feb 2025
- 22:03:29 +0000
-Date: Fri, 14 Feb 2025 16:03:16 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Ira Weiny <ira.weiny@intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
-	<david.m.ertman@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "Stephen
- Boyd" <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Danilo Krummrich
-	<dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
-	<daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	"Robert Foss" <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>, Ilpo
- =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>, Vladimir Kondratiev
-	<vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
-	<gregory.clement@bootlin.com>, =?iso-8859-1?Q?Th=E9o?= Lebrun
-	<theo.lebrun@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, "Abel
- Vesa" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
-	<platform-driver-x86@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>
-Subject: Re: [PATCH v3 6/7] clk: clk-imx8mp-audiomix: use the auxiliary
- device creation helper
-Message-ID: <67afbda4d493_17db6b294bd@iweiny-mobl.notmuch>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-6-7edb50524909@baylibre.com>
- <67af6c284c349_1614f3294dd@iweiny-mobl.notmuch>
- <1jr040xu9z.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1jr040xu9z.fsf@starbuckisacylon.baylibre.com>
-X-ClientProxiedBy: MW4PR04CA0304.namprd04.prod.outlook.com
- (2603:10b6:303:82::9) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Fri, 14 Feb
+ 2025 22:03:42 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8445.016; Fri, 14 Feb 2025
+ 22:03:42 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
+ Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] mm/huge_memory: add two new (not yet used)
+ functions for folio_split()
+Date: Fri, 14 Feb 2025 17:03:37 -0500
+X-Mailer: MailMate (2.0r6222)
+Message-ID: <03F6CCF4-EE7D-4259-AF85-455DEA721098@nvidia.com>
+In-Reply-To: <db77d017-4a1e-4a47-9064-e335cb0313af@redhat.com>
+References: <20250211155034.268962-1-ziy@nvidia.com>
+ <20250211155034.268962-3-ziy@nvidia.com>
+ <db77d017-4a1e-4a47-9064-e335cb0313af@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BY3PR05CA0028.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::33) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -140,212 +88,419 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MW4PR11MB7008:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a8ae7b1-6a02-4084-4d48-08dd4d4369e9
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN0PR12MB5713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f4c0815-ab60-4cc2-ca38-08dd4d437179
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?N+Rz/dUMS87zTmVZ9926rQW3GAbirTeqmGlYwO9O0EeQ6AALZzQ2/44OCl0H?=
- =?us-ascii?Q?63Ph/8O5dBz6BgmuYSyJDlCZKTZG6Azs6X66/Qjs+WclDXGAvf5NXO4couCH?=
- =?us-ascii?Q?ROnUKdM47lk2nzMhF5JrieolpTsLh9Tli3uVqRiaLDIchac/G4f6ed5R0nQV?=
- =?us-ascii?Q?e8GqW5emgMdkZ/7RPTS7UVDfF9yJTdJVJ1u0NVwrNMLmwzPCXvtkk/uldlMB?=
- =?us-ascii?Q?j7iec16v8ioP8xltwYQgv5PbUjVpgpoS4hAAOwpBjV2wxmFNKIhTNsbEzEPy?=
- =?us-ascii?Q?IWNHUh0aKoak4F/g/G+vtu+Feb0guL//L7tTVaIyfZyqiqUoqx2/5tiyQBll?=
- =?us-ascii?Q?UVAlfeMl3bO1r2ZBe8gNIns8OKjsfq6T6Uraj0EgJ5r+a78o3vn+ESyDBfhu?=
- =?us-ascii?Q?zeF8pNo9Ihd9WY1POtDIVl7YIE+rP/qAKfuuLLTZxrXBb0TOATVkTo5I/ff9?=
- =?us-ascii?Q?PFJ/o2kOA8fJke+XSfmyM2uk7sM8jMkMNO34JGhbMilAT/Lb8A8/f0vVgY6d?=
- =?us-ascii?Q?t49yZMuM10gs8uj0NEhQBbkUM4U2aCwIXF27Z/mT/UF6ZLpRP2e/4rbwbTIW?=
- =?us-ascii?Q?dMtvJn7AI853s50rWS635q3iPkCZXLS1Fg1zRnRXgT5CTvYK57g6E1p4krAo?=
- =?us-ascii?Q?zOZqxSkFDZddPQOSDgoHRjsmd0IhUaFwzMrQPC0C+yw8fD8AWPqZRZIuf4vW?=
- =?us-ascii?Q?Rb0OanF/8fl7kWUNX/Gn3xohW1OvgRaGYN42QrqdGI7als3Z3NV/kJ1+Q7oZ?=
- =?us-ascii?Q?RTF5XLHPo3g1o8drpmBPUnOhDBnEKH6v6cT433iWHB4rKsds74Mpz2X6TiAI?=
- =?us-ascii?Q?FGWE4GG8e2KmJCZvdPdapml9Xlx1+0PRF0D4eOLp6Yl+Jh1OR776p1xlGaKh?=
- =?us-ascii?Q?AMVZyp8O1mr/fqlZ1SvJtE9gqeOiL+verx0U2dJZH3bnyOLT/nV3aleHDN50?=
- =?us-ascii?Q?iiO79gVN7VYfRubzhfd9cXJn0msnGwB060YjPtIHg2WGvoxPpdRrHtQ5R3FR?=
- =?us-ascii?Q?88inAZTOGeJKJo/tH91Q+h4Vf1uC6QWaMwaD6CK0M+IROqlo+o8Lm0WDkaNr?=
- =?us-ascii?Q?I7sJfy3dtVjNw4eMBSe7/vVmFzjykIgS+b/p3RnmduWR4jBlVjJErvIggVFF?=
- =?us-ascii?Q?SHtCfvxZghurotTh4TNFPnRHliS3XL4fWmVJGutavVrKdkKBazsRD7cPmX5g?=
- =?us-ascii?Q?bHvxruRu0Csmm3SU5kZXrqlxZzXvJrAE8Bu7MeOCSegrOQH1mYEEWt4YJDKV?=
- =?us-ascii?Q?fr8JSHJGGXvqZ7e5fm09QBjGFNdVdWaI1FtNf8ecspFi+PBOLoadE+Qudilq?=
- =?us-ascii?Q?PHtMPyQuuVvk/uYK/JQO5jJ0+i2QPD5LQ16onJK/UwYez3BTkclUq6Sd7I0c?=
- =?us-ascii?Q?nE+kJ3w4KbATwUsM2/YxqgzDjMSf?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nm9BdlBQZGlsYWdaWGpwZEhJa3J2NmJvUHVzaVZ1UmNlTk5tZndWWTNMOGMr?=
+ =?utf-8?B?VzkyeEhFRXA1ODE5RE12cDBvcDhrV1VtL1dWc0ZIZkhBb1U5RWlGNnlpZDky?=
+ =?utf-8?B?V0F2UTk4d0ZmMWlSTi84UmJ0MXp0NFhPKzN2aDc5R1RVQTN4R2RmNVh6NWd5?=
+ =?utf-8?B?WGZPRU81bW5KUWFSb1NMNnZaZmhHcTAvaUZlQWxJTDV3azNIeFBERTBRSUtN?=
+ =?utf-8?B?dlhuUDZ5MEQ2WDlZUUR2WmY1Tkt6OTlVNnhzdXBuc3lkVUQxbmFDdTdrOCtt?=
+ =?utf-8?B?dnZhNXU0Y1g1eGxyZTViUkZoSW1lTnlIN3k4Z1FpejJNZjJ1bGVRK0VPdUdF?=
+ =?utf-8?B?ZVEzMFBQZHk4eXlYdFkyTzVNSDZiOHV4d3hrcDJjanNtNWs3ODJrZVhXZHNi?=
+ =?utf-8?B?N3RxaVlta3BZK3VFdGhyR25tTzVpeW85QVlYQnVoQ1g1bEdMWEJUT1RUaFJk?=
+ =?utf-8?B?bHExR3pGUzBwTjFhL2xpTk9aZTk2UTBnTHJJblNiSkM0YTI4TnRTSXMzd0ti?=
+ =?utf-8?B?TG54dGZ3Rkhnc1NNRjFOZXA0T3p6RnNCL3UvRFcvL3N5R0RJandzWjJySjdx?=
+ =?utf-8?B?MGZwRUEwcUFVTmlXaTdGVUpmbUhQamU2RFFydVZhenlHY0xuTEJsd09xVzdG?=
+ =?utf-8?B?dmczeXlkNmcvUGxxcnRDaXVocFpyRUIxZUNadmpsNmdlV0wzN1hXUjFwYi9B?=
+ =?utf-8?B?MG9TV3R1QSs1NDBhUzlrL3J3V3NLcGI1aXkwVk9wMllhTEdCYmF2MDQ3b3lP?=
+ =?utf-8?B?ZW9aUE9ZOWZyZ255QlFsSGh5YWx4RUdkUWFvY3hUa0hGZXJadU1OeWNrdHRm?=
+ =?utf-8?B?alFvcFdpQzRYZFJCRHVqd21JeXhIZ1M1THRJbEJYQysvQ1UxdXlMZmIxL1F1?=
+ =?utf-8?B?VUxONCs4WlpuRG5KQ0dFSnZwdVJYUXZaR0xzSkRvSzNBcUVHaUtTTHZGb1Mw?=
+ =?utf-8?B?U1piTXl3NlJjTXh1Y0xYek9xVHBpZVJxcmxzOUZFN3dNK0E4dWlZQ2xFMjlk?=
+ =?utf-8?B?VTVVTzdoVVNtcWRJeEU0ZnNETEZ0bUhBQlJWeFhVWEE1aXNraDlkS3psUHJX?=
+ =?utf-8?B?OGdYeGdSMUNnRVJqeTJGajk1SkNRMVZFOFl6NG45MVE5cXkxNkFhdGdORUZa?=
+ =?utf-8?B?UHBGVHprNW5rdWw4ZkFnOVdiSmlpWGlxOVVSNjlCNkNMeFlrYktoYU1lWEoz?=
+ =?utf-8?B?N2U3OWVJZU9DVUpFS1kvWHBES2Fza0swa3B0M1JpOExiWndOZUZIazBGa0NM?=
+ =?utf-8?B?TEhFSHFNWUF4M2ZpdlgzNThPSFFXL05TSFpURHRVS1F4TCszT05pdTVNMThl?=
+ =?utf-8?B?U1pTeFlocUZCSy9ZVXdTMEtYK0lSSWVOVkZud2x3eHBFZWJtQ1I1d1hXTTZS?=
+ =?utf-8?B?TldabDcrL1c5cjFYei9keDlUNk1LRUFBZkh4U2MwOGExbm1xUHkwQ0gvRXRY?=
+ =?utf-8?B?bTNkVFE2eTJSV0lYMm44ZWFINlpxYnRsaUhEN3dXSlNZaFNhM1IzMGFkTVFa?=
+ =?utf-8?B?MWI0OE1ZK042QklqYlNGYlNLQnFPOE1tR0l1U0FTQWpDY2habXlGdHJObFBU?=
+ =?utf-8?B?YUd1R2k5am5zWVpXTWFhUDdNckpLTlFCSHhXbU8yM3F0RVVoQ3ZIazZzWWJJ?=
+ =?utf-8?B?dndxN0cvY3hEa05EU1Ewa0dIc1ZHZTJYV0ZUMmpiZTNTcm02MERsS2paa1pX?=
+ =?utf-8?B?T1BOL0U3OHMrQ21XcjkwK1R2ZjEwTGRtQ1BzL0NqSE43VjVpODhXNDB2QnBi?=
+ =?utf-8?B?b3RaVXZxdlQvSXRncmh4R09TUDlIcHNZUkY3SjV3Um9mRnprMGNVaVpjTk55?=
+ =?utf-8?B?TzRidjRJUzhNM01qdC9LZVpGbDdhTi84V2l3SlcvMlJHcGtaMTFyQnFmdU96?=
+ =?utf-8?Q?XNnlTH5ReBLF+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ABH8lEBuiRpZUV7oAXibgx5IKgROS09+Kf8wrijLDfFDCD2i2SuZa/CkdtdB?=
- =?us-ascii?Q?qjW0BmrYKV9mwy7p16fxyrfaMk7qo1LDzUoAtitZDL5EMxWsrqmtHbWSdhra?=
- =?us-ascii?Q?km8Y0HI4Qz7/qufLuf1N2jsf1qn5np9cQVCEZUuxTI8vLSmRhv5qf2+NKJdu?=
- =?us-ascii?Q?pyoKCOuS9bqbzwqDI5tUZgYDHVxz/2+u+yb65IQ1CdLm1Glp0isdZhOhH8Wz?=
- =?us-ascii?Q?2GtH7KbeZMo/24w3ZGZrm99hgm5aU2t+cnPpo2zmCCBDy00XGfZDxIkk9sxx?=
- =?us-ascii?Q?ug8K/nwVajpMhbKm4ZB7OjgpDt0K8Un8mLVANVFdGljw3zn7WwO7q8Na3qqZ?=
- =?us-ascii?Q?wQZCVi65uqAa6OzwpQ3coK0uGw3xzRYT9FN3S/BP6hAFvNOIt8EOiM7mPvvl?=
- =?us-ascii?Q?BmOpF8zV1smGkGSweIqWBqE6/ru/kBZlniZs2puE5XejcF/kcLYqmtz5ZB+/?=
- =?us-ascii?Q?Pp9xGPmpM34o26fHJlaOsHItnJbX8YyOm5ppWN7vwKu51yCGtm8/Ns5Fj2ew?=
- =?us-ascii?Q?T2yJ6gJFZBpPhMiNO8KmBWvU74skOimnxjpV83/5Jcg5MgFNjnrkiep+KmBZ?=
- =?us-ascii?Q?cyElPaUwvrj2qwU8Ra2lqOsTisJ835ZlPgUJWZmvGT05EdmafMEKg4w7lWXg?=
- =?us-ascii?Q?cW+zbWPGEGg6jaNdtXxwcdmyzvx238Pdejny0r+EluczUHZ+2/kHc0o24JXT?=
- =?us-ascii?Q?aZ1T4R6l+2vH2dwktqrC5Enguu8GAlIZNczu26PE2Z+PK8n08R7OkhAYFzzB?=
- =?us-ascii?Q?SK+E/XncOuDwlzU9WUiOfwxxKxgDz1JYU4UqLkyMgURoIfRRFyFnvP9jU/V0?=
- =?us-ascii?Q?bsWOSkIEK0SK4/H9j5lLYLkH8JmfknhXlowPM1VzHyItlRG4OQ0OLjbc3r6u?=
- =?us-ascii?Q?EGeabztbO1HSEWvCpnlxmJgSQ8dlXVvTYzHi/o3+nR0oh7s4mDb3zzrPsk9b?=
- =?us-ascii?Q?HZCxLJ/EIh0UaIy+FqFW0DPiJ/QVIHwXLWhjyKSUpSKL/OSgo+ZWCWM6b4/F?=
- =?us-ascii?Q?KQ00HTQn4i+qFBi1oDsw3Ss4RjGAVSy0jEFQv1MROCMU2ReIcBdyMfVJ8XfJ?=
- =?us-ascii?Q?6gUQsqCOW/GJxrlssqeJH4lqbsXQEL7snRSvFreX5gLhDg8eM2qM9g0ui4zA?=
- =?us-ascii?Q?STbvA5qrIPGcO3OwlWXsvl9f6Pu3r46/nhndkKljsgkeSLY3yRADqcv4w2IM?=
- =?us-ascii?Q?XjSZhbGgaBzxGp+c5W88eJlbDbPllkACqzksPOMdmXI+bt3ggHkDMDoCtpa0?=
- =?us-ascii?Q?yxhFGTKF30y89jxGY8opJ6dPWgEIqwQDol0EOq4s9oG4ldHdnVaBuaITAz6d?=
- =?us-ascii?Q?wl3UZ4SbhCvzdD3vsk7hXeo3CObmL8JlvwO0v07HPHSX7wJeZv4bdRjSCf8Y?=
- =?us-ascii?Q?8DfJJfd2c7z6cdm/yNH2IyF+KOvPDa5dNC2PI8NEdoGKrwVhQOC8ScReWTzf?=
- =?us-ascii?Q?OSjYp8I0scPGZ8H6LMvzr7j8soPHs+vgmFnVZIJ6RbG3iuENO5lVwIDHHPls?=
- =?us-ascii?Q?BPJ2CApwyXG07tA/dqRz7cEdQQ6fkCqV5AJhmqVRpAENubJbBTjqUJgKJRLJ?=
- =?us-ascii?Q?XYR6b18wTJRoF3k1W//jGqRDfNNlRnrp4f9ltFVBBWYzvRa2n5VQIO2yXvfq?=
- =?us-ascii?Q?EQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a8ae7b1-6a02-4084-4d48-08dd4d4369e9
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eHNXOTVybjYrQmZ0U0kwNEdVZ3ZGSG9kUXhxQmdzK0ZkMkZMS0FkbmlXNWo1?=
+ =?utf-8?B?YjRFUlFCdGhlZ1RFWFFERVRDbFd0aUl1TXEydHYyOUxEeWphVVF3ZnpTVGxU?=
+ =?utf-8?B?LzUwOTFxSVkyZFdSK2lZOUtYS0NPcmlXZHFudWk4Vjh1ZjBZWGV5SUYvN2lI?=
+ =?utf-8?B?OTJqOEZpcEFjTzNBMWt1bEhXa2wxcVVXREZuQlpDb3o4VlNDOEdzcEpmTlJu?=
+ =?utf-8?B?V0NXbW90Q1pYeVBnMHFmTlJXVUlnalk4M3BqSkNheUlUS3hPWkZNR08vSXJI?=
+ =?utf-8?B?QS8wUWZTOGxtZW9aTFdTSzh0ZDhjNG8zelo1eWc4L3Z5dXlTT0hQSGpNUVo0?=
+ =?utf-8?B?M01lVmpXaC9DS0YrRC9MWHByNmZONXZNejIzS2d2RUg5ZDlEcnkySkpsMWRk?=
+ =?utf-8?B?Mzc4cUcrUzdDQWs5VmpjUDhmN3IxTFBVN3Rrd1BiRkRES3RhN2owZTJUb1BS?=
+ =?utf-8?B?QlM0elVEMm9SRWVWLzA1cFlJQUJVUFJ1bi80dzVLMmUzTXpYK2VYUHRVWEJ0?=
+ =?utf-8?B?V0M0ZGswemVZNDF6TWhOc3R2czVmb0NmV1dUdGMvMG1NTkFEUCtlRUNOcnNi?=
+ =?utf-8?B?dmlXN2RINVorVkxQQ3Ntb0lFelBMYmlMaXk1N1kxZE8vU05QdWl3Snh0UWxv?=
+ =?utf-8?B?TDZ1aWNNLzhpWk8vcnRRRFpid1NKODRsdEE2bllxY0lvaDJudWxmd1pqdVI2?=
+ =?utf-8?B?cFRRb2k5ejM1ZkE4cG5EOFdiWW1mT2d0M0FhSHFBMGdJMTFZak8wZ1RlVnlL?=
+ =?utf-8?B?QllESjkrT05WRXgrRVJYa3U1N09vM0lwbnBmUTZjS0RjMnA2dFlLR3dGbm9N?=
+ =?utf-8?B?SXZla1hmdTVBejNjZnF5cmN2di9MbzlOR2RhRWoyTWk3dGR2S0MwMStMTm1N?=
+ =?utf-8?B?Unhma0d2eEprUFZkc2ZoL0JKMUZTRW9oSXFYeDdLenlGMHNzWFJRRFQ4eFhq?=
+ =?utf-8?B?WmQyU1dOZytHTHIxTnpHbHJocms3bko2d0J5NjlnSXZhS2ZVUTV1b000Uktz?=
+ =?utf-8?B?ZytlbUF5clJWNS9jTm1LWm55YWo3QS9sek9JME9RWE1WRlVxTmFtKy9GTE1S?=
+ =?utf-8?B?Snc2dVBOYUd1RFhwc1FZa1N4MnVabStvUjFkZ3V6VmNQemgrYzBRRE1mdzJ2?=
+ =?utf-8?B?WGgrOEMwcktGRnJTM2xqa1JEUTRGOGxnNmNBZnFTQnp0ZmtiM29rLzNLb3Bs?=
+ =?utf-8?B?Ym5BSHBKaGo4OW9IV09EdTk5N3NsdnBMRTJUNG9MdVBDT24zMU4wOVYxQ2Ix?=
+ =?utf-8?B?MEpGcVhpcTkyUnJYcVlEUTZIZnZCc0JMaFpyNStlMkdUNUtSRzZKekM1dzV4?=
+ =?utf-8?B?aUcwWHBlUklNWmFqK1Fqd0Jjb1VVL0JtV2IrWldKVnQrTC9FWkswaVF5M0E2?=
+ =?utf-8?B?bUF6UGxJdzZsYTcxWHdnWkN3Wm9SMUdGMEhDYi9iaGZsZ0cwZGs5NWFFS09p?=
+ =?utf-8?B?QURYS2p5Mm41Z1VvSW81VzlBalUxMS9IdWdweXVOV3Z1V000QmxPZlJjSzJ5?=
+ =?utf-8?B?WTQyZ3pNYTF1eDNIeDJieWdna2xKQURrWXpLZTZuQmlXYWdJRHp0UnhSSUto?=
+ =?utf-8?B?V2trM3lHcHFhZ0t3MzBETnFjbTRwN1duQmNPL251UzVKTEh0REZ1OUk4NVJM?=
+ =?utf-8?B?YjM2NWhKOUp4VzN5V2JPWFlWSjFYcUhEZEhJR2RHUmVORW9ua0xubGVBZkpG?=
+ =?utf-8?B?SURTSllBWngwTTVJazVKU2hTWFdLVkpvS3JaMU42MVgrK1czcmQzMk9KNzRq?=
+ =?utf-8?B?eTZEL0RFZDZxWkVPSThGb2JocWhSQlpONmJWbEJMVUFJWnN0ZmZDbnc1YkNk?=
+ =?utf-8?B?QjdaWEM1eWtnWTlKcjQyYWZZL25TRWRIUmd2dUFsMkYyMTZCWHAzbUxSN2pI?=
+ =?utf-8?B?bTZLRGpEOGk5cEtCazZ3d3JzUkVZYTR2ejZib3NnRDNpc1Z3R2FjVEg4WVRz?=
+ =?utf-8?B?MDdkRVRONGcrNkQ0MERWNlR0K2pSSGtFVUpoZXE2TU1abXBLcUFuOUJBbksx?=
+ =?utf-8?B?UmlCK01wY3BveVIrRG55WkR0UENVMDRISGtldjdqU21UeFNFcG5JcTdGZjl3?=
+ =?utf-8?B?MktZWGY5Kzk3dUgwQUc4ZElwQWpZSktadGc1S04rci9KcTFMdkdtNit0UXlq?=
+ =?utf-8?Q?vEOYPPS7fU7Q32w2R8HTX8is6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f4c0815-ab60-4cc2-ca38-08dd4d437179
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 22:03:29.3252
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 22:03:41.9485
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CGjrG0ZV6tDIF9qkHvivbOZjO7CZhft+PHWSUJ0MFAobotzmA6reeEoXUx3LTuVr9UptiJBfRXCItuFL0YD9ew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7008
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: JjKy02lEzGHzXFYc1Qaz5C+oEKq5njibd7EHANA4IgIY44xqqAytTYmCE6LRo/6e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5713
 
-Jerome Brunet wrote:
-> On Fri 14 Feb 2025 at 10:15, Ira Weiny <ira.weiny@intel.com> wrote:
-> 
-> > Jerome Brunet wrote:
-> >> The auxiliary device creation of this driver is simple enough to
-> >> use the available auxiliary device creation helper.
-> >> 
-> >> Use it and remove some boilerplate code.
-> >> 
-> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> >> ---
-> >>  drivers/clk/imx/clk-imx8mp-audiomix.c | 56 ++++-------------------------------
-> >>  1 file changed, 6 insertions(+), 50 deletions(-)
-> >> 
-> >> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> >> index c409fc7e061869988f83c7df3ef7860500426323..988a5fffeb4e0e481ec57038d9d1f1b43432fc98 100644
-> >> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> >> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> >> @@ -228,64 +228,20 @@ struct clk_imx8mp_audiomix_priv {
-> >>  	struct clk_hw_onecell_data clk_data;
-> >>  };
-> >>  
-> >> -#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> >
-> > I see the Kconfig ...
-> >
-> >         select AUXILIARY_BUS if RESET_CONTROLLER
-> >
-> > But I don't see how this code is omitted without AUXILIARY_BUS.  Is this
-> > kconfig check safe to remove?
-> 
-> Ahhh that's what this directive was for.
-> 
-> I thought it was really odd to have an #if on RESET while auxialiary
-> device was supposed to properly decouple the clock and reset part.
-> 
-> To keep things as they were I'll add an #if on CONFIG_AUXILIARY_BUS I
-> wonder if this driver should select CONFIG_AUXILIARY_BUS instead ?
+On 14 Feb 2025, at 16:59, David Hildenbrand wrote:
 
-I wonder if .../imx/clk-imx8mp-audiomix.c should be conditionally compiled
-based off of AUXILIARY_BUS?  That is what I expected to see when I dug
-into the Kconfig/Makefile but it is not there AFAICS.
+> On 11.02.25 16:50, Zi Yan wrote:
+>> This is a preparation patch, both added functions are not used yet.
+>>
+>> The added __split_unmapped_folio() is able to split a folio with
+>> its mapping removed in two manners: 1) uniform split (the existing way),
+>> and 2) buddy allocator like split.
+>>
+>> The added __split_folio_to_order() can split a folio into any lower orde=
+r.
+>> For uniform split, __split_unmapped_folio() calls it once to split
+>> the given folio to the new order. For buddy allocator split,
+>> __split_unmapped_folio() calls it (folio_order - new_order) times
+>> and each time splits the folio containing the given page to one lower
+>> order.
+>>
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>> ---
+>>   mm/huge_memory.c | 349 ++++++++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 348 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index a0277f4154c2..12d3f515c408 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -3262,7 +3262,6 @@ static void remap_page(struct folio *folio, unsign=
+ed long nr, int flags)
+>>   static void lru_add_page_tail(struct folio *folio, struct page *tail,
+>>   		struct lruvec *lruvec, struct list_head *list)
+>>   {
+>> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>>   	VM_BUG_ON_FOLIO(PageLRU(tail), folio);
+>>   	lockdep_assert_held(&lruvec->lru_lock);
+>>  @@ -3506,6 +3505,354 @@ bool can_split_folio(struct folio *folio, int c=
+aller_pins, int *pextra_pins)
+>>   					caller_pins;
+>>   }
+>>  +/*
+>> + * It splits @folio into @new_order folios and copies the @folio metada=
+ta to
+>> + * all the resulting folios.
+>> + */
+>> +static int __split_folio_to_order(struct folio *folio, int new_order)
+>> +{
+>> +	int curr_order =3D folio_order(folio);
+>> +	long nr_pages =3D folio_nr_pages(folio);
+>> +	long new_nr_pages =3D 1 << new_order;
+>> +	long index;
+>> +
+>> +	if (curr_order <=3D new_order)
+>> +		return -EINVAL;
+>> +
+>> +	/*
+>> +	 * Skip the first new_nr_pages, since the new folio from them have all
+>> +	 * the flags from the original folio.
+>> +	 */
+>> +	for (index =3D new_nr_pages; index < nr_pages; index +=3D new_nr_pages=
+) {
+>> +		struct page *head =3D &folio->page;
+>> +		struct page *new_head =3D head + index;
+>> +
+>> +		/*
+>> +		 * Careful: new_folio is not a "real" folio before we cleared PageTai=
+l.
+>> +		 * Don't pass it around before clear_compound_head().
+>> +		 */
+>> +		struct folio *new_folio =3D (struct folio *)new_head;
+>> +
+>> +		VM_BUG_ON_PAGE(atomic_read(&new_head->_mapcount) !=3D -1, new_head);
+>> +
+>> +		/*
+>> +		 * Clone page flags before unfreezing refcount.
+>> +		 *
+>> +		 * After successful get_page_unless_zero() might follow flags change,
+>> +		 * for example lock_page() which set PG_waiters.
+>> +		 *
+>> +		 * Note that for mapped sub-pages of an anonymous THP,
+>> +		 * PG_anon_exclusive has been cleared in unmap_folio() and is stored =
+in
+>> +		 * the migration entry instead from where remap_page() will restore i=
+t.
+>> +		 * We can still have PG_anon_exclusive set on effectively unmapped an=
+d
+>> +		 * unreferenced sub-pages of an anonymous THP: we can simply drop
+>> +		 * PG_anon_exclusive (-> PG_mappedtodisk) for these here.
+>> +		 */
+>> +		new_head->flags &=3D ~PAGE_FLAGS_CHECK_AT_PREP;
+>> +		new_head->flags |=3D (head->flags &
+>> +				((1L << PG_referenced) |
+>> +				 (1L << PG_swapbacked) |
+>> +				 (1L << PG_swapcache) |
+>> +				 (1L << PG_mlocked) |
+>> +				 (1L << PG_uptodate) |
+>> +				 (1L << PG_active) |
+>> +				 (1L << PG_workingset) |
+>> +				 (1L << PG_locked) |
+>> +				 (1L << PG_unevictable) |
+>> +#ifdef CONFIG_ARCH_USES_PG_ARCH_2
+>> +				 (1L << PG_arch_2) |
+>> +#endif
+>> +#ifdef CONFIG_ARCH_USES_PG_ARCH_3
+>> +				 (1L << PG_arch_3) |
+>> +#endif
+>> +				 (1L << PG_dirty) |
+>> +				 LRU_GEN_MASK | LRU_REFS_MASK));
+>> +
+>> +		/* ->mapping in first and second tail page is replaced by other uses =
+*/
+>> +		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_head->mapping !=3D TAIL_MAPPIN=
+G,
+>> +			       new_head);
+>> +		new_head->mapping =3D head->mapping;
+>> +		new_head->index =3D head->index + index;
+>> +
+>> +		/*
+>> +		 * page->private should not be set in tail pages. Fix up and warn onc=
+e
+>> +		 * if private is unexpectedly set.
+>> +		 */
+>> +		if (unlikely(new_head->private)) {
+>> +			VM_WARN_ON_ONCE_PAGE(true, new_head);
+>> +			new_head->private =3D 0;
+>> +		}
+>> +
+>> +		if (folio_test_swapcache(folio))
+>> +			new_folio->swap.val =3D folio->swap.val + index;
+>> +
+>> +		/* Page flags must be visible before we make the page non-compound. *=
+/
+>> +		smp_wmb();
+>> +
+>> +		/*
+>> +		 * Clear PageTail before unfreezing page refcount.
+>> +		 *
+>> +		 * After successful get_page_unless_zero() might follow put_page()
+>> +		 * which needs correct compound_head().
+>> +		 */
+>> +		clear_compound_head(new_head);
+>> +		if (new_order) {
+>> +			prep_compound_page(new_head, new_order);
+>> +			folio_set_large_rmappable(new_folio);
+>> +
+>> +			folio_set_order(folio, new_order);
+>> +		}
+>> +
+>> +		if (folio_test_young(folio))
+>> +			folio_set_young(new_folio);
+>> +		if (folio_test_idle(folio))
+>> +			folio_set_idle(new_folio);
+>> +
+>> +		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
+>> +	}
+>> +
+>> +	if (!new_order)
+>> +		ClearPageCompound(&folio->page);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * It splits an unmapped @folio to lower order smaller folios in two wa=
+ys.
+>> + * @folio: the to-be-split folio
+>> + * @new_order: the smallest order of the after split folios (since budd=
+y
+>> + *             allocator like split generates folios with orders from @=
+folio's
+>> + *             order - 1 to new_order).
+>> + * @page: in buddy allocator like split, the folio containing @page wil=
+l be
+>> + *        split until its order becomes @new_order.
+>> + * @list: the after split folios will be added to @list if it is not NU=
+LL,
+>> + *        otherwise to LRU lists.
+>> + * @end: the end of the file @folio maps to. -1 if @folio is anonymous =
+memory.
+>> + * @xas: xa_state pointing to folio->mapping->i_pages and locked by cal=
+ler
+>> + * @mapping: @folio->mapping
+>> + * @uniform_split: if the split is uniform or not (buddy allocator like=
+ split)
+>> + *
+>> + *
+>> + * 1. uniform split: the given @folio into multiple @new_order small fo=
+lios,
+>> + *    where all small folios have the same order. This is done when
+>> + *    uniform_split is true.
+>> + * 2. buddy allocator like (non-uniform) split: the given @folio is spl=
+it into
+>> + *    half and one of the half (containing the given page) is split int=
+o half
+>> + *    until the given @page's order becomes @new_order. This is done wh=
+en
+>> + *    uniform_split is false.
+>> + *
+>> + * The high level flow for these two methods are:
+>> + * 1. uniform split: a single __split_folio_to_order() is called to spl=
+it the
+>> + *    @folio into @new_order, then we traverse all the resulting folios=
+ one by
+>> + *    one in PFN ascending order and perform stats, unfreeze, adding to=
+ list,
+>> + *    and file mapping index operations.
+>> + * 2. non-uniform split: in general, folio_order - @new_order calls to
+>> + *    __split_folio_to_order() are made in a for loop to split the @fol=
+io
+>> + *    to one lower order at a time. The resulting small folios are proc=
+essed
+>> + *    like what is done during the traversal in 1, except the one conta=
+ining
+>> + *    @page, which is split in next for loop.
+>> + *
+>> + * After splitting, the caller's folio reference will be transferred to=
+ the
+>> + * folio containing @page. The other folios may be freed if they are no=
+t mapped.
+>> + *
+>> + * In terms of locking, after splitting,
+>> + * 1. uniform split leaves @page (or the folio contains it) locked;
+>> + * 2. buddy allocator like (non-uniform) split leaves @folio locked.
+>> + *
+>> + *
+>> + * For !uniform_split, when -ENOMEM is returned, the original folio mig=
+ht be
+>> + * split. The caller needs to check the input folio.
+>> + */
+>> +static int __split_unmapped_folio(struct folio *folio, int new_order,
+>> +		struct page *page, struct list_head *list, pgoff_t end,
+>> +		struct xa_state *xas, struct address_space *mapping,
+>> +		bool uniform_split)
+>> +{
+>> +	struct lruvec *lruvec;
+>> +	struct address_space *swap_cache =3D NULL;
+>> +	struct folio *origin_folio =3D folio;
+>> +	struct folio *next_folio =3D folio_next(folio);
+>> +	struct folio *new_folio;
+>> +	struct folio *next;
+>> +	int order =3D folio_order(folio);
+>> +	int split_order;
+>> +	int start_order =3D uniform_split ? new_order : order - 1;
+>> +	int nr_dropped =3D 0;
+>> +	int ret =3D 0;
+>> +	bool stop_split =3D false;
+>> +
+>> +	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+>> +		/* a swapcache folio can only be uniformly split to order-0 */
+>> +		if (!uniform_split || new_order !=3D 0)
+>> +			return -EINVAL;
+>> +
+>> +		swap_cache =3D swap_address_space(folio->swap);
+>> +		xa_lock(&swap_cache->i_pages);
+>> +	}
+>> +
+>> +	if (folio_test_anon(folio))
+>> +		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+>> +
+>> +	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+>> +	lruvec =3D folio_lruvec_lock(folio);
+>> +
+>> +	folio_clear_has_hwpoisoned(folio);
+>> +
+>> +	/*
+>> +	 * split to new_order one order at a time. For uniform split,
+>> +	 * folio is split to new_order directly.
+>> +	 */
+>> +	for (split_order =3D start_order;
+>> +	     split_order >=3D new_order && !stop_split;
+>> +	     split_order--) {
+>> +		int old_order =3D folio_order(folio);
+>> +		struct folio *release;
+>> +		struct folio *end_folio =3D folio_next(folio);
+>> +		int status;
+>> +
+>> +		/* order-1 anonymous folio is not supported */
+>> +		if (folio_test_anon(folio) && split_order =3D=3D 1)
+>> +			continue;
+>> +		if (uniform_split && split_order !=3D new_order)
+>> +			continue;
+>> +
+>> +		if (mapping) {
+>> +			/*
+>> +			 * uniform split has xas_split_alloc() called before
+>> +			 * irq is disabled to allocate enough memory, whereas
+>> +			 * non-uniform split can handle ENOMEM.
+>> +			 */
+>> +			if (uniform_split)
+>> +				xas_split(xas, folio, old_order);
+>> +			else {
+>> +				xas_set_order(xas, folio->index, split_order);
+>> +				xas_try_split(xas, folio, old_order,
+>> +						GFP_NOWAIT);
+>> +				if (xas_error(xas)) {
+>> +					ret =3D xas_error(xas);
+>> +					stop_split =3D true;
+>> +					goto after_split;
+>> +				}
+>> +			}
+>> +		}
+>> +
+>> +		/* complete memcg works before add pages to LRU */
+>> +		split_page_memcg(&folio->page, old_order, split_order);
+>> +		split_page_owner(&folio->page, old_order, split_order);
+>> +		pgalloc_tag_split(folio, old_order, split_order);
+>> +
+>> +		status =3D __split_folio_to_order(folio, split_order);
+>> +
+>
+> Stumbling over that code (sorry for the late reply ... ).
+>
+> That looks weird. We split memcg/owner/pgalloc ... and then figure out in=
+ __split_folio_to_order() that we don't want to ... split?
+>
+> Should that all be moved into __split_folio_to_order() and performed only=
+ when we really want to split?
 
-I think for this patch it is best to leave the kconfig as it was.  But it
-seems this is a place which could be cleaned up by the folks who work on
-this driver?
-
-Ira
-
-> 
-> >
-> > Ira
-> >
-> >> -
-> >> -static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> >> -{
-> >> -	struct auxiliary_device *adev = _adev;
-> >> -
-> >> -	auxiliary_device_delete(adev);
-> >> -	auxiliary_device_uninit(adev);
-> >> -}
-> >> -
-> >> -static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
-> >> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev)
-> >>  {
-> >> -	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> >> -
-> >> -	kfree(adev);
-> >> -}
-> >> -
-> >> -static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> >> -							 struct clk_imx8mp_audiomix_priv *priv)
-> >> -{
-> >> -	struct auxiliary_device *adev __free(kfree) = NULL;
-> >> -	int ret;
-> >> +	struct auxiliary_device *adev;
-> >>  
-> >>  	if (!of_property_present(dev->of_node, "#reset-cells"))
-> >>  		return 0;
-> >>  
-> >> -	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> >> -	if (!adev)
-> >> -		return -ENOMEM;
-> >> -
-> >> -	adev->name = "reset";
-> >> -	adev->dev.parent = dev;
-> >> -	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
-> >> -
-> >> -	ret = auxiliary_device_init(adev);
-> >> -	if (ret)
-> >> -		return ret;
-> >> -
-> >> -	ret = auxiliary_device_add(adev);
-> >> -	if (ret) {
-> >> -		auxiliary_device_uninit(adev);
-> >> -		return ret;
-> >> -	}
-> >> -
-> >> -	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
-> >> -					no_free_ptr(adev));
-> >> -}
-> >> -
-> >> -#else /* !CONFIG_RESET_CONTROLLER */
-> >> +	adev = devm_auxiliary_device_create(dev, "reset", NULL, 0);
-> >> +	if (IS_ERR_OR_NULL(adev))
-> >> +		return PTR_ERR(adev);
-> >>  
-> >> -static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> >> -							 struct clk_imx8mp_audiomix_priv *priv)
-> >> -{
-> >>  	return 0;
-> >>  }
-> >>  
-> >> -#endif /* !CONFIG_RESET_CONTROLLER */
-> >> -
-> >>  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
-> >>  {
-> >>  	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-> >> @@ -408,7 +364,7 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
-> >>  	if (ret)
-> >>  		goto err_clk_register;
-> >>  
-> >> -	ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
-> >> +	ret = clk_imx8mp_audiomix_reset_controller_register(dev);
-> >>  	if (ret)
-> >>  		goto err_clk_register;
-> >>  
-> >> 
-> >> -- 
-> >> 2.45.2
-> >> 
-> 
-> -- 
-> Jerome
+Yes, or move it after the status check. In reality, __split_folio_to_order(=
+)
+only fails split_order is bigger than folio=E2=80=99s order, which should n=
+ot happen.
+But still. I will fix it in the next version.
 
 
+Best Regards,
+Yan, Zi
 
