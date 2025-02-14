@@ -1,183 +1,178 @@
-Return-Path: <linux-kernel+bounces-515296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C0EA36302
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:26:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E8EA36303
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8E316B340
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DF0F7A5011
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209F2267B6C;
-	Fri, 14 Feb 2025 16:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5EB2676FD;
+	Fri, 14 Feb 2025 16:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rKCvgizw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lqqYUd+I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C217E0ED;
-	Fri, 14 Feb 2025 16:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9708A2676F8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550306; cv=none; b=JBCvKhoXno+6j3vxtvfRi2BbQlxeJeJWhpqk8ekK1nYAazIPZbtNgAIbkuQJO1d+pmfdhF98T/LQnADP1oSlDH7hJkuoWpHyYYmPHRYnRYdsmmz7hLTEaTzDIr5H0WROkr5G1Y3rd2F02S4GesGGh+4iW50pxN1kh7KoItHISsg=
+	t=1739550355; cv=none; b=nuRdz+i5NFGrejYwAqucYpDUa4Q9bGpsdtZQeVE6z5L4i+ibtYp1qTtmmETdeqIE9hM7qQa2H/X2OLz4UmiVbakzIbI8M2PWJzurmVN0omYKNPYC+uCOS+3nv8ujyhSzBkQX5dLngEGDNwLcpu/ZDB7C8c5SCPHpwZjIcTngp18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550306; c=relaxed/simple;
-	bh=XGCrjKYWR6g/Oc7ffC1TNGQJ7GNX5TqlzKoNYIeqInk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NA6RYps2XyKRtV3tgWVFPHYRGeH6JYxlf6EeQAZzXMJ1muFZ4Dlf6MhVhwlurDFfoYyhoX6OKWeP6EaXLRkgXf+7J8z74Q/qqygi4qx7BuMBPgIEEGXYtxnx3uskbp4mQ/D6UxLf0NzsZHmqQD1bD52uQoXnvHY4FsMBlo1PAl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rKCvgizw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E7X0G3026210;
-	Fri, 14 Feb 2025 16:24:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=HVK5Ba/d9bGUUzXzE
-	oQTVrIVyX5umy5tq9OStFoQzHg=; b=rKCvgizwkuI/UlC27TdtP4Cbv5lvZBXxl
-	F7kS1sc2mcfRCUPa5mE9jPM/cI4mpfhP/5OweCS078+5i7rcadlELWEntSjeTWDb
-	QRowi/aAwXyibqBvxmgR16FjFVPmI3Q4kPAAHT/GA6tBh74PtHt4AMcLIN7VCeQM
-	6/FU5SVYZMyio6o3OIVTTUAxKq5TNtdwPTTdsYCK6BOeyXn8Oc8GsA3Nma7VepJF
-	JEK3Lx7md3n24tkLSIjp+mC4+W9jtxDCMMJiMt5qhMbSNRaEv3mb7s7y7Sbhcfk/
-	324Rdw9pBGcxaLSYJGPuRxm0fJW4lU4lFjo6I1pX0BpLw0GPVGJSQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44t1hpte9f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 16:24:54 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51EFHjEP016679;
-	Fri, 14 Feb 2025 16:24:54 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44pk3kmd4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 16:24:54 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51EGOqm418154226
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Feb 2025 16:24:52 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BF135803F;
-	Fri, 14 Feb 2025 16:24:52 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF62258056;
-	Fri, 14 Feb 2025 16:24:51 +0000 (GMT)
-Received: from li-4c4c4544-0047-5210-804b-b8c04f323634.lan (unknown [9.61.91.157])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Feb 2025 16:24:51 +0000 (GMT)
-From: Nick Child <nnac123@linux.ibm.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: haren@linux.ibm.com, ricklind@us.ibm.com, nick.child@ibm.com,
-        jacob.e.keller@intel.com, horms@kernel.org,
-        Nick Child <nnac123@linux.ibm.com>
-Subject: [PATCH v2 3/3] ibmvnic: Print data buffers with kernel API's
-Date: Fri, 14 Feb 2025 10:24:36 -0600
-Message-ID: <20250214162436.241359-4-nnac123@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250214162436.241359-1-nnac123@linux.ibm.com>
-References: <20250214162436.241359-1-nnac123@linux.ibm.com>
+	s=arc-20240116; t=1739550355; c=relaxed/simple;
+	bh=xE4Njoyxxxt7h5muOvaecOz2DvQhoas6HmilLX9gMOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PBVWNgb5ZI00E+uaH2x+ObmbidATZ8lW8sFRdsL8ygGv6OqCAS7WCYNVBfV0cs5XiIXo9mhM36+W9ekxT9pgqiI7HUNFdxvkRnTtpp+AZ5yPLVVX+oI6Y0eBUWuQMY7aWdK8mkwaMFuS2MgOF3nV7+m93vepqJA+lJvo4/DdGPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lqqYUd+I; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739550353; x=1771086353;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xE4Njoyxxxt7h5muOvaecOz2DvQhoas6HmilLX9gMOs=;
+  b=lqqYUd+IjbTepA0kNXZSRnp8yrZQemde9hblMFpLltcra5ccjByylxvs
+   laerryL8twspLx1/qj6+rderDSrUeEqwD9AQVH5MKx5cHPHvkdr+y8Oc5
+   kZdrTMvfzrRTvIIYek9ARBEKvAVq7/0CW1fNtiqIQUlE4G7XIBVLGWYcl
+   mmTwtNydWLByk2dW765rkbkZIkmJ9e0+CfjZsUAespb0jyJsSdw7CTsNS
+   5XcfvZC4wZhwJ69k5BOlnn5u2+SPY5Zhf5b7KME9QEY54GQai8s2HjtsK
+   9Rwuu7klucW/BeYuMJpqpoeCKuyRI2j+F3WE5BC8IjHtrz3OHSNM7Q0Fb
+   w==;
+X-CSE-ConnectionGUID: W11KgWJlQce7b9GhRolSTg==
+X-CSE-MsgGUID: YlVxgHniT0CXsvjXL27WkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40447113"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="40447113"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:25:52 -0800
+X-CSE-ConnectionGUID: QnpF+3SJQjS0E1pjW7WhkA==
+X-CSE-MsgGUID: WoQgMQ7nTfiHk7j8FRVjcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="113355705"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.34]) ([10.125.109.34])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:25:52 -0800
+Message-ID: <613c2726-a576-4cd8-86a2-c84529b754cd@intel.com>
+Date: Fri, 14 Feb 2025 09:25:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: M1vwKHZdR9uqW1AiZCVjq7v90PIzsE4x
-X-Proofpoint-GUID: M1vwKHZdR9uqW1AiZCVjq7v90PIzsE4x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_07,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- mlxlogscore=767 mlxscore=0 suspectscore=0 clxscore=1011 malwarescore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140114
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/12] dmaengine: idxd: Remove unnecessary
+ IOMMU_DEV_FEAT_IOPF
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Vinicius Costa Gomes <vinicius.gomes@intel.com>
+References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
+ <20250214061104.1959525-10-baolu.lu@linux.intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250214061104.1959525-10-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Previously, data buffers that were to be printed were cast to 8 byte
-integers and printed. This can lead to buffer overflow if the length
-of the buffer is not a multiple of 8.
 
-Simplify and safeguard printing by using kernel provided functions
-to print these data blobs.
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Nick Child <nnac123@linux.ibm.com>
----
- drivers/net/ethernet/ibm/ibmvnic.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+On 2/13/25 11:11 PM, Lu Baolu wrote:
+> The IOMMU_DEV_FEAT_IOPF implementation in the iommu driver is just a no-op.
+> It will also be removed from the iommu driver in the subsequent patch.
+> Remove it to avoid dead code.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index e95ae0d39948..a8f1feb9a2e7 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -4834,6 +4834,7 @@ static int send_login(struct ibmvnic_adapter *adapter)
- 	struct device *dev = &adapter->vdev->dev;
- 	struct vnic_login_client_data *vlcd;
- 	dma_addr_t rsp_buffer_token;
-+	unsigned char hex_str[16 * 3];
- 	dma_addr_t buffer_token;
- 	size_t rsp_buffer_size;
- 	union ibmvnic_crq crq;
-@@ -4937,9 +4938,9 @@ static int send_login(struct ibmvnic_adapter *adapter)
- 	vnic_add_client_data(adapter, vlcd);
- 
- 	netdev_dbg(adapter->netdev, "Login Buffer:\n");
--	for (i = 0; i < (adapter->login_buf_sz - 1) / 8 + 1; i++) {
--		netdev_dbg(adapter->netdev, "%016lx\n",
--			   ((unsigned long *)(adapter->login_buf))[i]);
-+	for_each_line_in_hex_dump(i, 16, hex_str, sizeof(hex_str), 8,
-+				  adapter->login_buf, adapter->login_buf_sz) {
-+		netdev_dbg(adapter->netdev, "%s\n", hex_str);
- 	}
- 
- 	memset(&crq, 0, sizeof(crq));
-@@ -5317,15 +5318,17 @@ static void handle_query_ip_offload_rsp(struct ibmvnic_adapter *adapter)
- {
- 	struct device *dev = &adapter->vdev->dev;
- 	struct ibmvnic_query_ip_offload_buffer *buf = &adapter->ip_offload_buf;
-+	unsigned char hex_str[16 * 3];
- 	int i;
- 
- 	dma_unmap_single(dev, adapter->ip_offload_tok,
- 			 sizeof(adapter->ip_offload_buf), DMA_FROM_DEVICE);
- 
- 	netdev_dbg(adapter->netdev, "Query IP Offload Buffer:\n");
--	for (i = 0; i < (sizeof(adapter->ip_offload_buf) - 1) / 8 + 1; i++)
--		netdev_dbg(adapter->netdev, "%016lx\n",
--			   ((unsigned long *)(buf))[i]);
-+	for_each_line_in_hex_dump(i, 16, hex_str, sizeof(hex_str), 8, buf,
-+				  sizeof(adapter->ip_offload_buf)) {
-+		netdev_dbg(adapter->netdev, "%s\n", hex_str);
-+	}
- 
- 	netdev_dbg(adapter->netdev, "ipv4_chksum = %d\n", buf->ipv4_chksum);
- 	netdev_dbg(adapter->netdev, "ipv6_chksum = %d\n", buf->ipv6_chksum);
-@@ -5518,6 +5521,7 @@ static int handle_login_rsp(union ibmvnic_crq *login_rsp_crq,
- 	struct net_device *netdev = adapter->netdev;
- 	struct ibmvnic_login_rsp_buffer *login_rsp = adapter->login_rsp_buf;
- 	struct ibmvnic_login_buffer *login = adapter->login_buf;
-+	unsigned char hex_str[16 * 3];
- 	u64 *tx_handle_array;
- 	u64 *rx_handle_array;
- 	int num_tx_pools;
-@@ -5556,9 +5560,10 @@ static int handle_login_rsp(union ibmvnic_crq *login_rsp_crq,
- 	netdev->mtu = adapter->req_mtu - ETH_HLEN;
- 
- 	netdev_dbg(adapter->netdev, "Login Response Buffer:\n");
--	for (i = 0; i < (adapter->login_rsp_buf_sz - 1) / 8 + 1; i++) {
--		netdev_dbg(adapter->netdev, "%016lx\n",
--			   ((unsigned long *)(adapter->login_rsp_buf))[i]);
-+	for_each_line_in_hex_dump(i, 16, hex_str, sizeof(hex_str), 8,
-+				  adapter->login_rsp_buf,
-+				  adapter->login_rsp_buf_sz) {
-+		netdev_dbg(adapter->netdev, "%s\n", hex_str);
- 	}
- 
- 	/* Sanity checks */
--- 
-2.48.0
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/dma/idxd/init.c | 37 ++++++-------------------------------
+>  1 file changed, 6 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 1e5038cca22c..d44944195807 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -626,21 +626,6 @@ static void idxd_disable_system_pasid(struct idxd_device *idxd)
+>  	idxd->pasid = IOMMU_PASID_INVALID;
+>  }
+>  
+> -static int idxd_enable_sva(struct pci_dev *pdev)
+> -{
+> -	int ret;
+> -
+> -	ret = iommu_dev_enable_feature(&pdev->dev, IOMMU_DEV_FEAT_IOPF);
+> -	if (ret)
+> -		return ret;
+> -	return 0;
+> -}
+> -
+> -static void idxd_disable_sva(struct pci_dev *pdev)
+> -{
+> -	iommu_dev_disable_feature(&pdev->dev, IOMMU_DEV_FEAT_IOPF);
+> -}
+> -
+>  static int idxd_probe(struct idxd_device *idxd)
+>  {
+>  	struct pci_dev *pdev = idxd->pdev;
+> @@ -655,17 +640,13 @@ static int idxd_probe(struct idxd_device *idxd)
+>  	dev_dbg(dev, "IDXD reset complete\n");
+>  
+>  	if (IS_ENABLED(CONFIG_INTEL_IDXD_SVM) && sva) {
+> -		if (idxd_enable_sva(pdev)) {
+> -			dev_warn(dev, "Unable to turn on user SVA feature.\n");
+> -		} else {
+> -			set_bit(IDXD_FLAG_USER_PASID_ENABLED, &idxd->flags);
+> +		set_bit(IDXD_FLAG_USER_PASID_ENABLED, &idxd->flags);
+>  
+> -			rc = idxd_enable_system_pasid(idxd);
+> -			if (rc)
+> -				dev_warn(dev, "No in-kernel DMA with PASID. %d\n", rc);
+> -			else
+> -				set_bit(IDXD_FLAG_PASID_ENABLED, &idxd->flags);
+> -		}
+> +		rc = idxd_enable_system_pasid(idxd);
+> +		if (rc)
+> +			dev_warn(dev, "No in-kernel DMA with PASID. %d\n", rc);
+> +		else
+> +			set_bit(IDXD_FLAG_PASID_ENABLED, &idxd->flags);
+>  	} else if (!sva) {
+>  		dev_warn(dev, "User forced SVA off via module param.\n");
+>  	}
+> @@ -703,8 +684,6 @@ static int idxd_probe(struct idxd_device *idxd)
+>   err:
+>  	if (device_pasid_enabled(idxd))
+>  		idxd_disable_system_pasid(idxd);
+> -	if (device_user_pasid_enabled(idxd))
+> -		idxd_disable_sva(pdev);
+>  	return rc;
+>  }
+>  
+> @@ -715,8 +694,6 @@ static void idxd_cleanup(struct idxd_device *idxd)
+>  	idxd_cleanup_internals(idxd);
+>  	if (device_pasid_enabled(idxd))
+>  		idxd_disable_system_pasid(idxd);
+> -	if (device_user_pasid_enabled(idxd))
+> -		idxd_disable_sva(idxd->pdev);
+>  }
+>  
+>  /*
+> @@ -1248,8 +1225,6 @@ static void idxd_remove(struct pci_dev *pdev)
+>  	free_irq(irq_entry->vector, irq_entry);
+>  	pci_free_irq_vectors(pdev);
+>  	pci_iounmap(pdev, idxd->reg_base);
+> -	if (device_user_pasid_enabled(idxd))
+> -		idxd_disable_sva(pdev);
+>  	pci_disable_device(pdev);
+>  	destroy_workqueue(idxd->wq);
+>  	perfmon_pmu_remove(idxd);
 
 
