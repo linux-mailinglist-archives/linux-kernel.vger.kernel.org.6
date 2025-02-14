@@ -1,828 +1,141 @@
-Return-Path: <linux-kernel+bounces-514339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB6CA355C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CC5A355D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C21E3AD91E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572DB3ACAA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C8415CD74;
-	Fri, 14 Feb 2025 04:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C58186284;
+	Fri, 14 Feb 2025 04:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="f0YQLu63"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbT5E6bx"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36C222071
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7326B17B401;
+	Fri, 14 Feb 2025 04:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739507441; cv=none; b=TvZSqWVfLpQ7utPXhxvmoAO8xGB9ML36wQ6mYRR+gLDNDpO9CtlRLQ2EUmQFvAKLytbgtDuWs2us4EUDu8YL+/K+oVtXobQladkI9dKSGoDg48ntOYP/ON9p4KaEO3vCwy1mIji9tnwADHlc0lS0KscsBCkS/7dAp+Ec+eChJA0=
+	t=1739507656; cv=none; b=bVgVT/8W1pM0uMec/td9eLoBA9REK/71wdKiuMS9QshfL/G73GXavK12p9WmDfr4SoeS4MaJ1PZku0b0xul7lBttJqYAbkft28k8Gd1sfb1QrC8bVe3Es8DOgjzYedstekgeQ6tEdeKPucHePAJTkW+EMtK3OS2gnqfaN3nBZQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739507441; c=relaxed/simple;
-	bh=hy1X58FkgRVoWxDZ6ASLhMm6doK7oWaa2Wg/fPypQJQ=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WjvaclWgCGJpm5fSbCQrkWTf4MCdZv57pf5k7e3Uh8t2w2Ejr2eWFca5MuISilX++eRxX5/juTeBLusAOyqIUsdSw/fLRp2dXqDysJW8PziZPog9zOjcG4YKZrmPV+eSuDr2Q7OiEwm+zstU1YIiogC0/g0Xw6GGroWi90SnaOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=f0YQLu63; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fa8ada664fso2618759a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 20:30:38 -0800 (PST)
+	s=arc-20240116; t=1739507656; c=relaxed/simple;
+	bh=aE2wWcqpFbC4XebLj7NF3xjtNb+1wLW9AH1SRvAJy9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kC8Vn4PHooL3bWXg1Ie+QKgh1cPFq+emTmhWS0KwjE9IMT8KLhPq6jFNtQ+osXqGoOWcY4Bfg8SZq+0myG3y0J08LFKlqta8xocIF7UDLb6FRkTTKymqnD5nYmWqDMwZmUKd9ZrzL5PM3Y9a4UKpvOhshUUoZnJZcUvlW9rlp+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbT5E6bx; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab7f42ee3ecso325847166b.0;
+        Thu, 13 Feb 2025 20:34:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=telus.net; s=google; t=1739507438; x=1740112238; darn=vger.kernel.org;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iu2gq6TNnoi9/irMHl5bO+lDk+CqNPAGsiveEaM2C0U=;
-        b=f0YQLu63dSQx73evT/200mIh3NsroH2ALzjrKnuN+Wcdo6o+JpSO2Z19vV4+FF9Wcz
-         L4YiiO9Ald52IBBFMDspOJnQHkgZJSd/YJN67fLKxf6sXDcXM/blYfGHg2zUwP9wvbkn
-         /vDMwAcOiMjPQQ5RrUY2L7R9A07LqEGoUOmAq5zssrO++w84e+jnb6x4tCh/Jvhmzfqv
-         dO9iNvi/YY7cMqg0gDmg47Vd6MWHeKKHFVScD/lx7Cm9zPquntbP+6mhM8f7M/zp98ev
-         nt1Nhma/7aNdjgxHCs1gIrpBS+WpQ/AtEukZ5C2EJqvwsXPd3iEThcNgz+6EXuC9MVEQ
-         bcvQ==
+        d=gmail.com; s=20230601; t=1739507653; x=1740112453; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aE2wWcqpFbC4XebLj7NF3xjtNb+1wLW9AH1SRvAJy9A=;
+        b=bbT5E6bxHBpVQS80mYwrID2IuYMN4ZFBzu82MlIrQP4EWTqQjzskOQdm2yLssOylxw
+         ebsb8oleBO0Od5gKbysSObkfydMD9+G+cKyw5iVt8SSa0g/yauMhI7obvBQ9D/12xp3p
+         KE1G/DaA3bvKcgF6htn+1AM1VU6YiolJwDavK3Uz5Lo9TUlJcKyXSUoHWARalayUya4Z
+         awO5eYul19vEPza1INstZCU5npKHL8atE9TYicsu+euCdF9ofyylHxB5PmF4jUq8fNED
+         NmrQjkEJWkRfVHMiEetty44RgJnI9FkuU4ZdfK9HMfYamkSWp52m0eBnwNWURPP/6JON
+         mntA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739507438; x=1740112238;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iu2gq6TNnoi9/irMHl5bO+lDk+CqNPAGsiveEaM2C0U=;
-        b=ud/tCmBojAWPVy8xWeb9tHgGe/CJfkXtkhzYxeHHR6eLy0jwFVvrtGo8ywVTKl/pH4
-         8eUi8cjGxbiCMxT7HkddTc3wXoqfVx3k+UFNmvgk1ya8DL7eNCHhj1NrzZqNH6u4VZQ0
-         UerwRPDCvqxhf1DChEHngGYjQQ1K4akh2EKBPMW2zC2lOJ5TBUUO2r230oJSnzqHDyZB
-         RYZCnnarE2F6gxOlvy4v2U4ly1pQEmncoSq/6qf4UphAxqG7orjqQPoizvuX+hEBof5e
-         0342+E7KTPx0stL7DnhKn1/HN/GVJBrxE0xNmzyaaqt/YJAUV7mmheiFabeOhy0dnz4o
-         m+1w==
-X-Gm-Message-State: AOJu0YwmJjLgWl7FeukpXOReXP7ZdG6ACjwxKuyVgVXJ+aFMbq5z7Nzm
-	4lBOJ3jW7otu9X1yb7520BCbjOpHi6VlTXlJa9uyHVqe/NHIWm9RBt/hT1j55CCtfCJof0FsTFx
-	p
-X-Gm-Gg: ASbGnctKQDsSE30eU+iWiuL9y1IcRFj2NMoSrvjmpfwX/jzz0dZrswVD0CAi2DGk7gG
-	sZRloIoSjZ37I1MfSoo6L2DyG0AFxQX/1RrhNXWW+vpyCHPkLXc0nVgPEgZr7opkgM+Ra+UF11K
-	0mhRSSXfxEjQpki7gyk499l1pkVLa91i2zn2ocrh1Of9+iwti8ElJLMQXDsQfkjEtS7qY4MxbL9
-	E0/CjGSYwB/MPm7fpvtDbwQgC+jas7vg/D6RH8E6h9SNXDCVx4JFYJqBhjBf6SLjq2GdoU3B3VV
-	zoA7ssaNKS3oUwAiDe0MkfoSvgptuJQflfoR3t2PV/7yOTfS/6ZyMo1m
-X-Google-Smtp-Source: AGHT+IHsuK0nVvdalVRoWsZ2wiGKo0LZ440DAyXj3i8Z6FVDr1zv8PWsixQQaWTbAK0fa32OdRCDnA==
-X-Received: by 2002:a17:90b:2810:b0:2ee:b2fe:eeeb with SMTP id 98e67ed59e1d1-2fbf5c57bdfmr12581779a91.22.1739507437595;
-        Thu, 13 Feb 2025 20:30:37 -0800 (PST)
-Received: from DougS18 (s66-183-142-209.bc.hsia.telus.net. [66.183.142.209])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ad2f20sm2134931a91.23.2025.02.13.20.30.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Feb 2025 20:30:36 -0800 (PST)
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-	"'Linux PM'" <linux-pm@vger.kernel.org>
-Cc: "'LKML'" <linux-kernel@vger.kernel.org>,
-	"'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-	"'Christian Loehle'" <christian.loehle@arm.com>,
-	"'Artem Bityutskiy'" <artem.bityutskiy@linux.intel.com>,
-	"'Aboorva Devarajan'" <aboorvad@linux.ibm.com>,
-	"Doug Smythies" <dsmythies@telus.net>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
-In-Reply-To: <1916668.tdWV9SEqCh@rjwysocki.net>
-Subject: RE: [RFT][PATCH v1 0/5] cpuidle: menu: Avoid discarding useful information when processing recent idle intervals
-Date: Thu, 13 Feb 2025 20:30:40 -0800
-Message-ID: <003b01db7e99$34791c50$9d6b54f0$@telus.net>
+        d=1e100.net; s=20230601; t=1739507653; x=1740112453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aE2wWcqpFbC4XebLj7NF3xjtNb+1wLW9AH1SRvAJy9A=;
+        b=Eyaf/MLSrsNi3JdHohGeoEwemi237dKNWSBhpO0DLbwMK8dSz7wWqwfHKgwehOcyL7
+         4HQ72CJMmlq6PQkE2mKh8LMhaFrsi2YNn5CPi+xjI8rt5RafH7QSf2py/tSR5Ctlnlm5
+         0c5HIxbXbZ2CzN3ydalapbdAJA6MAmoUeKU2NIJ3mPbqMk3HVqpmCovHBCzfqrezjJTE
+         7MOoco8cuxCEh4/4qMevzlwNfbAZwZj9R3rzXr4tEsQn157g4ukFTuX0Z9o1KM5v3pwo
+         KVgvF3ZTgqduxNmc5+oosfRGDhfPHIW765nPDKwoS70ELDXY4T+FXyun+Zu7VNjDpzvi
+         PwJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrQp68rAddgmf4RUee9lv6TQ6Q0s+ehwkyOUReBGGzz/sA0hNcIUbLY/C4Gv1FfgRNMdc73VX3QOc=@vger.kernel.org, AJvYcCXcyd7TN84StiNcjjpdPxv/XEJjHOjjIzgDLe1BTUx3Xv+uTPfCGN9pkaTnYfsUKtYlvNm2dMw+FKkFBVXe@vger.kernel.org
+X-Gm-Message-State: AOJu0YymyfU1Z/pILkQNlBQyVRHUP3wq/LEqEPOyczXXmdhpFG9SVr5s
+	1bjpx0XK1jzdHU/HJh6KK6wYWPYUlQluwQEYSBvBlUkYlLpsx9BslGmxqBpSyv1dA8tEkAOYSSU
+	z/7KLoAW+4XtLlufDfLloXIXOqKe8/GsqJDfaXQ==
+X-Gm-Gg: ASbGncsovH5ujNbsuZf824XL2v2DHktKwDQlOgNnj74vJBzj+bOHgXIsnCSfh12h6hh
+	bMmasG78FLxWb7k0PL8V4kNrrMSkBtRv8ERGXaPZobxSmIL76OVURUSS9YTZ9WYD6lyPpTZCC
+X-Google-Smtp-Source: AGHT+IEdWqk6OuWF9cpgOPkxClX2jfBAmhUTYRnLlwYU2C8FQEalrxY4didEhXlEEI2pQRacKG1c6+qdxnFlk94LWCU=
+X-Received: by 2002:a17:906:f59b:b0:ab6:8bc1:9b5a with SMTP id
+ a640c23a62f3a-aba5018d9a1mr611382466b.41.1739507652395; Thu, 13 Feb 2025
+ 20:34:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-ca
-Thread-Index: AQD+BgZZG1yDo2pCGl+Ay1eM9EzyO7UBJVcQ
-
-On 2025.02.06 06:22 Rafael J. Wysocki wrote:
-
-> Hi Everyone,
-
-Hi Rafael,
-
->
-> This work had been triggered by a report that commit 0611a640e60a =
-("eventpoll:
-> prefer kfree_rcu() in __ep_remove()") had caused the critical-jOPS =
-metric of
-... deleted ...
-
-This is a long email. It contains test results for several recent idle =
-governor patches:
-
-cpuidle: teo: Cleanups and very frequent wakeups handling update
-cpuidle: teo: Avoid selecting deepest idle state over-eagerly (Testing =
-aborted, after the patch was dropped.)
-cpuidle: menu: Avoid discarding useful information when processing =
-recent idle intervals
-
-Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
-Distro: Ubuntu 24.04.1, server, no desktop GUI.
-
-CPU frequency scaling driver: intel_pstate
-HWP: disabled.
-CPU frequency scaling governor: performance
-
-Ilde driver: intel_idle
-Idle governor: as per individual test
-Idle states: 4: name : description:
-   state0/name:POLL             desc:CPUIDLE CORE POLL IDLE
-   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
-   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
-   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
-
-Legend:
-teo-613: teo governor - Kernel 6.13: before "cpuidle: teo: Cleanups and =
-very frequent wakeups handling update"
-menu-613: menu governor - Kernel 6.13: before "cpuidle: teo: Cleanups =
-and very frequent wakeups handling update"
-teo-614: teo governor - Kernel 6.14-rc1: Includes cpuidle: teo: Cleanups =
-and very frequent wakeups handling update
-menu-614: menu governor - Kernel 6.14-rc1: Includes cpuidle: teo: =
-Cleanups and very frequent wakeups handling update
-teo-614-p: teo governor - Kernel 6.14-rc1-p: Includes "cpuidle: teo: =
-Avoid selecting deepest idle state over-eagerly"
-menu-614-p: menu governor - Kernel 6.14-rc1-p: Includes "cpuidle: menu: =
-Avoid discarding useful information when processing recent idle =
-intervals"
-
-I do a set of tests adopted over some years now.
-Readers may recall that some of the tests search over a wide range of =
-operating conditions looking for areas to focus on in more detail.
-One interesting observation is that everything seems to run slower than =
-the last time I did this, June 2024, Kernel 6.10-rc2,
-which was also slower than the time before that, August 2023, Kernel =
-6.5-rc4.
-There are some repatabilty issues with the tests.
-
-I was unable to get the "cpuidle: teo: Cleanups and very frequent =
-wakeups handling update" patch set to apply to kernel 6.13, and so just =
-used kernel 6.14-rc1, but that means that all the other commits
-between the kernel versions are included. This could cast doubt on the =
-test results, and indeed some differences in test results are observed =
-with the menu idle governor, which did not change.
-
-Test 1: System Idle
-
-Purpose: Basic starting point test. To observee and check an idle system =
-for excessive power consumption.
-
-teo-613: 1.752 watts (reference: 0.0%)
-menu-613: 1.909 watts (+9.0%)
-teo-614: 2.199 watts (+25.51%)   <<< Test flawed. Needs to be redone. =
-Will be less.
-teo-614-2: 2.112 watts (+17.05%) <<< Re-test of teo-614. (don't care =
-about 0.4 watts)
-menu-614: 1.873 watts (+6.91%)
-teo-614-p: 9.401 watts (+436.6%)  <<< Very bad regression.
-menu-614-p: 1.820 watts (+3.9%)
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/idle/perf/
-
-Test 2: 2 core ping pong sweep:
-
-Pass a token between 2 CPUs on 2 different cores.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the shallowest idle states
-and observe the transition from using more of 1
-idle state to another.
-
-Results relative to teo-613 (negative is better):
-        menu-613        teo-614         menu-614        menu-614-p
-average -2.06%          -0.32%          -2.33%          -2.52%
-max     9.42%           12.72%          8.29%           8.55%
-min     -10.36%         -3.82%          -11.89%         -12.13%
-
-No significant issues here. There are differences on idle state =
-preferences.
-
-Standard "fast" dwell test:
-
-teo-613: average 3.826 uSec/loop reference
-menu-613: average 4.159 +8.70%
-teo-614: average 3.751 -1.94%
-menu-614: average 4.076 +6.54%
-menu-614-p: average 4.178 +9.21%
-
-Intrestingly, teo-614 also uses a little less power.
-Note that there is an offsetting region for the menu governor where it =
-performs better
-than teo, but it was not extracted and done as a dwell test.
-
-Standard "medium dwell test:
-
-teo-613: 12.241 average uSec/loop reference
-menu-613: 12.251 average +0.08%
-teo-614: 12.121 average -0.98%
-menu-614: 12.123 average -0.96%
-menu-614-p: 12.236 average -0.04%
-
-Standard "slow" dwell test: Not done.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/loop-times.png=
-
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/loop-times-rel=
-ative.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/many-0-400000000-2/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/many-3000-100000000-2/
-
-Test 3: 6 core ping pong sweep:
-
-Pass a token between 6 CPUs on 6 different cores.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the midrange idle states
-and observe the transitions between use of
-idle states.
-
-Note: This test has uncertainty in an area where the performance is =
-bi-stable for all idle governors,
-transitioning between much less power and slower performance and much =
-more power and higher performance.
-On either side of this area, the differences between all idle governors =
-are small.
-Only data from before this area (from results 1 to 95) was included in =
-the below results.
-
-Results relative to teo-613 (negative is better):
-        teo-614 menu-613        menu-614        menu-614-p
-average 1.60%   0.18%           0.02%           0.02%
-max     5.91%   0.97%           1.12%           0.85%
-min     -1.79%  -1.11%          -1.88%          -1.52%
-
-A further dwell test was done in the area where teo-614 performed worse.
-There was a slight regression in both performance and power:
-
-teo-613: average 21.34068 uSec per loop
-teo-614: average 20.55809 usec per loop 3.67% regression
-
-teo-613: average 37.17577 watts.
-teo-614: average 38.06375 watts. 2.3% regression.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times.png=
-
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times-det=
-ail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times-det=
-ail-b.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/dwell/perf/
-
-Test 4: 12 CPU ping pong sweep:
-
-Pass a token between all 12 CPUs.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the deeper idle states
-and observe the transitions between use of
-idle states.
-
-This test was added last time at the request of Christian Loehle.
-
-Note: This test has uncertainty in an area where the performance is =
-bi-stable for all idle governors,
-transitioning between much less power and slower performance and much =
-more power and higher performance.
-On either side of this area, the differences between all idle governors =
-are small.
-
-Only data from before this area (from results 1 to 60) was included in =
-the below results:
-
-Results relative to teo-613 (negative is better):
-        teo-614 menu-613        menu-614        teo-614-p       =
-menu-614-p
-ave     1.73%   0.97%           1.29%           1.70%           0.43%
-max     16.79%  3.52%           3.95%           17.48%          4.98%
-min     -0.35%  -0.35%          -0.18%          -0.40%          -0.54%
-
-Only data from after the uncertainty area (from results 170-300) was =
-included in the below results:
-
-        teo-614 menu-613        menu-614        teo-614-p       =
-menu-614-p
-ave     1.65%   0.04%           0.98%           -0.56%          0.73%
-max     5.04%   2.10%           4.58%           2.44%           3.82%
-min     0.00%   -1.89%          -1.17%          -1.95%          -1.38%
-
-A further dwell test was done in the area where teo-614 performed worse =
-and there is a 15.74%
-throughput regression for teo-614 and a 5.4% regression in power.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-loop-ti=
-mes.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-loop-ti=
-mes-detail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-relativ=
-e-times.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/dwell/times.t=
-xt
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/dwell/perf/
-
-Test 5: sleeping ebizzy - 128 threads.
-
-Purpose: This test has given interesting results in the past.
-The test varies the sleep interval between record lookups.
-The result is varying usage of idle states.
-
-Results: Nothing significant to report just from the performance data.
-However, there does seem to be power differences worth considering.
-
-A futher dwell test was done in a cherry picked spot.
-It it is important to note that teo-614 removed a sawtooth performance
-pattern that was present with teo-613. I.E. it is more stable. See:
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps-only-teo.p=
-ng
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/interval-sweep.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/relative-performance=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps-relative.p=
-ng
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/perf/
-
-Test 6: adrestia wakeup latency tests. 500 threads.
-
-Purpose: The test was reported in 2023.09 by the kernel test robot and =
-looked
-both interesting and gave interesting results, so I added it to the =
-tests I run.
-
-Results:
-teo-613.txt:wakeup cost (periodic, 20us): 3331nSec reference
-teo-614.txt:wakeup cost (periodic, 20us): 3375nSec +1.32%
-menu-613.txt:wakeup cost (periodic, 20us): 3207nSec -3.72%
-menu-614.txt:wakeup cost (periodic, 20us): 3315nSec -0.48%
-menu-614-p.txt:wakeup cost (periodic, 20us): 3353nSec +0.66%
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/histogram=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/histogram=
--detail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/perf/
-
-
-Test 7: consume: periodic workflow. Various work/sleep frequencies and =
-loads.
-
-Purpose: To search for anomalies and hysteresis over all possible =
-workloads at various work/sleep frequencies.
-work/sleep frequencies tested: 73, 113, 211, 347, and 401 Hertz.
-IS a timer based test.
-
-NOTE: Repeatability issues. More work needed.
-
-Tests show instability with teo-614, but a re-test was much less =
-unstable and better power.
-Idle statistics were collected for the re-test and does show teo-614 =
-overly favoring idle state 1, with
-"Idle state 1 was too shallow" of 70% verses 15% for teo-613.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf73/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf113/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf211/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf347/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf401/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/test/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/test-idle/
-
-Test 8: shell-intensive serialized workloads.
-
-Variable: PIDs per second, amount of work each task does.
-Note: Single threaded.
-
-Dountil the list of tasks is finished:
-    Start the next task in the list of stuff to do (with a new PID).
-    Wait for it to finish
-Enduntil
-
-This workflow represents a challenge for CPU frequency scaling drivers,
-schedulers, and therefore idle drivers.
-
-Also, the best performance is achieved by overriding
-the scheduler and forcing CPU affinity. This "best" case is the
-master reference, requiring additional legend definitions:
-1cpu-613: Kernel 6.13, execution forced onto CPU 3.
-1cpu-614: Kernel 6.14-rc1, execution forced onto CPU 3.
-
-Ideally the two 1cpu graphs would be identical, but they are not,
-likely due to other changes betwwen the two kernels.
-
-Results:
-teo-614 is abaolutely outstanding in this test.
-Considerably better than any previous result over many years.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/times.pn=
-g
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/times-lo=
-g.png
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/relative=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/relative=
--log.png
-
-Test 9: Many threads, periodic workflow
-
-500 threads of do a little work and then sleep a little.
-IS a timer based test.
-
-Results:
-Kernel 6.13 teo:    reference
-Kernel 6.13 menu:   -0.06%
-Kernel 6.14 teo:    -0.09%
-Kernel 6.14 menu:   +0.49%
-Kernel 6.14+p menu: +0.33%
-
-What is interesting is the significant differences in idle state =
-selection.
-Powers might be interesting, but much longer tests would be needed to =
-acheive thermal equalibrium.
-
-doug@s19:~/idle/teo/6.14$ nano README.txt
-doug@s19:~/idle/teo/6.14$ rsync --archive --delete --verbose ./ =
-doug@s15.smythies.com:/home/doug/public_html/linux/idle/teo-6.14
-doug@s15.smythies.com's password:
-sending incremental file list
-./
-README.txt
-idle/
-idle/teo-614-2.xlsx
-
-sent 61,869 bytes  received 214 bytes  13,796.22 bytes/sec
-total size is 20,642,833  speedup is 332.50
-doug@s19:~/idle/teo/6.14$ uname -a
-Linux s19 6.14.0-rc1-stock #1339 SMP PREEMPT_DYNAMIC Sun Feb  2 16:45:39 =
-PST 2025 x86_64 x86_64 x86_64 GNU/Linux
-doug@s19:~/idle/teo/6.14$ uname -a
-Linux s19 6.14.0-rc1-stock #1339 SMP PREEMPT_DYNAMIC Sun Feb  2 16:45:39 =
-PST 2025 x86_64 x86_64 x86_64 GNU/Linux
-doug@s19:~/idle/teo/6.14$
-doug@s19:~/idle/teo/6.14$
-doug@s19:~/idle/teo/6.14$
-doug@s19:~/idle/teo/6.14$ cat READEME.txt
-cat: READEME.txt: No such file or directory
-doug@s19:~/idle/teo/6.14$ cat README.txt
-2025.02.13 Notes on this round of idle governors testing:
-
-Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
-Distro: Ubuntu 24.04.1, server, no desktop GUI.
-
-CPU frequency scaling driver: intel_pstate
-HWP: disabled.
-CPU frequency scaling governor: performance
-
-Ilde driver: intel_idle
-Idle governor: as per individual test
-Idle states: 4: name : description:
-   state0/name:POLL             desc:CPUIDLE CORE POLL IDLE
-   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
-   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
-   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
-
-Legend:
-teo-613: teo governor - Kernel 6.13: before "cpuidle: teo: Cleanups and =
-very frequent wakeups handling update"
-menu-613: menu governor - Kernel 6.13: before "cpuidle: teo: Cleanups =
-and very frequent wakeups handling update"
-teo-614: teo governor - Kernel 6.14-rc1: Includes cpuidle: teo: Cleanups =
-and very frequent wakeups handling update
-menu-614: menu governor - Kernel 6.14-rc1: Includes cpuidle: teo: =
-Cleanups and very frequent wakeups handling update
-teo-614-p: teo governor - Kernel 6.14-rc1-p: Includes "cpuidle: teo: =
-Avoid selecting deepest idle state over-eagerly"
-menu-614-p: menu governor - Kernel 6.14-rc1-p: Includes "cpuidle: menu: =
-Avoid discarding useful information when processing recent idle =
-intervals"
-
-I do a set of tests adopted over some years now.
-Readers may recall that some of the tests search over a wide range of =
-operating conditions looking for areas to focus on in more detail.
-One interesting observation is that everything seems to run slower than =
-the last time I did this, June 2024, Kernel 6.10-rc2,
-which was also slower than the time before that, August 2023, Kernel =
-6.5-rc4.
-There are some repeatability issues with the tests.
-
-I was unable to get the "cpuidle: teo: Cleanups and very frequent =
-wakeups handling update"
-patch set to apply to kernel 6.13, and so just used kernel 6.14-rc1, but =
-that means that
-all the other commits between the kernel versions are included. This =
-could cast doubt on
-the test results, and indeed some differences in test results are =
-observed with the menu
-idle governor, which did not change.
-
-Test 1: System Idle
-
-Purpose: Basic starting point test. To observe and check an idle system =
-for excessive power consumption.
-
-teo-613: 1.752 watts (reference: 0.0%)
-menu-613: 1.909 watts (+9.0%)
-teo-614: 2.199 watts (+25.51%)   <<< Test flawed. Needs to be redone. =
-Will be less.
-teo-614-2: 2.112 watts (+17.05%) <<< Re-test of teo-614. (don't care =
-about 0.4 watts)
-menu-614: 1.873 watts (+6.91%)
-teo-614-p: 9.401 watts (+436.6%)  <<< Very bad regression.
-menu-614-p: 1.820 watts (+3.9%)
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/idle/perf/
-
-Test 2: 2 core ping pong sweep:
-
-Pass a token between 2 CPUs on 2 different cores.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the shallowest idle states
-and observe the transition from using more of 1
-idle state to another.
-
-Results relative to teo-613 (negative is better):
-        menu-613        teo-614         menu-614        menu-614-p
-average -2.06%          -0.32%          -2.33%          -2.52%
-max     9.42%           12.72%          8.29%           8.55%
-min     -10.36%         -3.82%          -11.89%         -12.13%
-
-No significant issues here. There are differences on idle state =
-preferences.
-
-Standard "fast" dwell test:
-
-teo-613: average 3.826 uSec/loop reference
-menu-613: average 4.159 +8.70%
-teo-614: average 3.751 -1.94%
-menu-614: average 4.076 +6.54%
-menu-614-p: average 4.178 +9.21%
-
-Interestingly, teo-614 also uses a little less power.
-Note that there is an offsetting region for the menu governor where it =
-performs better
-than teo, but it was not extracted and done as a dwell test.
-
-Standard "medium dwell test:
-
-teo-613: 12.241 average uSec/loop reference
-menu-613: 12.251 average +0.08%
-teo-614: 12.121 average -0.98%
-menu-614: 12.123 average -0.96%
-menu-614-p: 12.236 average -0.04%
-
-Standard "slow" dwell test: Not done.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/loop-times.png=
-
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/loop-times-rel=
-ative.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-2/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/many-0-400000000-2/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/many-3000-100000000-2/
-
-Test 3: 6 core ping pong sweep:
-
-Pass a token between 6 CPUs on 6 different cores.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the midrange idle states
-and observe the transitions between use of
-idle states.
-
-Note: This test has uncertainty in an area where the performance is =
-bi-stable for all idle governors,
-transitioning between much less power and slower performance and much =
-more power and higher performance.
-On either side of this area, the differences between all idle governors =
-are small.
-Only data from before this area (from results 1 to 95) was included in =
-the below results.
-
-Results relative to teo-613 (negative is better):
-        teo-614 menu-613        menu-614        menu-614-p
-average 1.60%   0.18%           0.02%           0.02%
-max     5.91%   0.97%           1.12%           0.85%
-min     -1.79%  -1.11%          -1.88%          -1.52%
-
-A further dwell test was done in the area where teo-614 performed worse.
-There was a slight regression in both performance and power:
-
-teo-613: average 21.34068 uSec per loop
-teo-614: average 20.55809 usec per loop 3.67% regression
-
-teo-613: average 37.17577 watts.
-teo-614: average 38.06375 watts. 2.3% regression.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times.png=
-
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times-det=
-ail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/loop-times-det=
-ail-b.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-6/dwell/perf/
-
-Test 4: 12 CPU ping pong sweep:
-
-Pass a token between all 12 CPUs.
-Do a variable amount of work at each stop.
-NOT a timer based test.
-
-Purpose: To utilize the deeper idle states
-and observe the transitions between use of
-idle states.
-
-This test was added last time at the request of Christian Loehle.
-
-Note: This test has uncertainty in an area where the performance is =
-bi-stable for all idle governors,
-transitioning between much less power and slower performance and much =
-more power and higher performance.
-On either side of this area, the differences between all idle governors =
-are small.
-
-Only data from before this area (from results 1 to 60) was included in =
-the below results:
-
-Results relative to teo-613 (negative is better):
-        teo-614 menu-613        menu-614        teo-614-p       =
-menu-614-p
-ave     1.73%   0.97%           1.29%           1.70%           0.43%
-max     16.79%  3.52%           3.95%           17.48%          4.98%
-min     -0.35%  -0.35%          -0.18%          -0.40%          -0.54%
-
-Only data from after the uncertainty area (from results 170-300) was =
-included in the below results:
-
-        teo-614 menu-613        menu-614        teo-614-p       =
-menu-614-p
-ave     1.65%   0.04%           0.98%           -0.56%          0.73%
-max     5.04%   2.10%           4.58%           2.44%           3.82%
-min     0.00%   -1.89%          -1.17%          -1.95%          -1.38%
-
-A further dwell test was done in the area where teo-614 performed worse =
-and there is a 15.74%
-throughput regression for teo-614 and a 5.4% regression in power.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-loop-ti=
-mes.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-loop-ti=
-mes-detail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/sweep-relativ=
-e-times.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/dwell/times.t=
-xt
-http://smythies.com/~doug/linux/idle/teo-6.14/ping-sweep-12/dwell/perf/
-
-Test 5: sleeping ebizzy - 128 threads.
-
-Purpose: This test has given interesting results in the past.
-The test varies the sleep interval between record lookups.
-The result is varying usage of idle states.
-
-Results: Nothing significant to report just from the performance data.
-However, there does seem to be power differences worth considering.
-
-A further dwell test was done on a cherry-picked spot.
-It it is important to note that teo-614 removed a sawtooth performance
-pattern that was present with teo-613. I.E. it is more stable. See:
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps-only-teo.p=
-ng
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/interval-sweep.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/relative-performance=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/perf/
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps.png
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/rps-relative.p=
-ng
-http://smythies.com/~doug/linux/idle/teo-6.14/ebizzy/dwell/perf/
-
-Test 6: adrestia wakeup latency tests. 500 threads.
-
-Purpose: The test was reported in 2023.09 by the kernel test robot and =
-looked
-both interesting and gave interesting results, so I added it to the =
-tests I run.
-
-Results:
-teo-613.txt:wakeup cost (periodic, 20us): 3331nSec reference
-teo-614.txt:wakeup cost (periodic, 20us): 3375nSec +1.32%
-menu-613.txt:wakeup cost (periodic, 20us): 3207nSec -3.72%
-menu-614.txt:wakeup cost (periodic, 20us): 3315nSec -0.48%
-menu-614-p.txt:wakeup cost (periodic, 20us): 3353nSec +0.66%
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/histogram=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/histogram=
--detail-a.png
-http://smythies.com/~doug/linux/idle/teo-6.14/adrestia/periodic/perf/
-
-
-Test 7: consume: periodic workflow. Various work/sleep frequencies and =
-loads.
-
-Purpose: To search for anomalies and hysteresis over all possible =
-workloads at various work/sleep frequencies.
-work/sleep frequencies tested: 73, 113, 211, 347, and 401 Hertz.
-IS a timer based test.
-
-NOTE: Repeatability issues. More work needed.
-
-Tests show instability with teo-614, but a re-test was much less =
-unstable and better power.
-Idle statistics were collected for the re-test and does show teo-614 =
-overly favoring idle state 1, with
-"Idle state 1 was too shallow" of 70% verses 15% for teo-613.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf73/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf113/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf211/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf347/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/pf401/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/test/
-http://smythies.com/~doug/linux/idle/teo-6.14/consume/test-idle/
-
-Test 8: shell-intensive serialized workloads.
-
-Variable: PIDs per second, amount of work each task does.
-Note: Single threaded.
-
-Dountil the list of tasks is finished:
-    Start the next task in the list of stuff to do (with a new PID).
-    Wait for it to finish
-Enduntil
-
-This workflow represents a challenge for CPU frequency scaling drivers,
-schedulers, and therefore idle drivers.
-
-Also, the best performance is achieved by overriding
-the scheduler and forcing CPU affinity. This "best" case is the
-master reference, requiring additional legend definitions:
-1cpu-613: Kernel 6.13, execution forced onto CPU 3.
-1cpu-614: Kernel 6.14-rc1, execution forced onto CPU 3.
-
-Ideally the two 1cpu graphs would be identical, but they are not,
-likely due to other changes between the two kernels.
-
-Results:
-teo-614 is absolutely outstanding in this test.
-Considerably better than any previous result over many years.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/times.pn=
-g
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/times-lo=
-g.png
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/relative=
-.png
-http://smythies.com/~doug/linux/idle/teo-6.14/pid-per-sec/perf-3/relative=
--log.png
-
-Test 9: Many threads, periodic workflow
-
-500 threads of do a little work and then sleep a little.
-IS a timer based test.
-
-Results:
-Kernel 6.13 teo:    reference
-Kernel 6.13 menu:   -0.06%
-Kernel 6.14 teo:    -0.09%
-Kernel 6.14 menu:   +0.49%
-Kernel 6.14+p menu: +0.33%
-
-What is interesting is the significant differences in idle state =
-selection.
-Powers might be interesting, but much longer tests would be needed to =
-achieve thermal equilibrium.
-
+References: <20250213054222.21776-1-alexs@kernel.org> <20250213054222.21776-2-alexs@kernel.org>
+ <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev> <CAD-N9QXhmNBUFPfo11-h0H0Du_JFNX_Qxcs8aoesW8=ABgneaw@mail.gmail.com>
+In-Reply-To: <CAD-N9QXhmNBUFPfo11-h0H0Du_JFNX_Qxcs8aoesW8=ABgneaw@mail.gmail.com>
+From: Alex Shi <seakeel@gmail.com>
+Date: Fri, 14 Feb 2025 12:33:35 +0800
+X-Gm-Features: AWEUYZk20DCwab62mCru-z3vCsCxAjsGUM0lUQ3P4Vqq843x7N2uOL-h_E0v6dQ
+Message-ID: <CAJy-AmmZAuZWUS5TTuSGg5y33Q7Q52CGQ7en5vg_eB2W2y_s9Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
+To: Dongliang Mu <mudongliangabcd@gmail.com>
+Cc: Yanteng Si <si.yanteng@linux.dev>, alexs@kernel.org, 
+	Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RG9uZ2xpYW5nIE11IDxtdWRvbmdsaWFuZ2FiY2RAZ21haWwuY29tPiDkuo4yMDI15bm0MuaciDE0
+5pel5ZGo5LqUIDExOjI15YaZ6YGT77yaDQo+DQo+IE9uIFRodSwgRmViIDEzLCAyMDI1IGF0IDY6
+MjTigK9QTSBZYW50ZW5nIFNpIDxzaS55YW50ZW5nQGxpbnV4LmRldj4gd3JvdGU6DQo+ID4NCj4g
+Pg0KPiA+IOWcqCAyLzEzLzI1IDE6NDIgUE0sIGFsZXhzQGtlcm5lbC5vcmcg5YaZ6YGTOg0KPiA+
+ID4gRnJvbTogQWxleCBTaGkgPGFsZXhzQGtlcm5lbC5vcmc+DQo+ID4gPg0KPiA+ID4gQSBnb29k
+IGNoZWNrZWQgc3VtbWl0IGNvdWxkIHNhdmUgbXVjaCB0aW1lIGZvciBsaW51eC1kb2MgbWFpbnRh
+aW5lci4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4IFNoaSA8YWxleHNAa2VybmVs
+Lm9yZz4NCj4gPiA+IENjOiBZYW50ZW5nIFNpIDxzaXlhbnRlbmdAbG9vbmdzb24uY24+DQo+ID4g
+PiBDYzogSm9uYXRoYW4gQ29yYmV0IDxjb3JiZXRAbHduLm5ldD4NCj4gPiA+IENjOiBsaW51eC1k
+b2NAdmdlci5rZXJuZWwub3JnDQo+ID4gPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
+Zw0KPiA+DQo+ID4gUmV2aWV3ZWQtYnk6IFlhbnRlbmcgU2kgPHNpLnlhbnRlbmdAbGludXguZGV2
+Pg0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tDQo+ID4gPiAgIERvY3VtZW50YXRpb24vdHJhbnNs
+YXRpb25zL3poX0NOL2luZGV4LnJzdCB8IDggKysrKysrKy0NCj4gPiA+ICAgMSBmaWxlIGNoYW5n
+ZWQsIDcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1n
+aXQgYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9pbmRleC5yc3QgYi9Eb2N1bWVu
+dGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9pbmRleC5yc3QNCj4gPiA+IGluZGV4IDc1NzRlMTY3
+MzE4MC4uY2M1MTJjYTU0MTcyIDEwMDY0NA0KPiA+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi90cmFu
+c2xhdGlvbnMvemhfQ04vaW5kZXgucnN0DQo+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL3RyYW5z
+bGF0aW9ucy96aF9DTi9pbmRleC5yc3QNCj4gPiA+IEBAIC0yNiw3ICsyNiwxMyBAQA0KPiA+ID4g
+ICDpobrkvr/or7TkuIvvvIzkuK3mlofmlofmoaPkuZ/pnIDopoHpgbXlrojlhoXmoLjnvJbnoIHp
+o47moLzvvIzpo47moLzkuK3kuK3mloflkozoi7HmlofnmoTkuLvopoHkuI3lkIzlsLHmmK/kuK3m
+locNCj4gPiA+ICAg55qE5a2X56ym5qCH54K55Y2g55So5Lik5Liq6Iux5paH5a2X56ym5a695bqm
+77yM5omA5Lul77yM5b2T6Iux5paH6KaB5rGC5LiN6KaB6LaF6L+H5q+P6KGMMTAw5Liq5a2X56ym
+5pe277yMDQo+ID4gPiAgIOS4reaWh+WwseS4jeimgei2hei/hzUw5Liq5a2X56ym44CC5Y+m5aSW
+77yM5Lmf6KaB5rOo5oSPJy0n77yMJz0n562J56ym5Y+35LiO55u45YWz5qCH6aKY55qE5a+56b2Q
+44CC5Zyo5bCGDQo+ID4gPiAt6KGl5LiB5o+Q5Lqk5Yiw56S+5Yy65LmL5YmN77yM5LiA5a6a6KaB
+6L+b6KGM5b+F6KaB55qEIGBgY2hlY2twYXRjaC5wbGBgIOajgOafpeWSjOe8luivkea1i+ivleOA
+gg0KPiA+ID4gK+ihpeS4geaPkOS6pOWIsOekvuWMuuS5i+WJje+8jOS4gOWumuimgei/m+ihjOW/
+heimgeeahCBgYGNoZWNrcGF0Y2gucGxgYCDmo4Dmn6XlkoznvJbor5HmtYvor5XvvIznoa7kv50N
+Cj4gPiA+ICvlnKggYGBtYWtlIGh0bWxkb2NzL3BkZmRvY3NgYCDkuK3kuI3lop7liqDmlrDnmoTl
+kYrorabvvIzmnIDlkI7vvIzlronoo4Xmo4Dmn6XkvaDnlJ/miJDnmoQNCj4gPiA+ICtodG1sL3Bk
+ZiDmlofku7bvvIznoa7orqTlroPku6znnIvotbfmnaXmmK/mraPluLjnmoTjgIINCj4gPiA+ICsN
+Cj4gPiA+ICvmj5DkuqTkuYvliY3or7fnoa7orqTkvaDnmoTooaXkuIHlj6/ku6XmraPluLjmj5Dk
+uqTliLDkuK3mlofmlofmoaPnu7TmiqTlupM6DQo+ID4gPiAraHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvYWxleHMvbGludXguZ2l0Lw0KPiA+DQo+ID4gPiAr
+5aaC5p6c5L2g55qE6KGl5LiB5L6d6LWW5LqO5YW25LuW5Lq655qE6KGl5LiBLCDlj6/ku6XkuI7l
+hbbku5bkurrllYbph4/lkI7nlLHmn5DkuIDkuKrkurrlkIjlubbmj5DkuqTjgIINCj4gPg0KPiA+
+IEkgdGhpbmsgdGhpcyByZXF1aXJlcyBhIGRldGFpbGVkIHR1dG9yaWFsLiBPdGhlcndpc2UsIGl0
+DQo+ID4NCj4gPiB3aWxsIGluY3JlYXNlIHRoZSBkaWZmaWN1bHR5IGZvciBiZWdpbm5lcnMgdG8g
+Z2V0IHN0YXJ0ZWQuDQo+ID4NCj4gPiBIb3cgYWJvdXQgcmVtb3ZpbmcgaXQgZm9yIG5vdz8gSSBo
+YXZlIGEgcGxhbiB0byB3cml0ZQ0KPiA+DQo+ID4gYSB0cmFuc2xhdGlvbiBndWlkZWJvb2suIFdo
+YXQncyB5b3VyIG9waW5pb24/DQo+DQo+IEdvb2QgaWRlYS4gSSBjYW4gaGVscCBjb250cmlidXRl
+LiBPdXIgVHJhbnNsYXRpb24gVGVhbSBoYXMgYSBzaW1wbGUNCj4gb25lIHRvIGd1aWRlIHRlYW0g
+bWVtYmVycyBpbiBrZXJuZWwgZG9jdW1lbnQgdHJhbnNsYXRpb24uDQo+DQo+IE9uZSBpc3N1ZSBp
+biBteSBtaW5kIGlzLCBgbWFrZSBodG1sZG9jc2AgbmVlZHMgbXVjaCByZXNvdWNlIGluIHRoZSBj
+b21waWxhdGlvbi4NCg0KTmljZSBkb2MhIExvb2tzIHZlcnkgdXNlZnVsLg0KQnV0IGl0IGFsc28g
+bWVudGlvbmVkICdtYWtlIGh0bWxkb2NzJyBpcyByZXF1aXJlZCwgc28gd2hhdCdzIHlvdXINCmZp
+bmFsIHN1Z2dlc3Rpb24gZm9yICdtYWtlIGh0bWxkb2NzJz8NCg0KPg0KPiBbMV0gaHR0cHM6Ly9n
+aXRodWIuY29tL2h1c3Qtb3Blbi1hdG9tLWNsdWIvVHJhbnNsYXRlUHJvamVjdC93aWtpLzMuMS0l
+RTUlODYlODUlRTYlQTAlQjglRTYlOTYlODclRTYlQTElQTMlRTclQkYlQkIlRTglQUYlOTElRTYl
+OEMlODclRTUlOEQlOTcNCg==
 
