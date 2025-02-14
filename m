@@ -1,151 +1,163 @@
-Return-Path: <linux-kernel+bounces-515155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5E0A360F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:05:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663A5A360F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E8C1608F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA97E188D397
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C275126657D;
-	Fri, 14 Feb 2025 15:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AFA266590;
+	Fri, 14 Feb 2025 15:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lAhHOeks"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=uni-heidelberg.de header.i=@uni-heidelberg.de header.b="i7q54Z6K"
+Received: from relay.uni-heidelberg.de (relay.uni-heidelberg.de [129.206.100.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6808E25A63D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DB525A63D;
+	Fri, 14 Feb 2025 15:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.206.100.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739545543; cv=none; b=Lgthak1AL9gQSie6A3JyXun5vIWx1exwMqeUebocFMlXEiL0tA5dXQVVjSDIdnGidmLy2iekpxw81gfbonCG4k1xJ1g8opKqKnf2UmNlk7MB+ZHOvhTu1KTAwjnD5MTK6SIH7JjsB4B2GIfozg7oJTuVRtfZRV74LFbA+jYZOgU=
+	t=1739545627; cv=none; b=uslgGnNWLsFjHmlUocmXUkIk4asFPw75yIVmlAzPV3UJ9lWFmRKM8UrAf8CQ5F9IbRnYER2OE35cVz5NtDWdt0+Am6nukL4KLQGf8/fzkh0gnB+mIt8a9mqc1hGDyYEmW6GXlwoTUMrmCkXCOQSZqUJFg8SSJ5LYYD0alHmd9OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739545543; c=relaxed/simple;
-	bh=FvXY0J6HFmz+F4kGGhdiUtByaCV/93S7mXHV8f989j8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=azrbUH6PVMh5ZFmZktTI9NtqkOrcqyLl4yaMHzJSynwi31NmQ0g6uPPzC8BM9WYqXmwA5YzKjGwwBC4rPa1Vdijp/xaLZA/seTuEBB74BYya4PMmQ2PlPT78cHjKHFwC7l4q590YD+BQRzDkd4wI93A3YpySBTAdmZ+HkZZRZNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=lAhHOeks; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7c14b880dso73565466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:05:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1739545539; x=1740150339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jC9QV0bJcgZgqHHH3SUMbf/vptPD4PQ0vRL1kkv5HIw=;
-        b=lAhHOeksAotTY7BZ+9HNMkCvrxASeGTLQulgd6SrlEyYhNZcom1u1A5cCXlo/Tf+9j
-         9Yo1o7X3xBMO+7JOMPVSTUllnS3Sd6xdlpWycmb2YVfrjn8DM/P48iHmfJq2m279DxpQ
-         QYltdIjnNNA11bPxFfwuYUdrkeOnxT2TkjT7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739545539; x=1740150339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jC9QV0bJcgZgqHHH3SUMbf/vptPD4PQ0vRL1kkv5HIw=;
-        b=fM9TMvyV4sKd07We0b2PvfEWWqe1aCzh9pcRHiTEN/uYbh21/01d609Y1jpUvjhBFr
-         IqHZb3daBSnAlPuZh77tCZjlPdNezVAkrVDa7ZpzgdRU+7N45J7LNTX5BCfpHX6YMHrc
-         of57QnFQ88AaC5GOGQoJDqJyVmjiK6UXTQII7IdsXS+A31XW3M55G+u+63pTFfFKcc2+
-         Rh4cEUqmZ8asSHNXqIwW9WK4+Fbh3Ibv4STfvuBGT/OqKrECwBBP3WI3ZBzf3IHLiVmF
-         c8+G+sbZmGt4ivHFoGt3UWq6NDh+WXU8tTaaTRrhVCZZ37nhcJdInh1vOBvIxmhvhhhV
-         KNmw==
-X-Gm-Message-State: AOJu0YxHZspwZM0jQxSmN2rJaLg0GSinoI4rAbblwqDMyiwc60SlYOvh
-	FTQcePL1xn60K93Sj0o9vsIui8AsyeY+t08p0tA8EE+qCTskzJZW1EWPY5JVgNhCGtBz46ywqd0
-	K
-X-Gm-Gg: ASbGnctSVzVLzNgL0xwdVBySwgOJrztCV/viqwrhTuZ7ikYyJfXFTWI5NFNZ/aVcPj6
-	GGv8aZyjLyr5TVegrAa3ZhTWJhT2yNVGQSfL63dEegb5SKQe8t0fvLuU+ubUF54abtnOyiAHJwq
-	Wv/5oQjZBayIx4acUOhq5fTPS96jOWZCbbem/lOID72gaS2xvHFgSIP29K01aN6/IxIat4gUq5A
-	R43ByBJaV5lnNeM/h/8Ok84mqk1hIFzrMa06+BL8Ccc0Qeo/t+TX2q4FExToUjdJX04MYP5cBJI
-	n1IoAOhrshXUqJ3CUfY0Gs/e92IJEdBZfmiOTYD/B4zd7eNubHHR6Aqr
-X-Google-Smtp-Source: AGHT+IFZ+c7+go5Wo3r0b5Kv+36ob4O06Y3nn1YLZvsFSFjUvUi9yBoXLR53Qg4HfytiBB896uYB9A==
-X-Received: by 2002:a17:907:2cc5:b0:ab7:d179:24a2 with SMTP id a640c23a62f3a-ab7f37149dbmr1273515166b.1.1739545530075;
-        Fri, 14 Feb 2025 07:05:30 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.. ([176.201.8.20])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dedddd5b82sm1421906a12.30.2025.02.14.07.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 07:05:29 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Marek Vasut <marex@denx.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Stefan Agner <stefan@agner.ch>,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v3] drm/mxsfb: Remove generic DRM drivers in probe function
-Date: Fri, 14 Feb 2025 16:05:19 +0100
-Message-ID: <20250214150525.1505210-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739545627; c=relaxed/simple;
+	bh=9nkcpXZNvkPRt/uuH/9BO1mdsXmqDK8fyg9SPqOXcyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCvoctMkn35yey0xwqc9j6FNVTUF8v1DJlJCY9M1tbOwLEB1c1ITRcpZqFSGsL3bDmarwf2G380stPuT6PabZ3ilcDT9VSYOWGIS28ksCsvtKpBKzY5cbVup+MvUyX3DxgXxG91rNTUJrx+mICRIsvsdofHsDw7i9Jw9GdVagBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uni-heidelberg.de; spf=none smtp.mailfrom=lemon.iwr.uni-heidelberg.de; dkim=pass (2048-bit key) header.d=uni-heidelberg.de header.i=@uni-heidelberg.de header.b=i7q54Z6K; arc=none smtp.client-ip=129.206.100.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uni-heidelberg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lemon.iwr.uni-heidelberg.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=uni-heidelberg.de; i=@uni-heidelberg.de; q=dns/txt;
+  s=s1; t=1739545626; x=1771081626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9nkcpXZNvkPRt/uuH/9BO1mdsXmqDK8fyg9SPqOXcyE=;
+  b=i7q54Z6KxPQ59fIFsiMJnAkx2448d2hnPBBplHkQ5pevhOBoiPsxOXl9
+   Pz2LhkQ8C6RpfXf4JdYgYa55RxtmWSyliIUOLSU8m8SMeQkKo/rdSz+pC
+   v6UjhMELURcpIQ+GYAdN2ew3TrTBIfgWmcY58AAWGAN3kfBUr2EufP2Tr
+   vpH0Tap1tELXGW2TTcx6u06OL9HlVyUpH9bZMdE/DOULDRcObezhTBPh4
+   30jrcIyNnAjrxXWRUB3kx7fzXDPypa9ltk1r/C7EWjGx/Y+E9pivesIrD
+   DuTcmHfNbEwUFjupjIlRXF6PHzlX8FEVLN2leyIO9A6DzZ/u+2+YcOUlA
+   Q==;
+X-CSE-ConnectionGUID: qf2ZENTEQwuWng8L42772g==
+X-CSE-MsgGUID: 6y0cHPHCQeq7UrFSk0mm9w==
+X-IPAS-Result: =?us-ascii?q?A2AOAwDYWq9n/1BqzoFaHAEBAQEBAQcBARIBAQQEAQFAg?=
+ =?us-ascii?q?VODJgGGU5FwA6AhAQEBAQEBAQEBCUQEAQGFB4sMKDgTAQIEAQEBAQMCAwEBA?=
+ =?us-ascii?q?QEBAQEBDgEBBgEBAQEBBwWBIYYIhlsBBSNWEAsYAgImAgIUSIV6sAqBMoEB3?=
+ =?us-ascii?q?kuBNCOBGi6ITwGFa4JIhH6BFYMqPoQaAQo7gz46gi8EgnmBJINApSRSe3gsA?=
+ =?us-ascii?q?VUTFwsHBYEpSAOBESOBIwU0Cjc6gg1pSToCDQI1Z4E3fIIrgiCCOIRDhE2FW?=
+ =?us-ascii?q?IISgWMDAxYQgyF4HIUUZx1AAwttPTcUG6UJgUMXAi2BLgWXBrAEB55bCYcBB?=
+ =?us-ascii?q?BYzl1GTAZh9qS6BfoF+Mz6DN1EZD9t2gTMCBwsBAQMJj3YBgXwBAQ?=
+IronPort-Data: A9a23:mbMxi6lOUYCeJTlfMRljlM3o5gzHIURdPkR7XQ2eYbSJt1+Wr1Gzt
+ xJODTzVOPiNZzf3f9t/OY6yoUoB68fXyIUwQQU//ilmEFtH+JHPbTi7Bh6tYHnCcJGroGGLT
+ Sk6QoOdRCzhZiaE/n9BCpC48D8kk/vOHuGgYAL9EngZbRd+Tys8gg5Ulec8g4p56fC0GArlV
+ ena+6UzA3f7nWcvWo4ow/jb8k435q2u4G5wUmEWPJingnePzxH5M7pCfcldH1OgKqFIE+izQ
+ fr0zb3R1gs1KD90V7tJOp6iGqE7aua60Tqm0xK6aID66vR2nRHe545gXBYqhee7vB3S9zx54
+ I0lWZVd0m7FNIWU8AgWe0Ew/y2TocSq9ZefSUVTv/B/wGXffSHe7tNSIXgpILIe9bZTXTsRq
+ qYXfWVlghCr34pawZq/R+xrgIIiM9OtIYUe/3FtzD3UCfwrW5+FT6iiCd1whW1hwJoWQ7CHP
+ 5RfOWIHgBfoOnWjPn8XDJsjkf2AgnT6dDseqU2P47cx4i3TwQ193bznPcDaPNCHLSlQthzE/
+ DOboTulW3n2MvTB2GKO0kqMrdbChHzGQqwpF+W986911Qj7Kms7UkRNBAbg/5FVkHWWRN9ZM
+ GQf4Ssj668o+ySDU8bgdxyzrXiDoQ9aXtc4O+Q85BuAjLLO8ReGD3INZjdbbZots8pebSYt3
+ F+hnN7zAzFr9rqPRhq19a2GrnC+JQAWIHUEaCtCShEKi/Hop4c0lFHDUv5gHbSzg9mzHiv/q
+ xiIoTI4irdVls0R3q+29njIhjutot7CSQtdzh7eW3+o6itiZImhY4Wu5R7c9/koBIKYSESR+
+ XEeno2d4foIAJWlkC2WXP5LHben/f+JPTTQx1l1EPEJ8zWr5m7mZp1W8DBWIEZyLt1CfT7vf
+ V+VtQ5PjLdfMWWrZqJreY+8I9olwLKmFtn/UP3QKN1UbfBZcA6B4TErZkOK2W3puFYjnLt5O
+ pqBd8uoS3EABsxaICGeQ+oY1rltxz8kg37VRNX7whWr3L6UaWSaD7sIWLeTUgwnxLqK+jf41
+ epyDtSX9BNQAMmiOHaIq4FGeDjmMkMH6YDKR91/L7HYc1c9RD96UJfsLaUdl5tNs4k9qwspw
+ p1echYGoLYHrSebQThmk1g6AF4vNL4mxZ7BAQQiPEyzx18oapu14aEUevMfJOZ8pbA8lKIlF
+ KJeJK1s58ijrByaolzxirGg9+RfmOiD2GpiwgL8O2FkJc4Iq/LhpY+5LmMDCxXi/gLt7JBv/
+ ub+vu8qaYcFRhpvFt3XdPui0xuxsHkRleZ4UlHHSuS/i22ymLWH6kXZ0JcKHi37AUman2vFj
+ VbIXUZwSCuki9ZdzeQlTJus9++Be9aS1GIHd4UHxd5a7RXnw1c=
+IronPort-HdrOrdr: A9a23:BCeVo6tmX+OSuWUaDJ1ZS+iM7skCpIMji2hC6mlwRA09TyXGra
+ 2TdaUgvyMc1gx7ZJhAo6HnBEDkex/hHPFOkO0s1NuZLWvbUQiTXeJfBOnZskTd8kTFn4Yzu8
+ ddmsBFeaXN5DNB/KHHCWeDYrMdKe28gduVbKrlvgRQZDAvT5slwxZyCw6dHEEzbA5aBaAhHJ
+ 7ZwsZcvTKvdVkec8z+XxA+Lp3+juyOsKijTQ8NBhYh5gXLpTS06ITiGxzd+hsFSTtAzZor7G
+ CAuQ3k4aeIte2913bnph3uxqUTvOGk5spIBcSKhMRQAjLwijywbIAkYLGGtCBdmpDQ1L5/+u
+ Osnz4Qe+BIr1/BdGC8phXgnyP61iw11nPkwViExVP+vM3QXlsBeoF8rLMcViGcx1srvdl63q
+ 4O9XmerYBrARTJmzm4z8TUVittilG/rRMZ4KQuZkRkIMYjgYJq3MUiFQJuYeE99RvBmfca+T
+ xVfYnhDPU/SyLkU5mWhBgi/DWWZAVOIv63eDl+hiWr6UktoJlY9Tpo+CVNpAZxyHt6cegx29
+ j5
+X-Talos-CUID: 9a23:y7yfGm+pvKjk8U0wVKiVv1caQPIIVEHw9WjNHEm3WUI1EuLKE1DFrQ==
+X-Talos-MUID: =?us-ascii?q?9a23=3AYlcmgg7YdI4OIAOfdVbdWPa4xow28vylKHgtuqw?=
+ =?us-ascii?q?Lopa5LwJLOG+YiWWoF9o=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+Received: from lemon.iwr.uni-heidelberg.de ([129.206.106.80])
+  by relay.uni-heidelberg.de with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Feb 2025 16:05:46 +0100
+Received: from hlauer by lemon.iwr.uni-heidelberg.de with local (Exim 4.92)
+	(envelope-from <hlauer@lemon.iwr.uni-heidelberg.de>)
+	id 1tixGB-0002Z2-Iz; Fri, 14 Feb 2025 16:05:43 +0100
+Date: Fri, 14 Feb 2025 16:05:43 +0100
+From: Hermann.Lauer@uni-heidelberg.de
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <uwu@icenowy.me>, Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: [PATCH v2] ARM: dts: sun8i-r40: remove unused GPIO
+ regulator
+Message-ID: <20250214150543.GA9779@lemon.iwr.uni-heidelberg.de>
+References: <20241213195433.GA1568@lemon.iwr.uni-heidelberg.de>
+ <20241214011612.4fd9e4bf@minigeek.lan>
+ <e61c927a4dfe909f4ede4a07dffd9dcd762875be.camel@icenowy.me>
+ <20241220172134.GA9899@lemon.iwr.uni-heidelberg.de>
+ <CAGb2v64ovacuS+G+k3zBvQR+rW2_TSYh4p5frj7fLxz81K9Kmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGb2v64ovacuS+G+k3zBvQR+rW2_TSYh4p5frj7fLxz81K9Kmg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Use aperture helpers to remove all generic graphics drivers before
-loading mxsfb. Makes mxsfb compatible with simpledrm.
+On Mon, Dec 23, 2024 at 01:18:18AM +0800, Chen-Yu Tsai wrote:
+> > > > CC:ing Icenowy, who added the regulator originally, with commit
+> > > > 0ca12c1ee43c ("ARM: sun8i: r40: add 5V regulator for Banana Pi M2
+> > > > Ultra").
+> > ...
+> > > > Icenowy: can you clarify what "newer" version this was referring to
+> > > > in
+> > > > that commit message? That commit in itself doesn't seem to do
+> > > > anything,
+> > > > as the regulator isn't referenced, and it's not always-on. It's only
+> > > > later when the USB nodes were added that it got used?
+> > > > So was PH23 really necessary?
+...
+> > diagnosed that futher now: PH23 is indeed powering the USB-Ports. Whats
+> > happens ist that I powered the board through the micro USB port which turned
+> > out to be limited to 900mA in axp221s. So the setting of reg 0x30 is
+> > the real culprit: Setting the two lowest bits in this register allows
+> > unlimited power over micro usb.
+...
+> > > I am not sure, the schematics I have here (which says V1.0) have PH23
+> > > as NC... Well, the M2 Berry schematics have PH23 as 5V EN, maybe I
+> > > messed up M2U and M2B when developing?
+> >
+> > While V1.0 didn't need the PH23 setup due to nc, V1.1 needs it. Maybe V1.1
+> > was already on the horizon...
+> 
+> It seems this patch isn't needed then?
 
-Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+It's plain wrong: The culprit is the power issue as discussed above. Strange
+is the increase of power needed on V1.1, as V1.0 is working with the limit
+in place.
 
----
+As there are issues with the stability of the mmc driver even when disabling
+mmc2 and mmc3, maybe something yet to be found changed in the mmc wirering
+on V1.1 bords which increases power consumption compared to V1.0 with the
+actual driver.
 
-Changes in v3:
-- Add 'Reviewed-by' of  Thomas Zimmermann
-
-Changes in v2:
-- Use aperture_remove_all_conflicting_devices() instead of
-  drm_aperture_remove_framebuffers().
-
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 59020862cf65..e5eb644b54ae 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -8,6 +8,7 @@
-  * Copyright (C) 2008 Embedded Alley Solutions, Inc All Rights Reserved.
-  */
- 
-+#include <linux/aperture.h>
- #include <linux/clk.h>
- #include <linux/dma-mapping.h>
- #include <linux/io.h>
-@@ -361,6 +362,15 @@ static int mxsfb_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_free;
- 
-+	/*
-+	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
-+	 * located anywhere in RAM
-+	 */
-+	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "can't kick out existing framebuffers\n");
-+
- 	ret = drm_dev_register(drm, 0);
- 	if (ret)
- 		goto err_unload;
--- 
-2.43.0
-
+Sorry for the late reply - my time to look at this is scarse.
+Thanks (especially to Andre for his help) and greetings
+ Hermann
 
