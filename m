@@ -1,260 +1,148 @@
-Return-Path: <linux-kernel+bounces-514367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFC6A355FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:03:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FBDA35600
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6176188D1C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6315516C065
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A2E152E02;
-	Fri, 14 Feb 2025 05:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0BB17B401;
+	Fri, 14 Feb 2025 05:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzUWYY3N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPoX5Vpi"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BC227540F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 05:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF40C15442D;
+	Fri, 14 Feb 2025 05:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739509400; cv=none; b=J+Z/eC3iNlzN1JSCaR4otv8YtC+GWTOwzdxu7zCDnYF47LHnjZTjgLPYGTteykaRp1Iw7GdxwwQ3lQyvPn4Y0Hk7rQuyrKSsVO3dOKXcuSAv4WrCg29JsgXfx9/p3bFf/ElX0fjJKqxGiGfilZOkPSDNFhZDgPj6pgF+Auci2EU=
+	t=1739509548; cv=none; b=Mr95EJTmLd7OPiB50cD7kPzf32+lU5YBuE8Eootr0Wio5RyTeKKvmIAfkdtHtjaOmPLbK9XbJ5DoiSkzE63S6407f+vcJ4swafbvbYDTPSGRpv692BoePP6orvwciWF0fBo7n+F03RRTDPr6/o2kbZbD+VlwY/FXvOWkhQDV0b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739509400; c=relaxed/simple;
-	bh=v8Wo8ZAR+qUI0Q/gqLVZ5OtGZ37XkHxQLbb3pMglYMo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=T+MUgmobRHGaCNfI1Bg501fwTwubXgW3fgyDNBygQZYmp0VSx0pzyw9q+aAKWo+6GUOOmsWi/W94heRcmk0B6lz8lMNuP0O7OwMPJFz+Hxvv1q0I1gIPnWpX7ACrBQ9bWk28DCm09/VEiWI+5VUGDf2O+gBK5Orv8qoiXJMZCk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzUWYY3N; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739509398; x=1771045398;
-  h=date:from:to:cc:subject:message-id;
-  bh=v8Wo8ZAR+qUI0Q/gqLVZ5OtGZ37XkHxQLbb3pMglYMo=;
-  b=SzUWYY3Nfo9U8SKNm2b0YZww9FSTe6IjLLZ9zT+ghZadQB33O9H7Qgdi
-   EMkyr5LX+kvoGRGFEQuB4LS4bbZCPhe/Q5fcvnDVfwr0uPQw+LepW7S5O
-   ZFqNWOpMR9K0oI8Sy3twz4HC6cGpHCgZsjzO5XGFIcNYAm3QGs8QSoZ7r
-   xUVWKpvuExok7XmqZIwFchy16W+ErCEx0RYX+5ajE5AU6TxCl88DSFRor
-   iDs9YQ2IfGwFxX1UqVsONrbgyEotgzatl9LyunqfTJ0EQpEPBSLLKRrYp
-   Hq3ppUT1FeG3hUWCGvbGqI8vohb+WEvd1Sk2czE5qNa58jSCi7dRyMqPb
-   Q==;
-X-CSE-ConnectionGUID: MJk51cBPT5q1swqgGDnlXQ==
-X-CSE-MsgGUID: wzagVFWHRT2EFYv8EnXybw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="65599068"
-X-IronPort-AV: E=Sophos;i="6.13,284,1732608000"; 
-   d="scan'208";a="65599068"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 21:03:17 -0800
-X-CSE-ConnectionGUID: 9KbxffTjQqS2pBvcUt6CUg==
-X-CSE-MsgGUID: 5trA6vp0QEKg1oa6HmLMCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117494507"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Feb 2025 21:03:16 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tinr8-00194r-0L;
-	Fri, 14 Feb 2025 05:03:14 +0000
-Date: Fri, 14 Feb 2025 13:02:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250212] BUILD REGRESSION
- 513cdf5e772efc6cb8a92344b0f436e77c2b42f7
-Message-ID: <202502141337.JhhdRJWh-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739509548; c=relaxed/simple;
+	bh=W9xzcKzzqpRTDvCmTpbkkfQznC4Yz3/T3sUJwlIDtKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEwc8ZJib8A/xbbQVo6bCDQ3UHBRWSp+aAw+VFuL6LoeDWj/tC7cJju0SZ6qWQmQtT5EgoMZZe8M4OVHAVo/+nd9M18L+i1oh/3Xu+EIC/4nUhvo/vKU/lnPEISdzpcyoanwAN9Oi2b3nO9mc6pYde/2TZVZia55Ok+tIUNflJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPoX5Vpi; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dee07e51aaso572735a12.3;
+        Thu, 13 Feb 2025 21:05:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739509545; x=1740114345; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6y8dDAtdsuLGiNq0Uhroh633zd/41tN4sxwt2UHLOM=;
+        b=nPoX5VpiwXsFMnuuF0OiS41WoXDM07JbMziXJWNa7QyhEmpMdwgxVceOPMO3k3DjV3
+         gx8LNEb5BPgmYKLiUXbkWEW+2InTE32qk8xNoQUoGftqaWwDlh2wMuIl43Z8DICt0Z+f
+         8xdDbLb7pU0Dmsnw0XjyLQSBRtbGYW/d70pz5JdAyppigqmt9O/EKNZnSj6YcXffagUV
+         0LaIzvY7aaseJfOSKWB7R2qTP4uu8LJSr5RvzHgcV5H4FJ4kEKuT9ao1YLgEdvgtPtK3
+         S8TYrFVZcnrxPvkyfl+CH6amaGr8Gpx7Ja80GcgXTc1aPnmroVZWW6onrsN+jxKdwKKR
+         6U2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739509545; x=1740114345;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q6y8dDAtdsuLGiNq0Uhroh633zd/41tN4sxwt2UHLOM=;
+        b=lQGLQrBoTuTPvmyr3Pg+z6ViQBu5Tj/1c2Z5oxqVvf9BSfd/7cdaHEkzgvqHBhZtC8
+         kqTuIKb/6Y+FbZ0G146vqV3g/nIuPLO9jduRMjZhtGdVoK2PwF0JsBu1CRVS+BzeKq47
+         2jt3SlrIRAzF0tD4+LyFlp5vnkWpaALTZV6fvne4lHeqTuUhWskU6I3i8LgXwefmw8gw
+         vZJgn6rJuTmaWmTUwoxvdI3V2DR76ArTwGjGzAytR6lvvQhGdA2bxp+exzkmKGVsV5W7
+         RGw2q7IP9+XA5fu5KCy4UbTL7NOWr/UdhAgahMhufg/IAD51s8XlDu9WzwNVbm0YpX9t
+         uX7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUF6vLeKsU7PfAISEiJN9Omfqso8UlXDdWLDrU9olfWVnYsaejJtFPA9CuF6mVwmStraYTiO4tSZnKH@vger.kernel.org, AJvYcCVFz8FysWlyggRFqRMNqN+KsJQZ3n9WQnfnF6dS2UN5RBgubJ088yChQ9bXHk+3ROdy5OljnGqfHblJ@vger.kernel.org, AJvYcCVtXrt3y7edDXkEfI75HbXtz4lJ45EsgNqXGW4xfFG2nR0eV3WbX4bMUxFY6bhTg+9JoK3v2fB9/GqYLzZS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7m+8q5U1OgIp8XWSI7PjCFnJeTYrG9dnB9PMuavijfkOz6Ccv
+	uRXI+kEkR4bZi/iOOrZPXN1jzlAx6o2JlqQ1r9WJ0T5RPAkcd9UN
+X-Gm-Gg: ASbGnctGQukURANWRLZ07wV5EOYgBiG4q0tUmzZGp9rzEo8/f495xmOkCb/2cO+sPyD
+	K+b68LblterAJDfAqBn60fc/GCfh2rY7+DiGNefzi4iJj82Ab/EOwSxlxKDBxcjKAm+nBvhlC+g
+	Y2FCrYSMQ5z0xbedCZiPzhkuk1twHf/IWKmySYARUQNp/apiYOry8wWGJBcdV8lv2/DwIzXW45K
+	HWVlCHnnnFCjLrPNFwmHB11gQ7RYrB+BXnITI+mlgL/XlKVos/U8Cw+eFpCNO9Tm2qVUYky6e5x
+	GZzUfbFVRbgZ
+X-Google-Smtp-Source: AGHT+IEH3bBKeyyUEPgOcACTpRbfh9j/BQFlm3mYol8UGPcKSBqjbSUmJIaMirsEGeSasKzpr5YXBA==
+X-Received: by 2002:a05:6402:4409:b0:5dc:89e0:8eb3 with SMTP id 4fb4d7f45d1cf-5deb08810a7mr8070846a12.11.1739509544975;
+        Thu, 13 Feb 2025 21:05:44 -0800 (PST)
+Received: from debian ([2a00:79c0:653:f300:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5decdfe758asm2282677a12.0.2025.02.13.21.05.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 21:05:43 -0800 (PST)
+Date: Fri, 14 Feb 2025 06:05:40 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: dimitri.fedrau@liebherr.com, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: can: fsl,flexcan: add transceiver
+ capabilities
+Message-ID: <20250214050540.GA3602@debian>
+References: <20250211-flexcan-add-transceiver-caps-v1-0-c6abb7817b0f@liebherr.com>
+ <20250211-flexcan-add-transceiver-caps-v1-1-c6abb7817b0f@liebherr.com>
+ <20250211-epidermis-crib-b50da209d954@spud>
+ <20250212195204.GA6577@debian>
+ <20250213-scariness-enhance-56eda6901f69@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-scariness-enhance-56eda6901f69@spud>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250212
-branch HEAD: 513cdf5e772efc6cb8a92344b0f436e77c2b42f7  drm/amd/pm: Avoid multiple -Wflex-array-member-not-at-end warnings
+Am Thu, Feb 13, 2025 at 08:07:22PM +0000 schrieb Conor Dooley:
+> On Wed, Feb 12, 2025 at 08:52:04PM +0100, Dimitri Fedrau wrote:
+> > Am Tue, Feb 11, 2025 at 04:38:48PM +0000 schrieb Conor Dooley:
+> > > On Tue, Feb 11, 2025 at 02:12:33PM +0100, Dimitri Fedrau via B4 Relay wrote:
+> > > > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > > > 
+> > > > Currently the flexcan driver does not support adding PHYs. Add the
+> > > > capability to ensure that the PHY is in operational state when the link
+> > > > is set to an "up" state.
+> > > > 
+> > > > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > > > index 97dd1a7c5ed26bb7f1b2f78c326d91e2c299938a..397957569588a61111a313cf9107e29dacc9e667 100644
+> > > > --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > > > +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
+> > > > @@ -70,6 +70,9 @@ properties:
+> > > >    xceiver-supply:
+> > > >      description: Regulator that powers the CAN transceiver.
+> > > >  
+> > > > +  phys:
+> > > > +    maxItems: 1
+> > > 
+> > > Can all devices in this binding support external phy? Are all devices
+> > > limited to a single external phy?
+> > > 
+> > As far as I know, these devices are controllers without integrated PHY.
+> > So they need a single external PHY. Transceivers can be very simple like
+> > xceiver-supply in the binding, but I want to use "ti,tcan1043" in 
+> > drivers/phy/phy-can-transceiver.
+> 
+> I'm not quite following, do all of these devices need to have an
+> external phy but the property did not exist until now? How did any of
+> them work, if that's the case?
 
-Error/Warning (recently discovered and may have been fixed):
+The property xceiver-supply is used to describe connected transceiver
+which do only rely on corresponding regulator configuration.
+For example here:
+https://elixir.bootlin.com/linux/v6.14-rc2/source/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi#L105
 
-    https://lore.kernel.org/oe-kbuild-all/202502132042.V5SUV9zZ-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202502140000.KIQUxLr5-lkp@intel.com
+But I want to enable support for these:
+https://elixir.bootlin.com/linux/v6.14-rc2/source/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
 
-    drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5237:21: error: no member named 'levels' in 'struct SISLANDS_SMC_SWSTATE_HDR'
-    drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5237:27: error: 'struct SISLANDS_SMC_SWSTATE_HDR' has no member named 'levels'
-    drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5758:24: error: incompatible pointer types initializing 'SISLANDS_SMC_SWSTATE *' (aka 'struct SISLANDS_SMC_SWSTATE *') with an expression of type 'struct SISLANDS_SMC_SWSTATE_HDR *' [-Werror,-Wincompatible-pointer-types]
-    drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.c:5758:43: error: initialization of 'SISLANDS_SMC_SWSTATE *' from incompatible pointer type 'struct SISLANDS_SMC_SWSTATE_HDR *' [-Werror=incompatible-pointer-types]
-
-Error/Warning ids grouped by kconfigs:
-
-recent_errors
-|-- arc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- arm-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- arm-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- arm64-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-|-- i386-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- loongarch-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- loongarch-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- powerpc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- powerpc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-|-- riscv-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-|-- riscv-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-|-- s390-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-|-- sparc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-|-- x86_64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:incompatible-pointer-types-initializing-SISLANDS_SMC_SWSTATE-(aka-struct-SISLANDS_SMC_SWSTATE-)-with-an-expression-of-type-struct-SISLANDS_SM
-|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:no-member-named-levels-in-struct-SISLANDS_SMC_SWSTATE_HDR
-`-- x86_64-buildonly-randconfig-004-20250213
-    |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:initialization-of-SISLANDS_SMC_SWSTATE-from-incompatible-pointer-type-struct-SISLANDS_SMC_SWSTATE_HDR
-    `-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.c:error:struct-SISLANDS_SMC_SWSTATE_HDR-has-no-member-named-levels
-
-elapsed time: 1162m
-
-configs tested: 106
-configs skipped: 1
-
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250213    gcc-13.2.0
-arc                   randconfig-002-20250213    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250213    clang-17
-arm                   randconfig-002-20250213    clang-15
-arm                   randconfig-003-20250213    clang-21
-arm                   randconfig-004-20250213    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250213    clang-19
-arm64                 randconfig-002-20250213    gcc-14.2.0
-arm64                 randconfig-003-20250213    gcc-14.2.0
-arm64                 randconfig-004-20250213    clang-21
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250213    gcc-14.2.0
-csky                  randconfig-002-20250213    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250213    clang-21
-hexagon               randconfig-002-20250213    clang-18
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250213    gcc-12
-i386        buildonly-randconfig-002-20250213    clang-19
-i386        buildonly-randconfig-003-20250213    clang-19
-i386        buildonly-randconfig-004-20250213    clang-19
-i386        buildonly-randconfig-005-20250213    clang-19
-i386        buildonly-randconfig-006-20250213    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250213    gcc-14.2.0
-loongarch             randconfig-002-20250213    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250213    gcc-14.2.0
-nios2                 randconfig-002-20250213    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250213    gcc-14.2.0
-parisc                randconfig-002-20250213    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250213    clang-17
-powerpc               randconfig-002-20250213    gcc-14.2.0
-powerpc               randconfig-003-20250213    gcc-14.2.0
-powerpc64             randconfig-001-20250213    clang-19
-powerpc64             randconfig-002-20250213    clang-21
-powerpc64             randconfig-003-20250213    gcc-14.2.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250213    clang-19
-riscv                 randconfig-002-20250213    clang-17
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250213    gcc-14.2.0
-s390                  randconfig-002-20250213    clang-21
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250213    gcc-14.2.0
-sh                    randconfig-002-20250213    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250213    gcc-14.2.0
-sparc                 randconfig-002-20250213    gcc-14.2.0
-sparc64               randconfig-001-20250213    gcc-14.2.0
-sparc64               randconfig-002-20250213    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250213    clang-19
-um                    randconfig-002-20250213    clang-21
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250213    gcc-11
-x86_64      buildonly-randconfig-002-20250213    gcc-12
-x86_64      buildonly-randconfig-003-20250213    clang-19
-x86_64      buildonly-randconfig-004-20250213    gcc-12
-x86_64      buildonly-randconfig-005-20250213    gcc-12
-x86_64      buildonly-randconfig-006-20250213    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250213    gcc-14.2.0
-xtensa                randconfig-002-20250213    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Dimitri Fedrau
 
