@@ -1,179 +1,139 @@
-Return-Path: <linux-kernel+bounces-515410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9754A36474
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:24:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBAFA36481
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782371895D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0773B4B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF96267F78;
-	Fri, 14 Feb 2025 17:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7QfDX8G"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16CC268C71;
+	Fri, 14 Feb 2025 17:21:47 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5336D267F6F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C138C267F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553705; cv=none; b=tr/m52qwn8iAevKddfXlkUg38utewxbJ7KmjiT9SmKE49O6j9s0xG1iQT69n48469msWDNSKnxOAqpFD0Nvs8V3dM5GkQy746gjemn+IDZDJkfpfYz5okePik63EqMx9MC2N4H+usQGHaWcjHEgniLnxpP5+8jPNpaqqoJ439ig=
+	t=1739553707; cv=none; b=u2XXStSQQ49fUGOnG58SrmDdtT3LJecwBrGSu1KWCVyZ46zWFDhzFu2+4DaeKZ5awRvjEtHMPdHpmNtR6vfCDjIHsGOzgAWLhxsdEJ6WtXip9bwu+x5XnXdICH7Pt2CIxHEwmOYB07e+WTJAgZddEY2mZEqBL5ieDSOjUWVQkKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553705; c=relaxed/simple;
-	bh=q7gQgr616uVOQTMZ77imFQirud5OxtnWyayh475uip0=;
+	s=arc-20240116; t=1739553707; c=relaxed/simple;
+	bh=TOL6koKzoZj0grh9Pr0n6iccLhOBG0/43NlkNNhI43k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pteqpK5unlzMdif23ykvTjEsvIJK8suiW7oJDhc2IHKpduRF7Oywiikc3D2Ru3KoUqlZazlt1QmIZ9w2Cq2Q5D7oILg2f9oXIoRbooi21F7ek3haMtrdBiPY96126ZpjgKXfQwDmC9btpKe1tTinDnCrZpjm+P9Nx9OyTu5Bu0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7QfDX8G; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22101839807so8042305ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739553703; x=1740158503; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/PVsVZnYuQ/wni7IvzfZedmUg/Flzek4tKSKCxL8mts=;
-        b=I7QfDX8GYTv0bYvHmRotwx156koiyCrZsSmMz9c9f4HZITTuCZ5CYG4JfsM7i0ljBR
-         qHelGRtKwnkAMgTq6NSwMkq+On67JleQo2V40YQkMe42mplnQxHdkMbIvUAiT+dzM2tJ
-         kjN5P4wQbGEYffaogdMjAdpikWi2rowIFGIow4g3uXMaXINjv/5M6vYKLY6pOfGScOsG
-         AlnRa/xeKdBD0Wpgo0PAVPhHWm1tDma7e79WiN/eZXq24Wc2DVRJel+dqbdh7c7W/qIb
-         vKmc26gz60XyVX61c9rsH4znNMZe+Ft5wb2zFxdhdJqdrSppQoPZrWHMggZ3HkeXbaeU
-         CxwQ==
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ig5I014gtLjcSvZ1Cf/eTiaKoFH1l+iVCD+HVPhshtDbMkK8ovKyAUTuUyY89hnpHb8NDgiX9jGlDCJ9o7tCijeEZ1RtQNrErLzG1RHbU/If1g1C6cRCqx/gSnBCU4anyAwIiQJTgwL/+YMYUGeYhRQK1fG0zrYACRP7iNvS3C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7ee6f54faso268295266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:21:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739553703; x=1740158503;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/PVsVZnYuQ/wni7IvzfZedmUg/Flzek4tKSKCxL8mts=;
-        b=dBA0SOM1zgng6JmALQie8X+N6IyW0vkwTvBDeB6xrhQONcSs5L9LIPwTrZgK0COic7
-         hNEJNkHbYPmZeMCKw+VaK0+DWrYaydnhek8Ev52mizggC3ktVthE2q+IRuOy9D52UPei
-         x+AU9t9BF8r72Zl5en5TnmBUdSABckESaSlSkojuOUHgB9RGzPsTXZ17YgoLBIClcQxZ
-         QBu4TKge0iDvkEXZnoWJjuE4E1Mk2dACOWAiq3QLQLc9gMizk6CmcI5C9iElbnBi7bnV
-         feDkFDqvnV9zpD/2s47YiJotMwu+4uVVsnnXhzxYatcJxQq9v+j8TcySja2okU/KnuXp
-         knXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWik4ILPT8sdGAhk/4AvDHNLp56aiAMwtGfOphUuDQTp0C1OXyPeNDkPDpCcRYkxamUP5MFzv32XjJnJBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqYDJr/EyjD3N00nSm6WtUHyZvGPyyqIFlOX4kP4uLHvQn4rzq
-	mvo67VNvw9jMySxAdpm0bu5pT2/MTu2jdgKpCMw8HtunIBPyyWyjD6iqUyEenA==
-X-Gm-Gg: ASbGncvcLLVsacvUgXTB/EwWZ7WIpQtWGnJvDkDbbvz/WRmsN6fkYNkAGlKWwvUClrd
-	+HuiAmKprr9EqbKO5fau9Q/pdihv7fZ0yBDEBwjyZE1dSrfL4SQk2Y5Ixk9du972i4eia2IeUia
-	zIow2vQXg+lZ2GGtDrZ5QG50j6ypzxDQh/wNxQ2zchsgQGGTihLnduUB/Qj41xxPOQr3z3WZgK8
-	ZiwsI+K4uAchb8Y8Sx+DoEZvjdDnxWRtCqiNG0uUqYNvWVSFBsTG+rsScaOyK61xztlC28CZDoV
-	UQ7yxFj2Q7gEtBhr0jGRhqGDZgk=
-X-Google-Smtp-Source: AGHT+IGcRo+nLJC59NjoyRCElAIfb+jisUP5T3miAi6A+0NQw62kcP9lRVYfGrAftSB0L9zhfWHPdQ==
-X-Received: by 2002:a05:6a00:2eaa:b0:732:5164:3bb with SMTP id d2e1a72fcca58-732617b7772mr183432b3a.9.1739553703494;
+        d=1e100.net; s=20230601; t=1739553704; x=1740158504;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ixEWdkwMU4zD/s1haC4UL9Xf1aLUzJqzLyYSOlInL5I=;
+        b=dZpeOpVVhrmAhR+OairRd3Is+5aAelTvdHwIfZDgOk4Ns2bKEbzQfQKYWS8Y0VSVMK
+         ZjxTN0eMHESEozpXKAHY+EMF3lYalORcS4EE2Upj0+GSoxEiXaBQFAM+I7OojRnlgrhD
+         S3BiTRTp5wXhk2ATSl1B0Ae+40ytoanx2uoG+FqMjWEfKAGtQNfOgWZKeil2U9WkcwJK
+         lNs3zb2DFt+RKnFkhzgSTw8gZcmvpj8sJcx+49zLBS91fFqFobv+kgR/OEfr1svSIwl1
+         WpYEldT7Lakyx2MMvW+sPDTL/CMLmf+R9sMoSjyVX1H9pvylW2HDaPWKTPcFgu1x3YTf
+         zMVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+sHV6IqtgkwiLpeX+BOvMd1hKg/v+mkkfVfdwii9kcJC7OjP2yi2OJEBzmIAn46rzqx5kvMXLIWiH2D4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdcPSMNrM6sPKlEze7+MVM7qo9qPLe2ots4EzMXVr2Up6Z5Tv/
+	cNVFZSTNnOiEWNpvH/BblN4ef32jrhLuDQ+Fmbb7qgz9q0L8KBF9
+X-Gm-Gg: ASbGncvmdgftyuSCR3DLNgqYeKMdaj2U7KUrs3js/wXbCm/pf5cUGafZ/4AUqn5ATu9
+	oLaTJGfZtFn863LsAXP+evuuegFFSPJFEaS3XM8SrscFocVoQ6UWrjzO2F2NLLWUP9C3COWl1z3
+	kfMlUFXNqX22vu1WPJd/nVqfQfaH5vhVX9ciIQAraFzxT/xUH2dPwXavsc1QYPM41Ke0F5SofaE
+	l+YoP99PsenR/BR/8byOO8sTzVZfSOtoYsJ4UihAe1uhshgwxkRBzVvo2rDvl+h/ynQ6tQgwPSJ
+	fBxOcg==
+X-Google-Smtp-Source: AGHT+IEuGhV2i8f6wK3EowSDdboD4lp+PcmEyMlRnn/ximlM2zAnGPP8DSgXkHv7a2yEZLh/urcc9g==
+X-Received: by 2002:a05:6402:27d3:b0:5dc:74fd:abf1 with SMTP id 4fb4d7f45d1cf-5e036061d44mr578332a12.15.1739553703636;
         Fri, 14 Feb 2025 09:21:43 -0800 (PST)
-Received: from thinkpad ([120.60.134.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e4e2sm3375480b3a.116.2025.02.14.09.21.40
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bfaabsm377297666b.181.2025.02.14.09.21.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 09:21:43 -0800 (PST)
-Date: Fri, 14 Feb 2025 22:51:38 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Krzysztof Wilczynski <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] misc: pci_endpoint_test: Avoid issue of
- interrupts remaining after request_irq error
-Message-ID: <20250214172138.setswcgqz3dbf65t@thinkpad>
-References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
- <20250210075812.3900646-2-hayashi.kunihiko@socionext.com>
+        Fri, 14 Feb 2025 09:21:42 -0800 (PST)
+Date: Fri, 14 Feb 2025 09:21:40 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, vincent.guittot@linaro.org,
+	linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, corbet@lwn.net,
+	qyousef@layalina.io, chris.hyser@oracle.com,
+	patrick.bellasi@matbug.net, pjt@google.com, pavel@ucw.cz,
+	qperret@google.com, tim.c.chen@linux.intel.com, joshdon@google.com,
+	timj@gnu.org, kprateek.nayak@amd.com, yu.c.chen@intel.com,
+	youssefesmat@chromium.org, joel@joelfernandes.org, efault@gmx.de,
+	tglx@linutronix.de
+Subject: Re: [PATCH 03/15] sched/fair: Add lag based placement
+Message-ID: <20250214-charming-tapir-of-education-03eb8b@leitao>
+References: <20230531115839.089944915@infradead.org>
+ <20230531124603.794929315@infradead.org>
+ <20250207-petite-eminent-husky-7d1704@leitao>
+ <20250207111141.GD7145@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250210075812.3900646-2-hayashi.kunihiko@socionext.com>
+In-Reply-To: <20250207111141.GD7145@noisy.programming.kicks-ass.net>
 
-On Mon, Feb 10, 2025 at 04:58:08PM +0900, Kunihiko Hayashi wrote:
-> After devm_request_irq() fails with error in
-> pci_endpoint_test_request_irq(), pci_endpoint_test_free_irq_vectors() is
-> called assuming that all IRQs have been released.
+On Fri, Feb 07, 2025 at 12:11:41PM +0100, Peter Zijlstra wrote:
+> On Fri, Feb 07, 2025 at 02:07:18AM -0800, Breno Leitao wrote:
+> > Hello Peter,
+> > 
+> > On Wed, May 31, 2023 at 01:58:42PM +0200, Peter Zijlstra wrote:
+> > >
+> > >  place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int initial)
+> > >  {
+> > <snip>
+> > > -		vruntime -= thresh;
+> > > +		lag *= load + se->load.weight;
+> > > +		if (WARN_ON_ONCE(!load))
+> > 
+> > I have 6.13 running on some hosts, and in some cases, where the system
+> > is getting some OOMs, I see the following stack:
+> > 
+> >           WARNING: CPU: 29 PID: 593474 at kernel/sched/fair.c:5250 place_entity+0x199/0x1b0
+> > 
+> >            Call Trace:
+> >             <TASK>
+> >             ? place_entity+0x199/0x1b0
+> >             reweight_entity+0x188/0x200
+> >             enqueue_task_fair.llvm.15448040313737105663+0x28c/0x560
+> >             enqueue_task+0x30/0x120
+> >             ttwu_do_activate+0x99/0x230
+> >             try_to_wake_up+0x25a/0x4a0
+> >             ? hrtimer_dummy_timeout+0x10/0x10
+> >             hrtimer_wakeup+0x25/0x30
+> >             __hrtimer_run_queues+0xf1/0x250
+> >             hrtimer_interrupt+0xfb/0x220
+> >             __sysvec_apic_timer_interrupt+0x47/0x140
+> >             sysvec_apic_timer_interrupt+0x35/0x80
+> >             asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > 
+> > I am sorry for not decoding the stack, but I am having a hard time
+> > decoding the stack properly. The values I got was misleading, and I am
+> > working to understand what is happening.
+> > 
+> > Anyway, I don't have a reproducer and this problem doesn't happen
+> > frequent enough. I have 1K hosts with 6.13 and I saw it 5 times in the
+> > last week.
 > 
-> However some requested IRQs remain unreleased, so there are still
-> /proc/irq/* entries remaining and we encounters WARN() with the following
+> Weird. Would you mind trying with the below patch on top?
 
-s/we encounters/this results in WARN()
+Tested for a 3 days in ~1k hosts and the warning is gone.
 
-> message:
-> 
->     remove_proc_entry: removing non-empty directory 'irq/30', leaking at
->     least 'pci-endpoint-test.0'
->     WARNING: CPU: 0 PID: 202 at fs/proc/generic.c:719 remove_proc_entry
->     +0x190/0x19c
-> 
-> And show the call trace that led to this issue:
+Tested-by: Breno Leitao <leitao@debian.org>
 
-You can remove this backtrace.
-
-> 
->     [   12.050005] Call trace:
->     [   12.051226]  remove_proc_entry+0x190/0x19c (P)
->     [   12.053448]  unregister_irq_proc+0xd0/0x104
->     [   12.055541]  free_desc+0x4c/0xd0
->     [   12.057155]  irq_free_descs+0x68/0x90
->     [   12.058984]  irq_domain_free_irqs+0x15c/0x1bc
->     [   12.061161]  msi_domain_free_locked.part.0+0x184/0x1d4
->     [   12.063728]  msi_domain_free_irqs_all_locked+0x64/0x8c
->     [   12.066296]  pci_msi_teardown_msi_irqs+0x48/0x54
->     [   12.068604]  pci_free_msi_irqs+0x18/0x38
->     [   12.070564]  pci_free_irq_vectors+0x64/0x8c
->     [   12.072654]  pci_endpoint_test_ioctl+0x870/0x1068
->     [   12.075006]  __arm64_sys_ioctl+0xb0/0xe8
->     [   12.076967]  invoke_syscall+0x48/0x110
->     [   12.078841]  el0_svc_common.constprop.0+0x40/0xe8
->     [   12.081192]  do_el0_svc+0x20/0x2c
->     [   12.082848]  el0_svc+0x30/0xd0
->     [   12.084376]  el0t_64_sync_handler+0x144/0x168
->     [   12.086553]  el0t_64_sync+0x198/0x19c
->     [   12.088383] ---[ end trace 0000000000000000 ]---
-> 
-> To solve this issue, set the number of remaining IRQs to test->num_irqs
-> and release IRQs in advance by calling pci_endpoint_test_release_irq().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e03327122e2c ("pci_endpoint_test: Add 2 ioctl commands")
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/misc/pci_endpoint_test.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index d5ac71a49386..bbcccd425700 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -259,6 +259,9 @@ static int pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
->  		break;
->  	}
->  
-> +	test->num_irqs = i;
-> +	pci_endpoint_test_release_irq(test);
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.25.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks!
+--breno
 
