@@ -1,206 +1,264 @@
-Return-Path: <linux-kernel+bounces-514903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B721A35D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:55:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC00A35D36
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEAE3AA932
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E4416AF39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BDA263F39;
-	Fri, 14 Feb 2025 11:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jmqh6xRt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CACC263F26;
+	Fri, 14 Feb 2025 11:54:25 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30281263C70;
-	Fri, 14 Feb 2025 11:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECEE25A623;
+	Fri, 14 Feb 2025 11:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739534012; cv=none; b=J4+n7yDGpgYMQftQMRTcmm9U9eTmwp7XhIBWBV/m2B3p7GhnjPv+R0Bb+AxXQCaF7zf7uNemVW0EFn0vaj+nxKNCBvqb8clbkNts/J6u1XwRYh/7zhCfKF56fiwbbbJC81s2QnggieaVlVRHe1rbkrx/EhHF0Z5roY1RpEkQLFc=
+	t=1739534064; cv=none; b=PADrSmCsaeSfDs4WmrJFg6GWE5PVfY8QMjYioiKOLUd838KoY7MXNH4+uIo76HFLd4hejeRzEsooP8vdbqfEXczSBp6kVAX2pTMNMbYqOczkU5VCAienrSgXKFWu1Iy0k9DDx0jue2mPNpYn05c5zGNvKEEiSmFH86fXJ3ARYt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739534012; c=relaxed/simple;
-	bh=hN7mZgtRYM62uyhk4JMKAzreBpJR0Dk7bnADcpzizR0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fjYszt6TY2+B9UI2k58+fCx52ecreD7SZFOImN9zfOSgUNz9FnPPBmxKiPRr7rREzhgQEIz1guJd7gjHAlZXqRSBN3vUsCYxx/ALbkObLlvOOptMuxSgEhmXCZ9S69ASzkCpy1RIbFcMJdq1QBjU2vRoL4SXT8Mg1qAHfoIFghw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jmqh6xRt; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739534011; x=1771070011;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=hN7mZgtRYM62uyhk4JMKAzreBpJR0Dk7bnADcpzizR0=;
-  b=Jmqh6xRtM1cJwEP+YvTn7aKxxI31CDsJu7INqYZIgovBQ5HESmdDuLNA
-   FrNjNzKj1MK39fxB+LW/grNFu5xa6DfuwrheUzhmubUJTPqbjMajzeJiT
-   t+AU9DNflVDkhcoTwEgACQV9ezjHGTy5/GaDxK0CVAqAsMCV+vp2jbuZx
-   SWOIDwtHL7mtnOwnHM7N/1BaKeLLPIL3x0QK0K8qIB1fqJEpBFVfsDU04
-   OVBUCVAgQJs/ivZVWsD8G9kV2dzU40GJZIOWpp3hO6FBhofE736M1uz2R
-   CG50T0OI0qSFNwLknMnN5TwgsHaGXcmRq56lu3XpfGAUIQlGLbp20ryec
-   w==;
-X-CSE-ConnectionGUID: mh9yYuMCRq2P5b7wsewgYg==
-X-CSE-MsgGUID: Cceq7gVvQBS2ZBM4VocUng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="51679753"
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="51679753"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:53:30 -0800
-X-CSE-ConnectionGUID: Gh/agrcXSm2sfpwTTwEm+w==
-X-CSE-MsgGUID: MVsxA/2oT4yJy0AuhPpGQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
-   d="scan'208";a="113629564"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 03:53:28 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Feb 2025 13:53:24 +0200 (EET)
-To: "=?ISO-2022-JP?Q?Xiaochun_XC17_Li_|_=1B$BM{=3E=2E=3DU=1B=28J_Xav?=
- =?ISO-2022-JP?Q?ier?=" <lixc17@lenovo.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>
-cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
-    Igor Mammedov <imammedo@redhat.com>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: RE: [PATCH 00/25] PCI: Resource fitting/assignment fixes and
- cleanups
-In-Reply-To: <SEYPR03MB68778FC6609C967F1C05F556BCFE2@SEYPR03MB6877.apcprd03.prod.outlook.com>
-Message-ID: <dc575157-ab4b-c287-2ba5-b277aeb8c5ef@linux.intel.com>
-References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com> <SEYPR03MB68778FC6609C967F1C05F556BCFE2@SEYPR03MB6877.apcprd03.prod.outlook.com>
+	s=arc-20240116; t=1739534064; c=relaxed/simple;
+	bh=WqM6pCi7iPCKYwn6UXNd4FgAcsKn5Chxq/5jqmqGaTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuyYjz1QS0yJ+Mo4hd6xDB435wn+ts8e0Z+svXvUZpLuuL5SfIkWPRWG+P1I8sC46ZB2/8XUt+BIdyQPd0M+Rve7q1D1RU8Oo6GhPSRN8C3gonab06/ObluZPJzPhq3QhZtWfScGO0vbA2M7jj4RoRckgCrYaXhdM0pHYLM5bvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 3263A3430DA;
+	Fri, 14 Feb 2025 11:54:20 +0000 (UTC)
+Date: Fri, 14 Feb 2025 11:54:10 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: gpio: spacemit: add support for K1
+ SoC
+Message-ID: <20250214115410-GYA21743@gentoo>
+References: <20250121-03-k1-gpio-v4-1-4641c95c0194@gentoo.org>
+ <Z5FPJLzAEVXGWJnE@chonkvm.lixom.net>
+ <20250123113042-GYA38135@gentoo>
+ <Z5LOdh-4UxRtteOy@chonkvm.lixom.net>
+ <20250127181726.GA538260-robh@kernel.org>
+ <20250128031712-GYB47737@gentoo>
+ <CACRpkdYbSOHD9UH5=+qjztxS3Cq_rxaoOT9tFtD8ZWm9zQGnPw@mail.gmail.com>
+ <CACRpkdZa887vx4Lmxk1U_8w5n7AxMnyzGexeYzhsxNGT-DTYcQ@mail.gmail.com>
+ <20250206133156-GYA5687@gentoo>
+ <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-213667712-1739533528=:944"
-Content-ID: <391af4c5-15d1-1c66-28c7-b1eb4fdd9001@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZYYZ5tUR4gJXuCrix0k56rPPB2TUGP3KpwqMgjs_Vd5w@mail.gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Linus:
 
---8323328-213667712-1739533528=:944
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <543eb919-2d99-5aae-daf8-5483861fb8bf@linux.intel.com>
+On 14:07 Thu 13 Feb     , Linus Walleij wrote:
+> On Thu, Feb 6, 2025 at 2:32 PM Yixun Lan <dlan@gentoo.org> wrote:
+> 
+> > > > foo-gpios <&gpio 2 7 GPIO_ACTIVE_LOW>;
+> >
+> > if we model the dts as above, then "&gpio" will register itself as one sole "struct gpio_chip",
+> >  which mean one gpio chip combine three banks..
+> 
+> Not really: the fact that there is just one gpio node in the device
+> tree does not
+> mean that it needs to correspond to one single gpio_chip instance inside the
+> Linux kernel.
+> 
+> It's just what the current existing bindings and the code in the GPIO subsystem
+> assumes. It does not have to assume that: we can change it.
+> 
+> I'm sorry if this is not entirely intuitive :(
+> 
+> One node can very well spawn three gpio_chip instances, but it requires
+> some core changes. But I think it's the most elegant.
+> 
+> > if taking "one gpio chip support multi banks" direction, then it will be reverted back as patch V1,
+> > then, even the three gpio-cells model is unnecessary needed, as we can map gpio number
+> >  to the <bank, offset> array in the underlying gpio driver
+> >
+> > the v4 patch is very similar to drivers/gpio/gpio-dwapb.c
+> >
+> > If had to choose the direction between v1 and v4, I personally would favor the latter,
+> >  as from hw perspective, each gpio bank is quite indepedent - has its own io/irq registers,
+> >  merely has interleaved io memory space, one shared IRQ line.. also the patch v4 leverage
+> >  lots underlying generic gpio APIs, result in much simplified/clean code base..
+> 
+> So what I would suggest is a combination of the two.
+> 
+> One gpio node in the device tree, like the DT maintainers want it.
+> 
+> Three struct gpio_chip instances inside the driver, all three spawn from
+> that single gpio device, and from that single platform_device.
+> 
+> What we are suggesting is a three-cell phandle in the device tree:
+> 
+> foo-gpios = <&gpio 0 7 GPIO_ACTIVE_HIGH>;
+> bar-gpios = <&gpio 2 31 GPIO_ACTIVE_HIGH>;
+> 
+> Notice the new first cell which is 0 or 2.
+> 
+> The first one is what was previously called gpio 7.
+> The second one is what was 2*32+31 = gpio 95.
+> 
+> So internally in the driver it is easy to use the first cell (0 or 2) to map to
+> the right struct gpio_chip if you have it in your driver something like this:
+> 
+> struct spacemit_gpio {
+>     struct gpio_chip gcs[3];
+> ...
+> };
+> 
+> struct spacemit_gpio *sg;
+> struct gpio_chip *gc;
+> int ret;
+> 
+> for (i = 0; i++; i < 3) {
+>      ret = devm_gpiochip_add_data(dev, &sg->gcs[i], sg);
+>      if (ret)
+>         return ret;
+>      gc = sg->gcs[i];
+>      .... do stuff with this instance ....
+> }
+> 
+> Callbacks etc should work as before.
+> 
+> Then these phandles needs to be properly translated, which is done with the
+> struct gpio_chip .of_xlate() callback. (If you look inside gpiolib-of.c
+> you will see that chip->of_xlate() is called to map the phandle cells
+> to a certain GPIO line).
+> 
+> In most cases, drivers do not assign the chip->of_xlate callback
+> (one exception is gpio-pxa.c) and then it is default-assigned to
+> of_gpio_simple_xlate() which you can find in gpiolib-of.c as well.
+> 
+> You need to copy this callback to your driver and augment it
+> properly.
+> 
+> The xlate callback is used to locate the struct gpio_chip and
+> struct gpio_device as well, by just calling the xlate callback, so if
+> you code up the right xlate callback, everything should just
+> work by itself.
+> 
+> this is a guess on what it would look like (just dry coding,
+> but hopefully the idea works!):
+> 
+> static int spacemit_gpio_xlate(struct gpio_chip *gc,
+>                                 const struct of_phandle_args *gpiospec,
+>                                 u32 *flags)
+> {
+>         struct spacemit_gpio *sg = gpiochip_get_data(gc);
+>         int i;
+> 
+>         if (gc->of_gpio_n_cells != 3)
+>                 return -EINVAL;
+> 
+>         if (gpiospec->args_count < gc->of_gpio_n_cells)
+>                 return -EINVAL;
+> 
+>         /* We support maximum 3 gpio_chip instances */
+>         i = gpiospec->args[0];
+>         if (i >= 3)
+>                 return -EINVAL;
+> 
+>         /* OK is this the right gpio_chip out of the three ? */
+>         if (gc != sg->gcs[i])
+>                 return -EINVAL;
+> 
+>         /* Are we in range for this GPIO chip */
+>         if (gpiospec->args[1] >= gc->ngpio)
+>                 return -EINVAL;
+> 
+>         if (flags)
+>                 *flags = gpiospec->args[2];
+> 
+>         /* Return the hw index */
+>         return gpiospec->args[1];
+> }
+> 
+thanks for this very detail prototype! it works mostly, with one problem:
 
-Hi Bjorn,
+how to map gpio correctly to the pin from pinctrl subsystem?
 
-Can you please add to the last patch of the series:
+for example, I specify gpio-ranges in dts, then 
+                gpio0: gpio@d4019000 {
+                        compatible = "spacemit,k1-gpio";
+                        reg = <0x0 0xd4019000 0x0 0x100>;
+			...
+                        gpio-ranges = <&pinctrl 0 0 96>;
+                };
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219547
+		foo-gpios = <&gpio0 2 28 GPIO_ACTIVE_LOW>;
 
-=2E..And also Xiaochun's tested by tag from below to the series.
+It should get GPIO_92 ( 92 = 2 * 32 + 28), but turns out GPIO_28
 
-On Fri, 14 Feb 2025, Xiaochun XC17 Li | =E6=9D=8E=E5=B0=8F=E6=98=A5 Xavier =
-wrote:
-> On Mon, Dec 16, 2024 at 7:56:45PM +0200 Ilpo J=C3=A4rvinen <ilpo.jarvinen=
-@linux.intel.com> wrote:
-> > From: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> >=20
-> > Hi all,
-> >=20
-> > This series focuses on PCI resource fitting and assignment algorithms.
-> > I've further changes in works to enable handling resizable BARs better =
-during
-> > resource fitting built on top of these, but that's still WIP and this s=
-eries seems
-> > way too large as is to have more stuff included.
-> >=20
-> > First there are small tweaks and fixes to the relaxed tail alignment co=
-de and
-> > applying the lessons learned to other similar cases. They are sort of
-> > independent of the rest. Then a large set of pure cleanups and refactor=
-ing that
-> > are not intended to make any functional changes.
-> > Finally, starting from "PCI: Extend enable to check for any optional re=
-source" are
-> > again patches that aim to make behavioral changes to fix bridge window =
-sizing
-> > to consider expansion ROM as an optional resource (to fix a remove/resc=
-an
-> > cycle issue) and improve resource fitting algorithm in general.
-> >=20
-> > The series includes one of the change from Micha=C5=82 Winiarski
-> > <michal.winiarski@intel.com> as these changes also touch the same IOV c=
-hecks.
-> >=20
-> > Please let me know if you'd prefer me to order the changes differently =
-or split it
-> > into smaller chunks.
-> >=20
-> >=20
-> > I've extensively tested this series over the hosts in our lab which hav=
-e quite
-> > heterogeneous PCI setup each. There were no losses of any important res=
-ource.
-> > Without pci=3Drealloc, there's some churn in which of the disabled expa=
-nsion
-> > ROMs gets a scarce memory space assigned (with pci=3Drealloc, they are =
-all
-> > assigned large enough bridge window).
-> >=20
-> >=20
-> > Ilpo J=C3=A4rvinen (24):
-> >   PCI: Remove add_align overwrite unrelated to size0
-> >   PCI: size0 is unrelated to add_align
-> >   PCI: Simplify size1 assignment logic
-> >   PCI: Optional bridge window size too may need relaxing
-> >   PCI: Fix old_size lower bound in calculate_iosize() too
-> >   PCI: Use SZ_* instead of literals in setup-bus.c
-> >   PCI: resource_set_range/size() conversions
-> >   PCI: Check resource_size() separately
-> >   PCI: Add pci_resource_num() helper
-> >   PCI: Add dev & res local variables to resource assignment funcs
-> >   PCI: Converge return paths in __assign_resources_sorted()
-> >   PCI: Refactor pdev_sort_resources() & __dev_sort_resources()
-> >   PCI: Use while loop and break instead of gotos
-> >   PCI: Rename retval to ret
-> >   PCI: Consolidate assignment loop next round preparation
-> >   PCI: Remove wrong comment from pci_reassign_resource()
-> >   PCI: Add restore_dev_resource()
-> >   PCI: Extend enable to check for any optional resource
-> >   PCI: Always have realloc_head in __assign_resources_sorted()
-> >   PCI: Indicate optional resource assignment failures
-> >   PCI: Add debug print when releasing resources before retry
-> >   PCI: Use res->parent to check is resource is assigned
+Probably there is something I missed...
+> ...
+> gc->of_gpio_n_cells = 3;
+> gc->of_xlate = spacemit_gpio_xlate;
+> 
+> If it works as I hope, this will make the code in gpiolib-of.c in
+> of_find_gpio_device_by_xlate() calling gpio_device_find()
+> (which will iterate over all registered gpio_chips and then
+> of_gpiochip_match_node_and_xlate() will call this custom function
+> to see if it's the right one and return > 0 when we have the right
+> chip.
+> 
+> This should work for gpios *only*. When we then come to irqs,
+> these assume (see gpiolib.c) that we are using
+> irq_domain_xlate_twocell() when using GPIOLIB_IRQCHIP, so
+> you either need to roll your own irqchip code or we should fix
+Sounds I should implement something like irq_domain_xlate_threecell()?
 
-I also noticed there's a typo here, should be "if resource is assigned"
+> the core (I can help with this if the above works).
+> 
+> Several gpio chips use their own domain translation outside
+> of the gpiolib so you can use this as an intermediate step:
+> git grep irq_domain_ops drivers/gpio/
+..
+> ... but if you get here, let's patch the core to deal with custom
+> irqdomain xlate functions in the same manner as above.
+> 
+I like this direction, but how we should proceed?
 
-My apologies for the extra work.
+> I hope this isn't terribly unclear or complicated?
+> Otherwise tell me and I will try to ... explain more or give
+> up and say you can use a single 96-pin gpio_chip.
+> 
+Let's try first, sounds it's a feasible way.
 
-> >   PCI: Perform reset_resource() and build fail list in sync
-> >   PCI: Rework optional resource handling
-> >=20
-> > Micha=C5=82 Winiarski (1):
-> >   PCI: Add a helper to identify IOV resources
-> >=20
-> >  drivers/pci/pci.h       |  44 +++-
-> >  drivers/pci/setup-bus.c | 566 +++++++++++++++++++++++-----------------
-> >  drivers/pci/setup-res.c |   8 +-
-> >  3 files changed, 364 insertions(+), 254 deletions(-)
-> >=20
-> Hi, all
-> This series has undergone testing on the following configurations:
-> - Lenovo ThinkSystem SR630 V4 equipped with Intel Granite Rapids CPUs.
-> - The latest upstream kernel v6.14-rc2 and the stable kernel 6.13.2.
-> - With "pci=3Drealloc" appended to the kernel command line.
-> - Red Hat Enterprise Linux 10.0 Beta.
->=20
-> Test results:
-> - All patches were applied cleanly and the build process was successful.
-> - The assignment for the ROM BAR of downstream devices was successful.
-> - The bridge window has been adjusted to fit the downstream resources.
->=20
-> Tested-by: Xiaochun Lee <lixc17@lenovo.com>
+Many thanks!
 
+> Yours,
+> Linus Walleij
 
---=20
- i.
---8323328-213667712-1739533528=:944--
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
