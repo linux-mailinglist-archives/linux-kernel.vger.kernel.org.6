@@ -1,203 +1,382 @@
-Return-Path: <linux-kernel+bounces-514831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CD5A35C4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:16:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03F7A35C50
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C8016F377
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:16:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69F797A4A60
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779C5261579;
-	Fri, 14 Feb 2025 11:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C300261579;
+	Fri, 14 Feb 2025 11:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OI2otWP4"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yBd5SgQc"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB5025C6F2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E522D793
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 11:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531796; cv=none; b=tAwQXD7Ozl9KDAqi8pV3R8aUeOr9wCfSxv4EWQrspNnq2E/NEC7x3Vh/ONSRSSmc5AoZNKvtUAq2+jRhR/LfAc1CKqxIk/Rqm73TcUYLow8qFbkbT2X/5n4zD3bCdILilFikDe+TeES9viteQ9v0QQGc9HM2l5YfK9ebdeiwQ68=
+	t=1739531814; cv=none; b=fXIIGokfC5MvbigFKmfxqlvy5X1jrW5UFReQCPOJF8CF2CZ3XYqZaXMnivrxx8Uie5gR14Ho+sU4GPFZnu6+c5ARY7Rv8XaCCgcQ8PKmEAj/Uu+HXxuCnI4c6LjhARn3msyDcvKij1oFBqzMyF70ZLPJu3JnBbz5BKSwBuP8zUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531796; c=relaxed/simple;
-	bh=Nv+6Ycy+r/YLOTrYHkPYwU3kd5MfJvihnaHXExKMBQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jMk/yB1+DWPIXIQMEPLO3AIny7TVfaNsYcuYDuC/UKOCwrquZf3AIPOp5pd1ph9n9nAs8TYbohv/PZTjngEiCl3o8yznkBGIc3KTfUER1sJXM3+7fJ/tn4LW/B7oBch1nCWJGPAJ7+/offWaH/ESzcjZ6jVz0xpii2VGx8rQnkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OI2otWP4; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e46ebe19489so1346380276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:16:34 -0800 (PST)
+	s=arc-20240116; t=1739531814; c=relaxed/simple;
+	bh=MaOUxDW/eBvGxamf8FwedgMhuy6X6y2HuT6k6T1h6MU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GFeuk2av5ZBJquQP+zlEsApVESBUZ9C2iy+7QXkbAW5XPl2nRztvx3lKYzZlZsEdW3H+1iBOpKCF27pbXCpcfRmouP3z1tH1YuXR4Qd8b/Ll/yl9WOT7jgRONt6j+4fDOISyrvO6amRMTqZCiuFTZZ0I/ZDgNCPpChx75iipfUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yBd5SgQc; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21f90aec0fdso43863785ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 03:16:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739531794; x=1740136594; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
-        b=OI2otWP44QmJsoWW6RJiWch/jCTDIewr6cfpbcKwj/F7m36rqzqlUgKidAe42S+0S4
-         Z7sl3GyDZudsFFofQHZvvXpLyBBeIxAlhSPSmFD2b9fQ8MrDh8lYn64YjwcrstwGrPph
-         UcOOQIc6sq3RMSX77WwLDimMAqZosz21ge6REELimIcopeiS/RZF2FNLUhbWcGDpUgbu
-         0PACkJqPTYGriSinpNaJtPZooZGLlY1F1SA2cVH4oMNuYPeCktrvhZSCMCgYqCRidG9r
-         WD/sauw0CRoqsGpFsTrR1EpxCRtFdzkud54FGFRQCIJlNQzwkGVPWnAEZz9jH/S/AUCV
-         PVQw==
+        d=google.com; s=20230601; t=1739531812; x=1740136612; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=76zcDfZJAShy1uAqpJD+Rqjmc6Ak37f0sv6fSF0nEvQ=;
+        b=yBd5SgQcgJjO38tOlyt7Ofg4YKz4LaS3se4Ery82oFK+ED9a+11e7g0G1WVzjRf8Q1
+         ziokItAsqNYW4iub6f0ZXJSWeMSuk/sk6dpVPCeXEqpuTaCUueR0WFEMMc5ad7z0Ep5X
+         1emMNkjeOS6Me50hiqYLutcW+9lvO0yNFmm1+Wsne+VucakFkXqOpwzSBnlJVAajjmIM
+         0vAubXR7yAb4rV8QBB1WuTv6AB/0yhlzCm9K4pjQvEzVuYu0ymzwHVP+BuTAPrsc162n
+         vNGTg43Jk9r5vpwZrgXmQS5itRkf5qxwZyOHM0z4sFWQ64T4VtaVDok9HmAAoYEandUH
+         yujQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531794; x=1740136594;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
-        b=ss7+evrYV6uE3SSBnOp22FPnJReuU7co8O2Vn3C6S5ziW3+LdBIyrxGrNwPly0KIId
-         WZiHipoUXUjG38hOl6ArmLcJNfjxKBwHyBnZKoxHMOby41ipyl5t/djydhdtyNMwtD52
-         Kj2/oEGHNdl5GQEXloOteBsVCKiQ1iYVXrv986XUsI5ma7nAbukkY0D8j+OtgllXufLi
-         JcPLsnfjRjBnyD399PQq/XA2k6Rl3pT3/7DfOs8dDYFNdC2TWukTqdwmm5qkDDcZbGfE
-         Jzser2jZoE9ijP8dYYR+GfGFDYtrhE55a+sxTdjsLhrlyvxIVTU1qe8Scivht2bKoEOI
-         cv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbv0hN884X4CzqQqTsZINZJ0ocoSe4TTZDrZCqzJc/5ghqKq1B5MUvu09Vr14iJGR5DA7Vm5qkGwoI1V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw0atBtg0NTcXxospWGlwHKDc03Dfxtj2hN7A1PqJXp2UomZOZ
-	5AcUrBCx4d9q/3rQrAm9ePFVY1FK9JelII9lkA3AnflAUOfZ3umaYjMZSp4UlsL/aPV+2bneE5N
-	mnOFzC8FangSeGWpCSkkdqoQ9H6+hi93URhAWgw==
-X-Gm-Gg: ASbGncs2a19jfYkOKBko3tTPPKWCQu6pHoe0JoPyC4UfBMmt4vEmLJODIZMGvxIOcED
-	NCGYmUIWmouofXildeMu3u6dWYGatkKsXtdrJuBD5CGmpdO0DyEvizNqRP++H51ivB+j+aShG6Q
-	==
-X-Google-Smtp-Source: AGHT+IE6woj8oPDle191tVLCdn9IrSTd52LbGDiCC/HBR/zbujT5GVfsySFK4K0WQQyEViMhqMK63WlGFClc8+pjkbk=
-X-Received: by 2002:a05:6902:841:b0:e5b:323b:a1a4 with SMTP id
- 3f1490d57ef6-e5d9f180dc6mr10461212276.41.1739531793901; Fri, 14 Feb 2025
- 03:16:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739531812; x=1740136612;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=76zcDfZJAShy1uAqpJD+Rqjmc6Ak37f0sv6fSF0nEvQ=;
+        b=TiTGplrsChgbD6K6yWDUQpair2KG85DFEC35quJsGSp8zsaIKqustXunx4eMgvcMsQ
+         dhrbtChVVFixyDGQKAMClf95mtphr9ALEMF0GmJg00BxUDUPVdFk4x9FgaWdbvHPug4Y
+         Nq6KjFddb/rC1zdyGODUV1e++kvPe6tIe7OrTwBLSuhkY5j7PstemLMSduHUL2VOesnJ
+         Xo13LXzE/Tb35VNpWAuAnokjAwe27dyloH1lSsaXt753Xm8e2QR9Qwimkjn+Bc/mMgFc
+         o6xNSN4bJLZC9GC/BiIG6rUROGRBZJc7UjM2jHtUvfWqUiSSUH+FTd2BHGG3FW7pAvHZ
+         Qotg==
+X-Forwarded-Encrypted: i=1; AJvYcCVksv7pmbPqo6qtTl7Kj70pX3lDeW/lSaBioAe6KevVzNS1G7n0wjGm1JpRQg5O5eTQ7dPeogc4oUNkINs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJILXcwgc+SEdYIE0If2pvgTZQ4Bd13PdZaZiYlDor4j6Y6B6t
+	7gc7VPYkAvkWXaFaARNuKLE+DcUiPSl5GRrx9G+wz4qS3WehGL8VbyRfL/0u/nBeRm7rgyvs3St
+	1la6cwA==
+X-Google-Smtp-Source: AGHT+IHrd+L+SHgv9Z0BHGYO92JTFuNtoVvwppcXvz6tejven4Ja+Pk8+Ka+Ddl5poJmXJB892jtfhWD/eaW
+X-Received: from pfan14.prod.google.com ([2002:aa7:8a4e:0:b0:730:7648:7a74])
+ (user=chharry job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7290:b0:1ee:6a20:176f
+ with SMTP id adf61e73a8af0-1ee6b401442mr13260153637.39.1739531812084; Fri, 14
+ Feb 2025 03:16:52 -0800 (PST)
+Date: Fri, 14 Feb 2025 19:16:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CGME20250128194832eucas1p15db9ed3575703812ecc0374ffc5b2861@eucas1p1.samsung.com>
- <20250128194816.2185326-1-m.wilczynski@samsung.com> <20250128194816.2185326-7-m.wilczynski@samsung.com>
-In-Reply-To: <20250128194816.2185326-7-m.wilczynski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 14 Feb 2025 12:15:58 +0100
-X-Gm-Features: AWEUYZmWRXn0bzCrMyNA_HXGOtxuTTirzpyDWms-8p0mq8f1JPxvJIR_18CPMCg
-Message-ID: <CAPDyKFrcs5Hc-X6qExEA992MoQcakCuKRjw7cek3KpYZihsLFw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/18] pmdomain: thead: Add power-domain driver for TH1520
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, jszhang@kernel.org, 
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	linux-pm@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+Subject: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
+From: Hsin-chen Chuang <chharry@google.com>
+To: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	gregkh@linuxfoundation.org
+Cc: chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 28 Jan 2025 at 20:48, Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
->
-> The T-Head TH1520 SoC contains multiple power islands that can be
-> programmatically turned on and off using the AON (Always-On) protocol
-> and a hardware mailbox [1]. The relevant mailbox driver has already been
-> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
-> Introduce support for T-head TH1520 Mailbox driver");
->
-> Introduce a power-domain driver for the TH1520 SoC, which is using AON
-> firmware protocol to communicate with E902 core through the hardware
-> mailbox. This way it can send power on/off commands to the E902 core.
->
-> The interaction with AUDIO power island e.g trying to turn it OFF proved
-> to crash the firmware running on the E902 core. Introduce the workaround
-> to disable interacting with the power island.
->
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
->
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
+From: Hsin-chen Chuang <chharry@chromium.org>
 
-[...]
+Expose the isoc_alt attr with device group to avoid the racing.
 
-> +
-> +static int th1520_pd_probe(struct platform_device *pdev)
-> +{
-> +       struct generic_pm_domain **domains;
-> +       struct genpd_onecell_data *pd_data;
-> +       struct th1520_aon_chan *aon_chan;
-> +       struct device *dev = &pdev->dev;
-> +       int i;
-> +
-> +       aon_chan = dev_get_drvdata(dev->parent);
-> +       if (!aon_chan) {
-> +               dev_err(dev, "Failed to get AON channel from parent\n");
-> +               return -EINVAL;
-> +       }
+Now we create a dev node for btusb. The isoc_alt attr belongs to it and
+it also becomes the parent device of hci dev.
 
-As pointed out on patch4. Rather than receiving the aon_chang from the
-parent device like this, it seems better to receive it from a call to
-a library function provided by the FW library.
+Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+---
 
-> +
-> +       domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
-> +                              sizeof(*domains), GFP_KERNEL);
-> +       if (!domains)
-> +               return -ENOMEM;
-> +
-> +       pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
-> +       if (!pd_data)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
-> +               struct th1520_power_domain *pd;
-> +
-> +               if (th1520_pd_ranges[i].disabled)
-> +                       continue;
-> +
-> +               pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
-> +               if (IS_ERR(pd))
-> +                       return PTR_ERR(pd);
-> +
-> +               pd->aon_chan = aon_chan;
-> +               domains[i] = &pd->genpd;
-> +               dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
-> +       }
-> +
-> +       pd_data->domains = domains;
-> +       pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
-> +       pd_data->xlate = th1520_pd_xlate;
-> +
-> +       /*
-> +        * Initialize all power domains to off to ensure they start in a
-> +        * low-power state. This allows device drivers to manage power
-> +        * domains by turning them on or off as needed.
-> +        */
-> +       th1520_pd_init_all_off(domains, dev);
-> +
-> +       return of_genpd_add_provider_onecell(dev->parent->of_node, pd_data);
-> +}
-> +
-> +static struct platform_driver th1520_pd_driver = {
-> +       .driver = {
-> +               .name = "th1520-pd",
-> +       },
-> +       .probe = th1520_pd_probe,
-> +};
-> +module_platform_driver(th1520_pd_driver);
+Changes in v5:
+- Merge the ABI doc into this patch
+- Manage the driver data with device
 
-There is no ->remove() callback.
+Changes in v4:
+- Create a dev node for btusb. It's now hci dev's parent and the
+  isoc_alt now belongs to it.
+- Since the changes is almost limitted in btusb, no need to add the
+  callbacks in hdev anymore.
 
-Either add one or make this a builtin_platform_driver() with
-"suppress_bind_attrs = true".
+Changes in v3:
+- Make the attribute exported only when the isoc_alt is available.
+- In btusb_probe, determine data->isoc before calling hci_alloc_dev_priv
+  (which calls hci_init_sysfs).
+- Since hci_init_sysfs is called before btusb could modify the hdev,
+  add new argument add_isoc_alt_attr for btusb to inform hci_init_sysfs.
 
-> +
-> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-> +MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.34.1
->
+Changes in v2:
+- The patch has been removed from series
 
-Besides the minor thing above, this looks good to me!
+ .../ABI/stable/sysfs-class-bluetooth          |  13 ++
+ drivers/bluetooth/btusb.c                     | 111 ++++++++++++++----
+ include/net/bluetooth/hci_core.h              |   1 +
+ net/bluetooth/hci_sysfs.c                     |   3 +-
+ 4 files changed, 102 insertions(+), 26 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/Documentation/ABI/stable/sysfs-class-bluetooth b/Documentation/ABI/stable/sysfs-class-bluetooth
+index 36be02471174..c1024c7c4634 100644
+--- a/Documentation/ABI/stable/sysfs-class-bluetooth
++++ b/Documentation/ABI/stable/sysfs-class-bluetooth
+@@ -7,3 +7,16 @@ Description: 	This write-only attribute allows users to trigger the vendor reset
+ 		The reset may or may not be done through the device transport
+ 		(e.g., UART/USB), and can also be done through an out-of-band
+ 		approach such as GPIO.
++
++What:		/sys/class/bluetooth/btusb<usb-intf>/isoc_alt
++Date:		13-Feb-2025
++KernelVersion:	6.13
++Contact:	linux-bluetooth@vger.kernel.org
++Description:	This attribute allows users to configure the USB Alternate setting
++		for the specific HCI device. Reading this attribute returns the
++		current setting, and writing any supported numbers would change
++		the setting. See the USB Alternate setting definition in Bluetooth
++		core spec 5, vol 4, part B, table 2.1.
++		If the HCI device is not yet init-ed, the write fails with -ENODEV.
++		If the data is not a valid number, the write fails with -EINVAL.
++		The other failures are vendor specific.
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 1caf7a071a73..e2fb3d08a5ed 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -920,6 +920,8 @@ struct btusb_data {
+ 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+ 
+ 	struct qca_dump_info qca_dump;
++
++	struct device dev;
+ };
+ 
+ static void btusb_reset(struct hci_dev *hdev)
+@@ -3693,6 +3695,9 @@ static ssize_t isoc_alt_store(struct device *dev,
+ 	int alt;
+ 	int ret;
+ 
++	if (!data->hdev)
++		return -ENODEV;
++
+ 	if (kstrtoint(buf, 10, &alt))
+ 		return -EINVAL;
+ 
+@@ -3702,6 +3707,36 @@ static ssize_t isoc_alt_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(isoc_alt);
+ 
++static struct attribute *btusb_sysfs_attrs[] = {
++	NULL,
++};
++ATTRIBUTE_GROUPS(btusb_sysfs);
++
++static void btusb_sysfs_release(struct device *dev)
++{
++	struct btusb_data *data = dev_get_drvdata(dev);
++
++	kfree(data);
++}
++
++static const struct device_type btusb_sysfs = {
++	.name    = "btusb",
++	.release = btusb_sysfs_release,
++	.groups  = btusb_sysfs_groups,
++};
++
++static struct attribute *btusb_sysfs_isoc_alt_attrs[] = {
++	&dev_attr_isoc_alt.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(btusb_sysfs_isoc_alt);
++
++static const struct device_type btusb_sysfs_isoc_alt = {
++	.name    = "btusb",
++	.release = btusb_sysfs_release,
++	.groups  = btusb_sysfs_isoc_alt_groups,
++};
++
+ static int btusb_probe(struct usb_interface *intf,
+ 		       const struct usb_device_id *id)
+ {
+@@ -3743,7 +3778,7 @@ static int btusb_probe(struct usb_interface *intf,
+ 			return -ENODEV;
+ 	}
+ 
+-	data = devm_kzalloc(&intf->dev, sizeof(*data), GFP_KERNEL);
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+@@ -3766,8 +3801,10 @@ static int btusb_probe(struct usb_interface *intf,
+ 		}
+ 	}
+ 
+-	if (!data->intr_ep || !data->bulk_tx_ep || !data->bulk_rx_ep)
+-		return -ENODEV;
++	if (!data->intr_ep || !data->bulk_tx_ep || !data->bulk_rx_ep) {
++		err = -ENODEV;
++		goto out_free_data;
++	}
+ 
+ 	if (id->driver_info & BTUSB_AMP) {
+ 		data->cmdreq_type = USB_TYPE_CLASS | 0x01;
+@@ -3821,16 +3858,47 @@ static int btusb_probe(struct usb_interface *intf,
+ 
+ 	data->recv_acl = hci_recv_frame;
+ 
++	if (id->driver_info & BTUSB_AMP) {
++		/* AMP controllers do not support SCO packets */
++		data->isoc = NULL;
++	} else {
++		/* Interface orders are hardcoded in the specification */
++		data->isoc = usb_ifnum_to_if(data->udev, ifnum_base + 1);
++		data->isoc_ifnum = ifnum_base + 1;
++	}
++
++	if (id->driver_info & BTUSB_BROKEN_ISOC)
++		data->isoc = NULL;
++
++	/* Init a dev for btusb. The attr depends on the support of isoc. */
++	if (data->isoc)
++		data->dev.type = &btusb_sysfs_isoc_alt;
++	else
++		data->dev.type = &btusb_sysfs;
++	data->dev.class = &bt_class;
++	data->dev.parent = &intf->dev;
++
++	err = dev_set_name(&data->dev, "btusb%s", dev_name(&intf->dev));
++	if (err)
++		goto out_free_data;
++
++	dev_set_drvdata(&data->dev, data);
++	err = device_register(&data->dev);
++	if (err < 0)
++		goto out_put_sysfs;
++
+ 	hdev = hci_alloc_dev_priv(priv_size);
+-	if (!hdev)
+-		return -ENOMEM;
++	if (!hdev) {
++		err = -ENOMEM;
++		goto out_free_sysfs;
++	}
+ 
+ 	hdev->bus = HCI_USB;
+ 	hci_set_drvdata(hdev, data);
+ 
+ 	data->hdev = hdev;
+ 
+-	SET_HCIDEV_DEV(hdev, &intf->dev);
++	SET_HCIDEV_DEV(hdev, &data->dev);
+ 
+ 	reset_gpio = gpiod_get_optional(&data->udev->dev, "reset",
+ 					GPIOD_OUT_LOW);
+@@ -3969,15 +4037,6 @@ static int btusb_probe(struct usb_interface *intf,
+ 		hci_set_msft_opcode(hdev, 0xFD70);
+ 	}
+ 
+-	if (id->driver_info & BTUSB_AMP) {
+-		/* AMP controllers do not support SCO packets */
+-		data->isoc = NULL;
+-	} else {
+-		/* Interface orders are hardcoded in the specification */
+-		data->isoc = usb_ifnum_to_if(data->udev, ifnum_base + 1);
+-		data->isoc_ifnum = ifnum_base + 1;
+-	}
+-
+ 	if (IS_ENABLED(CONFIG_BT_HCIBTUSB_RTL) &&
+ 	    (id->driver_info & BTUSB_REALTEK)) {
+ 		btrtl_set_driver_name(hdev, btusb_driver.name);
+@@ -4010,9 +4069,6 @@ static int btusb_probe(struct usb_interface *intf,
+ 			set_bit(HCI_QUIRK_FIXUP_BUFFER_SIZE, &hdev->quirks);
+ 	}
+ 
+-	if (id->driver_info & BTUSB_BROKEN_ISOC)
+-		data->isoc = NULL;
+-
+ 	if (id->driver_info & BTUSB_WIDEBAND_SPEECH)
+ 		set_bit(HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED, &hdev->quirks);
+ 
+@@ -4065,10 +4121,6 @@ static int btusb_probe(struct usb_interface *intf,
+ 						 data->isoc, data);
+ 		if (err < 0)
+ 			goto out_free_dev;
+-
+-		err = device_create_file(&intf->dev, &dev_attr_isoc_alt);
+-		if (err)
+-			goto out_free_dev;
+ 	}
+ 
+ 	if (IS_ENABLED(CONFIG_BT_HCIBTUSB_BCM) && data->diag) {
+@@ -4099,6 +4151,16 @@ static int btusb_probe(struct usb_interface *intf,
+ 	if (data->reset_gpio)
+ 		gpiod_put(data->reset_gpio);
+ 	hci_free_dev(hdev);
++
++out_free_sysfs:
++	device_del(&data->dev);
++
++out_put_sysfs:
++	put_device(&data->dev);
++	return err;
++
++out_free_data:
++	kfree(data);
+ 	return err;
+ }
+ 
+@@ -4115,10 +4177,8 @@ static void btusb_disconnect(struct usb_interface *intf)
+ 	hdev = data->hdev;
+ 	usb_set_intfdata(data->intf, NULL);
+ 
+-	if (data->isoc) {
+-		device_remove_file(&intf->dev, &dev_attr_isoc_alt);
++	if (data->isoc)
+ 		usb_set_intfdata(data->isoc, NULL);
+-	}
+ 
+ 	if (data->diag)
+ 		usb_set_intfdata(data->diag, NULL);
+@@ -4150,6 +4210,7 @@ static void btusb_disconnect(struct usb_interface *intf)
+ 		gpiod_put(data->reset_gpio);
+ 
+ 	hci_free_dev(hdev);
++	device_unregister(&data->dev);
+ }
+ 
+ #ifdef CONFIG_PM
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 05919848ea95..776dd6183509 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -1843,6 +1843,7 @@ int hci_get_adv_monitor_offload_ext(struct hci_dev *hdev);
+ 
+ void hci_event_packet(struct hci_dev *hdev, struct sk_buff *skb);
+ 
++extern const struct class bt_class;
+ void hci_init_sysfs(struct hci_dev *hdev);
+ void hci_conn_init_sysfs(struct hci_conn *conn);
+ void hci_conn_add_sysfs(struct hci_conn *conn);
+diff --git a/net/bluetooth/hci_sysfs.c b/net/bluetooth/hci_sysfs.c
+index 041ce9adc378..aab3ffaa264c 100644
+--- a/net/bluetooth/hci_sysfs.c
++++ b/net/bluetooth/hci_sysfs.c
+@@ -6,9 +6,10 @@
+ #include <net/bluetooth/bluetooth.h>
+ #include <net/bluetooth/hci_core.h>
+ 
+-static const struct class bt_class = {
++const struct class bt_class = {
+ 	.name = "bluetooth",
+ };
++EXPORT_SYMBOL(bt_class);
+ 
+ static void bt_link_release(struct device *dev)
+ {
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
