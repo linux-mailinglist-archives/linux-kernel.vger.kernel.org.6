@@ -1,198 +1,248 @@
-Return-Path: <linux-kernel+bounces-515143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E613A360C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:47:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07B6A360C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92BD91894F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6570716F301
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB19266B66;
-	Fri, 14 Feb 2025 14:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB726656F;
+	Fri, 14 Feb 2025 14:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDog0RD0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjWgDJvl"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9902641F7;
-	Fri, 14 Feb 2025 14:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C621CA02
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544425; cv=none; b=VN8WE3nZebmj6d24E/7q80jCgVimbmIcdf4lQF8rSS/Y5e4EdZPPsKCEUCykxStNNj4RTWv7Z66d21f0qmwIrQ2+WDFbY+xP3crcbnajej/ezkbH4xBoO3ekd84fW9O1sTAkr8J9npPtd6Eh8M4/BamdleoGXasH1R3ZmGh5m+Y=
+	t=1739544681; cv=none; b=pkQUCkvbtkMNLpzSr9wrn3oI9pznRgvrOfw1+pXIzjBIupMqtr2jAfiHSak9t0kPim5CC+oZri3PUmGts8t6/PhZep5KoSta+heO7sbvE9u3dC91VhcmNGyUTAeta2ogMOyCIU4peEd9/a9PrhNTszBMgSGnG1SQjoG8F3H2KOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544425; c=relaxed/simple;
-	bh=SyLU6IbvipwhDabpk1usdLGba4ULwr4q4Ssvnk0UWkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qB1z762kv4Jvb0m1hKz3u8o2+7B0osLZzEOt1zRnW2aclcFNH/EvceMIDLtJ1I6AtfRYaziPoaVAZVC0NhZdRqe4+/pjDXBsP+mH7lPWH89QtguJD/TEX/eW2MZ5keLBtnf4M7B0Poj74Xw45sNf9grGu+1Kfbip/X26+XfGl3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDog0RD0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52213C4CEDF;
-	Fri, 14 Feb 2025 14:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739544424;
-	bh=SyLU6IbvipwhDabpk1usdLGba4ULwr4q4Ssvnk0UWkQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XDog0RD0zyKTUqYTNfkdQ9i5DtlIr2wbzNHfRbfGqX0mkCexjvzTruiY/kjLnK8J3
-	 +xH+ahja8v4AX7rkW+0b3hBsG/sk1t09wxK/YXH6ACQ80OKnOY4xCcAl28f3ciXFkP
-	 5CAzKyvRKHHgEsgGaUZSbZt5JJtd9iYjqmmcJIRp5bMjgw+gXz5IUGpl5En7yEMPFf
-	 xjphbfPTs8wXkwHjl5yxGzCFjHH5G8yc6YzWFCpjVzdcNJQq2+7tLopdDeJaXsGf0A
-	 hivuSAu0ZxLSIb3xI5SY1oHsdMWfXQHLxC70x4cIIjvQbGZc299L6eP7Xw9Nwv+OP5
-	 jb61l0lRfE7aA==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de5e3729ecso4308616a12.0;
-        Fri, 14 Feb 2025 06:47:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV/SX+kW9A3mmRrSgRpPzqg5RahHe/B9ZFEHf9gycvGzu6sklMEZjBx1IbtO9uLnGpo/0b8OcxrR1WK+xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylHGuoEwUfk2o24cpiOWKeb5F+szqQZWZvGuUv74mr+w4qv3Vi
-	CAfICTQr4zt3bc0Vfdds+e6x54UUl+0NpqHO0zMFh3sR2Iml8vxzcr7OJ5j2PmsP75l3eWimLC3
-	GhWpjyCY1D4Zf254Vic6pDxzU4Ao=
-X-Google-Smtp-Source: AGHT+IGLP2hfLxyhDNLDMFXVxFjF7thUSuEvL0i10rfKHQr5NwdBRqYExxq+8zSv4dyiGdV3AS67Or9gUJzpXwcXVXo=
-X-Received: by 2002:a17:907:770f:b0:abb:2e65:96f7 with SMTP id
- a640c23a62f3a-abb2e660cd1mr57018866b.43.1739544422884; Fri, 14 Feb 2025
- 06:47:02 -0800 (PST)
+	s=arc-20240116; t=1739544681; c=relaxed/simple;
+	bh=bdbMeH8oaPRgL3u9VvU6Dw1az7CyzfRo1NDkgGXUVSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d90W/jBkKCOoubM3tsa/YxL2UNd6OD8M9fr6xBzpm06FiXaA/dipxq/pnfyHXImSitWb0QCgjOglKW56VZkz2I27brlJvLJo8foCfteZjaVTNV6kCerHiZWYT8Mh/XJ9ZD/TAOG3YJQMQgb+vstqK7o0iqLWYH9ptLB5H+OPwBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjWgDJvl; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f42992f608so3522516a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:51:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739544679; x=1740149479; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UtkO3BfS7RUR3ZvPkv2iNZwz0HqEh2TlEN4hK+R6VZs=;
+        b=BjWgDJvlj0L8VxAAC4mD4mT1DmsAEYE6y/t6i3OIGoFjF+tfziuoHhPfwnDCmDWkal
+         ORghkAhY3XjjmIys/YwE823WbHU3TnA9Qmc/b5OukRBCI1j2eNW9ytgfT26UWgp2bOZb
+         +x1qLFqnqLEViBT2EYHn6DaqZIa98+xtmbVIBSZ4t4xhcnGrGikxmhF9PwY+m1q8uGs4
+         +Qj0gYCPRn6PSeyDfawE0wA3oBmhpm1Qp9uOZYv0FjRz5I9aQzQHmLea+usTt9fTwlKy
+         8dJrKbaK5v4ZccCnDryeWloP8AlA75dOF/DwykiSpCV/GPy6oKrOa/ex4M7ydx6VsOXW
+         hmAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739544679; x=1740149479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UtkO3BfS7RUR3ZvPkv2iNZwz0HqEh2TlEN4hK+R6VZs=;
+        b=MXlp0j0BVmShhjK8L06ePSi06p/xprWAj1WBURmQQO5unbqRWEC3/JPNr/VLelpMzY
+         9Vy3cFkjNozd0XUaRzYiGL+ENAndoAfeeM7MiICdlF0mJt8vpoK3RyZB7OUiZcP0xNPt
+         sLP6X4CRNGUjs/R0SIJbg8u4lipQOfGlOiCYtPQ04WroyTbuvrPdtai94utVLVgRUKtk
+         ZUn3rvScQnASusMORqEOf6BZEVDOW0H+TP3HzZ0yNoGmN+mmBOEVq0TSZUZNgvmyvtde
+         8PVDh3jVOUTKCAs72D57hOXXyl87P+Hcs65YjSAyaB1klFH5eXLdHYKOmAvrfHfFUonz
+         8UlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM8fLLuAS8QlDploOwJu07OrHzLL+itclHy8Ft1d/1JL6UZGNQ67XIq7+YOTHbbfDkFSIjUOhT5hx4B3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU9UA31uBovb2+mbvaOqRGfjMUnqcKrPG0EWUr1YODmJ7Y+LDq
+	XImTZQvcVOYiIt1P2FYJlPN/G5lIIfKjv7Z/g9RQp6XpK0T0phPc
+X-Gm-Gg: ASbGncsU1CjECgLDW+FBqvRN8+XsWeRk3A2h7Vq1Y2FlZ9sS+3zUapEMd3bTn5L28gn
+	mLMrZjjDHBacf6fS5GUNatK8drWjRF8rM+4VjG+dC70AXoyoIi59rZtgkUffTQrlTDWnmQeNvn7
+	uDBTpYUJwqVBL1OH82edKu9WvdzGe4GFSkEBxyYWqRB+fK040e9oVxCcerXsEkTSRMZSTzWvQJL
+	DLQWl7zv/M+QksR18eULuSVueRt95wUyFQOP28xeiV1lMmV1Dgjw9IOyxE2vBT+mdB0NQ4MRiVe
+	Fwt0uK6n23jea86elfHg5XXyQfc5es7A
+X-Google-Smtp-Source: AGHT+IFshQ2u48OOIlxtH9By/ZtXEpcmtkK2VSxnuv7nA6QWRQLbgOVaJ4JYV6mRWu6zNaDuCDH2Yg==
+X-Received: by 2002:a17:90b:2248:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2fc0e2c0d3cmr11021077a91.8.1739544678687;
+        Fri, 14 Feb 2025 06:51:18 -0800 (PST)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:2434:f20a:5d9e:5136])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc327f1158sm670693a91.0.2025.02.14.06.51.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 06:51:18 -0800 (PST)
+Date: Fri, 14 Feb 2025 22:51:13 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: anshuman.khandual@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw, skhan@linuxfoundation.org,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/2] uapi: Refactor __GENMASK() for speed-up
+Message-ID: <Z69YYeQB5E5Mi3Jf@vaxr-BM6660-BM6360>
+References: <20250211162412.477655-1-richard120310@gmail.com>
+ <20250211162412.477655-2-richard120310@gmail.com>
+ <Z6uZZPpQ9YYfrL-I@thinkpad>
+ <Z6uaW9XzaKjSrWYC@thinkpad>
+ <Z6ypqCN_KI2gaSJ4@vaxr-BM6660-BM6360>
+ <Z65N81jXcyKIu95l@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214105047.150835-1-marco.crivellari@suse.com> <20250214105047.150835-2-marco.crivellari@suse.com>
-In-Reply-To: <20250214105047.150835-2-marco.crivellari@suse.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 14 Feb 2025 22:46:52 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
-X-Gm-Features: AWEUYZnwAMKYhkoagxpnGYT5f00p8m0OnzKLWg0cGlI_vqI7kw1yteYhWCjuifs
-Message-ID: <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: Fix idle VS timer enqueue
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z65N81jXcyKIu95l@thinkpad>
 
-Hi, Marco,
+On Thu, Feb 13, 2025 at 02:54:27PM -0500, Yury Norov wrote:
+> + Andrew, Matthias
+> 
+> On Wed, Feb 12, 2025 at 10:01:12PM +0800, I Hsin Cheng wrote:
+> > On Tue, Feb 11, 2025 at 01:44:18PM -0500, Yury Norov wrote:
+> > > On Tue, Feb 11, 2025 at 01:39:34PM -0500, Yury Norov wrote:
+> > > > On Wed, Feb 12, 2025 at 12:24:11AM +0800, I Hsin Cheng wrote:
+> > > > > The calculation of "((~_UL(0)) - (_UL(1) << (l)) + 1)" is to generate a
+> > > > > bitmask with "l" trailing zeroes, which is equivalent to
+> > > > > "(~_UL(0) << (l))".
+> > > > 
+> > > > I used to think that GENMASK() is a compile-time macro. __GENMASK() is
+> > > > not, but it has very limited usage through the kernel, all in the uapi.
+> > > >  
+> > > > > Refactor the calculation so the number of arithmetic instruction will be
+> > > > > reduced from 3 to 1.
+> > > > 
+> > > > I'd like to look at it! Please share disassembly.
+> > > > 
+> > > > > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> > > > > ---
+> > > > > Test is done to show the speed-up we can get from reducing the number of
+> > > > > instruction. The test machine runs with 6.9.0-0-generic kernel on x86_64
+> > > > > architecture with processor AMD Ryzen 7 5700X3D 8-Core Processor.
+> > > > 
+> > > > So you CC arm maintainers and provide tests against x86_64. Are your
+> > > > improvements consistent for arm, power and other arches?
+> > > > 
+> > > > Can you run bloat-o-meter against your change?
+> > > 
+> > > Ah, sorry, overlooked you bloat-o-meter results in cover letter.
+> > > Anyways, can you provide it for each patch individually?
+> > 
+> > Oh ok, let me paste them here first, I'll attach them along with v2 as
+> > well.
+> > 
+> > In the section below, vmlinux_old uses old version of GENMASK() and
+> > GENMASK_ULL(), vmlinux_p1 use new version of GENMASK() and old version
+> > of GENMASK_ULL(), vmlinux_p2 use new version of GENMASK() and new
+> > version of GENMASK_ULL().
+> > 
+> > $ ./scripts/bloat-o-meter vmlinux_old vmlinux_p1
+> > add/remove: 0/2 grow/shrink: 46/505 up/down: 464/-1717 (-1253)
+> 
+> So, I ran the build myself and I confirm that reverting c32ee3d9abd284b4
+> (which this patch actually does) helps to save over 1k of .text. In my
+> case it's 1269 bytes on x86_64 + defconfig for GENMASK() only.
+> 
+> I looked at some functions affected by this revert, and I found that
+> they call for_each_*_cpu() macros. This eventually boils down to bitmap
+> functions like this:
+> 
+>   static __always_inline
+>   unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
+>                               unsigned long offset)
+>   {
+>           if (small_const_nbits(size)) {
+>                   unsigned long val;
+>   
+>                   if (unlikely(offset >= size))
+>                           return size;
+>   
+>                   val = *addr & GENMASK(size - 1, offset);
+>                   return val ? __ffs(val) : size;
+>           }   
+>   
+>           return _find_next_bit(addr, size, offset);
+>   }
+> 
+> The 'size' here is NR_CPUS, which on my machine is 64. 
+> 
+> GENMASK is used with non-constant parameters, but it's OK because
+> from compiler's point of view, the GENMASK_INPUT_CHECK() which is
+> just:
+>         BUILD_BUG_ON_ZERO(const_true((l) > (h)))
+> 
+> It is passed as the 'offset > size', and it's is indeed a constant
+> expression at that point because it's explicitly tested before.
+> 
+> Is this for_each_cpu() thing the only case - I don't know, but it's
+> enough to consider reverting back to the original version.
+> 
+> I Hsing,
+> 
+> At first, thank you for catching this up.
+> 
+> I think performance testing part is trivial here, so let's focus on
+> code generation and consistency.
+> 
+> Can you please run your build against few recent GCC and clang versions?
+> Can you also build the kernel for ARM64? You don't need to run it on
+> real hardware (but maybe on VM). I just need to make sure that the
+> result is consistent for all important arches.
+> 
+> Matthias didn't mention how did he build his kernel. Did clang emit
+> that warning against W=0, 1 or higher, and which code triggered the
+> warning? Maybe clang already fixed it?
+> 
+> Can you please check how would it work if NR_CPUS is set to be say 1024?
+> This way the small_const_nbits optimization will be disabled.
+> 
+> If you will find that clang still emits warnings at lower than W=2,
+> can you please resend this patches together with a patch that
+> suppresses clang warning?
+> 
+> Can you also please attach one or two examples of code generation for
+> real functions, not an artificial one as you did before. And maybe a
+> link to goldbolt?
+> 
+> For the next iteration can you please make sure that you refer your
+> series as a revert of Matthias's patch? 
+> 
+> Thank you for discovering this. I realize that I'm asking you to do
+> some extra work, but we all need to be 100% sure that it's not a fluke
+> before reverting the c32ee3d9abd284b4 because it potentially leads to
+> suppressing another clang warning.
+> 
+> Thanks,
+> Yury
 
-On Fri, Feb 14, 2025 at 6:51=E2=80=AFPM Marco Crivellari
-<marco.crivellari@suse.com> wrote:
->
-> MIPS re-enables interrupts on its idle routine and performs
-> a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
->
-> The IRQs firing between the check and the 'wait' instruction may set the
-> TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
-> interrupting __r4k_wait() rollback their return address to the
-> beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
-> again before going back to sleep.
->
-> However idle IRQs can also queue timers that may require a tick
-> reprogramming through a new generic idle loop iteration but those timers
-> would go unnoticed here because __r4k_wait() only checks
-> TIF_NEED_RESCHED. It doesn't check for pending timers.
->
-> Fix this with fast-forwarding idle IRQs return address to the end of the
-> idle routine instead of the beginning, so that the generic idle loop
-> handles both TIF_NEED_RESCHED and pending timers.
->
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  arch/mips/kernel/genex.S | 36 ++++++++++++++++++++----------------
->  arch/mips/kernel/idle.c  |  1 -
->  2 files changed, 20 insertions(+), 17 deletions(-)
->
-> diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> index a572ce36a24f..a78d5132c940 100644
-> --- a/arch/mips/kernel/genex.S
-> +++ b/arch/mips/kernel/genex.S
-> @@ -104,18 +104,16 @@ handle_vcei:
->
->         __FINIT
->
-> -       .align  5       /* 32 byte rollback region */
-> +       .align  5
->  LEAF(__r4k_wait)
->         .set    push
->         .set    noreorder
-> -       /* start of rollback region */
-> -       LONG_L  t0, TI_FLAGS($28)
-> -       nop
-> -       andi    t0, _TIF_NEED_RESCHED
-> -       bnez    t0, 1f
-> -        nop
-> -       nop
-> -       nop
-> +       /* start of idle interrupt region */
-> +       MFC0    k0, CP0_STATUS
-> +       /* Enable Interrupt */
-> +       ori     k0, 0x1f
-> +       xori    k0, 0x1e
-> +       MTC0    k0, CP0_STATUS
->  #ifdef CONFIG_CPU_MICROMIPS
->         nop
->         nop
-> @@ -123,11 +121,17 @@ LEAF(__r4k_wait)
->         nop
->  #endif
->         .set    MIPS_ISA_ARCH_LEVEL_RAW
-> +       /*
-> +        * If an interrupt lands here, between enabling interrupts above =
-and
-> +        * going idle on the next instruction, we must *NOT* go idle sinc=
-e the
-> +        * interrupt could have set TIF_NEED_RESCHED or caused a timer to=
- need
-> +        * resched. Fall through -- see rollback_handler below -- and hav=
-e
-> +        * the idle loop take care of things.
-> +        */
->         wait
-> -       /* end of rollback region (the region size must be power of two) =
-*/
-> -1:
-> +       /* end of idle interrupt region (the region size must be power of=
- two) */
-> +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
-You can also use label 1 as the LoongArch version.
+Hi Yury,
 
->         jr      ra
-> -        nop
->         .set    pop
->         END(__r4k_wait)
->
-> @@ -136,10 +140,10 @@ LEAF(__r4k_wait)
->         .set    push
->         .set    noat
->         MFC0    k0, CP0_EPC
-> -       PTR_LA  k1, __r4k_wait
-> -       ori     k0, 0x1f        /* 32 byte rollback region */
-> -       xori    k0, 0x1f
-> -       bne     k0, k1, \handler
-> +       PTR_LA  k1, __r4k_wait_exit
-> +       /* 3 instructions rollback region */
-For MIPS the rollback region is not 3 instructions, and so you cannot
-use 0xc below. I think there is no chance for the wait instruction
-after this patch.
+No problem ! I'll be happy to help with these tests, I'll send the next
+iteration when I complete the things you mentioned.
 
-Huacai
+> Is this for_each_cpu() thing the only case - I don't know, but it's
+> enough to consider reverting back to the original version.
 
-> +       ori     k0, k0, 0x0c
-> +       bne     k0, k1, \handler
->         MTC0    k0, CP0_EPC
->         .set pop
->         .endm
-> diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
-> index 5abc8b7340f8..1f74c0589f7e 100644
-> --- a/arch/mips/kernel/idle.c
-> +++ b/arch/mips/kernel/idle.c
-> @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
->
->  void __cpuidle r4k_wait(void)
->  {
-> -       raw_local_irq_enable();
->         __r4k_wait();
->         raw_local_irq_disable();
->  }
-> --
-> 2.48.1
->
->
+So basically the reason of sizing up is because for_each_cpu() put
+non-constant parameter in GENMASK(), which is supposed to be used by
+constant only?
+
+> Can you also please attach one or two examples of code generation for
+> real functions, not an artificial one as you did before. And maybe a
+> link to goldbolt?
+
+I have no problem of other tests but this one, I wrote a simple
+artificial use case because most functions I found according to the
+report generated by bloat-o-meter, doesn't use GENMASK() directly or
+they're super long and GENMASK() only accounts for very small part of
+them, it wasn't very trivial to sense the difference of disassembly at
+least for me. Should I just pick 1~2 random use cases? or do you have
+any suggestions?
+
+Btw, are you talking about Online Compiler Explorer? I don't really know
+what goldbolt means here, sorry XD .
+
+Best regards,
+I Hsin Cheng
+
 
