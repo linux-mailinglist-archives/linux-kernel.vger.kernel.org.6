@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-515201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FBBA3619F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:26:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA68FA361A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0429C3A1229
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1D916BC1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88666266B4D;
-	Fri, 14 Feb 2025 15:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CFB4D8C8;
+	Fri, 14 Feb 2025 15:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pm6SDM6F"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rTXIoPjH"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13728264A61
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897DD2661A9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546774; cv=none; b=JTRXwGBPJfAIvVmfA+qIktXmLlNKPCrJXn6ooGZGyrfNOyKFXiAbolYT/u3yQWm8yCQDv5qTCcBisyh+60s1vhs62LYMJP391wBt62rLxysJcNXRAS9RvL5xETEclJmypFdJf2wIGtxuBncPXXDkZhXDIMPTvp7/jyY+vNnESRk=
+	t=1739546813; cv=none; b=ZevYW/mhYeADnLmyM5/MsIVM4Jj8rY//pxHpFZtBFnmBZQDNs7wBEUFxg6gNBCfjAY9MedeRl6kWJLRzOsUWwMeH78z+/WMesgywoG4KXQ7BmooeGtsJ0hk0CnuQhJqk7jn1dp7SyIooLQQrvRds5QnbkRlzwHOhgNLTk2pV+iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546774; c=relaxed/simple;
-	bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TDOVpLvqHzqEulvR7hJpkHaG1YcFyZeYtjW4Gyp/yHmRvdoRHALWzpjqjt1+XpH1oU4yeL2p2kqJSny1V1TEsP/xMKpWTrwYGAHe3yJ89Fab504XnNqKa8V7ylQRjr1yZYy8s0PqVVLRxkRytbRjWC7CT2ptwrG84eSetvWbcqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Pm6SDM6F; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5452e6f2999so474500e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:26:12 -0800 (PST)
+	s=arc-20240116; t=1739546813; c=relaxed/simple;
+	bh=0LxUpI37n9Ty+9Pp2W9i6XsDKp/K+emkn4l7dIJVF4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p8KBIpExaZjuZvYPBTPVuqppkVABY2qm3bN5HNavuj7S7wNHbzRYs2or6uzlhrgAPXh1I5uMn7BkQTic4BBdTr3oC7P2UJva0iIMB/r2LvutoAe4WcBahryOu61BtImLDecAQ1R0QwYggHrX4niQh31t44qbkI3qSde/02TcCMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rTXIoPjH; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43964e79314so16680065e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739546771; x=1740151571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
-        b=Pm6SDM6Fs35JGtxuKf8Ug0RJj4uKeZCOc0V9kqGr2rq6ZFZs/M/WYV0xeaw2ogLs4+
-         hSNrzpF2do+iP7t7Qw8wKNRQNnWXIc3NKch0kzJ0aSwEEOuzGnqDDz7VZU8wWDxnE70k
-         0JpHR0QJIEXu/WDqdxr5HDKPvUR29sqzI1UmE=
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739546810; x=1740151610; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oTRfEW2yWn9zerW5a3NIEU5Z05XOKgCl0U2kOQmvH4E=;
+        b=rTXIoPjHJZ/xKNsMODPPdaS1aktKuKyVmNRGg6MJFEaN4NSDaZHqQzdZnSLUcfCtAe
+         FJarqNBpprsG0JilxGfzGV2U8eTXZ0lEQOqDTDUDY+xuZyUv0GnexrZECwhFES3Axcw0
+         pv7ftpfQRAJLEo+QGuEoXMffKFIGAgnHnv8EKbdP1SRje/Hkm/hTbwCur80dN1V578uf
+         6JHQcOmwbwaqFyNe0gJ+P3Zowups0aKvjwsLk0VmPqwyk2YgfzJ5RlmyYJDwuiQDDQCN
+         ACS/AgDoI29d5Ldoe2BMSAZK7AmNHMq9/BAFF4UwRXpjy78hIMSYxqbZ4lhNZPnaOj5z
+         98rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739546771; x=1740151571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
-        b=DdF2wcB9Yo/Zth5UawYBXaUSXHT1LISrj7yqyPwIZsIcEL3zqOydJTsuk5F+9nL2YG
-         xe/O2MuEZFuZLvWLCnGr/NjEBuME7QdxlN0sm1hYNmCL6jpNiVHlsy8S0rjc0wWoI5W8
-         zD9iAmoojGPozrp96q4QSn/fOVIbamxg9V9gRrAxwYj6E0UMvc3gkPtq16I92BYN/Pre
-         mu27ZGiL/I5YT+In7DecNDX3rqhAiV3Xi+7GodTeM7zTFWvkGwGps15UJn4YvHnvu6O4
-         D4gcUIdT+q30m3pmvsioe1M8LLZdWCdYoCEfgQeiEW54DccCQAwX4DDq4D38E6zQ2ulz
-         nrYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMfzNGY9Xyeh7uzJu4W9u5OZE9Znre80E21L2Evyo+8w6ocJ5YrTzzubdKhkL9/TzwVsSsQh5K5roEPVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzBpoVxSI/apN99jUhBOH5FbNDi18lSGqg6T8jL6CEpr5BQR5k
-	0wzkhmJnMMFh8pXsKuDk3ggYyrexZwyVh/NZvYUAkPBI3qwQOhDPYQptAgpFFrbp/i9wQScIMEK
-	xFg==
-X-Gm-Gg: ASbGnct2tPcUDkzSWNu7+HBNdXUUyNBBH+e+TyBBF73ji68WYBLnBcRVr07OZgG/CDZ
-	VMjs78X2fVdbk4oYhCqG0RdSdWkLt8ij0Ub0pxb0Rv98PvRvmDTAPhetwXRUzHUlxnMcqL45S+P
-	bP//ZION5lY3K3D57oL81nm6RtmdkpNNqr+gelU3Uh6Zah9WlutUZ+Mo8TsqOYa6DsvsNSGz7mH
-	vky0A8N8Vc74Kk4k6Yg3tt12KcF1Yqs2dZcSl32V4Hk0prJ/+fsSMfmVIlycLYsR0k8cg0WXd7n
-	2xQ17TNG1ssq/4WTK8K+YBYe7OpPE3Bts4r8XwJEJL6hVQYwlHfG90cvfqk=
-X-Google-Smtp-Source: AGHT+IGl9eLtDWFrIPKmtViL8nrWFrjrl2kzHQFjG6UJuMZsPS56kwQPW7MoQSUCPROj1Mb4T+OE2w==
-X-Received: by 2002:a05:6512:2345:b0:545:2dcb:948a with SMTP id 2adb3069b0e04-5452dcb95bdmr670250e87.34.1739546771026;
-        Fri, 14 Feb 2025 07:26:11 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105d4esm545398e87.154.2025.02.14.07.26.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 07:26:10 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-309191eec90so12257621fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:26:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWiI9PIfuKChTLO3U04N+g9xKekj3d3+3RXaYGueu0fbKNkoMWWrGMVz1upXcP6OiLJgUj2J1uyOXIKh6k=@vger.kernel.org
-X-Received: by 2002:a2e:8a97:0:b0:308:eb58:6581 with SMTP id
- 38308e7fff4ca-30914801891mr14311001fa.0.1739546770563; Fri, 14 Feb 2025
- 07:26:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739546810; x=1740151610;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oTRfEW2yWn9zerW5a3NIEU5Z05XOKgCl0U2kOQmvH4E=;
+        b=wwOFrccUTndGx52ryr85ZtjKbJ6PbAet4wDzPWtNtFlBriRMIq9INcpU9M9iJ///cZ
+         zFgZ4Gf54M+ZqiZ61mcUZMZ9AjI2kCgdVR768UohYaJddvE8HqYWA6eDjh263YD47p7x
+         TPegTDpuB4QM7QDUmsyvllBEgO4VAy/Sd4LtMzYraIGIHKJKI4r0TrruJKAXtAQTSG0v
+         Rt7zRMAprFT//6E6S6PCVK2Wu4tjcCA7bY7Iw+NJbgZCScO4HCqpdpRfl+PGz3Gm+0Wr
+         H2esC0rpksOekjlSvm9kCgv40dU8dAnfXMoypjJ9V9GQnT4/Huu7swwqvbuu/pWhOe5S
+         DHrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDXLzBAKepMbYI5vyv4segQuHtQUK+Z9RNJuo1//0oZgs+3xFYSRg7avcFDhNghSWmXL3VOzq4o5fpMZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMlZeGNDkZeI+sI0Mu7ggOESgxB80zueD0uceil6U0SkxlWduC
+	UbHSDhhMQDb+zjbHEeB5G9eMZQJ+ESab5uQt6wZkXkNdy4SOiEHUBOJum2AhHf5yPpjcCTXN7q+
+	5+Lc=
+X-Gm-Gg: ASbGncuiglAD4Dlggr5wnkGLTxR3mLRxV1xNf0aI9c5cgVRMT/K44i1l/rDK53RyWLo
+	hQr618b4h7zxoJeapcMEbvTy4Uum57D/An7BFs69C+DAalj0x/RG5yPeEpu6PtKUJcOsre46hfW
+	grgBVRZjbi5wy9HgagFiNx9TVGCmguQu+jbrdI9tKfgosMkqvX0lsuylOYcU7QsSho+dpeoLmSb
+	V2ncf3tOiLK0yUfuHxEf+bLKC107nJpIagKbjml3hkhuH/I7EYtavSJVZtg2RcTSjh7fJ83hbkF
+	U6OOxrRpaDVdEQ==
+X-Google-Smtp-Source: AGHT+IFONZH8iHIvDAz5kPlqIVC2dTox3doanunplFJvfkohj4JLvMnOuxYGgtIrhnV5tFQrR+RNyA==
+X-Received: by 2002:a05:6000:1f88:b0:38d:ba81:b5c2 with SMTP id ffacd0b85a97d-38dea2f875dmr13554012f8f.47.1739546809688;
+        Fri, 14 Feb 2025 07:26:49 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:62cc:da7:7c42:97ac])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm4814051f8f.43.2025.02.14.07.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 07:26:49 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.14-rc3
+Date: Fri, 14 Feb 2025 16:26:42 +0100
+Message-ID: <20250214152642.90363-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
- <20250213-crown-clustered-81c6434c892b@spud> <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 14 Feb 2025 07:25:59 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
-X-Gm-Features: AWEUYZn5Dl35ky148QOOCnARP_86rg2vhIKgVTUOs7s9KbdYhXOWWeRWr_r9yF0
-Message-ID: <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation helper
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Conor Dooley <conor@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Fri, Feb 14, 2025 at 12:59=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.co=
-m> wrote:
->
-> > One think that's always felt a bit meh to me is this id number stuff,
-> > I just threw in 666 for meme value.
->
-> :)
->
-> > The whole thing seems super
-> > arbitrary, do any of the users of this helper actually put meaningful
-> > values into the id parameter?
->
-> In example changes I've sent, no.
->
-> In other simple usages (those using container_of()) of the auxiliary
-> bus, I think there are a few that uses 0 and 1 for 2 instances.
->
-> I guess your question is "do we really need this parameter here ?"
->
-> We could remove it and still address 90% of the original target.
->
-> Keeping it leaves the door open in case the figure above does not hold
-> and it is pretty cheap to do. It could also enable drivers requiring an
-> IDA to use the helper, possibly.
+Linus,
 
-FWIW, once you resolve the conflicts in drm-misc with ti-sn65dsi86
-you'll need the ID value. ;-)
+Please pull the following set of GPIO fixes for the next RC. Details are
+in the signed tag. We have fixes to drivers, a new ACPI quirk and two
+fixes to GPIO core.
 
-There was a big-ol' discussion here:
+Bartosz
 
-https://lore.kernel.org/r/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.17291804=
-70.git.geert+renesas@glider.be
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-I eventually pushed v2 of the patch:
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
-https://lore.kernel.org/r/7a68a0e3f927e26edca6040067fb653eb06efb79.17338400=
-89.git.geert+renesas@glider.be
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.14-rc3
 
--Doug
+for you to fetch changes up to e47a75fb5b139233bdbb889995edda4dffc3f0f7:
+
+  gpiolib: protect gpio_chip with SRCU in array_info paths in multi get/set (2025-02-13 18:53:01 +0100)
+
+----------------------------------------------------------------
+gpio fixes for v6.14-rc3
+
+- fix interrupt handling issues in gpio-bcm-kona
+- add an ACPI quirk for Acer Nitro ANV14 fixing an issue with spurious
+  wake up events
+- add missing return value checks to gpio-stmpe
+- fix a crash in error path in gpiochip_get_ngpios()
+- add missing SRCU protection to the code path getting/setting multiple
+  line values at once
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      gpiolib: Fix crash on error in gpiochip_get_ngpios()
+
+Artur Weber (3):
+      gpio: bcm-kona: Fix GPIO lock/unlock for banks above bank 0
+      gpio: bcm-kona: Make sure GPIO bits are unlocked when requesting IRQ
+      gpio: bcm-kona: Add missing newline to dev_err format string
+
+Bartosz Golaszewski (1):
+      gpiolib: protect gpio_chip with SRCU in array_info paths in multi get/set
+
+Mario Limonciello (1):
+      gpiolib: acpi: Add a quirk for Acer Nitro ANV14
+
+Wentao Liang (1):
+      gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
+
+ drivers/gpio/gpio-bcm-kona.c | 71 ++++++++++++++++++++++++++++++++++++--------
+ drivers/gpio/gpio-stmpe.c    | 15 ++++++++--
+ drivers/gpio/gpiolib-acpi.c  | 14 +++++++++
+ drivers/gpio/gpiolib.c       | 54 ++++++++++++++++++++++-----------
+ drivers/gpio/gpiolib.h       |  4 +--
+ 5 files changed, 122 insertions(+), 36 deletions(-)
 
