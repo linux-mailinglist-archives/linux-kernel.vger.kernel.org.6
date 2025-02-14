@@ -1,152 +1,232 @@
-Return-Path: <linux-kernel+bounces-515320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05BCA36330
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:34:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BA3A36337
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE55418984FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136671716C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F59267F55;
-	Fri, 14 Feb 2025 16:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A57E0ED;
+	Fri, 14 Feb 2025 16:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dcc/1Si+"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tT6SgSHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6179267AE7;
-	Fri, 14 Feb 2025 16:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE4026738A;
+	Fri, 14 Feb 2025 16:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739550750; cv=none; b=ZCIN6w2akJaMYEG+VU02NCUUZEJmfNirAITko4fVfXO8MwkSdfXqnh+7U6b/mPGk+0tTfMQnYYY4wcaAL9FdAU39T+8JMVp2e6a3UCrmtgWept69lHaJ/Vy/8QLvqDrsOitI9caUXvYXdP6A3IM1Xr6kLU4HPkKWpFgI1eZcyHg=
+	t=1739550819; cv=none; b=DVJZgrjnsk3AU8tWSYOyEkbZuw2JrECY7NcLQQMqx0DzNJeD8gg9IxGP8BbNcd+7j//bMpWpWUsdgIn0XTWksHZ1pMLpt5chF8KB77LJEd2YFAVC9TCspxSTylr0BTmtKeKhtXw/cB6h3857ib3h+nvWzEgIDFbFmNdK/SwPAVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739550750; c=relaxed/simple;
-	bh=7lwrx4RRpVzZCgE/TYuke3KaJPHx8rSawCREvStJyvQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mr3ZCoKBBraHR9qaeqT77TXiRhHksOrvd49B8fVya605pLwNYliVMGNA4XPj+0ICAV6iOzEm0Zwq+BU35CA8ffmFShq17bWtuHZyDllumpoFCjmAmnjTHoaWWEPcdvWBHiLrnYkqOjLqg42Zeh4yeiy42/CBhoklJjYnXc07yOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dcc/1Si+; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso3941786a12.2;
-        Fri, 14 Feb 2025 08:32:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739550747; x=1740155547; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HmxvbSXC9J0vj/lTBJKkcQrKbAZ26uQTzWdP7WGpRMw=;
-        b=Dcc/1Si+Wu1fZ++JX3d5xxbATtfoYGYLprFixJ1B6SoSeJte71JHh8iP8ODfvN6SAa
-         BN/SjffAUXrDF4It+J6ZeWdQu52iV6eRpc+giIqd6drlVpyBGiDAvGM33tPcQfhFrBU5
-         LlqBttyI7R4DBt3OV4jQwLHqp83FpjuQ42edOHnOqaAvr49YhTi2OY5lUSdFL/LYdvXC
-         O+W79A4v9us0jX4G+forFzdl4oUM8X7lFwmfd+ef+izAUc4g+zEqtSRYfuHIYI+L4ZkO
-         Ne+QIubkcIOuRrFZd7HYOPbVnSDnrGKGBLbnb6lJPd/1WgMSQT28lhfosn4zS0xekRH+
-         m1Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739550747; x=1740155547;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HmxvbSXC9J0vj/lTBJKkcQrKbAZ26uQTzWdP7WGpRMw=;
-        b=BQT1cc8cRYOR4Fe6XqHKi/Fq+rRoc4NrL1Jb5GWDQSFbQYmmbiJKxPiwTnz8uCFGPD
-         R5JQGRles6EdsmwyNq/tWUqaGvcKLClWYBu8iYpQyuUplH48s6L+UQSDJ2D6Obamj3dH
-         dKidRsfo/9UjAM2hhUqDyZlcDyJZeR6XEsnx9jeEJfDZuDvUXuvbhBEPXC2RnZmYALef
-         yNsZcEH0ZZEYRmfsVL0nFDN671WsCRzqyu/uqx1GN7Mc6MFxsPLUQFyb2jWdh/xtHNQM
-         k0j3bOsasHnbx1TVIPvp8qU43jJunOe54ZMXLFr5cwAr+Mfow8lIm/ykb63JUbliBUgy
-         BvGg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3XwCFOULNdB9XK9gOYuc3CZvw3/GwwjIFAAaBQCxfHhthHJXIjSsoXc2BfmDHdnoNhKCr5L5eltxoVBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKJ63UdhbYyp5rv6Az3H+bC+QTN2cIftu7h7WAK3yNgdsMXkoB
-	qpEbQlwbeUntW9FEEH8isRqnxuhmOmy6E7TV0BmXINYfMWQEYrA5
-X-Gm-Gg: ASbGncvJ0lB0tPYDmV6tik5DomgII/O+saYHGyVtPDpGE9f/P8/+YedU3eesazY0AXL
-	zc8Xsf0buOOrGgn5an3izePcBxxXlonouxdD/MurhHNX9Jj2ENiWMniFzeJxMsAJrP406728zic
-	WKMXXARfY+aSE93pjyJJbSOzSl12HBslx2wyHIJ0EbEKGD3ct2dRxV6wZj4AD8WS0Ft9+whvyk0
-	Ndxb0ePEFdrr0q/3Jt8Q86xcORdLPPeOKdTHHvSU6O20n3soOI7ZSq1odd9E+F8AtbGWKK3Q4t2
-	+/H5rCa5pvOvAllmDEk=
-X-Google-Smtp-Source: AGHT+IHGRLuSZfJeXCb3dQQu1A6Yi5wnlJM4ZCRXl0irJ/FsQ5EvZnKFGPGDceSwJx2Yohsqs0noog==
-X-Received: by 2002:a17:907:da5:b0:ab7:e73a:f2cc with SMTP id a640c23a62f3a-ab7f33c7622mr1381130266b.27.1739550746544;
-        Fri, 14 Feb 2025 08:32:26 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:79c0:653:f300:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323202dsm370716266b.6.2025.02.14.08.32.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 08:32:26 -0800 (PST)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-Date: Fri, 14 Feb 2025 17:32:05 +0100
-Subject: [PATCH net-next 3/3] net: phy: marvell-88q2xxx: enable temperature
- sensor in mv88q2xxx_config_init
+	s=arc-20240116; t=1739550819; c=relaxed/simple;
+	bh=CqVOqHb3hkAOpfkdQ0WY8NjkmJA6LRQqJbjC+25kotw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDisVMnqvZFUny+5jJcu15084ANjZ3NlWDPaf0LUH0ZizvZY1qxbe5Q8sC8QuUhLK5tpbXD+Y7QMESQnFgLZ85zkvz2GKihJooVFBTMyxfgBk52rSl8z9O6kOiB3xPEdd6Et4Yz+3ZtQEc4cUalXcgCe62kFFWFgnYhQ2fDKWHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tT6SgSHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437E2C4CED1;
+	Fri, 14 Feb 2025 16:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739550818;
+	bh=CqVOqHb3hkAOpfkdQ0WY8NjkmJA6LRQqJbjC+25kotw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tT6SgSHnecSbLt2hHIvRD2w8P7Qen0E4uemod9P4Uzf/Rf5MujWLyRERt+PlyeEkj
+	 NFpQcVDgRI6COuLtv5omgBbkMykWng24oFznZCXdmpZhbuPh+fcv6yxx0/C/tXRtSA
+	 LgXjhckBG761hA8IWNDwD4WIQgMYa1b67sdvhg5E=
+Date: Fri, 14 Feb 2025 17:33:35 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
+ helpers
+Message-ID: <2025021437-washout-stonewall-d13e@gregkh>
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+ <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-marvell-88q2xxx-cleanup-v1-3-71d67c20f308@gmail.com>
-References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
-In-Reply-To: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
- Stefan Eichenberger <eichest@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dimitri Fedrau <dima.fedrau@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
 
-Temperature sensor gets enabled for 88Q222X devices in
-mv88q222x_config_init. Move enabling to mv88q2xxx_config_init because
-all 88Q2XXX devices support the temperature sensor.
+On Tue, Feb 11, 2025 at 06:27:58PM +0100, Jerome Brunet wrote:
+> Add helper functions to create a device on the auxiliary bus.
+> 
+> This is meant for fairly simple usage of the auxiliary bus, to avoid having
+> the same code repeated in the different drivers.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/base/auxiliary.c      | 88 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/auxiliary_bus.h | 10 +++++
+>  2 files changed, 98 insertions(+)
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
- drivers/net/phy/marvell-88q2xxx.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+I like the idea, see much the same of what I recently did for the "faux"
+bus here:
+	https://lore.kernel.org/all/2025021023-sandstorm-precise-9f5d@gregkh/
 
-diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
-index 7b0913968bb404df1d271b040e698a4c8c391705..1859db10b3914f54486c7e6132b10b0353fa49e6 100644
---- a/drivers/net/phy/marvell-88q2xxx.c
-+++ b/drivers/net/phy/marvell-88q2xxx.c
-@@ -513,6 +513,15 @@ static int mv88q2xxx_config_init(struct phy_device *phydev)
- 			return ret;
- 	}
- 
-+	/* Enable temperature sense */
-+	if (priv->enable_temp) {
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_PCS,
-+				     MDIO_MMD_PCS_MV_TEMP_SENSOR2,
-+				     MDIO_MMD_PCS_MV_TEMP_SENSOR2_DIS_MASK, 0);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -903,18 +912,6 @@ static int mv88q222x_revb1_revb2_config_init(struct phy_device *phydev)
- 
- static int mv88q222x_config_init(struct phy_device *phydev)
- {
--	struct mv88q2xxx_priv *priv = phydev->priv;
--	int ret;
--
--	/* Enable temperature sense */
--	if (priv->enable_temp) {
--		ret = phy_modify_mmd(phydev, MDIO_MMD_PCS,
--				     MDIO_MMD_PCS_MV_TEMP_SENSOR2,
--				     MDIO_MMD_PCS_MV_TEMP_SENSOR2_DIS_MASK, 0);
--		if (ret < 0)
--			return ret;
--	}
--
- 	if (phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] == PHY_ID_88Q2220_REVB0)
- 		return mv88q222x_revb0_config_init(phydev);
- 	else
+Some review comments:
 
--- 
-2.39.5
+> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..0f697c9c243dc9a50498a52362806db594345faf 100644
+> --- a/drivers/base/auxiliary.c
+> +++ b/drivers/base/auxiliary.c
+> @@ -385,6 +385,94 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+>  }
+>  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
+>  
+> +static void auxiliary_device_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+> +
+> +	kfree(auxdev);
+> +}
+> +
+> +static struct auxiliary_device *auxiliary_device_create(struct device *dev,
+> +							const char *modname,
+> +							const char *devname,
+> +							void *platform_data,
 
+Can you have the caller set the platform_data if they need/want it after
+the device is created?  Or do you need that in the probe callback?
+
+And can't this be a global function too for those that don't want to
+deal with devm stuff?
+
+> +							int id)
+> +{
+> +	struct auxiliary_device *auxdev;
+> +	int ret;
+> +
+> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
+> +	if (!auxdev)
+> +		return ERR_PTR(-ENOMEM);
+
+Ick, who cares what the error value really is?  Why not just do NULL or
+a valid pointer?  That makes the caller much simpler to handle, right?
+
+> +
+> +	auxdev->id = id;
+> +	auxdev->name = devname;
+> +	auxdev->dev.parent = dev;
+> +	auxdev->dev.platform_data = platform_data;
+> +	auxdev->dev.release = auxiliary_device_release;
+> +	device_set_of_node_from_dev(&auxdev->dev, dev);
+> +
+> +	ret = auxiliary_device_init(auxdev);
+
+Only way this will fail is if you forgot to set parent or a valid name.
+So why not check for devname being non-NULL above this?
+
+> +	if (ret) {
+> +		kfree(auxdev);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	ret = __auxiliary_device_add(auxdev, modname);
+> +	if (ret) {
+> +		/*
+> +		 * NOTE: It may look odd but auxdev should not be freed
+> +		 * here. auxiliary_device_uninit() calls device_put()
+> +		 * which call the device release function, freeing auxdev.
+> +		 */
+> +		auxiliary_device_uninit(auxdev);
+
+Yes it is odd, are you SURE you should be calling device_del() on the
+device if this fails?  auxiliary_device_uninit(), makes sense so why not
+just call that here?
+
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return auxdev;
+> +}
+> +
+> +static void auxiliary_device_destroy(void *_auxdev)
+> +{
+> +	struct auxiliary_device *auxdev = _auxdev;
+> +
+> +	auxiliary_device_delete(auxdev);
+> +	auxiliary_device_uninit(auxdev);
+> +}
+> +
+> +/**
+> + * __devm_auxiliary_device_create - create a device on the auxiliary bus
+> + * @dev: parent device
+> + * @modname: module name used to create the auxiliary driver name.
+> + * @devname: auxiliary bus device name
+> + * @platform_data: auxiliary bus device platform data
+> + * @id: auxiliary bus device id
+> + *
+> + * Device managed helper to create an auxiliary bus device.
+> + * The device create matches driver 'modname.devname' on the auxiliary bus.
+> + */
+> +struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
+> +							const char *modname,
+> +							const char *devname,
+> +							void *platform_data,
+> +							int id)
+> +{
+> +	struct auxiliary_device *auxdev;
+> +	int ret;
+> +
+> +	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
+> +	if (IS_ERR(auxdev))
+> +		return auxdev;
+> +
+> +	ret = devm_add_action_or_reset(dev, auxiliary_device_destroy,
+> +				       auxdev);
+
+Oh this is going to be messy, but I trust that callers know what they
+are doing here.  Good luck!  :)
+
+thanks,
+
+greg k-h
 
