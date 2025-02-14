@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-515471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDA5A36530
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:06:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEDAA36533
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7413172F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:05:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4944D7A2329
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC74268C51;
-	Fri, 14 Feb 2025 18:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A3F268C67;
+	Fri, 14 Feb 2025 18:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PU4EfdfM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Pxdeg6e6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF506FC5;
-	Fri, 14 Feb 2025 18:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7D818A95E;
+	Fri, 14 Feb 2025 18:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739556323; cv=none; b=XH0NSAoKijq5n58qRCi/frtnI1G9qtJ1nK/omCdcG67CSzkK3Vt/cYxXxM+MitPYczBX5bvFwGi6a6mukED5WdkVooZqjYQXGczunAJROkH5BI3yP/QBAEDiGvtnnAIbvsdaulIHQBTHXxrR6keaXUFD3AtN3bP8yHBkNvQUt/o=
+	t=1739556394; cv=none; b=jkCgrtfgQ9EHDeSuiJRzuOaQBi2v+L4e/Ck0FvO/5lZESvjNtu7oyKogr/MhFYmgzaElgmJYD97/HgWnRpkzlSreh4980Z9zMwaEKnvOHUHP5gI0nLB+vZ4YKEmHsWn0aIeK5n7MI0ICdBncKmmaEtMen6s/eiNpOSO89L4LZIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739556323; c=relaxed/simple;
-	bh=U/5KNCjmmxbPQLiOGusLqmw0uEnG/qtoUpSRDMK4wvs=;
+	s=arc-20240116; t=1739556394; c=relaxed/simple;
+	bh=nwJkCdu5aYASX2I9rQY1aemjO5APAP4C13JnuAkuHmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Im20xbccTzlW24t9gnDFiUx7aCHaXHHDQxs3LbuAF11jsf/j2qvd8Ez5hXWJ5JzAIz+X0wdkx2rQGgoiFXCDtBy6hkk0JOMAyc6SdMKqZh8DGFCquUFsL6B2j/AYJ4lKg8f3FixFYodFMnpnU8cHpBIsuFk7PuF2yGjhg1SaRm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PU4EfdfM; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739556322; x=1771092322;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U/5KNCjmmxbPQLiOGusLqmw0uEnG/qtoUpSRDMK4wvs=;
-  b=PU4EfdfMQq1eeUcYmVcsXRVP/fWjhpA+rTXuv/aoWg2Oy/2hexu64Uo8
-   DcVo3+oLkY8Px74rn6IR/IGKsuR0zS25CtmqeBS3CwftfkZA7i9O6YXWY
-   gdaSrxBmL4xcJDZNjkDSKnvOogtnqf9gep2hu81rxuQNm+Y8SsmeMwu/g
-   /cqsfSdCBjpK7Usq7adv1/mAJgElwdSm2YxEh+28t+Z2HAo2jbdks8UhP
-   GddNhMbPUGjqhy0mxMZIBpdS6mWspvnBng1sVWwqdOEUs8L4KqsCt1pIf
-   CDk9/D2srPbNan7aJsTXEO09KnJ6XDGn1h+mGz4q4fYkQfUYeHRsuimUc
-   g==;
-X-CSE-ConnectionGUID: LEvpkEnKQy6O90rsJIKIcQ==
-X-CSE-MsgGUID: fl9NDyu6R9mUZVEI5VdFUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40580911"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40580911"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 10:05:21 -0800
-X-CSE-ConnectionGUID: 87SwqQWLSqWIZVoP75YXhg==
-X-CSE-MsgGUID: ZEwEKscbSXqJmgxeSxIi0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113391276"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 10:05:20 -0800
-Date: Fri, 14 Feb 2025 10:05:19 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: namhyung@kernel.org, irogers@google.com, acme@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/9] perf report: Add latency and parallelism profiling
-Message-ID: <Z6-F35N8fkhTvagn@tassilo>
-References: <cover.1739437531.git.dvyukov@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dD1U7ECXxbMSVy8vjhizoXCzf8dvl1HR8RqaDYkSwGCM88Ms2ilzTdyyLoafgFnMA3BlmryfODTtufYuzi349jExR3ghUWQzJChSPMHPe+B5ZzH6/m0Kc6n/c6TlxE1b5e+EEel3ks80OoRpuKPa1Esm6ZSfAYR5LCzYGZdMRGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Pxdeg6e6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=BfqA5i2k2ih3KhcB7eyqPSoEHZ9WVOsd3W+6RqLEdV8=; b=Pxdeg6e6YfNeOi2C3fUWQX7C0v
+	OGuZedY5YrRh4P2fVKKAOH28D2SvrEzwWWzk5xUdy0j0nDrEVxawcTWyRXQtXYAIAgjRGsfjxDoBK
+	RRHxIyC0rE+xfE9DMGTAUPdk53jOeho2tztyzemWcXuHJ+jSjuQjmL0v/eaapCcAcU5g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tj050-00E98D-IH; Fri, 14 Feb 2025 19:06:22 +0100
+Date: Fri, 14 Feb 2025 19:06:22 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Stefan Eichenberger <eichest@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] net: phy: marvell-88q2xxx: enable
+ temperature sensor in mv88q2xxx_config_init
+Message-ID: <a3a5bd94-5bb7-4c65-85b6-d7876dca74b8@lunn.ch>
+References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
+ <20250214-marvell-88q2xxx-cleanup-v1-3-71d67c20f308@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,20 +66,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1739437531.git.dvyukov@google.com>
+In-Reply-To: <20250214-marvell-88q2xxx-cleanup-v1-3-71d67c20f308@gmail.com>
 
-On Thu, Feb 13, 2025 at 10:08:13AM +0100, Dmitry Vyukov wrote:
-> There are two notions of time: wall-clock time and CPU time.
-> For a single-threaded program, or a program running on a single-core
-> machine, these notions are the same. However, for a multi-threaded/
-> multi-process program running on a multi-core machine, these notions are
-> significantly different. Each second of wall-clock time we have
-> number-of-cores seconds of CPU time.
+On Fri, Feb 14, 2025 at 05:32:05PM +0100, Dimitri Fedrau wrote:
+> Temperature sensor gets enabled for 88Q222X devices in
+> mv88q222x_config_init. Move enabling to mv88q2xxx_config_init because
+> all 88Q2XXX devices support the temperature sensor.
+> 
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
 
-I read through it and it looks good to me.
+The change itself looks fine:
 
-For the patchkit.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
+but is the sensor actually usable if the PHY has not yet been
+configured?
 
+Architecturally, it seems odd to register the HWMON in probe, and then
+enable it in config_init.
+
+    Andrew
 
