@@ -1,166 +1,118 @@
-Return-Path: <linux-kernel+bounces-515212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EC8A361C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:32:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11E3A361CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6156918924FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E5A17029A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8826659B;
-	Fri, 14 Feb 2025 15:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B120825A2AD;
+	Fri, 14 Feb 2025 15:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAOM1XOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="DJPNUGCT"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A321F92A;
-	Fri, 14 Feb 2025 15:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571E126656D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547120; cv=none; b=ufLja5FSXOPsPhA1pEvaTMUnl0Qi6DIHazee8AO9GfxSVSVRr7SJNvNfOATqtOoRuPibI1f91pX5XHEvtQEzPOoYqiejeU5H+HjlVQ9/WdWHdT5ZZv5kgKJIdvbMeKwiUGrjDPQy4zXx/SQfYITv7i9pUE5bvXqwXOEZEMAEWq4=
+	t=1739547230; cv=none; b=lFlYLvmpEAeWYsiZgpQYa65YKepe88S2bDzQm0YTWOA5AmoIhtvjGcvb4fTu8bsjONMTzdOlPq1EqX7rslwS2paURXP0g/CielnvfzxGd7F/Um6aFzZxpflPyzwrM3mx/m1UGumm0Z0kkc0d3RfDrB2B2G4X5qAIV82eVjaNEHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547120; c=relaxed/simple;
-	bh=KCDFKHc9ZM5Ox9QzR1rz3yyEmfiZGegSVP6n+hKiNTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcCZRLVWiRu9BrDmCdjLysHhsKHzPdEYsIhqtyulNKcQ2qvfDy7/iz4E/QQIMvtSw8WMvxGQD1tWLYOR0SmVJNW4ksKUL2wBANaFJ4CcEEFlR/PKLLGdsncLBr3g1y2/3rbMMltuOCrX/UGPRF3u1r/j+NPHAZyg3CE3Us5e/oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAOM1XOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13E4C4CED1;
-	Fri, 14 Feb 2025 15:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739547119;
-	bh=KCDFKHc9ZM5Ox9QzR1rz3yyEmfiZGegSVP6n+hKiNTw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mAOM1XOkaSwGMmCZJF0siuvK027HA4akMrVHBw/HNJ1G/YlovIjCYRalILudDt17Q
-	 OkfJUPQrzyisirDB+2R8GCuC4ELSipKb9i0yIMXHQbzzeOtJhrGOCOtaLBCfWCH4jf
-	 Tos5hlYEyQNysU2O+Bsai9OyYGn8KXyJrzufSnHhZM40WhVpr2HEHIURouXK/WW6Bo
-	 QmkjDDwn3ZYRIoceel598tbcLov6pHWXSZ6vWosyXvE8tQTJh0oWLkjDuMKlwkdCiV
-	 IOQCRYZsGTOXsD4SxUy9dxWeE6EZ4hXHis8ha95tpYe6ckNgFchy11yRpykSFDjr41
-	 2UIYtRRdvp59g==
-Message-ID: <6dac6db1-60ef-4a14-8998-7da44c26690f@kernel.org>
-Date: Fri, 14 Feb 2025 16:31:52 +0100
+	s=arc-20240116; t=1739547230; c=relaxed/simple;
+	bh=07AhQZY6eqBCHApP+AXZgM2NZRDZAnYHuj2a4Hr2NjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TopI8qhC8sQlAZ+gEJPAC1GLqqBbBivQi47RGVafB9CXFK1O53eo/ztuQ+dLTr/tnrdTV/t8EYQf1RiYf3swqYIW9KwQdxFpoHP+C/QzIErNtkP7dQZ38gd7ZPHNlQTeMCdjsyrjQ5FWSLCqe9SimY/qPtW4HDKUueLoVkhsT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=DJPNUGCT; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85527b814abso33393739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:33:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxtx.org; s=google; t=1739547226; x=1740152026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qkMQckh9jiT1iN830+BKZT3u1q140/CKGbZYSL5RY18=;
+        b=DJPNUGCT6u/zHwxYTyh+0wrTeEj8939ZwQAzkKVaFThB+iHhjEJTgdXu3ubUYCcwT4
+         i2Svf/GAfRe/u1r8bic4ScjwmlZBuBs/h78PkqIzlVnU6Q3BDChVtlKdYMj9CRN8xtOp
+         Nbejh1d3Xb1XW1Lp2iB7343l6B7e++pfyuQlM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739547226; x=1740152026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qkMQckh9jiT1iN830+BKZT3u1q140/CKGbZYSL5RY18=;
+        b=gPiQ5Yko6RdyKfT+kfxwtZnuCEIeS3nLXqfiABcZhICY1CVRptU1E5cyuyOUibts8V
+         xy/Q6Yfya2UnLs7AsMIlMMZ0Vv3QqEnV7UL2RcNtdW9A6LbOXzfXSTNawD0Srmxwyw2D
+         3cBNsCb/TTKZ8EPfkzfDvxFQktchJKWc+9UGuFhwuQgB4BF3fzQqgEitGISnCQd0/eDX
+         83oLB2OEfq5KyVF7aYC5LZj4u05LQZMZqAPrtakhg5zFQUWoWHOn9hllurt50OdZ3yQs
+         gKy9PLySQ96RfJICZrBrWaghtKYZ8vHM2wn9n9ERQ13g3Bh3vvwIccYNd7XPQrYMKgpf
+         1CTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJRVLkPo2dj/mFVo7CqzXrXvzAHX/wczi90ZdbVpihdV03lhhYhs36QiUQVS3UImqq3eqbfolewTp0N1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzx5He2cPktQUHOIcM/9KecVn7F/QOWV8BmIE0UWKOYftE6chj
+	gluop1yGM5IgBRqaafY/U2gwLcXxRNWCV1OgVs8V1Y2ztKVxCTcV92C1BG8dYw==
+X-Gm-Gg: ASbGncvsTR6GsM5GcjAiFVvxBZDLh05s72iGXHMUD4KPqbPkfvBDOfLtgZZ9kcjYSWB
+	bRN2U3d1fQ3GCbJ4+KFQgG/bKdo7NYkmvzDjpGcr62qEuXnsgCYey4mOPDGRu1gYm9L2si8RX4f
+	ReDJ/GLTBboDXJ6R/GOgvHGHO4E1RYJUm0P3BINQak7chlpCyWab2xHcH5m6eIBU4ku7/j0n7J8
+	5SZ2fjnaeROydntSqKVL9/INFuQE0KRu13fRo6O/5CuLi2p/9zD9HiDIh/+Rjn0aLrDdacs2OVC
+	92/vNTupeFhrerlts+qNlV7zMmmR0no8
+X-Google-Smtp-Source: AGHT+IEq9JvuG9VMapzzSQzEygbV112X3NEj6nPsFllTlUf7bexl8lMA4JJVXPsFCKRgGWrgadZhuA==
+X-Received: by 2002:a05:6602:1588:b0:855:515b:ba6 with SMTP id ca18e2360f4ac-85555daecf3mr976402839f.10.1739547226240;
+        Fri, 14 Feb 2025 07:33:46 -0800 (PST)
+Received: from fedora64.linuxtx.org ([72.42.103.70])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85566e63194sm74004939f.21.2025.02.14.07.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 07:33:45 -0800 (PST)
+Sender: Justin Forbes <jmforbes@linuxtx.org>
+Date: Fri, 14 Feb 2025 08:33:44 -0700
+From: Justin Forbes <jforbes@fedoraproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 000/422] 6.12.14-rc1 review
+Message-ID: <Z69iWGFV6szC7Jck@fedora64.linuxtx.org>
+References: <20250213142436.408121546@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/3] net: phy: mediatek: add driver for built-in
- 2.5G ethernet PHY on MT7988
-To: =?UTF-8?B?U2t5TGFrZSBIdWFuZyAo6buD5ZWf5r6kKQ==?=
- <SkyLake.Huang@mediatek.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
- "dqfext@gmail.com" <dqfext@gmail.com>,
- "davem@davemloft.net" <davem@davemloft.net>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
- "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
- "daniel@makrotopia.org" <daniel@makrotopia.org>,
- "horms@kernel.org" <horms@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-Cc: =?UTF-8?B?U3RldmVuIExpdSAo5YqJ5Lq66LGqKQ==?= <steven.liu@mediatek.com>
-References: <20250116012159.3816135-1-SkyLake.Huang@mediatek.com>
- <20250116012159.3816135-4-SkyLake.Huang@mediatek.com>
- <df2a463c-102c-4eb1-905d-96dbd926db7e@kernel.org>
- <e58dabed4915e5c2dcece5f047e045ca08f836b6.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e58dabed4915e5c2dcece5f047e045ca08f836b6.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213142436.408121546@linuxfoundation.org>
 
-On 14/02/2025 14:23, SkyLake Huang (黃啟澤) wrote:
-> On Thu, 2025-01-16 at 13:45 +0100, Krzysztof Kozlowski wrote:
->>
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> On 16/01/2025 02:21, Sky Huang wrote:
->>> +
->>> +static int mt798x_2p5ge_phy_load_fw(struct phy_device *phydev)
->>> +{
->>> +     struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
->>> +     void __iomem *mcu_csr_base, *pmb_addr;
->>> +     struct device *dev = &phydev->mdio.dev;
->>> +     const struct firmware *fw;
->>> +     struct device_node *np;
->>> +     int ret, i;
->>> +     u32 reg;
->>> +
->>> +     if (priv->fw_loaded)
->>> +             return 0;
->>> +
->>> +     np = of_find_compatible_node(NULL, NULL, "mediatek,2p5gphy-
->>> fw");
->>
->> There is no such compatible. You cannot just add undocumented
->> bindings.
->>
->> Also, devices should not just look for some random compatibles.
->> Express
->> proper relationships with phandles or node hierarchy.
->>
-> Hi Krzysztof,
->   OK. I'll add dt-bindings' document in next version.
+On Thu, Feb 13, 2025 at 03:22:29PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.14 release.
+> There are 422 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 15 Feb 2025 14:23:11 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.14-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Carefully read the comment instead. Anyway, if you come with response to
-the comment after one month (nice disproportion between received review
-and responding to feedback), my entire context is gone.
+Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
+x86_64), and boot tested x86_64. No regressions noted.
 
-Best regards,
-Krzysztof
+Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
 
