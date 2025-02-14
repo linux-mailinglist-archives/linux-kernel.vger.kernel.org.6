@@ -1,131 +1,217 @@
-Return-Path: <linux-kernel+bounces-515506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AF6A365B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:26:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706A5A365B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 19:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 488917A16D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28673170B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0968E269815;
-	Fri, 14 Feb 2025 18:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A281269814;
+	Fri, 14 Feb 2025 18:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FnJ6qMU3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="bS56Gh5h"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B1214D28C;
-	Fri, 14 Feb 2025 18:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5784268C45;
+	Fri, 14 Feb 2025 18:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739557561; cv=none; b=OzWQeoz52MsHEKvS5N4uvqnJdDBp6QJU8nEQvetE8Aq9siA6i4QLOHyCL0cViHVV8SU3Jw73mDLozlbDGrGIwZTtWyW904uZTWSHx0QMl8nY8QqIfU5ouf4uIG1ntVmiExo4Q8fRQ4eznFpzyOm1IIEtvglv/MCKVwgzDHM+ul4=
+	t=1739557594; cv=none; b=FrF65JrpERZYA9G6b4q9Havlk820ng+Y9iMGmAVJNp6HmZ1bMFX5lRg/qyu9ySH+ELsKuNV6v9r9MgvdehCYnefx62xjAyyNPRajGzhh03Vu+GAFvX8mQpoIbRra0rRkpbkKf8wEv7urtthaIPaJedAfvNYRVFRKucj3v6m7+44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739557561; c=relaxed/simple;
-	bh=+x+hwGbeiiewIBUcuyA6IeK0Cv+3CNmAHDuMbjvIz6Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SwUZR3gCXuN4rUZ6g7R59Aog+Yx4D9op71Vgp4/1KpBED30BdwYnxieHP1/J/7jy/E3F+ELVgqxKcRy2z+o5NMvAcGTLWgS0Wh/QqBQ44UpCrA/Lb98t9zLVeVkB06ylPBpJdWOVh9kaqmlP1+ObeoTQ90NFNnaVtWuSF9mhZ5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FnJ6qMU3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739557557;
-	bh=+x+hwGbeiiewIBUcuyA6IeK0Cv+3CNmAHDuMbjvIz6Y=;
-	h=From:Date:Subject:To:Cc:From;
-	b=FnJ6qMU3StLaOoSe1JuVVdejdtt0RqIDPk1bTxBFNPP0dyUhngVKn9kqDNFKYlq2E
-	 c1EEOmz7gTi9JWcSicMlwqgr7TGQMbQc2rDHUqj7zCYrhqLnN9o3LbZBB6gqV4mtdU
-	 Zbm8NhvE0J7qGytFx+wCCli69zHhYmb+BfNhuO49HY0IBUCVXFcqclyXBYi6y9Nys8
-	 GUJ/apo2REPQlP8MhiONgLcvqvV853LqLw1mqxUtGd7Ctg8ESzkLvX+i0SnE/p7HVS
-	 mBDby8L0H1MDAj0JfXf4h5UapUUsLXug3j6Y+YW2T7dBxmShfluNJxI3W71lC3/NxE
-	 FZlJogFvF3SWA==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1003])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F08E417E0FC1;
-	Fri, 14 Feb 2025 19:25:54 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 14 Feb 2025 15:25:48 -0300
-Subject: [PATCH] arm64: dts: mediatek: mt8390-genio-common: Add DMIC codec
- for delay
+	s=arc-20240116; t=1739557594; c=relaxed/simple;
+	bh=5SAs9h/MeZMEpYhpzWt1QWZwTrgFYpqzNonzMoz6HHI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IAmDFauc9spTNgyj8wKp2yXatmHav6WrIR+rnZmtzPYV3rw35PUZUoolWkF81KU9yUKyojDV0CcwSTnzLZg878o46wqL5/maSDSa3VdDNuvY2oYnK5ISJ1rs8e14zmhkXO10ZY5aZ9zW9Gn7b91qg1HaDdvZ68gFQRNIVIEgrWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=bS56Gh5h; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=lb8UeyUJ5kaiUORiZMt8CZIHBu6K6oUcJ1EMZFGDpe8=;
+	t=1739557592; x=1740767192; b=bS56Gh5hC389PI5Uk4xmUKElr0BKCzeClnRMhbBMibKDI5W
+	x/ufkAIoF6LRoXFee6shFktfI76s4b7F3j7YkAZsLnO8ZKfOa2ePVb+JwCoe5a8tymHHjXInHSm3j
+	+n2UGzr6dd+P0ctXwljjx7xT8zcWTPQKI0tfum3qMdlzldwNR2HYXf+H3+jZuOjXnXQITjetEbWIM
+	sde+hk3KK1RaS9FYQQQgcsnJaXQLWYgilKDSwYdSa3C2igxsOVFENrhsD2dFcSjgAjeWQYwWvD+tT
+	xFHuJqUNfRi1FFjMZT74hr8cuAsfWBCa6KSTdrU2rbsaI1VqVOG2w054qCQ091Eg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tj0OO-0000000EjAP-1yhk;
+	Fri, 14 Feb 2025 19:26:24 +0100
+Message-ID: <57ff2078632d8f14ca73c8307dc43585b3d09f50.camel@sipsolutions.net>
+Subject: adding new drivers (was: Re: [PATCH 00/43] wifi: nxpwifi: create
+ nxpwifi to support iw61x)
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Jeff Chen <jeff.chen_1@nxp.com>, "linux-wireless@vger.kernel.org"
+	 <linux-wireless@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+ "briannorris@chromium.org"	 <briannorris@chromium.org>,
+ "francesco@dolcini.it" <francesco@dolcini.it>,  Pete Hsieh
+ <tsung-hsien.hsieh@nxp.com>
+Date: Fri, 14 Feb 2025 19:26:23 +0100
+In-Reply-To: <PAWPR04MB991006F5D4C0D82A4153C0069CFE2@PAWPR04MB9910.eurprd04.prod.outlook.com>
+References: 
+	<PAWPR04MB9910AE0CBBFAE748D265EAE09CFE2@PAWPR04MB9910.eurprd04.prod.outlook.com>
+	 <PAWPR04MB991006F5D4C0D82A4153C0069CFE2@PAWPR04MB9910.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250214-genio700-amic-wakeup-delay-200ms-v1-1-0094837c62b7@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAKuKr2cC/x3NSwqDQBBF0a1IjVNQdvxAthIyKPXFFGor3ZhEx
- L3bODyTe3eKCIZIj2yngK9Fm31Cfsuo/ajvwdYlkxNXissL7uFtrkVYJ2v5pwPWhTuMurETmSI
- 3dVMpyuoOCKXMEvC2/7V4vo7jBBfc4ldyAAAA
-X-Change-ID: 20250214-genio700-amic-wakeup-delay-200ms-b7b6ae563ee0
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, Zoran Zhan <zoran.zhan@mediatek.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+X-malware-bazaar: not-scanned
 
-The UL_SRC_BE DAI is connected to the MT6359 PMIC which can switch
-between a headset microphone and a built-in analog microphone. Both
-microphones' signals require around 200ms to settle after being enabled.
-Add a dmic-codec DAI to the UL_SRC_BE dai link with the corresponding
-wakeup-delay-ms to let the signal stabilize and prevent a "pop" sound.
+Hi Jeff, all,
 
-Co-developed-by: Zoran Zhan <zoran.zhan@mediatek.com>
-Signed-off-by: Zoran Zhan <zoran.zhan@mediatek.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> > This is ... huge. I don't know who could possibly review it at all.
+>=20
+> Since this is a new driver, any suggestions on how we can make it easier =
+for review?
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index a37cf102a6e928440cc88e7e8fe0225fc28ec962..6c934d70c1eadbc7af3f97af1961e629ab62ab3d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -218,6 +218,13 @@ usb_p2_vbus: regulator-9 {
- 		regulator-max-microvolt = <5000000>;
- 		enable-active-high;
- 	};
-+
-+	amic_codec: amic-codec {
-+		compatible = "dmic-codec";
-+		#sound-dai-cells = <0>;
-+		num-channels = <2>;
-+		wakeup-delay-ms = <200>;
-+	};
- };
- 
- &adsp {
-@@ -970,6 +977,14 @@ codec {
- 			sound-dai = <&pmic 0>;
- 		};
- 	};
-+
-+	dai-link-1 {
-+		link-name = "UL_SRC_BE";
-+
-+		codec {
-+			sound-dai = <&pmic 0>, <&amic_codec>;
-+		};
-+	};
- };
- 
- &spi2 {
+No, not really. Or, well, there was a suggestion to integrate it a bit
+more with mwifiex, as to reduce the duplicated code. I don't find that
+suggestion as entirely ill-founded as you seem to, given that large
+sections of the code such are simply copy/pasted.
 
----
-base-commit: 0ae0fa3bf0b44c8611d114a9f69985bf451010c3
-change-id: 20250214-genio700-amic-wakeup-delay-200ms-b7b6ae563ee0
+Now that doesn't mean you should necessarily _integrate_ the new device
+into the old driver, but I don't see how doing some refactoring to share
+some code really would be all that problematic, though we might have to
+make some changes to the layout such as moving nxpwifi under the nxp/
+dir now.
 
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+If I ask git about it (after s/nxpwifi/mwifiex/ and some other trivial
+renames) then it says a lot of files are effectively the same:
+...
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11ac.c            =
+    |  104 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11ac.h            =
+    |    7 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11h.c             =
+    |  190 +++-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n.c             =
+    |  190 ++--
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n.h             =
+    |   58 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n_aggr.c        =
+    |   51 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n_aggr.h        =
+    |    2 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n_rxreorder.c   =
+    |  173 +---
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/11n_rxreorder.h   =
+    |   12 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/cfp.c             =
+    |  143 +--
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/ethtool.c         =
+    |    2 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/ie.c              =
+    |  100 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/sta_rx.c          =
+    |   76 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/sta_tx.c          =
+    |   62 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/txrx.c            =
+    |   62 +-
+ drivers/net/wireless/{marvell/mwifiex =3D> nxp/nxpwifi}/uap_txrx.c        =
+    |   74 +-
+...
 
+and in many cases here the diff looks larger than it really is because
+nxpwifi appears to be missing features (TDLS, IBSS?) removed USB
+support, and did some (minor) code cleanups (and anti-cleanups.)
+
+I'm glad you now use 'struct element' instead of having your own 'struct
+ieee_types_header', but that's an obvious trivial transformation even
+for mwifiex, you can do that with spatch?
+
+For a total of:
+ 66 files changed, 10945 insertions(+), 21952 deletions(-)
+so your driver actually shrinks to about 30%, i.e. 70% of the code are
+simply copied from mwifiex (and that's a conservative estimate, since it
+contains a lot of the trivial cleanups you made in those lines that are
+still different.)
+
+Side note: integrating it would probably also somewhat hide issues in
+your code, such as open-coding "Bubble sort" when we have a perfectly
+fine implementation of sorting in the sort() function? Or using
+ktime_get_ns() in an odd way for deriving random numbers, what's up with
+that?? But I wonder how much you even care if you just copied such code
+into the new driver without thinking about it at all.
+Another example is the obvious inconsistency wrt. endian annotations, I
+cannot believe that the firmware adjusts to host endian for some
+commands, so I guess you must simply not care I guess. But then why do
+it partially? I suppose because copy/paste is easier?
+
+
+I also get it though - you don't want to maintain code that's well over
+decade old, however by having 70% of the old code copied into the new
+driver it seems like you're now painting yourself into that same corner
+again.
+
+
+> We have addressed the comments you sent on June 22, 2024 in patches V3.
+> Please review and let us know if you have any additional feedback or sugg=
+estions.
+
+If you've been reading the list (have you?) you should know that Kalle
+just left a little while ago, and I'm definitely not going to be able to
+really review everything at this time.
+
+
+Also! Another important thing to me right now is that it doesn't seem
+like you're interacting much with this community other than dumping this
+code and asking for it to get reviewed and merged. I literally just
+asked for everyone to start reviewing each other's patches [1] because I
+will not be able to review everything (and I don't even think I (as
+maintainer) _should_ necessarily be reviewing everything, I see it more
+as keeping an eye on the overall wifi-specific architecture, APIs etc. I
+don't see why I should point out obviously odd things like using
+ktime_get_ns() for random numbers.)
+
+[1] https://lore.kernel.org/linux-wireless/21896d2788b8bc6c7fcb534cd43e7567=
+1a57f494.camel@sipsolutions.net/
+
+
+Now I'll admit that nobody else has taking that up so far either as far
+as reviewing goes, but I really still hope they will... You could even
+set a good example here I guess, and have developers learn something in
+the process; getting folks exposed to the mailing list and thereby
+current ideas, trends and how other drivers work is almost certainly a
+really good thing for your own driver/development too. See, for example,
+how Kalle said it simplified the locking etc. much to use the wiphy
+mutex with wiphy_lock() throughout the ath12k driver now.
+
+
+Anyway ... I should stop. If this feels like a bit of a rant, I guess
+that's because it is. I'm not sure everyone else is doing better (*looks
+over at Broadcom*), and the cc33xx folks would probably do well to pay
+attention here too. At least here I am trying to help people out, but
+like I see here - I offer a bit of review and then I'm asked to do "the
+review" that makes the driver get accepted.
+
+Maybe I care too much? But drivers/staging/ is supposed to be the free-
+for-all thing, not drivers/net/wireless/.
+
+Anyway, I think there are issues to address here and I'm not going to
+merge a driver that's 70% copy/pasted, we have that with the older
+realtek drivers and it's awful. You can submit it to the net-next tree
+or staging if you like, I'm not going to block it on the grounds of
+something here being bad wrt. WiFi, even if Linux support feels like a
+bit of a second thought for the firmware (e.g. the lack of probe_client,
+this ought to be a trivial feature to actually support if you cared
+about the integration with the Linux wifi stack? Or
+nxpwifi_cfg80211_change_station() being a no-op? How does that even
+_work_ at all?)
+
+johannes
 
