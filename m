@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-514368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FBDA35600
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:05:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8435EA35604
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6315516C065
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D923AD447
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0BB17B401;
-	Fri, 14 Feb 2025 05:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33DC186E56;
+	Fri, 14 Feb 2025 05:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPoX5Vpi"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qVMgUW2n"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF40C15442D;
-	Fri, 14 Feb 2025 05:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE4B126F0A;
+	Fri, 14 Feb 2025 05:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739509548; cv=none; b=Mr95EJTmLd7OPiB50cD7kPzf32+lU5YBuE8Eootr0Wio5RyTeKKvmIAfkdtHtjaOmPLbK9XbJ5DoiSkzE63S6407f+vcJ4swafbvbYDTPSGRpv692BoePP6orvwciWF0fBo7n+F03RRTDPr6/o2kbZbD+VlwY/FXvOWkhQDV0b4=
+	t=1739509642; cv=none; b=FAZVALH6ht1Cq0b3/7QPb/Ab8XGAB2KesAtDyVus0SAoXWPv51/i7CESZiaoScJ+6ZE03Kq/Hv3yBlL6C+WgMQR5iH+te679MBSnHF4zNhC2B3hID4MzGEayPJIJrqT7gq3PZc5WpCDBBfm+/6Xe2mWxJHSF9KsHUxcUZtcxdRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739509548; c=relaxed/simple;
-	bh=W9xzcKzzqpRTDvCmTpbkkfQznC4Yz3/T3sUJwlIDtKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEwc8ZJib8A/xbbQVo6bCDQ3UHBRWSp+aAw+VFuL6LoeDWj/tC7cJju0SZ6qWQmQtT5EgoMZZe8M4OVHAVo/+nd9M18L+i1oh/3Xu+EIC/4nUhvo/vKU/lnPEISdzpcyoanwAN9Oi2b3nO9mc6pYde/2TZVZia55Ok+tIUNflJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPoX5Vpi; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dee07e51aaso572735a12.3;
-        Thu, 13 Feb 2025 21:05:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739509545; x=1740114345; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6y8dDAtdsuLGiNq0Uhroh633zd/41tN4sxwt2UHLOM=;
-        b=nPoX5VpiwXsFMnuuF0OiS41WoXDM07JbMziXJWNa7QyhEmpMdwgxVceOPMO3k3DjV3
-         gx8LNEb5BPgmYKLiUXbkWEW+2InTE32qk8xNoQUoGftqaWwDlh2wMuIl43Z8DICt0Z+f
-         8xdDbLb7pU0Dmsnw0XjyLQSBRtbGYW/d70pz5JdAyppigqmt9O/EKNZnSj6YcXffagUV
-         0LaIzvY7aaseJfOSKWB7R2qTP4uu8LJSr5RvzHgcV5H4FJ4kEKuT9ao1YLgEdvgtPtK3
-         S8TYrFVZcnrxPvkyfl+CH6amaGr8Gpx7Ja80GcgXTc1aPnmroVZWW6onrsN+jxKdwKKR
-         6U2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739509545; x=1740114345;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6y8dDAtdsuLGiNq0Uhroh633zd/41tN4sxwt2UHLOM=;
-        b=lQGLQrBoTuTPvmyr3Pg+z6ViQBu5Tj/1c2Z5oxqVvf9BSfd/7cdaHEkzgvqHBhZtC8
-         kqTuIKb/6Y+FbZ0G146vqV3g/nIuPLO9jduRMjZhtGdVoK2PwF0JsBu1CRVS+BzeKq47
-         2jt3SlrIRAzF0tD4+LyFlp5vnkWpaALTZV6fvne4lHeqTuUhWskU6I3i8LgXwefmw8gw
-         vZJgn6rJuTmaWmTUwoxvdI3V2DR76ArTwGjGzAytR6lvvQhGdA2bxp+exzkmKGVsV5W7
-         RGw2q7IP9+XA5fu5KCy4UbTL7NOWr/UdhAgahMhufg/IAD51s8XlDu9WzwNVbm0YpX9t
-         uX7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUF6vLeKsU7PfAISEiJN9Omfqso8UlXDdWLDrU9olfWVnYsaejJtFPA9CuF6mVwmStraYTiO4tSZnKH@vger.kernel.org, AJvYcCVFz8FysWlyggRFqRMNqN+KsJQZ3n9WQnfnF6dS2UN5RBgubJ088yChQ9bXHk+3ROdy5OljnGqfHblJ@vger.kernel.org, AJvYcCVtXrt3y7edDXkEfI75HbXtz4lJ45EsgNqXGW4xfFG2nR0eV3WbX4bMUxFY6bhTg+9JoK3v2fB9/GqYLzZS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7m+8q5U1OgIp8XWSI7PjCFnJeTYrG9dnB9PMuavijfkOz6Ccv
-	uRXI+kEkR4bZi/iOOrZPXN1jzlAx6o2JlqQ1r9WJ0T5RPAkcd9UN
-X-Gm-Gg: ASbGnctGQukURANWRLZ07wV5EOYgBiG4q0tUmzZGp9rzEo8/f495xmOkCb/2cO+sPyD
-	K+b68LblterAJDfAqBn60fc/GCfh2rY7+DiGNefzi4iJj82Ab/EOwSxlxKDBxcjKAm+nBvhlC+g
-	Y2FCrYSMQ5z0xbedCZiPzhkuk1twHf/IWKmySYARUQNp/apiYOry8wWGJBcdV8lv2/DwIzXW45K
-	HWVlCHnnnFCjLrPNFwmHB11gQ7RYrB+BXnITI+mlgL/XlKVos/U8Cw+eFpCNO9Tm2qVUYky6e5x
-	GZzUfbFVRbgZ
-X-Google-Smtp-Source: AGHT+IEH3bBKeyyUEPgOcACTpRbfh9j/BQFlm3mYol8UGPcKSBqjbSUmJIaMirsEGeSasKzpr5YXBA==
-X-Received: by 2002:a05:6402:4409:b0:5dc:89e0:8eb3 with SMTP id 4fb4d7f45d1cf-5deb08810a7mr8070846a12.11.1739509544975;
-        Thu, 13 Feb 2025 21:05:44 -0800 (PST)
-Received: from debian ([2a00:79c0:653:f300:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5decdfe758asm2282677a12.0.2025.02.13.21.05.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 21:05:43 -0800 (PST)
-Date: Fri, 14 Feb 2025 06:05:40 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: dimitri.fedrau@liebherr.com, Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: can: fsl,flexcan: add transceiver
- capabilities
-Message-ID: <20250214050540.GA3602@debian>
-References: <20250211-flexcan-add-transceiver-caps-v1-0-c6abb7817b0f@liebherr.com>
- <20250211-flexcan-add-transceiver-caps-v1-1-c6abb7817b0f@liebherr.com>
- <20250211-epidermis-crib-b50da209d954@spud>
- <20250212195204.GA6577@debian>
- <20250213-scariness-enhance-56eda6901f69@spud>
+	s=arc-20240116; t=1739509642; c=relaxed/simple;
+	bh=KfFGOuc5JjjRIz0Ea0BajMpJsbMdkcnLcBnBwON+Liw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AdHjbBNVXh0gF2VpFqt2VWygmKFdJ0cglymaabm86v8UFMYiWFM/K64t/Yb0JtrsAKAU+/OyANb98Aex527+trFGEa1nI1Y4IVzTGY2ZH1vxOMCUX7Jj4FtQ75Y8+6qiuIO2Lrw30WKCu720IQKyCA2KJGxrw48yJbcVmH8VER8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qVMgUW2n; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739509636;
+	bh=Ybl5pjKtAGkp6U3PePyb/EpekVJzwa92J/91S0y7yqo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qVMgUW2nq8Qqpti1zAihhZdxcFxWon4c8e/zpmKesw/xFjEkYSnzNttrfy87405JF
+	 dly3y4DWtqQhQst1KpzHA5UZ3fWJAJlT0CdJZlhTCMJ18B5y/FmFmX6N0/Uw0M7xaw
+	 Y6EpIWKLeD36Y/i/6rT3jHZAMaMMcub1vy7flxoR+5084XXz/Lxf4RlpZMTwtskKM8
+	 4skbVy/OXF2uyimqqI99xYwmVeX4dvECDpbTs8CnAXWgKPKwA6bjyWLKjv6/tPMjD/
+	 hEn2SX7CZK+b0DzsCGDQ3RYCfFozydynbQUDudSRVEW/tA8NRU0+NRBK6HiPxGf01v
+	 1wOI73yhBnoaQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YvKmN0Qtxz4x4t;
+	Fri, 14 Feb 2025 16:07:15 +1100 (AEDT)
+Date: Fri, 14 Feb 2025 16:07:14 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
+Message-ID: <20250214160714.4cd44261@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-scariness-enhance-56eda6901f69@spud>
+Content-Type: multipart/signed; boundary="Sig_/WSU/=WLeJHVwI+vzmrU09TM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Am Thu, Feb 13, 2025 at 08:07:22PM +0000 schrieb Conor Dooley:
-> On Wed, Feb 12, 2025 at 08:52:04PM +0100, Dimitri Fedrau wrote:
-> > Am Tue, Feb 11, 2025 at 04:38:48PM +0000 schrieb Conor Dooley:
-> > > On Tue, Feb 11, 2025 at 02:12:33PM +0100, Dimitri Fedrau via B4 Relay wrote:
-> > > > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > > > 
-> > > > Currently the flexcan driver does not support adding PHYs. Add the
-> > > > capability to ensure that the PHY is in operational state when the link
-> > > > is set to an "up" state.
-> > > > 
-> > > > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> > > > index 97dd1a7c5ed26bb7f1b2f78c326d91e2c299938a..397957569588a61111a313cf9107e29dacc9e667 100644
-> > > > --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> > > > +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> > > > @@ -70,6 +70,9 @@ properties:
-> > > >    xceiver-supply:
-> > > >      description: Regulator that powers the CAN transceiver.
-> > > >  
-> > > > +  phys:
-> > > > +    maxItems: 1
-> > > 
-> > > Can all devices in this binding support external phy? Are all devices
-> > > limited to a single external phy?
-> > > 
-> > As far as I know, these devices are controllers without integrated PHY.
-> > So they need a single external PHY. Transceivers can be very simple like
-> > xceiver-supply in the binding, but I want to use "ti,tcan1043" in 
-> > drivers/phy/phy-can-transceiver.
-> 
-> I'm not quite following, do all of these devices need to have an
-> external phy but the property did not exist until now? How did any of
-> them work, if that's the case?
+--Sig_/WSU/=WLeJHVwI+vzmrU09TM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The property xceiver-supply is used to describe connected transceiver
-which do only rely on corresponding regulator configuration.
-For example here:
-https://elixir.bootlin.com/linux/v6.14-rc2/source/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi#L105
+Hi all,
 
-But I want to enable support for these:
-https://elixir.bootlin.com/linux/v6.14-rc2/source/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-Best regards,
-Dimitri Fedrau
+  kernel/bpf/btf.c
+
+between commit:
+
+  5da7e15fb5a1 ("net: Add rx_skb of kfree_skb to raw_tp_null_args[].")
+
+from the bpf tree and commit:
+
+  c83e2d970bae ("bpf: Add tracepoints with null-able arguments")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/bpf/btf.c
+index c3223e0db2f5,f8335bdc8bf8..000000000000
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@@ -6507,8 -6505,8 +6505,10 @@@ static const struct bpf_raw_tp_null_arg
+  	/* rxrpc */
+  	{ "rxrpc_recvdata", 0x1 },
+  	{ "rxrpc_resend", 0x10 },
++ 	{ "rxrpc_tq", 0x10 },
++ 	{ "rxrpc_client", 0x1 },
+ +	/* skb */
+ +	{"kfree_skb", 0x1000},
+  	/* sunrpc */
+  	{ "xs_stream_read_data", 0x1 },
+  	/* ... from xprt_cong_event event class */
+
+--Sig_/WSU/=WLeJHVwI+vzmrU09TM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmeuz4IACgkQAVBC80lX
+0GzFwQf+KccFBNU+HUJlqoL4MQCl1bRZ4k5FqGnL6ELDAMxV6Uc+neJveJfv3LD/
+6jK8CsuRgAsmCBR+c3iYeaB0pJV3jMvsa5TdM93p8lbxzijZzurlLMzFxXaIAT6T
+Ua9NqwACzjVLyShGZ4+b221gpbgDd1EuEtz+PEEyrG/KsCjZDWUZtbusbtQBbXOd
+/lwwqe62LhOSvHUmI8xta56ZjkOODQS4M17Nwtt10x4yR/QI1h2XUg3P1600sKHL
+b4t7tWigH1tgM56a4Rvk3255r5yWrhh1/LY961MndGiWQaJfWTQxXHhwX9cJ19Oe
+adrWLbxTeEQBqmo99uWmX7EdadIPXQ==
+=CPEF
+-----END PGP SIGNATURE-----
+
+--Sig_/WSU/=WLeJHVwI+vzmrU09TM--
 
