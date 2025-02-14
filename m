@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-515272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E19A362C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:10:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03788A362BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D023AAA14
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3170A1893683
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B402673B4;
-	Fri, 14 Feb 2025 16:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt0vUjco"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706922673AE;
+	Fri, 14 Feb 2025 16:09:26 +0000 (UTC)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEBD22F165;
-	Fri, 14 Feb 2025 16:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6D570831;
+	Fri, 14 Feb 2025 16:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739549265; cv=none; b=Di/gMFKcifFfAHcz9UGWK/xFMtbT8Drel1jGBMTVt1rhwHuk9pOMoV2ZBcnQzJs1weqv7uidRhnmjshEdt9dFEEgYxik17NjzAarBavZPM/230frWv+Cmc9SfGtufAWuH2xOpTDOOVoS9wMFMEqc8ZoTX1rbYLJKmiLDrTCmY/8=
+	t=1739549366; cv=none; b=TEOvX4nW0lym4PGP3CDG/N2k0R40uGu+FyGtbhG6LWa7VNZNQ+OoeBM6lReN/AwW1VXIb/W80WxOE/c+K25RatUTHCr4zW6vgDPh3YI/uyv83NUySFKPsBQ+rGHpAd8u63XY0LnM4Jhm6QUSx60jT8oswS2h+RJqTHKOgm5q+jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739549265; c=relaxed/simple;
-	bh=kIPwPH7X7wZ8cRjLtiCbyATDZF5ahgyEmcy1BihksyY=;
+	s=arc-20240116; t=1739549366; c=relaxed/simple;
+	bh=XvfaTAUytr9K0t1F7rHIR0kQJhJKplPtZaVtQLmMrM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8O0HZS/BOVpOkfTjXvl+mouun5kfpqTjBATSND5Pp1ApOyoLmh6qxtSGOw7J+/z6tOWwz0SBTitVVIyvbm9SeJJdKJHKqaOplRsSYDoAW91oEG6bu+9+zCGImI2xahlJwvT/ZQRnZaHVFKRZ897NeY/0IPGdvqPNqvO2WtWLKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt0vUjco; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739549264; x=1771085264;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kIPwPH7X7wZ8cRjLtiCbyATDZF5ahgyEmcy1BihksyY=;
-  b=Rt0vUjcotGo1pevTU5rd1U9H2JBqBgTiUvvuHbFDLCepma4GYNagazdA
-   Eo+LBtqzgWAIkxgba82J0skX68VafEhwiutmSXrJlv0CRKsTDfCOUvVQG
-   f2XRTC/hA2zbdkO7oWAgeexeoUzTO9/a2u3mUl9VGnNOVC2fbOPn1snjn
-   9LWFYue2bfXKzUxgy2czQlD0h4/xCPBISGINDSOFP8GfObk5appXDziOU
-   rl1EL//0S16D1EOXQaaIPusrbwXDghkNeZGgW2/+iONcukcHc9kQqayT9
-   x06qcW46QZpypjKTNC/ix8xdy3DvrIKMLbKJDor2VBbprn01BROIhZkXU
-   Q==;
-X-CSE-ConnectionGUID: +XiEyjH/ReirNUMi8hqceA==
-X-CSE-MsgGUID: +Cd292ZORs6z1b+XZ/D6Rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43141038"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="43141038"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:07:43 -0800
-X-CSE-ConnectionGUID: fL05wUw3TFu5bVqAt2WnrQ==
-X-CSE-MsgGUID: OFDMSXopTM2RK4LrmNzj8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="144347581"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:07:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiyE3-0000000BXWw-0Sh6;
-	Fri, 14 Feb 2025 18:07:35 +0200
-Date: Fri, 14 Feb 2025 18:07:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 04/10] gpio: regmap: Allow to provide request and free
- callbacks
-Message-ID: <Z69qRrQ3XxgKtPUD@smile.fi.intel.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqTUHPl5AJoCY+PpfP3zPwKUHADpYMIS74hOJh4UvwZBhksMu+22kDG4+Rjj8rID8Zad051/oMZeLFyeSUeg74VxpiZXXwZQ4hSndlZ6euKiMi1FMbMugrVc/YsP5qL09KW1FdeaWgw9JEI0h8eSIeihCGuqWgRPxAKjUOiI4RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5de4a8b4f86so3191958a12.2;
+        Fri, 14 Feb 2025 08:09:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739549363; x=1740154163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JF5FufNPsiom+i34fThs/hUtAnyWEdYBJTAnC8Bz9ik=;
+        b=dmPjI6e1tjg7FR5MFZ5oGl7aS0LrCF8qGLAq7PvMREUcfMhWE8r2rKpMiTNOcv3TBr
+         wR0ja2pxIcsTaQqruY+v3xvxCs2h3EZBuWdAlhYLsiqKXYuHKv4hNxXN6Kl8YDtEQLsG
+         UAifeiJWsXAZ7lsw4cPSRhuoP5t4PBVH2q2N3Vkz2rOuyO1/2wAe+GpEh1l8ZXkbSSuy
+         /ldFKPL/pmtjb3z0mZjLC93vetbg9i2t3hwUyUwZj+4/BwJDGQQ+27+nCBShT1EIkleG
+         qn7mouvBM72HG+9Oetq6h3UO8zHBUV+FUYiPnbcstmnbkVmUmbFskccE+Z1Z/yft/Al+
+         a0OA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeKKRfHnM/GQnLMHvbO/xZGR+JuPPvHlqaz6/mNJm4SbHqqg8fwX5fyvKRJ217eAiaA3RMYO+HNhpgLCc=@vger.kernel.org, AJvYcCW2KYadxojFaPLqlcAPcAbn6JPHpwCWyTwEASbW5IF0jlhxU9xBaSHvtroqYuEhGo+UJ/6IdP0R@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN3HTyCWm+agN8XQ9D0q2jBG7LWj/kZMX+BptF8ccspUuNB4Wx
+	VJxUsuMhzTjZ9vWTa9ezfehL6/x+ZCodMqnmTBhhA+bZNXyigHqCziAxnw==
+X-Gm-Gg: ASbGncsMOaAc37KJPCFCFF2Xr7WTJ+WYOY78AStE0OWoHw2iOFuYj4ZSb2iMvxKfNFI
+	sKZqL5Zr1NzR8wrps6bNu1GbGSbKhr7oj8zHa50M5udrW5Px9fHevcCKqcwy+UK3e7prqNmSkLi
+	F2kScp73tH+3l+G5DkFiADEbLttU36RYr681JSd0MeI0Pv8frFknjBk32OeK3bj55K1D8CWoem8
+	FyNdIKCufuAAxEu/KOTVQNUBQdhYxv3ianC1bBVDDqiVeIrztDk5zE6ftZkloR4w8koN5nninOH
+	K9NuWQ==
+X-Google-Smtp-Source: AGHT+IFvmEPPfznVRo+H6qDRmrc/GS0dcen0jjnB7DIo3iaqoZEyzMgj9gc8pj+yIVY8o82BeznEJw==
+X-Received: by 2002:a17:907:7f06:b0:ab7:d5e3:cbac with SMTP id a640c23a62f3a-ab7f34aeb1amr1192297066b.54.1739549362472;
+        Fri, 14 Feb 2025 08:09:22 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5323226asm370036566b.8.2025.02.14.08.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 08:09:22 -0800 (PST)
+Date: Fri, 14 Feb 2025 08:09:19 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: Remove redundant variable declaration in
+ __dev_change_flags()
+Message-ID: <20250214-bald-mammoth-of-opportunity-48a0bb@leitao>
+References: <20250214-old_flags-v1-1-29096b9399a9@debian.org>
+ <1d7e3018-9c82-4a00-8e10-3451b4a19a0d@lunn.ch>
+ <20250214-civet-of-regular-refinement-23b247@leitao>
+ <943abc29-d5af-4064-8853-5f3c365bf6d6@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,22 +81,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <943abc29-d5af-4064-8853-5f3c365bf6d6@lunn.ch>
 
-On Fri, Feb 14, 2025 at 12:49:54PM +0100, Mathieu Dubois-Briand wrote:
-> Allows to populate the gpio_regmap_config structure with request() and
-> free() callbacks to set on the final gpio_chip structure.
+On Fri, Feb 14, 2025 at 04:02:10PM +0100, Andrew Lunn wrote:
+> > But I agree with you, if you needed to look at it, it means the message
+> > is NOT good enough. I will update it.
+> 
+> Thanks.
+> 
+> > 
+> > > > Fixes: 991fb3f74c142e ("dev: always advertise rx_flags changes via netlink")
+> > > 
+> > > I suppose there is also a danger here this code has at some point in
+> > > the past has been refactored, such that the outer old_flags was used
+> > > at some point? Backporting this patch could then break something?  Did
+> > > you check for this? Again, a comment in the commit message that you
+> > > have checked this is safe to backport would be nice.
+> > 
+> > I haven't look at this, and I don't think this should be backported,
+> > thus, that is why I sent to net-next and didn't cc: stable.
+> > 
+> > That said, I don't think this should be backported, since it is not
+> > a big deal. Shouldn't I add the Fixes: in such case?
+> 
+> The danger of adding a Fixes: is that the ML bot will see the Fixes:
+> tag and might select it for backporting, even if we did not explicitly
+> queue it up for back porting. So i suggest dropping the tag.
 
-Yeah, I understand the intention, but I have mixed feelings about this.
-OOH it helps with the cases like yours, OTO it sounds like a hack instead
-of proper implementation of the pin muxing. Yes, I know there are some
-drivers in the kernel do similar things, but it most likely historically
-and not always having the same HW capabilities as this chip.
+Makes sense. I will drop the Fixes: tag and send a v2 to net-next.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks Andrew,
+--breno
 
