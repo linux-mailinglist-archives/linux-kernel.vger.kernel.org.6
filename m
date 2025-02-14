@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-515355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38185A363B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD163A363B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3561895D25
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098D2188E66E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A11D267AE8;
-	Fri, 14 Feb 2025 16:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D71267AEB;
+	Fri, 14 Feb 2025 16:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QInND93q"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733D1267707;
-	Fri, 14 Feb 2025 16:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRAEUDGM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B45267700;
+	Fri, 14 Feb 2025 16:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739552055; cv=none; b=q9HaaZADpnMhT6gfzzEVMvbPkim2em+KvdZb12gflXqV71UBpd//NbCAgtQOQzxpIw0FC+hW0q+dOOQcjy2mNoORgdlrtaWVT0G2bKkqCB8+hiIlALvJ4SaMjjJEHNmXh93SGByPztxTixWANrGmpOdowivcURTfGAFwgcxDYAk=
+	t=1739552144; cv=none; b=aaVLlpdEnXA3SSBYjreccMGZCIn9UfOK4kjcQljh+3TwJnPkXzXqPei4YhAoG9kBde9tKK7MHZuoH6WNIFY1GCFeJXqc4iyzeZRCcYOj9Wge2rsEVWTzjs0JqpKz8YMstRytZ1HRdm831r6PtaU2loL0XLyFHFsDqasc6z2h2fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739552055; c=relaxed/simple;
-	bh=IFEiXrrJb8KjuBXvYRhIgd9nrcRAceAIp9pxdMOs/uU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDGII4h6mi2tWbp0G1nM3152BNhIyCVmOre6BeJdbGocOphIiVQ4FVtcIlsJIFVUVRJDvZCiSmTBaSJpngmpSwPGdNnPgxfk9Rvzyw402a0L4RyN5HnARb+3ba42eWGs5ZlWLH98PWUTs1CvX87dsFR3Lssn0Cei//uM1OUNZ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QInND93q; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=iHCZRKQOV/t8wh4QfIKn5R7J3aMaa1mmCvAkxwGVn1k=;
-	b=QInND93qA0Ww0L01d0UIruACfP7sdCgMwcj84uGApfrq6Z5J0vPINYNdTev2Em
-	8fmSsa3fqDx+MFoA6rAIoBvOuOjNWxDnilGBWiCHGrGdwmPWsz58lLs5VxBATvGH
-	7QQNt+Y0S/rIUP+zXqT3ChW/edZTXwrhM8VyAlm0zmvtY=
-Received: from [192.168.71.44] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnsQoQda9neAOaMA--.50023S2;
-	Sat, 15 Feb 2025 00:53:37 +0800 (CST)
-Message-ID: <f7e51e84-721c-4177-9a00-94ca466c145b@163.com>
-Date: Sat, 15 Feb 2025 00:53:36 +0800
+	s=arc-20240116; t=1739552144; c=relaxed/simple;
+	bh=VAjnJKsH78yNOyUdTaah0rZDzzTfTb0qzpH9n4vpm+k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ddavVd1IwUZr+R+8RiPPKW6pwC438EcgygmHJi2q6tfKPT4E/G9Dkc+jtnSwqJSBLsNhmo8FEqwkaEgCYUHOzgQlvhQ1Qg6UEHpYHar1h0imRrIlRMyPmNqZfskp7Metun/C3Yk+fe4pAZFAiclXWajKlrPVN7BVEYs6PCKc1vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRAEUDGM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 263A5C4CED1;
+	Fri, 14 Feb 2025 16:55:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739552144;
+	bh=VAjnJKsH78yNOyUdTaah0rZDzzTfTb0qzpH9n4vpm+k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=nRAEUDGMx0dcWj6jvJx2JeHzcERTLWVczHJfSaLlz7OVZ6KcXnbASrnBf0PZy6cKs
+	 a6Rd2a7MxctHXAOG3+O2jhLl3CY3QzuSwt0em+qfT2kIMeAnAhWeuzm7ryUFE1ixYN
+	 EF469VokPMMTTURY+dqhazQL4f/yMo6074Q34E67duR6IMgBdZObVTRlMtP/4gJALO
+	 Q+GAJmuG+Ju5dzCxfyFZ4Bi2Air8cCubZEQEQiXtKF6taTrt0Ggn0mN00u5BfZKQGF
+	 LEV3/5xuPcPmgk1VsubVsgbg8iXqoDS2ZzKGTrr67cObXiuwvFvpt4n46BCHrK4Mpg
+	 2264TsTl9JXfQ==
+Message-ID: <6d48bcfd0c6030c92f6a5a4a91c9b62f926b3b16.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
+From: Amit Shah <amit@kernel.org>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 14 Feb 2025 17:55:41 +0100
+In-Reply-To: <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
+References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+	 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
+	 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
+	 <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
+	 <k72vfex6qy53xrunz5ohe24c2upfjcdwofozszi4l3k3rm6dou@bd6swzi3v5ng>
+	 <606b16787920ff5e1807e4f8450add5889fdd1cb.camel@kernel.org>
+	 <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] PCI: cadence: Fix sending message with data or without data
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
- bwawrzyn@cisco.com, cassel@kernel.org,
- wojciech.jasko-EXT@continental-corporation.com, a-verma1@ti.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rockswang7@gmail.com
-References: <20250207103923.32190-1-18255117159@163.com>
- <20250214073030.4vckeq2hf6wbb4ez@thinkpad>
- <7eb9fedc-67c9-4886-9470-d747273f136c@163.com>
- <20250214132115.fpiqq65tqtowl2wa@thinkpad>
- <332ec463-ebd9-477c-8b10-157887343225@163.com>
- <20250214153103.4cjlawksw4xobc2l@thinkpad>
- <3d3d8772-08ba-4e5a-bf1f-71821cf056e7@163.com>
- <20250214155725.jpkd4vtcycav4yrc@thinkpad>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250214155725.jpkd4vtcycav4yrc@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnsQoQda9neAOaMA--.50023S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUFq2MUUUUU
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxDzo2evaI6xnAAAsY
 
+On Fri, 2025-02-14 at 17:52 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Amit,
+>=20
+> On Fri, Feb 14, 2025 at 05:37:52PM +0100, Amit Shah wrote:
+> > I'm thinking of the two combinations of interest: REMOTEPROC=3Dm,
+> > VIRTIO_CONSOLE can be y or m.=C2=A0 Say virtcons_probe() happens when
+> > the
+> > remoteproc module isn't yet loaded.=C2=A0 Even after later loading
+> > remoteproc, virtio console won't do anything interesting with
+> > remoteproc.
+>=20
+> Where does the interesting thing happen if remoteproc is already
+> loaded
+> at that time? I'm not seeing anything interesting in that case either
+> ...
 
+The code I pointed to,
 
-On 2025/2/14 23:57, Manivannan Sadhasivam wrote:
-> On Fri, Feb 14, 2025 at 11:48:16PM +0800, Hans Zhang wrote:
->>> If so, it is fine. But is there a way we could detect those first generation IPs
->>> and flag it to users about broken MSG TLP support? Atleast, that would make the
->>> users aware of broken hw.
->>
->> I don't know how to do it, but here are the questions that were actually
->> tested.
->>
-> 
-> Not related to this patch, but please check if it is possible to detect those
-> controllers.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/char/virtio_console.c#n1993
 
-If possible, I'll try to find an opportunity to check it out.
+either enables remoteproc if the module is present; or it enables
+multiport, but not both at the same time.  If remoteproc isn't present
+when this probe routine is executed, multiport might get enabled.  And
+then there's no chance for remoteproc to get enabled.
 
-Best regards
-Hans
-
+		Amit
 
