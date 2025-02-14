@@ -1,271 +1,199 @@
-Return-Path: <linux-kernel+bounces-515134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35FEA360B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:44:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874ADA360AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90143B14CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9DB188CA75
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 14:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E4E266F0B;
-	Fri, 14 Feb 2025 14:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2891F26658B;
+	Fri, 14 Feb 2025 14:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmHEnCms"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+no3KEA"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18DE266581;
-	Fri, 14 Feb 2025 14:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521CD266572
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 14:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739544102; cv=none; b=PaC3Jgs9vsr1TQ1bVDaznr94X8cWh92/tyVY8hrL4G0etGLqfdFXxWgT8sVhIKkMLofWRuQpfrYvwYpP9OEL+yFsuVHlm/Gjb/NNab9NKZyqyd77hUrLgOBJi/DxCo1EGb4XqBy58lPGWyIVr708e2udAkBxRM3eqNA5OFB5Vto=
+	t=1739544153; cv=none; b=osdw5N3SVLzCEP2cMAXCSJQZrVTFX0y8OC9xyau5NYcILLIFCgB9jAXCeSbr+DWEjcSiFjtsuzAAyvvqDYs32dHK7b9ZicWA8aSQPUTWeS3BHr/TB4l19qfk2lbEdDDPikkHkARCmwkyZ0EU6YoQeO0nXCEjbrNVFyY51g5wjPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739544102; c=relaxed/simple;
-	bh=OTXs3V3Gm6IRul4QKaL7JCAspCNZEAUXXNFKStN0soQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXM+EnpxVsh7ZZerlbX+bFDSr6XCIQHs5Eliah5gTkqocWns47BqvZ+MuFzwvezIHVHqufobve4JmuosxnMJvQM8LP7Y1GjDufEh8fZypjluCF1ScMOgB1EnlhBZQaurLxypziBQt27EkkzmG8jlsm3E8Z/Mlq7zFXykc8zjkZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XmHEnCms; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-307c13298eeso20830311fa.0;
-        Fri, 14 Feb 2025 06:41:40 -0800 (PST)
+	s=arc-20240116; t=1739544153; c=relaxed/simple;
+	bh=/hFRqo78Ekm9g5FTrhvJLClp80bSRuKsAEF9GDz0Hts=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cfQGsQ7gf/GLR5ovFWu2V9XZrI7JxmZdZmQj6KsR/Ff+2cpPQjOqI/L7ZvVlfLSLMF02OUzzSnviv14i6HhmaU6ILIrTZxMYWHFwECJT0DNly0rLcuBm+STqP8dC2o4qgh5Zlb6RS1Z10dQ52VSTHtw5K7WQYO8VP11dhtKqyvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C+no3KEA; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5de594e2555so3386688a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:42:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739544099; x=1740148899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lZywg83io+M8jYPqDvZGoCFahp6/T+xzE48i56QLMnM=;
-        b=XmHEnCmsacK+e+eO8cls6EvBkWNJhoqQ290R53VmttlJTmK0cELQV9UdNiPyoL+0Eb
-         lK9mbnSWVvI8I65RSPfsDQDwjwLI4OZE0Y8riVTfB9W9ckAJi3eC5ybPOaHfxmStapvP
-         WBysmIjCDo5qTUWt5kI0tDRkU+UlcXv47sOKR5DljARLEdexCrFhJkP55pzTPkYlkUPR
-         VNEMxSUVXY100HUeacH4R9G+3fHtWo+MVYXXlS6k3fosV579kLrFQ5du/t5IDgxFmQsX
-         L2wfKGiwokap0D0P8r1bpNhYwlmal/1nZqMtGK4/CsToHtClBDbfQifCeR/ooQ720jeK
-         KZuw==
+        d=linaro.org; s=google; t=1739544149; x=1740148949; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5A8Gla8Q///5jr1e+UVgogTbKkTus0cG6K56L7NjpIo=;
+        b=C+no3KEA9bPYfxOreQf5ybJ3uJ7f9PclOAuEFQs2abfFOIB2Wu4QkAZ6HGij1jmK84
+         6uUK17vIhYQ1D0whxaXV8OUK+522eXLJqymOsQW10WDGlb4NP7jEgguAISKHFJorRVz6
+         /umvGA3vIYagf/4Bqo23pIOGOJTumQSDIlvVE26fBnTttRKYfhnewS2WRtshsiALCXsA
+         kC1Z7NnJrsM15LVzGPP8K8iLXtbDbVsAgatWmFJe6BD8h5lBw5W65m3FxFfA6OS+XVUI
+         3vmajwb/0VU4F4mAsaqiQ2XYnm97tJtH1nD3MCydp9Kw7iDaSid9ZGEURoslqIhjPNMk
+         h7NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739544099; x=1740148899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lZywg83io+M8jYPqDvZGoCFahp6/T+xzE48i56QLMnM=;
-        b=NPIvFtmiMbt2xnj/8DWEkPsLs0MoI0wxF57LwX5ojPce/+NUZbleGqkHeifHLENZbU
-         73+dhaXAr5jsp0uI66ZQaELzCEWVp4O/IJaykdstFTeZ4XSpJa+cs/5T2ySkfb4dFb0v
-         TIf5byeaJH6UOy/Gcehr20wz+GmNyApeWe6NzVVJFh5u1Xu9AzvBfPNQDIAIk3k2InQa
-         DWzaw2wWjS7ZuiUeC+eA+6MECcvb0+NdoeAUiNplGlFc9u70ACmLSI3LarOlyeH5I66v
-         fK/bm7EWrrFTYQucdiZJDgaPEBHWmeL3ZMDULb9F9/vska7AFg+AgPj0G4FZ9qxHpSxX
-         BlKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCkdpVAyQWzzU5VSi1W4fk016P6od4Slib5j3UCkcqNVBn5MI8CGaYv5U9j68TTVfSaA8NpGfo3+SmY3Nbb7oO@vger.kernel.org, AJvYcCVvOxZ3AoNEByCZp//qvMNrYgynkyQ/42N1DFAvyceon6O0/VNY+c08LoNoqzJnuUxMuFFLa6jhCY7nVNk=@vger.kernel.org, AJvYcCWmXCk6O6gmVeO9i2qd4W3bgCVQiHQ39Q5oGXprAMKPaPNxP9CdL5BbON4+7DarMYrfPCqX2Z4h5MA3POfbtRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0YuKWAIAi2QububelGWTWPVKnoS1MykLPV8roZD1yhiCfr6yn
-	a8MSdD0zuJk7rqCaKlGBZNLjXl43ZAKqE34yxrALRDnYJhDzzRWP2MOp1pQIbQQqG4gurWc3p0H
-	oNn5yfuUEZKoEs8KHXIihNqB9Nbg=
-X-Gm-Gg: ASbGncsOX0Oq5NuY0x6pr71XyzZu8z/f+XY6EzaUROrQk8ATZdgr+AE9V23UEDd+4Ky
-	p/1IuM9avGkWLeYGZ2+1BF0AkdJOe23HZihc80rOzZ0+qIDGkWMwDr7mz9LACFAugJUjqB3rGDU
-	ABYAAEYEXeIW7ZwFoUaEAfQf2h+ZpiAnc=
-X-Google-Smtp-Source: AGHT+IFHKgpZPcpXEVRmDoWFwA2sR1RNqGhaFaOyGhlS5WyPRXpQVTSo6DzE0uTiP9BYq/oi9I1N4cXElI3SDgPoGuU=
-X-Received: by 2002:a2e:2e0c:0:b0:308:e2da:2168 with SMTP id
- 38308e7fff4ca-3090f2495ebmr20155371fa.11.1739544098529; Fri, 14 Feb 2025
- 06:41:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739544149; x=1740148949;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5A8Gla8Q///5jr1e+UVgogTbKkTus0cG6K56L7NjpIo=;
+        b=o32fafwOuf6X+RhLTjicfpOFDCiwzIuAYtxhaAJR0oHxABO+mmM3BRdr6myHcZ9SKV
+         CwdgUkpNRI20d6bAsH2mApzfn6M3KFiNq0HqNh+dTvUge0MYcEfV5zMNjzPYa72Kbrl6
+         Dp600GwpLKvNHh+3giWKqcO8zVECHWdyy8iRxMbe6GjxVbcjhuPxmpPGZGNFU2xNgkG1
+         DSX6PBKewkM3Eqyu6bAVl0H+zfTnuKUrXxO9PjNyQc4dfvEXoR0uQvZGPfqZgm92vJUf
+         z4HCILESAUrLxnDXHCjjVmk2adU98HzgZQ8UIb5KL9tbzy38h6MHy6nu0XMLs0ZDgIGD
+         0/lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGmmNNxsNAYIrW4kto1em0nXO7fex+Y+0muKRixgBOEokUTFtFYV9f4c3Lakck8RmFF4jN6icrqPVGZE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykKVFq5d9eS/fsj/lLWJdFO4HzvJ8yEtG9K2rkrT6Mv7UXHW8i
+	MGD1MTY4XCqzpPMQGioDlTcgkwcAn5JZvDZ+CPo21XZz4ax/dnrmvQfPpK6SJAI=
+X-Gm-Gg: ASbGncvSx8u7wpSV0EzDtF1HC5v32TsjlDlpYwv9JGT2dNb/JVg5kIs7RSfi4JOIbFx
+	yhbA47wmZNNq9IEmbGLbsGU/8U6ppGXO1mxp/pRobrNMOMt8Ad1wrIc7jtywSxD9KehTraaRZY2
+	lzQQ4MltyN3kYU6XGXMnP4uftgI155UKp40b6s84ln6R6+HJm3npLa6bKFkkxoXC4VHZPFp5rOi
+	mWuqfoD/p6J8UP+rtnej3VM1LGDT7lfQtDgnQuEi0iBy0VlAcPhhlduJdhw6NiWe2eAEkmBqdqD
+	uXZZ90qVD25Co9EcuRoG
+X-Google-Smtp-Source: AGHT+IHTsnNF3Z8oPb7KOJ0Szwe2eAivT4doFj5mcvOerXR4qOqV2S8aY3wuae3qVBS6+tsVgOsgtg==
+X-Received: by 2002:a17:906:7807:b0:ab7:6369:83fc with SMTP id a640c23a62f3a-ab7f34af3d5mr1042895666b.38.1739544149543;
+        Fri, 14 Feb 2025 06:42:29 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba533bdd39sm349560366b.167.2025.02.14.06.42.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 06:42:29 -0800 (PST)
+Date: Fri, 14 Feb 2025 17:42:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Karan Tilak Kumar <kartilak@cisco.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Gian Carlo Boffa <gcboffa@cisco.com>,
+	Arulprabhu Ponnusamy <arulponn@cisco.com>,
+	Arun Easi <aeasi@cisco.com>
+Subject: drivers/scsi/fnic/fdls_disc.c:263
+ fdls_schedule_oxid_free_retry_work() warn: inconsistent indenting
+Message-ID: <f1c717cf-63eb-402a-82cc-91c445055b97@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214074051.1619256-1-davidgow@google.com> <20250214074051.1619256-4-davidgow@google.com>
-In-Reply-To: <20250214074051.1619256-4-davidgow@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 14 Feb 2025 09:41:02 -0500
-X-Gm-Features: AWEUYZnfWpWjmZOjvgT1lwCZJX7AcCD4niJuCdhB2H3Ki6byoqEQZFxKixu6sKA
-Message-ID: <CAJ-ks9kwVz4sPdmqfTLVK-Z2C7WmXHpBhbe5_ozWBZnwxJ8HpA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] rust: kunit: allow to know if we are in a test
-To: David Gow <davidgow@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Feb 14, 2025 at 2:42=E2=80=AFAM David Gow <davidgow@google.com> wro=
-te:
->
-> From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
->
-> In some cases, we need to call test-only code from outside the test
-> case, for example, to mock a function or a module.
->
-> In order to check whether we are in a test or not, we need to test if
-> `CONFIG_KUNIT` is set.
-> Unfortunately, we cannot rely only on this condition because:
-> - a test could be running in another thread,
-> - some distros compile KUnit in production kernels, so checking at runtim=
-e
->   that `current->kunit_test !=3D NULL` is required.
->
-> Forturately, KUnit provides an optimised check in
-> `kunit_get_current_test()`, which checks CONFIG_KUNIT, a global static
-> key, and then the current thread's running KUnit test.
->
-> Add a safe wrapper function around this to know whether or not we are in
-> a KUnit test and examples showing how to mock a function and a module.
->
-> Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> Co-developed-by: David Gow <davidgow@google.com>
-> Signed-off-by: David Gow <davidgow@google.com>
-> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->
-> Changes since v5:
-> https://lore.kernel.org/all/20241213081035.2069066-4-davidgow@google.com/
-> - Greatly improved documentation, which is both clearer and better
->   matches the rustdoc norm. (Thanks, Miguel)
-> - The examples and safety comments are also both more idiomatic an
->   cleaner. (Thanks, Miguel)
-> - More things sit appropriately behind CONFIG_KUNIT (Thanks, Miguel)
->
-> Changes since v4:
-> https://lore.kernel.org/linux-kselftest/20241101064505.3820737-4-davidgow=
-@google.com/
-> - Rebased against 6.13-rc1
-> - Fix some missing safety comments, and remove some unneeded 'unsafe'
->   blocks. (Thanks Boqun)
->
-> Changes since v3:
-> https://lore.kernel.org/linux-kselftest/20241030045719.3085147-8-davidgow=
-@google.com/
-> - The example test has been updated to no longer use assert_eq!() with
->   a constant bool argument (fixes a clippy warning).
->
-> No changes since v2:
-> https://lore.kernel.org/linux-kselftest/20241029092422.2884505-4-davidgow=
-@google.com/
->
-> Changes since v1:
-> https://lore.kernel.org/lkml/20230720-rustbind-v1-3-c80db349e3b5@google.c=
-om/
-> - Rebased on top of rust-next.
-> - Use the `kunit_get_current_test()` C function, which wasn't previously
->   available, instead of rolling our own.
-> - (Thanks also to Boqun for suggesting a nicer way of implementing this,
->   which I tried, but the `kunit_get_current_test()` version obsoleted.)
-> ---
->  rust/kernel/kunit.rs | 66 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
->
-> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> index 9e27b74a605b..3aad7a281b6d 100644
-> --- a/rust/kernel/kunit.rs
-> +++ b/rust/kernel/kunit.rs
-> @@ -286,11 +286,77 @@ macro_rules! kunit_unsafe_test_suite {
->      };
->  }
->
-> +/// Returns whether we are currently running a KUnit test.
-> +///
-> +/// In some cases, you need to call test-only code from outside the test=
- case, for example, to
-> +/// create a function mock. This function allows to change behavior depe=
-nding on whether we are
-> +/// currently running a KUnit test or not.
-> +///
-> +/// # Examples
-> +///
-> +/// This example shows how a function can be mocked to return a well-kno=
-wn value while testing:
-> +///
-> +/// ```
-> +/// # use kernel::kunit::in_kunit_test;
-> +/// fn fn_mock_example(n: i32) -> i32 {
-> +///     if in_kunit_test() {
-> +///         return 100;
-> +///     }
-> +///
-> +///     n + 1
-> +/// }
-> +///
-> +/// let mock_res =3D fn_mock_example(5);
-> +/// assert_eq!(mock_res, 100);
-> +/// ```
-> +///
-> +/// Sometimes, you don't control the code that needs to be mocked. This =
-example shows how the
-> +/// `bindings` module can be mocked:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   128c8f96eb8638c060cd3532dc394d046ce64fe1
+commit: a63e78eb2b0f654b138abfc323f6bd7573e26145 scsi: fnic: Add support for fabric based solicited requests and responses
+config: i386-randconfig-141-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141403.1PcpwyJp-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
 
-[`bindings`] here, please. There are two more instances below but
-those aren't doc comments, so I don't think bracketing them will do
-anything.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202502141403.1PcpwyJp-lkp@intel.com/
 
-> +///
-> +/// ```
-> +/// // Import our mock naming it as the real module.
-> +/// #[cfg(CONFIG_KUNIT)]
-> +/// use bindings_mock_example as bindings;
-> +/// #[cfg(not(CONFIG_KUNIT))]
-> +/// use kernel::bindings;
-> +///
-> +/// // This module mocks `bindings`.
-> +/// #[cfg(CONFIG_KUNIT)]
-> +/// mod bindings_mock_example {
-> +///     /// Mock `ktime_get_boot_fast_ns` to return a well-known value w=
-hen running a KUnit test.
-> +///     pub(crate) fn ktime_get_boot_fast_ns() -> u64 {
-> +///         1234
-> +///     }
-> +/// }
-> +///
-> +/// // This is the function we want to test. Since `bindings` has been m=
-ocked, we can use its
-> +/// // functions seamlessly.
-> +/// fn get_boot_ns() -> u64 {
-> +///     // SAFETY: `ktime_get_boot_fast_ns()` is always safe to call.
-> +///     unsafe { bindings::ktime_get_boot_fast_ns() }
-> +/// }
-> +///
-> +/// let time =3D get_boot_ns();
-> +/// assert_eq!(time, 1234);
-> +/// ```
+smatch warnings:
+drivers/scsi/fnic/fdls_disc.c:263 fdls_schedule_oxid_free_retry_work() warn: inconsistent indenting
+drivers/scsi/fnic/fdls_disc.c:989 fdls_send_fabric_logo() warn: inconsistent indenting
+drivers/scsi/fnic/fdls_disc.c:1953 fnic_fdls_validate_and_get_frame_type() warn: inconsistent indenting
 
-Isn't this swapping out the bindings module at compile time, and for
-the whole build? In other words cfg(CONFIG_KUNIT) will apply to all
-code, both test and non-test.
+vim +/cur_jiffies +166 drivers/scsi/fnic/fdls_disc.c
 
-> +pub fn in_kunit_test() -> bool {
-> +    // SAFETY: `kunit_get_current_test()` is always safe to call (it has=
- fallbacks for
-> +    // when KUnit is not enabled).
-> +    unsafe { !bindings::kunit_get_current_test().is_null() }
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  244  void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  245  {
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  246  	struct fnic_oxid_pool_s *oxid_pool = container_of(work,
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  247  		struct fnic_oxid_pool_s, schedule_oxid_free_retry.work);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  248  	struct fnic_iport_s *iport = container_of(oxid_pool,
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  249  		struct fnic_iport_s, oxid_pool);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  250  	struct fnic *fnic = iport->fnic;
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  251  	struct reclaim_entry_s *reclaim_entry;
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  252  	unsigned long delay_j = msecs_to_jiffies(OXID_RECLAIM_TOV(iport));
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  253  	int idx;
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  254  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  255  	spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
 
-Nit if you care about reducing unsafe blocks:
+Passing fnic->lock_flags is wrong.  spin_lock_irqsave() is not nestable
+in the sense that the "flags" variable can't hold two values at once:
 
-!unsafe { bindings::kunit_get_current_test() }.is_null()
+	orig_irq = save_original irq states and disable()
+	orig_irq = save_original irq states and disable()
+	restore(orig_irq)
+	restore(orig_irq)
+
+The second restore(orig_irq) is not going to restore the original states
+it's going to leave them as disabled.
+
+If fnic->lock_flags is holding anything useful when this is called, then it
+is a bug or if anything uses it before we exit that will break us.  Just
+declare "unsigned long flags;" locally.
+
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  256  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  257  	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  258  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  259  		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  260  			"Schedule oxid free. oxid idx: %d\n", idx);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  261  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  262  		spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11 @263  	reclaim_entry = (struct reclaim_entry_s *)
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  264  	kzalloc(sizeof(struct reclaim_entry_s), GFP_KERNEL);
 
 
-> +}
-> +
->  #[kunit_tests(rust_kernel_kunit)]
->  mod tests {
-> +    use super::*;
-> +
->      #[test]
->      fn rust_test_kunit_example_test() {
->          #![expect(clippy::eq_op)]
->          assert_eq!(1 + 1, 2);
->      }
-> +
-> +    #[test]
-> +    fn rust_test_kunit_in_kunit_test() {
-> +        assert!(in_kunit_test());
-> +    }
->  }
-> --
-> 2.48.1.601.g30ceb7b040-goog
->
->
+The indenting is off.  The normal way to write this is:
+
+		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
+
+Remove the cast and change the sizeof().
+
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  265  		spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  266  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  267  		if (!reclaim_entry) {
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  268  			FNIC_FCS_DBG(KERN_WARNING, fnic->lport->host, fnic->fnic_num,
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  269  				"Failed to allocate memory for reclaim struct for oxid idx: 0x%x\n",
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  270  				idx);
+
+Remove this DBG.  The truth is that for as long as anyone can remember
+the kmalloc() allocator won't fail for tiny allocations.  We're more
+likely to formalize this rule than we are to change it at this point.
+Still, we check for errors until that day arrives.
+
+But allocations are not supposed to print an error message on error.
+It's just messy and it doesn't add any information that isn't already
+in the stack traces that kmalloc() prints.
+
+I guess we can't call schedule_delayed_work() without holding the
+spin_lock?  It's a strange thing.
+
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  271  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  272  			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  273  				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  274  			spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  275  			return;
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  276  		}
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  277  
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  278  		if (test_and_clear_bit(idx, oxid_pool->pending_schedule_free)) {
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  279  			reclaim_entry->oxid_idx = idx;
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  280  			reclaim_entry->expires = round_jiffies(jiffies + delay_j);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  281  			list_add_tail(&reclaim_entry->links, &oxid_pool->oxid_reclaim_list);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  282  			schedule_delayed_work(&oxid_pool->oxid_reclaim_work, delay_j);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  283  		} else {
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  284  			/* unlikely scenario, free the allocated memory and continue */
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  285  			kfree(reclaim_entry);
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  286  		}
+a63e78eb2b0f65 Karan Tilak Kumar 2024-12-11  287  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
