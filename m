@@ -1,241 +1,211 @@
-Return-Path: <linux-kernel+bounces-514634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21C5A3598B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:59:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EE2A3599B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A762916E80E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16A416F305
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5200322A4CA;
-	Fri, 14 Feb 2025 08:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C122B8D5;
+	Fri, 14 Feb 2025 09:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OIacxsyd"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYvSLL/k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F6B21A438
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC6227BA3;
+	Fri, 14 Feb 2025 09:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523581; cv=none; b=PUoVL0n67QNze5gCKRPvQSuYKpnxLobQu0794YZbPRgcTZEQCyY6SRNcbfJ9+9zLaZJVfdtmMMNHc05jcQhW+ZJs22rIqIOeUSrMN8tK7z84UcoF2zEApERsxrHW4LxqPiQ/uJdJD1YLbFPkAMq+hjU33q6ueUtiuEq3WdthsCY=
+	t=1739523721; cv=none; b=AL/BDALQAHsu7r1H3Fgt2Dx/VUfW7VS3psAlUxWJiT+2bfwA7WjA8KgKaG8vaGhD1WmHJZ+b91bVBa/KqAZhuP+lA4UyO6jiZmRRAhP7mVOkf6BmBwMYgElbUnIxgKgiW5iQ2DbBBA7+RVYpsOyACdNJ+kvb07Gv5pxqY7sBbAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523581; c=relaxed/simple;
-	bh=lIqag3A/X2pmc4BRaks73YT6X86Cppexn1l2jgDjt0Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VgZSJWAduwkkqjdXzfrSLKg7CMUyhqumXx7pg1B2XaAuzy8Jm/5KHs6HtCpIAMIiDk+zLFZWcEKCbNK1d6jJJw3Ozwqmnstz13Oxe2x0taT5EM48HVKEJwEsvMp3+kFlydHtU1G4BMCgpjxyjQq35/RpH9LxEM6uSZAcJgCN2t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OIacxsyd; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38dd006a4e1so1319228f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:59:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739523577; x=1740128377; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zoda2EDe08w9D7LB4RKFhW/A5U1oY6oOY5HMe4wfwNc=;
-        b=OIacxsyd5OVWk5oYDGblY5KZhNDbhpdl5XK+UAPOdf5iDTNuWzhh9bYwPNI0mOsSYc
-         uSFR4eOXST3uhvFqwK6SqVDze41XqmYxs/dJMbxQ5tBLOIqkmmSROiX/wLynu2X+N04t
-         xmmTnKI8IMczZrHLjvRI6SqzBLeLwT/lOTp8zVE8grvrB+v42YTgodrNo8RT5UZIPhd8
-         XGHfN9a7hhAVTZqrNUpBUxKyZkhbXIkRRq01qK3V6ZbOMQdG4LIpOgV4zesXH/G8yMS4
-         ABZ3edysKAmALcsAJwlOg+G1UI3ZnTxg5euvhEjoc0vcwy9UXfBZ1k3V2y3sjrTbBKMC
-         1QxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739523577; x=1740128377;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zoda2EDe08w9D7LB4RKFhW/A5U1oY6oOY5HMe4wfwNc=;
-        b=kINbBFUd3NKlsapJDYRZ3oK7lrAQmVEcKK27JS8IL3yMhRujQilTjUzrAJ9Gn81WMz
-         ZH2YZ+swyq71RqOeBjk+tgilVOPiYk9JYi+/q2N15HkmQABS2Txr9TJ9ZyaMTHNadaFX
-         OdMjS4umUgNetMnYKO4eLmofcUSnS2qf53euLe1NAm2JoCy44ov+XE+yyjlQzxPPGjMc
-         LuDdyfTz1vh1PdA6MRV1092VRgTtmWEmnqpQ14vL6wcepzNe2c3tSH+yxdwJGybOLJ3i
-         L/Bgs8zojHvF9o+dxcfw4Fu8dPKc50zpb3QQ+INaQHZ7bI8og2p59PdyFPBD+Nf9ZAKb
-         3GUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcT9QQl8FI/TcNIxISaKK97NdcyIbskjuhHl3kj4IOl1z3ZgHV3rxzytyNLKzIkMSIwQulUoBF3amJus4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5xRM+rFH8+hfoAmZ0CkTH1kemgSVCMqmDbmv4hL21otVb2rJV
-	3NP5KYJovfBzPSG9yoJmHsVOCrV+Fw3cjG58vB3Eju6DL/sXAbQcIse6/kLvih8=
-X-Gm-Gg: ASbGnctOalIHziV3tEPu+G9UG9e3K+sl5RnE7ATKYNSQISePQE9gv8P//XuGsjwSL1c
-	3wTYGbd7Sga5l9CSDL4iyPfTAplJhHJ3C03Mt7fqcy8yhqV03HSWHLO34EPlB957dfBXQh6f3Ks
-	RjU0ql0Y8luzif3MSkerxXNUsNW72cWymx8qmci6xcv9wwDAYlwlglA/i4iuztXXAot0OsI94zX
-	yuC71aIaeqkd7yEmow7CcylF8rnH4LfgPt3Vc8JSKr74mmD3zRGgT36GzOUUXSwNLP/hFAjGBV+
-	mWFxdXoN+aKIlyA=
-X-Google-Smtp-Source: AGHT+IHr8NGbRnNCNsasOEgGwEH9hogJeR/Q2q11CcGnTNY+PAq+96jRXtyg1EfxGENX3t8ZZduxZg==
-X-Received: by 2002:a5d:5250:0:b0:38f:3141:8912 with SMTP id ffacd0b85a97d-38f31418a8cmr220671f8f.24.1739523576712;
-        Fri, 14 Feb 2025 00:59:36 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:baa6:bc65:b9db:3759])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f258ccda0sm4052204f8f.27.2025.02.14.00.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 00:59:36 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Dave Ertman
- <david.m.ertman@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  "Rafael J.
- Wysocki" <rafael@kernel.org>,  Stephen Boyd <sboyd@kernel.org>,  Arnd
- Bergmann <arnd@arndb.de>,  Danilo Krummrich <dakr@kernel.org>,  Conor
- Dooley <conor.dooley@microchip.com>,  Daire McNamara
- <daire.mcnamara@microchip.com>,  Philipp Zabel <p.zabel@pengutronix.de>,
-  Douglas Anderson <dianders@chromium.org>,  Andrzej Hajda
- <andrzej.hajda@intel.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Robert Foss <rfoss@kernel.org>,  Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>,  Jonas Karlman <jonas@kwiboo.se>,
-  Jernej Skrabec <jernej.skrabec@gmail.com>,  Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
-  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
- <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Hans de Goede
- <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,
-  Bryan O'Donoghue <bryan.odonoghue@linaro.org>,  Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>,  Gregory CLEMENT
- <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
-  Michael Turquette <mturquette@baylibre.com>,  Abel Vesa
- <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Shawn Guo
- <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
-  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
-  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation
- helper
-In-Reply-To: <20250213-crown-clustered-81c6434c892b@spud> (Conor Dooley's
-	message of "Thu, 13 Feb 2025 17:59:07 +0000")
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
-	<20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
-	<20250213-crown-clustered-81c6434c892b@spud>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 14 Feb 2025 09:59:35 +0100
-Message-ID: <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1739523721; c=relaxed/simple;
+	bh=Msx+YmHuz2vc+eqfMfJj/R+QbkCQEJDAFr68K21fjTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4Og19DRMcqtgyyTDbH48odjs2+8AByMQ3ZH837iQiqR/mk2A02KPE+4byqBeZ055q1cn6qx/070seH/XnlafGciXNLcOLQvZxe5BjyMOI7CP+WMMXi2+jjoROFFy/QalWwq+YQAXoDAzuLqYtuBqZuZIeGNqvysUZ4Jn01wtJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYvSLL/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2A0C4CED1;
+	Fri, 14 Feb 2025 09:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739523721;
+	bh=Msx+YmHuz2vc+eqfMfJj/R+QbkCQEJDAFr68K21fjTI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=iYvSLL/kS+3m7qVerqmAHaPWSmarIMp+MmTwlMLFRbadw3WT991907W5QdKFpX32N
+	 lTMahCBbWU3BYz4XvrvwL/2oc14fdkADjJvfJ+FbYEU12F+HpnKTbRVL0gMmrpu/8p
+	 KrEsFXm2GO2ouIk0/sEXib7u3AS6RbLEEAYERb40JZvZxiObOPq1JXrAdRZ7fxHf7v
+	 ZYU9NeFUB5pljRafyLK1hr39R4f8H6ZAlKZGzLCwxKLb0vZRF5IenjMsL50AsOOTCG
+	 KXDO8IeJQEw/qVfEBT5UJZDLbVppd1diaw3O3sgh+Ywo2bHzk6KEh7lzQep0PmGnd5
+	 7QO/uhBe6HojQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id AB242CE0426; Fri, 14 Feb 2025 01:01:56 -0800 (PST)
+Date: Fri, 14 Feb 2025 01:01:56 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rcu/exp: Remove needless CPU up quiescent state
+ report
+Message-ID: <fe931d3a-bf97-4be5-8420-f1fcb55e6a46@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250213232559.34163-1-frederic@kernel.org>
+ <20250213232559.34163-4-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213232559.34163-4-frederic@kernel.org>
 
-On Thu 13 Feb 2025 at 17:59, Conor Dooley <conor@kernel.org> wrote:
+On Fri, Feb 14, 2025 at 12:25:59AM +0100, Frederic Weisbecker wrote:
+> A CPU coming online checks for an ongoing grace period and reports
+> a quiescent state accordingly if needed. This special treatment that
+> shortcuts the expedited IPI finds its origin as an optimization purpose
+> on the following commit:
+> 
+> 	338b0f760e84 (rcu: Better hotplug handling for synchronize_sched_expedited()
+> 
+> The point is to avoid an IPI while waiting for a CPU to become online
+> or failing to become offline.
+> 
+> However this is pointless and even error prone for several reasons:
+> 
+> * If the CPU has been seen offline in the first round scanning offline
+>   and idle CPUs, no IPI is even tried and the quiescent state is
+>   reported on behalf of the CPU.
+> 
+> * This means that if the IPI fails, the CPU just became offline. So
+>   it's unlikely to become online right away, unless the cpu hotplug
+>   operation failed and rolled back, which is a rare event that can
+>   wait a jiffy for a new IPI to be issued.
+> 
+> * But then the "optimization" applying on failing CPU hotplug down only
+>   applies to !PREEMPT_RCU.
+> 
+> * This force reports a quiescent state even if ->cpu_no_qs.b.exp is not
+>   set. As a result it can race with remote QS reports on the same rdp.
+>   Fortunately it happens to be OK but an accident is waiting to happen.
+> 
+> For all those reasons, remove this optimization that doesn't look worthy
+> to keep around.
 
-> On Tue, Feb 11, 2025 at 06:27:59PM +0100, Jerome Brunet wrote:
->> The auxiliary device creation of this driver is simple enough to
->> use the available auxiliary device creation helper.
->> 
->> Use it and remove some boilerplate code.
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  drivers/reset/reset-mpfs.c | 52 +++-------------------------------------------
->>  1 file changed, 3 insertions(+), 49 deletions(-)
->> 
->> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
->> index 574e59db83a4fcf30b60cb5f638607a2ec7b0580..bbea64862181877eb7ae51fdaa9e50ffac17c908 100644
->> --- a/drivers/reset/reset-mpfs.c
->> +++ b/drivers/reset/reset-mpfs.c
->> @@ -155,62 +155,16 @@ static int mpfs_reset_probe(struct auxiliary_device *adev,
->>  	return devm_reset_controller_register(dev, rcdev);
->>  }
->>  
->> -static void mpfs_reset_unregister_adev(void *_adev)
->> -{
->> -	struct auxiliary_device *adev = _adev;
->> -
->> -	auxiliary_device_delete(adev);
->> -	auxiliary_device_uninit(adev);
->> -}
->> -
->> -static void mpfs_reset_adev_release(struct device *dev)
->> -{
->> -	struct auxiliary_device *adev = to_auxiliary_dev(dev);
->> -
->> -	kfree(adev);
->> -}
->> -
->> -static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk_dev)
->> -{
->> -	struct auxiliary_device *adev;
->> -	int ret;
->> -
->> -	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
->> -	if (!adev)
->> -		return ERR_PTR(-ENOMEM);
->> -
->> -	adev->name = "reset-mpfs";
->> -	adev->dev.parent = clk_dev;
->> -	adev->dev.release = mpfs_reset_adev_release;
->> -	adev->id = 666u;
->> -
->> -	ret = auxiliary_device_init(adev);
->> -	if (ret) {
->> -		kfree(adev);
->> -		return ERR_PTR(ret);
->> -	}
->> -
->> -	return adev;
->> -}
->> -
->>  int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base)
->>  {
->>  	struct auxiliary_device *adev;
->> -	int ret;
->>  
->> -	adev = mpfs_reset_adev_alloc(clk_dev);
->> +	adev = devm_auxiliary_device_create(clk_dev, "reset-mpfs",
->> +					    (__force void *)base, 666u);
->
-> Moving the boilerplate into a helper makes sense:
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->
-> One think that's always felt a bit meh to me is this id number stuff,
-> I just threw in 666 for meme value.
+Thank you for digging into this!
 
-:)
+When I ran tests that removed the call to sync_sched_exp_online_cleanup()
+a few months ago, I got grace-period hangs [1].  Has something changed
+to make this safe?
 
-> The whole thing seems super
-> arbitrary, do any of the users of this helper actually put meaningful
-> values into the id parameter?
+							Thanx, Paul
 
-In example changes I've sent, no.
+[1] https://docs.google.com/document/d/1-JQ4QYF1qid0TWSLa76O1kusdhER2wgm0dYdwFRUzU8/edit?usp=sharing
 
-In other simple usages (those using container_of()) of the auxiliary
-bus, I think there are a few that uses 0 and 1 for 2 instances.
-
-I guess your question is "do we really need this parameter here ?"
-
-We could remove it and still address 90% of the original target.
-
-Keeping it leaves the door open in case the figure above does not hold
-and it is pretty cheap to do. It could also enable drivers requiring an
-IDA to use the helper, possibly.
-
->
->>  	if (IS_ERR(adev))
->>  		return PTR_ERR(adev);
->>  
->> -	ret = auxiliary_device_add(adev);
->> -	if (ret) {
->> -		auxiliary_device_uninit(adev);
->> -		return ret;
->> -	}
->> -
->> -	adev->dev.platform_data = (__force void *)base;
->> -
->> -	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, adev);
->> +	return 0;
->>  }
->>  EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, "MCHP_CLK_MPFS");
->>  
->> 
->> -- 
->> 2.45.2
->> 
-
--- 
-Jerome
+> Reported-by: Paul E. McKenney <paulmck@kernel.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  kernel/rcu/tree.c     |  2 --
+>  kernel/rcu/tree_exp.h | 45 ++-----------------------------------------
+>  2 files changed, 2 insertions(+), 45 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 8625f616c65a..86935fe00397 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -151,7 +151,6 @@ static void rcu_report_qs_rnp(unsigned long mask, struct rcu_node *rnp,
+>  			      unsigned long gps, unsigned long flags);
+>  static void invoke_rcu_core(void);
+>  static void rcu_report_exp_rdp(struct rcu_data *rdp);
+> -static void sync_sched_exp_online_cleanup(int cpu);
+>  static void check_cb_ovld_locked(struct rcu_data *rdp, struct rcu_node *rnp);
+>  static bool rcu_rdp_is_offloaded(struct rcu_data *rdp);
+>  static bool rcu_rdp_cpu_online(struct rcu_data *rdp);
+> @@ -4259,7 +4258,6 @@ int rcutree_online_cpu(unsigned int cpu)
+>  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
+>  		return 0; /* Too early in boot for scheduler work. */
+> -	sync_sched_exp_online_cleanup(cpu);
+>  
+>  	// Stop-machine done, so allow nohz_full to disable tick.
+>  	tick_dep_clear(TICK_DEP_BIT_RCU);
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index caff16e441d1..a3f962eb7057 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -751,12 +751,8 @@ static void rcu_exp_handler(void *unused)
+>  	struct task_struct *t = current;
+>  
+>  	/*
+> -	 * First, is there no need for a quiescent state from this CPU,
+> -	 * or is this CPU already looking for a quiescent state for the
+> -	 * current grace period?  If either is the case, just leave.
+> -	 * However, this should not happen due to the preemptible
+> -	 * sync_sched_exp_online_cleanup() implementation being a no-op,
+> -	 * so warn if this does happen.
+> +	 * WARN if the CPU is unexpectedly already looking for a
+> +	 * QS or has already reported one.
+>  	 */
+>  	ASSERT_EXCLUSIVE_WRITER_SCOPED(rdp->cpu_no_qs.b.exp);
+>  	if (WARN_ON_ONCE(!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
+> @@ -803,11 +799,6 @@ static void rcu_exp_handler(void *unused)
+>  	WARN_ON_ONCE(1);
+>  }
+>  
+> -/* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
+> -static void sync_sched_exp_online_cleanup(int cpu)
+> -{
+> -}
+> -
+>  /*
+>   * Scan the current list of tasks blocked within RCU read-side critical
+>   * sections, printing out the tid of each that is blocking the current
+> @@ -885,38 +876,6 @@ static void rcu_exp_handler(void *unused)
+>  	rcu_exp_need_qs();
+>  }
+>  
+> -/* Send IPI for expedited cleanup if needed at end of CPU-hotplug operation. */
+> -static void sync_sched_exp_online_cleanup(int cpu)
+> -{
+> -	unsigned long flags;
+> -	int my_cpu;
+> -	struct rcu_data *rdp;
+> -	int ret;
+> -	struct rcu_node *rnp;
+> -
+> -	rdp = per_cpu_ptr(&rcu_data, cpu);
+> -	rnp = rdp->mynode;
+> -	my_cpu = get_cpu();
+> -	/* Quiescent state either not needed or already requested, leave. */
+> -	if (!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
+> -	    READ_ONCE(rdp->cpu_no_qs.b.exp)) {
+> -		put_cpu();
+> -		return;
+> -	}
+> -	/* Quiescent state needed on current CPU, so set it up locally. */
+> -	if (my_cpu == cpu) {
+> -		local_irq_save(flags);
+> -		rcu_exp_need_qs();
+> -		local_irq_restore(flags);
+> -		put_cpu();
+> -		return;
+> -	}
+> -	/* Quiescent state needed on some other CPU, send IPI. */
+> -	ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
+> -	put_cpu();
+> -	WARN_ON_ONCE(ret);
+> -}
+> -
+>  /*
+>   * Because preemptible RCU does not exist, we never have to check for
+>   * tasks blocked within RCU read-side critical sections that are
+> -- 
+> 2.46.0
+> 
 
