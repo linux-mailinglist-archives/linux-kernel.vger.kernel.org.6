@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-515265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276E7A362B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:06:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B924A362A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005AB3A75C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:02:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B63FA7A477A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6B914EC77;
-	Fri, 14 Feb 2025 16:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3526826739E;
+	Fri, 14 Feb 2025 16:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eYi7ThzX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnxfsNb3"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7F264F9F;
-	Fri, 14 Feb 2025 16:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B8B156C40;
+	Fri, 14 Feb 2025 16:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548978; cv=none; b=OxyHYE8V2dS1Wuz/M60CznHfv20tcj6GSLtPln/NhM3ck/2sS4e0jXcgu9XuBlB3PBXiQFu8iMsM6AhglojaHqULFIWn3IlhpBZO8/4R/0B556vJ5vm7A0ANTcXp90zAfHv3mM4cekyj5PSICtuWX1wzMpx15W+dgh5N5s+gAoo=
+	t=1739549071; cv=none; b=pz8r0Cmpvh5GfC83OaEMWFAGGIoaUhUjy1x4YKeSs5E5pxlmmabH5Z8iKdBdnAa0akao0BYOitlN/IoCpgrVEWvcLaL0vpfeHug4ZiK6XxwlRHRFiEsePnLa+KRmHDrT1ENdXeSVs3nIw1xPzacMTlu7MnU0OgZeVUe3OefCCR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548978; c=relaxed/simple;
-	bh=MAjpCZOZoyGfd6fah3oQUUOvsbLcuxHpsSWESwVYX38=;
+	s=arc-20240116; t=1739549071; c=relaxed/simple;
+	bh=40k2bFaPMVCxdWgPTG5Q+U8Nu9Zmh+DnNr+UJ2CsL7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEi6hxDcDV0T8anDNFRqa4d7qa3AFfSz6bbRchTqD6apnjMwuBdhnuxz2BMrbQkmgGrXcvZ6wNRNYr02CL0kg1+YdRaZlkkN/3HI5qnsZBHM11fgpo55ynejDb6jSpvjDkSB+DRysaVl3zidCvXMjfjrtiQa1ONWrEeFwSy4n7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eYi7ThzX; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739548976; x=1771084976;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MAjpCZOZoyGfd6fah3oQUUOvsbLcuxHpsSWESwVYX38=;
-  b=eYi7ThzXNvIiz7agQuNgTwmuNdl8YjN0h934I8I12XZWwGYGswwUGN06
-   01FtvTUGdjul7ZVh8rc7ZcTEWbuJkBRhKM2j3/jjskAKQpwX7fjil8PKh
-   sulmZMAyedvrAiQNxeWFhVb2EXpoQOC80j7lce9+2je3tkzlvOs4P3EWJ
-   uRsdp2rdiKnUDCNWyxmlk5hORykvVFPOAzmkmuhTF2gkXbxpaah+i2e9Q
-   1kql2Rc1li/5cJMWhz+JkBAHuWnHoYR64lZjwxIOqLJ0kZYu+jKK/KSgd
-   BFKBCM6Dc8BcfLw7pSY6pVptWWgZq+MYz69gaL0/0Kp8uJh3ZuM+ufXYU
-   A==;
-X-CSE-ConnectionGUID: t6yUfC0WQ/yjGXAd0R3OLA==
-X-CSE-MsgGUID: /kGJqZqPQXmNdcOYWzuEPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="65658042"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="65658042"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:02:55 -0800
-X-CSE-ConnectionGUID: 1tvWR5XLTECSx6EZF0ypJA==
-X-CSE-MsgGUID: 9fGnYwAnSjysFeiFWxbcvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="113349387"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 08:02:50 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tiy9P-0000000BXSZ-3hUD;
-	Fri, 14 Feb 2025 18:02:47 +0200
-Date: Fri, 14 Feb 2025 18:02:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 06/10] regmap: irq: Add support for chips without
- separate IRQ status
-Message-ID: <Z69pJ3BWp_cGV1yq@smile.fi.intel.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
- <Z69eue2dV37vw61v@smile.fi.intel.com>
- <D7SADDQZUERA.PT8QLVZ9ZN1N@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kq7EWSlwgXAe9mxZ2UBFLCEA0gtHiZ1l8VNDGGGS28dxm1iBVfVKyYzcJgRIjgB0+osJjJcbeSwKdCeXYhJqVYgpaecFkGul30jHn24B2tYrKIrQBT8M4rRgzg8+tKaTJuMWBLi6QypOr+3FRgosQeS7Yn1pz/QeZWUsmQzbBoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnxfsNb3; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2468673276.1;
+        Fri, 14 Feb 2025 08:04:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739549069; x=1740153869; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jg65XI36kch2lKh7M7ZeZJ4/dXm/KQiHYNWC0zJbbwg=;
+        b=KnxfsNb3gLClVUg9bqPT+hLbzwqwHL/zaR2HAZujVJqPpTSGNZRJny21UsbhHtFGEM
+         wpOgrV8qsw3WTvM3yP70aEdpfAOwGS6Tdx3rrhSwrHsAlpJIuBXlhb8mQLH6FOie/DDa
+         zKi6CZtapVDNn38V3hrVlzfbuMunqE8XmTlGjP59AjazU2uK2RLlqFGr6jk1cLeRPtv9
+         Unzbl/NxIaJ8njotjDkCJ6K6WAX6vEP+Ed0a4oAFaXmKdne+ylIkLeAwjSVUbtxXVMx6
+         2HBOEDwihTsu5myM70AlzPXOZWtlT7Sqrpei/xXRfftizkhENygCKrbvHQrl7MUWiV9K
+         BFEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739549069; x=1740153869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jg65XI36kch2lKh7M7ZeZJ4/dXm/KQiHYNWC0zJbbwg=;
+        b=wZ1axPYshR3ZPxVdfI6S0s3ttjLrlGDiHaR4Z9xiayJmhIwSe/HUOBvNYYFgXZx3AC
+         Tkb0t3r2AGHtKJ1YM9csDVUq+8uFiDYDQuGRXWr64ONLPUoFh35H2uV8/iHtTNUmSotd
+         tWxFNpiCe0hDt1oZVwzE2DlsgAP06zELK7YL6qxk8/RLW0qbpmYSy0mv1YFguXN1kTMz
+         7cjf66VYqyukiTzvzyEcGFrnx9R1D3L9pkhnnhVktMj59eWDbykeVGWFv+FZZRHC4zyX
+         +YjbaS3y2l9OIkeaeXytXnuU7QckIFTQT1oUYTpP/ctTa6hExYZoT6iXUnuTBmOQuPaD
+         0y1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKL3HuJxXOWtYXYIotXKwccvIVTNOaU3f2Ex5SqGHefnxY1Jum3+XoOUDFpmNEIEqdw7k=@vger.kernel.org, AJvYcCUljlmIhsySALP/O1IYKFDIcIlyTRGPAiyeSoi16cQXdIS0xgYpHPDJwv9v+UZIXuY7vYc3hB350M8xxgQc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOLQt6xBE9JscrzsJbURBPpMSJ8zz1D5oCUZS6+vj+bIPbtxE9
+	jmUllbhINCRu6MTurTMrJZz6XMz9pkUx204yRdp2wxemM2B+aojg
+X-Gm-Gg: ASbGncvHAd6+y9Z0uou88zt+ukUHp4nfzsgXun+UWAxlVgqm8x/NcxBFl2x0MMFoEUq
+	OvPq69XzJXXYekHgZjUm7Dgx/mlZtIabISAuWzQ0LOpQfExn0j5HpInx95F4JG40QChUJSKvz2l
+	mwQgur6sQPlTatQX3AOfHwNvC4xyxh1ZnT+6Hyp+K04ap+M/1CFya2G7ZmdXiT3H4ZBf6lO8E74
+	Ls1en3lXr0ZmZdGhU4qP/VIYtQCwwYQIgUrfQoQcwMd1X76Ih6J4pLORC/sCZfhlBQWYkRjPCFx
+	AvL0fG1T1EyMjcrDdBACRpewLzcVyn6u0XySnQwmpzmU77QtTAA=
+X-Google-Smtp-Source: AGHT+IEWTnBUObZ6GvHUjh4EkZcsg8NKWXrSgXJJN83DtepcFqo4+s4XqmFyx30JrAF6ZlzyLuDa7A==
+X-Received: by 2002:a05:6902:2304:b0:e57:d3c8:554b with SMTP id 3f1490d57ef6-e5da815c9a7mr7031668276.22.1739549068704;
+        Fri, 14 Feb 2025 08:04:28 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dade8c815sm1084946276.10.2025.02.14.08.04.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 08:04:28 -0800 (PST)
+Date: Fri, 14 Feb 2025 11:04:27 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] mm/numa: Introduce nearest_node_nodemask()
+Message-ID: <Z69pi2KDLB5eZ29A@thinkpad>
+References: <20250212165006.490130-1-arighi@nvidia.com>
+ <20250212165006.490130-3-arighi@nvidia.com>
+ <Z64WTLPaSxixbE2q@thinkpad>
+ <Z64brsSMAR7cLPUU@gpd3>
+ <Z64oDlh9vzvRYziL@thinkpad>
+ <Z68E_ar8l7vNOxgh@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,54 +100,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D7SADDQZUERA.PT8QLVZ9ZN1N@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <Z68E_ar8l7vNOxgh@gpd3>
 
-On Fri, Feb 14, 2025 at 04:49:57PM +0100, Mathieu Dubois-Briand wrote:
-> On Fri Feb 14, 2025 at 4:18 PM CET, Andy Shevchenko wrote:
-> > On Fri, Feb 14, 2025 at 12:49:56PM +0100, Mathieu Dubois-Briand wrote:
-
-...
-
-> > > +static irqreturn_t regmap_irq_thread(int irq, void *d)
-> > > +{
-> > > +	struct regmap_irq_chip_data *data = d;
-> > > +	const struct regmap_irq_chip *chip = data->chip;
-> > > +	struct regmap *map = data->map;
-> > > +	int ret, i;
-> >
-> > 	unsigned int i;
-> > ?
+On Fri, Feb 14, 2025 at 09:55:25AM +0100, Andrea Righi wrote:
+> Hi Yury,
 > 
-> I agree, but signed int index variables are used in all functions of
-> this file. What would be the best approach here? Only fix it on code
-> parts I modified? On the whole file?
-
-I would change in the code you touched,
-
-> > > +	bool handled = false;
-> > > +	u32 reg;
-> > > +
-> > > +	if (chip->handle_pre_irq)
-> > > +		chip->handle_pre_irq(chip->irq_drv_data);
-> > > +
-> > > +	if (chip->runtime_pm) {
-> > > +		ret = pm_runtime_get_sync(map->dev);
-> > > +		if (ret < 0) {
-> >
-> > > +			dev_err(map->dev, "IRQ thread failed to resume: %d\n",
-> > > +				ret);
-> >
-> > Can be one line.
+> On Thu, Feb 13, 2025 at 12:12:46PM -0500, Yury Norov wrote:
+> ...
+> > > > >  include/linux/numa.h |  7 +++++++
+> > > > >  mm/mempolicy.c       | 32 ++++++++++++++++++++++++++++++++
+> > > > >  2 files changed, 39 insertions(+)
+> > > > > 
+> > > > > diff --git a/include/linux/numa.h b/include/linux/numa.h
+> > > > > index 31d8bf8a951a7..e6baaf6051bcf 100644
+> > > > > --- a/include/linux/numa.h
+> > > > > +++ b/include/linux/numa.h
+> > > > > @@ -31,6 +31,8 @@ void __init alloc_offline_node_data(int nid);
+> > > > >  /* Generic implementation available */
+> > > > >  int numa_nearest_node(int node, unsigned int state);
+> > > > >  
+> > > > > +int nearest_node_nodemask(int node, nodemask_t *mask);
+> > > > > +
+> > > > 
+> > > > See how you use it. It looks a bit inconsistent to the other functions:
+> > > > 
+> > > >   #define for_each_node_numadist(node, unvisited)                                \
+> > > >          for (int start = (node),                                                \
+> > > >               node = nearest_node_nodemask((start), &(unvisited));               \
+> > > >               node < MAX_NUMNODES;                                               \
+> > > >               node_clear(node, (unvisited)),                                     \
+> > > >               node = nearest_node_nodemask((start), &(unvisited)))
+> > > >   
+> > > > 
+> > > > I would suggest to make it aligned with the rest of the API:
+> > > > 
+> > > >   #define node_clear(node, dst) __node_clear((node), &(dst))
+> > > >   static __always_inline void __node_clear(int node, volatile nodemask_t *dstp)
+> > > >   {
+> > > >           clear_bit(node, dstp->bits);
+> > > >   }
+> > > 
+> > > Sorry Yury, can you elaborate more on this? What do you mean with
+> > > inconsistent, is it the volatile nodemask_t *?
+> > 
+> > What I mean is:
+> >   #define nearest_node_nodemask(start, srcp)
+> >                 __nearest_node_nodemask((start), &(srcp))
+> >   int __nearest_node_nodemask(int node, nodemask_t *mask);
 > 
-> Yes. Kind of the same question here: should I fix only the code close to
-> the parts I modified or the whole file?
+> This all makes sense assuming that nearest_node_nodemask() is placed in
+> include/linux/nodemask.h and is considered as a nodemask API, but I thought
+> we determined to place it in include/linux/numa.h, since it seems more of a
+> NUMA API, similar to numa_nearest_node(), so under this assumption I was
+> planning to follow the same style of numa_nearest_node().
+> 
+> Or do you think it should go in linux/nodemask.h and follow the style of
+> the other nodemask APIs?
 
-Same, it falls under the "common sense" category.
+Ok, I see. I have no strong opinion. I like to have the API looking
+consistent, but I also like to have all functions of the same family
+together. If we move nearest_node_nodemask to linux/nodemask.h, it
+will help with consistency, but will separate it from the sibling
+numa_nearest_node().
 
--- 
-With Best Regards,
-Andy Shevchenko
+So, at your discretion. If you don't want to change anything - I'm OK
+with that.
 
+This is anyways the very final nits, and I feel like the series now is
+in a good shape, almost ready to be merged.
 
+Thanks,
+Yury
 
