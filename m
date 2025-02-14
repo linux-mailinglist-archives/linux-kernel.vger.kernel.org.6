@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-515184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76490A3616D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:21:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51CBA36172
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2287A67C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F319118965FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510B7267382;
-	Fri, 14 Feb 2025 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2E7266EE4;
+	Fri, 14 Feb 2025 15:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eftJfU1C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cLNOzJl2"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC5D266B4D;
-	Fri, 14 Feb 2025 15:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97380266EE5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546308; cv=none; b=a0knkq46tv03i2gGRsHYqiaE2PQzrwjNxAqyy/Yy+PMn4fgu75M+yGpZfS+bLA9O7/OlznxDVI+poS70gojmDfx2iedGsEHh5xzEsyk2awqj94aD13E4HwGQS1CsSKFn18pKRT3Hgd5KxdJwv7vufw4DYntVj80+iouxHcR+0ms=
+	t=1739546318; cv=none; b=qWfhB9JMQoJd0KEXjPWgGCaTK4+MTMZPAdNWNhRWCeatfvuzBfD2BYjz2/8ts46m0qWq0Z6l3q9fLXfqa+ZZGblVopDUuwvogLFezOz4uDRCREugWSDnsG5qnarbrOBmj4dSrwvtT+fi/pUBbhTfwdwdsaBOgQA7UvNhd483MeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546308; c=relaxed/simple;
-	bh=Ccy4yBddiH1ImFNY9Pm+Nr1mImwwalRXFCXZ00/riwg=;
+	s=arc-20240116; t=1739546318; c=relaxed/simple;
+	bh=khiM/ryaaEil6pLN+/17eJzNX76ge6PFhXLfoJXCGLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3iBTCEU+JBmD24aaCWv7Us03n5QC3Wmttvrnu7oHbEyTKubIF610/QcJXptXcFRNyA9TIHhFHD10kDAu3Go4SLbEK9bx7fa6640Pis8cMrFmYMnn1bBVpvUMj/tnkpW8QsU4htwVwmixO1cwaNVI8J7sIcccFR5Wao3J+Oy0MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eftJfU1C; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739546308; x=1771082308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ccy4yBddiH1ImFNY9Pm+Nr1mImwwalRXFCXZ00/riwg=;
-  b=eftJfU1CIxY8uPbX6x7NhsIFqunEcl6hNEdssPGBkuzhA3bkHnYTqvvn
-   erMrvZe78odwlNFz7G1WjmpqO+X/deGRSLVbRNRvA4pbpU0IeulXln1mz
-   tYLtt4c1rDFTU9ehTxOUNFppAW78adOwPY5q7DghctUmY9kAQ/8PSU1t+
-   uT2eYu+nqgvWoUe1jWxkQ9sEC60YhfzA6T5gW1Oo2WhUIyIdwK4GFQUxs
-   oujue67UNyv4jnm2PJAEEdoPd2btwGjADsDVC9ss8bcueGgmRA9+FMev5
-   4+tJyFkiHjt81ZiB+CYl33lM3Sr2ruT7HRCosuiUe3K7TSNNGuXh7KQpU
-   Q==;
-X-CSE-ConnectionGUID: vPXqW9CPSue6iAuCMCSGMw==
-X-CSE-MsgGUID: RSpD4nYjTiKgqmGet3/zog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40005253"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="40005253"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:18:27 -0800
-X-CSE-ConnectionGUID: 12OXvvsISZ6LDtN9Vlx7Jw==
-X-CSE-MsgGUID: dG/E/93STyKP7B6gt/kBaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113970982"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:18:21 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tixSL-0000000BWmd-40hj;
-	Fri, 14 Feb 2025 17:18:17 +0200
-Date: Fri, 14 Feb 2025 17:18:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 06/10] regmap: irq: Add support for chips without
- separate IRQ status
-Message-ID: <Z69eue2dV37vw61v@smile.fi.intel.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpmM20ntOw+zNmDgxpj6+fbsUm5EZXAr2IZKGPLhJV5dYz2lnoLpPFlUE7wcxxyQC44taDshr+TM1wTEWq2z1vK/TeO564Zh/dKSyq+PhcrAQ4GDijDU/z1gJBgjuzQV5C9Y9RjlO8+VU3wODi4T7Vd/8MMWKlPd7LJYKPf8mM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cLNOzJl2; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-308ec50eb3dso22457181fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:18:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739546315; x=1740151115; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OcMZLvgo2+3kThO/hfiHuPvII26oDwywV7kGrf9ppp8=;
+        b=cLNOzJl2A1/vuizglh4nHJ6+tGN7YWDR+B9XPK9Zzr9AEnkTK5rHMFPcWm9oLniytX
+         fTIhJY2ZWnLasJApXyNfLx9DolTHxRSwxS2pZ42/wI39SgbJEq8p49WCnoUkHxaVySLQ
+         2jBzk/2CVOaZOXqbYaZJUzhz/drGb44iOjvcY9+sxPWZm5+Zwns8M84+0cnxCJyqjmhj
+         zxpZZ3mbDSaYck/zgbdaVbGtwADZK8Cg3Tl54MM3vAtYuVHV6YsWlQUt414t8m0n8wjt
+         DmZPwuufiwQAI8OobOD2bm+V4fvqcGNVVrlSC7xWEhOlrsOqTpHMMZorceqKLjHlFfeN
+         sk/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739546315; x=1740151115;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OcMZLvgo2+3kThO/hfiHuPvII26oDwywV7kGrf9ppp8=;
+        b=WvuDmZr1mxf9eSi53E66z3gmvC5b4YI4uA29tqnM9xRH/dqz07iqioli+TIf7q82Sl
+         9AMGYHc57TrDl8wqVCnXxmRExVEz1ZLZJQmuN4IAOnGQZgZzJpZ13t57r/8pqToPrwY8
+         8gIAiy39gGcrjL6T4/DW6oOfsJqx6Tq4YVN84+jR48pcZIYQTZtMpyfa2axdJ2aajk3+
+         I1gSSh/tYx+I4rMJohYjKCyhAbCyb24vauv1awU0vRpVaeRcnDzp9zqyBRtvXP8iMl7o
+         co3BoTriUCzJ+tfg71oc0AEIJl3hg3GRWiANifaGvsC2I7vZUF5DmnpC/ZCNAjw0i5t2
+         2M0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVG6iwrW1HHHLjzUdmZjiP12lmha/7brRcCnJw38lDTumoi2l0sqNc5ou4hjPo+iIC7+MnBHx6DGpRNQkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Bh7s1nkVtwxQ3roO1bJksH5MbT6kfyTrdZBDtJrVZUkzpRRl
+	GIwp9Ew7MtvTAN4oS9xExyoUiq1Gjmhwwh3KRBJ7jq19UlvwxoAnAm52DyNaNM4=
+X-Gm-Gg: ASbGnctXo5Y6ukBFfGGIdJ/+klbKCsz+xuDdCsrfcCONOQQ2DRk/UPVs/b8WJRgYo5h
+	wrwn3siYSXMCGEuMx5lnTBZ5uocMxdMLasIIyYjVUfnwz8HFyMzLa0OIXZwuoeKdv2BGH222wnb
+	Cf5QpaT1eNU9lLUQzeSWwBYYMpu/Z36S6Vp8N3LQB5PZeASsXnqNzIdVTpKyDsGut4ghNDER+re
+	xqeQvWhRzBVoRX6Dun+5fJw51wjGW2LJnhLIONhU3mb+WTUDbAnJ7uz5YieJyvQqtmws5IeRMg4
+	Yn/Lq62XaLWksgMh4VpqtDpVFdO9DJVZxqpnwMb2em9CWs9OSTFKngcwd5sz8XSnaozhvT0=
+X-Google-Smtp-Source: AGHT+IEezzYlzsneQzuZxQe4Yo+jf7QLilk9BuU0obW1zoL2W/XDA76D0mSIeKsRAt8vyBqyYw8shw==
+X-Received: by 2002:a05:651c:b29:b0:306:10d6:28b0 with SMTP id 38308e7fff4ca-30903630202mr37322251fa.1.1739546314624;
+        Fri, 14 Feb 2025 07:18:34 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309100c528asm5887331fa.22.2025.02.14.07.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 07:18:34 -0800 (PST)
+Date: Fri, 14 Feb 2025 17:18:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Marek <jonathan@marek.ca>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH v3 2/4] drm/msm/dsi/phy: Protect PHY_CMN_CLK_CFG1 against
+ clock driver
+Message-ID: <g6ddzfh6vsd7zgyopzassfp5ehife2t5mlq5jbjdcas3ewed2t@th37tsj7mmsw>
+References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
+ <20250214-drm-msm-phy-pll-cfg-reg-v3-2-0943b850722c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,75 +92,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214-mdb-max7360-support-v4-6-8a35c6dbb966@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250214-drm-msm-phy-pll-cfg-reg-v3-2-0943b850722c@linaro.org>
 
-On Fri, Feb 14, 2025 at 12:49:56PM +0100, Mathieu Dubois-Briand wrote:
-> Some GPIO chips allow to rise an IRQ on GPIO level changes but do not
-> provide an IRQ status for each separate line: only the current gpio
-> level can be retrieved.
+On Fri, Feb 14, 2025 at 04:08:42PM +0100, Krzysztof Kozlowski wrote:
+> PHY_CMN_CLK_CFG1 register is updated by the PHY driver and by a mux
+> clock from Common Clock Framework:
+> devm_clk_hw_register_mux_parent_hws().  There could be a path leading to
+> concurrent and conflicting updates between PHY driver and clock
+> framework, e.g. changing the mux and enabling PLL clocks.
 > 
-> Add support for these chips, emulating IRQ status by comparing GPIO
-> levels with the levels during the previous interrupt.
+> Add dedicated spinlock to be sure all PHY_CMN_CLK_CFG1 updates are
+> synchronized.
+> 
+> While shuffling the code, define and use PHY_CMN_CLK_CFG1 bitfields to
+> make the code more readable and obvious.
+> 
+> Fixes: 1ef7c99d145c ("drm/msm/dsi: add support for 7nm DSI PHY/PLL")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
 
-Thanks, this will help to convert more drivers to regmap
-(e.g., gpio-pca953x that seems use similar approach).
-
-...
-
-> +static irqreturn_t regmap_irq_thread(int irq, void *d)
-> +{
-> +	struct regmap_irq_chip_data *data = d;
-> +	const struct regmap_irq_chip *chip = data->chip;
-> +	struct regmap *map = data->map;
-> +	int ret, i;
-
-	unsigned int i;
-?
-
-> +	bool handled = false;
-> +	u32 reg;
-> +
-> +	if (chip->handle_pre_irq)
-> +		chip->handle_pre_irq(chip->irq_drv_data);
-> +
-> +	if (chip->runtime_pm) {
-> +		ret = pm_runtime_get_sync(map->dev);
-> +		if (ret < 0) {
-
-> +			dev_err(map->dev, "IRQ thread failed to resume: %d\n",
-> +				ret);
-
-Can be one line.
-
-> +			goto exit;
-> +		}
-> +	}
-> +
-> +	ret = read_irq_data(data);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	if (chip->status_is_level) {
-> +		for (i = 0; i < data->chip->num_regs; i++) {
-> +			unsigned int val = data->status_buf[i];
-> +
-> +			data->status_buf[i] ^= data->prev_status_buf[i];
-> +			data->prev_status_buf[i] = val;
-> +		}
-> +	}
-
-...
-
-> +		for (i = 0; i < d->chip->num_regs; i++)
-> +			d->prev_status_buf[i] = d->status_buf[i];
-
-Hmm... Wouldn't memcpy() suffice?
-But okay, this seems to be not a hot path and the intention is clear.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
