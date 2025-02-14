@@ -1,154 +1,94 @@
-Return-Path: <linux-kernel+bounces-514723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75154A35ACD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB15A35ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398AA16CA72
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D231892C90
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F7124CEF1;
-	Fri, 14 Feb 2025 09:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D4D25A64E;
+	Fri, 14 Feb 2025 09:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="VGWfD1X2"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QYT4nrEd"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2EE253B46;
-	Fri, 14 Feb 2025 09:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0335A25A626
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526536; cv=none; b=O078vjHXt4KxtpSmphS2xeFC5aNtWF038FVlrUjb9VkzCu3ng5vSeMMVrrZcTOcyjsvhQwA2H6uLpt+l8O+yMy0XJK+vizDaUeJzUPa6GbjIk1u8KJKPrTYFrNo5Lm/u/K2k3resgI3EuUioEk+DLti7JXKQ6Ikb0nDC9g2enCE=
+	t=1739526521; cv=none; b=nLF2I2nUiXEXi+rDREiYdlywfOFuLHw9SnWPzPk3HtaWH5nGUEQI1jZeNlbAsqDgizQnVfvOjxwgLDlefHZhbkJkvwYxTHG/0jzEBVwapUWCSTIEVvZNU28pmjh7u9qFzU1F46eZnNJILdah42K5uH4JG1trdjG6hFPsaHFaoOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526536; c=relaxed/simple;
-	bh=O/8DIOSl5f/Y31KM1037Yj7JP2uqjIWVBVFxogazJiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RrUqcPxMncwjJycLAnV8kLCvW6WNoDYw7xXRT+uvuwRabWGwMJ/wQ8DwHZryc53qGfNQjXuDAj4D52gHUQummLKFIQIqj9t8vDJfkZiPeN8bbHXrwzIt22QM4L0I3Mlmnc7VWuE38YJe+RiXn+IbQelqrny+QfexX7pc0K4AWRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=VGWfD1X2; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739526496;
-	bh=NAnqMvpz3CgMXnHWGFEBjzdavwVkEzeTJ0xJecoflYw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VGWfD1X2NFjRTxsb3x5d2n94r2fkvs1BY9rvVS8O+9ASPXtQVkVH51//ZKVlV9OD8
-	 bX0L+I7uho62jqadSSrWvVkXWv62+KERXT0JLqU9Z93cGXQEHr3uMUcUrNT7lGyL/o
-	 d9+ENqqOPcJDKAOMPWGYwtxTuY+UG5ZXhYorv4NA=
-X-QQ-mid: bizesmtpip2t1739526484tw7hc1n
-X-QQ-Originating-IP: hzoQEaX1BdaUZ8Hg3TePiaMBVM3pnsJ+6yBRy4x28Y8=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Feb 2025 17:48:02 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14775040142801817448
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	macro@orcam.me.uk,
-	masahiroy@kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v2 0/2] MIPS: dec: Only check -msym32 when need compiler
-Date: Fri, 14 Feb 2025 17:47:58 +0800
-Message-ID: <F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739526521; c=relaxed/simple;
+	bh=KE/1PS8bSk4dH0R2K60/pmTjlC5i51phdJ5NWCLMzN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+n9FeYcFwmKl2YapCNCW4w2Fxc4HgPUW5N+yFQGfiKkf9fk+x1RX747tCbHwaybLrW/QHHEutH00vxQ98/fGBobl267i8zRuQzia6dHlg7qUpoq1TEi/uHdCk/yGuVXVUQny8emXLw4Xw0rJpRgdPTX+mOFLFb3LMg2+Vv5fac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QYT4nrEd; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c05c30e0aaso178056685a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:48:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1739526518; x=1740131318; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MDr4jsMykS2/ggucs0AcLI/tKQzpn55xwyUNyvWALTY=;
+        b=QYT4nrEdOPWxvCEE7dk0xSkC0VkmKFlVurzHzDGB8XaeZCciACCLQdg+xtXbPgj/My
+         199RhFB16sD1A6q+SPkQ7t2UEnlf+qjxeiHQvi6qleDy7ptoPsMDPisxS/m0euzAh0qN
+         UJ6WKSa0xmSunLQWF/EJjHMFQUJLnAIfw7rY4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739526518; x=1740131318;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MDr4jsMykS2/ggucs0AcLI/tKQzpn55xwyUNyvWALTY=;
+        b=luPY3/LWyvtXtpBZJnEEO0PS203+9Gc23y0Bq7bzvSUYKJHv+DUBc+lV1Rr3xPSMx/
+         +WFgviychhyU+z5boN8axWtWEey0rwzIeKuqwuQry4LPj9CcCp2OHK1XHFD2Zmt+MWT/
+         /C8wwC2ATVzHiTlQMv+/zS7PuNxlMhlfyB0bejVWcTuuf5Q3TP/XsiClfGaB522JGXmq
+         IbzIvk444v6eyFpS+BNHhopY5+c3mr+hlEH+39mxgWcId7uTUnpZROld7PftsuS1OspS
+         nUOUO6Ozv7jAyQPBdB2IZjT82MiRG+zUftISxrPhSBcVs79fXrMHTbtk7AcY5udeiv6A
+         F8aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrGoHy4ryEAz0p2DB5C3SJpjjC2vUBsSf/9ABV09LH5zfQBRZko9h8EaU+rUQ4jXZh2zC7k6C+k3vZ4HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoOZKF3UmYW897QxR351JgCX7X9KgADFI9uN0wkc1LJ2m/IT4E
+	RWpMNmDzmv6rdJ5odXBqyji9UglBBuGdYm0nVYhBRZi0NmK7d3fkj8ejQu2lcwmRVLDf0kpsHon
+	+CS79eTJB1GEd6Xx1xVKO2yRC0++f0OY5GQp37g==
+X-Gm-Gg: ASbGncuxU4rRAIruiG8RI3MgIIgP35w00+cw1SURlg+76oIdp1HG/1I7SW3RxACLULi
+	H1h5MuiDk7HOwyhC3rijITbS+HLuOFwxu478W8bNPYrSFNlkZPGCB6vFstdN2gCS91CAF55o=
+X-Google-Smtp-Source: AGHT+IGuB62P59Ol+6vxloURqcamERa0qYdF0pLayov3aelu2QkTJBkViDqxaan7Awl6SY9eZnVYSryW0tCpG8J74gQ=
+X-Received: by 2002:a05:622a:593:b0:461:22f0:4f83 with SMTP id
+ d75a77b69052e-471afef5585mr160384561cf.43.1739526517753; Fri, 14 Feb 2025
+ 01:48:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N3iD438OGJ7hGK0NaeWMxyTtblKV6UJcTJWX9vlLcuuX1tsrenCVk5Vu
-	gzgUk3pHxm96e5H+kbqXU6MTEoq0TwV/UMyENawIVovmIWaZdfOXxAw+O6h26SxQ0LeJlsD
-	63bvwzuziNd0rjhAsrK84uelaiELd9qeLQ5Y3l5AVpGJyNNhZnGVU2BVPkybhLxgqffraoQ
-	NAWJ4kgKgYo5BBdHXceJH8QazgkZcW7lUY6LBxK81VCRRPwWhE8qpM/hyVTz2hoBj+BeeRa
-	ANN/AhYikjiZap8h0MzhAch8yV1lUZfZLDKLvqJgK7YEpBwuT3lEMlDqJhzU2hIG1asrUuU
-	k31A97N845cS2gu8WtM/DxqKDmAnjfitAirBMYVxFL05QRY03/t96Wbd7AZeT5FrlXZ3kfe
-	2uaUO9jyHiyj+SbYlbbCuj3i2MkPK15ttQPiVZdQwbWmLsSo/Q6+aa+ezblqqvg832gCsRn
-	H3bQtYm5o6NjxEQ7N5tMv/LjLut2NMXG3yCAEn+XR2U2Dy8fDGz+N+xWfbkUatbC/wZrhi4
-	X6IeZ2VS9ekO+Do3qNgXS8eBQyPHZzCpTs56bJg3B8YtNXqFYTSiBg4nlOW+2qDNyPE1pwj
-	VMXALEru0clfuvGzSfJG1vmi4XQzmUudJz+bzUmHS5OUGe2FvNKY/Iohtk0dbqLzeZ/Vxzz
-	ZyKMsRrTc1KEjoc+niSFAZLLy2msdsyMeZK3+Ilw1FabSm7pQwc1ePxLuytcEV4qU5lyEmh
-	66xu/5nha3n+xy5XC+OiQtx9zxzo4vcUSvns5kPOg6LroKBlmmZYvQu8kmIAFcl97jCVAyN
-	T/aQ/jCLwUcvMmNd34K/UemEcywZ/CcgChatxLOHCifEvpgi2zPjpqXDd2GggtbMzfMBq1s
-	VHANzq/WNtvGhgaNsulhTkBorUjptBiwIbOSkM3ur6H+IIBx7imE0zv6gNp8o6LrwS127Ru
-	mwHHg1lpylAYVBJnfPN6zRcxgozQ96TOSV4YSVS+hJUAYx7QoMfUAvkyYKGPyhamZSWxrzu
-	MnvCJ/pOXwcY64fH5aVd29NEgiu8KXdiDMLab3J7JmCjis3RsCQ2EbA7eHPNA=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+References: <20250207133502.24209-1-luis@igalia.com>
+In-Reply-To: <20250207133502.24209-1-luis@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 14 Feb 2025 10:48:27 +0100
+X-Gm-Features: AWEUYZnbRxMitMiVBkeyxPOZvfKFE0ntNolS4pNWHZK8u6Gg05D8SwmA8SFkAbc
+Message-ID: <CAJfpegsymDHQj800wtD6Tq9fSOHjJ+UJ7dhvPf9Ut0LT71us4g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: removed unused function fuse_uring_create() from header
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-During make modules_install, the need-compiler variable becomes null,
-so Makefile.compiler isn't included.
-    
-This results in call cc-option-yn returning nothing.
-    
-To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
-without -msym32" error, just wrap it into `ifdef need-compiler'.
+On Fri, 7 Feb 2025 at 14:35, Luis Henriques <luis@igalia.com> wrote:
+>
+> Function fuse_uring_create() is used only from dev_uring.c and does not
+> need to be exposed in the header file.  Furthermore, it has the wrong
+> signature.
+>
+> While there, also remove the 'struct fuse_ring' forward declaration.
 
-Moreover, I also identified an unnecessary check for KBUILD_SYM32
-in this Makefile section. Eliminate it for code simplification.
+Applied, thanks.
 
-
-
-NOTE:
-
-It is particularly important to note that this code fix does not
-imply that we have resolved the problem entirely.
-
-In fact, the entire application of cc-option and its auxiliary
-commands within the kernel codebase currently carries significant
-risk.
-
-When we execute make modules_install, the Makefile for the
-corresponding architecture under arch/subarches/Makefile is
-invariably included. Within these files, there are numerous
-usages of cc-option and its auxiliary commands, all of which will
-return empty strings. The reason other architectures can
-successfully complete compilation under these circumstances is
-purely because they do not, unlike MIPS, check the return values
-of cc-option and its auxiliary commands within their Makefiles
-and halt the compilation process when the expected results are
-not received.
-
-A feasible approach to remediation might be to encapsulate all
-usages of cc-option and its auxiliary commands within conditional
-statements across all architecture Makefiles, preventing their
-execution entirely during make modules_install.
-
-However, this would lead to a massive number of inelegant
-modifications, and these broader implications may require
-deliberation by Masahiro Yamada.
-
-Regardless, this does not preclude us from addressing the
-issue on MIPS first.
-
-Link: https://lore.kernel.org/all/41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com/
-
-WangYuli (2):
-  MIPS: dec: Only check -msym32 when need compiler
-  MIPS: Eliminate Redundant KBUILD_SYM32 Checks
-
- arch/mips/Makefile | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
----
-Changelog:
- *v1->v2:
-    1). Correct semantic errors.
-    2). Adopted a revised fix: Using a check for need-compiler
-in place of KBUILD_SYM32 check.
-    3). Swap the order of the changes in v1.
-
--- 
-2.47.2
-
+Miklos
 
