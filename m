@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-514609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C008A35941
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:46:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A916A3593E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1111890E41
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD82F16E49C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36920227BB2;
-	Fri, 14 Feb 2025 08:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC37227BAE;
+	Fri, 14 Feb 2025 08:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WG9i7WlS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ertDIWL3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8849F227BA3;
-	Fri, 14 Feb 2025 08:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7143207E13;
+	Fri, 14 Feb 2025 08:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739522744; cv=none; b=Y6thfMcrOSDJBNw9mbkr6mKuGg+q1AdPaGUu6qN/IwfX4cjU6wp7sGzY/AHxm+KARWZTJWl3RbVCB54D7Icwj9cKCJtQxw6xezehdngX7B1wWBj5sDNnnceoPOoFms81CEumeUVUSME2LXIcigEamMK9nIZhwpfrmSftEsqpY4o=
+	t=1739522756; cv=none; b=fhOLt49CbQuyDUIf0DpZ9GHc7c84wFpm2wTHm/I0v+kCMblKT5SP/u328hsdS9x+3rN+2ff+Y5pX0NAwvyUlqnGLYe6RyRhFti31bHB4b6/HjoPOev+mxu156hqWE1xShT6NucEDcXWG09bI6Ht+qCWr8cECs7MB4PcEvBcMSXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739522744; c=relaxed/simple;
-	bh=Jfc7H7jl7D+i12XJhv+Pu+5TzsvZiCzzGUULroEicnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fS5nZGOKME0kX8tQvsNq3CjgEhNrxsPR7hcX+ukYym0Ihz7bUszmAXOj79E6gCJEBgvnebejK+ss/DX02GwRSwauR4+dimx4w0NuzgzAmBE4HHXnqvAi9lOO07WiyO9fM0ithXXm1XKy5+AXfZ+FNMifoRDzgWhC9sJ/i2pryaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WG9i7WlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF82FC4CEE2;
-	Fri, 14 Feb 2025 08:45:41 +0000 (UTC)
+	s=arc-20240116; t=1739522756; c=relaxed/simple;
+	bh=fjB8HqmqVH8rp5Jz5lXC7wUNsIKwFQMVWWlI1UO4+4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFMPId243ffEgfin4F6Z+Dqt64rrhzL5SWvRv7irS7pqNhJRJ3qh73QnESjhfR8Me9/iH0upEHHpdtErBTUeS8udVWalTPDZawjv4WilSbqzCrQ4G8IvH0PoIlw8I7kbVmuAlBaB+2xvdLlbnyWgI0ZpNQD5GeZP7b+bpI7h2B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ertDIWL3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE00C4CED1;
+	Fri, 14 Feb 2025 08:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739522744;
-	bh=Jfc7H7jl7D+i12XJhv+Pu+5TzsvZiCzzGUULroEicnM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WG9i7WlSjlGwi045U6qpWsp5mcx9fWTW1aW/EP293XnC2Z+VaU2q6Vb4JJbuN9/Nb
-	 i9nZNvC2uMe6EgD6yarHr8XXEC82rokrRHsqG/bjtadI3cK+9t/uA3FOPjz8uU9taB
-	 LSGZ9Prft1mwhgSDMZ3bl9y+rzcxVp3K6yPWfmNc5Myqe1GvUja6BIHNt38ffNYw6u
-	 d7vCiGE+iH4b4IXHoG10TPCeXrs3jhKmzhIk9563oF10Z+8q2uhmImaHgH0aCrlV5T
-	 g5nvT3N/qAb5NyInyqKWwOamTOvIPDiPIJQpFBsJC1We2ESTSKriU12t80wWh2O4Ct
-	 ZWd7411qBTzlQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH] module: don't annotate ROX memory as kmemleak_not_leak()
-Date: Fri, 14 Feb 2025 10:45:31 +0200
-Message-ID: <20250214084531.3299390-1-rppt@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1739522756;
+	bh=fjB8HqmqVH8rp5Jz5lXC7wUNsIKwFQMVWWlI1UO4+4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ertDIWL3KPj20gHOsk85e8SE4PyO6D68ljhLxDCK2scAfJ437BBe5bLIOTjmfh0/8
+	 GbB5P3cMu3Fnj3USxCWsvTLsgem8rNzpUYGaxuXf2+dONmQlvbiBggwBfKXQe5rXke
+	 M4ckpk+oBXkmqKB2mYf52rzrgKExzDq8t5IVt/nucSCSFZhDwgmn6PVkWVchbzG75e
+	 eYBjPUv1FOQ98ah5s6cYIFeY58Ybnw7ftBbroHclC2kN6RKPrnA0TD0RGneA6QCvDX
+	 a0StWKYfCtUyfp+UpTiaG6YJHSuE58TB/+6aUgYzPl0vxVvCrqEesddeD0iAPEv4JR
+	 fxWtBD4/aujEA==
+Date: Fri, 14 Feb 2025 09:45:52 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wilson Ding <dingwei@marvell.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, andrew@lunn.ch, gregory.clement@bootlin.com, 
+	sebastian.hesselbarth@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, salee@marvell.com, gakula@marvell.com
+Subject: Re: [PATCH 3/4] [PATCH 3/4] dt-bindings: cp110: Document the reset
+ controller
+Message-ID: <20250214-pony-from-small-town-b48816@krzk-bin>
+References: <20250214065833.530276-1-dingwei@marvell.com>
+ <20250214065833.530276-5-dingwei@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250214065833.530276-5-dingwei@marvell.com>
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Thu, Feb 13, 2025 at 10:58:32PM -0800, Wilson Ding wrote:
+> Add new compatible to be used for CP110's reset controller, and document
+> the supported reset lines.
+> 
+> Signed-off-by: Wilson Ding <dingwei@marvell.com>
+> ---
 
-The ROX memory allocations are part of a larger vmalloc allocation and
-annotating them with kmemleak_not_leak() confuses kmemleak.
+Subject: only one prefix
 
-Skip kmemleak_not_leak() annotations for the ROX areas.
+>  .../arm/marvell/cp110-system-controller.txt   | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+> index 9d5d70c98058..a5cc1360969c 100644
+> --- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+> +++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+> @@ -190,6 +190,38 @@ CP110_LABEL(syscon0): system-controller@440000 {
+>  
+>  };
+>  
+> +Reset:
+> +------
+> +
+> +The Device Tree node representing this System Controller 0 provides a
+> +number of reset lines:
+> +
 
-Fixes: c287c0723329 ("module: switch to execmem API for remapping as RW and restoring ROX")
-Fixes: 64f6a4e10c05 ("x86: re-enable EXECMEM_ROX support")
-Reported-by: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
+No new bindings in TXT. Only DT schema.
 
-Peter, can you take it via tip tree?
-Or you prefer for Luis to pick this up?
-
- kernel/module/main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 974821d6e85a..3dbe23098433 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1250,7 +1250,8 @@ static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
- 	 * *do* eventually get freed, but let's just keep things simple
- 	 * and avoid *any* false positives.
- 	 */
--	kmemleak_not_leak(ptr);
-+	if (!mod->mem[type].is_rox)
-+		kmemleak_not_leak(ptr);
- 
- 	memset(ptr, 0, size);
- 	mod->mem[type].base = ptr;
--- 
-2.47.2
+Best regards,
+Krzysztof
 
 
