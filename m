@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-514751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABADA35B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:03:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C16A35B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF9161892998
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23703AAB1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF29257439;
-	Fri, 14 Feb 2025 10:03:11 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9749253B4B;
+	Fri, 14 Feb 2025 10:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUqVeDlm"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3BF186E40;
-	Fri, 14 Feb 2025 10:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8B12236F8;
+	Fri, 14 Feb 2025 10:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739527391; cv=none; b=QyQDd/tAvYeZ+pikeU89YPVlcmPJQpicz3mxPGrqJI9/b/hOfG2ukHI0BQJKAD8LXhHBIk+B3Tg51rGXog+KBbr3ic9mmY5huRexC0YBQuV150qCZxJ62QinbT1TB3d/pjvS3Hp2FXR7fondZtHDKIy5fotdqGJDaZDRmHjGJO8=
+	t=1739527473; cv=none; b=K2kdiqTaAslXq0OOYf3SaUJ+JscV1MT2M//SycMVP9L9IyKfRFjmZ7Q6OgRUT2Q2MoAOYu6h6Zvt5iHXU7akkIbdOuAIDZk3Wlr+w94aG2mgH4GEF6CvMx0vVRUwKF4SXTZfsNkwbuFM9+8eL9kfc83YXkL1THUES1S/kdg0oIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739527391; c=relaxed/simple;
-	bh=srSZy0fGEMt6o4wncQG0hGfi+JWU6PXfZLThmo6ElvY=;
+	s=arc-20240116; t=1739527473; c=relaxed/simple;
+	bh=O5+hvzeUVTaanAFr7pzPUiUCZtR0kLvDBOjS27pRU9g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RtLWJ9TmOEsOTBZc88dwyReImWJej8C4sFJHrtp54ihhloB+sDROBtzrfJP4F96T9y3lojaTJKM9ydKW39r75FN/hO5THG4N6nWnyFUvp+w++GCrQxMg41D2nRo0+A/UiEWGQL3ljxrol0O/d6Nvt4+Mkm+W++veDkKgL/rB5LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=UEqMFXcpI+Xux7f4OPf3Lw0q+FSS8izF26+pQBRsMmxjAl1Ktal6PKLStI1p6ZA43H0a1JM1Mv/XZCLul9p4PLU22agE5qfnu59c1RooAW/3iIL9Z80j3pva9NdOZBdQZkWWo2MNMXq/ociCw4460gjklganHtEeWZfZGXplcrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUqVeDlm; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4bd3763900aso54129137.2;
-        Fri, 14 Feb 2025 02:03:09 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4bbf5c10865so560469137.3;
+        Fri, 14 Feb 2025 02:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739527470; x=1740132270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vctiJ5pJJIOhGH+h0e2tZwQ96eqyBSN4JZq19MvB2XA=;
+        b=PUqVeDlmpenP3WHtXwhJRdY6zw+7tLXHzvhAU5EkxLpn+bXLnrTY7K/BpxAUfx0phK
+         sbXFa0dsTWLeXvBlcGtdtTIzE1gejSOYy8wgcrdWTSRSiQ0Rafegnlcd9oeMVWXk8SAP
+         nmJBd52NFSbZaWAgwe5pJYrlLiL6qrdZcsehZ7scfaI9c6Cs9eONTHTM9Vv5SN7wjBjd
+         NSdwQZbCLzg7xE8zf6e190MMfaQkZucw5oTfhrpJPu7JJlHQ93ebAEgNp6n2kqivU50v
+         tQphbefGMfw7E7Nq5Usnym+CFav7y777MmvLKwC/wWvaLbGJvTUUq9H1mG1VOGBBOSDz
+         GETw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739527387; x=1740132187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GwRMJibn/gtsGcl7fkUZirnJvkIAEeTn8KQ8iBAEz8s=;
-        b=LEcdAuNAd+dHbT2Ydiy7rqiU/5jSPbx5H5OxDVfrTfiJCj9iBzFKm1QYZxdm+sictK
-         AQSGUlh6QWb6u66kKx3i0vC9VEgVSiKAeg4RXhLIv17FTurfdzmMHi5gEzPg9iEn9gHO
-         Yk37M57+KoTTf2+BtbYij+qvrXhh8g1hWQ3fRAwml68FAOTNc4JpdsBynhZWiCJSjWJv
-         j87YkHM2NxrXItd2Ht/ATBzURjrRr7DC5ipzswy8nMjqaQAyJwzxZBJk/emV0VI+EWel
-         1pDvCdbEAPUhUpT2cDSEFVqtLHAw8h/xaTSsz3uBvWPmT1ebZfih5ASu6GWR2+NIYocd
-         FfPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTDLtcDNh9n6oe0Mgc5rAvR1fCOdPLi7TC535PI3BaO2OCn4bZmpMHX/FfQw7FG4YvoiDFL7x0qj8=@vger.kernel.org, AJvYcCUw+Y9FUuyI21PkzBztnkOYinidmhy9/8M9OrS8CODdFOmC6CP1HBzehwRvZGRzn+bRutb2tRWXo+ZaUvNU@vger.kernel.org, AJvYcCWaY9duM++PzMMwyv9ePODq7gPXboUqatJeXjJiLwPjCe2oJINB2KARg2gRqPpH4YFWnMkw0MmMyOtDQeBphBlNk7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0v0VjIyOU/zi5P2fCRLJMFQx8OudX2zU836Yh9TLpHF63Ab+g
-	+eYSRPQdlsCphYtWKWNbK+dqn2UXkWgl9PeokEXw89OFgxQOp4V11O9hPTfdj40=
-X-Gm-Gg: ASbGncuyJxg9VklCXHCRBS/3ANIZpQjUC/nAaTL3m3KNkwlmm50JCy8rAX8qQSGqG7D
-	FK1N0LrKlO7VXDKaBLaYHYlqiM4Uiji1MTLBT9CMtaSa26RsWX7ihvGBtEkveVNijMHXUysx9Tb
-	dr4QvWtxBh3Sa2Kaccah+FXs+xDRymJ8j/kRF1/c5sfJBoMM4kwdhomd3c4ymQMG6FPsQd2hB5i
-	oIt5wMWEtsccjRIDrJtg/g3P/dIRk+Tn+GucqfuP6tCSF984yqEc6tMR1OzynXGK9mR1GBnhP+v
-	lVZkFO2nppbIf1EhNHt62IZn/1bqhtrXSVzIC+Q4KhmpZ60+pPgoMg==
-X-Google-Smtp-Source: AGHT+IHq8XR3Kph+vnEd4RKcMTxuWlJ7MVRPl/PLwlJfmK0GghznfW/ibJW8XiBapor41l2Xq8aYqA==
-X-Received: by 2002:a05:6102:3f0a:b0:4af:c519:4e7f with SMTP id ada2fe7eead31-4bbf22e8233mr10005831137.18.1739527386837;
-        Fri, 14 Feb 2025 02:03:06 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86d4e8asm468119241.34.2025.02.14.02.03.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 02:03:06 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-864e4f5b253so568741241.1;
-        Fri, 14 Feb 2025 02:03:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7mlo89iWa3qrQ6KaheF6w6uJiKZMPYATHmeZ4IRN0fmD8PHEMVeQtsi3F+iUbCgiyxgSyfW6HhZKTCwlt@vger.kernel.org, AJvYcCWRvbrwEmgzUSMeBoz+Ftms1FI5OdU2vZBPHBfv+UULTprXD6wJNV+bWi+8r7uhTv0M8PYiWMM0qrTGqR+a2krdOhA=@vger.kernel.org, AJvYcCXiU/567wF6YE2BeZZz382AvqOrHSIqdL6Xs15Ouib3MtMC8xn4tzpN5D8JFlRCjtoZuOGtS1BFGkY=@vger.kernel.org
-X-Received: by 2002:a05:6102:c8b:b0:4ba:9689:872e with SMTP id
- ada2fe7eead31-4bbf21cdc3cmr9180315137.10.1739527386255; Fri, 14 Feb 2025
- 02:03:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739527470; x=1740132270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vctiJ5pJJIOhGH+h0e2tZwQ96eqyBSN4JZq19MvB2XA=;
+        b=J91jp5aIg5fo6Yh8XK0GAkk4rJLwxaUSdCsVveJm+HmFpbKWYWp3uCi+lw1lRBHqoO
+         kUZ6sAkiTUFwEMj3qDrYCG8lSchkB3FyHX+/MBs4xWbFmy3ZJoEc148+mVdCLPZepCvW
+         o0JJxzYw5XJ28sg489siXIE07aYLPcczg2p4AlWtRYafc96ZSDEtKpyUMwRRQsKt6pm/
+         xiCN8DS6OkeIvcmUrjA1ssUFkhFWJIe4AtD6qbKcNB6gKaPtCAKnnkNc9Ym9SBoctqhY
+         T79SnnOdRHuXZq8mdgALPYMarjgEvNLgLrHLl/Q6uS2AP8fGJpOa7jOi+Ycf1Ury+s8C
+         Mbrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3D3yJPfu+pT+Jtxn3NA1WUu4zb2ZP3oPrEq5dRpzVVH3KNDff8xMsISw/UXllFi4pIolsoXGj37zrgrYb@vger.kernel.org, AJvYcCXR5SMV3l3PeZigBPiceqKFeqD3fqybLZ1Sg5YcHT6WvVj/0zIS6mJbO6LpfJdEbM6iDf8QrbdB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmbAieXzRXsiR/lEaqMrsvzzuwOhvo8STW/4foV3W7HmtKNvp6
+	0BAJf6MtCvJI24wRuXEzY2iklgfWDN2phQ4J2h+oVSZIvp/ExcFnHAJyx1u0I5yOh10GQ3kUQ5w
+	qbQCyP+z6a7pN+VUnSP7wsm8w3/4=
+X-Gm-Gg: ASbGnctNYPj3XPs63DtmG5zm1lC+rAwtJ7RqkTDr1RlRfx3u6RXeI2Lt5BSygbyORG0
+	1ExmzdK4kO0qouhQ/sDAL9pOxpgfnTfpUumRfmF8pajZ0FtKvbHrYqS75mWsQzp8uUT/AVsHW4g
+	==
+X-Google-Smtp-Source: AGHT+IF7vSJeurvUbicM8qXUojUD37VLd4CrYZ3E32Pklvi89crD5IDYQiF2aB1zmhIk5MUk1UwFw0l6Y6dGjDfiwtY=
+X-Received: by 2002:a05:6102:2d03:b0:4af:be6e:f0aa with SMTP id
+ ada2fe7eead31-4bc0382036cmr5869332137.25.1739527470467; Fri, 14 Feb 2025
+ 02:04:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211105603.195905-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250211105603.195905-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250211105603.195905-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Feb 2025 11:02:53 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUhOzjpo=a5C9A_aA8gRYsdi-EM9OznjW8_EyH5nrdMsQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmmfFvEem34T251UJV6mok-YPnbeecChTnVC_3e7-TqeMladahr6o0pfBM
-Message-ID: <CAMuHMdUhOzjpo=a5C9A_aA8gRYsdi-EM9OznjW8_EyH5nrdMsQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Update error message
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <3a5337f9-9f86-4723-837e-de86504c2094.jinguojie.jgj@alibaba-inc.com>
+ <CA+B+MYQD2K0Vz_jHD_YNnnTcH08_+N=_xRBb7qfvgyxx-wPbiw@mail.gmail.com> <pl23stfp4qgojauntrgbfutmrstky3azcoiweddseii52vgns4@6446nbhq2zl6>
+In-Reply-To: <pl23stfp4qgojauntrgbfutmrstky3azcoiweddseii52vgns4@6446nbhq2zl6>
+From: Jin Guojie <guojie.jin@gmail.com>
+Date: Fri, 14 Feb 2025 18:04:18 +0800
+X-Gm-Features: AWEUYZmwMiEXWXSo10bYEaqj5lstQHVTw3HsKqWlOAZClry7ZPsEIwM-0BlsbJM
+Message-ID: <CA+B+MYQuz9ue1ZogpEGb8J+F8UA5P0dD-R1cRUp-4EgDBnPS+Q@mail.gmail.com>
+Subject: Re: [PATCH v2] cgroup/cpuset: call fmeter_init() when
+ cpuset.memory_pressure disabled
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-Thanks for your patch!
-
-On Tue, 11 Feb 2025 at 11:56, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Jan 15, 2025 at 7:01=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
 >
-> Update the error message in `rzv2h_mod_clock_endisable()` to provide
-> clearer debugging information. Instead of printing only the register
-> address, include both the `GET_CLK_ON_OFFSET(reg)` offset and the
-
-Indeed, printing the obfuscated virtual address is useless.
-
-> corresponding `clk` name (`%pC`). This enhances readability and aids
-> in debugging clock enable failures.
+> On Wed, Jan 15, 2025 at 01:05:21PM +0800, Jin Guojie <guojie.jin@gmail.co=
+m> wrote:
+> > V2:
+> > * call fmeter_init() when writing 0 to the memory_pressure_enabled
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Thanks for taking into account the feedback.
+>
+> I'm still curious -- is this:
+>         a) a new LTP test,
+>         b) a new failure,
+>         c) an old failure, new look
+> or anything else?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.15.
+For the three situations a, b, and c you mentioned, none of them is true.
+In fact, this "case cpuset_memory_pressure" has been in LTP for a long time=
+,
+and the same error will occur when running in multiple kernel versions.
 
-Gr{oetje,eeting}s,
+The method to reproduce the error is provided in the description of patch v=
+1.
 
-                        Geert
+https://lore.kernel.org/cgroups/CA+B+MYRNsdKcYxC8kbyzVrdH9fT8c2if5UxGguKep3=
+6ZHe6HMQ@mail.gmail.com/T/#u
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The fmeter_getrate() function in the kernel has not been modified for
+a long time,
+so currently LTP "case cpuset_memory_pressure" still produces the same erro=
+r.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Michal
 
