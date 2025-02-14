@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-514944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83861A35DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:42:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A392A35DE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 13:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5FD188F5E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9523ACECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C2263F47;
-	Fri, 14 Feb 2025 12:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8040A22D793;
+	Fri, 14 Feb 2025 12:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C3/QUGv3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zjVzz1tg"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C05263F3F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9172D2753E0
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 12:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739536966; cv=none; b=pbcOofaaFqrPF1db+6qXJkl+M1FKHVf1/qUJpd0LHkT6Ua30PUN87qRNPFs2Q4HuCmOewF4qgpSuvXBU/P3yYxYpqBxK5HYdupxBa5ZuAvSknRBT6TGr2FP9z9oU7KWyKOfl3aUwSbEPH0M2BTQdqq63M/yg2nYVH3EKz77ns2A=
+	t=1739537569; cv=none; b=S/nUMML17b5rbxkjl2RfpmjKrj0JqRnF57aGADkUIkuYr0nje05oY583s8jFGN+wSab8sn7IELByQ5cP2/eS3Oi6rnIPOIWn6kK85LhhX4L1lIvTTaA5C5jMfGnmYlyLJTgyC9cjVhPTotqHd6oz1E1bNBmjJWzuI9EoVZwjOT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739536966; c=relaxed/simple;
-	bh=d11x50LxRQmrP1+dyTgBwa9f88B58AqvvEqtw+md3vo=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=qIhZWjMRdrS2tkbqPVP0QvNzku7J+YXH2Kh/FcYx1UfkNzGwU7XiQE1A/9z6iVVmf9YcbNGz4KDaSdjMFXMyin9MWq9tYXT0PSAoJhPxziXCf72Y1BggTbMP2W2AgVg6zLlWEExIRhWxWKju7DUwluTPHKSqNRdh5kqmJ44o7uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C3/QUGv3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739536963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qeI2phbh9W6eJPANE+hSKKu7J5Y3ZY+RS2E2MDT+/Mg=;
-	b=C3/QUGv32Tl6eHnB1oki/9RtX+wSwdPlcIWSAdpQZqBX1Z/C/waUqM3eEF+hCzh7KSLJXq
-	d1bDqenVS37cdQxjaGmT4fpJOQqIR4ZSfQnFcgvngFbIV9DyzB4z9UNd6JFm3mMOywJxPu
-	Ul3BXh5OrAiyH7Uu6ZsZJPFoDMvbo/s=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-356-a9oD0zXqNjK2Sbi1lAnHAA-1; Fri,
- 14 Feb 2025 07:42:42 -0500
-X-MC-Unique: a9oD0zXqNjK2Sbi1lAnHAA-1
-X-Mimecast-MFC-AGG-ID: a9oD0zXqNjK2Sbi1lAnHAA_1739536961
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBD93180087F;
-	Fri, 14 Feb 2025 12:42:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.92])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC8621955DCE;
-	Fri, 14 Feb 2025 12:42:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250210223144.3481766-1-max.kellermann@ionos.com>
-References: <20250210223144.3481766-1-max.kellermann@ionos.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, netfs@lists.linux.dev,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v6.13] fs/netfs/read_pgpriv2: skip folio queues without `marks3`
+	s=arc-20240116; t=1739537569; c=relaxed/simple;
+	bh=G9RP4HAdNG5lnGWFyEKBYzLe5LWlSSHiW8Y9+2BxC0M=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=M39M/MsDyA2wkuXNeGR0zUEqBh516MbsXmKSktBSRnTuiAarDosPUsHiWLUBbXHvP1MKa7X6+gFZwTMblM/sYCehYW4QxdWG2wQbZZnSk+RegSjNmrbR8fK8M4k+SwQWpBjXJiMMgZD9HbFAaIOJxyqwT1urK9SmB8cx4wLTIsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zjVzz1tg; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1739537553; bh=8D6bFUm8Xr4oGQYiTiQbQ47HC4u4PdN6xq2N/Cs+KR8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=zjVzz1tgh3OEj3a6CWAEvdWc9iNRLvHz/pMP0I6G1pzx0lj8v18RtUBa4oaB1uNN0
+	 ug+nC4FCvvYL56zp1p56FeZ1/U5rtEz1ZYMvR3m0MOLRmAa0qHhcoCla314UJH4uSS
+	 9EOa7vNnlrNp0+Qez+s4hkWG0pqSVFmNkxyKjeO0=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id B8D11E77; Fri, 14 Feb 2025 20:46:13 +0800
+X-QQ-mid: xmsmtpt1739537173t4mur07qy
+Message-ID: <tencent_C7123BDDD75DA11956CFE20D8225938DEB07@qq.com>
+X-QQ-XMAILINFO: MyirvGjpKb1j68GC9Fp5X6/XAo65JFxnfeG6UJMKkQF0hQcHYpSz+nqPTQqPj0
+	 eENzJpa4Q/eJUOqOGKQVH36RyzbQJH4eoN05ZzVBrYzdHSfjmZzfIauuuufOXkokjcD+lRdC4fVi
+	 FHpQwwy8PdZaCUPeHPLoFRhWLtPp+8rCLElGXps3ibjrC2SsxkpZQM3regN1JR43j92o+O8VzXjX
+	 wQFi3SZwu9Tng8zsvXPbFElmZ25ceOFOqWpfF2KJE4AxFsJaBHibOt9hpVZULPYtX//hlksLh3zx
+	 Aaeb372eJdB+ElCkxbUDw5VmSU+pDKJfXQHDLyStvq/e+jPei0dr6O48fqP3zXNsqnpdxRBwgJD0
+	 6pxedxCFjtPgBlMREcVA0p6GTrtrs1wmB4glBq1xyju5IqTxXg6ciCbYQ1XoGb5PMTprkxDP2mc8
+	 94+Y3glKvX3b9/LTGxjpwv0jau+LqDSGr+x854EvbsjqFsvEiEI15AGG5sC4MYENd1EcJfHP7j33
+	 1NzOcckyP54KroxGdfbg8yfPdR+v0vM+OXCbj4dxLiMgtymaB2g/A483XcZ4Xm7c4nXPZDiXhsc3
+	 D/Chde1eRrZEOz9bhT5WaS7iDMifukbv7pytvsMo01Cy08TOkEvKQ1e2We++2s9lC23shXaEfW5z
+	 Jhlu++/2neClJdpQJ5AGaNsvUC4A4Li3U35U2vWSCadyU3N7F9w4Q5Ryh6w/9rA1mhYoyvnFwICd
+	 ALYuUSa/7xKtcb+iuPaZdR7k4ePTPP6VFdtvxeqm5+Pl6YzAmfNKEpLeM0098jVbNajKqtLGQq1m
+	 fOIhxNR9be/wKLeD97B3N+8QM1Jd+tpW4C1rYmjMvlvt7G2a6gkuGArMSN8zJnNHmTpGvrg5i2cy
+	 XYot3Sm++R2csrBZgV48HQzF3A6KIVF/s+0tVjj6gW
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [netfs?] KASAN: slab-use-after-free Write in io_submit_one
+Date: Fri, 14 Feb 2025 20:46:13 +0800
+X-OQ-MSGID: <20250214124612.826903-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
+References: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3977862.1739536957.1@warthog.procyon.org.uk>
-Date: Fri, 14 Feb 2025 12:42:37 +0000
-Message-ID: <3977863.1739536957@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-Max Kellermann <max.kellermann@ionos.com> wrote:
+#syz test
 
-> At the beginning of the function, folio queues with marks3==0 are
-> skipped, but after that, the `marks3` field is ignored.  If one such
-> queue is found, `slot` is set to 64 (because `__ffs(0)==64`), leading
-> to a buffer overflow in the folioq_folio() call.  The resulting crash
-> may look like this:
-> 
->  BUG: kernel NULL pointer dereference, address: 0000000000000000
-> ...
-> 
-> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index f65affa5a9e4..40c408705f1a 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -371,9 +371,13 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
+ 
+ 	if (rreq->iocb) {
+ 		rreq->iocb->ki_pos += rreq->transferred;
+-		if (rreq->iocb->ki_complete)
++		if (rreq->iocb->ki_complete) {
++			if (rreq->transferred < rreq->len)
++				refcount_add_not_zero(&rreq->iocb->ki_refcnt);
++
+ 			rreq->iocb->ki_complete(
+ 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
++		}
+ 	}
+ 	if (rreq->netfs_ops->done)
+ 		rreq->netfs_ops->done(rreq);
 
 
