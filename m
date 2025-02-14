@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-514602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A627A35927
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C0AA3592D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C8B16BD6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C093116CB19
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332E227B88;
-	Fri, 14 Feb 2025 08:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE2227BA1;
+	Fri, 14 Feb 2025 08:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YkQWJ9Zz"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iF611NiJ"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CBF22616C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D64275401;
+	Fri, 14 Feb 2025 08:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739522609; cv=none; b=OgK2Id2+5h0RahHaye2G3N2FnYE0lIkbUPoX7FBmV30KOXMzOvt3mCQz8EDias7+6DTLEkJwoaCvUnwAZOg9DvLO6iRTVycFg+pDqFFDY6iQB7P5GsqensYkwD/0jPV5nNr2peEVyoun2e+g9BVSlGk7NEFXU8BrUFImbnrWemw=
+	t=1739522647; cv=none; b=LBeXgKwX2rsYcBVHERADPAIqjaw0dksmS7W6+BDMw5U4SQpfQV8L8lOFrW8ll15L8n2iTN4Rb/64ARPM2rnmosPfUXPypwJgjMeWK2NUKjXy2jCTeTBIgtmf4Q5EvFiCadYv33POM6fR7cpI+MuYqCW2RPL/hGdjBfPuPOW7j2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739522609; c=relaxed/simple;
-	bh=CXPc3y668anJq9lBRrDv5CYpwtXv7HerEoD7uqDJSrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKLRY7897j2VH8NTozuzpGodlWcm/OjRoXJAwnaUCXAOVQphR7MDQ7dZ9+l28NC9qaUTqS7wgDeK86UiiiuuAxieL1KgZXa1vyrVilt30joRsZbW4/NLOAqEGw+7oNm5smjndrbqBKI9rXkIvK9Uw1EfHRlwj3juyfDXaWarBYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YkQWJ9Zz; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-545054d78edso1827675e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 00:43:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739522604; x=1740127404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YrGWn46F9945+gUUg8W+kiuyxDl8keZLgoB3N8SvlL8=;
-        b=YkQWJ9Zzrgehpt6l4Gg4oQtyaKESE9IiPFOxeKWduu9Sf4WgSUGx8m9qft4PVPISml
-         KsrJ4jRHXkpptYBxv6efpUwqp6h01W2zXvaJfyxznH4ujlx7dz0CrcilfFbWsY1tU87l
-         vogd1h/rpcuwZTdsewEu99PfKBxqm4EzmSVwUOMQdcPsH7u+A9x2YNqoGxreBtUArfH/
-         DCpYFcH/cJzc4wb3MxjgRCxzrESZBlcmkmX6u79HfLq7jwxqCH/cB3ZV+X7ALOnKhMXG
-         k2vouItNRKXvqc3ifY4x428c+kOzNiydeWNKt7CTWwLzGxVMfWozrEhmEu102uR3h0hD
-         pqRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739522604; x=1740127404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YrGWn46F9945+gUUg8W+kiuyxDl8keZLgoB3N8SvlL8=;
-        b=RMT3TkuHVgqQPQZEkElwxOhhWCJ7bDoZ78cU8C5fh9BIVTTm8GzmC7ele0Lw4OEgf2
-         jsiATiJjZVXksUXjUEfBLOHyqJhqE4ZHWK708llpB+YwsNgqBcxcyPk1z6V0q0gL2Ofn
-         9LZDVe9G+XFVLjAvYyUtzOJJ0R7gBj8VrZyXBkKC2Mns7Bbk/QZ9uTDXdM65ywmkz795
-         Daoo5r06a4hoMYYkw4xvqKIaaJDmNv+dk+3stmwWNzymFgGAPKyGwMbBR54E12Wk1ao8
-         6TmtNR14BC6HC2ESO4igRExVv2mNeXwj1eWDtwl8tVQE3C8enu8ykKy/Pel5cIzKG60R
-         A+lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjgnRC6jbaMl2dnV7OLmu1fQokAIIv2/ahLN/37OLlw6M838aJjZRhcDdRdA5Nj4gxz0fD3FLn1nlBASE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsO+R5E1xK6B7Om0Yg50Rx2S+pCpjQILLO1UbwXh2O73CwaOXy
-	BgPPd381i2HSR9/yWclfsnvitTs6Xh+RAqYvTyjJDH2xyIqKfXTbbM5H8y/tLP42J+qwvbe26tv
-	UXrdcWdeZS9VXWb+TRTKupYDljqk3MtZSLJF0ig==
-X-Gm-Gg: ASbGncsvstcXxOJn8TnWkPIpoV7PGP95fcdZgR5ck7TElWZdc+0Mjk3UW4mqDmt7Eab
-	gGZ7Hkk3/qWZF0qYrx+qedysrVdlg8Is2NSMAbpCPWfea5GLtwSC0agK1qg70I61gpPXOxtVMDn
-	2IUA==
-X-Google-Smtp-Source: AGHT+IEy54NZS39ARrjg/49nfZ2l3CeZ4lYDsrIyQaSITqrHjX5TvkMyKcPqBEKExLhAOiEB7VqLqCeUMkrmy70IrdI=
-X-Received: by 2002:a05:6512:6ce:b0:545:2b68:9360 with SMTP id
- 2adb3069b0e04-5452b689407mr281546e87.23.1739522604517; Fri, 14 Feb 2025
- 00:43:24 -0800 (PST)
+	s=arc-20240116; t=1739522647; c=relaxed/simple;
+	bh=ykvEShYNLVtLUN8WbhFUSrKQ/Ai8VO/e+8edobeJJcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ft7RghC0312RqKoyAIl/+wW739/sPa/NOoKZtOBZMb8VPxWSjPg8TtTcE2d5usniaN6CgRxNdZ2u4WwcMgAjc/tYQRa7jxZ2MK7meDBEWAvBmvnJg2nKCf31LLPCocgN6attTEsmwfPAwoW9X31y9WUeruQUj0vLqv9rCO4hWaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iF611NiJ; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D198441E5;
+	Fri, 14 Feb 2025 08:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739522643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WSaeyfo8DQwqJGKUIUvYkkgVgRZAUJU2hAJTGaurvSE=;
+	b=iF611NiJf5UmWwAeRJ9fSRHPIr3slCUYg5J6GAy0IdyLMF/8cuZA6Vlvrdk9KqZZpGEpG8
+	kLtnvTavAgWOoMu/olJ9i0hTVWQZKGjyvLFuGt9ENeeuW2gHQeRM3dozeIy233+ZMMhS5l
+	4cDs+4mGEpzgEf4vKDvoq+1MDohQXLjW1DGeXMvZ8xsXfUVsOcYUKMMVf6067nFcAb05mB
+	cfewLHnFQN1PM5oKIbQVBVnPsEDPGm/PFVLg9W1dFGD/POGdAICBc/mMRZ+80qIVM1vKux
+	lBikh5Q99/eDpUU7L0gR4sCdqdJ80nrXpDpQzlbTGaohs3kqxrCBjUkk1PI9qQ==
+Message-ID: <1274bae7-e473-4711-9235-de0aeeadb02f@bootlin.com>
+Date: Fri, 14 Feb 2025 09:44:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
-In-Reply-To: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Fri, 14 Feb 2025 16:43:12 +0800
-X-Gm-Features: AWEUYZkjQWE-qK49xiiBKEEkxJP-7Ch5gON0NzmMUVyroeED-rVwKmIQ7uLah4I
-Message-ID: <CABQgh9FMy7oVt9+enSpJxXvkux+czMFqbsPZVgmBV+rFWWvhGA@mail.gmail.com>
-Subject: Re: [PATCH 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Fenghua Yu <fenghua.yu@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Vinod Koul <vkoul@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, 
-	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] serial: mctrl_gpio: add parameter to skip sync
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Richard Genoud <richard.genoud@bootlin.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, linux-doc@vger.kernel.org
+References: <20250214-atomic_sleep_mctrl_serial_gpio-v2-1-1e60c732fd90@bootlin.com>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20250214-atomic_sleep_mctrl_serial_gpio-v2-1-1e60c732fd90@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegledvtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdetteektdehudelheehkeeggfejgfelveevgeevtdejudfgveetgefhtdduuedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddungdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugdrghgvnhhouhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghro
+ hgthhhiphdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrsehtuhigohhnrdguvghvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvg
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-Hi, Baolu
+On 2/14/25 09:38, Alexis Lothoré wrote:
+> The following splat has been observed on a SAMA5D27 platform using
+> atmel_serial:
+> 
+> BUG: sleeping function called from invalid context at kernel/irq/manage.c:738
+> in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 27, name: kworker/u5:0
+> preempt_count: 1, expected: 0
+> INFO: lockdep is turned off.
+> irq event stamp: 0
+> hardirqs last  enabled at (0): [<00000000>] 0x0
+> hardirqs last disabled at (0): [<c01588f0>] copy_process+0x1c4c/0x7bec
+> softirqs last  enabled at (0): [<c0158944>] copy_process+0x1ca0/0x7bec
+> softirqs last disabled at (0): [<00000000>] 0x0
+> CPU: 0 UID: 0 PID: 27 Comm: kworker/u5:0 Not tainted 6.13.0-rc7+ #74
+> Hardware name: Atmel SAMA5
+> Workqueue: hci0 hci_power_on [bluetooth]
+> Call trace:
+>   unwind_backtrace from show_stack+0x18/0x1c
+>   show_stack from dump_stack_lvl+0x44/0x70
+>   dump_stack_lvl from __might_resched+0x38c/0x598
+>   __might_resched from disable_irq+0x1c/0x48
+>   disable_irq from mctrl_gpio_disable_ms+0x74/0xc0
+>   mctrl_gpio_disable_ms from atmel_disable_ms.part.0+0x80/0x1f4
+>   atmel_disable_ms.part.0 from atmel_set_termios+0x764/0x11e8
+>   atmel_set_termios from uart_change_line_settings+0x15c/0x994
+>   uart_change_line_settings from uart_set_termios+0x2b0/0x668
+>   uart_set_termios from tty_set_termios+0x600/0x8ec
+>   tty_set_termios from ttyport_set_flow_control+0x188/0x1e0
+>   ttyport_set_flow_control from wilc_setup+0xd0/0x524 [hci_wilc]
+>   wilc_setup [hci_wilc] from hci_dev_open_sync+0x330/0x203c [bluetooth]
+>   hci_dev_open_sync [bluetooth] from hci_dev_do_open+0x40/0xb0 [bluetooth]
+>   hci_dev_do_open [bluetooth] from hci_power_on+0x12c/0x664 [bluetooth]
+>   hci_power_on [bluetooth] from process_one_work+0x998/0x1a38
+>   process_one_work from worker_thread+0x6e0/0xfb4
+>   worker_thread from kthread+0x3d4/0x484
+>   kthread from ret_from_fork+0x14/0x28
+> 
+> This warning is emitted when trying to toggle, at the highest level,
+> some flow control (with serdev_device_set_flow_control) in a device
+> driver. At the lowest level, the atmel_serial driver is using
+> serial_mctrl_gpio lib to enable/disable the corresponding IRQs
+> accordingly.  The warning emitted by CONFIG_DEBUG_ATOMIC_SLEEP is due to
+> disable_irq (called in mctrl_gpio_disable_ms) being possibly called in
+> some atomic context (some tty drivers perform modem lines configuration
+> in regions protected by port lock).
+> 
+> Split mctrl_gpio_disable_ms into two differents APIs, a non-blocking one
+> and a blocking one. Replace mctrl_gpio_disable_ms calls with the
+> relevant version depending on whether the call is protected by some port
+> lock.
+> 
+> Suggested-by: Jiri Slaby <jirislaby@kernel.org>
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
 
-On Fri, 14 Feb 2025 at 14:11, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> The new method for driver fault reporting support relies on the domain
-> to specify a iopf_handler. The driver should detect this and setup the
-> HW when fault capable domains are attached.
->
-> Move SMMUv3 to use this method and have VT-D validate support during
-> attach so that all three fault capable drivers have a no-op FEAT_SVA and
-> _IOPF. Then remove them.
->
-> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
-> further clean up.
->
-> The whole series is also available at github:
-> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v1
+So despite changing the commit description, I forgot to update the actual commit
+message, which is eventually not adding a flag anymore but new APIs. v3 will
+follow, sorry for the noise.
 
-I quickly test this branch
+Alexis
 
-1. host test is OK
 
-2. qemu boot one device, test ok,
-though reports this when guest bootup.
-vfio-pci xxx: resetting
-vfio-pci xxx: reset done
-
-3. qemu boot multi device,  test fails, host kernel reports [Hardware Error]
-qemu can boot no problem
-Test fails.
-
-Will do more check without these patches.
-
-Thanks
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
