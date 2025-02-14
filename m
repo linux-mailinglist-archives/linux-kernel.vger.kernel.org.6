@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-514458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1087A3573F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:39:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BD5A35749
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB913AC151
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C9018920D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 06:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008820371F;
-	Fri, 14 Feb 2025 06:39:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FC01FFC72;
+	Fri, 14 Feb 2025 06:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LTd6egzz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079F71E1C2B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2195B17E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 06:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739515167; cv=none; b=cx5xWOzTPcUImnlakpzTyDZvYT6nuAURgtiY95g3swdOw7CQsb60rCNt3E9FcWwk4gCiFqJFSCfJJwv7BCJR3S6q1JjPpy7Nz7Hh2mLrOKugDSeJklGsQn1xFHc63mmiCYZ/x6LQdP2hzxunIuit0WCZyKty1TRPaMC0fgg13ZQ=
+	t=1739515233; cv=none; b=mWP8KixqurNEDuyBJ9MRzd1kkV1JgLc6xbOC/ECEpPjpiT5S5DACkRhvp+r/gLndI2P4h3nh0odyDCFAoaAphPZY6j+p335e4UWOy0m++I25mUWo068aek3lbscxzZmuG8jQuIIqdtoLDl6JdN8oeE3UIGkfD0rcFO10I3iaeEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739515167; c=relaxed/simple;
-	bh=RPRcBdYTiyPNkll2YVDappoe1ToG6ZsC+q9BYPD/0KM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K/XZVznJXhY7NhXc8oRaU2OycYVqTCE/Dy3M1VNblk0nvRTFVAUlEmNSCG6WAgdbu0XhRPhvaMuPmS4v8w27F3Fl+ri45MZ89jH1RVpzxBDufkbNYKUrYNjKjR2EPqMkROfMaYZr31dn3Eqkd52PoF+UDnBmv7Aki9H19hrKJh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d158477b5fso10722275ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 22:39:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739515165; x=1740119965;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eHhZV9Csomr8XUspDhbBmbn5Y6J59ZTrAZNyV8CqFaE=;
-        b=aVzNzj6Y8WeOWrDIwQVlK04zjG+DHTGTqPBAJ68Cn0u0xJdbMF9TXuIRBz8hyVOjcp
-         afrEd94lYuSD00kCwbPxT66Hsv/Ht7rQfXTBO1JtuQtLfqxn3U27bkPbQZHR6nfW1b+f
-         rx3aB+lQqaX2Y9ELH5wlgrib9Sbqzk9N/2i5HklrHAKlCk9pHU2DTPLcqUwblbzd1U6P
-         cp2icRdlNUrpmRH9LZGvSNHhqzbEW9Fk38TlUa1WRT9qBDs1sVxY8niDdKO8MljnNY4U
-         PiO6OqKvQ6SQgWeJeGyUuYFA5imh9zrh3IwjcLJ4IbfPjQ7WA8g2t9PUU6X8d68Dtgnd
-         Vv2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7KeMukNeUO2IgHShnHUNiJVuStXAQ4ZbYcg/mD9Gluc2RZ8Lmf6i1Gq7HyocR1/KOQTDGkO8rVL3CZJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAMFRc6RwfZaLylOf1REZr5FeZNuIa4JbHiIMWLrc+37XAydmC
-	64c3Nip7yVjtXzUR6gSGc+nHc2QiB8VJ/3zI86RvhuAfdtSisbGNt7RUOv+73nAKzAngyPyK0vz
-	gqdvtTMWJ/MkUoK2KJdvI0GlF+eNRAe7jqR28GQdNvmNX0xZFU3RhaL0=
-X-Google-Smtp-Source: AGHT+IF/Hv/mD9dUCycNVAxCnDojNZtBwU1TsxPI3uWgYvdBobM+POkLBFJq1PuAq/ogiC5/7/BSp0H9LhxEj11P/yyJn+ZlrKo4
+	s=arc-20240116; t=1739515233; c=relaxed/simple;
+	bh=5PPWOptl/YwW2wgNO8zYM57QPa9w1lWgGNZot+EV99s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gdtTIyqVvy5iu9+VJ5gto0t0wuyqGt15+iythyOtWK2moleP37BlAiAUyYKiHAgLpo/S8lPfR3+GanZ0LkJ/zIwTKoB8L/u4yBxJdHhFLBMFMrNbbOWs0LCxkQw74+CmEbVTfZXMug/OpkE/qpOIHlIynikW2yfQSHHkOkyE4ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LTd6egzz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51DMnbkQ000644;
+	Fri, 14 Feb 2025 06:40:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MuwEtK
+	LF7ofB4unmQfXvMcEmuv+K68chaMVfpQh/Qbk=; b=LTd6egzz2DEtYvVK44IMbb
+	wa+BZ8Zj2sSdTLYxVcnmmttrbLPwhom3f7LZ29EYG/d6dgvORLDT0dyDtugWWCdB
+	l1TnKFwPZBxbrbW7yirwM7HUBOp52GSK+T6F9rzr/YNXHJcqfU3YEqCI4G5EE7Y/
+	b081uenieKQgspCwKwavvscxeDa4XGhbqH9LQD7M9nhX/Y6qo3l6UDDCzeXi60dU
+	ZOVDypO2UDm4wEiid2O6lb3CQG5eTttXoSPAlkWH2g5f/6gqkUECORAw44g9SQ/H
+	RnIaRQ2NrV464O6Hsyf0fHXVY9LMzfHsSExpVShw/N8vUQvF9j3FyuAx8hKLAqwg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ssva9kyp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 06:40:26 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51E4ff9o011677;
+	Fri, 14 Feb 2025 06:40:25 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44pktk9yvn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Feb 2025 06:40:25 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51E6eO3n27722354
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Feb 2025 06:40:24 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BA53F58057;
+	Fri, 14 Feb 2025 06:40:24 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 763385805D;
+	Fri, 14 Feb 2025 06:40:23 +0000 (GMT)
+Received: from [9.61.255.185] (unknown [9.61.255.185])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Feb 2025 06:40:23 +0000 (GMT)
+Message-ID: <5a0d9847-54df-47f3-9e96-be393f76b3fb@linux.vnet.ibm.com>
+Date: Fri, 14 Feb 2025 12:10:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2168:b0:3d0:255e:fdc with SMTP id
- e9e14a558f8ab-3d17bfde1f2mr94773195ab.15.1739515165127; Thu, 13 Feb 2025
- 22:39:25 -0800 (PST)
-Date: Thu, 13 Feb 2025 22:39:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67aee51d.050a0220.21dd3.002f.GAE@google.com>
-Subject: [syzbot] [netfs?] WARNING: refcount bug in netfs_put_subrequest
-From: syzbot <syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250212] syscall kexec_file_load not available
+Content-Language: en-GB
+To: Hari Bathini <hbathini@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
+References: <8e73069b-5987-4a08-b13d-13fe691092ad@linux.vnet.ibm.com>
+ <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
+From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+In-Reply-To: <77c11ea2-f3ae-497a-aaba-f7b33f46743d@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 6uYwXQ4X0eJylFIz94UmefSYhxhL2U3D
+X-Proofpoint-ORIG-GUID: 6uYwXQ4X0eJylFIz94UmefSYhxhL2U3D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-14_02,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=812 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2501170000 definitions=main-2502140047
 
-Hello,
+Yes Hari, its built with CONFIG_KEXEC_FILE=y
 
-syzbot found the following issue on:
+Regards,
 
-HEAD commit:    69b54314c975 Merge tag 'kbuild-fixes-v6.14' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=106d6bdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a7ddf49cf33ba213
-dashboard link: https://syzkaller.appspot.com/bug?extid=d9890527385ab9767e03
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13aafdf8580000
+Venkat.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-69b54314.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d0a58d1d655/vmlinux-69b54314.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b99949b40299/bzImage-69b54314.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d9890527385ab9767e03@syzkaller.appspotmail.com
-
-netfs: Couldn't get user pages (rc=-14)
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 3 PID: 6306 at lib/refcount.c:28 refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
-Modules linked in:
-CPU: 3 UID: 0 PID: 6306 Comm: syz.2.100 Not tainted 6.14.0-rc1-syzkaller-00276-g69b54314c975 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
-Code: ff 89 de e8 78 71 f5 fc 84 db 0f 85 66 ff ff ff e8 cb 76 f5 fc c6 05 e5 68 86 0b 01 90 48 c7 c7 00 fb d2 8b e8 97 b2 b5 fc 90 <0f> 0b 90 90 e9 43 ff ff ff e8 a8 76 f5 fc 0f b6 1d c0 68 86 0b 31
-RSP: 0018:ffffc900030d7750 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a1159
-RDX: ffff88805135c880 RSI: ffffffff817a1166 RDI: 0000000000000001
-RBP: ffff88802d916fa0 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000005
-R13: 000000000000006f R14: 0000000000000001 R15: ffff88802d916fa0
-FS:  00007fee79bce6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fee79bad000 CR3: 00000000233ec000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_sub_and_test include/linux/refcount.h:275 [inline]
- __refcount_dec_and_test include/linux/refcount.h:307 [inline]
- netfs_put_subrequest+0x2c1/0x4d0 fs/netfs/objects.c:230
- netfs_collect_read_results fs/netfs/read_collect.c:300 [inline]
- netfs_read_collection+0x25af/0x3cb0 fs/netfs/read_collect.c:417
- netfs_wait_for_pause+0x31c/0x3e0 fs/netfs/read_collect.c:689
- netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:106 [inline]
- netfs_unbuffered_read fs/netfs/direct_read.c:144 [inline]
- netfs_unbuffered_read_iter_locked+0xb50/0x1610 fs/netfs/direct_read.c:229
- netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:264
- v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
- aio_read+0x313/0x4e0 fs/aio.c:1602
- __io_submit_one fs/aio.c:2003 [inline]
- io_submit_one+0x1580/0x1da0 fs/aio.c:2052
- __do_sys_io_submit fs/aio.c:2111 [inline]
- __se_sys_io_submit fs/aio.c:2081 [inline]
- __x64_sys_io_submit+0x1b2/0x340 fs/aio.c:2081
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fee78d8cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fee79bce038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007fee78fa5fa0 RCX: 00007fee78d8cde9
-RDX: 00004000000002c0 RSI: 0000000000000001 RDI: 00007fee79bad000
-RBP: 00007fee78e0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fee78fa5fa0 R15: 00007ffe1e525b98
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On 14/02/25 12:02 pm, Hari Bathini wrote:
+>
+>
+> On 13/02/25 8:34 pm, Venkat Rao Bagalkote wrote:
+>> Greetings!!!
+>>
+>>  From kernel next-20250210, I am observing syscall kexec_file_load 
+>> not available, there by kdump service is failing to start.
+>>
+>>
+>> Logs:
+>>
+>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -c
+>> Warning: append= option is not passed. Using the first kernel root 
+>> partition
+>> Modified cmdline: elfcorehdr=311424K root=UUID=b5b1f89c- 
+>> d479-48b3-90e2-744a2fd05667
+>> [root@ltc-zzci-1 ~]# kexec -p --initrd=/boot/initramfs-6.14.0-rc2- 
+>> next-20250212kdump.img /boot/vmlinuz-6.14.0-rc2-next-20250212 -s
+>> syscall kexec_file_load not available.
+>> [root@ltc-zzci-1 ~]# kexec -v
+>> kexec-tools 2.0.27
+>> [root@ltc-zzci-1 ~]# uname -r
+>> 6.14.0-rc2-next-20250212
+>>
+>
+> Is the kernel built with CONFIG_KEXEC_FILE ?
+>
+> - Hari
+>
 
