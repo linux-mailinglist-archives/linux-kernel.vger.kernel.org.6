@@ -1,53 +1,79 @@
-Return-Path: <linux-kernel+bounces-514615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BF1A35951
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:49:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1516EA35956
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B33AC098
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB1D18911A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D075227BA3;
-	Fri, 14 Feb 2025 08:49:19 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF9227BB2;
+	Fri, 14 Feb 2025 08:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="AKsbYQM3"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEAC207E13
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04379275401;
+	Fri, 14 Feb 2025 08:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739522959; cv=none; b=o+pDAfn0EJwx91fVvYgQwnmNkSap51DJaFoxUE7eTtoIE5HdqSFifukOaAUXCgqz4qS8eSOdQTbYZRuTF56KzMcpKuDGF0/Nf+ROM8Xu9JHb2Jl3a9TU1d0vtPi5Q+HJablAeGlL6X9B6hY+ITkk9u25//7PcpJSe4L+02OBsaQ=
+	t=1739523010; cv=none; b=dmeyWP8N7RwvigG8JgUDeHAxwyM8j/alGZjqFw/sqPfESWVctj6FOD29Z4Ru6AdfG51IFKjKDmal6Rvru/qnWTqQaAAu6Ybm/+/SgVNJaYILk0N88MfJyXzejJZ8Ub5JoDhSMx3ZEgOODEx3dBilaIA59GkmsAB+yiO4W4LEano=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739522959; c=relaxed/simple;
-	bh=gfPYUhwKYv1yN+ZIi7Gwz/R6bJJpxCjLJcrBc2tzsb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MHUm6XCZ1LJYHBT/iEtzBY3Leq7lEAJMQdop1RiaiklkWl7e8qMgx9Tqs8akeiw38oR/YZNvxkFQy/5NYCmlwbLF5YDmaStVV1MnkiB6QOpdjCHHBg/4oSDmw20RxU3iyduIZuNVQ1j3iyU5PgNYbLMGurqAn1AYGpIBK+Z2UaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	(Authenticated sender: kovalevvv)
-	by air.basealt.ru (Postfix) with ESMTPSA id 85BD4233B5;
-	Fri, 14 Feb 2025 11:49:13 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: joseph.qi@linux.alibaba.com
-Cc: jlbec@evilplan.org,
-	kovalev@altlinux.org,
-	kurt.hackel@oracle.com,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	mark@fasheh.com,
-	ocfs2-devel@lists.linux.dev,
-	syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
-Subject: [PATCH v3] ocfs2: validate l_tree_depth to avoid out-of-bounds access
-Date: Fri, 14 Feb 2025 11:49:08 +0300
-Message-Id: <20250214084908.736528-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
-In-Reply-To: <bb8e95f6-ee91-47b9-82a0-86d576f67e39@linux.alibaba.com>
-References: <bb8e95f6-ee91-47b9-82a0-86d576f67e39@linux.alibaba.com>
+	s=arc-20240116; t=1739523010; c=relaxed/simple;
+	bh=eHsbsd/eFKbVVaYr4omsL/Cx88B0Q51hlfhaRwPY0RA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WXo9o4MXBkVyE7juKHi/FQxwgCcKEnEj1cB0pid75TXuq5eUpxYBjv/QLzPnHPJ/Kd5Vb3505OYucxe+S0lqD9fkQbieGKzuH7KuQHKxWfR8hxX08Vz0P3Sqr2/Gm0rvbX7FMd5IQMH6+T0BBjc6LOEx2HIxsUGxDWmA93cxQFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=AKsbYQM3; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ae86e8d2eab011efb8f9918b5fc74e19-20250214
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SZTKFrboegu1pyLSyq2HcY2eKZBWe3hXG4JUqZ8ZU0c=;
+	b=AKsbYQM3lxBAVEii1KIMqewju/FjqyPgdG/pUaVAs7cOTyqevlueh+KQSCI65TLtIhivjCOOuuzUYdB5d+5fHVu5MrdzQY51KAsAfzY7rg+H8OEMPZ3FVdQaFKBqB4WJBRLHBpz4doIJZ9XpXOu4jh5I2K5mizdJqbIUPbMtixQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:46e23ee0-5498-40be-8e8a-c3aa7291560b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:60aa074,CLOUDID:fcecbf24-96bd-4ac5-8f2e-15aa1ef9defa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ae86e8d2eab011efb8f9918b5fc74e19-20250214
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 94671838; Fri, 14 Feb 2025 16:50:03 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 14 Feb 2025 16:50:02 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 14 Feb 2025 16:50:02 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Sen Chu <sen.chu@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-usb@vger.kernel.org>, <stable@vger.kernel.org>, Chris-qj chen
+	<chris-qj.chen@mediatek.com>
+Subject: [PATCH v3] arm64: dts: mediatek: mt6359: fix dtbs_check error for RTC and regulators
+Date: Fri, 14 Feb 2025 16:49:54 +0800
+Message-ID: <20250214084954.1181435-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,46 +81,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-The l_tree_depth field is 16-bit (__le16), but the actual
-maximum depth is limited to OCFS2_MAX_PATH_DEPTH.
+This patch fixes the following dtbs_check errors:
+1. 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
+ - Update 'mt6359rtc' in 'mt6359.dtsi' with a generic device name 'rtc'
+2. 'pmic: regulators: 'compatible' is a required property'
+ - Add 'mediatek,mt6359-regulator' to compatible property.
 
-Add a check to prevent out-of-bounds access if l_tree_depth
-has an invalid value, which may occur when reading from a
-corrupted mounted disk [1].
-
-Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
-Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd [1]
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-v3: Change the condition "> OCFS2_MAX_PATH_DEPTH" to ">= OCFS2_MAX_PATH_DEPTH"
-v2: Restricted depth to OCFS2_MAX_PATH_DEPTH and moved the check
-    to __ocfs2_find_path().
----
- fs/ocfs2/alloc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt6359.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 4414743b638e8..cec8fc5cb8e87 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -1803,6 +1803,14 @@ static int __ocfs2_find_path(struct ocfs2_caching_info *ci,
+Changes for v2:
+ - No change.
+
+Changes for v3:
+ - Add "Reviewed-by:" tag, Thanks!
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
+index 150ad84d5d2b..3d97ca4e2098 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
+@@ -19,6 +19,8 @@ mt6359codec: mt6359codec {
+ 		};
  
- 	el = root_el;
- 	while (el->l_tree_depth) {
-+		if (unlikely(le16_to_cpu(el->l_tree_depth) >= OCFS2_MAX_PATH_DEPTH)) {
-+			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
-+				    "Owner %llu has invalid tree depth %u in extent list\n",
-+				    (unsigned long long)ocfs2_metadata_cache_owner(ci),
-+				    le16_to_cpu(el->l_tree_depth));
-+			ret = -EROFS;
-+			goto out;
-+		}
- 		if (le16_to_cpu(el->l_next_free_rec) == 0) {
- 			ocfs2_error(ocfs2_metadata_cache_get_super(ci),
- 				    "Owner %llu has empty extent list at depth %u\n",
+ 		regulators {
++			compatible = "mediatek,mt6359-regulator";
++
+ 			mt6359_vs1_buck_reg: buck_vs1 {
+ 				regulator-name = "vs1";
+ 				regulator-min-microvolt = <800000>;
+@@ -297,7 +299,7 @@ mt6359_vsram_others_sshub_ldo: ldo_vsram_others_sshub {
+ 			};
+ 		};
+ 
+-		mt6359rtc: mt6359rtc {
++		mt6359_rtc: rtc {
+ 			compatible = "mediatek,mt6358-rtc";
+ 		};
+ 	};
 -- 
-2.42.2
+2.45.2
 
 
