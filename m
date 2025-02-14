@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-514544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03A3A35850
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:00:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E30AA35852
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E04168E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9675188BDB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A7F21CC4E;
-	Fri, 14 Feb 2025 08:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A119221570;
+	Fri, 14 Feb 2025 08:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NaxdaKET";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DDwhNG9o"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ss3JsjB+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E3221CA1F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1F321CC4D;
+	Fri, 14 Feb 2025 08:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739520000; cv=none; b=Ei51F5/a3Hh/vJN/6pyOZk5fKfpv0uVKvNfgB+lF03YtXoNgsS+WTT3h6qqmXWhuVvC4dNeeX+8byxjiwr37uX6mWlkPc/EF3HC7tR9Jh0+9IEdiSugYJP3XGX7KWm7SogiywRXFSfISomPYEloPFaXgpV8Ubap6C0aUIDV0W8k=
+	t=1739520041; cv=none; b=qViv8cbbaCRlQi5ZDlIdmmnmlP4vip1VmzHmVYjZtCwcY+hr66mJCaXO0rjMuof5ELglONN7zVf6qEQMQS48/QatZVE8YmEU/TjSIUa+oYqOKHyjSs/PY9M73q/ixMLLvXzLoB4DW0gbDfFIbha+ZpGQtmxJrIJjr9aYo03lSOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739520000; c=relaxed/simple;
-	bh=DKMGO+BlRls70FJsTX8R+XDMAZDrzb6etwUX4idhAP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iaCIQnV+X26Df8CFCmtikpMmZOLK1nvzgasn3oFDaZOH43hanTMzFDSnebY3qP+VEYnFpuaaGlegkjzl+SHM7xiWYys0rwyO3FCkCZoHnHTCfSeCwQJSiDtqLtN/oaBAXQuQFTFQ31FcJY0gDFA2r6DTe66vJ4nAlei1O1FUZ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NaxdaKET; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DDwhNG9o; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 390351F451;
-	Fri, 14 Feb 2025 07:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1739519997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vl42sO+5tmTPqeo1iMS87UANmhyjUCvI0bsY48G3xH8=;
-	b=NaxdaKETD89REe6+zWdTKRrZKJfxGwWBd1s0J2O8nqi4oi82y0Uj69jiadBW5WcVZgXG6b
-	jQr6vDFKxJr0FKpUMq3UY0N67EevVoMemWMXVkwCDNJ/u5WTkDEXNmXcLN421R40gzxSTx
-	AE9U5n0dKSa4w1KPI5ig5Nk/pBTfwkc=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=DDwhNG9o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1739519996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vl42sO+5tmTPqeo1iMS87UANmhyjUCvI0bsY48G3xH8=;
-	b=DDwhNG9oNfUmq8eCdhdieU+vhk41r8ul7PAso9e/ktTQHDcuNx8ftuYovRuh1tZjmZCvFh
-	bLVSceznziO1updZV2ERfD9elmWiQ+Aqu4BoQDxRkoNm24V1SDFYKY+KkojTRKpZSst9/g
-	vhKzegdr1UmcQqhrCp7YbCrSWYwR//g=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0177413285;
-	Fri, 14 Feb 2025 07:59:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L8g3Ovv3rmdXHAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Fri, 14 Feb 2025 07:59:55 +0000
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	sstabellini@kernel.org
-Subject: [GIT PULL] xen: branch for v6.14-rc3
-Date: Fri, 14 Feb 2025 08:59:55 +0100
-Message-ID: <20250214075955.17913-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739520041; c=relaxed/simple;
+	bh=v8hYqpTwAwdY3wJCEKVEjENut2Exj9ilsZyzIlA7VIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WL9nKPzWtmFxvAT0WlVUvYDyaDkpOmvO90mHHiG/SNCnsJdnQtq4HGze4Zc/ScFRUCOjCep1L4AUNypHGAtoVcuUigjmT9thSribrCmv1JI1rrjBRoRYtvm39c0nmg2z+0x2F00ULmeJF9F+PslApfMjq6KHR7m/lQc47fQMZdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ss3JsjB+; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739520040; x=1771056040;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v8hYqpTwAwdY3wJCEKVEjENut2Exj9ilsZyzIlA7VIc=;
+  b=Ss3JsjB++WvgReWc86xLGCUYXAmFR4ipiALbjNq57hdlck9iqsU2/Xzs
+   kDDjB3TVZgOCzj1wGf/xuMsslseMAl8FVP3tNbzSgAx7rGy8t5SGIPNWq
+   Rql87wLDOfYcNdkNSN3eSHAkAyh6ClHyAprxJgohYc0je+gdj8/FTS8vk
+   Atev5Qio96me2JhA9CQ6sVlCkDVwFfXZgsn+gyCe7jf8wKfxSrtZNyegZ
+   Q1LUrQIa7zPlVgKWfW6dHQI/z9km8JZOk+gFyvoCwhrCoxtiqTXtzmdD2
+   IqZwT65u9z2y5/2XNMLDk4VdS17JY9TzFX0xnQ10+Q/FaRigtDW+rmyPi
+   A==;
+X-CSE-ConnectionGUID: D0gXEUzoQBusCVa9FPh2ug==
+X-CSE-MsgGUID: bVlkWACYSWy75zlhyB+/dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="57666760"
+X-IronPort-AV: E=Sophos;i="6.13,285,1732608000"; 
+   d="scan'208";a="57666760"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 00:00:40 -0800
+X-CSE-ConnectionGUID: sFldRYM+S2WPmtEdqfEVvQ==
+X-CSE-MsgGUID: Eh1FUK/UQRW996/whU3rZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113253143"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 14 Feb 2025 00:00:37 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiqck-0019FP-2J;
+	Fri, 14 Feb 2025 08:00:34 +0000
+Date: Fri, 14 Feb 2025 16:00:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Gabriele Monaco <gmonaco@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+Message-ID: <202502141516.OkUInaxw-lkp@intel.com>
+References: <20250213090819.419470-4-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 390351F451
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.com:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213090819.419470-4-gmonaco@redhat.com>
 
-Linus,
+Hi Gabriele,
 
-Please git pull the following tag:
+kernel test robot noticed the following build errors:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.14-rc3-tag
+[auto build test ERROR on 4dc1d1bec89864d8076e5ab314f86f46442bfb02]
 
-xen: branch for v6.14-rc3
+url:    https://github.com/intel-lab-lkp/linux/commits/Gabriele-Monaco/tracing-Fix-DECLARE_TRACE_CONDITION/20250213-171642
+base:   4dc1d1bec89864d8076e5ab314f86f46442bfb02
+patch link:    https://lore.kernel.org/r/20250213090819.419470-4-gmonaco%40redhat.com
+patch subject: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+config: i386-buildonly-randconfig-001-20250214 (https://download.01.org/0day-ci/archive/20250214/202502141516.OkUInaxw-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502141516.OkUInaxw-lkp@intel.com/reproduce)
 
-It contains 3 patches related to the xen-swiotlb driver:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502141516.OkUInaxw-lkp@intel.com/
 
-- 2 fixes for issues coming up due to another fix in 6.12
-- 1 addition of an __init annotation
+All errors (new ones prefixed by >>):
+
+   kernel/sched/core.c: In function '__do_trace_set_current_state':
+>> kernel/sched/core.c:503:9: error: implicit declaration of function '__do_trace_sched_set_state_tp'; did you mean 'trace_sched_set_state_tp'? [-Werror=implicit-function-declaration]
+     503 |         __do_trace_sched_set_state_tp(current, current->__state, state_value);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |         trace_sched_set_state_tp
+   cc1: some warnings being treated as errors
 
 
-Thanks.
+vim +503 kernel/sched/core.c
 
-Juergen
+   496	
+   497	/*
+   498	 * Do not call this function directly since it won't check if the tp is enabled.
+   499	 * Call the helper macro trace_set_current_state instead.
+   500	 */
+   501	void __do_trace_set_current_state(int state_value)
+   502	{
+ > 503		__do_trace_sched_set_state_tp(current, current->__state, state_value);
+   504	}
+   505	EXPORT_SYMBOL(__do_trace_set_current_state);
+   506	
 
- arch/x86/xen/mmu_pv.c     | 71 +++++++++++++++++++++++++++++++++++++++++------
- drivers/xen/swiotlb-xen.c | 22 +++++++++------
- 2 files changed, 75 insertions(+), 18 deletions(-)
-
-Jan Beulich (1):
-      Xen/swiotlb: mark xen_swiotlb_fixup() __init
-
-Juergen Gross (2):
-      xen/swiotlb: relax alignment requirements
-      x86/xen: allow larger contiguous memory regions in PV guests
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
