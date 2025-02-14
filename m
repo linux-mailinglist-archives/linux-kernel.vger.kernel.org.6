@@ -1,211 +1,118 @@
-Return-Path: <linux-kernel+bounces-514739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BCEA35AFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:58:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C42A35AEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 10:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372E13ADEA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5B83A282C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 09:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3AE25D52D;
-	Fri, 14 Feb 2025 09:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BAA25A2AD;
+	Fri, 14 Feb 2025 09:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D0QD7XRy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y/8soyW5"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A13B25A640;
-	Fri, 14 Feb 2025 09:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A43257420
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739526999; cv=none; b=lykVUiqrViI62k9uX9Frsp8h9UJx/ysNYu8uRSKqhnZekFOsIXEiVCYugLj8QQSld7Oq4v63etu6nudJi0I1lovIGia/X3X3uRuKNYeXPvp5u9l5Thgle0uVqmTD6UST/cRqy3BvOsA6xhRTfg/SHHWj6wnCz9p1N/yZhQcXGNI=
+	t=1739526985; cv=none; b=iBFQLBncVemmh2RsHfQGPfp8IGLZD0vp4M9hNgMLxh/cVns3zv/53l1W4fxhBlaZfOnAJs1tZu8JTBQGgXSNzrhAaDKVRGhagoCe0mRpQ47be76T+RsEmTqi7xUBmgBzIcXPOV1OC+wamsDUP+jnRcDujliUk7e4i3Qm5fbAcRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739526999; c=relaxed/simple;
-	bh=cjRkm3uh/e//CfBttj9mAhGUBQTHG8t6ruCTx5IGxBM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XIBea+Q7EeCtnCZL3CVaaIRHFE0a+RomFwzkMnheYSeGn8YwB7+BNqJLRaoKER8R37Ioy5bxUILI45gO70PWdWrxiaNfkHvPMaGRaOiKF9C2EhFvilHwk/BFK7QUopUGzPviuxLVuu9P6lDtIDx81KWDXhWDBKa3kTtaHhAsc7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D0QD7XRy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51E8s2dK028708;
-	Fri, 14 Feb 2025 09:56:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZNjhAfW6/peszqKRsXRZ2D/Am9WCq21HAOCNWHy/qP8=; b=D0QD7XRyFmI20R4p
-	0pxAMbMOUvzt+ct8nW74qUNHyeHE9Qdy+MzRwwnUyMlnzc2rm8Jp/0UvNHEmQWUK
-	gPUGsgLogs+QHWVUbE1PMqrTdL2wytKVFYLqHQLjniPrdLaM0cyr5WWHomhIX9Qx
-	cd4YS/RoegCU5uwcprJk9xL0j4+o5rjQNY7YoWEu31HiFMy3Cm53mfxRs2GyuLlN
-	hsLwu59o0TW8cEMGxhiYjcsJEuwGxnNH5sd9RSUOTqjYUnUBdKtj20JOcR0reMar
-	ZiZ3YYfl2O0OQTSr3V8iSOHk5Zpbyz98oxAQwhq8bvhpV1QFGhg1yN0UEOJ8MTVo
-	Iayadg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sebnbatf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 09:56:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51E9uXr2018189
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Feb 2025 09:56:33 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 14 Feb 2025 01:56:31 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_svankada@quicinc.com>
-Subject: [PATCH v1 2/5] media: qcom: camss: Add support for CSIPHY QCS8300
-Date: Fri, 14 Feb 2025 15:26:08 +0530
-Message-ID: <20250214095611.2498950-3-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
-References: <20250214095611.2498950-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1739526985; c=relaxed/simple;
+	bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J0TpEzVjEFXhyD21CN0z9elePztMtU7HFJCZX1cK/njE93dKdVz73KoYqDKsxgezYaVFFnfz+goaIJldhdGaOqU2NR5rPFhhHR7MreqBoKHkzzRIxItJeR+PgHfaiz/IZ60JLKM6xTmrFTAY/AGZr3A5kTHUggyFduaT7uFHyts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y/8soyW5; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-545284eac3bso461602e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:56:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739526981; x=1740131781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
+        b=y/8soyW5CwNUoYqNTFX6lyGU8Qk9Avts8muHSffQeW/9/dTMOKJKVOg7Qok88c2s1V
+         5nw4+Yi/2I18rJ727ag4Cpn1hS+I4uomvGEziAnRkXTRLM+TwzH1xW8X/zNtUQj8n7u5
+         5Tz6GLZ0MnZlJJzbTRuEkPYhz048KOmgTgh9QngV9W/q9Mb+/x8+/o1OwBAAmT5QWO6L
+         njNdK+QjD0AnWIttmNTk+qYIn7Qr1H+5nK/B0DZdHW4CQMA8yeGHO4eMyFAikSFo4TN7
+         bCdquKPd4jaOl6bjjCWt7qpw53/ipnoEJ/6xD33MAGBCd/Jfi2fmt8gbX6kdrWz2lT9h
+         YBWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739526981; x=1740131781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2AsCrWbVyGKPdXvfmBx4a9snB6Aw/WrgC/hdNdtKs30=;
+        b=Z1nDe+AwVXXKV7GTWKCXNXb5U8alTvLjQXSFV6T4IT/0hZBqrZVUM2IqgUlKUVTPAR
+         2zhyl3PSYwOv8ANtMZfTf1apw1gDh9rz221UIU+jgw2bL7qu0pXBgifcJoZv6V0hs5q1
+         bPtIwPUNlcK2skB2T8NFJfF4ZVJl9okjv4lNgzdJc+qM6o4R+I8P9KRebZrTXLf/hw1r
+         7wRQ2LO/dq5mWNnfq2DvOEmZtKJ/hKFdVD4sv6aNJAe5pv7y7pBJgvDG6oxfaARzlMMH
+         FEuSQ8tR4rtfhP516/aK1Iwx4TMIUoDdyoBfXZDXxceWjoKgf+KC0Pv4ZrItdR9onEe5
+         9EGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiRaFS/HWi6ViQOucIz9tt6cThJsRuflsoeph+eEwxkt1E9hmtVC9aG12Mrn9rd9LKXhIjUZzyMlokS2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0qGfkIwqINxw2RIbVa5NL5rlVhlHSNTCOxNjIEDV7uf7hxG1J
+	UBOUOOCKAy7xFqbbAyAvr39klS9hlUP9DZRQJTgRRfBSUp7lQvwbBw52pNFvS0FmzQ0lw7fFjrW
+	ad39QQofIzf7zUeVD449KuFq1F7d8eK0jkhwa5Q==
+X-Gm-Gg: ASbGncuByi8ESxYemzvaAosAB4gr2nKor2rKMZufet6H0DVRmiRAqo4/iHLsOzNNQ6s
+	m9CglWbiYGZ+n0mJeIu7suxyMe2aMR7V3ksXU7m6rfd/1ZjW8fOjQ0BU4pX1boPBy0v+BBwB2
+X-Google-Smtp-Source: AGHT+IGBcbrZEU3WtspasRr8y5DGBmF7RSzDcVPvB+A0GtrhyVirdFfGoibdROQWEv1N6aRSxdNWZYR6heUIRHTOP7E=
+X-Received: by 2002:a05:6512:138f:b0:544:ead:e1d6 with SMTP id
+ 2adb3069b0e04-54518178efbmr3191247e87.38.1739526981311; Fri, 14 Feb 2025
+ 01:56:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: N96OAEVjKgQyobXuCGkEq-YplMLIK_zR
-X-Proofpoint-ORIG-GUID: N96OAEVjKgQyobXuCGkEq-YplMLIK_zR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=997 phishscore=0
- suspectscore=0 malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502140071
+References: <20250211-gpio-set-retval-v1-0-52d3d613d7d3@linaro.org>
+In-Reply-To: <20250211-gpio-set-retval-v1-0-52d3d613d7d3@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Feb 2025 10:56:09 +0100
+X-Gm-Features: AWEUYZmo1A8kyC_1nRo1MhdajxMnD6e7V4G-rNnAAebgBMCC6AkDlJN1o-MAiIs
+Message-ID: <CACRpkdYL4odi-00YDi-cFuVgw8uBncA+ZxGYnRRhuYR7eZuBWw@mail.gmail.com>
+Subject: Re: [PATCH 00/14] gpiolib: indicate errors in value setters
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Walle <mwalle@kernel.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Keerthy <j-keerthy@ti.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for CSIPHY found on QCS8300.
+On Tue, Feb 11, 2025 at 1:10=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- .../qcom/camss/camss-csiphy-3ph-1-0.c         |  2 +
- .../media/platform/qcom/camss/camss-csiphy.c  |  5 ++
- .../media/platform/qcom/camss/camss-csiphy.h  |  1 +
- drivers/media/platform/qcom/camss/camss.c     | 48 +++++++++++++++++++
- 4 files changed, 56 insertions(+)
+> The value setter callbacks (both for single and multiple lines) return
+> void even though we have many types of controllers that can fail to set
+> a line's value: i2c, SPI, USB, etc.
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-index b69c20b0544e..4f97beef168d 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-@@ -703,6 +703,7 @@ static bool csiphy_is_gen2(u32 version)
- 	case CAMSS_7280:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_8300:
- 	case CAMSS_845:
- 	case CAMSS_8550:
- 	case CAMSS_8775P:
-@@ -799,6 +800,7 @@ static int csiphy_init(struct csiphy_device *csiphy)
- 		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
- 		regs->offset = 0x1000;
- 		break;
-+	case CAMSS_8300:
- 	case CAMSS_8775P:
- 		regs->lane_regs = &lane_regs_sa8775p[0];
- 		regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index e07e871113d9..c462e0bd7ad0 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -103,6 +103,11 @@ const struct csiphy_formats csiphy_formats_8x96 = {
- 	.formats = formats_8x96
- };
- 
-+const struct csiphy_formats csiphy_formats_qcs8300 = {
-+	.nformats = ARRAY_SIZE(formats_sdm845),
-+	.formats = formats_sdm845
-+};
-+
- const struct csiphy_formats csiphy_formats_sa8775p = {
- 	.nformats = ARRAY_SIZE(formats_sdm845),
- 	.formats = formats_sdm845
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-index 9f2e088b1e47..7cd2697d9d54 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-@@ -125,6 +125,7 @@ void msm_csiphy_unregister_entity(struct csiphy_device *csiphy);
- 
- extern const struct csiphy_formats csiphy_formats_8x16;
- extern const struct csiphy_formats csiphy_formats_8x96;
-+extern const struct csiphy_formats csiphy_formats_qcs8300;
- extern const struct csiphy_formats csiphy_formats_sa8775p;
- extern const struct csiphy_formats csiphy_formats_sc7280;
- extern const struct csiphy_formats csiphy_formats_sdm845;
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 1c0c3c019803..108470a2e70f 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -2447,6 +2447,54 @@ static const struct resources_icc icc_res_sm8550[] = {
- 	},
- };
- 
-+static const struct camss_subdev_resources csiphy_res_8300[] = {
-+	/* CSIPHY0 */
-+	{
-+		.regulators = { "vdd-csiphy-0p8-supply",
-+				"vdd-csiphy-1p2-supply" },
-+		.clock = { "csiphy_rx", "csiphy0", "csiphy0_timer"},
-+		.clock_rate = {
-+			{ 400000000, 0, 400000000}
-+		},
-+		.reg = { "csiphy0" },
-+		.interrupt = { "csiphy0" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0,
-+			.formats = &csiphy_formats_qcs8300
-+		}
-+	},
-+	/* CSIPHY1 */
-+	{
-+		.regulators = { "vdd-csiphy-0p8-supply",
-+				"vdd-csiphy-1p2-supply" },
-+		.clock = { "csiphy_rx", "csiphy1", "csiphy1_timer"},
-+		.clock_rate = {
-+			{ 400000000, 0, 400000000}
-+		},
-+		.reg = { "csiphy1" },
-+		.interrupt = { "csiphy1" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0,
-+			.formats = &csiphy_formats_qcs8300
-+		}
-+	},
-+	/* CSIPHY2 */
-+	{
-+		.regulators = { "vdd-csiphy-0p8-supply",
-+				"vdd-csiphy-1p2-supply" },
-+		.clock = { "csiphy_rx", "csiphy2", "csiphy2_timer"},
-+		.clock_rate = {
-+			{ 400000000, 0, 400000000}
-+		},
-+		.reg = { "csiphy2" },
-+		.interrupt = { "csiphy2" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0,
-+			.formats = &csiphy_formats_qcs8300
-+		}
-+	},
-+};
-+
- static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	/* CSIPHY0 */
- 	{
--- 
-2.25.1
+Yeah this is a remnant from the design that was done of gpiolib,
+at the time (by David Brownell) assumed to be simple MMIO register
+writes, so not much could go wrong there.
 
+> This series proposes to start the process of converting the setters to
+> returning int thus making it possible to propagate any errors to the
+> user.
+
+My worry is that this project will be another one that stalls at
+85% completion (like with the eternal descriptor rewrite project)
+but I guess the upside outweighs the downside, and I also trust
+your proven grittiness so:
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+for the series +/- minor nitpicks I may send that I am sure
+you would address anyway.
+
+Yours,
+Linus Walleij
 
