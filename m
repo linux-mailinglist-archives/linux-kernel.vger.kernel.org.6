@@ -1,392 +1,219 @@
-Return-Path: <linux-kernel+bounces-515223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5A8A361FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:41:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A77EA36204
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375543AFB39
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC627189328D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC072267383;
-	Fri, 14 Feb 2025 15:40:56 +0000 (UTC)
-Received: from n169-113.mail.139.com (n169-113.mail.139.com [120.232.169.113])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09057266F19;
+	Fri, 14 Feb 2025 15:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Efn4KlxN"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02499266EE4;
-	Fri, 14 Feb 2025 15:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547656; cv=none; b=K/fwgbB3p9d3CO8H6rjtuOynt/7uQ9mo1gSmuIzeAcyjLyZ+LSMxv1Y0cJ1GrzWvMmAgLeaPT9SxcMVqN2q1Jt4pVF3pVKf6N7FVHK5b3psnkZxnyGH32e/T3M0gYJ9bXgrtvzRyUWmDWgC3nkNYFTYPBEQzZ5MwfIb2yF5B1A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547656; c=relaxed/simple;
-	bh=ZeioJAiUm+F0Z9PDYbxPs7NUwEgcNpqJiAvB1P3HIhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kXxXJWaogWGctPPFgIkkj9wtBzdWkQOoQe+Z8SH269mzZYN5r45y+kBvClj47T4+Hae7mGovNXmeG9s3ZNwM5B3dNvjoUosAPlDNgW3S0/KnIErx4IH0x/QccA8k0TnQjPwqbk8NRR4ms3QG2+ksPnQXETOzm/r9iciXSHHP4AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from test-ThinkBook-16-G8-IRL.. (unknown[2409:8A00:7877:4FA0:B447:118:24F7:471A])
-	by rmsmtp-lg-appmail-34-12048 (RichMail) with SMTP id 2f1067af63ed52c-6bbf0;
-	Fri, 14 Feb 2025 23:40:43 +0800 (CST)
-X-RM-TRANSID:2f1067af63ed52c-6bbf0
-From: Jackie Dong <xy-jackie@139.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	kuurtb@gmail.com,
-	W_Armin@gmx.de,
-	dongeg1@lenovo.com,
-	Jackie Dong <xy-jackie@139.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>
-Subject: [PATCH v7] platform/x86:lenovo-wmi-hotkey-utilities
-Date: Fri, 14 Feb 2025 23:40:33 +0800
-Message-ID: <20250214154033.5483-1-xy-jackie@139.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE41266F01
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739547749; cv=fail; b=AdVT5hbBqcjLOs/rsP6LPPGtizUrlhoy5W+SeverCQ4HfdxBfR5DOCGVCckuXL/XMR38U4VfZEDJkNasm4NX5QIGzBbSptReuYPCcIB65gkjnx3CLHnzKWzG/X4Cs0sAXTc6veKeoeuLCbSmsf3SopbFPFVXLR0bgjhqED5kFDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739547749; c=relaxed/simple;
+	bh=NyzKCEEXo8ytf7vmWr6ixCM2/6VtRyMxP9js1S52rDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TgFNJO5egfd39DpXR9KBImWll6FNOf153HPTCOzKx/GLTw4Z/VoxMcWOO32vm2ybL63PIq9lGu9mivEvjH7BjgaLIHIjaTZOm2tytZ5uTmDfQtse28/fPH8Ngn/mN/GqFjqo3Q4C2RNIpG/WmlLWllz19ATqL3YBz1UhvtmGahM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Efn4KlxN; arc=fail smtp.client-ip=40.107.94.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dAlLKEETq8AJ7RSxwOKC3fkA2CMHm2U8Ddkw9t4H5zXvgK5sDXWRiVI/MyCLxcvuv6Hf2Go+R4VI1mvEQDxYi+OZsPKnsD/EgF6Fe0fo+M785Rd0MUFA4brwHGi1AbyX+TcFhejv3nXPw1/oQbdk+soFkhk8pnutD8umhDejpEAe7LUcs9u9DxnevUy6uqIXfSFE+88PuV3oeNnq+RPAx5Bn6pgSM3oL6tfzmPk0niXdMNH3+BPJJhvV/vnutagdhhZJovo3mwvq1NO1yfjWcAc6ryONsCbCt9JvLM1z5eNH/H4kwpX/NJJMXqjeRC0e9DTCmINh3EkTILBYk3yccA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zlA3cFZdEXtrsC0PjbObJxBPZ26KdwF0auVLorp7Jck=;
+ b=yhhMakOuwrTj0QQezsT+fwZXt9T8cDnmYw/iFrigrfdijn/ka5DFqlHdErn0GNHr6cFvE8W2v6bm4qsVqJV1Eh18xqgzeXyIuGmnlWXuVOw9FLUZaHJpQ/3/7IDrhx0FRFJfpxtzrH/BKjDTXLbxC1fpY+m+71Lok/F6ykeIM9vAlmLLZ4owmjZwWeEOqSD/SY8IrkfENP27HaNTeRNdkXXCXEALayAI2Esfb2YBYI7Sk6BIDEOWln9mvQRR+S3NDjLpNHszNgkXSqXXvL/zR50jRBwYD7QsBN35WkrPtWu8GtVxZbtZGbvE00q23wTgyxQSe/ypdol+EHBD+Q7Q6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zlA3cFZdEXtrsC0PjbObJxBPZ26KdwF0auVLorp7Jck=;
+ b=Efn4KlxNDL70yfaBoGPso2OuLgyK4QpRwbHh1s+NivKTOLWSKoBiQDcTvdG3FrDoTn3MyZFtJimekuxuuVdqgk950PP+iL8+OH4yq8WRk55xsYM859FHB8b4+OrC98DnNY1RSe3sJblIKDnXoM6t4CbQA+K0HtXtmLtlF15jQt4MvDG7PGpSarK54NGwfxeI/mgtnQyJU9QvKtvR8IqQaUtQenpaV3rkvfyYprqNq/6jDepeS24pUSHDxsv0XrgwNwijoP++cHcVvOTBjCWmWg/SDG55zxFRiFZRwkR5+rE/IRSiNNiCa7fb7LNofMdnXh3JDKZiXfu7SEDSQubwlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ CY8PR12MB8339.namprd12.prod.outlook.com (2603:10b6:930:7e::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.14; Fri, 14 Feb 2025 15:42:23 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8445.016; Fri, 14 Feb 2025
+ 15:42:23 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Mel Gorman <mgorman@suse.de>,
+	linux-kernel@vger.kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v2 0/4] Make MIGRATE_ISOLATE a standalone bit
+Date: Fri, 14 Feb 2025 10:42:11 -0500
+Message-ID: <20250214154215.717537-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN0PR04CA0021.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::32) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY8PR12MB8339:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28354c4f-d7cf-432a-21c6-08dd4d0e2c95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lC1rNUBHhuVVtZnB3+0/5pwKU5YFT4gz+DdiAMeqS2yTr5+0r3VxjXFK266B?=
+ =?us-ascii?Q?UX8GMc+7nfKLDT2Ug9/wp09FFtoTHhtT9QJ1yY4dSelCOzvnJg2HQR4mh9Jd?=
+ =?us-ascii?Q?RTifBeHnCXbNZT1H39T/956sIfFw5xNsatiz0k3PoNV/ei5E8F59jWH46s1D?=
+ =?us-ascii?Q?SYqFYPuvl5R98dPmjQFBbiBNKpruXtBQJb9jCljEHq9aJxLfWLauW4Bs7ZWl?=
+ =?us-ascii?Q?W3jT4G+vCPuhXpDdnm4f5jUeGGxFChDV0XG7AhWM7cNCvSIvOj2RaXVaFKPf?=
+ =?us-ascii?Q?yO+LOZvrUXeCx9sJOZ9TKjs3eP+1WszRgJFTD1EbMIWh81V/WUW8aZ4LQal+?=
+ =?us-ascii?Q?jiGIaFh2xYB9RuWqAelb+yAiD3nkPPA759fr1YycAua4DOVR3M5TlKaFbJzY?=
+ =?us-ascii?Q?W87heWE6hubhbIu0rPNkF43n8fXbP1yva9l36O4yTnF/DZSI4O2mqfnDNJ6B?=
+ =?us-ascii?Q?L0QVAot1fmifbx62QUJDN0rgGcOvtguoVi1NkV46AjonLz8AccJCPYnbmrb7?=
+ =?us-ascii?Q?RMqEenJoASgUHzc4eWl2unMOHaQHs/OL2Og6kwFQwyo3VODHF8qipo3GeZrB?=
+ =?us-ascii?Q?p5WRwLSDz/+tbbbVM3GZT38PgFjFJMsF9MB3y7dwvzOjIrpbDd5RxM4f+TrV?=
+ =?us-ascii?Q?Zr/eZT5Qmk8ol1gmoF9oL3uAWZz4CjjADTzCt0x7JmNXLYZrpJhEh4l3VH3R?=
+ =?us-ascii?Q?p6pbAc4QKsekN3BiSZFNacwcK54MYQ7G63zHmk+5dDNXf9LM7HL/qpN5R9xi?=
+ =?us-ascii?Q?q7GcxhIvtB6qGSSDCGFETrqXuA39InftZ0DKZ4GHz9mC9xxn3hjH1l3pnueS?=
+ =?us-ascii?Q?AbcEKEU/oV3lsvJyyKhiybW0l5xS7ped/fiRTIrZSoVn1WY/L7ESObYuRrjU?=
+ =?us-ascii?Q?NOpcOFWRM5qfVax3GLulp+8+41KYQ3tPyg/404EmpykH8kWnW0peLgxWIi52?=
+ =?us-ascii?Q?tNrW4xjLDgfxK2HsBdEkeyy3isUUzOPjgXlDwawFXHZdX6FR2nQv4bkGD8Z3?=
+ =?us-ascii?Q?I4JjgWwIVe0jvXvqHxu0mKJO/7ZyH17ASPCmjeiSOZOZ7RTB7fY2p+VDojAI?=
+ =?us-ascii?Q?Klx9CLBzSTF+1V/KUKPgOmrJk69aG61h7Xz64f4lS0bfpKRODRZlnJAlJ2BI?=
+ =?us-ascii?Q?wv+XexplKQip74EKfv1pSvEJvMCS770yCZZYPOuIyr7Z4f6Ni3NEaPmcMOFa?=
+ =?us-ascii?Q?4xmI+IcBTJAGLUptRuBNP8rgHMU1fujUZK7A9QXoK8AvIMQKQ/MzfW7pF0ll?=
+ =?us-ascii?Q?QW9TDFjox/x9Kfpgr3G8hAIO1FelCY/pa5XHDor0bwMRsV80Jr1aBSGnJmd5?=
+ =?us-ascii?Q?ArCgmpJzYhT5xv5c8f3EaHHJo2sLsPcgAM7cg1IvznsArQW79eRyilemx2fh?=
+ =?us-ascii?Q?VQ+UFv4LXjP4QU7EcAmfXeL2XrZx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/12nIk4dMWGxJufNb1CCkdJxhNR2kMbhODAgUuFKiILlysM7zy2hGBYnDyGL?=
+ =?us-ascii?Q?v8MRrXWi2UTDLt+IMQt8iFWBDaWCAFxtEI+cbb1LAVYbQylKpYWX6fACeasB?=
+ =?us-ascii?Q?pqUkH/PMaBalb9OLUDiGzKTdzdyzJiX1/q1hqZxjiA7t9BxcGaBlekX57+CD?=
+ =?us-ascii?Q?shJSkSXEqk57P9pVw+60aMqO1NT668PTIVWtQTYcaoDtvfnEUkE3ZV64NoOh?=
+ =?us-ascii?Q?orNBapsx+mvf0a0HBBth305ADLvYCvYtA4yROQhEfJBa81rYFZbe8qpr5t2E?=
+ =?us-ascii?Q?BHKlWAbBofG3DLyMI2p1mSUGohsmUyQDECdYbA6cncMqEe1QNUCB10TQkmwZ?=
+ =?us-ascii?Q?5kdH9EYtQSSZrhGovbbvSf/CRKos1o7PO7YL1KOyfUcU20VvrfxdKPEGwLSK?=
+ =?us-ascii?Q?sFoBc5vtqjCwjMsHMz1lKJ1NeaEM9UskAiF8akssmkocOjO+3XEajI/EywNC?=
+ =?us-ascii?Q?BFBbxTcKsV0SM+N5PTHDmAU6Z0nO+SUx3lE/GfiA0yYzpn4vuIXvJ1zwl0x+?=
+ =?us-ascii?Q?jfQiO+udJ4ShQbPycBrGcRYhVOrxDdTZzeg+g/4ZsuURIBFHPO3rg0z3zwHx?=
+ =?us-ascii?Q?iGqO/g/fQoQk/mjEf1m9ANPsE+8cdqdjYVF1poAXU4NZ07o09PEzHErpKfXX?=
+ =?us-ascii?Q?jOOveBxUwNTRlzFQWSXKD84BXcB7CfqogzN7AUQY5mpjFfDYiRln8gwUFE2A?=
+ =?us-ascii?Q?9dxYbTN+bwBsu6WF3+uSikyDi1VaUXKsvJzb6IWUH4Lmz8q4e3s9QuwrlVHe?=
+ =?us-ascii?Q?N072mpdeePpWhwHxNSiLrXxLchHqVW6Ol4tXzfU3wxgFXFrmX4PqwKlHk/p8?=
+ =?us-ascii?Q?vNEMne/TR8gizeFVsqb5JChAO1IvtayyQwVPe8yjJPkGHpcJ5cPfH5hy4sHE?=
+ =?us-ascii?Q?Qnug0lZVFKGfRBk9USKd7Eh7bWt8dEInkLLlAA2pfCI9YQkqOZh5taH5bQeM?=
+ =?us-ascii?Q?zmZMz411ydE32qlhI7UhlFnwM52JpsN8MQMfP3lmKJ3XqJyyHnElVlfWhQPb?=
+ =?us-ascii?Q?c1UpVlRpIlymjbsKBTpNt8cG62XpN3LI8GDlA2JCoVbP39jreZU2Yo9yJRou?=
+ =?us-ascii?Q?Fqy8/EnfenZhucXPxzfi1ykUvxzJ2MJhYwnu9j51Ii+3pwc3v/tDVDsU+ayB?=
+ =?us-ascii?Q?CXiGcOi8aZNMFTuamo6YpMny6VWCIYzvRtMoy3RG8NieFKMSmIYGuw3GRwHB?=
+ =?us-ascii?Q?CAcE/xkCsaPk/sMtvrXvcEhlMTM4glFsvoJ3ry1953Cp34XjS4VKuXt7uqvm?=
+ =?us-ascii?Q?+36Yp/r8AQZGIh4/3SKpgKsUyjlVdD/PqKP5iQY5yKylZWpWtd2owyed6+34?=
+ =?us-ascii?Q?u6PHU1GigpUcNiZaOeT93TsLQLDWE1zAopKTLjxsiA0pYi4pM6TITZbe6g/I?=
+ =?us-ascii?Q?P5f9SeOHKCDsLjl8ulpjcBibbFNlAbz+MAAUMXPR0Jq+ZQJjvsA7AiBIolX8?=
+ =?us-ascii?Q?O/ewkjZD6Sn0aGrTEiZlug8PDFAtRpyiW75JIxpv8pRtn1DfVnTfloDwmKxC?=
+ =?us-ascii?Q?N9kz1IZ2nwpt06X89aaGpH1jDB9uRH6dw961Nfs8th8xK8UliRYWJKnyNDLd?=
+ =?us-ascii?Q?wSR0pBRAUyyoiqH2tur5alp4Tf8b9ZyNcKWdntgX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28354c4f-d7cf-432a-21c6-08dd4d0e2c95
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2025 15:42:23.0207
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4/sy7sLM0j5xCUTRxnI0UmirUugfPGSXGojxFBZS2Nfb2pM/PRQvyQwUWXshRweZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8339
 
-Tested on below samples.
-ThinkBook 13X Gen4 IMH
-ThinkBook 14 G6 ABP
-ThinkBook 16p Gen4-21J8
-ThinkBook 16 G8 IRL
-ThinkBook 16 G7+ ASP
+Hi all,
 
-Signed-off-by: Jackie Dong <xy-jackie@139.com>
-Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Reviewed-by: Kurt Borja <kuurtb@gmail.com>
----
-Changes in v7:
- - Replaced spaces by tab for items in enum hotkey_set_feature
- - Directly return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev)
- - Added Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+This patchset moves MIGRATE_ISOLATE to a standalone bit to avoid
+being overwritten during pageblock isolation process. Currently,
+MIGRATE_ISOLATE is part of enum migratetype (in include/linux/mmzone.h),
+thus, setting a pageblock to MIGRATE_ISOLATE overwrites its original
+migratetype. This causes pageblock migratetype loss during
+alloc_contig_range() and memory offline, especially when the process
+fails due to a failed pageblock isolation and the code tries to undo the
+finished pageblock isolations.
 
-Changes in v6:
- - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
- - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
-   NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
- - Align items in enum hotkey_set_feature
- - Drop some brances and return error message directly
- - Check return value of lenovo_super_hotkey_wmi_led_init() in
-   lenovo_super_hotkey_wmi_leds_setup
+It is on top of mm-everything-2025-02-13-23-42.
 
-Changes in v5:
- - Take out union acpi_object *obj __free(kfree) = output.pointer from
-   if-else block
- - Remove lsk_wmi_context_lud_keys related source code
+In terms of performance for changing pageblock types, no performance
+change is observed:
 
-Changes in v4:
- - Add related head files include cleanup.h, dev_printk.h, device.h,
-   module.h
- - Replaced kfree() by __free()
- - Remove double free for obj
- - Remove wpriv->cdev[led_type].dev = dev
- - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private *)context
- - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
- - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
+1. I used perf to collect stats of offlining and onlining all memory of a
+200GB VM 10 times and see that set_pfnblock_flags_mask() takes about
+0.13% of the whole process with and without this patchset across 3 runs.
 
-Changes in v3:
- - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
- - Renamed everything in this driver which contains the name "ideapad"
-   to instead contain the name of this driver.
- - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
-   and use container_of() to the led_wdev pointer.
- - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
- - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
-   and free the ACPI object after get the required value.
- - Removed led_classdev_unregister() after led_reg_failed label, but
-   add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
-   resource.
- - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
-   source codes and only keep LUD_WMI_METHOD_GUID.
+2. I used perf to collect stats of dd from /dev/zero to a 200GB tmpfs file
+and find get_pfnblock_flags_mask() takes about 0.30% of the process with and
+without this patchset across 3 runs.
 
-Changes in v2:
- - Update code layout and formatting as recommended in review
- - Improved error handling in ideapad_wmi_led_init
- - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
-   ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
 
- drivers/platform/x86/Kconfig                  |  11 +
- drivers/platform/x86/Makefile                 |   1 +
- .../x86/lenovo-wmi-hotkey-utilities.c         | 222 ++++++++++++++++++
- 3 files changed, 234 insertions(+)
- create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+Design
+===
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 0258dd879d64..715bcfbe992f 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
- 	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
- 	  rfkill switch, hotkey, fan control and backlight control.
- 
-+config LENOVO_WMI_HOTKEY_UTILITIES
-+	tristate "Lenovo Hotkey Utility WMI extras driver"
-+	depends on ACPI_WMI
-+	depends on IDEAPAD_LAPTOP
-+	select NEW_LEDS
-+	select LEDS_CLASS
-+	help
-+	  This driver provides WMI support for Lenovo customized hotkeys function,
-+	  such as LED control for audio/mic mute event for Ideapad, YOGA, XiaoXin,
-+	  Gaming, ThinkBook and so on.
-+
- config LENOVO_YMC
- 	tristate "Lenovo Yoga Tablet Mode Control"
- 	depends on ACPI_WMI
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e1b142947067..131fcf974477 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
- # IBM Thinkpad and Lenovo
- obj-$(CONFIG_IBM_RTL)		+= ibm_rtl.o
- obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad-laptop.o
-+obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+= lenovo-wmi-hotkey-utilities.o
- obj-$(CONFIG_LENOVO_YMC)	+= lenovo-ymc.o
- obj-$(CONFIG_SENSORS_HDAPS)	+= hdaps.o
- obj-$(CONFIG_THINKPAD_ACPI)	+= thinkpad_acpi.o
-diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-new file mode 100644
-index 000000000000..9df7145620a0
---- /dev/null
-+++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
-+ *
-+ *  Copyright (C) 2025	Lenovo
-+ */
-+
-+#include <linux/cleanup.h>
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/wmi.h>
-+
-+/* Lenovo Super Hotkey WMI GUIDs */
-+#define LUD_WMI_METHOD_GUID	"CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
-+
-+/* Lenovo Utility Data WMI method_id */
-+#define WMI_LUD_GET_SUPPORT 1
-+#define WMI_LUD_SET_FEATURE 2
-+
-+#define WMI_LUD_GET_MICMUTE_LED_VER   20
-+#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
-+
-+#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
-+#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
-+
-+/* Input parameters to mute/unmute audio LED and Mic LED */
-+struct wmi_led_args {
-+	u8 id;
-+	u8 subid;
-+	u16 value;
-+};
-+
-+/* Values of input parameters to SetFeature of audio LED and Mic LED */
-+enum hotkey_set_feature {
-+	MIC_MUTE_LED_ON		= 1,
-+	MIC_MUTE_LED_OFF	= 2,
-+	AUDIO_MUTE_LED_ON	= 4,
-+	AUDIO_MUTE_LED_OFF	= 5,
-+};
-+
-+#define LSH_ACPI_LED_MAX 2
-+
-+struct lenovo_super_hotkey_wmi_private {
-+	struct led_classdev cdev[LSH_ACPI_LED_MAX];
-+	struct wmi_device *led_wdev;
-+};
-+
-+enum mute_led_type {
-+	MIC_MUTE,
-+	AUDIO_MUTE,
-+};
-+
-+static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct led_classdev *led_cdev,
-+				enum led_brightness brightness)
-+
-+{
-+	struct lenovo_super_hotkey_wmi_private *wpriv = container_of(led_cdev,
-+			struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
-+	struct wmi_led_args led_arg = {0, 0, 0};
-+	struct acpi_buffer input;
-+	acpi_status status;
-+
-+	switch (led_type) {
-+	case MIC_MUTE:
-+		led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : MIC_MUTE_LED_OFF;
-+		break;
-+	case AUDIO_MUTE:
-+		led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : AUDIO_MUTE_LED_OFF;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	input.length = sizeof(led_arg);
-+	input.pointer = &led_arg;
-+	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_SET_FEATURE, &input, NULL);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
-+				     enum led_brightness brightness)
-+
-+{
-+	return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
-+}
-+
-+static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
-+				   enum led_brightness brightness)
-+{
-+	return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
-+}
-+
-+static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct device *dev)
-+{
-+	struct lenovo_super_hotkey_wmi_private *wpriv = dev_get_drvdata(dev);
-+	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-+	struct acpi_buffer input;
-+	int led_version, err = 0;
-+	unsigned int wmiarg;
-+	acpi_status status;
-+
-+	switch (led_type) {
-+	case MIC_MUTE:
-+		wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
-+		break;
-+	case AUDIO_MUTE:
-+		wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	input.length = sizeof(wmiarg);
-+	input.pointer = &wmiarg;
-+	status = wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_GET_SUPPORT, &input, &output);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	union acpi_object *obj __free(kfree) = output.pointer;
-+	if (obj && obj->type == ACPI_TYPE_INTEGER)
-+		led_version = obj->integer.value;
-+	else
-+		return -EIO;
-+
-+	wpriv->cdev[led_type].max_brightness = LED_ON;
-+	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+
-+	switch (led_type) {
-+	case MIC_MUTE:
-+		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-+			return -EIO;
-+
-+		wpriv->cdev[led_type].name = "platform::micmute";
-+		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
-+		wpriv->cdev[led_type].default_trigger = "audio-micmute";
-+
-+		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
-+		if (err < 0)
-+			goto led_reg_failed;
-+
-+		break;
-+	case AUDIO_MUTE:
-+		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-+			return -EIO;
-+
-+		wpriv->cdev[led_type].name = "platform::mute";
-+		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-+		wpriv->cdev[led_type].default_trigger = "audio-mute";
-+
-+		err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
-+		if (err < 0)
-+			goto led_reg_failed;
-+
-+		break;
-+	default:
-+		dev_err(dev, "Unknown LED type %d\n", led_type);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+
-+led_reg_failed:
-+	dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
-+	return err;
-+}
-+
-+static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
-+{
-+	int err;
-+
-+	err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
-+	if (err)
-+		return err;
-+
-+	err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, const void *context)
-+{
-+	struct lenovo_super_hotkey_wmi_private *wpriv;
-+
-+	wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
-+	if (!wpriv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(&wdev->dev, wpriv);
-+	wpriv->led_wdev = wdev;
-+	return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
-+}
-+
-+static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] = {
-+	{ LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(wmi, lenovo_super_hotkey_wmi_id_table);
-+
-+static struct wmi_driver lenovo_super_hotkey_wmi_driver = {
-+	 .driver = {
-+		 .name = "lenovo_super_hotkey_wmi",
-+		 .probe_type = PROBE_PREFER_ASYNCHRONOUS
-+	 },
-+	 .id_table = lenovo_super_hotkey_wmi_id_table,
-+	 .probe = lenovo_super_hotkey_wmi_probe,
-+	 .no_singleton = true,
-+};
-+
-+module_wmi_driver(lenovo_super_hotkey_wmi_driver);
-+
-+MODULE_INFO(depends, "wmi,ideapad-laptop");
-+MODULE_AUTHOR("Jackie Dong <dongeg1@lenovo.com>");
-+MODULE_DESCRIPTION("Lenovo Super Hotkey Utility WMI extras driver");
-+MODULE_LICENSE("GPL");
+Pageblock flags are read in words to achieve good performance and existing
+pageblock flags take 4 bits per pageblock. To avoid a substantial change
+to the pageblock flag code, pageblock flag bits are expanded to use 8
+and MIGRATE_ISOLATE is moved to use the last bit (bit 7).
+
+It might look like the pageblock flags have doubled the overhead, but in
+reality, the overhead is only 1 byte per 2MB/4MB (based on pageblock config),
+or 0.0000476 %.
+
+
+Any comment and/or suggestion is welcome. Thanks.
+
+Zi Yan (4):
+  mm/page_isolation: make page isolation a standalone bit.
+  mm/page_isolation: remove migratetype from
+    move_freepages_block_isolate()
+  mm/page_isolation: remove migratetype from undo_isolate_page_range()
+  mm/page_isolation: remove migratetype parameter from more functions.
+
+ drivers/virtio/virtio_mem.c     |  3 +-
+ include/linux/gfp.h             |  6 ++-
+ include/linux/mmzone.h          | 18 +++++--
+ include/linux/page-isolation.h  | 24 ++++++---
+ include/linux/pageblock-flags.h | 33 +++++++++++-
+ include/trace/events/kmem.h     | 14 ++---
+ mm/cma.c                        |  2 +-
+ mm/memory_hotplug.c             |  5 +-
+ mm/page_alloc.c                 | 96 ++++++++++++++++++++++++---------
+ mm/page_isolation.c             | 66 +++++++++--------------
+ 10 files changed, 175 insertions(+), 92 deletions(-)
+
 -- 
-2.43.0
-
+2.47.2
 
 
