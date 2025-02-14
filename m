@@ -1,106 +1,140 @@
-Return-Path: <linux-kernel+bounces-514858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE254A35C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:33:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DB7A35CA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 12:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD116D653
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B95188ED2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 11:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2152526388A;
-	Fri, 14 Feb 2025 11:32:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737EE245021;
-	Fri, 14 Feb 2025 11:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B85263C6B;
+	Fri, 14 Feb 2025 11:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0VNtTEYh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WFnwPIfj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE5221541;
+	Fri, 14 Feb 2025 11:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532773; cv=none; b=oce6z/rVsRdEgavcSa9FchwabMh8fRtSBrBb3k2adjYk7VArxwn3MvY+8nBIJi1m8QIgopJ05RS7+5qSg7ClY40HK7l6jt4MAqabdvJxYa1hUzQ85FpYI9+WVzCzAIuVw1tC6M2B79YH+KhOC9h5vdseYPLXKhWJYGt01qPqWcA=
+	t=1739532895; cv=none; b=ppG0Wzpt+Kznpqm62ea8JKVJz6eg3YT7PNFSTkKF3kK6PXRbVDifWpUtmKFWgiDJuouxM/HrkeHKq/0UyA3eDRy+n2U0f0rSMr9Em9gLYctjppwptKpM3gl49q4aTFW3EOFkN6FageJ8Qst0H9VaDfUhSE6R99Ft6Z7/hj5TjB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532773; c=relaxed/simple;
-	bh=ZxRqtA2Pr+vwIr05ZbDmWmG2gKvCO/nFce1NT3ml670=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCzoXRFgzxvNUGM7PKclJ1P6A3B9pyjXJQdyZS/HcsRw1tb9go+9EbMUYNsfpx7xu4y/H+0VERkTtvauNrs3EqbeLMauV0uYST1gHxsTIsPvkIO4OF6AmWTr60KvHZtbniYfx2oab+ZQ5Sa9HsFQz8xWAIaSc2ju+Xu1eW0NF+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C77C113E;
-	Fri, 14 Feb 2025 03:33:12 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A1363F6A8;
-	Fri, 14 Feb 2025 03:32:51 -0800 (PST)
-Date: Fri, 14 Feb 2025 11:32:49 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Graham Woodward <graham.woodward@arm.com>
-Subject: Re: [PATCH v1 00/11] perf script: Refactor branch flags for Arm SPE
-Message-ID: <20250214113249.GA6174@e132581.arm.com>
-References: <20250205121555.180606-1-leo.yan@arm.com>
- <CAP-5=fUH6X2F5S5eH+iU+-hT0vNvMKPTqbGt=E9W06sG=MzxEg@mail.gmail.com>
- <20250212085439.GA235556@e132581.arm.com>
- <CAP-5=fX6veqJYbTRfOiOqtpg8Dq+m3nZJRd4zEBCZeNiwB5Xpw@mail.gmail.com>
- <Z62DOPuDJ-PrcHQw@google.com>
+	s=arc-20240116; t=1739532895; c=relaxed/simple;
+	bh=ZSR5ExLzPOWzKeKJCYti0FPwPXEtrgPIJBvFt7ageL8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dwk8NZNh21ayng0IeDKlbnGLtHdZhpGKnFYRvgWmVng7EveNGoEebW5aZzcYEpF8vi01UTRuCpt+0wWcgnprHBBqjjjB49VQ+9cIZ1QpxsUrsIu5xlQXzEcnHDtufMXOYFB5VidtZlmKSiSTI/aeTKviUuYbxNeWRNFwh3Jz970=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0VNtTEYh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WFnwPIfj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739532886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WWdSDqLPiHMtkC3qRBjEr7KgW5xesCDv6jmHPBIB4Zc=;
+	b=0VNtTEYhNZqymGENVsUmuk+rnlFfX7RSGT3Ho51Jzxq38FSlmeIElqqU148QkLgRvvbxMF
+	oARriYR4RFpth96NjMkBo5hNBkelucCuzn5JwatniL1M08uy4SKjyhCAdV/qdQ/eba99LI
+	XiEfVSgYOnLLjTtprHlvawcrkXxeqR+m8TpQcRwp+J+sEstFenL0586F5ak1q3mLy7LV6n
+	qnrektVapcPsyxUDFZn8atapF68IW+EhNarZoqS+FgcZ3nF1GslRp9zthgkNswbWYfqivE
+	2J78e9sNA7ZDPletmeb/HsB02wyQreu92A/Zp2E3TtpGj+8SwnWuzKOp2Uz71Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739532886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WWdSDqLPiHMtkC3qRBjEr7KgW5xesCDv6jmHPBIB4Zc=;
+	b=WFnwPIfjvhMmBrrfQwvQ/cPdgZnaXQkJD4fxKY5hU7USn1NEKaf7iB28bu/zo8sPSUnwBx
+	KGOlqDpRoCYGNWAw==
+To: David Woodhouse <dwmw2@infradead.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge
+ Deller <deller@gmx.de>, Andy Lutomirski <luto@kernel.org>, Vincenzo
+ Frascino <vincenzo.frascino@arm.com>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore
+ Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Russell King <linux@armlinux.org.uk>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
+ Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann
+ <arnd@arndb.de>, Guo Ren <guoren@kernel.org>
+Cc: linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-s390@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arch@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
+ linux-csky@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>, "Luu,
+ Ryan" <rluu@amazon.com>, kvm <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 00/18] vDSO: Introduce generic data storage
+In-Reply-To: <ff83dc5c91b4e46bcf2d99680ec6af250fb05b27.camel@infradead.org>
+References: <20250204-vdso-store-rng-v3-0-13a4669dfc8c@linutronix.de>
+ <ff83dc5c91b4e46bcf2d99680ec6af250fb05b27.camel@infradead.org>
+Date: Fri, 14 Feb 2025 12:34:44 +0100
+Message-ID: <87ed00kbe3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z62DOPuDJ-PrcHQw@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian, Namhyung,
+David!
 
-On Wed, Feb 12, 2025 at 09:29:28PM -0800, Namhyung Kim wrote:
+On Thu, Feb 06 2025 at 09:31, David Woodhouse wrote:
+> Thanks for working on this. Is there a plan to expose the time data
+> directly to userspace in a form which is usable *other* than by
+> function calls which get the value of the clock at a given moment?
+>
+> For populating the vmclock device=C2=B9 we need to know the actual
+> relationship between the hardware counter (TSC, arch timer, etc.) and
+> real time in order to propagate that to the guest.
+>
+> I see two options for doing this:
+>
+>  1. Via userspace, exposing the vdso time data (and a notification when
+>     it changes?) and letting the userspace VMM populate the vmclock.
+>     This is complex for x86 because of TSC scaling; in fact userspace
+>     doesn't currently know the precise scaling from host to guest TSC
+>     so we'd have to be able to extract that from KVM.
 
-[...]
+Exposing the raw data is not going to happen as we would create an ABI
+preventing any modifications to the internals. VDSO data is considered a
+fully internal (think kernel) representation and the accessor functions
+create an ABI around it. So if at all you can add a accessor function
+which exposes data to user space so that the internal data
+representation can still be modified as necessary.
 
-> > > > Built and tested (on x86). A little strange patch 5 adds a new bit not
-> > > > at the end, but "Sample parsing" test wasn't broken so looks like it
-> > > > is good. I was surprised the use of value in the union:
-> > > > ```
-> > > > struct branch_flags {
-> > > > union {
-> > > > u64 value;
-> > > > struct {
-> > > > u64 mispred:1;
-> > > > u64 predicted:1;
-> > > > ...
-> > > > ```
-> > > > didn't get broken. Perhaps there's an opportunity for additional tests.
-> 
-> Probably because it just checks the value as a whole u64, not each
-> bitfield.  But it seems to test if the value of the input sample data
-> and synthesized-and-parsed output sample data is same.  So it may not be
-> important what value it has.
-> 
-> Anyway it'd be nice if any ARM folks can review this series.
+>  2. In kernel, asking KVM to populate the vmclock structure much like
+>     it does other pvclocks shared with the guest. KVM/x86 already uses
+>     pvclock_gtod_register_notifier() to hook changes; should we expand
+>     on that? The problem with that notifier is that it seems to be
+>     called far more frequently than I'd expect.
 
-After discussed with James, I concluded that it has risk to break
-other arches (e.g., x86 LBR).  So I have sent out patch set v2 [1]
-to keep the existed bitfield layout in patch 05, and added Ian's
-review tags.
-
-I expect James will give a review the new series.
+It's called once per tick to expose the continous updates to the
+conversion factors and related internal data.
 
 Thanks,
-Leo
 
-[1] https://lore.kernel.org/linux-perf-users/20250214111936.15168-1-leo.yan@arm.com/T/#t
+        tglx
+
 
