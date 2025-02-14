@@ -1,168 +1,196 @@
-Return-Path: <linux-kernel+bounces-514191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC645A353CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:40:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FFCA353D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 02:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CDA3A40F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D3D1890302
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 01:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCE678F2D;
-	Fri, 14 Feb 2025 01:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33F381ACA;
+	Fri, 14 Feb 2025 01:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BTEnjzar"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLs7PX2j"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CFF7081C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 01:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3AE537FF;
+	Fri, 14 Feb 2025 01:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739497198; cv=none; b=nQ4L3d0QKfdLpAH2u1/5hJ4g8GkdPK10onVUMvOIUARZ/e9Qm3r23Yvjtv/8VR/E14HkqWyYHCM+Y+rXe3WUwvGo8mS+m+uIq98AxiAcOje3JNf7FCCmN/uSJ9buVaRVfWWkQUZjXmpC+ebh7o7hPDyr+TdNSEZ8Q0zkchTHSD4=
+	t=1739497240; cv=none; b=HhN0d24jM74QjtsR1lpXGMSCU7GK44eVLgntoDJ6N/Lj2xJNadSYKMXIly796JfrHYV6em58oDN6a4Oeljjb4J/e6qE8IIYkYHF1aMm3lejIWeOM/oT88XckFlQXWK75vaKobRNmjA239eagzOrg6JV4vCla8JM5g5H1sJhqMPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739497198; c=relaxed/simple;
-	bh=nfP4yEj2vL6ycDB2Fk0sO0HXVXlyHmxmwJ3kr+6xh3g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mm8bwjb+jhg+dHpPPWG50H3F17RU05wQxCCjBcoeu9nrnznYBVuGBnN5XoDq/weRA6ugqPMYXdrwfu5zLfhKaM+qSxne+v35IBcMr6Ygw/jX1wys8nfxdGjJVQ2093WKTMbVO40OjWr3/7vTCYG8AoCRNXJKSQT/7MRhHKfrjyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BTEnjzar; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4393ee912e1so16315e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 17:39:56 -0800 (PST)
+	s=arc-20240116; t=1739497240; c=relaxed/simple;
+	bh=dv3enzOJg9KrTvdJom9BJbupSXYAXAmFW/cVbpJiE5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rebPp7Gb7++5bJaljEtxpmBxT3FNrKVkaFn1WOJA0V5NFAkzcXaK+WZ88AiPznF9EcXrcMtVVhU+lecIJuR4w8hFLa/+4jcsuqMJTt2GPB0hBWdCGR65jS7JAc3g3havsNxtdyKS5tq90AosVM9EhSZNG8u82Qo+kItoNlnnVX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLs7PX2j; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2bc685be295so264535fac.3;
+        Thu, 13 Feb 2025 17:40:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739497195; x=1740101995; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j3rEr2PzHksO3Fsv/Zkc3QLfv1bYecXc0QZkWn8OD/Y=;
-        b=BTEnjzarvcLT2lesiPvBw4Vm2J2V9ZErklfm6YWFta3EI+kSIkd9R/A9AS+fUP9Hna
-         DsDCUcT1QN+9sHH8hRvqlIHhnGjXZ6tCwxu8H+jCAaU4xX9704DBZehaQnlm3CZoyk76
-         rT9+45xVgVBM9lsJ0Peo/aItPvO0ADmr0A6DqPWh6t1iWPVGM21BoIenejPbbuJT4row
-         FnQBgeaWK/1w8V6IT0s69RuP3ERBuR3WO7uQYvKAzCOwrMeTAUjqW2pisX52I2nFEK/9
-         H33kB2zMqYQDk6Nm3vpaoPHQ0VwUcgFxdAJj7wWgsO1V8MvAdVkLImiYcIuWdL1WDZNO
-         FQbA==
+        d=gmail.com; s=20230601; t=1739497238; x=1740102038; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p4aqqg9T7Texkg+zEN9mq7DtWDF92KdPzGxhWCeQ+QA=;
+        b=hLs7PX2jmB1qRSitdeY921C2+0uVkd7sHWl8xjpGy1oQI4khfUG2Yl9TAY9UPoYKO/
+         rLg4Fqi1nTzKyquCSg6zs6nX+329Kuy59d397q4iklETP/IGIxaxMicDcNCW3wbeN1X4
+         3/50ADw+EJje1AKokIuxZliKeM6vsihBkJ9BSbhcxU/KX37c/jVtlGjNkwv7wZN2SoeE
+         HOzkhH2ysv4Ll+MhWHRRFaefQNu/EWRaUo+6KTdkOc+27fQGEMQcO7c+EdxfGOGmn8WO
+         U7BQVuNT23afRKXTtAR6Xt8apXOHzSk5qzaGJlmknPZLcEeSD1RtSJSCrJGM8vl0Xvhh
+         y0JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739497195; x=1740101995;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739497238; x=1740102038;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j3rEr2PzHksO3Fsv/Zkc3QLfv1bYecXc0QZkWn8OD/Y=;
-        b=F9mwaCiJ5VM1wEXw2dbjFqQHXTFkfFzhGB0VMr0d0+F+4AULdB9S/LZjixs74sjKVH
-         5exaqAxOKwiEriCsIwhECBeHp6iUi7eU+Ot4pJbcWcgs8JiI17lVIUJZQNgfabledszv
-         eolurizxVUM+hhhYPUuH9e4E+zhyjsqySbTEsfL5+0RkYJm1XkPnxiCAjYQVxKuzznK9
-         b/YDPccqDYiAJcD5JI4N7t/S3+vYXCsqQDSA1mwfj1L0Y9OkIMF53njdP60MXuJqnD1x
-         QlFJBT9AszllCZiVUd7KqiU+Nv2YfQoPd27G1loUDi4mPLqOUJSL6dO/KcgT2vJVrnJm
-         B6Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSA4PLVyZrfaXRMBzYW4ggaVsT2KrTEwqtgovsI78F+/pqCP02gUV1K6AF01oadCf/m6+a/tmUSJXBY1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ZYexUATJ607hC/qirfbrrlSBSggydzJC1xUnc9MhO50R3cgD
-	YkqZ8tTwbTztuXXrhr4NqnHfsol3g89cCFsyRvaCvVZt/qItv4L6MnQsFOvRmH7+BEWKL3zknN2
-	gaVgD
-X-Gm-Gg: ASbGnctWId7v1MH167q0SeMX9HqPLpZzr8F38i//ucZeRqtFSetqwaQP+vfAZz2SN3Y
-	Qb9mGx/klitwDy9O/6eM/BOV7STDO0w9G9T1AHS4qlt+mqiEv2ggrgp7EmzgtLXko/z+XSiw14b
-	jLovpIUbYpgn0hSYMHX9SffVmEcQmLkpvBbTWIgtRnrAWAjMa1oPJwTap3t/4zNpmhxQ8chGreY
-	HsycZQ6GZz+YolwO13tDkF4Fi5Lr6///sY5vOlE3faPu5ihAociIbKI71mT7jjPWdgv1174zos9
-	zZK1
-X-Google-Smtp-Source: AGHT+IERNn2wQZnS5W4hVQgg0jAgZlRsgDb+R9ON8DjwxOfnnnOh9Q5LS2mFbZr333r1gnG0bzGl5g==
-X-Received: by 2002:a05:600c:6d19:b0:439:33c5:3872 with SMTP id 5b1f17b1804b1-43968364d78mr307105e9.5.1739497194866;
-        Thu, 13 Feb 2025 17:39:54 -0800 (PST)
-Received: from localhost ([2a00:79e0:9d:4:fe28:cd9e:e03f:148e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43961811315sm31377985e9.20.2025.02.13.17.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 17:39:54 -0800 (PST)
-From: Jann Horn <jannh@google.com>
-Date: Fri, 14 Feb 2025 02:39:50 +0100
-Subject: [PATCH] partitions: mac: fix handling of bogus partition table
+        bh=p4aqqg9T7Texkg+zEN9mq7DtWDF92KdPzGxhWCeQ+QA=;
+        b=ng2s/o5zQlrXyd/EzLKZsfnLMRdPrFKepwZq9ZLDZpfxjXAvLM4PrNxjm0IYr3bMmn
+         ZwBCmrOr50Z1l/z0qdyIVplGDVeNE53ZNyriKrmwXOZ1EFcg9OpO9ZIlUfdChKgcJQX2
+         uLniwyssmfgM1m77nuxo01QMacM2J4WmBDLwGgzPGnzDOg0AGSWK3K2gUEBPvar36CpI
+         oNS+HDJ3I/Ngtzt553A1Y14GLMWeDizlNNbUJs/QBi8ZGlzQh1owN3oi8PzmOqidqZ09
+         8lG2RwBwqfV+liGNirUZGmSZ/TSc0pr5p1BJDYWtlgq9rf4qomwqkK0VzDL8wp3Y4pxM
+         KKPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5xzviclH3KHDQ4ntjwBdHheFLEDXBIXjGDhVFDt8jWwKqKL1btqHo0dIJa00c2NAoJFgk3AJi6pM=@vger.kernel.org, AJvYcCVP5GDESpT7oqA28K7Dstjt45L4cCxFs1ChGBOXep2aK33PqFVXJFshy05wVPKfRevvX9x3cPJFBNObW4Au@vger.kernel.org, AJvYcCWS7ZPYgVvKZkpeFDJ177J6DEkvCES/JIklO8Q1lUvwp75y4id8PbuLskBOxKuUn+YVkgLQX3uO2KXd9jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/8/S2I6YkmBn6bv4pjYzSsZELSPLcgarzRtywgypoEn1pG7ep
+	u9qxCOufl27pc9JJp/WkKwAPy9eVPPMiev6OpbWkVFBKOEB/H8B+ll7lQf+QXvr9etPQQDjl5EF
+	iR+FLgjixgliXAVtpLDovn5Ch2gM=
+X-Gm-Gg: ASbGnctApG7NHpS6lf+eM2bED+By/nqMVAyyH8QmKetMkqHZhopTJTD8wQwUwWjVOFg
+	zvDukV/1/dF8pK8UphUa3CqN9dg121QQVXQDOt6UoL2sWByEY5Objp9TPOm/fU5H8sefXh8UHd1
+	Tq22YFApr7yUDlFG+F7EuuDkSWDZ3K
+X-Google-Smtp-Source: AGHT+IHaPhkpQ5sudo7SaVi7TcjcMdEkzloixKb0RO5UQ+Y460AaIBKtk0bx5VU/HVpLudsUAUuG+ituDRPvvbj3Blg=
+X-Received: by 2002:a05:6870:3313:b0:29e:4578:5f74 with SMTP id
+ 586e51a60fabf-2b8f8aaf65amr3390978fac.4.1739497238239; Thu, 13 Feb 2025
+ 17:40:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250214-partition-mac-v1-1-c1c626dffbd5@google.com>
-X-B4-Tracking: v=1; b=H4sIAOWermcC/x2MQQqAIBAAvyJ7TtDNCvpKdBDbag+ZqEQg/j3pO
- DAzBRJFpgSzKBDp4cS3b6A7Ae60/iDJW2NAhYNCbWSwMXNulrysk0iT1saNiNhDa0Kknd//t6y
- 1fiw47kBfAAAA
-X-Change-ID: 20250214-partition-mac-2e7114c62223
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739497190; l=2407;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=nfP4yEj2vL6ycDB2Fk0sO0HXVXlyHmxmwJ3kr+6xh3g=;
- b=BV6zLc/d4z/D4NFAJ6tQJUcbU1o7Ri6FlL0LcWrpZEjcQxmvcFpXFJ8pS2zBfplOgKW4yhvJG
- dCLE32yp6MTB29egbiz4hhVQPEMdLnu9G4PPeY4ztgUBWeGVxoE1GkB
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+References: <20250213-mem-cocci-v3-v1-0-93466d165349@redhat.com> <20250213-mem-cocci-v3-v1-6-93466d165349@redhat.com>
+In-Reply-To: <20250213-mem-cocci-v3-v1-6-93466d165349@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 14 Feb 2025 09:40:01 +0800
+X-Gm-Features: AWEUYZmNNW2GxKBvhWTtapwmiPwzOWM-ubPmXZmO79ZpLPJrrgzjYmiy7fGvf4g
+Message-ID: <CAAfSe-tNuzNCi=oR4Yv=TLRPt5jUmcozv+mtfu=PBT+6LqsHDw@mail.gmail.com>
+Subject: Re: [PATCH 06/12] drm/sprd: move to devm_platform_ioremap_resource() usage
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>, 
+	Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>, 
+	Tian Tao <tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
+	John Stultz <jstultz@google.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix several issues in partition probing:
+On Fri, 14 Feb 2025 at 08:20, Anusha Srivatsa <asrivats@redhat.com> wrote:
+>
+> Replace platform_get_resource + devm_ioremap
+> with just devm_platform_ioremap_resource()
+>
+> Used Coccinelle to do this change. SmPl patch:
+> @rule_2@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource(pdev,0);
+>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>  drivers/gpu/drm/sprd/sprd_dpu.c | 9 +--------
+>  drivers/gpu/drm/sprd/sprd_dsi.c | 9 +--------
+>  2 files changed, 2 insertions(+), 16 deletions(-)
+>
 
- - The bailout for a bad partoffset must use put_dev_sector(), since the
-   preceding read_part_sector() succeeded.
- - If the partition table claims a silly sector size like 0xfff bytes
-   (which results in partition table entries straddling sector boundaries),
-   bail out instead of accessing out-of-bounds memory.
- - We must not assume that the partition table contains proper NUL
-   termination - use strnlen() and strncmp() instead of strlen() and
-   strcmp().
+Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
- block/partitions/mac.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Thanks,
+Chunyan
 
-diff --git a/block/partitions/mac.c b/block/partitions/mac.c
-index c80183156d68020e0e14974308ac751b3df84421..b02530d986297058de0db929fbf638a76fc44508 100644
---- a/block/partitions/mac.c
-+++ b/block/partitions/mac.c
-@@ -53,13 +53,25 @@ int mac_partition(struct parsed_partitions *state)
- 	}
- 	secsize = be16_to_cpu(md->block_size);
- 	put_dev_sector(sect);
-+
-+	/*
-+	 * If the "block size" is not a power of 2, things get weird - we might
-+	 * end up with a partition straddling a sector boundary, so we wouldn't
-+	 * be able to read a partition entry with read_part_sector().
-+	 * Real block sizes are probably (?) powers of two, so just require
-+	 * that.
-+	 */
-+	if (!is_power_of_2(secsize))
-+		return -1;
- 	datasize = round_down(secsize, 512);
- 	data = read_part_sector(state, datasize / 512, &sect);
- 	if (!data)
- 		return -1;
- 	partoffset = secsize % 512;
--	if (partoffset + sizeof(*part) > datasize)
-+	if (partoffset + sizeof(*part) > datasize) {
-+		put_dev_sector(sect);
- 		return -1;
-+	}
- 	part = (struct mac_partition *) (data + partoffset);
- 	if (be16_to_cpu(part->signature) != MAC_PARTITION_MAGIC) {
- 		put_dev_sector(sect);
-@@ -112,8 +124,8 @@ int mac_partition(struct parsed_partitions *state)
- 				int i, l;
- 
- 				goodness++;
--				l = strlen(part->name);
--				if (strcmp(part->name, "/") == 0)
-+				l = strnlen(part->name, sizeof(part->name));
-+				if (strncmp(part->name, "/", sizeof(part->name)) == 0)
- 					goodness++;
- 				for (i = 0; i <= l - 4; ++i) {
- 					if (strncasecmp(part->name + i, "root",
-
----
-base-commit: ab68d7eb7b1a64f3f4710da46cc5f93c6c154942
-change-id: 20250214-partition-mac-2e7114c62223
-
--- 
-Jann Horn <jannh@google.com>
-
+> diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+> index cb2816985305fd19eac27413c214681a5a1e9ffa..65cd5aa1634eee5a6735ccffa4ee3979844d92ce 100644
+> --- a/drivers/gpu/drm/sprd/sprd_dpu.c
+> +++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+> @@ -784,16 +784,9 @@ static int sprd_dpu_context_init(struct sprd_dpu *dpu,
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct dpu_context *ctx = &dpu->ctx;
+> -       struct resource *res;
+>         int ret;
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!res) {
+> -               dev_err(dev, "failed to get I/O resource\n");
+> -               return -EINVAL;
+> -       }
+> -
+> -       ctx->base = devm_ioremap(dev, res->start, resource_size(res));
+> +       ctx->base = devm_platform_ioremap_resource(pdev, 0);
+>         if (!ctx->base) {
+>                 dev_err(dev, "failed to map dpu registers\n");
+>                 return -EFAULT;
+> diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
+> index 8fc26479bb6bce0aa94914f49d0986a7e19326c1..1668bb4166ab0ad3812c5654244544a9caf249a6 100644
+> --- a/drivers/gpu/drm/sprd/sprd_dsi.c
+> +++ b/drivers/gpu/drm/sprd/sprd_dsi.c
+> @@ -901,15 +901,8 @@ static int sprd_dsi_context_init(struct sprd_dsi *dsi,
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct dsi_context *ctx = &dsi->ctx;
+> -       struct resource *res;
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!res) {
+> -               dev_err(dev, "failed to get I/O resource\n");
+> -               return -EINVAL;
+> -       }
+> -
+> -       ctx->base = devm_ioremap(dev, res->start, resource_size(res));
+> +       ctx->base = devm_platform_ioremap_resource(pdev, 0);
+>         if (!ctx->base) {
+>                 drm_err(dsi->drm, "failed to map dsi host registers\n");
+>                 return -ENXIO;
+>
+> --
+> 2.47.0
+>
 
