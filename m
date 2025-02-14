@@ -1,159 +1,202 @@
-Return-Path: <linux-kernel+bounces-515248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CBBA3624A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:53:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7F7A36251
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A8B1684A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1F516AE95
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A81267387;
-	Fri, 14 Feb 2025 15:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59905266F19;
+	Fri, 14 Feb 2025 15:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GkqUT5uk"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ND/wpHyU"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC3D245002
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC73267383
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548367; cv=none; b=LpNcLfj9n1+re4JVoLrFbPltIEGIB0mffGau8v8gevxyC7uZTPJZdILV5gkwNYYyMse3OVg5RkTbs0aWTFm8VBRcHIcag7VOjYOOJUXx3vIOu+h2mPeovJZxcUmDDzgKy0qsuSvta02MvRtWL0dPW7yjKf8XKH0AbE2rKikeB2I=
+	t=1739548397; cv=none; b=D6m1V8MRAJAwXWuHT9Sg9M+UY61bpFCGApBEmEPFov12Qe0xyQtwmcbOzQ+7y0849DN1KH6u4e4R1RxyP1zZdn65u5pcsRh3xxjWTCOA6CPZHKb9/X9R4+S8YjFfUtQ+sNTKIgCIJ++8T/Fzp4uykliZ01i6g1Eb17ykzCLBaNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548367; c=relaxed/simple;
-	bh=3d5yNh+7mmkzMBeCsstHX2sTs31Ph92UicrtFLPMvh4=;
+	s=arc-20240116; t=1739548397; c=relaxed/simple;
+	bh=FYKDIQSkb4oNo/IEZYGwWMmXMD9FjCP7BaaZKOqokoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2dhgRjdYOt97/zCkrsZNeXzjsJ6dwe8hrlbrDt7kCBKxNlkdh9t/duEv0WwtzkYPEXYqY/DrTFm3HzP7dI20+xJiuYdXf4LYU6wTi16ehxCoRLvCANKIG6lXf0GHqbLwvdJRuYetNB64pvOxV5Sa7KNq3j8QX0wHltztape62A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GkqUT5uk; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab7e3d0921bso394163266b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:52:45 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlaqrhaoiuEgz2EEex/AJQTbak9RWmSeK32S50kYx/LHcD3ygjnbt+XIHpPe6ESoc9GrrqkmGC0YiVkmFPz0I4iIrHxGYiDDAK5J+mRpKjGOk+A9pVvg8PiFdIjd0jeOetNfQhtUAsCBJPnn3EbhBo91duWY7ugJhoBXk9VUpkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ND/wpHyU; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4395b367329so14599585e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739548364; x=1740153164; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPQDSWdyumx+7kZtAbOyAbWC8fKUL0iK50FAOdUwRCA=;
-        b=GkqUT5ukZkKR6mvWShznmI3n+bEZzR+OiIYdPNGd39OABUsTtc3DEXp9VwDReB4l7k
-         pNhpx2eMiEcriuZyHgevYItOUP/zZR2PGL3FCm8WfTmmcimweU/cU81es7+1VuMezVME
-         4jkuOaV+0F2rXLncrirYBcoOFr/PaAp6TUVNjxbi9nbfSlAROqBox4wKWarhjgAFcGlu
-         HGcyoULfWBNcBdsQF5VfdUVFtJ0ShGkJ8JlZRySNJVjrBTTdWVCYciW6rW/nESPCuRgL
-         sJgaukFHyG4ngpHAllhpQpIrXDC1q4x9yhQHqK5E7+D+lXdm4rBscAnjlE6df9vSfTr1
-         aLrQ==
+        d=gmail.com; s=20230601; t=1739548394; x=1740153194; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LUeXql4TWDHCjVh3ewbV3baFX6FxknoLfQ1URmQIH8w=;
+        b=ND/wpHyU+83LLhgBU83AJM/e8lolzq06KKHVy8ufp/DOklPQL5FM96ew1gck4+sYj/
+         rQu4VIFnxBmSbdRrGsdogG428DYSb/0K+s1v3s4YLGY9vbYGq0v0s2vMcENQQIe4HTbe
+         JFVwt9+eO+d3s6HY9tL6xXNeeTK5EDokV2ETPPSbGSiHbS85IhLc2V1xM+cfpxw8eYec
+         hk6HbGX8uAsVu2kwGu779fB8HBi8Bif8VC2fKOVMrl/vTe6HFJkFKZB9UNBoosc8RSLD
+         pluXqGxwxVsEhpkyFGcABPynu9bPI2aTPk06kEaiRL+sF3R/40zBYq3r7gMOAxtsJaJs
+         9+ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739548364; x=1740153164;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPQDSWdyumx+7kZtAbOyAbWC8fKUL0iK50FAOdUwRCA=;
-        b=XEfqQIjpBCtWQTCsQaKOLytvd4J6TS3iy50FTedvHRk/fhndfV5GvbbpHmm0c0YiMa
-         Mazs5n/vtLRb/6ADTb/lcKK5Kd5liKPTQ38OwzFj1QAb60uIzpyEyS8uNSObr2pSmdZ9
-         4tAFSIO0gbS2FSsMw06en9Vc+GbnbDDRfnZLS6rXsajR4wOSfw2j2DhiN5mAcou56RzM
-         qC0KpgxB/HF+zZx4UkZDXQ7HmWtfxdcRatJRrgXfbYHdkW+qnRiiYBDuTNoxCCPBdIsQ
-         /BiFA3L3UGMNs54nkahMMIPQggcKEg6QRQU7hLOoxpPKHHdJXopcbxfBPcB/w/8llrLX
-         auHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMoEYH6sI6/V/Lh8TgRtFt0c6LmsMqxuKhDpi46MCoJq3RWC9UeZJbfByo2GKdXeKVTNLPxipxhKNTqZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxekpOV/BwDBIuAeriUq7kXcWzzARON/Z1BX+IwzrYtBKl+JFon
-	r5ayk0fcTPH8+W/bv87aQ52TGID4qH4hmbL51b2/WYlTwyBZd7XnB48N2MKAbJg=
-X-Gm-Gg: ASbGncsSnWbmQoA3oZQroaCZqmIiv1wLhWzDOxDZAczyHexhLdA02EAiC94jzq8OH0L
-	0IESBK8zoBvGk+TDiT/dmvOCKtCcB9h6dRU2z0W9J04JjEzZPzeBhYjF0bWCHNarW5eE/SCqwt1
-	k2vtoSl52zl8oDL7HCDNHSaLpa6UJ5/C06j050RbTPWD2L9Z07+0f0yk3ZvFFs00GgzbRmwG4ZX
-	/VepbjFrfh8Upe9IwK3f0EgoDM02z+wKEj/2GWlfXO0NDzPiJM9qViJB9uNpz5fJ3O1x95A18cC
-	CNk7MjaAtdF5lGH4cT+vrbo8VR1w
-X-Google-Smtp-Source: AGHT+IGM4zyda7P3q+Y2IYo5LojVyQ2Ld4whAaXWvkt3be7ScN0HjwuroYqtgMUfJbnJWY08Yx4Lvg==
-X-Received: by 2002:a17:907:94cc:b0:ab7:da56:af9f with SMTP id a640c23a62f3a-aba501a9dc2mr940172666b.49.1739548363814;
-        Fri, 14 Feb 2025 07:52:43 -0800 (PST)
-Received: from localhost (109-81-86-120.rct.o2.cz. [109.81.86.120])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba533bee4asm365187166b.170.2025.02.14.07.52.43
+        d=1e100.net; s=20230601; t=1739548394; x=1740153194;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LUeXql4TWDHCjVh3ewbV3baFX6FxknoLfQ1URmQIH8w=;
+        b=jZrI4bSic499asXSVE/e0Do+FELd8Y9hqPjvZLuCW2PzqDH1TGUTegoaQhm+pg7l6y
+         aONPEUyg/VK5p+RF9xKal0hpPL6MpcAa/HcUbQRpFD/PIDlEn/lfzum780QDUorfBEQn
+         1VN7FQDgoLrwGzKf/FQ3TRqv3JdsxVVhgoMLprvjw6gdKapUCOWmv+qmkb7Lhc6oGVEU
+         Xn1ZM7VEYWZjP6AbE3oxlw2qth0xVhtA9eu0Jj4TbAiDj4hoe/2onxWxFdoQn6zsZ+mx
+         iZbzVKfdorj3vLc+pzQIL0BhFXvTGEFiTXKJwpZsxP560ekRPkMpy4nPX7ROl7ZOLWUu
+         nD6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWaBIqyr9PadQ/UZQstVyJBTm1rLQUI1UkOGbNq2fKLlsO9IMWOFvHtKb8t/kPFXMnE3XIZ+H10yRhcyro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfF2qZNJTeclK0tvG5F1kFMmM8z/jYBiJjTl+RnAjhUgcI2dDp
+	0H22o2fCVFNAKG9Y+HLBD+q534Cnc8NZK5WOexC3kAjFyG+B29IK
+X-Gm-Gg: ASbGncsCRhjoFpuwibUvWJqjq87RYE7IbiiawsOvD6GrOwKTWdfDNh7L3Uh5+NOvSmw
+	lFag4KOYrCWMRxj9RR97BIE9hY1+JecfLW7SGR69el09RW9Jb9OLIvGno4gVfHkg7F7QjDxJXs1
+	wuPqUbM0sYiVHICoAKg9VmA+QAIdyxFgfPxlKoOspGUTE48C2RFkxsalzR92ObF6ZjD4/OYm4Cl
+	zgWumEZuR11op1wTgAsIWRhCwQJXHzw3/9v9ac8aDDzGtX7fFNWANVpVwXo4CQWgerHavQqgyn+
+	yR0DB546vwvGdCo=
+X-Google-Smtp-Source: AGHT+IG0lJQY6xjpwwK0gCbW2yA9JBNFByk5LNr2enf7zbh05eh9v7dpT+s+DVjyajrRMWDBxnwtyQ==
+X-Received: by 2002:a05:600c:501f:b0:439:5560:c9a3 with SMTP id 5b1f17b1804b1-43960169713mr107862715e9.6.1739548393929;
+        Fri, 14 Feb 2025 07:53:13 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06c95bsm77848905e9.17.2025.02.14.07.53.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 07:52:43 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:52:42 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Filipe Manana <fdmanana@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, percpu: do not consider sleepable allocations atomic
-Message-ID: <Z69mygllBATJ6dsm@tiehlicka>
-References: <20250206122633.167896-1-mhocko@kernel.org>
- <Z6u5OJIQBw8QLGe_@slm.duckdns.org>
- <Z6zS4Dtyway78Gif@tiehlicka>
- <Z6zlC3juT46dLHr9@slm.duckdns.org>
- <Z60KQCuPCueqRwzc@tiehlicka>
- <Z60S4NMUzzKbW5HY@slm.duckdns.org>
- <Z60VE9SJHXEtfIbw@snowbird>
+        Fri, 14 Feb 2025 07:53:13 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:53:11 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/15] drm/vkms: Add a validation function for VKMS
+ configuration
+Message-ID: <Z69m50L8NzcYt45j@fedora>
+References: <20250211110912.15409-1-jose.exposito89@gmail.com>
+ <20250211110912.15409-9-jose.exposito89@gmail.com>
+ <Z6362KrzjLUL6Mj6@louis-chauvet-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Z60VE9SJHXEtfIbw@snowbird>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z6362KrzjLUL6Mj6@louis-chauvet-laptop>
 
-On Wed 12-02-25 13:39:31, Dennis Zhou wrote:
-> Hello,
+On Thu, Feb 13, 2025 at 02:59:52PM +0100, Louis Chauvet wrote:
+> On 11/02/25 - 12:09, José Expósito wrote:
+> > From: Louis Chauvet <louis.chauvet@bootlin.com>
+> > 
+> > As the configuration will be used by userspace, add a validator to avoid
+> > creating a broken DRM device.
+> > 
+> > For the moment, the function always returns true, but rules will be
+> > added in future patches.
+> > 
+> > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Co-developed-by: José Expósito <jose.exposito89@gmail.com>
+> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > 
-> On Wed, Feb 12, 2025 at 11:30:08AM -1000, Tejun Heo wrote:
-> > Hello,
-> > 
-> > On Wed, Feb 12, 2025 at 09:53:20PM +0100, Michal Hocko wrote:
-> > ...
-> > > > Hmm... you'd a better judge on whether that'd be okay or not but it does
-> > > > bother me that we might be increasing the chance of allocation failures for
-> > > > GFP_KERNEL users at least under memory pressure.
-> > > 
-> > > Nope, this will not change the allocation failure mode. Reclaim
-> > > constrains do not change the failure mode they just change how much the
-> > > allocation might struggle to reclaim to succeed. 
-> > >
-> > > My undocumented assumption (another dept on my end) is that pcp
-> > > allocations are no hot paths. So the worst case is that GFP_KERNEL
-> > > pcp_allocation could have been satisfied _easier_ (i.e. faster) because
-> > > it could have reclaimed fs/io caches and now it needs to rely on kswapd
-> > > to do that on memory tight situations. On the other hand we have a
-> > > situation when NOIO/FS allocations fail prematurely so there is
-> > > certainly some pros and cons.
-> > 
-> > I'm having a hard time following. Are you saying that it won't increase the
-> > likelihood of allocation failures even under memory pressure but that it
-> > might just make allocations take longer to succeed?
-> > 
-> > NOFS/IO prevents allocation attempt from entering fs/io reclaim paths,
-> > right? It would still trigger kswapd for reclaim but can the allocation
-> > attempt wait for that to finish? If so, wouldn't that constitute a
-> > dependency cycle all the same?
-> > 
-> > All in all, percpu allocations taking longer under memory pressure is fine.
-> > Becoming more prone to allocation failures, especially for GFP_KERNEL
-> > callers, probably isn't great.
-> > 
+> The compilation is broken when building as module:
 > 
-> Wait, I think I'm interpreting this change differently. This is
-> preventing the worker from allocating backing pages via GFP_KERNEL. It
-> isn't preventing an allocation via alloc_percpu() from being GFP_KERNEL
-> and providing those flags down to the backing page code. alloc_percpu()
-> for GFP_KERNEL allocations will populate the pages before returning.
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index b9267aef4804..82335006c94a 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -55,6 +55,7 @@ bool vkms_config_is_valid(struct vkms_config *config)
+>  {
+>         return true;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(vkms_config_is_valid);
 
-Correct.
+Fixed the issue in all patches, thanks!
  
-> I'm reading this as potentially making atomic percpu allocations fail as
-> we might be low on backing pages. This change makes the worker now need
-> to wait for kswapd to give it pages. Consequently, if there are a lot of
-> allocations coming in when it's low, we might burn a bit of cpu from the
-> worker now.
+> > [...]
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> > index fcaa909fb2e0..0376dceaf6be 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_config.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> > @@ -67,6 +67,16 @@ vkms_config_get_device_name(struct vkms_config *config)
+> >  	return config->dev_name;
+> >  }
+> >  
+> > +/**
+> > + * vkms_config_is_valid() - Validate a configuration
+> > + * @config: Configuration to validate
+> > + *
+> > + * Returns:
+> > + * Whether the configuration is valid or not.
+> > + * For example, a configuration without primary planes is not valid.
+> > + */
+> > +bool vkms_config_is_valid(struct vkms_config *config);
+> > +
+> 
+> I think here we can take a const pointer.
+> 
+> >  /**
+> >   * vkms_config_register_debugfs() - Register a debugfs file to show the device's
+> >   * configuration
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> > index a74a7fc3a056..95afc39ce985 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> > @@ -204,7 +204,7 @@ struct vkms_config;
+> >  struct vkms_device {
+> >  	struct drm_device drm;
+> >  	struct platform_device *platform;
+> > -	const struct vkms_config *config;
+> > +	struct vkms_config *config;
+> 
+> So we can keep a const pointer here (for me the device should never modify 
+> vkms_config)
 
-Yes, this is potential side effect. On the other hand NOFS/NOIO requests
-wouldn't be considered atomic anymore and they wouldn't fail that
-easily. Maybe that is an odd case not worth the additional worker
-overhead. As I've said I am not familiar with the pcp internals to know
-how often the worker is really required
+I tryed keeping the const pointer, but, since list_count_nodes() is used in
+several valid_* functions and it takes a non-const pointer, it causes
+warnings.
 
--- 
-Michal Hocko
-SUSE Labs
+We can fix them with a cast:
+
+  n_planes = list_count_nodes((struct list_head *)&config->planes);
+
+But I feel that keeping the "const" creates more issues than it solves.
+
+Anyway, if you prefer this pointer to be const, I will change it in v3.
+
+Jose
+ 
+> >  };
+> >  
+> >  /*
+> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> > index 068a7f87ecec..414cc933af41 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_output.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> > @@ -16,6 +16,9 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+> >  	int writeback;
+> >  	unsigned int n;
+> >  
+> > +	if (!vkms_config_is_valid(vkmsdev->config))
+> > +		return -EINVAL;
+> > +
+> >  	/*
+> >  	 * Initialize used plane. One primary plane is required to perform the composition.
+> >  	 *
+> > -- 
+> > 2.48.1
+> > 
 
