@@ -1,279 +1,156 @@
-Return-Path: <linux-kernel+bounces-514481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01727A35789
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:01:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12ABA3578E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 08:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773141890374
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D493AC1AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 07:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50C3204085;
-	Fri, 14 Feb 2025 07:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B980614A4CC;
+	Fri, 14 Feb 2025 07:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eQWtjdxL"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sVXza/pq"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D724501A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8D127E18
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739516466; cv=none; b=IDKa2tpkuVS8lRFE02KdtWQLHQdZugLPjtY+Auye3Xaur6WUyt3o4bGg1yqUtRVkfOsDA9jSmCBHA9EU8ffP86UuTMGR0AM+k6PIULC2PkaglRaghDVMajrLb2EBJmHGSh9fggbTwcW4HHmB1styjwbjCW4T+OqVMnXBhNp4VoE=
+	t=1739516697; cv=none; b=KZFqZHR5WkCRqlUJiNz4jif+H8Bbq6n3rBX2ryxECMwBe8girz9rDQse1OExASu9pbYfgC7ipS5VlngWr8KUHTk4e8HPx2Q5fF2A3jxVGQT/HWUlytwDBNYhgnagdwwO9WAAsDZxpo30pKtwMY1UVzKeBRnNmlIkyh5YzKRUFfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739516466; c=relaxed/simple;
-	bh=6NkC1IEGz2tLs6MeYaeovv7DK9RlY7H96TcjBImltuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ls5ClJFA8XzVRq9S9hGst3qFZdw3eV2w9jrIzgTDXTCpD3+5qtlLvx7JIxs6SUST+Cy6bLN335oQ0GkTi2XWfAx9aUHZ5ctve2VcULS2XDTp/q2RSV6LsUBzuR1uI/HNjqNrAq8n8XOYBb7YKnCQUvlVwedZ1L0d1gOF0riom28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eQWtjdxL; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NgVDSIva1L82XqfAjteHd9IXKe+k8j8fvIXf3bbE6MI=; b=eQWtjdxLth9C4ifuLM+8selRcU
-	/KuWpsjhRyl10Tx5ejYTaKgI1nt2SdYfQcl7rrsWS2Rxlkpt0eDQTrC/rST18eN7ePsWaZLmIAA4y
-	rqd0+CiDf8Zhh1n1a9EiKhzwcD3Qafo2feHEyC3bfgxLF2yboOvCKrLFeHqyWM0G4rjwMkFjQL2Yt
-	D0NE2xMe4fMTUTB0+mqxjaJjwLziFHJDH2aG1SwN9BHo7H5xwQ0ivX9Zd7ZtdF7sm7QkhWzhDbx7y
-	O5/BH/T5SB4fQa9/Q3i2GM74H8YOCuZCp+hUiPO3juvYTHBiajxR9gHigSj84fGdY+pFyrB9zVxy8
-	D5S8cN1Q==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tipgj-00FgsQ-5G; Fri, 14 Feb 2025 08:00:43 +0100
-Message-ID: <e85f7088-7426-4140-b7bd-1ef8d414199d@igalia.com>
-Date: Fri, 14 Feb 2025 16:00:36 +0900
+	s=arc-20240116; t=1739516697; c=relaxed/simple;
+	bh=inoYxAUSZL0MSsh61jRPAz7Xi/ChSIhVE59oDoIvQIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUBdGSyYp+2nXJh0hnPG15UEAJB1v56D+bJG2UrBZBCT6Q+kz6RBT996R3MEyfXEd/a8SCtPcwPXutvo7dZiI0y9KQtlFq5CG65R4FoLhUPYlc9FNFzBKLhKV/OvcMY3IcydGtH3dBaP4lEUsiYIV2E6+fQwad+Be2XE86YfVpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sVXza/pq; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220ec47991aso7181145ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Feb 2025 23:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739516695; x=1740121495; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=P0N0X3RdIUpKTp5bovKhP0i6D22WIPGqOlaqXbJdgtw=;
+        b=sVXza/pqbI+UVLxjlslCjCdoQ40KT3F5oDRhgB4yLRWP8+V9E1bYA/3pn0yN16l/sO
+         X1H215pgmEV5lKp5DMCXJyhf1PzpLEUtSFYsMrTgH2ro+xIjSuleSbFaLdVyRZa3zQTz
+         yj2V6ytUeL5HiptcsaM3irYrJo+0uw/ruuLez8/R4RTREpcmOwQ1UWsOvlN13Os2xQNB
+         X7F0RmzQXK+zUvN3FoXtJfeSW9uFPT4cBuQC8hAqNClihALjpSWFc0ERhzKA54ezlmDx
+         MqsJLUl6leQqYPtKHyJWrR3iG8QPRKwWAsJyJ7lzqrHkFU0DHMqpymeQiVPodn/nlews
+         3Zwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739516695; x=1740121495;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0N0X3RdIUpKTp5bovKhP0i6D22WIPGqOlaqXbJdgtw=;
+        b=gaVwpZaeMtfdo/oHj7lHpFhuK+cbAki4ZCK0W07sKBiGV+Y/txV3FLgoOcg5sfru3J
+         AoZ72LmVCZNC9s6Is4P05juVHDlSsCoTij/m+Z3r3mLHIZDuZRlxDw7spL7YSnY8Dyzo
+         NDCVGjhkkmXBV6dd2OxFLyIt1YemjEylyJi3Z/ghRtW6Onzv7If5IDzEww/nV5ivbCfq
+         q18gm3BzfLpt/hknCwWMcAf7TJlms1YYqQbPUqLmmlVocyjhY45pO7rT+bFgGMkj2VnP
+         9VZlMFqrxlczlwPxYGHQzEQE23jMENBDPapbl0ecLVOeBWSxZfFHRe8E0MHL2aL3lj9M
+         onZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu2EaIxgHy/5w7wEoGjxYUSVIIct8mKUzKzkbW8kitFTOHi3XIAe7GwjpK2WyOj3/t916sJ60Y5Euz3LI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdG8ptVxnllH67XqvgzU52cLlErTdWFgySqRki4qRiFqIGlmON
+	juEbl/o2AyMLxzNP5+EinhArDmC8XQShyNXXaRkLW40rBRM/ava+kN7QLn7Fmg==
+X-Gm-Gg: ASbGnctgR6s8nUqDzfqLphGfGw3xQTL4pW8wzL9dd1NMnBzThDxW8h5zKJZ1LDmg+Em
+	AkOGl3HHVDbYAzopx7eZdfpflzeUYsPaG//4bOMMjY5y6xS4WdUv3CcgH1T4HUXDwD3kXdIqgV5
+	yaYeFdxM3UmdnfzdEAAA8/mbtqi8BjHMHpAWkS6/b1kyHUScAtoDAVZVQqQVMRZH3ODnzkpZR4E
+	6WiQ6LN5GoVTPJ+JYkKibn5QinSnOXrgueIXE+Eg5BbN+vv38yTyR8S8oQrSNnTXkGUflktiB7e
+	wdbvU36KOsSVhhaavC+xX3CKSQPJySo=
+X-Google-Smtp-Source: AGHT+IGuqMZgZlagRCyTIKxDvOSsuvPGqcUxE8dosYx3w84r1nGN21q6LfaA+OlbApLZ3lRcHCSUbA==
+X-Received: by 2002:a17:903:950:b0:220:e63c:5b08 with SMTP id d9443c01a7336-220e63c5e07mr59800745ad.11.1739516694826;
+        Thu, 13 Feb 2025 23:04:54 -0800 (PST)
+Received: from thinkpad ([2409:40f4:304f:ad8a:8cb7:72db:3a5e:1287])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d537ca99sm22711205ad.106.2025.02.13.23.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 23:04:54 -0800 (PST)
+Date: Fri, 14 Feb 2025 12:34:47 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Johan Hovold <johan@kernel.org>,
+	Loic Poulain <loic.poulain@linaro.org>,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	kernel@collabora.com, ath11k@lists.infradead.org,
+	jjohnson@kernel.org
+Subject: Re: [BUG REPORT] MHI's resume from hibernate is broken
+Message-ID: <20250214070447.scs6lpytjtecz3ko@thinkpad>
+References: <59c036b6-a3d6-403b-8bb0-566a17f72abc@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH sched_ext/for-6.15 v2] sched_ext: Implement
- SCX_OPS_ALLOW_QUEUED_WAKEUP
-To: Tejun Heo <tj@kernel.org>, Neel Natu <neelnatu@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>, Barret Rhoden <brho@google.com>,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
-References: <Z60p755gE1aDiimC@slm.duckdns.org>
- <CAJDe-OLcEe8AuOeffusdxhktTyoAkCgG-7zWAvcuSWWGfDrakQ@mail.gmail.com>
- <Z64s-7xN6WcsbRhQ@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z64s-7xN6WcsbRhQ@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <59c036b6-a3d6-403b-8bb0-566a17f72abc@collabora.com>
 
-Hello Tejun,
+Hi,
 
-Sorry for the delayed response. This makes sense to me.
++ ath11k list and Jeff
 
-Acked-by: Changwoo Min <changwoo@igalia.com>
+On Tue, Feb 11, 2025 at 01:15:55PM +0500, Muhammad Usama Anjum wrote:
+> Hi,
+> 
+> I've been digging in the MHI code to find the reason behind broken
+> resume from hibernation for MHI. The same resume function is used
+> for both resume from suspend and resume from hibernation. The resume
+> from suspend works fine because at resume time the state of MHI is 
+> MHI_STATE_M3. On the other hand, the state is MHI_STATE_RESET when
+> we resume from hibernation.
+> 
+> It seems resume from MHI_STATE_RESET state isn't correctly supported.
+> The channel state is MHI_CH_STATE_ENABLED at this point. We get error
+> while switching channel state from MHI_CH_STATE_ENABLE to
+> MHI_CH_STATE_RUNNING. Hence, channel state change fails and later mhi
+> resume fails as well. 
+> 
+> I've put some debug prints to understand the issue. These may be
+> helpful:
+> 
+> [  669.032683] mhi_update_channel_state: switch to MHI_CH_STATE_TYPE_START[2] channel state not possible cuzof channel current state[1]. mhi state: [0] Return -EINVAL
+> [  669.032685] mhi_prepare_channel: mhi_update_channel_state to MHI_CH_STATE_TYPE_START[2] returned -22
+> [  669.032693] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
+> 
 
-Regards,
-Changwoo Min
+Thanks for the report!
 
-On 25. 2. 14. 02:33, Tejun Heo wrote:
->  From 3539c6411a7c9d6c5895f78750f93160705cd250 Mon Sep 17 00:00:00 2001
-> From: Tejun Heo <tj@kernel.org>
-> Date: Wed, 12 Feb 2025 13:08:31 -1000
-> 
-> A task wakeup can be either processed on the waker's CPU or bounced to the
-> wakee's previous CPU using an IPI (ttwu_queue). Bouncing to the wakee's CPU
-> avoids the waker's CPU locking and accessing the wakee's rq which can be
-> expensive across cache and node boundaries.
-> 
-> When ttwu_queue path is taken, select_task_rq() and thus ops.select_cpu()
-> may be skipped in some cases (racing against the wakee switching out). As
-> this confused some BPF schedulers, there wasn't a good way for a BPF
-> scheduler to tell whether idle CPU selection has been skipped, ops.enqueue()
-> couldn't insert tasks into foreign local DSQs, and the performance
-> difference on machines with simple toplogies were minimal, sched_ext
-> disabled ttwu_queue.
-> 
-> However, this optimization makes noticeable difference on more complex
-> topologies and a BPF scheduler now has an easy way tell whether
-> ops.select_cpu() was skipped since 9b671793c7d9 ("sched_ext, scx_qmap: Add
-> and use SCX_ENQ_CPU_SELECTED") and can insert tasks into foreign local DSQs
-> since 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct
-> dispatches").
-> 
-> Implement SCX_OPS_ALLOW_QUEUED_WAKEUP which allows BPF schedulers to choose
-> to enable ttwu_queue optimization.
-> 
-> v2: Update the patch description and comment re. ops.select_cpu() being
->      skipped in some cases as opposed to always as per Neel.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Neel Natu <neelnatu@google.com>
-> Reported-by: Barret Rhoden <brho@google.com>
-> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Andrea Righi <arighi@nvidia.com>
-> ---
->   kernel/sched/core.c |  9 ++-------
->   kernel/sched/ext.c  | 32 ++++++++++++++++++++++++++------
->   kernel/sched/ext.h  | 10 ++++++++++
->   3 files changed, 38 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index e77897a62442..618bb0a5eb1c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3921,13 +3921,8 @@ bool cpus_share_resources(int this_cpu, int that_cpu)
->   
->   static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
->   {
-> -	/*
-> -	 * The BPF scheduler may depend on select_task_rq() being invoked during
-> -	 * wakeups. In addition, @p may end up executing on a different CPU
-> -	 * regardless of what happens in the wakeup path making the ttwu_queue
-> -	 * optimization less meaningful. Skip if on SCX.
-> -	 */
-> -	if (task_on_scx(p))
-> +	/* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
-> +	if (!scx_allow_ttwu_queue(p))
->   		return false;
->   
->   	/*
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 98d5f2f68f38..2e1a1e4fc304 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -96,7 +96,7 @@ enum scx_ops_flags {
->   	/*
->   	 * Keep built-in idle tracking even if ops.update_idle() is implemented.
->   	 */
-> -	SCX_OPS_KEEP_BUILTIN_IDLE = 1LLU << 0,
-> +	SCX_OPS_KEEP_BUILTIN_IDLE	= 1LLU << 0,
->   
->   	/*
->   	 * By default, if there are no other task to run on the CPU, ext core
-> @@ -104,7 +104,7 @@ enum scx_ops_flags {
->   	 * flag is specified, such tasks are passed to ops.enqueue() with
->   	 * %SCX_ENQ_LAST. See the comment above %SCX_ENQ_LAST for more info.
->   	 */
-> -	SCX_OPS_ENQ_LAST	= 1LLU << 1,
-> +	SCX_OPS_ENQ_LAST		= 1LLU << 1,
->   
->   	/*
->   	 * An exiting task may schedule after PF_EXITING is set. In such cases,
-> @@ -117,13 +117,13 @@ enum scx_ops_flags {
->   	 * depend on pid lookups and wants to handle these tasks directly, the
->   	 * following flag can be used.
->   	 */
-> -	SCX_OPS_ENQ_EXITING	= 1LLU << 2,
-> +	SCX_OPS_ENQ_EXITING		= 1LLU << 2,
->   
->   	/*
->   	 * If set, only tasks with policy set to SCHED_EXT are attached to
->   	 * sched_ext. If clear, SCHED_NORMAL tasks are also included.
->   	 */
-> -	SCX_OPS_SWITCH_PARTIAL	= 1LLU << 3,
-> +	SCX_OPS_SWITCH_PARTIAL		= 1LLU << 3,
->   
->   	/*
->   	 * A migration disabled task can only execute on its current CPU. By
-> @@ -136,7 +136,23 @@ enum scx_ops_flags {
->   	 * current CPU while p->nr_cpus_allowed keeps tracking p->user_cpus_ptr
->   	 * and thus may disagree with cpumask_weight(p->cpus_ptr).
->   	 */
-> -	SCX_OPS_ENQ_MIGRATION_DISABLED = 1LLU << 4,
-> +	SCX_OPS_ENQ_MIGRATION_DISABLED	= 1LLU << 4,
-> +
-> +	/*
-> +	 * Queued wakeup (ttwu_queue) is a wakeup optimization that invokes
-> +	 * ops.enqueue() on the ops.select_cpu() selected or the wakee's
-> +	 * previous CPU via IPI (inter-processor interrupt) to reduce cacheline
-> +	 * transfers. When this optimization is enabled, ops.select_cpu() is
-> +	 * skipped in some cases (when racing against the wakee switching out).
-> +	 * As the BPF scheduler may depend on ops.select_cpu() being invoked
-> +	 * during wakeups, queued wakeup is disabled by default.
-> +	 *
-> +	 * If this ops flag is set, queued wakeup optimization is enabled and
-> +	 * the BPF scheduler must be able to handle ops.enqueue() invoked on the
-> +	 * wakee's CPU without preceding ops.select_cpu() even for tasks which
-> +	 * may be executed on multiple CPUs.
-> +	 */
-> +	SCX_OPS_ALLOW_QUEUED_WAKEUP	= 1LLU << 5,
->   
->   	/*
->   	 * CPU cgroup support flags
-> @@ -147,6 +163,7 @@ enum scx_ops_flags {
->   				  SCX_OPS_ENQ_LAST |
->   				  SCX_OPS_ENQ_EXITING |
->   				  SCX_OPS_ENQ_MIGRATION_DISABLED |
-> +				  SCX_OPS_ALLOW_QUEUED_WAKEUP |
->   				  SCX_OPS_SWITCH_PARTIAL |
->   				  SCX_OPS_HAS_CGROUP_WEIGHT,
->   };
-> @@ -897,6 +914,7 @@ DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
->   static struct sched_ext_ops scx_ops;
->   static bool scx_warned_zero_slice;
->   
-> +DEFINE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
->   static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_last);
->   static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_exiting);
->   static DEFINE_STATIC_KEY_FALSE(scx_ops_enq_migration_disabled);
-> @@ -4717,6 +4735,7 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
->   	static_branch_disable(&__scx_ops_enabled);
->   	for (i = SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
->   		static_branch_disable(&scx_has_op[i]);
-> +	static_branch_disable(&scx_ops_allow_queued_wakeup);
->   	static_branch_disable(&scx_ops_enq_last);
->   	static_branch_disable(&scx_ops_enq_exiting);
->   	static_branch_disable(&scx_ops_enq_migration_disabled);
-> @@ -5348,9 +5367,10 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->   		if (((void (**)(void))ops)[i])
->   			static_branch_enable(&scx_has_op[i]);
->   
-> +	if (ops->flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
-> +		static_branch_enable(&scx_ops_allow_queued_wakeup);
->   	if (ops->flags & SCX_OPS_ENQ_LAST)
->   		static_branch_enable(&scx_ops_enq_last);
-> -
->   	if (ops->flags & SCX_OPS_ENQ_EXITING)
->   		static_branch_enable(&scx_ops_enq_exiting);
->   	if (ops->flags & SCX_OPS_ENQ_MIGRATION_DISABLED)
-> diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
-> index 1079b56b0f7a..1bda96b19a1b 100644
-> --- a/kernel/sched/ext.h
-> +++ b/kernel/sched/ext.h
-> @@ -8,6 +8,8 @@
->    */
->   #ifdef CONFIG_SCHED_CLASS_EXT
->   
-> +DECLARE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
-> +
->   void scx_tick(struct rq *rq);
->   void init_scx_entity(struct sched_ext_entity *scx);
->   void scx_pre_fork(struct task_struct *p);
-> @@ -34,6 +36,13 @@ static inline bool task_on_scx(const struct task_struct *p)
->   	return scx_enabled() && p->sched_class == &ext_sched_class;
->   }
->   
-> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p)
-> +{
-> +	return !scx_enabled() ||
-> +		static_branch_likely(&scx_ops_allow_queued_wakeup) ||
-> +		p->sched_class != &ext_sched_class;
-> +}
-> +
->   #ifdef CONFIG_SCHED_CORE
->   bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
->   		   bool in_fi);
-> @@ -52,6 +61,7 @@ static inline void scx_rq_activate(struct rq *rq) {}
->   static inline void scx_rq_deactivate(struct rq *rq) {}
->   static inline int scx_check_setscheduler(struct task_struct *p, int policy) { return 0; }
->   static inline bool task_on_scx(const struct task_struct *p) { return false; }
-> +static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { return true; }
->   static inline void init_sched_ext_class(void) {}
->   
->   #endif	/* CONFIG_SCHED_CLASS_EXT */
+Could you please enable the MHI and ath11k debug logs and share the full dmesg
+to help us understand the issue better?
 
+> This same error has been reported on some fix patches [1] [2]. Are there
+> any patches which I should test? 
+> 
+> Is officially hibernation use case supported at all?
+> 
+
+Yes. The hibernation support was tested with x86 host machine for both MHI
+modems and WLAN chipsets (especially ath11k devices).
+
+> In my view, this path may not have gotten tested and can be fixed easily
+> as we need to perform, more or less the same steps which were performed
+> at init time. But I've not found much documentation around MHI protocol
+> and its state machine, how is mhi state related to mhi channels support.
+> 
+
+During hibernation, the power to the device could be lost. But it should be
+handled by the ath11k driver. Maybe the debug logs could help us know what is
+going wrong.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
