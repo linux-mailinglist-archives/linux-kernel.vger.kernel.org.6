@@ -1,190 +1,137 @@
-Return-Path: <linux-kernel+bounces-515203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30E5A361AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:27:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1C8A361AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 16:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB373ACBC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8CB188CA12
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 15:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4AB266B64;
-	Fri, 14 Feb 2025 15:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14B4266B64;
+	Fri, 14 Feb 2025 15:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zt1CDVFg"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yQmypplA"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504B326656A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EB2661A9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 15:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739546821; cv=none; b=TWkXRIzMiGd2BjCNMcRsRzuImPHX5VUiScLdLVghwYEywWibYqbfCgDnhaQnAtqNhgNXzBNvPqeoDjcRHW/WYNKG50qsbuNH77QbJzn6grPLkwb0EM6L4chi/7kM4otyyFCrZBKBsMSY8z7aH6FQEm2bgDRuwG3sO3PIBwwc4VM=
+	t=1739546862; cv=none; b=k9xM1ADW7cPUxpv17AkOETH3GfSHySd4wmoTYIvCtk9WXPp0XfcV/umRm/3XxY671ToCZKrygZId0LAkW856oGsm5lmTbBkCV1PeeRjo0kOde3eTT04Jklo1Qv7TJgrrZfJK9oIaYbS0U9T2asKQ+4erdWka3ZH7xyN/y+j1xlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739546821; c=relaxed/simple;
-	bh=4YjQ+mVg6V227x71VJf2S+wTAFuySquGpvAuFTgbffM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SJ8GisT8BHYDVAAWbCkgxhpMbpypGdjCeLlsAOeu2McRu/eV3LwTsy+mCiHxzUwU9hd4JC/fZRN/XT9cpD5LKdNY9gChTCYF0JDDKteQMKTN7agg2XhYGZm0V/zUnu3KEgQctVRRbgV8Oc39b5vhaI+Im/1c/G6S6Fj4MWGOe9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zt1CDVFg; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc0bc05afdso4476251a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:27:00 -0800 (PST)
+	s=arc-20240116; t=1739546862; c=relaxed/simple;
+	bh=XV8AT4C5Gp3NId7z/OQmyfyGNoiIpsTboDGzh/JM5Rg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eXowJ8XJT/Rflc78jBIqmPM0K/KjYBlOoSiyLL2EGMxar5oRiFzE50mBw3mgG7yy+NaJiIXEqrcyQz0qWSmgtZb2UtOOkcgvex6Fy5jYjqcFxE/z9VsrcwLHnfLzWvHTxZFTkIAsrQXZznL6pPPYD+5Kd5BVtImhB/yD8h2KR30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yQmypplA; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e549be93d5eso2420186276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 07:27:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739546819; x=1740151619; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ieo8bF68ul8NY3XsoXjeCza+BbG3/+5Q5pjbotrXjzo=;
-        b=Zt1CDVFgX9j3RZk1KnN63nlmDbfWbDgZ6q5Ffs7kCSLQh9LWd/PBAlOTiJ/S0r7YCr
-         NOtBvDzBqSqrX1T0JzBO0gMTjYlcaMJllXf35fYagrDpdyJL+05LZBdpXsH9k930hlVP
-         44I2KitLMFl/NmKLUsODE7JW6ga9owLLWBKH526aDgc/dvwQdYIsxrzAENlLWY7wq4Ua
-         Sd2siB5eECxHKlYCfKUgnCemS181j42/PZUInhz14myDFKMsoMKoWqBpsQbVulfm+zEu
-         uj/KwSiCdd4FoKq9p3tPHClFLiff4u3zY8tmkwnbzdl+b5PzqMKcihu5nPgOJyIQScnD
-         L8ww==
+        d=linaro.org; s=google; t=1739546859; x=1740151659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6wygEz6vt3imSF3NwvzsbaEgG5kEjxbe8ddM+Vd/l/w=;
+        b=yQmypplAo+bysWaEaKZ3ULDutOw5rDZQx76SFfcPaxlN1GqcxvawtHCw+z5khRyH4E
+         6JOQLVhbIZ84vug8gYJLFtVG2Nif3vc61k7W+1bdZwx4IyQvRnLoo+U3ZNm2ZOm8UPmt
+         KV4y+vjOyxa2bCyJaKhiNPMxZTRIXhKk9ltgHzK3RIS1y8hR3kYJT8PsQNjHpkZZlQuk
+         4hlW0QmB92m2JoDJ6pqm7/CGmfxmqkkbkoOlmzprHgQCe6IFshmHK6jGT9CfSTjjweab
+         7ibkuy7PbGG68IreLZZwPDahVtfJvwucA3pa4NigZrFCLXNITu/tRGGNr4U9sWxtYYwl
+         ekLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739546819; x=1740151619;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ieo8bF68ul8NY3XsoXjeCza+BbG3/+5Q5pjbotrXjzo=;
-        b=rzE0ykAYlduQ2Mj6LLvBb2Q/eNYK1jw3ZCBBw6notxQaXXAbXzIEMWhwoWSlJs+cr8
-         11Zwg09GByY/g3nNaDJuYZcoBCxsQ6daLGkuKltQ8cyEkWCYuzm+Q2d/MZtOlxkJFBXi
-         EZ4GjXcg9E1aO2acXtJStpP+st7eU5Ws3O3YI4UdVaZz8KIL+SufyDPN0vjbil//R8RX
-         vD7C8WctakXevLHcscGHyF2u0Hh/ScKO8QIPnGqKpDRv8Mq/WvdRLnX/5tjSsYDpbVOF
-         FqHDAbOZ5XclEiLF4euJYTo6dMkLr6Jgcs4ELMWD8AG4pzuRNdCbwbb3dMaaajGP/nD/
-         m1Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMkPLmCMCz64PmtckzkpndJDicjZmZHp08UgjjOdxV12rRQMcx5iAXxbrOBec8dkcLg/L+H9IX2FRpQLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq0tV1Qb+iXSGjNlmQ9FddnQG5ITf4f9RlQb/Qarp0dcOdo5Jb
-	ku2iJgabHQLi2IPfUU3FVOSpXKg7ntbUymcAGD9f5xTjp+U9bdd72FqbjFwnqi2dOSy1AvJybGS
-	6Sg==
-X-Google-Smtp-Source: AGHT+IHWbVB4kTHf+DIwJbZNqYRlgO/ExJdlMCgjxVC7ddzx+IsADDqc7aCG4RrvAEEQDguHxQ9DO4uDWcE=
-X-Received: from pjbnd14.prod.google.com ([2002:a17:90b:4cce:b0:2fb:fa62:d40])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a42:b0:2ee:964e:67ce
- with SMTP id 98e67ed59e1d1-2fc0ddd1ff1mr11086665a91.3.1739546819402; Fri, 14
- Feb 2025 07:26:59 -0800 (PST)
-Date: Fri, 14 Feb 2025 07:26:57 -0800
-In-Reply-To: <20250204004038.1680123-3-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1739546859; x=1740151659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6wygEz6vt3imSF3NwvzsbaEgG5kEjxbe8ddM+Vd/l/w=;
+        b=KYkrVVsfE78Tr3y7jTfEfwdmnqcrmys4tg0GfepXVRq/a0UP4gQ/zhOrWOEJf7wti9
+         4aJr5+c74QSjRRzuNkoYu0bq5l4UVcWPPNyn+ltSNnWlte9Krx62IMepMSMTNP27o+dW
+         OmRzk+mwc/ouACj1DSteCDFq0deEY2S8yhjKe0QruF4h1ARrs47/YwcLPQc0ht9TrZVX
+         sAGwSCpzVDb+I8sQF6NrWhuMmG+D0S2DMEeC00Ki2K8vVAT5eIN0eCrY7K0hkEvziX8R
+         LMlet9Ug76d3K0826uCUiMT2fyR4s2AkZ2fKvEUyWGzHudAdj6ZxEpGmpNzZy1DYO/p4
+         28iA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIQTW3oTmFjuTeMNnuB12pNXcGZxEYWR6cETri/k8T1nNvQX2mU3aIJYgSbS0lTBdwoEsus6u4Ztx9pBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSVCJ6+O3Rn1A41lFYhEWzXYccFU2ltj+jSRVzfDzo+Tvuh5wM
+	94Pa+XMqSsoKuFPQ3n+eI5e0a5v1sxxyfs8eRfR2ODnpuPffprNUSB9IDnSe3Q8yoA6ua4eAdtC
+	ymikJjwhbDI/Pm6K8gAPGbvbNfsuxqrsoVVeGIg==
+X-Gm-Gg: ASbGncvU7ba5hvxSReWCM8wfrMMNq7CZCePatC5IRNHhD1luJWxa/ajsZQJbJNt9mgC
+	P9qEuFQWwY703C/R4M00U40XMYFPjb68FIwBe0cWuLDk3/65h+1K4ihw+lmSlOHuwmF5FOpmiYX
+	jrNa9aMMGu8hXs6AIAg4D6sl6mU8pPVyw=
+X-Google-Smtp-Source: AGHT+IG4t59iStpuyGq1+m+dvxq6YGK16dQkcUOiGs7tsyDTNdFxcN+r/HnSGFs01wlQ6aVqrC6vhWCS/t0g0Qj+n0o=
+X-Received: by 2002:a05:6902:f06:b0:e5b:21fe:d9bd with SMTP id
+ 3f1490d57ef6-e5da81026d3mr6137510276.10.1739546859693; Fri, 14 Feb 2025
+ 07:27:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250204004038.1680123-1-jthoughton@google.com> <20250204004038.1680123-3-jthoughton@google.com>
-Message-ID: <Z69gwTQjaeMLY7rM@google.com>
-Subject: Re: [PATCH v9 02/11] KVM: Add lockless memslot walk to KVM
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+MIME-Version: 1.0
+References: <20250214-spi-s3c64xx-fifo-depth-v1-1-e1b1915e3ee7@linaro.org>
+In-Reply-To: <20250214-spi-s3c64xx-fifo-depth-v1-1-e1b1915e3ee7@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 14 Feb 2025 09:27:29 -0600
+X-Gm-Features: AWEUYZkkGWUD60LMpHEHi4hDR2nuH8MPeQ82wDcgpZ-r7ywAfZ4HSSClhEmifNo
+Message-ID: <CAPLW+4n3bQOGDewkh1Yfftticp5n3sOnvmVxgNz=rnmWVf6vmg@mail.gmail.com>
+Subject: Re: [PATCH] spi: s3c64xx: extend description of compatible's fifo_depth
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Denzeel Oliva <wachiturroxd150@gmail.com>, linux-spi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It's not a lockless walk of the memslots.  The walk of memslots is already
-"lockless" in that the memslots are protected by SRCU, not by mmu_lock.
-
-On Tue, Feb 04, 2025, James Houghton wrote:
-> It is possible to correctly do aging without taking the KVM MMU lock;
-> this option allows such architectures to do so. Architectures that
-> select CONFIG_KVM_MMU_NOTIFIER_AGING_LOCKLESS are responsible for
-> correctness.
-> 
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> Reviewed-by: David Matlack <dmatlack@google.com>
+On Fri, Feb 14, 2025 at 1:32=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+> The FIFO depth specified with the compatibles's data is used where all
+> the instances of the IP define the same FIFO depth. It naturally has
+> higher precedence than the FIFO depth specified via DT. Specifying FIFO
+> depth in DT becomes superfluous in this case. Extend comment about
+> compatible's FIFO depth.
+>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  include/linux/kvm_host.h |  1 +
->  virt/kvm/Kconfig         |  2 ++
->  virt/kvm/kvm_main.c      | 24 +++++++++++++++++-------
->  3 files changed, 20 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index f34f4cfaa513..c28a6aa1f2ed 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -267,6 +267,7 @@ struct kvm_gfn_range {
->  	union kvm_mmu_notifier_arg arg;
->  	enum kvm_gfn_range_filter attr_filter;
->  	bool may_block;
-> +	bool lockless;
->  };
->  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
->  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
-> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-> index 54e959e7d68f..9356f4e4e255 100644
-> --- a/virt/kvm/Kconfig
-> +++ b/virt/kvm/Kconfig
-> @@ -102,6 +102,8 @@ config KVM_GENERIC_MMU_NOTIFIER
->  
->  config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
->         depends on KVM_GENERIC_MMU_NOTIFIER
-> +
-> +config KVM_MMU_NOTIFIER_AGING_LOCKLESS
->         bool
 
-As noted by Stephen[*], this steals the "bool" from KVM_ELIDE_TLB_FLUSH_IF_YOUNG.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Looking at it with fresh eyes, it also fails to take a depenency on
-KVM_GENERIC_MMU_NOTIFIER.
-
-Lastly, the name is unnecessarily long.  The "NOTIFIER" part is superfluous and
-can be dropped, as it's a property of the architecture's MMU, not of KVM's
-mmu_notifier implementation. E.g. if KVM ever did aging outside of the notifier,
-then this Kconfig would be relevant for that flow as well.  The dependency on
-KVM_GENERIC_MMU_NOTIFIER is what communicates that its currently used only by
-mmu_notifier aging.
-
-Actually, I take "Lastly" back.  IMO, it reads much better as LOCKLESS_AGING,
-because LOCKLESS is an adverb that describes the AGING process.
-
-[*] https://lore.kernel.org/all/20250214181401.4e7dd91d@canb.auug.org.au
-
-TL;DR: I'm squashing this:
-
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index f0a60e59c884..fe8ea8c097de 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -22,7 +22,7 @@ config KVM_X86
-        select KVM_COMMON
-        select KVM_GENERIC_MMU_NOTIFIER
-        select KVM_ELIDE_TLB_FLUSH_IF_YOUNG
--       select KVM_MMU_NOTIFIER_AGING_LOCKLESS
-+       select KVM_MMU_LOCKLESS_AGING
-        select HAVE_KVM_IRQCHIP
-        select HAVE_KVM_PFNCACHE
-        select HAVE_KVM_DIRTY_RING_TSO
-diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-index 9356f4e4e255..746e1f466aa6 100644
---- a/virt/kvm/Kconfig
-+++ b/virt/kvm/Kconfig
-@@ -102,8 +102,10 @@ config KVM_GENERIC_MMU_NOTIFIER
- 
- config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
-        depends on KVM_GENERIC_MMU_NOTIFIER
-+       bool
- 
--config KVM_MMU_NOTIFIER_AGING_LOCKLESS
-+config KVM_MMU_LOCKLESS_AGING
-+       depends on KVM_GENERIC_MMU_NOTIFIER
-        bool
- 
- config KVM_GENERIC_MEMORY_ATTRIBUTES
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index e514e3db1b31..201c14ff476f 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -655,8 +655,7 @@ static __always_inline int kvm_age_hva_range(struct mmu_notifier *mn,
-                .on_lock        = (void *)kvm_null_fn,
-                .flush_on_ret   = flush_on_ret,
-                .may_block      = false,
--               .lockless       =
--                       IS_ENABLED(CONFIG_KVM_MMU_NOTIFIER_AGING_LOCKLESS),
-+               .lockless       = IS_ENABLED(CONFIG_KVM_MMU_LOCKLESS_AGING),
-        };
- 
-        return kvm_handle_hva_range(kvm, &range).ret;
+>  drivers/spi/spi-s3c64xx.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 389275dbc003..9c47f5741c5f 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -139,7 +139,9 @@ struct s3c64xx_spi_dma_data {
+>   * struct s3c64xx_spi_port_config - SPI Controller hardware info
+>   * @fifo_lvl_mask: [DEPRECATED] use @{rx, tx}_fifomask instead.
+>   * @rx_lvl_offset: [DEPRECATED] use @{rx,tx}_fifomask instead.
+> - * @fifo_depth: depth of the FIFO.
+> + * @fifo_depth: depth of the FIFOs. Used by compatibles where all the in=
+stances
+> + *              of the IP define the same FIFO depth. It has higher prec=
+edence
+> + *              than the FIFO depth specified via DT.
+>   * @rx_fifomask: SPI_STATUS.RX_FIFO_LVL mask. Shifted mask defining the =
+field's
+>   *               length and position.
+>   * @tx_fifomask: SPI_STATUS.TX_FIFO_LVL mask. Shifted mask defining the =
+field's
+>
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250214-spi-s3c64xx-fifo-depth-6787f108be83
+>
+> Best regards,
+> --
+> Tudor Ambarus <tudor.ambarus@linaro.org>
+>
 
