@@ -1,163 +1,105 @@
-Return-Path: <linux-kernel+bounces-515379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECA6A3641E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:11:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4ECA36429
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 18:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB24C188B035
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09673A69EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 17:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440B9267B85;
-	Fri, 14 Feb 2025 17:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A766267B85;
+	Fri, 14 Feb 2025 17:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="LRmqiR8I"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="I7XGqFdW"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E684D267B15
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739553069; cv=none; b=PN9ILWUG08VGPPAuTKGcm6BVtLGGdGoT+A51DhXobnholjMl/5+cYufg1zqTZugZZM2R3ekXPQTHxXRH7An1GwkLzGlpYzVLEOkrcWvWn2FDD43ODPhdchSpM1sE+YnsozzzD1RiBzpmTgRZaj7gpHNqE5A4bjXKN6IIuLxcgxo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739553069; c=relaxed/simple;
-	bh=ELy+zrfrHewmzsP5iE3srJfwjuO1/17WeHvmzSm5Cx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bTaVkcyyNhPv5PKucTCcKt9HMym3UYquaSzI3FvhFM7LWKfEXWtqBkbngp+QnI9ReT+zZFKnN9TMIW2lp2inVngw+DPFeUoenbZtGws/Dq6XVvszTDZ+SnmI8nJMI/C5K7Gho6d6HtwkAeVAzCLO5m4XYlXBmcUtniSt+cBzEhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=LRmqiR8I; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220bff984a0so40697145ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 09:11:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1739553067; x=1740157867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a3WJ3Hbul+BcwiKbMsLe5up1foaUcyVA+15YyjU7ZeY=;
-        b=LRmqiR8IKvX6YkCu6yLaOHyT+sYWVnTa9BtSiHFyLHLTVLfZpHZGHTtQZqBXBhys5K
-         /QAVefqvY+Waln576Di2Odh0usLJIrkxUN+IugdcWOboMVkY8M4NoWlPYTTdx4hiyG5e
-         CrvUi1aFsnRPFKX/64tYqi5v73BldjcqsncCKuIibVutcEo4aiYmI/5EimamtgosMqFo
-         t/GZFOS7CCLQ5bwq4ta3VJUHEpFFkeYmUpSJFExge1KGo5dDrp0NivfKDVklysunplR/
-         c2w9QxOZ0OoTZzPGiYsbL0LV85Of4tXOE4XVKVEfO5LIh2JkoqgrsHOTBuF1KSNKDaiB
-         pESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739553067; x=1740157867;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a3WJ3Hbul+BcwiKbMsLe5up1foaUcyVA+15YyjU7ZeY=;
-        b=dvsPWnCaolnD/zCIvp845uCR6+sf4NzKzUG1LSsjOBTehCeZe20X8PTSa9kVh+chHZ
-         sKd09hsRuBK62EeXqH4Si6KqEsYvTZcFA68fmCEIJlJ4MxQx0qXQtiOmCElLai7H4I3p
-         /UO9/IKAdQvEvKKWCFqdRY/bpTVj0J8621cyjoKzk4bN5oYOhuNIedd0ur4SPj2RKPPA
-         lZuWbItMcPM8Sgx1EuO3C8de6d3yzJHNpbbDDygELcWhjp3UaobRwrkqjW5SRbvaeKkq
-         l8ysjSdOK/DuFYsjCbBc6TpNPDJZzU8oiwOJC2yCz8hjLeqgfUSHZmWewOyH1eyS1Bny
-         wKng==
-X-Forwarded-Encrypted: i=1; AJvYcCWhrFanAZ5a3cmhuijOZK9YO8dVozGfRQIN6uMROlsP2EdgFC04/xP8HvUWUJjhMNNjza1J0WtAjtb7alo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBT9hl95bYgSltYxZ9v0e8nqNGKzmKxaOCQCx7bFACuF0Zwaww
-	rgJqQH9HjG1TGfqA7QoOJsUEkD4gOF7PAhpT1nigW6CCZIPJQntkQnDFhv7yBzoi8AXPdXbt1hW
-	eQac=
-X-Gm-Gg: ASbGncuCn51mGQBJRq3F+MN91uSgDYoc2YSPqLaxGSmVCkLYJpIaMzDXWTfBwxrMB07
-	Mwo1kG83gd4bBUVnwpRotVxRQl8qcVjE9etJ84dWrD5dxx3+VP5TmGGf1a2N//wCQWuqHuT0pYx
-	XU/CqbFcSdW3RAtwMIFYhE+ovFrUJghqIQ0XlUkVjt/X5ggb5MDmaX1Ob6P9TFvybBTj1qXAXUB
-	f6L7UoB7didQ3HsmZ7LtLTltcaaIQ9SzTaci5Sl75wZA6Li27A8oJiWwtBvEl929DsjrQPKOzJs
-	7XLb5YNmwtJtX7HzMToDYt4wD5zF5zS2JYG1qMI25nlQxaYv8NJ5XzUzHpnRgVm7P8zg
-X-Google-Smtp-Source: AGHT+IFmUYelpgd2oImgFRIzH4xmfNMtpcgqp/XRqTu33fmCKbF5ZW0INkiDWT/S0JQHXkWBpK/8lg==
-X-Received: by 2002:a17:902:ccd1:b0:21f:542e:dd0a with SMTP id d9443c01a7336-220d2132b27mr132509325ad.41.1739553067141;
-        Fri, 14 Feb 2025 09:11:07 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d448sm31250045ad.150.2025.02.14.09.11.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 09:11:06 -0800 (PST)
-Date: Fri, 14 Feb 2025 09:11:04 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
- <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
- <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [RFC PATCH] uio_hv_generic: Fix sysfs creation path for ring
- buffer
-Message-ID: <20250214091104.01ae4d0a@hermes.local>
-In-Reply-To: <2025021418-cork-rinse-698a@gregkh>
-References: <20250214064351.8994-1-namjain@linux.microsoft.com>
-	<2025021455-tricky-rebalance-4acc@gregkh>
-	<bb1c122e-e1bb-43fb-a71d-dde8f7aa352b@linux.microsoft.com>
-	<2025021418-cork-rinse-698a@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D67C267AE8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739553227; cv=pass; b=lYGGxq6fXVqzMN3tXQ2LM9NPJGr7oohMygSc4XEQ0+MEG+4yBzV+4f25nhhjLbCwAKeWckcKas2NU3xokZPQK0TNztyNMB5GBghqQZ6SVneVrSgiSuhQdkPpUsNe16NOmXhq5P/IRzNBxJ7iFEIPLXWUVqVQXU5T8LKNcqkIAhw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739553227; c=relaxed/simple;
+	bh=OpB2YwORv7ZZMP2GLJvCEgX2ulrT6406s2E/L623RuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfDU2hdQ1XL/bpf+m54uB8mSwjQlFoNhDwmE4wfmh3Ki123ZzDYfz6XBl3hb2Nac7ql8hYsj8e5zXPAlB87FI4FzC8l4amkZP7o7bb1gStUlvV6A2vF6Q2jj9FPOmMipt0d1C977DbU+WrIPagOYgfNCzalzrxLsZVaZbfcoRpM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=I7XGqFdW; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739553200; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gjXqQx0PN9fIBRAdPXvG2V1D2iMEDJwYwHKwJ9gnYH6Zvmsgnw0M0i4WLydKUT9HumwYlmmRQb2DyEZUL+LPw+rGqlAI5nJNxPY5VrGTOy/vN6ZHWUDTGOR6EJJuJPf4eVWNHIuCyJabAgB2vei3ZJkPpJ0GityFpHocL0Hcx1g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739553200; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rx4zOK0jMB+T5gcNOQuTYR78srSh2K1r/cPK3FfxCyk=; 
+	b=Sa+a6c5dqeuoHvB8lEbCj6yju8t8zBDSkaz4QRXOzKXJP4kQsg5VKvnkRVZfOkstICpfTo7iRasOCNy30lpVSsnZOmVwLp/LKlQpFQK8dOuMRNrF9aTeqpT+PHaOTZho3n5LJWblxKBXo/sCutwf9bEa23xeSnJb1qLGl1cJ4zs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739553200;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=rx4zOK0jMB+T5gcNOQuTYR78srSh2K1r/cPK3FfxCyk=;
+	b=I7XGqFdWjPA5IMCXORPkrrCfozZDdiB7wzF+9HUPf4nwda+xcdRyfF8zWAoIK6ed
+	M/vLUcZ+VWgyUpW/HMpb+KMp2jj+3Wr9A3gmPR9WgzBDAmQye41+0D14jcXC92T2NZJ
+	msJE1Z8V1FmP0FiPFYRdxBGMi73pHhoyWEqd5OW4=
+Received: by mx.zohomail.com with SMTPS id 1739553198330678.3612859142831;
+	Fri, 14 Feb 2025 09:13:18 -0800 (PST)
+Message-ID: <f6d6de4d-1b87-4a53-a2eb-0d9ddfbc4311@collabora.com>
+Date: Fri, 14 Feb 2025 20:13:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 5/5] drm/virtio: add
+ VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE to params
+To: Sergio Lopez <slp@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Daniel Verkamp <dverkamp@chromium.org>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+ fnkl.kernel@gmail.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250214-virtio-shm-page-size-v2-0-aa1619e6908b@redhat.com>
+ <20250214-virtio-shm-page-size-v2-5-aa1619e6908b@redhat.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250214-virtio-shm-page-size-v2-5-aa1619e6908b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, 14 Feb 2025 08:41:57 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On 2/14/25 18:16, Sergio Lopez wrote:
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+> index c33c057365f85a2ace536f91655c903036827312..4b49635b4fe1d4256f219823341cef8e5fa8f029 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+> @@ -117,6 +117,11 @@ static int virtio_gpu_getparam_ioctl(struct drm_device *dev, void *data,
+>  	case VIRTGPU_PARAM_EXPLICIT_DEBUG_NAME:
+>  		value = vgdev->has_context_init ? 1 : 0;
+>  		break;
+> +	case VIRTGPU_PARAM_HOST_SHM_PAGE_SIZE:
+> +		if (!vgdev->has_host_visible)
+> +			return -EINVAL;
 
-> On Fri, Feb 14, 2025 at 12:35:44PM +0530, Naman Jain wrote:
-> > 
-> > 
-> > On 2/14/2025 12:21 PM, Greg Kroah-Hartman wrote:  
-> > > On Fri, Feb 14, 2025 at 12:13:51PM +0530, Naman Jain wrote:  
-> > > > On regular bootup, devices get registered to vmbus first, so when
-> > > > uio_hv_generic driver for a particular device type is probed,
-> > > > the device is already initialized and added, so sysfs creation in
-> > > > uio_hv_generic probe works fine. However, when device is removed
-> > > > and brought back, the channel rescinds and again gets registered
-> > > > to vmbus. However this time, the uio_hv_generic driver is already
-> > > > registered to probe for that device and in this case sysfs creation
-> > > > is tried before the device gets initialized completely. Fix this by
-> > > > deferring sysfs creation till device gets initialized completely.
-> > > > 
-> > > > Problem path:
-> > > > vmbus_device_register
-> > > >      device_register
-> > > >          uio_hv_generic probe
-> > > > 		    sysfs_create_bin_file (fails here)  
-> > > 
-> > > Ick, that's the issue, you shouldn't be manually creating sysfs files.
-> > > Have the driver core do it for you at the proper time, which should make
-> > > your logic much simpler, right?
-> > > 
-> > > Set the default attribute groups instead of manually creating this and
-> > > see if that works out better.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h  
-> > 
-> > Thanks for reviewing Greg. I tried this approach and here are my
-> > observations:
-> > 
-> > What I could create with ATTRIBUTE_GROUPS:
-> > /sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/ring
-> > 
-> > The one we have right now:
-> > /sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/channels/6/ring  
-> 
-> What is "channels" and "6" here?  Are they real devices or just a
-> directory name or something else?
-> 
-> > I could not find a way to tweak attributes to create the "ring" under above
-> > path. I could see the variations of sys_create_* which provides a
-> > way to pass kobj and do that, but that is something we are already
-> > using.  
-> 
-> No driver should EVER be pointing to a raw kobject, that's a huge hint
-> that something is really wrong.  Also, if a raw kobject is in a device
-> path in the middle like this, it will not be seen properly from
-> userspace library tools :(
-> 
-> So again, what is creating the "channels" and "6" subdirectories?  All
-> of that shoudl be under full control by the uio device, right?
+Nit: virtio_gpu_getparam_ioctl() returns EINVAL for unsupported params.
+While this is a supported param, but there is no hostmem available.
+Hence, should a different error code, maybe ENOENT or ENXIO.
 
-The original design of exposing channels was based on what the
-network core does to expose queues. Worth comparing the two
-to see if there is any shared insight.
+-- 
+Best regards,
+Dmitry
 
