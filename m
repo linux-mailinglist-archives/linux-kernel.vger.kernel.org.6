@@ -1,133 +1,509 @@
-Return-Path: <linux-kernel+bounces-514324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-514325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D05EA35590
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:06:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6677A35592
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 05:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5FC188FDA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2568C1890418
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 04:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AA51581E0;
-	Fri, 14 Feb 2025 04:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsw0VNqV"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7761547E0;
+	Fri, 14 Feb 2025 04:06:39 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E532753E4;
-	Fri, 14 Feb 2025 04:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F97D2753E4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 04:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739505943; cv=none; b=icPfb5Owkxqdxf8DpV/HamMWiaLW2JtAOa/1HmHExt3n1SsHsp1kHw3HSz7Ra/TFJDal5C3g5WecmbwE1zvYZgVZaLTm1CvRY+yEjo1/eW37K9iksu2icfNzS4ZAJ1vKgimci4IO+wPHJkbNPWZprzpiRwHs3qLGBElZ6QMd840=
+	t=1739505998; cv=none; b=lqGK7+F67n3Z+Ld6orKYTcqhiCwyDiyV64Byq9RSQclA/wTfZLiDWcV5pC7Fhk+xhiLzd2wU+0CjlNTDxvcrN4UR2IlDmaLYLWDxlUcC1tNkyKEoboGAp0P8y+vmLjeBT4VagS77UkAaaKWZK6RdS+hdevAhwmhCSrDKHuqMkaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739505943; c=relaxed/simple;
-	bh=c3BgKJxEx8TWtxiTJZidpJXtjr85Bk8psUOyafxaNPE=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mMVaitJ/xBYqkEtEon6VXj6JJVAcP4+ifVduVFrIBosxAgLi3upqtGiL9bT/cLVLlngnvqOeT/cefd6PKFwi9npxpbZaZO0YoAnVRn+HwAnKfitIx4AiBZowxtR5VmWAi/dyTVVAEHl9mmfM+XTIUzWFVAQOoU7R6OMx7YHxa9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsw0VNqV; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fc0026eb79so2968267a91.0;
-        Thu, 13 Feb 2025 20:05:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739505940; x=1740110740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cXObaPOwBzdR39AvlOz+qHq1Yn+96zXqSvT5rc48WGw=;
-        b=lsw0VNqVh95nKa4YCXWESC83eVTumhN6CJaCuUjrFh6QJexuZo2M/xb/cZczxdnKVT
-         aTlwMwWp2LGXq+dm6QwmkD8bw6CGTGsx8idAr8+C8WLkX/N7nk3YeEvpgScaGfGVbbxY
-         caBtq3WCQDAg9TVOeRaxY8UH61pG4L8e+OavTUCMKbFV6A1VIkpjRjC/UrETM8t+SjTn
-         W6bo62o6qu6mceZB3jwdgnv3r1ex4sO+TFD1wLUvbo5mNkAm0Ktf6ONpgejUdQ058/zh
-         iv7JP0Wj9kiO+QT3Soygeas3X6o7adNxGRfvMjPWFaSp4LzR/j6nrq3H7xTF6nSI0+q8
-         lWIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739505940; x=1740110740;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cXObaPOwBzdR39AvlOz+qHq1Yn+96zXqSvT5rc48WGw=;
-        b=BxC5k+DOJhsMBUSZofX0EG56W7kgskLdOxhpHEtwLBeTiQ8ttS3jjKggCanByBFUxG
-         PXbpbSuL2UO9xAecwzPlSmV9zk+1O+aokdp+8XnSfUKxO7wzwC/g35sVjlxMKaEZZKUN
-         f+GyJcb1UOldLIoaMRSteVZfAa6EP42cQqRPMVBzwHeMaLWNSQhMRo1GVCjBEaIh7TH/
-         FLCNcqn4+glf4Y6mQ6U6ERpt6LelK8vHpoSx4h/UUGamU6EVaJRvQHxhQKJwnpDBrexI
-         t+T7M8HZJlyODCMhz7c/Iv5I6W4xk7w4CFz/rLfYQpY7DbfW6OyWbg+cJj1xyM2AsUbI
-         Ifeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV65WJASQYrNq5iWnalQtUNJTjqHdUhD2MYD+WWGDAAldwFV3iuHH0dKgcvQxI5LchYLvlEW0m4XjuXYBvNTnc=@vger.kernel.org, AJvYcCV9gHv20p8jPTZoj+4yPLtyghT5D9i39SP1P9WgMNt1WEjQVIagOBH5EVTi+C2qcygaO48t+Mxj@vger.kernel.org, AJvYcCX4HgNhXIaOzJetVpk4BKdXNhESsqnmtgjVE+vI4iy4GDpS4fIVa7NrO75p269vEmarvjXeNeKMw9hM178=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYSmPKgnqiPW+cJh449h/SJhD6iHD8lLMiSkgHaQ+MaqHurmTY
-	zIgcJj3UplvAmRYvotjbmIjCzcmrn13xjmwiOsfhA/dXJZonpeOr
-X-Gm-Gg: ASbGncuMYH4cpIaCrq5v1RQPiRws7VUmsiiR6zkmngEoD2PfxHh/frs04RWmMaN2JiH
-	vqzk7NwkUEtSXsJgHZ3Rpp9D9hccWo+gi78dqqlhkjjLy7DqXBN5+qBwo+MLSc+7L4MXwV+qo4l
-	5h3eF1L1vhL2RJ1anl9crE/Y4nR55dYJ+m5KRD4AnyOH699x5PeSse2mzohAjSeiQO9vCfACjir
-	e8vNwlb0HLYzHY8TOfWbTEruVhw5lePBhJ+jit4RNrVj+ftUFBJnXEjBs/WTRqH+RMDXeRIYnHz
-	jVL+q/WBTDWZvU+1VjuXETv10o4qitCcKeOTYaKCQU5JAIne2DhIf83tqQJVgyOZtRqSyrff
-X-Google-Smtp-Source: AGHT+IEhWsGDncS57E8nNrhShQYX6mQbMVVUTVtGZ/iv4TUPUJHb7sZabPE8epMZzY1QQHtITKEBgQ==
-X-Received: by 2002:a17:90b:544f:b0:2ee:aed6:9ec2 with SMTP id 98e67ed59e1d1-2fbf5c0f653mr16933042a91.14.1739505940248;
-        Thu, 13 Feb 2025 20:05:40 -0800 (PST)
-Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13aafa44sm2097846a91.5.2025.02.13.20.05.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2025 20:05:39 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:05:30 +0900 (JST)
-Message-Id: <20250214.130530.335441284525755047.fujita.tomonori@gmail.com>
-To: gary@garyguo.net
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
- hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
- alex.gaynor@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev
-Subject: Re: [PATCH v10 7/8] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250209162048.3f18eebd.gary@garyguo.net>
-References: <20250207132623.168854-1-fujita.tomonori@gmail.com>
-	<20250207132623.168854-8-fujita.tomonori@gmail.com>
-	<20250209162048.3f18eebd.gary@garyguo.net>
+	s=arc-20240116; t=1739505998; c=relaxed/simple;
+	bh=dTGSK0QYOlRoA9DLNQJ1wmj7iidq5e8J46EiYcKUcdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jSrVm1/d4Xsa6SdIvAceiDdfOlsdi4FtGKXAJRltI+WwU3+YWRcLLU9NgYSn0k5JF62j7JgyTHyMyvCacJ7VQNDyMxkdiS0fDFfMj+2HL14rck7CszGQiJWOfAI+Rq/5n506HveUlH65nnYdc3F4SHS6F0ChMC8x/Ers8z8Gp5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YvJKn3Pmjz1ltbF;
+	Fri, 14 Feb 2025 12:02:37 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 58F0114013B;
+	Fri, 14 Feb 2025 12:06:25 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Feb 2025 12:06:23 +0800
+Message-ID: <4bbf7723-f5ae-451d-95fb-b54b273cf653@huawei.com>
+Date: Fri, 14 Feb 2025 12:06:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 drm-dp 7/7] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250210144959.100551-1-shiyongbang@huawei.com>
+ <20250210144959.100551-8-shiyongbang@huawei.com>
+ <zbbksbprvvwkjsmhuxac7ugshfjbnnp4hxxwxmmnosjzcebb3l@ppyn2cijj6bi>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <zbbksbprvvwkjsmhuxac7ugshfjbnnp4hxxwxmmnosjzcebb3l@ppyn2cijj6bi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On Sun, 9 Feb 2025 16:20:48 +0000
-Gary Guo <gary@garyguo.net> wrote:
 
->> +fn might_sleep(loc: &Location<'_>) {
->> +    // SAFETY: FFI call.
->> +    unsafe {
->> +        crate::bindings::__might_sleep_precision(
->> +            loc.file().as_ptr().cast(),
->> +            loc.file().len() as i32,
->> +            loc.line() as i32,
->> +        )
->> +    }
->> +}
-> 
-> One last Q: why isn't `might_sleep` marked as `track_caller` and then
-> have `Location::caller` be called internally?
+> On Mon, Feb 10, 2025 at 10:49:59PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> To realize HPD feature, we have getting hpd status function, registering
+>> irq function, interrupt handler function, and hpd event process function.
+>> And also we use pci_alloc_irq_vectors() to get our msi irq, because we have
+>> two interrupts now.
+>>
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v1 -> v2:
+>>    - optimizing the description in commit message, suggested by Dmitry Baryshkov.
+>>    - add mdelay(100) comments, suggested by Dmitry Baryshkov.
+>>    - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
+>> ---
+>>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 33 ++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    | 13 ++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  2 +
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 57 +++++++++++++-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 78 +++++++++++++++----
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   | 14 ++++
+>>   7 files changed, 181 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>> index c5feef8dc27d..08f9e1caf7fc 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>> @@ -16,5 +16,6 @@
+>>   #define HIBMC_DP_SYNC_EN_MASK		0x3
+>>   #define HIBMC_DP_LINK_RATE_CAL		27
+>>   #define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
+>> +#define HIBMC_DP_INT_ENABLE		0xc
+>>   
+>>   #endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> index 5e889c377117..0b6ce48c5d8f 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -181,6 +181,7 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+>>   	/* int init */
+>>   	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
+>>   	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
+>> +	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
+>>   	/* rst */
+>>   	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
+>>   	/* clock enable */
+>> @@ -284,3 +285,35 @@ void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
+>>   	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
+>>   	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
+>>   }
+>> +
+>> +enum hibmc_dp_hpd_status hibmc_dp_get_hpd_status(const struct hibmc_dp *dp)
+>> +{
+>> +	enum hibmc_dp_hpd_status status;
+>> +	u32 val;
+>> +
+>> +	/* spec said the HPD signal needs to be pulled up for
+>> +	 * more than 100 ms to enter the plug status
+>> +	 */
+>> +	mdelay(100);
+> Please check that your code doesn't break with CONFIG_DEBUG_ATOMIC_SLEEP=y
 >
-> It would make the API same as the C macro.
+> Having a 100msec delay in the ISR handler is a really sad idea. Don't
+> you have HPD debouncing handled in the hardware?
+>
+>> +
+>> +	val = readl(dp->dp_dev->base + HIBMC_DP_HPD_STATUS);
+>> +	val = (val & HIBMC_DP_CFG_SINK_HPD_STATE_MACHINE) >> 4;
+>> +
+>> +	switch (val) {
+>> +	case 0: /* 0: IDLE */
+>> +	case 3: /* 3: DONE */
+>> +		status = HIBMC_DP_HPD_OUT;
+>> +		break;
+>> +	case 1: /* 1: PLUG */
+>> +		status = HIBMC_DP_HPD_IN;
+>> +		break;
+>> +	case 4: /* 4: ASSERT_LENGHT */
+>> +		status = HIBMC_DP_HPD_DETECTING;
+>> +		break;
+>> +	default: /* unknown status */
+>> +		status = HIBMC_DP_HPD_DET_FAIL;
+>> +		break;
+>> +	}
+> Is there a way to detect a short pulse on the HPD line aka attention?
+> You have defined HIBMC_DP_HPD_SHORT below, but it is not being assigned
+> at all.
 
-Equivalent to the C side __might_sleep(), not might_sleep(). To avoid
-confusion, it might be better to change the name of this function.
+Okay, I'll fix this funciton.
 
-The reason why __might_sleep() is used instead of might_sleep() is
-might_sleep() can't always be called. It was discussed in v2:
 
-https://lore.kernel.org/all/ZwPT7HZvG1aYONkQ@boqun-archlinux/
+>> +
+>> +	return status;
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> index 823544b8008b..df7b692b1998 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -41,6 +41,17 @@ struct hibmc_dp_cbar_cfg {
+>>   	enum hibmc_dp_cbar_pattern pattern;
+>>   };
+>>   
+>> +enum hibmc_dp_hpd_status {
+>> +	HIBMC_DP_HPD_DETECTING,
+>> +	HIBMC_DP_HPD_IN,
+>> +	HIBMC_DP_HPD_OUT,
+>> +	HIBMC_DP_HPD_SHORT, /* Short hpd (irq_hpd) */
+>> +	HIBMC_DP_HPD_DET_FAIL,
+>> +	HIBMC_DP_HPD_IN_SIMULATE,
+>> +	HIBMC_DP_HPD_OUT_SIMULATE,
+>> +	HIBMC_DP_HPD_SHORT_SIMULATE,
+>> +};
+>> +
+>>   struct hibmc_dp {
+>>   	struct hibmc_dp_dev *dp_dev;
+>>   	struct drm_device *drm_dev;
+>> @@ -49,6 +60,7 @@ struct hibmc_dp {
+>>   	void __iomem *mmio;
+>>   	struct drm_dp_aux aux;
+>>   	struct hibmc_dp_cbar_cfg cfg;
+>> +	u32 hpd_status;
+>>   };
+>>   
+>>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>> @@ -58,5 +70,6 @@ int hibmc_dp_get_dpcd(struct hibmc_dp *dp);
+>>   u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp);
+>>   u8 hibmc_dp_get_lanes(struct hibmc_dp *dp);
+>>   void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
+>> +enum hibmc_dp_hpd_status hibmc_dp_get_hpd_status(const struct hibmc_dp *dp);
+>>   
+>>   #endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> index c43ad6b30c2c..6c4ba0412b15 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> @@ -12,6 +12,7 @@
+>>   #define HIBMC_DP_AUX_RD_DATA0			0x64
+>>   #define HIBMC_DP_AUX_REQ			0x74
+>>   #define HIBMC_DP_AUX_STATUS			0x78
+>> +#define HIBMC_DP_HPD_STATUS			0x98
+>>   #define HIBMC_DP_PHYIF_CTRL0			0xa0
+>>   #define HIBMC_DP_VIDEO_CTRL			0x100
+>>   #define HIBMC_DP_VIDEO_CONFIG0			0x104
+>> @@ -75,5 +76,6 @@
+>>   #define HIBMC_DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
+>>   #define HIBMC_DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
+>>   #define HIBMC_DP_CFG_STREAM_SYNC_CALIBRATION	GENMASK(31, 20)
+>> +#define HIBMC_DP_CFG_SINK_HPD_STATE_MACHINE	GENMASK(7, 4)
+>>   
+>>   #endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> index 1f8f7b74f5b4..057dd3caa043 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -11,8 +11,12 @@
+>>   #include <drm/drm_edid.h>
+>>   
+>>   #include "hibmc_drm_drv.h"
+>> +#include "hibmc_drm_regs.h"
+>>   #include "dp/dp_hw.h"
+>>   
+>> +#define DP_MASKED_SINK_HPD_UNPLUG_INT	BIT(3)
+>> +#define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
+>> +
+>>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>>   	.get_modes = drm_connector_helper_get_modes,
+>>   	.detect_ctx = drm_connector_helper_detect_from_ddc,
+>> @@ -81,6 +85,53 @@ static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+>>   	.atomic_disable = hibmc_dp_encoder_disable,
+>>   };
+>>   
+>> +static int hibmc_dp_cfg(struct hibmc_dp *dp)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = hibmc_dp_hw_init(dp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+> Does this enable video signal? You should only enable AUX and perform
+> link training at this point.
 
-> Also -- perhaps this function can be public (though I guess you'd need
-> to put it in a new module).
+It's a switch function, the parameter false.
+Also I can change the function name.
 
-Wouldn't it be better to keep it private until actual users appear?
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +irqreturn_t hibmc_dp_hpd_event_isr(int irq, void *arg)
+>> +{
+>> +	struct drm_device *dev = (struct drm_device *)arg;
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>> +	enum hibmc_dp_hpd_status status;
+>> +	int idx;
+>> +
+>> +	if (!drm_dev_enter(dev, &idx))
+>> +		return -ENODEV;
+>> +
+>> +	status  = hibmc_dp_get_hpd_status(&priv->dp);
+>> +	if (status == HIBMC_DP_HPD_IN) {
+>> +		if (!(priv->dp.hpd_status & DP_MASKED_SINK_HPD_PLUG_INT))
+>> +			goto err;
+>> +		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
+>> +		hibmc_dp_cfg(&priv->dp);
+>> +		drm_kms_helper_connector_hotplug_event(&priv->dp.connector);
+>> +	} else if (status == HIBMC_DP_HPD_OUT) {
+>> +		if (!(priv->dp.hpd_status & DP_MASKED_SINK_HPD_UNPLUG_INT))
+>> +			goto err;
+>> +		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
+>> +		drm_kms_helper_connector_hotplug_event(&priv->dp.connector);
+> This looks like a hand-coded drm_connector_helper_hpd_irq_event()
+
+Ok. I will change to it.
+
+
+>> +	} else {
+>> +		drm_warn(&priv->dev, "HPD unknown isr occur, status: %d\n", status);
+>> +	}
+>> +
+>> +err:
+>> +	priv->dp.hpd_status = 0;
+>> +
+>> +	drm_dev_exit(idx);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   int hibmc_dp_init(struct hibmc_drm_private *priv)
+>>   {
+>>   	struct drm_device *dev = &priv->dev;
+>> @@ -93,14 +144,12 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
+>>   	dp->mmio = priv->mmio;
+>>   	dp->drm_dev = dev;
+>>   
+>> -	ret = hibmc_dp_hw_init(&priv->dp);
+>> +	ret = hibmc_dp_cfg(dp);
+>>   	if (ret) {
+>> -		drm_err(dev, "hibmc dp hw init failed: %d\n", ret);
+>> +		drm_err(dev, "hibmc dp cfg failed: %d\n", ret);
+>>   		return ret;
+>>   	}
+>>   
+>> -	hibmc_dp_display_en(&priv->dp, false);
+>> -
+>>   	encoder->possible_crtcs = drm_crtc_mask(crtc);
+>>   	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
+>>   	if (ret) {
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> index bade693d9730..199acb3e7a73 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> @@ -29,9 +29,13 @@
+>>   #include "hibmc_drm_regs.h"
+>>   
+>>   #define HIBMC_DP_HOST_SERDES_CTRL	0x1f001c
+>> +#define HIBMC_DP_INTSTAT		0x1e0724
+>> +#define HIBMC_DP_INTCLR			0x1e0728
+> Why are those defined outside of hibmc_drm_regs.h?
+
+Ok, I will fix it.
+
+
+>>   
+>>   DEFINE_DRM_GEM_FOPS(hibmc_fops);
+>>   
+>> +static const char *g_irqs_names_map[HIBMC_MAX_VECTORS] = { "vblank", "hpd" };
+>> +
+>>   static irqreturn_t hibmc_interrupt(int irq, void *arg)
+>>   {
+>>   	struct drm_device *dev = (struct drm_device *)arg;
+>> @@ -49,6 +53,22 @@ static irqreturn_t hibmc_interrupt(int irq, void *arg)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> +static irqreturn_t hibmc_dp_interrupt(int irq, void *arg)
+>> +{
+>> +	struct drm_device *dev = (struct drm_device *)arg;
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>> +	u32 status;
+>> +
+>> +	status = readl(priv->mmio + HIBMC_DP_INTSTAT);
+>> +	if (status) {
+>> +		priv->dp.hpd_status = status;
+>> +		writel(status, priv->mmio + HIBMC_DP_INTCLR);
+>> +		return IRQ_WAKE_THREAD;
+>> +	}
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   static int hibmc_dumb_create(struct drm_file *file, struct drm_device *dev,
+>>   			     struct drm_mode_create_dumb *args)
+>>   {
+>> @@ -248,15 +268,52 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+>>   	return 0;
+>>   }
+>>   
+>> -static int hibmc_unload(struct drm_device *dev)
+>> +static void hibmc_unload(struct drm_device *dev)
+>> +{
+>> +	drm_atomic_helper_shutdown(dev);
+>> +
+>> +	pci_disable_msi(to_pci_dev(dev->dev));
+>> +}
+>> +
+>> +static int hibmc_msi_init(struct drm_device *dev)
+>>   {
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>>   	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>> +	int ret;
+>>   
+>> -	drm_atomic_helper_shutdown(dev);
+>> +	ret = pci_alloc_irq_vectors(pdev, HIBMC_MIN_VECTORS,
+>> +				    HIBMC_MAX_VECTORS, PCI_IRQ_MSI);
+>> +	if (ret < 0) {
+>> +		drm_err(dev, "enabling MSI failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>>   
+>> -	free_irq(pdev->irq, dev);
+>> +	priv->valid_irq_num = ret;
+>>   
+>> -	pci_disable_msi(to_pci_dev(dev->dev));
+>> +	priv->irqs = drmm_kcalloc(dev, priv->valid_irq_num,
+>> +				  sizeof(struct hibmc_irq), GFP_KERNEL);
+> Why do you need an extra pointer?  You know that there are no more than
+> HIBMC_MAX_VECTORS, so you can have this data as a part of your private
+> structure.
+
+Ok.
+
+
+>> +	if (!priv->irqs)
+>> +		return -ENOMEM;
+>> +
+>> +	for (int i = 0; i < priv->valid_irq_num; i++) {
+>> +		snprintf(priv->irqs[i].name, sizeof(priv->irqs[i].name) - 1, "%s-%s-%s",
+>> +			 dev->driver->name, pci_name(pdev), g_irqs_names_map[i]);
+>> +
+>> +		priv->irqs[i].irq_num = pci_irq_vector(pdev, i);
+>> +
+>> +		if (i)
+>> +			/* PCI devices require shared interrupts. */
+>> +			ret = devm_request_threaded_irq(&pdev->dev, priv->irqs[i].irq_num,
+>> +							hibmc_dp_interrupt, hibmc_dp_hpd_event_isr,
+>> +							IRQF_SHARED, priv->irqs[i].name, dev);
+>> +		else
+>> +			ret = devm_request_irq(&pdev->dev, priv->irqs[i].irq_num, hibmc_interrupt,
+>> +					       IRQF_SHARED, priv->irqs[i].name, dev);
+> This feels like "too many changes". You have MSI-related changes, devm_,
+> your HPD interrupt. Please split this patch into logical parts.
+
+Alright, I'll fix them and split it, thanks.
+
+
+>> +		if (ret) {
+>> +			drm_err(dev, "install irq failed: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>>   
+>>   	return 0;
+>>   }
+>> @@ -288,15 +345,10 @@ static int hibmc_load(struct drm_device *dev)
+>>   		goto err;
+>>   	}
+>>   
+>> -	ret = pci_enable_msi(pdev);
+>> +	ret = hibmc_msi_init(dev);
+>>   	if (ret) {
+>> -		drm_warn(dev, "enabling MSI failed: %d\n", ret);
+>> -	} else {
+>> -		/* PCI devices require shared interrupts. */
+>> -		ret = request_irq(pdev->irq, hibmc_interrupt, IRQF_SHARED,
+>> -				  dev->driver->name, dev);
+>> -		if (ret)
+>> -			drm_warn(dev, "install irq failed: %d\n", ret);
+>> +		drm_err(dev, "hibmc msi init failed, ret:%d\n", ret);
+>> +		goto err;
+>>   	}
+>>   
+>>   	/* reset all the states of crtc/plane/encoder/connector */
+>> @@ -372,7 +424,7 @@ static void hibmc_pci_remove(struct pci_dev *pdev)
+>>   
+>>   static void hibmc_pci_shutdown(struct pci_dev *pdev)
+>>   {
+>> -	drm_atomic_helper_shutdown(pci_get_drvdata(pdev));
+>> +	hibmc_pci_remove(pdev);
+>>   }
+>>   
+>>   static const struct pci_device_id hibmc_pci_table[] = {
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> index bc89e4b9f4e3..764e211a8779 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> @@ -22,6 +22,14 @@
+>>   
+>>   #include "dp/dp_hw.h"
+>>   
+>> +#define HIBMC_MIN_VECTORS	1
+>> +#define HIBMC_MAX_VECTORS	2
+>> +
+>> +struct hibmc_irq {
+>> +	s32 irq_num;
+>> +	char name[32];
+>> +};
+>> +
+>>   struct hibmc_vdac {
+>>   	struct drm_device *dev;
+>>   	struct drm_encoder encoder;
+>> @@ -40,6 +48,10 @@ struct hibmc_drm_private {
+>>   	struct drm_crtc crtc;
+>>   	struct hibmc_vdac vdac;
+>>   	struct hibmc_dp dp;
+>> +
+>> +	/* irqs */
+>> +	struct hibmc_irq *irqs;
+>> +	u32 valid_irq_num;
+>>   };
+>>   
+>>   static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
+>> @@ -71,4 +83,6 @@ int hibmc_dp_init(struct hibmc_drm_private *priv);
+>>   
+>>   void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root);
+>>   
+>> +irqreturn_t hibmc_dp_hpd_event_isr(int irq, void *arg);
+>> +
+>>   #endif
+>> -- 
+>> 2.33.0
+>>
 
