@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-516146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152CFA36D63
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:55:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3039A36D66
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72281894FA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612811895311
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7391A23BD;
-	Sat, 15 Feb 2025 10:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3431E1A5B87;
+	Sat, 15 Feb 2025 10:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xpfimjAX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H69qkZuX"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n8RDobiv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yJ2+OJ2W"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08FF4A08;
-	Sat, 15 Feb 2025 10:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028011A23BD;
+	Sat, 15 Feb 2025 10:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739616941; cv=none; b=XgjvXBD+gDyJndVv8Opjb5NArONk3D4I2IPB7FCfwocxrh2dXacZzLuXI49DRDK0bbWWnocluL46C5M1O311p6flLAEfCnrMlK91s4UQx8bk1p4IaXnqEOIgAMdzf/pvyTRe78dYKzGcpfBxu3yO5YHoeNHNM4Ei4zqzFf8ZRIM=
+	t=1739616960; cv=none; b=uojAjsNalNDdztyIvFH9rZ9g84XzaClOWz644q8pI6twfqR8naN2iMM6SB6moSucbQH98xN1pZqO+ojwS5shsUoT7oEEICkQUofP9kijrPq09SSLE2BqUpcyihQfy4M+lToPTCQoLcn8EIU8+i5ozuospDgBsOEM8+t1+j2fpBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739616941; c=relaxed/simple;
-	bh=lsutgyfVwgCn3cJX4eKXD0Louo96A8EKR0pI+P69rEs=;
+	s=arc-20240116; t=1739616960; c=relaxed/simple;
+	bh=cwV4GJPv6+vLMjPLxK9h8mxo2J0X8KdiqHOSZqOFJPw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RamJ1XPZpQVn3eEbUMhvkv5iE1WrO8gnbBQZirAhDico11PqHnh+SeU4dmw7QxLwg2DmkTx0Gf+mY4v134vjYBo2EcY6nTeG/JCByY7ux+YFcEKUZMRlK2H/FasmjBA7V/E801msZuHEUG2m6VU985h70m6+TyzfxnB52kbtotg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xpfimjAX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H69qkZuX; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=U2TyqB8hx9o07t0eFJAh5n29bUR4nwOviY/q5xdfe6moaYXziWRigzgkQPAxRNFlp3qUwUP1Xru8aqgjlx4aKsz+PAdygjV8NrvaT1YiDSDixPy6a9QwuuZSAK1V38Fj9eXBFgTTrR1j61EotCJFa/z6y6hVKLGp7w0JY6O4REg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n8RDobiv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yJ2+OJ2W; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 15 Feb 2025 10:55:25 -0000
+Date: Sat, 15 Feb 2025 10:55:56 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739616937;
+	s=2020; t=1739616957;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xnKHHa0zCQ4rdMiZJG1DUl92tOcflQzFHLDRX6rOi4Q=;
-	b=xpfimjAXnDBSfYlsHezTXVGhLYdFbAPTRsBgNfhxFuAmmznQUDR4MGT7bMMhO57ncLs9Pq
-	UPdO/eVt/U4e2fN/Ks9XqxSs8D28+QpYjYoj7kHIk8boczqILN5F4HepCRs/TDRVJ6TiNO
-	yzerKj2oAjcmr0sZJvTSfkQj1WMzznVuddhPKm96Crb4glbdlwyOFVemN/P5Fq3NbsNE0i
-	Q2G4xaG+uf5R7G6deTqoPwoLeEqC1dJHH8/l/qoz9OWTwtTE/V3vDTdGAAtUJg/5H8pjf0
-	iiMi/XNxPGrpWyKfmH5fD4pzMAjT7cRFleJ765B27+hbLCSOuIFE0k2wSFjavA==
+	bh=PquJFUk3IH3jUTv2TezDyvZQbb5kNJjtTC87VPrr598=;
+	b=n8RDobiv6EffZL/yC2WaXSzsQpimYm34T7TJDQHsrvDA7Nx8MHKvG63/E4nzVP3P67Lg06
+	sLgJUVG4NyQ6m60zT6O1pZPFfenhDuyhmMGcLG57vxwxlCT/TeOoZ0oK/tB1O/RMzSvwur
+	NKT1N24bpGMGDlbpG8nJS5V4JBV7/47Su6WshgmglWSC87Ng1hINyXGZTJJNBHip50oorc
+	TkubL+7x/uEs4hSlnZqTtTtWL4FwflYfsQ73wRAJhr+IfVthrzHJpETNx7xeAU3t0zZNE8
+	CmBpdzAK4DMxwA9QvxigaTAfO4gZ0ryKnZ19qJra8x0PtXbB+6NXXuxuASnklA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739616937;
+	s=2020e; t=1739616957;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xnKHHa0zCQ4rdMiZJG1DUl92tOcflQzFHLDRX6rOi4Q=;
-	b=H69qkZuXja8gm/xrL9XtfQ1aVIkd7QD2lw5PpswS7n1Kxu2ywqXmhWp199YsOHcr+otPO1
-	pnUG8R+fb9Sd/wBw==
-From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
+	bh=PquJFUk3IH3jUTv2TezDyvZQbb5kNJjtTC87VPrr598=;
+	b=yJ2+OJ2WRy7pmTfMfmcvJkulIvipnqkE6LR2T2w7740o1M++wKYg5camz0qsq7GRE1/iaF
+	VqjZyqQ1TFAEA0Cg==
+From: "tip-bot2 for I Hsin Cheng" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] x86/events/amd/iommu: Increase IOMMU_NAME_SIZE
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Subject:
+ [tip: sched/core] sched/fair: Refactor can_migrate_task() to elimate looping
+Cc: I Hsin Cheng <richard120310@gmail.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250210193412.483233-1-andriy.shevchenko@linux.intel.com>
-References: <20250210193412.483233-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250210103019.283824-1-richard120310@gmail.com>
+References: <20250210103019.283824-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173961692629.10177.5199148332316223161.tip-bot2@tip-bot2>
+Message-ID: <173961695638.10177.15446908649592495018.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the perf/core branch of tip:
+The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     1623ced247f7cb1b48a27cca6b0f17fe5ab5942b
-Gitweb:        https://git.kernel.org/tip/1623ced247f7cb1b48a27cca6b0f17fe5ab=
-5942b
-Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate:    Mon, 10 Feb 2025 21:34:12 +02:00
+Commit-ID:     d34e798094ca7be935b629a42f8b237d4d5b7f1d
+Gitweb:        https://git.kernel.org/tip/d34e798094ca7be935b629a42f8b237d4d5b7f1d
+Author:        I Hsin Cheng <richard120310@gmail.com>
+AuthorDate:    Mon, 10 Feb 2025 18:30:18 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 14 Feb 2025 10:32:02 +01:00
+CommitterDate: Fri, 14 Feb 2025 10:32:01 +01:00
 
-x86/events/amd/iommu: Increase IOMMU_NAME_SIZE
+sched/fair: Refactor can_migrate_task() to elimate looping
 
-The init_one_iommu() takes an unsigned int argument that can't be checked for
-the boundaries at compile time and GCC complains about that when build with
-`make W=3D1`:
+The function "can_migrate_task()" utilize "for_each_cpu_and" with a
+"if" statement inside to find the destination cpu. It's the same logic
+to find the first set bit of the result of the bitwise-AND of
+"env->dst_grpmask", "env->cpus" and "p->cpus_ptr".
 
-arch/x86/events/amd/iommu.c:441:53: note: directive argument in the range [0,=
- 4294967294]
-arch/x86/events/amd/iommu.c:441:9: note: =E2=80=98snprintf=E2=80=99 output be=
-tween 12 and 21 bytes into a destination of size 16
+Refactor it by using "cpumask_first_and_and()" to perform bitwise-AND
+for "env->dst_grpmask", "env->cpus" and "p->cpus_ptr" and pick the
+first cpu within the intersection as the destination cpu, so we can
+elimate the need of looping and multiple times of branch.
 
-Increase the size to cover all possible cases.
+After the refactoring this part of the code can speed up from ~115ns
+to ~54ns, according to the test below.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Ran the test for 5 times and the result is showned in the following
+table, and the test script is paste in next section.
+
+  -------------------------------------------------------
+  |Old method|  130|  118|  115|  109|  106|  avg ~115ns|
+  -------------------------------------------------------
+  |New method|   58|   55|   54|   48|   55|  avg  ~54ns|
+  -------------------------------------------------------
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250210193412.483233-1-andriy.shevchenko@lin=
-ux.intel.com
+Link: https://lkml.kernel.org/r/20250210103019.283824-1-richard120310@gmail.com
 ---
- arch/x86/events/amd/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
-index b15f7b9..f8228d8 100644
---- a/arch/x86/events/amd/iommu.c
-+++ b/arch/x86/events/amd/iommu.c
-@@ -30,7 +30,7 @@
- #define GET_DOMID_MASK(x)  (((x)->conf1 >> 16) & 0xFFFFULL)
- #define GET_PASID_MASK(x)  (((x)->conf1 >> 32) & 0xFFFFFULL)
-=20
--#define IOMMU_NAME_SIZE 16
-+#define IOMMU_NAME_SIZE 24
-=20
- struct perf_amd_iommu {
- 	struct list_head list;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9279bfb..857808d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9439,12 +9439,11 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ 			return 0;
+ 
+ 		/* Prevent to re-select dst_cpu via env's CPUs: */
+-		for_each_cpu_and(cpu, env->dst_grpmask, env->cpus) {
+-			if (cpumask_test_cpu(cpu, p->cpus_ptr)) {
+-				env->flags |= LBF_DST_PINNED;
+-				env->new_dst_cpu = cpu;
+-				break;
+-			}
++		cpu = cpumask_first_and_and(env->dst_grpmask, env->cpus, p->cpus_ptr);
++
++		if (cpu < nr_cpu_ids) {
++			env->flags |= LBF_DST_PINNED;
++			env->new_dst_cpu = cpu;
+ 		}
+ 
+ 		return 0;
 
