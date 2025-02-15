@@ -1,264 +1,101 @@
-Return-Path: <linux-kernel+bounces-516246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7580DA36EA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:56:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F4AA36EAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF3A1895340
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416C518955BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6239D1C84AD;
-	Sat, 15 Feb 2025 13:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B0C1C8617;
+	Sat, 15 Feb 2025 14:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="a3M0S/pu"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdkeIjoa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA40F186E54
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62F8634E;
+	Sat, 15 Feb 2025 14:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739627758; cv=none; b=Qq42T+VB0mLg3DS2qBRkqnVklN+hkHjHTljmwI+5ynCNt/5Lub1y7uN/mGwraBO5hd6EtqS99BeHa1cVCLxonExkkKGNeEt6r3bI7GuSN+Ppg0tReaWuQEHoMQch8S82hedfsA6+DafEOuYYkrx0Tj6qoqXvibDZR6h7PmZhi3U=
+	t=1739628070; cv=none; b=UPKUMdMCzR4EseavdWi7cRU3zEdbo/Go4pdZQMteyh37Mwy8IORtD+GPcpBxVQhR75JYz3zTf/4C05rbgeejeqvvRxRDUcRMGHchVYL6lHkbEi4cCR/s6W35af7AMyzYCjWoRXHw7iKuGnehqAJN06fhgCLI+QzympdtJ8TbZvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739627758; c=relaxed/simple;
-	bh=ynQRGmv0k2LHJILsKLHBzXzaTuyPYqreNIxN9MimNAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UqBr+JRKmFbNp78F6+EVkMHn1wvOzavx9TnQHLWIxsFnBmDEN/iql0iWprbUrP798/ekDtJ48kXxgZ5u/RBPQ9aaY7HL2efncThqMyE1fNsYTEj9LuK4fkF7LzWhMJvcxYz4iaQChNcashAnWakb4viWxqkxeh+6YUINJ7sgm24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=a3M0S/pu; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aba868c6e88so203762166b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1739627754; x=1740232554; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ip35XfUe0PCV8P/WbBPAmeZvVqMfUDUUb94mizXHroE=;
-        b=a3M0S/puKA9s5+jkPRpNMfF5c4AExwu9rvdiH4JolodtkWOWuXQrX9X7nuHYHZM4m2
-         aUy+q8L0YQR8VVB2tzxna85AxYgKpnQBRe0l6zo2ILvlvSfahx+dUm26K7H2WS/dS0EP
-         t7I+Gkc0V6twOFMZBnYvfH6cuc6gGywhECf0zpftwxg5K1sX57tfimXvArkDZkt4BvY2
-         OoCTu6hck6N7EyTYhT9pgJvq9/MrM7oHaeVpS8UgmVmDwhwJbT+k3DcTzY4cav0KIx/b
-         e5wRJd6WigWbFqGL3sAuMqVFDn5BYdG+QIE2eTd2jubHUy0hHoa8XXEEr5TfiqVHo3EH
-         x7oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739627754; x=1740232554;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ip35XfUe0PCV8P/WbBPAmeZvVqMfUDUUb94mizXHroE=;
-        b=nMAmFz6v1gIz/z8k0EqyhmGcTdlEH7QJzLGXgVcodiUC2y5UKBqN6/dthLqbtY2ADL
-         jNTOAhVylNhGorXYaXhXTQN9zY12vhFCy78oG8G+j/aQZfMwFAzrFXsWFnrmVH6lXPzD
-         EgzzwfSk+hPqXs2VzeUcI1nHufJFYpQFip1/NU2IwQTJdgwbghKJc0V337Mvo3YwJRmw
-         2R0pJXdERHaZv7BEv2jcUzVTELbrKcZbgG2xyaZrF9vZ8G4CwwpXc0ulid3E5HJkS6nJ
-         aBMMF5k3a0kK+AfwJ1rY4z5FxtrIUpZenvGdae/Af0yzEyTi9Pne1rWWT70LpXYkUnzL
-         v2Gg==
-X-Gm-Message-State: AOJu0YxuDliTZUW/uOQnVmo5LPmPzWVNGTODbxul2O/oVl/orX3LF2K+
-	Vt0Zl5bxUH2tMLwN8mtazpwqQwBIl6AKVY2M2MQ2h6ilGPVQCPa2MNiYQwEDZUs=
-X-Gm-Gg: ASbGncvcCNwwYepJ1sRokH4JAXO89z+JyFvBEFG2ic7Nbf+KDTa8fZSeYeAKu/2yqAo
-	2WdG3FchXjmHG/aLfbUk+nW9SkfHkY/DY44HeDeFy6mU1qEqB9Ls5tdgV37/2Uh69w9cZEBdzOf
-	gu3lAK8dsMLrcP6uv6fpMkI9ZEXqPTL8iUs9XceGrKUCR5Bt6MmYoSHpBDHEkGfnQZRfZotLABC
-	Hn8H0il5dM6byYbFs2kdhoZkmK5bv1xqUgQ0QOoPRp4Xm8ot8Y22YQEvIDhJ2ZU8GVohRYP0M0V
-	dLpr6HCc0Sq4f97esmKDqo9G
-X-Google-Smtp-Source: AGHT+IHKDmH405xdj0jPJHIKuZ0K0kF6FFhjrC1+AWHo4C3rQtUztDXAnjVwRXBOlB15UUxyrtHq7g==
-X-Received: by 2002:a17:907:7209:b0:ab7:b589:4f9e with SMTP id a640c23a62f3a-abb70de294cmr262384866b.39.1739627754103;
-        Sat, 15 Feb 2025 05:55:54 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.173])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bce23sm532277766b.161.2025.02.15.05.55.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Feb 2025 05:55:53 -0800 (PST)
-Message-ID: <ed953445-9c55-4658-af16-04eaa71d746e@tuxon.dev>
-Date: Sat, 15 Feb 2025 15:55:51 +0200
+	s=arc-20240116; t=1739628070; c=relaxed/simple;
+	bh=3KZjQFG9kWj7eD82rZJTbZ9FPBolNJSFaZ87/g22y1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0AE3Vw5Pgc+XA1tSwRLZfDwZbt9F2J8ezrU00JY6R0NzwhZNWcCQ7xV+4ka9RYjIEvnELHKzraMSa4tocO5y4v3ODC1uguxSnI1+No5uBv4sGXKJ/zGBr1ztgwBcG7bwnD7jgUbqPTPcKBNnFsuQo8jHUVZRJpvzzfzx9IG3Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdkeIjoa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822DEC4CEDF;
+	Sat, 15 Feb 2025 14:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739628069;
+	bh=3KZjQFG9kWj7eD82rZJTbZ9FPBolNJSFaZ87/g22y1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mdkeIjoaX5Cb1zuFkBFKRC5hh5M29XZV6OoodO/ZlM3RWcOllZD4faWThxIxKAilu
+	 /iuMlnTsVOmvaUlKMWzMz5ioNFJOXsiMMall0OHQ5poQv5AalO30eE62ksKJNLys9m
+	 avuff3LzCUsjxCRVh/t92j1yyH3H7FvPdXrKUOKmWJxLUey6VcZNnyDE1WeRjBfOt1
+	 AAyWl08v6RedA0ScYvadnEDN2CwZ1fjFeeB+ivrxUOi3LQvWGLreBwFsweGGPCKke1
+	 LDUWOLGA7xmCvobdxxd+EikL5WJC7hNXcHgTv8xCmhg8BHfFCEsi2cvputIOqUNCB7
+	 SwzWhYoCaaffA==
+Date: Sat, 15 Feb 2025 14:01:04 +0000
+From: Simon Horman <horms@kernel.org>
+To: Eric Woudstra <ericwouds@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 net-next] net: ethernet: mtk_ppe_offload: Allow QinQ
+Message-ID: <20250215140104.GO1615191@kernel.org>
+References: <20250209110936.241487-1-ericwouds@gmail.com>
+ <20250211165127.3282acb0@kernel.org>
+ <fe6509ab-c186-47c1-b004-4e17a875c5c7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] clk: Overwrite clk_hw::init with NULL during
- clk_register()
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- Doug Anderson <dianders@chromium.org>
-References: <20190731193517.237136-1-sboyd@kernel.org>
- <20190731193517.237136-10-sboyd@kernel.org>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20190731193517.237136-10-sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe6509ab-c186-47c1-b004-4e17a875c5c7@gmail.com>
 
-Hi, Stephen,
-
-On 31.07.2019 22:35, Stephen Boyd wrote:
-> We don't want clk provider drivers to use the init structure after clk
-> registration time, but we leave a dangling reference to it by means of
-> clk_hw::init. Let's overwrite the member with NULL during clk_register()
-> so that this can't be used anymore after registration time.
+On Wed, Feb 12, 2025 at 08:33:52PM +0100, Eric Woudstra wrote:
 > 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
 > 
-> Please ack so I can take this through clk tree
+> On 2/12/25 1:51 AM, Jakub Kicinski wrote:
+> > On Sun,  9 Feb 2025 12:09:36 +0100 Eric Woudstra wrote:
+> >> This patch adds QinQ support to mtk_flow_offload_replace().
+> >>
+> >> Only PPPoE-in-Q (as before) and Q-in-Q are allowed. A combination
+> >> of PPPoE and Q-in-Q is not allowed.
+> > 
+> > AFAIU the standard asks for outer tag in Q-in-Q to be ETH_P_8021AD,
+> > but you still check:
+> > 
+> >> 			    act->vlan.proto != htons(ETH_P_8021Q))
+> >> 				return -EOPNOTSUPP;
+> > 
+> > If this is a HW limitation I think you should document that more
+> > clearly in the commit message. If you can fix it, I think you should..
 > 
->  drivers/clk/clk.c            | 24 ++++++++++++++++--------
->  include/linux/clk-provider.h |  3 ++-
->  2 files changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c0990703ce54..efac620264a2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
->  	return 0;
->  }
->  
-> -static int clk_core_populate_parent_map(struct clk_core *core)
-> +static int clk_core_populate_parent_map(struct clk_core *core,
-> +					const struct clk_init_data *init)
->  {
-> -	const struct clk_init_data *init = core->hw->init;
->  	u8 num_parents = init->num_parents;
->  	const char * const *parent_names = init->parent_names;
->  	const struct clk_hw **parent_hws = init->parent_hws;
-> @@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  {
->  	int ret;
->  	struct clk_core *core;
-> +	const struct clk_init_data *init = hw->init;
-> +
-> +	/*
-> +	 * The init data is not supposed to be used outside of registration path.
-> +	 * Set it to NULL so that provider drivers can't use it either and so that
-> +	 * we catch use of hw->init early on in the core.
-> +	 */
-> +	hw->init = NULL;
+> It will be the first case. mtk_foe_entry_set_vlan() is limited to using
+> only 1 fixed protocol. I'll drop the reviewed-by, amend the commit
+> message and send v4.
 
-I found that this line impact the drivers/clk/clk-versaclock3.c driver when
-doing unbind/bind. The driver provides statically initialized hw.init
-object for registration, the hw.init pointers are set to NULL after clock
-registrations then the next registration (when re-binding) fails.
+I agree with Jakub's comment regarding the spec, and his suggested actions.
+But, FWIIW, I also think that situations such as this are not uncommon in
+the wild.
 
-In the driver probe the clock are registered like:
-
-	for (i = 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
-		clk_pfd_mux[i].regmap = regmap;
-		ret = devm_clk_hw_register(dev, &clk_pfd_mux[i].hw);
-		if (ret)
-			return dev_err_probe(dev, ret, "%s failed\n",
-					     clk_pfd_mux[i].hw.init->name);
-	}
-
-and entries in clk_pfd_mux[] are like:
-
-static struct vc3_hw_data clk_pfd_mux[] = {
-	[VC3_PFD2_MUX] = {
-		.data = &(struct vc3_clk_data) {
-			.offs = VC3_PLL_OP_CTRL,
-			.bitmsk = BIT(VC3_PLL_OP_CTRL_PLL2_REFIN_SEL)
-		},
-		.hw.init = &(struct clk_init_data) {
-			.name = "pfd2_mux",
-			.ops = &vc3_pfd_mux_ops,
-			.parent_data = pfd_mux_parent_data,
-			.num_parents = 2,
-			.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT
-		}
-	},
-
-// ...
-
-};
-
-I tried with the following diff, too:
-
-diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 9fe27dace111..c1776c313e9b 100644
---- a/drivers/clk/clk-versaclock3.c
-+++ b/drivers/clk/clk-versaclock3.c
-@@ -1022,10 +1022,11 @@ static int vc3_probe(struct i2c_client *client)
-        /* Register pfd muxes */
-        for (i = 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
-                clk_pfd_mux[i].regmap = regmap;
-+               pr_err("%s(): hw init=%08x\n", __func__,
-clk_pfd_mux[i].hw.init);
-                ret = devm_clk_hw_register(dev, &clk_pfd_mux[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_pfd_mux[i].hw.init->name);
-+                                            "test");
-//clk_pfd_mux[i].hw.init->name);
-        }
-
-        /* Register pfd's */
-@@ -1034,7 +1035,7 @@ static int vc3_probe(struct i2c_client *client)
-                ret = devm_clk_hw_register(dev, &clk_pfd[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_pfd[i].hw.init->name);
-+                                            "test");
-//clk_pfd[i].hw.init->name);
-        }
-
-        data = i2c_get_match_data(client);
-@@ -1050,7 +1051,7 @@ static int vc3_probe(struct i2c_client *client)
-                ret = devm_clk_hw_register(dev, &clk_pll[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_pll[i].hw.init->name);
-+                                            "test");
-//clk_pll[i].hw.init->name);
-        }
-
-        /* Register divider muxes */
-@@ -1059,7 +1060,7 @@ static int vc3_probe(struct i2c_client *client)
-                ret = devm_clk_hw_register(dev, &clk_div_mux[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_div_mux[i].hw.init->name);
-+
-"test");//clk_div_mux[i].hw.init->name);
-        }
-
-        /* Register dividers */
-@@ -1068,7 +1069,7 @@ static int vc3_probe(struct i2c_client *client)
-                ret = devm_clk_hw_register(dev, &clk_div[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_div[i].hw.init->name);
-+                                            "test");
-//clk_div[i].hw.init->name);
-        }
-
-        /* Register clk muxes */
-@@ -1082,7 +1083,7 @@ static int vc3_probe(struct i2c_client *client)
-                ret = devm_clk_hw_register(dev, &clk_mux[i].hw);
-                if (ret)
-                        return dev_err_probe(dev, ret, "%s failed\n",
--                                            clk_mux[i].hw.init->name);
-+
-"test");//clk_mux[i].hw.init->name);
-        }
-
-        /* Register clk outputs */
-
-Can you please let me know if this is a wrong pattern? I noticed there are
-other drivers following similar approach, e.g.:
-- drivers/clk/clk-axm5516.c
-- drivers/clk/qcom/camcc-sm6350.c
-- drivers/clk/meson/c3-pll.c
-
-Full console log with my trials can be found here:
-https://p.fr33tux.org/9d976f
-
-Thank you,
-Claudiu
 
