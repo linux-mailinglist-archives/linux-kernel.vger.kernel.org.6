@@ -1,124 +1,110 @@
-Return-Path: <linux-kernel+bounces-516161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF129A36D7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:58:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574A9A36D87
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7338D163EDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:58:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C4E3B2564
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C581DDC1A;
-	Sat, 15 Feb 2025 10:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D131A9B58;
+	Sat, 15 Feb 2025 10:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HGuP+Z1b";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9AhZUqQb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUx0A6Zj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CDE1BD017;
-	Sat, 15 Feb 2025 10:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA021A83EB;
+	Sat, 15 Feb 2025 10:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617006; cv=none; b=eykKRS76jgN69NKgb4J5GviH0jxIyYFxP0l6Jo864v+Y5lKffgHDF824RR1dCZYyvmetWjWfTrsjOT+urHHuQ00VFBTeBi/N9nEj5BBXtj7CiQgZWKfD9vD0gBFZ6S2BnzLj9P7VR7eyP+vjQjniqhCbNw19nh80e50B50Fc/ro=
+	t=1739617189; cv=none; b=e+469Mw90H0JEiUnykvhAgmjFWsugr5N8diOwI+zMJaXwnqNJMxAc+90z9APPfRnxAul9ey0JHm9t4LfhQrokUJR/PWrEEnYHDZX/U06pRahcRgZTb/Nm1Ics98ouR1orxK+TvE3d6LBTf2V8I2nARcOUadU94Z7JBJmUdWspHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617006; c=relaxed/simple;
-	bh=kpXtMnA0USK/aNM0ICs2wbh0ICecsgqbBfs4a5GrTyk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=BEMtnEfjsGuBNJ5VtaEah8PmoEaNPTLOzpXul0jsIqNwWde+fFH79bWovDGInT+hDabO87dx+tKk2OwOtyDEa4Jvad1wzAcz06QYdj5OgLxHolYRSSyDNwf04bASF6MD9x4SazHkd+NiauqLcINUyWQ8FIRWRvIp5OCkS06hPQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HGuP+Z1b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9AhZUqQb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 15 Feb 2025 10:56:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739617001;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9laLNhz/M9XkIlh7DF82MwYNKUBr1YJBn8rW298KhM=;
-	b=HGuP+Z1bBV30Rao7/C2P9sSGccHD0MHgRZ7CxaDWZ7L3uivLidC5uBKcQLvzxMGhNFp+IC
-	tQ2hOWnlpPogL9lX9NZIZlqNSnj+DU9VhxE5qarTkFAYcDcZ1cf4XjXXsPU3AUMVQnMeh9
-	FCmOUyIm1kO39Uc9QgO+PGcXLCAHdlRebUcDvj/tmn0wEvDRo6LNkH9v5Owe/8r1E810FP
-	9n40FrKcGf5zjbgwF2Rvg1vM0bwwBQOm5JToZ2EhDOKE4f/K6n+s7qVCH04PWeyRuL7Df1
-	5PPQ/zClMYPE0VNyIklMuqPcQInyErZA5ULdq9xmkKjyJgtEW4NIJltbpeJn9A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739617001;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9laLNhz/M9XkIlh7DF82MwYNKUBr1YJBn8rW298KhM=;
-	b=9AhZUqQbGLSRLMt4jqLG7cjXu7fqZ94hmxsNnnjkaTwHQdz2ERgNemX1O9c5usx02n+UwH
-	7weM9VevRuNl/sAQ==
-From: "tip-bot2 for Mike Rapoport (Microsoft)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/core] module: don't annotate ROX memory as kmemleak_not_leak()
-Cc: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>,
- "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250214084531.3299390-1-rppt@kernel.org>
-References: <20250214084531.3299390-1-rppt@kernel.org>
+	s=arc-20240116; t=1739617189; c=relaxed/simple;
+	bh=v7PXerc38yX4CSSTiNxWoTxizSMopm2JkQfFEFeuHsE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FafPhtGwR63+y4xlK41UHhE6DlhSjmZDt7bbljZU5kUvEKuG4WF7Ou29iyaNi4CXZF8qnacnhKlX86DxqhE2xwCXnuF+/4PEMgMiA5tuuc8TTBG5kNInh+kfCFMlECs66/MQKGf4bHzI4HV5thTLqMrha2bUM6MUUSw2XZIFFMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUx0A6Zj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFBDC4CEDF;
+	Sat, 15 Feb 2025 10:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739617188;
+	bh=v7PXerc38yX4CSSTiNxWoTxizSMopm2JkQfFEFeuHsE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=DUx0A6ZjPb9BoXkHbezSjdfVqHsoUe0OAfrSML3F1k49QZuLomKa2q3odI/nq90cD
+	 5ZZRRr7UV541UZXdkxYccEC/oREHDTx/crrd1C4qh6WRl1VS5CU/Z6fhEZFJ92SA3w
+	 H6FOa+CssOG4CkzZFeGwFjiBUnO5ghwDgNO7jFIsjZf4IAqGocTsbpFjaU6mVXmw7e
+	 b4mUYREs/jTGvlp/oVLhRMHpMJE/WtdrGdlSxHzvw/5gyrmu3sc98jkATUng3nCZnx
+	 I9jFC5eBYxpC9RROfH8IeE0nvk3d58oWWuZdILkPjDjxDFBKtMnxBfRKuxXAsiQJU3
+	 OkJBYdoeep/Jw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Sat, 15 Feb 2025 11:58:15 +0100
+Subject: [PATCH] block: set bi_vcnt when cloning bio
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173961700088.10177.5467759050046137250.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250215-clone-bi_vcnt-v1-1-5d00c95fd53a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEZzsGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0NT3eSc/LxU3aTM+LLkvBLdNOM0c3MDSwsLC0sTJaCegqLUtMwKsHn
+ RsbW1AMAHFYlfAAAA
+X-Change-ID: 20250215-clone-bi_vcnt-f3f770988894
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Oliver Mangold <oliver.mangold@pm.me>, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=780; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=v7PXerc38yX4CSSTiNxWoTxizSMopm2JkQfFEFeuHsE=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnsHNWsWLBMjvJzH4+k0Jo39tw83pgfr1HRvVxM
+ I9HkjZD6cqJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7BzVgAKCRDhuBo+eShj
+ d8m/D/98mFEDqez+HIXSjUNykYa93Js07AnK+4CAp2CL+xvL7IhOuvJm24g6AiqrL6C38f3kKvm
+ 6+0Kc+R6UFktOIIO09uPII8SLhi6kOtgWGxTanSYwJbZx6wadCQKchEOk5YeEVF2LPDsukWvXI3
+ bSg67dX1GTW0iVOG5r6ar0jdKdyvNJcrZhkq0r/Uk9z8yAVv30RXBXm03LAFJj0cn1gv/cHnQS3
+ HdIHw+jMlWA6zG7VbyrpQuzURfpldQC58aAT6SalyChHNoIusuKAW6pk5bf9wYxtuIJd11gjQrv
+ I5lJQ3yo2RuzSxZanc+f0CyyLSeFB/BNANjR+mHoaXYMMn2dYsXtr9SRGkuBzx+A/M2+F54/Jw7
+ RSnWsWx2q/a8IPAH5QLp6DVe4ur/t/FwjW1a8rovOs51JNhGoYuXU30yRwtuewGmjFhAlx3HH7R
+ /yB5OKA0PiS7PB9d1dkZ+uZ9r/jcwBhfasRhV7sVXknjGbcUkVr5UvDqSPDEKc1iUJtvdZLFBRS
+ krT9NUcc4TidA1a/4pqR452uA738R13joxxsbuj1PEzbyJcU8M1lIjgqnpx1VImu7Vmk0B70Gmw
+ /i4JiYTVHKRs5FcXFQZwjmmJMTqweaO+qWnuEaAK6LO9he/hKA+7LojRgaS+SyVqbdjg2MhGCfH
+ USYLR/JUZJSKYKw==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-The following commit has been merged into the x86/core branch of tip:
+When cloning a bio, the `bio.bi_vcnt` field is not cloned. This is a
+problem if users want to perform bounds checks on the `bio.bi_io_vec`
+field.
 
-Commit-ID:     675204778c69c2b3e0f6a4e2dbfeb4f3e89194ba
-Gitweb:        https://git.kernel.org/tip/675204778c69c2b3e0f6a4e2dbfeb4f3e89194ba
-Author:        Mike Rapoport (Microsoft) <rppt@kernel.org>
-AuthorDate:    Fri, 14 Feb 2025 10:45:31 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 14 Feb 2025 10:32:02 +01:00
-
-module: don't annotate ROX memory as kmemleak_not_leak()
-
-The ROX memory allocations are part of a larger vmalloc allocation and
-annotating them with kmemleak_not_leak() confuses kmemleak.
-
-Skip kmemleak_not_leak() annotations for the ROX areas.
-
-Fixes: c287c0723329 ("module: switch to execmem API for remapping as RW and restoring ROX")
-Fixes: 64f6a4e10c05 ("x86: re-enable EXECMEM_ROX support")
-Reported-by: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250214084531.3299390-1-rppt@kernel.org
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- kernel/module/main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/bio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 5c127be..a256cc9 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1260,7 +1260,8 @@ static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
- 	 * *do* eventually get freed, but let's just keep things simple
- 	 * and avoid *any* false positives.
- 	 */
--	kmemleak_not_leak(ptr);
-+	if (!mod->mem[type].is_rox)
-+		kmemleak_not_leak(ptr);
+diff --git a/block/bio.c b/block/bio.c
+index f0c416e5931d9..334eedf312803 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -870,6 +870,7 @@ struct bio *bio_alloc_clone(struct block_device *bdev, struct bio *bio_src,
+ 		return NULL;
+ 	}
+ 	bio->bi_io_vec = bio_src->bi_io_vec;
++	bio->bi_vcnt = bio_src->bi_vcnt;
  
- 	memset(ptr, 0, size);
- 	mod->mem[type].base = ptr;
+ 	return bio;
+ }
+
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250215-clone-bi_vcnt-f3f770988894
+
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
+
+
 
