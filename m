@@ -1,84 +1,109 @@
-Return-Path: <linux-kernel+bounces-516216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2B4A36E45
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:58:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59E0A36E46
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D4E170FFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002C93B045E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9432C1A5BAE;
-	Sat, 15 Feb 2025 12:58:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DD01C6FE1;
+	Sat, 15 Feb 2025 12:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="cnZI0DCY"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78BC2AD2D
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 12:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A087B23BB;
+	Sat, 15 Feb 2025 12:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624287; cv=none; b=E6d3v10Y5vXO4gZfYhwNfG976IRXe3DsHQyF1m3ODmlimDUpw+J/zk570nToZp3IHsHWUkl3lyCy8ATKLzodWOmFajl5bzhkG11i2wMv5A+OqAmx0OfxxMJ8y87Sawf/CQvXCgvAyk9I75Z1qHGGzAg4AoyZRXkDstyDa/6Vpig=
+	t=1739624390; cv=none; b=RS/sv8khdswtp7hL9cnLuqU8MU3HCk3BSTTzb/4AV3jDn/m67Z+9v36NwPilrkovCJMVVHDVhdwgAEXRDkwCz1CqiKtVMHy2bVlOX6Lm5yr555l6J79TNVIV9zVcJNyMQxBAnVSFVCCUHhlEXC7CniEugg1fCtLtnJnE2BHEE/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624287; c=relaxed/simple;
-	bh=qUOKmRDEGSnF4Pzp94qlrp32fYZGL4Y9QCx4YwO8/rE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Cvk97Gi6QFWuXNrpjRlNJJV4FCHP0ONiSRs86rE0wLnt53UGCEyqiQft9wTsUdFEQiaw2zQTJ7R1ZLCs1bE9S/Asez1gYfout9wm4ohvZBM/tS83HMfOYcJqFIhkHJpzvmccRzU6YX9zqaUerTe7RIIstUsDWsM1OKNffFzkzyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d158477b5fso19364405ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:58:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739624285; x=1740229085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvIyoKFkKJkE4APFgv1fclSgzQUADvqZn9LSd6dD4eQ=;
-        b=YKQjoBZQLAv1PDh+xk87YMHEW3EKPwWYGjIqibDHyesZNw6/573UoN71gv+hTiTa4S
-         KCpDqd1y2dZuvIRn/T+bfu2MPtiCWX6Hp9Oe8ZHYqhwCDcSIdgIoN3CXHhMg4NkvSqKa
-         fp8qEbJPQixM4VepxjDErP2tv1tEk0mPwF6KhozBGtVI9cRDE5/n+1wTq6IbmP7aP+TN
-         eufXhmx79kJMkCpnMYIEoUASuPMErgib4TL/vz2SJab1VTkkyx2Z6kf6G5wLxXpWnw7U
-         DX0QsEuIPp0H/OL3UjXeiKhbqQrTFQgu9AgEzL98oQSJ8ci/GrY3X5kM/WCG9KqbjH23
-         SxZg==
-X-Gm-Message-State: AOJu0Yz1rB8+rtsKNtPeOdGdcRwnz4Act3bgpnwG5PqNcVfFXEs9e/Ht
-	53hoiikCmEgA40uLkYpMrktMTCyLSmw2KvS5GoNMTLzz/ypOHMPwNbPnM/S9Ktpsi1NSymZQBGV
-	jEqyfA2sAnAVrliO/AbRIAAP490Mnizh+bvfsNDeH6eCLlBvHfVJ7QX8=
-X-Google-Smtp-Source: AGHT+IG9Qeomynodxj7mGb0vap3MDCOJDFr5IeFouGgnAPP5NtSRPgJVg+zTijlqg+a1TcLVGMJOEB6PqW0S/DRZ9lMIzeuL6dW3
+	s=arc-20240116; t=1739624390; c=relaxed/simple;
+	bh=8jQAb/dYuoUScJoKwj2GKJdNAULQX5Y+wNeOURHJANs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rUVZ/7HA6D+Rr2mTMfFAGKDOg3JjzgTeLsY25QgkAR5vt0x8I6V8fjtVNhntHhrTOyGiFBwGUTE60i11yf79X/wq5PfOc+UBFmntqPkmOyoMgSGXtrenv9tpDZlFp35UPNapRBZz3ve0XnXrj2G6DtMx/saAqQ5GexvzTfVH93s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=cnZI0DCY; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1739624340;
+	bh=8jQAb/dYuoUScJoKwj2GKJdNAULQX5Y+wNeOURHJANs=;
+	h=Mime-Version:Subject:From:Date:Message-Id:To;
+	b=cnZI0DCYAghlShLEPVptANHOV27CLqKQlh0HBWHVfVHa16z+scReRl5PHP6wEMcLJ
+	 LhoJzEZxFNEydjAn6AH2tMG4RsjAIfayKHwi+EecA/lbEO9cuYyDXwcJEV4+cN/uCR
+	 eOSlPShrpz15dornjRf6ofvtvhD9YR/Iofs5yuJ0=
+X-QQ-mid: bizesmtpip2t1739624336tov8wgm
+X-QQ-Originating-IP: wBmH7GpDkqmHc20Gc6BCNXbWq1Le3PuTW+x/Q6ZSN9M=
+Received: from smtpclient.apple ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 15 Feb 2025 20:58:53 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2358419826102758231
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:c24d:0:b0:3d1:966c:fc8c with SMTP id
- e9e14a558f8ab-3d2809066demr22350725ab.17.1739624284978; Sat, 15 Feb 2025
- 04:58:04 -0800 (PST)
-Date: Sat, 15 Feb 2025 04:58:04 -0800
-In-Reply-To: <CAMp3bLVAx01Kd_UEK_sGTAd1ZgXESUcX497bumaKjt+nX8iqwQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b08f5c.050a0220.6f0b7.0008.GAE@google.com>
-Subject: Re: [syzbot] [ppp?] KMSAN: uninit-value in ppp_sync_send (2)
-From: syzbot <syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Bug: soft lockup in exfat_clear_bitmap
+From: Kun Hu <huk23@m.fudan.edu.cn>
+In-Reply-To: <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
+Date: Sat, 15 Feb 2025 20:58:43 +0800
+Cc: "Yuezhang.Mo" <Yuezhang.Mo@sony.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9267F80E-138A-4707-A3C4-637892DD2828@m.fudan.edu.cn>
+References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
+ <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn>
+ <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
+ <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn>
+ <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
+ <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
+ <CAKYAXd_ebG4L_mRwCqoGgt9kQ6BxcCf6M5UUJ1djnbMkBLUbgg@mail.gmail.com>
+ <CBA1218B-888D-4FB1-A5CF-7B0541B37AA0@m.fudan.edu.cn>
+ <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OQEcVJ+S+3/DTVz/oBBTlZOOuuIDp2T4Sg8vYkztIAckbqiQx1fGPvjr
+	hModZazeQtVcCMF4vodjNxGec/fanxHyMy33/o402oAGVX4ey9DTj1Nf/mfPfGibAXZ2Kem
+	c0vb7CjDjUPbtd6svyTnMQ4wcbJSZN85g09Y3/44IHp2fc5Pi2oYTKuNq+FPv64OapcSXGZ
+	UYRYHUsWrtQ0dZGrUU+8kcJ8rKYH6rr6cpIFrCHC1kVJh3WalcYQejcXfC434AWIIBKebEe
+	B5I5zaiqvgqeU96AM32Nm+idD9cOnnyQAeEvNkhWCjmPkV999hZ4poipc2wS3DsgZlBMvBF
+	F4YPh9xXdP11lPmyWiWl6TGs7YfGTizPsEgPtHweEfoMI1b/Zh9hFCkEN3HysTKDHp9NSp6
+	G986jNJkFcoYMTQKCp6ewn0hGErV3WZvlALTpIRAnQ1Cle8gI3D9PSPaxeHCY+mB/4+bojh
+	sGO2uGaaak6t7khEX7alSj2jn+KUd8nBvsb2yqu6GN0BfmSic2w+A7JIw+0R+4d355sKuwb
+	l5UhnVCohEY9I0LHIduJOAvrkrgpi0Z4YgQyvjIgIRpzgDrFDT69TPfeRpiTrW0Dl/0Jw4w
+	7pVjhFAHWbkziYSz8/zMwJBT9iFKoTkGXNjck7LcphezA/61kBVsP5koV5X6E8ovmSvpBZJ
+	phZvNv1wnpxZVrlEChUnAuXWzdnIikMMVKiOXxYCTuTt5S8L7tKH9eCNZk4PimPmv7BG2Lp
+	YdxZSUoUtpzhd+UATz/tPIqsvGgrwA6PT2ykfXC8sUnNkW+f3Gt0LlrS2oxOEXW3+45vjH/
+	1f20/gxZQ96LkNm1y3bBLBw1S8PJuhrsxHG90OMwG+o/WQvGYdouCNIyQ8lB7w1Nr+z4y3Y
+	eoGUfcsC9OBWDjIvkHoGPZqgSBYjrk2gn8e+ua2W1FnaLj+TkzOPZsX9NLxfxfTPpEcHurm
+	2DVD918jxIaAwUDL6bDeo+8i1YL7OGbfBqx4Art9QTJRtNO31Zc6qLq1HJ8VAg5jly6/JFf
+	IkCuo02QwpF4LFN8/X75wAPt0A5bM=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hello,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+> The patch for this issue is in the exFAT dev queue. Additionally, I am
+> waiting for a performance improvement patch from Yuezhang. I plan to
+> send a PR along with that patch.
+>=20
+>=20
 
-drivers/net/ppp/ppp_synctty.c:502:23: error: initializer element is not a compile-time constant
+It=E2=80=99s great! Thanks for your time!
 
-
-Tested on:
-
-commit:         7ff71e6d Merge tag 'alpha-fixes-v6.14-rc2' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f20bce78db15972a
-dashboard link: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=124f99a4580000
-
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94
+Kun=
 
