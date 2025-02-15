@@ -1,196 +1,206 @@
-Return-Path: <linux-kernel+bounces-516101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE09A36CF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72703A36CF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E2F17153E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:34:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18856171CA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957F819F40A;
-	Sat, 15 Feb 2025 09:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNcOfGt0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA9A19D8BE;
+	Sat, 15 Feb 2025 09:37:20 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2A81373;
-	Sat, 15 Feb 2025 09:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D711373
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739612091; cv=none; b=rZObyLxsReP5oAvAlALcQkS7myEctDexbafKCMCosQO6fOoi3TLNjUbmJuPYpAhbWfLVHcQUjQyMTyZFv98A5ZKPH+WSVuNidkd0buFUWeDxgyb0RqbagjkcDIFiEOna67rSYizUGaMRcCr6ikBp1iHdBSbakyfW0KGxXQRoowo=
+	t=1739612239; cv=none; b=j986T4nBTmZ3tusFtriPJjBqNGvL3IZINEXaTwXnUTjKvSAScSJgI9xZa8/pLTa3dfLH8rMsmT2zRDphNq4XHI6utUhUqzhS4DpZSy9zmgNa5ZmlzMew/OjqS1Rj8AVF+8OLRyToKL6rTZ/lk7mQ1C/dyDwdQeQa4HqE1ipWQB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739612091; c=relaxed/simple;
-	bh=IKAZ62FsF2gjnJ9KpMdbt5Jkq3UapRnpVvowqhjkAOo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=km7YCXEE5kEeSZHRbZxOdQY85ij4/rFduW3cSEQ+9Lm5KYBwgvXEXTnu83x0IREeATOO/RKbv3H5JW1m24TJ4NPzZvOtYDsMz5hPD9qidkE6M4eoV+x4GTZeX9ypfF3GUDApr/g2UN/IqiPVV2fkobCpatUCfa/c/RW3sokCPz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNcOfGt0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F8AC4CEDF;
-	Sat, 15 Feb 2025 09:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739612091;
-	bh=IKAZ62FsF2gjnJ9KpMdbt5Jkq3UapRnpVvowqhjkAOo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=CNcOfGt0rxUkBNBm2E0As9dDWfXXhIRglO86RMgEibzqtVCQchSuQaW1JQl14+hkQ
-	 3/TfLDOsp8kStnE7U2/5xHjjSEHKH8EMMBQ/HDOAF8sxo3TZLSMTR9KH/e/1i2CNn0
-	 5H9sw4vTmRqLpn/+I9ROob9REWWUKgFBboCS872BI4eLzZe7necRoVi9GJWYfw+MSF
-	 mXY65hmU+oz3cY2BGvoxH08iSm6d3k2fe5ilrtUxDFukPyq2e3AZh6rKOqATaBlph2
-	 boHxM2ynaEtNlo8VmyYEVfZqN3y/Eent85/MvhOqZg7mB9Zj8zzf8tJiUA2LGbbhxa
-	 FwsRdfXrmq4Hg==
-Message-ID: <0198b64c-c0d1-465c-a1e7-85b7732d6268@kernel.org>
-Date: Sat, 15 Feb 2025 10:34:43 +0100
+	s=arc-20240116; t=1739612239; c=relaxed/simple;
+	bh=3AzwmXcD3iuQEmGVWfjJ1uHDGGBLkKMivcxDdXv8SRM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rYZfd17wIsLT9t6PgSiuaNUi5HSg/hnTCJ3FB2o72xzkGLYtq4l4fXCmz0NzkxtAQLH4vl57o3QMqBVMGyhBJz9PTUqwDtpM9Seqpq04g8Q9slINMSXI2KULNqDUo+CmQJ9wKJKtu3xGBgnZBv6r4dwwVBdkO6IL1lv5bp7bOfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85564bf83fdso508131239f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:37:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739612237; x=1740217037;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fylukBOBK7wL2ZFCB5U55A14uFCcqh305hge2cYCo5w=;
+        b=BGgzL5wZaa613dgODTkWx9NM07M63H3fx84zVTfw6lUfIhwxVR/Nf2W3OBzyUe3Xqm
+         /qrsGQgXaEfmWpVpRRiHwwQKCO7sfkjmt1+n/VtgozhRDLoGTu6PEqrhoiTtk3kdgiTA
+         iM4F+mJD7FqqhHqa/WRsCJoHmA4eryFrLtp3Ri1bMvFs6Rl7OnZ5045g+iTrLR1EJ+yS
+         gLyEp6kwHzwddq1gUb3xeklPmuVYmxgvi7lJtANL5HSybelZJs1Zvoc7E1DBvC+phqSg
+         YF7FxpmmDftYBRBFq6f/ibyVhgYzrWjlsnop3D6m3yDyydhsXXABYF6Fyhw+IF3TSTea
+         9T2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlGFRvEcY63ZuEBufeXj2DdBF2WhozXNcqJTrZ996H4CK5cWl0+bfPAErKX3Pyjc6uML2S+3H6hZq+Pgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7ncOnU3Woxy3Ai7jp0QA8JR3kmxJzceQRsPoRomasmN2KoUv8
+	EpASD3arlyUFZoDC0zf0cVA8p+0D6GKmU1mID12flIwgcRjM6nd1lFuiBmEi0l0iloTHLxFGTg4
+	NA7e95PUuJbOz1dl6R/11s+GFjipbwQAMNQ8rjI7OZHBMhjo+l2l+SFw=
+X-Google-Smtp-Source: AGHT+IE3sS6XPLtYwB1G604NGyg49j5MIjRpQYfSZTxEjvuHfkyYbUaorI9kzK/G0L1fGKzBPijpR5AXtGdtwO1A3kdrO6ZiTNWT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
- <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
- <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
- <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1fc3:b0:3d1:9236:ca4b with SMTP id
+ e9e14a558f8ab-3d2807b900amr17275845ab.8.1739612237142; Sat, 15 Feb 2025
+ 01:37:17 -0800 (PST)
+Date: Sat, 15 Feb 2025 01:37:17 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b0604d.050a0220.47157.0004.GAE@google.com>
+Subject: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill
+From: syzbot <syzbot+e41e83af7a07a4df8051@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 15/02/2025 10:24, Krzysztof Kozlowski wrote:
-> On 14/02/2025 20:30, Marek Szyprowski wrote:
->> On 06.12.2024 17:31, André Draszik wrote:
->>> gs101's SS phy needs to be configured differently based on the
->>> connector orientation, as the SS link can only be established if the
->>> mux is configured correctly.
->>>
->>> The code to handle programming of the mux is in place already, this commit
->>> now adds the missing pieces to subscribe to the Type-C orientation
->>> switch event.
->>>
->>> Note that for this all to work we rely on the USB controller
->>> re-initialising us. It should invoke our .exit() upon cable unplug, and
->>> during cable plug we'll receive the orientation event after which we
->>> expect our .init() to be called.
->>>
->>> Above reinitialisation happens if the DWC3 controller can enter runtime
->>> suspend automatically. For the DWC3 driver, this is an opt-in:
->>>      echo auto > /sys/devices/.../11110000.usb/power/control
->>> Once done, things work as long as the UDC is not bound as otherwise it
->>> stays busy because it doesn't cancel / stop outstanding TRBs. For now
->>> we have to manually unbind the UDC in that case:
->>>       echo "" > sys/kernel/config/usb_gadget/.../UDC
->>>
->>> Note that if the orientation-switch property is missing from the DT,
->>> the code will behave as before this commit (meaning for gs101 it will
->>> work in SS mode in one orientation only). Other platforms are not
->>> affected either way.
->>>
->>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>>
->>> ---
->>> v3:
->>> * drop init to -1 of phy_drd->orientation (Vinod)
->>> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->>>    CONFIG_TYPEC
->>>
->>> v2:
->>> * move #include typec_mux.h from parent patch into this one (Peter)
->>> ---
->>>   drivers/phy/samsung/Kconfig              |  1 +
->>>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->>>   2 files changed, 57 insertions(+)
->>>
->>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->>> index f10afa3d7ff5..fc7bd1088576 100644
->>> --- a/drivers/phy/samsung/Kconfig
->>> +++ b/drivers/phy/samsung/Kconfig
->>> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->>>   	tristate "Exynos5 SoC series USB DRD PHY driver"
->>>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>>   	depends on HAS_IOMEM
->>> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->>>   	depends on USB_DWC3_EXYNOS
->>>   	select GENERIC_PHY
->>>   	select MFD_SYSCON
-> 
-> 
-> So that explains why on recent next some of my boards don't boot. I was
-> about to dig over the weekend.
-> 
->>
->> I've just noticed that the above disables Exynos DRD PHY driver in the 
->> default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
->> exynos_defconfig probably is the easiest way to fix this. I will send a 
->> patch then.
-> 
-> No, it's just wrong. Nothing here depends on typec and ARMv7 does not
-> have Typec.
-> 
-I'll send a fix for this.
+Hello,
 
-Best regards,
-Krzysztof
+syzbot found the following issue on:
+
+HEAD commit:    febbc555cf0f Merge tag 'nfsd-6.14-1' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f678e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c2347dd6174fbe2
+dashboard link: https://syzkaller.appspot.com/bug?extid=e41e83af7a07a4df8051
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-febbc555.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b3f419dfe94d/vmlinux-febbc555.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e1814568eab/bzImage-febbc555.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e41e83af7a07a4df8051@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+Oops: divide error: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.14.0-rc2-syzkaller-00034-gfebbc555cf0f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5fa/0xbe0 fs/ocfs2/suballoc.c:386
+Code: 00 4f 8d b4 35 50 01 00 00 45 0f b7 20 48 83 c6 02 49 89 f7 49 c1 ef 03 41 0f b6 04 3f 84 c0 0f 85 6e 04 00 00 44 89 e0 31 d2 <66> f7 36 0f b7 d8 4c 89 f0 48 c1 e8 03 0f b6 04 38 84 c0 0f 85 8e
+RSP: 0018:ffffc9000d24ec20 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880551e0158 RCX: 0000000000100000
+RDX: 0000000000000000 RSI: ffff88804052a2c2 RDI: dffffc0000000000
+RBP: ffffc9000d24ed28 R08: ffff8880551e000a R09: 1ffff1100aa3c001
+R10: ffff8880551e0000 R11: ffffed100aa3c040 R12: 0000000000000000
+R13: ffff8880551e0000 R14: ffff8880551e0150 R15: 1ffff110080a5458
+FS:  00007f2117db36c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f210bdff000 CR3: 00000000402e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_block_group_alloc_discontig fs/ocfs2/suballoc.c:634 [inline]
+ ocfs2_block_group_alloc fs/ocfs2/suballoc.c:702 [inline]
+ ocfs2_reserve_suballoc_bits+0x2358/0x4e70 fs/ocfs2/suballoc.c:832
+ ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
+ ocfs2_init_xattr_set_ctxt+0x3a6/0x8e0 fs/ocfs2/xattr.c:3277
+ ocfs2_xattr_set+0xf4e/0x1930 fs/ocfs2/xattr.c:3634
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
+ vfs_setxattr+0x221/0x430 fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ filename_setxattr+0x2af/0x430 fs/xattr.c:665
+ path_setxattrat+0x440/0x510 fs/xattr.c:713
+ __do_sys_setxattr fs/xattr.c:747 [inline]
+ __se_sys_setxattr fs/xattr.c:743 [inline]
+ __x64_sys_setxattr+0xbc/0xe0 fs/xattr.c:743
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2116f8cde9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2117db3038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f21171a5fa0 RCX: 00007f2116f8cde9
+RDX: 0000000000000000 RSI: 00004000000003c0 RDI: 0000400000000180
+RBP: 00007f211700e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f21171a5fa0 R15: 00007ffd982bc2e8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
+RIP: 0010:ocfs2_block_group_fill+0x5fa/0xbe0 fs/ocfs2/suballoc.c:386
+Code: 00 4f 8d b4 35 50 01 00 00 45 0f b7 20 48 83 c6 02 49 89 f7 49 c1 ef 03 41 0f b6 04 3f 84 c0 0f 85 6e 04 00 00 44 89 e0 31 d2 <66> f7 36 0f b7 d8 4c 89 f0 48 c1 e8 03 0f b6 04 38 84 c0 0f 85 8e
+RSP: 0018:ffffc9000d24ec20 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880551e0158 RCX: 0000000000100000
+RDX: 0000000000000000 RSI: ffff88804052a2c2 RDI: dffffc0000000000
+RBP: ffffc9000d24ed28 R08: ffff8880551e000a R09: 1ffff1100aa3c001
+R10: ffff8880551e0000 R11: ffffed100aa3c040 R12: 0000000000000000
+R13: ffff8880551e0000 R14: ffff8880551e0150 R15: 1ffff110080a5458
+FS:  00007f2117db36c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f210bc7c000 CR3: 00000000402e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 4f 8d             	add    %cl,-0x73(%rdi)
+   3:	b4 35                	mov    $0x35,%ah
+   5:	50                   	push   %rax
+   6:	01 00                	add    %eax,(%rax)
+   8:	00 45 0f             	add    %al,0xf(%rbp)
+   b:	b7 20                	mov    $0x20,%bh
+   d:	48 83 c6 02          	add    $0x2,%rsi
+  11:	49 89 f7             	mov    %rsi,%r15
+  14:	49 c1 ef 03          	shr    $0x3,%r15
+  18:	41 0f b6 04 3f       	movzbl (%r15,%rdi,1),%eax
+  1d:	84 c0                	test   %al,%al
+  1f:	0f 85 6e 04 00 00    	jne    0x493
+  25:	44 89 e0             	mov    %r12d,%eax
+  28:	31 d2                	xor    %edx,%edx
+* 2a:	66 f7 36             	divw   (%rsi) <-- trapping instruction
+  2d:	0f b7 d8             	movzwl %ax,%ebx
+  30:	4c 89 f0             	mov    %r14,%rax
+  33:	48 c1 e8 03          	shr    $0x3,%rax
+  37:	0f b6 04 38          	movzbl (%rax,%rdi,1),%eax
+  3b:	84 c0                	test   %al,%al
+  3d:	0f                   	.byte 0xf
+  3e:	85                   	.byte 0x85
+  3f:	8e                   	.byte 0x8e
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
