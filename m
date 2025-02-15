@@ -1,124 +1,183 @@
-Return-Path: <linux-kernel+bounces-516326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B67A36FAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:16:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72517A36FAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E67A16FD33
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C3118927A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1F71EA7D4;
-	Sat, 15 Feb 2025 17:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4VpjfNk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A8C1EA7D2;
+	Sat, 15 Feb 2025 17:18:22 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541B8158DC4;
-	Sat, 15 Feb 2025 17:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CE613AD18
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 17:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739639775; cv=none; b=oKXDnXwdKullD05qEzoaxHlb/kaF5w3qvKO8NaUm0NN2qkMr4YaEJRd683nRB9c2N10Oy60fsbQUjkKnvGoQMYBnkTbmEVn8iSPN61sgqDHeU+F6c/ZjOrnFTwtWGm+fPZZk7L649l3WWvAm4a015TCm6TsuXaIo2VtDVaOQHX8=
+	t=1739639902; cv=none; b=Ctc/dFi6PNMbVlQx3jEF8GnaQCQsCgXZZ5w15oeT0anv81YW5Q3EBbKIMd4Elc1Nx/OuFU5xoGkSWTxoojx+ApD0wIscqQ6Ja0oSJfNziFLBkf5mbPB2ri2sZ1crEkQyyP336ijAogMaYSgo4fTVZBqlcg0JGAZ+FRjIwlaVRFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739639775; c=relaxed/simple;
-	bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJjw14GM2p74EzhszkU7cuPLDbH/gF40xidz+dEY/VN1tXNpn33JNEMZ2Nl7F4j+n0jMcJINQGxVPns8E2HXye4loAW4I6CIxKXETIZVB2/o4Zc7/TZhh9v7Xn6zLrVajoj5jhAYOzp8BTCC1x5fqiO9kMjQmIj/Lxqsf6/ViXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4VpjfNk; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739639773; x=1771175773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
-  b=l4VpjfNkSNwuaTcR0Pxvss4+9dfbJx+EqVrSadMv3SX7//LiHfIi13sr
-   a/zy2x+DHGUD+bpEE/RsNNFPrNOzfEjAFkuOICFe/h4Kqm9Ycbtvif651
-   NqUgV+5U3hGxhcZg7w1v1lKqXd4K+EcdBq685nfpVX2Kv/iatY2Rl1T2R
-   yvGkVqiPUHJad/ngRr/j7NNNRYajaHp5wXKdv39A6mHg/4zWw4ReYt42q
-   tkfyhm60w7riUEX7oj79d8VcS+l8bpT6N5mYcwrgPD/ffOGiepe018lUq
-   trb9F7KXZw1PqPU4w6ETFzJlaAS21S5ABn6VNfjPetZK+MUPOP1vWU3wO
-   Q==;
-X-CSE-ConnectionGUID: pPoMEHllQE27/H1nZL+vKQ==
-X-CSE-MsgGUID: 4yQv5bnlQoSii68tLT6a1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40403678"
-X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
-   d="scan'208";a="40403678"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 09:16:12 -0800
-X-CSE-ConnectionGUID: Yd7RnQbmTgWJdCCXOEjokw==
-X-CSE-MsgGUID: Dzd1IWb1TXSPnX7Q8e5WhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="144654676"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 15 Feb 2025 09:16:10 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjLlw-001B1v-0e;
-	Sat, 15 Feb 2025 17:16:08 +0000
-Date: Sun, 16 Feb 2025 01:16:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
-Message-ID: <202502160050.nTezfbL3-lkp@intel.com>
-References: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1739639902; c=relaxed/simple;
+	bh=RFEWrCUShwgVdNPvnxVDnheZEPFUwyM6zeN8VlOW014=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rEDC709vukXu1Mn6IMwhbWUcG6kmqR8ZeOQR0eVUG31wAT6qHhG7nDKJofcpeM9bm5p3Vt/RbTELldK4HtLnqRQ6jRVtj3Z5JLxQD+9ByBQLtFn4ENylLCH5PMVY6x6YEMMYJaJ3BjES+ZcXBzPlx82zCargeRRFU7Wb88KTwS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3cfb20d74b5so22227175ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:18:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739639900; x=1740244700;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rsLhZ191vrYU5fujgkATG9kXKEFSnPg2S3s9On+hOXo=;
+        b=ojpZYkRMJVg7kf8jkMOYQkS9Actmj3yP/aI8x4If2QAo213jpi5lnVr5xstnccelJZ
+         h3hNonWAoa6NjVzTkYkzuWeIudg4EgN6QkYEOvyfRaIYldGe524V2SFep/phaCzu7nKX
+         Uj1wVweo45cnoxKY1DXaMmePDGoMw8qoF8DhvzB/+Zq8u1SvkqGkMvsE4U76EhU/snBW
+         B4icc9L1L/SnFHjPTEfgxK1QcA0PIIBUR//YT95hD80v4KiM0EZJNMlI2fpi1ooOGkaZ
+         69vaoupLNoLc+UxNL6iTi/HHiCAdP3CKUMw1BrTb2W1psiELOZD3rourNeQv3YM43z2T
+         wYKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKiJBifwV3unTh9rzaRTbcMxnNz5n8nsaGu/I3Vc2+xdwYoRuETuLc5EOHdzuwkrgQ1ZInK6D0iE7RJjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5qeH3kQqHMbD5SXl9lezBmxD2UbdeDkHtTTGZpcsRMH5gr7CX
+	0lo51yVse7/B0nD6payfNWgi0nntcO/xN+pK9Cr3Gz0w+PHAMf9+uogwybdqZnju5lIyZ/zdZuI
+	yaZnbxQlekHOItRK9rOu03aY7EpwJ4qh7vdpWjcRA4FvVyUnExmLmfE8=
+X-Google-Smtp-Source: AGHT+IENTpBl/uZ96gO6h5GkDtGD5eg14FMjs/IUzqfR6iyPa2dkI5XD1VDdg3O4kpD0oqOmCfd+O0qLcV7SVY44luZTiyOLfzfD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
+X-Received: by 2002:a05:6e02:148b:b0:3d0:24c0:bd4d with SMTP id
+ e9e14a558f8ab-3d280946e67mr28198605ab.18.1739639899820; Sat, 15 Feb 2025
+ 09:18:19 -0800 (PST)
+Date: Sat, 15 Feb 2025 09:18:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
+Subject: [syzbot] [bluetooth?] general protection fault in bcsp_recv
+From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ivaylo,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on linus/master v6.14-rc2 next-20250214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    df5d6180169a Add linux-next specific files for 20250210
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17be8718580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cd616b6e736ca7
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1480a3f8580000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/MAINTAINERS-add-entry-for-Samsung-Exynos2200-SoC/20250215-210923
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20250215130702.170851-1-ivo.ivanov.ivanov1%40gmail.com
-patch subject: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
-reproduce: (https://download.01.org/0day-ci/archive/20250216/202502160050.nTezfbL3-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/92495cf20271/disk-df5d6180.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4b3656161842/vmlinux-df5d6180.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7fbc4e7a0f5d/bzImage-df5d6180.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502160050.nTezfbL3-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
 
-All warnings (new ones prefixed by >>):
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000021: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000108-0x000000000000010f]
+CPU: 0 UID: 0 PID: 6167 Comm: syz.3.45 Not tainted 6.14.0-rc2-next-20250210-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+RIP: 0010:bcsp_recv+0xcd/0x16d0 drivers/bluetooth/hci_bcsp.c:590
+Code: 38 4c 89 e8 48 c1 e8 03 48 89 44 24 28 48 89 4c 24 20 48 89 6c 24 18 4c 89 6c 24 10 4c 89 7c 24 08 89 5c 24 04 48 8b 44 24 38 <42> 80 3c 30 00 74 08 48 89 ef e8 94 d5 5c f9 48 8b 5d 00 31 ff 48
+RSP: 0018:ffffc900034d7cd0 EFLAGS: 00010202
+RAX: 0000000000000021 RBX: 0000000000000001 RCX: 0000000000000182
+RDX: ffff888035fc8000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000108 R08: ffffffff88c9aef5 R09: 1ffff1100ade3c03
+R10: dffffc0000000000 R11: ffffffff88c9ae90 R12: ffffc900034d7e00
+R13: 0000000000000178 R14: dffffc0000000000 R15: 0000000000000110
+FS:  00007f0fbdf626c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000348be000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ hci_uart_tty_receive+0x141/0x1c0 drivers/bluetooth/hci_ldisc.c:622
+ tiocsti+0x24d/0x300 drivers/tty/tty_io.c:2299
+ tty_ioctl+0x518/0xdc0 drivers/tty/tty_io.c:2716
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0fbd18cde9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0fbdf62038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f0fbd3a6160 RCX: 00007f0fbd18cde9
+RDX: 0000400000000240 RSI: 0000000000005412 RDI: 0000000000000007
+RBP: 00007f0fbd20e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f0fbd3a6160 R15: 00007fffe8c957b8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bcsp_recv+0xcd/0x16d0 drivers/bluetooth/hci_bcsp.c:590
+Code: 38 4c 89 e8 48 c1 e8 03 48 89 44 24 28 48 89 4c 24 20 48 89 6c 24 18 4c 89 6c 24 10 4c 89 7c 24 08 89 5c 24 04 48 8b 44 24 38 <42> 80 3c 30 00 74 08 48 89 ef e8 94 d5 5c f9 48 8b 5d 00 31 ff 48
+RSP: 0018:ffffc900034d7cd0 EFLAGS: 00010202
+RAX: 0000000000000021 RBX: 0000000000000001 RCX: 0000000000000182
+RDX: ffff888035fc8000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000108 R08: ffffffff88c9aef5 R09: 1ffff1100ade3c03
+R10: dffffc0000000000 R11: ffffffff88c9ae90 R12: ffffc900034d7e00
+R13: 0000000000000178 R14: dffffc0000000000 R15: 0000000000000110
+FS:  00007f0fbdf626c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0fbdf40f98 CR3: 00000000348be000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	38 4c 89 e8          	cmp    %cl,-0x18(%rcx,%rcx,4)
+   4:	48 c1 e8 03          	shr    $0x3,%rax
+   8:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+   d:	48 89 4c 24 20       	mov    %rcx,0x20(%rsp)
+  12:	48 89 6c 24 18       	mov    %rbp,0x18(%rsp)
+  17:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
+  1c:	4c 89 7c 24 08       	mov    %r15,0x8(%rsp)
+  21:	89 5c 24 04          	mov    %ebx,0x4(%rsp)
+  25:	48 8b 44 24 38       	mov    0x38(%rsp),%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 ef             	mov    %rbp,%rdi
+  34:	e8 94 d5 5c f9       	call   0xf95cd5cd
+  39:	48 8b 5d 00          	mov    0x0(%rbp),%rbx
+  3d:	31 ff                	xor    %edi,%edi
+  3f:	48                   	rex.W
 
-   Warning: Documentation/hwmon/isl28022.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/isl,isl28022.yaml
-   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/clock/samsung,exynos2200-clock.yaml
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.yaml
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
-   Using alabaster theme
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
