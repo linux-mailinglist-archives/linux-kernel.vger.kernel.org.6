@@ -1,192 +1,146 @@
-Return-Path: <linux-kernel+bounces-516089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90A9A36CDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:24:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF631A36CDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6606188E7A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CAFA3B1077
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8519F133;
-	Sat, 15 Feb 2025 09:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B3E19E97C;
+	Sat, 15 Feb 2025 09:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nW8R+LGE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kudGv7dj"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C20802;
-	Sat, 15 Feb 2025 09:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D6E19D8BE
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611486; cv=none; b=hGewdXT1bzqWMQJJagVX3uHmovE49UJHSfBRef3hl27du2RIieC58G4ltDpYiyblpqJXp3X8WQcIsy2gC4UhzuqNtt2IgB2EUBgIR9/JUbcO00bCjRFyvG8TXKSahdtCMTp2M8Yy1pK7bEgwdjLepTvLBx/64hu3k8D3tigqSzc=
+	t=1739611516; cv=none; b=RT9TYULxni/f3YTmv4qllE76KQCOYlKx0XTvReTQ6k47tjzETS5aBi36AaGHVAI6M0gWjpUvh4RphqXL+mY3Mdg5JLyIQfS/OWIgV7t12YE53LtkrObSXqs41UGBwQc2wtvU23G1dwrHMLc3M0ZXb9rXK2jY2zP2XcHcCV+B9lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611486; c=relaxed/simple;
-	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hboo404Pt06HODNkx6gRmPK4kkXuCKZVphcGGESG+WG7fub6KOcWcCZS4lZR6yXQB0Mm2x5lm/3H7eXbcGLL5+4LOF2efM5MuqIlGS9dNfLAzuoUfZ/CcCtMPUYzsaiZYh+ByXG+4ZuaiH4E8nX3BetLc9J0w48XA85ncHiWcTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nW8R+LGE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B917C4CEDF;
-	Sat, 15 Feb 2025 09:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739611485;
-	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nW8R+LGErP81EkTm12pzbj36ijQzll9GIptmlmba3ws12mcaVoSGp50PONuhy0TOz
-	 s6j4giqwOgx08ZfXn5K9ZfFX36DVUwQnMhOcYDDfFJSm0aeFG3+TdEXgq+IBRLDX6K
-	 92SN0CElkDT09ulfUDautEHpgbtEZZBdM/qH0IXRHoHtZtXpUkkX7q7R3KNn7h709b
-	 rX7JmFtVyQ+1OyBm+N0HPbeMu/8wM5zp1q23joFUHmIQa1cakvod2pklJ+nhMxvKfd
-	 /TkBBcI3NIldzQmNvo+vjJGIPiYbLmLO8o1zcuZ2aPLYDT1fzrBL2UamlOTTYOuE2x
-	 5Q+qcYG+fUYjg==
-Message-ID: <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
-Date: Sat, 15 Feb 2025 10:24:36 +0100
+	s=arc-20240116; t=1739611516; c=relaxed/simple;
+	bh=fUEhJUJqOaQ6kqDr/ymTWQoQOscJJR6mrSLqxVNnVhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVSTayHsmTfNizu/iWD30gd8vxEr+zdbpEX+ayHzV+4T12y6c+cEH5S40+dVCiAOzC2Ynkqn+nmKz9aX0pWVOofKRLc/ky0NFXbCNfdOL2DEJJ4FkKfCbcTXvaOWEGRsOVgNDUZiVXGtDnMeTJlrGo/poKWMIaUVbzAY9WtlCoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kudGv7dj; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-438a39e659cso19847425e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:25:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739611512; x=1740216312; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KbpcipICDHXuME30jOt6GpmvUkIPw+/TuJhtLOZoIJE=;
+        b=kudGv7djwhYMRO3Ou4v/47TcrnQk6Hgr7X9RPe6o2yWg/wOQ+nLh0apMEmcMa7M3f9
+         sqNguNOtInbQpL8oHKtTVtbigdEv9bmpNU5kaUiOj9WzUuaezgsCaTaCYc7iaWYqXOPZ
+         Z/4XRgslioiPTzktxOtjAOpNIUvBKHMR/oGSGhv6gOHGWDl35VQxaxtSkrZ//uOsqERm
+         agolgOaUZyKpg9uVbtkiDL4qw7kl17DRaf++i6RwNIV0EwkRSB6FfGljDwhyNqPPBU/D
+         GvoJXY/En9vBmbBEvSwec6BcVj3RptnHX9PgJPHevyx+Bn6hVg7HyjfPsDzbZeWE2+4q
+         A5hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739611512; x=1740216312;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KbpcipICDHXuME30jOt6GpmvUkIPw+/TuJhtLOZoIJE=;
+        b=MFhbAs7Kg76aeIi2/4HT2HkRt+XG8BC5b+Sc2qZWx6SAUeVbX+UEG7PPoYrUhWrZtQ
+         7zZEcPzJKTWDxAWWCPdRQ5nTyaGaLW6sR6R/1sub5MwqD58v4As9puNEw1D1psEv3QBw
+         KKtBTEBBNEogHQ403DvA9DJd3Jt6CTtTaWNNI70qvJr8xySoMiQR4AcWiYkstZb0/2WW
+         l41arhAIL5tXxpy5CcoHWRPERr2nk384HewYf0vQd0Nh1xzK1NKg6aCjCqi7tOdQhBV2
+         /hrpuh8e2IulGHVCvENojCHXMisJsNN26487AoedTy2/rGgwWkZO0YDJqT8FbJtdC17h
+         DVgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgtFJVmq4Qpna4Pio+0vGJMLgboxHfN734AFANxV8nEH2kAXg0YnTXcIIvLnrS9fXNHQ6hv/JqdHRuYSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhobbSaFMQWcZJbgm06GsZkmnPbwHe/7Dg5JkuWSsm2a9l/RmR
+	iP5o5npuwosy+0dOULbwOWdaWii9VzDrw2PUdvRfgdLGUaM27r3FDZoVcoNlQh0=
+X-Gm-Gg: ASbGnct64sAbYWiFGr21M2ajIl4BS4hTZu5Bkle44JDe/rU7HBGZzpMnsL4alrg9tQw
+	Tze9hkWhLfdrpy7Z//Pd+stU27Ac0bu3uCx88DjKHAMGMjibZFJKVuaohEwJ0xHORoOQBFlIsSu
+	UHumEONMYXV4Jx4yeJPLr8Efq9no4/tMOfUo3Wc/iIUxWHLq/TMr5CaJDiv7afvl/hHxuqO6SOw
+	5xPZNhS5X59uAtwIyhwUjW07GXBd2tr6EpvNv1+CLDQ1zYB3NG1aN7UMYEv/+blb40QygU7Z94N
+	K0Ltf8YzwFzY
+X-Google-Smtp-Source: AGHT+IFkUX2lCfN6as9yUxvWctb2+wcKM91fqinvxlY72zNbgOkS02wV6iv5kqX++4LIwQqaOdaE+A==
+X-Received: by 2002:a05:600c:4fc9:b0:439:564a:6503 with SMTP id 5b1f17b1804b1-4396e705d5fmr28556145e9.18.1739611511767;
+        Sat, 15 Feb 2025 01:25:11 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de0:6b3:d799:3d4f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04ee2fsm95776445e9.4.2025.02.15.01.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 01:25:11 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.14-rc3 - take 2
+Date: Sat, 15 Feb 2025 10:25:08 +0100
+Message-ID: <20250215092508.5849-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
- <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
- <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/02/2025 20:30, Marek Szyprowski wrote:
-> On 06.12.2024 17:31, André Draszik wrote:
->> gs101's SS phy needs to be configured differently based on the
->> connector orientation, as the SS link can only be established if the
->> mux is configured correctly.
->>
->> The code to handle programming of the mux is in place already, this commit
->> now adds the missing pieces to subscribe to the Type-C orientation
->> switch event.
->>
->> Note that for this all to work we rely on the USB controller
->> re-initialising us. It should invoke our .exit() upon cable unplug, and
->> during cable plug we'll receive the orientation event after which we
->> expect our .init() to be called.
->>
->> Above reinitialisation happens if the DWC3 controller can enter runtime
->> suspend automatically. For the DWC3 driver, this is an opt-in:
->>      echo auto > /sys/devices/.../11110000.usb/power/control
->> Once done, things work as long as the UDC is not bound as otherwise it
->> stays busy because it doesn't cancel / stop outstanding TRBs. For now
->> we have to manually unbind the UDC in that case:
->>       echo "" > sys/kernel/config/usb_gadget/.../UDC
->>
->> Note that if the orientation-switch property is missing from the DT,
->> the code will behave as before this commit (meaning for gs101 it will
->> work in SS mode in one orientation only). Other platforms are not
->> affected either way.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>
->> ---
->> v3:
->> * drop init to -1 of phy_drd->orientation (Vinod)
->> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->>    CONFIG_TYPEC
->>
->> v2:
->> * move #include typec_mux.h from parent patch into this one (Peter)
->> ---
->>   drivers/phy/samsung/Kconfig              |  1 +
->>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f10afa3d7ff5..fc7bd1088576 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->>   	tristate "Exynos5 SoC series USB DRD PHY driver"
->>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>   	depends on HAS_IOMEM
->> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->>   	depends on USB_DWC3_EXYNOS
->>   	select GENERIC_PHY
->>   	select MFD_SYSCON
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Linus,
 
-So that explains why on recent next some of my boards don't boot. I was
-about to dig over the weekend.
+Here's a second attempt at the PR with fixes for the upcoming RC. The
+sparse warning I mentioned in my previous email turned out to be a false
+positive - the "offending" commit wasn't the culprit - but I removed it
+anyway and will send it again next week with the sparse issue fixed
+separately.
 
-> 
-> I've just noticed that the above disables Exynos DRD PHY driver in the 
-> default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
-> exynos_defconfig probably is the easiest way to fix this. I will send a 
-> patch then.
+Details for this one are in the signed tag.
 
-No, it's just wrong. Nothing here depends on typec and ARMv7 does not
-have Typec.
+Please pull,
+Bartosz
 
-Best regards,
-Krzysztof
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.14-rc3-take2
+
+for you to fetch changes up to 7b4aebeecbbd5b5fe73e35fad3f62ed21aa7ef44:
+
+  gpiolib: Fix crash on error in gpiochip_get_ngpios() (2025-02-13 18:51:39 +0100)
+
+----------------------------------------------------------------
+gpio fixes for v6.14-rc3 - take 2
+
+- fix interrupt handling issues in gpio-bcm-kona
+- add an ACPI quirk for Acer Nitro ANV14 fixing an issue with spurious
+  wake up events
+- add missing return value checks to gpio-stmpe
+- fix a crash in error path in gpiochip_get_ngpios()
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      gpiolib: Fix crash on error in gpiochip_get_ngpios()
+
+Artur Weber (3):
+      gpio: bcm-kona: Fix GPIO lock/unlock for banks above bank 0
+      gpio: bcm-kona: Make sure GPIO bits are unlocked when requesting IRQ
+      gpio: bcm-kona: Add missing newline to dev_err format string
+
+Mario Limonciello (1):
+      gpiolib: acpi: Add a quirk for Acer Nitro ANV14
+
+Wentao Liang (1):
+      gpio: stmpe: Check return value of stmpe_reg_read in stmpe_gpio_irq_sync_unlock
+
+ drivers/gpio/gpio-bcm-kona.c | 71 ++++++++++++++++++++++++++++++++++++--------
+ drivers/gpio/gpio-stmpe.c    | 15 ++++++++--
+ drivers/gpio/gpiolib-acpi.c  | 14 +++++++++
+ drivers/gpio/gpiolib.c       |  6 ++--
+ 4 files changed, 87 insertions(+), 19 deletions(-)
 
