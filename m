@@ -1,234 +1,317 @@
-Return-Path: <linux-kernel+bounces-516220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50378A36E50
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B165A36E53
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1223AE7E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78A51894494
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35FE1C701C;
-	Sat, 15 Feb 2025 13:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946721C84A6;
+	Sat, 15 Feb 2025 13:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKPFFvM2"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcSJPF+V"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F39A1C862A
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3068623;
+	Sat, 15 Feb 2025 13:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624525; cv=none; b=S7ULzUPbDssCGoO+iRcJdzDCdWlmegRb6ClVCi7kHg2B0/ZFmg03zaHJVTd5qxDUCbnJkY85ixYzhrsJdCDVXTDXyeo855OGuE6OmnJZGZknH2DmygfGYXei0KBi6hD29ksm35lHvazH/mJvHifIFX5l1NKGVpMODOnmC8tZpZM=
+	t=1739624686; cv=none; b=jbO9dtpY4ius61L+K8D4nPz4vah1Q7bJjMstqJ3bluQ9MvJtl9AYHGmBQ7uCYiHp6cRAhZf7E/XNy9NmmpX0rCEo+iGhmbvnHyf5lYpKCrru7qwCWVhYjgf3Sr4kqvBxigfI54Qd2E185mmAwGpraceT31M9jMFi5tEWCuMU/v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624525; c=relaxed/simple;
-	bh=pNpqUiamZ9dzTnpgPJdYJAKOpDBLeZW7fnoSXdVQ0Oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=onFhNxKFAJmCyxpgWQBFYjHiXZeYsrGTYcnpkkdw6DQBl7bse7+WS8Wog9CQjxcqHB4DJaanv/TIRhAeFxjdRtlQAzHKgkGW3sG+Iw89N54M4mJSz77P0POQfxRwFpEaYBHB5I8vf2FoMsOLmHqJtj6RyKpkCthO2hT+MEtoqhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKPFFvM2; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4395cf61014so2210175e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:02:02 -0800 (PST)
+	s=arc-20240116; t=1739624686; c=relaxed/simple;
+	bh=UWYnF2e2+P6Y/sAgEbI3iKHOLh7pG3OxwbBUXSU8RLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ADR8B5gRNQz6xyoOYK9w803bCyh/CCH4bm1ys/n9q0sLGtUGVQ3ja3uvpfYZ+vp6ZW3tOfVWejelFkUHRp7fYD3yyJPVZkBsxuf8TJ6OZbHcAjjmqTz7UcDGE4iKpmChThKFOP6H9ET1ASQcIBC2f+HUTBX/4EC/i/blHuAeqEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UcSJPF+V; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3092643f4aaso8988231fa.1;
+        Sat, 15 Feb 2025 05:04:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739624521; x=1740229321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RR/GHUMHBjoRr6SKp1D1VZVvMK6Rk4ChRoLAcy+7yFQ=;
-        b=XKPFFvM2H8umov4k3DcblYrLFytcv64PQqcpIXGIFKZtSxvNFv4VG7Xa/XKGZz/gDe
-         RGC8jdWZRCDpt9Z/EfsW3iQTsa0YN9s4LVPeZQ1ngrMsNCziBXRptREckb8b41Pz2mDy
-         Rr89WdVumDHGCsFWhtOOGYQTb1IewOH81ZedMbCbYSX6s+xYGFugtKHNbwX5feYsU2fD
-         WQ84uv10A+U0MmsKe6b7uRt9tvH0sdUPbIKvFm1wI8PKqvwQZ5v4E/mLUn7e2GCqm8ip
-         oLuviCDL/ZgzaiOWXqVl9wL0HtmdZHf5CA7Vv6/Q4sww+i/tGnXNwUZ7B7dyYgWCpS0p
-         Q4Cg==
+        d=gmail.com; s=20230601; t=1739624682; x=1740229482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eQxqWePvHIT2picXONSU+2OFMt7hfUb4gyLS+js58fQ=;
+        b=UcSJPF+VDAFsUGV3rRFrwtljkzXJvXJU53F+rc2OSww6cKL7caCjE+p2RwQ498268N
+         NifbZ6jVWoJtqMuBMWBRaorKOEWEqw93mCcZCMwSxk/iT0wCmoCFmXlZhYH8D0GdMgVI
+         P3/5OmskogeacO7U9uwfeGL7PHcv7RILVbN1+ciJPBAHPQ3dXKD8pccIosW9rqC5d1sF
+         hX71Pdu1y1ptnHOQGtR/LlOJ8o67PS/zFzrdW2ZWwon+RwDfNCbc0xzaEXiQ2OP7vwpR
+         WkFD6HIZmUC9Ayw8uoPTEFBUayYQ8At+Lt+3cIO4yp8s1foxnU9B1ecIdNpWL1u9c7jb
+         47LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739624521; x=1740229321;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RR/GHUMHBjoRr6SKp1D1VZVvMK6Rk4ChRoLAcy+7yFQ=;
-        b=j2m3xqcYmRJd3xT4+DqTXag+Jh4NqoE47G40t190oMJMlpRHVj2ber7qAlxLhjx3sK
-         WPrsMFBdsa4TcOCSj1lyA294mUWmCphZ4IlyNPMRFXTNlu7bCqrXZIAEtOekidBppv5Y
-         TE4Xt399kR4ojnldnx/0xM7eGOvERML2xrpMOZ1s/xVsXjnHNzgP2W/tKEoMy9d1jUus
-         t8ZJ7Svpi/Rc9rrxjBxNfxrZBeN6NN6xmiufrffAyrLBlvbrQPba9mhPKXfgDnTp+HHk
-         zCmuP4DPz1x1k2VVBy2RV4tygh8EnZ1/tNPBw1+uFPT0g+dyaANFK6luqKVI6BipFyTD
-         DzhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVppzTChRL8MDaUX5IfjDlr/gXm6sjoEgfhjaMsXVDDY7oqVz0jVGlGad/p/4wr1feDD6xSGGLkGJDn4ow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoJ2wfKvWE9WQPZ5GvKm0DWc8bRj5p7hThX54xkx7dR8lEmiYn
-	Yz0W8RK+V0Es48MQEpFGB6NZMVD6GbfBczkTq9BJ3cq4Kc36omOu3CEbmdpeZwA=
-X-Gm-Gg: ASbGncs7iSmDhss52OgdDBzbpokorJhRpklaeofcl3H5m4cloWjTO5XVPhuhTftw/QR
-	fg4nuqlOCjk313ussKxivz10P9cyNpZoqeIRb30WFgCX1x/TwGlFs4TyKPCoVWXQUBVokKgmzXh
-	wTH5Oahrf4ES6ln2DUi3Dfgn8cB5V/uQQw1ZUN+sLZ38tK7BQm0yw/XvTwtu58VaCbGaIyMJR5s
-	YCJbS3ydecCeiQLfFZRu5qLLMrihJPYKofbAi+6FicVtWEO5L2EdgebFxMfO4R88LEx+OGhrA7e
-	C8UZo0a38K72Ofc49abSlB74Wl2Jy3PGfyo=
-X-Google-Smtp-Source: AGHT+IEkYaev64JoIJX7BjN1Kn2qbNsU34l3xF8cI2UjENhYJNPkz42xyMxJqIrN2wkI3tDlo9ovyA==
-X-Received: by 2002:a05:600c:1d23:b0:434:9cb7:7321 with SMTP id 5b1f17b1804b1-4396e6d8163mr14041935e9.1.1739624521315;
-        Sat, 15 Feb 2025 05:02:01 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396713feccsm45558085e9.39.2025.02.15.05.02.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Feb 2025 05:02:00 -0800 (PST)
-Message-ID: <886cb4b9-9d95-4346-9c38-923cb7c69036@linaro.org>
-Date: Sat, 15 Feb 2025 14:01:59 +0100
+        d=1e100.net; s=20230601; t=1739624682; x=1740229482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQxqWePvHIT2picXONSU+2OFMt7hfUb4gyLS+js58fQ=;
+        b=WNuF5sGHRBGEb7sSGm2uPr4bcJRUZsmOD7LoiHUOiM9Nf88IzIAuT/IpbJua4n/dYP
+         iQBbNCxiCE+9jVn5C2jsK1YUIY/BKJOjpDaVfI1agvhssDXOXTLctYbvjWZKeIlJ9nNT
+         z/BJjZj0578LVWFTw6QsEKBZT7l8u27o9jhzSKNNYYgh7wB9ivfG+VXFgm3iUG7lWQJL
+         X06hoFlIGgo5V8LgYpOJsI3GcN9TeVIDjIBIVRubRVVuAI/QAaHJ9VvUjMF3UZLfgJgC
+         5U772vTmkIcs4vXGkboI4s4d6Yonfyk2QdD9qiyERaM2xzVTLsbE3X4/bhdMzs8a/qC3
+         qlAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6znYU7BGtP/VL6U8nQEA39TlCS6awcS6kMZJLfIgmdi9c+jV0bv8cBh2hk4aqk2kJoe2WmvA/BRPgLgL7+nY=@vger.kernel.org, AJvYcCW+DxO8YaI3QvbxX8TpIR6fk7nqhh6qNIdDoWa1T6N2CLP0lhHZlDB3QnLPtngLk+KxEICjo0tZSwKmLig=@vger.kernel.org, AJvYcCWYqp1YxnUNbOh/J5LY3PVHNahLrNnbweKvVTRi+iM0UHaI6SDFnHpef1BV05xYOKasH9G4+JuVSZLaY8C41PxL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1rsDw0VyRTjirlyuxgfYh4KLRhUHp52gwUj9bXGxCKjv++63s
+	8oVyd1eIkVGntCrwWr5OyvMEanJNeuKYDmoVT7wEK+YeeMJ8GbyQscgxeHulEeUquX2m4xxXtsr
+	tcuOb4Cs9GfRvcB9ZQF36q//j8gtiz4zK
+X-Gm-Gg: ASbGncsfK2l8QVenejSEZPfcSxcFTDDuioGHKlnCkfNVTV4r4RvXIeGdszAPduvDQEK
+	AYiolC7xaGzsMpum9E6x1eXy/fCqFbsAmsgwYnqwm6yv1AEfyV2bYUB+/9fqcfKzd/Hho/N1cey
+	VbwTNaKMZ1hET+QhzbZzzEmcgRRYyMxQ==
+X-Google-Smtp-Source: AGHT+IGADOXK6A8/GEkATLBOdsyZof9/aX5TClGqjHqEuQqchxyCpH+3TIKuNfkvMgRdz1TQFw/1RcVFxaS9v1vh/NA=
+X-Received: by 2002:a2e:95cd:0:b0:302:3356:35d7 with SMTP id
+ 38308e7fff4ca-30928b7439bmr7123121fa.18.1739624681465; Sat, 15 Feb 2025
+ 05:04:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: kconfig: Mention IS_REACHABLE as way for optional
- dependency
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
- <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>,
- linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-References: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
- <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250214074051.1619256-1-davidgow@google.com> <20250214074051.1619256-4-davidgow@google.com>
+ <CAJ-ks9kwVz4sPdmqfTLVK-Z2C7WmXHpBhbe5_ozWBZnwxJ8HpA@mail.gmail.com> <CABVgOS=2f3Yg8Wb7qxneRC_+s-W_TQey083niujpZD3fYcfL_w@mail.gmail.com>
+In-Reply-To: <CABVgOS=2f3Yg8Wb7qxneRC_+s-W_TQey083niujpZD3fYcfL_w@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 15 Feb 2025 08:04:05 -0500
+X-Gm-Features: AWEUYZkO-deC3TTJ-Ho4qHpqUbaRWg5ash0Mk7jUJ1Y_Vd10hv4vuGqdu5AaPFo
+Message-ID: <CAJ-ks9n92LCVQRuNMqKwMwGyLzJTnQXpHth4L8h19D0qoGUphg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] rust: kunit: allow to know if we are in a test
+To: David Gow <davidgow@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/02/2025 13:54, Masahiro Yamada wrote:
-> On Sat, Feb 15, 2025 at 8:42 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> Several drivers express optional Kconfig dependency with FOO || !FOO,
->> but for many choices this is neither suitable (lack of stubs for !FOO
->> like in HWMON) nor really needed and driver can be built in even if FOO
->> is the module.  This is achieved with IS_REACHABLE, so provide cross
->> reference to it.
->>
->> Cc: Masahiro Yamada <masahiroy@kernel.org>
->> Cc: Arnd Bergmann <arnd@arndb.de>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  Documentation/kbuild/kconfig-language.rst | 13 ++++++++++---
->>  1 file changed, 10 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
->> index 2619fdf56e68..66248294a552 100644
->> --- a/Documentation/kbuild/kconfig-language.rst
->> +++ b/Documentation/kbuild/kconfig-language.rst
->> @@ -194,6 +194,8 @@ applicable everywhere (see syntax).
->>    ability to hook into a secondary subsystem while allowing the user to
->>    configure that subsystem out without also having to unset these drivers.
->>
->> +.. _is_reachable:
-> 
-> Instead of this, could you move this hunk below ?
-> 
+On Sat, Feb 15, 2025 at 4:03=E2=80=AFAM David Gow <davidgow@google.com> wro=
+te:
+>
+> On Fri, 14 Feb 2025 at 22:41, Tamir Duberstein <tamird@gmail.com> wrote:
+> >
+> > On Fri, Feb 14, 2025 at 2:42=E2=80=AFAM David Gow <davidgow@google.com>=
+ wrote:
+> > >
+> > > From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> > >
+> > > In some cases, we need to call test-only code from outside the test
+> > > case, for example, to mock a function or a module.
+> > >
+> > > In order to check whether we are in a test or not, we need to test if
+> > > `CONFIG_KUNIT` is set.
+> > > Unfortunately, we cannot rely only on this condition because:
+> > > - a test could be running in another thread,
+> > > - some distros compile KUnit in production kernels, so checking at ru=
+ntime
+> > >   that `current->kunit_test !=3D NULL` is required.
+> > >
+> > > Forturately, KUnit provides an optimised check in
+> > > `kunit_get_current_test()`, which checks CONFIG_KUNIT, a global stati=
+c
+> > > key, and then the current thread's running KUnit test.
+> > >
+> > > Add a safe wrapper function around this to know whether or not we are=
+ in
+> > > a KUnit test and examples showing how to mock a function and a module=
+.
+> > >
+> > > Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> > > Co-developed-by: David Gow <davidgow@google.com>
+> > > Signed-off-by: David Gow <davidgow@google.com>
+> > > Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> > > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> > > ---
+> > >
+> > > Changes since v5:
+> > > https://lore.kernel.org/all/20241213081035.2069066-4-davidgow@google.=
+com/
+> > > - Greatly improved documentation, which is both clearer and better
+> > >   matches the rustdoc norm. (Thanks, Miguel)
+> > > - The examples and safety comments are also both more idiomatic an
+> > >   cleaner. (Thanks, Miguel)
+> > > - More things sit appropriately behind CONFIG_KUNIT (Thanks, Miguel)
+> > >
+> > > Changes since v4:
+> > > https://lore.kernel.org/linux-kselftest/20241101064505.3820737-4-davi=
+dgow@google.com/
+> > > - Rebased against 6.13-rc1
+> > > - Fix some missing safety comments, and remove some unneeded 'unsafe'
+> > >   blocks. (Thanks Boqun)
+> > >
+> > > Changes since v3:
+> > > https://lore.kernel.org/linux-kselftest/20241030045719.3085147-8-davi=
+dgow@google.com/
+> > > - The example test has been updated to no longer use assert_eq!() wit=
+h
+> > >   a constant bool argument (fixes a clippy warning).
+> > >
+> > > No changes since v2:
+> > > https://lore.kernel.org/linux-kselftest/20241029092422.2884505-4-davi=
+dgow@google.com/
+> > >
+> > > Changes since v1:
+> > > https://lore.kernel.org/lkml/20230720-rustbind-v1-3-c80db349e3b5@goog=
+le.com/
+> > > - Rebased on top of rust-next.
+> > > - Use the `kunit_get_current_test()` C function, which wasn't previou=
+sly
+> > >   available, instead of rolling our own.
+> > > - (Thanks also to Boqun for suggesting a nicer way of implementing th=
+is,
+> > >   which I tried, but the `kunit_get_current_test()` version obsoleted=
+.)
+> > > ---
+> > >  rust/kernel/kunit.rs | 66 ++++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 66 insertions(+)
+> > >
+> > > diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> > > index 9e27b74a605b..3aad7a281b6d 100644
+> > > --- a/rust/kernel/kunit.rs
+> > > +++ b/rust/kernel/kunit.rs
+> > > @@ -286,11 +286,77 @@ macro_rules! kunit_unsafe_test_suite {
+> > >      };
+> > >  }
+> > >
+> > > +/// Returns whether we are currently running a KUnit test.
+> > > +///
+> > > +/// In some cases, you need to call test-only code from outside the =
+test case, for example, to
+> > > +/// create a function mock. This function allows to change behavior =
+depending on whether we are
+> > > +/// currently running a KUnit test or not.
+> > > +///
+> > > +/// # Examples
+> > > +///
+> > > +/// This example shows how a function can be mocked to return a well=
+-known value while testing:
+> > > +///
+> > > +/// ```
+> > > +/// # use kernel::kunit::in_kunit_test;
+> > > +/// fn fn_mock_example(n: i32) -> i32 {
+> > > +///     if in_kunit_test() {
+> > > +///         return 100;
+> > > +///     }
+> > > +///
+> > > +///     n + 1
+> > > +/// }
+> > > +///
+> > > +/// let mock_res =3D fn_mock_example(5);
+> > > +/// assert_eq!(mock_res, 100);
+> > > +/// ```
+> > > +///
+> > > +/// Sometimes, you don't control the code that needs to be mocked. T=
+his example shows how the
+> > > +/// `bindings` module can be mocked:
+> >
+> > [`bindings`] here, please. There are two more instances below but
+> > those aren't doc comments, so I don't think bracketing them will do
+> > anything.
+> >
+>
+> Done in v7. Alas, I'll have to keep getting used to the differences
+> between kerneldoc and rustdoc...
+>
+> > > +///
+> > > +/// ```
+> > > +/// // Import our mock naming it as the real module.
+> > > +/// #[cfg(CONFIG_KUNIT)]
+> > > +/// use bindings_mock_example as bindings;
+> > > +/// #[cfg(not(CONFIG_KUNIT))]
+> > > +/// use kernel::bindings;
+> > > +///
+> > > +/// // This module mocks `bindings`.
+> > > +/// #[cfg(CONFIG_KUNIT)]
+> > > +/// mod bindings_mock_example {
+> > > +///     /// Mock `ktime_get_boot_fast_ns` to return a well-known val=
+ue when running a KUnit test.
+> > > +///     pub(crate) fn ktime_get_boot_fast_ns() -> u64 {
+> > > +///         1234
+> > > +///     }
+> > > +/// }
+> > > +///
+> > > +/// // This is the function we want to test. Since `bindings` has be=
+en mocked, we can use its
+> > > +/// // functions seamlessly.
+> > > +/// fn get_boot_ns() -> u64 {
+> > > +///     // SAFETY: `ktime_get_boot_fast_ns()` is always safe to call=
+.
+> > > +///     unsafe { bindings::ktime_get_boot_fast_ns() }
+> > > +/// }
+> > > +///
+> > > +/// let time =3D get_boot_ns();
+> > > +/// assert_eq!(time, 1234);
+> > > +/// ```
+> >
+> > Isn't this swapping out the bindings module at compile time, and for
+> > the whole build? In other words cfg(CONFIG_KUNIT) will apply to all
+> > code, both test and non-test.
+> >
+>
+> I believe so, so this is probably something best done only in test files.
 
-Ack
+Why would you need conditional compilation of this kind in test files?
 
-> 
-> 
-> 
-> 
->>    Note: If the combination of FOO=y and BAZ=m causes a link error,
->>    you can guard the function call with IS_REACHABLE()::
->>
->> @@ -580,10 +582,15 @@ Some drivers are able to optionally use a feature from another module
->>  or build cleanly with that module disabled, but cause a link failure
->>  when trying to use that loadable module from a built-in driver.
->>
->> -The most common way to express this optional dependency in Kconfig logic
->> -uses the slightly counterintuitive::
->> +There are two ways to express this optional dependency:
->>
->> -  config FOO
->> +1. If pre-processor can discard entire optional code or module FOO does not
->> +   provide !FOO stubs then in the C code :ref:`IS_REACHABLE<is_reachable>`
-> 
-> Instead of the link, please move the code example at line 200 to here.
-> 
-> The note at line 197 is not strongly related to the 'imply' keyword.
-> 
-> 
-> One more thing, please document the drawback of IS_REACHABLE.
+What I was getting at with this comment is that this example might
+mislead a user to think that this is how they should imbue their code
+with test-specific behavior, which is not what this will do. Instead
+this would break kernels built with CONFIG_KUNIT, which I think is not
+where we want to be going. Right?
 
-Ack
-
-> 
-> It is true that IS_REACHABLE() resolves the link error, but we
-> will end up with run-time debugging.
-> 
-> foo_init()
-> {
->         if (IS_REACHABLE(CONFIG_BAZ))
->                 baz_register(&foo);
->         ...
-> }
-> 
-> Even if CONFIG_BAZ is enabled, baz_register() may get discarded.
-
-Hm, why would that happen? For compiler this would be "if(true)", so
-what case would lead to discarding?
-
-> Users may scratch their head why baz_register() does not work.
-> Due to this reason, IS_REACHABLE() tends to be avoided.
-
-I would rather say IS_REACHABLE should be avoided if someone really
-wants to document the dependency, not optional feature.
-
-> 
-> 
-> "depends on BAR || !BAR" is configuration-time debugging.
-> 
-
-
-
-Best regards,
-Krzysztof
+>
+> Ideally, we'd have support for something like the KUnit function
+> mocking features here, but that's horribly C-specific at the moment.
+>
+> > > +pub fn in_kunit_test() -> bool {
+> > > +    // SAFETY: `kunit_get_current_test()` is always safe to call (it=
+ has fallbacks for
+> > > +    // when KUnit is not enabled).
+> > > +    unsafe { !bindings::kunit_get_current_test().is_null() }
+> >
+> > Nit if you care about reducing unsafe blocks:
+> >
+> > !unsafe { bindings::kunit_get_current_test() }.is_null()
+> >
+> >
+>
+> Huh, I thought this wouldn't work, but it's working fine for me here,
+> so I've made the change.
+>
+> Thanks!
+>
+> > > +}
+> > > +
+> > >  #[kunit_tests(rust_kernel_kunit)]
+> > >  mod tests {
+> > > +    use super::*;
+> > > +
+> > >      #[test]
+> > >      fn rust_test_kunit_example_test() {
+> > >          #![expect(clippy::eq_op)]
+> > >          assert_eq!(1 + 1, 2);
+> > >      }
+> > > +
+> > > +    #[test]
+> > > +    fn rust_test_kunit_in_kunit_test() {
+> > > +        assert!(in_kunit_test());
+> > > +    }
+> > >  }
+> > > --
+> > > 2.48.1.601.g30ceb7b040-goog
+> > >
+> > >
+>
+> Thanks a lot, these should be fixed in v7.
+>
+> Cheers,
+> -- David
 
