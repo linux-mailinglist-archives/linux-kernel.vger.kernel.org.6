@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-516205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F29FA36E17
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:34:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38FEA36E25
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9721C7A3E47
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4391316F94A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894CF1B4234;
-	Sat, 15 Feb 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BED51C6FFE;
+	Sat, 15 Feb 2025 12:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jsdH3dqj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4u5hKr5"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB4E748D;
-	Sat, 15 Feb 2025 12:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746B11A8401;
+	Sat, 15 Feb 2025 12:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739622847; cv=none; b=YXAagu96IcATis9RS5H8y26jNCdN3VXLD06RF79HBIpdwUGJwJgGItz2XtDvfiNsAahllkBDjsI8yIwDj0hihiLPImB8x7Vz6itu3n5gZ7Tv39HYT7LknznsWTTdaFoQk3vYmR7heGtlhTPEmhGN8y3sL056i/qWLiggGRWzySY=
+	t=1739622900; cv=none; b=tPB+VnNJaaAkQ2tsboMP3vPOpwUgHMXYhtDhxN6EamaNBeiPwPmBuvnKISNm3160hMYLYVp+YxIidvYJctiETJtj0+raoY1/KfANesFezzbFs0xxJ/Ux1DtUVntyF5Sv2fC4/pt4ND9EF4h0O54kBIsloDyXecstOTxvbzCou+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739622847; c=relaxed/simple;
-	bh=NnRZ74pVR86hV7lGrabOr8uvrPWBnexcNXQ4+Gj4un4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYyCg+SWZXv5nlxfbkg2U6hj7JFZPVnNMat+ow4SdQu30/jti6IxtiwSJ7GW/KVvzAZhwRF/gHfAsCXHm2iEOdmM2y6vAn5ujfZmibLGgMtNSvEVOPQivCnqHnfwxatM0f2Q0Q0UjLsrc9WSneZFFLKTVeaoBdgEY0TU2otXAVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jsdH3dqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1C5C4CEDF;
-	Sat, 15 Feb 2025 12:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739622847;
-	bh=NnRZ74pVR86hV7lGrabOr8uvrPWBnexcNXQ4+Gj4un4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsdH3dqjBgyKQpZGu4eSmCTyOBbV6n8HhRO0RfAx8xWtu5cGcojyLCZorzTZ5xrum
-	 UKk62Mff7INTEpuU6Asje8FMeb7vnW+XPxfdX78zfHZFdKZ6ds6ICucd3SQuIvphSj
-	 8ae1NXoaqGGn6vLbyOIdHRjh3qWttl5Xw7AB16mk=
-Date: Sat, 15 Feb 2025 13:34:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
-	Radoslav =?iso-8859-1?Q?Bod=F3?= <radoslav.bodo@igalileo.cz>,
-	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add
- alignment check for dma buffers") when booting with Xen and mpt3sas_cm0
- _scsih_probe failures
-Message-ID: <2025021548-amiss-duffel-9dcf@gregkh>
-References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
- <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
- <Z6ukbNnyQVdw4kh0@eldamar.lan>
- <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
- <6d7ed6bf-f8ad-438a-a368-724055b4f04c@suse.com>
+	s=arc-20240116; t=1739622900; c=relaxed/simple;
+	bh=f0+fTG9za/9bbevKQFo+26uPRWzCeT9Jd5N2XbxKmfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j7OWhQ8wtUN9ftjH0RhiVURIkc6WjVgCFqnJo0qgAp431J7eUaID8j1vODLdiy56A48UmHm9ZdICkyJ74jZXZdr3WdpBekwlgWCR9/4ZfMTFsrRAvtd+tI648+wUvWd2PdmR1LJQMvyWrUvAzdmOfOcmUlO5Km3nryCSWaHgrvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4u5hKr5; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43978ae8d4fso782255e9.3;
+        Sat, 15 Feb 2025 04:34:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739622897; x=1740227697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CKe4QYdGATEkp08y+n3JYFYApI5cWyhfV2vUJ+ZTwQQ=;
+        b=j4u5hKr5FRDuBack6HM36oZ6JXg3ghr3h8em8mEjeNUMgwVloIePDeNXkfCKU7qGpt
+         qnLeojO3LUAVp7ETLq3A2HpAObMz8rg/PMvbMwKqLZlo1gdN71dWJPflMfE6Fy0UciTu
+         bAW8KQxAoU4prHN2Zw22cAicqpMfM1KAEtQQaY1aVFkMIOtDaNZVmhiXumvbqP1uJcVc
+         XUMLlAT38PFNTQh/FcGmsV++5jVGtmtFV7IH6Yle4aIgjOvfq+N/2rOZwFlk9sIUbPN7
+         f9tYdGSyX+PbWbvHOebOWl96GIajmV1ctyZLtm0AKGWwNiylApJ1SquocFM+aTlWFZ/r
+         tizg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739622897; x=1740227697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CKe4QYdGATEkp08y+n3JYFYApI5cWyhfV2vUJ+ZTwQQ=;
+        b=ToiVHBsIvzjA0aCKRB1vG3bO6WENez2n0ob5oZFcyVE591cGCCu3WyiQF9alaMSikG
+         ONso41CulldE0GBU8qnj/AZak8Ji49drhgZZ+BjjutV8kgPrEt2zH1zX53jLwfPRcDRh
+         zS57m6CuKQ0giIJOKuEXQAj/jBibOnBIu+O5I1rxYDM8fNVHUHsPhDdR+2TcLQjESOl9
+         wtg4EkCqHunx2ttiX41VNQgto4r1B73ASE51MABXszXDBGZ44769r8cRRE6DSM5X6zmS
+         +KpsS7g5GnLhCQqozLKZOctlla/3TtmnVgOc8DnnBvy9Ri5zVCIpKXAdC2HVFC3MEUBe
+         rJIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU71d4fVyqW1NQ3znjfNpwKKSOi3hAJ1jDOPz/IgSmJwRpIggYST4rSrHdcqodTbgltp05o+wSmHFeG0Mlbv7kZDAQ=@vger.kernel.org, AJvYcCUjZrgUzx6aJep4GM5X35bWY7HNE/WI187DtT+O/F9sX9RXYO5jn1CxgA4kjpisMUy5qABqn+PSAB27@vger.kernel.org, AJvYcCX9QsRvYXcWARTYz9RNeKIOxzFAoCIAFOgSPWuO2HHN6+uwghXpZgbIBtY//LcxAH7tzht80Koa6KU68LZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv+DHtf4gSGg0ZhHl2iqmR5MPi4Lzlz4vId+ZjJsM3OmDspjHe
+	PKJp0SVziqlrakYQvvx7d+DQN+htzWkHjiwk20F33hj8sfX/jWiu
+X-Gm-Gg: ASbGncuvVxJKP/04N6cv8ZTs1O0uTY+ey+/42YkV9lG25Jgcv94e4w6BWU8Vgxv5vt4
+	Y3W7spX86u178piqtF3aVlO+9p4lfpIvtvi37tBBm2J7ZQ7EaIDMCOcpnZaPxkfq7AO+CNPDFGl
+	WRT2STOw8B05+GBZUWz90a4QRPKfyzUHnXAUtYXg1mG/2KoWxckl0oIJknEzUmqzECyYuo7UYDv
+	EHtpwBuhWloGbIcLZObM19XkgCRwrH6ppP6c4mwas4EwBxEopUOeUGlAym0dNt53OuQBiN1xASW
+	y2RlTdQl2yq++Kl2VMyiouFluSGVMPaceAov2r02hZg/MEGVJA6a7kP+uFYSaph768I=
+X-Google-Smtp-Source: AGHT+IFUBWZsXU82RxSy96RoGb0/0g4JAb4YfWMt6GwiDByMiJh3slbtaSZj/gS6aBzPWbV508Vxgg==
+X-Received: by 2002:a05:600c:1c94:b0:439:685e:d4c8 with SMTP id 5b1f17b1804b1-4396e6fa130mr38307765e9.15.1739622896632;
+        Sat, 15 Feb 2025 04:34:56 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439615e543asm70846685e9.0.2025.02.15.04.34.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 04:34:56 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] usb: dwc3: exynos: add support for Exynos2200 variant
+Date: Sat, 15 Feb 2025 14:34:51 +0200
+Message-ID: <20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d7ed6bf-f8ad-438a-a368-724055b4f04c@suse.com>
 
-On Sat, Feb 15, 2025 at 12:47:57PM +0100, Jürgen Groß wrote:
-> On 12.02.25 16:12, Harshit Mogalapalli wrote:
-> > Hi Salvatore,
-> > 
-> > On 12/02/25 00:56, Salvatore Bonaccorso wrote:
-> > > Hi Harshit,
-> > > 
-> > > On Sun, Feb 09, 2025 at 01:45:38AM +0530, Harshit Mogalapalli wrote:
-> > > > Hi Salvatore,
-> > > > 
-> > > > On 08/02/25 21:26, Salvatore Bonaccorso wrote:
-> > > > > Hi Juergen, hi all,
-> > > > > 
-> > > > > Radoslav Bodó reported in Debian an issue after updating our kernel
-> > > > > from 6.1.112 to 6.1.115. His report in full is at:
-> > > > > 
-> > > > > https://bugs.debian.org/1088159
-> > > > > 
-> > > > 
-> > > > Note:
-> > > > We have seen this on 5.4.y kernel: More details here:
-> > > > https://lore.kernel.org/all/9dd91f6e-1c66-4961-994e-dbda87d69dad@oracle.com/
-> > > 
-> > > Thanks for the pointer, so looking at that thread I suspect the three
-> > > referenced bugs in Debian are in the end all releated. We have one as
-> > > well relating to the megasas_sas driver, this one for the mpt3sas
-> > > driver and one for the i40e driver).
-> > > 
-> > > AFAICS, there is not yet a patch which has landed upstream which I can
-> > > redirect to a affected user to test?
-> > > 
-> > 
-> > Konrad pointed me at this thread: https://lore.kernel.org/
-> > all/20250211120432.29493-1-jgross@suse.com/
-> > 
-> > This has some fixes, but not landed upstream yet.
-> 
-> Patches are upstream now. In case you still experience any problems, please
-> speak up.
+Hey folks,
 
-What specific commits should be backported here?
+This patchset adds support for the Exynos 2200 to the exynos-dwc3 glue
+code. It takes one clock - the link_aclk, and the dwc3 refclk is passed
+to the dwc3 subnode, as with gs101.
 
-thanks,
+Best regards,
+Ivaylo
 
-greg k-h
+Ivaylo Ivanov (2):
+  dt-bindings: usb: samsung,exynos-dwc3: add exynos2200 compatible
+  usb: dwc3: exynos: add support for Exynos2200 variant
+
+ .../bindings/usb/samsung,exynos-dwc3.yaml         | 15 +++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c                    |  9 +++++++++
+ 2 files changed, 24 insertions(+)
+
+-- 
+2.43.0
+
 
