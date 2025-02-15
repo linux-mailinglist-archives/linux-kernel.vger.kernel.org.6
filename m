@@ -1,239 +1,192 @@
-Return-Path: <linux-kernel+bounces-516097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA6EA36CE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:27:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90A9A36CDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23FF17A4D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6606188E7A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B305619E7F8;
-	Sat, 15 Feb 2025 09:26:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8519F133;
+	Sat, 15 Feb 2025 09:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nW8R+LGE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B261A23A8;
-	Sat, 15 Feb 2025 09:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C20802;
+	Sat, 15 Feb 2025 09:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611563; cv=none; b=d5BwTAXjPsPtoiAyWF5aYXBe3SeIb+HrecgVtIatatd3RVPh9d/mKF+xROZja9Dn9YbtbU/FMFrGaPaOjy7lOyxe15bK79WV87fQHdqTyCni+EZpIcVypEZObLG2Ed19Z5OkRpHO85pS2vF8SE7VReBclhn/hVgyPaiJZJ7j9iw=
+	t=1739611486; cv=none; b=hGewdXT1bzqWMQJJagVX3uHmovE49UJHSfBRef3hl27du2RIieC58G4ltDpYiyblpqJXp3X8WQcIsy2gC4UhzuqNtt2IgB2EUBgIR9/JUbcO00bCjRFyvG8TXKSahdtCMTp2M8Yy1pK7bEgwdjLepTvLBx/64hu3k8D3tigqSzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611563; c=relaxed/simple;
-	bh=/Yd6LGK/voyZCkC/3RwOpE9q0HSaaXjvFUz/GVKwcf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ClvdprGOCULxG5BLX7a4upyc+t651/EnyP2/87rtmq6gkmBB6CyZH6BcSA9jIrWxRjImghMVq+vStTaqlYpsQZnWbqhQR7z+Z76PHvfIpDaUqZdB9IP8R4v2kUcmlRGoXmWBdeo/b9MsxI5nprH6ynF6TebdTO4RSlQeFzU/qdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Yw3Rs09H8z4f3kvM;
-	Sat, 15 Feb 2025 17:25:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D4F001A06D7;
-	Sat, 15 Feb 2025 17:25:51 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAni1+bXbBn+Q+iDw--.49525S11;
-	Sat, 15 Feb 2025 17:25:51 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH md-6.15 7/7] md: switch md-cluster to use md_submodle_head
-Date: Sat, 15 Feb 2025 17:22:25 +0800
-Message-Id: <20250215092225.2427977-8-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
-References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1739611486; c=relaxed/simple;
+	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hboo404Pt06HODNkx6gRmPK4kkXuCKZVphcGGESG+WG7fub6KOcWcCZS4lZR6yXQB0Mm2x5lm/3H7eXbcGLL5+4LOF2efM5MuqIlGS9dNfLAzuoUfZ/CcCtMPUYzsaiZYh+ByXG+4ZuaiH4E8nX3BetLc9J0w48XA85ncHiWcTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nW8R+LGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B917C4CEDF;
+	Sat, 15 Feb 2025 09:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739611485;
+	bh=qLlpdx2XZpTJthdJqVOlO6CbXRLajGkyRyRoDG6/yCM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nW8R+LGErP81EkTm12pzbj36ijQzll9GIptmlmba3ws12mcaVoSGp50PONuhy0TOz
+	 s6j4giqwOgx08ZfXn5K9ZfFX36DVUwQnMhOcYDDfFJSm0aeFG3+TdEXgq+IBRLDX6K
+	 92SN0CElkDT09ulfUDautEHpgbtEZZBdM/qH0IXRHoHtZtXpUkkX7q7R3KNn7h709b
+	 rX7JmFtVyQ+1OyBm+N0HPbeMu/8wM5zp1q23joFUHmIQa1cakvod2pklJ+nhMxvKfd
+	 /TkBBcI3NIldzQmNvo+vjJGIPiYbLmLO8o1zcuZ2aPLYDT1fzrBL2UamlOTTYOuE2x
+	 5Q+qcYG+fUYjg==
+Message-ID: <b23342dd-381d-4127-9eee-c8755a0d425d@kernel.org>
+Date: Sat, 15 Feb 2025 10:24:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
+ notifier if required
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
+ <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
+ <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
+ <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAni1+bXbBn+Q+iDw--.49525S11
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFWfZr1UuF13JrW7CrW8tFb_yoW7Xr4kpF
-	WSg345Jr1UJrWDWa1UGFyDZFy5Kw1xG3yUt34fJ3sagFnrWrW8JFs8Jr95Ar98Gay3JrnF
-	q3WrK3WDu3s5Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAV
-	WUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYcTQUUUU
-	U
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 14/02/2025 20:30, Marek Szyprowski wrote:
+> On 06.12.2024 17:31, André Draszik wrote:
+>> gs101's SS phy needs to be configured differently based on the
+>> connector orientation, as the SS link can only be established if the
+>> mux is configured correctly.
+>>
+>> The code to handle programming of the mux is in place already, this commit
+>> now adds the missing pieces to subscribe to the Type-C orientation
+>> switch event.
+>>
+>> Note that for this all to work we rely on the USB controller
+>> re-initialising us. It should invoke our .exit() upon cable unplug, and
+>> during cable plug we'll receive the orientation event after which we
+>> expect our .init() to be called.
+>>
+>> Above reinitialisation happens if the DWC3 controller can enter runtime
+>> suspend automatically. For the DWC3 driver, this is an opt-in:
+>>      echo auto > /sys/devices/.../11110000.usb/power/control
+>> Once done, things work as long as the UDC is not bound as otherwise it
+>> stays busy because it doesn't cancel / stop outstanding TRBs. For now
+>> we have to manually unbind the UDC in that case:
+>>       echo "" > sys/kernel/config/usb_gadget/.../UDC
+>>
+>> Note that if the orientation-switch property is missing from the DT,
+>> the code will behave as before this commit (meaning for gs101 it will
+>> work in SS mode in one orientation only). Other platforms are not
+>> affected either way.
+>>
+>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+>>
+>> ---
+>> v3:
+>> * drop init to -1 of phy_drd->orientation (Vinod)
+>> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
+>>    CONFIG_TYPEC
+>>
+>> v2:
+>> * move #include typec_mux.h from parent patch into this one (Peter)
+>> ---
+>>   drivers/phy/samsung/Kconfig              |  1 +
+>>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
+>>   2 files changed, 57 insertions(+)
+>>
+>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+>> index f10afa3d7ff5..fc7bd1088576 100644
+>> --- a/drivers/phy/samsung/Kconfig
+>> +++ b/drivers/phy/samsung/Kconfig
+>> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
+>>   	tristate "Exynos5 SoC series USB DRD PHY driver"
+>>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>>   	depends on HAS_IOMEM
+>> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+>>   	depends on USB_DWC3_EXYNOS
+>>   	select GENERIC_PHY
+>>   	select MFD_SYSCON
 
-To make code cleaner, and prepare to add kconfig for bitmap.
 
-Also remove the unsed global variables pers_lock, md_cluster_ops and
-md_cluster_mod, and exported symbols register_md_cluster_operations(),
-unregister_md_cluster_operations() and md_cluster_ops.
+So that explains why on recent next some of my boards don't boot. I was
+about to dig over the weekend.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md-cluster.c | 14 ++++++++++----
- drivers/md/md-cluster.h |  3 ---
- drivers/md/md.c         | 41 ++++++-----------------------------------
- drivers/md/md.h         |  2 +-
- 4 files changed, 17 insertions(+), 43 deletions(-)
+> 
+> I've just noticed that the above disables Exynos DRD PHY driver in the 
+> default exynos_defconfig for arm 32bit. Enabling CONFIG_TYPEC is 
+> exynos_defconfig probably is the easiest way to fix this. I will send a 
+> patch then.
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index 6fd436a1d373..94221d964d4f 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -1612,7 +1612,14 @@ static int gather_bitmaps(struct md_rdev *rdev)
- 	return err;
- }
- 
--static const struct md_cluster_operations cluster_ops = {
-+static struct md_cluster_operations cluster_ops = {
-+	.head = {
-+		.type	= MD_CLUSTER,
-+		.id	= ID_CLUSTER,
-+		.name	= "cluster",
-+		.owner	= THIS_MODULE,
-+	},
-+
- 	.join   = join,
- 	.leave  = leave,
- 	.slot_number = slot_number,
-@@ -1642,13 +1649,12 @@ static int __init cluster_init(void)
- {
- 	pr_warn("md-cluster: support raid1 and raid10 (limited support)\n");
- 	pr_info("Registering Cluster MD functions\n");
--	register_md_cluster_operations(&cluster_ops, THIS_MODULE);
--	return 0;
-+	return register_md_submodule(&cluster_ops.head);
- }
- 
- static void cluster_exit(void)
- {
--	unregister_md_cluster_operations();
-+	unregister_md_submodule(&cluster_ops.head);
- }
- 
- module_init(cluster_init);
-diff --git a/drivers/md/md-cluster.h b/drivers/md/md-cluster.h
-index 4e842af11fb4..8fb06d853173 100644
---- a/drivers/md/md-cluster.h
-+++ b/drivers/md/md-cluster.h
-@@ -37,9 +37,6 @@ struct md_cluster_operations {
- 	void (*update_size)(struct mddev *mddev, sector_t old_dev_sectors);
- };
- 
--extern int register_md_cluster_operations(const struct md_cluster_operations *ops,
--		struct module *module);
--extern int unregister_md_cluster_operations(void);
- extern int md_setup_cluster(struct mddev *mddev, int nodes);
- extern void md_cluster_stop(struct mddev *mddev);
- extern void md_reload_sb(struct mddev *mddev, int raid_disk);
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index d94c9aa8c3aa..4d93cc1aaabc 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -81,13 +81,8 @@ static const char *action_name[NR_SYNC_ACTIONS] = {
- 
- static DEFINE_XARRAY(md_submodule);
- 
--static DEFINE_SPINLOCK(pers_lock);
--
- static const struct kobj_type md_ktype;
- 
--static const struct md_cluster_operations *md_cluster_ops;
--static struct module *md_cluster_mod;
--
- static DECLARE_WAIT_QUEUE_HEAD(resync_wait);
- static struct workqueue_struct *md_wq;
- 
-@@ -7452,11 +7447,12 @@ static int update_raid_disks(struct mddev *mddev, int raid_disks)
- 
- static int get_cluster_ops(struct mddev *mddev)
- {
--	spin_lock(&pers_lock);
--	mddev->cluster_ops = md_cluster_ops;
--	if (mddev->cluster_ops && !try_module_get(md_cluster_mod))
-+	xa_lock(&md_submodule);
-+	mddev->cluster_ops = xa_load(&md_submodule, ID_CLUSTER);
-+	if (mddev->cluster_ops &&
-+	    !try_module_get(mddev->cluster_ops->head.owner))
- 		mddev->cluster_ops = NULL;
--	spin_unlock(&pers_lock);
-+	xa_unlock(&md_submodule);
- 
- 	return mddev->cluster_ops == NULL ? -ENOENT : 0;
- }
-@@ -7467,7 +7463,7 @@ static void put_cluster_ops(struct mddev *mddev)
- 		return;
- 
- 	mddev->cluster_ops->leave(mddev);
--	module_put(md_cluster_mod);
-+	module_put(mddev->cluster_ops->head.owner);
- 	mddev->cluster_ops = NULL;
- }
- 
-@@ -8559,31 +8555,6 @@ void unregister_md_submodule(struct md_submodule_head *msh)
- }
- EXPORT_SYMBOL_GPL(unregister_md_submodule);
- 
--int register_md_cluster_operations(const struct md_cluster_operations *ops,
--				   struct module *module)
--{
--	int ret = 0;
--	spin_lock(&pers_lock);
--	if (md_cluster_ops != NULL)
--		ret = -EALREADY;
--	else {
--		md_cluster_ops = ops;
--		md_cluster_mod = module;
--	}
--	spin_unlock(&pers_lock);
--	return ret;
--}
--EXPORT_SYMBOL(register_md_cluster_operations);
--
--int unregister_md_cluster_operations(void)
--{
--	spin_lock(&pers_lock);
--	md_cluster_ops = NULL;
--	spin_unlock(&pers_lock);
--	return 0;
--}
--EXPORT_SYMBOL(unregister_md_cluster_operations);
--
- int md_setup_cluster(struct mddev *mddev, int nodes)
- {
- 	int ret = get_cluster_ops(mddev);
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 873f33e2a1f6..dd6a28f5d8e6 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -603,7 +603,7 @@ struct mddev {
- 	mempool_t *serial_info_pool;
- 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
- 	struct md_cluster_info		*cluster_info;
--	const struct md_cluster_operations *cluster_ops;
-+	struct md_cluster_operations *cluster_ops;
- 	unsigned int			good_device_nr;	/* good device num within cluster raid */
- 	unsigned int			noio_flag; /* for memalloc scope API */
- 
--- 
-2.39.2
+No, it's just wrong. Nothing here depends on typec and ARMv7 does not
+have Typec.
 
+Best regards,
+Krzysztof
 
