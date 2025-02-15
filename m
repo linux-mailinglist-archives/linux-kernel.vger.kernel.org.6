@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-516274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A117DA36F0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25070A36F0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7D41706F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA951170B21
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF511DE3A0;
-	Sat, 15 Feb 2025 15:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB7D1DDC37;
+	Sat, 15 Feb 2025 15:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dg7opRyJ"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIKjwTmj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D7A42AA5;
-	Sat, 15 Feb 2025 15:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC37C1B532F;
+	Sat, 15 Feb 2025 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739632645; cv=none; b=tisg8hjK9gcB2hxeQf3en49+6Ve8cBXTe1aOf2qI1aJCWni+SQCduU+7wI55vAX/R9mtfAQUXz3KhXh7LVH/PL8vpXtYZz/qBfnZOyjHkS1zXuzmZ1T0QhDJaLSuDNjO2g2m6HdCS8WAJQNtysJz1viwoZb11E+/D0qqQmfBij4=
+	t=1739632679; cv=none; b=JuoWOFxAdJa/lYHE+2EdFqfuiXYb0SsUnDmXSBJGNFP+wba3BxN5wgAZih5F+oj1VfbJqsXstFJKdwOZtmr04aQylrYsqdSS+7bfqEWtH4SXrGM/FG6mi0PdGTLh4zh0L6j8Xm8m97YHx3MT106Y9zxvYh0n+847vKIVXYLfR7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739632645; c=relaxed/simple;
-	bh=12D54tSqZYYM94NSTY49DMrJ8u9BJDLtE0yKjHfwIoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKmrR34uE1qJD+jeRQhlhQSahUm1HwJf2FiNGxtWQE8ymNaPeVpjo8JPKV1eW0STTiX96xjPnNSJtkVcSwC23WwT5K9d4abHRAzaStBUo8kUB0Y3nOll+2uugGI85QBhqxwDlyw3+lr//EWKZ+Y0/PuHLrpr5Bt4bg5FCTuJNGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dg7opRyJ; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RVHUTIkovelkcVcjpfjCsd7fs8jwD3h1GnA4cAJiVMA=; b=dg7opRyJyzXQS/ijLpY6yVjfse
-	y0xiZSai6ir1hv53xjC04L7tKk7jUwdthNjnu6+3MoZHil9g61/njVIigEWQqplQBwHg4YPCTj69R
-	XVqr2Z8B2+j0RhvgMrVANU81GEWgYuOz6S/FCnQltOY6lUuz53o6cChvNwMU/0XWsP3xAPRlCJVAl
-	0dPikczG5BrOz/p0vm+FIrT4ZtZ7Etf5NCK7RMkCjTZpkYo0SURvtT/JKdYX3Ww9pIHI4FH0o5BIG
-	WW8exkUchA24xaIJ3trqItrV5euoRgM1tiWpFRlb3suc8bysL0NRXjy1geDU6bB4JyrXFvi350FSS
-	TUMvJcMw==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tjJuT-003xbB-B7; Sat, 15 Feb 2025 16:16:55 +0100
-Message-ID: <6632e26d-996c-432e-956f-5be178722e5b@igalia.com>
-Date: Sun, 16 Feb 2025 00:16:43 +0900
+	s=arc-20240116; t=1739632679; c=relaxed/simple;
+	bh=0usuO2VVnSrxD/i1f7GJ9yWz1k/gjIV1mloWca/XxQA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VdSrbiNli/KCkQtAMoQmSXm/BDIg6Bvajf0VjY9BFLHvq8jKo0pa4ai9dBmB+EI+a+bqf28J/i3DWWAXHzeHAlTPvlezCOwWmitWS4E0iXWtJAd+VO84+QQ0U5kJ0H5QgkJdfCWq3g0uJnTyzD8sNQoL/XIx9SJ4dPYGh4sexDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIKjwTmj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7193BC4CEDF;
+	Sat, 15 Feb 2025 15:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739632679;
+	bh=0usuO2VVnSrxD/i1f7GJ9yWz1k/gjIV1mloWca/XxQA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IIKjwTmj+gYTbB/3JjaGEF30QKTAZ7y9cYhD+22Z2kYDTBKdKrMxrDi56sgED9iFr
+	 XSOvRK/FHOHQt/wZaULUoFE1VSjZ8UhF8X8RNMqmhq0hUSma4DyxaSUDjWfRpqudOJ
+	 zrXCodpcFeuIX72fgTSk6F56a6Q3lYKnu5rUMzauWul0ebA+5FDlT2ZsYHUvdCnp4r
+	 31Bp6USLLCNJv8uLqRh80m6KCmIicN7pf8yU+ahzgP/kJOGPha2fedS91/QV0uSMQK
+	 wpDx/Vxr4XdfCHwaOpgClZNMiqnmxYGJKtAi6kDCXrXzIHkYyxoGsNR7YHwe8BKXSO
+	 A54eH+SQ1lWzQ==
+Date: Sun, 16 Feb 2025 00:17:55 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincent Donnefort <vdonnefort@google.com>
+Subject: Re: [PATCH] ring-buffer: Update pages_touched to reflect persistent
+ buffer content
+Message-Id: <20250216001755.b5e1f1ac00bef0b46dec74f4@kernel.org>
+In-Reply-To: <20250214123512.0631436e@gandalf.local.home>
+References: <20250214123512.0631436e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
- when unit_alloc() fails
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Tejun Heo <tj@kernel.org>,
- Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250212084851.150169-1-changwoo@igalia.com>
- <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
- <4fd39e4b-f2dc-4b7d-a3be-ec3eae8d592a@igalia.com>
- <CAADnVQL5dt7_S-zFSh-ps7uPfL2ofYs0vo1fFuFBwiz0=DV2Vw@mail.gmail.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <CAADnVQL5dt7_S-zFSh-ps7uPfL2ofYs0vo1fFuFBwiz0=DV2Vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 14 Feb 2025 12:35:12 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 25. 2. 15. 12:51, Alexei Starovoitov wrote:
- > On Fri, Feb 14, 2025 at 1:24 AM Changwoo Min <changwoo@igalia.com> wrote:
- >>
- >> Hello Alexei,
- >>
- >> Thank you for the comments! I reordered your comments for ease of
- >> explanation.
- >>
- >> On 25. 2. 14. 02:45, Alexei Starovoitov wrote:
- >>> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min <changwoo@igalia.com> 
-wrote:
- >>
- >>> The commit log is too terse to understand what exactly is going on.
- >>> Pls share the call stack. What is the allocation size?
- >>> How many do you do in a sequence?
- >>
- >> The symptom is that an scx scheduler (scx_lavd) fails to load on
- >> an ARM64 platform on its first try. The second try succeeds. In
- >> the failure case, the kernel spits the following messages:
- >>
- >> [   27.431380] sched_ext: BPF scheduler "lavd" disabled (runtime error)
- >> [   27.431396] sched_ext: lavd: ops.init() failed (-12)
- >> [   27.431401]    scx_ops_enable.isra.0+0x838/0xe48
- >> [   27.431413]    bpf_scx_reg+0x18/0x30
- >> [   27.431418]    bpf_struct_ops_link_create+0x144/0x1a0
- >> [   27.431427]    __sys_bpf+0x1560/0x1f98
- >> [   27.431433]    __arm64_sys_bpf+0x2c/0x80
- >> [   27.431439]    do_el0_svc+0x74/0x120
- >> [   27.431446]    el0_svc+0x80/0xb0
- >> [   27.431454]    el0t_64_sync_handler+0x120/0x138
- >> [   27.431460]    el0t_64_sync+0x174/0x178
- >>
- >> The ops.init() failed because the 5th bpf_cpumask_create() calls
- >> failed during the initialization of the BPF scheduler. The exact
- >> point where bpf_cpumask_create() failed is here [1]. That scx
- >> scheduler allocates 5 CPU masks to aid its scheduling decision.
- >
- > ...
- >
- >> In this particular scenario, the IRQ is not disabled. I just
- >
- > since irq-s are not disabled the unit_alloc() should have done:
- >          if (cnt < c->low_watermark)
- >                  irq_work_raise(c);
- >
- > and alloc_bulk() should have started executing after the first
- > calloc_cpumask(&active_cpumask);
- > to refill it from 3 to 64
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> The pages_touched field represents the number of subbuffers in the ring
+> buffer that have content that can be read. This is used in accounting of
+> "dirty_pages" and "buffer_percent" to allow the user to wait for the
+> buffer to be filled to a certain amount before it reads the buffer in
+> blocking mode.
+> 
+> The persistent buffer never updated this value so it was set to zero, and
+> this accounting would take it as it had no content. This would cause user
+> space to wait for content even though there's enough content in the ring
+> buffer that satisfies the buffer_percent.
 
-Is there any possibility that irq_work is not scheduled right away on 
-aarch64?
+Looks good to me.
 
- >
- > What is sizeof(struct bpf_cpumask) in your system?
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-In my system, sizeof(struct bpf_cpumask) is 1032.
+Thanks,
 
- >
- > Something doesn't add up. irq_work_queue() should be
- > instant when irq-s are not disabled.
- > This is not IRQ_WORK_LAZY.> Are you running PREEMPT_RT ?
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5f3b6e839f3ce ("ring-buffer: Validate boot range memory events")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/ring_buffer.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 0419d41a2060..bb6089c2951e 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -1850,6 +1850,11 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+>  				cpu_buffer->cpu);
+>  			goto invalid;
+>  		}
+> +
+> +		/* If the buffer has content, update pages_touched */
+> +		if (ret)
+> +			local_inc(&cpu_buffer->pages_touched);
+> +
+>  		entries += ret;
+>  		entry_bytes += local_read(&head_page->page->commit);
+>  		local_set(&cpu_buffer->head_page->entries, ret);
+> -- 
+> 2.47.2
+> 
 
-No, CONFIG_PREEMPT_RT is not set.
 
-Regards,
-Changwoo Min
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
