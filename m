@@ -1,188 +1,135 @@
-Return-Path: <linux-kernel+bounces-516128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82BDA36D3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:08:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17D4A36D3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560751892BD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090A73A3F85
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E262D1A3153;
-	Sat, 15 Feb 2025 10:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3DA1A23BA;
+	Sat, 15 Feb 2025 10:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qi/k3+A5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="V8fxFeR9"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8CF19258E;
-	Sat, 15 Feb 2025 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B5D19E7ED
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739614077; cv=none; b=G+LbHFT2bDkfZQ8Ep4ebDmiRA34psjrwuuX+S0ExBGuarPyPZ0jFt4s3mt7XD3jWfmVvzASlrNq/GOfvwvFL964xfotkKGIwtjkPDzf8/O2zx+Tcm+2bd1uGW63BKcEMnswpqxKna23q/uwVO44IQnhYjtkfhgs10047roaEwZw=
+	t=1739614132; cv=none; b=hXe4k1Oa+o8YJ4IjQo0fDwWBiseD7JhSJK1X78uA6zoZE2ks8X6i+Ca8QU73jZs4hu7fucHiDKiA7X0HxCRZZz/EPCb0AjQcV9EmWdV4Hagcrm5BRxN6Pk+M7vxMG9z3jd3qTDgqSa9qwQN6Pr15S6UhKzK1kFI1f4K2rP9AbVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739614077; c=relaxed/simple;
-	bh=tIDU56jo1s+8ObGKmjKkETRM71pM0ipfljqXskOq1B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYL4/Pi4I0C+fWEEGI5zm+lyJFLAuPDjd5YvHESwr+EY0xyOhY3DUVAH78mPezyCkZUrpYLZMcCbtgEGx7aL2xtJ3ouPwFDFfAxLmDKfbKA+lmsTpoUeIGHCpjlpn7OL2COdI+ane5BQrba0cWfAtEp7GFCMYVIDliwD+VeiJME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qi/k3+A5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 536A4C4CEDF;
-	Sat, 15 Feb 2025 10:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739614074;
-	bh=tIDU56jo1s+8ObGKmjKkETRM71pM0ipfljqXskOq1B8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qi/k3+A5Xa5039kXxfQKobZt5SEFykpdULmJVuAdf4Ztgd36omY3Lf+bxJhlx/VbV
-	 WRsJpETiz1GYv450e5jyBRJ0e36rg68oYKFoBG11lZUzzgoyBfHdZfgtXurhXNocCt
-	 dDOavZy8T4laQniqN+x2AsMc+C5lJ4t1VjWjKH0pZGZsJFJaLZApzg2Abu6wwbYsqj
-	 39x2PBOWshqbq0xE7dylOxaEeUyaSrgJ85bpdCVQIqfB+kRAzNuV8jPB/1M4iUkZ0f
-	 E++o3Rzp1T3cGznja9cbYRX/irFPEtl2BO//q+2Tbh1CKpAmMAjBMfKN3wJQw7yUvq
-	 QYrckA0bbRP+g==
-Message-ID: <7c0dcf24-187c-4dc8-aa4a-4a8f814775b2@kernel.org>
-Date: Sat, 15 Feb 2025 11:07:45 +0100
+	s=arc-20240116; t=1739614132; c=relaxed/simple;
+	bh=BRmwtD3g4MdASxOYlwvxiLLUj13AgRdVvwTDU+wMxCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVs87Ixp5ZeCLyi+cRVTMWXEG2CFe7U0uxtH8axcH+YLsiJCDuhis7YBZrCqRUVPlXIUcrNdLG7pbJjlb92vqUVrbTFL4vLbHQBCyg4viQ0saXd0OVt2Hslytbl5HBe+6nF4BgdSgrk137/0jRTAGZYz0xduChwVY7QJqopOb2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=V8fxFeR9; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2c4382d1so864512f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 02:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739614129; x=1740218929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONpnWz0CmHVgfVwLFdzwsY0uXxe9qG8gGGoClVT2HtQ=;
+        b=V8fxFeR9FBNL2NfjASW4Qkwhckq8jR8lv6AldEXvHFqdhtYcESSN9msdipXv+3xrYy
+         3lJWdApGBYdxsM+BqT0gmZw/cAJRza2vkeulktvrur1dZoktojaeWovw6ZNIEGFovvlv
+         +VfZXEPZnvxPiVs2nCgHWxH5xCMh02IEjJUiGibQmlwdxey5/XqC/b7Yoth4d816ysVg
+         gO8QPGxDFNKNtNm10Ai9sUmNMEZnMD7oeJsXZIzXogHfNIfHAtVpXN1Qe5xDU/bCGB5C
+         Iw6yR7EdSsOZVTtFRzm1Gq516rtapBlYMUqoXuX5EP5yVY/4nUzkaH60wvCTVDYeq/ns
+         fPWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739614129; x=1740218929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ONpnWz0CmHVgfVwLFdzwsY0uXxe9qG8gGGoClVT2HtQ=;
+        b=KCOerU3x8aJzhuc8q1HgyNZglgdEq33wTrH1sL8dUCmB3HCf32V5z/7GCet0gQI5MF
+         5ImLz0oqElKUkINWN5VLQ63L5GTtEUs+ynHmDXP4LUICvGDWiOlcKHPATH7dPA+e0fSR
+         c6uVOLELGGagU3d37XBTv0aMz3tIydNhMQoAvSm9IzGcdw43bGpbpGOy6QqDIiQZ5FzB
+         cgOmpQDgSnh6giD18VfdNLa/SxooEzwtIJo6xDu8EbR3YJ4lRR6pWVbkKPIRrpov9UTR
+         /qVMqx74VPmVqK5hRLiNRQGRnnJka8URKQU6UqML29puVeaqkm0u/m0dVbXHzY0mPo90
+         ptWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgWhFb69a0MbpWgOmVuCGLX8rFZNiVPySA8C2xPnj1S2D0SxuVQsxRuGrV7EGlj8v1Wwe0ek8n9TgT33c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBKCkXSFAzBNUKpmwjiKp6oAsDdVOwr014DF3U4eWym/YJyLm7
+	DZv+UDkS5FufdLiYW+cZHXJhfKm1UGH6e+qk3zOjLfDfcT4Hyr5b3iLjyly7yjjZcUUODFEdYyK
+	c66M=
+X-Gm-Gg: ASbGncuGR4A6qKOvQ9Y4JX8b7TacNtPtSxFT0zFEBqay9dxpp+do2GJLqbg8URVX+Mo
+	LG4rgJF+6UzIIE37YT31a4RPEKzGgG37O5OYTqV5nbXBq7QUoBX6kej0098KD1kYkuIG1l9Mhtd
+	vNvT/JMSljoWJELuPbgedoFs3N9lC4XtHpYVRsF2Bs1M8+XHKrevnue2MY20iOPp4x/1dZqnavL
+	9FBUv7eEhiSQ6fyoWY22cnoZaS+l0j9SS3kYmBggK6Zq80dBQzq+S/4zd19kXb1eSPsPONUlgMa
+	8xBINfqzsv5n
+X-Google-Smtp-Source: AGHT+IGh6i3Dj+Choh+Ag1DxD3ZJRrsDaj224k4gzjS6anWZyky52EcQ9UvX1NzyoZ1iyfF1U5sC4g==
+X-Received: by 2002:a05:6000:18a9:b0:38f:221c:2c8e with SMTP id ffacd0b85a97d-38f339d8907mr2947145f8f.6.1739614128977;
+        Sat, 15 Feb 2025 02:08:48 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de0:6b3:d799:3d4f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258cccdesm6862411f8f.26.2025.02.15.02.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 02:08:48 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpiolib: read descriptor flags once in gpiolib_dbg_show()
+Date: Sat, 15 Feb 2025 11:08:47 +0100
+Message-ID: <20250215100847.30136-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <CGME20241206163109eucas1p12aea3a9a6c404cd7c678009ea11aa5b3@eucas1p1.samsung.com>
- <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
- <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/02/2025 20:30, Marek Szyprowski wrote:
-> On 06.12.2024 17:31, André Draszik wrote:
->> gs101's SS phy needs to be configured differently based on the
->> connector orientation, as the SS link can only be established if the
->> mux is configured correctly.
->>
->> The code to handle programming of the mux is in place already, this commit
->> now adds the missing pieces to subscribe to the Type-C orientation
->> switch event.
->>
->> Note that for this all to work we rely on the USB controller
->> re-initialising us. It should invoke our .exit() upon cable unplug, and
->> during cable plug we'll receive the orientation event after which we
->> expect our .init() to be called.
->>
->> Above reinitialisation happens if the DWC3 controller can enter runtime
->> suspend automatically. For the DWC3 driver, this is an opt-in:
->>      echo auto > /sys/devices/.../11110000.usb/power/control
->> Once done, things work as long as the UDC is not bound as otherwise it
->> stays busy because it doesn't cancel / stop outstanding TRBs. For now
->> we have to manually unbind the UDC in that case:
->>       echo "" > sys/kernel/config/usb_gadget/.../UDC
->>
->> Note that if the orientation-switch property is missing from the DT,
->> the code will behave as before this commit (meaning for gs101 it will
->> work in SS mode in one orientation only). Other platforms are not
->> affected either way.
->>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>
->> ---
->> v3:
->> * drop init to -1 of phy_drd->orientation (Vinod)
->> * avoid #ifdef and switch to normal conditional IS_ENABLED() for
->>    CONFIG_TYPEC
->>
->> v2:
->> * move #include typec_mux.h from parent patch into this one (Peter)
->> ---
->>   drivers/phy/samsung/Kconfig              |  1 +
->>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 56 ++++++++++++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f10afa3d7ff5..fc7bd1088576 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->>   	tristate "Exynos5 SoC series USB DRD PHY driver"
->>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>   	depends on HAS_IOMEM
->> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-BTW, this syntax never made any sense - it did not work. The optional
-dependency is expressed as:
-	depends on TYPEC || !TYPEC
+For consistency with most other code that can access requested
+descriptors: read the flags once atomically and then test individual
+bits from the helper variable. This avoids any potential discrepancies
+should flags change during the debug print.
 
-but what it epxressed is that it is possible to build it without typec
-only for compile test, which is odd if this was meant to be optional.
-And further code:
-	if (!IS_ENABLED(CONFIG_TYPEC))
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-clearly suggests this should be optional.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f4e14a7dbc87..7dd054f8141e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -5003,6 +5003,7 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+ 	unsigned int gpio = gdev->base;
+ 	struct gpio_desc *desc;
+ 	struct gpio_chip *gc;
++	unsigned long flags;
+ 	int value;
+ 
+ 	guard(srcu)(&gdev->srcu);
+@@ -5015,12 +5016,13 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+ 
+ 	for_each_gpio_desc(gc, desc) {
+ 		guard(srcu)(&desc->gdev->desc_srcu);
+-		is_irq = test_bit(FLAG_USED_AS_IRQ, &desc->flags);
+-		if (is_irq || test_bit(FLAG_REQUESTED, &desc->flags)) {
++		flags = READ_ONCE(desc->flags);
++		is_irq = test_bit(FLAG_USED_AS_IRQ, &flags);
++		if (is_irq || test_bit(FLAG_REQUESTED, &flags)) {
+ 			gpiod_get_direction(desc);
+-			is_out = test_bit(FLAG_IS_OUT, &desc->flags);
++			is_out = test_bit(FLAG_IS_OUT, &flags);
+ 			value = gpio_chip_get_value(gc, desc);
+-			active_low = test_bit(FLAG_ACTIVE_LOW, &desc->flags);
++			active_low = test_bit(FLAG_ACTIVE_LOW, &flags);
+ 			seq_printf(s, " gpio-%-3u (%-20.20s|%-20.20s) %s %s %s%s\n",
+ 				   gpio, desc->name ?: "", gpiod_get_label(desc),
+ 				   is_out ? "out" : "in ",
+-- 
+2.45.2
 
-
-Best regards,
-Krzysztof
 
