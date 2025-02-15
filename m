@@ -1,331 +1,158 @@
-Return-Path: <linux-kernel+bounces-515808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E91A3694D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:04:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3CBA36947
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5B03B1272
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB501188BC9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457E12E62B;
-	Sat, 15 Feb 2025 00:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37D415E8B;
+	Sat, 15 Feb 2025 00:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FftUHtFc"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p35LgQoc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E041CD0C;
-	Sat, 15 Feb 2025 00:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189C31096F;
+	Sat, 15 Feb 2025 00:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577795; cv=none; b=OK/JXvgNcBh+XQWcT9N2bLFsAFebeuHjmYrQDbQUgA/5PEScdDgwidbblGr5OYZC9Iy7F/ktsxQJpQPAYBjOSokyDnP+zfERBFxKT0VnwtPXUmzFQ9oT0q1AFgysWCvV6ZpxNI9/ez4xA5aS1OBWURoow8OM9i9N5s/0Su+Ov0A=
+	t=1739577791; cv=none; b=G6SWmh5AeGcTMexa6xjzEOOJcCOwbjo8wtjmwYMRneEFfRt8msYLQYM0jog2/5KCddKnaO2hEESTvceBXnd9GLt9Ldt5x9jhR/SM3KrqQnWL1oKEtr6y+wQTpl5NKQz1klGgxRHEgtK5zpxsuxJyvUgEuDQ+ViBH17Ba4kAEM0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577795; c=relaxed/simple;
-	bh=I33ECS2dn4xDgX9A3s2ndVHD+u+pmKmrL/6XQzYxerM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A4slnwxK90Y7MdjPYUj73O+V/59y4c5f5QDXo4LnkwSjlFmrA4kYhrGMLeFsoKtxU6I4jJ+OhY0KPUX5cEqiv6JrVRAjOI996dFlpcjejsNm4qF1mAtMNKP9p6Ne87mG923axR9kkZ9+PSieTeGzfIhxpXID0PAaYbAEdjedc/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FftUHtFc; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f9c6d147edso24593127b3.3;
-        Fri, 14 Feb 2025 16:03:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739577792; x=1740182592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nef+ttkW6sOw/of/q3ow/c0DyRk7Vqkp8UwOrc60xng=;
-        b=FftUHtFcJEbner79sT4Kh09rsvQk2iW1VFweRSKIvL9L6ojdD1IwiGRvXACAOaUem/
-         zS0J0ECE5kcv/ZOglYhS5ZcoRxNyoqwv2eKoF+lkce3i/81j1A0X0C3ybuNGUg91E9aA
-         HVq1c6LXhLP3GTc+TSAvf5fQOAvO8jjpc8sMvLq2YZGKh+nImTQM88J2phVzfatl7xEb
-         SUKU3dfTHwmg2sDXncYZdYQzUEXy7zdS1rJlKP1D1NBsXXPBGg1PY6to6mO4FANrVXiL
-         ObBmcLPZItaI9PnlrdNPUFTT+v4Sz3z6OMZHPy7q7Mc4kUnzZkvSI1hCE3IjRdwT8r2V
-         emPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739577792; x=1740182592;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nef+ttkW6sOw/of/q3ow/c0DyRk7Vqkp8UwOrc60xng=;
-        b=OypVALKAh2nS/TYyE5TwFVMI6mshWi1TleY0ZDHJtaN/xajweZoyTEvhF2BXj4DR/i
-         Wr4VeYCl6xq6c7ym6p+jYqDKrSBi1WszxBpayNHy+CuuIoaIy5CKykthE0jXf1y7q6d8
-         a1lI/cOS1U4i1gJNR+3ocugfB2sRJ8+qOkDTdJk0riaMH6KsvCuoGjAbewFiMmQd5jqG
-         k1Scvj+lHd4XCsuHfHTfuhpiFzoP1V7yVUKey5vF6NbfYria3psw3mMWgQRSp3Qo7obf
-         UaJOvahT6jxIVq2rsExQ9EEb2ysY37Hjvamrpk81fBnJNgW2VSKXsigyACgdI+BThg90
-         yyHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOuLs1l3z7QyaO5kqvCc3t+YqCpgrpmStKhEEpth99NFl8/sMiaWwwsPSCTDb6oHTCx6vwgXAEoZgc9jc=@vger.kernel.org, AJvYcCWqCgcSnqXIxjoBtgQoNANZCOsikisharQ3blaEq36jLK4ciPZgZe43+WRFT6hLsmZ4f4E76ymeqAc9UlMlanJHeOxQqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyDQiykUe3rpOColHmkj6AFWSddCwpI8qVYVQxGGE0gwLe+Gwn
-	JYH0D8PabMxHPJxvIqa6piwy85GzQHzm1cR+SDtnYVmVOc1l9ukouujJcQ==
-X-Gm-Gg: ASbGncustrFeOQBWruCcIXzQEo793Kcwbhe7iSpWMBB37MUjRDZ0QGmqQ/xxj2BRjwx
-	zDa3Z/XdCCO9DC/dlmzkyralBjaY+UOIqHJ73EtriFatLQhrl3zY3q2/Xw1S0Nrrlk/FCLJAzuK
-	5YNp5apKCShjfgNSJLYmBTSdvvmw+K7TOxjmPvINWDB69Yo3CNZBENpojgrz7MuK25HPUzDz0g3
-	EqzgJvvOLqvGR8DpJJdVkBd7RzHiCXflteFd7RFhlDoi/H1Todrgc1tcMSVCjyCaurC8ke75lHa
-	947XtuFR1covI31hyc8/Qno=
-X-Google-Smtp-Source: AGHT+IEheVAFV0wi/wzsqTMVLV3X3BaSwCdvJMaIS9By7sccuhiYNDmYBozGqjlzr0KxAdwDt8cv5A==
-X-Received: by 2002:a05:690c:30f:b0:6f9:7801:7b2b with SMTP id 00721157ae682-6fb583a1865mr14679067b3.35.1739577792535;
-        Fri, 14 Feb 2025 16:03:12 -0800 (PST)
-Received: from localhost.localdomain ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb35d586e5sm9844207b3.17.2025.02.14.16.03.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 16:03:11 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
+	s=arc-20240116; t=1739577791; c=relaxed/simple;
+	bh=LZmLoCUg08NiVuotxrtqAjBOOXyj6jZPtonN1xnIy4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uAvWmDvab+7X5HoVNSisVU4RQYbJeTKXBE4DIe1fmC7jTf3zJtVJv3hMgekeTyoKsM8p8iP0Awjqc3q3qOwWZ4R5PmxDilw41le9s0RZ+134yCu13koR0oZ5eQUDE6EBsCeO/03e8zQjkjBAF5826zNRL4KPAVtoqsthlnjf3oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p35LgQoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C1BC4CED1;
+	Sat, 15 Feb 2025 00:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739577790;
+	bh=LZmLoCUg08NiVuotxrtqAjBOOXyj6jZPtonN1xnIy4A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=p35LgQocFaddJNP++Q2tfgtWsy/Rgk6APOwPSl9UKUkTfCTLhWekS0zCupTf0Rs1p
+	 FlipWpvQNwyUS+6tc0LnJxz6WGcCVNEgRbplqYxI/oyLu6NyuihfcutXwAaGe8AOgz
+	 tjAYb5POICChBpxb6YzwLM84muOIkb8OGWpt2YCmn09ZjhMQxm8UJzdFbI8hDGmV0K
+	 5U7k4KQ/BFHo43RSVIpA7jW3J++E6/ZOofCy9gPlgqOi8xKt0SPPX4j2v0dk0QBmMB
+	 1Pom8G2S8dlUywZWRyVmPNJSKRNyBi+EAetVWJEa4Fr0HVA9j3HHj4JZJ+UHwb9QxL
+	 Fp9pfx8rUXkuw==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
-	Kurt Borja <kuurtb@gmail.com>
-Subject: [PATCH 1/2] platform/x86: thinkpad_acpi: Move subdriver initialization to tpacpi_pdriver's probe.
-Date: Fri, 14 Feb 2025 19:03:01 -0500
-Message-ID: <20250215000302.19753-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250215000302.19753-1-kuurtb@gmail.com>
-References: <20250215000302.19753-1-kuurtb@gmail.com>
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v2 2/2] PCI: Cache offset of Resizable BAR capability
+Date: Fri, 14 Feb 2025 18:03:01 -0600
+Message-Id: <20250215000301.175097-3-helgaas@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250215000301.175097-1-helgaas@kernel.org>
+References: <20250215000301.175097-1-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-It was reported that if subdrivers assigned devres resources inside
-ibm_init_struct's .init callbacks, driver binding would fail with the
-following error message:
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-	platform thinkpad_acpi: Resources present before probing
+Previously most resizable BAR interfaces (pci_rebar_get_possible_sizes(),
+pci_rebar_set_size(), etc) as well as pci_restore_state() searched config
+space for a Resizable BAR capability.  Most devices don't have such a
+capability, so this is wasted effort, especially for pci_restore_state().
 
-Let the driver core manage the lifetimes of the subdrivers and children
-devices, by initializing them inside tpacpi_driver's .probe callback.
-This is appropriate because these subdrivers usually expose sysfs groups
-and the driver core manages this automatically to avoid races.
+Search for a Resizable BAR capability once at enumeration-time and cache
+the offset so we don't have to search every time we need it.  No functional
+change intended.
 
-One immediate benefit of this, is that we are now able to use devres
-inside .init subdriver callbacks.
-
-platform_create_bundle is specifically used because it makes the
-driver's probe type synchronous and returns an ERR_PTR if attachment
-failed.
-
-Additionally, to make error handling simpler, allocate the input device
-using devm_input_allocate_device().
-
-Reported-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Closes: https://lore.kernel.org/platform-driver-x86/20250208091438.5972-1-mpearson-lenovo@squebb.ca/#t
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/platform/x86/thinkpad_acpi.c | 136 ++++++++++++---------------
- 1 file changed, 62 insertions(+), 74 deletions(-)
+ drivers/pci/pci.c   | 9 +++++++--
+ drivers/pci/pci.h   | 1 +
+ drivers/pci/probe.c | 1 +
+ include/linux/pci.h | 1 +
+ 4 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index ab1cade5ef23..ad9de48cc122 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -367,8 +367,6 @@ static struct {
- 	u32 beep_needs_two_args:1;
- 	u32 mixer_no_level_control:1;
- 	u32 battery_force_primary:1;
--	u32 input_device_registered:1;
--	u32 platform_drv_registered:1;
- 	u32 sensors_pdrv_registered:1;
- 	u32 hotkey_poll_active:1;
- 	u32 has_adaptive_kbd:1;
-@@ -11815,36 +11813,20 @@ MODULE_PARM_DESC(profile_force, "Force profile mode. -1=off, 1=MMC, 2=PSC");
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 503376bf7e75..cf2632080a94 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1872,7 +1872,7 @@ static void pci_restore_rebar_state(struct pci_dev *pdev)
+ 	unsigned int pos, nbars, i;
+ 	u32 ctrl;
  
- static void thinkpad_acpi_module_exit(void)
- {
--	struct ibm_struct *ibm, *itmp;
--
- 	tpacpi_lifecycle = TPACPI_LIFE_EXITING;
+-	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
++	pos = pdev->rebar_cap;
+ 	if (!pos)
+ 		return;
  
- 	if (tpacpi_hwmon)
- 		hwmon_device_unregister(tpacpi_hwmon);
- 	if (tp_features.sensors_pdrv_registered)
- 		platform_driver_unregister(&tpacpi_hwmon_pdriver);
--	if (tp_features.platform_drv_registered)
--		platform_driver_unregister(&tpacpi_pdriver);
--
--	list_for_each_entry_safe_reverse(ibm, itmp,
--					 &tpacpi_all_drivers,
--					 all_drivers) {
--		ibm_exit(ibm);
--	}
--
--	dbg_printk(TPACPI_DBG_INIT, "finished subdriver exit path...\n");
--
--	if (tpacpi_inputdev) {
--		if (tp_features.input_device_registered)
--			input_unregister_device(tpacpi_inputdev);
--		else
--			input_free_device(tpacpi_inputdev);
--	}
--
- 	if (tpacpi_sensors_pdev)
- 		platform_device_unregister(tpacpi_sensors_pdev);
--	if (tpacpi_pdev)
-+
-+	if (tpacpi_pdev) {
-+		platform_driver_unregister(&tpacpi_pdriver);
- 		platform_device_unregister(tpacpi_pdev);
-+	}
-+
- 	if (proc_dir)
- 		remove_proc_entry(TPACPI_PROC_DIR, acpi_root_dir);
- 	if (tpacpi_wq)
-@@ -11856,11 +11838,63 @@ static void thinkpad_acpi_module_exit(void)
- 	kfree(thinkpad_id.nummodel_str);
+@@ -3719,6 +3719,11 @@ void pci_acs_init(struct pci_dev *dev)
+ 	pci_enable_acs(dev);
  }
  
-+static void tpacpi_subdrivers_release(void *data)
++void pci_rebar_init(struct pci_dev *pdev)
 +{
-+	struct ibm_struct *ibm, *itmp;
-+
-+	list_for_each_entry_safe_reverse(ibm, itmp, &tpacpi_all_drivers, all_drivers)
-+		ibm_exit(ibm);
-+
-+	dbg_printk(TPACPI_DBG_INIT, "finished subdriver exit path...\n");
++	pdev->rebar_cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
 +}
 +
-+static int __init tpacpi_pdriver_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	devm_mutex_init(&pdev->dev, &tpacpi_inputdev_send_mutex);
-+
-+	tpacpi_inputdev = devm_input_allocate_device(&pdev->dev);
-+	if (!tpacpi_inputdev)
-+		return -ENOMEM;
-+
-+	tpacpi_inputdev->name = "ThinkPad Extra Buttons";
-+	tpacpi_inputdev->phys = TPACPI_DRVR_NAME "/input0";
-+	tpacpi_inputdev->id.bustype = BUS_HOST;
-+	tpacpi_inputdev->id.vendor = thinkpad_id.vendor;
-+	tpacpi_inputdev->id.product = TPACPI_HKEY_INPUT_PRODUCT;
-+	tpacpi_inputdev->id.version = TPACPI_HKEY_INPUT_VERSION;
-+	tpacpi_inputdev->dev.parent = &tpacpi_pdev->dev;
-+
-+	/* Init subdriver dependencies */
-+	tpacpi_detect_brightness_capabilities();
-+
-+	/* Init subdrivers */
-+	for (unsigned int i = 0; i < ARRAY_SIZE(ibms_init); i++) {
-+		ret = ibm_init(&ibms_init[i]);
-+		if (ret >= 0 && *ibms_init[i].param)
-+			ret = ibms_init[i].data->write(ibms_init[i].param);
-+		if (ret < 0) {
-+			tpacpi_subdrivers_release(NULL);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, tpacpi_subdrivers_release, NULL);
-+	if (ret)
-+		return ret;
-+
-+	ret = input_register_device(tpacpi_inputdev);
-+	if (ret < 0)
-+		pr_err("unable to register input device\n");
-+
-+	return ret;
-+}
+ /**
+  * pci_rebar_find_pos - find position of resize ctrl reg for BAR
+  * @pdev: PCI device
+@@ -3733,7 +3738,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+ 	unsigned int pos, nbars, i;
+ 	u32 ctrl;
  
- static int __init thinkpad_acpi_module_init(void)
- {
- 	const struct dmi_system_id *dmi_id;
--	int ret, i;
-+	int ret;
- 	acpi_object_type obj_type;
+-	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
++	pos = pdev->rebar_cap;
+ 	if (!pos)
+ 		return -ENOTSUPP;
  
- 	tpacpi_lifecycle = TPACPI_LIFE_INIT;
-@@ -11920,15 +11954,16 @@ static int __init thinkpad_acpi_module_init(void)
- 		tp_features.quirks = dmi_id->driver_data;
- 
- 	/* Device initialization */
--	tpacpi_pdev = platform_device_register_simple(TPACPI_DRVR_NAME, PLATFORM_DEVID_NONE,
--							NULL, 0);
-+	tpacpi_pdev = platform_create_bundle(&tpacpi_pdriver, tpacpi_pdriver_probe,
-+					     NULL, 0, NULL, 0);
- 	if (IS_ERR(tpacpi_pdev)) {
- 		ret = PTR_ERR(tpacpi_pdev);
- 		tpacpi_pdev = NULL;
--		pr_err("unable to register platform device\n");
-+		pr_err("unable to register platform device/driver bundle\n");
- 		thinkpad_acpi_module_exit();
- 		return ret;
- 	}
-+
- 	tpacpi_sensors_pdev = platform_device_register_simple(
- 						TPACPI_HWMON_DRVR_NAME,
- 						PLATFORM_DEVID_NONE, NULL, 0);
-@@ -11940,46 +11975,8 @@ static int __init thinkpad_acpi_module_init(void)
- 		return ret;
- 	}
- 
--	mutex_init(&tpacpi_inputdev_send_mutex);
--	tpacpi_inputdev = input_allocate_device();
--	if (!tpacpi_inputdev) {
--		thinkpad_acpi_module_exit();
--		return -ENOMEM;
--	} else {
--		/* Prepare input device, but don't register */
--		tpacpi_inputdev->name = "ThinkPad Extra Buttons";
--		tpacpi_inputdev->phys = TPACPI_DRVR_NAME "/input0";
--		tpacpi_inputdev->id.bustype = BUS_HOST;
--		tpacpi_inputdev->id.vendor = thinkpad_id.vendor;
--		tpacpi_inputdev->id.product = TPACPI_HKEY_INPUT_PRODUCT;
--		tpacpi_inputdev->id.version = TPACPI_HKEY_INPUT_VERSION;
--		tpacpi_inputdev->dev.parent = &tpacpi_pdev->dev;
--	}
--
--	/* Init subdriver dependencies */
--	tpacpi_detect_brightness_capabilities();
--
--	/* Init subdrivers */
--	for (i = 0; i < ARRAY_SIZE(ibms_init); i++) {
--		ret = ibm_init(&ibms_init[i]);
--		if (ret >= 0 && *ibms_init[i].param)
--			ret = ibms_init[i].data->write(ibms_init[i].param);
--		if (ret < 0) {
--			thinkpad_acpi_module_exit();
--			return ret;
--		}
--	}
--
- 	tpacpi_lifecycle = TPACPI_LIFE_RUNNING;
- 
--	ret = platform_driver_register(&tpacpi_pdriver);
--	if (ret) {
--		pr_err("unable to register main platform driver\n");
--		thinkpad_acpi_module_exit();
--		return ret;
--	}
--	tp_features.platform_drv_registered = 1;
--
- 	ret = platform_driver_register(&tpacpi_hwmon_pdriver);
- 	if (ret) {
- 		pr_err("unable to register hwmon platform driver\n");
-@@ -11998,15 +11995,6 @@ static int __init thinkpad_acpi_module_init(void)
- 		return ret;
- 	}
- 
--	ret = input_register_device(tpacpi_inputdev);
--	if (ret < 0) {
--		pr_err("unable to register input device\n");
--		thinkpad_acpi_module_exit();
--		return ret;
--	} else {
--		tp_features.input_device_registered = 1;
--	}
--
- 	return 0;
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 01e51db8d285..d7b46ddfd6d2 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -799,6 +799,7 @@ static inline int acpi_get_rc_resources(struct device *dev, const char *hid,
  }
+ #endif
  
++void pci_rebar_init(struct pci_dev *pdev);
+ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar);
+ int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size);
+ static inline u64 pci_rebar_size_to_bytes(int size)
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b6536ed599c3..24dd3dcfd223 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2564,6 +2564,7 @@ static void pci_init_capabilities(struct pci_dev *dev)
+ 	pci_rcec_init(dev);		/* Root Complex Event Collector */
+ 	pci_doe_init(dev);		/* Data Object Exchange */
+ 	pci_tph_init(dev);		/* TLP Processing Hints */
++	pci_rebar_init(dev);		/* Resizable BAR */
+ 
+ 	pcie_report_downtraining(dev);
+ 	pci_init_reset_methods(dev);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 47b31ad724fa..9e5bbd996c83 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -353,6 +353,7 @@ struct pci_dev {
+ 	struct pci_dev  *rcec;          /* Associated RCEC device */
+ #endif
+ 	u32		devcap;		/* PCIe Device Capabilities */
++	u16		rebar_cap;	/* Resizable BAR capability offset */
+ 	u8		pcie_cap;	/* PCIe capability offset */
+ 	u8		msi_cap;	/* MSI capability offset */
+ 	u8		msix_cap;	/* MSI-X capability offset */
 -- 
-2.48.1
+2.34.1
 
 
