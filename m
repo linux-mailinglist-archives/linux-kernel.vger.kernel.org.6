@@ -1,204 +1,82 @@
-Return-Path: <linux-kernel+bounces-516428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF01A37155
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:40:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D99A37159
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC56189348A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351F216FB83
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B491FCCFD;
-	Sat, 15 Feb 2025 23:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAOF4YbT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514381FCCE1;
+	Sat, 15 Feb 2025 23:42:53 +0000 (UTC)
+Received: from mail115-118.sinamail.sina.com.cn (mail115-118.sinamail.sina.com.cn [218.30.115.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A0C1925AC;
-	Sat, 15 Feb 2025 23:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532D11A840E
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 23:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739662800; cv=none; b=AI/BqxbDBPSRqks3I08mUON9HzNBEIAyoHv+Fd4mcm9B1i1lnz5zVAeRLUm8fF9bnaS6gCPAWQ2fI6ctIivyjLjAGUvC8cs7Rze6gq6KO3Kky/ru4/XexigusIXs7/Dd8Zrlx0GTvf62wGZFEuOip6Vg25HLHZpashKeiuX3Feo=
+	t=1739662972; cv=none; b=mJX4Uz8vm5EzwMALPHobfF6FNMuitEkcz0pIFLgjRuEYq0DQdX1DS6gSRy36w9EXbmDn3aIStxIOxvKiB2q8JhvgN0muAw0aFlDspZqNPDgDR2/ZejbsluW0XWmk/nykTFFDSsI7YHMFJON4G5Wr1GGGO5hbKCk7Z0+mle4sADo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739662800; c=relaxed/simple;
-	bh=C03vfY/YewPcsWqb71F4heYY/J42ivxfv87i7Ms0uoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7Eb2gBu1c8LFi+bb9HO+4UtolIoGN/SX7fkpR6DHNYC3JP4Hjw4HgyYJ+ePqWvNROrUGSwYMUiX+rWbwJJMQVBVLIki6KQFh3w9C6K4XfPvRp4C4TrYF5w242yHG9J1q9X6eWU8OLTo2XTBBW8jLmCNh8/YWETfk/L5CrPBa1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAOF4YbT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35203C4CEDF;
-	Sat, 15 Feb 2025 23:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739662799;
-	bh=C03vfY/YewPcsWqb71F4heYY/J42ivxfv87i7Ms0uoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAOF4YbT8Fkxq+UQItc/1gGn5BPEEE5z5GToaY8kBogwjZ2w7ege97NXCmFPMR2kM
-	 CMkiz4TasJm3XFfwQPKLuaMpceBUxTNP10KZPEiivB3gB9rX0q4zC7Pra9joHKGhog
-	 sqBAO0sIh+ynP20z2RyoUAIlz7OgtrE/Xy0Y52bRV6jcYqKO9HQhOGg37G6Frx8khd
-	 iTvbAl+uMpdCxIhAFqnCKvWcaRx2BT9KDw7BhnQ5XIDGqzKAETulRiOTL7XkPAadzl
-	 YtAH/mut35SRiUdWwPgVtGJqo2qSBj5sRuq0+ojq9424u/6mHrJCXr0ROX5PIY8RF8
-	 xAf24EmBTYJoQ==
-Received: by pali.im (Postfix)
-	id BAB14676; Sun, 16 Feb 2025 00:39:46 +0100 (CET)
-Date: Sun, 16 Feb 2025 00:39:46 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Immutable vs read-only for Windows compatibility
-Message-ID: <20250215233946.cxznczjjiu7vqazf@pali>
-References: <0659dfe1-e160-40fd-b95a-5d319ca3504f@oracle.com>
- <20250114215350.gkc2e2kcovj43hk7@pali>
- <CAN05THSXjmVtvYdFLB67kKOwGN5jsAiihtX57G=HT7fBb62yEw@mail.gmail.com>
- <20250114235547.ncqaqcslerandjwf@pali>
- <20250114235925.GC3561231@frogsfrogsfrogs>
- <CAOQ4uxjj3XUNh6p3LLp_4YCJQ+cQHu7dj8uM3gCiU61L3CQRpA@mail.gmail.com>
- <20250117173900.GN3557553@frogsfrogsfrogs>
- <CAOQ4uxhh1LDz5zXzqFENPhJ9k851AL3E7Xc2d7pSVVYX4Fu9Jw@mail.gmail.com>
- <20250117185947.ylums2dhmo3j6hol@pali>
- <20250202152343.ahy4hnzbfuzreirz@pali>
+	s=arc-20240116; t=1739662972; c=relaxed/simple;
+	bh=cObdMpMUQPwEBleYCvz83wWf/COd3IWERsv4lStGwN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TqC+xzmpVioxD25yFiQxroCAYHq+cInB32OErZwjl9Li4Q4AvFI50afd5uQ0xuKYmDUg2B/YROLMeFSMEBZvqoxXUghnu9GI4G4LH8VZaHFJ6EuE4dZKuN6x4cHaSmQQysOrVf1yf7yjTGUdU961BopbypUlFLp1eZKzStNNWes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.11.159])
+	by sina.com (10.185.250.24) with ESMTP
+	id 67B125E20000360A; Sat, 16 Feb 2025 07:40:20 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 33953410748404
+X-SMAIL-UIID: EFD174A50DF446E1B783603F10E6E3BF-20250216-074020-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] BUG: corrupted list in loop_process_work
+Date: Sun, 16 Feb 2025 07:40:07 +0800
+Message-ID: <20250215234008.2328-1-hdanton@sina.com>
+In-Reply-To: <67afa060.050a0220.21dd3.0051.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250202152343.ahy4hnzbfuzreirz@pali>
-User-Agent: NeoMutt/20180716
 
-Some updates...
+On Fri, 14 Feb 2025 11:58:24 -0800
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c674aa7c289e Add linux-next specific files for 20250212
+> git tree:       linux-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e18aa4580000
 
-On Sunday 02 February 2025 16:23:43 Pali Rohár wrote:
-> And how many bit flags are needed? I have done some investigation. Lets
-> start with table which describes all 32 possible bit flags which are
-> used by Windows system and also by filesystems FAT / exFAT / NTFS / ReFS
-> and also by SMB over network:
-> 
-> bit / attrib.exe flag / SDK constant / description
-> 
->  0 - R - FILE_ATTRIBUTE_READONLY              - writing to file or deleting it is disallowed
->  1 - H - FILE_ATTRIBUTE_HIDDEN                - inode is hidden
->  2 - S - FILE_ATTRIBUTE_SYSTEM                - inode is part of operating system
->  3 -   - FILE_ATTRIBUTE_VOLUME                - inode is the disk volume label entry
->  4 -   - FILE_ATTRIBUTE_DIRECTORY             - inode is directory
->  5 - A - FILE_ATTRIBUTE_ARCHIVE               - inode was not archived yet (when set)
->  6 -   - FILE_ATTRIBUTE_DEVICE                - inode represents  in-memory device (e.g. C:\), flag not stored on filesystem
->  7 -   - FILE_ATTRIBUTE_NORMAL                - no other flag is set (value 0 means to not change flags, bit 7 means to clear all flags)
->  8 -   - FILE_ATTRIBUTE_TEMPORARY             - inode data do not have to be flushed to disk
->  9 -   - FILE_ATTRIBUTE_SPARSE_FILE           - file is sparse with holes
-> 10 -   - FILE_ATTRIBUTE_REPARSE_POINT         - inode has attached reparse point (symlink is also reparse point)
-> 11 -   - FILE_ATTRIBUTE_COMPRESSED            - file is compressed, for directories it means that newly created inodes would have this flag set
-> 12 - O - FILE_ATTRIBUTE_OFFLINE               - HSM - inode is used by HSM
-> 13 - I - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED   - inode will not be indexed by content indexing service
-> 14 -   - FILE_ATTRIBUTE_ENCRYPTED             - file is encrypted, for directories it means that newly created inodes would have this flag set
-> 15 - V - FILE_ATTRIBUTE_INTEGRITY_STREAM      - fs does checksumming of data and metadata when reading inode, read-only
+#syz test
 
-FILE_ATTRIBUTE_INTEGRITY_STREAM can be enabled for individual inode via
-FSCTL_SET_INTEGRITY_INFORMATION or FSCTL_SET_INTEGRITY_INFORMATION_EX
-fs ioctl call, available on Windows and also via SMB protocol. So
-de-facto it is read-write attribute, just over SMB requires separate
-operation for changing it.
-
-In similar way can be modified also FILE_ATTRIBUTE_COMPRESSED and
-FILE_ATTRIBUTE_ENCRYPTED attributes.
-
-> 16 -   - FILE_ATTRIBUTE_VIRTUAL               - inode is in %LocalAppData%\VirtualStore, flag not stored on filesystem
-> 17 - X - FILE_ATTRIBUTE_NO_SCRUB_DATA         - do not use scrubber (proactive background data integrity scanner) on this file, for directories it means that newly created inodes would have this flag set
-> 18 -   - FILE_ATTRIBUTE_EA                    - inode has xattrs, (not in readdir output, shares same bit with FILE_ATTRIBUTE_RECALL_ON_OPEN)
-> 18 -   - FILE_ATTRIBUTE_RECALL_ON_OPEN        - HSM - inode is not stored locally (only in readdir output, shares same bit with FILE_ATTRIBUTE_EA)
-> 19 - P - FILE_ATTRIBUTE_PINNED                - HSM - inode data content must be always stored on locally
-> 20 - U - FILE_ATTRIBUTE_UNPINNED              - HSM - inode data content can be removed from local storage
-> 21 -   -                                      - reserved
-> 22 -   - FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS - HSM - inode data content is not stored locally
-> 23 -   -                                      - reserved
-> 24 -   -                                      - reserved
-> 25 -   -                                      - reserved
-> 26 -   -                                      - reserved
-> 27 -   -                                      - reserved
-> 28 -   -                                      - reserved
-> 29 - B - FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL   - SMR Blob, unknown meaning, read-only
-> 30 -   -                                      - reserved
-> 31 -   -                                      - reserved
-> 
-> (HSM means Hierarchical Storage Management software, which uses reparse
-> points to make some remote file/folder available on the local
-> filesystem, for example OneDrive or DropBox)
-> 
-> From above list only following bit flags are suitable for modification
-> over some Linux API:
-> - FILE_ATTRIBUTE_READONLY
-> - FILE_ATTRIBUTE_HIDDEN
-> - FILE_ATTRIBUTE_SYSTEM
-> - FILE_ATTRIBUTE_ARCHIVE
-> - FILE_ATTRIBUTE_TEMPORARY
-> - FILE_ATTRIBUTE_COMPRESSED
-> - FILE_ATTRIBUTE_OFFLINE
-> - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
-> - FILE_ATTRIBUTE_ENCRYPTED
-> - FILE_ATTRIBUTE_NO_SCRUB_DATA
-> - FILE_ATTRIBUTE_PINNED
-> - FILE_ATTRIBUTE_UNPINNED
-
-Hence this list needs to be extended by FILE_ATTRIBUTE_INTEGRITY_STREAM
-attribute.
-
-FILE_ATTRIBUTE_INTEGRITY_STREAM is interesting attribute as it allows to
-enable checksumming of file content.
-
-> And if I'm looking correctly the FILE_ATTRIBUTE_COMPRESSED can be
-> already mapped to Linux FS_COMPR_FL / STATX_ATTR_COMPRESSED, which has
-> same meaning. Also FILE_ATTRIBUTE_ENCRYPTED can be mapped to
-> FS_ENCRYPT_FL / STATX_ATTR_ENCRYPTED. Note that these two flags cannot
-> be set over WinAPI or SMB directly and it is required to use special
-> WinAPI or SMB ioctl.
-> 
-> So totally are needed 10 new bit flags. And for future there are 9
-> reserved bits which could be introduced by MS in future.
-> 
-> Additionally there are get-only attributes which can be useful for statx
-> purposes (for example exported by cifs.ko SMB client):
-> - FILE_ATTRIBUTE_REPARSE_POINT
-> - FILE_ATTRIBUTE_INTEGRITY_STREAM
-> - FILE_ATTRIBUTE_RECALL_ON_OPEN
-> - FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
-> - FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL
-> 
-> From the above list of flags suitable for modification, following bit
-> flags have no meaning for kernel and it is up to userspace how will use
-> them. What is needed from kernel and/or filesystem driver is to preserve
-> those bit flags.
-> - FILE_ATTRIBUTE_HIDDEN
-> - FILE_ATTRIBUTE_SYSTEM
-> - FILE_ATTRIBUTE_ARCHIVE
-> - FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
-> 
-> Following are bit flags which kernel / VFS / fsdriver would have to
-> handle specially, to provide enforcement or correct behavior of them:
-> - FILE_ATTRIBUTE_READONLY - enforce that data modification or unlink is disallowed when set
-> - FILE_ATTRIBUTE_COMPRESSED - enforce compression on filesystem when set
-> - FILE_ATTRIBUTE_ENCRYPTED - enforce encryption on filesystem when set
-> 
-> Then there are HSM flags which for local filesystem would need some
-> cooperation with userspace synchronization software. For network
-> filesystems (SMB / NFS4) they need nothing special, just properly
-> propagating them over network:
-> - FILE_ATTRIBUTE_OFFLINE
-> - FILE_ATTRIBUTE_PINNED
-> - FILE_ATTRIBUTE_UNPINNED
-> 
-> About following 2 flags, I'm not sure if the kernel / VFS / fs driver
-> has to do something or it can just store bits to fs:
-> - FILE_ATTRIBUTE_TEMPORARY
-> - FILE_ATTRIBUTE_NO_SCRUB_DATA
+--- x/drivers/block/loop.c
++++ y/drivers/block/loop.c
+@@ -1974,7 +1974,8 @@ static void loop_process_work(struct loo
+ 	 */
+ 	if (worker && !work_pending(&worker->work)) {
+ 		worker->last_ran_at = jiffies;
+-		list_add_tail(&worker->idle_list, &lo->idle_worker_list);
++		if (list_empty(&worker->idle_list))
++			list_add_tail(&worker->idle_list, &lo->idle_worker_list);
+ 		loop_set_timer(lo);
+ 	}
+ 	spin_unlock_irq(&lo->lo_work_lock);
+--
 
