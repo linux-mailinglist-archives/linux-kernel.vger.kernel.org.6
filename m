@@ -1,154 +1,174 @@
-Return-Path: <linux-kernel+bounces-516087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2CDA36CD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:20:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F889A36CD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FBF3B04EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64BF1895014
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE22819DF66;
-	Sat, 15 Feb 2025 09:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977C19DFA5;
+	Sat, 15 Feb 2025 09:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TqMD57lj"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9491802;
-	Sat, 15 Feb 2025 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EZVW4oby"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9FF19CC3D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611247; cv=none; b=oJ0ZQvonXZ9hua19ofyGqjBD5e+BYKlyJCrSpBVyKa09mqaad/rBJRgfPQJGdUVn0qUsqd6aNEmDdfy5WXqpyPoBYXwqEuiKv6jJhQvYtx9C58JDfj/QWC7Oa2diu1je2p/J/bF8Lv3gKYmKZdeudLqhI7sgJs4O+GEq+n1uEfk=
+	t=1739611348; cv=none; b=WBzcLqHZFfnYMG0yKJzOVXimb2+InRJIE8iks9bolzvoyhnRFaQJ/M3vsHBLWqTZ/EMkQ8qy0WZLzzOIUf2qTk5dBMgR//G4/oLOl5V4rCEXRGoxFLw20OZ4USNt9wGmbcNjg7H35Dd/wHip686fWcsJKg1wVOH2LmTFxPmq8oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611247; c=relaxed/simple;
-	bh=PBYNrOLXNU7rMQSZX5XVZ6b210WBqxWqqIhqXNHKUVM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=LyVObRT4uFsAhFuVOTggkkOVMGN8Gr0OMOb/imR+cD/jWG/9+8ExvPemKmVSk73B8WvSsuIw+6djAtvicSCcYAonyJ4Kk4+UVkVyIkgOLq6RSS9NDSi4HCdrlWfcrBmZUr6gt1rqbjrMDnBZh0pq/s4i00i7A8ZHKOQekc4SHp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TqMD57lj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 36D332107AA1;
-	Sat, 15 Feb 2025 01:20:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 36D332107AA1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739611245;
-	bh=X4BZo2FoCtZKftMiZVna+dhZsaZWDkhj/UsiastHJkE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TqMD57ljKGise/ffyryS+Wk18XxesOCMs3BLBm2eoryGDbIlhiMHAjm823Oy9Pl3V
-	 pDLzx9NSIT/EHyBJcpPXwTXIYbjyGR35vH94cuyIOxErfFl0ZuWFvJYE8UOOEECzg9
-	 GBcQXoMzWjSaRie5AGtJoS6cmR+OP88+cPEJOIF4=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	deller@gmx.de,
-	akpm@linux-foundation.org,
-	linux-hyperv@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	mhklinux@outlook.com
-Subject: [PATCH] fbdev: hyperv_fb: Allow graceful removal of framebuffer
-Date: Sat, 15 Feb 2025 01:20:40 -0800
-Message-Id: <1739611240-9512-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1739611348; c=relaxed/simple;
+	bh=sLhWljl77kFulYgmKP/XNP8GseZdhJlpw0W5ambG1Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=lC/neL2C+1YRNn/DIIcgto/7OqaLOcaYTN6Cw9mRIl3geaBfjnRvkl4A+jYThiv/+GW5A7SCwcHyeeouIxiNUj0RE/OUSpZ2T8ZsaD3mpfMKfIoloX0VTVR6/PYP0ze6zy+sHEPEpZBq5Fx1nAw2WRwSThB1CXQ/ga/sYStTqHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EZVW4oby; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739611347; x=1771147347;
+  h=date:from:to:cc:subject:message-id;
+  bh=sLhWljl77kFulYgmKP/XNP8GseZdhJlpw0W5ambG1Xg=;
+  b=EZVW4obywcGSG4GUcB4Z1iE97L1gPxWwsNzjSHDB3qBA3nuwH8FJKK8Y
+   T2UfeL0qeDsaAHLGcUtbSX1M9LMxqBuHRkcwprehHcmXX2LDaNGLu4MfQ
+   CHAMjO3A+WtdkI9yy5Rdlz2V7W2sLxIsn5OMRdV6DbWUJA3MyJ97+Xk7r
+   +TT7tASCkQGSn5XMpRuZrAeQBMkJpTy6gPdeUgVG1RXq752IHzxfcLSz8
+   gcYg9hStTQUHdmyxXuCx8+kONfNlRwJjFKvOuXYRz4yR78jL8aexvPMQ7
+   dIMwMdb34rNTqTz5f21ugTOG17oOiYSFinRKcYcTyTGdT+3oiqaQ8l15m
+   w==;
+X-CSE-ConnectionGUID: swMiQhEORHClb+OvhJ+30w==
+X-CSE-MsgGUID: bUCXc1vuQ0yHiYoDhe/peQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57886320"
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="57886320"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:22:25 -0800
+X-CSE-ConnectionGUID: F0yZyTofTjS1wKWe96b+rQ==
+X-CSE-MsgGUID: uLT9HwBiTAy8a9A5FooAUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="113648578"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 15 Feb 2025 01:22:23 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjENQ-001AgB-2Q;
+	Sat, 15 Feb 2025 09:22:20 +0000
+Date: Sat, 15 Feb 2025 17:21:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ e4cb98b9ef02fede832955307f569ca2855fe133
+Message-ID: <202502151737.AWpyutuW-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
-release the framebuffer forcefully. If this framebuffer is in use it
-produce the following WARN and hence this framebuffer is never released.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: e4cb98b9ef02fede832955307f569ca2855fe133  Merge branch into tip/master: 'x86/mm'
 
-[   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_info.c:70 framebuffer_release+0x2c/0x40
-< snip >
-[   44.111289] Call Trace:
-[   44.111290]  <TASK>
-[   44.111291]  ? show_regs+0x6c/0x80
-[   44.111295]  ? __warn+0x8d/0x150
-[   44.111298]  ? framebuffer_release+0x2c/0x40
-[   44.111300]  ? report_bug+0x182/0x1b0
-[   44.111303]  ? handle_bug+0x6e/0xb0
-[   44.111306]  ? exc_invalid_op+0x18/0x80
-[   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
-[   44.111311]  ? framebuffer_release+0x2c/0x40
-[   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
-[   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
-[   44.111323]  device_remove+0x40/0x80
-[   44.111325]  device_release_driver_internal+0x20b/0x270
-[   44.111327]  ? bus_find_device+0xb3/0xf0
+elapsed time: 1451m
 
-Fix this by moving the release of framebuffer to fb_ops.fb_destroy function
-so that framebuffer framework handles it gracefully
+configs tested: 82
+configs skipped: 1
 
-While we fix this, also replace manual registrations/unregistration of
-framebuffer with devm_register_framebuffer.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Fixes: 68a2d20b79b1 ("drivers/video: add Hyper-V Synthetic Video Frame Buffer Driver")
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
----
- drivers/video/fbdev/hyperv_fb.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                             allmodconfig    gcc-13.2.0
+arc                             allyesconfig    gcc-13.2.0
+arc                  randconfig-001-20250214    gcc-13.2.0
+arc                  randconfig-002-20250214    gcc-13.2.0
+arm                             allyesconfig    gcc-14.2.0
+arm                  randconfig-001-20250214    clang-16
+arm                  randconfig-002-20250214    gcc-14.2.0
+arm                  randconfig-003-20250214    clang-21
+arm                  randconfig-004-20250214    gcc-14.2.0
+arm64                           allmodconfig    clang-18
+arm64                randconfig-001-20250214    gcc-14.2.0
+arm64                randconfig-002-20250214    gcc-14.2.0
+arm64                randconfig-003-20250214    gcc-14.2.0
+arm64                randconfig-004-20250214    gcc-14.2.0
+csky                 randconfig-001-20250214    gcc-14.2.0
+csky                 randconfig-002-20250214    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250214    clang-21
+hexagon              randconfig-002-20250214    clang-15
+i386                            allmodconfig    gcc-12
+i386                             allnoconfig    gcc-12
+i386                            allyesconfig    gcc-12
+i386       buildonly-randconfig-001-20250214    gcc-12
+i386       buildonly-randconfig-002-20250214    gcc-12
+i386       buildonly-randconfig-003-20250214    clang-19
+i386       buildonly-randconfig-004-20250214    gcc-12
+i386       buildonly-randconfig-005-20250214    gcc-12
+i386       buildonly-randconfig-006-20250214    gcc-12
+i386                               defconfig    clang-19
+loongarch            randconfig-001-20250214    gcc-14.2.0
+loongarch            randconfig-002-20250214    gcc-14.2.0
+nios2                randconfig-001-20250214    gcc-14.2.0
+nios2                randconfig-002-20250214    gcc-14.2.0
+openrisc                         allnoconfig    gcc-14.2.0
+openrisc                        allyesconfig    gcc-14.2.0
+parisc                          allmodconfig    gcc-14.2.0
+parisc                           allnoconfig    gcc-14.2.0
+parisc                          allyesconfig    gcc-14.2.0
+parisc               randconfig-001-20250214    gcc-14.2.0
+parisc               randconfig-002-20250214    gcc-14.2.0
+powerpc                          allnoconfig    gcc-14.2.0
+powerpc              randconfig-001-20250214    gcc-14.2.0
+powerpc              randconfig-002-20250214    clang-18
+powerpc              randconfig-003-20250214    clang-21
+powerpc64            randconfig-001-20250214    clang-18
+powerpc64            randconfig-002-20250214    gcc-14.2.0
+powerpc64            randconfig-003-20250214    gcc-14.2.0
+riscv                            allnoconfig    gcc-14.2.0
+riscv                randconfig-001-20250214    clang-18
+riscv                randconfig-002-20250214    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                             allnoconfig    clang-21
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250214    gcc-14.2.0
+s390                 randconfig-002-20250214    clang-19
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250214    gcc-14.2.0
+sh                   randconfig-002-20250214    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250214    gcc-14.2.0
+sparc                randconfig-002-20250214    gcc-14.2.0
+sparc64              randconfig-001-20250214    gcc-14.2.0
+sparc64              randconfig-002-20250214    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                               allnoconfig    clang-18
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250214    gcc-12
+um                   randconfig-002-20250214    clang-16
+x86_64                           allnoconfig    clang-19
+x86_64                          allyesconfig    clang-19
+x86_64     buildonly-randconfig-001-20250214    clang-19
+x86_64     buildonly-randconfig-002-20250214    clang-19
+x86_64     buildonly-randconfig-003-20250214    gcc-12
+x86_64     buildonly-randconfig-004-20250214    clang-19
+x86_64     buildonly-randconfig-005-20250214    gcc-12
+x86_64     buildonly-randconfig-006-20250214    gcc-12
+x86_64                             defconfig    gcc-11
+xtensa               randconfig-001-20250214    gcc-14.2.0
+xtensa               randconfig-002-20250214    gcc-14.2.0
 
-diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
-index 363e4ccfcdb7..83b1ab4da984 100644
---- a/drivers/video/fbdev/hyperv_fb.c
-+++ b/drivers/video/fbdev/hyperv_fb.c
-@@ -862,6 +862,16 @@ static void hvfb_ops_damage_area(struct fb_info *info, u32 x, u32 y, u32 width,
- 		hvfb_ondemand_refresh_throttle(par, x, y, width, height);
- }
- 
-+/*
-+ * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
-+ * of unregister_framebuffer() or fb_release(). Do any cleanup related to
-+ * framebuffer here.
-+ */
-+static void hvfb_destroy(struct fb_info *info)
-+{
-+	framebuffer_release(info);
-+}
-+
- /*
-  * TODO: GEN1 codepaths allocate from system or DMA-able memory. Fix the
-  *       driver to use the _SYSMEM_ or _DMAMEM_ helpers in these cases.
-@@ -877,6 +887,7 @@ static const struct fb_ops hvfb_ops = {
- 	.fb_set_par = hvfb_set_par,
- 	.fb_setcolreg = hvfb_setcolreg,
- 	.fb_blank = hvfb_blank,
-+	.fb_destroy	= hvfb_destroy,
- };
- 
- /* Get options from kernel paramenter "video=" */
-@@ -1172,7 +1183,7 @@ static int hvfb_probe(struct hv_device *hdev,
- 	if (ret)
- 		goto error;
- 
--	ret = register_framebuffer(info);
-+	ret = devm_register_framebuffer(&hdev->device, info);
- 	if (ret) {
- 		pr_err("Unable to register framebuffer\n");
- 		goto error;
-@@ -1220,14 +1231,11 @@ static void hvfb_remove(struct hv_device *hdev)
- 
- 	fb_deferred_io_cleanup(info);
- 
--	unregister_framebuffer(info);
- 	cancel_delayed_work_sync(&par->dwork);
- 
- 	vmbus_close(hdev->channel);
--	hv_set_drvdata(hdev, NULL);
- 
- 	hvfb_putmem(hdev, info);
--	framebuffer_release(info);
- }
- 
- static int hvfb_suspend(struct hv_device *hdev)
--- 
-2.43.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
