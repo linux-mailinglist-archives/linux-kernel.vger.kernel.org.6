@@ -1,190 +1,143 @@
-Return-Path: <linux-kernel+bounces-516244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B6FA36EA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:52:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCDEA36EA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3671D1895223
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090D13A748E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29881C8606;
-	Sat, 15 Feb 2025 13:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AFF1C8615;
+	Sat, 15 Feb 2025 13:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+oGkMGx"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcpJ7IWq"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F52753FC;
-	Sat, 15 Feb 2025 13:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF6A186E54;
+	Sat, 15 Feb 2025 13:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739627540; cv=none; b=san3vpcXF6oLimqb0h7o2j01EzNydYewm66+yNiOwds8epSOhdXAcrhSjv0l9CnuKTM+iGcMfbP5tLUUdf4HMfSLeIyvj+47PEhHywQawNbdsCQyrnp3IJeRnFHNcuilJE1wigI8s7AErSkgLvkGpsus/yZlnxEbKEUxtzf7kF4=
+	t=1739627564; cv=none; b=gT/hhvZpJ7RlOpj3Izgzj8nycg2bimCAw1ONx0kn0EdWWpcTSDJBvP54DH+3aWTDe8QqOegU5JDB/3T+VR9QalcgvfuvH7Iw72OTsU4AMbsiImdQ0ojOiw77M0QsGI82FIeL9ronuq3TEUKEcLG32reB9Ydz1O9q3ulA5nAP51Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739627540; c=relaxed/simple;
-	bh=wRsSCZ5NQa/DtG+ZmvyGjZdp/eeP1UZuVt6YTQNEHK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0cK3ESKKPO172YcUTB01YdDX3+zDnBqbLk60MUDPmDGALOcwor5yxCjR0D9IK3LyO8Oilx0VG5TTIvuOT6IumLAWXuzb6exO/NEwk0CxuF4tixOgvkX/E5D91yEmr/vouQR8BhEp/aqCpDUp+Pur/5yZqACQZzaitt3E6IrA1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+oGkMGx; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1739627564; c=relaxed/simple;
+	bh=YWhbF1mdP9nqZ2WCZQtej7ovlu0IyuZ++4Ue367cGEk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ihmUFQ5NEoWK1J2CPW9Rw1E+iUH1s+SFj4ADHFlpiClJL7LJefc+83lurKYgM+MUL5T+YKsFdRnoMxAt9H7KEc5UrRhkEYj1W5g95mKrSqCtJ4cGKyX5IUx+6rMf5pBvI+fCqD3HMaahbGGKa45pnV5vQf6e/AGAmtrf8AVgfEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcpJ7IWq; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439714a799aso3839515e9.2;
-        Sat, 15 Feb 2025 05:52:18 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so52540305ad.0;
+        Sat, 15 Feb 2025 05:52:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739627537; x=1740232337; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4wEV1ADnqQWD8L1k/XFokDETvht2ffBYSspDwjyPN8g=;
-        b=M+oGkMGx+Yq8AWEpkzp9lZ/AiDt9cNuE4jO+DkkFk47oQlbuYPQmXPHaYv1dsYcI85
-         ewhXSfCyrVyclea9fvMvL4aV+qSaOeJWF7Av24YoyuhCEHsC1cG7w/c7vNbCRQkSj4IL
-         h0C8Dx+srPxkq76TyMtWA/trfKhRYoVQhu4CFApKEYmntfsG928JVyRVjcKIEsRDb068
-         1QyGOpPxey/Zge0zGlRvJ6k/tmSCjtZkmQFn6fFR2pjGo3aYwbu5mfgFWWSFtXnP2zSz
-         kMHdmKT3c2wJcBH8W+KLrMiA8pzhfGg0VMAY3aC1lU6BKKBj+KeCnhYDow3n7JD+Z4Um
-         oRfg==
+        d=gmail.com; s=20230601; t=1739627562; x=1740232362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vaNUxH6SFpAA21j86E6kLFdfmS5koBBXhIiZdTkRCXo=;
+        b=jcpJ7IWqYTNtVWHU2DfiDWFCW478wZR6DzWjUQ2RT3wgTzF6Cko6qlJO82+EGfnSCS
+         uN38Hl06A4nS2PKvUA2OI+lmtzwlZtNHe6+PccaA4dz/O89Wu2qeDdcTb7E0E2LEsV/d
+         YN7hTE3eb+bL9XkEkW78GAcfz0q+ll+HfpK9GDG2A+39IMoynWPgq8CSMgVhMUyK6tng
+         f5af47vHh22szySw1ZlPHmygHidZaqlUhxQ/7FLlWzBzR5+aHE6s4Zh4i9knrvt6OYFM
+         uZ8UUbtxIW9DJlGD1EroCkYHO/WCWul5HFhbgtmia58npmcOfkrgORuOd3zNAt6eHQDQ
+         k7MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739627537; x=1740232337;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wEV1ADnqQWD8L1k/XFokDETvht2ffBYSspDwjyPN8g=;
-        b=GCePyXZCQiJKBrutgfcMePEsKFCZyR1eWyNY0AI297TT/kpU+NJ2N9mmbbkWdVn+Ru
-         55UyD5VVBQUuA0qZQEpbC5Xln6lAjfW6XGM0CyLHjJKYhBvhlFgFvKxU1+Vq7S4hN8pn
-         YCg+COCh3HveRIB3XrJdkdZLGhudrp9fus+UMzt/odkefKAK1974TO4RUiOvL0Oq1/Pd
-         8O191Lcn71l/a+/TKu3sgb0fq4p8Wt3kM8LEPBN3tSDbrST50IRfug/Nm8zUy+/Hezly
-         nWVFGX3NoFnaAnKISLLmgr648ptC+iuFZzlM5fTZkwLFVcxORfupsWUJZjt5DwgXj7EW
-         Fu5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWOhYuTbjCRb2tQ7TULNlKlodNxQwXKoXNV/e70cxq5SVudZZFqlOm2HRuCg85FkzC4Sh/+N23a/EX5SRGM@vger.kernel.org, AJvYcCWux1IHNNSOTeXx6X3xH/KjpPc3NS6y4jsofrsYYxX06w4A88Dg7xPSX20l8hIvoxK6l0R4NiiJyxiM@vger.kernel.org, AJvYcCXgH6i3JojPn8oqa8WAMeJYzyhujp8fvUNbPhpxZFdg4QCgRZC44QBUK7Jk8l6qPUN0t5yAow/VSi95zZGxllXZFGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTUKzKBwhHA2TS5NCpnNmujpnUyW2RBEuHcwkwbacspeWLOAv8
-	a8opHlxqa+ewW9Vt6uQZeXUu2tFcm5HBreJrVQmgujnSO1oFIa3R
-X-Gm-Gg: ASbGncsk7PX+Oxji7V8o5PGUGQIMXR5hPWyttB5Ql/SH3GQ6TgdcMzIOCzdjyCUs86B
-	zv7A5NfYN5wARptbM0DOFBlNIR+x7tnUi+fUclbUbAeCvUDJE0g4JQlOHFESUVjc3dXBUbZljf8
-	K23A2g4eZxvslfbUnuwxNTUAaSaTU65fuibzEJVJPWunp1UHpFb0Qm0Uizd3fF/pozuqoWpDf2L
-	nbPF05w+NSdOrf4RXHLRJiJzFwDfSkHhEqD8T5vVVxIRZRMeLHwoBuqc0u4ghFjCquQSlfh6hib
-	ftEab46j0Nshog06qYnHhcD8ToMvYx4Tr7bLDE3C/b5LvKdJ+eugaVR9+2GZATRUUxe9Ng==
-X-Google-Smtp-Source: AGHT+IHUH/PSZrSEvYPRf7g1ThAvmE/rux13z69XbwZo1Qmd9SlXptEtu6drLDmn4VEdSVQBss2m8Q==
-X-Received: by 2002:a5d:64cc:0:b0:38d:e707:f312 with SMTP id ffacd0b85a97d-38f33f53f95mr3614339f8f.46.1739627536424;
-        Sat, 15 Feb 2025 05:52:16 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7df2sm7291484f8f.84.2025.02.15.05.52.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Feb 2025 05:52:15 -0800 (PST)
-Message-ID: <8bcf7557-dff3-4017-84b1-184b20e028bf@gmail.com>
-Date: Sat, 15 Feb 2025 15:52:14 +0200
+        d=1e100.net; s=20230601; t=1739627562; x=1740232362;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vaNUxH6SFpAA21j86E6kLFdfmS5koBBXhIiZdTkRCXo=;
+        b=SfnX2XQqIu778AfAMObHXpVOrGT/8+SMCK2gAbR8MmK+ibgZdO+LKZZgzL+1QYdrcy
+         FdQ9Bb9AbtB14M36nP2bRpOYu54n89sfmgF8Ct3gSRmZzjHncwLLOY4KSeFJYmgRG1Yj
+         sakbODjtXUq90hl5KOCmfHJcR97/OTSKVJ2Gx7k3MHtrXtE5Fpf26tEVfFonyRqQgaNw
+         cVg2e2HbPriHbEjS+xifbzlklnnwlyhihgPEug9PA8Zai8ySRy8vhHJMqGKYc7otYrqn
+         THGUUDle+/oyyydGeQbGJNjkriUHNoqHHtLL8E5DDHqItGOJA7gOsCg3/dK1jTFnoLDV
+         6/4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV15TYiUYUuRvWSHzYZsmC3YAhiTuiNov0kpW57PZP4KfOHSaSf4MeyBm3UU+iEjLMmToKZxffi+2y1oLE=@vger.kernel.org, AJvYcCVPVxWUGB/lEc32d8x1UN0s5mglUBRMuWbgGdDhC0tJZLrBNkrPhAgmSnm2avHt+m9TZHLt8/A5MwcEk7PYOgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycWUECjxqgxNRAcCmQBCfKZXhBA5DgBrZH/WIZw2EY5TaM/ulr
+	prDNOCfXFsKpOW0fruBr1H0dwZD0t6p0plk/wo3litm9ZszIvWiL
+X-Gm-Gg: ASbGncv1y9YoMfxsHBqdvJciKYo73HPBS0xMWRRF6pWAZbbao60oPaml5ed8DeSLLnM
+	Gxkc9uLRbE0zlOeH4FAZAsId0u2qQAPxxNA2CRDzOI2PoTXPVNEVD1MqKJ8H+zd3vXAC5ixw4pW
+	LEjtM0vPGC6AKkHqw9BuG5R5wQke/xlenttUJdsXzCVCBqmcbbjW+VhE3eiSHnJT2Co1rSjC3IG
+	b98qY9ULs2gxysRX0bbuAXuFw3/ctK889GVLnCC87UPsXNJU0UeUl3xuCARnIDB/OKnl+M9CC+5
+	39LiripngB74f/7dHespNjCU
+X-Google-Smtp-Source: AGHT+IFfaxeE+NyKacuzcbL4HKdiCGziXsxJ0qeAcMrBVH78k3SQu6rlAWweKDn8yQlNhWcBEVICjA==
+X-Received: by 2002:a05:6a20:43a0:b0:1ee:69db:b0c5 with SMTP id adf61e73a8af0-1ee8cbd7f21mr6325214637.31.1739627562422;
+        Sat, 15 Feb 2025 05:52:42 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.159.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732532ce7f1sm2970126b3a.73.2025.02.15.05.52.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 05:52:41 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: benno.lossin@proton.me
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V2 1/2] rust: module: change author to be a array
+Date: Sat, 15 Feb 2025 10:52:29 -0300
+Message-Id: <20250215135229.300420-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <93eaeb37-9913-49cb-be6d-367696a81baf@proton.me>
+References: <93eaeb37-9913-49cb-be6d-367696a81baf@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: exynos: update all samsung,mode constants
-Content-Language: en-US
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>
-References: <20250209132043.3906127-1-ivo.ivanov.ivanov1@gmail.com>
- <173920411901.476943.11749535762195189252.robh@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <173920411901.476943.11749535762195189252.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/10/25 18:22, Rob Herring (Arm) wrote:
-> On Sun, 09 Feb 2025 15:20:43 +0200, Ivaylo Ivanov wrote:
->> Update all samsung,mode property values to account for renaming USI_V2
->> constants to USI_MODE in the bindings.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->> Patch picked from [1] and rebased on linux-next
->>
->> [1] https://lore.kernel.org/all/20250204172803.3425496-1-ivo.ivanov.ivanov1@gmail.com/
->> ---
->>  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 14 +++---
->>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 48 +++++++++----------
->>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  2 +-
->>  .../dts/exynos/google/gs101-pixel-common.dtsi |  4 +-
->>  arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  2 +-
->>  5 files changed, 35 insertions(+), 35 deletions(-)
->>
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
+Benno Lossin <benno.lossin@proton.me> wrote:
+> This commit message looks a bit clunky to me, though I am not a native
+> speaker. My suggestion would be:
+> 
+>     Change the type of the `author` field in the `module!` macro from string
+>     to string array. This allows multiple authors for a single module as is
+>     already possible in C.
+>     Additionally, rename the field to `authors` to better reflect this
+>     change.
+> 
+> Feel free to change/adapt anything.
+Thanks for your suggestions, in the truth my english is not so good.
 
-Please note that this is happening because the bot didn't account for
-header changes in the previous USIv1 patchset. Should be safe to apply
-since the latter is in linux-next now (if it even merges).
+> As already mentioned above, I think it makes sense to also rename the
+> field to `authors`.
+When I maked this change, I thinked in change the field name from author to
+authors, but I don't doing this because anothers fields that is a array in
+module! macro (firmware and alias) are in singular too.
 
-Best regards,
-Ivaylo
+> You should also change the documentation in this file, there the field
+> `author` is listed as "string literal of the author of the kernel
+> module.", so it also needs to be updated.
+Yes, you is right... I haven't seen this chunk of text 
 
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250209132043.3906127-1-ivo.ivanov.ivanov1@gmail.com:
->
-> Error: arch/arm64/boot/dts/exynos/exynos850.dtsi:654.20-21 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynos850-e850-96.dtb] Error 1
-> make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-> make[2]: Target 'arch/arm64/boot/dts/exynos/exynos850-e850-96.dtb' not remade because of errors.
-> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynos850-e850-96.dtb] Error 2
-> Error: arch/arm64/boot/dts/exynos/exynosautov920.dtsi:309.20-21 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb] Error 1
-> make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-> make[2]: Target 'arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb' not remade because of errors.
-> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynosautov920-sadk.dtb] Error 2
-> Error: arch/arm64/boot/dts/exynos/exynosautov9.dtsi:445.20-21 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb] Error 1
-> make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-> make[2]: Target 'arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb' not remade because of errors.
-> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/exynosautov9-sadk.dtb] Error 2
-> Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:828.20-21 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
-> make[3]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos/google] Error 2
-> make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-> make[2]: *** [scripts/Makefile.build:465: arch/arm64/boot/dts/exynos] Error 2
-> make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1464: exynos/google/gs101-oriole.dtb] Error 2
-> make: *** [Makefile:251: __sub-make] Error 2
-> make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-> make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-> make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-> make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-> make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-> make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-> make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-> make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-> make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-> make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-> make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-> make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-> make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-> make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
->
->
->
->
->
 
+Thanks,
+Guilherme
 
