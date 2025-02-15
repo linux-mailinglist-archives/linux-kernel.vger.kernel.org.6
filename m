@@ -1,184 +1,136 @@
-Return-Path: <linux-kernel+bounces-516167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E00A36D99
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:07:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA573A36D9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB6616CB42
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA6D3B1F0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1169F1A5BAF;
-	Sat, 15 Feb 2025 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFW6meLh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6B11A5B89;
+	Sat, 15 Feb 2025 11:09:23 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDBB1482E1;
-	Sat, 15 Feb 2025 11:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E71581F1
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 11:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617667; cv=none; b=q0TVXcCmfSyIuuO6AIt5fIG3faXQnHzccw+lVNxVYYSi6JqbhjLVXlsBTl6tso7OMU82UTbpJdLLyZujX6IfgWCL/ZfUHyF30VSpZ2qLb46u6vJrvp0xfjkpQfd2vL2yF85lAJRhD0pURjnWhVJqcH5JKew/yAfCH5tJanhpWPA=
+	t=1739617762; cv=none; b=dbhaFPi0hD5ivUL2aHCxR7BUHDpPWIh6pRxESbPBOL7Eu/1GgxMVQAYzrxmgrICcEl7ou5nXMJXJWw/GtLVYuzN1uPQ7xIn1eXQ3yV9C9PNLoKIg0NV98X27mR8ylNs89MOYvDDaNcTGpv6WffxKCtqQ7Q5S66Zfuy7t7wPErjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617667; c=relaxed/simple;
-	bh=aviqrW+4MMM0OACMiFIOXdC21DPQ4amvmUKmI0yVnsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9EEPMemyTjnlvLAvO32zq+TEJwFzzM0ehzp5lA79C+rmaHZp51FbWL+KosHwSAq6zDCQwtMgFBW85CAyH0g/SP15QQHMY0WPDzH0Kt7qQAb5Fc2L0QIaWphO+Q+2mzOlZTuEQniD5286s8fl1giWguxNqle+NxDSg0Ki2X2RaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFW6meLh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89FAC4CEDF;
-	Sat, 15 Feb 2025 11:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739617666;
-	bh=aviqrW+4MMM0OACMiFIOXdC21DPQ4amvmUKmI0yVnsc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mFW6meLh6335BCBVacv3KLcHO3Lnh6ZpSDXy/9IXWDFgzUwZIW1SxqylwEuTLXAfz
-	 3KUwHnvFAv0Qyn3s/p5GVuVygQqlCSSOwxqJQLsnWkCAW/MPD5N7FJs0of2XpXZtTx
-	 9NeCIkkRgIEsUcwJHI4t1jq7rpVGJUSoJ7kVH0LfmQ29+1orsNuvbbmE3K38DlkB9W
-	 S5u5YdiF+hcNUeMMo5nd9FWUSRkkgjzDuN3DqR44cSohZy4aCheFQr129ouxWqWGyJ
-	 xLAUI8BcokmJ1drd4ogMNlJLXZHQThsm7EBDjKwQXbymiosyyIjpdm+C6vaBL2nD0a
-	 d+0iZxdlYB2ug==
-Message-ID: <87e21b2a-b0f5-41c3-ba6e-960da5c1f836@kernel.org>
-Date: Sat, 15 Feb 2025 12:07:39 +0100
+	s=arc-20240116; t=1739617762; c=relaxed/simple;
+	bh=QsTM/b/ShaDvJLchPA/QcVpGiASWAv4GsSCkVYtg+P8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ahr/PMBHwoZefv+XyiWWjdsFzJnJ2xrIWZlk7LMe1CPkOeE7yDgkDeU4NDvxY83OuLXQUSD6AL2vOux7CrXY6JotGBhs4J0w5Bpj7eg6rTLPj4ACgxiFdjMbCsMiudBqAL96AiNIil/kSdhAJJPrYhwPpcsHQ3GPgTSl5xH4KqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so24121005ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 03:09:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739617760; x=1740222560;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+msdTiV3dh/grEx5HhcNgwCDceZ8oekmj7XtrsfSAkc=;
+        b=nMKFKnS6+KPG0YQ2RGMdmnHshMENri9+yVnhsHeADa7hu27JquySO82Y5jR8XTjCD8
+         XXpvLD06YLMbV2jLd+N8Yj722uWoyAyGT6bs3m5yMVv4PCGtBVr1dPgLzwjD/GqvWXcB
+         TB3W5Vik7ptek2jzKimByYlwMDwVw8TGW3bo8K5tFI6BrB4QCicZ4oRRqgnQh1c6dZFO
+         V2G4DnmRpYnSWIOAA9I3EYyKLZspBohhJG9nrg8Hjth/rBsN6AcsvQlNrFPZAXX2CpX9
+         K0vs5vAkrKs6IJI24ft4gMgeVvmhc03LXVczEk3ElE/Yzq16QDctrKNUW/MUCFi13A/b
+         wlsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdiaJvnZ2Ik7yL7xhKH5PSB6W2Q25Js/Go1r9Js/Te6iUCiqu7lg9x8b0y4M1VDS0c+4RRPsTX/MYkGRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx7G0dLOQdSaUP2tTcVgfaOsEGXLpolI2a777PSmaygyuLUW2o
+	HwUomrw0qH99FjrrWR+9l23skKo6SUgqztga+JdIy3vtC9hA3fnM7DG4kgLfPehc3/WanyEHiEL
+	fb3fnmZaBVM3zfTLnV8xfUGqfPgXBbrF5hGaheuYqrFkuH0Q75llAvLA=
+X-Google-Smtp-Source: AGHT+IG0HPosK62MBkh0uJdYlIhmznYl7gKiqEuRjj1CvH4+aBPVZnnatYPvX2F/VUJ5jPcY5MTOQIqRSiPv2utSM/QMFHbD2cfo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
- define
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250210085004.1898895-1-ryan_chen@aspeedtech.com>
- <20250210085004.1898895-2-ryan_chen@aspeedtech.com>
- <20250211-encouraging-free-aardwolf-0fabb1@krzk-bin>
- <OS8PR06MB7541287BC48C500E50C7C77FF2F92@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OS8PR06MB7541287BC48C500E50C7C77FF2F92@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a2e:b0:3d0:47cf:869c with SMTP id
+ e9e14a558f8ab-3d280949c9emr16539415ab.19.1739617760343; Sat, 15 Feb 2025
+ 03:09:20 -0800 (PST)
+Date: Sat, 15 Feb 2025 03:09:20 -0800
+In-Reply-To: <67afa09f.050a0220.21dd3.0054.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b075e0.050a0220.6f0b7.0002.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] [bcachefs?] UBSAN: shift-out-of-bounds in radix_tree_delete_item
+From: syzbot <syzbot+b581c7106aa616bb522c@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 15/02/2025 03:14, Ryan Chen wrote:
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Tuesday, February 11, 2025 4:18 PM
->> To: Ryan Chen <ryan_chen@aspeedtech.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@kernel.org>; Philipp Zabel <p.zabel@pengutronix.de>; Joel Stanley
->> <joel@jms.id.au>; Andrew Jeffery <andrew@aj.id.au>;
->> linux-clk@vger.kernel.org; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
->> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
->> linux-arm-kernel@lists.infradead.org; linux-aspeed@lists.ozlabs.org;
->> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v8 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
->> define
->>
->> On Mon, Feb 10, 2025 at 04:50:02PM +0800, Ryan Chen wrote:
->>> remove soc0 clock:
->>
->> Why? Your commit msg must explain why. What is obvious from the diff, isn't
->> it?
-> Thank you for your feedback. I will add explanation in next commit patch.
->>
->>>  SOC0_CLK_UART_DIV13
->>>  SOC0_CLK_HPLL_DIV_AHB
->>>  SOC0_CLK_MPLL_DIV_AHB
->>> add soc0 clock:
->>>  SOC0_CLK_AHBMUX
->>>  SOC0_CLK_MPHYSRC
->>>  SOC0_CLK_U2PHY_REFCLKSRC
->>> add soc1 clock:
->>>  SOC1_CLK_I3C
->>>
->>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
->>> ---
->>>  include/dt-bindings/clock/aspeed,ast2700-scu.h | 7 ++++---
->>>  1 file changed, 4 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/include/dt-bindings/clock/aspeed,ast2700-scu.h
->>> b/include/dt-bindings/clock/aspeed,ast2700-scu.h
->>> index 63021af3caf5..c7389530629d 100644
->>> --- a/include/dt-bindings/clock/aspeed,ast2700-scu.h
->>> +++ b/include/dt-bindings/clock/aspeed,ast2700-scu.h
->>> @@ -13,18 +13,17 @@
->>>  #define SCU0_CLK_24M		1
->>>  #define SCU0_CLK_192M		2
->>>  #define SCU0_CLK_UART		3
->>> -#define SCU0_CLK_UART_DIV13	3
->>
->> NAK, ABI break without any explanation.
-> 
-> The `SCU0_CLK_UART_DIV13` was originally defined as a separate clock identifier, reviewing the AST2700 clock driver implement, I realized it is no longer necessary.
-> The clk-ast2700.c driver I have **integrated the SOC0 UART clock (`soc0_uartclk`) with `ast2700_clk_uart_div_table`**. 
-> The UART clock source will get from ast2700_clk_uart_div_table, that will div from source 24M div13 or div1.
+syzbot has found a reproducer for the following issue on:
 
-Wrap your replies correctly.
+HEAD commit:    04f41cbf03ec Merge tag 'sched_ext-for-6.14-rc2-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=158239b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b581c7106aa616bb522c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b399a4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17dd4bf8580000
 
-So all this means you exported clocks which are not clocks?
-How are ABI consumers behaving now?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-04f41cbf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/04aaec67f85e/vmlinux-04f41cbf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0b8db5fac3a6/bzImage-04f41cbf.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/402dc55a596d/mount_0.gz
 
-Anyway, any ABI impact must be clearly justified in commit msg.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b581c7106aa616bb522c@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in lib/radix-tree.c:88:31
+shift exponent 240 is too large for 64-bit type 'unsigned long'
+CPU: 0 UID: 0 PID: 5331 Comm: syz-executor299 Not tainted 6.14.0-rc2-syzkaller-00228-g04f41cbf03ec #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ radix_tree_descend lib/radix-tree.c:88 [inline]
+ __radix_tree_lookup lib/radix-tree.c:766 [inline]
+ radix_tree_delete_item+0x1df/0x3f0 lib/radix-tree.c:1420
+ kernfs_put+0x1ba/0x370 fs/kernfs/dir.c:575
+ __kernfs_remove+0x768/0x870 fs/kernfs/dir.c:1509
+ kernfs_remove+0x7a/0xa0 fs/kernfs/dir.c:1529
+ __kobject_del+0xe2/0x310 lib/kobject.c:604
+ kobject_del+0x45/0x60 lib/kobject.c:627
+ __bch2_fs_stop+0x288/0x5c0 fs/bcachefs/super.c:641
+ bch2_fs_stop+0x15/0x20 fs/bcachefs/super.c:691
+ bch2_fs_get_tree+0xdee/0x17a0 fs/bcachefs/fs.c:2299
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f17e484402a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f17e3fe7fd8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f17e3fe7ff0 RCX: 00007f17e484402a
+RDX: 00004000000058c0 RSI: 0000400000005900 RDI: 00007f17e3fe7ff0
+RBP: 0000400000005900 R08: 00007f17e3fe8030 R09: 0000000000005931
+R10: 0000000000010000 R11: 0000000000000282 R12: 00004000000058c0
+R13: 00007f17e3fe8030 R14: 0000000000000003 R15: 0000000000010000
+ </TASK>
+---[ end trace ]---
 
 
-
-Best regards,
-Krzysztof
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
