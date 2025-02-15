@@ -1,101 +1,214 @@
-Return-Path: <linux-kernel+bounces-516359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D45A3701B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D461A37021
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79F9188E4A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831A4188D51A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A231EA7FC;
-	Sat, 15 Feb 2025 18:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3SeTT7x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBDA1EDA2C;
+	Sat, 15 Feb 2025 18:20:20 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A5D197A87;
-	Sat, 15 Feb 2025 18:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4211DE8A5
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 18:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739643072; cv=none; b=fTyIqsqMW4eVZWY1TR2UFSD9X5BsqsS7rf1fESiMw+R4ZXW5cL6YvdJ7GEp8C2jk1iUdWHOojYFaPdn5m7JP4xg1lWoJleOgBTOzbnsEGLbmSGawybP7Kq1GUMkln2dZDfFGLq8RPqHfZHhQsZZ2pi+HKxEvUt5kLOyw4i3C4WM=
+	t=1739643619; cv=none; b=HDPwlD9rmWV8x4TYm6p1FxckJdtA4vOIU0eCVI+D/G4h7XE6IadOXMZH/PbS43m2QFvxMZRtDqRa4jtvgQeZ+E9XePaojp7/Qt6ZlEflUzIdZusAo/hwWZckKr6lmWKlfV6oDhNs1rbeMrMtgT56E2uyc7znxZEL2sTy6HPGYZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739643072; c=relaxed/simple;
-	bh=VwiucCmRsHj4WIjXs8qnCxLiQoA41Y/9GZf5q6IhOkU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TgLrVHbavgZB/TObITpCXQrtETXeGaLp26Lm76C29V4q0NX8F+7pmBFKNSfBdjAFFn7GZ39gdQSmKGzxi1KuFyqvCuYkV/a/pHlLUpphLnDGjcV/4Uw65Y8ERm9vRmTphDpJzt5DOWasWb9y0NCgMQaXWELDnWYAxodEQ1SMBOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3SeTT7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EEEC4CEE2;
-	Sat, 15 Feb 2025 18:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739643071;
-	bh=VwiucCmRsHj4WIjXs8qnCxLiQoA41Y/9GZf5q6IhOkU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d3SeTT7xsLBcmBCCbwEsTYMmsO5H+B9aU62Ry9WxlkZtPxRVfQWZaLjQtzEBNRK/8
-	 mWmcI/oBs8lsGujeTaP2Il5h2m2Hu8wR6hfwXZ8UKeMwUlcU2fB0bpIYs8jwmydQS0
-	 1rA2/FU3x4P+7Doi9WzLpR4PDhOuwy9yNdhshAz/9l8pairy/eDMgsfqp9sah/P6IZ
-	 H+bUl6D2PWzC2qHVYiMYcv+afzoOhgwbR0PW5QD1kOLOp1lcW8HO2XHD6TaKpY7O5x
-	 WGKxrJ0ZVjQimrRHXEeNRMsm1q96WnyFSXJ1r2WVvZXgPkOQ5VF1mA+WjFC687vatg
-	 sMjIVh956VbNQ==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54529eeb38aso1829783e87.2;
-        Sat, 15 Feb 2025 10:11:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU76f3SeWHbuNHX+8sSEsepXZ1Pbtfl8bLybFjQ4hQVGRiPfb5ky983/Rma40CUFJ+aqBRoj9sJzpdrv0CX@vger.kernel.org, AJvYcCUL9nduLKZ23Bgj0ySaBIT7OAnB1ePWLAc0SZB3OGi9ZBjahud/XVh5qjpRa1wjVI1cGOuuCr0DKBVKnkc=@vger.kernel.org, AJvYcCWNCeB9LdBZciU1C3R6VjK86JtWv4vlnv7RylRHJj6kS7DtS1tDoSM2WCvYvLdMPmyTmRxxSZ66@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM1LUP4JohoxY4qZyUBxpHTBCQ57cPjjKIVIVY2EDqZstO5ytF
-	EFNXrw0LvP7j0vi5td3voXegLtgbAveuVpBmDEGf0vnM7nzgxjUTRlxdo460YHJDzehmU8y/4BS
-	zOjCAt4SH2SzZq8J6L2rP78WILn0=
-X-Google-Smtp-Source: AGHT+IE0rwwrkKgLzFfRhD+QZGgoJPXVzhh3qODeXXehVd6GVBdQBZy6zuaKggs25GRFT4iSWYp/JPldBTE6dAjsCs8=
-X-Received: by 2002:a05:6512:6ce:b0:540:3561:969d with SMTP id
- 2adb3069b0e04-5452fe8f8b0mr1371699e87.49.1739643070214; Sat, 15 Feb 2025
- 10:11:10 -0800 (PST)
+	s=arc-20240116; t=1739643619; c=relaxed/simple;
+	bh=4IZFZVwxSOzjwGdsSJltCMPC+UOXv+W9HdBfvkqeNPM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ue6oWCRHz/y+FGsswjCLf7l1KRL2l2OXz7uAmCnoEDUgUT9NCljWdZteuz1A2mEGRtmfC8zY984WBYLxiYrc8xx5f7GFIdHZzjZqb7L5nAn5mv4oPtpxQzQqhz+IYtcwP/3c9eoXFEaNQmOB9rnhDXkIetS4lq1PjeoCZcldoXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d158477b5fso21812285ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:20:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739643617; x=1740248417;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6soIbLLaWqTuyjlNGLM2C7ZiMywCYPk0bzeKRcfSfCA=;
+        b=iipT9kgNlnzvhixC10VzYQRr4RLxqgn+7DewO/WmLjw6aHgZPcvB3SollS/fAKYr5s
+         GDVSAa1izpbgFMJ8WK5vUGf6vjdErCQY2KG6JX1vxl00RaAJEqVTyTOvWdPWkAj6QHP/
+         Nq5dO+WuUA4gSo7elehngLPm+429lEO7WnqE+XVIioJpRhWIcLNB3/c5Zk5dxx05mHju
+         t1MQyXD4SDlPkcv8/bUqnwPDqcBeBZulW9DAXsByxouPIUtoeyd3+TOGsWKLhCcjh0X5
+         VGaDnnApJxgm22qD1CGOADjxp/LvaO2BvD+Pi9CdJDw7TAyzB5ga7T/QytXZktQMsDLH
+         oPIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+p7pd3AnlRi8pbtuvc//4fKUEknHFY2sxUmTs86ZGrs0T9TROpmepyHindWlCgHbsWhoF/c3//e/BdKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM+fgmkxa0nCiLKUkxXKFKJVi9s4VbcklMfrwKcGPztmWhhR5Y
+	u4AHh8VNCab8PWlWs9EpUTBDnVojRWTXwDwhEnG+EVYv7pDR+G90bkv92Qlt9/8N2pOGPp4P77w
+	UJh8tSlNqYXfSJDI+9J2KhRMGrfLpKp8rNlOp1NUdOdGE0fSb+8/Od54=
+X-Google-Smtp-Source: AGHT+IG+GvKiaFPKEPnevbx3Uw8ccSd3DdGwU4IPkKUtnrbzZi0Gb60jDgG0HhmpC1JMGCtjfxIpBoKbMcx8FyqkRpbI4zP/B/6c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-kbuild-userprog-fixes-v1-0-f255fb477d98@linutronix.de> <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
-In-Reply-To: <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 16 Feb 2025 03:10:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQPO82Qp_161yGgsRL4hA1XdeoCX6ZgLutmivKorUuLxw@mail.gmail.com>
-X-Gm-Features: AWEUYZnbXcOx5HSwO35f-2mNBGhl_Ad3is1i1PF1BQf2JE6Cr9dN8_ACRThMo2w
-Message-ID: <CAK7LNAQPO82Qp_161yGgsRL4hA1XdeoCX6ZgLutmivKorUuLxw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kbuild: userprogs: fix bitsize and target detection
- on clang
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+X-Received: by 2002:a05:6e02:2181:b0:3d1:4b97:4f2d with SMTP id
+ e9e14a558f8ab-3d280763f51mr23479835ab.5.1739643616909; Sat, 15 Feb 2025
+ 10:20:16 -0800 (PST)
+Date: Sat, 15 Feb 2025 10:20:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b0dae0.050a0220.6f0b7.0016.GAE@google.com>
+Subject: [syzbot] [kernel?] INFO: task hung in hci_dev_open (2)
+From: syzbot <syzbot+b3b33ad3a3e6369375a7@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, davem@davemloft.net, frederic@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	vinicius.gomes@intel.com, xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 11:55=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> scripts/Makefile.clang was changed in the linked commit to move --target =
-from
-> KBUILD_CFLAGS to KBUILD_CPPFLAGS, as that generally has a broader scope.
-> However that variable is not inspected by the userprogs logic,
-> breaking cross compilation on clang.
->
-> Use both variables to detect bitsize and target arguments for userprogs.
->
-> Fixes: feb843a469fb ("kbuild: add $(CLANG_FLAGS) to KBUILD_CPPFLAGS")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
+Hello,
 
-Applied to linux-kbuild/fixes.
-Thanks!
+syzbot found the following issue on:
+
+HEAD commit:    ae9b3c0e79bc Merge branch 'tcp-allow-to-reduce-max-rto'
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e00aa4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
+dashboard link: https://syzkaller.appspot.com/bug?extid=b3b33ad3a3e6369375a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161e23f8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/93d74fa441be/disk-ae9b3c0e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e226dd1d1f06/vmlinux-ae9b3c0e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/423579a2a07e/bzImage-ae9b3c0e.xz
+
+The issue was bisected to:
+
+commit 5a781ccbd19e4664babcbe4b4ead7aa2b9283d22
+Author: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Date:   Sat Sep 29 00:59:43 2018 +0000
+
+    tc: Add support for configuring the taprio scheduler
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126b4718580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=116b4718580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=166b4718580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b3b33ad3a3e6369375a7@syzkaller.appspotmail.com
+Fixes: 5a781ccbd19e ("tc: Add support for configuring the taprio scheduler")
+
+INFO: task syz-executor:6086 blocked for more than 178 seconds.
+      Not tainted 6.14.0-rc1-syzkaller-00272-gae9b3c0e79bc #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:25984 pid:6086  tgid:6086  ppid:6085   task_flags:0x400140 flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5377 [inline]
+ __schedule+0x190e/0x4c90 kernel/sched/core.c:6764
+ __schedule_loop kernel/sched/core.c:6841 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6856
+ schedule_timeout+0xb0/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ __flush_workqueue+0x575/0x1280 kernel/workqueue.c:3998
+ hci_dev_open+0x149/0x300 net/bluetooth/hci_core.c:455
+ sock_do_ioctl+0x158/0x460 net/socket.c:1194
+ sock_ioctl+0x626/0x8e0 net/socket.c:1313
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f940718c9eb
+RSP: 002b:00007fff6ef05ae0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f940718c9eb
+RDX: 0000000000000005 RSI: 00000000400448c9 RDI: 0000000000000003
+RBP: 00007fff6ef05b4c R08: 0000000000000000 R09: 00007fff6ef05a57
+R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000005
+R13: 0000000000000005 R14: 0000000000000009 R15: 0000000000000000
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/0:0/8:
+3 locks held by kworker/1:0/25:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
+2 locks held by kworker/u8:3/51:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc90000bc7c60 ((work_completion)(&pool->idle_cull_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90000bc7c60 ((work_completion)(&pool->idle_cull_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+3 locks held by kworker/u9:0/53:
+ #0: ffff88807da56148 ((wq_completion)hci5){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88807da56148 ((wq_completion)hci5){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc90000be7c60 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90000be7c60 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+ #2: ffff88805a3d8d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_open net/bluetooth/hci_core.c:409 [inline]
+ #2: ffff88805a3d8d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_power_on+0x1bf/0x6b0 net/bluetooth/hci_core.c:940
+3 locks held by kworker/1:2/974:
+ #0: ffff88801ac81d48 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88801ac81d48 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc90003a0fc60 ((crda_timeout).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90003a0fc60 ((crda_timeout).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+ #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: crda_timeout_work+0x15/0x50 net/wireless/reg.c:540
+5 locks held by kworker/u8:5/1025:
+3 locks held by kworker/u8:8/1153:
+ #0: ffff888030945148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff888030945148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc90003d0fc60 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90003d0fc60 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+ #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0x10e/0x16a0 net/ipv6/addrconf.c:4190
+3 locks held by kworker/0:2/1165:
+4 locks held by kworker/u9:1/5146:
+ #0: ffff88802976d948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88802976d948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc900106d7c60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc900106d7c60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+ #2: ffff888025450d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:331
+ #3: ffff888025450078 (&hdev->lock){+.+.}-{4:4}, at: hci_abort_conn_sync+0x1e4/0x11f0 net/bluetooth/hci_sync.c:5569
+2 locks held by dhcpcd/5502:
+2 locks held by getty/5586:
+ #0: ffff8880355800a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+1 lock held by syz-execprog/5826:
+4 locks held by kworker/u9:2/5851:
+ #0: ffff88802991a148 ((wq_completion)hci3){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88802991a148 ((wq_completion)hci3){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
+ #1: ffffc900041bfc60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc900041bfc60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
---=20
-Best Regards
-Masahiro Yamada
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
