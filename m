@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-516337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C13A36FCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:30:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A68A36FDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7B716FEBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE32B3AF63D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A39D1EA7EA;
-	Sat, 15 Feb 2025 17:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2AE1D89FA;
+	Sat, 15 Feb 2025 17:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="cfaRK2o9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rP6GG9lC"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwzbJCdW"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F4F1EA7D9;
-	Sat, 15 Feb 2025 17:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E481FDE39
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 17:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739640603; cv=none; b=gU4D0cVrUj3ZengQvfkCl0MD8MGJUKbl2A9MSrcYaJy1zSiMO5gI/oow7Z74xGcWxOd4owhuwZuPQJVYZGau359UdSmpwdp+F2MjQ4KnRsDEGA/LYa/L4b8AZM0LJdubC22MvLrbYjSVgfXhgl9ZY5I6cEozKNBPs4U/goXpPUM=
+	t=1739641117; cv=none; b=oO+mG3Hyh1dJwybjCeVl144d40b8ZVxgfyx5/Agg4quTU+Vi2fU0Oi0bABg03QjUhQDKgGZxmnPoluXDGiVrRPm6jhKtV/CiZNddF2FOplL1Wsp6sYAhfZE5qLJbKBk5wnphWUS6mTzC2lxXV7onNvZ6uldEHRumEfza0JgWZ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739640603; c=relaxed/simple;
-	bh=L/0U9vwm/cm6dWuFvLAdLACDDXDljPFBk/iXIqJoFu4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=me9CuFRmdZjJxhFH7KwQGS9O9MhYvyTU+pScJThvkhtNvH02emZpC2icFw7Cekny6RusAewwG4bD00GbWYygVoslTkZui3fI2le2xcK9Tb7Jb/0caPYR1zN0oAVDp3GHsJ/AP2PnPbl23BqYGhI/1bcxV4nbklt/t65QFS90Mb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=cfaRK2o9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rP6GG9lC; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A6DBD254018B;
-	Sat, 15 Feb 2025 12:29:59 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-13.internal (MEProxy); Sat, 15 Feb 2025 12:29:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1739640599; x=
-	1739726999; bh=hbhfVtGnmRP+FHNE70Dvm+oPuq45bwTEpBGRMv0hqFE=; b=c
-	faRK2o9SWalcefZxXPGoA7jexmGzBk0qxZYQIz6PdEIw3s73FcgDsKAR8JoIO8/D
-	ngV/VAANem+/ItT9Nqn8Ch4Bl0oqIMFIGsa+CwAcg9L2h2WsXpO7eka7p3NYscoX
-	tEZ1A+TZW8MbHz/g8SoJIZR8KUrkb0hW5Y7cChS4Hhf5viDoPdZ/J6zJJF6rIKhP
-	JKctKgvBfFiAI11+xLBwd2CwHQRxWum9QWUPXv3wvazq0b3nCq4TBsIN2PhIu2JZ
-	oDiF44c2JuDGcKrMejvu4rz0WSyx2chSHBR0xafU7jnJqhocqtODvZS9m2INtQEZ
-	E1qSGzcINy41Ywm/YMXvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1739640599; x=1739726999; bh=hbhfVtGnmRP+FHNE70Dvm+oPuq45bwTEpBG
-	RMv0hqFE=; b=rP6GG9lCF2GHzP9UdYXQPKlwVPR1dFxwWL5BbidvDMHfBbDWGGF
-	B6xVEj2JXCHuYisiLhj2TVRzeLdM8QG4X5sYMWpCVz+o6zQLSLgQfAlZMl+7KVAl
-	603+WHTHzg7i4GOL/2zr9zcJhn437oZiPXzcvgehVUN+raLzSXHIZ5Il9MXt5RJr
-	XR4o8BSVzIfUwG0J85EfgzHPFOuCWuylMHY/Hl9Jvyzd2ecTzjiLTS1sFYIaVXWI
-	T1lJ2y6OCGT8jyfzeg0LR1EgsPsB5XJd7zPwpgO5n5J+aiPcHVQlk05iqOzJggTy
-	/1gUn6Ca/FjmcGQa5LZaSSH3F3kJNA971eg==
-X-ME-Sender: <xms:Fs-wZ8vbpRgLU1N8QpCtvoE6XhIg9SGQey9uE9TlCjowUiZeZuzotg>
-    <xme:Fs-wZ5cTMXO0ktlc5yMwHpH3OGRzDlqRiRR7r5xY_ovN0QhujTXj1tW5YJYb-481c
-    EjhuJGjq7XHjuPZw7o>
-X-ME-Received: <xmr:Fs-wZ3xZExxOnx405lZssuw_B61TYArPgkVTgb2c3IuTSN41KFO4dc64W3TBHqvXXrb2tYRFi7OCohHf0kQOKXrrbA1n8Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehfedugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtsehttdertddtredt
-    necuhfhrohhmpeffrghvihguucftvggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrh
-    drtghomheqnecuggftrfgrthhtvghrnhepudetjefhvdeujefhkefhteelffelheevtddu
-    ueelkeeludevteekteekjeevvddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepmhgvsegurghvihgurhgvrghvvghrrdgtohhmpdhnsggprhgt
-    phhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgs
-    lhhotghksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqug
-    hotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrgigsohgvsehkvghr
-    nhgvlhdrughkpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdrohhrgh
-    dprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehkohgtthel
-    ihesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:Fs-wZ_Pt1aGehPoWqt05tFkta1B1K1EX958e_47WkOh3TKLWAVRp4Q>
-    <xmx:Fs-wZ89mJm4-C0LrRY9GzuR4el6-0s3gw_IrQRbP-Mna-C-2CD1ljA>
-    <xmx:Fs-wZ3VccjCHtkYytCtAlcmyNfcFdfm_gDAjWfSH9rfHjI1XxTJo1A>
-    <xmx:Fs-wZ1cNPITYC436bNFXZ6dov__hb-jKt0b92EvGucohClgIq7vIIA>
-    <xmx:F8-wZ5OxchQhSJeA8gpxbdhihNB_KDRSjMWxZIX3vXKylIpuZuC4F5qT>
-Feedback-ID: i67e946c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 15 Feb 2025 12:29:57 -0500 (EST)
-From: David Reaver <me@davidreaver.com>
-To: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,  Randy Dunlap <rdunlap@infradead.org>,
-  Jens Axboe <axboe@kernel.dk>,  linux-doc@vger.kernel.org,
-  linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: iostats: Rewrite intro, remove outdated formats
-In-Reply-To: <CALYGNiOA4K4PQcJTk_OwkHOamW-Am_gKSUZoog41v+Y_+qEQxg@mail.gmail.com>
-	(Konstantin Khlebnikov's message of "Sat, 15 Feb 2025 18:18:20 +0100")
-References: <0e8c8ead-423a-45f3-9e10-020334ef8907@infradead.org>
-	<20250214051432.207630-1-me@davidreaver.com>
-	<CALYGNiOU3vPAyvsNv4rt=qZRbZFVZ9iAe+kzPzGKkx6_L3wG5Q@mail.gmail.com>
-	<864j0wxw74.fsf@davidreaver.com>
-	<CALYGNiOA4K4PQcJTk_OwkHOamW-Am_gKSUZoog41v+Y_+qEQxg@mail.gmail.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Sat, 15 Feb 2025 09:29:56 -0800
-Message-ID: <86eczz3yln.fsf@davidreaver.com>
+	s=arc-20240116; t=1739641117; c=relaxed/simple;
+	bh=R9JcFarqOJwyNgPlHFO1pjrmDbE8auqsaOP+7eBAoCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KAQpXGIOq3PuHw9QzJePEOB1+qWaPg8d76JdsqEpaqoSdJsw6AVhUmMI4KuCvyqU11fcAoJNBjBZsbxPE+Wqkybu0rT86yjfRC+rWpoiIVnZy1pusMBbjky5viK8ZHQSqAsIhUAZ+2VuWpFNOZ58p4oL7hVGE8xTDE6/IQC1o8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwzbJCdW; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452c2805bcso1729080e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:38:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739641113; x=1740245913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e23thYrVFz7izQrLfyCHZJvjAgG77Y/0y3FpMKO2LUk=;
+        b=XwzbJCdWverof9zsrUuwNBZIN7z7QgPwSguoql3mAo+jgiXxIXh0zs7XprVkFreGoV
+         E6PsvRWNhnrttzkW08QBN1XuLsRMB8ohRoX1XG2IGW6fXtDpQLxxPozK4vF7UGQzLY2Z
+         +G50TmMvXrbG1QCPDJMFq0S6c4PrcAnjFhxtSfgjDF34Qg3yCC73Ydk9YGGwkWNDuG7m
+         mymtlUGDASX5unRauECYQM5MhBYqmhvmwgqYoy+f1d7GYLHcOGhKPMg/LlJGHXweVpVj
+         rRkEfAFn+O+sx2rUS8VC0fz10uvdQtgTFy+qc7XqsO5A2ZZO7MQOuAJjW1r85AW746Uo
+         pJtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739641113; x=1740245913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e23thYrVFz7izQrLfyCHZJvjAgG77Y/0y3FpMKO2LUk=;
+        b=Tf3k/RV1Uv8TEGkvSBmOWwBScxkZD0FLpA68pjb/65gMhclfeSgYpZMGoe2WC0s1v8
+         0T1vjGwIkOCxMT9ZIDqsqbRFCeICPwdZLsTAvbq16GM6Hed10m3C0a34ed+xixg+b/sp
+         yFF24ENDIzmmAG4ZKeOoAFUJE8DKlIfRtB95lBHD2GR6t3qWOORG7oUsPFEak6Y1qUQb
+         YdAthW2fOsuFDypGEwRBZ17R8V8rmrBMr8ZYNj9HH1e32tZkUm+0bPwOkrvIkFrb7p2w
+         YHi2o8nLg4VsgQbpnWhvqyneEFe4sM8zmKJ12sIJJfrjGfoKPf9rbOSJPSGeYi4aeyt7
+         Fr6Q==
+X-Gm-Message-State: AOJu0YwLT8eXn0QSZp9pQ+1J1yNL3k+wWxAPVoqXsUz3yIxc5YX/3/TT
+	JMeh0vw5WGYsIuhbvdKBeQ9zuxr0Gtf48f7psfHB5ZzudBbQUYhMjbYpqFlFamH1AJDx3AtNxG0
+	HwB9QoVpZkITqDv7dlBJENLsO0g==
+X-Gm-Gg: ASbGnctQYj/H9sQd3mXXTuVkG1eE73s3gGMNBoFsdvhuqZh48oHAmWUenYDNBTm7EWd
+	MjDxYXdq2/uDbg9PgaOyReIsi6M/WhmVIE68/zc1sx7RY2vDCXvD3RCbN9o0G+LIpIVqtjcsJ/I
+	H9yPb2U5airb0=
+X-Google-Smtp-Source: AGHT+IHmIy9D5scxb+6srcgy48VXBB2I0UiPP3/5kpAcVAaBm7Ln1VSMp2aIW5CVV76yHRa0lSCt5vTJfQTf/MVzO8I=
+X-Received: by 2002:ac2:4e0a:0:b0:544:138d:4b7b with SMTP id
+ 2adb3069b0e04-5452feab078mr1296983e87.52.1739641113104; Sat, 15 Feb 2025
+ 09:38:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-9-brgerst@gmail.com>
+ <20250215142714.GFZ7CkQtdXoUM-xKMo@fat_crate.local>
+In-Reply-To: <20250215142714.GFZ7CkQtdXoUM-xKMo@fat_crate.local>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sat, 15 Feb 2025 12:38:21 -0500
+X-Gm-Features: AWEUYZneyE7EgLynpNzKvZ3wZZ6mC7waiQqIjVbOVPkk6O__hZJ-6zRR2VUA3-s
+Message-ID: <CAMzpN2h05N+KZzpFY6YXZjMViK+_U9gks36mOfRJpSOMY-Xm5A@mail.gmail.com>
+Subject: Re: [PATCH v5 08/16] x86/stackprotector/64: Convert to normal percpu variable
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Konstantin Khlebnikov <koct9i@gmail.com> writes:
-
-> There is another case when counters back to zero:
-> device reattachment or reinitialization.
-> The device itself might be the same or completely different,
-> but statistics sampling will see only restart from zero.
+On Sat, Feb 15, 2025 at 9:27=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrot=
+e:
 >
-> So, maybe rephrase that counters sometimes restarts at zero.
-> For example at boot, device attachment, or counter overflows.
+> On Tue, Nov 05, 2024 at 10:57:53AM -0500, Brian Gerst wrote:
+> > Older versions of GCC fixed the location of the stack protector canary
+> > at %gs:40.  This constraint forced the percpu section to be linked at
+> > absolute address 0 so that the canary could be the first data object in
+> > the percpu section.  Supporting the zero-based percpu section requires
+> > additional code to handle relocations for RIP-relative references to
+> > percpu data, extra complexity to kallsyms, and workarounds for linker
+> > bugs due to the use of absolute symbols.
+> >
+> > GCC 8.1 supports redefining where the canary is located, allowng it to
+> > become a normal percpu variable instead of at a fixed location.  This
+> > removes the contraint that the percpu section must be zero-based.
+>
+> Unknown word [contraint] in commit message.
+> Suggestions: ['constraint',...
+>
+> Use a spellchecker for your commit messages please.
+>
+> > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> > index 5b773b34768d..88a1705366f9 100644
+> > --- a/arch/x86/Makefile
+> > +++ b/arch/x86/Makefile
+> > @@ -140,14 +140,7 @@ ifeq ($(CONFIG_X86_32),y)
+> >          # temporary until string.h is fixed
+> >          KBUILD_CFLAGS +=3D -ffreestanding
+> >
+> > -    ifeq ($(CONFIG_STACKPROTECTOR),y)
+> > -        ifeq ($(CONFIG_SMP),y)
+> > -            KBUILD_CFLAGS +=3D -mstack-protector-guard-reg=3Dfs \
+> > -                             -mstack-protector-guard-symbol=3D__ref_st=
+ack_chk_guard
+> > -        else
+> > -            KBUILD_CFLAGS +=3D -mstack-protector-guard=3Dglobal
+> > -        endif
+> > -    endif
+> > +        percpu_seg :=3D fs
+>
+> Any particular reason this var is not in all caps like the rest of the va=
+rs in
+> this file?
+>
+>         PERCPU_SEG :=3D fs
 
-That makes sense. How does this version of that paragraph sound?
+The convention appears to me to be that all caps are used for global
+variables used by the core build scripts and/or exported to
+subdirectory makefiles, whereas lower case is for local variables.
 
-  All fields are cumulative, monotonic counters, except for field 9, which
-  resets to zero as I/Os complete. The remaining fields reset at boot, on
-  device reattachment or reinitialization, or when the underlying counter
-  overflows. Applications reading these counters should detect and handle
-  resets when comparing stat snapshots.
+PS.  Please comment on the most recent patch series, v6.
 
-Thanks for your feedback!
 
-Thanks,
-David Reaver
+
+Brian Gerst
 
