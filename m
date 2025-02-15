@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-515970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5593A36B57
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:15:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D9AA36B46
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441373B24F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A440D171728
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0161527B4;
-	Sat, 15 Feb 2025 02:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A8813C80E;
+	Sat, 15 Feb 2025 02:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="nX25qR1t"
-Received: from antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gvi/krYb"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D87D151998;
-	Sat, 15 Feb 2025 02:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AC614012;
+	Sat, 15 Feb 2025 02:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739585713; cv=none; b=K6D/wGbf4nPGo6Qq+8ejpRlvJNUGw9BVkp2WG/daUl9v1tWCsQ4fI3t97xOkF+SO4tqaQYnClnRtZimLHA+TJyrb7qowqiNn/YsuRjU+WZ7esPe4Ii5Nc7rTCnhTFLKuEwMu0N9RZ9Tz+xY4YEH9Uc+JS8y68TuZDM6BPMMPQM8=
+	t=1739585208; cv=none; b=rqBpW2xZm6cqtILOnPL0JAZQ/I6+csIutAs5mVH3rcjXrNOYYHsxxNF4LWl3+xrUzqxI0S3nS6FHG8408STRNHE0ae2BrUAkTGga5lBI4dL7ad+QBBWBsB8UUWASD0Z9k+k8nsYYcPcokyWr+ISDY3KRnRbehnTZhFuUhkBG+qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739585713; c=relaxed/simple;
-	bh=f/HFjrGZbsXz4gTQGvHCYTL/7eWhGkkflXSVPCcpWIg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+5fwzHkcHhV4i7I3SYmpWMp/rH+YITGd7UJeXAc0SQcPjm6W6pf2vWb01ZgIBJo0h3zxitxdVXKqh43PILAZx64NnZJKi+QjJ3mfTPxw3SzohljY9XYjTTg7nTzIR1OhmnkX069XSbWHPsKp8EyHoq+a1bahuzb7Kv2WfVBWsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=nX25qR1t; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Sat, 15 Feb 2025 03:05:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1739585126;
-	bh=f/HFjrGZbsXz4gTQGvHCYTL/7eWhGkkflXSVPCcpWIg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
-	b=nX25qR1t0By4jFQtme5p9vdemxtjh6jOZl7YKFvaupfHyjrwTb/PM2Acgd3TLMPPG
-	 fQaUTiIKqdq6I8ff8k5Lu973dJ/bRcEmHsydD8igbP1WkjbsrsRo/sDj2jowpXxwHR
-	 5DC2VZNNNPTrJPTHWm2rTsesqCBHXfw9TVaCpit0gFqLdSWTDzzQ+yfZVub5jObwro
-	 EeJuscbEoIzMl/uMDpnrmfwz5u3ZI/SIB01G0/HOTHUgwv08+ZXjzswCt/A/IUwfL2
-	 dAnlKV7EhbC0rgiCtRIElirmPK+7JOxCdoW/Ghz2vKZXVgFYqhCjGLY9YpfJf8vfhO
-	 YkTixwq13v75Q==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.12 000/419] 6.12.14-rc2 review
-Message-ID: <20250215020526.GA23322@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250214133845.788244691@linuxfoundation.org>
+	s=arc-20240116; t=1739585208; c=relaxed/simple;
+	bh=XR7AOhY6S34dKewifz+km1VWG9yebCK5SGbtEbta3bw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J2mOnQac5hwn4iJyAiaIFfy+bNzL5/nOk6tjQ3jOGUn9f6/9F8l6oBWoJhTVR0iHGBcGa33FvRDzWjOQcYvBQRsUV23SKpuGT9qInG3dbFlOxSDyXF7zkcdPXI/+siFbfzWIezNbGsmU68O50PJdCNPyUqR9NjmF40FzNY/27GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gvi/krYb; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so4999502a91.1;
+        Fri, 14 Feb 2025 18:06:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739585206; x=1740190006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3HOnpJxe0NdKNGJOO+XqAJq7CFi8wQ7LHZoTb4qt4I=;
+        b=Gvi/krYbtj42Fj/42FHOLNu+/TA/U9aawjV3cd7iUTolOSgStUMHWovB+Gp4aBLgLG
+         rS+Hj0SkcaVetCOwFb3neew/Lxy4LwSEifovS8Pzee3LE8+AwTk4XtLxpU49zHIVUnuo
+         9jbMiAJICcvexnNQFy0fcP7s8rLi5mkKpDunzOalC7DXeAuPBxPve0YCE1QUxwhTgP8m
+         KiZDWc8/Xw463DiSsCHkWxc+aX6Y7GO18z+NKts1z5XvYlyCcQm4psDGIxSnep2Mx3z+
+         MGgautbTX8QD0z2TH+KtleXjj1uhn0LSeAgLI6wX5bDF+eTs7kqht95nhT0b9Qes/0L0
+         1ZRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739585206; x=1740190006;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m3HOnpJxe0NdKNGJOO+XqAJq7CFi8wQ7LHZoTb4qt4I=;
+        b=dZ3ZmGKVQrK0r3hnhdvSIAcYxz6hhDzwIqv3Fsb96icQ2r4F2va4uS8aNOyq0TmcXe
+         s13fnjumm+DB2ogr3FnKlm004dT3Rohxper1GzjtgOopqkwe1w0794AxswALJ6Oga+jK
+         hE/ROHvSgWchyJWxZDbthcrlKMgBK8aP/GMSdb0iuzBetol4WwiOgScJAExFyLhMkElt
+         oES8lnQbtriOYx+v2R5YJk2CTRl3zyBiwbyYeeZs1r4Twl+7Gb2l/cxGIPR0rZocpqRf
+         24No9FCKJ+KmxnjbOwTsNUIx1m5cfkOyuDoRHdhYxA2t26WjYP7+n+yi5bkbA1eVAR3O
+         pT+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDzeL5o4QOQoMVll5J6tr8krGqJJ7F1jLFLlV+7Un1wETRwQICs9ivUnMVtvff/YCqwf/dDfZexRHnEKU=@vger.kernel.org, AJvYcCXF0bmtfo01x8bXyncJa74EhPCPyMaA+/UTedO3yOzvP4RugJfsCBzB16J8vPECZpj2xDiz5ZZPZw36@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI+2EK92pM01FYH4vecQlKm9V5WcJzGbCeIocVmFIY94FCTe6/
+	Wpd4UHIWsdSvJKVJGs3MGUBndPaZq3yfUfMeNaE8ug+Flro2UPCH
+X-Gm-Gg: ASbGncuGJl3AgeUvkbujmNb7n+H92GrvQn3SubRjqEVBpAfgil7qBsJeZmkl0QPA1b6
+	hsdsdh9xmI3ZlgcsxwX5vu0ojPmOY9z6A8+HZ6vI8Q7oIkz6guXzwD53QCMxQveszpPEKHvEcxg
+	mIyMkOOtmGPQi+KeRL1DLxYyXSQ+RUZYP+6GRx0s/QybtjtvdfvkTysaFE2JPfZAboN8YGJXVdl
+	ueoi9OY4YNuecEpINAK9ulzZrZWbNOB5J5RDs+z22x91VKXP21gi3xBtWdEYXOnlS2LhPX8wf32
+	DMwroK82E8uaxi1a+GLPu5+o
+X-Google-Smtp-Source: AGHT+IHop3S/O5egKSMDEHdYYSPIkN92gkImI2lM0f7ymUc+Yot11QLU/FVOBFAexTXqSZZLbgzItg==
+X-Received: by 2002:a05:6a00:3e0c:b0:730:74f8:25b9 with SMTP id d2e1a72fcca58-732618d54b1mr2524363b3a.17.1739585205777;
+        Fri, 14 Feb 2025 18:06:45 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.159.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242761538sm3914913b3a.139.2025.02.14.18.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 18:06:45 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: helgaas@kernel.org
+Cc: bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	scott@spiteful.org,
+	trintaeoitogc@gmail.com
+Subject: Re: [RESEND PATCH] PCI: cpci: remove unused fields
+Date: Fri, 14 Feb 2025 23:06:37 -0300
+Message-Id: <20250215020637.217456-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250213212627.GA129476@bhelgaas>
+References: <20250213212627.GA129476@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214133845.788244691@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.12.14 release.
-> There are 419 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Bjorn Helgaas <helgaas@kernel.org> wrote:
+> There are no implementations of ->set_power() or ->get_power(), are
+> there?  If not, we can just remove them and the calls to them.
 > 
-> Responses should be made by Sun, 16 Feb 2025 13:37:21 +0000.
-> Anything received after that time might be too late.
+> I don't see why we should add SLOT_ENABLED.
+Are not implementations of set_power() and get_power(). 
+I removed this funcions and in enable_slot(), disable_slot() and
+cpci_get_power_status() I use a `flags` field that I create in
+cpci_hp_controller_ops struct. I created this `flags` for store a power_status
+and use this in enable_slot(), disable_slot() and cpci_get_power_status() that
+before uses a set_power() and get_power(). I do this way, because I seeing this
+patter in another pci subsystems. In adittion on this, the flags can be used
+for store anothers values.
 
-Hi Greg
+But the Christophe JAILLET <christophe.jaillet@wanadoo.fr> say:
+"If neither get_power nor set_power where defined in any driver, then 
+cpci_get_power_status() was always returning 1.
+IIUC, now it may return 1 or 0 depending of if enable_slot() or 
+disable_slot() have been called."
 
-6.12.14-rc2 compiles, boots and runs here on x86_64 (AMD Ryzen 5 7520U,
-Slackware64-current), no regressions observed.
+Do you think that is better we only return 1 in pci_get_power_status() and
+remove SLOT_ENABLED and `flags` field?
 
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+Thanks,
+Guilherme
 
