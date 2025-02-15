@@ -1,183 +1,127 @@
-Return-Path: <linux-kernel+bounces-516327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72517A36FAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:18:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01138A36FB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C3118927A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C65516FEE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A8C1EA7D2;
-	Sat, 15 Feb 2025 17:18:22 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7C1EA7D4;
+	Sat, 15 Feb 2025 17:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUbxtvZs"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CE613AD18
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 17:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A6813AD18;
+	Sat, 15 Feb 2025 17:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739639902; cv=none; b=Ctc/dFi6PNMbVlQx3jEF8GnaQCQsCgXZZ5w15oeT0anv81YW5Q3EBbKIMd4Elc1Nx/OuFU5xoGkSWTxoojx+ApD0wIscqQ6Ja0oSJfNziFLBkf5mbPB2ri2sZ1crEkQyyP336ijAogMaYSgo4fTVZBqlcg0JGAZ+FRjIwlaVRFM=
+	t=1739639913; cv=none; b=ikA15+cbJYS5SfyYzu8qEUNOuCb832zVeV9I13vz3NnB5bwC/mYsF1IVfl0ICsugX1zQ2W5Ydh8DLR7ZV8C7J7jZZkvURDq5t7SK+sVR5mwPcO6hZ6qGvnL7bAPizUr3AyLVszoqOF4AnDYx5gYQYH+kjAdbihlGEiDlP7U9gnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739639902; c=relaxed/simple;
-	bh=RFEWrCUShwgVdNPvnxVDnheZEPFUwyM6zeN8VlOW014=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rEDC709vukXu1Mn6IMwhbWUcG6kmqR8ZeOQR0eVUG31wAT6qHhG7nDKJofcpeM9bm5p3Vt/RbTELldK4HtLnqRQ6jRVtj3Z5JLxQD+9ByBQLtFn4ENylLCH5PMVY6x6YEMMYJaJ3BjES+ZcXBzPlx82zCargeRRFU7Wb88KTwS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3cfb20d74b5so22227175ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:18:20 -0800 (PST)
+	s=arc-20240116; t=1739639913; c=relaxed/simple;
+	bh=syfhYjdXfwB3WFjAvZ1Lw4ojSBHHmfK0NVQrluGAilM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mfCp6LMtq0o+s3MhnhzLAfTh5rVnA1sX2T4EmUl14mNldbarfm4zrg5grOqHOLujI7DHTnboDVQeXFriJfWO9UaLnDnbe6E6QGfCW2bfbxzbc9mD9jGbqSY0OW4YeNenrD+Fs/OpHpagPE5+aDWl9KoVr9yLQaMluvUN2dt0Zyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUbxtvZs; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fa48404207so6267254a91.1;
+        Sat, 15 Feb 2025 09:18:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739639911; x=1740244711; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3rRk+gn9//zXPLARWtdRv3yS/t43lzQ1DoeFoUszLM=;
+        b=PUbxtvZscBFYvGqlVRzbQJMcXvAUwnVZ12985iEXRnYrZ0pLCLylhCVRiTQlC+sn3V
+         f4xl18qZQt/fAB3VzrExqyT/xPg0DDmq/Fuk0ViBlS4LINxLqPkJQIE9ZSQCUeSRQViT
+         O7lXF/QHU12xK/NVZhz7MIYLAYSp0dT9L9zD9zo4HNl+s3xNgUl2xcCDyWTUX8RDlqHA
+         kXA6Q0mOGW/vpFCFcDhpT+B9X0vXk96hUDcIYZsb9tN/6zB/MLA/lA83HCbYuSYaG87q
+         bt9epCnkpmR1YRAfK8X9yY2tnEZAp/1pL9l2srmLlyuCBbgonTT+ffM7cWv6be8KcvmK
+         dNPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739639900; x=1740244700;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rsLhZ191vrYU5fujgkATG9kXKEFSnPg2S3s9On+hOXo=;
-        b=ojpZYkRMJVg7kf8jkMOYQkS9Actmj3yP/aI8x4If2QAo213jpi5lnVr5xstnccelJZ
-         h3hNonWAoa6NjVzTkYkzuWeIudg4EgN6QkYEOvyfRaIYldGe524V2SFep/phaCzu7nKX
-         Uj1wVweo45cnoxKY1DXaMmePDGoMw8qoF8DhvzB/+Zq8u1SvkqGkMvsE4U76EhU/snBW
-         B4icc9L1L/SnFHjPTEfgxK1QcA0PIIBUR//YT95hD80v4KiM0EZJNMlI2fpi1ooOGkaZ
-         69vaoupLNoLc+UxNL6iTi/HHiCAdP3CKUMw1BrTb2W1psiELOZD3rourNeQv3YM43z2T
-         wYKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKiJBifwV3unTh9rzaRTbcMxnNz5n8nsaGu/I3Vc2+xdwYoRuETuLc5EOHdzuwkrgQ1ZInK6D0iE7RJjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5qeH3kQqHMbD5SXl9lezBmxD2UbdeDkHtTTGZpcsRMH5gr7CX
-	0lo51yVse7/B0nD6payfNWgi0nntcO/xN+pK9Cr3Gz0w+PHAMf9+uogwybdqZnju5lIyZ/zdZuI
-	yaZnbxQlekHOItRK9rOu03aY7EpwJ4qh7vdpWjcRA4FvVyUnExmLmfE8=
-X-Google-Smtp-Source: AGHT+IENTpBl/uZ96gO6h5GkDtGD5eg14FMjs/IUzqfR6iyPa2dkI5XD1VDdg3O4kpD0oqOmCfd+O0qLcV7SVY44luZTiyOLfzfD
+        d=1e100.net; s=20230601; t=1739639911; x=1740244711;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y3rRk+gn9//zXPLARWtdRv3yS/t43lzQ1DoeFoUszLM=;
+        b=tK6HD1bH4PbYwPQUET0gXBb/AyhIi5GyWLJ5KBwdFExKrWQ1Pi+mAPStv6uK46Rrkk
+         Bv4Vv23cPQSEOwTKnB/q9JZ27p8ohYYfkIEKYubIFsyTvV+ZZDq3qd4yGihuIWnGlL8u
+         eWKkrm/SzawsPbtLw+JtXjNsOW41FwYcp7xLegVLxGSEk9BAFaUzg4urSUZVuK4ocN51
+         BNPGwvuJupSCBv5q4zn2w55gOVp1RSJcYQNqW5NNDMHqMVT+siB8yeMalqyOfm5ix+ZX
+         7lJtdHhf6LMjfVbe03fi/beOGbMKWftMSsVVLY4qIZF+mV250dH80wHCLqw3lycU0dlG
+         CPJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIvcu+YPqtUY9gXFCCZU4fbdjUrPQ4dTqpVS2OpR/9tCoD2wk3qaeKw2pn/0UC9QfLT1yvv1UACjh4@vger.kernel.org, AJvYcCWMQnafKdX41ER1Uvawb3XsJzPj+4OTflLHnWvWU2koxYeDtDPcMi2PIARWRp/fEgW2FfeuJWEvIlppXw==@vger.kernel.org, AJvYcCWvOsci/KHTWPdjYHMS60RwuyCZzOkSTBTvnJXpo/E9YNtmV8hlernRiEgcNppHoiwnAB6/+g4SVkww2ojP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFqvaajzt/SY19JUI2MAuAh8JtptxJ4ypPrXkDxKIdqdJk7JEK
+	5wO/Wz2TZ8KmVlZfcKgvw3GHVVIRZAU1bDyUAk65vj3uzw0c2GX4El8PMMOmEbP0cjiWd2qMK/y
+	bSlRHZ3eqZ3CdRZhoDr/m3yTrxc0OxP8x
+X-Gm-Gg: ASbGnctlGWaDj41BUTPPUh57GhW7GTliHl9vxeTbdjA8SP5d4yM6cePQXN8c5/FbCPW
+	Z49W3sBTvLwb6jV6yjTBcBZYPEqDgMeN7ez2XrOwoo8tb6Cpl27uiSYF7Aej2WsZaY+jIGFalaX
+	P7pW9d2J7dTz2mZ4hVUwKKrKEC70o=
+X-Google-Smtp-Source: AGHT+IH2zdiRa2ZNSD2zK+ox8iI7QVeC+t9719g4kVI01lpqPix3B9a0iXWsoIjErPKlDujuZJkGpsthWiW4G/CyLPI=
+X-Received: by 2002:a17:90b:4c07:b0:2ee:b8ac:73b0 with SMTP id
+ 98e67ed59e1d1-2fc40d1245fmr5580596a91.2.1739639911180; Sat, 15 Feb 2025
+ 09:18:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148b:b0:3d0:24c0:bd4d with SMTP id
- e9e14a558f8ab-3d280946e67mr28198605ab.18.1739639899820; Sat, 15 Feb 2025
- 09:18:19 -0800 (PST)
-Date: Sat, 15 Feb 2025 09:18:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
-Subject: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+References: <0e8c8ead-423a-45f3-9e10-020334ef8907@infradead.org>
+ <20250214051432.207630-1-me@davidreaver.com> <CALYGNiOU3vPAyvsNv4rt=qZRbZFVZ9iAe+kzPzGKkx6_L3wG5Q@mail.gmail.com>
+ <864j0wxw74.fsf@davidreaver.com>
+In-Reply-To: <864j0wxw74.fsf@davidreaver.com>
+From: Konstantin Khlebnikov <koct9i@gmail.com>
+Date: Sat, 15 Feb 2025 18:18:20 +0100
+X-Gm-Features: AWEUYZnG0tSbZyT1TSj-Wscf2JYcJrjGbDJVy2WzG7qo0-hz7fiqnDHwTzWS3hg
+Message-ID: <CALYGNiOA4K4PQcJTk_OwkHOamW-Am_gKSUZoog41v+Y_+qEQxg@mail.gmail.com>
+Subject: Re: [PATCH] docs: iostats: Rewrite intro, remove outdated formats
+To: David Reaver <me@davidreaver.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
+	linux-doc@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Fri, 14 Feb 2025 at 18:39, David Reaver <me@davidreaver.com> wrote:
+>
+> Konstantin Khlebnikov <koct9i@gmail.com> writes:
+>
+> > Wraparounds here are slightly more complicated than simply 32-bit or 64-bit overflows.
+> >
+> > Internal time counters are 64-bit in nanoseconds.
+> >
+> > Values are converted into milliseconds for printing,
+> > also 32-bit architectures truncate printed values to 32-bit.
+> >
+> > So the common trick: delta = (long)(after - before) does not work,
+> > because the time counter wraps around UINT64_MAX/1000.
+> >
+>
+> Thanks Konstantin. What do you think about just removing this entire
+> sentence? It is mostly tweaked from the old text that was rewritten, but
+> I'm not sure it is particularly insightful. That paragraph would look
+> like this:
+>
+>   All fields are cumulative, monotonic counters that start at zero at
+>   boot, except for field 9, which resets to zero as I/Os complete. Other
+>   fields only increase unless they overflow and wrap. Wrapping may occur
+>   on long-running or high-load systems, so applications should handle this
+>   properly.
 
-syzbot found the following issue on:
+There is another case when counters back to zero:
+device reattachment or reinitialization.
+The device itself might be the same or completely different,
+but statistics sampling will see only restart from zero.
 
-HEAD commit:    df5d6180169a Add linux-next specific files for 20250210
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17be8718580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2cd616b6e736ca7
-dashboard link: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1480a3f8580000
+So, maybe rephrase that counters sometimes restarts at zero.
+For example at boot, device attachment, or counter overflows.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/92495cf20271/disk-df5d6180.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4b3656161842/vmlinux-df5d6180.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7fbc4e7a0f5d/bzImage-df5d6180.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000021: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000108-0x000000000000010f]
-CPU: 0 UID: 0 PID: 6167 Comm: syz.3.45 Not tainted 6.14.0-rc2-next-20250210-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:bcsp_recv+0xcd/0x16d0 drivers/bluetooth/hci_bcsp.c:590
-Code: 38 4c 89 e8 48 c1 e8 03 48 89 44 24 28 48 89 4c 24 20 48 89 6c 24 18 4c 89 6c 24 10 4c 89 7c 24 08 89 5c 24 04 48 8b 44 24 38 <42> 80 3c 30 00 74 08 48 89 ef e8 94 d5 5c f9 48 8b 5d 00 31 ff 48
-RSP: 0018:ffffc900034d7cd0 EFLAGS: 00010202
-RAX: 0000000000000021 RBX: 0000000000000001 RCX: 0000000000000182
-RDX: ffff888035fc8000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000108 R08: ffffffff88c9aef5 R09: 1ffff1100ade3c03
-R10: dffffc0000000000 R11: ffffffff88c9ae90 R12: ffffc900034d7e00
-R13: 0000000000000178 R14: dffffc0000000000 R15: 0000000000000110
-FS:  00007f0fbdf626c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000348be000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hci_uart_tty_receive+0x141/0x1c0 drivers/bluetooth/hci_ldisc.c:622
- tiocsti+0x24d/0x300 drivers/tty/tty_io.c:2299
- tty_ioctl+0x518/0xdc0 drivers/tty/tty_io.c:2716
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0fbd18cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0fbdf62038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0fbd3a6160 RCX: 00007f0fbd18cde9
-RDX: 0000400000000240 RSI: 0000000000005412 RDI: 0000000000000007
-RBP: 00007f0fbd20e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0fbd3a6160 R15: 00007fffe8c957b8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bcsp_recv+0xcd/0x16d0 drivers/bluetooth/hci_bcsp.c:590
-Code: 38 4c 89 e8 48 c1 e8 03 48 89 44 24 28 48 89 4c 24 20 48 89 6c 24 18 4c 89 6c 24 10 4c 89 7c 24 08 89 5c 24 04 48 8b 44 24 38 <42> 80 3c 30 00 74 08 48 89 ef e8 94 d5 5c f9 48 8b 5d 00 31 ff 48
-RSP: 0018:ffffc900034d7cd0 EFLAGS: 00010202
-RAX: 0000000000000021 RBX: 0000000000000001 RCX: 0000000000000182
-RDX: ffff888035fc8000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000108 R08: ffffffff88c9aef5 R09: 1ffff1100ade3c03
-R10: dffffc0000000000 R11: ffffffff88c9ae90 R12: ffffc900034d7e00
-R13: 0000000000000178 R14: dffffc0000000000 R15: 0000000000000110
-FS:  00007f0fbdf626c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0fbdf40f98 CR3: 00000000348be000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	38 4c 89 e8          	cmp    %cl,-0x18(%rcx,%rcx,4)
-   4:	48 c1 e8 03          	shr    $0x3,%rax
-   8:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
-   d:	48 89 4c 24 20       	mov    %rcx,0x20(%rsp)
-  12:	48 89 6c 24 18       	mov    %rbp,0x18(%rsp)
-  17:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
-  1c:	4c 89 7c 24 08       	mov    %r15,0x8(%rsp)
-  21:	89 5c 24 04          	mov    %ebx,0x4(%rsp)
-  25:	48 8b 44 24 38       	mov    0x38(%rsp),%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 ef             	mov    %rbp,%rdi
-  34:	e8 94 d5 5c f9       	call   0xf95cd5cd
-  39:	48 8b 5d 00          	mov    0x0(%rbp),%rbx
-  3d:	31 ff                	xor    %edi,%edi
-  3f:	48                   	rex.W
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> Thanks,
+> David Reaver
 
