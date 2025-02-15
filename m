@@ -1,257 +1,143 @@
-Return-Path: <linux-kernel+bounces-516045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C2A36C5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:54:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1742A36C66
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964CE3B12BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 06:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 370BF7A484A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDCC1925B8;
-	Sat, 15 Feb 2025 06:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD22190662;
+	Sat, 15 Feb 2025 07:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uS4GDR/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FNdIKLTI"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A87D1537AC;
-	Sat, 15 Feb 2025 06:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B3D2FF;
+	Sat, 15 Feb 2025 07:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739602461; cv=none; b=VYPJsUp1kMKmjSu/EUfyr9VvpjUCm86mVzUaoqzsFqxtb0wS4ET1r9BWiRuYJCmthrBhJVE1y7kWV5rL9e3v8+nBrsWQFttgFQd7ZZkOFLweWOmlk0hiT3kYIDL/bNBBMPanUJ4Z5Da/XM0e9pGwygb8eop2OIDemgg5XgMXBi4=
+	t=1739602885; cv=none; b=Bkhzc3VfAAcuPsueqgLbdFApdkxwDRCSkC2RcRW8gKAsNz/9qbDhfHM8b3gjxcEWrgKARApsRxKt1gFdpK2v8sBwLbV/j4kidTuKq1bHdCcKQUmsndGVPSjaOZI23gteTqnghWTs6HQ/xqzxh/H3HwNP9TDxWbW5nZ/bB+QgPk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739602461; c=relaxed/simple;
-	bh=mfCqWG6NaYR6Sxd++9L3Sle7RqL0qWrh+kjSNFtksAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PiNsvpWNPiLItwfMnNORdjoG3HwQoox7xq8011uwWVUSGUTVDRTWICOLDf6SQQFAIY3tG4wknLnvesxu1/KreEUX6FkVqR+L0sa1GLmZS0YiG3FLXjcONFEIFfvBBq+VUNZkAegJV7vBjNia6txTuEqLia7tjV2qGH1mkqjJgV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uS4GDR/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326CCC4CEDF;
-	Sat, 15 Feb 2025 06:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739602457;
-	bh=mfCqWG6NaYR6Sxd++9L3Sle7RqL0qWrh+kjSNFtksAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uS4GDR/SYf5jq318wLFt00h54nZgI/f4yIrfYTZvBV7jtSKQ1RY9pTAqlNYYxSCC6
-	 zygTR0MT/JQ5CQ/0x1v48rY/2sgioAgVjQlS+fAcz/p+8ZpKoylYdoM2+Ime/YZKv1
-	 76WODxrBGyq6uEyBhlP3dGL1sSbDsZD2GKoZSyLE=
-Date: Sat, 15 Feb 2025 07:53:12 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <2025021501-tamer-sank-142a@gregkh>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
- <2025021437-washout-stonewall-d13e@gregkh>
- <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1739602885; c=relaxed/simple;
+	bh=Cj10GefRMuc4vTdEGLMun4lQYXt0WGTz2+ZiQdAckLk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A4/dbAyFHXwbqMpMmU/loy3mv/Dr6mT8c+FMbEqBaxknPhNommNaqIoLIp6dI/xBsK3qKQ+FFAPEfOiL7aOGGnaPIexKzaqsV+idJlagSWpdYK3lbjGvB9/OZ2XdCxURBw3S8USZS5Xi/CrwIalVo6ORSDNeF4ClJ8hghLne6nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FNdIKLTI; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51F71A4g1100935
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 15 Feb 2025 01:01:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739602870;
+	bh=a49cENLS4LBwW3AZTSCjBneWux6vcWcfKqPjTK1C0V8=;
+	h=From:To:CC:Subject:Date;
+	b=FNdIKLTIZUyHtYOZM27/tKV6M3K1tyWNGHg+CKxiDSPZy6nbLzmHRV+xf5LiP1c0s
+	 rgRUOuU/vqbioSaZBBcHi8StWhjDq80gS04VEe31x/3BXzNzTVZpwB8l8dAeHWxcDw
+	 D41N4XWUDjdLvq9Glxhuv2fztysNRqztakd+7TVs=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51F71AmT028345
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 15 Feb 2025 01:01:10 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 15
+ Feb 2025 01:01:09 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 15 Feb 2025 01:01:09 -0600
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.6])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51F7169d117699;
+	Sat, 15 Feb 2025 01:01:07 -0600
+From: Udit Kumar <u-kumar1@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Udit Kumar
+	<u-kumar1@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j721s2-som-p0: Add flash partition details
+Date: Sat, 15 Feb 2025 12:30:59 +0530
+Message-ID: <20250215070059.1593489-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Feb 14, 2025 at 07:16:30PM +0100, Jerome Brunet wrote:
-> On Fri 14 Feb 2025 at 17:33, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Tue, Feb 11, 2025 at 06:27:58PM +0100, Jerome Brunet wrote:
-> >> Add helper functions to create a device on the auxiliary bus.
-> >> 
-> >> This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> >> the same code repeated in the different drivers.
-> >> 
-> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>
-> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> >> ---
-> >>  drivers/base/auxiliary.c      | 88 +++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/auxiliary_bus.h | 10 +++++
-> >>  2 files changed, 98 insertions(+)
-> >
-> > I like the idea, see much the same of what I recently did for the "faux"
-> > bus here:
-> > 	https://lore.kernel.org/all/2025021023-sandstorm-precise-9f5d@gregkh/
-> 
-> Reading this, I'm getting the feeling that some (most?) simple auxiliary
-> driver might be better off migrating to "faux", instead of what I'm
-> proposing here ? Is this what you are suggesting ?
+When used as boot device, OSPI flash hosts different  boot
+binaries and rootfs etc.
+So Add partition details for images hosted on OSPI flash.
 
-For any that do not actually talk to any real hardware (i.e. they are
-NOT sharing resources with a parent device), then yes, they should.  I
-was also trying to point out that "simple" apis like what you created
-here are a good thing in my opinion, I like it!
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi | 41 ++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-> Few Q:
-> Is there some sort of 'platform_data' (sorry for the lack of a better
-> term, no provocation intended ;) ) ... it there a
-> simple way to pass an arbitrary struct to the created device with 'faux' ?
+diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
+index b3a0385ed3d8..54fc5c4f8c3f 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
+@@ -448,6 +448,47 @@ flash@0 {
+ 		cdns,tchsh-ns = <60>;
+ 		cdns,tslch-ns = <60>;
+ 		cdns,read-delay = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "ospi.tiboot3";
++				reg = <0x0 0x80000>;
++			};
++
++			partition@80000 {
++				label = "ospi.tispl";
++				reg = <0x80000 0x200000>;
++			};
++
++			partition@280000 {
++				label = "ospi.u-boot";
++				reg = <0x280000 0x400000>;
++			};
++
++			partition@680000 {
++				label = "ospi.env";
++				reg = <0x680000 0x40000>;
++			};
++
++			partition@6c0000 {
++				label = "ospi.env.backup";
++				reg = <0x6c0000 0x40000>;
++			};
++
++			partition@800000 {
++				label = "ospi.rootfs";
++				reg = <0x800000 0x37c0000>;
++			};
++
++			partition@3fc0000 {
++				label = "ospi.phypattern";
++				reg = <0x3fc0000 0x40000>;
++			};
++		};
+ 	};
+ };
+ 
+-- 
+2.34.1
 
-There are at least 2 ways to do this:
-  - embed a faux_device inside a larger structure and then do a
-    container_of() in any sysfs callback to get to your real structure
-  - in a provided probe() callback, set the driverdata field with a call
-    to faux_device_set_drvdata()
-
-> The difference between aux and faux I'm seeing it that aux seems to
-> decouple things a bit more. The only thing aux needs is a module name to
-> pop something up, while faux needs a reference to the ops instead.
-
-aux is needed for when you want multiple drivers to be bound to the same
-hardware resource and need some way to share all of that.  faux is used
-for "fake" devices where you just need a struct device in the /sys/ tree
-to be used for "something" or as a parent device for something else.
-See the examples in the above patch series where I convert many
-different types of drivers over to use faux.
-
-> I can see the appeal to use aux for maintainers trying to decouple
-> different subsystems.
-
-Again aux is needed for "sharing" a real device.  faux is there for fake
-ones that people previously were using platform devices for.
-
-> > Some review comments:
-> >
-> >> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> >> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..0f697c9c243dc9a50498a52362806db594345faf 100644
-> >> --- a/drivers/base/auxiliary.c
-> >> +++ b/drivers/base/auxiliary.c
-> >> @@ -385,6 +385,94 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
-> >>  
-> >> +static void auxiliary_device_release(struct device *dev)
-> >> +{
-> >> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-> >> +
-> >> +	kfree(auxdev);
-> >> +}
-> >> +
-> >> +static struct auxiliary_device *auxiliary_device_create(struct device *dev,
-> >> +							const char *modname,
-> >> +							const char *devname,
-> >> +							void *platform_data,
-> >
-> > Can you have the caller set the platform_data if they need/want it after
-> > the device is created?  Or do you need that in the probe callback?
-> 
-> My assumption was that it is needed in probe, but I guess that entirely
-> depends on the driver. If that was ever needed, it could be added later
-> I think.
-> 
-> >
-> > And can't this be a global function too for those that don't want to
-> > deal with devm stuff?
-> 
-> There was a note about that in the cover-letter of the v1 but I did not
-> repeat it after.
-> 
-> It can be exported but I had no use for it so I thought It was better not
-> export it until it was actually needed. I really do not have a strong
-> preference over this.
-> 
-> >
-> >> +							int id)
-> >> +{
-> >> +	struct auxiliary_device *auxdev;
-> >> +	int ret;
-> >> +
-> >> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> >> +	if (!auxdev)
-> >> +		return ERR_PTR(-ENOMEM);
-> >
-> > Ick, who cares what the error value really is?  Why not just do NULL or
-> > a valid pointer?  That makes the caller much simpler to handle, right?
-> >
-> 
-> Sure why not
-> 
-> >> +
-> >> +	auxdev->id = id;
-> >> +	auxdev->name = devname;
-> >> +	auxdev->dev.parent = dev;
-> >> +	auxdev->dev.platform_data = platform_data;
-> >> +	auxdev->dev.release = auxiliary_device_release;
-> >> +	device_set_of_node_from_dev(&auxdev->dev, dev);
-> >> +
-> >> +	ret = auxiliary_device_init(auxdev);
-> >
-> > Only way this will fail is if you forgot to set parent or a valid name.
-> > So why not check for devname being non-NULL above this?
-> 
-> If auxiliary_device_init() ever changes it would be easy to forget to
-> update that and lead to something nasty to debug, don't you think ?
-
-Yes, this is being more defensive, I take back my objection, thanks.
-
-> >> +	if (ret) {
-> >> +		kfree(auxdev);
-> >> +		return ERR_PTR(ret);
-> >> +	}
-> >> +
-> >> +	ret = __auxiliary_device_add(auxdev, modname);
-> >> +	if (ret) {
-> >> +		/*
-> >> +		 * NOTE: It may look odd but auxdev should not be freed
-> >> +		 * here. auxiliary_device_uninit() calls device_put()
-> >> +		 * which call the device release function, freeing auxdev.
-> >> +		 */
-> >> +		auxiliary_device_uninit(auxdev);
-> >
-> > Yes it is odd, are you SURE you should be calling device_del() on the
-> > device if this fails?  auxiliary_device_uninit(), makes sense so why not
-> > just call that here?
-> 
-> I'm confused ... I am call auxiliary_device_uninit() here. What do you
-> mean ? 
-
-Oh wow, I got this wrong, sorry, I was thinking you were calling
-auxiliary_device_destroy().  Nevermind, ugh, it was a long day...
-
-thanks,
-
-greg k-h
 
