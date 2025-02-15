@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-516393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFEFA370B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 21:37:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE16A370B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D90D188FD8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE97E1892E4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 21:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4224A1EEA5A;
-	Sat, 15 Feb 2025 20:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7E81EDA0F;
+	Sat, 15 Feb 2025 21:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkEwe60R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="j6ZlM+nk"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B76E1925A6;
-	Sat, 15 Feb 2025 20:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDFD193086;
+	Sat, 15 Feb 2025 21:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739651858; cv=none; b=ffUcz0nJWfsmXtdU2AP3Rg/ND2No9eX/ZplKIPqZpBCuZreEfl6lxahpTIkTefZl6DbULJk2snzinqONbugxoTpZOJ3dYNc/sKoPAVmRLEn3hU+XAC226GP5wZLppOFGeaXbHx/+hEcIc+zzV3nZ4WN/pkkBhtzpsOAxykjJCnY=
+	t=1739653424; cv=none; b=A3JTex5HNjNK3Idwk5ia2qoRqI3QpcpJEVtRpljNIim3JFhvJT/JlbR54sXB16FKnbItbAYoYfQwjKTrlumAcjzwgnth9P/tSuTqvfj9JP0MhzQ14+RE1PAIFgx/fjRYK0+xk5xSVDOdPo7JZASb9hlNByIVYZlR7QtxebHIw30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739651858; c=relaxed/simple;
-	bh=oM535P0+yVW/RCS+EfwNf5PILDqtQCaGF2LRWeDXtdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvwvwmpdCU235XW67z05VzfxniHfPRFmDGwH6a7/oXZg4phil2OEqseyNyBRy0hL19hrXvH4S2surYStU2CFItLsYHQ7XaE29nqXS9RQ1/xNLL2C5FyLQQXuNGZV3aFXtvIBfCYqnfrfqCGAco6s/TtUOgjLrgSRRXcMvPV/idk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkEwe60R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C82C4CEE2;
-	Sat, 15 Feb 2025 20:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739651858;
-	bh=oM535P0+yVW/RCS+EfwNf5PILDqtQCaGF2LRWeDXtdE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TkEwe60R1qpUR+c8jFCMzTC/t/8DkpdMN8Q0p0X/kI/T+6fIbudfBR27hdTYJ7AJs
-	 WKVQKWtHPbyHvi9RjuBYTsPzNd6nTZ/6ahEYFisCfBK3cNnMvMAXGGfj8B7bXg4jCt
-	 3zdpxn5Ndn+qpSypvvarfp0+RDsANCg+kWUSS6YxOsDOQVej3hbZNi27b1KMy1/J4D
-	 Ns/+cvhEQj9HYYSpoh2i8LOi5z3bfF+R6O3Er875ZZnr4087A5/397UDX817+AVH3R
-	 T41DSKfD3l/aNjebBC0U+7rgQqsLzRC8fxWiN1pwxZ53UcHUc1IdkvZJgR+hvnH//t
-	 COcTsxrAh/xbw==
-Date: Sat, 15 Feb 2025 13:37:33 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: move -fzero-init-padding-bits=all to the
- top-level Makefile
-Message-ID: <20250215203733.GA2954129@ax162>
-References: <20250215161604.690467-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1739653424; c=relaxed/simple;
+	bh=IXB/OA0/HJEcsIwYx8E7/hlc3FONZBJ+SuINx/OY1Ww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQn8XoJPLR0abZKgjpPq2VHH695c3gNuRU8S5yRJXgbdUJ0AHPtOYUJlXDlaDsvfANG6wOSb7/rQAFKOaVTOglCh3FDzqVQuybMOVQA16GpedewMP0jFe4i/cpTN4+5I2FkzZUKLK/rDXdDNOWW7viF3aaNR/fMItnMwWi6m6Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=j6ZlM+nk; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=8SGIblqnPcnG43bpX86thHVrqLMXC+Z5CiJGbNB0aOA=; b=j6ZlM+nk37YpPhhR4WQbqyeu1E
+	ucV/nYoy0Yqn2O1PbFrjKpTr4/ndEZ16FcChl9f4/eKsmZDEE1BCeG1xcdPvWiA4DHX0fQfJOvCDj
+	Ni+EtzOPi/g3caHa2rMpUU0XCwTmutcg8JXLOpwsQ+hso4xE6Qc2i8Mxk91PBOiGNAmyQJJdb9SXk
+	dsh5JJCS/Yhaqqaound2KpDxpmQ+0ZGAwd+tPirBa8AnM25NCHOS7I6tEGlN3zVDczHaPwZG+Zn7b
+	N3eKP8dlB8nFCrdwNAemai60DV3pYc9Tbfgwrc7j9UMhgPdiZigEAbtE7q3V/6A01CrMpm54A6aGO
+	pIjyfq9w==;
+Received: from [187.90.171.141] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tjPJt-004POc-M5; Sat, 15 Feb 2025 22:03:32 +0100
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	rostedt@goodmis.org,
+	kernel-dev@igalia.com,
+	kernel@gpiccoli.net,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] x86/tsc: Always save/restore TSC sched_clock on suspend/resume
+Date: Sat, 15 Feb 2025 17:58:16 -0300
+Message-ID: <20250215210314.351480-1-gpiccoli@igalia.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215161604.690467-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 16, 2025 at 01:15:52AM +0900, Masahiro Yamada wrote:
-> The -fzero-init-padding-bits=all option is not a warning flag, so
-> defining it in scripts/Makefile.extrawarn is inconsistent.
-> 
-> Move it to the top-level Makefile for consistency.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+TSC could be reset in deep ACPI sleep states, even with invariant TSC.
+That's the reason we have sched_clock() save/restore functions, to deal
+with this situation. But happens that such functions are guarded with a
+check for the stability of sched_clock - if not considered stable, the
+save/restore routines aren't executed.
 
-Whoops, I will have to watch for that in the future.
+On top of that, we have a clear comment on native_sched_clock() saying
+that *even* with TSC unstable, we continue using TSC for sched_clock due
+to its speed. In other words, if we have a situation of TSC getting
+detected as unstable, it marks the sched_clock as unstable as well,
+so subsequent S3 sleep cycles could bring bogus sched_clock values due
+to the lack of the save/restore mechanism, causing warnings like this:
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+[22.954918] ------------[ cut here ]------------
+[22.954923] Delta way too big! 18446743750843854390 ts=18446744072977390405 before=322133536015 after=322133536015 write stamp=18446744072977390405
+[22.954923] If you just came from a suspend/resume,
+[22.954923] please switch to the trace global clock:
+[22.954923]   echo global > /sys/kernel/tracing/trace_clock
+[22.954923] or add trace_clock=global to the kernel command line
+[22.954937] WARNING: CPU: 2 PID: 5728 at kernel/trace/ring_buffer.c:2890 rb_add_timestamp+0x193/0x1c0
 
-> ---
-> 
->  Makefile                   | 3 +++
->  scripts/Makefile.extrawarn | 3 ---
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 89628e354ca7..4a36864dd4bd 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -928,6 +928,9 @@ KBUILD_CFLAGS	+= $(CC_AUTO_VAR_INIT_ZERO_ENABLER)
->  endif
->  endif
->  
-> +# Explicitly clear padding bits during variable initialization
-> +KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
-> +
->  # While VLAs have been removed, GCC produces unreachable stack probes
->  # for the randomize_kstack_offset feature. Disable it for all compilers.
->  KBUILD_CFLAGS	+= $(call cc-option, -fno-stack-clash-protection)
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index dc081cf46d21..d75897559d18 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -82,9 +82,6 @@ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
->  # Warn if there is an enum types mismatch
->  KBUILD_CFLAGS += $(call cc-option,-Wenum-conversion)
->  
-> -# Explicitly clear padding bits during variable initialization
-> -KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
-> -
->  KBUILD_CFLAGS += -Wextra
->  KBUILD_CFLAGS += -Wunused
->  
-> -- 
-> 2.43.0
-> 
+Notice that the above was reproduced even with "trace_clock=global".
+
+The fix for that is to _always_ save/restore the sched_clock on suspend
+cycle _if TSC is used_ as sched_clock - only if we fallback to jiffies
+the sched_clock_stable() check becomes relevant to save/restore the
+sched_clock.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+---
+ arch/x86/kernel/tsc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 34dec0b72ea8..88e5a4ed9db3 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -959,7 +959,7 @@ static unsigned long long cyc2ns_suspend;
+ 
+ void tsc_save_sched_clock_state(void)
+ {
+-	if (!sched_clock_stable())
++	if (!static_branch_likely(&__use_tsc) && !sched_clock_stable())
+ 		return;
+ 
+ 	cyc2ns_suspend = sched_clock();
+@@ -979,7 +979,7 @@ void tsc_restore_sched_clock_state(void)
+ 	unsigned long flags;
+ 	int cpu;
+ 
+-	if (!sched_clock_stable())
++	if (!static_branch_likely(&__use_tsc) && !sched_clock_stable())
+ 		return;
+ 
+ 	local_irq_save(flags);
+-- 
+2.47.1
+
 
