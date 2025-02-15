@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-515953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBAEA36AD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 790F7A36AFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823A53B1161
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAA13B1B7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0812770FE;
-	Sat, 15 Feb 2025 01:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="Xg851AJR"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFA5103F;
+	Sat, 15 Feb 2025 01:27:03 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865813595D;
-	Sat, 15 Feb 2025 01:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A2D2FF
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739582650; cv=none; b=CwpesJzKzBj8XSqD+pvS+V/0AtOnRoaXRWyMU2K+9rNtNIv3/+W+q+IaVG/o86ALPfhyKM2nghiL7eC5CngwZvqzFebsb5cZRMgH6rUbOr0dNd3+X2APe/Ytgvyb8LasqyywcOzv1Su150sQYisZWid0bSDs9KsYDtwHNed9KXI=
+	t=1739582822; cv=none; b=dGPVg/4qc1LOzUPip/L9vdoRvC8JF+RljM9zPw0WB5vGG1BoY8Bp2J6TZa64TE1fO12sirUrRPl1DaiJt48+vaotyzuTBZZ7hHpCk6NhsEhVAMnN6gIFrjKyZ6tEcJD83ppzqBFMsKOEKz1610kWDWeMITzFJEH4vnszfmnjqbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739582650; c=relaxed/simple;
-	bh=/8rvox9DOC/NPAqTp23c5M8ih+i+QiAgWnjovlqOJAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZGJmVsaqYxTzVkrhK8tepIgiujsq+Kj3rjQ5bRpTtFoMyll4L6VviEgACaOCVglY0U/fUKZjqgahRcy6y/G67Xbj/lXcQRVx5v7pQpm9S0B3AtFfx6laQnwwXQ53spux8z6OUh1l7neIeKwRoC7zg0GjyYPezGVheLmwk+XamUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=Xg851AJR; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jw3SBcHfeO9xQcGCOZ7HTEtBaz2w2sb/NeaKrxms458=; b=Xg851AJRGjCCqkRvuy7GRRgRfX
-	H5E1t1Tj34t9hcjE+oxOrjHfSsrW9ObUB8wJCcMYybXtVeHFM5lX2wzn/VN/gjdduvPYx1Bs0pr96
-	UDjNDXenZimieCUy0+TSI0ioR41jlkJCOVfYbrRzIL38ZAZSXMLFKHxaYOHH7QxO1UiISo/pOJ44Y
-	MBTqnzjs0TiGhW9x758kJc6QxRDBfpCB32GB7A/rCk21kHUZwTjNPzt3LNiZwYKA/+M7mEifytO4U
-	txWBv4aOZDsqZE/C8+o/jPlw/vflDDCzAiU/9ysdRQjZ6XQKG656jftEGvyBKLVQNgULZ6iUNy6hC
-	tC2BYddg==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.localnet)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tj6uW-00FC1C-2T;
-	Fri, 14 Feb 2025 19:24:00 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Mike Lothian <mike@fireburn.co.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- dri-devel@lists.freedesktop.org, Arnd Bergmann <arnd@arndb.de>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- wine-devel@winehq.org, =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
- Wolfram Sang <wsa@kernel.org>, Arkadiusz Hiler <ahiler@codeweavers.com>,
- Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH] ntsync: Set the permissions to be 0666
-Date: Fri, 14 Feb 2025 19:24:00 -0600
-Message-ID: <3611179.iIbC2pHGDl@camazotz>
-In-Reply-To: <20250215010333.GO3028674@frogsfrogsfrogs>
-References:
- <20250214122759.2629-2-mike@fireburn.co.uk> <8487800.T7Z3S40VBb@camazotz>
- <20250215010333.GO3028674@frogsfrogsfrogs>
+	s=arc-20240116; t=1739582822; c=relaxed/simple;
+	bh=AdsovmeqayU7sop6zJS8/ADHIunyLp4dOkTInukMREg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hGD42jDFCgsANlVOm2imy8IK0+1w3q942LMpur0egILkQpQFhqJteWStSBHUX5hMh5QcmRRQ2en87LIPvbe783i/PjbVaN/cE9+WZv8ShH0nEhdNGEYPhGUFqN6XHQE66Z8cp8lz8cPsE4U3zhtcHnd1ei+QieB1VSodaOBoVfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tj6wL-0000000055H-2ugD;
+	Fri, 14 Feb 2025 20:25:53 -0500
+Message-ID: <3e26626aa1c01aaa5d1e7b42d3ffbd632c3264fb.camel@surriel.com>
+Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
+From: Rik van Riel <riel@surriel.com>
+To: Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
+ jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali
+ Shukla	 <Manali.Shukla@amd.com>
+Date: Fri, 14 Feb 2025 20:25:51 -0500
+In-Reply-To: <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
+References: <20250213161423.449435-1-riel@surriel.com>
+	 <20250213161423.449435-7-riel@surriel.com>
+	 <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
+	 <20250214194013.GA2198@noisy.programming.kicks-ass.net>
+	 <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Sender: riel@surriel.com
 
-On Friday, 14 February 2025 19:03:33 CST Darrick J. Wong wrote:
-> On Fri, Feb 14, 2025 at 04:15:25PM -0600, Elizabeth Figura wrote:
-> > On Friday, 14 February 2025 12:45:39 CST Darrick J. Wong wrote:
-> > > On Fri, Feb 14, 2025 at 12:13:03PM -0600, Elizabeth Figura wrote:
-> > > > On Friday, 14 February 2025 07:06:20 CST Greg Kroah-Hartman wrote:
-> > > > > On Fri, Feb 14, 2025 at 12:28:00PM +0000, Mike Lothian wrote:
-> > > > > > This allows ntsync to be usuable by non-root processes out of t=
-he box
-> > > > >=20
-> > > > > Are you sure you need/want that?  If so, why?  How did existing t=
-esting
-> > > > > not ever catch this?
-> > > >=20
-> > > > Hi, sorry, this is of course my fault.
-> > > >=20
-> > > > We do need /dev/ntsync to be openable from user space for it to be
-> > > > useful. I'm not sure what the most "correct" permissions are to have
-> > > > in this case (when we don't specifically need read or write), but I
-> > > > don't think I see a reason not to just set to 666 or 444.
-> > > >=20
-> > > > I originally assumed that the right way to do this was not to set t=
-he
-> > > > mode on the kernel file but rather through udev; I believe I was us=
-ing
-> > > > the code for /dev/loop-control or /dev/fuse as an example, which bo=
-th
-> > > > do that. So I (and others who tested) had just manually set up udev
-> > > > rules for this, with the eventual intent of adding a default rule to
-> > > > systemd like the others. I only recently realized that doing someth=
-ing
-> > > > like this patch is possible and precedented.
-> > > >=20
-> > > > I don't know what the best way to address this is, but this is
-> > > > certainly the simplest.
-> > >=20
-> > > Paranoid defaults in the kernel, and then a udev rule to relax the mo=
-de
-> > > at runtime.  You could also have logind scripts to add add per-user
-> > > allow acls to the device file at user session set up time... or howev=
-er
-> > > it is that /dev/sr0 has me on the allow list.  I'm not sure how that
-> > > happens exactly, but it works smoothly.
-> > >=20
-> > > I get far less complaining about relaxing posture than tightening it
-> > > (=3D=3Dbreaking things) after the fact.
-> >=20
-> > FWIW, it may be worth stressing that this is not a hardware device in
-> > any sense, it's a software driver that only lives in a char device
-> > (and dedicated module) for the sake of isolating the code. I can't
-> > imagine any reason to control access per-user, although my experience
-> > may not be enough to grant such imagination.
+On Fri, 2025-02-14 at 11:55 -0800, Dave Hansen wrote:
 >=20
-> Oh, I'm aware that ntsync is a driver for a software "device" that
-> implements various Windows APIs and isn't real hardware. :)
+> Fair enough. If we don't have a better name, we can at least do:
 >=20
-> But, you might want prevent non-root systemd services (e.g. avahi) from
-> being able to access /dev/ntsync if, say, someone breaches that, while
-> at the same time allowing access to (say) logged-in users who can run
-> Wine.
+> 	if (new_bad_name()) {
+> 		new_thing();
+> 	} else {
+> 		old_thing();
+> 	}
+>=20
+> My real heartburn is with:
+>=20
+> 	if (new_bad_name()) {
+> 		new_thing();
+> 	} else if (need_thing_1()) {
+> 		old_thing1();
+> 	} else {
+> 		old_thing2();
+> 	}
+>=20
+> Where new and old are logically squished together.
+>=20
+Do we want to group this code by history, or
+by function?
 
-I see the idea, though I don't know if it's applicable in this case=E2=80=
-=94the individual ntsync file descriptions are also supposed to be isolated=
- from one another, so even a rogue avahi would still have another barrier t=
-owards compromising a Wine process. Of course you may be aware of that and =
-be advocating for the more barriers the better.
+I would argue that new_thing() and old_thing1()
+are closer to each other functionally (they both
+do remote TLB invalidation) than they are to=C2=A0
+old_thing2(), which does local-only invalidation.
 
-I can't say what systemd will actually prefer in this case, but they do see=
-m to have requested that the kernel change it... [1]
-
-[1] https://github.com/systemd/systemd/pull/36384
-
-
+I can organize the code however people want,
+but I would like a second opinion on this idea :)
+--=20
+All Rights Reversed.
 
