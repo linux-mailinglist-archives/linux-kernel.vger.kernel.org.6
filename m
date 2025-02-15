@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-515926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51823A36A91
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:07:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB409A36A92
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A3C170F14
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F6C1729A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDDF204F97;
-	Sat, 15 Feb 2025 00:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF4A13CA9C;
+	Sat, 15 Feb 2025 00:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtsgTaCl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TqJEdj5v"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F4113CA9C;
-	Sat, 15 Feb 2025 00:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0F7144D21
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581024; cv=none; b=F8CmtDcNo3yyC2fo2l5Y0Z3tk9QJ3dIMwnPhf6fRfrGD6m77aIJVLGAuscrQZPY+Tn1X6nfq6Nm2d3ZenwfhQN18GytBCpcZxLMG8cektA/ithuhLRQguqGJc+fh8Wc/qH8K20bLaL5l6baYB38hgba29SmZanDmIK4lJ7OFgwU=
+	t=1739581038; cv=none; b=H9HyU7MWKZq49rfoMieIiM6uPwkBh4ZGv2SGc4vDpb+d1Fxx6iz1pWoUsikfdThUlCjz29y4w6HAir2bXTktOxMewRaiIsg/9TIgMialNS1UjMR/zuM7ry3zKi34r+jUMx1+t2PqfBYAmQaM9nQh+yUEtU+I7AuSzaoMYr+5bls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739581024; c=relaxed/simple;
-	bh=imiRXcRe5fIzga1fTl2XI0oxBCEsG3xFvR07QmMegj0=;
+	s=arc-20240116; t=1739581038; c=relaxed/simple;
+	bh=nnoQI6FWAHPVgbUaFSMH0teF0LgFuzIsBNVBOQo5EK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtBgXtMG58EEOUQTVpAZeBJxctnZXdOooMkqpoR5Mxb5t3t5ZxKK5qyu9QcFRYfgVbLJDBzs2N8RI74RhMKD59xtAWBo3de1N9KFG9s3OQV3FyIWMhF7MjUV4vyT1Fq+LHmK9Wc6JtRLeTjdIBTZwPAU9zmx8gmf42bk+SwAfjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtsgTaCl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F33CC4CED1;
-	Sat, 15 Feb 2025 00:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739581023;
-	bh=imiRXcRe5fIzga1fTl2XI0oxBCEsG3xFvR07QmMegj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MtsgTaClPzNEeNFM589RpXlKOsY6YNX5SrT20oR5i2WSWVQIA2sBcgRkL6roIoAk9
-	 Z5VVHLTLn8qirFBrwEtZ+7AJXyGamHTeanDTXLSqMQcHZUDImxSJe3lIhnv4pWPpUk
-	 YOcPPb4wCXftDpbLQVz3mQNtNxRS7YusiLrZNSielDmLUyThQbJonkm1UXSNQpI7LJ
-	 dCtcl+3vQxJQAJ/lqGCjdhRQMH8SWEnV+jjSLHT3dHs4tTIXhoMl6AyUosZiLU18Fz
-	 1eUdPB0eOPHZQxc5YVdsrvZscfIng5R/k6bTKaqO0LpC5a2x6NYIh3lLCUfImB6KuS
-	 p75eqMwUImy6Q==
-Date: Sat, 15 Feb 2025 00:56:59 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.12 000/419] 6.12.14-rc2 review
-Message-ID: <Z6_mW-l_zGRthtBU@finisterre.sirena.org.uk>
-References: <20250214133845.788244691@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4UihRMzl3NUbgM7jLYlilqSPWlsShSYnB46n2SaLzdChI9K9smVx1YW/Uhk+VnlkvPlTE8OPb3fVZ3GR56uguIFkgOk+x/r8ayDmipmczDHWKAcmjrYMiuNmMi1QosDx/+hBGLhO9Gxw9GmH0kA5fuO0BoeUf/qQxA7KyGiq4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TqJEdj5v; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 15 Feb 2025 00:57:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739581032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ULLjJNjDq0utTi5CLFZt6GhLkdXDd/3gI8n8ZSY2n0o=;
+	b=TqJEdj5vkvxy8qYPKvRPZtv99VxJOX1cUM3pnFDRPRWyFcGQocLF9gyQFMGX9czf2fIYIc
+	qJJ9fFbFa8KRpt+FbzKn275zri2nG1appkc39bTekXSeVPeGThBT7JkporaoLdazIQjjgY
+	PCnaDcVTxKPBs/el00NRMznSjXbY7qc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Patrick Bellasi <derkling@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Patrick Bellasi <derkling@matbug.net>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
+Message-ID: <Z6_mY3a_FH-Zw4MC@google.com>
+References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
+ <20250213175057.3108031-1-derkling@google.com>
+ <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b1zMQeLm7Y0fmuUQ"
-Content-Disposition: inline
-In-Reply-To: <20250214133845.788244691@linuxfoundation.org>
-X-Cookie: Editing is a rewording activity.
-
-
---b1zMQeLm7Y0fmuUQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 14, 2025 at 02:58:41PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.14 release.
-> There are 419 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Feb 14, 2025 at 09:10:05PM +0100, Borislav Petkov wrote:
+> On Thu, Feb 13, 2025 at 05:50:57PM +0000, Patrick Bellasi wrote:
+> > The "should be set identically across all processors in the system" makes me
+> > wondering if using the "KVM's user_return approach" proposed here is robust
+> > enough. Could this not lead to the bit being possibly set only on some CPU
+> > but not others?
+> 
+> That's fine, we should update that paper.
+> 
+> > If BpSpecReduce does not prevent training, but only the training from being
+> > used, should not we keep it consistently set after a guest has run, or until an
+> > IBPB is executed?
+> 
+> After talking with folks internally, you're probably right. We should slap an
+> IBPB before clearing. Which means, I cannot use the MSR return slots anymore.
+> I will have to resurrect some of the other solutions we had lined up...
+> 
+> Stay tuned.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Thanks for working on this!
 
---b1zMQeLm7Y0fmuUQ
-Content-Type: application/pgp-signature; name="signature.asc"
+Should this patch (and the two previously merged patches) be backported
+to stable? I noticed they did not have CC:stable.
 
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmev5lsACgkQJNaLcl1U
-h9BK0Qf3SzoFKJQ5kz2A1VqO+kHwutHNzrjB5O7aSBnpK4EMWhRwrIVV4qhT+tA7
-xT9Vj1WX4in3tBlXf2hGGQXLHFm46ARFn91DkrxAdj6HYTQynQ8fDyQtehmCnHSV
-STZvh9VFVBrQKLYBzsY9ljJLBj0BzZ8LHwX67es9GYQvlh0H+a9k+l1kOB5voJtc
-6vExTBBJvIzWVwpc81mF8mE3pH0IK33qSTXZ4voZHHaSW3yTNiaczUWCyXEC9UG9
-Jd4ob3t4CFsGGjZEm/55CqirUeF5dnXEAFxIEEpYVtKpqw80DKsGgUledfKZkUuo
-rxaX+0JTOBxpPAMWGqUh0QABTTwi
-=qL4n
------END PGP SIGNATURE-----
-
---b1zMQeLm7Y0fmuUQ--
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
