@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-516170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E41A36DA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:14:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574DCA36DA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48687A3940
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED8618913AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643C1A9B39;
-	Sat, 15 Feb 2025 11:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D729D1A9B46;
+	Sat, 15 Feb 2025 11:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isXhq3kt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D69V7T0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8EA18F2DF;
-	Sat, 15 Feb 2025 11:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CA319007F;
+	Sat, 15 Feb 2025 11:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739618056; cv=none; b=hj09tei7YJ35Lk1vG8+gbaqYgl7YelszFdjZmQNH5OW/2tTumGADbFHnOHvrfhLz3xQGDEIORXEtairuyKA+tH0DvD8wyzZSf7SQg3yCKgy/M5zq66XvPZFJW3bF0V5D3kPmxZD2m7AGYIqeboQ3j6/fpIk7Hvm2gI+ks673gds=
+	t=1739618287; cv=none; b=UHED2QjWDlLIocCIxqNCH8LvfN759fDhlCKp1vxRswB/RYmNEmJixExRNHQTQ/u2fDw6Lgj+s6y6AbAtRfHkWzDeUK5OMkAzRYv4000tqi6toPx8USvIIZufOfn7x8iKVS7yK9WTutgOy9ya27tNYZVDtUFkHmV0F8p7YGInDPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739618056; c=relaxed/simple;
-	bh=2MG5CjrZ+8pQDI+3FotFCAtkUVEZsU+0uSwPnGrtv1U=;
+	s=arc-20240116; t=1739618287; c=relaxed/simple;
+	bh=3Ua9OyyZnHpzG6+8qpoAGmyrpmSSp4HUMzl8X59dxGY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c17hXMxINbdsGAkoQ/yQk5JtkbyE6FhVxa/Yj/Bs30oK/VYlH6uMElWbvjxGXe2lh+b65U5b+jXKd6dFo+r6LMHvECzmeS4KW2Wdw02LS+PJ6AVM8wPd0JweckIkBi2Aw2ANNBdEUzrkp7oh8SAbwsP2Udr9ikGVY84MuvtCoZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isXhq3kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E927C4CEDF;
-	Sat, 15 Feb 2025 11:14:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tXMRaJQENF376F5ARH4C0AUQ0O+Dt+ivsI9RrYxAMjqxJgcwz5TrkQkGeYAEYr7wh6KnpZxu5zN+UEBvsYUNTzpwgcMPdUymmpHrI6twshwB0kw+mXNC0DBZamEOUT/1Ii6Pke8KOjOuh1BX04+S0zsPEgg+W0VqgD+g8+QhApU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D69V7T0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A05C4CEDF;
+	Sat, 15 Feb 2025 11:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739618056;
-	bh=2MG5CjrZ+8pQDI+3FotFCAtkUVEZsU+0uSwPnGrtv1U=;
+	s=k20201202; t=1739618286;
+	bh=3Ua9OyyZnHpzG6+8qpoAGmyrpmSSp4HUMzl8X59dxGY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=isXhq3ktq4XF7Ur7evEAeexK9bmTJ9BXtTQteA6D7utao/Uqi+shVcotQWzmu0PBQ
-	 3miM4u5GxdFgLlj2NIHnWRB4QY2N9pg2P5AOOt3AsVXsEHxq+d/m769aqlcCJse2/V
-	 IMCK1MD2TYsdAFeJHCEp/uHcon78tQwwBBIXS+vbGuQ+Ko4QUVuBRMc2foaxtK4yzG
-	 jFMaYVIYfav246rsYl64PCj/mWvPkDYqXXHIuvH+zXGbpzeXBvlxU6uVjVltLjPgT2
-	 l8J7oMaZ+qN7bDqIESZKcIIBvDcIRh358UuDEdhqdYAEHxxSUmRkZC2BGKMr07xsGr
-	 ADc1u82knp58Q==
-Message-ID: <8eab6c81-2015-4d5e-a1af-7ebe0208996a@kernel.org>
-Date: Sat, 15 Feb 2025 12:14:10 +0100
+	b=D69V7T0fiPWDvRrtHLvmfFTfAFoMnTLy37Rf0giAEJgGlKW/peBG6TQQ0Sqbpc6YF
+	 skjsRoVr9Ls2uK9qhDkWntWOmow6I5co9U3Ykg+dqBq+o65z95SIpK0vNAk+2W7mxg
+	 fdVTZ7erdQu+yTHbkYFdrNWFNs4EwtbzD/3i+hRY5y/XZ6ccDmvDjWuNBrnHS9BAtu
+	 7+97UI9FHA9zZjKI7BgfqEmOyL5FBOJ+y5PJRnSmsuygD39w8DtwratSciSuiKM01V
+	 dDxvK5UZyJjiCpBRW/B6/Q8o6gLyOErpj9XfCfQn7u0j6zk0LoicGy1YMTDJHwEMSV
+	 +xkchD3o3Bqyw==
+Message-ID: <c61c5713-d7d6-4266-847b-e0e480837632@kernel.org>
+Date: Sat, 15 Feb 2025 12:17:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] arm64: Kconfig: expand STM32 Armv8 SoC with
- STM32MP21 SoCs family
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250210-b4-stm32mp2_new_dts-v1-0-e8ef1e666c5e@foss.st.com>
- <20250210-b4-stm32mp2_new_dts-v1-7-e8ef1e666c5e@foss.st.com>
- <20250213-polite-spiked-dingo-ce0f3a@krzk-bin>
- <450d2efa-f38b-4f3a-b308-f2fb01fdb8f7@foss.st.com>
+Subject: Re: [PATCH 1/2] dt-bindings: riscv: spacemit: Add Milk-V Jupiter
+ board compatible
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ linux-kernel@vger.kernel.org
+Cc: javier@dowhile0.org, rjones@redhat.com, abologna@redhat.com,
+ spacemit@lists.linux.dev, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>,
+ Yangyu Chen <cyy@cyyself.name>, Yixun Lan <dlan@gentoo.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20250214151700.666544-1-javierm@redhat.com>
+ <20250214151700.666544-2-javierm@redhat.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,48 +108,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <450d2efa-f38b-4f3a-b308-f2fb01fdb8f7@foss.st.com>
+In-Reply-To: <20250214151700.666544-2-javierm@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/02/2025 16:06, Amelie Delaunay wrote:
-> On 2/13/25 10:02, Krzysztof Kozlowski wrote:
->> On Mon, Feb 10, 2025 at 04:21:01PM +0100, Amelie Delaunay wrote:
->>> Expand config ARCH_STM32 with the new STM32MP21 SoCs family which is
->>> composed of STM32MP211, STM32MP213 and STM32MP215 SoCs.
->>>
->>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
->>> ---
->>>   arch/arm64/Kconfig.platforms | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->>> index 844a39620cfea8bfc031a545d85e33894ef20994..f788dbc09c9eb6f5801758ccf6b0ffe50a96090e 100644
->>> --- a/arch/arm64/Kconfig.platforms
->>> +++ b/arch/arm64/Kconfig.platforms
->>> @@ -325,6 +325,8 @@ config ARCH_STM32
->>>   			- STM32MP251, STM32MP253, STM32MP255 and STM32MP257.
->>>   		- STM32MP23:
->>>   			- STM32MP231, STM32MP233, STM32MP235.
->>> +		- STM32MP21:
->>
->> Squash it with previous patch and keep some sort of order.
->>
+On 14/02/2025 16:16, Javier Martinez Canillas wrote:
+> Document the compatible string for Milk-V Jupiter board [1], which
+> is a Mini ITX computer based on the SpacemiT K1/M1 RISC-V SoC [2].
 > 
-> Ok for squashing with patch 3.
-> Do you mean to keep the current chronological order used here or to 
+> Link: https://milkv.io/jupiter [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> ---
 
-chronological of what? Adding it? That's the worse of possible orders,
-because it is basically random invitation to conflicts.
 
-If chronological of market release, that's tricky to any contributor to
-figure out.
-
-> change the order because "chronological" is not an appropriate order? In 
-> this case, would the alphanumeric order be fine?
-
-Many lists go alphanumerical because it is most obvious and avoids
-conflicts.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
