@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-516021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43034A36C15
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 06:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0DBA36C1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 06:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017601896266
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81641888182
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D192F18A943;
-	Sat, 15 Feb 2025 05:05:39 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9C1581F1;
-	Sat, 15 Feb 2025 05:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF171624FE;
+	Sat, 15 Feb 2025 05:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fQk/KTor"
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8162F4A
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739595939; cv=none; b=aPUgDhxOCKuz3DgYwoBd4JbMM+dfgn+yXePcT6naQKabKn062xPjrxB7lqASM3xiO+wxo02e90Xl+JsfgaZ68n9wVGWBDOdPUZYhKsOProqv53KmFUi4jbITNWvdBUWzUHb+KoQdRmPGtUld4+MhuWKO10ieRExHFvhwLDdjLwE=
+	t=1739596560; cv=none; b=eGQPvj8MgLN+uM7N+6GSUoYnKUi44YBHOEZS7J29DSGa32OpmfqF/XhR6VW45c0GVguuxIenAQYAWeZSRhWBOVyWaBjLj6w4od3UwUKHU3CKyPsI0mhBDl1qpH85YWnGMJysOHTGD4oUMrSjWiOQcPCuxqtOkiXajpgcuGrTxhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739595939; c=relaxed/simple;
-	bh=SrXTc6X/ECMzZTWLH2SwjL1xlPi7ojTU3gNLDZvCYXk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Gdza1s3zkQxt377d0sm1VPAJkkqS6vEaZiGJ/X7Tw4ar3t/JiIhf+H/liDlKbvDbppmOvFxDoiApgmFJFjbRN2vMeBmSaCbgUT487YMSLt/bZLi33p3neT2WZ0ZQH3CDByA5tXTe1L6I7jWQHerrYefq7qIxXRwOhC/RHrPsOqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id A1CB692009C; Sat, 15 Feb 2025 06:05:34 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 93F0292009B;
-	Sat, 15 Feb 2025 05:05:34 +0000 (GMT)
-Date: Sat, 15 Feb 2025 05:05:34 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Marco Crivellari <marco.crivellari@suse.com>
-cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH] MIPS: Fix idle VS timer enqueue
-In-Reply-To: <20250214105047.150835-2-marco.crivellari@suse.com>
-Message-ID: <alpine.DEB.2.21.2502150409000.65342@angie.orcam.me.uk>
-References: <20250214105047.150835-1-marco.crivellari@suse.com> <20250214105047.150835-2-marco.crivellari@suse.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1739596560; c=relaxed/simple;
+	bh=1KfR0ReSOrDksD7Gqg4LeN9SGYnXYWhyRwfFTIQlHGI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=FLqQjzIIg/lmwj8Vk6bv3USXwpYvv/2lH3SPexwm2vM1Eid86fnIjPBx/zgZofcbtM6OFTkvCngDyxwtrgExWcipa5q/FzIM6KKbr7Q2UWPgA+J0ctm4leEbiy9MDQ2V5Did/xFMWN3DsZPXeOspZuWnEMqYH0u8qORu8CIHIAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fQk/KTor; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1739596547; bh=74rJBhX2Y1r/7c7UIdfhVaNUGgmB6X6oiBsVf04pKTw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=fQk/KToru1684BjEvKjpEMFZfUg0Kf5bSS/j+eLWXPXpDLs601d6D2Th3D1L+NK5j
+	 gMacQbEUg/KPzdzVrIYdzYVOfJXXRRXDZ2neE8ZYbY+CNFujm754INLYy+YCViPk6N
+	 iSYGMEFnSFCGKxIUbcgrfjiPEmJMnqgweH2e3OsY=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 3EDA1E41; Sat, 15 Feb 2025 13:15:45 +0800
+X-QQ-mid: xmsmtpt1739596545th4p146ak
+Message-ID: <tencent_08922ECA6EE0CCB467D606C852E9464B0906@qq.com>
+X-QQ-XMAILINFO: OYTBn1rNHH7tIoEqC4D8P+gx774JPNtVozebF1jSxS6DpHKzKWjBJrXWiIFftj
+	 EJ4TTOVHyMH5YxfoQ1KwbldlifLBaWHcUu9R0hLkq3Jl0T0L+1M3+hRzT8iXqOE0A9LujEQ4IyO+
+	 3F5C7La8DOIKJLNmmqdlHRfzfuq0G/5ACdILEwIps+eZboNJZagO9uOTvbtMVh+KxuRGMcxD2SRd
+	 DJoQ2UHC/kNgJl1Mjktvb+T/9g0hyPghGvHLjALtfS0CkZaLkbRqu117erDhzsI78O3pNfTPQrBP
+	 D7cPAnoAwuoGUXLVzG6O9CC8o3tyE/IQtRrATBF+JrbNTiAR3I0wC/Ds5IuFzeX/bFOW59u0UumM
+	 b6FS7XGmXh48BMwa4PB0uSyd7Dcp12k58fMLZDt/pn9wI8R0i6ySnYo6cu3QU4cbiYkHQ75DWBvT
+	 s2O7RUD6oVGn25hizI0vv8AWpLjZSIkavQlwrtrOa1uVz/AdoxIIkcvUeb/gVzz1JuM88FcS99Ov
+	 f/P3taevgrB0zQU5Iqqus6PNp0kX6HSouw4MXdf2hOq2oa7zacFi7pub1mx80mSlXttGshXFj9Ds
+	 ytiPNrT0Q1KfajGzHX1j5wzzl5Y5opm8OKZHyLhPERT2Ddm0sO2OoQ5WSD5tBSzYusRsERbUP1rB
+	 z1rG/pHi57hFJvYRNTxB0dp2L29nDI8Y8Eh2C5uBUWvQLBbazHePVZxg6XMQGrnhSRHRWOvK5Elp
+	 HWUSK8Onbqa+t2upAtoZJODlcXbERKqH86+RE1zT2SUXq82Nls0xwgK/bOx98hXB+6NawoPj/BIK
+	 B/ROdCQ8DJmPP5nAnPKcCpf3c5/HngRiJ1t/Pstm/Fd70C1JWxnuRGcJd8SHc62Ea4zzCAWzTcyt
+	 KJUo0Q8vqnjpTHem+33knijsuSTRX6MGxZmyQCczOuWb11OOOk3gfzLG3iL8u0Sbda9ydnMUc4Bk
+	 RbCCrzcMtWOZ/+Q/OhqVAC2zTnr3F5wyDjavJrIuPFRRZH3EDKCEB6SomABzGA
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [netfs?] KASAN: slab-use-after-free Write in io_submit_one
+Date: Sat, 15 Feb 2025 13:15:46 +0800
+X-OQ-MSGID: <20250215051545.1260392-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
+References: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025, Marco Crivellari wrote:
+#syz test
 
-> diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> index a572ce36a24f..a78d5132c940 100644
-> --- a/arch/mips/kernel/genex.S
-> +++ b/arch/mips/kernel/genex.S
-> @@ -104,18 +104,16 @@ handle_vcei:
->  
->  	__FINIT
->  
-> -	.align	5	/* 32 byte rollback region */
-> +	.align	5
->  LEAF(__r4k_wait)
->  	.set	push
->  	.set	noreorder
-> -	/* start of rollback region */
-> -	LONG_L	t0, TI_FLAGS($28)
-> -	nop
-> -	andi	t0, _TIF_NEED_RESCHED
-> -	bnez	t0, 1f
-> -	 nop
-> -	nop
-> -	nop
-> +	/* start of idle interrupt region */
-> +	MFC0	k0, CP0_STATUS
-> +	/* Enable Interrupt */
-> +	ori 	k0, 0x1f
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index f65affa5a9e4..6f3c0404f4b8 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -207,6 +207,7 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
+ 	 * in progress.  The issuer thread may be adding stuff to the tail
+ 	 * whilst we're doing this.
+ 	 */
++	spin_lock(&rreq->lock);
+ 	front = READ_ONCE(stream->front);
+ 	while (front) {
+ 		size_t transferred;
+@@ -288,7 +289,6 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
+ 
+ 		/* Remove if completely consumed. */
+ 		stream->source = front->source;
+-		spin_lock(&rreq->lock);
+ 
+ 		remove = front;
+ 		trace_netfs_sreq(front, netfs_sreq_trace_discard);
+@@ -296,12 +296,12 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
+ 		front = list_first_entry_or_null(&stream->subrequests,
+ 						 struct netfs_io_subrequest, rreq_link);
+ 		stream->front = front;
+-		spin_unlock(&rreq->lock);
+ 		netfs_put_subrequest(remove, false,
+ 				     notes & ABANDON_SREQ ?
+ 				     netfs_sreq_trace_put_abandon :
+ 				     netfs_sreq_trace_put_done);
+ 	}
++	spin_unlock(&rreq->lock);
+ 
+ 	trace_netfs_collect_stream(rreq, stream);
+ 	trace_netfs_collect_state(rreq, rreq->collected_to, notes);
+@@ -369,12 +369,17 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
+ 		}
+ 	}
+ 
++	spin_lock(&rreq->lock);
+ 	if (rreq->iocb) {
+ 		rreq->iocb->ki_pos += rreq->transferred;
+-		if (rreq->iocb->ki_complete)
++		if (rreq->iocb->ki_complete) {
+ 			rreq->iocb->ki_complete(
+ 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
++			rreq->iocb = NULL;
++		}
+ 	}
++	spin_unlock(&rreq->lock);
++
+ 	if (rreq->netfs_ops->done)
+ 		rreq->netfs_ops->done(rreq);
+ 	if (rreq->origin == NETFS_DIO_READ)
 
- Data from CP0 will be delivered late to $k0 on MIPS III, you need to fill 
-the coprocessor move delay slot here.  Existing code takes care about it. 
-I bet you won't trigger this with QEMU, you need to verify with real hw.
-
- For CONFIG_CPU_HAS_DIEI you want EI here instead.
-
-> +	xori	k0, 0x1e
-> +	MTC0	k0, CP0_STATUS
-
- You need to clear the CP0 hazard here, just as `raw_local_irq_enable' 
-does, because WAIT halts the pipeline and the interrupt enable state may 
-not have been propagated beforehand otherwise.  Again, not triggerable 
-with QEMU.
-
-> @@ -123,11 +121,17 @@ LEAF(__r4k_wait)
->  	nop
->  #endif
->  	.set	MIPS_ISA_ARCH_LEVEL_RAW
-> +	/*
-> +	 * If an interrupt lands here, between enabling interrupts above and
-> +	 * going idle on the next instruction, we must *NOT* go idle since the
-> +	 * interrupt could have set TIF_NEED_RESCHED or caused a timer to need
-> +	 * resched. Fall through -- see rollback_handler below -- and have
-> +	 * the idle loop take care of things.
-> +	 */
->  	wait
-> -	/* end of rollback region (the region size must be power of two) */
-> -1:
-> +	/* end of idle interrupt region (the region size must be power of two) */
-
- Have you verified this still stands with CONFIG_CPU_MICROMIPS after your 
-change?
-
-> +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
->  	jr	ra
-> -	 nop
->  	.set	pop
->  	END(__r4k_wait)
-
- You're dropping the delay slot NOP here, meaning that whatever comes next 
-gets there, possibly "mfc0 $k0, $c0_epc" (depending on alignment), why?
-
-> @@ -136,10 +140,10 @@ LEAF(__r4k_wait)
->  	.set	push
->  	.set	noat
->  	MFC0	k0, CP0_EPC
-> -	PTR_LA	k1, __r4k_wait
-> -	ori	k0, 0x1f	/* 32 byte rollback region */
-> -	xori	k0, 0x1f
-> -	bne	k0, k1, \handler
-> +	PTR_LA	k1, __r4k_wait_exit
-> +	/* 3 instructions rollback region */
-> +	ori 	k0, k0, 0x0c
-> +	bne 	k0, k1, \handler
-
- How is `__r4k_wait_exit' guaranteed to have bits 3:2 set and bit 1 (for 
-CONFIG_CPU_MICROMIPS) clear?  Also EPC may or may not have bit 1 set.
-
- NB not a full review and certainly not for the change of semantics, but 
-for some issues spotted with the low-level correctness of new code.
-
-  Maciej
 
